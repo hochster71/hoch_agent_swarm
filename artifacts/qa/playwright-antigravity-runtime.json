@@ -1,0 +1,216 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/26.3.1/bin/node",
+      "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/node_modules/.bin/playwright",
+      "test",
+      "tests/e2e/antigravity-runtime.spec.ts"
+    ],
+    "configFile": "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/playwright.config.ts",
+    "rootDir": "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "antigravity-chromium",
+        "name": "antigravity-chromium",
+        "testDir": "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 45000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/qa/playwright-antigravity-runtime.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "artifacts/qa/playwright-report",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.61.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "antigravity-runtime.spec.ts",
+      "file": "antigravity-runtime.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Antigravity runtime console",
+          "file": "antigravity-runtime.spec.ts",
+          "line": 29,
+          "column": 6,
+          "specs": [
+            {
+              "title": "loads without production CSS/runtime regressions",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "antigravity-chromium",
+                  "projectName": "antigravity-chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1479,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-24T22:08:44.877Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "runtime-home",
+                          "contentType": "image/png",
+                          "path": "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/test-results/antigravity-runtime-Antigr-8fb49-ion-CSS-runtime-regressions-antigravity-chromium/attachments/runtime-home-386edb5df17b3717dbddd4369afd6fd4cc49371b.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "406d2e0f6c3e1e1b063d-66139aaa63af82bdde72",
+              "file": "antigravity-runtime.spec.ts",
+              "line": 30,
+              "column": 7
+            },
+            {
+              "title": "remediation safety view is semantically correct",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "antigravity-chromium",
+                  "projectName": "antigravity-chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1453,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-24T22:08:46.431Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "remediation-safety",
+                          "contentType": "image/png",
+                          "path": "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/test-results/antigravity-runtime-Antigr-b4abe-iew-is-semantically-correct-antigravity-chromium/attachments/remediation-safety-4abbfc8114dd86d4e0fba91f5621a4046c26c586.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "406d2e0f6c3e1e1b063d-1e11bd30865ff00f65a7",
+              "file": "antigravity-runtime.spec.ts",
+              "line": 65,
+              "column": 7
+            },
+            {
+              "title": "all locked nav modules can activate",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "antigravity-chromium",
+                  "projectName": "antigravity-chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1845,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-24T22:08:47.888Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "406d2e0f6c3e1e1b063d-392f7f2b23d475779f39",
+              "file": "antigravity-runtime.spec.ts",
+              "line": 100,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-06-24T22:08:44.649Z",
+    "duration": 5118.033,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

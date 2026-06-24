@@ -34,9 +34,13 @@
     "build": "npm run build:tailwind",
     "qa:view-contract": "npx tsx scripts/qa/test-view-content-contract.ts",
     "qa:ui-contract": "npm run qa:no-tailwind-cdn && npm run qa:nav && npm run qa:view-contract && npm run qa:frontend-entrypoint",
-    "qa:frontend-entrypoint": "npx tsx scripts/qa/test-frontend-entrypoint-contract.ts"
+    "qa:frontend-entrypoint": "npx tsx scripts/qa/test-frontend-entrypoint-contract.ts",
+    "e2e:antigravity": "npx playwright test tests/e2e/antigravity-runtime.spec.ts",
+    "qa:e2e-runtime": "npm run e2e:antigravity",
+    "qa:runtime-full": "npm run qa:ui-contract && npm run qa:readiness && npm run qa:autonomy-budget && npm run qa:e2e-runtime"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "@tailwindcss/cli": "^4.3.1",
     "tailwindcss": "^4.3.1",
     "tsx": "^4.7.1",
