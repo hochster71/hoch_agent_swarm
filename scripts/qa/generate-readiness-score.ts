@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const OUT_DIR = "artifacts/qa";
+const packageJson = readJson("package.json", {});
 
 function readJson(filePath: string, fallback: any) {
   if (!fs.existsSync(filePath)) return fallback;
@@ -86,7 +87,7 @@ function main() {
 
   // 6. Supply-chain provenance (10%)
   let supplyScore = 10;
-  const currentReleaseDir = "dist/releases/v0.1.3-HOCHSTER-RUNTIME-EXECUTION-AUDIT";
+  const currentReleaseDir = `dist/releases/${packageJson.version}`;
   if (
     fs.existsSync(`${currentReleaseDir}/release_manifest.json`) &&
     fs.existsSync(`${currentReleaseDir}/provenance.intoto.jsonl`) &&

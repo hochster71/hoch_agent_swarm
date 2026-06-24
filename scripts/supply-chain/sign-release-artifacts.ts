@@ -1,7 +1,8 @@
 import { execSync } from "node:child_process";
 import fs from "node:fs";
 
-const VERSION = "v0.1.3-HOCHSTER-RUNTIME-EXECUTION-AUDIT";
+const packageJson = JSON.parse(fs.readFileSync("package.json", "utf8"));
+const VERSION = packageJson.version;
 const RELEASE_DIR = `dist/releases/${VERSION}`;
 
 function run(command: string) {

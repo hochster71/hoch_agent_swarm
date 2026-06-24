@@ -82,6 +82,35 @@ def init_execution_store_tables() -> None:
             )
             """
         )
+        # 5. Readiness reports
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS hochster_readiness_reports (
+                report_id TEXT PRIMARY KEY,
+                readiness_score INTEGER NOT NULL,
+                breakdown_json TEXT NOT NULL,
+                status TEXT NOT NULL,
+                drift_detected INTEGER NOT NULL,
+                drift_findings_json TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            )
+            """
+        )
+        # 6. Incidents
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS hochster_incidents (
+                incident_id TEXT PRIMARY KEY,
+                category TEXT NOT NULL,
+                severity TEXT NOT NULL,
+                findings_json TEXT NOT NULL,
+                remediation_patch TEXT NOT NULL,
+                rollback_plan TEXT NOT NULL,
+                status TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            )
+            """
+        )
         conn.commit()
     finally:
         conn.close()
@@ -271,3 +300,116 @@ def redact_secrets(text: str) -> tuple[str, int, list[str]]:
         
     redacted = re.sub(pattern, replace_match, text)
     return redacted, count, keys_found
+
+def persist_readiness_report(
+    report_id: str,
+    readiness_score: int,
+    breakdown: dict,
+    status: str,
+    drift_detected: bool,
+    drift_findings: list[str]
+) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO hochster_readiness_reports (
+                report_id, readiness_score, breakdown_json, status, drift_detected, drift_findings_json, created_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                report_id,
+                readiness_score,
+                json.dumps(breakdown),
+                status,
+                1 if drift_detected else 0,
+                json.dumps(drift_findings),
+                now_iso()
+            )
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+def list_readiness_reports(limit: int = 50) -> list[dict]:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        rows = conn.execute(
+            "SELECT * FROM hochster_readiness_reports ORDER BY created_at DESC LIMIT ?", (limit,)
+        ).fetchall()
+        output = []
+        for r in rows:
+            d = dict(r)
+            d["breakdown"] = json.loads(d.pop("breakdown_json"))
+            d["drift_findings"] = json.loads(d.pop("drift_findings_json"))
+            d["drift_detected"] = bool(d["drift_detected"])
+            output.append(d)
+        return output
+    finally:
+        conn.close()
+
+def persist_incident(
+    incident_id: str,
+    category: str,
+    severity: str,
+    findings: list[str],
+    remediation_patch: str,
+    rollback_plan: str,
+    status: str
+) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO hochster_incidents (
+                incident_id, category, severity, findings_json, remediation_patch, rollback_plan, status, created_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                incident_id,
+                category,
+                severity,
+                json.dumps(findings),
+                remediation_patch,
+                rollback_plan,
+                status,
+                now_iso()
+            )
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+def list_incidents() -> list[dict]:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        rows = conn.execute("SELECT * FROM hochster_incidents ORDER BY created_at DESC").fetchall()
+        output = []
+        for r in rows:
+            d = dict(r)
+            d["findings"] = json.loads(d.pop("findings_json"))
+            output.append(d)
+        return output
+    finally:
+        conn.close()
+
+def update_incident_status(incident_id: str, status: str) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        conn.execute(
+            "UPDATE hochster_incidents SET status = ? WHERE incident_id = ?",
+            (status, incident_id)
+        )
+        conn.commit()
+    finally:
+        conn.close()
+

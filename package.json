@@ -1,6 +1,6 @@
 {
   "name": "hoch-agent-swarm",
-  "version": "0.1.3-HOCHSTER-RUNTIME-EXECUTION-AUDIT",
+  "version": "0.1.4-OPERATIONAL-READINESS-AUTOPILOT",
   "private": true,
   "scripts": {
     "baseline:scan-static": "grep -RInE \"mock|fixture|demo|fake|placeholder|sample|seed|Math\\.random|Date\\.now|health: 100|status: ['\\\"]healthy|sync: ['\\\"]ok|latency: ['\\\"]1\\.2ms\" frontend/src backend/main.py || true",

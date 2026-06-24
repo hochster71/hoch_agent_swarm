@@ -2,7 +2,8 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import { execSync } from "node:child_process";
 
-const VERSION = "v0.1.3-HOCHSTER-RUNTIME-EXECUTION-AUDIT";
+const packageJson = JSON.parse(fs.readFileSync("package.json", "utf8"));
+const VERSION = packageJson.version;
 const RELEASE_DIR = `dist/releases/${VERSION}`;
 const EVIDENCE_PATH = `${RELEASE_DIR}/baseline_evidence_pack.json`;
 

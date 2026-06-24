@@ -1,7 +1,8 @@
 import fs from "node:fs";
 import { execSync } from "node:child_process";
 
-const VERSION = "v0.1.3-HOCHSTER-RUNTIME-EXECUTION-AUDIT";
+const packageJson = JSON.parse(fs.readFileSync("package.json", "utf8"));
+const VERSION = packageJson.version;
 const RELEASE_DIR = `dist/releases/${VERSION}`;
 
 function run(command: string): string {
@@ -12,7 +13,6 @@ function run(command: string): string {
   }
 }
 
-const packageJson = JSON.parse(fs.readFileSync("package.json", "utf8"));
 const lockHash = fs.existsSync("package-lock.json")
   ? run("shasum -a 256 package-lock.json").split(" ")[0]
   : null;

@@ -2,7 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 
 const OUT_DIR = "artifacts/qa";
-const VERSION = "v0.1.3-HOCHSTER-RUNTIME-EXECUTION-AUDIT";
+const packageJson = JSON.parse(fs.readFileSync("package.json", "utf8"));
+const VERSION = packageJson.version;
 const RELEASE_DIR = `dist/releases/${VERSION}`;
 
 function readJson(filePath: string, fallback: any) {
