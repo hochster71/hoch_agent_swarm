@@ -1,0 +1,43 @@
+name: Nav Contract QA
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  nav-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install python requirements
+        run: |
+          python3 -m pip install --upgrade pip
+          if [ -f backend/requirements.txt ]; then pip install -r backend/requirements.txt; else pip install fastapi uvicorn pydantic; fi
+
+      - name: Start FastAPI
+        run: |
+          python3 -m uvicorn backend.main:app --port 8000 --host 0.0.0.0 &
+          echo $! > uvicorn.pid
+          sleep 5
+
+      - name: Run nav QA
+        run: npm run qa:nav
+
+      - name: Stop FastAPI
+        if: always()
+        run: |
+          kill $(cat uvicorn.pid) || true

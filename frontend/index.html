@@ -350,34 +350,132 @@
             </div>
 
             <!-- Tasks View (Hidden by default) -->
+            
             <div id="view-remediation-safety" class="hidden">
-                <div class="dashboard-grid">
-                    <section class="card" style="grid-column: 1/-1;">
-                        <div class="card-header">
-                            <h2 class="card-title">Cluster Task History</h2>
+                <div class="section-header">
+                    <div>
+                        <h2>Remediation Safety Command Center</h2>
+                        <p>Autonomous remediation gates, dry-runs, approvals, rollback, and readiness impact.</p>
+                    </div>
+                    <div class="section-status">
+                        <span id="remediation-safety-freshness" class="status-pill">LIVE</span>
+                        <span id="remediation-safety-updated" class="muted">Waiting for telemetry...</span>
+                    </div>
+                </div>
+
+                <div class="metric-grid">
+                    <div class="metric-card">
+                        <span class="metric-label">Autonomy Level</span>
+                        <strong id="remediation-autonomy-level">--</strong>
+                        <small id="remediation-autonomy-reason">Policy-gated</small>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Readiness Score</span>
+                        <strong id="remediation-readiness-score">--</strong>
+                        <small>Post-fix guardrail</small>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Error Budget</span>
+                        <strong id="remediation-error-budget">--</strong>
+                        <small id="remediation-burn-rate">Burn rate: --</small>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Active Incidents</span>
+                        <strong id="remediation-active-incidents">--</strong>
+                        <small>Detected by readiness daemon</small>
+                    </div>
+                </div>
+
+                <div class="grid-two">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Safety Gates</h3>
+                            <span class="muted">Required before mutation</span>
                         </div>
-                        <div class="table-container">
-                            <table class="deployments-table">
-                                <thead>
-                                    <tr>
-                                        <th>Task ID</th>
-                                        <th>Type</th>
-                                        <th>Target Asset</th>
-                                        <th>Duration</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tasks-tbody">
-                                    <!-- Dynamic rows from app.js -->
-                                </tbody>
-                            </table>
+                        <div class="gate-list">
+                            <div class="gate-row"><span>Risk Classifier</span><strong id="gate-risk-classifier">ACTIVE</strong></div>
+                            <div class="gate-row"><span>SQL Allowlist</span><strong id="gate-sql-allowlist">ACTIVE</strong></div>
+                            <div class="gate-row"><span>Side-Effect Guard</span><strong id="gate-side-effect">ACTIVE</strong></div>
+                            <div class="gate-row"><span>Dry-Run Simulation</span><strong id="gate-dry-run">ACTIVE</strong></div>
+                            <div class="gate-row"><span>Approval Policy</span><strong id="gate-approval-policy">ACTIVE</strong></div>
+                            <div class="gate-row"><span>Rollback Plan</span><strong id="gate-rollback-plan">REQUIRED</strong></div>
+                            <div class="gate-row"><span>Post-Fix Verification</span><strong id="gate-postfix-verification">REQUIRED</strong></div>
                         </div>
-                    </section>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Autonomy Throttle</h3>
+                            <span class="muted">Reliability-budget-aware action limits</span>
+                        </div>
+                        <table class="ops-table">
+                            <thead>
+                                <tr><th>Condition</th><th>Allowed Mode</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Healthy budget + low risk</td><td>L4 low-risk autonomous</td></tr>
+                                <tr><td>Moderate burn / degraded readiness</td><td>L3 approval-gated</td></tr>
+                                <tr><td>Readiness below threshold</td><td>L1/L2 recommendation only</td></tr>
+                                <tr><td>High/Critical incident</td><td>Mutation blocked</td></tr>
+                                <tr><td>Missing trace/evidence/rollback</td><td>Mutation blocked</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Incident Remediation Queue</h3>
+                        <span class="muted">Detected → diagnosed → proposed → approved → remediated → verified</span>
+                    </div>
+                    <table class="ops-table">
+                        <thead>
+                            <tr>
+                                <th>Incident</th>
+                                <th>Severity</th>
+                                <th>Risk</th>
+                                <th>State</th>
+                                <th>Remediation</th>
+                                <th>Rollback</th>
+                            </tr>
+                        </thead>
+                        <tbody id="remediation-incident-rows">
+                            <tr><td colspan="6">Waiting for live incident telemetry...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Red-Team Safety Validation</h3>
+                        <span class="muted">Unsafe remediation scenarios must remain blocked</span>
+                    </div>
+                    <div class="metric-grid">
+                        <div class="metric-card">
+                            <span class="metric-label">Red-Team Cases</span>
+                            <strong id="remediation-redteam-cases">25+</strong>
+                            <small>Autonomy budget suite</small>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">Unsafe Cases Blocked</span>
+                            <strong id="remediation-unsafe-blocked">100%</strong>
+                            <small>Required: 100%</small>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">Approval Bypasses</span>
+                            <strong id="remediation-approval-bypasses">0</strong>
+                            <small>Required: zero</small>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-label">Rollback Failures</span>
+                            <strong id="remediation-rollback-failures">0</strong>
+                            <small>Required: zero</small>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Readiness Autopilot View (Hidden by default) -->
-            <div id="view-readiness-autopilot" class="hidden">
+<div id="view-readiness-autopilot" class="hidden">
                 <!-- Live Readiness Autopilot Summary Row -->
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
                     <div class="card" style="padding: 16px; background: rgba(22, 28, 45, 0.65); border: 1px solid var(--border-glass); text-align: center;">

@@ -2859,3 +2859,62 @@ async function updateNavStatuses() {
     updateIndicator("nav-timeline-replay", ledgerOk ? "live" : "error");
 }
 
+
+
+async function fetchRemediationSafetyData() {
+    try {
+        const status = await fetchJson("/api/v1/readiness/status");
+        const budget = await fetchJson("/api/v1/readiness/budget-report");
+        let incidents = { data: { incidents: [] } };
+
+        try {
+            incidents = await fetchJson("/api/v1/readiness/incidents");
+        } catch (_err) {
+            incidents = { data: { incidents: [] } };
+        }
+
+        const statusData = status.data || {};
+        const budgetData = budget.data || {};
+        const incidentData = incidents.data || {};
+        const rows = Array.isArray(incidentData.incidents) ? incidentData.incidents : [];
+
+        setText("remediation-safety-freshness", status.freshness || "live");
+        setText("remediation-safety-updated", `Updated ${status.received_at || "--"}`);
+        setText("remediation-autonomy-level", statusData.autonomy_level || budgetData.autonomy_level || "--");
+        setText("remediation-autonomy-reason", statusData.autonomy_reason || "Budget-aware autonomy gate");
+        setText("remediation-readiness-score", statusData.readiness_score ?? statusData.score ?? "--");
+        setText("remediation-error-budget", budgetData.remaining_error_budget ?? budgetData.error_budget_remaining ?? "--");
+        setText("remediation-burn-rate", `Burn rate: ${budgetData.burn_rate ?? "--"}`);
+        setText("remediation-active-incidents", rows.filter((i) => (i.state || i.status || "").toLowerCase() !== "closed").length);
+        renderRemediationIncidentRows(rows);
+    } catch (error) {
+        console.warn("Failed to fetch remediation safety telemetry", error);
+    }
+}
+
+function renderRemediationIncidentRows(incidents) {
+    const tbody = document.getElementById("remediation-incident-rows");
+    if (!tbody) return;
+
+    if (!incidents.length) {
+        tbody.innerHTML = `<tr><td colspan="6">No active incidents. Remediation safety gates standing by.</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = incidents.map((incident) => `
+        <tr>
+            <td>${escapeHtml(incident.title || incident.incident_id || incident.id || "--")}</td>
+            <td>${escapeHtml(incident.severity || "--")}</td>
+            <td>${escapeHtml(incident.risk_level || incident.risk || "--")}</td>
+            <td>${escapeHtml(incident.state || incident.status || "--")}</td>
+            <td>${escapeHtml(incident.remediation_plan || incident.recommendation || "Pending")}</td>
+            <td>${escapeHtml(incident.rollback_plan || "Required")}</td>
+        </tr>
+    `).join("");
+}
+
+
+document.getElementById("nav-remediation-safety")?.addEventListener("click", () => {
+    fetchRemediationSafetyData();
+});
+setInterval(fetchRemediationSafetyData, 5000);
