@@ -8,3 +8,16 @@ frontend/node_modules/
 frontend/dist/
 frontend/.env
 .DS_Store
+
+# Python runtime artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Local/generated release artifacts
+dist/*.sha256
+dist/releases/*.tar.gz
+dist/releases/*.tar.gz.sha256
+
+# Local runtime / generated app scaffolds
+server/
