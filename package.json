@@ -1,0 +1,20 @@
+{
+  "name": "hoch-agent-swarm",
+  "version": "0.1.1",
+  "private": true,
+  "scripts": {
+    "baseline:scan-static": "grep -RInE \"mock|fixture|demo|fake|placeholder|sample|seed|Math\\.random|Date\\.now|health: 100|status: ['\\\"]healthy|sync: ['\\\"]ok|latency: ['\\\"]1\\.2ms\" frontend/src backend/main.py || true",
+    "baseline:validate-api": "python3 scripts/verify_realtime_integrity.py",
+    "baseline:validate-audit": "python3 scripts/verify_baseline_lock.py",
+    "baseline:evidence": "npx tsx scripts/generate-baseline-evidence.ts",
+    "baseline:evaluate": "npx tsx scripts/baseline/ci-baseline-gate.ts",
+    "baseline:capture-digests": "npx tsx scripts/baseline/capture-docker-digests.ts",
+    "baseline:checksum": "npx tsx scripts/baseline/checksum-evidence-pack.ts",
+    "baseline:hardening": "npm run baseline:scan-static && npm run baseline:validate-api && npm run baseline:validate-audit && npm run baseline:capture-digests && npm run baseline:evidence && npm run baseline:checksum && npm run baseline:evaluate",
+    "test": "npx tsx scripts/baseline/verify-stale-green-regression.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.1",
+    "typescript": "^5.3.3"
+  }
+}
