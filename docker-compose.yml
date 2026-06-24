@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  hochster-api:
+    image: hoch-agent-swarm/hochster-api:latest
+    container_name: hochster-api
+    environment:
+      - HOCHSTER_MODE=control-plane
+      - HOCHSTER_MAX_INSTANCES=12
+      - HOCHSTER_TOOL_SANDBOX=docker
+      - HOCHSTER_AUDIT_ENABLED=true
+      - HOCHSTER_CALLBACKS_ENABLED=true
+    ports:
+      - "8787:8787"
+    volumes:
+      - hochster-cache:/var/lib/hochster
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - hochster-net
+
+  hochster-worker:
+    image: hoch-agent-swarm/hochster-worker:latest
+    deploy:
+      replicas: 4
+    environment:
+      - HOCHSTER_WORKER_MODE=solver
+      - HOCHSTER_ALLOWED_TOOLS=filesystem,shell,docker,tests,security,diff_patch
+      - HOCHSTER_READ_ONLY_DOCKER=true
+    networks:
+      - hochster-net
+
+volumes:
+  hochster-cache:
+
+networks:
+  hochster-net:
+    driver: bridge
