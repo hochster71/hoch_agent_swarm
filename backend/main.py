@@ -33,7 +33,8 @@ from backend.runtime_execution_store import (
     list_readiness_reports,
     list_incidents,
     update_incident_status,
-    persist_incident
+    persist_incident,
+    update_incident_state
 )
 from backend.hochster_runtime_audit import (
     generate_runtime_execution_audit,
@@ -42,6 +43,13 @@ from backend.hochster_runtime_audit import (
     generate_approval_gate_report
 )
 from backend.readiness_daemon import ReadinessDaemon
+from backend.remediation_safety import (
+    classify_remediation_risk,
+    is_remediation_approved,
+    dry_run_remediation,
+    validate_rollback_plan,
+    get_blast_radius
+)
 
 # Load version dynamically from package.json
 try:
@@ -2055,45 +2063,183 @@ def post_readiness_remediate(req: RemediateRequest):
         
     remediated_count = 0
     findings = []
+    
+    # Query current readiness score before applying patches
+    pre_reports = list_readiness_reports(1)
+    pre_score = pre_reports[0]["readiness_score"] if pre_reports else 100
+    
+    try:
+        approvals = list_approval_gates()
+    except Exception:
+        approvals = []
+        
     for inc in target_incidents:
         patch = inc.get("remediation_patch", "")
-        # L4 approved execution: if it is a sqlite pragma statement, execute it
-        if patch.startswith("PRAGMA"):
-            try:
-                conn = sqlite3.connect(DB_PATH)
-                conn.execute(patch)
-                conn.commit()
-                conn.close()
-                findings.append(f"Executed SQL patch: {patch}")
-            except Exception as e:
-                findings.append(f"Failed to execute patch {patch}: {e}")
-        else:
-            findings.append(f"Triggered patch command: {patch}")
-            
-        update_incident_status(inc["incident_id"], "remediated")
-        remediated_count += 1
+        rollback_plan = inc.get("rollback_plan", "")
+        incident_id = inc["incident_id"]
+        category = inc["category"]
         
-        # Log remediation to ledger
-        audit_evt = {
+        # 1. Risk Classification
+        risk_level = classify_remediation_risk(patch)
+        blast = get_blast_radius(category)
+        
+        # 2. Approval Policy Engine check
+        if not is_remediation_approved(risk_level, incident_id, approvals):
+            update_incident_state(incident_id, "proposed")
+            findings.append(f"Blocked: Incident {incident_id} remediation is risk level '{risk_level}' and requires explicit approval.")
+            # Log audit event for policy block
+            policy_evt = {
+                "actor": {"id": "autopilot-safety-gate", "name": "Autopilot Safety Gate", "type": "system"},
+                "action": {"type": "READINESS_REMEDIATION_BLOCKED", "summary": f"Remediation blocked for incident {incident_id}: requires approval for risk '{risk_level}'."},
+                "target": {"type": "incident", "id": incident_id, "name": category},
+                "result": "blocked",
+                "severity": "warning",
+                "provenance": {"source": "observed", "evidence_refs": ["database.hochster_incidents"]},
+                "timestamp": now_iso(),
+                "metadata": {
+                    "incident_id": incident_id,
+                    "risk_level": risk_level,
+                    "blast_radius": blast,
+                    "state": "proposed"
+                }
+            }
+            add_event_to_ledger(policy_evt)
+            continue
+            
+        # 3. Dry-Run simulation check
+        ok, msg = dry_run_remediation(patch)
+        if not ok:
+            update_incident_state(incident_id, "diagnosed")
+            findings.append(f"Blocked: Incident {incident_id} pre-flight dry-run failed: {msg}")
+            continue
+            
+        # 4. Rollback Validation check
+        ok_rb, msg_rb = validate_rollback_plan(rollback_plan)
+        if not ok_rb:
+            update_incident_state(incident_id, "diagnosed")
+            findings.append(f"Blocked: Incident {incident_id} rollback validation failed: {msg_rb}")
+            continue
+            
+        correlation_id = f"corr-rem-{uuid.uuid4().hex[:8]}"
+        trace_id = uuid.uuid4().hex
+        
+        # 5. Log audit event BEFORE execution
+        start_evt = {
             "actor": {"id": "autopilot-remediator", "name": "Readiness Autopilot Remediator", "type": "system"},
-            "action": {"type": "READINESS_AUTOPILOT_REMEDIATION", "summary": f"Executed remediation patch for incident {inc['incident_id']} ({inc['category']})."},
-            "target": {"type": "incident", "id": inc["incident_id"], "name": inc["category"]},
+            "action": {"type": "READINESS_REMEDIATION_STARTED", "summary": f"Starting execution of remediation patch for incident {incident_id}."},
+            "target": {"type": "incident", "id": incident_id, "name": category},
             "result": "success",
             "severity": "info",
             "provenance": {"source": "observed", "evidence_refs": ["database.hochster_incidents"]},
             "timestamp": now_iso(),
             "metadata": {
-                "incident_id": inc["incident_id"],
-                "patch": patch
+                "incident_id": incident_id,
+                "correlation_id": correlation_id,
+                "trace_id": trace_id,
+                "risk_level": risk_level,
+                "blast_radius": blast,
+                "state": "diagnosed"
             }
         }
-        add_event_to_ledger(audit_evt)
+        add_event_to_ledger(start_evt)
         
-    # Trigger immediate tick update to refresh score
-    daemon = getattr(app.state, "readiness_daemon", None)
-    if daemon:
-        daemon.tick()
+        # 6. Execute remediation
+        success = False
+        execution_msg = ""
+        if patch.startswith("PRAGMA") or "UPDATE" in patch.upper() or "INSERT" in patch.upper():
+            try:
+                conn = sqlite3.connect(DB_PATH)
+                conn.execute(patch)
+                conn.commit()
+                conn.close()
+                execution_msg = f"Executed SQL patch: {patch}"
+                success = True
+            except Exception as e:
+                execution_msg = f"Failed SQL execution: {e}"
+        else:
+            execution_msg = f"Triggered command execution: {patch}"
+            success = True
+            
+        findings.append(execution_msg)
         
+        if success:
+            update_incident_status(incident_id, "remediated")
+            update_incident_state(incident_id, "remediated")
+            remediated_count += 1
+            
+            # Log audit event AFTER execution
+            complete_evt = {
+                "actor": {"id": "autopilot-remediator", "name": "Readiness Autopilot Remediator", "type": "system"},
+                "action": {"type": "READINESS_REMEDIATION_COMPLETED", "summary": f"Completed execution of remediation patch for incident {incident_id}."},
+                "target": {"type": "incident", "id": incident_id, "name": category},
+                "result": "success",
+                "severity": "info",
+                "provenance": {"source": "observed", "evidence_refs": ["database.hochster_incidents"]},
+                "timestamp": now_iso(),
+                "metadata": {
+                    "incident_id": incident_id,
+                    "correlation_id": correlation_id,
+                    "trace_id": trace_id,
+                    "risk_level": risk_level,
+                    "blast_radius": blast,
+                    "state": "remediated"
+                }
+            }
+            add_event_to_ledger(complete_evt)
+            
+            # 7. Post-Fix Health Check & Auto-Rollback
+            daemon = getattr(app.state, "readiness_daemon", None)
+            post_score = pre_score
+            if daemon:
+                post_report = daemon.tick()
+                post_score = post_report.get("readiness_score", 100)
+                
+            if post_score < pre_score or post_score < 95:
+                # Trigger Auto-Rollback!
+                findings.append(f"Warning: Readiness score degraded from {pre_score} to {post_score}. Triggering auto-rollback!")
+                
+                if rollback_plan.startswith("PRAGMA") or any(x in rollback_plan.upper() for x in ["UPDATE", "INSERT", "DELETE"]):
+                    try:
+                        conn = sqlite3.connect(DB_PATH)
+                        conn.execute(rollback_plan)
+                        conn.commit()
+                        conn.close()
+                        rb_success = True
+                    except Exception as e:
+                        print(f"Auto-rollback SQL execution failed: {e}")
+                        pass
+                else:
+                    rb_success = True
+                    
+                update_incident_status(incident_id, "active")
+                update_incident_state(incident_id, "rolled_back")
+                
+                # Log auto-rollback event
+                rollback_evt = {
+                    "actor": {"id": "autopilot-remediator", "name": "Readiness Autopilot Remediator", "type": "system"},
+                    "action": {"type": "READINESS_AUTOPILOT_AUTO_ROLLBACK", "summary": f"Auto-rolled back remediation for incident {incident_id} due to score degradation."},
+                    "target": {"type": "incident", "id": incident_id, "name": category},
+                    "result": "success",
+                    "severity": "warning",
+                    "provenance": {"source": "observed", "evidence_refs": ["database.hochster_incidents"]},
+                    "timestamp": now_iso(),
+                    "metadata": {
+                        "incident_id": incident_id,
+                        "correlation_id": correlation_id,
+                        "trace_id": trace_id,
+                        "pre_score": pre_score,
+                        "post_score": post_score,
+                        "rollback_plan": rollback_plan,
+                        "state": "rolled_back"
+                    }
+                }
+                add_event_to_ledger(rollback_evt)
+                
+                if daemon:
+                    daemon.tick()
+        else:
+            update_incident_state(incident_id, "diagnosed")
+            
     return {
         "status": "success",
         "remediated_count": remediated_count,
@@ -2114,7 +2260,7 @@ def post_readiness_rollback(req: RollbackRequest):
         
     rollback_plan = target.get("rollback_plan", "")
     findings = []
-    if rollback_plan.startswith("PRAGMA"):
+    if rollback_plan.startswith("PRAGMA") or "UPDATE" in rollback_plan.upper():
         try:
             conn = sqlite3.connect(DB_PATH)
             conn.execute(rollback_plan)
@@ -2127,6 +2273,7 @@ def post_readiness_rollback(req: RollbackRequest):
         findings.append(f"Triggered rollback command: {rollback_plan}")
         
     update_incident_status(req.incident_id, "active")
+    update_incident_state(req.incident_id, "rolled_back")
     
     # Log rollback to ledger
     audit_evt = {
@@ -2139,7 +2286,8 @@ def post_readiness_rollback(req: RollbackRequest):
         "timestamp": now_iso(),
         "metadata": {
             "incident_id": req.incident_id,
-            "rollback_plan": rollback_plan
+            "rollback_plan": rollback_plan,
+            "state": "rolled_back"
         }
     }
     add_event_to_ledger(audit_evt)

@@ -107,10 +107,19 @@ def init_execution_store_tables() -> None:
                 remediation_patch TEXT NOT NULL,
                 rollback_plan TEXT NOT NULL,
                 status TEXT NOT NULL,
+                risk_level TEXT,
+                blast_radius_json TEXT,
+                state TEXT,
                 created_at TEXT NOT NULL
             )
             """
         )
+        # Migrate/add columns if they do not exist
+        for col, col_type in [("risk_level", "TEXT"), ("blast_radius_json", "TEXT"), ("state", "TEXT")]:
+            try:
+                conn.execute(f"ALTER TABLE hochster_incidents ADD COLUMN {col} {col_type}")
+            except Exception:
+                pass
         conn.commit()
     finally:
         conn.close()
@@ -359,7 +368,10 @@ def persist_incident(
     findings: list[str],
     remediation_patch: str,
     rollback_plan: str,
-    status: str
+    status: str,
+    risk_level: str = "Low",
+    blast_radius: list[str] = None,
+    state: str = "detected"
 ) -> None:
     conn = sqlite3.connect(DB_PATH, timeout=30)
     apply_pragmas(conn)
@@ -367,9 +379,9 @@ def persist_incident(
         conn.execute(
             """
             INSERT OR REPLACE INTO hochster_incidents (
-                incident_id, category, severity, findings_json, remediation_patch, rollback_plan, status, created_at
+                incident_id, category, severity, findings_json, remediation_patch, rollback_plan, status, risk_level, blast_radius_json, state, created_at
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 incident_id,
@@ -379,6 +391,9 @@ def persist_incident(
                 remediation_patch,
                 rollback_plan,
                 status,
+                risk_level,
+                json.dumps(blast_radius or []),
+                state,
                 now_iso()
             )
         )
@@ -396,6 +411,7 @@ def list_incidents() -> list[dict]:
         for r in rows:
             d = dict(r)
             d["findings"] = json.loads(d.pop("findings_json"))
+            d["blast_radius"] = json.loads(d.pop("blast_radius_json")) if d.get("blast_radius_json") else []
             output.append(d)
         return output
     finally:
@@ -408,6 +424,18 @@ def update_incident_status(incident_id: str, status: str) -> None:
         conn.execute(
             "UPDATE hochster_incidents SET status = ? WHERE incident_id = ?",
             (status, incident_id)
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+def update_incident_state(incident_id: str, state: str) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        conn.execute(
+            "UPDATE hochster_incidents SET state = ? WHERE incident_id = ?",
+            (state, incident_id)
         )
         conn.commit()
     finally:

@@ -17,6 +17,7 @@ from backend.runtime_execution_store import (
 )
 from backend.ledger_manager import get_ledger_blocks, verify_ledger_chain, add_event_to_ledger
 from backend.cluster_manager import ClusterManager
+from backend.remediation_safety import classify_remediation_risk, get_blast_radius
 
 def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
@@ -290,6 +291,8 @@ class ReadinessDaemon:
                     remediation = "echo 'remediating standard'"
                     rollback = "echo 'rollback standard'"
                     
+                risk_level = classify_remediation_risk(remediation)
+                blast = get_blast_radius(category)
                 # Store incident in database
                 try:
                     persist_incident(
@@ -299,7 +302,10 @@ class ReadinessDaemon:
                         findings=[finding],
                         remediation_patch=remediation,
                         rollback_plan=rollback,
-                        status="active"
+                        status="active",
+                        risk_level=risk_level,
+                        blast_radius=blast,
+                        state="detected"
                     )
                     active_incidents.append(finding)
                 except Exception as e:

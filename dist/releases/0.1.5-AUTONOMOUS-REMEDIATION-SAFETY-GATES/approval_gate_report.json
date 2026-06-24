@@ -1,0 +1,22 @@
+{
+  "approval_events": [
+    {
+      "approval_id": "app_af55deb0",
+      "request_id": "req_3e941102",
+      "correlation_id": "corr_f965a47a25a8",
+      "trace_id": "ff2efa4901ee435eb1304af7563aca4f",
+      "action_type": "high_risk_command_execution",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator",
+      "created_at": "2026-06-24T19:17:30.246566+00:00",
+      "decisions": [
+        {
+          "decision": "approve",
+          "approver": "Security Lead",
+          "timestamp": "2026-06-24T19:17:30.246241+00:00"
+        }
+      ]
+    }
+  ]
+}
