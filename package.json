@@ -1,6 +1,6 @@
 {
   "name": "hoch-agent-swarm",
-  "version": "0.1.1",
+  "version": "0.1.2-SUPPLY-CHAIN-PROVENANCE",
   "private": true,
   "scripts": {
     "baseline:scan-static": "grep -RInE \"mock|fixture|demo|fake|placeholder|sample|seed|Math\\.random|Date\\.now|health: 100|status: ['\\\"]healthy|sync: ['\\\"]ok|latency: ['\\\"]1\\.2ms\" frontend/src backend/main.py || true",
@@ -11,6 +11,12 @@
     "baseline:capture-digests": "npx tsx scripts/baseline/capture-docker-digests.ts",
     "baseline:checksum": "npx tsx scripts/baseline/checksum-evidence-pack.ts",
     "baseline:hardening": "npm run baseline:scan-static && npm run baseline:validate-api && npm run baseline:validate-audit && npm run baseline:capture-digests && npm run baseline:evidence && npm run baseline:checksum && npm run baseline:evaluate",
+    "supply:sbom": "npx tsx scripts/supply-chain/generate-sbom.ts",
+    "supply:provenance": "npx tsx scripts/supply-chain/generate-provenance.ts",
+    "supply:manifest": "npx tsx scripts/supply-chain/generate-release-manifest.ts",
+    "supply:sign": "npx tsx scripts/supply-chain/sign-release-artifacts.ts",
+    "supply:verify": "npx tsx scripts/supply-chain/verify-release-artifacts.ts",
+    "supply:release": "npm run baseline:hardening && npm run supply:sbom && npm run supply:provenance && npm run supply:manifest && npm run supply:verify && npm run supply:sign",
     "test": "npx tsx scripts/baseline/verify-stale-green-regression.ts"
   },
   "devDependencies": {

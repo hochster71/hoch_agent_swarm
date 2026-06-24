@@ -1,0 +1,9 @@
+{
+  "generated_at": "2026-06-24T19:03:59.380Z",
+  "release": "v0.1.2-SUPPLY-CHAIN-PROVENANCE",
+  "status": "PASS",
+  "blockers": [],
+  "warnings": [
+    "Release artifacts are not cryptographically signed yet"
+  ]
+}
