@@ -75,7 +75,7 @@ graph TD
 ```
 
 ## 3. Communication Protocols & Continuous Sync
-- **Inter-Cluster RPC**: Underutilized assets (like iMac L2 or iPad Pro) host light routing brokers, utilizing gRPC with Protobuf structures for sub-millisecond payloads.
+- **Inter-Cluster RPC**: Operational assets (like iMac L2 or iPad Pro) host light routing brokers, utilizing gRPC with Protobuf structures for sub-millisecond payloads.
 - **Continuous Monitoring (ConMon)**: Controls like NIST SP 800-53 AC-3 and SI-2 ensure that container security rules are verified continuously during heavy runtime compilation.
 
 ## 4. Immediate Remediation & Next Steps

@@ -53,7 +53,21 @@ const navItems = {
     security: { nav: document.getElementById("nav-security"), view: document.getElementById("view-security") },
     settings: { nav: document.getElementById("nav-settings"), view: document.getElementById("view-settings") },
     pert: { nav: document.getElementById("nav-pert"), view: document.getElementById("view-pert") },
-    mission: { nav: document.getElementById("nav-mission"), view: document.getElementById("view-mission") }
+    mission: { nav: document.getElementById("nav-mission"), view: document.getElementById("view-mission") },
+    audit: { nav: document.getElementById("nav-audit"), view: document.getElementById("view-audit") },
+    replay: { nav: document.getElementById("nav-replay"), view: document.getElementById("view-replay") },
+    collab: { nav: document.getElementById("nav-collab"), view: document.getElementById("view-collab") },
+    ledger: { nav: document.getElementById("nav-ledger"), view: document.getElementById("view-ledger") },
+    governance: { nav: document.getElementById("nav-governance"), view: document.getElementById("view-governance") },
+    redTeam: { nav: document.getElementById("nav-red-team"), view: document.getElementById("view-red-team") },
+    executive: { nav: document.getElementById("nav-executive"), view: document.getElementById("view-executive") },
+    capabilities: { nav: document.getElementById("nav-capabilities"), view: document.getElementById("view-capabilities") },
+    remediation: { nav: document.getElementById("nav-remediation"), view: document.getElementById("view-remediation") },
+    tenancy: { nav: document.getElementById("nav-tenancy"), view: document.getElementById("view-tenancy") },
+    compliance: { nav: document.getElementById("nav-compliance"), view: document.getElementById("view-compliance") },
+    customerSuccess: { nav: document.getElementById("nav-customer-success"), view: document.getElementById("view-customer-success") },
+    revenueOps: { nav: document.getElementById("nav-revenue-ops"), view: document.getElementById("view-revenue-ops") },
+    hochster: { nav: document.getElementById("nav-hochster"), view: document.getElementById("view-hochster") }
 };
 
 // Security Audit & Sub-tab Elements
@@ -118,6 +132,8 @@ const API_BASE = window.location.origin;
 // State management
 let currentNodes = [];
 let baseMermaidGraph = "";
+let lastTelemetryTime = Date.now();
+let telemetryIsStale = false;
 
 // SVG Drag/Zoom Coordinates
 let panX = 0;
@@ -154,6 +170,84 @@ async function initDashboard() {
         initDashboardCharts();
         animateSwarmFlow();
         initSwarmGlobe();
+        setupAccordions();
+
+        // Bind Command Preview Close/Cancel/Confirm buttons
+        const btnClosePreview = document.getElementById("btn-close-preview");
+        if (btnClosePreview) {
+            btnClosePreview.addEventListener("click", () => {
+                const modal = document.getElementById("command-preview-modal");
+                if (modal) modal.classList.add("hidden");
+            });
+        }
+        const btnCancelPreview = document.getElementById("btn-cancel-preview");
+        if (btnCancelPreview) {
+            btnCancelPreview.addEventListener("click", () => {
+                const modal = document.getElementById("command-preview-modal");
+                if (modal) modal.classList.add("hidden");
+            });
+        }
+
+        // Bind audit log export button
+        const btnExportAudit = document.getElementById("btn-export-audit");
+        if (btnExportAudit) {
+            btnExportAudit.addEventListener("click", () => {
+                window.open(`${API_BASE}/api/audit/export`, "_blank");
+            });
+        }
+        
+        // Bind audit log filter
+        const auditFilterResult = document.getElementById("audit-filter-result");
+        if (auditFilterResult) {
+            auditFilterResult.addEventListener("change", () => {
+                fetchAndRenderAuditLogs();
+            });
+        }
+
+        // 1-second interval heartbeat monitor for telemetry freshness
+        setInterval(() => {
+            const elapsed = (Date.now() - lastTelemetryTime) / 1000;
+            const telemetryStaleWarning = document.getElementById("telemetry-stale-warning");
+            if (elapsed > 10.0) {
+                if (telemetryStaleWarning) {
+                    telemetryStaleWarning.classList.remove("hidden");
+                }
+                if (!telemetryIsStale) {
+                    telemetryIsStale = true;
+                    logToConsoleTerminal("Telemetry", "CRITICAL WARNING: Live telemetry feed has gone stale (10+ seconds with no updates)", "error");
+                    if (window.addAuditEvent) {
+                        window.addAuditEvent({
+                            actor: { id: "system.telemetry", name: "Telemetry System", type: "system" },
+                            action: { type: "TELEMETRY_UPDATED", summary: "CRITICAL: Live telemetry feed has gone stale (10s threshold exceeded)." },
+                            target: { type: "system", id: "cluster-status", name: "Cluster Health Status" },
+                            result: "warning",
+                            severity: "high",
+                            provenance: { source: "observed", evidence_refs: [] },
+                            policy: { required: false, result: "not_required" }
+                        });
+                    }
+                }
+            } else {
+                if (telemetryStaleWarning) {
+                    telemetryStaleWarning.classList.add("hidden");
+                }
+                if (telemetryIsStale) {
+                    telemetryIsStale = false;
+                    logToConsoleTerminal("Telemetry", "Live telemetry feed reconnected & synchronized.", "success");
+                    if (window.addAuditEvent) {
+                        window.addAuditEvent({
+                            actor: { id: "system.telemetry", name: "Telemetry System", type: "system" },
+                            action: { type: "TELEMETRY_UPDATED", summary: "Live telemetry feed reconnected and synchronized." },
+                            target: { type: "system", id: "cluster-status", name: "Cluster Health Status" },
+                            result: "success",
+                            severity: "info",
+                            provenance: { source: "observed", evidence_refs: [] },
+                            policy: { required: false, result: "not_required" }
+                        });
+                    }
+                }
+            }
+        }, 1000);
 
         // Security / governance bootstrap logs
         logToConsoleTerminal("KernelHub", "Tac-C2 Kernel Hub initialization successful.", "system");
@@ -229,6 +323,21 @@ function setupWebsocket() {
 
 // Update DOM with metrics data
 function updateUI(data) {
+    // Reset telemetry freshness timer
+    lastTelemetryTime = Date.now();
+    const telemetryTimestamp = document.getElementById("telemetry-timestamp");
+    const telemetryStaleWarning = document.getElementById("telemetry-stale-warning");
+    if (telemetryTimestamp) {
+        telemetryTimestamp.textContent = `Last telemetry update: ${new Date().toLocaleTimeString()}`;
+    }
+    if (telemetryStaleWarning) {
+        telemetryStaleWarning.classList.add("hidden");
+    }
+    if (telemetryIsStale) {
+        telemetryIsStale = false;
+        logToConsoleTerminal("Telemetry", "Live telemetry feed reconnected & synchronized.", "success");
+    }
+
     if (statusBadge) statusBadge.textContent = data.status;
     if (activeAssetsBadge) activeAssetsBadge.textContent = `${data.active_assets} ASSETS ACTIVE`;
     if (totalAgentsVal) totalAgentsVal.textContent = data.total_agents;
@@ -294,6 +403,9 @@ function updateUI(data) {
     // Populate active deployment table
     if (data.nodes) {
         currentNodes = data.nodes;
+        if (window.updateAssetsFromLegacy) {
+            window.updateAssetsFromLegacy(data.nodes);
+        }
         populateTable(data.nodes);
         updateMermaidTopology(data.nodes);
         renderAssetsView(data.nodes);
@@ -302,6 +414,12 @@ function updateUI(data) {
         if (navItems.settings.nav && navItems.settings.nav.classList.contains("active")) {
             renderSettingsNodesList(data.nodes);
         }
+    }
+
+    // Render mission feed if streamed over WebSocket/HTTP status response
+    if (data.mission_events) {
+        renderMissionFeedData(data.mission_events, "mission-event-feed");
+        renderMissionFeedData(data.mission_events, "dash-mission-feed");
     }
 }
 
@@ -617,104 +735,170 @@ function spawnTaskParticles(targetNodeId) {
 }
 
 // Dispatch task to swarm backend
-btnSubmitTask.addEventListener("click", async () => {
-    const prompt = promptInput.value.trim();
-    if (!prompt) {
-        alert("Please enter a task instruction.");
-        return;
-    }
-
-    const taskType = taskTypeSelect.value;
-    
-    taskOutputBox.classList.remove("hidden");
-    logOutputContent.innerHTML = `<span style="color:var(--text-secondary)">[System] Dispatching task to cluster...</span><br/>`;
-    logToConsoleTerminal("Scheduler", `Task dispatch requested: "${prompt}" (Type: ${taskType})`, "system");
-    btnSubmitTask.disabled = true;
-
-    try {
-        const response = await fetch(`${API_BASE}/api/tasks/run`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                task_type: taskType,
-                prompt: prompt
-            })
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            
-            // Highlight target node
-            const targetNode = data.routed_node;
-            logOutputContent.innerHTML += `<span style="color:var(--accent-blue)">[Scheduler] Routed to ${targetNode.name} (${targetNode.ip})</span><br/>`;
-            logToConsoleTerminal("Orchestrator", `Routed task to ${targetNode.name} (${targetNode.ip})`, "info");
-            
-            // Re-render topology highlighting the routed node
-            const responseStatus = await fetch(`${API_BASE}/api/status`);
-            if (responseStatus.ok) {
-                const statusData = await responseStatus.json();
-                updateMermaidTopology(statusData.nodes, targetNode.id);
-            }
-
-            // Trigger animation packet flow bursts
-            spawnTaskParticles(targetNode.id);
-
-            // Simulate typewriter effect for execution log
-            logOutputContent.innerHTML += `<span style="color:var(--accent-teal)">[Swarm Runner] Node executing task...</span><br/>`;
-            setTimeout(() => {
-                logOutputContent.innerHTML += `<span style="color:#ffffff">${data.result}</span><br/>`;
-                logOutputContent.innerHTML += `<span style="color:var(--accent-teal)">[Success] Swarm execution task complete.</span>`;
-                logOutputContent.scrollTop = logOutputContent.scrollHeight;
-                
-                logToConsoleTerminal("SwarmRunner", `Task finished on ${targetNode.name}. Status: COMPLETED`, "info");
-                
-                btnSubmitTask.disabled = false;
-                promptInput.value = ""; // Clear input bar
-                fetchAndRenderTasks(); // Refresh history
-            }, 1500);
-
-        } else {
-            logOutputContent.innerHTML += `<span style="color:#ef4444">[Error] Failed to execute swarm task.</span>`;
-            logToConsoleTerminal("Scheduler", "Task execution failed.", "error");
-            btnSubmitTask.disabled = false;
+// Intercept dispatch and open command preview modal
+if (btnSubmitTask) {
+    btnSubmitTask.addEventListener("click", () => {
+        const prompt = promptInput.value.trim();
+        if (!prompt) {
+            alert("Please enter a task instruction.");
+            return;
         }
-    } catch (err) {
-        logOutputContent.innerHTML += `<span style="color:#ef4444">[Error] Connection lost to control plane: ${err.message}</span>`;
-        logToConsoleTerminal("Connection", `Error: ${err.message}`, "error");
-        btnSubmitTask.disabled = false;
-    }
-});
+
+        const taskType = taskTypeSelect.value;
+        
+        // Determine expected target node client-side
+        const promptLower = prompt.toLowerCase();
+        let targetId = "L1";
+        if (promptLower.includes("neo") || promptLower.includes("l3")) {
+            targetId = "L3";
+        } else if (promptLower.includes("deploy") || promptLower.includes("app store")) {
+            targetId = "L3";
+        } else if (promptLower.includes("imac") || promptLower.includes("l2")) {
+            targetId = "L2";
+        } else if (promptLower.includes("dell") || promptLower.includes("w1") || promptLower.includes("9440")) {
+            targetId = "W1";
+        } else if (promptLower.includes("ipad")) {
+            targetId = "IPAD";
+        } else if (promptLower.includes("iphone")) {
+            targetId = "IPHONE";
+        } else if (promptLower.includes("code") || promptLower.includes("write") || promptLower.includes("research")) {
+            const coders = ["L2", "L3", "W1"].filter(id => {
+                const n = currentNodes.find(x => x.id === id);
+                return n && n.status !== "Offline";
+            });
+            if (coders.length > 0) {
+                let lowestNode = coders[0];
+                let lowestCpu = 100;
+                coders.forEach(id => {
+                    const n = currentNodes.find(x => x.id === id);
+                    if (n && n.cpu_usage < lowestCpu) {
+                        lowestCpu = n.cpu_usage;
+                        lowestNode = id;
+                    }
+                });
+                targetId = lowestNode;
+            } else {
+                targetId = "L1";
+            }
+        } else if (taskType === "mobile" || promptLower.includes("ui")) {
+            targetId = "IPAD";
+        } else {
+            targetId = "L1";
+        }
+
+        const targetNode = currentNodes.find(n => n.id === targetId);
+
+        // Populate Command Preview Modal elements
+        document.getElementById("preview-cmd-text").textContent = prompt;
+        const targetSpan = document.getElementById("preview-target-node");
+        if (targetSpan) {
+            targetSpan.textContent = targetNode ? `${targetNode.name} (${targetNode.ip})` : "—";
+        }
+        const enclaveSpan = document.getElementById("preview-affected-nodes");
+        if (enclaveSpan) {
+            if (targetNode) {
+                if (targetNode.os.toLowerCase().includes("ios") || targetNode.os.toLowerCase().includes("ipad")) {
+                    enclaveSpan.textContent = "JWICS (MOBILE EDGE)";
+                } else if (targetNode.id === "L1") {
+                    enclaveSpan.textContent = "NIPRNET (CORE SERVICES)";
+                } else {
+                    enclaveSpan.textContent = "SIPRNET (TACTICAL COMPUTE)";
+                }
+            } else {
+                enclaveSpan.textContent = "SIPRNET (TACTICAL COMPUTE)";
+            }
+        }
+
+        // Set default radio selection
+        const defaultRadio = document.querySelector('input[name="dispatch-mode"][value="Simulate"]');
+        if (defaultRadio) defaultRadio.checked = true;
+
+        // Show command safety preview modal
+        const modal = document.getElementById("command-preview-modal");
+        if (modal) modal.classList.remove("hidden");
+
+        if (window.addAuditEvent) {
+            window.addAuditEvent({
+                actor: { id: "michael.hoch", name: "Michael Hoch", type: "human", role: "Operator" },
+                action: { type: "COMMAND_PREVIEWED", summary: `Command instruction previewed: "${prompt}"` },
+                target: { type: "command", id: "input-command", name: prompt },
+                result: "success",
+                severity: "low",
+                provenance: { source: "manual", evidence_refs: [] },
+                policy: { required: false, result: "not_required" }
+            });
+        }
+
+        // Bind Confirm Dispatch button (once/overwrite to avoid duplicate handlers)
+        const btnConfirmDispatch = document.getElementById("btn-confirm-dispatch");
+        if (btnConfirmDispatch) {
+            btnConfirmDispatch.onclick = async () => {
+                const modal2 = document.getElementById("command-preview-modal");
+                if (modal2) modal2.classList.add("hidden");
+                const selectedMode = document.querySelector('input[name="dispatch-mode"]:checked').value;
+                await executeTaskWithMode(prompt, taskType, selectedMode);
+            };
+        }
+    });
+}
 
 // Zoom and Reset controls for topology layout
-btnZoom.addEventListener("click", () => {
-    scale = scale >= 1.8 ? 1.0 : scale + 0.2;
-    const svg = mermaidGraph.querySelector("svg");
-    if (svg) svg.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
-});
+if (btnZoom) {
+    btnZoom.addEventListener("click", () => {
+        scale = scale >= 1.8 ? 1.0 : scale + 0.2;
+        const svg = mermaidGraph.querySelector("svg");
+        if (svg) svg.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+    });
+}
 
-btnReset.addEventListener("click", () => {
-    scale = 1.0;
-    panX = 0;
-    panY = 0;
-    const svg = mermaidGraph.querySelector("svg");
-    if (svg) svg.style.transform = `translate(0px, 0px) scale(1.0)`;
-});
+if (btnReset) {
+    btnReset.addEventListener("click", () => {
+        scale = 1.0;
+        panX = 0;
+        panY = 0;
+        const svg = mermaidGraph.querySelector("svg");
+        if (svg) svg.style.transform = `translate(0px, 0px) scale(1.0)`;
+    });
+}
 
+// Modal Logic to display node specs and Gordy profiles
 // Modal Logic to display node specs and Gordy profiles
 function openModalForNode(node) {
     modalNodeTitle.textContent = node.name;
     modalNodeIp.textContent = node.ip;
     modalNodeSpecs.textContent = node.specs;
     modalNodeRole.textContent = `${node.os} (${node.role})`;
-    modalNodeLatency.textContent = `${node.latency_ms || 1.2}ms`;
+    
+    const latencyVal = node.latency_ms || 0.0;
+    modalNodeLatency.textContent = `${latencyVal}ms`;
+
+    // Upgrade: Latency progress bar inside the modal header
+    const latencyBar = document.getElementById("modal-latency-bar");
+    if (latencyBar) {
+        const percent = Math.min(100, Math.max(5, (latencyVal / 10.0) * 100)); // normalized to 10ms scale for detail bar
+        latencyBar.style.width = `${percent}%`;
+        
+        let latColour = "#10b981";  // green (good)
+        if (latencyVal < 0)        { latColour = "#6b7280"; } // Offline / BLOCKED
+        else if (latencyVal > 3.0) { latColour = "#ef4444"; } // Red (slow)
+        else if (latencyVal > 1.5) { latColour = "#f59e0b"; } // Amber (moderate)
+        
+        latencyBar.style.backgroundColor = latColour;
+    }
 
     modalAgentsContainer.innerHTML = "";
     if (node.agents && node.agents.length > 0) {
         node.agents.forEach(agent => {
             const isGordy = agent.type.includes("GORDY") || agent.type.includes("Docker Coder");
             const typeClass = isGordy ? "agent-type agent-type-gordy" : "agent-type";
+            
+            // Per-agent status color mapping
+            let dotColour = "#10b981"; // green (default/active)
+            const stat = (agent.status || "").toLowerCase();
+            if (stat.includes("triage"))       dotColour = "#f59e0b"; // amber
+            else if (stat.includes("heal"))   dotColour = "#a855f7"; // purple
+            else if (stat.includes("reason"))  dotColour = "#3b82f6"; // blue
+            else if (stat.includes("deploy"))  dotColour = "#06b6d4"; // cyan
             
             const card = document.createElement("div");
             card.className = "agent-card";
@@ -725,8 +909,8 @@ function openModalForNode(node) {
                 </div>
                 <p class="agent-desc">${agent.description}</p>
                 <div class="agent-status-badge">
-                    <span class="dot" style="background-color: var(--accent-teal)"></span>
-                    <span style="color: var(--text-secondary); margin-left: 4px;">Status: ${agent.status}</span>
+                    <span class="dot" style="background-color: ${dotColour}"></span>
+                    <span style="color: var(--text-secondary); margin-left: 4px; font-weight: 600;">Status: ${agent.status}</span>
                 </div>
             `;
             modalAgentsContainer.appendChild(card);
@@ -735,25 +919,82 @@ function openModalForNode(node) {
         modalAgentsContainer.innerHTML = `<p style="color:var(--text-secondary);font-size:14px;grid-column:1/-1;text-align:center;padding:24px 0;">No active agent containers deployed on this node.</p>`;
     }
 
-    modalContainer.classList.remove("hidden");
+    // Upgrade: Fetch and render Node-specific Mission Timeline (recent 5 events)
+    const timelineContainer = document.getElementById("modal-timeline-container");
+    if (timelineContainer) {
+        timelineContainer.innerHTML = `<span style="font-size:11px;color:var(--text-secondary);font-style:italic;">Loading timeline events...</span>`;
+        fetch(`${API_BASE}/api/mission/feed?limit=80`)
+            .then(res => res.ok ? res.json() : {events:[]})
+            .then(data => {
+                const nodeEvents = (data.events || []).filter(e => e.node_id === node.id).slice(0, 5);
+                timelineContainer.innerHTML = "";
+                if (nodeEvents.length > 0) {
+                    nodeEvents.forEach(ev => {
+                        const item = document.createElement("div");
+                        const statusClass = (ev.status || "Active").toLowerCase().replace(/ /g, "-");
+                        item.className = `modal-timeline-item status-${statusClass}`;
+                        item.innerHTML = `
+                            <span style="color:var(--text-secondary);font-family:monospace;font-size:9.5px;flex-shrink:0;margin-top:2px;">${ev.ts}</span>
+                            <div style="flex-grow:1;display:flex;flex-direction:column;">
+                                <span style="font-weight:700;color:#fff;font-size:10px;">${ev.icon} ${ev.status.toUpperCase()}</span>
+                                <span style="color:var(--text-secondary);font-size:9.5px;margin-top:2px;line-height:1.3;">${ev.activity}</span>
+                            </div>
+                        `;
+                        timelineContainer.appendChild(item);
+                    });
+                } else {
+                    timelineContainer.innerHTML = `<p style="color:var(--text-secondary);font-size:11px;font-style:italic;">No historical events recorded for this node.</p>`;
+                }
+            })
+            .catch(err => {
+                console.warn("Error loading modal timeline:", err);
+                timelineContainer.innerHTML = `<p style="color:#ef4444;font-size:11px;">Failed to load timeline.</p>`;
+            });
+    }
+
+    // Reset accordions to default state: 1, 2, 3 expanded, 4 collapsed
+    const modalAccordions = modalContainer.querySelectorAll(".accordion-item");
+    modalAccordions.forEach((item, index) => {
+        const header = item.querySelector(".accordion-header");
+        const content = item.querySelector(".accordion-content");
+        if (header && content) {
+            if (index < 3) {
+                header.classList.add("active");
+                content.style.display = "block";
+                content.classList.add("show");
+            } else {
+                header.classList.remove("active");
+                content.style.display = "none";
+                content.classList.remove("show");
+            }
+        }
+    });
+
+    if (modalContainer) {
+        modalContainer.classList.remove("hidden");
+    }
     lucide.createIcons(); // Re-render X icon inside modal
 }
 
 // Close Modal Controls
-btnCloseModal.addEventListener("click", () => {
-    modalContainer.classList.add("hidden");
-});
+if (btnCloseModal) {
+    btnCloseModal.addEventListener("click", () => {
+        if (modalContainer) modalContainer.classList.add("hidden");
+    });
+}
 
-modalContainer.addEventListener("click", (e) => {
-    if (e.target === modalContainer) {
-        modalContainer.classList.add("hidden");
-    }
-});
+if (modalContainer) {
+    modalContainer.addEventListener("click", (e) => {
+        if (e.target === modalContainer) {
+            modalContainer.classList.add("hidden");
+        }
+    });
+}
 
 // Close modal on Escape key
 document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
-        modalContainer.classList.add("hidden");
+        if (modalContainer) modalContainer.classList.add("hidden");
     }
 });
 
@@ -780,6 +1021,34 @@ Object.keys(navItems).forEach(key => {
                 fetchAndRenderTasks();
             } else if (key === "settings") {
                 renderSettingsNodesList(currentNodes);
+            } else if (key === "audit") {
+                fetchAndRenderAuditLogs();
+            } else if (key === "replay") {
+                if (window.onReplayTabActive) window.onReplayTabActive();
+            } else if (key === "collab") {
+                if (window.onCollabTabActive) window.onCollabTabActive();
+            } else if (key === "ledger") {
+                if (window.onLedgerTabActive) window.onLedgerTabActive();
+            } else if (key === "governance") {
+                if (window.onGovernanceTabActive) window.onGovernanceTabActive();
+            } else if (key === "redTeam") {
+                if (window.onRedTeamTabActive) window.onRedTeamTabActive();
+            } else if (key === "executive") {
+                if (window.onExecutiveTabActive) window.onExecutiveTabActive();
+            } else if (key === "capabilities") {
+                if (window.onCapabilitiesTabActive) window.onCapabilitiesTabActive();
+            } else if (key === "remediation") {
+                if (window.onRemediationTabActive) window.onRemediationTabActive();
+            } else if (key === "tenancy") {
+                if (window.onTenancyTabActive) window.onTenancyTabActive();
+            } else if (key === "compliance") {
+                if (window.onComplianceTabActive) window.onComplianceTabActive();
+            } else if (key === "customerSuccess") {
+                if (window.onCustomerSuccessTabActive) window.onCustomerSuccessTabActive();
+            } else if (key === "revenueOps") {
+                if (window.onRevenueOpsTabActive) window.onRevenueOpsTabActive();
+            } else if (key === "hochster") {
+                if (window.onHochsterTabActive) window.onHochsterTabActive();
             }
         });
     }
@@ -2067,47 +2336,50 @@ const MISSION_STATUS_COLOURS = {
 };
 
 /**
- * Fetch /api/mission/feed and render events into the given container.
- * @param {string} containerId  — ID of the <div> to render into
+ * Render given mission events array into the target HTML container.
  */
-async function loadMissionFeed(containerId = "mission-event-feed") {
+function renderMissionFeedData(events, containerId = "mission-event-feed") {
     const container = document.getElementById(containerId);
     if (!container) return;
+    if (!events || events.length === 0) return;
+
+    container.innerHTML = "";
+    events.forEach(ev => {
+        const borderCol = MISSION_STATUS_COLOURS[ev.status] || "#10b981";
+        const sc = getStatusClass(ev.status);
+        const row = document.createElement("div");
+        row.className = "mission-event-row";
+        row.style.cssText = `
+            display: flex; align-items: flex-start; gap: 10px;
+            padding: 7px 10px; border-radius: 6px;
+            background: rgba(255,255,255,0.03);
+            border-left: 3px solid ${borderCol};
+            transition: background 0.2s;
+            flex-shrink: 0;
+        `;
+        row.innerHTML = `
+            <span style="font-size: 9px; color: var(--text-secondary); font-family: monospace; white-space: nowrap; margin-top: 1px;">${ev.ts}</span>
+            <div style="display: flex; flex-direction: column; min-width: 0; flex: 1;">
+                <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                    <span style="font-size: 10px; font-weight: 700; color: #fff; font-family: monospace;">${ev.icon} ${ev.node_id}</span>
+                    <span class="node-status-label ${sc}" style="font-size: 7px; padding: 1px 5px;">${ev.status}</span>
+                    <span style="font-size: 9px; color: var(--text-secondary); font-family: monospace;">CPU ${ev.cpu}% · RAM ${ev.ram}%</span>
+                </div>
+                <span style="font-size: 10px; color: var(--text-secondary); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${ev.activity}</span>
+            </div>
+        `;
+        row.addEventListener("mouseenter", () => row.style.background = "rgba(255,255,255,0.06)");
+        row.addEventListener("mouseleave", () => row.style.background = "rgba(255,255,255,0.03)");
+        container.appendChild(row);
+    });
+}
+
+async function loadMissionFeed(containerId = "mission-event-feed") {
     try {
         const resp = await fetch(`${API_BASE}/api/mission/feed?limit=30`);
         if (!resp.ok) return;
         const { events } = await resp.json();
-        if (!events || events.length === 0) return;
-
-        container.innerHTML = "";
-        events.forEach(ev => {
-            const borderCol = MISSION_STATUS_COLOURS[ev.status] || "#10b981";
-            const sc = getStatusClass(ev.status);
-            const row = document.createElement("div");
-            row.className = "mission-event-row";
-            row.style.cssText = `
-                display: flex; align-items: flex-start; gap: 10px;
-                padding: 7px 10px; border-radius: 6px;
-                background: rgba(255,255,255,0.03);
-                border-left: 3px solid ${borderCol};
-                transition: background 0.2s;
-                flex-shrink: 0;
-            `;
-            row.innerHTML = `
-                <span style="font-size: 9px; color: var(--text-secondary); font-family: monospace; white-space: nowrap; margin-top: 1px;">${ev.ts}</span>
-                <div style="display: flex; flex-direction: column; min-width: 0; flex: 1;">
-                    <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                        <span style="font-size: 10px; font-weight: 700; color: #fff; font-family: monospace;">${ev.icon} ${ev.node_id}</span>
-                        <span class="node-status-label ${sc}" style="font-size: 7px; padding: 1px 5px;">${ev.status}</span>
-                        <span style="font-size: 9px; color: var(--text-secondary); font-family: monospace;">CPU ${ev.cpu}% · RAM ${ev.ram}%</span>
-                    </div>
-                    <span style="font-size: 10px; color: var(--text-secondary); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${ev.activity}</span>
-                </div>
-            `;
-            row.addEventListener("mouseenter", () => row.style.background = "rgba(255,255,255,0.06)");
-            row.addEventListener("mouseleave", () => row.style.background = "rgba(255,255,255,0.03)");
-            container.appendChild(row);
-        });
+        renderMissionFeedData(events, containerId);
     } catch (e) {
         console.warn("Mission feed load error:", e);
     }
@@ -2144,6 +2416,17 @@ async function loadIntelBrief(textElId = "mission-intel-brief-text", tsElId = "m
         // Colour the header line differently
         typewriterAnimate(textEl, brief, 10);
         if (tsEl && ts) tsEl.textContent = ts.replace("T", " ").split(".")[0] + "Z";
+        if (window.addAuditEvent) {
+            window.addAuditEvent({
+                actor: { id: "agent.cluster-intel", name: "Cluster Intel Agent", type: "agent" },
+                action: { type: "AI_RECOMMENDATION_GENERATED", summary: "New cluster operations intelligence brief generated." },
+                target: { type: "system", id: "intel-briefing", name: "Operations Intelligence Brief" },
+                result: "success",
+                severity: "medium",
+                provenance: { source: "inferred", confidence: 94, evidence_refs: ["telemetry.sync.latest"] },
+                policy: { required: false, result: "not_required" }
+            });
+        }
     } catch (e) {
         console.warn("Intel brief load error:", e);
         if (textEl) textEl.textContent = "[ Brief unavailable — server may be restarting ]";
@@ -2197,17 +2480,9 @@ async function loadPingTable(containerId = "mission-ping-table") {
 let _missionFeedInterval = null;
 
 function startMissionPolling() {
-    // Clear any old intervals
-    if (_missionFeedInterval) clearInterval(_missionFeedInterval);
-
     // Immediately load
     loadMissionFeed("mission-event-feed");
     loadMissionFeed("dash-mission-feed"); // Dashboard strip (if exists)
-
-    // Poll feed every 4 seconds
-    _missionFeedInterval = setInterval(() => {
-        loadMissionFeed("mission-event-feed");
-    }, 4000);
 }
 
 // ---- Boot IIFE: wire Mission Intel tab ----
@@ -2252,3 +2527,198 @@ function startMissionPolling() {
         });
     }
 })();
+
+// ================================================================
+//  PHASE 11: DYNAMIC ACCORDIONS, AUDIT FEEDS, & DISPATCH MODES
+// ================================================================
+
+function setupAccordions() {
+    const accordions = document.querySelectorAll(".accordion-item");
+    accordions.forEach(item => {
+        const header = item.querySelector(".accordion-header");
+        const content = item.querySelector(".accordion-content");
+        if (header && content) {
+            header.addEventListener("click", () => {
+                const isActive = header.classList.contains("active");
+                if (isActive) {
+                    header.classList.remove("active");
+                    content.style.display = "none";
+                    content.classList.remove("show");
+                } else {
+                    header.classList.add("active");
+                    content.style.display = "block";
+                    content.classList.add("show");
+                }
+            });
+        }
+    });
+}
+
+async function executeTaskWithMode(prompt, taskType, mode) {
+    taskOutputBox.classList.remove("hidden");
+    logOutputContent.innerHTML = `<span style="color:var(--text-secondary)">[System] Dispatching task to cluster (${mode} Mode)...</span><br/>`;
+    logToConsoleTerminal("Scheduler", `Task dispatch requested: "${prompt}" (Type: ${taskType}, Mode: ${mode})`, "system");
+    btnSubmitTask.disabled = true;
+
+    try {
+        const response = await fetch(`${API_BASE}/api/tasks/run`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                task_type: taskType,
+                prompt: prompt,
+                mode: mode
+            })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            
+            // Highlight target node
+            const targetNode = data.routed_node;
+            logOutputContent.innerHTML += `<span style="color:var(--accent-blue)">[Scheduler] Routed to ${targetNode.name} (${targetNode.ip})</span><br/>`;
+            logToConsoleTerminal("Orchestrator", `Routed task to ${targetNode.name} (${targetNode.ip}) [Mode: ${mode}]`, "info");
+            
+            // Log audit event
+            if (window.addAuditEvent) {
+                if (mode === "Simulate") {
+                    window.addAuditEvent({
+                        actor: { id: "michael.hoch", name: "Michael Hoch", type: "human", role: "Operator" },
+                        action: { type: "COMMAND_SIMULATED", summary: `Dry-run simulation of instruction completed: "${prompt}"` },
+                        target: { type: "command", id: "input-command", name: prompt },
+                        result: "success",
+                        severity: "info",
+                        provenance: { source: "manual", evidence_refs: [] },
+                        policy: { required: false, result: "not_required" }
+                    });
+                } else {
+                    window.addAuditEvent({
+                        actor: { id: "michael.hoch", name: "Michael Hoch", type: "human", role: "Operator" },
+                        action: { type: "COMMAND_EXECUTED", summary: `Instruction executed on node: "${prompt}"` },
+                        target: { type: "command", id: "input-command", name: prompt },
+                        result: "success",
+                        severity: mode === "Emergency Override" ? "high" : "medium",
+                        provenance: { source: "manual", evidence_refs: [] },
+                        policy: { required: true, result: "passed", explanation: `Governance mode: ${mode}` }
+                    });
+                }
+            }
+
+            // Re-render topology highlighting the routed node
+            const responseStatus = await fetch(`${API_BASE}/api/status`);
+            if (responseStatus.ok) {
+                const statusData = await responseStatus.json();
+                updateMermaidTopology(statusData.nodes, targetNode.id);
+            }
+
+            // Trigger animation packet flow bursts
+            spawnTaskParticles(targetNode.id);
+
+            // Simulate typewriter effect for execution log
+            logOutputContent.innerHTML += `<span style="color:var(--accent-teal)">[Swarm Runner] Node executing task...</span><br/>`;
+            setTimeout(() => {
+                logOutputContent.innerHTML += `<span style="color:#ffffff">${data.result}</span><br/>`;
+                logOutputContent.innerHTML += `<span style="color:var(--accent-teal)">[Success] Swarm execution task complete.</span>`;
+                logOutputContent.scrollTop = logOutputContent.scrollHeight;
+                
+                logToConsoleTerminal("SwarmRunner", `Task finished on ${targetNode.name}. Status: COMPLETED`, "info");
+                
+                btnSubmitTask.disabled = false;
+                promptInput.value = ""; // Clear input bar
+                fetchAndRenderTasks(); // Refresh history
+            }, 1500);
+
+        } else {
+            logOutputContent.innerHTML += `<span style="color:#ef4444">[Error] Failed to execute swarm task.</span>`;
+            logToConsoleTerminal("Scheduler", "Task execution failed.", "error");
+            if (window.addAuditEvent) {
+                window.addAuditEvent({
+                    actor: { id: "michael.hoch", name: "Michael Hoch", type: "human", role: "Operator" },
+                    action: { type: "TASK_FAILED", summary: `Failed to execute swarm task: "${prompt}"` },
+                    target: { type: "command", id: "input-command", name: prompt },
+                    result: "failed",
+                    severity: "high",
+                    provenance: { source: "manual", evidence_refs: [] },
+                    policy: { required: false, result: "not_required" }
+                });
+            }
+            btnSubmitTask.disabled = false;
+        }
+    } catch (err) {
+        logOutputContent.innerHTML += `<span style="color:#ef4444">[Error] Connection lost to control plane: ${err.message}</span>`;
+        logToConsoleTerminal("Connection", `Error: ${err.message}`, "error");
+        btnSubmitTask.disabled = false;
+    }
+}
+
+async function fetchAndRenderAuditLogs() {
+    const tbody = document.getElementById("audit-trail-tbody");
+    const countSpan = document.getElementById("audit-logs-count");
+    if (!tbody) return;
+
+    try {
+        const response = await fetch(`${API_BASE}/api/audit/logs`);
+        if (!response.ok) throw new Error("Failed to fetch audit logs");
+        const logs = await response.json();
+
+        // Apply filters
+        const filterVal = document.getElementById("audit-filter-result").value;
+        const filtered = logs.filter(log => {
+            if (filterVal === "ALL") return true;
+            return log.result === filterVal;
+        });
+
+        tbody.innerHTML = "";
+        countSpan.textContent = `${filtered.length} RECORDS`;
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 24px; color: var(--text-secondary);">No audit logs found.</td></tr>`;
+            return;
+        }
+
+        filtered.forEach(log => {
+            let resBadge = "";
+            if (log.result === "Success") {
+                resBadge = `<span class="status-badge success">Success</span>`;
+            } else if (log.result === "Blocked") {
+                resBadge = `<span class="status-badge blocked">Blocked</span>`;
+            } else {
+                resBadge = `<span class="status-badge fail">Failed</span>`;
+            }
+
+            let policyBadge = "";
+            if (log.policy_check === "Passed") {
+                policyBadge = `<span style="color:#10b981; font-weight:bold;">● Passed</span>`;
+            } else if (log.policy_check === "Warn") {
+                policyBadge = `<span style="color:#f59e0b; font-weight:bold;">▲ Warn</span>`;
+            } else {
+                policyBadge = `<span style="color:#ef4444; font-weight:bold;">✖ Blocked</span>`;
+            }
+
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td style="padding: 8px 12px; color: var(--text-secondary);">${log.timestamp}</td>
+                <td style="padding: 8px 12px; font-weight: 600;">${log.actor}</td>
+                <td style="padding: 8px 12px; color: #fff;">${log.action}</td>
+                <td style="padding: 8px 12px; color: var(--accent-blue);">${log.target}</td>
+                <td style="padding: 8px 12px;">${resBadge}</td>
+                <td style="padding: 8px 12px;">${policyBadge}</td>
+                <td style="padding: 8px 12px; text-align: right; color: var(--accent-teal);">${log.confidence ? log.confidence + '%' : '—'}</td>
+                <td style="padding: 8px 12px; font-family: monospace; color: var(--text-secondary);">${log.rollback_id || 'N/A'}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+    } catch (err) {
+        console.error("Error loading audit trail:", err);
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 24px; color:#ef4444;">Error loading audit logs: ${err.message}</td></tr>`;
+    }
+}
+
+// Expose global window bindings for React integration
+window.executeTaskWithMode = executeTaskWithMode;
+window.spawnTaskParticles = spawnTaskParticles;
+window.updateMermaidTopology = updateMermaidTopology;
+

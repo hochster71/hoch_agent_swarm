@@ -48,7 +48,11 @@ from backend.remediation_safety import (
     is_remediation_approved,
     dry_run_remediation,
     validate_rollback_plan,
-    get_blast_radius
+    get_blast_radius,
+    calculate_error_budget_and_burn_rate,
+    get_autonomy_level,
+    has_external_side_effects,
+    is_sql_remediation_allowed
 )
 
 # Load version dynamically from package.json
@@ -2010,8 +2014,9 @@ def get_readiness_status():
         
     score = report_data.get("readiness_score", 100)
     
-    # Calculate live error budget based on readiness score
-    error_budget = max(0.0, float(score))
+    # Calculate live error budget and burn rate using new engine functions
+    remaining_budget, burn_rate = calculate_error_budget_and_burn_rate()
+    autonomy_level = get_autonomy_level(score, remaining_budget, burn_rate)
     slo_status = "COMPLIANT" if score >= 95 else "BREACHED"
     
     return {
@@ -2021,7 +2026,9 @@ def get_readiness_status():
             "drift_detected": report_data.get("drift_detected", False),
             "drift_findings": report_data.get("drift_findings", []),
             "breakdown": report_data.get("breakdown", {}),
-            "error_budget_percentage": error_budget,
+            "error_budget_percentage": remaining_budget,
+            "burn_rate": burn_rate,
+            "autonomy_level": autonomy_level,
             "slo_status": slo_status,
             "observed_at": report_data.get("created_at", now_iso())
         },
@@ -2052,6 +2059,32 @@ def get_readiness_incidents():
         "evidence_refs": ["database.hochster_incidents"]
     }
 
+@app.get("/api/v1/readiness/budget-report")
+def get_readiness_budget_report():
+    reports = list_readiness_reports(50)
+    score = reports[0]["readiness_score"] if reports else 100
+    remaining_budget, burn_rate = calculate_error_budget_and_burn_rate()
+    autonomy_level = get_autonomy_level(score, remaining_budget, burn_rate)
+    
+    return {
+        "data": {
+            "target_slo": 95.0,
+            "remaining_error_budget": remaining_budget,
+            "burn_rate": burn_rate,
+            "autonomy_level": autonomy_level,
+            "reports_evaluated": len(reports),
+            "observed_at": now_iso()
+        },
+        "source": "live",
+        "source_id": "readiness.budget_report",
+        "observed_at": now_iso(),
+        "received_at": now_iso(),
+        "ttl_ms": 30000,
+        "freshness": "live",
+        "correlation_id": f"corr-budget-{uuid.uuid4().hex[:8]}",
+        "evidence_refs": ["database.hochster_readiness_reports"]
+    }
+
 @app.post("/api/v1/readiness/remediate")
 def post_readiness_remediate(req: RemediateRequest):
     incidents = list_incidents()
@@ -2068,6 +2101,10 @@ def post_readiness_remediate(req: RemediateRequest):
     pre_reports = list_readiness_reports(1)
     pre_score = pre_reports[0]["readiness_score"] if pre_reports else 100
     
+    # Calculate live error budget and burn rate using new engine functions
+    remaining_budget, burn_rate = calculate_error_budget_and_burn_rate()
+    autonomy_level = get_autonomy_level(pre_score, remaining_budget, burn_rate)
+    
     try:
         approvals = list_approval_gates()
     except Exception:
@@ -2079,32 +2116,60 @@ def post_readiness_remediate(req: RemediateRequest):
         incident_id = inc["incident_id"]
         category = inc["category"]
         
-        # 1. Risk Classification
+        # 1. Risk Classification & Safety Guards
         risk_level = classify_remediation_risk(patch)
         blast = get_blast_radius(category)
         
-        # 2. Approval Policy Engine check
-        if not is_remediation_approved(risk_level, incident_id, approvals):
-            update_incident_state(incident_id, "proposed")
-            findings.append(f"Blocked: Incident {incident_id} remediation is risk level '{risk_level}' and requires explicit approval.")
-            # Log audit event for policy block
-            policy_evt = {
-                "actor": {"id": "autopilot-safety-gate", "name": "Autopilot Safety Gate", "type": "system"},
-                "action": {"type": "READINESS_REMEDIATION_BLOCKED", "summary": f"Remediation blocked for incident {incident_id}: requires approval for risk '{risk_level}'."},
-                "target": {"type": "incident", "id": incident_id, "name": category},
-                "result": "blocked",
-                "severity": "warning",
-                "provenance": {"source": "observed", "evidence_refs": ["database.hochster_incidents"]},
-                "timestamp": now_iso(),
-                "metadata": {
-                    "incident_id": incident_id,
-                    "risk_level": risk_level,
-                    "blast_radius": blast,
-                    "state": "proposed"
-                }
-            }
-            add_event_to_ledger(policy_evt)
+        # SQL AST Allowlist check
+        is_sql = patch.strip().upper().startswith("PRAGMA") or "UPDATE" in patch.strip().upper() or "INSERT" in patch.strip().upper()
+        if is_sql and not is_sql_remediation_allowed(patch):
+            update_incident_state(incident_id, "diagnosed")
+            findings.append(f"Blocked: Incident {incident_id} SQL AST allowlist check failed.")
             continue
+            
+        # External side-effect guard
+        ext_side_effects = has_external_side_effects(patch)
+        
+        # Severity check
+        severity = inc.get("severity", "Medium")
+        high_severity = severity in ["High", "Critical"]
+        
+        # Determine if autonomous execution is allowed under throttle levels
+        autonomy_allowed = False
+        if autonomy_level == "L4":
+            if risk_level == "Low" and not ext_side_effects and not high_severity:
+                autonomy_allowed = True
+        elif autonomy_level == "L3":
+            autonomy_allowed = False
+        else: # L1/L2
+            autonomy_allowed = False
+
+        # 2. Approval check
+        if not autonomy_allowed:
+            if not is_remediation_approved(risk_level, incident_id, approvals):
+                update_incident_state(incident_id, "proposed")
+                findings.append(f"Blocked: Incident {incident_id} (Autonomy Level: {autonomy_level}, Risk: {risk_level}, Severity: {severity}, Side Effects: {ext_side_effects}) requires explicit operator approval.")
+                # Log audit event for policy block
+                policy_evt = {
+                    "actor": {"id": "autopilot-safety-gate", "name": "Autopilot Safety Gate", "type": "system"},
+                    "action": {"type": "READINESS_REMEDIATION_BLOCKED", "summary": f"Remediation blocked for incident {incident_id}: requires approval (autonomy level '{autonomy_level}')."},
+                    "target": {"type": "incident", "id": incident_id, "name": category},
+                    "result": "blocked",
+                    "severity": "warning",
+                    "provenance": {"source": "observed", "evidence_refs": ["database.hochster_incidents"]},
+                    "timestamp": now_iso(),
+                    "metadata": {
+                        "incident_id": incident_id,
+                        "risk_level": risk_level,
+                        "blast_radius": blast,
+                        "state": "proposed",
+                        "autonomy_level": autonomy_level,
+                        "severity": severity,
+                        "external_side_effects": ext_side_effects
+                    }
+                }
+                add_event_to_ledger(policy_evt)
+                continue
             
         # 3. Dry-Run simulation check
         ok, msg = dry_run_remediation(patch)

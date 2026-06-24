@@ -63,6 +63,7 @@ async function main() {
   await fetchAndSave(`${BASE_URL}/api/v1/audit/runtime/tool-calls`, `${RELEASE_DIR}/tool_call_trace_summary.json`);
   await fetchAndSave(`${BASE_URL}/api/v1/audit/runtime/redactions`, `${RELEASE_DIR}/redaction_report.json`);
   await fetchAndSave(`${BASE_URL}/api/v1/audit/runtime/approvals`, `${RELEASE_DIR}/approval_gate_report.json`);
+  await fetchAndSave(`${BASE_URL}/api/v1/readiness/budget-report`, `${RELEASE_DIR}/autonomy_budget_report.json`);
 
   const dockerDigests = readJson("artifacts/baseline/docker-image-digests.json", {
     records: [],
@@ -104,6 +105,7 @@ async function main() {
     "tool_call_trace_summary.json",
     "redaction_report.json",
     "approval_gate_report.json",
+    "autonomy_budget_report.json",
   ];
 
   const artifacts = candidateArtifacts
@@ -129,6 +131,8 @@ async function main() {
           ? "tool_call_trace_summary"
           : name.includes("redaction")
           ? "redaction_report"
+          : name.includes("autonomy_budget")
+          ? "autonomy_budget_report"
           : "approval_gate_report",
       sha256: sha256(`${RELEASE_DIR}/${name}`),
     }));

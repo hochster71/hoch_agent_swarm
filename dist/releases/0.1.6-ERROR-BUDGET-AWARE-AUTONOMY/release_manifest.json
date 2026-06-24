@@ -1,0 +1,81 @@
+{
+  "release": {
+    "version": "0.1.6-ERROR-BUDGET-AWARE-AUTONOMY",
+    "codename": "Hochster Runtime Execution Audit",
+    "generated_at": "2026-06-24T19:52:34.930Z",
+    "generated_by": "generate-release-manifest.ts",
+    "git_commit_sha": "8b55d26e2e96a9a2229a2f156c5c783216923b43",
+    "git_branch": "release/v0.1.6-error-budget-aware-autonomy",
+    "ci_provider": "local"
+  },
+  "artifacts": [
+    {
+      "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/baseline_evidence_pack.json",
+      "type": "evidence_pack",
+      "sha256": "0f53096d1f3c6f8e3ef6591d90c50bca072f3b429dba13ca36c181bee0b7b9dc"
+    },
+    {
+      "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/baseline_evidence_pack.json.sha256",
+      "type": "checksum",
+      "sha256": "9d950beb485ea720d891c899b038e3db1adc28a38aba1f8a5e69a08e38e3adb0"
+    },
+    {
+      "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/provenance.intoto.jsonl",
+      "type": "provenance",
+      "sha256": "42b539c50a90cfb80196a08b96280e16f0d01d758e6065f401f896230272aaf6"
+    },
+    {
+      "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/sbom.spdx.json",
+      "type": "sbom",
+      "sha256": "1b0d101708a69f7695d1bdaa34f49e128962a1431de4044a233adc82ba8c742c"
+    },
+    {
+      "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/runtime_execution_audit.json",
+      "type": "runtime_execution_audit",
+      "sha256": "602b2c69eb16f10dd91cdb7c06e19d6444d362135b53db36f7502433a5619b22"
+    },
+    {
+      "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/tool_call_trace_summary.json",
+      "type": "tool_call_trace_summary",
+      "sha256": "3db5aabdcbb88b5a85d51e67ad63c5531443ad7d7b50a32b5e81094087ee7397"
+    },
+    {
+      "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/redaction_report.json",
+      "type": "redaction_report",
+      "sha256": "a573dc6d8a7fe51e2922181e1ae5bdef7bb4ab0e9ab28010018ce79d4bdb335e"
+    },
+    {
+      "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/approval_gate_report.json",
+      "type": "approval_gate_report",
+      "sha256": "12ce3a03ee579c8a501b375a68ef58a199bcadaefef0e09c1853f62eadda34fb"
+    },
+    {
+      "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/autonomy_budget_report.json",
+      "type": "autonomy_budget_report",
+      "sha256": "8b52028327a7488406fbb6172f2870cd446fb62ed907b0df562c78c6c6b3f897"
+    }
+  ],
+  "docker": [],
+  "baseline_chain": {
+    "previous": "v0.1.1-HOCHSTER-CLUSTER-HARDENING",
+    "hardening": "v0.1.2-SUPPLY-CHAIN-PROVENANCE",
+    "current": "0.1.6-ERROR-BUDGET-AWARE-AUTONOMY"
+  },
+  "integrity": {
+    "signed": false,
+    "signature_refs": [],
+    "provenance_ref": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/provenance.intoto.jsonl",
+    "sbom_ref": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/sbom.spdx.json"
+  },
+  "hochster": {
+    "cluster_jobs_completed": 9,
+    "cluster_jobs_blocked": 0,
+    "missing_trace_ids": [],
+    "missing_evidence_refs": []
+  },
+  "decision": {
+    "status": "PASS",
+    "blockers": [],
+    "warnings": []
+  }
+}

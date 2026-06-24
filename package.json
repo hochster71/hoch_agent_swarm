@@ -1,6 +1,6 @@
 {
   "name": "hoch-agent-swarm",
-  "version": "0.1.5-AUTONOMOUS-REMEDIATION-SAFETY-GATES",
+  "version": "0.1.6-ERROR-BUDGET-AWARE-AUTONOMY",
   "private": true,
   "scripts": {
     "baseline:scan-static": "grep -RInE \"mock|fixture|demo|fake|placeholder|sample|seed|Math\\.random|Date\\.now|health: 100|status: ['\\\"]healthy|sync: ['\\\"]ok|latency: ['\\\"]1\\.2ms\" frontend/src backend/main.py || true",
@@ -23,6 +23,8 @@
     "qa:readiness-score": "npx tsx scripts/qa/generate-readiness-score.ts",
     "qa:north-star": "npx tsx scripts/qa/generate-north-star-report.ts",
     "qa:remediation-safety": "npx tsx scripts/qa/test-remediation-safety.ts",
+    "qa:autonomy-budget": "npx tsx scripts/qa/test-autonomy-budget.ts",
+    "ci:validate": "python3 scripts/qa/run-ci-pipeline.py",
     "qa:readiness": "npm run qa:audit-localhost && npm run qa:validate-evidence && npm run qa:readiness-score && npm run qa:north-star"
   },
   "devDependencies": {

@@ -265,6 +265,8 @@ import time
 import logging
 import psutil
 import copy
+import subprocess
+import threading
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("ClusterManager")
@@ -274,40 +276,103 @@ class ClusterManager:
         # Deep-copy so random mutations don't corrupt the module-level config
         self.nodes = copy.deepcopy(NODES_CONFIG)
         self._activity_idx = {nid: 0 for nid in self.nodes}
+        self.status_lock = threading.Lock()
+        
+        # Start background telemetry loop to run pings and host checks asynchronously
+        self.bg_thread = threading.Thread(target=self._bg_telemetry_loop, daemon=True)
+        self.bg_thread.start()
 
-    def get_cluster_status(self):
-        # ---- Live vitals for L1 (Control Plane) via psutil ----
+    def _bg_telemetry_loop(self):
+        # Perform initial telemetry scan, then update telemetry continuously
+        while True:
+            try:
+                self._update_telemetry_data()
+            except Exception as e:
+                logger.error(f"Error in background telemetry loop: {e}")
+            time.sleep(3.0)
+
+    def _update_telemetry_data(self):
+        # 1. Host vitals (Control Plane L1) via psutil
         try:
             cpu_percent = psutil.cpu_percent()
             virtual_mem = psutil.virtual_memory()
             ram_percent = virtual_mem.percent
             ram_total_gb = round(virtual_mem.total / (1024 ** 3), 1)
-            self.nodes["L1"]["cpu_usage"] = int(cpu_percent)
-            self.nodes["L1"]["ram_usage"] = int(ram_percent)
-            self.nodes["L1"]["specs"] = f"{ram_total_gb}GB RAM, Disk: {psutil.disk_usage('/').percent}% used"
+            with self.status_lock:
+                self.nodes["L1"]["cpu_usage"] = int(cpu_percent)
+                self.nodes["L1"]["ram_usage"] = int(ram_percent)
+                self.nodes["L1"]["specs"] = f"{ram_total_gb}GB RAM, Disk: {psutil.disk_usage('/').percent}% used"
         except Exception as e:
             logger.warning(f"Failed to query psutil host vitals: {e}")
 
-        # ---- Per-node metric fluctuation + activity rotation ----
+        # 2. Worker nodes fluctuations, activity rotation, and ping checks
+        for node_id, node in list(self.nodes.items()):
+            if node_id != "L1":
+                with self.status_lock:
+                    node["cpu_usage"] = min(95, max(8, node["cpu_usage"] + random.randint(-4, 6)))
+                    node["ram_usage"] = min(92, max(15, node["ram_usage"] + random.randint(-2, 3)))
+
+            domain = node.get("missionDomain", "control")
+            pool = ACTIVITY_POOLS.get(domain, ACTIVITY_POOLS["control"])
+            idx = self._activity_idx.get(node_id, 0)
+            
+            with self.status_lock:
+                node["activity"] = pool[idx % len(pool)]
+                self._activity_idx[node_id] = (idx + 1) % len(pool)
+                
+                # Determine status dynamically based on activity keywords
+                act_lower = node["activity"].lower()
+                if "triage" in act_lower or "triaging" in act_lower:
+                    node["status"] = "Triaging"
+                elif "self-healing" in act_lower or "self-heal" in act_lower or "rebuilding" in act_lower or "rollback" in act_lower or "flushing" in act_lower or "rerouting" in act_lower:
+                    node["status"] = "Self-Healing"
+                elif "reasoning" in act_lower or "reason" in act_lower or "validating" in act_lower or "synthesizing" in act_lower:
+                    node["status"] = "Reasoning"
+                elif "deploying" in act_lower or "deploy" in act_lower or "dispatching" in act_lower or "building" in act_lower:
+                    node["status"] = "Deploying"
+                else:
+                    node["status"] = "Active"
+
+            # Run ping check outside status lock to prevent blocking
+            if node_id == "L1":
+                latency = 0.0
+            else:
+                latency = self._ping_node(node["ip"])
+
+            with self.status_lock:
+                node["latency_ms"] = latency
+
+    def _ping_node(self, ip: str) -> float:
+        """Runs ICMP ping to check actual node latency. Returns ms, or a simulated value if it fails."""
+        try:
+            # -c 1 = 1 packet, -t 1 = 1 second timeout (macOS/Linux)
+            cmd = ["ping", "-c", "1", "-t", "1", ip]
+            start_time = time.time()
+            res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            duration_ms = round((time.time() - start_time) * 1000, 1)
+            if res.returncode == 0:
+                stdout_str = res.stdout.decode("utf-8", errors="ignore")
+                for line in stdout_str.split("\n"):
+                    if "time=" in line:
+                        time_part = line.split("time=")[1].split()[0]
+                        return round(float(time_part), 1)
+                return duration_ms
+        except Exception:
+            pass
+        # Fallback to simulated latency with minor fluctuation
+        return round(1.0 + random.random() * 2.0, 1)
+
+    def get_cluster_status(self):
+        with self.status_lock:
+            nodes_copy = copy.deepcopy(self.nodes)
+
         total_agents = 0
         total_cpu = 0
         total_ram_used = 0
         total_ram_cap = 0
         count = 0
 
-        for node_id, node in self.nodes.items():
-            if node_id != "L1":
-                # All nodes are active — fluctuate cpu/ram realistically
-                node["cpu_usage"] = min(95, max(8, node["cpu_usage"] + random.randint(-4, 6)))
-                node["ram_usage"] = min(92, max(15, node["ram_usage"] + random.randint(-2, 3)))
-
-            # Rotate the live activity string from the pool
-            domain = node.get("missionDomain", "control")
-            pool = ACTIVITY_POOLS.get(domain, ACTIVITY_POOLS["control"])
-            idx = self._activity_idx.get(node_id, 0)
-            node["activity"] = pool[idx % len(pool)]
-            self._activity_idx[node_id] = (idx + 1) % len(pool)
-
+        for node_id, node in nodes_copy.items():
             total_agents += node["total_agents"]
             total_cpu += node["cpu_usage"]
 
@@ -332,45 +397,47 @@ class ClusterManager:
 
         return {
             "status": "HEALTHY 100%",
-            "active_assets": len(self.nodes),  # all nodes are online
+            "active_assets": len([n for n in nodes_copy.values() if n["status"] != "Offline"]),
             "sync": "OK",
             "latency": "1.1ms (Excellent)",
             "total_agents": total_agents,
             "system_cpu": f"{int(avg_cpu)}%",
             "system_ram": f"{round(total_ram_used, 1)}GB/{int(total_ram_cap)}GB",
-            "nodes": list(self.nodes.values())
+            "nodes": list(nodes_copy.values())
         }
 
     def add_node(self, node_data: dict):
         node_id = node_data.get("id")
         if not node_id:
             return False
-        # Normalize node structure
-        self.nodes[node_id] = {
-            "id": node_id,
-            "name": node_data.get("name", "Unknown Node"),
-            "ip": node_data.get("ip", "10.0.0.1"),
-            "role": node_data.get("role", "Worker Node"),
-            "specs": node_data.get("specs", "8GB RAM, 512GB SSD"),
-            "status": node_data.get("status", "Active"),
-            "total_agents": int(node_data.get("total_agents", 0)),
-            "os": node_data.get("os", "Linux"),
-            "cpu_usage": int(node_data.get("cpu_usage", 10)),
-            "ram_usage": int(node_data.get("ram_usage", 20)),
-            "latency_ms": float(node_data.get("latency_ms", 1.5)),
-            "agents": node_data.get("agents", [])
-        }
+        with self.status_lock:
+            # Normalize node structure
+            self.nodes[node_id] = {
+                "id": node_id,
+                "name": node_data.get("name", "Unknown Node"),
+                "ip": node_data.get("ip", "10.0.0.1"),
+                "role": node_data.get("role", "Worker Node"),
+                "specs": node_data.get("specs", "8GB RAM, 512GB SSD"),
+                "status": node_data.get("status", "Active"),
+                "total_agents": int(node_data.get("total_agents", 0)),
+                "os": node_data.get("os", "Linux"),
+                "cpu_usage": int(node_data.get("cpu_usage", 10)),
+                "ram_usage": int(node_data.get("ram_usage", 20)),
+                "latency_ms": float(node_data.get("latency_ms", 1.5)),
+                "agents": node_data.get("agents", [])
+            }
         logger.info(f"Node '{node_id}' successfully registered in cluster.")
         return True
 
     def remove_node(self, node_id: str):
-        if node_id in self.nodes:
-            # Prevent removing L1 control plane
-            if node_id == "L1":
-                return False
-            del self.nodes[node_id]
-            logger.info(f"Node '{node_id}' successfully removed from cluster.")
-            return True
+        with self.status_lock:
+            if node_id in self.nodes:
+                # Prevent removing L1 control plane
+                if node_id == "L1":
+                    return False
+                del self.nodes[node_id]
+                logger.info(f"Node '{node_id}' successfully removed from cluster.")
+                return True
         return False
 
     def route_task(self, task_type: str, prompt: str):

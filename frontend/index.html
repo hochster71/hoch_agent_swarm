@@ -11,10 +11,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Tailwind CSS CDN for utility styles -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <!-- Mermaid.js for topology graph -->
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
     <!-- Chart.js for live metrics line charts -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js"></script>
     <style>
         html, body {
             background-color: #0b0f19;
@@ -57,10 +59,48 @@
                 <a href="#" class="nav-item" id="nav-mission">
                     <i data-lucide="radio"></i> <span>Mission Intel</span>
                 </a>
+                <a href="#" class="nav-item" id="nav-replay">
+                    <i data-lucide="history"></i> <span>Timeline Replay</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-collab">
+                    <i data-lucide="message-square"></i> <span>Collaboration</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-ledger">
+                    <i data-lucide="database"></i> <span>System Ledger</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-governance">
+                    <i data-lucide="shield"></i> <span>AI Governance</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-red-team">
+                    <i data-lucide="shield-alert"></i> <span>Red-Team Chaos</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-executive">
+                    <i data-lucide="file-text"></i> <span>Executive Control</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-capabilities">
+                    <i data-lucide="grid"></i> <span>Capability Marketplace</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-remediation">
+                    <i data-lucide="wrench"></i> <span>Remediation Runbooks</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-tenancy">
+                    <i data-lucide="globe"></i> <span>Enterprise Console</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-compliance">
+                    <i data-lucide="shield"></i> <span>Compliance</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-customer-success">
+                    <i data-lucide="users"></i> <span>Customer Success</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-revenue-ops">
+                    <i data-lucide="trending-up"></i> <span>Revenue Ops</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-hochster">
+                    <i data-lucide="bug"></i> <span>HOCHSTER Debugger</span>
+                </a>
                 <a href="#" class="nav-item" id="nav-settings">
                     <i data-lucide="settings"></i> <span>Settings</span>
                 </a>
-
             </nav>
             <div class="profile-area">
                 <div class="avatar">MH</div>
@@ -97,6 +137,7 @@
                             <i data-lucide="bell"></i>
                             <span class="badge-dot"></span>
                         </button>
+                        <div id="react-header-audit-root" style="display: inline-flex; align-items: center; margin-left: 8px;"></div>
                     </div>
                 </div>
             </header>
@@ -147,17 +188,7 @@
                             </div>
 
                             <!-- Command dispatch terminal line -->
-                            <div class="console-command-bar" style="display: flex; gap: 12px; align-items: center; background: rgba(15, 23, 42, 0.85); border-top: 1px solid var(--border-glass); padding: 12px; z-index: 10;">
-                                <div style="font-family: monospace; font-size: 12px; color: var(--accent-teal); font-weight: bold; white-space: nowrap;">SWARM_CMD_INPUT &gt;</div>
-                                <select id="task-type-select" style="background: rgba(0,0,0,0.4); border: 1px solid var(--border-glass); color: #fff; padding: 6px; border-radius: 6px; font-size: 12px;">
-                                    <option value="code_generation">Code Generation Swarm</option>
-                                    <option value="refactoring">Refactoring Swarm</option>
-                                    <option value="unit_testing">Automated Unit Testing</option>
-                                    <option value="general_query">General Query / Research</option>
-                                </select>
-                                <input type="text" id="prompt-input" placeholder="Enter tactical swarm instruction (e.g. Deploy MVP)..." style="flex-grow: 1; background: rgba(0,0,0,0.4); border: 1px solid var(--border-glass); color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-family: monospace;">
-                                <button class="btn btn-primary btn-sm" id="btn-submit-task" style="padding: 6px 16px;">DISPATCH</button>
-                            </div>
+                            <div id="react-command-root"></div>
 
                             <!-- Output logs overlay -->
                             <div class="task-output-container hidden" id="task-output-box" style="position: absolute; bottom: 80px; left: 16px; right: 16px; background: rgba(10, 15, 28, 0.96); border: 1px solid rgba(0, 229, 255, 0.25); border-radius: 8px; padding: 12px; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.6);">
@@ -652,38 +683,80 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Replay View -->
+            <div id="view-replay" class="hidden">
+                <div id="react-replay-root"></div>
+            </div>
+
+            <!-- Collaboration View -->
+            <div id="view-collab" class="hidden">
+                <div id="react-collab-root"></div>
+            </div>
+
+            <!-- Ledger View -->
+            <div id="view-ledger" class="hidden">
+                <div id="react-ledger-root"></div>
+            </div>
+
+            <!-- AI Governance View -->
+            <div id="view-governance" class="hidden">
+                <div id="react-governance-root"></div>
+            </div>
+
+            <!-- Red-Team Chaos View -->
+            <div id="view-red-team" class="hidden">
+                <div id="react-red-team-root"></div>
+            </div>
+
+            <!-- Executive Control View -->
+            <div id="view-executive" class="hidden">
+                <div id="react-executive-root"></div>
+            </div>
+
+            <!-- Capability Marketplace View -->
+            <div id="view-capabilities" class="hidden">
+                <div id="react-capabilities-root"></div>
+            </div>
+
+            <!-- Remediation Runbooks View -->
+            <div id="view-remediation" class="hidden">
+                <div id="react-remediation-root"></div>
+            </div>
+
+            <!-- Enterprise Console View -->
+            <div id="view-tenancy" class="hidden">
+                <div id="react-tenancy-root"></div>
+            </div>
+
+            <!-- Compliance Control View -->
+            <div id="view-compliance" class="hidden">
+                <div id="react-compliance-root"></div>
+            </div>
+
+            <!-- Customer Success View -->
+            <div id="view-customer-success" class="hidden">
+                <div id="react-customer-success-root"></div>
+            </div>
+
+            <!-- Revenue Operations View -->
+            <div id="view-revenue-ops" class="hidden">
+                <div id="react-revenue-ops-root"></div>
+            </div>
+
+            <!-- HOCHSTER Debugger View -->
+            <div id="view-hochster" class="hidden">
+                <div id="react-hochster-root"></div>
+            </div>
         </main>
     </div>
 
 
-    <!-- Asset & Agent Details Modal -->
-    <div id="modal-container" class="modal-overlay hidden">
-        <div class="modal-content card">
-            <div class="modal-header">
-                <div class="modal-header-left">
-                    <i data-lucide="cpu" class="modal-icon"></i>
-                    <h2 id="modal-node-title" class="modal-title">Node Details</h2>
-                </div>
-                <button class="icon-btn close-btn" id="btn-close-modal" aria-label="Close details">
-                    <i data-lucide="x"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="node-meta-grid">
-                    <div class="meta-item"><span class="meta-label">IP Address</span><span id="modal-node-ip" class="meta-value"></span></div>
-                    <div class="meta-item"><span class="meta-label">Specs</span><span id="modal-node-specs" class="meta-value"></span></div>
-                    <div class="meta-item"><span class="meta-label">OS / Role</span><span id="modal-node-role" class="meta-value"></span></div>
-                    <div class="meta-item"><span class="meta-label">Latency</span><span id="modal-node-latency" class="meta-value"></span></div>
-                </div>
-                
-                <h3 class="modal-section-title">DEPLOYED DOCKER AGENT PROFILES</h3>
-                <div class="agents-grid" id="modal-agents-container">
-                    <!-- Agent cards will be dynamically rendered here -->
-                </div>
-            </div>
-        </div>
-    </div>
+    <div id="react-asset-drilldown-root"></div>
+    <div id="react-command-preview-root"></div>
+    <div id="react-audit-drawer-root"></div>
 
-    <script src="app.js?v=1.0.5"></script>
+    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="/app.js"></script>
 </body>
 </html>
