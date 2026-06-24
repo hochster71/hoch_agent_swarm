@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
 
-const VERSION = "v0.1.2-SUPPLY-CHAIN-PROVENANCE";
+const VERSION = "v0.1.3-HOCHSTER-RUNTIME-EXECUTION-AUDIT";
 const RELEASE_DIR = `dist/releases/${VERSION}`;
 const MANIFEST = `${RELEASE_DIR}/release_manifest.json`;
 
@@ -35,9 +35,21 @@ for (const required of [
   "release_manifest.json",
   "provenance.intoto.jsonl",
   "sbom.spdx.json",
+  "runtime_execution_audit.json",
+  "tool_call_trace_summary.json",
+  "redaction_report.json",
+  "approval_gate_report.json",
 ]) {
   if (!fs.existsSync(`${RELEASE_DIR}/${required}`)) {
     blockers.push(`Required release artifact missing: ${required}`);
+  }
+}
+
+const runtimeAuditPath = `${RELEASE_DIR}/runtime_execution_audit.json`;
+if (fs.existsSync(runtimeAuditPath)) {
+  const runtimeAudit = JSON.parse(fs.readFileSync(runtimeAuditPath, "utf8"));
+  if (runtimeAudit.status !== "PASS") {
+    blockers.push(`Runtime execution audit did not PASS: ${JSON.stringify(runtimeAudit.blockers)}`);
   }
 }
 

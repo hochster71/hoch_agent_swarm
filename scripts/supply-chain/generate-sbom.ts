@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import { execSync } from "node:child_process";
 
-const VERSION = "v0.1.2-SUPPLY-CHAIN-PROVENANCE";
+const VERSION = "v0.1.3-HOCHSTER-RUNTIME-EXECUTION-AUDIT";
 const RELEASE_DIR = `dist/releases/${VERSION}`;
 
 function run(command: string): string {

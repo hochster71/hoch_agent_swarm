@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import { execSync } from "node:child_process";
 
-const VERSION = "v0.1.2-SUPPLY-CHAIN-PROVENANCE";
+const VERSION = "v0.1.3-HOCHSTER-RUNTIME-EXECUTION-AUDIT";
 const RELEASE_DIR = `dist/releases/${VERSION}`;
 const EVIDENCE_PATH = `${RELEASE_DIR}/baseline_evidence_pack.json`;
 
@@ -52,8 +52,8 @@ const statement = {
       },
       internalParameters: {
         baseline_chain: [
-          "v0.1.0-RT-LOCK",
           "v0.1.1-HOCHSTER-CLUSTER-HARDENING",
+          "v0.1.2-SUPPLY-CHAIN-PROVENANCE",
           VERSION,
         ],
       },

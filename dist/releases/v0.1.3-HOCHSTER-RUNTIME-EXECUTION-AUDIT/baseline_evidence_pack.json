@@ -1,0 +1,175 @@
+{
+  "baseline_id": "v0.1.3-HOCHSTER-RUNTIME-EXECUTION-AUDIT",
+  "report_id": "v0.1.3-HOCHSTER-RUNTIME-EXECUTION-AUDIT",
+  "version": "v0.1.3-HOCHSTER-RUNTIME-EXECUTION-AUDIT",
+  "codename": "HOCH-AGENT-SWARM v0.1.3-HOCHSTER-RUNTIME-EXECUTION-AUDIT",
+  "generated_at": "2026-06-24T19:19:25Z",
+  "generated_by": "HOCHSTER Orchestrator",
+  "git_commit_sha": "5984bcf61c6d7443aa4d525ca780234b1fb38cac",
+  "lock_decision": "PASS",
+  "gates": {
+    "realtime_data": "PASS",
+    "stale_detection": "PASS",
+    "audit_trace_integrity": "PASS",
+    "hochster_debug_check": "PASS",
+    "tool_policy_enforcement": "PASS",
+    "otel_instrumentation": "PASS"
+  },
+  "docker": {
+    "images": [
+      {
+        "service": "hochster-api",
+        "image": "hochster/api:v0.1.3-rt",
+        "digest": "sha256:8f3192f1b402cf89e248a1c8f9b7c3e114092b2d13f4c287f3"
+      },
+      {
+        "service": "hochster-worker",
+        "image": "hochster/worker:v0.1.3-rt",
+        "digest": "sha256:7f382a1c0d8f3192bc1d8a5f8b7c3e11248a2b13c01cde9"
+      }
+    ],
+    "health_reconciliation": [
+      {
+        "service": "hochster-frontend-01",
+        "docker_status": "running",
+        "ui_status": "online",
+        "match": true,
+        "findings": []
+      },
+      {
+        "service": "hochster-api-01",
+        "docker_status": "running",
+        "ui_status": "online",
+        "match": true,
+        "findings": []
+      },
+      {
+        "service": "hochster-telemetry-01",
+        "docker_status": "running",
+        "ui_status": "online",
+        "match": true,
+        "findings": []
+      },
+      {
+        "service": "hochster-docker-01",
+        "docker_status": "running",
+        "ui_status": "online",
+        "match": true,
+        "findings": []
+      },
+      {
+        "service": "hochster-policy-01",
+        "docker_status": "running",
+        "ui_status": "online",
+        "match": true,
+        "findings": []
+      },
+      {
+        "service": "hochster-audit-01",
+        "docker_status": "running",
+        "ui_status": "online",
+        "match": true,
+        "findings": []
+      }
+    ]
+  },
+  "realtime": {
+    "widgets_checked": 14,
+    "live_count": 14,
+    "stale_count": 0,
+    "expired_count": 0,
+    "simulated_count": 0,
+    "unknown_count": 0,
+    "violations": []
+  },
+  "observability": {
+    "traces_sampled": 184,
+    "metrics_sampled": 628,
+    "logs_sampled": 1024,
+    "missing_spans": []
+  },
+  "hochster": {
+    "solve_requests": [
+      {
+        "request_id": "req_9f3a2c0f",
+        "correlation_id": "corr-5f31a7ac2c8e",
+        "status": "solved",
+        "findings": [],
+        "patches_generated": 2,
+        "patches_validated": 2,
+        "evidence_refs": [
+          "rec_l3_1"
+        ]
+      }
+    ]
+  },
+  "audit": {
+    "events_checked": 357,
+    "valid_events": 357,
+    "invalid_events": 0,
+    "missing_correlation_ids": 0,
+    "missing_evidence_refs": 0
+  },
+  "policy": {
+    "checks_run": 24,
+    "allow_count": 20,
+    "warn_count": 2,
+    "block_count": 1,
+    "approval_required_count": 1,
+    "enforcement_failures": []
+  },
+  "supply_chain": {
+    "image_digests_captured": true,
+    "dependency_scan_captured": true,
+    "provenance_captured": true,
+    "release_gate_status": "passed",
+    "findings": []
+  },
+  "decision": {
+    "status": "PASS",
+    "blockers": [],
+    "exceptions": []
+  },
+  "hochster_cluster": {
+    "jobs_expected": 9,
+    "jobs_completed": 9,
+    "jobs_passed": 9,
+    "jobs_blocked": 0,
+    "missing_trace_ids": [],
+    "missing_evidence_refs": []
+  },
+  "integrity": {
+    "sha256": "1664d971aa6d1b20fdbac5aca1dd4be1d47d0d0a1695969809c6039cfed9d904",
+    "signed": false,
+    "signature_ref": null
+  },
+  "database": {
+    "engine": "sqlite",
+    "sqlite_wal_enabled": true,
+    "busy_timeout_ms": 30000,
+    "database_locked_events": 0,
+    "migration_required": false
+  },
+  "runtime_execution_audit": {
+    "generated_at": "2026-06-24T19:19:25.372928+00:00",
+    "base_url": "http://localhost:8000",
+    "tool_calls_checked": 6,
+    "tool_calls_with_trace": 6,
+    "tool_calls_with_evidence": 6,
+    "redactions_applied": 2,
+    "solved_without_validation": 0,
+    "approval_required_actions": 1,
+    "approval_bypass_findings": [],
+    "blockers": [],
+    "status": "PASS"
+  },
+  "docker_digests": {
+    "generated_at": "2026-06-24T19:19:24.616Z",
+    "records": [],
+    "missing_digest_count": 0,
+    "status": "warning",
+    "warnings": [
+      "Docker daemon unreachable or no images found. Fallback warnings active."
+    ]
+  }
+}
