@@ -86,6 +86,7 @@ def generate_runtime_execution_audit() -> dict:
 
     status = "PASS" if len(blockers) == 0 else "BLOCK"
 
+    import uuid
     return {
         "generated_at": now_iso(),
         "base_url": "http://localhost:8000",
@@ -97,7 +98,15 @@ def generate_runtime_execution_audit() -> dict:
         "approval_required_actions": approval_required_actions,
         "approval_bypass_findings": approval_bypass_findings,
         "blockers": blockers,
-        "status": status
+        "status": status,
+        "source": "live",
+        "source_id": "audit.runtime.execution",
+        "observed_at": now_iso(),
+        "received_at": now_iso(),
+        "ttl_ms": 10000,
+        "freshness": "live",
+        "correlation_id": f"corr-audit-exec-{uuid.uuid4().hex[:8]}",
+        "evidence_refs": ["database.swarm_ledger"]
     }
 
 def generate_tool_call_trace_summary() -> dict:

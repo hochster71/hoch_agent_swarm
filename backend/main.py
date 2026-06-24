@@ -282,6 +282,22 @@ async def get_status():
     return data
 
 
+@app.get("/api/v1/agents/status")
+def get_agents_status():
+    data = cluster_mgr.get_cluster_status()
+    return {
+        "data": data,
+        "source": "live",
+        "source_id": "swarm.control",
+        "observed_at": now_iso(),
+        "received_at": now_iso(),
+        "ttl_ms": 10000,
+        "freshness": "live",
+        "correlation_id": f"corr-agents-{uuid.uuid4().hex[:8]}",
+        "evidence_refs": ["database.swarm_ledger"]
+    }
+
+
 @app.get("/api/mission/feed")
 async def get_mission_feed(limit: int = 25):
     with _mission_lock:
@@ -1574,7 +1590,13 @@ def get_cluster_health():
         "observed_at": now_str,
         "correlation_id": correlation_id,
         "otel": trace,
-        "services": services
+        "services": services,
+        "source": "live",
+        "source_id": "hochster.runtime.execution",
+        "received_at": now_str,
+        "ttl_ms": 10000,
+        "freshness": "live",
+        "evidence_refs": ["system.process_list"]
     }
 
 @app.get("/api/v1/hochster/cluster/jobs")

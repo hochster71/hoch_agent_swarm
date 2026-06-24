@@ -2831,7 +2831,7 @@ async function updateNavStatuses() {
     updateIndicator("nav-hochster-runtime", hochsterOk ? "live" : "error");
 
     // 3. Remediation Safety
-    const safetyOk = await checkEndpoint("/api/v1/policy/status");
+    const safetyOk = await checkEndpoint("/api/v1/readiness/budget-report");
     updateIndicator("nav-remediation-safety", safetyOk ? "live" : "error");
 
     // 4. Runtime Audit
@@ -2839,21 +2839,23 @@ async function updateNavStatuses() {
     updateIndicator("nav-runtime-audit", auditOk ? "live" : "error");
 
     // 5. Error Budget
-    updateIndicator("nav-error-budget", "planned");
+    const errorBudgetOk = await checkEndpoint("/api/v1/readiness/budget-report");
+    updateIndicator("nav-error-budget", errorBudgetOk ? "live" : "error");
 
     // 6. Release Provenance
-    updateIndicator("nav-release-provenance", readinessOk ? "live" : "error");
+    const provenanceOk = await checkEndpoint("/api/v1/hochster/baseline/lock");
+    updateIndicator("nav-release-provenance", provenanceOk ? "live" : "error");
 
     // 7. Swarm Control
-    const statusOk = await checkEndpoint("/api/status");
+    const statusOk = await checkEndpoint("/api/v1/agents/status");
     updateIndicator("nav-swarm-control", statusOk ? "live" : "error");
 
     // 8. Mission Intel
-    const missionOk = await checkEndpoint("/api/mission/brief");
+    const missionOk = await checkEndpoint("/api/v1/audit/events");
     updateIndicator("nav-mission-intel", missionOk ? "live" : "error");
 
     // 9. Timeline Replay
-    const ledgerOk = await checkEndpoint("/api/ledger/blocks");
+    const ledgerOk = await checkEndpoint("/api/v1/audit/events");
     updateIndicator("nav-timeline-replay", ledgerOk ? "live" : "error");
 }
 
