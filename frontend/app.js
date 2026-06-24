@@ -45,29 +45,43 @@ const modalAgentsContainer = document.getElementById("modal-agents-container");
 
 // Tab Navigation Elements
 const navItems = {
-    dashboard: { nav: document.getElementById("nav-dashboard"), view: document.getElementById("view-dashboard") },
-    assets: { nav: document.getElementById("nav-assets"), view: document.getElementById("view-assets") },
-    swarms: { nav: document.getElementById("nav-swarms"), view: document.getElementById("view-swarms") },
-    tasks: { nav: document.getElementById("nav-tasks"), view: document.getElementById("view-tasks") },
-    metrics: { nav: document.getElementById("nav-metrics"), view: document.getElementById("view-metrics") },
-    security: { nav: document.getElementById("nav-security"), view: document.getElementById("view-security") },
+    // Keep settings because of line 414
     settings: { nav: document.getElementById("nav-settings"), view: document.getElementById("view-settings") },
-    pert: { nav: document.getElementById("nav-pert"), view: document.getElementById("view-pert") },
-    mission: { nav: document.getElementById("nav-mission"), view: document.getElementById("view-mission") },
-    audit: { nav: document.getElementById("nav-audit"), view: document.getElementById("view-audit") },
-    replay: { nav: document.getElementById("nav-replay"), view: document.getElementById("view-replay") },
+
+    // Old key compatibility mappings (aliases to new elements to avoid breaking other files/scripts)
+    dashboard: { nav: document.getElementById("nav-readiness-autopilot"), view: document.getElementById("view-readiness-autopilot") },
+    assets: { nav: document.getElementById("nav-readiness-autopilot"), view: document.getElementById("view-readiness-autopilot") },
+    swarms: { nav: document.getElementById("nav-hochster-runtime"), view: document.getElementById("view-hochster-runtime") },
+    tasks: { nav: document.getElementById("nav-remediation-safety"), view: document.getElementById("view-remediation-safety") },
+    metrics: { nav: document.getElementById("nav-runtime-audit"), view: document.getElementById("view-runtime-audit") },
+    security: { nav: document.getElementById("nav-release-provenance"), view: document.getElementById("view-release-provenance") },
+    pert: { nav: document.getElementById("nav-error-budget"), view: document.getElementById("view-error-budget") },
+    mission: { nav: document.getElementById("nav-mission-intel"), view: document.getElementById("view-mission") },
+    audit: { nav: document.getElementById("nav-runtime-audit"), view: document.getElementById("view-runtime-audit") },
+    replay: { nav: document.getElementById("nav-timeline-replay"), view: document.getElementById("view-replay") },
     collab: { nav: document.getElementById("nav-collab"), view: document.getElementById("view-collab") },
     ledger: { nav: document.getElementById("nav-ledger"), view: document.getElementById("view-ledger") },
     governance: { nav: document.getElementById("nav-governance"), view: document.getElementById("view-governance") },
     redTeam: { nav: document.getElementById("nav-red-team"), view: document.getElementById("view-red-team") },
     executive: { nav: document.getElementById("nav-executive"), view: document.getElementById("view-executive") },
     capabilities: { nav: document.getElementById("nav-capabilities"), view: document.getElementById("view-capabilities") },
-    remediation: { nav: document.getElementById("nav-remediation"), view: document.getElementById("view-remediation") },
+    remediation: { nav: document.getElementById("nav-remediation-safety"), view: document.getElementById("view-remediation-safety") },
     tenancy: { nav: document.getElementById("nav-tenancy"), view: document.getElementById("view-tenancy") },
     compliance: { nav: document.getElementById("nav-compliance"), view: document.getElementById("view-compliance") },
     customerSuccess: { nav: document.getElementById("nav-customer-success"), view: document.getElementById("view-customer-success") },
     revenueOps: { nav: document.getElementById("nav-revenue-ops"), view: document.getElementById("view-revenue-ops") },
-    hochster: { nav: document.getElementById("nav-hochster"), view: document.getElementById("view-hochster") }
+    hochster: { nav: document.getElementById("nav-hochster-runtime"), view: document.getElementById("view-hochster-runtime") },
+
+    // New keys for exact routing
+    readinessAutopilot: { nav: document.getElementById("nav-readiness-autopilot"), view: document.getElementById("view-readiness-autopilot") },
+    hochsterRuntime: { nav: document.getElementById("nav-hochster-runtime"), view: document.getElementById("view-hochster-runtime") },
+    remediationSafety: { nav: document.getElementById("nav-remediation-safety"), view: document.getElementById("view-remediation-safety") },
+    runtimeAudit: { nav: document.getElementById("nav-runtime-audit"), view: document.getElementById("view-runtime-audit") },
+    errorBudget: { nav: document.getElementById("nav-error-budget"), view: document.getElementById("view-error-budget") },
+    releaseProvenance: { nav: document.getElementById("nav-release-provenance"), view: document.getElementById("view-release-provenance") },
+    swarmControl: { nav: document.getElementById("nav-swarm-control"), view: document.getElementById("view-swarm-control") },
+    missionIntel: { nav: document.getElementById("nav-mission-intel"), view: document.getElementById("view-mission") },
+    timelineReplay: { nav: document.getElementById("nav-timeline-replay"), view: document.getElementById("view-replay") }
 };
 
 // Security Audit & Sub-tab Elements
@@ -248,6 +262,14 @@ async function initDashboard() {
                 }
             }
         }, 1000);
+
+        // Start readiness autopilot data fetch and nav status updates immediately
+        fetchReadinessAutopilotData();
+        updateNavStatuses();
+
+        // 5-second interval for readiness autopilot metrics and navigation status checks
+        setInterval(fetchReadinessAutopilotData, 5000);
+        setInterval(updateNavStatuses, 5000);
 
         // Security / governance bootstrap logs
         logToConsoleTerminal("KernelHub", "Tac-C2 Kernel Hub initialization successful.", "system");
@@ -1013,17 +1035,18 @@ Object.keys(navItems).forEach(key => {
             item.view.classList.remove("hidden");
 
             // Custom actions on tab switches
-            if (key === "security") {
+            if (key === "security" || key === "releaseProvenance") {
                 triggerSecurityAudit();
-            } else if (key === "assets") {
+            } else if (key === "assets" || key === "swarmControl") {
                 renderAssetsView(currentNodes);
-            } else if (key === "tasks") {
+            } else if (key === "tasks" || key === "remediationSafety") {
                 fetchAndRenderTasks();
+                if (window.onRemediationTabActive) window.onRemediationTabActive();
             } else if (key === "settings") {
                 renderSettingsNodesList(currentNodes);
-            } else if (key === "audit") {
+            } else if (key === "audit" || key === "runtimeAudit") {
                 fetchAndRenderAuditLogs();
-            } else if (key === "replay") {
+            } else if (key === "replay" || key === "timelineReplay") {
                 if (window.onReplayTabActive) window.onReplayTabActive();
             } else if (key === "collab") {
                 if (window.onCollabTabActive) window.onCollabTabActive();
@@ -1047,8 +1070,10 @@ Object.keys(navItems).forEach(key => {
                 if (window.onCustomerSuccessTabActive) window.onCustomerSuccessTabActive();
             } else if (key === "revenueOps") {
                 if (window.onRevenueOpsTabActive) window.onRevenueOpsTabActive();
-            } else if (key === "hochster") {
+            } else if (key === "hochster" || key === "hochsterRuntime") {
                 if (window.onHochsterTabActive) window.onHochsterTabActive();
+            } else if (key === "readinessAutopilot") {
+                fetchReadinessAutopilotData();
             }
         });
     }
@@ -2721,4 +2746,114 @@ async function fetchAndRenderAuditLogs() {
 window.executeTaskWithMode = executeTaskWithMode;
 window.spawnTaskParticles = spawnTaskParticles;
 window.updateMermaidTopology = updateMermaidTopology;
+
+// ================================================================
+//  OPERATIONAL READINESS & TELEMETRY CHAIN STATUS POLLING
+// ================================================================
+async function fetchReadinessAutopilotData() {
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/readiness/status`);
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const json = await res.json();
+        const rData = json.data || {};
+        
+        const scoreEl = document.getElementById("readiness-autopilot-score");
+        if (scoreEl) scoreEl.textContent = `${rData.readiness_score} / 100`;
+        
+        const statusEl = document.getElementById("readiness-autopilot-status");
+        if (statusEl) {
+            statusEl.textContent = `● ${rData.status}`;
+            statusEl.className = rData.status === "PASS" ? "text-emerald-400 font-bold" : "text-red-400 font-bold";
+        }
+        
+        const budgetEl = document.getElementById("readiness-autopilot-budget");
+        if (budgetEl) budgetEl.textContent = `${rData.error_budget_percentage}%`;
+        
+        const sloEl = document.getElementById("readiness-autopilot-slo");
+        if (sloEl) {
+            sloEl.textContent = rData.slo_status;
+            sloEl.className = rData.slo_status === "COMPLIANT" ? "text-emerald-400 font-bold" : "text-red-400 font-bold";
+        }
+        
+        const autonomyEl = document.getElementById("readiness-autopilot-autonomy");
+        if (autonomyEl) autonomyEl.textContent = rData.autonomy_level;
+        
+        const burnEl = document.getElementById("readiness-autopilot-burn");
+        if (burnEl) burnEl.textContent = Number(rData.burn_rate).toFixed(2);
+    } catch (err) {
+        console.error("Error fetching readiness autopilot data:", err);
+    }
+}
+
+function getNavStatusColor(status) {
+  switch (status) {
+    case "live":
+      return "text-emerald-400";
+    case "planned":
+      return "text-blue-300";
+    case "stale":
+      return "text-amber-300";
+    case "expired":
+    case "error":
+      return "text-red-400";
+    default:
+      return "text-slate-400";
+  }
+}
+
+async function updateNavStatuses() {
+    const checkEndpoint = async (url) => {
+        try {
+            const res = await fetch(`${API_BASE}${url}`);
+            return res.ok;
+        } catch (e) {
+            return false;
+        }
+    };
+
+    const updateIndicator = (navId, status) => {
+        const navEl = document.getElementById(navId);
+        if (!navEl) return;
+        const indicator = navEl.querySelector(".nav-status-indicator");
+        if (!indicator) return;
+        
+        // Remove existing color classes
+        indicator.classList.remove("text-emerald-400", "text-blue-300", "text-amber-300", "text-red-400", "text-slate-400");
+        indicator.classList.add(getNavStatusColor(status));
+    };
+
+    // 1. Readiness Autopilot
+    const readinessOk = await checkEndpoint("/api/v1/readiness/status");
+    updateIndicator("nav-readiness-autopilot", readinessOk ? "live" : "error");
+
+    // 2. HOCHSTER Runtime
+    const hochsterOk = await checkEndpoint("/api/v1/hochster/health");
+    updateIndicator("nav-hochster-runtime", hochsterOk ? "live" : "error");
+
+    // 3. Remediation Safety
+    const safetyOk = await checkEndpoint("/api/v1/policy/status");
+    updateIndicator("nav-remediation-safety", safetyOk ? "live" : "error");
+
+    // 4. Runtime Audit
+    const auditOk = await checkEndpoint("/api/v1/audit/runtime/execution");
+    updateIndicator("nav-runtime-audit", auditOk ? "live" : "error");
+
+    // 5. Error Budget
+    updateIndicator("nav-error-budget", "planned");
+
+    // 6. Release Provenance
+    updateIndicator("nav-release-provenance", readinessOk ? "live" : "error");
+
+    // 7. Swarm Control
+    const statusOk = await checkEndpoint("/api/status");
+    updateIndicator("nav-swarm-control", statusOk ? "live" : "error");
+
+    // 8. Mission Intel
+    const missionOk = await checkEndpoint("/api/mission/brief");
+    updateIndicator("nav-mission-intel", missionOk ? "live" : "error");
+
+    // 9. Timeline Replay
+    const ledgerOk = await checkEndpoint("/api/ledger/blocks");
+    updateIndicator("nav-timeline-replay", ledgerOk ? "live" : "error");
+}
 
