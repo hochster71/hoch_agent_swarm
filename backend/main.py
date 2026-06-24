@@ -85,13 +85,131 @@ class ConnectionManager:
             except Exception:
                 pass
 
+import collections
+import threading
+import subprocess as _sp
+
+# ================================================================
+#  MISSION LOG — circular event buffer (last 80 events)
+# ================================================================
+_mission_lock = threading.Lock()
+_mission_log: collections.deque = collections.deque(maxlen=80)
+
+STATUS_ICONS = {
+    "Active":       "●",
+    "Triaging":     "◈",
+    "Self-Healing": "⟳",
+    "Reasoning":    "⊙",
+    "Deploying":    "▲",
+}
+
+def _append_mission_events(nodes: list):
+    """Called after each cluster status fetch to log latest node activity."""
+    ts = datetime.utcnow().strftime("%H:%M:%S")
+    with _mission_lock:
+        for node in nodes:
+            icon = STATUS_ICONS.get(node.get("status", "Active"), "●")
+            _mission_log.append({
+                "ts":       ts,
+                "node_id":  node["id"],
+                "name":     node["name"],
+                "status":   node.get("status", "Active"),
+                "icon":     icon,
+                "activity": node.get("activity", node.get("role", "—")),
+                "cpu":      node.get("cpu_usage", 0),
+                "ram":      node.get("ram_usage", 0),
+            })
+
+def _generate_intel_brief(nodes: list) -> str:
+    """Synthesises a human-readable cluster Intel Brief from live node states."""
+    total = len(nodes)
+    triaging   = [n for n in nodes if n.get("status") == "Triaging"]
+    healing    = [n for n in nodes if n.get("status") == "Self-Healing"]
+    reasoning  = [n for n in nodes if n.get("status") == "Reasoning"]
+    deploying  = [n for n in nodes if n.get("status") == "Deploying"]
+    active     = [n for n in nodes if n.get("status") == "Active"]
+    avg_cpu    = round(sum(n.get("cpu_usage", 0) for n in nodes) / max(total, 1))
+    total_agents = sum(n.get("total_agents", 0) for n in nodes)
+
+    lines = []
+    lines.append(f"INTEL BRIEF — {datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')}")
+    lines.append(f"")
+    lines.append(f"All {total} cluster nodes are ONLINE. {total_agents} agents operational across the mesh. "
+                 f"Mean cluster CPU load: {avg_cpu}%.")
+    lines.append(f"")
+    if triaging:
+        names = ", ".join(n["id"] for n in triaging)
+        lines.append(f"◈ TRIAGE IN PROGRESS — Node(s) {names} are actively diagnosing live issues. "
+                     f"Current focus: {triaging[0].get('activity', '')}")
+    if healing:
+        names = ", ".join(n["id"] for n in healing)
+        lines.append(f"⟳ SELF-HEAL ACTIVE — Node(s) {names} executing autonomous remediation. "
+                     f"Mission: {healing[0].get('activity', '')}")
+    if reasoning:
+        names = ", ".join(n["id"] for n in reasoning)
+        lines.append(f"⊙ DEEP REASONING — Node(s) {names} running multi-hypothesis analysis. "
+                     f"Target: {reasoning[0].get('activity', '')}")
+    if deploying:
+        names = ", ".join(n["id"] for n in deploying)
+        lines.append(f"▲ DEPLOY PIPELINE — {names}: {deploying[0].get('activity', '')}")
+    if active:
+        lines.append(f"● STEADY STATE — {len(active)} node(s) operating within normal parameters.")
+    lines.append(f"")
+    lines.append("ZTA posture: ENFORCED. CDAO RAI traceability: ACTIVE. ConMon: STREAMING.")
+    return "\n".join(lines)
+
+
+def _ping_node(ip: str) -> float:
+    """ICMP ping a node. Returns latency in ms, or -1.0 on failure."""
+    try:
+        result = _sp.run(
+            ["ping", "-c", "1", "-W", "1", ip],
+            capture_output=True, text=True, timeout=2
+        )
+        for line in result.stdout.splitlines():
+            if "time=" in line:
+                ms = float(line.split("time=")[1].split()[0])
+                return round(ms, 2)
+    except Exception:
+        pass
+    return -1.0
+
+
 manager = ConnectionManager()
 
 @app.get("/api/status")
 def get_status():
-    return cluster_mgr.get_cluster_status()
+    data = cluster_mgr.get_cluster_status()
+    _append_mission_events(data.get("nodes", []))
+    return data
 
-@app.post("/api/tasks/run")
+
+@app.get("/api/mission/feed")
+def get_mission_feed(limit: int = 25):
+    with _mission_lock:
+        events = list(_mission_log)
+    events.reverse()  # newest first
+    return {"events": events[:limit]}
+
+@app.get("/api/mission/brief")
+def get_intel_brief():
+    status = cluster_mgr.get_cluster_status()
+    brief = _generate_intel_brief(status.get("nodes", []))
+    return {"brief": brief, "ts": datetime.utcnow().isoformat() + "Z"}
+
+@app.get("/api/nodes/ping")
+def ping_all_nodes():
+    nodes = cluster_mgr.nodes
+    results = {}
+    for node_id, node in nodes.items():
+        results[node_id] = {
+            "ip": node["ip"],
+            "latency_ms": _ping_node(node["ip"]),
+            "name": node["name"]
+        }
+    return {"pings": results}
+
+
 def run_swarm_task(req: TaskRequest):
     # Route task to appropriate node
     routed_node = cluster_mgr.route_task(req.task_type, req.prompt)

@@ -52,7 +52,8 @@ const navItems = {
     metrics: { nav: document.getElementById("nav-metrics"), view: document.getElementById("view-metrics") },
     security: { nav: document.getElementById("nav-security"), view: document.getElementById("view-security") },
     settings: { nav: document.getElementById("nav-settings"), view: document.getElementById("view-settings") },
-    pert: { nav: document.getElementById("nav-pert"), view: document.getElementById("view-pert") }
+    pert: { nav: document.getElementById("nav-pert"), view: document.getElementById("view-pert") },
+    mission: { nav: document.getElementById("nav-mission"), view: document.getElementById("view-mission") }
 };
 
 // Security Audit & Sub-tab Elements
@@ -166,6 +167,11 @@ async function initDashboard() {
         }
         setupWebsocket();
         fetchAndRenderTasks();
+        // Mission Intel bootstrap — load brief + start feed polling
+        setTimeout(() => {
+            loadIntelBrief("dash-intel-brief-text", "mission-brief-ts");
+            startMissionPolling();
+        }, 1200);
     } catch (err) {
         console.error("Error initializing dashboard: ", err);
         // Fallback polling if WebSocket fails
@@ -2047,3 +2053,202 @@ async function resetPertTasks() {
 })();
 
 
+// ================================================================
+//  PHASE 10: MISSION INTELLIGENCE MODULE
+// ================================================================
+
+// --- Status colour map (left-border of feed rows) ---
+const MISSION_STATUS_COLOURS = {
+    "Active":       "#10b981",
+    "Triaging":     "#f59e0b",
+    "Self-Healing": "#a855f7",
+    "Reasoning":    "#3b82f6",
+    "Deploying":    "#06b6d4",
+};
+
+/**
+ * Fetch /api/mission/feed and render events into the given container.
+ * @param {string} containerId  — ID of the <div> to render into
+ */
+async function loadMissionFeed(containerId = "mission-event-feed") {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    try {
+        const resp = await fetch(`${API_BASE}/api/mission/feed?limit=30`);
+        if (!resp.ok) return;
+        const { events } = await resp.json();
+        if (!events || events.length === 0) return;
+
+        container.innerHTML = "";
+        events.forEach(ev => {
+            const borderCol = MISSION_STATUS_COLOURS[ev.status] || "#10b981";
+            const sc = getStatusClass(ev.status);
+            const row = document.createElement("div");
+            row.className = "mission-event-row";
+            row.style.cssText = `
+                display: flex; align-items: flex-start; gap: 10px;
+                padding: 7px 10px; border-radius: 6px;
+                background: rgba(255,255,255,0.03);
+                border-left: 3px solid ${borderCol};
+                transition: background 0.2s;
+                flex-shrink: 0;
+            `;
+            row.innerHTML = `
+                <span style="font-size: 9px; color: var(--text-secondary); font-family: monospace; white-space: nowrap; margin-top: 1px;">${ev.ts}</span>
+                <div style="display: flex; flex-direction: column; min-width: 0; flex: 1;">
+                    <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                        <span style="font-size: 10px; font-weight: 700; color: #fff; font-family: monospace;">${ev.icon} ${ev.node_id}</span>
+                        <span class="node-status-label ${sc}" style="font-size: 7px; padding: 1px 5px;">${ev.status}</span>
+                        <span style="font-size: 9px; color: var(--text-secondary); font-family: monospace;">CPU ${ev.cpu}% · RAM ${ev.ram}%</span>
+                    </div>
+                    <span style="font-size: 10px; color: var(--text-secondary); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${ev.activity}</span>
+                </div>
+            `;
+            row.addEventListener("mouseenter", () => row.style.background = "rgba(255,255,255,0.06)");
+            row.addEventListener("mouseleave", () => row.style.background = "rgba(255,255,255,0.03)");
+            container.appendChild(row);
+        });
+    } catch (e) {
+        console.warn("Mission feed load error:", e);
+    }
+}
+
+/**
+ * Typewriter-animates the Intel Brief into a target element.
+ */
+let _briefTypewriterTimer = null;
+function typewriterAnimate(el, text, speed = 12) {
+    if (_briefTypewriterTimer) clearInterval(_briefTypewriterTimer);
+    el.textContent = "";
+    let i = 0;
+    _briefTypewriterTimer = setInterval(() => {
+        el.textContent += text[i] || "";
+        i++;
+        if (i >= text.length) clearInterval(_briefTypewriterTimer);
+    }, speed);
+}
+
+/**
+ * Fetch /api/mission/brief and display with typewriter animation.
+ * @param {string} textElId — ID of the <div> for the brief text
+ * @param {string} tsElId   — ID of the timestamp label (optional)
+ */
+async function loadIntelBrief(textElId = "mission-intel-brief-text", tsElId = "mission-brief-ts") {
+    const textEl = document.getElementById(textElId);
+    const tsEl   = tsElId ? document.getElementById(tsElId) : null;
+    if (!textEl) return;
+    try {
+        const resp = await fetch(`${API_BASE}/api/mission/brief`);
+        if (!resp.ok) return;
+        const { brief, ts } = await resp.json();
+        // Colour the header line differently
+        typewriterAnimate(textEl, brief, 10);
+        if (tsEl && ts) tsEl.textContent = ts.replace("T", " ").split(".")[0] + "Z";
+    } catch (e) {
+        console.warn("Intel brief load error:", e);
+        if (textEl) textEl.textContent = "[ Brief unavailable — server may be restarting ]";
+    }
+}
+
+/**
+ * Fetch /api/nodes/ping and render a latency table.
+ */
+async function loadPingTable(containerId = "mission-ping-table") {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = `<span style="font-size:11px;color:var(--text-secondary);font-style:italic;">Pinging all nodes...</span>`;
+    try {
+        const resp = await fetch(`${API_BASE}/api/nodes/ping`);
+        if (!resp.ok) throw new Error("Ping API error");
+        const { pings } = await resp.json();
+        container.innerHTML = "";
+        Object.entries(pings).forEach(([nodeId, info]) => {
+            const ms = info.latency_ms;
+            let latColour = "#10b981";  // green
+            let latLabel  = `${ms} ms`;
+            if (ms < 0)        { latColour = "#6b7280"; latLabel = "BLOCKED"; }
+            else if (ms > 50)  { latColour = "#ef4444"; }
+            else if (ms > 10)  { latColour = "#f59e0b"; }
+
+            const row = document.createElement("div");
+            row.style.cssText = "display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:rgba(255,255,255,0.03);border-radius:6px;gap:10px;";
+            row.innerHTML = `
+                <span style="font-family:monospace;font-size:11px;font-weight:700;color:#fff;">${nodeId}</span>
+                <span style="font-size:10px;color:var(--text-secondary);flex:1;margin-left:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${info.name}</span>
+                <span style="font-size:10px;color:var(--text-secondary);font-family:monospace;">${info.ip}</span>
+                <span class="ping-badge" style="
+                    font-family:monospace;font-size:10px;font-weight:700;
+                    padding:2px 10px;border-radius:12px;
+                    background:${latColour}22;
+                    border:1px solid ${latColour}55;
+                    color:${latColour};
+                    white-space:nowrap;
+                ">${latLabel}</span>
+            `;
+            container.appendChild(row);
+        });
+    } catch (e) {
+        console.warn("Ping load error:", e);
+        container.innerHTML = `<span style="font-size:11px;color:#ef4444;">Ping request failed — check backend.</span>`;
+    }
+}
+
+/** Polling intervals for mission module. */
+let _missionFeedInterval = null;
+
+function startMissionPolling() {
+    // Clear any old intervals
+    if (_missionFeedInterval) clearInterval(_missionFeedInterval);
+
+    // Immediately load
+    loadMissionFeed("mission-event-feed");
+    loadMissionFeed("dash-mission-feed"); // Dashboard strip (if exists)
+
+    // Poll feed every 4 seconds
+    _missionFeedInterval = setInterval(() => {
+        loadMissionFeed("mission-event-feed");
+    }, 4000);
+}
+
+// ---- Boot IIFE: wire Mission Intel tab ----
+(function initMissionModule() {
+    const navMission = document.getElementById("nav-mission");
+    if (!navMission) return;
+
+    let missionActivated = false;
+
+    navMission.addEventListener("click", async () => {
+        if (!missionActivated) {
+            missionActivated = true;
+            // Full-page feed
+            await loadMissionFeed("mission-event-feed");
+            await loadIntelBrief("mission-intel-brief-text", "mission-brief-ts");
+        }
+        // Refresh feed on every visit
+        loadMissionFeed("mission-event-feed");
+    });
+
+    // Refresh Brief button (full-page view)
+    const btnRefreshBrief = document.getElementById("btn-mission-refresh-brief");
+    if (btnRefreshBrief) {
+        btnRefreshBrief.addEventListener("click", () => {
+            loadIntelBrief("mission-intel-brief-text", "mission-brief-ts");
+        });
+    }
+
+    // Ping All button
+    const btnPingAll = document.getElementById("btn-mission-ping-all");
+    if (btnPingAll) {
+        btnPingAll.addEventListener("click", () => {
+            loadPingTable("mission-ping-table");
+        });
+    }
+
+    // Dashboard Intel Brief refresh button
+    const btnRefreshDash = document.getElementById("btn-refresh-brief");
+    if (btnRefreshDash) {
+        btnRefreshDash.addEventListener("click", () => {
+            loadIntelBrief("dash-intel-brief-text", null);
+        });
+    }
+})();
