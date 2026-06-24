@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+/* Kimi-Style Comic Swarm Custom Styles */
+@keyframes pulse-core {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); border-color: var(--accent-teal); }
+    50% { box-shadow: 0 0 15px 5px rgba(16, 185, 129, 0.2); border-color: #34d399; }
+}
+.pulse-active {
+    animation: pulse-core 2s infinite !important;
+}
+.loop-stage.active-stage {
+    background: rgba(16, 185, 129, 0.15) !important;
+    border-color: var(--accent-teal) !important;
+    color: var(--accent-teal) !important;
+    font-weight: 700;
+}
+

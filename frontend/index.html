@@ -222,6 +222,106 @@
 
                     </div>
                 </div>
+
+                <!-- Kimi-Style Comic Swarm Section -->
+                <div id="kimi-style-comic-swarm-interface" class="card mt-6" style="padding: 20px; margin-top: 24px;">
+                    <div style="border-bottom: 1px solid var(--border-glass); padding-bottom: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+                        <h2 style="font-size: 16px; font-family: var(--font-heading); font-weight: 700; color: var(--accent-teal);">Hoch Agent Swarm: Kimi-Style Comic Swarm</h2>
+                        <span class="badge badge-info">OPERATIONAL MESH</span>
+                    </div>
+
+                    <!-- Prompt area -->
+                    <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+                        <input type="text" id="kimi-comic-prompt-input" placeholder="Ask the swarm anything. Example: research YouTube videos for Docker debugging and harden Hoch Agent Swarm." style="flex-grow: 1; background: rgba(0,0,0,0.4); border: 1px solid var(--border-glass); color: #fff; padding: 10px 16px; border-radius: 8px; outline: none; font-size: 13px;">
+                        <button id="kimi-comic-spinup-button" class="btn btn-primary" style="padding: 10px 20px; font-size: 13px; font-weight: 600;">Spin Up Swarm</button>
+                    </div>
+
+                    <!-- Pipeline stages (Command Loop) -->
+                    <div id="kimi-comic-command-loop" style="display: flex; gap: 12px; margin-bottom: 20px; justify-content: center;">
+                        <span class="loop-stage" id="stage-plan" style="padding: 4px 12px; border-radius: 4px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); font-family: monospace; font-size: 11px; color: var(--text-secondary);">Plan</span>
+                        <span class="loop-stage" id="stage-research" style="padding: 4px 12px; border-radius: 4px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); font-family: monospace; font-size: 11px; color: var(--text-secondary);">Research</span>
+                        <span class="loop-stage" id="stage-execute" style="padding: 4px 12px; border-radius: 4px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); font-family: monospace; font-size: 11px; color: var(--text-secondary);">Execute</span>
+                        <span class="loop-stage" id="stage-verify" style="padding: 4px 12px; border-radius: 4px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); font-family: monospace; font-size: 11px; color: var(--text-secondary);">Verify</span>
+                        <span class="loop-stage" id="stage-report" style="padding: 4px 12px; border-radius: 4px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); font-family: monospace; font-size: 11px; color: var(--text-secondary);">Report</span>
+                    </div>
+
+                    <!-- Canvas for drawing connecting lines -->
+                    <div style="position: relative; width: 100%;">
+                        <canvas id="kimi-comic-motion-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5;"></canvas>
+                        
+                        <!-- Visual grid layout -->
+                        <div style="display: grid; grid-template-columns: 1fr 1.2fr 1fr; gap: 20px; position: relative; z-index: 10;">
+                            
+                            <!-- Left Col: Mission Core & Agent Ring -->
+                            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 280px;">
+                                <div id="kimi-comic-mission-core" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--accent-teal); background: rgba(16, 185, 129, 0.1); display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                                    <span style="font-size: 11px; font-weight: bold; color: var(--accent-teal); font-family: var(--font-heading);">Mission Core</span>
+                                </div>
+                                <div id="kimi-comic-agent-ring" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
+                                    <!-- Populated dynamically -->
+                                </div>
+                            </div>
+
+                            <!-- Center Col: YouTube Research Lane -->
+                            <div id="kimi-comic-youtube-research-lane" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 8px; padding: 16px; display: flex; flex-direction: column;">
+                                <h3 style="font-size: 12px; font-family: var(--font-heading); font-weight: 600; color: var(--text-primary); border-bottom: 1px solid var(--border-glass); padding-bottom: 8px; margin-bottom: 12px;">YouTube Research Lane</h3>
+                                <div style="font-size: 10px; color: var(--text-secondary); margin-bottom: 8px; font-weight: 500;">Video Candidates</div>
+                                <div id="kimi-comic-video-candidate-grid" style="display: flex; flex-direction: column; gap: 10px; overflow-y: auto; max-height: 220px; flex-grow: 1;">
+                                    <!-- YouTube candidate cards populate here -->
+                                </div>
+                            </div>
+
+                            <!-- Right Col: Asset Plane -->
+                            <div id="kimi-comic-asset-plane" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 8px; padding: 16px; display: flex; flex-direction: column;">
+                                <h3 style="font-size: 12px; font-family: var(--font-heading); font-weight: 600; color: var(--text-primary); border-bottom: 1px solid var(--border-glass); padding-bottom: 8px; margin-bottom: 12px;">Asset Assignment Plane</h3>
+                                <div id="kimi-comic-asset-grid" style="display: grid; grid-template-columns: 1fr; gap: 8px; font-size: 11px; overflow-y: auto; max-height: 220px; flex-grow: 1;">
+                                    <!-- Assets list -->
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Work logs feed -->
+                    <div style="margin-top: 20px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-glass); border-radius: 8px; padding: 12px;">
+                        <h3 style="font-family: monospace; font-size: 10px; color: var(--accent-teal); font-weight: bold; margin-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 4px;">SWARM ACTIVE WORKSTREAM FEED</h3>
+                        <div id="kimi-comic-work-feed" style="font-family: monospace; font-size: 11px; color: rgba(16, 185, 129, 0.85); max-height: 100px; overflow-y: auto; text-align: left; height: 60px; line-height: 1.4; white-space: pre-wrap;">Idle. Waiting for prompt to activate swarm.</div>
+                    </div>
+
+                    <!-- Agent Profiles Deck -->
+                    <div style="margin-top: 24px;">
+                        <h3 style="font-size: 13px; font-family: var(--font-heading); font-weight: 600; color: var(--text-primary); border-bottom: 1px solid var(--border-glass); padding-bottom: 8px; margin-bottom: 16px;">Agent Profiles</h3>
+                        <div id="kimi-comic-agent-profile-deck" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+                            <!-- Populated with dynamic agent profiles cards -->
+                        </div>
+                    </div>
+
+                    <!-- Gordon container whisperer panel -->
+                    <div id="gordon-container-whisperer-panel" style="margin-top: 24px; background: rgba(255,255,255,0.02); border: 1px solid rgba(99,102,241,0.2); border-radius: 8px; padding: 16px; display: flex; gap: 20px; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 250px; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <h3 style="font-size: 13px; font-family: var(--font-heading); font-weight: 600; color: #818cf8; margin-bottom: 6px;">Gordon Container Whisperer</h3>
+                                <p style="font-size: 11px; color: var(--text-secondary); font-style: italic; line-height: 1.4;">"The container will tell us what hurts."</p>
+                            </div>
+                            <div style="font-size: 9px; color: var(--text-secondary); margin-top: 12px; font-family: monospace;">
+                                Catchphrases of Swarm:<br>
+                                • "If it is not evidenced, it did not happen."<br>
+                                • "Ship only what can defend itself."
+                            </div>
+                        </div>
+                        <div style="flex: 2; min-width: 280px;">
+                            <div style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;">Docker Diagnostic Checklist</div>
+                            <ul style="list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 11px; color: var(--text-secondary);" id="gordon-checklist-container">
+                                <li style="display: flex; align-items: center; gap: 8px;"><input type="checkbox" id="gordon-chk-logs" disabled style="pointer-events: none;"> <span>read container logs</span></li>
+                                <li style="display: flex; align-items: center; gap: 8px;"><input type="checkbox" id="gordon-chk-health" disabled style="pointer-events: none;"> <span>inspect health status</span></li>
+                                <li style="display: flex; align-items: center; gap: 8px;"><input type="checkbox" id="gordon-chk-deps" disabled style="pointer-events: none;"> <span>verify compose dependencies</span></li>
+                                <li style="display: flex; align-items: center; gap: 8px;"><input type="checkbox" id="gordon-chk-bind" disabled style="pointer-events: none;"> <span>isolate network binding</span></li>
+                                <li style="display: flex; align-items: center; gap: 8px;"><input type="checkbox" id="gordon-chk-patch" disabled style="pointer-events: none;"> <span>propose minimal patch</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
             </div>
 
             <!-- Runtime Audit View (Hidden by default) -->

@@ -2914,7 +2914,509 @@ function renderRemediationIncidentRows(incidents) {
 }
 
 
-document.getElementById("nav-remediation-safety")?.addEventListener("click", () => {
-    fetchRemediationSafetyData();
-});
 setInterval(fetchRemediationSafetyData, 5000);
+
+// ==============================================================================
+// Kimi-Style Swarm Comic Interface Implementation
+// ==============================================================================
+
+const hochComicAgents = [
+  {
+    id: "research",
+    name: "Research Agent",
+    tag: "TRUTH HUNTER",
+    look: "magnifying glass, tiny antenna, notebook",
+    catchphrase: "I find the signal before anyone patches.",
+    skills: ["YouTube research", "source triage", "pattern extraction", "context mapping"],
+    currentAssignment: "Find relevant video candidates and extract repair patterns"
+  },
+  {
+    id: "architect",
+    name: "Architect Agent",
+    tag: "SYSTEM CARTOONIST",
+    look: "blueprint cape, crooked ruler",
+    catchphrase: "Every fix needs a shape.",
+    skills: ["system design", "dependency mapping", "failure-mode planning"],
+    currentAssignment: "Convert research into a safe system plan"
+  },
+  {
+    id: "code",
+    name: "Code Agent",
+    tag: "PATCH MONK",
+    look: "code brackets, tiny keyboard sword",
+    catchphrase: "Small diff. Big effect.",
+    skills: ["implementation", "refactor", "integration", "config repair"],
+    currentAssignment: "Implement the smallest safe patch"
+  },
+  {
+    id: "qa",
+    name: "QA Agent",
+    tag: "BUG BOUNCER",
+    look: "clipboard shield, checkmark helmet",
+    catchphrase: "No proof, no pass.",
+    skills: ["build validation", "regression tests", "E2E", "UI contracts"],
+    currentAssignment: "Prove the fix works"
+  },
+  {
+    id: "security",
+    name: "Security Agent",
+    tag: "GUARDRAIL GOBLIN",
+    look: "shield, lock belt, suspicious eyebrows",
+    catchphrase: "Freedom inside fences.",
+    skills: ["secret checks", "command risk", "dependency risk", "policy gates"],
+    currentAssignment: "Reject unsafe advice and risky commands"
+  },
+  {
+    id: "gordon",
+    name: "Gordon Docker Debugger",
+    tag: "CONTAINER WHISPERER",
+    look: "glasses, coffee mug, Docker cube",
+    catchphrase: "The container will tell us what hurts.",
+    skills: ["docker logs", "docker inspect", "health checks", "compose diagnosis", "root-cause isolation"],
+    currentAssignment: "Extract container debug patterns and propose exact checks"
+  },
+  {
+    id: "remediation",
+    name: "Remediation Agent",
+    tag: "FIX GREMLIN",
+    look: "wrench, bandage roll, sparks",
+    catchphrase: "Failure is unfinished repair.",
+    skills: ["self-healing", "rollback planning", "safety gates", "dry runs"],
+    currentAssignment: "Repair failed gates without breaking invariants"
+  },
+  {
+    id: "audit",
+    name: "Audit Agent",
+    tag: "RECEIPT WIZARD",
+    look: "ledger scroll, stamp, monocle",
+    catchphrase: "If it is not evidenced, it did not happen.",
+    skills: ["trace IDs", "evidence packs", "provenance", "release records"],
+    currentAssignment: "Record source candidates, decisions, and verification"
+  },
+  {
+    id: "release",
+    name: "Release Agent",
+    tag: "SHIP JUDGE",
+    look: "rocket stamp, robe, gavel",
+    catchphrase: "Ship only what can defend itself.",
+    skills: ["release readiness", "SBOM/provenance", "final gate decision"],
+    currentAssignment: "Decide whether the result is shippable"
+  }
+];
+
+const hochYoutubeResearchCandidates = [
+  {
+    title: "Docker container exits immediately: logs and entrypoint diagnosis",
+    channel: "Research Candidate",
+    signal: "container lifecycle",
+    extractedPattern: "Start with logs, inspect exit code, verify entrypoint and command"
+  },
+  {
+    title: "Docker Compose healthcheck failures and dependency timing",
+    channel: "Research Candidate",
+    signal: "compose health",
+    extractedPattern: "Inspect healthcheck command, interval, retries, service readiness"
+  },
+  {
+    title: "Debugging container networking and localhost binding",
+    channel: "Research Candidate",
+    signal: "network routing",
+    extractedPattern: "Check published ports, bridge network, service hostnames"
+  },
+  {
+    title: "Optimizing Docker images and runtime startup",
+    channel: "Research Candidate",
+    signal: "runtime performance",
+    extractedPattern: "Reduce layers, check startup path, cache dependencies"
+  }
+];
+
+function getAgentSvg(id) {
+    const head = `<circle cx="40" cy="25" r="10" stroke="currentColor" stroke-width="2" fill="none" />`;
+    const spine = `<line x1="40" y1="35" x2="40" y2="60" stroke="currentColor" stroke-width="2" />`;
+    const arms = `<line x1="40" y1="45" x2="25" y2="40" stroke="currentColor" stroke-width="2" />
+                  <line x1="40" y1="45" x2="55" y2="40" stroke="currentColor" stroke-width="2" />`;
+    const legs = `<line x1="40" y1="60" x2="30" y2="80" stroke="currentColor" stroke-width="2" />
+                  <line x1="40" y1="60" x2="50" y2="80" stroke="currentColor" stroke-width="2" />`;
+    
+    let accessory = '';
+    if (id === 'research') {
+        accessory = `
+            <circle cx="20" cy="35" r="5" stroke="#10b981" stroke-width="2" fill="none" />
+            <line x1="23" y1="38" x2="25" y2="40" stroke="#10b981" stroke-width="2" />
+            <rect x="52" y="32" width="10" height="12" rx="1" fill="#1e293b" stroke="currentColor" stroke-width="1.5" />
+            <line x1="54" y1="36" x2="60" y2="36" stroke="currentColor" stroke-width="1" />
+            <line x1="54" y1="40" x2="58" y2="40" stroke="currentColor" stroke-width="1" />
+        `;
+    } else if (id === 'architect') {
+        accessory = `
+            <path d="M40,35 L20,60 L40,55 Z" fill="rgba(59, 130, 246, 0.4)" stroke="#3b82f6" stroke-width="1" />
+            <line x1="20" y1="40" x2="30" y2="30" stroke="#3b82f6" stroke-width="2.5" />
+        `;
+    } else if (id === 'code') {
+        accessory = `
+            <text x="10" y="35" fill="#a855f7" font-size="14" font-weight="bold">[</text>
+            <text x="62" y="35" fill="#a855f7" font-size="14" font-weight="bold">]</text>
+            <line x1="55" y1="40" x2="70" y2="25" stroke="#a855f7" stroke-width="2.5" />
+        `;
+    } else if (id === 'qa') {
+        accessory = `
+            <polygon points="12,30 22,30 25,42 17,47 9,42" fill="rgba(16, 185, 129, 0.3)" stroke="#10b981" stroke-width="1.5" />
+            <path d="M13,38 L16,41 L21,35" stroke="#10b981" stroke-width="2" fill="none" />
+        `;
+    } else if (id === 'security') {
+        accessory = `
+            <rect x="52" y="42" width="12" height="10" rx="1" fill="#f97316" stroke="none" />
+            <path d="M55,42 L55,38 A3,3 0 0,1 61,38 L61,42" stroke="#f97316" stroke-width="1.5" fill="none" />
+            <path d="M36,20 L39,22 M44,20 L41,22" stroke="#f97316" stroke-width="2" />
+        `;
+    } else if (id === 'gordon') {
+        accessory = `
+            <circle cx="37" cy="23" r="3" stroke="#818cf8" stroke-width="1.5" fill="none" />
+            <circle cx="43" cy="23" r="3" stroke="#818cf8" stroke-width="1.5" fill="none" />
+            <polygon points="60,40 68,36 76,40 76,48 68,52 60,48" fill="rgba(59, 130, 246, 0.4)" stroke="#3b82f6" stroke-width="1" />
+        `;
+    } else if (id === 'remediation') {
+        accessory = `
+            <path d="M55,35 L65,45 M62,42 L65,39 A2,2 0 1,1 68,42 Z" stroke="#e11d48" stroke-width="2" fill="none" />
+            <circle cx="15" cy="30" r="1" fill="#f59e0b" />
+            <circle cx="20" cy="22" r="1.5" fill="#f59e0b" />
+        `;
+    } else if (id === 'audit') {
+        accessory = `
+            <circle cx="37" cy="24" r="4" stroke="#e2e8f0" stroke-width="1" fill="none" />
+            <path d="M12,45 C15,42 22,48 25,45 L25,60 C22,63 15,57 12,60 Z" fill="rgba(255,255,255,0.05)" stroke="currentColor" stroke-width="1.5" />
+        `;
+    } else if (id === 'release') {
+        accessory = `
+            <line x1="55" y1="45" x2="65" y2="35" stroke="#fbbf24" stroke-width="2" />
+            <rect x="57" y="32" width="6" height="12" rx="1" transform="rotate(45 60 38)" fill="#fbbf24" stroke="none" />
+        `;
+    }
+    
+    return `
+        <svg viewBox="0 0 80 100" style="width:100%; height:100%; color: var(--text-secondary);">
+            ${spine}
+            ${arms}
+            ${legs}
+            ${head}
+            ${accessory}
+        </svg>
+    `;
+}
+
+function renderKimiStyleComicSwarmInterface() {
+    renderHochComicAgentProfiles();
+    renderYoutubeResearchLane();
+    renderGordonContainerWhispererPanel();
+    
+    // Clear dynamic states
+    const ring = document.getElementById("kimi-comic-agent-ring");
+    if (ring) {
+        ring.innerHTML = hochComicAgents.map(a => `
+            <div id="ring-dot-${a.id}" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--text-secondary); font-weight: bold; transition: all 0.3s;" title="${a.name}">
+                ${a.name.split(" ")[0][0]}
+            </div>
+        `).join("");
+    }
+
+    const assetGrid = document.getElementById("kimi-comic-asset-grid");
+    if (assetGrid) {
+        assetGrid.innerHTML = `
+            <div style="border: 1px dashed var(--border-glass); border-radius: 6px; padding: 12px; text-align: center; color: var(--text-secondary); width: 100%;">
+                Asset plane standing by...
+            </div>
+        `;
+    }
+}
+
+function renderHochComicAgentProfiles() {
+    const deck = document.getElementById("kimi-comic-agent-profile-deck");
+    if (!deck) return;
+    deck.innerHTML = hochComicAgents.map(a => `
+        <div id="profile-card-${a.id}" class="card" style="padding:12px; opacity: 0.3; transition: all 0.5s ease-in-out; border: 1px solid var(--border-glass); background: rgba(22, 28, 45, 0.4);">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid var(--border-glass); padding-bottom:6px; margin-bottom:8px;">
+                <span style="font-weight:700; font-size:12px; color:var(--text-primary);">${a.name}</span>
+                <span style="font-size:9px; background:rgba(16, 185, 129, 0.1); border:1px solid rgba(16, 185, 129, 0.3); color:var(--accent-teal); padding:2px 6px; border-radius:4px; font-family:monospace; font-weight:bold;">${a.tag}</span>
+            </div>
+            <div style="display:flex; gap:12px; align-items:center; margin-bottom:8px;">
+                <div style="border: 1px solid var(--border-glass); border-radius:50%; background:rgba(0,0,0,0.2); width:48px; height:48px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                    ${getAgentSvg(a.id)}
+                </div>
+                <div style="font-size:10px; color:var(--text-secondary); font-style: italic; line-height:1.3; text-align:left;">
+                    <strong>Catchphrase:</strong> "${a.catchphrase}"
+                </div>
+            </div>
+            <div style="font-size:10px; color:var(--text-secondary); text-align:left; line-height:1.4;">
+                <div style="margin-bottom:4px;"><strong>Look:</strong> ${a.look}</div>
+                <div style="margin-bottom:4px;"><strong>Skills:</strong> ${a.skills.join(", ")}</div>
+                <div id="profile-assign-${a.id}" style="color:var(--accent-blue); font-weight:500;"><strong>Status:</strong> Idle</div>
+            </div>
+        </div>
+    `).join("");
+}
+
+function renderYoutubeResearchLane() {
+    const grid = document.getElementById("kimi-comic-video-candidate-grid");
+    if (!grid) return;
+    grid.innerHTML = `
+        <div style="border: 1px dashed var(--border-glass); border-radius: 6px; padding: 16px; text-align: center; color: var(--text-secondary); font-size: 11px; width: 100%;">
+            Lane standing by. Trigger search to populate research...
+        </div>
+    `;
+}
+
+function animateYoutubeResearchCards() {
+    const grid = document.getElementById("kimi-comic-video-candidate-grid");
+    if (!grid) return;
+    
+    grid.innerHTML = hochYoutubeResearchCandidates.map((c, idx) => `
+        <div class="card" id="video-card-${idx}" style="padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 6px; text-align: left; opacity: 0; transform: translateY(10px); transition: all 0.4s ease-out; margin-bottom: 8px;">
+            <div style="font-size: 11px; font-weight: 600; color: #fff; margin-bottom: 4px; line-height: 1.3;">${c.title}</div>
+            <div style="display:flex; justify-content:space-between; align-items:center; font-size: 9px; color: var(--text-secondary);">
+                <span>${c.channel} • <span style="color:#3b82f6;">${c.signal}</span></span>
+                <span style="font-size:8px; border: 1px solid rgba(245, 158, 11, 0.3); background: rgba(245, 158, 11, 0.05); color: #f59e0b; padding: 1px 4px; border-radius: 3px; font-weight:bold;">candidate, not verified</span>
+            </div>
+            <div style="font-size: 9px; color: var(--accent-teal); margin-top: 6px; font-family: monospace; border-top: 1px solid rgba(255,255,255,0.03); padding-top: 4px;">
+                <strong>Pattern:</strong> ${c.extractedPattern}
+            </div>
+        </div>
+    `).join("");
+
+    hochYoutubeResearchCandidates.forEach((c, idx) => {
+        setTimeout(() => {
+            const card = document.getElementById(`video-card-${idx}`);
+            if (card) {
+                card.style.opacity = "1";
+                card.style.transform = "translateY(0)";
+            }
+        }, idx * 250);
+    });
+}
+
+function animateComicAgentProfiles() {
+    // Handled staggered in spinUp workflow
+}
+
+function drawKimiStyleMotionLines() {
+    const canvas = document.getElementById("kimi-comic-motion-canvas");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const getCoords = (id) => {
+        const el = document.getElementById(id);
+        if (!el) return null;
+        const elRect = el.getBoundingClientRect();
+        return {
+            x: elRect.left - rect.left + elRect.width / 2,
+            y: elRect.top - rect.top + elRect.height / 2
+        };
+    };
+
+    const core = getCoords("kimi-comic-mission-core");
+    const lane = getCoords("kimi-comic-youtube-research-lane");
+    const plane = getCoords("kimi-comic-asset-plane");
+    const input = getCoords("kimi-comic-prompt-input");
+
+    ctx.lineWidth = 1.5;
+    ctx.lineCap = "round";
+
+    const drawLine = (from, to, color) => {
+        if (!from || !to) return;
+        ctx.beginPath();
+        ctx.moveTo(from.x, from.y);
+        ctx.bezierCurveTo(
+            (from.x + to.x) / 2, from.y,
+            (from.x + to.x) / 2, to.y,
+            to.x, to.y
+        );
+        ctx.strokeStyle = color;
+        ctx.stroke();
+    };
+
+    drawLine(input, core, "rgba(59, 130, 246, 0.35)");
+    drawLine(core, lane, "rgba(16, 185, 129, 0.35)");
+    drawLine(lane, plane, "rgba(168, 85, 247, 0.35)");
+
+    hochComicAgents.forEach(a => {
+        const pCard = getCoords(`profile-card-${a.id}`);
+        if (pCard && core) {
+            drawLine(core, pCard, "rgba(255, 255, 255, 0.08)");
+        }
+    });
+}
+
+function assignResearchToAgents() {
+    const assetGrid = document.getElementById("kimi-comic-asset-grid");
+    if (assetGrid) {
+        assetGrid.innerHTML = `
+            <div style="border: 1px solid rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.05); padding: 8px; border-radius: 6px; margin-bottom: 6px; display:flex; justify-content:space-between; align-items:center;">
+                <span>Asset L1 (FASTAPI)</span> <span style="color:var(--accent-teal); font-weight:bold;">Code Agent Assigned</span>
+            </div>
+            <div style="border: 1px solid rgba(59, 130, 246, 0.3); background: rgba(59, 130, 246, 0.05); padding: 8px; border-radius: 6px; margin-bottom: 6px; display:flex; justify-content:space-between; align-items:center;">
+                <span>Asset L2 (TELEMETRY)</span> <span style="color:var(--accent-blue); font-weight:bold;">Gordon Debugger Assigned</span>
+            </div>
+            <div style="border: 1px solid rgba(168, 85, 247, 0.3); background: rgba(168, 85, 247, 0.05); padding: 8px; border-radius: 6px; margin-bottom: 6px; display:flex; justify-content:space-between; align-items:center;">
+                <span>Asset L3 (AUDIT)</span> <span style="color:var(--accent-purple); font-weight:bold;">Audit Agent Assigned</span>
+            </div>
+            <div style="border: 1px solid rgba(249, 115, 22, 0.3); background: rgba(249, 115, 22, 0.05); padding: 8px; border-radius: 6px; display:flex; justify-content:space-between; align-items:center;">
+                <span>Asset W1 (WORKERS)</span> <span style="color:var(--accent-orange); font-weight:bold;">QA Agent Assigned</span>
+            </div>
+        `;
+    }
+}
+
+function appendKimiComicWorkFeed(event) {
+    const feed = document.getElementById("kimi-comic-work-feed");
+    if (!feed) return;
+    if (feed.innerHTML.includes("Idle. Waiting")) {
+        feed.innerHTML = "";
+    }
+    feed.innerHTML += `<div>${event}</div>`;
+    feed.scrollTop = feed.scrollHeight;
+}
+
+function updateKimiComicCommandLoop(stage) {
+    const stages = ["plan", "research", "execute", "verify", "report"];
+    stages.forEach(s => {
+        const el = document.getElementById(`stage-${s}`);
+        if (el) {
+            if (s === stage) {
+                el.classList.add("active-stage");
+            } else {
+                el.classList.remove("active-stage");
+            }
+        }
+    });
+}
+
+function renderGordonContainerWhispererPanel() {
+    const chks = ["logs", "health", "deps", "bind", "patch"];
+    chks.forEach(c => {
+        const el = document.getElementById(`gordon-chk-${c}`);
+        if (el) {
+            el.checked = false;
+            el.parentElement.style.color = "var(--text-secondary)";
+            el.parentElement.style.textDecoration = "none";
+        }
+    });
+}
+
+function checkGordonListItem(id, check) {
+    const el = document.getElementById(`gordon-chk-${id}`);
+    if (el) {
+        el.checked = check;
+        if (check) {
+            el.parentElement.style.color = "var(--accent-teal)";
+            el.parentElement.style.textDecoration = "line-through";
+        } else {
+            el.parentElement.style.color = "var(--text-secondary)";
+            el.parentElement.style.textDecoration = "none";
+        }
+    }
+}
+
+function wakeAgent(id, statusText) {
+    const card = document.getElementById(`profile-card-${id}`);
+    const dot = document.getElementById(`ring-dot-${id}`);
+    const assign = document.getElementById(`profile-assign-${id}`);
+
+    if (card) card.style.opacity = "1";
+    if (dot) {
+        dot.style.background = "var(--accent-teal)";
+        dot.style.borderColor = "var(--accent-teal)";
+        dot.style.color = "#fff";
+    }
+    if (assign) {
+        assign.innerHTML = `<strong>Status:</strong> ${statusText}`;
+    }
+}
+
+function spinUpKimiStyleComicSwarm(promptText) {
+    renderKimiStyleComicSwarmInterface();
+    const core = document.getElementById("kimi-comic-mission-core");
+    if (core) core.classList.add("pulse-active");
+
+    appendKimiComicWorkFeed(`[Plan] Prompt received: "${promptText}"`);
+    updateKimiComicCommandLoop("plan");
+
+    setTimeout(() => {
+        wakeAgent("research", "Searching YouTube API search.list...");
+        appendKimiComicWorkFeed("[Plan] Research Agent online. Scanning YouTube for debugging patterns.");
+        drawKimiStyleMotionLines();
+    }, 1000);
+
+    setTimeout(() => {
+        updateKimiComicCommandLoop("research");
+        appendKimiComicWorkFeed("[Research] Search list retrieved. 4 video candidates matches loaded.");
+        animateYoutubeResearchCards();
+        checkGordonListItem("logs", true);
+        drawKimiStyleMotionLines();
+    }, 2500);
+
+    setTimeout(() => {
+        appendKimiComicWorkFeed("[Research] Parsing metadata & signals. Extracting repair patterns.");
+        assignResearchToAgents();
+        checkGordonListItem("health", true);
+        drawKimiStyleMotionLines();
+    }, 4000);
+
+    setTimeout(() => {
+        updateKimiComicCommandLoop("execute");
+        wakeAgent("architect", "System mapping design options...");
+        wakeAgent("code", "Generating candidate patches...");
+        wakeAgent("qa", "Constructing contract validation gates...");
+        wakeAgent("security", "Enforcing ZTA allowed commands list...");
+        appendKimiComicWorkFeed("[Execute] Code, Architect, QA, and Security agents assigned.");
+        checkGordonListItem("deps", true);
+        drawKimiStyleMotionLines();
+    }, 5500);
+
+    setTimeout(() => {
+        updateKimiComicCommandLoop("verify");
+        wakeAgent("gordon", "Extracting active container health check logs...");
+        wakeAgent("remediation", "Validating pre-flight dry-runs...");
+        wakeAgent("audit", "Compiling cryptographic ledger records...");
+        wakeAgent("release", "Signing final provenance scorecard...");
+        appendKimiComicWorkFeed("[Verify] Execution verify loop: checking SQL allowlist, rollback triggers, and L4 budget thresholds.");
+        checkGordonListItem("bind", true);
+        drawKimiStyleMotionLines();
+    }, 7000);
+
+    setTimeout(() => {
+        updateKimiComicCommandLoop("report");
+        checkGordonListItem("patch", true);
+        
+        hochComicAgents.forEach(a => {
+            const assign = document.getElementById(`profile-assign-${a.id}`);
+            if (assign) assign.innerHTML = `<strong>Status:</strong> Done / Monitoring`;
+        });
+
+        appendKimiComicWorkFeed("[Report] Verification complete. 100/100 readiness verified. Swarm mesh secured.");
+        if (core) core.classList.remove("pulse-active");
+        drawKimiStyleMotionLines();
+    }, 8500);
+}
+
+// Initial binding
+setTimeout(() => {
+    renderKimiStyleComicSwarmInterface();
+
+    const spinBtn = document.getElementById("kimi-comic-spinup-button");
+    const inputField = document.getElementById("kimi-comic-prompt-input");
+
+    spinBtn?.addEventListener("click", () => {
+        const text = inputField?.value.trim() || "Research YouTube videos on Docker container debugging, summarize repair patterns, and assign agents to harden Hoch Agent Swarm.";
+        spinUpKimiStyleComicSwarm(text);
+    });
+}, 100);
+
+window.addEventListener("resize", drawKimiStyleMotionLines);
+
