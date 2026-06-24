@@ -57,6 +57,30 @@ const navItems = {
 
 // Security Audit & Sub-tab Elements
 const subtabAudit = document.getElementById("subtab-audit");
+
+// ================================================================
+//  STATUS HELPER — maps status string → CSS class
+// ================================================================
+function getStatusClass(status) {
+    switch ((status || "").toLowerCase().replace(/ /g, "-")) {
+        case "active":        return "status-active";
+        case "triaging":      return "status-triaging";
+        case "self-healing":  return "status-self-healing";
+        case "reasoning":     return "status-reasoning";
+        case "deploying":     return "status-deploying";
+        default:              return "status-active";  // all nodes online
+    }
+}
+
+// Status label text map
+const STATUS_LABELS = {
+    "Active":       "● ACTIVE",
+    "Triaging":     "◈ TRIAGING",
+    "Self-Healing": "⟳ SELF-HEALING",
+    "Reasoning":    "⊙ REASONING",
+    "Deploying":    "▲ DEPLOYING",
+};
+
 const subtabGap = document.getElementById("subtab-gap");
 const securityAuditContent = document.getElementById("security-audit-content");
 const securityGapContent = document.getElementById("security-gap-content");
@@ -303,16 +327,19 @@ function populateTable(nodes) {
         card.innerHTML = `
             <div style="display: flex; align-items: center; gap: 12px; text-align: left;">
                 <i data-lucide="${osIcon}" class="asset-os-icon" style="width: 18px; height: 18px; color: var(--text-secondary);"></i>
-                <div style="display: flex; flex-direction: column;">
+                <div style="display: flex; flex-direction: column; min-width: 0; flex: 1;">
                     <span style="font-size: 12px; font-weight: 600; color: #fff; letter-spacing: 0.3px;">${node.name}</span>
                     <span style="font-size: 9px; color: var(--text-secondary); margin-top: 1px;">${node.ip} &bull; ${ramDiskText}</span>
+                    <span class="node-activity-ticker">${node.activity || node.role}</span>
                 </div>
             </div>
-            <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+                <span class="node-status-label ${getStatusClass(node.status)}">${STATUS_LABELS[node.status] || node.status}</span>
                 <span style="font-size: 9px; color: var(--text-secondary); background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; font-family: monospace;">${node.total_agents} AGENTS</span>
-                <span class="status-pulse-dot ${statusClass}"></span>
+                <span class="status-pulse-dot ${getStatusClass(node.status)}"></span>
             </div>
         `;
+
         
         card.addEventListener("click", () => {
             openModalForNode(node);
@@ -475,20 +502,21 @@ async function updateMermaidTopology(nodes, executingNodeId = null) {
         else if (node.os.toLowerCase().includes("linux")) osIcon = "server";
 
         nodesHtml += `
-        <foreignObject x="${workerX}" y="${wY}" width="200" height="70">
+        <foreignObject x="${workerX}" y="${wY}" width="200" height="80">
             <div xmlns="http://www.w3.org/1999/xhtml" class="topology-node-card ${executingClass}" onclick="openModalForNodeById('${node.id}')" style="box-sizing: border-box; width: 100%; height: 100%; background: rgba(22, 28, 45, 0.85); backdrop-filter: blur(8px); border: 1px solid ${nodeStroke}; border-radius: 8px; padding: 8px 12px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.4); overflow: hidden;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                        <i data-lucide="${osIcon}" style="width: 12px; height: 12px; color: var(--text-secondary);"></i>
-                        <span style="font-size: 11px; font-weight: bold; color: #fff; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; max-width: 125px;">${node.name}</span>
+                    <div style="display: flex; align-items: center; gap: 6px; min-width: 0; flex: 1;">
+                        <i data-lucide="${osIcon}" style="width: 12px; height: 12px; color: var(--text-secondary); flex-shrink: 0;"></i>
+                        <span style="font-size: 11px; font-weight: bold; color: #fff; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; max-width: 110px;">${node.name}</span>
                     </div>
-                    <span class="status-pulse-dot ${statusClass}"></span>
+                    <span class="node-status-label ${getStatusClass(node.status)}" style="font-size: 8px; padding: 1px 5px;">${node.status}</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; font-size: 8px; color: var(--text-secondary); margin-top: 2px;">
                     <span>${node.ip}</span>
                     <span>CPU: ${node.cpu_usage}%</span>
                 </div>
-                <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; overflow: hidden; max-height: 20px;">
+                <div class="node-activity-ticker" style="font-size: 8px; max-width: 180px;">${node.activity || node.role}</div>
+                <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-top: 2px; overflow: hidden; max-height: 16px;">
                     ${node.agents && node.agents.length > 0 
                         ? node.agents.map(a => `<span class="agent-pill ${a.type.includes('GORDY') ? 'gordy' : ''}" style="font-size: 7px; padding: 1px 3px; border-radius: 3px; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.25); color: #c084fc; font-family: monospace; white-space: nowrap;">${a.name.split('-')[0]}</span>`).join('') 
                         : `<span style="font-size: 7px; color: var(--text-secondary);">No active agents</span>`}
@@ -496,6 +524,7 @@ async function updateMermaidTopology(nodes, executingNodeId = null) {
             </div>
         </foreignObject>
         `;
+
     });
 
     // Populate SVG
@@ -775,10 +804,7 @@ function renderAssetsView(nodes) {
     nodes.forEach(node => {
         const card = document.createElement("div");
         card.className = "asset-detail-card";
-        
-        let statusClass = "status-idle";
-        if (node.status === "Active") statusClass = "status-active";
-        else if (node.status === "Underutilized") statusClass = "status-underutilized";
+        const sc = getStatusClass(node.status);
 
         // Build agent capsules list
         let capsulesHtml = "";
@@ -786,7 +812,8 @@ function renderAssetsView(nodes) {
             node.agents.forEach(agent => {
                 const isGordy = agent.type.includes("GORDY") || agent.type.includes("Docker Coder");
                 const capsuleClass = isGordy ? "agent-capsule agent-capsule-gordy" : "agent-capsule";
-                capsulesHtml += `<span class="${capsuleClass}">${agent.name}</span>`;
+                const agentSC = getStatusClass(agent.status);
+                capsulesHtml += `<span class="${capsuleClass}" style="cursor:default" title="${agent.description || ''}">${agent.name} <span class="node-status-label ${agentSC}" style="font-size:7px; padding:1px 4px; margin-left:2px;">${agent.status}</span></span>`;
             });
         } else {
             capsulesHtml = `<span style="font-size:11px; color:var(--text-secondary);">No agents active</span>`;
@@ -795,9 +822,10 @@ function renderAssetsView(nodes) {
         card.innerHTML = `
             <div class="asset-card-title-row">
                 <span class="asset-card-title">${node.name}</span>
-                <span class="status-indicator ${statusClass}"><span class="dot" style="background-color:currentColor"></span> ${node.status}</span>
+                <span class="node-status-label ${sc}">${STATUS_LABELS[node.status] || node.status}</span>
             </div>
-            <div class="asset-specs-list" style="margin-top: 8px;">
+            <div class="node-activity-ticker" style="margin-top: 4px; margin-bottom: 8px; font-size: 10px;">${node.activity || node.role}</div>
+
                 <div><strong>IP Address:</strong> ${node.ip}</div>
                 <div><strong>Role/OS:</strong> ${node.os} (${node.role})</div>
                 <div><strong>Specifications:</strong> ${node.specs}</div>
