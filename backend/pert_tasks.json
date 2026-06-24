@@ -1,0 +1,61 @@
+{
+  "T1": {
+    "id": "T1",
+    "name": "Requirements & Swarm Enclaves Setup",
+    "optimistic": 2.0,
+    "most_likely": 3.0,
+    "pessimistic": 4.0,
+    "predecessors": []
+  },
+  "T2": {
+    "id": "T2",
+    "name": "CDAO RAI Ethics Alignment Model Audit",
+    "optimistic": 3.0,
+    "most_likely": 5.0,
+    "pessimistic": 7.0,
+    "predecessors": [
+      "T1"
+    ]
+  },
+  "T3": {
+    "id": "T3",
+    "name": "Secure API Development & ZTA Gateway",
+    "optimistic": 4.0,
+    "most_likely": 6.0,
+    "pessimistic": 14.0,
+    "predecessors": [
+      "T1"
+    ]
+  },
+  "T4": {
+    "id": "T4",
+    "name": "Gordy Coding Container Agent Instantiation",
+    "optimistic": 2.0,
+    "most_likely": 4.0,
+    "pessimistic": 6.0,
+    "predecessors": [
+      "T2"
+    ]
+  },
+  "T5": {
+    "id": "T5",
+    "name": "DoD ZTA Continuous Monitoring Audit Check",
+    "optimistic": 3.0,
+    "most_likely": 4.0,
+    "pessimistic": 11.0,
+    "predecessors": [
+      "T3",
+      "T4"
+    ]
+  },
+  "T6": {
+    "id": "T6",
+    "name": "Operator Approval & SWARM Dispatch",
+    "optimistic": 1.0,
+    "most_likely": 2.0,
+    "pessimistic": 3.0,
+    "predecessors": [
+      "T5"
+    ]
+  }
+}

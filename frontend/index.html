@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hoch Agent Swarm Cluster Dashboard</title>
+    <meta name="description" content="Local cluster optimized agent swarm deployment dashboard for monitoring and orchestration.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Mermaid.js for topology graph -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <!-- Chart.js for live metrics line charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        html, body {
+            background-color: #0b0f19;
+            color: #f3f4f6;
+        }
+    </style>
+    <link rel="stylesheet" href="styles.css?v=1.0.2">
+    <link rel="icon" href="data:,">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" aria-label="Main Navigation">
+            <div class="logo-area">
+                <i data-lucide="network" class="logo-icon"></i>
+                <span class="logo-text">HOCH SWARM</span>
+            </div>
+            <nav class="nav-links">
+                <a href="#" class="nav-item active" id="nav-dashboard">
+                    <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-assets">
+                    <i data-lucide="cpu"></i> <span>Assets</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-swarms">
+                    <i data-lucide="users"></i> <span>Swarms</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-tasks">
+                    <i data-lucide="check-square"></i> <span>Tasks</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-metrics">
+                    <i data-lucide="bar-chart-2"></i> <span>Metrics</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-security">
+                    <i data-lucide="shield-check"></i> <span>Security Audit</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-pert">
+                    <i data-lucide="git-branch"></i> <span>PERT Analysis</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-settings">
+                    <i data-lucide="settings"></i> <span>Settings</span>
+                </a>
+            </nav>
+            <div class="profile-area">
+                <div class="avatar">MH</div>
+                <div class="profile-info">
+                    <div class="profile-name">Michael Hoch</div>
+                    <div class="profile-role">Helvetica Manager</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content" id="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1 class="header-title">CDAO TACTICAL AI OPERATIONS CENTRES <span class="subnet">[DoD ZTA SECURITY GROUP]</span></h1>
+                    <div class="badges">
+                        <span class="badge badge-success" id="cluster-status-badge">HEALTHY 100%</span>
+                        <span class="badge badge-info" id="active-assets-badge">4 ASSETS ACTIVE</span>
+                        <span class="badge badge-sync" id="sync-badge"><i data-lucide="refresh-cw"></i> Sync: OK</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="latency-indicator">
+                        <span class="dot pulse"></span>
+                        Network Latency: <span class="latency-val" id="latency-val">1.2ms (Excellent)</span>
+                    </div>
+                    <div class="header-actions">
+                        <div class="search-container">
+                            <i data-lucide="search" class="search-icon"></i>
+                            <input type="text" id="search-input" placeholder="Search clusters...">
+                        </div>
+                        <button class="icon-btn" aria-label="Notifications" id="btn-notifications">
+                            <i data-lucide="bell"></i>
+                            <span class="badge-dot"></span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard View -->
+            <div id="view-dashboard">
+                <div class="console-wrapper" style="display: flex; gap: 16px; height: calc(100vh - 120px); overflow: hidden; width: 100%;">
+                    
+                    <!-- Left Column: Mesh Assets Topology list -->
+                    <div class="console-col-left" style="display: flex; flex-direction: column; gap: 16px; width: 280px; flex-shrink: 0;">
+                        <div class="card console-card" style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; height: 100%; padding: 16px;">
+                            <div>
+                                <div class="card-header" style="padding-bottom: 12px; border-bottom: 1px solid var(--border-glass);">
+                                    <h2 class="card-title" style="font-size: 14px; letter-spacing: 1px;">MESH ASSETS TOPOLOGY</h2>
+                                </div>
+                                <div id="deployments-tbody" style="display: flex; flex-direction: column; gap: 10px; margin-top: 16px; overflow-y: auto; max-height: calc(100vh - 280px);">
+                                    <!-- Populated dynamically as asset-console-card elements -->
+                                </div>
+                            </div>
+                            <!-- Operator info block -->
+                            <div class="operator-profile-card" style="display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--border-glass); padding-top: 16px; margin-top: 16px;">
+                                <div class="avatar" style="width: 36px; height: 36px; border-radius: 50%; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); color: #fff;">MH</div>
+                                <div style="display: flex; flex-direction: column; text-align: left;">
+                                    <span style="font-size: 12px; font-weight: 600; color: #fff;">Operator: Michael Hoch</span>
+                                    <span style="font-size: 10px; color: var(--text-secondary);">Helvetica Manager</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Center Column: Master Hub Topology Graph -->
+                    <div class="console-col-center" style="display: flex; flex-direction: column; flex-grow: 1; min-width: 400px; height: 100%;">
+                        <div class="card console-card topology-console-card" style="display: flex; flex-direction: column; height: 100%; padding: 0; overflow: hidden; position: relative;">
+                            <div class="card-header" style="padding: 16px 16px 12px 16px; border-bottom: 1px solid var(--border-glass);">
+                                <h2 class="card-title" style="font-size: 14px; letter-spacing: 1px;">CLUSTER MGR (MASTER HUB)</h2>
+                                <div class="card-actions">
+                                    <button class="btn btn-outline btn-xs" id="btn-zoom"><i data-lucide="zoom-in"></i> Zoom</button>
+                                    <button class="btn btn-outline btn-xs" id="btn-reset"><i data-lucide="rotate-ccw"></i> Reset</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Graph drawing container -->
+                            <div class="mermaid-container-wrapper" style="flex-grow: 1; position: relative; overflow: hidden; min-height: 280px; width: 100%;">
+                                <canvas id="agent-flow-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5;"></canvas>
+                                <div class="mermaid-container" id="mermaid-graph" style="border: none; background: transparent; width: 100%; height: 100%; position: absolute; top: 0; left: 0;">
+                                    <!-- Rendered dynamically as custom SVG shapes in app.js -->
+                                </div>
+                            </div>
+
+                            <!-- Command dispatch terminal line -->
+                            <div class="console-command-bar" style="display: flex; gap: 12px; align-items: center; background: rgba(15, 23, 42, 0.85); border-top: 1px solid var(--border-glass); padding: 12px; z-index: 10;">
+                                <div style="font-family: monospace; font-size: 12px; color: var(--accent-teal); font-weight: bold; white-space: nowrap;">SWARM_CMD_INPUT &gt;</div>
+                                <select id="task-type-select" style="background: rgba(0,0,0,0.4); border: 1px solid var(--border-glass); color: #fff; padding: 6px; border-radius: 6px; font-size: 12px;">
+                                    <option value="code_generation">Code Generation Swarm</option>
+                                    <option value="refactoring">Refactoring Swarm</option>
+                                    <option value="unit_testing">Automated Unit Testing</option>
+                                    <option value="general_query">General Query / Research</option>
+                                </select>
+                                <input type="text" id="prompt-input" placeholder="Enter tactical swarm instruction (e.g. Deploy MVP)..." style="flex-grow: 1; background: rgba(0,0,0,0.4); border: 1px solid var(--border-glass); color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-family: monospace;">
+                                <button class="btn btn-primary btn-sm" id="btn-submit-task" style="padding: 6px 16px;">DISPATCH</button>
+                            </div>
+
+                            <!-- Output logs overlay -->
+                            <div class="task-output-container hidden" id="task-output-box" style="position: absolute; bottom: 80px; left: 16px; right: 16px; background: rgba(10, 15, 28, 0.96); border: 1px solid rgba(0, 229, 255, 0.25); border-radius: 8px; padding: 12px; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.6);">
+                                <div style="display:flex; justify-content:space-between; margin-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px;">
+                                    <span style="font-size:11px; font-weight:bold; color:var(--accent-teal);">SWARM EXECUTION OUTPUT FEED</span>
+                                    <span style="cursor:pointer; font-size:11px; color:var(--text-secondary);" onclick="document.getElementById('task-output-box').classList.add('hidden')">CLOSE [X]</span>
+                                </div>
+                                <div class="log-output" id="log-output-content" style="font-family: monospace; font-size:12px; max-height: 140px; overflow-y: auto; color: #a5f3fc; text-align: left; white-space: pre-wrap;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Analytics & Terminal Widgets -->
+                    <div class="console-col-right" style="display: flex; flex-direction: column; gap: 16px; width: 320px; flex-shrink: 0; height: 100%;">
+                        <!-- Workload Modeling -->
+                        <div class="card console-card" style="padding: 12px; height: 150px; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div class="card-header" style="padding: 0 0 6px 0; border-bottom: 1px solid var(--border-glass);">
+                                <h2 class="card-title" style="font-size: 11px; letter-spacing: 0.5px;">PREDICTIVE WORKLOAD MODELLING</h2>
+                            </div>
+                            <div style="position: relative; flex-grow: 1; width: 100%; margin-top: 6px;">
+                                <canvas id="console-workload-chart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Swarm Intelligence Globe -->
+                        <div class="card console-card" style="padding: 12px; height: 210px; display: flex; flex-direction: column; justify-content: space-between; align-items: stretch; text-align: center;">
+                            <div class="card-header" style="padding: 0 0 6px 0; border-bottom: 1px solid var(--border-glass); text-align: left;">
+                                <h2 class="card-title" style="font-size: 11px; letter-spacing: 0.5px;">GLOBAL SWARM INTELLIGENCE MESH</h2>
+                            </div>
+                            <div style="flex-grow: 1; display: flex; justify-content: center; align-items: center; position: relative; margin-top: 4px; overflow: hidden;">
+                                <canvas id="swarm-globe-canvas" style="width: 100%; height: 100%; background: transparent;"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Resource Allocation -->
+                        <div class="card console-card" style="padding: 12px; height: 150px; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div class="card-header" style="padding: 0 0 6px 0; border-bottom: 1px solid var(--border-glass);">
+                                <h2 class="card-title" style="font-size: 11px; letter-spacing: 0.5px;">DYNAMIC RESOURCE ALLOCATION</h2>
+                            </div>
+                            <div style="position: relative; flex-grow: 1; width: 100%; margin-top: 6px;">
+                                <canvas id="console-resource-chart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Terminal Logs -->
+                        <div class="card console-card" style="padding: 12px; flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 180px;">
+                            <div class="card-header" style="padding: 0 0 6px 0; border-bottom: 1px solid var(--border-glass); display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                <h2 class="card-title" style="font-size: 11px; letter-spacing: 0.5px;">TERMINAL LOGS</h2>
+                                <input type="text" id="terminal-search" placeholder="Filter logs..." style="background: rgba(0,0,0,0.5); border: 1px solid var(--border-glass); color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 9px; width: 90px; height: 18px; outline: none;">
+                            </div>
+                            <div id="console-terminal-logs" style="flex-grow: 1; overflow-y: auto; font-family: monospace; font-size: 10px; color: #4ade80; text-align: left; background: rgba(0,0,0,0.5); border-radius: 6px; padding: 8px; margin-top: 8px; line-height: 1.3;">
+                                <!-- Live logs -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Audit View (Hidden by default) -->
+            <div id="view-security" class="hidden">
+                <div class="sub-tabs-container">
+                    <button class="sub-tab active" id="subtab-audit">Audit Checklist</button>
+                    <button class="sub-tab" id="subtab-gap">Gap Analysis</button>
+                </div>
+                
+                <div class="dashboard-grid" id="security-audit-content">
+                    <!-- Audit Summary Scorecard (Left) -->
+                    <section class="card summary-audit-card">
+                        <div class="card-header">
+                            <h2 class="card-title">Continuous ConMon Scorecard</h2>
+                            <button class="btn btn-primary btn-xs" id="btn-run-audit">
+                                <i data-lucide="shield-alert"></i> Run Audit Check
+                            </button>
+                        </div>
+                        <div class="score-display-container">
+                            <div class="large-score-circle">
+                                <span id="audit-score-percent">0%</span>
+                                <span class="score-caption">Compliance Score</span>
+                            </div>
+                            <div class="score-stats-grid">
+                                <div class="score-stat-item">
+                                    <span class="stat-num text-success" id="audit-passed-count">0</span>
+                                    <span class="stat-name">Passed</span>
+                                </div>
+                                <div class="score-stat-item">
+                                    <span class="stat-num text-warning" id="audit-warnings-count">0</span>
+                                    <span class="stat-name">Warnings</span>
+                                </div>
+                                <div class="score-stat-item">
+                                    <span class="stat-num text-danger" id="audit-failed-count">0</span>
+                                    <span class="stat-name">Failed</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Control Compliance Details (Right) -->
+                    <section class="card controls-checklist-card">
+                        <div class="card-header">
+                            <h2 class="card-title">DoD Zero Trust (ZTA) & CDAO RAI Compliance Details</h2>
+                        </div>
+                        <div class="controls-list" id="security-controls-list">
+                            <!-- Populated dynamically by app.js -->
+                            <p style="color:var(--text-secondary); text-align:center; padding: 24px;">Initialize cybersecurity compliance check to poll statistics...</p>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="dashboard-grid hidden" id="security-gap-content">
+                    <section class="card gap-analysis-card" style="grid-column: 1/-1;">
+                        <div class="card-header">
+                            <h2 class="card-title">Remediation Gap Report</h2>
+                        </div>
+                        <div class="table-container">
+                            <table class="deployments-table">
+                                <thead>
+                                    <tr>
+                                        <th>Control ID</th>
+                                        <th>DoD ZTA / CDAO Policy Standard</th>
+                                        <th>Status</th>
+                                        <th>Identified Security Gap</th>
+                                        <th>Remediation Action / Command</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="security-gap-tbody">
+                                    <!-- Dynamic rows from app.js -->
+                                    <tr><td colspan="5" style="color:var(--text-secondary); text-align:center; padding: 24px;">Initialize cybersecurity compliance check to generate Gap Analysis report...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Assets View (Hidden by default) -->
+            <div id="view-assets" class="hidden">
+                <div class="dashboard-grid" id="assets-grid-container" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+                    <!-- Dynamic Asset Cards from app.js -->
+                </div>
+            </div>
+
+            <!-- Swarms View (Hidden by default) -->
+            <div id="view-swarms" class="hidden">
+                <div class="dashboard-grid">
+                    <section class="card" style="grid-column: 1/-1;">
+                        <div class="card-header">
+                            <h2 class="card-title">Agent Swarms Orchestration</h2>
+                        </div>
+                        <div class="swarms-flex-container" style="display: flex; gap: 24px; flex-wrap: wrap; margin-top: 16px;">
+                            <div class="swarm-card card" style="flex: 1; min-width: 300px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-glass);">
+                                <h3 style="font-size: 18px; margin-bottom: 12px; color: var(--accent-purple);">AGENT SWARM ALPHA</h3>
+                                <p style="color:var(--text-secondary); font-size:13px; line-height: 1.4; margin-bottom: 16px;">
+                                    Optimized for code generation, syntax validation, and continuous unit testing. Orchestrated primarily on L1 and W1 compute engines.
+                                </p>
+                                <div class="stat-box" style="margin-top: 12px;">
+                                    <span class="stat-label">Active Load: 85%</span>
+                                    <div class="gauge-container" style="height: 6px;"><div class="gauge-bar" style="width: 85%; background: var(--accent-purple);"></div></div>
+                                </div>
+                                <div style="margin-top: 16px; font-size:13px;">
+                                    <strong>Assigned Models:</strong> llama3 (Local Ollama), phi3
+                                </div>
+                            </div>
+                            <div class="swarm-card card" style="flex: 1; min-width: 300px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-glass);">
+                                <h3 style="font-size: 18px; margin-bottom: 12px; color: var(--accent-blue);">AGENT SWARM BETA</h3>
+                                <p style="color:var(--text-secondary); font-size:13px; line-height: 1.4; margin-bottom: 16px;">
+                                    Optimized for end-to-end AI research, application architecture design, and database structure layout. Orchestrated across L2 and L3.
+                                </p>
+                                <div class="stat-box" style="margin-top: 12px;">
+                                    <span class="stat-label">Active Load: 92%</span>
+                                    <div class="gauge-container" style="height: 6px;"><div class="gauge-bar ram" style="width: 92%;"></div></div>
+                                </div>
+                                <div style="margin-top: 16px; font-size:13px;">
+                                    <strong>Assigned Models:</strong> mistral, codegemma
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Tasks View (Hidden by default) -->
+            <div id="view-tasks" class="hidden">
+                <div class="dashboard-grid">
+                    <section class="card" style="grid-column: 1/-1;">
+                        <div class="card-header">
+                            <h2 class="card-title">Cluster Task History</h2>
+                        </div>
+                        <div class="table-container">
+                            <table class="deployments-table">
+                                <thead>
+                                    <tr>
+                                        <th>Task ID</th>
+                                        <th>Type</th>
+                                        <th>Target Asset</th>
+                                        <th>Duration</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tasks-tbody">
+                                    <!-- Dynamic rows from app.js -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Metrics View (Hidden by default) -->
+            <div id="view-metrics" class="hidden">
+                <div class="dashboard-grid">
+                    <!-- Real-time Chart (Left Major Card) -->
+                    <section class="card" style="grid-column: 1;">
+                        <div class="card-header">
+                            <h2 class="card-title">Real-Time Swarm Resource History</h2>
+                        </div>
+                        <div style="margin-top: 16px; position: relative; height: 300px; width: 100%;">
+                            <canvas id="live-metrics-chart"></canvas>
+                        </div>
+                    </section>
+                    
+                    <!-- Performance Analytics (Right Secondary Card) -->
+                    <section class="card" style="grid-column: 2;">
+                        <div class="card-header">
+                            <h2 class="card-title">Performance Analytics</h2>
+                        </div>
+                        <div class="metrics-summary-grid" style="display: flex; flex-direction: column; gap: 20px; margin-top: 16px;">
+                            <div class="stat-box card" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-glass); padding: 16px;">
+                                <span class="stat-label">Total Swarm Network Latency</span>
+                                <span class="stat-val" style="font-size:20px; color: var(--accent-teal);">1.2ms (Average)</span>
+                            </div>
+                            <div class="stat-box card" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-glass); padding: 16px;">
+                                <span class="stat-label">Task Success Rate</span>
+                                <span class="stat-val" style="font-size:20px; color: var(--accent-blue);">99.4%</span>
+                            </div>
+                            <div class="stat-box card" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-glass); padding: 16px;">
+                                <span class="stat-label">Average Response Time</span>
+                                <span class="stat-val" style="font-size:20px; color: var(--accent-purple);">1.4 seconds</span>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Settings View (Hidden by default) -->
+            <div id="view-settings" class="hidden">
+                <div class="dashboard-grid">
+                    <!-- Left: Node Registration Form -->
+                    <section class="card" style="grid-column: 1;">
+                        <div class="card-header">
+                            <h2 class="card-title">Register Swarm Asset</h2>
+                        </div>
+                        <div class="task-form-container" style="margin-top: 16px;">
+                            <form id="form-register-node" onsubmit="event.preventDefault();">
+                                <div class="form-group" style="margin-bottom: 12px;">
+                                    <label for="reg-node-id">Node ID (e.g. L4, W2)</label>
+                                    <input type="text" id="reg-node-id" placeholder="L4" required style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-glass); border-radius: 8px; padding: 10px; color: #fff; width: 100%;">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 12px;">
+                                    <label for="reg-node-name">Asset Name</label>
+                                    <input type="text" id="reg-node-name" placeholder="MACBOOK STUDIO" required style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-glass); border-radius: 8px; padding: 10px; color: #fff; width: 100%;">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 12px;">
+                                    <label for="reg-node-ip">IP Address</label>
+                                    <input type="text" id="reg-node-ip" placeholder="10.0.0.15" required style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-glass); border-radius: 8px; padding: 10px; color: #fff; width: 100%;">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 12px;">
+                                    <label for="reg-node-role">Swarm Role</label>
+                                    <input type="text" id="reg-node-role" placeholder="Coder Node" required style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-glass); border-radius: 8px; padding: 10px; color: #fff; width: 100%;">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 12px;">
+                                    <label for="reg-node-specs">Specifications</label>
+                                    <input type="text" id="reg-node-specs" placeholder="32GB RAM, 1TB SSD" required style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-glass); border-radius: 8px; padding: 10px; color: #fff; width: 100%;">
+                                </div>
+                                <div class="form-group" style="margin-bottom: 16px;">
+                                    <label for="reg-node-os">Operating System</label>
+                                    <select id="reg-node-os" style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-glass); border-radius: 8px; padding: 10px; color: #fff; width: 100%;">
+                                        <option value="macOS">macOS</option>
+                                        <option value="Windows 11">Windows 11</option>
+                                        <option value="Linux">Linux</option>
+                                        <option value="iOS">iOS</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-primary" id="btn-register-node" style="width: 100%;">
+                                    <i data-lucide="plus-circle"></i> Register Swarm Asset
+                                </button>
+                            </form>
+                        </div>
+                    </section>
+
+                    <!-- Right: Node Deletion/Management List -->
+                    <section class="card" style="grid-column: 2;">
+                        <div class="card-header">
+                            <h2 class="card-title">Deregister Swarm Assets</h2>
+                        </div>
+                        <div class="table-container" style="margin-top: 16px;">
+                            <table class="deployments-table" style="font-size: 13px;">
+                                <thead>
+                                    <tr>
+                                        <th>Asset</th>
+                                        <th>IP</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="settings-nodes-tbody">
+                                    <!-- Populated dynamically by app.js -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- PERT Analysis View (Hidden by default) -->
+            <div id="view-pert" class="hidden">
+                <div class="dashboard-grid" style="grid-template-columns: 280px 1fr; gap: 20px;">
+                    <!-- Left Column: Add/Update Task Form -->
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <section class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">Manage PERT Task</h2>
+                            </div>
+                            <div class="task-form-container" style="margin-top: 10px;">
+                                <form id="form-pert-task" onsubmit="event.preventDefault();">
+                                    <div class="form-group" style="margin-bottom: 10px;">
+                                        <label for="pert-task-id">Task ID (e.g. T1, T2)</label>
+                                        <input type="text" id="pert-task-id" placeholder="T1" required style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-glass); border-radius: 6px; padding: 8px; color: #fff; width: 100%; font-size: 12px;">
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 10px;">
+                                        <label for="pert-task-name">Task Name</label>
+                                        <input type="text" id="pert-task-name" placeholder="Setup Swarm Enclaves" required style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-glass); border-radius: 6px; padding: 8px; color: #fff; width: 100%; font-size: 12px;">
+                                    </div>
+                                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px;">
+                                        <div class="form-group">
+                                            <label for="pert-task-opt" title="Optimistic (O)">Opt (O)</label>
+                                            <input type="number" step="0.5" id="pert-task-opt" placeholder="2" required style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-glass); border-radius: 6px; padding: 8px; color: #fff; width: 100%; font-size: 12px;">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="pert-task-likely" title="Most Likely (M)">Like (M)</label>
+                                            <input type="number" step="0.5" id="pert-task-likely" placeholder="3" required style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-glass); border-radius: 6px; padding: 8px; color: #fff; width: 100%; font-size: 12px;">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="pert-task-pess" title="Pessimistic (P)">Pess (P)</label>
+                                            <input type="number" step="0.5" id="pert-task-pess" placeholder="4" required style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-glass); border-radius: 6px; padding: 8px; color: #fff; width: 100%; font-size: 12px;">
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 14px;">
+                                        <label for="pert-task-preds">Predecessors (comma-separated, e.g. T1, T2)</label>
+                                        <input type="text" id="pert-task-preds" placeholder="T1" style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-glass); border-radius: 6px; padding: 8px; color: #fff; width: 100%; font-size: 12px;">
+                                    </div>
+                                    <div style="display: flex; gap: 8px;">
+                                        <button class="btn btn-primary btn-xs" id="btn-save-pert-task" style="flex-grow: 1;">Save Task</button>
+                                        <button class="btn btn-outline btn-xs" id="btn-reset-pert" type="button" title="Reset all to default workflow"><i data-lucide="rotate-ccw" style="width:12px;height:12px;"></i> Reset</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </section>
+                        
+                        <section class="card" style="padding: 14px;">
+                            <div class="card-header" style="margin-bottom: 8px; border-bottom: 1px solid var(--border-glass); padding-bottom: 6px;">
+                                <h3 class="card-title" style="font-size: 12px;">CRITICAL PATH STATS</h3>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-size: 11px; color: var(--text-secondary);">Project Duration:</span>
+                                    <span id="pert-duration-val" style="font-size: 13px; font-weight: bold; color: #ef4444;">0.0s</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-size: 11px; color: var(--text-secondary);">Standard Deviation (σ):</span>
+                                    <span id="pert-stddev-val" style="font-size: 12px; font-weight: bold; color: var(--accent-teal);">±0.0s</span>
+                                </div>
+                                <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;">
+                                    <div style="font-size: 10px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px; font-weight: 600;">Critical Sequence:</div>
+                                    <div id="pert-critical-path-seq" style="font-family: monospace; font-size: 11px; color: #ef4444; word-break: break-all; font-weight: bold;"></div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- Right Column: Interactive Diagram & Task Table -->
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <!-- Interactive Network DAG Chart -->
+                        <section class="card" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; height: 320px; position: relative;">
+                            <div class="card-header" style="padding: 12px 16px; border-bottom: 1px solid var(--border-glass);">
+                                <h2 class="card-title" style="font-size: 12px;">PERT PROJECT NETWORK DIAGRAM</h2>
+                            </div>
+                            <div class="mermaid-container-wrapper" style="flex-grow: 1; min-height: auto; position: relative;">
+                                <div id="pert-diagram-svg-container" style="width: 100%; height: 100%; overflow: hidden;">
+                                    <!-- Rendered dynamically as custom SVG DAG in app.js -->
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Detailed Tasks Listing -->
+                        <section class="card" style="padding: 16px; flex-grow: 1;">
+                            <div class="card-header" style="margin-bottom: 10px;">
+                                <h2 class="card-title" style="font-size: 12px;">PERT TASKS & SLACK SCHEDULING</h2>
+                            </div>
+                            <div class="table-container" style="max-height: 180px; overflow-y: auto;">
+                                <table class="deployments-table" style="font-size: 11px;">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Task Name</th>
+                                            <th>Predecessors</th>
+                                            <th>O/M/P</th>
+                                            <th>Expected (TE)</th>
+                                            <th>ES / EF</th>
+                                            <th>LS / LF</th>
+                                            <th>Slack</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pert-tasks-tbody">
+                                        <!-- Dynamic task rows from app.js -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Asset & Agent Details Modal -->
+    <div id="modal-container" class="modal-overlay hidden">
+        <div class="modal-content card">
+            <div class="modal-header">
+                <div class="modal-header-left">
+                    <i data-lucide="cpu" class="modal-icon"></i>
+                    <h2 id="modal-node-title" class="modal-title">Node Details</h2>
+                </div>
+                <button class="icon-btn close-btn" id="btn-close-modal" aria-label="Close details">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="node-meta-grid">
+                    <div class="meta-item"><span class="meta-label">IP Address</span><span id="modal-node-ip" class="meta-value"></span></div>
+                    <div class="meta-item"><span class="meta-label">Specs</span><span id="modal-node-specs" class="meta-value"></span></div>
+                    <div class="meta-item"><span class="meta-label">OS / Role</span><span id="modal-node-role" class="meta-value"></span></div>
+                    <div class="meta-item"><span class="meta-label">Latency</span><span id="modal-node-latency" class="meta-value"></span></div>
+                </div>
+                
+                <h3 class="modal-section-title">DEPLOYED DOCKER AGENT PROFILES</h3>
+                <div class="agents-grid" id="modal-agents-container">
+                    <!-- Agent cards will be dynamically rendered here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js?v=1.0.3"></script>
+</body>
+</html>
