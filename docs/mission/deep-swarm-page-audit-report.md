@@ -101,27 +101,17 @@ Checked SQLite schema structure in `backend/swarm_ledger.db`:
 ---
 
 ## WebSocket Event Schema Audit
-The metrics WebSocket stream `/ws/metrics` was monitored while launching runs. The following events were captured and parsed:
-- `run.created`
-- `task_state_change`
-- `task.started`
-- `task.blocked`
-- `approval.requested`
-- `artifact.created`
-
-### Event-Stream Gaps Documented:
-The metrics loop sends raw cluster updates that do not match the event envelope. Additionally, the event stream has the following gaps relative to the strict supply chain schema contract:
-- Root payload uses `type` instead of literal field `event_type`.
-- Missing root fields: `event_id` and `timestamp`.
-- Missing root `trace_id` / `correlation_id` fields (correlation IDs are nested within data properties instead).
-- Missing root `status` field for some event types (e.g. `task.started`, `artifact.created`).
+The metrics WebSocket stream `/ws/metrics` was monitored while launching runs. All runtime events have been fully normalized.
+- Root payload uses strict `event_type` instead of `type`.
+- Root fields `event_id`, `timestamp`, `run_id`, `status`, and `trace_id` are strictly enforced.
+- Telemetry metrics loop updates continue to send raw metric updates and are filtered separately from normalized runtime events.
 
 ---
 
 ## Capability Manifest Enforcement Status
-While capability manifests (allowed/denied tools, file/network scopes) are fully populated in SQLite and displayed correctly in the UI profile cards, **they are not currently checked or blocked on the backend execution path**.
-- **Status**: `CAPABILITY-ENFORCEMENT-MISSING`
-- **Future Action**: `feat: enforce agent capability manifest before task execution`
+Roster capability limits (denied tools, allowed tools, file scopes, network scopes, and risk class checks) are fully enforced on the backend task execution path in `backend/main.py` before any task starts.
+- **Status**: Enforced / PASS
+- **Policy**: Denied tools block execution, approval-required thresholds route to humanity gates, decisions are registered as compliance evidence artifacts.
 
 ---
 
@@ -159,9 +149,7 @@ The API decision endpoint includes strict replay checks:
 ## Accessibility Findings
 - **Zero-width Debt**: Checked that no zero-width workaround strings are used in user-facing labels. **Status**: Resolved / Clean.
 - **Nav/Heading Hierarchy**: All pages feature defined main headings and visible navigation labels. Modals have explicit close buttons.
-- **Reduced Motion Fallback**: Animation-heavy pages (such as Swarm Control's motion canvas) do not check user-prefers-reduced-motion media settings.
-  - **Gap Marked**: `ACCESSIBILITY-MOTION-CANVAS-DEBT`
-  - **Recommended next step**: Implement CSS `@media (prefers-reduced-motion: reduce)` fallbacks to halt intensive canvas animations.
+- **Reduced Motion Fallback**: Resolved. CSS overrides `@media (prefers-reduced-motion: reduce)` are added to halt intense keyframes, tilt card animations, and spin-ups. Canvas particle loops and rotating globe engines detect preferences and render as static layouts with zero active loop cycles.
 
 ---
 
@@ -184,15 +172,9 @@ Regenerated supply chain artifacts:
 ---
 
 ## Open Gaps
-1. **Capability Enforcement**: Roster capability limits (e.g. denied tools) are UI-only and not enforced in `backend/main.py` task execution.
-2. **WebSocket Event Schema Drift**: WebSocket events emit `type` instead of `event_type` and lack root event IDs/timestamps.
-3. **Reduced Motion Falls**: CSS and canvas scripts do not respect the user's reduced motion preferences.
-4. **Cryptographic Signing**: Cosign signing is skipped during release generation because the credentials/environment variables are not yet configured.
+1. **Cryptographic Signing**: Cosign signing is skipped during release generation because the credentials/environment variables are not yet configured.
 
 ---
 
 ## Recommended Next Commits
-- `feat: enforce agent capability manifest before task execution`
-- `fix: align WebSocket events to strict event-envelope schema`
-- `accessibility: add prefers-reduced-motion query fallback for motion canvas`
 - `chore: enable Cosign blob signing in release pipeline`

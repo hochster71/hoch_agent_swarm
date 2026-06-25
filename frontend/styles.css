@@ -2237,3 +2237,21 @@ body {
 .neon-cybernetic-glow {
     filter: url(#neon-glow);
 }
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .topology-motion-canvas,
+  #topology-agent-motion-canvas {
+    opacity: 0.15;
+  }
+  .holographic-card,
+  .topology-profile-card,
+  .topology-agent-trading-card {
+    transform: none !important;
+  }
+}

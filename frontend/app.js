@@ -1,6 +1,9 @@
 // Initialize Lucide Icons
 lucide.createIcons();
 
+// Accessiblity prefers-reduced-motion helper
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 // Initialize Mermaid.js with custom dark base theme variables
 mermaid.initialize({
     startOnLoad: false,
@@ -347,7 +350,7 @@ function handleRuntimeDeltaEvent(type, eventData) {
     const termLog = typeof logToConsoleTerminal === "function" ? logToConsoleTerminal : (window.logToConsoleTerminal || console.log);
     
     if (type === "run.created") {
-        termLog("Orchestrator", `New execution campaign created: ${eventData.name} (${eventData.run_id})`, "info");
+        termLog("Orchestrator", `New execution campaign created: ${eventData.name || ""} (${eventData.run_id})`, "info");
         refreshRunsList().then(() => {
             const selector = document.getElementById("run-selector");
             if (selector) {
@@ -363,7 +366,7 @@ function handleRuntimeDeltaEvent(type, eventData) {
             fetchRunTasks(eventData.run_id);
         }
     } else if (type === "task.blocked") {
-        const reason = eventData.reason || "dependency";
+        const reason = eventData.reason || eventData.message || "dependency";
         termLog("Scheduler", `Task ${eventData.task_id} BLOCKED (Reason: ${reason})`, "warn");
         if (selectedRunId === eventData.run_id) {
             fetchRunTasks(eventData.run_id);
@@ -380,10 +383,27 @@ function handleRuntimeDeltaEvent(type, eventData) {
             fetchRunTasks(eventData.run_id);
         }
     } else if (type === "artifact.created") {
-        termLog("Audit", `New artifact generated: ${eventData.name}`, "success");
+        termLog("Audit", `New artifact generated: ${eventData.name || ""}`, "success");
     } else if (type === "run.completed") {
         termLog("Orchestrator", `Execution campaign ${eventData.run_id} completed successfully!`, "success");
         refreshRunsList();
+        if (selectedRunId === eventData.run_id) {
+            fetchRunTasks(eventData.run_id);
+        }
+    } else if (type === "capability.allowed") {
+        termLog("Capability", `Agent ${eventData.agent_id} allowed tool '${eventData.payload?.tool || eventData.tool || ""}'`, "info");
+    } else if (type === "capability.blocked") {
+        termLog("Capability", `Agent ${eventData.agent_id} BLOCKED (Reason: ${eventData.message || ""})`, "error");
+        if (selectedRunId === eventData.run_id) {
+            fetchRunTasks(eventData.run_id);
+        }
+    } else if (type === "capability.approval_required") {
+        termLog("Capability", `Agent ${eventData.agent_id} requires approval (Reason: ${eventData.message || ""})`, "warn");
+        if (selectedRunId === eventData.run_id) {
+            fetchRunTasks(eventData.run_id);
+            fetchApprovalRequests();
+        }
+    } else if (type === "task_state_change") {
         if (selectedRunId === eventData.run_id) {
             fetchRunTasks(eventData.run_id);
         }
@@ -399,7 +419,9 @@ function setupWebsocket() {
 
     ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        if (data.type && (data.type.includes(".") || data.type.includes("_"))) {
+        if (data.event_type) {
+            handleRuntimeDeltaEvent(data.event_type, data);
+        } else if (data.type && (data.type.includes(".") || data.type.includes("_"))) {
             handleRuntimeDeltaEvent(data.type, data.data);
         } else {
             updateUI(data);
@@ -1691,6 +1713,11 @@ function animateSwarmFlow() {
         ctx.stroke();
     });
 
+    if (prefersReducedMotion) {
+        // Skip particle logic and animation loop when reduced motion is preferred
+        return;
+    }
+
     // Update and render particle stream
     for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
@@ -1798,7 +1825,7 @@ function initSwarmGlobe() {
         const cy = canvas.height / 2;
         const rVal = Math.min(cx, cy) * 0.8;
 
-        globeAngleY += 0.004; // Rotate speed
+        globeAngleY += prefersReducedMotion ? 0 : 0.004; // Rotate speed
 
         const cosY = Math.cos(globeAngleY);
         const sinY = Math.sin(globeAngleY);
@@ -1881,7 +1908,9 @@ function initSwarmGlobe() {
             }
         });
 
-        requestAnimationFrame(drawGlobe);
+        if (!prefersReducedMotion) {
+            requestAnimationFrame(drawGlobe);
+        }
     }
 
     drawGlobe();
@@ -4878,7 +4907,7 @@ function openTopologyAgentProfile(agentId, triggerEl) {
         skillsEl.innerHTML = "";
         agent.skills.forEach((skill, idx) => {
             const span = document.createElement("span");
-            span.className = "agent-capsule skill-spinning";
+            span.className = prefersReducedMotion ? "agent-capsule" : "agent-capsule skill-spinning";
             span.textContent = skill;
             span.style.animationDelay = `${idx * 100}ms`;
             skillsEl.appendChild(span);
@@ -5021,6 +5050,7 @@ function openTopologyAgentProfile(agentId, triggerEl) {
     if (cardContainer) {
         const cardInner = cardContainer.querySelector(".trading-card-inner");
         cardContainer.onmousemove = (e) => {
+            if (prefersReducedMotion) return;
             const rect = cardContainer.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;

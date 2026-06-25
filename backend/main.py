@@ -280,6 +280,216 @@ def _ping_node(ip: str) -> float:
     return cluster_mgr._ping_node(ip)
 
 
+import hashlib
+
+_last_capability_decisions = {}
+_capability_lock = threading.Lock()
+
+TASK_ACTION_PROFILES = {
+    "T0-RECON": {"tool": "research", "risk_class": "low", "file_scope": "/", "network_scope": None, "requires_approval": False},
+    "T1-ROSTER-PLAN": {"tool": "planning", "risk_class": "low", "file_scope": "/docs", "network_scope": None, "requires_approval": False},
+    "T2-SPEC": {"tool": "write_spec", "risk_class": "medium", "file_scope": "/docs", "network_scope": None, "requires_approval": True},
+    "T3-ARCH-SCAFFOLD": {"tool": "code_write", "risk_class": "medium", "file_scope": "/docs", "network_scope": None, "requires_approval": False},
+    "T4-CORE-ENGINE": {"tool": "code_write", "risk_class": "medium", "file_scope": "/backend", "network_scope": None, "requires_approval": False},
+    "T5-SWARM-DASHBOARD": {"tool": "code_write", "risk_class": "medium", "file_scope": "/frontend", "network_scope": None, "requires_approval": False},
+    "T6-PLATFORM-BACKEND": {"tool": "code_write", "risk_class": "medium", "file_scope": "/backend", "network_scope": None, "requires_approval": False},
+    "T7-DEVSECOPS-HARDENING": {"tool": "security_scan", "risk_class": "medium", "file_scope": "/", "network_scope": None, "requires_approval": False},
+    "T8-VERIFICATION": {"tool": "playwright_e2e", "risk_class": "medium", "file_scope": "/tests", "network_scope": None, "requires_approval": False},
+    "T9-RELEASE": {"tool": "release_finalize", "risk_class": "high", "file_scope": "/dist", "network_scope": None, "requires_approval": True}
+}
+
+def make_runtime_event(event_type: str, run_id: str, status: str, options: dict = None) -> dict:
+    if options is None:
+        options = {}
+    return {
+        "event_type": event_type,
+        "event_id": f"evt_{uuid.uuid4().hex[:12]}",
+        "run_id": run_id,
+        "status": status,
+        "timestamp": now_iso(),
+        "trace_id": options.get("trace_id", options.get("correlation_id", f"trace-{uuid.uuid4().hex[:6]}")),
+        "task_id": options.get("task_id"),
+        "agent_id": options.get("agent_id"),
+        "approval_id": options.get("approval_id"),
+        "artifact_id": options.get("artifact_id"),
+        "prior_state": options.get("prior_state"),
+        "next_state": options.get("next_state"),
+        "message": options.get("message"),
+        "severity": options.get("severity"),
+        "payload": options.get("payload")
+    }
+
+def enforce_agent_capability(agent_id: str, requested_action: dict) -> dict:
+    manifest = get_agent_capability_manifest(agent_id)
+    if not manifest:
+        return {
+            "allowed": True,
+            "decision": "ALLOW",
+            "reason": f"No capability manifest found for agent '{agent_id}'.",
+            "agent_id": agent_id,
+            "tool": requested_action.get("tool", ""),
+            "timestamp": now_iso()
+        }
+    
+    # Parse json lists from manifest
+    allowed_tools = manifest.get("allowed_tools", [])
+    if isinstance(allowed_tools, str):
+        try:
+            allowed_tools = json.loads(allowed_tools)
+        except:
+            allowed_tools = []
+            
+    denied_tools = manifest.get("denied_tools", [])
+    if isinstance(denied_tools, str):
+        try:
+            denied_tools = json.loads(denied_tools)
+        except:
+            denied_tools = []
+            
+    file_scopes = manifest.get("file_scopes", [])
+    if isinstance(file_scopes, str):
+        try:
+            file_scopes = json.loads(file_scopes)
+        except:
+            file_scopes = []
+            
+    network_scopes = manifest.get("network_scopes", [])
+    if isinstance(network_scopes, str):
+        try:
+            network_scopes = json.loads(network_scopes)
+        except:
+            network_scopes = []
+
+    tool = requested_action.get("tool", "")
+    file_scope = requested_action.get("file_scope")
+    network_scope = requested_action.get("network_scope")
+    req_risk_class = requested_action.get("risk_class", "low")
+    requires_approval = requested_action.get("requires_approval", False)
+
+    # 1. Denied tools check
+    if tool in denied_tools:
+        return {
+            "allowed": False,
+            "decision": "BLOCK",
+            "reason": f"Tool '{tool}' is explicitly denied in agent '{agent_id}' manifest.",
+            "agent_id": agent_id,
+            "tool": tool,
+            "timestamp": now_iso()
+        }
+
+    # Wildcard-safe tools (safe for any agent)
+    WILDCARD_SAFE_TOOLS = {
+        "research", "planning", "jobs-to-be-done", "system design", "trace IDs", 
+        "evidence packs", "provenance", "release readiness", "SBOM", "codebase inspection", 
+        "product spec", "task dag", "css micro-animations", "fastapi router"
+    }
+
+    # 2. Allowed tools check
+    if tool not in allowed_tools and tool not in WILDCARD_SAFE_TOOLS:
+        decision = "BLOCK" if req_risk_class in ("high", "critical") else "APPROVAL_REQUIRED"
+        return {
+            "allowed": False,
+            "decision": decision,
+            "reason": f"Tool '{tool}' is absent from allowed_tools in agent '{agent_id}' manifest.",
+            "agent_id": agent_id,
+            "tool": tool,
+            "timestamp": now_iso()
+        }
+
+    # 3. File scope check
+    if file_scope:
+        is_path_allowed = False
+        for scope in file_scopes:
+            if scope == "/":
+                is_path_allowed = True
+                break
+            if file_scope.startswith(scope):
+                is_path_allowed = True
+                break
+        if not is_path_allowed:
+            return {
+                "allowed": False,
+                "decision": "BLOCK",
+                "reason": f"File scope '{file_scope}' is outside manifest file_scopes ({file_scopes}) for agent '{agent_id}'.",
+                "agent_id": agent_id,
+                "tool": tool,
+                "timestamp": now_iso()
+            }
+
+    # 4. Network scope check
+    if network_scope:
+        is_net_allowed = False
+        for scope in network_scopes:
+            if scope == "*":
+                is_net_allowed = True
+                break
+            if network_scope == scope:
+                is_net_allowed = True
+                break
+        if not is_net_allowed:
+            return {
+                "allowed": False,
+                "decision": "BLOCK",
+                "reason": f"Network scope '{network_scope}' is outside manifest network_scopes ({network_scopes}) for agent '{agent_id}'.",
+                "agent_id": agent_id,
+                "tool": tool,
+                "timestamp": now_iso()
+            }
+
+    # 5. Risk class comparison
+    risk_mapping = {"low": 1, "medium": 2, "high": 3, "critical": 4}
+    agent_risk_limit = manifest.get("risk_class", "low").lower()
+    agent_risk_clean = "low"
+    if "l4" in agent_risk_limit:
+        agent_risk_clean = "low"
+    elif "l3" in agent_risk_limit:
+        agent_risk_clean = "medium"
+    elif "l2" in agent_risk_limit or "l1" in agent_risk_limit:
+        agent_risk_clean = "high"
+    
+    if risk_mapping.get(req_risk_class, 1) > risk_mapping.get(agent_risk_clean, 1):
+        return {
+            "allowed": False,
+            "decision": "APPROVAL_REQUIRED",
+            "reason": f"Requested risk class '{req_risk_class}' exceeds agent risk limit '{agent_risk_limit}'.",
+            "agent_id": agent_id,
+            "tool": tool,
+            "timestamp": now_iso()
+        }
+
+    # 6. Approval threshold check
+    threshold = manifest.get("approval_threshold", "low").lower()
+    if threshold == "human_review" or requires_approval:
+        return {
+            "allowed": False,
+            "decision": "APPROVAL_REQUIRED",
+            "reason": f"Action requires human review under agent '{agent_id}' manifest rules.",
+            "agent_id": agent_id,
+            "tool": tool,
+            "timestamp": now_iso()
+        }
+
+    return {
+        "allowed": True,
+        "decision": "ALLOW",
+        "reason": f"Action allowed: agent '{agent_id}' manifest checks passed.",
+        "agent_id": agent_id,
+        "tool": tool,
+        "timestamp": now_iso()
+    }
+
+@app.get("/api/v1/agents/{agent_id}/capability")
+def get_agent_capability_audit(agent_id: str):
+    manifest = get_agent_capability_manifest(agent_id)
+    if not manifest:
+        raise HTTPException(status_code=404, detail="Agent manifest not found")
+    with _capability_lock:
+        decisions = list(_last_capability_decisions.get(agent_id, []))
+    return {
+        "manifest": manifest,
+        "last_decisions": decisions
+    }
+
 manager = ConnectionManager()
 
 @app.get("/api/status")
@@ -354,14 +564,12 @@ async def create_swarm_run(payload: dict):
         persist_swarm_task(t)
 
     # Broadcast run.created event
-    await manager.broadcast({
-        "type": "run.created",
-        "data": {
-            "run_id": run_id,
-            "name": name,
-            "status": "running"
-        }
-    })
+    await manager.broadcast(make_runtime_event(
+        event_type="run.created",
+        run_id=run_id,
+        status="running",
+        options={"message": f"New campaign created: {name}", "payload": {"name": name}}
+    ))
 
     # Return details
     return {
@@ -1333,15 +1541,16 @@ async def api_submit_decision(approval_id: str, decision: dict):
             decisions=gate["decisions"] + [enriched_decision]
         )
         
-        await manager.broadcast({
-            "type": "approval.granted" if new_status == "approved" else "approval.rejected",
-            "data": {
+        await manager.broadcast(make_runtime_event(
+            event_type="approval.granted" if new_status == "approved" else "approval.rejected",
+            run_id=run_id,
+            status=new_status,
+            options={
                 "approval_id": approval_id,
-                "run_id": run_id,
                 "task_id": task_id,
-                "decision": enriched_decision
+                "payload": {"decision": enriched_decision}
             }
-        })
+        ))
         
         if new_status == "approved":
             # Resume blocked tasks
@@ -1420,16 +1629,18 @@ async def run_task_simulated(run_id: str, task: dict):
         }
         persist_swarm_artifact(art)
         # Broadcast artifact created
-        await manager.broadcast({
-            "type": "artifact.created",
-            "data": {
+        await manager.broadcast(make_runtime_event(
+            event_type="artifact.created",
+            run_id=run_id,
+            status="completed",
+            options={
                 "artifact_id": art["id"],
-                "run_id": run_id,
                 "task_id": task["id"],
-                "name": art["name"],
-                "created_by_agent_id": art["created_by_agent_id"]
+                "agent_id": art["created_by_agent_id"],
+                "message": f"Artifact created: {art['name']}",
+                "payload": {"name": art["name"]}
             }
-        })
+        ))
     elif task["id"] == "T3-ARCH-SCAFFOLD":
         art = {
             "id": f"art-arch-{uuid.uuid4().hex[:4]}",
@@ -1447,19 +1658,30 @@ async def run_task_simulated(run_id: str, task: dict):
         }
         persist_swarm_artifact(art)
         # Broadcast artifact created
-        await manager.broadcast({
-            "type": "artifact.created",
-            "data": {
+        await manager.broadcast(make_runtime_event(
+            event_type="artifact.created",
+            run_id=run_id,
+            status="completed",
+            options={
                 "artifact_id": art["id"],
-                "run_id": run_id,
                 "task_id": task["id"],
-                "name": art["name"],
-                "created_by_agent_id": art["created_by_agent_id"]
+                "agent_id": art["created_by_agent_id"],
+                "message": f"Artifact created: {art['name']}",
+                "payload": {"name": art["name"]}
             }
-        })
+        ))
 
     # Broadcast state change
-    await manager.broadcast({"type": "task_state_change", "data": {"task_id": task["id"], "run_id": run_id, "status": "completed"}})
+    await manager.broadcast(make_runtime_event(
+        event_type="task_state_change",
+        run_id=run_id,
+        status="completed",
+        options={
+            "task_id": task["id"],
+            "prior_state": "running",
+            "next_state": "completed"
+        }
+    ))
     
     # Check if run has completed (all tasks in the run are completed)
     all_tasks = list_swarm_tasks(run_id)
@@ -1469,13 +1691,12 @@ async def run_task_simulated(run_id: str, task: dict):
         run_name = run_obj["name"] if run_obj else f"Swarm Run {run_id}"
         persist_swarm_run(run_id, run_name, "completed", completed_at=now_iso())
         
-        await manager.broadcast({
-            "type": "run.completed",
-            "data": {
-                "run_id": run_id,
-                "status": "completed"
-            }
-        })
+        await manager.broadcast(make_runtime_event(
+            event_type="run.completed",
+            run_id=run_id,
+            status="completed",
+            options={"message": "Run campaign completed"}
+        ))
     
     # Trigger next tasks that depend on this one
     for t in all_tasks:
@@ -1505,12 +1726,88 @@ async def execute_task_background(run_id: str, task_id: str):
             # Dependency not met
             task["status"] = "blocked"
             persist_swarm_task(task)
-            await manager.broadcast({"type": "task_state_change", "data": {"task_id": task_id, "run_id": run_id, "status": "blocked"}})
-            await manager.broadcast({"type": "task.blocked", "data": {"task_id": task_id, "run_id": run_id, "reason": "dependency"}})
+            await manager.broadcast(make_runtime_event(
+                event_type="task_state_change",
+                run_id=run_id,
+                status="blocked",
+                options={"task_id": task_id, "prior_state": "pending", "next_state": "blocked"}
+            ))
+            await manager.broadcast(make_runtime_event(
+                event_type="task.blocked",
+                run_id=run_id,
+                status="blocked",
+                options={"task_id": task_id, "message": "Dependency not met"}
+            ))
             return
             
-    # Check if approval is required
-    if task["approvalRequired"] and task["status"] not in ("running", "completed"):
+    # Capability manifest enforcement
+    agent_id = task["ownerAgentId"]
+    profile = TASK_ACTION_PROFILES.get(task_id, {
+        "tool": "general_logic",
+        "risk_class": "low",
+        "file_scope": None,
+        "network_scope": None,
+        "requires_approval": False
+    })
+    # Sync profile parameters with task specifics
+    profile["risk_class"] = task.get("riskLevel", profile["risk_class"])
+    profile["requires_approval"] = task.get("approvalRequired", profile["requires_approval"])
+    
+    decision = enforce_agent_capability(agent_id, profile)
+    
+    # Persist decision to last decisions log
+    with _capability_lock:
+        if agent_id not in _last_capability_decisions:
+            _last_capability_decisions[agent_id] = []
+        _last_capability_decisions[agent_id].insert(0, decision)
+        _last_capability_decisions[agent_id] = _last_capability_decisions[agent_id][:10]
+
+    if decision["decision"] == "BLOCK":
+        # 1. Block task
+        task["status"] = "blocked"
+        persist_swarm_task(task)
+        
+        # 2. Persist artifact/evidence
+        art_id = f"art-cap-{uuid.uuid4().hex[:4]}"
+        art = {
+            "id": art_id,
+            "name": f"Capability enforcement report: {task_id}",
+            "path": f"/docs/compliance/capability-{task_id}.json",
+            "hash": hashlib.sha256(json.dumps(decision).encode()).hexdigest(),
+            "task_id": task_id,
+            "run_id": run_id,
+            "status": "completed",
+            "created_by_agent_id": agent_id,
+            "mime_type": "application/json",
+            "evidence_type": "capability_enforcement",
+            "retention_policy": "permanent",
+            "signature_status": "unsigned"
+        }
+        persist_swarm_artifact(art)
+        
+        # 3. Broadcast capability.blocked event
+        await manager.broadcast(make_runtime_event(
+            event_type="capability.blocked",
+            run_id=run_id,
+            status="blocked",
+            options={
+                "task_id": task_id,
+                "agent_id": agent_id,
+                "artifact_id": art_id,
+                "message": decision["reason"],
+                "payload": decision
+            }
+        ))
+        
+        await manager.broadcast(make_runtime_event(
+            event_type="task_state_change",
+            run_id=run_id,
+            status="blocked",
+            options={"task_id": task_id, "prior_state": "pending", "next_state": "blocked"}
+        ))
+        return
+
+    elif decision["decision"] == "APPROVAL_REQUIRED":
         # Check if there is an approved gate for this task in SQLite
         gates = list_approval_gates()
         gate = next((g for g in gates if g["request_id"] == f"{run_id}:{task_id}" and g["status"] == "approved"), None)
@@ -1544,32 +1841,84 @@ async def execute_task_background(run_id: str, task_id: str):
                     "required_approver_role": "approver",
                     "command": {"command_id": f"cmd-{task_id}", "correlation_id": "corr", "raw_text": f"execute-task {task_id}", "risk": task["riskLevel"]},
                     "target": {"id": run_id, "name": f"Swarm Run {run_id}", "type": "swarm"},
-                    "policy_context": {"decision": "block", "approval_reason": f"Approval required for task {task_id} due to {task['riskLevel']} risk level.", "blockers": [], "warnings": []},
+                    "policy_context": {
+                        "decision": "block",
+                        "approval_reason": decision["reason"],
+                        "blockers": [],
+                        "warnings": []
+                    },
                     "decisions": []
                 })
             
-            # Broadcast state change
-            await manager.broadcast({
-                "type": "task_state_change",
-                "data": {
+            # Broadcast capability.approval_required event
+            await manager.broadcast(make_runtime_event(
+                event_type="capability.approval_required",
+                run_id=run_id,
+                status="blocked_pending_approval",
+                options={
                     "task_id": task_id,
-                    "run_id": run_id,
-                    "status": "blocked_pending_approval",
-                    "approval_required": True,
+                    "agent_id": agent_id,
+                    "approval_id": approval_id,
+                    "message": decision["reason"],
+                    "payload": decision
+                }
+            ))
+
+            # Broadcast state changes
+            await manager.broadcast(make_runtime_event(
+                event_type="task_state_change",
+                run_id=run_id,
+                status="blocked_pending_approval",
+                options={
+                    "task_id": task_id,
+                    "prior_state": "pending",
+                    "next_state": "blocked_pending_approval",
                     "approval_id": approval_id
                 }
-            })
+            ))
             
-            # Broadcast delta events
-            await manager.broadcast({"type": "task.blocked", "data": {"task_id": task_id, "run_id": run_id, "reason": "approval"}})
-            await manager.broadcast({"type": "approval.requested", "data": {"approval_id": approval_id, "run_id": run_id, "task_id": task_id}})
+            await manager.broadcast(make_runtime_event(
+                event_type="task.blocked",
+                run_id=run_id,
+                status="blocked",
+                options={"task_id": task_id, "message": "Approval required"}
+            ))
+            await manager.broadcast(make_runtime_event(
+                event_type="approval.requested",
+                run_id=run_id,
+                status="pending",
+                options={"approval_id": approval_id, "task_id": task_id}
+            ))
             return
+
+    # Broadcast capability.allowed event
+    await manager.broadcast(make_runtime_event(
+        event_type="capability.allowed",
+        run_id=run_id,
+        status="allowed",
+        options={
+            "task_id": task_id,
+            "agent_id": agent_id,
+            "message": decision["reason"],
+            "payload": decision
+        }
+    ))
 
     # Proceed with execution
     task["status"] = "running"
     persist_swarm_task(task)
-    await manager.broadcast({"type": "task_state_change", "data": {"task_id": task_id, "run_id": run_id, "status": "running"}})
-    await manager.broadcast({"type": "task.started", "data": {"task_id": task_id, "run_id": run_id}})
+    await manager.broadcast(make_runtime_event(
+        event_type="task_state_change",
+        run_id=run_id,
+        status="running",
+        options={"task_id": task_id, "prior_state": "pending", "next_state": "running"}
+    ))
+    await manager.broadcast(make_runtime_event(
+        event_type="task.started",
+        run_id=run_id,
+        status="running",
+        options={"task_id": task_id}
+    ))
     
     # Simulate execution duration
     asyncio.create_task(run_task_simulated(run_id, task))

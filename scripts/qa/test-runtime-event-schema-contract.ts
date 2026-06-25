@@ -87,61 +87,37 @@ async function runEventSchemaTest() {
 
     // Verify events against target schema
     receivedEvents.forEach((ev) => {
-      const type = ev.type || ev.event_type;
-      if (!type) {
-        // Skip raw cluster status telemetry packets
+      // Telemetry snapshots are filtered separately (contain metrics, CPU, RAM, active_assets, etc., but no type/event_type)
+      if (!ev.type && !ev.event_type) {
         findings.push("Skipping raw cluster status metrics telemetry packet");
         return;
       }
+
+      const type = ev.event_type || ev.type;
       findings.push(`Evaluating event type: ${type}`);
 
-      // Check event_type
-      if (!ev.event_type) {
-        gaps.push(`[${type}] Missing literal field: event_type (present as 'type')`);
-      }
+      // Assert runtime events use normalized envelope root fields
+      const requiredFields = ["event_type", "event_id", "run_id", "status", "timestamp", "trace_id"];
+      requiredFields.forEach((field) => {
+        if (ev[field] === undefined || ev[field] === null || ev[field] === "") {
+          errors.push(`[${type}] Missing required normalized root field: ${field}`);
+        }
+      });
 
-      // Check event_id
-      if (!ev.event_id && !ev.id) {
-        gaps.push(`[${type}] Missing field: event_id`);
-      }
-
-      // Check timestamp
-      if (!ev.timestamp && !ev.time) {
-        gaps.push(`[${type}] Missing field: timestamp`);
-      }
-
-      // Check trace_id or correlation_id
-      if (!ev.trace_id && !ev.correlation_id && !ev.data?.correlation_id) {
-        gaps.push(`[${type}] Missing field: trace_id / correlation_id`);
-      }
-
-      // Check run_id when relevant
-      const data = ev.data || {};
-      const actualRunId = ev.run_id || data.run_id;
-      if (!actualRunId) {
-        gaps.push(`[${type}] Missing field: run_id`);
-      }
-
-      // Check status
-      const actualStatus = ev.status || data.status;
-      if (!actualStatus) {
-        gaps.push(`[${type}] Missing field: status`);
-      }
-
-      // Event specific checks
+      // Event specific root checks
       if (type && type.startsWith("task.")) {
-        if (!ev.task_id && !data.task_id) {
-          gaps.push(`[${type}] Task event missing task_id`);
+        if (!ev.task_id) {
+          errors.push(`[${type}] Task event missing root field: task_id`);
         }
       }
       if (type && type.startsWith("approval.")) {
-        if (!ev.approval_id && !data.approval_id) {
-          gaps.push(`[${type}] Approval event missing approval_id`);
+        if (!ev.approval_id) {
+          errors.push(`[${type}] Approval event missing root field: approval_id`);
         }
       }
       if (type && type.startsWith("artifact.")) {
-        if (!ev.artifact_id && !data.artifact_id) {
-          gaps.push(`[${type}] Artifact event missing artifact_id`);
+        if (!ev.artifact_id) {
+          errors.push(`[${type}] Artifact event missing root field: artifact_id`);
         }
       }
     });
