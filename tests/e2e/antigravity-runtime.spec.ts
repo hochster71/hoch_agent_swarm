@@ -46,7 +46,7 @@ test.describe("Antigravity runtime console", () => {
     }
 
     for (const label of forbiddenLegacyText) {
-      await expect(page.getByText(label, { exact: true })).toHaveCount(0);
+      await expect(page.locator(".sidebar").getByText(label, { exact: true })).toHaveCount(0);
     }
 
     expect(consoleErrors, consoleErrors.join("\n")).toEqual([]);

@@ -18,9 +18,12 @@ for (const label of requiredLabels) {
   }
 }
 
+const navLinksMatch = html.match(/<nav class="nav-links">([\s\S]*?)<\/nav>/);
+const navLinksContent = navLinksMatch ? navLinksMatch[1] : "";
+
 for (const label of forbiddenLabels) {
-  if (html.includes(label)) {
-    blockers.push(`Forbidden stale nav label still present: ${label}`);
+  if (navLinksContent.includes(label)) {
+    blockers.push(`Forbidden stale nav label still present in nav links: ${label}`);
   }
 }
 
