@@ -1151,6 +1151,9 @@ Object.keys(navItems).forEach(key => {
             // Custom actions on tab switches
             if (key === "security" || key === "releaseProvenance") {
                 triggerSecurityAudit();
+                if (typeof fetchAndRenderSigningPolicy === 'function') {
+                    fetchAndRenderSigningPolicy();
+                }
             } else if (key === "assets" || key === "swarmControl") {
                 renderAssetsView(currentNodes);
             } else if (key === "tasks" || key === "remediationSafety") {
@@ -6605,6 +6608,9 @@ async function pollRunsDashboardState() {
         await fetchRunTasks(selectedRunId);
     }
     await fetchApprovalRequests();
+    if (typeof fetchAndRenderSigningPolicy === 'function') {
+        await fetchAndRenderSigningPolicy();
+    }
 }
 
 async function fetchRunTasks(runId) {
@@ -6927,4 +6933,148 @@ window.fetchRunTasks = fetchRunTasks;
 window.renderTaskFlowGrid = renderTaskFlowGrid;
 window.fetchApprovalRequests = fetchApprovalRequests;
 window.submitApprovalDecision = submitApprovalDecision;
+
+async function fetchAndRenderSigningPolicy() {
+    const policyPanel = document.getElementById("release-signing-policy-panel");
+    if (!policyPanel) return;
+
+    try {
+        const response = await fetch(`${API_BASE}/api/v1/release/signing-policy`);
+        if (response.ok) {
+            const data = await response.json();
+            const current = data.current_release || {};
+
+            // 1. Render signature status
+            const sigStatusEl = document.getElementById("release-signature-status");
+            if (sigStatusEl) {
+                if (current.signature_status === "signed") {
+                    sigStatusEl.textContent = "Signed";
+                    sigStatusEl.style.color = "var(--accent-teal)";
+                } else if (current.signature_status === "waived") {
+                    sigStatusEl.textContent = "Waived With Operator Approval";
+                    sigStatusEl.style.color = "var(--accent-blue)";
+                } else if (current.signature_status === "partially_signed") {
+                    sigStatusEl.textContent = "Partially Signed";
+                    sigStatusEl.style.color = "var(--accent-yellow)";
+                } else {
+                    sigStatusEl.textContent = "Signing Pending";
+                    sigStatusEl.style.color = "var(--text-secondary)";
+                }
+            }
+
+            // 2. Render policy status
+            const policyStatusEl = document.getElementById("release-signing-policy-status");
+            if (policyStatusEl) {
+                policyStatusEl.textContent = current.signing_policy_status || "WARN";
+                if (current.signing_policy_status === "PASS") {
+                    policyStatusEl.style.color = "var(--accent-teal)";
+                    policyStatusEl.style.borderColor = "var(--accent-teal)";
+                } else if (current.signing_policy_status === "BLOCK") {
+                    policyStatusEl.style.color = "#ef4444";
+                    policyStatusEl.style.borderColor = "#ef4444";
+                } else {
+                    policyStatusEl.style.color = "var(--accent-yellow)";
+                    policyStatusEl.style.borderColor = "var(--accent-yellow)";
+                }
+            }
+
+            // 3. Render finalization status
+            const finalStatusEl = document.getElementById("release-finalization-status");
+            if (finalStatusEl) {
+                if (current.release_finalization_status === "formal_release_blocked") {
+                    finalStatusEl.textContent = "Formal Release Blocked";
+                    finalStatusEl.style.color = "#ef4444";
+                } else if (current.release_finalization_status === "formal_release_ready") {
+                    finalStatusEl.textContent = "Formal Release Ready";
+                    finalStatusEl.style.color = "var(--accent-teal)";
+                } else {
+                    finalStatusEl.textContent = "Local Dev Pass";
+                    finalStatusEl.style.color = "var(--accent-blue)";
+                }
+            }
+
+            // 4. Render waiver status
+            const waiverStatusEl = document.getElementById("release-signing-waiver-status");
+            if (waiverStatusEl) {
+                waiverStatusEl.textContent = current.signing_waiver_status || "none";
+            }
+
+            // 5. Render actions list
+            const actionListEl = document.getElementById("release-signing-action-list");
+            if (actionListEl) {
+                actionListEl.innerHTML = "";
+                const allowed = data.allowed_actions || [];
+                allowed.forEach(action => {
+                    const btn = document.createElement("button");
+                    btn.className = "btn btn-xs";
+                    if (action === "continue_local_dev") {
+                        btn.className += " btn-secondary";
+                        btn.textContent = "Continue Local Dev";
+                    } else if (action === "request_signing") {
+                        btn.className += " btn-primary";
+                        btn.textContent = "Request Signing";
+                    } else if (action === "request_operator_waiver") {
+                        btn.className += " btn-danger";
+                        btn.textContent = "Request Operator Waiver";
+                    }
+                    btn.addEventListener("click", () => handleSigningAction(action));
+                    actionListEl.appendChild(btn);
+                });
+            }
+        }
+    } catch (err) {
+        console.error("Failed to fetch signing policy:", err);
+    }
+}
+
+async function handleSigningAction(action) {
+    if (action === "continue_local_dev") {
+        try {
+            const res = await fetch(`${API_BASE}/api/v1/release/signing-waiver`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    reason: "Local development loop continuation",
+                    scope: "local_dev",
+                    operator: "Local Developer"
+                })
+            });
+            if (res.ok) {
+                alert("Local dev signature warning waived successfully.");
+                fetchAndRenderSigningPolicy();
+            }
+        } catch (err) {
+            alert("Failed to waive warning: " + err.message);
+        }
+    } else if (action === "request_operator_waiver") {
+        const reason = prompt("Enter reason for formal release signing waiver:", "Testing release without Cosign keys");
+        if (reason === null) return;
+        try {
+            const res = await fetch(`${API_BASE}/api/v1/release/signing-waiver`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    reason: reason,
+                    scope: "formal_release",
+                    operator: "Operator"
+                })
+            });
+            if (res.ok) {
+                const data = await res.json();
+                alert("Waiver approval gate requested: " + data.approval_id);
+                fetchAndRenderSigningPolicy();
+                if (typeof fetchApprovalRequests === 'function') {
+                    fetchApprovalRequests();
+                }
+            }
+        } catch (err) {
+            alert("Failed to request waiver: " + err.message);
+        }
+    } else if (action === "request_signing") {
+        alert("Cosign signing requested. Set ENABLE_COSIGN_SIGNING=true in env and run release pipeline.");
+    }
+}
+
+window.fetchAndRenderSigningPolicy = fetchAndRenderSigningPolicy;
+window.handleSigningAction = handleSigningAction;
 

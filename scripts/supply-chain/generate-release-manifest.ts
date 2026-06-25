@@ -65,6 +65,25 @@ async function main() {
   await fetchAndSave(`${BASE_URL}/api/v1/audit/runtime/approvals`, `${RELEASE_DIR}/approval_gate_report.json`);
   await fetchAndSave(`${BASE_URL}/api/v1/readiness/budget-report`, `${RELEASE_DIR}/autonomy_budget_report.json`);
 
+  // Fetch signing policy
+  let signingPolicyData: any = {
+    current_release: {
+      signature_status: "unsigned",
+      signing_policy_status: "WARN",
+      release_finalization_status: "local_dev_pass",
+      signing_waiver_status: "none",
+      signing_waiver_decision_id: null
+    }
+  };
+  try {
+    const res = await fetch(`${BASE_URL}/api/v1/release/signing-policy`);
+    if (res.ok) {
+      signingPolicyData = await res.json();
+    }
+  } catch (err) {
+    console.warn("Could not fetch signing policy from backend:", (err as Error).message);
+  }
+
   const dockerDigests = readJson("artifacts/baseline/docker-image-digests.json", {
     records: [],
     warnings: ["docker digest report missing"],
@@ -140,7 +159,39 @@ async function main() {
   const gitCommit = run("git rev-parse HEAD");
   const gitBranch = run("git rev-parse --abbrev-ref HEAD");
 
-  const manifest = {
+  const expectedSigned = [
+    "baseline_evidence_pack.json",
+    "release_manifest.json",
+    "provenance.intoto.jsonl",
+    "sbom.spdx.json",
+    "runtime_execution_audit.json",
+    "tool_call_trace_summary.json",
+    "redaction_report.json",
+    "approval_gate_report.json",
+  ];
+  let signedCount = 0;
+  let unsignedCount = 0;
+  for (const name of expectedSigned) {
+    const filePath = `${RELEASE_DIR}/${name}`;
+    if (fs.existsSync(filePath)) {
+      if (fs.existsSync(`${filePath}.sig`)) {
+        signedCount++;
+      } else {
+        unsignedCount++;
+      }
+    }
+  }
+
+  const manifest: any = {
+    signing_policy_status: signingPolicyData.current_release.signing_policy_status || "WARN",
+    signing_required_for_formal_release: true,
+    signing_provider: "cosign",
+    signature_status: signingPolicyData.current_release.signature_status || "unsigned",
+    signed_artifacts_count: signedCount,
+    unsigned_artifacts_count: unsignedCount,
+    signing_waiver_status: signingPolicyData.current_release.signing_waiver_status || "none",
+    signing_waiver_decision_id: signingPolicyData.current_release.signing_waiver_decision_id,
+    release_finalization_status: signingPolicyData.current_release.release_finalization_status || "local_dev_pass",
     release: {
       version: VERSION,
       codename: "Hochster Runtime Execution Audit",
@@ -173,10 +224,19 @@ async function main() {
       current: VERSION,
     },
     integrity: {
-      signed: false,
+      signed: (signingPolicyData.current_release.signature_status === "signed"),
       signature_refs: [],
       provenance_ref: `${RELEASE_DIR}/provenance.intoto.jsonl`,
       sbom_ref: `${RELEASE_DIR}/sbom.spdx.json`,
+      signing_policy_status: signingPolicyData.current_release.signing_policy_status || "WARN",
+      signing_required_for_formal_release: true,
+      signing_provider: "cosign",
+      signature_status: signingPolicyData.current_release.signature_status || "unsigned",
+      signed_artifacts_count: signedCount,
+      unsigned_artifacts_count: unsignedCount,
+      signing_waiver_status: signingPolicyData.current_release.signing_waiver_status || "none",
+      signing_waiver_decision_id: signingPolicyData.current_release.signing_waiver_decision_id,
+      release_finalization_status: signingPolicyData.current_release.release_finalization_status || "local_dev_pass"
     },
     hochster: {
       cluster_jobs_completed:

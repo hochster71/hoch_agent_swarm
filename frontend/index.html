@@ -1039,8 +1039,61 @@
 </div>
 
             <!-- Release Provenance View -->
-            <div id="view-release-provenance" class="hidden">
-</div>
+            <div id="view-release-provenance" class="hidden" style="padding: 20px; display: flex; flex-direction: column; gap: 20px; height: 100%; overflow-y: auto;">
+                <section class="card" id="release-signing-policy-panel" style="padding: 20px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-glass); padding-bottom: 12px; margin-bottom: 16px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i data-lucide="key-round" style="color: var(--accent-teal); width: 20px; height: 20px;"></i>
+                            <h2 style="font-size: 16px; font-weight: 700; color: #fff; margin: 0;">Release Signing Policy</h2>
+                        </div>
+                        <span class="badge" id="release-signing-policy-status" style="background: rgba(255,255,255,0.05); color: var(--text-secondary); padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-glass); font-size: 11px; font-weight: 600;">UNKNOWN</span>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <div style="font-size: 13px; color: var(--text-secondary);">
+                                <strong>Signature Status:</strong> 
+                                <span id="release-signature-status" style="color: #fff; font-weight: 600;">Signing Pending</span>
+                            </div>
+                            <div style="font-size: 13px; color: var(--text-secondary);">
+                                <strong>Release Finalization Status:</strong> 
+                                <span id="release-finalization-status" style="color: #fff; font-weight: 600;">Formal Release Blocked</span>
+                            </div>
+                            <div style="font-size: 13px; color: var(--text-secondary);">
+                                <strong>Signing Provider:</strong> 
+                                <span id="release-signing-provider" style="color: #fff;">cosign</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <div style="font-size: 13px; color: var(--text-secondary);" id="release-signing-required-indicator">
+                                <strong>Signing Required for Formal Release:</strong> 
+                                <span style="color: var(--accent-blue);">Yes</span>
+                            </div>
+                            <div style="font-size: 13px; color: var(--text-secondary);">
+                                <strong>Waiver Status:</strong> 
+                                <span id="release-signing-waiver-status" style="color: #fff;">none</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="background: rgba(0,0,0,0.2); padding: 12px 16px; font-size: 12px; line-height: 1.6; color: var(--text-secondary); margin-bottom: 20px; border: 1px solid var(--border-glass);">
+                        <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px;">
+                            <li>Local Dev Allows Unsigned Evidence</li>
+                            <li>Formal Release Blocks Unsigned Artifacts</li>
+                            <li>Possible signature states: Signing Pending, Signed, or Waived With Operator Approval</li>
+                        </ul>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <h4 style="font-size: 13px; font-weight: 600; color: #fff; margin: 0 0 4px 0;">Available Actions</h4>
+                        <div id="release-signing-action-list" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button id="btn-signing-continue-dev" class="btn btn-secondary btn-xs" onclick="window.handleSigningAction('continue_local_dev')">Continue Local Dev</button>
+                            <button id="btn-signing-request-sign" class="btn btn-primary btn-xs" onclick="window.handleSigningAction('request_signing')">Request Signing</button>
+                            <button id="btn-signing-request-waiver" class="btn btn-danger btn-xs" onclick="window.handleSigningAction('request_operator_waiver')">Request Operator Waiver</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
 
             <!-- Customer Success View -->
             <div id="view-customer-success" class="hidden">

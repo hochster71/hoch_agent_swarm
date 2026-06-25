@@ -794,4 +794,7 @@ def get_agent_capability_manifest(agent_id: str) -> dict | None:
     finally:
         conn.close()
 
+# End of runtime_execution_store.py - Phase 6 Release Signing Policy Gate support active.
+
+
 

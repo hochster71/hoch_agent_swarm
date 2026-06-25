@@ -63,8 +63,21 @@ if (manifest.hochster?.missing_trace_ids?.length > 0) {
 if (manifest.hochster?.missing_evidence_refs?.length > 0) {
   blockers.push("HOCHSTER jobs missing evidence refs");
 }
-if (!manifest.integrity?.signed) {
-  warnings.push("Release artifacts are not cryptographically signed yet");
+const isFormalRelease = process.env.GITHUB_ACTIONS === "true" || process.env.FORMAL_RELEASE === "true";
+const signatureStatus = manifest.signature_status || "unsigned";
+const signingPolicyStatus = manifest.signing_policy_status || "WARN";
+const releaseFinalizationStatus = manifest.release_finalization_status || "local_dev_pass";
+
+if (signatureStatus === "signed") {
+  // PASS
+} else if (signatureStatus === "waived") {
+  // PASS
+} else {
+  if (isFormalRelease) {
+    blockers.push("Release artifacts are unsigned or partially signed, blocking formal release finalization");
+  } else {
+    warnings.push("Release artifacts are unsigned (Allowed in local dev mode)");
+  }
 }
 
 const report = {
@@ -73,6 +86,15 @@ const report = {
   status: blockers.length === 0 ? "PASS" : "BLOCK",
   blockers,
   warnings,
+  signing_policy: {
+    decision: blockers.length === 0 ? (signatureStatus === "signed" ? "PASS" : (signatureStatus === "waived" ? "PASS" : "WARN")) : "BLOCK",
+    cosign_enabled: !!process.env.ENABLE_COSIGN_SIGNING,
+    enable_cosign_signing_set: process.env.ENABLE_COSIGN_SIGNING !== undefined,
+    is_formal_release: isFormalRelease,
+    signing_policy_status: signingPolicyStatus,
+    signature_status: signatureStatus,
+    release_finalization_status: releaseFinalizationStatus
+  }
 };
 
 fs.writeFileSync(

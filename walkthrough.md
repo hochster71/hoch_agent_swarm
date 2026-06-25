@@ -1,9 +1,6 @@
-# Walkthrough — v0.1.9-CORE-RUNTIME-BUILD-AND-HARDENING
+# Walkthrough — v0.1.6-ERROR-BUDGET-AWARE-AUTONOMY
 
-This walkthrough documents the deliverables, features, and verification details of:
-- **Phase 2 (Product & Runtime Specification)**
-- **Phase 3 (Reference Architecture Scaffolding)**
-- **Phase 4 (Core Runtime Build and Hardening)**
+This walkthrough documents the deliverables, features, and verification details of the Hoch Agent Swarm platform, including the new Release Signing Policy Gate.
 
 ---
 
@@ -39,7 +36,31 @@ We implemented the persistent execution engine and telemetry-driven frontend syn
 
 ---
 
-## 4. Verification Results
+## 4. Security Hardening & Telemetry Upgrades (Phase 5)
+We fortified the runtime and auditing layer with:
+- **Agent Capability Manifests**: Integrated an authority manifest for each agent (specifying `allowed_tools`, `denied_tools`, `file_scopes`, etc.) that renders dynamically as trust badges when viewing dossiers.
+- **Approval Replay Protection**: Enriched the approval gate decisions with cryptographically linked nonces, state deltas, and request checking that blocks stale/duplicate decisions.
+- **Auditable Provenance Schema**: Expanded `swarm_artifacts` database properties with agent signature and retention statuses.
+- **WebSocket Telemetry Stream**: Implemented dynamic streaming of execution event deltas (`run.created`, `task.started`, `task.blocked`, etc.) to trigger live terminal logger updates.
+- **Full Chain E2E Verification**: Added a comprehensive Playwright suite that simulates run launching, assertions on DB rows, operator manual gate approval, and final campaign completion.
+
+---
+
+## 5. Release Signing Policy Gate (Phase 6)
+We implemented the Release Signing Policy Gate to secure the supply chain release evidence:
+- **Signing Policy Enforcement**:
+  - Unsigned release evidence is permitted for local/dev runs, emitting a `WARN` in the verification report.
+  - Unsigned release evidence strictly blocks formal CI/CD releases (`BLOCK` in the verification report, exiting 1).
+- **Operator Waivers**:
+  - Support a `local_dev` waiver acknowledging warnings.
+  - Support a `formal_release` waiver creating an auditable approval gate in the database ledger.
+- **Cosign Integration & UI Panel**:
+  - Added the `#release-signing-policy-panel` card inside `#view-release-provenance` in the UI to display policy parameters, active waiver status, and release finalization status.
+  - Integrated signature audits into the automated release pipeline (`npm run supply:release`).
+
+---
+
+## 6. Verification Results
 
 ### Static QA & Contract Checks (`npm run qa:ui-contract`)
 - All contract checks exited with `PASS`:
@@ -53,6 +74,7 @@ We implemented the persistent execution engine and telemetry-driven frontend syn
   - `topology-agent-overlay`: PASS
   - `topology-animation-quality`: PASS
   - `cybersecurity-factory`: PASS
+  - `release-signing-policy-contract`: PASS
 
 ### Playwright E2E Integration Tests (`npm run qa:e2e-runtime`)
 - All browser simulation specs completed successfully:
@@ -60,16 +82,9 @@ We implemented the persistent execution engine and telemetry-driven frontend syn
   - `global-swarm-animation-runtime.spec.ts`: PASS
   - `topology-agent-overlay.spec.ts`: PASS (verified with 0 browser console/runtime exceptions)
   - `cybersecurity-factory.spec.ts`: PASS
+  - `release-signing-policy.spec.ts`: PASS
 
+### North Star & Autonomy Budget Audit (`npm run qa:runtime-full`)
+- Autonomy Safety Engine static red-team assertions: 20/20 PASS
+- Autonomy Gating and budget throttling integration assertions: 5/5 PASS
 - Final Operational Readiness Score: **100/100 PASS**
-
----
-
-## 5. Security Hardening & Telemetry Upgrades
-We fortified the runtime and auditing layer with:
-- **Agent Capability Manifests**: Integrated an authority manifest for each agent (specifying `allowed_tools`, `denied_tools`, `file_scopes`, etc.) that renders dynamically as trust badges when viewing dossiers.
-- **Approval Replay Protection**: Enriched the approval gate decisions with cryptographically linked nonces, state deltas, and request checking that blocks stale/duplicate decisions.
-- **Auditable Provenance Schema**: Expanded `swarm_artifacts` database properties with agent signature and retention statuses.
-- **WebSocket Telemetry Stream**: Implemented dynamic streaming of execution event deltas (`run.created`, `task.started`, `task.blocked`, etc.) to trigger live terminal logger updates.
-- **Full Chain E2E Verification**: Added a comprehensive Playwright suite that simulates run launching, assertions on DB rows, operator manual gate approval, and final campaign completion.
-

@@ -81,6 +81,8 @@ except Exception:
 
 app = FastAPI(title="Hoch Agent Swarm Control API")
 
+_local_dev_waiver_active = False
+
 # Enable CORS for frontend development
 app.add_middleware(
     CORSMiddleware,
@@ -489,6 +491,212 @@ def get_agent_capability_audit(agent_id: str):
         "manifest": manifest,
         "last_decisions": decisions
     }
+
+@app.get("/api/v1/release/signing-policy")
+def get_release_signing_policy():
+    # Load package.json version
+    version = "0.1.6"
+    try:
+        with open("package.json", "r") as f:
+            package_json = json.load(f)
+            version = package_json.get("version", "0.1.6")
+    except Exception as e:
+        print(f"Error reading package.json version: {e}")
+
+    manifest_path = f"dist/releases/{version}/release_manifest.json"
+    
+    # Calculate signature status
+    release_dir = f"dist/releases/{version}"
+    expected_artifacts = [
+        "baseline_evidence_pack.json",
+        "release_manifest.json",
+        "provenance.intoto.jsonl",
+        "sbom.spdx.json",
+        "runtime_execution_audit.json",
+        "tool_call_trace_summary.json",
+        "redaction_report.json",
+        "approval_gate_report.json"
+    ]
+    
+    is_formal_release = os.environ.get("GITHUB_ACTIONS") == "true" or os.environ.get("FORMAL_RELEASE") == "true"
+    
+    # Check if a waiver exists
+    waiver_gate = None
+    gates = list_approval_gates()
+    for g in gates:
+        if g.get("action_type") == "signing_waiver" and g.get("status") == "approved":
+            if is_formal_release and g.get("request_id") == "signing_waiver:formal_release":
+                waiver_gate = g
+                break
+            elif not is_formal_release and g.get("request_id") == "signing_waiver:local_dev":
+                waiver_gate = g
+                break
+                
+    if not waiver_gate and not is_formal_release and _local_dev_waiver_active:
+        sig_status = "waived"
+        waiver_decision_id = "local_dev_memory"
+    elif waiver_gate:
+        sig_status = "waived"
+        decisions = waiver_gate.get("decisions", [])
+        waiver_decision_id = decisions[0].get("decision_id") if decisions else "unknown"
+    else:
+        # Check signature files
+        if not os.path.exists(release_dir):
+            sig_status = "unsigned"
+        else:
+            signed_count = 0
+            unsigned_count = 0
+            for name in expected_artifacts:
+                path = os.path.join(release_dir, name)
+                if os.path.exists(path):
+                    if os.path.exists(path + ".sig"):
+                        signed_count += 1
+                    else:
+                        unsigned_count += 1
+            if signed_count > 0 and unsigned_count == 0:
+                sig_status = "signed"
+            elif signed_count > 0 and unsigned_count > 0:
+                sig_status = "partially_signed"
+            else:
+                sig_status = "unsigned"
+        waiver_decision_id = None
+
+    # Determine policy status
+    if sig_status in ["signed", "waived"]:
+        policy_status = "PASS"
+    else:
+        policy_status = "BLOCK" if is_formal_release else "WARN"
+        
+    # Determine release finalization status
+    if not is_formal_release:
+        release_finalization_status = "local_dev_pass"
+    else:
+        if sig_status in ["signed", "waived"]:
+            release_finalization_status = "formal_release_ready"
+        else:
+            release_finalization_status = "formal_release_blocked"
+
+    operator_action_required = (release_finalization_status == "formal_release_blocked") or (not is_formal_release and sig_status == "unsigned" and not _local_dev_waiver_active)
+    
+    return {
+        "policy": {
+            "local_dev_allows_unsigned": True,
+            "formal_release_requires_signed": True,
+            "waiver_requires_operator_approval": True,
+            "unsigned_status": "SIGNING_PENDING",
+            "signed_status": "SIGNED",
+            "waived_status": "WAIVED_WITH_OPERATOR_APPROVAL",
+            "blocked_status": "BLOCKED_UNSIGNED_RELEASE"
+        },
+        "current_release": {
+            "version": version,
+            "manifest_path": manifest_path,
+            "signature_status": sig_status,
+            "signing_policy_status": policy_status,
+            "release_finalization_status": release_finalization_status,
+            "signing_waiver_status": "waived" if sig_status == "waived" else "none",
+            "signing_waiver_decision_id": waiver_decision_id
+        },
+        "operator_action_required": operator_action_required,
+        "allowed_actions": ["continue_local_dev", "request_signing", "request_operator_waiver"]
+    }
+
+@app.post("/api/v1/release/signing-waiver")
+async def api_submit_signing_waiver(payload: dict):
+    reason = payload.get("reason", "")
+    scope = payload.get("scope", "local_dev")
+    operator = payload.get("operator", "Operator")
+    
+    if scope == "local_dev":
+        global _local_dev_waiver_active
+        _local_dev_waiver_active = True
+        
+        # Persist an approved gate for audit trail
+        approval_id = f"app-waiver-{uuid.uuid4().hex[:6]}"
+        dec = {
+            "decision_id": f"dec-{uuid.uuid4().hex[:8]}",
+            "request_id": f"signing_waiver:{scope}",
+            "run_id": None,
+            "task_id": None,
+            "operator": operator,
+            "decision": "approved",
+            "decision_time": now_iso(),
+            "nonce": uuid.uuid4().hex,
+            "prior_state": "pending",
+            "next_state": "approved"
+        }
+        persist_approval_gate(
+            approval_id=approval_id,
+            request_id=f"signing_waiver:{scope}",
+            correlation_id=f"corr-{uuid.uuid4().hex[:12]}",
+            trace_id=uuid.uuid4().hex,
+            action_type="signing_waiver",
+            risk_level="low",
+            status="approved",
+            requested_by=operator,
+            decisions=[dec]
+        )
+        return {
+            "status": "success",
+            "scope": scope,
+            "approval_id": approval_id,
+            "decision_id": dec["decision_id"],
+            "message": "Local dev signing warning waived successfully"
+        }
+        
+    elif scope == "formal_release":
+        approval_id = f"app-waiver-{uuid.uuid4().hex[:6]}"
+        persist_approval_gate(
+            approval_id=approval_id,
+            request_id=f"signing_waiver:{scope}",
+            correlation_id=f"corr-{uuid.uuid4().hex[:12]}",
+            trace_id=uuid.uuid4().hex,
+            action_type="signing_waiver",
+            risk_level="high",
+            status="pending",
+            requested_by=operator,
+            decisions=[]
+        )
+        
+        with _approvals_lock:
+            _approvals.insert(0, {
+                "approval_id": approval_id,
+                "status": "pending",
+                "action_type": "signing_waiver",
+                "risk_level": "high",
+                "requested_by": operator,
+                "created_at": now_iso(),
+                "decisions": [],
+                "command": {
+                    "command_id": f"signing_waiver:{scope}",
+                    "cmd": f"Release Signing Waiver: {reason}",
+                    "impact": "Waives cryptographic signing checks for release"
+                }
+            })
+            
+        await manager.broadcast(make_runtime_event(
+            event_type="approval.requested",
+            run_id=None,
+            status="pending",
+            options={
+                "approval_id": approval_id,
+                "task_id": None,
+                "payload": {
+                    "reason": reason,
+                    "scope": scope,
+                    "operator": operator
+                }
+            }
+        ))
+        
+        return {
+            "status": "pending_approval",
+            "scope": scope,
+            "approval_id": approval_id,
+            "message": "Formal release signing waiver requested. Approval gate created."
+        }
+    else:
+        raise HTTPException(status_code=400, detail="Invalid waiver scope")
 
 manager = ConnectionManager()
 

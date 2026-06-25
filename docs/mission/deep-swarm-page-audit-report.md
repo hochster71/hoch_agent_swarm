@@ -161,20 +161,16 @@ The API decision endpoint includes strict replay checks:
 
 ---
 
-## Release Evidence Status
+## Release Evidence & Signing Policy Status
 Regenerated supply chain artifacts:
 - `sbom.spdx.json` (SPDX package documentation)
 - `provenance.intoto.jsonl` (SLSA-compatible build steps)
-- `release_manifest.json` (Integrity mapping of all files and audits)
-- `verification_report.json` (Overall pipeline output status: `PASS`)
-- **Cosign Status**: `RELEASE-SIGNING-PENDING` (ENABLE_COSIGN_SIGNING was not set)
+- `release_manifest.json` (Integrity mapping of all files, audits, and signing policy status)
+- `verification_report.json` (Overall pipeline output status: `PASS`, containing signing policy decision)
+- **Signing Policy Gate**: Implemented. Unsigned release evidence is permitted for local/dev loops with a warning (`WARN`), but strictly blocks formal CI/CD releases (`BLOCK`) unless a signing waiver is explicitly requested and approved by an operator decision gate.
+- **Cosign Status**: Exposed in the UI and manifests. Actual Cosign signing is skipped during release generation unless `ENABLE_COSIGN_SIGNING` is set.
 
 ---
 
 ## Open Gaps
-1. **Cryptographic Signing**: Cosign signing is skipped during release generation because the credentials/environment variables are not yet configured.
-
----
-
-## Recommended Next Commits
-- `chore: enable Cosign blob signing in release pipeline`
+1. **Cryptographic Signing Provider Credentials**: Actual signature generation (`.sig`) requires configuring Cosign credentials and keys in the target environment when ready.
