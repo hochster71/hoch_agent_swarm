@@ -106,7 +106,16 @@ We implemented a formal release approval simulator allowing the operator to requ
 
 ---
 
-## 11. Verification Results
+## 11. Formal Release Seal Dry Run (Phase 12)
+We implemented a formal release seal dry-run utility to generate a final dry-run seal report from an approved formal release simulation:
+- **API Endpoints**: Added `POST /api/v1/release/formal-preview/{formal_preview_id}/seal-dry-run` and `GET /api/v1/release/seal-dry-run` to compile, compute, and persist dry run records.
+- **Dry-Run Manifest & Report**: Generates a seal dry run manifest JSON and a human-readable markdown report under `dist/formal-previews/{formal_preview_id}/` listing checklist validation results and remaining blockers.
+- **Cockpit UI Panel**: Added the `#formal-release-seal-dry-run-panel` in the Governance Cockpit showing dry run inputs, status, blocker lists, and history.
+- **No-Mutation Safety Guarantees**: Assured zero git tags are created, zero artifacts are signed, and zero packages are published.
+
+---
+
+## 12. Verification Results
 
 ### Static QA & Contract Checks (`npm run qa:ui-contract`)
 - All contract checks exited with `PASS`:
@@ -126,6 +135,7 @@ We implemented a formal release approval simulator allowing the operator to requ
   - `candidate-release-packet-contract`: PASS
   - `formal-release-preview-contract`: PASS
   - `formal-release-approval-contract`: PASS
+  - `formal-release-seal-dry-run-contract`: PASS
 
 ### Playwright E2E Integration Tests (`npm run qa:e2e-runtime`)
 - All browser simulation specs completed successfully:
@@ -139,6 +149,7 @@ We implemented a formal release approval simulator allowing the operator to requ
   - `candidate-release-packet.spec.ts`: PASS
   - `formal-release-preview.spec.ts`: PASS
   - `formal-release-approval.spec.ts`: PASS
+  - `formal-release-seal-dry-run.spec.ts`: PASS
 
 ### North Star & Autonomy Budget Audit (`npm run qa:runtime-full`)
 - Autonomy Safety Engine static red-team assertions: 20/20 PASS
