@@ -1725,6 +1725,202 @@
                         </div>
                     </div>
                 </section>
+
+                <!-- Model Provider Registry Panel (Phase 17) -->
+                <section class="card" id="model-provider-registry-panel" style="padding: 16px; margin-top: 20px;">
+                    <div class="card-header" style="border-bottom: 1px solid var(--border-glass); padding-bottom: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                        <i data-lucide="cpu" style="color: var(--accent-teal); width: 16px; height: 16px;"></i>
+                        <h3 class="card-title" style="font-size: 13px; font-weight: 600; color: #fff; margin: 0;">Model Provider Registry</h3>
+                    </div>
+
+                    <div class="dashboard-grid" style="grid-template-columns: 1fr 1.5fr; gap: 20px; border: 0; padding: 0; background: transparent; margin: 0;">
+                        <!-- Registration Form -->
+                        <div id="model-provider-register-form" style="display: flex; flex-direction: column; gap: 12px; background: rgba(0,0,0,0.15); padding: 14px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.03);">
+                            <h4 style="margin: 0 0 4px 0; font-size: 12px; font-weight: bold; color: var(--accent-teal);">Register Local Model Endpoint</h4>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 11px; color: var(--text-secondary);">Provider Name</label>
+                                <input type="text" id="model-provider-name-input" placeholder="iPad Pro 12 Gemma" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 12px;">
+                            </div>
+
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 11px; color: var(--text-secondary);">Service Node</label>
+                                <select id="model-provider-node-select" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 12px;">
+                                    <option value="">-- No Node (Standalone) --</option>
+                                    <option value="L1">L1 Control Plane (Core)</option>
+                                    <option value="L2">L2 Worker (Core)</option>
+                                    <!-- Dynamic service nodes populated dynamically -->
+                                </select>
+                            </div>
+
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 11px; color: var(--text-secondary);">Provider Type</label>
+                                <select id="model-provider-type-select" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 12px;">
+                                    <option value="openai_compatible">openai_compatible</option>
+                                    <option value="ollama">ollama</option>
+                                    <option value="lm_studio">lm_studio</option>
+                                    <option value="localai">localai</option>
+                                    <option value="llama_cpp">llama_cpp</option>
+                                    <option value="mlx_server">mlx_server</option>
+                                    <option value="custom_http">custom_http</option>
+                                    <option value="manual_bridge">manual_bridge</option>
+                                    <option value="unknown">unknown</option>
+                                </select>
+                            </div>
+
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 11px; color: var(--text-secondary);">Endpoint URL</label>
+                                <input type="text" id="model-provider-endpoint-input" placeholder="http://10.0.0.120:PORT/v1/chat/completions" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 12px;">
+                            </div>
+
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 11px; color: var(--text-secondary);">Default Model ID</label>
+                                <input type="text" id="model-provider-default-model-input" placeholder="gemma-4-12b" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 12px;">
+                            </div>
+
+                            <div style="display: flex; gap: 16px; margin-top: 4px;">
+                                <label style="font-size: 11px; color: #fff; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                    <input type="checkbox" id="model-provider-api-key-required-toggle" style="accent-color: var(--accent-teal);"> API Key Required
+                                </label>
+                                <label style="font-size: 11px; color: #fff; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                    <input type="checkbox" id="model-provider-sensitive-context-toggle" style="accent-color: var(--accent-teal);"> Sensitive Context Allowed
+                                </label>
+                            </div>
+
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 11px; color: var(--text-secondary);">Allowed Agent Roles (comma-separated)</label>
+                                <input type="text" id="model-provider-allowed-roles-input" placeholder="research, summarize, review" value="research, summarize, review, approval_assist" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 12px;">
+                            </div>
+
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 11px; color: var(--text-secondary);">Allowed Task Types (comma-separated)</label>
+                                <input type="text" id="model-provider-allowed-task-types-input" placeholder="summarization, local_reasoning" value="summarization, analysis, local_reasoning, document_review" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 12px;">
+                            </div>
+
+                            <div style="margin-top: 8px;">
+                                <button class="btn btn-sm btn-primary" id="model-provider-register-button" style="width: 100%;">Register Provider</button>
+                            </div>
+                        </div>
+
+                        <!-- Provider List and Operations -->
+                        <div style="display: flex; flex-direction: column; gap: 14px;">
+                            <div class="table-container" style="max-height: 280px; overflow-y: auto; background: rgba(0,0,0,0.1); border-radius: 6px; border: 1px solid rgba(255,255,255,0.03);">
+                                <table class="deployments-table" style="font-size: 11px; margin: 0; width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>Provider Name</th>
+                                            <th>Type</th>
+                                            <th>Default Model</th>
+                                            <th>Context</th>
+                                            <th>Status</th>
+                                            <th>Approval</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="model-provider-list">
+                                        <!-- Dynamically loaded providers -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Selected Provider Action Panel -->
+                            <div id="selected-provider-ops-panel" class="hidden" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 6px; padding: 12px; display: flex; flex-direction: column; gap: 10px;">
+                                <h4 style="margin: 0; font-size: 12px; font-weight: bold; color: #fff;" id="selected-provider-name-display">-</h4>
+                                <div style="font-size: 11px; color: var(--text-secondary); display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                                    <div><strong>Endpoint:</strong> <span id="selected-provider-endpoint-display" style="color: #fff;">-</span></div>
+                                    <div><strong>Node Mapping:</strong> <span id="selected-provider-node-display" style="color: #fff;">-</span></div>
+                                    <div><strong>Last Health Check:</strong> <span id="selected-provider-health-ts" style="color: #fff;">-</span></div>
+                                    <div><strong>Sensitive Context:</strong> <span id="selected-provider-sensitive-display" style="color: #fff;">-</span></div>
+                                </div>
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px;">
+                                    <button class="btn btn-xs" id="model-provider-health-check-button" style="background: rgba(59,130,246,0.15); color: var(--accent-blue);">Health Check</button>
+                                    <button class="btn btn-xs" id="model-provider-discover-models-button" style="background: rgba(20,184,166,0.15); color: var(--accent-teal);">Discover Models</button>
+                                    <button class="btn btn-xs" id="model-provider-approve-button" style="background: rgba(16,185,129,0.15); color: var(--accent-teal);">Approve</button>
+                                    <button class="btn btn-xs" id="model-provider-disable-button" style="background: rgba(239,68,68,0.15); color: #ef4444;">Disable</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.5; margin-top: 14px; padding: 10px; background: rgba(255,255,255,0.01); border-radius: 4px; border: 1px dashed rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 4px;">
+                        <span>🔒 <strong>Local models are sandboxed unless called by Hoch Agent Swarm</strong></span>
+                        <span>⚠️ <strong>Do not send secrets to untrusted local models</strong> (Trusted status defaults to false)</span>
+                        <span>🛡️ <strong>Operator approval required before inference routing</strong></span>
+                    </div>
+                </section>
+
+                <!-- Inference Test Panel (Phase 17) -->
+                <section class="card" id="inference-test-panel" style="padding: 16px; margin-top: 20px;">
+                    <div class="card-header" style="border-bottom: 1px solid var(--border-glass); padding-bottom: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                        <i data-lucide="terminal" style="color: var(--accent-purple); width: 16px; height: 16px;"></i>
+                        <h3 class="card-title" style="font-size: 13px; font-weight: 600; color: #fff; margin: 0;">Send Test Inference</h3>
+                    </div>
+
+                    <div class="dashboard-grid" style="grid-template-columns: 1fr 1.5fr; gap: 20px; border: 0; padding: 0; background: transparent; margin: 0;">
+                        <!-- Input controls -->
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 11px; color: var(--text-secondary);">Select Model Provider</label>
+                                <select id="inference-provider-select" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 12px;">
+                                    <option value="">-- Auto-Route (Capability Matching) --</option>
+                                    <!-- Populated dynamically -->
+                                </select>
+                            </div>
+
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 11px; color: var(--text-secondary);">Model ID Override (Optional)</label>
+                                <input type="text" id="inference-model-input" placeholder="e.g. gemma-4-12b" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 12px;">
+                            </div>
+
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 11px; color: var(--text-secondary);">Agent Role ID</label>
+                                <select id="inference-agent-select" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 12px;">
+                                    <option value="research">research</option>
+                                    <option value="summarize">summarize</option>
+                                    <option value="review">review</option>
+                                    <option value="approval_assist">approval_assist</option>
+                                </select>
+                            </div>
+
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 11px; color: var(--text-secondary);">Prompt Content</label>
+                                <textarea id="inference-prompt-input" rows="4" placeholder="Summarize current runtime state." style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 12px; font-family: monospace; resize: vertical;"></textarea>
+                            </div>
+
+                            <div>
+                                <button class="btn btn-sm btn-primary" id="inference-send-button" style="width: 100%;">Send Test Inference</button>
+                            </div>
+                        </div>
+
+                        <!-- Response and evidence -->
+                        <div style="display: flex; flex-direction: column; gap: 14px;">
+                            <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 11px; color: var(--text-secondary);">Inference Response</label>
+                                <div id="inference-response-output" style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 6px; padding: 12px; color: var(--accent-teal); font-family: monospace; font-size: 11px; white-space: pre-wrap; min-height: 120px; overflow-y: auto; max-height: 200px;">No response generated yet. Submit a prompt to execute.</div>
+                            </div>
+
+                            <!-- History / evidence list -->
+                            <div>
+                                <label style="font-size: 11px; color: var(--text-secondary);">Inference Evidence History</label>
+                                <div class="table-container" style="max-height: 140px; overflow-y: auto; background: rgba(0,0,0,0.1); border-radius: 6px; border: 1px solid rgba(255,255,255,0.03);">
+                                    <table class="deployments-table" style="font-size: 10px; margin: 0; width: 100%;">
+                                        <thead>
+                                            <tr>
+                                                <th>Run ID</th>
+                                                <th>Provider</th>
+                                                <th>Model</th>
+                                                <th>Latency</th>
+                                                <th>Evidence Artifact</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="inference-run-history-list">
+                                            <!-- Dynamically populated runs -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
 
             <!-- Red-Team Chaos View -->

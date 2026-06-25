@@ -410,6 +410,68 @@ def init_execution_store_tables() -> None:
             )
             """
         )
+        # Create model_providers table
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS model_providers (
+                model_provider_id TEXT PRIMARY KEY,
+                node_id TEXT,
+                display_name TEXT,
+                device_name TEXT,
+                device_class TEXT,
+                fleet_group TEXT,
+                provider_type TEXT,
+                endpoint_url TEXT,
+                health_url TEXT,
+                models_url TEXT,
+                api_key_required INTEGER,
+                api_key_ref TEXT,
+                approved_for_inference INTEGER,
+                trusted_for_sensitive_context INTEGER,
+                allowed_agent_roles_json TEXT,
+                allowed_task_types_json TEXT,
+                model_ids_json TEXT,
+                default_model TEXT,
+                context_window INTEGER,
+                supports_streaming INTEGER,
+                supports_tools INTEGER,
+                supports_vision INTEGER,
+                supports_audio INTEGER,
+                supports_json_mode INTEGER,
+                latency_ms REAL,
+                last_health_check_at TEXT,
+                health_status TEXT,
+                operator_notes TEXT,
+                created_at TEXT,
+                updated_at TEXT
+            )
+            """
+        )
+        # Create inference_runs table
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS inference_runs (
+                inference_run_id TEXT PRIMARY KEY,
+                created_at TEXT,
+                completed_at TEXT,
+                model_provider_id TEXT,
+                node_id TEXT,
+                agent_id TEXT,
+                task_id TEXT,
+                model_id TEXT,
+                prompt_hash TEXT,
+                prompt_preview TEXT,
+                response_hash TEXT,
+                response_preview TEXT,
+                status TEXT,
+                latency_ms REAL,
+                token_usage_json TEXT,
+                error_message TEXT,
+                evidence_path TEXT,
+                metadata_json TEXT
+            )
+            """
+        )
         conn.commit()
     finally:
         conn.close()
@@ -1765,6 +1827,256 @@ def get_service_node_leases() -> list[dict]:
         return result
     finally:
         conn.close()
+
+def register_model_provider_db(model_provider_id: str, payload: dict) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        now = now_iso()
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO model_providers (
+                model_provider_id, node_id, display_name, device_name, device_class, fleet_group,
+                provider_type, endpoint_url, health_url, models_url, api_key_required, api_key_ref,
+                approved_for_inference, trusted_for_sensitive_context, allowed_agent_roles_json,
+                allowed_task_types_json, model_ids_json, default_model, context_window,
+                supports_streaming, supports_tools, supports_vision, supports_audio, supports_json_mode,
+                latency_ms, last_health_check_at, health_status, operator_notes, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                model_provider_id,
+                payload.get("node_id"),
+                payload.get("display_name"),
+                payload.get("device_name"),
+                payload.get("device_class"),
+                payload.get("fleet_group"),
+                payload.get("provider_type"),
+                payload.get("endpoint_url"),
+                payload.get("health_url"),
+                payload.get("models_url"),
+                1 if payload.get("api_key_required") else 0,
+                payload.get("api_key_ref"),
+                1 if payload.get("approved_for_inference") else 0,
+                1 if payload.get("trusted_for_sensitive_context") else 0,
+                json.dumps(payload.get("allowed_agent_roles", [])),
+                json.dumps(payload.get("allowed_task_types", [])),
+                json.dumps(payload.get("model_ids", [])),
+                payload.get("default_model"),
+                payload.get("context_window", 2048),
+                1 if payload.get("supports_streaming") else 0,
+                1 if payload.get("supports_tools") else 0,
+                1 if payload.get("supports_vision") else 0,
+                1 if payload.get("supports_audio") else 0,
+                1 if payload.get("supports_json_mode") else 0,
+                payload.get("latency_ms", 0.0),
+                payload.get("last_health_check_at"),
+                payload.get("health_status", "unverified"),
+                payload.get("operator_notes"),
+                payload.get("created_at") or now,
+                payload.get("updated_at") or now
+            )
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+def update_model_provider_db(model_provider_id: str, payload: dict) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        now = now_iso()
+        fields = []
+        params = []
+        for k, v in payload.items():
+            if k in ["allowed_agent_roles", "allowed_task_types", "model_ids"]:
+                fields.append(f"{k}_json = ?")
+                params.append(json.dumps(v))
+            elif k in ["api_key_required", "approved_for_inference", "trusted_for_sensitive_context",
+                       "supports_streaming", "supports_tools", "supports_vision", "supports_audio", "supports_json_mode"]:
+                fields.append(f"{k} = ?")
+                params.append(1 if v else 0)
+            elif k not in ["model_provider_id", "created_at"]:
+                fields.append(f"{k} = ?")
+                params.append(v)
+        fields.append("updated_at = ?")
+        params.append(now)
+        params.append(model_provider_id)
+        
+        query = f"UPDATE model_providers SET {', '.join(fields)} WHERE model_provider_id = ?"
+        conn.execute(query, tuple(params))
+        conn.commit()
+    finally:
+        conn.close()
+
+def get_model_provider_db(model_provider_id: str) -> dict | None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        row = conn.execute("SELECT * FROM model_providers WHERE model_provider_id = ?", (model_provider_id,)).fetchone()
+        if not row:
+            return None
+        d = dict(row)
+        return {
+            "model_provider_id": d["model_provider_id"],
+            "node_id": d["node_id"],
+            "display_name": d["display_name"],
+            "device_name": d["device_name"],
+            "device_class": d["device_class"],
+            "fleet_group": d["fleet_group"],
+            "provider_type": d["provider_type"],
+            "endpoint_url": d["endpoint_url"],
+            "health_url": d["health_url"],
+            "models_url": d["models_url"],
+            "api_key_required": bool(d["api_key_required"]),
+            "api_key_ref": d["api_key_ref"],
+            "approved_for_inference": bool(d["approved_for_inference"]),
+            "trusted_for_sensitive_context": bool(d["trusted_for_sensitive_context"]),
+            "allowed_agent_roles": json.loads(d["allowed_agent_roles_json"] or "[]"),
+            "allowed_task_types": json.loads(d["allowed_task_types_json"] or "[]"),
+            "model_ids": json.loads(d["model_ids_json"] or "[]"),
+            "default_model": d["default_model"],
+            "context_window": d["context_window"],
+            "supports_streaming": bool(d["supports_streaming"]),
+            "supports_tools": bool(d["supports_tools"]),
+            "supports_vision": bool(d["supports_vision"]),
+            "supports_audio": bool(d["supports_audio"]),
+            "supports_json_mode": bool(d["supports_json_mode"]),
+            "latency_ms": d["latency_ms"],
+            "last_health_check_at": d["last_health_check_at"],
+            "health_status": d["health_status"],
+            "operator_notes": d["operator_notes"],
+            "created_at": d["created_at"],
+            "updated_at": d["updated_at"]
+        }
+    finally:
+        conn.close()
+
+def list_model_providers_db() -> list[dict]:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        rows = conn.execute("SELECT * FROM model_providers").fetchall()
+        results = []
+        for row in rows:
+            d = dict(row)
+            results.append({
+                "model_provider_id": d["model_provider_id"],
+                "node_id": d["node_id"],
+                "display_name": d["display_name"],
+                "device_name": d["device_name"],
+                "device_class": d["device_class"],
+                "fleet_group": d["fleet_group"],
+                "provider_type": d["provider_type"],
+                "endpoint_url": d["endpoint_url"],
+                "health_url": d["health_url"],
+                "models_url": d["models_url"],
+                "api_key_required": bool(d["api_key_required"]),
+                "api_key_ref": d["api_key_ref"],
+                "approved_for_inference": bool(d["approved_for_inference"]),
+                "trusted_for_sensitive_context": bool(d["trusted_for_sensitive_context"]),
+                "allowed_agent_roles": json.loads(d["allowed_agent_roles_json"] or "[]"),
+                "allowed_task_types": json.loads(d["allowed_task_types_json"] or "[]"),
+                "model_ids": json.loads(d["model_ids_json"] or "[]"),
+                "default_model": d["default_model"],
+                "context_window": d["context_window"],
+                "supports_streaming": bool(d["supports_streaming"]),
+                "supports_tools": bool(d["supports_tools"]),
+                "supports_vision": bool(d["supports_vision"]),
+                "supports_audio": bool(d["supports_audio"]),
+                "supports_json_mode": bool(d["supports_json_mode"]),
+                "latency_ms": d["latency_ms"],
+                "last_health_check_at": d["last_health_check_at"],
+                "health_status": d["health_status"],
+                "operator_notes": d["operator_notes"],
+                "created_at": d["created_at"],
+                "updated_at": d["updated_at"]
+            })
+        return results
+    finally:
+        conn.close()
+
+def delete_model_provider_db(model_provider_id: str) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        conn.execute("DELETE FROM model_providers WHERE model_provider_id = ?", (model_provider_id,))
+        conn.commit()
+    finally:
+        conn.close()
+
+def persist_inference_run_db(inference_run_id: str, data: dict) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO inference_runs (
+                inference_run_id, created_at, completed_at, model_provider_id, node_id, agent_id,
+                task_id, model_id, prompt_hash, prompt_preview, response_hash, response_preview,
+                status, latency_ms, token_usage_json, error_message, evidence_path, metadata_json
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                inference_run_id,
+                data.get("created_at"),
+                data.get("completed_at"),
+                data.get("model_provider_id"),
+                data.get("node_id"),
+                data.get("agent_id"),
+                data.get("task_id"),
+                data.get("model_id"),
+                data.get("prompt_hash"),
+                data.get("prompt_preview"),
+                data.get("response_hash"),
+                data.get("response_preview"),
+                data.get("status"),
+                data.get("latency_ms"),
+                json.dumps(data.get("token_usage", {})),
+                data.get("error_message"),
+                data.get("evidence_path"),
+                json.dumps(data.get("metadata", {}))
+            )
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+def list_inference_runs_db() -> list[dict]:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        rows = conn.execute("SELECT * FROM inference_runs ORDER BY created_at DESC").fetchall()
+        results = []
+        for r in rows:
+            d = dict(r)
+            results.append({
+                "inference_run_id": d["inference_run_id"],
+                "created_at": d["created_at"],
+                "completed_at": d["completed_at"],
+                "model_provider_id": d["model_provider_id"],
+                "node_id": d["node_id"],
+                "agent_id": d["agent_id"],
+                "task_id": d["task_id"],
+                "model_id": d["model_id"],
+                "prompt_hash": d["prompt_hash"],
+                "prompt_preview": d["prompt_preview"],
+                "response_hash": d["response_hash"],
+                "response_preview": d["response_preview"],
+                "status": d["status"],
+                "latency_ms": d["latency_ms"],
+                "token_usage": json.loads(d["token_usage_json"] or "{}"),
+                "error_message": d["error_message"],
+                "evidence_path": d["evidence_path"],
+                "metadata": json.loads(d["metadata_json"] or "{}")
+            })
+        return results
+    finally:
+        conn.close()
+
 
 
 

@@ -28,6 +28,8 @@ The following validation suites were added to `package.json` and executed cleanl
 - `npm run e2e:release-seal-attestation` (Phase 13 release seal attestation E2E test)
 - `npm run qa:device-registry` (Device registry hardware config contract check)
 - `npm run e2e:device-registry` (Device registry topology rendering E2E test)
+- `npm run qa:model-provider-registry` (Model provider registry API and database validation)
+- `npm run e2e:model-provider-registry` (Model provider cockpit E2E tests)
 - `npm run qa:runtime-full` (Full regression suite pass)
 
 ---
@@ -250,7 +252,12 @@ Regenerated supply chain artifacts:
 - **Dynamic Routing Exclusions**: Excludes any dynamically approved nodes with missing, sleeping, offline, or expired/stale leases, ensuring tasks are only routed to active and battery-healthy devices.
 - **UI Lease Status Badges**: Updates the dynamic active service nodes list in the Governance Cockpit to display green `Lease Active` or red `Lease Expired` / `No Lease` badges along with real-time battery and power metrics.
 
----
+## AI Model Provider Registry & Inference Routing (Phase 17)
+- **Model Provider Registry Persistence**: Stores registered model endpoints, default models, trusted contexts, health statuses, and dynamic model lists in the `model_providers` and `inference_runs` SQLite tables.
+- **Safety Gating & Secret Scanning**: Scans prompt messages for credentials and sensitive tokens, blocking requests to untrusted providers. Excludes providers whose hosting devices have expired or offline leases.
+- **Auditable Evidence Logging**: Automatically writes execution details, safety flags, token usage, and latency records under `artifacts/inference/<inference_run_id>.json`.
+- **Self-Contained Mock Completions Endpoint**: Implements `/api/v1/mock/llm` simulating completions and tag endpoints to support fully automated, hermetic local tests.
+- **Frontend Governance Cockpit Integration**: Renders `#model-provider-registry-panel` and `#inference-test-panel` inside the Governance Cockpit to manage, health check, discover models, approve, and execute test prompts.
 
 ## Open Gaps
 1. **Cryptographic Signing Provider Credentials**: Actual signature generation (`.sig`) requires configuring Cosign credentials and keys in the target environment when ready.

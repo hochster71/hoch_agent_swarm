@@ -372,6 +372,7 @@ async function initDashboard() {
         initRunsDashboard();
         initDeviceRegistry();
         initCapabilityRouterUI();
+        initModelProviderRegistryUI();
     } catch (err) {
         console.error("Error initializing dashboard: ", err);
         // Fallback polling if WebSocket fails
@@ -1516,6 +1517,11 @@ Object.keys(navItems).forEach(key => {
             } else if (key === "governance") {
                 if (typeof window.fetchAndRenderGovernanceSummary === "function") {
                     window.fetchAndRenderGovernanceSummary();
+                }
+                if (typeof loadModelProviders === "function") {
+                    loadModelProviders();
+                    loadInferenceHistory();
+                    populateModelNodeSelect();
                 }
             } else if (key === "collab") {
                 if (window.onCollabTabActive) window.onCollabTabActive();
@@ -9262,3 +9268,384 @@ window.initCapabilityRouterUI = initCapabilityRouterUI;
 window.loadRoutingHistoryData = loadRoutingHistoryData;
 window.renderRoutingHistory = renderRoutingHistory;
 window.selectRoutingEvent = selectRoutingEvent;
+
+let selectedProviderId = null;
+
+async function initModelProviderRegistryUI() {
+    const registerBtn = document.getElementById("model-provider-register-button");
+    if (registerBtn) {
+        registerBtn.addEventListener("click", registerModelProvider);
+    }
+    
+    const healthCheckBtn = document.getElementById("model-provider-health-check-button");
+    if (healthCheckBtn) {
+        healthCheckBtn.addEventListener("click", runProviderHealthCheck);
+    }
+    
+    const discoverBtn = document.getElementById("model-provider-discover-models-button");
+    if (discoverBtn) {
+        discoverBtn.addEventListener("click", runProviderModelDiscovery);
+    }
+    
+    const approveBtn = document.getElementById("model-provider-approve-button");
+    if (approveBtn) {
+        approveBtn.addEventListener("click", runProviderApproval);
+    }
+    
+    const disableBtn = document.getElementById("model-provider-disable-button");
+    if (disableBtn) {
+        disableBtn.addEventListener("click", runProviderDisabling);
+    }
+    
+    const sendInferenceBtn = document.getElementById("inference-send-button");
+    if (sendInferenceBtn) {
+        sendInferenceBtn.addEventListener("click", sendTestInference);
+    }
+    
+    loadModelProviders();
+    loadInferenceHistory();
+    populateModelNodeSelect();
+}
+
+async function populateModelNodeSelect() {
+    const selectEl = document.getElementById("model-provider-node-select");
+    if (!selectEl) return;
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/devices/service-registry`);
+        if (!res.ok) return;
+        const nodes = await res.json();
+        
+        selectEl.innerHTML = `
+            <option value="">-- No Node (Standalone) --</option>
+            <option value="L1">L1 Control Plane (Core)</option>
+            <option value="L2">L2 Worker (Core)</option>
+        `;
+        
+        nodes.forEach(node => {
+            const opt = document.createElement("option");
+            opt.value = node.node_id;
+            opt.textContent = `${node.name || node.node_id} (${node.device_class || "unknown"})`;
+            selectEl.appendChild(opt);
+        });
+    } catch (err) {
+        console.error("Error populating model node select:", err);
+    }
+}
+
+async function registerModelProvider() {
+    const nameInput = document.getElementById("model-provider-name-input");
+    const nodeSelect = document.getElementById("model-provider-node-select");
+    const typeSelect = document.getElementById("model-provider-type-select");
+    const endpointInput = document.getElementById("model-provider-endpoint-input");
+    const modelInput = document.getElementById("model-provider-default-model-input");
+    const apiKeyToggle = document.getElementById("model-provider-api-key-required-toggle");
+    const sensitiveToggle = document.getElementById("model-provider-sensitive-context-toggle");
+    const rolesInput = document.getElementById("model-provider-allowed-roles-input");
+    const tasksInput = document.getElementById("model-provider-allowed-task-types-input");
+    
+    if (!nameInput || !endpointInput) return;
+    
+    const name = nameInput.value.trim();
+    const endpoint = endpointInput.value.trim();
+    if (!name || !endpoint) {
+        alert("Provider Name and Endpoint URL are required.");
+        return;
+    }
+    
+    const payload = {
+        display_name: name,
+        endpoint_url: endpoint,
+        node_id: nodeSelect ? nodeSelect.value : "",
+        provider_type: typeSelect ? typeSelect.value : "openai_compatible",
+        default_model: modelInput ? modelInput.value.trim() : "gemma-4-12b",
+        api_key_required: apiKeyToggle ? apiKeyToggle.checked : false,
+        trusted_for_sensitive_context: sensitiveToggle ? sensitiveToggle.checked : false,
+        allowed_agent_roles: rolesInput ? rolesInput.value.split(",").map(s => s.trim()).filter(Boolean) : [],
+        allowed_task_types: tasksInput ? tasksInput.value.split(",").map(s => s.trim()).filter(Boolean) : []
+    };
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/models/providers`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+            nameInput.value = "";
+            endpointInput.value = "";
+            loadModelProviders();
+        } else {
+            const err = await res.json();
+            alert("Registration failed: " + (err.detail || "Unknown error"));
+        }
+    } catch (err) {
+        console.error("Error registering model provider:", err);
+    }
+}
+
+async function loadModelProviders() {
+    const listEl = document.getElementById("model-provider-list");
+    const selectEl = document.getElementById("inference-provider-select");
+    if (!listEl) return;
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/models/providers`);
+        if (!res.ok) return;
+        const providers = await res.json();
+        
+        listEl.innerHTML = "";
+        if (selectEl) {
+            selectEl.innerHTML = `<option value="">-- Auto-Route (Capability Matching) --</option>`;
+        }
+        
+        if (providers.length === 0) {
+            listEl.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-secondary); padding: 12px;">No model providers registered.</td></tr>`;
+            return;
+        }
+        
+        providers.forEach(p => {
+            const tr = document.createElement("tr");
+            tr.style.cursor = "pointer";
+            tr.addEventListener("click", () => selectProvider(p));
+            
+            const approvedBadge = p.approved_for_inference
+                ? `<span class="badge" style="background:rgba(16,185,129,0.15); color:var(--accent-teal);">APPROVED</span>`
+                : `<span class="badge" style="background:rgba(239,68,68,0.15); color:#ef4444;">INACTIVE</span>`;
+                
+            const sensitiveText = p.trusted_for_sensitive_context
+                ? `<span style="color:var(--accent-teal);">Trusted</span>`
+                : `<span style="color:var(--text-secondary);">Untrusted</span>`;
+                
+            let healthClass = "text-danger";
+            if (p.health_status === "available") healthClass = "text-success";
+            else if (p.health_status === "degraded") healthClass = "text-warning";
+            
+            tr.innerHTML = `
+                <td><strong>${p.display_name}</strong> <span style="font-size:9px; color:var(--text-secondary);">${p.model_provider_id}</span></td>
+                <td><span style="font-family:monospace;">${p.provider_type}</span></td>
+                <td><span style="font-family:monospace;">${p.default_model || "none"}</span></td>
+                <td>${sensitiveText}</td>
+                <td><span class="${healthClass} font-semibold" style="text-transform:uppercase;">${p.health_status}</span></td>
+                <td>${approvedBadge}</td>
+            `;
+            listEl.appendChild(tr);
+            
+            if (selectEl && p.approved_for_inference) {
+                const opt = document.createElement("option");
+                opt.value = p.model_provider_id;
+                opt.textContent = `${p.display_name} (${p.default_model})`;
+                selectEl.appendChild(opt);
+            }
+        });
+    } catch (err) {
+        console.error("Error loading model providers:", err);
+    }
+}
+
+function selectProvider(p) {
+    selectedProviderId = p.model_provider_id;
+    const opsPanel = document.getElementById("selected-provider-ops-panel");
+    if (opsPanel) {
+        opsPanel.classList.remove("hidden");
+    }
+    
+    document.getElementById("selected-provider-name-display").textContent = `${p.display_name} (${p.model_provider_id})`;
+    document.getElementById("selected-provider-endpoint-display").textContent = p.endpoint_url;
+    document.getElementById("selected-provider-node-display").textContent = p.node_id || "Standalone";
+    document.getElementById("selected-provider-health-ts").textContent = p.last_health_check_at ? p.last_health_check_at.substring(11, 19) : "Never";
+    document.getElementById("selected-provider-sensitive-display").textContent = p.trusted_for_sensitive_context ? "Allowed" : "Blocked";
+    
+    const approveBtn = document.getElementById("model-provider-approve-button");
+    const disableBtn = document.getElementById("model-provider-disable-button");
+    if (approveBtn && disableBtn) {
+        if (p.approved_for_inference) {
+            approveBtn.classList.add("hidden");
+            disableBtn.classList.remove("hidden");
+        } else {
+            approveBtn.classList.remove("hidden");
+            disableBtn.classList.add("hidden");
+        }
+    }
+}
+
+async function runProviderHealthCheck() {
+    if (!selectedProviderId) return;
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/models/providers/${selectedProviderId}/health-check`, { method: "POST" });
+        if (res.ok) {
+            const data = await res.json();
+            selectProvider(data.provider);
+            loadModelProviders();
+        }
+    } catch (err) {
+        console.error("Error running health check:", err);
+    }
+}
+
+async function runProviderModelDiscovery() {
+    if (!selectedProviderId) return;
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/models/providers/${selectedProviderId}/discover-models`, { method: "POST" });
+        if (res.ok) {
+            const data = await res.json();
+            alert(`Discovered models: ${data.models.join(", ")}`);
+            loadModelProviders();
+            const getRes = await fetch(`${API_BASE}/api/v1/models/providers/${selectedProviderId}`);
+            if (getRes.ok) {
+                const p = await getRes.json();
+                selectProvider(p);
+            }
+        } else {
+            alert("Model discovery failed or not supported by endpoint.");
+        }
+    } catch (err) {
+        console.error("Error running model discovery:", err);
+    }
+}
+
+async function runProviderApproval() {
+    if (!selectedProviderId) return;
+    const operator = "Michael Hoch";
+    const payload = {
+        operator: operator,
+        allowed_agent_roles: ["research", "summarize", "review", "approval_assist"],
+        allowed_task_types: ["summarization", "analysis", "local_reasoning", "document_review"]
+    };
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/models/providers/${selectedProviderId}/approve`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+            const data = await res.json();
+            selectProvider(data.provider);
+            loadModelProviders();
+        }
+    } catch (err) {
+        console.error("Error approving provider:", err);
+    }
+}
+
+async function runProviderDisabling() {
+    if (!selectedProviderId) return;
+    const payload = {
+        operator: "Michael Hoch",
+        reason: "Manual operator disable override"
+    };
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/models/providers/${selectedProviderId}/disable`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+            const data = await res.json();
+            selectProvider(data.provider);
+            loadModelProviders();
+        }
+    } catch (err) {
+        console.error("Error disabling provider:", err);
+    }
+}
+
+async function sendTestInference() {
+    const providerSelect = document.getElementById("inference-provider-select");
+    const modelOverride = document.getElementById("inference-model-input");
+    const agentSelect = document.getElementById("inference-agent-select");
+    const promptArea = document.getElementById("inference-prompt-input");
+    const outputBox = document.getElementById("inference-response-output");
+    
+    if (!promptArea || !outputBox) return;
+    
+    const promptText = promptArea.value.trim();
+    if (!promptText) {
+        alert("Please enter a prompt context.");
+        return;
+    }
+    
+    const sendBtn = document.getElementById("inference-send-button");
+    if (sendBtn) {
+        sendBtn.disabled = true;
+        sendBtn.textContent = "Executing Inference...";
+    }
+    outputBox.textContent = "Processing request on model worker node...";
+    
+    const payload = {
+        model_provider_id: providerSelect ? providerSelect.value : null,
+        model: modelOverride ? modelOverride.value.trim() : null,
+        agent_id: agentSelect ? agentSelect.value : "research",
+        task_id: "test-inference-" + Math.floor(Math.random() * 1000),
+        messages: [
+            { role: "user", content: promptText }
+        ],
+        options: {
+            temperature: 0.2,
+            max_tokens: 512
+        }
+    };
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/inference/chat`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+            const data = await res.json();
+            outputBox.textContent = data.response;
+            promptArea.value = "";
+            loadInferenceHistory();
+        } else {
+            const err = await res.json();
+            outputBox.textContent = "ERROR: " + (err.detail || "Inference request failed");
+        }
+    } catch (err) {
+        console.error("Error sending test inference:", err);
+        outputBox.textContent = "NETWORK ERROR: " + err.message;
+    } finally {
+        if (sendBtn) {
+            sendBtn.disabled = false;
+            sendBtn.textContent = "Send Test Inference";
+        }
+    }
+}
+
+async function loadInferenceHistory() {
+    const listEl = document.getElementById("inference-run-history-list");
+    if (!listEl) return;
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/inference/history`);
+        if (!res.ok) return;
+        const runs = await res.json();
+        
+        listEl.innerHTML = "";
+        if (runs.length === 0) {
+            listEl.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-secondary); padding: 10px;">No inference run evidence captured yet.</td></tr>`;
+            return;
+        }
+        
+        runs.forEach(run => {
+            const tr = document.createElement("tr");
+            const isSuccess = run.status === "success";
+            const statusColor = isSuccess ? "var(--accent-teal)" : "#ef4444";
+            const linkText = `inference/${run.inference_run_id}.json`;
+            
+            tr.innerHTML = `
+                <td style="font-family:monospace; color:var(--accent-blue);">${run.inference_run_id}</td>
+                <td><strong>${run.model_provider_id}</strong></td>
+                <td><span style="font-family:monospace;">${run.model_id}</span></td>
+                <td>${run.latency_ms ? run.latency_ms.toFixed(1) + "ms" : "-"}</td>
+                <td><span style="font-family:monospace; color:${statusColor};">${linkText}</span></td>
+            `;
+            listEl.appendChild(tr);
+        });
+    } catch (err) {
+        console.error("Error loading inference history:", err);
+    }
+}
+
+window.initModelProviderRegistryUI = initModelProviderRegistryUI;
+window.loadModelProviders = loadModelProviders;
+window.loadInferenceHistory = loadInferenceHistory;
+window.populateModelNodeSelect = populateModelNodeSelect;

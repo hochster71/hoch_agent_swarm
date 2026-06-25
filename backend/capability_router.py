@@ -30,6 +30,12 @@ def extract_required_capabilities(task_type: str, prompt: str, explicit_caps: li
     prompt_lower = prompt.lower()
     req_caps = []
 
+    # Check for model capabilities
+    for cap in ["local_reasoning", "summarization", "document_review", "code_review", "research", "multimodal_review"]:
+        if task_type == cap or cap in prompt_lower or cap.replace("_", " ") in prompt_lower:
+            req_caps.append(cap)
+            return req_caps
+
     # Check for display/alert/rendering tasks
     if "display" in prompt_lower or "render" in prompt_lower or "alert" in prompt_lower or "wall" in prompt_lower:
         req_caps.append("display")
@@ -56,30 +62,59 @@ def extract_required_capabilities(task_type: str, prompt: str, explicit_caps: li
 
 def get_node_capabilities(node_id: str, node_data: dict) -> list[str]:
     """
-    Determines the capabilities of a node, whether it's a core node or a dynamically approved service node.
+    Determines the capabilities of a node, whether it's a core node or a dynamically approved service node,
+    and merges any approved model provider capabilities hosted on this node.
     """
+    caps = []
     # 1. Check if it's a core node
     if node_id in CORE_NODE_CAPABILITIES:
-        return CORE_NODE_CAPABILITIES[node_id]
+        caps = list(CORE_NODE_CAPABILITIES[node_id])
+    else:
+        # 2. Check if it's a dynamic service node
+        device_class = node_data.get("device_class")
+        service_roles = node_data.get("service_roles", [])
 
-    # 2. Check if it's a dynamic service node
-    device_class = node_data.get("device_class")
-    service_roles = node_data.get("service_roles", [])
-
-    if device_class == "tv_display":
-        return ["display"]
-    elif device_class == "xr_headset":
-        return ["spatial", "operator_console", "voice"]
-    elif device_class == "ipad":
-        caps = ["mobile_dashboard", "approval_terminal"]
-        if "compute_worker" in service_roles:
-            caps.append("compute")
-        return caps
-    elif device_class == "mac" or device_class == "pc":
-        return ["compute", "build", "qa", "automation"]
+        if device_class == "tv_display":
+            caps = ["display"]
+        elif device_class == "xr_headset":
+            caps = ["spatial", "operator_console", "voice"]
+        elif device_class == "ipad":
+            caps = ["mobile_dashboard", "approval_terminal"]
+            if "compute_worker" in service_roles:
+                caps.append("compute")
+        elif device_class == "mac" or device_class == "pc":
+            caps = ["compute", "build", "qa", "automation"]
     
-    # Untrusted / unapproved / fallback
-    return []
+    # 3. Check model providers hosted on this node
+    from backend.runtime_execution_store import list_model_providers_db, get_service_node_leases
+    try:
+        providers = list_model_providers_db()
+        leases = {l["node_id"]: l for l in get_service_node_leases()}
+        for p in providers:
+            if p["node_id"] == node_id and p["approved_for_inference"] and p["health_status"] in ["available", "degraded"]:
+                # Check lease freshness
+                lease = leases.get(node_id)
+                lease_fresh = True
+                if lease:
+                    if lease["availability"] in ["sleeping", "offline"]:
+                        lease_fresh = False
+                    else:
+                        try:
+                            from datetime import datetime
+                            last_seen_dt = datetime.fromisoformat(lease["last_seen"].replace("Z", "+00:00"))
+                            now_dt = datetime.now(last_seen_dt.tzinfo)
+                            if (now_dt - last_seen_dt).total_seconds() > lease["lease_duration_seconds"]:
+                                lease_fresh = False
+                        except Exception:
+                            pass
+                if lease_fresh:
+                    for t in p["allowed_task_types"]:
+                        if t not in caps:
+                            caps.append(t)
+    except Exception as e:
+        logger.warning(f"Error reading model providers for node capabilities: {e}")
+
+    return caps
 
 def route_task_by_capabilities(task_type: str, prompt: str, explicit_caps: list[str] = None, all_nodes: dict = None) -> dict:
     """

@@ -2656,6 +2656,333 @@ def get_leases_list():
     from backend.runtime_execution_store import get_service_node_leases
     return get_service_node_leases()
 
+class ModelProviderRegisterRequest(BaseModel):
+    model_provider_id: str = None
+    node_id: str = None
+    display_name: str
+    device_name: str = None
+    device_class: str = None
+    fleet_group: str = None
+    provider_type: str
+    endpoint_url: str
+    health_url: str = None
+    models_url: str = None
+    api_key_required: bool = False
+    api_key_ref: str = None
+    approved_for_inference: bool = False
+    trusted_for_sensitive_context: bool = False
+    allowed_agent_roles: list[str] = []
+    allowed_task_types: list[str] = []
+    default_model: str = None
+    context_window: int = 2048
+    supports_streaming: bool = False
+    supports_tools: bool = False
+    supports_vision: bool = False
+    supports_audio: bool = False
+    supports_json_mode: bool = False
+    operator_notes: str = None
+
+class ModelProviderApproveRequest(BaseModel):
+    operator: str
+    allowed_agent_roles: list[str]
+    allowed_task_types: list[str]
+
+class ModelProviderDisableRequest(BaseModel):
+    operator: str
+    reason: str
+
+class InferenceChatOptions(BaseModel):
+    temperature: float = 0.7
+    max_tokens: int = 1024
+
+class InferenceChatRequest(BaseModel):
+    model_provider_id: str = None
+    model: str = None
+    agent_id: str = None
+    task_id: str = None
+    messages: list[dict]
+    options: InferenceChatOptions = None
+
+# Model Provider Registry Endpoints
+@app.get("/api/v1/models/providers")
+def api_list_model_providers():
+    from backend.model_provider_registry import list_model_providers
+    return list_model_providers()
+
+@app.post("/api/v1/models/providers")
+def api_register_model_provider(req: ModelProviderRegisterRequest):
+    from backend.model_provider_registry import register_model_provider
+    try:
+        provider = register_model_provider(req.dict())
+        return {"status": "SUCCESS", "provider": provider}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/models/providers/{model_provider_id}")
+def api_get_model_provider(model_provider_id: str):
+    from backend.model_provider_registry import get_model_provider
+    provider = get_model_provider(model_provider_id)
+    if not provider:
+        raise HTTPException(status_code=404, detail="Model provider not found")
+    return provider
+
+@app.post("/api/v1/models/providers/{model_provider_id}/approve")
+def api_approve_model_provider(model_provider_id: str, req: ModelProviderApproveRequest):
+    from backend.model_provider_registry import approve_model_provider
+    try:
+        provider = approve_model_provider(
+            model_provider_id=model_provider_id,
+            operator=req.operator,
+            allowed_roles=req.allowed_agent_roles,
+            allowed_task_types=req.allowed_task_types
+        )
+        return {"status": "SUCCESS", "provider": provider}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/models/providers/{model_provider_id}/disable")
+def api_disable_model_provider(model_provider_id: str, req: ModelProviderDisableRequest):
+    from backend.model_provider_registry import disable_model_provider
+    try:
+        provider = disable_model_provider(
+            model_provider_id=model_provider_id,
+            operator=req.operator,
+            reason=req.reason
+        )
+        return {"status": "SUCCESS", "provider": provider}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/models/providers/{model_provider_id}/health-check")
+def api_health_check_model_provider(model_provider_id: str):
+    from backend.model_provider_registry import health_check_model_provider
+    try:
+        provider = health_check_model_provider(model_provider_id)
+        return {"status": "SUCCESS", "provider": provider}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/models/providers/{model_provider_id}/discover-models")
+def api_discover_models_for_provider(model_provider_id: str):
+    from backend.model_provider_registry import discover_models_for_provider
+    try:
+        models = discover_models_for_provider(model_provider_id)
+        return {"status": "SUCCESS", "models": models}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+# Inference Endpoint
+@app.post("/api/v1/inference/chat")
+def api_inference_chat(req: InferenceChatRequest):
+    from backend.inference_gateway import (
+        scan_for_secrets,
+        get_hash,
+        route_inference_request,
+        send_openai_compatible_chat,
+        send_ollama_chat,
+        send_lm_studio_chat,
+        send_localai_chat,
+        write_inference_evidence
+    )
+    from backend.model_provider_registry import get_model_provider
+    from backend.runtime_execution_store import persist_inference_run_db
+    
+    # 1. Secret Scanning Validation
+    has_secrets = scan_for_secrets(req.messages)
+    
+    provider = None
+    if req.model_provider_id:
+        provider = get_model_provider(req.model_provider_id)
+        if not provider:
+            raise HTTPException(status_code=404, detail=f"Model provider '{req.model_provider_id}' not found")
+    else:
+        # Auto route
+        try:
+            prompt_text = next((m["content"] for m in req.messages if m["role"] == "user"), "")
+            opt_dict = req.options.dict() if req.options else {}
+            provider = route_inference_request(
+                agent_id=req.agent_id,
+                task_id=req.task_id,
+                required_capabilities=[],
+                prompt=prompt_text,
+                options=opt_dict
+            )
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Inference routing failed: {e}")
+            
+    # 2. Safety & Trust Enforcements
+    if not provider.get("approved_for_inference"):
+        raise HTTPException(status_code=400, detail=f"Model provider '{provider['model_provider_id']}' is not approved for inference by an operator")
+        
+    if provider.get("health_status") not in ["available", "degraded"]:
+        raise HTTPException(status_code=400, detail=f"Model provider '{provider['model_provider_id']}' health check is currently '{provider.get('health_status')}'")
+        
+    if has_secrets and not provider.get("trusted_for_sensitive_context"):
+        raise HTTPException(status_code=400, detail="Inference request blocked: Prompt contains secrets/credentials but the selected provider is not trusted for sensitive context")
+
+    # Verify agent/task criteria if specified
+    if req.agent_id and provider.get("allowed_agent_roles"):
+        agent_matched = False
+        for role in provider["allowed_agent_roles"]:
+            if role in req.agent_id.lower():
+                agent_matched = True
+                break
+        if not agent_matched:
+            raise HTTPException(status_code=400, detail=f"Agent '{req.agent_id}' is not authorized to use model provider '{provider['model_provider_id']}'")
+
+    model_id = req.model or provider.get("default_model") or "gemma-4-12b"
+    options_dict = req.options.dict() if req.options else {}
+    
+    start_time = time.perf_counter()
+    run_id = f"INF-{uuid.uuid4().hex[:6].upper()}"
+    created_at = now_iso()
+    
+    prompt_str = json.dumps(req.messages)
+    prompt_hash = get_hash(prompt_str)
+    prompt_preview = prompt_str[:100]
+    
+    try:
+        ptype = provider.get("provider_type", "openai_compatible")
+        if ptype == "ollama":
+            res = send_ollama_chat(provider, model_id, req.messages, options_dict)
+        elif ptype == "lm_studio":
+            res = send_lm_studio_chat(provider, model_id, req.messages, options_dict)
+        elif ptype == "localai":
+            res = send_localai_chat(provider, model_id, req.messages, options_dict)
+        else: # openai_compatible or custom_http or manual_bridge fallback
+            res = send_openai_compatible_chat(provider, model_id, req.messages, options_dict)
+            
+        latency = (time.perf_counter() - start_time) * 1000.0
+        completed_at = now_iso()
+        
+        response_text = res["content"]
+        response_hash = get_hash(response_text)
+        response_preview = response_text[:100]
+        
+        run_data = {
+            "model_provider_id": provider["model_provider_id"],
+            "node_id": provider.get("node_id"),
+            "agent_id": req.agent_id,
+            "task_id": req.task_id,
+            "model_id": model_id,
+            "prompt_hash": prompt_hash,
+            "prompt_preview": prompt_preview,
+            "response_hash": response_hash,
+            "response_preview": response_preview,
+            "status": "success",
+            "latency_ms": latency,
+            "token_usage": res.get("usage", {}),
+            "error_message": None,
+            "created_at": created_at,
+            "completed_at": completed_at,
+            "secrets_detected": has_secrets,
+            "trusted_context": provider.get("trusted_for_sensitive_context", False)
+        }
+        
+        evidence_path = write_inference_evidence(run_id, run_data)
+        run_data["evidence_path"] = evidence_path
+        persist_inference_run_db(run_id, run_data)
+        
+        return {
+            "status": "SUCCESS",
+            "inference_run_id": run_id,
+            "response": response_text,
+            "model": model_id,
+            "latency_ms": latency,
+            "token_usage": res.get("usage", {}),
+            "evidence_path": evidence_path
+        }
+        
+    except Exception as e:
+        latency = (time.perf_counter() - start_time) * 1000.0
+        completed_at = now_iso()
+        
+        err_msg = str(e)
+        run_data = {
+            "model_provider_id": provider["model_provider_id"],
+            "node_id": provider.get("node_id"),
+            "agent_id": req.agent_id,
+            "task_id": req.task_id,
+            "model_id": model_id,
+            "prompt_hash": prompt_hash,
+            "prompt_preview": prompt_preview,
+            "response_hash": "",
+            "response_preview": "",
+            "status": "failed",
+            "latency_ms": latency,
+            "token_usage": {},
+            "error_message": err_msg,
+            "created_at": created_at,
+            "completed_at": completed_at,
+            "secrets_detected": has_secrets,
+            "trusted_context": provider.get("trusted_for_sensitive_context", False)
+        }
+        
+        evidence_path = write_inference_evidence(run_id, run_data)
+        run_data["evidence_path"] = evidence_path
+        persist_inference_run_db(run_id, run_data)
+        
+        raise HTTPException(status_code=500, detail=f"Inference request failed: {err_msg}")
+
+@app.get("/api/v1/inference/history")
+def api_inference_history():
+    from backend.runtime_execution_store import list_inference_runs_db
+    return list_inference_runs_db()
+
+# Self-contained mock LLM adapter endpoints for E2E testing
+@app.get("/api/v1/mock/llm/v1/models")
+def mock_openai_models():
+    return {
+        "object": "list",
+        "data": [
+            {"id": "gemma-4-12b", "object": "model", "created": 1718225149, "owned_by": "google"}
+        ]
+    }
+
+@app.post("/api/v1/mock/llm/v1/chat/completions")
+def mock_openai_chat_completions(req: dict):
+    return {
+        "id": "chatcmpl-mock123",
+        "object": "chat.completion",
+        "created": 1718225149,
+        "model": req.get("model", "gemma-4-12b"),
+        "choices": [
+            {
+                "index": 0,
+                "message": {
+                    "role": "assistant",
+                    "content": "This is a mock assistant response from Gemma 4 12B routing."
+                },
+                "finish_reason": "stop"
+            }
+        ],
+        "usage": {
+            "prompt_tokens": 15,
+            "completion_tokens": 12,
+            "total_tokens": 27
+        }
+    }
+
+@app.get("/api/v1/mock/llm/api/tags")
+def mock_ollama_tags():
+    return {
+        "models": [
+            {"name": "gemma-4-12b", "model": "gemma-4-12b", "details": {"format": "gguf"}}
+        ]
+    }
+
+@app.post("/api/v1/mock/llm/api/chat")
+def mock_ollama_chat(req: dict):
+    return {
+        "model": req.get("model", "gemma-4-12b"),
+        "created_at": "2026-06-25T15:27:18Z",
+        "message": {
+            "role": "assistant",
+            "content": "This is a mock assistant response from Gemma 4 12B routing."
+        },
+        "done": True
+    }
+
 class NodeRegisterRequest(BaseModel):
     id: str
     name: str
