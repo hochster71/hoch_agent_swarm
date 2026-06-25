@@ -396,6 +396,20 @@ def init_execution_store_tables() -> None:
             )
             """
         )
+        # Create service_node_leases table
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS service_node_leases (
+                node_id TEXT PRIMARY KEY,
+                last_seen TEXT,
+                battery_level REAL,
+                power_source TEXT,
+                network_status TEXT,
+                availability TEXT,
+                lease_duration_seconds INTEGER
+            )
+            """
+        )
         conn.commit()
     finally:
         conn.close()
@@ -1693,6 +1707,60 @@ def list_routing_history(limit: int = 50) -> list[dict]:
                 "eligible_nodes": json.loads(r["eligible_nodes_json"] or "[]"),
                 "routing_decisions": json.loads(r["routing_decisions_json"] or "{}"),
                 "created_at": r["created_at"]
+            })
+        return result
+    finally:
+        conn.close()
+
+def update_service_node_lease(
+    node_id: str,
+    battery_level: float,
+    power_source: str,
+    network_status: str,
+    availability: str,
+    lease_duration_seconds: int
+) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO service_node_leases (
+                node_id, last_seen, battery_level, power_source, network_status, availability, lease_duration_seconds
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (node_id, now_iso(), battery_level, power_source, network_status, availability, lease_duration_seconds)
+        )
+        health_status = "Active" if availability == "available" else ("Sleeping" if availability == "sleeping" else "Offline")
+        conn.execute(
+            """
+            UPDATE device_service_registry 
+            SET last_seen = ?, health_status = ? 
+            WHERE node_id = ?
+            """,
+            (now_iso(), health_status, node_id)
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+def get_service_node_leases() -> list[dict]:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        rows = conn.execute("SELECT * FROM service_node_leases").fetchall()
+        result = []
+        for r in rows:
+            d = dict(r)
+            result.append({
+                "node_id": d["node_id"],
+                "last_seen": d["last_seen"],
+                "battery_level": d["battery_level"],
+                "power_source": d["power_source"],
+                "network_status": d["network_status"],
+                "availability": d["availability"],
+                "lease_duration_seconds": d["lease_duration_seconds"]
             })
         return result
     finally:

@@ -96,6 +96,14 @@ def route_task_by_capabilities(task_type: str, prompt: str, explicit_caps: list[
     # Load approved service nodes from DB to ensure we match their DB properties
     approved_db_nodes = {n["node_id"]: n for n in list_service_nodes()}
 
+    # Load health leases
+    from backend.runtime_execution_store import get_service_node_leases
+    leases = {}
+    try:
+        leases = {l["node_id"]: l for l in get_service_node_leases()}
+    except Exception as e:
+        logger.warning(f"Failed to load leases in capability router: {e}")
+
     for nid, ndata in all_nodes.items():
         node_name = ndata.get("name", nid)
         node_status = ndata.get("status", "Active")
@@ -122,6 +130,47 @@ def route_task_by_capabilities(task_type: str, prompt: str, explicit_caps: list[
                 "capabilities": []
             }
             continue
+
+        # 2.5. Lease checks for approved dynamic devices
+        if is_approved:
+            lease = leases.get(nid)
+            if not lease:
+                routing_decisions[nid] = {
+                    "name": node_name,
+                    "status": "rejected",
+                    "reason": "Device has no active health lease.",
+                    "capabilities": []
+                }
+                continue
+            if lease["availability"] == "sleeping":
+                routing_decisions[nid] = {
+                    "name": node_name,
+                    "status": "rejected",
+                    "reason": "Device is currently sleeping/unavailable.",
+                    "capabilities": []
+                }
+                continue
+            if lease["availability"] == "offline":
+                routing_decisions[nid] = {
+                    "name": node_name,
+                    "status": "rejected",
+                    "reason": "Device is marked offline.",
+                    "capabilities": []
+                }
+                continue
+            try:
+                last_seen_dt = datetime.fromisoformat(lease["last_seen"].replace("Z", "+00:00"))
+                now_dt = datetime.now(last_seen_dt.tzinfo)
+                if (now_dt - last_seen_dt).total_seconds() > lease["lease_duration_seconds"]:
+                    routing_decisions[nid] = {
+                        "name": node_name,
+                        "status": "rejected",
+                        "reason": f"Device health lease has expired (stale for {int((now_dt - last_seen_dt).total_seconds())}s).",
+                        "capabilities": []
+                    }
+                    continue
+            except Exception as e:
+                logger.warning(f"Error checking lease expiration for {nid}: {e}")
 
         # Use DB roles/class for approved dynamic devices
         eval_data = ndata

@@ -42,6 +42,19 @@ def approve_service_node(node_id: str, operator: str, roles: list[str]) -> bool:
     }
     persist_service_node(service_node)
     
+    from backend.runtime_execution_store import update_service_node_lease
+    try:
+        update_service_node_lease(
+            node_id=node_id,
+            battery_level=100.0,
+            power_source="AC",
+            network_status="connected",
+            availability="available",
+            lease_duration_seconds=300
+        )
+    except Exception as e:
+        logger.error(f"Failed to create default health lease for approved node {node_id}: {e}")
+
     try:
         from backend.main import cluster_mgr
         cluster_mgr.load_approved_service_nodes()

@@ -9054,9 +9054,43 @@ function renderApprovedServiceNodes(nodes) {
         const statusBadge = document.createElement("span");
         statusBadge.className = "badge";
         statusBadge.style.fontSize = "8px";
-        statusBadge.style.background = "rgba(16, 185, 129, 0.15)";
-        statusBadge.style.color = "#10b981";
-        statusBadge.innerText = "Active Node";
+
+        if (node.lease) {
+            const leaseDiv = document.createElement("div");
+            leaseDiv.style.fontSize = "9px";
+            leaseDiv.style.color = "var(--text-secondary)";
+            leaseDiv.style.marginTop = "4px";
+            leaseDiv.style.display = "flex";
+            leaseDiv.style.gap = "8px";
+
+            const batterySpan = document.createElement("span");
+            batterySpan.innerHTML = `<i data-lucide="battery" style="width:10px; height:10px; display:inline-block; vertical-align:middle; margin-right:2px;"></i> ${node.lease.battery_level}% (${node.lease.power_source})`;
+
+            const netSpan = document.createElement("span");
+            netSpan.innerHTML = `<i data-lucide="wifi" style="width:10px; height:10px; display:inline-block; vertical-align:middle; margin-right:2px;"></i> ${node.lease.network_status}`;
+
+            const durationSpan = document.createElement("span");
+            durationSpan.innerText = `Lease: ${node.lease.availability} (${node.lease.lease_duration_seconds}s)`;
+
+            leaseDiv.appendChild(batterySpan);
+            leaseDiv.appendChild(netSpan);
+            leaseDiv.appendChild(durationSpan);
+            left.appendChild(leaseDiv);
+
+            if (node.lease.status === "active") {
+                statusBadge.style.background = "rgba(16, 185, 129, 0.15)";
+                statusBadge.style.color = "#10b981";
+                statusBadge.innerText = "Lease Active";
+            } else {
+                statusBadge.style.background = "rgba(239, 68, 68, 0.15)";
+                statusBadge.style.color = "#ef4444";
+                statusBadge.innerText = "Lease Expired";
+            }
+        } else {
+            statusBadge.style.background = "rgba(239, 68, 68, 0.15)";
+            statusBadge.style.color = "#ef4444";
+            statusBadge.innerText = "No Lease";
+        }
 
         const operatorText = document.createElement("span");
         operatorText.style.fontSize = "8px";

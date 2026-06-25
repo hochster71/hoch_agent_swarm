@@ -68,7 +68,7 @@ test.describe("Device-as-a-Service Registry E2E", () => {
     // 10. Verify it gets registered as active node
     const approvedNode = page.locator("#service-node-registry-list");
     await expect(approvedNode).toContainText("Michael's iPad Mini", { timeout: 10000 });
-    await expect(approvedNode).toContainText("Active Node");
+    await expect(approvedNode).toContainText("Lease Active");
 
     // 11. Capture screenshot of the dashboard state
     const screenshotPath = "artifacts/qa/device-service-registry.png";

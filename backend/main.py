@@ -2275,9 +2275,35 @@ async def get_status():
     events.reverse()
     data["mission_events"] = events[:25]
     
-    from backend.runtime_execution_store import list_service_nodes
+    from backend.runtime_execution_store import list_service_nodes, get_service_node_leases
     try:
         s_nodes = list_service_nodes()
+        leases = {l["node_id"]: l for l in get_service_node_leases()}
+        for sn in s_nodes:
+            nid = sn["node_id"]
+            if nid in leases:
+                l = leases[nid]
+                sn["lease"] = {
+                    "last_seen": l["last_seen"],
+                    "battery_level": l["battery_level"],
+                    "power_source": l["power_source"],
+                    "network_status": l["network_status"],
+                    "availability": l["availability"],
+                    "lease_duration_seconds": l["lease_duration_seconds"],
+                    "status": "active"
+                }
+                try:
+                    from datetime import datetime
+                    last_seen_dt = datetime.fromisoformat(l["last_seen"].replace("Z", "+00:00"))
+                    now_dt = datetime.now(last_seen_dt.tzinfo)
+                    if (now_dt - last_seen_dt).total_seconds() > l["lease_duration_seconds"]:
+                        sn["lease"]["status"] = "expired"
+                    elif l["availability"] in ["sleeping", "offline"]:
+                        sn["lease"]["status"] = "expired"
+                except Exception:
+                    pass
+            else:
+                sn["lease"] = None
     except Exception:
         s_nodes = []
     data["service_nodes"] = s_nodes
@@ -2550,8 +2576,38 @@ def run_discovery(req: DiscoverDevicesRequest):
 
 @app.get("/api/v1/devices/service-registry")
 def get_service_registry():
-    from backend.runtime_execution_store import list_service_nodes
-    return list_service_nodes()
+    from backend.runtime_execution_store import list_service_nodes, get_service_node_leases
+    nodes = list_service_nodes()
+    try:
+        leases = {l["node_id"]: l for l in get_service_node_leases()}
+        for sn in nodes:
+            nid = sn["node_id"]
+            if nid in leases:
+                l = leases[nid]
+                sn["lease"] = {
+                    "last_seen": l["last_seen"],
+                    "battery_level": l["battery_level"],
+                    "power_source": l["power_source"],
+                    "network_status": l["network_status"],
+                    "availability": l["availability"],
+                    "lease_duration_seconds": l["lease_duration_seconds"],
+                    "status": "active"
+                }
+                try:
+                    from datetime import datetime
+                    last_seen_dt = datetime.fromisoformat(l["last_seen"].replace("Z", "+00:00"))
+                    now_dt = datetime.now(last_seen_dt.tzinfo)
+                    if (now_dt - last_seen_dt).total_seconds() > l["lease_duration_seconds"]:
+                        sn["lease"]["status"] = "expired"
+                    elif l["availability"] in ["sleeping", "offline"]:
+                        sn["lease"]["status"] = "expired"
+                except Exception:
+                    pass
+            else:
+                sn["lease"] = None
+    except Exception as e:
+        logger.warning(f"Error merging leases: {e}")
+    return nodes
 
 @app.post("/api/v1/devices/service-registry/{node_id}/approve")
 def approve_device(node_id: str, req: ApproveDeviceRequest):
@@ -2569,6 +2625,36 @@ def reject_device(node_id: str, req: RejectDeviceRequest):
 def get_routing_history(limit: int = 50):
     from backend.runtime_execution_store import list_routing_history
     return list_routing_history(limit)
+
+class LeaseRefreshRequest(BaseModel):
+    node_id: str
+    battery_level: float
+    power_source: str
+    network_status: str
+    availability: str
+    lease_duration_seconds: int
+
+@app.post("/api/v1/devices/lease/refresh")
+def refresh_device_lease(req: LeaseRefreshRequest):
+    from backend.runtime_execution_store import update_service_node_lease
+    try:
+        update_service_node_lease(
+            node_id=req.node_id,
+            battery_level=req.battery_level,
+            power_source=req.power_source,
+            network_status=req.network_status,
+            availability=req.availability,
+            lease_duration_seconds=req.lease_duration_seconds
+        )
+        cluster_mgr.load_approved_service_nodes()
+        return {"status": "SUCCESS"}
+    except Exception as e:
+        return {"status": "FAILED", "error": str(e)}
+
+@app.get("/api/v1/devices/leases")
+def get_leases_list():
+    from backend.runtime_execution_store import get_service_node_leases
+    return get_service_node_leases()
 
 class NodeRegisterRequest(BaseModel):
     id: str
