@@ -356,9 +356,41 @@ class ClusterManager:
         self._activity_idx = {nid: 0 for nid in self.nodes}
         self.status_lock = threading.Lock()
         
+        # Load approved service nodes from sqlite registry
+        self.load_approved_service_nodes()
+        
         # Start background telemetry loop to run pings and host checks asynchronously
         self.bg_thread = threading.Thread(target=self._bg_telemetry_loop, daemon=True)
         self.bg_thread.start()
+
+    def load_approved_service_nodes(self):
+        try:
+            from backend.runtime_execution_store import list_service_nodes
+            approved = list_service_nodes()
+            with self.status_lock:
+                self.nodes = copy.deepcopy(NODES_CONFIG)
+                self._activity_idx = {nid: 0 for nid in self.nodes}
+                for node in approved:
+                    nid = node["node_id"]
+                    # Extract IP address from list if stored as dict or string
+                    ip_addr = node.get("ip_address", "127.0.0.1")
+                    self.nodes[nid] = {
+                        "id": nid,
+                        "fleet_group": node.get("fleet_group", "unknown"),
+                        "name": node.get("display_name", "Service Node"),
+                        "ip": ip_addr,
+                        "role": f"{node.get('compute_tier', 'none').upper()} | Roles: {', '.join(node.get('service_roles', []))}",
+                        "specs": f"Class: {node.get('device_class')}, Tier: {node.get('compute_tier')}",
+                        "status": "Active",
+                        "total_agents": 0,
+                        "os": node.get("device_class", "unknown"),
+                        "cpu_usage": 15,
+                        "ram_usage": 25,
+                        "latency_ms": 1.5,
+                        "agents": []
+                    }
+        except Exception as e:
+            logger.error(f"Failed to load approved service nodes from registry: {e}")
 
     def _bg_telemetry_loop(self):
         # Perform initial telemetry scan, then update telemetry continuously

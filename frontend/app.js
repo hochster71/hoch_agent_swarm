@@ -370,6 +370,7 @@ async function initDashboard() {
         initFormalReleaseSealDryRun();
         initReleaseSealAttestation();
         initRunsDashboard();
+        initDeviceRegistry();
     } catch (err) {
         console.error("Error initializing dashboard: ", err);
         // Fallback polling if WebSocket fails
@@ -8721,3 +8722,360 @@ window.initReleaseSealAttestation = initReleaseSealAttestation;
 window.loadSealDryRunsForAttestation = loadSealDryRunsForAttestation;
 window.createAttestationBundle = createAttestationBundle;
 window.loadAttestationHistory = loadAttestationHistory;
+
+let selectedDiscoveredDevice = null;
+
+async function initDeviceRegistry() {
+    const btnRunDiscovery = document.getElementById("device-discovery-run-button");
+    const btnRefreshRegistry = document.getElementById("device-service-refresh-button");
+    const btnApprove = document.getElementById("btn-device-approve");
+    const btnReject = document.getElementById("btn-device-reject");
+
+    if (btnRunDiscovery) {
+        btnRunDiscovery.addEventListener("click", executeDeviceDiscovery);
+    }
+    if (btnRefreshRegistry) {
+        btnRefreshRegistry.addEventListener("click", loadRegistryData);
+    }
+    if (btnApprove) {
+        btnApprove.addEventListener("click", executeDeviceApproval);
+    }
+    if (btnReject) {
+        btnReject.addEventListener("click", executeDeviceRejection);
+    }
+
+    await loadRegistryData();
+}
+
+async function loadRegistryData() {
+    try {
+        const discRes = await fetch(`${API_BASE}/api/v1/devices/discovered`);
+        if (discRes.ok) {
+            const discovered = await discRes.json();
+            renderDiscoveredDevices(discovered);
+        }
+
+        const regRes = await fetch(`${API_BASE}/api/v1/devices/service-registry`);
+        if (regRes.ok) {
+            const approved = await regRes.json();
+            renderApprovedServiceNodes(approved);
+        }
+    } catch (err) {
+        console.error("Error loading registry data:", err);
+    }
+}
+
+async function executeDeviceDiscovery() {
+    const statusText = document.getElementById("device-discovery-status");
+    const btnRunDiscovery = document.getElementById("device-discovery-run-button");
+    if (statusText) statusText.innerText = "DISCOVERING...";
+    if (btnRunDiscovery) btnRunDiscovery.disabled = true;
+
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/devices/discover`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ enable_ping_sweep: false, enable_tcp_probes: false })
+        });
+        if (res.ok) {
+            logToConsoleTerminal("DaaSDiscovery", "Network discovery completed successfully. Recommended service enclaves updated.", "info");
+        } else {
+            logToConsoleTerminal("DaaSDiscovery", "Network discovery failed.", "error");
+        }
+    } catch (err) {
+        console.error("Discovery error:", err);
+        logToConsoleTerminal("DaaSDiscovery", "Error running discovery: " + err.message, "error");
+    } finally {
+        if (statusText) statusText.innerText = "IDLE";
+        if (btnRunDiscovery) btnRunDiscovery.disabled = false;
+        await loadRegistryData();
+    }
+}
+
+function renderDiscoveredDevices(devices) {
+    const listContainer = document.getElementById("discovered-device-list");
+    if (!listContainer) return;
+    listContainer.innerHTML = "";
+
+    if (!devices || devices.length === 0) {
+        listContainer.innerHTML = `<span style="font-size: 11px; color: var(--text-secondary); font-style: italic; text-align: center; padding: 12px 0;">No devices discovered yet. Trigger discovery to scan local network.</span>`;
+        return;
+    }
+
+    devices.forEach(dev => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.style.padding = "8px 12px";
+        div.style.cursor = "pointer";
+        div.style.border = "1px solid var(--border-glass)";
+        div.style.background = "rgba(255, 255, 255, 0.02)";
+        div.style.display = "flex";
+        div.style.justifyContent = "space-between";
+        div.style.alignItems = "center";
+        div.style.transition = "all 0.2s";
+        div.setAttribute("id", `discovered-card-${dev.node_id}`);
+        
+        div.onmouseover = () => {
+            div.style.background = "rgba(255, 255, 255, 0.06)";
+            div.style.borderColor = "var(--accent-teal)";
+        };
+        div.onmouseout = () => {
+            if (selectedDiscoveredDevice?.node_id !== dev.node_id) {
+                div.style.background = "rgba(255, 255, 255, 0.02)";
+                div.style.borderColor = "var(--border-glass)";
+            }
+        };
+
+        div.addEventListener("click", () => {
+            selectDiscoveredDevice(dev);
+        });
+
+        const left = document.createElement("div");
+        left.style.display = "flex";
+        left.style.flexDirection = "column";
+        left.style.textAlign = "left";
+
+        const name = document.createElement("span");
+        name.style.fontSize = "11px";
+        name.style.fontWeight = "bold";
+        name.style.color = "#fff";
+        name.innerText = dev.display_name;
+
+        const details = document.createElement("span");
+        details.style.fontSize = "9px";
+        details.style.color = "var(--text-secondary)";
+        details.style.fontFamily = "monospace";
+        details.innerText = `${dev.ip_address} | Class: ${dev.device_class}`;
+
+        left.appendChild(name);
+        left.appendChild(details);
+
+        const badge = document.createElement("span");
+        badge.className = "badge";
+        badge.style.fontSize = "8px";
+        badge.style.padding = "1px 4px";
+        
+        if (dev.onboarding_status === "approved") {
+            badge.style.background = "rgba(16, 185, 129, 0.15)";
+            badge.style.color = "#10b981";
+            badge.innerText = "Approved";
+        } else if (dev.onboarding_status === "rejected") {
+            badge.style.background = "rgba(239, 68, 68, 0.15)";
+            badge.style.color = "#ef4444";
+            badge.innerText = "Rejected";
+        } else {
+            badge.style.background = "rgba(59, 130, 246, 0.15)";
+            badge.style.color = "var(--accent-blue)";
+            badge.innerText = "Discovered";
+        }
+
+        div.appendChild(left);
+        div.appendChild(badge);
+        listContainer.appendChild(div);
+    });
+
+    if (selectedDiscoveredDevice) {
+        const activeCard = document.getElementById(`discovered-card-${selectedDiscoveredDevice.node_id}`);
+        if (activeCard) {
+            activeCard.style.background = "rgba(255, 255, 255, 0.08)";
+            activeCard.style.borderColor = "var(--accent-teal)";
+        }
+    }
+}
+
+function selectDiscoveredDevice(device) {
+    selectedDiscoveredDevice = device;
+    
+    document.querySelectorAll('[id^="discovered-card-"]').forEach(card => {
+        card.style.background = "rgba(255, 255, 255, 0.02)";
+        card.style.borderColor = "var(--border-glass)";
+    });
+    const activeCard = document.getElementById(`discovered-card-${device.node_id}`);
+    if (activeCard) {
+        activeCard.style.background = "rgba(255, 255, 255, 0.08)";
+        activeCard.style.borderColor = "var(--accent-teal)";
+    }
+
+    const panel = document.getElementById("device-service-approval-panel");
+    if (!panel) return;
+    panel.classList.remove("hidden");
+
+    document.getElementById("approval-device-name").innerText = device.display_name;
+    document.getElementById("approval-device-ip").innerText = `${device.ip_address} (${device.mac_address || "No MAC"})`;
+    
+    const classBadge = document.getElementById("approval-device-class");
+    classBadge.innerText = device.device_class;
+    
+    document.getElementById("approval-fleet-group").innerText = device.fleet_group;
+    document.getElementById("approval-compute-tier").innerText = device.compute_tier;
+    document.getElementById("approval-operator-notes").value = device.operator_notes || "";
+
+    const roleList = document.getElementById("device-service-role-list");
+    roleList.innerHTML = "";
+
+    const candidateRoles = device.service_roles && device.service_roles.length > 0
+        ? device.service_roles
+        : ["dashboard_receiver", "alert_wall", "release_status_display", "mobile_dashboard", "approval_terminal", "compute_worker"];
+
+    candidateRoles.forEach(role => {
+        const label = document.createElement("label");
+        label.style.display = "flex";
+        label.style.alignItems = "center";
+        label.style.gap = "4px";
+        label.style.fontSize = "10px";
+        label.style.color = "var(--text-secondary)";
+        label.style.background = "rgba(255, 255, 255, 0.03)";
+        label.style.border = "1px solid var(--border-glass)";
+        label.style.padding = "2px 6px";
+        label.style.borderRadius = "4px";
+        label.style.cursor = "pointer";
+
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.value = role;
+        cb.checked = true;
+        cb.style.margin = "0";
+
+        label.appendChild(cb);
+        label.appendChild(document.createTextNode(role));
+        roleList.appendChild(label);
+    });
+}
+
+async function executeDeviceApproval() {
+    if (!selectedDiscoveredDevice) return;
+    const operator = "Michael Hoch";
+    
+    const selectedRoles = [];
+    document.querySelectorAll('#device-service-role-list input[type="checkbox"]').forEach(cb => {
+        if (cb.checked) selectedRoles.push(cb.value);
+    });
+
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/devices/service-registry/${selectedDiscoveredDevice.node_id}/approve`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                operator: operator,
+                service_roles: selectedRoles
+            })
+        });
+        if (res.ok) {
+            logToConsoleTerminal("DaaSOnboarding", `Approved device ${selectedDiscoveredDevice.display_name} as active service node.`, "info");
+            const panel = document.getElementById("device-service-approval-panel");
+            if (panel) panel.classList.add("hidden");
+            selectedDiscoveredDevice = null;
+            await loadRegistryData();
+            if (window.refreshClusterTopologyStatus) {
+                await window.refreshClusterTopologyStatus();
+            }
+        }
+    } catch (err) {
+        console.error("Approval error:", err);
+    }
+}
+
+async function executeDeviceRejection() {
+    if (!selectedDiscoveredDevice) return;
+    const operator = "Michael Hoch";
+    const reason = "Operator rejected onboarding request.";
+
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/devices/service-registry/${selectedDiscoveredDevice.node_id}/reject`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                operator: operator,
+                reason: reason
+            })
+        });
+        if (res.ok) {
+            logToConsoleTerminal("DaaSOnboarding", `Rejected device ${selectedDiscoveredDevice.display_name}. Onboarding request denied.`, "warning");
+            const panel = document.getElementById("device-service-approval-panel");
+            if (panel) panel.classList.add("hidden");
+            selectedDiscoveredDevice = null;
+            await loadRegistryData();
+            if (window.refreshClusterTopologyStatus) {
+                await window.refreshClusterTopologyStatus();
+            }
+        }
+    } catch (err) {
+        console.error("Rejection error:", err);
+    }
+}
+
+function renderApprovedServiceNodes(nodes) {
+    const listContainer = document.getElementById("service-node-registry-list");
+    if (!listContainer) return;
+    listContainer.innerHTML = "";
+
+    if (!nodes || nodes.length === 0) {
+        listContainer.innerHTML = `<span style="font-size: 11px; color: var(--text-secondary); font-style: italic; text-align: center; padding: 12px 0;">No active service nodes approved.</span>`;
+        return;
+    }
+
+    nodes.forEach(node => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.style.padding = "8px 12px";
+        div.style.border = "1px solid rgba(16, 185, 129, 0.2)";
+        div.style.background = "rgba(16, 185, 129, 0.02)";
+        div.style.display = "flex";
+        div.style.justifyContent = "space-between";
+        div.style.alignItems = "center";
+
+        const left = document.createElement("div");
+        left.style.display = "flex";
+        left.style.flexDirection = "column";
+        left.style.textAlign = "left";
+
+        const name = document.createElement("span");
+        name.style.fontSize = "11px";
+        name.style.fontWeight = "bold";
+        name.style.color = "#fff";
+        name.innerText = node.display_name;
+
+        const details = document.createElement("span");
+        details.style.fontSize = "9px";
+        details.style.color = "var(--text-secondary)";
+        details.style.fontFamily = "monospace";
+        details.innerText = `Roles: ${node.service_roles.join(", ")}`;
+
+        left.appendChild(name);
+        left.appendChild(details);
+
+        const right = document.createElement("div");
+        right.style.display = "flex";
+        right.style.flexDirection = "column";
+        right.style.alignItems = "flex-end";
+        right.style.gap = "4px";
+
+        const statusBadge = document.createElement("span");
+        statusBadge.className = "badge";
+        statusBadge.style.fontSize = "8px";
+        statusBadge.style.background = "rgba(16, 185, 129, 0.15)";
+        statusBadge.style.color = "#10b981";
+        statusBadge.innerText = "Active Node";
+
+        const operatorText = document.createElement("span");
+        operatorText.style.fontSize = "8px";
+        operatorText.style.color = "var(--text-secondary)";
+        operatorText.innerText = `By: ${node.approved_by_operator || "System"}`;
+
+        right.appendChild(statusBadge);
+        right.appendChild(operatorText);
+
+        div.appendChild(left);
+        div.appendChild(right);
+        listContainer.appendChild(div);
+    });
+}
+
+window.initDeviceRegistry = initDeviceRegistry;
+window.loadRegistryData = loadRegistryData;
+window.executeDeviceDiscovery = executeDeviceDiscovery;
+window.renderDiscoveredDevices = renderDiscoveredDevices;
+window.selectDiscoveredDevice = selectDiscoveredDevice;
+window.executeDeviceApproval = executeDeviceApproval;
+window.executeDeviceRejection = executeDeviceRejection;
+window.renderApprovedServiceNodes = renderApprovedServiceNodes;

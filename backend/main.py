@@ -2273,6 +2273,15 @@ async def get_status():
         events = list(_mission_log)
     events.reverse()
     data["mission_events"] = events[:25]
+    
+    from backend.runtime_execution_store import list_service_nodes
+    try:
+        s_nodes = list_service_nodes()
+    except Exception:
+        s_nodes = []
+    data["service_nodes"] = s_nodes
+    data["devices"] = {"services": s_nodes}
+    
     return data
 
 
@@ -2490,6 +2499,70 @@ def run_swarm_task(req: TaskRequest):
 @app.get("/api/tasks")
 def get_task_history():
     return load_task_history()
+
+class DiscoverDevicesRequest(BaseModel):
+    enable_ping_sweep: bool = False
+    enable_tcp_probes: bool = False
+
+class ApproveDeviceRequest(BaseModel):
+    operator: str
+    service_roles: list[str]
+
+class RejectDeviceRequest(BaseModel):
+    operator: str
+    reason: str
+
+@app.get("/api/v1/devices/discovery/policy")
+def get_discovery_policy():
+    return {
+        "mode": "passive",
+        "mdns_enabled": True,
+        "arp_enabled": True,
+        "ping_sweep_enabled": False,
+        "tcp_probes_enabled": False,
+        "safety_notices": [
+            "Operator Approval Required",
+            "No Automatic Agent Installation",
+            "No Credential Attempts",
+            "TVs are display services by default",
+            "XR headsets require operator presence",
+            "Unknown devices remain untrusted"
+        ]
+    }
+
+@app.get("/api/v1/devices/discovered")
+def get_discovered():
+    from backend.runtime_execution_store import list_discovered_devices
+    return list_discovered_devices()
+
+@app.post("/api/v1/devices/discover")
+def run_discovery(req: DiscoverDevicesRequest):
+    from backend.device_discovery import run_local_discovery
+    from backend.runtime_execution_store import persist_discovered_device
+    discovered = run_local_discovery(
+        enable_ping_sweep=req.enable_ping_sweep,
+        enable_tcp_probes=req.enable_tcp_probes
+    )
+    for dev in discovered:
+        persist_discovered_device(dev)
+    return {"status": "SUCCESS", "count": len(discovered)}
+
+@app.get("/api/v1/devices/service-registry")
+def get_service_registry():
+    from backend.runtime_execution_store import list_service_nodes
+    return list_service_nodes()
+
+@app.post("/api/v1/devices/service-registry/{node_id}/approve")
+def approve_device(node_id: str, req: ApproveDeviceRequest):
+    from backend.service_registry import approve_service_node
+    success = approve_service_node(node_id, req.operator, req.service_roles)
+    return {"status": "SUCCESS" if success else "FAILED"}
+
+@app.post("/api/v1/devices/service-registry/{node_id}/reject")
+def reject_device(node_id: str, req: RejectDeviceRequest):
+    from backend.service_registry import reject_service_node
+    success = reject_service_node(node_id, req.operator, req.reason)
+    return {"status": "SUCCESS" if success else "FAILED"}
 
 class NodeRegisterRequest(BaseModel):
     id: str

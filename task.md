@@ -1,28 +1,15 @@
-# Task List — Phase 14: Cluster Command Map 2.0 Redesign
+# Task List — Device-as-a-Service Registry
 
-- `[x]` Add `"fleet_group"` metadata to all nodes in `backend/cluster_manager.py`
-- `[x]` Re-engineer `frontend/index.html` layout:
-  - Add `#cluster-command-map-v2` container
-  - Add `#cluster-agent-command-rail`
-  - Add collapsible `#cluster-device-fleet-drawer` with sections
-  - Add `#cluster-selected-node-inspector` and `#cluster-health-legend`
-- `[x]` Implement frontend functions in `frontend/app.js`:
-  - `renderClusterCommandMapV2`
-  - `renderAgentCommandRail`
-  - `groupClusterDevicesByFleet`
-  - `renderClusterTopologyGroups`
-  - `renderDeviceFleetDrawer`
-  - `renderSelectedNodeInspector`
-  - `selectClusterNode`
-  - `toggleClusterTopologyGroup`
-  - `fitClusterTopologyViewport`
-  - `refreshClusterTopologyStatus`
-- `[x]` Bind drawer toggle transitions and map adjustments
-- `[x]` Align `package.json` script names:
-  - `"qa:device-registry-contract"`
-  - `"e2e:device-registry-topology"`
-- `[x]` Update contract test `scripts/qa/test-device-registry-contract.ts` to assert all V2 container structures, entrypoints, script names, and safety constraints
-- `[x]` Update Playwright E2E topology check `tests/e2e/device-registry-topology.spec.ts` to expand drawer, click iPads, assert details, check console errors, and capture screenshot
-- `[x]` Rebuild local assets (`npm run build`)
-- `[x]` Restart backend server with `TEST_MODE=true` on port 8000 and run contract + E2E QA checks
-- `[x]` Update documentation: `docs/mission/deep-swarm-page-audit-report.md`, `walkthrough.md`, and `task.md`
+- `[x]` Define SQLite tables in `init_execution_store_tables()` and write database helper functions
+- `[x]` Create `backend/device_discovery.py` containing mDNS, neighbor table scanners, and fingerprint/classification rules
+- `[x]` Create `backend/service_registry.py` containing approve/reject controllers
+- `[x]` Update `backend/cluster_manager.py` to dynamically load approved service nodes
+- `[x]` Add Pydantic schemas and REST routes in `backend/main.py`
+- `[x]` Create discovery fixtures in `tests/fixtures/device-discovery-fixtures.json`
+- `[x]` Add DaaS panels and safety disclaimers to `frontend/index.html`
+- `[x]` Implement DaaS event handlers and list renderers in `frontend/app.js`
+- `[x]` Create contract validation script `scripts/qa/test-device-service-registry-contract.ts`
+- `[x]` Create Playwright E2E test `tests/e2e/device-service-registry.spec.ts`
+- `[x]` Register script commands in `package.json`
+- `[x]` Rebuild assets, run QA contract checks, and execute Playwright E2E tests
+- `[x]` Update documentation: deep-swarm-page-audit-report.md, walkthrough.md, and task.md

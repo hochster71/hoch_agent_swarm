@@ -1569,6 +1569,109 @@
                         </div>
                     </div>
                 </section>
+
+                <section class="card" id="device-service-registry-panel" style="padding: 16px; margin-top: 20px; display: flex; flex-direction: column; gap: 16px;">
+                    <div class="card-header" style="border-bottom: 1px solid var(--border-glass); padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                        <h3 class="card-title" style="font-size: 14px; font-weight: 600; color: #fff; margin: 0; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="server" style="color: var(--accent-teal); width: 16px; height: 16px;"></i> Device-as-a-Service Registry
+                        </h3>
+                        <button id="device-service-refresh-button" class="btn btn-xs btn-outline"><i data-lucide="refresh-cw"></i> Refresh</button>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <!-- Left: Discovery policy & trigger -->
+                        <div style="display: flex; flex-direction: column; gap: 14px;">
+                            <div id="device-discovery-policy-panel" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 6px; padding: 12px;">
+                                <h4 style="margin: 0 0 8px 0; font-size: 12px; color: var(--accent-teal);">Discovery Policy</h4>
+                                <div style="font-size: 11px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 6px;">
+                                    <div><strong>Mode:</strong> Passive Discovery (mDNS/Bonjour & Neighbor Table)</div>
+                                    <div><strong>Active Sweeps:</strong> Disabled by default (Operator override required)</div>
+                                    <div><strong>Credential Policy:</strong> No Credential Attempts (Read-Only)</div>
+                                </div>
+                            </div>
+                            
+                            <div id="device-service-safety-notice" style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: 6px; padding: 12px; font-size: 11px; color: #fca5a5;">
+                                <div style="font-weight: bold; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+                                    <i data-lucide="alert-triangle" style="width: 12px; height: 12px;"></i> Swarm Security Enforcement
+                                </div>
+                                <ul style="margin: 0; padding-left: 14px; display: flex; flex-direction: column; gap: 3px;">
+                                    <li>Operator Approval Required for registry entry.</li>
+                                    <li>No Automatic Agent Installation will be performed.</li>
+                                    <li>No Credential Attempts will be executed on discovered nodes.</li>
+                                    <li>TVs are display services by default (compute disabled).</li>
+                                    <li>XR headsets require operator presence.</li>
+                                    <li>Macs/PCs remain candidates (no auto-approval).</li>
+                                    <li>Unknown devices remain untrusted until audited.</li>
+                                </ul>
+                            </div>
+                            
+                            <div>
+                                <button id="device-discovery-run-button" class="btn btn-primary btn-sm" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                    <i data-lucide="search" style="width: 14px; height: 14px;"></i> Discover Local Network Devices
+                                </button>
+                                <div style="font-size: 10px; color: var(--text-secondary); margin-top: 6px; text-align: center;">
+                                    Discovery Status: <span id="device-discovery-status" style="font-weight: bold; color: var(--accent-teal);">IDLE</span>
+                                </div>
+                            </div>
+
+                            <!-- Discovered Devices list -->
+                            <div>
+                                <h4 style="margin: 0 0 8px 0; font-size: 12px; color: #fff;">Discovered Devices</h4>
+                                <div id="discovered-device-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 6px; padding: 8px;">
+                                    <span style="font-size: 11px; color: var(--text-secondary); font-style: italic; text-align: center; padding: 12px 0;">No devices discovered yet. Trigger discovery to scan local network.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Approved active registry & Details/Approval panels -->
+                        <div style="display: flex; flex-direction: column; gap: 14px;">
+                            <!-- Active Service Nodes -->
+                            <div>
+                                <h4 style="margin: 0 0 8px 0; font-size: 12px; color: #fff;">Active Service Nodes</h4>
+                                <div id="service-node-registry-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 180px; overflow-y: auto; background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 6px; padding: 8px;">
+                                    <span style="font-size: 11px; color: var(--text-secondary); font-style: italic; text-align: center; padding: 12px 0;">No active service nodes approved.</span>
+                                </div>
+                            </div>
+
+                            <!-- Dynamic Inspector/Approval Form -->
+                            <div id="device-service-approval-panel" class="hidden" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 6px; padding: 12px; display: flex; flex-direction: column; gap: 12px;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                    <div>
+                                        <h4 id="approval-device-name" style="margin: 0; font-size: 13px; color: #fff; font-weight: bold;">Device Name</h4>
+                                        <span id="approval-device-ip" style="font-size: 10px; font-family: monospace; color: var(--text-secondary);">10.0.0.X</span>
+                                    </div>
+                                    <span id="approval-device-class" class="badge" style="font-size: 9px; padding: 1px 4px;">unknown</span>
+                                </div>
+
+                                <!-- Classification Details -->
+                                <div id="device-service-classification-panel" style="font-size: 11px; color: var(--text-secondary); display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: rgba(0,0,0,0.15); padding: 8px; border-radius: 4px;">
+                                    <div><strong>Fleet Group:</strong> <span id="approval-fleet-group" style="color: #fff;">-</span></div>
+                                    <div><strong>Compute Tier:</strong> <span id="approval-compute-tier" style="color: #fff;">-</span></div>
+                                </div>
+
+                                <!-- Roles checklist -->
+                                <div>
+                                    <span style="font-size: 11px; font-weight: bold; color: #fff;">Configure Service Roles:</span>
+                                    <div id="device-service-role-list" style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px;">
+                                        <!-- Checkboxes populated dynamically -->
+                                    </div>
+                                </div>
+
+                                <!-- Input for operator notes -->
+                                <div>
+                                    <span style="font-size: 11px; font-weight: bold; color: #fff;">Operator Notes:</span>
+                                    <textarea id="approval-operator-notes" rows="2" style="width: 100%; margin-top: 4px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 4px; color: #fff; padding: 4px 8px; font-size: 11px; resize: none;" placeholder="Provide audit notes..."></textarea>
+                                </div>
+
+                                <!-- Action buttons -->
+                                <div style="display: flex; gap: 10px; margin-top: 4px;">
+                                    <button id="btn-device-approve" class="btn btn-xs btn-primary" style="flex: 1; padding: 6px 0; font-weight: 600;">Approve Service Node</button>
+                                    <button id="btn-device-reject" class="btn btn-xs btn-outline" style="flex: 1; padding: 6px 0; border-color: rgba(239, 68, 68, 0.4); color: #ef4444; font-weight: 600;">Reject Service Node</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
 
             <!-- Red-Team Chaos View -->

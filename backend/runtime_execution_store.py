@@ -327,6 +327,59 @@ def init_execution_store_tables() -> None:
             )
             """
         )
+        # Create discovered_devices table
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS discovered_devices (
+                node_id TEXT PRIMARY KEY,
+                display_name TEXT,
+                hostname TEXT,
+                ip_address TEXT,
+                mac_address TEXT,
+                vendor TEXT,
+                model TEXT,
+                model_identifier TEXT,
+                device_class TEXT,
+                fleet_group TEXT,
+                compute_tier TEXT,
+                service_roles_json TEXT,
+                service_endpoints_json TEXT,
+                trusted_compute INTEGER,
+                approval_required INTEGER,
+                onboarding_status TEXT,
+                network_profile TEXT,
+                power_profile TEXT,
+                sandbox_level TEXT,
+                requires_operator_presence INTEGER,
+                last_seen TEXT,
+                discovery_sources_json TEXT,
+                confidence_score REAL,
+                operator_notes TEXT,
+                raw_fingerprint_json TEXT
+            )
+            """
+        )
+        # Create device_service_registry table
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS device_service_registry (
+                node_id TEXT PRIMARY KEY,
+                approved_at TEXT,
+                approved_by_operator TEXT,
+                display_name TEXT,
+                device_class TEXT,
+                fleet_group TEXT,
+                compute_tier TEXT,
+                service_roles_json TEXT,
+                service_endpoints_json TEXT,
+                trusted_compute INTEGER,
+                onboarding_status TEXT,
+                last_seen TEXT,
+                health_status TEXT,
+                no_auto_install_guarantee INTEGER
+            )
+            """
+        )
         conn.commit()
     finally:
         conn.close()
@@ -1334,6 +1387,233 @@ def get_attestation_bundle(bundle_id: str) -> dict | None:
                 "no_mutation_guarantee": bool(d["no_mutation_guarantee"])
             }
         return None
+    finally:
+        conn.close()
+
+def persist_discovered_device(device: dict) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO discovered_devices (
+                node_id, display_name, hostname, ip_address, mac_address,
+                vendor, model, model_identifier, device_class, fleet_group,
+                compute_tier, service_roles_json, service_endpoints_json,
+                trusted_compute, approval_required, onboarding_status,
+                network_profile, power_profile, sandbox_level,
+                requires_operator_presence, last_seen, discovery_sources_json,
+                confidence_score, operator_notes, raw_fingerprint_json
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                device["node_id"],
+                device.get("display_name"),
+                device.get("hostname"),
+                device.get("ip_address"),
+                device.get("mac_address"),
+                device.get("vendor"),
+                device.get("model"),
+                device.get("model_identifier"),
+                device.get("device_class"),
+                device.get("fleet_group"),
+                device.get("compute_tier"),
+                json.dumps(device.get("service_roles") or []),
+                json.dumps(device.get("service_endpoints") or []),
+                1 if device.get("trusted_compute") else 0,
+                1 if device.get("approval_required") else 0,
+                device.get("onboarding_status", "discovered"),
+                device.get("network_profile"),
+                device.get("power_profile"),
+                device.get("sandbox_level", "unknown"),
+                1 if device.get("requires_operator_presence") else 0,
+                device.get("last_seen") or now_iso(),
+                json.dumps(device.get("discovery_sources") or []),
+                device.get("confidence_score", 1.0),
+                device.get("operator_notes"),
+                json.dumps(device.get("raw_fingerprint") or {})
+            )
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+def list_discovered_devices() -> list[dict]:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        rows = conn.execute("SELECT * FROM discovered_devices").fetchall()
+        result = []
+        for r in rows:
+            d = dict(r)
+            result.append({
+                "node_id": d["node_id"],
+                "display_name": d["display_name"],
+                "hostname": d["hostname"],
+                "ip_address": d["ip_address"],
+                "mac_address": d["mac_address"],
+                "vendor": d["vendor"],
+                "model": d["model"],
+                "model_identifier": d["model_identifier"],
+                "device_class": d["device_class"],
+                "fleet_group": d["fleet_group"],
+                "compute_tier": d["compute_tier"],
+                "service_roles": json.loads(d["service_roles_json"] or "[]"),
+                "service_endpoints": json.loads(d["service_endpoints_json"] or "[]"),
+                "trusted_compute": bool(d["trusted_compute"]),
+                "approval_required": bool(d["approval_required"]),
+                "onboarding_status": d["onboarding_status"],
+                "network_profile": d["network_profile"],
+                "power_profile": d["power_profile"],
+                "sandbox_level": d["sandbox_level"],
+                "requires_operator_presence": bool(d["requires_operator_presence"]),
+                "last_seen": d["last_seen"],
+                "discovery_sources": json.loads(d["discovery_sources_json"] or "[]"),
+                "confidence_score": d["confidence_score"],
+                "operator_notes": d["operator_notes"],
+                "raw_fingerprint": json.loads(d["raw_fingerprint_json"] or "{}")
+            })
+        return result
+    finally:
+        conn.close()
+
+def get_discovered_device(node_id: str) -> dict | None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        r = conn.execute("SELECT * FROM discovered_devices WHERE node_id = ?", (node_id,)).fetchone()
+        if r:
+            d = dict(r)
+            return {
+                "node_id": d["node_id"],
+                "display_name": d["display_name"],
+                "hostname": d["hostname"],
+                "ip_address": d["ip_address"],
+                "mac_address": d["mac_address"],
+                "vendor": d["vendor"],
+                "model": d["model"],
+                "model_identifier": d["model_identifier"],
+                "device_class": d["device_class"],
+                "fleet_group": d["fleet_group"],
+                "compute_tier": d["compute_tier"],
+                "service_roles": json.loads(d["service_roles_json"] or "[]"),
+                "service_endpoints": json.loads(d["service_endpoints_json"] or "[]"),
+                "trusted_compute": bool(d["trusted_compute"]),
+                "approval_required": bool(d["approval_required"]),
+                "onboarding_status": d["onboarding_status"],
+                "network_profile": d["network_profile"],
+                "power_profile": d["power_profile"],
+                "sandbox_level": d["sandbox_level"],
+                "requires_operator_presence": bool(d["requires_operator_presence"]),
+                "last_seen": d["last_seen"],
+                "discovery_sources": json.loads(d["discovery_sources_json"] or "[]"),
+                "confidence_score": d["confidence_score"],
+                "operator_notes": d["operator_notes"],
+                "raw_fingerprint": json.loads(d["raw_fingerprint_json"] or "{}")
+            }
+        return None
+    finally:
+        conn.close()
+
+def persist_service_node(node: dict) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO device_service_registry (
+                node_id, approved_at, approved_by_operator, display_name,
+                device_class, fleet_group, compute_tier, service_roles_json,
+                service_endpoints_json, trusted_compute, onboarding_status,
+                last_seen, health_status, no_auto_install_guarantee
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                node["node_id"],
+                node.get("approved_at") or now_iso(),
+                node.get("approved_by_operator"),
+                node.get("display_name"),
+                node.get("device_class"),
+                node.get("fleet_group"),
+                node.get("compute_tier"),
+                json.dumps(node.get("service_roles") or []),
+                json.dumps(node.get("service_endpoints") or []),
+                1 if node.get("trusted_compute") else 0,
+                node.get("onboarding_status", "approved"),
+                node.get("last_seen") or now_iso(),
+                node.get("health_status", "Active"),
+                1 if node.get("no_auto_install_guarantee", True) else 0
+            )
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+def list_service_nodes() -> list[dict]:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        rows = conn.execute("SELECT * FROM device_service_registry").fetchall()
+        result = []
+        for r in rows:
+            d = dict(r)
+            result.append({
+                "node_id": d["node_id"],
+                "approved_at": d["approved_at"],
+                "approved_by_operator": d["approved_by_operator"],
+                "display_name": d["display_name"],
+                "device_class": d["device_class"],
+                "fleet_group": d["fleet_group"],
+                "compute_tier": d["compute_tier"],
+                "service_roles": json.loads(d["service_roles_json"] or "[]"),
+                "service_endpoints": json.loads(d["service_endpoints_json"] or "[]"),
+                "trusted_compute": bool(d["trusted_compute"]),
+                "onboarding_status": d["onboarding_status"],
+                "last_seen": d["last_seen"],
+                "health_status": d["health_status"],
+                "no_auto_install_guarantee": bool(d["no_auto_install_guarantee"])
+            })
+        return result
+    finally:
+        conn.close()
+
+def get_service_node(node_id: str) -> dict | None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        r = conn.execute("SELECT * FROM device_service_registry WHERE node_id = ?", (node_id,)).fetchone()
+        if r:
+            d = dict(r)
+            return {
+                "node_id": d["node_id"],
+                "approved_at": d["approved_at"],
+                "approved_by_operator": d["approved_by_operator"],
+                "display_name": d["display_name"],
+                "device_class": d["device_class"],
+                "fleet_group": d["fleet_group"],
+                "compute_tier": d["compute_tier"],
+                "service_roles": json.loads(d["service_roles_json"] or "[]"),
+                "service_endpoints": json.loads(d["service_endpoints_json"] or "[]"),
+                "trusted_compute": bool(d["trusted_compute"]),
+                "onboarding_status": d["onboarding_status"],
+                "last_seen": d["last_seen"],
+                "health_status": d["health_status"],
+                "no_auto_install_guarantee": bool(d["no_auto_install_guarantee"])
+            }
+        return None
+    finally:
+        conn.close()
+
+def delete_service_node(node_id: str) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        conn.execute("DELETE FROM device_service_registry WHERE node_id = ?", (node_id,))
+        conn.commit()
     finally:
         conn.close()
 
