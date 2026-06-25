@@ -1154,10 +1154,12 @@ async function refreshClusterTopologyStatus() {
     }
 }
 
-window.openModalForNodeById = function(nodeId) {
-    const node = currentNodes.find(n => n.id === nodeId);
-    if (node) openModalForNode(node);
-};
+if (!window.openModalForNodeById) {
+    window.openModalForNodeById = function(nodeId) {
+        const node = currentNodes.find(n => n.id === nodeId);
+        if (node) openModalForNode(node);
+    };
+}
 
 // SVG curve calculations
 function getBezierPathString(x1, y1, x2, y2) {
@@ -1346,6 +1348,12 @@ if (btnReset) {
 // Modal Logic to display node specs and Gordy profiles
 // Modal Logic to display node specs and Gordy profiles
 function openModalForNode(node) {
+    if (!modalNodeTitle) {
+        if (window.reactSelectAsset) {
+            window.reactSelectAsset(node.id);
+        }
+        return;
+    }
     modalNodeTitle.textContent = node.name;
     modalNodeIp.textContent = node.ip;
     modalNodeSpecs.textContent = node.specs;

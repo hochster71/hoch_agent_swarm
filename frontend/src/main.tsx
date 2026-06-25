@@ -17,6 +17,7 @@ declare global {
     addAuditEvent: (event: any) => void;
     updateAssetsFromLegacy: (nodes: any[]) => void;
     openModalForNodeById: (nodeId: string) => void;
+    reactSelectAsset?: (nodeId: string) => void;
     executeTaskWithMode?: (prompt: string, taskType: string, mode: string) => Promise<void>;
     spawnTaskParticles?: (nodeId: string) => void;
     updateMermaidTopology?: (nodes: any[], targetId?: string) => void;
@@ -53,6 +54,10 @@ window.updateAssetsFromLegacy = (nodes: any[]) => {
 };
 
 window.openModalForNodeById = (nodeId: string) => {
+  useAssetStore.getState().selectAsset(nodeId);
+};
+
+window.reactSelectAsset = (nodeId: string) => {
   useAssetStore.getState().selectAsset(nodeId);
 };
 
