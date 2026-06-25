@@ -1,0 +1,35 @@
+{
+  "formal_preview_id": "preview-1782406876-4964ea05",
+  "candidate_packet_id": "packet-1782406875-2731570d",
+  "candidate_version": "0.1.7-candidate.1",
+  "created_at": "2026-06-25T17:01:16.129911+00:00",
+  "head_sha": "2055d92510d7b99811ad2cccb81e58df2c71c150",
+  "branch": "release/v0.1.6-error-budget-aware-autonomy",
+  "release_tag": "v0.1.7-candidate.1",
+  "tag_sha": "",
+  "tag_points_at_head": false,
+  "tag_status": "NO_RELEASE_TAG",
+  "signing_policy_status": "BLOCK",
+  "release_channel_policy_status": "BLOCK",
+  "working_tree_clean": false,
+  "qa_status": "WARN",
+  "readiness_status": "PASS",
+  "operator_approval_status": "pending",
+  "formal_release_ready": false,
+  "formal_release_blockers": [
+    "working tree is dirty",
+    "QA tests not fully passed",
+    "signing policy not satisfied",
+    "release tag does not point at HEAD",
+    "operator approval missing"
+  ],
+  "required_operator_actions": [
+    "commit or stash unstaged changes",
+    "run QA suite and fix test failures",
+    "enable signing provider or approve waiver",
+    "align release tag",
+    "obtain formal release approval"
+  ],
+  "preview_manifest_path": "dist/formal-previews/preview-1782406876-4964ea05/formal_release_preview_manifest.json",
+  "preview_status": "preview_warn"
+}
