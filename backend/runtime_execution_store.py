@@ -489,6 +489,40 @@ def init_execution_store_tables() -> None:
             )
             """
         )
+        # Create agent_model_policies table
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS agent_model_policies (
+                agent_role TEXT PRIMARY KEY,
+                allowed_model_classes TEXT NOT NULL,
+                preferred_providers TEXT NOT NULL,
+                fallback_providers TEXT NOT NULL,
+                require_trusted_for_sensitive INTEGER NOT NULL,
+                quorum_size INTEGER NOT NULL,
+                dissent_similarity_threshold REAL NOT NULL,
+                updated_at TEXT NOT NULL
+            )
+            """
+        )
+        # Create agent_model_policy_logs table
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS agent_model_policy_logs (
+                log_id TEXT PRIMARY KEY,
+                task_id TEXT,
+                run_id TEXT,
+                agent_role TEXT,
+                agent_id TEXT,
+                prompt_hash TEXT,
+                policy_status TEXT NOT NULL,
+                selected_providers TEXT NOT NULL,
+                use_multi_model INTEGER NOT NULL,
+                trusted_enforced INTEGER NOT NULL,
+                reason TEXT,
+                logged_at TEXT NOT NULL
+            )
+            """
+        )
         conn.commit()
     finally:
         conn.close()
@@ -2143,6 +2177,137 @@ def list_multi_model_runs_db() -> list[dict]:
                 "latency_ms": d["latency_ms"],
                 "evidence_path": d["evidence_path"],
                 "metadata": json.loads(d["metadata_json"] or "{}")
+            })
+        return results
+    finally:
+        conn.close()
+
+def persist_agent_model_policy_db(policy: dict) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO agent_model_policies (
+                agent_role, allowed_model_classes, preferred_providers,
+                fallback_providers, require_trusted_for_sensitive,
+                quorum_size, dissent_similarity_threshold, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                policy["agent_role"],
+                json.dumps(policy["allowed_model_classes"]),
+                json.dumps(policy["preferred_providers"]),
+                json.dumps(policy["fallback_providers"]),
+                1 if policy["require_trusted_for_sensitive"] else 0,
+                policy["quorum_size"],
+                policy["dissent_similarity_threshold"],
+                policy.get("updated_at") or now_iso()
+            )
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+def get_agent_model_policy_db(agent_role: str) -> dict | None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        row = conn.execute("SELECT * FROM agent_model_policies WHERE agent_role = ?", (agent_role,)).fetchone()
+        if not row:
+            return None
+        d = dict(row)
+        return {
+            "agent_role": d["agent_role"],
+            "allowed_model_classes": json.loads(d["allowed_model_classes"] or "[]"),
+            "preferred_providers": json.loads(d["preferred_providers"] or "[]"),
+            "fallback_providers": json.loads(d["fallback_providers"] or "[]"),
+            "require_trusted_for_sensitive": bool(d["require_trusted_for_sensitive"]),
+            "quorum_size": d["quorum_size"],
+            "dissent_similarity_threshold": d["dissent_similarity_threshold"],
+            "updated_at": d["updated_at"]
+        }
+    finally:
+        conn.close()
+
+def list_agent_model_policies_db() -> list[dict]:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        rows = conn.execute("SELECT * FROM agent_model_policies ORDER BY agent_role").fetchall()
+        results = []
+        for r in rows:
+            d = dict(r)
+            results.append({
+                "agent_role": d["agent_role"],
+                "allowed_model_classes": json.loads(d["allowed_model_classes"] or "[]"),
+                "preferred_providers": json.loads(d["preferred_providers"] or "[]"),
+                "fallback_providers": json.loads(d["fallback_providers"] or "[]"),
+                "require_trusted_for_sensitive": bool(d["require_trusted_for_sensitive"]),
+                "quorum_size": d["quorum_size"],
+                "dissent_similarity_threshold": d["dissent_similarity_threshold"],
+                "updated_at": d["updated_at"]
+            })
+        return results
+    finally:
+        conn.close()
+
+def log_agent_model_policy_decision_db(log: dict) -> None:
+    import uuid
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        conn.execute(
+            """
+            INSERT INTO agent_model_policy_logs (
+                log_id, task_id, run_id, agent_role, agent_id, prompt_hash,
+                policy_status, selected_providers, use_multi_model,
+                trusted_enforced, reason, logged_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                log.get("log_id") or f"POL-{uuid.uuid4().hex[:6].upper()}",
+                log.get("task_id"),
+                log.get("run_id"),
+                log["agent_role"],
+                log.get("agent_id"),
+                log.get("prompt_hash"),
+                log["policy_status"],
+                json.dumps(log["selected_providers"]),
+                1 if log.get("use_multi_model") else 0,
+                1 if log.get("trusted_enforced") else 0,
+                log.get("reason"),
+                log.get("logged_at") or now_iso()
+            )
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+def list_agent_model_policy_logs_db() -> list[dict]:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        rows = conn.execute("SELECT * FROM agent_model_policy_logs ORDER BY logged_at DESC").fetchall()
+        results = []
+        for r in rows:
+            d = dict(r)
+            results.append({
+                "log_id": d["log_id"],
+                "task_id": d["task_id"],
+                "run_id": d["run_id"],
+                "agent_role": d["agent_role"],
+                "agent_id": d["agent_id"],
+                "prompt_hash": d["prompt_hash"],
+                "policy_status": d["policy_status"],
+                "selected_providers": json.loads(d["selected_providers"] or "[]"),
+                "use_multi_model": bool(d["use_multi_model"]),
+                "trusted_enforced": bool(d["trusted_enforced"]),
+                "reason": d["reason"],
+                "logged_at": d["logged_at"]
             })
         return results
     finally:

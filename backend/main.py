@@ -77,6 +77,12 @@ from backend.remediation_safety import (
     has_external_side_effects,
     is_sql_remediation_allowed
 )
+from backend.agent_model_policy import init_default_agent_model_policies, evaluate_agent_model_policy
+from backend.runtime_execution_store import (
+    list_agent_model_policies_db,
+    persist_agent_model_policy_db,
+    list_agent_model_policy_logs_db
+)
 
 # Load version dynamically from package.json
 try:
@@ -2708,6 +2714,16 @@ class MultiModelInferenceRequest(BaseModel):
     prompt: str
     options: dict = None
 
+class AgentModelPolicyRequest(BaseModel):
+    agent_role: str
+    allowed_model_classes: list[str]
+    preferred_providers: list[str]
+    fallback_providers: list[str]
+    require_trusted_for_sensitive: bool
+    quorum_size: int
+    dissent_similarity_threshold: float
+
+
 # Model Provider Registry Endpoints
 @app.get("/api/v1/models/providers")
 def api_list_model_providers():
@@ -2773,6 +2789,28 @@ def api_discover_models_for_provider(model_provider_id: str):
     try:
         models = discover_models_for_provider(model_provider_id)
         return {"status": "SUCCESS", "models": models}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/policies")
+def api_list_policies():
+    try:
+        return list_agent_model_policies_db()
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/v1/policies")
+def api_save_policy(req: AgentModelPolicyRequest):
+    try:
+        persist_agent_model_policy_db(req.dict())
+        return {"status": "SUCCESS", "policy": req.dict()}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/v1/policies/decisions")
+def api_list_policy_decisions():
+    try:
+        return list_agent_model_policy_logs_db()
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -3219,6 +3257,7 @@ async def startup_event():
     init_db()
     init_hochster_cluster_tables()
     init_execution_store_tables()
+    init_default_agent_model_policies()
 
     # Seed 14 specialized agents if empty
     try:

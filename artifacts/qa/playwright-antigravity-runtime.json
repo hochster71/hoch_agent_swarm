@@ -4,7 +4,7 @@
       "/opt/homebrew/Cellar/node/26.3.1/bin/node",
       "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/node_modules/.bin/playwright",
       "test",
-      "tests/e2e/device-service-lease.spec.ts"
+      "tests/e2e/model-provider-registry.spec.ts"
     ],
     "configFile": "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/playwright.config.ts",
     "rootDir": "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/tests/e2e",
@@ -73,20 +73,20 @@
   },
   "suites": [
     {
-      "title": "device-service-lease.spec.ts",
-      "file": "device-service-lease.spec.ts",
+      "title": "model-provider-registry.spec.ts",
+      "file": "model-provider-registry.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "Device Service Health Lease Manager E2E",
-          "file": "device-service-lease.spec.ts",
+          "title": "AI Model Provider Registry E2E",
+          "file": "model-provider-registry.spec.ts",
           "line": 5,
           "column": 6,
           "specs": [
             {
-              "title": "registers, approves, updates leases, and asserts UI status badges",
+              "title": "registers, performs health checks, approves, and tests chat completions on a provider",
               "ok": true,
               "tags": [],
               "tests": [
@@ -101,16 +101,19 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2554,
+                      "duration": 4649,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "Captured device service lease E2E screenshot at: artifacts/qa/device-service-lease.png\n"
+                          "text": "Dialog opened: [alert] Discovered models: gemma-4-12b\n"
+                        },
+                        {
+                          "text": "Captured E2E model provider registry screenshot at: artifacts/qa/model-provider-registry.png\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-06-25T20:20:26.625Z",
+                      "startTime": "2026-06-25T21:51:43.639Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -118,8 +121,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "7878f8f9fb3644165c72-d1c905715ea1700b18f9",
-              "file": "device-service-lease.spec.ts",
+              "id": "f9bbcb1c382a9d7ee9ba-8e1f83687e2a9abca1e4",
+              "file": "model-provider-registry.spec.ts",
               "line": 6,
               "column": 7
             }
@@ -130,8 +133,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-06-25T20:20:26.404Z",
-    "duration": 2886.729,
+    "startTime": "2026-06-25T21:51:43.440Z",
+    "duration": 4940.2919999999995,
     "expected": 1,
     "skipped": 0,
     "unexpected": 0,

@@ -9315,10 +9315,17 @@ async function initModelProviderRegistryUI() {
         multiExecuteBtn.addEventListener("click", executeMultiModelReasoning);
     }
     
+    const savePolicyBtn = document.getElementById("policy-save-button");
+    if (savePolicyBtn) {
+        savePolicyBtn.addEventListener("click", saveAgentModelPolicy);
+    }
+    
     loadModelProviders();
     loadInferenceHistory();
     loadMultiModelHistory();
     populateModelNodeSelect();
+    loadAgentModelPolicies();
+    loadPolicyDecisions();
 }
 
 async function populateModelNodeSelect() {
@@ -9635,6 +9642,7 @@ async function sendTestInference() {
             outputBox.textContent = data.response;
             promptArea.value = "";
             loadInferenceHistory();
+            loadPolicyDecisions();
         } else {
             const err = await res.json();
             outputBox.textContent = "ERROR: " + (err.detail || "Inference request failed");
@@ -9773,6 +9781,7 @@ async function executeMultiModelReasoning() {
 
             if (promptArea) promptArea.value = "";
             loadMultiModelHistory();
+            loadPolicyDecisions();
         } else {
             const err = await res.json();
             if (consensusOutput) consensusOutput.textContent = "ERROR: " + (err.detail || "Consensus execution failed");
@@ -9824,6 +9833,121 @@ async function loadMultiModelHistory() {
         });
     } catch (err) {
         console.error("Error loading multi-model history:", err);
+    }
+}
+
+async function loadAgentModelPolicies() {
+    const rulesBody = document.getElementById("policy-rules-tbody");
+    if (!rulesBody) return;
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/policies`);
+        if (!res.ok) return;
+        const policies = await res.json();
+        rulesBody.innerHTML = "";
+        if (policies.length === 0) {
+            rulesBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-secondary); padding: 8px;">No policies defined.</td></tr>`;
+            return;
+        }
+        policies.forEach(p => {
+            const tr = document.createElement("tr");
+            const classes = p.allowed_model_classes ? p.allowed_model_classes.join(", ") : "none";
+            const preferred = p.preferred_providers ? p.preferred_providers.join(", ") : "none";
+            const requireSensitive = p.require_trusted_for_sensitive ? "Yes" : "No";
+            tr.innerHTML = `
+                <td><strong>${p.agent_role}</strong></td>
+                <td><span style="font-family:monospace;">${classes}</span></td>
+                <td style="text-align:center;">${p.quorum_size}</td>
+                <td style="text-align:center;">${requireSensitive}</td>
+                <td><span style="font-family:monospace; color:var(--accent-teal);">${preferred}</span></td>
+            `;
+            rulesBody.appendChild(tr);
+        });
+    } catch (err) {
+        console.error("Error loading policies:", err);
+    }
+}
+
+async function loadPolicyDecisions() {
+    const decisionsBody = document.getElementById("policy-decisions-tbody");
+    if (!decisionsBody) return;
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/policies/decisions`);
+        if (!res.ok) return;
+        const logs = await res.json();
+        decisionsBody.innerHTML = "";
+        if (logs.length === 0) {
+            decisionsBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-secondary); padding: 8px;">No policy decisions logged.</td></tr>`;
+            return;
+        }
+        logs.forEach(l => {
+            const tr = document.createElement("tr");
+            const timestamp = l.created_at ? l.created_at.split("T")[1].substring(0, 8) : "";
+            const hash = l.prompt_hash ? l.prompt_hash.substring(0, 8) : "-";
+            const selected = l.selected_provider_ids ? l.selected_provider_ids.join(", ") : "-";
+            
+            let statusColor = "var(--accent-teal)";
+            if (l.status === "failed") statusColor = "#ef4444";
+            else if (l.status === "fallback") statusColor = "var(--accent-yellow)";
+
+            tr.innerHTML = `
+                <td>${timestamp}</td>
+                <td><strong>${l.agent_role}</strong></td>
+                <td style="font-family:monospace; color:var(--accent-blue);">${hash}</td>
+                <td><span style="font-family:monospace;">${selected}</span></td>
+                <td><span style="color:${statusColor}; font-weight:bold; text-transform:uppercase;">${l.status}</span></td>
+                <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${l.reason}</td>
+            `;
+            decisionsBody.appendChild(tr);
+        });
+    } catch (err) {
+        console.error("Error loading policy decisions:", err);
+    }
+}
+
+async function saveAgentModelPolicy() {
+    const roleSelect = document.getElementById("policy-agent-role-select");
+    const preferredInput = document.getElementById("policy-preferred-input");
+    const fallbackInput = document.getElementById("policy-fallback-input");
+    const sensitiveToggle = document.getElementById("policy-require-sensitive-toggle");
+    const quorumInput = document.getElementById("policy-quorum-input");
+    const dissentInput = document.getElementById("policy-dissent-input");
+
+    const allowedClasses = [];
+    if (document.getElementById("policy-class-reasoning").checked) allowedClasses.push("reasoning");
+    if (document.getElementById("policy-class-general").checked) allowedClasses.push("general");
+    if (document.getElementById("policy-class-coding").checked) allowedClasses.push("coding");
+    if (document.getElementById("policy-class-multimodal").checked) allowedClasses.push("multimodal");
+
+    const preferred = preferredInput.value.split(",").map(s => s.trim()).filter(Boolean);
+    const fallback = fallbackInput.value.split(",").map(s => s.trim()).filter(Boolean);
+
+    const payload = {
+        agent_role: roleSelect.value,
+        allowed_model_classes: allowedClasses,
+        preferred_providers: preferred,
+        fallback_providers: fallback,
+        require_trusted_for_sensitive: sensitiveToggle.checked,
+        quorum_size: parseInt(quorumInput.value) || 1,
+        dissent_similarity_threshold: parseFloat(dissentInput.value) || 0.5
+    };
+
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/policies`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+            loadAgentModelPolicies();
+            loadPolicyDecisions();
+            preferredInput.value = "";
+            fallbackInput.value = "";
+        } else {
+            const err = await res.json();
+            alert("Failed to save policy: " + (err.detail || "Unknown error"));
+        }
+    } catch (err) {
+        console.error("Error saving policy:", err);
     }
 }
 

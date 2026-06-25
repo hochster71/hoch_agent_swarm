@@ -111,77 +111,41 @@ def route_inference_request(
     options: dict
 ) -> dict:
     """
-    Finds the best eligible, approved, healthy model provider based on:
-    - Provider approved_for_inference = True
-    - Health status is available/degraded
-    - allowed_agent_roles contains agent_id or agent role
-    - allowed_task_types contains task type
-    - lease is fresh (for device-bound providers)
-    - sensitive prompts only sent to trusted providers
+    Evaluates agent-to-model routing policies to select the most appropriate
+    healthy, approved model provider.
     """
-    providers = list_model_providers_db()
-    leases = {l["node_id"]: l for l in get_service_node_leases()}
+    from backend.agent_model_policy import evaluate_agent_model_policy
     
-    messages = [{"role": "user", "content": prompt}]
-    has_secrets = scan_for_secrets(messages)
-    
-    # Infer task type from capabilities or options
-    task_type = options.get("task_type")
-    if not task_type and required_capabilities:
-        task_type = required_capabilities[0]
-    
-    eligible = []
-    for p in providers:
-        if not p["approved_for_inference"]:
-            continue
-        if p["health_status"] not in ["available", "degraded"]:
-            continue
+    # Map agent_id/context to policy role
+    agent_role = "research"
+    agent_id_lower = (agent_id or "").lower()
+    if "summarize" in agent_id_lower or "brief" in agent_id_lower:
+        agent_role = "summarize"
+    elif "review" in agent_id_lower or "audit" in agent_id_lower or "developer" in agent_id_lower:
+        agent_role = "review"
+    elif "approve" in agent_id_lower or "gate" in agent_id_lower or "release" in agent_id_lower:
+        agent_role = "approval_assist"
+
+    task_context = {
+        "task_id": task_id,
+        "run_id": options.get("run_id"),
+        "prompt": prompt,
+        "risk_level": options.get("risk_level", "low"),
+        "agent_id": agent_id
+    }
+
+    result = evaluate_agent_model_policy(agent_role, task_context)
+    if result["policy_status"] == "failed" or not result["selected_providers"]:
+        raise ValueError(f"Agent model policy routing failed: {result['reason']}")
+
+    # Return the primary selected provider
+    primary_provider_id = result["selected_providers"][0]
+    provider = get_model_provider_db(primary_provider_id)
+    if not provider:
+        raise ValueError(f"Selected model provider '{primary_provider_id}' from policy not found in database.")
         
-        # Check sensitive context trust
-        if has_secrets and not p["trusted_for_sensitive_context"]:
-            continue
-            
-        # Check task type matching
-        if task_type and p["allowed_task_types"]:
-            if task_type not in p["allowed_task_types"]:
-                continue
-                
-        # Check agent role matching
-        if agent_id and p["allowed_agent_roles"]:
-            if agent_id not in p["allowed_agent_roles"]:
-                # Also check roles/substrings if agent_id is longer
-                matched_role = False
-                for role in p["allowed_agent_roles"]:
-                    if role in agent_id.lower():
-                        matched_role = True
-                        break
-                if not matched_role:
-                    continue
-        
-        # Check device lease freshness
-        if p["node_id"]:
-            lease = leases.get(p["node_id"])
-            if not lease:
-                continue
-            if lease["availability"] in ["sleeping", "offline"]:
-                continue
-            try:
-                from datetime import datetime
-                last_seen_dt = datetime.fromisoformat(lease["last_seen"].replace("Z", "+00:00"))
-                now_dt = datetime.now(last_seen_dt.tzinfo)
-                if (now_dt - last_seen_dt).total_seconds() > lease["lease_duration_seconds"]:
-                    continue
-            except Exception:
-                continue
-        
-        eligible.append(p)
-        
-    if not eligible:
-        raise ValueError("No eligible, approved, and healthy model providers found matching the request criteria.")
-        
-    # Select provider with lowest latency or first available
-    eligible.sort(key=lambda x: x.get("latency_ms", 9999.0))
-    return eligible[0]
+    return provider
+
 
 def write_inference_evidence(inference_run_id: str, data: dict) -> str:
     import os
