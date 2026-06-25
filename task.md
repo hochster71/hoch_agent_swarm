@@ -1,15 +1,11 @@
-# Task List — Device-as-a-Service Registry
+# Task List — Multi-Model Swarm Reasoning Orchestrator (Phase 18)
 
-- `[x]` Define SQLite tables in `init_execution_store_tables()` and write database helper functions
-- `[x]` Create `backend/device_discovery.py` containing mDNS, neighbor table scanners, and fingerprint/classification rules
-- `[x]` Create `backend/service_registry.py` containing approve/reject controllers
-- `[x]` Update `backend/cluster_manager.py` to dynamically load approved service nodes
-- `[x]` Add Pydantic schemas and REST routes in `backend/main.py`
-- `[x]` Create discovery fixtures in `tests/fixtures/device-discovery-fixtures.json`
-- `[x]` Add DaaS panels and safety disclaimers to `frontend/index.html`
-- `[x]` Implement DaaS event handlers and list renderers in `frontend/app.js`
-- `[x]` Create contract validation script `scripts/qa/test-device-service-registry-contract.ts`
-- `[x]` Create Playwright E2E test `tests/e2e/device-service-registry.spec.ts`
-- `[x]` Register script commands in `package.json`
-- `[x]` Rebuild assets, run QA contract checks, and execute Playwright E2E tests
-- `[x]` Update documentation: deep-swarm-page-audit-report.md, walkthrough.md, and task.md
+- `[x]` Define `multi_model_runs` table and helper functions in `backend/runtime_execution_store.py`
+- `[x]` Create `backend/multi_model_orchestrator.py` implementing parallel executions, similarity agreement, consensus centroid selection, and evidence writing
+- `[x]` Register API endpoints `/api/v1/inference/multi-chat` and `/api/v1/inference/multi-history` in `backend/main.py`
+- `[x]` Add `#multi-model-swarm-comparison-panel` inside the Governance Cockpit view in `frontend/index.html`
+- `[x]` Wire inputs, parallel dispatch, comparative grid tables, and run histories in `frontend/app.js`
+- `[x]` Verify via Model Provider Registry Contract tests
+- `[x]` Verify via Model Provider Registry Playwright E2E spec
+- `[x]` Rebuild assets, run contract tests, run E2E, and execute the full QA validation suite
+- `[x]` Update documentation in walkthrough.md and task.md

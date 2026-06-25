@@ -124,14 +124,12 @@ We implemented a release seal attestation bundle builder to compile a final pack
 
 ---
 
-## 13. Device Onboarding Workflow & Registry Command Map 2.0
+## 13. Device Onboarding Workflow & Registry Governance
 We codified the official rules for onboarding devices, nodes, cluster layouts, iPads, and agent-hosts to the swarm:
-- **Cluster Command Map 2.0**: Redesigned the Master Hub topology into an operator-grade Cluster Command Map 2.0 featuring a compact Agent Command Rail, collapsible Device Fleet Drawer, and Selected Node Inspector.
-- **Device Fleet Grouping**: Grouped devices into explicit Core Compute, Mobile Fleet, and Edge Phones sections, placing iPads under the Mobile Fleet by default.
 - **Mandatory Backend Restart Rule**: Any configuration updates to `backend/cluster_manager.py` require restarting the backend server before checking the UI. This prevents stale in-memory state errors from uvicorn.
 - **API Source of Truth**: `/api/status` is the source of truth for device exposure.
 - **Browser Refresh**: Operators must refresh their browser windows after a backend reload to render the updated nodes.
-- **Topology Regression Protection**: We protect the command map layout and device registration via contract checks (`qa:device-registry-contract`) and Playwright E2E topology verification (`e2e:device-registry-topology`).
+- **Topology Regression Protection**: We introduced a contract check (`qa:device-registry`) and E2E topology verification (`e2e:device-registry`) to prevent topology regressions.
 
 ---
 
@@ -158,6 +156,7 @@ We codified the official rules for onboarding devices, nodes, cluster layouts, i
   - `formal-release-seal-dry-run-contract`: PASS
   - `release-seal-attestation-contract`: PASS
   - `device-registry-contract`: PASS
+  - `device-service-registry-contract`: PASS
 
 ### Playwright E2E Integration Tests (`npm run qa:e2e-runtime`)
 - All browser simulation specs completed successfully:
@@ -174,8 +173,200 @@ We codified the official rules for onboarding devices, nodes, cluster layouts, i
   - `formal-release-seal-dry-run.spec.ts`: PASS
   - `release-seal-attestation-bundle.spec.ts`: PASS
   - `device-registry-topology.spec.ts`: PASS
+  - `device-service-registry.spec.ts`: PASS
+
+---
+
+## 14. Device-as-a-Service (DaaS) Onboarding (Phase 14)
+We implemented a secure, local-first Device-as-a-Service (DaaS) onboarding and operator control registry:
+- **Network Discovery Engine (`backend/device_discovery.py`)**:
+  - Implements passive local neighbor scans parsing `arp -a` tables dynamically and mDNS Bonjour queries.
+  - Fingerprints devices securely by MAC OUI prefix and hostname attributes.
+  - Categorizes discovered candidates (TV displays, XR headsets, mobile clients, and compute servers) mapping them to recommended service roles.
+- **Operator Approvals & SQLite Registry (`backend/service_registry.py`)**:
+  - Declares persistent registry schemas, storing operator actions and approved nodes in `device_service_registry`.
+  - Enables custom role binding and audit notes, protecting the swarm from unauthorized access.
+- **Dynamic Topology Refresh**:
+  - Upon approval, the registry calls `cluster_mgr.load_approved_service_nodes()` to dynamically reload nodes, instantly integrating them into the live dashboard topology map without server restarts.
+- **Frontend Governance Integration**:
+  - Adds the **Device-as-a-Service Registry** panel (`#device-service-registry-panel`) inside the Governance Cockpit tab with a clear safety notice disclaimer.
+- **E2E Automation (`tests/e2e/device-service-registry.spec.ts`)**:
+  - Performs discovery scans, configures and approves mock devices, and takes verification screenshot evidence at `artifacts/qa/device-service-registry.png`.
+
+---
+
+## 15. Verification Results
 
 ### North Star & Autonomy Budget Audit (`npm run qa:runtime-full`)
 - Autonomy Safety Engine static red-team assertions: 20/20 PASS
 - Autonomy Gating and budget throttling integration assertions: 5/5 PASS
 - Final Operational Readiness Score: **100/100 PASS**
+
+---
+
+## 16. Device Capability-Based Task Routing (Phase 15)
+We implemented a dynamic, cluster-wide capability-based task routing engine:
+- **Capability Routing Engine (`backend/capability_router.py`)**:
+  - Automatically parses task prompts to extract explicit and implicit capability requirements (e.g. `approval_terminal`, `compute`, `storage`, `display`).
+  - Audits all active nodes (both static `NODES_CONFIG` and dynamic approved DaaS nodes) to find match eligibility based on node classes and roles.
+  - Dynamically routes tasks to the eligible node with the lowest CPU usage.
+- **Persistent Routing Ledger**:
+  - Stores all routing events, including timestamps, task details, required capabilities, selected node, and detailed eligibility audits, in the SQLite database.
+- **Frontend Capability Router UI**:
+  - Adds the **Device Capability Routing Center** panel (`#device-routing-center-panel`) in the Governance Cockpit tab.
+  - Renders a live decision history log list and an interactive decision inspector with a grid auditing eligibility matches and selection reasons across all cluster nodes.
+- **E2E & Contract Verification**:
+  - Created static and API routing contract test (`qa:capability-routing-contract`) verifying router logic and database persistence.
+  - Created Playwright integration test (`e2e:capability-routing`) automating cockpit navigation, event selection, and inspector verification, capturing screenshot evidence at `artifacts/qa/capability-routing.png`.
+
+---
+
+## 17. Verification Results (Updated)
+
+### Static QA & Contract Checks (`npm run qa:ui-contract`)
+- All contract checks exited with `PASS`:
+  - `no-tailwind-cdn`: PASS
+  - `nav-contract`: PASS
+  - `nav-live`: PASS
+  - `view-contract`: PASS
+  - `frontend-entrypoint`: PASS
+  - `comic-swarm`: PASS
+  - `global-swarm-animation`: PASS
+  - `topology-agent-overlay`: PASS
+  - `topology-animation-quality`: PASS
+  - `cybersecurity-factory`: PASS
+  - `release-signing-policy-contract`: PASS
+  - `release-channel-governance-contract`: PASS
+  - `operator-governance-contract`: PASS
+  - `candidate-release-packet-contract`: PASS
+  - `formal-release-preview-contract`: PASS
+  - `formal-release-approval-contract`: PASS
+  - `formal-release-seal-dry-run-contract`: PASS
+  - `release-seal-attestation-contract`: PASS
+  - `device-registry-contract`: PASS
+  - `device-service-registry-contract`: PASS
+  - `capability-routing-contract`: PASS
+  - `device-service-lease-contract`: PASS
+
+### Playwright E2E Integration Tests (`npm run qa:runtime-full`)
+- All browser simulation specs completed successfully:
+  - `antigravity-runtime.spec.ts`: PASS
+  - `global-swarm-animation-runtime.spec.ts`: PASS
+  - `topology-agent-overlay.spec.ts`: PASS
+  - `cybersecurity-factory.spec.ts`: PASS
+  - `release-signing-policy.spec.ts`: PASS
+  - `release-channel-governance.spec.ts`: PASS
+  - `operator-governance-cockpit.spec.ts`: PASS
+  - `candidate-release-packet.spec.ts`: PASS
+  - `formal-release-preview.spec.ts`: PASS
+  - `formal-release-approval.spec.ts`: PASS
+  - `formal-release-seal-dry-run.spec.ts`: PASS
+  - `release-seal-attestation-bundle.spec.ts`: PASS
+  - `device-registry-topology.spec.ts`: PASS
+  - `device-service-registry.spec.ts`: PASS
+  - `capability-routing.spec.ts`: PASS
+  - `device-service-lease.spec.ts`: PASS
+
+---
+
+## 18. Service Node Health & Lease Manager (Phase 16)
+We implemented a dynamic, cluster-wide service node health lease management framework:
+- **Durable Leases Persistence**:
+  - Added the `service_node_leases` SQLite table to record telemetry lease metadata (`battery_level`, `power_source`, `network_status`, `availability`, and `lease_duration_seconds`).
+- **Exclusion Matching Invariant**:
+  - Refactored `backend/capability_router.py` to check health leases when evaluating dynamic service nodes. Excludes nodes if their lease is expired (stale timestamp data) or if availability is sleeping/offline.
+- **DaaS Registry UI Enrichment**:
+  - Updated the active service nodes cockpit list to display active (`Lease Active` in green) or expired (`Lease Expired` / `No Lease` in red) status badges, along with current battery and power details.
+- **Contract & E2E Verification**:
+  - Created `qa:device-service-lease` contract tests verifying DB updates, status merging, and capability exclusions.
+  - Created `e2e:device-service-lease` Playwright test suite capturing screenshots at `artifacts/qa/device-service-lease.png`.
+
+---
+
+## 19. AI Model Provider Registry & Inference Routing (Phase 17)
+We implemented the AI Model Provider Registry and Local Inference Routing framework:
+- **Model Provider Registry Persistence**:
+  - Added the `model_providers` and `inference_runs` tables in SQLite to persist provider metadata, health statuses, and inference execution run logs.
+- **Dynamic Inference Routing & Safety Gateway**:
+  - Implemented the `InferenceGateway` which scans request prompts for credentials/secrets, routing sensitive prompts only to explicitly trusted providers.
+  - Excludes providers whose hosting device has an expired lease or offline status.
+  - Logs auditable runtime evidence under `artifacts/inference/<inference_run_id>.json` containing latency and safety details without storing raw prompt secrets.
+- **Self-Contained Mock Completions Endpoint**:
+  - Implemented a mock completions and tags endpoint under `/api/v1/mock/llm` simulating Ollama/OpenAI API responses to guarantee hermetic E2E testing in CI.
+- **Frontend Governance Cockpit Integration**:
+  - Added the **Model Provider Registry** and **Send Test Inference** cockpit cards in the Governance tab.
+  - Features provider registration, manual operator approval overrides, dynamic model discovery alerts, live health checks, and test prompt execution.
+
+---
+
+## 20. Parallel Swarm Reasoning & Model Comparison Matrix (Phase 18)
+We implemented a multi-model parallel inference orchestrator to support consensus checking and dissent tracking:
+- **Parallel Swarm Orchestrator (`backend/multi_model_orchestrator.py`)**:
+  - Executes parallel chat completion queries to a user-specified set of approved model providers.
+  - Computes TF-IDF vector similarity metrics to verify response consensus across providers.
+  - Isolates and logs dissenters (responses with <50% similarity to the mathematical consensus).
+- **Consensus Analytics API**:
+  - Added `POST /api/v1/inference/multi-chat` and `GET /api/v1/inference/multi-history` endpoints.
+  - Automatically persists multi-model run records under `artifacts/multi_model/<multi_model_run_id>.json`.
+- **UI Swarm Reasoning & Comparison Panel**:
+  - Added the **Swarm Reasoning Engine** panel in the Governance Cockpit tab.
+  - Features checkbox selection of multiple approved model providers, custom prompt input, consensus response view, and a comparison table displaying model IDs, similarity scores, status, response previews, and individual latencies.
+  - Renders a table of past multi-model runs with verification file links.
+
+---
+
+## 21. Verification Results (Updated)
+
+### Static QA & Contract Checks (`npm run qa:ui-contract`)
+- All contract checks exited with `PASS`:
+  - `no-tailwind-cdn`: PASS
+  - `nav-contract`: PASS
+  - `nav-live`: PASS
+  - `view-contract`: PASS
+  - `frontend-entrypoint`: PASS
+  - `comic-swarm`: PASS
+  - `global-swarm-animation`: PASS
+  - `topology-agent-overlay`: PASS
+  - `topology-animation-quality`: PASS
+  - `cybersecurity-factory`: PASS
+  - `release-signing-policy-contract`: PASS
+  - `release-channel-governance-contract`: PASS
+  - `operator-governance-contract`: PASS
+  - `candidate-release-packet-contract`: PASS
+  - `formal-release-preview-contract`: PASS
+  - `formal-release-approval-contract`: PASS
+  - `formal-release-seal-dry-run-contract`: PASS
+  - `release-seal-attestation-contract`: PASS
+  - `device-registry-contract`: PASS
+  - `device-service-registry-contract`: PASS
+  - `capability-routing-contract`: PASS
+  - `device-service-lease-contract`: PASS
+  - `model-provider-registry-contract`: PASS
+
+### Playwright E2E Integration Tests (`npm run qa:runtime-full`)
+- All browser simulation specs completed successfully:
+  - `antigravity-runtime.spec.ts`: PASS
+  - `global-swarm-animation-runtime.spec.ts`: PASS
+  - `topology-agent-overlay.spec.ts`: PASS
+  - `cybersecurity-factory.spec.ts`: PASS
+  - `release-signing-policy.spec.ts`: PASS
+  - `release-channel-governance.spec.ts`: PASS
+  - `operator-governance-cockpit.spec.ts`: PASS
+  - `candidate-release-packet.spec.ts`: PASS
+  - `formal-release-preview.spec.ts`: PASS
+  - `formal-release-approval.spec.ts`: PASS
+  - `formal-release-seal-dry-run.spec.ts`: PASS
+  - `release-seal-attestation-bundle.spec.ts`: PASS
+  - `device-registry-topology.spec.ts`: PASS
+  - `device-service-registry.spec.ts`: PASS
+  - `capability-routing.spec.ts`: PASS
+  - `device-service-lease.spec.ts`: PASS
+  - `model-provider-registry.spec.ts`: PASS
+
+---
+
+### E2E Visual Verification
+
+Here is the captured E2E visual verification of the Live Model Provider Registry and Inference Test Cockpit:
+
+![E2E Model Provider Registry Cockpit Screenshot](/Users/michaelhoch/.gemini/antigravity/brain/c72fc948-b730-4420-b7dd-4e159a9aea6d/model-provider-registry-e2e.png)
