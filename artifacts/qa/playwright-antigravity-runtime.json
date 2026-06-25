@@ -4,7 +4,7 @@
       "/opt/homebrew/Cellar/node/26.3.1/bin/node",
       "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/node_modules/.bin/playwright",
       "test",
-      "tests/e2e/formal-release-preview.spec.ts"
+      "tests/e2e/formal-release-approval.spec.ts"
     ],
     "configFile": "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/playwright.config.ts",
     "rootDir": "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/tests/e2e",
@@ -73,20 +73,20 @@
   },
   "suites": [
     {
-      "title": "formal-release-preview.spec.ts",
-      "file": "formal-release-preview.spec.ts",
+      "title": "formal-release-approval.spec.ts",
+      "file": "formal-release-approval.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "Formal Release Finalization Preview E2E",
-          "file": "formal-release-preview.spec.ts",
+          "title": "Formal Release Approval Simulator E2E",
+          "file": "formal-release-approval.spec.ts",
           "line": 5,
           "column": 6,
           "specs": [
             {
-              "title": "navigates to Governance Cockpit, triggers formal release preview, and captures screenshot",
+              "title": "navigates to Governance Cockpit, runs preview, requests approval, and approves gate successfully",
               "ok": true,
               "tags": [],
               "tests": [
@@ -101,22 +101,31 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 5131,
+                      "duration": 4425,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "E2E Dialog text: Candidate Release Packet generated successfully, but FORMAL RELEASE is STILL BLOCKED. Formal release requires signing policy and tag alignment gates to pass.\n"
+                          "text": "E2E Dialog type: alert, message: Candidate Release Packet generated successfully, but FORMAL RELEASE is STILL BLOCKED. Formal release requires signing policy and tag alignment gates to pass.\n"
                         },
                         {
-                          "text": "E2E Dialog text: Formal Release Preview simulation complete: release is STILL BLOCKED. Review blockers and required actions.\n"
+                          "text": "E2E Dialog type: alert, message: Formal Release Preview simulation complete: release is STILL BLOCKED. Review blockers and required actions.\n"
                         },
                         {
-                          "text": "Captured screenshot at: artifacts/qa/formal-release-preview.png\n"
+                          "text": "E2E Dialog type: alert, message: Formal release approval request created successfully. Please check the pending gates queue in the Governance Cockpit.\n"
+                        },
+                        {
+                          "text": "E2E Dialog type: prompt, message: Enter justification reason for this approve decision:\n"
+                        },
+                        {
+                          "text": "E2E Dialog type: alert, message: Decision registered in the SQLite governance ledger successfully.\n"
+                        },
+                        {
+                          "text": "Captured screenshot at: artifacts/qa/formal-release-approval.png\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-06-25T17:01:12.511Z",
+                      "startTime": "2026-06-25T17:29:06.429Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -124,8 +133,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "520260e29f1a8de00544-5583fb314e4a0226ed03",
-              "file": "formal-release-preview.spec.ts",
+              "id": "67579b1c4869242667c6-bcb93d723a57cc752d88",
+              "file": "formal-release-approval.spec.ts",
               "line": 6,
               "column": 7
             }
@@ -136,8 +145,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-06-25T17:01:12.316Z",
-    "duration": 5427.598,
+    "startTime": "2026-06-25T17:29:06.230Z",
+    "duration": 4732.38,
     "expected": 1,
     "skipped": 0,
     "unexpected": 0,

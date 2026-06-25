@@ -1555,18 +1555,6 @@
       ]
     },
     {
-      "approval_id": "app-bc5d",
-      "request_id": "run-0b66a7ed:T4-CORE-ENGINE",
-      "correlation_id": "corr-847bb0",
-      "trace_id": "trace-f8bc5e",
-      "action_type": "TASK_EXECUTION",
-      "risk_level": "medium",
-      "status": "pending",
-      "requested_by": "Swarm Orchestrator",
-      "created_at": "2026-06-25T13:51:08.375022+00:00",
-      "decisions": []
-    },
-    {
       "approval_id": "app-cb6f",
       "request_id": "run-191d822b:T2-SPEC",
       "correlation_id": "corr-5b04a8",
@@ -1592,18 +1580,6 @@
       ]
     },
     {
-      "approval_id": "app-1177",
-      "request_id": "run-4e98c303:T2-SPEC",
-      "correlation_id": "corr-4baf25",
-      "trace_id": "trace-7c2e3a",
-      "action_type": "TASK_EXECUTION",
-      "risk_level": "low",
-      "status": "pending",
-      "requested_by": "Swarm Orchestrator",
-      "created_at": "2026-06-25T14:38:09.891135+00:00",
-      "decisions": []
-    },
-    {
       "approval_id": "app-5859",
       "request_id": "run-191d822b:T4-CORE-ENGINE",
       "correlation_id": "corr-36d5bc",
@@ -1627,30 +1603,6 @@
           "next_state": "approved"
         }
       ]
-    },
-    {
-      "approval_id": "app-35eb",
-      "request_id": "run-191d822b:T5-SWARM-DASHBOARD",
-      "correlation_id": "corr-950898",
-      "trace_id": "trace-9af887",
-      "action_type": "TASK_EXECUTION",
-      "risk_level": "low",
-      "status": "pending",
-      "requested_by": "Swarm Orchestrator",
-      "created_at": "2026-06-25T14:38:33.579093+00:00",
-      "decisions": []
-    },
-    {
-      "approval_id": "app-149c",
-      "request_id": "run-191d822b:T6-PLATFORM-BACKEND",
-      "correlation_id": "corr-6d4c06",
-      "trace_id": "trace-a3b500",
-      "action_type": "TASK_EXECUTION",
-      "risk_level": "medium",
-      "status": "pending",
-      "requested_by": "Swarm Orchestrator",
-      "created_at": "2026-06-25T14:38:33.584788+00:00",
-      "decisions": []
     },
     {
       "approval_id": "app-ed11",
@@ -4703,18 +4655,6 @@
       ]
     },
     {
-      "approval_id": "app-8191",
-      "request_id": "run-205ea4c8:T6-PLATFORM-BACKEND",
-      "correlation_id": "corr-9bc846",
-      "trace_id": "trace-c828f8",
-      "action_type": "TASK_EXECUTION",
-      "risk_level": "medium",
-      "status": "pending",
-      "requested_by": "Swarm Orchestrator",
-      "created_at": "2026-06-25T16:36:54.386557+00:00",
-      "decisions": []
-    },
-    {
       "approval_id": "app-5b70",
       "request_id": "run-a7494b3f:T2-SPEC",
       "correlation_id": "corr-2759b6",
@@ -4738,18 +4678,6 @@
           "next_state": "approved"
         }
       ]
-    },
-    {
-      "approval_id": "app-8d86",
-      "request_id": "run-a7494b3f:T4-CORE-ENGINE",
-      "correlation_id": "corr-96cc55",
-      "trace_id": "trace-461200",
-      "action_type": "TASK_EXECUTION",
-      "risk_level": "medium",
-      "status": "pending",
-      "requested_by": "Swarm Orchestrator",
-      "created_at": "2026-06-25T16:36:59.544802+00:00",
-      "decisions": []
     },
     {
       "approval_id": "app-2686",
@@ -4802,30 +4730,6 @@
       ]
     },
     {
-      "approval_id": "app-16d1",
-      "request_id": "run-7956ab4d:T5-SWARM-DASHBOARD",
-      "correlation_id": "corr-bc81db",
-      "trace_id": "trace-8ebd0f",
-      "action_type": "TASK_EXECUTION",
-      "risk_level": "low",
-      "status": "pending",
-      "requested_by": "Swarm Orchestrator",
-      "created_at": "2026-06-25T16:37:17.222555+00:00",
-      "decisions": []
-    },
-    {
-      "approval_id": "app-3d90",
-      "request_id": "run-7956ab4d:T6-PLATFORM-BACKEND",
-      "correlation_id": "corr-1dc995",
-      "trace_id": "trace-51210e",
-      "action_type": "TASK_EXECUTION",
-      "risk_level": "medium",
-      "status": "pending",
-      "requested_by": "Swarm Orchestrator",
-      "created_at": "2026-06-25T16:37:17.227345+00:00",
-      "decisions": []
-    },
-    {
       "approval_id": "app-09d2",
       "request_id": "run-ce826f0e:T2-SPEC",
       "correlation_id": "corr-2c46a9",
@@ -4849,18 +4753,6 @@
           "next_state": "approved"
         }
       ]
-    },
-    {
-      "approval_id": "app-cd2d",
-      "request_id": "run-ce826f0e:T4-CORE-ENGINE",
-      "correlation_id": "corr-d7735f",
-      "trace_id": "trace-f617e4",
-      "action_type": "TASK_EXECUTION",
-      "risk_level": "medium",
-      "status": "pending",
-      "requested_by": "Swarm Orchestrator",
-      "created_at": "2026-06-25T16:37:23.411596+00:00",
-      "decisions": []
     },
     {
       "approval_id": "app-501b",
@@ -4888,18 +4780,6 @@
       ]
     },
     {
-      "approval_id": "app-4a0e",
-      "request_id": "run-18e29487:T4-CORE-ENGINE",
-      "correlation_id": "corr-755fab",
-      "trace_id": "trace-fef195",
-      "action_type": "TASK_EXECUTION",
-      "risk_level": "medium",
-      "status": "pending",
-      "requested_by": "Swarm Orchestrator",
-      "created_at": "2026-06-25T16:37:27.782888+00:00",
-      "decisions": []
-    },
-    {
       "approval_id": "app-415f",
       "request_id": "run-fcf9f02a:T4-CORE-ENGINE",
       "correlation_id": "corr-c124c9",
@@ -4923,42 +4803,6 @@
           "next_state": "approved"
         }
       ]
-    },
-    {
-      "approval_id": "app-39a2",
-      "request_id": "run-fcf9f02a:T5-SWARM-DASHBOARD",
-      "correlation_id": "corr-13ed69",
-      "trace_id": "trace-149890",
-      "action_type": "TASK_EXECUTION",
-      "risk_level": "low",
-      "status": "pending",
-      "requested_by": "Swarm Orchestrator",
-      "created_at": "2026-06-25T16:37:33.396850+00:00",
-      "decisions": []
-    },
-    {
-      "approval_id": "app-01b5",
-      "request_id": "run-fcf9f02a:T6-PLATFORM-BACKEND",
-      "correlation_id": "corr-2e1a59",
-      "trace_id": "trace-1d6857",
-      "action_type": "TASK_EXECUTION",
-      "risk_level": "medium",
-      "status": "pending",
-      "requested_by": "Swarm Orchestrator",
-      "created_at": "2026-06-25T16:37:33.402534+00:00",
-      "decisions": []
-    },
-    {
-      "approval_id": "app-chan-591a00",
-      "request_id": "channel_decision:formal",
-      "correlation_id": "corr-252e363c98ed",
-      "trace_id": "046eb84b94554cf288a3f5b5cf288ef6",
-      "action_type": "channel_decision",
-      "risk_level": "high",
-      "status": "pending",
-      "requested_by": "Michael Hoch",
-      "created_at": "2026-06-25T16:38:50.805895+00:00",
-      "decisions": []
     },
     {
       "approval_id": "app-chan-472fb2",
@@ -5011,30 +4855,6 @@
       ]
     },
     {
-      "approval_id": "app-59bd",
-      "request_id": "run-246e6c34:T2-SPEC",
-      "correlation_id": "corr-0caeab",
-      "trace_id": "trace-fc58d2",
-      "action_type": "TASK_EXECUTION",
-      "risk_level": "low",
-      "status": "pending",
-      "requested_by": "Swarm Orchestrator",
-      "created_at": "2026-06-25T16:51:40.740194+00:00",
-      "decisions": []
-    },
-    {
-      "approval_id": "app-0ba3",
-      "request_id": "run-c4f01c35:T4-CORE-ENGINE",
-      "correlation_id": "corr-68df90",
-      "trace_id": "trace-b1f44b",
-      "action_type": "TASK_EXECUTION",
-      "risk_level": "medium",
-      "status": "pending",
-      "requested_by": "Swarm Orchestrator",
-      "created_at": "2026-06-25T16:51:40.750226+00:00",
-      "decisions": []
-    },
-    {
       "approval_id": "app-e7bb",
       "request_id": "run-8c163801:T2-SPEC",
       "correlation_id": "corr-2f9198",
@@ -5060,18 +4880,6 @@
       ]
     },
     {
-      "approval_id": "app-db52",
-      "request_id": "run-8c163801:T4-CORE-ENGINE",
-      "correlation_id": "corr-91295f",
-      "trace_id": "trace-06e949",
-      "action_type": "TASK_EXECUTION",
-      "risk_level": "medium",
-      "status": "pending",
-      "requested_by": "Swarm Orchestrator",
-      "created_at": "2026-06-25T16:52:46.216943+00:00",
-      "decisions": []
-    },
-    {
       "approval_id": "app-chan-78e494",
       "request_id": "channel_decision:candidate",
       "correlation_id": "corr-d59813c6003a",
@@ -5091,6 +4899,1080 @@
           "decision": "approved",
           "decision_time": "2026-06-25T16:53:02.665567+00:00",
           "nonce": "8a92dfec03884ddfa39d3088d72d2f39",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-db52",
+      "request_id": "run-8c163801:T4-CORE-ENGINE",
+      "correlation_id": "corr-91295f",
+      "trace_id": "trace-06e949",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T16:59:39.674977+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-dcc2ea93",
+          "request_id": "run-8c163801:T4-CORE-ENGINE",
+          "run_id": "run-8c163801",
+          "task_id": "T4-CORE-ENGINE",
+          "operator": "Contract Audit Operator",
+          "decision": "approved",
+          "decision_time": "2026-06-25T16:59:39.674652+00:00",
+          "nonce": "cb0e08a056b0474380af274c4677a095",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-c9de",
+      "request_id": "run-ad3a28a8:T2-SPEC",
+      "correlation_id": "corr-3d6e5d",
+      "trace_id": "trace-678760",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:00:43.658534+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-a9fb88c1",
+          "request_id": "run-ad3a28a8:T2-SPEC",
+          "run_id": "run-ad3a28a8",
+          "task_id": "T2-SPEC",
+          "operator": "Operator",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:00:43.658006+00:00",
+          "nonce": "297301513b254a1ca85634c375b7b43a",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-chan-39f3df",
+      "request_id": "channel_decision:candidate",
+      "correlation_id": "corr-7b49ad28a0d0",
+      "trace_id": "4746e517e2b1457aaebc380740a6cb15",
+      "action_type": "channel_decision",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Michael Hoch",
+      "created_at": "2026-06-25T17:01:03.252379+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-27ff213d",
+          "request_id": "channel_decision:candidate",
+          "run_id": null,
+          "task_id": null,
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:01:03.251922+00:00",
+          "nonce": "361d8f7fa85e448c9b272f21c24c69d1",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-bc5d",
+      "request_id": "run-0b66a7ed:T4-CORE-ENGINE",
+      "correlation_id": "corr-847bb0",
+      "trace_id": "trace-f8bc5e",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:05:30.396803+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-6fcaaffc",
+          "request_id": "run-0b66a7ed:T4-CORE-ENGINE",
+          "run_id": "run-0b66a7ed",
+          "task_id": "T4-CORE-ENGINE",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:05:30.395821+00:00",
+          "nonce": "1ff4908011e444e8a823392999e3841d",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-chan-591a00",
+      "request_id": "channel_decision:formal",
+      "correlation_id": "corr-252e363c98ed",
+      "trace_id": "046eb84b94554cf288a3f5b5cf288ef6",
+      "action_type": "channel_decision",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Michael Hoch",
+      "created_at": "2026-06-25T17:05:57.333743+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-07163f1e",
+          "request_id": "channel_decision:formal",
+          "run_id": "channel_decision",
+          "task_id": "formal",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:05:57.333057+00:00",
+          "nonce": "8f4b86ee26b545068e9f959a5a1234f3",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-59bd",
+      "request_id": "run-246e6c34:T2-SPEC",
+      "correlation_id": "corr-0caeab",
+      "trace_id": "trace-fc58d2",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:06:01.243987+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-3158526a",
+          "request_id": "run-246e6c34:T2-SPEC",
+          "run_id": "run-246e6c34",
+          "task_id": "T2-SPEC",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:06:01.243194+00:00",
+          "nonce": "366646202719466b8dd559692fced070",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-0ba3",
+      "request_id": "run-c4f01c35:T4-CORE-ENGINE",
+      "correlation_id": "corr-68df90",
+      "trace_id": "trace-b1f44b",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:06:04.604353+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-fdedcc03",
+          "request_id": "run-c4f01c35:T4-CORE-ENGINE",
+          "run_id": "run-c4f01c35",
+          "task_id": "T4-CORE-ENGINE",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:06:04.603549+00:00",
+          "nonce": "7870b448f41d4dc59b7b6e1273387b12",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-850d",
+      "request_id": "run-8c163801:T5-SWARM-DASHBOARD",
+      "correlation_id": "corr-f02e54",
+      "trace_id": "trace-96d5a2",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:06:06.897208+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-7152bb60",
+          "request_id": "run-8c163801:T5-SWARM-DASHBOARD",
+          "run_id": "run-8c163801",
+          "task_id": "T5-SWARM-DASHBOARD",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:06:06.896299+00:00",
+          "nonce": "f50c363f1ae143f38ed0c7a293ee92e9",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-b3ea",
+      "request_id": "run-8c163801:T6-PLATFORM-BACKEND",
+      "correlation_id": "corr-c98334",
+      "trace_id": "trace-5558fa",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:06:09.380077+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-c0e3e10c",
+          "request_id": "run-8c163801:T6-PLATFORM-BACKEND",
+          "run_id": "run-8c163801",
+          "task_id": "T6-PLATFORM-BACKEND",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:06:09.379279+00:00",
+          "nonce": "c9cf1196c9c6438da416069150db60e7",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-bed7",
+      "request_id": "run-58cfbb9c:T2-SPEC",
+      "correlation_id": "corr-f9727b",
+      "trace_id": "trace-1f29b3",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:06:12.915254+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-d664e79d",
+          "request_id": "run-58cfbb9c:T2-SPEC",
+          "run_id": "run-58cfbb9c",
+          "task_id": "T2-SPEC",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:06:12.914528+00:00",
+          "nonce": "1a3d78d37aa240f1b5193cee857474f6",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-47d8",
+      "request_id": "run-ad3a28a8:T4-CORE-ENGINE",
+      "correlation_id": "corr-c63817",
+      "trace_id": "trace-abd8a2",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:06:15.954895+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-3a3350ec",
+          "request_id": "run-ad3a28a8:T4-CORE-ENGINE",
+          "run_id": "run-ad3a28a8",
+          "task_id": "T4-CORE-ENGINE",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:06:15.954624+00:00",
+          "nonce": "0798fbc99a6141b38c531c7f33718718",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-f08c",
+      "request_id": "run-0b66a7ed:T5-SWARM-DASHBOARD",
+      "correlation_id": "corr-07d425",
+      "trace_id": "trace-9c140b",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:06:19.464751+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-0091d5cd",
+          "request_id": "run-0b66a7ed:T5-SWARM-DASHBOARD",
+          "run_id": "run-0b66a7ed",
+          "task_id": "T5-SWARM-DASHBOARD",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:06:19.463968+00:00",
+          "nonce": "432c335b1e3c4c989d77f132cb371336",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-93bd",
+      "request_id": "run-0b66a7ed:T6-PLATFORM-BACKEND",
+      "correlation_id": "corr-a7fd7e",
+      "trace_id": "trace-29ee23",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:06:22.499818+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-068e0650",
+          "request_id": "run-0b66a7ed:T6-PLATFORM-BACKEND",
+          "run_id": "run-0b66a7ed",
+          "task_id": "T6-PLATFORM-BACKEND",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:06:22.499014+00:00",
+          "nonce": "29a94ed0cd3548a88314031b3ea563d9",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-0d32",
+      "request_id": "run-246e6c34:T4-CORE-ENGINE",
+      "correlation_id": "corr-a5cba5",
+      "trace_id": "trace-0c0782",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:06:25.441632+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-48f1257d",
+          "request_id": "run-246e6c34:T4-CORE-ENGINE",
+          "run_id": "run-246e6c34",
+          "task_id": "T4-CORE-ENGINE",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:06:25.440788+00:00",
+          "nonce": "b6e368e1e6964c92a78bf755a900d87d",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-74d0",
+      "request_id": "run-c4f01c35:T6-PLATFORM-BACKEND",
+      "correlation_id": "corr-3ea954",
+      "trace_id": "trace-422e4e",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:06:28.806405+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-24b8e2e3",
+          "request_id": "run-c4f01c35:T6-PLATFORM-BACKEND",
+          "run_id": "run-c4f01c35",
+          "task_id": "T6-PLATFORM-BACKEND",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:06:28.805724+00:00",
+          "nonce": "07686e85aca34754af279e2662266c52",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-d439",
+      "request_id": "run-ad3a28a8:T6-PLATFORM-BACKEND",
+      "correlation_id": "corr-5c7a09",
+      "trace_id": "trace-9f5882",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:06:35.494903+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-d7358272",
+          "request_id": "run-ad3a28a8:T6-PLATFORM-BACKEND",
+          "run_id": "run-ad3a28a8",
+          "task_id": "T6-PLATFORM-BACKEND",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:06:35.494034+00:00",
+          "nonce": "2f9b5a476ab642bd8f5f2dbc56e4d41d",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-aa9e",
+      "request_id": "run-246e6c34:T5-SWARM-DASHBOARD",
+      "correlation_id": "corr-38057e",
+      "trace_id": "trace-5ee4e7",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:06:37.684744+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-8738ca0a",
+          "request_id": "run-246e6c34:T5-SWARM-DASHBOARD",
+          "run_id": "run-246e6c34",
+          "task_id": "T5-SWARM-DASHBOARD",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:06:37.683827+00:00",
+          "nonce": "15e45b6e8ad74ae5ba698094c500cb64",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-605b",
+      "request_id": "run-246e6c34:T6-PLATFORM-BACKEND",
+      "correlation_id": "corr-f6e0fe",
+      "trace_id": "trace-d9decf",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:06:40.822838+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-df0ae08e",
+          "request_id": "run-246e6c34:T6-PLATFORM-BACKEND",
+          "run_id": "run-246e6c34",
+          "task_id": "T6-PLATFORM-BACKEND",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:06:40.822178+00:00",
+          "nonce": "e544bb5ee6cc4ca1a9a688243a3e7b16",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-be3e",
+      "request_id": "run-ad3a28a8:T5-SWARM-DASHBOARD",
+      "correlation_id": "corr-75a09d",
+      "trace_id": "trace-66ada5",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:06:45.699552+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-a02641ec",
+          "request_id": "run-ad3a28a8:T5-SWARM-DASHBOARD",
+          "run_id": "run-ad3a28a8",
+          "task_id": "T5-SWARM-DASHBOARD",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:06:45.698589+00:00",
+          "nonce": "c355ab0ebbba4310be233405bc1daebd",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-9c0d",
+      "request_id": "run-58cfbb9c:T4-CORE-ENGINE",
+      "correlation_id": "corr-ea2421",
+      "trace_id": "trace-c936e4",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:06:51.448477+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-49b61ca3",
+          "request_id": "run-58cfbb9c:T4-CORE-ENGINE",
+          "run_id": "run-58cfbb9c",
+          "task_id": "T4-CORE-ENGINE",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:06:51.447367+00:00",
+          "nonce": "8881751caf844f9b9dbc5f8b461673e1",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-3dc8",
+      "request_id": "run-c4f01c35:T5-SWARM-DASHBOARD",
+      "correlation_id": "corr-0832d2",
+      "trace_id": "trace-d2ec0a",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:06:53.629157+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-39f44a8c",
+          "request_id": "run-c4f01c35:T5-SWARM-DASHBOARD",
+          "run_id": "run-c4f01c35",
+          "task_id": "T5-SWARM-DASHBOARD",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:06:53.628253+00:00",
+          "nonce": "409c42c14ec946ffa2c6c20f2d802ea6",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-57f7",
+      "request_id": "run-58cfbb9c:T5-SWARM-DASHBOARD",
+      "correlation_id": "corr-201c1a",
+      "trace_id": "trace-7eb5ec",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:06:55.431277+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-5b9287eb",
+          "request_id": "run-58cfbb9c:T5-SWARM-DASHBOARD",
+          "run_id": "run-58cfbb9c",
+          "task_id": "T5-SWARM-DASHBOARD",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:06:55.430517+00:00",
+          "nonce": "71febdd6d8e44df0a2728e77b2fe7988",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-01b5",
+      "request_id": "run-fcf9f02a:T6-PLATFORM-BACKEND",
+      "correlation_id": "corr-2e1a59",
+      "trace_id": "trace-1d6857",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:06:58.673119+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-09384efd",
+          "request_id": "run-fcf9f02a:T6-PLATFORM-BACKEND",
+          "run_id": "run-fcf9f02a",
+          "task_id": "T6-PLATFORM-BACKEND",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:06:58.672483+00:00",
+          "nonce": "021a108202054e399964f42314f6167d",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-767d",
+      "request_id": "run-58cfbb9c:T6-PLATFORM-BACKEND",
+      "correlation_id": "corr-f24475",
+      "trace_id": "trace-9b7596",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:07:00.627345+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-5406924d",
+          "request_id": "run-58cfbb9c:T6-PLATFORM-BACKEND",
+          "run_id": "run-58cfbb9c",
+          "task_id": "T6-PLATFORM-BACKEND",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:07:00.626560+00:00",
+          "nonce": "c40b71aa31f84e678665ca5a046ad4f5",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-4a0e",
+      "request_id": "run-18e29487:T4-CORE-ENGINE",
+      "correlation_id": "corr-755fab",
+      "trace_id": "trace-fef195",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:07:03.630480+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-4e691d7b",
+          "request_id": "run-18e29487:T4-CORE-ENGINE",
+          "run_id": "run-18e29487",
+          "task_id": "T4-CORE-ENGINE",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:07:03.629713+00:00",
+          "nonce": "283a38a65e2c4d8faba78807cc72b287",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-cd2d",
+      "request_id": "run-ce826f0e:T4-CORE-ENGINE",
+      "correlation_id": "corr-d7735f",
+      "trace_id": "trace-f617e4",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:07:06.466445+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-78f0878f",
+          "request_id": "run-ce826f0e:T4-CORE-ENGINE",
+          "run_id": "run-ce826f0e",
+          "task_id": "T4-CORE-ENGINE",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:07:06.465759+00:00",
+          "nonce": "955a697c86ae44408dc0672c0d61f32d",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-3d90",
+      "request_id": "run-7956ab4d:T6-PLATFORM-BACKEND",
+      "correlation_id": "corr-1dc995",
+      "trace_id": "trace-51210e",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:07:08.805246+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-25ebb53f",
+          "request_id": "run-7956ab4d:T6-PLATFORM-BACKEND",
+          "run_id": "run-7956ab4d",
+          "task_id": "T6-PLATFORM-BACKEND",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:07:08.804656+00:00",
+          "nonce": "61b37863edd64694a384435217f998c5",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-16d1",
+      "request_id": "run-7956ab4d:T5-SWARM-DASHBOARD",
+      "correlation_id": "corr-bc81db",
+      "trace_id": "trace-8ebd0f",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:07:12.608705+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-a4464f4e",
+          "request_id": "run-7956ab4d:T5-SWARM-DASHBOARD",
+          "run_id": "run-7956ab4d",
+          "task_id": "T5-SWARM-DASHBOARD",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:07:12.607729+00:00",
+          "nonce": "e3e1c436aa1145538bbd52a07e3dc889",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-8d86",
+      "request_id": "run-a7494b3f:T4-CORE-ENGINE",
+      "correlation_id": "corr-96cc55",
+      "trace_id": "trace-461200",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:07:16.469582+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-bc1e69e2",
+          "request_id": "run-a7494b3f:T4-CORE-ENGINE",
+          "run_id": "run-a7494b3f",
+          "task_id": "T4-CORE-ENGINE",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:07:16.468615+00:00",
+          "nonce": "0444b7251b384ea093a738ef07b125a4",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-8191",
+      "request_id": "run-205ea4c8:T6-PLATFORM-BACKEND",
+      "correlation_id": "corr-9bc846",
+      "trace_id": "trace-c828f8",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:07:20.119753+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-249d9d01",
+          "request_id": "run-205ea4c8:T6-PLATFORM-BACKEND",
+          "run_id": "run-205ea4c8",
+          "task_id": "T6-PLATFORM-BACKEND",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:07:20.118998+00:00",
+          "nonce": "4c81ba78fc4f4f778c42d33b78d65885",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-1177",
+      "request_id": "run-4e98c303:T2-SPEC",
+      "correlation_id": "corr-4baf25",
+      "trace_id": "trace-7c2e3a",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:07:26.012424+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-fe4d26f2",
+          "request_id": "run-4e98c303:T2-SPEC",
+          "run_id": "run-4e98c303",
+          "task_id": "T2-SPEC",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:07:26.011355+00:00",
+          "nonce": "fb0070505e21457d98d0b99f6e721c42",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-35eb",
+      "request_id": "run-191d822b:T5-SWARM-DASHBOARD",
+      "correlation_id": "corr-950898",
+      "trace_id": "trace-9af887",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:07:30.692104+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-e04dc84f",
+          "request_id": "run-191d822b:T5-SWARM-DASHBOARD",
+          "run_id": "run-191d822b",
+          "task_id": "T5-SWARM-DASHBOARD",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:07:30.690938+00:00",
+          "nonce": "2646c925ee4a4c12b6f23353cc454b48",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-149c",
+      "request_id": "run-191d822b:T6-PLATFORM-BACKEND",
+      "correlation_id": "corr-6d4c06",
+      "trace_id": "trace-a3b500",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:07:33.681386+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-acddbf95",
+          "request_id": "run-191d822b:T6-PLATFORM-BACKEND",
+          "run_id": "run-191d822b",
+          "task_id": "T6-PLATFORM-BACKEND",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:07:33.680503+00:00",
+          "nonce": "fc46a0ccc20d492fa7ed2cd0a6e8b8e5",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-39a2",
+      "request_id": "run-fcf9f02a:T5-SWARM-DASHBOARD",
+      "correlation_id": "corr-13ed69",
+      "trace_id": "trace-149890",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:07:35.995073+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-d14eb337",
+          "request_id": "run-fcf9f02a:T5-SWARM-DASHBOARD",
+          "run_id": "run-fcf9f02a",
+          "task_id": "T5-SWARM-DASHBOARD",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:07:35.994172+00:00",
+          "nonce": "007118664a004feda3846ac067edd9c1",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-e134",
+      "request_id": "run-18e29487:T5-SWARM-DASHBOARD",
+      "correlation_id": "corr-3ef9d2",
+      "trace_id": "trace-cb40d8",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:07:38.148342+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-9a840ba4",
+          "request_id": "run-18e29487:T5-SWARM-DASHBOARD",
+          "run_id": "run-18e29487",
+          "task_id": "T5-SWARM-DASHBOARD",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:07:38.147535+00:00",
+          "nonce": "935e95a816ab4db4a651d8fd144b2f8e",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-95bf",
+      "request_id": "run-18e29487:T6-PLATFORM-BACKEND",
+      "correlation_id": "corr-15f81d",
+      "trace_id": "trace-abbb5d",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:07:39.913915+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-89dda386",
+          "request_id": "run-18e29487:T6-PLATFORM-BACKEND",
+          "run_id": "run-18e29487",
+          "task_id": "T6-PLATFORM-BACKEND",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:07:39.913148+00:00",
+          "nonce": "9448903f5adb4c67a495c747cfd5b17e",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-11b9",
+      "request_id": "run-ce826f0e:T5-SWARM-DASHBOARD",
+      "correlation_id": "corr-42702b",
+      "trace_id": "trace-bdc537",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:07:42.230799+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-5dcd6863",
+          "request_id": "run-ce826f0e:T5-SWARM-DASHBOARD",
+          "run_id": "run-ce826f0e",
+          "task_id": "T5-SWARM-DASHBOARD",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:07:42.230049+00:00",
+          "nonce": "9ca20058cb604c039a53b246d3413f7a",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-56bf",
+      "request_id": "run-ce826f0e:T6-PLATFORM-BACKEND",
+      "correlation_id": "corr-5953bd",
+      "trace_id": "trace-4aea3d",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:07:44.815869+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-3b87148c",
+          "request_id": "run-ce826f0e:T6-PLATFORM-BACKEND",
+          "run_id": "run-ce826f0e",
+          "task_id": "T6-PLATFORM-BACKEND",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:07:44.814948+00:00",
+          "nonce": "4037fbc6d86644aebc148653ef57c13a",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-c99e",
+      "request_id": "run-a7494b3f:T5-SWARM-DASHBOARD",
+      "correlation_id": "corr-92d815",
+      "trace_id": "trace-9149b4",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:07:46.501687+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-87e5941c",
+          "request_id": "run-a7494b3f:T5-SWARM-DASHBOARD",
+          "run_id": "run-a7494b3f",
+          "task_id": "T5-SWARM-DASHBOARD",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:07:46.501008+00:00",
+          "nonce": "a25575294620447691039638338680a4",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-850a",
+      "request_id": "run-a7494b3f:T6-PLATFORM-BACKEND",
+      "correlation_id": "corr-dc86f1",
+      "trace_id": "trace-c74397",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:07:48.786684+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-4d7db50b",
+          "request_id": "run-a7494b3f:T6-PLATFORM-BACKEND",
+          "run_id": "run-a7494b3f",
+          "task_id": "T6-PLATFORM-BACKEND",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:07:48.785857+00:00",
+          "nonce": "6be0cbd9f73443f68a2b686c8c2a0a28",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-3673",
+      "request_id": "run-4e98c303:T4-CORE-ENGINE",
+      "correlation_id": "corr-add41d",
+      "trace_id": "trace-3307d4",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:07:51.564764+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-e74d4e89",
+          "request_id": "run-4e98c303:T4-CORE-ENGINE",
+          "run_id": "run-4e98c303",
+          "task_id": "T4-CORE-ENGINE",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:07:51.563695+00:00",
+          "nonce": "55ecec1cdac944398b03a0e6b4b8cd95",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-78c5",
+      "request_id": "run-4e98c303:T5-SWARM-DASHBOARD",
+      "correlation_id": "corr-5053ae",
+      "trace_id": "trace-e1d8fa",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:07:53.092483+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-4924",
+      "request_id": "run-4e98c303:T6-PLATFORM-BACKEND",
+      "correlation_id": "corr-bcb14c",
+      "trace_id": "trace-1ca377",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:07:53.099253+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-bd1d8d3c",
+      "request_id": "channel_decision:formal:preview-1782408394-66171b07",
+      "correlation_id": "corr-5ca1e7f4",
+      "trace_id": "trace-559d23e3",
+      "action_type": "channel_decision",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Michael Hoch",
+      "created_at": "2026-06-25T17:26:34.400918+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-faceecc6",
+          "request_id": "channel_decision:formal:preview-1782408394-66171b07",
+          "run_id": "channel_decision",
+          "task_id": "formal:preview-1782408394-66171b07",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:26:34.400526+00:00",
+          "nonce": "5731cb395d4b4288b91bdc8ecc5c25a7",
           "prior_state": "pending",
           "next_state": "approved"
         }
