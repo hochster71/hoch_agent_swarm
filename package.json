@@ -31,7 +31,7 @@
     "qa:readiness": "npm run qa:audit-localhost && npm run qa:validate-evidence && npm run qa:readiness-score && npm run qa:north-star",
     "build:tailwind": "npx @tailwindcss/cli -i ./frontend/src/styles/tailwind.css -o ./frontend/dist/tailwind.css --minify",
     "qa:no-tailwind-cdn": "npx tsx scripts/qa/test-no-tailwind-cdn.ts",
-    "build": "npm run build:tailwind && mkdir -p frontend/dist/dist && cp frontend/dist/tailwind.css frontend/dist/dist/tailwind.css",
+    "build": "npm --prefix frontend run build && npm run build:tailwind && mkdir -p frontend/dist/dist && cp frontend/dist/tailwind.css frontend/dist/dist/tailwind.css",
     "qa:view-contract": "npx tsx scripts/qa/test-view-content-contract.ts",
     "qa:ui-contract": "npm run qa:no-tailwind-cdn && npm run qa:nav && npm run qa:view-contract && npm run qa:frontend-entrypoint && npm run qa:comic-swarm && npm run qa:global-swarm-animation && npm run qa:topology-agent-overlay && npm run qa:topology-animation-quality && npm run qa:cybersecurity-factory",
     "qa:frontend-entrypoint": "npx tsx scripts/qa/test-frontend-entrypoint-contract.ts",

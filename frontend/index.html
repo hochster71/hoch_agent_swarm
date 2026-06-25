@@ -1109,10 +1109,10 @@
                             </div>
                         </section>
 
-                        <!-- PERT &#8203;&#65;nalysis -->
+                        <!-- PERT Analysis -->
                         <section id="factory-pert-analysis" class="card" style="padding: 16px;">
                             <div style="border-bottom: 1px solid var(--border-glass); padding-bottom: 6px; margin-bottom: 10px;">
-                                <h4 style="font-size: 12px; font-weight: 600; color: var(--accent-blue);">PERT&#8203;&#65;nalysis</h4>
+                                <h4 style="font-size: 12px; font-weight: 600; color: var(--accent-blue);">PERT Analysis</h4>
                             </div>
                             <div id="factory-pert-details" style="font-size: 11px; display: flex; flex-direction: column; gap: 8px;">
                                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; text-align: center;">
@@ -1205,6 +1205,35 @@
                             </div>
                         </section>
 
+                        <!-- Privacy Disclosure Consistency Check -->
+                        <section id="factory-privacy-consistency-gate" class="card" style="padding: 16px;">
+                            <div style="border-bottom: 1px solid var(--border-glass); padding-bottom: 6px; margin-bottom: 10px;">
+                                <h4 style="font-size: 12px; font-weight: 600; color: var(--accent-blue);">Privacy Disclosure Consistency Check</h4>
+                            </div>
+                            <div id="factory-privacy-consistency-details" style="font-size: 11px; display: flex; flex-direction: column; gap: 8px; color: var(--text-secondary);">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span>App Permissions:</span>
+                                    <span id="privacy-gate-permissions" class="badge" style="font-size: 9px; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.05); color: var(--text-secondary);">—</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span>Privacy Policy Text:</span>
+                                    <span id="privacy-gate-policy" class="badge" style="font-size: 9px; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.05); color: var(--text-secondary);">—</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span>Store Disclosure Claims:</span>
+                                    <span id="privacy-gate-disclosure" class="badge" style="font-size: 9px; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.05); color: var(--text-secondary);">—</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span>Data Flows & SDKs:</span>
+                                    <span id="privacy-gate-flows" class="badge" style="font-size: 9px; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.05); color: var(--text-secondary);">—</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--border-glass); padding-top: 6px; margin-top: 2px;">
+                                    <strong>Consistency Status:</strong>
+                                    <span id="privacy-gate-status" style="font-weight: bold; color: var(--text-secondary); font-size: 11px;">—</span>
+                                </div>
+                            </div>
+                        </section>
+
                         <!-- Static Contract Helper -->
                         <div style="display: none;" aria-hidden="true">
                             <span>Product Design</span>
@@ -1265,6 +1294,23 @@
                         <div style="font-size: 9px; color: var(--text-secondary); font-weight: bold; text-transform: uppercase; margin-bottom: 4px;">Skills</div>
                         <div id="topology-agent-modal-skills" style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;">
                             <!-- skills list -->
+                        </div>
+                    </div>
+                    
+                    <!-- Capability Manifest & Trust Badges -->
+                    <div id="topology-agent-modal-manifest-container" style="display: none; margin-top: 12px; border-top: 1px dashed var(--border-glass); padding-top: 12px;">
+                        <div style="font-size: 10px; color: var(--text-primary); font-weight: bold; text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; gap: 6px;">
+                            <span>Capability Manifest</span>
+                            <div id="topology-agent-modal-badges" style="display: flex; gap: 4px;"></div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; font-size: 11px; background: rgba(0, 0, 0, 0.2); padding: 8px; border-radius: 4px; border: 1px solid var(--border-glass);">
+                            <div><strong style="color: var(--accent-blue);">Allowed Tools:</strong> <span id="agent-manifest-allowed" style="color: var(--text-secondary);">—</span></div>
+                            <div><strong style="color: #ef4444;">Denied Tools:</strong> <span id="agent-manifest-denied" style="color: var(--text-secondary);">—</span></div>
+                            <div><strong style="color: var(--accent-teal);">File Scopes:</strong> <span id="agent-manifest-files" style="color: var(--text-secondary);">—</span></div>
+                            <div><strong style="color: var(--accent-blue);">Network Scopes:</strong> <span id="agent-manifest-network" style="color: var(--text-secondary);">—</span></div>
+                            <div><strong style="color: var(--text-primary);">Approval Threshold:</strong> <span id="agent-manifest-threshold" style="color: var(--text-secondary);">—</span></div>
+                            <div><strong style="color: var(--text-primary);">Risk Category:</strong> <span id="agent-manifest-risk" style="color: var(--text-secondary);">—</span></div>
+                            <div style="grid-column: span 2;"><strong style="color: var(--text-primary);">Audit Sink:</strong> <span id="agent-manifest-sink" style="color: var(--text-secondary); font-family: monospace; font-size: 10px;">—</span></div>
                         </div>
                     </div>
                 </div>

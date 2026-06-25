@@ -5129,7 +5129,7 @@ const hochApplicationFactoryStages = [
   "Humanity Usefulness Gate",
   "Research",
   "North Star Planning",
-  "PERT\u200bAnalysis",
+  "PERT Analysis",
   "Product Design",
   "Architecture",
   "Secure Development",
@@ -5188,7 +5188,16 @@ const factoryAgentsData = [
     stage: "Intake",
     completionSignal: "app pipeline decomposed",
     avatarVariant: 1,
-    status: "idle"
+    status: "idle",
+    capabilities: {
+      allowedTools: "git, grep, view_file, list_dir",
+      deniedTools: "run_command, write_to_file",
+      fileScopes: "frontend/*, scripts/*",
+      networkScopes: "none",
+      approvalThreshold: "None (Read-only)",
+      riskCategory: "Low",
+      auditSink: "/var/log/swarm/foreman_fizz.audit"
+    }
   },
   {
     id: "humanity-hank",
@@ -5199,7 +5208,16 @@ const factoryAgentsData = [
     stage: "Humanity Usefulness Gate",
     completionSignal: "usefulness gate passed",
     avatarVariant: 2,
-    status: "idle"
+    status: "idle",
+    capabilities: {
+      allowedTools: "view_file, grep",
+      deniedTools: "write_to_file, run_command",
+      fileScopes: "*",
+      networkScopes: "none",
+      approvalThreshold: "Strict (Gate keeper)",
+      riskCategory: "Low",
+      auditSink: "/var/log/swarm/humanity_gate.audit"
+    }
   },
   {
     id: "research-raccoon",
@@ -5210,7 +5228,16 @@ const factoryAgentsData = [
     stage: "Research",
     completionSignal: "research pack synthesized",
     avatarVariant: 3,
-    status: "idle"
+    status: "idle",
+    capabilities: {
+      allowedTools: "search_web, read_url_content",
+      deniedTools: "run_command, write_to_file",
+      fileScopes: "none",
+      networkScopes: "google.com, youtube.com, github.com",
+      approvalThreshold: "None",
+      riskCategory: "Medium",
+      auditSink: "/var/log/swarm/research_raccoon.audit"
+    }
   },
   {
     id: "north-star-nora",
@@ -5221,7 +5248,16 @@ const factoryAgentsData = [
     stage: "North Star Planning",
     completionSignal: "north star locked",
     avatarVariant: 4,
-    status: "idle"
+    status: "idle",
+    capabilities: {
+      allowedTools: "view_file, grep",
+      deniedTools: "run_command, write_to_file",
+      fileScopes: "*",
+      networkScopes: "none",
+      approvalThreshold: "Manual sign-off required",
+      riskCategory: "Low",
+      auditSink: "/var/log/swarm/north_star.audit"
+    }
   },
   {
     id: "pert-percy",
@@ -5229,10 +5265,19 @@ const factoryAgentsData = [
     funnyTag: "TIME GOBLIN",
     role: "builds AI-compressed PERT and dependency schedule",
     mission: "Compile optimistic, likely, and pessimistic estimates into critical path nodes.",
-    stage: "PERT\u200bAnalysis",
+    stage: "PERT Analysis",
     completionSignal: "delivery graph estimated",
     avatarVariant: 5,
-    status: "idle"
+    status: "idle",
+    capabilities: {
+      allowedTools: "view_file, grep",
+      deniedTools: "run_command",
+      fileScopes: "package.json, src/*",
+      networkScopes: "none",
+      approvalThreshold: "None",
+      riskCategory: "Low",
+      auditSink: "/var/log/swarm/pert_percy.audit"
+    }
   },
   {
     id: "design-doodle-dee",
@@ -5243,7 +5288,16 @@ const factoryAgentsData = [
     stage: "Product Design",
     completionSignal: "user journey drawn",
     avatarVariant: 6,
-    status: "idle"
+    status: "idle",
+    capabilities: {
+      allowedTools: "generate_image, view_file",
+      deniedTools: "run_command, write_to_file",
+      fileScopes: "frontend/src/components/*",
+      networkScopes: "none",
+      approvalThreshold: "None",
+      riskCategory: "Low",
+      auditSink: "/var/log/swarm/design_doodle.audit"
+    }
   },
   {
     id: "architect-atlas",
@@ -5254,7 +5308,16 @@ const factoryAgentsData = [
     stage: "Architecture",
     completionSignal: "architecture contract written",
     avatarVariant: 7,
-    status: "idle"
+    status: "idle",
+    capabilities: {
+      allowedTools: "view_file, grep",
+      deniedTools: "run_command",
+      fileScopes: "frontend/src/lib/*, backend/*",
+      networkScopes: "none",
+      approvalThreshold: "None",
+      riskCategory: "Low",
+      auditSink: "/var/log/swarm/architect_atlas.audit"
+    }
   },
   {
     id: "secrets-squirrel",
@@ -5265,7 +5328,16 @@ const factoryAgentsData = [
     stage: "Secure Development",
     completionSignal: "secrets clear",
     avatarVariant: 8,
-    status: "idle"
+    status: "idle",
+    capabilities: {
+      allowedTools: "grep, view_file",
+      deniedTools: "run_command, write_to_file",
+      fileScopes: "*",
+      networkScopes: "none",
+      approvalThreshold: "Immediate Alert",
+      riskCategory: "Low",
+      auditSink: "/var/log/swarm/secrets_squirrel.audit"
+    }
   },
   {
     id: "dependency-dingo",
@@ -5276,7 +5348,16 @@ const factoryAgentsData = [
     stage: "Secure Development",
     completionSignal: "dependency risk triaged",
     avatarVariant: 9,
-    status: "idle"
+    status: "idle",
+    capabilities: {
+      allowedTools: "grep, view_file, run_command (npm list)",
+      deniedTools: "npm install, npm publish",
+      fileScopes: "package.json, package-lock.json",
+      networkScopes: "registry.npmjs.org",
+      approvalThreshold: "Developer sign-off",
+      riskCategory: "Medium",
+      auditSink: "/var/log/swarm/dependency_dingo.audit"
+    }
   },
   {
     id: "cyber-cobra",
@@ -5287,7 +5368,16 @@ const factoryAgentsData = [
     stage: "Cybersecurity Review",
     completionSignal: "threat model complete",
     avatarVariant: 10,
-    status: "idle"
+    status: "idle",
+    capabilities: {
+      allowedTools: "grep, view_file",
+      deniedTools: "run_command, write_to_file",
+      fileScopes: "*",
+      networkScopes: "none",
+      approvalThreshold: "Immediate Alert",
+      riskCategory: "Low",
+      auditSink: "/var/log/swarm/cyber_cobra.audit"
+    }
   },
   {
     id: "e2e-ellie",
@@ -5298,7 +5388,16 @@ const factoryAgentsData = [
     stage: "QA / E2E",
     completionSignal: "E2E evidence captured",
     avatarVariant: 11,
-    status: "idle"
+    status: "idle",
+    capabilities: {
+      allowedTools: "run_command (npx playwright)",
+      deniedTools: "write_to_file",
+      fileScopes: "tests/*",
+      networkScopes: "localhost:8000",
+      approvalThreshold: "None",
+      riskCategory: "Medium",
+      auditSink: "/var/log/swarm/e2e_ellie.audit"
+    }
   },
   {
     id: "storefront-stan",
@@ -5309,7 +5408,16 @@ const factoryAgentsData = [
     stage: "Privacy / Store Compliance",
     completionSignal: "store packet ready",
     avatarVariant: 12,
-    status: "idle"
+    status: "idle",
+    capabilities: {
+      allowedTools: "view_file, grep",
+      deniedTools: "run_command",
+      fileScopes: "dist/releases/*",
+      networkScopes: "apple.com, google.com",
+      approvalThreshold: "Operator approval required",
+      riskCategory: "Medium",
+      auditSink: "/var/log/swarm/storefront_stan.audit"
+    }
   },
   {
     id: "review-rita",
@@ -5320,7 +5428,16 @@ const factoryAgentsData = [
     stage: "App Store Delivery",
     completionSignal: "review approved",
     avatarVariant: 13,
-    status: "idle"
+    status: "idle",
+    capabilities: {
+      allowedTools: "view_file, grep",
+      deniedTools: "run_command, write_to_file",
+      fileScopes: "*",
+      networkScopes: "none",
+      approvalThreshold: "Manual Operator Approval",
+      riskCategory: "Low",
+      auditSink: "/var/log/swarm/review_rita.audit"
+    }
   }
 ];
 
@@ -5341,12 +5458,12 @@ const cybersecurityChecklistItems = [
 
 // Map of store targets checks details
 const storeTargetsChecksData = {
-  "Apple App Store": "privacy nutrition, review guidelines, screenshots, age rating, IAP rules, human value",
-  "Google Play": "Data Safety, permissions, malware/deception checks, target SDK, testing track",
+  "Apple App Store": "screenshots, privacy labels, age rating, review notes, support URL, marketing URL",
+  "Google Play": "Data Safety, content rating, testing track, permissions justification, privacy policy",
   "Microsoft Store": "package identity, privacy policy, install behavior, content policies",
-  "Chrome Web Store": "extension permissions, remote code policy, privacy disclosure",
-  "GitHub Release": "SBOM, provenance, signed artifact, release notes",
-  "Docker Registry": "image scan, digest pinning, non-root user, CVE report",
+  "Chrome Web Store": "permissions justification, remote-code compliance, privacy disclosure",
+  "GitHub Release": "SBOM, provenance, checksum, release notes",
+  "Docker Registry": "image digest, CVE scan, non-root runtime, SBOM",
   "Web / PWA": "HTTPS, CSP, accessibility, privacy policy, E2E smoke tests"
 };
 
@@ -5364,6 +5481,7 @@ function renderCybersecurityFactoryView() {
     renderFactoryStoreDeliveryMatrix(false);
     renderFactoryPertAnalysis(false);
     renderFactoryE2EEvidenceBoard(false);
+    renderFactoryPrivacyConsistencyGate(false);
     renderFactoryPortfolioTable();
 }
 
@@ -5442,6 +5560,39 @@ function openFactoryAgentProfile(agentId, triggerEl) {
     const skillsEl = document.getElementById("topology-agent-modal-skills");
     if (skillsEl) {
         skillsEl.innerHTML = `<span class="agent-capsule">${agent.stage}</span>`;
+    }
+
+    const manifestContainer = document.getElementById("topology-agent-modal-manifest-container");
+    if (manifestContainer) {
+        if (agent.capabilities) {
+            manifestContainer.style.display = "block";
+            document.getElementById("agent-manifest-allowed").textContent = agent.capabilities.allowedTools;
+            document.getElementById("agent-manifest-denied").textContent = agent.capabilities.deniedTools;
+            document.getElementById("agent-manifest-files").textContent = agent.capabilities.fileScopes;
+            document.getElementById("agent-manifest-network").textContent = agent.capabilities.networkScopes;
+            document.getElementById("agent-manifest-threshold").textContent = agent.capabilities.approvalThreshold;
+            document.getElementById("agent-manifest-risk").textContent = agent.capabilities.riskCategory;
+            document.getElementById("agent-manifest-sink").textContent = agent.capabilities.auditSink;
+
+            const badgesEl = document.getElementById("topology-agent-modal-badges");
+            if (badgesEl) {
+                let badgeHtml = "";
+                if (agent.capabilities.riskCategory === "Low") {
+                    badgeHtml += `<span style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; color: #10b981; font-size: 8px; font-weight: bold; padding: 2px 6px; border-radius: 4px; text-transform: uppercase;">Low Risk</span>`;
+                } else {
+                    badgeHtml += `<span style="background: rgba(245, 158, 11, 0.15); border: 1px solid #f59e0b; color: #f59e0b; font-size: 8px; font-weight: bold; padding: 2px 6px; border-radius: 4px; text-transform: uppercase;">Medium Risk</span>`;
+                }
+                if (agent.capabilities.deniedTools.includes("run_command")) {
+                    badgeHtml += `<span style="background: rgba(59, 130, 246, 0.15); border: 1px solid #3b82f6; color: #3b82f6; font-size: 8px; font-weight: bold; padding: 2px 6px; border-radius: 4px; text-transform: uppercase;">Sandboxed</span>`;
+                }
+                if (agent.capabilities.auditSink !== "none") {
+                    badgeHtml += `<span style="background: rgba(168, 85, 247, 0.15); border: 1px solid #a855f7; color: #a855f7; font-size: 8px; font-weight: bold; padding: 2px 6px; border-radius: 4px; text-transform: uppercase;">Audited</span>`;
+                }
+                badgesEl.innerHTML = badgeHtml;
+            }
+        } else {
+            manifestContainer.style.display = "none";
+        }
     }
     
     const modal = document.getElementById("topology-agent-profile-modal");
@@ -5605,9 +5756,60 @@ function renderFactoryE2EEvidenceBoard(active) {
 [Playwright runner] Action clicked: Humanity Usefulness Gate verified.
 [Playwright runner] Checklist parsed. 11/11 security checks complete.
 [Playwright runner] Capture: artifacts/qa/cybersecurity-factory-runtime.png
-[Playwright runner] E2E evidence saved successfully.`;
+[Playwright runner] E2E evidence saved successfully.
+[Security Swarm] Evidence generated · signing pending`;
     } else {
         logsEl.innerHTML = "Awaiting QA run...";
+    }
+}
+
+function renderFactoryPrivacyConsistencyGate(active) {
+    const permEl = document.getElementById("privacy-gate-permissions");
+    const policyEl = document.getElementById("privacy-gate-policy");
+    const disclosureEl = document.getElementById("privacy-gate-disclosure");
+    const flowsEl = document.getElementById("privacy-gate-flows");
+    const statusEl = document.getElementById("privacy-gate-status");
+
+    if (!permEl || !policyEl || !disclosureEl || !flowsEl || !statusEl) return;
+
+    if (active) {
+        permEl.textContent = "Checked (Clean)";
+        permEl.style.background = "rgba(16, 185, 129, 0.15)";
+        permEl.style.color = "#10b981";
+
+        policyEl.textContent = "Checked (Aligned)";
+        policyEl.style.background = "rgba(16, 185, 129, 0.15)";
+        policyEl.style.color = "#10b981";
+
+        disclosureEl.textContent = "Checked (Consistent)";
+        disclosureEl.style.background = "rgba(16, 185, 129, 0.15)";
+        disclosureEl.style.color = "#10b981";
+
+        flowsEl.textContent = "Checked (No leaks)";
+        flowsEl.style.background = "rgba(16, 185, 129, 0.15)";
+        flowsEl.style.color = "#10b981";
+
+        statusEl.textContent = "PASS (Consistent)";
+        statusEl.style.color = "#10b981";
+    } else {
+        permEl.textContent = "—";
+        permEl.style.background = "rgba(255,255,255,0.05)";
+        permEl.style.color = "var(--text-secondary)";
+
+        policyEl.textContent = "—";
+        policyEl.style.background = "rgba(255,255,255,0.05)";
+        policyEl.style.color = "var(--text-secondary)";
+
+        disclosureEl.textContent = "—";
+        disclosureEl.style.background = "rgba(255,255,255,0.05)";
+        disclosureEl.style.color = "var(--text-secondary)";
+
+        flowsEl.textContent = "—";
+        flowsEl.style.background = "rgba(255,255,255,0.05)";
+        flowsEl.style.color = "var(--text-secondary)";
+
+        statusEl.textContent = "Pending";
+        statusEl.style.color = "var(--text-secondary)";
     }
 }
 
@@ -5645,6 +5847,7 @@ function launchApplicationFactorySwarm() {
     renderFactoryStoreDeliveryMatrix(false);
     renderFactoryPertAnalysis(false);
     renderFactoryE2EEvidenceBoard(false);
+    renderFactoryPrivacyConsistencyGate(false);
     
     const researchLogs = document.getElementById("factory-research-logs");
     if (researchLogs) researchLogs.textContent = "Decomposing pipeline...";
@@ -5737,12 +5940,14 @@ function launchApplicationFactorySwarm() {
                     if (nsUser) nsUser.textContent = "Students, Families, Civic operators";
                     if (nsMetric) nsMetric.textContent = "Accessibility & Privacy metric index >= 98%";
                     if (nsBoundary) nsBoundary.textContent = "Refuse deceptive ads and data scraping";
-                } else if (stage === "PERT\u200bAnalysis") {
+                } else if (stage === "PERT Analysis") {
                     renderFactoryPertAnalysis(true);
                 } else if (stage === "Secure Development") {
                     renderFactoryCybersecurityPipeline(true);
                 } else if (stage === "QA / E2E") {
                     renderFactoryE2EEvidenceBoard(true);
+                } else if (stage === "Privacy / Store Compliance") {
+                    renderFactoryPrivacyConsistencyGate(true);
                 } else if (stage === "App Store Delivery") {
                     renderFactoryStoreDeliveryMatrix(true);
                 } else if (stage === "Post-Launch Monitoring") {
@@ -5815,5 +6020,6 @@ window.renderFactoryPertAnalysis = renderFactoryPertAnalysis;
 window.renderFactoryStoreDeliveryMatrix = renderFactoryStoreDeliveryMatrix;
 window.renderFactoryCybersecurityPipeline = renderFactoryCybersecurityPipeline;
 window.renderFactoryE2EEvidenceBoard = renderFactoryE2EEvidenceBoard;
+window.renderFactoryPrivacyConsistencyGate = renderFactoryPrivacyConsistencyGate;
 window.initializeCybersecurityFactory = initializeCybersecurityFactory;
 

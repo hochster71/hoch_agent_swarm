@@ -37,7 +37,7 @@ test.describe("Cybersecurity Factory View Flow", () => {
     // The pipeline animates sequentially with timeouts. Let's wait for the final completed state.
     // We can also assert visibility of various text items that light up
     await expect(page.getByText("North Star Planning", { exact: true }).first()).toBeVisible();
-    await expect(page.getByText("PERT\u200bAnalysis", { exact: true }).first()).toBeVisible();
+    await expect(page.getByText("PERT Analysis", { exact: true }).first()).toBeVisible();
     await expect(page.getByText("Cybersecurity Review", { exact: true }).first()).toBeVisible();
     await expect(page.getByText("App Store Delivery", { exact: true }).first()).toBeVisible();
     await expect(page.getByText("Apple App Store", { exact: true }).first()).toBeVisible();
@@ -45,6 +45,27 @@ test.describe("Cybersecurity Factory View Flow", () => {
 
     // Wait for the pipeline status to complete or the final agent to finish
     await page.waitForTimeout(6500); // 14 stages * 400ms = 5.6s + 300ms initial
+
+    // Assert that the Privacy Disclosure Consistency Check panel is visible
+    await expect(page.getByText("Privacy Disclosure Consistency Check", { exact: true }).first()).toBeVisible();
+    await expect(page.locator("#privacy-gate-status")).toHaveText("PASS (Consistent)");
+
+    // Assert that "Evidence generated · signing pending" is present in E2E logs
+    await expect(page.getByText("Evidence generated · signing pending", { exact: false })).toBeVisible();
+
+    // Click on foreman-fizz agent chip to open capability manifest modal
+    const foremanChip = page.locator("#factory-chip-foreman-fizz");
+    await foremanChip.click();
+
+    // Expect the dossier modal and capability manifest block to be visible
+    const manifestContainer = page.locator("#topology-agent-modal-manifest-container");
+    await expect(manifestContainer).toBeVisible();
+    await expect(page.locator("#agent-manifest-allowed")).toHaveText("git, grep, view_file, list_dir");
+    await expect(page.locator("#agent-manifest-denied")).toHaveText("run_command, write_to_file");
+
+    // Close modal
+    const closeBtn = page.locator("#topology-agent-modal-close");
+    await closeBtn.click();
 
     // Ensure the QA artifacts folder exists
     const screenshotPath = path.resolve(__dirname, "../../artifacts/qa/cybersecurity-factory-runtime.png");

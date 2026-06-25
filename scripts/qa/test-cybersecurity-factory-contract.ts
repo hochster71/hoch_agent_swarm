@@ -52,7 +52,9 @@ function runContractValidation(): ValidationResult {
     "factory-store-delivery-matrix",
     "factory-application-portfolio",
     "factory-post-launch-monitor",
-    "factory-agent-roster"
+    "factory-agent-roster",
+    "factory-privacy-consistency-gate",
+    "topology-agent-modal-manifest-container"
   ];
   for (const id of requiredIds) {
     if (!indexHtml.includes(`id="${id}"`) && !indexHtml.includes(`id='${id}'`)) {
@@ -67,7 +69,7 @@ function runContractValidation(): ValidationResult {
     "Humanity Usefulness Gate",
     "Research",
     "North Star Planning",
-    "PERT&#8203;&#65;nalysis",
+    "PERT Analysis",
     "Product Design",
     "Secure Development",
     "Cybersecurity Review",
@@ -86,7 +88,16 @@ function runContractValidation(): ValidationResult {
     "Chrome Web Store",
     "GitHub Release",
     "Docker Registry",
-    "Web / PWA"
+    "Web / PWA",
+    "Privacy Disclosure Consistency Check",
+    "Capability Manifest",
+    "Allowed Tools",
+    "Denied Tools",
+    "File Scopes",
+    "Network Scopes",
+    "Approval Threshold",
+    "Risk Category",
+    "Audit Sink"
   ];
   for (const text of requiredTexts) {
     if (!indexHtml.includes(text)) {
@@ -135,7 +146,8 @@ function runContractValidation(): ValidationResult {
     "renderFactoryPertAnalysis",
     "renderFactoryStoreDeliveryMatrix",
     "renderFactoryCybersecurityPipeline",
-    "renderFactoryE2EEvidenceBoard"
+    "renderFactoryE2EEvidenceBoard",
+    "renderFactoryPrivacyConsistencyGate"
   ];
   for (const func of requiredFunctions) {
     if (!appJs.includes(func)) {
