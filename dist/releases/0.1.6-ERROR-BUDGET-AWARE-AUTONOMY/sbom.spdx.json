@@ -3,9 +3,9 @@
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
   "name": "hoch-agent-swarm",
-  "documentNamespace": "https://hoch-agent-swarm.local/sbom/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/1782346119841",
+  "documentNamespace": "https://hoch-agent-swarm.local/sbom/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/1782346489743",
   "creationInfo": {
-    "created": "2026-06-25T00:08:39.841Z",
+    "created": "2026-06-25T00:14:49.743Z",
     "creators": [
       "Tool: hoch-agent-swarm-generate-sbom"
     ]
