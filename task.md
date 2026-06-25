@@ -1,17 +1,16 @@
-# Task List — Deep Swarm Page Audit
+# Task List — Phase 7: Immutable Release Channel + Tag Governance
 
-- `[ ]` Audit repository state (branch, HEAD, commits, Cosign status)
-- `[ ]` Verify build & asset integrity (`npm run build`, check CSS files)
-- `[ ]` Create and run `scripts/qa/test-full-page-swarm-audit.ts` (view/nav checks)
-- `[ ]` Create and run `tests/e2e/full-page-swarm-audit.spec.ts` (Playwright screenshots & traversal)
-- `[ ]` Create and run `scripts/qa/test-backend-runtime-api-contract.ts` (API contracts)
-- `[ ]` Create and run `scripts/qa/test-runtime-ledger-db-contract.ts` (SQLite contracts)
-- `[ ]` Create and run `scripts/qa/test-runtime-event-schema-contract.ts` (WebSocket metrics events)
-- `[ ]` Audit Capability Manifest enforcement gap
-- `[ ]` Audit Accessibility details (headings, close buttons, zero-width text debt)
-- `[ ]` Audit Security details (replay checks, tailwind CDN, browser sandbox constraints)
-- `[ ]` Audit Release Evidence (`npm run supply:release` and signing verification)
-- `[ ]` Configure package.json scripts (`qa:full-page-swarm-audit`, `qa:backend-runtime-api`, etc.)
-- `[ ]` Write full audit report `docs/mission/deep-swarm-page-audit-report.md`
-- `[ ]` Run final pipeline validation (full QA tests, release evidence refresh)
-- `[ ]` Commit the audit scripts, tests, reports, and evidence packages
+- `[x]` Add release channel policy model in `backend/main.py`
+- `[x]` Add REST endpoint `GET /api/v1/release/channel-governance` in `backend/main.py`
+- `[x]` Add REST endpoint `POST /api/v1/release/channel-decision` in `backend/main.py`
+- `[x]` Update `scripts/supply-chain/generate-release-manifest.ts` to embed channel and tag fields in the manifest
+- `[x]` Update `scripts/supply-chain/verify-release-artifacts.ts` to enforce release channel and tag policies
+- `[x]` Add Release Channel Governance panel HTML in `frontend/index.html`
+- `[x]` Add JavaScript rendering and decision handler logic in `frontend/app.js`
+- `[x]` Create contract validation script `scripts/qa/test-release-channel-governance-contract.ts`
+- `[x]` Create Playwright E2E spec `tests/e2e/release-channel-governance.spec.ts`
+- `[x]` Register scripts in `package.json` (`qa:release-channel-governance`, `e2e:release-channel-governance`)
+- `[x]` Update `docs/mission/deep-swarm-page-audit-report.md`
+- `[x]` Update `walkthrough.md`
+- `[x]` Run full verification suite and verify PASS status
+- `[x]` Commit the Phase 7 changes and refresh release evidence

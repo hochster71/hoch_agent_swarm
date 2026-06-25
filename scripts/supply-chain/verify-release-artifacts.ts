@@ -68,9 +68,7 @@ const signatureStatus = manifest.signature_status || "unsigned";
 const signingPolicyStatus = manifest.signing_policy_status || "WARN";
 const releaseFinalizationStatus = manifest.release_finalization_status || "local_dev_pass";
 
-if (signatureStatus === "signed") {
-  // PASS
-} else if (signatureStatus === "waived") {
+if (signatureStatus === "signed" || signatureStatus === "waived") {
   // PASS
 } else {
   if (isFormalRelease) {
@@ -79,6 +77,30 @@ if (signatureStatus === "signed") {
     warnings.push("Release artifacts are unsigned (Allowed in local dev mode)");
   }
 }
+
+// Compute formal release blockers
+const formal_release_blockers: string[] = [];
+if (!manifest.working_tree_clean) formal_release_blockers.push("dirty_working_tree");
+if (manifest.decision?.status !== "PASS") formal_release_blockers.push("qa_not_passed");
+if (signingPolicyStatus === "BLOCK") formal_release_blockers.push("signing_policy_not_passed");
+if (manifest.release_tag_status === "NO_RELEASE_TAG") formal_release_blockers.push("tag_missing");
+if (manifest.release_tag_status === "STALE_TAG") formal_release_blockers.push("tag_stale");
+
+const isFormalChannel = (manifest.release_channel === "formal");
+const operatorApprovalMissing = isFormalChannel && !manifest.release_channel_decision_id;
+if (operatorApprovalMissing) {
+  formal_release_blockers.push("operator_approval_missing");
+}
+
+// Block if formal release is blocked
+if (isFormalRelease && manifest.formal_release_finalization_status === "formal_release_blocked") {
+  blockers.push(`Formal release finalization is blocked: ${formal_release_blockers.join(", ")}`);
+}
+
+const release_channel_policy_decision = 
+  manifest.formal_release_finalization_status === "formal_release_blocked" 
+    ? "BLOCK" 
+    : (manifest.release_channel === "local_dev" && formal_release_blockers.length > 0 ? "WARN" : "PASS");
 
 const report = {
   generated_at: new Date().toISOString(),
@@ -94,7 +116,19 @@ const report = {
     signing_policy_status: signingPolicyStatus,
     signature_status: signatureStatus,
     release_finalization_status: releaseFinalizationStatus
-  }
+  },
+  release_channel_policy_decision,
+  release_channel: manifest.release_channel || "local_dev",
+  tag_points_at_head: !!manifest.release_tag_points_at_head,
+  tag_status: manifest.release_tag_status || "NO_RELEASE_TAG",
+  formal_release_blockers,
+  allowed_release_actions: [
+    "continue_local_dev",
+    "create_candidate_release",
+    "request_formal_release_approval",
+    "request_tag_alignment_approval"
+  ],
+  operator_approval_required: isFormalChannel || isFormalRelease
 };
 
 fs.writeFileSync(

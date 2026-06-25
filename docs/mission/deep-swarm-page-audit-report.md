@@ -172,5 +172,13 @@ Regenerated supply chain artifacts:
 
 ---
 
+## Release Channel & Tag Governance
+- **Release Channels**: Implemented formal `local_dev`, `candidate`, and `formal` release channel policy governance.
+- **Tag Alignment**: Formal releases are blocked unless the target release tag points directly at the current HEAD commit (preventing "moving evidence buckets").
+- **Operator Approvals**: Explicit operator approval is required for any tag movement, tag waivers, or formal release promotions. No automatic tag mutation or creation is performed by the API.
+- **Stale Tag Audit**: If a release tag points to an older commit (e.g. stale `v0.1.6`), it is audited, and finalization is blocked.
+
+---
+
 ## Open Gaps
 1. **Cryptographic Signing Provider Credentials**: Actual signature generation (`.sig`) requires configuring Cosign credentials and keys in the target environment when ready.

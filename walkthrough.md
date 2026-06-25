@@ -60,7 +60,16 @@ We implemented the Release Signing Policy Gate to secure the supply chain releas
 
 ---
 
-## 6. Verification Results
+## 6. Immutable Release Channel & Tag Governance (Phase 7)
+We implemented formal release channel policy governance:
+- **Release Channels**: Added `local_dev`, `candidate`, and `formal` channels.
+- **Tag-Alignment Governance**: Checks that the release tag points directly at the current HEAD commit, blocking formal releases if a stale tag (like `v0.1.6`) or tag mismatch is found.
+- **Operator Approvals**: Enforced manual operator decisions for tag movement and channel promotion requests. No automatic tag mutation or creation is performed.
+- **UI Governance Panel**: Added the `#release-channel-governance-panel` card near the signing policy panel to display channel details, tag target SHA, git HEAD SHA, alignment status, and finalization status.
+
+---
+
+## 7. Verification Results
 
 ### Static QA & Contract Checks (`npm run qa:ui-contract`)
 - All contract checks exited with `PASS`:
@@ -75,6 +84,7 @@ We implemented the Release Signing Policy Gate to secure the supply chain releas
   - `topology-animation-quality`: PASS
   - `cybersecurity-factory`: PASS
   - `release-signing-policy-contract`: PASS
+  - `release-channel-governance-contract`: PASS
 
 ### Playwright E2E Integration Tests (`npm run qa:e2e-runtime`)
 - All browser simulation specs completed successfully:
@@ -83,6 +93,7 @@ We implemented the Release Signing Policy Gate to secure the supply chain releas
   - `topology-agent-overlay.spec.ts`: PASS (verified with 0 browser console/runtime exceptions)
   - `cybersecurity-factory.spec.ts`: PASS
   - `release-signing-policy.spec.ts`: PASS
+  - `release-channel-governance.spec.ts`: PASS
 
 ### North Star & Autonomy Budget Audit (`npm run qa:runtime-full`)
 - Autonomy Safety Engine static red-team assertions: 20/20 PASS

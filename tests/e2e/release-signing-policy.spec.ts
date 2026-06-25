@@ -28,9 +28,9 @@ test.describe("Release Signing Policy Gate E2E", () => {
     const panel = page.locator("#release-signing-policy-panel");
     await expect(panel).toBeVisible();
 
-    await expect(page.locator("text=Release Signing Policy")).toBeVisible();
-    await expect(page.locator("text=Signature Status")).toBeVisible();
-    await expect(page.locator("text=Signing Required for Formal Release")).toBeVisible();
+    await expect(page.locator("h2:has-text('Release Signing Policy')")).toBeVisible();
+    await expect(page.locator("strong:has-text('Signature Status')")).toBeVisible();
+    await expect(page.locator("strong:has-text('Signing Required for Formal Release')")).toBeVisible();
     await expect(page.locator("text=Local Dev Allows Unsigned Evidence")).toBeVisible();
     await expect(page.locator("text=Formal Release Blocks Unsigned Artifacts")).toBeVisible();
 
@@ -39,9 +39,9 @@ test.describe("Release Signing Policy Gate E2E", () => {
     const statusLocator = page.locator("#release-signature-status");
     if (signatureStatus === "unsigned") {
       await expect(statusLocator).toHaveText("Signing Pending");
-      await expect(page.locator("text=Continue Local Dev")).toBeVisible();
+      await expect(page.locator("#btn-signing-continue-dev")).toBeVisible();
       // Ensure we do not display "Formal Release Ready" since it is unsigned and not waived
-      await expect(page.locator("text=Formal Release Ready")).not.toBeVisible();
+      await expect(page.locator("#release-finalization-status")).not.toHaveText("Formal Release Ready");
     } else if (signatureStatus === "signed") {
       await expect(statusLocator).toHaveText("Signed");
     } else if (signatureStatus === "waived") {

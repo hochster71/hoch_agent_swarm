@@ -7008,18 +7008,154 @@ async function fetchAndRenderSigningPolicy() {
                     const btn = document.createElement("button");
                     btn.className = "btn btn-xs";
                     if (action === "continue_local_dev") {
+                        btn.id = "btn-signing-continue-dev";
                         btn.className += " btn-secondary";
                         btn.textContent = "Continue Local Dev";
                     } else if (action === "request_signing") {
+                        btn.id = "btn-signing-request-sign";
                         btn.className += " btn-primary";
                         btn.textContent = "Request Signing";
                     } else if (action === "request_operator_waiver") {
+                        btn.id = "btn-signing-request-waiver";
                         btn.className += " btn-danger";
                         btn.textContent = "Request Operator Waiver";
                     }
                     btn.addEventListener("click", () => handleSigningAction(action));
                     actionListEl.appendChild(btn);
                 });
+            }
+
+            // 6. Fetch and render release channel governance
+            const chanResponse = await fetch(`${API_BASE}/api/v1/release/channel-governance`);
+            if (chanResponse.ok) {
+                const chanData = await chanResponse.json();
+                const curRel = chanData.current_release || {};
+                
+                // Render current channel
+                const chanCurrentEl = document.getElementById("release-channel-current");
+                if (chanCurrentEl) {
+                    if (curRel.channel === "formal") {
+                        chanCurrentEl.textContent = "Formal";
+                        chanCurrentEl.style.color = "var(--accent-teal)";
+                    } else if (curRel.channel === "candidate") {
+                        chanCurrentEl.textContent = "Candidate";
+                        chanCurrentEl.style.color = "var(--accent-yellow)";
+                    } else {
+                        chanCurrentEl.textContent = "Local Dev";
+                        chanCurrentEl.style.color = "var(--accent-blue)";
+                    }
+                }
+                
+                // Render policy status
+                const chanPolicyStatusEl = document.getElementById("release-channel-policy-status");
+                if (chanPolicyStatusEl) {
+                    const status = curRel.release_channel_policy_status || "WARN";
+                    chanPolicyStatusEl.textContent = status;
+                    if (status === "PASS") {
+                        chanPolicyStatusEl.style.color = "var(--accent-teal)";
+                        chanPolicyStatusEl.style.borderColor = "var(--accent-teal)";
+                    } else if (status === "BLOCK") {
+                        chanPolicyStatusEl.style.color = "#ef4444";
+                        chanPolicyStatusEl.style.borderColor = "#ef4444";
+                    } else {
+                        chanPolicyStatusEl.style.color = "var(--accent-yellow)";
+                        chanPolicyStatusEl.style.borderColor = "var(--accent-yellow)";
+                    }
+                }
+                
+                // Render release tag
+                const tagCurrentEl = document.getElementById("release-tag-current");
+                if (tagCurrentEl) {
+                    tagCurrentEl.textContent = curRel.release_tag || "v0.1.6-ERROR-BUDGET-AWARE-AUTONOMY";
+                }
+                
+                // Render tag status
+                const tagStatusEl = document.getElementById("release-tag-status");
+                if (tagStatusEl) {
+                    if (curRel.tag_status === "TAG_AT_HEAD") {
+                        tagStatusEl.textContent = "Tag Points at HEAD";
+                        tagStatusEl.style.color = "var(--accent-teal)";
+                    } else if (curRel.tag_status === "STALE_TAG") {
+                        tagStatusEl.textContent = "Stale Tag";
+                        tagStatusEl.style.color = "var(--accent-yellow)";
+                    } else {
+                        tagStatusEl.textContent = "No Release Tag";
+                        tagStatusEl.style.color = "var(--text-secondary)";
+                    }
+                }
+                
+                // Render tag alignment text
+                const tagAlignEl = document.getElementById("release-tag-alignment-status");
+                if (tagAlignEl) {
+                    if (curRel.tag_points_at_head) {
+                        tagAlignEl.textContent = "Tag Points at HEAD";
+                        tagAlignEl.style.color = "var(--accent-teal)";
+                    } else if (curRel.tag_status === "STALE_TAG") {
+                        tagAlignEl.textContent = "Stale Tag";
+                        tagAlignEl.style.color = "var(--accent-yellow)";
+                    } else {
+                        tagAlignEl.textContent = "No Release Tag";
+                        tagAlignEl.style.color = "var(--text-secondary)";
+                    }
+                }
+                
+                // Render SHAs
+                const tagHeadShaEl = document.getElementById("release-tag-head-sha");
+                if (tagHeadShaEl) {
+                    tagHeadShaEl.textContent = curRel.head_sha ? curRel.head_sha.substring(0, 12) : "...";
+                }
+                
+                const tagTargetShaEl = document.getElementById("release-tag-target-sha");
+                if (tagTargetShaEl) {
+                    tagTargetShaEl.textContent = curRel.tag_sha ? curRel.tag_sha.substring(0, 12) : "none";
+                }
+                
+                // Render finalization status
+                const formalFinalStatusEl = document.getElementById("release-formal-finalization-status");
+                if (formalFinalStatusEl) {
+                    if (curRel.release_finalization_status === "formal_release_blocked") {
+                        formalFinalStatusEl.textContent = "Formal Release Blocked";
+                        formalFinalStatusEl.style.color = "#ef4444";
+                    } else if (curRel.release_finalization_status === "formal_release_ready") {
+                        formalFinalStatusEl.textContent = "Formal Release Ready";
+                        formalFinalStatusEl.style.color = "var(--accent-teal)";
+                    } else if (curRel.release_finalization_status === "candidate_ready") {
+                        formalFinalStatusEl.textContent = "Candidate Ready";
+                        formalFinalStatusEl.style.color = "var(--accent-teal)";
+                    } else {
+                        formalFinalStatusEl.textContent = "Local Dev Pass";
+                        formalFinalStatusEl.style.color = "var(--accent-blue)";
+                    }
+                }
+                
+                // Populate channel action buttons
+                const chanActionListEl = document.getElementById("release-channel-action-list");
+                if (chanActionListEl) {
+                    chanActionListEl.innerHTML = "";
+                    const allowedActions = chanData.allowed_actions || [];
+                    allowedActions.forEach(action => {
+                        const btn = document.createElement("button");
+                        btn.className = "btn btn-xs";
+                        if (action === "continue_local_dev") {
+                            btn.className += " btn-secondary";
+                            btn.textContent = "Continue Local Dev";
+                        } else if (action === "create_candidate_release") {
+                            btn.className += " btn-yellow";
+                            btn.style.background = "rgba(234, 179, 8, 0.15)";
+                            btn.style.color = "var(--accent-yellow)";
+                            btn.style.border = "1px solid var(--accent-yellow)";
+                            btn.textContent = "Request Candidate Release";
+                        } else if (action === "request_formal_release_approval") {
+                            btn.className += " btn-primary";
+                            btn.textContent = "Request Formal Release Approval";
+                        } else if (action === "request_tag_alignment_approval") {
+                            btn.className += " btn-danger";
+                            btn.textContent = "Request Tag Alignment Approval";
+                        }
+                        btn.addEventListener("click", () => handleGovernanceAction(action));
+                        chanActionListEl.appendChild(btn);
+                    });
+                }
             }
         }
     } catch (err) {
@@ -7077,4 +7213,135 @@ async function handleSigningAction(action) {
 
 window.fetchAndRenderSigningPolicy = fetchAndRenderSigningPolicy;
 window.handleSigningAction = handleSigningAction;
+
+async function handleGovernanceAction(action) {
+    if (action === "continue_local_dev") {
+        try {
+            const res = await fetch(`${API_BASE}/api/v1/release/governance-waiver`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    reason: "Local development loop continuation",
+                    scope: "local_dev",
+                    operator: "Local Developer"
+                })
+            });
+            if (res.ok) {
+                alert("Local dev governance warning waived successfully.");
+                fetchAndRenderSigningPolicy();
+            }
+        } catch (err) {
+            alert("Failed to waive warning: " + err.message);
+        }
+    } else if (action === "request_tag_alignment_approval") {
+        const reason = prompt("Enter reason for tag alignment waiver / tag movement approval:", "Tag alignment override for testing");
+        if (reason === null) return;
+        try {
+            const res = await fetch(`${API_BASE}/api/v1/release/governance-waiver`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    reason: reason,
+                    scope: "formal_release",
+                    operator: "Operator"
+                })
+            });
+            if (res.ok) {
+                const data = await res.json();
+                alert("Governance waiver approval gate requested: " + data.approval_id);
+                fetchAndRenderSigningPolicy();
+                if (typeof fetchApprovalRequests === 'function') {
+                    fetchApprovalRequests();
+                }
+            }
+        } catch (err) {
+            alert("Failed to request waiver: " + err.message);
+        }
+    } else if (action === "create_candidate_release") {
+        try {
+            const res = await fetch(`${API_BASE}/api/v1/release/channel-decision`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    requested_channel: "candidate",
+                    operator: "Michael Hoch",
+                    reason: "Promote post-audit evidence to release candidate"
+                })
+            });
+            if (res.ok) {
+                const data = await res.json();
+                alert("Candidate promotion recorded successfully: " + data.approval_id);
+                fetchAndRenderSigningPolicy();
+            } else {
+                const data = await res.json();
+                alert("Failed to promote: " + (data.detail || "Unknown error"));
+            }
+        } catch (err) {
+            alert("Failed to promote: " + err.message);
+        }
+    } else if (action === "request_formal_release_approval") {
+        try {
+            const res = await fetch(`${API_BASE}/api/v1/release/channel-decision`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    requested_channel: "formal",
+                    operator: "Michael Hoch",
+                    reason: "Formal release promotion request"
+                })
+            });
+            if (res.ok) {
+                const data = await res.json();
+                alert("Formal release promotion requested: " + data.approval_id);
+                fetchAndRenderSigningPolicy();
+                if (typeof fetchApprovalRequests === 'function') {
+                    fetchApprovalRequests();
+                }
+            } else {
+                const data = await res.json();
+                alert("Failed to request: " + (data.detail || "Unknown error"));
+            }
+        } catch (err) {
+            alert("Failed to request: " + err.message);
+        }
+    }
+}
+
+async function submitChannelDecisionRequest() {
+    const channelSelect = document.getElementById("select-requested-channel");
+    const tagInput = document.getElementById("input-requested-tag");
+    if (!channelSelect) return;
+    
+    const requested_channel = channelSelect.value;
+    const requested_tag = tagInput ? tagInput.value : "";
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/channel-decision`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                requested_channel: requested_channel,
+                operator: "Michael Hoch",
+                reason: `Requested channel promotion to ${requested_channel}`,
+                requested_tag: requested_tag
+            })
+        });
+        if (res.ok) {
+            const data = await res.json();
+            alert(`Decision submitted. Status: ${data.status}, ID: ${data.approval_id}`);
+            fetchAndRenderSigningPolicy();
+            if (typeof fetchApprovalRequests === 'function') {
+                fetchApprovalRequests();
+            }
+        } else {
+            const data = await res.json();
+            alert("Failed to submit decision: " + (data.detail || "Unknown error"));
+        }
+    } catch (err) {
+        alert("Failed to submit: " + err.message);
+    }
+}
+
+window.handleGovernanceAction = handleGovernanceAction;
+window.submitChannelDecisionRequest = submitChannelDecisionRequest;
 

@@ -84,6 +84,44 @@ async function main() {
     console.warn("Could not fetch signing policy from backend:", (err as Error).message);
   }
 
+  // Fetch channel governance
+  let channelGovData: any = {
+    policy: {
+      allowed_channels: ["local_dev", "candidate", "formal"],
+      default_channel: "local_dev",
+      formal_requires_clean_tree: true,
+      formal_requires_tag_at_head: true,
+      formal_requires_signing_policy_pass: true,
+      formal_requires_qa_pass: true,
+      formal_requires_operator_approval: true,
+      tag_move_requires_operator_approval: true
+    },
+    current_release: {
+      version: VERSION,
+      channel: "local_dev",
+      head_sha: "unknown",
+      release_tag: `v${VERSION}`,
+      tag_sha: "",
+      tag_points_at_head: false,
+      tag_status: "NO_RELEASE_TAG",
+      working_tree_clean: false,
+      qa_status: "FAIL",
+      signing_policy_status: "WARN",
+      release_finalization_status: "local_dev_pass",
+      governance_waiver_status: "none",
+      tag_alignment_decision_id: null,
+      release_channel_decision_id: null
+    }
+  };
+  try {
+    const res = await fetch(`${BASE_URL}/api/v1/release/channel-governance`);
+    if (res.ok) {
+      channelGovData = await res.json();
+    }
+  } catch (err) {
+    console.warn("Could not fetch channel governance from backend:", (err as Error).message);
+  }
+
   const dockerDigests = readJson("artifacts/baseline/docker-image-digests.json", {
     records: [],
     warnings: ["docker digest report missing"],
@@ -182,6 +220,15 @@ async function main() {
     }
   }
 
+  const release_channel_policy_status = 
+    channelGovData.current_release.release_finalization_status === "formal_release_blocked" 
+      ? "BLOCK" 
+      : (channelGovData.current_release.channel === "local_dev" && (
+          channelGovData.current_release.tag_status !== "TAG_AT_HEAD" || 
+          !channelGovData.current_release.working_tree_clean || 
+          signingPolicyData.current_release.signing_policy_status !== "PASS"
+        ) ? "WARN" : "PASS");
+
   const manifest: any = {
     signing_policy_status: signingPolicyData.current_release.signing_policy_status || "WARN",
     signing_required_for_formal_release: true,
@@ -192,6 +239,20 @@ async function main() {
     signing_waiver_status: signingPolicyData.current_release.signing_waiver_status || "none",
     signing_waiver_decision_id: signingPolicyData.current_release.signing_waiver_decision_id,
     release_finalization_status: signingPolicyData.current_release.release_finalization_status || "local_dev_pass",
+    
+    release_channel: channelGovData.current_release.channel || "local_dev",
+    release_channel_policy_status: release_channel_policy_status,
+    release_tag: channelGovData.current_release.release_tag,
+    release_tag_sha: channelGovData.current_release.tag_sha,
+    release_tag_points_at_head: channelGovData.current_release.tag_points_at_head,
+    release_tag_status: channelGovData.current_release.tag_status,
+    working_tree_clean: channelGovData.current_release.working_tree_clean,
+    formal_release_requirements: channelGovData.policy,
+    formal_release_finalization_status: channelGovData.current_release.release_finalization_status,
+    tag_alignment_required: channelGovData.policy.formal_requires_tag_at_head,
+    tag_alignment_decision_id: channelGovData.current_release.tag_alignment_decision_id,
+    release_channel_decision_id: channelGovData.current_release.release_channel_decision_id,
+
     release: {
       version: VERSION,
       codename: "Hochster Runtime Execution Audit",

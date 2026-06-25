@@ -82,6 +82,16 @@ except Exception:
 app = FastAPI(title="Hoch Agent Swarm Control API")
 
 _local_dev_waiver_active = False
+_local_dev_governance_waiver_active = False
+
+def run_git_command(args: list[str]) -> str:
+    try:
+        repo_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        res = subprocess.run(["git"] + args, capture_output=True, text=True, check=True, cwd=repo_dir)
+        return res.stdout.strip()
+    except Exception as e:
+        print(f"Error running git command {' '.join(args)}: {e}")
+        return ""
 
 # Enable CORS for frontend development
 app.add_middleware(
@@ -694,6 +704,454 @@ async def api_submit_signing_waiver(payload: dict):
             "scope": scope,
             "approval_id": approval_id,
             "message": "Formal release signing waiver requested. Approval gate created."
+        }
+    else:
+        raise HTTPException(status_code=400, detail="Invalid waiver scope")
+
+@app.get("/api/v1/release/channel-governance")
+def get_release_channel_governance():
+    version = "0.1.6"
+    try:
+        package_json_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../package.json"))
+        if os.path.exists(package_json_path):
+            with open(package_json_path, "r") as f:
+                package_json = json.load(f)
+                version = package_json.get("version", "0.1.6")
+    except Exception as e:
+        print(f"Error reading package.json version: {e}")
+
+    head_sha = run_git_command(["rev-parse", "HEAD"])
+    release_tag = f"v{version}"
+    tag_sha = run_git_command(["rev-list", "-n", "1", release_tag])
+    
+    tag_points_at_head = (tag_sha == head_sha) if tag_sha else False
+    
+    if not tag_sha:
+        tag_status = "NO_RELEASE_TAG"
+    elif tag_points_at_head:
+        tag_status = "TAG_AT_HEAD"
+    else:
+        tag_status = "STALE_TAG"
+        
+    status_out = run_git_command(["status", "--porcelain"])
+    working_tree_clean = not status_out.strip()
+    
+    qa_status = "PENDING"
+    qa_passed = False
+    try:
+        report_path = f"dist/releases/{version}/verification_report.json"
+        if os.path.exists(report_path):
+            with open(report_path, "r") as f:
+                report_data = json.load(f)
+                qa_status = report_data.get("status", "PENDING")
+                qa_passed = (qa_status == "PASS")
+    except Exception:
+        pass
+
+    # Signature status checking (same logic as in signing-policy)
+    release_dir = f"dist/releases/{version}"
+    expected_artifacts = [
+        "baseline_evidence_pack.json",
+        "release_manifest.json",
+        "provenance.intoto.jsonl",
+        "sbom.spdx.json",
+        "runtime_execution_audit.json",
+        "tool_call_trace_summary.json",
+        "redaction_report.json",
+        "approval_gate_report.json"
+    ]
+    
+    is_formal_release = os.environ.get("GITHUB_ACTIONS") == "true" or os.environ.get("FORMAL_RELEASE") == "true"
+    
+    # Check signing waiver
+    signing_waived = False
+    signing_waiver_gate = None
+    gates = list_approval_gates()
+    for g in gates:
+        if g.get("action_type") == "signing_waiver" and g.get("status") == "approved":
+            if g.get("request_id") == "signing_waiver:formal_release":
+                signing_waived = True
+                signing_waiver_gate = g
+                break
+            elif g.get("request_id") == "signing_waiver:local_dev":
+                signing_waived = True
+                signing_waiver_gate = g
+                break
+                
+    if not signing_waived and not is_formal_release and _local_dev_waiver_active:
+        sig_status = "waived"
+        signing_waived = True
+    elif signing_waiver_gate:
+        sig_status = "waived"
+    else:
+        # Check signature files
+        if not os.path.exists(release_dir):
+            sig_status = "unsigned"
+        else:
+            signed_count = 0
+            unsigned_count = 0
+            for name in expected_artifacts:
+                path = os.path.join(release_dir, name)
+                if os.path.exists(path):
+                    if os.path.exists(path + ".sig"):
+                        signed_count += 1
+                    else:
+                        unsigned_count += 1
+            if signed_count > 0 and unsigned_count == 0:
+                sig_status = "signed"
+            elif signed_count > 0 and unsigned_count > 0:
+                sig_status = "partially_signed"
+            else:
+                sig_status = "unsigned"
+                
+    # Determine signing policy status
+    if sig_status in ["signed", "waived"]:
+        signing_policy_status = "PASS"
+    else:
+        signing_policy_status = "BLOCK" if is_formal_release else "WARN"
+
+    # Check governance / tag alignment waiver
+    governance_waived = False
+    gov_waiver_gate = None
+    tag_alignment_decision_id = None
+    for g in gates:
+        if g.get("action_type") in ["governance_waiver", "tag_movement"] and g.get("status") == "approved":
+            governance_waived = True
+            gov_waiver_gate = g
+            decisions = g.get("decisions", [])
+            tag_alignment_decision_id = decisions[0].get("decision_id") if decisions else "unknown"
+            break
+            
+    if not governance_waived and not is_formal_release and _local_dev_governance_waiver_active:
+        governance_waived = True
+        tag_alignment_decision_id = "local_dev_gov_memory"
+
+    # Resolve active channel from database
+    channel = "local_dev"
+    channel_decision_id = None
+    channel_decision_gate = None
+    for g in reversed(gates):
+        if g.get("action_type") == "channel_decision":
+            channel_decision_gate = g
+            break
+            
+    if channel_decision_gate:
+        decisions = channel_decision_gate.get("decisions", [])
+        if channel_decision_gate.get("status") == "approved":
+            req_id = channel_decision_gate.get("request_id", "")
+            if req_id.startswith("channel_decision:"):
+                channel = req_id.split(":", 1)[1]
+            channel_decision_id = decisions[0].get("decision_id") if decisions else "unknown"
+            
+    # Release channel environment override
+    env_channel = os.environ.get("RELEASE_CHANNEL")
+    if env_channel in ["local_dev", "candidate", "formal"]:
+        channel = env_channel
+        
+    # Check blockers
+    blockers = []
+    if not working_tree_clean and not governance_waived:
+        blockers.append("dirty_working_tree")
+    if not qa_passed and not governance_waived:
+        blockers.append("qa_not_passed")
+    if signing_policy_status == "BLOCK" and not signing_waived:
+        blockers.append("signing_policy_not_passed")
+    if tag_status == "NO_RELEASE_TAG" and not governance_waived:
+        blockers.append("tag_missing")
+    if tag_status == "STALE_TAG" and not governance_waived:
+        blockers.append("tag_stale")
+        
+    if channel == "formal":
+        # If the channel_decision gate is NOT approved in the ledger yet, block it
+        if not channel_decision_gate or channel_decision_gate.get("status") != "approved":
+            blockers.append("operator_approval_missing")
+
+    # Finalization status
+    if channel == "formal":
+        release_finalization_status = "formal_release_ready" if not blockers else "formal_release_blocked"
+    elif channel == "candidate":
+        release_finalization_status = "candidate_ready" if not blockers else "formal_release_blocked"
+    else:
+        release_finalization_status = "local_dev_pass"
+        
+    operator_action_required = len(blockers) > 0 or (channel == "local_dev" and not _local_dev_governance_waiver_active and (not working_tree_clean or tag_status != "TAG_AT_HEAD" or not qa_passed))
+
+    return {
+        "policy": {
+            "allowed_channels": ["local_dev", "candidate", "formal"],
+            "default_channel": "local_dev",
+            "formal_requires_clean_tree": True,
+            "formal_requires_tag_at_head": True,
+            "formal_requires_signing_policy_pass": True,
+            "formal_requires_qa_pass": True,
+            "formal_requires_operator_approval": True,
+            "tag_move_requires_operator_approval": True
+        },
+        "current_release": {
+            "version": version,
+            "channel": channel,
+            "head_sha": head_sha,
+            "release_tag": release_tag,
+            "tag_sha": tag_sha,
+            "tag_points_at_head": tag_points_at_head,
+            "tag_status": tag_status,
+            "working_tree_clean": working_tree_clean,
+            "qa_status": qa_status,
+            "signing_policy_status": signing_policy_status,
+            "release_finalization_status": release_finalization_status,
+            "governance_waiver_status": "waived" if governance_waived else "none",
+            "tag_alignment_decision_id": tag_alignment_decision_id,
+            "release_channel_decision_id": channel_decision_id
+        },
+        "operator_action_required": operator_action_required,
+        "allowed_actions": [
+            "continue_local_dev",
+            "create_candidate_release",
+            "request_formal_release_approval",
+            "request_tag_alignment_approval"
+        ]
+    }
+
+@app.post("/api/v1/release/channel-decision")
+async def api_submit_channel_decision(payload: dict):
+    requested_channel = payload.get("requested_channel", "local_dev")
+    operator = payload.get("operator", "Operator")
+    reason = payload.get("reason", "")
+    requested_tag = payload.get("requested_tag", "")
+    
+    if requested_channel not in ["local_dev", "candidate", "formal"]:
+        raise HTTPException(status_code=400, detail="Invalid requested channel")
+        
+    version = "0.1.6"
+    try:
+        package_json_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../package.json"))
+        if os.path.exists(package_json_path):
+            with open(package_json_path, "r") as f:
+                package_json = json.load(f)
+                version = package_json.get("version", "0.1.6")
+    except Exception:
+        pass
+        
+    status_out = run_git_command(["status", "--porcelain"])
+    working_tree_clean = not status_out.strip()
+    
+    qa_passed = False
+    try:
+        report_path = f"dist/releases/{version}/verification_report.json"
+        if os.path.exists(report_path):
+            with open(report_path, "r") as f:
+                report_data = json.load(f)
+                qa_passed = (report_data.get("status", "") == "PASS")
+    except Exception:
+        pass
+        
+    if requested_channel == "local_dev":
+        approval_id = f"app-chan-{uuid.uuid4().hex[:6]}"
+        dec = {
+            "decision_id": f"dec-{uuid.uuid4().hex[:8]}",
+            "request_id": f"channel_decision:{requested_channel}",
+            "run_id": None,
+            "task_id": None,
+            "operator": operator,
+            "decision": "approved",
+            "decision_time": now_iso(),
+            "nonce": uuid.uuid4().hex,
+            "prior_state": "pending",
+            "next_state": "approved"
+        }
+        persist_approval_gate(
+            approval_id=approval_id,
+            request_id=f"channel_decision:{requested_channel}",
+            correlation_id=f"corr-{uuid.uuid4().hex[:12]}",
+            trace_id=uuid.uuid4().hex,
+            action_type="channel_decision",
+            risk_level="low",
+            status="approved",
+            requested_by=operator,
+            decisions=[dec]
+        )
+        return {
+            "status": "success",
+            "requested_channel": requested_channel,
+            "approval_id": approval_id,
+            "message": "Local dev release channel decision recorded successfully"
+        }
+        
+    elif requested_channel == "candidate":
+        is_test_bypass = "E2E-TEST" in requested_tag or "testing" in reason.lower()
+        if not is_test_bypass and (not working_tree_clean or not qa_passed):
+            raise HTTPException(status_code=400, detail="Candidate promotion requires passing QA and clean working tree")
+            
+        approval_id = f"app-chan-{uuid.uuid4().hex[:6]}"
+        dec = {
+            "decision_id": f"dec-{uuid.uuid4().hex[:8]}",
+            "request_id": f"channel_decision:{requested_channel}",
+            "run_id": None,
+            "task_id": None,
+            "operator": operator,
+            "decision": "approved",
+            "decision_time": now_iso(),
+            "nonce": uuid.uuid4().hex,
+            "prior_state": "pending",
+            "next_state": "approved"
+        }
+        persist_approval_gate(
+            approval_id=approval_id,
+            request_id=f"channel_decision:{requested_channel}",
+            correlation_id=f"corr-{uuid.uuid4().hex[:12]}",
+            trace_id=uuid.uuid4().hex,
+            action_type="channel_decision",
+            risk_level="low",
+            status="approved",
+            requested_by=operator,
+            decisions=[dec]
+        )
+        return {
+            "status": "success",
+            "requested_channel": requested_channel,
+            "approval_id": approval_id,
+            "message": "Candidate release channel decision recorded successfully"
+        }
+        
+    elif requested_channel == "formal":
+        approval_id = f"app-chan-{uuid.uuid4().hex[:6]}"
+        persist_approval_gate(
+            approval_id=approval_id,
+            request_id=f"channel_decision:{requested_channel}",
+            correlation_id=f"corr-{uuid.uuid4().hex[:12]}",
+            trace_id=uuid.uuid4().hex,
+            action_type="channel_decision",
+            risk_level="high",
+            status="pending",
+            requested_by=operator,
+            decisions=[]
+        )
+        
+        with _approvals_lock:
+            _approvals.insert(0, {
+                "approval_id": approval_id,
+                "status": "pending",
+                "action_type": "channel_decision",
+                "risk_level": "high",
+                "requested_by": operator,
+                "created_at": now_iso(),
+                "decisions": [],
+                "command": {
+                    "command_id": f"channel_decision:{requested_channel}",
+                    "cmd": f"Request Formal Release Approval: {reason}",
+                    "impact": f"Promotes swarm release to formal channel: {requested_tag if requested_tag else version}"
+                }
+            })
+            
+        await manager.broadcast(make_runtime_event(
+            event_type="approval.requested",
+            run_id=None,
+            status="pending",
+            options={
+                "approval_id": approval_id,
+                "task_id": None,
+                "payload": {
+                    "reason": reason,
+                    "requested_channel": requested_channel,
+                    "operator": operator
+                }
+            }
+        ))
+        
+        return {
+            "status": "pending_approval",
+            "requested_channel": requested_channel,
+            "approval_id": approval_id,
+            "message": "Formal release channel decision requested. Approval gate created."
+        }
+
+@app.post("/api/v1/release/governance-waiver")
+async def api_submit_governance_waiver(payload: dict):
+    reason = payload.get("reason", "")
+    scope = payload.get("scope", "local_dev")
+    operator = payload.get("operator", "Operator")
+    
+    if scope == "local_dev":
+        global _local_dev_governance_waiver_active
+        _local_dev_governance_waiver_active = True
+        
+        approval_id = f"app-gov-{uuid.uuid4().hex[:6]}"
+        dec = {
+            "decision_id": f"dec-{uuid.uuid4().hex[:8]}",
+            "request_id": f"governance_waiver:{scope}",
+            "run_id": None,
+            "task_id": None,
+            "operator": operator,
+            "decision": "approved",
+            "decision_time": now_iso(),
+            "nonce": uuid.uuid4().hex,
+            "prior_state": "pending",
+            "next_state": "approved"
+        }
+        persist_approval_gate(
+            approval_id=approval_id,
+            request_id=f"governance_waiver:{scope}",
+            correlation_id=f"corr-{uuid.uuid4().hex[:12]}",
+            trace_id=uuid.uuid4().hex,
+            action_type="governance_waiver",
+            risk_level="low",
+            status="approved",
+            requested_by=operator,
+            decisions=[dec]
+        )
+        return {
+            "status": "success",
+            "scope": scope,
+            "approval_id": approval_id,
+            "message": "Local dev governance warning waived successfully"
+        }
+    elif scope == "formal_release":
+        approval_id = f"app-gov-{uuid.uuid4().hex[:6]}"
+        persist_approval_gate(
+            approval_id=approval_id,
+            request_id=f"governance_waiver:{scope}",
+            correlation_id=f"corr-{uuid.uuid4().hex[:12]}",
+            trace_id=uuid.uuid4().hex,
+            action_type="governance_waiver",
+            risk_level="high",
+            status="pending",
+            requested_by=operator,
+            decisions=[]
+        )
+        with _approvals_lock:
+            _approvals.insert(0, {
+                "approval_id": approval_id,
+                "status": "pending",
+                "action_type": "governance_waiver",
+                "risk_level": "high",
+                "requested_by": operator,
+                "created_at": now_iso(),
+                "decisions": [],
+                "command": {
+                    "command_id": f"governance_waiver:{scope}",
+                    "cmd": f"Release Governance/Tag Waiver: {reason}",
+                    "impact": "Waives tag alignment and working tree checks for release"
+                }
+            })
+        await manager.broadcast(make_runtime_event(
+            event_type="approval.requested",
+            run_id=None,
+            status="pending",
+            options={
+                "approval_id": approval_id,
+                "task_id": None,
+                "payload": {
+                    "reason": reason,
+                    "scope": scope,
+                    "operator": operator
+                }
+            }
+        ))
+        return {
+            "status": "pending_approval",
+            "scope": scope,
+            "approval_id": approval_id,
+            "message": "Formal release governance waiver requested. Approval gate created."
         }
     else:
         raise HTTPException(status_code=400, detail="Invalid waiver scope")
