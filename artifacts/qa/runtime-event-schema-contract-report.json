@@ -1,25 +1,16 @@
 {
-  "generated_at": "2026-06-25T18:41:15.181Z",
+  "generated_at": "2026-06-25T19:08:04.183Z",
   "status": "PASS",
   "errors": [],
   "findings": [
-    "Triggered run creation: run-3be57838",
-    "Received 21 events from WebSocket",
+    "Triggered run creation: run-6d8b79a3",
+    "Received 12 events from WebSocket",
     "Skipping raw cluster status metrics telemetry packet",
     "Evaluating event type: run.created",
     "Evaluating event type: task_state_change",
     "Evaluating event type: capability.allowed",
     "Evaluating event type: task_state_change",
     "Evaluating event type: task.started",
-    "Evaluating event type: task_state_change",
-    "Evaluating event type: capability.approval_required",
-    "Evaluating event type: task_state_change",
-    "Evaluating event type: task.blocked",
-    "Evaluating event type: approval.requested",
-    "Evaluating event type: capability.approval_required",
-    "Evaluating event type: task_state_change",
-    "Evaluating event type: task.blocked",
-    "Evaluating event type: approval.requested",
     "Skipping raw cluster status metrics telemetry packet",
     "Evaluating event type: task_state_change",
     "Evaluating event type: capability.approval_required",
@@ -28,6 +19,6 @@
     "Evaluating event type: approval.requested"
   ],
   "gaps": [],
-  "received_events_count": 21,
+  "received_events_count": 12,
   "gaps_count": 0
 }

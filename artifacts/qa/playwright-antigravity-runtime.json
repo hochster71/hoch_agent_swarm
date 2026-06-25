@@ -4,7 +4,7 @@
       "/opt/homebrew/Cellar/node/26.3.1/bin/node",
       "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/node_modules/.bin/playwright",
       "test",
-      "tests/e2e/release-seal-attestation-bundle.spec.ts"
+      "tests/e2e/device-registry-topology.spec.ts"
     ],
     "configFile": "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/playwright.config.ts",
     "rootDir": "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/tests/e2e",
@@ -73,20 +73,20 @@
   },
   "suites": [
     {
-      "title": "release-seal-attestation-bundle.spec.ts",
-      "file": "release-seal-attestation-bundle.spec.ts",
+      "title": "device-registry-topology.spec.ts",
+      "file": "device-registry-topology.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "Release Seal Attestation Bundle E2E",
-          "file": "release-seal-attestation-bundle.spec.ts",
+          "title": "Device Registry Topology E2E",
+          "file": "device-registry-topology.spec.ts",
           "line": 5,
           "column": 6,
           "specs": [
             {
-              "title": "runs preview, requests approval, approves preview, executes seal dry run, and generates attestation bundle successfully",
+              "title": "renders all three new onboarded iPads and the updated iMac IP on the dashboard",
               "ok": true,
               "tags": [],
               "tests": [
@@ -101,37 +101,16 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 7686,
+                      "duration": 1915,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "E2E Dialog type: alert, message: Candidate Release Packet generated successfully, but FORMAL RELEASE is STILL BLOCKED. Formal release requires signing policy and tag alignment gates to pass.\n"
-                        },
-                        {
-                          "text": "E2E Dialog type: alert, message: Formal Release Preview simulation complete: release is STILL BLOCKED. Review blockers and required actions.\n"
-                        },
-                        {
-                          "text": "E2E Dialog type: alert, message: Formal release approval request created successfully. Please check the pending gates queue in the Governance Cockpit.\n"
-                        },
-                        {
-                          "text": "E2E Dialog type: prompt, message: Enter justification reason for this approve decision:\n"
-                        },
-                        {
-                          "text": "E2E Dialog type: alert, message: Decision registered in the SQLite governance ledger successfully.\n"
-                        },
-                        {
-                          "text": "E2E Dialog type: alert, message: Seal Dry Run completed: SEAL_BLOCKED. Protects no-mutation guarantee.\n"
-                        },
-                        {
-                          "text": "E2E Dialog type: alert, message: Attestation Bundle generated: ATTESTATION_WARN\n"
-                        },
-                        {
-                          "text": "Captured E2E screenshot at: artifacts/qa/release-seal-attestation-bundle.png\n"
+                          "text": "Captured E2E topology screenshot at: artifacts/qa/device-registry-topology.png\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-06-25T18:43:02.659Z",
+                      "startTime": "2026-06-25T19:10:06.023Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -139,8 +118,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "5bbfb7873501a4755576-3933a333e79427ef78e0",
-              "file": "release-seal-attestation-bundle.spec.ts",
+              "id": "f701f25a68e3e21b1a31-716639467a58185b65e9",
+              "file": "device-registry-topology.spec.ts",
               "line": 6,
               "column": 7
             }
@@ -151,8 +130,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-06-25T18:43:02.453Z",
-    "duration": 8009.090000000001,
+    "startTime": "2026-06-25T19:10:05.769Z",
+    "duration": 2294.642,
     "expected": 1,
     "skipped": 0,
     "unexpected": 0,
