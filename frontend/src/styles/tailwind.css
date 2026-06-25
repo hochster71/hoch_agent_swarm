@@ -15,3 +15,287 @@
     font-weight: 700;
 }
 
+/* Swarm Status LEDs for Sidebar Indicators */
+.nav-status-indicator.swarm-led-idle {
+    color: #6b7280 !important;
+    text-shadow: 0 0 4px rgba(107, 114, 128, 0.5);
+    animation: none;
+}
+.nav-status-indicator.swarm-led-active {
+    color: #3b82f6 !important;
+    text-shadow: 0 0 8px rgba(59, 130, 246, 0.8);
+    animation: ledBlinkBlue 1.2s infinite;
+}
+.nav-status-indicator.swarm-led-complete {
+    color: #10b981 !important;
+    text-shadow: 0 0 8px rgba(16, 185, 129, 0.8);
+    animation: none;
+}
+.nav-status-indicator.swarm-led-blocked {
+    color: #ef4444 !important;
+    text-shadow: 0 0 8px rgba(239, 68, 68, 0.8);
+    animation: ledBlinkRed 0.8s infinite;
+}
+.nav-status-indicator.swarm-led-approval {
+    color: #f59e0b !important;
+    text-shadow: 0 0 8px rgba(245, 158, 11, 0.8);
+    animation: ledBlinkAmber 1.2s infinite alternate;
+}
+
+@keyframes ledBlinkBlue {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+@keyframes ledBlinkRed {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+@keyframes ledBlinkAmber {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+/* Global Process Rail step styles */
+.process-stage-step {
+    flex: 1;
+    text-align: center;
+    padding: 6px 12px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-glass);
+    font-family: monospace;
+    font-size: 11px;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+}
+.process-stage-step.active {
+    background: rgba(59, 130, 246, 0.15) !important;
+    border-color: #3b82f6 !important;
+    color: #93c5fd !important;
+    font-weight: 700;
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+}
+.process-stage-step.complete {
+    background: rgba(16, 185, 129, 0.15) !important;
+    border-color: var(--accent-teal) !important;
+    color: var(--accent-teal) !important;
+    font-weight: 700;
+}
+
+/* Global Agent Dock Card styles */
+.agent-dock-card {
+    background: rgba(22, 28, 45, 0.4);
+    border: 1px solid var(--border-glass);
+    border-radius: 6px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.5s ease-in-out;
+    opacity: 0.3;
+    transform: scale(0.95);
+}
+.agent-dock-card.active {
+    opacity: 1;
+    transform: scale(1.02);
+    border-color: #3b82f6;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+}
+.agent-dock-card.complete {
+    opacity: 1;
+    transform: scale(1);
+    border-color: var(--accent-teal);
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+}
+.agent-dock-card.blocked {
+    opacity: 1;
+    transform: scale(1.02);
+    border-color: #ef4444;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+}
+.agent-dock-card.needs-approval {
+    opacity: 1;
+    transform: scale(1.02);
+    border-color: #f59e0b;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+}
+
+.agent-dock-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-glass);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+.agent-dock-card.active .agent-dock-avatar {
+    border-color: #3b82f6;
+    background: rgba(59, 130, 246, 0.1);
+}
+.agent-dock-card.complete .agent-dock-avatar {
+    border-color: var(--accent-teal);
+    background: rgba(16, 185, 129, 0.1);
+}
+
+/* Compliance evidence lights */
+.evidence-light {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #6b7280;
+    box-shadow: 0 0 2px rgba(107, 114, 128, 0.5);
+    transition: all 0.3s ease;
+}
+.evidence-light.locked {
+    background-color: #10b981;
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.8);
+}
+.evidence-light.pending {
+    background-color: #3b82f6;
+    box-shadow: 0 0 6px rgba(59, 130, 246, 0.8);
+    animation: ledBlinkBlue 1s infinite;
+}
+
+/* ==============================================================================
+   TOPOLOGY AGENT OVERLAY SYSTEM - KIMI-STYLE / PIXEL-STICK
+   ============================================================================== */
+.topology-agent-overlay-runtime {
+    margin-bottom: 20px;
+    padding: 16px;
+    background: rgba(22, 28, 45, 0.45);
+    border: 1px solid var(--border-glass);
+    border-radius: 12px;
+}
+
+.topology-agent-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(22, 28, 45, 0.6);
+    border: 1px solid var(--border-glass);
+    border-radius: 999px;
+    padding: 6px 14px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 500;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.topology-agent-chip:hover {
+    transform: translateY(-1px);
+    border-color: rgba(59, 130, 246, 0.5);
+    background: rgba(59, 130, 246, 0.05);
+}
+
+.topology-agent-chip.is-active {
+    background: #fff !important;
+    color: #0b0f19 !important;
+    border-color: #fff !important;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+}
+
+.topology-agent-chip.is-dimmed {
+    opacity: 0.35;
+}
+
+.topology-agent-chip.is-complete {
+    border-color: var(--accent-teal) !important;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.25);
+}
+
+.topology-agent-led {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #4b5563;
+    display: inline-block;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.topology-agent-led.is-green {
+    background-color: #10b981 !important;
+    box-shadow: 0 0 8px #10b981 !important;
+}
+
+.topology-stage-step {
+    flex: 1;
+    text-align: center;
+    padding: 6px 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-glass);
+    font-family: monospace;
+    font-size: 10px;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+}
+
+.topology-stage-step.is-active {
+    background: rgba(59, 130, 246, 0.15) !important;
+    border-color: #3b82f6 !important;
+    color: #93c5fd !important;
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+}
+
+.topology-stage-step.is-complete {
+    background: rgba(16, 185, 129, 0.15) !important;
+    border-color: var(--accent-teal) !important;
+    color: var(--accent-teal) !important;
+}
+
+.topology-asset-glow {
+    border-color: var(--accent-teal) !important;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.4) !important;
+    transition: all 0.5s ease;
+}
+
+.topology-profile-modal {
+    width: min(600px, calc(100vw - 32px));
+    border: 0;
+    border-radius: 20px;
+    padding: 0;
+    background: #0f172a;
+    color: #f8fafc;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    outline: none;
+}
+
+.topology-profile-modal::backdrop {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+}
+
+.topology-profile-avatar {
+    height: 160px;
+    border: 1px solid var(--border-glass);
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-size: 80px;
+    background: rgba(0, 0, 0, 0.3);
+    font-family: monospace;
+}
+
+.topology-motion-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 50;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .topology-agent-chip,
+    .topology-stage-step {
+        transition: none !important;
+    }
+}
+

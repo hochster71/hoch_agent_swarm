@@ -4,7 +4,7 @@
       "/opt/homebrew/Cellar/node/26.3.1/bin/node",
       "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/node_modules/.bin/playwright",
       "test",
-      "tests/e2e/antigravity-runtime.spec.ts"
+      "tests/e2e/topology-agent-overlay.spec.ts"
     ],
     "configFile": "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/playwright.config.ts",
     "rootDir": "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/tests/e2e",
@@ -73,20 +73,20 @@
   },
   "suites": [
     {
-      "title": "antigravity-runtime.spec.ts",
-      "file": "antigravity-runtime.spec.ts",
+      "title": "topology-agent-overlay.spec.ts",
+      "file": "topology-agent-overlay.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "Antigravity runtime console",
-          "file": "antigravity-runtime.spec.ts",
-          "line": 29,
+          "title": "Topology Agent Overlay & Roster Runtime",
+          "file": "topology-agent-overlay.spec.ts",
+          "line": 3,
           "column": 6,
           "specs": [
             {
-              "title": "loads without production CSS/runtime regressions",
+              "title": "interacts with agents and runs the swarm animation successfully",
               "ok": true,
               "tags": [],
               "tests": [
@@ -101,18 +101,18 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1691,
+                      "duration": 12845,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-06-24T22:11:47.678Z",
+                      "startTime": "2026-06-24T22:53:17.240Z",
                       "annotations": [],
                       "attachments": [
                         {
-                          "name": "runtime-home",
+                          "name": "topology-agent-overlay-runtime",
                           "contentType": "image/png",
-                          "path": "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/test-results/antigravity-runtime-Antigr-8fb49-ion-CSS-runtime-regressions-antigravity-chromium/attachments/runtime-home-386edb5df17b3717dbddd4369afd6fd4cc49371b.png"
+                          "path": "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/test-results/topology-agent-overlay-Top-c9ffc-warm-animation-successfully-antigravity-chromium/attachments/topology-agent-overlay-runtime-dcd39acf6e9bfc54073df90330c88e5dc1251fca.png"
                         }
                       ]
                     }
@@ -120,83 +120,9 @@
                   "status": "expected"
                 }
               ],
-              "id": "406d2e0f6c3e1e1b063d-66139aaa63af82bdde72",
-              "file": "antigravity-runtime.spec.ts",
-              "line": 30,
-              "column": 7
-            },
-            {
-              "title": "remediation safety view is semantically correct",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 45000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "antigravity-chromium",
-                  "projectName": "antigravity-chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 1512,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-06-24T22:11:49.539Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "remediation-safety",
-                          "contentType": "image/png",
-                          "path": "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/test-results/antigravity-runtime-Antigr-b4abe-iew-is-semantically-correct-antigravity-chromium/attachments/remediation-safety-4abbfc8114dd86d4e0fba91f5621a4046c26c586.png"
-                        }
-                      ]
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "406d2e0f6c3e1e1b063d-1e11bd30865ff00f65a7",
-              "file": "antigravity-runtime.spec.ts",
-              "line": 65,
-              "column": 7
-            },
-            {
-              "title": "all locked nav modules can activate",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 45000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "antigravity-chromium",
-                  "projectName": "antigravity-chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 1789,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-06-24T22:11:51.056Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "406d2e0f6c3e1e1b063d-392f7f2b23d475779f39",
-              "file": "antigravity-runtime.spec.ts",
-              "line": 100,
+              "id": "f9b74107a32e60712813-847301617c5488e67ab2",
+              "file": "topology-agent-overlay.spec.ts",
+              "line": 4,
               "column": 7
             }
           ]
@@ -206,9 +132,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-06-24T22:11:47.483Z",
-    "duration": 5393.857999999999,
-    "expected": 3,
+    "startTime": "2026-06-24T22:53:17.040Z",
+    "duration": 13152.34,
+    "expected": 1,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

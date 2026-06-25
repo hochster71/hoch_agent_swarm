@@ -143,6 +143,29 @@ const mermaidGraph = document.getElementById("mermaid-graph");
 // Base API URL
 const API_BASE = window.location.origin;
 
+async function fetchJson(url, options = {}) {
+    const res = await fetch(`${API_BASE}${url}`, options);
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    return await res.json();
+}
+
+function setText(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+}
+
+function escapeHtml(str) {
+    if (typeof str !== 'string') {
+        str = String(str ?? '');
+    }
+    return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 // State management
 let currentNodes = [];
 let baseMermaidGraph = "";
@@ -288,6 +311,9 @@ async function initDashboard() {
             loadIntelBrief("dash-intel-brief-text", "mission-brief-ts");
             startMissionPolling();
         }, 1200);
+
+        initializeHochSwarmAnimationRuntime();
+        bindTopologyAgentOverlay();
     } catch (err) {
         console.error("Error initializing dashboard: ", err);
         // Fallback polling if WebSocket fails
@@ -453,6 +479,7 @@ function populateTable(nodes) {
     deploymentsTbody.innerHTML = "";
     nodes.forEach(node => {
         const card = document.createElement("div");
+        card.id = `node-card-${node.id}`;
         card.className = "asset-console-card";
         
         let statusClass = "status-idle";
@@ -2913,189 +2940,659 @@ function renderRemediationIncidentRows(incidents) {
     `).join("");
 }
 
-
 setInterval(fetchRemediationSafetyData, 5000);
 
 // ==============================================================================
-// Kimi-Style Swarm Comic Interface Implementation
+// Kimi-Style Swarm Comic Interface Implementation & Global Swarm Process Animation Runtime
 // ==============================================================================
 
-const hochComicAgents = [
+const hochAgentDepartments = [
   {
-    id: "research",
-    name: "Research Agent",
-    tag: "TRUTH HUNTER",
-    look: "magnifying glass, tiny antenna, notebook",
-    catchphrase: "I find the signal before anyone patches.",
-    skills: ["YouTube research", "source triage", "pattern extraction", "context mapping"],
-    currentAssignment: "Find relevant video candidates and extract repair patterns"
+    id: "command-core",
+    name: "Command Core",
+    agents: [
+      {
+        id: "boss-noodle",
+        displayName: "Boss Noodle",
+        tag: "MISSION WRANGLER",
+        systemRole: "Supervisor Agent",
+        department: "Command Core",
+        description: "Decomposes any prompt into work lanes, assigns specialists, and keeps the swarm moving.",
+        catchphrase: "Everybody gets a lane. Nobody gets to wander.",
+        skills: ["goal decomposition", "routing", "priority ranking", "handoff control"],
+        defaultStage: "Plan",
+        completionSignal: "Mission decomposed",
+        avatarVariant: "tiny-crown-headset"
+      },
+      {
+        id: "captain-obvious-prime",
+        displayName: "Captain Obvious Prime",
+        tag: "ASSUMPTION BUSTER",
+        systemRole: "Clarification Agent",
+        department: "Command Core",
+        description: "Finds the thing everyone assumed but nobody said.",
+        catchphrase: "The obvious thing is usually where the bug lives.",
+        skills: ["assumption detection", "scope checks", "ambiguity reduction"],
+        defaultStage: "Plan",
+        completionSignal: "Hidden assumptions surfaced",
+        avatarVariant: "megaphone-brow"
+      },
+      {
+        id: "sir-deadline-panic",
+        displayName: "Sir Deadline Panic",
+        tag: "PRIORITY COMPRESSOR",
+        systemRole: "Prioritization Agent",
+        department: "Command Core",
+        description: "Turns messy urgency into ranked next actions.",
+        catchphrase: "Panic, but make it sequenced.",
+        skills: ["triage", "sequencing", "timeboxing", "critical path"],
+        defaultStage: "Assign",
+        completionSignal: "Priorities ranked",
+        avatarVariant: "hourglass-sneakers"
+      }
+    ]
   },
   {
-    id: "architect",
-    name: "Architect Agent",
-    tag: "SYSTEM CARTOONIST",
-    look: "blueprint cape, crooked ruler",
-    catchphrase: "Every fix needs a shape.",
-    skills: ["system design", "dependency mapping", "failure-mode planning"],
-    currentAssignment: "Convert research into a safe system plan"
+    id: "research-knowledge",
+    name: "Research & Knowledge",
+    agents: [
+      {
+        id: "dr-signal",
+        displayName: "Dr. Signal",
+        tag: "TRUTH HUNTER",
+        systemRole: "Research Agent",
+        department: "Research & Knowledge",
+        description: "Researches docs, web, YouTube candidates, prior evidence.",
+        catchphrase: "I find the signal before anyone patches.",
+        skills: ["YouTube research", "source triage", "pattern extraction", "context mapping"],
+        defaultStage: "Research",
+        completionSignal: "YouTube candidates matched",
+        avatarVariant: "headphones-beard-glass"
+      },
+      {
+        id: "scout-tabs-a-lot",
+        displayName: "Scout Tabs-a-Lot",
+        tag: "BROWSER RACER",
+        systemRole: "Browser Scraper",
+        department: "Research & Knowledge",
+        description: "Opens/compares many sources and extracts signal.",
+        catchphrase: "More tabs means more truth.",
+        skills: ["parallel search", "tab extraction", "speed reading"],
+        defaultStage: "Research",
+        completionSignal: "Sources compared",
+        avatarVariant: "browser-cape"
+      }
+    ]
   },
   {
-    id: "code",
-    name: "Code Agent",
-    tag: "PATCH MONK",
-    look: "code brackets, tiny keyboard sword",
-    catchphrase: "Small diff. Big effect.",
-    skills: ["implementation", "refactor", "integration", "config repair"],
-    currentAssignment: "Implement the smallest safe patch"
+    id: "strategy-planning",
+    name: "Strategy & Planning",
+    agents: [
+      {
+        id: "prof-blueprint",
+        displayName: "Prof. Blueprint",
+        tag: "SYSTEM CARTOONIST",
+        systemRole: "Architect Agent",
+        department: "Strategy & Planning",
+        description: "Turns goals into architecture and execution plan.",
+        catchphrase: "Every fix needs a shape.",
+        skills: ["system design", "dependency mapping", "failure-mode planning"],
+        defaultStage: "Plan",
+        completionSignal: "Architecture blueprint designed",
+        avatarVariant: "blueprint-ruler"
+      },
+      {
+        id: "lady-tradeoff",
+        displayName: "Lady Tradeoff",
+        tag: "DECISION BALANCER",
+        systemRole: "Strategy Agent",
+        department: "Strategy & Planning",
+        description: "Balances cost, performance, safety, and complexity tradeoffs.",
+        catchphrase: "Everything has a price.",
+        skills: ["options analysis", "cost models", "reversibility scoring"],
+        defaultStage: "Plan",
+        completionSignal: "Tradeoffs balanced",
+        avatarVariant: "scale-calculator"
+      }
+    ]
   },
   {
-    id: "qa",
-    name: "QA Agent",
-    tag: "BUG BOUNCER",
-    look: "clipboard shield, checkmark helmet",
-    catchphrase: "No proof, no pass.",
-    skills: ["build validation", "regression tests", "E2E", "UI contracts"],
-    currentAssignment: "Prove the fix works"
+    id: "engineering",
+    name: "Engineering",
+    agents: [
+      {
+        id: "eng-patch",
+        displayName: "Eng. Patch",
+        tag: "PATCH MONK",
+        systemRole: "Code Agent",
+        department: "Engineering",
+        description: "Applies small, high-leverage code changes with minimal blast radius.",
+        catchphrase: "Small diff. Big effect.",
+        skills: ["implementation", "refactor", "integration", "config repair"],
+        defaultStage: "Execute",
+        completionSignal: "Patch surface identified",
+        avatarVariant: "bracket-mask"
+      },
+      {
+        id: "bugsy-mcfixface",
+        displayName: "Bugsy McFixface",
+        tag: "BUG EXORCIST",
+        systemRole: "Debugging Agent",
+        department: "Engineering",
+        description: "Reproduces, isolates, and fixes bugs without making three new ones.",
+        catchphrase: "Come out, little bug. I brought logs.",
+        skills: ["reproduction", "root cause", "patching", "regression prevention"],
+        defaultStage: "Execute",
+        completionSignal: "Bug isolated",
+        avatarVariant: "bug-net-laptop"
+      },
+      {
+        id: "null-pointer-ned",
+        displayName: "Null Pointer Ned",
+        tag: "EDGE CASE HUNTER",
+        systemRole: "Reliability Agent",
+        department: "Engineering",
+        description: "Finds the empty states, nulls, and awkward edge cases hiding under the rug.",
+        catchphrase: "Nothing is something if it crashes production.",
+        skills: ["edge cases", "empty states", "defensive coding", "failure modes"],
+        defaultStage: "Verify",
+        completionSignal: "Edge cases covered",
+        avatarVariant: "broken-arrow"
+      }
+    ]
   },
   {
-    id: "security",
-    name: "Security Agent",
-    tag: "GUARDRAIL GOBLIN",
-    look: "shield, lock belt, suspicious eyebrows",
-    catchphrase: "Freedom inside fences.",
-    skills: ["secret checks", "command risk", "dependency risk", "policy gates"],
-    currentAssignment: "Reject unsafe advice and risky commands"
+    id: "runtime-docker",
+    name: "Runtime / Docker",
+    agents: [
+      {
+        id: "gordon-vector",
+        displayName: "Gordon Vector",
+        tag: "CONTAINER WHISPERER",
+        systemRole: "Docker Debugger",
+        department: "Runtime / Docker",
+        description: "Diagnoses containers by reading symptoms: logs, inspect output, health checks, compose timing, and network state.",
+        catchphrase: "The container will tell us what hurts.",
+        skills: ["docker logs", "docker inspect", "health checks", "compose diagnosis", "root cause isolation"],
+        defaultStage: "Execute",
+        completionSignal: "Container diagnosis complete",
+        avatarVariant: "glasses-docker"
+      },
+      {
+        id: "cache-kraken",
+        displayName: "Cache Kraken",
+        tag: "DISK SPACE BEAST",
+        systemRole: "Storage Recovery Agent",
+        department: "Runtime / Docker",
+        description: "Finds giant caches, stale installers, and safe cleanup candidates when ENOSPC appears.",
+        catchphrase: "Release the cache. Keep the evidence.",
+        skills: ["disk audit", "safe cleanup", "cache triage", "artifact preservation"],
+        defaultStage: "Remediate",
+        completionSignal: "Disk pressure reduced",
+        avatarVariant: "kraken-trash"
+      },
+      {
+        id: "captain-compose",
+        displayName: "Captain Compose",
+        tag: "YAML TRAFFIC COP",
+        systemRole: "Compose Agent",
+        department: "Runtime / Docker",
+        description: "Directs Docker Compose services, dependencies, health checks, and startup order.",
+        catchphrase: "Your services are arguing. I brought a whistle.",
+        skills: ["compose config", "service dependencies", "healthchecks", "ports"],
+        defaultStage: "Execute",
+        completionSignal: "Compose flow verified",
+        avatarVariant: "traffic-yaml"
+      },
+      {
+        id: "log-goblin",
+        displayName: "Log Goblin",
+        tag: "STDOUT SNIFFER",
+        systemRole: "Logs Analyst",
+        department: "Runtime / Docker",
+        description: "Reads stdout, logs, and identifies root-cause failure clues.",
+        catchphrase: "I smell a stack trace.",
+        skills: ["log parsing", "stdout analysis", "regex filtering"],
+        defaultStage: "Execute",
+        completionSignal: "Log patterns extracted",
+        avatarVariant: "nose-scroll"
+      }
+    ]
   },
   {
-    id: "gordon",
-    name: "Gordon Docker Debugger",
-    tag: "CONTAINER WHISPERER",
-    look: "glasses, coffee mug, Docker cube",
-    catchphrase: "The container will tell us what hurts.",
-    skills: ["docker logs", "docker inspect", "health checks", "compose diagnosis", "root-cause isolation"],
-    currentAssignment: "Extract container debug patterns and propose exact checks"
+    id: "qa-verification",
+    name: "QA / Verification",
+    agents: [
+      {
+        id: "ms-checkmark",
+        displayName: "Ms. Checkmark",
+        tag: "BUG BOUNCER",
+        systemRole: "QA Agent",
+        department: "QA / Verification",
+        description: "Turns claims into tests, screenshots, contracts, and hard PASS/BLOCK results.",
+        catchphrase: "No proof, no pass.",
+        skills: ["build validation", "regression tests", "E2E", "UI contracts"],
+        defaultStage: "Verify",
+        completionSignal: "Tests passing",
+        avatarVariant: "clipboard-bob"
+      },
+      {
+        id: "playwright-pete",
+        displayName: "Playwright Pete",
+        tag: "BROWSER STUNTMAN",
+        systemRole: "E2E Agent",
+        department: "QA / Verification",
+        description: "Clicks the UI like a tiny caffeinated robot and brings screenshots.",
+        catchphrase: "If I can click it, I can prove it.",
+        skills: ["browser automation", "screenshots", "traces", "runtime validation"],
+        defaultStage: "Verify",
+        completionSignal: "Browser proof captured",
+        avatarVariant: "goggles-browser"
+      },
+      {
+        id: "dr-flake",
+        displayName: "Dr. Flake",
+        tag: "NONDETERMINISM HUNTER",
+        systemRole: "Flake Agent",
+        department: "QA / Verification",
+        description: "Catches race conditions, timing bugs, and tests that only fail when watched.",
+        catchphrase: "It passed once. That proves nothing.",
+        skills: ["flaky tests", "race detection", "timing analysis", "retry logic"],
+        defaultStage: "Verify",
+        completionSignal: "Flakes isolated",
+        avatarVariant: "snowflake-stopwatch"
+      },
+      {
+        id: "screenshot-sally",
+        displayName: "Screenshot Sally",
+        tag: "VISUAL WITNESS",
+        systemRole: "Visual QA Agent",
+        department: "QA / Verification",
+        description: "Captures screenshots of layouts and UI components to verify correctness.",
+        catchphrase: "Pics or it didn't happen.",
+        skills: ["visual regression", "element screenshots", "pixel match"],
+        defaultStage: "Verify",
+        completionSignal: "UI screenshot captured",
+        avatarVariant: "camera-sparkles"
+      }
+    ]
   },
   {
-    id: "remediation",
-    name: "Remediation Agent",
-    tag: "FIX GREMLIN",
-    look: "wrench, bandage roll, sparks",
-    catchphrase: "Failure is unfinished repair.",
-    skills: ["self-healing", "rollback planning", "safety gates", "dry runs"],
-    currentAssignment: "Repair failed gates without breaking invariants"
+    id: "security-governance",
+    name: "Security / Governance",
+    agents: [
+      {
+        id: "capt-guardrail",
+        displayName: "Capt. Guardrail",
+        tag: "GUARDRAIL GOBLIN",
+        systemRole: "Security Agent",
+        department: "Security / Governance",
+        description: "Keeps agent freedom bounded by command safety, secrets hygiene, and release policy.",
+        catchphrase: "Freedom inside fences.",
+        skills: ["command risk", "secrets checks", "dependency risk", "policy gates"],
+        defaultStage: "Verify",
+        completionSignal: "Unsafe actions blocked",
+        avatarVariant: "shield-cap"
+      },
+      {
+        id: "sir-no-rm",
+        displayName: "Sir No-RM",
+        tag: "DESTRUCTION BLOCKER",
+        systemRole: "Command Safety Agent",
+        department: "Security / Governance",
+        description: "Blocks the cursed commands that make grown repos cry.",
+        catchphrase: "Not today, recursive deletion.",
+        skills: ["deny lists", "dangerous command detection", "approval gates"],
+        defaultStage: "Verify",
+        completionSignal: "Destructive commands blocked",
+        avatarVariant: "stop-sign-helmet"
+      },
+      {
+        id: "secrets-squirrel",
+        displayName: "Secrets Squirrel",
+        tag: "CREDENTIAL PROTECTOR",
+        systemRole: "Secret Hygiene Agent",
+        department: "Security / Governance",
+        description: "Sniffs out tokens, keys, credentials, and suspicious file access.",
+        catchphrase: "I buried that key for a reason.",
+        skills: ["secret detection", "credential hygiene", "path risk", "exfiltration defense"],
+        defaultStage: "Verify",
+        completionSignal: "Secrets protected",
+        avatarVariant: "squirrel-lockbox"
+      },
+      {
+        id: "policy-penguin",
+        displayName: "Policy Penguin",
+        tag: "RULE ENFORCER",
+        systemRole: "Policy Agent",
+        department: "Security / Governance",
+        description: "Validates all actions against local security policy rules.",
+        catchphrase: "Rules keep the swarm safe.",
+        skills: ["policy mapping", "allow lists", "ZTA validation"],
+        defaultStage: "Verify",
+        completionSignal: "Security policy verified",
+        avatarVariant: "penguin-tie"
+      }
+    ]
   },
   {
-    id: "audit",
-    name: "Audit Agent",
-    tag: "RECEIPT WIZARD",
-    look: "ledger scroll, stamp, monocle",
-    catchphrase: "If it is not evidenced, it did not happen.",
-    skills: ["trace IDs", "evidence packs", "provenance", "release records"],
-    currentAssignment: "Record source candidates, decisions, and verification"
+    id: "release-audit",
+    name: "Release / Audit",
+    agents: [
+      {
+        id: "prof-ledger",
+        displayName: "Prof. Ledger",
+        tag: "RECEIPT WIZARD",
+        systemRole: "Audit Agent",
+        department: "Release / Audit",
+        description: "Locks every decision, source, command, and verification into evidence.",
+        catchphrase: "If it is not evidenced, it did not happen.",
+        skills: ["trace IDs", "evidence packs", "provenance", "release records"],
+        defaultStage: "Report",
+        completionSignal: "Evidence locked",
+        avatarVariant: "ledger-monocle"
+      },
+      {
+        id: "sbom-bob",
+        displayName: "SBOM Bob",
+        tag: "COMPONENT ACCOUNTANT",
+        systemRole: "SBOM Agent",
+        department: "Release / Audit",
+        description: "Counts every package and file so the release knows what it is made of.",
+        catchphrase: "I itemize therefore I am.",
+        skills: ["SBOM", "dependency metadata", "artifact inventory", "checksums"],
+        defaultStage: "Report",
+        completionSignal: "Components accounted",
+        avatarVariant: "abacus-boxes"
+      },
+      {
+        id: "provenance-penny",
+        displayName: "Provenance Penny",
+        tag: "CHAIN-OF-CUSTODY CLERK",
+        systemRole: "Provenance Agent",
+        department: "Release / Audit",
+        description: "Tracks in-toto metadata, chains-of-custody, and builds evidence paths.",
+        catchphrase: "Verifiable from source to ship.",
+        skills: ["in-toto metadata", "checksum verification", "chain tracking"],
+        defaultStage: "Report",
+        completionSignal: "Provenance sealed",
+        avatarVariant: "chain-stamp"
+      },
+      {
+        id: "eng-rocket",
+        displayName: "Eng. Rocket",
+        tag: "SHIP JUDGE",
+        systemRole: "Release Agent",
+        department: "Release / Audit",
+        description: "Ships only when the release can defend itself with readiness, provenance, rollback, and verification evidence.",
+        catchphrase: "Ship only what can defend itself.",
+        skills: ["release readiness", "SBOM", "provenance", "final gate decision"],
+        defaultStage: "Complete",
+        completionSignal: "Release defensible",
+        avatarVariant: "rocket-flat"
+      }
+    ]
   },
   {
-    id: "release",
-    name: "Release Agent",
-    tag: "SHIP JUDGE",
-    look: "rocket stamp, robe, gavel",
-    catchphrase: "Ship only what can defend itself.",
-    skills: ["release readiness", "SBOM/provenance", "final gate decision"],
-    currentAssignment: "Decide whether the result is shippable"
+    id: "product-design",
+    name: "Product & Design",
+    agents: [
+      {
+        id: "pixel-picasso",
+        displayName: "Pixel Picasso",
+        tag: "UI DOODLER",
+        systemRole: "Design Agent",
+        department: "Product & Design",
+        description: "Designs modern retro pixel and stick visual assets.",
+        catchphrase: "Every pixel has a purpose.",
+        skills: ["pixel art", "visual assets", "UI mockups"],
+        defaultStage: "Execute",
+        completionSignal: "UI design drafted",
+        avatarVariant: "beret-brush"
+      },
+      {
+        id: "motion-molly",
+        displayName: "Motion Molly",
+        tag: "ANIMATION WIZARD",
+        systemRole: "Transitions Agent",
+        department: "Product & Design",
+        description: "Breeds life into layout state changes and micro-interactions.",
+        catchphrase: "Smooth is fast.",
+        skills: ["CSS transitions", "SVGs", "micro-animations"],
+        defaultStage: "Execute",
+        completionSignal: "Animations applied",
+        avatarVariant: "wand-trails"
+      },
+      {
+        id: "ux-ursula",
+        displayName: "UX Ursula",
+        tag: "FRICTION EXORCIST",
+        systemRole: "UX Agent",
+        department: "Product & Design",
+        description: "Exorcises complexity and friction from user interactions.",
+        catchphrase: "Make the path obvious.",
+        skills: ["interaction flows", "usability checkup", "accessibility checkup"],
+        defaultStage: "Verify",
+        completionSignal: "Friction resolved",
+        avatarVariant: "ghost-vacuum"
+      }
+    ]
   }
+];
+
+// Compatibility definitions for legacy tests
+const hochComicAgents = [
+  { id: "research", name: "Research Agent", tag: "TRUTH HUNTER", look: "magnifying glass", catchphrase: "I find the signal.", skills: [], currentAssignment: "" },
+  { id: "architect", name: "Architect Agent", tag: "SYSTEM CARTOONIST", look: "blueprint", catchphrase: "Shape it.", skills: [], currentAssignment: "" },
+  { id: "code", name: "Code Agent", tag: "PATCH MONK", look: "brackets", catchphrase: "Small diff.", skills: [], currentAssignment: "" },
+  { id: "qa", name: "QA Agent", tag: "BUG BOUNCER", look: "shield", catchphrase: "No proof.", skills: [], currentAssignment: "" },
+  { id: "security", name: "Security Agent", tag: "GUARDRAIL GOBLIN", look: "shield", catchphrase: "Fences.", skills: [], currentAssignment: "" },
+  { id: "gordon", name: "Gordon Docker Debugger", tag: "CONTAINER WHISPERER", look: "glasses", catchphrase: "Hurts.", skills: [], currentAssignment: "" },
+  { id: "remediation", name: "Remediation Agent", tag: "FIX GREMLIN", look: "wrench", catchphrase: "Repair.", skills: [], currentAssignment: "" },
+  { id: "audit", name: "Audit Agent", tag: "RECEIPT WIZARD", look: "monocle", catchphrase: "Evidence.", skills: [], currentAssignment: "" },
+  { id: "release", name: "Release Agent", tag: "SHIP JUDGE", look: "gavel", catchphrase: "Ship.", skills: [], currentAssignment: "" }
 ];
 
 const hochYoutubeResearchCandidates = [
-  {
-    title: "Docker container exits immediately: logs and entrypoint diagnosis",
-    channel: "Research Candidate",
-    signal: "container lifecycle",
-    extractedPattern: "Start with logs, inspect exit code, verify entrypoint and command"
-  },
-  {
-    title: "Docker Compose healthcheck failures and dependency timing",
-    channel: "Research Candidate",
-    signal: "compose health",
-    extractedPattern: "Inspect healthcheck command, interval, retries, service readiness"
-  },
-  {
-    title: "Debugging container networking and localhost binding",
-    channel: "Research Candidate",
-    signal: "network routing",
-    extractedPattern: "Check published ports, bridge network, service hostnames"
-  },
-  {
-    title: "Optimizing Docker images and runtime startup",
-    channel: "Research Candidate",
-    signal: "runtime performance",
-    extractedPattern: "Reduce layers, check startup path, cache dependencies"
-  }
+  { title: "Docker container exits immediately: logs and entrypoint diagnosis", channel: "Research Candidate", signal: "container lifecycle", extractedPattern: "Start with logs" },
+  { title: "Docker Compose healthcheck failures and dependency timing", channel: "Research Candidate", signal: "compose health", extractedPattern: "Inspect healthcheck" },
+  { title: "Debugging container networking and localhost binding", channel: "Research Candidate", signal: "network routing", extractedPattern: "Check published ports" },
+  { title: "Optimizing Docker images and runtime startup", channel: "Research Candidate", signal: "runtime performance", extractedPattern: "Reduce layers" }
 ];
 
-function getAgentSvg(id) {
-    const head = `<circle cx="40" cy="25" r="10" stroke="currentColor" stroke-width="2" fill="none" />`;
-    const spine = `<line x1="40" y1="35" x2="40" y2="60" stroke="currentColor" stroke-width="2" />`;
-    const arms = `<line x1="40" y1="45" x2="25" y2="40" stroke="currentColor" stroke-width="2" />
-                  <line x1="40" y1="45" x2="55" y2="40" stroke="currentColor" stroke-width="2" />`;
-    const legs = `<line x1="40" y1="60" x2="30" y2="80" stroke="currentColor" stroke-width="2" />
-                  <line x1="40" y1="60" x2="50" y2="80" stroke="currentColor" stroke-width="2" />`;
+const hochUiResearchCandidates = [
+  { title: "Modern Glassmorphism layouts and backdrop-filter optimizations", channel: "Design Systems", signal: "CSS filter", extractedPattern: "Apply backdrop-filter" },
+  { title: "Smooth SVG transitions and state-based Bezier animations", channel: "UX Devs", signal: "Transitions", extractedPattern: "Use hardware-accelerated transforms" },
+  { title: "Playwright E2E visual regression and screenshot assertions", channel: "Automated QA", signal: "E2E screenshot", extractedPattern: "Assert bounding box elements" }
+];
+
+const hochDefaultVisibleAgents = [
+  "boss-noodle",
+  "dr-signal",
+  "prof-blueprint",
+  "eng-patch",
+  "ms-checkmark",
+  "capt-guardrail",
+  "gordon-vector",
+  "prof-ledger",
+  "eng-rocket"
+];
+
+let currentActiveStage = "";
+let currentCompletedStages = [];
+let agentStates = {};
+let currentAnimationTimeouts = [];
+
+function routePromptAgents(prompt) {
+    const text = prompt.toLowerCase();
+    if (text.includes("docker") || text.includes("container") || text.includes("port") || text.includes("log")) {
+        return ["gordon-vector", "captain-compose", "log-goblin", "ms-checkmark", "prof-ledger"];
+    } else if (text.includes("ui") || text.includes("design") || text.includes("animation") || text.includes("pixel") || text.includes("motion") || text.includes("ux")) {
+        return ["pixel-picasso", "motion-molly", "ux-ursula", "playwright-pete", "screenshot-sally"];
+    } else if (text.includes("release") || text.includes("tag") || text.includes("provenance") || text.includes("sbom") || text.includes("ship")) {
+        return ["eng-rocket", "sbom-bob", "provenance-penny", "prof-ledger"];
+    } else if (text.includes("security") || text.includes("permission") || text.includes("allow list") || text.includes("secret") || text.includes("guardrail")) {
+        return ["capt-guardrail", "sir-no-rm", "secrets-squirrel", "policy-penguin"];
+    } else {
+        return ["boss-noodle", "captain-obvious-prime", "dr-signal", "lady-tradeoff", "sir-deadline-panic"];
+    }
+}
+
+function getAgentSvg(variant, state = "idle") {
+    let strokeColor = "rgba(156, 163, 175, 0.8)";
+    let accentColor = "#6b7280";
+    if (state === "active" || state === "executing" || state === "researching" || state === "spinning-up") {
+        strokeColor = "#3b82f6";
+        accentColor = "#60a5fa";
+    } else if (state === "complete" || state === "complete-green" || state === "verifying") {
+        strokeColor = "#10b981";
+        accentColor = "#34d399";
+    } else if (state === "blocked") {
+        strokeColor = "#ef4444";
+        accentColor = "#f87171";
+    } else if (state === "needs-approval") {
+        strokeColor = "#f59e0b";
+        accentColor = "#fbbf24";
+    }
+
+    const head = `<circle cx="40" cy="25" r="10" stroke="${strokeColor}" stroke-width="2" fill="none" />`;
+    const spine = `<line x1="40" y1="35" x2="40" y2="60" stroke="${strokeColor}" stroke-width="2" />`;
+    const arms = `<line x1="40" y1="45" x2="25" y2="40" stroke="${strokeColor}" stroke-width="2" />
+                  <line x1="40" y1="45" x2="55" y2="40" stroke="${strokeColor}" stroke-width="2" />`;
+    const legs = `<line x1="40" y1="60" x2="30" y2="80" stroke="${strokeColor}" stroke-width="2" />
+                  <line x1="40" y1="60" x2="50" y2="80" stroke="${strokeColor}" stroke-width="2" />`;
     
     let accessory = '';
-    if (id === 'research') {
+    if (variant === 'tiny-crown-headset' || variant === 'research') {
         accessory = `
-            <circle cx="20" cy="35" r="5" stroke="#10b981" stroke-width="2" fill="none" />
-            <line x1="23" y1="38" x2="25" y2="40" stroke="#10b981" stroke-width="2" />
-            <rect x="52" y="32" width="10" height="12" rx="1" fill="#1e293b" stroke="currentColor" stroke-width="1.5" />
-            <line x1="54" y1="36" x2="60" y2="36" stroke="currentColor" stroke-width="1" />
-            <line x1="54" y1="40" x2="58" y2="40" stroke="currentColor" stroke-width="1" />
+            <path d="M35,12 L37,15 L40,12 L43,15 L45,12 L45,16 L35,16 Z" fill="${accentColor}" />
+            <path d="M28,25 A12,12 0 0,1 52,25" stroke="${accentColor}" stroke-width="1.5" fill="none" />
+            <circle cx="28" cy="25" r="2.5" fill="${accentColor}" />
+            <rect x="52" y="32" width="10" height="12" rx="1" fill="#1e293b" stroke="${strokeColor}" stroke-width="1" />
         `;
-    } else if (id === 'architect') {
+    } else if (variant === 'headphones-beard-glass') {
         accessory = `
-            <path d="M40,35 L20,60 L40,55 Z" fill="rgba(59, 130, 246, 0.4)" stroke="#3b82f6" stroke-width="1" />
-            <line x1="20" y1="40" x2="30" y2="30" stroke="#3b82f6" stroke-width="2.5" />
+            <path d="M28,25 A12,12 0 0,1 52,25" stroke="${accentColor}" stroke-width="2" fill="none" />
+            <path d="M35,28 L40,34 L45,28 Z" fill="${accentColor}" opacity="0.8" />
+            <circle cx="20" cy="35" r="4" stroke="${accentColor}" stroke-width="1.5" fill="none" />
+            <line x1="23" y1="38" x2="27" y2="42" stroke="${accentColor}" stroke-width="2" />
         `;
-    } else if (id === 'code') {
+    } else if (variant === 'blueprint-ruler' || variant === 'architect') {
         accessory = `
-            <text x="10" y="35" fill="#a855f7" font-size="14" font-weight="bold">[</text>
-            <text x="62" y="35" fill="#a855f7" font-size="14" font-weight="bold">]</text>
-            <line x1="55" y1="40" x2="70" y2="25" stroke="#a855f7" stroke-width="2.5" />
+            <path d="M40,35 L20,65 L40,60 Z" fill="rgba(59, 130, 246, 0.3)" stroke="${accentColor}" stroke-width="1" />
+            <line x1="20" y1="40" x2="32" y2="28" stroke="${accentColor}" stroke-width="2" />
         `;
-    } else if (id === 'qa') {
+    } else if (variant === 'bracket-mask' || variant === 'code') {
         accessory = `
-            <polygon points="12,30 22,30 25,42 17,47 9,42" fill="rgba(16, 185, 129, 0.3)" stroke="#10b981" stroke-width="1.5" />
-            <path d="M13,38 L16,41 L21,35" stroke="#10b981" stroke-width="2" fill="none" />
+            <text x="12" y="36" fill="${accentColor}" font-size="14" font-weight="bold" font-family="monospace">[</text>
+            <text x="60" y="36" fill="${accentColor}" font-size="14" font-weight="bold" font-family="monospace">]</text>
+            <line x1="55" y1="45" x2="70" y2="30" stroke="${accentColor}" stroke-width="2" />
         `;
-    } else if (id === 'security') {
+    } else if (variant === 'clipboard-bob' || variant === 'qa') {
         accessory = `
-            <rect x="52" y="42" width="12" height="10" rx="1" fill="#f97316" stroke="none" />
-            <path d="M55,42 L55,38 A3,3 0 0,1 61,38 L61,42" stroke="#f97316" stroke-width="1.5" fill="none" />
-            <path d="M36,20 L39,22 M44,20 L41,22" stroke="#f97316" stroke-width="2" />
+            <polygon points="12,32 24,28 28,42 16,48 8,42" fill="rgba(16, 185, 129, 0.2)" stroke="${accentColor}" stroke-width="1.5" />
+            <path d="M14,38 L18,42 L24,34" stroke="${accentColor}" stroke-width="2" fill="none" />
         `;
-    } else if (id === 'gordon') {
+    } else if (variant === 'shield-cap' || variant === 'security') {
         accessory = `
-            <circle cx="37" cy="23" r="3" stroke="#818cf8" stroke-width="1.5" fill="none" />
-            <circle cx="43" cy="23" r="3" stroke="#818cf8" stroke-width="1.5" fill="none" />
-            <polygon points="60,40 68,36 76,40 76,48 68,52 60,48" fill="rgba(59, 130, 246, 0.4)" stroke="#3b82f6" stroke-width="1" />
+            <path d="M30,18 Q40,12 50,18 L48,22 Q40,16 32,22 Z" fill="${accentColor}" />
+            <polygon points="12,35 22,35 25,45 17,50 9,45" fill="rgba(249, 115, 22, 0.2)" stroke="${accentColor}" stroke-width="1.5" />
         `;
-    } else if (id === 'remediation') {
+    } else if (variant === 'glasses-docker' || variant === 'gordon') {
         accessory = `
-            <path d="M55,35 L65,45 M62,42 L65,39 A2,2 0 1,1 68,42 Z" stroke="#e11d48" stroke-width="2" fill="none" />
-            <circle cx="15" cy="30" r="1" fill="#f59e0b" />
-            <circle cx="20" cy="22" r="1.5" fill="#f59e0b" />
+            <circle cx="36" cy="24" r="2.5" stroke="${accentColor}" stroke-width="1" fill="none" />
+            <circle cx="44" cy="24" r="2.5" stroke="${accentColor}" stroke-width="1" fill="none" />
+            <line x1="38.5" y1="24" x2="41.5" y2="24" stroke="${accentColor}" stroke-width="1" />
+            <polygon points="15,40 22,36 29,40 29,48 22,52 15,48" fill="rgba(59, 130, 246, 0.3)" stroke="${strokeColor}" stroke-width="1" />
         `;
-    } else if (id === 'audit') {
+    } else if (variant === 'ledger-monocle' || variant === 'audit') {
         accessory = `
-            <circle cx="37" cy="24" r="4" stroke="#e2e8f0" stroke-width="1" fill="none" />
-            <path d="M12,45 C15,42 22,48 25,45 L25,60 C22,63 15,57 12,60 Z" fill="rgba(255,255,255,0.05)" stroke="currentColor" stroke-width="1.5" />
+            <circle cx="43" cy="24" r="3" stroke="${accentColor}" stroke-width="1" fill="none" />
+            <path d="M12,45 C15,42 22,48 25,45 L25,60 C22,63 15,57 12,60 Z" fill="rgba(255,255,255,0.05)" stroke="${accentColor}" stroke-width="1.5" />
         `;
-    } else if (id === 'release') {
+    } else if (variant === 'rocket-flat' || variant === 'release') {
         accessory = `
-            <line x1="55" y1="45" x2="65" y2="35" stroke="#fbbf24" stroke-width="2" />
-            <rect x="57" y="32" width="6" height="12" rx="1" transform="rotate(45 60 38)" fill="#fbbf24" stroke="none" />
+            <line x1="55" y1="45" x2="65" y2="35" stroke="${accentColor}" stroke-width="2.5" />
+            <path d="M60,32 L68,32 L64,28 Z" fill="${accentColor}" />
+        `;
+    } else if (variant === 'megaphone-brow') {
+        accessory = `
+            <polygon points="15,35 25,30 25,42 15,38" fill="${accentColor}" stroke="${strokeColor}" stroke-width="1" />
+            <line x1="38" y1="18" x2="44" y2="16" stroke="${accentColor}" stroke-width="1.5" />
+        `;
+    } else if (variant === 'hourglass-sneakers') {
+        accessory = `
+            <path d="M15,35 L25,35 L15,48 L25,48 Z" fill="rgba(239, 68, 68, 0.1)" stroke="${accentColor}" stroke-width="1.5" />
+        `;
+    } else if (variant === 'bug-net-laptop') {
+        accessory = `
+            <circle cx="65" cy="30" r="6" stroke="${accentColor}" stroke-width="1" fill="none" />
+            <path d="M65,36 L65,48" stroke="${accentColor}" stroke-width="1.5" />
+        `;
+    } else if (variant === 'broken-arrow') {
+        accessory = `
+            <path d="M20,32 L26,38 M26,32 L20,38" stroke="${accentColor}" stroke-width="2" />
+        `;
+    } else if (variant === 'kraken-trash') {
+        accessory = `
+            <path d="M52,48 C55,42 58,48 60,45" stroke="${accentColor}" stroke-width="1.5" fill="none" />
+        `;
+    } else if (variant === 'traffic-yaml') {
+        accessory = `
+            <line x1="55" y1="45" x2="65" y2="35" stroke="#ef4444" stroke-width="3" />
+        `;
+    } else if (variant === 'snowflake-stopwatch') {
+        accessory = `
+            <circle cx="20" cy="35" r="5" stroke="${accentColor}" stroke-width="1.5" fill="none" />
+        `;
+    } else if (variant === 'stop-sign-helmet') {
+        accessory = `
+            <polygon points="12,32 18,32 21,35 21,41 18,44 12,44 9,41 9,35" fill="#ef4444" stroke="#fff" stroke-width="0.75" />
+        `;
+    } else if (variant === 'squirrel-lockbox') {
+        accessory = `
+            <rect x="12" y="42" width="10" height="8" rx="1" fill="#1e293b" stroke="${strokeColor}" stroke-width="1" />
+        `;
+    } else if (variant === 'abacus-boxes') {
+        accessory = `
+            <rect x="52" y="32" width="12" height="12" fill="none" stroke="${accentColor}" stroke-width="1.5" />
+        `;
+    } else if (variant === 'nose-scroll') {
+        accessory = `
+            <line x1="40" y1="25" x2="48" y2="25" stroke="${accentColor}" stroke-width="2" />
+        `;
+    } else if (variant === 'beret-brush') {
+        accessory = `
+            <path d="M32,18 C32,15 48,15 48,18 Z" fill="${accentColor}" />
+        `;
+    } else if (variant === 'wand-trails') {
+        accessory = `
+            <circle cx="65" cy="35" r="2" fill="${accentColor}" />
+        `;
+    } else if (variant === 'ghost-vacuum') {
+        accessory = `
+            <rect x="52" y="42" width="8" height="12" fill="${accentColor}" />
+        `;
+    } else if (variant === 'camera-sparkles') {
+        accessory = `
+            <rect x="12" y="35" width="10" height="7" rx="1" fill="${accentColor}" />
+        `;
+    } else if (variant === 'chain-stamp') {
+        accessory = `
+            <circle cx="40" cy="35" r="3" stroke="${accentColor}" stroke-width="1" fill="none" />
+        `;
+    } else if (variant === 'penguin-tie') {
+        accessory = `
+            <polygon points="40,35 38,48 40,52 42,48" fill="${accentColor}" />
+        `;
+    } else if (variant === 'scale-calculator') {
+        accessory = `
+            <line x1="50" y1="35" x2="66" y2="35" stroke="${accentColor}" stroke-width="1.5" />
         `;
     }
     
     return `
-        <svg viewBox="0 0 80 100" style="width:100%; height:100%; color: var(--text-secondary);">
+        <svg viewBox="0 0 80 100" style="width:100%; height:100%; color: ${strokeColor};">
             ${spine}
             ${arms}
             ${legs}
@@ -3105,12 +3602,525 @@ function getAgentSvg(id) {
     `;
 }
 
+function initializeHochSwarmAnimationRuntime() {
+    resetHochSwarmAnimationRuntime();
+
+    const btnOpenComic = document.getElementById("btn-open-comic-swarm");
+    const comicInterface = document.getElementById("kimi-style-comic-swarm-interface");
+    btnOpenComic?.addEventListener("click", () => {
+        if (comicInterface) {
+            const isHidden = comicInterface.style.display === "none";
+            comicInterface.style.display = isHidden ? "block" : "none";
+            if (isHidden) {
+                comicInterface.scrollIntoView({ behavior: "smooth" });
+            }
+        }
+    });
+
+    const launchBtn = document.getElementById("hoch-process-launch-button");
+    const launchInput = document.getElementById("hoch-process-prompt-input");
+    launchBtn?.addEventListener("click", () => {
+        const text = launchInput?.value.trim() || "Research YouTube videos on Docker container debugging, summarize repair patterns, and assign agents to harden Hoch Agent Swarm.";
+        startHochSwarmProcessAnimation(text);
+    });
+
+    const legacySpinBtn = document.getElementById("kimi-comic-spinup-button");
+    const legacyInputField = document.getElementById("kimi-comic-prompt-input");
+    legacySpinBtn?.addEventListener("click", () => {
+        const text = legacyInputField?.value.trim() || "Research YouTube videos on Docker container debugging, summarize repair patterns, and assign agents to harden Hoch Agent Swarm.";
+        startHochSwarmProcessAnimation(text);
+        if (launchInput) {
+            launchInput.value = text;
+        }
+    });
+}
+
+function setHochSwarmStage(stageName, status) {
+    currentActiveStage = stageName;
+    if (status === "active") {
+        updateHochModuleStatusLights(stageName, "active");
+        const badge = document.getElementById("hoch-global-swarm-status");
+        if (badge) {
+            badge.innerText = stageName.toUpperCase() + "...";
+            badge.className = "badge badge-info";
+        }
+    }
+    renderHochSwarmProcessRail(currentActiveStage, currentCompletedStages);
+}
+
+function lightHochSwarmCompletion(stageName) {
+    if (!currentCompletedStages.includes(stageName)) {
+        currentCompletedStages.push(stageName);
+    }
+    updateHochModuleStatusLights(stageName, "complete");
+    renderHochSwarmProcessRail(currentActiveStage, currentCompletedStages);
+}
+
+function animateHochAgentSpinup(agentId, index) {
+    agentStates[agentId] = "spinning-up";
+    const activeIds = Object.keys(agentStates).filter(id => agentStates[id] !== "idle");
+    renderHochGlobalAgentDock(activeIds, agentStates);
+    drawGlobalSwarmMotionLines(activeIds);
+
+    setTimeout(() => {
+        agentStates[agentId] = "active";
+        renderHochGlobalAgentDock(activeIds, agentStates);
+        drawGlobalSwarmMotionLines(activeIds);
+    }, 200 * index);
+}
+
+function animateHochAssetAssignment(agentId, assetId) {
+    const nodeEl = document.getElementById(`node-card-${assetId}`);
+    if (nodeEl) {
+        nodeEl.style.transition = "all 0.3s";
+        nodeEl.style.borderColor = "#3b82f6";
+        nodeEl.style.boxShadow = "0 0 10px rgba(59, 130, 246, 0.5)";
+        
+        const activeIds = Object.keys(agentStates).filter(id => agentStates[id] !== "idle");
+        drawGlobalSwarmMotionLines(activeIds);
+    }
+}
+
+function updateHochModuleStatusLights(stageName, status) {
+    const ledMap = {
+        "plan": ["led-readiness-autopilot", "led-hochster-runtime"],
+        "research": ["led-mission-intel"],
+        "execute": ["led-remediation-safety", "led-swarm-control"],
+        "verify": ["led-runtime-audit", "led-error-budget"],
+        "report": ["led-release-provenance", "led-timeline-replay"],
+        "complete": ["led-readiness-autopilot", "led-hochster-runtime", "led-remediation-safety", "led-swarm-control", "led-runtime-audit", "led-error-budget", "led-release-provenance", "led-mission-intel", "led-timeline-replay"]
+    };
+
+    const classMap = {
+        "idle": "swarm-led-idle",
+        "active": "swarm-led-active",
+        "complete": "swarm-led-complete",
+        "blocked": "swarm-led-blocked",
+        "approval": "swarm-led-approval"
+    };
+
+    const leds = ledMap[stageName] || [];
+    const className = classMap[status] || "swarm-led-idle";
+
+    leds.forEach(ledId => {
+        const el = document.getElementById(ledId);
+        if (el) {
+            el.className = "nav-status-indicator " + className;
+        }
+    });
+}
+
+function renderHochSwarmProcessRail(activeStage = "", completedStages = []) {
+    const rail = document.getElementById("hoch-swarm-process-rail");
+    if (!rail) return;
+
+    const stages = [
+        { id: "plan", label: "PLAN" },
+        { id: "research", label: "RESEARCH" },
+        { id: "execute", label: "EXECUTE" },
+        { id: "verify", label: "VERIFY" },
+        { id: "report", label: "REPORT" },
+        { id: "complete", label: "COMPLETE" }
+    ];
+
+    rail.innerHTML = stages.map(stage => {
+        let stepClass = "process-stage-step";
+        if (stage.id === activeStage) {
+            stepClass += " active";
+        } else if (completedStages.includes(stage.id)) {
+            stepClass += " complete";
+        }
+        return `
+            <div class="${stepClass}" id="global-stage-${stage.id}">
+                ${stage.label}
+            </div>
+        `;
+    }).join("");
+}
+
+function renderHochGlobalAgentDock(activeAgentIds = [], states = {}) {
+    const dock = document.getElementById("hoch-global-agent-dock");
+    if (!dock) return;
+
+    const agentsToDisplay = [...hochDefaultVisibleAgents];
+    activeAgentIds.forEach(id => {
+        if (!agentsToDisplay.includes(id)) {
+            agentsToDisplay.push(id);
+        }
+    });
+
+    const allAgents = [];
+    hochAgentDepartments.forEach(dept => {
+        dept.agents.forEach(agent => {
+            allAgents.push(agent);
+        });
+    });
+
+    const currentDisplayAgents = agentsToDisplay.map(id => {
+        return allAgents.find(a => a.id === id) || {
+            id,
+            displayName: id.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" "),
+            tag: "SPECIALIST",
+            systemRole: "Agent Specialist",
+            description: "Ready to assist the swarm.",
+            catchphrase: "Swarm standby.",
+            skills: ["operations"],
+            defaultStage: "Execute",
+            completionSignal: "Task complete",
+            avatarVariant: "standard"
+        };
+    });
+
+    dock.innerHTML = currentDisplayAgents.map(a => {
+        const state = states[a.id] || "idle";
+        let cardClass = "agent-dock-card";
+        if (state === "active" || state === "executing" || state === "researching" || state === "spinning-up") {
+            cardClass += " active";
+        } else if (state === "complete" || state === "complete-green") {
+            cardClass += " complete";
+        } else if (state === "blocked") {
+            cardClass += " blocked";
+        } else if (state === "needs-approval") {
+            cardClass += " needs-approval";
+        }
+        
+        return `
+            <div id="dock-card-${a.id}" class="${cardClass}" style="padding: 6px; font-size: 10px; text-align: center;">
+                <div style="font-weight: 700; color: #fff; font-size: 9px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;" title="${a.displayName}">${a.displayName}</div>
+                <div style="font-size: 7px; color: var(--accent-teal); font-weight: bold; text-transform: uppercase; margin-bottom: 4px;">${a.tag}</div>
+                <div class="agent-dock-avatar" style="width: 32px; height: 32px; margin: 4px auto;">
+                    ${getAgentSvg(a.avatarVariant, state)}
+                </div>
+                <div style="font-size: 8px; color: var(--text-secondary); text-align: center; height: 24px; display: flex; flex-direction: column; justify-content: center; overflow: hidden;">
+                    <div style="font-style: italic; line-height: 1.1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">"${a.catchphrase}"</div>
+                </div>
+                <div style="font-size: 8px; font-weight: 600; color: #fff; margin-top: 4px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 2px; text-transform: uppercase;">
+                    ${state}
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+function renderHochEvidenceCompletionLights(states = {}) {
+    const container = document.getElementById("hoch-global-evidence-lights");
+    if (!container) return;
+
+    const categories = [
+        { key: "realtime", label: "REALTIME" },
+        { key: "ast", label: "AST" },
+        { key: "audit", label: "AUDIT" },
+        { key: "provenance", label: "PROV" }
+    ];
+
+    container.innerHTML = categories.map(cat => {
+        const state = states[cat.key] || "idle";
+        let dotClass = "evidence-light";
+        if (state === "locked") {
+            dotClass += " locked";
+        } else if (state === "pending") {
+            dotClass += " pending";
+        }
+        return `
+            <div style="display: flex; align-items: center; gap: 4px; font-size: 9px; font-weight: 600; font-family: monospace; color: var(--text-secondary);">
+                <span class="${dotClass}"></span>
+                <span>${cat.label}</span>
+            </div>
+        `;
+    }).join("");
+}
+
+function animateGordonDockerChecklist() {
+    const items = ["logs", "health", "deps", "bind", "patch"];
+    items.forEach((item, idx) => {
+        setTimeout(() => {
+            checkGordonListItem(item, true);
+        }, idx * 600);
+    });
+}
+
+function drawGlobalSwarmMotionLines(activeAgentIds = []) {
+    const canvas = document.getElementById("hoch-global-motion-canvas");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const getCoords = (id) => {
+        const el = document.getElementById(id);
+        if (!el) return null;
+        const elRect = el.getBoundingClientRect();
+        return {
+            x: elRect.left - rect.left + elRect.width / 2,
+            y: elRect.top - rect.top + elRect.height / 2
+        };
+    };
+
+    const promptBar = getCoords("hoch-process-prompt-bar");
+    const rail = getCoords("hoch-swarm-process-rail");
+
+    ctx.lineWidth = 1.5;
+    ctx.lineCap = "round";
+
+    const drawLine = (from, to, color) => {
+        if (!from || !to) return;
+        ctx.beginPath();
+        ctx.moveTo(from.x, from.y);
+        ctx.bezierCurveTo(
+            (from.x + to.x) / 2, from.y,
+            (from.x + to.x) / 2, to.y,
+            to.x, to.y
+        );
+        ctx.strokeStyle = color;
+        ctx.stroke();
+    };
+
+    if (promptBar && rail) {
+        drawLine(promptBar, rail, "rgba(59, 130, 246, 0.25)");
+    }
+
+    activeAgentIds.forEach(id => {
+        const card = getCoords(`dock-card-${id}`);
+        if (card && rail) {
+            drawLine(rail, card, "rgba(16, 185, 129, 0.2)");
+        }
+    });
+}
+
+function resetHochSwarmAnimationRuntime() {
+    currentActiveStage = "";
+    currentCompletedStages = [];
+    agentStates = {};
+    
+    const allLeds = [
+        "led-readiness-autopilot", "led-hochster-runtime", "led-remediation-safety",
+        "led-runtime-audit", "led-error-budget", "led-release-provenance",
+        "led-swarm-control", "led-mission-intel", "led-timeline-replay"
+    ];
+    allLeds.forEach(ledId => {
+        const el = document.getElementById(ledId);
+        if (el) {
+            el.className = "nav-status-indicator swarm-led-idle";
+        }
+    });
+
+    const badge = document.getElementById("hoch-global-swarm-status");
+    if (badge) {
+        badge.innerText = "STANDBY";
+        badge.className = "badge badge-success";
+    }
+
+    renderHochSwarmProcessRail();
+
+    const initialStates = {};
+    hochDefaultVisibleAgents.forEach(id => {
+        initialStates[id] = "idle";
+    });
+    renderHochGlobalAgentDock(hochDefaultVisibleAgents, initialStates);
+
+    const initialEvidenceStates = {
+        realtime: "idle",
+        ast: "idle",
+        audit: "idle",
+        provenance: "idle"
+    };
+    renderHochEvidenceCompletionLights(initialEvidenceStates);
+
+    const chks = ["logs", "health", "deps", "bind", "patch"];
+    chks.forEach(c => {
+        const el = document.getElementById(`gordon-chk-${c}`);
+        if (el) {
+            el.checked = false;
+            el.parentElement.style.color = "var(--text-secondary)";
+            el.parentElement.style.textDecoration = "none";
+        }
+    });
+
+    const canvas = document.getElementById("hoch-global-motion-canvas");
+    if (canvas) {
+        const ctx = canvas.getContext("2d");
+        if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+}
+
+function startHochSwarmProcessAnimation(promptText) {
+    currentAnimationTimeouts.forEach(t => clearTimeout(t));
+    currentAnimationTimeouts = [];
+
+    resetHochSwarmAnimationRuntime();
+
+    const activeAgentIds = routePromptAgents(promptText);
+    
+    // 1. Stage: Plan
+    setHochSwarmStage("plan", "active");
+    const planAgents = activeAgentIds.filter(id => ["boss-noodle", "captain-obvious-prime", "sir-deadline-panic", "prof-blueprint", "lady-tradeoff"].includes(id));
+    if (planAgents.length === 0) planAgents.push("boss-noodle");
+    
+    planAgents.forEach((agentId, idx) => {
+        animateHochAgentSpinup(agentId, idx + 1);
+    });
+
+    appendKimiComicWorkFeed(`[Plan] Prompt received: "${promptText}"`);
+    appendKimiComicWorkFeed(`[Plan] Mission Wrangler decomposing prompt. Assigned specialists: ${activeAgentIds.join(", ")}`);
+
+    // 2. Stage: Research
+    let t1 = setTimeout(() => {
+        lightHochSwarmCompletion("plan");
+        setHochSwarmStage("research", "active");
+
+        const researchAgents = activeAgentIds.filter(id => ["dr-signal", "scout-tabs-a-lot"].includes(id));
+        if (researchAgents.length === 0) researchAgents.push("dr-signal");
+        
+        researchAgents.forEach((agentId, idx) => {
+            animateHochAgentSpinup(agentId, idx + 1);
+        });
+
+        const isDocker = promptText.toLowerCase().match(/docker|container|port|log/);
+        if (isDocker) {
+            animateYoutubeResearchCards();
+        } else {
+            const grid = document.getElementById("kimi-comic-video-candidate-grid");
+            if (grid) {
+                grid.innerHTML = hochUiResearchCandidates.map((c, idx) => `
+                    <div class="card" id="video-card-${idx}" style="padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 6px; text-align: left; opacity: 0; transform: translateY(10px); transition: all 0.4s ease-out; margin-bottom: 8px;">
+                        <div style="font-size: 11px; font-weight: 600; color: #fff; margin-bottom: 4px; line-height: 1.3;">${c.title}</div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; font-size: 9px; color: var(--text-secondary);">
+                            <span>${c.channel} • <span style="color:#3b82f6;">${c.signal}</span></span>
+                            <span style="font-size:8px; border: 1px solid rgba(245, 158, 11, 0.3); background: rgba(245, 158, 11, 0.05); color: #f59e0b; padding: 1px 4px; border-radius: 3px; font-weight:bold;">candidate, not verified</span>
+                        </div>
+                        <div style="font-size: 9px; color: var(--accent-teal); margin-top: 6px; font-family: monospace; border-top: 1px solid rgba(255,255,255,0.03); padding-top: 4px;">
+                            <strong>Pattern:</strong> ${c.extractedPattern}
+                        </div>
+                    </div>
+                `).join("");
+                hochUiResearchCandidates.forEach((c, idx) => {
+                    setTimeout(() => {
+                        const card = document.getElementById(`video-card-${idx}`);
+                        if (card) {
+                            card.style.opacity = "1";
+                            card.style.transform = "translateY(0)";
+                        }
+                    }, idx * 250);
+                });
+            }
+        }
+
+        appendKimiComicWorkFeed(`[Research] Accessing domain telemetry. Extracting candidates and workflow matches.`);
+    }, 1500);
+    currentAnimationTimeouts.push(t1);
+
+    // 3. Stage: Execute
+    let t2 = setTimeout(() => {
+        lightHochSwarmCompletion("research");
+        setHochSwarmStage("execute", "active");
+
+        const executeAgents = activeAgentIds.filter(id => ["eng-patch", "bugsy-mcfixface", "gordon-vector", "captain-compose", "log-goblin", "pixel-picasso", "motion-molly"].includes(id));
+        if (executeAgents.length === 0) executeAgents.push("eng-patch");
+
+        executeAgents.forEach((agentId, idx) => {
+            animateHochAgentSpinup(agentId, idx + 1);
+        });
+
+        animateGordonDockerChecklist();
+        animateHochAssetAssignment(executeAgents[0], "L1");
+
+        appendKimiComicWorkFeed(`[Execute] Execution lane active. Applying minimal modifications.`);
+    }, 3000);
+    currentAnimationTimeouts.push(t2);
+
+    // 4. Stage: Verify
+    let t3 = setTimeout(() => {
+        lightHochSwarmCompletion("execute");
+        setHochSwarmStage("verify", "active");
+
+        const verifyAgents = activeAgentIds.filter(id => ["ms-checkmark", "playwright-pete", "dr-flake", "screenshot-sally", "ux-ursula", "null-pointer-ned"].includes(id));
+        if (verifyAgents.length === 0) verifyAgents.push("ms-checkmark");
+
+        verifyAgents.forEach((agentId, idx) => {
+            animateHochAgentSpinup(agentId, idx + 1);
+        });
+
+        renderHochEvidenceCompletionLights({
+            realtime: "pending",
+            ast: "pending",
+            audit: "idle",
+            provenance: "idle"
+        });
+
+        appendKimiComicWorkFeed(`[Verify] Verification loop active. Running regression checks and E2E contract compliance.`);
+    }, 5000);
+    currentAnimationTimeouts.push(t3);
+
+    // 5. Stage: Report
+    let t4 = setTimeout(() => {
+        lightHochSwarmCompletion("verify");
+        setHochSwarmStage("report", "active");
+
+        const reportAgents = activeAgentIds.filter(id => ["prof-ledger", "sbom-bob", "provenance-penny", "eng-rocket"].includes(id));
+        if (reportAgents.length === 0) reportAgents.push("prof-ledger");
+
+        reportAgents.forEach((agentId, idx) => {
+            animateHochAgentSpinup(agentId, idx + 1);
+        });
+
+        renderHochEvidenceCompletionLights({
+            realtime: "locked",
+            ast: "locked",
+            audit: "locked",
+            provenance: "pending"
+        });
+
+        appendKimiComicWorkFeed(`[Report] Compiling cryptographic ledger entries and generating SBOM manifest.`);
+    }, 6500);
+    currentAnimationTimeouts.push(t4);
+
+    // 6. Stage: Complete
+    let t5 = setTimeout(() => {
+        lightHochSwarmCompletion("report");
+        setHochSwarmStage("complete", "active");
+        lightHochSwarmCompletion("complete");
+
+        Object.keys(agentStates).forEach(id => {
+            if (agentStates[id] !== "idle") {
+                agentStates[id] = "complete-green";
+            }
+        });
+        const activeIds = Object.keys(agentStates).filter(id => agentStates[id] !== "idle");
+        renderHochGlobalAgentDock(activeIds, agentStates);
+        drawGlobalSwarmMotionLines(activeIds);
+
+        renderHochEvidenceCompletionLights({
+            realtime: "locked",
+            ast: "locked",
+            audit: "locked",
+            provenance: "locked"
+        });
+
+        const badge = document.getElementById("hoch-global-swarm-status");
+        if (badge) {
+            badge.innerText = "COMPLETED";
+            badge.className = "badge badge-success";
+        }
+
+        appendKimiComicWorkFeed(`[Report] Swarm verification complete. Compliance scored 100/100. Swarm mesh secured.`);
+    }, 8000);
+    currentAnimationTimeouts.push(t5);
+}
+
+// ------------------------------------------------------------------------------
+// Compatibility Wrappers for Legacy Comic Swarm Panel
+// ------------------------------------------------------------------------------
+
 function renderKimiStyleComicSwarmInterface() {
     renderHochComicAgentProfiles();
     renderYoutubeResearchLane();
     renderGordonContainerWhispererPanel();
     
-    // Clear dynamic states
     const ring = document.getElementById("kimi-comic-agent-ring");
     if (ring) {
         ring.innerHTML = hochComicAgents.map(a => `
@@ -3118,15 +4128,6 @@ function renderKimiStyleComicSwarmInterface() {
                 ${a.name.split(" ")[0][0]}
             </div>
         `).join("");
-    }
-
-    const assetGrid = document.getElementById("kimi-comic-asset-grid");
-    if (assetGrid) {
-        assetGrid.innerHTML = `
-            <div style="border: 1px dashed var(--border-glass); border-radius: 6px; padding: 12px; text-align: center; color: var(--text-secondary); width: 100%;">
-                Asset plane standing by...
-            </div>
-        `;
     }
 }
 
@@ -3141,7 +4142,7 @@ function renderHochComicAgentProfiles() {
             </div>
             <div style="display:flex; gap:12px; align-items:center; margin-bottom:8px;">
                 <div style="border: 1px solid var(--border-glass); border-radius:50%; background:rgba(0,0,0,0.2); width:48px; height:48px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                    ${getAgentSvg(a.id)}
+                    ${getAgentSvg(a.id === 'gordon' ? 'glasses-docker' : (a.id === 'research' ? 'headphones-beard-glass' : (a.id === 'architect' ? 'blueprint-ruler' : (a.id === 'code' ? 'bracket-mask' : (a.id === 'qa' ? 'clipboard-bob' : (a.id === 'security' ? 'shield-cap' : (a.id === 'remediation' ? 'scale-calculator' : (a.id === 'audit' ? 'ledger-monocle' : 'rocket-flat'))))))), 'idle')}
                 </div>
                 <div style="font-size:10px; color:var(--text-secondary); font-style: italic; line-height:1.3; text-align:left;">
                     <strong>Catchphrase:</strong> "${a.catchphrase}"
@@ -3159,17 +4160,12 @@ function renderHochComicAgentProfiles() {
 function renderYoutubeResearchLane() {
     const grid = document.getElementById("kimi-comic-video-candidate-grid");
     if (!grid) return;
-    grid.innerHTML = `
-        <div style="border: 1px dashed var(--border-glass); border-radius: 6px; padding: 16px; text-align: center; color: var(--text-secondary); font-size: 11px; width: 100%;">
-            Lane standing by. Trigger search to populate research...
-        </div>
-    `;
+    grid.innerHTML = `<div style="border: 1px dashed var(--border-glass); border-radius: 6px; padding: 16px; text-align: center; color: var(--text-secondary); font-size: 11px; width: 100%;">Lane standing by...</div>`;
 }
 
 function animateYoutubeResearchCards() {
     const grid = document.getElementById("kimi-comic-video-candidate-grid");
     if (!grid) return;
-    
     grid.innerHTML = hochYoutubeResearchCandidates.map((c, idx) => `
         <div class="card" id="video-card-${idx}" style="padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 6px; text-align: left; opacity: 0; transform: translateY(10px); transition: all 0.4s ease-out; margin-bottom: 8px;">
             <div style="font-size: 11px; font-weight: 600; color: #fff; margin-bottom: 4px; line-height: 1.3;">${c.title}</div>
@@ -3195,7 +4191,7 @@ function animateYoutubeResearchCards() {
 }
 
 function animateComicAgentProfiles() {
-    // Handled staggered in spinUp workflow
+    // Legacy support
 }
 
 function drawKimiStyleMotionLines() {
@@ -3203,82 +4199,13 @@ function drawKimiStyleMotionLines() {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-
-    const rect = canvas.parentElement.getBoundingClientRect();
-    canvas.width = rect.width;
-    canvas.height = rect.height;
-
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    const getCoords = (id) => {
-        const el = document.getElementById(id);
-        if (!el) return null;
-        const elRect = el.getBoundingClientRect();
-        return {
-            x: elRect.left - rect.left + elRect.width / 2,
-            y: elRect.top - rect.top + elRect.height / 2
-        };
-    };
-
-    const core = getCoords("kimi-comic-mission-core");
-    const lane = getCoords("kimi-comic-youtube-research-lane");
-    const plane = getCoords("kimi-comic-asset-plane");
-    const input = getCoords("kimi-comic-prompt-input");
-
-    ctx.lineWidth = 1.5;
-    ctx.lineCap = "round";
-
-    const drawLine = (from, to, color) => {
-        if (!from || !to) return;
-        ctx.beginPath();
-        ctx.moveTo(from.x, from.y);
-        ctx.bezierCurveTo(
-            (from.x + to.x) / 2, from.y,
-            (from.x + to.x) / 2, to.y,
-            to.x, to.y
-        );
-        ctx.strokeStyle = color;
-        ctx.stroke();
-    };
-
-    drawLine(input, core, "rgba(59, 130, 246, 0.35)");
-    drawLine(core, lane, "rgba(16, 185, 129, 0.35)");
-    drawLine(lane, plane, "rgba(168, 85, 247, 0.35)");
-
-    hochComicAgents.forEach(a => {
-        const pCard = getCoords(`profile-card-${a.id}`);
-        if (pCard && core) {
-            drawLine(core, pCard, "rgba(255, 255, 255, 0.08)");
-        }
-    });
-}
-
-function assignResearchToAgents() {
-    const assetGrid = document.getElementById("kimi-comic-asset-grid");
-    if (assetGrid) {
-        assetGrid.innerHTML = `
-            <div style="border: 1px solid rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.05); padding: 8px; border-radius: 6px; margin-bottom: 6px; display:flex; justify-content:space-between; align-items:center;">
-                <span>Asset L1 (FASTAPI)</span> <span style="color:var(--accent-teal); font-weight:bold;">Code Agent Assigned</span>
-            </div>
-            <div style="border: 1px solid rgba(59, 130, 246, 0.3); background: rgba(59, 130, 246, 0.05); padding: 8px; border-radius: 6px; margin-bottom: 6px; display:flex; justify-content:space-between; align-items:center;">
-                <span>Asset L2 (TELEMETRY)</span> <span style="color:var(--accent-blue); font-weight:bold;">Gordon Debugger Assigned</span>
-            </div>
-            <div style="border: 1px solid rgba(168, 85, 247, 0.3); background: rgba(168, 85, 247, 0.05); padding: 8px; border-radius: 6px; margin-bottom: 6px; display:flex; justify-content:space-between; align-items:center;">
-                <span>Asset L3 (AUDIT)</span> <span style="color:var(--accent-purple); font-weight:bold;">Audit Agent Assigned</span>
-            </div>
-            <div style="border: 1px solid rgba(249, 115, 22, 0.3); background: rgba(249, 115, 22, 0.05); padding: 8px; border-radius: 6px; display:flex; justify-content:space-between; align-items:center;">
-                <span>Asset W1 (WORKERS)</span> <span style="color:var(--accent-orange); font-weight:bold;">QA Agent Assigned</span>
-            </div>
-        `;
-    }
 }
 
 function appendKimiComicWorkFeed(event) {
     const feed = document.getElementById("kimi-comic-work-feed");
     if (!feed) return;
-    if (feed.innerHTML.includes("Idle. Waiting")) {
-        feed.innerHTML = "";
-    }
+    if (feed.innerHTML.includes("Idle. Waiting")) feed.innerHTML = "";
     feed.innerHTML += `<div>${event}</div>`;
     feed.scrollTop = feed.scrollHeight;
 }
@@ -3288,11 +4215,8 @@ function updateKimiComicCommandLoop(stage) {
     stages.forEach(s => {
         const el = document.getElementById(`stage-${s}`);
         if (el) {
-            if (s === stage) {
-                el.classList.add("active-stage");
-            } else {
-                el.classList.remove("active-stage");
-            }
+            if (s === stage) el.classList.add("active-stage");
+            else el.classList.remove("active-stage");
         }
     });
 }
@@ -3340,12 +4264,6 @@ function wakeAgent(id, statusText) {
 }
 
 function spinUpKimiStyleComicSwarm(promptText) {
-    renderKimiStyleComicSwarmInterface();
-    const core = document.getElementById("kimi-comic-mission-core");
-    if (core) core.classList.add("pulse-active");
-
-    appendKimiComicWorkFeed(`[Plan] Prompt received: "${promptText}"`);
-    updateKimiComicCommandLoop("plan");
 
     setTimeout(() => {
         wakeAgent("research", "Searching YouTube API search.list...");
@@ -3405,6 +4323,26 @@ function spinUpKimiStyleComicSwarm(promptText) {
     }, 8500);
 }
 
+function assignResearchToAgents() {
+    const assetGrid = document.getElementById("kimi-comic-asset-grid");
+    if (assetGrid) {
+        assetGrid.innerHTML = `
+            <div style="border: 1px solid rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.05); padding: 8px; border-radius: 6px; margin-bottom: 6px; display:flex; justify-content:space-between; align-items:center;">
+                <span>Asset L1 (FASTAPI)</span> <span style="color:var(--accent-teal); font-weight:bold;">Code Agent Assigned</span>
+            </div>
+            <div style="border: 1px solid rgba(59, 130, 246, 0.3); background: rgba(59, 130, 246, 0.05); padding: 8px; border-radius: 6px; margin-bottom: 6px; display:flex; justify-content:space-between; align-items:center;">
+                <span>Asset L2 (TELEMETRY)</span> <span style="color:var(--accent-blue); font-weight:bold;">Gordon Debugger Assigned</span>
+            </div>
+            <div style="border: 1px solid rgba(168, 85, 247, 0.3); background: rgba(168, 85, 247, 0.05); padding: 8px; border-radius: 6px; margin-bottom: 6px; display:flex; justify-content:space-between; align-items:center;">
+                <span>Asset L3 (AUDIT)</span> <span style="color:var(--accent-purple); font-weight:bold;">Audit Agent Assigned</span>
+            </div>
+            <div style="border: 1px solid rgba(249, 115, 22, 0.3); background: rgba(249, 115, 22, 0.05); padding: 8px; border-radius: 6px; display:flex; justify-content:space-between; align-items:center;">
+                <span>Asset W1 (WORKERS)</span> <span style="color:var(--accent-orange); font-weight:bold;">QA Agent Assigned</span>
+            </div>
+        `;
+    }
+}
+
 // Initial binding
 setTimeout(() => {
     renderKimiStyleComicSwarmInterface();
@@ -3419,4 +4357,744 @@ setTimeout(() => {
 }, 100);
 
 window.addEventListener("resize", drawKimiStyleMotionLines);
+
+// ==============================================================================
+// TOPOLOGY DASHBOARD AGENT OVERLAY SYSTEM - IMPLEMENTATION
+// ==============================================================================
+
+const hochPixelStickAgents = [
+  {
+    id: "boss-noodle",
+    displayName: "Boss Noodle",
+    title: "Swarm Supervisor",
+    tag: "MISSION WRANGLER",
+    systemRole: "Supervisor Agent",
+    avatarVariant: "tiny-crown-headset",
+    status: "idle",
+    description: "Decomposes any prompt into work lanes, assigns specialists, and keeps the swarm moving.",
+    catchphrase: "Everybody gets a lane. Nobody gets to wander.",
+    skills: ["goal decomposition", "routing", "priority ranking", "handoff control"],
+    defaultStage: "Plan",
+    completionSignal: "Mission decomposed",
+    assetTargets: []
+  },
+  {
+    id: "dr-signal",
+    displayName: "Dr. Signal",
+    title: "Senior Research Agent",
+    tag: "TRUTH HUNTER",
+    systemRole: "Research Specialist",
+    avatarVariant: "research",
+    status: "idle",
+    description: "Finds signal in messy research, video candidates, docs, and prior evidence before anyone patches.",
+    catchphrase: "I find the signal before anyone patches.",
+    skills: ["research triage", "YouTube candidate synthesis", "source ranking", "constraint extraction"],
+    defaultStage: "Research",
+    completionSignal: "Signal extracted",
+    assetTargets: []
+  },
+  {
+    id: "prof-blueprint",
+    displayName: "Prof. Blueprint",
+    title: "Systems Architect",
+    tag: "SYSTEM CARTOONIST",
+    systemRole: "Planning Specialist",
+    avatarVariant: "standard",
+    status: "idle",
+    description: "Turns high-level swarm goals into concrete architectural designs and execution steps.",
+    catchphrase: "Every fix needs a shape.",
+    skills: ["architecture documentation", "component mapping", "dependency analysis"],
+    defaultStage: "Plan",
+    completionSignal: "Blueprint drawn",
+    assetTargets: []
+  },
+  {
+    id: "eng-patch",
+    displayName: "Eng. Patch",
+    title: "Implementation Specialist",
+    tag: "PATCH MONK",
+    systemRole: "Code Specialist",
+    avatarVariant: "bracket-mask",
+    status: "idle",
+    description: "Applies small, high-leverage code changes with minimal blast radius.",
+    catchphrase: "Small diff. Big effect.",
+    skills: ["implementation", "refactor", "integration", "config repair"],
+    defaultStage: "Execute",
+    completionSignal: "Patch applied",
+    assetTargets: ["L1", "W1"]
+  },
+  {
+    id: "ms-checkmark",
+    displayName: "Ms. Checkmark",
+    title: "Verification Lead",
+    tag: "BUG BOUNCER",
+    systemRole: "QA Specialist",
+    avatarVariant: "clipboard-bob",
+    status: "idle",
+    description: "Turns claims into tests, screenshots, contracts, and hard PASS/BLOCK results.",
+    catchphrase: "No proof, no pass.",
+    skills: ["build validation", "regression tests", "E2E", "UI contracts"],
+    defaultStage: "Verify",
+    completionSignal: "Tests verified",
+    assetTargets: ["L2"]
+  },
+  {
+    id: "capt-guardrail",
+    displayName: "Capt. Guardrail",
+    title: "Autonomy Safety Officer",
+    tag: "GUARDRAIL GOBLIN",
+    systemRole: "Security Officer",
+    avatarVariant: "shield-cap",
+    status: "idle",
+    description: "Keeps agent freedom bounded by command safety, secrets hygiene, and release policy.",
+    catchphrase: "Freedom inside fences.",
+    skills: ["command risk", "secrets checks", "dependency risk", "policy gates"],
+    defaultStage: "Verify",
+    completionSignal: "Policy enforced",
+    assetTargets: []
+  },
+  {
+    id: "gordon-vector",
+    displayName: "Gordon Vector",
+    title: "Docker Debugger",
+    tag: "CONTAINER WHISPERER",
+    systemRole: "Docker Specialist",
+    avatarVariant: "glasses-docker",
+    status: "idle",
+    description: "Diagnoses containers by reading symptoms: logs, inspect output, health checks, compose timing, and network state.",
+    catchphrase: "The container will tell us what hurts.",
+    skills: ["docker logs", "docker inspect", "health checks", "compose diagnosis", "root cause isolation"],
+    defaultStage: "Execute",
+    completionSignal: "Containers verified",
+    assetTargets: ["L3"]
+  },
+  {
+    id: "prof-ledger",
+    displayName: "Prof. Ledger",
+    title: "Evidence Auditor",
+    tag: "RECEIPT WIZARD",
+    systemRole: "Audit Specialist",
+    avatarVariant: "ledger-monocle",
+    status: "idle",
+    description: "Locks every decision, source, command, and verification into evidence.",
+    catchphrase: "If it is not evidenced, it did not happen.",
+    skills: ["trace IDs", "evidence packs", "provenance", "release records"],
+    defaultStage: "Report",
+    completionSignal: "Evidence finalized",
+    assetTargets: []
+  },
+  {
+    id: "eng-rocket",
+    displayName: "Eng. Rocket",
+    title: "Release Judge",
+    tag: "SHIP JUDGE",
+    systemRole: "Release Manager",
+    avatarVariant: "rocket-flat",
+    status: "idle",
+    description: "Ships only when the release can defend itself with readiness, provenance, rollback, and verification evidence.",
+    catchphrase: "Ship only what can defend itself.",
+    skills: ["release readiness", "SBOM", "provenance", "final gate decision"],
+    defaultStage: "Complete",
+    completionSignal: "Release authorized",
+    assetTargets: []
+  }
+];
+
+let lastTopologyTrigger = null;
+let topologyTimeouts = [];
+
+function bindTopologyAgentOverlay() {
+    renderTopologyAgentRoster();
+    
+    const launchBtn = document.getElementById("topology-agent-launch-button");
+    const launchInput = document.getElementById("topology-agent-prompt-input");
+    
+    launchBtn?.addEventListener("click", () => {
+        const text = launchInput?.value.trim() || "Research YouTube Docker debugging videos and verify release readiness.";
+        launchTopologyExpertSwarm(text);
+    });
+    
+    const modalCloseBtn = document.getElementById("topology-agent-modal-close");
+    modalCloseBtn?.addEventListener("click", () => {
+        closeTopologyAgentProfile();
+    });
+    
+    const modal = document.getElementById("topology-agent-profile-modal");
+    modal?.addEventListener("click", (e) => {
+        if (e.target === modal) {
+            closeTopologyAgentProfile();
+        }
+    });
+    
+    document.getElementById("topology-agent-modal-spinup")?.addEventListener("click", () => {
+        const agentId = modal?.dataset.agentId;
+        if (agentId) {
+            const agent = hochPixelStickAgents.find(a => a.id === agentId);
+            if (agent) {
+                agent.status = "complete";
+                animateTopologyAgentChip(agentId);
+                const led = document.getElementById(`topo-led-${agentId}`);
+                if (led) {
+                    led.className = "topology-agent-led is-green";
+                }
+                const statusEl = document.getElementById("topology-agent-modal-status");
+                if (statusEl) statusEl.textContent = "complete";
+                
+                // Active stage complete
+                animateTopologyStageRail(agent.defaultStage, "complete");
+            }
+        }
+    });
+    
+    document.getElementById("topology-agent-modal-assign")?.addEventListener("click", () => {
+        const agentId = modal?.dataset.agentId;
+        if (agentId) {
+            const agent = hochPixelStickAgents.find(a => a.id === agentId);
+            if (agent) {
+                const promptVal = launchInput?.value || "Assign current mission";
+                console.log(`[Topology Swarm Assignment] ${agent.displayName}: ${promptVal}`);
+                
+                agent.status = "complete";
+                animateTopologyAgentChip(agentId);
+                const led = document.getElementById(`topo-led-${agentId}`);
+                if (led) {
+                    led.className = "topology-agent-led is-green";
+                }
+                const statusEl = document.getElementById("topology-agent-modal-status");
+                if (statusEl) statusEl.textContent = "complete";
+                
+                // Active stage complete
+                animateTopologyStageRail(agent.defaultStage, "complete");
+            }
+        }
+    });
+}
+
+function renderTopologyAgentRoster() {
+    const roster = document.getElementById("topology-agent-roster");
+    if (!roster) return;
+    
+    roster.innerHTML = hochPixelStickAgents.map(agent => {
+        const state = agent.status || "idle";
+        let ledClass = "topology-agent-led";
+        if (state === "complete") {
+            ledClass += " is-green";
+        }
+        
+        return `
+            <button class="topology-agent-chip" id="topo-chip-${agent.id}" data-agent-id="${agent.id}" type="button" style="margin: 2px;">
+                <span class="${ledClass}" id="topo-led-${agent.id}"></span>
+                <strong>${agent.displayName}</strong>
+                <span style="font-size: 7px; opacity: 0.6; text-transform: uppercase;">${agent.tag}</span>
+            </button>
+        `;
+    }).join("");
+    
+    // Bind click events
+    roster.querySelectorAll(".topology-agent-chip").forEach(chip => {
+        chip.addEventListener("click", () => {
+            openTopologyAgentProfile(chip.dataset.agentId, chip);
+        });
+    });
+}
+
+function renderTopologyPixelAvatar(avatarVariant, state) {
+    return getAgentSvg(avatarVariant, state);
+}
+
+function openTopologyAgentProfile(agentId, triggerEl) {
+    const agent = hochPixelStickAgents.find(a => a.id === agentId);
+    if (!agent) return;
+    
+    lastTopologyTrigger = triggerEl || document.activeElement;
+    
+    // Dim other chips, highlight active one
+    document.querySelectorAll(".topology-agent-chip").forEach(chip => {
+        const isTarget = chip.dataset.agentId === agentId;
+        chip.classList.toggle("is-active", isTarget);
+        chip.classList.toggle("is-dimmed", !isTarget);
+    });
+    
+    // Populate modal elements
+    const avatarContainer = document.getElementById("topology-agent-modal-avatar");
+    if (avatarContainer) {
+        avatarContainer.innerHTML = renderTopologyPixelAvatar(agent.avatarVariant, agent.status);
+    }
+    
+    const statusEl = document.getElementById("topology-agent-modal-status");
+    if (statusEl) statusEl.textContent = agent.status || "idle";
+    
+    const tagEl = document.getElementById("topology-agent-modal-tag");
+    if (tagEl) {
+        tagEl.textContent = agent.tag;
+    }
+    
+    const nameEl = document.getElementById("topology-agent-modal-name");
+    if (nameEl) nameEl.textContent = agent.displayName;
+    
+    const titleEl = document.getElementById("topology-agent-modal-title");
+    if (titleEl) titleEl.textContent = agent.title;
+    
+    const descEl = document.getElementById("topology-agent-modal-description");
+    if (descEl) descEl.textContent = agent.description;
+    
+    const phraseEl = document.getElementById("topology-agent-modal-catchphrase");
+    if (phraseEl) phraseEl.textContent = `“${agent.catchphrase}”`;
+    
+    const skillsEl = document.getElementById("topology-agent-modal-skills");
+    if (skillsEl) {
+        skillsEl.innerHTML = agent.skills.map(skill => `<span class="agent-capsule">${skill}</span>`).join("");
+    }
+    
+    const modal = document.getElementById("topology-agent-profile-modal");
+    if (modal) {
+        modal.dataset.agentId = agent.id;
+        if (typeof modal.showModal === "function") {
+            modal.showModal();
+        } else {
+            modal.setAttribute("open", "open");
+        }
+        
+        // Element.animate() transitions
+        modal.animate([
+            { opacity: 0, transform: "translateY(18px) scale(0.96)" },
+            { opacity: 1, transform: "translateY(0) scale(1)" }
+        ], { duration: 220, easing: "cubic-bezier(.2,.8,.2,1)" });
+        
+        if (avatarContainer) {
+            avatarContainer.animate([
+                { transform: "scale(0.7) rotate(-6deg)" },
+                { transform: "scale(1.1) rotate(3deg)" },
+                { transform: "scale(1) rotate(0deg)" }
+            ], { duration: 420, easing: "ease-out" });
+        }
+    }
+    
+    // Highlight default stage
+    animateTopologyStageRail(agent.defaultStage, "active");
+}
+
+function closeTopologyAgentProfile() {
+    const modal = document.getElementById("topology-agent-profile-modal");
+    if (modal) {
+        if (modal.open && typeof modal.close === "function") {
+            modal.close();
+        } else {
+            modal.removeAttribute("open");
+        }
+    }
+    
+    // Remove dimmer/active classes on chips
+    document.querySelectorAll(".topology-agent-chip").forEach(chip => {
+        chip.classList.remove("is-dimmed", "is-active");
+    });
+    
+    if (lastTopologyTrigger && typeof lastTopologyTrigger.focus === "function") {
+        lastTopologyTrigger.focus();
+    }
+}
+
+function animateTopologyAgentChip(agentId) {
+    const chip = document.getElementById(`topo-chip-${agentId}`);
+    if (chip) {
+        chip.classList.add("is-complete");
+        chip.animate([
+            { transform: "translateY(0) rotate(0deg)" },
+            { transform: "translateY(-6px) rotate(-1deg)" },
+            { transform: "translateY(0) rotate(1deg)" }
+        ], { duration: 500, easing: "ease-in-out" });
+    }
+}
+
+function lightTopologyCompletion(stageName) {
+    animateTopologyStageRail(stageName, "complete");
+}
+
+function animateTopologyStageRail(stageName, status) {
+    document.querySelectorAll(".topology-stage-step").forEach(step => {
+        if (step.dataset.stage.toLowerCase() === stageName.toLowerCase()) {
+            step.classList.remove("is-active", "is-complete");
+            if (status === "active") {
+                step.classList.add("is-active");
+            } else if (status === "complete") {
+                step.classList.add("is-complete");
+            }
+        }
+    });
+}
+
+function glowTopologyAssetCards(assetId, status) {
+    const card = document.getElementById(`node-card-${assetId}`);
+    if (card) {
+        card.style.transition = "all 0.4s ease";
+        if (status === "blue") {
+            card.style.borderColor = "#3b82f6";
+            card.style.boxShadow = "0 0 15px rgba(59, 130, 246, 0.4)";
+        } else if (status === "green") {
+            card.style.borderColor = "#10b981";
+            card.style.boxShadow = "0 0 15px rgba(16, 185, 129, 0.4)";
+            card.classList.add("topology-asset-glow");
+        } else {
+            // Reset
+            card.style.borderColor = "";
+            card.style.boxShadow = "";
+            card.classList.remove("topology-asset-glow");
+        }
+    }
+}
+
+function animateGordonContainerChecklist(stepIndex) {
+    const checkIds = ["gordon-chk-logs", "gordon-chk-health", "gordon-chk-deps", "gordon-chk-bind", "gordon-chk-patch"];
+    for (let i = 0; i <= stepIndex; i++) {
+        const el = document.getElementById(checkIds[i]);
+        if (el) {
+            el.checked = true;
+            const parent = el.parentElement;
+            if (parent) {
+                parent.style.color = "#10b981";
+                parent.style.fontWeight = "bold";
+            }
+        }
+    }
+}
+
+function resetGordonContainerChecklist() {
+    const checkIds = ["gordon-chk-logs", "gordon-chk-health", "gordon-chk-deps", "gordon-chk-bind", "gordon-chk-patch"];
+    checkIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.checked = false;
+            const parent = el.parentElement;
+            if (parent) {
+                parent.style.color = "";
+                parent.style.fontWeight = "";
+            }
+        }
+    });
+}
+
+function drawTopologyAgentMotion(activeAgentIds = []) {
+    const canvas = document.getElementById("topology-agent-motion-canvas");
+    if (!canvas) return;
+    
+    const parent = canvas.parentElement;
+    if (!parent) return;
+    
+    const rect = parent.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2 + 40;
+    
+    activeAgentIds.forEach(agentId => {
+        const chip = document.getElementById(`topo-chip-${agentId}`);
+        if (!chip) return;
+        
+        const chipRect = chip.getBoundingClientRect();
+        const targetX = chipRect.left - rect.left + chipRect.width / 2;
+        const targetY = chipRect.top - rect.top + chipRect.height / 2;
+        
+        ctx.beginPath();
+        ctx.strokeStyle = "rgba(59, 130, 246, 0.5)";
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 4]);
+        ctx.moveTo(centerX, centerY);
+        ctx.quadraticCurveTo((centerX + targetX) / 2, (centerY + targetY) / 2 - 30, targetX, targetY);
+        ctx.stroke();
+        
+        const agent = hochPixelStickAgents.find(a => a.id === agentId);
+        if (agent && agent.assetTargets) {
+            agent.assetTargets.forEach(assetId => {
+                const card = document.getElementById(`node-card-${assetId}`);
+                if (!card) return;
+                
+                const cardRect = card.getBoundingClientRect();
+                const assetX = cardRect.left - rect.left + cardRect.width / 2;
+                const assetY = cardRect.top - rect.top + cardRect.height / 2;
+                
+                ctx.beginPath();
+                ctx.strokeStyle = "rgba(16, 185, 129, 0.5)";
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([]);
+                ctx.moveTo(targetX, targetY);
+                ctx.quadraticCurveTo((targetX + assetX) / 2, (targetY + assetY) / 2 + 30, assetX, assetY);
+                ctx.stroke();
+            });
+        }
+    });
+}
+
+function launchTopologyExpertSwarm(promptText) {
+    topologyTimeouts.forEach(t => clearTimeout(t));
+    topologyTimeouts = [];
+    
+    hochPixelStickAgents.forEach(a => {
+        a.status = "idle";
+        const led = document.getElementById(`topo-led-${a.id}`);
+        if (led) led.className = "topology-agent-led";
+        const chip = document.getElementById(`topo-chip-${a.id}`);
+        if (chip) chip.className = "topology-agent-chip";
+    });
+    resetGordonContainerChecklist();
+    document.querySelectorAll(".topology-stage-step").forEach(step => {
+        step.className = "topology-stage-step";
+    });
+    document.querySelectorAll(".evidence-light").forEach(light => {
+        light.className = "evidence-light";
+    });
+    
+    hochPixelStickAgents.forEach(a => {
+        if (a.assetTargets) {
+            a.assetTargets.forEach(assetId => glowTopologyAssetCards(assetId, "reset"));
+        }
+    });
+    
+    const promptVal = promptText || "Research YouTube Docker debugging videos and verify release readiness.";
+    const lowerPrompt = promptVal.toLowerCase();
+    
+    let activeIds = [];
+    if (lowerPrompt.includes("docker") || lowerPrompt.includes("container") || lowerPrompt.includes("logs") || lowerPrompt.includes("compose")) {
+        activeIds = ["boss-noodle", "dr-signal", "gordon-vector", "ms-checkmark", "prof-ledger", "eng-rocket"];
+    } else {
+        activeIds = ["boss-noodle", "dr-signal", "prof-blueprint", "eng-patch", "ms-checkmark", "capt-guardrail", "prof-ledger", "eng-rocket"];
+    }
+    
+    const canvas = document.getElementById("topology-agent-motion-canvas");
+    const ctx = canvas?.getContext("2d");
+    if (ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    const sidebarLed = document.getElementById("led-swarm-control");
+    if (sidebarLed) {
+        sidebarLed.className = "nav-status-indicator swarm-led-active";
+    }
+    
+    const statusBadge = document.getElementById("hoch-global-swarm-status");
+    if (statusBadge) {
+        statusBadge.textContent = "EXECUTING...";
+        statusBadge.className = "badge badge-info";
+    }
+    
+    // 1. Stage: Prompt
+    animateTopologyStageRail("Prompt", "active");
+    topologyTimeouts.push(setTimeout(() => {
+        lightTopologyCompletion("Prompt");
+    }, 500));
+    
+    // 2. Stage: Plan
+    topologyTimeouts.push(setTimeout(() => {
+        animateTopologyStageRail("Plan", "active");
+        const planAgents = activeIds.filter(id => ["boss-noodle", "prof-blueprint"].includes(id));
+        planAgents.forEach(id => {
+            const agent = hochPixelStickAgents.find(a => a.id === id);
+            if (agent) agent.status = "executing";
+            const chip = document.getElementById(`topo-chip-${id}`);
+            if (chip) chip.className = "topology-agent-chip is-active";
+        });
+        drawTopologyAgentMotion(planAgents);
+    }, 1000));
+    
+    topologyTimeouts.push(setTimeout(() => {
+        lightTopologyCompletion("Plan");
+        activeIds.filter(id => ["boss-noodle", "prof-blueprint"].includes(id)).forEach(id => {
+            const agent = hochPixelStickAgents.find(a => a.id === id);
+            if (agent) agent.status = "complete";
+            animateTopologyAgentChip(id);
+            const led = document.getElementById(`topo-led-${id}`);
+            if (led) led.className = "topology-agent-led is-green";
+        });
+    }, 2000));
+    
+    // 3. Stage: Research
+    topologyTimeouts.push(setTimeout(() => {
+        animateTopologyStageRail("Research", "active");
+        const researchAgents = activeIds.filter(id => ["dr-signal"].includes(id));
+        researchAgents.forEach(id => {
+            const agent = hochPixelStickAgents.find(a => a.id === id);
+            if (agent) agent.status = "researching";
+            const chip = document.getElementById(`topo-chip-${id}`);
+            if (chip) chip.className = "topology-agent-chip is-active";
+        });
+        drawTopologyAgentMotion(researchAgents);
+        
+        if (lowerPrompt.includes("youtube") || lowerPrompt.includes("video") || lowerPrompt.includes("research")) {
+            animateYoutubeResearchCards();
+        }
+    }, 2500));
+    
+    topologyTimeouts.push(setTimeout(() => {
+        lightTopologyCompletion("Research");
+        activeIds.filter(id => ["dr-signal"].includes(id)).forEach(id => {
+            const agent = hochPixelStickAgents.find(a => a.id === id);
+            if (agent) agent.status = "complete";
+            animateTopologyAgentChip(id);
+            const led = document.getElementById(`topo-led-${id}`);
+            if (led) led.className = "topology-agent-led is-green";
+        });
+    }, 3500));
+    
+    // 4. Stage: Assign
+    topologyTimeouts.push(setTimeout(() => {
+        animateTopologyStageRail("Assign", "active");
+        const executeAgents = activeIds.filter(id => ["eng-patch", "gordon-vector"].includes(id));
+        executeAgents.forEach(id => {
+            const agent = hochPixelStickAgents.find(a => a.id === id);
+            if (agent && agent.assetTargets) {
+                agent.assetTargets.forEach(assetId => glowTopologyAssetCards(assetId, "blue"));
+            }
+        });
+    }, 4000));
+    
+    topologyTimeouts.push(setTimeout(() => {
+        lightTopologyCompletion("Assign");
+    }, 4500));
+    
+    // 5. Stage: Execute
+    topologyTimeouts.push(setTimeout(() => {
+        animateTopologyStageRail("Execute", "active");
+        const executeAgents = activeIds.filter(id => ["eng-patch", "gordon-vector"].includes(id));
+        executeAgents.forEach(id => {
+            const agent = hochPixelStickAgents.find(a => a.id === id);
+            if (agent) agent.status = "executing";
+            const chip = document.getElementById(`topo-chip-${id}`);
+            if (chip) chip.className = "topology-agent-chip is-active";
+            if (agent && agent.assetTargets) {
+                agent.assetTargets.forEach(assetId => glowTopologyAssetCards(assetId, "green"));
+            }
+        });
+        drawTopologyAgentMotion(executeAgents);
+        
+        if (lowerPrompt.includes("docker") || lowerPrompt.includes("container") || lowerPrompt.includes("logs") || lowerPrompt.includes("compose")) {
+            animateGordonContainerChecklist(2);
+        }
+    }, 5000));
+    
+    topologyTimeouts.push(setTimeout(() => {
+        lightTopologyCompletion("Execute");
+        activeIds.filter(id => ["eng-patch", "gordon-vector"].includes(id)).forEach(id => {
+            const agent = hochPixelStickAgents.find(a => a.id === id);
+            if (agent) agent.status = "complete";
+            animateTopologyAgentChip(id);
+            const led = document.getElementById(`topo-led-${id}`);
+            if (led) led.className = "topology-agent-led is-green";
+        });
+        
+        if (lowerPrompt.includes("docker") || lowerPrompt.includes("container") || lowerPrompt.includes("logs") || lowerPrompt.includes("compose")) {
+            animateGordonContainerChecklist(4);
+        }
+    }, 6000));
+    
+    // 6. Stage: Verify
+    topologyTimeouts.push(setTimeout(() => {
+        animateTopologyStageRail("Verify", "active");
+        const verifyAgents = activeIds.filter(id => ["ms-checkmark", "capt-guardrail"].includes(id));
+        verifyAgents.forEach(id => {
+            const agent = hochPixelStickAgents.find(a => a.id === id);
+            if (agent) agent.status = "verifying";
+            const chip = document.getElementById(`topo-chip-${id}`);
+            if (chip) chip.className = "topology-agent-chip is-active";
+        });
+        drawTopologyAgentMotion(verifyAgents);
+    }, 6500));
+    
+    topologyTimeouts.push(setTimeout(() => {
+        lightTopologyCompletion("Verify");
+        activeIds.filter(id => ["ms-checkmark", "capt-guardrail"].includes(id)).forEach(id => {
+            const agent = hochPixelStickAgents.find(a => a.id === id);
+            if (agent) agent.status = "complete";
+            animateTopologyAgentChip(id);
+            const led = document.getElementById(`topo-led-${id}`);
+            if (led) led.className = "topology-agent-led is-green";
+        });
+        
+        const rLight = document.getElementById("topo-light-realtime");
+        if (rLight) rLight.className = "evidence-light locked";
+        const aLight = document.getElementById("topo-light-ast");
+        if (aLight) aLight.className = "evidence-light locked";
+    }, 7500));
+    
+    // 7. Stage: Report
+    topologyTimeouts.push(setTimeout(() => {
+        animateTopologyStageRail("Report", "active");
+        const reportAgents = activeIds.filter(id => ["prof-ledger"].includes(id));
+        reportAgents.forEach(id => {
+            const agent = hochPixelStickAgents.find(a => a.id === id);
+            if (agent) agent.status = "reporting";
+            const chip = document.getElementById(`topo-chip-${id}`);
+            if (chip) chip.className = "topology-agent-chip is-active";
+        });
+        drawTopologyAgentMotion(reportAgents);
+    }, 8000));
+    
+    topologyTimeouts.push(setTimeout(() => {
+        lightTopologyCompletion("Report");
+        activeIds.filter(id => ["prof-ledger"].includes(id)).forEach(id => {
+            const agent = hochPixelStickAgents.find(a => a.id === id);
+            if (agent) agent.status = "complete";
+            animateTopologyAgentChip(id);
+            const led = document.getElementById(`topo-led-${id}`);
+            if (led) led.className = "topology-agent-led is-green";
+        });
+        
+        const auLight = document.getElementById("topo-light-audit");
+        if (auLight) auLight.className = "evidence-light locked";
+    }, 9000));
+    
+    // 8. Stage: Complete
+    topologyTimeouts.push(setTimeout(() => {
+        animateTopologyStageRail("Complete", "active");
+        const completeAgents = activeIds.filter(id => ["eng-rocket"].includes(id));
+        completeAgents.forEach(id => {
+            const agent = hochPixelStickAgents.find(a => a.id === id);
+            if (agent) agent.status = "completing";
+            const chip = document.getElementById(`topo-chip-${id}`);
+            if (chip) chip.className = "topology-agent-chip is-active";
+        });
+        drawTopologyAgentMotion(completeAgents);
+    }, 9500));
+    
+    topologyTimeouts.push(setTimeout(() => {
+        lightTopologyCompletion("Complete");
+        activeIds.forEach(id => {
+            const agent = hochPixelStickAgents.find(a => a.id === id);
+            if (agent) agent.status = "complete";
+            animateTopologyAgentChip(id);
+            const led = document.getElementById(`topo-led-${id}`);
+            if (led) led.className = "topology-agent-led is-green";
+        });
+        
+        const pLight = document.getElementById("topo-light-provenance");
+        if (pLight) pLight.className = "evidence-light locked";
+        
+        if (statusBadge) {
+            statusBadge.textContent = "COMPLETE";
+            statusBadge.className = "badge badge-success";
+        }
+        
+        if (sidebarLed) {
+            sidebarLed.className = "nav-status-indicator swarm-led-complete";
+        }
+        
+        const badge = document.getElementById("hoch-global-swarm-status");
+        if (badge) {
+            badge.innerText = "COMPLETED";
+            badge.className = "badge badge-success";
+        }
+        
+        drawTopologyAgentMotion(activeIds);
+    }, 10500));
+}
+
+window.addEventListener("resize", () => {
+    const statusBadge = document.getElementById("hoch-global-swarm-status");
+    if (statusBadge && statusBadge.textContent !== "STANDBY") {
+        const activeIds = hochPixelStickAgents.filter(a => a.status === "complete" || a.status === "executing" || a.status === "researching" || a.status === "verifying" || a.status === "reporting" || a.status === "completing").map(a => a.id);
+        drawTopologyAgentMotion(activeIds);
+    }
+});
 
