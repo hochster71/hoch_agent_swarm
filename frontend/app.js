@@ -7523,7 +7523,7 @@ async function fetchAndRenderGovernanceSummary() {
                     const timeStr = item.timestamp ? item.timestamp.substring(11, 19) : "";
                     row.innerHTML = `
                         <td style="font-family:monospace; color:var(--accent-teal);">${item.decision_id}</td>
-                        <td style="font-family:monospace; color:var(--text-secondary);">${item.nonce.substring(0, 16)}...</td>
+                        <td style="font-family:monospace; color:var(--text-secondary);">${item.nonce ? item.nonce.substring(0, 16) + '...' : 'none'}</td>
                         <td><span style="font-family:monospace;">${item.prior_state}</span> ➔ <span style="font-family:monospace; font-weight:600; color:var(--accent-teal);">${item.next_state}</span></td>
                         <td style="color:var(--text-secondary);">${timeStr}</td>
                     `;
