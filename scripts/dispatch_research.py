@@ -15,11 +15,14 @@ def main():
     
     assets = [
         {"name": "MBP MS PRO [L1]", "ip": "10.0.0.6"},
-        {"name": "MICHAEL'S IMAC [L2]", "ip": "10.0.0.91"},
+        {"name": "MICHAEL'S IMAC [L2]", "ip": "10.0.0.92"},
         {"name": "HOCH-MESH MACBOOK NEO [L3]", "ip": "10.0.0.8"},
         {"name": "DELL 9440 [W1]", "ip": "10.0.0.207"},
         {"name": "IPAD PRO 12\" [IPAD]", "ip": "10.0.0.120"},
-        {"name": "IPHONE 15 PRO MAX [IPHONE]", "ip": "10.0.0.74"}
+        {"name": "IPHONE 15 PRO MAX [IPHONE]", "ip": "10.0.0.74"},
+        {"name": "Michael's iPad pro 11-inch MTXQ2LL/A [IPAD_PRO_11]", "ip": "10.0.0.44"},
+        {"name": "iPad mini MUU62LL/A [IPAD_MINI_1]", "ip": "10.0.0.91"},
+        {"name": "iPad mini MGNV2LL/A [IPAD_MINI_2]", "ip": "10.0.0.137"}
     ]
     
     for asset in assets:

@@ -86,7 +86,7 @@ NODES_CONFIG = {
     "L2": {
         "id": "L2",
         "name": "MICHAEL'S IMAC",
-        "ip": "10.0.0.91",
+        "ip": "10.0.0.92",
         "role": "Coder Node — Refactor & Analysis",
         "specs": "M3, 8GB RAM, 512GB SSD",
         "status": "Triaging",
@@ -255,6 +255,75 @@ NODES_CONFIG = {
                 "type": "Push Gateway",
                 "status": "Active",
                 "description": "APNs relay agent for critical cluster events. Processed 6 push notifications in the current session. Zero delivery failures. Encrypted TLS 1.3 channel to control plane verified."
+            }
+        ]
+    },
+    "IPAD_PRO_11": {
+        "id": "IPAD_PRO_11",
+        "name": "Michael's iPad pro 11-inch MTXQ2LL/A",
+        "ip": "10.0.0.44",
+        "role": "Edge Client / Mobile Node",
+        "specs": "Apple M4, 8GB RAM",
+        "status": "Active",
+        "activity": "Streaming live vitals to C2 dashboard",
+        "missionDomain": "monitor",
+        "total_agents": 2,
+        "os": "iPadOS",
+        "cpu_usage": 15,
+        "ram_usage": 25,
+        "latency_ms": 3.8,
+        "agents": [
+            {
+                "name": "UI-Client-iPad-Pro-11",
+                "type": "C2 Monitor Agent",
+                "status": "Active",
+                "description": "Active C2 session telemetry streaming on Apple Silicon iPad."
+            }
+        ]
+    },
+    "IPAD_MINI_1": {
+        "id": "IPAD_MINI_1",
+        "name": "iPad mini MUU62LL/A",
+        "ip": "10.0.0.91",
+        "role": "Edge Client / Mobile Node",
+        "specs": "A12 Bionic, 3GB RAM",
+        "status": "Active",
+        "activity": "Streaming live vitals to C2 dashboard",
+        "missionDomain": "monitor",
+        "total_agents": 2,
+        "os": "iPadOS",
+        "cpu_usage": 18,
+        "ram_usage": 35,
+        "latency_ms": 4.1,
+        "agents": [
+            {
+                "name": "UI-Client-iPad-Mini-1",
+                "type": "C2 Monitor Agent",
+                "status": "Active",
+                "description": "Edge interface active on iPad mini (gen 5)."
+            }
+        ]
+    },
+    "IPAD_MINI_2": {
+        "id": "IPAD_MINI_2",
+        "name": "iPad mini MGNV2LL/A",
+        "ip": "10.0.0.137",
+        "role": "Edge Client / Mobile Node",
+        "specs": "A7, 1GB RAM",
+        "status": "Active",
+        "activity": "Streaming live vitals to C2 dashboard",
+        "missionDomain": "monitor",
+        "total_agents": 2,
+        "os": "iPadOS",
+        "cpu_usage": 22,
+        "ram_usage": 45,
+        "latency_ms": 5.5,
+        "agents": [
+            {
+                "name": "UI-Client-iPad-Mini-2",
+                "type": "C2 Monitor Agent",
+                "status": "Active",
+                "description": "Edge interface active on legacy iPad mini 3."
             }
         ]
     }

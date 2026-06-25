@@ -43,7 +43,7 @@ const defaultAssets: Asset[] = [
   {
     id: "L2",
     name: "MICHAEL'S IMAC",
-    ip_address: "10.0.0.91",
+    ip_address: "10.0.0.92",
     device_type: "iMac",
     status: "training",
     risk: "medium",
@@ -161,6 +161,60 @@ const defaultAssets: Asset[] = [
       confidence: 100,
       last_updated: new Date().toISOString(),
       evidence_refs: ["mobile.sec.ping"]
+    },
+    active_swarms: [],
+    recommendations: []
+  },
+  {
+    id: "IPAD_PRO_11",
+    name: "Michael's iPad pro 11-inch MTXQ2LL/A",
+    ip_address: "10.0.0.44",
+    device_type: "iPad",
+    status: "active",
+    risk: "low",
+    telemetry: { cpu_percent: 15, ram_used_gb: 2.0, ram_total_gb: 8.0, disk_used_gb: 45, disk_total_gb: 256, network_latency_ms: 3.8 },
+    state: {
+      summary: "Edge Client / Mobile Node online.",
+      provenance: "observed",
+      confidence: 100,
+      last_updated: new Date().toISOString(),
+      evidence_refs: ["mobile.edge.ping"]
+    },
+    active_swarms: [],
+    recommendations: []
+  },
+  {
+    id: "IPAD_MINI_1",
+    name: "iPad mini MUU62LL/A",
+    ip_address: "10.0.0.91",
+    device_type: "iPad",
+    status: "active",
+    risk: "low",
+    telemetry: { cpu_percent: 18, ram_used_gb: 1.2, ram_total_gb: 3.0, disk_used_gb: 30, disk_total_gb: 64, network_latency_ms: 4.1 },
+    state: {
+      summary: "Edge Client / Mobile Node online.",
+      provenance: "observed",
+      confidence: 100,
+      last_updated: new Date().toISOString(),
+      evidence_refs: ["mobile.edge.ping"]
+    },
+    active_swarms: [],
+    recommendations: []
+  },
+  {
+    id: "IPAD_MINI_2",
+    name: "iPad mini MGNV2LL/A",
+    ip_address: "10.0.0.137",
+    device_type: "iPad",
+    status: "active",
+    risk: "low",
+    telemetry: { cpu_percent: 22, ram_used_gb: 0.5, ram_total_gb: 1.0, disk_used_gb: 12, disk_total_gb: 16, network_latency_ms: 5.5 },
+    state: {
+      summary: "Edge Client / Mobile Node online.",
+      provenance: "observed",
+      confidence: 100,
+      last_updated: new Date().toISOString(),
+      evidence_refs: ["mobile.edge.ping"]
     },
     active_swarms: [],
     recommendations: []
