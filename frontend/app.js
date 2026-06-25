@@ -371,6 +371,7 @@ async function initDashboard() {
         initReleaseSealAttestation();
         initRunsDashboard();
         initDeviceRegistry();
+        initCapabilityRouterUI();
     } catch (err) {
         console.error("Error initializing dashboard: ", err);
         // Fallback polling if WebSocket fails
@@ -9079,3 +9080,151 @@ window.selectDiscoveredDevice = selectDiscoveredDevice;
 window.executeDeviceApproval = executeDeviceApproval;
 window.executeDeviceRejection = executeDeviceRejection;
 window.renderApprovedServiceNodes = renderApprovedServiceNodes;
+
+async function initCapabilityRouterUI() {
+    const refreshBtn = document.getElementById("device-routing-refresh-button");
+    if (refreshBtn) {
+        refreshBtn.addEventListener("click", loadRoutingHistoryData);
+    }
+    // Load data initially
+    await loadRoutingHistoryData();
+}
+
+async function loadRoutingHistoryData() {
+    try {
+        const res = await fetch("/api/v1/devices/routing/history");
+        if (!res.ok) throw new Error("Failed to fetch routing history");
+        const data = await res.json();
+        renderRoutingHistory(data);
+    } catch (err) {
+        console.error("Error loading routing history: ", err);
+    }
+}
+
+function renderRoutingHistory(events) {
+    const listContainer = document.getElementById("device-routing-history-list");
+    if (!listContainer) return;
+    listContainer.innerHTML = "";
+
+    if (!events || events.length === 0) {
+        listContainer.innerHTML = `<span style="font-size: 11px; color: var(--text-secondary); font-style: italic; text-align: center; padding: 12px 0;">No routing decisions recorded yet.</span>`;
+        return;
+    }
+
+    events.forEach(event => {
+        const div = document.createElement("div");
+        div.className = "gate-row";
+        div.style.cursor = "pointer";
+        div.style.padding = "8px 12px";
+        div.style.display = "flex";
+        div.style.flexDirection = "column";
+        div.style.alignItems = "flex-start";
+        div.style.gap = "4px";
+        div.style.transition = "all 0.2s ease";
+
+        div.addEventListener("mouseover", () => {
+            div.style.borderColor = "var(--accent-blue)";
+            div.style.background = "rgba(59, 130, 246, 0.05)";
+        });
+        div.addEventListener("mouseout", () => {
+            div.style.borderColor = "var(--border-glass)";
+            div.style.background = "rgba(255, 255, 255, 0.02)";
+        });
+
+        div.addEventListener("click", () => {
+            selectRoutingEvent(event);
+        });
+
+        const headerDiv = document.createElement("div");
+        headerDiv.style.display = "flex";
+        headerDiv.style.justifyContent = "space-between";
+        headerDiv.style.width = "100%";
+        headerDiv.style.fontWeight = "bold";
+        headerDiv.style.fontSize = "11px";
+        headerDiv.style.color = "#fff";
+
+        const idSpan = document.createElement("span");
+        idSpan.innerText = event.routing_id;
+
+        const targetSpan = document.createElement("span");
+        targetSpan.style.color = "var(--accent-blue)";
+        targetSpan.innerText = event.selected_node_name;
+
+        headerDiv.appendChild(idSpan);
+        headerDiv.appendChild(targetSpan);
+
+        const promptDiv = document.createElement("div");
+        promptDiv.style.fontSize = "9px";
+        promptDiv.style.color = "var(--text-secondary)";
+        promptDiv.style.whiteSpace = "nowrap";
+        promptDiv.style.overflow = "hidden";
+        promptDiv.style.textOverflow = "ellipsis";
+        promptDiv.style.width = "100%";
+        promptDiv.innerText = event.prompt;
+
+        div.appendChild(headerDiv);
+        div.appendChild(promptDiv);
+        listContainer.appendChild(div);
+    });
+}
+
+function selectRoutingEvent(event) {
+    const panel = document.getElementById("device-routing-inspector-panel");
+    if (!panel) return;
+    panel.classList.remove("hidden");
+
+    document.getElementById("routing-inspect-id").innerText = event.routing_id;
+    document.getElementById("routing-inspect-time").innerText = event.created_at || "Just now";
+    document.getElementById("routing-inspect-selected").innerText = event.selected_node_name;
+    document.getElementById("routing-inspect-type").innerText = event.task_type;
+    document.getElementById("routing-inspect-prompt").innerText = event.prompt;
+    document.getElementById("routing-inspect-required").innerText = JSON.stringify(event.required_capabilities);
+
+    const tbody = document.getElementById("routing-inspect-table-body");
+    if (!tbody) return;
+    tbody.innerHTML = "";
+
+    const decisions = event.routing_decisions || {};
+    Object.keys(decisions).forEach(nodeId => {
+        const decision = decisions[nodeId];
+        const tr = document.createElement("tr");
+
+        const nameTd = document.createElement("td");
+        nameTd.innerHTML = `<strong>${decision.name}</strong> <span style="font-family: monospace; font-size: 8px; color: var(--text-secondary);">${nodeId}</span>`;
+
+        const capsTd = document.createElement("td");
+        capsTd.style.fontFamily = "monospace";
+        capsTd.style.fontSize = "9px";
+        capsTd.innerText = JSON.stringify(decision.capabilities || []);
+
+        const statusTd = document.createElement("td");
+        const statusSpan = document.createElement("span");
+        statusSpan.style.fontWeight = "bold";
+        statusSpan.style.textTransform = "uppercase";
+        statusSpan.style.fontSize = "9px";
+
+        if (decision.status === "eligible") {
+            statusSpan.style.color = "var(--accent-teal)";
+            statusSpan.innerText = "Eligible";
+        } else {
+            statusSpan.style.color = "#ef4444";
+            statusSpan.innerText = "Rejected";
+        }
+        statusTd.appendChild(statusSpan);
+
+        const reasonTd = document.createElement("td");
+        reasonTd.style.fontSize = "9px";
+        reasonTd.innerText = decision.reason;
+
+        tr.appendChild(nameTd);
+        tr.appendChild(capsTd);
+        tr.appendChild(statusTd);
+        tr.appendChild(reasonTd);
+        tbody.appendChild(tr);
+    });
+}
+
+window.initCapabilityRouterUI = initCapabilityRouterUI;
+window.loadRoutingHistoryData = loadRoutingHistoryData;
+window.renderRoutingHistory = renderRoutingHistory;
+window.selectRoutingEvent = selectRoutingEvent;

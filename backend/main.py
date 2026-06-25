@@ -154,6 +154,7 @@ class TaskRequest(BaseModel):
     model: str = None
     mode: str = "Execute" # "Draft" | "Simulate" | "Execute" | "Emergency Override"
     operator_role: str = "Operator"
+    required_capabilities: list[str] = None
 
 # ================================================================
 #  AUDIT TRAIL — thread-safe list of system executions & compliance audits
@@ -2400,7 +2401,7 @@ def ping_all_nodes():
 @app.post("/api/tasks/run")
 def run_swarm_task(req: TaskRequest):
     # Route task to appropriate node
-    routed_node = cluster_mgr.route_task(req.task_type, req.prompt)
+    routed_node = cluster_mgr.route_task(req.task_type, req.prompt, req.required_capabilities)
     
     if req.mode == "Simulate":
         # Simulation (Dry-run) mode
@@ -2563,6 +2564,11 @@ def reject_device(node_id: str, req: RejectDeviceRequest):
     from backend.service_registry import reject_service_node
     success = reject_service_node(node_id, req.operator, req.reason)
     return {"status": "SUCCESS" if success else "FAILED"}
+
+@app.get("/api/v1/devices/routing/history")
+def get_routing_history(limit: int = 50):
+    from backend.runtime_execution_store import list_routing_history
+    return list_routing_history(limit)
 
 class NodeRegisterRequest(BaseModel):
     id: str

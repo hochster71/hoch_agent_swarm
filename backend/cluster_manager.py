@@ -550,34 +550,10 @@ class ClusterManager:
                 return True
         return False
 
-    def route_task(self, task_type: str, prompt: str):
-        # Decide which node gets the task based on task requirements or explicit targeting
-        prompt_lower = prompt.lower()
-        
-        if "neo" in prompt_lower or "l3" in prompt_lower:
-            target_node = "L3"
-        elif "deploy" in prompt_lower or "app store" in prompt_lower:
-            target_node = "L3" # Neo hosts the Gordy-App-Deployer agent!
-        elif "imac" in prompt_lower or "l2" in prompt_lower:
-            target_node = "L2"
-        elif "dell" in prompt_lower or "w1" in prompt_lower or "9440" in prompt_lower:
-            target_node = "W1"
-        elif "ipad" in prompt_lower:
-            target_node = "IPAD"
-        elif "iphone" in prompt_lower:
-            target_node = "IPHONE"
-        elif "code" in prompt_lower or "write" in prompt_lower or "research" in prompt_lower:
-            # Code/Research tasks go to coder nodes
-            active_coders = [n for n in ["L2", "L3", "W1"] if self.nodes[n]["status"] != "Offline"]
-            if active_coders:
-                # Select the one with the lowest CPU usage
-                target_node = min(active_coders, key=lambda n: self.nodes[n]["cpu_usage"])
-            else:
-                target_node = "L1"
-        elif "mobile" in task_type or "ui" in prompt_lower:
-            target_node = "IPAD"
-        else:
-            target_node = "L1" # Default Control Plane
-            
-        logger.info(f"Routing task '{task_type}' to node: {self.nodes[target_node]['name']} ({self.nodes[target_node]['ip']})")
-        return self.nodes[target_node]
+    def route_task(self, task_type: str, prompt: str, explicit_caps: list[str] = None):
+        from backend.capability_router import route_task_by_capabilities
+        try:
+            return route_task_by_capabilities(task_type, prompt, explicit_caps, self.nodes)
+        except Exception as e:
+            logger.error(f"Capability routing failed: {e}. Falling back to default L1 routing.")
+            return self.nodes.get("L1")

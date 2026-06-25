@@ -380,6 +380,22 @@ def init_execution_store_tables() -> None:
             )
             """
         )
+        # Create swarm_routing_history table
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS swarm_routing_history (
+                routing_id TEXT PRIMARY KEY,
+                task_type TEXT,
+                prompt TEXT,
+                required_capabilities_json TEXT,
+                selected_node_id TEXT,
+                selected_node_name TEXT,
+                eligible_nodes_json TEXT,
+                routing_decisions_json TEXT,
+                created_at TEXT
+            )
+            """
+        )
         conn.commit()
     finally:
         conn.close()
@@ -1614,6 +1630,71 @@ def delete_service_node(node_id: str) -> None:
     try:
         conn.execute("DELETE FROM device_service_registry WHERE node_id = ?", (node_id,))
         conn.commit()
+    finally:
+        conn.close()
+
+def persist_routing_decision(
+    routing_id: str,
+    task_type: str,
+    prompt: str,
+    required_caps: list[str],
+    selected_node_id: str,
+    selected_node_name: str,
+    eligible_nodes: list[str],
+    routing_decisions: dict[str, dict]
+) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        now_str = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO swarm_routing_history (
+                routing_id, task_type, prompt, required_capabilities_json,
+                selected_node_id, selected_node_name, eligible_nodes_json,
+                routing_decisions_json, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                routing_id,
+                task_type,
+                prompt,
+                json.dumps(required_caps),
+                selected_node_id,
+                selected_node_name,
+                json.dumps(eligible_nodes),
+                json.dumps(routing_decisions),
+                now_str
+            )
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+def list_routing_history(limit: int = 50) -> list[dict]:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    conn.row_factory = sqlite3.Row
+    try:
+        cursor = conn.execute(
+            "SELECT * FROM swarm_routing_history ORDER BY created_at DESC LIMIT ?",
+            (limit,)
+        )
+        rows = cursor.fetchall()
+        result = []
+        for r in rows:
+            result.append({
+                "routing_id": r["routing_id"],
+                "task_type": r["task_type"],
+                "prompt": r["prompt"],
+                "required_capabilities": json.loads(r["required_capabilities_json"] or "[]"),
+                "selected_node_id": r["selected_node_id"],
+                "selected_node_name": r["selected_node_name"],
+                "eligible_nodes": json.loads(r["eligible_nodes_json"] or "[]"),
+                "routing_decisions": json.loads(r["routing_decisions_json"] or "{}"),
+                "created_at": r["created_at"]
+            })
+        return result
     finally:
         conn.close()
 

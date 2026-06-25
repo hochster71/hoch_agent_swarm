@@ -1672,6 +1672,59 @@
                         </div>
                     </div>
                 </section>
+
+                <section class="card" id="device-routing-center-panel" style="padding: 16px; margin-top: 20px; display: flex; flex-direction: column; gap: 16px;">
+                    <div class="card-header" style="border-bottom: 1px solid var(--border-glass); padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                        <h3 class="card-title" style="font-size: 14px; font-weight: 600; color: #fff; margin: 0; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="git-branch" style="color: var(--accent-blue); width: 16px; height: 16px;"></i> Device Capability Routing Center
+                        </h3>
+                        <button id="device-routing-refresh-button" class="btn btn-xs btn-outline"><i data-lucide="refresh-cw"></i> Refresh History</button>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 240px 1fr; gap: 20px;">
+                        <!-- Left: Routing history events list -->
+                        <div>
+                            <h4 style="margin: 0 0 8px 0; font-size: 12px; color: #fff;">Routing Decision History</h4>
+                            <div id="device-routing-history-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 6px; padding: 8px;">
+                                <span style="font-size: 11px; color: var(--text-secondary); font-style: italic; text-align: center; padding: 12px 0;">No routing decisions recorded yet.</span>
+                            </div>
+                        </div>
+
+                        <!-- Right: Detailed routing decision inspector -->
+                        <div id="device-routing-inspector-panel" class="hidden" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 6px; padding: 12px; display: flex; flex-direction: column; gap: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--border-glass); padding-bottom: 8px;">
+                                <div>
+                                    <h4 id="routing-inspect-id" style="margin: 0; font-size: 13px; color: #fff; font-weight: bold;">Routing ID</h4>
+                                    <span id="routing-inspect-time" style="font-size: 10px; color: var(--text-secondary);">YYYY-MM-DD HH:MM:SS</span>
+                                </div>
+                                <span id="routing-inspect-selected" class="status-pill" style="font-size: 9px; padding: 2px 6px;">L1 Control Plane</span>
+                            </div>
+
+                            <div style="font-size: 11px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 6px;">
+                                <div><strong>Task Type:</strong> <span id="routing-inspect-type" style="color: #fff;">-</span></div>
+                                <div><strong>Prompt Context:</strong> <span id="routing-inspect-prompt" style="color: #fff; font-style: italic;">-</span></div>
+                                <div><strong>Required Capabilities:</strong> <span id="routing-inspect-required" style="color: var(--accent-teal); font-family: monospace;">[]</span></div>
+                            </div>
+
+                            <div>
+                                <h4 style="margin: 0 0 6px 0; font-size: 11px; font-weight: bold; color: #fff;">Cluster-wide Capability Audit Table</h4>
+                                <table class="ops-table" style="font-size: 10px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Device / Node</th>
+                                            <th>Capabilities</th>
+                                            <th>Match Status</th>
+                                            <th>Routing Decision Reason</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="routing-inspect-table-body">
+                                        <!-- Populated dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
 
             <!-- Red-Team Chaos View -->
