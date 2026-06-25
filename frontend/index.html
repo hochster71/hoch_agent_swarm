@@ -1921,6 +1921,97 @@
                         </div>
                     </div>
                 </section>
+
+                <!-- Multi-Model Swarm Comparison Panel (Phase 18) -->
+                <section class="card" id="multi-model-swarm-comparison-panel" style="padding: 16px; margin-top: 20px;">
+                    <div class="card-header" style="border-bottom: 1px solid var(--border-glass); padding-bottom: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                        <i data-lucide="git-branch" style="color: var(--accent-blue); width: 16px; height: 16px;"></i>
+                        <h3 class="card-title" style="font-size: 13px; font-weight: 600; color: #fff; margin: 0;">Multi-Model Swarm Comparison & Consensus</h3>
+                    </div>
+
+                    <div class="dashboard-grid" style="grid-template-columns: 1fr 1.5fr; gap: 20px; border: 0; padding: 0; background: transparent; margin: 0;">
+                        <!-- Selection & Input -->
+                        <div style="display: flex; flex-direction: column; gap: 12px; background: rgba(0,0,0,0.15); padding: 14px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.03);">
+                            <h4 style="margin: 0 0 4px 0; font-size: 12px; font-weight: bold; color: var(--accent-blue);">Run Parallel Swarm Reasoning</h4>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 6px;">
+                                <label style="font-size: 11px; color: var(--text-secondary);">Select Model Providers to Compare</label>
+                                <div id="multi-model-providers-list" style="display: flex; flex-direction: column; gap: 6px; max-height: 120px; overflow-y: auto; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 4px; border: 1px solid var(--border-glass);">
+                                    <!-- Dynamic checkboxes populate here -->
+                                </div>
+                            </div>
+
+                            <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 4px;">
+                                <label style="font-size: 11px; color: var(--text-secondary);">Test Prompt</label>
+                                <textarea id="multi-model-prompt-input" rows="4" placeholder="Explain the role of local sandboxed reasoning nodes in this swarm." style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 12px; font-family: monospace; resize: vertical;"></textarea>
+                            </div>
+
+                            <div style="margin-top: 8px;">
+                                <button class="btn btn-sm btn-primary" id="multi-model-execute-button" style="width: 100%;">Execute Swarm Reasoning</button>
+                            </div>
+                        </div>
+
+                        <!-- Results & Analysis -->
+                        <div style="display: flex; flex-direction: column; gap: 14px;">
+                            <!-- Consensus Metrics -->
+                            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 6px; padding: 10px; display: flex; flex-direction: column; gap: 6px;">
+                                <h4 style="margin: 0; font-size: 11px; font-weight: bold; color: #fff;">Consensus Summary</h4>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 11px;">
+                                    <div><strong>Agreement Score:</strong> <span id="multi-model-agreement-display" style="color: var(--accent-teal); font-weight: bold;">-</span></div>
+                                    <div><strong>Run Latency:</strong> <span id="multi-model-latency-display" style="color: #fff;">-</span></div>
+                                </div>
+                                <div style="font-size: 11px; margin-top: 4px;">
+                                    <strong>Consensus Answer:</strong>
+                                    <div id="multi-model-consensus-output" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); padding: 8px; border-radius: 4px; font-family: monospace; font-size: 10px; max-height: 80px; overflow-y: auto; white-space: pre-wrap; margin-top: 4px; color: #fff;">No execution yet.</div>
+                                </div>
+                            </div>
+
+                            <!-- Comparison Matrix -->
+                            <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 11px; color: var(--text-secondary);">Model Output Comparison Matrix</label>
+                                <div class="table-container" style="max-height: 200px; overflow-y: auto; background: rgba(0,0,0,0.1); border-radius: 6px; border: 1px solid rgba(255,255,255,0.03);">
+                                    <table class="deployments-table" style="font-size: 10px; margin: 0; width: 100%;">
+                                        <thead>
+                                            <tr>
+                                                <th>Provider ID</th>
+                                                <th>Model</th>
+                                                <th>Similarity</th>
+                                                <th>Status</th>
+                                                <th>Output Excerpt</th>
+                                                <th>Latency</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="multi-model-matrix-list">
+                                            <!-- Populated dynamically -->
+                                            <tr><td colspan="6" style="text-align: center; color: var(--text-secondary);">No active execution metrics.</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Swarm Reasoning History -->
+                            <div>
+                                <label style="font-size: 11px; color: var(--text-secondary);">Swarm Consensus History Log</label>
+                                <div class="table-container" style="max-height: 100px; overflow-y: auto; background: rgba(0,0,0,0.1); border-radius: 6px; border: 1px solid rgba(255,255,255,0.03);">
+                                    <table class="deployments-table" style="font-size: 9px; margin: 0; width: 100%;">
+                                        <thead>
+                                            <tr>
+                                                <th>Run ID</th>
+                                                <th>Agreement</th>
+                                                <th>Consensus Preview</th>
+                                                <th>Latency</th>
+                                                <th>Artifact</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="multi-model-history-list">
+                                            <!-- Dynamically populated runs -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
 
             <!-- Red-Team Chaos View -->

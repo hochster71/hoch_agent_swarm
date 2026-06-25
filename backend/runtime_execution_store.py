@@ -472,6 +472,23 @@ def init_execution_store_tables() -> None:
             )
             """
         )
+        # Create multi_model_runs table
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS multi_model_runs (
+                multi_model_run_id TEXT PRIMARY KEY,
+                prompt_hash TEXT,
+                consensus_agreement_score REAL,
+                consensus_response_preview TEXT,
+                status TEXT,
+                created_at TEXT,
+                completed_at TEXT,
+                latency_ms REAL,
+                evidence_path TEXT,
+                metadata_json TEXT
+            )
+            """
+        )
         conn.commit()
     finally:
         conn.close()
@@ -2070,6 +2087,60 @@ def list_inference_runs_db() -> list[dict]:
                 "latency_ms": d["latency_ms"],
                 "token_usage": json.loads(d["token_usage_json"] or "{}"),
                 "error_message": d["error_message"],
+                "evidence_path": d["evidence_path"],
+                "metadata": json.loads(d["metadata_json"] or "{}")
+            })
+        return results
+    finally:
+        conn.close()
+
+def persist_multi_model_run_db(multi_model_run_id: str, data: dict) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO multi_model_runs (
+                multi_model_run_id, prompt_hash, consensus_agreement_score,
+                consensus_response_preview, status, created_at, completed_at,
+                latency_ms, evidence_path, metadata_json
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                multi_model_run_id,
+                data.get("prompt_hash"),
+                data.get("consensus_agreement_score"),
+                data.get("consensus_response_preview"),
+                data.get("status"),
+                data.get("created_at"),
+                data.get("completed_at"),
+                data.get("latency_ms"),
+                data.get("evidence_path"),
+                json.dumps(data.get("metadata", {}))
+            )
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+def list_multi_model_runs_db() -> list[dict]:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        rows = conn.execute("SELECT * FROM multi_model_runs ORDER BY created_at DESC").fetchall()
+        results = []
+        for r in rows:
+            d = dict(r)
+            results.append({
+                "multi_model_run_id": d["multi_model_run_id"],
+                "prompt_hash": d["prompt_hash"],
+                "consensus_agreement_score": d["consensus_agreement_score"],
+                "consensus_response_preview": d["consensus_response_preview"],
+                "status": d["status"],
+                "created_at": d["created_at"],
+                "completed_at": d["completed_at"],
+                "latency_ms": d["latency_ms"],
                 "evidence_path": d["evidence_path"],
                 "metadata": json.loads(d["metadata_json"] or "{}")
             })

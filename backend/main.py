@@ -2703,6 +2703,11 @@ class InferenceChatRequest(BaseModel):
     messages: list[dict]
     options: InferenceChatOptions = None
 
+class MultiModelInferenceRequest(BaseModel):
+    model_provider_ids: list[str] = None
+    prompt: str
+    options: dict = None
+
 # Model Provider Registry Endpoints
 @app.get("/api/v1/models/providers")
 def api_list_model_providers():
@@ -2928,6 +2933,24 @@ def api_inference_chat(req: InferenceChatRequest):
 def api_inference_history():
     from backend.runtime_execution_store import list_inference_runs_db
     return list_inference_runs_db()
+
+@app.post("/api/v1/inference/multi-chat")
+def api_multi_model_inference(req: MultiModelInferenceRequest):
+    from backend.multi_model_orchestrator import execute_multi_model_inference
+    try:
+        res = execute_multi_model_inference(
+            prompt=req.prompt,
+            provider_ids=req.model_provider_ids,
+            options=req.options
+        )
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/inference/multi-history")
+def api_multi_model_history():
+    from backend.runtime_execution_store import list_multi_model_runs_db
+    return list_multi_model_runs_db()
 
 # Self-contained mock LLM adapter endpoints for E2E testing
 @app.get("/api/v1/mock/llm/v1/models")

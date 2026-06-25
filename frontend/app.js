@@ -9310,8 +9310,14 @@ async function initModelProviderRegistryUI() {
         sendInferenceBtn.addEventListener("click", sendTestInference);
     }
     
+    const multiExecuteBtn = document.getElementById("multi-model-execute-button");
+    if (multiExecuteBtn) {
+        multiExecuteBtn.addEventListener("click", executeMultiModelReasoning);
+    }
+    
     loadModelProviders();
     loadInferenceHistory();
+    loadMultiModelHistory();
     populateModelNodeSelect();
 }
 
@@ -9406,6 +9412,11 @@ async function loadModelProviders() {
             selectEl.innerHTML = `<option value="">-- Auto-Route (Capability Matching) --</option>`;
         }
         
+        const multiListEl = document.getElementById("multi-model-providers-list");
+        if (multiListEl) {
+            multiListEl.innerHTML = "";
+        }
+        
         if (providers.length === 0) {
             listEl.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-secondary); padding: 12px;">No model providers registered.</td></tr>`;
             return;
@@ -9443,6 +9454,26 @@ async function loadModelProviders() {
                 opt.value = p.model_provider_id;
                 opt.textContent = `${p.display_name} (${p.default_model})`;
                 selectEl.appendChild(opt);
+            }
+            
+            if (multiListEl && p.approved_for_inference) {
+                const label = document.createElement("label");
+                label.style.display = "flex";
+                label.style.alignItems = "center";
+                label.style.gap = "6px";
+                label.style.fontSize = "11px";
+                label.style.color = "#fff";
+                label.style.cursor = "pointer";
+                
+                const input = document.createElement("input");
+                input.type = "checkbox";
+                input.value = p.model_provider_id;
+                input.className = "multi-model-provider-checkbox";
+                input.style.accentColor = "var(--accent-blue)";
+                
+                label.appendChild(input);
+                label.appendChild(document.createTextNode(`${p.display_name} (${p.default_model})`));
+                multiListEl.appendChild(label);
             }
         });
     } catch (err) {
@@ -9653,7 +9684,151 @@ async function loadInferenceHistory() {
     }
 }
 
+async function executeMultiModelReasoning() {
+    const promptArea = document.getElementById("multi-model-prompt-input");
+    const promptText = promptArea ? promptArea.value.trim() : "";
+    if (!promptText) {
+        alert("Please enter a prompt for parallel swarm reasoning.");
+        return;
+    }
+
+    const checkboxes = document.querySelectorAll(".multi-model-provider-checkbox:checked");
+    const providerIds = Array.from(checkboxes).map(cb => cb.value);
+    
+    if (providerIds.length === 0) {
+        alert("Please select at least one model provider to compare.");
+        return;
+    }
+
+    const executeBtn = document.getElementById("multi-model-execute-button");
+    if (executeBtn) {
+        executeBtn.disabled = true;
+        executeBtn.textContent = "Running Swarm Reasoning...";
+    }
+
+    const consensusOutput = document.getElementById("multi-model-consensus-output");
+    const agreementDisplay = document.getElementById("multi-model-agreement-display");
+    const latencyDisplay = document.getElementById("multi-model-latency-display");
+    const matrixList = document.getElementById("multi-model-matrix-list");
+
+    if (consensusOutput) consensusOutput.textContent = "Orchestrating parallel requests and resolving consensus...";
+    if (agreementDisplay) agreementDisplay.textContent = "-";
+    if (latencyDisplay) latencyDisplay.textContent = "-";
+
+    const payload = {
+        model_provider_ids: providerIds,
+        prompt: promptText,
+        options: {
+            temperature: 0.2,
+            max_tokens: 512
+        }
+    };
+
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/inference/multi-chat`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            
+            if (consensusOutput) consensusOutput.textContent = data.consensus_response;
+            if (agreementDisplay) agreementDisplay.textContent = (data.consensus_agreement_score * 100).toFixed(0) + "%";
+            if (latencyDisplay) latencyDisplay.textContent = data.latency_ms.toFixed(1) + "ms";
+
+            if (matrixList) {
+                matrixList.innerHTML = "";
+                data.responses.forEach(r => {
+                    const tr = document.createElement("tr");
+                    const isSuccess = r.status === "success";
+                    const statusColor = isSuccess ? "var(--accent-teal)" : "#ef4444";
+                    
+                    const dissenter = data.dissenters.find(d => d.model_provider_id === r.model_provider_id);
+                    let simText = "-";
+                    let rowStyle = "";
+                    
+                    if (isSuccess) {
+                        if (dissenter) {
+                            simText = `<span style="color:#ef4444; font-weight:bold;">${(dissenter.similarity_to_consensus * 100).toFixed(0)}% (Dissent)</span>`;
+                            rowStyle = "background: rgba(239,68,68,0.05);";
+                        } else {
+                            simText = `<span style="color:var(--accent-teal); font-weight:bold;">≥50% (Agreed)</span>`;
+                        }
+                    }
+
+                    tr.style = rowStyle;
+                    tr.innerHTML = `
+                        <td style="font-family:monospace; color:var(--accent-blue); font-weight:bold;">${r.model_provider_id}</td>
+                        <td><span style="font-family:monospace;">${r.model_id}</span></td>
+                        <td>${simText}</td>
+                        <td><span class="${isSuccess ? 'text-success' : 'text-danger'} font-semibold" style="text-transform:uppercase;">${r.status}</span></td>
+                        <td style="color:#fff; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${r.content}">${r.content}</td>
+                        <td>${r.latency_ms.toFixed(0)}ms</td>
+                    `;
+                    matrixList.appendChild(tr);
+                });
+            }
+
+            if (promptArea) promptArea.value = "";
+            loadMultiModelHistory();
+        } else {
+            const err = await res.json();
+            if (consensusOutput) consensusOutput.textContent = "ERROR: " + (err.detail || "Consensus execution failed");
+        }
+    } catch (err) {
+        console.error("Error executing swarm reasoning:", err);
+        if (consensusOutput) consensusOutput.textContent = "NETWORK ERROR: " + err.message;
+    } finally {
+        if (executeBtn) {
+            executeBtn.disabled = false;
+            executeBtn.textContent = "Execute Swarm Reasoning";
+        }
+    }
+}
+
+async function loadMultiModelHistory() {
+    const listEl = document.getElementById("multi-model-history-list");
+    if (!listEl) return;
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/inference/multi-history`);
+        if (!res.ok) return;
+        const runs = await res.json();
+        
+        listEl.innerHTML = "";
+        if (runs.length === 0) {
+            listEl.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-secondary); padding: 10px;">No multi-model history logs captured.</td></tr>`;
+            return;
+        }
+        
+        runs.forEach(run => {
+            const tr = document.createElement("tr");
+            const isSuccess = run.status === "success";
+            const statusColor = isSuccess ? "var(--accent-teal)" : "#ef4444";
+            const linkText = `multi_model/${run.multi_model_run_id}.json`;
+            const agreementPercent = (run.consensus_agreement_score * 100).toFixed(0) + "%";
+            
+            const previewText = run.consensus_response_preview.length > 50 
+                ? run.consensus_response_preview.substring(0, 50) + "..."
+                : run.consensus_response_preview;
+                
+            tr.innerHTML = `
+                <td style="font-family:monospace; color:var(--accent-blue);">${run.multi_model_run_id}</td>
+                <td style="font-weight:bold; color:var(--accent-teal);">${agreementPercent}</td>
+                <td style="color:#fff; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${previewText}</td>
+                <td>${run.latency_ms ? run.latency_ms.toFixed(0) + "ms" : "-"}</td>
+                <td><span style="font-family:monospace; color:${statusColor};">${linkText}</span></td>
+            `;
+            listEl.appendChild(tr);
+        });
+    } catch (err) {
+        console.error("Error loading multi-model history:", err);
+    }
+}
+
 window.initModelProviderRegistryUI = initModelProviderRegistryUI;
 window.loadModelProviders = loadModelProviders;
 window.loadInferenceHistory = loadInferenceHistory;
+window.loadMultiModelHistory = loadMultiModelHistory;
 window.populateModelNodeSelect = populateModelNodeSelect;
