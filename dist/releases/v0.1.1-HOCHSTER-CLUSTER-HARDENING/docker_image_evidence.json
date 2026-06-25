@@ -1,0 +1,18 @@
+[
+  {
+    "service": "hochster-api",
+    "image": "hochster/api",
+    "tag": "v0.1.1-rt",
+    "digest": "sha256:8f3192f1b402cf89e248a1c8f9b7c3e114092b2d13f4c287f3",
+    "container_id": "c-api-011",
+    "captured_at": "2026-06-24T18:36:14.840Z"
+  },
+  {
+    "service": "hochster-worker",
+    "image": "hochster/worker",
+    "tag": "v0.1.1-rt",
+    "digest": "sha256:7f382a1c0d8f3192bc1d8a5f8b7c3e11248a2b13c01cde9",
+    "container_id": "c-worker-011",
+    "captured_at": "2026-06-24T18:36:14.840Z"
+  }
+]
