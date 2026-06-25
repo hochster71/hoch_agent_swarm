@@ -28,6 +28,15 @@ from backend.runtime_execution_store import (
     persist_tool_call,
     persist_redaction_record,
     persist_approval_gate,
+    list_approval_gates,
+    persist_swarm_run,
+    list_swarm_runs,
+    persist_swarm_agent,
+    list_swarm_agents,
+    persist_swarm_task,
+    list_swarm_tasks,
+    persist_swarm_artifact,
+    list_swarm_artifacts,
     persist_validation_evidence,
     redact_secrets,
     list_readiness_reports,
@@ -297,6 +306,68 @@ def get_agents_status():
         "evidence_refs": ["database.swarm_ledger"]
     }
 
+@app.get("/api/v1/agents")
+def get_swarm_agents():
+    return list_swarm_agents()
+
+@app.get("/api/v1/runs")
+def get_swarm_runs():
+    return list_swarm_runs()
+
+@app.post("/api/v1/runs")
+def create_swarm_run(payload: dict):
+    run_id = f"run-{uuid.uuid4().hex[:8]}"
+    name = payload.get("name", f"Swarm Run {datetime.now().strftime('%Y-%m-%d %H:%M')}")
+    persist_swarm_run(run_id, name, "running")
+    
+    # Load tasks template from task_graph.json
+    tasks_template = []
+    task_graph_path = "/Users/michaelhoch/.gemini/antigravity/brain/c72fc948-b730-4420-b7dd-4e159a9aea6d/task_graph.json"
+    if os.path.exists(task_graph_path):
+        try:
+            with open(task_graph_path, "r") as f:
+                graph_data = json.load(f)
+                tasks_template = graph_data.get("tasks", [])
+        except Exception:
+            pass
+            
+    if not tasks_template:
+        # Fallback tasks mapping to the 10-task graph
+        tasks_template = [
+            {"id": "T0-RECON", "title": "Perform Repository Reconnaissance", "description": "Inspect files.", "priority": "critical", "ownerAgentId": "repo-recon-agent", "dependencies": [], "planningFrameworks": [], "acceptanceCriteria": "done", "riskLevel": "low", "approvalRequired": False},
+            {"id": "T1-ROSTER-PLAN", "title": "Decompose Swarm Agent Roster & Gates", "description": "Map roles.", "priority": "critical", "ownerAgentId": "executive-orchestrator-agent", "dependencies": ["T0-RECON"], "planningFrameworks": [], "acceptanceCriteria": "done", "riskLevel": "low", "approvalRequired": False},
+            {"id": "T2-SPEC", "title": "Define Product and Runtime Specs", "description": "Establish schemas.", "priority": "high", "ownerAgentId": "product-strategy-agent", "dependencies": ["T1-ROSTER-PLAN"], "planningFrameworks": [], "acceptanceCriteria": "done", "riskLevel": "low", "approvalRequired": True},
+            {"id": "T3-ARCH-SCAFFOLD", "title": "Create Reference Architecture Scaffold", "description": "Merge schemas.", "priority": "high", "ownerAgentId": "system-architecture-agent", "dependencies": ["T2-SPEC"], "planningFrameworks": [], "acceptanceCriteria": "done", "riskLevel": "medium", "approvalRequired": True},
+            {"id": "T4-CORE-ENGINE", "title": "Implement Core Orchestration Runtime", "description": "Write DAG resolver.", "priority": "critical", "ownerAgentId": "agent-runtime-engineer", "dependencies": ["T3-ARCH-SCAFFOLD"], "planningFrameworks": [], "acceptanceCriteria": "done", "riskLevel": "medium", "approvalRequired": True},
+            {"id": "T5-SWARM-DASHBOARD", "title": "Build Swarm UI Console Dashboard", "description": "Render lanes.", "priority": "high", "ownerAgentId": "frontend-swarm-ui-agent", "dependencies": ["T4-CORE-ENGINE"], "planningFrameworks": [], "acceptanceCriteria": "done", "riskLevel": "low", "approvalRequired": False},
+            {"id": "T6-PLATFORM-BACKEND", "title": "Harden Orchestration Backend API", "description": "Secure databases.", "priority": "high", "ownerAgentId": "backend-platform-agent", "dependencies": ["T4-CORE-ENGINE"], "planningFrameworks": [], "acceptanceCriteria": "done", "riskLevel": "medium", "approvalRequired": True},
+            {"id": "T7-DEVSECOPS-HARDENING", "title": "Threat Modeling and DevSecOps Integration", "description": "STRIDE analysis.", "priority": "medium", "ownerAgentId": "cybersecurity-threat-model-agent", "dependencies": ["T6-PLATFORM-BACKEND", "T5-SWARM-DASHBOARD"], "planningFrameworks": [], "acceptanceCriteria": "done", "riskLevel": "high", "approvalRequired": True},
+            {"id": "T8-VERIFICATION", "title": "Execute E2E Verification Suites", "description": "Run Playwright.", "priority": "high", "ownerAgentId": "qa-verification-agent", "dependencies": ["T7-DEVSECOPS-HARDENING"], "planningFrameworks": [], "acceptanceCriteria": "done", "riskLevel": "low", "approvalRequired": False},
+            {"id": "T9-RELEASE", "title": "Final Release Launch Synthesis", "description": "Release candidate.", "priority": "critical", "ownerAgentId": "release-manager-agent", "dependencies": ["T8-VERIFICATION"], "planningFrameworks": [], "acceptanceCriteria": "done", "riskLevel": "low", "approvalRequired": True}
+        ]
+
+    for t in tasks_template:
+        t["run_id"] = run_id
+        t["status"] = "pending"
+        persist_swarm_task(t)
+
+    # Return details
+    return {
+        "run_id": run_id,
+        "name": name,
+        "status": "running",
+        "tasks": list_swarm_tasks(run_id)
+    }
+
+@app.get("/api/v1/runs/{run_id}/tasks")
+def get_run_tasks(run_id: str):
+    return list_swarm_tasks(run_id)
+
+@app.get("/api/v1/runs/{run_id}/artifacts")
+def get_run_artifacts(run_id: str):
+    return list_swarm_artifacts(run_id)
+
+
 
 @app.get("/api/mission/feed")
 async def get_mission_feed(limit: int = 25):
@@ -502,6 +573,9 @@ def patch_security_control(req: PatchRequest):
         success = True
         details = "SSH daemon configurations hardened (PasswordAuthentication/RootLogin checks enforced)."
         
+    if success:
+        security_auditor.patched_controls.add(control_id)
+
     # Append to audit trail
     with _audit_lock:
         _audit_trail.insert(0, {
@@ -637,6 +711,213 @@ async def startup_event():
     init_db()
     init_hochster_cluster_tables()
     init_execution_store_tables()
+
+    # Seed 14 specialized agents if empty
+    try:
+        agents = list_swarm_agents()
+        if not agents:
+            default_agents = [
+                {
+                    "id": "boss-noodle",
+                    "displayName": "Boss Noodle",
+                    "title": "Swarm Supervisor",
+                    "tag": "MISSION WRANGLER",
+                    "systemRole": "Supervisor Agent",
+                    "avatarVariant": "tiny-crown-headset",
+                    "status": "idle",
+                    "description": "Decomposes any prompt into work lanes, assigns specialists, and keeps the swarm moving.",
+                    "catchphrase": "Everybody gets a lane. Nobody gets to wander.",
+                    "skills": ["goal decomposition", "routing", "priority ranking", "handoff control"],
+                    "stats": {"intelligence": 98, "speed": 90, "reliability": 95, "energy": 85},
+                    "tier": "MYTHIC"
+                },
+                {
+                    "id": "dr-signal",
+                    "displayName": "Dr. Signal",
+                    "title": "Senior Research Agent",
+                    "tag": "TRUTH HUNTER",
+                    "systemRole": "Research Specialist",
+                    "avatarVariant": "research",
+                    "status": "idle",
+                    "description": "Finds signal in messy research, video candidates, docs, and prior evidence before anyone patches.",
+                    "catchphrase": "I find the signal before anyone patches.",
+                    "skills": ["research triage", "YouTube candidate synthesis", "source ranking", "constraint extraction"],
+                    "stats": {"intelligence": 96, "speed": 85, "reliability": 97, "energy": 75},
+                    "tier": "GOLD"
+                },
+                {
+                    "id": "prof-blueprint",
+                    "displayName": "Prof. Blueprint",
+                    "title": "Systems Architect",
+                    "tag": "SYSTEM CARTOONIST",
+                    "systemRole": "Planning Specialist",
+                    "avatarVariant": "standard",
+                    "status": "idle",
+                    "description": "Turns high-level swarm goals into concrete architectural designs and execution steps.",
+                    "catchphrase": "Every fix needs a shape.",
+                    "skills": ["architecture documentation", "component mapping", "dependency analysis"],
+                    "stats": {"intelligence": 95, "speed": 80, "reliability": 92, "energy": 70},
+                    "tier": "PLATINUM"
+                },
+                {
+                    "id": "eng-patch",
+                    "displayName": "Eng. Patch",
+                    "title": "Implementation Specialist",
+                    "tag": "PATCH MONK",
+                    "systemRole": "Code Specialist",
+                    "avatarVariant": "bracket-mask",
+                    "status": "idle",
+                    "description": "Applies small, high-leverage code changes with minimal blast radius.",
+                    "catchphrase": "Small diff. Big effect.",
+                    "skills": ["implementation", "refactor", "integration", "config repair"],
+                    "stats": {"intelligence": 92, "speed": 98, "reliability": 94, "energy": 90},
+                    "tier": "LEGENDARY"
+                },
+                {
+                    "id": "ms-checkmark",
+                    "displayName": "Ms. Checkmark",
+                    "title": "Verification Lead",
+                    "tag": "BUG BOUNCER",
+                    "systemRole": "QA Specialist",
+                    "avatarVariant": "clipboard-bob",
+                    "status": "idle",
+                    "description": "Turns claims into tests, screenshots, contracts, and hard PASS/BLOCK results.",
+                    "catchphrase": "No proof, no pass.",
+                    "skills": ["build validation", "regression tests", "E2E", "UI contracts"],
+                    "stats": {"intelligence": 90, "speed": 92, "reliability": 99, "energy": 80},
+                    "tier": "LEGENDARY"
+                },
+                {
+                    "id": "capt-guardrail",
+                    "displayName": "Capt. Guardrail",
+                    "title": "Autonomy Safety Officer",
+                    "tag": "GUARDRAIL GOBLIN",
+                    "systemRole": "Security Officer",
+                    "avatarVariant": "shield-cap",
+                    "status": "idle",
+                    "description": "Keeps agent freedom bounded by command safety, secrets hygiene, and release policy.",
+                    "catchphrase": "Freedom inside fences.",
+                    "skills": ["command risk", "secrets checks", "dependency risk", "policy gates"],
+                    "stats": {"intelligence": 94, "speed": 86, "reliability": 98, "energy": 85},
+                    "tier": "GOLD"
+                },
+                {
+                    "id": "gordon-vector",
+                    "displayName": "Gordon Vector",
+                    "title": "Docker Debugger",
+                    "tag": "CONTAINER WHISPERER",
+                    "systemRole": "Docker Specialist",
+                    "avatarVariant": "glasses-docker",
+                    "status": "idle",
+                    "description": "Diagnoses containers by reading symptoms: logs, inspect output, health checks, compose timing, and network state.",
+                    "catchphrase": "The container will tell us what hurts.",
+                    "skills": ["docker logs", "docker inspect", "health checks", "compose diagnosis", "root cause isolation"],
+                    "stats": {"intelligence": 93, "speed": 91, "reliability": 96, "energy": 75},
+                    "tier": "PLATINUM"
+                },
+                {
+                    "id": "prof-ledger",
+                    "displayName": "Prof. Ledger",
+                    "title": "Evidence Auditor",
+                    "tag": "RECEIPT WIZARD",
+                    "systemRole": "Audit Specialist",
+                    "avatarVariant": "ledger-monocle",
+                    "status": "idle",
+                    "description": "Locks every decision, source, command, and verification into evidence.",
+                    "catchphrase": "If it is not evidenced, it did not happen.",
+                    "skills": ["trace IDs", "evidence packs", "provenance", "release records"],
+                    "stats": {"intelligence": 91, "speed": 84, "reliability": 100, "energy": 65},
+                    "tier": "MYTHIC"
+                },
+                {
+                    "id": "eng-rocket",
+                    "displayName": "Eng. Rocket",
+                    "title": "Release Judge",
+                    "tag": "SHIP JUDGE",
+                    "systemRole": "Release Manager",
+                    "avatarVariant": "rocket-flat",
+                    "status": "idle",
+                    "description": "Ships only when the release can defend itself with readiness, provenance, rollback, and verification evidence.",
+                    "catchphrase": "Ship only what can defend itself.",
+                    "skills": ["release readiness", "SBOM", "provenance", "final gate decision"],
+                    "stats": {"intelligence": 94, "speed": 95, "reliability": 97, "energy": 95},
+                    "tier": "LEGENDARY"
+                },
+                {
+                    "id": "repo-recon-agent",
+                    "displayName": "Dr. Recon",
+                    "title": "Repository Recon Agent",
+                    "tag": "CODEBASE INSPECTOR",
+                    "systemRole": "Recon Specialist",
+                    "avatarVariant": "glasses-recon",
+                    "status": "idle",
+                    "description": "Inspects file structures, checks dependency versions, and maps code enclaves.",
+                    "catchphrase": "Let's see what is hidden in the codebase.",
+                    "skills": ["codebase inspection", "dependency checks", "security scan"],
+                    "stats": {"intelligence": 95, "speed": 90, "reliability": 93, "energy": 70},
+                    "tier": "PLATINUM"
+                },
+                {
+                    "id": "product-strategy-agent",
+                    "displayName": "Strat Genius",
+                    "title": "Product Strategy Agent",
+                    "tag": "SCOPE DEFINER",
+                    "systemRole": "Strategy Specialist",
+                    "avatarVariant": "strat-cap",
+                    "status": "idle",
+                    "description": "Defines product scope, Kano mapping, and Jobs To Be Done (JTBD) requirements.",
+                    "catchphrase": "Alignment starts with clear requirements.",
+                    "skills": ["jobs-to-be-done", "kano model", "product spec"],
+                    "stats": {"intelligence": 96, "speed": 85, "reliability": 94, "energy": 75},
+                    "tier": "GOLD"
+                },
+                {
+                    "id": "agent-runtime-engineer",
+                    "displayName": "Loop Master",
+                    "title": "Agent Runtime Engineer",
+                    "tag": "SWARM ENGINE BUILDER",
+                    "systemRole": "Runtime Specialist",
+                    "avatarVariant": "bracket-mask",
+                    "status": "idle",
+                    "description": "Orchestrates task DAG resolver loops and runs execution hooks.",
+                    "catchphrase": "The loop must execute safely and atomically.",
+                    "skills": ["task dag", "loop executor", "concurrency control"],
+                    "stats": {"intelligence": 97, "speed": 94, "reliability": 98, "energy": 85},
+                    "tier": "LEGENDARY"
+                },
+                {
+                    "id": "frontend-swarm-ui-agent",
+                    "displayName": "Pixel Artist",
+                    "title": "Frontend Swarm UI Agent",
+                    "tag": "DASHBOARD BUILDER",
+                    "systemRole": "UI Specialist",
+                    "avatarVariant": "canvas-cap",
+                    "status": "idle",
+                    "description": "Renders parallel work lanes, WebSockets feeds, and 3D card tilt.",
+                    "catchphrase": "Wow the operator at first glance.",
+                    "skills": ["css micro-animations", "canvas rendering", "holographic tilt"],
+                    "stats": {"intelligence": 93, "speed": 95, "reliability": 92, "energy": 80},
+                    "tier": "PLATINUM"
+                },
+                {
+                    "id": "backend-platform-agent",
+                    "displayName": "API Architect",
+                    "title": "Backend Platform Agent",
+                    "tag": "SERVICE DEVELOPER",
+                    "systemRole": "Backend Specialist",
+                    "avatarVariant": "server-monocle",
+                    "status": "idle",
+                    "description": "Mounts FastAPI endpoints, structures SQLite WAL database connections.",
+                    "catchphrase": "Data must flow with sub-millisecond pings.",
+                    "skills": ["fastapi router", "sqlite wal", "websockets broker"],
+                    "stats": {"intelligence": 94, "speed": 92, "reliability": 97, "energy": 75},
+                    "tier": "LEGENDARY"
+                }
+            ]
+            for a in default_agents:
+                persist_swarm_agent(a)
+    except Exception as e:
+        logger.error(f"Failed to seed swarm agents: {e}")
 
     # Start continuous readiness daemon
     daemon = ReadinessDaemon(interval_seconds=30)
@@ -850,12 +1131,45 @@ def api_create_approval(request: dict):
         return request
 
 @app.post("/api/approval/requests/{approval_id}/decisions")
-def api_submit_decision(approval_id: str, decision: dict):
+async def api_submit_decision(approval_id: str, decision: dict):
+    # 1. Update SQLite approval gate
+    gates = list_approval_gates()
+    gate = next((g for g in gates if g["approval_id"] == approval_id), None)
+    if gate:
+        dec_type = decision.get("decision")
+        status_map = {"approve": "approved", "reject": "rejected", "request_changes": "changes_requested"}
+        new_status = status_map.get(dec_type, "pending")
+        
+        persist_approval_gate(
+            approval_id=approval_id,
+            request_id=gate["request_id"],
+            correlation_id=gate["correlation_id"],
+            trace_id=gate["trace_id"],
+            action_type=gate["action_type"],
+            risk_level=gate["risk_level"],
+            status=new_status,
+            requested_by=gate["requested_by"],
+            decisions=gate["decisions"] + [decision]
+        )
+        
+        if new_status == "approved":
+            # Resume blocked tasks
+            req_id = gate["request_id"]
+            if ":" in req_id:
+                parts = req_id.split(":", 1)
+                run_id, task_id = parts[0], parts[1]
+            else:
+                run_id, task_id = None, req_id
+            all_tasks = list_swarm_tasks(run_id)
+            matching_task = next((t for t in all_tasks if t["id"] == task_id and t["status"] == "blocked_pending_approval"), None)
+            if matching_task:
+                asyncio.create_task(execute_task_background(matching_task["run_id"], task_id))
+
+    # 2. Update in-memory approvals list
     with _approvals_lock:
         for r in _approvals:
             if r["approval_id"] == approval_id:
                 r["decisions"].insert(0, decision)
-                # update status based on decision
                 dec_type = decision.get("decision")
                 if dec_type == "approve":
                     r["status"] = "approved"
@@ -865,6 +1179,143 @@ def api_submit_decision(approval_id: str, decision: dict):
                     r["status"] = "changes_requested"
                 return r
         return {"error": "Approval request not found"}
+
+from datetime import timedelta
+
+async def run_task_simulated(run_id: str, task: dict):
+    # Simulate execution duration
+    await asyncio.sleep(1.5)
+    
+    # Check if task is still running (wasn't cancelled)
+    tasks = list_swarm_tasks(run_id)
+    current_task = next((t for t in tasks if t["id"] == task["id"]), None)
+    if not current_task or current_task["status"] != "running":
+        return
+        
+    current_task["status"] = "completed"
+    persist_swarm_task(current_task)
+    
+    # Persist artifact if it produces one
+    if task["id"] == "T2-SPEC":
+        persist_swarm_artifact({
+            "id": f"art-prd-{uuid.uuid4().hex[:4]}",
+            "name": "prd.md",
+            "path": "/docs/mission/prd.md",
+            "hash": "8169a0c04ab0942182225f7e4ce17eaf3064b694944e518c3339e4a1b901bae5",
+            "task_id": task["id"],
+            "run_id": run_id,
+            "status": "completed"
+        })
+    elif task["id"] == "T3-ARCH-SCAFFOLD":
+        persist_swarm_artifact({
+            "id": f"art-arch-{uuid.uuid4().hex[:4]}",
+            "name": "architecture.md",
+            "path": "/docs/mission/architecture.md",
+            "hash": "a93efcaa6c215e7c64fa31c6750300d38e4f2594c8e1a752558134cebd812b9e",
+            "task_id": task["id"],
+            "run_id": run_id,
+            "status": "completed"
+        })
+
+    # Broadcast state change
+    await manager.broadcast({"type": "task_state_change", "data": {"task_id": task["id"], "run_id": run_id, "status": "completed"}})
+    
+    # Trigger next tasks that depend on this one
+    all_tasks = list_swarm_tasks(run_id)
+    for t in all_tasks:
+        if t["status"] == "pending" and task["id"] in t["dependencies"]:
+            # Check if all other dependencies are met
+            deps_met = True
+            for dep_id in t["dependencies"]:
+                dep_t = next((x for x in all_tasks if x["id"] == dep_id), None)
+                if not dep_t or dep_t["status"] != "completed":
+                    deps_met = False
+                    break
+            if deps_met:
+                asyncio.create_task(execute_task_background(run_id, t["id"]))
+
+async def execute_task_background(run_id: str, task_id: str):
+    # Fetch task
+    tasks = list_swarm_tasks(run_id)
+    task = next((t for t in tasks if t["id"] == task_id), None)
+    if not task:
+        return
+        
+    # Check if dependencies are complete
+    deps = task["dependencies"]
+    for d in deps:
+        dep_task = next((t for t in tasks if t["id"] == d), None)
+        if dep_task and dep_task["status"] != "completed":
+            # Dependency not met
+            task["status"] = "blocked"
+            persist_swarm_task(task)
+            await manager.broadcast({"type": "task_state_change", "data": {"task_id": task_id, "run_id": run_id, "status": "blocked"}})
+            return
+            
+    # Check if approval is required
+    if task["approvalRequired"] and task["status"] not in ("running", "completed"):
+        # Check if there is an approved gate for this task in SQLite
+        gates = list_approval_gates()
+        gate = next((g for g in gates if g["request_id"] == f"{run_id}:{task_id}" and g["status"] == "approved"), None)
+        if not gate:
+            # Need approval!
+            task["status"] = "blocked_pending_approval"
+            persist_swarm_task(task)
+            
+            # Persist approval gate in SQLite
+            approval_id = f"app-{uuid.uuid4().hex[:4]}"
+            persist_approval_gate(
+                approval_id=approval_id,
+                request_id=f"{run_id}:{task_id}",
+                correlation_id=f"corr-{uuid.uuid4().hex[:6]}",
+                trace_id=f"trace-{uuid.uuid4().hex[:6]}",
+                action_type="TASK_EXECUTION",
+                risk_level=task["riskLevel"],
+                status="pending",
+                requested_by="Swarm Orchestrator",
+                decisions=[]
+            )
+            
+            # Insert into in-memory approvals list to support frontend / E2E compatibility
+            with _approvals_lock:
+                _approvals.insert(0, {
+                    "approval_id": approval_id,
+                    "created_at": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "expires_at": (datetime.utcnow() + timedelta(hours=1)).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "status": "pending",
+                    "requested_by": {"id": "swarm", "name": "Swarm Orchestrator", "role": "orchestrator"},
+                    "required_approver_role": "approver",
+                    "command": {"command_id": f"cmd-{task_id}", "correlation_id": "corr", "raw_text": f"execute-task {task_id}", "risk": task["riskLevel"]},
+                    "target": {"id": run_id, "name": f"Swarm Run {run_id}", "type": "swarm"},
+                    "policy_context": {"decision": "block", "approval_reason": f"Approval required for task {task_id} due to {task['riskLevel']} risk level.", "blockers": [], "warnings": []},
+                    "decisions": []
+                })
+            
+            # Broadcast state change
+            await manager.broadcast({
+                "type": "task_state_change",
+                "data": {
+                    "task_id": task_id,
+                    "run_id": run_id,
+                    "status": "blocked_pending_approval",
+                    "approval_required": True,
+                    "approval_id": approval_id
+                }
+            })
+            return
+
+    # Proceed with execution
+    task["status"] = "running"
+    persist_swarm_task(task)
+    await manager.broadcast({"type": "task_state_change", "data": {"task_id": task_id, "run_id": run_id, "status": "running"}})
+    
+    # Simulate execution duration
+    asyncio.create_task(run_task_simulated(run_id, task))
+
+@app.post("/api/v1/runs/{run_id}/tasks/{task_id}/execute")
+async def execute_run_task(run_id: str, task_id: str):
+    asyncio.create_task(execute_task_background(run_id, task_id))
+    return {"status": "dispatched", "task_id": task_id}
 
 @app.get("/api/intel/insights")
 def api_get_insights():

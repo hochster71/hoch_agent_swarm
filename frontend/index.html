@@ -24,7 +24,7 @@
     </style>
     <link rel="stylesheet" href="styles.css?v=1.0.2">
     <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="/dist/tailwind.css">
+  <link rel="stylesheet" href="/tailwind.css">
 </head>
 <body>
     <div class="app-container">
@@ -245,6 +245,42 @@
                                 </div>
                                 <!-- Motion canvas overlay -->
                                 <canvas id="topology-agent-motion-canvas" class="topology-motion-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 80;"></canvas>
+                            </div>
+
+                            <!-- Runs & Tasks Synchronization Panel -->
+                            <div id="runs-control-panel" style="padding: 16px; border-top: 1px solid var(--border-glass); background: rgba(10, 15, 28, 0.75); display: flex; flex-direction: column; gap: 12px; z-index: 10; position: relative;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                                        <span style="font-size: 11px; font-weight: bold; letter-spacing: 0.5px; color: var(--accent-blue); font-family: monospace;">RUNS CONSOLE:</span>
+                                        <select id="run-selector" style="background: rgba(15, 23, 42, 0.85); border: 1px solid var(--border-glass); border-radius: 4px; padding: 4px 10px; color: #fff; font-size: 11px; font-family: monospace; outline: none; transition: border-color 0.2s;" onchange="this.style.borderColor = 'var(--accent-blue)'">
+                                            <option value="">Select a Run...</option>
+                                        </select>
+                                        <button id="btn-create-run" style="background: rgba(0, 229, 255, 0.12); border: 1px solid rgba(0, 229, 255, 0.25); color: var(--accent-teal); padding: 4px 10px; border-radius: 4px; font-size: 10px; font-family: monospace; font-weight: bold; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(0, 229, 255, 0.22)'" onmouseout="this.style.background='rgba(0, 229, 255, 0.12)'">NEW RUN</button>
+                                        <button id="btn-start-run" style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.25); color: #10b981; padding: 4px 10px; border-radius: 4px; font-size: 10px; font-family: monospace; font-weight: bold; cursor: pointer; display: none; transition: all 0.2s;" onmouseover="this.style.background='rgba(16, 185, 129, 0.22)'" onmouseout="this.style.background='rgba(16, 185, 129, 0.12)'">START EXECUTION</button>
+                                    </div>
+                                    <div style="font-size: 10px; font-family: monospace; color: var(--text-secondary);">
+                                        Run status: <span id="run-status-text" style="color: #fff; font-weight: bold;">-</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- 10-Task Status Flow Grid -->
+                                <div style="display: flex; flex-direction: column; gap: 6px;">
+                                    <div style="font-size: 10px; font-weight: bold; color: var(--text-secondary); letter-spacing: 0.5px; font-family: monospace;">SQLITE RUNTIME TASK STATE FLOW:</div>
+                                    <div id="task-flow-grid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; max-height: 120px; overflow-y: auto; padding: 2px;">
+                                        <!-- Will render 10 tasks dynamically -->
+                                    </div>
+                                </div>
+
+                                <!-- Human Operator Approval Queue -->
+                                <div id="approval-queue-section" style="display: flex; flex-direction: column; gap: 6px; border-top: 1px dashed rgba(255, 255, 255, 0.08); padding-top: 8px;">
+                                    <div style="font-size: 10px; font-weight: bold; color: var(--accent-purple); letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; font-family: monospace;">
+                                        <span>&#9888; HUMAN OPERATOR APPROVAL QUEUE</span>
+                                        <span id="approval-queue-count" style="font-size: 9px; padding: 2px 6px; border-radius: 4px; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); color: #f59e0b; font-family: monospace;">0 PENDING</span>
+                                    </div>
+                                    <div id="approval-queue-list" style="display: flex; flex-direction: column; gap: 6px; max-height: 140px; overflow-y: auto; padding: 2px;">
+                                        <div style="font-size: 10px; color: var(--text-secondary); font-family: monospace; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 6px; text-align: center; border: 1px dashed rgba(255,255,255,0.05);">No pending decisions in queue.</div>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Command dispatch terminal line -->
@@ -1266,12 +1302,57 @@
                 <span class="badge badge-info" id="topology-agent-modal-tag" style="text-transform: uppercase; letter-spacing: 0.05em; font-size: 10px;">MISSION WRANGLER</span>
             </div>
             
-            <div style="display: grid; grid-template-columns: 160px 1fr; gap: 20px; align-items: start;">
-                <div style="display: flex; flex-direction: column; gap: 12px; align-items: center;">
-                    <div id="topology-agent-modal-avatar" class="topology-profile-avatar" style="width: 140px; height: 140px; display: flex; align-items: center; justify-content: center;">
-                        <!-- SVG stick figure dynamically updated -->
+            <div style="display: grid; grid-template-columns: 210px 1fr; gap: 24px; align-items: start;">
+                <!-- Holographic Trading Card Container -->
+                <div class="trading-card-container" id="topology-agent-card-container">
+                    <div class="trading-card-inner">
+                        <!-- Holo diagonal sheen layer -->
+                        <div class="trading-card-sheen"></div>
+                        <div class="trading-card-glow-border" id="trading-card-glow"></div>
+                        
+                        <div style="padding: 12px; height: 100%; display: flex; flex-direction: column; justify-content: space-between; position: relative; z-index: 5; box-sizing: border-box;">
+                            <!-- Header: Patent Badge & Rarity Tier -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 8px;">
+                                <span class="trading-card-patent-badge">PATENT PENDING</span>
+                                <span class="trading-card-rarity" id="trading-card-tier">GOLD</span>
+                            </div>
+                            
+                            <!-- Avatar Frame -->
+                            <div id="topology-agent-modal-avatar" class="topology-profile-avatar" style="width: 100%; height: 105px; display: flex; align-items: center; justify-content: center; margin: 6px 0; background: rgba(0,0,0,0.5); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;">
+                                <!-- SVG stick figure dynamically updated -->
+                            </div>
+                            
+                            <!-- Dynamic stats section -->
+                            <div style="display: flex; flex-direction: column; gap: 3.5px; font-size: 9px; width: 100%;">
+                                <div class="trading-stat-row">
+                                    <span class="stat-label">INT:</span>
+                                    <div class="stat-bar-bg"><div class="stat-bar-fill" id="stat-int" style="width: 0%"></div></div>
+                                    <span class="stat-val" id="stat-int-val">0</span>
+                                </div>
+                                <div class="trading-stat-row">
+                                    <span class="stat-label">SPD:</span>
+                                    <div class="stat-bar-bg"><div class="stat-bar-fill" id="stat-spd" style="width: 0%"></div></div>
+                                    <span class="stat-val" id="stat-spd-val">0</span>
+                                </div>
+                                <div class="trading-stat-row">
+                                    <span class="stat-label">REL:</span>
+                                    <div class="stat-bar-bg"><div class="stat-bar-fill" id="stat-rel" style="width: 0%"></div></div>
+                                    <span class="stat-val" id="stat-rel-val">0</span>
+                                </div>
+                                <div class="trading-stat-row">
+                                    <span class="stat-label">NRG:</span>
+                                    <div class="stat-bar-bg"><div class="stat-bar-fill" id="stat-nrg" style="width: 0%"></div></div>
+                                    <span class="stat-val" id="stat-nrg-val">0</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Footer: Status and Registry ID -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 5px; margin-top: 4px; font-size: 8px;">
+                                <span id="topology-agent-modal-status" style="font-family: monospace; color: var(--accent-teal); text-transform: uppercase; font-weight: bold;">IDLE</span>
+                                <span style="color: #fbbf24; font-weight: bold; letter-spacing: 0.5px;">US-2026-SWARM</span>
+                            </div>
+                        </div>
                     </div>
-                    <span id="topology-agent-modal-status" style="font-family: monospace; font-size: 10px; color: var(--accent-teal); text-transform: uppercase;">idle</span>
                 </div>
                 
                 <div style="display: flex; flex-direction: column; gap: 12px; text-align: left;">

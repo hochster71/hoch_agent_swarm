@@ -31,7 +31,7 @@ test.describe("Cybersecurity Factory View Flow", () => {
 
     // Expect Humanity Gate validation PASS to show
     await expect(page.locator("#gate-result-pass")).toBeVisible();
-    await expect(page.getByText("PASS", { exact: true }).first()).toBeVisible();
+    await expect(page.locator("#view-cybersecurity-factory").getByText("PASS", { exact: true }).first()).toBeVisible();
 
     // Wait for the pipeline to run and check stage visibility
     // The pipeline animates sequentially with timeouts. Let's wait for the final completed state.

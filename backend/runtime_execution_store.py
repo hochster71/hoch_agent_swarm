@@ -114,6 +114,74 @@ def init_execution_store_tables() -> None:
             )
             """
         )
+        # 7. Swarm Runs
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS swarm_runs (
+                run_id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                status TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                completed_at TEXT,
+                score INTEGER
+            )
+            """
+        )
+        # 8. Swarm Agents
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS swarm_agents (
+                agent_id TEXT PRIMARY KEY,
+                display_name TEXT NOT NULL,
+                title TEXT NOT NULL,
+                tag TEXT NOT NULL,
+                system_role TEXT NOT NULL,
+                avatar_variant TEXT NOT NULL,
+                status TEXT NOT NULL,
+                description TEXT NOT NULL,
+                catchphrase TEXT NOT NULL,
+                skills_json TEXT NOT NULL,
+                stats_json TEXT NOT NULL,
+                tier TEXT NOT NULL
+            )
+            """
+        )
+        # 9. Swarm Tasks
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS swarm_tasks (
+                task_id TEXT NOT NULL,
+                run_id TEXT NOT NULL,
+                title TEXT NOT NULL,
+                description TEXT NOT NULL,
+                status TEXT NOT NULL,
+                priority TEXT NOT NULL,
+                owner_agent_id TEXT NOT NULL,
+                dependencies_json TEXT NOT NULL,
+                planning_frameworks_json TEXT NOT NULL,
+                acceptance_criteria TEXT NOT NULL,
+                risk_level TEXT NOT NULL,
+                approval_required INTEGER NOT NULL,
+                PRIMARY KEY (task_id, run_id)
+            )
+            """
+        )
+        # 10. Swarm Artifacts
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS swarm_artifacts (
+                artifact_id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                path TEXT NOT NULL,
+                hash TEXT NOT NULL,
+                task_id TEXT,
+                run_id TEXT,
+                status TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            )
+            """
+        )
+
         # Migrate/add columns if they do not exist
         for col, col_type in [("risk_level", "TEXT"), ("blast_radius_json", "TEXT"), ("state", "TEXT")]:
             try:
@@ -440,4 +508,188 @@ def update_incident_state(incident_id: str, state: str) -> None:
         conn.commit()
     finally:
         conn.close()
+
+def persist_swarm_run(run_id: str, name: str, status: str, score: Optional[int] = None, completed_at: Optional[str] = None) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO swarm_runs (run_id, name, status, created_at, completed_at, score)
+            VALUES (?, ?, ?, COALESCE((SELECT created_at FROM swarm_runs WHERE run_id = ?), ?), ?, ?)
+            """,
+            (run_id, name, status, run_id, now_iso(), completed_at, score)
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+def list_swarm_runs() -> list[dict]:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        rows = conn.execute("SELECT * FROM swarm_runs ORDER BY created_at DESC").fetchall()
+        return [dict(r) for r in rows]
+    finally:
+        conn.close()
+
+def persist_swarm_agent(agent: dict) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO swarm_agents (
+                agent_id, display_name, title, tag, system_role, avatar_variant, status, description, catchphrase, skills_json, stats_json, tier
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                agent["id"],
+                agent["displayName"],
+                agent["title"],
+                agent["tag"],
+                agent["systemRole"],
+                agent["avatarVariant"],
+                agent["status"],
+                agent["description"],
+                agent["catchphrase"],
+                json.dumps(agent["skills"]),
+                json.dumps(agent["stats"]),
+                agent["tier"]
+            )
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+def list_swarm_agents() -> list[dict]:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        rows = conn.execute("SELECT * FROM swarm_agents").fetchall()
+        output = []
+        for r in rows:
+            d = dict(r)
+            agent_dict = {
+                "id": d["agent_id"],
+                "displayName": d["display_name"],
+                "title": d["title"],
+                "tag": d["tag"],
+                "systemRole": d["system_role"],
+                "avatarVariant": d["avatar_variant"],
+                "status": d["status"],
+                "description": d["description"],
+                "catchphrase": d["catchphrase"],
+                "skills": json.loads(d["skills_json"]),
+                "stats": json.loads(d["stats_json"]),
+                "tier": d["tier"]
+            }
+            output.append(agent_dict)
+        return output
+    finally:
+        conn.close()
+
+def persist_swarm_task(task: dict) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO swarm_tasks (
+                task_id, run_id, title, description, status, priority, owner_agent_id, dependencies_json, planning_frameworks_json, acceptance_criteria, risk_level, approval_required
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                task["id"],
+                task["run_id"],
+                task["title"],
+                task["description"],
+                task["status"],
+                task["priority"],
+                task["ownerAgentId"],
+                json.dumps(task["dependencies"]),
+                json.dumps(task["planningFrameworks"]),
+                task["acceptanceCriteria"],
+                task["riskLevel"],
+                1 if task["approvalRequired"] else 0
+            )
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+def list_swarm_tasks(run_id: Optional[str] = None) -> list[dict]:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        if run_id:
+            rows = conn.execute("SELECT * FROM swarm_tasks WHERE run_id = ?", (run_id,)).fetchall()
+        else:
+            rows = conn.execute("SELECT * FROM swarm_tasks").fetchall()
+        output = []
+        for r in rows:
+            d = dict(r)
+            task_dict = {
+                "id": d["task_id"],
+                "run_id": d["run_id"],
+                "title": d["title"],
+                "description": d["description"],
+                "status": d["status"],
+                "priority": d["priority"],
+                "ownerAgentId": d["owner_agent_id"],
+                "dependencies": json.loads(d["dependencies_json"]),
+                "planningFrameworks": json.loads(d["planning_frameworks_json"]),
+                "acceptanceCriteria": d["acceptance_criteria"],
+                "riskLevel": d["risk_level"],
+                "approvalRequired": bool(d["approval_required"])
+            }
+            output.append(task_dict)
+        return output
+    finally:
+        conn.close()
+
+def persist_swarm_artifact(artifact: dict) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO swarm_artifacts (
+                artifact_id, name, path, hash, task_id, run_id, status, created_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                artifact["id"],
+                artifact["name"],
+                artifact["path"],
+                artifact["hash"],
+                artifact.get("task_id"),
+                artifact.get("run_id"),
+                artifact["status"],
+                artifact.get("created_at", now_iso())
+            )
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+def list_swarm_artifacts(run_id: Optional[str] = None) -> list[dict]:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        if run_id:
+            rows = conn.execute("SELECT * FROM swarm_artifacts WHERE run_id = ?", (run_id,)).fetchall()
+        else:
+            rows = conn.execute("SELECT * FROM swarm_artifacts").fetchall()
+        return [dict(r) for r in rows]
+    finally:
+        conn.close()
+
 

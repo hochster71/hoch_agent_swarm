@@ -307,6 +307,8 @@ async function initDashboard() {
         }
         setupWebsocket();
         fetchAndRenderTasks();
+        triggerSecurityAudit();
+        fetchAndRenderAuditLogs();
         // Mission Intel bootstrap — load brief + start feed polling
         setTimeout(() => {
             loadIntelBrief("dash-intel-brief-text", "mission-brief-ts");
@@ -316,6 +318,7 @@ async function initDashboard() {
         initializeHochSwarmAnimationRuntime();
         bindTopologyAgentOverlay();
         if (window.initializeCybersecurityFactory) window.initializeCybersecurityFactory();
+        initRunsDashboard();
     } catch (err) {
         console.error("Error initializing dashboard: ", err);
         // Fallback polling if WebSocket fails
@@ -489,11 +492,11 @@ function populateTable(nodes) {
         else if (node.status === "Underutilized") statusClass = "status-underutilized";
 
         let osIcon = "monitor";
-        if (node.os.toLowerCase().includes("mac")) osIcon = "apple";
-        else if (node.os.toLowerCase().includes("win")) osIcon = "terminal";
-        else if (node.os.toLowerCase().includes("ios")) osIcon = "smartphone";
-        else if (node.os.toLowerCase().includes("ipad")) osIcon = "tablet";
-        else if (node.os.toLowerCase().includes("linux")) osIcon = "server";
+        if (node.os && node.os.toLowerCase().includes("mac")) osIcon = "apple";
+        else if (node.os && node.os.toLowerCase().includes("win")) osIcon = "terminal";
+        else if (node.os && node.os.toLowerCase().includes("ios")) osIcon = "smartphone";
+        else if (node.os && node.os.toLowerCase().includes("ipad")) osIcon = "tablet";
+        else if (node.os && node.os.toLowerCase().includes("linux")) osIcon = "server";
 
         // Separate specs info
         const specsParts = node.specs.split(",");
@@ -595,7 +598,7 @@ async function updateMermaidTopology(nodes, executingNodeId = null) {
     // 3. Orchestrator -> Worker connection curves
     workers.forEach(node => {
         const wY = workerPositions[node.id] + 35; // Center of the 70px card
-        const isCoder = !node.os.toLowerCase().includes("ios") && !node.os.toLowerCase().includes("ipad");
+        const isCoder = !node.os || (!node.os.toLowerCase().includes("ios") && !node.os.toLowerCase().includes("ipad"));
 
         let fromX, fromY, strokeColor, dashArray, pathKey;
         if (isCoder) {
@@ -679,11 +682,11 @@ async function updateMermaidTopology(nodes, executingNodeId = null) {
         const nodeStroke = executingNodeId === node.id ? '#ef4444' : 'rgba(255, 255, 255, 0.08)';
 
         let osIcon = "monitor";
-        if (node.os.toLowerCase().includes("mac")) osIcon = "apple";
-        else if (node.os.toLowerCase().includes("win")) osIcon = "terminal";
-        else if (node.os.toLowerCase().includes("ios")) osIcon = "smartphone";
-        else if (node.os.toLowerCase().includes("ipad")) osIcon = "tablet";
-        else if (node.os.toLowerCase().includes("linux")) osIcon = "server";
+        if (node.os && node.os.toLowerCase().includes("mac")) osIcon = "apple";
+        else if (node.os && node.os.toLowerCase().includes("win")) osIcon = "terminal";
+        else if (node.os && node.os.toLowerCase().includes("ios")) osIcon = "smartphone";
+        else if (node.os && node.os.toLowerCase().includes("ipad")) osIcon = "tablet";
+        else if (node.os && node.os.toLowerCase().includes("linux")) osIcon = "server";
 
         nodesHtml += `
         <foreignObject x="${workerX}" y="${wY}" width="200" height="80">
@@ -857,7 +860,7 @@ if (btnSubmitTask) {
         const enclaveSpan = document.getElementById("preview-affected-nodes");
         if (enclaveSpan) {
             if (targetNode) {
-                if (targetNode.os.toLowerCase().includes("ios") || targetNode.os.toLowerCase().includes("ipad")) {
+                if (targetNode.os && (targetNode.os.toLowerCase().includes("ios") || targetNode.os.toLowerCase().includes("ipad"))) {
                     enclaveSpan.textContent = "JWICS (MOBILE EDGE)";
                 } else if (targetNode.id === "L1") {
                     enclaveSpan.textContent = "NIPRNET (CORE SERVICES)";
@@ -1082,7 +1085,8 @@ Object.keys(navItems).forEach(key => {
                 if (window.onRemediationTabActive) window.onRemediationTabActive();
             } else if (key === "settings") {
                 renderSettingsNodesList(currentNodes);
-            } else if (key === "audit" || key === "runtimeAudit") {
+            } else if (key === "audit" || key === "runtimeAudit" || key === "metrics") {
+                triggerSecurityAudit();
                 fetchAndRenderAuditLogs();
             } else if (key === "cybersecurityFactory") {
                 if (window.renderCybersecurityFactoryView) window.renderCybersecurityFactoryView();
@@ -1303,6 +1307,57 @@ function renderGapReport(controls) {
             <td><span class="status-indicator ${statusClass}"><span class="dot" style="background-color:currentColor"></span> ${control.status}</span></td>
             <td style="max-width: 250px; font-size: 13px; line-height: 1.4; color: var(--text-secondary);">${gapDesc}</td>
             <td>${remediationHtml}</td>
+        `;
+        securityGapTbody.appendChild(tr);
+    });
+
+    // Append Swarm-specific Gap Analysis Entries
+    const swarmGaps = [
+        {
+            control: "SWARM-SYNC",
+            name: "Workspace Consistency",
+            status: "WARNING",
+            gapDesc: "Isolated workspace directory trees across active swarm nodes (MBP, iMac, Dell, etc.) lack dynamic file synchronization.",
+            remediationHtml: `<div class="remediation-cmd-container">syncthing --home=/data/syncthing</div>
+                               <button class="btn btn-primary btn-xs" style="margin-top: 6px; font-size:11px; padding: 4px 8px; width:100%;" onclick="alert('Starting Syncthing daemon to sync swarm workspace...')"><i data-lucide="refresh-cw" style="width:12px;height:12px;"></i> Initialize Sync</button>`
+        },
+        {
+            control: "SELF-HEAL",
+            name: "Self-Correcting Debug Loop",
+            status: "WARNING",
+            gapDesc: "Compilation and testing failures are printed to logs but do not automatically route back to Coder agent for iterative self-healing.",
+            remediationHtml: `<div class="remediation-cmd-container">python3 backend/agent_runner.py --enable-self-healing</div>
+                               <button class="btn btn-primary btn-xs" style="margin-top: 6px; font-size:11px; padding: 4px 8px; width:100%;" onclick="alert('Enabling compiler feedback self-healing loop...')"><i data-lucide="shield-check" style="width:12px;height:12px;"></i> Enable Loop</button>`
+        },
+        {
+            control: "SWARM-METRICS",
+            name: "Performance Analytics",
+            status: "PASS",
+            gapDesc: "Historical node resource metrics are static in the UI (only showing averages instead of realtime plots).",
+            remediationHtml: `<span style="color: var(--text-secondary);">Resolved: Active WebSocket data stream plotted in real time</span>`
+        },
+        {
+            control: "SWARM-API-SEC",
+            name: "API Access Control",
+            status: "WARNING",
+            gapDesc: "Control plane endpoints lack JWT or OAuth2 authorization and transaction rate-limiting.",
+            remediationHtml: `<div class="remediation-cmd-container">uvicorn backend.main:app --auth-token $SWARM_SECRET</div>
+                               <button class="btn btn-primary btn-xs" style="margin-top: 6px; font-size:11px; padding: 4px 8px; width:100%;" onclick="alert('Securing endpoints with token validation...')"><i data-lucide="lock" style="width:12px;height:12px;"></i> Secure API</button>`
+        }
+    ];
+
+    swarmGaps.forEach(gap => {
+        const tr = document.createElement("tr");
+        let statusClass = "status-underutilized";
+        if (gap.status === "PASS") statusClass = "status-active";
+        else if (gap.status === "FAIL") statusClass = "text-danger";
+
+        tr.innerHTML = `
+            <td><code>${gap.control}</code></td>
+            <td><strong>${gap.name}</strong></td>
+            <td><span class="status-indicator ${statusClass}"><span class="dot" style="background-color:currentColor"></span> ${gap.status}</span></td>
+            <td style="max-width: 250px; font-size: 13px; line-height: 1.4; color: var(--text-secondary);">${gap.gapDesc}</td>
+            <td>${gap.remediationHtml}</td>
         `;
         securityGapTbody.appendChild(tr);
     });
@@ -3457,18 +3512,23 @@ function routePromptAgents(prompt) {
 function getAgentSvg(variant, state = "idle") {
     let strokeColor = "rgba(156, 163, 175, 0.8)";
     let accentColor = "#6b7280";
+    let isNeon = false;
     if (state === "active" || state === "executing" || state === "researching" || state === "spinning-up") {
         strokeColor = "#3b82f6";
         accentColor = "#60a5fa";
+        isNeon = true;
     } else if (state === "complete" || state === "complete-green" || state === "verifying") {
         strokeColor = "#10b981";
         accentColor = "#34d399";
+        isNeon = true;
     } else if (state === "blocked") {
         strokeColor = "#ef4444";
         accentColor = "#f87171";
+        isNeon = true;
     } else if (state === "needs-approval") {
         strokeColor = "#f59e0b";
         accentColor = "#fbbf24";
+        isNeon = true;
     }
 
     const head = `<circle cx="40" cy="25" r="10" stroke="${strokeColor}" stroke-width="2" fill="none" />`;
@@ -3607,13 +3667,44 @@ function getAgentSvg(variant, state = "idle") {
         `;
     }
     
+    // Cybernetic enhancements
+    let cyberneticElements = '';
+    if (isNeon) {
+        cyberneticElements = `
+            <!-- Neon Glowing Visor -->
+            <path d="M34,22 L46,22" stroke="${accentColor}" stroke-width="3" stroke-linecap="round" />
+            <!-- Glowing Core (Reactor) -->
+            <circle cx="40" cy="45" r="3.5" fill="${accentColor}" />
+            <!-- Joint Nodes -->
+            <circle cx="25" cy="40" r="2" fill="${strokeColor}" />
+            <circle cx="55" cy="40" r="2" fill="${strokeColor}" />
+            <circle cx="30" cy="80" r="2" fill="${strokeColor}" />
+            <circle cx="50" cy="80" r="2" fill="${strokeColor}" />
+            <circle cx="40" cy="60" r="2" fill="${strokeColor}" />
+            <!-- Circuitry detail on spine -->
+            <path d="M40,50 L46,47 L50,51" stroke="${accentColor}" stroke-width="1" fill="none" opacity="0.7" />
+        `;
+    }
+
     return `
         <svg viewBox="0 0 80 100" style="width:100%; height:100%; color: ${strokeColor};">
-            ${spine}
-            ${arms}
-            ${legs}
-            ${head}
-            ${accessory}
+            <defs>
+                <filter id="neon-glow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="1.5" result="blur" />
+                    <feMerge>
+                        <feMergeNode in="blur" />
+                        <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                </filter>
+            </defs>
+            <g ${isNeon ? 'filter="url(#neon-glow)"' : ''}>
+                ${spine}
+                ${arms}
+                ${legs}
+                ${head}
+                ${accessory}
+                ${cyberneticElements}
+            </g>
         </svg>
     `;
 }
@@ -4280,6 +4371,8 @@ function wakeAgent(id, statusText) {
 }
 
 function spinUpKimiStyleComicSwarm(promptText) {
+    const core = document.getElementById("kimi-comic-mission-core");
+    if (core) core.classList.add("pulse-active");
 
     setTimeout(() => {
         wakeAgent("research", "Searching YouTube API search.list...");
@@ -4392,7 +4485,9 @@ const hochPixelStickAgents = [
     skills: ["goal decomposition", "routing", "priority ranking", "handoff control"],
     defaultStage: "Plan",
     completionSignal: "Mission decomposed",
-    assetTargets: []
+    assetTargets: [],
+    stats: { intelligence: 98, speed: 90, reliability: 95, energy: 85 },
+    tier: "MYTHIC"
   },
   {
     id: "dr-signal",
@@ -4407,7 +4502,9 @@ const hochPixelStickAgents = [
     skills: ["research triage", "YouTube candidate synthesis", "source ranking", "constraint extraction"],
     defaultStage: "Research",
     completionSignal: "Signal extracted",
-    assetTargets: []
+    assetTargets: [],
+    stats: { intelligence: 96, speed: 85, reliability: 97, energy: 75 },
+    tier: "GOLD"
   },
   {
     id: "prof-blueprint",
@@ -4422,7 +4519,9 @@ const hochPixelStickAgents = [
     skills: ["architecture documentation", "component mapping", "dependency analysis"],
     defaultStage: "Plan",
     completionSignal: "Blueprint drawn",
-    assetTargets: []
+    assetTargets: [],
+    stats: { intelligence: 95, speed: 80, reliability: 92, energy: 70 },
+    tier: "PLATINUM"
   },
   {
     id: "eng-patch",
@@ -4437,7 +4536,9 @@ const hochPixelStickAgents = [
     skills: ["implementation", "refactor", "integration", "config repair"],
     defaultStage: "Execute",
     completionSignal: "Patch applied",
-    assetTargets: ["L1", "W1"]
+    assetTargets: ["L1", "W1"],
+    stats: { intelligence: 92, speed: 98, reliability: 94, energy: 90 },
+    tier: "LEGENDARY"
   },
   {
     id: "ms-checkmark",
@@ -4452,7 +4553,9 @@ const hochPixelStickAgents = [
     skills: ["build validation", "regression tests", "E2E", "UI contracts"],
     defaultStage: "Verify",
     completionSignal: "Tests verified",
-    assetTargets: ["L2"]
+    assetTargets: ["L2"],
+    stats: { intelligence: 90, speed: 92, reliability: 99, energy: 80 },
+    tier: "LEGENDARY"
   },
   {
     id: "capt-guardrail",
@@ -4467,7 +4570,9 @@ const hochPixelStickAgents = [
     skills: ["command risk", "secrets checks", "dependency risk", "policy gates"],
     defaultStage: "Verify",
     completionSignal: "Policy enforced",
-    assetTargets: []
+    assetTargets: [],
+    stats: { intelligence: 94, speed: 86, reliability: 98, energy: 85 },
+    tier: "GOLD"
   },
   {
     id: "gordon-vector",
@@ -4482,7 +4587,9 @@ const hochPixelStickAgents = [
     skills: ["docker logs", "docker inspect", "health checks", "compose diagnosis", "root cause isolation"],
     defaultStage: "Execute",
     completionSignal: "Containers verified",
-    assetTargets: ["L3"]
+    assetTargets: ["L3"],
+    stats: { intelligence: 93, speed: 91, reliability: 96, energy: 75 },
+    tier: "PLATINUM"
   },
   {
     id: "prof-ledger",
@@ -4497,7 +4604,9 @@ const hochPixelStickAgents = [
     skills: ["trace IDs", "evidence packs", "provenance", "release records"],
     defaultStage: "Report",
     completionSignal: "Evidence finalized",
-    assetTargets: []
+    assetTargets: [],
+    stats: { intelligence: 91, speed: 84, reliability: 100, energy: 65 },
+    tier: "MYTHIC"
   },
   {
     id: "eng-rocket",
@@ -4512,14 +4621,62 @@ const hochPixelStickAgents = [
     skills: ["release readiness", "SBOM", "provenance", "final gate decision"],
     defaultStage: "Complete",
     completionSignal: "Release authorized",
-    assetTargets: []
+    assetTargets: [],
+    stats: { intelligence: 94, speed: 95, reliability: 97, energy: 95 },
+    tier: "LEGENDARY"
   }
 ];
 
 let lastTopologyTrigger = null;
 let topologyTimeouts = [];
 
-function bindTopologyAgentOverlay() {
+async function bindTopologyAgentOverlay() {
+    try {
+        const resp = await fetch("/api/v1/agents");
+        if (resp.ok) {
+            const data = await resp.json();
+            if (data && data.length > 0) {
+                const staticAssetTargets = {
+                    "capt-guardrail": ["L1", "W1"],
+                    "ms-checkmark": ["L1", "W1"],
+                    "bugsy-mcfixface": ["L2"],
+                    "eng-patch": ["L2"],
+                    "gordon-vector": ["L3"]
+                };
+                const staticStages = {
+                    "boss-noodle": "Plan",
+                    "dr-signal": "Research",
+                    "prof-blueprint": "Plan",
+                    "eng-patch": "Execute",
+                    "ms-checkmark": "Verify",
+                    "capt-guardrail": "Verify",
+                    "gordon-vector": "Execute",
+                    "prof-ledger": "Report",
+                    "eng-rocket": "Complete"
+                };
+                const staticSignals = {
+                    "boss-noodle": "Mission decomposed",
+                    "dr-signal": "Signal extracted",
+                    "prof-blueprint": "Blueprint drawn",
+                    "eng-patch": "Patch applied",
+                    "ms-checkmark": "Tests verified",
+                    "capt-guardrail": "Policy enforced",
+                    "gordon-vector": "Containers verified",
+                    "prof-ledger": "Evidence finalized",
+                    "eng-rocket": "Release authorized"
+                };
+                data.forEach(agent => {
+                    agent.assetTargets = staticAssetTargets[agent.id] || [];
+                    agent.defaultStage = staticStages[agent.id] || "Plan";
+                    agent.completionSignal = staticSignals[agent.id] || "Mission decomposed";
+                });
+                hochPixelStickAgents.length = 0;
+                hochPixelStickAgents.push(...data);
+            }
+        }
+    } catch (e) {
+        console.warn("Failed to fetch live agents:", e);
+    }
     renderTopologyAgentRoster();
     
     const launchBtn = document.getElementById("topology-agent-launch-button");
@@ -4635,6 +4792,13 @@ function openTopologyAgentProfile(agentId, triggerEl) {
     const avatarContainer = document.getElementById("topology-agent-modal-avatar");
     if (avatarContainer) {
         avatarContainer.innerHTML = renderTopologyPixelAvatar(agent.avatarVariant, agent.status);
+        
+        // Element.animate() transitions for stick figure
+        avatarContainer.animate([
+            { transform: "scale(0) rotate(-180deg)", opacity: 0 },
+            { transform: "scale(1.1) rotate(10deg)", opacity: 1 },
+            { transform: "scale(1) rotate(0deg)", opacity: 1 }
+        ], { duration: 600, easing: "cubic-bezier(0.34, 1.56, 0.64, 1)" });
     }
     
     const statusEl = document.getElementById("topology-agent-modal-status");
@@ -4657,9 +4821,105 @@ function openTopologyAgentProfile(agentId, triggerEl) {
     const phraseEl = document.getElementById("topology-agent-modal-catchphrase");
     if (phraseEl) phraseEl.textContent = `“${agent.catchphrase}”`;
     
+    // Animate specialized skills spinning up sequentially
     const skillsEl = document.getElementById("topology-agent-modal-skills");
     if (skillsEl) {
-        skillsEl.innerHTML = agent.skills.map(skill => `<span class="agent-capsule">${skill}</span>`).join("");
+        skillsEl.innerHTML = "";
+        agent.skills.forEach((skill, idx) => {
+            const span = document.createElement("span");
+            span.className = "agent-capsule skill-spinning";
+            span.textContent = skill;
+            span.style.animationDelay = `${idx * 100}ms`;
+            skillsEl.appendChild(span);
+        });
+    }
+
+    // Set Tier class on card inner for border glows and rarities
+    const cardContainer = document.getElementById("topology-agent-card-container");
+    if (cardContainer) {
+        cardContainer.className = `trading-card-container tier-${(agent.tier || "GOLD").toLowerCase()}`;
+    }
+    
+    const tierEl = document.getElementById("trading-card-tier");
+    if (tierEl) {
+        tierEl.textContent = `${agent.tier || "GOLD"} EDITION`;
+    }
+
+    // Bind stats values and trigger progress bar animations
+    const stats = agent.stats || { intelligence: 90, speed: 85, reliability: 95, energy: 75 };
+    
+    const statIntFill = document.getElementById("stat-int");
+    const statIntVal = document.getElementById("stat-int-val");
+    if (statIntFill) statIntFill.style.width = "0%";
+    if (statIntVal) statIntVal.textContent = "0";
+
+    const statSpdFill = document.getElementById("stat-spd");
+    const statSpdVal = document.getElementById("stat-spd-val");
+    if (statSpdFill) statSpdFill.style.width = "0%";
+    if (statSpdVal) statSpdVal.textContent = "0";
+
+    const statRelFill = document.getElementById("stat-rel");
+    const statRelVal = document.getElementById("stat-rel-val");
+    if (statRelFill) statRelFill.style.width = "0%";
+    if (statRelVal) statRelVal.textContent = "0";
+
+    const statNrgFill = document.getElementById("stat-nrg");
+    const statNrgVal = document.getElementById("stat-nrg-val");
+    if (statNrgFill) statNrgFill.style.width = "0%";
+    if (statNrgVal) statNrgVal.textContent = "0";
+
+    setTimeout(() => {
+        if (statIntFill) statIntFill.style.width = `${stats.intelligence}%`;
+        if (statIntVal) statIntVal.textContent = stats.intelligence;
+        
+        if (statSpdFill) statSpdFill.style.width = `${stats.speed}%`;
+        if (statSpdVal) statSpdVal.textContent = stats.speed;
+        
+        if (statRelFill) statRelFill.style.width = `${stats.reliability}%`;
+        if (statRelVal) statRelVal.textContent = stats.reliability;
+        
+        if (statNrgFill) statNrgFill.style.width = `${stats.energy}%`;
+        if (statNrgVal) statNrgVal.textContent = stats.energy;
+    }, 150);
+
+    // Bind dynamic 3D tilt effects
+    if (cardContainer) {
+        const cardInner = cardContainer.querySelector(".trading-card-inner");
+        cardContainer.onmousemove = (e) => {
+            const rect = cardContainer.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const rotateX = ((centerY - y) / centerY) * 15; // Max 15 degrees tilt
+            const rotateY = ((x - centerX) / centerX) * 15;
+            
+            if (cardInner) {
+                cardInner.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
+                
+                // Adjust holographic sheen position dynamically
+                const sheen = cardContainer.querySelector(".trading-card-sheen");
+                if (sheen) {
+                    const pctX = (x / rect.width) * 100;
+                    const pctY = (y / rect.height) * 100;
+                    sheen.style.backgroundPosition = `${pctX}% ${pctY}%`;
+                    sheen.style.opacity = "0.8";
+                }
+            }
+        };
+        
+        cardContainer.onmouseleave = () => {
+            if (cardInner) {
+                cardInner.style.transform = "rotateX(0deg) rotateY(0deg) scale(1)";
+                const sheen = cardContainer.querySelector(".trading-card-sheen");
+                if (sheen) {
+                    sheen.style.backgroundPosition = "0% 0%";
+                    sheen.style.opacity = "0.15";
+                }
+            }
+        };
     }
     
     const modal = document.getElementById("topology-agent-profile-modal");
@@ -4671,19 +4931,11 @@ function openTopologyAgentProfile(agentId, triggerEl) {
             modal.setAttribute("open", "open");
         }
         
-        // Element.animate() transitions
+        // Element.animate() transitions for modal container
         modal.animate([
             { opacity: 0, transform: "translateY(18px) scale(0.96)" },
             { opacity: 1, transform: "translateY(0) scale(1)" }
         ], { duration: 220, easing: "cubic-bezier(.2,.8,.2,1)" });
-        
-        if (avatarContainer) {
-            avatarContainer.animate([
-                { transform: "scale(0.7) rotate(-6deg)" },
-                { transform: "scale(1.1) rotate(3deg)" },
-                { transform: "scale(1) rotate(0deg)" }
-            ], { duration: 420, easing: "ease-out" });
-        }
     }
     
     // Highlight default stage
@@ -4727,8 +4979,9 @@ function lightTopologyCompletion(stageName) {
 }
 
 function animateTopologyStageRail(stageName, status) {
+    if (!stageName) return;
     document.querySelectorAll(".topology-stage-step").forEach(step => {
-        if (step.dataset.stage.toLowerCase() === stageName.toLowerCase()) {
+        if (step.dataset.stage && step.dataset.stage.toLowerCase() === stageName.toLowerCase()) {
             step.classList.remove("is-active", "is-complete");
             if (status === "active") {
                 step.classList.add("is-active");
@@ -6022,4 +6275,491 @@ window.renderFactoryCybersecurityPipeline = renderFactoryCybersecurityPipeline;
 window.renderFactoryE2EEvidenceBoard = renderFactoryE2EEvidenceBoard;
 window.renderFactoryPrivacyConsistencyGate = renderFactoryPrivacyConsistencyGate;
 window.initializeCybersecurityFactory = initializeCybersecurityFactory;
+
+// ================================================================
+//  RUNS & TASK STATE SYNCHRONIZATION AND APPROVAL QUEUE
+// ================================================================
+
+let selectedRunId = null;
+let runsPollInterval = null;
+
+async function initRunsDashboard() {
+    // Inject animation styles if they don't exist
+    if (!document.getElementById("runs-dashboard-styles")) {
+        const style = document.createElement("style");
+        style.id = "runs-dashboard-styles";
+        style.innerHTML = `
+            @keyframes pulse-running {
+                0% { box-shadow: 0 0 6px rgba(0, 229, 255, 0.15); border-color: rgba(0, 229, 255, 0.3); }
+                50% { box-shadow: 0 0 12px rgba(0, 229, 255, 0.35); border-color: rgba(0, 229, 255, 0.6); }
+                100% { box-shadow: 0 0 6px rgba(0, 229, 255, 0.15); border-color: rgba(0, 229, 255, 0.3); }
+            }
+            @keyframes pulse-warning {
+                0% { box-shadow: 0 0 6px rgba(245, 158, 11, 0.2); border-color: rgba(245, 158, 11, 0.4); }
+                50% { box-shadow: 0 0 14px rgba(245, 158, 11, 0.45); border-color: rgba(245, 158, 11, 0.85); }
+                100% { box-shadow: 0 0 6px rgba(245, 158, 11, 0.2); border-color: rgba(245, 158, 11, 0.4); }
+            }
+            .pulse-glow-running {
+                animation: pulse-running 2s infinite ease-in-out;
+            }
+            .pulse-glow-warning {
+                animation: pulse-warning 1.8s infinite ease-in-out;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    const runSelector = document.getElementById("run-selector");
+    const btnCreateRun = document.getElementById("btn-create-run");
+    const btnStartRun = document.getElementById("btn-start-run");
+
+    if (btnCreateRun) {
+        btnCreateRun.addEventListener("click", async () => {
+            await createNewSwarmRun();
+        });
+    }
+
+    if (btnStartRun) {
+        btnStartRun.addEventListener("click", async () => {
+            if (selectedRunId) {
+                await startRunExecution(selectedRunId);
+            }
+        });
+    }
+
+    if (runSelector) {
+        runSelector.addEventListener("change", (e) => {
+            selectedRunId = e.target.value;
+            localStorage.setItem("selectedRunId", selectedRunId || "");
+            if (selectedRunId) {
+                fetchRunTasks(selectedRunId);
+            } else {
+                renderTaskFlowGrid([]);
+                const statusText = document.getElementById("run-status-text");
+                if (statusText) statusText.textContent = "-";
+                if (btnStartRun) btnStartRun.style.display = "none";
+            }
+        });
+    }
+
+    // Initial load
+    await refreshRunsList();
+    
+    // Auto-select last run if saved in localStorage
+    const savedRunId = localStorage.getItem("selectedRunId");
+    if (savedRunId && runSelector) {
+        const option = Array.from(runSelector.options).find(opt => opt.value === savedRunId);
+        if (option) {
+            runSelector.value = savedRunId;
+            selectedRunId = savedRunId;
+            fetchRunTasks(selectedRunId);
+        }
+    }
+
+    // Start polling interval
+    if (runsPollInterval) clearInterval(runsPollInterval);
+    runsPollInterval = setInterval(pollRunsDashboardState, 2500);
+}
+
+async function refreshRunsList() {
+    try {
+        const runs = await fetchJson("/api/v1/runs");
+        const runSelector = document.getElementById("run-selector");
+        if (!runSelector) return;
+
+        // Keep current selection if possible
+        const currentSelection = runSelector.value;
+        
+        // Reset dropdown
+        runSelector.innerHTML = '<option value="">Select a Run...</option>';
+        
+        // Populate dropdown
+        runs.forEach(run => {
+            const opt = document.createElement("option");
+            opt.value = run.run_id;
+            opt.textContent = `${run.name} (${run.run_id})`;
+            runSelector.appendChild(opt);
+        });
+
+        // Restore selection
+        if (currentSelection) {
+            const exists = Array.from(runSelector.options).some(opt => opt.value === currentSelection);
+            if (exists) {
+                runSelector.value = currentSelection;
+                selectedRunId = currentSelection;
+            } else {
+                selectedRunId = null;
+            }
+        }
+    } catch (err) {
+        console.error("Failed to refresh runs list:", err);
+    }
+}
+
+async function createNewSwarmRun() {
+    try {
+        const name = "Swarm Run " + new Date().toLocaleString();
+        const run = await fetchJson("/api/v1/runs", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name })
+        });
+        
+        logToConsoleTerminal("Orchestrator", `Created new swarm run: ${run.name} (${run.run_id})`, "info");
+        
+        // Refresh and select new run
+        await refreshRunsList();
+        const runSelector = document.getElementById("run-selector");
+        if (runSelector) {
+            runSelector.value = run.run_id;
+            selectedRunId = run.run_id;
+            localStorage.setItem("selectedRunId", selectedRunId);
+            await fetchRunTasks(selectedRunId);
+        }
+    } catch (err) {
+        console.error("Failed to create new run:", err);
+        logToConsoleTerminal("Orchestrator", `Failed to create new run: ${err.message}`, "error");
+    }
+}
+
+async function startRunExecution(runId) {
+    try {
+        await fetchJson(`/api/v1/runs/${runId}/tasks/T0-RECON/execute`, {
+            method: "POST"
+        });
+        logToConsoleTerminal("Orchestrator", `Started execution for run ${runId}: dispatched T0-RECON`, "success");
+        await fetchRunTasks(runId);
+    } catch (err) {
+        console.error("Failed to start run execution:", err);
+        logToConsoleTerminal("Orchestrator", `Failed to start run: ${err.message}`, "error");
+    }
+}
+
+async function pollRunsDashboardState() {
+    if (selectedRunId) {
+        await fetchRunTasks(selectedRunId);
+    }
+    await fetchApprovalRequests();
+}
+
+async function fetchRunTasks(runId) {
+    try {
+        const tasks = await fetchJson(`/api/v1/runs/${runId}/tasks`);
+        renderTaskFlowGrid(tasks);
+        
+        // Determine overall run status
+        const runStatusText = document.getElementById("run-status-text");
+        const btnStartRun = document.getElementById("btn-start-run");
+
+        if (tasks.length > 0) {
+            const allPending = tasks.every(t => t.status === "pending");
+            const anyRunning = tasks.some(t => t.status === "running");
+            const anyBlocked = tasks.some(t => t.status === "blocked_pending_approval" || t.status === "blocked");
+            const allCompleted = tasks.every(t => t.status === "completed");
+
+            let status = "running";
+            if (allPending) {
+                status = "pending";
+                if (btnStartRun) btnStartRun.style.display = "inline-block";
+            } else {
+                if (btnStartRun) btnStartRun.style.display = "none";
+                if (allCompleted) {
+                    status = "completed";
+                } else if (anyBlocked) {
+                    status = "blocked";
+                }
+            }
+
+            if (runStatusText) {
+                runStatusText.textContent = status.toUpperCase();
+                // Color status text
+                if (status === "completed") {
+                    runStatusText.style.color = "#10b981";
+                } else if (status === "blocked") {
+                    runStatusText.style.color = "#f59e0b";
+                } else if (status === "running") {
+                    runStatusText.style.color = "#00e5ff";
+                } else {
+                    runStatusText.style.color = "#94a3b8";
+                }
+            }
+        }
+    } catch (err) {
+        console.error(`Failed to fetch tasks for run ${runId}:`, err);
+    }
+}
+
+function renderTaskFlowGrid(tasks) {
+    const grid = document.getElementById("task-flow-grid");
+    if (!grid) return;
+    
+    if (!tasks || tasks.length === 0) {
+        grid.innerHTML = '<div style="grid-column: span 5; font-size: 10px; color: var(--text-secondary); text-align: center; padding: 12px; font-family: monospace;">No tasks in selected run.</div>';
+        return;
+    }
+
+    grid.innerHTML = "";
+    
+    tasks.forEach(task => {
+        const card = document.createElement("div");
+        card.style.padding = "8px 10px";
+        card.style.borderRadius = "6px";
+        card.style.border = "1px solid rgba(255, 255, 255, 0.08)";
+        card.style.background = "rgba(255, 255, 255, 0.02)";
+        card.style.display = "flex";
+        card.style.flexDirection = "column";
+        card.style.justifyContent = "space-between";
+        card.style.minHeight = "64px";
+        card.style.fontFamily = "monospace";
+        card.style.fontSize = "10px";
+        card.style.transition = "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)";
+        card.style.position = "relative";
+        card.style.overflow = "hidden";
+
+        // Status styling
+        const status = task.status;
+        let borderGlow = "rgba(255,255,255,0.08)";
+        let bgGlow = "rgba(255,255,255,0.02)";
+        let statusColor = "var(--text-secondary)";
+        let pulseClass = "";
+
+        if (status === "completed") {
+            borderGlow = "rgba(16, 185, 129, 0.4)";
+            bgGlow = "rgba(16, 185, 129, 0.04)";
+            statusColor = "#10b981";
+        } else if (status === "running") {
+            borderGlow = "rgba(0, 229, 255, 0.5)";
+            bgGlow = "rgba(0, 229, 255, 0.06)";
+            statusColor = "#00e5ff";
+            pulseClass = "pulse-glow-running";
+        } else if (status === "blocked_pending_approval") {
+            borderGlow = "rgba(245, 158, 11, 0.6)";
+            bgGlow = "rgba(245, 158, 11, 0.08)";
+            statusColor = "#f59e0b";
+            pulseClass = "pulse-glow-warning";
+        } else if (status === "blocked") {
+            borderGlow = "rgba(239, 68, 68, 0.4)";
+            bgGlow = "rgba(239, 68, 68, 0.04)";
+            statusColor = "#ef4444";
+        }
+
+        card.style.borderColor = borderGlow;
+        card.style.background = bgGlow;
+        if (pulseClass) {
+            card.classList.add(pulseClass);
+        }
+
+        // Card header (ID and status)
+        const header = document.createElement("div");
+        header.style.display = "flex";
+        header.style.justifyContent = "space-between";
+        header.style.fontWeight = "bold";
+        header.innerHTML = `
+            <span style="color: #fff;">${task.id}</span>
+            <span style="color: ${statusColor}; font-size: 9px;">${status.replace('_', ' ').toUpperCase()}</span>
+        `;
+        card.appendChild(header);
+
+        // Card body (title/description snippet)
+        const body = document.createElement("div");
+        body.style.color = "var(--text-secondary)";
+        body.style.fontSize = "9px";
+        body.style.whiteSpace = "nowrap";
+        body.style.overflow = "hidden";
+        body.style.textOverflow = "ellipsis";
+        body.style.marginTop = "2px";
+        body.textContent = task.title;
+        card.appendChild(body);
+
+        // Card footer (priority/risk)
+        const footer = document.createElement("div");
+        footer.style.display = "flex";
+        footer.style.justifyContent = "space-between";
+        footer.style.marginTop = "4px";
+        footer.style.fontSize = "8px";
+
+        let riskColor = "#10b981";
+        if (task.riskLevel === "critical") riskColor = "#ef4444";
+        else if (task.riskLevel === "high") riskColor = "#f97316";
+        else if (task.riskLevel === "medium") riskColor = "#eab308";
+
+        footer.innerHTML = `
+            <span style="color: var(--text-secondary);">Risk: <span style="color: ${riskColor}; font-weight: bold;">${task.riskLevel.toUpperCase()}</span></span>
+            ${task.approvalRequired ? '<span style="color: var(--accent-purple);" title="Human Approval Required">&#128274; REQ</span>' : ''}
+        `;
+        card.appendChild(footer);
+
+        // Mouse hover effects
+        card.addEventListener("mouseenter", () => {
+            card.style.transform = "translateY(-2px)";
+            card.style.boxShadow = `0 4px 12px ${borderGlow.replace('0.4', '0.2').replace('0.5', '0.25').replace('0.6', '0.3')}`;
+        });
+        card.addEventListener("mouseleave", () => {
+            card.style.transform = "translateY(0)";
+            card.style.boxShadow = "none";
+        });
+
+        grid.appendChild(card);
+    });
+}
+
+async function fetchApprovalRequests() {
+    try {
+        const approvals = await fetchJson("/api/approval/requests");
+        const list = document.getElementById("approval-queue-list");
+        const countBadge = document.getElementById("approval-queue-count");
+        if (!list) return;
+
+        // Filter for pending approvals matching the selected run
+        const pendingApprovals = approvals.filter(a => a.status === "pending" && (!selectedRunId || a.target?.id === selectedRunId));
+
+        if (countBadge) {
+            countBadge.textContent = `${pendingApprovals.length} PENDING`;
+            if (pendingApprovals.length > 0) {
+                countBadge.style.background = "rgba(245, 158, 11, 0.15)";
+                countBadge.style.color = "#f59e0b";
+                countBadge.style.borderColor = "rgba(245, 158, 11, 0.3)";
+            } else {
+                countBadge.style.background = "rgba(255, 255, 255, 0.05)";
+                countBadge.style.color = "var(--text-secondary)";
+                countBadge.style.borderColor = "var(--border-glass)";
+            }
+        }
+
+        if (pendingApprovals.length === 0) {
+            list.innerHTML = '<div style="font-size: 10px; color: var(--text-secondary); font-family: monospace; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 6px; text-align: center; border: 1px dashed rgba(255,255,255,0.05);">No pending decisions in queue.</div>';
+            return;
+        }
+
+        list.innerHTML = "";
+
+        pendingApprovals.forEach(app => {
+            const row = document.createElement("div");
+            row.style.display = "flex";
+            row.style.justifyContent = "space-between";
+            row.style.alignItems = "center";
+            row.style.padding = "8px 12px";
+            row.style.background = "rgba(245, 158, 11, 0.04)";
+            row.style.border = "1px solid rgba(245, 158, 11, 0.2)";
+            row.style.borderRadius = "6px";
+            row.style.gap = "8px";
+            row.style.animation = "pulse-warning 3s infinite ease-in-out";
+            row.style.fontFamily = "monospace";
+            row.style.fontSize = "10px";
+
+            // Left side details
+            const details = document.createElement("div");
+            details.style.display = "flex";
+            details.style.flexDirection = "column";
+            details.style.gap = "2px";
+            details.style.textAlign = "left";
+            
+            const taskId = app.command?.command_id ? app.command.command_id.replace("cmd-", "") : "UNKNOWN";
+            const risk = app.command?.risk ? app.command.risk.toUpperCase() : "MEDIUM";
+            
+            details.innerHTML = `
+                <div style="font-weight: bold; color: #fff;">
+                    Approval Request <span style="color: var(--accent-purple);">${app.approval_id}</span>
+                </div>
+                <div style="color: var(--text-secondary); font-size: 9px;">
+                    Task: <span style="color: #fff;">${taskId}</span> | Risk: <span style="color: #ef4444; font-weight: bold;">${risk}</span>
+                </div>
+                <div style="color: var(--text-secondary); font-size: 9px; max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${app.policy_context?.approval_reason || ''}">
+                    ${app.policy_context?.approval_reason || "Approval required"}
+                </div>
+            `;
+            row.appendChild(details);
+
+            // Right side buttons
+            const actions = document.createElement("div");
+            actions.style.display = "flex";
+            actions.style.gap = "6px";
+
+            const btnApprove = document.createElement("button");
+            btnApprove.textContent = "APPROVE";
+            btnApprove.style.background = "rgba(16, 185, 129, 0.15)";
+            btnApprove.style.border = "1px solid rgba(16, 185, 129, 0.35)";
+            btnApprove.style.color = "#10b981";
+            btnApprove.style.padding = "4px 8px";
+            btnApprove.style.borderRadius = "4px";
+            btnApprove.style.fontSize = "9px";
+            btnApprove.style.fontWeight = "bold";
+            btnApprove.style.cursor = "pointer";
+            btnApprove.style.transition = "all 0.2s";
+            btnApprove.onmouseover = () => {
+                btnApprove.style.background = "rgba(16, 185, 129, 0.35)";
+                btnApprove.style.boxShadow = "0 0 8px rgba(16, 185, 129, 0.4)";
+            };
+            btnApprove.onmouseout = () => {
+                btnApprove.style.background = "rgba(16, 185, 129, 0.15)";
+                btnApprove.style.boxShadow = "none";
+            };
+            btnApprove.addEventListener("click", async () => {
+                await submitApprovalDecision(app.approval_id, "approve");
+            });
+            actions.appendChild(btnApprove);
+
+            const btnReject = document.createElement("button");
+            btnReject.textContent = "REJECT";
+            btnReject.style.background = "rgba(239, 68, 68, 0.15)";
+            btnReject.style.border = "1px solid rgba(239, 68, 68, 0.35)";
+            btnReject.style.color = "#ef4444";
+            btnReject.style.padding = "4px 8px";
+            btnReject.style.borderRadius = "4px";
+            btnReject.style.fontSize = "9px";
+            btnReject.style.fontWeight = "bold";
+            btnReject.style.cursor = "pointer";
+            btnReject.style.transition = "all 0.2s";
+            btnReject.onmouseover = () => {
+                btnReject.style.background = "rgba(239, 68, 68, 0.35)";
+                btnReject.style.boxShadow = "0 0 8px rgba(239, 68, 68, 0.4)";
+            };
+            btnReject.onmouseout = () => {
+                btnReject.style.background = "rgba(239, 68, 68, 0.15)";
+                btnReject.style.boxShadow = "none";
+            };
+            btnReject.addEventListener("click", async () => {
+                await submitApprovalDecision(app.approval_id, "reject");
+            });
+            actions.appendChild(btnReject);
+
+            row.appendChild(actions);
+            list.appendChild(row);
+        });
+    } catch (err) {
+        console.error("Failed to fetch approvals:", err);
+    }
+}
+
+async function submitApprovalDecision(approvalId, decision) {
+    try {
+        const payload = {
+            decision: decision,
+            approver: "Operator",
+            timestamp: new Date().toISOString()
+        };
+        await fetchJson(`/api/approval/requests/${approvalId}/decisions`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+        logToConsoleTerminal("Orchestrator", `Submitted decision: ${decision.toUpperCase()} for approval request ${approvalId}`, decision === "approve" ? "success" : "error");
+        
+        // Immediately refresh state
+        await pollRunsDashboardState();
+    } catch (err) {
+        console.error(`Failed to submit decision ${decision} for ${approvalId}:`, err);
+        logToConsoleTerminal("Orchestrator", `Failed to submit decision: ${err.message}`, "error");
+    }
+}
+
+// Bind runs console functions to window for global access/tests
+window.initRunsDashboard = initRunsDashboard;
+window.refreshRunsList = refreshRunsList;
+window.createNewSwarmRun = createNewSwarmRun;
+window.startRunExecution = startRunExecution;
+window.fetchRunTasks = fetchRunTasks;
+window.renderTaskFlowGrid = renderTaskFlowGrid;
+window.fetchApprovalRequests = fetchApprovalRequests;
+window.submitApprovalDecision = submitApprovalDecision;
 

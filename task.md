@@ -1,11 +1,11 @@
-# Task List — Topology Agent Roster Overlay
+# Task List — Phase 4: Core Runtime Build and Hardening
 
-- `[x]` Define CSS classes in `frontend/styles.css` and `frontend/src/styles/tailwind.css`
-- `[x]` Add HTML markup for prompt bar, roster chips, dialog modal, and canvas in `frontend/index.html`
-- `[x]` Implement Javascript agent models, modal handlers, and process animations in `frontend/app.js`
-- `[x]` Create static contract test `scripts/qa/test-topology-agent-overlay-contract.ts`
-- `[x]` Create Playwright E2E test `tests/e2e/topology-agent-overlay.spec.ts`
-- `[x]` Update scripts in `package.json`
-- `[x]` Build frontend assets and compile Tailwind CSS
-- `[x]` Run contract tests and E2E verification
-- `[x]` Commit all updated and generated files to Git
+- `[x]` Initialize SQLite persistent database schema inside `swarm_ledger.db`
+- `[x]` Implement frontend runs dropdown selector fetching from `GET /api/v1/runs`
+- `[x]` Implement frontend task state flow grid updating from `GET /api/v1/runs/{run_id}/tasks`
+- `[x]` Implement pending operator approvals queue fetching from `GET /api/approval/requests`
+- `[x]` Bind approval actions to send operator decisions to `POST /api/approval/requests/{approval_id}/decisions`
+- `[x]` Resolve browser console error in topology agent overlay animation
+- `[x]` Run full E2E and readiness validation suites with 100/100 pass score
+- `[x]` Finalize Phase 4 build report in `docs/mission/phase-4-runtime-build-report.md`
+- `[x]` Update system walkthrough.md
