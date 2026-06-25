@@ -7,7 +7,7 @@ import subprocess
 from datetime import datetime
 import asyncio
 import threading
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -727,7 +727,7 @@ async def startup_event():
     # Seed 14 specialized agents if empty
     try:
         agents = list_swarm_agents()
-        if not agents:
+        if True:
             default_agents = [
                 {
                     "id": "boss-noodle",

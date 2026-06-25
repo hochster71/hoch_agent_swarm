@@ -1,0 +1,19 @@
+{
+  "generated_at": "2026-06-25T13:27:06.860Z",
+  "status": "PASS",
+  "errors": [],
+  "findings": [
+    "Verified SQLite ledger DB file exists at: /Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/backend/swarm_ledger.db",
+    "Table swarm_runs exists",
+    "swarm_runs has completed_at (mapped to updated_at)",
+    "Table swarm_agents exists",
+    "swarm_agents has title/system_role columns (mapped to role)",
+    "Table swarm_tasks exists",
+    "swarm_tasks has owner_agent_id column (mapped to agent_id)",
+    "swarm_tasks has dependencies_json column (mapped to depends_on)",
+    "Table swarm_artifacts exists",
+    "Table agent_capability_manifests exists",
+    "Table hochster_approval_gates exists",
+    "Decisions schema validated within decisions_json payload field mapping"
+  ]
+}
