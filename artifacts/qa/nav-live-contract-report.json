@@ -1,0 +1,90 @@
+{
+  "generated_at": "2026-06-25T02:03:10.967Z",
+  "base_url": "http://localhost:8000",
+  "status": "PASS",
+  "results": [
+    {
+      "id": "readiness-autopilot",
+      "label": "Readiness Autopilot",
+      "endpoint": "/api/v1/readiness/status",
+      "status": "PASS",
+      "http_status": 200,
+      "blockers": [],
+      "warnings": []
+    },
+    {
+      "id": "hochster-runtime",
+      "label": "HOCHSTER Runtime",
+      "endpoint": "/api/v1/hochster/health",
+      "status": "PASS",
+      "http_status": 200,
+      "blockers": [],
+      "warnings": []
+    },
+    {
+      "id": "remediation-safety",
+      "label": "Remediation Safety",
+      "endpoint": "/api/v1/readiness/budget-report",
+      "status": "PASS",
+      "http_status": 200,
+      "blockers": [],
+      "warnings": []
+    },
+    {
+      "id": "runtime-audit",
+      "label": "Runtime Audit",
+      "endpoint": "/api/v1/audit/runtime/execution",
+      "status": "PASS",
+      "http_status": 200,
+      "blockers": [],
+      "warnings": []
+    },
+    {
+      "id": "error-budget",
+      "label": "Error Budget",
+      "endpoint": "/api/v1/readiness/budget-report",
+      "status": "PASS",
+      "http_status": 200,
+      "blockers": [],
+      "warnings": []
+    },
+    {
+      "id": "release-provenance",
+      "label": "Release Provenance",
+      "endpoint": "/api/v1/hochster/baseline/lock",
+      "status": "PASS",
+      "http_status": 200,
+      "blockers": [],
+      "warnings": []
+    },
+    {
+      "id": "swarm-control",
+      "label": "Swarm Control",
+      "endpoint": "/api/v1/agents/status",
+      "status": "PASS",
+      "http_status": 200,
+      "blockers": [],
+      "warnings": []
+    },
+    {
+      "id": "mission-intel",
+      "label": "Mission Intel",
+      "endpoint": "/api/v1/audit/events",
+      "status": "PASS",
+      "http_status": 200,
+      "blockers": [],
+      "warnings": []
+    },
+    {
+      "id": "timeline-replay",
+      "label": "Timeline Replay",
+      "endpoint": "/api/v1/audit/events",
+      "status": "PASS",
+      "http_status": 200,
+      "blockers": [],
+      "warnings": []
+    }
+  ],
+  "blockers": [],
+  "warnings": []
+}

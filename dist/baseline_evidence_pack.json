@@ -3,7 +3,7 @@
   "report_id": "0.1.6-ERROR-BUDGET-AWARE-AUTONOMY",
   "version": "0.1.6-ERROR-BUDGET-AWARE-AUTONOMY",
   "codename": "HOCH-AGENT-SWARM 0.1.6-ERROR-BUDGET-AWARE-AUTONOMY",
-  "generated_at": "2026-06-25T00:25:46Z",
+  "generated_at": "2026-06-25T02:04:15Z",
   "generated_by": "HOCHSTER Orchestrator",
   "git_commit_sha": "5984bcf61c6d7443aa4d525ca780234b1fb38cac",
   "lock_decision": "PASS",
@@ -92,7 +92,7 @@
     "solve_requests": [
       {
         "request_id": "req_9f3a2c0f",
-        "correlation_id": "corr-bfd7349b920a",
+        "correlation_id": "corr-8b2e76e66614",
         "status": "solved",
         "findings": [],
         "patches_generated": 2,
@@ -104,8 +104,8 @@
     ]
   },
   "audit": {
-    "events_checked": 1540,
-    "valid_events": 1540,
+    "events_checked": 1682,
+    "valid_events": 1682,
     "invalid_events": 0,
     "missing_correlation_ids": 0,
     "missing_evidence_refs": 0
@@ -139,7 +139,7 @@
     "missing_evidence_refs": []
   },
   "integrity": {
-    "sha256": "4f629ff06234b40fcae1daa570bd47d2e1e49356c55aede78d34b18821cb1301",
+    "sha256": "e22f66e105a6cb1773a5d2ec1b719b684104ab2c83dcd53d24f59aaea6c5554d",
     "signed": false,
     "signature_ref": null
   },
@@ -151,7 +151,7 @@
     "migration_required": false
   },
   "runtime_execution_audit": {
-    "generated_at": "2026-06-25T00:25:46.053777+00:00",
+    "generated_at": "2026-06-25T02:04:15.768207+00:00",
     "base_url": "http://localhost:8000",
     "tool_calls_checked": 6,
     "tool_calls_with_trace": 6,
@@ -164,17 +164,17 @@
     "status": "PASS",
     "source": "live",
     "source_id": "audit.runtime.execution",
-    "observed_at": "2026-06-25T00:25:46.053786+00:00",
-    "received_at": "2026-06-25T00:25:46.053787+00:00",
+    "observed_at": "2026-06-25T02:04:15.768218+00:00",
+    "received_at": "2026-06-25T02:04:15.768219+00:00",
     "ttl_ms": 10000,
     "freshness": "live",
-    "correlation_id": "corr-audit-exec-4dcffa48",
+    "correlation_id": "corr-audit-exec-0f33f3e6",
     "evidence_refs": [
       "database.swarm_ledger"
     ]
   },
   "docker_digests": {
-    "generated_at": "2026-06-25T00:25:45.487Z",
+    "generated_at": "2026-06-25T02:04:15.173Z",
     "records": [],
     "missing_digest_count": 0,
     "status": "warning",

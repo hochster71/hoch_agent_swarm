@@ -1,0 +1,54 @@
+{
+  "generated_at": "2026-06-25T02:04:34Z",
+  "readiness_score": 100,
+  "breakdown": {
+    "Realtime freshness": {
+      "weight": 15,
+      "score": 15,
+      "comment": "All endpoints live/fresh"
+    },
+    "HOCHSTER runtime evidence": {
+      "weight": 15,
+      "score": 15,
+      "comment": "All tool calls trace-linked & validation verified"
+    },
+    "Audit integrity": {
+      "weight": 15,
+      "score": 15,
+      "comment": "Cryptographic ledger blocks intact"
+    },
+    "Policy enforcement": {
+      "weight": 10,
+      "score": 10,
+      "comment": "Policy rules live and active"
+    },
+    "Database durability": {
+      "weight": 10,
+      "score": 10,
+      "comment": "SQLite WAL + busy_timeout >= 30000 active"
+    },
+    "Supply-chain provenance": {
+      "weight": 10,
+      "score": 10,
+      "comment": "Manifest/SBOM/provenance verified"
+    },
+    "CI repeatability": {
+      "weight": 10,
+      "score": 10,
+      "comment": "CI configuration yml exists"
+    },
+    "Docker/runtime truth": {
+      "weight": 10,
+      "score": 10,
+      "comment": "Docker container health reconciles with UI"
+    },
+    "Performance readiness": {
+      "weight": 5,
+      "score": 5,
+      "comment": "API latencies within SLO limits (< 500ms)"
+    }
+  },
+  "status": "PASS",
+  "drift_detected": false,
+  "drift_findings": []
+}
