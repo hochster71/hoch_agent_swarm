@@ -1,9 +1,18 @@
 {
-  "generated_at": "2026-06-25T13:55:57.711Z",
+  "generated_at": "2026-06-25T14:45:24.449Z",
   "release": "0.1.6-ERROR-BUDGET-AWARE-AUTONOMY",
   "status": "PASS",
   "blockers": [],
   "warnings": [
-    "Release artifacts are not cryptographically signed yet"
-  ]
+    "Release artifacts are unsigned (Allowed in local dev mode)"
+  ],
+  "signing_policy": {
+    "decision": "WARN",
+    "cosign_enabled": false,
+    "enable_cosign_signing_set": false,
+    "is_formal_release": false,
+    "signing_policy_status": "WARN",
+    "signature_status": "unsigned",
+    "release_finalization_status": "local_dev_pass"
+  }
 }

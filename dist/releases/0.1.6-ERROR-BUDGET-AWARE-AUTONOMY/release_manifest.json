@@ -1,10 +1,19 @@
 {
+  "signing_policy_status": "WARN",
+  "signing_required_for_formal_release": true,
+  "signing_provider": "cosign",
+  "signature_status": "unsigned",
+  "signed_artifacts_count": 0,
+  "unsigned_artifacts_count": 8,
+  "signing_waiver_status": "none",
+  "signing_waiver_decision_id": null,
+  "release_finalization_status": "local_dev_pass",
   "release": {
     "version": "0.1.6-ERROR-BUDGET-AWARE-AUTONOMY",
     "codename": "Hochster Runtime Execution Audit",
-    "generated_at": "2026-06-25T13:55:57.325Z",
+    "generated_at": "2026-06-25T14:45:24.051Z",
     "generated_by": "generate-release-manifest.ts",
-    "git_commit_sha": "85035dcb6db54d9ee4fd6ca09b7cbe9179125b8d",
+    "git_commit_sha": "6741f2a3450b10c16892cd4c5c014534e3dcd070",
     "git_branch": "release/v0.1.6-error-budget-aware-autonomy",
     "ci_provider": "local"
   },
@@ -12,37 +21,37 @@
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/baseline_evidence_pack.json",
       "type": "evidence_pack",
-      "sha256": "e0531e1efdcb11205724fb720b881e3bac934c5e3cbade37fa087a621cc6ad02"
+      "sha256": "55bcb53456bff59b577743e407a1d1e2a17484ffb37e570ee7caee0db1a099ca"
     },
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/baseline_evidence_pack.json.sha256",
       "type": "checksum",
-      "sha256": "217911e3a06694f24a186d3a3f84e87d23dd6d21ac98ed505d7ac0525bf1ecd6"
+      "sha256": "f53e506b680c61094fc367088b64e0dfa9eb32fd2870408045123aadf7ba8a23"
     },
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/provenance.intoto.jsonl",
       "type": "provenance",
-      "sha256": "06deef9dbd2bec048f038a94f262bdda1dde8e978e5c4c672778be7154c5ab31"
+      "sha256": "490fa515940cfb417128f2523d419c4a089d4353942b3fa1e7702ed2afaaf6ef"
     },
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/sbom.spdx.json",
       "type": "sbom",
-      "sha256": "588f012bb08f80b80185b832510e58efd46ce858d6f27b138e24a755e50a6c49"
+      "sha256": "f4be8106cc387f4a2911c40cd8f232099de2301090c05dbfad1bb2a56bbec5cb"
     },
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/verification_report.json",
       "type": "verification_report",
-      "sha256": "e75fe88be8a661d99a5a91f966363d239455fe65306d3684c1f250a7ee042ac1"
+      "sha256": "6cc4bdebc57b0265e8496ef408fa55bf05f7da87ed3f98f16ff676aab6b743dc"
     },
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/runtime_execution_audit.json",
       "type": "runtime_execution_audit",
-      "sha256": "39ea96c2001957f8cae4ede5779a0267f470a3e013bdf15d392f60451f4cd8be"
+      "sha256": "fae842a65d24d7b7c0d908beefaa9dee40d229c893b3b27ba9be655c9716f72d"
     },
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/tool_call_trace_summary.json",
       "type": "tool_call_trace_summary",
-      "sha256": "a03bc8151b7af8efbdb595115299af18cdf8bc3a6c99c1bff958b5064d53de3b"
+      "sha256": "693658b435fc7a92d6fbd6e0568c88aea991c69edd68da0677af707f6870d2a8"
     },
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/redaction_report.json",
@@ -52,12 +61,12 @@
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/approval_gate_report.json",
       "type": "approval_gate_report",
-      "sha256": "6f032028c47665b0dd507d0c0ab3f4291f6c2d74578d71eb46b34f12956634f4"
+      "sha256": "55b841e3c1522d9060ff4634192c6d5083a6cd0c53a320cff9dabc0e190680db"
     },
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/autonomy_budget_report.json",
       "type": "autonomy_budget_report",
-      "sha256": "8cfee36e24b74febfa2c558933abfc03560ff66fefad5b4a5d141e788c3bf18d"
+      "sha256": "fb639e9915b5be6de4f467f2766873a170f3c0e6a557f72fbc6aacea6604273a"
     }
   ],
   "docker": [],
@@ -70,7 +79,16 @@
     "signed": false,
     "signature_refs": [],
     "provenance_ref": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/provenance.intoto.jsonl",
-    "sbom_ref": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/sbom.spdx.json"
+    "sbom_ref": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/sbom.spdx.json",
+    "signing_policy_status": "WARN",
+    "signing_required_for_formal_release": true,
+    "signing_provider": "cosign",
+    "signature_status": "unsigned",
+    "signed_artifacts_count": 0,
+    "unsigned_artifacts_count": 8,
+    "signing_waiver_status": "none",
+    "signing_waiver_decision_id": null,
+    "release_finalization_status": "local_dev_pass"
   },
   "hochster": {
     "cluster_jobs_completed": 9,
