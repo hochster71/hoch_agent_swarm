@@ -7592,6 +7592,12 @@ async function submitGovernanceApproval(approvalId, decision) {
             if (typeof fetchAndRenderSigningPolicy === 'function') {
                 fetchAndRenderSigningPolicy();
             }
+            const previewIdEl = document.getElementById("formal-preview-id");
+            if (previewIdEl && previewIdEl.textContent && previewIdEl.textContent !== "None") {
+                if (typeof checkApprovalStatusForPreview === 'function') {
+                    checkApprovalStatusForPreview(previewIdEl.textContent.trim());
+                }
+            }
         } else {
             const data = await res.json();
             alert("Failed to submit decision: " + (data.detail || "Unknown error"));
@@ -7771,6 +7777,10 @@ function initFormalReleasePreview() {
     if (createBtn) {
         createBtn.addEventListener("click", submitFormalPreviewRequest);
     }
+    const requestApprovalBtn = document.getElementById("formal-preview-request-approval-button");
+    if (requestApprovalBtn) {
+        requestApprovalBtn.addEventListener("click", submitFormalPreviewApprovalRequest);
+    }
     refreshCandidateSelectDropdown();
     fetchAndRenderFormalPreviews();
 }
@@ -7928,6 +7938,7 @@ async function submitFormalPreviewRequest() {
                 alert("Formal Release Preview simulation complete: Release is READY for formal release. Explicit operator approval is still required to finalize.");
             }
             
+            await checkApprovalStatusForPreview(preview.formal_preview_id);
             fetchAndRenderFormalPreviews();
         } else {
             const data = await res.json();
@@ -7943,7 +7954,111 @@ async function submitFormalPreviewRequest() {
     }
 }
 
+async function submitFormalPreviewApprovalRequest() {
+    const idEl = document.getElementById("formal-preview-id");
+    if (!idEl) return;
+    const formalPreviewId = idEl.textContent.trim();
+    if (!formalPreviewId || formalPreviewId === "None") {
+        alert("No simulated formal preview is active to request approval for");
+        return;
+    }
+    
+    const requestApprovalBtn = document.getElementById("formal-preview-request-approval-button");
+    if (requestApprovalBtn) {
+        requestApprovalBtn.disabled = true;
+        requestApprovalBtn.textContent = "Requesting...";
+    }
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/formal-preview/${formalPreviewId}/approve-request`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                operator: "Michael Hoch",
+                reason: "Operator request for simulated formal release finalization"
+            })
+        });
+        
+        if (res.ok) {
+            alert("Formal release approval request created successfully. Please check the pending gates queue in the Governance Cockpit.");
+            await checkApprovalStatusForPreview(formalPreviewId);
+            if (typeof fetchAndRenderGovernanceSummary === "function") {
+                fetchAndRenderGovernanceSummary();
+            }
+        } else {
+            const data = await res.json();
+            alert("Failed to request approval: " + (data.detail || "Unknown error"));
+        }
+    } catch (err) {
+        alert("Error requesting approval: " + err.message);
+    } finally {
+        if (requestApprovalBtn) {
+            requestApprovalBtn.disabled = false;
+            requestApprovalBtn.textContent = "Request Formal Release Approval";
+        }
+    }
+}
+
+async function checkApprovalStatusForPreview(formalPreviewId) {
+    const requestApprovalBtn = document.getElementById("formal-preview-request-approval-button");
+    const container = document.getElementById("formal-preview-approval-report-container");
+    const statusEl = document.getElementById("formal-preview-approval-status");
+    const reportPathEl = document.getElementById("formal-preview-approval-report-path");
+    
+    if (!formalPreviewId || formalPreviewId === "None") {
+        if (requestApprovalBtn) requestApprovalBtn.style.display = "none";
+        if (container) container.style.display = "none";
+        return;
+    }
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/governance/summary`);
+        if (!res.ok) return;
+        const data = await res.json();
+        
+        const targetReqId = `channel_decision:formal:${formalPreviewId}`;
+        
+        // 1. Check if pending
+        const pendingGate = data.pending_gates.find(g => g.request_id === targetReqId);
+        if (pendingGate) {
+            if (requestApprovalBtn) requestApprovalBtn.style.display = "none";
+            if (container) container.style.display = "flex";
+            if (statusEl) {
+                statusEl.textContent = "PENDING";
+                statusEl.style.color = "var(--accent-yellow)";
+            }
+            if (reportPathEl) reportPathEl.textContent = "none (awaiting decision)";
+            return;
+        }
+        
+        // 2. Check if decided in historical decision ledger
+        const historicalDecision = data.decision_ledger.find(d => d.request_id === targetReqId);
+        if (historicalDecision) {
+            if (requestApprovalBtn) requestApprovalBtn.style.display = "none";
+            if (container) container.style.display = "flex";
+            if (statusEl) {
+                const dec = historicalDecision.decision.toUpperCase();
+                statusEl.textContent = dec;
+                statusEl.style.color = dec === "APPROVED" ? "var(--accent-teal)" : "#ef4444";
+            }
+            if (reportPathEl) {
+                reportPathEl.textContent = `dist/formal-previews/${formalPreviewId}/formal_release_approval_report.json`;
+            }
+            return;
+        }
+        
+        // 3. No gate exists yet
+        if (requestApprovalBtn) requestApprovalBtn.style.display = "block";
+        if (container) container.style.display = "none";
+        
+    } catch (err) {
+        console.error("Error checking preview approval status:", err);
+    }
+}
+
 window.initFormalReleasePreview = initFormalReleasePreview;
 window.refreshCandidateSelectDropdown = refreshCandidateSelectDropdown;
 window.fetchAndRenderFormalPreviews = fetchAndRenderFormalPreviews;
 window.submitFormalPreviewRequest = submitFormalPreviewRequest;
+window.submitFormalPreviewApprovalRequest = submitFormalPreviewApprovalRequest;
+window.checkApprovalStatusForPreview = checkApprovalStatusForPreview;

@@ -1313,6 +1313,15 @@
                                     <!-- Required actions list -->
                                 </ul>
                             </div>
+
+                            <div style="margin-top: 10px; border-top: 1px solid var(--border-glass); padding-top: 10px; display: flex; flex-direction: column; gap: 8px;">
+                                <button class="btn btn-xs btn-warning" id="formal-preview-request-approval-button" style="display: none; width: 100%;">Request Formal Release Approval</button>
+                                
+                                <div id="formal-preview-approval-report-container" style="display: none; font-size: 11px; flex-direction: column; gap: 6px; padding: 8px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 4px;">
+                                    <div><strong>Approval Status:</strong> <span id="formal-preview-approval-status" style="font-weight:600; color:var(--accent-yellow);">None</span></div>
+                                    <div><strong>Simulation Report:</strong> <span id="formal-preview-approval-report-path" style="font-family:monospace; color:var(--accent-blue);">None</span></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     

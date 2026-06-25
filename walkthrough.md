@@ -97,7 +97,16 @@ We implemented a read-only finalization preview utility to check if a release ca
 
 ---
 
-## 10. Verification Results
+## 10. Formal Release Approval Simulator (Phase 11)
+We implemented a formal release approval simulator allowing the operator to request and decide simulated release approvals:
+- **API Endpoints**: Added `POST /api/v1/release/formal-preview/{formal_preview_id}/approve-request` creating a high-risk `channel_decision` gate in SQLite and in-memory.
+- **Decision Hook & Report Generation**: Hooked the decision endpoint to write simulated approval reports (`formal_release_approval_report.json` and `.md`) under `dist/formal-previews/{formal_preview_id}/` upon operator approval or rejection.
+- **Frontend Controls**: Added the **Request Formal Release Approval** button (`#formal-preview-request-approval-button`) and status dashboard container (`#formal-preview-approval-report-container`) which dynamically updates.
+- **Replay Protection & Invariants**: Enforces replay protection (duplicate decisions block) and guarantees zero tag creation or Cosign signing during the simulated approval workflow.
+
+---
+
+## 11. Verification Results
 
 ### Static QA & Contract Checks (`npm run qa:ui-contract`)
 - All contract checks exited with `PASS`:
@@ -116,6 +125,7 @@ We implemented a read-only finalization preview utility to check if a release ca
   - `operator-governance-contract`: PASS
   - `candidate-release-packet-contract`: PASS
   - `formal-release-preview-contract`: PASS
+  - `formal-release-approval-contract`: PASS
 
 ### Playwright E2E Integration Tests (`npm run qa:e2e-runtime`)
 - All browser simulation specs completed successfully:
@@ -128,9 +138,11 @@ We implemented a read-only finalization preview utility to check if a release ca
   - `operator-governance-cockpit.spec.ts`: PASS
   - `candidate-release-packet.spec.ts`: PASS
   - `formal-release-preview.spec.ts`: PASS
+  - `formal-release-approval.spec.ts`: PASS
 
 ### North Star & Autonomy Budget Audit (`npm run qa:runtime-full`)
 - Autonomy Safety Engine static red-team assertions: 20/20 PASS
 - Autonomy Gating and budget throttling integration assertions: 5/5 PASS
 - Final Operational Readiness Score: **100/100 PASS**
+
 

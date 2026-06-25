@@ -1537,6 +1537,87 @@ def get_formal_preview_manifest(formal_preview_id: str):
         return db_preview
     raise HTTPException(status_code=404, detail="Formal release preview not found")
 
+class FormalPreviewApproveRequest(BaseModel):
+    operator: str
+    reason: str
+
+@app.post("/api/v1/release/formal-preview/{formal_preview_id}/approve-request")
+def create_formal_preview_approval_gate(formal_preview_id: str, req: FormalPreviewApproveRequest):
+    import uuid
+    from datetime import datetime, timedelta
+    
+    # 1. Load formal preview manifest
+    try:
+        manifest = get_formal_preview_manifest(formal_preview_id)
+    except HTTPException:
+        raise HTTPException(status_code=404, detail="Formal preview not found")
+        
+    # Check if a gate already exists for this formal_preview_id
+    gates = list_approval_gates()
+    target_req_id = f"channel_decision:formal:{formal_preview_id}"
+    existing_gate = next((g for g in gates if g["request_id"] == target_req_id), None)
+    if existing_gate:
+        return existing_gate
+        
+    # 2. Create approval gate in SQLite
+    approval_id = f"app-{uuid.uuid4().hex[:8]}"
+    correlation_id = f"corr-{uuid.uuid4().hex[:8]}"
+    trace_id = f"trace-{uuid.uuid4().hex[:8]}"
+    
+    persist_approval_gate(
+        approval_id=approval_id,
+        request_id=target_req_id,
+        correlation_id=correlation_id,
+        trace_id=trace_id,
+        action_type="channel_decision",
+        risk_level="high",
+        status="pending",
+        requested_by=req.operator,
+        decisions=[]
+    )
+    
+    # 3. Create approval gate in memory
+    expires_at = (datetime.utcnow() + timedelta(hours=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    new_approval = {
+        "approval_id": approval_id,
+        "created_at": now_iso(),
+        "expires_at": expires_at,
+        "status": "pending",
+        "requested_by": {
+            "id": "operator",
+            "name": req.operator,
+            "role": "operator"
+        },
+        "required_approver_role": "approver",
+        "command": {
+            "command_id": target_req_id,
+            "correlation_id": correlation_id,
+            "raw_text": f"Request formal release approval for preview: {formal_preview_id}",
+            "risk": "high"
+        },
+        "target": {
+            "id": formal_preview_id,
+            "name": f"Formal Release Preview {formal_preview_id}",
+            "type": "formal_release"
+        },
+        "policy_context": {
+            "decision": "block",
+            "approval_reason": f"Formal release approval requested by {req.operator}. Simulates finalization.",
+            "blockers": ["operator_approval_required"],
+            "warnings": []
+        },
+        "decisions": []
+    }
+    
+    with _approvals_lock:
+        _approvals.insert(0, new_approval)
+        
+    return {
+        "approval_id": approval_id,
+        "request_id": target_req_id,
+        "status": "pending"
+    }
+
 @app.post("/api/v1/release/formal-preview")
 def create_formal_preview(req: FormalPreviewRequest):
     import uuid
@@ -2797,6 +2878,77 @@ async def api_submit_decision(approval_id: str, decision: dict):
             requested_by=gate["requested_by"],
             decisions=gate["decisions"] + [enriched_decision]
         )
+        
+        # Check if this is a formal release approval simulation
+        if req_id.startswith("channel_decision:formal:"):
+            import os
+            import json
+            parts = req_id.split(":", 2)
+            if len(parts) >= 3:
+                formal_preview_id = parts[2]
+                preview_dir = f"dist/formal-previews/{formal_preview_id}"
+                os.makedirs(preview_dir, exist_ok=True)
+                
+                # Load preview manifest
+                preview_manifest = {}
+                preview_manifest_path = f"{preview_dir}/formal_release_preview_manifest.json"
+                if os.path.exists(preview_manifest_path):
+                    with open(preview_manifest_path, "r") as f:
+                        try:
+                            preview_manifest = json.load(f)
+                        except Exception:
+                            pass
+                
+                # Write approval report JSON
+                report = {
+                    "report_id": f"rep-{uuid.uuid4().hex[:8]}",
+                    "formal_preview_id": formal_preview_id,
+                    "request_id": req_id,
+                    "approval_id": approval_id,
+                    "created_at": now_iso(),
+                    "operator": enriched_decision["operator"],
+                    "decision": new_status,
+                    "reason": decision.get("reason", ""),
+                    "replay_protection": {
+                        "nonce": enriched_decision["nonce"],
+                        "prior_state": enriched_decision["prior_state"],
+                        "next_state": enriched_decision["next_state"]
+                    },
+                    "preview_metadata": preview_manifest
+                }
+                
+                report_path = f"{preview_dir}/formal_release_approval_report.json"
+                with open(report_path, "w") as f:
+                    json.dump(report, f, indent=2)
+                    
+                # Write approval report Markdown
+                md_path = f"{preview_dir}/formal_release_approval_report.md"
+                md_content = f"""# Simulated Formal Release Approval Report — `{report["report_id"]}`
+
+## Approval Details
+- **Formal Preview ID**: `{formal_preview_id}`
+- **Approval Request ID**: `{req_id}`
+- **Approval Gate Status**: **`{new_status.upper()}`**
+- **Decided By**: `{report["operator"]}`
+- **Justification**: {report["reason"]}
+- **Decided At**: {report["created_at"]}
+
+---
+
+## Replay Protection Validation
+- **Cryptographic Nonce**: `{report["replay_protection"]["nonce"]}`
+- **State Transition**: `{report["replay_protection"]["prior_state"]}` ➔ `{report["replay_protection"]["next_state"]}`
+
+---
+
+## Safety Disclaimers
+- ⚠️ **No Tags Are Created**
+- 🔒 **No Signing Is Performed**
+- 🚀 **No Publishing Is Performed**
+- 🔍 **Simulated Approval Only**
+"""
+                with open(md_path, "w") as f:
+                    f.write(md_content)
         
         await manager.broadcast(make_runtime_event(
             event_type="approval.granted" if new_status == "approved" else "approval.rejected",

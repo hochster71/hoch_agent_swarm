@@ -202,7 +202,14 @@ Regenerated supply chain artifacts:
 - **Generated Preview Artifacts**: Creates a formal release preview JSON manifest and summary Markdown file under `dist/formal-previews/<formal_preview_id>/` for auditability and compliance tracking.
 - **UI Contract and DOM IDs Integrity**: Fully compliant with required frontend identifiers (`formal-preview-candidate-select`, `formal-preview-status`, `formal-preview-blockers`, `formal-preview-required-actions`, etc.) and disclaimers ("No Tags Are Created", "No Signing Is Performed", "No Publishing Is Performed", "Preview Only").
 
+## Formal Release Approval Simulator (Phase 11)
+- **Formal Release Approval Simulation Control**: Embedded the `#formal-preview-request-approval-button` inside the preview card to dispatch a formal release approval request for a simulated preview.
+- **Approval Gate Creation**: Automatically registers a pending `channel_decision` gate in SQLite and adds a corresponding pending request to the dashboard approval queue for operator review.
+- **Simulation Report Generation**: Updates the decision handler to write simulated approval reports under `dist/formal-previews/<formal_preview_id>/` (containing a JSON manifest and summary Markdown report) when the operator approves or rejects the simulated gate.
+- **Non-Destructive Posture**: The approval process simulates release finalization and validation without mutating git tags, applying signatures, or publishing files.
+
 ---
 
 ## Open Gaps
 1. **Cryptographic Signing Provider Credentials**: Actual signature generation (`.sig`) requires configuring Cosign credentials and keys in the target environment when ready.
+

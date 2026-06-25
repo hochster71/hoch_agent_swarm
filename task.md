@@ -1,15 +1,13 @@
-# Task List — Phase 10: Formal Release Finalization Preview
+# Task List — Phase 11: Formal Release Approval Simulator
 
-- `[x]` Implement table `formal_release_previews` and database helpers in `backend/runtime_execution_store.py`
-- `[x]` Implement API endpoints `/api/v1/release/formal-preview` (GET, GET by ID, POST) in `backend/main.py`
-- `[x]` Restart backend FastAPI server to load updated endpoints and schemas
-- `[x]` Update frontend template `frontend/index.html` to add formal release finalization preview panel with all required DOM IDs and texts
-- `[x]` Update frontend logic `frontend/app.js` to handle preview requests, candidate dropdown updates, and preview run history rendering
-- `[x]` Compile local Tailwind CSS assets (`npm run build:tailwind`)
-- `[x]` Create contract validation script `scripts/qa/test-formal-release-preview-contract.ts`
-- `[x]` Create Playwright E2E specification `tests/e2e/formal-release-preview.spec.ts`
+- `[x]` Implement API route `POST /api/v1/release/formal-preview/{formal_preview_id}/approve-request` in `backend/main.py`
+- `[x]` Update decision handler `POST /api/approval/requests/{approval_id}/decisions` to write simulation reports for preview gates
+- `[x]` Update frontend template `frontend/index.html` to add request button and simulation report display
+- `[x]` Update frontend logic `frontend/app.js` to support approval requests, update statuses, and display reports
+- `[x]` Compile local Tailwind CSS assets (`npm run build`)
+- `[x]` Create contract validation script `scripts/qa/test-formal-release-approval-contract.ts`
+- `[x]` Create Playwright E2E specification `tests/e2e/formal-release-approval.spec.ts`
 - `[x]` Register run commands and update validation suites in `package.json`
 - `[x]` Update documentation: `docs/mission/deep-swarm-page-audit-report.md` & `walkthrough.md`
 - `[x]` Verify by building and running full QA suites: `npm run build`, `npm run qa:runtime-full`, `npm run supply:release`
 - `[x]` Stage and commit changes (Feature commit and Evidence commit)
-
