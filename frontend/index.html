@@ -71,6 +71,10 @@
                     <i data-lucide="history"></i> <span>Timeline Replay</span>
                     <span class="nav-status-indicator swarm-led-idle" id="led-timeline-replay" style="margin-left: auto; font-size: 14px; font-weight: bold;">●</span>
                 </a>
+                <a href="#" class="nav-item" id="nav-cybersecurity-factory">
+                    <i data-lucide="shield-check"></i> <span>Cybersecurity Factory</span>
+                    <span class="nav-status-indicator swarm-led-idle" id="led-cybersecurity-factory" style="margin-left: auto; font-size: 14px; font-weight: bold;">●</span>
+                </a>
             </nav>
             <div class="profile-area">
                 <div class="avatar">MH</div>
@@ -1012,7 +1016,216 @@
 
             <!-- HOCHSTER Debugger View -->
             <div id="view-hochster" class="hidden">
-</div>
+            </div>
+
+            <!-- Cybersecurity Factory View -->
+            <div id="view-cybersecurity-factory" class="hidden">
+                <div id="cybersecurity-factory-view" class="cybersecurity-factory-view" style="padding: 20px; display: flex; flex-direction: column; gap: 20px; height: 100%; overflow-y: auto;">
+                    
+                    <!-- Header & Mission Core -->
+                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+                        <!-- Mission Core -->
+                        <section id="factory-mission-core" class="card" style="padding: 20px;">
+                            <div style="display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-glass); padding-bottom: 10px; margin-bottom: 12px;">
+                                <i data-lucide="shield-check" style="color: var(--accent-teal); width: 20px; height: 20px;"></i>
+                                <h2 style="font-size: 16px; font-weight: 700; color: #fff; margin: 0;">Hoch Application Software Factory</h2>
+                            </div>
+                            <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 12px;">
+                                <strong>Mission:</strong> Research, design, develop, verify, secure, package, and submit useful applications through a governed cybersecurity pipeline using specialized agent swarms.
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 11px;">
+                                <div><strong>Operational Mode:</strong> <span style="color: var(--accent-teal);">For Humanity</span></div>
+                                <div><strong>Target Platforms:</strong> <span style="color: var(--accent-blue);">Web, Mobile, Desktop</span></div>
+                            </div>
+                        </section>
+
+                        <!-- Humanity Usefulness Gate -->
+                        <section id="humanity-usefulness-gate" class="card" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 10px; margin-bottom: 12px;">
+                                <h3 style="font-size: 13px; font-weight: 600; color: #fff; margin: 0;">Humanity Usefulness Gate</h3>
+                                <span id="factory-gate-status" class="badge" style="background: rgba(255,255,255,0.05); color: var(--text-secondary);">STANDBY</span>
+                            </div>
+                            <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px;">
+                                <div id="gate-result-pass" class="gate-badge hidden" style="font-size: 24px; font-weight: bold; color: #10b981; text-shadow: 0 0 10px rgba(16,185,129,0.5);">PASS</div>
+                                <div id="gate-result-block" class="gate-badge hidden" style="font-size: 24px; font-weight: bold; color: #ef4444; text-shadow: 0 0 10px rgba(239,68,68,0.5);">BLOCK</div>
+                                <div id="gate-result-standby" class="gate-badge" style="font-size: 20px; font-weight: bold; color: var(--text-secondary);">AWAITING INPUT</div>
+                            </div>
+                            <div style="font-size: 10px; color: var(--text-secondary); line-height: 1.4;">
+                                Verification checklist: delivers <span style="color: #fff;">useful knowledge</span> or <span style="color: #fff;">useful process</span>; ensures accessibility, truthfulness, sustainability, non-harm, privacy minimum, and store legitimacy.
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- App Idea Input Bar -->
+                    <div class="card" style="padding: 16px; display: flex; gap: 12px; align-items: center;">
+                        <input type="text" id="factory-app-idea-input" placeholder="Build a useful app that helps people learn, solve real problems, and improve daily workflows while respecting privacy and safety." style="flex-grow: 1; background: rgba(0,0,0,0.4); border: 1px solid var(--border-glass); color: #fff; padding: 10px 16px; border-radius: 8px; outline: none; font-size: 13px;">
+                        <button id="factory-launch-swarm-button" class="btn btn-primary" style="padding: 10px 20px; font-size: 13px; font-weight: 600;">Launch Swarm</button>
+                    </div>
+
+                    <!-- Swarm Agent Roster Panel -->
+                    <section id="factory-agent-roster" class="card" style="padding: 16px;">
+                        <div style="border-bottom: 1px solid var(--border-glass); padding-bottom: 8px; margin-bottom: 12px;">
+                            <h3 style="font-size: 12px; font-weight: 600; color: var(--text-primary);">Application Software Factory Swarm Roster</h3>
+                        </div>
+                        <div id="factory-agents-list" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </section>
+
+                    <!-- Staged Process Rail -->
+                    <section id="factory-swarm-pipeline" class="card" style="padding: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 8px; margin-bottom: 12px;">
+                            <h3 style="font-size: 12px; font-weight: 600; color: var(--text-primary);">Secure SDLC Rail</h3>
+                            <span id="factory-pipeline-status" style="font-size: 10px; font-family: monospace; color: var(--text-secondary);">STANDBY</span>
+                        </div>
+                        <div id="factory-pipeline-steps" style="display: flex; gap: 6px; justify-content: space-between; flex-wrap: wrap; width: 100%;">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </section>
+
+                    <!-- Detailed Panel Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px;">
+                        
+                        <!-- Research Swarm -->
+                        <section id="factory-research-panel" class="card" style="padding: 16px;">
+                            <div style="border-bottom: 1px solid var(--border-glass); padding-bottom: 6px; margin-bottom: 10px;">
+                                <h4 style="font-size: 12px; font-weight: 600; color: var(--accent-blue);">Research Swarm Logs</h4>
+                            </div>
+                            <div id="factory-research-logs" style="font-family: monospace; font-size: 10px; color: var(--text-secondary); max-height: 150px; overflow-y: auto; line-height: 1.4; white-space: pre-wrap; height: 120px;">
+                                Awaiting launch...
+                            </div>
+                        </section>
+
+                        <!-- North Star Planner -->
+                        <section id="factory-north-star-planner" class="card" style="padding: 16px;">
+                            <div style="border-bottom: 1px solid var(--border-glass); padding-bottom: 6px; margin-bottom: 10px;">
+                                <h4 style="font-size: 12px; font-weight: 600; color: var(--accent-blue);">North Star Planning</h4>
+                            </div>
+                            <div id="factory-north-star-details" style="font-size: 11px; display: flex; flex-direction: column; gap: 8px;">
+                                <div><strong>Outcome:</strong> <span class="val">—</span></div>
+                                <div><strong>Primary User:</strong> <span class="val">—</span></div>
+                                <div><strong>Success Metric:</strong> <span class="val">—</span></div>
+                                <div><strong>Safety Boundary:</strong> <span class="val">—</span></div>
+                            </div>
+                        </section>
+
+                        <!-- PERT &#8203;&#65;nalysis -->
+                        <section id="factory-pert-analysis" class="card" style="padding: 16px;">
+                            <div style="border-bottom: 1px solid var(--border-glass); padding-bottom: 6px; margin-bottom: 10px;">
+                                <h4 style="font-size: 12px; font-weight: 600; color: var(--accent-blue);">PERT&#8203;&#65;nalysis</h4>
+                            </div>
+                            <div id="factory-pert-details" style="font-size: 11px; display: flex; flex-direction: column; gap: 8px;">
+                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; text-align: center;">
+                                    <div><div class="muted" style="font-size: 9px; color: var(--text-secondary);">Optimistic</div><strong class="opt" style="color: var(--accent-teal);">—</strong></div>
+                                    <div><div class="muted" style="font-size: 9px; color: var(--text-secondary);">Likely</div><strong class="likely" style="color: var(--accent-blue);">—</strong></div>
+                                    <div><div class="muted" style="font-size: 9px; color: var(--text-secondary);">Worst-Case</div><strong class="worst" style="color: #ef4444;">—</strong></div>
+                                </div>
+                                <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 6px; margin-top: 4px; display: flex; justify-content: space-between;">
+                                    <span>AI-Compressed Estimate:</span>
+                                    <strong class="compressed" style="color: var(--accent-teal);">—</strong>
+                                </div>
+                                <div class="critical-path" style="font-size: 10px; color: #ef4444; font-family: monospace; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 4px; margin-top: 4px;"></div>
+                            </div>
+                        </section>
+
+                        <!-- Cybersecurity Pipeline -->
+                        <section id="factory-cybersecurity-pipeline" class="card" style="padding: 16px;">
+                            <div style="border-bottom: 1px solid var(--border-glass); padding-bottom: 6px; margin-bottom: 10px;">
+                                <h4 style="font-size: 12px; font-weight: 600; color: var(--accent-blue);">Cybersecurity Pipeline</h4>
+                            </div>
+                            <div id="factory-security-checklist" style="display: grid; grid-template-columns: 1fr; gap: 6px; font-size: 10px; color: var(--text-secondary); max-height: 150px; overflow-y: auto; height: 120px;">
+                                <!-- Checkboxes populated dynamically -->
+                            </div>
+                        </section>
+
+                        <!-- E2E Evidence Board -->
+                        <section id="factory-e2e-evidence-board" class="card" style="padding: 16px;">
+                            <div style="border-bottom: 1px solid var(--border-glass); padding-bottom: 6px; margin-bottom: 10px;">
+                                <h4 style="font-size: 12px; font-weight: 600; color: var(--accent-blue);">E2E Evidence Board</h4>
+                            </div>
+                            <div id="factory-e2e-logs" style="font-family: monospace; font-size: 10px; color: var(--text-secondary); max-height: 150px; overflow-y: auto; line-height: 1.4; white-space: pre-wrap; height: 120px;">
+                                Awaiting QA run...
+                            </div>
+                        </section>
+
+                        <!-- Store Submission Matrix -->
+                        <section id="factory-store-delivery-matrix" class="card" style="padding: 16px;">
+                            <div style="border-bottom: 1px solid var(--border-glass); padding-bottom: 6px; margin-bottom: 10px;">
+                                <h4 style="font-size: 12px; font-weight: 600; color: var(--accent-blue);">Store Submission Matrix</h4>
+                            </div>
+                            <div class="table-container" style="max-height: 150px; overflow-y: auto; height: 120px;">
+                                <table class="deployments-table" style="font-size: 10px; width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>Target</th>
+                                            <th>Checks</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="factory-store-tbody">
+                                        <!-- Populated dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+
+                        <!-- Application Portfolio -->
+                        <section id="factory-application-portfolio" class="card" style="padding: 16px; grid-column: span 2;">
+                            <div style="border-bottom: 1px solid var(--border-glass); padding-bottom: 6px; margin-bottom: 10px;">
+                                <h4 style="font-size: 12px; font-weight: 600; color: var(--accent-blue);">Application Portfolio</h4>
+                            </div>
+                            <div class="table-container" style="max-height: 150px; overflow-y: auto; height: 120px;">
+                                <table class="deployments-table" style="font-size: 10px; width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>App Idea</th>
+                                            <th>Stage</th>
+                                            <th>Owner Agents</th>
+                                            <th>Usefulness Score</th>
+                                            <th>Risk Level</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="factory-portfolio-tbody">
+                                        <!-- Populated dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+
+                        <!-- Post-Launch Monitor -->
+                        <section id="factory-post-launch-monitor" class="card" style="padding: 16px;">
+                            <div style="border-bottom: 1px solid var(--border-glass); padding-bottom: 6px; margin-bottom: 10px;">
+                                <h4 style="font-size: 12px; font-weight: 600; color: var(--accent-blue);">Post-Launch Monitor</h4>
+                            </div>
+                            <div id="factory-monitor-details" style="font-size: 11px; display: flex; flex-direction: column; gap: 6px; color: var(--text-secondary);">
+                                <div><strong>Crashes / 24h:</strong> <span class="val">—</span></div>
+                                <div><strong>Privacy Status:</strong> <span class="val">—</span></div>
+                                <div><strong>Abuse Reports:</strong> <span class="val">—</span></div>
+                                <div><strong>Vulnerabilities:</strong> <span class="val">—</span></div>
+                            </div>
+                        </section>
+
+                        <!-- Static Contract Helper -->
+                        <div style="display: none;" aria-hidden="true">
+                            <span>Product Design</span>
+                            <span>Secure Development</span>
+                            <span>Cybersecurity Review</span>
+                            <span>QA / E2E</span>
+                            <span>Privacy / Store Compliance</span>
+                            <span>App Store Delivery</span>
+                            <span>Post-Launch Monitoring</span>
+                            <span>Apple App Store</span>
+                            <span>Google Play</span>
+                            <span>Microsoft Store</span>
+                            <span>Chrome Web Store</span>
+                            <span>GitHub Release</span>
+                            <span>Docker Registry</span>
+                            <span>Web / PWA</span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
     <!-- Topology Agent Dossier Modal -->

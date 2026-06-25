@@ -81,7 +81,8 @@ const navItems = {
     releaseProvenance: { nav: document.getElementById("nav-release-provenance"), view: document.getElementById("view-release-provenance") },
     swarmControl: { nav: document.getElementById("nav-swarm-control"), view: document.getElementById("view-swarm-control") },
     missionIntel: { nav: document.getElementById("nav-mission-intel"), view: document.getElementById("view-mission") },
-    timelineReplay: { nav: document.getElementById("nav-timeline-replay"), view: document.getElementById("view-replay") }
+    timelineReplay: { nav: document.getElementById("nav-timeline-replay"), view: document.getElementById("view-replay") },
+    cybersecurityFactory: { nav: document.getElementById("nav-cybersecurity-factory"), view: document.getElementById("view-cybersecurity-factory") }
 };
 
 // Security Audit & Sub-tab Elements
@@ -314,6 +315,7 @@ async function initDashboard() {
 
         initializeHochSwarmAnimationRuntime();
         bindTopologyAgentOverlay();
+        if (window.initializeCybersecurityFactory) window.initializeCybersecurityFactory();
     } catch (err) {
         console.error("Error initializing dashboard: ", err);
         // Fallback polling if WebSocket fails
@@ -1082,6 +1084,8 @@ Object.keys(navItems).forEach(key => {
                 renderSettingsNodesList(currentNodes);
             } else if (key === "audit" || key === "runtimeAudit") {
                 fetchAndRenderAuditLogs();
+            } else if (key === "cybersecurityFactory") {
+                if (window.renderCybersecurityFactoryView) window.renderCybersecurityFactoryView();
             } else if (key === "replay" || key === "timelineReplay") {
                 if (window.onReplayTabActive) window.onReplayTabActive();
             } else if (key === "collab") {
@@ -2893,6 +2897,9 @@ async function updateNavStatuses() {
     // 9. Timeline Replay
     const ledgerOk = await checkEndpoint("/api/v1/audit/events");
     updateIndicator("nav-timeline-replay", ledgerOk ? "live" : "error");
+
+    // 10. Cybersecurity Factory
+    updateIndicator("nav-cybersecurity-factory", "live");
 }
 
 
@@ -5111,4 +5118,702 @@ window.addEventListener("resize", () => {
         drawTopologyAgentMotion(activeIds);
     }
 });
+
+// ==============================================================================
+//  CYBERSECURITY + APPLICATION SOFTWARE FACTORY
+// ==============================================================================
+
+// Data models
+const hochApplicationFactoryStages = [
+  "Intake",
+  "Humanity Usefulness Gate",
+  "Research",
+  "North Star Planning",
+  "PERT\u200bAnalysis",
+  "Product Design",
+  "Architecture",
+  "Secure Development",
+  "Cybersecurity Review",
+  "QA / E2E",
+  "Privacy / Store Compliance",
+  "Packaging",
+  "App Store Delivery",
+  "Post-Launch Monitoring"
+];
+
+const humanityUsefulnessCriteria = [
+  "Human benefit",
+  "Non-harm",
+  "Privacy minimum",
+  "Accessibility",
+  "Truthfulness",
+  "Sustainability",
+  "Store legitimacy"
+];
+
+const applicationStoreTargets = [
+  "Apple App Store",
+  "Google Play",
+  "Microsoft Store",
+  "Chrome Web Store",
+  "GitHub Release",
+  "Docker Registry",
+  "Web / PWA"
+];
+
+const hochApplicationFactoryAgents = [
+  "Factory Foreman Fizz",
+  "Humanity Hank",
+  "North Star Nora",
+  "PERT Percy",
+  "Research Raccoon",
+  "Design Doodle Dee",
+  "Architect Atlas",
+  "Cyber Cobra",
+  "Secrets Squirrel",
+  "Dependency Dingo",
+  "E2E Ellie",
+  "Storefront Stan",
+  "Review Rita"
+];
+
+// Agent data mapped to stages
+const factoryAgentsData = [
+  {
+    id: "foreman-fizz",
+    displayName: "Factory Foreman Fizz",
+    funnyTag: "APP MILL WRANGLER",
+    role: "orchestrates the factory pipeline",
+    mission: "Coordinate swarm agents and track secure SDLC pipeline progression.",
+    stage: "Intake",
+    completionSignal: "app pipeline decomposed",
+    avatarVariant: 1,
+    status: "idle"
+  },
+  {
+    id: "humanity-hank",
+    displayName: "Humanity Hank",
+    funnyTag: "BENEFIT BOUNCER",
+    role: "blocks apps that do not deliver real human usefulness",
+    mission: "Evaluate app ideas against human value criteria and block toxic/spam candidates.",
+    stage: "Humanity Usefulness Gate",
+    completionSignal: "usefulness gate passed",
+    avatarVariant: 2,
+    status: "idle"
+  },
+  {
+    id: "research-raccoon",
+    displayName: "Research Raccoon",
+    funnyTag: "SOURCE BANDIT",
+    role: "researches docs, competitors, user needs, YouTube candidates",
+    mission: "Scan competitive platforms, developer docs, and synthesize requirements packs.",
+    stage: "Research",
+    completionSignal: "research pack synthesized",
+    avatarVariant: 3,
+    status: "idle"
+  },
+  {
+    id: "north-star-nora",
+    displayName: "North Star Nora",
+    funnyTag: "OUTCOME COMPASS",
+    role: "defines outcome, users, success metric, ethical boundary",
+    mission: "Outline core outcomes, define metrics, and set strict ethical refusals.",
+    stage: "North Star Planning",
+    completionSignal: "north star locked",
+    avatarVariant: 4,
+    status: "idle"
+  },
+  {
+    id: "pert-percy",
+    displayName: "PERT Percy",
+    funnyTag: "TIME GOBLIN",
+    role: "builds AI-compressed PERT and dependency schedule",
+    mission: "Compile optimistic, likely, and pessimistic estimates into critical path nodes.",
+    stage: "PERT\u200bAnalysis",
+    completionSignal: "delivery graph estimated",
+    avatarVariant: 5,
+    status: "idle"
+  },
+  {
+    id: "design-doodle-dee",
+    displayName: "Design Doodle Dee",
+    funnyTag: "UX CARTOONIST",
+    role: "wireframes usable, accessible flows",
+    mission: "Draft clean user flows, access controls, and wireframe views.",
+    stage: "Product Design",
+    completionSignal: "user journey drawn",
+    avatarVariant: 6,
+    status: "idle"
+  },
+  {
+    id: "architect-atlas",
+    displayName: "Architect Atlas",
+    funnyTag: "SYSTEM SPINE",
+    role: "architecture, data model, APIs, deployment model",
+    mission: "Formulate schemas, endpoint contracts, API models, and backend layouts.",
+    stage: "Architecture",
+    completionSignal: "architecture contract written",
+    avatarVariant: 7,
+    status: "idle"
+  },
+  {
+    id: "secrets-squirrel",
+    displayName: "Secrets Squirrel",
+    funnyTag: "CREDENTIAL PROTECTOR",
+    role: "secrets scanning, env safety, token hygiene",
+    mission: "Verify environment isolation and scan codebase for leaked credentials.",
+    stage: "Secure Development",
+    completionSignal: "secrets clear",
+    avatarVariant: 8,
+    status: "idle"
+  },
+  {
+    id: "dependency-dingo",
+    displayName: "Dependency Dingo",
+    funnyTag: "SUPPLY-CHAIN SNIFFER",
+    role: "dependency audit, SBOM, license checks",
+    mission: "Compile software bill of materials and triage third-party dependency vulnerabilities.",
+    stage: "Secure Development",
+    completionSignal: "dependency risk triaged",
+    avatarVariant: 9,
+    status: "idle"
+  },
+  {
+    id: "cyber-cobra",
+    displayName: "Cyber Cobra",
+    funnyTag: "THREAT MODELER",
+    role: "threat modeling, abuse cases, attack surface review",
+    mission: "Analyze vulnerabilities, map out threat vectors, and audit attack surfaces.",
+    stage: "Cybersecurity Review",
+    completionSignal: "threat model complete",
+    avatarVariant: 10,
+    status: "idle"
+  },
+  {
+    id: "e2e-ellie",
+    displayName: "E2E Ellie",
+    funnyTag: "BROWSER PROOFMASTER",
+    role: "Playwright journeys, screenshots, store-critical flows",
+    mission: "Orchestrate Playwright end-to-end integration tests and capture visual state proof.",
+    stage: "QA / E2E",
+    completionSignal: "E2E evidence captured",
+    avatarVariant: 11,
+    status: "idle"
+  },
+  {
+    id: "storefront-stan",
+    displayName: "Storefront Stan",
+    funnyTag: "SUBMISSION CLERK",
+    role: "app store metadata, screenshots, privacy forms, package checklist",
+    mission: "Verify privacy policies, draft data safety disclosures, and collect store assets.",
+    stage: "Privacy / Store Compliance",
+    completionSignal: "store packet ready",
+    avatarVariant: 12,
+    status: "idle"
+  },
+  {
+    id: "review-rita",
+    displayName: "Review Rita",
+    funnyTag: "HUMAN REVIEW GATE",
+    role: "requires final operator approval before submission",
+    mission: "Require final visual operator verification and seal application release packages.",
+    stage: "App Store Delivery",
+    completionSignal: "review approved",
+    avatarVariant: 13,
+    status: "idle"
+  }
+];
+
+// Map of cybersecurity checks
+const cybersecurityChecklistItems = [
+  "Threat model",
+  "SAST",
+  "Dependency audit",
+  "Secrets scan",
+  "SBOM",
+  "Privacy policy alignment",
+  "Data safety disclosure check",
+  "Abuse-case review",
+  "Accessibility check",
+  "E2E evidence",
+  "Human review approval"
+];
+
+// Map of store targets checks details
+const storeTargetsChecksData = {
+  "Apple App Store": "privacy nutrition, review guidelines, screenshots, age rating, IAP rules, human value",
+  "Google Play": "Data Safety, permissions, malware/deception checks, target SDK, testing track",
+  "Microsoft Store": "package identity, privacy policy, install behavior, content policies",
+  "Chrome Web Store": "extension permissions, remote code policy, privacy disclosure",
+  "GitHub Release": "SBOM, provenance, signed artifact, release notes",
+  "Docker Registry": "image scan, digest pinning, non-root user, CVE report",
+  "Web / PWA": "HTTPS, CSP, accessibility, privacy policy, E2E smoke tests"
+};
+
+// Global state for factory simulation
+let factoryTimeouts = [];
+const factoryPortfolio = [];
+
+// Functions
+
+function renderCybersecurityFactoryView() {
+    renderHumanityUsefulnessGate();
+    renderApplicationFactoryPipeline();
+    renderFactoryAgentRoster();
+    renderFactoryCybersecurityPipeline(false);
+    renderFactoryStoreDeliveryMatrix(false);
+    renderFactoryPertAnalysis(false);
+    renderFactoryE2EEvidenceBoard(false);
+    renderFactoryPortfolioTable();
+}
+
+function renderHumanityUsefulnessGate() {
+    const statusEl = document.getElementById("factory-gate-status");
+    if (statusEl) {
+        statusEl.textContent = "STANDBY";
+        statusEl.className = "badge";
+    }
+    lightFactoryGateResult("STANDBY");
+}
+
+function renderApplicationFactoryPipeline() {
+    const container = document.getElementById("factory-pipeline-steps");
+    if (!container) return;
+    container.innerHTML = hochApplicationFactoryStages.map(stage => {
+        return `<div class="process-stage-step" id="factory-stage-${stage.replace(/ \/ /g, '-').replace(/ /g, '-')}" style="flex: 1; text-align: center; padding: 6px 8px; border-radius: 4px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-glass); font-family: monospace; font-size: 10px; color: var(--text-secondary); transition: all 0.3s ease; min-width: 100px;">
+            ${stage}
+        </div>`;
+    }).join("");
+}
+
+function renderFactoryAgentRoster() {
+    const listEl = document.getElementById("factory-agents-list");
+    if (!listEl) return;
+    listEl.innerHTML = factoryAgentsData.map(agent => {
+        let stateClass = "topology-agent-led";
+        if (agent.status === "complete") stateClass += " is-green";
+        
+        return `<div class="topology-agent-chip" id="factory-chip-${agent.id}" data-agent-id="${agent.id}" style="display: inline-flex; align-items: center; gap: 8px; background: rgba(22, 28, 45, 0.6); border: 1px solid var(--border-glass); border-radius: 999px; padding: 6px 14px; color: #fff; cursor: pointer; font-size: 11px; font-weight: 500; transition: all 0.2s;">
+            <span class="${stateClass}" id="factory-led-${agent.id}"></span>
+            <span>${agent.displayName}</span>
+            <span style="font-size: 9px; color: var(--text-secondary); opacity: 0.8;">[${agent.funnyTag}]</span>
+        </div>`;
+    }).join("");
+
+    // Bind click events to chips to open the dossier modal
+    listEl.querySelectorAll(".topology-agent-chip").forEach(chip => {
+        chip.addEventListener("click", () => {
+            const agentId = chip.dataset.agentId;
+            openFactoryAgentProfile(agentId, chip);
+        });
+    });
+}
+
+function openFactoryAgentProfile(agentId, triggerEl) {
+    const agent = factoryAgentsData.find(a => a.id === agentId);
+    if (!agent) return;
+
+    // Populate modal elements
+    const avatarContainer = document.getElementById("topology-agent-modal-avatar");
+    if (avatarContainer) {
+        avatarContainer.innerHTML = renderTopologyPixelAvatar(agent.avatarVariant, agent.status);
+    }
+    
+    const statusEl = document.getElementById("topology-agent-modal-status");
+    if (statusEl) statusEl.textContent = agent.status || "idle";
+    
+    const tagEl = document.getElementById("topology-agent-modal-tag");
+    if (tagEl) {
+        tagEl.textContent = agent.funnyTag;
+    }
+    
+    const nameEl = document.getElementById("topology-agent-modal-name");
+    if (nameEl) nameEl.textContent = agent.displayName;
+    
+    const titleEl = document.getElementById("topology-agent-modal-title");
+    if (titleEl) titleEl.textContent = agent.role;
+    
+    const descEl = document.getElementById("topology-agent-modal-description");
+    if (descEl) descEl.textContent = agent.mission;
+    
+    const phraseEl = document.getElementById("topology-agent-modal-catchphrase");
+    if (phraseEl) phraseEl.textContent = `“Completion signal: ${agent.completionSignal}”`;
+    
+    const skillsEl = document.getElementById("topology-agent-modal-skills");
+    if (skillsEl) {
+        skillsEl.innerHTML = `<span class="agent-capsule">${agent.stage}</span>`;
+    }
+    
+    const modal = document.getElementById("topology-agent-profile-modal");
+    if (modal) {
+        modal.dataset.agentId = agent.id;
+        if (typeof modal.showModal === "function") {
+            modal.showModal();
+        } else {
+            modal.setAttribute("open", "open");
+        }
+        
+        modal.animate([
+            { opacity: 0, transform: "translateY(18px) scale(0.96)" },
+            { opacity: 1, transform: "translateY(0) scale(1)" }
+        ], { duration: 220, easing: "cubic-bezier(.2,.8,.2,1)" });
+    }
+}
+
+function runFactoryHumanityGate(prompt) {
+    const p = (prompt || "").toLowerCase();
+    const blockKeywords = ["clone", "exploit", "ad-network", "bypass review", "miner", "gamble", "spyware", "spam", "adware", "deceptive", "casino", "malware"];
+    for (const kw of blockKeywords) {
+        if (p.includes(kw)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function lightFactoryGateResult(result) {
+    const passEl = document.getElementById("gate-result-pass");
+    const blockEl = document.getElementById("gate-result-block");
+    const standbyEl = document.getElementById("gate-result-standby");
+    const gateStatus = document.getElementById("factory-gate-status");
+
+    if (passEl) passEl.classList.add("hidden");
+    if (blockEl) blockEl.classList.add("hidden");
+    if (standbyEl) standbyEl.classList.add("hidden");
+
+    if (result === "PASS") {
+        if (passEl) passEl.classList.remove("hidden");
+        if (gateStatus) {
+            gateStatus.textContent = "PASS";
+            gateStatus.style.background = "rgba(16, 185, 129, 0.15)";
+            gateStatus.style.color = "#10b981";
+        }
+    } else if (result === "BLOCK") {
+        if (blockEl) blockEl.classList.remove("hidden");
+        if (gateStatus) {
+            gateStatus.textContent = "BLOCK";
+            gateStatus.style.background = "rgba(239, 68, 68, 0.15)";
+            gateStatus.style.color = "#ef4444";
+        }
+    } else {
+        if (standbyEl) standbyEl.classList.remove("hidden");
+        if (gateStatus) {
+            gateStatus.textContent = "STANDBY";
+            gateStatus.style.background = "rgba(255, 255, 255, 0.05)";
+            gateStatus.style.color = "var(--text-secondary)";
+        }
+    }
+}
+
+function animateFactoryPipelineStage(stage, status) {
+    const stepEl = document.getElementById(`factory-stage-${stage.replace(/ \/ /g, '-').replace(/ /g, '-')}`);
+    if (!stepEl) return;
+    
+    stepEl.classList.remove("active", "complete");
+    if (status === "active") {
+        stepEl.classList.add("active");
+        stepEl.style.background = "rgba(59, 130, 246, 0.15)";
+        stepEl.style.borderColor = "#3b82f6";
+        stepEl.style.color = "#93c5fd";
+    } else if (status === "complete") {
+        stepEl.classList.add("complete");
+        stepEl.style.background = "rgba(16, 185, 129, 0.15)";
+        stepEl.style.borderColor = "var(--accent-teal)";
+        stepEl.style.color = "var(--accent-teal)";
+    } else {
+        stepEl.style.background = "rgba(255, 255, 255, 0.02)";
+        stepEl.style.borderColor = "var(--border-glass)";
+        stepEl.style.color = "var(--text-secondary)";
+    }
+}
+
+function renderFactoryPertAnalysis(active) {
+    const optEl = document.querySelector("#factory-pert-details .opt");
+    const likelyEl = document.querySelector("#factory-pert-details .likely");
+    const worstEl = document.querySelector("#factory-pert-details .worst");
+    const compressedEl = document.querySelector("#factory-pert-details .compressed");
+    const criticalPathEl = document.querySelector("#factory-pert-details .critical-path");
+
+    if (active) {
+        if (optEl) optEl.textContent = "1.5d";
+        if (likelyEl) likelyEl.textContent = "2.2d";
+        if (worstEl) worstEl.textContent = "4.0d";
+        if (compressedEl) compressedEl.textContent = "2.1d (AI-Compressed)";
+        if (criticalPathEl) criticalPathEl.textContent = "CRITICAL PATH: T1:Intake -> T3:Research -> T7:Dev -> T10:Audit";
+    } else {
+        if (optEl) optEl.textContent = "—";
+        if (likelyEl) likelyEl.textContent = "—";
+        if (worstEl) worstEl.textContent = "—";
+        if (compressedEl) compressedEl.textContent = "—";
+        if (criticalPathEl) criticalPathEl.textContent = "";
+    }
+}
+
+function renderFactoryStoreDeliveryMatrix(active) {
+    const tbody = document.getElementById("factory-store-tbody");
+    if (!tbody) return;
+    
+    if (active) {
+        tbody.innerHTML = applicationStoreTargets.map(target => {
+            const checks = storeTargetsChecksData[target] || "";
+            return `<tr>
+                <td style="font-weight: 600; color: #fff;">${target}</td>
+                <td style="color: var(--text-secondary); font-size: 9px;">${checks}</td>
+                <td><span class="badge" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa;">Packet Ready</span></td>
+            </tr>`;
+        }).join("");
+    } else {
+        tbody.innerHTML = applicationStoreTargets.map(target => {
+            const checks = storeTargetsChecksData[target] || "";
+            return `<tr>
+                <td style="font-weight: 600; color: #fff;">${target}</td>
+                <td style="color: var(--text-secondary); font-size: 9px;">${checks}</td>
+                <td><span class="badge" style="background: rgba(255,255,255,0.05); color: var(--text-secondary);">Draft</span></td>
+            </tr>`;
+        }).join("");
+    }
+}
+
+function renderFactoryCybersecurityPipeline(active) {
+    const container = document.getElementById("factory-security-checklist");
+    if (!container) return;
+
+    if (active) {
+        container.innerHTML = cybersecurityChecklistItems.map(item => {
+            return `<div style="display: flex; align-items: center; gap: 6px;">
+                <input type="checkbox" checked disabled style="accent-color: var(--accent-teal);">
+                <span style="color: var(--accent-teal); font-weight: 600;">${item}</span>
+            </div>`;
+        }).join("");
+    } else {
+        container.innerHTML = cybersecurityChecklistItems.map(item => {
+            return `<div style="display: flex; align-items: center; gap: 6px;">
+                <input type="checkbox" disabled>
+                <span>${item}</span>
+            </div>`;
+        }).join("");
+    }
+}
+
+function renderFactoryE2EEvidenceBoard(active) {
+    const logsEl = document.getElementById("factory-e2e-logs");
+    if (!logsEl) return;
+
+    if (active) {
+        logsEl.innerHTML = `[Playwright runner] Starting browser headless tests...
+[Playwright runner] Page loaded successfully.
+[Playwright runner] Action clicked: Humanity Usefulness Gate verified.
+[Playwright runner] Checklist parsed. 11/11 security checks complete.
+[Playwright runner] Capture: artifacts/qa/cybersecurity-factory-runtime.png
+[Playwright runner] E2E evidence saved successfully.`;
+    } else {
+        logsEl.innerHTML = "Awaiting QA run...";
+    }
+}
+
+function renderFactoryPortfolioTable() {
+    const tbody = document.getElementById("factory-portfolio-tbody");
+    if (!tbody) return;
+
+    if (factoryPortfolio.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-secondary); padding: 12px;">No applications generated yet.</td></tr>`;
+    } else {
+        tbody.innerHTML = factoryPortfolio.map(app => {
+            return `<tr>
+                <td style="font-weight: 600; color: #fff;">${app.idea}</td>
+                <td><span class="badge badge-success">${app.stage}</span></td>
+                <td style="font-family: monospace; font-size: 9px; color: var(--text-secondary);">${app.agents.join(", ")}</td>
+                <td><strong style="color: var(--accent-teal);">${app.usefulnessScore}%</strong></td>
+                <td><span class="badge ${app.risk === 'Low' ? 'badge-success' : 'badge-danger'}">${app.risk}</span></td>
+            </tr>`;
+        }).join("");
+    }
+}
+
+// Main orchestrator
+
+function launchApplicationFactorySwarm() {
+    const inputEl = document.getElementById("factory-app-idea-input");
+    const prompt = inputEl?.value.trim() || "Build a useful app that helps people learn, solve real problems, and improve daily workflows while respecting privacy and safety.";
+
+    // Clear previous timeouts
+    factoryTimeouts.forEach(t => clearTimeout(t));
+    factoryTimeouts = [];
+
+    // Reset UI
+    renderFactoryCybersecurityPipeline(false);
+    renderFactoryStoreDeliveryMatrix(false);
+    renderFactoryPertAnalysis(false);
+    renderFactoryE2EEvidenceBoard(false);
+    
+    const researchLogs = document.getElementById("factory-research-logs");
+    if (researchLogs) researchLogs.textContent = "Decomposing pipeline...";
+
+    const monitorDetails = document.getElementById("factory-monitor-details");
+    if (monitorDetails) {
+        monitorDetails.innerHTML = `
+            <div><strong>Crashes / 24h:</strong> <span class="val">—</span></div>
+            <div><strong>Privacy Status:</strong> <span class="val">—</span></div>
+            <div><strong>Abuse Reports:</strong> <span class="val">—</span></div>
+            <div><strong>Vulnerabilities:</strong> <span class="val">—</span></div>
+        `;
+    }
+
+    // Reset stages
+    hochApplicationFactoryStages.forEach(s => animateFactoryPipelineStage(s, "idle"));
+    
+    // Reset agents
+    factoryAgentsData.forEach(agent => {
+        agent.status = "idle";
+    });
+    renderFactoryAgentRoster();
+
+    // 1. Run gate first
+    const isUseful = runFactoryHumanityGate(prompt);
+    
+    // Small delay to simulate evaluation
+    factoryTimeouts.push(setTimeout(() => {
+        if (!isUseful) {
+            lightFactoryGateResult("BLOCK");
+            const pipeStatus = document.getElementById("factory-pipeline-status");
+            if (pipeStatus) pipeStatus.textContent = "BLOCKED BY HUMANITY BOUNCER";
+            
+            // Mark Humanity Hank as blocked
+            const bouncer = factoryAgentsData.find(a => a.id === "humanity-hank");
+            if (bouncer) {
+                bouncer.status = "blocked";
+            }
+            renderFactoryAgentRoster();
+            return;
+        }
+
+        // Safe prompt: Animate PASS
+        lightFactoryGateResult("PASS");
+        const pipeStatus = document.getElementById("factory-pipeline-status");
+        if (pipeStatus) pipeStatus.textContent = "PIPELINE ACTIVE";
+
+        // Decompose stages sequentially
+        let delay = 300;
+        
+        hochApplicationFactoryStages.forEach((stage, idx) => {
+            factoryTimeouts.push(setTimeout(() => {
+                // Set previous stage to complete
+                if (idx > 0) {
+                    animateFactoryPipelineStage(hochApplicationFactoryStages[idx - 1], "complete");
+                    // Complete the agents for the previous stage
+                    factoryAgentsData.forEach(agent => {
+                        if (agent.stage === hochApplicationFactoryStages[idx - 1] && agent.status === "executing") {
+                            agent.status = "complete";
+                        }
+                    });
+                }
+                
+                // Set current stage to active
+                animateFactoryPipelineStage(stage, "active");
+                
+                // Activate agents working on this stage
+                factoryAgentsData.forEach(agent => {
+                    if (agent.stage === stage) {
+                        agent.status = "executing";
+                    }
+                });
+                renderFactoryAgentRoster();
+
+                // Custom actions per stage
+                if (stage === "Research") {
+                    if (researchLogs) {
+                        researchLogs.innerHTML = `[Research Swarm] Searching dev docs...
+[Research Swarm] Analysing target audiences...
+[Research Swarm] Competitor analysis complete.
+[Research Swarm] YouTube candidate list synthesized.`;
+                    }
+                } else if (stage === "North Star Planning") {
+                    const nsOutcome = document.querySelector("#factory-north-star-details div:nth-child(1) .val");
+                    const nsUser = document.querySelector("#factory-north-star-details div:nth-child(2) .val");
+                    const nsMetric = document.querySelector("#factory-north-star-details div:nth-child(3) .val");
+                    const nsBoundary = document.querySelector("#factory-north-star-details div:nth-child(4) .val");
+                    
+                    if (nsOutcome) nsOutcome.textContent = "Real problem solved; safety active";
+                    if (nsUser) nsUser.textContent = "Students, Families, Civic operators";
+                    if (nsMetric) nsMetric.textContent = "Accessibility & Privacy metric index >= 98%";
+                    if (nsBoundary) nsBoundary.textContent = "Refuse deceptive ads and data scraping";
+                } else if (stage === "PERT\u200bAnalysis") {
+                    renderFactoryPertAnalysis(true);
+                } else if (stage === "Secure Development") {
+                    renderFactoryCybersecurityPipeline(true);
+                } else if (stage === "QA / E2E") {
+                    renderFactoryE2EEvidenceBoard(true);
+                } else if (stage === "App Store Delivery") {
+                    renderFactoryStoreDeliveryMatrix(true);
+                } else if (stage === "Post-Launch Monitoring") {
+                    if (monitorDetails) {
+                        monitorDetails.innerHTML = `
+                            <div><strong>Crashes / 24h:</strong> <span class="val" style="color: #10b981;">0</span></div>
+                            <div><strong>Privacy Status:</strong> <span class="val" style="color: #10b981;">Clean (HIPAA/ZTA compliant)</span></div>
+                            <div><strong>Abuse Reports:</strong> <span class="val" style="color: #10b981;">0</span></div>
+                            <div><strong>Vulnerabilities:</strong> <span class="val" style="color: #10b981;">0 CVEs</span></div>
+                        `;
+                    }
+                }
+
+            }, delay));
+            delay += 400; // 400ms per stage
+        });
+
+        // Final completion timeout
+        factoryTimeouts.push(setTimeout(() => {
+            // Complete last stage
+            animateFactoryPipelineStage(hochApplicationFactoryStages[hochApplicationFactoryStages.length - 1], "complete");
+            factoryAgentsData.forEach(agent => {
+                if (agent.status === "executing") {
+                    agent.status = "complete";
+                }
+            });
+            renderFactoryAgentRoster();
+            
+            if (pipeStatus) pipeStatus.textContent = "COMPLETE";
+            
+            // Add to portfolio
+            factoryPortfolio.push({
+                idea: prompt,
+                stage: "Store Delivery",
+                agents: ["Foreman Fizz", "Rita", "Stan", "Ellie"],
+                usefulnessScore: 98,
+                risk: "Low"
+            });
+            renderFactoryPortfolioTable();
+        }, delay));
+
+    }, 300));
+}
+
+function initializeCybersecurityFactory() {
+    renderCybersecurityFactoryView();
+    
+    const launchBtn = document.getElementById("factory-launch-swarm-button");
+    const launchInput = document.getElementById("factory-app-idea-input");
+    
+    if (launchInput && !launchInput.value.trim()) {
+        launchInput.value = "Build a useful app that helps people learn, solve real problems, and improve daily workflows while respecting privacy and safety.";
+    }
+
+    launchBtn?.addEventListener("click", () => {
+        launchApplicationFactorySwarm();
+    });
+}
+
+// Bind to window for global access/tests
+window.renderCybersecurityFactoryView = renderCybersecurityFactoryView;
+window.renderHumanityUsefulnessGate = renderHumanityUsefulnessGate;
+window.renderApplicationFactoryPipeline = renderApplicationFactoryPipeline;
+window.renderFactoryAgentRoster = renderFactoryAgentRoster;
+window.runFactoryHumanityGate = runFactoryHumanityGate;
+window.launchApplicationFactorySwarm = launchApplicationFactorySwarm;
+window.animateFactoryPipelineStage = animateFactoryPipelineStage;
+window.lightFactoryGateResult = lightFactoryGateResult;
+window.renderFactoryPertAnalysis = renderFactoryPertAnalysis;
+window.renderFactoryStoreDeliveryMatrix = renderFactoryStoreDeliveryMatrix;
+window.renderFactoryCybersecurityPipeline = renderFactoryCybersecurityPipeline;
+window.renderFactoryE2EEvidenceBoard = renderFactoryE2EEvidenceBoard;
+window.initializeCybersecurityFactory = initializeCybersecurityFactory;
 

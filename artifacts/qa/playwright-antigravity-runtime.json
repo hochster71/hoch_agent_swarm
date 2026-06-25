@@ -4,7 +4,7 @@
       "/opt/homebrew/Cellar/node/26.3.1/bin/node",
       "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/node_modules/.bin/playwright",
       "test",
-      "tests/e2e/topology-agent-overlay.spec.ts"
+      "tests/e2e/cybersecurity-factory.spec.ts"
     ],
     "configFile": "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/playwright.config.ts",
     "rootDir": "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/tests/e2e",
@@ -73,20 +73,20 @@
   },
   "suites": [
     {
-      "title": "topology-agent-overlay.spec.ts",
-      "file": "topology-agent-overlay.spec.ts",
+      "title": "cybersecurity-factory.spec.ts",
+      "file": "cybersecurity-factory.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "Topology Agent Overlay & Roster Runtime",
-          "file": "topology-agent-overlay.spec.ts",
-          "line": 3,
+          "title": "Cybersecurity Factory View Flow",
+          "file": "cybersecurity-factory.spec.ts",
+          "line": 5,
           "column": 6,
           "specs": [
             {
-              "title": "interacts with agents and runs the swarm animation successfully",
+              "title": "submits app idea and processes swarm pipeline successfully",
               "ok": true,
               "tags": [],
               "tests": [
@@ -101,18 +101,18 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 12845,
+                      "duration": 8565,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-06-24T22:53:17.240Z",
+                      "startTime": "2026-06-25T00:25:33.742Z",
                       "annotations": [],
                       "attachments": [
                         {
-                          "name": "topology-agent-overlay-runtime",
+                          "name": "cybersecurity-factory-runtime",
                           "contentType": "image/png",
-                          "path": "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/test-results/topology-agent-overlay-Top-c9ffc-warm-animation-successfully-antigravity-chromium/attachments/topology-agent-overlay-runtime-dcd39acf6e9bfc54073df90330c88e5dc1251fca.png"
+                          "path": "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/test-results/cybersecurity-factory-Cybe-2f5f4-swarm-pipeline-successfully-antigravity-chromium/attachments/cybersecurity-factory-runtime-d5b3d25f57d1f429de75f20aa0f678254e51c3e3.png"
                         }
                       ]
                     }
@@ -120,9 +120,9 @@
                   "status": "expected"
                 }
               ],
-              "id": "f9b74107a32e60712813-847301617c5488e67ab2",
-              "file": "topology-agent-overlay.spec.ts",
-              "line": 4,
+              "id": "979df8291c54f8aad1b3-c5f970dc2768daf58d9f",
+              "file": "cybersecurity-factory.spec.ts",
+              "line": 6,
               "column": 7
             }
           ]
@@ -132,8 +132,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-06-24T22:53:17.040Z",
-    "duration": 13152.34,
+    "startTime": "2026-06-25T00:25:33.506Z",
+    "duration": 8896.097,
     "expected": 1,
     "skipped": 0,
     "unexpected": 0,

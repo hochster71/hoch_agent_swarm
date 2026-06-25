@@ -2054,7 +2054,20 @@ body {
     }
 }
 
-
-
-
-
+/* Cybersecurity Factory styling */
+.gate-badge {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 700;
+}
+.gate-badge-pass {
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid var(--accent-teal);
+    color: var(--accent-teal);
+}
+.gate-badge-block {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid #ef4444;
+    color: #ef4444;
+}
