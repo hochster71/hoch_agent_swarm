@@ -324,6 +324,7 @@ async function initDashboard() {
         if (window.initializeCybersecurityFactory) window.initializeCybersecurityFactory();
         initCandidateReleasePacketBuilder();
         initFormalReleasePreview();
+        initFormalReleaseSealDryRun();
         initRunsDashboard();
     } catch (err) {
         console.error("Error initializing dashboard: ", err);
@@ -7358,6 +7359,12 @@ window.submitChannelDecisionRequest = submitChannelDecisionRequest;
 
 async function fetchAndRenderGovernanceSummary() {
     try {
+        if (typeof loadApprovedPreviewsForDryRun === 'function') {
+            loadApprovedPreviewsForDryRun();
+        }
+        if (typeof loadSealDryRunHistory === 'function') {
+            loadSealDryRunHistory();
+        }
         const res = await fetch(`${API_BASE}/api/v1/governance/summary`);
         if (!res.ok) {
             console.error("Failed to fetch governance summary");
@@ -8056,9 +8063,154 @@ async function checkApprovalStatusForPreview(formalPreviewId) {
     }
 }
 
+function initFormalReleaseSealDryRun() {
+    const executeBtn = document.getElementById("seal-dry-run-execute-button");
+    if (executeBtn) {
+        executeBtn.addEventListener("click", executeSealDryRun);
+    }
+    
+    loadApprovedPreviewsForDryRun();
+    loadSealDryRunHistory();
+}
+
+async function loadApprovedPreviewsForDryRun() {
+    const selectEl = document.getElementById("seal-dry-run-preview-select");
+    if (!selectEl) return;
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/formal-preview`);
+        if (!res.ok) return;
+        const previews = await res.json();
+        
+        selectEl.innerHTML = '<option value="">-- Select Approved Formal Preview --</option>';
+        
+        const approvedPreviews = previews.filter(p => p.operator_approval_status === "approved");
+        if (approvedPreviews.length === 0) {
+            selectEl.innerHTML = '<option value="">-- No approved previews found --</option>';
+            return;
+        }
+        
+        approvedPreviews.forEach(p => {
+            const opt = document.createElement("option");
+            opt.value = p.formal_preview_id;
+            opt.textContent = `${p.formal_preview_id} (Version: ${p.candidate_version})`;
+            selectEl.appendChild(opt);
+        });
+    } catch (err) {
+        console.error("Error loading approved previews for dry run:", err);
+    }
+}
+
+async function executeSealDryRun() {
+    const selectEl = document.getElementById("seal-dry-run-preview-select");
+    const operatorInput = document.getElementById("seal-dry-run-operator-input");
+    const executeBtn = document.getElementById("seal-dry-run-execute-button");
+    
+    if (!selectEl || !selectEl.value) {
+        alert("Please select an approved formal preview first.");
+        return;
+    }
+    
+    const previewId = selectEl.value;
+    const operator = operatorInput ? operatorInput.value : "Michael Hoch";
+    
+    if (executeBtn) {
+        executeBtn.disabled = true;
+        executeBtn.textContent = "Executing Dry Run...";
+    }
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/formal-preview/${previewId}/seal-dry-run`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ operator })
+        });
+        
+        if (res.ok) {
+            const data = await res.json();
+            
+            const statusEl = document.getElementById("seal-dry-run-status");
+            const idEl = document.getElementById("seal-dry-run-id");
+            const manifestPathEl = document.getElementById("seal-dry-run-manifest-path");
+            const reportPathEl = document.getElementById("seal-dry-run-report-path");
+            const blockersEl = document.getElementById("seal-dry-run-blockers");
+            
+            if (statusEl) {
+                statusEl.textContent = data.seal_status;
+                statusEl.style.color = data.seal_status === "SEAL_READY" ? "var(--accent-teal)" : "#ef4444";
+            }
+            if (idEl) idEl.textContent = data.seal_dry_run_id;
+            if (manifestPathEl) manifestPathEl.textContent = data.seal_manifest_path;
+            if (reportPathEl) reportPathEl.textContent = data.seal_report_path;
+            
+            if (blockersEl) {
+                blockersEl.innerHTML = "";
+                if (data.formal_release_blockers.length === 0) {
+                    blockersEl.innerHTML = `<li style="color: var(--accent-teal);">✅ No remaining blockers - Ready to seal!</li>`;
+                } else {
+                    data.formal_release_blockers.forEach(b => {
+                        const li = document.createElement("li");
+                        li.textContent = `• ${b}`;
+                        blockersEl.appendChild(li);
+                    });
+                }
+            }
+            
+            alert(`Seal Dry Run completed: ${data.seal_status}. Protects no-mutation guarantee.`);
+            loadSealDryRunHistory();
+        } else {
+            const errData = await res.json();
+            alert("Failed to execute Seal Dry Run: " + (errData.detail || "Unknown error"));
+        }
+    } catch (err) {
+        alert("Error executing Seal Dry Run: " + err.message);
+    } finally {
+        if (executeBtn) {
+            executeBtn.disabled = false;
+            executeBtn.textContent = "Execute Seal Dry Run";
+        }
+    }
+}
+
+async function loadSealDryRunHistory() {
+    const historyTbody = document.getElementById("seal-dry-run-history-list");
+    if (!historyTbody) return;
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/seal-dry-run`);
+        if (!res.ok) return;
+        const runs = await res.json();
+        
+        historyTbody.innerHTML = "";
+        if (runs.length === 0) {
+            historyTbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-secondary);">No seal dry runs executed yet.</td></tr>`;
+            return;
+        }
+        
+        runs.forEach(r => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td style="font-family: monospace; color: var(--accent-teal);">${r.seal_dry_run_id}</td>
+                <td style="font-family: monospace;">${r.formal_preview_id}</td>
+                <td>v${r.candidate_version}</td>
+                <td style="font-weight: 600; color: ${r.seal_status === 'SEAL_READY' ? 'var(--accent-teal)' : '#ef4444'}">${r.seal_status}</td>
+                <td>${r.operator}</td>
+                <td>${r.created_at}</td>
+            `;
+            historyTbody.appendChild(tr);
+        });
+    } catch (err) {
+        console.error("Error loading seal dry run history:", err);
+    }
+}
+
 window.initFormalReleasePreview = initFormalReleasePreview;
 window.refreshCandidateSelectDropdown = refreshCandidateSelectDropdown;
 window.fetchAndRenderFormalPreviews = fetchAndRenderFormalPreviews;
 window.submitFormalPreviewRequest = submitFormalPreviewRequest;
 window.submitFormalPreviewApprovalRequest = submitFormalPreviewApprovalRequest;
 window.checkApprovalStatusForPreview = checkApprovalStatusForPreview;
+window.initFormalReleaseSealDryRun = initFormalReleaseSealDryRun;
+window.loadApprovedPreviewsForDryRun = loadApprovedPreviewsForDryRun;
+window.executeSealDryRun = executeSealDryRun;
+window.loadSealDryRunHistory = loadSealDryRunHistory;

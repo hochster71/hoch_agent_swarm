@@ -51,7 +51,10 @@ from backend.runtime_execution_store import (
     get_candidate_release_packet,
     persist_formal_release_preview,
     list_formal_release_previews,
-    get_formal_release_preview
+    get_formal_release_preview,
+    persist_seal_dry_run,
+    list_seal_dry_runs,
+    get_seal_dry_run
 )
 from backend.hochster_runtime_audit import (
     generate_runtime_execution_audit,
@@ -1617,6 +1620,205 @@ def create_formal_preview_approval_gate(formal_preview_id: str, req: FormalPrevi
         "request_id": target_req_id,
         "status": "pending"
     }
+
+class SealDryRunRequest(BaseModel):
+    operator: str
+
+@app.post("/api/v1/release/formal-preview/{formal_preview_id}/seal-dry-run")
+def execute_formal_release_seal_dry_run(formal_preview_id: str, req: SealDryRunRequest):
+    import uuid
+    import time
+    import os
+    import json
+    
+    # 1. Load formal preview manifest
+    try:
+        preview = get_formal_preview_manifest(formal_preview_id)
+    except HTTPException:
+        db_preview = get_formal_release_preview(formal_preview_id)
+        if db_preview:
+            preview = db_preview
+        else:
+            raise HTTPException(status_code=404, detail="Formal preview not found")
+            
+    candidate_packet_id = preview["candidate_packet_id"]
+    version = preview["candidate_version"]
+    head_sha = preview["head_sha"]
+    branch = preview["branch"]
+    release_tag = preview["release_tag"]
+    
+    # 2. Check operator approval status specifically for this preview in SQLite
+    gates = list_approval_gates()
+    target_req_id = f"channel_decision:formal:{formal_preview_id}"
+    approved_gate = next((g for g in gates if g["request_id"] == target_req_id and g["status"] == "approved"), None)
+    
+    operator_approval_status = "approved" if approved_gate else "pending"
+    
+    # 3. Re-evaluate blockers and required actions
+    # Query current git info
+    current_head = run_git_command(["rev-parse", "HEAD"]).strip()
+    current_branch = run_git_command(["rev-parse", "--abbrev-ref", "HEAD"]).strip()
+    status_out = run_git_command(["status", "--porcelain"])
+    working_tree_clean = not status_out.strip()
+    
+    # Query tag alignment
+    tag_sha = ""
+    tag_points_at_head = False
+    tag_sha_out = run_git_command(["rev-list", "-n", "1", release_tag]).strip()
+    if tag_sha_out and "fatal" not in tag_sha_out:
+        tag_sha = tag_sha_out
+        if tag_sha == current_head:
+            tag_points_at_head = True
+            
+    # Query signing status & waivers
+    signing_waived = False
+    for g in gates:
+        if g.get("action_type") == "signing_waiver" and g.get("status") == "approved":
+            signing_waived = True
+            
+    signing_policy_status = "BLOCK"
+    release_dir = f"dist/releases/{version}"
+    expected_artifacts = [
+        "baseline_evidence_pack.json",
+        "release_manifest.json",
+        "provenance.intoto.jsonl",
+        "sbom.spdx.json",
+        "runtime_execution_audit.json",
+        "tool_call_trace_summary.json",
+        "redaction_report.json",
+        "approval_gate_report.json"
+    ]
+    sig_status = "unsigned"
+    if os.path.exists(release_dir):
+        signed_count = 0
+        unsigned_count = 0
+        for name in expected_artifacts:
+            path_file = os.path.join(release_dir, name)
+            if os.path.exists(path_file):
+                if os.path.exists(path_file + ".sig"):
+                    signed_count += 1
+                else:
+                    unsigned_count += 1
+        if signed_count > 0 and unsigned_count == 0:
+            sig_status = "signed"
+        elif signed_count > 0 and unsigned_count > 0:
+            sig_status = "partially_signed"
+            
+    if sig_status in ["signed", "waived"] or signing_waived:
+        signing_policy_status = "PASS"
+        
+    # Query QA status
+    qa_status = "WARN"
+    try:
+        report_path = f"dist/releases/{version}/verification_report.json"
+        if os.path.exists(report_path):
+            with open(report_path, "r") as f:
+                report_data = json.load(f)
+                qa_status = report_data.get("status", "WARN")
+    except Exception:
+        pass
+        
+    # Query Readiness status
+    reports = list_readiness_reports(1)
+    readiness_status = "PASS"
+    if reports:
+        readiness_status = reports[0].get("status", "PASS")
+        
+    # 4. Compute blockers
+    blockers = []
+    
+    if not working_tree_clean:
+        blockers.append("working tree is dirty")
+    if qa_status != "PASS":
+        blockers.append("QA tests not fully passed")
+    if readiness_status != "PASS":
+        blockers.append("readiness status not compliant")
+    if signing_policy_status != "PASS":
+        blockers.append("signing policy not satisfied")
+    if not tag_points_at_head:
+        blockers.append("release tag does not point at HEAD")
+    if operator_approval_status != "approved":
+        blockers.append("operator approval missing")
+        
+    seal_status = "SEAL_READY" if len(blockers) == 0 else "SEAL_BLOCKED"
+    
+    seal_dry_run_id = f"seal-dry-{int(time.time())}-{uuid.uuid4().hex[:8]}"
+    preview_dir = f"dist/formal-previews/{formal_preview_id}"
+    seal_manifest_path = f"{preview_dir}/formal_release_seal_dry_run_manifest.json"
+    seal_report_path = f"{preview_dir}/formal_release_seal_dry_run_report.md"
+    
+    # 5. Build Seal Dry Run Manifest
+    dry_run = {
+        "seal_dry_run_id": seal_dry_run_id,
+        "formal_preview_id": formal_preview_id,
+        "candidate_packet_id": candidate_packet_id,
+        "candidate_version": version,
+        "created_at": now_iso(),
+        "operator": req.operator,
+        "head_sha": current_head,
+        "branch": current_branch,
+        "release_tag": release_tag,
+        "seal_status": seal_status,
+        "formal_release_blockers": blockers,
+        "seal_manifest_path": seal_manifest_path,
+        "seal_report_path": seal_report_path
+    }
+    
+    # 6. Persist to DB and disk
+    persist_seal_dry_run(dry_run)
+    
+    os.makedirs(preview_dir, exist_ok=True)
+    with open(seal_manifest_path, "w") as f:
+        json.dump(dry_run, f, indent=2)
+        
+    # Write Seal Dry Run markdown report
+    ready_badge = "✅ SEAL READY" if seal_status == "SEAL_READY" else "❌ SEAL BLOCKED"
+    blockers_list_str = "\n".join([f"- ⚠️ {b}" for b in blockers]) if blockers else "- None"
+    
+    md_content = f"""# Formal Release Seal Dry Run Report — `{seal_dry_run_id}`
+
+## Status: {ready_badge}
+
+## Metadata
+- **Seal Dry Run ID**: `{seal_dry_run_id}`
+- **Formal Preview ID**: `{formal_preview_id}`
+- **Candidate Packet ID**: `{candidate_packet_id}`
+- **Version**: `{version}`
+- **Git HEAD SHA**: `{current_head}`
+- **Git Branch**: `{current_branch}`
+- **Release Tag**: `{release_tag}`
+- **Operator**: `{req.operator}`
+- **Generated At**: `{dry_run["created_at"]}`
+
+---
+
+## Final Seal Verification Checklist
+- **QA Verification Status**: `{qa_status}`
+- **Signing Policy Status**: `{signing_policy_status}` (Waiver: {"Approved" if signing_waived else "None"})
+- **Tag Alignment Status**: `{"ALIGNED" if tag_points_at_head else "MISALIGNED"}`
+- **Operator Approval Gate**: `{operator_approval_status.upper()}`
+
+---
+
+## Remaining Blockers
+{blockers_list_str}
+
+---
+
+## Safety & No-Mutation Guarantees
+- ⚠️ **Zero git tags were created or modified.**
+- 🔒 **Zero artifacts were signed.**
+- 🚀 **Zero packages were published or finalized.**
+- 🔍 **Simulated Dry Run Only.**
+"""
+    with open(seal_report_path, "w") as f:
+        f.write(md_content)
+        
+    return dry_run
+
+@app.get("/api/v1/release/seal-dry-run")
+def get_seal_dry_runs():
+    return list_seal_dry_runs()
 
 @app.post("/api/v1/release/formal-preview")
 def create_formal_preview(req: FormalPreviewRequest):

@@ -277,6 +277,26 @@ def init_execution_store_tables() -> None:
             )
             """
         )
+        # Create formal_release_seal_dry_runs table
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS formal_release_seal_dry_runs (
+                seal_dry_run_id TEXT PRIMARY KEY,
+                formal_preview_id TEXT NOT NULL,
+                candidate_packet_id TEXT NOT NULL,
+                candidate_version TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                operator TEXT NOT NULL,
+                head_sha TEXT NOT NULL,
+                branch TEXT NOT NULL,
+                release_tag TEXT NOT NULL,
+                seal_status TEXT NOT NULL,
+                formal_release_blockers_json TEXT NOT NULL,
+                seal_manifest_path TEXT NOT NULL,
+                seal_report_path TEXT NOT NULL
+            )
+            """
+        )
         conn.commit()
     finally:
         conn.close()
@@ -1075,6 +1095,93 @@ def get_formal_release_preview(preview_id: str) -> dict | None:
                 "required_operator_actions": json.loads(d["required_operator_actions_json"]),
                 "preview_manifest_path": d["preview_manifest_path"],
                 "preview_status": d["preview_status"]
+            }
+        return None
+    finally:
+        conn.close()
+
+def persist_seal_dry_run(dry_run: dict) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        with conn:
+            conn.execute(
+                """
+                INSERT OR REPLACE INTO formal_release_seal_dry_runs (
+                    seal_dry_run_id, formal_preview_id, candidate_packet_id, candidate_version,
+                    created_at, operator, head_sha, branch, release_tag, seal_status,
+                    formal_release_blockers_json, seal_manifest_path, seal_report_path
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    dry_run["seal_dry_run_id"],
+                    dry_run["formal_preview_id"],
+                    dry_run["candidate_packet_id"],
+                    dry_run["candidate_version"],
+                    dry_run["created_at"],
+                    dry_run["operator"],
+                    dry_run["head_sha"],
+                    dry_run["branch"],
+                    dry_run["release_tag"],
+                    dry_run["seal_status"],
+                    json.dumps(dry_run["formal_release_blockers"]),
+                    dry_run["seal_manifest_path"],
+                    dry_run["seal_report_path"]
+                )
+            )
+    finally:
+        conn.close()
+
+def list_seal_dry_runs() -> list[dict]:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        rows = conn.execute("SELECT * FROM formal_release_seal_dry_runs ORDER BY created_at DESC").fetchall()
+        runs = []
+        for row in rows:
+            d = dict(row)
+            runs.append({
+                "seal_dry_run_id": d["seal_dry_run_id"],
+                "formal_preview_id": d["formal_preview_id"],
+                "candidate_packet_id": d["candidate_packet_id"],
+                "candidate_version": d["candidate_version"],
+                "created_at": d["created_at"],
+                "operator": d["operator"],
+                "head_sha": d["head_sha"],
+                "branch": d["branch"],
+                "release_tag": d["release_tag"],
+                "seal_status": d["seal_status"],
+                "formal_release_blockers": json.loads(d["formal_release_blockers_json"]),
+                "seal_manifest_path": d["seal_manifest_path"],
+                "seal_report_path": d["seal_report_path"]
+            })
+        return runs
+    finally:
+        conn.close()
+
+def get_seal_dry_run(dry_run_id: str) -> dict | None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        row = conn.execute("SELECT * FROM formal_release_seal_dry_runs WHERE seal_dry_run_id = ?", (dry_run_id,)).fetchone()
+        if row:
+            d = dict(row)
+            return {
+                "seal_dry_run_id": d["seal_dry_run_id"],
+                "formal_preview_id": d["formal_preview_id"],
+                "candidate_packet_id": d["candidate_packet_id"],
+                "candidate_version": d["candidate_version"],
+                "created_at": d["created_at"],
+                "operator": d["operator"],
+                "head_sha": d["head_sha"],
+                "branch": d["branch"],
+                "release_tag": d["release_tag"],
+                "seal_status": d["seal_status"],
+                "formal_release_blockers": json.loads(d["formal_release_blockers_json"]),
+                "seal_manifest_path": d["seal_manifest_path"],
+                "seal_report_path": d["seal_report_path"]
             }
         return None
     finally:
