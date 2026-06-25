@@ -233,8 +233,26 @@ Regenerated supply chain artifacts:
 - **Browser Refresh Requirement**: A browser refresh is required after a backend reload to re-fetch the dynamic nodes payload and prevent showing stale UI state.
 - **Topology Regression Protection**: Dedicated contract checks (`qa:device-registry-contract`) and Playwright E2E validations (`e2e:device-registry-topology`) protect the topology command map and iPad payloads against regressions.
 
+## Device-as-a-Service (DaaS) Onboarding (Phase 14)
+- **Passive Network Discovery**: Implemented local scanning utilizing mDNS Bonjour and passive `arp -a` neighbor tables, fingerprinting host classes and hostnames dynamically.
+- **Operator Approvals SQLite Registry**: Created the `device_service_registry` table in SQLite to track operator approvals, role bindings, and custom audit notes.
+- **Dynamic Topology Refresh**: Approved service nodes are loaded instantly via `cluster_mgr.load_approved_service_nodes()` and integrated into the live Command Map topology without requiring a backend uvicorn restart.
+- **E2E Registry Validation**: Added E2E tests (`e2e:device-service-registry`) validating discovery pings, operator approvals, and dynamic UI rendering.
+
+## Device Capability-Based Task Routing (Phase 15)
+- **Task Prompt Capability Extraction**: The capability router parses prompts to extract task requirements (`compute`, `display`, `spatial`, or `approval_terminal`).
+- **Load-Aware Routing**: Evaluates active dynamic and core nodes, filtering by capability match, and routing to the eligible node with the lowest CPU load.
+- **Routing Decision Ledger**: Persists detailed node eligibility decisions and chosen targets to SQLite `swarm_routing_history` for full auditable placement history.
+- **Governance UI Routing Center**: Embedded the `#device-routing-center-panel` showing the list of routing decisions and an interactive capability audit grid detailing rejection reasons.
+
+## Service Node Health & Lease Manager (Phase 16)
+- **Durable Health Leases**: Declared the `service_node_leases` SQLite table to store dynamic lease details including `battery_level`, `power_source`, `network_status`, `availability`, and `lease_duration_seconds`.
+- **Dynamic Routing Exclusions**: Excludes any dynamically approved nodes with missing, sleeping, offline, or expired/stale leases, ensuring tasks are only routed to active and battery-healthy devices.
+- **UI Lease Status Badges**: Updates the dynamic active service nodes list in the Governance Cockpit to display green `Lease Active` or red `Lease Expired` / `No Lease` badges along with real-time battery and power metrics.
+
 ---
 
 ## Open Gaps
 1. **Cryptographic Signing Provider Credentials**: Actual signature generation (`.sig`) requires configuring Cosign credentials and keys in the target environment when ready.
+
 
