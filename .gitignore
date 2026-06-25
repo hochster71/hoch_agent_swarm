@@ -25,3 +25,7 @@ server/
 # Generated release evidence not tracked by default
 dist/releases/*/north_star_report.md
 dist/releases/v0.1.1-HOCHSTER-CLUSTER-HARDENING/
+
+# Playwright runtime output
+test-results/
+playwright-report/
