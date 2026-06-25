@@ -32,13 +32,13 @@
   "formal_release_finalization_status": "formal_release_blocked",
   "tag_alignment_required": true,
   "tag_alignment_decision_id": null,
-  "release_channel_decision_id": "dec-517809df",
+  "release_channel_decision_id": "dec-ef14eef9",
   "release": {
     "version": "0.1.6-ERROR-BUDGET-AWARE-AUTONOMY",
     "codename": "Hochster Runtime Execution Audit",
-    "generated_at": "2026-06-25T15:07:56.286Z",
+    "generated_at": "2026-06-25T15:20:33.334Z",
     "generated_by": "generate-release-manifest.ts",
-    "git_commit_sha": "3b0dbad975899af95253988c15c8fff67e68b2d5",
+    "git_commit_sha": "9fcebeae9742f2178eb23fbd1482cf5497c6a8d2",
     "git_branch": "release/v0.1.6-error-budget-aware-autonomy",
     "ci_provider": "local"
   },
@@ -46,37 +46,37 @@
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/baseline_evidence_pack.json",
       "type": "evidence_pack",
-      "sha256": "da7b0213282eecb92bc0f1c9159f07a6c971e356dd1dc5a6d1502d0c5670a1ec"
+      "sha256": "7800fac8443ae281661321956c38475fb14771afa4cdee36b18a6e79dcf5ffcd"
     },
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/baseline_evidence_pack.json.sha256",
       "type": "checksum",
-      "sha256": "c3b9d4fc3ab6aff9863589dc1e5c56f219597c839990d724966b54b24232d3c5"
+      "sha256": "2f3a7fa782c493584451d2de30a2199a378b7d07352c36501448323058e754a5"
     },
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/provenance.intoto.jsonl",
       "type": "provenance",
-      "sha256": "55b6a7aface4b150a51aa498d6502340c06b5854b416fc5d183ddb7fb848eceb"
+      "sha256": "2f5cea5af02f26becc4ccffa1f42f0f6a7449e1303410e94173c11113720a3d3"
     },
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/sbom.spdx.json",
       "type": "sbom",
-      "sha256": "87a8295d299bcbf15caf5b27ac7845f03db6e207e7fec8ff1897aa7e281114ec"
+      "sha256": "624d81efb284843caaa586ef5d89d0c67da3fda33248a489d8c5cd1014bc28e7"
     },
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/verification_report.json",
       "type": "verification_report",
-      "sha256": "527c16450a4252a50f03a59813947143efecb0c88ef4640f0b1b107c39736da3"
+      "sha256": "f120eaf797e48914bb02f231cfaaef50516177fef5a6eb1882399792190e4da5"
     },
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/runtime_execution_audit.json",
       "type": "runtime_execution_audit",
-      "sha256": "9729f82f226a180e91914938f362092e05464647e255aeef2d80311f1ff6bc1f"
+      "sha256": "b1e569bde1c6857fdc24684452649221e6c8cb50bc03f3e104126cee52b3dc81"
     },
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/tool_call_trace_summary.json",
       "type": "tool_call_trace_summary",
-      "sha256": "54164f1e823f7aeeaf7b09b150c01c7ced09fd9f72e42695734b98d7c5898022"
+      "sha256": "c2ff9b06bb14ba88833e2fe80c0d410cff7f3fdfd9e679ad2b0ebdbc389ef9fb"
     },
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/redaction_report.json",
@@ -86,12 +86,12 @@
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/approval_gate_report.json",
       "type": "approval_gate_report",
-      "sha256": "2bfaa0864b43aee8251bd2cc23eb464beea431c020cfc4c6e6ad1ef90f37fe0b"
+      "sha256": "965113bdd87f0e79fe58436b2d1bb9e656b201b0c856f2d3c0b50e6fcd900406"
     },
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/autonomy_budget_report.json",
       "type": "autonomy_budget_report",
-      "sha256": "36b9af541afc8c072d3dfeaa214e936343e3029e51e61141a958b3b72ad3c81e"
+      "sha256": "a8c5b973a71808dac8bee17b61d816f26c33539c9aa6894d19cd096ef879cc10"
     }
   ],
   "docker": [],
