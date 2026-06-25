@@ -471,8 +471,8 @@ function updateUI(data) {
     }
 }
 
-// State variables for topology paths
 let currentPaths = {};
+let glowingAssetIds = {};
 
 // Render active deployments as premium tactical cards
 function populateTable(nodes) {
@@ -514,6 +514,15 @@ function populateTable(nodes) {
         `;
 
         
+        if (glowingAssetIds[node.id] === "green") {
+            card.classList.add("topology-asset-glow");
+            card.style.borderColor = "#10b981";
+            card.style.boxShadow = "0 0 15px rgba(16, 185, 129, 0.4)";
+        } else if (glowingAssetIds[node.id] === "blue") {
+            card.style.borderColor = "#3b82f6";
+            card.style.boxShadow = "0 0 15px rgba(59, 130, 246, 0.4)";
+        }
+
         card.addEventListener("click", () => {
             openModalForNode(node);
         });
@@ -4724,6 +4733,11 @@ function animateTopologyStageRail(stageName, status) {
 }
 
 function glowTopologyAssetCards(assetId, status) {
+    if (status === "reset") {
+        delete glowingAssetIds[assetId];
+    } else {
+        glowingAssetIds[assetId] = status;
+    }
     const card = document.getElementById(`node-card-${assetId}`);
     if (card) {
         card.style.transition = "all 0.4s ease";
