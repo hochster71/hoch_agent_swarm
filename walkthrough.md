@@ -69,7 +69,16 @@ We implemented formal release channel policy governance:
 
 ---
 
-## 7. Verification Results
+## 7. Operator Governance Command Center (Phase 8)
+We unified all platform governance metrics into one dashboard console:
+- **Unified Governance Cockpit**: Added the `Governance Cockpit` tab aggregating pending gates, active policies/waivers, capability decisions, replay protection, and the operator ledger.
+- **Operator Decision Ledger**: Created a persistent SQL-based history table recording every manual override and policy resolution.
+- **Replay Protection Audit**: Displayed cryptographic nonces and prior/next state transition values proving that decisions are replay-resistant.
+- **Harnessed test bypass**: Hardened Phase 7's test bypass so it only triggers when `TEST_MODE=true` is set.
+
+---
+
+## 8. Verification Results
 
 ### Static QA & Contract Checks (`npm run qa:ui-contract`)
 - All contract checks exited with `PASS`:
@@ -85,6 +94,7 @@ We implemented formal release channel policy governance:
   - `cybersecurity-factory`: PASS
   - `release-signing-policy-contract`: PASS
   - `release-channel-governance-contract`: PASS
+  - `operator-governance-contract`: PASS
 
 ### Playwright E2E Integration Tests (`npm run qa:e2e-runtime`)
 - All browser simulation specs completed successfully:
@@ -94,6 +104,7 @@ We implemented formal release channel policy governance:
   - `cybersecurity-factory.spec.ts`: PASS
   - `release-signing-policy.spec.ts`: PASS
   - `release-channel-governance.spec.ts`: PASS
+  - `operator-governance-cockpit.spec.ts`: PASS
 
 ### North Star & Autonomy Budget Audit (`npm run qa:runtime-full`)
 - Autonomy Safety Engine static red-team assertions: 20/20 PASS

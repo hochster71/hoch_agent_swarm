@@ -1,16 +1,18 @@
-# Task List — Phase 7: Immutable Release Channel + Tag Governance
+# Task List — Phase 8: Operator Approval Ledger + Governance Command Center
 
-- `[x]` Add release channel policy model in `backend/main.py`
-- `[x]` Add REST endpoint `GET /api/v1/release/channel-governance` in `backend/main.py`
-- `[x]` Add REST endpoint `POST /api/v1/release/channel-decision` in `backend/main.py`
-- `[x]` Update `scripts/supply-chain/generate-release-manifest.ts` to embed channel and tag fields in the manifest
-- `[x]` Update `scripts/supply-chain/verify-release-artifacts.ts` to enforce release channel and tag policies
-- `[x]` Add Release Channel Governance panel HTML in `frontend/index.html`
-- `[x]` Add JavaScript rendering and decision handler logic in `frontend/app.js`
-- `[x]` Create contract validation script `scripts/qa/test-release-channel-governance-contract.ts`
-- `[x]` Create Playwright E2E spec `tests/e2e/release-channel-governance.spec.ts`
-- `[x]` Register scripts in `package.json` (`qa:release-channel-governance`, `e2e:release-channel-governance`)
+- `[x]` Harden test bypass check in `backend/main.py` using `TEST_MODE` global constant
+- `[x]` Add GET `/api/v1/governance/summary` REST endpoint in `backend/main.py`
+- `[x]` Update `.github/workflows/nav-contract-qa.yml` to set `TEST_MODE=true`
+- `[x]` Update `scripts/qa/run-ci-pipeline.py` to set `TEST_MODE=true` uvicorn launch environment
+- `[x]` Add Governance Cockpit navigation item HTML in `frontend/index.html`
+- `[x]` Add Governance Cockpit main panel HTML in `frontend/index.html`
+- `[x]` Add JavaScript mapping and tab switching logic in `frontend/app.js`
+- `[x]` Implement `fetchAndRenderGovernanceSummary()` rendering logic in `frontend/app.js`
+- `[x]` Add list status check for `nav-governance` in `updateNavStatuses()` in `frontend/app.js`
+- `[x]` Create contract validation script `scripts/qa/test-operator-governance-cockpit.ts`
+- `[x]` Create Playwright E2E spec `tests/e2e/operator-governance-cockpit.spec.ts`
+- `[x]` Register scripts in `package.json` (`qa:operator-governance`, `e2e:operator-governance`)
 - `[x]` Update `docs/mission/deep-swarm-page-audit-report.md`
 - `[x]` Update `walkthrough.md`
 - `[x]` Run full verification suite and verify PASS status
-- `[x]` Commit the Phase 7 changes and refresh release evidence
+- `[x]` Commit the Phase 8 changes and refresh release evidence

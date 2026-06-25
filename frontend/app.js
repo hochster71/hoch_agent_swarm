@@ -85,7 +85,8 @@ const navItems = {
     swarmControl: { nav: document.getElementById("nav-swarm-control"), view: document.getElementById("view-swarm-control") },
     missionIntel: { nav: document.getElementById("nav-mission-intel"), view: document.getElementById("view-mission") },
     timelineReplay: { nav: document.getElementById("nav-timeline-replay"), view: document.getElementById("view-replay") },
-    cybersecurityFactory: { nav: document.getElementById("nav-cybersecurity-factory"), view: document.getElementById("view-cybersecurity-factory") }
+    cybersecurityFactory: { nav: document.getElementById("nav-cybersecurity-factory"), view: document.getElementById("view-cybersecurity-factory") },
+    governance: { nav: document.getElementById("nav-governance"), view: document.getElementById("view-governance") }
 };
 
 // Security Audit & Sub-tab Elements
@@ -1168,6 +1169,10 @@ Object.keys(navItems).forEach(key => {
                 if (window.renderCybersecurityFactoryView) window.renderCybersecurityFactoryView();
             } else if (key === "replay" || key === "timelineReplay") {
                 if (window.onReplayTabActive) window.onReplayTabActive();
+            } else if (key === "governance") {
+                if (typeof window.fetchAndRenderGovernanceSummary === "function") {
+                    window.fetchAndRenderGovernanceSummary();
+                }
             } else if (key === "collab") {
                 if (window.onCollabTabActive) window.onCollabTabActive();
             } else if (key === "ledger") {
@@ -3038,6 +3043,10 @@ async function updateNavStatuses() {
 
     // 10. Cybersecurity Factory
     updateIndicator("nav-cybersecurity-factory", "live");
+
+    // 11. Governance Cockpit
+    const govOk = await checkEndpoint("/api/v1/governance/summary");
+    updateIndicator("nav-governance", govOk ? "live" : "error");
 }
 
 
@@ -7342,6 +7351,250 @@ async function submitChannelDecisionRequest() {
     }
 }
 
-window.handleGovernanceAction = handleGovernanceAction;
+window.handleSigningAction = handleSigningAction;
 window.submitChannelDecisionRequest = submitChannelDecisionRequest;
 
+async function fetchAndRenderGovernanceSummary() {
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/governance/summary`);
+        if (!res.ok) {
+            console.error("Failed to fetch governance summary");
+            return;
+        }
+        const data = await res.json();
+        
+        // 1. Pending count & list
+        const pendingCountEl = document.getElementById("gov-pending-count");
+        if (pendingCountEl) {
+            pendingCountEl.textContent = data.pending_gates.length;
+        }
+        
+        const pendingListEl = document.getElementById("gov-pending-list");
+        if (pendingListEl) {
+            pendingListEl.innerHTML = "";
+            if (data.pending_gates.length === 0) {
+                pendingListEl.innerHTML = `<p style="color:var(--text-secondary); text-align:center; padding: 20px; font-size:12px; margin:0;">No pending approval requests.</p>`;
+            } else {
+                data.pending_gates.forEach(gate => {
+                    const card = document.createElement("div");
+                    card.className = "card";
+                    card.style.background = "rgba(255,255,255,0.02)";
+                    card.style.border = "1px solid var(--border-glass)";
+                    card.style.borderRadius = "6px";
+                    card.style.padding = "10px";
+                    card.style.display = "flex";
+                    card.style.flexDirection = "column";
+                    card.style.gap = "6px";
+                    
+                    card.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px;">
+                            <strong style="color:var(--accent-yellow);">${gate.action_type.toUpperCase()}</strong>
+                            <span style="color:var(--text-secondary);">${gate.created_at}</span>
+                        </div>
+                        <div style="font-size:12px; color:#fff;"><strong>Request ID:</strong> ${gate.request_id}</div>
+                        <div style="font-size:11px; color:var(--text-secondary); line-height:1.4;">Requested by: ${gate.requested_by} (Risk: ${gate.risk_level})</div>
+                        <div style="display:flex; gap:10px; margin-top:4px;">
+                            <button class="btn btn-xs btn-primary" onclick="window.submitGovernanceApproval('${gate.approval_id}', 'approve')">Approve</button>
+                            <button class="btn btn-xs btn-danger" onclick="window.submitGovernanceApproval('${gate.approval_id}', 'reject')">Reject</button>
+                        </div>
+                    `;
+                    pendingListEl.appendChild(card);
+                });
+            }
+        }
+        
+        // 2. Blockers status & list
+        const blockersStatusEl = document.getElementById("gov-blockers-status");
+        if (blockersStatusEl) {
+            if (data.formal_release_blockers.length === 0) {
+                blockersStatusEl.textContent = "PASS";
+                blockersStatusEl.style.color = "var(--accent-teal)";
+                blockersStatusEl.style.background = "rgba(16,185,129,0.15)";
+            } else {
+                blockersStatusEl.textContent = "BLOCK";
+                blockersStatusEl.style.color = "#ef4444";
+                blockersStatusEl.style.background = "rgba(239,68,68,0.15)";
+            }
+        }
+        
+        const blockersListEl = document.getElementById("gov-blockers-list");
+        if (blockersListEl) {
+            blockersListEl.innerHTML = "";
+            if (data.formal_release_blockers.length === 0) {
+                blockersListEl.innerHTML = `<li style="display:flex; align-items:center; gap:8px; color:var(--accent-teal);"><i data-lucide="check-circle" style="width:14px; height:14px;"></i> All finalization gates satisfy release policy constraints.</li>`;
+            } else {
+                data.formal_release_blockers.forEach(blocker => {
+                    const li = document.createElement("li");
+                    li.style.display = "flex";
+                    li.style.alignItems = "center";
+                    li.style.gap = "8px";
+                    li.style.color = "#ef4444";
+                    let label = blocker;
+                    if (blocker === "dirty_working_tree") label = "Git Working Tree is Dirty (Unwaived)";
+                    else if (blocker === "qa_not_passed") label = "QA / Verification Pack is Not Passing (Unwaived)";
+                    else if (blocker === "signing_policy_not_passed") label = "Release Artifacts Are Unsigned (Unwaived)";
+                    else if (blocker === "tag_missing") label = "Git Release Tag is Missing (Unwaived)";
+                    else if (blocker === "tag_stale") label = "Git Release Tag points to non-HEAD commit (Unwaived)";
+                    else if (blocker === "operator_approval_missing") label = "Formal Channel Promotion requires Operator Gate";
+                    
+                    li.innerHTML = `<i data-lucide="alert-triangle" style="width:14px; height:14px; flex-shrink:0;"></i> <span>${label}</span>`;
+                    blockersListEl.appendChild(li);
+                });
+            }
+        }
+        
+        // 3. Active Policies & Waivers
+        const activeChanEl = document.getElementById("gov-active-channel");
+        if (activeChanEl) {
+            activeChanEl.textContent = data.active_channel;
+            if (data.active_channel === "formal") {
+                activeChanEl.style.color = "var(--accent-teal)";
+            } else if (data.active_channel === "candidate") {
+                activeChanEl.style.color = "var(--accent-yellow)";
+            } else {
+                activeChanEl.style.color = "var(--accent-blue)";
+            }
+        }
+        
+        const signingWaiverEl = document.getElementById("gov-signing-waiver");
+        if (signingWaiverEl) {
+            signingWaiverEl.textContent = data.signing_waiver;
+            if (data.signing_waiver === "waived") {
+                signingWaiverEl.style.color = "var(--accent-yellow)";
+            } else {
+                signingWaiverEl.style.color = "#fff";
+            }
+        }
+        
+        const tagAlignmentEl = document.getElementById("gov-tag-alignment");
+        if (tagAlignmentEl) {
+            tagAlignmentEl.textContent = data.tag_alignment_status;
+            if (data.tag_alignment_status === "TAG_AT_HEAD") {
+                tagAlignmentEl.style.color = "var(--accent-teal)";
+            } else {
+                tagAlignmentEl.style.color = "#ef4444";
+            }
+        }
+        
+        const testBypassEl = document.getElementById("gov-test-bypass-active");
+        if (testBypassEl) {
+            testBypassEl.textContent = data.test_bypass_hardening;
+            if (data.test_bypass_hardening === "ACTIVE") {
+                testBypassEl.style.color = "var(--accent-blue)";
+            } else {
+                testBypassEl.style.color = "var(--text-secondary)";
+            }
+        }
+        
+        // 4. Capability Enforcement Decisions
+        const capBody = document.getElementById("gov-capability-tbody");
+        if (capBody) {
+            capBody.innerHTML = "";
+            if (data.capability_decisions.length === 0) {
+                capBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-secondary); padding: 12px;">No capability decisions registered.</td></tr>`;
+            } else {
+                data.capability_decisions.forEach(item => {
+                    const row = document.createElement("tr");
+                    const timeStr = item.timestamp ? item.timestamp.substring(11, 19) : "";
+                    const allowedClass = item.decision === "ALLOW" ? "text-success" : (item.decision === "BLOCK" ? "text-danger" : "text-warning");
+                    row.innerHTML = `
+                        <td style="color:var(--text-secondary);">${timeStr}</td>
+                        <td><strong>${item.agent_id}</strong></td>
+                        <td style="font-family:monospace;">${item.tool}</td>
+                        <td><span class="${allowedClass} font-semibold">${item.decision}</span></td>
+                        <td style="color:var(--text-secondary);">${item.reason}</td>
+                    `;
+                    capBody.appendChild(row);
+                });
+            }
+        }
+        
+        // 5. Replay Protection Evidence
+        const replayBody = document.getElementById("gov-replay-tbody");
+        if (replayBody) {
+            replayBody.innerHTML = "";
+            if (data.replay_protection_evidence.length === 0) {
+                replayBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-secondary); padding: 12px;">No replay protection evidence recorded.</td></tr>`;
+            } else {
+                data.replay_protection_evidence.forEach(item => {
+                    const row = document.createElement("tr");
+                    const timeStr = item.timestamp ? item.timestamp.substring(11, 19) : "";
+                    row.innerHTML = `
+                        <td style="font-family:monospace; color:var(--accent-teal);">${item.decision_id}</td>
+                        <td style="font-family:monospace; color:var(--text-secondary);">${item.nonce.substring(0, 16)}...</td>
+                        <td><span style="font-family:monospace;">${item.prior_state}</span> ➔ <span style="font-family:monospace; font-weight:600; color:var(--accent-teal);">${item.next_state}</span></td>
+                        <td style="color:var(--text-secondary);">${timeStr}</td>
+                    `;
+                    replayBody.appendChild(row);
+                });
+            }
+        }
+        
+        // 6. Historical Operator Decision Ledger
+        const ledgerBody = document.getElementById("gov-ledger-tbody");
+        if (ledgerBody) {
+            ledgerBody.innerHTML = "";
+            if (data.decision_ledger.length === 0) {
+                ledgerBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-secondary); padding: 12px;">No historical operator decisions recorded in ledger.</td></tr>`;
+            } else {
+                data.decision_ledger.forEach(item => {
+                    const row = document.createElement("tr");
+                    const colorClass = item.decision === "approved" ? "text-success" : "text-danger";
+                    row.innerHTML = `
+                        <td style="font-family:monospace; color:var(--accent-blue);">${item.decision_id}</td>
+                        <td><strong>${item.operator}</strong></td>
+                        <td style="font-family:monospace;">${item.action_type}</td>
+                        <td><span class="${colorClass} font-semibold">${item.decision.toUpperCase()}</span></td>
+                        <td style="color:var(--text-secondary);">${item.reason || "none"}</td>
+                        <td style="color:var(--text-secondary);">${item.timestamp}</td>
+                    `;
+                    ledgerBody.appendChild(row);
+                });
+            }
+        }
+        
+        // Trigger lucide icons rendering
+        if (typeof lucide !== "undefined" && typeof lucide.createIcons === "function") {
+            lucide.createIcons();
+        }
+        
+    } catch (err) {
+        console.error("Error fetching governance summary:", err);
+    }
+}
+
+async function submitGovernanceApproval(approvalId, decision) {
+    const reason = prompt(`Enter justification reason for this ${decision} decision:`, `Operator manual override: ${decision}`);
+    if (reason === null) return;
+    try {
+        const res = await fetch(`${API_BASE}/api/approval/requests/${approvalId}/decisions`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                decision: decision === "approve" ? "approve" : "reject",
+                operator: "Michael Hoch",
+                reason: reason
+            })
+        });
+        if (res.ok) {
+            alert("Decision registered in the SQLite governance ledger successfully.");
+            fetchAndRenderGovernanceSummary();
+            if (typeof fetchApprovalRequests === 'function') {
+                fetchApprovalRequests();
+            }
+            if (typeof fetchAndRenderSigningPolicy === 'function') {
+                fetchAndRenderSigningPolicy();
+            }
+        } else {
+            const data = await res.json();
+            alert("Failed to submit decision: " + (data.detail || "Unknown error"));
+        }
+    } catch (err) {
+        alert("Failed to submit decision: " + err.message);
+    }
+}
+
+window.fetchAndRenderGovernanceSummary = fetchAndRenderGovernanceSummary;
+window.submitGovernanceApproval = submitGovernanceApproval;
+window.handleGovernanceAction = handleGovernanceAction;
+window.submitChannelDecisionRequest = submitChannelDecisionRequest;

@@ -174,9 +174,17 @@ Regenerated supply chain artifacts:
 
 ## Release Channel & Tag Governance
 - **Release Channels**: Implemented formal `local_dev`, `candidate`, and `formal` release channel policy governance.
-- **Tag Alignment**: Formal releases are blocked unless the target release tag points directly at the current HEAD commit (preventing "moving evidence buckets").
+- **Tag-Alignment Governance**: Formal releases are blocked unless the target release tag points directly at the current HEAD commit (preventing "moving evidence buckets").
 - **Operator Approvals**: Explicit operator approval is required for any tag movement, tag waivers, or formal release promotions. No automatic tag mutation or creation is performed by the API.
 - **Stale Tag Audit**: If a release tag points to an older commit (e.g. stale `v0.1.6`), it is audited, and finalization is blocked.
+
+---
+
+## Operator Governance Command Center (Phase 8)
+- **Unified Cockpit**: Aggregated pending approvals, capability checks, active signing/tag waivers, release channel selections, tag alignment parameters, and formal blockers into a single dashboard tab (`view-governance`).
+- **Operator Decision Ledger**: Logged a chronological history of all operator approvals, rejections, and changes requested in a SQL audit trail.
+- **Replay Protection Evidence**: Exposed cryptographic nonces, transition states, and timestamps in the UI to confirm replay defense compliance.
+- **Harnessed Test Bypass**: Hardened the Phase 7 E2E candidate test bypass to only activate when uvicorn is explicitly started in a test environment (`TEST_MODE=true` or `NODE_ENV=test`). Bypass invocations print explicit server alerts (`[TEST-ONLY]`).
 
 ---
 

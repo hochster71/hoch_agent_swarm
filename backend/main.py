@@ -296,6 +296,7 @@ import hashlib
 
 _last_capability_decisions = {}
 _capability_lock = threading.Lock()
+TEST_MODE = os.environ.get("TEST_MODE") == "true" or os.environ.get("NODE_ENV") == "test"
 
 TASK_ACTION_PROFILES = {
     "T0-RECON": {"tool": "research", "risk_class": "low", "file_scope": "/", "network_scope": None, "requires_approval": False},
@@ -978,7 +979,9 @@ async def api_submit_channel_decision(payload: dict):
         }
         
     elif requested_channel == "candidate":
-        is_test_bypass = "E2E-TEST" in requested_tag or "testing" in reason.lower()
+        is_test_bypass = TEST_MODE and ("E2E-TEST" in requested_tag or "testing" in reason.lower())
+        if is_test_bypass:
+            print(" [TEST-ONLY] Candidate promotion bypass allowed for E2E-TEST tag")
         if not is_test_bypass and (not working_tree_clean or not qa_passed):
             raise HTTPException(status_code=400, detail="Candidate promotion requires passing QA and clean working tree")
             
@@ -1155,6 +1158,188 @@ async def api_submit_governance_waiver(payload: dict):
         }
     else:
         raise HTTPException(status_code=400, detail="Invalid waiver scope")
+
+@app.get("/api/v1/governance/summary")
+def get_governance_summary():
+    gates = list_approval_gates()
+    
+    # 1. Pending gates
+    pending_gates = [g for g in gates if g.get("status") == "pending"]
+    
+    # 2. Capability decisions
+    capability_decisions = []
+    with _capability_lock:
+        for agent_id, decs in _last_capability_decisions.items():
+            capability_decisions.extend(decs)
+    # Sort by timestamp desc
+    capability_decisions.sort(key=lambda x: x.get("timestamp", ""), reverse=True)
+    
+    # 3. Signing waivers
+    signing_waivers = [g for g in gates if g.get("action_type") == "signing_waiver"]
+    
+    # 4. Channel decisions
+    channel_decisions = [g for g in gates if g.get("action_type") == "channel_decision"]
+    
+    # 5. Tag alignment requests
+    tag_alignment_requests = [g for g in gates if g.get("action_type") == "governance_waiver"]
+    
+    # 6. Formal release blockers
+    version = "0.1.6"
+    try:
+        package_json_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../package.json"))
+        if os.path.exists(package_json_path):
+            with open(package_json_path, "r") as f:
+                package_json = json.load(f)
+                version = package_json.get("version", "0.1.6")
+    except Exception:
+        pass
+
+    # Tree cleanliness
+    status_out = run_git_command(["status", "--porcelain"])
+    working_tree_clean = not status_out.strip()
+    
+    # QA status
+    qa_passed = False
+    qa_status = "WARN"
+    try:
+        report_path = f"dist/releases/{version}/verification_report.json"
+        if os.path.exists(report_path):
+            with open(report_path, "r") as f:
+                report_data = json.load(f)
+                qa_status = report_data.get("status", "WARN")
+                qa_passed = (qa_status == "PASS")
+    except Exception:
+        pass
+        
+    # Tag status
+    release_tag = f"v{version}"
+    tag_sha = ""
+    tag_points_at_head = False
+    tag_status = "NO_RELEASE_TAG"
+    
+    head_sha = run_git_command(["rev-parse", "HEAD"]).strip()
+    
+    tag_sha_out = run_git_command(["rev-list", "-n", "1", release_tag]).strip()
+    if tag_sha_out and "fatal" not in tag_sha_out:
+        tag_sha = tag_sha_out
+        if tag_sha == head_sha:
+            tag_status = "TAG_AT_HEAD"
+            tag_points_at_head = True
+        else:
+            tag_status = "STALE_TAG"
+            
+    # Check waivers
+    signing_waived = False
+    governance_waived = False
+    for g in gates:
+        if g.get("action_type") == "signing_waiver" and g.get("status") == "approved":
+            signing_waived = True
+        if g.get("action_type") == "governance_waiver" and g.get("status") == "approved":
+            governance_waived = True
+            
+    # Signing policy status
+    signing_policy_status = "WARN"
+    sig_status = "unsigned"
+    # Check signature count
+    release_dir = f"dist/releases/{version}"
+    expected_artifacts = [
+        "baseline_evidence_pack.json",
+        "release_manifest.json",
+        "provenance.intoto.jsonl",
+        "sbom.spdx.json",
+        "runtime_execution_audit.json",
+        "tool_call_trace_summary.json",
+        "redaction_report.json",
+        "approval_gate_report.json"
+    ]
+    if os.path.exists(release_dir):
+        signed_count = 0
+        unsigned_count = 0
+        for name in expected_artifacts:
+            path = os.path.join(release_dir, name)
+            if os.path.exists(path):
+                if os.path.exists(path + ".sig"):
+                    signed_count += 1
+                else:
+                    unsigned_count += 1
+        if signed_count > 0 and unsigned_count == 0:
+            sig_status = "signed"
+        elif signed_count > 0 and unsigned_count > 0:
+            sig_status = "partially_signed"
+            
+    if sig_status in ["signed", "waived"] or signing_waived:
+        signing_policy_status = "PASS"
+    else:
+        signing_policy_status = "BLOCK"
+        
+    blockers = []
+    if not working_tree_clean and not governance_waived:
+        blockers.append("dirty_working_tree")
+    if not qa_passed and not governance_waived:
+        blockers.append("qa_not_passed")
+    if signing_policy_status == "BLOCK" and not signing_waived:
+        blockers.append("signing_policy_not_passed")
+    if tag_status == "NO_RELEASE_TAG" and not governance_waived:
+        blockers.append("tag_missing")
+    if tag_status == "STALE_TAG" and not governance_waived:
+        blockers.append("tag_stale")
+
+    # 7. Decision ledger
+    decision_ledger = []
+    for g in gates:
+        for d in g.get("decisions", []):
+            decision_ledger.append({
+                "decision_id": d.get("decision_id"),
+                "operator": d.get("operator"),
+                "action_type": g.get("action_type"),
+                "request_id": g.get("request_id"),
+                "decision": d.get("decision"),
+                "reason": d.get("reason"),
+                "timestamp": d.get("decision_time")
+            })
+    decision_ledger.sort(key=lambda x: x.get("timestamp") or "", reverse=True)
+    
+    # 8. Replay protection evidence
+    replay_protection_evidence = []
+    for g in gates:
+        for d in g.get("decisions", []):
+            replay_protection_evidence.append({
+                "decision_id": d.get("decision_id"),
+                "nonce": d.get("nonce"),
+                "prior_state": d.get("prior_state"),
+                "next_state": d.get("next_state"),
+                "timestamp": d.get("decision_time")
+            })
+    replay_protection_evidence.sort(key=lambda x: x.get("timestamp") or "", reverse=True)
+
+    # Active channel determination
+    channel = "local_dev"
+    for g in gates:
+        if g.get("action_type") == "channel_decision" and g.get("status") == "approved":
+            req_id = g.get("request_id", "")
+            if req_id.startswith("channel_decision:"):
+                channel = req_id.split(":", 1)[1]
+                
+    # Active signing waiver string
+    active_signing_waiver = "none"
+    if sig_status == "waived" or signing_waived:
+        active_signing_waiver = "waived"
+
+    return {
+        "policy_status": "PASS" if not blockers else ("WARN" if channel == "local_dev" else "BLOCK"),
+        "pending_gates": pending_gates,
+        "capability_decisions": capability_decisions,
+        "signing_waivers": signing_waivers,
+        "channel_decisions": channel_decisions,
+        "tag_alignment_requests": tag_alignment_requests,
+        "formal_release_blockers": blockers,
+        "decision_ledger": decision_ledger,
+        "replay_protection_evidence": replay_protection_evidence,
+        "active_channel": channel,
+        "signing_waiver": active_signing_waiver,
+        "tag_alignment_status": tag_status,
+        "test_bypass_hardening": "ACTIVE" if TEST_MODE else "INACTIVE"
+    }
 
 manager = ConnectionManager()
 

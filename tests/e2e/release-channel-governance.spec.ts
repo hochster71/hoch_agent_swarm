@@ -32,9 +32,9 @@ test.describe("Release Channel & Tag Governance E2E", () => {
     await expect(panel).toBeVisible();
 
     await expect(page.locator("h2:has-text('Release Channel Governance')")).toBeVisible();
-    await expect(page.locator("strong:has-text('Current Channel')")).toBeVisible();
-    await expect(page.locator("strong:has-text('Release Tag')")).toBeVisible();
-    await expect(page.locator("strong:has-text('Tag Alignment')")).toBeVisible();
+    await expect(panel.locator("strong:has-text('Current Channel:')")).toBeVisible();
+    await expect(panel.locator("strong:has-text('Release Tag:')")).toBeVisible();
+    await expect(panel.locator("strong:has-text('Tag Alignment:')")).toBeVisible();
 
     const currentChannel = data.current_release.channel;
     const finalizationStatus = data.current_release.release_finalization_status;

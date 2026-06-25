@@ -36,7 +36,7 @@ def main():
         ["python3", "-m", "uvicorn", "backend.main:app", "--port", "8000", "--host", "0.0.0.0"],
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
-        env={**os.environ, "PYTHONPATH": "."}
+        env={**os.environ, "PYTHONPATH": ".", "TEST_MODE": "true"}
     )
 
     # 2. Wait for server to become healthy

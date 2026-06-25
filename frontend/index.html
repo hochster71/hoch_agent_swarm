@@ -75,6 +75,10 @@
                     <i data-lucide="shield-check"></i> <span>Cybersecurity Factory</span>
                     <span class="nav-status-indicator swarm-led-idle" id="led-cybersecurity-factory" style="margin-left: auto; font-size: 14px; font-weight: bold;">●</span>
                 </a>
+                <a href="#" class="nav-item" id="nav-governance">
+                    <i data-lucide="scale"></i> <span>Governance Cockpit</span>
+                    <span class="nav-status-indicator swarm-led-idle" id="led-governance" style="margin-left: auto; font-size: 14px; font-weight: bold;">●</span>
+                </a>
             </nav>
             <div class="profile-area">
                 <div class="avatar">MH</div>
@@ -1014,9 +1018,146 @@
             <div id="view-ledger" class="hidden">
 </div>
 
-            <!-- AI Governance View -->
-            <div id="view-governance" class="hidden">
-</div>
+            <!-- AI Governance Cockpit (Unified Console) -->
+            <div id="view-governance" class="hidden" style="padding: 20px; display: flex; flex-direction: column; gap: 20px; height: 100%; overflow-y: auto;">
+                <div class="section-header">
+                    <div>
+                        <h2>Operator Governance Command Center</h2>
+                        <p>Unified cockpit for approval gates, capability enforcement, waivers, tag status, and release blockers.</p>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
+                    <!-- Pending approvals card -->
+                    <section class="card" style="padding: 16px; min-height: 200px; display: flex; flex-direction: column;">
+                        <div class="card-header" style="border-bottom: 1px solid var(--border-glass); padding-bottom: 8px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                            <h3 class="card-title" style="font-size: 13px; font-weight: 600; color: #fff; margin: 0; display: flex; align-items: center; gap: 8px;">
+                                <i data-lucide="clipboard-list" style="color: var(--accent-yellow); width: 16px; height: 16px;"></i> PENDING APPROVAL GATES
+                            </h3>
+                            <span class="badge" id="gov-pending-count" style="background: rgba(234,179,8,0.15); color: var(--accent-yellow); font-size: 11px; padding: 2px 6px; border-radius: 4px;">0</span>
+                        </div>
+                        <div id="gov-pending-list" style="flex-grow: 1; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; max-height: 240px;">
+                            <!-- Dynamically populated pending request card list -->
+                        </div>
+                    </section>
+
+                    <!-- Formal Release Blockers & Status -->
+                    <section class="card" style="padding: 16px; min-height: 200px; display: flex; flex-direction: column;">
+                        <div class="card-header" style="border-bottom: 1px solid var(--border-glass); padding-bottom: 8px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                            <h3 class="card-title" style="font-size: 13px; font-weight: 600; color: #fff; margin: 0; display: flex; align-items: center; gap: 8px;">
+                                <i data-lucide="shield-alert" style="color: #ef4444; width: 16px; height: 16px;"></i> FORMAL RELEASE BLOCKERS
+                            </h3>
+                            <span class="badge" id="gov-blockers-status" style="background: rgba(239,68,68,0.15); color: #ef4444; font-size: 11px; padding: 2px 6px; border-radius: 4px; font-weight: 600;">BLOCK</span>
+                        </div>
+                        <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                            <ul id="gov-blockers-list" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; font-size: 12px; color: var(--text-secondary);">
+                                <!-- Blockers items -->
+                            </ul>
+                        </div>
+                    </section>
+
+                    <!-- Active Waivers / Channels -->
+                    <section class="card" style="padding: 16px; min-height: 200px; display: flex; flex-direction: column;">
+                        <div class="card-header" style="border-bottom: 1px solid var(--border-glass); padding-bottom: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="sliders" style="color: var(--accent-teal); width: 16px; height: 16px;"></i>
+                            <h3 class="card-title" style="font-size: 13px; font-weight: 600; color: #fff; margin: 0;">ACTIVE POLICIES & WAIVERS</h3>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12px; color: var(--text-secondary);">
+                            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 6px;">
+                                <strong>Active Release Channel:</strong>
+                                <span id="gov-active-channel" style="color:#fff; font-weight:600;">local_dev</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 6px;">
+                                <strong>Signing Waiver Status:</strong>
+                                <span id="gov-signing-waiver" style="color:#fff; font-weight:600;">none</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 6px;">
+                                <strong>Tag Alignment Status:</strong>
+                                <span id="gov-tag-alignment" style="color:#fff; font-weight:600;">TAG_AT_HEAD</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding-bottom: 4px;">
+                                <strong>Test Bypass Hardening:</strong>
+                                <span id="gov-test-bypass-active" style="color:var(--accent-blue); font-weight:600;">ACTIVE</span>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Detail grids -->
+                <div class="dashboard-grid" style="grid-template-columns: 1.2fr 1fr; gap: 20px; margin-top: 10px;">
+                    <!-- Capability Decisions list -->
+                    <section class="card" style="padding: 16px; min-height: 260px;">
+                        <div class="card-header" style="border-bottom: 1px solid var(--border-glass); padding-bottom: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="key" style="color: var(--accent-purple); width: 16px; height: 16px;"></i>
+                            <h3 class="card-title" style="font-size: 13px; font-weight: 600; color: #fff; margin: 0;">CAPABILITY ENFORCEMENT DECISIONS</h3>
+                        </div>
+                        <div class="table-container" style="max-height: 220px; overflow-y: auto;">
+                            <table class="deployments-table" style="font-size: 11px;">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>Agent ID</th>
+                                        <th>Requested Action / Tool</th>
+                                        <th>Decision</th>
+                                        <th>Governance Reason</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="gov-capability-tbody">
+                                    <!-- Dynamic capability entries -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <!-- Replay Protection & nonces evidence -->
+                    <section class="card" style="padding: 16px; min-height: 260px;">
+                        <div class="card-header" style="border-bottom: 1px solid var(--border-glass); padding-bottom: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="fingerprint" style="color: var(--accent-teal); width: 16px; height: 16px;"></i>
+                            <h3 class="card-title" style="font-size: 13px; font-weight: 600; color: #fff; margin: 0;">REPLAY-PROTECTION INTEGRITY EVIDENCE</h3>
+                        </div>
+                        <div class="table-container" style="max-height: 220px; overflow-y: auto;">
+                            <table class="deployments-table" style="font-size: 11px;">
+                                <thead>
+                                    <tr>
+                                        <th>Decision ID</th>
+                                        <th>Cryptographic Nonce</th>
+                                        <th>State transition</th>
+                                        <th>Timestamp</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="gov-replay-tbody">
+                                    <!-- Nonce tracking -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Operator Decision Ledger -->
+                <section class="card" style="padding: 16px; min-height: 250px; margin-top: 10px;">
+                    <div class="card-header" style="border-bottom: 1px solid var(--border-glass); padding-bottom: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                        <i data-lucide="book-open" style="color: var(--accent-blue); width: 16px; height: 16px;"></i>
+                        <h3 class="card-title" style="font-size: 13px; font-weight: 600; color: #fff; margin: 0;">HISTORICAL OPERATOR DECISION LEDGER</h3>
+                    </div>
+                    <div class="table-container" style="max-height: 220px; overflow-y: auto;">
+                        <table class="deployments-table" style="font-size: 11px;">
+                            <thead>
+                                <tr>
+                                    <th>Decision ID</th>
+                                    <th>Operator</th>
+                                    <th>Action Type / Scope</th>
+                                    <th>Resolution</th>
+                                    <th>Operator Justification / Reason</th>
+                                    <th>Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gov-ledger-tbody">
+                                <!-- Historical decisions -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
 
             <!-- Red-Team Chaos View -->
             <div id="view-red-team" class="hidden">
