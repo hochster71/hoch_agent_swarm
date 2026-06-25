@@ -325,6 +325,7 @@ async function initDashboard() {
         initCandidateReleasePacketBuilder();
         initFormalReleasePreview();
         initFormalReleaseSealDryRun();
+        initReleaseSealAttestation();
         initRunsDashboard();
     } catch (err) {
         console.error("Error initializing dashboard: ", err);
@@ -7365,6 +7366,12 @@ async function fetchAndRenderGovernanceSummary() {
         if (typeof loadSealDryRunHistory === 'function') {
             loadSealDryRunHistory();
         }
+        if (typeof loadSealDryRunsForAttestation === 'function') {
+            loadSealDryRunsForAttestation();
+        }
+        if (typeof loadAttestationHistory === 'function') {
+            loadAttestationHistory();
+        }
         const res = await fetch(`${API_BASE}/api/v1/governance/summary`);
         if (!res.ok) {
             console.error("Failed to fetch governance summary");
@@ -8158,6 +8165,9 @@ async function executeSealDryRun() {
             
             alert(`Seal Dry Run completed: ${data.seal_status}. Protects no-mutation guarantee.`);
             loadSealDryRunHistory();
+            if (typeof loadSealDryRunsForAttestation === 'function') {
+                loadSealDryRunsForAttestation();
+            }
         } else {
             const errData = await res.json();
             alert("Failed to execute Seal Dry Run: " + (errData.detail || "Unknown error"));
@@ -8214,3 +8224,186 @@ window.initFormalReleaseSealDryRun = initFormalReleaseSealDryRun;
 window.loadApprovedPreviewsForDryRun = loadApprovedPreviewsForDryRun;
 window.executeSealDryRun = executeSealDryRun;
 window.loadSealDryRunHistory = loadSealDryRunHistory;
+
+function initReleaseSealAttestation() {
+    const createBtn = document.getElementById("attestation-create-button");
+    if (createBtn) {
+        createBtn.addEventListener("click", createAttestationBundle);
+    }
+    
+    loadSealDryRunsForAttestation();
+    loadAttestationHistory();
+}
+
+async function loadSealDryRunsForAttestation() {
+    const selectEl = document.getElementById("attestation-seal-dry-run-select");
+    if (!selectEl) return;
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/seal-dry-run`);
+        if (!res.ok) return;
+        const runs = await res.json();
+        
+        selectEl.innerHTML = '<option value="">-- Select Seal Dry Run --</option>';
+        
+        if (runs.length === 0) {
+            selectEl.innerHTML = '<option value="">-- No dry runs found --</option>';
+            return;
+        }
+        
+        runs.forEach(r => {
+            const opt = document.createElement("option");
+            opt.value = r.seal_dry_run_id;
+            opt.textContent = `${r.seal_dry_run_id} (${r.seal_status})`;
+            selectEl.appendChild(opt);
+        });
+    } catch (err) {
+        console.error("Error loading dry runs for attestation select:", err);
+    }
+}
+
+async function createAttestationBundle() {
+    const selectEl = document.getElementById("attestation-seal-dry-run-select");
+    const operatorInput = document.getElementById("attestation-operator-input");
+    const reasonInput = document.getElementById("attestation-reason-input");
+    const createBtn = document.getElementById("attestation-create-button");
+    
+    if (!selectEl || !selectEl.value) {
+        alert("Please select a seal dry run first.");
+        return;
+    }
+    
+    const sealDryRunId = selectEl.value;
+    const operator = operatorInput ? operatorInput.value : "Michael Hoch";
+    const reason = reasonInput ? reasonInput.value : "";
+    
+    if (createBtn) {
+        createBtn.disabled = true;
+        createBtn.textContent = "Generating Attestation Bundle...";
+    }
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/seal-dry-run/${sealDryRunId}/attestation-bundle`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ operator, reason })
+        });
+        
+        if (res.ok) {
+            const data = await res.json();
+            
+            const statusEl = document.getElementById("attestation-status");
+            const idEl = document.getElementById("attestation-bundle-id");
+            const pathEl = document.getElementById("attestation-bundle-path");
+            const readyEl = document.getElementById("attestation-formal-ready");
+            const mutEl = document.getElementById("attestation-no-mutation-guarantee");
+            
+            const artListEl = document.getElementById("attestation-artifact-list");
+            const chkListEl = document.getElementById("attestation-checksum-list");
+            const missListEl = document.getElementById("attestation-missing-artifacts");
+            
+            if (statusEl) {
+                statusEl.textContent = data.attestation_status;
+                if (data.attestation_status === "ATTESTATION_READY") {
+                    statusEl.style.color = "var(--accent-teal)";
+                } else if (data.attestation_status === "ATTESTATION_WARN") {
+                    statusEl.style.color = "var(--accent-yellow)";
+                } else {
+                    statusEl.style.color = "#ef4444";
+                }
+            }
+            if (idEl) idEl.textContent = data.attestation_bundle_id;
+            if (pathEl) pathEl.textContent = data.bundle_manifest_path;
+            if (readyEl) {
+                readyEl.textContent = data.formal_release_ready ? "YES (All gates passed)" : "NO (Blockers present)";
+                readyEl.style.color = data.formal_release_ready ? "var(--accent-teal)" : "#ef4444";
+            }
+            if (mutEl) {
+                mutEl.textContent = data.no_mutation_guarantee ? "ACTIVE (No tags/signs applied)" : "INACTIVE";
+            }
+            
+            if (artListEl) {
+                artListEl.innerHTML = "";
+                data.included_artifacts.forEach(art => {
+                    const li = document.createElement("li");
+                    const name = art.split("/").pop();
+                    li.textContent = `• ${name}`;
+                    artListEl.appendChild(li);
+                });
+            }
+            if (chkListEl) {
+                chkListEl.innerHTML = "";
+                data.included_artifacts.forEach(art => {
+                    const li = document.createElement("li");
+                    const name = art.split("/").pop();
+                    const sum = data.artifact_checksums[art] || "none";
+                    li.textContent = `${name}: ${sum.substring(0, 8)}...`;
+                    chkListEl.appendChild(li);
+                });
+            }
+            if (missListEl) {
+                missListEl.innerHTML = "";
+                if (data.missing_artifacts.length === 0) {
+                    missListEl.innerHTML = `<li style="color: var(--accent-teal);">✅ Zero missing artifacts</li>`;
+                } else {
+                    data.missing_artifacts.forEach(art => {
+                        const li = document.createElement("li");
+                        const name = art.split("/").pop();
+                        li.textContent = `• ${name}`;
+                        missListEl.appendChild(li);
+                    });
+                }
+            }
+            
+            alert(`Attestation Bundle generated: ${data.attestation_status}`);
+            loadAttestationHistory();
+        } else {
+            const errData = await res.json();
+            alert("Failed to generate Attestation Bundle: " + (errData.detail || "Unknown error"));
+        }
+    } catch (err) {
+        alert("Error generating Attestation Bundle: " + err.message);
+    } finally {
+        if (createBtn) {
+            createBtn.disabled = false;
+            createBtn.textContent = "Generate Attestation Bundle";
+        }
+    }
+}
+
+async function loadAttestationHistory() {
+    const historyTbody = document.getElementById("attestation-history-list");
+    if (!historyTbody) return;
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/attestation-bundles`);
+        if (!res.ok) return;
+        const bundles = await res.json();
+        
+        historyTbody.innerHTML = "";
+        if (bundles.length === 0) {
+            historyTbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-secondary);">No attestation bundles generated yet.</td></tr>`;
+            return;
+        }
+        
+        bundles.forEach(b => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td style="font-family: monospace; color: var(--accent-teal);">${b.attestation_bundle_id}</td>
+                <td style="font-family: monospace;">${b.seal_dry_run_id}</td>
+                <td style="font-weight: 600; color: ${b.attestation_status === 'ATTESTATION_READY' ? 'var(--accent-teal)' : b.attestation_status === 'ATTESTATION_WARN' ? 'var(--accent-yellow)' : '#ef4444'}">${b.attestation_status}</td>
+                <td>${b.created_by_operator}</td>
+                <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${b.reason}</td>
+                <td>${b.created_at}</td>
+            `;
+            historyTbody.appendChild(tr);
+        });
+    } catch (err) {
+        console.error("Error loading attestation history:", err);
+    }
+}
+
+window.initReleaseSealAttestation = initReleaseSealAttestation;
+window.loadSealDryRunsForAttestation = loadSealDryRunsForAttestation;
+window.createAttestationBundle = createAttestationBundle;
+window.loadAttestationHistory = loadAttestationHistory;

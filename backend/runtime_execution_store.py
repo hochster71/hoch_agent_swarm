@@ -297,6 +297,36 @@ def init_execution_store_tables() -> None:
             )
             """
         )
+        # Create release_seal_attestation_bundles table
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS release_seal_attestation_bundles (
+                attestation_bundle_id TEXT PRIMARY KEY,
+                seal_dry_run_id TEXT,
+                formal_preview_id TEXT,
+                candidate_packet_id TEXT,
+                created_at TEXT,
+                created_by_operator TEXT,
+                reason TEXT,
+                head_sha TEXT,
+                branch TEXT,
+                release_tag TEXT,
+                tag_status TEXT,
+                signing_policy_status TEXT,
+                release_channel_policy_status TEXT,
+                seal_status TEXT,
+                attestation_status TEXT,
+                bundle_path TEXT,
+                bundle_manifest_path TEXT,
+                bundle_summary_path TEXT,
+                included_artifacts_json TEXT,
+                missing_artifacts_json TEXT,
+                artifact_checksums_json TEXT,
+                formal_release_ready INTEGER,
+                no_mutation_guarantee INTEGER
+            )
+            """
+        )
         conn.commit()
     finally:
         conn.close()
@@ -1182,6 +1212,126 @@ def get_seal_dry_run(dry_run_id: str) -> dict | None:
                 "formal_release_blockers": json.loads(d["formal_release_blockers_json"]),
                 "seal_manifest_path": d["seal_manifest_path"],
                 "seal_report_path": d["seal_report_path"]
+            }
+        return None
+    finally:
+        conn.close()
+
+def persist_attestation_bundle(bundle: dict) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        with conn:
+            conn.execute(
+                """
+                INSERT OR REPLACE INTO release_seal_attestation_bundles (
+                    attestation_bundle_id, seal_dry_run_id, formal_preview_id, candidate_packet_id,
+                    created_at, created_by_operator, reason, head_sha, branch, release_tag,
+                    tag_status, signing_policy_status, release_channel_policy_status, seal_status,
+                    attestation_status, bundle_path, bundle_manifest_path, bundle_summary_path,
+                    included_artifacts_json, missing_artifacts_json, artifact_checksums_json,
+                    formal_release_ready, no_mutation_guarantee
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    bundle["attestation_bundle_id"],
+                    bundle["seal_dry_run_id"],
+                    bundle["formal_preview_id"],
+                    bundle["candidate_packet_id"],
+                    bundle["created_at"],
+                    bundle["created_by_operator"],
+                    bundle["reason"],
+                    bundle["head_sha"],
+                    bundle["branch"],
+                    bundle["release_tag"],
+                    bundle["tag_status"],
+                    bundle["signing_policy_status"],
+                    bundle["release_channel_policy_status"],
+                    bundle["seal_status"],
+                    bundle["attestation_status"],
+                    bundle["bundle_path"],
+                    bundle["bundle_manifest_path"],
+                    bundle["bundle_summary_path"],
+                    json.dumps(bundle["included_artifacts"]),
+                    json.dumps(bundle["missing_artifacts"]),
+                    json.dumps(bundle["artifact_checksums"]),
+                    1 if bundle["formal_release_ready"] else 0,
+                    1 if bundle["no_mutation_guarantee"] else 0
+                )
+            )
+    finally:
+        conn.close()
+
+def list_attestation_bundles() -> list[dict]:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        rows = conn.execute("SELECT * FROM release_seal_attestation_bundles ORDER BY created_at DESC").fetchall()
+        bundles = []
+        for row in rows:
+            d = dict(row)
+            bundles.append({
+                "attestation_bundle_id": d["attestation_bundle_id"],
+                "seal_dry_run_id": d["seal_dry_run_id"],
+                "formal_preview_id": d["formal_preview_id"],
+                "candidate_packet_id": d["candidate_packet_id"],
+                "created_at": d["created_at"],
+                "created_by_operator": d["created_by_operator"],
+                "reason": d["reason"],
+                "head_sha": d["head_sha"],
+                "branch": d["branch"],
+                "release_tag": d["release_tag"],
+                "tag_status": d["tag_status"],
+                "signing_policy_status": d["signing_policy_status"],
+                "release_channel_policy_status": d["release_channel_policy_status"],
+                "seal_status": d["seal_status"],
+                "attestation_status": d["attestation_status"],
+                "bundle_path": d["bundle_path"],
+                "bundle_manifest_path": d["bundle_manifest_path"],
+                "bundle_summary_path": d["bundle_summary_path"],
+                "included_artifacts": json.loads(d["included_artifacts_json"] or "[]"),
+                "missing_artifacts": json.loads(d["missing_artifacts_json"] or "[]"),
+                "artifact_checksums": json.loads(d["artifact_checksums_json"] or "{}"),
+                "formal_release_ready": bool(d["formal_release_ready"]),
+                "no_mutation_guarantee": bool(d["no_mutation_guarantee"])
+            })
+        return bundles
+    finally:
+        conn.close()
+
+def get_attestation_bundle(bundle_id: str) -> dict | None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        row = conn.execute("SELECT * FROM release_seal_attestation_bundles WHERE attestation_bundle_id = ?", (bundle_id,)).fetchone()
+        if row:
+            d = dict(row)
+            return {
+                "attestation_bundle_id": d["attestation_bundle_id"],
+                "seal_dry_run_id": d["seal_dry_run_id"],
+                "formal_preview_id": d["formal_preview_id"],
+                "candidate_packet_id": d["candidate_packet_id"],
+                "created_at": d["created_at"],
+                "created_by_operator": d["created_by_operator"],
+                "reason": d["reason"],
+                "head_sha": d["head_sha"],
+                "branch": d["branch"],
+                "release_tag": d["release_tag"],
+                "tag_status": d["tag_status"],
+                "signing_policy_status": d["signing_policy_status"],
+                "release_channel_policy_status": d["release_channel_policy_status"],
+                "seal_status": d["seal_status"],
+                "attestation_status": d["attestation_status"],
+                "bundle_path": d["bundle_path"],
+                "bundle_manifest_path": d["bundle_manifest_path"],
+                "bundle_summary_path": d["bundle_summary_path"],
+                "included_artifacts": json.loads(d["included_artifacts_json"] or "[]"),
+                "missing_artifacts": json.loads(d["missing_artifacts_json"] or "[]"),
+                "artifact_checksums": json.loads(d["artifact_checksums_json"] or "{}"),
+                "formal_release_ready": bool(d["formal_release_ready"]),
+                "no_mutation_guarantee": bool(d["no_mutation_guarantee"])
             }
         return None
     finally:

@@ -1419,6 +1419,104 @@
                                     <!-- History list -->
                                 </tbody>
                             </table>
+                    </div>
+                </section>
+
+                <!-- Release Seal Attestation Bundle Panel (Phase 13) -->
+                <section class="card" id="release-seal-attestation-panel" style="padding: 16px; margin-top: 20px;">
+                    <div class="card-header" style="border-bottom: 1px solid var(--border-glass); padding-bottom: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                        <i data-lucide="archive" style="color: var(--accent-teal); width: 16px; height: 16px;"></i>
+                        <h3 class="card-title" style="font-size: 13px; font-weight: 600; color: #fff; margin: 0;">Release Seal Attestation Bundle</h3>
+                    </div>
+                    
+                    <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; border: 0; padding: 0; background: transparent; margin: 0;">
+                        <!-- Attestation Inputs -->
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 11px; color: var(--text-secondary);">Select Seal Dry Run</label>
+                                <select id="attestation-seal-dry-run-select" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 12px;">
+                                    <option value="">-- No dry runs loaded --</option>
+                                </select>
+                            </div>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 11px; color: var(--text-secondary);">Operator</label>
+                                <input type="text" id="attestation-operator-input" value="Michael Hoch" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 12px;">
+                            </div>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 11px; color: var(--text-secondary);">Justification Reason</label>
+                                <input type="text" id="attestation-reason-input" value="Attestation bundle after Phase 12 seal dry run" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 12px;">
+                            </div>
+                            
+                            <div>
+                                <button class="btn btn-sm btn-primary" id="attestation-create-button" style="width: 100%;">Generate Attestation Bundle</button>
+                            </div>
+                            
+                            <div style="font-size: 11px; color: var(--accent-teal); margin-top: 8px; line-height: 1.4; display: flex; flex-direction: column; gap: 4px;">
+                                <span>🔒 <strong>No Mutation Guarantee</strong></span>
+                                <span>🚫 <strong>No Tags Are Created</strong></span>
+                                <span>🔒 <strong>No Signing Is Performed</strong></span>
+                                <span>🚀 <strong>No Publishing Is Performed</strong></span>
+                                <span>🔍 <strong>Attestation Is Not A Formal Release</strong></span>
+                            </div>
+                        </div>
+                        
+                        <!-- Attestation Output -->
+                        <div style="display: flex; flex-direction: column; gap: 12px; border-left: 1px solid var(--border-glass); padding-left: 20px;">
+                            <h4 style="font-size: 12px; color: #fff; font-weight: 600; margin: 0;">Attestation Details</h4>
+                            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px;">
+                                <div><strong>Attestation Status:</strong> <span id="attestation-status" style="color: var(--text-secondary); font-weight: 600;">None</span></div>
+                                <div><strong>Bundle ID:</strong> <span id="attestation-bundle-id" style="font-family: monospace; color: var(--accent-teal);">None</span></div>
+                                <div><strong>Bundle Path:</strong> <span id="attestation-bundle-path" style="font-family: monospace; color: var(--accent-blue);">None</span></div>
+                                <div><strong>Formal Release Ready:</strong> <span id="attestation-formal-ready" style="font-weight: 600;">None</span></div>
+                                <div><strong>No Mutation Guarantee:</strong> <span id="attestation-no-mutation-guarantee" style="color: var(--accent-green); font-weight: 600;">None</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Evidence Lists -->
+                    <div style="margin-top: 20px; border-top: 1px solid var(--border-glass); padding-top: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <strong style="font-size: 11px; color: #fff; display: block; margin-bottom: 6px;">Included Evidence Artifacts:</strong>
+                            <ul id="attestation-artifact-list" style="list-style: none; padding: 0; margin: 0; font-size: 11px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 4px;">
+                                <!-- Included artifacts -->
+                            </ul>
+                        </div>
+                        <div>
+                            <strong style="font-size: 11px; color: #fff; display: block; margin-bottom: 6px;">Artifact Checksums:</strong>
+                            <ul id="attestation-checksum-list" style="list-style: none; padding: 0; margin: 0; font-size: 11px; color: var(--accent-teal); display: flex; flex-direction: column; gap: 4px; font-family: monospace;">
+                                <!-- Artifact checksums -->
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 12px; border-top: 1px solid var(--border-glass); padding-top: 12px;">
+                        <strong style="font-size: 11px; color: #ef4444; display: block; margin-bottom: 6px;">Missing Artifacts:</strong>
+                        <ul id="attestation-missing-artifacts" style="list-style: none; padding: 0; margin: 0; font-size: 11px; color: #ef4444; display: flex; flex-direction: column; gap: 4px;">
+                            <!-- Missing artifacts -->
+                        </ul>
+                    </div>
+                    
+                    <!-- History -->
+                    <div style="margin-top: 20px; border-top: 1px solid var(--border-glass); padding-top: 16px;">
+                        <h4 style="font-size: 12px; color: #fff; font-weight: 600; margin-bottom: 10px; margin-top: 0;">Attestation History</h4>
+                        <div class="table-container" style="max-height: 180px; overflow-y: auto;">
+                            <table class="deployments-table" style="font-size: 11px;">
+                                <thead>
+                                    <tr>
+                                        <th>Bundle ID</th>
+                                        <th>Dry Run ID</th>
+                                        <th>Status</th>
+                                        <th>Operator</th>
+                                        <th>Reason</th>
+                                        <th>Created At</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="attestation-history-list">
+                                    <!-- History list -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </section>

@@ -115,13 +115,22 @@ We implemented a formal release seal dry-run utility to generate a final dry-run
 
 ---
 
-## 12. Verification Results
+## 12. Release Seal Attestation Bundle (Phase 13)
+We implemented a release seal attestation bundle builder to compile a final package of all release evidence:
+- **API Endpoints**: Added `POST /api/v1/release/seal-dry-run/{seal_dry_run_id}/attestation-bundle` and `GET /api/v1/release/attestation-bundles` to generate and query attestation bundles.
+- **TypeScript CLI Generator**: Added `scripts/supply-chain/generate-release-seal-attestation-bundle.ts` that discovers the latest dry-run, computes sha256 checksums of local artifacts, lists missing artifacts, and writes bundle outputs under `dist/attestations/{bundle_id}/`.
+- **Cockpit UI Panel**: Added the `#release-seal-attestation-panel` in the Governance Cockpit to interactively build and view attestation history.
+- **Safety Boundaries**: Enforces `no_mutation_guarantee = true` with zero git tag mutations, zero Cosign signing, and zero package publishing.
+
+---
+
+## 13. Verification Results
 
 ### Static QA & Contract Checks (`npm run qa:ui-contract`)
 - All contract checks exited with `PASS`:
   - `no-tailwind-cdn`: PASS
-  - `nav-contract` (ensured forbidden labels like "PERT Analysis" and "Security Audit" are not in nav links): PASS
-  - `nav-live` (validated all live endpoint handshakes): PASS
+  - `nav-contract`: PASS
+  - `nav-live`: PASS
   - `view-contract`: PASS
   - `frontend-entrypoint`: PASS
   - `comic-swarm`: PASS
@@ -136,6 +145,7 @@ We implemented a formal release seal dry-run utility to generate a final dry-run
   - `formal-release-preview-contract`: PASS
   - `formal-release-approval-contract`: PASS
   - `formal-release-seal-dry-run-contract`: PASS
+  - `release-seal-attestation-contract`: PASS
 
 ### Playwright E2E Integration Tests (`npm run qa:e2e-runtime`)
 - All browser simulation specs completed successfully:
@@ -150,10 +160,9 @@ We implemented a formal release seal dry-run utility to generate a final dry-run
   - `formal-release-preview.spec.ts`: PASS
   - `formal-release-approval.spec.ts`: PASS
   - `formal-release-seal-dry-run.spec.ts`: PASS
+  - `release-seal-attestation-bundle.spec.ts`: PASS
 
 ### North Star & Autonomy Budget Audit (`npm run qa:runtime-full`)
 - Autonomy Safety Engine static red-team assertions: 20/20 PASS
 - Autonomy Gating and budget throttling integration assertions: 5/5 PASS
 - Final Operational Readiness Score: **100/100 PASS**
-
-

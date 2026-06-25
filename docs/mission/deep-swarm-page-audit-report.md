@@ -22,6 +22,10 @@ The following validation suites were added to `package.json` and executed cleanl
 - `npm run qa:runtime-ledger-db` (SQLite schema structure validation)
 - `npm run qa:runtime-event-schema` (WebSocket metric/event stream validation)
 - `npm run e2e:full-page-swarm-audit` (Browser traversals & screenshots)
+- `npm run qa:formal-release-seal-dry-run` (Phase 12 seal dry-run contract check)
+- `npm run e2e:formal-release-seal-dry-run` (Phase 12 seal dry-run E2E test)
+- `npm run qa:release-seal-attestation` (Phase 13 release seal attestation contract check)
+- `npm run e2e:release-seal-attestation` (Phase 13 release seal attestation E2E test)
 - `npm run qa:runtime-full` (Full regression suite pass)
 
 ---
@@ -207,6 +211,17 @@ Regenerated supply chain artifacts:
 - **Approval Gate Creation**: Automatically registers a pending `channel_decision` gate in SQLite and adds a corresponding pending request to the dashboard approval queue for operator review.
 - **Simulation Report Generation**: Updates the decision handler to write simulated approval reports under `dist/formal-previews/<formal_preview_id>/` (containing a JSON manifest and summary Markdown report) when the operator approves or rejects the simulated gate.
 - **Non-Destructive Posture**: The approval process simulates release finalization and validation without mutating git tags, applying signatures, or publishing files.
+
+## Formal Release Seal Dry Run (Phase 12)
+- **Seal Dry Run Utility**: Compiles and writes seal dry-run manifests (`formal_release_seal_dry_run_manifest.json`) and markdown reports (`formal_release_seal_dry_run_report.md`) under `dist/formal-previews/<formal_preview_id>/` listing remaining blockers.
+- **Cockpit Panel Integration**: Added a cockpit UI panel `#formal-release-seal-dry-run-panel` to execute dry runs and view history.
+- **Safety Boundaries**: No tags created, no signing performed, no publishing triggered.
+
+## Release Seal Attestation Bundle (Phase 13)
+- **Attestation Bundle Generator**: Compiles and writes a durable attestation bundle manifest JSON and summary Markdown file under `dist/attestations/<attestation_bundle_id>/` to package all release evidence.
+- **Evidence Checksums**: Computes sha256 checksums for all local evidence files on disk, listing missing artifacts explicitly rather than ignoring them.
+- **Safety Invariants**: Zero git tag creation, zero Cosign signing, zero package publishing, keeping the attestation completely non-mutating.
+- **Governance Cockpit UI**: Adds `#release-seal-attestation-panel` rendering attestation statuses, bundle paths, checksums, and history.
 
 ---
 

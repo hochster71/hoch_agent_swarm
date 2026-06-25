@@ -54,7 +54,10 @@ from backend.runtime_execution_store import (
     get_formal_release_preview,
     persist_seal_dry_run,
     list_seal_dry_runs,
-    get_seal_dry_run
+    get_seal_dry_run,
+    persist_attestation_bundle,
+    list_attestation_bundles,
+    get_attestation_bundle
 )
 from backend.hochster_runtime_audit import (
     generate_runtime_execution_audit,
@@ -1806,7 +1809,7 @@ def execute_formal_release_seal_dry_run(formal_preview_id: str, req: SealDryRunR
 ---
 
 ## Safety & No-Mutation Guarantees
-- ⚠️ **Zero git tags were created or modified.**
+- ⚠️ **Zero git-tags were created or modified.**
 - 🔒 **Zero artifacts were signed.**
 - 🚀 **Zero packages were published or finalized.**
 - 🔍 **Simulated Dry Run Only.**
@@ -1819,6 +1822,236 @@ def execute_formal_release_seal_dry_run(formal_preview_id: str, req: SealDryRunR
 @app.get("/api/v1/release/seal-dry-run")
 def get_seal_dry_runs():
     return list_seal_dry_runs()
+
+class AttestationBundleCreateRequest(BaseModel):
+    operator: str
+    reason: str
+
+@app.post("/api/v1/release/seal-dry-run/{seal_dry_run_id}/attestation-bundle")
+def create_release_seal_attestation_bundle(seal_dry_run_id: str, req: AttestationBundleCreateRequest):
+    import uuid
+    import time
+    import os
+    import json
+    import hashlib
+    
+    # 1. Load seal dry-run record
+    dry_run = get_seal_dry_run(seal_dry_run_id)
+    if not dry_run:
+        raise HTTPException(status_code=404, detail="Seal dry run not found")
+        
+    formal_preview_id = dry_run["formal_preview_id"]
+    candidate_packet_id = dry_run["candidate_packet_id"]
+    version = dry_run["candidate_version"]
+    head_sha = dry_run["head_sha"]
+    branch = dry_run["branch"]
+    release_tag = dry_run["release_tag"]
+    seal_status = dry_run["seal_status"]
+    
+    # Load preview & packet info
+    preview = get_formal_release_preview(formal_preview_id)
+    
+    # Calculate bundle ID & metadata
+    bundle_id = f"attestation-bundle-{int(time.time())}-{uuid.uuid4().hex[:8]}"
+    created_at = now_iso()
+    
+    # Determine attestation status
+    if seal_status == "SEAL_READY":
+        attestation_status = "ATTESTATION_READY"
+    elif "dirty" in str(dry_run["formal_release_blockers_json"] if "formal_release_blockers_json" in dry_run else dry_run.get("formal_release_blockers", [])).lower():
+        attestation_status = "ATTESTATION_WARN"
+    else:
+        attestation_status = "ATTESTATION_BLOCKED"
+        
+    # Gather potential evidence files
+    potential_files = [
+        # Release manifests & supply chain
+        f"dist/releases/{version}/baseline_evidence_pack.json",
+        f"dist/releases/{version}/release_manifest.json",
+        f"dist/releases/{version}/provenance.intoto.jsonl",
+        f"dist/releases/{version}/sbom.spdx.json",
+        f"dist/releases/{version}/runtime_execution_audit.json",
+        f"dist/releases/{version}/tool_call_trace_summary.json",
+        f"dist/releases/{version}/redaction_report.json",
+        f"dist/releases/{version}/approval_gate_report.json",
+        f"dist/releases/{version}/verification_report.json",
+        f"dist/releases/{version}/autonomy_budget_report.json",
+        
+        # Candidate packet files
+        f"dist/candidates/{candidate_packet_id}/candidate_packet_manifest.json",
+        f"dist/candidates/{candidate_packet_id}/candidate_packet_summary.md",
+        
+        # Formal preview files
+        f"dist/formal-previews/{formal_preview_id}/formal_release_preview_manifest.json",
+        f"dist/formal-previews/{formal_preview_id}/formal_release_preview_summary.md",
+        f"dist/formal-previews/{formal_preview_id}/formal_release_approval_report.json",
+        f"dist/formal-previews/{formal_preview_id}/formal_release_approval_report.md",
+        f"dist/formal-previews/{formal_preview_id}/formal_release_seal_dry_run_manifest.json",
+        f"dist/formal-previews/{formal_preview_id}/formal_release_seal_dry_run_report.md",
+        
+        # QA scorecards & audit reports
+        "artifacts/qa/readiness-scorecard.json",
+        "artifacts/qa/localhost-8000-audit.json",
+        "artifacts/qa/autonomy-budget-audit.json",
+        "artifacts/qa/north-star-readiness-report.md",
+        
+        # QA screenshots
+        "artifacts/qa/formal-release-approval.png",
+        "artifacts/qa/formal-release-preview.png",
+        "artifacts/qa/candidate-release-packet.png",
+        "artifacts/qa/formal-release-seal-dry-run.png"
+    ]
+    
+    # Compute sha256 checksums
+    included_artifacts = []
+    missing_artifacts = []
+    artifact_checksums = {}
+    
+    def compute_sha256(filepath):
+        h = hashlib.sha256()
+        with open(filepath, "rb") as f:
+            for chunk in iter(lambda: f.read(4096), b""):
+                h.update(chunk)
+        return h.hexdigest()
+        
+    for path_file in potential_files:
+        if os.path.exists(path_file):
+            try:
+                chk = compute_sha256(path_file)
+                included_artifacts.append(path_file)
+                artifact_checksums[path_file] = chk
+            except Exception:
+                missing_artifacts.append(path_file)
+        else:
+            missing_artifacts.append(path_file)
+            
+    # Paths for bundle outputs
+    bundle_dir = f"dist/attestations/{bundle_id}"
+    bundle_manifest_path = f"{bundle_dir}/release_seal_attestation_bundle_manifest.json"
+    bundle_summary_path = f"{bundle_dir}/release_seal_attestation_bundle_summary.md"
+    
+    bundle_manifest = {
+        "attestation_bundle_id": bundle_id,
+        "seal_dry_run_id": seal_dry_run_id,
+        "formal_preview_id": formal_preview_id,
+        "candidate_packet_id": candidate_packet_id,
+        "created_at": created_at,
+        "operator": req.operator,
+        "reason": req.reason,
+        "head_sha": head_sha,
+        "branch": branch,
+        "release_tag": release_tag,
+        "seal_status": seal_status,
+        "formal_release_ready": dry_run["seal_status"] == "SEAL_READY",
+        "no_mutation_guarantee": True,
+        "included_artifacts": included_artifacts,
+        "missing_artifacts": missing_artifacts,
+        "artifact_checksums": artifact_checksums,
+        "signing_policy": preview.get("signing_policy_status", "BLOCK") if preview else "BLOCK",
+        "release_channel_governance": preview.get("release_channel_policy_status", "BLOCK") if preview else "BLOCK",
+        "governance_summary": {
+            "operator_approval": preview.get("operator_approval_status", "pending") if preview else "pending"
+        },
+        "qa_summary": {
+            "qa_status": preview.get("qa_status", "WARN") if preview else "WARN",
+            "readiness_status": preview.get("readiness_status", "WARN") if preview else "WARN"
+        },
+        "evidence_paths": {
+            "manifest": bundle_manifest_path,
+            "summary": bundle_summary_path
+        }
+    }
+    
+    # Save files to disk
+    os.makedirs(bundle_dir, exist_ok=True)
+    with open(bundle_manifest_path, "w") as f:
+        json.dump(bundle_manifest, f, indent=2)
+        
+    # Write summary markdown
+    status_badge = "✅ READY TO SEAL" if attestation_status == "ATTESTATION_READY" else "❌ BLOCKED"
+    included_list_str = "\n".join([f"- `{os.path.basename(p)}` (SHA256: `{artifact_checksums[p]}`)" for p in included_artifacts]) if included_artifacts else "- None"
+    missing_list_str = "\n".join([f"- `{os.path.basename(p)}`" for p in missing_artifacts]) if missing_artifacts else "- None"
+    
+    md_content = f"""# Release Seal Attestation Bundle Summary — `{bundle_id}`
+
+## Attestation Status: {status_badge}
+- **Dry Run Seal Status**: `{seal_status}`
+- **Ready for Formal Release**: `{"YES" if bundle_manifest["formal_release_ready"] else "NO"}`
+
+## Metadata
+- **Attestation Bundle ID**: `{bundle_id}`
+- **Seal Dry Run ID**: `{seal_dry_run_id}`
+- **Formal Preview ID**: `{formal_preview_id}`
+- **Candidate Packet ID**: `{candidate_packet_id}`
+- **Git HEAD SHA**: `{head_sha}`
+- **Git Branch**: `{branch}`
+- **Release Tag**: `{release_tag}`
+- **Operator**: `{req.operator}`
+- **Justification Reason**: {req.reason}
+- **Generated At**: `{created_at}`
+
+---
+
+## Safety & No-Mutation Guarantees
+- 🔒 **no_mutation_guarantee = true**
+- ⚠️ **Zero git-tags were created or modified.**
+- 🔒 **Zero artifacts were signed.**
+- 🚀 **Zero packages were published or finalized.**
+- 🔍 **This attestation bundle is NOT a formal release.**
+
+---
+
+## Included Evidence Artifacts & Checksums
+{included_list_str}
+
+---
+
+## Missing Artifacts
+{missing_list_str}
+"""
+    with open(bundle_summary_path, "w") as f:
+        f.write(md_content)
+        
+    # Save bundle metadata to SQLite
+    db_bundle = {
+        "attestation_bundle_id": bundle_id,
+        "seal_dry_run_id": seal_dry_run_id,
+        "formal_preview_id": formal_preview_id,
+        "candidate_packet_id": candidate_packet_id,
+        "created_at": created_at,
+        "created_by_operator": req.operator,
+        "reason": req.reason,
+        "head_sha": head_sha,
+        "branch": branch,
+        "release_tag": release_tag,
+        "tag_status": preview.get("tag_status", "stale") if preview else "stale",
+        "signing_policy_status": preview.get("signing_policy_status", "BLOCK") if preview else "BLOCK",
+        "release_channel_policy_status": preview.get("release_channel_policy_status", "BLOCK") if preview else "BLOCK",
+        "seal_status": seal_status,
+        "attestation_status": attestation_status,
+        "bundle_path": bundle_dir,
+        "bundle_manifest_path": bundle_manifest_path,
+        "bundle_summary_path": bundle_summary_path,
+        "included_artifacts": included_artifacts,
+        "missing_artifacts": missing_artifacts,
+        "artifact_checksums": artifact_checksums,
+        "formal_release_ready": bundle_manifest["formal_release_ready"],
+        "no_mutation_guarantee": True
+    }
+    persist_attestation_bundle(db_bundle)
+    
+    return db_bundle
+
+@app.get("/api/v1/release/attestation-bundles")
+def get_attestation_bundles():
+    return list_attestation_bundles()
+
+@app.get("/api/v1/release/attestation-bundles/{attestation_bundle_id}")
+def get_attestation_bundle_details(attestation_bundle_id: str):
+    db_bundle = get_attestation_bundle(attestation_bundle_id)
+    if not db_bundle:
+        raise HTTPException(status_code=404, detail="Attestation bundle not found")
+    return db_bundle
 
 @app.post("/api/v1/release/formal-preview")
 def create_formal_preview(req: FormalPreviewRequest):
