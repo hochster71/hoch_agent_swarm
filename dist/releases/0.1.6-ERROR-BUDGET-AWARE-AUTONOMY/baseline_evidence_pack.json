@@ -3,7 +3,7 @@
   "report_id": "0.1.6-ERROR-BUDGET-AWARE-AUTONOMY",
   "version": "0.1.6-ERROR-BUDGET-AWARE-AUTONOMY",
   "codename": "HOCH-AGENT-SWARM 0.1.6-ERROR-BUDGET-AWARE-AUTONOMY",
-  "generated_at": "2026-06-25T13:26:44Z",
+  "generated_at": "2026-06-25T13:55:55Z",
   "generated_by": "HOCHSTER Orchestrator",
   "git_commit_sha": "5984bcf61c6d7443aa4d525ca780234b1fb38cac",
   "lock_decision": "PASS",
@@ -92,7 +92,7 @@
     "solve_requests": [
       {
         "request_id": "req_9f3a2c0f",
-        "correlation_id": "corr-1840829d0e4a",
+        "correlation_id": "corr-137a3531ad97",
         "status": "solved",
         "findings": [],
         "patches_generated": 2,
@@ -104,8 +104,8 @@
     ]
   },
   "audit": {
-    "events_checked": 2397,
-    "valid_events": 2397,
+    "events_checked": 2757,
+    "valid_events": 2757,
     "invalid_events": 0,
     "missing_correlation_ids": 0,
     "missing_evidence_refs": 0
@@ -139,7 +139,7 @@
     "missing_evidence_refs": []
   },
   "integrity": {
-    "sha256": "34536ee6e86c57efd2962b8a956f21b9bd160bbfb9f628453ab45d5bd92b8712",
+    "sha256": "effb1fa95432e378bde8a339ac26a89faa13a8098595f5d001e47014ddf7a35d",
     "signed": false,
     "signature_ref": null
   },
@@ -151,30 +151,30 @@
     "migration_required": false
   },
   "runtime_execution_audit": {
-    "generated_at": "2026-06-25T13:26:44.345871+00:00",
+    "generated_at": "2026-06-25T13:55:55.371960+00:00",
     "base_url": "http://localhost:8000",
     "tool_calls_checked": 6,
     "tool_calls_with_trace": 6,
     "tool_calls_with_evidence": 6,
     "redactions_applied": 2,
     "solved_without_validation": 0,
-    "approval_required_actions": 48,
+    "approval_required_actions": 80,
     "approval_bypass_findings": [],
     "blockers": [],
     "status": "PASS",
     "source": "live",
     "source_id": "audit.runtime.execution",
-    "observed_at": "2026-06-25T13:26:44.345882+00:00",
-    "received_at": "2026-06-25T13:26:44.345883+00:00",
+    "observed_at": "2026-06-25T13:55:55.371970+00:00",
+    "received_at": "2026-06-25T13:55:55.371971+00:00",
     "ttl_ms": 10000,
     "freshness": "live",
-    "correlation_id": "corr-audit-exec-b7f243f9",
+    "correlation_id": "corr-audit-exec-8e8918f9",
     "evidence_refs": [
       "database.swarm_ledger"
     ]
   },
   "docker_digests": {
-    "generated_at": "2026-06-25T13:26:43.769Z",
+    "generated_at": "2026-06-25T13:55:54.829Z",
     "records": [],
     "missing_digest_count": 0,
     "status": "warning",
