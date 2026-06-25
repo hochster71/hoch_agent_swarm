@@ -188,5 +188,14 @@ Regenerated supply chain artifacts:
 
 ---
 
+## Candidate Release Packet Builder (Phase 9)
+- **Candidate Release Packet Builder implemented**: Integrated a dedicated panel inside the Governance Cockpit to input candidate version, operator, reason, and channel, and trigger compilation.
+- **Zero Git Tag Mutation**: Employs a strict read-only design for candidate packet compilation. Does not create, move, delete, or push git tags under candidate release packet workflows.
+- **Blockers Preserved**: Collects and exposes the full formal release blockers checklist directly within the candidate packet.
+- **Release Evidence References**: Resolves and bundles SBOM, provenance, baseline evidence, verification reports, QA reports, and browser page screenshots, saving the manifest and md summary files to `dist/candidates/<candidate_packet_id>/`.
+- **Review Artifacts Only**: Formally differentiates candidate release packets as review artifacts. Creating a candidate packet does not silently finalize a formal release, which remains blocked until signing and tag alignment policy gates are passed.
+
+---
+
 ## Open Gaps
 1. **Cryptographic Signing Provider Credentials**: Actual signature generation (`.sig`) requires configuring Cosign credentials and keys in the target environment when ready.

@@ -40,8 +40,11 @@
     "qa:capability-enforcement": "npx tsx scripts/qa/test-agent-capability-enforcement-contract.ts",
     "qa:release-signing-policy": "npx tsx scripts/qa/test-release-signing-policy-contract.ts",
     "qa:release-channel-governance": "npx tsx scripts/qa/test-release-channel-governance-contract.ts",
+    "candidate:release-packet": "npx tsx scripts/supply-chain/generate-candidate-release-packet.ts",
+    "qa:candidate-release-packet": "npx tsx scripts/qa/test-candidate-release-packet-contract.ts",
+    "e2e:candidate-release-packet": "npx playwright test tests/e2e/candidate-release-packet.spec.ts",
     "qa:operator-governance": "npx tsx scripts/qa/test-operator-governance-cockpit.ts",
-    "qa:ui-contract": "npm run qa:no-tailwind-cdn && npm run qa:nav && npm run qa:view-contract && npm run qa:frontend-entrypoint && npm run qa:comic-swarm && npm run qa:global-swarm-animation && npm run qa:topology-agent-overlay && npm run qa:topology-animation-quality && npm run qa:cybersecurity-factory && npm run qa:full-page-swarm-audit && npm run qa:runtime-ledger-db && npm run qa:backend-runtime-api && npm run qa:runtime-event-schema && npm run qa:capability-enforcement && npm run qa:release-signing-policy && npm run qa:release-channel-governance && npm run qa:operator-governance",
+    "qa:ui-contract": "npm run qa:no-tailwind-cdn && npm run qa:nav && npm run qa:view-contract && npm run qa:frontend-entrypoint && npm run qa:comic-swarm && npm run qa:global-swarm-animation && npm run qa:topology-agent-overlay && npm run qa:topology-animation-quality && npm run qa:cybersecurity-factory && npm run qa:full-page-swarm-audit && npm run qa:runtime-ledger-db && npm run qa:backend-runtime-api && npm run qa:runtime-event-schema && npm run qa:capability-enforcement && npm run qa:release-signing-policy && npm run qa:release-channel-governance && npm run qa:operator-governance && npm run qa:candidate-release-packet",
     "qa:frontend-entrypoint": "npx tsx scripts/qa/test-frontend-entrypoint-contract.ts",
     "qa:comic-swarm": "npx tsx scripts/qa/test-kimi-style-comic-swarm-contract.ts",
     "qa:global-swarm-animation": "npx tsx scripts/qa/test-global-swarm-animation-contract.ts",
@@ -59,7 +62,7 @@
     "e2e:release-channel-governance": "npx playwright test tests/e2e/release-channel-governance.spec.ts",
     "e2e:operator-governance": "npx playwright test tests/e2e/operator-governance-cockpit.spec.ts",
     "qa:e2e-runtime": "npm run e2e:antigravity && npm run e2e:global-swarm-animation && npm run e2e:topology-agent-overlay && npm run e2e:cybersecurity-factory",
-    "qa:runtime-full": "npm run qa:ui-contract && npm run qa:readiness && npm run qa:autonomy-budget && npm run qa:e2e-runtime && npm run e2e:full-page-swarm-audit && npm run e2e:capability-enforcement && npm run e2e:reduced-motion-swarm && npm run e2e:release-signing-policy && npm run e2e:release-channel-governance && npm run e2e:operator-governance"
+    "qa:runtime-full": "npm run qa:ui-contract && npm run qa:readiness && npm run qa:autonomy-budget && npm run qa:e2e-runtime && npm run e2e:full-page-swarm-audit && npm run e2e:capability-enforcement && npm run e2e:reduced-motion-swarm && npm run e2e:release-signing-policy && npm run e2e:release-channel-governance && npm run e2e:operator-governance && npm run e2e:candidate-release-packet"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",

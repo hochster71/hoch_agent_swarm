@@ -1,18 +1,15 @@
-# Task List — Phase 8: Operator Approval Ledger + Governance Command Center
+# Task List — Phase 9: Candidate Release Packet Builder
 
-- `[x]` Harden test bypass check in `backend/main.py` using `TEST_MODE` global constant
-- `[x]` Add GET `/api/v1/governance/summary` REST endpoint in `backend/main.py`
-- `[x]` Update `.github/workflows/nav-contract-qa.yml` to set `TEST_MODE=true`
-- `[x]` Update `scripts/qa/run-ci-pipeline.py` to set `TEST_MODE=true` uvicorn launch environment
-- `[x]` Add Governance Cockpit navigation item HTML in `frontend/index.html`
-- `[x]` Add Governance Cockpit main panel HTML in `frontend/index.html`
-- `[x]` Add JavaScript mapping and tab switching logic in `frontend/app.js`
-- `[x]` Implement `fetchAndRenderGovernanceSummary()` rendering logic in `frontend/app.js`
-- `[x]` Add list status check for `nav-governance` in `updateNavStatuses()` in `frontend/app.js`
-- `[x]` Create contract validation script `scripts/qa/test-operator-governance-cockpit.ts`
-- `[x]` Create Playwright E2E spec `tests/e2e/operator-governance-cockpit.spec.ts`
-- `[x]` Register scripts in `package.json` (`qa:operator-governance`, `e2e:operator-governance`)
-- `[x]` Update `docs/mission/deep-swarm-page-audit-report.md`
-- `[x]` Update `walkthrough.md`
-- `[x]` Run full verification suite and verify PASS status
-- `[x]` Commit the Phase 8 changes and refresh release evidence
+- `[x]` Define candidate release packets SQLite table and helpers in `backend/runtime_execution_store.py`
+- `[x]` Implement API endpoints `/api/v1/release/candidate-packets` (GET, GET by ID, POST) in `backend/main.py`
+- `[x]` Create TypeScript candidate packet builder script `scripts/supply-chain/generate-candidate-release-packet.ts`
+- `[x]` Update frontend template `frontend/index.html` to add candidate release packet builder panel and DOM IDs/visible text
+- `[x]` Update frontend logic `frontend/app.js` to fetch and submit candidate packets
+- `[x]` Update styles in `frontend/styles.css` / `frontend/src/styles/tailwind.css`
+- `[x]` Verify and adjust supply chain manifest/verification scripts
+- `[x]` Create contract validation script `scripts/qa/test-candidate-release-packet-contract.ts`
+- `[x]` Create Playwright E2E specification `tests/e2e/candidate-release-packet.spec.ts`
+- `[x]` Register run commands and update suites in `package.json`
+- `[x]` Update documentation: `docs/mission/deep-swarm-page-audit-report.md` & `walkthrough.md`
+- `[x]` Verify by building and running full QA suites: `npm run build`, `npm run qa:runtime-full`, `npm run supply:release`
+- `[x]` Stage and commit changes (Feature commit and Evidence commit)

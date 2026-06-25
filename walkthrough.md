@@ -78,7 +78,16 @@ We unified all platform governance metrics into one dashboard console:
 
 ---
 
-## 8. Verification Results
+## 8. Candidate Release Packet Builder (Phase 9)
+We built a formal release candidate packet builder:
+- **Candidate Release Packet Builder**: Added a cockpit input form and details dashboard showing status, blockers, and artifact summaries.
+- **TypeScript Generator Script**: Created a script generating compiled JSON manifests and Markdown summaries under `dist/candidates/<candidate_packet_id>/`.
+- **Blockers & Evidence Binding**: Evaluates tree cleanliness, QA results, signing, and tag alignment, listing them in the candidate packet without mutating git tags.
+- **Review Mode Assurance**: Candidate packets are review artifacts. Final releases remain blocked by signing policy and tag alignment gates.
+
+---
+
+## 9. Verification Results
 
 ### Static QA & Contract Checks (`npm run qa:ui-contract`)
 - All contract checks exited with `PASS`:
@@ -95,6 +104,7 @@ We unified all platform governance metrics into one dashboard console:
   - `release-signing-policy-contract`: PASS
   - `release-channel-governance-contract`: PASS
   - `operator-governance-contract`: PASS
+  - `candidate-release-packet-contract`: PASS
 
 ### Playwright E2E Integration Tests (`npm run qa:e2e-runtime`)
 - All browser simulation specs completed successfully:
@@ -105,6 +115,7 @@ We unified all platform governance metrics into one dashboard console:
   - `release-signing-policy.spec.ts`: PASS
   - `release-channel-governance.spec.ts`: PASS
   - `operator-governance-cockpit.spec.ts`: PASS
+  - `candidate-release-packet.spec.ts`: PASS
 
 ### North Star & Autonomy Budget Audit (`npm run qa:runtime-full`)
 - Autonomy Safety Engine static red-team assertions: 20/20 PASS

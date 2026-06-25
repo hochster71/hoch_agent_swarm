@@ -1157,6 +1157,99 @@
                         </table>
                     </div>
                 </section>
+
+                <!-- Candidate Release Packet Builder Panel (Phase 9) -->
+                <section class="card" id="candidate-release-packet-panel" style="padding: 16px; margin-top: 20px;">
+                    <div class="card-header" style="border-bottom: 1px solid var(--border-glass); padding-bottom: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                        <i data-lucide="package" style="color: var(--accent-orange); width: 16px; height: 16px;"></i>
+                        <h3 class="card-title" style="font-size: 13px; font-weight: 600; color: #fff; margin: 0;">Candidate Release Packet Builder</h3>
+                    </div>
+                    
+                    <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; border: 0; padding: 0; background: transparent; margin: 0;">
+                        <!-- Creation Form -->
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 11px; color: var(--text-secondary);">Candidate Version</label>
+                                <input type="text" id="candidate-packet-version-input" value="0.1.7-candidate.1" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 12px;">
+                            </div>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 11px; color: var(--text-secondary);">Candidate Channel</label>
+                                <select id="candidate-packet-channel-select" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 12px;">
+                                    <option value="candidate">candidate</option>
+                                    <option value="local_dev">local_dev</option>
+                                </select>
+                            </div>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 11px; color: var(--text-secondary);">Operator</label>
+                                <input type="text" id="candidate-packet-operator-input" value="Michael Hoch" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 12px;">
+                            </div>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 11px; color: var(--text-secondary);">Reason</label>
+                                <input type="text" id="candidate-packet-reason-input" value="Create candidate packet after Phase 8 governance cockpit" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 12px;">
+                            </div>
+                            
+                            <div>
+                                <button class="btn btn-sm btn-primary" id="candidate-packet-create-button" style="width: 100%;">Create Candidate Packet</button>
+                            </div>
+                            
+                            <div style="font-size: 11px; color: var(--accent-yellow); margin-top: 8px; line-height: 1.4; display: flex; flex-direction: column; gap: 4px;">
+                                <span>⚠️ <strong>No Tags Are Created Automatically</strong></span>
+                                <span>🔒 <strong>Formal Release Still Requires Signing and Tag Alignment</strong></span>
+                            </div>
+                        </div>
+                        
+                        <!-- Status & Results -->
+                        <div style="display: flex; flex-direction: column; gap: 12px; border-left: 1px solid var(--border-glass); padding-left: 20px;">
+                            <h4 style="font-size: 12px; color: #fff; font-weight: 600; margin: 0;">Candidate Packet Status</h4>
+                            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px;">
+                                <div><strong>Status:</strong> <span id="candidate-packet-status" style="color: var(--text-secondary); font-weight: 600;">None</span></div>
+                                <div><strong>Packet ID:</strong> <span id="candidate-packet-id" style="font-family: monospace; color: var(--accent-teal);">None</span></div>
+                                <div><strong>Packet Path:</strong> <span id="candidate-packet-path" style="font-family: monospace; color: var(--accent-blue);">None</span></div>
+                                <div><strong>Formal Release Ready:</strong> <span id="candidate-packet-formal-ready" style="font-weight: 600;">None</span></div>
+                            </div>
+                            
+                            <div>
+                                <strong style="font-size: 11px; color: #ef4444; display: block; margin-bottom: 4px;">Formal Release Blockers:</strong>
+                                <ul id="candidate-packet-blockers" style="list-style: none; padding: 0; margin: 0; font-size: 11px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 4px;">
+                                    <!-- Blockers list -->
+                                </ul>
+                            </div>
+                            
+                            <div>
+                                <strong style="font-size: 11px; color: #fff; display: block; margin-bottom: 4px;">Included Evidence Artifacts:</strong>
+                                <ul id="candidate-packet-artifact-list" style="list-style: none; padding: 0; margin: 0; font-size: 11px; color: var(--text-secondary); max-height: 120px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px;">
+                                    <!-- Artifacts list -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Packet History -->
+                    <div style="margin-top: 20px; border-top: 1px solid var(--border-glass); padding-top: 16px;">
+                        <h4 style="font-size: 12px; color: #fff; font-weight: 600; margin-bottom: 10px; margin-top: 0;">Candidate Packet History</h4>
+                        <div class="table-container" style="max-height: 180px; overflow-y: auto;">
+                            <table class="deployments-table" style="font-size: 11px;">
+                                <thead>
+                                    <tr>
+                                        <th>Packet ID</th>
+                                        <th>Version</th>
+                                        <th>Channel</th>
+                                        <th>Operator</th>
+                                        <th>Status</th>
+                                        <th>Formal Ready</th>
+                                        <th>Created At</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="candidate-packet-history-list">
+                                    <!-- History list -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
             </div>
 
             <!-- Red-Team Chaos View -->

@@ -322,6 +322,7 @@ async function initDashboard() {
         initializeHochSwarmAnimationRuntime();
         bindTopologyAgentOverlay();
         if (window.initializeCybersecurityFactory) window.initializeCybersecurityFactory();
+        initCandidateReleasePacketBuilder();
         initRunsDashboard();
     } catch (err) {
         console.error("Error initializing dashboard: ", err);
@@ -7553,6 +7554,11 @@ async function fetchAndRenderGovernanceSummary() {
             }
         }
         
+        // Render candidate packets list as well
+        if (typeof fetchAndRenderCandidatePackets === "function") {
+            fetchAndRenderCandidatePackets();
+        }
+
         // Trigger lucide icons rendering
         if (typeof lucide !== "undefined" && typeof lucide.createIcons === "function") {
             lucide.createIcons();
@@ -7598,3 +7604,162 @@ window.fetchAndRenderGovernanceSummary = fetchAndRenderGovernanceSummary;
 window.submitGovernanceApproval = submitGovernanceApproval;
 window.handleGovernanceAction = handleGovernanceAction;
 window.submitChannelDecisionRequest = submitChannelDecisionRequest;
+
+function initCandidateReleasePacketBuilder() {
+    const createBtn = document.getElementById("candidate-packet-create-button");
+    if (createBtn) {
+        createBtn.addEventListener("click", submitCandidatePacketRequest);
+    }
+    fetchAndRenderCandidatePackets();
+}
+
+async function fetchAndRenderCandidatePackets() {
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/candidate-packets`);
+        if (!res.ok) return;
+        const packets = await res.json();
+        
+        const historyTbody = document.getElementById("candidate-packet-history-list");
+        if (historyTbody) {
+            historyTbody.innerHTML = "";
+            if (packets.length === 0) {
+                historyTbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-secondary); padding: 12px;">No candidate release packets generated.</td></tr>`;
+            } else {
+                packets.forEach(packet => {
+                    const row = document.createElement("tr");
+                    const readyClass = packet.formal_release_ready ? "text-success" : "text-danger";
+                    const statusClass = packet.packet_status === "candidate_ready" ? "text-success" : (packet.packet_status === "candidate_warn" ? "text-warning" : "text-danger");
+                    
+                    row.innerHTML = `
+                        <td style="font-family:monospace; color:var(--accent-blue);">${packet.candidate_packet_id}</td>
+                        <td><strong>${packet.candidate_version}</strong></td>
+                        <td><span class="badge badge-sm" style="font-size:10px;">${packet.candidate_channel}</span></td>
+                        <td>${packet.created_by_operator}</td>
+                        <td><span class="${statusClass} font-semibold">${packet.packet_status.toUpperCase()}</span></td>
+                        <td><span class="${readyClass} font-semibold">${packet.formal_release_ready ? "YES" : "NO"}</span></td>
+                        <td style="color:var(--text-secondary);">${packet.created_at}</td>
+                    `;
+                    historyTbody.appendChild(row);
+                });
+            }
+        }
+    } catch (err) {
+        console.error("Error listing candidate packets:", err);
+    }
+}
+
+async function submitCandidatePacketRequest() {
+    const versionInput = document.getElementById("candidate-packet-version-input");
+    const operatorInput = document.getElementById("candidate-packet-operator-input");
+    const reasonInput = document.getElementById("candidate-packet-reason-input");
+    const channelSelect = document.getElementById("candidate-packet-channel-select");
+    
+    if (!versionInput || !operatorInput || !reasonInput || !channelSelect) return;
+    
+    const version = versionInput.value.trim();
+    const operator = operatorInput.value.trim();
+    const reason = reasonInput.value.trim();
+    const channel = channelSelect.value;
+    
+    if (!version) {
+        alert("Candidate Version is required");
+        return;
+    }
+    
+    const createBtn = document.getElementById("candidate-packet-create-button");
+    if (createBtn) {
+        createBtn.disabled = true;
+        createBtn.textContent = "Generating...";
+    }
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/candidate-packets`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                operator: operator || "Michael Hoch",
+                reason: reason || "Create candidate packet",
+                candidate_channel: channel,
+                candidate_version: version
+            })
+        });
+        
+        if (res.ok) {
+            const data = await res.json();
+            const packet = data.packet;
+            
+            // Render results
+            const statusEl = document.getElementById("candidate-packet-status");
+            const idEl = document.getElementById("candidate-packet-id");
+            const pathEl = document.getElementById("candidate-packet-path");
+            const readyEl = document.getElementById("candidate-packet-formal-ready");
+            
+            if (statusEl) {
+                statusEl.textContent = packet.packet_status.toUpperCase();
+                const statusClass = packet.packet_status === "candidate_ready" ? "var(--accent-teal)" : (packet.packet_status === "candidate_warn" ? "var(--accent-yellow)" : "#ef4444");
+                statusEl.style.color = statusClass;
+            }
+            if (idEl) idEl.textContent = packet.candidate_packet_id;
+            if (pathEl) pathEl.textContent = packet.packet_path;
+            
+            if (readyEl) {
+                readyEl.textContent = packet.formal_release_ready ? "YES" : "NO";
+                readyEl.style.color = packet.formal_release_ready ? "var(--accent-teal)" : "#ef4444";
+            }
+            
+            // Blocker list
+            const blockersEl = document.getElementById("candidate-packet-blockers");
+            if (blockersEl) {
+                blockersEl.innerHTML = "";
+                if (packet.formal_release_blockers.length === 0) {
+                    blockersEl.innerHTML = `<li style="color: var(--accent-teal);">✓ No formal release blockers.</li>`;
+                } else {
+                    packet.formal_release_blockers.forEach(blocker => {
+                        const li = document.createElement("li");
+                        li.style.color = "#ef4444";
+                        li.textContent = `• ${blocker}`;
+                        blockersEl.appendChild(li);
+                    });
+                }
+            }
+            
+            // Artifacts list
+            const artEl = document.getElementById("candidate-packet-artifact-list");
+            if (artEl) {
+                artEl.innerHTML = "";
+                if (packet.included_artifacts.length === 0) {
+                    artEl.innerHTML = `<li>No artifacts included.</li>`;
+                } else {
+                    packet.included_artifacts.forEach(path => {
+                        const li = document.createElement("li");
+                        li.textContent = path.split("/").pop();
+                        artEl.appendChild(li);
+                    });
+                }
+            }
+            
+            // Show warnings if not ready
+            if (!packet.formal_release_ready) {
+                alert("Candidate Release Packet generated successfully, but FORMAL RELEASE is STILL BLOCKED. Formal release requires signing policy and tag alignment gates to pass.");
+            } else {
+                alert("Candidate Release Packet generated successfully and is ready for formal release!");
+            }
+            
+            fetchAndRenderCandidatePackets();
+        } else {
+            const data = await res.json();
+            alert("Failed to create candidate packet: " + (data.detail || "Unknown error"));
+        }
+    } catch (err) {
+        alert("Error creating candidate packet: " + err.message);
+    } finally {
+        if (createBtn) {
+            createBtn.disabled = false;
+            createBtn.textContent = "Create Candidate Packet";
+        }
+    }
+}
+
+window.initCandidateReleasePacketBuilder = initCandidateReleasePacketBuilder;
+window.fetchAndRenderCandidatePackets = fetchAndRenderCandidatePackets;
+window.submitCandidatePacketRequest = submitCandidatePacketRequest;

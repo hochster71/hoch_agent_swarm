@@ -220,6 +220,35 @@ def init_execution_store_tables() -> None:
                 conn.execute(f"ALTER TABLE swarm_artifacts ADD COLUMN {col} {col_type}")
             except Exception:
                 pass
+
+        # Create candidate_release_packets table
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS candidate_release_packets (
+                candidate_packet_id TEXT PRIMARY KEY,
+                candidate_version TEXT NOT NULL,
+                candidate_channel TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                created_by_operator TEXT NOT NULL,
+                reason TEXT NOT NULL,
+                head_sha TEXT NOT NULL,
+                branch TEXT NOT NULL,
+                working_tree_clean INTEGER NOT NULL,
+                qa_status TEXT NOT NULL,
+                signing_policy_status TEXT NOT NULL,
+                release_channel_policy_status TEXT NOT NULL,
+                tag_status TEXT NOT NULL,
+                formal_release_blockers_json TEXT NOT NULL,
+                packet_status TEXT NOT NULL,
+                packet_path TEXT NOT NULL,
+                packet_manifest_path TEXT NOT NULL,
+                included_artifacts_json TEXT NOT NULL,
+                missing_artifacts_json TEXT NOT NULL,
+                operator_decision_id TEXT,
+                formal_release_ready INTEGER NOT NULL
+            )
+            """
+        )
         conn.commit()
     finally:
         conn.close()
@@ -794,7 +823,121 @@ def get_agent_capability_manifest(agent_id: str) -> dict | None:
     finally:
         conn.close()
 
-# End of runtime_execution_store.py - Phase 6 Release Signing Policy Gate support active.
+def persist_candidate_release_packet(packet: dict) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO candidate_release_packets (
+                candidate_packet_id, candidate_version, candidate_channel, created_at,
+                created_by_operator, reason, head_sha, branch, working_tree_clean,
+                qa_status, signing_policy_status, release_channel_policy_status, tag_status,
+                formal_release_blockers_json, packet_status, packet_path, packet_manifest_path,
+                included_artifacts_json, missing_artifacts_json, operator_decision_id, formal_release_ready
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                packet["candidate_packet_id"],
+                packet["candidate_version"],
+                packet["candidate_channel"],
+                packet["created_at"],
+                packet["created_by_operator"],
+                packet["reason"],
+                packet["head_sha"],
+                packet["branch"],
+                1 if packet["working_tree_clean"] else 0,
+                packet["qa_status"],
+                packet["signing_policy_status"],
+                packet["release_channel_policy_status"],
+                packet["tag_status"],
+                json.dumps(packet["formal_release_blockers"]),
+                packet["packet_status"],
+                packet["packet_path"],
+                packet["packet_manifest_path"],
+                json.dumps(packet["included_artifacts"]),
+                json.dumps(packet["missing_artifacts"]),
+                packet.get("operator_decision_id"),
+                1 if packet["formal_release_ready"] else 0
+            )
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+def list_candidate_release_packets() -> list[dict]:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        rows = conn.execute("SELECT * FROM candidate_release_packets ORDER BY created_at DESC").fetchall()
+        packets = []
+        for r in rows:
+            d = dict(r)
+            packets.append({
+                "candidate_packet_id": d["candidate_packet_id"],
+                "candidate_version": d["candidate_version"],
+                "candidate_channel": d["candidate_channel"],
+                "created_at": d["created_at"],
+                "created_by_operator": d["created_by_operator"],
+                "reason": d["reason"],
+                "head_sha": d["head_sha"],
+                "branch": d["branch"],
+                "working_tree_clean": bool(d["working_tree_clean"]),
+                "qa_status": d["qa_status"],
+                "signing_policy_status": d["signing_policy_status"],
+                "release_channel_policy_status": d["release_channel_policy_status"],
+                "tag_status": d["tag_status"],
+                "formal_release_blockers": json.loads(d["formal_release_blockers_json"]),
+                "packet_status": d["packet_status"],
+                "packet_path": d["packet_path"],
+                "packet_manifest_path": d["packet_manifest_path"],
+                "included_artifacts": json.loads(d["included_artifacts_json"]),
+                "missing_artifacts": json.loads(d["missing_artifacts_json"]),
+                "operator_decision_id": d["operator_decision_id"],
+                "formal_release_ready": bool(d["formal_release_ready"])
+            })
+        return packets
+    finally:
+        conn.close()
+
+def get_candidate_release_packet(packet_id: str) -> dict | None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        row = conn.execute("SELECT * FROM candidate_release_packets WHERE candidate_packet_id = ?", (packet_id,)).fetchone()
+        if row:
+            d = dict(row)
+            return {
+                "candidate_packet_id": d["candidate_packet_id"],
+                "candidate_version": d["candidate_version"],
+                "candidate_channel": d["candidate_channel"],
+                "created_at": d["created_at"],
+                "created_by_operator": d["created_by_operator"],
+                "reason": d["reason"],
+                "head_sha": d["head_sha"],
+                "branch": d["branch"],
+                "working_tree_clean": bool(d["working_tree_clean"]),
+                "qa_status": d["qa_status"],
+                "signing_policy_status": d["signing_policy_status"],
+                "release_channel_policy_status": d["release_channel_policy_status"],
+                "tag_status": d["tag_status"],
+                "formal_release_blockers": json.loads(d["formal_release_blockers_json"]),
+                "packet_status": d["packet_status"],
+                "packet_path": d["packet_path"],
+                "packet_manifest_path": d["packet_manifest_path"],
+                "included_artifacts": json.loads(d["included_artifacts_json"]),
+                "missing_artifacts": json.loads(d["missing_artifacts_json"]),
+                "operator_decision_id": d["operator_decision_id"],
+                "formal_release_ready": bool(d["formal_release_ready"])
+            }
+        return None
+    finally:
+        conn.close()
+
+# End of runtime_execution_store.py - Phase 9 Candidate Release Packet Builder active.
 
 
 

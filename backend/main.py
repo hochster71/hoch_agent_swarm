@@ -45,7 +45,10 @@ from backend.runtime_execution_store import (
     persist_incident,
     update_incident_state,
     persist_agent_capability_manifest,
-    get_agent_capability_manifest
+    get_agent_capability_manifest,
+    persist_candidate_release_packet,
+    list_candidate_release_packets,
+    get_candidate_release_packet
 )
 from backend.hochster_runtime_audit import (
     generate_runtime_execution_audit,
@@ -1339,6 +1342,171 @@ def get_governance_summary():
         "signing_waiver": active_signing_waiver,
         "tag_alignment_status": tag_status,
         "test_bypass_hardening": "ACTIVE" if TEST_MODE else "INACTIVE"
+    }
+
+class CandidatePacketRequest(BaseModel):
+    operator: str
+    reason: str
+    candidate_channel: str
+    candidate_version: str
+
+@app.get("/api/v1/release/candidate-packets")
+def get_candidate_packets_list():
+    return list_candidate_release_packets()
+
+@app.get("/api/v1/release/candidate-packets/{candidate_packet_id}")
+def get_candidate_packet(candidate_packet_id: str):
+    import os
+    import json
+    manifest_path = f"dist/candidates/{candidate_packet_id}/candidate_packet_manifest.json"
+    if os.path.exists(manifest_path):
+        with open(manifest_path, "r") as f:
+            try:
+                return json.load(f)
+            except Exception:
+                pass
+    db_packet = get_candidate_release_packet(candidate_packet_id)
+    if db_packet:
+        return db_packet
+    raise HTTPException(status_code=404, detail="Candidate packet not found")
+
+@app.post("/api/v1/release/candidate-packets")
+def create_candidate_packet(req: CandidatePacketRequest):
+    import uuid
+    import time
+    import glob
+    import os
+    import json
+    
+    if not req.candidate_version:
+        raise HTTPException(status_code=400, detail="Candidate version is required")
+    
+    # gather git info
+    head_sha = run_git_command(["rev-parse", "HEAD"]).strip()
+    branch = run_git_command(["rev-parse", "--abbrev-ref", "HEAD"]).strip()
+    if not branch or "fatal" in branch:
+        branch = "detached"
+    status_out = run_git_command(["status", "--porcelain"])
+    working_tree_clean = not status_out.strip()
+    
+    # compute governance details
+    gov = get_governance_summary()
+    
+    # generate ID
+    candidate_packet_id = f"packet-{int(time.time())}-{uuid.uuid4().hex[:8]}"
+    
+    packet_path = f"dist/candidates/{candidate_packet_id}"
+    packet_manifest_path = f"{packet_path}/candidate_packet_manifest.json"
+    
+    # expected artifacts
+    version = req.candidate_version
+    release_dir = f"dist/releases/{version}"
+    expected = [
+        f"dist/baseline_evidence_pack.json",
+        f"{release_dir}/release_manifest.json",
+        f"{release_dir}/provenance.intoto.jsonl",
+        f"{release_dir}/sbom.spdx.json",
+        f"{release_dir}/runtime_execution_audit.json",
+        f"{release_dir}/tool_call_trace_summary.json",
+        f"{release_dir}/redaction_report.json",
+        f"{release_dir}/approval_gate_report.json"
+    ]
+    qa_files = glob.glob("artifacts/qa/*.json") + glob.glob("artifacts/qa/pages/*.png") + glob.glob("artifacts/qa/*.png")
+    
+    included = []
+    missing = []
+    for p in expected:
+        if os.path.exists(p):
+            included.append(p)
+        else:
+            missing.append(p)
+    for qp in qa_files:
+        if os.path.exists(qp):
+            included.append(qp)
+            
+    qa_status = "PASS" if "qa_not_passed" not in gov["formal_release_blockers"] else "WARN"
+    
+    # status determination
+    if len(gov["formal_release_blockers"]) == 0:
+        packet_status = "candidate_ready"
+    elif req.candidate_channel == "local_dev":
+        packet_status = "candidate_warn"
+    else:
+        packet_status = "candidate_blocked"
+        
+    latest_decision_id = None
+    for g in gov.get("decision_ledger", []):
+        latest_decision_id = g.get("decision_id")
+        break
+        
+    packet = {
+        "candidate_packet_id": candidate_packet_id,
+        "candidate_version": req.candidate_version,
+        "candidate_channel": req.candidate_channel,
+        "created_at": now_iso(),
+        "created_by_operator": req.operator,
+        "reason": req.reason,
+        "head_sha": head_sha,
+        "branch": branch,
+        "working_tree_clean": working_tree_clean,
+        "qa_status": qa_status,
+        "signing_policy_status": "PASS" if "signing_policy_not_passed" not in gov["formal_release_blockers"] else "BLOCK",
+        "release_channel_policy_status": "PASS" if "operator_approval_missing" not in gov["formal_release_blockers"] else "BLOCK",
+        "tag_status": gov["tag_alignment_status"],
+        "formal_release_blockers": gov["formal_release_blockers"],
+        "packet_status": packet_status,
+        "packet_path": packet_path,
+        "packet_manifest_path": packet_manifest_path,
+        "included_artifacts": included,
+        "missing_artifacts": missing,
+        "operator_decision_id": latest_decision_id,
+        "formal_release_ready": len(gov["formal_release_blockers"]) == 0
+    }
+    
+    # create dir and save to DB
+    os.makedirs(packet_path, exist_ok=True)
+    persist_candidate_release_packet(packet)
+    
+    # call typescript generator
+    cmd = [
+        "npx", "tsx", "scripts/supply-chain/generate-candidate-release-packet.ts",
+        "--packet-id", candidate_packet_id,
+        "--version", req.candidate_version,
+        "--operator", req.operator,
+        "--reason", req.reason,
+        "--channel", req.candidate_channel
+    ]
+    try:
+        subprocess.run(cmd, check=True, capture_output=True, text=True)
+    except Exception as e:
+        print(f"Error calling generate-candidate-release-packet.ts: {e}")
+        # write fallback manifest file
+        fallback_manifest = {
+            "candidate_packet_id": candidate_packet_id,
+            "candidate_version": req.candidate_version,
+            "candidate_channel": req.candidate_channel,
+            "created_at": packet["created_at"],
+            "head_sha": head_sha,
+            "branch": branch,
+            "packet_status": packet_status,
+            "formal_release_ready": packet["formal_release_ready"],
+            "formal_release_blockers": packet["formal_release_blockers"],
+            "included_artifacts": included,
+            "missing_artifacts": missing,
+            "signing_policy": packet["signing_policy_status"],
+            "release_channel_governance": packet["release_channel_policy_status"],
+            "governance_summary": gov,
+            "qa_summary": {"status": qa_status},
+            "evidence_paths": included,
+            "operator": req.operator,
+            "reason": req.reason
+        }
+        with open(packet_manifest_path, "w") as f:
+            json.dump(fallback_manifest, f, indent=2)
+            
+    return {
+        "packet": packet,
+        "blockers": gov["formal_release_blockers"]
     }
 
 manager = ConnectionManager()
