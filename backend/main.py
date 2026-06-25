@@ -43,7 +43,9 @@ from backend.runtime_execution_store import (
     list_incidents,
     update_incident_status,
     persist_incident,
-    update_incident_state
+    update_incident_state,
+    persist_agent_capability_manifest,
+    get_agent_capability_manifest
 )
 from backend.hochster_runtime_audit import (
     generate_runtime_execution_audit,
@@ -315,7 +317,7 @@ def get_swarm_runs():
     return list_swarm_runs()
 
 @app.post("/api/v1/runs")
-def create_swarm_run(payload: dict):
+async def create_swarm_run(payload: dict):
     run_id = f"run-{uuid.uuid4().hex[:8]}"
     name = payload.get("name", f"Swarm Run {datetime.now().strftime('%Y-%m-%d %H:%M')}")
     persist_swarm_run(run_id, name, "running")
@@ -350,6 +352,16 @@ def create_swarm_run(payload: dict):
         t["run_id"] = run_id
         t["status"] = "pending"
         persist_swarm_task(t)
+
+    # Broadcast run.created event
+    await manager.broadcast({
+        "type": "run.created",
+        "data": {
+            "run_id": run_id,
+            "name": name,
+            "status": "running"
+        }
+    })
 
     # Return details
     return {
@@ -916,8 +928,154 @@ async def startup_event():
             ]
             for a in default_agents:
                 persist_swarm_agent(a)
+            
+            # Seed default capability manifests
+            default_manifests = [
+                {
+                    "agent_id": "boss-noodle",
+                    "allowed_tools": ["goal decomposition", "routing", "priority ranking", "handoff control"],
+                    "denied_tools": ["run_command"],
+                    "file_scopes": ["/"],
+                    "network_scopes": [],
+                    "approval_threshold": "medium",
+                    "risk_class": "L4",
+                    "audit_sink": "sqlite://swarm_ledger.db"
+                },
+                {
+                    "agent_id": "dr-signal",
+                    "allowed_tools": ["youtube research", "source triage", "pattern extraction", "context mapping"],
+                    "denied_tools": ["run_command"],
+                    "file_scopes": ["/docs"],
+                    "network_scopes": ["youtube.com", "google.com"],
+                    "approval_threshold": "low",
+                    "risk_class": "L4",
+                    "audit_sink": "sqlite://swarm_ledger.db"
+                },
+                {
+                    "agent_id": "prof-blueprint",
+                    "allowed_tools": ["system design", "dependency mapping", "failure-mode planning"],
+                    "denied_tools": ["run_command"],
+                    "file_scopes": ["/docs"],
+                    "network_scopes": [],
+                    "approval_threshold": "medium",
+                    "risk_class": "L4",
+                    "audit_sink": "sqlite://swarm_ledger.db"
+                },
+                {
+                    "agent_id": "eng-patch",
+                    "allowed_tools": ["run_command", "view_file", "write_file"],
+                    "denied_tools": ["rm", "sudo"],
+                    "file_scopes": ["/frontend", "/backend"],
+                    "network_scopes": [],
+                    "approval_threshold": "high",
+                    "risk_class": "L3",
+                    "audit_sink": "sqlite://swarm_ledger.db"
+                },
+                {
+                    "agent_id": "ms-checkmark",
+                    "allowed_tools": ["run_command", "view_file"],
+                    "denied_tools": ["write_file"],
+                    "file_scopes": ["/tests"],
+                    "network_scopes": [],
+                    "approval_threshold": "medium",
+                    "risk_class": "L4",
+                    "audit_sink": "sqlite://swarm_ledger.db"
+                },
+                {
+                    "agent_id": "capt-guardrail",
+                    "allowed_tools": ["command risk", "secrets checks", "dependency risk", "policy gates"],
+                    "denied_tools": ["run_command"],
+                    "file_scopes": ["/"],
+                    "network_scopes": [],
+                    "approval_threshold": "low",
+                    "risk_class": "L4",
+                    "audit_sink": "sqlite://swarm_ledger.db"
+                },
+                {
+                    "agent_id": "gordon-vector",
+                    "allowed_tools": ["docker logs", "docker inspect", "health checks", "compose diagnosis"],
+                    "denied_tools": ["docker run", "docker rm"],
+                    "file_scopes": ["/docker-compose.yml"],
+                    "network_scopes": [],
+                    "approval_threshold": "high",
+                    "risk_class": "L3",
+                    "audit_sink": "sqlite://swarm_ledger.db"
+                },
+                {
+                    "agent_id": "prof-ledger",
+                    "allowed_tools": ["trace IDs", "evidence packs", "provenance", "release records"],
+                    "denied_tools": ["run_command"],
+                    "file_scopes": ["/dist"],
+                    "network_scopes": [],
+                    "approval_threshold": "low",
+                    "risk_class": "L4",
+                    "audit_sink": "sqlite://swarm_ledger.db"
+                },
+                {
+                    "agent_id": "eng-rocket",
+                    "allowed_tools": ["release readiness", "SBOM", "provenance", "final gate decision"],
+                    "denied_tools": ["run_command"],
+                    "file_scopes": ["/dist"],
+                    "network_scopes": [],
+                    "approval_threshold": "critical",
+                    "risk_class": "L1/L2",
+                    "audit_sink": "sqlite://swarm_ledger.db"
+                },
+                {
+                    "agent_id": "repo-recon-agent",
+                    "allowed_tools": ["codebase inspection", "dependency checks", "security scan"],
+                    "denied_tools": ["write_file"],
+                    "file_scopes": ["/"],
+                    "network_scopes": [],
+                    "approval_threshold": "low",
+                    "risk_class": "L4",
+                    "audit_sink": "sqlite://swarm_ledger.db"
+                },
+                {
+                    "agent_id": "product-strategy-agent",
+                    "allowed_tools": ["jobs-to-be-done", "kano model", "product spec"],
+                    "denied_tools": ["run_command"],
+                    "file_scopes": ["/docs"],
+                    "network_scopes": [],
+                    "approval_threshold": "low",
+                    "risk_class": "L4",
+                    "audit_sink": "sqlite://swarm_ledger.db"
+                },
+                {
+                    "agent_id": "agent-runtime-engineer",
+                    "allowed_tools": ["task dag", "loop executor", "concurrency control"],
+                    "denied_tools": ["run_command"],
+                    "file_scopes": ["/backend"],
+                    "network_scopes": [],
+                    "approval_threshold": "high",
+                    "risk_class": "L3",
+                    "audit_sink": "sqlite://swarm_ledger.db"
+                },
+                {
+                    "agent_id": "frontend-swarm-ui-agent",
+                    "allowed_tools": ["css micro-animations", "canvas rendering", "holographic tilt"],
+                    "denied_tools": ["run_command"],
+                    "file_scopes": ["/frontend"],
+                    "network_scopes": [],
+                    "approval_threshold": "low",
+                    "risk_class": "L4",
+                    "audit_sink": "sqlite://swarm_ledger.db"
+                },
+                {
+                    "agent_id": "backend-platform-agent",
+                    "allowed_tools": ["fastapi router", "sqlite wal", "websockets broker"],
+                    "denied_tools": ["run_command"],
+                    "file_scopes": ["/backend"],
+                    "network_scopes": [],
+                    "approval_threshold": "high",
+                    "risk_class": "L3",
+                    "audit_sink": "sqlite://swarm_ledger.db"
+                }
+            ]
+            for m in default_manifests:
+                persist_agent_capability_manifest(m)
     except Exception as e:
-        logger.error(f"Failed to seed swarm agents: {e}")
+        logger.error(f"Failed to seed swarm agents/manifests: {e}")
 
     # Start continuous readiness daemon
     daemon = ReadinessDaemon(interval_seconds=30)
@@ -1136,9 +1294,32 @@ async def api_submit_decision(approval_id: str, decision: dict):
     gates = list_approval_gates()
     gate = next((g for g in gates if g["approval_id"] == approval_id), None)
     if gate:
+        if gate["status"] in ["approved", "rejected", "changes_requested"]:
+            raise HTTPException(status_code=400, detail="Replay blocked: approval gate has already been decided")
+            
         dec_type = decision.get("decision")
         status_map = {"approve": "approved", "reject": "rejected", "request_changes": "changes_requested"}
         new_status = status_map.get(dec_type, "pending")
+        
+        req_id = gate["request_id"]
+        if ":" in req_id:
+            parts = req_id.split(":", 1)
+            run_id, task_id = parts[0], parts[1]
+        else:
+            run_id, task_id = None, req_id
+            
+        enriched_decision = {
+            "decision_id": f"dec-{uuid.uuid4().hex[:8]}",
+            "request_id": gate["request_id"],
+            "run_id": run_id,
+            "task_id": task_id,
+            "operator": decision.get("operator", "Operator"),
+            "decision": new_status,
+            "decision_time": now_iso(),
+            "nonce": uuid.uuid4().hex,
+            "prior_state": gate["status"],
+            "next_state": new_status
+        }
         
         persist_approval_gate(
             approval_id=approval_id,
@@ -1149,17 +1330,21 @@ async def api_submit_decision(approval_id: str, decision: dict):
             risk_level=gate["risk_level"],
             status=new_status,
             requested_by=gate["requested_by"],
-            decisions=gate["decisions"] + [decision]
+            decisions=gate["decisions"] + [enriched_decision]
         )
+        
+        await manager.broadcast({
+            "type": "approval.granted" if new_status == "approved" else "approval.rejected",
+            "data": {
+                "approval_id": approval_id,
+                "run_id": run_id,
+                "task_id": task_id,
+                "decision": enriched_decision
+            }
+        })
         
         if new_status == "approved":
             # Resume blocked tasks
-            req_id = gate["request_id"]
-            if ":" in req_id:
-                parts = req_id.split(":", 1)
-                run_id, task_id = parts[0], parts[1]
-            else:
-                run_id, task_id = None, req_id
             all_tasks = list_swarm_tasks(run_id)
             matching_task = next((t for t in all_tasks if t["id"] == task_id and t["status"] == "blocked_pending_approval"), None)
             if matching_task:
@@ -1169,8 +1354,30 @@ async def api_submit_decision(approval_id: str, decision: dict):
     with _approvals_lock:
         for r in _approvals:
             if r["approval_id"] == approval_id:
-                r["decisions"].insert(0, decision)
+                if r["status"] in ["approved", "rejected", "changes_requested"]:
+                    raise HTTPException(status_code=400, detail="Replay blocked: approval gate has already been decided")
+                
                 dec_type = decision.get("decision")
+                req_id = gate["request_id"] if gate else r.get("command", {}).get("command_id", "")
+                if ":" in req_id:
+                    parts = req_id.split(":", 1)
+                    run_id, task_id = parts[0], parts[1]
+                else:
+                    run_id, task_id = None, req_id
+                
+                enriched_decision = {
+                    "decision_id": f"dec-{uuid.uuid4().hex[:8]}",
+                    "request_id": req_id,
+                    "run_id": run_id,
+                    "task_id": task_id,
+                    "operator": decision.get("operator", "Operator"),
+                    "decision": dec_type,
+                    "decision_time": now_iso(),
+                    "nonce": uuid.uuid4().hex,
+                    "prior_state": r["status"],
+                    "next_state": "approved" if dec_type == "approve" else ("rejected" if dec_type == "reject" else "changes_requested")
+                }
+                r["decisions"].insert(0, enriched_decision)
                 if dec_type == "approve":
                     r["status"] = "approved"
                 elif dec_type == "reject":
@@ -1197,31 +1404,80 @@ async def run_task_simulated(run_id: str, task: dict):
     
     # Persist artifact if it produces one
     if task["id"] == "T2-SPEC":
-        persist_swarm_artifact({
+        art = {
             "id": f"art-prd-{uuid.uuid4().hex[:4]}",
             "name": "prd.md",
             "path": "/docs/mission/prd.md",
             "hash": "8169a0c04ab0942182225f7e4ce17eaf3064b694944e518c3339e4a1b901bae5",
             "task_id": task["id"],
             "run_id": run_id,
-            "status": "completed"
+            "status": "completed",
+            "created_by_agent_id": "product-strategy-agent",
+            "mime_type": "text/markdown",
+            "evidence_type": "release_artifact",
+            "retention_policy": "permanent",
+            "signature_status": "unsigned"
+        }
+        persist_swarm_artifact(art)
+        # Broadcast artifact created
+        await manager.broadcast({
+            "type": "artifact.created",
+            "data": {
+                "artifact_id": art["id"],
+                "run_id": run_id,
+                "task_id": task["id"],
+                "name": art["name"],
+                "created_by_agent_id": art["created_by_agent_id"]
+            }
         })
     elif task["id"] == "T3-ARCH-SCAFFOLD":
-        persist_swarm_artifact({
+        art = {
             "id": f"art-arch-{uuid.uuid4().hex[:4]}",
             "name": "architecture.md",
             "path": "/docs/mission/architecture.md",
             "hash": "a93efcaa6c215e7c64fa31c6750300d38e4f2594c8e1a752558134cebd812b9e",
             "task_id": task["id"],
             "run_id": run_id,
-            "status": "completed"
+            "status": "completed",
+            "created_by_agent_id": "system-architecture-agent",
+            "mime_type": "text/markdown",
+            "evidence_type": "release_artifact",
+            "retention_policy": "permanent",
+            "signature_status": "unsigned"
+        }
+        persist_swarm_artifact(art)
+        # Broadcast artifact created
+        await manager.broadcast({
+            "type": "artifact.created",
+            "data": {
+                "artifact_id": art["id"],
+                "run_id": run_id,
+                "task_id": task["id"],
+                "name": art["name"],
+                "created_by_agent_id": art["created_by_agent_id"]
+            }
         })
 
     # Broadcast state change
     await manager.broadcast({"type": "task_state_change", "data": {"task_id": task["id"], "run_id": run_id, "status": "completed"}})
     
-    # Trigger next tasks that depend on this one
+    # Check if run has completed (all tasks in the run are completed)
     all_tasks = list_swarm_tasks(run_id)
+    if all_tasks and all(t["status"] == "completed" for t in all_tasks):
+        runs = list_swarm_runs()
+        run_obj = next((r for r in runs if r["run_id"] == run_id), None)
+        run_name = run_obj["name"] if run_obj else f"Swarm Run {run_id}"
+        persist_swarm_run(run_id, run_name, "completed", completed_at=now_iso())
+        
+        await manager.broadcast({
+            "type": "run.completed",
+            "data": {
+                "run_id": run_id,
+                "status": "completed"
+            }
+        })
+    
+    # Trigger next tasks that depend on this one
     for t in all_tasks:
         if t["status"] == "pending" and task["id"] in t["dependencies"]:
             # Check if all other dependencies are met
@@ -1250,6 +1506,7 @@ async def execute_task_background(run_id: str, task_id: str):
             task["status"] = "blocked"
             persist_swarm_task(task)
             await manager.broadcast({"type": "task_state_change", "data": {"task_id": task_id, "run_id": run_id, "status": "blocked"}})
+            await manager.broadcast({"type": "task.blocked", "data": {"task_id": task_id, "run_id": run_id, "reason": "dependency"}})
             return
             
     # Check if approval is required
@@ -1302,12 +1559,17 @@ async def execute_task_background(run_id: str, task_id: str):
                     "approval_id": approval_id
                 }
             })
+            
+            # Broadcast delta events
+            await manager.broadcast({"type": "task.blocked", "data": {"task_id": task_id, "run_id": run_id, "reason": "approval"}})
+            await manager.broadcast({"type": "approval.requested", "data": {"approval_id": approval_id, "run_id": run_id, "task_id": task_id}})
             return
 
     # Proceed with execution
     task["status"] = "running"
     persist_swarm_task(task)
     await manager.broadcast({"type": "task_state_change", "data": {"task_id": task_id, "run_id": run_id, "status": "running"}})
+    await manager.broadcast({"type": "task.started", "data": {"task_id": task_id, "run_id": run_id}})
     
     # Simulate execution duration
     asyncio.create_task(run_task_simulated(run_id, task))

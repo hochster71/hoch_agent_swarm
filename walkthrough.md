@@ -61,7 +61,15 @@ We implemented the persistent execution engine and telemetry-driven frontend syn
   - `topology-agent-overlay.spec.ts`: PASS (verified with 0 browser console/runtime exceptions)
   - `cybersecurity-factory.spec.ts`: PASS
 
-### North Star & Autonomy Budget Audit (`npm run qa:runtime-full`)
-- Autonomy Safety Engine static red-team assertions: 20/20 PASS
-- Autonomy gating and budget throttling integration assertions: 5/5 PASS
 - Final Operational Readiness Score: **100/100 PASS**
+
+---
+
+## 5. Security Hardening & Telemetry Upgrades
+We fortified the runtime and auditing layer with:
+- **Agent Capability Manifests**: Integrated an authority manifest for each agent (specifying `allowed_tools`, `denied_tools`, `file_scopes`, etc.) that renders dynamically as trust badges when viewing dossiers.
+- **Approval Replay Protection**: Enriched the approval gate decisions with cryptographically linked nonces, state deltas, and request checking that blocks stale/duplicate decisions.
+- **Auditable Provenance Schema**: Expanded `swarm_artifacts` database properties with agent signature and retention statuses.
+- **WebSocket Telemetry Stream**: Implemented dynamic streaming of execution event deltas (`run.created`, `task.started`, `task.blocked`, etc.) to trigger live terminal logger updates.
+- **Full Chain E2E Verification**: Added a comprehensive Playwright suite that simulates run launching, assertions on DB rows, operator manual gate approval, and final campaign completion.
+

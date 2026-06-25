@@ -177,7 +177,27 @@ def init_execution_store_tables() -> None:
                 task_id TEXT,
                 run_id TEXT,
                 status TEXT NOT NULL,
-                created_at TEXT NOT NULL
+                created_at TEXT NOT NULL,
+                created_by_agent_id TEXT,
+                mime_type TEXT,
+                evidence_type TEXT,
+                retention_policy TEXT,
+                signature_status TEXT
+            )
+            """
+        )
+        # 11. Agent Capability Manifests
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS agent_capability_manifests (
+                agent_id TEXT PRIMARY KEY,
+                allowed_tools TEXT NOT NULL,
+                denied_tools TEXT NOT NULL,
+                file_scopes TEXT NOT NULL,
+                network_scopes TEXT NOT NULL,
+                approval_threshold TEXT NOT NULL,
+                risk_class TEXT NOT NULL,
+                audit_sink TEXT NOT NULL
             )
             """
         )
@@ -186,6 +206,18 @@ def init_execution_store_tables() -> None:
         for col, col_type in [("risk_level", "TEXT"), ("blast_radius_json", "TEXT"), ("state", "TEXT")]:
             try:
                 conn.execute(f"ALTER TABLE hochster_incidents ADD COLUMN {col} {col_type}")
+            except Exception:
+                pass
+        # Migrate/add columns for swarm_artifacts
+        for col, col_type in [
+            ("created_by_agent_id", "TEXT"),
+            ("mime_type", "TEXT"),
+            ("evidence_type", "TEXT"),
+            ("retention_policy", "TEXT"),
+            ("signature_status", "TEXT")
+        ]:
+            try:
+                conn.execute(f"ALTER TABLE swarm_artifacts ADD COLUMN {col} {col_type}")
             except Exception:
                 pass
         conn.commit()
@@ -573,6 +605,21 @@ def list_swarm_agents() -> list[dict]:
         output = []
         for r in rows:
             d = dict(r)
+            # Fetch capability manifest if it exists
+            cap_row = conn.execute("SELECT * FROM agent_capability_manifests WHERE agent_id = ?", (d["agent_id"],)).fetchone()
+            capability = None
+            if cap_row:
+                cd = dict(cap_row)
+                capability = {
+                    "agent_id": cd["agent_id"],
+                    "allowed_tools": json.loads(cd["allowed_tools"]),
+                    "denied_tools": json.loads(cd["denied_tools"]),
+                    "file_scopes": json.loads(cd["file_scopes"]),
+                    "network_scopes": json.loads(cd["network_scopes"]),
+                    "approval_threshold": cd["approval_threshold"],
+                    "risk_class": cd["risk_class"],
+                    "audit_sink": cd["audit_sink"]
+                }
             agent_dict = {
                 "id": d["agent_id"],
                 "displayName": d["display_name"],
@@ -585,7 +632,8 @@ def list_swarm_agents() -> list[dict]:
                 "catchphrase": d["catchphrase"],
                 "skills": json.loads(d["skills_json"]),
                 "stats": json.loads(d["stats_json"]),
-                "tier": d["tier"]
+                "tier": d["tier"],
+                "capability": capability
             }
             output.append(agent_dict)
         return output
@@ -660,9 +708,10 @@ def persist_swarm_artifact(artifact: dict) -> None:
         conn.execute(
             """
             INSERT OR REPLACE INTO swarm_artifacts (
-                artifact_id, name, path, hash, task_id, run_id, status, created_at
+                artifact_id, name, path, hash, task_id, run_id, status, created_at,
+                created_by_agent_id, mime_type, evidence_type, retention_policy, signature_status
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 artifact["id"],
@@ -672,7 +721,12 @@ def persist_swarm_artifact(artifact: dict) -> None:
                 artifact.get("task_id"),
                 artifact.get("run_id"),
                 artifact["status"],
-                artifact.get("created_at", now_iso())
+                artifact.get("created_at", now_iso()),
+                artifact.get("created_by_agent_id"),
+                artifact.get("mime_type"),
+                artifact.get("evidence_type"),
+                artifact.get("retention_policy"),
+                artifact.get("signature_status")
             )
         )
         conn.commit()
@@ -689,6 +743,54 @@ def list_swarm_artifacts(run_id: Optional[str] = None) -> list[dict]:
         else:
             rows = conn.execute("SELECT * FROM swarm_artifacts").fetchall()
         return [dict(r) for r in rows]
+    finally:
+        conn.close()
+
+def persist_agent_capability_manifest(manifest: dict) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO agent_capability_manifests (
+                agent_id, allowed_tools, denied_tools, file_scopes, network_scopes, approval_threshold, risk_class, audit_sink
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                manifest["agent_id"],
+                json.dumps(manifest["allowed_tools"]),
+                json.dumps(manifest["denied_tools"]),
+                json.dumps(manifest["file_scopes"]),
+                json.dumps(manifest["network_scopes"]),
+                manifest["approval_threshold"],
+                manifest["risk_class"],
+                manifest["audit_sink"]
+            )
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+def get_agent_capability_manifest(agent_id: str) -> dict | None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        row = conn.execute("SELECT * FROM agent_capability_manifests WHERE agent_id = ?", (agent_id,)).fetchone()
+        if row:
+            d = dict(row)
+            return {
+                "agent_id": d["agent_id"],
+                "allowed_tools": json.loads(d["allowed_tools"]),
+                "denied_tools": json.loads(d["denied_tools"]),
+                "file_scopes": json.loads(d["file_scopes"]),
+                "network_scopes": json.loads(d["network_scopes"]),
+                "approval_threshold": d["approval_threshold"],
+                "risk_class": d["risk_class"],
+                "audit_sink": d["audit_sink"]
+            }
+        return None
     finally:
         conn.close()
 

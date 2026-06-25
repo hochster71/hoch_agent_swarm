@@ -104,4 +104,114 @@ test.describe("Security Gate E2E Regression", () => {
     expect(finalPrdArtifact).toBeDefined();
     expect(finalPrdArtifact.status).toBe("completed");
   });
+
+  test("asserts the full chain with browser interaction and database state checks", async ({ page, request }) => {
+    // 1. Navigate to the dashboard
+    await page.goto("/", { waitUntil: "networkidle" });
+
+    // 2. Click "NEW RUN" button to launch a run
+    const newRunBtn = page.locator("#btn-create-run");
+    await expect(newRunBtn).toBeVisible();
+    await newRunBtn.click();
+
+    // Wait for run selector to have a value (meaning the run was created and selected)
+    const runSelector = page.locator("#run-selector");
+    await expect(runSelector).not.toHaveValue("");
+    const runId = await runSelector.inputValue();
+    expect(runId).toBeDefined();
+    expect(runId).not.toBeNull();
+
+    // Assert database state: backend creates run row in DB
+    const getRunResponse = await request.get(`/api/v1/runs`);
+    expect(getRunResponse.ok()).toBeTruthy();
+    const runs = await getRunResponse.json();
+    const dbRun = runs.find((r: any) => r.run_id === runId);
+    expect(dbRun).toBeDefined();
+    expect(dbRun.status).toBe("running");
+
+    // 3. Click "START EXECUTION" to start the run
+    const startBtn = page.locator("#btn-start-run");
+    await expect(startBtn).toBeVisible();
+    await startBtn.click();
+
+    // Assert database state: task row pending/running
+    let t0Status = "";
+    let maxPoll = 15;
+    while (maxPoll > 0) {
+      const tasksResp = await request.get(`/api/v1/runs/${runId}/tasks`);
+      if (tasksResp.ok()) {
+        const tasks = await tasksResp.json();
+        const t0 = tasks.find((t: any) => t.id === "T0-RECON");
+        if (t0 && (t0.status === "running" || t0.status === "completed")) {
+          t0Status = t0.status;
+          break;
+        }
+      }
+      await page.waitForTimeout(500);
+      maxPoll--;
+    }
+    expect(["running", "completed"]).toContain(t0Status);
+
+    // 4. Poll until approval gate row is created (T2-SPEC becomes blocked_pending_approval)
+    let approvalRequest: any = null;
+    maxPoll = 30;
+    while (maxPoll > 0) {
+      const tasksResp = await request.get(`/api/v1/runs/${runId}/tasks`);
+      if (tasksResp.ok()) {
+        const tasks = await tasksResp.json();
+        const t2 = tasks.find((t: any) => t.id === "T2-SPEC");
+        if (t2 && t2.status === "blocked_pending_approval") {
+          const approvalsResp = await request.get("/api/approval/requests");
+          if (approvalsResp.ok()) {
+            const approvals = await approvalsResp.json();
+            approvalRequest = approvals.find((a: any) => a.command?.command_id === `cmd-T2-SPEC` && a.target?.id === runId);
+            if (approvalRequest && approvalRequest.status === "pending") {
+              break;
+            }
+          }
+        }
+      }
+      await page.waitForTimeout(500);
+      maxPoll--;
+    }
+    expect(approvalRequest).toBeDefined();
+    expect(approvalRequest.status).toBe("pending");
+
+    // Verify that the UI displays the task as blocked in the task flow grid
+    // Verify that the Human Operator Approval Queue renders the request
+    const approvalItem = page.locator(`#approval-queue-list div:has-text("Approval Request")`);
+    await expect(approvalItem.first()).toBeVisible();
+
+    // 5. Operator approves all tasks that require approval via the UI
+    let runFinalStatus = "";
+    maxPoll = 60; // 60 seconds limit
+    while (maxPoll > 0) {
+      const runStatusText = await page.locator("#run-status-text").textContent();
+      if (runStatusText && runStatusText.toLowerCase().includes("completed")) {
+        runFinalStatus = runStatusText;
+        break;
+      }
+
+      // If there's an approval button visible in the queue, click it
+      const count = await approvalItem.count();
+      if (count > 0) {
+        const approveBtn = approvalItem.first().getByRole("button", { name: "APPROVE" });
+        if (await approveBtn.isVisible()) {
+          await approveBtn.click();
+        }
+      }
+
+      await page.waitForTimeout(1000);
+      maxPoll--;
+    }
+    expect(runFinalStatus.toLowerCase()).toContain("completed");
+
+    // Assert database state: artifact row created for T2-SPEC (prd.md)
+    const artifactsResp = await request.get(`/api/v1/runs/${runId}/artifacts`);
+    expect(artifactsResp.ok()).toBeTruthy();
+    const artifacts = await artifactsResp.json();
+    const prdArtifact = artifacts.find((a: any) => a.name === "prd.md");
+    expect(prdArtifact).toBeDefined();
+    expect(prdArtifact.status).toBe("completed");
+  });
 });

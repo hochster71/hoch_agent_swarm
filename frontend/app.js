@@ -343,6 +343,53 @@ async function pollMetrics() {
 let wsFailCount = 0;
 let wsFallbackToPolling = false;
 
+function handleRuntimeDeltaEvent(type, eventData) {
+    const termLog = typeof logToConsoleTerminal === "function" ? logToConsoleTerminal : (window.logToConsoleTerminal || console.log);
+    
+    if (type === "run.created") {
+        termLog("Orchestrator", `New execution campaign created: ${eventData.name} (${eventData.run_id})`, "info");
+        refreshRunsList().then(() => {
+            const selector = document.getElementById("run-selector");
+            if (selector) {
+                selector.value = eventData.run_id;
+                selectedRunId = eventData.run_id;
+                localStorage.setItem("selectedRunId", selectedRunId);
+                fetchRunTasks(eventData.run_id);
+            }
+        });
+    } else if (type === "task.started") {
+        termLog("Scheduler", `Task ${eventData.task_id} transitioned to RUNNING`, "info");
+        if (selectedRunId === eventData.run_id) {
+            fetchRunTasks(eventData.run_id);
+        }
+    } else if (type === "task.blocked") {
+        const reason = eventData.reason || "dependency";
+        termLog("Scheduler", `Task ${eventData.task_id} BLOCKED (Reason: ${reason})`, "warn");
+        if (selectedRunId === eventData.run_id) {
+            fetchRunTasks(eventData.run_id);
+            fetchApprovalRequests();
+        }
+    } else if (type === "approval.requested") {
+        termLog("Security", `Approval request generated for task ${eventData.task_id}`, "warn");
+        fetchApprovalRequests();
+    } else if (type === "approval.granted" || type === "approval.rejected") {
+        const status = type === "approval.granted" ? "APPROVED" : "REJECTED";
+        termLog("Security", `Operator decision submitted for approval: ${status}`, "success");
+        fetchApprovalRequests();
+        if (selectedRunId === eventData.run_id) {
+            fetchRunTasks(eventData.run_id);
+        }
+    } else if (type === "artifact.created") {
+        termLog("Audit", `New artifact generated: ${eventData.name}`, "success");
+    } else if (type === "run.completed") {
+        termLog("Orchestrator", `Execution campaign ${eventData.run_id} completed successfully!`, "success");
+        refreshRunsList();
+        if (selectedRunId === eventData.run_id) {
+            fetchRunTasks(eventData.run_id);
+        }
+    }
+}
+
 function setupWebsocket() {
     if (wsFallbackToPolling) return;
 
@@ -352,7 +399,11 @@ function setupWebsocket() {
 
     ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        updateUI(data);
+        if (data.type && (data.type.includes(".") || data.type.includes("_"))) {
+            handleRuntimeDeltaEvent(data.type, data.data);
+        } else {
+            updateUI(data);
+        }
         wsFailCount = 0; // Reset count on successful message
     };
 
@@ -4832,6 +4883,90 @@ function openTopologyAgentProfile(agentId, triggerEl) {
             span.style.animationDelay = `${idx * 100}ms`;
             skillsEl.appendChild(span);
         });
+    }
+
+    // Render capability manifest if present
+    const manifestContainer = document.getElementById("topology-agent-modal-manifest-container");
+    const allowedEl = document.getElementById("agent-manifest-allowed");
+    const deniedEl = document.getElementById("agent-manifest-denied");
+    const filesEl = document.getElementById("agent-manifest-files");
+    const netEl = document.getElementById("agent-manifest-net");
+    const badgesEl = document.getElementById("topology-agent-modal-badges");
+
+    if (manifestContainer) {
+        if (agent.capability) {
+            manifestContainer.style.display = "block";
+            const cap = agent.capability;
+            
+            if (allowedEl) allowedEl.textContent = cap.allowed_tools.length ? cap.allowed_tools.join(", ") : "None";
+            if (deniedEl) deniedEl.textContent = cap.denied_tools.length ? cap.denied_tools.join(", ") : "None";
+            if (filesEl) filesEl.textContent = cap.file_scopes.length ? cap.file_scopes.join(", ") : "None";
+            if (netEl) netEl.textContent = cap.network_scopes.length ? cap.network_scopes.join(", ") : "None";
+            
+            if (badgesEl) {
+                badgesEl.innerHTML = "";
+                
+                // Add Risk Class Badge
+                const riskBadge = document.createElement("span");
+                riskBadge.className = "badge";
+                riskBadge.style.fontSize = "8px";
+                riskBadge.style.padding = "2px 6px";
+                riskBadge.style.borderRadius = "4px";
+                riskBadge.style.fontWeight = "bold";
+                riskBadge.style.textTransform = "uppercase";
+                if (cap.risk_class.includes("L1") || cap.risk_class.includes("L2")) {
+                    riskBadge.style.backgroundColor = "rgba(239, 68, 68, 0.15)";
+                    riskBadge.style.color = "#ef4444";
+                    riskBadge.style.border = "1px solid rgba(239, 68, 68, 0.3)";
+                } else if (cap.risk_class.includes("L3")) {
+                    riskBadge.style.backgroundColor = "rgba(245, 158, 11, 0.15)";
+                    riskBadge.style.color = "#f59e0b";
+                    riskBadge.style.border = "1px solid rgba(245, 158, 11, 0.3)";
+                } else {
+                    riskBadge.style.backgroundColor = "rgba(16, 185, 129, 0.15)";
+                    riskBadge.style.color = "#10b981";
+                    riskBadge.style.border = "1px solid rgba(16, 185, 129, 0.3)";
+                }
+                riskBadge.textContent = `Risk: ${cap.risk_class}`;
+                badgesEl.appendChild(riskBadge);
+                
+                // Add Approval Threshold Badge
+                const thresholdBadge = document.createElement("span");
+                thresholdBadge.className = "badge";
+                thresholdBadge.style.fontSize = "8px";
+                thresholdBadge.style.padding = "2px 6px";
+                thresholdBadge.style.borderRadius = "4px";
+                thresholdBadge.style.fontWeight = "bold";
+                thresholdBadge.style.textTransform = "uppercase";
+                if (cap.approval_threshold.toLowerCase() === "high" || cap.approval_threshold.toLowerCase() === "critical") {
+                    thresholdBadge.style.backgroundColor = "rgba(239, 68, 68, 0.15)";
+                    thresholdBadge.style.color = "#ef4444";
+                    thresholdBadge.style.border = "1px solid rgba(239, 68, 68, 0.3)";
+                } else {
+                    thresholdBadge.style.backgroundColor = "rgba(59, 130, 246, 0.15)";
+                    thresholdBadge.style.color = "#3b82f6";
+                    thresholdBadge.style.border = "1px solid rgba(59, 130, 246, 0.3)";
+                }
+                thresholdBadge.textContent = `Gate: ${cap.approval_threshold}`;
+                badgesEl.appendChild(thresholdBadge);
+
+                // Add Audit Badge
+                const auditBadge = document.createElement("span");
+                auditBadge.className = "badge";
+                auditBadge.style.fontSize = "8px";
+                auditBadge.style.padding = "2px 6px";
+                auditBadge.style.borderRadius = "4px";
+                auditBadge.style.fontWeight = "bold";
+                auditBadge.style.textTransform = "uppercase";
+                auditBadge.style.backgroundColor = "rgba(168, 85, 247, 0.15)";
+                auditBadge.style.color = "#a855f7";
+                auditBadge.style.border = "1px solid rgba(168, 85, 247, 0.3)";
+                auditBadge.textContent = "Audit: Active";
+                badgesEl.appendChild(auditBadge);
+            }
+        } else {
+            manifestContainer.style.display = "none";
+        }
     }
 
     // Set Tier class on card inner for border glows and rarities
