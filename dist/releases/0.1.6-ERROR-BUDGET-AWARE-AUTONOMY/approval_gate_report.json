@@ -5977,6 +5977,452 @@
           "next_state": "approved"
         }
       ]
+    },
+    {
+      "approval_id": "app-ff0b",
+      "request_id": "run-64a58e2f:T2-SPEC",
+      "correlation_id": "corr-b3d95f",
+      "trace_id": "trace-afab99",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:27:32.809622+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-a4a4",
+      "request_id": "run-fc729253:T2-SPEC",
+      "correlation_id": "corr-82c5f9",
+      "trace_id": "trace-1ad7c7",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:28:33.103572+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-15b60a17",
+          "request_id": "run-fc729253:T2-SPEC",
+          "run_id": "run-fc729253",
+          "task_id": "T2-SPEC",
+          "operator": "Operator",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:28:33.103070+00:00",
+          "nonce": "66189b4cbf8a460692d58dea9772fbc2",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-chan-fa806f",
+      "request_id": "channel_decision:candidate",
+      "correlation_id": "corr-9ce269e19888",
+      "trace_id": "c4d0d8d0a5b744088e1ddf6778c4e81e",
+      "action_type": "channel_decision",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Michael Hoch",
+      "created_at": "2026-06-25T17:28:52.261458+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-b3a7c02d",
+          "request_id": "channel_decision:candidate",
+          "run_id": null,
+          "task_id": null,
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:28:52.260987+00:00",
+          "nonce": "3d01efd893b5471e8d611a1620883d5e",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-7725514d",
+      "request_id": "channel_decision:formal:preview-1782408549-dd509e3c",
+      "correlation_id": "corr-ecf3040f",
+      "trace_id": "trace-10d3093a",
+      "action_type": "channel_decision",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Michael Hoch",
+      "created_at": "2026-06-25T17:29:09.530861+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-3b239cdd",
+          "request_id": "channel_decision:formal:preview-1782408549-dd509e3c",
+          "run_id": "channel_decision",
+          "task_id": "formal:preview-1782408549-dd509e3c",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:29:09.530432+00:00",
+          "nonce": "b9cea6dcc5be48eaa5557b9531e57a7b",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-4890",
+      "request_id": "run-fc729253:T4-CORE-ENGINE",
+      "correlation_id": "corr-545f25",
+      "trace_id": "trace-3bea13",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:40:01.120215+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-d5671ae2",
+          "request_id": "run-fc729253:T4-CORE-ENGINE",
+          "run_id": "run-fc729253",
+          "task_id": "T4-CORE-ENGINE",
+          "operator": "Contract Audit Operator",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:40:01.119907+00:00",
+          "nonce": "69cc0fd1a069471bad817b6539bbe843",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-dfdf",
+      "request_id": "run-fc729253:T5-SWARM-DASHBOARD",
+      "correlation_id": "corr-d53c6f",
+      "trace_id": "trace-948725",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:40:02.633500+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-854f",
+      "request_id": "run-fc729253:T6-PLATFORM-BACKEND",
+      "correlation_id": "corr-1137fe",
+      "trace_id": "trace-587663",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:40:02.637736+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-7985",
+      "request_id": "run-771e7071:T2-SPEC",
+      "correlation_id": "corr-5195ec",
+      "trace_id": "trace-96cc4a",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:41:14.251534+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-e0ad8d78",
+          "request_id": "run-771e7071:T2-SPEC",
+          "run_id": "run-771e7071",
+          "task_id": "T2-SPEC",
+          "operator": "Contract Audit Operator",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:41:14.251109+00:00",
+          "nonce": "62fcd7d056ee4492810b01b4feeb6008",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-40fa",
+      "request_id": "run-af8c0b93:T2-SPEC",
+      "correlation_id": "corr-a69f7d",
+      "trace_id": "trace-f74d5f",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:41:17.266725+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-c13c",
+      "request_id": "run-771e7071:T4-CORE-ENGINE",
+      "correlation_id": "corr-72d997",
+      "trace_id": "trace-0c3608",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:41:17.279160+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-b473",
+      "request_id": "run-09e60156:T2-SPEC",
+      "correlation_id": "corr-6bc08e",
+      "trace_id": "trace-1750c3",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:42:19.904906+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-890e530c",
+          "request_id": "run-09e60156:T2-SPEC",
+          "run_id": "run-09e60156",
+          "task_id": "T2-SPEC",
+          "operator": "Operator",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:42:19.904420+00:00",
+          "nonce": "b5e0173d98ca4d88b41fd43690327ac6",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-5605",
+      "request_id": "run-09e60156:T4-CORE-ENGINE",
+      "correlation_id": "corr-0a29f1",
+      "trace_id": "trace-3969c2",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T17:42:22.937605+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-chan-de9b2f",
+      "request_id": "channel_decision:candidate",
+      "correlation_id": "corr-695ae4d8a962",
+      "trace_id": "d9391c5978aa41928841c494b24172ab",
+      "action_type": "channel_decision",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Michael Hoch",
+      "created_at": "2026-06-25T17:42:40.452543+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-fba90973",
+          "request_id": "channel_decision:candidate",
+          "run_id": null,
+          "task_id": null,
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:42:40.452058+00:00",
+          "nonce": "9ea29d19a9754100af3eab936ed44ee0",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-328a690d",
+      "request_id": "channel_decision:formal:preview-1782409378-68428831",
+      "correlation_id": "corr-07347e5a",
+      "trace_id": "trace-ff999db9",
+      "action_type": "channel_decision",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Michael Hoch",
+      "created_at": "2026-06-25T17:42:59.312191+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-5bfd3317",
+          "request_id": "channel_decision:formal:preview-1782409378-68428831",
+          "run_id": "channel_decision",
+          "task_id": "formal:preview-1782409378-68428831",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T17:42:59.311742+00:00",
+          "nonce": "023722572c3346f39071474c69bcd9cb",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-bab74839",
+      "request_id": "channel_decision:formal:preview-1782410913-b47f88cd",
+      "correlation_id": "corr-834473f2",
+      "trace_id": "trace-bd8e9168",
+      "action_type": "channel_decision",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Michael Hoch",
+      "created_at": "2026-06-25T18:08:34.311010+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-33d76b1f",
+          "request_id": "channel_decision:formal:preview-1782410913-b47f88cd",
+          "run_id": "channel_decision",
+          "task_id": "formal:preview-1782410913-b47f88cd",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T18:08:34.310638+00:00",
+          "nonce": "1f30d07a7bfd48b7a8ae2ac2c3eaced3",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-64be75d1",
+      "request_id": "channel_decision:formal:preview-1782410959-1917f1f5",
+      "correlation_id": "corr-09df0c48",
+      "trace_id": "trace-2f4ee8f4",
+      "action_type": "channel_decision",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Michael Hoch",
+      "created_at": "2026-06-25T18:09:20.267195+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-bae8355f",
+          "request_id": "channel_decision:formal:preview-1782410959-1917f1f5",
+          "run_id": "channel_decision",
+          "task_id": "formal:preview-1782410959-1917f1f5",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T18:09:20.266786+00:00",
+          "nonce": "7165bc5551314186a8ff16a96ccae223",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-5038",
+      "request_id": "run-c769db51:T2-SPEC",
+      "correlation_id": "corr-9adfe5",
+      "trace_id": "trace-633a17",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T18:09:54.026332+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-3e06",
+      "request_id": "run-eed1415b:T2-SPEC",
+      "correlation_id": "corr-fc3081",
+      "trace_id": "trace-aaa698",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T18:10:56.188456+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-5a8b0fea",
+          "request_id": "run-eed1415b:T2-SPEC",
+          "run_id": "run-eed1415b",
+          "task_id": "T2-SPEC",
+          "operator": "Operator",
+          "decision": "approved",
+          "decision_time": "2026-06-25T18:10:56.188046+00:00",
+          "nonce": "b533cacfa07f4b2aa444c314815970cc",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-ba78",
+      "request_id": "run-eed1415b:T4-CORE-ENGINE",
+      "correlation_id": "corr-0496db",
+      "trace_id": "trace-89a77f",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-25T18:10:59.284177+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-chan-9e5068",
+      "request_id": "channel_decision:candidate",
+      "correlation_id": "corr-8db972aa7812",
+      "trace_id": "a66700fb32e74196845641426f9a71d9",
+      "action_type": "channel_decision",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Michael Hoch",
+      "created_at": "2026-06-25T18:11:15.599350+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-d1e7ec47",
+          "request_id": "channel_decision:candidate",
+          "run_id": null,
+          "task_id": null,
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T18:11:15.598881+00:00",
+          "nonce": "d1c9e46b17ea4c5794fb5f5360e284cb",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-4429c84c",
+      "request_id": "channel_decision:formal:preview-1782411092-a13542f5",
+      "correlation_id": "corr-34510ff7",
+      "trace_id": "trace-c7993b9b",
+      "action_type": "channel_decision",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Michael Hoch",
+      "created_at": "2026-06-25T18:11:33.027205+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-f16f5437",
+          "request_id": "channel_decision:formal:preview-1782411092-a13542f5",
+          "run_id": "channel_decision",
+          "task_id": "formal:preview-1782411092-a13542f5",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T18:11:33.026781+00:00",
+          "nonce": "1774244e992a4d388e8bf7e631f5ddce",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-2202006d",
+      "request_id": "channel_decision:formal:preview-1782411097-9eda2c19",
+      "correlation_id": "corr-f642abe1",
+      "trace_id": "trace-5ebd13d9",
+      "action_type": "channel_decision",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Michael Hoch",
+      "created_at": "2026-06-25T18:11:38.175777+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-ebba5eef",
+          "request_id": "channel_decision:formal:preview-1782411097-9eda2c19",
+          "run_id": "channel_decision",
+          "task_id": "formal:preview-1782411097-9eda2c19",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "decision_time": "2026-06-25T18:11:38.175378+00:00",
+          "nonce": "13aa744e67d149f59fcf8ffd5b865d85",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
     }
   ]
 }

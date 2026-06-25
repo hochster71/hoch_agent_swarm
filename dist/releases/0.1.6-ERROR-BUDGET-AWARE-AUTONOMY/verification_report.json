@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-25T17:27:02.699Z",
+  "generated_at": "2026-06-25T18:11:56.905Z",
   "release": "0.1.6-ERROR-BUDGET-AWARE-AUTONOMY",
   "status": "PASS",
   "blockers": [],
@@ -16,7 +16,7 @@
     "release_finalization_status": "local_dev_pass"
   },
   "release_channel_policy_decision": "PASS",
-  "release_channel": "formal:preview-1782408394-66171b07",
+  "release_channel": "formal:preview-1782411097-9eda2c19",
   "tag_points_at_head": false,
   "tag_status": "STALE_TAG",
   "formal_release_blockers": [

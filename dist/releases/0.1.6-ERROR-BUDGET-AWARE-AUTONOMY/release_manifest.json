@@ -8,7 +8,7 @@
   "signing_waiver_status": "none",
   "signing_waiver_decision_id": null,
   "release_finalization_status": "local_dev_pass",
-  "release_channel": "formal:preview-1782408394-66171b07",
+  "release_channel": "formal:preview-1782411097-9eda2c19",
   "release_channel_policy_status": "PASS",
   "release_tag": "v0.1.6-ERROR-BUDGET-AWARE-AUTONOMY",
   "release_tag_sha": "3d383b85989866e56803eb9fdfb1d6890d08b7f2",
@@ -32,13 +32,13 @@
   "formal_release_finalization_status": "local_dev_pass",
   "tag_alignment_required": true,
   "tag_alignment_decision_id": null,
-  "release_channel_decision_id": "dec-faceecc6",
+  "release_channel_decision_id": "dec-ebba5eef",
   "release": {
     "version": "0.1.6-ERROR-BUDGET-AWARE-AUTONOMY",
     "codename": "Hochster Runtime Execution Audit",
-    "generated_at": "2026-06-25T17:27:02.299Z",
+    "generated_at": "2026-06-25T18:11:56.514Z",
     "generated_by": "generate-release-manifest.ts",
-    "git_commit_sha": "26d666baebf0689957c9d8bf338b1c6a3338936b",
+    "git_commit_sha": "0453c3471c1f030814c2a59f27094de71167ae61",
     "git_branch": "release/v0.1.6-error-budget-aware-autonomy",
     "ci_provider": "local"
   },
@@ -46,37 +46,37 @@
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/baseline_evidence_pack.json",
       "type": "evidence_pack",
-      "sha256": "4380ae947f62abff886f6ab1ffe7a6f35758b1031c95f9ef5c21dd510449ed87"
+      "sha256": "d38b0b369eccae9b39f7520e689a0daeebd11cfc36a9ca5f53272075a7103016"
     },
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/baseline_evidence_pack.json.sha256",
       "type": "checksum",
-      "sha256": "519eaf171791801d64eb82e3eec5ff13b8b10c08ae49a6285f4e585f68d3a624"
+      "sha256": "9df57012cb8ffc6e60271378023287afd8d717e9720f10644faf625d232a9e12"
     },
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/provenance.intoto.jsonl",
       "type": "provenance",
-      "sha256": "d80a7a5973aecd54773a71375946e9049fe2c4d4cab7d290dc625d6fa6d9b66f"
+      "sha256": "994bb79c8f84444dd6463326b084fab40a5fe2d9ea1841acd838d1954297d8a1"
     },
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/sbom.spdx.json",
       "type": "sbom",
-      "sha256": "3b0ed9821997553adab11fdbc9d0afdb5ed3c3923dec8c205cbab8c7c84e8be3"
+      "sha256": "5226b0d18837cc890e3d2aa0d1840e4fba5254f9dd626f7c5ddff8ad2d83c8d3"
     },
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/verification_report.json",
       "type": "verification_report",
-      "sha256": "e9400ff377dfb47bb55c3f9bcc18d2f522c5337eb2f3569ce307c96da639486b"
+      "sha256": "a8ec3f0cc99da4b13272b01877dcec18787f1889c9493bfc379e49a5136677d9"
     },
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/runtime_execution_audit.json",
       "type": "runtime_execution_audit",
-      "sha256": "8ff56b586cb519e51ac4716caad8c6f03658be3482d5a01ebdd88a872ea3176e"
+      "sha256": "cebc39a363fa85c7a5ca26878ff200bd0690881478f562dca42f8bf225c0d5c3"
     },
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/tool_call_trace_summary.json",
       "type": "tool_call_trace_summary",
-      "sha256": "b9e5cb5361c467727eec6576dba5e2972651a2d1168ca9345349a50b3c5b4fa6"
+      "sha256": "e6e3ed1242896712c759fcb8ca12eb483065bbd5aa83a96e6e7d9138033d93f7"
     },
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/redaction_report.json",
@@ -86,12 +86,12 @@
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/approval_gate_report.json",
       "type": "approval_gate_report",
-      "sha256": "83b512db636321e8f63b549149b6ec6bc46dd41a46146d95880815cd8f49144d"
+      "sha256": "60b8062c5e8799ee4905e5968d2558c0b664308705a49cbd5fb13e0ca59a1fa1"
     },
     {
       "path": "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/autonomy_budget_report.json",
       "type": "autonomy_budget_report",
-      "sha256": "acfda51467ee649620184c1cb0d6621685043bb14d8d3ec3c592a0e6d27fa0b2"
+      "sha256": "ad70f480908e3354a0bfb2cb5ec61585167f1f58279984792136c4f158dd40a7"
     }
   ],
   "docker": [],
