@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-24T19:52:34.899139+00:00",
+  "generated_at": "2026-06-25T00:08:40.636514+00:00",
   "base_url": "http://localhost:8000",
   "tool_calls_checked": 6,
   "tool_calls_with_trace": 6,
@@ -9,5 +9,15 @@
   "approval_required_actions": 1,
   "approval_bypass_findings": [],
   "blockers": [],
-  "status": "PASS"
+  "status": "PASS",
+  "source": "live",
+  "source_id": "audit.runtime.execution",
+  "observed_at": "2026-06-25T00:08:40.636528+00:00",
+  "received_at": "2026-06-25T00:08:40.636529+00:00",
+  "ttl_ms": 10000,
+  "freshness": "live",
+  "correlation_id": "corr-audit-exec-3a11b326",
+  "evidence_refs": [
+    "database.swarm_ledger"
+  ]
 }

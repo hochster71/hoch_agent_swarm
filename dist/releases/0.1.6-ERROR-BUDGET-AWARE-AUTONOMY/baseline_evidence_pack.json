@@ -3,7 +3,7 @@
   "report_id": "0.1.6-ERROR-BUDGET-AWARE-AUTONOMY",
   "version": "0.1.6-ERROR-BUDGET-AWARE-AUTONOMY",
   "codename": "HOCH-AGENT-SWARM 0.1.6-ERROR-BUDGET-AWARE-AUTONOMY",
-  "generated_at": "2026-06-24T19:52:31Z",
+  "generated_at": "2026-06-25T00:08:38Z",
   "generated_by": "HOCHSTER Orchestrator",
   "git_commit_sha": "5984bcf61c6d7443aa4d525ca780234b1fb38cac",
   "lock_decision": "PASS",
@@ -92,7 +92,7 @@
     "solve_requests": [
       {
         "request_id": "req_9f3a2c0f",
-        "correlation_id": "corr-50ddadf5dc2d",
+        "correlation_id": "corr-1f9be720e36b",
         "status": "solved",
         "findings": [],
         "patches_generated": 2,
@@ -104,8 +104,8 @@
     ]
   },
   "audit": {
-    "events_checked": 551,
-    "valid_events": 551,
+    "events_checked": 1392,
+    "valid_events": 1392,
     "invalid_events": 0,
     "missing_correlation_ids": 0,
     "missing_evidence_refs": 0
@@ -139,7 +139,7 @@
     "missing_evidence_refs": []
   },
   "integrity": {
-    "sha256": "c4961150c3ccbc1835bed5b3809ae160ce234082397eed8604a6f8de8100904a",
+    "sha256": "5fcf4eced9ffdcf2d0c96df848d73db848e6aa185598ae8d8e58060e021315ff",
     "signed": false,
     "signature_ref": null
   },
@@ -151,7 +151,7 @@
     "migration_required": false
   },
   "runtime_execution_audit": {
-    "generated_at": "2026-06-24T19:52:31.588798+00:00",
+    "generated_at": "2026-06-25T00:08:38.617859+00:00",
     "base_url": "http://localhost:8000",
     "tool_calls_checked": 6,
     "tool_calls_with_trace": 6,
@@ -161,10 +161,20 @@
     "approval_required_actions": 1,
     "approval_bypass_findings": [],
     "blockers": [],
-    "status": "PASS"
+    "status": "PASS",
+    "source": "live",
+    "source_id": "audit.runtime.execution",
+    "observed_at": "2026-06-25T00:08:38.617869+00:00",
+    "received_at": "2026-06-25T00:08:38.617870+00:00",
+    "ttl_ms": 10000,
+    "freshness": "live",
+    "correlation_id": "corr-audit-exec-5940a207",
+    "evidence_refs": [
+      "database.swarm_ledger"
+    ]
   },
   "docker_digests": {
-    "generated_at": "2026-06-24T19:52:30.704Z",
+    "generated_at": "2026-06-25T00:08:37.979Z",
     "records": [],
     "missing_digest_count": 0,
     "status": "warning",
