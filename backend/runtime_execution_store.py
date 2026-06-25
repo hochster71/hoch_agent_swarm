@@ -249,6 +249,34 @@ def init_execution_store_tables() -> None:
             )
             """
         )
+        # Create formal_release_previews table
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS formal_release_previews (
+                formal_preview_id TEXT PRIMARY KEY,
+                candidate_packet_id TEXT NOT NULL,
+                candidate_version TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                head_sha TEXT NOT NULL,
+                branch TEXT NOT NULL,
+                release_tag TEXT NOT NULL,
+                tag_sha TEXT NOT NULL,
+                tag_points_at_head INTEGER NOT NULL,
+                tag_status TEXT NOT NULL,
+                signing_policy_status TEXT NOT NULL,
+                release_channel_policy_status TEXT NOT NULL,
+                working_tree_clean INTEGER NOT NULL,
+                qa_status TEXT NOT NULL,
+                readiness_status TEXT NOT NULL,
+                operator_approval_status TEXT NOT NULL,
+                formal_release_ready INTEGER NOT NULL,
+                formal_release_blockers_json TEXT NOT NULL,
+                required_operator_actions_json TEXT NOT NULL,
+                preview_manifest_path TEXT NOT NULL,
+                preview_status TEXT NOT NULL
+            )
+            """
+        )
         conn.commit()
     finally:
         conn.close()
@@ -937,7 +965,120 @@ def get_candidate_release_packet(packet_id: str) -> dict | None:
     finally:
         conn.close()
 
-# End of runtime_execution_store.py - Phase 9 Candidate Release Packet Builder active.
+def persist_formal_release_preview(preview: dict) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO formal_release_previews (
+                formal_preview_id, candidate_packet_id, candidate_version, created_at,
+                head_sha, branch, release_tag, tag_sha, tag_points_at_head, tag_status,
+                signing_policy_status, release_channel_policy_status, working_tree_clean,
+                qa_status, readiness_status, operator_approval_status, formal_release_ready,
+                formal_release_blockers_json, required_operator_actions_json, preview_manifest_path,
+                preview_status
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                preview["formal_preview_id"],
+                preview["candidate_packet_id"],
+                preview["candidate_version"],
+                preview["created_at"],
+                preview["head_sha"],
+                preview["branch"],
+                preview["release_tag"],
+                preview["tag_sha"],
+                1 if preview["tag_points_at_head"] else 0,
+                preview["tag_status"],
+                preview["signing_policy_status"],
+                preview["release_channel_policy_status"],
+                1 if preview["working_tree_clean"] else 0,
+                preview["qa_status"],
+                preview["readiness_status"],
+                preview["operator_approval_status"],
+                1 if preview["formal_release_ready"] else 0,
+                json.dumps(preview["formal_release_blockers"]),
+                json.dumps(preview["required_operator_actions"]),
+                preview["preview_manifest_path"],
+                preview["preview_status"]
+            )
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+def list_formal_release_previews() -> list[dict]:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        rows = conn.execute("SELECT * FROM formal_release_previews ORDER BY created_at DESC").fetchall()
+        previews = []
+        for r in rows:
+            d = dict(r)
+            previews.append({
+                "formal_preview_id": d["formal_preview_id"],
+                "candidate_packet_id": d["candidate_packet_id"],
+                "candidate_version": d["candidate_version"],
+                "created_at": d["created_at"],
+                "head_sha": d["head_sha"],
+                "branch": d["branch"],
+                "release_tag": d["release_tag"],
+                "tag_sha": d["tag_sha"],
+                "tag_points_at_head": bool(d["tag_points_at_head"]),
+                "tag_status": d["tag_status"],
+                "signing_policy_status": d["signing_policy_status"],
+                "release_channel_policy_status": d["release_channel_policy_status"],
+                "working_tree_clean": bool(d["working_tree_clean"]),
+                "qa_status": d["qa_status"],
+                "readiness_status": d["readiness_status"],
+                "operator_approval_status": d["operator_approval_status"],
+                "formal_release_ready": bool(d["formal_release_ready"]),
+                "formal_release_blockers": json.loads(d["formal_release_blockers_json"]),
+                "required_operator_actions": json.loads(d["required_operator_actions_json"]),
+                "preview_manifest_path": d["preview_manifest_path"],
+                "preview_status": d["preview_status"]
+            })
+        return previews
+    finally:
+        conn.close()
+
+def get_formal_release_preview(preview_id: str) -> dict | None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        row = conn.execute("SELECT * FROM formal_release_previews WHERE formal_preview_id = ?", (preview_id,)).fetchone()
+        if row:
+            d = dict(row)
+            return {
+                "formal_preview_id": d["formal_preview_id"],
+                "candidate_packet_id": d["candidate_packet_id"],
+                "candidate_version": d["candidate_version"],
+                "created_at": d["created_at"],
+                "head_sha": d["head_sha"],
+                "branch": d["branch"],
+                "release_tag": d["release_tag"],
+                "tag_sha": d["tag_sha"],
+                "tag_points_at_head": bool(d["tag_points_at_head"]),
+                "tag_status": d["tag_status"],
+                "signing_policy_status": d["signing_policy_status"],
+                "release_channel_policy_status": d["release_channel_policy_status"],
+                "working_tree_clean": bool(d["working_tree_clean"]),
+                "qa_status": d["qa_status"],
+                "readiness_status": d["readiness_status"],
+                "operator_approval_status": d["operator_approval_status"],
+                "formal_release_ready": bool(d["formal_release_ready"]),
+                "formal_release_blockers": json.loads(d["formal_release_blockers_json"]),
+                "required_operator_actions": json.loads(d["required_operator_actions_json"]),
+                "preview_manifest_path": d["preview_manifest_path"],
+                "preview_status": d["preview_status"]
+            }
+        return None
+    finally:
+        conn.close()
 
 
 

@@ -48,7 +48,10 @@ from backend.runtime_execution_store import (
     get_agent_capability_manifest,
     persist_candidate_release_packet,
     list_candidate_release_packets,
-    get_candidate_release_packet
+    get_candidate_release_packet,
+    persist_formal_release_preview,
+    list_formal_release_previews,
+    get_formal_release_preview
 )
 from backend.hochster_runtime_audit import (
     generate_runtime_execution_audit,
@@ -1508,6 +1511,241 @@ def create_candidate_packet(req: CandidatePacketRequest):
         "packet": packet,
         "blockers": gov["formal_release_blockers"]
     }
+
+class FormalPreviewRequest(BaseModel):
+    candidate_packet_id: str
+    operator: str
+    reason: str
+
+@app.get("/api/v1/release/formal-preview")
+def get_formal_previews_list():
+    return list_formal_release_previews()
+
+@app.get("/api/v1/release/formal-preview/{formal_preview_id}")
+def get_formal_preview_manifest(formal_preview_id: str):
+    import os
+    import json
+    manifest_path = f"dist/formal-previews/{formal_preview_id}/formal_release_preview_manifest.json"
+    if os.path.exists(manifest_path):
+        with open(manifest_path, "r") as f:
+            try:
+                return json.load(f)
+            except Exception:
+                pass
+    db_preview = get_formal_release_preview(formal_preview_id)
+    if db_preview:
+        return db_preview
+    raise HTTPException(status_code=404, detail="Formal release preview not found")
+
+@app.post("/api/v1/release/formal-preview")
+def create_formal_preview(req: FormalPreviewRequest):
+    import uuid
+    import time
+    import os
+    import json
+    
+    # 1. Load candidate packet
+    packet = get_candidate_release_packet(req.candidate_packet_id)
+    if not packet:
+        raise HTTPException(status_code=404, detail="Candidate packet not found")
+        
+    version = packet["candidate_version"]
+    
+    # 2. Query current git info
+    head_sha = run_git_command(["rev-parse", "HEAD"]).strip()
+    branch = run_git_command(["rev-parse", "--abbrev-ref", "HEAD"]).strip()
+    if not branch or "fatal" in branch:
+        branch = "detached"
+    status_out = run_git_command(["status", "--porcelain"])
+    working_tree_clean = not status_out.strip()
+    
+    # 3. Query tag alignment
+    release_tag = f"v{version}"
+    tag_sha = ""
+    tag_points_at_head = False
+    tag_status = "NO_RELEASE_TAG"
+    
+    tag_sha_out = run_git_command(["rev-list", "-n", "1", release_tag]).strip()
+    if tag_sha_out and "fatal" not in tag_sha_out:
+        tag_sha = tag_sha_out
+        if tag_sha == head_sha:
+            tag_status = "TAG_AT_HEAD"
+            tag_points_at_head = True
+        else:
+            tag_status = "STALE_TAG"
+            
+    # 4. Query signing status & waivers
+    gates = list_approval_gates()
+    signing_waived = False
+    for g in gates:
+        if g.get("action_type") == "signing_waiver" and g.get("status") == "approved":
+            signing_waived = True
+            
+    signing_policy_status = "BLOCK"
+    release_dir = f"dist/releases/{version}"
+    expected_artifacts = [
+        "baseline_evidence_pack.json",
+        "release_manifest.json",
+        "provenance.intoto.jsonl",
+        "sbom.spdx.json",
+        "runtime_execution_audit.json",
+        "tool_call_trace_summary.json",
+        "redaction_report.json",
+        "approval_gate_report.json"
+    ]
+    sig_status = "unsigned"
+    if os.path.exists(release_dir):
+        signed_count = 0
+        unsigned_count = 0
+        for name in expected_artifacts:
+            path_file = os.path.join(release_dir, name)
+            if os.path.exists(path_file):
+                if os.path.exists(path_file + ".sig"):
+                    signed_count += 1
+                else:
+                    unsigned_count += 1
+        if signed_count > 0 and unsigned_count == 0:
+            sig_status = "signed"
+        elif signed_count > 0 and unsigned_count > 0:
+            sig_status = "partially_signed"
+            
+    if sig_status in ["signed", "waived"] or signing_waived:
+        signing_policy_status = "PASS"
+        
+    # 5. Query QA status
+    qa_status = "WARN"
+    try:
+        report_path = f"dist/releases/{version}/verification_report.json"
+        if os.path.exists(report_path):
+            with open(report_path, "r") as f:
+                report_data = json.load(f)
+                qa_status = report_data.get("status", "WARN")
+    except Exception:
+        pass
+        
+    # 6. Query Readiness status
+    reports = list_readiness_reports(1)
+    readiness_status = "PASS"
+    if reports:
+        readiness_status = reports[0].get("status", "PASS")
+        
+    # 7. Query Operator approval status
+    operator_approval_status = "pending"
+    for g in gates:
+        if g.get("action_type") == "channel_decision" and g.get("status") == "approved":
+            req_id = g.get("request_id", "")
+            if req_id.startswith("channel_decision:formal"):
+                operator_approval_status = "approved"
+                
+    # 8. Compute blockers and actions
+    blockers = []
+    actions = []
+    
+    if not working_tree_clean:
+        blockers.append("working tree is dirty")
+        actions.append("commit or stash unstaged changes")
+    if qa_status != "PASS":
+        blockers.append("QA tests not fully passed")
+        actions.append("run QA suite and fix test failures")
+    if readiness_status != "PASS":
+        blockers.append("readiness status not compliant")
+        actions.append("remediate readiness compliance drift")
+    if signing_policy_status != "PASS":
+        blockers.append("signing policy not satisfied")
+        actions.append("enable signing provider or approve waiver")
+    if not tag_points_at_head:
+        blockers.append("release tag does not point at HEAD")
+        actions.append("align release tag")
+    if operator_approval_status != "approved":
+        blockers.append("operator approval missing")
+        actions.append("obtain formal release approval")
+        
+    formal_release_ready = (len(blockers) == 0)
+    
+    if formal_release_ready:
+        preview_status = "preview_ready"
+    elif not working_tree_clean:
+        preview_status = "preview_warn"
+    else:
+        preview_status = "preview_blocked"
+        
+    formal_preview_id = f"preview-{int(time.time())}-{uuid.uuid4().hex[:8]}"
+    preview_dir = f"dist/formal-previews/{formal_preview_id}"
+    preview_manifest_path = f"{preview_dir}/formal_release_preview_manifest.json"
+    
+    preview = {
+        "formal_preview_id": formal_preview_id,
+        "candidate_packet_id": req.candidate_packet_id,
+        "candidate_version": version,
+        "created_at": now_iso(),
+        "head_sha": head_sha,
+        "branch": branch,
+        "release_tag": release_tag,
+        "tag_sha": tag_sha,
+        "tag_points_at_head": tag_points_at_head,
+        "tag_status": tag_status,
+        "signing_policy_status": signing_policy_status,
+        "release_channel_policy_status": "PASS" if operator_approval_status == "approved" else "BLOCK",
+        "working_tree_clean": working_tree_clean,
+        "qa_status": qa_status,
+        "readiness_status": readiness_status,
+        "operator_approval_status": operator_approval_status,
+        "formal_release_ready": formal_release_ready,
+        "formal_release_blockers": blockers,
+        "required_operator_actions": actions,
+        "preview_manifest_path": preview_manifest_path,
+        "preview_status": preview_status
+    }
+    
+    os.makedirs(preview_dir, exist_ok=True)
+    persist_formal_release_preview(preview)
+    
+    # Save manifest JSON to disk
+    with open(preview_manifest_path, "w") as f:
+        json.dump(preview, f, indent=2)
+        
+    # Write summary Markdown
+    summary_path = f"{preview_dir}/formal_release_preview_summary.md"
+    ready_str = "YES" if formal_release_ready else "NO"
+    blockers_str = "\n".join([f"- {b}" for b in blockers]) if blockers else "- None"
+    actions_str = "\n".join([f"- {a}" for a in actions]) if actions else "- None"
+    
+    markdown_content = f"""# Formal Release Finalization Preview — `{formal_preview_id}`
+
+## Metadata
+- **Candidate Packet ID**: {req.candidate_packet_id}
+- **Version**: {version}
+- **Generated At**: {preview["created_at"]}
+- **Git HEAD SHA**: `{head_sha}`
+- **Git Branch**: `{branch}`
+- **Release Tag**: `{release_tag}` (pointing at `{tag_sha or "none"}`)
+- **Tag Points at HEAD**: {tag_points_at_head}
+- **Working Tree Clean**: {working_tree_clean}
+- **Formal Release Ready**: **{ready_str}**
+- **Preview Status**: **`{preview_status.upper()}`**
+
+---
+
+## Safety Disclaimers
+- ⚠️ **No Tags Are Created**
+- 🔒 **No Signing Is Performed**
+- 🚀 **No Publishing Is Performed**
+- 🔍 **Preview Only**
+
+---
+
+## Formal Release Blockers
+{blockers_str}
+
+---
+
+## Required Operator Actions
+{actions_str}
+"""
+    with open(summary_path, "w") as f:
+        f.write(markdown_content)
+        
+    return preview
 
 manager = ConnectionManager()
 

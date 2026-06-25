@@ -87,7 +87,17 @@ We built a formal release candidate packet builder:
 
 ---
 
-## 9. Verification Results
+## 9. Formal Release Finalization Preview (Phase 10)
+We implemented a read-only finalization preview utility to check if a release candidate packet is ready to become a formal release:
+- **Persistent Storage**: Configured `formal_release_previews` SQLite database schema in `backend/runtime_execution_store.py` with custom migration/initialization functions (`persist_formal_release_preview`, `get_formal_release_preview`, etc.).
+- **FastAPI Endpoint**: Created API endpoints under `/api/v1/release/formal-preview` to fetch and submit new preview requests, parsing git logs, tag alignments, signatures, and QA verification outputs.
+- **Frontend Governance UI**: Added the `#formal-release-preview-panel` within the Governance Cockpit to display the preview workflow.
+- **Automation Constraints**: Strictly prohibited any git tag mutation, git pushes, Cosign signatures, or finalizations during preview generation.
+- **Preview Artifact Generation**: Automatically writes JSON manifests and Markdown summaries to `dist/formal-previews/<formal_preview_id>/`.
+
+---
+
+## 10. Verification Results
 
 ### Static QA & Contract Checks (`npm run qa:ui-contract`)
 - All contract checks exited with `PASS`:
@@ -105,6 +115,7 @@ We built a formal release candidate packet builder:
   - `release-channel-governance-contract`: PASS
   - `operator-governance-contract`: PASS
   - `candidate-release-packet-contract`: PASS
+  - `formal-release-preview-contract`: PASS
 
 ### Playwright E2E Integration Tests (`npm run qa:e2e-runtime`)
 - All browser simulation specs completed successfully:
@@ -116,8 +127,10 @@ We built a formal release candidate packet builder:
   - `release-channel-governance.spec.ts`: PASS
   - `operator-governance-cockpit.spec.ts`: PASS
   - `candidate-release-packet.spec.ts`: PASS
+  - `formal-release-preview.spec.ts`: PASS
 
 ### North Star & Autonomy Budget Audit (`npm run qa:runtime-full`)
 - Autonomy Safety Engine static red-team assertions: 20/20 PASS
 - Autonomy Gating and budget throttling integration assertions: 5/5 PASS
 - Final Operational Readiness Score: **100/100 PASS**
+

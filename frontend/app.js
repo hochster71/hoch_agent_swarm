@@ -323,6 +323,7 @@ async function initDashboard() {
         bindTopologyAgentOverlay();
         if (window.initializeCybersecurityFactory) window.initializeCybersecurityFactory();
         initCandidateReleasePacketBuilder();
+        initFormalReleasePreview();
         initRunsDashboard();
     } catch (err) {
         console.error("Error initializing dashboard: ", err);
@@ -7746,6 +7747,7 @@ async function submitCandidatePacketRequest() {
             }
             
             fetchAndRenderCandidatePackets();
+            if (window.refreshCandidateSelectDropdown) window.refreshCandidateSelectDropdown();
         } else {
             const data = await res.json();
             alert("Failed to create candidate packet: " + (data.detail || "Unknown error"));
@@ -7763,3 +7765,185 @@ async function submitCandidatePacketRequest() {
 window.initCandidateReleasePacketBuilder = initCandidateReleasePacketBuilder;
 window.fetchAndRenderCandidatePackets = fetchAndRenderCandidatePackets;
 window.submitCandidatePacketRequest = submitCandidatePacketRequest;
+
+function initFormalReleasePreview() {
+    const createBtn = document.getElementById("formal-preview-create-button");
+    if (createBtn) {
+        createBtn.addEventListener("click", submitFormalPreviewRequest);
+    }
+    refreshCandidateSelectDropdown();
+    fetchAndRenderFormalPreviews();
+}
+
+async function refreshCandidateSelectDropdown() {
+    const selectEl = document.getElementById("formal-preview-candidate-select");
+    if (!selectEl) return;
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/candidate-packets`);
+        if (!res.ok) return;
+        const packets = await res.json();
+        
+        selectEl.innerHTML = "";
+        if (packets.length === 0) {
+            selectEl.innerHTML = `<option value="">-- No candidate packets loaded --</option>`;
+        } else {
+            packets.forEach(packet => {
+                const opt = document.createElement("option");
+                opt.value = packet.candidate_packet_id;
+                opt.textContent = `${packet.candidate_packet_id} (v${packet.candidate_version} - ${packet.candidate_channel})`;
+                selectEl.appendChild(opt);
+            });
+        }
+    } catch (err) {
+        console.error("Error loading candidate packets for select:", err);
+    }
+}
+
+async function fetchAndRenderFormalPreviews() {
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/formal-preview`);
+        if (!res.ok) return;
+        const previews = await res.json();
+        
+        const historyTbody = document.getElementById("formal-preview-history-list");
+        if (historyTbody) {
+            historyTbody.innerHTML = "";
+            if (previews.length === 0) {
+                historyTbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-secondary); padding: 12px;">No formal release previews simulated.</td></tr>`;
+            } else {
+                previews.forEach(preview => {
+                    const row = document.createElement("tr");
+                    const readyClass = preview.formal_release_ready ? "text-success" : "text-danger";
+                    const statusClass = preview.preview_status === "preview_ready" ? "text-success" : (preview.preview_status === "preview_warn" ? "text-warning" : "text-danger");
+                    
+                    row.innerHTML = `
+                        <td style="font-family:monospace; color:var(--accent-blue);">${preview.formal_preview_id}</td>
+                        <td style="font-family:monospace; color:var(--text-secondary);">${preview.candidate_packet_id}</td>
+                        <td><strong>${preview.candidate_version}</strong></td>
+                        <td><span class="${statusClass} font-semibold">${preview.preview_status.toUpperCase()}</span></td>
+                        <td><span class="${readyClass} font-semibold">${preview.formal_release_ready ? "YES" : "NO"}</span></td>
+                        <td style="color:var(--text-secondary);">${preview.created_at}</td>
+                    `;
+                    historyTbody.appendChild(row);
+                });
+            }
+        }
+    } catch (err) {
+        console.error("Error listing formal release previews:", err);
+    }
+}
+
+async function submitFormalPreviewRequest() {
+    const selectEl = document.getElementById("formal-preview-candidate-select");
+    const operatorInput = document.getElementById("formal-preview-operator-input");
+    const reasonInput = document.getElementById("formal-preview-reason-input");
+    
+    if (!selectEl || !operatorInput || !reasonInput) return;
+    
+    const candidatePacketId = selectEl.value;
+    const operator = operatorInput.value.trim();
+    const reason = reasonInput.value.trim();
+    
+    if (!candidatePacketId) {
+        alert("Please select a candidate packet to preview");
+        return;
+    }
+    
+    const createBtn = document.getElementById("formal-preview-create-button");
+    if (createBtn) {
+        createBtn.disabled = true;
+        createBtn.textContent = "Simulating...";
+    }
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/formal-preview`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                candidate_packet_id: candidatePacketId,
+                operator: operator || "Michael Hoch",
+                reason: reason || "Preview formal readiness for candidate packet"
+            })
+        });
+        
+        if (res.ok) {
+            const preview = await res.json();
+            
+            // Render results
+            const statusEl = document.getElementById("formal-preview-status");
+            const idEl = document.getElementById("formal-preview-id");
+            const pathEl = document.getElementById("formal-preview-path");
+            const readyEl = document.getElementById("formal-preview-formal-ready");
+            
+            if (statusEl) {
+                statusEl.textContent = preview.preview_status.toUpperCase();
+                const statusClass = preview.preview_status === "preview_ready" ? "var(--accent-teal)" : (preview.preview_status === "preview_warn" ? "var(--accent-yellow)" : "#ef4444");
+                statusEl.style.color = statusClass;
+            }
+            if (idEl) idEl.textContent = preview.formal_preview_id;
+            if (pathEl) pathEl.textContent = preview.preview_manifest_path;
+            
+            if (readyEl) {
+                readyEl.textContent = preview.formal_release_ready ? "YES" : "NO";
+                readyEl.style.color = preview.formal_release_ready ? "var(--accent-teal)" : "#ef4444";
+            }
+            
+            // Blocker list
+            const blockersEl = document.getElementById("formal-preview-blockers");
+            if (blockersEl) {
+                blockersEl.innerHTML = "";
+                if (preview.formal_release_blockers.length === 0) {
+                    blockersEl.innerHTML = `<li style="color: var(--accent-teal);">✓ No formal release blockers.</li>`;
+                } else {
+                    preview.formal_release_blockers.forEach(blocker => {
+                        const li = document.createElement("li");
+                        li.style.color = "#ef4444";
+                        li.textContent = `• ${blocker}`;
+                        blockersEl.appendChild(li);
+                    });
+                }
+            }
+            
+            // Required Actions list
+            const actionsEl = document.getElementById("formal-preview-required-actions");
+            if (actionsEl) {
+                actionsEl.innerHTML = "";
+                if (preview.required_operator_actions.length === 0) {
+                    actionsEl.innerHTML = `<li style="color: var(--accent-teal);">✓ No operator actions required.</li>`;
+                } else {
+                    preview.required_operator_actions.forEach(action => {
+                        const li = document.createElement("li");
+                        li.style.color = "var(--accent-yellow)";
+                        li.textContent = `• ${action}`;
+                        actionsEl.appendChild(li);
+                    });
+                }
+            }
+            
+            // Show alerts
+            if (!preview.formal_release_ready) {
+                alert("Formal Release Preview simulation complete: release is STILL BLOCKED. Review blockers and required actions.");
+            } else {
+                alert("Formal Release Preview simulation complete: Release is READY for formal release. Explicit operator approval is still required to finalize.");
+            }
+            
+            fetchAndRenderFormalPreviews();
+        } else {
+            const data = await res.json();
+            alert("Failed to run preview simulation: " + (data.detail || "Unknown error"));
+        }
+    } catch (err) {
+        alert("Error running preview simulation: " + err.message);
+    } finally {
+        if (createBtn) {
+            createBtn.disabled = false;
+            createBtn.textContent = "Preview Formal Release Readiness";
+        }
+    }
+}
+
+window.initFormalReleasePreview = initFormalReleasePreview;
+window.refreshCandidateSelectDropdown = refreshCandidateSelectDropdown;
+window.fetchAndRenderFormalPreviews = fetchAndRenderFormalPreviews;
+window.submitFormalPreviewRequest = submitFormalPreviewRequest;

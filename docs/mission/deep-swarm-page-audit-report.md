@@ -195,6 +195,13 @@ Regenerated supply chain artifacts:
 - **Release Evidence References**: Resolves and bundles SBOM, provenance, baseline evidence, verification reports, QA reports, and browser page screenshots, saving the manifest and md summary files to `dist/candidates/<candidate_packet_id>/`.
 - **Review Artifacts Only**: Formally differentiates candidate release packets as review artifacts. Creating a candidate packet does not silently finalize a formal release, which remains blocked until signing and tag alignment policy gates are passed.
 
+## Formal Release Finalization Preview (Phase 10)
+- **Formal Release Finalization Preview Panel**: Integrated the `#formal-release-preview-panel` inside the Governance Cockpit, featuring a candidate packet selection dropdown, input controls for the operator and decision rationale, a simulation button, and a history log table (`#formal-preview-history-list`).
+- **Read-Only Finalization Simulation**: The simulation evaluates whether a candidate packet can become a formal release right now by querying tag alignment, signing policy status (with operator waiver checks), working tree cleanliness, QA test status, and readiness autopilot compliance.
+- **Strict Non-Destructive Operation**: Simulates and previews blockers, requirements, and required operator actions without performing any git tag modifications, pushing commits, signing with Cosign, or finalizing release states.
+- **Generated Preview Artifacts**: Creates a formal release preview JSON manifest and summary Markdown file under `dist/formal-previews/<formal_preview_id>/` for auditability and compliance tracking.
+- **UI Contract and DOM IDs Integrity**: Fully compliant with required frontend identifiers (`formal-preview-candidate-select`, `formal-preview-status`, `formal-preview-blockers`, `formal-preview-required-actions`, etc.) and disclaimers ("No Tags Are Created", "No Signing Is Performed", "No Publishing Is Performed", "Preview Only").
+
 ---
 
 ## Open Gaps
