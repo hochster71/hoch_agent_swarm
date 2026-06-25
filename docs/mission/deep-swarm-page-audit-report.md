@@ -26,6 +26,8 @@ The following validation suites were added to `package.json` and executed cleanl
 - `npm run e2e:formal-release-seal-dry-run` (Phase 12 seal dry-run E2E test)
 - `npm run qa:release-seal-attestation` (Phase 13 release seal attestation contract check)
 - `npm run e2e:release-seal-attestation` (Phase 13 release seal attestation E2E test)
+- `npm run qa:device-registry` (Device registry hardware config contract check)
+- `npm run e2e:device-registry` (Device registry topology rendering E2E test)
 - `npm run qa:runtime-full` (Full regression suite pass)
 
 ---
@@ -222,6 +224,12 @@ Regenerated supply chain artifacts:
 - **Evidence Checksums**: Computes sha256 checksums for all local evidence files on disk, listing missing artifacts explicitly rather than ignoring them.
 - **Safety Invariants**: Zero git tag creation, zero Cosign signing, zero package publishing, keeping the attestation completely non-mutating.
 - **Governance Cockpit UI**: Adds `#release-seal-attestation-panel` rendering attestation statuses, bundle paths, checksums, and history.
+
+## Device Onboarding Workflow & Registry Governance
+- **Mandatory Backend Restart Rule**: Any configuration updates to backend devices, nodes, cluster layout, iPads, agent-hosts, or topology require restarting the backend server before validating dashboard visibility. Stale uvicorn processes on port 8000 must be explicitly terminated to force reloading Python modules.
+- **API Source of Truth**: `/api/status` is codified as the source of truth for device exposure.
+- **Browser Refresh Requirement**: A browser refresh is required after a backend reload to re-fetch dynamic nodes payload and prevent showing stale UI state.
+- **Topology Regression Protection**: A dedicated `qa:device-registry` contract check and `e2e:device-registry` test protect the topology layout and device payload against regressions.
 
 ---
 

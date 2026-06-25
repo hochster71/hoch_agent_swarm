@@ -1,0 +1,17 @@
+{
+  "generated_at": "2026-06-25T19:08:08.556Z",
+  "status": "PASS",
+  "results": {
+    "backend_has_ipad_pro_11": true,
+    "backend_has_ipad_mini_5": true,
+    "backend_has_ipad_mini_3": true,
+    "store_has_ipad_pro_11": true,
+    "store_has_ipad_mini_5": true,
+    "store_has_ipad_mini_3": true,
+    "api_exposes_ipad_pro_11": true,
+    "api_exposes_ipad_mini_5": true,
+    "api_exposes_ipad_mini_3": true,
+    "api_status_check": true
+  },
+  "issues": []
+}

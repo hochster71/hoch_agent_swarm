@@ -124,7 +124,16 @@ We implemented a release seal attestation bundle builder to compile a final pack
 
 ---
 
-## 13. Verification Results
+## 13. Device Onboarding Workflow & Registry Governance
+We codified the official rules for onboarding devices, nodes, cluster layouts, iPads, and agent-hosts to the swarm:
+- **Mandatory Backend Restart Rule**: Any configuration updates to `backend/cluster_manager.py` require restarting the backend server before checking the UI. This prevents stale in-memory state errors from uvicorn.
+- **API Source of Truth**: `/api/status` is the source of truth for device exposure.
+- **Browser Refresh**: Operators must refresh their browser windows after a backend reload to render the updated nodes.
+- **Topology Regression Protection**: We introduced a contract check (`qa:device-registry`) and E2E topology verification (`e2e:device-registry`) to prevent topology regressions.
+
+---
+
+## 14. Verification Results
 
 ### Static QA & Contract Checks (`npm run qa:ui-contract`)
 - All contract checks exited with `PASS`:
@@ -146,6 +155,7 @@ We implemented a release seal attestation bundle builder to compile a final pack
   - `formal-release-approval-contract`: PASS
   - `formal-release-seal-dry-run-contract`: PASS
   - `release-seal-attestation-contract`: PASS
+  - `device-registry-contract`: PASS
 
 ### Playwright E2E Integration Tests (`npm run qa:e2e-runtime`)
 - All browser simulation specs completed successfully:
@@ -161,6 +171,7 @@ We implemented a release seal attestation bundle builder to compile a final pack
   - `formal-release-approval.spec.ts`: PASS
   - `formal-release-seal-dry-run.spec.ts`: PASS
   - `release-seal-attestation-bundle.spec.ts`: PASS
+  - `device-registry-topology.spec.ts`: PASS
 
 ### North Star & Autonomy Budget Audit (`npm run qa:runtime-full`)
 - Autonomy Safety Engine static red-team assertions: 20/20 PASS
