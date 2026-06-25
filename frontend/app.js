@@ -310,6 +310,49 @@ async function initDashboard() {
             updateUI(data);
         }
         setupWebsocket();
+
+        // Bind Command Map 2.0 Actions
+        const btnRefreshMap = document.getElementById("cluster-topology-refresh-button");
+        if (btnRefreshMap) {
+            btnRefreshMap.addEventListener("click", () => {
+                refreshClusterTopologyStatus();
+            });
+        }
+        const btnFitMap = document.getElementById("cluster-topology-fit-button");
+        if (btnFitMap) {
+            btnFitMap.addEventListener("click", () => {
+                fitClusterTopologyViewport();
+            });
+        }
+        const btnToggleMobile = document.getElementById("cluster-topology-group-toggle-mobile");
+        if (btnToggleMobile) {
+            btnToggleMobile.addEventListener("click", () => {
+                toggleClusterTopologyGroup("mobile");
+            });
+        }
+        const drawer = document.getElementById("cluster-device-fleet-drawer");
+        const toggleTab = document.getElementById("fleet-drawer-toggle-tab");
+        const toggleIcon = document.getElementById("drawer-toggle-icon");
+        if (drawer && toggleTab) {
+            toggleTab.addEventListener("click", () => {
+                const isCollapsed = drawer.classList.contains("fleet-drawer-collapsed");
+                const mapContainer = document.getElementById("cluster-topology-map-v2");
+                if (isCollapsed) {
+                    drawer.classList.remove("fleet-drawer-collapsed");
+                    drawer.classList.add("fleet-drawer-expanded");
+                    if (mapContainer) mapContainer.classList.add("fleet-drawer-expanded-margin");
+                    toggleTab.style.right = "240px";
+                    if (toggleIcon) toggleIcon.setAttribute("data-lucide", "chevron-right");
+                } else {
+                    drawer.classList.remove("fleet-drawer-expanded");
+                    drawer.classList.add("fleet-drawer-collapsed");
+                    if (mapContainer) mapContainer.classList.remove("fleet-drawer-expanded-margin");
+                    toggleTab.style.right = "0";
+                    if (toggleIcon) toggleIcon.setAttribute("data-lucide", "chevron-left");
+                }
+                lucide.createIcons();
+            });
+        }
         fetchAndRenderTasks();
         triggerSecurityAudit();
         fetchAndRenderAuditLogs();
@@ -538,7 +581,7 @@ function updateUI(data) {
             window.updateAssetsFromLegacy(data.nodes);
         }
         populateTable(data.nodes);
-        updateMermaidTopology(data.nodes);
+        renderClusterCommandMapV2(data.nodes);
         renderAssetsView(data.nodes);
         
         // Also refresh settings list if visible
@@ -621,91 +664,86 @@ function updateNodesMap() {
 }
 
 // Render dynamic custom SVG Topology Layout representing Zero Trust enclaves and C2 architecture
+let coreGroupExpanded = true;
+let mobileGroupExpanded = true;
+let edgeGroupExpanded = true;
+let selectedNodeId = null;
+
 async function updateMermaidTopology(nodes, executingNodeId = null) {
+    await renderClusterTopologyGroups(nodes, executingNodeId);
+}
+
+async function renderClusterTopologyGroups(nodes, executingNodeId = null) {
     const wrapper = document.querySelector(".mermaid-container-wrapper");
     const canvas = document.getElementById("agent-flow-canvas");
     if (!wrapper || !canvas) return;
 
-    // ViewBox coordinates
     const width = 800;
     const height = 500;
 
     canvas.width = width;
     canvas.height = height;
 
-    // Find Master Node
     const masterNode = nodes.find(n => n.id === "L1") || nodes[0];
     if (!masterNode) return;
 
-    // Sort remaining nodes into compute/coder nodes vs client/mobile nodes
-    const workers = nodes.filter(n => n.id !== masterNode.id);
-
-    // Positions mapping
-    const masterX = 100;
-    const masterY = 250;
-    const schedX = 290;
-    const schedY = 160;
-    const lbX = 290;
-    const lbY = 340;
-    const workerX = 540;
-
-    // Distribute workers vertically in the right-most column
-    const workersCount = workers.length;
-    const startY = 40;
-    const endY = 460;
-    const gapY = workersCount > 1 ? (endY - startY) / (workersCount - 1) : 0;
-
-    const workerPositions = {};
-    workers.forEach((node, i) => {
-        workerPositions[node.id] = workersCount > 1 ? startY + i * gapY : 250;
-    });
+    const { core, mobile, edge } = groupClusterDevicesByFleet(nodes);
 
     let pathsHtml = "";
     currentPaths = {};
 
-    // 1. Master Hub -> Scheduler connection curve (Dotted Cyan X-axis transport)
-    const masterToSchedPath = getBezierPathString(masterX, masterY, schedX - 60, schedY);
-    pathsHtml += `<path d="${masterToSchedPath}" stroke="rgba(0, 229, 255, 0.45)" stroke-width="1.8" stroke-dasharray="4, 4" fill="none" />`;
-    currentPaths["master-sched"] = getBezierPoints(masterX, masterY, schedX - 60, schedY);
+    // 1. Paths from Master (Cluster MGR) to Hubs
+    const mgrToCorePath = getBezierPathString(100, 250, 300, 100);
+    const mgrToMobilePath = getBezierPathString(100, 250, 300, 250);
+    const mgrToEdgePath = getBezierPathString(100, 250, 300, 400);
 
-    // 2. Master Hub -> Load Balancer connection curve (Dotted Cyan X-axis transport)
-    const masterToLbPath = getBezierPathString(masterX, masterY, lbX - 60, lbY);
-    pathsHtml += `<path d="${masterToLbPath}" stroke="rgba(0, 229, 255, 0.45)" stroke-width="1.8" stroke-dasharray="4, 4" fill="none" />`;
-    currentPaths["master-lb"] = getBezierPoints(masterX, masterY, lbX - 60, lbY);
+    pathsHtml += `<path d="${mgrToCorePath}" stroke="rgba(59, 130, 246, 0.4)" stroke-width="1.8" fill="none" />`;
+    pathsHtml += `<path d="${mgrToMobilePath}" stroke="rgba(16, 185, 129, 0.4)" stroke-width="1.8" fill="none" />`;
+    pathsHtml += `<path d="${mgrToEdgePath}" stroke="rgba(168, 85, 247, 0.4)" stroke-width="1.8" fill="none" />`;
 
-    // 3. Orchestrator -> Worker connection curves
-    workers.forEach(node => {
-        const wY = workerPositions[node.id] + 35; // Center of the 70px card
-        const isCoder = !node.os || (!node.os.toLowerCase().includes("ios") && !node.os.toLowerCase().includes("ipad"));
+    currentPaths["master-sched"] = getBezierPoints(100, 250, 300, 100);
+    currentPaths["master-lb"] = getBezierPoints(100, 250, 300, 250);
+    if (executingNodeId === "IPHONE") {
+        currentPaths["master-lb"] = getBezierPoints(100, 250, 300, 400);
+    }
 
-        let fromX, fromY, strokeColor, dashArray, pathKey;
-        if (isCoder) {
-            fromX = schedX + 60;
-            fromY = schedY;
-            strokeColor = "rgba(0, 229, 255, 0.35)"; // Dotted Cyan for horizontal code pipelines
-            dashArray = "4, 4";
-            pathKey = `sched-${node.id}`;
-        } else {
-            fromX = lbX + 60;
-            fromY = lbY;
-            strokeColor = "rgba(16, 185, 129, 0.45)"; // Solid Green/Teal for vertical edge streams
-            dashArray = "none";
-            pathKey = `lb-${node.id}`;
-        }
+    // 2. Paths from Hubs to worker cards (if expanded)
+    if (coreGroupExpanded) {
+        core.forEach(node => {
+            let yVal = 25;
+            if (node.id === "L3") yVal = 80;
+            if (node.id === "W1") yVal = 135;
+            
+            const pathD = getBezierPathString(300, 100, 535, yVal + 22.5);
+            pathsHtml += `<path d="${pathD}" stroke="rgba(59, 130, 246, 0.25)" stroke-width="1.2" stroke-dasharray="3, 3" fill="none" />`;
+            currentPaths[`sched-${node.id}`] = getBezierPoints(300, 100, 535, yVal + 22.5);
+        });
+    }
 
-        const pathD = getBezierPathString(fromX, fromY, workerX, wY);
-        pathsHtml += `<path d="${pathD}" stroke="${strokeColor}" stroke-width="1.5" stroke-dasharray="${dashArray}" fill="none" />`;
-        currentPaths[pathKey] = getBezierPoints(fromX, fromY, workerX, wY);
+    if (mobileGroupExpanded) {
+        mobile.forEach(node => {
+            let yVal = 210;
+            if (node.id === "IPAD_PRO_11") yVal = 260;
+            if (node.id === "IPAD_MINI_1") yVal = 310;
+            if (node.id === "IPAD_MINI_2") yVal = 360;
+            
+            const pathD = getBezierPathString(300, 250, 535, yVal + 22.5);
+            pathsHtml += `<path d="${pathD}" stroke="rgba(16, 185, 129, 0.25)" stroke-width="1.2" stroke-dasharray="3, 3" fill="none" />`;
+            currentPaths[`lb-${node.id}`] = getBezierPoints(300, 250, 535, yVal + 22.5);
+        });
+    }
 
-        // Display IP label along path
-        const midX = fromX + (workerX - fromX) * 0.55;
-        const midY = fromY + (wY - fromY) * 0.45 - 4;
-        pathsHtml += `<text x="${midX}" y="${midY}" text-anchor="middle" fill="${isCoder ? 'rgba(0, 229, 255, 0.4)' : 'rgba(16, 185, 129, 0.55)'}" style="font-family: monospace; font-size: 8px; font-weight: bold;">${node.ip}</text>`;
-    });
+    if (edgeGroupExpanded) {
+        edge.forEach(node => {
+            const pathD = getBezierPathString(300, 400, 535, 442 + 22.5);
+            pathsHtml += `<path d="${pathD}" stroke="rgba(168, 85, 247, 0.25)" stroke-width="1.2" stroke-dasharray="3, 3" fill="none" />`;
+            currentPaths[`lb-${node.id}`] = getBezierPoints(300, 400, 535, 442 + 22.5);
+        });
+    }
 
     let nodesHtml = "";
 
-    // Gradient defs
+    // Gradient definitions
     nodesHtml += `
     <defs>
         <linearGradient id="masterGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -715,49 +753,87 @@ async function updateMermaidTopology(nodes, executingNodeId = null) {
     </defs>
     `;
 
-    // Render Master Hub
-    const isMasterExecuting = executingNodeId === masterNode.id;
+    // Group boundary boxes
+    if (coreGroupExpanded) {
+        nodesHtml += `
+        <g id="cluster-topology-core-group">
+            <rect x="525" y="10" width="220" height="180" rx="8" ry="8" fill="rgba(59, 130, 246, 0.02)" stroke="rgba(59, 130, 246, 0.12)" stroke-width="1" stroke-dasharray="4 4" />
+            <text x="535" y="22" fill="rgba(59, 130, 246, 0.35)" style="font-family: monospace; font-size: 8px; font-weight: bold; letter-spacing: 0.05em;">CORE MESH GROUP</text>
+        </g>
+        `;
+    }
+
+    if (mobileGroupExpanded) {
+        nodesHtml += `
+        <g id="cluster-topology-mobile-group">
+            <rect x="525" y="200" width="220" height="230" rx="8" ry="8" fill="rgba(16, 185, 129, 0.02)" stroke="rgba(16, 185, 129, 0.12)" stroke-width="1" stroke-dasharray="4 4" />
+            <text x="535" y="212" fill="rgba(16, 185, 129, 0.35)" style="font-family: monospace; font-size: 8px; font-weight: bold; letter-spacing: 0.05em;">MOBILE FLEET GROUP</text>
+        </g>
+        `;
+    }
+
+    if (edgeGroupExpanded) {
+        nodesHtml += `
+        <g id="cluster-topology-edge-group">
+            <rect x="525" y="440" width="220" height="50" rx="8" ry="8" fill="rgba(168, 85, 247, 0.02)" stroke="rgba(168, 85, 247, 0.12)" stroke-width="1" stroke-dasharray="4 4" />
+            <text x="535" y="452" fill="rgba(168, 85, 247, 0.35)" style="font-family: monospace; font-size: 8px; font-weight: bold; letter-spacing: 0.05em;">EDGE GROUP</text>
+        </g>
+        `;
+    }
+
     nodesHtml += `
-    <g transform="translate(${masterX}, ${masterY})" style="cursor: pointer;" onclick="openModalForNodeById('${masterNode.id}')">
-        <circle cx="0" cy="0" r="45" fill="none" stroke="rgba(0, 229, 255, 0.45)" stroke-width="2" stroke-dasharray="10 15">
+    <g id="cluster-topology-agent-group" style="display: none;"></g>
+    `;
+
+    // Render Master Hub (Cluster MGR)
+    const isMasterExecuting = executingNodeId === masterNode.id;
+    const isMasterSelected = selectedNodeId === masterNode.id ? 'style="filter: drop-shadow(0 0 12px rgba(59,130,246,0.6));"' : '';
+    nodesHtml += `
+    <g transform="translate(100, 250)" style="cursor: pointer;" onclick="selectClusterNode('${masterNode.id}')">
+        <circle cx="0" cy="0" r="42" fill="none" stroke="rgba(0, 229, 255, 0.45)" stroke-width="2" stroke-dasharray="10 15">
             <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="20s" repeatCount="indefinite" />
         </circle>
-        <circle cx="0" cy="0" r="38" fill="none" stroke="rgba(168, 85, 247, 0.45)" stroke-width="1.5" stroke-dasharray="6 8">
-            <animateTransform attributeName="transform" type="rotate" from="360" to="0" dur="12s" repeatCount="indefinite" />
-        </circle>
-        <circle cx="0" cy="0" r="30" fill="url(#masterGrad)" stroke="${isMasterExecuting ? '#ef4444' : 'rgba(0, 229, 255, 0.6)'}" stroke-width="2.5" style="filter: drop-shadow(0 0 8px ${isMasterExecuting ? 'rgba(239,68,68,0.7)' : 'rgba(0, 229, 255, 0.5)'});" />
+        <circle cx="0" cy="0" r="35" fill="url(#masterGrad)" stroke="${isMasterExecuting ? '#ef4444' : 'rgba(0, 229, 255, 0.6)'}" stroke-width="2.5" ${isMasterSelected} />
         <text x="0" y="3" text-anchor="middle" fill="#ffffff" style="font-family: 'Outfit', sans-serif; font-size: 8px; font-weight: 700; letter-spacing: 0.5px;">CLUSTER MGR</text>
         <text x="0" y="13" text-anchor="middle" fill="rgba(255,255,255,0.7)" style="font-family: monospace; font-size: 7px;">${masterNode.ip}</text>
     </g>
     `;
 
-    // Render Task Scheduler
+    // Render Hubs
+    // 1. Core Compute Hub
     nodesHtml += `
-    <g transform="translate(${schedX - 60}, ${schedY - 25})" style="cursor: pointer;" onclick="openModalForNodeById('${masterNode.id}')">
-        <rect x="0" y="0" width="120" height="50" rx="6" ry="6" fill="#161c2d" stroke="rgba(59, 130, 246, 0.55)" stroke-width="1.5" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));" />
-        <text x="60" y="20" text-anchor="middle" fill="#fff" style="font-family: 'Outfit', sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 0.5px;">TASK SCHEDULER</text>
-        <text x="60" y="35" text-anchor="middle" fill="var(--accent-teal)" style="font-family: monospace; font-size: 8px; font-weight: bold;">ACTIVE (OK)</text>
+    <g transform="translate(300, 100)" style="cursor: pointer;" onclick="toggleClusterTopologyGroup('core')">
+        <circle cx="0" cy="0" r="22" fill="#161c2d" stroke="rgba(59, 130, 246, 0.7)" stroke-width="2" />
+        <circle cx="0" cy="0" r="16" fill="rgba(59, 130, 246, 0.15)" />
+        <text x="0" y="3" text-anchor="middle" fill="#fff" style="font-family: monospace; font-size: 8px; font-weight: bold;">CORE</text>
     </g>
     `;
 
-    // Render Load Balancer
+    // 2. Mobile Fleet Hub
     nodesHtml += `
-    <g transform="translate(${lbX - 60}, ${lbY - 25})" style="cursor: pointer;">
-        <rect x="0" y="0" width="120" height="50" rx="6" ry="6" fill="#161c2d" stroke="rgba(168, 85, 247, 0.55)" stroke-width="1.5" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));" />
-        <text x="60" y="20" text-anchor="middle" fill="#fff" style="font-family: 'Outfit', sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 0.5px;">LOAD BALANCER</text>
-        <text x="60" y="35" text-anchor="middle" fill="var(--accent-teal)" style="font-family: monospace; font-size: 8px; font-weight: bold;">ACTIVE (OK)</text>
+    <g transform="translate(300, 250)" style="cursor: pointer;" onclick="toggleClusterTopologyGroup('mobile')">
+        <circle cx="0" cy="0" r="22" fill="#161c2d" stroke="rgba(16, 185, 129, 0.7)" stroke-width="2" />
+        <circle cx="0" cy="0" r="16" fill="rgba(16, 185, 129, 0.15)" />
+        <text x="0" y="3" text-anchor="middle" fill="#fff" style="font-family: monospace; font-size: 8px; font-weight: bold;">MOBILE</text>
     </g>
     `;
 
-    // Render Worker Node Cards
-    workers.forEach(node => {
-        const wY = workerPositions[node.id];
-        let statusClass = "status-idle";
-        if (node.status === "Active") statusClass = "status-active";
-        else if (node.status === "Underutilized") statusClass = "status-underutilized";
+    // 3. Edge Phones Hub
+    nodesHtml += `
+    <g transform="translate(300, 400)" style="cursor: pointer;" onclick="toggleClusterTopologyGroup('edge')">
+        <circle cx="0" cy="0" r="22" fill="#161c2d" stroke="rgba(168, 85, 247, 0.7)" stroke-width="2" />
+        <circle cx="0" cy="0" r="16" fill="rgba(168, 85, 247, 0.15)" />
+        <text x="0" y="3" text-anchor="middle" fill="#fff" style="font-family: monospace; font-size: 8px; font-weight: bold;">EDGE</text>
+    </g>
+    `;
 
-        const executingClass = executingNodeId === node.id ? 'executing' : '';
-        const nodeStroke = executingNodeId === node.id ? '#ef4444' : 'rgba(255, 255, 255, 0.08)';
+    // Render child nodes (if expanded)
+    const renderNodeCard = (node, x, y) => {
+        const isExecuting = executingNodeId === node.id;
+        const isSelected = selectedNodeId === node.id;
+        const nodeStroke = isExecuting ? '#ef4444' : (isSelected ? 'var(--accent-blue)' : 'rgba(255, 255, 255, 0.08)');
+        const executingClass = isExecuting ? 'executing' : '';
+        const selectedClass = isSelected ? 'selected' : '';
 
         let osIcon = "monitor";
         if (node.os && node.os.toLowerCase().includes("mac")) osIcon = "apple";
@@ -766,31 +842,49 @@ async function updateMermaidTopology(nodes, executingNodeId = null) {
         else if (node.os && node.os.toLowerCase().includes("ipad")) osIcon = "tablet";
         else if (node.os && node.os.toLowerCase().includes("linux")) osIcon = "server";
 
-        nodesHtml += `
-        <foreignObject x="${workerX}" y="${wY}" width="200" height="80">
-            <div xmlns="http://www.w3.org/1999/xhtml" class="topology-node-card ${executingClass}" onclick="openModalForNodeById('${node.id}')" style="box-sizing: border-box; width: 100%; height: 100%; background: rgba(22, 28, 45, 0.85); backdrop-filter: blur(8px); border: 1px solid ${nodeStroke}; border-radius: 8px; padding: 8px 12px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.4); overflow: hidden;">
+        return `
+        <foreignObject x="${x}" y="${y}" width="200" height="45" id="node-card-${node.id}">
+            <div xmlns="http://www.w3.org/1999/xhtml" class="topology-node-card ${executingClass} ${selectedClass}" onclick="selectClusterNode('${node.id}')" style="box-sizing: border-box; width: 100%; height: 100%; background: rgba(22, 28, 45, 0.85); backdrop-filter: blur(8px); border: 1px solid ${nodeStroke}; border-radius: 6px; padding: 6px 10px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.4); overflow: hidden;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div style="display: flex; align-items: center; gap: 6px; min-width: 0; flex: 1;">
-                        <i data-lucide="${osIcon}" style="width: 12px; height: 12px; color: var(--text-secondary); flex-shrink: 0;"></i>
-                        <span style="font-size: 11px; font-weight: bold; color: #fff; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; max-width: 110px;">${node.name}</span>
+                    <div style="display: flex; align-items: center; gap: 4px; min-width: 0; flex: 1;">
+                        <i data-lucide="${osIcon}" style="width: 10px; height: 10px; color: var(--text-secondary); flex-shrink: 0;"></i>
+                        <span style="font-size: 10px; font-weight: bold; color: #fff; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; max-width: 130px;">${escapeHtml(node.name)}</span>
                     </div>
-                    <span class="node-status-label ${getStatusClass(node.status)}" style="font-size: 8px; padding: 1px 5px;">${node.status}</span>
+                    <span class="node-status-label ${getStatusClass(node.status)}" style="font-size: 7px; padding: 1px 4px;">${node.status}</span>
                 </div>
-                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 8px; color: var(--text-secondary); margin-top: 2px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 7.5px; color: var(--text-secondary);">
                     <span>${node.ip}</span>
                     <span>CPU: ${node.cpu_usage}%</span>
-                </div>
-                <div class="node-activity-ticker" style="font-size: 8px; max-width: 180px;">${node.activity || node.role}</div>
-                <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-top: 2px; overflow: hidden; max-height: 16px;">
-                    ${node.agents && node.agents.length > 0 
-                        ? node.agents.map(a => `<span class="agent-pill ${a.type.includes('GORDY') ? 'gordy' : ''}" style="font-size: 7px; padding: 1px 3px; border-radius: 3px; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.25); color: #c084fc; font-family: monospace; white-space: nowrap;">${a.name.split('-')[0]}</span>`).join('') 
-                        : `<span style="font-size: 7px; color: var(--text-secondary);">No active agents</span>`}
                 </div>
             </div>
         </foreignObject>
         `;
+    };
 
-    });
+    if (coreGroupExpanded) {
+        core.forEach(node => {
+            let yVal = 25;
+            if (node.id === "L3") yVal = 80;
+            if (node.id === "W1") yVal = 135;
+            nodesHtml += renderNodeCard(node, 535, yVal);
+        });
+    }
+
+    if (mobileGroupExpanded) {
+        mobile.forEach(node => {
+            let yVal = 210;
+            if (node.id === "IPAD_PRO_11") yVal = 260;
+            if (node.id === "IPAD_MINI_1") yVal = 310;
+            if (node.id === "IPAD_MINI_2") yVal = 360;
+            nodesHtml += renderNodeCard(node, 535, yVal);
+        });
+    }
+
+    if (edgeGroupExpanded) {
+        edge.forEach(node => {
+            nodesHtml += renderNodeCard(node, 535, 442);
+        });
+    }
 
     // Populate SVG
     mermaidGraph.innerHTML = `
@@ -800,17 +894,261 @@ async function updateMermaidTopology(nodes, executingNodeId = null) {
     </svg>
     `;
 
-    // Apply transforms
     const svg = mermaidGraph.querySelector("svg");
     if (svg) {
         svg.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
     }
 
-    // Rebind zoom/pan
     setupSvgPanZoom();
-
-    // Render icons inside SVG foreignObject
     lucide.createIcons();
+}
+
+function renderClusterCommandMapV2(nodes) {
+    if (!nodes) nodes = currentNodes;
+    renderAgentCommandRail();
+    renderDeviceFleetDrawer(nodes);
+    renderClusterTopologyGroups(nodes);
+}
+
+function groupClusterDevicesByFleet(nodes) {
+    const core = [];
+    const mobile = [];
+    const edge = [];
+    const service = [];
+    
+    nodes.forEach(node => {
+        const group = node.fleet_group || "";
+        if (group === "core_compute" || node.id === "L1" || node.id === "L2" || node.id === "L3" || node.id === "W1") {
+            core.push(node);
+        } else if (group === "mobile_fleet" || (node.os && node.os.toLowerCase().includes("ipad")) || node.id === "IPAD" || node.id.includes("IPAD")) {
+            mobile.push(node);
+        } else if (group === "edge_phone" || (node.os && (node.os.toLowerCase().includes("ios") || node.os.toLowerCase().includes("iphone"))) || node.id === "IPHONE") {
+            edge.push(node);
+        } else {
+            service.push(node);
+        }
+    });
+    
+    return { core, mobile, edge, service };
+}
+
+function renderAgentCommandRail() {
+    const rail = document.getElementById("cluster-agent-command-rail");
+    if (!rail) return;
+
+    const groups = {
+        "Mission": ["boss-noodle"],
+        "Research": ["dr-signal"],
+        "Build": ["prof-blueprint", "eng-patch", "gordon-vector"],
+        "QA": ["ms-checkmark"],
+        "Security": ["capt-guardrail"],
+        "Release": ["eng-rocket"],
+        "Governance": ["prof-ledger"]
+    };
+
+    let html = `<div class="agent-rail-container">`;
+    for (const [groupName, agentIds] of Object.entries(groups)) {
+        const groupAgents = hochPixelStickAgents.filter(a => agentIds.includes(a.id));
+        if (groupAgents.length === 0) continue;
+
+        html += `
+            <div class="agent-rail-group">
+                <div class="agent-rail-group-title">${groupName}</div>
+        `;
+
+        groupAgents.forEach(agent => {
+            const state = agent.status || "idle";
+            let ledColor = "#6b7280";
+            let statusClass = "";
+            if (state === "complete") {
+                ledColor = "#10b981";
+                statusClass = "is-complete";
+            } else if (state === "executing" || state === "active" || state === "researching" || state === "verifying" || state === "reporting" || state === "completing") {
+                ledColor = "#3b82f6";
+                statusClass = "is-active";
+            }
+            
+            const chipClass = `agent-rail-chip topology-agent-chip ${statusClass}`;
+            
+            html += `
+                <button class="${chipClass}" id="topo-chip-${agent.id}" data-agent-id="${agent.id}" type="button" title="${agent.displayName} - ${agent.title}">
+                    <span class="topology-agent-led" id="topo-led-${agent.id}" style="width: 5px; height: 5px; border-radius: 50%; background: ${ledColor}; display: inline-block; box-shadow: 0 0 4px ${ledColor};"></span>
+                    <span>${agent.displayName}</span>
+                </button>
+            `;
+        });
+
+        html += `</div>`;
+    }
+    html += `</div>`;
+    rail.innerHTML = html;
+
+    rail.querySelectorAll(".agent-rail-chip").forEach(chip => {
+        chip.addEventListener("click", () => {
+            openTopologyAgentProfile(chip.dataset.agentId, chip);
+        });
+    });
+}
+
+function renderDeviceFleetDrawer(nodes) {
+    const coreSection = document.getElementById("cluster-device-core-section");
+    const mobileSection = document.getElementById("cluster-device-mobile-section");
+    const edgeSection = document.getElementById("cluster-device-edge-section");
+    
+    if (!coreSection || !mobileSection || !edgeSection) return;
+    
+    const { core, mobile, edge } = groupClusterDevicesByFleet(nodes);
+    
+    const buildCards = (groupNodes) => {
+        return groupNodes.map(node => {
+            const modelText = node.name.includes("MTXQ2LL/A") ? "MTXQ2LL/A" :
+                              node.name.includes("MUU62LL/A") ? "MUU62LL/A" :
+                              node.name.includes("MGNV2LL/A") ? "MGNV2LL/A" : "";
+            
+            const isSelected = selectedNodeId === node.id ? "selected" : "";
+            
+            let statusColor = "#6b7280";
+            if (node.status === "Active" || node.status === "OK") statusColor = "#10b981";
+            else if (node.status === "Reasoning") statusColor = "#3b82f6";
+            else if (node.status === "Self-Healing") statusColor = "#a855f7";
+            else if (node.status === "Triaging" || node.status === "Warning") statusColor = "#f59e0b";
+            
+            return `
+                <div class="fleet-device-card ${isSelected}" id="fleet-card-${node.id}" onclick="selectClusterNode('${node.id}')" style="margin-bottom: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 10px; font-weight: bold; color: #fff;">${escapeHtml(node.name)}</span>
+                        <span style="width: 5px; height: 5px; border-radius: 50%; background: ${statusColor}; display: inline-block;"></span>
+                    </div>
+                    ${modelText ? `<div style="font-size: 8px; font-family: monospace; color: var(--accent-teal); margin-top: 1px;">${modelText}</div>` : ""}
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 8px; color: var(--text-secondary); margin-top: 2px;">
+                        <span>${node.ip}</span>
+                        <span>CPU: ${node.cpu_usage || 0}%</span>
+                    </div>
+                </div>
+            `;
+        }).join("");
+    };
+    
+    coreSection.innerHTML = `
+        <div class="fleet-section-title"><i data-lucide="cpu" style="width: 10px; height: 10px;"></i> Core Compute</div>
+        ${buildCards(core)}
+    `;
+    mobileSection.innerHTML = `
+        <div class="fleet-section-title"><i data-lucide="tablet" style="width: 10px; height: 10px;"></i> Mobile Fleet</div>
+        ${buildCards(mobile)}
+    `;
+    edgeSection.innerHTML = `
+        <div class="fleet-section-title"><i data-lucide="smartphone" style="width: 10px; height: 10px;"></i> Edge Phones</div>
+        ${buildCards(edge)}
+    `;
+    
+    lucide.createIcons();
+}
+
+function renderSelectedNodeInspector(node) {
+    const inspector = document.getElementById("cluster-selected-node-inspector");
+    if (!inspector) return;
+    
+    if (!node) {
+        inspector.innerHTML = `<span style="font-size: 11px; color: var(--text-secondary); font-style: italic;">Select a node from the map or fleet list to inspect details.</span>`;
+        return;
+    }
+    
+    let statusColor = "#6b7280";
+    if (node.status === "Active" || node.status === "OK") statusColor = "#10b981";
+    else if (node.status === "Reasoning") statusColor = "#3b82f6";
+    else if (node.status === "Self-Healing") statusColor = "#a855f7";
+    else if (node.status === "Triaging" || node.status === "Warning") statusColor = "#f59e0b";
+
+    const modelVal = node.name.includes("MTXQ2LL/A") ? "MTXQ2LL/A" :
+                     node.name.includes("MUU62LL/A") ? "MUU62LL/A" :
+                     node.name.includes("MGNV2LL/A") ? "MGNV2LL/A" : 
+                     (node.id === "IPAD" ? "IPAD PRO 12\"" : "Standard Node");
+    
+    const linkedAgents = node.agents && node.agents.length > 0 
+        ? node.agents.map(a => a.name).join(", ") 
+        : "No active agents";
+        
+    const recommendedAction = node.status === "Warning" || node.status === "Triaging" 
+        ? "Initialize automated self-healing protocol or dispatch warning alert." 
+        : "Vitals sync stable. No operator actions required.";
+    
+    inspector.innerHTML = `
+        <div style="width: 100%; display: grid; grid-template-columns: repeat(4, 1fr) 2fr; gap: 12px; text-align: left; font-family: monospace; font-size: 10px;">
+            <div class="inspector-field">
+                <span class="inspector-label">NODE</span>
+                <span class="inspector-value" style="color: var(--accent-teal);">${escapeHtml(node.name)}</span>
+            </div>
+            <div class="inspector-field">
+                <span class="inspector-label">MODEL / IP</span>
+                <span class="inspector-value">${modelVal} (${node.ip})</span>
+            </div>
+            <div class="inspector-field">
+                <span class="inspector-label">STATUS / LOAD</span>
+                <span class="inspector-value" style="display: flex; align-items: center; gap: 4px;">
+                    <span style="width: 5px; height: 5px; border-radius: 50%; background: ${statusColor}; display: inline-block;"></span>
+                    ${node.status} (CPU: ${node.cpu_usage || 0}%)
+                </span>
+            </div>
+            <div class="inspector-field">
+                <span class="inspector-label">ACTIVE AGENTS</span>
+                <span class="inspector-value" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 130px;" title="${linkedAgents}">${linkedAgents}</span>
+            </div>
+            <div class="inspector-field">
+                <span class="inspector-label">RECOMMENDED ACTION</span>
+                <span class="inspector-value" style="color: #f59e0b;">${recommendedAction}</span>
+            </div>
+        </div>
+    `;
+}
+
+function selectClusterNode(nodeId) {
+    selectedNodeId = nodeId;
+    
+    document.querySelectorAll(".fleet-device-card").forEach(card => {
+        card.classList.toggle("selected", card.id === `fleet-card-${nodeId}`);
+    });
+    
+    const node = currentNodes.find(n => n.id === nodeId);
+    renderSelectedNodeInspector(node);
+    
+    renderClusterTopologyGroups(currentNodes);
+}
+
+function toggleClusterTopologyGroup(groupId) {
+    if (groupId === "mobile") {
+        mobileGroupExpanded = !mobileGroupExpanded;
+    } else if (groupId === "core") {
+        coreGroupExpanded = !coreGroupExpanded;
+    } else if (groupId === "edge") {
+        edgeGroupExpanded = !edgeGroupExpanded;
+    }
+    renderClusterTopologyGroups(currentNodes);
+}
+
+window.selectClusterNode = selectClusterNode;
+window.toggleClusterTopologyGroup = toggleClusterTopologyGroup;
+
+function fitClusterTopologyViewport() {
+    panX = 0;
+    panY = 0;
+    scale = 1.0;
+    const svg = mermaidGraph.querySelector("svg");
+    if (svg) {
+        svg.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+    }
+}
+
+async function refreshClusterTopologyStatus() {
+    try {
+        const response = await fetch(`${API_BASE}/api/status`);
+        if (response.ok) {
+            const data = await response.json();
+            updateUI(data);
+        }
+    } catch (err) {
+        console.warn("Manual sync failed: ", err);
+    }
 }
 
 window.openModalForNodeById = function(nodeId) {
@@ -4840,31 +5178,7 @@ async function bindTopologyAgentOverlay() {
 }
 
 function renderTopologyAgentRoster() {
-    const roster = document.getElementById("topology-agent-roster");
-    if (!roster) return;
-    
-    roster.innerHTML = hochPixelStickAgents.map(agent => {
-        const state = agent.status || "idle";
-        let ledClass = "topology-agent-led";
-        if (state === "complete") {
-            ledClass += " is-green";
-        }
-        
-        return `
-            <button class="topology-agent-chip" id="topo-chip-${agent.id}" data-agent-id="${agent.id}" type="button" style="margin: 2px;">
-                <span class="${ledClass}" id="topo-led-${agent.id}"></span>
-                <strong>${agent.displayName}</strong>
-                <span style="font-size: 7px; opacity: 0.6; text-transform: uppercase;">${agent.tag}</span>
-            </button>
-        `;
-    }).join("");
-    
-    // Bind click events
-    roster.querySelectorAll(".topology-agent-chip").forEach(chip => {
-        chip.addEventListener("click", () => {
-            openTopologyAgentProfile(chip.dataset.agentId, chip);
-        });
-    });
+    renderAgentCommandRail();
 }
 
 function renderTopologyPixelAvatar(avatarVariant, state) {

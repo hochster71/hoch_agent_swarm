@@ -44,6 +44,7 @@ ACTIVITY_POOLS = {
 NODES_CONFIG = {
     "L1": {
         "id": "L1",
+        "fleet_group": "core_compute",
         "name": "MBP MS PRO (CONTROL PLANE)",
         "ip": "10.0.0.6",
         "role": "CONTROL PLANE / KERNEL HUB",
@@ -85,6 +86,7 @@ NODES_CONFIG = {
     },
     "L2": {
         "id": "L2",
+        "fleet_group": "core_compute",
         "name": "MICHAEL'S IMAC",
         "ip": "10.0.0.92",
         "role": "Coder Node — Refactor & Analysis",
@@ -120,6 +122,7 @@ NODES_CONFIG = {
     },
     "L3": {
         "id": "L3",
+        "fleet_group": "core_compute",
         "name": "HOCH-MESH MACBOOK NEO",
         "ip": "10.0.0.8",
         "role": "Coder Node — Deploy & Self-Heal Engine",
@@ -161,6 +164,7 @@ NODES_CONFIG = {
     },
     "W1": {
         "id": "W1",
+        "fleet_group": "core_compute",
         "name": "DELL 9440",
         "ip": "10.0.0.207",
         "role": "Coder Node — Heavy Compute & Reasoning",
@@ -202,6 +206,7 @@ NODES_CONFIG = {
     },
     "IPAD": {
         "id": "IPAD",
+        "fleet_group": "mobile_fleet",
         "name": "IPAD PRO 12\"",
         "ip": "10.0.0.120",
         "role": "C2 Monitor / Lightweight Triage Client",
@@ -231,6 +236,7 @@ NODES_CONFIG = {
     },
     "IPHONE": {
         "id": "IPHONE",
+        "fleet_group": "edge_phone",
         "name": "IPHONE 15 PRO MAX",
         "ip": "10.0.0.74",
         "role": "Mobile Sentinel / Push Alert Gateway",
@@ -260,6 +266,7 @@ NODES_CONFIG = {
     },
     "IPAD_PRO_11": {
         "id": "IPAD_PRO_11",
+        "fleet_group": "mobile_fleet",
         "name": "Michael's iPad pro 11-inch MTXQ2LL/A",
         "ip": "10.0.0.44",
         "role": "Edge Client / Mobile Node",
@@ -283,6 +290,7 @@ NODES_CONFIG = {
     },
     "IPAD_MINI_1": {
         "id": "IPAD_MINI_1",
+        "fleet_group": "mobile_fleet",
         "name": "iPad mini MUU62LL/A",
         "ip": "10.0.0.91",
         "role": "Edge Client / Mobile Node",
@@ -306,6 +314,7 @@ NODES_CONFIG = {
     },
     "IPAD_MINI_2": {
         "id": "IPAD_MINI_2",
+        "fleet_group": "mobile_fleet",
         "name": "iPad mini MGNV2LL/A",
         "ip": "10.0.0.137",
         "role": "Edge Client / Mobile Node",

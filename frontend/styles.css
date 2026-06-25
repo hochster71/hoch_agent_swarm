@@ -2255,3 +2255,140 @@ body {
     transform: none !important;
   }
 }
+
+/* Cluster Command Map 2.0 Styles */
+.fleet-drawer-expanded {
+    transform: translateX(0) !important;
+}
+
+#fleet-drawer-toggle-tab {
+    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fleet-device-card {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--border-glass);
+    border-radius: 6px;
+    padding: 8px 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.fleet-device-card:hover {
+    border-color: var(--accent-teal);
+    background: rgba(15, 23, 42, 0.85);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 229, 255, 0.1);
+}
+
+.fleet-device-card.selected {
+    border-color: var(--accent-blue);
+    background: rgba(59, 130, 246, 0.08);
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+}
+
+.fleet-section-title {
+    font-size: 9px;
+    font-weight: bold;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.agent-rail-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.agent-rail-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    background: rgba(15, 23, 42, 0.45);
+    border: 1px solid var(--border-glass);
+    border-radius: 6px;
+}
+
+.agent-rail-group-title {
+    font-size: 8px;
+    font-weight: 800;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-right: 1px solid var(--border-glass);
+    padding-right: 6px;
+}
+
+.agent-rail-chip,
+.topology-agent-chip {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    color: #e2e8f0;
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    padding: 2px 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+}
+
+.agent-rail-chip:hover,
+.topology-agent-chip:hover {
+    background: rgba(30, 41, 59, 0.85);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.agent-rail-chip.is-active,
+.topology-agent-chip.is-active {
+    border-color: var(--accent-teal) !important;
+    background: rgba(0, 229, 255, 0.1) !important;
+    box-shadow: 0 0 6px rgba(0, 229, 255, 0.2);
+    color: #fff;
+}
+
+.agent-rail-chip.is-dimmed,
+.topology-agent-chip.is-dimmed {
+    opacity: 0.4;
+}
+
+.agent-rail-chip.is-complete,
+.topology-agent-chip.is-complete {
+    border-color: #10b981 !important;
+    background: rgba(16, 185, 129, 0.08) !important;
+}
+
+.inspector-field {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.inspector-label {
+    font-size: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    font-family: monospace;
+}
+
+.inspector-value {
+    font-size: 10px;
+    font-weight: 600;
+    color: #fff;
+}
+

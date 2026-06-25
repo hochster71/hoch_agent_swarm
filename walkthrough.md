@@ -124,12 +124,14 @@ We implemented a release seal attestation bundle builder to compile a final pack
 
 ---
 
-## 13. Device Onboarding Workflow & Registry Governance
+## 13. Device Onboarding Workflow & Registry Command Map 2.0
 We codified the official rules for onboarding devices, nodes, cluster layouts, iPads, and agent-hosts to the swarm:
+- **Cluster Command Map 2.0**: Redesigned the Master Hub topology into an operator-grade Cluster Command Map 2.0 featuring a compact Agent Command Rail, collapsible Device Fleet Drawer, and Selected Node Inspector.
+- **Device Fleet Grouping**: Grouped devices into explicit Core Compute, Mobile Fleet, and Edge Phones sections, placing iPads under the Mobile Fleet by default.
 - **Mandatory Backend Restart Rule**: Any configuration updates to `backend/cluster_manager.py` require restarting the backend server before checking the UI. This prevents stale in-memory state errors from uvicorn.
 - **API Source of Truth**: `/api/status` is the source of truth for device exposure.
 - **Browser Refresh**: Operators must refresh their browser windows after a backend reload to render the updated nodes.
-- **Topology Regression Protection**: We introduced a contract check (`qa:device-registry`) and E2E topology verification (`e2e:device-registry`) to prevent topology regressions.
+- **Topology Regression Protection**: We protect the command map layout and device registration via contract checks (`qa:device-registry-contract`) and Playwright E2E topology verification (`e2e:device-registry-topology`).
 
 ---
 

@@ -226,10 +226,12 @@ Regenerated supply chain artifacts:
 - **Governance Cockpit UI**: Adds `#release-seal-attestation-panel` rendering attestation statuses, bundle paths, checksums, and history.
 
 ## Device Onboarding Workflow & Registry Governance
+- **Cluster Command Map 2.0**: The Master Hub topology is redesigned into an operator-grade Cluster Command Map 2.0, adding a compact Agent Command Rail, sliding Device Fleet Drawer, and Selected Node Inspector to avoid visual crowding.
+- **Device Fleet Grouping**: Nodes are explicitly grouped into categorized lanes: Core Compute, Mobile Fleet, and Edge Phones. Newly onboarded iPads are placed inside the Mobile Fleet.
 - **Mandatory Backend Restart Rule**: Any configuration updates to backend devices, nodes, cluster layout, iPads, agent-hosts, or topology require restarting the backend server before validating dashboard visibility. Stale uvicorn processes on port 8000 must be explicitly terminated to force reloading Python modules.
 - **API Source of Truth**: `/api/status` is codified as the source of truth for device exposure.
-- **Browser Refresh Requirement**: A browser refresh is required after a backend reload to re-fetch dynamic nodes payload and prevent showing stale UI state.
-- **Topology Regression Protection**: A dedicated `qa:device-registry` contract check and `e2e:device-registry` test protect the topology layout and device payload against regressions.
+- **Browser Refresh Requirement**: A browser refresh is required after a backend reload to re-fetch the dynamic nodes payload and prevent showing stale UI state.
+- **Topology Regression Protection**: Dedicated contract checks (`qa:device-registry-contract`) and Playwright E2E validations (`e2e:device-registry-topology`) protect the topology command map and iPad payloads against regressions.
 
 ---
 

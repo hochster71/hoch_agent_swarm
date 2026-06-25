@@ -1,13 +1,28 @@
-# Task List — Phase 11: Formal Release Approval Simulator
+# Task List — Phase 14: Cluster Command Map 2.0 Redesign
 
-- `[x]` Implement API route `POST /api/v1/release/formal-preview/{formal_preview_id}/approve-request` in `backend/main.py`
-- `[x]` Update decision handler `POST /api/approval/requests/{approval_id}/decisions` to write simulation reports for preview gates
-- `[x]` Update frontend template `frontend/index.html` to add request button and simulation report display
-- `[/]` Update frontend logic `frontend/app.js` to support approval requests, update statuses, and display reports
-- `[x]` Compile local Tailwind CSS assets (`npm run build`)
-- `[x]` Create contract validation script `scripts/qa/test-formal-release-approval-contract.ts`
-- `[x]` Create Playwright E2E specification `tests/e2e/formal-release-approval.spec.ts`
-- `[x]` Register run commands and update validation suites in `package.json`
-- `[x]` Update documentation: `docs/mission/deep-swarm-page-audit-report.md` & `walkthrough.md`
-- `[x]` Verify by building and running full QA suites: `npm run build`, `npm run qa:runtime-full`, `npm run supply:release`
-- `[x]` Stage and commit changes (Feature commit and Evidence commit)
+- `[x]` Add `"fleet_group"` metadata to all nodes in `backend/cluster_manager.py`
+- `[x]` Re-engineer `frontend/index.html` layout:
+  - Add `#cluster-command-map-v2` container
+  - Add `#cluster-agent-command-rail`
+  - Add collapsible `#cluster-device-fleet-drawer` with sections
+  - Add `#cluster-selected-node-inspector` and `#cluster-health-legend`
+- `[x]` Implement frontend functions in `frontend/app.js`:
+  - `renderClusterCommandMapV2`
+  - `renderAgentCommandRail`
+  - `groupClusterDevicesByFleet`
+  - `renderClusterTopologyGroups`
+  - `renderDeviceFleetDrawer`
+  - `renderSelectedNodeInspector`
+  - `selectClusterNode`
+  - `toggleClusterTopologyGroup`
+  - `fitClusterTopologyViewport`
+  - `refreshClusterTopologyStatus`
+- `[x]` Bind drawer toggle transitions and map adjustments
+- `[x]` Align `package.json` script names:
+  - `"qa:device-registry-contract"`
+  - `"e2e:device-registry-topology"`
+- `[x]` Update contract test `scripts/qa/test-device-registry-contract.ts` to assert all V2 container structures, entrypoints, script names, and safety constraints
+- `[x]` Update Playwright E2E topology check `tests/e2e/device-registry-topology.spec.ts` to expand drawer, click iPads, assert details, check console errors, and capture screenshot
+- `[x]` Rebuild local assets (`npm run build`)
+- `[x]` Restart backend server with `TEST_MODE=true` on port 8000 and run contract + E2E QA checks
+- `[x]` Update documentation: `docs/mission/deep-swarm-page-audit-report.md`, `walkthrough.md`, and `task.md`

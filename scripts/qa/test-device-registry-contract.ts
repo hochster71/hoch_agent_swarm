@@ -22,16 +22,55 @@ function assertFileContains(filePath: string, term: string, checkName: string) {
   }
 }
 
-// 1. Source configuration assertions
+function assertFileNotContains(filePath: string, term: string, checkName: string) {
+  if (!fs.existsSync(filePath)) {
+    results[checkName] = false;
+    issues.push(`File missing: ${filePath}`);
+    return;
+  }
+  const content = fs.readFileSync(filePath, "utf8");
+  if (!content.includes(term)) {
+    results[checkName] = true;
+  } else {
+    results[checkName] = false;
+    issues.push(`File ${filePath} contains forbidden term "${term}"`);
+  }
+}
+
+function assertFileExists(filePath: string, checkName: string) {
+  if (fs.existsSync(filePath)) {
+    results[checkName] = true;
+  } else {
+    results[checkName] = false;
+    issues.push(`Expected file to exist: ${filePath}`);
+  }
+}
+
+// 1. Source configuration iPad model assertions
 assertFileContains("backend/cluster_manager.py", "MTXQ2LL/A", "backend_has_ipad_pro_11");
 assertFileContains("backend/cluster_manager.py", "MUU62LL/A", "backend_has_ipad_mini_5");
 assertFileContains("backend/cluster_manager.py", "MGNV2LL/A", "backend_has_ipad_mini_3");
 
-assertFileContains("frontend/src/lib/assets/assetStore.ts", "MTXQ2LL/A", "store_has_ipad_pro_11");
-assertFileContains("frontend/src/lib/assets/assetStore.ts", "MUU62LL/A", "store_has_ipad_mini_5");
-assertFileContains("frontend/src/lib/assets/assetStore.ts", "MGNV2LL/A", "store_has_ipad_mini_3");
+// 2. DOM IDs assertions in index.html
+assertFileContains("frontend/index.html", "cluster-command-map-v2", "html_has_command_map");
+assertFileContains("frontend/index.html", "cluster-device-fleet-drawer", "html_has_fleet_drawer");
+assertFileContains("frontend/index.html", "cluster-selected-node-inspector", "html_has_selected_inspector");
 
-// 2. Active API validation
+// 3. Frontend functions assertions in app.js
+assertFileContains("frontend/app.js", "renderClusterCommandMapV2", "js_has_renderClusterCommandMapV2");
+assertFileContains("frontend/app.js", "groupClusterDevicesByFleet", "js_has_groupClusterDevicesByFleet");
+assertFileContains("frontend/app.js", "renderDeviceFleetDrawer", "js_has_renderDeviceFleetDrawer");
+assertFileContains("frontend/app.js", "renderSelectedNodeInspector", "js_has_renderSelectedNodeInspector");
+
+// 4. Package.json script name assertion
+assertFileContains("package.json", "qa:device-registry-contract", "pkg_has_registry_contract_script");
+
+// 5. Tailwind and entrypoint safety/non-pollution assertions
+assertFileNotContains("frontend/index.html", "cdn.tailwindcss.com", "no_tailwind_cdn");
+assertFileNotContains("frontend/index.html", "/src/main.tsx", "no_react_main_tsx");
+assertFileExists("frontend/dist/tailwind.css", "tailwind_css_compiled_exists");
+
+// 6. Active API validation
 async function runApiChecks() {
   try {
     const res = await fetch("http://localhost:8000/api/status");

@@ -3,37 +3,60 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 
 test.describe("Device Registry Topology E2E", () => {
-  test("renders all three new onboarded iPads and the updated iMac IP on the dashboard", async ({ page }) => {
+  test("renders Cluster Command Map 2.0 and verifies Mobile Fleet Drawer details", async ({ page }) => {
+    // Collect browser console errors
+    const consoleErrors: string[] = [];
+    page.on("console", msg => {
+      if (msg.type() === "error") {
+        consoleErrors.push(msg.text());
+      }
+    });
+
     // 1. Go to dashboard
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    // 2. Locate the node cards on the dashboard
-    const pro11Card = page.locator("#node-card-IPAD_PRO_11");
-    const mini5Card = page.locator("#node-card-IPAD_MINI_1");
-    const mini3Card = page.locator("#node-card-IPAD_MINI_2");
-    const imacCard = page.locator("#node-card-L2");
+    // 2. Verify Command Map 2.0 layout containers are visible
+    const commandMap = page.locator("#cluster-command-map-v2");
+    const agentRail = page.locator("#cluster-agent-command-rail");
+    const fleetDrawer = page.locator("#cluster-device-fleet-drawer");
+    const mobileSection = page.locator("#cluster-device-mobile-section");
 
-    // 3. Assert all are visible on the dashboard
-    await expect(pro11Card).toBeVisible({ timeout: 10000 });
-    await expect(mini5Card).toBeVisible({ timeout: 10000 });
-    await expect(mini3Card).toBeVisible({ timeout: 10000 });
-    await expect(imacCard).toBeVisible({ timeout: 10000 });
+    await expect(commandMap).toBeVisible({ timeout: 10000 });
+    await expect(agentRail).toBeVisible({ timeout: 10000 });
+    await expect(fleetDrawer).toBeVisible({ timeout: 10000 });
+    await expect(mobileSection).toBeVisible({ timeout: 10000 });
 
-    // 4. Assert correct text outputs/metadata
-    await expect(pro11Card).toContainText("Michael's iPad pro 11-inch MTXQ2LL/A");
-    await expect(pro11Card).toContainText("10.0.0.44");
+    // 3. Open the collapsible fleet drawer by clicking the toggle tab
+    const drawerToggle = page.locator("#fleet-drawer-toggle-tab");
+    await expect(drawerToggle).toBeVisible();
+    await drawerToggle.click();
 
-    await expect(mini5Card).toContainText("iPad mini MUU62LL/A");
-    await expect(mini5Card).toContainText("10.0.0.91");
+    // Verify the drawer is expanded (transform transition is done)
+    await expect(fleetDrawer).toHaveClass(/fleet-drawer-expanded/);
 
-    await expect(mini3Card).toContainText("iPad mini MGNV2LL/A");
-    await expect(mini3Card).toContainText("10.0.0.137");
+    // 4. Assert all iPad model IDs are visible
+    const bodyText = await page.locator("body").innerText();
+    expect(bodyText).toContain("MTXQ2LL/A");
+    expect(bodyText).toContain("MUU62LL/A");
+    expect(bodyText).toContain("MGNV2LL/A");
 
-    await expect(imacCard).toContainText("MICHAEL'S IMAC");
-    await expect(imacCard).toContainText("10.0.0.92");
+    // 5. Locate an iPad card in the Mobile Fleet list and click it
+    const ipadProCard = page.locator("#fleet-card-IPAD_PRO_11");
+    await expect(ipadProCard).toBeVisible();
+    await ipadProCard.click();
 
-    // 5. Take screenshot
+    // 6. Verify that the Selected Node Inspector updates with the node info
+    const inspector = page.locator("#cluster-selected-node-inspector");
+    await expect(inspector).toBeVisible();
+    const inspectorText = await inspector.innerText();
+    expect(inspectorText).toContain("MTXQ2LL/A");
+    expect(inspectorText).toContain("10.0.0.44");
+
+    // 7. Verify no browser console errors occurred
+    expect(consoleErrors).toEqual([]);
+
+    // 8. Capture verification screenshot
     const screenshotPath = "artifacts/qa/device-registry-topology.png";
     fs.mkdirSync(path.dirname(screenshotPath), { recursive: true });
     await page.screenshot({ path: screenshotPath });
