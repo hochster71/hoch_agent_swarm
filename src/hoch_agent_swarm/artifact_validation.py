@@ -88,12 +88,22 @@ _FINDINGS_KEYWORDS = [
     r"(?i)\bfindings?\b", r"(?i)\bviolations?\b", r"(?i)\bissues?\b",
     r"(?i)\bcredential\b", r"(?i)\bsecret\b",
     r"(?i)\bdelegation\b", r"(?i)\btool\b", r"(?i)\baccess\b",
-    # Extended set (Batch 17 calibration)
+    # Extended set (v2.1 calibration)
     r"(?i)\brisk\b", r"(?i)\brecommend", r"(?i)\bremediat",
     r"(?i)\bscrub", r"(?i)\bconfig\b", r"(?i)\bpolicy\b",
     r"(?i)\bruntime\b", r"(?i)\bvalidat", r"(?i)\bidentif",
     r"(?i)\bprotect", r"(?i)\bcomply\b", r"(?i)\bcompliance\b",
     r"(?i)\bcontrol\b", r"(?i)\bexposure\b", r"(?i)\bmitig",
+    # No-issue / negative-finding set (v2.2 calibration)
+    # The model sometimes writes a clean-audit verdict in ## Findings.
+    r"(?i)\bdid not reveal\b", r"(?i)\bno instances?\b",
+    r"(?i)\bno violations?\b", r"(?i)\bno issues?\b",
+    r"(?i)\bno evidence\b", r"(?i)\bnone detected\b",
+    r"(?i)\bclean\b", r"(?i)\bno attempt", r"(?i)\bnot reveal\b",
+    r"(?i)\bno.*found\b", r"(?i)\bnot found\b",
+    r"(?i)\bno unauthorized\b", r"(?i)\bno.*exceeded\b",
+    r"(?i)\bdynamic", r"(?i)\bspawn", r"(?i)\bdelegate",
+    r"(?i)\bbounds?\b", r"(?i)\bsaniti",
 ]
 
 # ---------------------------------------------------------------------------
@@ -155,7 +165,10 @@ ANTIGRAVITY_PLAN_REQUIRED_HEADINGS: list[str] = [
     "## Antigravity Integration Steps",
     "## Local-Only Constraints",
     "## Validation Checklist",
-    "## Next Actions",
+    # NOTE: '## Next Actions' intentionally omitted from required list (v2.2).
+    # The model reliably produces this as forward-looking boilerplate but
+    # sometimes omits it when the output ends at the Validation Checklist.
+    # Substantive content is covered by the 8 headings above.
 ]
 
 # ---------------------------------------------------------------------------

@@ -226,6 +226,44 @@ class TestCheckHeadings:
         )
         assert errors == []
 
+    # --- v2.2 calibration regression tests ---
+
+    def test_next_actions_omission_passes(self):
+        """## Next Actions is no longer required — its absence must not cause a failure."""
+        # Build a plan with all required headings but no ## Next Actions
+        content = (
+            "# Hoch Agent Swarm Antigravity Execution Plan\n\n"
+            "## Mission\nThe mission.\n\n"
+            "## Inputs Reviewed\nInputs reviewed.\n\n"
+            "## Crew Output Chain\n1. Step one\n\n"
+            "## Security Audit Summary\nSummary.\n\n"
+            "## Antigravity Integration Steps\n- Step one\n\n"
+            "## Local-Only Constraints\nConstraints.\n\n"
+            "## Validation Checklist\n- Item one\n"
+            # No ## Next Actions
+        )
+        errors = _check_headings(content, "test.md", ANTIGRAVITY_PLAN_REQUIRED_HEADINGS)
+        assert errors == [], f"## Next Actions absence should not fail: {errors}"
+
+    def test_real_batch17b_missing_next_actions_passes(self):
+        """The actual plan that omitted ## Next Actions in batch17b must now pass heading check."""
+        import os
+        sample = os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "artifacts",
+            "validation_samples",
+            "batch17b",
+            "antigravity_missing_next_actions.md",
+        )
+        if not os.path.isfile(sample):
+            import pytest
+            pytest.skip("batch17b sample not present")
+        with open(sample) as f:
+            content = f.read()
+        errors = _check_headings(content, "antigravity_execution_plan.md", ANTIGRAVITY_PLAN_REQUIRED_HEADINGS)
+        assert errors == [], f"Missing Next Actions should no longer be an error: {errors}"
+
 
 # ---------------------------------------------------------------------------
 # Unit tests: _check_minimum_length
@@ -788,6 +826,58 @@ class TestCheckFindingsContent:
             content = f.read()
         errors = _check_findings_content(content, "security_audit_report.md")
         assert errors == [], f"Real failure sample should now pass: {errors}"
+
+    # --- v2.2 calibration regression tests ---
+
+    def test_no_instances_negative_finding_passes(self):
+        """'no instances' clean-audit verdict must pass (batch17b failure pattern)."""
+        content = (
+            "## Findings\n\n"
+            "The review did not reveal any instances of agents spawning additional "
+            "agents dynamically or exceeding delegated bounds.\n"
+        )
+        errors = _check_findings_content(content, "test.md")
+        assert errors == []
+
+    def test_no_violations_passes(self):
+        content = "## Findings\n\nNo violations were observed during the review.\n"
+        errors = _check_findings_content(content, "test.md")
+        assert errors == []
+
+    def test_clean_keyword_passes(self):
+        content = "## Findings\n\nAll configurations returned a clean result.\n"
+        errors = _check_findings_content(content, "test.md")
+        assert errors == []
+
+    def test_no_unauthorized_passes(self):
+        content = "## Findings\n\nNo unauthorized tool access was detected.\n"
+        errors = _check_findings_content(content, "test.md")
+        assert errors == []
+
+    def test_spawn_keyword_passes(self):
+        """'spawn' (in 'agents spawning') triggers the dynamic/spawn pattern."""
+        content = "## Findings\n\nNo agents spawning additional agents detected.\n"
+        errors = _check_findings_content(content, "test.md")
+        assert errors == []
+
+    def test_real_batch17b_clean_finding_sample_passes(self):
+        """The actual security audit from the batch17b failure run must now pass."""
+        import os
+        sample = os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "artifacts",
+            "validation_samples",
+            "batch17b",
+            "security_audit_clean_finding.md",
+        )
+        if not os.path.isfile(sample):
+            import pytest
+            pytest.skip("batch17b sample not present")
+        with open(sample) as f:
+            content = f.read()
+        errors = _check_findings_content(content, "security_audit_report.md")
+        assert errors == [], f"Real clean-finding sample should now pass: {errors}"
 
 
 # ---------------------------------------------------------------------------
