@@ -651,6 +651,55 @@ class TestExtractSectionContent:
         text = _extract_section_content(self.SAMPLE, "## Section B")
         assert "Content B here." in text
 
+    # --- v2.3 calibration regression tests ---
+
+    def test_leading_space_before_heading_marker_extracted(self):
+        """' ## Heading' (with leading space) must be extractable — batch17c pattern."""
+        content = (
+            "## Section A\n\nContent A.\n\n"
+            " ## Section B\n\nContent B indented heading.\n"
+        )
+        text = _extract_section_content(content, "## Section B")
+        assert "Content B indented heading." in text
+
+    def test_leading_space_section_not_empty(self):
+        """Extraction of ' ## Validation Checklist' must return non-empty string."""
+        content = " ## Validation Checklist\n\n- Item one\n- Item two\n"
+        text = _extract_section_content(content, "## Validation Checklist")
+        assert len(text) > 0
+        assert "Item one" in text
+
+    def test_real_batch17c_indented_heading_passes_full_validation(self):
+        """The actual plan with ' ## Validation Checklist' must pass end-to-end."""
+        import os
+        import tempfile
+        sample = os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "artifacts",
+            "validation_samples",
+            "batch17c",
+            "antigravity_indented_checklist_heading.md",
+        )
+        if not os.path.isfile(sample):
+            import pytest
+            pytest.skip("batch17c sample not present")
+        with open(sample) as f:
+            content = f.read()
+        # Section extraction must yield content
+        extracted = _extract_section_content(content, "## Validation Checklist")
+        assert len(extracted) > 0, "Leading-space heading must now be extractable"
+        # Full validator must pass
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False) as f:
+            f.write(content)
+            tmp = f.name
+        try:
+            from hoch_agent_swarm.artifact_validation import validate_antigravity_plan
+            result = validate_antigravity_plan(path=tmp)
+            assert result.passed, f"Real batch17c sample should pass: {result.errors}"
+        finally:
+            os.unlink(tmp)
+
 
 # ---------------------------------------------------------------------------
 # v2 unit tests: _check_section_content_lengths

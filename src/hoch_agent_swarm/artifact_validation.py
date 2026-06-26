@@ -288,6 +288,9 @@ def _extract_section_content(content: str, heading: str) -> str:
     Returns everything between this heading and the next same-or-higher-level
     heading (or end of document). Excludes the heading line itself.
 
+    Tolerates optional leading whitespace before the heading marker — models
+    occasionally emit ' ## Heading' (with a leading space) instead of '## Heading'.
+
     Args:
         heading: A markdown heading string such as '## Scope' or '# Title'.
                  Must start with one or more '#' characters.
@@ -300,9 +303,10 @@ def _extract_section_content(content: str, heading: str) -> str:
 
     heading_text = heading_stripped.lstrip("#").strip()
 
-    # Find the exact heading line in the content
+    # Find the heading line — allow optional leading whitespace before the '#' chars
+    # so that ' ## Validation Checklist' matches the same as '## Validation Checklist'.
     start_match = re.search(
-        rf"(?m)^{"#" * level}\s+{re.escape(heading_text)}\s*$",
+        rf"(?m)^\s*{"#" * level}\s+{re.escape(heading_text)}\s*$",
         content,
     )
     if not start_match:
@@ -311,9 +315,8 @@ def _extract_section_content(content: str, heading: str) -> str:
     # Everything after the heading line
     remainder = content[start_match.end():]
 
-    # Next boundary: any heading at the same or higher level
-    # i.e., a line starting with 1 to `level` '#' characters
-    boundary_re = re.compile(rf"(?m)^#{{1,{level}}}(?!#)\s")
+    # Next boundary: any heading at the same or higher level (with optional indent)
+    boundary_re = re.compile(rf"(?m)^\s*#{{1,{level}}}(?!#)\s")
     end_match = boundary_re.search(remainder)
     if end_match:
         return remainder[: end_match.start()].strip()
