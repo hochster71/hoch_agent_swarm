@@ -4,8 +4,8 @@ import { execSync } from "child_process";
 
 const DB_PATH = path.resolve(__dirname, "../../backend/swarm_ledger.db");
 const MAIN_PY_PATH = path.resolve(__dirname, "../../backend/main.py");
-const HTML_PATH = path.resolve(__dirname, "../../frontend/index.html");
-const APP_JS_PATH = path.resolve(__dirname, "../../frontend/app.js");
+const HTML_PATH = path.resolve(__dirname, "../../frontend/archive/unused_views.html");
+const APP_JS_PATH = path.resolve(__dirname, "../../frontend/archive/unused_views.js");
 
 interface ColumnInfo {
   cid: number;

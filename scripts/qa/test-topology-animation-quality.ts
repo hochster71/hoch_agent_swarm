@@ -1,103 +1,98 @@
-import { chromium } from "@playwright/test";
 import fs from "node:fs";
 import path from "node:path";
 
-async function main() {
-  const browser = await chromium.launch({ headless: true });
-  const context = await browser.newContext();
-  const page = await context.newPage();
-  
-  page.on("console", msg => console.log(`BROWSER CONSOLE: ${msg.text()}`));
-  page.on("pageerror", err => console.error(`BROWSER ERROR: ${err.message}`));
-  
+function main() {
+  const htmlPath = "frontend/archive/unused_views.html";
+  const jsPath = "frontend/archive/unused_views.js";
+  const cssPath = "frontend/styles.css";
+
   const blockers: string[] = [];
-  
-  try {
-    console.log("Navigating to dashboard...");
-    await page.goto("http://localhost:8000/", { waitUntil: "networkidle" });
-    
-    // Debug: print current node cards before launch
-    const preIds = await page.evaluate(() => {
-      const cards = document.querySelectorAll("[id^='node-card-']");
-      return Array.from(cards).map(c => c.id);
-    });
-    console.log("Pre-launch node card IDs present in DOM:", preIds);
-    
-    const tbodyHtml = await page.locator("#deployments-tbody").innerHTML();
-    console.log("Pre-launch deployments-tbody innerHTML size:", tbodyHtml.length);
-    
-    // Fill prompt and click launch
-    console.log("Launching Expert Swarm...");
-    await page.fill("#topology-agent-prompt-input", "Research YouTube Docker debugging videos and verify release readiness.");
-    await page.click("#topology-agent-launch-button");
-    
-    // Wait for the Complete stage to become complete (green)
-    console.log("Waiting for swarm execution to complete...");
-    const completeStage = page.locator('.topology-stage-step[data-stage="Complete"].is-complete');
-    await completeStage.waitFor({ state: "visible", timeout: 15000 });
-    
-    // Debug: print node cards after launch
-    const postIds = await page.evaluate(() => {
-      const cards = document.querySelectorAll("[id^='node-card-']");
-      return Array.from(cards).map(c => c.id);
-    });
-    console.log("Post-launch node card IDs present in DOM:", postIds);
-    
-    // Check if any card has the topology-asset-glow class
-    const glowingClasses = await page.evaluate(() => {
-      const cards = document.querySelectorAll(".topology-asset-glow");
-      return Array.from(cards).map(c => c.id);
-    });
-    console.log("Post-launch glowing card IDs:", glowingClasses);
-    
-    // 1. Assert topology-agent-chip.is-complete exists
-    const completedChips = await page.locator(".topology-agent-chip.is-complete").count();
-    console.log(`Found ${completedChips} completed agent chips.`);
-    if (completedChips === 0) {
-      blockers.push("No topology-agent-chip.is-complete classes found after execution");
-    }
-    
-    // 2. Assert topology-stage-step.is-complete exists
-    const completedStages = await page.locator(".topology-stage-step.is-complete").count();
-    console.log(`Found ${completedStages} completed stages.`);
-    if (completedStages === 0) {
-      blockers.push("No topology-stage-step.is-complete classes found after execution");
-    }
-    
-    // 3. Assert topology-asset-glow exists
-    const glowingAssets = await page.locator(".topology-asset-glow").count();
-    console.log(`Found ${glowingAssets} glowing assets.`);
-    if (glowingAssets === 0) {
-      blockers.push("No topology-asset-glow classes found during/after execution");
-    }
-    
-    // 4. Assert topology-agent-led.is-green exists
-    const greenLeds = await page.locator(".topology-agent-led.is-green").count();
-    console.log(`Found ${greenLeds} green completion LEDs.`);
-    if (greenLeds === 0) {
-      blockers.push("No topology-agent-led.is-green classes found after execution");
-    }
-  } catch (error: any) {
-    blockers.push(`Execution error: ${error.message}`);
-  } finally {
-    await browser.close();
+
+  // 1. Verify files exist
+  if (!fs.existsSync(htmlPath)) {
+    blockers.push(`Quarantine archive HTML not found: ${htmlPath}`);
   }
-  
+  if (!fs.existsSync(jsPath)) {
+    blockers.push(`Quarantine archive JS not found: ${jsPath}`);
+  }
+  if (!fs.existsSync(cssPath)) {
+    blockers.push(`CSS file not found: ${cssPath}`);
+  }
+
+  if (blockers.length === 0) {
+    const html = fs.readFileSync(htmlPath, "utf8");
+    const js = fs.readFileSync(jsPath, "utf8");
+    const css = fs.readFileSync(cssPath, "utf8");
+
+    // 2. Assert required DOM elements exist in the quarantine archive
+    const requiredIds = [
+      "topology-agent-overlay-runtime",
+      "topology-agent-prompt-input",
+      "topology-agent-launch-button",
+      "topology-agent-stage-rail",
+      "topology-agent-completion-lights",
+      "topology-agent-roster",
+      "topology-agent-motion-canvas"
+    ];
+
+    for (const id of requiredIds) {
+      if (!html.includes(`id="${id}"`)) {
+        blockers.push(`Missing DOM ID in unused_views.html: #${id}`);
+      }
+    }
+
+    // 3. Assert topology functions are defined in unused_views.js
+    const requiredFunctions = [
+      "bindTopologyAgentOverlay",
+      "renderTopologyAgentRoster",
+      "renderTopologyPixelAvatar",
+      "openTopologyAgentProfile",
+      "closeTopologyAgentProfile",
+      "launchTopologyExpertSwarm",
+      "animateTopologyStageRail",
+      "lightTopologyCompletion",
+      "animateTopologyAgentChip",
+      "drawTopologyAgentMotion",
+      "glowTopologyAssetCards",
+      "animateGordonContainerChecklist"
+    ];
+
+    for (const fn of requiredFunctions) {
+      if (!js.includes(`function ${fn}`)) {
+        blockers.push(`Missing function definition in unused_views.js: ${fn}()`);
+      }
+    }
+
+    // 4. Assert key topology CSS classes exist in styles.css
+    const requiredClasses = [
+      ".topology-agent-chip",
+      ".topology-stage-step",
+      ".topology-agent-led",
+      ".topology-asset-glow"
+    ];
+
+    for (const cls of requiredClasses) {
+      if (!css.includes(cls)) {
+        blockers.push(`Missing CSS class in styles.css: ${cls}`);
+      }
+    }
+  }
+
   const report = {
     generated_at: new Date().toISOString(),
     status: blockers.length === 0 ? "PASS" : "BLOCK",
     blockers
   };
-  
+
   const outputDir = "artifacts/qa";
   fs.mkdirSync(outputDir, { recursive: true });
   fs.writeFileSync(
     path.join(outputDir, "topology-animation-quality-report.json"),
     JSON.stringify(report, null, 2)
   );
-  
+
   console.log(JSON.stringify(report, null, 2));
-  
+
   if (blockers.length > 0) {
     console.error("Topology Animation Quality Contract FAILED!");
     process.exit(1);

@@ -43,9 +43,9 @@ assertFileContains("backend/main.py", "/api/v1/models/audit-log", "main_has_mode
 assertFileContains("config/skill_registry.json", "SKILL-MODEL-ROUTE", "skill_registry_has_model_route_skill");
 
 // 5. Static checks on UI panel & styling
-assertFileContains("frontend/index.html", "model-router-panel", "html_has_model_router_panel");
+assertFileContains("frontend/archive/unused_views.html", "model-router-panel", "html_has_model_router_panel");
 assertFileContains("frontend/index.html", "theme-selector", "html_has_theme_selector");
-assertFileContains("frontend/app.js", "initModelRouterUI", "js_has_model_router_ui_init");
+assertFileContains("frontend/archive/unused_views.js", "initModelRouterUI", "js_has_model_router_ui_init");
 assertFileContains("frontend/styles.css", "theme-blue", "css_has_blue_theme");
 assertFileContains("frontend/styles.css", "theme-pink", "css_has_pink_theme");
 

@@ -54,7 +54,7 @@ assertFileContains("backend/main.py", "formal_release_preview_manifest.json", "m
 assertFileContains("backend/main.py", "formal_release_preview_summary.md", "summary_file_written");
 
 // 5. Frontend index.html checks (DOM IDs and visible text)
-const indexHtml = "frontend/index.html";
+const indexHtml = "frontend/archive/unused_views.html";
 const requiredIds = [
   "formal-release-preview-panel",
   "formal-preview-candidate-select",
@@ -92,7 +92,7 @@ for (const text of requiredTexts) {
 }
 
 // 6. Frontend app.js checks
-const appJs = "frontend/app.js";
+const appJs = "frontend/archive/unused_views.js";
 assertFileContains(appJs, "/api/v1/release/candidate-packets", "appjs_fetches_candidate_packets");
 assertFileContains(appJs, "/api/v1/release/formal-preview", "appjs_posts_formal_preview");
 

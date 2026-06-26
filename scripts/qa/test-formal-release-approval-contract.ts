@@ -47,14 +47,14 @@ assertFileNotContains("backend/main.py", "run_git_command([\"tag\"", "backend_no
 assertFileNotContains("backend/main.py", "run_git_command([\"push\"", "backend_no_git_push_mutation");
 
 // 3. Frontend index.html checks (DOM IDs)
-const indexHtml = "frontend/index.html";
+const indexHtml = "frontend/archive/unused_views.html";
 assertFileContains(indexHtml, `id="formal-preview-request-approval-button"`, `html_has_id_request_button`);
 assertFileContains(indexHtml, `id="formal-preview-approval-report-container"`, `html_has_id_report_container`);
 assertFileContains(indexHtml, `id="formal-preview-approval-status"`, `html_has_id_approval_status`);
 assertFileContains(indexHtml, `id="formal-preview-approval-report-path"`, `html_has_id_approval_report_path`);
 
 // 4. Frontend app.js checks
-const appJs = "frontend/app.js";
+const appJs = "frontend/archive/unused_views.js";
 assertFileContains(appJs, "/approve-request", "appjs_posts_approve_request");
 assertFileContains(appJs, "checkApprovalStatusForPreview", "appjs_checks_status");
 

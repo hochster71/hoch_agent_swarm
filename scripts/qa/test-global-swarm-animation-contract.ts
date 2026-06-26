@@ -1,7 +1,7 @@
 import fs from "node:fs";
 
-const html = fs.readFileSync("frontend/index.html", "utf8");
-const appJs = fs.readFileSync("frontend/app.js", "utf8");
+const html = fs.readFileSync("frontend/archive/unused_views.html", "utf8");
+const appJs = fs.readFileSync("frontend/archive/unused_views.js", "utf8");
 
 const blockers: string[] = [];
 

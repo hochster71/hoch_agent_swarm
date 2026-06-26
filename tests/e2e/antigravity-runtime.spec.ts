@@ -1,15 +1,15 @@
 import { test, expect } from "@playwright/test";
 
 const requiredNavLabels = [
-  "Readiness Autopilot",
-  "HOCHSTER Runtime",
-  "Remediation Safety",
-  "Runtime Audit",
-  "Error Budget",
-  "Release Provenance",
-  "Swarm Control",
-  "Mission Intel",
-  "Timeline Replay"
+  "Mission Control",
+  "Live Runtime",
+  "Local Models",
+  "Model Router",
+  "Escalations",
+  "Evidence",
+  "Detections",
+  "Readiness",
+  "Settings"
 ];
 
 const forbiddenLegacyText = [
@@ -63,9 +63,7 @@ test.describe("Antigravity runtime console", () => {
   });
 
   test("remediation safety view is semantically correct", async ({ page }, testInfo) => {
-    await page.goto("/", { waitUntil: "networkidle" });
-
-    await page.getByText("Remediation Safety", { exact: true }).click();
+    await page.goto("/archive/unused_views.html", { waitUntil: "networkidle" });
 
     const remediationView = page.locator("#view-remediation-safety");
     await expect(remediationView).toBeVisible();

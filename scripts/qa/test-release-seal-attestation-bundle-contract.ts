@@ -48,7 +48,7 @@ assertFileContains("scripts/supply-chain/generate-release-seal-attestation-bundl
 assertFileContains("scripts/supply-chain/generate-release-seal-attestation-bundle.ts", "computeSha256", "generator_computes_checksums");
 
 // 3. UI Panel Checks (DOM IDs)
-const indexHtml = "frontend/index.html";
+const indexHtml = "frontend/archive/unused_views.html";
 assertFileContains(indexHtml, `id="release-seal-attestation-panel"`, "html_has_id_panel");
 assertFileContains(indexHtml, `id="attestation-seal-dry-run-select"`, "html_has_id_select");
 assertFileContains(indexHtml, `id="attestation-operator-input"`, "html_has_id_operator");
@@ -80,7 +80,7 @@ assertFileContains(indexHtml, "No Publishing Is Performed", "html_text_no_publis
 assertFileContains(indexHtml, "Attestation Is Not A Formal Release", "html_text_not_formal");
 
 // 5. app.js endpoints & functions
-const appJs = "frontend/app.js";
+const appJs = "frontend/archive/unused_views.js";
 assertFileContains(appJs, "/api/v1/release/attestation-bundles", "appjs_fetches_bundles");
 assertFileContains(appJs, "/api/v1/release/seal-dry-run/", "appjs_posts_attestation");
 

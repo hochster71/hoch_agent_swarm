@@ -27,8 +27,8 @@ assertFileContains("backend/capability_router.py", "route_task_by_capabilities",
 assertFileContains("backend/capability_router.py", "extract_required_capabilities", "backend_has_capability_extractor");
 assertFileContains("backend/cluster_manager.py", "route_task_by_capabilities", "cluster_manager_integrates_capability_routing");
 assertFileContains("backend/main.py", "/api/v1/devices/routing/history", "api_has_routing_history_endpoint");
-assertFileContains("frontend/index.html", "device-routing-center-panel", "html_has_routing_panel");
-assertFileContains("frontend/app.js", "initCapabilityRouterUI", "js_has_routing_ui_init");
+assertFileContains("frontend/archive/unused_views.html", "device-routing-center-panel", "html_has_routing_panel");
+assertFileContains("frontend/archive/unused_views.js", "initCapabilityRouterUI", "js_has_routing_ui_init");
 assertFileContains("package.json", "qa:capability-routing-contract", "pkg_has_routing_contract_script");
 
 // 2. Active API Simulation & Verification

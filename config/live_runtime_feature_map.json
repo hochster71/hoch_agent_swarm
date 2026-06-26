@@ -1,0 +1,111 @@
+{
+  "generated_by": "UI/OPS-14",
+  "active_views": [
+    {
+      "id": "mission-control",
+      "label": "Mission Control",
+      "required": true,
+      "endpoints": [
+        "/api/v1/production-readiness",
+        "/api/v1/runtime/process/animation-state",
+        "/api/v1/qa/evidence-matrix",
+        "/api/v1/live-runtime/cockpit"
+      ],
+      "truth_states": ["LIVE", "DEGRADED", "FAILED", "ERROR", "EMPTY", "ASSUMPTION"],
+      "operator_value": "Primary live runtime status overview cards"
+    },
+    {
+      "id": "live-runtime",
+      "label": "Live Runtime",
+      "required": true,
+      "endpoints": [
+        "/api/v1/runtime/process/events",
+        "/api/v1/runtime/process/animation-state",
+        "/api/v1/runtime/process/health"
+      ],
+      "truth_states": ["LIVE", "FAILED", "EMPTY", "ERROR"],
+      "operator_value": "Wiggle process pond animation fed strictly from live telemetry events"
+    },
+    {
+      "id": "local-models",
+      "label": "Local Models",
+      "required": true,
+      "endpoints": [
+        "/api/v1/runtime/local-supervisor/status"
+      ],
+      "truth_states": ["LIVE", "DEGRADED", "FAILED", "EMPTY", "ERROR"],
+      "operator_value": "Monitor local Ollama engine health check loops"
+    },
+    {
+      "id": "model-router",
+      "label": "Model Router",
+      "required": true,
+      "endpoints": [
+        "/api/v1/models/status",
+        "/api/v1/models/audit-log"
+      ],
+      "truth_states": ["LIVE", "DEGRADED", "FAILED", "ERROR"],
+      "operator_value": "Postures of local-first routing rules"
+    },
+    {
+      "id": "escalations",
+      "label": "Escalations",
+      "required": true,
+      "endpoints": [
+        "/api/v1/escalations/pending"
+      ],
+      "truth_states": ["LIVE", "EMPTY", "ERROR", "APPROVAL_REQUIRED"],
+      "operator_value": "Pending Google Frontier paid provider approval queue"
+    },
+    {
+      "id": "evidence",
+      "label": "Evidence",
+      "required": true,
+      "endpoints": [
+        "/api/v1/qa/evidence-matrix"
+      ],
+      "truth_states": ["LIVE", "ERROR"],
+      "operator_value": "Traceability and verification matrix of QA gates"
+    },
+    {
+      "id": "detections",
+      "label": "Detections",
+      "required": true,
+      "endpoints": [
+        "/api/v1/detections/health",
+        "/api/v1/detections/events",
+        "/api/v1/detections/rules"
+      ],
+      "truth_states": ["LIVE", "DEGRADED", "FAILED", "ERROR"],
+      "operator_value": "Expose Splunk/Sigma/KQL/LogQL coverage and tail of events"
+    },
+    {
+      "id": "readiness",
+      "label": "Readiness",
+      "required": true,
+      "endpoints": [
+        "/api/v1/production-readiness"
+      ],
+      "truth_states": ["LIVE", "STALE", "PENDING", "IN_PROGRESS", "COMPLETE", "ERROR", "NO-GO", "GO"],
+      "operator_value": "Operational readiness gate and scorecard"
+    },
+    {
+      "id": "settings",
+      "label": "Settings",
+      "required": true,
+      "endpoints": [
+        "/api/v1/devices/service-registry",
+        "/api/v1/devices/leases"
+      ],
+      "truth_states": ["LIVE", "ERROR"],
+      "operator_value": "Operator settings and registrations"
+    }
+  ],
+  "forbidden_active_views": [
+    "comic-swarm",
+    "youtube-research-lane",
+    "fake-topology",
+    "fake-terminal-logs",
+    "static-conmon-scorecard"
+  ]
+}

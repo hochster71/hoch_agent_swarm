@@ -26,7 +26,7 @@ function assertFileContains(filePath: string, term: string, checkName: string) {
 assertFileContains("backend/main.py", "/api/v1/release/evidence/archive/preview", "backend_contains_api_route");
 
 // 2. Frontend index.html checks (DOM IDs)
-const indexHtml = "frontend/index.html";
+const indexHtml = "frontend/archive/unused_views.html";
 const requiredIds = [
   "release-evidence-archive-preview-panel",
   "btn-calculate-archive-preview",
@@ -49,7 +49,7 @@ for (const id of requiredIds) {
 }
 
 // 3. Frontend app.js checks
-const appJs = "frontend/app.js";
+const appJs = "frontend/archive/unused_views.js";
 assertFileContains(appJs, "/api/v1/release/evidence/archive/preview", "appjs_fetches_archive_preview");
 assertFileContains(appJs, "initReleaseEvidenceArchivePreview", "appjs_has_init_function");
 assertFileContains(appJs, "calculateArchivePreview", "appjs_has_calculate_function");

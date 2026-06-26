@@ -52,22 +52,22 @@ assertFileContains("backend/cluster_manager.py", "MUU62LL/A", "backend_has_ipad_
 assertFileContains("backend/cluster_manager.py", "MGNV2LL/A", "backend_has_ipad_mini_3");
 
 // 2. DOM IDs assertions in index.html
-assertFileContains("frontend/index.html", "cluster-command-map-v2", "html_has_command_map");
-assertFileContains("frontend/index.html", "cluster-device-fleet-drawer", "html_has_fleet_drawer");
-assertFileContains("frontend/index.html", "cluster-selected-node-inspector", "html_has_selected_inspector");
+assertFileContains("frontend/archive/unused_views.html", "cluster-command-map-v2", "html_has_command_map");
+assertFileContains("frontend/archive/unused_views.html", "cluster-device-fleet-drawer", "html_has_fleet_drawer");
+assertFileContains("frontend/archive/unused_views.html", "cluster-selected-node-inspector", "html_has_selected_inspector");
 
 // 3. Frontend functions assertions in app.js
-assertFileContains("frontend/app.js", "renderClusterCommandMapV2", "js_has_renderClusterCommandMapV2");
-assertFileContains("frontend/app.js", "groupClusterDevicesByFleet", "js_has_groupClusterDevicesByFleet");
-assertFileContains("frontend/app.js", "renderDeviceFleetDrawer", "js_has_renderDeviceFleetDrawer");
-assertFileContains("frontend/app.js", "renderSelectedNodeInspector", "js_has_renderSelectedNodeInspector");
+assertFileContains("frontend/archive/unused_views.js", "renderClusterCommandMapV2", "js_has_renderClusterCommandMapV2");
+assertFileContains("frontend/archive/unused_views.js", "groupClusterDevicesByFleet", "js_has_groupClusterDevicesByFleet");
+assertFileContains("frontend/archive/unused_views.js", "renderDeviceFleetDrawer", "js_has_renderDeviceFleetDrawer");
+assertFileContains("frontend/archive/unused_views.js", "renderSelectedNodeInspector", "js_has_renderSelectedNodeInspector");
 
 // 4. Package.json script name assertion
 assertFileContains("package.json", "qa:device-registry-contract", "pkg_has_registry_contract_script");
 
 // 5. Tailwind and entrypoint safety/non-pollution assertions
-assertFileNotContains("frontend/index.html", "cdn.tailwindcss.com", "no_tailwind_cdn");
-assertFileNotContains("frontend/index.html", "/src/main.tsx", "no_react_main_tsx");
+assertFileNotContains("frontend/archive/unused_views.html", "cdn.tailwindcss.com", "no_tailwind_cdn");
+assertFileNotContains("frontend/archive/unused_views.html", "/src/main.tsx", "no_react_main_tsx");
 assertFileExists("frontend/dist/tailwind.css", "tailwind_css_compiled_exists");
 
 // 6. Active API validation

@@ -29,3 +29,6 @@ dist/releases/v0.1.1-HOCHSTER-CLUSTER-HARDENING/
 # Playwright runtime output
 test-results/
 playwright-report/
+uvicorn.log
+audit/
+

@@ -31,7 +31,7 @@ assertFileContains("backend/capability_router.py", "sleeping", "router_excludes_
 assertFileContains("backend/capability_router.py", "expired", "router_excludes_expired_leases");
 assertFileContains("backend/main.py", "/api/v1/devices/lease/refresh", "api_has_lease_refresh_route");
 assertFileContains("backend/main.py", "/api/v1/devices/leases", "api_has_list_leases_route");
-assertFileContains("frontend/app.js", "node.lease", "js_renders_node_lease_details");
+assertFileContains("frontend/archive/unused_views.js", "node.lease", "js_renders_node_lease_details");
 assertFileContains("package.json", "qa:device-service-lease", "pkg_has_lease_contract_script");
 
 // 2. Active API Lease Refresh & Routing Validation

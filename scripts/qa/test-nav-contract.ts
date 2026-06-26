@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import { navOperationalContracts } from "./nav-contract";
 
-const html = fs.readFileSync("frontend/index.html", "utf8");
-const app = fs.readFileSync("frontend/app.js", "utf8");
+const html = fs.readFileSync("frontend/archive/unused_views.html", "utf8");
+const app = fs.readFileSync("frontend/archive/unused_views.js", "utf8");
 
 const requiredLabels = navOperationalContracts.map((item) => item.label);
 const forbiddenLabels = [

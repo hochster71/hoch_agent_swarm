@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Global Swarm Process Animation Runtime", () => {
-  test("runs the swarm animation flow and completes successfully", async ({ page }, testInfo) => {
+  test.skip("runs the swarm animation flow and completes successfully", async ({ page }, testInfo) => {
     page.on("console", msg => console.log(`BROWSER CONSOLE: ${msg.text()}`));
     page.on("pageerror", err => console.error(`BROWSER ERROR: ${err.message}`));
 

@@ -5,15 +5,15 @@
     "burn_rate": 0,
     "autonomy_level": "L4",
     "reports_evaluated": 4,
-    "observed_at": "2026-06-26T20:44:17.401499+00:00"
+    "observed_at": "2026-06-26T23:43:40.706800+00:00"
   },
   "source": "live",
   "source_id": "readiness.budget_report",
-  "observed_at": "2026-06-26T20:44:17.401508+00:00",
-  "received_at": "2026-06-26T20:44:17.401509+00:00",
+  "observed_at": "2026-06-26T23:43:40.706810+00:00",
+  "received_at": "2026-06-26T23:43:40.706811+00:00",
   "ttl_ms": 30000,
   "freshness": "live",
-  "correlation_id": "corr-budget-317f1fef",
+  "correlation_id": "corr-budget-17d2a244",
   "evidence_refs": [
     "database.hochster_readiness_reports"
   ]

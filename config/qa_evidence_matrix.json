@@ -1432,18 +1432,219 @@
       ],
       "evidence_present": true,
       "truth": "LIVE"
+    },
+    {
+      "control_id":  "LIVE-INSTRUMENT-001",
+      "name":        "Live Runtime Instrument Doctrine Setup",
+      "domain":      "GOVERNANCE",
+      "pert_ref":    "Batch-UI-OPS-14",
+      "gap_ref":     "GAP-004",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-LI-001",
+          "description":   "Doctrine exists at docs/mission/live_runtime_instrument_doctrine.md and lists allowed and forbidden active components",
+          "type":          "smoke",
+          "result":        "PASS",
+          "batch":         "UI-OPS-14",
+          "evidence_file": "docs/mission/live_runtime_instrument_doctrine.md",
+          "notes":         "Verified: doctrine file contains rules for Live Dashboard posture"
+        }
+      ],
+      "evidence_artifacts": [
+        "docs/mission/live_runtime_instrument_doctrine.md"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
+    },
+    {
+      "control_id":  "LIVE-INSTRUMENT-002",
+      "name":        "Live Runtime Feature Mapping",
+      "domain":      "GOVERNANCE",
+      "pert_ref":    "Batch-UI-OPS-14",
+      "gap_ref":     "GAP-004",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-LI-002",
+          "description":   "Active views and forbidden views configuration map in config/live_runtime_feature_map.json",
+          "type":          "smoke",
+          "result":        "PASS",
+          "batch":         "UI-OPS-14",
+          "evidence_file": "config/live_runtime_feature_map.json",
+          "notes":         "Verified: config maps the 9 active views and list of forbidden elements"
+        }
+      ],
+      "evidence_artifacts": [
+        "config/live_runtime_feature_map.json"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
+    },
+    {
+      "control_id":  "LIVE-INSTRUMENT-003",
+      "name":        "Live Runtime Telemetry Endpoint Audit",
+      "domain":      "GOVERNANCE",
+      "pert_ref":    "Batch-UI-OPS-14",
+      "gap_ref":     "GAP-004",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-LI-003",
+          "description":   "Run audit script scanning frontend and backend files for forbidden static elements",
+          "type":          "integration",
+          "result":        "PASS",
+          "batch":         "UI-OPS-14",
+          "evidence_file": "artifacts/qa/live_runtime_surface_audit.json",
+          "notes":         "Verified: audit outputs report detailing zero active codebase hits for static indicators"
+        }
+      ],
+      "evidence_artifacts": [
+        "scripts/qa/audit-live-runtime-surface.ts",
+        "artifacts/qa/live_runtime_surface_audit.json",
+        "artifacts/qa/live_runtime_surface_gap_analysis.md"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
+    },
+    {
+      "control_id":  "LIVE-INSTRUMENT-004",
+      "name":        "Live Runtime Backend Aggregation API",
+      "domain":      "GOVERNANCE",
+      "pert_ref":    "Batch-UI-OPS-14",
+      "gap_ref":     "GAP-004",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-LI-004",
+          "description":   "LiveRuntimeAggregator gathers health status from 12 distinct cards",
+          "type":          "integration",
+          "result":        "PASS",
+          "batch":         "UI-OPS-14",
+          "evidence_file": "backend/live_runtime_aggregator.py",
+          "notes":         "Verified: backend aggregation gathers all 12 cards from their original sources"
+        },
+        {
+          "test_id":       "T-LI-005",
+          "description":   "Route GET /api/v1/live-runtime/cockpit returning aggregated JSON",
+          "type":          "smoke",
+          "result":        "PASS",
+          "batch":         "UI-OPS-14",
+          "evidence_file": "backend/main.py",
+          "notes":         "Verified: endpoint returns live operational JSON structure"
+        }
+      ],
+      "evidence_artifacts": [
+        "backend/live_runtime_aggregator.py",
+        "backend/main.py"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
+    },
+    {
+      "control_id":  "LIVE-INSTRUMENT-005",
+      "name":        "Clean Single-Page UI and View Navigation",
+      "domain":      "GOVERNANCE",
+      "pert_ref":    "Batch-UI-OPS-14",
+      "gap_ref":     "GAP-004",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-LI-006",
+          "description":   "Sidebar links restricted to exactly 9 views with no stale layout blocks",
+          "type":          "smoke",
+          "result":        "PASS",
+          "batch":         "UI-OPS-14",
+          "evidence_file": "frontend/index.html",
+          "notes":         "Verified: active sidebar matches features config"
+        },
+        {
+          "test_id":       "T-LI-007",
+          "description":   "Switch between the 9 views dynamically in client JS",
+          "type":          "smoke",
+          "result":        "PASS",
+          "batch":         "UI-OPS-14",
+          "evidence_file": "frontend/app.js",
+          "notes":         "Verified: SPA navigates with unique IDs and hides inactive tabs"
+        }
+      ],
+      "evidence_artifacts": [
+        "frontend/index.html",
+        "frontend/app.js"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
+    },
+    {
+      "control_id":  "LIVE-INSTRUMENT-006",
+      "name":        "Active Dashboard Telemetry and FRESH indicators",
+      "domain":      "GOVERNANCE",
+      "pert_ref":    "Batch-UI-OPS-14",
+      "gap_ref":     "GAP-004",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-LI-008",
+          "description":   "Update indicators dynamically from cockpit data and measure network latency",
+          "type":          "integration",
+          "result":        "PASS",
+          "batch":         "UI-OPS-14",
+          "evidence_file": "frontend/app.js",
+          "notes":         "Verified: cards reflect cockpit response payload and live roundtrip time"
+        },
+        {
+          "test_id":       "T-LI-009",
+          "description":   "Animate Process Pond strictly based on live events animation state",
+          "type":          "integration",
+          "result":        "PASS",
+          "batch":         "UI-OPS-14",
+          "evidence_file": "frontend/app.js",
+          "notes":         "Verified: canvas wiggles and pulses only on active events, shows empty if zero"
+        }
+      ],
+      "evidence_artifacts": [
+        "frontend/app.js"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
+    },
+    {
+      "control_id":  "LIVE-INSTRUMENT-007",
+      "name":        "Contract and E2E validation of Cockpit layout",
+      "domain":      "GOVERNANCE",
+      "pert_ref":    "Batch-UI-OPS-14",
+      "gap_ref":     "GAP-004",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-LI-010",
+          "description":   "Playwright E2E verifies cockpit loads 12 cards and works with no overflow",
+          "type":          "integration",
+          "result":        "PASS",
+          "batch":         "UI-OPS-14",
+          "evidence_file": "artifacts/qa/live-runtime-cockpit-contract-report.json",
+          "notes":         "Verified: Playwright test checks 12 card elements and view switching"
+        }
+      ],
+      "evidence_artifacts": [
+        "scripts/qa/test-live-runtime-instrument-contract.ts",
+        "tests/e2e/live-runtime-cockpit.spec.ts",
+        "artifacts/qa/live-runtime-instrument-contract-report.json"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
     }
   ],
   "summary": {
-    "total_controls":         43,
-    "tested":                  41,
+    "total_controls":         50,
+    "tested":                  48,
     "partial":                 0,
     "in_progress":             2,
     "pending":                 0,
-    "evidence_present_count": 43,
+    "evidence_present_count": 50,
     "evidence_missing_count":  0,
-    "total_tests":            84,
-    "tests_pass":             84,
+    "total_tests":            94,
+    "tests_pass":             94,
     "tests_partial":           0,
     "tests_pending":           0,
     "matrix_status":          "COMPLETE",

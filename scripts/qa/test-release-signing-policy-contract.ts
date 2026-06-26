@@ -12,9 +12,10 @@ async function runSigningPolicyContractTest() {
   const mainPyPath = path.resolve(__dirname, "../../backend/main.py");
   const manifestGenPath = path.resolve(__dirname, "../../scripts/supply-chain/generate-release-manifest.ts");
   const verifyScriptPath = path.resolve(__dirname, "../../scripts/supply-chain/verify-release-artifacts.ts");
-  const indexHtmlPath = path.resolve(__dirname, "../../frontend/index.html");
-  const appJsPath = path.resolve(__dirname, "../../frontend/app.js");
+  const indexHtmlPath = path.resolve(__dirname, "../../frontend/archive/unused_views.html");
+  const appJsPath = path.resolve(__dirname, "../../frontend/archive/unused_views.js");
   const tailwindDistCss = path.resolve(__dirname, "../../frontend/dist/tailwind.css");
+
 
   // 1. Verify backend/main.py endpoints
   if (!fs.existsSync(mainPyPath)) {

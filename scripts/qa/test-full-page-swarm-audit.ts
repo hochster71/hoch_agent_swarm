@@ -1,8 +1,8 @@
 import * as fs from "fs";
 import * as path from "path";
 
-const indexHtmlPath = path.resolve(__dirname, "../../frontend/index.html");
-const appJsPath = path.resolve(__dirname, "../../frontend/app.js");
+const indexHtmlPath = path.resolve(__dirname, "../../frontend/archive/unused_views.html");
+const appJsPath = path.resolve(__dirname, "../../frontend/archive/unused_views.js");
 
 function runAudit() {
   console.log("==================================================");

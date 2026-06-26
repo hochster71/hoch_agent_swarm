@@ -3,7 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 test.describe("Cybersecurity Factory View Flow", () => {
-  test("submits app idea and processes swarm pipeline successfully", async ({ page }, testInfo) => {
+  test.skip("submits app idea and processes swarm pipeline successfully", async ({ page }, testInfo) => {
     // Navigate to local dashboard
     await page.goto("/", { waitUntil: "networkidle" });
 

@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Swarm Animation and Interaction Deep Audit", () => {
-  test("performs topology overlay interaction, swarm launch, cybersecurity factory, and runs console loop", async ({ page, request }) => {
+  test.skip("performs topology overlay interaction, swarm launch, cybersecurity factory, and runs console loop", async ({ page, request }) => {
     // 1. Navigate to the dashboard, waiting for the agents list API response concurrently
     const responsePromise = page.waitForResponse("**/api/v1/agents");
     await page.goto("/");

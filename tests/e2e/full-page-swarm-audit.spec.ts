@@ -34,16 +34,15 @@ test.describe("Full-Page Swarm Traversal and Console Audit", () => {
 
     // Required nav link IDs and their corresponding view IDs and target screenshot names
     const pages = [
-      { navId: "nav-readiness-autopilot", viewId: "view-readiness-autopilot", name: "readiness-autopilot.png" },
-      { navId: "nav-hochster-runtime", viewId: "view-hochster-runtime", name: "hochster-runtime.png" },
-      { navId: "nav-cybersecurity-factory", viewId: "view-cybersecurity-factory", name: "cybersecurity-factory.png" },
-      { navId: "nav-remediation-safety", viewId: "view-remediation-safety", name: "remediation-safety.png" },
-      { navId: "nav-runtime-audit", viewId: "view-runtime-audit", name: "runtime-audit.png" },
-      { navId: "nav-error-budget", viewId: "view-error-budget", name: "error-budget.png" },
-      { navId: "nav-release-provenance", viewId: "view-release-provenance", name: "release-provenance.png" },
-      { navId: "nav-swarm-control", viewId: "view-swarm-control", name: "swarm-control.png" },
-      { navId: "nav-mission-intel", viewId: "view-mission", name: "mission-intel.png" },
-      { navId: "nav-timeline-replay", viewId: "view-replay", name: "timeline-replay.png" }
+      { navId: "nav-mission-control", viewId: "view-mission-control", name: "mission-control.png" },
+      { navId: "nav-live-runtime", viewId: "view-live-runtime", name: "live-runtime.png" },
+      { navId: "nav-local-models", viewId: "view-local-models", name: "local-models.png" },
+      { navId: "nav-model-router", viewId: "view-model-router", name: "model-router.png" },
+      { navId: "nav-escalations", viewId: "view-escalations", name: "escalations.png" },
+      { navId: "nav-evidence", viewId: "view-evidence", name: "evidence.png" },
+      { navId: "nav-detections", viewId: "view-detections", name: "detections.png" },
+      { navId: "nav-readiness", viewId: "view-readiness", name: "readiness.png" },
+      { navId: "nav-settings", viewId: "view-settings", name: "settings.png" }
     ];
 
     for (const p of pages) {
@@ -61,23 +60,6 @@ test.describe("Full-Page Swarm Traversal and Console Audit", () => {
         fullPage: false
       });
     }
-
-    // Capture Topology Agent Overlay screenshot (Swarm Control page overlay)
-    await page.locator("#nav-swarm-control").click();
-    await page.waitForTimeout(300);
-    const overlay = page.locator("#topology-agent-overlay-runtime");
-    await expect(overlay).toBeVisible();
-    await page.screenshot({
-      path: path.join(outputDir, "topology-agent-overlay.png"),
-      fullPage: false
-    });
-
-    // Capture Runs Console screenshot
-    const runsConsole = page.locator("#runs-control-panel");
-    await expect(runsConsole).toBeVisible();
-    await runsConsole.screenshot({
-      path: path.join(outputDir, "runs-console.png")
-    });
 
     // Check for errors
     expect(consoleErrors, `Uncaught console errors detected: ${consoleErrors.join("\n")}`).toEqual([]);

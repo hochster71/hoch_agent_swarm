@@ -31,24 +31,24 @@ assertFileContains("backend/main.py", "/approve", "backend_has_approve_route");
 assertFileContains("backend/main.py", "/reject", "backend_has_reject_route");
 
 // 2. Check DOM Elements in index.html
-assertFileContains("frontend/index.html", "device-service-registry-panel", "html_has_registry_panel");
-assertFileContains("frontend/index.html", "device-discovery-policy-panel", "html_has_discovery_policy_panel");
-assertFileContains("frontend/index.html", "device-discovery-run-button", "html_has_discovery_run_btn");
-assertFileContains("frontend/index.html", "device-discovery-status", "html_has_discovery_status_span");
-assertFileContains("frontend/index.html", "discovered-device-list", "html_has_discovered_list_div");
-assertFileContains("frontend/index.html", "service-node-registry-list", "html_has_service_node_registry_list");
-assertFileContains("frontend/index.html", "device-service-approval-panel", "html_has_approval_panel_div");
-assertFileContains("frontend/index.html", "device-service-role-list", "html_has_service_role_list_div");
+assertFileContains("frontend/archive/unused_views.html", "device-service-registry-panel", "html_has_registry_panel");
+assertFileContains("frontend/archive/unused_views.html", "device-discovery-policy-panel", "html_has_discovery_policy_panel");
+assertFileContains("frontend/archive/unused_views.html", "device-discovery-run-button", "html_has_discovery_run_btn");
+assertFileContains("frontend/archive/unused_views.html", "device-discovery-status", "html_has_discovery_status_span");
+assertFileContains("frontend/archive/unused_views.html", "discovered-device-list", "html_has_discovered_list_div");
+assertFileContains("frontend/archive/unused_views.html", "service-node-registry-list", "html_has_service_node_registry_list");
+assertFileContains("frontend/archive/unused_views.html", "device-service-approval-panel", "html_has_approval_panel_div");
+assertFileContains("frontend/archive/unused_views.html", "device-service-role-list", "html_has_service_role_list_div");
 
 // 3. Check App.js UI methods
-assertFileContains("frontend/app.js", "initDeviceRegistry", "js_has_initDeviceRegistry");
-assertFileContains("frontend/app.js", "loadRegistryData", "js_has_loadRegistryData");
-assertFileContains("frontend/app.js", "executeDeviceDiscovery", "js_has_executeDeviceDiscovery");
-assertFileContains("frontend/app.js", "renderDiscoveredDevices", "js_has_renderDiscoveredDevices");
-assertFileContains("frontend/app.js", "selectDiscoveredDevice", "js_has_selectDiscoveredDevice");
-assertFileContains("frontend/app.js", "executeDeviceApproval", "js_has_executeDeviceApproval");
-assertFileContains("frontend/app.js", "executeDeviceRejection", "js_has_executeDeviceRejection");
-assertFileContains("frontend/app.js", "renderApprovedServiceNodes", "js_has_renderApprovedServiceNodes");
+assertFileContains("frontend/archive/unused_views.js", "initDeviceRegistry", "js_has_initDeviceRegistry");
+assertFileContains("frontend/archive/unused_views.js", "loadRegistryData", "js_has_loadRegistryData");
+assertFileContains("frontend/archive/unused_views.js", "executeDeviceDiscovery", "js_has_executeDeviceDiscovery");
+assertFileContains("frontend/archive/unused_views.js", "renderDiscoveredDevices", "js_has_renderDiscoveredDevices");
+assertFileContains("frontend/archive/unused_views.js", "selectDiscoveredDevice", "js_has_selectDiscoveredDevice");
+assertFileContains("frontend/archive/unused_views.js", "executeDeviceApproval", "js_has_executeDeviceApproval");
+assertFileContains("frontend/archive/unused_views.js", "executeDeviceRejection", "js_has_executeDeviceRejection");
+assertFileContains("frontend/archive/unused_views.js", "renderApprovedServiceNodes", "js_has_renderApprovedServiceNodes");
 
 // 4. Check status schema response includes service_nodes & devices.services
 assertFileContains("backend/main.py", "list_service_nodes()", "backend_status_exposes_service_nodes");

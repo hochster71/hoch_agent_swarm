@@ -4,7 +4,7 @@ import json
 import uuid
 import sys
 import subprocess
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import asyncio
 import threading
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
@@ -272,7 +272,7 @@ def _append_mission_events(nodes: list):
             })
 
 def _generate_intel_brief(nodes: list) -> str:
-    """Synthesises a human-readable cluster Intel Brief from live node states."""
+    """Synthesises a human-readable cluster status summary from live node states."""
     total = len(nodes)
     triaging   = [n for n in nodes if n.get("status") == "Triaging"]
     healing    = [n for n in nodes if n.get("status") == "Self-Healing"]
@@ -283,10 +283,10 @@ def _generate_intel_brief(nodes: list) -> str:
     total_agents = sum(n.get("total_agents", 0) for n in nodes)
 
     lines = []
-    lines.append(f"INTEL BRIEF — {datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')}")
+    lines.append(f"OPERATIONAL BRIEF — {datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')}")
     lines.append(f"")
     lines.append(f"All {total} cluster nodes are ONLINE. {total_agents} agents operational across the mesh. "
-                 f"Mean cluster CPU load: {avg_cpu}%.")
+                 f"Average cluster CPU load: {avg_cpu}%.")
     lines.append(f"")
     if triaging:
         names = ", ".join(n["id"] for n in triaging)
@@ -306,7 +306,7 @@ def _generate_intel_brief(nodes: list) -> str:
     if active:
         lines.append(f"● STEADY STATE — {len(active)} node(s) operating within normal parameters.")
     lines.append(f"")
-    lines.append("ZTA posture: ENFORCED. CDAO RAI traceability: ACTIVE. ConMon: STREAMING.")
+    lines.append("Zero-Trust posture: ENFORCED. Governance traceability: ACTIVE. Continuous Monitoring: ACTIVE.")
     return "\n".join(lines)
 
 
@@ -4180,7 +4180,7 @@ async def startup_event():
             default_agents = [
                 {
                     "id": "boss-noodle",
-                    "displayName": "Boss Noodle",
+                    "displayName": "Supervisor Agent",
                     "title": "Swarm Supervisor",
                     "tag": "MISSION WRANGLER",
                     "systemRole": "Supervisor Agent",
@@ -4194,13 +4194,13 @@ async def startup_event():
                 },
                 {
                     "id": "dr-signal",
-                    "displayName": "Dr. Signal",
+                    "displayName": "Research Agent",
                     "title": "Senior Research Agent",
                     "tag": "TRUTH HUNTER",
                     "systemRole": "Research Specialist",
                     "avatarVariant": "research",
                     "status": "idle",
-                    "description": "Finds signal in messy research, video candidates, docs, and prior evidence before anyone patches.",
+                    "description": "Finds signal in messy research, analysis candidates, docs, and prior evidence.",
                     "catchphrase": "I find the signal before anyone patches.",
                     "skills": ["research triage", "YouTube candidate synthesis", "source ranking", "constraint extraction"],
                     "stats": {"intelligence": 96, "speed": 85, "reliability": 97, "energy": 75},
@@ -4208,7 +4208,7 @@ async def startup_event():
                 },
                 {
                     "id": "prof-blueprint",
-                    "displayName": "Prof. Blueprint",
+                    "displayName": "Blueprint Planner Agent",
                     "title": "Systems Architect",
                     "tag": "SYSTEM CARTOONIST",
                     "systemRole": "Planning Specialist",
@@ -4222,7 +4222,7 @@ async def startup_event():
                 },
                 {
                     "id": "eng-patch",
-                    "displayName": "Eng. Patch",
+                    "displayName": "Patch Engineer Agent",
                     "title": "Implementation Specialist",
                     "tag": "PATCH MONK",
                     "systemRole": "Code Specialist",
@@ -4236,7 +4236,7 @@ async def startup_event():
                 },
                 {
                     "id": "ms-checkmark",
-                    "displayName": "Ms. Checkmark",
+                    "displayName": "Verification Check Agent",
                     "title": "Verification Lead",
                     "tag": "BUG BOUNCER",
                     "systemRole": "QA Specialist",
@@ -4250,7 +4250,7 @@ async def startup_event():
                 },
                 {
                     "id": "capt-guardrail",
-                    "displayName": "Capt. Guardrail",
+                    "displayName": "Guardrail Policy Agent",
                     "title": "Autonomy Safety Officer",
                     "tag": "GUARDRAIL GOBLIN",
                     "systemRole": "Security Officer",
@@ -4264,7 +4264,7 @@ async def startup_event():
                 },
                 {
                     "id": "gordon-vector",
-                    "displayName": "Gordon Vector",
+                    "displayName": "Vector Container Agent",
                     "title": "Docker Debugger",
                     "tag": "CONTAINER WHISPERER",
                     "systemRole": "Docker Specialist",
@@ -4278,7 +4278,7 @@ async def startup_event():
                 },
                 {
                     "id": "prof-ledger",
-                    "displayName": "Prof. Ledger",
+                    "displayName": "Ledger Auditor Agent",
                     "title": "Evidence Auditor",
                     "tag": "RECEIPT WIZARD",
                     "systemRole": "Audit Specialist",
@@ -4292,7 +4292,7 @@ async def startup_event():
                 },
                 {
                     "id": "eng-rocket",
-                    "displayName": "Eng. Rocket",
+                    "displayName": "Rocket Release Agent",
                     "title": "Release Judge",
                     "tag": "SHIP JUDGE",
                     "systemRole": "Release Manager",
@@ -7449,6 +7449,11 @@ def get_detections_health_endpoint():
         },
         "playbooks": 4
     }
+
+@app.get("/api/v1/live-runtime/cockpit")
+def get_live_runtime_cockpit_endpoint():
+    from backend.live_runtime_aggregator import get_cockpit_data
+    return get_cockpit_data()
 
 # ── Escalation Approval Queue Endpoints ───────────────────────────────────────
 @app.get("/api/v1/escalations/pending")

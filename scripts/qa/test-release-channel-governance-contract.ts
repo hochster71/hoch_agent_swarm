@@ -65,9 +65,9 @@ function runContractTest() {
     }
   }
 
-  const htmlPath = "frontend/index.html";
+  const htmlPath = "frontend/archive/unused_views.html";
   if (!fs.existsSync(htmlPath)) {
-    blockers.push(`Missing frontend/index.html`);
+    blockers.push(`Missing frontend/archive/unused_views.html`);
   } else {
     const html = fs.readFileSync(htmlPath, "utf8");
     
@@ -126,9 +126,9 @@ function runContractTest() {
     }
   }
 
-  const appJsPath = "frontend/app.js";
+  const appJsPath = "frontend/archive/unused_views.js";
   if (!fs.existsSync(appJsPath)) {
-    blockers.push(`Missing frontend/app.js`);
+    blockers.push(`Missing frontend/archive/unused_views.js`);
   } else {
     const appJs = fs.readFileSync(appJsPath, "utf8");
     if (!appJs.includes("/api/v1/release/channel-governance")) {

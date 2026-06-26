@@ -30,10 +30,10 @@ assertFileContains("backend/inference_gateway.py", "route_inference_request", "b
 assertFileContains("backend/main.py", "/api/v1/models/providers", "api_has_providers_endpoint");
 assertFileContains("backend/main.py", "/api/v1/inference/chat", "api_has_inference_chat_endpoint");
 assertFileContains("backend/main.py", "/api/v1/mock/llm", "api_has_mock_llm_endpoint");
-assertFileContains("frontend/index.html", "model-provider-registry-panel", "html_has_model_registry_panel");
-assertFileContains("frontend/index.html", "inference-test-panel", "html_has_inference_test_panel");
-assertFileContains("frontend/app.js", "initModelProviderRegistryUI", "js_has_registry_ui_init");
-assertFileContains("frontend/app.js", "loadModelProviders", "js_has_load_providers_function");
+assertFileContains("frontend/archive/unused_views.html", "model-provider-registry-panel", "html_has_model_registry_panel");
+assertFileContains("frontend/archive/unused_views.html", "inference-test-panel", "html_has_inference_test_panel");
+assertFileContains("frontend/archive/unused_views.js", "initModelProviderRegistryUI", "js_has_registry_ui_init");
+assertFileContains("frontend/archive/unused_views.js", "loadModelProviders", "js_has_load_providers_function");
 
 // 2. Active API Simulation & Verification
 async function runApiChecks() {

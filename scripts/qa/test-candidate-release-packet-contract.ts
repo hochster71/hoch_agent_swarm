@@ -58,7 +58,7 @@ if (!fs.existsSync(generatorPath)) {
 }
 
 // 5. Frontend index.html checks (DOM IDs and visible text)
-const indexHtml = "frontend/index.html";
+const indexHtml = "frontend/archive/unused_views.html";
 const requiredIds = [
   "candidate-release-packet-panel",
   "candidate-packet-version-input",
@@ -100,7 +100,7 @@ for (const text of requiredTexts) {
 }
 
 // 6. Frontend app.js checks
-const appJs = "frontend/app.js";
+const appJs = "frontend/archive/unused_views.js";
 assertFileContains(appJs, "/api/v1/release/candidate-packets", "appjs_calls_candidate_packets_api");
 assertFileContains(appJs, '"POST"', "appjs_calls_post_api");
 

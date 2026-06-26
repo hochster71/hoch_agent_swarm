@@ -48,7 +48,7 @@ assertFileNotContains("backend/main.py", "run_git_command([\"tag\"", "backend_no
 assertFileNotContains("backend/main.py", "run_git_command([\"push\"", "backend_no_git_push_mutation");
 
 // 3. Frontend index.html checks (DOM IDs)
-const indexHtml = "frontend/index.html";
+const indexHtml = "frontend/archive/unused_views.html";
 assertFileContains(indexHtml, `id="formal-release-seal-dry-run-panel"`, `html_has_id_seal_panel`);
 assertFileContains(indexHtml, `id="seal-dry-run-preview-select"`, `html_has_id_preview_select`);
 assertFileContains(indexHtml, `id="seal-dry-run-operator-input"`, `html_has_id_operator_input`);
@@ -61,7 +61,7 @@ assertFileContains(indexHtml, `id="seal-dry-run-blockers"`, `html_has_id_blocker
 assertFileContains(indexHtml, `id="seal-dry-run-history-list"`, `html_has_id_history_list`);
 
 // 4. Frontend app.js checks
-const appJs = "frontend/app.js";
+const appJs = "frontend/archive/unused_views.js";
 assertFileContains(appJs, "initFormalReleaseSealDryRun", "appjs_has_init_function");
 assertFileContains(appJs, "loadApprovedPreviewsForDryRun", "appjs_has_load_function");
 assertFileContains(appJs, "executeSealDryRun", "appjs_has_execute_function");

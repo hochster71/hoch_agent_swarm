@@ -12826,18 +12826,6 @@
       ]
     },
     {
-      "approval_id": "app-28a3",
-      "request_id": "run-829ceb91:T4-CORE-ENGINE",
-      "correlation_id": "corr-3e8121",
-      "trace_id": "trace-a3bb20",
-      "action_type": "TASK_EXECUTION",
-      "risk_level": "medium",
-      "status": "pending",
-      "requested_by": "Swarm Orchestrator",
-      "created_at": "2026-06-26T01:53:29.889378+00:00",
-      "decisions": []
-    },
-    {
       "approval_id": "app-chan-3f2cff",
       "request_id": "channel_decision:candidate",
       "correlation_id": "corr-78bc40d9358b",
@@ -14841,6 +14829,1134 @@
       "status": "pending",
       "requested_by": "Swarm Orchestrator",
       "created_at": "2026-06-26T20:35:51.540850+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-32f04886",
+      "request_id": "channel_decision:formal:preview-1782506899-3ff44fee",
+      "correlation_id": "corr-f7cdbd06",
+      "trace_id": "trace-af71c6b8",
+      "action_type": "channel_decision",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Michael Hoch",
+      "created_at": "2026-06-26T20:48:20.312775+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-b55f18de",
+          "request_id": "channel_decision:formal:preview-1782506899-3ff44fee",
+          "run_id": "channel_decision",
+          "task_id": "formal:preview-1782506899-3ff44fee",
+          "operator": "Michael Hoch",
+          "decision": "approved",
+          "reason": "Simulated formal release approval for attestation bundle E2E testing",
+          "decision_time": "2026-06-26T20:48:20.312317+00:00",
+          "nonce": "0cbfddaf0d5c4a719bd8a7ff1fea32c6",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-a223",
+      "request_id": "run-42de0572:T2-SPEC",
+      "correlation_id": "corr-771669",
+      "trace_id": "trace-196f7e",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T20:57:57.928609+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-cb2a",
+      "request_id": "run-255aeb69:T2-SPEC",
+      "correlation_id": "corr-bedee0",
+      "trace_id": "trace-d037ab",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T21:22:09.915628+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-1b93",
+      "request_id": "run-e4b256e7:T2-SPEC",
+      "correlation_id": "corr-2d2494",
+      "trace_id": "trace-83230e",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T21:24:47.922945+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-369b",
+      "request_id": "run-ea0dfeeb:T2-SPEC",
+      "correlation_id": "corr-0e5883",
+      "trace_id": "trace-4f7709",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T21:35:39.337295+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-71de",
+      "request_id": "run-caf7573a:T2-SPEC",
+      "correlation_id": "corr-4df468",
+      "trace_id": "trace-6c1fa2",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T21:35:39.645292+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-d702c3a3",
+          "request_id": "run-caf7573a:T2-SPEC",
+          "run_id": "run-caf7573a",
+          "task_id": "T2-SPEC",
+          "operator": "Contract Audit Operator",
+          "decision": "approved",
+          "reason": "",
+          "decision_time": "2026-06-26T21:35:39.644714+00:00",
+          "nonce": "7013066709c94911908581891bd1afc1",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-3090",
+      "request_id": "run-caf7573a:T4-CORE-ENGINE",
+      "correlation_id": "corr-2eb228",
+      "trace_id": "trace-9b1e31",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T21:35:42.690714+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-cdca",
+      "request_id": "run-93a3473f:T2-SPEC",
+      "correlation_id": "corr-961009",
+      "trace_id": "trace-b6796d",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T21:49:14.472949+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-8900cfeb",
+          "request_id": "run-93a3473f:T2-SPEC",
+          "run_id": "run-93a3473f",
+          "task_id": "T2-SPEC",
+          "operator": "Contract Audit Operator",
+          "decision": "approved",
+          "reason": "",
+          "decision_time": "2026-06-26T21:49:14.472566+00:00",
+          "nonce": "1d70b301f44b4978897aabfd53a2b606",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-00c0",
+      "request_id": "run-63576670:T2-SPEC",
+      "correlation_id": "corr-87c351",
+      "trace_id": "trace-446bed",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T21:49:17.494496+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-ea2e",
+      "request_id": "run-93a3473f:T4-CORE-ENGINE",
+      "correlation_id": "corr-196759",
+      "trace_id": "trace-1d1138",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T21:53:51.680554+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-8cd59b37",
+          "request_id": "run-93a3473f:T4-CORE-ENGINE",
+          "run_id": "run-93a3473f",
+          "task_id": "T4-CORE-ENGINE",
+          "operator": "Contract Audit Operator",
+          "decision": "approved",
+          "reason": "",
+          "decision_time": "2026-06-26T21:53:51.679760+00:00",
+          "nonce": "338fe7b1a84d4ce49c2f87b776b43b49",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-a75a",
+      "request_id": "run-93a3473f:T5-SWARM-DASHBOARD",
+      "correlation_id": "corr-320a29",
+      "trace_id": "trace-ca98f3",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T21:53:53.202869+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-9840",
+      "request_id": "run-93a3473f:T6-PLATFORM-BACKEND",
+      "correlation_id": "corr-3e9067",
+      "trace_id": "trace-5c535f",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T21:53:53.211546+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-c76b",
+      "request_id": "run-0595f68a:T2-SPEC",
+      "correlation_id": "corr-9f4047",
+      "trace_id": "trace-efccf3",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T21:53:54.758272+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-74a6",
+      "request_id": "run-fbed5a75:T2-SPEC",
+      "correlation_id": "corr-2f16e5",
+      "trace_id": "trace-3e538b",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T21:56:27.149880+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-0352",
+      "request_id": "run-38d3c4c4:T2-SPEC",
+      "correlation_id": "corr-39a743",
+      "trace_id": "trace-fb1c62",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T22:58:35.512720+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-1bf0d401",
+          "request_id": "run-38d3c4c4:T2-SPEC",
+          "run_id": "run-38d3c4c4",
+          "task_id": "T2-SPEC",
+          "operator": "Contract Audit Operator",
+          "decision": "approved",
+          "reason": "",
+          "decision_time": "2026-06-26T22:58:35.512028+00:00",
+          "nonce": "2dae3dc0b96244218cb18af950c1dcc5",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-718d",
+      "request_id": "run-562b7fb9:T2-SPEC",
+      "correlation_id": "corr-6fc3ef",
+      "trace_id": "trace-34b0d6",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T22:58:38.556027+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-9447",
+      "request_id": "run-38d3c4c4:T4-CORE-ENGINE",
+      "correlation_id": "corr-0ba955",
+      "trace_id": "trace-7d8dc5",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:16:40.768561+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-f9530b98",
+          "request_id": "run-38d3c4c4:T4-CORE-ENGINE",
+          "run_id": "run-38d3c4c4",
+          "task_id": "T4-CORE-ENGINE",
+          "operator": "Contract Audit Operator",
+          "decision": "approved",
+          "reason": "",
+          "decision_time": "2026-06-26T23:16:40.768213+00:00",
+          "nonce": "85300bcdfa3f42138680f73db32669c5",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-c411",
+      "request_id": "run-38d3c4c4:T5-SWARM-DASHBOARD",
+      "correlation_id": "corr-0b5c08",
+      "trace_id": "trace-7d975f",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:16:42.297620+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-f83b",
+      "request_id": "run-38d3c4c4:T6-PLATFORM-BACKEND",
+      "correlation_id": "corr-006f11",
+      "trace_id": "trace-ec1f1d",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:16:42.306658+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-d088",
+      "request_id": "run-cafc7247:T2-SPEC",
+      "correlation_id": "corr-786e56",
+      "trace_id": "trace-2c27de",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:18:13.559314+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-2bb6bf61",
+          "request_id": "run-cafc7247:T2-SPEC",
+          "run_id": "run-cafc7247",
+          "task_id": "T2-SPEC",
+          "operator": "Contract Audit Operator",
+          "decision": "approved",
+          "reason": "",
+          "decision_time": "2026-06-26T23:18:13.558591+00:00",
+          "nonce": "f22ff45307b1447eaaf016e1b26dad9d",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-5b4c",
+      "request_id": "run-6e0b7082:T2-SPEC",
+      "correlation_id": "corr-d8db93",
+      "trace_id": "trace-6c2123",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:18:16.592945+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-931e",
+      "request_id": "run-cafc7247:T4-CORE-ENGINE",
+      "correlation_id": "corr-2737f4",
+      "trace_id": "trace-84c36f",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:19:10.871933+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-a5083688",
+          "request_id": "run-cafc7247:T4-CORE-ENGINE",
+          "run_id": "run-cafc7247",
+          "task_id": "T4-CORE-ENGINE",
+          "operator": "Contract Audit Operator",
+          "decision": "approved",
+          "reason": "",
+          "decision_time": "2026-06-26T23:19:10.871555+00:00",
+          "nonce": "00c8fbf992244f57aa48a000e18c9f85",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-3941",
+      "request_id": "run-cafc7247:T5-SWARM-DASHBOARD",
+      "correlation_id": "corr-7fed5d",
+      "trace_id": "trace-82537d",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:19:12.398346+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-ad5e",
+      "request_id": "run-cafc7247:T6-PLATFORM-BACKEND",
+      "correlation_id": "corr-088b26",
+      "trace_id": "trace-5cc544",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:19:12.406781+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-8ba3",
+      "request_id": "run-960801f3:T2-SPEC",
+      "correlation_id": "corr-c1afdd",
+      "trace_id": "trace-b86d84",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:19:59.621335+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-866fd729",
+          "request_id": "run-960801f3:T2-SPEC",
+          "run_id": "run-960801f3",
+          "task_id": "T2-SPEC",
+          "operator": "Contract Audit Operator",
+          "decision": "approved",
+          "reason": "",
+          "decision_time": "2026-06-26T23:19:59.620896+00:00",
+          "nonce": "2be168a0fc0743f6bc80868d7381ed41",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-53c1",
+      "request_id": "run-b7224a10:T2-SPEC",
+      "correlation_id": "corr-22c32e",
+      "trace_id": "trace-6e7ce3",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:20:02.500510+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-4d2f",
+      "request_id": "run-960801f3:T4-CORE-ENGINE",
+      "correlation_id": "corr-aded54",
+      "trace_id": "trace-6605e3",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:20:44.904892+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-2d666080",
+          "request_id": "run-960801f3:T4-CORE-ENGINE",
+          "run_id": "run-960801f3",
+          "task_id": "T4-CORE-ENGINE",
+          "operator": "Contract Audit Operator",
+          "decision": "approved",
+          "reason": "",
+          "decision_time": "2026-06-26T23:20:44.904538+00:00",
+          "nonce": "dfeb6302888148989d1f035de4ffb390",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-6d6f",
+      "request_id": "run-960801f3:T5-SWARM-DASHBOARD",
+      "correlation_id": "corr-8abf21",
+      "trace_id": "trace-4cdbe9",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:20:46.430914+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-ed26",
+      "request_id": "run-960801f3:T6-PLATFORM-BACKEND",
+      "correlation_id": "corr-e1d336",
+      "trace_id": "trace-e64477",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:20:46.440618+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-92fc",
+      "request_id": "run-d7070803:T2-SPEC",
+      "correlation_id": "corr-dfee9c",
+      "trace_id": "trace-bd9f4e",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:21:29.655032+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-ee483b9d",
+          "request_id": "run-d7070803:T2-SPEC",
+          "run_id": "run-d7070803",
+          "task_id": "T2-SPEC",
+          "operator": "Contract Audit Operator",
+          "decision": "approved",
+          "reason": "",
+          "decision_time": "2026-06-26T23:21:29.654600+00:00",
+          "nonce": "1ef7d087665346689e733b1369b1d83b",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-5522",
+      "request_id": "run-06ca96d5:T2-SPEC",
+      "correlation_id": "corr-0575d5",
+      "trace_id": "trace-4c463f",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:21:32.677478+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-bdab",
+      "request_id": "run-d7070803:T4-CORE-ENGINE",
+      "correlation_id": "corr-6ce86d",
+      "trace_id": "trace-9949cb",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:22:19.969315+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-d7c25821",
+          "request_id": "run-d7070803:T4-CORE-ENGINE",
+          "run_id": "run-d7070803",
+          "task_id": "T4-CORE-ENGINE",
+          "operator": "Contract Audit Operator",
+          "decision": "approved",
+          "reason": "",
+          "decision_time": "2026-06-26T23:22:19.968518+00:00",
+          "nonce": "b34a5f00cd034a038636eac9f76b75c7",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-a601",
+      "request_id": "run-d7070803:T5-SWARM-DASHBOARD",
+      "correlation_id": "corr-6296c5",
+      "trace_id": "trace-fccdad",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:22:21.501218+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-28a3",
+      "request_id": "run-d7070803:T6-PLATFORM-BACKEND",
+      "correlation_id": "corr-401718",
+      "trace_id": "trace-c36488",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:22:21.514919+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-bf8f",
+      "request_id": "run-e39f9eee:T2-SPEC",
+      "correlation_id": "corr-f55580",
+      "trace_id": "trace-e36e1d",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:23:06.757706+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-5c7a01d0",
+          "request_id": "run-e39f9eee:T2-SPEC",
+          "run_id": "run-e39f9eee",
+          "task_id": "T2-SPEC",
+          "operator": "Contract Audit Operator",
+          "decision": "approved",
+          "reason": "",
+          "decision_time": "2026-06-26T23:23:06.757319+00:00",
+          "nonce": "131276e5557c471094c608b245c0776f",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-7d71",
+      "request_id": "run-8a738734:T2-SPEC",
+      "correlation_id": "corr-7c6877",
+      "trace_id": "trace-5ca3fc",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:23:09.930049+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-d6cb",
+      "request_id": "run-e39f9eee:T4-CORE-ENGINE",
+      "correlation_id": "corr-ab6813",
+      "trace_id": "trace-064fc9",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:23:57.740185+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-1cb8bd3d",
+          "request_id": "run-e39f9eee:T4-CORE-ENGINE",
+          "run_id": "run-e39f9eee",
+          "task_id": "T4-CORE-ENGINE",
+          "operator": "Contract Audit Operator",
+          "decision": "approved",
+          "reason": "",
+          "decision_time": "2026-06-26T23:23:57.739844+00:00",
+          "nonce": "ec81f51fd3f74472be898912a136be33",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-e5ee",
+      "request_id": "run-e39f9eee:T5-SWARM-DASHBOARD",
+      "correlation_id": "corr-d61fab",
+      "trace_id": "trace-d71a7f",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:23:59.264962+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-0a30",
+      "request_id": "run-e39f9eee:T6-PLATFORM-BACKEND",
+      "correlation_id": "corr-c57657",
+      "trace_id": "trace-24180b",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:23:59.273971+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-a403",
+      "request_id": "run-945310de:T2-SPEC",
+      "correlation_id": "corr-28b756",
+      "trace_id": "trace-b04cda",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:24:50.071499+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-d6b2db95",
+          "request_id": "run-945310de:T2-SPEC",
+          "run_id": "run-945310de",
+          "task_id": "T2-SPEC",
+          "operator": "Contract Audit Operator",
+          "decision": "approved",
+          "reason": "",
+          "decision_time": "2026-06-26T23:24:50.071011+00:00",
+          "nonce": "a9db075301974f808d24f8caa881ff87",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-9844",
+      "request_id": "run-146f7968:T2-SPEC",
+      "correlation_id": "corr-095b71",
+      "trace_id": "trace-7022a1",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:24:53.097265+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-bbca",
+      "request_id": "run-945310de:T4-CORE-ENGINE",
+      "correlation_id": "corr-e03a20",
+      "trace_id": "trace-fe2be8",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:25:47.168295+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-4d2e279c",
+          "request_id": "run-945310de:T4-CORE-ENGINE",
+          "run_id": "run-945310de",
+          "task_id": "T4-CORE-ENGINE",
+          "operator": "Contract Audit Operator",
+          "decision": "approved",
+          "reason": "",
+          "decision_time": "2026-06-26T23:25:47.167851+00:00",
+          "nonce": "2df507f2e34447e49bd32fc815b81e00",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-ad89",
+      "request_id": "run-945310de:T5-SWARM-DASHBOARD",
+      "correlation_id": "corr-7629da",
+      "trace_id": "trace-7b3f8a",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:25:48.693586+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-d365",
+      "request_id": "run-945310de:T6-PLATFORM-BACKEND",
+      "correlation_id": "corr-539410",
+      "trace_id": "trace-0e83b1",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:25:48.700878+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-a1b5",
+      "request_id": "run-cbcd87a1:T2-SPEC",
+      "correlation_id": "corr-3e7239",
+      "trace_id": "trace-ee7ad7",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:26:32.545083+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-209a0769",
+          "request_id": "run-cbcd87a1:T2-SPEC",
+          "run_id": "run-cbcd87a1",
+          "task_id": "T2-SPEC",
+          "operator": "Contract Audit Operator",
+          "decision": "approved",
+          "reason": "",
+          "decision_time": "2026-06-26T23:26:32.544751+00:00",
+          "nonce": "c0460f0551804cf2b0c3a242be2d2df2",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-9214",
+      "request_id": "run-c2cbe109:T2-SPEC",
+      "correlation_id": "corr-2d234c",
+      "trace_id": "trace-89e586",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:26:35.573217+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-223a",
+      "request_id": "run-cbcd87a1:T4-CORE-ENGINE",
+      "correlation_id": "corr-4a3217",
+      "trace_id": "trace-ed7b0b",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:27:22.022198+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-2c748ba1",
+          "request_id": "run-cbcd87a1:T4-CORE-ENGINE",
+          "run_id": "run-cbcd87a1",
+          "task_id": "T4-CORE-ENGINE",
+          "operator": "Contract Audit Operator",
+          "decision": "approved",
+          "reason": "",
+          "decision_time": "2026-06-26T23:27:22.021759+00:00",
+          "nonce": "353b61c7e1a54751a21ccfab789c5f9a",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-9163",
+      "request_id": "run-cbcd87a1:T5-SWARM-DASHBOARD",
+      "correlation_id": "corr-7062cc",
+      "trace_id": "trace-e0f3fe",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:27:23.547591+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-1653",
+      "request_id": "run-cbcd87a1:T6-PLATFORM-BACKEND",
+      "correlation_id": "corr-840d91",
+      "trace_id": "trace-34b60d",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:27:23.556326+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-7ef1",
+      "request_id": "run-ef0c586c:T2-SPEC",
+      "correlation_id": "corr-e0bd5f",
+      "trace_id": "trace-b48cee",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:28:05.230569+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-b1cdf781",
+          "request_id": "run-ef0c586c:T2-SPEC",
+          "run_id": "run-ef0c586c",
+          "task_id": "T2-SPEC",
+          "operator": "Contract Audit Operator",
+          "decision": "approved",
+          "reason": "",
+          "decision_time": "2026-06-26T23:28:05.228480+00:00",
+          "nonce": "38dd16163d5e4a0faba0d3b3d4755847",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-9ad7",
+      "request_id": "run-abd8146a:T2-SPEC",
+      "correlation_id": "corr-bd645d",
+      "trace_id": "trace-a64c3a",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:28:08.256512+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-29d9",
+      "request_id": "run-ef0c586c:T4-CORE-ENGINE",
+      "correlation_id": "corr-baf52d",
+      "trace_id": "trace-5b9130",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:28:56.887509+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-0452e91b",
+          "request_id": "run-ef0c586c:T4-CORE-ENGINE",
+          "run_id": "run-ef0c586c",
+          "task_id": "T4-CORE-ENGINE",
+          "operator": "Contract Audit Operator",
+          "decision": "approved",
+          "reason": "",
+          "decision_time": "2026-06-26T23:28:56.887077+00:00",
+          "nonce": "b8cb38f30def4180aa7caf74c347075e",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-e667",
+      "request_id": "run-ef0c586c:T5-SWARM-DASHBOARD",
+      "correlation_id": "corr-abb6a5",
+      "trace_id": "trace-0a5833",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:28:58.416978+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-199b",
+      "request_id": "run-ef0c586c:T6-PLATFORM-BACKEND",
+      "correlation_id": "corr-2342bb",
+      "trace_id": "trace-774577",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:28:58.427200+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-d9c3",
+      "request_id": "run-0b3f00df:T2-SPEC",
+      "correlation_id": "corr-9754c9",
+      "trace_id": "trace-e802a8",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:29:58.197788+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-b5f0af63",
+          "request_id": "run-0b3f00df:T2-SPEC",
+          "run_id": "run-0b3f00df",
+          "task_id": "T2-SPEC",
+          "operator": "Contract Audit Operator",
+          "decision": "approved",
+          "reason": "",
+          "decision_time": "2026-06-26T23:29:58.197412+00:00",
+          "nonce": "bd3b2bac9913408f88567949509c5109",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-783a",
+      "request_id": "run-204c3a76:T2-SPEC",
+      "correlation_id": "corr-a9ec8e",
+      "trace_id": "trace-1d580f",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:30:01.264009+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-02ff",
+      "request_id": "run-0b3f00df:T4-CORE-ENGINE",
+      "correlation_id": "corr-3c117f",
+      "trace_id": "trace-1559de",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:30:25.848976+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-d02a782f",
+          "request_id": "run-0b3f00df:T4-CORE-ENGINE",
+          "run_id": "run-0b3f00df",
+          "task_id": "T4-CORE-ENGINE",
+          "operator": "Contract Audit Operator",
+          "decision": "approved",
+          "reason": "",
+          "decision_time": "2026-06-26T23:30:25.848576+00:00",
+          "nonce": "cc9b9b2bba1f4430b9613437cce20554",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-0207",
+      "request_id": "run-0b3f00df:T5-SWARM-DASHBOARD",
+      "correlation_id": "corr-34f4b7",
+      "trace_id": "trace-7a768a",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:30:27.377966+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-a1a0",
+      "request_id": "run-0b3f00df:T6-PLATFORM-BACKEND",
+      "correlation_id": "corr-1d48b7",
+      "trace_id": "trace-31bf9d",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:30:27.387781+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-dd8c",
+      "request_id": "run-76ecff13:T2-SPEC",
+      "correlation_id": "corr-330459",
+      "trace_id": "trace-efdebc",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:31:25.886626+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-81ea7e84",
+          "request_id": "run-76ecff13:T2-SPEC",
+          "run_id": "run-76ecff13",
+          "task_id": "T2-SPEC",
+          "operator": "Contract Audit Operator",
+          "decision": "approved",
+          "reason": "",
+          "decision_time": "2026-06-26T23:31:25.886018+00:00",
+          "nonce": "fc9a04e48f714ddf87411792e6d81059",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-638e",
+      "request_id": "run-8524f2f0:T2-SPEC",
+      "correlation_id": "corr-632583",
+      "trace_id": "trace-43590b",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:31:28.925923+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-5e7c",
+      "request_id": "run-76ecff13:T4-CORE-ENGINE",
+      "correlation_id": "corr-8b6c67",
+      "trace_id": "trace-b94e70",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:31:29.017222+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-e6f2",
+      "request_id": "run-3f087f86:T2-SPEC",
+      "correlation_id": "corr-b7864d",
+      "trace_id": "trace-5b8c21",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "approved",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:37:57.538369+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-11afa23e",
+          "request_id": "run-3f087f86:T2-SPEC",
+          "run_id": "run-3f087f86",
+          "task_id": "T2-SPEC",
+          "operator": "Contract Audit Operator",
+          "decision": "approved",
+          "reason": "",
+          "decision_time": "2026-06-26T23:37:57.537939+00:00",
+          "nonce": "b3d4209282304e4cba4919ea04308c80",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-6ebb",
+      "request_id": "run-919ab061:T2-SPEC",
+      "correlation_id": "corr-bc2dfb",
+      "trace_id": "trace-a07381",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:38:00.648646+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-23a5",
+      "request_id": "run-3f087f86:T4-CORE-ENGINE",
+      "correlation_id": "corr-a5fe9a",
+      "trace_id": "trace-5bf17a",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "medium",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:38:00.655506+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-abf7",
+      "request_id": "run-d3026182:T2-SPEC",
+      "correlation_id": "corr-eaabcb",
+      "trace_id": "trace-2e47cb",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-26T23:42:08.846945+00:00",
       "decisions": []
     }
   ]
