@@ -5899,7 +5899,14 @@ def trigger_crewai_ingestion():
     from backend.crewai_ingestion_bridge import run_crewai_ingestion
     try:
         res = run_crewai_ingestion()
-        return {"status": "success", "results": res}
+        return {
+            "status": "success",
+            "scanned": res.get("scanned", 0),
+            "ingested": res.get("ingested", 0),
+            "new": res.get("new", 0),
+            "skipped": res.get("skipped", 0),
+            "results": res
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -5956,6 +5963,48 @@ def get_crewai_artifact_detail(artifact_id: str):
         return d
     except HTTPException as he:
         raise he
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ================================================================
+#  CROSS-RUNTIME EVIDENCE GRAPH ENDPOINTS
+# ================================================================
+
+@app.get("/api/v1/evidence/graph")
+def get_evidence_graph_api():
+    from backend.evidence_graph import build_evidence_graph
+    try:
+        return build_evidence_graph()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/evidence/graph/trace/{graph_id:path}")
+def get_evidence_graph_trace_api(graph_id: str):
+    from backend.evidence_graph import trace_evidence_chain
+    try:
+        return trace_evidence_chain(graph_id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/v1/evidence/graph/link")
+def post_evidence_graph_link_api(request: dict):
+    from backend.evidence_graph import create_manual_link
+    source = request.get("source_graph_id")
+    target = request.get("target_graph_id")
+    relation = request.get("relation_type", "associated_with")
+    if not source or not target:
+        raise HTTPException(status_code=400, detail="source_graph_id and target_graph_id are required")
+    try:
+        return create_manual_link(source, target, relation)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/api/v1/evidence/graph/link/{link_id}")
+def delete_evidence_graph_link_api(link_id: str):
+    from backend.runtime_execution_store import delete_evidence_graph_link
+    try:
+        delete_evidence_graph_link(link_id)
+        return {"status": "success", "message": f"Link {link_id} deleted"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

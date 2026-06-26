@@ -2158,9 +2158,9 @@
                                     <thead>
                                         <tr>
                                             <th>Plan Name</th>
+                                            <th>Source Path</th>
                                             <th>Hash</th>
                                             <th>Ingested At</th>
-                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody id="crewai-plans-tbody">
@@ -2179,16 +2179,130 @@
                                 <table class="deployments-table" style="font-size: 11px;">
                                     <thead>
                                         <tr>
+                                            <th>Name</th>
+                                            <th>Context</th>
                                             <th>Source Path</th>
-                                            <th>Type</th>
                                             <th>Hash</th>
                                             <th>Ingested At</th>
                                         </tr>
                                     </thead>
                                     <tbody id="crewai-runs-tbody">
-                                        <tr><td colspan="4" style="text-align: center; color: var(--text-secondary);">No evidence ingested yet</td></tr>
+                                        <tr><td colspan="5" style="text-align: center; color: var(--text-secondary);">No evidence ingested yet</td></tr>
                                     </tbody>
                                 </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Cross-Runtime Evidence Graph & Trace Inspector Panel (Phase 21) -->
+                <section class="card" id="evidence-chain-view-panel" style="padding: 20px; margin-top: 20px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-glass); padding-bottom: 12px; margin-bottom: 16px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i data-lucide="git-merge" style="color: var(--accent-teal); width: 20px; height: 20px;"></i>
+                            <h3 style="font-size: 16px; font-weight: 700; color: #fff; margin: 0;">CROSS-RUNTIME EVIDENCE GRAPH LINEAGE</h3>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <button id="btn-refresh-evidence-graph" class="btn btn-xs btn-outline" style="display: flex; align-items: center; gap: 4px;">
+                                <i data-lucide="refresh-cw" style="width: 12px; height: 12px;"></i> Refresh Graph
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1.8fr 1.2fr; gap: 20px;">
+                        <!-- Left Panel: Lineage Graph Tracing -->
+                        <div style="display: flex; flex-direction: column; gap: 15px; background: rgba(0,0,0,0.15); padding: 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.03);">
+                            <div style="display: flex; gap: 10px; align-items: flex-end;">
+                                <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                                    <label style="font-size: 11px; color: var(--text-secondary);">Select Starting Node to Trace</label>
+                                    <select id="evidence-trace-start-select" style="background: rgba(0,0,0,0.25); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 12px; width: 100%;">
+                                        <option value="">-- No nodes loaded --</option>
+                                    </select>
+                                </div>
+                                <button id="btn-trigger-evidence-trace" class="btn btn-sm btn-primary">Trace Lineage</button>
+                            </div>
+
+                            <!-- Lineage Visualization Area -->
+                            <div style="margin-top: 10px;">
+                                <h4 style="margin: 0 0 10px 0; font-size: 12px; color: var(--accent-teal); font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                                    <i data-lucide="split" style="width: 14px; height: 14px;"></i> Interactive Evidence Flow
+                                </h4>
+                                <div id="evidence-flow-container" style="background: rgba(0,0,0,0.25); border: 1px solid var(--border-glass); border-radius: 6px; padding: 20px; min-height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow-x: auto; gap: 12px;">
+                                    <span style="font-size: 12px; color: var(--text-secondary); font-style: italic;">Select a node above and click "Trace Lineage" to construct the cross-runtime flow diagram.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Node Details & Manual Connector -->
+                        <div style="display: flex; flex-direction: column; gap: 16px;">
+                            <!-- Node Inspector -->
+                            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+                                <h4 style="margin: 0; font-size: 13px; color: #fff; font-weight: bold; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid var(--border-glass); padding-bottom: 8px;">
+                                    <i data-lucide="info" style="color: var(--accent-teal); width: 14px; height: 14px;"></i> NODE INSPECTOR
+                                </h4>
+                                <div id="evidence-node-inspector-empty" style="font-size: 11px; color: var(--text-secondary); font-style: italic; text-align: center; padding: 10px 0;">
+                                    Click any chip in the trace diagram or select a node to inspect detailed properties.
+                                </div>
+                                <div id="evidence-node-inspector-content" class="hidden" style="display: flex; flex-direction: column; gap: 10px; font-size: 11px;">
+                                    <div><strong>Node ID:</strong> <span id="inspector-node-id" style="font-family: monospace; color: var(--accent-teal);"></span></div>
+                                    <div><strong>Type:</strong> <span id="inspector-node-type" class="badge" style="font-size: 9px; padding: 1px 4px;"></span></div>
+                                    <div><strong>Label:</strong> <span id="inspector-node-label" style="color: #fff; font-weight: 600;"></span></div>
+                                    
+                                    <!-- Properties segment -->
+                                    <div id="inspector-node-properties-section" style="background: rgba(0,0,0,0.15); padding: 8px; border-radius: 4px; display: flex; flex-direction: column; gap: 6px; border: 1px solid rgba(255,255,255,0.02);">
+                                        <strong style="color: var(--text-secondary); font-size: 10px;">PROPERTIES</strong>
+                                        <div id="inspector-node-properties-list" style="display: flex; flex-direction: column; gap: 4px;"></div>
+                                    </div>
+
+                                    <!-- Connections (Edges) -->
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 5px;">
+                                        <div>
+                                            <strong style="color: var(--text-secondary); font-size: 10px; display: block; margin-bottom: 4px;">UPSTREAM (PARENTS)</strong>
+                                            <div id="inspector-node-parents" style="display: flex; flex-direction: column; gap: 4px; max-height: 80px; overflow-y: auto;"></div>
+                                        </div>
+                                        <div>
+                                            <strong style="color: var(--text-secondary); font-size: 10px; display: block; margin-bottom: 4px;">DOWNSTREAM (CHILDREN)</strong>
+                                            <div id="inspector-node-children" style="display: flex; flex-direction: column; gap: 4px; max-height: 80px; overflow-y: auto;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Explicit Link Creator -->
+                            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+                                <h4 style="margin: 0; font-size: 13px; color: #fff; font-weight: bold; display: flex; align-items: center; gap: 6px;">
+                                    <i data-lucide="link-2" style="color: var(--accent-orange); width: 14px; height: 14px;"></i> PERSIST EXPLICIT RELATIONSHIP
+                                </h4>
+                                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 11px;">
+                                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                                        <label style="color: var(--text-secondary);">Source Node</label>
+                                        <select id="link-source-select" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 11px; width: 100%;">
+                                            <option value="">-- Select Source --</option>
+                                        </select>
+                                    </div>
+                                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                                        <label style="color: var(--text-secondary);">Relation Type</label>
+                                        <select id="link-relation-select" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 11px; width: 100%;">
+                                            <option value="associated_with">associated_with</option>
+                                            <option value="produced_by">produced_by</option>
+                                            <option value="signed_by">signed_by</option>
+                                            <option value="guards_task">guards_task</option>
+                                            <option value="includes">includes</option>
+                                            <option value="previews">previews</option>
+                                            <option value="seals">seals</option>
+                                            <option value="attests">attests</option>
+                                            <option value="runs_on">runs_on</option>
+                                            <option value="routed_to">routed_to</option>
+                                        </select>
+                                    </div>
+                                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                                        <label style="color: var(--text-secondary);">Target Node</label>
+                                        <select id="link-target-select" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 11px; width: 100%;">
+                                            <option value="">-- Select Target --</option>
+                                        </select>
+                                    </div>
+                                    <button id="btn-save-manual-link" class="btn btn-sm btn-primary" style="margin-top: 4px; width: 100%;">Establish Persistent Link</button>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -3,7 +3,7 @@ import hashlib
 import json
 from pathlib import Path
 from datetime import datetime, timezone
-from backend.runtime_execution_store import persist_crewai_ingested_artifact, now_iso
+from backend.runtime_execution_store import persist_crewai_ingested_artifact, get_crewai_ingested_artifact, now_iso
 
 CREWAI_ARTIFACTS_DIR = Path.home() / "hoch_agent_swarm" / "artifacts"
 
@@ -87,6 +87,8 @@ def run_crewai_ingestion() -> dict:
         "scanned": 0,
         "ingested": 0,
         "updated": 0,
+        "new": 0,
+        "skipped": 0,
         "artifacts": []
     }
     
@@ -133,6 +135,15 @@ def run_crewai_ingestion() -> dict:
                         run_context.update(parse_yaml_metadata(content))
                     elif artifact_type == "crew_run_report":
                         run_context["title"] = f"Crew Run Report: {file}"
+                        if file.endswith(".json"):
+                            try:
+                                report_data = json.loads(content)
+                                if isinstance(report_data, dict):
+                                    for key in ["crew_name", "run_id", "agent", "status", "timestamp"]:
+                                        if key in report_data:
+                                            run_context[key] = report_data[key]
+                            except Exception as je:
+                                print(f"Could not parse crew_run_report JSON file {file}: {je}")
                         
                     # Deterministic ID based on source path so we keep 1 record per path
                     rel_path = filepath.relative_to(Path.home())
@@ -151,15 +162,33 @@ def run_crewai_ingestion() -> dict:
                         "ingested_at": now_iso()
                     }
                     
-                    persist_crewai_ingested_artifact(artifact_record)
-                    results["ingested"] += 1
-                    results["artifacts"].append({
-                        "id": artifact_id,
-                        "source_path": source_path,
-                        "artifact_type": artifact_type,
-                        "hash": file_hash,
-                        "created_at": created_at
-                    })
+                    existing = get_crewai_ingested_artifact(artifact_id)
+                    if existing:
+                        if existing["hash"] == file_hash:
+                            results["skipped"] += 1
+                        else:
+                            persist_crewai_ingested_artifact(artifact_record)
+                            results["ingested"] += 1
+                            results["updated"] += 1
+                            results["new"] += 1
+                            results["artifacts"].append({
+                                "id": artifact_id,
+                                "source_path": source_path,
+                                "artifact_type": artifact_type,
+                                "hash": file_hash,
+                                "created_at": created_at
+                            })
+                    else:
+                        persist_crewai_ingested_artifact(artifact_record)
+                        results["ingested"] += 1
+                        results["new"] += 1
+                        results["artifacts"].append({
+                            "id": artifact_id,
+                            "source_path": source_path,
+                            "artifact_type": artifact_type,
+                            "hash": file_hash,
+                            "created_at": created_at
+                        })
                     
                 except Exception as e:
                     # Log error internally and continue scanning other files

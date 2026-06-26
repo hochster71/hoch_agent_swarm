@@ -537,6 +537,19 @@ def init_execution_store_tables() -> None:
             )
             """
         )
+        # Create evidence_graph_links table
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS evidence_graph_links (
+                link_id TEXT PRIMARY KEY,
+                source_graph_id TEXT NOT NULL,
+                target_graph_id TEXT NOT NULL,
+                relation_type TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                UNIQUE(source_graph_id, target_graph_id, relation_type)
+            )
+            """
+        )
         conn.commit()
     finally:
         conn.close()
@@ -2370,6 +2383,42 @@ def get_crewai_ingested_artifact(artifact_id: str) -> dict | None:
         return dict(row) if row else None
     finally:
         conn.close()
+
+def persist_evidence_graph_link(link_id: str, source_graph_id: str, target_graph_id: str, relation_type: str) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO evidence_graph_links (
+                link_id, source_graph_id, target_graph_id, relation_type, created_at
+            ) VALUES (?, ?, ?, ?, ?)
+            """,
+            (link_id, source_graph_id, target_graph_id, relation_type, now_iso())
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+def get_evidence_graph_links() -> list[dict]:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        rows = conn.execute("SELECT * FROM evidence_graph_links ORDER BY created_at DESC").fetchall()
+        return [dict(r) for r in rows]
+    finally:
+        conn.close()
+
+def delete_evidence_graph_link(link_id: str) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        conn.execute("DELETE FROM evidence_graph_links WHERE link_id = ?", (link_id,))
+        conn.commit()
+    finally:
+        conn.close()
+
 
 
 

@@ -9970,6 +9970,9 @@ async function initCrewaiIngestionBridge() {
         btn.addEventListener("click", triggerCrewaiIngestion);
     }
     await loadCrewaiIngestionStatus();
+    if (typeof initEvidenceGraphUI === 'function') {
+        await initEvidenceGraphUI();
+    }
 }
 
 async function loadCrewaiIngestionStatus() {
@@ -9980,11 +9983,11 @@ async function loadCrewaiIngestionStatus() {
             return;
         }
         const data = await res.json();
-        const artifacts = data.artifacts || [];
+        const artifacts = Array.isArray(data) ? data : (data.artifacts || []);
 
         // Filter artifacts into plans and runs
-        const plans = artifacts.filter(a => a.artifact_type === 'plan');
-        const runs = artifacts.filter(a => a.artifact_type === 'run_report');
+        const plans = artifacts.filter(a => a.artifact_type === 'antigravity_plan');
+        const runs = artifacts.filter(a => a.artifact_type === 'crew_run_report' || a.artifact_type === 'agent_manifest');
 
         // Update statistics
         const statusEl = document.getElementById("crewai-ingestion-status");
@@ -10102,4 +10105,390 @@ async function triggerCrewaiIngestion() {
 window.initCrewaiIngestionBridge = initCrewaiIngestionBridge;
 window.loadCrewaiIngestionStatus = loadCrewaiIngestionStatus;
 window.triggerCrewaiIngestion = triggerCrewaiIngestion;
+
+// ================================================================
+//  CROSS-RUNTIME EVIDENCE GRAPH & TRACE INSPECTOR (Phase 21)
+// ================================================================
+let localEvidenceGraphData = null;
+
+async function initEvidenceGraphUI() {
+    const btnRefresh = document.getElementById("btn-refresh-evidence-graph");
+    if (btnRefresh) {
+        btnRefresh.addEventListener("click", loadEvidenceGraph);
+    }
+    const btnTrace = document.getElementById("btn-trigger-evidence-trace");
+    if (btnTrace) {
+        btnTrace.addEventListener("click", traceEvidenceLineage);
+    }
+    const btnSaveLink = document.getElementById("btn-save-manual-link");
+    if (btnSaveLink) {
+        btnSaveLink.addEventListener("click", saveManualLink);
+    }
+    await loadEvidenceGraph();
+}
+
+async function loadEvidenceGraph() {
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/evidence/graph`);
+        if (!res.ok) {
+            console.error("Failed to load evidence graph:", res.statusText);
+            return;
+        }
+        const data = await res.json();
+        localEvidenceGraphData = data;
+        populateEvidenceDropdowns(data.nodes || []);
+    } catch (err) {
+        console.error("Error loading evidence graph:", err);
+    }
+}
+
+function populateEvidenceDropdowns(nodes) {
+    const startSelect = document.getElementById("evidence-trace-start-select");
+    const sourceSelect = document.getElementById("link-source-select");
+    const targetSelect = document.getElementById("link-target-select");
+
+    const selects = [startSelect, sourceSelect, targetSelect];
+    selects.forEach(select => {
+        if (select) {
+            select.innerHTML = select.id === "evidence-trace-start-select" 
+                ? '<option value="">-- Select Node to Trace --</option>'
+                : `<option value="">-- Select Node --</option>`;
+        }
+    });
+
+    const sortedNodes = [...nodes].sort((a, b) => a.label.localeCompare(b.label));
+
+    sortedNodes.forEach(node => {
+        selects.forEach(select => {
+            if (select) {
+                const opt = document.createElement("option");
+                opt.value = node.id;
+                opt.textContent = `[${node.type.toUpperCase()}] ${node.label}`;
+                select.appendChild(opt);
+            }
+        });
+    });
+}
+
+async function traceEvidenceLineage() {
+    const startNodeId = document.getElementById("evidence-trace-start-select").value;
+    const container = document.getElementById("evidence-flow-container");
+    if (!startNodeId) {
+        alert("Please select a starting node to trace.");
+        return;
+    }
+    
+    if (container) {
+        container.innerHTML = `<span style="font-size: 12px; color: var(--text-secondary);"><i class="fas fa-spinner fa-spin mr-1"></i> Tracing lineage chain...</span>`;
+    }
+
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/evidence/graph/trace/${encodeURIComponent(startNodeId)}`);
+        if (!res.ok) {
+            throw new Error(`HTTP error ${res.status}: ${res.statusText}`);
+        }
+        const data = await res.json();
+        renderEvidenceFlow(data.nodes, data.edges);
+        inspectEvidenceNode(startNodeId);
+    } catch (err) {
+        console.error("Error tracing lineage:", err);
+        if (container) {
+            container.innerHTML = `<span style="font-size: 12px; color: var(--accent-orange);">Error tracing: ${err.message}</span>`;
+        }
+    }
+}
+
+function renderEvidenceFlow(nodes, edges) {
+    const container = document.getElementById("evidence-flow-container");
+    if (!container) return;
+
+    if (!nodes || nodes.length === 0) {
+        container.innerHTML = `<span style="font-size: 12px; color: var(--text-secondary); font-style: italic;">No trace nodes returned.</span>`;
+        return;
+    }
+
+    container.innerHTML = "";
+    container.style.alignItems = "stretch";
+    container.style.flexDirection = "column";
+
+    const flowWrapper = document.createElement("div");
+    flowWrapper.style.display = "flex";
+    flowWrapper.style.flexDirection = "row";
+    flowWrapper.style.flexWrap = "wrap";
+    flowWrapper.style.gap = "30px";
+    flowWrapper.style.justifyContent = "center";
+    flowWrapper.style.alignItems = "center";
+    flowWrapper.style.padding = "10px";
+
+    const nodesMap = {};
+    nodes.forEach(node => {
+        nodesMap[node.id] = node;
+        
+        const card = document.createElement("div");
+        card.className = "evidence-node-chip";
+        card.style.background = getBackgroundForNodeType(node.type);
+        card.style.border = getBorderForNodeType(node.type);
+        card.style.borderRadius = "6px";
+        card.style.padding = "10px 14px";
+        card.style.cursor = "pointer";
+        card.style.minWidth = "180px";
+        card.style.maxWidth = "260px";
+        card.style.transition = "transform 0.2s, box-shadow 0.2s";
+        card.style.boxShadow = "0 4px 6px rgba(0,0,0,0.15)";
+        card.setAttribute("data-node-id", node.id);
+
+        card.addEventListener("mouseenter", () => {
+            card.style.transform = "translateY(-3px)";
+            card.style.boxShadow = "0 8px 12px rgba(0,0,0,0.3)";
+        });
+        card.addEventListener("mouseleave", () => {
+            card.style.transform = "translateY(0)";
+            card.style.boxShadow = "0 4px 6px rgba(0,0,0,0.15)";
+        });
+        card.addEventListener("click", () => {
+            inspectEvidenceNode(node.id);
+            document.querySelectorAll(".evidence-node-chip").forEach(c => {
+                c.style.outline = "none";
+            });
+            card.style.outline = "2px solid var(--accent-teal)";
+        });
+
+        const iconName = getIconForNodeType(node.type);
+        const colorName = getColorForNodeType(node.type);
+
+        card.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                <i class="fas fa-microchip" style="width: 14px; height: 14px; color: ${colorName};"></i>
+                <span class="badge" style="background: rgba(255,255,255,0.05); font-size: 8px; color: ${colorName}; border: 1px solid rgba(255,255,255,0.05);">${node.type.toUpperCase()}</span>
+            </div>
+            <div style="font-size: 11px; font-weight: bold; color: #fff; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; margin-bottom: 4px;">${escapeHtml(node.label)}</div>
+            <div style="font-size: 9px; color: var(--text-secondary); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; font-family: monospace;">${escapeHtml(node.id.substring(0, 24))}...</div>
+        `;
+
+        flowWrapper.appendChild(card);
+    });
+
+    container.appendChild(flowWrapper);
+
+    if (edges && edges.length > 0) {
+        const edgesSummary = document.createElement("div");
+        edgesSummary.style.marginTop = "15px";
+        edgesSummary.style.padding = "10px";
+        edgesSummary.style.background = "rgba(0,0,0,0.1)";
+        edgesSummary.style.borderRadius = "4px";
+        edgesSummary.style.border = "1px solid var(--border-glass)";
+
+        let edgesHtml = `<div style="font-size: 11px; font-weight: bold; margin-bottom: 6px; color: var(--text-secondary);">ESTABLISHED RELATIONSHIPS:</div>`;
+        edgesHtml += `<div style="display: grid; grid-template-columns: 1fr; gap: 4px; max-height: 120px; overflow-y: auto;">`;
+        edges.forEach(edge => {
+            const sourceNode = nodesMap[edge.source] || { label: edge.source };
+            const targetNode = nodesMap[edge.target] || { label: edge.target };
+            edgesHtml += `
+                <div style="font-size: 10px; display: flex; align-items: center; gap: 6px; color: #ccc;">
+                    <span style="font-weight: bold; color: #fff;">${escapeHtml(sourceNode.label)}</span>
+                    <span style="color: var(--accent-orange); font-size: 10px;">→</span>
+                    <span class="badge badge-outline-warning" style="font-size: 8px;">${escapeHtml(edge.relation)}</span>
+                    <span style="color: var(--accent-orange); font-size: 10px;">→</span>
+                    <span style="font-weight: bold; color: #fff;">${escapeHtml(targetNode.label)}</span>
+                    ${edge.id.startsWith('manual:') ? `
+                        <button class="btn btn-xs btn-outline btn-danger btn-delete-manual-link" data-link-id="${edge.id.substring(7)}" style="padding: 1px 3px; font-size: 8px; margin-left: auto;">
+                            Delete
+                        </button>
+                    ` : ''}
+                </div>
+            `;
+        });
+        edgesHtml += `</div>`;
+        edgesSummary.innerHTML = edgesHtml;
+        container.appendChild(edgesSummary);
+
+        edgesSummary.querySelectorAll(".btn-delete-manual-link").forEach(btn => {
+            btn.addEventListener("click", async (e) => {
+                e.stopPropagation();
+                const linkId = btn.getAttribute("data-link-id");
+                if (confirm("Are you sure you want to delete this custom relationship link?")) {
+                    try {
+                        const deleteRes = await fetch(`${API_BASE}/api/v1/evidence/graph/link/${linkId}`, {
+                            method: "DELETE"
+                        });
+                        if (deleteRes.ok) {
+                            await loadEvidenceGraph();
+                            await traceEvidenceLineage();
+                        } else {
+                            alert("Failed to delete link.");
+                        }
+                    } catch (err) {
+                        console.error("Error deleting link:", err);
+                    }
+                }
+            });
+        });
+    }
+}
+
+function getBackgroundForNodeType(type) {
+    switch (type) {
+        case 'policy_guard': return 'rgba(235, 94, 40, 0.08)';
+        case 'execution_plan': return 'rgba(56, 176, 0, 0.08)';
+        case 'run_report': return 'rgba(0, 180, 216, 0.08)';
+        case 'agent_manifest': return 'rgba(114, 9, 183, 0.08)';
+        case 'audit_trail': return 'rgba(255, 209, 102, 0.08)';
+        default: return 'rgba(255, 255, 255, 0.03)';
+    }
+}
+
+function getBorderForNodeType(type) {
+    switch (type) {
+        case 'policy_guard': return '1px solid rgba(235, 94, 40, 0.25)';
+        case 'execution_plan': return '1px solid rgba(56, 176, 0, 0.25)';
+        case 'run_report': return '1px solid rgba(0, 180, 216, 0.25)';
+        case 'agent_manifest': return '1px solid rgba(114, 9, 183, 0.25)';
+        case 'audit_trail': return '1px solid rgba(255, 209, 102, 0.25)';
+        default: return '1px solid rgba(255, 255, 255, 0.1)';
+    }
+}
+
+function getColorForNodeType(type) {
+    switch (type) {
+        case 'policy_guard': return 'var(--accent-orange)';
+        case 'execution_plan': return 'var(--accent-green)';
+        case 'run_report': return 'var(--accent-teal)';
+        case 'agent_manifest': return '#7209b7';
+        case 'audit_trail': return '#ffd166';
+        default: return '#fff';
+    }
+}
+
+async function inspectEvidenceNode(nodeId) {
+    const emptyEl = document.getElementById("evidence-node-inspector-empty");
+    const contentEl = document.getElementById("evidence-node-inspector-content");
+    if (!emptyEl || !contentEl) return;
+
+    if (!nodeId) {
+        emptyEl.classList.remove("hidden");
+        contentEl.classList.add("hidden");
+        return;
+    }
+
+    if (!localEvidenceGraphData || !localEvidenceGraphData.nodes) return;
+    const node = localEvidenceGraphData.nodes.find(n => n.id === nodeId);
+    if (!node) return;
+
+    emptyEl.classList.add("hidden");
+    contentEl.classList.remove("hidden");
+
+    document.getElementById("inspector-node-id").textContent = node.id;
+    document.getElementById("inspector-node-type").textContent = node.type.toUpperCase();
+    document.getElementById("inspector-node-type").className = `badge badge-outline-${getBadgeClassForNodeType(node.type)}`;
+    document.getElementById("inspector-node-label").textContent = node.label;
+
+    const propertiesList = document.getElementById("inspector-node-properties-list");
+    propertiesList.innerHTML = "";
+    if (node.properties) {
+        Object.entries(node.properties).forEach(([k, v]) => {
+            const row = document.createElement("div");
+            row.style.display = "flex";
+            row.style.justifyContent = "space-between";
+            row.style.gap = "10px";
+            row.style.marginBottom = "3px";
+            row.innerHTML = `
+                <span style="color: var(--text-secondary); font-family: monospace;">${escapeHtml(k)}:</span>
+                <span style="color: #fff; text-align: right; word-break: break-all;">${escapeHtml(typeof v === 'object' ? JSON.stringify(v) : String(v))}</span>
+            `;
+            propertiesList.appendChild(row);
+        });
+    } else {
+        propertiesList.innerHTML = `<span style="color: var(--text-secondary); font-style: italic;">No specific properties.</span>`;
+    }
+
+    const parentsEl = document.getElementById("inspector-node-parents");
+    const childrenEl = document.getElementById("inspector-node-children");
+    parentsEl.innerHTML = "";
+    childrenEl.innerHTML = "";
+
+    const edges = localEvidenceGraphData.edges || [];
+    const upstream = edges.filter(e => e.target === nodeId);
+    const downstream = edges.filter(e => e.source === nodeId);
+
+    if (upstream.length === 0) {
+        parentsEl.innerHTML = `<span style="font-size: 9px; color: var(--text-secondary); font-style: italic;">None</span>`;
+    } else {
+        upstream.forEach(edge => {
+            const pNode = localEvidenceGraphData.nodes.find(n => n.id === edge.source) || { label: edge.source };
+            const div = document.createElement("div");
+            div.style.fontSize = "9px";
+            div.innerHTML = `<span style="color: var(--accent-orange); font-weight:bold;">${escapeHtml(edge.relation)}</span>: ${escapeHtml(pNode.label)}`;
+            parentsEl.appendChild(div);
+        });
+    }
+
+    if (downstream.length === 0) {
+        childrenEl.innerHTML = `<span style="font-size: 9px; color: var(--text-secondary); font-style: italic;">None</span>`;
+    } else {
+        downstream.forEach(edge => {
+            const cNode = localEvidenceGraphData.nodes.find(n => n.id === edge.target) || { label: edge.target };
+            const div = document.createElement("div");
+            div.style.fontSize = "9px";
+            div.innerHTML = `<span style="color: var(--accent-green); font-weight:bold;">${escapeHtml(edge.relation)}</span>: ${escapeHtml(cNode.label)}`;
+            childrenEl.appendChild(div);
+        });
+    }
+}
+
+function getBadgeClassForNodeType(type) {
+    switch (type) {
+        case 'policy_guard': return 'warning';
+        case 'execution_plan': return 'success';
+        case 'run_report': return 'info';
+        case 'agent_manifest': return 'primary';
+        case 'audit_trail': return 'secondary';
+        default: return 'outline';
+    }
+}
+
+async function saveManualLink() {
+    const source = document.getElementById("link-source-select").value;
+    const target = document.getElementById("link-target-select").value;
+    const relation = document.getElementById("link-relation-select").value;
+
+    if (!source || !target) {
+        alert("Please select both a source and a target node.");
+        return;
+    }
+    if (source === target) {
+        alert("Source and Target nodes cannot be the same.");
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/evidence/graph/link`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                source_graph_id: source,
+                target_graph_id: target,
+                relation_type: relation
+            })
+        });
+
+        if (!res.ok) {
+            throw new Error(`HTTP error ${res.status}: ${res.statusText}`);
+        }
+        
+        alert("Manual connection established successfully.");
+        await loadEvidenceGraph();
+        await traceEvidenceLineage();
+    } catch (err) {
+        console.error("Error creating manual connection:", err);
+        alert("Error establishing connection: " + err.message);
+    }
+}
+
+window.initEvidenceGraphUI = initEvidenceGraphUI;
+window.loadEvidenceGraph = loadEvidenceGraph;
+window.traceEvidenceLineage = traceEvidenceLineage;
+window.saveManualLink = saveManualLink;
+window.inspectEvidenceNode = inspectEvidenceNode;
 
