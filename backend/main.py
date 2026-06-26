@@ -6870,6 +6870,29 @@ except Exception as _e:
     pass  # non-fatal — ledger tables created on first use
 
 
+# ================================================================
+#  SKILL REGISTRY — Runtime enforcement gate (Batch PR-4 / P2)
+#  Policy: fail-closed, tier-based, HIGH=approval, BLOCKED=hard reject
+# ================================================================
+from backend.skill_gate import (
+    evaluate_skill       as _sg_evaluate,
+    get_registry_summary as _sg_summary,
+    get_audit_log        as _sg_audit_log,
+    get_audit_verdicts   as _sg_verdicts,
+    _skill_map           as _sg_skill_map,
+    _load_registry       as _sg_load_registry,
+    _get_db              as _sg_get_db,
+    VERDICT_ALLOWED, VERDICT_REQUIRES_APPROVAL,
+    VERDICT_DENIED, VERDICT_BLOCKED, VERDICT_UNREGISTERED,
+)
+
+# Initialise skill audit DB at startup
+try:
+    _sg_get_db().close()
+except Exception:
+    pass  # non-fatal
+
+
 # ── Read-only prompt library endpoints (now include sha256 + risk metadata) ───
 
 @app.get("/api/v1/prompt-library")
@@ -6980,6 +7003,119 @@ def prompt_all_approvals(status: str = None):
     return _pg_all_approvals(status=status)
 
 
+# ================================================================
+#  SKILL REGISTRY ENDPOINTS — Batch PR-4 / PERT P2 / GAP-003
+# ================================================================
+
+@app.get("/api/v1/skills/registry")
+def skills_registry():
+    """
+    Returns the full skill registry with all skill definitions.
+    Policy: read-only. No evaluation occurs.
+    Added: Batch PR-4
+    """
+    reg  = _sg_load_registry()
+    summ = _sg_summary()
+    return {
+        "skills":      reg.get("skills", []),
+        "risk_levels": reg.get("risk_levels", {}),
+        "summary":     summ,
+        "gate_status": summ.get("gate_status", "UNKNOWN"),
+        "fail_closed": True,
+        "truth":       "LIVE",
+    }
+
+
+@app.get("/api/v1/skills/registry/{skill_id}")
+def skills_registry_detail(skill_id: str):
+    """
+    Returns detail for a single skill from the registry.
+    Added: Batch PR-4
+    """
+    skill_map = _sg_skill_map()
+    if skill_id not in skill_map:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail=f"Skill {skill_id!r} not found in registry")
+    skill = skill_map[skill_id]
+    return {
+        "skill":       skill,
+        "registered":  True,
+        "truth":       "LIVE",
+    }
+
+
+@app.post("/api/v1/skills/evaluate")
+def skills_evaluate(body: dict):
+    """
+    Evaluate whether a skill invocation is permitted for a given caller.
+
+    Body (JSON):
+      skill_id     — required  — SKILL-WEB-SEARCH, SKILL-CODE-EXECUTION, etc.
+      caller_tier  — required  — ALPHA | BETA | GAMMA | DELTA
+      caller_node  — optional  — e.g. "macbook-pro-l1"
+      rationale    — optional  — required for MEDIUM/HIGH skills
+
+    Returns:
+      verdict      — ALLOWED | REQUIRES_APPROVAL | DENIED | BLOCKED | UNREGISTERED
+      risk_level   — LOW | MEDIUM | HIGH | BLOCKED | UNREGISTERED
+      reason       — human-readable explanation
+      requires_rationale / requires_approval flags
+    Added: Batch PR-4
+    """
+    skill_id    = str(body.get("skill_id",   "")).strip()
+    caller_tier = str(body.get("caller_tier","UNKNOWN")).strip().upper()
+    caller_node = str(body.get("caller_node","UNKNOWN")).strip()
+    rationale   = str(body.get("rationale",  "")).strip()
+
+    if not skill_id:
+        return {
+            "verdict":   "INVALID",
+            "reason":    "skill_id is required",
+            "truth":     "LIVE",
+        }
+
+    return _sg_evaluate(
+        skill_id    = skill_id,
+        caller_tier = caller_tier,
+        caller_node = caller_node,
+        rationale   = rationale,
+        source      = "API",
+    )
+
+
+@app.get("/api/v1/skills/audit-log")
+def skills_audit_log(limit: int = 50, verdict: str = None):
+    """
+    Returns skill evaluation history from the audit DB.
+    Optionally filter by verdict: ALLOWED|REQUIRES_APPROVAL|DENIED|BLOCKED|UNREGISTERED
+    Added: Batch PR-4
+    """
+    log      = _sg_audit_log(limit=limit, verdict_filter=verdict)
+    verdicts = _sg_verdicts()
+    return {
+        "entries":       log.get("entries", []),
+        "returned":      log.get("returned", 0),
+        "verdict_counts":verdicts.get("verdict_counts", {}),
+        "total_evals":   verdicts.get("total", 0),
+        "truth":         "LIVE",
+    }
+
+
+@app.get("/api/v1/skills/summary")
+def skills_summary():
+    """
+    Returns skill gate status summary: counts by risk level, gate health.
+    Added: Batch PR-4
+    """
+    summ     = _sg_summary()
+    verdicts = _sg_verdicts()
+    return {
+        **summ,
+        "verdict_counts": verdicts.get("verdict_counts", {}),
+        "total_evals":    verdicts.get("total", 0),
+    }
+
+
 @app.post("/api/v1/prompts/expire-test")
 def prompt_expire_test_approvals():
     """
@@ -7018,6 +7154,7 @@ def production_readiness():
     trust_data,    trust_truth    = _load("asset_trust_registry.json")
     profiles_data, profiles_truth = _load("cluster_worker_profiles.json")
     port_data,     port_truth     = _load("port_hardening_audit.json")
+    skill_reg,     skill_truth    = _load("skill_registry.json")
 
     # ── P3 / P8 — complete if config files present ─────────────────────────────
     p3_status = "COMPLETE" if trust_truth    == "LIVE" else "PENDING"
@@ -7028,15 +7165,30 @@ def production_readiness():
     # ── P1 — doctrine sealed (northstar_sealed flag) ────────────────────────────
     p1_sealed = controls_data.get("northstar_sealed", False)
     p1_status = "IN_PROGRESS" if p1_sealed else "PENDING"
-    gap001_status = "IN_PROGRESS"  # doctrine written, runtime enforcement pending
-    gap006_status = "IN_PROGRESS"  # medium — doctrine sealed, full doctrine pending P2
+    gap001_status = "IN_PROGRESS"  # doctrine written, runtime enforcement pending P2
+    gap006_status = "IN_PROGRESS"  # doctrine sealed; principles written
+
+    # ── P2 — skill registry gate ───────────────────────────────────────────────
+    try:
+        _sg_live = _sg_summary()
+        skill_gate_ok   = _sg_live.get("gate_status") == "ACTIVE"
+        skill_gate_total = _sg_live.get("total_skills", 0)
+        skill_gate_summary = _sg_live
+    except Exception:
+        skill_gate_ok      = False
+        skill_gate_total   = 0
+        skill_gate_summary = {"gate_status": "UNKNOWN", "truth": "UNKNOWN"}
+    p2_status     = "IN_PROGRESS" if skill_gate_ok else "PENDING"
+    gap003_status = "IN_PROGRESS" if skill_gate_ok else "OPEN"
+    # P1 resolution advances when P2 is active (doctrine now has runtime backing)
+    if skill_gate_ok and p1_sealed:
+        gap001_status = "IN_PROGRESS"  # still needs ephemeral TTL enforcement
 
     # ── P4 — port audit: PARTIAL (swarm PASS, host non-swarm REVIEW_REQUIRED) ──
     port_summary = port_data.get("summary", {})
     p4_overall   = port_summary.get("overall_status", "UNKNOWN")
     p4_swarm_ok  = port_summary.get("swarm_ports_compliant", 0) == 2 and port_truth == "LIVE"
     p4_status    = "IN_PROGRESS" if port_truth == "LIVE" else "PENDING"
-    # GAP-008 moves to IN_PROGRESS (not RESOLVED) — swarm PASS, host non-swarm still REVIEW_REQUIRED
     gap008_status = "IN_PROGRESS" if port_truth == "LIVE" else "OPEN"
 
     # ── Patch PERT workstream statuses dynamically ──────────────────────────────
@@ -7045,6 +7197,10 @@ def production_readiness():
         if ws["id"] == "P1":
             ws["status"] = p1_status
             ws["evidence_resolved"] = p1_sealed
+        if ws["id"] == "P2":
+            ws["status"] = p2_status
+            ws["evidence_resolved"] = skill_gate_ok
+            ws["skill_count"] = skill_gate_total
         if ws["id"] == "P3":
             ws["status"] = p3_status
             ws["evidence_resolved"] = (trust_truth == "LIVE")
@@ -7078,7 +7234,8 @@ def production_readiness():
          "truth":controls_truth, "evidence":"artifacts/qa/northstar_doctrine.md (doctrine written; runtime enforcement pending P2)"},
         {"id":"GAP-002","area":"Cluster Security",   "severity":"HIGH",  "status":gap002_status,  "pert":"P3",
          "truth":trust_truth,    "evidence":"config/asset_trust_registry.json" if p3_status=="COMPLETE" else "MISSING"},
-        {"id":"GAP-003","area":"Runtime Policy",     "severity":"HIGH",  "status":"OPEN",         "pert":"P2"},
+        {"id":"GAP-003","area":"Runtime Policy",     "severity":"HIGH",  "status":gap003_status,  "pert":"P2",
+         "truth":skill_truth,    "evidence":f"config/skill_registry.json ({skill_gate_total} skills, fail-closed gate ACTIVE)" if skill_gate_ok else "PENDING"},
         {"id":"GAP-004","area":"QA Evidence",        "severity":"HIGH",  "status":"OPEN",         "pert":"P5"},
         {"id":"GAP-005","area":"PERT Engine",        "severity":"MEDIUM","status":"IN_PROGRESS",  "pert":"P6"},
         {"id":"GAP-006","area":"Northstar Doctrine", "severity":"MEDIUM","status":gap006_status,  "pert":"P1",
@@ -7141,10 +7298,13 @@ def production_readiness():
         "port_truth":        port_truth,
         "p1_status":         p1_status,
         "p1_sealed":         p1_sealed,
+        "p2_status":         p2_status,
         "p3_status":         p3_status,
         "p4_status":         p4_status,
         "p4_swarm_pass":     p4_swarm_ok,
         "p8_status":         p8_status,
+        "skill_gate":        skill_gate_summary,
+        "skill_truth":       skill_truth,
         "truth":             "LIVE",
     }
 
