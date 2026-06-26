@@ -141,6 +141,12 @@ directory before running the crew. This requirement exists on both 1.14.7 and 1.
 Use a git worktree so the main branch is never touched during the upgrade trial.
 `run_report.json` provides the measurable before/after baseline.
 `trial_preflight` blocks a trial run if required local runtime inputs are absent.
+The preflight verifies:
+- `.env` exists and is readable
+- `MODEL` and `API_BASE` are set
+- Ollama endpoint is reachable
+- the requested Ollama model is pulled and available
+- a baseline `run_report.json` exists to compare against (warn-only)
 
 > **Batch 7 lesson**: git worktrees do not copy gitignored files. A missing `.env`
 > causes `crewai` to fall back to `gpt-4o` and fail with `OPENAI_API_KEY is required`.
@@ -160,10 +166,17 @@ Expected output:
   ✅ model_env_var_set: MODEL='ollama/llama3.1:8b'
   ✅ api_base_env_var_set: API_BASE='http://localhost:11434'
   ✅ ollama_endpoint_reachable: HTTP 200 from http://localhost:11434
+  ✅ ollama_model_available: model 'llama3.1:8b' is available in Ollama
   ✅ baseline_run_report_exists [warn-only]: latest baseline: ...
 
 preflight: PASS — all blocking checks passed
 ```
+
+If the model check fails:
+```
+  ❌ ollama_model_available: model 'llama3.1:8b' is NOT pulled — run: ollama pull llama3.1:8b
+```
+Run `ollama pull <model-name>` and re-run `trial_preflight` before proceeding.
 
 ### Step 1 — Collect a baseline run report on main
 

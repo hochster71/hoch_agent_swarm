@@ -11,7 +11,8 @@ Checks (in order):
   2. MODEL env var is set and non-empty (after load_dotenv)
   3. API_BASE env var is set and non-empty
   4. Ollama endpoint at API_BASE is reachable (HTTP GET, 3 s timeout)
-  5. At least one baseline run_report.json exists (warn-only)
+  5. Ollama model named by MODEL is pulled and available (/api/tags)
+  6. At least one baseline run_report.json exists (warn-only)
 
 Usage:
     uv run trial_preflight           # exit 0 = all blocking checks pass
@@ -45,6 +46,7 @@ _CHECK_ENV_FILE = "env_file_present"
 _CHECK_MODEL = "model_env_var_set"
 _CHECK_API_BASE = "api_base_env_var_set"
 _CHECK_OLLAMA = "ollama_endpoint_reachable"
+_CHECK_MODEL_AVAILABLE = "ollama_model_available"
 _CHECK_BASELINE = "baseline_run_report_exists"
 
 
@@ -181,8 +183,108 @@ def _check_ollama_endpoint(api_base: str, timeout: int = _OLLAMA_TIMEOUT_SECONDS
         )
 
 
+def _normalize_ollama_model_name(model: str) -> str:
+    """
+    Strip the provider prefix from a MODEL string for Ollama lookup.
+
+    Examples:
+        "ollama/llama3.1:8b"  → "llama3.1:8b"
+        "llama3.1:8b"         → "llama3.1:8b"
+        "ollama/mistral:7b"   → "mistral:7b"
+    """
+    if model.startswith("ollama/"):
+        return model[len("ollama/"):]
+    return model
+
+
+def _check_ollama_model_available(
+    api_base: str,
+    model: str,
+    timeout: int = _OLLAMA_TIMEOUT_SECONDS,
+) -> CheckResult:
+    """
+    Check 5: The model named by MODEL is pulled and available in Ollama.
+
+    Queries {api_base}/api/tags and checks that the normalised model name
+    appears in at least one entry's 'name' or 'model' field.
+
+    A healthy Ollama daemon with the model absent is a distinct failure from
+    the daemon being unreachable (Check 4).
+    """
+    expected = _normalize_ollama_model_name(model)
+    url = api_base.rstrip("/") + "/api/tags"
+    try:
+        req = urllib.request.urlopen(url, timeout=timeout)  # noqa: S310
+        raw = req.read().decode("utf-8")
+    except urllib.error.HTTPError as e:
+        return CheckResult(
+            name=_CHECK_MODEL_AVAILABLE,
+            passed=False,
+            blocking=True,
+            detail=(
+                f"HTTP {e.code} from {url} — "
+                "cannot retrieve model list from Ollama"
+            ),
+        )
+    except OSError as e:
+        return CheckResult(
+            name=_CHECK_MODEL_AVAILABLE,
+            passed=False,
+            blocking=True,
+            detail=f"cannot reach {url}: {e}",
+        )
+
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError:
+        return CheckResult(
+            name=_CHECK_MODEL_AVAILABLE,
+            passed=False,
+            blocking=True,
+            detail=f"/api/tags returned invalid JSON from {url}",
+        )
+
+    models = data.get("models", [])
+    if not isinstance(models, list):
+        return CheckResult(
+            name=_CHECK_MODEL_AVAILABLE,
+            passed=False,
+            blocking=True,
+            detail=f"/api/tags response missing 'models' list from {url}",
+        )
+
+    available = {
+        entry.get("name", "")
+        for entry in models
+        if isinstance(entry, dict)
+    } | {
+        entry.get("model", "")
+        for entry in models
+        if isinstance(entry, dict)
+    }
+    available.discard("")
+
+    if expected in available:
+        return CheckResult(
+            name=_CHECK_MODEL_AVAILABLE,
+            passed=True,
+            blocking=True,
+            detail=f"model '{expected}' is available in Ollama",
+        )
+
+    return CheckResult(
+        name=_CHECK_MODEL_AVAILABLE,
+        passed=False,
+        blocking=True,
+        detail=(
+            f"model '{expected}' is NOT pulled — "
+            f"run: ollama pull {expected}"
+        ),
+    )
+
+
 def _check_baseline_report(run_reports_dir: str) -> tuple[CheckResult, Optional[str]]:
-    """Check 5: at least one baseline run_report.json exists (warn-only)."""
+    """Check 6: at least one baseline run_report.json exists (warn-only)."""
     reports: list[str] = []
     base = Path(run_reports_dir)
     if base.is_dir():
@@ -282,6 +384,7 @@ def run_preflight(
 
     # Check 4 — Ollama reachable (only if API_BASE is available)
     api_base = env.get("API_BASE", "").strip()
+    model_val = env.get("MODEL", "").strip()
     if api_base:
         c4 = _check_ollama_endpoint(api_base, timeout=ollama_timeout)
         checks.append(c4)
@@ -297,7 +400,33 @@ def run_preflight(
         ))
         blocking_failed = True
 
-    # Check 5 — baseline report (warn-only)
+    # Check 5 — Ollama model available (only if API_BASE and MODEL are present
+    #            and daemon was reachable)
+    if api_base and model_val and not blocking_failed:
+        c5 = _check_ollama_model_available(api_base, model_val, timeout=ollama_timeout)
+        checks.append(c5)
+        if not c5.passed:
+            blocking_failed = True
+    elif api_base and model_val:
+        # Daemon unreachable — skip model check but record it as skipped/blocked
+        checks.append(CheckResult(
+            name=_CHECK_MODEL_AVAILABLE,
+            passed=False,
+            blocking=True,
+            detail="skipped — Ollama endpoint was not reachable",
+        ))
+        blocking_failed = True
+    else:
+        # MODEL or API_BASE missing — synthesize a skipped check 5
+        checks.append(CheckResult(
+            name=_CHECK_MODEL_AVAILABLE,
+            passed=False,
+            blocking=True,
+            detail="skipped — MODEL or API_BASE is not set",
+        ))
+        blocking_failed = True
+
+    # Check 6 — baseline report (warn-only)
     baseline_check, baseline_report = _check_baseline_report(run_reports_dir)
     checks.append(baseline_check)
 

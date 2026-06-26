@@ -20,13 +20,16 @@ from hoch_agent_swarm.trial_preflight import (
     _CHECK_BASELINE,
     _CHECK_ENV_FILE,
     _CHECK_MODEL,
+    _CHECK_MODEL_AVAILABLE,
     _CHECK_OLLAMA,
     _check_api_base_var,
     _check_baseline_report,
     _check_env_file,
     _check_model_var,
     _check_ollama_endpoint,
+    _check_ollama_model_available,
     _load_dotenv_into_dict,
+    _normalize_ollama_model_name,
     main,
     run_preflight,
 )
@@ -270,6 +273,216 @@ class TestCheckBaselineReport:
         assert "20260103T000000" in latest
 
 
+
+# ---------------------------------------------------------------------------
+# _normalize_ollama_model_name
+# ---------------------------------------------------------------------------
+
+
+class TestNormalizeOllamaModelName:
+    def test_strips_ollama_prefix(self):
+        assert _normalize_ollama_model_name("ollama/llama3.1:8b") == "llama3.1:8b"
+
+    def test_no_prefix_unchanged(self):
+        assert _normalize_ollama_model_name("llama3.1:8b") == "llama3.1:8b"
+
+    def test_other_provider_prefix_unchanged(self):
+        assert _normalize_ollama_model_name("openai/gpt-4o") == "openai/gpt-4o"
+
+    def test_strips_ollama_prefix_with_tag(self):
+        assert _normalize_ollama_model_name("ollama/mistral:7b") == "mistral:7b"
+
+    def test_empty_string_unchanged(self):
+        assert _normalize_ollama_model_name("") == ""
+
+
+# ---------------------------------------------------------------------------
+# _check_ollama_model_available
+# ---------------------------------------------------------------------------
+
+
+def _make_urlopen_model_ok(model_name: str = "llama3.1:8b"):
+    """Return a monkeypatch target that simulates /api/tags returning one model."""
+    _resp = json.dumps({"models": [
+        {"name": model_name, "model": model_name},
+    ]}).encode()
+
+    class _FakeReq:
+        def read(self):
+            return _resp
+
+    return lambda url, timeout: _FakeReq()
+
+
+class TestCheckOllamaModelAvailable:
+    def test_pass_when_model_in_name_field(self, monkeypatch):
+        _resp = json.dumps({"models": [
+            {"name": "llama3.1:8b", "model": ""},
+        ]}).encode()
+
+        class _FakeReq:
+            def read(self):
+                return _resp
+
+        monkeypatch.setattr(
+            "hoch_agent_swarm.trial_preflight.urllib.request.urlopen",
+            lambda url, timeout: _FakeReq(),
+        )
+        result = _check_ollama_model_available("http://localhost:11434", "ollama/llama3.1:8b")
+        assert result.passed is True
+        assert result.name == _CHECK_MODEL_AVAILABLE
+        assert "llama3.1:8b" in result.detail
+
+    def test_pass_when_model_in_model_field(self, monkeypatch):
+        _resp = json.dumps({"models": [
+            {"name": "", "model": "llama3.1:8b"},
+        ]}).encode()
+
+        class _FakeReq:
+            def read(self):
+                return _resp
+
+        monkeypatch.setattr(
+            "hoch_agent_swarm.trial_preflight.urllib.request.urlopen",
+            lambda url, timeout: _FakeReq(),
+        )
+        result = _check_ollama_model_available("http://localhost:11434", "llama3.1:8b")
+        assert result.passed is True
+
+    def test_pass_model_without_provider_prefix(self, monkeypatch):
+        """MODEL=llama3.1:8b (no ollama/ prefix) should still match."""
+        monkeypatch.setattr(
+            "hoch_agent_swarm.trial_preflight.urllib.request.urlopen",
+            _make_urlopen_model_ok("llama3.1:8b"),
+        )
+        result = _check_ollama_model_available("http://localhost:11434", "llama3.1:8b")
+        assert result.passed is True
+
+    def test_block_when_model_absent(self, monkeypatch):
+        monkeypatch.setattr(
+            "hoch_agent_swarm.trial_preflight.urllib.request.urlopen",
+            _make_urlopen_model_ok("mistral:7b"),  # different model present
+        )
+        result = _check_ollama_model_available("http://localhost:11434", "ollama/llama3.1:8b")
+        assert result.passed is False
+        assert result.blocking is True
+        assert "ollama pull llama3.1:8b" in result.detail
+
+    def test_block_when_models_list_empty(self, monkeypatch):
+        _resp = json.dumps({"models": []}).encode()
+
+        class _FakeReq:
+            def read(self):
+                return _resp
+
+        monkeypatch.setattr(
+            "hoch_agent_swarm.trial_preflight.urllib.request.urlopen",
+            lambda url, timeout: _FakeReq(),
+        )
+        result = _check_ollama_model_available("http://localhost:11434", "llama3.1:8b")
+        assert result.passed is False
+        assert "NOT pulled" in result.detail
+
+    def test_block_on_invalid_json(self, monkeypatch):
+        class _FakeReq:
+            def read(self):
+                return b"not-json!!!"
+
+        monkeypatch.setattr(
+            "hoch_agent_swarm.trial_preflight.urllib.request.urlopen",
+            lambda url, timeout: _FakeReq(),
+        )
+        result = _check_ollama_model_available("http://localhost:11434", "llama3.1:8b")
+        assert result.passed is False
+        assert "invalid JSON" in result.detail
+
+    def test_block_when_models_key_missing(self, monkeypatch):
+        """Response JSON does not contain 'models' key."""
+        _resp = json.dumps({"other_key": []}).encode()
+
+        class _FakeReq:
+            def read(self):
+                return _resp
+
+        monkeypatch.setattr(
+            "hoch_agent_swarm.trial_preflight.urllib.request.urlopen",
+            lambda url, timeout: _FakeReq(),
+        )
+        result = _check_ollama_model_available("http://localhost:11434", "llama3.1:8b")
+        # models defaults to [] from .get("models", []) — model not found
+        assert result.passed is False
+
+    def test_block_when_models_not_a_list(self, monkeypatch):
+        _resp = json.dumps({"models": "not-a-list"}).encode()
+
+        class _FakeReq:
+            def read(self):
+                return _resp
+
+        monkeypatch.setattr(
+            "hoch_agent_swarm.trial_preflight.urllib.request.urlopen",
+            lambda url, timeout: _FakeReq(),
+        )
+        result = _check_ollama_model_available("http://localhost:11434", "llama3.1:8b")
+        assert result.passed is False
+        assert "missing 'models' list" in result.detail
+
+    def test_block_on_http_error(self, monkeypatch):
+        monkeypatch.setattr(
+            "hoch_agent_swarm.trial_preflight.urllib.request.urlopen",
+            lambda url, timeout: (_ for _ in ()).throw(
+                urllib.error.HTTPError(url, 500, "error", None, None)  # type: ignore[arg-type]
+            ),
+        )
+        result = _check_ollama_model_available("http://localhost:11434", "llama3.1:8b")
+        assert result.passed is False
+        assert "HTTP 500" in result.detail
+
+    def test_block_on_os_error(self, monkeypatch):
+        monkeypatch.setattr(
+            "hoch_agent_swarm.trial_preflight.urllib.request.urlopen",
+            lambda url, timeout: (_ for _ in ()).throw(OSError("connection refused")),
+        )
+        result = _check_ollama_model_available("http://localhost:11434", "llama3.1:8b")
+        assert result.passed is False
+        assert "cannot reach" in result.detail
+
+    def test_check_name_constant(self, monkeypatch):
+        monkeypatch.setattr(
+            "hoch_agent_swarm.trial_preflight.urllib.request.urlopen",
+            _make_urlopen_model_ok("llama3.1:8b"),
+        )
+        result = _check_ollama_model_available("http://localhost:11434", "ollama/llama3.1:8b")
+        assert result.name == _CHECK_MODEL_AVAILABLE
+
+    def test_json_output_includes_model_check(self, monkeypatch, capsys):
+        """--json output contains the ollama_model_available check entry."""
+        _TAGS_RESP = json.dumps({"models": [
+            {"name": "llama3.1:8b", "model": "llama3.1:8b"},
+        ]}).encode()
+
+        class _FakeReq:
+            def getcode(self):
+                return 200
+            def read(self):
+                return _TAGS_RESP
+
+        monkeypatch.setattr(
+            "hoch_agent_swarm.trial_preflight.urllib.request.urlopen",
+            lambda url, timeout: _FakeReq(),
+        )
+        import tempfile, os
+        with tempfile.TemporaryDirectory() as tmpdir:
+            env_file = os.path.join(tmpdir, ".env")
+            with open(env_file, "w") as f:
+                f.write("MODEL=ollama/llama3.1:8b\nAPI_BASE=http://localhost:11434\n")
+            from hoch_agent_swarm.trial_preflight import run_preflight
+            result = run_preflight(cwd=tmpdir, run_reports_dir=os.path.join(tmpdir, "no_runs"))
+            parsed = json.loads(result.to_json())
+            check_names = [c["name"] for c in parsed["checks"]]
+            assert _CHECK_MODEL_AVAILABLE in check_names
+
+
 # ---------------------------------------------------------------------------
 # run_preflight — integration paths
 # ---------------------------------------------------------------------------
@@ -277,13 +490,20 @@ class TestCheckBaselineReport:
 
 class TestRunPreflight:
     def _mock_ollama_ok(self, monkeypatch):
-        class _FakeResp:
+        """Mock both HTTP calls: endpoint check (GET /) and model check (GET /api/tags)."""
+        _TAGS_RESP = json.dumps({"models": [
+            {"name": "llama3.1:8b", "model": "llama3.1:8b"},
+        ]}).encode()
+
+        class _FakeReq:
             def getcode(self):
                 return 200
+            def read(self):
+                return _TAGS_RESP
 
         monkeypatch.setattr(
             "hoch_agent_swarm.trial_preflight.urllib.request.urlopen",
-            lambda url, timeout: _FakeResp(),
+            lambda url, timeout: _FakeReq(),
         )
 
     def test_full_pass_path(self, tmp_path, monkeypatch):
@@ -340,17 +560,40 @@ class TestRunPreflight:
         assert result.baseline_report is None
 
     def test_check_count_full_path(self, tmp_path, monkeypatch):
-        """Full pass path produces exactly 5 checks."""
+        """Full pass path produces exactly 6 checks."""
         cwd = _write_env(tmp_path)
         _write_report(tmp_path)
         self._mock_ollama_ok(monkeypatch)
         result = run_preflight(cwd=cwd, run_reports_dir=str(tmp_path / "artifacts" / "crew_runs"))
-        assert len(result.checks) == 5
+        assert len(result.checks) == 6
 
     def test_check_count_env_absent(self, tmp_path):
-        """Env-absent path short-circuits: only check 1 + check 5."""
+        """Env-absent path short-circuits: only check 1 + check 6 (warn)."""
         result = run_preflight(cwd=str(tmp_path), run_reports_dir=str(tmp_path))
-        assert len(result.checks) == 2  # check 1 (fail) + check 5 (warn)
+        assert len(result.checks) == 2  # check 1 (fail) + check 6 (warn)
+
+    def test_blocked_when_model_not_available(self, tmp_path, monkeypatch):
+        """Model absent from /api/tags → BLOCKED."""
+        _TAGS_RESP = json.dumps({"models": [
+            {"name": "mistral:7b", "model": "mistral:7b"},
+        ]}).encode()
+
+        class _FakeReq:
+            def getcode(self):
+                return 200
+            def read(self):
+                return _TAGS_RESP
+
+        monkeypatch.setattr(
+            "hoch_agent_swarm.trial_preflight.urllib.request.urlopen",
+            lambda url, timeout: _FakeReq(),
+        )
+        cwd = _write_env(tmp_path)  # MODEL=ollama/llama3.1:8b
+        result = run_preflight(cwd=cwd, run_reports_dir=str(tmp_path))
+        assert result.passed is False
+        model_avail = next(c for c in result.checks if c.name == _CHECK_MODEL_AVAILABLE)
+        assert model_avail.passed is False
+        assert "ollama pull" in model_avail.detail
 
 
 # ---------------------------------------------------------------------------
