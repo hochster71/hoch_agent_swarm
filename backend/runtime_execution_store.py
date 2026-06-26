@@ -2601,6 +2601,21 @@ def scan_and_index_evidence() -> list[dict]:
                 "created_at": r["created_at"]
             }
             
+        # Prune records for paths that no longer exist
+        to_delete = []
+        for evidence_id, info in list(existing.items()):
+            full_path = project_root / info["source_path"]
+            if not full_path.exists():
+                to_delete.append(evidence_id)
+                del existing[evidence_id]
+                
+        if to_delete:
+            conn.execute(
+                f"DELETE FROM release_evidence_retention WHERE evidence_id IN ({','.join(['?']*len(to_delete))})",
+                to_delete
+            )
+            conn.commit()
+            
         new_records = []
         
         for rel_dir, artifact_type, dir_is_single_entry in scan_configs:

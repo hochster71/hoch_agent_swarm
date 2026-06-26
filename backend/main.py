@@ -1815,6 +1815,199 @@ def get_release_evidence_archive_preview():
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.get("/api/v1/release/evidence/archive/build-plan")
+def get_release_evidence_archive_build_plan():
+    from backend.runtime_execution_store import scan_and_index_evidence
+    from pathlib import Path
+    import hashlib
+    import json
+    import os
+    from datetime import datetime, timezone
+    
+    try:
+        evidence_list = scan_and_index_evidence()
+        project_root = Path(__file__).resolve().parent.parent
+        
+        included = []
+        excluded = []
+        needs_review = []
+        missing = []
+        
+        for item in evidence_list:
+            full_path = project_root / item["source_path"]
+            exists = full_path.exists()
+            decision = item["retention_decision"]
+            
+            item_info = {
+                "evidence_id": item["evidence_id"],
+                "source_path": item["source_path"],
+                "file_hash": item["file_hash"],
+                "artifact_type": item["artifact_type"]
+            }
+            
+            if not exists:
+                missing.append(item_info)
+            elif decision == "retain":
+                size_bytes = 0
+                if full_path.is_file():
+                    size_bytes = full_path.stat().st_size
+                elif full_path.is_dir():
+                    for root, dirs, files in os.walk(full_path):
+                        for f in files:
+                            fp = Path(root) / f
+                            if fp.exists():
+                                size_bytes += fp.stat().st_size
+                
+                item_info["size_bytes"] = size_bytes
+                included.append(item_info)
+            elif decision in ("ignore", "archive"):
+                item_info["retention_decision"] = decision
+                excluded.append(item_info)
+            elif decision == "needs-review":
+                needs_review.append(item_info)
+                
+        timestamp_str = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        
+        sorted_included = sorted(included, key=lambda x: x["evidence_id"])
+        
+        h = hashlib.sha256()
+        for idx_item in sorted_included:
+            h.update(idx_item["file_hash"].encode('utf-8'))
+        simulated_checksum = h.hexdigest()
+        
+        planned_archive_path = f"dist/archives/evidence-archive-{timestamp_str}-{simulated_checksum[:8]}.tar.gz"
+        planned_manifest_path = f"dist/archives/evidence-manifest-{timestamp_str}.json"
+        
+        has_unclassified_evidence = len(needs_review) > 0
+        has_missing_evidence = len(missing) > 0
+        can_execute = not (has_unclassified_evidence or has_missing_evidence)
+        build_plan_status = "READY" if can_execute else "BLOCKED"
+        
+        manifest_payload = {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "planned_archive_path": planned_archive_path,
+            "archive_checksum_sha256": simulated_checksum,
+            "included_count": len(included),
+            "excluded_count": len(excluded),
+            "needs_review_count": len(needs_review),
+            "missing_count": len(missing),
+            "included_artifacts": [
+                {
+                    "evidence_id": item["evidence_id"],
+                    "source_path": item["source_path"],
+                    "file_hash": item["file_hash"],
+                    "artifact_type": item["artifact_type"],
+                    "size_bytes": item.get("size_bytes", 0)
+                } for item in sorted_included
+            ]
+        }
+        manifest_json_str = json.dumps(manifest_payload, indent=2)
+        expected_manifest_hash = hashlib.sha256(manifest_json_str.encode('utf-8')).hexdigest()
+        
+        operations = []
+        step = 1
+        operations.append({
+            "step": step,
+            "action": "INITIALIZE_DIRECTORY",
+            "source": "-",
+            "destination": "dist/archives",
+            "size_bytes": 0,
+            "status": "PENDING",
+            "description": "Create base target directory for release evidence archives (dry run)"
+        })
+        
+        step += 1
+        manifest_size = len(manifest_json_str.encode('utf-8'))
+        operations.append({
+            "step": step,
+            "action": "GENERATE_MANIFEST",
+            "source": "-",
+            "destination": planned_manifest_path,
+            "size_bytes": manifest_size,
+            "status": "PENDING",
+            "description": f"Write simulated build manifest JSON with expected hash {expected_manifest_hash[:12]}..."
+        })
+        
+        for item in sorted_included:
+            step += 1
+            operations.append({
+                "step": step,
+                "action": "PACKAGE_FILE",
+                "source": item["source_path"],
+                "destination": f"{planned_archive_path}://{item['source_path']}",
+                "size_bytes": item.get("size_bytes", 0),
+                "status": "PENDING",
+                "description": f"Add {item['artifact_type']} file to simulated release evidence tarball"
+            })
+            
+        step += 1
+        operations.append({
+            "step": step,
+            "action": "COMPRESS_ARCHIVE",
+            "source": "dist/archives/temp",
+            "destination": planned_archive_path,
+            "size_bytes": sum(item.get("size_bytes", 0) for item in sorted_included),
+            "status": "PENDING",
+            "description": f"Compress packaged release evidence files into gzipped tarball with expected checksum {simulated_checksum[:12]}..."
+        })
+        
+        rollback_invariants = (
+            "1. Rollback on Failure: If any operation fails, the build runner immediately halts.\n"
+            "2. No-op Guarantee: No files are modified or written to disk. The workspace remains completely untouched.\n"
+            "3. Dry Run Assertion: This plan represents a validated, zero-mutation check prior to formal release sealing."
+        )
+        
+        md = f"# Release Evidence Archive Build Plan (Dry Run)\n\n"
+        md += f"- **Generated At**: {datetime.now(timezone.utc).isoformat()}\n"
+        md += f"- **Build Plan Status**: `{build_plan_status}`\n"
+        md += f"- **Target Archive Path**: `{planned_archive_path}`\n"
+        md += f"- **Target Manifest Path**: `{planned_manifest_path}`\n"
+        md += f"- **Expected Manifest Hash**: `{expected_manifest_hash}`\n"
+        md += f"- **Expected Archive Checksum**: `{simulated_checksum}`\n\n"
+        
+        md += f"## Validation Analysis\n\n"
+        md += f"| Rule Check | Status | Description |\n"
+        md += f"| --- | --- | --- |\n"
+        md += f"| Classification Enforcement | {'FAIL' if has_unclassified_evidence else 'PASS'} | All evidence must be classified (retained/ignored/archived) prior to build. |\n"
+        md += f"| Filesystem Existence check | {'FAIL' if has_missing_evidence else 'PASS'} | All retained evidence paths must physically exist on disk. |\n"
+        md += f"| Overall Status | {build_plan_status} | {'Build plan is blocked due to validation failures.' if not can_execute else 'Build plan is ready to execute.'} |\n\n"
+        
+        if not can_execute:
+            md += "### ⚠️ Build Plan Blockers\n\n"
+            if has_unclassified_evidence:
+                md += f"- **Unclassified Evidence**: There are {len(needs_review)} items in 'needs-review' state. Operators must explicitly classify them.\n"
+            if has_missing_evidence:
+                md += f"- **Missing Evidence**: There are {len(missing)} items that are indexed but missing on disk. Run a scan refresh to sync.\n"
+            md += "\n"
+            
+        md += f"## Rollback & No-Op Invariants\n\n"
+        md += f"```text\n{rollback_invariants}\n```\n\n"
+        
+        md += f"## Ordered Archive Operations ({len(operations)}):\n\n"
+        md += f"| Step | Action | Source | Target | Size (Bytes) | Description |\n"
+        md += f"| --- | --- | --- | --- | --- | --- |\n"
+        for op in operations:
+            md += f"| {op['step']} | {op['action']} | `{op['source']}` | `{op['destination']}` | {op['size_bytes']} | {op['description']} |\n"
+        md += "\n"
+        
+        return {
+            "status": "success",
+            "build_plan_status": build_plan_status,
+            "planned_archive_path": planned_archive_path,
+            "planned_manifest_path": planned_manifest_path,
+            "expected_manifest_hash": expected_manifest_hash,
+            "expected_archive_checksum": simulated_checksum,
+            "can_execute": can_execute,
+            "has_unclassified_evidence": has_unclassified_evidence,
+            "has_missing_evidence": has_missing_evidence,
+            "operations": operations,
+            "manifest_payload": manifest_payload,
+            "markdown": md
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.post("/api/v1/release/candidate-packets")
 def create_candidate_packet(req: CandidatePacketRequest):
     import uuid

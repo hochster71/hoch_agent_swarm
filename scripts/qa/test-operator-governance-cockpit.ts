@@ -43,6 +43,9 @@ function runContractTest() {
     if (!mainPy.includes("/api/v1/release/evidence/archive/preview")) {
       blockers.push("backend/main.py missing /api/v1/release/evidence/archive/preview endpoint");
     }
+    if (!mainPy.includes("/api/v1/release/evidence/archive/build-plan")) {
+      blockers.push("backend/main.py missing /api/v1/release/evidence/archive/build-plan endpoint");
+    }
     if (!mainPy.includes("TEST_MODE =")) {
       blockers.push("backend/main.py missing TEST_MODE definition");
     }
@@ -135,7 +138,20 @@ function runContractTest() {
       "archive-preview-warnings-list",
       "btn-export-preview-markdown",
       "btn-export-preview-json",
-      "archive-preview-included-tbody"
+      "archive-preview-included-tbody",
+      "release-evidence-archive-build-plan-panel",
+      "btn-generate-archive-build-plan",
+      "archive-build-plan-details",
+      "archive-build-status",
+      "archive-build-target-path",
+      "archive-build-manifest-path",
+      "archive-build-manifest-hash",
+      "archive-build-archive-checksum",
+      "archive-build-plan-warnings",
+      "archive-build-plan-warnings-list",
+      "btn-export-build-plan-markdown",
+      "btn-export-build-plan-json",
+      "archive-build-operations-tbody"
     ];
     for (const id of requiredIds) {
       if (!html.includes(`id="${id}"`)) {
@@ -165,7 +181,10 @@ function runContractTest() {
       "ORDERED EXECUTION PROTOCOL",
       "RELEASE EVIDENCE RETENTION POLICY MANAGER",
       "RELEASE EVIDENCE ARCHIVE PREVIEW",
-      "PLANNED INCLUDED ARTIFACTS"
+      "PLANNED INCLUDED ARTIFACTS",
+      "RELEASE EVIDENCE ARCHIVE BUILDER DRY RUN",
+      "Ordered Build Operations",
+      "DRY-RUN & ROLLBACK SAFETY ASSURANCE"
     ];
     for (const text of requiredTexts) {
       if (!html.includes(text)) {
@@ -235,6 +254,18 @@ function runContractTest() {
     }
     if (!appJs.includes("exportArchivePreviewJSON")) {
       blockers.push("frontend/app.js does not define exportArchivePreviewJSON");
+    }
+    if (!appJs.includes("initReleaseEvidenceArchiveBuildPlan")) {
+      blockers.push("frontend/app.js does not define initReleaseEvidenceArchiveBuildPlan");
+    }
+    if (!appJs.includes("generateArchiveBuildPlan")) {
+      blockers.push("frontend/app.js does not define generateArchiveBuildPlan");
+    }
+    if (!appJs.includes("exportBuildPlanMarkdown")) {
+      blockers.push("frontend/app.js does not define exportBuildPlanMarkdown");
+    }
+    if (!appJs.includes("exportBuildPlanJSON")) {
+      blockers.push("frontend/app.js does not define exportBuildPlanJSON");
     }
   }
 

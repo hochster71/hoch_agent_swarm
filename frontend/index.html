@@ -1458,6 +1458,96 @@
                     </div>
                 </section>
 
+                <!-- Release Evidence Archive Builder Dry Run Panel (Phase 28) -->
+                <section class="card" id="release-evidence-archive-build-plan-panel" style="padding: 20px; margin-bottom: 10px; border-left: 4px solid var(--accent-teal);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-glass); padding-bottom: 12px; margin-bottom: 16px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i data-lucide="package-open" style="color: var(--accent-teal); width: 20px; height: 20px;"></i>
+                            <h3 style="font-size: 16px; font-weight: 700; color: #fff; margin: 0;">RELEASE EVIDENCE ARCHIVE BUILDER DRY RUN</h3>
+                        </div>
+                        <div>
+                            <button id="btn-generate-archive-build-plan" class="btn btn-xs btn-outline btn-success" style="display: flex; align-items: center; gap: 4px;">
+                                <i data-lucide="play" style="width: 12px; height: 12px;"></i> Generate Build Plan
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Archive Build Plan Information (Hidden by default, shown after generation) -->
+                    <div id="archive-build-plan-details" class="hidden" style="display: flex; flex-direction: column; gap: 16px;">
+                        <!-- Metadata block -->
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 8px; padding: 12px; font-size: 11px;">
+                            <div style="display: grid; grid-template-columns: 140px 1fr; gap: 8px; align-items: center;">
+                                <span style="color: var(--text-secondary);">Execution Status:</span>
+                                <div>
+                                    <span id="archive-build-status" style="font-size: 9px; font-weight: bold; padding: 2px 8px; border-radius: 4px;">-</span>
+                                </div>
+                                <span style="color: var(--text-secondary);">Planned Archive:</span>
+                                <span id="archive-build-target-path" style="font-family: monospace; color: #fff; word-break: break-all;">-</span>
+                                <span style="color: var(--text-secondary);">Planned Manifest:</span>
+                                <span id="archive-build-manifest-path" style="font-family: monospace; color: #fff; word-break: break-all;">-</span>
+                                <span style="color: var(--text-secondary);">Expected Manifest Hash:</span>
+                                <span id="archive-build-manifest-hash" style="font-family: monospace; color: var(--accent-cyan); word-break: break-all;">-</span>
+                                <span style="color: var(--text-secondary);">Expected Archive Checksum:</span>
+                                <span id="archive-build-archive-checksum" style="font-family: monospace; color: var(--accent-teal); word-break: break-all;">-</span>
+                            </div>
+                        </div>
+
+                        <!-- Warnings section -->
+                        <div id="archive-build-plan-warnings" class="hidden" style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: 8px; padding: 12px; font-size: 11px;">
+                            <div style="display: flex; align-items: center; gap: 8px; color: var(--accent-red); font-weight: bold; margin-bottom: 6px;">
+                                <i data-lucide="shield-alert" style="width: 14px; height: 14px;"></i> BUILD PLAN BLOCKED
+                            </div>
+                            <ul id="archive-build-plan-warnings-list" style="margin: 0; padding-left: 16px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 4px;">
+                                <!-- Warnings will be listed here -->
+                            </ul>
+                        </div>
+
+                        <!-- Safety Notice -->
+                        <div style="background: rgba(20, 184, 166, 0.03); border: 1px solid rgba(20, 184, 166, 0.15); border-radius: 8px; padding: 12px; font-size: 10px;">
+                            <div style="font-weight: bold; color: var(--accent-teal); margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                                <i data-lucide="shield-check" style="width: 14px; height: 14px;"></i> DRY-RUN & ROLLBACK SAFETY ASSURANCE
+                            </div>
+                            <div style="color: var(--text-secondary); line-height: 1.4;">
+                                This dry-run planner validates all requirements before invoking physical packaging operations.
+                                In compliance with our release invariants, this step commits no modifications to the filesystem (No-Op Guarantee).
+                                If executing in production, a rollback strategy is established to revert partial state transitions upon failure.
+                            </div>
+                        </div>
+
+                        <!-- Export actions -->
+                        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                            <button id="btn-export-build-plan-markdown" class="btn btn-xs btn-outline btn-secondary" style="display: flex; align-items: center; gap: 4px;">
+                                <i data-lucide="file-text" style="width: 12px; height: 12px;"></i> Export Build Plan Markdown
+                            </button>
+                            <button id="btn-export-build-plan-json" class="btn btn-xs btn-outline btn-secondary" style="display: flex; align-items: center; gap: 4px;">
+                                <i data-lucide="code" style="width: 12px; height: 12px;"></i> Export Build Plan JSON
+                            </button>
+                        </div>
+
+                        <!-- Operations Table -->
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <div style="font-size: 11px; font-weight: bold; color: #fff; text-transform: uppercase;">Ordered Build Operations</div>
+                            <div class="table-container" style="overflow-x: auto; background: rgba(0,0,0,0.15); border: 1px solid var(--border-glass); border-radius: 8px; max-height: 300px; overflow-y: auto;">
+                                <table class="deployments-table" style="font-size: 10px; width: 100%; border-collapse: collapse;">
+                                    <thead>
+                                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); text-align: left; background: rgba(255,255,255,0.02);">
+                                            <th style="padding: 6px 12px; width: 50px;">Step</th>
+                                            <th style="padding: 6px 12px; width: 120px;">Action</th>
+                                            <th style="padding: 6px 12px;">Source</th>
+                                            <th style="padding: 6px 12px;">Destination</th>
+                                            <th style="padding: 6px 12px; width: 80px; text-align: right;">Size</th>
+                                            <th style="padding: 6px 12px; width: 220px;">Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="archive-build-operations-tbody">
+                                        <!-- Dynamically populated operations -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- Token Authority Confirmation Modal -->
                 <div id="authority-request-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px;">
                     <div class="card" style="width: 100%; max-width: 500px; padding: 24px; background: #121214; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5);">

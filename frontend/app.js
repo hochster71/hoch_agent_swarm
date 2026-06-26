@@ -10968,6 +10968,7 @@ async function initReleaseDecisionRoom() {
 
     await initReleaseEvidenceRetention();
     await initReleaseEvidenceArchivePreview();
+    await initReleaseEvidenceArchiveBuildPlan();
 
     await populateDecisionRoomCandidates();
 }
@@ -11856,6 +11857,172 @@ window.initReleaseEvidenceArchivePreview = initReleaseEvidenceArchivePreview;
 window.calculateArchivePreview = calculateArchivePreview;
 window.exportArchivePreviewMarkdown = exportArchivePreviewMarkdown;
 window.exportArchivePreviewJSON = exportArchivePreviewJSON;
+
+
+let lastArchiveBuildPlanData = null;
+
+async function initReleaseEvidenceArchiveBuildPlan() {
+    const genBtn = document.getElementById("btn-generate-archive-build-plan");
+    if (genBtn) {
+        genBtn.addEventListener("click", generateArchiveBuildPlan);
+    }
+    const exportMdBtn = document.getElementById("btn-export-build-plan-markdown");
+    if (exportMdBtn) {
+        exportMdBtn.addEventListener("click", exportBuildPlanMarkdown);
+    }
+    const exportJsonBtn = document.getElementById("btn-export-build-plan-json");
+    if (exportJsonBtn) {
+        exportJsonBtn.addEventListener("click", exportBuildPlanJSON);
+    }
+}
+
+async function generateArchiveBuildPlan() {
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/evidence/archive/build-plan`);
+        if (!res.ok) {
+            const err = await res.json();
+            alert("Failed to generate archive build plan: " + (err.detail || "Unknown error"));
+            return;
+        }
+        const data = await res.json();
+        lastArchiveBuildPlanData = data;
+        
+        const detailsEl = document.getElementById("archive-build-plan-details");
+        if (detailsEl) {
+            detailsEl.classList.remove("hidden");
+        }
+        
+        const statusEl = document.getElementById("archive-build-status");
+        if (statusEl) {
+            statusEl.textContent = data.build_plan_status;
+            if (data.build_plan_status === "READY") {
+                statusEl.style.color = "#10b981";
+                statusEl.style.background = "rgba(16, 185, 129, 0.15)";
+                statusEl.style.border = "1px solid rgba(16, 185, 129, 0.3)";
+            } else {
+                statusEl.style.color = "#f97316";
+                statusEl.style.background = "rgba(249, 115, 22, 0.15)";
+                statusEl.style.border = "1px solid rgba(249, 115, 22, 0.3)";
+            }
+        }
+        
+        const targetPathEl = document.getElementById("archive-build-target-path");
+        if (targetPathEl) targetPathEl.textContent = data.planned_archive_path || "-";
+        
+        const manifestPathEl = document.getElementById("archive-build-manifest-path");
+        if (manifestPathEl) manifestPathEl.textContent = data.planned_manifest_path || "-";
+        
+        const manifestHashEl = document.getElementById("archive-build-manifest-hash");
+        if (manifestHashEl) manifestHashEl.textContent = data.expected_manifest_hash || "-";
+        
+        const archiveChecksumEl = document.getElementById("archive-build-archive-checksum");
+        if (archiveChecksumEl) archiveChecksumEl.textContent = data.expected_archive_checksum || "-";
+        
+        // Warnings
+        const warningsPanel = document.getElementById("archive-build-plan-warnings");
+        const warningsList = document.getElementById("archive-build-plan-warnings-list");
+        if (warningsPanel && warningsList) {
+            warningsList.innerHTML = "";
+            if (data.build_plan_status === "BLOCKED") {
+                warningsPanel.classList.remove("hidden");
+                if (data.has_unclassified_evidence) {
+                    const li = document.createElement("li");
+                    li.innerHTML = `<strong>Unclassified Evidence</strong>: One or more evidence items are in "needs-review" state. Classification is required.`;
+                    warningsList.appendChild(li);
+                }
+                if (data.has_missing_evidence) {
+                    const li = document.createElement("li");
+                    li.innerHTML = `<strong>Missing Evidence</strong>: One or more evidence items exist in database but are not present on disk.`;
+                    warningsList.appendChild(li);
+                }
+            } else {
+                warningsPanel.classList.add("hidden");
+            }
+        }
+        
+        // Operations Table
+        const tbody = document.getElementById("archive-build-operations-tbody");
+        if (tbody) {
+            tbody.innerHTML = "";
+            const operations = data.operations || [];
+            
+            if (operations.length === 0) {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td colspan="6" style="padding: 12px; text-align: center; color: var(--text-secondary);">No build operations planned.</td>`;
+                tbody.appendChild(row);
+            } else {
+                operations.forEach(op => {
+                    const row = document.createElement("tr");
+                    row.style.borderBottom = "1px solid rgba(255,255,255,0.03)";
+                    
+                    let actionColor = "var(--text-secondary)";
+                    if (op.action === "INITIALIZE_DIRECTORY") actionColor = "var(--accent-blue)";
+                    else if (op.action === "GENERATE_MANIFEST") actionColor = "var(--accent-cyan)";
+                    else if (op.action === "PACKAGE_FILE") actionColor = "var(--accent-teal)";
+                    else if (op.action === "COMPRESS_ARCHIVE") actionColor = "var(--accent-purple)";
+                    
+                    row.innerHTML = `
+                        <td style="padding: 6px 12px; font-family: monospace; color: var(--text-secondary);">${op.step}</td>
+                        <td style="padding: 6px 12px;">
+                            <span style="font-size: 9px; font-weight: bold; color: ${actionColor};">
+                                ${op.action}
+                            </span>
+                        </td>
+                        <td style="padding: 6px 12px; font-family: monospace; color: #fff; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${op.source}</td>
+                        <td style="padding: 6px 12px; font-family: monospace; color: #fff; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${op.destination}</td>
+                        <td style="padding: 6px 12px; text-align: right; font-family: monospace; color: var(--accent-teal);">${op.size_bytes.toLocaleString()}</td>
+                        <td style="padding: 6px 12px; color: var(--text-secondary); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${op.description}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+        }
+        
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
+    } catch (err) {
+        console.error("Error generating archive build plan:", err);
+        alert("Error generating archive build plan: " + err.message);
+    }
+}
+
+function exportBuildPlanMarkdown() {
+    if (!lastArchiveBuildPlanData || !lastArchiveBuildPlanData.markdown) {
+        alert("Please generate the build plan first before exporting.");
+        return;
+    }
+    const blob = new Blob([lastArchiveBuildPlanData.markdown], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "release-evidence-archive-build-plan.md";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function exportBuildPlanJSON() {
+    if (!lastArchiveBuildPlanData || !lastArchiveBuildPlanData.manifest_payload) {
+        alert("Please generate the build plan first before exporting.");
+        return;
+    }
+    const blob = new Blob([JSON.stringify(lastArchiveBuildPlanData.manifest_payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "release-evidence-archive-build-plan.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+window.initReleaseEvidenceArchiveBuildPlan = initReleaseEvidenceArchiveBuildPlan;
+window.generateArchiveBuildPlan = generateArchiveBuildPlan;
+window.exportBuildPlanMarkdown = exportBuildPlanMarkdown;
+window.exportBuildPlanJSON = exportBuildPlanJSON;
 
 
 
