@@ -550,6 +550,35 @@ def init_execution_store_tables() -> None:
             )
             """
         )
+        # Create formal_release_authority_tokens table
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS formal_release_authority_tokens (
+                token_id TEXT PRIMARY KEY,
+                candidate_packet_id TEXT NOT NULL,
+                operator TEXT NOT NULL,
+                scope TEXT NOT NULL,
+                token_value TEXT NOT NULL,
+                expires_at TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            )
+            """
+        )
+        # Create formal_release_authority_logs table
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS formal_release_authority_logs (
+                log_id TEXT PRIMARY KEY,
+                action TEXT NOT NULL,
+                candidate_packet_id TEXT NOT NULL,
+                operator TEXT NOT NULL,
+                token_value TEXT,
+                status TEXT NOT NULL,
+                details TEXT,
+                created_at TEXT NOT NULL
+            )
+            """
+        )
         conn.commit()
     finally:
         conn.close()
@@ -2416,6 +2445,84 @@ def delete_evidence_graph_link(link_id: str) -> None:
     try:
         conn.execute("DELETE FROM evidence_graph_links WHERE link_id = ?", (link_id,))
         conn.commit()
+    finally:
+        conn.close()
+
+def persist_authority_token(
+    token_id: str,
+    candidate_packet_id: str,
+    operator: str,
+    scope: str,
+    token_value: str,
+    expires_at: str
+) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO formal_release_authority_tokens (
+                token_id, candidate_packet_id, operator, scope, token_value, expires_at, created_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (token_id, candidate_packet_id, operator, scope, token_value, expires_at, now_iso())
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+def get_active_authority_token(candidate_packet_id: str) -> dict | None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        now = now_iso()
+        row = conn.execute(
+            """
+            SELECT * FROM formal_release_authority_tokens 
+            WHERE candidate_packet_id = ? AND expires_at > ?
+            ORDER BY expires_at DESC LIMIT 1
+            """,
+            (candidate_packet_id, now)
+        )
+        res = row.fetchone()
+        return dict(res) if res else None
+    finally:
+        conn.close()
+
+def persist_authority_log(
+    log_id: str,
+    action: str,
+    candidate_packet_id: str,
+    operator: str,
+    token_value: str | None,
+    status: str,
+    details: str | None
+) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        conn.execute(
+            """
+            INSERT INTO formal_release_authority_logs (
+                log_id, action, candidate_packet_id, operator, token_value, status, details, created_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (log_id, action, candidate_packet_id, operator, token_value, status, details, now_iso())
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+def list_authority_logs() -> list[dict]:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        rows = conn.execute("SELECT * FROM formal_release_authority_logs ORDER BY created_at DESC").fetchall()
+        return [dict(r) for r in rows]
     finally:
         conn.close()
 

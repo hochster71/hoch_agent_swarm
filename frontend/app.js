@@ -10848,7 +10848,218 @@ async function initReleaseDecisionRoom() {
         exportBtn.addEventListener("click", exportDecisionMemo);
     }
 
+    const requestAuthBtn = document.getElementById("btn-request-authority");
+    const executeRealPromotionBtn = document.getElementById("btn-execute-real-promotion");
+    const cancelAuthBtn = document.getElementById("btn-modal-cancel-authority");
+    const grantAuthBtn = document.getElementById("btn-modal-grant-authority");
+    const confirmAuthChk = document.getElementById("chk-confirm-authority-scope");
+    const modalEl = document.getElementById("authority-request-modal");
+
+    if (requestAuthBtn) {
+        requestAuthBtn.addEventListener("click", () => {
+            if (!currentDecisionRoomCandidate) return;
+            const modalCandidateId = document.getElementById("modal-authority-candidate-id");
+            if (modalCandidateId) modalCandidateId.textContent = currentDecisionRoomCandidate.candidate_packet_id;
+            if (confirmAuthChk) confirmAuthChk.checked = false;
+            if (grantAuthBtn) grantAuthBtn.disabled = true;
+            if (modalEl) modalEl.classList.remove("hidden");
+        });
+    }
+
+    if (confirmAuthChk) {
+        confirmAuthChk.addEventListener("change", (e) => {
+            if (grantAuthBtn) grantAuthBtn.disabled = !e.target.checked;
+        });
+    }
+
+    if (cancelAuthBtn) {
+        cancelAuthBtn.addEventListener("click", () => {
+            if (modalEl) modalEl.classList.add("hidden");
+        });
+    }
+
+    if (grantAuthBtn) {
+        grantAuthBtn.addEventListener("click", async () => {
+            if (!currentDecisionRoomCandidate) return;
+            const isTest = window.location.search.includes("test_mode=true");
+            try {
+                const res = await fetch(`${API_BASE}/api/v1/release/authority/request`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        candidate_packet_id: currentDecisionRoomCandidate.candidate_packet_id,
+                        operator: "Michael Hoch",
+                        is_test: isTest
+                    })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    if (modalEl) modalEl.classList.add("hidden");
+                    alert(`Release Authority Token Granted successfully.\n` +
+                          `Token: ${data.token_value}\n` +
+                          `Expires: ${data.expires_at}`);
+                    await updateReleaseAuthorityUI();
+                } else {
+                    const err = await res.json();
+                    alert("Failed to request authority: " + (err.detail || "Forbidden"));
+                }
+            } catch (err) {
+                alert("Error requesting authority: " + err.message);
+            }
+        });
+    }
+
+    if (executeRealPromotionBtn) {
+        executeRealPromotionBtn.addEventListener("click", async () => {
+            if (!currentDecisionRoomCandidate || !activeAuthorityToken) {
+                alert("No active authority token found.");
+                return;
+            }
+
+            const confirmPromotion = confirm(`Are you sure you want to execute real promotion for candidate ${currentDecisionRoomCandidate.candidate_packet_id}?\n\nThis will trigger git tags mutation, cosign signing, package publishing, and prod deployment simulations.`);
+            if (!confirmPromotion) return;
+
+            try {
+                const res = await fetch(`${API_BASE}/api/v1/release/promote`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        candidate_packet_id: currentDecisionRoomCandidate.candidate_packet_id,
+                        operator: "Michael Hoch",
+                        authority_token: activeAuthorityToken
+                    })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    alert(`Real Promotion Executed Successfully!\n\nDetails:\n` +
+                          `- Git Tag: ${data.details.git_tag}\n` +
+                          `- Signed: ${data.details.signed}\n` +
+                          `- Published: ${data.details.published}\n` +
+                          `- Deployed: ${data.details.deployed}`);
+                    
+                    fetchAndRenderSigningPolicy();
+                    await updateReleaseAuthorityUI();
+                } else {
+                    const err = await res.json();
+                    alert("Promotion failed: " + (err.detail || "Forbidden"));
+                }
+            } catch (err) {
+                alert("Error executing promotion: " + err.message);
+            }
+        });
+    }
+
     await populateDecisionRoomCandidates();
+}
+
+let authorityCountdownInterval = null;
+let activeAuthorityToken = null;
+
+async function updateReleaseAuthorityUI() {
+    const requestBtn = document.getElementById("btn-request-authority");
+    const executeBtn = document.getElementById("btn-execute-real-promotion");
+    const statusText = document.getElementById("gov-authority-status");
+    const badge = document.getElementById("gov-authority-badge");
+    const detailsContainer = document.getElementById("gov-authority-token-details");
+    const tokenValText = document.getElementById("gov-active-token-val");
+
+    if (!currentDecisionRoomCandidate) {
+        if (requestBtn) requestBtn.disabled = true;
+        if (executeBtn) executeBtn.classList.add("hidden");
+        if (statusText) {
+            statusText.textContent = "ABSENT (Preview Mode)";
+            statusText.style.color = "#ef4444";
+        }
+        if (badge) {
+            badge.textContent = "SIMULATION ONLY";
+            badge.style.backgroundColor = "rgba(239, 68, 68, 0.15)";
+            badge.style.color = "#ef4444";
+            badge.style.borderColor = "rgba(239, 68, 68, 0.3)";
+        }
+        if (detailsContainer) detailsContainer.classList.add("hidden");
+        clearInterval(authorityCountdownInterval);
+        activeAuthorityToken = null;
+        return;
+    }
+
+    const packetId = currentDecisionRoomCandidate.candidate_packet_id;
+
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/authority/state/${packetId}`);
+        if (!res.ok) return;
+        const data = await res.json();
+
+        if (data.status === "active") {
+            activeAuthorityToken = data.token_value;
+            if (requestBtn) requestBtn.disabled = true;
+            if (executeBtn) executeBtn.classList.remove("hidden");
+            if (statusText) {
+                statusText.textContent = `GRANTED (Active - ${data.operator})`;
+                statusText.style.color = "var(--accent-teal)";
+            }
+            if (badge) {
+                badge.textContent = "AUTHORITY ACTIVE";
+                badge.style.backgroundColor = "rgba(20, 184, 166, 0.15)";
+                badge.style.color = "var(--accent-teal)";
+                badge.style.borderColor = "rgba(20, 184, 166, 0.3)";
+            }
+            if (detailsContainer) detailsContainer.classList.remove("hidden");
+            if (tokenValText) tokenValText.textContent = data.token_value;
+
+            startAuthorityCountdown(data.expires_at);
+        } else {
+            activeAuthorityToken = null;
+            if (requestBtn) requestBtn.disabled = false;
+            if (executeBtn) executeBtn.classList.add("hidden");
+            if (statusText) {
+                statusText.textContent = data.status === "expired" ? "EXPIRED (Preview Mode)" : "ABSENT (Preview Mode)";
+                statusText.style.color = "#ef4444";
+            }
+            if (badge) {
+                badge.textContent = "SIMULATION ONLY";
+                badge.style.backgroundColor = "rgba(239, 68, 68, 0.15)";
+                badge.style.color = "#ef4444";
+                badge.style.borderColor = "rgba(239, 68, 68, 0.3)";
+            }
+            if (detailsContainer) detailsContainer.classList.add("hidden");
+            clearInterval(authorityCountdownInterval);
+        }
+    } catch (err) {
+        console.error("Error fetching release authority state:", err);
+    }
+}
+
+function startAuthorityCountdown(expiresAt) {
+    clearInterval(authorityCountdownInterval);
+    const countdownEl = document.getElementById("gov-token-countdown");
+    if (!countdownEl) return;
+
+    const expTime = new Date(expiresAt).getTime();
+
+    function updateTimer() {
+        const now = new Date().getTime();
+        const diff = expTime - now;
+
+        if (diff <= 0) {
+            clearInterval(authorityCountdownInterval);
+            countdownEl.textContent = "00:00";
+            updateReleaseAuthorityUI();
+            return;
+        }
+
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        const minStr = String(minutes).padStart(2, "0");
+        const secStr = String(seconds).padStart(2, "0");
+
+        countdownEl.textContent = `${minStr}:${secStr}`;
+    }
+
+    updateTimer();
+    authorityCountdownInterval = setInterval(updateTimer, 1000);
 }
 
 async function populateDecisionRoomCandidates() {
@@ -10889,6 +11100,7 @@ async function handleCandidateSelectionChange() {
         if (rejectBtn) rejectBtn.disabled = true;
         if (exportBtn) exportBtn.classList.add("hidden");
         currentDecisionRoomCandidate = null;
+        updateReleaseAuthorityUI();
         return;
     }
 
@@ -11063,6 +11275,9 @@ async function handleCandidateSelectionChange() {
         // Enable simulate buttons
         if (approveBtn) approveBtn.disabled = false;
         if (rejectBtn) rejectBtn.disabled = false;
+
+        // Update release authority UI
+        await updateReleaseAuthorityUI();
 
     } catch (err) {
         console.error("Error handling candidate change in decision room:", err);

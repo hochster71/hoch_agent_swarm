@@ -1193,6 +1193,120 @@
                     </div>
                 </section>
 
+                <!-- Formal Release Authority Gate Panel (Phase 24) -->
+                <section class="card" id="release-authority-gate-panel" style="padding: 20px; margin-bottom: 10px; border-left: 4px solid var(--accent-orange);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-glass); padding-bottom: 12px; margin-bottom: 16px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i data-lucide="key-round" style="color: var(--accent-orange); width: 20px; height: 20px;"></i>
+                            <h3 style="font-size: 16px; font-weight: 700; color: #fff; margin: 0;">FORMAL RELEASE AUTHORITY GATE</h3>
+                        </div>
+                        <div>
+                            <span id="gov-authority-badge" class="badge" style="background: rgba(239,68,68,0.15); color: #ef4444; font-size: 11px; padding: 4px 10px; border-radius: 4px; font-weight: bold; border: 1px solid rgba(239,68,68,0.3);">SIMULATION ONLY</span>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px;">
+                        <!-- Left Column: Status and Token Details -->
+                        <div style="display: flex; flex-direction: column; gap: 12px; background: rgba(0,0,0,0.15); padding: 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.03);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;">
+                                <span style="font-size: 12px; color: var(--text-secondary); font-weight: 500;">Authority State:</span>
+                                <strong id="gov-authority-status" style="font-size: 13px; color: #ef4444;">ABSENT (Preview Mode)</strong>
+                            </div>
+
+                            <div id="gov-authority-token-details" class="hidden" style="display: flex; flex-direction: column; gap: 8px; font-size: 11px;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="color: var(--text-secondary);">Active Token:</span>
+                                    <span id="gov-active-token-val" style="font-family: monospace; color: var(--accent-teal);">auth-tok-...</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="color: var(--text-secondary);">Granted Scope:</span>
+                                    <span style="color: #fff; text-align: right;">tag, sign, publish, deploy</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="color: var(--text-secondary);">Token Expiration Countdown:</span>
+                                    <strong id="gov-token-countdown" style="color: var(--accent-yellow); font-size: 13px;">05:00</strong>
+                                </div>
+                            </div>
+
+                            <div id="gov-authority-grant-actions" style="margin-top: 6px;">
+                                <button id="btn-request-authority" class="btn btn-sm btn-outline btn-warning" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px;" disabled>
+                                    <i data-lucide="shield-check" style="width: 14px; height: 14px;"></i> Request Short-Lived Release Authority
+                                </button>
+                                <button id="btn-execute-real-promotion" class="btn btn-sm btn-success hidden" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 10px;">
+                                    <i data-lucide="rocket" style="width: 14px; height: 14px;"></i> Execute Real Promotion (Authority Active)
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Explanations of Scoped Privileges -->
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+                            <h4 style="margin: 0; font-size: 11px; color: var(--text-secondary); font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 6px;">RESTRICTED PRODUCTION ACTIONS</h4>
+                            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 11px; line-height: 1.4;">
+                                <div style="display: flex; gap: 6px;">
+                                    <i class="fas fa-lock" style="color: var(--accent-orange); margin-top: 2px;"></i>
+                                    <div><strong>Mutate git tags:</strong> Creating/pushing tags (e.g. <code>v0.1.6</code>) is blocked.</div>
+                                </div>
+                                <div style="display: flex; gap: 6px;">
+                                    <i class="fas fa-lock" style="color: var(--accent-orange); margin-top: 2px;"></i>
+                                    <div><strong>Artifact signing:</strong> Signing release builds (e.g. <code>cosign sign</code>) is blocked.</div>
+                                </div>
+                                <div style="display: flex; gap: 6px;">
+                                    <i class="fas fa-lock" style="color: var(--accent-orange); margin-top: 2px;"></i>
+                                    <div><strong>Package publishing:</strong> Publishing to npm/registry is blocked.</div>
+                                </div>
+                                <div style="display: flex; gap: 6px;">
+                                    <i class="fas fa-lock" style="color: var(--accent-orange); margin-top: 2px;"></i>
+                                    <div><strong>Production deployment:</strong> Deploying swarm logic to real environments.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Token Authority Confirmation Modal -->
+                <div id="authority-request-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px;">
+                    <div class="card" style="width: 100%; max-width: 500px; padding: 24px; background: #121214; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5);">
+                        <div style="display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-glass); padding-bottom: 12px; margin-bottom: 16px;">
+                            <i data-lucide="shield-alert" style="color: var(--accent-orange); width: 22px; height: 22px;"></i>
+                            <h3 style="font-size: 16px; font-weight: 700; color: #fff; margin: 0;">CONFIRM RELEASE AUTHORITY REQUEST</h3>
+                        </div>
+
+                        <div style="font-size: 12px; line-height: 1.5; color: var(--text-secondary); display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+                            <p>You are requesting a short-lived (5-minute) <strong>Formal Release Authority Token</strong>.</p>
+                            
+                            <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: 6px; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+                                <div style="color: #fff; font-weight: bold;">⚠️ Scoped Actions Activated by this Token:</div>
+                                <ul style="margin: 0; padding-left: 16px; display: flex; flex-direction: column; gap: 4px; color: var(--text-secondary);">
+                                    <li>Creating and mutating git tags on the repository</li>
+                                    <li>Signing production packages with Cosign</li>
+                                    <li>Publishing final artifacts to registries</li>
+                                    <li>Triggering production environment promotions</li>
+                                </ul>
+                            </div>
+                            
+                            <div>
+                                <strong>Request Scope Metadata:</strong>
+                                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 6px; font-family: monospace; background: rgba(255,255,255,0.02); padding: 8px; border-radius: 4px; margin-top: 4px; border: 1px solid var(--border-glass);">
+                                    <span style="color: var(--text-secondary);">Operator:</span>
+                                    <span style="color: #fff;">Michael Hoch</span>
+                                    <span style="color: var(--text-secondary);">Candidate:</span>
+                                    <span id="modal-authority-candidate-id" style="color: #fff;">-</span>
+                                </div>
+                            </div>
+
+                            <label style="display: flex; gap: 8px; align-items: flex-start; cursor: pointer; color: #fff; font-weight: 500; margin-top: 8px; font-size: 11px;">
+                                <input type="checkbox" id="chk-confirm-authority-scope" style="margin-top: 2px;">
+                                <span>I understand that this token permits real tag mutations, package signing, and artifact promotions.</span>
+                            </label>
+                        </div>
+
+                        <div style="display: flex; gap: 10px; justify-content: flex-end; border-top: 1px solid var(--border-glass); padding-top: 12px;">
+                            <button id="btn-modal-cancel-authority" class="btn btn-sm btn-outline btn-secondary">Cancel</button>
+                            <button id="btn-modal-grant-authority" class="btn btn-sm btn-warning" disabled>Generate & Grant Token</button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
                     <!-- Pending approvals card -->
                     <section class="card" style="padding: 16px; min-height: 200px; display: flex; flex-direction: column;">

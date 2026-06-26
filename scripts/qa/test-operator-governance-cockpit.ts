@@ -25,6 +25,12 @@ function runContractTest() {
     if (!mainPy.includes("/api/v1/release/simulate-decision")) {
       blockers.push("backend/main.py missing /api/v1/release/simulate-decision endpoint");
     }
+    if (!mainPy.includes("/api/v1/release/authority/request")) {
+      blockers.push("backend/main.py missing /api/v1/release/authority/request endpoint");
+    }
+    if (!mainPy.includes("/api/v1/release/promote")) {
+      blockers.push("backend/main.py missing /api/v1/release/promote endpoint");
+    }
     if (!mainPy.includes("TEST_MODE =")) {
       blockers.push("backend/main.py missing TEST_MODE definition");
     }
@@ -76,7 +82,20 @@ function runContractTest() {
       "dec-blockers-warning-list",
       "dec-graph-total-nodes",
       "dec-graph-missing-nodes",
-      "dec-graph-integrity"
+      "dec-graph-integrity",
+      "release-authority-gate-panel",
+      "gov-authority-badge",
+      "gov-authority-status",
+      "gov-authority-token-details",
+      "gov-active-token-val",
+      "gov-token-countdown",
+      "btn-request-authority",
+      "btn-execute-real-promotion",
+      "authority-request-modal",
+      "modal-authority-candidate-id",
+      "chk-confirm-authority-scope",
+      "btn-modal-cancel-authority",
+      "btn-modal-grant-authority"
     ];
     for (const id of requiredIds) {
       if (!html.includes(`id="${id}"`)) {
@@ -98,7 +117,10 @@ function runContractTest() {
       "RELEASE PROMOTION PIPELINE STATUS",
       "COMPLIANCE & GOVERNANCE CHECKS",
       "DETECTED BLOCKERS & MISSING EVIDENCE",
-      "EVIDENCE GRAPH COMPLETENESS"
+      "EVIDENCE GRAPH COMPLETENESS",
+      "FORMAL RELEASE AUTHORITY GATE",
+      "RESTRICTED PRODUCTION ACTIONS",
+      "CONFIRM RELEASE AUTHORITY REQUEST"
     ];
     for (const text of requiredTexts) {
       if (!html.includes(text)) {
@@ -132,6 +154,12 @@ function runContractTest() {
     }
     if (!appJs.includes("window.initReleaseDecisionRoom")) {
       blockers.push("frontend/app.js does not expose window.initReleaseDecisionRoom");
+    }
+    if (!appJs.includes("updateReleaseAuthorityUI")) {
+      blockers.push("frontend/app.js does not define updateReleaseAuthorityUI");
+    }
+    if (!appJs.includes("startAuthorityCountdown")) {
+      blockers.push("frontend/app.js does not define startAuthorityCountdown");
     }
   }
 
