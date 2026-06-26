@@ -114,8 +114,105 @@ uv run python -c "import crewai; print(crewai.__version__)"  # should be 1.14.7
 ## Recommendation
 
 **Defer.** Reassess after:
-1. The Batch 4 intermediate artifact live run is validated (`uv run run_crew`).
-2. At least one week of community stabilization time has elapsed for `1.15.0`.
-3. The `filterwarnings` suppression in `pyproject.toml` is verified not to mask new real warnings in `1.15.0`.
+1. At least one week of community stabilization time has elapsed for `1.15.0`.
+2. The `filterwarnings` suppression in `pyproject.toml` is verified not to mask new real warnings in `1.15.0`.
+3. Run reports from the sealed `1.14.7` workflow are collected as baseline (see below).
 
-**Estimated window**: Batch 5 or later.
+**Estimated window**: Batch 6 or later.
+
+---
+
+## Isolated Trial Procedure (Batch 6+)
+
+Use a git worktree so the main branch is never touched during the upgrade trial.
+`run_report.json` provides the measurable before/after baseline.
+
+### Step 1 — Collect a baseline run report on main
+
+```bash
+# On sealed main (1.14.7)
+uv run run_crew
+# Note the run_report.json path printed:
+# [report] Run report written: artifacts/crew_runs/<timestamp>/run_report.json
+BASELINE_REPORT="artifacts/crew_runs/<timestamp>/run_report.json"
+```
+
+### Step 2 — Create an isolated worktree
+
+```bash
+# Create a linked worktree that shares the repo but branches independently
+git worktree add ../hoch_agent_swarm_trial_1.15 -b trial/crewai-1.15.0
+cd ../hoch_agent_swarm_trial_1.15
+```
+
+### Step 3 — Upgrade CrewAI in the trial worktree only
+
+```bash
+uv sync --upgrade-package crewai
+uv run python -c "import crewai; print(crewai.__version__)"  # expect 1.15.0
+```
+
+### Step 4 — Run tests
+
+```bash
+uv run pytest -q
+# Stop here if any test fails. Do not continue to live run.
+```
+
+### Step 5 — Live crew run with run report
+
+```bash
+uv run run_crew
+# Note the trial run report path
+TRIAL_REPORT="artifacts/crew_runs/<timestamp>/run_report.json"
+```
+
+### Step 6 — Compare run reports
+
+```bash
+# Compare version fields and artifact hashes
+python3 -c "
+import json
+baseline = json.load(open('$BASELINE_REPORT'))
+trial    = json.load(open('$TRIAL_REPORT'))
+print('Baseline crewai:', baseline['crewai_version'])
+print('Trial    crewai:', trial['crewai_version'])
+print()
+for b, t in zip(baseline['canonical_artifacts'], trial['canonical_artifacts']):
+    match = '✓' if b['sha256'] == t['sha256'] else '✗ CHANGED'
+    print(f\"{match}  {b['path']}\")
+    if b['sha256'] != t['sha256']:
+        print(f'     baseline sha256: {b[\"sha256\"]}')
+        print(f'     trial    sha256: {t[\"sha256\"]}')
+"
+```
+
+Artifact hashes changing is **expected** (model output varies run to run).
+The check is that `status` is `PASS` in both and `validation_status` is `VALID` for all artifacts.
+
+### Step 7 — Decision
+
+| Outcome | Action |
+|---|---|
+| Tests pass, artifacts valid | Promote: commit `uv.lock` to main |
+| Tests fail or artifacts invalid | Revert and open issue |
+
+### Step 8 — Promote or revert
+
+**Promote:**
+```bash
+# In trial worktree
+git add uv.lock pyproject.toml
+git commit -m "chore: upgrade crewai to 1.15.0"
+git checkout main
+git merge trial/crewai-1.15.0
+git worktree remove ../hoch_agent_swarm_trial_1.15
+```
+
+**Revert (trial only — main is never touched):**
+```bash
+cd /Users/michaelhoch/hoch_agent_swarm
+git worktree remove ../hoch_agent_swarm_trial_1.15 --force
+git branch -d trial/crewai-1.15.0
+# Main remains at 1.14.7 with uv.lock unchanged
+```
