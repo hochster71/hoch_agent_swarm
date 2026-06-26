@@ -528,12 +528,14 @@
           "type":          "manual",
           "result":        "PASS",
           "batch":         "P9",
-          "evidence_file": "artifacts/qa/readiness-scorecard.json",
-          "notes":         "Verified: all high open gaps resolved, final readiness score is 100/100."
+          "evidence_file": "config/release_authorization.json",
+          "notes":         "Verified: all high open gaps resolved, final readiness score is 100/100, and operator release_authorization.json is signed off."
         }
       ],
       "evidence_artifacts": [
-        "artifacts/qa/readiness-scorecard.json"
+        "artifacts/qa/readiness-scorecard.json",
+        "config/release_authorization.json",
+        "docs/mission/final_release_authorization.md"
       ],
       "evidence_present": true,
       "truth": "LIVE"

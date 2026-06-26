@@ -66,4 +66,12 @@
 - [x] Compile visual system theme audit report in `artifacts/qa/ui_theme_audit/multi_color_kimi_baseline_audit.md`
 - [x] Verify all tests pass and commit changes with the required message
 
+## Batch PR-10: Operator Final Release Authorization
+- [x] Ingest final operator release authorization in `backend/main.py`
+- [x] Create authorization configuration `config/release_authorization.json`
+- [x] Create authorization document `docs/mission/final_release_authorization.md`
+- [x] Update QA matrix test T-GNG-001 in `config/qa_evidence_matrix.json`
+- [x] Create pytest suite `tests/test_release_authorization_gate.py`
+- [x] Verify all unit, contract, and CI tests pass
+- [x] Commit changes with the required message
 

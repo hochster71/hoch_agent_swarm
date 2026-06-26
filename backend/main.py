@@ -7473,7 +7473,25 @@ def production_readiness():
     ]
 
     high_open = [g for g in gaps if g["severity"] == "HIGH" and g["status"] not in ("RESOLVED", "COMPLETE")]
-    go_no_go  = "NO-GO" if high_open else "PENDING_VERIFICATION"
+    
+    # Check for explicit operator release authorization (Batch PR-10)
+    auth_file = os.path.abspath(os.path.join(os.path.dirname(__file__), "../config/release_authorization.json"))
+    operator_authorized = False
+    if os.path.exists(auth_file):
+        try:
+            with open(auth_file, "r") as f:
+                auth_data = json.load(f)
+                if auth_data.get("authorized") is True and auth_data.get("verdict") == "GO":
+                    operator_authorized = True
+        except Exception:
+            pass
+
+    if high_open:
+        go_no_go = "NO-GO"
+    elif operator_authorized:
+        go_no_go = "GO"
+    else:
+        go_no_go = "PENDING_VERIFICATION"
 
     # Cluster nodes — sourced from asset_trust_registry.json (truth: LIVE)
     if trust_data.get("nodes"):
