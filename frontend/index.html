@@ -89,6 +89,21 @@
                     <span class="nav-status-indicator" id="led-harmony" style="margin-left:auto; font-size:14px; font-weight:bold; color:#8cff5c; animation: agentHeartbeat 3s ease-in-out infinite;">●</span>
                 </a>
             </nav>
+            <div class="theme-selector-container" style="padding: 10px 0; border-top: 1px solid var(--border-glass); margin-top: 10px;">
+                <label for="theme-selector" style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; display: block; margin-bottom: 5px;">Visual Theme</label>
+                <select id="theme-selector" style="width: 100%; background: #161c2d; border: 1px solid var(--border-glass); color: var(--text-primary); border-radius: 4px; padding: 6px; font-size: 12px; outline: none; cursor: pointer;">
+                    <option value="theme-green">Kimi Green</option>
+                    <option value="theme-blue">Kimi Blue</option>
+                    <option value="theme-pink">Kimi Pink</option>
+                    <option value="theme-purple">Kimi Purple</option>
+                    <option value="theme-cyan">Kimi Cyan</option>
+                    <option value="theme-amber">Kimi Amber</option>
+                    <option value="theme-orange">Kimi Orange</option>
+                    <option value="theme-red">Kimi Red</option>
+                    <option value="theme-silver">Kimi Silver</option>
+                    <option value="theme-mono">Kimi Mono</option>
+                </select>
+            </div>
             <div class="profile-area">
                 <div class="avatar">MH</div>
                 <div class="profile-info">
@@ -3201,7 +3216,35 @@
                     <div class="kimi-panel-strong" style="padding:14px;">
                       <div class="kimi-section-label" style="color:var(--kimi-amber);">⚡ Prompt Governance</div>
                       <div id="hd-gov-summary" style="display:flex;flex-direction:column;gap:8px;font-size:11px;"></div>
-                      <button class="btn btn-xs btn-outline" onclick="document.getElementById('nav-governance')?.click()" style="margin-top:10px;width:100%;font-size:10px;border-color:rgba(140,255,92,0.3);color:var(--kimi-green);">Open Governance Cockpit →</button>
+                    </div>
+                    
+                    <!-- Local-First Model Router Panel -->
+                    <div class="kimi-panel" id="model-router-panel" style="padding:14px; margin-top: 14px;">
+                      <div class="kimi-section-label" style="color:var(--kimi-cyan); display: flex; align-items: center; gap: 6px;">
+                        <span>🤖 Local-First Model Router</span>
+                      </div>
+                      <div style="display:flex; flex-direction:column; gap:8px; font-size:11px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                          <span style="color:var(--kimi-muted);">Router Status:</span>
+                          <span id="mr-status-pill" class="kimi-status-pill kimi-pill-live">ONLINE</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                          <span style="color:var(--kimi-muted);">Default Model:</span>
+                          <span id="mr-local-model" style="color:var(--kimi-green); font-family:monospace; font-weight:700;">loading...</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                          <span style="color:var(--kimi-muted);">Local First:</span>
+                          <span id="mr-local-first-mode" style="color:var(--kimi-green); font-weight:700;">ENABLED</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                          <span style="color:var(--kimi-muted);">Paid Fallback:</span>
+                          <span id="mr-escalation-status" style="color:var(--kimi-red); font-weight:700;">DISABLED</span>
+                        </div>
+                        <div style="border-top:1px solid var(--border-glass); padding-top:6px; margin-top:4px;">
+                          <div style="font-size:9px; color:var(--kimi-muted); text-transform:uppercase; margin-bottom:4px;">Recent Routing Audits</div>
+                          <div id="mr-audit-log" style="font-family:monospace; font-size:9px; background:rgba(0,0,0,0.3); border:1px solid var(--border-glass); border-radius:4px; padding:6px; max-height:80px; overflow-y:auto; white-space:pre-wrap; color:var(--text-secondary);">No routing events logged.</div>
+                        </div>
+                      </div>
                     </div>
 
                   </div>
@@ -3832,6 +3875,33 @@
 </div>
 
 <script type="module" src="/app.js"></script>
+
+<script>
+    // Theme Manager Persistence Script
+    (function() {
+        const defaultTheme = "theme-green";
+        const savedTheme = localStorage.getItem("selected-theme") || defaultTheme;
+        document.body.classList.add(savedTheme);
+        
+        document.addEventListener("DOMContentLoaded", () => {
+            const selector = document.getElementById("theme-selector");
+            if (selector) {
+                selector.value = savedTheme;
+                selector.addEventListener("change", (e) => {
+                    const newTheme = e.target.value;
+                    // Remove existing themes
+                    document.body.classList.forEach(cls => {
+                        if (cls.startsWith("theme-")) {
+                            document.body.classList.remove(cls);
+                        }
+                    });
+                    document.body.classList.add(newTheme);
+                    localStorage.setItem("selected-theme", newTheme);
+                });
+            }
+        });
+    })();
+</script>
 
 </body>
 </html>

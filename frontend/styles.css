@@ -2606,6 +2606,11 @@ body {
   --kimi-muted:         #9ebaa0;
   --kimi-shadow:        0 0 34px rgba(132,255,92,0.16);
   --kimi-shadow-soft:   0 4px 24px rgba(0,0,0,0.6);
+
+  /* Truth states static definitions to prevent decorative theme overrides */
+  --kimi-truth-green:   #8cff5c;
+  --kimi-truth-amber:   #f59e0b;
+  --kimi-truth-red:     #ff5f7a;
 }
 
 /* ── Shell / page wrapper ───────────────────────────────────────────────────── */
@@ -2701,10 +2706,10 @@ body {
   border: 2px solid transparent;
   animation: agentHeartbeat 3s ease-in-out infinite;
 }
-.kimi-agent-online::after  { border-color: var(--kimi-green);  }
+.kimi-agent-online::after  { border-color: var(--kimi-truth-green);  }
 .kimi-agent-idle::after    { border-color: rgba(140,255,92,0.25); animation-duration: 5s; }
-.kimi-agent-pending::after { border-color: var(--kimi-amber);   animation-name: amberPulse; }
-.kimi-agent-broken::after  { border-color: var(--kimi-red);     animation-name: redFlare; }
+.kimi-agent-pending::after { border-color: var(--kimi-truth-amber);   animation-name: amberPulse; }
+.kimi-agent-broken::after  { border-color: var(--kimi-truth-red);     animation-name: redFlare; }
 .kimi-agent-mock           { border-style: dashed !important; }
 
 /* ── Status pills ───────────────────────────────────────────────────────────── */
@@ -2713,14 +2718,14 @@ body {
   padding: 2px 9px; border-radius: 20px; font-size: 10px; font-weight: 700;
   text-transform: uppercase; letter-spacing: 0.5px;
 }
-.kimi-pill-live     { background: rgba(140,255,92,0.14); color: var(--kimi-green);  border: 1px solid rgba(140,255,92,0.35); }
-.kimi-pill-stale    { background: rgba(245,158,11,0.14); color: var(--kimi-amber);  border: 1px solid rgba(245,158,11,0.35); }
+.kimi-pill-live     { background: rgba(140,255,92,0.14); color: var(--kimi-truth-green);  border: 1px solid rgba(140,255,92,0.35); }
+.kimi-pill-stale    { background: rgba(245,158,11,0.14); color: var(--kimi-truth-amber);  border: 1px solid rgba(245,158,11,0.35); }
 .kimi-pill-mock     { background: rgba(100,100,100,0.14);color: #9ca3af;            border: 1px dashed rgba(100,100,100,0.35); }
 .kimi-pill-synthetic{ background: rgba(99,102,241,0.14); color: #a5b4fc;            border: 1px dashed rgba(99,102,241,0.35); }
-.kimi-pill-broken   { background: rgba(255,95,122,0.14); color: var(--kimi-red);    border: 1px solid rgba(255,95,122,0.35); }
-.kimi-pill-pending  { background: rgba(245,158,11,0.14); color: var(--kimi-amber);  border: 1px solid rgba(245,158,11,0.4); animation: amberBlink 2s ease-in-out infinite; }
-.kimi-pill-approval { background: rgba(255,95,122,0.14); color: var(--kimi-red);    border: 1px solid rgba(255,95,122,0.4); animation: amberBlink 1.5s ease-in-out infinite; }
-.kimi-pill-complete { background: rgba(140,255,92,0.14); color: var(--kimi-green);  border: 1px solid rgba(140,255,92,0.35); }
+.kimi-pill-broken   { background: rgba(255,95,122,0.14); color: var(--kimi-truth-red);    border: 1px solid rgba(255,95,122,0.35); }
+.kimi-pill-pending  { background: rgba(245,158,11,0.14); color: var(--kimi-truth-amber);  border: 1px solid rgba(245,158,11,0.4); animation: amberBlink 2s ease-in-out infinite; }
+.kimi-pill-approval { background: rgba(255,95,122,0.14); color: var(--kimi-truth-red);    border: 1px solid rgba(255,95,122,0.4); animation: amberBlink 1.5s ease-in-out infinite; }
+.kimi-pill-complete { background: rgba(140,255,92,0.14); color: var(--kimi-truth-green);  border: 1px solid rgba(140,255,92,0.35); }
 .kimi-pill-unknown  { background: rgba(100,100,100,0.1); color: #6b7280;            border: 1px solid rgba(100,100,100,0.2); }
 
 /* ── Truth badge (status provenance) ───────────────────────────────────────── */
@@ -2822,14 +2827,14 @@ body {
 .kimi-alert-banner {
   background: rgba(255,95,122,0.1); border: 1px solid rgba(255,95,122,0.35);
   border-radius: 10px; padding: 8px 14px;
-  font-size: 11px; color: var(--kimi-red);
+  font-size: 11px; color: var(--kimi-truth-red);
   display: flex; align-items: center; gap: 8px;
   animation: amberBlink 2s ease-in-out infinite;
 }
 .kimi-warn-banner {
   background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3);
   border-radius: 10px; padding: 8px 14px;
-  font-size: 11px; color: var(--kimi-amber);
+  font-size: 11px; color: var(--kimi-truth-amber);
   display: flex; align-items: center; gap: 8px;
 }
 
@@ -2922,4 +2927,136 @@ body {
     animation: none !important;
     transition: none !important;
   }
+}
+
+/* ── Kimi Multi-Color Styling Themes ────────────────────────────────────────── */
+body.theme-green {
+  --kimi-bg-0:          #020604;
+  --kimi-bg-1:          #06100b;
+  --kimi-panel:         rgba(7,20,14,0.72);
+  --kimi-panel-strong:  rgba(10,32,20,0.86);
+  --kimi-border:        rgba(132,255,92,0.18);
+  --kimi-border-strong: rgba(132,255,92,0.44);
+  --kimi-green:         #8cff5c;
+  --kimi-green-soft:    #56d944;
+  --kimi-text:          #edfbe9;
+  --kimi-muted:         #9ebaa0;
+  --kimi-shadow:        0 0 34px rgba(132,255,92,0.16);
+}
+body.theme-blue {
+  --kimi-bg-0:          #02040c;
+  --kimi-bg-1:          #060a16;
+  --kimi-panel:         rgba(7,14,24,0.72);
+  --kimi-panel-strong:  rgba(10,20,36,0.86);
+  --kimi-border:        rgba(92,166,255,0.18);
+  --kimi-border-strong: rgba(92,166,255,0.44);
+  --kimi-green:         #3b82f6;
+  --kimi-green-soft:    #2563eb;
+  --kimi-text:          #ebf4ff;
+  --kimi-muted:         #9eb0ca;
+  --kimi-shadow:        0 0 34px rgba(92,166,255,0.16);
+}
+body.theme-pink {
+  --kimi-bg-0:          #0c0206;
+  --kimi-bg-1:          #16060c;
+  --kimi-panel:         rgba(24,7,14,0.72);
+  --kimi-panel-strong:  rgba(36,10,20,0.86);
+  --kimi-border:        rgba(255,92,184,0.18);
+  --kimi-border-strong: rgba(255,92,184,0.44);
+  --kimi-green:         #ec4899;
+  --kimi-green-soft:    #db2777;
+  --kimi-text:          #ffebf4;
+  --kimi-muted:         #ca9eb4;
+  --kimi-shadow:        0 0 34px rgba(255,92,184,0.16);
+}
+body.theme-purple {
+  --kimi-bg-0:          #06020c;
+  --kimi-bg-1:          #0e0616;
+  --kimi-panel:         rgba(15,7,24,0.72);
+  --kimi-panel-strong:  rgba(22,10,36,0.86);
+  --kimi-border:        rgba(168,85,247,0.18);
+  --kimi-border-strong: rgba(168,85,247,0.44);
+  --kimi-green:         #a855f7;
+  --kimi-green-soft:    #9333ea;
+  --kimi-text:          #f3e8ff;
+  --kimi-muted:         #b79eca;
+  --kimi-shadow:        0 0 34px rgba(168,85,247,0.16);
+}
+body.theme-cyan {
+  --kimi-bg-0:          #020b0c;
+  --kimi-bg-1:          #061516;
+  --kimi-panel:         rgba(7,23,24,0.72);
+  --kimi-panel-strong:  rgba(10,33,36,0.86);
+  --kimi-border:        rgba(6,182,212,0.18);
+  --kimi-border-strong: rgba(6,182,212,0.44);
+  --kimi-green:         #06b6d4;
+  --kimi-green-soft:    #0891b2;
+  --kimi-text:          #ecfeff;
+  --kimi-muted:         #9ecacb;
+  --kimi-shadow:        0 0 34px rgba(6,182,212,0.16);
+}
+body.theme-amber {
+  --kimi-bg-0:          #0c0802;
+  --kimi-bg-1:          #161006;
+  --kimi-panel:         rgba(24,18,7,0.72);
+  --kimi-panel-strong:  rgba(36,28,10,0.86);
+  --kimi-border:        rgba(245,158,11,0.18);
+  --kimi-border-strong: rgba(245,158,11,0.44);
+  --kimi-green:         #f59e0b;
+  --kimi-green-soft:    #d97706;
+  --kimi-text:          #fffbeb;
+  --kimi-muted:         #cab89e;
+  --kimi-shadow:        0 0 34px rgba(245,158,11,0.16);
+}
+body.theme-orange {
+  --kimi-bg-0:          #0c0502;
+  --kimi-bg-1:          #160b06;
+  --kimi-panel:         rgba(24,11,7,0.72);
+  --kimi-panel-strong:  rgba(36,17,10,0.86);
+  --kimi-border:        rgba(249,115,22,0.18);
+  --kimi-border-strong: rgba(249,115,22,0.44);
+  --kimi-green:         #f97316;
+  --kimi-green-soft:    #ea580c;
+  --kimi-text:          #fff7ed;
+  --kimi-muted:         #caaa9e;
+  --kimi-shadow:        0 0 34px rgba(249,115,22,0.16);
+}
+body.theme-red {
+  --kimi-bg-0:          #0c0202;
+  --kimi-bg-1:          #160606;
+  --kimi-panel:         rgba(24,7,7,0.72);
+  --kimi-panel-strong:  rgba(36,10,10,0.86);
+  --kimi-border:        rgba(239,68,68,0.18);
+  --kimi-border-strong: rgba(239,68,68,0.44);
+  --kimi-green:         #ef4444;
+  --kimi-green-soft:    #dc2626;
+  --kimi-text:          #fef2f2;
+  --kimi-muted:         #ca9e9e;
+  --kimi-shadow:        0 0 34px rgba(239,68,68,0.16);
+}
+body.theme-silver {
+  --kimi-bg-0:          #0a0b0d;
+  --kimi-bg-1:          #121419;
+  --kimi-panel:         rgba(20,22,28,0.72);
+  --kimi-panel-strong:  rgba(30,33,42,0.86);
+  --kimi-border:        rgba(156,163,175,0.18);
+  --kimi-border-strong: rgba(156,163,175,0.44);
+  --kimi-green:         #d1d5db;
+  --kimi-green-soft:    #9ca3af;
+  --kimi-text:          #f9fafb;
+  --kimi-muted:         #9eb0ca;
+  --kimi-shadow:        0 0 34px rgba(156,163,175,0.12);
+}
+body.theme-mono {
+  --kimi-bg-0:          #000000;
+  --kimi-bg-1:          #0c0c0c;
+  --kimi-panel:         rgba(15,15,15,0.82);
+  --kimi-panel-strong:  rgba(25,25,25,0.92);
+  --kimi-border:        rgba(255,255,255,0.15);
+  --kimi-border-strong: rgba(255,255,255,0.35);
+  --kimi-green:         #ffffff;
+  --kimi-green-soft:    #a3a3a3;
+  --kimi-text:          #ffffff;
+  --kimi-muted:         #a1a1aa;
+  --kimi-shadow:        0 0 34px rgba(255,255,255,0.1);
 }

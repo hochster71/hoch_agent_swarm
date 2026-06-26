@@ -13291,6 +13291,59 @@ window.exportSealPreviewJSON = exportSealPreviewJSON;
     }
     addConsoleLog(`Prompt governance: ${govData.total} records · ${ledgerData.total} ledger events`, "api/v1/prompts");
     addConsoleLog(`Swarm status: ${apiData.status || "UNKNOWN"} · ${apiData.total_agents || "?"} agents`, "api/status");
+
+    await initModelRouterUI();
+  }
+
+  async function initModelRouterUI() {
+    const base = (typeof API_BASE !== "undefined" && API_BASE) ? API_BASE : "http://127.0.0.1:8000";
+    const statusPill = el("mr-status-pill");
+    const localModel = el("mr-local-model");
+    const localFirstMode = el("mr-local-first-mode");
+    const escalationStatus = el("mr-escalation-status");
+    const auditLog = el("mr-audit-log");
+
+    if (!statusPill) return;
+
+    try {
+      const statusRes = await fetch(`${base}/api/v1/models/status`);
+      if (statusRes.ok) {
+        const data = await statusRes.json();
+        statusPill.textContent = "ONLINE";
+        statusPill.className = "kimi-status-pill kimi-pill-live";
+        localModel.textContent = data.default_model || "none";
+        
+        localFirstMode.textContent = data.local_first ? "ENABLED" : "DISABLED";
+        localFirstMode.style.color = data.local_first ? "#8cff5c" : "#ff5f7a";
+        
+        escalationStatus.textContent = data.paid_models_enabled ? "ENABLED" : "DISABLED";
+        escalationStatus.style.color = data.paid_models_enabled ? "#8cff5c" : "#ff5f7a";
+      } else {
+        statusPill.textContent = "OFFLINE";
+        statusPill.className = "kimi-status-pill kimi-pill-broken";
+      }
+    } catch (err) {
+      console.warn("[Model Router UI] Error fetching status:", err);
+      statusPill.textContent = "OFFLINE";
+      statusPill.className = "kimi-status-pill kimi-pill-broken";
+    }
+
+    try {
+      const auditRes = await fetch(`${base}/api/v1/models/audit-log?limit=5`);
+      if (auditRes.ok) {
+        const logs = await auditRes.json();
+        if (logs && logs.length > 0) {
+          auditLog.textContent = logs.map(l => {
+            const time = l.timestamp ? l.timestamp.split("T")[1].slice(0, 8) : "";
+            return `[${time}] ${l.decision || "route"}: ${l.model || "none"} (${l.task_type || "general"})`;
+          }).join("\n");
+        } else {
+          auditLog.textContent = "No routing events logged.";
+        }
+      }
+    } catch (err) {
+      console.warn("[Model Router UI] Error fetching audit logs:", err);
+    }
   }
 
   // ── Nav wiring ─────────────────────────────────────────────────────────────────

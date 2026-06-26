@@ -117,6 +117,18 @@
       "evidence": "GAMMA inference node only; model allowlist must be enforced"
     },
     {
+      "id": "SKILL-MODEL-ROUTE",
+      "name": "Model Route",
+      "description": "Route prompt execution to local or paid models under governed escalation.",
+      "risk_level": "MEDIUM",
+      "approval_required": false,
+      "rationale_required": true,
+      "allowed_caller_tiers": ["ALPHA", "BETA", "GAMMA"],
+      "denied_caller_tiers": ["DELTA"],
+      "audit_required": true,
+      "evidence": "Model routing capability — restricted to approved tiers; DELTA denied"
+    },
+    {
       "id": "SKILL-AUDIT-LOG-WRITE",
       "name": "Audit Log Write",
       "description": "Append to the swarm audit/evidence ledger.",

@@ -7225,6 +7225,75 @@ def qa_evidence_matrix_endpoint():
     }
 
 
+# ================================================================
+#  LOCAL-FIRST MODEL ROUTER ENDPOINTS — Batch PR-7A
+# ================================================================
+
+class ModelRunRequest(BaseModel):
+    prompt: str
+    task_type: str = "general"
+    preferred_model: str = None
+    caller_tier: str = "ALPHA"
+    caller_node: str = "macbook-pro-l1"
+    rationale: str = ""
+
+@app.get("/api/v1/models/registry")
+def get_model_registry_endpoint():
+    from backend.model_router import model_registry
+    return model_registry.load_config()
+
+@app.get("/api/v1/models/status")
+def get_model_status_endpoint():
+    from backend.model_router import model_registry
+    return {
+        "local_first": model_registry.is_local_first(),
+        "paid_models_enabled": model_registry.are_paid_models_enabled(),
+        "enabled_local_providers": model_registry.get_enabled_local_providers(),
+        "enabled_paid_providers": model_registry.get_enabled_paid_providers(),
+        "default_provider": model_registry.get_default_provider(),
+        "default_model": model_registry.get_default_model()
+    }
+
+@app.get("/api/v1/models/audit-log")
+def get_model_audit_log_endpoint(limit: int = 50):
+    from backend.model_router import audit_log
+    return audit_log.get_audit_logs(limit)
+
+@app.post("/api/v1/models/run")
+def run_model_endpoint(req: ModelRunRequest):
+    from backend.skill_gate import evaluate_skill as _sg_evaluate
+    
+    # Evaluate SKILL-MODEL-ROUTE for the caller node trust tier
+    verdict = _sg_evaluate(
+        caller_node=req.caller_node,
+        caller_tier=req.caller_tier,
+        skill_id="SKILL-MODEL-ROUTE",
+        rationale=req.rationale or "governed model routing execution",
+        source="MODEL_ROUTER"
+    )
+    
+    if verdict.get("verdict") in ("BLOCKED", "DENIED", "UNREGISTERED"):
+        raise HTTPException(status_code=403, detail=f"Execution blocked by Skill Gate: {verdict.get('reason')}")
+    elif verdict.get("verdict") == "REQUIRES_APPROVAL":
+        raise HTTPException(status_code=403, detail="Execution blocked by Skill Gate: SKILL-MODEL-ROUTE requires operator approval.")
+        
+    from backend.model_router import router
+    try:
+        res = router.route_and_run(
+            prompt=req.prompt,
+            task_type=req.task_type,
+            preferred_model=req.preferred_model,
+            caller_tier=req.caller_tier,
+            caller_node=req.caller_node,
+            rationale=req.rationale
+        )
+        return res
+    except Exception as e:
+        # If no local model server is running (fails closed), raise HTTP 503 Service Unavailable
+        raise HTTPException(status_code=503, detail=str(e))
+
+
+
 @app.post("/api/v1/prompts/expire-test")
 def prompt_expire_test_approvals():
     """
@@ -7432,7 +7501,33 @@ def production_readiness():
             {"name":"iPhone",          "role":"Emergency Console","tier":"DELTA","status":"UNKNOWN","provisioning":"UNKNOWN","truth":"UNKNOWN"},
         ]
 
+    model_router_info = {
+        "truth": "UNKNOWN",
+        "local_first": True,
+        "paid_models_enabled": False,
+        "escalation_enabled": False,
+        "enabled_local_providers": 0,
+        "enabled_paid_providers": 0,
+        "audit_log_path": "audit/model_routing.jsonl",
+        "status": "INACTIVE"
+    }
+    try:
+        from backend.model_router import model_registry, escalation_policy
+        model_router_info = {
+            "truth": "LIVE",
+            "local_first": model_registry.is_local_first(),
+            "paid_models_enabled": model_registry.are_paid_models_enabled(),
+            "escalation_enabled": escalation_policy.load_escalation_config().get("escalation", {}).get("enabled", False),
+            "enabled_local_providers": len(model_registry.get_enabled_local_providers()),
+            "enabled_paid_providers": len(model_registry.get_enabled_paid_providers()),
+            "audit_log_path": "audit/model_routing.jsonl",
+            "status": "ACTIVE"
+        }
+    except Exception:
+        pass
+
     return {
+        "model_router":      model_router_info,
         "go_no_go":          go_no_go,
         "high_open_count":   len(high_open),
         "total_gaps":        len(gaps),

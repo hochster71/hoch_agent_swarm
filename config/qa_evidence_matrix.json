@@ -819,18 +819,173 @@
       ],
       "evidence_present": true,
       "truth": "LIVE"
+    },
+    {
+      "control_id":  "MODEL-ROUTER-001",
+      "name":        "Local-First Execution Hierarchy",
+      "domain":      "MODEL_ROUTER",
+      "pert_ref":    "Batch-PR-7A",
+      "gap_ref":     "GAP-003",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-MR-001",
+          "description":   "Verify registry parses models configuration from config/models.yaml",
+          "type":          "unit",
+          "result":        "PASS",
+          "batch":         "PR-7A",
+          "evidence_file": null,
+          "notes":         "Verified by tests/test_model_registry.py"
+        },
+        {
+          "test_id":       "T-MR-002",
+          "description":   "Verify router tries local provider first and fails closed if offline",
+          "type":          "unit",
+          "result":        "PASS",
+          "batch":         "PR-7A",
+          "evidence_file": null,
+          "notes":         "Verified by tests/test_model_router_policy.py"
+        },
+        {
+          "test_id":       "T-MR-003",
+          "description":   "Verify run endpoint /api/v1/models/run is registered and functional",
+          "type":          "integration",
+          "result":        "PASS",
+          "batch":         "PR-7A",
+          "evidence_file": null,
+          "notes":         "Verified by scripts/qa/test-model-router-contract.ts"
+        }
+      ],
+      "evidence_artifacts": [
+        "config/models.yaml",
+        "backend/model_router/model_registry.py",
+        "backend/model_router/router.py"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
+    },
+    {
+      "control_id":  "MODEL-ROUTER-002",
+      "name":        "Paid Model Governance & Escalation Policy",
+      "domain":      "MODEL_ROUTER",
+      "pert_ref":    "Batch-PR-7A",
+      "gap_ref":     "GAP-003",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-MR-004",
+          "description":   "Verify escalation validation blocks high-risk keywords",
+          "type":          "unit",
+          "result":        "PASS",
+          "batch":         "PR-7A",
+          "evidence_file": null,
+          "notes":         "Verified by tests/test_escalation_policy.py"
+        },
+        {
+          "test_id":       "T-MR-005",
+          "description":   "Verify escalation budget caps enforce zero budget",
+          "type":          "unit",
+          "result":        "PASS",
+          "batch":         "PR-7A",
+          "evidence_file": null,
+          "notes":         "Verified by tests/test_escalation_policy.py"
+        },
+        {
+          "test_id":       "T-MR-006",
+          "description":   "Verify escalation policy is loaded and correctly evaluates requests",
+          "type":          "unit",
+          "result":        "PASS",
+          "batch":         "PR-7A",
+          "evidence_file": null,
+          "notes":         "Verified by tests/test_escalation_policy.py"
+        }
+      ],
+      "evidence_artifacts": [
+        "config/escalation.yaml",
+        "backend/model_router/escalation_policy.py"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
+    },
+    {
+      "control_id":  "MODEL-ROUTER-003",
+      "name":        "Model Routing Trust Tier & Skill Gating",
+      "domain":      "MODEL_ROUTER",
+      "pert_ref":    "Batch-PR-7A",
+      "gap_ref":     "GAP-003",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-MR-007",
+          "description":   "Verify skill evaluation denies DELTA nodes",
+          "type":          "unit",
+          "result":        "PASS",
+          "batch":         "PR-7A",
+          "evidence_file": null,
+          "notes":         "Verified by tests/test_model_router_policy.py"
+        },
+        {
+          "test_id":       "T-MR-008",
+          "description":   "Verify skill evaluation allows ALPHA/BETA/GAMMA tiers",
+          "type":          "unit",
+          "result":        "PASS",
+          "batch":         "PR-7A",
+          "evidence_file": null,
+          "notes":         "Verified by tests/test_model_router_policy.py"
+        }
+      ],
+      "evidence_artifacts": [
+        "config/skill_registry.json",
+        "backend/skill_gate.py"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
+    },
+    {
+      "control_id":  "MODEL-ROUTER-004",
+      "name":        "Model Routing Audit Ledger",
+      "domain":      "MODEL_ROUTER",
+      "pert_ref":    "Batch-PR-7A",
+      "gap_ref":     "GAP-003",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-MR-009",
+          "description":   "Verify confidence scorer gives low score for empty output",
+          "type":          "unit",
+          "result":        "PASS",
+          "batch":         "PR-7A",
+          "evidence_file": null,
+          "notes":         "Verified by tests/test_model_router_policy.py"
+        },
+        {
+          "test_id":       "T-MR-010",
+          "description":   "Verify routing decisions are written to JSON Lines audit log",
+          "type":          "unit",
+          "result":        "PASS",
+          "batch":         "PR-7A",
+          "evidence_file": null,
+          "notes":         "Verified by tests/test_model_router_policy.py"
+        }
+      ],
+      "evidence_artifacts": [
+        "backend/model_router/confidence.py",
+        "backend/model_router/audit_log.py"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
     }
   ],
   "summary": {
-    "total_controls":         24,
-    "tested":                  22,
+    "total_controls":         28,
+    "tested":                  26,
     "partial":                 0,
     "in_progress":             1,
     "pending":                 0,
-    "evidence_present_count": 24,
+    "evidence_present_count": 28,
     "evidence_missing_count":  0,
-    "total_tests":            46,
-    "tests_pass":             45,
+    "total_tests":            56,
+    "tests_pass":             55,
     "tests_partial":           1,
     "tests_pending":           0,
     "matrix_status":          "COMPLETE",
