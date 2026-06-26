@@ -24,10 +24,25 @@ assemble_agents_task:
 
 audit_security_task:
   description: >
-    Perform a security audit on the instantiated configurations and proposed execution steps.
-    Enforce replay protection compliance, verify secret scrubbing, and ensure no secrets are exposed in logs.
+    Perform a thorough security audit on the assembled agent configurations and proposed execution steps.
+    Verify the following:
+    - Replay protection compliance: each task run is uniquely identified.
+    - Secret scrubbing: no secrets or environment variable values appear in logs or outputs.
+    - Tool access boundaries: each agent only accesses tools permitted by the manifest.
+    - Delegation bounds: no agent is configured to spawn additional agents dynamically.
+    Write a structured audit report in plain markdown using these exact section headings:
+    # Security Audit Report
+    ## Scope
+    ## Agent Configuration Review
+    ## Tool Access Verification
+    ## Secret Scrubbing Status
+    ## Replay Protection Status
+    ## Findings
+    ## Verdict
+    Do not include code blocks, JSON, Python expressions, or pseudocode. Plain prose and markdown lists only.
   expected_output: >
-    A signed security audit report.
+    A structured markdown security audit report with all required sections filled in.
+    Must be non-empty and directly usable as an audit record.
   agent: security_operator
 
 plan_execution_task:
@@ -46,17 +61,29 @@ direct_synthesis_task:
 
 antigravity_integration_task:
   description: >
-    Read the generated swarm architecture and integration context.
-    Specifically review these integration details:
+    Review the swarm synthesis report and produce a production-grade Antigravity integration plan.
+    Integration context for this run:
     - Antigravity Role: {antigravity_role}
     - CrewAI Role: {crewai_role}
     - Integration Mode: {integration_mode}
-    Produce a production-grade Antigravity implementation plan that:
-    1. Defines how Antigravity agents interact with the CrewAI project.
-    2. Outlines artifact handoff conventions between execution and planning layers.
-    3. Details local run commands and environment setup steps.
-    4. Establishes operator review gates for promotion.
-    Write the final output directly to the file artifacts/antigravity/antigravity_execution_plan.md.
+    STRICT OUTPUT RULES — violations will fail validation:
+    - Write plain markdown only.
+    - Do NOT include any Python code, pseudocode, JSON fragments, code blocks, lambda expressions,
+      random generators, placeholder variables, or raw data structures.
+    - Every section heading listed below MUST appear in the output.
+    - All content must be written in complete English sentences and bullet lists.
+    Required output structure — use these exact headings in this order:
+    # Hoch Agent Swarm Antigravity Execution Plan
+    ## Mission
+    ## Inputs Reviewed
+    ## Crew Output Chain
+    ## Security Audit Summary
+    ## Antigravity Integration Steps
+    ## Local-Only Constraints
+    ## Validation Checklist
+    ## Next Actions
   expected_output: >
-    A complete markdown document describing the Antigravity-to-CrewAI integration plan.
+    A complete plain-markdown document with all eight required sections.
+    Must not contain code blocks, JSON, Python expressions, or pseudocode.
+    Must be non-empty and directly readable as an operator-facing integration plan.
   agent: antigravity_integration_operator

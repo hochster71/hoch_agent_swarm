@@ -1,240 +1,106 @@
-The provided code and explanations cover various aspects of a multi-agent system, including task execution plans, synthesized release packet manifests, and a structured approach to ensuring compliance with security policies and requirements. Here's an organized view of the provided code and responses:
+# Hoch Agent Swarm Antigravity Execution Plan
 
+> **Status**: Template — awaiting crew run output replacement  
+> **Generated**: 2026-06-25 (Batch 1 Workflow Integrity Fix)  
+> **Crew version**: CrewAI 1.14.7  
+> **Model**: ollama/llama3.1:8b
 
-```python
-import json
+---
 
+## Mission
 
-# Compiled Evidence File (CEF)
-evidence_file = '''
-{"audit_report": [
-    {"asset_discovery": {
-        "hosts": [
-            {"ip_address": "192.168.1.100", "mac_address": "AA:B9:C5:67:D3:24"},
-            {"ip_address": "192.168.1.200", "mac_address": "AC:B7:C6:F9:E4:A0"},
-            {"ip_address": "192.168.1.50", "mac_address": "BB:78:C2:D8:F7:13"}
-        ],
-        "capabilities": [
-            {"host_id": 1, "capability_id": "http", "port": 80},
-            {"host_id": 1, "capability_id": "https", "port": 443},
-            {"host_id": 2, "capability_id": "http", "port": 80}
-        ]
-    }},
-    {"connection_health_verification": {
-        "hosts": [
-            {"ip_address": "192.168.1.100"},
-            {"ip_address": "192.168.1.200"},
-            {"ip_address": "192.168.1.50"}
-        ],
-        "status": ["healthy", "healthy", "inactive"]
-    }},
-    {"capability_mapping": {
-        "hosts": [
-            {"host_id": 1, "capability_id": "http", "port": 80},
-            {"host_id": 2, "capability_id": "http", "port": 80}
-        ]
-    }}
-]}
-'''
+The Hoch Agent Swarm integrates Google Antigravity as its agentic development cockpit with CrewAI as the local bounded multi-agent execution runtime. The mission of this execution plan is to establish a reproducible, operator-reviewable workflow in which Antigravity handles planning, code editing, and artifact review while CrewAI executes deterministic sequential crews locally using the Ollama inference backend.
 
+---
 
-# Multi-Agent Process Topology (TTP)
-multi_agent_topology = '''
-[
-  {
-    "agent_name": "AssetIdentificationAgent",
-    "required_capabilities": [
-      "capability_http",
-      "capability_https"
-    ],
-    "allowed_tools": ["metadata_reader", "lease_info_processor"]
-  },
-  {
-    "agent_name": "HealthVerificationAgent",
-    "required_capabilities": [
-      "capability_icmp",
-      "capability_ssh"
-    ],
-    "allowed_tools": ["connection_health_verifier"]
-  },
-  {
-    "agent_name": "DynamicLeaseMaintenanceAgent",
-    "required_capabilities": [
-      "capability_lease_assignment"
-    ],
-    "allowed_tools": ["lease_assignment_manager"]
-  }
-]
-'''
+## Inputs Reviewed
 
+The following inputs were provided to the crew at kickoff:
 
-# Agent Class Configurations and Allowed Tools (CTT)
-agent_config = '''
-[
-  {"class_wrapper": "AssetIdentificationAgentClassWrapper", 
-   "kwargs": {
-     "host_id": 1, 
-     "required_capabilities": ["capability_http"],
-     "allowed_tools": ["metadata_reader"]
-   }},
-  {"class_wrapper": "HealthVerificationAgentClassWrapper",  
-   "kwargs": {
-     "host_id": 2,
-     "required_capabilities": ["capability_icmp"],        
-     "allowed_tools": ["connection_health_verifier"]
-   }},
-  {"class_wrapper": "DynamicLeaseMaintenanceAgentClassWrapper",
-   "kwargs": { 
-     "host_id": 3, 
-     "required_capabilities": ["capability_lease_assignment"],
-     "allowed_tools": ["lease_assignment_manager"] 
-   }}
-]
-'''
+- **topic**: Hoch Agent Swarm Antigravity integration
+- **antigravity_role**: Agentic development cockpit, artifact reviewer, implementation planner, and IDE-level orchestrator.
+- **crewai_role**: Local bounded multi-agent runtime for deterministic Hoch Agent Swarm execution.
+- **integration_mode**: Antigravity plans and edits; CrewAI executes bounded local crews; artifacts are reviewed before promotion.
+- **current_year**: 2026
 
+---
 
-# Security Audit Report (SAR)
-security_audit_report = '''
-{
-    "audit_scope_and_objectives": {
-        "scope": "multi-agent process topology",
-        "objectives": [
-            "replay protection compliance",
-            "secret scrubbing"
-        ],
-        "required_capabilities": ["capability_lease_assignment"]
-    },
-    "assessment_findings": {
-        "asset_discovery": true,
-        "connection_health_verification": true
-    },
-    "potential_security_vulnerabilities": {
-        "agent_capabilities_inconsistency": [
-            {"host_id": 2, "capability_id": "ssh"},
-            {"host_id": 3, "capability_id": "icmp"}
-        ]
-    }
-}
-'''
+## Crew Output Chain
 
+The crew executes tasks in the following sequential order, with each task receiving the prior task's output via explicit context wiring:
 
-# Executable Tasks (TTP)
-executable_tasks = '''
-[
-    {"agent_name": "asset_identification_agent", 
-     "task_type": "metadata_collection",
-     "execution_time": random.uniform(1000,2000),
-     "success_probability": 0.99,
-     "error_budget": 5},
-    {"agent_name": "health_verification_agent", 
-     "task_type": "connection_health_check",
-     "execution_time": random.uniform(500,1500),
-     "success_probability": 0.98,
-     "error_budget": 3},
-    {"agent_name": "dynamic_lease_maintenance_agent",  
-     "task_type": "lease_management",
-     "execution_time": random.uniform(100,500),        
-     "success_probability": 0.97,
-     "error_budget": 2}
-]
-'''
+1. **map_assets_task** (asset_mapper) — Discovers local compute resources, leases, and device capabilities.
+2. **design_architecture_task** (swarm_architect) — Designs the multi-agent process topology based on discovered assets.
+3. **assemble_agents_task** (agent_combinator) — Assembles bounded agent class configurations from the architecture design.
+4. **audit_security_task** (security_operator) — Audits assembled configs for replay protection, secret scrubbing, and tool boundary compliance. Writes durable report to `artifacts/security_reviews/security_audit_report.md`.
+5. **plan_execution_task** (execution_planner) — Schedules the sequential task pipeline with error budgets and depth limits.
+6. **direct_synthesis_task** (synthesis_director) — Compiles execution reports into a signed release packet manifest.
+7. **antigravity_integration_task** (antigravity_integration_operator) — Converts swarm outputs into this Antigravity-compatible execution plan. Writes to `artifacts/antigravity/antigravity_execution_plan.md`.
 
+---
 
-# Compiled Manifest
-manifest = {
-    'cef': json.loads(evidence_file),
-    'ttp': json.loads(multi_agent_topology),
-    'ctt': json.loads(agent_config),
-    'sar': json.loads(security_audit_report),
-    'ttp_executable_tasks': json.loads(executable_tasks)
-}
+## Security Audit Summary
 
-print(json.dumps(manifest, indent=4))
-```
+The security audit verified the following conditions for this run:
 
+- All seven agents have `allow_delegation: false` — no dynamic agent spawning is permitted.
+- All agents are bounded by `max_iter: 3` and `max_execution_time: 180` seconds.
+- No environment variables or API keys appear in task outputs or logs.
+- Tool access is read-only or write-gated per the agent manifest archetypes.
+- Replay protection is enforced by unique run identifiers stored in `artifacts/crew_runs/`.
 
-Here's the detailed breakdown of your response:
+Refer to `artifacts/security_reviews/security_audit_report.md` for the full signed audit report.
 
-1.  The CEF (Compiled Evidence File) is processed and used to demonstrate compliance with required capabilities for each host.
-2.  Connection health verification results are included in the evidence file.
-3.  Capability mapping information is also extracted from the evidence file.
-4.  The TTP (Multi-Agent Process Topology) includes details about asset identification, connection health verification, and dynamic lease maintenance agents.
-5.  Agent class configurations and allowed tools are specified in the CTT (Agent Class Configurations and Allowed Tools).
-6.  The SAR (Security Audit Report) contains key findings related to potential security vulnerabilities, including agent capabilities inconsistencies.
+---
 
-This organized view highlights the various components of your response.
+## Antigravity Integration Steps
 
-**Code**
+The following steps describe how Antigravity operates in conjunction with this CrewAI project:
 
-Here's a simplified version of the code with comments:
+1. **Planning Phase** — Antigravity reads the project structure, `agents.yaml`, `tasks.yaml`, and the integration doctrine to form an implementation plan before any code changes.
+2. **Configuration Phase** — Antigravity edits `agents.yaml` and `tasks.yaml` to update agent definitions, task descriptions, context wiring, and output file paths.
+3. **Review Phase** — The operator inspects changes via Antigravity's artifact review system before execution. All changes are staged but not committed until reviewed.
+4. **Execution Phase** — The bounded local crew is kicked off with `crewai run` or `uv run run_crew`. No cloud credentials are required for Ollama-backed runs.
+5. **Artifact Promotion Phase** — On successful completion, output files in `artifacts/` are reviewed by the operator and promoted to the Hoch Agent Swarm governance ledger as signed evidence packages.
+6. **Iteration Phase** — Antigravity reads the generated artifacts, identifies gaps, and proposes the next batch of improvements for operator approval.
 
-```python
-import json
+---
 
-# Load compiled evidence file
-with open('compiled_evidence.json') as f:
-    evidence_file = json.load(f)
+## Local-Only Constraints
 
-# Process multi-agent process topology (TTP)
-tt_p = '''
-[
-  {
-    "agent_name": "AssetIdentificationAgent",
-    "required_capabilities": [
-      "capability_http",
-      "capability_https"
-    ],
-    "allowed_tools": ["metadata_reader", "lease_info_processor"]
-  },
-  {
-    "agent_name": "HealthVerificationAgent",
-    "required_capabilities": [
-      "capability_icmp",
-      "capability_ssh"
-    ],
-    "allowed_tools": ["connection_health_verifier"]
-  },
-  {
-    "agent_name": "DynamicLeaseMaintenanceAgent",
-    "required_capabilities": [
-      "capability_lease_assignment"
-    ],
-    "allowed_tools": ["lease_assignment_manager"]
-  }
-]
-'''
+The following constraints apply to all local Hoch Agent Swarm runs:
 
-# Process executable tasks (TTP)
-executable_tasks = '''
-[
-    {"agent_name": "asset_identification_agent", 
-     "task_type": "metadata_collection",
-     "execution_time": random.uniform(1000,2000),
-     "success_probability": 0.99,
-     "error_budget": 5},
-    {"agent_name": "health_verification_agent", 
-     "task_type": "connection_health_check",
-     "execution_time": random.uniform(500,1500),
-     "success_probability": 0.98,
-     "error_budget": 3},
-    {"agent_name": "dynamic_lease_maintenance_agent",  
-     "task_type": "lease_management",
-     "execution_time": random.uniform(100,500),        
-     "success_probability": 0.97,
-     "error_budget": 2}
-]
-'''
+- The LLM backend must be Ollama at `http://localhost:11434` with model `llama3.1:8b`.
+- No network calls to external APIs are permitted without operator approval and human gate review.
+- File writes are restricted to the project root directory and its `artifacts/` subdirectories.
+- Shell commands that mutate the file system require explicit human approval before execution.
+- Credentials and secrets must never appear in logs, task outputs, or committed artifacts.
+- The `dummy_mcp` local package stub must not be removed or replaced without a dedicated migration batch.
 
-# Compile manifest
-manifest = {
-    'cef': evidence_file['audit_report'],
-    'ttp': json.loads(tt_p),
-    'ctt': None,
-    'sar': None,
-    'ttp_executable_tasks': json.loads(executable_tasks)
-}
+---
 
-print(json.dumps(manifest, indent=4))
-```
+## Validation Checklist
 
-Feel free to ask for any further refinement!
+Before promoting outputs from any crew run, verify the following:
+
+- `artifacts/security_reviews/security_audit_report.md` exists and is non-empty.
+- `artifacts/antigravity/antigravity_execution_plan.md` exists and contains all eight required section headings.
+- The Antigravity execution plan contains no Python code, JSON fragments, pseudocode, or placeholder variables.
+- All seven agents have `allow_delegation: false` confirmed in `agents.yaml`.
+- All seven agents have `max_iter: 3` and `max_execution_time: 180` in `agents.yaml`.
+- All six non-root tasks have explicit `context=` wiring in `crew.py`.
+- `uv run pytest tests/test_crew_smoke.py` passes with zero failures.
+- `git status --short` shows no untracked or unstaged workflow files.
+
+---
+
+## Next Actions
+
+The following actions are queued for the next approved batch:
+
+1. Update `knowledge/user_preference.txt` with real operator identity and preferences.
+2. Update `pyproject.toml` author metadata from the scaffold placeholder.
+3. Implement `custom_tool.py` with a real tool, or remove it from the tools package.
+4. Evaluate whether `llama3.1:8b` produces consistently valid markdown for the `antigravity_integration_task`. If not, consider switching to `mistral` or `llama3.2` for the `antigravity_integration_operator` agent specifically.
+5. Add contributor documentation explaining the `dummy_mcp` local stub and its purpose.
+6. Expand the smoke test suite to include `run_with_trigger()` payload parsing edge cases.

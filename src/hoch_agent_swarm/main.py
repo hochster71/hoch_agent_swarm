@@ -75,6 +75,8 @@ def test():
 def run_with_trigger():
     """
     Run the crew with trigger payload.
+    topic and current_year are extracted from the payload when present;
+    deterministic defaults are used otherwise to prevent blank task interpolation.
     """
     import json
 
@@ -88,11 +90,20 @@ def run_with_trigger():
 
     inputs = {
         "crewai_trigger_payload": trigger_payload,
-        "topic": "",
-        "current_year": "",
-        "antigravity_role": "Agentic development cockpit, artifact reviewer, implementation planner, and IDE-level orchestrator.",
-        "crewai_role": "Local bounded multi-agent runtime for deterministic Hoch Agent Swarm execution.",
-        "integration_mode": "Antigravity plans and edits; CrewAI executes bounded local crews; artifacts are reviewed before promotion."
+        "topic": trigger_payload.get("topic", "Hoch Agent Swarm Antigravity integration"),
+        "current_year": str(datetime.now().year),
+        "antigravity_role": trigger_payload.get(
+            "antigravity_role",
+            "Agentic development cockpit, artifact reviewer, implementation planner, and IDE-level orchestrator."
+        ),
+        "crewai_role": trigger_payload.get(
+            "crewai_role",
+            "Local bounded multi-agent runtime for deterministic Hoch Agent Swarm execution."
+        ),
+        "integration_mode": trigger_payload.get(
+            "integration_mode",
+            "Antigravity plans and edits; CrewAI executes bounded local crews; artifacts are reviewed before promotion."
+        ),
     }
 
     try:

@@ -26,3 +26,8 @@ type = "crew"
 
 [tool.uv.sources]
 mcp = { path = "./dummy_mcp" }
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
