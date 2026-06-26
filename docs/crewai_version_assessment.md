@@ -1,5 +1,5 @@
 # CrewAI Version Assessment
-> Generated: 2026-06-26 · Batch 4 · Hoch Agent Swarm
+> Generated: 2026-06-26 · Batch 4 · Updated: 2026-06-26 Batch 7 · Hoch Agent Swarm
 
 ---
 
@@ -7,9 +7,9 @@
 
 | | Version | Date |
 |---|---|---|
-| **Installed (pinned)** | `1.14.7` | — |
+| **Installed (pinned)** | `1.15.0` | Promoted Batch 7 |
 | **Latest on PyPI** | `1.15.0` | 2026-06-25 |
-| **Delta** | 1 minor version | Released ~7 hours before this assessment |
+| **Delta** | — (current) | — |
 
 ---
 
@@ -113,30 +113,25 @@ uv run python -c "import crewai; print(crewai.__version__)"  # should be 1.14.7
 
 ## Recommendation
 
-**BLOCKED** (as of 2026-06-26, Batch 6 trial).
+**PROMOTED** (as of 2026-06-26, Batch 7 shim assessment).
 
-`crewai 1.15.0` fails at first task execution on this Ollama/LiteLLM runtime
-(`MODEL=ollama/llama3.1:8b`, `API_BASE=http://localhost:11434`) with:
+`crewai 1.15.0` is **compatible** with this Ollama/local LLM runtime and has been
+promoted to `main`. Pytest: 123 passed. Live crew: PASS. All 5 artifacts VALID.
 
-```
-ValueError: OPENAI_API_KEY is required
-  at crewai/llms/providers/openai/completion.py:366
-```
+**Batch 6 BLOCKED decision — corrected root cause**: The Batch 6 trial run failed
+with `ValueError: OPENAI_API_KEY is required` because the `.env` file was not
+present in the trial worktree (git worktrees do not copy gitignored files). Without
+`MODEL=ollama/llama3.1:8b` set, `crewai 1.15.0` fell back to `gpt-4o` and routed
+through the OpenAI native provider. This was a trial environment setup defect, not
+a 1.15.0 regression.
 
-**Root cause**: 1.15.0 defaults to `AgentExecutor` (experimental) which routes
-LLM calls through native OpenAI provider modules that require `OPENAI_API_KEY`
-even when the configured model is Ollama. The prior `CrewAgentExecutor` used
-LiteLLM routing and did not have this requirement.
+**Operational prerequisite**: The `.env` file must be present in the working
+directory before running the crew. This requirement exists on both 1.14.7 and 1.15.0;
+1.15.0 makes it fail faster and more explicitly (at client construction vs. inference).
 
 **Full trial memo**: `docs/crewai_1_15_0_trial_memo.md` (in `trial/crewai-1.15.0` branch).
 
-**Reassess when**:
-1. CrewAI fixes `AgentExecutor` ollama/openai-compatible provider routing, OR
-2. A `1.15.x` patch is released addressing this regression, OR
-3. A supported workaround (`executor_class=CrewAgentExecutor` per-agent) is
-   confirmed stable and forward-compatible.
-
-**Estimated window**: Batch 7 or later.
+**Installed**: `crewai[tools]>=1.15.0,<2` — resolves to `1.15.0`.
 
 
 ---

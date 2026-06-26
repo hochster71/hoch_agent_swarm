@@ -5,7 +5,7 @@ description = "hoch_agent_swarm using crewAI"
 authors = [{ name = "Michael Hoch", email = "michaelhoch@Michaels-MacBook-Pro.local" }]
 requires-python = ">=3.10,<3.14"
 dependencies = [
-    "crewai[tools]==1.14.7",
+    "crewai[tools]>=1.15.0,<2",
     "mcp"
 ]
 
@@ -35,6 +35,6 @@ dev = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 filterwarnings = [
-    # CrewAI 1.14.7 internal deprecation warnings — not actionable from this project
+    # CrewAI 1.15.0 internal deprecation warnings — not actionable from this project
     "ignore::DeprecationWarning:crewai.*",
 ]
