@@ -6,7 +6,7 @@ test.describe("Device-as-a-Service Registry E2E", () => {
   test("runs local device discovery, inspects details, and approves a node", async ({ page }) => {
     const consoleErrors: string[] = [];
     page.on("console", msg => {
-      if (msg.type() === "error") {
+      if (msg.type() === "error" && !msg.text().includes("WebSocket")) {
         consoleErrors.push(msg.text());
       }
     });

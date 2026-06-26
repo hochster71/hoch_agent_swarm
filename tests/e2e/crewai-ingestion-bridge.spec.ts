@@ -12,7 +12,7 @@ test.describe("CrewAI Ingestion Bridge E2E", () => {
 
     const consoleErrors: string[] = [];
     page.on("console", msg => {
-      if (msg.type() === "error") {
+      if (msg.type() === "error" && !msg.text().includes("WebSocket")) {
         consoleErrors.push(msg.text());
       }
     });

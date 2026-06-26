@@ -1666,6 +1666,154 @@ def generate_execution_plan(req: ExecutionPlanRequest):
         "markdown": md
     }
 
+class EvidenceClassificationRequest(BaseModel):
+    evidence_id: str
+    retention_decision: str
+
+@app.get("/api/v1/release/evidence/retention")
+def get_evidence_retention():
+    from backend.runtime_execution_store import scan_and_index_evidence
+    try:
+        evidence_list = scan_and_index_evidence()
+        return {
+            "status": "success",
+            "evidence": evidence_list
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/v1/release/evidence/retention/classify")
+def post_classify_evidence(req: EvidenceClassificationRequest):
+    from backend.runtime_execution_store import classify_evidence
+    if req.retention_decision not in ("retain", "archive", "ignore", "needs-review"):
+        raise HTTPException(status_code=400, detail="Invalid retention decision")
+    try:
+        classify_evidence(req.evidence_id, req.retention_decision)
+        return {
+            "status": "success",
+            "evidence_id": req.evidence_id,
+            "retention_decision": req.retention_decision
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/release/evidence/archive/preview")
+def get_release_evidence_archive_preview():
+    from backend.runtime_execution_store import scan_and_index_evidence
+    import hashlib
+    import os
+    from datetime import datetime, timezone
+    
+    try:
+        evidence_list = scan_and_index_evidence()
+        project_root = Path(__file__).resolve().parent.parent
+        
+        included = []
+        excluded = []
+        needs_review = []
+        missing = []
+        
+        for item in evidence_list:
+            full_path = project_root / item["source_path"]
+            exists = full_path.exists()
+            
+            decision = item["retention_decision"]
+            
+            if not exists:
+                missing.append({
+                    "evidence_id": item["evidence_id"],
+                    "source_path": item["source_path"],
+                    "artifact_type": item["artifact_type"]
+                })
+            elif decision == "retain":
+                included.append({
+                    "evidence_id": item["evidence_id"],
+                    "source_path": item["source_path"],
+                    "file_hash": item["file_hash"],
+                    "artifact_type": item["artifact_type"]
+                })
+            elif decision in ("ignore", "archive"):
+                excluded.append({
+                    "evidence_id": item["evidence_id"],
+                    "source_path": item["source_path"],
+                    "file_hash": item["file_hash"],
+                    "artifact_type": item["artifact_type"],
+                    "retention_decision": decision
+                })
+            elif decision == "needs-review":
+                needs_review.append({
+                    "evidence_id": item["evidence_id"],
+                    "source_path": item["source_path"],
+                    "file_hash": item["file_hash"],
+                    "artifact_type": item["artifact_type"]
+                })
+                
+        timestamp_str = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        
+        sorted_included = sorted(included, key=lambda x: x["evidence_id"])
+        
+        h = hashlib.sha256()
+        for idx_item in sorted_included:
+            h.update(idx_item["file_hash"].encode('utf-8'))
+        simulated_checksum = h.hexdigest()
+        
+        planned_archive_path = f"dist/archives/evidence-archive-{timestamp_str}-{simulated_checksum[:8]}.tar.gz"
+        
+        md = f"# Release Evidence Archive Preview Manifest\n\n"
+        md += f"- **Generated At**: {datetime.now(timezone.utc).isoformat()}\n"
+        md += f"- **Planned Archive Path**: `{planned_archive_path}`\n"
+        md += f"- **Simulated Checksum (SHA-256)**: `{simulated_checksum}`\n\n"
+        
+        md += f"## Metrics Summary\n\n"
+        md += f"| Category | Count |\n"
+        md += f"| --- | --- |\n"
+        md += f"| Included (Retained) | {len(included)} |\n"
+        md += f"| Excluded | {len(excluded)} |\n"
+        md += f"| Needs Review | {len(needs_review)} |\n"
+        md += f"| Missing from Disk | {len(missing)} |\n\n"
+        
+        if missing or needs_review:
+            md += f"### ⚠️ Warnings Detected\n\n"
+            if missing:
+                md += f"- **Missing Artifacts**: {len(missing)} items exist in database index but are not present on disk.\n"
+            if needs_review:
+                md += f"- **Needs Review**: {len(needs_review)} items require operator retention decisions.\n"
+            md += "\n"
+            
+        md += f"## Planned Included Artifacts ({len(included)})\n\n"
+        if included:
+            md += f"| Type | Relative Path | SHA-256 Hash |\n"
+            md += f"| --- | --- | --- |\n"
+            for item in sorted_included:
+                md += f"| {item['artifact_type']} | `{item['source_path']}` | `{item['file_hash']}` |\n"
+        else:
+            md += "*No artifacts selected for retention.*\n"
+            
+        md += "\n"
+        
+        return {
+            "status": "success",
+            "planned_archive_path": planned_archive_path,
+            "checksum": simulated_checksum,
+            "included_count": len(included),
+            "excluded_count": len(excluded),
+            "needs_review_count": len(needs_review),
+            "missing_count": len(missing),
+            "manifest": {
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "planned_archive_path": planned_archive_path,
+                "checksum": simulated_checksum,
+                "included_artifacts": included,
+                "excluded_artifacts": excluded,
+                "needs_review_artifacts": needs_review,
+                "missing_artifacts": missing
+            },
+            "markdown": md
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.post("/api/v1/release/candidate-packets")
 def create_candidate_packet(req: CandidatePacketRequest):
     import uuid

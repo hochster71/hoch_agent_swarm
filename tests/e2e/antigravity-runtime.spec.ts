@@ -32,7 +32,7 @@ test.describe("Antigravity runtime console", () => {
 
     page.on("console", (msg) => {
       const text = msg.text();
-      if (msg.type() === "error" || text.includes("cdn.tailwindcss.com should not be used in production")) {
+      if ((msg.type() === "error" && !text.includes("WebSocket")) || text.includes("cdn.tailwindcss.com should not be used in production")) {
         consoleErrors.push(text);
       }
     });

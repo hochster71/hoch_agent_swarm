@@ -1309,8 +1309,65 @@
                             <div style="font-size: 10px; color: var(--text-secondary); font-style: italic; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px; margin-top: 6px; display: flex; align-items: center; gap: 6px;">
                                 <i class="fas fa-info-circle" style="color: var(--accent-blue);"></i>
                                 <span>Note: All steps are evaluated dynamically against current candidate evidence and authority token status.</span>
-                            </div>
+                             </div>
                         </div>
+                    </div>
+                </section>
+
+                <!-- Release Evidence Retention Policy Panel (Phase 26) -->
+                <section class="card" id="release-evidence-retention-panel" style="padding: 20px; margin-bottom: 10px; border-left: 4px solid var(--accent-teal);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-glass); padding-bottom: 12px; margin-bottom: 16px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i data-lucide="database" style="color: var(--accent-teal); width: 20px; height: 20px;"></i>
+                            <h3 style="font-size: 16px; font-weight: 700; color: #fff; margin: 0;">RELEASE EVIDENCE RETENTION POLICY MANAGER</h3>
+                        </div>
+                        <div>
+                            <button id="btn-scan-evidence" class="btn btn-xs btn-outline btn-success" style="display: flex; align-items: center; gap: 4px;">
+                                <i data-lucide="refresh-cw" style="width: 12px; height: 12px;"></i> Scan/Sync Evidence
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Metrics Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-bottom: 16px;">
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 6px; padding: 10px; text-align: center;">
+                            <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase;">Total</div>
+                            <div id="retention-count-total" style="font-size: 18px; font-weight: bold; color: #fff; margin-top: 4px;">0</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 6px; padding: 10px; text-align: center;">
+                            <div style="font-size: 10px; color: var(--accent-orange); text-transform: uppercase;">Needs Review</div>
+                            <div id="retention-count-review" style="font-size: 18px; font-weight: bold; color: var(--accent-orange); margin-top: 4px;">0</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 6px; padding: 10px; text-align: center;">
+                            <div style="font-size: 10px; color: var(--accent-teal); text-transform: uppercase;">Retained</div>
+                            <div id="retention-count-retained" style="font-size: 18px; font-weight: bold; color: var(--accent-teal); margin-top: 4px;">0</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 6px; padding: 10px; text-align: center;">
+                            <div style="font-size: 10px; color: var(--accent-blue); text-transform: uppercase;">Archived</div>
+                            <div id="retention-count-archived" style="font-size: 18px; font-weight: bold; color: var(--accent-blue); margin-top: 4px;">0</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 6px; padding: 10px; text-align: center;">
+                            <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase;">Ignored</div>
+                            <div id="retention-count-ignored" style="font-size: 18px; font-weight: bold; color: var(--text-secondary); margin-top: 4px;">0</div>
+                        </div>
+                    </div>
+
+                    <!-- Evidence Table -->
+                    <div class="table-container" style="overflow-x: auto; background: rgba(0,0,0,0.15); border: 1px solid var(--border-glass); border-radius: 8px; max-height: 350px; overflow-y: auto;">
+                        <table class="deployments-table" style="font-size: 10px; width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); text-align: left; background: rgba(255,255,255,0.02);">
+                                    <th style="padding: 8px 12px;">Type</th>
+                                    <th style="padding: 8px 12px;">Source Path</th>
+                                    <th style="padding: 8px 12px;">SHA-256 Hash</th>
+                                    <th style="padding: 8px 12px;">Created At</th>
+                                    <th style="padding: 8px 12px; text-align: center;">Retention Decision</th>
+                                </tr>
+                            </thead>
+                            <tbody id="retention-evidence-tbody">
+                                <!-- Dynamically populated evidence entries -->
+                            </tbody>
+                        </table>
                     </div>
                 </section>
 

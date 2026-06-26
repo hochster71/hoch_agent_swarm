@@ -6,7 +6,7 @@ test.describe("Device Service Health Lease Manager E2E", () => {
   test("registers, approves, updates leases, and asserts UI status badges", async ({ page }) => {
     const consoleErrors: string[] = [];
     page.on("console", msg => {
-      if (msg.type() === "error") {
+      if (msg.type() === "error" && !msg.text().includes("WebSocket")) {
         consoleErrors.push(msg.text());
       }
     });

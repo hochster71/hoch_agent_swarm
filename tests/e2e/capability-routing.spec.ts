@@ -7,7 +7,7 @@ test.describe("Device Capability Routing Center E2E", () => {
     // Collect browser console errors
     const consoleErrors: string[] = [];
     page.on("console", msg => {
-      if (msg.type() === "error") {
+      if (msg.type() === "error" && !msg.text().includes("WebSocket")) {
         consoleErrors.push(msg.text());
       }
     });

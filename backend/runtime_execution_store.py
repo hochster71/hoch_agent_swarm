@@ -579,6 +579,19 @@ def init_execution_store_tables() -> None:
             )
             """
         )
+        # Create release_evidence_retention table
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS release_evidence_retention (
+                evidence_id TEXT PRIMARY KEY,
+                artifact_type TEXT NOT NULL,
+                source_path TEXT NOT NULL,
+                file_hash TEXT NOT NULL,
+                retention_decision TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            )
+            """
+        )
         conn.commit()
     finally:
         conn.close()
@@ -2523,6 +2536,144 @@ def list_authority_logs() -> list[dict]:
     try:
         rows = conn.execute("SELECT * FROM formal_release_authority_logs ORDER BY created_at DESC").fetchall()
         return [dict(r) for r in rows]
+    finally:
+        conn.close()
+
+def get_file_sha256(filepath: Path) -> str:
+    import hashlib
+    h = hashlib.sha256()
+    try:
+        with open(filepath, 'rb') as f:
+            while chunk := f.read(8192):
+                h.update(chunk)
+    except Exception:
+        pass
+    return h.hexdigest()
+
+def get_path_hash(target_path: Path) -> str:
+    import hashlib
+    import os
+    if target_path.is_file():
+        return get_file_sha256(target_path)
+    elif target_path.is_dir():
+        h = hashlib.sha256()
+        files = []
+        for root, _, filenames in os.walk(target_path):
+            for f in filenames:
+                files.append(Path(root) / f)
+        files.sort()
+        for f in files:
+            h.update(str(f.relative_to(target_path)).encode('utf-8'))
+            h.update(get_file_sha256(f).encode('utf-8'))
+        return h.hexdigest()
+    return hashlib.sha256(str(target_path).encode('utf-8')).hexdigest()
+
+def scan_and_index_evidence() -> list[dict]:
+    import os
+    import hashlib
+    
+    project_root = Path(__file__).resolve().parent.parent
+    
+    # Folders and their artifact type mapping
+    scan_configs = [
+        ("dist/candidates", "candidate", True),
+        ("dist/formal-previews", "formal-preview", True),
+        ("dist/attestations", "attestation", True),
+        ("dist/releases", "release-bundle", False),
+        ("artifacts/qa", "qa-artifact", False),
+        ("test-results", "temporary-run", False)
+    ]
+    
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    
+    try:
+        # Get existing indexed items
+        existing = {}
+        conn.row_factory = sqlite3.Row
+        rows = conn.execute("SELECT evidence_id, source_path, file_hash, retention_decision, created_at FROM release_evidence_retention").fetchall()
+        for r in rows:
+            existing[r["evidence_id"]] = {
+                "evidence_id": r["evidence_id"],
+                "source_path": r["source_path"],
+                "file_hash": r["file_hash"],
+                "retention_decision": r["retention_decision"],
+                "created_at": r["created_at"]
+            }
+            
+        new_records = []
+        
+        for rel_dir, artifact_type, dir_is_single_entry in scan_configs:
+            full_dir = project_root / rel_dir
+            if not full_dir.exists() or not full_dir.is_dir():
+                continue
+                
+            for item in full_dir.iterdir():
+                # For qa-artifact, skip subdirectories to avoid deep playwright-report indexing
+                if artifact_type == "qa-artifact" and item.is_dir():
+                    continue
+                # Skip system files like .DS_Store
+                if item.name == ".DS_Store" or item.name.startswith("."):
+                    continue
+                    
+                item_rel = str(item.relative_to(project_root))
+                evidence_id = hashlib.sha256(item_rel.encode('utf-8')).hexdigest()
+                
+                # Check if already exists in DB
+                if evidence_id in existing:
+                    # Update file hash if changed (e.g. preview summary updated) but keep decision
+                    current_hash = get_path_hash(item)
+                    if existing[evidence_id]["file_hash"] != current_hash:
+                        conn.execute(
+                            "UPDATE release_evidence_retention SET file_hash = ? WHERE evidence_id = ?",
+                            (current_hash, evidence_id)
+                        )
+                    continue
+                
+                # If new, compute hash and created_at
+                file_hash = get_path_hash(item)
+                mtime = os.path.getmtime(item)
+                created_at = datetime.fromtimestamp(mtime, timezone.utc).isoformat()
+                
+                new_records.append((
+                    evidence_id,
+                    artifact_type,
+                    item_rel,
+                    file_hash,
+                    "needs-review",
+                    created_at
+                ))
+                
+        if new_records:
+            conn.executemany(
+                """
+                INSERT INTO release_evidence_retention (
+                    evidence_id, artifact_type, source_path, file_hash, retention_decision, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                new_records
+            )
+            conn.commit()
+            
+        # Re-fetch everything
+        conn.row_factory = sqlite3.Row
+        all_rows = conn.execute("SELECT * FROM release_evidence_retention ORDER BY created_at DESC").fetchall()
+        return [dict(r) for r in all_rows]
+        
+    finally:
+        conn.close()
+
+def classify_evidence(evidence_id: str, decision: str) -> None:
+    if decision not in ("retain", "archive", "ignore", "needs-review"):
+        raise ValueError(f"Invalid retention decision: {decision}")
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        conn.execute(
+            "UPDATE release_evidence_retention SET retention_decision = ? WHERE evidence_id = ?",
+            (decision, evidence_id)
+        )
+        conn.commit()
     finally:
         conn.close()
 

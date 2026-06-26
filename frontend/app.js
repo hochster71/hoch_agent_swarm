@@ -10966,6 +10966,8 @@ async function initReleaseDecisionRoom() {
         exportPlanJsonBtn.addEventListener("click", exportPlanJson);
     }
 
+    await initReleaseEvidenceRetention();
+
     await populateDecisionRoomCandidates();
 }
 
@@ -11547,5 +11549,140 @@ function exportPlanJson() {
 window.generateExecutionPlan = generateExecutionPlan;
 window.exportPlanMarkdown = exportPlanMarkdown;
 window.exportPlanJson = exportPlanJson;
+
+async function initReleaseEvidenceRetention() {
+    const scanBtn = document.getElementById("btn-scan-evidence");
+    if (scanBtn) {
+        scanBtn.addEventListener("click", loadEvidenceRetentionList);
+    }
+    await loadEvidenceRetentionList();
+}
+
+async function loadEvidenceRetentionList() {
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/evidence/retention`);
+        if (!res.ok) return;
+        const data = await res.json();
+        const evidence = data.evidence || [];
+        
+        let total = evidence.length;
+        let review = 0;
+        let retained = 0;
+        let archived = 0;
+        let ignored = 0;
+        
+        const tbody = document.getElementById("retention-evidence-tbody");
+        if (tbody) {
+            tbody.innerHTML = "";
+            evidence.forEach(item => {
+                const dec = item.retention_decision;
+                if (dec === "needs-review") review++;
+                else if (dec === "retain") retained++;
+                else if (dec === "archive") archived++;
+                else if (dec === "ignore") ignored++;
+                
+                const row = document.createElement("tr");
+                row.style.borderBottom = "1px solid rgba(255,255,255,0.03)";
+                
+                let typeColor = "var(--text-secondary)";
+                let typeBg = "rgba(255,255,255,0.05)";
+                if (item.artifact_type === "candidate") {
+                    typeColor = "var(--accent-blue)";
+                    typeBg = "rgba(59, 130, 246, 0.15)";
+                } else if (item.artifact_type === "formal-preview") {
+                    typeColor = "var(--accent-purple)";
+                    typeBg = "rgba(168, 85, 247, 0.15)";
+                } else if (item.artifact_type === "attestation") {
+                    typeColor = "var(--accent-orange)";
+                    typeBg = "rgba(249, 115, 22, 0.15)";
+                } else if (item.artifact_type === "release-bundle") {
+                    typeColor = "var(--accent-teal)";
+                    typeBg = "rgba(20, 184, 166, 0.15)";
+                } else if (item.artifact_type === "qa-artifact") {
+                    typeColor = "var(--accent-cyan)";
+                    typeBg = "rgba(6, 182, 212, 0.15)";
+                } else if (item.artifact_type === "temporary-run") {
+                    typeColor = "#64748b";
+                    typeBg = "rgba(100, 116, 139, 0.15)";
+                }
+                
+                const selectId = `select-retention-${item.evidence_id}`;
+                const options = [
+                    { value: "needs-review", label: "NEEDS REVIEW" },
+                    { value: "retain", label: "RETAIN" },
+                    { value: "archive", label: "ARCHIVE" },
+                    { value: "ignore", label: "IGNORE" }
+                ];
+                
+                let selectHtml = `<select id="${selectId}" class="retention-decision-select" style="font-size: 9px; padding: 2px 4px; border-radius: 4px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); color: #fff;">`;
+                options.forEach(opt => {
+                    const sel = opt.value === dec ? "selected" : "";
+                    selectHtml += `<option value="${opt.value}" ${sel}>${opt.label}</option>`;
+                });
+                selectHtml += `</select>`;
+                
+                row.innerHTML = `
+                    <td style="padding: 6px 12px;">
+                        <span style="font-size: 9px; font-weight: bold; color: ${typeColor}; background: ${typeBg}; border: 1px solid ${typeColor}30; padding: 2px 6px; border-radius: 4px;">
+                            ${item.artifact_type.toUpperCase()}
+                        </span>
+                    </td>
+                    <td style="padding: 6px 12px; font-family: monospace; color: #fff; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.source_path}</td>
+                    <td style="padding: 6px 12px; font-family: monospace; color: var(--accent-teal);">${item.file_hash.substring(0, 12)}...</td>
+                    <td style="padding: 6px 12px; color: var(--text-secondary);">${new Date(item.created_at).toLocaleString()}</td>
+                    <td style="padding: 6px 12px; text-align: center;">${selectHtml}</td>
+                `;
+                tbody.appendChild(row);
+                
+                const selectEl = row.querySelector(`#${selectId}`);
+                if (selectEl) {
+                    selectEl.addEventListener("change", async (e) => {
+                        await classifyEvidence(item.evidence_id, e.target.value);
+                    });
+                }
+            });
+        }
+        
+        const totalEl = document.getElementById("retention-count-total");
+        const reviewEl = document.getElementById("retention-count-review");
+        const retainedEl = document.getElementById("retention-count-retained");
+        const archivedEl = document.getElementById("retention-count-archived");
+        const ignoredEl = document.getElementById("retention-count-ignored");
+        
+        if (totalEl) totalEl.textContent = total;
+        if (reviewEl) reviewEl.textContent = review;
+        if (retainedEl) retainedEl.textContent = retained;
+        if (archivedEl) archivedEl.textContent = archived;
+        if (ignoredEl) ignoredEl.textContent = ignored;
+        
+    } catch (err) {
+        console.error("Error loading retention evidence list:", err);
+    }
+}
+
+async function classifyEvidence(evidenceId, decision) {
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/evidence/retention/classify`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                evidence_id: evidenceId,
+                retention_decision: decision
+            })
+        });
+        if (res.ok) {
+            await loadEvidenceRetentionList();
+        } else {
+            const err = await res.json();
+            alert("Failed to classify evidence: " + (err.detail || "Unknown error"));
+        }
+    } catch (err) {
+        alert("Error classifying evidence: " + err.message);
+    }
+}
+
+window.initReleaseEvidenceRetention = initReleaseEvidenceRetention;
+window.loadEvidenceRetentionList = loadEvidenceRetentionList;
+window.classifyEvidence = classifyEvidence;
 
 

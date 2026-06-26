@@ -34,6 +34,12 @@ function runContractTest() {
     if (!mainPy.includes("/api/v1/release/execution-plan/generate")) {
       blockers.push("backend/main.py missing /api/v1/release/execution-plan/generate endpoint");
     }
+    if (!mainPy.includes("/api/v1/release/evidence/retention")) {
+      blockers.push("backend/main.py missing /api/v1/release/evidence/retention endpoint");
+    }
+    if (!mainPy.includes("/api/v1/release/evidence/retention/classify")) {
+      blockers.push("backend/main.py missing /api/v1/release/evidence/retention/classify endpoint");
+    }
     if (!mainPy.includes("TEST_MODE =")) {
       blockers.push("backend/main.py missing TEST_MODE definition");
     }
@@ -104,7 +110,15 @@ function runContractTest() {
       "execution-plan-details",
       "execution-plan-steps-tbody",
       "btn-export-plan-markdown",
-      "btn-export-plan-json"
+      "btn-export-plan-json",
+      "release-evidence-retention-panel",
+      "btn-scan-evidence",
+      "retention-count-total",
+      "retention-count-review",
+      "retention-count-retained",
+      "retention-count-archived",
+      "retention-count-ignored",
+      "retention-evidence-tbody"
     ];
     for (const id of requiredIds) {
       if (!html.includes(`id="${id}"`)) {
@@ -131,7 +145,8 @@ function runContractTest() {
       "RESTRICTED PRODUCTION ACTIONS",
       "CONFIRM RELEASE AUTHORITY REQUEST",
       "FORMAL RELEASE EXECUTION DRY-RUN PLANNER",
-      "ORDERED EXECUTION PROTOCOL"
+      "ORDERED EXECUTION PROTOCOL",
+      "RELEASE EVIDENCE RETENTION POLICY MANAGER"
     ];
     for (const text of requiredTexts) {
       if (!html.includes(text)) {
@@ -180,6 +195,15 @@ function runContractTest() {
     }
     if (!appJs.includes("exportPlanJson")) {
       blockers.push("frontend/app.js does not define exportPlanJson");
+    }
+    if (!appJs.includes("initReleaseEvidenceRetention")) {
+      blockers.push("frontend/app.js does not define initReleaseEvidenceRetention");
+    }
+    if (!appJs.includes("loadEvidenceRetentionList")) {
+      blockers.push("frontend/app.js does not define loadEvidenceRetentionList");
+    }
+    if (!appJs.includes("classifyEvidence")) {
+      blockers.push("frontend/app.js does not define classifyEvidence");
     }
   }
 

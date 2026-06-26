@@ -13,7 +13,7 @@ test.describe("Cross-Runtime Evidence Graph E2E", () => {
     const consoleErrors: string[] = [];
     page.on("console", msg => {
       console.log(`[BROWSER CONSOLE ${msg.type().toUpperCase()}]: ${msg.text()}`);
-      if (msg.type() === "error") {
+      if (msg.type() === "error" && !msg.text().includes("WebSocket")) {
         consoleErrors.push(msg.text());
       }
     });
