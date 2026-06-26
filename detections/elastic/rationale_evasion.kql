@@ -1,0 +1,2 @@
+event.dataset : "hoch_agent_swarm.prompt_governance" and
+(verdict : "RATIONALE_REJECTED" or reason : "rationale_quality_failed")

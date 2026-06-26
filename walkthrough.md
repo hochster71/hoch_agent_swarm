@@ -287,3 +287,36 @@ We have successfully implemented Batch PR-11 to convert decorative animations in
   - **Evidence Present**: 29 → 37
   - **Matrix Status**: `"COMPLETE"`
 - **CI Pipeline Run**: Executed `python3 scripts/qa/run-ci-pipeline.py` confirming 100% success across the entire build, verification, and SBOM packaging workflow.
+
+---
+
+## Part 10 — Detection Engineering Pack & SIEM Rules (Batch PR-13)
+
+We have successfully implemented Batch PR-13 to convert the theoretical detection strategy into concrete, versioned, and deployable detection-as-code artifacts:
+
+### 1. Detection Engineering Doctrine
+- Created [detection_engineering_doctrine.md](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/docs/mission/detection_engineering_doctrine.md) to define standard observabilities, telemetry sources, and rule lifecycles.
+
+### 2. Normalized Security Event Bus
+- Implemented `DetectionEvent` model and `DetectionEventBus` in [detection_events.py](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/backend/detection_events.py) to write normalized telemetry events to `audit/detection_events.jsonl` outside the sandboxed runtime.
+- Added API endpoints `/api/v1/detections/events`, `rules`, and `health` in [main.py](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/backend/main.py).
+
+### 3. Dialect-Separated SIEM Rules
+- Created Splunk rules under `detections/splunk/` (`delta_tier_privilege_escalation.spl`, `approval_replay_or_bruteforce.spl`, `test_approval_misuse.spl`, `google_frontier_policy_block.spl`, `local_model_outage_surge.spl`).
+- Created generic, vendor-neutral Sigma rules under `detections/sigma/` mapping to all families.
+- Created Elastic/KQL rules (`fail_closed_blocks.kql`, `rationale_evasion.kql`, `google_frontier_block.kql`) under `detections/elastic/`.
+- Created LogQL rules (`fail_closed_blocks.logql`, `local_model_outage_surge.logql`) under `detections/logql/`.
+
+### 4. Incident Response Playbooks & Fixtures
+- Written structured playbooks under `detections/playbooks/` outlining severity, actions, containment, recovery, and evidence signatures.
+- Written JSON Lines unit fixtures under `detections/fixtures/` to simulate alert scenarios.
+
+### 5. Verification & QA Matrix Mapping
+- Implemented Python test suites [test_detection_event_bus.py](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/tests/test_detection_event_bus.py) and [test_detection_rules_inventory.py](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/tests/test_detection_rules_inventory.py). All tests passed.
+- Written contract audit [test-detection-engineering-contract.ts](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/scripts/qa/test-detection-engineering-contract.ts), verified successfully via `npm run qa:detection-engineering` and `npm run qa:ui-contract` (PASS).
+- Registered 6 new controls and 10 new tests in [qa_evidence_matrix.json](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/config/qa_evidence_matrix.json):
+  - **Total Controls**: 37 → 43
+  - **Total Tests**: 74 → 84 (All 84 tests passing)
+  - **Evidence Present**: 37 → 43
+  - **Matrix Status**: `"COMPLETE"`
+- **CI Pipeline Run**: Running `python3 scripts/qa/run-ci-pipeline.py` completed with **100% success** and zero failures, generating updated release manifest, SBOM, and provenance metadata.

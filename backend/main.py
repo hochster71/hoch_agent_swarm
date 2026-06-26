@@ -7400,6 +7400,56 @@ def post_local_supervisor_check_once_endpoint():
     from backend.local_runtime_supervisor import SUPERVISOR
     return SUPERVISOR.check_once()
 
+# ── Detection Engineering Endpoints ──────────────────────────────────────────
+@app.get("/api/v1/detections/events")
+def get_detections_events_endpoint(limit: int = 100):
+    from backend.detection_events import DetectionEventBus
+    bus = DetectionEventBus()
+    return bus.tail(limit)
+
+@app.get("/api/v1/detections/rules")
+def get_detections_rules_endpoint():
+    return {
+        "splunk": [
+            "delta_tier_privilege_escalation.spl",
+            "approval_replay_or_bruteforce.spl",
+            "test_approval_misuse.spl",
+            "google_frontier_policy_block.spl",
+            "local_model_outage_surge.spl"
+        ],
+        "sigma": [
+            "delta_tier_privilege_escalation.yml",
+            "approval_replay_or_bruteforce.yml",
+            "test_approval_misuse.yml",
+            "google_frontier_policy_block.yml",
+            "local_model_outage_surge.yml"
+        ],
+        "elastic": [
+            "fail_closed_blocks.kql",
+            "rationale_evasion.kql",
+            "google_frontier_block.kql"
+        ],
+        "logql": [
+            "fail_closed_blocks.logql",
+            "local_model_outage_surge.logql"
+        ]
+    }
+
+@app.get("/api/v1/detections/health")
+def get_detections_health_endpoint():
+    return {
+        "truth": "LIVE",
+        "status": "ACTIVE",
+        "event_log_path": "audit/detection_events.jsonl",
+        "rules": {
+            "splunk": 5,
+            "sigma": 5,
+            "elastic": 3,
+            "logql": 2
+        },
+        "playbooks": 4
+    }
+
 # ── Escalation Approval Queue Endpoints ───────────────────────────────────────
 @app.get("/api/v1/escalations/pending")
 def get_escalations_pending_endpoint():

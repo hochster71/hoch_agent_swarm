@@ -1,0 +1,5 @@
+index=hoch_agent_swarm sourcetype=hoch:prompt_approval
+(status="DENIED" OR status="NOT_FOUND" OR verdict="APPROVAL_ALREADY_USED" OR verdict="APPROVAL_HASH_MISMATCH")
+| bin _time span=5m
+| stats count by _time actor approval_id prompt_id task_id src_ip
+| where count >= 3

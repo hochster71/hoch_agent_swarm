@@ -1,0 +1,4 @@
+index=hoch_agent_swarm sourcetype=hoch:prompt_approval
+source="TEST" status="APPROVED"
+| where expires_at > now()
+| table _time approval_id prompt_id agent_id task_id source status expires_at

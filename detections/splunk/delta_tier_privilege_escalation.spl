@@ -1,0 +1,5 @@
+index=hoch_agent_swarm sourcetype=hoch:skill_audit
+(caller_tier="DELTA")
+(skill_id="SKILL-SHELL-COMMAND" OR skill_id="SKILL-CODE-EXECUTION" OR skill_id="SKILL-SYSTEM-MODIFY" OR verdict="ALLOWED" OR verdict="REQUIRES_APPROVAL")
+| eval alert_severity="critical"
+| table _time caller_node caller_tier skill_id verdict reason

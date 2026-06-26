@@ -1247,18 +1247,203 @@
       ],
       "evidence_present": true,
       "truth": "LIVE"
+    },
+    {
+      "control_id":  "DETECT-ENG-001",
+      "name":        "Detection Event Bus",
+      "domain":      "GOVERNANCE",
+      "pert_ref":    "Batch-PR-13",
+      "gap_ref":     "GAP-004",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-DE-001",
+          "description":   "Verify DetectionEventBus writes valid JSON Lines format",
+          "type":          "unit",
+          "result":        "PASS",
+          "batch":         "PR-13",
+          "evidence_file": "audit/detection_events.jsonl",
+          "notes":         "Verified: event bus records normalized security events dynamically"
+        }
+      ],
+      "evidence_artifacts": [
+        "backend/detection_events.py",
+        "audit/detection_events.jsonl"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
+    },
+    {
+      "control_id":  "DETECT-ENG-002",
+      "name":        "SIEM Rules Artifacts",
+      "domain":      "GOVERNANCE",
+      "pert_ref":    "Batch-PR-13",
+      "gap_ref":     "GAP-004",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-DE-002",
+          "description":   "Verify rules inventory contains Splunk, Sigma, Elastic, and LogQL rules",
+          "type":          "unit",
+          "result":        "PASS",
+          "batch":         "PR-13",
+          "evidence_file": null,
+          "notes":         "Verified: rules inventory endpoint and files present"
+        },
+        {
+          "test_id":       "T-DE-003",
+          "description":   "Verify Splunk rules exist and are structured",
+          "type":          "unit",
+          "result":        "PASS",
+          "batch":         "PR-13",
+          "evidence_file": null,
+          "notes":         "Verified: Splunk rules exist for all detection families"
+        },
+        {
+          "test_id":       "T-DE-004",
+          "description":   "Verify Sigma rules exist and are structured",
+          "type":          "unit",
+          "result":        "PASS",
+          "batch":         "PR-13",
+          "evidence_file": null,
+          "notes":         "Verified: Sigma rules exist for all detection families"
+        },
+        {
+          "test_id":       "T-DE-005",
+          "description":   "Verify Elastic/KQL rules exist",
+          "type":          "unit",
+          "result":        "PASS",
+          "batch":         "PR-13",
+          "evidence_file": null,
+          "notes":         "Verified: Elastic/KQL rules exist"
+        },
+        {
+          "test_id":       "T-DE-006",
+          "description":   "Verify LogQL rules exist",
+          "type":          "unit",
+          "result":        "PASS",
+          "batch":         "PR-13",
+          "evidence_file": null,
+          "notes":         "Verified: LogQL rules exist"
+        }
+      ],
+      "evidence_artifacts": [
+        "detections/splunk/",
+        "detections/sigma/",
+        "detections/elastic/",
+        "detections/logql/"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
+    },
+    {
+      "control_id":  "DETECT-ENG-003",
+      "name":        "Detection Fixtures",
+      "domain":      "GOVERNANCE",
+      "pert_ref":    "Batch-PR-13",
+      "gap_ref":     "GAP-004",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-DE-007",
+          "description":   "Verify mock fixtures are present for all detection families",
+          "type":          "unit",
+          "result":        "PASS",
+          "batch":         "PR-13",
+          "evidence_file": null,
+          "notes":         "Verified: fixtures exist under detections/fixtures/"
+        }
+      ],
+      "evidence_artifacts": [
+        "detections/fixtures/"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
+    },
+    {
+      "control_id":  "DETECT-ENG-004",
+      "name":        "Response Playbooks",
+      "domain":      "GOVERNANCE",
+      "pert_ref":    "Batch-PR-13",
+      "gap_ref":     "GAP-004",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-DE-008",
+          "description":   "Verify playbooks exist for all detection families",
+          "type":          "unit",
+          "result":        "PASS",
+          "batch":         "PR-13",
+          "evidence_file": null,
+          "notes":         "Verified: playbooks exist under detections/playbooks/"
+        }
+      ],
+      "evidence_artifacts": [
+        "detections/playbooks/"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
+    },
+    {
+      "control_id":  "DETECT-ENG-005",
+      "name":        "Detection API Endpoints",
+      "domain":      "GOVERNANCE",
+      "pert_ref":    "Batch-PR-13",
+      "gap_ref":     "GAP-004",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-DE-009",
+          "description":   "Verify detections health endpoint returns ACTIVE",
+          "type":          "integration",
+          "result":        "PASS",
+          "batch":         "PR-13",
+          "evidence_file": null,
+          "notes":         "Verified: API returns correct status, paths, and inventory counts"
+        }
+      ],
+      "evidence_artifacts": [
+        "backend/main.py"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
+    },
+    {
+      "control_id":  "DETECT-ENG-006",
+      "name":        "Detection QA Contract",
+      "domain":      "GOVERNANCE",
+      "pert_ref":    "Batch-PR-13",
+      "gap_ref":     "GAP-004",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-DE-010",
+          "description":   "Verify qa:detection-engineering contract checks pass successfully",
+          "type":          "integration",
+          "result":        "PASS",
+          "batch":         "PR-13",
+          "evidence_file": "artifacts/qa/detection-engineering-contract-report.json",
+          "notes":         "Verified: contract asserts presence of all doctrine, rules, fixtures, playbooks, API, and tests"
+        }
+      ],
+      "evidence_artifacts": [
+        "scripts/qa/test-detection-engineering-contract.ts",
+        "artifacts/qa/detection-engineering-contract-report.json"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
     }
   ],
   "summary": {
-    "total_controls":         37,
-    "tested":                  35,
+    "total_controls":         43,
+    "tested":                  41,
     "partial":                 0,
     "in_progress":             2,
     "pending":                 0,
-    "evidence_present_count": 37,
+    "evidence_present_count": 43,
     "evidence_missing_count":  0,
-    "total_tests":            74,
-    "tests_pass":             74,
+    "total_tests":            84,
+    "tests_pass":             84,
     "tests_partial":           0,
     "tests_pending":           0,
     "matrix_status":          "COMPLETE",

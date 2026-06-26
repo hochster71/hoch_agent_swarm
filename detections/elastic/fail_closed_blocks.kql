@@ -1,0 +1,2 @@
+event.dataset : "hoch_agent_swarm.skill_gate" and
+(verdict : "UNREGISTERED" or verdict : "BLOCKED")
