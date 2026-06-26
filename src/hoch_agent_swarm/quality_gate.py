@@ -21,6 +21,13 @@ Exit codes:
     0  PASS — all included steps passed
     1  FAIL — one or more steps failed
 
+Gate report (--live only):
+    When --live is used, quality_gate writes a machine-readable evidence file:
+        artifacts/crew_runs/<timestamp>/quality_gate_report.json
+    This file captures all step results, the linked run_report.json path,
+    and the final gate verdict in one JSON object. It is the single source
+    of truth for whether a live gate execution passed or failed.
+
 Design principles:
   - Steps run unconditionally in sequence (no short-circuit) so the full
     failure picture is always visible.
@@ -33,10 +40,14 @@ Design principles:
 from __future__ import annotations
 
 import json
+import os
+import re
 import subprocess
 import sys
+import uuid
 
 from dataclasses import asdict, dataclass, field
+from datetime import datetime, timezone
 from typing import Optional
 
 from hoch_agent_swarm.trial_preflight import PreflightResult, run_preflight
@@ -63,11 +74,14 @@ class StepResult:
 
     name: str
     passed: bool
-    detail: str          # human-readable summary
-    output: str = ""     # captured stdout/stderr (trimmed)
+    detail: str              # human-readable summary
+    output: str = ""         # captured stdout/stderr (trimmed)
+    run_report_path: Optional[str] = None  # set by live_crew step when report written
 
     def to_dict(self) -> dict:
-        return asdict(self)
+        d = asdict(self)
+        # Omit None fields for cleaner JSON
+        return {k: v for k, v in d.items() if v is not None or k in ("passed",)}
 
 
 @dataclass
@@ -77,12 +91,32 @@ class GateResult:
     passed: bool
     live_run_included: bool
     steps: list[StepResult] = field(default_factory=list)
+    # Populated after run_quality_gate() when --live is used
+    run_id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    timestamp_utc: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    run_report_path: Optional[str] = None
+
+    @property
+    def verdict(self) -> str:
+        return "PASS" if self.passed else "FAIL"
 
     def to_dict(self) -> dict:
         return {
+            "run_id": self.run_id,
+            "timestamp_utc": self.timestamp_utc,
+            "verdict": self.verdict,
             "passed": self.passed,
             "live_run_included": self.live_run_included,
-            "steps": [s.to_dict() for s in self.steps],
+            "run_report_path": self.run_report_path,
+            "steps": [
+                {
+                    "name": s.name,
+                    "passed": s.passed,
+                    "detail": s.detail,
+                    **(({"run_report_path": s.run_report_path}) if s.run_report_path else {}),
+                }
+                for s in self.steps
+            ],
         }
 
     def to_json(self, indent: int = 2) -> str:
@@ -201,6 +235,9 @@ def _run_live_crew_step() -> StepResult:
 
     Only called when --live is explicitly passed. Takes several minutes.
     Captures output; surfaces last 30 lines on failure.
+
+    The run_report.json path is extracted from subprocess output and stored
+    in StepResult.run_report_path so the gate report can link to it.
     """
     result = subprocess.run(
         ["uv", "run", "run_crew"],
@@ -211,7 +248,16 @@ def _run_live_crew_step() -> StepResult:
     passed = result.returncode == 0
     combined = (result.stdout + result.stderr).strip()
 
-    # Look for run report path in output
+    # Extract run_report.json absolute path from subprocess output
+    run_report_path: Optional[str] = None
+    for line in combined.splitlines():
+        if "run_report.json" in line:
+            # Match a filesystem path ending in run_report.json
+            m = re.search(r"(/[^\s]+run_report\.json)", line)
+            if m:
+                run_report_path = m.group(1)
+                break
+
     report_line = ""
     for line in combined.splitlines():
         if "run_report.json" in line or "Run report" in line:
@@ -228,8 +274,36 @@ def _run_live_crew_step() -> StepResult:
         name=_STEP_LIVE_CREW,
         passed=passed,
         detail=detail,
-        output=combined[-3000:] if not passed else "",  # last ~3000 chars on failure
+        output=combined[-3000:] if not passed else "",
+        run_report_path=run_report_path,
     )
+
+
+# ---------------------------------------------------------------------------
+# Gate report writer
+# ---------------------------------------------------------------------------
+
+
+def write_gate_report(gate_result: GateResult, run_dir: str) -> str:
+    """
+    Write quality_gate_report.json into the given run directory.
+
+    The report captures all step results, the linked run_report.json path,
+    and the final gate verdict in one machine-readable JSON object.
+
+    Args:
+        gate_result: The completed GateResult.
+        run_dir: Directory path (e.g. artifacts/crew_runs/<timestamp>/).
+                 Will be created if it does not exist.
+
+    Returns:
+        Absolute path to the written quality_gate_report.json file.
+    """
+    os.makedirs(run_dir, exist_ok=True)
+    report_path = os.path.join(run_dir, "quality_gate_report.json")
+    with open(report_path, "w", encoding="utf-8") as f:
+        f.write(gate_result.to_json())
+    return os.path.abspath(report_path)
 
 
 # ---------------------------------------------------------------------------
@@ -256,15 +330,23 @@ def run_quality_gate(include_live: bool = False) -> GateResult:
     steps.append(_run_preflight_step())
     steps.append(_run_pytest_step())
 
+    live_step: Optional[StepResult] = None
     if include_live:
-        steps.append(_run_live_crew_step())
+        live_step = _run_live_crew_step()
+        steps.append(live_step)
 
     overall_passed = all(s.passed for s in steps)
+
+    # Propagate run_report_path from the live crew step to the gate result
+    run_report_path: Optional[str] = (
+        live_step.run_report_path if live_step is not None else None
+    )
 
     return GateResult(
         passed=overall_passed,
         live_run_included=include_live,
         steps=steps,
+        run_report_path=run_report_path,
     )
 
 
@@ -278,8 +360,8 @@ def main(argv: Optional[list[str]] = None) -> int:
     CLI entry point for `uv run quality_gate`.
 
     Flags:
-        --live    Include live crew run (step 4)
-        --json    Machine-readable JSON output
+        --live    Include live crew run (step 4); also writes quality_gate_report.json
+        --json    Machine-readable JSON output to stdout
 
     Returns 0 for PASS, 1 for FAIL.
     """
@@ -289,11 +371,19 @@ def main(argv: Optional[list[str]] = None) -> int:
 
     result = run_quality_gate(include_live=include_live)
 
+    # Write gate report when --live was used and we have a run directory
+    gate_report_path: Optional[str] = None
+    if include_live and result.run_report_path:
+        run_dir = os.path.dirname(result.run_report_path)
+        gate_report_path = write_gate_report(result, run_dir)
+
     if as_json:
         print(result.to_json())
     else:
         for line in result.summary_lines():
             print(line)
+        if gate_report_path:
+            print(f"  [gate report] {gate_report_path}")
 
     return 0 if result.passed else 1
 

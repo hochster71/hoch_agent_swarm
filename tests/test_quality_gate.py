@@ -24,6 +24,7 @@ from hoch_agent_swarm.quality_gate import (
     _run_pytest_step,
     main,
     run_quality_gate,
+    write_gate_report,
 )
 from hoch_agent_swarm.trial_preflight import CheckResult, PreflightResult
 
@@ -81,7 +82,8 @@ class TestStepResult:
         assert d["name"] == "foo"
         assert d["passed"] is True
         assert "detail" in d
-        assert "output" in d
+        # output omitted when empty (None-omission policy)
+        # but 'passed' is always included
 
     def test_passed_and_failed(self):
         ok = StepResult(name="a", passed=True, detail="ok")
@@ -89,6 +91,21 @@ class TestStepResult:
         assert ok.passed is True
         assert fail.passed is False
         assert fail.output == "err"
+
+    def test_run_report_path_in_dict_when_set(self):
+        s = StepResult(
+            name=_STEP_LIVE_CREW,
+            passed=True,
+            detail="ok",
+            run_report_path="/a/b/run_report.json",
+        )
+        d = s.to_dict()
+        assert d.get("run_report_path") == "/a/b/run_report.json"
+
+    def test_run_report_path_absent_when_none(self):
+        s = StepResult(name=_STEP_IMPORT, passed=True, detail="ok")
+        d = s.to_dict()
+        assert "run_report_path" not in d
 
 
 # ---------------------------------------------------------------------------
@@ -105,23 +122,64 @@ class TestGateResult:
         assert "steps" in d
         assert isinstance(d["steps"], list)
 
+    def test_to_dict_has_new_fields(self):
+        r = _make_gate_result()
+        d = r.to_dict()
+        assert "run_id" in d
+        assert "timestamp_utc" in d
+        assert "verdict" in d
+
+    def test_verdict_pass(self):
+        r = _make_gate_result()
+        assert r.verdict == "PASS"
+        assert r.to_dict()["verdict"] == "PASS"
+
+    def test_verdict_fail(self):
+        r = _make_gate_result(steps_passed=[False, True, True])
+        r.passed = False
+        assert r.verdict == "FAIL"
+        assert r.to_dict()["verdict"] == "FAIL"
+
+    def test_run_id_is_uuid_string(self):
+        r = _make_gate_result()
+        import uuid as _uuid
+        # Should not raise
+        _uuid.UUID(r.run_id)
+
+    def test_two_results_have_different_run_ids(self):
+        r1 = _make_gate_result()
+        r2 = _make_gate_result()
+        assert r1.run_id != r2.run_id
+
+    def test_run_report_path_none_by_default(self):
+        r = _make_gate_result()
+        assert r.run_report_path is None
+
+    def test_run_report_path_in_dict(self):
+        r = _make_gate_result()
+        r.run_report_path = "/some/path/run_report.json"
+        d = r.to_dict()
+        assert d["run_report_path"] == "/some/path/run_report.json"
+
     def test_to_json_valid(self):
         r = _make_gate_result()
         parsed = json.loads(r.to_json())
         assert parsed["passed"] is True
+        assert "verdict" in parsed
+        assert "run_id" in parsed
 
     def test_summary_lines_pass(self):
         r = _make_gate_result()
         combined = "\n".join(r.summary_lines())
         assert "PASS" in combined
-        assert "✅" in combined
+        assert "\u2705" in combined
 
     def test_summary_lines_fail(self):
         r = _make_gate_result(steps_passed=[True, False, True])
         r.passed = False
         combined = "\n".join(r.summary_lines())
         assert "FAIL" in combined
-        assert "❌" in combined
+        assert "\u274c" in combined
 
     def test_summary_lines_live_tag(self):
         r = _make_gate_result(live=True)
@@ -293,7 +351,7 @@ class TestRunLiveCrewStep:
             "hoch_agent_swarm.quality_gate.subprocess.run",
             lambda *a, **kw: _make_completed_process(
                 0,
-                stdout="[report] Run report written: artifacts/crew_runs/X/run_report.json\n",
+                stdout="[report] Run report written: /abs/crew_runs/X/run_report.json\n",
             ),
         )
         result = _run_live_crew_step()
@@ -306,11 +364,32 @@ class TestRunLiveCrewStep:
             "hoch_agent_swarm.quality_gate.subprocess.run",
             lambda *a, **kw: _make_completed_process(
                 0,
-                stdout="[report] Run report written: artifacts/crew_runs/X/run_report.json\n",
+                stdout="[report] Run report written: /abs/crew_runs/X/run_report.json\n",
             ),
         )
         result = _run_live_crew_step()
         assert "run_report.json" in result.detail
+
+    def test_run_report_path_extracted(self, monkeypatch):
+        """run_report_path is extracted from subprocess output into StepResult."""
+        monkeypatch.setattr(
+            "hoch_agent_swarm.quality_gate.subprocess.run",
+            lambda *a, **kw: _make_completed_process(
+                0,
+                stdout="[report] Run report written: /abs/crew_runs/20260626T010101/run_report.json\n",
+            ),
+        )
+        result = _run_live_crew_step()
+        assert result.run_report_path == "/abs/crew_runs/20260626T010101/run_report.json"
+
+    def test_run_report_path_none_when_absent(self, monkeypatch):
+        """run_report_path is None when no path appears in subprocess output."""
+        monkeypatch.setattr(
+            "hoch_agent_swarm.quality_gate.subprocess.run",
+            lambda *a, **kw: _make_completed_process(0, stdout="crew finished\n"),
+        )
+        result = _run_live_crew_step()
+        assert result.run_report_path is None
 
     def test_fail_on_nonzero_returncode(self, monkeypatch):
         monkeypatch.setattr(
@@ -462,6 +541,106 @@ class TestRunQualityGate:
         names = [s.name for s in result.steps]
         assert names == [_STEP_IMPORT, _STEP_PREFLIGHT, _STEP_PYTEST, _STEP_LIVE_CREW]
 
+    def test_run_report_path_propagated_from_live_step(self, monkeypatch):
+        """run_report_path extracted by live_crew step is propagated to GateResult."""
+        _mock_all_pass(monkeypatch)
+        # Override subprocess.run to return a path in output
+        call_count = {"n": 0}
+        def _fake_run(*a, **kw):
+            call_count["n"] += 1
+            if call_count["n"] == 1:  # import check
+                return _make_completed_process(0, stdout="ok\n")
+            if call_count["n"] == 2:  # pytest
+                return _make_completed_process(0, stdout="219 passed\n")
+            # live_crew
+            return _make_completed_process(
+                0,
+                stdout="[report] Run report written: /abs/crew_runs/20260626T010101/run_report.json\n",
+            )
+        monkeypatch.setattr("hoch_agent_swarm.quality_gate.subprocess.run", _fake_run)
+        result = run_quality_gate(include_live=True)
+        assert result.run_report_path == "/abs/crew_runs/20260626T010101/run_report.json"
+
+    def test_run_report_path_none_without_live(self, monkeypatch):
+        """run_report_path is None when live crew step is not run."""
+        _mock_all_pass(monkeypatch)
+        result = run_quality_gate(include_live=False)
+        assert result.run_report_path is None
+
+
+# ---------------------------------------------------------------------------
+# write_gate_report
+# ---------------------------------------------------------------------------
+
+
+class TestWriteGateReport:
+    def test_writes_json_file(self, tmp_path):
+        gate_result = _make_gate_result()
+        path = write_gate_report(gate_result, str(tmp_path))
+        assert path.endswith("quality_gate_report.json")
+        assert (tmp_path / "quality_gate_report.json").exists()
+
+    def test_json_is_valid(self, tmp_path):
+        gate_result = _make_gate_result()
+        path = write_gate_report(gate_result, str(tmp_path))
+        with open(path) as f:
+            data = json.load(f)
+        assert "verdict" in data
+        assert "run_id" in data
+        assert "steps" in data
+
+    def test_verdict_correct(self, tmp_path):
+        gate_result = _make_gate_result(steps_passed=[True, True, True])
+        path = write_gate_report(gate_result, str(tmp_path))
+        with open(path) as f:
+            data = json.load(f)
+        assert data["verdict"] == "PASS"
+
+    def test_fail_verdict_written(self, tmp_path):
+        gate_result = _make_gate_result(steps_passed=[False, True, True])
+        gate_result.passed = False
+        path = write_gate_report(gate_result, str(tmp_path))
+        with open(path) as f:
+            data = json.load(f)
+        assert data["verdict"] == "FAIL"
+
+    def test_run_report_path_included(self, tmp_path):
+        gate_result = _make_gate_result()
+        gate_result.run_report_path = "/abs/crew_runs/X/run_report.json"
+        path = write_gate_report(gate_result, str(tmp_path))
+        with open(path) as f:
+            data = json.load(f)
+        assert data["run_report_path"] == "/abs/crew_runs/X/run_report.json"
+
+    def test_steps_included(self, tmp_path):
+        gate_result = _make_gate_result()
+        path = write_gate_report(gate_result, str(tmp_path))
+        with open(path) as f:
+            data = json.load(f)
+        assert len(data["steps"]) == 3
+        assert data["steps"][0]["name"] == _STEP_IMPORT
+
+    def test_creates_directory_if_needed(self, tmp_path):
+        run_dir = tmp_path / "crew_runs" / "20260626T000000"
+        path = write_gate_report(_make_gate_result(), str(run_dir))
+        assert (run_dir / "quality_gate_report.json").exists()
+
+    def test_returns_absolute_path(self, tmp_path):
+        path = write_gate_report(_make_gate_result(), str(tmp_path))
+        import os
+        assert os.path.isabs(path)
+
+    def test_overwrite_on_second_call(self, tmp_path):
+        """Second write overwrites the first."""
+        g1 = _make_gate_result(steps_passed=[True, True, True])
+        g2 = _make_gate_result(steps_passed=[False, True, True])
+        g2.passed = False
+        write_gate_report(g1, str(tmp_path))
+        write_gate_report(g2, str(tmp_path))
+        with open(tmp_path / "quality_gate_report.json") as f:
+            data = json.load(f)
+        assert data["verdict"] == "FAIL"
+
 
 # ---------------------------------------------------------------------------
 # main() — CLI
@@ -471,9 +650,16 @@ class TestRunQualityGate:
 def _mock_gate_result(monkeypatch, passed: bool = True, live: bool = False):
     result = _make_gate_result(live=live)
     result.passed = passed
+    if live:
+        result.run_report_path = "/abs/crew_runs/20260626T010101/run_report.json"
     monkeypatch.setattr(
         "hoch_agent_swarm.quality_gate.run_quality_gate",
         lambda include_live=False: result,
+    )
+    # Also stub write_gate_report so main() doesn't try to write to disk
+    monkeypatch.setattr(
+        "hoch_agent_swarm.quality_gate.write_gate_report",
+        lambda gate_result, run_dir: "/abs/crew_runs/20260626T010101/quality_gate_report.json",
     )
     return result
 
