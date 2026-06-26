@@ -136,15 +136,38 @@ directory before running the crew. This requirement exists on both 1.14.7 and 1.
 
 ---
 
-## Isolated Trial Procedure (Batch 6+)
+## Isolated Trial Procedure (Batch 8+)
 
 Use a git worktree so the main branch is never touched during the upgrade trial.
 `run_report.json` provides the measurable before/after baseline.
+`trial_preflight` blocks a trial run if required local runtime inputs are absent.
+
+> **Batch 7 lesson**: git worktrees do not copy gitignored files. A missing `.env`
+> causes `crewai` to fall back to `gpt-4o` and fail with `OPENAI_API_KEY is required`.
+> The preflight script (Step 0 and Step 2b) makes this impossible to miss.
+
+### Step 0 — Preflight on main (before creating the worktree)
+
+```bash
+# Verify the local runtime is healthy on main before starting anything
+uv run trial_preflight
+# Must exit 0. If blocked, fix the issue before proceeding.
+```
+
+Expected output:
+```
+  ✅ env_file_present: .env found at ...
+  ✅ model_env_var_set: MODEL='ollama/llama3.1:8b'
+  ✅ api_base_env_var_set: API_BASE='http://localhost:11434'
+  ✅ ollama_endpoint_reachable: HTTP 200 from http://localhost:11434
+  ✅ baseline_run_report_exists [warn-only]: latest baseline: ...
+
+preflight: PASS — all blocking checks passed
+```
 
 ### Step 1 — Collect a baseline run report on main
 
 ```bash
-# On sealed main (1.14.7)
 uv run run_crew
 # Note the run_report.json path printed:
 # [report] Run report written: artifacts/crew_runs/<timestamp>/run_report.json
@@ -154,37 +177,56 @@ BASELINE_REPORT="artifacts/crew_runs/<timestamp>/run_report.json"
 ### Step 2 — Create an isolated worktree
 
 ```bash
-# Create a linked worktree that shares the repo but branches independently
-git worktree add ../hoch_agent_swarm_trial_1.15 -b trial/crewai-1.15.0
-cd ../hoch_agent_swarm_trial_1.15
+TRIALS_DIR=~/hoch_agent_swarm_trials
+mkdir -p "$TRIALS_DIR"
+WORKTREE="$TRIALS_DIR/crewai-<new-version>-trial"
+git worktree add "$WORKTREE" -b trial/crewai-<new-version>
+cd "$WORKTREE"
+```
+
+### Step 2b — Symlink .env into the trial worktree  ← MANDATORY
+
+```bash
+# Git worktrees do NOT copy gitignored files. Without this step,
+# crewai will fall back to gpt-4o and fail with OPENAI_API_KEY is required.
+ln -sf /Users/michaelhoch/hoch_agent_swarm/.env ./.env
+ls -la .env  # verify symlink resolves
 ```
 
 ### Step 3 — Upgrade CrewAI in the trial worktree only
 
 ```bash
-uv sync --upgrade-package crewai
-uv run python -c "import crewai; print(crewai.__version__)"  # expect 1.15.0
+# Relax the pin in pyproject.toml (trial branch only):
+#   "crewai[tools]==<current>" → "crewai[tools]>=<new>,<2"
+uv sync
+uv run python -c "import crewai; print(crewai.__version__)"  # expect <new-version>
 ```
 
-### Step 4 — Run tests
+### Step 4 — Run preflight in the trial worktree
+
+```bash
+# Verify the symlinked .env is loaded and Ollama is still reachable
+uv run trial_preflight
+# Must exit 0. If blocked, fix before proceeding.
+```
+
+### Step 5 — Run tests
 
 ```bash
 uv run pytest -q
 # Stop here if any test fails. Do not continue to live run.
 ```
 
-### Step 5 — Live crew run with run report
+### Step 6 — Live crew run with run report
 
 ```bash
 uv run run_crew
-# Note the trial run report path
 TRIAL_REPORT="artifacts/crew_runs/<timestamp>/run_report.json"
 ```
 
-### Step 6 — Compare run reports
+### Step 7 — Compare run reports
 
 ```bash
-# Compare version fields and artifact hashes
 python3 -c "
 import json
 baseline = json.load(open('$BASELINE_REPORT'))
@@ -202,31 +244,36 @@ for b, t in zip(baseline['canonical_artifacts'], trial['canonical_artifacts']):
 ```
 
 Artifact hashes changing is **expected** (model output varies run to run).
-The check is that `status` is `PASS` in both and `validation_status` is `VALID` for all artifacts.
+The check is that `status` is `PASS` in both and `validation_status` is `VALID`
+for all artifacts.
 
-### Step 7 — Decision
+### Step 8 — Decision
 
 | Outcome | Action |
 |---|---|
-| Tests pass, artifacts valid | Promote: commit `uv.lock` to main |
-| Tests fail or artifacts invalid | Revert and open issue |
+| Tests pass, artifacts valid | Promote: commit `uv.lock` + `pyproject.toml` to main |
+| Tests fail or artifacts invalid | Revert trial branch; main is never touched |
 
-### Step 8 — Promote or revert
+### Step 9 — Promote or revert
 
-**Promote:**
+**Promote (on main):**
 ```bash
-# In trial worktree
-git add uv.lock pyproject.toml
-git commit -m "chore: upgrade crewai to 1.15.0"
-git checkout main
-git merge trial/crewai-1.15.0
-git worktree remove ../hoch_agent_swarm_trial_1.15
+cd /Users/michaelhoch/hoch_agent_swarm
+# Update pyproject.toml on main to match trial constraint
+# uv sync → verify version
+# uv run pytest -q → must pass
+# uv run run_crew → must PASS
+git add pyproject.toml uv.lock docs/crewai_version_assessment.md
+git commit -m "chore: promote crewai to <new-version>"
+# Clean up trial worktree
+git worktree remove "$WORKTREE" --force
+git branch -D trial/crewai-<new-version>
 ```
 
 **Revert (trial only — main is never touched):**
 ```bash
 cd /Users/michaelhoch/hoch_agent_swarm
-git worktree remove ../hoch_agent_swarm_trial_1.15 --force
-git branch -d trial/crewai-1.15.0
-# Main remains at 1.14.7 with uv.lock unchanged
+git worktree remove "$WORKTREE" --force
+git branch -D trial/crewai-<new-version>
+# Main remains at prior version with uv.lock unchanged
 ```

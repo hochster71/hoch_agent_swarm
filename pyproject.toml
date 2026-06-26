@@ -16,6 +16,7 @@ train = "hoch_agent_swarm.main:train"
 replay = "hoch_agent_swarm.main:replay"
 test = "hoch_agent_swarm.main:test"
 run_with_trigger = "hoch_agent_swarm.main:run_with_trigger"
+trial_preflight = "hoch_agent_swarm.trial_preflight:main"
 
 [build-system]
 requires = ["hatchling"]
