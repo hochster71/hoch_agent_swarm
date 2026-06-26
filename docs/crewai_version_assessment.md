@@ -113,12 +113,31 @@ uv run python -c "import crewai; print(crewai.__version__)"  # should be 1.14.7
 
 ## Recommendation
 
-**Defer.** Reassess after:
-1. At least one week of community stabilization time has elapsed for `1.15.0`.
-2. The `filterwarnings` suppression in `pyproject.toml` is verified not to mask new real warnings in `1.15.0`.
-3. Run reports from the sealed `1.14.7` workflow are collected as baseline (see below).
+**BLOCKED** (as of 2026-06-26, Batch 6 trial).
 
-**Estimated window**: Batch 6 or later.
+`crewai 1.15.0` fails at first task execution on this Ollama/LiteLLM runtime
+(`MODEL=ollama/llama3.1:8b`, `API_BASE=http://localhost:11434`) with:
+
+```
+ValueError: OPENAI_API_KEY is required
+  at crewai/llms/providers/openai/completion.py:366
+```
+
+**Root cause**: 1.15.0 defaults to `AgentExecutor` (experimental) which routes
+LLM calls through native OpenAI provider modules that require `OPENAI_API_KEY`
+even when the configured model is Ollama. The prior `CrewAgentExecutor` used
+LiteLLM routing and did not have this requirement.
+
+**Full trial memo**: `docs/crewai_1_15_0_trial_memo.md` (in `trial/crewai-1.15.0` branch).
+
+**Reassess when**:
+1. CrewAI fixes `AgentExecutor` ollama/openai-compatible provider routing, OR
+2. A `1.15.x` patch is released addressing this regression, OR
+3. A supported workaround (`executor_class=CrewAgentExecutor` per-agent) is
+   confirmed stable and forward-compatible.
+
+**Estimated window**: Batch 7 or later.
+
 
 ---
 
