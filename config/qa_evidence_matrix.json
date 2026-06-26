@@ -537,18 +537,162 @@
       "evidence_artifacts": [],
       "evidence_present": false,
       "truth": "PENDING"
+    },
+    {
+      "control_id":  "EVIDENCE-ARCHIVE-001",
+      "name":        "Release Evidence Archive & Preview",
+      "domain":      "AUDIT",
+      "pert_ref":    "P5",
+      "gap_ref":     "GAP-004",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-EA-001",
+          "description":   "GET /api/v1/release/evidence/archive/preview scans, indices, and simulated checksums retained files",
+          "type":          "smoke",
+          "result":        "PASS",
+          "batch":         "PR-5",
+          "evidence_file": null,
+          "notes":         "Verified: returns calculated checksum, planned path, and categorization counts"
+        },
+        {
+          "test_id":       "T-EA-002",
+          "description":   "E2E calculates archive preview, renders warnings, and exports JSON/Markdown manifests",
+          "type":          "integration",
+          "result":        "PASS",
+          "batch":         "PR-5",
+          "evidence_file": "artifacts/qa/release-evidence-archive-preview.png",
+          "notes":         "Verified: Playwright test navigates dashboard, clicks Calculate Preview, and checks panel outputs"
+        }
+      ],
+      "evidence_artifacts": [
+        "backend/main.py",
+        "frontend/index.html",
+        "frontend/app.js",
+        "tests/e2e/release-evidence-archive-preview.spec.ts"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
+    },
+    {
+      "control_id":  "EVIDENCE-ARCHIVE-002",
+      "name":        "Release Evidence Archive Builder & Dry Run",
+      "domain":      "AUDIT",
+      "pert_ref":    "P5",
+      "gap_ref":     "GAP-004",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-EA-003",
+          "description":   "GET /api/v1/release/evidence/archive/build-plan returning ordered operations",
+          "type":          "smoke",
+          "result":        "PASS",
+          "batch":         "PR-5",
+          "evidence_file": null,
+          "notes":         "Verified: returns ordered list of archive steps, size limits, and blockages"
+        },
+        {
+          "test_id":       "T-EA-004",
+          "description":   "E2E verifying planned archive steps, size limits, and blockages",
+          "type":          "integration",
+          "result":        "PASS",
+          "batch":         "PR-5",
+          "evidence_file": "artifacts/qa/release-evidence-archive-build-plan.png",
+          "notes":         "Verified: Playwright test checks manifest paths and build plan checksums"
+        }
+      ],
+      "evidence_artifacts": [
+        "backend/main.py",
+        "frontend/index.html",
+        "frontend/app.js",
+        "tests/e2e/release-evidence-archive-build-plan.spec.ts"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
+    },
+    {
+      "control_id":  "EVIDENCE-ARCHIVE-003",
+      "name":        "Release Evidence Archive Seal Preview",
+      "domain":      "AUDIT",
+      "pert_ref":    "P5",
+      "gap_ref":     "GAP-004",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-EA-005",
+          "description":   "GET /api/v1/release/evidence/archive/seal-preview generating secure custody metadata and checksums",
+          "type":          "smoke",
+          "result":        "PASS",
+          "batch":         "PR-5",
+          "evidence_file": null,
+          "notes":         "Verified: returns SHA-256 seal_id, archive_id, operator, and status READY"
+        },
+        {
+          "test_id":       "T-EA-006",
+          "description":   "E2E verifying seal details and zero-mutation safety guidelines",
+          "type":          "integration",
+          "result":        "PASS",
+          "batch":         "PR-5",
+          "evidence_file": "artifacts/qa/release-evidence-archive-seal-preview.png",
+          "notes":         "Verified: Playwright test checks custody seal details and no mutation of disk files"
+        }
+      ],
+      "evidence_artifacts": [
+        "backend/main.py",
+        "frontend/index.html",
+        "frontend/app.js",
+        "tests/e2e/release-evidence-archive-seal-preview.spec.ts"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
+    },
+    {
+      "control_id":  "DAST-UI-NEGATIVE-001",
+      "name":        "DAST & Negative UI Testing for Unsigned Status",
+      "domain":      "AUDIT",
+      "pert_ref":    "P5",
+      "gap_ref":     "GAP-004",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-DA-001",
+          "description":   "XSS sanitization in Operator Ledger ledger and validation inputs",
+          "type":          "smoke",
+          "result":        "PASS",
+          "batch":         "PR-5",
+          "evidence_file": null,
+          "notes":         "Verified: input justifications are validated and escaping is applied correctly"
+        },
+        {
+          "test_id":       "T-DA-002",
+          "description":   "DAST spec validating invalid justification reasons, scope rejections, and double-spent blocks",
+          "type":          "integration",
+          "result":        "PASS",
+          "batch":         "PR-5",
+          "evidence_file": "artifacts/qa/dast-xss-ledger-escaped.png",
+          "notes":         "Verified: Playwright checks invalid reasons blocked, scope rejections, and replay protection"
+        }
+      ],
+      "evidence_artifacts": [
+        "backend/main.py",
+        "frontend/index.html",
+        "frontend/app.js",
+        "tests/e2e/dast-unsigned-ui-negative.spec.ts"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
     }
   ],
   "summary": {
-    "total_controls":         15,
-    "tested":                  7,
+    "total_controls":         19,
+    "tested":                  11,
     "partial":                 5,
     "in_progress":             1,
     "pending":                 2,
-    "evidence_present_count": 13,
+    "evidence_present_count": 17,
     "evidence_missing_count":  2,
-    "total_tests":            30,
-    "tests_pass":             21,
+    "total_tests":            38,
+    "tests_pass":             29,
     "tests_partial":           2,
     "tests_pending":           7,
     "matrix_status":          "IN_PROGRESS",

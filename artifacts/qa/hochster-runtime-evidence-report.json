@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-25T23:57:33.229Z",
+  "timestamp": "2026-06-26T20:31:30.048Z",
   "status": "PASS",
   "blockers": [],
   "metrics": {
@@ -8,6 +8,6 @@
     "tool_calls_with_evidence": 6,
     "redactions_applied": 2,
     "solved_without_validation": 0,
-    "approval_required_actions": 475
+    "approval_required_actions": 629
   }
 }

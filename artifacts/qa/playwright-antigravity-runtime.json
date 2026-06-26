@@ -4,7 +4,7 @@
       "/opt/homebrew/Cellar/node/26.3.1/bin/node",
       "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/node_modules/.bin/playwright",
       "test",
-      "tests/e2e/model-provider-registry.spec.ts"
+      "tests/e2e/release-evidence-archive-preview.spec.ts"
     ],
     "configFile": "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/playwright.config.ts",
     "rootDir": "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/tests/e2e",
@@ -73,20 +73,20 @@
   },
   "suites": [
     {
-      "title": "model-provider-registry.spec.ts",
-      "file": "model-provider-registry.spec.ts",
+      "title": "release-evidence-archive-preview.spec.ts",
+      "file": "release-evidence-archive-preview.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "AI Model Provider Registry E2E",
-          "file": "model-provider-registry.spec.ts",
+          "title": "Release Evidence Archive Preview E2E",
+          "file": "release-evidence-archive-preview.spec.ts",
           "line": 5,
           "column": 6,
           "specs": [
             {
-              "title": "registers, performs health checks, approves, and tests chat completions on a provider",
+              "title": "calculates archive preview, renders metrics, displays warnings, and supports downloading manifests",
               "ok": true,
               "tags": [],
               "tests": [
@@ -101,19 +101,16 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 4689,
+                      "duration": 8717,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "Dialog opened: [alert] Discovered models: gemma-4-12b\n"
-                        },
-                        {
-                          "text": "Captured E2E model provider registry screenshot at: artifacts/qa/model-provider-registry.png\n"
+                          "text": "Captured E2E archive preview screenshot at: /Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/artifacts/qa/release-evidence-archive-preview.png\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-06-25T23:59:47.850Z",
+                      "startTime": "2026-06-26T20:26:35.175Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -121,8 +118,8 @@
                   "status": "expected"
                 }
               ],
-              "id": "f9bbcb1c382a9d7ee9ba-8e1f83687e2a9abca1e4",
-              "file": "model-provider-registry.spec.ts",
+              "id": "ba1e96ae3eb3c3c21774-3e2afec01372096b0624",
+              "file": "release-evidence-archive-preview.spec.ts",
               "line": 6,
               "column": 7
             }
@@ -133,8 +130,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-06-25T23:59:47.646Z",
-    "duration": 5006.806,
+    "startTime": "2026-06-26T20:26:34.974Z",
+    "duration": 9143.651,
     "expected": 1,
     "skipped": 0,
     "unexpected": 0,

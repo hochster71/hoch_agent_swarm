@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-26T00:56:50.731Z",
+  "generated_at": "2026-06-26T20:30:43.638Z",
   "status": "PASS",
   "errors": [],
   "findings": [
@@ -30,6 +30,8 @@
     "frontend/index.html has element with id: evidence-graph-compact-toggle",
     "frontend/index.html has element with id: evidence-graph-large-warning",
     "frontend/index.html has element with id: evidence-graph-empty-state",
+    "frontend/index.html has element with id: evidence-graph-release-filter",
+    "frontend/index.html has element with id: btn-export-evidence-summary",
     "Verified frontend/app.js exists",
     "frontend/app.js contains snippet: api/v1/evidence/graph",
     "frontend/app.js contains snippet: btn-refresh-evidence-graph",
@@ -40,6 +42,10 @@
     "frontend/app.js contains snippet: visibleEdgesLimit",
     "frontend/app.js contains snippet: evidence-graph-load-more-button",
     "frontend/app.js contains snippet: evidence-graph-compact-toggle",
-    "frontend/app.js contains snippet: DocumentFragment"
+    "frontend/app.js contains snippet: DocumentFragment",
+    "frontend/app.js contains snippet: evidence-graph-release-filter",
+    "frontend/app.js contains snippet: btn-export-evidence-summary",
+    "frontend/app.js contains snippet: getSubgraphConnectedTo",
+    "frontend/app.js contains snippet: exportEvidenceSummary"
   ]
 }

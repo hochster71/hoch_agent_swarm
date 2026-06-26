@@ -387,3 +387,51 @@ We implemented a second-stage archive builder dry run to generate a fully audita
 Here is the captured E2E visual verification of the Release Evidence Archive Builder Dry Run Cockpit:
 
 ![E2E Archive Build Plan Screenshot](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/artifacts/qa/release-evidence-archive-build-plan.png)
+
+---
+
+## 23. Release Evidence Archive Seal Preview (Phase 29)
+We implemented a zero-mutation final seal preview to validate the archive build plan and generate planned seal metadata:
+- **Backend Seal Preview Endpoint (`GET /api/v1/release/evidence/archive/seal-preview` in `backend/main.py`)**:
+  - Validates release candidate packet linkage, active non-expired formal release authority token (`token_value`), unclassified (`needs-review`) evidence, and missing evidence.
+  - Generates custody seal metadata including a SHA-256 `seal_id` (hashing manifest, token, and operator), `archive_id` (checksum), `manifest_hash`, operator name, and policy version (`v0.1.6`).
+  - Enforces gating logic: outputs status `READY` if all checkpoints pass, or `BLOCKED` with list of explicit blockers and warnings.
+  - Generates and returns a complete Markdown custody report and raw JSON payload.
+- **Frontend Seal Preview UI Panel (`#release-evidence-archive-seal-preview-panel` in `frontend/index.html` & `frontend/app.js`)**:
+  - Integrated the seal preview panel card below the Phase 28 card.
+  - Dynamically invokes calculations on trigger, displaying readiness badges, planned metadata details, and any blockers/warnings.
+  - Wired export triggers to download generated custody seal reports as Markdown (`release-evidence-archive-seal-preview.md`) and JSON (`release-evidence-archive-seal-preview.json`).
+- **Verification & Zero-Mutation Safe Guard**:
+  - Validated via Playwright test `tests/e2e/release-evidence-archive-seal-preview.spec.ts` capturing screenshot evidence at `artifacts/qa/release-evidence-archive-seal-preview.png`.
+  - Assured strict zero-mutation constraints: no zip/tar files, signature files, or manifest JSON files are written or modified on disk.
+
+---
+
+### E2E Visual Verification
+
+Here is the captured E2E visual verification of the Release Evidence Archive Seal Preview Cockpit:
+
+![E2E Archive Seal Preview Screenshot](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/artifacts/qa/release-evidence-archive-seal-preview.png)
+
+---
+
+## 24. DAST and Negative UI Testing for Unsigned Status UI (Phase 30)
+We implemented a DAST (Dynamic Application Security Testing) and negative/bypass validation suite to verify the Release Signing Policy UI and backend endpoints:
+- **Backend Input Hardening (`backend/main.py`)**:
+  - Rejects empty, whitespace-only, or too-short (`< 10` characters) waiver reasons with a `400` status.
+- **XSS Remediation (`frontend/app.js`)**:
+  - Escapes all operator names and justification reasons in the Operator Decision Ledger using `escapeHtml()` before rendering to prevent XSS payloads from executing in the browser.
+- **Decision Persistence Enhancement (`backend/main.py`)**:
+  - Resolves decision justification reasons from JSON bodies or looks up pending records in-memory, ensuring correct SQLite audit log entries.
+- **Automated DAST Spec (`tests/e2e/dast-unsigned-ui-negative.spec.ts`)**:
+  - Verifies invalid scope rejections (`400`), empty/short reason rejections (`400`), safe escaping of operator and reason XSS payloads, replay/double-spend protection blocks (`400`), and formal release blockages.
+  - Automatically captures verification screenshot evidence at `artifacts/qa/dast-xss-ledger-escaped.png`.
+
+---
+
+### E2E Visual Verification
+
+Here is the captured E2E visual verification of the safely escaped XSS operator payload in the Operator Decision Ledger:
+
+![E2E DAST XSS Escaped Ledger Screenshot](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/artifacts/qa/dast-xss-ledger-escaped.png)
+
