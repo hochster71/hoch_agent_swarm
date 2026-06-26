@@ -7895,10 +7895,10 @@ async function fetchAndRenderGovernanceSummary() {
                     const colorClass = item.decision === "approved" ? "text-success" : "text-danger";
                     row.innerHTML = `
                         <td style="font-family:monospace; color:var(--accent-blue);">${item.decision_id}</td>
-                        <td><strong>${item.operator}</strong></td>
+                        <td><strong>${escapeHtml(item.operator)}</strong></td>
                         <td style="font-family:monospace;">${item.action_type}</td>
                         <td><span class="${colorClass} font-semibold">${item.decision.toUpperCase()}</span></td>
-                        <td style="color:var(--text-secondary);">${item.reason || "none"}</td>
+                        <td style="color:var(--text-secondary);">${escapeHtml(item.reason || "none")}</td>
                         <td style="color:var(--text-secondary);">${item.timestamp}</td>
                     `;
                     ledgerBody.appendChild(row);
@@ -12161,5 +12161,280 @@ window.generateArchiveSealPreview = generateArchiveSealPreview;
 window.exportSealPreviewMarkdown = exportSealPreviewMarkdown;
 window.exportSealPreviewJSON = exportSealPreviewJSON;
 
+// ================================================================
+//  PROMPT LIBRARY MODULE
+//  Serves hoch_agent_swarm_prompt_library.json via /api/v1/prompt-library
+// ================================================================
 
+(function initPromptLibraryModule() {
 
+    // ---- Register in navItems ----
+    navItems.promptLibrary = {
+        nav: document.getElementById("nav-prompt-library"),
+        view: document.getElementById("view-prompt-library"),
+    };
+
+    // ---- Category → colour mapping ----
+    const CAT_COLORS = {
+        "QA":                     { bg: "rgba(16,185,129,0.12)", border: "rgba(16,185,129,0.3)",  text: "#10b981" },
+        "Audit":                   { bg: "rgba(59,130,246,0.12)", border: "rgba(59,130,246,0.3)",  text: "#3b82f6" },
+        "DevSecOps":               { bg: "rgba(139,92,246,0.12)", border: "rgba(139,92,246,0.3)",  text: "#8b5cf6" },
+        "SAST":                    { bg: "rgba(245,158,11,0.12)", border: "rgba(245,158,11,0.3)",  text: "#f59e0b" },
+        "DAST":                    { bg: "rgba(239,68,68,0.12)",  border: "rgba(239,68,68,0.3)",   text: "#ef4444" },
+        "Operations":              { bg: "rgba(6,182,212,0.12)",  border: "rgba(6,182,212,0.3)",   text: "#06b6d4" },
+        "Coding":                  { bg: "rgba(99,102,241,0.12)", border: "rgba(99,102,241,0.3)",  text: "#6366f1" },
+        "Security Architecture":   { bg: "rgba(236,72,153,0.12)", border: "rgba(236,72,153,0.3)",  text: "#ec4899" },
+        "AI / ML Systems":         { bg: "rgba(16,185,129,0.12)", border: "rgba(16,185,129,0.3)",  text: "#10b981" },
+        "Incident Response":       { bg: "rgba(239,68,68,0.14)",  border: "rgba(239,68,68,0.35)",  text: "#ef4444" },
+        "Governance":              { bg: "rgba(251,191,36,0.12)", border: "rgba(251,191,36,0.3)",  text: "#fbbf24" },
+        "Vulnerability Management":{ bg: "rgba(245,158,11,0.14)", border: "rgba(245,158,11,0.35)", text: "#f59e0b" },
+        "Data Security":           { bg: "rgba(59,130,246,0.14)", border: "rgba(59,130,246,0.35)", text: "#3b82f6" },
+        "Detection Engineering":   { bg: "rgba(6,182,212,0.14)",  border: "rgba(6,182,212,0.35)",  text: "#06b6d4" },
+        "Privacy":                 { bg: "rgba(139,92,246,0.14)", border: "rgba(139,92,246,0.35)", text: "#8b5cf6" },
+        "Cloud Security":          { bg: "rgba(99,102,241,0.14)", border: "rgba(99,102,241,0.35)", text: "#6366f1" },
+        "Supply Chain":            { bg: "rgba(236,72,153,0.14)", border: "rgba(236,72,153,0.35)", text: "#ec4899" },
+        "Legal / Compliance":      { bg: "rgba(251,191,36,0.14)", border: "rgba(251,191,36,0.35)", text: "#fbbf24" },
+        "UX Security":             { bg: "rgba(16,185,129,0.14)", border: "rgba(16,185,129,0.35)", text: "#10b981" },
+        "Industry Specialized":    { bg: "rgba(0,229,255,0.10)",  border: "rgba(0,229,255,0.25)",  text: "#00e5ff" },
+    };
+    const DEFAULT_COLOR = { bg: "rgba(255,255,255,0.05)", border: "rgba(255,255,255,0.12)", text: "#94a3b8" };
+
+    function catColor(category) {
+        return CAT_COLORS[category] || DEFAULT_COLOR;
+    }
+
+    // ---- State ----
+    let _allPrompts = [];
+    let _activeDetail = null;
+
+    // ---- DOM refs (lazy) ----
+    function el(id) { return document.getElementById(id); }
+
+    // ---- Render cards ----
+    function renderCards(prompts) {
+        const grid = el("prompt-library-grid");
+        if (!grid) return;
+        const label = el("prompt-library-results-label");
+        if (label) label.textContent = `Showing ${prompts.length} of ${_allPrompts.length} prompts`;
+
+        grid.innerHTML = prompts.map(p => {
+            const c = catColor(p.category);
+            const shortMission = (p.mission || "").length > 90
+                ? p.mission.slice(0, 90) + "…"
+                : (p.mission || "");
+            return `
+            <div class="prompt-library-card" data-id="${p.id}"
+                style="background: rgba(15,23,42,0.7); border: 1px solid ${c.border}; border-radius: 10px;
+                       padding: 16px; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; gap: 10px;
+                       backdrop-filter: blur(8px);"
+                onmouseover="this.style.background='rgba(15,23,42,0.95)';this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(0,0,0,0.4)'"
+                onmouseout="this.style.background='rgba(15,23,42,0.7)';this.style.transform='';this.style.boxShadow=''">
+                <div style="display: flex; align-items: flex-start; gap: 8px; justify-content: space-between;">
+                    <span style="font-family: monospace; font-size: 10px; color: ${c.text}; font-weight: bold; background: ${c.bg}; border: 1px solid ${c.border}; padding: 2px 6px; border-radius: 4px; white-space: nowrap;">${p.id}</span>
+                    <span style="font-size: 10px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.industry || ""}</span>
+                </div>
+                <div style="font-size: 13px; font-weight: 600; color: #fff; line-height: 1.3;">${p.title}</div>
+                <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.5; flex: 1;">${shortMission}</div>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
+                    <span style="font-size: 10px; color: ${c.text}; background: ${c.bg}; padding: 2px 7px; border-radius: 10px; font-weight: 600;">${p.category}</span>
+                    <span style="font-size: 10px; color: var(--text-secondary);">View prompt →</span>
+                </div>
+            </div>`;
+        }).join("");
+
+        // Wire click handlers
+        grid.querySelectorAll(".prompt-library-card").forEach(card => {
+            card.addEventListener("click", () => {
+                const pid = card.dataset.id;
+                const prompt = _allPrompts.find(p => p.id === pid);
+                if (prompt) showDetail(prompt);
+            });
+        });
+    }
+
+    // ---- Filter + search ----
+    function applyFilters() {
+        const search  = (el("prompt-library-search")?.value || "").toLowerCase().trim();
+        const cat     = el("prompt-library-filter-category")?.value || "";
+        const ind     = el("prompt-library-filter-industry")?.value || "";
+
+        let results = _allPrompts;
+        if (cat)    results = results.filter(p => p.category === cat);
+        if (ind)    results = results.filter(p => p.industry === ind);
+        if (search) results = results.filter(p =>
+            (p.id     || "").toLowerCase().includes(search) ||
+            (p.title  || "").toLowerCase().includes(search) ||
+            (p.mission|| "").toLowerCase().includes(search) ||
+            (p.prompt || "").toLowerCase().includes(search) ||
+            (p.category || "").toLowerCase().includes(search)
+        );
+        renderCards(results);
+    }
+
+    // ---- Detail panel ----
+    function showDetail(prompt) {
+        _activeDetail = prompt;
+        const panel = el("prompt-library-detail");
+        if (!panel) return;
+
+        const c = catColor(prompt.category);
+        const badge = el("prompt-detail-category-badge");
+        if (badge) {
+            badge.textContent = prompt.category;
+            badge.style.background = c.bg;
+            badge.style.border = `1px solid ${c.border}`;
+            badge.style.color = c.text;
+        }
+        el("prompt-detail-id") && (el("prompt-detail-id").textContent = prompt.id);
+        el("prompt-detail-title") && (el("prompt-detail-title").textContent = prompt.title);
+        el("prompt-detail-industry") && (el("prompt-detail-industry").textContent = `Industry: ${prompt.industry || "All Industries"}`);
+        el("prompt-detail-mission") && (el("prompt-detail-mission").textContent = prompt.mission || "");
+        el("prompt-detail-outputs") && (el("prompt-detail-outputs").textContent = prompt.outputs || "");
+        el("prompt-detail-text") && (el("prompt-detail-text").textContent = prompt.prompt || "");
+
+        panel.classList.remove("hidden");
+        panel.style.display = "flex";
+    }
+
+    function hideDetail() {
+        const panel = el("prompt-library-detail");
+        if (panel) {
+            panel.classList.add("hidden");
+            panel.style.display = "none";
+        }
+        _activeDetail = null;
+    }
+
+    // ---- Populate filter dropdowns ----
+    async function loadCategories() {
+        try {
+            const res = await fetch(`${API_BASE}/api/v1/prompt-library/categories`);
+            if (!res.ok) return;
+            const data = await res.json();
+
+            const catSel = el("prompt-library-filter-category");
+            const indSel = el("prompt-library-filter-industry");
+
+            if (catSel) {
+                (data.categories || []).forEach(cat => {
+                    const opt = document.createElement("option");
+                    opt.value = cat;
+                    opt.textContent = cat;
+                    catSel.appendChild(opt);
+                });
+                catSel.addEventListener("change", applyFilters);
+            }
+            if (indSel) {
+                (data.industries || []).forEach(ind => {
+                    const opt = document.createElement("option");
+                    opt.value = ind;
+                    opt.textContent = ind;
+                    indSel.appendChild(opt);
+                });
+                indSel.addEventListener("change", applyFilters);
+            }
+        } catch (err) {
+            console.warn("Prompt library categories load failed:", err);
+        }
+    }
+
+    // ---- Load all prompts ----
+    async function loadPrompts() {
+        try {
+            const res = await fetch(`${API_BASE}/api/v1/prompt-library`);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+            _allPrompts = data.prompts || [];
+
+            const badge = el("prompt-library-count-badge");
+            if (badge) badge.textContent = `${_allPrompts.length} PROMPTS`;
+
+            renderCards(_allPrompts);
+        } catch (err) {
+            console.error("Failed to load prompt library:", err);
+            const grid = el("prompt-library-grid");
+            if (grid) grid.innerHTML = `<div style="color: var(--text-secondary); font-size: 12px; padding: 20px;">Failed to load prompt library: ${err.message}</div>`;
+        }
+    }
+
+    // ---- "Send to Swarm" ----
+    async function sendToSwarm(prompt) {
+        if (!prompt) return;
+        try {
+            const payload = {
+                task_type: prompt.category,
+                prompt: prompt.prompt,
+                system_prompt: `You are the ${prompt.title}. ${prompt.mission}`,
+                mode: "Execute",
+                operator_role: "Operator",
+            };
+            const res = await fetch(`${API_BASE}/api/tasks/run`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+            if (res.ok) {
+                const btn = el("prompt-detail-use");
+                if (btn) {
+                    const orig = btn.textContent;
+                    btn.textContent = "✓ Submitted to Swarm";
+                    btn.style.color = "#10b981";
+                    setTimeout(() => { btn.textContent = orig; btn.style.color = ""; }, 3000);
+                }
+            } else {
+                alert("Swarm submission failed: HTTP " + res.status);
+            }
+        } catch (err) {
+            alert("Swarm submission error: " + err.message);
+        }
+    }
+
+    // ---- Boot: nav click handler ----
+    const navBtn = document.getElementById("nav-prompt-library");
+    if (!navBtn) return;
+
+    let _initialized = false;
+
+    navBtn.addEventListener("click", async () => {
+        if (!_initialized) {
+            _initialized = true;
+            await loadCategories();
+            await loadPrompts();
+
+            // Search box
+            const searchBox = el("prompt-library-search");
+            if (searchBox) searchBox.addEventListener("input", applyFilters);
+
+            // Clear filters button
+            const clearBtn = el("prompt-library-clear-filters");
+            if (clearBtn) clearBtn.addEventListener("click", () => {
+                const s = el("prompt-library-search"); if (s) s.value = "";
+                const c = el("prompt-library-filter-category"); if (c) c.value = "";
+                const i = el("prompt-library-filter-industry"); if (i) i.value = "";
+                applyFilters();
+            });
+
+            // Detail close button
+            const closeBtn = el("prompt-detail-close");
+            if (closeBtn) closeBtn.addEventListener("click", hideDetail);
+
+            // Copy button
+            const copyBtn = el("prompt-detail-copy");
+            if (copyBtn) copyBtn.addEventListener("click", () => {
+                const text = el("prompt-detail-text")?.textContent || "";
+                navigator.clipboard.writeText(text).then(() => {
+                    copyBtn.textContent = "✓ Copied!";
+                    setTimeout(() => { copyBtn.textContent = "⧉ Copy"; }, 2000);
+                });
+            });
+
+            // Send to Swarm button
+            const useBtn = el("prompt-detail-use");
+            if (useBtn) useBtn.addEventListener("click", () => sendToSwarm(_activeDetail));
+
+            // Refresh lucide icons
+            if (window.lucide) window.lucide.createIcons();
+        }
+    });
+
+})();

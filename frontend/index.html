@@ -79,6 +79,10 @@
                     <i data-lucide="scale"></i> <span>Governance Cockpit</span>
                     <span class="nav-status-indicator swarm-led-idle" id="led-governance" style="margin-left: auto; font-size: 14px; font-weight: bold;">●</span>
                 </a>
+                <a href="#" class="nav-item" id="nav-prompt-library">
+                    <i data-lucide="book-open"></i> <span>Prompt Library</span>
+                    <span class="nav-status-indicator swarm-led-live" id="led-prompt-library" style="margin-left: auto; font-size: 14px; font-weight: bold;">●</span>
+                </a>
             </nav>
             <div class="profile-area">
                 <div class="avatar">MH</div>
@@ -3470,6 +3474,92 @@
         </div>
     </dialog>
 
+
+<!-- ================================================================
+     PROMPT LIBRARY VIEW
+     ================================================================ -->
+<div id="view-prompt-library" class="hidden" style="padding: 20px; display: flex; flex-direction: column; gap: 16px; height: 100%; overflow-y: auto;">
+
+    <!-- Header -->
+    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <i data-lucide="book-open" style="color: var(--accent-teal); width: 22px; height: 22px;"></i>
+            <h1 style="font-size: 18px; font-weight: 700; color: #fff; margin: 0;">Prompt Library</h1>
+        </div>
+        <span id="prompt-library-count-badge" style="background: rgba(0,229,255,0.12); border: 1px solid rgba(0,229,255,0.25); color: var(--accent-teal); font-size: 10px; font-family: monospace; padding: 2px 8px; border-radius: 4px; font-weight: bold;">103 PROMPTS</span>
+        <span style="font-size: 11px; color: var(--text-secondary); margin-left: auto;">HOCH Agent Swarm QA Audit DevSecOps Prompt Library v1.0.0</span>
+    </div>
+
+    <!-- Filters -->
+    <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+        <input
+            id="prompt-library-search"
+            type="text"
+            placeholder="Search by title, keyword, or ID…"
+            style="flex: 1; min-width: 220px; background: rgba(15,23,42,0.85); border: 1px solid var(--border-glass); border-radius: 6px; padding: 7px 12px; color: #fff; font-size: 12px; outline: none; transition: border-color 0.2s;"
+            onfocus="this.style.borderColor='var(--accent-teal)'" onblur="this.style.borderColor='var(--border-glass)'"
+        />
+        <select id="prompt-library-filter-category" style="background: rgba(15,23,42,0.85); border: 1px solid var(--border-glass); border-radius: 6px; padding: 7px 10px; color: #fff; font-size: 11px; outline: none;">
+            <option value="">All Categories</option>
+        </select>
+        <select id="prompt-library-filter-industry" style="background: rgba(15,23,42,0.85); border: 1px solid var(--border-glass); border-radius: 6px; padding: 7px 10px; color: #fff; font-size: 11px; outline: none;">
+            <option value="">All Industries</option>
+        </select>
+        <button id="prompt-library-clear-filters" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: var(--text-secondary); border-radius: 6px; padding: 7px 12px; font-size: 11px; cursor: pointer; transition: all 0.2s;"
+            onmouseover="this.style.borderColor='var(--accent-teal)'" onmouseout="this.style.borderColor='var(--border-glass)'">
+            Clear
+        </button>
+    </div>
+
+    <!-- Results count -->
+    <div id="prompt-library-results-label" style="font-size: 11px; color: var(--text-secondary); font-family: monospace;"></div>
+
+    <!-- Cards grid -->
+    <div id="prompt-library-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; padding-bottom: 20px;"></div>
+
+    <!-- Detail panel (shown on card click) -->
+    <div id="prompt-library-detail" class="hidden" style="position: fixed; top: 0; right: 0; width: min(520px, 100vw); height: 100vh; background: rgba(10,15,28,0.98); border-left: 1px solid var(--border-glass); backdrop-filter: blur(16px); z-index: 1000; display: flex; flex-direction: column; box-shadow: -8px 0 32px rgba(0,0,0,0.6);">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border-glass);">
+            <div>
+                <span id="prompt-detail-id" style="font-family: monospace; font-size: 11px; color: var(--accent-teal); font-weight: bold;"></span>
+                <span id="prompt-detail-category-badge" style="margin-left: 8px; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-family: monospace;"></span>
+            </div>
+            <button id="prompt-detail-close" style="background: none; border: 1px solid var(--border-glass); color: var(--text-secondary); border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer;">✕ Close</button>
+        </div>
+        <div style="padding: 20px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px;">
+            <div>
+                <h2 id="prompt-detail-title" style="font-size: 16px; font-weight: 700; color: #fff; margin: 0 0 6px 0;"></h2>
+                <div id="prompt-detail-industry" style="font-size: 11px; color: var(--text-secondary);"></div>
+            </div>
+            <div>
+                <div style="font-size: 10px; font-weight: bold; color: var(--accent-blue); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;">Mission</div>
+                <div id="prompt-detail-mission" style="font-size: 12px; color: var(--text-secondary); line-height: 1.6;"></div>
+            </div>
+            <div>
+                <div style="font-size: 10px; font-weight: bold; color: var(--accent-orange); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;">Expected Outputs</div>
+                <div id="prompt-detail-outputs" style="font-size: 12px; color: var(--text-secondary); line-height: 1.6;"></div>
+            </div>
+            <div>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                    <div style="font-size: 10px; font-weight: bold; color: var(--accent-teal); text-transform: uppercase; letter-spacing: 0.08em;">Prompt Text</div>
+                    <button id="prompt-detail-copy" style="background: rgba(0,229,255,0.1); border: 1px solid rgba(0,229,255,0.25); color: var(--accent-teal); border-radius: 4px; padding: 3px 10px; font-size: 10px; cursor: pointer; font-family: monospace; transition: all 0.2s;"
+                        onmouseover="this.style.background='rgba(0,229,255,0.2)'" onmouseout="this.style.background='rgba(0,229,255,0.1)'">
+                        ⧉ Copy
+                    </button>
+                </div>
+                <pre id="prompt-detail-text" style="background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.07); border-radius: 6px; padding: 14px; font-size: 11px; line-height: 1.6; color: #e2e8f0; white-space: pre-wrap; word-break: break-word; font-family: 'SF Mono', monospace; margin: 0; max-height: 400px; overflow-y: auto;"></pre>
+            </div>
+            <div style="border-top: 1px solid var(--border-glass); padding-top: 12px;">
+                <button id="prompt-detail-use" style="width: 100%; background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); color: #10b981; border-radius: 6px; padding: 10px; font-size: 12px; font-weight: bold; cursor: pointer; font-family: monospace; transition: all 0.2s;"
+                    onmouseover="this.style.background='rgba(16,185,129,0.22)'" onmouseout="this.style.background='rgba(16,185,129,0.12)'">
+                    ▶ Send to Swarm
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script type="module" src="/app.js"></script>
+
 </body>
 </html>

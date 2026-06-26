@@ -637,7 +637,11 @@ def get_release_signing_policy():
 
 @app.post("/api/v1/release/signing-waiver")
 async def api_submit_signing_waiver(payload: dict):
-    reason = payload.get("reason", "")
+    reason = payload.get("reason", "").strip()
+    if not reason:
+        raise HTTPException(status_code=400, detail="Waiver reason cannot be empty")
+    if len(reason) < 10:
+        raise HTTPException(status_code=400, detail="Waiver reason must be at least 10 characters long")
     scope = payload.get("scope", "local_dev")
     operator = payload.get("operator", "Operator")
     
@@ -4667,6 +4671,15 @@ async def api_submit_decision(approval_id: str, decision: dict):
         else:
             run_id, task_id = None, req_id
             
+        dec_reason = decision.get("reason", "")
+        if not dec_reason:
+            with _approvals_lock:
+                app_item = next((a for a in _approvals if a["approval_id"] == approval_id), None)
+                if app_item and "command" in app_item and "cmd" in app_item["command"]:
+                    cmd_str = app_item["command"]["cmd"]
+                    if cmd_str.startswith("Release Signing Waiver: "):
+                        dec_reason = cmd_str[len("Release Signing Waiver: "):]
+                        
         enriched_decision = {
             "decision_id": f"dec-{uuid.uuid4().hex[:8]}",
             "request_id": gate["request_id"],
@@ -4674,6 +4687,7 @@ async def api_submit_decision(approval_id: str, decision: dict):
             "task_id": task_id,
             "operator": decision.get("operator", "Operator"),
             "decision": new_status,
+            "reason": dec_reason,
             "decision_time": now_iso(),
             "nonce": uuid.uuid4().hex,
             "prior_state": gate["status"],
@@ -6831,6 +6845,73 @@ def delete_evidence_graph_link_api(link_id: str):
         return {"status": "success", "message": f"Link {link_id} deleted"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+# ================================================================
+#  PROMPT LIBRARY — serve hoch_agent_swarm_prompt_library.json
+# ================================================================
+import functools
+
+@functools.lru_cache(maxsize=1)
+def _load_prompt_library():
+    """Load prompt library JSON once and cache it."""
+    lib_path = os.path.join(os.path.dirname(__file__), "prompt_library.json")
+    try:
+        with open(lib_path, "r") as f:
+            return json.load(f)
+    except Exception as e:
+        return []
+
+@app.get("/api/v1/prompt-library")
+def get_prompt_library(
+    category: str = None,
+    industry: str = None,
+    search: str = None,
+    limit: int = 200
+):
+    """Return all prompts, with optional filters for category, industry, and full-text search."""
+    prompts = _load_prompt_library()
+    if category:
+        prompts = [p for p in prompts if p.get("category", "").lower() == category.lower()]
+    if industry:
+        prompts = [p for p in prompts if p.get("industry", "").lower() == industry.lower()]
+    if search:
+        q = search.lower()
+        prompts = [
+            p for p in prompts
+            if q in p.get("title", "").lower()
+            or q in p.get("mission", "").lower()
+            or q in p.get("prompt", "").lower()
+            or q in p.get("category", "").lower()
+            or q in p.get("id", "").lower()
+        ]
+    return {
+        "count": len(prompts[:limit]),
+        "total": len(_load_prompt_library()),
+        "prompts": prompts[:limit],
+        "source": "prompt_library.json",
+        "freshness": "static",
+    }
+
+@app.get("/api/v1/prompt-library/categories")
+def get_prompt_library_categories():
+    """Return unique categories and industries for filter UI."""
+    prompts = _load_prompt_library()
+    categories = sorted(set(p.get("category", "") for p in prompts if p.get("category")))
+    industries = sorted(set(p.get("industry", "") for p in prompts if p.get("industry")))
+    return {
+        "categories": categories,
+        "industries": industries,
+        "total_prompts": len(prompts),
+    }
+
+@app.get("/api/v1/prompt-library/{prompt_id}")
+def get_prompt_by_id(prompt_id: str):
+    """Return a single prompt by its ID (e.g. QA-001, SAST-002)."""
+    prompts = _load_prompt_library()
+    for p in prompts:
+        if p.get("id", "").upper() == prompt_id.upper():
+            return p
+    raise HTTPException(status_code=404, detail=f"Prompt '{prompt_id}' not found")
 
 # Mount frontend files at root (if frontend directory exists)
 
