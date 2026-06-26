@@ -681,18 +681,156 @@
       ],
       "evidence_present": true,
       "truth": "LIVE"
+    },
+    {
+      "control_id":  "CREWAI-ADAPTER-001",
+      "name":        "CrewAI Local Execution Adapter",
+      "domain":      "GOVERNANCE",
+      "pert_ref":    "Batch-Prompt-2",
+      "gap_ref":     "GAP-003",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-CA-001",
+          "description":   "CrewAI execution adapter handles run logging and SQLite ledger bridge",
+          "type":          "smoke",
+          "result":        "PASS",
+          "batch":         "PR-5-Audit",
+          "evidence_file": "audit_report_4e44f3cb.md",
+          "notes":         "Verified by tests/test_crew_smoke.py and tests/test_run_report.py"
+        },
+        {
+          "test_id":       "T-CA-002",
+          "description":   "Adapter CLI entry points (run_crew, train, replay, test, run_with_trigger) correctly parse arguments",
+          "type":          "smoke",
+          "result":        "PASS",
+          "batch":         "PR-5-Audit",
+          "evidence_file": "implementation_plan_4e44f3cb.md",
+          "notes":         "Verified by tests/test_entry_points.py"
+        }
+      ],
+      "evidence_artifacts": [
+        "src/hoch_agent_swarm/crew.py",
+        "src/hoch_agent_swarm/main.py",
+        "tests/test_crew_smoke.py"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
+    },
+    {
+      "control_id":  "ENV-PREFLIGHT-001",
+      "name":        "Environment Preflight Gating",
+      "domain":      "GOVERNANCE",
+      "pert_ref":    "Batch-Prompt-3",
+      "gap_ref":     "GAP-003",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-EPF-001",
+          "description":   "Preflight gating checks .env existence, model configuration, and local Ollama server reachability",
+          "type":          "smoke",
+          "result":        "PASS",
+          "batch":         "PR-5-Audit",
+          "evidence_file": "implementation_plan_4e44f3cb.md",
+          "notes":         "Verified by tests/test_trial_preflight.py"
+        },
+        {
+          "test_id":       "T-EPF-002",
+          "description":   "Preflight warning triggers when baseline run reports are absent",
+          "type":          "smoke",
+          "result":        "PASS",
+          "batch":         "PR-5-Audit",
+          "evidence_file": "implementation_plan_4e44f3cb.md",
+          "notes":         "Verified by tests/test_trial_preflight.py"
+        }
+      ],
+      "evidence_artifacts": [
+        "src/hoch_agent_swarm/trial_preflight.py",
+        "tests/test_trial_preflight.py"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
+    },
+    {
+      "control_id":  "MANIFEST-ALIGN-001",
+      "name":        "Agent Manifest Compliance",
+      "domain":      "GOVERNANCE",
+      "pert_ref":    "Batch-Prompt-2",
+      "gap_ref":     "GAP-003",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-MA-001",
+          "description":   "Runtime checks verify agent definitions align with yaml manifest and enforce agent limits",
+          "type":          "smoke",
+          "result":        "PASS",
+          "batch":         "PR-5-Audit",
+          "evidence_file": "qa_test_strategy_4e44f3cb.md",
+          "notes":         "Verified by tests/test_manifest_alignment.py"
+        }
+      ],
+      "evidence_artifacts": [
+        "artifacts/agent_manifests/hoch_agent_swarm_manifest.yaml",
+        "tests/test_manifest_alignment.py"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
+    },
+    {
+      "control_id":  "QUALITY-GATE-001",
+      "name":        "Operational Quality & RC Gating",
+      "domain":      "AUDIT",
+      "pert_ref":    "P5",
+      "gap_ref":     "GAP-004",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-QG-001",
+          "description":   "Release candidate builder compiles manifests, checksums, and package reports",
+          "type":          "integration",
+          "result":        "PASS",
+          "batch":         "PR-5-Audit",
+          "evidence_file": "qa_test_strategy_4e44f3cb.md",
+          "notes":         "Verified by tests/test_release_candidate.py and tests/test_rc_inspector.py"
+        },
+        {
+          "test_id":       "T-QG-002",
+          "description":   "Quality gate inspects and compares baseline run logs to ensure no performance/security regressions",
+          "type":          "integration",
+          "result":        "PASS",
+          "batch":         "PR-5-Audit",
+          "evidence_file": "gap_analysis_4e44f3cb.md",
+          "notes":         "Verified by tests/test_compare_reports.py and tests/test_quality_gate.py"
+        },
+        {
+          "test_id":       "T-QG-003",
+          "description":   "Redaction and signature validation checks verify artifact safety before release sealing",
+          "type":          "integration",
+          "result":        "PASS",
+          "batch":         "PR-5-Audit",
+          "evidence_file": "audit_report_4e44f3cb.md",
+          "notes":         "Verified by tests/test_artifact_validation.py"
+        }
+      ],
+      "evidence_artifacts": [
+        "src/hoch_agent_swarm/release_candidate.py",
+        "src/hoch_agent_swarm/quality_gate.py",
+        "tests/test_artifact_validation.py"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
     }
   ],
   "summary": {
-    "total_controls":         19,
-    "tested":                  11,
+    "total_controls":         24,
+    "tested":                  15,
     "partial":                 5,
     "in_progress":             1,
     "pending":                 2,
-    "evidence_present_count": 17,
+    "evidence_present_count": 21,
     "evidence_missing_count":  2,
-    "total_tests":            38,
-    "tests_pass":             29,
+    "total_tests":            46,
+    "tests_pass":             37,
     "tests_partial":           2,
     "tests_pending":           7,
     "matrix_status":          "IN_PROGRESS",
