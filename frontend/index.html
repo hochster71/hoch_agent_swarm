@@ -2212,7 +2212,7 @@
                     <div style="display: grid; grid-template-columns: 1.8fr 1.2fr; gap: 20px;">
                         <!-- Left Panel: Lineage Graph Tracing -->
                         <div style="display: flex; flex-direction: column; gap: 15px; background: rgba(0,0,0,0.15); padding: 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.03);">
-                            <div style="display: flex; gap: 10px; align-items: flex-end;">
+                             <div style="display: flex; gap: 10px; align-items: flex-end;">
                                 <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
                                     <label style="font-size: 11px; color: var(--text-secondary);">Select Starting Node to Trace</label>
                                     <select id="evidence-trace-start-select" style="background: rgba(0,0,0,0.25); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 12px; width: 100%;">
@@ -2222,13 +2222,41 @@
                                 <button id="btn-trigger-evidence-trace" class="btn btn-sm btn-primary">Trace Lineage</button>
                             </div>
 
+                            <!-- Graph Stats & Controls (Phase 21) -->
+                            <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border-glass); font-size: 11px; color: #fff;">
+                                <div style="display: flex; gap: 15px;">
+                                    <div>Nodes: <span id="evidence-graph-node-count" style="font-weight: bold; color: var(--accent-teal);">0</span></div>
+                                    <div>Edges: <span id="evidence-graph-edge-count" style="font-weight: bold; color: var(--accent-teal);">0</span></div>
+                                    <div>Hidden: <span id="evidence-graph-hidden-count" style="font-weight: bold; color: var(--accent-orange);">0</span></div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <input type="checkbox" id="evidence-graph-compact-toggle" checked style="cursor: pointer;">
+                                    <label for="evidence-graph-compact-toggle" style="color: var(--text-secondary); cursor: pointer; user-select: none;">Compact mode</label>
+                                </div>
+                            </div>
+
+                            <div id="evidence-graph-large-warning" class="hidden" style="background: rgba(255,165,0,0.08); border: 1px solid rgba(255,165,0,0.2); color: var(--accent-orange); font-size: 11px; padding: 8px 12px; border-radius: 4px; display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span>Large trace: rendering is truncated to protect stability. Use compact mode or load more.</span>
+                            </div>
+
+                            <div id="evidence-graph-empty-state" class="hidden" style="background: rgba(255,255,255,0.01); border: 1px dashed var(--border-glass); border-radius: 6px; padding: 20px; text-align: center; color: var(--text-secondary); font-size: 12px; font-style: italic;">
+                                <i class="fas fa-info-circle" style="display: block; font-size: 20px; margin-bottom: 8px; color: var(--text-secondary);"></i>
+                                No evidence graph nodes available for this trace.
+                            </div>
+
                             <!-- Lineage Visualization Area -->
-                            <div style="margin-top: 10px;">
-                                <h4 style="margin: 0 0 10px 0; font-size: 12px; color: var(--accent-teal); font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                            <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
+                                <h4 style="margin: 0; font-size: 12px; color: var(--accent-teal); font-weight: 600; display: flex; align-items: center; gap: 6px;">
                                     <i data-lucide="split" style="width: 14px; height: 14px;"></i> Interactive Evidence Flow
                                 </h4>
                                 <div id="evidence-flow-container" style="background: rgba(0,0,0,0.25); border: 1px solid var(--border-glass); border-radius: 6px; padding: 20px; min-height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow-x: auto; gap: 12px;">
                                     <span style="font-size: 12px; color: var(--text-secondary); font-style: italic;">Select a node above and click "Trace Lineage" to construct the cross-runtime flow diagram.</span>
+                                </div>
+                                <div style="display: flex; justify-content: center; margin-top: 5px;">
+                                    <button id="evidence-graph-load-more-button" class="btn btn-xs btn-outline hidden" style="display: flex; align-items: center; gap: 6px; padding: 6px 12px;">
+                                        <i class="fas fa-plus"></i> Load More Evidence Nodes
+                                    </button>
                                 </div>
                             </div>
                         </div>

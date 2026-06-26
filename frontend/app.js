@@ -10110,6 +10110,10 @@ window.triggerCrewaiIngestion = triggerCrewaiIngestion;
 //  CROSS-RUNTIME EVIDENCE GRAPH & TRACE INSPECTOR (Phase 21)
 // ================================================================
 let localEvidenceGraphData = null;
+let activeTraceNodes = [];
+let activeTraceEdges = [];
+let visibleNodesLimit = 100;
+let visibleEdgesLimit = 150;
 
 async function initEvidenceGraphUI() {
     const btnRefresh = document.getElementById("btn-refresh-evidence-graph");
@@ -10123,6 +10127,29 @@ async function initEvidenceGraphUI() {
     const btnSaveLink = document.getElementById("btn-save-manual-link");
     if (btnSaveLink) {
         btnSaveLink.addEventListener("click", saveManualLink);
+    }
+    const compactToggle = document.getElementById("evidence-graph-compact-toggle");
+    if (compactToggle) {
+        compactToggle.addEventListener("change", () => {
+            if (activeTraceNodes && activeTraceNodes.length > 0) {
+                if (compactToggle.checked) {
+                    visibleNodesLimit = 100;
+                    visibleEdgesLimit = 150;
+                } else {
+                    visibleNodesLimit = activeTraceNodes.length;
+                    visibleEdgesLimit = activeTraceEdges.length;
+                }
+                renderEvidenceFlow(activeTraceNodes, activeTraceEdges);
+            }
+        });
+    }
+    const btnLoadMore = document.getElementById("evidence-graph-load-more-button");
+    if (btnLoadMore) {
+        btnLoadMore.addEventListener("click", () => {
+            visibleNodesLimit += 100;
+            visibleEdgesLimit += 150;
+            renderEvidenceFlow(activeTraceNodes, activeTraceEdges);
+        });
     }
     await loadEvidenceGraph();
 }
@@ -10188,7 +10215,20 @@ async function traceEvidenceLineage() {
             throw new Error(`HTTP error ${res.status}: ${res.statusText}`);
         }
         const data = await res.json();
-        renderEvidenceFlow(data.nodes, data.edges);
+        
+        activeTraceNodes = data.nodes || [];
+        activeTraceEdges = data.edges || [];
+
+        const compactToggle = document.getElementById("evidence-graph-compact-toggle");
+        if (compactToggle && compactToggle.checked) {
+            visibleNodesLimit = 100;
+            visibleEdgesLimit = 150;
+        } else {
+            visibleNodesLimit = activeTraceNodes.length;
+            visibleEdgesLimit = activeTraceEdges.length;
+        }
+
+        renderEvidenceFlow(activeTraceNodes, activeTraceEdges);
         inspectEvidenceNode(startNodeId);
     } catch (err) {
         console.error("Error tracing lineage:", err);
@@ -10198,13 +10238,67 @@ async function traceEvidenceLineage() {
     }
 }
 
+function getIconForNodeType(type) {
+    switch (type) {
+        case 'policy_guard': return 'fa-shield-alt';
+        case 'execution_plan': return 'fa-clipboard-list';
+        case 'run_report': return 'fa-file-alt';
+        case 'agent_manifest': return 'fa-file-invoice';
+        case 'audit_trail': return 'fa-history';
+        default: return 'fa-microchip';
+    }
+}
+
 function renderEvidenceFlow(nodes, edges) {
     const container = document.getElementById("evidence-flow-container");
     if (!container) return;
 
+    const emptyState = document.getElementById("evidence-graph-empty-state");
+    const largeWarning = document.getElementById("evidence-graph-large-warning");
+    const loadMoreBtn = document.getElementById("evidence-graph-load-more-button");
+    const nodeCountEl = document.getElementById("evidence-graph-node-count");
+    const edgeCountEl = document.getElementById("evidence-graph-edge-count");
+    const hiddenCountEl = document.getElementById("evidence-graph-hidden-count");
+
+    const totalNodesCount = nodes ? nodes.length : 0;
+    const totalEdgesCount = edges ? edges.length : 0;
+
+    if (nodeCountEl) nodeCountEl.textContent = totalNodesCount;
+    if (edgeCountEl) edgeCountEl.textContent = totalEdgesCount;
+
     if (!nodes || nodes.length === 0) {
-        container.innerHTML = `<span style="font-size: 12px; color: var(--text-secondary); font-style: italic;">No trace nodes returned.</span>`;
+        container.innerHTML = "";
+        if (emptyState) emptyState.classList.remove("hidden");
+        if (largeWarning) largeWarning.classList.add("hidden");
+        if (loadMoreBtn) loadMoreBtn.classList.add("hidden");
+        if (hiddenCountEl) hiddenCountEl.textContent = "0";
         return;
+    }
+
+    if (emptyState) emptyState.classList.add("hidden");
+
+    const compactToggle = document.getElementById("evidence-graph-compact-toggle");
+    const isCompact = compactToggle ? compactToggle.checked : true;
+    
+    const nodesToRender = isCompact ? nodes.slice(0, visibleNodesLimit) : nodes;
+    const hiddenNodesCount = Math.max(0, totalNodesCount - nodesToRender.length);
+
+    if (hiddenCountEl) hiddenCountEl.textContent = hiddenNodesCount;
+
+    if (largeWarning) {
+        if (totalNodesCount > 150) {
+            largeWarning.classList.remove("hidden");
+        } else {
+            largeWarning.classList.add("hidden");
+        }
+    }
+
+    if (loadMoreBtn) {
+        if (hiddenNodesCount > 0) {
+            loadMoreBtn.classList.remove("hidden");
+        } else {
+            loadMoreBtn.classList.add("hidden");
+        }
     }
 
     container.innerHTML = "";
@@ -10221,11 +10315,17 @@ function renderEvidenceFlow(nodes, edges) {
     flowWrapper.style.padding = "10px";
 
     const nodesMap = {};
-    nodes.forEach(node => {
+    const visibleNodesSet = new Set();
+    
+    const nodeFragment = document.createDocumentFragment();
+
+    nodesToRender.forEach(node => {
         nodesMap[node.id] = node;
+        visibleNodesSet.add(node.id);
         
         const card = document.createElement("div");
         card.className = "evidence-node-chip";
+        card.id = "evidence-node-chip";
         card.style.background = getBackgroundForNodeType(node.type);
         card.style.border = getBorderForNodeType(node.type);
         card.style.borderRadius = "6px";
@@ -10258,19 +10358,23 @@ function renderEvidenceFlow(nodes, edges) {
 
         card.innerHTML = `
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                <i class="fas fa-microchip" style="width: 14px; height: 14px; color: ${colorName};"></i>
+                <i class="fas ${iconName}" style="width: 14px; height: 14px; color: ${colorName};"></i>
                 <span class="badge" style="background: rgba(255,255,255,0.05); font-size: 8px; color: ${colorName}; border: 1px solid rgba(255,255,255,0.05);">${node.type.toUpperCase()}</span>
             </div>
             <div style="font-size: 11px; font-weight: bold; color: #fff; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; margin-bottom: 4px;">${escapeHtml(node.label)}</div>
             <div style="font-size: 9px; color: var(--text-secondary); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; font-family: monospace;">${escapeHtml(node.id.substring(0, 24))}...</div>
         `;
 
-        flowWrapper.appendChild(card);
+        nodeFragment.appendChild(card);
     });
 
+    flowWrapper.appendChild(nodeFragment);
     container.appendChild(flowWrapper);
 
-    if (edges && edges.length > 0) {
+    const validEdges = edges ? edges.filter(edge => visibleNodesSet.has(edge.source) && visibleNodesSet.has(edge.target)) : [];
+    const edgesToRender = isCompact ? validEdges.slice(0, visibleEdgesLimit) : validEdges;
+
+    if (edgesToRender && edgesToRender.length > 0) {
         const edgesSummary = document.createElement("div");
         edgesSummary.style.marginTop = "15px";
         edgesSummary.style.padding = "10px";
@@ -10280,17 +10384,18 @@ function renderEvidenceFlow(nodes, edges) {
 
         let edgesHtml = `<div style="font-size: 11px; font-weight: bold; margin-bottom: 6px; color: var(--text-secondary);">ESTABLISHED RELATIONSHIPS:</div>`;
         edgesHtml += `<div style="display: grid; grid-template-columns: 1fr; gap: 4px; max-height: 120px; overflow-y: auto;">`;
-        edges.forEach(edge => {
+        
+        edgesToRender.forEach(edge => {
             const sourceNode = nodesMap[edge.source] || { label: edge.source };
             const targetNode = nodesMap[edge.target] || { label: edge.target };
             edgesHtml += `
-                <div style="font-size: 10px; display: flex; align-items: center; gap: 6px; color: #ccc;">
+                <div class="evidence-edge-row" id="evidence-edge-row" style="font-size: 10px; display: flex; align-items: center; gap: 6px; color: #ccc;">
                     <span style="font-weight: bold; color: #fff;">${escapeHtml(sourceNode.label)}</span>
                     <span style="color: var(--accent-orange); font-size: 10px;">→</span>
                     <span class="badge badge-outline-warning" style="font-size: 8px;">${escapeHtml(edge.relation)}</span>
                     <span style="color: var(--accent-orange); font-size: 10px;">→</span>
                     <span style="font-weight: bold; color: #fff;">${escapeHtml(targetNode.label)}</span>
-                    ${edge.id.startsWith('manual:') ? `
+                    ${edge.id && edge.id.startsWith('manual:') ? `
                         <button class="btn btn-xs btn-outline btn-danger btn-delete-manual-link" data-link-id="${edge.id.substring(7)}" style="padding: 1px 3px; font-size: 8px; margin-left: auto;">
                             Delete
                         </button>

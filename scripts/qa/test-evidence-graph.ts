@@ -115,7 +115,14 @@ function runContractTest() {
       "btn-trigger-evidence-trace",
       "evidence-flow-container",
       "evidence-node-inspector-content",
-      "btn-save-manual-link"
+      "btn-save-manual-link",
+      "evidence-graph-node-count",
+      "evidence-graph-edge-count",
+      "evidence-graph-hidden-count",
+      "evidence-graph-load-more-button",
+      "evidence-graph-compact-toggle",
+      "evidence-graph-large-warning",
+      "evidence-graph-empty-state"
     ];
 
     expectedHtmlIds.forEach(id => {
@@ -139,7 +146,12 @@ function runContractTest() {
       "btn-refresh-evidence-graph",
       "evidence-trace-start-select",
       "api/v1/evidence/graph/trace",
-      "api/v1/evidence/graph/link"
+      "api/v1/evidence/graph/link",
+      "visibleNodesLimit",
+      "visibleEdgesLimit",
+      "evidence-graph-load-more-button",
+      "evidence-graph-compact-toggle",
+      "DocumentFragment"
     ];
 
     expectedJsSnippets.forEach(snippet => {
