@@ -67,6 +67,17 @@ _VERDICT_KEYWORDS = [
     r"(?i)\bnon-compliant\b", r"(?i)\bconditional\b", r"(?i)\bblocked\b",
     r"(?i)\bapproved\b", r"(?i)\brejected\b", r"(?i)\bclearance\b",
     r"(?i)\bstatus\b", r"(?i)\bverdict\b",
+    # Extended vocabulary for model output that uses different phrasing
+    r"(?i)\bcompl(?:y|ies|ied|iance)\b",   # comply, complies, complied, compliance
+    r"(?i)\bdoes not (?:fully )?comply\b",  # does not comply / does not fully comply
+    r"(?i)\bmeets?\b",                       # meets / meet (the requirements)
+    r"(?i)\brequirement\b",                  # references a requirement decision
+    r"(?i)\brisk\b",                         # risk-based verdict language
+    r"(?i)\bconcern\b",                      # concern-based verdict language
+    r"(?i)\bviolat\w*\b",                    # violation / violates
+    r"(?i)\bindequate\b",                    # inadequate security measures
+    r"(?i)\bpose[sd]?\b",                    # poses risks
+    r"(?i)\bassess\w*\b",                    # assessment / assessed
 ]
 
 # Findings vocabulary — must contain at least one of these in the Findings section
