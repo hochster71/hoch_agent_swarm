@@ -101,6 +101,35 @@ The test suite covers:
 
 ---
 
+## Quality Gate
+
+A single command validates the full project locally without any cloud dependency:
+
+```bash
+uv run quality_gate
+```
+
+Runs in order, without short-circuit:
+
+| Step | What it checks |
+|---|---|
+| `import_check` | Package imports cleanly |
+| `preflight` | `.env`, `MODEL`, `API_BASE`, Ollama reachable, model pulled |
+| `pytest` | Full test suite (264 tests) |
+
+Exit 0 = PASS. Exit 1 = FAIL with per-step detail.
+
+Optional flags:
+```bash
+uv run quality_gate --live    # also runs the crew end-to-end (adds ~minutes)
+uv run quality_gate --json    # machine-readable JSON output
+```
+
+Run this before committing, before a trial worktree run, and after any
+dependency or environment change.
+
+---
+
 ## Project Structure
 
 ```

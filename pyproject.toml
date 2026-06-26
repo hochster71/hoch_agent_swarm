@@ -18,6 +18,7 @@ test = "hoch_agent_swarm.main:test"
 run_with_trigger = "hoch_agent_swarm.main:run_with_trigger"
 trial_preflight = "hoch_agent_swarm.trial_preflight:main"
 compare_reports = "hoch_agent_swarm.compare_reports:main"
+quality_gate = "hoch_agent_swarm.quality_gate:main"
 
 [build-system]
 requires = ["hatchling"]
