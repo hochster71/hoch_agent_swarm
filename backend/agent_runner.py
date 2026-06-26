@@ -85,14 +85,44 @@ graph TD
         else:
             return f"[Simulated LLM Fallback Response]\nProcessed request: '{prompt}'\n\nThe local Ollama service is currently offline. This is a high-fidelity mock response to ensure system resilience."
 
-    def execute_task(self, task_id: str, prompt: str, system_prompt: str = None, model: str = None):
-        logger.info(f"Executing task {task_id}...")
-        response = self.query_ollama(prompt, system_prompt, model)
-        logger.info(f"Task {task_id} completed.")
+    def execute_task(self, task_id: str, prompt: str, system_prompt: str = None, model: str = None, timeout_sec: float = 300.0):
+        logger.info(f"Executing task {task_id} with TTL {timeout_sec}s...")
+        
+        import threading
+        result_holder = {}
+        
+        def worker():
+            try:
+                result_holder["response"] = self.query_ollama(prompt, system_prompt, model)
+                result_holder["status"] = "COMPLETED"
+            except Exception as e:
+                result_holder["error"] = str(e)
+                result_holder["status"] = "FAILED"
+        
+        t = threading.Thread(target=worker)
+        t.start()
+        t.join(timeout=timeout_sec)
+        
+        if t.is_alive():
+            logger.error(f"Task {task_id} exceeded ephemeral process lifetime TTL of {timeout_sec}s. Aborting.")
+            return {
+                "task_id": task_id,
+                "status": "FAILED",
+                "error": f"Execution exceeded ephemeral TTL limit of {timeout_sec} seconds."
+            }
+        
+        if result_holder.get("status") == "FAILED":
+            return {
+                "task_id": task_id,
+                "status": "FAILED",
+                "error": result_holder.get("error", "Task execution failed.")
+            }
+            
+        logger.info(f"Task {task_id} completed successfully.")
         return {
             "task_id": task_id,
             "status": "COMPLETED",
-            "result": response
+            "result": result_holder.get("response", "")
         }
 
 if __name__ == "__main__":

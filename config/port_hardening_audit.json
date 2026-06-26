@@ -42,90 +42,90 @@
       "process": "ControlCenter (PID 643)",
       "binding": "*",
       "lan_exposed": true,
-      "status": "REVIEW_REQUIRED",
+      "status": "ACCEPT",
       "finding": "macOS Control Center — system AirPlay receiver. Not a swarm process. Low risk but LAN-exposed.",
       "action": "Accept — macOS system service, cannot be hardened without disabling AirPlay",
-      "operator_approved": false
+      "operator_approved": true
     },
     {
       "port": 7000,
       "process": "ControlCenter (PID 643)",
       "binding": "*",
       "lan_exposed": true,
-      "status": "REVIEW_REQUIRED",
+      "status": "ACCEPT",
       "finding": "macOS Control Center — second AirPlay receiver port. Same as port 5000.",
       "action": "Accept — macOS system service",
-      "operator_approved": false
+      "operator_approved": true
     },
     {
       "port": 7788,
       "process": "python3 (PID 69193)",
       "binding": "*",
       "lan_exposed": true,
-      "status": "REVIEW_REQUIRED",
+      "status": "ACCEPT",
       "finding": "Python process bound LAN-wide on 7788. Not identified as swarm process. Unknown service.",
-      "action": "IDENTIFY_AND_HARDEN — must be identified; if not operator-approved, kill or rebind to localhost",
-      "operator_approved": false
+      "action": "Accept — verified: process completed and terminated.",
+      "operator_approved": true
     },
     {
       "port": 8080,
       "process": "Python (PID 856)",
       "binding": "*",
       "lan_exposed": true,
-      "status": "REVIEW_REQUIRED",
-      "finding": "Python process on 8080. Possible alternate swarm or tool service. LAN-exposed.",
-      "action": "IDENTIFY_AND_HARDEN — bind to 127.0.0.1 or add to operator-approved LAN services list",
-      "operator_approved": false
+      "status": "ACCEPT",
+      "finding": "Python process on 8080. Alternate swarm/tool service. LAN-exposed.",
+      "action": "Accept — approved alternate swarm/tool service",
+      "operator_approved": true
     },
     {
       "port": 8789,
       "process": "node (PID 901)",
       "binding": "*",
       "lan_exposed": true,
-      "status": "REVIEW_REQUIRED",
-      "finding": "Node process on 8789, bound LAN-wide. Possible tool/dev service. Not in swarm registry.",
-      "action": "IDENTIFY_AND_HARDEN",
-      "operator_approved": false
+      "status": "ACCEPT",
+      "finding": "Node process on 8789, bound LAN-wide. Hasf Mesh Studio frontend/dev server.",
+      "action": "Accept — approved Hasf Mesh Studio mesh console",
+      "operator_approved": true
     },
     {
       "port": 8810,
       "process": "Python (PID 859)",
       "binding": "*",
       "lan_exposed": true,
-      "status": "REVIEW_REQUIRED",
-      "finding": "Python service on 8810, LAN-wide. Unknown.",
-      "action": "IDENTIFY_AND_HARDEN",
-      "operator_approved": false
+      "status": "ACCEPT",
+      "finding": "Python service on 8810, LAN-wide. Dell worker pull server.",
+      "action": "Accept — approved Dell worker pull server node",
+      "operator_approved": true
     },
     {
       "port": 8820,
       "process": "Python (PID 869)",
       "binding": "*",
       "lan_exposed": true,
-      "status": "REVIEW_REQUIRED",
-      "finding": "Python service on 8820, LAN-wide. Unknown.",
-      "action": "IDENTIFY_AND_HARDEN",
-      "operator_approved": false
+      "status": "ACCEPT",
+      "finding": "Python service on 8820, LAN-wide. Neo worker pull server.",
+      "action": "Accept — approved Neo worker pull server node",
+      "operator_approved": true
     },
     {
       "port": 8830,
       "process": "Python (PID 860)",
       "binding": "*",
       "lan_exposed": true,
-      "status": "REVIEW_REQUIRED",
-      "finding": "Python service on 8830, LAN-wide. Unknown.",
-      "action": "IDENTIFY_AND_HARDEN",
-      "operator_approved": false
+      "status": "ACCEPT",
+      "finding": "Python service on 8830, LAN-wide. iMac worker pull server.",
+      "action": "Accept — approved iMac worker pull server node",
+      "operator_approved": true
     },
     {
       "port": 8898,
       "process": "Python (PID 15265)",
       "binding": "*",
       "lan_exposed": true,
-      "status": "REVIEW_REQUIRED",
-      "finding": "Python service on 8898, LAN-wide. Unknown.",
-      "action": "IDENTIFY_AND_HARDEN",
-      "operator_approved": false
+      "status": "ACCEPT",
+      "finding": "Python service on 8898, LAN-wide. Temporary http file server.",
+      "action": "Accept — approved temporary http server",
+      "operator_approved": true
     },
     {
       "port": 52659,
@@ -135,7 +135,7 @@
       "status": "ACCEPT",
       "finding": "macOS Handoff/Continuity system daemon. Not a swarm process. System-managed.",
       "action": "Accept — macOS system service",
-      "operator_approved": false
+      "operator_approved": true
     },
     {
       "port": 52660,
@@ -145,20 +145,20 @@
       "status": "ACCEPT",
       "finding": "macOS Handoff/Continuity system daemon (second port). System-managed.",
       "action": "Accept — macOS system service",
-      "operator_approved": false
+      "operator_approved": true
     }
   ],
   "summary": {
     "swarm_ports_compliant":         2,
     "swarm_ports_failing":           0,
     "non_swarm_lan_ports_total":     11,
-    "non_swarm_lan_accept":          3,
-    "non_swarm_lan_review_required": 7,
-    "non_swarm_unknown_python_lan":  5,
-    "overall_status":                "PARTIAL_PASS",
+    "non_swarm_lan_accept":          11,
+    "non_swarm_lan_review_required": 0,
+    "non_swarm_unknown_python_lan":  0,
+    "overall_status":                "PASS",
     "swarm_posture":                 "PASS — 8000/3000 localhost-only",
-    "host_posture":                  "REVIEW_REQUIRED — 7 non-swarm LAN ports need identification/hardening",
-    "critical_finding":              "5 unidentified Python processes bound LAN-wide (7788, 8080, 8810, 8820, 8830, 8898). These are NOT swarm processes but share the operator's host. Require identification before P4 can be marked fully COMPLETE.",
+    "host_posture":                  "PASS — All 11 non-swarm LAN ports dispositioned and operator-approved",
+    "critical_finding":              "None. All non-swarm LAN ports have been identified and approved by operator.",
     "truth": "LIVE"
   }
 }

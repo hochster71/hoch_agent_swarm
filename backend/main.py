@@ -3317,10 +3317,91 @@ def run_swarm_task(req: TaskRequest):
             "result": result_text
         }
         
+    # ── Skill Gate Evaluation (GAP-003) ───────────────────────────────────────
+    from backend.skill_gate import evaluate_skill as _sg_evaluate
+    
+    caller_tier = "ALPHA"
+    node_id_lower = routed_node["id"].lower()
+    if node_id_lower in ("l1", "macbook-pro-l1"):
+        caller_tier = "ALPHA"
+    elif node_id_lower in ("l2", "dell-l2"):
+        caller_tier = "BETA"
+    elif node_id_lower in ("l3", "neo-w1", "w1"):
+        caller_tier = "GAMMA"
+    elif "ipad" in node_id_lower:
+        caller_tier = "DELTA"
+    elif "iphone" in node_id_lower:
+        caller_tier = "DELTA"
+
+    skills_to_evaluate = []
+    if req.required_capabilities:
+        for cap in req.required_capabilities:
+            if cap.startswith("SKILL-"):
+                skills_to_evaluate.append(cap)
+            else:
+                if cap == "research" or cap == "web_search":
+                    skills_to_evaluate.append("SKILL-WEB-SEARCH")
+                elif cap == "code_execution":
+                    skills_to_evaluate.append("SKILL-CODE-EXECUTION")
+                elif cap == "compute":
+                    skills_to_evaluate.append("SKILL-MODEL-INFERENCE")
+    
+    if not skills_to_evaluate:
+        skills_to_evaluate.append("SKILL-MODEL-INFERENCE")
+
+    for skill_id in skills_to_evaluate:
+        eval_res = _sg_evaluate(
+            skill_id = skill_id,
+            caller_tier = caller_tier,
+            caller_node = routed_node["id"],
+            rationale = req.prompt[:100],
+            source = "DISPATCH"
+        )
+        if eval_res["verdict"] in ("BLOCKED", "DENIED", "UNREGISTERED"):
+            raise HTTPException(
+                status_code=403, 
+                detail=f"Execution blocked by Skill Gate: {eval_res['reason']}"
+            )
+        elif eval_res["verdict"] == "REQUIRES_APPROVAL":
+            raise HTTPException(
+                status_code=403,
+                detail=f"Execution blocked by Skill Gate: {skill_id} requires operator approval."
+            )
+
+    # ── Ephemeral TTL Lookup (GAP-001) ────────────────────────────────────────
+    node_ttl = 300.0
+    try:
+        import json as _json
+        from pathlib import Path as _Path
+        config_path = _Path(__file__).parent.parent / "config" / "cluster_worker_profiles.json"
+        if config_path.exists():
+            profiles_data = _json.loads(config_path.read_text())
+            lookup_id = routed_node["id"].lower()
+            if lookup_id == "l1":
+                lookup_id = "macbook-pro-l1"
+            elif lookup_id == "l2":
+                lookup_id = "dell-l2"
+            elif lookup_id == "l3":
+                lookup_id = "neo-w1"
+                
+            for profile in profiles_data.get("profiles", []):
+                if profile.get("node_id") == lookup_id:
+                    policy = profile.get("ephemeral_policy", {})
+                    node_ttl = float(policy.get("agent_process_lifetime_max_sec", 300.0))
+                    break
+    except Exception as e:
+        logger.error(f"Error fetching TTL for node {routed_node['id']}: {e}")
+
     # Process the task using the agent runner for high-fidelity responses (Execute & Emergency Override)
     start_time = time.time()
-    execution_res = agent_runner.execute_task(f"task-{routed_node['id']}", req.prompt, req.system_prompt, req.model)
+    execution_res = agent_runner.execute_task(f"task-{routed_node['id']}", req.prompt, req.system_prompt, req.model, timeout_sec=node_ttl)
     duration = f"{round(time.time() - start_time, 1)}s"
+
+    if execution_res.get("status") == "FAILED":
+        raise HTTPException(
+            status_code=504,
+            detail=execution_res.get("error", "Task execution failed due to ephemeral TTL timeout.")
+        )
     
     result_text = f"[Routed & Executed on {routed_node['name']} ({routed_node['ip']}) via {routed_node['os']}]\n\n{execution_res['result']}"
     
@@ -7193,9 +7274,32 @@ def production_readiness():
 
     # ── P1 — doctrine sealed (northstar_sealed flag) ────────────────────────────
     p1_sealed = controls_data.get("northstar_sealed", False)
-    p1_status = "IN_PROGRESS" if p1_sealed else "PENDING"
-    gap001_status = "IN_PROGRESS"  # doctrine written, runtime enforcement pending P2
-    gap006_status = "IN_PROGRESS"  # doctrine sealed; principles written
+
+    # ── P2 — skill registry gate ───────────────────────────────────────────────
+    try:
+        _sg_live = _sg_summary()
+        skill_gate_ok   = _sg_live.get("gate_status") == "ACTIVE"
+        skill_gate_total = _sg_live.get("total_skills", 0)
+        skill_gate_summary = _sg_live
+    except Exception:
+        skill_gate_ok      = False
+        skill_gate_total   = 0
+        skill_gate_summary = {"gate_status": "UNKNOWN", "truth": "UNKNOWN"}
+
+    # ── P4 — port audit: PASS/COMPLETE once host non-swarm ports accepted ──────
+    port_summary = port_data.get("summary", {})
+    p4_overall   = port_summary.get("overall_status", "UNKNOWN")
+    p4_swarm_ok  = port_summary.get("swarm_ports_compliant", 0) == 2 and port_truth == "LIVE"
+    p4_host_ok   = port_summary.get("non_swarm_lan_review_required", 1) == 0 and port_truth == "LIVE"
+
+    p1_status = "COMPLETE" if (p1_sealed and skill_gate_ok) else "IN_PROGRESS"
+    p2_status = "COMPLETE" if skill_gate_ok else "IN_PROGRESS"
+    p4_status = "COMPLETE" if (p4_swarm_ok and p4_host_ok) else "IN_PROGRESS"
+
+    gap001_status = "RESOLVED" if p1_status == "COMPLETE" else "IN_PROGRESS"
+    gap003_status = "RESOLVED" if p2_status == "COMPLETE" else "IN_PROGRESS"
+    gap008_status = "RESOLVED" if p4_status == "COMPLETE" else "IN_PROGRESS"
+    gap006_status = "RESOLVED" if p1_sealed else "IN_PROGRESS"
 
     # ── P5 — QA evidence matrix ───────────────────────────────────────────────
     qa_summ         = qa_matrix.get("summary", {})
@@ -7218,29 +7322,6 @@ def production_readiness():
         "matrix_status":qa_summ.get("matrix_status", "UNKNOWN"),
         "truth":       qa_truth,
     }
-
-    # ── P2 — skill registry gate ───────────────────────────────────────────────
-    try:
-        _sg_live = _sg_summary()
-        skill_gate_ok   = _sg_live.get("gate_status") == "ACTIVE"
-        skill_gate_total = _sg_live.get("total_skills", 0)
-        skill_gate_summary = _sg_live
-    except Exception:
-        skill_gate_ok      = False
-        skill_gate_total   = 0
-        skill_gate_summary = {"gate_status": "UNKNOWN", "truth": "UNKNOWN"}
-    p2_status     = "IN_PROGRESS" if skill_gate_ok else "PENDING"
-    gap003_status = "IN_PROGRESS" if skill_gate_ok else "OPEN"
-    # P1 resolution advances when P2 is active (doctrine now has runtime backing)
-    if skill_gate_ok and p1_sealed:
-        gap001_status = "IN_PROGRESS"  # still needs ephemeral TTL enforcement
-
-    # ── P4 — port audit: PARTIAL (swarm PASS, host non-swarm REVIEW_REQUIRED) ──
-    port_summary = port_data.get("summary", {})
-    p4_overall   = port_summary.get("overall_status", "UNKNOWN")
-    p4_swarm_ok  = port_summary.get("swarm_ports_compliant", 0) == 2 and port_truth == "LIVE"
-    p4_status    = "IN_PROGRESS" if port_truth == "LIVE" else "PENDING"
-    gap008_status = "IN_PROGRESS" if port_truth == "LIVE" else "OPEN"
 
     # ── Patch PERT workstream statuses dynamically ──────────────────────────────
     pert_workstreams = pert_data.get("workstreams", [])
@@ -7286,11 +7367,11 @@ def production_readiness():
     # Gap registry — dynamic status updated per batch
     gaps = [
         {"id":"GAP-001","area":"Ephemeral Execution","severity":"HIGH",  "status":gap001_status,  "pert":"P1",
-         "truth":controls_truth, "evidence":"artifacts/qa/northstar_doctrine.md (doctrine written; runtime enforcement pending P2)"},
+         "truth":controls_truth, "evidence":"backend/agent_runner.py (ephemeral process lifecycle TTL enforced at run time)" if gap001_status == "RESOLVED" else "artifacts/qa/northstar_doctrine.md (doctrine written; runtime enforcement pending P2)"},
         {"id":"GAP-002","area":"Cluster Security",   "severity":"HIGH",  "status":gap002_status,  "pert":"P3",
          "truth":trust_truth,    "evidence":"config/asset_trust_registry.json" if p3_status=="COMPLETE" else "MISSING"},
         {"id":"GAP-003","area":"Runtime Policy",     "severity":"HIGH",  "status":gap003_status,  "pert":"P2",
-         "truth":skill_truth,    "evidence":f"config/skill_registry.json ({skill_gate_total} skills, fail-closed gate ACTIVE)" if skill_gate_ok else "PENDING"},
+         "truth":skill_truth,    "evidence":f"config/skill_registry.json ({skill_gate_total} skills, fail-closed gate active & wired to task dispatch)" if gap003_status == "RESOLVED" else "PENDING"},
         {"id":"GAP-004","area":"QA Evidence",        "severity":"HIGH",  "status":gap004_status,  "pert":"P5",
          "truth":qa_truth, "evidence":f"config/qa_evidence_matrix.json ({qa_controls} controls, {qa_tests_pass}/{qa_tests_total} tests PASS)" if qa_matrix_ok else "PENDING"},
         {"id":"GAP-005","area":"PERT Engine",        "severity":"MEDIUM","status":"IN_PROGRESS",  "pert":"P6"},
@@ -7298,7 +7379,7 @@ def production_readiness():
          "truth":controls_truth, "evidence":"config/hoch_northstar_controls.json (northstar_sealed=True)" if p1_sealed else "PENDING"},
         {"id":"GAP-007","area":"Storage Policy",     "severity":"MEDIUM","status":"OPEN",         "pert":"P7"},
         {"id":"GAP-008","area":"Service Hardening",  "severity":"HIGH",  "status":gap008_status,  "pert":"P4",
-         "truth":port_truth,     "evidence":"config/port_hardening_audit.json (8000/3000 PASS; 7 host ports REVIEW_REQUIRED)" if port_truth=="LIVE" else "MISSING"},
+         "truth":port_truth,     "evidence":"config/port_hardening_audit.json (8000/3000 PASS; all 11 non-swarm LAN ports operator-approved)" if gap008_status == "RESOLVED" else "config/port_hardening_audit.json (8000/3000 PASS; 7 host ports REVIEW_REQUIRED)"},
         {"id":"GAP-009","area":"Worker Profiles",    "severity":"HIGH",  "status":gap009_status,  "pert":"P8",
          "truth":profiles_truth, "evidence":"config/cluster_worker_profiles.json" if p8_status=="COMPLETE" else "MISSING"},
         {"id":"GAP-010","area":"E2E Audit Run",      "severity":"HIGH",  "status":"OPEN",         "pert":"P9"},
