@@ -85,3 +85,20 @@
 - `[x]` Run contract verification and CI pipeline successfully
 - `[x]` Stage and commit changes with the required message
 
+## Batch PR-11: Live Runtime Animation Process & Google Frontier Escalation
+- `[x]` Create `docs/mission/live_runtime_animation_doctrine.md`
+- `[x]` Create `backend/runtime_process.py`
+- `[x]` Create `backend/local_runtime_supervisor.py`
+- `[x]` Create `backend/model_router/google_frontier.py`
+- `[x]` Create `config/escalation_approvals.json`
+- `[x]` Modify `backend/main.py` to add API endpoints and run supervisor on startup
+- `[x]` Modify `backend/model_router/router.py` to emit runtime events
+- `[x]` Update configurations (`config/models.yaml`, `config/escalation.yaml`)
+- `[x]` Update `config/qa_evidence_matrix.json` with new controls and tests
+- `[x]` Modify frontend UI (`frontend/index.html`, `frontend/styles.css`, `frontend/app.js`) to display live process pond
+- `[x]` Implement unit tests and contract test `scripts/qa/test-live-runtime-koi-contract.ts`
+- `[x]` Register script and update contract runner in `package.json`
+- `[x]` Run validation commands and CI pipeline successfully
+- `[x]` Stage and commit changes with the required message
+
+

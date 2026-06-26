@@ -27,7 +27,6 @@
   <link rel="stylesheet" href="/tailwind.css">
 </head>
 <body>
-    <div id="koi-pond-layer"></div>
     <div class="app-container">
         <!-- Sidebar Navigation -->
         <aside class="sidebar" aria-label="Main Navigation">
@@ -92,7 +91,7 @@
             </nav>
             <div class="theme-selector-container" style="padding: 10px 0; border-top: 1px solid var(--border-glass); margin-top: 10px;">
                 <label for="theme-selector" style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; display: block; margin-bottom: 5px;">Visual Theme</label>
-                <select id="theme-selector" style="width: 100%; background: #161c2d; border: 1px solid var(--border-glass); color: var(--text-primary); border-radius: 4px; padding: 6px; font-size: 12px; outline: none; cursor: pointer;">
+                <select id="theme-selector" style="width: 100%; background: var(--bg-surface); border: 1px solid var(--border-glass); color: var(--text-primary); border-radius: 4px; padding: 6px; font-size: 12px; outline: none; cursor: pointer;">
                     <option value="theme-green">Kimi Green</option>
                     <option value="theme-blue">Kimi Blue</option>
                     <option value="theme-pink">Kimi Pink</option>
@@ -226,6 +225,22 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Live Runtime Process Pond Panel -->
+                <section id="live-runtime-pond-panel" class="card runtime-card" style="padding: 16px; margin-bottom: 16px; border: 1px solid var(--border-glass); border-radius: 8px;">
+                  <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <div>
+                      <p class="eyebrow" style="margin: 0; font-size: 10px; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 1px;">Live Runtime</p>
+                      <h2 style="margin: 4px 0 0 0; font-size: 16px; font-weight: 700; color: #fff;">Process Pond</h2>
+                    </div>
+                    <span id="runtime-pond-truth" class="badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); font-size: 10px; font-weight: 700; padding: 4px 8px; border-radius: 4px;">LIVE</span>
+                  </div>
+                  <div id="koi-pond-layer" class="koi-pond-layer" aria-label="Live runtime process pond" style="position: relative; height: 200px; border: 1px solid var(--border-glass); border-radius: 6px; background: rgba(0,0,0,0.3); overflow: hidden; margin-bottom: 12px;">
+                    <canvas id="koi-runtime-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;"></canvas>
+                    <div id="koi-runtime-legend" class="koi-runtime-legend" style="position: absolute; bottom: 8px; right: 8px; z-index: 10; font-size: 9px; font-family: monospace; display: flex; gap: 8px; color: var(--text-secondary); background: rgba(0,0,0,0.6); padding: 4px 8px; border-radius: 4px;"></div>
+                  </div>
+                  <div id="runtime-process-feed" class="runtime-process-feed" style="max-height: 100px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; padding: 4px; font-size: 11px; font-family: monospace; background: rgba(0,0,0,0.25); border: 1px solid var(--border-glass); border-radius: 4px;"></div>
+                </section>
 
                 <div class="console-wrapper" style="display: flex; gap: 16px; height: calc(100vh - 120px); overflow: hidden; width: 100%;">
                     

@@ -37,3 +37,12 @@ providers:
     enabled: false
     models:
       - claude-sonnet
+  google_gemini:
+    type: paid
+    base_url: https://generativelanguage.googleapis.com
+    api_style: google_gemini
+    enabled: false
+    models:
+      - gemini-3.1-flash-lite
+      - gemini-3.1-pro-preview
+      - gemini-3.5-flash

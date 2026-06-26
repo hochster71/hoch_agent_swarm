@@ -30,3 +30,24 @@ escalation:
     - ato
     - vulnerability
     - exploit
+
+google_frontier:
+  enabled: false
+  provider: google_gemini
+  require_paid_billing: true
+  require_api_key_env: GOOGLE_API_KEY
+  require_human_approval: true
+  daily_budget_usd: 5
+  monthly_budget_usd: 50
+  max_single_call_usd: 1
+  allowed_models:
+    - gemini-3.1-flash-lite
+    - gemini-3.1-pro-preview
+    - gemini-3.5-flash
+  blocked_payload_classes:
+    - secrets
+    - credentials
+    - raw_family_data
+    - raw_work_sensitive_data
+    - destructive_commands
+    - production_deployment_without_approval

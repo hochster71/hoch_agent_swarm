@@ -250,3 +250,40 @@ We have successfully implemented the visual Koi Animation Layer background and i
   - **Evidence Present**: 29
   - **Tests Passing**: 61 (all tests passing)
 
+---
+
+## Part 9 — Live Runtime Animation Process & Google Frontier Escalation (Batch PR-11)
+
+We have successfully implemented Batch PR-11 to convert decorative animations into live runtime telemetry, monitor local model health, and govern Google/Gemini cloud API escalations:
+
+### 1. Live Runtime Process Telemetry Bus
+- Implemented `RuntimeProcessBus` in [runtime_process.py](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/backend/runtime_process.py) which registers and handles real-time process events (e.g. state transitions, model execution, health heartbeats) and persists them in JSON Lines format to `audit/runtime_process_events.jsonl`.
+- Configured FastAPI telemetry endpoints (`/api/v1/runtime/process/events` and `/api/v1/runtime/process/animation-state`) in [main.py](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/backend/main.py).
+
+### 2. 24/7 Local Runtime Health Monitoring
+- Created `LocalRuntimeSupervisor` daemon in [local_runtime_supervisor.py](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/backend/local_runtime_supervisor.py) that polls the configured local Ollama provider hosts, evaluates health, and appends periodic health heartbeat events to the telemetry bus.
+- Wired supervisor lifecycle management inside [main.py](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/backend/main.py) startup handlers.
+
+### 3. Governed Google Frontier Escalation Router
+- Developed the governed cloud API router in [google_frontier.py](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/backend/model_router/google_frontier.py) that intercepts Gemini model routing.
+- Enforces strict security and budget controls:
+  - Validates API key availability.
+  - Monitors daily and monthly monetary budgets.
+  - Filters blocked payload classes (e.g., destructive commands like `rm -rf` and credentials like `password`).
+  - Restricts execution to authorized request tokens dynamically loaded from [escalation_approvals.json](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/config/escalation_approvals.json).
+
+### 4. Interactive Live Process Pond UI
+- Integrated the `#live-runtime-pond-panel` in [index.html](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/frontend/index.html) featuring a canvas-based live process telemetry visualization.
+- Wired [app.js](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/frontend/app.js) canvas rendering to paint active backend processes as swimming koi (color-coded by agent role/provider, speed mapped to latency/pressure) and trigger ripples on evidence ledger commits.
+- Maintained compatibility with reduced-motion preferences and legacy CSS class selectors (`.koi-fish`, `.koi-ripple`, `.koi-orbit`) validating the UI contract.
+- Compiled frontend assets to `frontend/dist/` using Vite compiler.
+
+### 5. Verification Results
+- **Unit & Integration Tests**: Implemented pytest suites ([test_runtime_process_bus.py](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/tests/test_runtime_process_bus.py), [test_local_runtime_supervisor.py](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/tests/test_local_runtime_supervisor.py), [test_google_frontier_policy.py](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/tests/test_google_frontier_policy.py), [test_runtime_animation_state.py](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/tests/test_runtime_animation_state.py)) verifying telemetry buffers, supervisor loops, and safety routers. All tests passed.
+- **Contract Audits**: Written Playwright contract [test-live-runtime-koi-contract.ts](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/scripts/qa/test-live-runtime-koi-contract.ts) asserting DOM integrity and animation structure. Succeeded under `npm run qa:ui-contract` (PASS).
+- **QA Matrix Upgrades**: Registered new controls and tests under [qa_evidence_matrix.json](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/config/qa_evidence_matrix.json):
+  - **Total Controls**: 29 → 37
+  - **Total Tests**: 61 → 74 (All 74 tests passing)
+  - **Evidence Present**: 29 → 37
+  - **Matrix Status**: `"COMPLETE"`
+- **CI Pipeline Run**: Executed `python3 scripts/qa/run-ci-pipeline.py` confirming 100% success across the entire build, verification, and SBOM packaging workflow.

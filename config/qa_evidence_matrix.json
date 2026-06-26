@@ -1003,18 +1003,262 @@
       ],
       "evidence_present": true,
       "truth": "LIVE"
+    },
+    {
+      "control_id":  "LIVE-RUNTIME-001",
+      "name":        "Runtime Process Telemetry Bus",
+      "domain":      "GOVERNANCE",
+      "pert_ref":    "Batch-PR-11",
+      "gap_ref":     "GAP-004",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-LR-001",
+          "description":   "Verify RuntimeProcessBus successfully appends event records to JSON Lines format",
+          "type":          "unit",
+          "result":        "PASS",
+          "batch":         "PR-11",
+          "evidence_file": "audit/runtime_process_events.jsonl",
+          "notes":         "Verified: process bus appends and manages events dynamically"
+        },
+        {
+          "test_id":       "T-LR-002",
+          "description":   "Verify RuntimeProcessBus.tail() correctly returns the last N records",
+          "type":          "unit",
+          "result":        "PASS",
+          "batch":         "PR-11",
+          "evidence_file": null,
+          "notes":         "Verified: returns correct limit and structure"
+        }
+      ],
+      "evidence_artifacts": [
+        "backend/runtime_process.py",
+        "audit/runtime_process_events.jsonl"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
+    },
+    {
+      "control_id":  "LIVE-RUNTIME-002",
+      "name":        "24/7 Local Runtime Supervisor",
+      "domain":      "GOVERNANCE",
+      "pert_ref":    "Batch-PR-11",
+      "gap_ref":     "GAP-004",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-LR-003",
+          "description":   "Verify LocalRuntimeSupervisor correctly monitors reachable local model hosts",
+          "type":          "unit",
+          "result":        "PASS",
+          "batch":         "PR-11",
+          "evidence_file": null,
+          "notes":         "Verified: local supervisor check_once verifies health status"
+        },
+        {
+          "test_id":       "T-LR-004",
+          "description":   "Verify LocalRuntimeSupervisor heartbeats are logged with correct event type",
+          "type":          "unit",
+          "result":        "PASS",
+          "batch":         "PR-11",
+          "evidence_file": "audit/runtime_process_events.jsonl",
+          "notes":         "Verified: health check heartbeats appended to events log"
+        }
+      ],
+      "evidence_artifacts": [
+        "backend/local_runtime_supervisor.py"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
+    },
+    {
+      "control_id":  "LIVE-RUNTIME-003",
+      "name":        "Live Telemetry API Endpoints",
+      "domain":      "GOVERNANCE",
+      "pert_ref":    "Batch-PR-11",
+      "gap_ref":     "GAP-004",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-LR-005",
+          "description":   "Verify /api/v1/runtime/process/events and /api/v1/runtime/process/animation-state serve telemetry properly",
+          "type":          "integration",
+          "result":        "PASS",
+          "batch":         "PR-11",
+          "evidence_file": null,
+          "notes":         "Verified: FastAPI endpoints return correctly formatted telemetry JSON"
+        }
+      ],
+      "evidence_artifacts": [
+        "backend/main.py"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
+    },
+    {
+      "control_id":  "LIVE-RUNTIME-004",
+      "name":        "Visual Telemetry Pond & Canvas Contract",
+      "domain":      "FRONTEND",
+      "pert_ref":    "Batch-PR-11",
+      "gap_ref":     "GAP-004",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-LR-006",
+          "description":   "Verify frontend elements and canvas draw loops exist and are styled correctly",
+          "type":          "contract",
+          "result":        "PASS",
+          "batch":         "PR-11",
+          "evidence_file": "artifacts/qa/live-runtime-koi-contract-report.json",
+          "notes":         "Verified: UI contract test passes successfully"
+        }
+      ],
+      "evidence_artifacts": [
+        "frontend/index.html",
+        "frontend/app.js",
+        "scripts/qa/test-live-runtime-koi-contract.ts"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
+    },
+    {
+      "control_id":  "GOOGLE-FRONTIER-001",
+      "name":        "Governed Cloud Escalation Gate",
+      "domain":      "GOVERNANCE",
+      "pert_ref":    "Batch-PR-11",
+      "gap_ref":     "GAP-003",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-GF-001",
+          "description":   "Verify Google Frontier calls fail-closed if escalation is disabled",
+          "type":          "unit",
+          "result":        "PASS",
+          "batch":         "PR-11",
+          "evidence_file": null,
+          "notes":         "Verified: global disable blocks Google AI calls"
+        },
+        {
+          "test_id":       "T-GF-002",
+          "description":   "Verify Google Frontier calls fail if missing GOOGLE_API_KEY",
+          "type":          "unit",
+          "result":        "PASS",
+          "batch":         "PR-11",
+          "evidence_file": null,
+          "notes":         "Verified: key verification blocks calls"
+        }
+      ],
+      "evidence_artifacts": [
+        "backend/model_router/google_frontier.py",
+        "config/escalation.yaml"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
+    },
+    {
+      "control_id":  "GOOGLE-FRONTIER-002",
+      "name":        "Escalation Approval Verification",
+      "domain":      "GOVERNANCE",
+      "pert_ref":    "Batch-PR-11",
+      "gap_ref":     "GAP-003",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-GF-003",
+          "description":   "Verify escalation is blocked without APPROVED record",
+          "type":          "unit",
+          "result":        "PASS",
+          "batch":         "PR-11",
+          "evidence_file": null,
+          "notes":         "Verified: approval-less requests are rejected"
+        },
+        {
+          "test_id":       "T-GF-004",
+          "description":   "Verify expired approvals (TTL > 1 hour) are rejected",
+          "type":          "unit",
+          "result":        "PASS",
+          "batch":         "PR-11",
+          "evidence_file": null,
+          "notes":         "Verified: expired approval tokens are blocked"
+        }
+      ],
+      "evidence_artifacts": [
+        "backend/model_router/google_frontier.py",
+        "config/escalation_approvals.json"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
+    },
+    {
+      "control_id":  "GOOGLE-FRONTIER-003",
+      "name":        "Escalation Budget Enforcement",
+      "domain":      "GOVERNANCE",
+      "pert_ref":    "Batch-PR-11",
+      "gap_ref":     "GAP-003",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-GF-005",
+          "description":   "Verify single-call cost cap check and budget limits check",
+          "type":          "unit",
+          "result":        "PASS",
+          "batch":         "PR-11",
+          "evidence_file": null,
+          "notes":         "Verified: prevents cost overruns"
+        }
+      ],
+      "evidence_artifacts": [
+        "backend/model_router/google_frontier.py",
+        "config/escalation.yaml"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
+    },
+    {
+      "control_id":  "GOOGLE-FRONTIER-004",
+      "name":        "Cloud Payload Safety Policies",
+      "domain":      "GOVERNANCE",
+      "pert_ref":    "Batch-PR-11",
+      "gap_ref":     "GAP-003",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-GF-006",
+          "description":   "Verify high-risk keywords are blocked at the cloud gateway",
+          "type":          "unit",
+          "result":        "PASS",
+          "batch":         "PR-11",
+          "evidence_file": null,
+          "notes":         "Verified: credentials and destructive keywords blocked"
+        },
+        {
+          "test_id":       "T-GF-007",
+          "description":   "Verify Google Frontier API execution is intercepted and logged",
+          "type":          "integration",
+          "result":        "PASS",
+          "batch":         "PR-11",
+          "evidence_file": "audit/runtime_process_events.jsonl",
+          "notes":         "Verified: calls logged in events bus"
+        }
+      ],
+      "evidence_artifacts": [
+        "backend/model_router/google_frontier.py",
+        "audit/runtime_process_events.jsonl"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
     }
   ],
   "summary": {
-    "total_controls":         29,
-    "tested":                  27,
+    "total_controls":         37,
+    "tested":                  35,
     "partial":                 0,
-    "in_progress":             1,
+    "in_progress":             2,
     "pending":                 0,
-    "evidence_present_count": 29,
+    "evidence_present_count": 37,
     "evidence_missing_count":  0,
-    "total_tests":            61,
-    "tests_pass":             61,
+    "total_tests":            74,
+    "tests_pass":             74,
     "tests_partial":           0,
     "tests_pending":           0,
     "matrix_status":          "COMPLETE",

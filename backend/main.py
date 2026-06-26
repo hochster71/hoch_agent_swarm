@@ -4,7 +4,7 @@ import json
 import uuid
 import sys
 import subprocess
-from datetime import datetime
+from datetime import datetime, timedelta
 import asyncio
 import threading
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
@@ -4167,6 +4167,11 @@ async def startup_event():
     init_hochster_cluster_tables()
     init_execution_store_tables()
     init_default_agent_model_policies()
+    
+    # Start Local Runtime Supervisor
+    if os.getenv("DISABLE_LOCAL_RUNTIME_SUPERVISOR", "false").lower() != "true":
+        from backend.local_runtime_supervisor import SUPERVISOR
+        SUPERVISOR.start()
 
     # Seed 14 specialized agents if empty
     try:
@@ -7292,6 +7297,283 @@ def run_model_endpoint(req: ModelRunRequest):
         # If no local model server is running (fails closed), raise HTTP 503 Service Unavailable
         raise HTTPException(status_code=503, detail=str(e))
 
+# ── Live Telemetry Endpoints ─────────────────────────────────────────────────
+@app.get("/api/v1/runtime/process/events")
+def get_runtime_process_events_endpoint(limit: int = 100):
+    from backend.runtime_process import RuntimeProcessBus
+    bus = RuntimeProcessBus()
+    return bus.tail(limit)
+
+@app.get("/api/v1/runtime/process/animation-state")
+def get_runtime_process_animation_state_endpoint(limit: int = 25):
+    from backend.runtime_process import RuntimeProcessBus, RuntimeProcessType, RuntimeProcessState
+    bus = RuntimeProcessBus()
+    events = bus.tail(limit)
+    
+    processes = []
+    for ev in events:
+        pt = ev.get("process_type")
+        st = ev.get("state")
+        prov = ev.get("provider")
+        model = ev.get("model")
+        
+        visual = {
+            "sprite": "koi",
+            "color": "green",
+            "motion": "swim",
+            "speed": "normal",
+            "trail": "local",
+            "pulse": False
+        }
+        
+        if pt == RuntimeProcessType.LOCAL_MODEL_HEALTH.value:
+            if st == RuntimeProcessState.LIVE.value:
+                visual.update({"motion": "heartbeat", "color": "green", "pulse": True})
+            else:
+                visual.update({"motion": "stop", "color": "red"})
+        elif pt == RuntimeProcessType.MODEL_ROUTE.value:
+            if st == RuntimeProcessState.RUNNING.value:
+                visual.update({"motion": "swim", "color": "green", "speed": "normal"})
+            elif st == RuntimeProcessState.FAILED.value:
+                visual.update({"motion": "stop", "color": "red"})
+            elif st == RuntimeProcessState.COMPLETE.value:
+                visual.update({"motion": "swim", "color": "green", "speed": "fast"})
+        elif pt == RuntimeProcessType.LOCAL_ARBITRATION.value:
+            visual.update({"motion": "orbit", "color": "cyan"})
+        elif pt == RuntimeProcessType.ESCALATION_RECOMMENDED.value:
+            visual.update({"motion": "pause", "color": "amber"})
+        elif pt == RuntimeProcessType.ESCALATION_APPROVAL_REQUIRED.value:
+            visual.update({"motion": "lock", "color": "amber"})
+        elif pt == RuntimeProcessType.GOOGLE_FRONTIER_CALL.value:
+            if st == RuntimeProcessState.RUNNING.value:
+                visual.update({"motion": "stream", "color": "purple", "speed": "fast", "trail": "google"})
+            elif st == RuntimeProcessState.COMPLETE.value:
+                visual.update({"motion": "swim", "color": "purple", "speed": "normal", "trail": "google"})
+            elif st == RuntimeProcessState.FAILED.value:
+                visual.update({"motion": "stop", "color": "red"})
+        elif pt == RuntimeProcessType.EVIDENCE_LEDGER_COMMIT.value:
+            visual.update({"motion": "ripple", "color": "silver"})
+        elif st in (RuntimeProcessState.FAILED.value, RuntimeProcessState.BLOCKED.value, RuntimeProcessState.DENIED.value):
+            visual.update({"motion": "stop", "color": "red"})
+        elif pt == RuntimeProcessType.RELEASE_STATE.value and st == "GO":
+            visual.update({"motion": "seal", "color": "green", "pulse": True})
+            
+        processes.append({
+            "event_id": ev.get("event_id"),
+            "process_type": pt,
+            "state": st,
+            "agent_id": ev.get("agent_id"),
+            "provider": prov,
+            "model": model,
+            "confidence_score": ev.get("confidence_score"),
+            "visual": visual
+        })
+        
+    return {
+        "truth": "LIVE",
+        "animation_mode": "runtime_process",
+        "decorative_only": False,
+        "events_path": "audit/runtime_process_events.jsonl",
+        "koi_enabled": True,
+        "processes": processes
+    }
+
+@app.get("/api/v1/runtime/process/health")
+def get_runtime_process_health_endpoint():
+    from backend.runtime_process import RuntimeProcessBus, RuntimeProcessType, RuntimeProcessState
+    bus = RuntimeProcessBus()
+    events = bus.tail(50)
+    has_failures = any(ev.get("state") in (RuntimeProcessState.FAILED.value, RuntimeProcessState.BLOCKED.value) for ev in events)
+    return {
+        "status": "UNHEALTHY" if has_failures else "HEALTHY",
+        "last_checked": datetime.now(timezone.utc).isoformat(),
+        "truth": "LIVE"
+    }
+
+@app.get("/api/v1/runtime/local-supervisor/status")
+def get_local_supervisor_status_endpoint():
+    from backend.local_runtime_supervisor import SUPERVISOR
+    return SUPERVISOR.status()
+
+@app.post("/api/v1/runtime/local-supervisor/check-once")
+def post_local_supervisor_check_once_endpoint():
+    from backend.local_runtime_supervisor import SUPERVISOR
+    return SUPERVISOR.check_once()
+
+# ── Escalation Approval Queue Endpoints ───────────────────────────────────────
+@app.get("/api/v1/escalations/pending")
+def get_escalations_pending_endpoint():
+    from backend.model_router.google_frontier import load_approvals
+    data = load_approvals()
+    now = datetime.now(timezone.utc).isoformat()
+    pending = [
+        app for app in data.get("approvals", [])
+        if app.get("status") == "PENDING" and (not app.get("expires_at") or app.get("expires_at") > now)
+    ]
+    return pending
+
+class EscalationRequestModel(BaseModel):
+    task_id: str
+    agent_id: str
+    reason_code: str
+    local_attempts: list[dict]
+    requested_provider: str
+    requested_model: str
+    estimated_cost_usd: float
+    risk_level: str
+    operator: str
+
+@app.post("/api/v1/escalations/request")
+def post_escalations_request_endpoint(req: EscalationRequestModel):
+    import json
+    from pathlib import Path
+    from uuid import uuid4
+    from backend.runtime_process import RuntimeProcessBus, RuntimeProcessType, RuntimeProcessState
+    
+    p = Path(__file__).parent.parent / "config" / "escalation_approvals.json"
+    data = {"approvals": []}
+    if p.exists():
+        try:
+            data = json.loads(p.read_text("utf-8"))
+        except Exception:
+            pass
+            
+    approval_id = f"esc-{uuid4()}"
+    now_dt = datetime.now(timezone.utc)
+    expires_dt = now_dt + timedelta(hours=1)
+    
+    from backend.model_router.escalation_policy import load_escalation_config
+    esc_cfg = load_escalation_config()
+    gf_cfg = esc_cfg.get("google_frontier", {})
+    blocked_classes = gf_cfg.get("blocked_payload_classes", [])
+    
+    is_blocked = req.reason_code in blocked_classes or req.risk_level == "high"
+    
+    new_app = {
+        "approval_id": approval_id,
+        "task_id": req.task_id,
+        "agent_id": req.agent_id,
+        "reason_code": req.reason_code,
+        "local_attempts": req.local_attempts,
+        "requested_provider": req.requested_provider,
+        "requested_model": req.requested_model,
+        "estimated_cost_usd": req.estimated_cost_usd,
+        "risk_level": req.risk_level,
+        "operator": req.operator,
+        "status": "BLOCKED" if is_blocked else "PENDING",
+        "created_at": now_dt.isoformat(),
+        "expires_at": expires_dt.isoformat(),
+        "approved_by": None,
+        "max_cost_usd": 1.0,
+        "allowed_model": req.requested_model
+    }
+    
+    data["approvals"].append(new_app)
+    p.write_text(json.dumps(data, indent=2), "utf-8")
+    
+    bus = RuntimeProcessBus()
+    bus.emit(
+        RuntimeProcessType.ESCALATION_REQUESTED,
+        RuntimeProcessState.BLOCKED if is_blocked else RuntimeProcessState.QUEUED,
+        f"Escalation requested (ID: {approval_id}, risk: {req.risk_level})",
+        agent_id=req.agent_id,
+        task_id=req.task_id,
+        provider=req.requested_provider,
+        model=req.requested_model,
+        risk_level=req.risk_level,
+        requires_approval=True
+    )
+    
+    return new_app
+
+class EscalationActionModel(BaseModel):
+    approval_id: str
+    operator: str
+
+@app.post("/api/v1/escalations/approve")
+def post_escalations_approve_endpoint(req: EscalationActionModel):
+    import json
+    from pathlib import Path
+    from backend.runtime_process import RuntimeProcessBus, RuntimeProcessType, RuntimeProcessState
+    
+    p = Path(__file__).parent.parent / "config" / "escalation_approvals.json"
+    if not p.exists():
+        raise HTTPException(status_code=404, detail="Approvals file not found.")
+        
+    try:
+        data = json.loads(p.read_text("utf-8"))
+    except Exception:
+        raise HTTPException(status_code=500, detail="Cannot parse approvals.")
+        
+    found = None
+    for app in data.get("approvals", []):
+        if app.get("approval_id") == req.approval_id:
+            if app.get("status") != "PENDING":
+                raise HTTPException(status_code=400, detail="Approval is not in PENDING state.")
+            app["status"] = "APPROVED"
+            app["approved_by"] = req.operator
+            found = app
+            break
+            
+    if not found:
+        raise HTTPException(status_code=404, detail="Approval ID not found.")
+        
+    p.write_text(json.dumps(data, indent=2), "utf-8")
+    
+    bus = RuntimeProcessBus()
+    bus.emit(
+        RuntimeProcessType.ESCALATION_APPROVED,
+        RuntimeProcessState.APPROVED,
+        f"Escalation request approved by operator: {req.operator}",
+        agent_id=found.get("agent_id"),
+        task_id=found.get("task_id"),
+        provider=found.get("requested_provider"),
+        model=found.get("requested_model"),
+        requires_approval=False
+    )
+    return found
+
+@app.post("/api/v1/escalations/deny")
+def post_escalations_deny_endpoint(req: EscalationActionModel):
+    import json
+    from pathlib import Path
+    from backend.runtime_process import RuntimeProcessBus, RuntimeProcessType, RuntimeProcessState
+    
+    p = Path(__file__).parent.parent / "config" / "escalation_approvals.json"
+    if not p.exists():
+        raise HTTPException(status_code=404, detail="Approvals file not found.")
+        
+    try:
+        data = json.loads(p.read_text("utf-8"))
+    except Exception:
+        raise HTTPException(status_code=500, detail="Cannot parse approvals.")
+        
+    found = None
+    for app in data.get("approvals", []):
+        if app.get("approval_id") == req.approval_id:
+            if app.get("status") not in ("PENDING", "APPROVED"):
+                raise HTTPException(status_code=400, detail="Approval is not active.")
+            app["status"] = "DENIED"
+            found = app
+            break
+            
+    if not found:
+        raise HTTPException(status_code=404, detail="Approval ID not found.")
+        
+    p.write_text(json.dumps(data, indent=2), "utf-8")
+    
+    bus = RuntimeProcessBus()
+    bus.emit(
+        RuntimeProcessType.ESCALATION_DENIED,
+        RuntimeProcessState.DENIED,
+        "Escalation request denied by operator.",
+        agent_id=found.get("agent_id"),
+        task_id=found.get("task_id"),
+        provider=found.get("requested_provider"),
+        model=found.get("requested_model"),
+        requires_approval=False
+    )
+    return found
 
 
 @app.post("/api/v1/prompts/expire-test")
@@ -7544,8 +7826,36 @@ def production_readiness():
     except Exception:
         pass
 
+    from backend.local_runtime_supervisor import SUPERVISOR
+    from backend.model_router.escalation_policy import load_escalation_config
+    esc_cfg = load_escalation_config()
+    gf_policy = esc_cfg.get("google_frontier", {})
+    gf_enabled = gf_policy.get("enabled", False) and esc_cfg.get("escalation", {}).get("enabled", False)
+    
+    live_runtime_info = {
+        "truth": "LIVE",
+        "decorative_animation": False,
+        "runtime_process_events": True,
+        "local_supervisor_running": SUPERVISOR._running,
+        "google_frontier_enabled": gf_enabled,
+        "google_frontier_requires_approval": gf_policy.get("require_human_approval", True),
+        "events_path": "audit/runtime_process_events.jsonl",
+        "status": "ACTIVE"
+    }
+    
+    google_frontier_info = {
+        "enabled": gf_enabled,
+        "provider": "google_gemini",
+        "approval_required": gf_policy.get("require_human_approval", True),
+        "budget_required": True,
+        "api_key_configured": bool(os.getenv("GOOGLE_API_KEY")),
+        "status": "ACTIVE" if gf_enabled else "DISABLED_BY_DEFAULT"
+    }
+
     return {
         "model_router":      model_router_info,
+        "live_runtime":      live_runtime_info,
+        "google_frontier":   google_frontier_info,
         "go_no_go":          go_no_go,
         "high_open_count":   len(high_open),
         "total_gaps":        len(gaps),

@@ -967,9 +967,11 @@ function renderAgentCommandRail() {
             const state = agent.status || "idle";
             let ledColor = "#6b7280";
             let statusClass = "";
+            let ledClassSuffix = "";
             if (state === "complete") {
                 ledColor = "#10b981";
                 statusClass = "is-complete";
+                ledClassSuffix = " is-green";
             } else if (state === "executing" || state === "active" || state === "researching" || state === "verifying" || state === "reporting" || state === "completing") {
                 ledColor = "#3b82f6";
                 statusClass = "is-active";
@@ -979,7 +981,7 @@ function renderAgentCommandRail() {
             
             html += `
                 <button class="${chipClass}" id="topo-chip-${agent.id}" data-agent-id="${agent.id}" type="button" title="${agent.displayName} - ${agent.title}">
-                    <span class="topology-agent-led" id="topo-led-${agent.id}" style="width: 5px; height: 5px; border-radius: 50%; background: ${ledColor}; display: inline-block; box-shadow: 0 0 4px ${ledColor};"></span>
+                    <span class="topology-agent-led${ledClassSuffix}" id="topo-led-${agent.id}" style="width: 5px; height: 5px; border-radius: 50%; background: ${ledColor}; display: inline-block; box-shadow: 0 0 4px ${ledColor};"></span>
                     <span>${agent.displayName}</span>
                 </button>
             `;
@@ -13732,86 +13734,312 @@ window.exportSealPreviewJSON = exportSealPreviewJSON;
 
 // ── Koi Animation Layer (Batch UI-KOI-1) ─────────────────────────────────────
 function initializeKoiAnimation() {
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    return;
+  const canvas = document.getElementById("koi-runtime-canvas");
+  const feedContainer = document.getElementById("runtime-process-feed");
+  const legendContainer = document.getElementById("koi-runtime-legend");
+  if (!canvas) return;
+
+  const ctx = canvas.getContext("2d");
+  let animationFrameId = null;
+  let particles = [];
+  let ripples = [];
+
+  function resizeCanvas() {
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * (window.devicePixelRatio || 1);
+    canvas.height = rect.height * (window.devicePixelRatio || 1);
+    ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
   }
-  const pond = document.getElementById("koi-pond-layer");
-  if (!pond) return;
+  resizeCanvas();
+  window.addEventListener("resize", resizeCanvas);
 
-  // Clear existing
-  pond.innerHTML = "";
-
-  // Helper to create koi SVG
-  function createKoiSVG() {
-    return `
-      <svg viewBox="0 0 60 30" width="100%" height="100%" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M5,15 Q30,5 55,15 Q30,25 5,15 Z" fill="var(--accent-teal, var(--kimi-green, #8cff5c))" opacity="0.8"/>
-        <path d="M25,8 Q20,2 15,5 Q18,8 20,8 Z" fill="var(--kimi-green-soft, #56d944)" opacity="0.6"/>
-        <path d="M25,22 Q20,28 15,25 Q18,22 20,22 Z" fill="var(--kimi-green-soft, #56d944)" opacity="0.6"/>
-        <path d="M5,15 Q0,10 2,5 Q5,10 5,15 Z" fill="var(--kimi-green-soft, #56d944)" opacity="0.7"/>
-        <path d="M5,15 Q0,20 2,25 Q5,20 5,15 Z" fill="var(--kimi-green-soft, #56d944)" opacity="0.7"/>
-      </svg>
-    `;
+  function getColorHex(colorName) {
+    switch (colorName) {
+      case "green": return "#10b981";
+      case "red": return "#ef4444";
+      case "amber": return "#f59e0b";
+      case "cyan": return "#06b6d4";
+      case "purple": return "#a855f7";
+      case "silver": return "#9ca3af";
+      default: return "#10b981";
+    }
   }
 
-  // Create 3 koi orbits
-  const orbits = [
-    { width: 300, height: 300, duration: 35, top: "15%", left: "10%", reverse: false },
-    { width: 450, height: 450, duration: 55, top: "45%", left: "55%", reverse: true },
-    { width: 350, height: 350, duration: 40, top: "25%", left: "40%", reverse: false }
+  class TelemetryFish {
+    constructor(process) {
+      this.eventId = process.event_id;
+      this.processType = process.process_type;
+      this.state = process.state;
+      this.visual = process.visual || {};
+      
+      const rect = canvas.getBoundingClientRect();
+      this.x = Math.random() * rect.width;
+      this.y = Math.random() * rect.height;
+      this.targetX = this.x;
+      this.targetY = this.y;
+      
+      this.angle = Math.random() * Math.PI * 2;
+      this.targetAngle = this.angle;
+      this.opacity = 0;
+      this.size = 6;
+      this.tailOffset = Math.random() * 100;
+      this.time = 0;
+      this.isRemoving = false;
+
+      this.orbitRadius = 40 + Math.random() * 20;
+      this.orbitSpeed = 0.02 + Math.random() * 0.01;
+      this.orbitCenterX = rect.width / 2;
+      this.orbitCenterY = rect.height / 2;
+    }
+
+    update(rect) {
+      this.time += 0.1;
+      
+      if (this.isRemoving) {
+        this.opacity -= 0.05;
+        if (this.opacity <= 0) return false;
+      } else if (this.opacity < 1) {
+        this.opacity += 0.05;
+      }
+
+      const motion = this.visual.motion || "swim";
+      const speedStr = this.visual.speed || "normal";
+      let baseSpeed = speedStr === "fast" ? 2.5 : speedStr === "slow" ? 0.5 : speedStr === "stop" ? 0 : 1.2;
+
+      if (motion === "swim" || motion === "stream") {
+        if (Math.random() < 0.02) {
+          this.targetAngle = this.angle + (Math.random() - 0.5) * 1.5;
+        }
+        if (this.x < 20) this.targetAngle = 0;
+        if (this.x > rect.width - 20) this.targetAngle = Math.PI;
+        if (this.y < 20) this.targetAngle = Math.PI / 2;
+        if (this.y > rect.height - 20) this.targetAngle = -Math.PI / 2;
+
+        let angleDiff = this.targetAngle - this.angle;
+        this.angle += angleDiff * 0.1;
+
+        this.x += Math.cos(this.angle) * baseSpeed;
+        this.y += Math.sin(this.angle) * baseSpeed;
+      } 
+      else if (motion === "orbit") {
+        this.angle += this.orbitSpeed * (speedStr === "fast" ? 2 : 1);
+        this.x = this.orbitCenterX + Math.cos(this.angle) * this.orbitRadius;
+        this.y = this.orbitCenterY + Math.sin(this.angle) * this.orbitRadius;
+      } 
+      else if (motion === "stop" || motion === "pause" || motion === "lock" || motion === "heartbeat" || motion === "seal") {
+        this.x += Math.sin(this.time * 0.1) * 0.1;
+        this.y += Math.cos(this.time * 0.1) * 0.1;
+      }
+
+      return true;
+    }
+
+    draw(ctx) {
+      const color = getColorHex(this.visual.color);
+      ctx.save();
+      ctx.globalAlpha = this.opacity;
+
+      if (this.visual.trail === "google" || this.visual.speed === "fast") {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(this.x - Math.cos(this.angle) * 15, this.y - Math.sin(this.angle) * 15);
+        ctx.lineTo(this.x, this.y);
+        ctx.stroke();
+      }
+
+      if (this.visual.pulse || this.visual.motion === "pause" || this.visual.motion === "lock" || this.visual.motion === "heartbeat") {
+        const pulseRadius = this.size * (1.5 + Math.sin(this.time * 0.3) * 0.5);
+        ctx.fillStyle = color;
+        ctx.globalAlpha = this.opacity * 0.15;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, pulseRadius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = this.opacity;
+      }
+
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.angle);
+
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, this.size * 1.5, this.size * 0.6, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      const motion = this.visual.motion || "swim";
+      const tailWaveSpeed = this.visual.speed === "fast" ? 0.6 : this.visual.speed === "slow" ? 0.1 : 0.3;
+      const tailAngle = Math.sin(this.time * 2 + this.tailOffset) * (motion === "stop" ? 0.05 : 0.35) * (tailWaveSpeed / 0.3);
+
+      ctx.save();
+      ctx.translate(-this.size * 1.2, 0);
+      ctx.rotate(tailAngle);
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(-this.size * 0.8, -this.size * 0.4);
+      ctx.lineTo(-this.size * 0.8, this.size * 0.4);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.ellipse(this.size * 0.3, -this.size * 0.6, this.size * 0.4, this.size * 0.15, -Math.PI / 4, 0, Math.PI * 2);
+      ctx.ellipse(this.size * 0.3, this.size * 0.6, this.size * 0.4, this.size * 0.15, Math.PI / 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+  }
+
+  function tick() {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+
+    const rect = canvas.getBoundingClientRect();
+    ctx.clearRect(0, 0, rect.width, rect.height);
+
+    particles = particles.filter(p => {
+      const active = p.update(rect);
+      if (active) p.draw(ctx);
+      return active;
+    });
+
+    ripples = ripples.filter(r => {
+      r.radius += 1.5;
+      r.opacity -= 0.015;
+      if (r.opacity <= 0) return false;
+
+      ctx.strokeStyle = r.color;
+      ctx.globalAlpha = r.opacity;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
+      ctx.stroke();
+      return true;
+    });
+
+    animationFrameId = requestAnimationFrame(tick);
+  }
+
+  tick();
+
+  const LEGEND_ITEMS = [
+    { label: "Local models", color: "green" },
+    { label: "Arbitration", color: "cyan" },
+    { label: "Escalation review", color: "amber" },
+    { label: "Google Frontier", color: "purple" },
+    { label: "Ledger commit", color: "silver" },
+    { label: "Failed/Denied", color: "red" }
   ];
 
-  orbits.forEach((cfg, idx) => {
-    const orbit = document.createElement("div");
-    orbit.className = "koi-orbit";
-    orbit.style.width = `${cfg.width}px`;
-    orbit.style.height = `${cfg.height}px`;
-    orbit.style.top = cfg.top;
-    orbit.style.left = cfg.left;
-    orbit.style.animationDuration = `${cfg.duration}s`;
-    if (cfg.reverse) {
-      orbit.style.animationDirection = "reverse";
+  function renderLegend() {
+    if (!legendContainer) return;
+    legendContainer.innerHTML = LEGEND_ITEMS.map(item => `
+      <span style="display: flex; align-items: center; gap: 4px;">
+        <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: ${getColorHex(item.color)}"></span>
+        ${item.label}
+      </span>
+    `).join("");
+  }
+  renderLegend();
+
+  async function loadRuntimeAnimationState() {
+    try {
+      const res = await fetch("/api/v1/runtime/process/animation-state");
+      if (!res.ok) return;
+      const state = await res.json();
+
+      renderRuntimeProcessFeed(state.processes || []);
+
+      const processes = state.processes || [];
+      if (processes.length === 0) {
+        particles.forEach(p => p.isRemoving = true);
+        return;
+      }
+
+      const apiIds = new Set(processes.map(p => p.event_id));
+
+      particles.forEach(p => {
+        if (!apiIds.has(p.eventId)) {
+          p.isRemoving = true;
+        }
+      });
+
+      const currentIds = new Set(particles.map(p => p.eventId));
+      processes.forEach(p => {
+        if (!currentIds.has(p.event_id)) {
+          const fish = new TelemetryFish(p);
+          particles.push(fish);
+
+          if (p.process_type === "EVIDENCE_LEDGER_COMMIT") {
+            const rect = canvas.getBoundingClientRect();
+            ripples.push({
+              x: Math.random() * rect.width,
+              y: Math.random() * rect.height,
+              radius: 5,
+              opacity: 1.0,
+              color: getColorHex("silver")
+            });
+          }
+        } else {
+          const existing = particles.find(pt => pt.eventId === p.event_id);
+          if (existing) {
+            existing.visual = p.visual || {};
+            existing.state = p.state;
+          }
+        }
+      });
+
+    } catch (e) {
+      console.error("Failed to load runtime process animation state", e);
     }
-
-    const fish = document.createElement("div");
-    fish.className = "koi-fish";
-    fish.style.top = "0px";
-    fish.style.left = "50%";
-    fish.style.transform = "translateX(-50%) rotate(90deg)";
-    fish.style.animationDelay = `${idx * 0.4}s`;
-    fish.innerHTML = createKoiSVG();
-
-    orbit.appendChild(fish);
-    pond.appendChild(orbit);
-  });
-
-  // Ripple creator
-  function triggerRipple(x, y) {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const ripple = document.createElement("div");
-    ripple.className = "koi-ripple";
-    ripple.style.left = `${x}px`;
-    ripple.style.top = `${y}px`;
-    pond.appendChild(ripple);
-    setTimeout(() => {
-      ripple.remove();
-    }, 3000);
   }
 
-  // Document click triggers ripples
-  document.addEventListener("click", (e) => {
-    if (e.target.tagName !== "BUTTON" && e.target.tagName !== "A" && e.target.tagName !== "INPUT" && e.target.tagName !== "SELECT") {
-      triggerRipple(e.clientX, e.clientY);
+  function renderRuntimeProcessFeed(processes) {
+    if (!feedContainer) return;
+    if (processes.length === 0) {
+      feedContainer.innerHTML = '<div style="color: var(--text-secondary); text-align: center; padding: 12px 0;">No active processes running. Pond is idle.</div>';
+      return;
     }
+
+    const rows = processes.slice(0, 25).map(p => {
+      const color = getColorHex(p.visual?.color || "green");
+      const cleanMsg = (p.process_type || "").replace(/_/g, " ");
+      const modelInfo = p.model ? ` [${p.model}]` : "";
+      return `
+        <div style="display: flex; gap: 8px; border-bottom: 1px solid rgba(255,255,255,0.03); padding: 2px 0; align-items: center;">
+          <span style="width: 6px; height: 6px; border-radius: 50%; background: ${color}; flex-shrink: 0;"></span>
+          <span style="color: #fff; font-weight: bold; flex-shrink: 0;">${p.state}</span>
+          <span style="color: var(--text-secondary); font-size: 10px; flex-shrink: 0;">${cleanMsg}</span>
+          <span style="color: var(--text-secondary); text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${modelInfo}</span>
+        </div>
+      `;
+    }).join("");
+    feedContainer.innerHTML = rows;
+  }
+
+  canvas.addEventListener("click", (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    ripples.push({
+      x: x,
+      y: y,
+      radius: 5,
+      opacity: 1.0,
+      color: "#3b82f6"
+    });
   });
 
-  // Random background ripples
-  setInterval(() => {
-    if (document.hidden) return;
-    const x = Math.random() * window.innerWidth;
-    const y = Math.random() * window.innerHeight;
-    triggerRipple(x, y);
-  }, 5000);
+  loadRuntimeAnimationState();
+  const pollInterval = setInterval(loadRuntimeAnimationState, 3000);
+
+  return () => {
+    clearInterval(pollInterval);
+    if (animationFrameId) cancelAnimationFrame(animationFrameId);
+    window.removeEventListener("resize", resizeCanvas);
+  };
 }
 
 if (document.readyState === "loading") {
