@@ -1,4 +1,5 @@
-User name is John Doe.
+User name is Michael Hoch.
 User is an AI Engineer.
-User is interested in AI Agents.
-User is based in San Francisco, California.
+User is interested in AI Agents and multi-agent swarm architectures.
+User is based in the United States.
+User is the owner of the Hoch Agent Swarm project.
