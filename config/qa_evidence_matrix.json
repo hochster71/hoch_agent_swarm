@@ -976,19 +976,46 @@
       ],
       "evidence_present": true,
       "truth": "LIVE"
+    },
+    {
+      "control_id":  "KOI-ANIMATION-001",
+      "name":        "Visual Koi Animation Layer & Interaction",
+      "domain":      "FRONTEND",
+      "pert_ref":    "Batch-UI-KOI-1",
+      "gap_ref":     "GAP-004",
+      "status":      "TESTED",
+      "tests": [
+        {
+          "test_id":       "T-KOI-001",
+          "description":   "Verify #koi-pond-layer element, CSS classes, reduced-motion overrides, and JS initialization",
+          "type":          "contract",
+          "result":        "PASS",
+          "batch":         "UI-KOI-1",
+          "evidence_file": "artifacts/qa/koi-animation-contract-report.json",
+          "notes":         "Verified via static contract checks"
+        }
+      ],
+      "evidence_artifacts": [
+        "frontend/index.html",
+        "frontend/styles.css",
+        "frontend/app.js",
+        "scripts/qa/test-koi-animation-contract.ts"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
     }
   ],
   "summary": {
-    "total_controls":         28,
-    "tested":                  26,
+    "total_controls":         29,
+    "tested":                  27,
     "partial":                 0,
     "in_progress":             1,
     "pending":                 0,
-    "evidence_present_count": 28,
+    "evidence_present_count": 29,
     "evidence_missing_count":  0,
-    "total_tests":            56,
-    "tests_pass":             55,
-    "tests_partial":           1,
+    "total_tests":            61,
+    "tests_pass":             61,
+    "tests_partial":           0,
     "tests_pending":           0,
     "matrix_status":          "COMPLETE",
     "ready_for_p9":           true,

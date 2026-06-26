@@ -75,3 +75,13 @@
 - [x] Verify all unit, contract, and CI tests pass
 - [x] Commit changes with the required message
 
+## Batch UI-KOI-1: Koi Animation Layer
+- `[x]` Add `#koi-pond-layer` background element to `frontend/index.html`
+- `[x]` Implement `.koi-fish`, `.koi-ripple`, and `.koi-orbit` styling in `frontend/styles.css`
+- `[x]` Implement reduced-motion behavior in `frontend/styles.css`
+- `[x]` Implement Koi animation initialization in `frontend/app.js`
+- `[x]` Create contract test `scripts/qa/test-koi-animation-contract.ts`
+- `[x]` Register script and update contract runner in `package.json`
+- `[x]` Run contract verification and CI pipeline successfully
+- `[x]` Stage and commit changes with the required message
+

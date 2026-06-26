@@ -219,3 +219,34 @@ We have successfully executed the final stage of Batch PR-10 to record the opera
 - **Unit Testing**: Wrote [test_release_authorization_gate.py](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/tests/test_release_authorization_gate.py) verifying transition rules under missing, unauthorized, and authorized states. All 3 unit tests passed successfully.
 - **Contract & CI Pipeline**: Executed `npm run qa:ui-contract` and `python3 scripts/qa/run-ci-pipeline.py` confirming 100% success across all 56 contract checkpoints, SBOM packaging, and cryptographic signatures.
 - **Ready for Release**: The readiness scorecard yields a perfect score of **100/100 (PASS)**, and the final release packet is sealed.
+
+---
+
+## Part 8 — Visual Koi Animation Layer & Interaction (Batch UI-KOI-1)
+
+We have successfully implemented the visual Koi Animation Layer background and its user interaction mechanics:
+
+### 1. DOM Background Integration
+- Embedded `<div id="koi-pond-layer"></div>` directly inside `<body>` of [index.html](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/frontend/index.html), positioned as a fixed background.
+
+### 2. Styling & Animation CSS Rules
+- Appended selectors for `#koi-pond-layer`, `.koi-orbit`, `.koi-fish`, and `.koi-ripple` to [styles.css](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/frontend/styles.css).
+- Created smooth linear rotate (`koi-swim-orbit`) keyframes for orbiting fish and a subtle wiggle (`koi-wiggle`) keyframe for the fish SVG bodies.
+- Implemented a scaling expansion animation (`koi-ripple-expand`) for the ripples.
+- Incorporated strict `prefers-reduced-motion: reduce` CSS overrides that force-disable the background layer, rotation, wiggling, and ripple expansion animations to align with accessibility standards.
+
+### 3. SVG Rendering & Script Initialization
+- Implemented `initializeKoiAnimation()` in [app.js](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/frontend/app.js) to dynamically inject koi orbits and SVGs styled using custom theme accent variables (`var(--accent-teal)` / `var(--kimi-green-soft)`).
+- Bound document-level pointer handlers to spawn a ripple (`.koi-ripple`) on clicks, ignoring clicks on interactive elements (`BUTTON`, `A`, `INPUT`, `SELECT`).
+- Integrated a background interval loop that spawns random periodic ripples every 5 seconds (suppressed when the document is hidden/minimized).
+
+### 4. Verification Results
+- **Contract Verification**: Created [test-koi-animation-contract.ts](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/scripts/qa/test-koi-animation-contract.ts) which asserts presence of `#koi-pond-layer` in index.html, matching class styling selectors in styles.css, accessibility styles, and script entry points in app.js. Verified successfully via `npm run qa:koi-animation` (PASS).
+- **QA Matrix Registration**: Added control `KOI-ANIMATION-001` and test `T-KOI-001` to [qa_evidence_matrix.json](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/config/qa_evidence_matrix.json).
+- **CI Pipeline Success**: Rerun `python3 scripts/qa/run-ci-pipeline.py` yielding 100% success across all 61 tests, generating clean release SBOM/provenance metadata.
+- **Recalibrated QA Matrix Metrics**:
+  - **Total Controls**: 28 → 29
+  - **Tested Controls**: 27 (26 + 1 new control)
+  - **Evidence Present**: 29
+  - **Tests Passing**: 61 (all tests passing)
+

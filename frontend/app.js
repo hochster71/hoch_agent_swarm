@@ -13730,3 +13730,94 @@ window.exportSealPreviewJSON = exportSealPreviewJSON;
   }
 })();
 
+// ── Koi Animation Layer (Batch UI-KOI-1) ─────────────────────────────────────
+function initializeKoiAnimation() {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    return;
+  }
+  const pond = document.getElementById("koi-pond-layer");
+  if (!pond) return;
+
+  // Clear existing
+  pond.innerHTML = "";
+
+  // Helper to create koi SVG
+  function createKoiSVG() {
+    return `
+      <svg viewBox="0 0 60 30" width="100%" height="100%" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5,15 Q30,5 55,15 Q30,25 5,15 Z" fill="var(--accent-teal, var(--kimi-green, #8cff5c))" opacity="0.8"/>
+        <path d="M25,8 Q20,2 15,5 Q18,8 20,8 Z" fill="var(--kimi-green-soft, #56d944)" opacity="0.6"/>
+        <path d="M25,22 Q20,28 15,25 Q18,22 20,22 Z" fill="var(--kimi-green-soft, #56d944)" opacity="0.6"/>
+        <path d="M5,15 Q0,10 2,5 Q5,10 5,15 Z" fill="var(--kimi-green-soft, #56d944)" opacity="0.7"/>
+        <path d="M5,15 Q0,20 2,25 Q5,20 5,15 Z" fill="var(--kimi-green-soft, #56d944)" opacity="0.7"/>
+      </svg>
+    `;
+  }
+
+  // Create 3 koi orbits
+  const orbits = [
+    { width: 300, height: 300, duration: 35, top: "15%", left: "10%", reverse: false },
+    { width: 450, height: 450, duration: 55, top: "45%", left: "55%", reverse: true },
+    { width: 350, height: 350, duration: 40, top: "25%", left: "40%", reverse: false }
+  ];
+
+  orbits.forEach((cfg, idx) => {
+    const orbit = document.createElement("div");
+    orbit.className = "koi-orbit";
+    orbit.style.width = `${cfg.width}px`;
+    orbit.style.height = `${cfg.height}px`;
+    orbit.style.top = cfg.top;
+    orbit.style.left = cfg.left;
+    orbit.style.animationDuration = `${cfg.duration}s`;
+    if (cfg.reverse) {
+      orbit.style.animationDirection = "reverse";
+    }
+
+    const fish = document.createElement("div");
+    fish.className = "koi-fish";
+    fish.style.top = "0px";
+    fish.style.left = "50%";
+    fish.style.transform = "translateX(-50%) rotate(90deg)";
+    fish.style.animationDelay = `${idx * 0.4}s`;
+    fish.innerHTML = createKoiSVG();
+
+    orbit.appendChild(fish);
+    pond.appendChild(orbit);
+  });
+
+  // Ripple creator
+  function triggerRipple(x, y) {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const ripple = document.createElement("div");
+    ripple.className = "koi-ripple";
+    ripple.style.left = `${x}px`;
+    ripple.style.top = `${y}px`;
+    pond.appendChild(ripple);
+    setTimeout(() => {
+      ripple.remove();
+    }, 3000);
+  }
+
+  // Document click triggers ripples
+  document.addEventListener("click", (e) => {
+    if (e.target.tagName !== "BUTTON" && e.target.tagName !== "A" && e.target.tagName !== "INPUT" && e.target.tagName !== "SELECT") {
+      triggerRipple(e.clientX, e.clientY);
+    }
+  });
+
+  // Random background ripples
+  setInterval(() => {
+    if (document.hidden) return;
+    const x = Math.random() * window.innerWidth;
+    const y = Math.random() * window.innerHeight;
+    triggerRipple(x, y);
+  }, 5000);
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initializeKoiAnimation);
+} else {
+  initializeKoiAnimation();
+}
+
+
