@@ -13327,3 +13327,294 @@ window.exportSealPreviewJSON = exportSealPreviewJSON;
   window.hochHarmony = { refresh: renderHarmonyDashboard };
 
 })();
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  HOCH PRODUCTION READINESS DASHBOARD  (Batch PR-1)
+//  8-panel governance view: Northstar · Gaps · PERT · QA Matrix · Controls ·
+//  Findings · Cluster · Go/No-Go
+//  Endpoint: GET /api/v1/production-readiness
+//  Truth states: LIVE · STALE · PENDING · IN_PROGRESS · COMPLETE · UNKNOWN
+// ═══════════════════════════════════════════════════════════════════════════════
+(function () {
+  "use strict";
+
+  function el(id) { return document.getElementById(id); }
+  function esc(s) { return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+  // ── Status colour helpers ─────────────────────────────────────────────────────
+  function statusColor(s) {
+    const m = {
+      "COMPLETE":      "#8cff5c",
+      "LIVE":          "#8cff5c",
+      "IN_PROGRESS":   "#f59e0b",
+      "OPEN":          "#ff5f7a",
+      "PENDING":       "#9ca3af",
+      "UNKNOWN":       "#6b7280",
+      "STALE":         "#f59e0b",
+      "BROKEN":        "#ff5f7a",
+      "NO-GO":         "#ff5f7a",
+      "PENDING_VERIFICATION": "#f59e0b",
+    };
+    return m[s] || "#9ca3af";
+  }
+
+  function severityColor(s) {
+    if (s === "HIGH")   return "#ff5f7a";
+    if (s === "MEDIUM") return "#f59e0b";
+    return "#8cff5c";
+  }
+
+  function truthPill(t) {
+    const c = t === "LIVE" ? "#8cff5c" : t === "UNKNOWN" ? "#6b7280" : t === "SYNTHETIC" ? "#f59e0b" : "#9ca3af";
+    return `<span style="font-size:8px;font-family:monospace;color:${c};border:1px solid ${c}33;border-radius:3px;padding:1px 4px;">${esc(t||"UNKNOWN")}</span>`;
+  }
+
+  // ── QA test matrix (static — mirrors production_readiness_audit.md) ──────────
+  const QA_TESTS = [
+    { id:"QA-001", control:"HIGH-risk prompt approval gate",    evidence:"prompt_governance.py",   status:"PASS" },
+    { id:"QA-002", control:"Test-state isolation",              evidence:"prompt_governance.py",   status:"PASS" },
+    { id:"QA-003", control:"Operator approval TTL",             evidence:"prompt_governance.py",   status:"PASS" },
+    { id:"QA-004", control:"Prompt Library risk classification",evidence:"prompt_governance.py",   status:"PASS" },
+    { id:"QA-005", control:"Usage ledger logging",              evidence:"prompt_governance.py",   status:"PASS" },
+    { id:"QA-006", control:"Governance Cockpit approval queue", evidence:"index.html / app.js",    status:"PASS" },
+    { id:"QA-007", control:"Harmony Dashboard renders",         evidence:"index.html / app.js",    status:"PASS" },
+    { id:"QA-008", control:"Ephemeral worker termination",      evidence:"MISSING",                status:"FAIL", gap:"GAP-001" },
+    { id:"QA-009", control:"Asset trust tier enforcement",      evidence:"MISSING",                status:"FAIL", gap:"GAP-002" },
+    { id:"QA-010", control:"Skill registry runtime gate",       evidence:"MISSING",                status:"FAIL", gap:"GAP-003" },
+    { id:"QA-011", control:"Port hardening verification",       evidence:"MISSING",                status:"FAIL", gap:"GAP-008" },
+    { id:"QA-012", control:"Worker profile enforcement",        evidence:"MISSING",                status:"FAIL", gap:"GAP-009" },
+    { id:"QA-013", control:"Storage policy enforcement",        evidence:"MISSING",                status:"FAIL", gap:"GAP-007" },
+    { id:"QA-014", control:"E2E audit run",                     evidence:"MISSING",                status:"FAIL", gap:"GAP-010" },
+  ];
+
+  // ── Go/No-Go checklist items ──────────────────────────────────────────────────
+  const GONOGO_GATES = [
+    { label:"GAP-001 Ephemeral execution enforcement",  done:false },
+    { label:"GAP-002 Asset trust registry committed",   done:false },
+    { label:"GAP-003 Skill registry runtime gate",      done:false },
+    { label:"GAP-004 QA evidence matrix complete",      done:false },
+    { label:"GAP-008 Port hardening verified",          done:false },
+    { label:"GAP-009 Worker profiles defined",          done:false },
+    { label:"GAP-010 E2E audit run sealed",             done:false },
+  ];
+
+  // ── Main render ───────────────────────────────────────────────────────────────
+  async function renderPR() {
+    const base = (typeof API_BASE !== "undefined" && API_BASE) ? API_BASE : "http://127.0.0.1:8000";
+    let data = null;
+    try {
+      const r = await fetch(`${base}/api/v1/production-readiness`);
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      data = await r.json();
+    } catch (err) {
+      console.warn("[PR Dashboard] fetch error:", err);
+      // Fallback minimal shape
+      data = {
+        go_no_go: "UNKNOWN", truth: "BROKEN",
+        high_open_count: "?", total_gaps: "?",
+        northstar: "(endpoint unavailable)", principles: [],
+        pert_workstreams: [], critical_path: [],
+        control_domains: [], gaps: [], cluster_nodes: [],
+        approval_summary: { truth: "UNKNOWN" },
+      };
+    }
+
+    // ── Header badges ──────────────────────────────────────────────────────────
+    const badge   = el("pr-go-nogo-badge");
+    const truthBa = el("pr-truth-badge");
+    const verdict = el("pr-gonogo-verdict");
+    const gonCard = el("pr-gonogo-card");
+    const isGo    = data.go_no_go === "GO";
+    const goColor = isGo ? "#8cff5c" : data.go_no_go === "PENDING_VERIFICATION" ? "#f59e0b" : "#ff5f7a";
+    if (badge)  { badge.textContent = data.go_no_go; badge.style.color = goColor; badge.style.borderColor = goColor+"66"; badge.style.background = goColor+"15"; }
+    if (truthBa) truthBa.textContent = `source: api/v1/production-readiness · ${data.truth || "?"}`;
+    if (verdict) { verdict.textContent = data.go_no_go; verdict.style.color = goColor; }
+    if (gonCard && isGo) {
+      gonCard.style.borderColor = "rgba(140,255,92,0.3)";
+      gonCard.style.background  = "rgba(10,40,20,0.5)";
+    }
+
+    // ── 1. Northstar ───────────────────────────────────────────────────────────
+    const nsSt  = el("pr-northstar-stmt");
+    const nsPr  = el("pr-principles");
+    if (nsSt) nsSt.textContent = data.northstar || "UNKNOWN";
+    if (nsPr) {
+      nsPr.innerHTML = (data.principles || []).map(p => `
+        <div style="display:flex;align-items:flex-start;gap:6px;font-size:9px;">
+          <span style="color:#8cff5c;font-weight:700;min-width:44px;">${esc(p.id)}</span>
+          <span style="color:#9ebaa0;"><b style="color:#e2f8e6;">${esc(p.name)}</b></span>
+        </div>`).join("");
+    }
+
+    // ── 2. Gap Analysis ────────────────────────────────────────────────────────
+    const gaps        = data.gaps || [];
+    const highOpen    = gaps.filter(g => g.severity === "HIGH"   && g.status === "OPEN");
+    const medOpen     = gaps.filter(g => g.severity === "MEDIUM" && g.status === "OPEN");
+    const inProgress  = gaps.filter(g => g.status === "IN_PROGRESS");
+    const gapCounts   = el("pr-gap-summary-counts");
+    const gapTable    = el("pr-gap-table");
+    if (gapCounts) {
+      gapCounts.innerHTML = [
+        { label:`${highOpen.length} HIGH`,      color:"#ff5f7a" },
+        { label:`${medOpen.length} MEDIUM`,     color:"#f59e0b" },
+        { label:`${inProgress.length} IN PROG`, color:"#62f5d5" },
+      ].map(c => `<span style="font-size:11px;font-weight:700;color:${c.color};">${c.label}</span>`).join("");
+    }
+    if (gapTable) {
+      gapTable.innerHTML = gaps.map(g => `
+        <div style="display:flex;align-items:center;gap:6px;padding:2px 4px;border-radius:4px;background:rgba(255,255,255,0.02);">
+          <span style="font-size:8px;font-weight:700;color:${severityColor(g.severity)};min-width:28px;">${esc(g.id)}</span>
+          <span style="font-size:9px;color:#c8e6c9;flex:1;">${esc(g.area)}</span>
+          <span style="font-size:8px;color:${severityColor(g.severity)};min-width:36px;">${esc(g.severity)}</span>
+          <span style="font-size:8px;color:${statusColor(g.status)};min-width:60px;">${esc(g.status)}</span>
+          <span style="font-size:8px;color:#6b7280;">${esc(g.pert)}</span>
+        </div>`).join("");
+    }
+
+    // ── 3. PERT Critical Path ──────────────────────────────────────────────────
+    const cpEl   = el("pr-critical-path");
+    const pertEl = el("pr-pert-list");
+    const cp     = data.critical_path || [];
+    const wss    = data.pert_workstreams || [];
+    if (cpEl) {
+      cpEl.innerHTML = cp.map((id, i) =>
+        `<span style="font-size:10px;font-weight:700;color:#62f5d5;background:rgba(98,245,213,0.08);
+          border:1px solid rgba(98,245,213,0.2);border-radius:4px;padding:2px 7px;">${esc(id)}</span>
+         ${i < cp.length - 1 ? '<span style="color:#6b7280;">→</span>' : ''}`
+      ).join("");
+    }
+    if (pertEl) {
+      pertEl.innerHTML = wss.map(w => {
+        const isCP = cp.includes(w.id);
+        const deps = (w.depends_on || []).join(", ") || "—";
+        return `
+          <div style="display:flex;align-items:center;gap:6px;padding:3px 5px;border-radius:4px;
+            background:${isCP ? "rgba(98,245,213,0.05)" : "rgba(255,255,255,0.02)"};
+            border-left:2px solid ${isCP ? "#62f5d5" : "transparent"};">
+            <span style="font-size:9px;font-weight:700;color:${isCP?"#62f5d5":"#8cff5c"};min-width:20px;">${esc(w.id)}</span>
+            <span style="font-size:9px;color:#e2f8e6;flex:1;">${esc(w.name)}</span>
+            <span style="font-size:8px;color:#6b7280;min-width:28px;">${esc(w.estimated_hours||"?")}</span>
+            <span style="font-size:8px;color:${statusColor(w.status)};">${esc(w.status||"UNKNOWN")}</span>
+          </div>`;
+      }).join("");
+    }
+
+    // ── 4. QA Audit Matrix ─────────────────────────────────────────────────────
+    const qaMx = el("pr-qa-matrix");
+    if (qaMx) {
+      const pass = QA_TESTS.filter(t => t.status === "PASS").length;
+      qaMx.innerHTML = `
+        <div style="display:flex;gap:10px;margin-bottom:6px;">
+          <span style="color:#8cff5c;font-weight:700;">${pass} PASS</span>
+          <span style="color:#ff5f7a;font-weight:700;">${QA_TESTS.length-pass} FAIL</span>
+          <span style="color:#9ca3af;">of ${QA_TESTS.length} tests</span>
+        </div>` +
+        QA_TESTS.map(t => `
+          <div style="display:flex;align-items:center;gap:5px;padding:2px 3px;border-radius:3px;
+            background:${t.status==="FAIL"?"rgba(255,95,122,0.05)":"rgba(140,255,92,0.03)"};">
+            <span style="color:${t.status==="PASS"?"#8cff5c":"#ff5f7a"};font-size:10px;min-width:12px;">${t.status==="PASS"?"✓":"✗"}</span>
+            <span style="font-size:8px;color:#9ebaa0;min-width:42px;">${esc(t.id)}</span>
+            <span style="font-size:9px;color:#c8e6c9;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(t.control)}</span>
+            <span style="font-size:8px;color:#6b7280;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(t.evidence)}</span>
+          </div>`).join("");
+    }
+
+    // ── 5. Control / Evidence Mapping ──────────────────────────────────────────
+    const ctrlEl = el("pr-controls");
+    if (ctrlEl) {
+      const domains = data.control_domains || [];
+      ctrlEl.innerHTML = domains.map(d => {
+        const rows = (d.controls || []).map(c => `
+          <div style="display:flex;align-items:center;gap:5px;padding:2px 4px 2px 12px;">
+            <span style="font-size:8px;color:#9ebaa0;min-width:80px;">${esc(c.id)}</span>
+            <span style="font-size:9px;color:#c8e6c9;flex:1;">${esc(c.name)}</span>
+            <span style="font-size:8px;color:${statusColor(c.status)};">${esc(c.status||"UNKNOWN")}</span>
+          </div>`).join("");
+        return `
+          <div style="margin-bottom:4px;">
+            <div style="font-size:8px;font-weight:700;color:#62f5d5;padding:2px 4px;letter-spacing:0.5px;">${esc(d.domain)}</div>
+            ${rows}
+          </div>`;
+      }).join("");
+    }
+
+    // ── 6. High-Risk Findings ──────────────────────────────────────────────────
+    const findEl = el("pr-findings");
+    if (findEl) {
+      const highGaps = gaps.filter(g => g.severity === "HIGH" && g.status === "OPEN");
+      if (!highGaps.length) {
+        findEl.innerHTML = `<div style="color:#8cff5c;font-size:11px;">✓ No HIGH findings open</div>`;
+      } else {
+        findEl.innerHTML = highGaps.map(g => `
+          <div style="display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:5px;
+            background:rgba(255,95,122,0.06);border:1px solid rgba(255,95,122,0.12);">
+            <span style="color:#ff5f7a;font-size:10px;">⚠</span>
+            <span style="font-size:9px;font-weight:700;color:#ff5f7a;min-width:52px;">${esc(g.id)}</span>
+            <span style="font-size:10px;color:#f5c0c8;flex:1;">${esc(g.area)}</span>
+            <span style="font-size:8px;color:#6b7280;">${esc(g.pert)}</span>
+          </div>`).join("");
+      }
+    }
+
+    // ── 7. Cluster Readiness ───────────────────────────────────────────────────
+    const clEl = el("pr-cluster");
+    if (clEl) {
+      const nodes = data.cluster_nodes || [];
+      clEl.innerHTML = nodes.map(n => `
+        <div style="display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:7px;
+          background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);">
+          <div style="width:8px;height:8px;border-radius:50%;background:${statusColor(n.status)};flex-shrink:0;"></div>
+          <div style="flex:1;">
+            <div style="font-size:10px;font-weight:600;color:#e2f8e6;">${esc(n.name)}</div>
+            <div style="font-size:8px;color:#6b7280;">${esc(n.role)} · Tier ${esc(n.tier)}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+            <span style="font-size:9px;color:${statusColor(n.status)};font-weight:600;">${esc(n.status)}</span>
+            ${truthPill(n.truth)}
+          </div>
+        </div>`).join("");
+    }
+
+    // ── 8. Go/No-Go checklist ──────────────────────────────────────────────────
+    const gocheckEl = el("pr-gonogo-checklist");
+    const goreason  = el("pr-gonogo-reason");
+    if (goreason) {
+      const openH = data.high_open_count;
+      goreason.textContent = openH > 0
+        ? `${openH} HIGH gap(s) blocking production deployment`
+        : data.go_no_go === "PENDING_VERIFICATION"
+          ? "All HIGH gaps resolved — awaiting E2E audit seal"
+          : "All gates clear";
+    }
+    if (gocheckEl) {
+      gocheckEl.innerHTML = GONOGO_GATES.map(g => `
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:10px;color:${g.done?"#8cff5c":"#ff5f7a"};">${g.done?"✓":"✗"}</span>
+          <span style="font-size:9px;color:${g.done?"#9ebaa0":"#f5c0c8"};">${esc(g.label)}</span>
+        </div>`).join("");
+    }
+  }
+
+  // ── Wire governance nav to also trigger PR render ─────────────────────────────
+  function wirePRDashboard() {
+    // Attach to the governance nav click (since PR panel lives inside view-governance)
+    const govNav = document.getElementById("nav-governance");
+    if (govNav && !govNav._prWired) {
+      govNav.addEventListener("click", () => {
+        setTimeout(() => {
+          renderPR().catch(err => console.warn("[PR Dashboard] render error:", err));
+        }, 100);
+      });
+      govNav._prWired = true;
+    }
+  }
+
+  // Expose for console + Refresh button
+  window.prDashboard = { refresh: renderPR };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", wirePRDashboard);
+  } else {
+    wirePRDashboard();
+  }
+})();

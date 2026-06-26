@@ -1,0 +1,75 @@
+{
+  "_meta": {
+    "schema": "hoch-northstar-controls-v1",
+    "created": "2026-06-26",
+    "version": "1.0.0",
+    "sealed": false,
+    "seal_requires": "operator approval + evidence artifacts complete"
+  },
+  "northstar_statement": "Build a local-first, ephemeral, cybersecurity-hardened AI swarm cluster that can execute life, work, cyber, research, and humanity tasks while preserving operator control, evidence, approval gates, and full auditability.",
+  "principles": [
+    { "id": "NS-01", "name": "Local-First", "description": "Swarm operates primarily on local hardware; cloud is opt-in, not default." },
+    { "id": "NS-02", "name": "Ephemeral Execution", "description": "All agent workers are disposable; no persistent state in execution context." },
+    { "id": "NS-03", "name": "Operator Control", "description": "Every HIGH-risk operation requires human operator approval before execution." },
+    { "id": "NS-04", "name": "Full Auditability", "description": "Every action is logged, hash-stamped, and traceable to a specific agent and run." },
+    { "id": "NS-05", "name": "Evidence-First", "description": "No control is considered active unless backed by a verifiable evidence artifact." },
+    { "id": "NS-06", "name": "Cybersecurity-Hardened", "description": "Attack surface is minimized: ports, credentials, and skills are gated by policy." },
+    { "id": "NS-07", "name": "Zero Trust within Cluster", "description": "Each node authenticates per-request; no implicit trust between cluster members." }
+  ],
+  "control_domains": [
+    {
+      "domain": "EPHEMERAL",
+      "controls": [
+        { "id": "EPHEMERAL-001", "name": "Worker Disposability", "status": "PENDING", "pert_ref": "P1" },
+        { "id": "EPHEMERAL-002", "name": "No Credential Persistence", "status": "PENDING", "pert_ref": "P1" }
+      ]
+    },
+    {
+      "domain": "ACCESS",
+      "controls": [
+        { "id": "SKILL-GATE-001", "name": "Skill Registry Runtime Enforcement", "status": "PENDING", "pert_ref": "P2" },
+        { "id": "RUNTIME-001",    "name": "Agent Policy Enforcement Point",    "status": "PENDING", "pert_ref": "P2" }
+      ]
+    },
+    {
+      "domain": "ASSET",
+      "controls": [
+        { "id": "ASSET-TRUST-001", "name": "Per-Node Trust Tier Model", "status": "PENDING", "pert_ref": "P3" },
+        { "id": "ZTA-001",         "name": "Zero Trust Auth between Nodes", "status": "PENDING", "pert_ref": "P3" },
+        { "id": "CLUSTER-001",     "name": "Worker Profile Enforcement", "status": "PENDING", "pert_ref": "P8" }
+      ]
+    },
+    {
+      "domain": "NETWORK",
+      "controls": [
+        { "id": "PORT-001",     "name": "Port Exposure Audit",         "status": "PENDING", "pert_ref": "P4" },
+        { "id": "LAN-001",      "name": "LAN Approval Gate",           "status": "PENDING", "pert_ref": "P4" },
+        { "id": "FIREWALL-001", "name": "Firewall Policy Documentation","status": "PENDING", "pert_ref": "P4" }
+      ]
+    },
+    {
+      "domain": "STORAGE",
+      "controls": [
+        { "id": "STORAGE-001", "name": "Ephemeral-First Storage Policy", "status": "PENDING", "pert_ref": "P7" },
+        { "id": "GDRIVE-001",  "name": "Google Drive Push Policy",       "status": "PENDING", "pert_ref": "P7" }
+      ]
+    },
+    {
+      "domain": "GOVERNANCE",
+      "controls": [
+        { "id": "PROMPT-GATE-001", "name": "HIGH-Risk Prompt Approval Gate", "status": "COMPLETE", "pert_ref": "Batch-Prompt-2", "evidence": "backend/prompt_governance.py" },
+        { "id": "TEST-ISOLATE-001","name": "Test-State Approval Isolation",  "status": "COMPLETE", "pert_ref": "Batch-Prompt-3", "evidence": "backend/prompt_governance.py" },
+        { "id": "PROMPT-TTL-001",  "name": "Operator Approval TTL (24h)",    "status": "COMPLETE", "pert_ref": "Batch-Prompt-3", "evidence": "backend/prompt_governance.py" }
+      ]
+    },
+    {
+      "domain": "AUDIT",
+      "controls": [
+        { "id": "QA-MATRIX-001", "name": "Unified QA Evidence Matrix", "status": "PENDING", "pert_ref": "P5" },
+        { "id": "EVIDENCE-001",  "name": "Evidence Artifact Chain",    "status": "PENDING", "pert_ref": "P5" },
+        { "id": "E2E-AUDIT-001", "name": "End-to-End Audit Run",       "status": "PENDING", "pert_ref": "P9" },
+        { "id": "GO-NOGO-001",   "name": "Production Go/No-Go Gate",   "status": "PENDING", "pert_ref": "P9" }
+      ]
+    }
+  ]
+}

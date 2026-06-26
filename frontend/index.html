@@ -2988,6 +2988,93 @@
                             </div>
                         </div>
                     </div>
+                <!-- ═══ PRODUCTION READINESS PANEL (Batch PR-1) ════════════════════════ -->
+                <section class="card" id="production-readiness-panel"
+                  style="padding:20px;border:1px solid rgba(140,255,92,0.2);background:rgba(6,16,11,0.85);border-radius:14px;">
+
+                  <!-- Header row -->
+                  <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(140,255,92,0.12);padding-bottom:12px;margin-bottom:16px;">
+                    <div style="display:flex;align-items:center;gap:10px;">
+                      <i data-lucide="shield" style="color:#8cff5c;width:20px;height:20px;"></i>
+                      <h3 style="font-size:16px;font-weight:700;color:#fff;margin:0;">PRODUCTION READINESS</h3>
+                      <span id="pr-go-nogo-badge" style="font-size:10px;font-weight:800;padding:3px 10px;border-radius:10px;
+                        background:rgba(255,95,122,0.15);border:1px solid rgba(255,95,122,0.4);color:#ff5f7a;">NO-GO</span>
+                      <span id="pr-truth-badge" style="font-size:9px;font-family:monospace;padding:1px 6px;border-radius:4px;
+                        background:rgba(0,0,0,0.4);color:#9ebaa0;border:1px solid rgba(255,255,255,0.08);">source: LOADING</span>
+                    </div>
+                    <button id="btn-pr-refresh" class="btn btn-xs btn-outline" onclick="window.prDashboard&&window.prDashboard.refresh()"
+                      style="font-size:10px;border-color:rgba(140,255,92,0.3);color:#8cff5c;">⟳ Refresh</button>
+                  </div>
+
+                  <!-- Row 1: Northstar + Gap Summary -->
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+
+                    <!-- 1. Northstar Mission -->
+                    <div style="background:rgba(10,30,18,0.7);border:1px solid rgba(140,255,92,0.12);border-radius:10px;padding:14px;">
+                      <div style="font-size:10px;font-weight:700;color:#8cff5c;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">① Northstar Mission</div>
+                      <div id="pr-northstar-stmt" style="font-size:11px;color:#edfbe9;line-height:1.6;font-style:italic;"></div>
+                      <div id="pr-principles" style="display:flex;flex-direction:column;gap:4px;margin-top:10px;"></div>
+                    </div>
+
+                    <!-- 2. Gap Analysis Summary -->
+                    <div style="background:rgba(10,30,18,0.7);border:1px solid rgba(140,255,92,0.12);border-radius:10px;padding:14px;">
+                      <div style="font-size:10px;font-weight:700;color:#f59e0b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">② Gap Analysis</div>
+                      <div id="pr-gap-summary-counts" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;"></div>
+                      <div id="pr-gap-table" style="display:flex;flex-direction:column;gap:3px;max-height:220px;overflow-y:auto;"></div>
+                    </div>
+                  </div>
+
+                  <!-- Row 2: PERT + QA Matrix -->
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+
+                    <!-- 3. PERT Critical Path -->
+                    <div style="background:rgba(10,30,18,0.7);border:1px solid rgba(140,255,92,0.12);border-radius:10px;padding:14px;">
+                      <div style="font-size:10px;font-weight:700;color:#62f5d5;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">③ PERT Critical Path</div>
+                      <div id="pr-critical-path" style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-bottom:10px;"></div>
+                      <div id="pr-pert-list" style="display:flex;flex-direction:column;gap:4px;max-height:200px;overflow-y:auto;"></div>
+                    </div>
+
+                    <!-- 4. QA Audit Matrix -->
+                    <div style="background:rgba(10,30,18,0.7);border:1px solid rgba(140,255,92,0.12);border-radius:10px;padding:14px;">
+                      <div style="font-size:10px;font-weight:700;color:#a5b4fc;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">④ QA Audit Matrix</div>
+                      <div id="pr-qa-matrix" style="display:flex;flex-direction:column;gap:3px;max-height:215px;overflow-y:auto;font-size:10px;"></div>
+                    </div>
+                  </div>
+
+                  <!-- Row 3: Controls + Findings -->
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+
+                    <!-- 5. Control / Evidence Mapping -->
+                    <div style="background:rgba(10,30,18,0.7);border:1px solid rgba(140,255,92,0.12);border-radius:10px;padding:14px;">
+                      <div style="font-size:10px;font-weight:700;color:#8cff5c;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">⑤ Control / Evidence Mapping</div>
+                      <div id="pr-controls" style="display:flex;flex-direction:column;gap:4px;max-height:220px;overflow-y:auto;font-size:10px;"></div>
+                    </div>
+
+                    <!-- 6. Open High-Risk Findings -->
+                    <div style="background:rgba(40,8,8,0.5);border:1px solid rgba(255,95,122,0.2);border-radius:10px;padding:14px;">
+                      <div style="font-size:10px;font-weight:700;color:#ff5f7a;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">⑥ Open High-Risk Findings</div>
+                      <div id="pr-findings" style="display:flex;flex-direction:column;gap:4px;max-height:220px;overflow-y:auto;font-size:10px;"></div>
+                    </div>
+                  </div>
+
+                  <!-- Row 4: Cluster + Go/No-Go -->
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+
+                    <!-- 7. Cluster Readiness -->
+                    <div style="background:rgba(10,30,18,0.7);border:1px solid rgba(140,255,92,0.12);border-radius:10px;padding:14px;">
+                      <div style="font-size:10px;font-weight:700;color:#62f5d5;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">⑦ Cluster Readiness</div>
+                      <div id="pr-cluster" style="display:flex;flex-direction:column;gap:6px;"></div>
+                    </div>
+
+                    <!-- 8. Go / No-Go Gate -->
+                    <div id="pr-gonogo-card" style="background:rgba(40,8,8,0.5);border:1px solid rgba(255,95,122,0.3);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px;">
+                      <div style="font-size:10px;font-weight:700;color:#ff5f7a;text-transform:uppercase;letter-spacing:1px;">⑧ Final Go / No-Go Gate</div>
+                      <div id="pr-gonogo-verdict" style="font-size:28px;font-weight:800;color:#ff5f7a;text-align:center;padding:10px 0;">NO-GO</div>
+                      <div id="pr-gonogo-reason" style="font-size:11px;color:#9ebaa0;text-align:center;"></div>
+                      <div id="pr-gonogo-checklist" style="display:flex;flex-direction:column;gap:4px;font-size:10px;"></div>
+                    </div>
+
+                  </div>
                 </section>
             </div>
 
