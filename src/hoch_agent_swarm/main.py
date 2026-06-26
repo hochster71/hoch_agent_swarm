@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import json
 import os
 import shutil
 import sys
@@ -14,11 +15,12 @@ from hoch_agent_swarm.artifact_validation import (
     SECURITY_AUDIT_PATH,
     validate_all_artifacts,
 )
+from hoch_agent_swarm.run_report import RunReport, STATUS_PASS, STATUS_FAIL
 
 warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 
 # ---------------------------------------------------------------------------
-# Artifact archive helpers (Step 6: prevent silent canonical overwrite)
+# Artifact archive helpers
 # ---------------------------------------------------------------------------
 
 _ARCHIVE_DIR = "artifacts/crew_runs"
@@ -27,16 +29,20 @@ _ARCHIVE_DIR = "artifacts/crew_runs"
 _CANONICAL_ARTIFACTS = ALL_CANONICAL_ARTIFACT_PATHS
 
 
-def _archive_existing_artifacts(run_timestamp: str) -> None:
+def _archive_existing_artifacts(run_timestamp: str) -> list[tuple[str, str]]:
     """
     Before a crew run overwrites canonical artifact files, copy current
     versions into artifacts/crew_runs/<timestamp>/ so prior output is
     not silently lost.
 
     artifacts/crew_runs/ is gitignored, so archives are local-only.
+
+    Returns:
+        List of (source_path, archived_path) pairs for every artifact that
+        was actually archived, for inclusion in the run report.
     """
     archive_dir = os.path.join(_ARCHIVE_DIR, run_timestamp)
-    archived = []
+    archived_pairs: list[tuple[str, str]] = []
 
     for src_path in _CANONICAL_ARTIFACTS:
         if os.path.isfile(src_path) and os.path.getsize(src_path) > 0:
@@ -44,26 +50,52 @@ def _archive_existing_artifacts(run_timestamp: str) -> None:
             dest_name = os.path.basename(src_path)
             dest_path = os.path.join(archive_dir, dest_name)
             shutil.copy2(src_path, dest_path)
-            archived.append(f"  archived: {src_path} → {dest_path}")
+            archived_pairs.append((src_path, dest_path))
+            print(f"  [archive] {src_path} → {dest_path}")
 
-    if archived:
-        print("\n[archive] Prior artifacts saved before overwrite:")
-        for line in archived:
-            print(line)
+    if archived_pairs:
+        print()
+
+    return archived_pairs
 
 
-def _run_validation() -> None:
+def _run_validation() -> dict[str, str]:
     """
     Run artifact validation after crew kickoff.
     Raises ArtifactValidationError on failure — crew run is not considered
     successful until all artifacts pass.
+
+    Returns:
+        Dict mapping canonical artifact path → "VALID" for all paths that
+        passed validation (used to populate run report).
     """
     print("\n[validate] Running artifact validation...")
-    try:
-        validate_all_artifacts(strict=True)
-        print("[validate] All artifacts passed validation.")
-    except ArtifactValidationError:
-        raise  # re-raise so the caller sees the full error
+    validate_all_artifacts(strict=True)
+    print("[validate] All artifacts passed validation.")
+    return {p: "VALID" for p in ALL_CANONICAL_ARTIFACT_PATHS}
+
+
+def _inputs_summary(inputs: dict) -> dict:
+    """
+    Extract a safe, non-secret summary of inputs for the run report.
+    Drops the raw trigger payload and any key containing 'secret' or 'key'.
+    """
+    SKIP_KEYS = {"crewai_trigger_payload"}
+    return {
+        k: v
+        for k, v in inputs.items()
+        if k not in SKIP_KEYS
+        and not any(word in k.lower() for word in ("secret", "key", "token", "password"))
+        and isinstance(v, (str, int, float, bool))
+    }
+
+
+def _write_report(report: RunReport, run_timestamp: str) -> str:
+    """Write the run report to the run archive directory and return its path."""
+    run_dir = os.path.join(_ARCHIVE_DIR, run_timestamp)
+    report_path = report.write(run_dir)
+    print(f"\n[report] Run report written: {report_path}")
+    return report_path
 
 
 # ---------------------------------------------------------------------------
@@ -96,17 +128,41 @@ def _default_inputs(topic: str = "AI LLMs") -> dict:
 def run():
     """
     Run the crew, then validate all canonical output artifacts.
+    Writes a run report to artifacts/crew_runs/<timestamp>/run_report.json.
     Raises on invalid output — does not silently continue.
     """
     run_timestamp = datetime.now().strftime("%Y%m%dT%H%M%S")
-    _archive_existing_artifacts(run_timestamp)
+    inputs = _default_inputs()
+    report = RunReport.start(
+        workflow_name="hoch_agent_swarm",
+        inputs_summary=_inputs_summary(inputs),
+    )
 
     try:
-        HochAgentSwarm().crew().kickoff(inputs=_default_inputs())
+        archived_pairs = _archive_existing_artifacts(run_timestamp)
+        report.record_archived_artifacts(archived_pairs)
+
+        HochAgentSwarm().crew().kickoff(inputs=inputs)
+
+        validation_results = _run_validation()
+        report.record_canonical_artifacts(ALL_CANONICAL_ARTIFACT_PATHS, validation_results)
+        report.finish(STATUS_PASS)
+
+    except ArtifactValidationError as e:
+        report.record_canonical_artifacts(ALL_CANONICAL_ARTIFACT_PATHS)
+        report.add_error(f"Artifact validation failed: {e}")
+        report.finish(STATUS_FAIL)
+        _write_report(report, run_timestamp)
+        raise
+
     except Exception as e:
+        report.record_canonical_artifacts(ALL_CANONICAL_ARTIFACT_PATHS)
+        report.add_error(str(e))
+        report.finish(STATUS_FAIL)
+        _write_report(report, run_timestamp)
         raise Exception(f"An error occurred while running the crew: {e}")
 
-    _run_validation()
+    _write_report(report, run_timestamp)
 
 
 def train():
@@ -153,9 +209,8 @@ def run_with_trigger():
     topic and current_year are extracted from the payload when present;
     deterministic defaults are used otherwise to prevent blank task interpolation.
     Validates artifacts after execution — raises on invalid output.
+    Writes a run report to artifacts/crew_runs/<timestamp>/run_report.json.
     """
-    import json
-
     if len(sys.argv) < 2:
         raise Exception("No trigger payload provided. Please provide JSON payload as argument.")
 
@@ -186,12 +241,34 @@ def run_with_trigger():
     }
 
     run_timestamp = datetime.now().strftime("%Y%m%dT%H%M%S")
-    _archive_existing_artifacts(run_timestamp)
+    report = RunReport.start(
+        workflow_name="hoch_agent_swarm",
+        inputs_summary=_inputs_summary(inputs),
+    )
 
     try:
+        archived_pairs = _archive_existing_artifacts(run_timestamp)
+        report.record_archived_artifacts(archived_pairs)
+
         result = HochAgentSwarm().crew().kickoff(inputs=inputs)
+
+        validation_results = _run_validation()
+        report.record_canonical_artifacts(ALL_CANONICAL_ARTIFACT_PATHS, validation_results)
+        report.finish(STATUS_PASS)
+
+    except ArtifactValidationError as e:
+        report.record_canonical_artifacts(ALL_CANONICAL_ARTIFACT_PATHS)
+        report.add_error(f"Artifact validation failed: {e}")
+        report.finish(STATUS_FAIL)
+        _write_report(report, run_timestamp)
+        raise
+
     except Exception as e:
+        report.record_canonical_artifacts(ALL_CANONICAL_ARTIFACT_PATHS)
+        report.add_error(str(e))
+        report.finish(STATUS_FAIL)
+        _write_report(report, run_timestamp)
         raise Exception(f"An error occurred while running the crew with trigger: {e}")
 
-    _run_validation()
+    _write_report(report, run_timestamp)
     return result

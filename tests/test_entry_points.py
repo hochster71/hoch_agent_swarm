@@ -125,8 +125,9 @@ class TestRun:
         mock_crew.return_value.crew.return_value = mock_crew_instance
 
         monkeypatch.setattr(main_module, "HochAgentSwarm", mock_crew)
-        monkeypatch.setattr(main_module, "_archive_existing_artifacts", MagicMock())
-        monkeypatch.setattr(main_module, "_run_validation", MagicMock())
+        monkeypatch.setattr(main_module, "_archive_existing_artifacts", MagicMock(return_value=[]))
+        monkeypatch.setattr(main_module, "_run_validation", MagicMock(return_value={}))
+        monkeypatch.setattr(main_module, "_write_report", MagicMock())
 
         run()
 
@@ -139,9 +140,10 @@ class TestRun:
     def test_run_calls_validation_after_kickoff(self, monkeypatch):
         mock_crew = MagicMock()
         monkeypatch.setattr(main_module, "HochAgentSwarm", mock_crew)
-        monkeypatch.setattr(main_module, "_archive_existing_artifacts", MagicMock())
+        monkeypatch.setattr(main_module, "_archive_existing_artifacts", MagicMock(return_value=[]))
+        monkeypatch.setattr(main_module, "_write_report", MagicMock())
 
-        validation_mock = MagicMock()
+        validation_mock = MagicMock(return_value={})
         monkeypatch.setattr(main_module, "_run_validation", validation_mock)
 
         run()
@@ -157,9 +159,11 @@ class TestRun:
 
         def fake_archive(ts):
             call_order.append("archive")
+            return []  # must return list for RunReport.record_archived_artifacts
 
         monkeypatch.setattr(main_module, "_archive_existing_artifacts", fake_archive)
-        monkeypatch.setattr(main_module, "_run_validation", MagicMock())
+        monkeypatch.setattr(main_module, "_run_validation", MagicMock(return_value={}))
+        monkeypatch.setattr(main_module, "_write_report", MagicMock())
 
         run()
 
@@ -171,8 +175,9 @@ class TestRun:
         mock_crew = MagicMock()
         mock_crew.return_value.crew.return_value.kickoff.side_effect = RuntimeError("model error")
         monkeypatch.setattr(main_module, "HochAgentSwarm", mock_crew)
-        monkeypatch.setattr(main_module, "_archive_existing_artifacts", MagicMock())
-        monkeypatch.setattr(main_module, "_run_validation", MagicMock())
+        monkeypatch.setattr(main_module, "_archive_existing_artifacts", MagicMock(return_value=[]))
+        monkeypatch.setattr(main_module, "_run_validation", MagicMock(return_value={}))
+        monkeypatch.setattr(main_module, "_write_report", MagicMock())
 
         with pytest.raises(Exception, match="An error occurred while running the crew"):
             run()
@@ -192,8 +197,9 @@ class TestRunWithTrigger:
 
         mock_crew = MagicMock()
         monkeypatch.setattr(main_module, "HochAgentSwarm", mock_crew)
-        monkeypatch.setattr(main_module, "_archive_existing_artifacts", MagicMock())
-        monkeypatch.setattr(main_module, "_run_validation", MagicMock())
+        monkeypatch.setattr(main_module, "_archive_existing_artifacts", MagicMock(return_value=[]))
+        monkeypatch.setattr(main_module, "_run_validation", MagicMock(return_value={}))
+        monkeypatch.setattr(main_module, "_write_report", MagicMock())
 
         run_with_trigger()
 
@@ -206,8 +212,9 @@ class TestRunWithTrigger:
 
         mock_crew = MagicMock()
         monkeypatch.setattr(main_module, "HochAgentSwarm", mock_crew)
-        monkeypatch.setattr(main_module, "_archive_existing_artifacts", MagicMock())
-        monkeypatch.setattr(main_module, "_run_validation", MagicMock())
+        monkeypatch.setattr(main_module, "_archive_existing_artifacts", MagicMock(return_value=[]))
+        monkeypatch.setattr(main_module, "_run_validation", MagicMock(return_value={}))
+        monkeypatch.setattr(main_module, "_write_report", MagicMock())
 
         run_with_trigger()
 
@@ -221,8 +228,9 @@ class TestRunWithTrigger:
 
         mock_crew = MagicMock()
         monkeypatch.setattr(main_module, "HochAgentSwarm", mock_crew)
-        monkeypatch.setattr(main_module, "_archive_existing_artifacts", MagicMock())
-        monkeypatch.setattr(main_module, "_run_validation", MagicMock())
+        monkeypatch.setattr(main_module, "_archive_existing_artifacts", MagicMock(return_value=[]))
+        monkeypatch.setattr(main_module, "_run_validation", MagicMock(return_value={}))
+        monkeypatch.setattr(main_module, "_write_report", MagicMock())
 
         run_with_trigger()
 
@@ -246,9 +254,10 @@ class TestRunWithTrigger:
 
         mock_crew = MagicMock()
         monkeypatch.setattr(main_module, "HochAgentSwarm", mock_crew)
-        monkeypatch.setattr(main_module, "_archive_existing_artifacts", MagicMock())
+        monkeypatch.setattr(main_module, "_archive_existing_artifacts", MagicMock(return_value=[]))
+        monkeypatch.setattr(main_module, "_write_report", MagicMock())
 
-        validation_mock = MagicMock()
+        validation_mock = MagicMock(return_value={})
         monkeypatch.setattr(main_module, "_run_validation", validation_mock)
 
         run_with_trigger()
