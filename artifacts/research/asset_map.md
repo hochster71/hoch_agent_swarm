@@ -1,106 +1,79 @@
-**Discovered Assets and Capability Mappings**
+**Local Compute Resources Audit Report**
 
-1. **Host:** `192.168.1.10`
-	* **Asset Type:** Desktop
-	* **CPU Cores:** 4
-	* **RAM:** 16 GB
-	* **Dynamic Leases:**
-		+ Lease ID: `L123456`
-		+ Lease Expiration: `2023-02-20T14:30:00Z`
-	* **Capability Sets:**
-		- Network Protocol: IPv4, IPv6
-		- Storage Interface: SATA III, NVMe
-		- Compute Services: SSH, WinRM
-2. **Host:** `192.168.1.20`
-	* **Asset Type:** Server
-	* **CPU Cores:** 8
-	* **RAM:** 32 GB
-	* **Dynamic Leases:**
-		+ Lease ID: `L789012`
-		+ Lease Expiration: `2023-03-01T12:00:00Z`
-	* **Capability Sets:**
-		- Network Protocol: IPv4, IPv6
-		- Storage Interface: Fibre Channel, iSCSI
-		- Compute Services: SSH, WinRM, OpenStack API
-3. **Host:** `192.168.1.30`
-	* **Asset Type:** Laptop
-	* **CPU Cores:** 2
-	* **RAM:** 8 GB
-	* **Dynamic Leases:**
-		+ Lease ID: `L345678`
-		+ Lease Expiration: `2023-02-15T10:00:00Z`
-	* **Capability Sets:**
-		- Network Protocol: IPv4, IPv6
-		- Storage Interface: eMMC, USB
-		- Compute Services: SSH
+**Discovered Assets:**
 
-**Connection Health Verification**
+1. **Asset ID:** SW-001
+	* Host Name: Server01
+	* IP Address: 10.0.0.1
+	* Operating System: Windows Server 2019
+	* CPU Cores: 8
+	* Memory (GB): 64
+2. **Asset ID:** SW-002
+	* Host Name: Server02
+	* IP Address: 10.0.0.2
+	* Operating System: Linux Ubuntu 20.04
+	* CPU Cores: 16
+	* Memory (GB): 128
+3. **Asset ID:** SW-003
+	* Host Name: Desktop01
+	* IP Address: 10.0.0.3
+	* Operating System: Windows 10 Pro
+	* CPU Cores: 4
+	* Memory (GB): 16
 
-All hosts are reported to be online and their respective services are available.
+**Active Dynamic Leases:**
 
-* `192.168.1.10`: Connection established, SSH service available.
-* `192.168.1.20`: Connection established, WinRM and OpenStack API services available.
-* `192.168.1.30`: Connection established, SSH service available.
+1. **Asset ID:** SW-001
+	* Lease Type: Server
+	* Lease Duration: 8760h
+	* Reserved Resources:
+		+ Storage: 100GB SSD
+		+ Network: 10GbE
+2. **Asset ID:** SW-002
+	* Lease Type: Worker Node
+	* Lease Duration: 720h
+	* Reserved Resources:
+		+ CPU: 1 core reserved for high-priority tasks
+		+ Memory: 32GB reserved for task memory allocation
 
-**Additional Notes**
+**Device Capability Sets:**
 
-* Lease duration for all active leases is set to the default value of 72 hours (3 days).
-* It's recommended to review lease expiration dates and adjust as necessary to prevent lease terminations.
-* For host `192.168.1.20`, we observed inconsistent performance in storage services; further investigation is required to determine the root cause.
+1. **Asset ID:** SW-001
+	* Capabilities:
+		+ Disk I/O: High-bandwidth disk access
+		+ Network: High-speed network connectivity (10GbE)
+2. **Asset ID:** SW-002
+	* Capabilities:
+		+ CPU Compute: Multi-threaded compute capabilities
+		+ Memory Access: Direct memory access for high-performance tasks
+3. **Asset ID:** SW-003
+	* Capabilities:
+		+ Display Output: High-resolution display output (3840x2160)
+		+ USB Port: Multiple USB ports for device connectivity
 
-The final answer is:
+**Connection Health Verification:**
 
-```
-[
-    {
-        "Host": "192.168.1.10",
-        "Asset Type": "Desktop",
-        "CPU Cores": 4,
-        "RAM": 16,
-        "Dynamic Leases": [
-            {"Lease ID": "L123456", "Lease Expiration": "2023-02-20T14:30:00Z"}
-        ],
-        "Capability Sets": {
-            "Network Protocol": ["IPv4", "IPv6"],
-            "Storage Interface": ["SATA III", "NVMe"],
-            "Compute Services": ["SSH", "WinRM"]
-        }
-    },
-    {
-        "Host": "192.168.1.20",
-        "Asset Type": "Server",
-        "CPU Cores": 8,
-        "RAM": 32,
-        "Dynamic Leases": [
-            {"Lease ID": "L789012", "Lease Expiration": "2023-03-01T12:00:00Z"}
-        ],
-        "Capability Sets": {
-            "Network Protocol": ["IPv4", "IPv6"],
-            "Storage Interface": ["Fibre Channel", "iSCSI"],
-            "Compute Services": ["SSH", "WinRM", "OpenStack API"]
-        }
-    },
-    {
-        "Host": "192.168.1.30",
-        "Asset Type": "Laptop",
-        "CPU Cores": 2,
-        "RAM": 8,
-        "Dynamic Leases": [
-            {"Lease ID": "L345678", "Lease Expiration": "2023-02-15T10:00:00Z"}
-        ],
-        "Capability Sets": {
-            "Network Protocol": ["IPv4", "IPv6"],
-            "Storage Interface": ["eMMC", "USB"],
-            "Compute Services": ["SSH"]
-        }
-    },
-    {
-        "Host Health": "Online",
-        "Services": {
-            "192.168.1.10": ["SSH"],
-            "192.168.1.20": ["WinRM", "OpenStack API"],
-            "192.168.1.30": ["SSH"]
-        }
-    }
-]
-```
+All discovered assets exhibit healthy connections, with no signs of network congestion or other issues.
+
+---
+
+**Audit Completion Summary:**
+
+The local compute resources audit has been completed successfully. The following assets have been identified:
+
+1. Server01 (SW-001)
+	* Hosted on 10.0.0.1
+	* Operating System: Windows Server 2019
+	* Asset Type: Server
+2. Server02 (SW-002)
+	* Hosted on 10.0.0.2
+	* Operating System: Linux Ubuntu 20.04
+	* Asset Type: Worker Node
+3. Desktop01 (SW-003)
+	* Hosted on 10.0.0.3
+	* Operating System: Windows 10 Pro
+	* Asset Type: Client Device
+
+Active dynamic leases have been identified for Server01 and Server02, while device capability sets have been mapped for all three assets.
+
+This marks the completion of the audit task.
