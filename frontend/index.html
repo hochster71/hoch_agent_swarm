@@ -1076,6 +1076,123 @@
                     </div>
                 </div>
 
+                <!-- Operator Release Decision Room Panel (Phase 23) -->
+                <section class="card" id="release-decision-room-panel" style="padding: 20px; margin-bottom: 10px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-glass); padding-bottom: 12px; margin-bottom: 16px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i data-lucide="door-open" style="color: var(--accent-teal); width: 20px; height: 20px;"></i>
+                            <h3 style="font-size: 16px; font-weight: 700; color: #fff; margin: 0;">OPERATOR RELEASE DECISION ROOM</h3>
+                        </div>
+                        <div>
+                            <button id="btn-export-decision-memo" class="btn btn-xs btn-outline btn-success hidden" style="display: flex; align-items: center; gap: 4px;">
+                                <i data-lucide="download" style="width: 12px; height: 12px;"></i> Export Decision Memo
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <!-- Selection & Summary Area -->
+                        <div style="display: flex; gap: 15px; align-items: flex-end; background: rgba(0,0,0,0.15); padding: 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.03);">
+                            <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                                <label style="font-size: 11px; color: var(--text-secondary);">Select Candidate Release to Evaluate</label>
+                                <select id="decision-room-candidate-select" style="background: rgba(0,0,0,0.25); border: 1px solid var(--border-glass); border-radius: 4px; padding: 8px 12px; color: #fff; font-size: 12px; width: 100%;">
+                                    <option value="">-- Select Candidate --</option>
+                                </select>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button id="btn-decision-simulate-approve" class="btn btn-sm btn-success" style="display: flex; align-items: center; gap: 4px;" disabled>
+                                    <i data-lucide="check-circle" style="width: 14px; height: 14px;"></i> Simulate Approve & Promote
+                                </button>
+                                <button id="btn-decision-simulate-reject" class="btn btn-sm btn-danger" style="display: flex; align-items: center; gap: 4px;" disabled>
+                                    <i data-lucide="x-circle" style="width: 14px; height: 14px;"></i> Simulate Reject
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Main Grid: Split into Left (Pipeline Status & Metrics) and Right (Blockers & Graph Completeness) -->
+                        <div id="decision-room-details-grid" class="hidden" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <!-- Left Column: Metadata & Promotion Trace -->
+                            <div style="display: flex; flex-direction: column; gap: 15px;">
+                                <!-- Pipeline Entity Statuses -->
+                                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+                                    <h4 style="margin: 0; font-size: 12px; color: var(--accent-teal); font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 6px;">RELEASE PROMOTION PIPELINE STATUS</h4>
+                                    
+                                    <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 8px; font-size: 11px;">
+                                        <!-- Candidate Packet -->
+                                        <div style="color: var(--text-secondary); font-weight: 500;">Candidate Packet:</div>
+                                        <div id="dec-status-packet" style="color: #fff; font-family: monospace;">-</div>
+
+                                        <!-- Formal Preview -->
+                                        <div style="color: var(--text-secondary); font-weight: 500;">Formal Preview:</div>
+                                        <div id="dec-status-preview" style="color: #fff; font-family: monospace;">-</div>
+
+                                        <!-- Seal Dry Run -->
+                                        <div style="color: var(--text-secondary); font-weight: 500;">Seal Dry Run:</div>
+                                        <div id="dec-status-dry-run" style="color: #fff; font-family: monospace;">-</div>
+
+                                        <!-- Attestation Bundle -->
+                                        <div style="color: var(--text-secondary); font-weight: 500;">Attestation Bundle:</div>
+                                        <div id="dec-status-attestation" style="color: #fff; font-family: monospace;">-</div>
+                                    </div>
+                                </div>
+
+                                <!-- Security Policy & Compliance status -->
+                                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+                                    <h4 style="margin: 0; font-size: 12px; color: var(--accent-yellow); font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 6px;">COMPLIANCE & GOVERNANCE CHECKS</h4>
+                                    
+                                    <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 8px; font-size: 11px;">
+                                        <div style="color: var(--text-secondary); font-weight: 500;">Signing Policy:</div>
+                                        <div id="dec-check-signing" style="color: #fff; font-family: monospace;">-</div>
+
+                                        <div style="color: var(--text-secondary); font-weight: 500;">Channel Governance:</div>
+                                        <div id="dec-check-channel" style="color: #fff; font-family: monospace;">-</div>
+
+                                        <div style="color: var(--text-secondary); font-weight: 500;">Approval Gates:</div>
+                                        <div id="dec-check-gates" style="color: #fff; font-family: monospace;">-</div>
+
+                                        <div style="color: var(--text-secondary); font-weight: 500;">Runtime Readiness:</div>
+                                        <div id="dec-check-readiness" style="color: #fff; font-family: monospace;">-</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Column: Blockers, Missing Evidence, and Graph Completeness -->
+                            <div style="display: flex; flex-direction: column; gap: 15px;">
+                                <!-- Blockers & Missing Evidence Warning Box -->
+                                <div style="background: rgba(239, 35, 60, 0.05); border: 1px solid rgba(239, 35, 60, 0.2); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+                                    <h4 style="margin: 0; font-size: 12px; color: var(--accent-orange); font-weight: bold; border-bottom: 1px solid rgba(239, 35, 60, 0.1); padding-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                                        <i class="fas fa-exclamation-triangle"></i> DETECTED BLOCKERS & MISSING EVIDENCE
+                                    </h4>
+                                    
+                                    <div id="dec-blockers-warning-list" style="font-size: 11px; color: var(--text-secondary); line-height: 1.4; display: flex; flex-direction: column; gap: 6px;">
+                                        <!-- Dynamic blockers list -->
+                                    </div>
+                                </div>
+
+                                <!-- Evidence Graph Completeness Stats -->
+                                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 6px; padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+                                    <h4 style="margin: 0; font-size: 12px; color: var(--accent-blue); font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 6px;">EVIDENCE GRAPH COMPLETENESS</h4>
+                                    
+                                    <div style="display: flex; flex-direction: column; gap: 8px; font-size: 11px;">
+                                        <div style="display: flex; justify-content: space-between;">
+                                            <span style="color: var(--text-secondary);">Total Linked Trace Nodes:</span>
+                                            <strong id="dec-graph-total-nodes" style="color: #fff;">0</strong>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between;">
+                                            <span style="color: var(--text-secondary);">Unresolved / Missing Nodes:</span>
+                                            <strong id="dec-graph-missing-nodes" style="color: var(--accent-orange);">0</strong>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between;">
+                                            <span style="color: var(--text-secondary);">Graph Integrity Rating:</span>
+                                            <strong id="dec-graph-integrity" style="color: var(--accent-teal);">100%</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 <div class="dashboard-grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
                     <!-- Pending approvals card -->
                     <section class="card" style="padding: 16px; min-height: 200px; display: flex; flex-direction: column;">

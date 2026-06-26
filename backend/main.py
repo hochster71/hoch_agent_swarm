@@ -1386,6 +1386,52 @@ def get_candidate_packet(candidate_packet_id: str):
         return db_packet
     raise HTTPException(status_code=404, detail="Candidate packet not found")
 
+class SimulatedDecisionRequest(BaseModel):
+    candidate_packet_id: str
+    operator: str
+    decision: str
+    reason: str
+
+@app.post("/api/v1/release/simulate-decision")
+def post_simulated_decision(req: SimulatedDecisionRequest):
+    import uuid
+    import time
+    
+    if req.decision not in ["approved", "rejected"]:
+        raise HTTPException(status_code=400, detail="Invalid decision resolution")
+        
+    approval_id = f"app-sim-{uuid.uuid4().hex[:6]}"
+    dec = {
+        "decision_id": f"dec-sim-{uuid.uuid4().hex[:6]}",
+        "request_id": f"simulated_release:{req.candidate_packet_id}",
+        "run_id": None,
+        "task_id": None,
+        "operator": req.operator,
+        "decision": req.decision,
+        "decision_time": now_iso(),
+        "nonce": uuid.uuid4().hex,
+        "prior_state": "candidate",
+        "next_state": "simulated_" + req.decision,
+        "reason": req.reason
+    }
+    persist_approval_gate(
+        approval_id=approval_id,
+        request_id=f"simulated_release:{req.candidate_packet_id}",
+        correlation_id=f"corr-{uuid.uuid4().hex[:12]}",
+        trace_id=uuid.uuid4().hex,
+        action_type="simulated_release_decision",
+        risk_level="high",
+        status=req.decision,
+        requested_by=req.operator,
+        decisions=[dec]
+    )
+    return {
+        "status": "success",
+        "approval_id": approval_id,
+        "decision_id": dec["decision_id"],
+        "message": f"Simulated release {req.decision} recorded successfully"
+    }
+
 @app.post("/api/v1/release/candidate-packets")
 def create_candidate_packet(req: CandidatePacketRequest):
     import uuid

@@ -22,6 +22,9 @@ function runContractTest() {
     if (!mainPy.includes("/api/v1/governance/summary")) {
       blockers.push("backend/main.py missing /api/v1/governance/summary endpoint");
     }
+    if (!mainPy.includes("/api/v1/release/simulate-decision")) {
+      blockers.push("backend/main.py missing /api/v1/release/simulate-decision endpoint");
+    }
     if (!mainPy.includes("TEST_MODE =")) {
       blockers.push("backend/main.py missing TEST_MODE definition");
     }
@@ -55,7 +58,25 @@ function runContractTest() {
       "btn-trigger-crewai-ingest",
       "crewai-ingest-status-msg",
       "crewai-plans-tbody",
-      "crewai-runs-tbody"
+      "crewai-runs-tbody",
+      "release-decision-room-panel",
+      "decision-room-candidate-select",
+      "btn-decision-simulate-approve",
+      "btn-decision-simulate-reject",
+      "btn-export-decision-memo",
+      "decision-room-details-grid",
+      "dec-status-packet",
+      "dec-status-preview",
+      "dec-status-dry-run",
+      "dec-status-attestation",
+      "dec-check-signing",
+      "dec-check-channel",
+      "dec-check-gates",
+      "dec-check-readiness",
+      "dec-blockers-warning-list",
+      "dec-graph-total-nodes",
+      "dec-graph-missing-nodes",
+      "dec-graph-integrity"
     ];
     for (const id of requiredIds) {
       if (!html.includes(`id="${id}"`)) {
@@ -72,7 +93,12 @@ function runContractTest() {
       "CAPABILITY ENFORCEMENT DECISIONS",
       "REPLAY-PROTECTION INTEGRITY EVIDENCE",
       "HISTORICAL OPERATOR DECISION LEDGER",
-      "CREWAI EXECUTION ARTIFACT INGESTION BRIDGE"
+      "CREWAI EXECUTION ARTIFACT INGESTION BRIDGE",
+      "OPERATOR RELEASE DECISION ROOM",
+      "RELEASE PROMOTION PIPELINE STATUS",
+      "COMPLIANCE & GOVERNANCE CHECKS",
+      "DETECTED BLOCKERS & MISSING EVIDENCE",
+      "EVIDENCE GRAPH COMPLETENESS"
     ];
     for (const text of requiredTexts) {
       if (!html.includes(text)) {
@@ -100,6 +126,12 @@ function runContractTest() {
     }
     if (!appJs.includes("window.initCrewaiIngestionBridge")) {
       blockers.push("frontend/app.js does not expose window.initCrewaiIngestionBridge");
+    }
+    if (!appJs.includes("initReleaseDecisionRoom")) {
+      blockers.push("frontend/app.js does not define initReleaseDecisionRoom");
+    }
+    if (!appJs.includes("window.initReleaseDecisionRoom")) {
+      blockers.push("frontend/app.js does not expose window.initReleaseDecisionRoom");
     }
   }
 

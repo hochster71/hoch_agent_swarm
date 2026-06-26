@@ -376,6 +376,7 @@ async function initDashboard() {
         initDeviceRegistry();
         initCapabilityRouterUI();
         initModelProviderRegistryUI();
+        initReleaseDecisionRoom();
     } catch (err) {
         console.error("Error initializing dashboard: ", err);
         // Fallback polling if WebSocket fails
@@ -8104,6 +8105,7 @@ async function submitCandidatePacketRequest() {
             
             fetchAndRenderCandidatePackets();
             if (window.refreshCandidateSelectDropdown) window.refreshCandidateSelectDropdown();
+            if (window.populateDecisionRoomCandidates) window.populateDecisionRoomCandidates();
         } else {
             const data = await res.json();
             alert("Failed to create candidate packet: " + (data.detail || "Unknown error"));
@@ -10824,4 +10826,385 @@ window.loadEvidenceGraph = loadEvidenceGraph;
 window.traceEvidenceLineage = traceEvidenceLineage;
 window.saveManualLink = saveManualLink;
 window.inspectEvidenceNode = inspectEvidenceNode;
+
+let currentDecisionRoomCandidate = null;
+
+async function initReleaseDecisionRoom() {
+    const selectEl = document.getElementById("decision-room-candidate-select");
+    const approveBtn = document.getElementById("btn-decision-simulate-approve");
+    const rejectBtn = document.getElementById("btn-decision-simulate-reject");
+    const exportBtn = document.getElementById("btn-export-decision-memo");
+
+    if (selectEl) {
+        selectEl.addEventListener("change", handleCandidateSelectionChange);
+    }
+    if (approveBtn) {
+        approveBtn.addEventListener("click", () => simulateDecision("approved"));
+    }
+    if (rejectBtn) {
+        rejectBtn.addEventListener("click", () => simulateDecision("rejected"));
+    }
+    if (exportBtn) {
+        exportBtn.addEventListener("click", exportDecisionMemo);
+    }
+
+    await populateDecisionRoomCandidates();
+}
+
+async function populateDecisionRoomCandidates() {
+    const selectEl = document.getElementById("decision-room-candidate-select");
+    if (!selectEl) return;
+
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/candidate-packets`);
+        if (!res.ok) return;
+        const packets = await res.json();
+
+        selectEl.innerHTML = `<option value="">-- Select Candidate --</option>`;
+        if (packets.length === 0) {
+            selectEl.innerHTML = `<option value="">-- No candidate packets loaded --</option>`;
+        } else {
+            packets.forEach(packet => {
+                const opt = document.createElement("option");
+                opt.value = packet.candidate_packet_id;
+                opt.textContent = `${packet.candidate_packet_id} (v${packet.candidate_version} - ${packet.candidate_channel})`;
+                selectEl.appendChild(opt);
+            });
+        }
+    } catch (err) {
+        console.error("Error loading candidates for decision room select:", err);
+    }
+}
+
+async function handleCandidateSelectionChange() {
+    const selectEl = document.getElementById("decision-room-candidate-select");
+    const gridEl = document.getElementById("decision-room-details-grid");
+    const approveBtn = document.getElementById("btn-decision-simulate-approve");
+    const rejectBtn = document.getElementById("btn-decision-simulate-reject");
+    const exportBtn = document.getElementById("btn-export-decision-memo");
+
+    if (!selectEl || !selectEl.value) {
+        if (gridEl) gridEl.classList.add("hidden");
+        if (approveBtn) approveBtn.disabled = true;
+        if (rejectBtn) rejectBtn.disabled = true;
+        if (exportBtn) exportBtn.classList.add("hidden");
+        currentDecisionRoomCandidate = null;
+        return;
+    }
+
+    const packetId = selectEl.value;
+    if (gridEl) gridEl.classList.remove("hidden");
+    if (exportBtn) exportBtn.classList.remove("hidden");
+
+    try {
+        // Fetch candidate packet detail
+        const packetRes = await fetch(`${API_BASE}/api/v1/release/candidate-packets/${packetId}`);
+        if (!packetRes.ok) return;
+        const packet = await packetRes.json();
+        currentDecisionRoomCandidate = packet;
+
+        // Fetch matching previews, dry runs, and attestations
+        const previewsRes = await fetch(`${API_BASE}/api/v1/release/formal-preview`);
+        const dryRunsRes = await fetch(`${API_BASE}/api/v1/release/seal-dry-run`);
+        const attestationsRes = await fetch(`${API_BASE}/api/v1/release/attestation-bundles`);
+
+        let matchedPreview = null;
+        let matchedDryRun = null;
+        let matchedAttestation = null;
+
+        if (previewsRes.ok) {
+            const previews = await previewsRes.json();
+            matchedPreview = previews.find(p => p.candidate_packet_id === packetId);
+        }
+        if (dryRunsRes.ok) {
+            const dryRuns = await dryRunsRes.json();
+            matchedDryRun = dryRuns.find(r => r.candidate_packet_id === packetId);
+        }
+        if (attestationsRes.ok) {
+            const attestations = await attestationsRes.json();
+            matchedAttestation = attestations.find(a => a.candidate_packet_id === packetId);
+        }
+
+        // Fetch graph trace for completeness checking
+        let totalNodes = 0;
+        let missingNodes = 0;
+        let integrityRating = 100;
+        let missingEvidenceList = [];
+
+        try {
+            const traceRes = await fetch(`${API_BASE}/api/v1/evidence/graph/trace/candidate:${packetId}`);
+            if (traceRes.ok) {
+                const traceData = await traceRes.json();
+                const nodes = traceData.nodes || [];
+                totalNodes = nodes.length;
+                const missingNodesList = nodes.filter(n => n.missing || (n.properties && n.properties.missing));
+                missingNodes = missingNodesList.length;
+                integrityRating = totalNodes > 0 ? Math.round(((totalNodes - missingNodes) / totalNodes) * 100) : 100;
+                missingEvidenceList = missingNodesList.map(n => n.label || n.id);
+            }
+        } catch (traceErr) {
+            console.error("Error tracing evidence graph:", traceErr);
+        }
+
+        // Render Left Column: Pipeline Entity Statuses
+        const statusPacket = document.getElementById("dec-status-packet");
+        const statusPreview = document.getElementById("dec-status-preview");
+        const statusDryRun = document.getElementById("dec-status-dry-run");
+        const statusAttestation = document.getElementById("dec-status-attestation");
+
+        if (statusPacket) {
+            statusPacket.textContent = packet.candidate_packet_id;
+            statusPacket.style.color = "var(--accent-teal)";
+        }
+        if (statusPreview) {
+            if (matchedPreview) {
+                statusPreview.textContent = `${matchedPreview.formal_preview_id} (${matchedPreview.preview_status || 'READY'})`;
+                statusPreview.style.color = "var(--accent-teal)";
+            } else {
+                statusPreview.textContent = "None (Blocked)";
+                statusPreview.style.color = "var(--accent-orange)";
+            }
+        }
+        if (statusDryRun) {
+            if (matchedDryRun) {
+                statusDryRun.textContent = `${matchedDryRun.seal_dry_run_id} (${matchedDryRun.seal_status})`;
+                statusDryRun.style.color = "var(--accent-teal)";
+            } else {
+                statusDryRun.textContent = "None (Blocked)";
+                statusDryRun.style.color = "var(--accent-orange)";
+            }
+        }
+        if (statusAttestation) {
+            if (matchedAttestation) {
+                statusAttestation.textContent = `${matchedAttestation.attestation_bundle_id} (${matchedAttestation.attestation_status})`;
+                statusAttestation.style.color = "var(--accent-teal)";
+            } else {
+                statusAttestation.textContent = "None (Blocked)";
+                statusAttestation.style.color = "var(--accent-orange)";
+            }
+        }
+
+        // Render Compliance Checks
+        const checkSigning = document.getElementById("dec-check-signing");
+        const checkChannel = document.getElementById("dec-check-channel");
+        const checkGates = document.getElementById("dec-check-gates");
+        const checkReadiness = document.getElementById("dec-check-readiness");
+
+        if (checkSigning) {
+            checkSigning.textContent = packet.signing_policy_status;
+            checkSigning.style.color = packet.signing_policy_status === "PASS" ? "var(--accent-teal)" : "var(--accent-orange)";
+        }
+        if (checkChannel) {
+            checkChannel.textContent = packet.release_channel_policy_status;
+            checkChannel.style.color = packet.release_channel_policy_status === "PASS" ? "var(--accent-teal)" : "var(--accent-orange)";
+        }
+        if (checkGates) {
+            checkGates.textContent = packet.packet_status === "candidate_blocked" ? "BLOCKED" : "READY";
+            checkGates.style.color = packet.packet_status === "candidate_blocked" ? "var(--accent-orange)" : "var(--accent-teal)";
+        }
+        if (checkReadiness) {
+            checkReadiness.textContent = packet.qa_status || "WARN";
+            checkReadiness.style.color = packet.qa_status === "PASS" ? "var(--accent-teal)" : "var(--accent-yellow)";
+        }
+
+        // Render Right Column: detected blockers warning list
+        const blockersListEl = document.getElementById("dec-blockers-warning-list");
+        if (blockersListEl) {
+            blockersListEl.innerHTML = "";
+            const blockers = packet.formal_release_blockers || [];
+            
+            if (blockers.length === 0 && missingEvidenceList.length === 0) {
+                blockersListEl.innerHTML = `<div style="color: var(--accent-teal); font-weight: 500;">✅ Zero blockers or missing evidence. READY for release decision.</div>`;
+            } else {
+                blockers.forEach(b => {
+                    const item = document.createElement("div");
+                    item.style.display = "flex";
+                    item.style.alignItems = "center";
+                    item.style.gap = "6px";
+                    item.innerHTML = `<i class="fas fa-ban" style="color: var(--accent-orange); font-size: 10px;"></i> <span style="color: var(--accent-orange); font-weight:bold;">BLOCKER:</span> <span>${translateBlocker(b)}</span>`;
+                    blockersListEl.appendChild(item);
+                });
+
+                missingEvidenceList.forEach(m => {
+                    const item = document.createElement("div");
+                    item.style.display = "flex";
+                    item.style.alignItems = "center";
+                    item.style.gap = "6px";
+                    item.innerHTML = `<i class="fas fa-exclamation-triangle" style="color: var(--accent-yellow); font-size: 10px;"></i> <span style="color: var(--accent-yellow); font-weight:bold;">MISSING EVIDENCE:</span> <span>${m}</span>`;
+                    blockersListEl.appendChild(item);
+                });
+            }
+        }
+
+        // Render Evidence Graph Completeness Stats
+        const totalNodesEl = document.getElementById("dec-graph-total-nodes");
+        const missingNodesEl = document.getElementById("dec-graph-missing-nodes");
+        const integrityEl = document.getElementById("dec-graph-integrity");
+
+        if (totalNodesEl) totalNodesEl.textContent = totalNodes;
+        if (missingNodesEl) {
+            missingNodesEl.textContent = missingNodes;
+            missingNodesEl.style.color = missingNodes > 0 ? "var(--accent-orange)" : "var(--accent-teal)";
+        }
+        if (integrityEl) {
+            integrityEl.textContent = `${integrityRating}%`;
+            integrityEl.style.color = integrityRating === 100 ? "var(--accent-teal)" : "var(--accent-yellow)";
+        }
+
+        // Store matched details in current candidate object for memo export
+        currentDecisionRoomCandidate.matchedPreview = matchedPreview;
+        currentDecisionRoomCandidate.matchedDryRun = matchedDryRun;
+        currentDecisionRoomCandidate.matchedAttestation = matchedAttestation;
+        currentDecisionRoomCandidate.totalNodes = totalNodes;
+        currentDecisionRoomCandidate.missingNodes = missingNodes;
+        currentDecisionRoomCandidate.integrityRating = integrityRating;
+        currentDecisionRoomCandidate.missingEvidenceList = missingEvidenceList;
+
+        // Enable simulate buttons
+        if (approveBtn) approveBtn.disabled = false;
+        if (rejectBtn) rejectBtn.disabled = false;
+
+    } catch (err) {
+        console.error("Error handling candidate change in decision room:", err);
+    }
+}
+
+function translateBlocker(blocker) {
+    const map = {
+        "dirty_working_tree": "Dirty Working Tree (Uncommitted Changes)",
+        "signing_policy_not_passed": "Signing Policy Check Failed (Missing Signature/Waiver)",
+        "tag_stale": "Stale Release Tag (Does not point at HEAD)",
+        "operator_approval_missing": "Operator Channel Approval Missing",
+        "qa_not_passed": "QA Verification Not Passed",
+        "missing_evidence": "Missing Critical Release Evidence"
+    };
+    return map[blocker] || blocker;
+}
+
+async function simulateDecision(resolution) {
+    if (!currentDecisionRoomCandidate) {
+        alert("No candidate release selected.");
+        return;
+    }
+
+    const justification = prompt(`Enter operator decision memo justification for simulated ${resolution.toUpperCase()}:`, 
+        `Operator simulated ${resolution} for candidate ${currentDecisionRoomCandidate.candidate_packet_id}`);
+    
+    if (justification === null) return; // cancelled
+
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/simulate-decision`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                candidate_packet_id: currentDecisionRoomCandidate.candidate_packet_id,
+                operator: "Michael Hoch",
+                decision: resolution,
+                reason: justification
+            })
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            alert(`Simulated Decision Recorded:\n` +
+                  `Decision ID: ${data.decision_id}\n` +
+                  `Approval ID: ${data.approval_id}\n\n` +
+                  `🔒 Simulation mode guarantee: tag mutation, package publishing, signing, and deployment were completely skipped.`);
+            
+            // Refresh ledger
+            fetchAndRenderSigningPolicy();
+
+            // Store decision outcome for export
+            currentDecisionRoomCandidate.decisionOutcome = {
+                decision_id: data.decision_id,
+                approval_id: data.approval_id,
+                resolution: resolution,
+                justification: justification,
+                timestamp: new Date().toISOString()
+            };
+
+        } else {
+            const errData = await res.json();
+            alert("Failed to submit simulated decision: " + (errData.detail || "Unknown error"));
+        }
+    } catch (err) {
+        alert("Error submitting simulated decision: " + err.message);
+    }
+}
+
+function exportDecisionMemo() {
+    if (!currentDecisionRoomCandidate) {
+        alert("No candidate selected for export.");
+        return;
+    }
+
+    const packet = currentDecisionRoomCandidate;
+    const outcome = packet.decisionOutcome || {
+        decision_id: "PENDING_SIMULATION",
+        approval_id: "PENDING_SIMULATION",
+        resolution: "PENDING_DECISION",
+        justification: "No decision simulated yet.",
+        timestamp: new Date().toISOString()
+    };
+
+    const markdown = `# Operator Release Decision Memo
+
+## General Metadata
+- **Candidate Packet ID**: ${packet.candidate_packet_id}
+- **Candidate Version**: ${packet.candidate_version}
+- **Candidate Channel**: ${packet.candidate_channel}
+- **Operator Name**: Michael Hoch
+- **Creation Timestamp**: ${packet.created_at}
+- **Repository Commit HEAD**: ${packet.head_sha}
+- **Repository Branch**: ${packet.branch}
+- **Working Tree Clean**: ${packet.working_tree_clean ? "Yes" : "No"}
+
+## Pipeline Entity Trace Status
+- **Formal Preview**: ${packet.matchedPreview ? packet.matchedPreview.formal_preview_id : "None"}
+- **Seal Dry Run**: ${packet.matchedDryRun ? packet.matchedDryRun.seal_dry_run_id : "None"}
+- **Attestation Bundle**: ${packet.matchedAttestation ? packet.matchedAttestation.attestation_bundle_id : "None"}
+
+## Compliance & Governance Evaluation
+- **Signing Policy Check**: ${packet.signing_policy_status}
+- **Channel Governance Policy**: ${packet.release_channel_policy_status}
+- **Approval Gates State**: ${packet.packet_status === "candidate_blocked" ? "BLOCKED" : "READY"}
+- **Runtime Readiness Evaluation**: ${packet.qa_status}
+
+## Evidence Graph Integrity
+- **Total Trace Nodes**: ${packet.totalNodes}
+- **Unresolved / Missing Nodes**: ${packet.missingNodes}
+- **Graph Integrity Rating**: ${packet.integrityRating}%
+${packet.missingEvidenceList && packet.missingEvidenceList.length > 0 ? 
+`\n### Missing Evidence Details:\n` + packet.missingEvidenceList.map(m => `- ${m}`).join('\n') : 
+'\n- All required upstream evidence is fully resolved.'}
+
+## Operator Action Log
+- **Simulated Decision ID**: ${outcome.decision_id}
+- **Simulated Approval ID**: ${outcome.approval_id}
+- **Simulated Resolution**: ${outcome.resolution.toUpperCase()}
+- **Justification**: ${outcome.justification}
+- **Logged Timestamp**: ${outcome.timestamp}
+
+---
+🔒 **Simulation Mode Notice**: No tag mutations, cryptographic signing, bundle publishing, or deployments were performed during this evaluation.
+`;
+
+    // Download file
+    const blob = new Blob([markdown], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `operator-release-decision-memo-${packet.candidate_packet_id}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+window.initReleaseDecisionRoom = initReleaseDecisionRoom;
+window.populateDecisionRoomCandidates = populateDecisionRoomCandidates;
+window.handleCandidateSelectionChange = handleCandidateSelectionChange;
+window.simulateDecision = simulateDecision;
+window.exportDecisionMemo = exportDecisionMemo;
+
 
