@@ -1,0 +1,62 @@
+map_assets_task:
+  description: >
+    Audit local compute resources, active dynamic leases, and device capability sets.
+    Identify available hosts and verify their connection health.
+  expected_output: >
+    A list of discovered assets and capability mappings.
+  agent: asset_mapper
+
+design_architecture_task:
+  description: >
+    Analyze the mapped assets and design a multi-agent process topology and task graph dependencies.
+    Define how task intents map to specific node capabilities.
+  expected_output: >
+    A description of the multi-agent execution topology.
+  agent: swarm_architect
+
+assemble_agents_task:
+  description: >
+    Compile and instantiate the agent class configurations required to support the designed architecture.
+    Enforce strict capability boundaries and ensure no unauthorized tool access.
+  expected_output: >
+    A summary of configured agent wrappers and allowed tools.
+  agent: agent_combinator
+
+audit_security_task:
+  description: >
+    Perform a security audit on the instantiated configurations and proposed execution steps.
+    Enforce replay protection compliance, verify secret scrubbing, and ensure no secrets are exposed in logs.
+  expected_output: >
+    A signed security audit report.
+  agent: security_operator
+
+plan_execution_task:
+  description: >
+    Schedule and structure the multi-stage task pipeline, verifying error budgets and execution constraints.
+  expected_output: >
+    A structured sequential task execution plan.
+  agent: execution_planner
+
+direct_synthesis_task:
+  description: >
+    Synthesize individual task execution reports and output evidence files into a release candidate packet format.
+  expected_output: >
+    A synthesized release packet manifest.
+  agent: synthesis_director
+
+antigravity_integration_task:
+  description: >
+    Read the generated swarm architecture and integration context.
+    Specifically review these integration details:
+    - Antigravity Role: {antigravity_role}
+    - CrewAI Role: {crewai_role}
+    - Integration Mode: {integration_mode}
+    Produce a production-grade Antigravity implementation plan that:
+    1. Defines how Antigravity agents interact with the CrewAI project.
+    2. Outlines artifact handoff conventions between execution and planning layers.
+    3. Details local run commands and environment setup steps.
+    4. Establishes operator review gates for promotion.
+    Write the final output directly to the file artifacts/antigravity/antigravity_execution_plan.md.
+  expected_output: >
+    A complete markdown document describing the Antigravity-to-CrewAI integration plan.
+  agent: antigravity_integration_operator

@@ -1,0 +1,78 @@
+# Hoch Agent Swarm Bounded Hyper-Agent Archetypes Manifest
+version: "1.0.0"
+
+# Hard Constraints
+constraints:
+  max_archetypes: 42
+  max_spawned_agents_per_run: 12
+  max_task_depth: 6
+  max_delegation_depth: 2
+
+# Human Approval Policy
+human_approval_required_for:
+  - file_writes_outside_project_root
+  - shell_commands_mutating_files
+  - network_calls
+  - credential_access
+  - deployments
+  - sending_emails_messages_calendar_updates
+  - purchases
+  - destructive_operations
+
+# Hyper-Agent Archetypes
+archetypes:
+  asset_mapper:
+    domain: ops
+    mode: executor
+    tool_access: read_only
+    memory_scope: task_local
+    risk_level: low
+    description: "Maps discovered network nodes and physical cluster layout representations."
+
+  swarm_architect:
+    domain: strategy
+    mode: planner
+    tool_access: read_only
+    memory_scope: project_local
+    risk_level: medium
+    description: "Designs topological graphs and multi-agent coordination architectures."
+
+  agent_combinator:
+    domain: code
+    mode: executor
+    tool_access: write_gated
+    memory_scope: task_local
+    risk_level: medium
+    description: "Assembles and instantiates target agent configurations."
+
+  security_operator:
+    domain: security
+    mode: reviewer
+    tool_access: admin_gated
+    memory_scope: project_local
+    risk_level: high
+    description: "Audits command executions, file alterations, and network communication."
+
+  execution_planner:
+    domain: ops
+    mode: planner
+    tool_access: write_gated
+    memory_scope: project_local
+    risk_level: medium
+    description: "Schedules and structures multi-stage task pipelines."
+
+  synthesis_director:
+    domain: strategy
+    mode: synthesizer
+    tool_access: read_only
+    memory_scope: long_term
+    risk_level: low
+    description: "Gathers execution records and generates release candidate packets."
+
+  antigravity_integration_operator:
+    domain: product
+    mode: synthesizer
+    tool_access: write_gated
+    memory_scope: project_local
+    risk_level: medium
+    description: "Converts swarm runtime data and task outcomes into Antigravity artifacts."
