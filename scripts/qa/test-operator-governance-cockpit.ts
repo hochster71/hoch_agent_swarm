@@ -40,6 +40,9 @@ function runContractTest() {
     if (!mainPy.includes("/api/v1/release/evidence/retention/classify")) {
       blockers.push("backend/main.py missing /api/v1/release/evidence/retention/classify endpoint");
     }
+    if (!mainPy.includes("/api/v1/release/evidence/archive/preview")) {
+      blockers.push("backend/main.py missing /api/v1/release/evidence/archive/preview endpoint");
+    }
     if (!mainPy.includes("TEST_MODE =")) {
       blockers.push("backend/main.py missing TEST_MODE definition");
     }
@@ -118,7 +121,21 @@ function runContractTest() {
       "retention-count-retained",
       "retention-count-archived",
       "retention-count-ignored",
-      "retention-evidence-tbody"
+      "retention-evidence-tbody",
+      "release-evidence-archive-preview-panel",
+      "btn-calculate-archive-preview",
+      "archive-preview-details",
+      "archive-preview-path",
+      "archive-preview-checksum",
+      "archive-preview-count-included",
+      "archive-preview-count-excluded",
+      "archive-preview-count-review",
+      "archive-preview-count-missing",
+      "archive-preview-warnings",
+      "archive-preview-warnings-list",
+      "btn-export-preview-markdown",
+      "btn-export-preview-json",
+      "archive-preview-included-tbody"
     ];
     for (const id of requiredIds) {
       if (!html.includes(`id="${id}"`)) {
@@ -146,7 +163,9 @@ function runContractTest() {
       "CONFIRM RELEASE AUTHORITY REQUEST",
       "FORMAL RELEASE EXECUTION DRY-RUN PLANNER",
       "ORDERED EXECUTION PROTOCOL",
-      "RELEASE EVIDENCE RETENTION POLICY MANAGER"
+      "RELEASE EVIDENCE RETENTION POLICY MANAGER",
+      "RELEASE EVIDENCE ARCHIVE PREVIEW",
+      "PLANNED INCLUDED ARTIFACTS"
     ];
     for (const text of requiredTexts) {
       if (!html.includes(text)) {
@@ -204,6 +223,18 @@ function runContractTest() {
     }
     if (!appJs.includes("classifyEvidence")) {
       blockers.push("frontend/app.js does not define classifyEvidence");
+    }
+    if (!appJs.includes("initReleaseEvidenceArchivePreview")) {
+      blockers.push("frontend/app.js does not define initReleaseEvidenceArchivePreview");
+    }
+    if (!appJs.includes("calculateArchivePreview")) {
+      blockers.push("frontend/app.js does not define calculateArchivePreview");
+    }
+    if (!appJs.includes("exportArchivePreviewMarkdown")) {
+      blockers.push("frontend/app.js does not define exportArchivePreviewMarkdown");
+    }
+    if (!appJs.includes("exportArchivePreviewJSON")) {
+      blockers.push("frontend/app.js does not define exportArchivePreviewJSON");
     }
   }
 

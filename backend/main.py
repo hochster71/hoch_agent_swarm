@@ -1700,6 +1700,7 @@ def post_classify_evidence(req: EvidenceClassificationRequest):
 @app.get("/api/v1/release/evidence/archive/preview")
 def get_release_evidence_archive_preview():
     from backend.runtime_execution_store import scan_and_index_evidence
+    from pathlib import Path
     import hashlib
     import os
     from datetime import datetime, timezone

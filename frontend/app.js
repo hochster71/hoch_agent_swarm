@@ -10967,6 +10967,7 @@ async function initReleaseDecisionRoom() {
     }
 
     await initReleaseEvidenceRetention();
+    await initReleaseEvidenceArchivePreview();
 
     await populateDecisionRoomCandidates();
 }
@@ -11681,8 +11682,180 @@ async function classifyEvidence(evidenceId, decision) {
     }
 }
 
+let lastArchivePreviewData = null;
+
+async function initReleaseEvidenceArchivePreview() {
+    const calcBtn = document.getElementById("btn-calculate-archive-preview");
+    if (calcBtn) {
+        calcBtn.addEventListener("click", calculateArchivePreview);
+    }
+    const exportMdBtn = document.getElementById("btn-export-preview-markdown");
+    if (exportMdBtn) {
+        exportMdBtn.addEventListener("click", exportArchivePreviewMarkdown);
+    }
+    const exportJsonBtn = document.getElementById("btn-export-preview-json");
+    if (exportJsonBtn) {
+        exportJsonBtn.addEventListener("click", exportArchivePreviewJSON);
+    }
+}
+
+async function calculateArchivePreview() {
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/evidence/archive/preview`);
+        if (!res.ok) {
+            const err = await res.json();
+            alert("Failed to calculate archive preview: " + (err.detail || "Unknown error"));
+            return;
+        }
+        const data = await res.json();
+        lastArchivePreviewData = data;
+        
+        const detailsEl = document.getElementById("archive-preview-details");
+        if (detailsEl) {
+            detailsEl.classList.remove("hidden");
+        }
+        
+        const pathEl = document.getElementById("archive-preview-path");
+        if (pathEl) pathEl.textContent = data.planned_archive_path || "-";
+        
+        const checksumEl = document.getElementById("archive-preview-checksum");
+        if (checksumEl) checksumEl.textContent = data.checksum || "-";
+        
+        const inclEl = document.getElementById("archive-preview-count-included");
+        if (inclEl) inclEl.textContent = data.included_count;
+        
+        const exclEl = document.getElementById("archive-preview-count-excluded");
+        if (exclEl) exclEl.textContent = data.excluded_count;
+        
+        const reviewEl = document.getElementById("archive-preview-count-review");
+        if (reviewEl) reviewEl.textContent = data.needs_review_count;
+        
+        const missingEl = document.getElementById("archive-preview-count-missing");
+        if (missingEl) missingEl.textContent = data.missing_count;
+        
+        // Warnings
+        const warningsPanel = document.getElementById("archive-preview-warnings");
+        const warningsList = document.getElementById("archive-preview-warnings-list");
+        if (warningsPanel && warningsList) {
+            warningsList.innerHTML = "";
+            if (data.missing_count > 0 || data.needs_review_count > 0) {
+                warningsPanel.classList.remove("hidden");
+                if (data.missing_count > 0) {
+                    const li = document.createElement("li");
+                    li.innerHTML = `<strong>Missing Artifacts</strong>: ${data.missing_count} items exist in database index but are not present on disk.`;
+                    warningsList.appendChild(li);
+                }
+                if (data.needs_review_count > 0) {
+                    const li = document.createElement("li");
+                    li.innerHTML = `<strong>Needs Review</strong>: ${data.needs_review_count} items require operator retention decisions.`;
+                    warningsList.appendChild(li);
+                }
+            } else {
+                warningsPanel.classList.add("hidden");
+            }
+        }
+        
+        // Table populating
+        const tbody = document.getElementById("archive-preview-included-tbody");
+        if (tbody) {
+            tbody.innerHTML = "";
+            const included = (data.manifest && data.manifest.included_artifacts) || [];
+            // Sort by evidence_id
+            const sorted = [...included].sort((a, b) => a.evidence_id.localeCompare(b.evidence_id));
+            
+            if (sorted.length === 0) {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td colspan="3" style="padding: 12px; text-align: center; color: var(--text-secondary);">No artifacts selected for retention.</td>`;
+                tbody.appendChild(row);
+            } else {
+                sorted.forEach(item => {
+                    const row = document.createElement("tr");
+                    row.style.borderBottom = "1px solid rgba(255,255,255,0.03)";
+                    
+                    let typeColor = "var(--text-secondary)";
+                    let typeBg = "rgba(255,255,255,0.05)";
+                    if (item.artifact_type === "candidate") {
+                        typeColor = "var(--accent-blue)";
+                        typeBg = "rgba(59, 130, 246, 0.15)";
+                    } else if (item.artifact_type === "formal-preview") {
+                        typeColor = "var(--accent-purple)";
+                        typeBg = "rgba(168, 85, 247, 0.15)";
+                    } else if (item.artifact_type === "attestation") {
+                        typeColor = "var(--accent-orange)";
+                        typeBg = "rgba(249, 115, 22, 0.15)";
+                    } else if (item.artifact_type === "release-bundle") {
+                        typeColor = "var(--accent-teal)";
+                        typeBg = "rgba(20, 184, 166, 0.15)";
+                    } else if (item.artifact_type === "qa-artifact") {
+                        typeColor = "var(--accent-cyan)";
+                        typeBg = "rgba(6, 182, 212, 0.15)";
+                    } else if (item.artifact_type === "temporary-run") {
+                        typeColor = "#64748b";
+                        typeBg = "rgba(100, 116, 139, 0.15)";
+                    }
+                    
+                    row.innerHTML = `
+                        <td style="padding: 6px 12px;">
+                            <span style="font-size: 9px; font-weight: bold; color: ${typeColor}; background: ${typeBg}; border: 1px solid ${typeColor}30; padding: 2px 6px; border-radius: 4px;">
+                                ${item.artifact_type.toUpperCase()}
+                            </span>
+                        </td>
+                        <td style="padding: 6px 12px; font-family: monospace; color: #fff; max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.source_path}</td>
+                        <td style="padding: 6px 12px; font-family: monospace; color: var(--accent-teal);">${item.file_hash.substring(0, 12)}...</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+        }
+        
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
+    } catch (err) {
+        console.error("Error calculating archive preview:", err);
+        alert("Error calculating archive preview: " + err.message);
+    }
+}
+
+function exportArchivePreviewMarkdown() {
+    if (!lastArchivePreviewData || !lastArchivePreviewData.markdown) {
+        alert("Please calculate the preview first before exporting.");
+        return;
+    }
+    const blob = new Blob([lastArchivePreviewData.markdown], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "release-evidence-archive-preview.md";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function exportArchivePreviewJSON() {
+    if (!lastArchivePreviewData || !lastArchivePreviewData.manifest) {
+        alert("Please calculate the preview first before exporting.");
+        return;
+    }
+    const blob = new Blob([JSON.stringify(lastArchivePreviewData.manifest, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "release-evidence-archive-preview.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
 window.initReleaseEvidenceRetention = initReleaseEvidenceRetention;
 window.loadEvidenceRetentionList = loadEvidenceRetentionList;
 window.classifyEvidence = classifyEvidence;
+window.initReleaseEvidenceArchivePreview = initReleaseEvidenceArchivePreview;
+window.calculateArchivePreview = calculateArchivePreview;
+window.exportArchivePreviewMarkdown = exportArchivePreviewMarkdown;
+window.exportArchivePreviewJSON = exportArchivePreviewJSON;
+
 
 
