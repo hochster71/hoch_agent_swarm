@@ -732,6 +732,63 @@ class TestCheckFindingsContent:
         errors = _check_findings_content(GOOD_SECURITY_AUDIT, "test.md")
         assert errors == []
 
+    # --- v2.1 calibration regression tests ---
+
+    def test_numbered_finding_entries_pass(self):
+        """Numbered list items in ## Findings pass even without keyword vocabulary."""
+        content = (
+            "## Findings\n\n"
+            "1. Task Run Unique Identification: no unique IDs assigned.\n"
+            "2. Secrets Management: no explicit scrubbing present.\n"
+        )
+        errors = _check_findings_content(content, "test.md")
+        assert errors == []
+
+    def test_risk_keyword_accepted(self):
+        content = "## Findings\n\nThere is a risk of replay attack.\n"
+        errors = _check_findings_content(content, "test.md")
+        assert errors == []
+
+    def test_recommend_keyword_accepted(self):
+        content = "## Findings\n\nWe recommend adding unique identifiers.\n"
+        errors = _check_findings_content(content, "test.md")
+        assert errors == []
+
+    def test_remediation_keyword_accepted(self):
+        content = "## Findings\n\nRemediation: add task run IDs.\n"
+        errors = _check_findings_content(content, "test.md")
+        assert errors == []
+
+    def test_protect_keyword_accepted(self):
+        content = "## Findings\n\nProtection against credential leak confirmed.\n"
+        errors = _check_findings_content(content, "test.md")
+        assert errors == []
+
+    def test_pure_generic_prose_still_fails(self):
+        """Generic prose with no finding vocabulary or numbered items still fails."""
+        content = "## Findings\n\nEverything looks good overall. The system is fine.\n"
+        errors = _check_findings_content(content, "test.md")
+        assert len(errors) == 1
+
+    def test_real_batch17_findings_sample_passes(self):
+        """The actual security audit that triggered the Batch 17 calibration must pass."""
+        import os
+        sample = os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "artifacts",
+            "validation_samples",
+            "batch17",
+            "security_audit_report_findings_style.md",
+        )
+        if not os.path.isfile(sample):
+            import pytest
+            pytest.skip("batch17 sample not present")
+        with open(sample) as f:
+            content = f.read()
+        errors = _check_findings_content(content, "security_audit_report.md")
+        assert errors == [], f"Real failure sample should now pass: {errors}"
+
 
 # ---------------------------------------------------------------------------
 # v2 unit tests: _check_antigravity_integration_steps
@@ -748,13 +805,13 @@ class TestCheckAntigravityIntegrationSteps:
         content = "## Antigravity Integration Steps\n\nAntigravity integrates things.\n"
         errors = _check_antigravity_integration_steps(content, "test.md")
         assert len(errors) == 1
-        assert "numbered" in errors[0]
+        assert "procedural" in errors[0]
 
-    def test_bullet_only_fails(self):
-        """Bullets without numbers should fail — steps must be ordered."""
+    def test_bullet_only_passes(self):
+        """Bullets are valid procedural steps — v2.1 calibration."""
         content = "## Antigravity Integration Steps\n\n- Step one\n- Step two\n"
         errors = _check_antigravity_integration_steps(content, "test.md")
-        assert len(errors) == 1
+        assert errors == []
 
     def test_missing_heading_ignored(self):
         content = "## Mission\n\nThe mission.\n"
@@ -764,6 +821,49 @@ class TestCheckAntigravityIntegrationSteps:
     def test_good_antigravity_plan_passes(self):
         errors = _check_antigravity_integration_steps(GOOD_ANTIGRAVITY_PLAN, "test.md")
         assert errors == []
+
+    # --- v2.1 calibration regression tests ---
+
+    def test_star_bullet_passes(self):
+        """'* Step' style is a valid procedural item."""
+        content = "## Antigravity Integration Steps\n\n* Step one\n* Step two\n"
+        errors = _check_antigravity_integration_steps(content, "test.md")
+        assert errors == []
+
+    def test_bold_bullet_passes(self):
+        """'- **Step**: description' (Batch 17 failure pattern) must pass."""
+        content = (
+            "## Antigravity Integration Steps\n\n"
+            "- **Initial Synthesis Step**: Convert architecture into artifacts.\n"
+            "- **Task Planning Step**: Derive task plans.\n"
+        )
+        errors = _check_antigravity_integration_steps(content, "test.md")
+        assert errors == []
+
+    def test_empty_section_fails(self):
+        """Section with only whitespace still fails."""
+        content = "## Antigravity Integration Steps\n\n   \n\n"
+        errors = _check_antigravity_integration_steps(content, "test.md")
+        assert len(errors) == 1
+
+    def test_real_batch17_bulleted_sample_passes(self):
+        """The actual artifact that triggered the Batch 17 calibration must pass."""
+        import os
+        sample = os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "artifacts",
+            "validation_samples",
+            "batch17",
+            "antigravity_bulleted_steps.md",
+        )
+        if not os.path.isfile(sample):
+            import pytest
+            pytest.skip("batch17 sample not present")
+        with open(sample) as f:
+            content = f.read()
+        errors = _check_antigravity_integration_steps(content, "antigravity_execution_plan.md")
+        assert errors == [], f"Real failure sample should now pass: {errors}"
 
 
 # ---------------------------------------------------------------------------

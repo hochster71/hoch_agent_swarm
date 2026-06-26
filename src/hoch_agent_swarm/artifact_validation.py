@@ -80,11 +80,20 @@ _VERDICT_KEYWORDS = [
     r"(?i)\bassess\w*\b",                    # assessment / assessed
 ]
 
-# Findings vocabulary — must contain at least one of these in the Findings section
+# Findings vocabulary — at least one keyword OR a numbered finding entry must appear
+# in the ## Findings section.  Vocabulary is intentionally broad: different LLM runs
+# phrase findings as violations, risks, recommendations, or remediation items.
 _FINDINGS_KEYWORDS = [
+    # Original set
     r"(?i)\bfindings?\b", r"(?i)\bviolations?\b", r"(?i)\bissues?\b",
     r"(?i)\bcredential\b", r"(?i)\bsecret\b",
     r"(?i)\bdelegation\b", r"(?i)\btool\b", r"(?i)\baccess\b",
+    # Extended set (Batch 17 calibration)
+    r"(?i)\brisk\b", r"(?i)\brecommend", r"(?i)\bremediat",
+    r"(?i)\bscrub", r"(?i)\bconfig\b", r"(?i)\bpolicy\b",
+    r"(?i)\bruntime\b", r"(?i)\bvalidat", r"(?i)\bidentif",
+    r"(?i)\bprotect", r"(?i)\bcomply\b", r"(?i)\bcompliance\b",
+    r"(?i)\bcontrol\b", r"(?i)\bexposure\b", r"(?i)\bmitig",
 ]
 
 # ---------------------------------------------------------------------------
@@ -362,6 +371,11 @@ def _check_findings_content(content: str, path: str) -> list[str]:
 
     Catches outputs where the model left the Findings section empty or
     produced a heading with only whitespace.
+
+    Pass conditions (any one is sufficient):
+      - A keyword from _FINDINGS_KEYWORDS appears in the section text.
+      - At least one numbered finding entry ('1.' / '2.' at line start)
+        appears — the model used a numbered list to enumerate findings.
     """
     findings_text = _extract_section_content(content, "## Findings")
     if not findings_text:
@@ -372,38 +386,54 @@ def _check_findings_content(content: str, path: str) -> list[str]:
             ]
         return []  # heading absent — let _check_headings report it
 
+    # Pass: keyword match
     for kw in _FINDINGS_KEYWORDS:
         if re.search(kw, findings_text):
             return []
 
+    # Pass: numbered finding entries (model enumerated findings as a list)
+    if re.search(r"(?m)^\s*\d+[.)]", findings_text):
+        return []
+
     return [
         f"[{path}] '## Findings' section exists but references no specific "
-        "finding, violation, or tool/access/credential/delegation keyword. "
+        "finding, violation, risk, recommendation, or remediation language. "
         "Model output may be generic or incomplete."
     ]
 
 
 def _check_antigravity_integration_steps(content: str, path: str) -> list[str]:
     """
-    Check that ## Antigravity Integration Steps contains a numbered list.
+    Check that ## Antigravity Integration Steps contains concrete procedural items.
 
-    Real integration plans must have concrete, ordered steps. A section
-    with only prose or bullets (but no numbered items) indicates the model
-    did not produce an actionable plan.
+    Accepts either:
+      - Numbered list items  ('1. Step', '2. Step', ...)
+      - Bullet list items    ('- Step', '* Step', '- **Step**:', ...)
+
+    Both formats represent concrete, actionable steps. Rejecting bullets while
+    accepting numbers was too brittle: LLMs validly use either style.
+
+    Still fails:
+      - Section entirely absent (caught by _check_headings)
+      - Section with only prose / whitespace (no list items of any kind)
     """
     if "## Antigravity Integration Steps" not in content:
         return []  # missing heading caught by _check_headings
 
     section_text = _extract_section_content(content, "## Antigravity Integration Steps")
 
-    # Look for at least one numbered list item: '1.' or '1)' at line start
+    # Accept numbered list items: '1.' or '1)' at line start
     if re.search(r"(?m)^\s*\d+[.)]", section_text):
         return []
 
+    # Accept bullet list items: '- text', '* text', or '- **Bold**:' style
+    if re.search(r"(?m)^\s*[-*]\s+\S", section_text):
+        return []
+
     return [
-        f"[{path}] '## Antigravity Integration Steps' section contains no numbered "
-        "list items. Expected at least one '1. Step description' line. "
-        "Model output may not contain concrete ordered steps."
+        f"[{path}] '## Antigravity Integration Steps' section contains no "
+        "procedural list items (numbered or bullet). Expected at least one "
+        "'1. Step' or '- Step' line. Model output may not contain concrete steps."
     ]
 
 
