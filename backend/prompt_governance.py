@@ -20,9 +20,14 @@ import re
 import sqlite3
 import threading
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from functools import lru_cache
 from typing import Optional
+
+# ── Constants ─────────────────────────────────────────────────────────────────
+
+_APPROVAL_TTL_HOURS = 24  # Operator approvals expire after this
+_TEST_PREFIXES = ("pytest", "test", "smoke", "ci_", "ci:")  # → source=TEST
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
 
@@ -199,8 +204,18 @@ def _get_conn():
     return conn
 
 
+def _infer_source(requested_by: str) -> str:
+    """Classify approval source: TEST (from automated tests) or OPERATOR (human)."""
+    rb = (requested_by or "").lower()
+    if any(rb.startswith(p) for p in _TEST_PREFIXES) or "pytest" in rb:
+        return "TEST"
+    if rb in ("ui_operator", "ui"):
+        return "UI"
+    return "OPERATOR"
+
+
 def ensure_ledger_table():
-    """Create prompt_usage_ledger and prompt_approvals tables if they don't exist."""
+    """Create/migrate prompt_usage_ledger and prompt_approvals tables."""
     with _db_lock:
         conn = _get_conn()
         conn.executescript("""
@@ -228,13 +243,26 @@ def ensure_ledger_table():
                 mission_context TEXT,
                 rationale       TEXT,
                 status          TEXT NOT NULL DEFAULT 'PENDING',
+                source          TEXT NOT NULL DEFAULT 'OPERATOR',
                 requested_by    TEXT,
                 reviewed_by     TEXT,
                 requested_at    TEXT NOT NULL,
                 reviewed_at     TEXT,
+                expires_at      TEXT,
                 decision_note   TEXT
             );
         """)
+        # Migrate: add source column if missing (for DBs created before Prompt-3)
+        existing_cols = {row[1] for row in conn.execute("PRAGMA table_info(prompt_approvals)").fetchall()}
+        if "source" not in existing_cols:
+            conn.execute("ALTER TABLE prompt_approvals ADD COLUMN source TEXT NOT NULL DEFAULT 'UNKNOWN'")
+            # Back-fill: mark existing rows by requested_by heuristic
+            rows = conn.execute("SELECT approval_id, requested_by FROM prompt_approvals").fetchall()
+            for aid, rb in rows:
+                src = _infer_source(rb or "")
+                conn.execute("UPDATE prompt_approvals SET source=? WHERE approval_id=?", (src, aid))
+        if "expires_at" not in existing_cols:
+            conn.execute("ALTER TABLE prompt_approvals ADD COLUMN expires_at TEXT")
         conn.commit()
         conn.close()
 
@@ -393,11 +421,17 @@ def approve_prompt(
             return {"error": f"Approval request is already '{row['status']}'."}
 
         new_status = "DENIED" if deny else "APPROVED"
+        # Set TTL only for real approvals, not denials
+        expires_at = None
+        if not deny:
+            expires_at = (datetime.now(timezone.utc) + timedelta(hours=_APPROVAL_TTL_HOURS)).isoformat()
+
         conn.execute(
             """UPDATE prompt_approvals
-               SET status=?, reviewed_by=?, reviewed_at=?, decision_note=?
+               SET status=?, reviewed_by=?, reviewed_at=?, decision_note=?, expires_at=?,
+                   source='OPERATOR'
                WHERE approval_id=?""",
-            (new_status, reviewed_by, _now(), decision_note, approval_id)
+            (new_status, reviewed_by, _now(), decision_note, expires_at, approval_id)
         )
 
         # Write decision to ledger
@@ -424,6 +458,7 @@ def approve_prompt(
         "status": new_status,
         "reviewed_by": reviewed_by,
         "decision_note": decision_note,
+        "expires_at": expires_at,
         "ledger_id": ledger_id,
         "message": f"Prompt {'approved' if not deny else 'denied'} by {reviewed_by}.",
     }
@@ -490,31 +525,140 @@ def _write_ledger(ledger_id, prompt_id, sha256, category, risk,
 
 def _create_approval_request(approval_id, prompt_id, sha256, risk,
                               agent_id, mission_context, rationale, requested_by):
+    source = _infer_source(requested_by or "")
     with _db_lock:
         conn = _get_conn()
         conn.execute(
             """INSERT OR IGNORE INTO prompt_approvals
                (approval_id, prompt_id, prompt_sha256, risk_level,
-                agent_id, mission_context, rationale, status,
+                agent_id, mission_context, rationale, status, source,
                 requested_by, requested_at)
-               VALUES (?,?,?,?,?,?,?,'PENDING',?,?)""",
+               VALUES (?,?,?,?,?,?,?,'PENDING',?,?,?)""",
             (approval_id, prompt_id, sha256, risk,
              agent_id or "", mission_context or "", rationale or "",
-             requested_by or "Operator", _now())
+             source, requested_by or "Operator", _now())
         )
         conn.commit()
         conn.close()
 
 
 def _get_active_approval(prompt_id: str, agent_id: str) -> Optional[dict]:
-    """Return the most recent APPROVED approval for this prompt+agent, if it exists."""
+    """
+    Return the most recent APPROVED, OPERATOR-sourced, non-expired approval
+    for this prompt. TEST approvals are NEVER honoured for live execution.
+    """
     with _db_lock:
         conn = _get_conn()
         row = conn.execute(
             """SELECT * FROM prompt_approvals
-               WHERE prompt_id=? AND status='APPROVED'
+               WHERE prompt_id=?
+                 AND status='APPROVED'
+                 AND source IN ('OPERATOR','UI')
                ORDER BY reviewed_at DESC LIMIT 1""",
             (prompt_id.upper(),)
         ).fetchone()
         conn.close()
-    return dict(row) if row else None
+    if not row:
+        return None
+    d = dict(row)
+    # Enforce TTL
+    expires = d.get("expires_at")
+    if expires:
+        try:
+            exp_dt = datetime.fromisoformat(expires)
+            if datetime.now(timezone.utc) > exp_dt:
+                return None  # Expired
+        except Exception:
+            pass
+    return d
+
+# ── Additional public API functions (Prompt-3) ─────────────────────────────────
+
+def get_all_approvals(status: str = None) -> dict:
+    """
+    Return all rows from prompt_approvals.
+    Each row includes source (TEST|UI|OPERATOR), TTL status, and whether
+    the approval is currently active (APPROVED + not expired + OPERATOR/UI source).
+    Optional filter: status in ('PENDING','APPROVED','DENIED','EXPIRED').
+    """
+    ensure_ledger_table()
+    now_utc = datetime.now(timezone.utc)
+    with _db_lock:
+        conn = _get_conn()
+        if status:
+            rows = conn.execute(
+                "SELECT * FROM prompt_approvals WHERE status=? ORDER BY requested_at DESC",
+                (status.upper(),)
+            ).fetchall()
+        else:
+            rows = conn.execute(
+                "SELECT * FROM prompt_approvals ORDER BY requested_at DESC"
+            ).fetchall()
+        conn.close()
+
+    enriched = []
+    for r in rows:
+        d = dict(r)
+        # Compute TTL state
+        d["is_test"] = d.get("source", "UNKNOWN") == "TEST"
+        expires = d.get("expires_at")
+        if expires and d["status"] == "APPROVED":
+            try:
+                exp_dt = datetime.fromisoformat(expires)
+                d["ttl_remaining_hours"] = max(0, round((exp_dt - now_utc).total_seconds() / 3600, 1))
+                d["is_expired"] = exp_dt <= now_utc
+            except Exception:
+                d["ttl_remaining_hours"] = None
+                d["is_expired"] = False
+        else:
+            d["ttl_remaining_hours"] = None
+            d["is_expired"] = False
+        # is_active: only OPERATOR/UI, APPROVED, not expired
+        d["is_active"] = (
+            d["status"] == "APPROVED"
+            and d.get("source", "") in ("OPERATOR", "UI")
+            and not d["is_expired"]
+        )
+        enriched.append(d)
+
+    pending = sum(1 for d in enriched if d["status"] == "PENDING")
+    active = sum(1 for d in enriched if d["is_active"])
+    test_count = sum(1 for d in enriched if d["is_test"])
+    return {
+        "total": len(enriched),
+        "pending_count": pending,
+        "active_count": active,
+        "test_count": test_count,
+        "approvals": enriched,
+    }
+
+
+def expire_test_approvals() -> dict:
+    """
+    Mark all TEST-sourced APPROVED or PENDING approvals as EXPIRED.
+    Returns count of records updated.
+    Prevents test approvals from silently authorising future HIGH-risk execution.
+    """
+    ensure_ledger_table()
+    with _db_lock:
+        conn = _get_conn()
+        rows = conn.execute(
+            """SELECT approval_id, prompt_id FROM prompt_approvals
+               WHERE source='TEST' AND status IN ('PENDING','APPROVED')"""
+        ).fetchall()
+        count = len(rows)
+        for row in rows:
+            conn.execute(
+                """UPDATE prompt_approvals
+                   SET status='EXPIRED', reviewed_by='SYSTEM', reviewed_at=?,
+                       decision_note='Auto-expired: test-sourced approval (Prompt-3 isolation)'
+                   WHERE approval_id=?""",
+                (_now(), row[0])
+            )
+        conn.commit()
+        conn.close()
+    return {
+        "expired_count": count,
+        "message": f"Expired {count} TEST-sourced approval(s). Operator approvals unaffected.",
+        "expired_ids": [r[0] for r in rows],
+    }

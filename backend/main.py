@@ -6858,6 +6858,8 @@ from backend.prompt_governance import (
     approve_prompt as _pg_approve,
     get_usage_ledger as _pg_ledger,
     get_pending_approvals as _pg_pending,
+    get_all_approvals as _pg_all_approvals,
+    expire_test_approvals as _pg_expire_test,
     ensure_ledger_table as _pg_init,
 )
 
@@ -6963,6 +6965,31 @@ def prompt_pending_approvals():
     Return all PENDING prompt approval requests (for Governance Cockpit queue).
     """
     return _pg_pending()
+
+
+@app.get("/api/v1/prompts/approvals")
+def prompt_all_approvals(status: str = None):
+    """
+    Return ALL prompt approval records with governance metadata:
+      source (TEST | UI | OPERATOR), expires_at, ttl_remaining_hours,
+      is_expired, is_active, is_test.
+
+    Filter by status: PENDING, APPROVED, DENIED, EXPIRED.
+    Use this to populate the Governance Cockpit approval queue and history table.
+    """
+    return _pg_all_approvals(status=status)
+
+
+@app.post("/api/v1/prompts/expire-test")
+def prompt_expire_test_approvals():
+    """
+    Test-state isolation control.
+    Marks all TEST-sourced PENDING or APPROVED approvals as EXPIRED so they
+    cannot silently authorise future HIGH-risk prompt execution.
+    Operator-sourced approvals are NEVER touched.
+    """
+    return _pg_expire_test()
+
 
 # Mount frontend files at root (if frontend directory exists)
 

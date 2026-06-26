@@ -12608,3 +12608,239 @@ window.exportSealPreviewJSON = exportSealPreviewJSON;
     });
 
 })();
+
+// ═══════════════════════════════════════════════════════════════════════
+//  PROMPT LIBRARY GOVERNANCE COCKPIT  (Batch Prompt-3)
+//  Mounted as window.pgCockpit — auto-init when Governance nav is clicked
+// ═══════════════════════════════════════════════════════════════════════
+(function () {
+    "use strict";
+    if (typeof API_BASE === "undefined") return;  // guard if loaded before init
+
+    // ── helpers ──────────────────────────────────────────────────────────
+    function el(id) { return document.getElementById(id); }
+    function escHtml(s) {
+        return String(s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    }
+
+    // ── Risk badge HTML ───────────────────────────────────────────────────
+    const RISK_CSS = {
+        LOW:     "background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.35);",
+        MEDIUM:  "background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.35);",
+        HIGH:    "background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.35);",
+        BLOCKED: "background:rgba(127,29,29,0.3);color:#fca5a5;border:1px solid rgba(239,68,68,0.5);",
+    };
+    function riskBadge(level) {
+        const s = RISK_CSS[(level||"").toUpperCase()] || RISK_CSS.LOW;
+        return `<span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;${s}">${escHtml(level||"LOW")}</span>`;
+    }
+
+    // ── Source badge HTML ─────────────────────────────────────────────────
+    const SRC_CSS = {
+        TEST:     "background:rgba(127,29,29,0.35);color:#fca5a5;border:1px solid rgba(239,68,68,0.5);",
+        UI:       "background:rgba(99,102,241,0.15);color:#a5b4fc;border:1px solid rgba(99,102,241,0.4);",
+        OPERATOR: "background:rgba(16,185,129,0.12);color:#6ee7b7;border:1px solid rgba(16,185,129,0.35);",
+        UNKNOWN:  "background:rgba(100,100,100,0.2);color:#aaa;border:1px solid rgba(100,100,100,0.4);",
+    };
+    function srcBadge(src) {
+        const s = SRC_CSS[(src||"").toUpperCase()] || SRC_CSS.UNKNOWN;
+        return `<span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;${s}">${escHtml(src||"UNKNOWN")}</span>`;
+    }
+
+    // ── Decision badge ────────────────────────────────────────────────────
+    function decisionBadge(d) {
+        const map = {
+            ALLOWED:                "color:#10b981",
+            ALLOWED_WITH_RATIONALE: "color:#06b6d4",
+            PENDING_APPROVAL:       "color:#f59e0b",
+            APPROVAL_APPROVED:      "color:#10b981",
+            APPROVAL_DENIED:        "color:#ef4444",
+            REJECTED:               "color:#ef4444",
+            RATIONALE_REQUIRED:     "color:#f59e0b",
+        };
+        const css = map[(d||"").toUpperCase()] || "color:var(--text-secondary)";
+        return `<span style="font-size:9px;font-weight:700;${css}">${escHtml(d||"—")}</span>`;
+    }
+
+    // ── Render approval queue ─────────────────────────────────────────────
+    function renderQueue(approvals) {
+        const container = el("pg-approval-queue");
+        if (!container) return;
+
+        const pending  = approvals.filter(a => a.status === "PENDING");
+        const approved = approvals.filter(a => a.status === "APPROVED");
+        const denied   = approvals.filter(a => a.status === "DENIED");
+        const expired  = approvals.filter(a => a.status === "EXPIRED");
+        const testRows = approvals.filter(a => a.is_test);
+
+        // Update badges
+        const pendingBadge = el("pg-pending-badge");
+        if (pendingBadge) {
+            pendingBadge.textContent = `${pending.length} PENDING`;
+            pendingBadge.style.background = pending.length > 0
+                ? "rgba(245,158,11,0.25)" : "rgba(16,185,129,0.12)";
+            pendingBadge.style.color = pending.length > 0 ? "#f59e0b" : "#10b981";
+        }
+
+        const testBadge = el("pg-test-badge");
+        const expireBtn = el("btn-pg-expire-test");
+        const activeTest = approvals.filter(a => a.is_test && ["PENDING","APPROVED"].includes(a.status));
+        if (testBadge) {
+            if (activeTest.length > 0) {
+                testBadge.style.display = "";
+                testBadge.textContent = `${activeTest.length} TEST STATE`;
+                if (expireBtn) expireBtn.style.display = "";
+            } else {
+                testBadge.style.display = "none";
+                if (expireBtn) expireBtn.style.display = "none";
+            }
+        }
+
+        if (approvals.length === 0) {
+            container.innerHTML = `<div style="text-align:center;color:var(--text-secondary);font-size:11px;padding:24px;">No approval records yet. HIGH-risk prompt requests appear here.</div>`;
+            return;
+        }
+
+        // Show all (PENDING first, then others)
+        const ordered = [...pending, ...approved, ...denied, ...expired];
+        container.innerHTML = ordered.map(a => {
+            const isPending = a.status === "PENDING";
+            const isTest    = a.is_test;
+            const ttl       = a.ttl_remaining_hours != null ? `TTL ${a.ttl_remaining_hours}h` : "";
+            const expiredTag = a.is_expired ? `<span style="font-size:9px;color:#ef4444;"> ⚠ EXPIRED</span>` : "";
+
+            return `
+            <div style="background:rgba(10,15,28,0.6);border:1px solid ${isPending ? "rgba(245,158,11,0.3)" : isTest ? "rgba(239,68,68,0.2)" : "rgba(255,255,255,0.06)"};
+                        border-radius:8px;padding:10px 12px;font-size:11px;">
+                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px;">
+                    <span style="font-family:monospace;font-weight:700;color:#fff;">${escHtml(a.prompt_id)}</span>
+                    ${riskBadge(a.risk_level)}
+                    ${srcBadge(a.source || "UNKNOWN")}
+                    <span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;
+                        background:${a.status==="PENDING"?"rgba(245,158,11,0.15)":a.status==="APPROVED"?"rgba(16,185,129,0.12)":a.status==="EXPIRED"?"rgba(100,100,100,0.2)":"rgba(239,68,68,0.12)"};
+                        color:${a.status==="PENDING"?"#f59e0b":a.status==="APPROVED"?"#10b981":a.status==="EXPIRED"?"#aaa":"#ef4444"};">
+                        ${escHtml(a.status)}
+                    </span>
+                    ${ttl ? `<span style="font-size:9px;color:var(--text-secondary);">${ttl}</span>` : ""}
+                    ${expiredTag}
+                </div>
+                <div style="font-size:10px;color:var(--text-secondary);margin-bottom:6px;">
+                    Req by <strong style="color:#d1d5db;">${escHtml(a.requested_by||"—")}</strong>
+                    · Agent: <code style="font-size:9px;">${escHtml(a.agent_id||"—")}</code>
+                    · ${escHtml((a.requested_at||"").slice(0,19).replace("T"," "))}
+                </div>
+                ${a.mission_context ? `<div style="font-size:9px;color:var(--text-secondary);border-left:2px solid rgba(255,255,255,0.1);padding-left:6px;margin-bottom:6px;">${escHtml(a.mission_context.slice(0,120))}${a.mission_context.length>120?"…":""}</div>` : ""}
+                ${a.reviewed_by ? `<div style="font-size:9px;color:var(--text-secondary);">Reviewed by <strong>${escHtml(a.reviewed_by)}</strong>${a.decision_note ? ": " + escHtml(a.decision_note) : ""}</div>` : ""}
+                ${isPending ? `
+                <div style="display:flex;gap:6px;margin-top:8px;">
+                    <button class="btn btn-xs btn-success" onclick="window.pgCockpit.approveRequest('${escHtml(a.approval_id)}','${escHtml(a.prompt_id)}')" style="flex:1;">✓ Approve</button>
+                    <button class="btn btn-xs btn-danger"  onclick="window.pgCockpit.denyRequest('${escHtml(a.approval_id)}','${escHtml(a.prompt_id)}')" style="flex:1;">✗ Deny</button>
+                </div>` : ""}
+            </div>`;
+        }).join("");
+    }
+
+    // ── Render usage ledger ───────────────────────────────────────────────
+    function renderLedger(entries) {
+        const tbody = el("pg-ledger-body");
+        if (!tbody) return;
+        if (!entries.length) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-secondary);padding:16px;">No usage records yet.</td></tr>`;
+            return;
+        }
+        tbody.innerHTML = entries.map(e => `
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+                <td style="padding:4px 6px;font-family:monospace;font-size:9px;color:#a5b4fc;">${escHtml(e.prompt_id)}</td>
+                <td style="padding:4px 6px;">${riskBadge(e.risk_level)}</td>
+                <td style="padding:4px 6px;">${decisionBadge(e.decision)}</td>
+                <td style="padding:4px 6px;font-size:9px;color:var(--text-secondary);">${escHtml((e.agent_id||"—").slice(0,12))}</td>
+                <td style="padding:4px 6px;font-size:9px;color:var(--text-secondary);">${escHtml((e.logged_at||"").slice(11,19))}</td>
+            </tr>
+        `).join("");
+    }
+
+    // ── Core refresh ──────────────────────────────────────────────────────
+    async function refresh() {
+        try {
+            const [appRes, ledRes] = await Promise.all([
+                fetch(`${API_BASE}/api/v1/prompts/approvals`),
+                fetch(`${API_BASE}/api/v1/prompts/usage-ledger?limit=20`),
+            ]);
+            if (appRes.ok) {
+                const data = await appRes.json();
+                renderQueue(data.approvals || []);
+            }
+            if (ledRes.ok) {
+                const data = await ledRes.json();
+                renderLedger(data.entries || []);
+            }
+        } catch (err) {
+            console.warn("[pgCockpit] refresh error:", err);
+        }
+    }
+
+    // ── Approve / Deny actions ────────────────────────────────────────────
+    async function approveRequest(approvalId, promptId) {
+        const note = window.prompt(`Approve HIGH-risk prompt ${promptId}?\n\nEnter decision note (optional):`);
+        if (note === null) return; // cancelled
+        try {
+            const res = await fetch(`${API_BASE}/api/v1/prompts/approve`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ approval_id: approvalId, reviewed_by: "Operator", decision_note: note || "", deny: false }),
+            });
+            const data = await res.json();
+            if (data.status === "APPROVED") {
+                alert(`✓ Approved.\nTTL: ${data.expires_at ? data.expires_at.slice(0,19).replace("T"," ") + " UTC" : "n/a"}`);
+            } else {
+                alert(`Result: ${JSON.stringify(data)}`);
+            }
+        } catch (e) { alert("Error: " + e.message); }
+        refresh();
+    }
+
+    async function denyRequest(approvalId, promptId) {
+        const ok = window.confirm(`Deny HIGH-risk prompt ${promptId}?\nThis will be logged to the ledger.`);
+        if (!ok) return;
+        try {
+            const res = await fetch(`${API_BASE}/api/v1/prompts/approve`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ approval_id: approvalId, reviewed_by: "Operator", decision_note: "Denied by operator", deny: true }),
+            });
+            const data = await res.json();
+            alert(data.status === "DENIED" ? "✓ Denied and logged." : JSON.stringify(data));
+        } catch (e) { alert("Error: " + e.message); }
+        refresh();
+    }
+
+    // ── Expire test approvals ─────────────────────────────────────────────
+    async function expireTest() {
+        const ok = window.confirm(
+            "Expire ALL test-sourced approvals?\n\n" +
+            "This marks any PENDING or APPROVED TEST approvals as EXPIRED.\n" +
+            "Operator approvals are NOT affected."
+        );
+        if (!ok) return;
+        try {
+            const res = await fetch(`${API_BASE}/api/v1/prompts/expire-test`, { method: "POST" });
+            const data = await res.json();
+            alert(`✓ ${data.message}`);
+        } catch (e) { alert("Error: " + e.message); }
+        refresh();
+    }
+
+    // ── Auto-refresh when Governance Cockpit nav is clicked ───────────────
+    const govNav = document.getElementById("nav-governance");
+    if (govNav) {
+        govNav.addEventListener("click", () => {
+            setTimeout(refresh, 150);  // panel renders after nav switches view
+        });
+    }
+
+    // ── Expose public API ─────────────────────────────────────────────────
+    window.pgCockpit = { refresh, approveRequest, denyRequest, expireTest };
+
+    // Initial load (deferred so DOM is ready)
+    setTimeout(refresh, 800);
+})();

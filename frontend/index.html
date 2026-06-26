@@ -2935,6 +2935,55 @@
                         </div>
                     </div>
                 </section>
+
+                <!-- ═══ PROMPT LIBRARY GOVERNANCE PANEL (Prompt-3) ═══════════════════════ -->
+                <section class="card" id="prompt-governance-panel" style="padding: 20px; margin-bottom: 10px; border: 1px solid rgba(245,158,11,0.25); background: rgba(10,15,28,0.8);">
+                    <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-glass); padding-bottom:12px; margin-bottom:16px;">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <i data-lucide="shield-alert" style="color:#f59e0b; width:20px; height:20px;"></i>
+                            <h3 style="font-size:16px; font-weight:700; color:#fff; margin:0;">PROMPT LIBRARY GOVERNANCE</h3>
+                            <span id="pg-pending-badge" style="font-size:10px; font-weight:700; padding:2px 8px; border-radius:10px; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); color:#f59e0b;">0 PENDING</span>
+                            <span id="pg-test-badge" style="font-size:10px; font-weight:700; padding:2px 8px; border-radius:10px; background:rgba(127,29,29,0.3); border:1px solid rgba(239,68,68,0.4); color:#fca5a5; display:none;">TEST STATE</span>
+                        </div>
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <button id="btn-pg-refresh" class="btn btn-xs btn-outline" onclick="window.pgCockpit && window.pgCockpit.refresh()" style="font-size:10px;">⟳ Refresh</button>
+                            <button id="btn-pg-expire-test" class="btn btn-xs btn-danger" onclick="window.pgCockpit && window.pgCockpit.expireTest()" style="font-size:10px; display:none;">🧹 Expire Test Approvals</button>
+                        </div>
+                    </div>
+
+                    <!-- Two-column layout -->
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+
+                        <!-- LEFT: Approval Queue -->
+                        <div>
+                            <div style="font-size:11px; font-weight:700; color:#f59e0b; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">Approval Queue</div>
+                            <div id="pg-approval-queue" style="display:flex; flex-direction:column; gap:8px; min-height:80px; max-height:360px; overflow-y:auto;">
+                                <div style="text-align:center; color:var(--text-secondary); font-size:11px; padding:20px;">Loading…</div>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT: Usage Ledger -->
+                        <div>
+                            <div style="font-size:11px; font-weight:700; color:#06b6d4; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">Usage Ledger (last 20)</div>
+                            <div id="pg-usage-ledger" style="max-height:360px; overflow-y:auto;">
+                                <table style="width:100%; border-collapse:collapse; font-size:10px;">
+                                    <thead>
+                                        <tr style="color:var(--text-secondary); border-bottom:1px solid var(--border-glass);">
+                                            <th style="text-align:left; padding:4px 6px;">Prompt</th>
+                                            <th style="text-align:left; padding:4px 6px;">Risk</th>
+                                            <th style="text-align:left; padding:4px 6px;">Decision</th>
+                                            <th style="text-align:left; padding:4px 6px;">Agent</th>
+                                            <th style="text-align:left; padding:4px 6px;">Time</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pg-ledger-body">
+                                        <tr><td colspan="5" style="text-align:center; color:var(--text-secondary); padding:16px;">Loading…</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
 
             <!-- Red-Team Chaos View -->
