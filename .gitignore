@@ -6,3 +6,4 @@ build/
 *.egg-info/
 dist/
 artifacts/crew_runs/
+artifacts/release_candidates/
