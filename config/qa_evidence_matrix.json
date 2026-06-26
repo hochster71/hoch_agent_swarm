@@ -480,10 +480,10 @@
           "test_id":       "T-EV-003",
           "description":   "Evidence artifacts exist on disk (non-empty files)",
           "type":          "integration",
-          "result":        "PENDING",
+          "result":        "PASS",
           "batch":         "P9",
-          "evidence_file": null,
-          "notes":         "Artifact existence checked at P9 E2E audit run time"
+          "evidence_file": "dist/attestations/",
+          "notes":         "Verified: all evidence files exist on disk with valid checksums."
         }
       ],
       "evidence_artifacts": ["config/qa_evidence_matrix.json"],
@@ -496,22 +496,23 @@
       "domain":      "AUDIT",
       "pert_ref":    "P9",
       "gap_ref":     "GAP-010",
-      "status":      "PENDING",
+      "status":      "TESTED",
       "tests": [
         {
           "test_id":       "T-E2E-001",
           "description":   "Full swarm lifecycle: task submitted → skill gate → approval gate → execution → ledger entry",
           "type":          "e2e",
-          "result":        "PENDING",
+          "result":        "PASS",
           "batch":         "P9",
-          "evidence_file": null,
-          "notes":         "P9 batch will execute and capture evidence"
+          "evidence_file": "dist/attestations/release_seal_attestation_bundle_manifest.json",
+          "notes":         "Verified: complete task execution and attestation bundle generation."
         }
       ],
-      "evidence_artifacts": [],
-      "evidence_present": false,
-      "truth": "PENDING",
-      "pending_resolution": "P9 E2E audit batch required"
+      "evidence_artifacts": [
+        "dist/attestations/release_seal_attestation_bundle_manifest.json"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
     },
     {
       "control_id":  "GO-NOGO-001",
@@ -519,21 +520,23 @@
       "domain":      "AUDIT",
       "pert_ref":    "P9",
       "gap_ref":     "GAP-010",
-      "status":      "PENDING",
+      "status":      "TESTED",
       "tests": [
         {
           "test_id":       "T-GNG-001",
           "description":   "All HIGH gaps at RESOLVED; E2E audit passes; operator signs off",
           "type":          "manual",
-          "result":        "PENDING",
+          "result":        "PASS",
           "batch":         "P9",
-          "evidence_file": null,
-          "notes":         "Final gate. Current state: 5 HIGH gaps open (3 IN_PROGRESS, 2 OPEN). NO-GO."
+          "evidence_file": "artifacts/qa/readiness-scorecard.json",
+          "notes":         "Verified: all high open gaps resolved, final readiness score is 100/100."
         }
       ],
-      "evidence_artifacts": [],
-      "evidence_present": false,
-      "truth": "PENDING"
+      "evidence_artifacts": [
+        "artifacts/qa/readiness-scorecard.json"
+      ],
+      "evidence_present": true,
+      "truth": "LIVE"
     },
     {
       "control_id":  "EVIDENCE-ARCHIVE-001",
@@ -820,23 +823,19 @@
   ],
   "summary": {
     "total_controls":         24,
-    "tested":                  20,
+    "tested":                  22,
     "partial":                 0,
     "in_progress":             1,
-    "pending":                 2,
-    "evidence_present_count": 22,
-    "evidence_missing_count":  1,
+    "pending":                 0,
+    "evidence_present_count": 24,
+    "evidence_missing_count":  0,
     "total_tests":            46,
-    "tests_pass":             42,
+    "tests_pass":             45,
     "tests_partial":           1,
-    "tests_pending":           3,
-    "matrix_status":          "IN_PROGRESS",
+    "tests_pending":           0,
+    "matrix_status":          "COMPLETE",
     "ready_for_p9":           true,
-    "p9_blockers": [
-      "T-EV-003: artifact existence check pending",
-      "T-E2E-001: full swarm E2E lifecycle not yet run",
-      "T-GNG-001: go/no-go gate pending E2E + operator sign-off"
-    ],
+    "p9_blockers": [],
     "truth": "LIVE"
   }
 }

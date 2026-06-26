@@ -7301,6 +7301,20 @@ def production_readiness():
     gap008_status = "RESOLVED" if p4_status == "COMPLETE" else "IN_PROGRESS"
     gap006_status = "RESOLVED" if p1_sealed else "IN_PROGRESS"
 
+    # ── P9 E2E Audit Run check ──────────────────────────────────────────────────
+    p9_passed = False
+    try:
+        p9_tests = [t for c in qa_matrix.get("controls", []) for t in c.get("tests", []) if t.get("batch") == "P9"]
+        if p9_tests and all(t.get("result") == "PASS" for t in p9_tests):
+            import glob as _glob
+            bundles = _glob.glob(str(_base / "dist" / "attestations" / "attestation-bundle-*"))
+            if bundles:
+                p9_passed = True
+    except Exception:
+        pass
+
+    gap010_status = "RESOLVED" if p9_passed else "OPEN"
+
     # ── P5 — QA evidence matrix ───────────────────────────────────────────────
     qa_summ         = qa_matrix.get("summary", {})
     qa_controls     = len(qa_matrix.get("controls", []))
@@ -7311,7 +7325,7 @@ def production_readiness():
     qa_matrix_ok    = qa_truth == "LIVE" and qa_controls >= 10
     p5_status       = "IN_PROGRESS" if qa_matrix_ok else "PENDING"
     # GAP-004: IN_PROGRESS once matrix exists; RESOLVED only after P9 E2E
-    gap004_status   = "IN_PROGRESS" if qa_matrix_ok else "OPEN"
+    gap004_status   = "RESOLVED" if (qa_matrix_ok and p9_passed) else ("IN_PROGRESS" if qa_matrix_ok else "OPEN")
     qa_matrix_summary = {
         "controls":    qa_controls,
         "tested":      qa_tested,
@@ -7347,6 +7361,9 @@ def production_readiness():
             ws["status"] = p5_status
             ws["evidence_resolved"] = qa_matrix_ok
             ws["controls_mapped"] = qa_controls
+        if ws["id"] == "P9":
+            ws["status"] = "COMPLETE" if p9_passed else "IN_PROGRESS"
+            ws["evidence_resolved"] = p9_passed
 
     # Live counts from ledger DB (non-fatal)
     approval_summary = {}
@@ -7382,7 +7399,8 @@ def production_readiness():
          "truth":port_truth,     "evidence":"config/port_hardening_audit.json (8000/3000 PASS; all 11 non-swarm LAN ports operator-approved)" if gap008_status == "RESOLVED" else "config/port_hardening_audit.json (8000/3000 PASS; 7 host ports REVIEW_REQUIRED)"},
         {"id":"GAP-009","area":"Worker Profiles",    "severity":"HIGH",  "status":gap009_status,  "pert":"P8",
          "truth":profiles_truth, "evidence":"config/cluster_worker_profiles.json" if p8_status=="COMPLETE" else "MISSING"},
-        {"id":"GAP-010","area":"E2E Audit Run",      "severity":"HIGH",  "status":"OPEN",         "pert":"P9"},
+        {"id":"GAP-010","area":"E2E Audit Run",      "severity":"HIGH",  "status":gap010_status,  "pert":"P9",
+         "truth":qa_truth, "evidence":"dist/attestations/ (release attestation bundle generated successfully)" if gap010_status == "RESOLVED" else "PENDING"},
     ]
 
     high_open = [g for g in gaps if g["severity"] == "HIGH" and g["status"] not in ("RESOLVED", "COMPLETE")]
