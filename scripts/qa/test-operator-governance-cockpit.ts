@@ -46,6 +46,9 @@ function runContractTest() {
     if (!mainPy.includes("/api/v1/release/evidence/archive/build-plan")) {
       blockers.push("backend/main.py missing /api/v1/release/evidence/archive/build-plan endpoint");
     }
+    if (!mainPy.includes("/api/v1/release/evidence/archive/seal-preview")) {
+      blockers.push("backend/main.py missing /api/v1/release/evidence/archive/seal-preview endpoint");
+    }
     if (!mainPy.includes("TEST_MODE =")) {
       blockers.push("backend/main.py missing TEST_MODE definition");
     }
@@ -151,7 +154,21 @@ function runContractTest() {
       "archive-build-plan-warnings-list",
       "btn-export-build-plan-markdown",
       "btn-export-build-plan-json",
-      "archive-build-operations-tbody"
+      "archive-build-operations-tbody",
+      "release-evidence-archive-seal-preview-panel",
+      "btn-generate-archive-seal-preview",
+      "archive-seal-preview-details",
+      "archive-seal-status",
+      "archive-seal-candidate-id",
+      "archive-seal-id",
+      "archive-seal-archive-id",
+      "archive-seal-manifest-hash",
+      "archive-seal-custody-path",
+      "archive-seal-operator",
+      "archive-seal-preview-warnings",
+      "archive-seal-preview-warnings-list",
+      "btn-export-seal-preview-markdown",
+      "btn-export-seal-preview-json"
     ];
     for (const id of requiredIds) {
       if (!html.includes(`id="${id}"`)) {
@@ -184,7 +201,9 @@ function runContractTest() {
       "PLANNED INCLUDED ARTIFACTS",
       "RELEASE EVIDENCE ARCHIVE BUILDER DRY RUN",
       "Ordered Build Operations",
-      "DRY-RUN & ROLLBACK SAFETY ASSURANCE"
+      "DRY-RUN & ROLLBACK SAFETY ASSURANCE",
+      "RELEASE EVIDENCE ARCHIVE SEAL PREVIEW",
+      "CUSTODY SEAL SAFE-GUARD INVARIANT"
     ];
     for (const text of requiredTexts) {
       if (!html.includes(text)) {
@@ -266,6 +285,18 @@ function runContractTest() {
     }
     if (!appJs.includes("exportBuildPlanJSON")) {
       blockers.push("frontend/app.js does not define exportBuildPlanJSON");
+    }
+    if (!appJs.includes("initReleaseEvidenceArchiveSealPreview")) {
+      blockers.push("frontend/app.js does not define initReleaseEvidenceArchiveSealPreview");
+    }
+    if (!appJs.includes("generateArchiveSealPreview")) {
+      blockers.push("frontend/app.js does not define generateArchiveSealPreview");
+    }
+    if (!appJs.includes("exportSealPreviewMarkdown")) {
+      blockers.push("frontend/app.js does not define exportSealPreviewMarkdown");
+    }
+    if (!appJs.includes("exportSealPreviewJSON")) {
+      blockers.push("frontend/app.js does not define exportSealPreviewJSON");
     }
   }
 

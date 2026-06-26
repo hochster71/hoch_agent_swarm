@@ -1548,6 +1548,77 @@
                     </div>
                 </section>
 
+                <!-- Release Evidence Archive Seal Preview Panel (Phase 29) -->
+                <section class="card" id="release-evidence-archive-seal-preview-panel" style="padding: 20px; margin-bottom: 10px; border-left: 4px solid var(--accent-purple);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-glass); padding-bottom: 12px; margin-bottom: 16px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i data-lucide="shield-check" style="color: var(--accent-purple); width: 20px; height: 20px;"></i>
+                            <h3 style="font-size: 16px; font-weight: 700; color: #fff; margin: 0;">RELEASE EVIDENCE ARCHIVE SEAL PREVIEW</h3>
+                        </div>
+                        <div>
+                            <button id="btn-generate-archive-seal-preview" class="btn btn-xs btn-outline btn-secondary" style="display: flex; align-items: center; gap: 4px; border-color: var(--accent-purple); color: var(--accent-purple);">
+                                <i data-lucide="play" style="width: 12px; height: 12px;"></i> Generate Seal Preview
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Seal Preview Information (Hidden by default, shown after generation) -->
+                    <div id="archive-seal-preview-details" class="hidden" style="display: flex; flex-direction: column; gap: 16px;">
+                        <!-- Metadata block -->
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 8px; padding: 12px; font-size: 11px;">
+                            <div style="display: grid; grid-template-columns: 150px 1fr; gap: 8px; align-items: center;">
+                                <span style="color: var(--text-secondary);">Seal Readiness:</span>
+                                <div>
+                                    <span id="archive-seal-status" style="font-size: 9px; font-weight: bold; padding: 2px 8px; border-radius: 4px;">-</span>
+                                </div>
+                                <span style="color: var(--text-secondary);">Linked Release Candidate:</span>
+                                <span id="archive-seal-candidate-id" style="font-family: monospace; color: #fff; word-break: break-all;">-</span>
+                                <span style="color: var(--text-secondary);">Seal ID:</span>
+                                <span id="archive-seal-id" style="font-family: monospace; color: var(--accent-purple); word-break: break-all;">-</span>
+                                <span style="color: var(--text-secondary);">Archive ID:</span>
+                                <span id="archive-seal-archive-id" style="font-family: monospace; color: var(--accent-teal); word-break: break-all;">-</span>
+                                <span style="color: var(--text-secondary);">Manifest Hash:</span>
+                                <span id="archive-seal-manifest-hash" style="font-family: monospace; color: var(--accent-cyan); word-break: break-all;">-</span>
+                                <span style="color: var(--text-secondary);">Planned Custody Path:</span>
+                                <span id="archive-seal-custody-path" style="font-family: monospace; color: #fff; word-break: break-all;">-</span>
+                                <span style="color: var(--text-secondary);">Signing Operator:</span>
+                                <span id="archive-seal-operator" style="color: #fff;">-</span>
+                            </div>
+                        </div>
+
+                        <!-- Warnings section -->
+                        <div id="archive-seal-preview-warnings" class="hidden" style="background: rgba(249, 115, 22, 0.05); border: 1px solid rgba(249, 115, 22, 0.15); border-radius: 8px; padding: 12px; font-size: 11px;">
+                            <div style="display: flex; align-items: center; gap: 8px; color: var(--accent-orange); font-weight: bold; margin-bottom: 6px;">
+                                <i data-lucide="shield-alert" style="width: 14px; height: 14px;"></i> CUSTODY SEAL BLOCKED
+                            </div>
+                            <ul id="archive-seal-preview-warnings-list" style="margin: 0; padding-left: 16px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 4px;">
+                                <!-- Warnings will be listed here -->
+                            </ul>
+                        </div>
+
+                        <!-- Safety Notice -->
+                        <div style="background: rgba(168, 85, 247, 0.03); border: 1px solid rgba(168, 85, 247, 0.15); border-radius: 8px; padding: 12px; font-size: 10px;">
+                            <div style="font-weight: bold; color: var(--accent-purple); margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                                <i data-lucide="info" style="width: 14px; height: 14px;"></i> CUSTODY SEAL SAFE-GUARD INVARIANT
+                            </div>
+                            <div style="color: var(--text-secondary); line-height: 1.4;">
+                                This preview validates all custody requirements before creating the final release seal.
+                                In compliance with supply chain controls, this preview commits zero modifications to local files and writes no archive or signature artifacts to disk.
+                            </div>
+                        </div>
+
+                        <!-- Export actions -->
+                        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                            <button id="btn-export-seal-preview-markdown" class="btn btn-xs btn-outline btn-secondary" style="display: flex; align-items: center; gap: 4px;">
+                                <i data-lucide="file-text" style="width: 12px; height: 12px;"></i> Export Seal Preview Markdown
+                            </button>
+                            <button id="btn-export-seal-preview-json" class="btn btn-xs btn-outline btn-secondary" style="display: flex; align-items: center; gap: 4px;">
+                                <i data-lucide="code" style="width: 12px; height: 12px;"></i> Export Seal Preview JSON
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- Token Authority Confirmation Modal -->
                 <div id="authority-request-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px;">
                     <div class="card" style="width: 100%; max-width: 500px; padding: 24px; background: #121214; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5);">

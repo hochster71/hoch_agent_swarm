@@ -2008,6 +2008,208 @@ def get_release_evidence_archive_build_plan():
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.get("/api/v1/release/evidence/archive/seal-preview")
+def get_release_evidence_archive_seal_preview(candidate_packet_id: str = None):
+    from backend.runtime_execution_store import scan_and_index_evidence, list_candidate_release_packets, get_active_authority_token
+    from pathlib import Path
+    import hashlib
+    import json
+    import os
+    from datetime import datetime, timezone
+    
+    try:
+        # Discover candidate packet if not explicitly provided
+        if not candidate_packet_id:
+            packets = list_candidate_release_packets()
+            if packets:
+                candidate_packet_id = packets[0]["candidate_packet_id"]
+                
+        # 1. Authority validation
+        has_auth = False
+        auth_token_val = "N/A"
+        operator_name = "N/A"
+        if candidate_packet_id:
+            token = get_active_authority_token(candidate_packet_id)
+            if token:
+                expires = datetime.fromisoformat(token["expires_at"].replace("Z", "+00:00"))
+                if expires > datetime.now(timezone.utc):
+                    has_auth = True
+                    auth_token_val = token["token_value"]
+                    operator_name = token.get("operator", "Operator")
+
+        # 2. Evidence validation (reusing the same logic from build-plan)
+        evidence_list = scan_and_index_evidence()
+        project_root = Path(__file__).resolve().parent.parent
+        
+        included = []
+        excluded = []
+        needs_review = []
+        missing = []
+        
+        for item in evidence_list:
+            full_path = project_root / item["source_path"]
+            exists = full_path.exists()
+            decision = item["retention_decision"]
+            
+            item_info = {
+                "evidence_id": item["evidence_id"],
+                "source_path": item["source_path"],
+                "file_hash": item["file_hash"],
+                "artifact_type": item["artifact_type"]
+            }
+            
+            if decision == "retain":
+                if not exists:
+                    missing.append(item_info)
+                else:
+                    size_bytes = 0
+                    if full_path.is_file():
+                        size_bytes = full_path.stat().st_size
+                    elif full_path.is_dir():
+                        for root, dirs, files in os.walk(full_path):
+                            for f in files:
+                                fp = Path(root) / f
+                                if fp.exists():
+                                    size_bytes += fp.stat().st_size
+                    item_info["size_bytes"] = size_bytes
+                    included.append(item_info)
+            elif decision in ("ignore", "archive"):
+                item_info["retention_decision"] = decision
+                excluded.append(item_info)
+            elif decision == "needs-review":
+                needs_review.append(item_info)
+                
+        # Hash planned manifest & archive checksum
+        sorted_included = sorted(included, key=lambda x: x["evidence_id"])
+        h = hashlib.sha256()
+        for idx_item in sorted_included:
+            h.update(idx_item["file_hash"].encode('utf-8'))
+        simulated_checksum = h.hexdigest()
+        
+        timestamp_str = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        planned_archive_path = f"dist/archives/evidence-archive-{timestamp_str}-{simulated_checksum[:8]}.tar.gz"
+        planned_manifest_path = f"dist/archives/evidence-manifest-{timestamp_str}.json"
+        
+        manifest_payload = {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "planned_archive_path": planned_archive_path,
+            "archive_checksum_sha256": simulated_checksum,
+            "included_count": len(included),
+            "excluded_count": len(excluded),
+            "needs_review_count": len(needs_review),
+            "missing_count": len(missing),
+            "included_artifacts": [
+                {
+                    "evidence_id": item["evidence_id"],
+                    "source_path": item["source_path"],
+                    "file_hash": item["file_hash"],
+                    "artifact_type": item["artifact_type"],
+                    "size_bytes": item.get("size_bytes", 0)
+                } for item in sorted_included
+            ]
+        }
+        manifest_json_str = json.dumps(manifest_payload, indent=2)
+        expected_manifest_hash = hashlib.sha256(manifest_json_str.encode('utf-8')).hexdigest()
+        
+        has_unclassified_evidence = len(needs_review) > 0
+        has_missing_evidence = len(missing) > 0
+        
+        # Readiness check
+        can_seal = bool(candidate_packet_id and has_auth and not has_unclassified_evidence and not has_missing_evidence)
+        seal_readiness = "READY" if can_seal else "BLOCKED"
+        
+        # Metadata values
+        seal_id = hashlib.sha256(f"{expected_manifest_hash}:{auth_token_val}:{operator_name}".encode('utf-8')).hexdigest() if can_seal else "N/A"
+        archive_id = simulated_checksum if can_seal else "N/A"
+        manifest_hash = expected_manifest_hash if can_seal else "N/A"
+        custody_path = planned_archive_path
+        operator_val = operator_name if has_auth else "N/A"
+        timestamp_val = datetime.now(timezone.utc).isoformat()
+        policy_version = "v0.1.6"
+        
+        # Blockers list
+        blockers = []
+        if not candidate_packet_id:
+            blockers.append("Missing release candidate packet linkage. Please build a candidate packet first.")
+        if not has_auth:
+            blockers.append("Formal release authority token is missing or expired. Operators must request authority in the Decision Room.")
+        if has_unclassified_evidence:
+            blockers.append("Blocked by unclassified evidence. Please classify all items in the Retention Policy Manager.")
+        if has_missing_evidence:
+            blockers.append("Blocked by missing retained evidence files. Ensure all retained files exist on disk.")
+
+        # Markdown report
+        md = f"# Release Evidence Archive Seal Preview (Dry Run)\n\n"
+        md += f"- **Generated At**: {timestamp_val}\n"
+        md += f"- **Seal Readiness**: `{seal_readiness}`\n"
+        md += f"- **Linked Candidate Packet**: `{candidate_packet_id or 'N/A'}`\n"
+        md += f"- **Policy Version**: `{policy_version}`\n\n"
+        
+        md += f"## Planned Seal Metadata\n\n"
+        md += f"| Parameter | Planned Value |\n"
+        md += f"| --- | --- |\n"
+        md += f"| Seal ID | `{seal_id}` |\n"
+        md += f"| Archive ID | `{archive_id}` |\n"
+        md += f"| Manifest Hash | `{manifest_hash}` |\n"
+        md += f"| Custody Path | `{custody_path}` |\n"
+        md += f"| Signing Operator | `{operator_val}` |\n"
+        md += f"| Timestamp | `{timestamp_val}` |\n\n"
+        
+        md += f"## Validation & Custody Checks\n\n"
+        md += f"| Rule Check | Status | Description |\n"
+        md += f"| --- | --- | --- |\n"
+        md += f"| Candidate Linkage | {'PASS' if candidate_packet_id else 'FAIL'} | Release candidate packet must be created and linked. |\n"
+        md += f"| Authority Enforced | {'PASS' if has_auth else 'FAIL'} | Valid, non-expired release authority token must be present. |\n"
+        md += f"| Classification Enforced | {'PASS' if not has_unclassified_evidence else 'FAIL'} | All evidence must be classified (retained/ignored/archived). |\n"
+        md += f"| Filesystem Existence | {'PASS' if not has_missing_evidence else 'FAIL'} | All retained evidence must exist on disk. |\n"
+        md += f"| Overall Seal Status | {seal_readiness} | {'Seal preview is blocked due to validation failures.' if not can_seal else 'Seal preview is ready.'} |\n\n"
+        
+        if blockers:
+            md += "### ⚠️ Seal Blockers\n\n"
+            for b in blockers:
+                md += f"- **Blocker**: {b}\n"
+            md += "\n"
+            
+        md += "## Zero-Mutation Dry-Run Safety Invariant\n\n"
+        md += "```text\n"
+        md += "1. Safe Execution: This seal preview represents a read-only assessment of custody metadata.\n"
+        md += "2. Non-Mutating: No archives are created, no manifest files are written, and no evidence is modified.\n"
+        md += "```\n"
+        
+        seal_payload = {
+            "seal_id": seal_id,
+            "archive_id": archive_id,
+            "manifest_hash": manifest_hash,
+            "custody_path": custody_path,
+            "operator": operator_val,
+            "timestamp": timestamp_val,
+            "policy_version": policy_version,
+            "candidate_packet_id": candidate_packet_id or "N/A"
+        }
+        
+        return {
+            "status": "success",
+            "seal_readiness": seal_readiness,
+            "candidate_packet_id": candidate_packet_id or "N/A",
+            "seal_id": seal_id,
+            "archive_id": archive_id,
+            "manifest_hash": manifest_hash,
+            "custody_path": custody_path,
+            "operator": operator_val,
+            "timestamp": timestamp_val,
+            "policy_version": policy_version,
+            "can_seal": can_seal,
+            "has_auth": has_auth,
+            "has_unclassified_evidence": has_unclassified_evidence,
+            "has_missing_evidence": has_missing_evidence,
+            "blockers": blockers,
+            "seal_payload": seal_payload,
+            "markdown": md
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.post("/api/v1/release/candidate-packets")
 def create_candidate_packet(req: CandidatePacketRequest):
     import uuid

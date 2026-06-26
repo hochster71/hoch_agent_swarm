@@ -10969,6 +10969,7 @@ async function initReleaseDecisionRoom() {
     await initReleaseEvidenceRetention();
     await initReleaseEvidenceArchivePreview();
     await initReleaseEvidenceArchiveBuildPlan();
+    await initReleaseEvidenceArchiveSealPreview();
 
     await populateDecisionRoomCandidates();
 }
@@ -12023,6 +12024,142 @@ window.initReleaseEvidenceArchiveBuildPlan = initReleaseEvidenceArchiveBuildPlan
 window.generateArchiveBuildPlan = generateArchiveBuildPlan;
 window.exportBuildPlanMarkdown = exportBuildPlanMarkdown;
 window.exportBuildPlanJSON = exportBuildPlanJSON;
+
+
+let lastArchiveSealPreviewData = null;
+
+async function initReleaseEvidenceArchiveSealPreview() {
+    const genBtn = document.getElementById("btn-generate-archive-seal-preview");
+    if (genBtn) {
+        genBtn.addEventListener("click", generateArchiveSealPreview);
+    }
+    const exportMdBtn = document.getElementById("btn-export-seal-preview-markdown");
+    if (exportMdBtn) {
+        exportMdBtn.addEventListener("click", exportSealPreviewMarkdown);
+    }
+    const exportJsonBtn = document.getElementById("btn-export-seal-preview-json");
+    if (exportJsonBtn) {
+        exportJsonBtn.addEventListener("click", exportSealPreviewJSON);
+    }
+}
+
+async function generateArchiveSealPreview() {
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/evidence/archive/seal-preview`);
+        if (!res.ok) {
+            const err = await res.json();
+            alert("Failed to generate archive seal preview: " + (err.detail || "Unknown error"));
+            return;
+        }
+        const data = await res.json();
+        lastArchiveSealPreviewData = data;
+        
+        const detailsEl = document.getElementById("archive-seal-preview-details");
+        if (detailsEl) {
+            detailsEl.classList.remove("hidden");
+        }
+        
+        const statusEl = document.getElementById("archive-seal-status");
+        if (statusEl) {
+            statusEl.textContent = data.seal_readiness;
+            if (data.seal_readiness === "READY") {
+                statusEl.style.color = "#10b981";
+                statusEl.style.background = "rgba(16, 185, 129, 0.15)";
+                statusEl.style.border = "1px solid rgba(16, 185, 129, 0.3)";
+            } else {
+                statusEl.style.color = "#f97316";
+                statusEl.style.background = "rgba(249, 115, 22, 0.15)";
+                statusEl.style.border = "1px solid rgba(249, 115, 22, 0.3)";
+            }
+        }
+        
+        const candidateIdEl = document.getElementById("archive-seal-candidate-id");
+        if (candidateIdEl) candidateIdEl.textContent = data.candidate_packet_id || "-";
+        
+        const sealIdEl = document.getElementById("archive-seal-id");
+        if (sealIdEl) sealIdEl.textContent = data.seal_id || "-";
+        
+        const archiveIdEl = document.getElementById("archive-seal-archive-id");
+        if (archiveIdEl) archiveIdEl.textContent = data.archive_id || "-";
+        
+        const manifestHashEl = document.getElementById("archive-seal-manifest-hash");
+        if (manifestHashEl) manifestHashEl.textContent = data.manifest_hash || "-";
+        
+        const custodyPathEl = document.getElementById("archive-seal-custody-path");
+        if (custodyPathEl) custodyPathEl.textContent = data.custody_path || "-";
+        
+        const operatorEl = document.getElementById("archive-seal-operator");
+        if (operatorEl) operatorEl.textContent = data.operator || "-";
+        
+        // Warnings
+        const warningsPanel = document.getElementById("archive-seal-preview-warnings");
+        const warningsList = document.getElementById("archive-seal-preview-warnings-list");
+        if (warningsPanel && warningsList) {
+            warningsList.innerHTML = "";
+            if (data.seal_readiness === "BLOCKED") {
+                warningsPanel.classList.remove("hidden");
+                const blockers = data.blockers || [];
+                if (blockers.length === 0) {
+                    const li = document.createElement("li");
+                    li.innerHTML = `Blocked by custody verification constraints.`;
+                    warningsList.appendChild(li);
+                } else {
+                    blockers.forEach(b => {
+                        const li = document.createElement("li");
+                        li.innerHTML = `<strong>Blocker</strong>: ${b}`;
+                        warningsList.appendChild(li);
+                    });
+                }
+            } else {
+                warningsPanel.classList.add("hidden");
+            }
+        }
+        
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
+    } catch (err) {
+        console.error("Error generating archive seal preview:", err);
+        alert("Error generating archive seal preview: " + err.message);
+    }
+}
+
+function exportSealPreviewMarkdown() {
+    if (!lastArchiveSealPreviewData || !lastArchiveSealPreviewData.markdown) {
+        alert("Please generate the seal preview first before exporting.");
+        return;
+    }
+    const blob = new Blob([lastArchiveSealPreviewData.markdown], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "release-evidence-archive-seal-preview.md";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function exportSealPreviewJSON() {
+    if (!lastArchiveSealPreviewData || !lastArchiveSealPreviewData.seal_payload) {
+        alert("Please generate the seal preview first before exporting.");
+        return;
+    }
+    const blob = new Blob([JSON.stringify(lastArchiveSealPreviewData.seal_payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "release-evidence-archive-seal-preview.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+window.initReleaseEvidenceArchiveSealPreview = initReleaseEvidenceArchiveSealPreview;
+window.generateArchiveSealPreview = generateArchiveSealPreview;
+window.exportSealPreviewMarkdown = exportSealPreviewMarkdown;
+window.exportSealPreviewJSON = exportSealPreviewJSON;
 
 
 
