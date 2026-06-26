@@ -10951,6 +10951,21 @@ async function initReleaseDecisionRoom() {
         });
     }
 
+    // Phase 25: Execution Plan event listeners
+    const generatePlanBtn = document.getElementById("btn-generate-execution-plan");
+    const exportPlanMdBtn = document.getElementById("btn-export-plan-markdown");
+    const exportPlanJsonBtn = document.getElementById("btn-export-plan-json");
+
+    if (generatePlanBtn) {
+        generatePlanBtn.addEventListener("click", generateExecutionPlan);
+    }
+    if (exportPlanMdBtn) {
+        exportPlanMdBtn.addEventListener("click", exportPlanMarkdown);
+    }
+    if (exportPlanJsonBtn) {
+        exportPlanJsonBtn.addEventListener("click", exportPlanJson);
+    }
+
     await populateDecisionRoomCandidates();
 }
 
@@ -10981,6 +10996,15 @@ async function updateReleaseAuthorityUI() {
         if (detailsContainer) detailsContainer.classList.add("hidden");
         clearInterval(authorityCountdownInterval);
         activeAuthorityToken = null;
+
+        const generatePlanBtn = document.getElementById("btn-generate-execution-plan");
+        if (generatePlanBtn) generatePlanBtn.disabled = true;
+        const planDetails = document.getElementById("execution-plan-details");
+        if (planDetails) planDetails.classList.add("hidden");
+        const actionsContainer = document.getElementById("execution-plan-actions-container");
+        if (actionsContainer) actionsContainer.classList.add("hidden");
+        currentGeneratedPlan = null;
+
         return;
     }
 
@@ -10990,6 +11014,9 @@ async function updateReleaseAuthorityUI() {
         const res = await fetch(`${API_BASE}/api/v1/release/authority/state/${packetId}`);
         if (!res.ok) return;
         const data = await res.json();
+
+        const generatePlanBtn = document.getElementById("btn-generate-execution-plan");
+        if (generatePlanBtn) generatePlanBtn.disabled = false;
 
         if (data.status === "active") {
             activeAuthorityToken = data.token_value;
@@ -11421,5 +11448,104 @@ window.populateDecisionRoomCandidates = populateDecisionRoomCandidates;
 window.handleCandidateSelectionChange = handleCandidateSelectionChange;
 window.simulateDecision = simulateDecision;
 window.exportDecisionMemo = exportDecisionMemo;
+
+let currentGeneratedPlan = null;
+
+async function generateExecutionPlan() {
+    if (!currentDecisionRoomCandidate) {
+        alert("No candidate packet selected.");
+        return;
+    }
+
+    const packetId = currentDecisionRoomCandidate.candidate_packet_id;
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/execution-plan/generate`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                candidate_packet_id: packetId,
+                operator: "Michael Hoch"
+            })
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            currentGeneratedPlan = data;
+
+            const tbody = document.getElementById("execution-plan-steps-tbody");
+            if (tbody) {
+                tbody.innerHTML = "";
+                data.steps.forEach(step => {
+                    const row = document.createElement("tr");
+                    row.style.borderBottom = "1px solid rgba(255,255,255,0.03)";
+                    
+                    const badgeColor = step.status === "SATISFIED" ? "var(--accent-teal)" : "var(--accent-orange)";
+                    const badgeBg = step.status === "SATISFIED" ? "rgba(20, 184, 166, 0.15)" : "rgba(239, 68, 68, 0.15)";
+                    const badgeBorder = step.status === "SATISFIED" ? "rgba(20, 184, 166, 0.3)" : "rgba(239, 68, 68, 0.3)";
+
+                    row.innerHTML = `
+                        <td style="padding: 8px 12px; font-weight: bold; color: var(--accent-blue);">${step.step}</td>
+                        <td style="padding: 8px 12px; font-weight: 500; color: #fff;">${step.title}</td>
+                        <td style="padding: 8px 12px;"><code style="font-family: monospace; color: var(--accent-teal); background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 4px; display: inline-block; max-width: 320px; overflow-x: auto; white-space: nowrap;">${step.command}</code></td>
+                        <td style="padding: 8px 12px; color: var(--text-secondary); font-family: monospace;">${step.scope_required}</td>
+                        <td style="padding: 8px 12px; text-align: center;">
+                            <span style="font-size: 10px; font-weight: bold; color: ${badgeColor}; background: ${badgeBg}; border: 1px solid ${badgeBorder}; padding: 2px 8px; border-radius: 4px; display: inline-block;">
+                                ${step.status}
+                            </span>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+
+            const details = document.getElementById("execution-plan-details");
+            if (details) details.classList.remove("hidden");
+            const actionsContainer = document.getElementById("execution-plan-actions-container");
+            if (actionsContainer) actionsContainer.classList.remove("hidden");
+
+        } else {
+            const err = await res.json();
+            alert("Failed to generate execution plan: " + (err.detail || "Unknown error"));
+        }
+    } catch (err) {
+        alert("Error generating execution plan: " + err.message);
+    }
+}
+
+function exportPlanMarkdown() {
+    if (!currentGeneratedPlan) {
+        alert("No plan generated to export.");
+        return;
+    }
+    const blob = new Blob([currentGeneratedPlan.markdown], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `formal-release-execution-plan-${currentGeneratedPlan.candidate_packet_id}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function exportPlanJson() {
+    if (!currentGeneratedPlan) {
+        alert("No plan generated to export.");
+        return;
+    }
+    const blob = new Blob([JSON.stringify(currentGeneratedPlan, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `formal-release-execution-plan-${currentGeneratedPlan.candidate_packet_id}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+window.generateExecutionPlan = generateExecutionPlan;
+window.exportPlanMarkdown = exportPlanMarkdown;
+window.exportPlanJson = exportPlanJson;
 
 

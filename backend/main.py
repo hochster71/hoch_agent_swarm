@@ -1568,6 +1568,104 @@ def promote_release(req: PromoteRequest):
         }
     }
 
+class ExecutionPlanRequest(BaseModel):
+    candidate_packet_id: str
+    operator: str
+
+@app.post("/api/v1/release/execution-plan/generate")
+def generate_execution_plan(req: ExecutionPlanRequest):
+    packet = get_candidate_release_packet(req.candidate_packet_id)
+    if not packet:
+        raise HTTPException(status_code=404, detail="Candidate packet not found")
+        
+    version = packet.get("candidate_version", "unknown")
+    token = get_active_authority_token(req.candidate_packet_id)
+    has_auth = token is not None
+    
+    steps = [
+        {
+            "step": 1,
+            "category": "validate",
+            "title": "Verify Release Readiness and Compliance",
+            "command": "npm run qa:runtime-full",
+            "scope_required": "none",
+            "status": "SATISFIED"
+        },
+        {
+            "step": 2,
+            "category": "tag",
+            "title": "Mutate Git Tags (Release Tagging)",
+            "command": f"git tag -a v{version} -m \"release v{version}\" && git push origin v{version}",
+            "scope_required": "mutating git tags",
+            "status": "SATISFIED" if has_auth else "MISSING"
+        },
+        {
+            "step": 3,
+            "category": "sign",
+            "title": "Cryptographic Signing of Release Artifacts",
+            "command": f"cosign sign-blob --yes --output-signature dist/releases/{version}/release_manifest.json.sig dist/releases/{version}/release_manifest.json",
+            "scope_required": "artifact signing",
+            "status": "SATISFIED" if has_auth else "MISSING"
+        },
+        {
+            "step": 4,
+            "category": "publish",
+            "title": "Publish Bundle to Registry",
+            "command": "npm publish --registry=https://registry.npmjs.org/",
+            "scope_required": "package publishing",
+            "status": "SATISFIED" if has_auth else "MISSING"
+        },
+        {
+            "step": 5,
+            "category": "deploy",
+            "title": "Deploy Swarm Configurations to Production",
+            "command": "kubectl apply -f k8s/production-swarm.yaml",
+            "scope_required": "prod deployment",
+            "status": "SATISFIED" if has_auth else "MISSING"
+        },
+        {
+            "step": 6,
+            "category": "rollback",
+            "title": "Emergency Rollback Protocol",
+            "command": f"kubectl rollout undo deployment/swarm-deployment && git tag -d v{version} && git push --delete origin v{version}",
+            "scope_required": "mutating git tags, prod deployment",
+            "status": "SATISFIED" if has_auth else "MISSING"
+        },
+        {
+            "step": 7,
+            "category": "audit",
+            "title": "Seal Ledger Record and Archive Release Evidence",
+            "command": "python3 scripts/supply-chain/record-release-audit.py",
+            "scope_required": "none",
+            "status": "SATISFIED"
+        }
+    ]
+    
+    auth_str = "GRANTED (Active)" if has_auth else "ABSENT (Simulation Mode Only)"
+    md = f"# Formal Release Execution Plan — Candidate: {req.candidate_packet_id}\n"
+    md += f"- **Operator**: {req.operator}\n"
+    md += f"- **Version**: v{version}\n"
+    md += f"- **Authority Status**: {auth_str}\n\n"
+    md += "## Ordered Release Steps\n\n"
+    
+    for s in steps:
+        md += f"### Step {s['step']}: {s['title']}\n"
+        md += f"- **Category**: `{s['category']}`\n"
+        md += f"- **Required Scope**: `{s['scope_required']}`\n"
+        md += f"- **Authority Check**: **{s['status']}**\n"
+        md += f"- **Dry-Run Command**:\n```bash\n{s['command']}\n```\n\n"
+        
+    md += "---\n🔒 **Zero-Mutation Dry-Run Notice**: No commands were executed. All release pathways remain simulation/preview-only.\n"
+    
+    return {
+        "status": "success",
+        "candidate_packet_id": req.candidate_packet_id,
+        "version": version,
+        "authority_status": "granted" if has_auth else "absent",
+        "steps": steps,
+        "markdown": md
+    }
+
 @app.post("/api/v1/release/candidate-packets")
 def create_candidate_packet(req: CandidatePacketRequest):
     import uuid

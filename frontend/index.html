@@ -1263,6 +1263,57 @@
                     </div>
                 </section>
 
+                <!-- Formal Release Execution Dry-Run Plan Panel (Phase 25) -->
+                <section class="card" id="release-execution-plan-panel" style="padding: 20px; margin-bottom: 10px; border-left: 4px solid var(--accent-blue);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-glass); padding-bottom: 12px; margin-bottom: 16px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i data-lucide="file-text" style="color: var(--accent-blue); width: 20px; height: 20px;"></i>
+                            <h3 style="font-size: 16px; font-weight: 700; color: #fff; margin: 0;">FORMAL RELEASE EXECUTION DRY-RUN PLANNER</h3>
+                        </div>
+                        <div id="execution-plan-actions-container" class="hidden" style="display: flex; gap: 8px;">
+                            <button id="btn-export-plan-markdown" class="btn btn-xs btn-outline btn-success" style="display: flex; align-items: center; gap: 4px;">
+                                <i data-lucide="download" style="width: 12px; height: 12px;"></i> Export Markdown Plan
+                            </button>
+                            <button id="btn-export-plan-json" class="btn btn-xs btn-outline btn-info" style="display: flex; align-items: center; gap: 4px;">
+                                <i data-lucide="download" style="width: 12px; height: 12px;"></i> Export JSON Plan
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <div>
+                            <button id="btn-generate-execution-plan" class="btn btn-sm btn-outline btn-info" style="display: flex; align-items: center; gap: 4px;" disabled>
+                                <i data-lucide="play" style="width: 14px; height: 14px;"></i> Generate Dry-Run Execution Plan
+                            </button>
+                        </div>
+
+                        <!-- Ordered Steps Table -->
+                        <div id="execution-plan-details" class="hidden" style="background: rgba(0,0,0,0.15); border: 1px solid var(--border-glass); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+                            <h4 style="margin: 0; font-size: 12px; color: var(--accent-blue); font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 6px;">ORDERED EXECUTION PROTOCOL</h4>
+                            <div class="table-container" style="overflow-x: auto;">
+                                <table class="deployments-table" style="font-size: 11px; width: 100%; border-collapse: collapse;">
+                                    <thead>
+                                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); text-align: left;">
+                                            <th style="padding: 8px 12px;">Step</th>
+                                            <th style="padding: 8px 12px;">Title</th>
+                                            <th style="padding: 8px 12px;">Dry-Run Execution Command</th>
+                                            <th style="padding: 8px 12px;">Required Scope</th>
+                                            <th style="padding: 8px 12px; text-align: center;">Authority Check</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="execution-plan-steps-tbody">
+                                        <!-- Dynamically generated plan steps -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div style="font-size: 10px; color: var(--text-secondary); font-style: italic; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px; margin-top: 6px; display: flex; align-items: center; gap: 6px;">
+                                <i class="fas fa-info-circle" style="color: var(--accent-blue);"></i>
+                                <span>Note: All steps are evaluated dynamically against current candidate evidence and authority token status.</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- Token Authority Confirmation Modal -->
                 <div id="authority-request-modal" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px;">
                     <div class="card" style="width: 100%; max-width: 500px; padding: 24px; background: #121214; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5);">
