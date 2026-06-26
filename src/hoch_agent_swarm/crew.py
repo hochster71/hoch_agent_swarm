@@ -86,9 +86,8 @@ class HochAgentSwarm():
     def audit_security_task(self) -> Task:
         # Depends on assembled agent configs to audit their tool access and bounds
         return Task(
-            config=self.tasks_config['audit_security_task'], # type: ignore[index]
+            config=self.tasks_config['audit_security_task'],  # type: ignore[index]
             context=[self.assemble_agents_task()],
-            output_file='artifacts/security_reviews/security_audit_report.md',
         )
 
     @task
@@ -111,9 +110,8 @@ class HochAgentSwarm():
     def antigravity_integration_task(self) -> Task:
         # Depends on all prior outputs: uses synthesis report as primary source
         return Task(
-            config=self.tasks_config['antigravity_integration_task'], # type: ignore[index]
+            config=self.tasks_config['antigravity_integration_task'],  # type: ignore[index]
             context=[self.direct_synthesis_task()],
-            output_file='artifacts/antigravity/antigravity_execution_plan.md',
         )
 
     @crew

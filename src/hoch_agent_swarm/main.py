@@ -9,6 +9,7 @@ from datetime import datetime
 from hoch_agent_swarm.crew import HochAgentSwarm
 from hoch_agent_swarm.artifact_validation import (
     ArtifactValidationError,
+    ALL_CANONICAL_ARTIFACT_PATHS,
     ANTIGRAVITY_PLAN_PATH,
     SECURITY_AUDIT_PATH,
     validate_all_artifacts,
@@ -22,10 +23,8 @@ warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 
 _ARCHIVE_DIR = "artifacts/crew_runs"
 
-_CANONICAL_ARTIFACTS = [
-    SECURITY_AUDIT_PATH,
-    ANTIGRAVITY_PLAN_PATH,
-]
+# All canonical paths to archive before overwrite; defined in artifact_validation.py
+_CANONICAL_ARTIFACTS = ALL_CANONICAL_ARTIFACT_PATHS
 
 
 def _archive_existing_artifacts(run_timestamp: str) -> None:

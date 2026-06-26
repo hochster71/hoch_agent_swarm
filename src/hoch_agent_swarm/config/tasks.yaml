@@ -5,6 +5,7 @@ map_assets_task:
   expected_output: >
     A list of discovered assets and capability mappings.
   agent: asset_mapper
+  output_file: artifacts/research/asset_map.md
 
 design_architecture_task:
   description: >
@@ -44,6 +45,7 @@ audit_security_task:
     A structured markdown security audit report with all required sections filled in.
     Must be non-empty and directly usable as an audit record.
   agent: security_operator
+  output_file: artifacts/security_reviews/security_audit_report.md
 
 plan_execution_task:
   description: >
@@ -51,6 +53,7 @@ plan_execution_task:
   expected_output: >
     A structured sequential task execution plan.
   agent: execution_planner
+  output_file: artifacts/reports/execution_plan.md
 
 direct_synthesis_task:
   description: >
@@ -58,6 +61,7 @@ direct_synthesis_task:
   expected_output: >
     A synthesized release packet manifest.
   agent: synthesis_director
+  output_file: artifacts/reports/release_packet.md
 
 antigravity_integration_task:
   description: >
@@ -87,3 +91,4 @@ antigravity_integration_task:
     Must not contain code blocks, JSON, Python expressions, or pseudocode.
     Must be non-empty and directly readable as an operator-facing integration plan.
   agent: antigravity_integration_operator
+  output_file: artifacts/antigravity/antigravity_execution_plan.md

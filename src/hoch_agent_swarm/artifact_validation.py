@@ -25,6 +25,20 @@ from typing import Optional
 SECURITY_AUDIT_PATH = "artifacts/security_reviews/security_audit_report.md"
 ANTIGRAVITY_PLAN_PATH = "artifacts/antigravity/antigravity_execution_plan.md"
 
+# Intermediate durable artifact paths (added in Batch 4)
+ASSET_MAP_PATH = "artifacts/research/asset_map.md"
+EXECUTION_PLAN_PATH = "artifacts/reports/execution_plan.md"
+RELEASE_PACKET_PATH = "artifacts/reports/release_packet.md"
+
+# All canonical artifact paths that archive-before-overwrite applies to
+ALL_CANONICAL_ARTIFACT_PATHS = [
+    ASSET_MAP_PATH,
+    EXECUTION_PLAN_PATH,
+    RELEASE_PACKET_PATH,
+    SECURITY_AUDIT_PATH,
+    ANTIGRAVITY_PLAN_PATH,
+]
+
 # ---------------------------------------------------------------------------
 # Forbidden patterns (model garbage indicators)
 # ---------------------------------------------------------------------------
