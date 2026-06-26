@@ -523,6 +523,20 @@ def init_execution_store_tables() -> None:
             )
             """
         )
+        # Create crewai_ingested_artifacts table
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS crewai_ingested_artifacts (
+                id TEXT PRIMARY KEY,
+                source_path TEXT UNIQUE NOT NULL,
+                hash TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                artifact_type TEXT NOT NULL,
+                run_context_json TEXT NOT NULL,
+                ingested_at TEXT NOT NULL
+            )
+            """
+        )
         conn.commit()
     finally:
         conn.close()
@@ -2310,6 +2324,50 @@ def list_agent_model_policy_logs_db() -> list[dict]:
                 "logged_at": d["logged_at"]
             })
         return results
+    finally:
+        conn.close()
+
+def persist_crewai_ingested_artifact(artifact: dict) -> None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    try:
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO crewai_ingested_artifacts (
+                id, source_path, hash, created_at, artifact_type, run_context_json, ingested_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                artifact.get("id"),
+                artifact.get("source_path"),
+                artifact.get("hash"),
+                artifact.get("created_at"),
+                artifact.get("artifact_type"),
+                artifact.get("run_context_json"),
+                artifact.get("ingested_at")
+            )
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+def list_crewai_ingested_artifacts() -> list[dict]:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        rows = conn.execute("SELECT * FROM crewai_ingested_artifacts ORDER BY ingested_at DESC").fetchall()
+        return [dict(r) for r in rows]
+    finally:
+        conn.close()
+
+def get_crewai_ingested_artifact(artifact_id: str) -> dict | None:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    apply_pragmas(conn)
+    try:
+        row = conn.execute("SELECT * FROM crewai_ingested_artifacts WHERE id = ?", (artifact_id,)).fetchone()
+        return dict(row) if row else None
     finally:
         conn.close()
 

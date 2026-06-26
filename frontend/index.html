@@ -2128,6 +2128,71 @@
                         </div>
                     </div>
                 </section>
+
+                <!-- CrewAI Artifact Ingestion Bridge Panel -->
+                <section class="card" id="crewai-ingestion-bridge-panel" style="padding: 20px; margin-top: 20px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-glass); padding-bottom: 12px; margin-bottom: 16px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <i data-lucide="folder-sync" style="color: var(--accent-orange); width: 20px; height: 20px;"></i>
+                            <h3 style="font-size: 16px; font-weight: 700; color: #fff; margin: 0;">CREWAI EXECUTION ARTIFACT INGESTION BRIDGE</h3>
+                        </div>
+                        <button id="btn-trigger-crewai-ingest" class="btn btn-sm btn-primary" style="display: flex; align-items: center; gap: 6px;">
+                            <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i> Ingest CrewAI Artifacts
+                        </button>
+                    </div>
+
+                    <div id="crewai-ingestion-status" style="margin-bottom: 10px; font-size: 12px; color: var(--text-secondary);">
+                    </div>
+
+                    <div id="crewai-ingest-status-msg" style="margin-bottom: 15px; font-size: 13px; color: var(--text-secondary); display: none; padding: 10px; border-radius: 4px; border: 1px solid var(--border-glass);">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <!-- Ingested Execution Plans -->
+                        <div>
+                            <h3 style="font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                                <i data-lucide="file-text" style="color: var(--accent-blue); width: 16px; height: 16px;"></i> Ingested Execution Plans
+                            </h3>
+                            <div class="table-container" style="max-height: 250px; overflow-y: auto;">
+                                <table class="deployments-table" style="font-size: 11px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Plan Name</th>
+                                            <th>Hash</th>
+                                            <th>Ingested At</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="crewai-plans-tbody">
+                                        <tr><td colspan="4" style="text-align: center; color: var(--text-secondary);">No plans ingested yet</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Ingested Crew Runs Evidence -->
+                        <div>
+                            <h3 style="font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                                <i data-lucide="activity" style="color: var(--accent-teal); width: 16px; height: 16px;"></i> Ingested Crew Runs & Manifests
+                            </h3>
+                            <div class="table-container" style="max-height: 250px; overflow-y: auto;">
+                                <table class="deployments-table" style="font-size: 11px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Source Path</th>
+                                            <th>Type</th>
+                                            <th>Hash</th>
+                                            <th>Ingested At</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="crewai-runs-tbody">
+                                        <tr><td colspan="4" style="text-align: center; color: var(--text-secondary);">No evidence ingested yet</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
 
             <!-- Red-Team Chaos View -->
@@ -2283,6 +2348,8 @@
                         </div>
                     </div>
                 </section>
+
+
             </div>
 
             <!-- Customer Success View -->
@@ -2536,6 +2603,24 @@
             </div>
         </main>
     </div>
+    <!-- CrewAI Artifact Detail Modal -->
+    <dialog id="crewai-artifact-detail-modal" class="topology-profile-modal" style="width: 80%; max-width: 800px;">
+        <div style="position: relative; padding: 24px; display: flex; flex-direction: column; gap: 16px; max-height: 85vh; overflow-y: auto;">
+            <button id="crewai-artifact-modal-close" style="position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--text-secondary); font-size: 20px; cursor: pointer; outline: none;">&times;</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 12px;">
+                <h3 id="crewai-artifact-modal-title" style="margin: 0; font-size: 16px; font-weight: 700; color: #fff;">Artifact Content</h3>
+                <span class="badge" id="crewai-artifact-modal-badge" style="background: rgba(59,130,246,0.15); color: var(--accent-blue); font-size: 11px; padding: 2px 6px; border-radius: 4px;">MD</span>
+            </div>
+            <div style="font-size: 12px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 4px;">
+                <div><strong>Source Path:</strong> <span id="crewai-artifact-modal-path" style="font-family: monospace; color: #fff;"></span></div>
+                <div><strong>SHA-256 Hash:</strong> <span id="crewai-artifact-modal-hash" style="font-family: monospace; color: #fff;"></span></div>
+            </div>
+            <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 6px; padding: 16px; max-height: 50vh; overflow-y: auto;">
+                <pre id="crewai-artifact-modal-content" style="margin: 0; font-family: monospace; font-size: 12px; color: #e2e8f0; white-space: pre-wrap; word-break: break-all;"></pre>
+            </div>
+        </div>
+    </dialog>
+
     <!-- Topology Agent Dossier Modal -->
     <dialog id="topology-agent-profile-modal" class="topology-profile-modal">
         <div style="position: relative; padding: 24px;">

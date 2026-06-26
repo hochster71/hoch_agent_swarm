@@ -1,8 +1,8 @@
 {
-  "report_id": "qa_localhost_8000_1782424170870",
+  "report_id": "qa_localhost_8000_1782431852775",
   "base_url": "http://localhost:8000",
-  "started_at": "2026-06-25T21:49:30.647Z",
-  "completed_at": "2026-06-25T21:49:30.870Z",
+  "started_at": "2026-06-25T23:57:32.536Z",
+  "completed_at": "2026-06-25T23:57:32.775Z",
   "status": "PASS",
   "checks": [
     {
@@ -39,7 +39,7 @@
       "required": true,
       "status": "PASS",
       "http_status": 200,
-      "latency_ms": 200,
+      "latency_ms": 217,
       "blockers": [],
       "warnings": [],
       "payload_summary": {
@@ -59,7 +59,7 @@
         "source": "live",
         "source_id": "hochster.baseline.lock",
         "freshness": "live",
-        "correlation_id": "corr-c63bb1220c7c",
+        "correlation_id": "corr-5cda8cecc957",
         "evidence_ref_count": 1,
         "decision": {
           "status": "PASS",
@@ -139,7 +139,7 @@
       "required": false,
       "status": "PASS",
       "http_status": 200,
-      "latency_ms": 9,
+      "latency_ms": 10,
       "blockers": [],
       "warnings": [],
       "payload_summary": {
@@ -167,7 +167,7 @@
       "required": true,
       "status": "PASS",
       "http_status": 200,
-      "latency_ms": 130,
+      "latency_ms": 133,
       "blockers": [],
       "warnings": [],
       "payload_summary": {

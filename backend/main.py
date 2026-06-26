@@ -5890,6 +5890,75 @@ def post_readiness_diagnose():
         
     return {"status": "success", "message": "Diagnostic job dispatched."}
 
+# ================================================================
+#  CREWAI ARTIFACT INGESTION BRIDGE ENDPOINTS
+# ================================================================
+
+@app.post("/api/v1/ingest/crewai")
+def trigger_crewai_ingestion():
+    from backend.crewai_ingestion_bridge import run_crewai_ingestion
+    try:
+        res = run_crewai_ingestion()
+        return {"status": "success", "results": res}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/ingest/crewai/artifacts")
+def get_crewai_artifacts():
+    from backend.runtime_execution_store import list_crewai_ingested_artifacts
+    import json
+    try:
+        raw_artifacts = list_crewai_ingested_artifacts()
+        artifacts = []
+        for a in raw_artifacts:
+            d = dict(a)
+            try:
+                d["run_context"] = json.loads(d["run_context_json"])
+            except Exception:
+                d["run_context"] = {}
+            artifacts.append(d)
+        return artifacts
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/ingest/crewai/artifacts/{artifact_id}")
+def get_crewai_artifact_detail(artifact_id: str):
+    from backend.runtime_execution_store import get_crewai_ingested_artifact
+    import json
+    from pathlib import Path
+    try:
+        artifact = get_crewai_ingested_artifact(artifact_id)
+        if not artifact:
+            raise HTTPException(status_code=404, detail="Artifact not found")
+        
+        source_path = artifact["source_path"]
+        if source_path.startswith("~/"):
+            full_path = Path.home() / source_path[2:]
+        else:
+            full_path = Path(source_path)
+            
+        content = ""
+        if full_path.exists() and full_path.is_file():
+            try:
+                with open(full_path, "r", encoding="utf-8", errors="ignore") as f:
+                    content = f.read()
+            except Exception as e:
+                content = f"Error reading file contents: {e}"
+        else:
+            content = f"File not found at source path: {source_path}"
+            
+        d = dict(artifact)
+        d["content"] = content
+        try:
+            d["run_context"] = json.loads(d["run_context_json"])
+        except Exception:
+            d["run_context"] = {}
+        return d
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Mount frontend files at root (if frontend directory exists)
 
 frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../frontend/dist"))

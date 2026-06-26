@@ -213,6 +213,9 @@ async function initDashboard() {
         animateSwarmFlow();
         initSwarmGlobe();
         setupAccordions();
+        if (typeof initCrewaiIngestionBridge === 'function') {
+            initCrewaiIngestionBridge();
+        }
 
         // Bind Command Preview Close/Cancel/Confirm buttons
         const btnClosePreview = document.getElementById("btn-close-preview");
@@ -7702,6 +7705,9 @@ async function fetchAndRenderGovernanceSummary() {
         if (typeof loadAttestationHistory === 'function') {
             loadAttestationHistory();
         }
+        if (typeof fetchAndRenderCrewaiArtifacts === 'function') {
+            fetchAndRenderCrewaiArtifacts();
+        }
         const res = await fetch(`${API_BASE}/api/v1/governance/summary`);
         if (!res.ok) {
             console.error("Failed to fetch governance summary");
@@ -9956,3 +9962,144 @@ window.loadModelProviders = loadModelProviders;
 window.loadInferenceHistory = loadInferenceHistory;
 window.loadMultiModelHistory = loadMultiModelHistory;
 window.populateModelNodeSelect = populateModelNodeSelect;
+
+// CrewAI Artifact Ingestion Bridge
+async function initCrewaiIngestionBridge() {
+    const btn = document.getElementById("btn-trigger-crewai-ingest");
+    if (btn) {
+        btn.addEventListener("click", triggerCrewaiIngestion);
+    }
+    await loadCrewaiIngestionStatus();
+}
+
+async function loadCrewaiIngestionStatus() {
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/ingest/crewai/artifacts`);
+        if (!res.ok) {
+            console.error("Failed to load CrewAI artifacts:", res.statusText);
+            return;
+        }
+        const data = await res.json();
+        const artifacts = data.artifacts || [];
+
+        // Filter artifacts into plans and runs
+        const plans = artifacts.filter(a => a.artifact_type === 'plan');
+        const runs = artifacts.filter(a => a.artifact_type === 'run_report');
+
+        // Update statistics
+        const statusEl = document.getElementById("crewai-ingestion-status");
+        if (statusEl) {
+            statusEl.textContent = `Total indexed artifacts: ${artifacts.length} (${plans.length} execution plans, ${runs.length} external execution runs).`;
+        }
+
+        // Populate Plans Table
+        const plansTable = document.getElementById("crewai-plans-tbody");
+        if (plansTable) {
+            plansTable.innerHTML = "";
+            if (plans.length === 0) {
+                plansTable.innerHTML = `<tr><td colspan="4" class="text-muted text-center">No ingested execution plans found. Run ingestion to scan.</td></tr>`;
+            } else {
+                plans.forEach(plan => {
+                    const row = document.createElement("tr");
+                    const name = plan.source_path.split('/').pop();
+                    let dateStr = new Date(plan.created_at).toLocaleString();
+                    if (dateStr === "Invalid Date") dateStr = plan.created_at;
+                    row.innerHTML = `
+                        <td><strong>${escapeHtml(name)}</strong></td>
+                        <td class="text-muted small">${escapeHtml(plan.source_path)}</td>
+                        <td><span class="badge badge-outline-success">${escapeHtml(plan.hash.substring(0, 8))}</span></td>
+                        <td>${escapeHtml(dateStr)}</td>
+                    `;
+                    plansTable.appendChild(row);
+                });
+            }
+        }
+
+        // Populate Runs Table
+        const runsTable = document.getElementById("crewai-runs-tbody");
+        if (runsTable) {
+            runsTable.innerHTML = "";
+            if (runs.length === 0) {
+                runsTable.innerHTML = `<tr><td colspan="5" class="text-muted text-center">No ingested external execution runs found. Run ingestion to scan.</td></tr>`;
+            } else {
+                runs.forEach(run => {
+                    const row = document.createElement("tr");
+                    const name = run.source_path.split('/').pop();
+                    let dateStr = new Date(run.created_at).toLocaleString();
+                    if (dateStr === "Invalid Date") dateStr = run.created_at;
+                    
+                    let contextStr = "N/A";
+                    try {
+                        const ctx = typeof run.run_context === 'string' ? JSON.parse(run.run_context) : run.run_context;
+                        if (ctx && ctx.crew_name) {
+                            contextStr = `${ctx.crew_name} (ID: ${ctx.run_id?.substring(0,8) || 'unknown'})`;
+                        } else if (ctx && ctx.agent) {
+                            contextStr = `${ctx.agent} action`;
+                        }
+                    } catch (e) {
+                        contextStr = "Error parsing metadata";
+                    }
+
+                    row.innerHTML = `
+                        <td><strong>${escapeHtml(name)}</strong></td>
+                        <td><span class="badge badge-info">${escapeHtml(contextStr)}</span></td>
+                        <td class="text-muted small">${escapeHtml(run.source_path)}</td>
+                        <td><code>${escapeHtml(run.hash.substring(0, 8))}</code></td>
+                        <td>${escapeHtml(dateStr)}</td>
+                    `;
+                    runsTable.appendChild(row);
+                });
+            }
+        }
+    } catch (err) {
+        console.error("Error loading CrewAI ingestion status:", err);
+    }
+}
+
+async function triggerCrewaiIngestion() {
+    const btn = document.getElementById("btn-trigger-crewai-ingest");
+    const statusMsg = document.getElementById("crewai-ingest-status-msg");
+    
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i>Ingesting...`;
+    }
+    if (statusMsg) {
+        statusMsg.style.display = "block";
+        statusMsg.className = "text-info";
+        statusMsg.textContent = "Scanning artifact directories and validating ledger hashes...";
+    }
+
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/ingest/crewai`, {
+            method: "POST"
+        });
+        if (!res.ok) {
+            throw new Error(`HTTP error ${res.status}: ${res.statusText}`);
+        }
+        const data = await res.json();
+        if (statusMsg) {
+            statusMsg.style.display = "block";
+            statusMsg.className = "text-success font-weight-bold mt-2 d-block";
+            statusMsg.innerHTML = `<i class="fas fa-check-circle mr-1"></i> Ingestion complete: Scanned <strong>${data.scanned}</strong>, Ingested <strong>${data.ingested}</strong> (${data.new} new, ${data.skipped} skipped).`;
+        }
+        await loadCrewaiIngestionStatus();
+    } catch (err) {
+        console.error("Error triggering CrewAI ingestion:", err);
+        if (statusMsg) {
+            statusMsg.style.display = "block";
+            statusMsg.className = "text-danger font-weight-bold mt-2 d-block";
+            statusMsg.textContent = `Error during ingestion: ${err.message}`;
+        }
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = `<i class="fas fa-sync mr-2"></i>Ingest CrewAI Artifacts`;
+        }
+    }
+}
+
+window.initCrewaiIngestionBridge = initCrewaiIngestionBridge;
+window.loadCrewaiIngestionStatus = loadCrewaiIngestionStatus;
+window.triggerCrewaiIngestion = triggerCrewaiIngestion;
+

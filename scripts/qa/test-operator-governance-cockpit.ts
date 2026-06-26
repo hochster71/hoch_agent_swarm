@@ -50,7 +50,12 @@ function runContractTest() {
       "gov-test-bypass-active",
       "gov-capability-tbody",
       "gov-replay-tbody",
-      "gov-ledger-tbody"
+      "gov-ledger-tbody",
+      "crewai-ingestion-bridge-panel",
+      "btn-trigger-crewai-ingest",
+      "crewai-ingest-status-msg",
+      "crewai-plans-tbody",
+      "crewai-runs-tbody"
     ];
     for (const id of requiredIds) {
       if (!html.includes(`id="${id}"`)) {
@@ -66,7 +71,8 @@ function runContractTest() {
       "ACTIVE POLICIES & WAIVERS",
       "CAPABILITY ENFORCEMENT DECISIONS",
       "REPLAY-PROTECTION INTEGRITY EVIDENCE",
-      "HISTORICAL OPERATOR DECISION LEDGER"
+      "HISTORICAL OPERATOR DECISION LEDGER",
+      "CREWAI EXECUTION ARTIFACT INGESTION BRIDGE"
     ];
     for (const text of requiredTexts) {
       if (!html.includes(text)) {
@@ -88,6 +94,12 @@ function runContractTest() {
     }
     if (!appJs.includes("window.fetchAndRenderGovernanceSummary")) {
       blockers.push("frontend/app.js does not expose window.fetchAndRenderGovernanceSummary");
+    }
+    if (!appJs.includes("initCrewaiIngestionBridge")) {
+      blockers.push("frontend/app.js does not define initCrewaiIngestionBridge");
+    }
+    if (!appJs.includes("window.initCrewaiIngestionBridge")) {
+      blockers.push("frontend/app.js does not expose window.initCrewaiIngestionBridge");
     }
   }
 

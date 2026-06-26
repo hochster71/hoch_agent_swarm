@@ -36,6 +36,22 @@ test.describe("Operator Governance Command Center E2E", () => {
     await expect(page.locator("h3:has-text('REPLAY-PROTECTION INTEGRITY EVIDENCE')")).toBeVisible();
     await expect(page.locator("h3:has-text('HISTORICAL OPERATOR DECISION LEDGER')")).toBeVisible();
 
+    // CrewAI Ingestion Bridge Assertions
+    const bridgePanel = page.locator("#crewai-ingestion-bridge-panel");
+    await expect(bridgePanel).toBeVisible();
+    await expect(bridgePanel.locator("h3:has-text('CREWAI EXECUTION ARTIFACT INGESTION BRIDGE')")).toBeVisible();
+    
+    const ingestBtn = bridgePanel.locator("#btn-trigger-crewai-ingest");
+    await expect(ingestBtn).toBeVisible();
+    
+    // Trigger ingestion scan
+    await ingestBtn.click();
+    
+    // Wait for the ingestion message to show success
+    const statusMsg = bridgePanel.locator("#crewai-ingest-status-msg");
+    await expect(statusMsg).toBeVisible();
+    await expect(statusMsg).toContainText("Ingestion complete");
+
     // 5. Capture screenshot
     const screenshotPath = path.resolve(__dirname, "../../artifacts/qa/operator-governance-cockpit.png");
     const screenshotDir = path.dirname(screenshotPath);
