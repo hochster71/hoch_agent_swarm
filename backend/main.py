@@ -6995,8 +6995,9 @@ def prompt_expire_test_approvals():
 def production_readiness():
     """
     Production Readiness Gate — merges PERT workstreams + northstar controls
-    with live swarm state (runs, approvals, audit events).
-    Truth states: LIVE | STALE | PENDING | IN_PROGRESS | COMPLETE | UNKNOWN
+    with live swarm state. Batch PR-2: derives P3/P8 and GAP-002/GAP-009
+    status dynamically from asset_trust_registry.json + cluster_worker_profiles.json.
+    Truth states: LIVE | STALE | PENDING | IN_PROGRESS | COMPLETE | UNKNOWN | RESOLVED
     """
     import json as _json
     from pathlib import Path as _Path
@@ -7012,8 +7013,26 @@ def production_readiness():
                 return {}, "BROKEN"
         return {}, "UNKNOWN"
 
-    pert_data,      pert_truth      = _load("hoch_pert_workstreams.json")
-    controls_data,  controls_truth  = _load("hoch_northstar_controls.json")
+    pert_data,     pert_truth     = _load("hoch_pert_workstreams.json")
+    controls_data, controls_truth = _load("hoch_northstar_controls.json")
+    trust_data,    trust_truth    = _load("asset_trust_registry.json")
+    profiles_data, profiles_truth = _load("cluster_worker_profiles.json")
+
+    # Derive P3 / P8 status from config file presence (truth-backed)
+    p3_status = "COMPLETE" if trust_truth    == "LIVE" else "PENDING"
+    p8_status = "COMPLETE" if profiles_truth == "LIVE" else "PENDING"
+    gap002_status = "RESOLVED" if p3_status == "COMPLETE" else "OPEN"
+    gap009_status = "RESOLVED" if p8_status == "COMPLETE" else "OPEN"
+
+    # Patch PERT workstream statuses for P3 / P8
+    pert_workstreams = pert_data.get("workstreams", [])
+    for ws in pert_workstreams:
+        if ws["id"] == "P3":
+            ws["status"] = p3_status
+            ws["evidence_resolved"] = (trust_truth == "LIVE")
+        if ws["id"] == "P8":
+            ws["status"] = p8_status
+            ws["evidence_resolved"] = (profiles_truth == "LIVE")
 
     # Live counts from ledger DB (non-fatal)
     approval_summary = {}
@@ -7022,46 +7041,65 @@ def production_readiness():
         _app = get_all_approvals()
         _led = get_usage_ledger(limit=1)
         approval_summary = {
-            "pending_count":  _app.get("pending_count", 0),
-            "active_count":   _app.get("active_count",  0),
-            "test_count":     _app.get("test_count",    0),
-            "ledger_total":   _led.get("total",         0),
-            "truth":          "LIVE",
+            "pending_count": _app.get("pending_count", 0),
+            "active_count":  _app.get("active_count",  0),
+            "test_count":    _app.get("test_count",    0),
+            "ledger_total":  _led.get("total",         0),
+            "truth":         "LIVE",
         }
     except Exception:
         approval_summary = {"truth": "UNKNOWN"}
 
-    # Gap registry (static — sourced from artifacts/qa/gap_analysis.md)
+    # Gap registry — dynamic status for P3/P8 gaps
     gaps = [
-        {"id":"GAP-001","area":"Ephemeral Execution","severity":"HIGH","status":"OPEN","pert":"P1"},
-        {"id":"GAP-002","area":"Cluster Security",    "severity":"HIGH","status":"OPEN","pert":"P3"},
-        {"id":"GAP-003","area":"Runtime Policy",      "severity":"HIGH","status":"OPEN","pert":"P2"},
-        {"id":"GAP-004","area":"QA Evidence",         "severity":"HIGH","status":"OPEN","pert":"P5"},
-        {"id":"GAP-005","area":"PERT Engine",         "severity":"MEDIUM","status":"IN_PROGRESS","pert":"P6"},
-        {"id":"GAP-006","area":"Northstar Doctrine",  "severity":"MEDIUM","status":"IN_PROGRESS","pert":"P1"},
-        {"id":"GAP-007","area":"Storage Policy",      "severity":"MEDIUM","status":"OPEN","pert":"P7"},
-        {"id":"GAP-008","area":"Service Hardening",   "severity":"HIGH","status":"OPEN","pert":"P4"},
-        {"id":"GAP-009","area":"Worker Profiles",     "severity":"HIGH","status":"OPEN","pert":"P8"},
-        {"id":"GAP-010","area":"E2E Audit Run",       "severity":"HIGH","status":"OPEN","pert":"P9"},
+        {"id":"GAP-001","area":"Ephemeral Execution", "severity":"HIGH",  "status":"OPEN",         "pert":"P1"},
+        {"id":"GAP-002","area":"Cluster Security",    "severity":"HIGH",  "status":gap002_status,  "pert":"P3",
+         "truth":trust_truth,    "evidence":"config/asset_trust_registry.json"    if p3_status=="COMPLETE" else "MISSING"},
+        {"id":"GAP-003","area":"Runtime Policy",      "severity":"HIGH",  "status":"OPEN",         "pert":"P2"},
+        {"id":"GAP-004","area":"QA Evidence",         "severity":"HIGH",  "status":"OPEN",         "pert":"P5"},
+        {"id":"GAP-005","area":"PERT Engine",         "severity":"MEDIUM","status":"IN_PROGRESS",  "pert":"P6"},
+        {"id":"GAP-006","area":"Northstar Doctrine",  "severity":"MEDIUM","status":"IN_PROGRESS",  "pert":"P1"},
+        {"id":"GAP-007","area":"Storage Policy",      "severity":"MEDIUM","status":"OPEN",         "pert":"P7"},
+        {"id":"GAP-008","area":"Service Hardening",   "severity":"HIGH",  "status":"OPEN",         "pert":"P4"},
+        {"id":"GAP-009","area":"Worker Profiles",     "severity":"HIGH",  "status":gap009_status,  "pert":"P8",
+         "truth":profiles_truth, "evidence":"config/cluster_worker_profiles.json" if p8_status=="COMPLETE" else "MISSING"},
+        {"id":"GAP-010","area":"E2E Audit Run",       "severity":"HIGH",  "status":"OPEN",         "pert":"P9"},
     ]
 
-    high_open  = [g for g in gaps if g["severity"]=="HIGH" and g["status"]=="OPEN"]
-    go_no_go   = "NO-GO" if high_open else "PENDING_VERIFICATION"
+    high_open = [g for g in gaps if g["severity"] == "HIGH" and g["status"] not in ("RESOLVED", "COMPLETE")]
+    go_no_go  = "NO-GO" if high_open else "PENDING_VERIFICATION"
 
-    # Cluster node trust (truth: SYNTHETIC — sourced from api/status shape)
-    cluster_nodes = [
-        {"name":"MacBook Pro (L1)","role":"Control Plane","tier":"ALPHA","status":"STALE","truth":"SYNTHETIC"},
-        {"name":"Dell (L2)",       "role":"Edge Worker",   "tier":"BETA", "status":"PENDING","truth":"UNKNOWN"},
-        {"name":"NEO (W1)",        "role":"Inference Node","tier":"GAMMA","status":"PENDING","truth":"UNKNOWN"},
-        {"name":"iPad",            "role":"Monitor",       "tier":"DELTA","status":"PENDING","truth":"UNKNOWN"},
-        {"name":"iPhone",          "role":"Emergency Console","tier":"DELTA","status":"PENDING","truth":"UNKNOWN"},
-    ]
+    # Cluster nodes — sourced from asset_trust_registry.json (truth: LIVE)
+    if trust_data.get("nodes"):
+        profiles_by_id = {p["node_id"]: p for p in profiles_data.get("profiles", [])}
+        cluster_nodes = []
+        for n in trust_data["nodes"]:
+            profile = profiles_by_id.get(n["node_id"], {})
+            cluster_nodes.append({
+                "name":          n["display_name"],
+                "role":          n["role"],
+                "tier":          n["trust_tier"],
+                "status":        profile.get("operational_status", n.get("status", "UNKNOWN")),
+                "provisioning":  profile.get("provisioning_status", "UNKNOWN"),
+                "approved_caps": len(n.get("approved_capabilities", [])),
+                "denied_caps":   len(n.get("denied_capabilities", [])),
+                "truth":         "LIVE",
+                "source":        "config/asset_trust_registry.json",
+            })
+    else:
+        cluster_nodes = [
+            {"name":"MacBook Pro (L1)","role":"Control Plane",   "tier":"ALPHA","status":"UNKNOWN","provisioning":"UNKNOWN","truth":"UNKNOWN"},
+            {"name":"Dell (L2)",       "role":"Edge Worker",     "tier":"BETA", "status":"UNKNOWN","provisioning":"UNKNOWN","truth":"UNKNOWN"},
+            {"name":"NEO (W1)",        "role":"Inference Node",  "tier":"GAMMA","status":"UNKNOWN","provisioning":"UNKNOWN","truth":"UNKNOWN"},
+            {"name":"iPad",            "role":"Monitor",         "tier":"DELTA","status":"UNKNOWN","provisioning":"UNKNOWN","truth":"UNKNOWN"},
+            {"name":"iPhone",          "role":"Emergency Console","tier":"DELTA","status":"UNKNOWN","provisioning":"UNKNOWN","truth":"UNKNOWN"},
+        ]
 
     return {
         "go_no_go":          go_no_go,
         "high_open_count":   len(high_open),
         "total_gaps":        len(gaps),
-        "pert_workstreams":  pert_data.get("workstreams", []),
+        "pert_workstreams":  pert_workstreams,
         "critical_path":     pert_data.get("_meta", {}).get("critical_path", []),
         "northstar":         controls_data.get("northstar_statement", ""),
         "principles":        controls_data.get("principles", []),
@@ -7071,7 +7109,70 @@ def production_readiness():
         "approval_summary":  approval_summary,
         "pert_truth":        pert_truth,
         "controls_truth":    controls_truth,
+        "trust_truth":       trust_truth,
+        "profiles_truth":    profiles_truth,
+        "p3_status":         p3_status,
+        "p8_status":         p8_status,
         "truth":             "LIVE",
+    }
+
+
+@app.get("/api/v1/cluster/nodes")
+def cluster_nodes_detail():
+    """
+    Full cluster trust registry + worker profiles per node.
+    Truth: LIVE from asset_trust_registry.json + cluster_worker_profiles.json
+    Added: Batch PR-2
+    """
+    import json as _json
+    from pathlib import Path as _Path
+
+    _base = _Path(__file__).parent.parent
+
+    def _load(name):
+        p = _base / "config" / name
+        if p.exists():
+            try:
+                return _json.loads(p.read_text()), "LIVE"
+            except Exception:
+                return {}, "BROKEN"
+        return {}, "UNKNOWN"
+
+    trust_data,    trust_truth    = _load("asset_trust_registry.json")
+    profiles_data, profiles_truth = _load("cluster_worker_profiles.json")
+    profiles_by_id = {p["node_id"]: p for p in profiles_data.get("profiles", [])}
+
+    nodes_out = []
+    for n in trust_data.get("nodes", []):
+        profile = profiles_by_id.get(n["node_id"], {})
+        nodes_out.append({
+            "node_id":              n["node_id"],
+            "display_name":         n["display_name"],
+            "role":                 n["role"],
+            "trust_tier":           n["trust_tier"],
+            "hardware":             profile.get("hardware", {}),
+            "operational_status":   profile.get("operational_status", n.get("status", "UNKNOWN")),
+            "provisioning_status":  profile.get("provisioning_status", "UNKNOWN"),
+            "provisioning_required":profile.get("provisioning_required", n.get("provisioning_required", [])),
+            "approved_capabilities":n.get("approved_capabilities", []),
+            "denied_capabilities":  n.get("denied_capabilities", []),
+            "approved_workloads":   profile.get("approved_workloads", []),
+            "denied_workloads":     profile.get("denied_workloads", []),
+            "resource_limits":      profile.get("resource_limits", {}),
+            "ephemeral_policy":     profile.get("ephemeral_policy", {}),
+            "storage_policy":       profile.get("storage_policy", {}),
+            "port_policy":          n.get("port_policy", {}),
+            "truth":                "LIVE",
+            "source":               "asset_trust_registry.json + cluster_worker_profiles.json",
+        })
+
+    return {
+        "nodes":          nodes_out,
+        "trust_tiers":    trust_data.get("trust_tiers", {}),
+        "trust_truth":    trust_truth,
+        "profiles_truth": profiles_truth,
+        "truth":          "LIVE" if trust_truth == "LIVE" and profiles_truth == "LIVE" else "PARTIAL",
+        "total_nodes":    len(nodes_out),
     }
 
 

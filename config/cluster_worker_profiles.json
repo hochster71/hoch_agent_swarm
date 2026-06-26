@@ -1,0 +1,256 @@
+{
+  "_meta": {
+    "schema": "hoch-cluster-worker-profiles-v1",
+    "created": "2026-06-26",
+    "version": "1.0.0",
+    "pert_ref": "P8",
+    "status": "ACTIVE",
+    "note": "Hardware specs are declarative targets; actual runtime enforcement requires worker daemons (future P2/P8 work)."
+  },
+  "profiles": [
+    {
+      "node_id": "macbook-pro-l1",
+      "display_name": "MacBook Pro (L1)",
+      "trust_tier": "ALPHA",
+      "hardware": {
+        "cpu": "Apple Silicon M-series (8–12 core)",
+        "ram_gb": 16,
+        "storage_gb": 512,
+        "gpu": "Integrated (Metal)",
+        "network": "Wi-Fi 6E + Ethernet"
+      },
+      "resource_limits": {
+        "max_cpu_pct": 70,
+        "max_ram_gb": 10,
+        "max_concurrent_agents": 10,
+        "max_concurrent_tasks": 20,
+        "max_disk_write_mb_per_min": 500,
+        "max_network_egress_mbps": 50
+      },
+      "approved_workloads": [
+        "api_server",
+        "frontend_server",
+        "governance_db",
+        "orchestration",
+        "prompt_evaluation",
+        "audit_logging",
+        "low_risk_agent_execution",
+        "medium_risk_agent_execution_with_approval",
+        "research_tasks",
+        "life_tasks",
+        "work_tasks"
+      ],
+      "denied_workloads": [
+        "gpu_inference",
+        "large_model_loading",
+        "crypto_mining",
+        "unapproved_network_scanning",
+        "high_risk_execution_without_approval"
+      ],
+      "ephemeral_policy": {
+        "agent_process_lifetime_max_sec": 300,
+        "task_tmp_dir": "/tmp/hoch-agent-swarm/tasks/",
+        "cleanup_on_termination": true,
+        "credential_env_vars_allowed": false,
+        "state_persistence": "approved_db_only"
+      },
+      "storage_policy": {
+        "approved_write_paths": [
+          "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/",
+          "/tmp/hoch-agent-swarm/"
+        ],
+        "google_drive_push": "on_mission_complete",
+        "no_secrets_on_disk": true
+      },
+      "operational_status": "ACTIVE",
+      "provisioning_status": "COMPLETE"
+    },
+    {
+      "node_id": "dell-l2",
+      "display_name": "Dell (L2)",
+      "trust_tier": "BETA",
+      "hardware": {
+        "cpu": "Intel/AMD x86_64 (TBD specs)",
+        "ram_gb": "TBD",
+        "storage_gb": "TBD",
+        "gpu": "None assumed",
+        "network": "Ethernet LAN"
+      },
+      "resource_limits": {
+        "max_cpu_pct": 80,
+        "max_ram_gb": "TBD",
+        "max_concurrent_agents": "TBD",
+        "max_concurrent_tasks": "TBD",
+        "max_disk_write_mb_per_min": 200,
+        "max_network_egress_mbps": "ALPHA_MEDIATED"
+      },
+      "approved_workloads": [
+        "batch_file_processing",
+        "web_scraping_approved_domains",
+        "data_transformation",
+        "document_generation",
+        "research_tasks_assigned_by_alpha"
+      ],
+      "denied_workloads": [
+        "governance_db_access",
+        "prompt_approval",
+        "gpu_inference",
+        "high_risk_execution",
+        "self_initiated_network_egress"
+      ],
+      "ephemeral_policy": {
+        "agent_process_lifetime_max_sec": 600,
+        "task_tmp_dir": "/tmp/hoch-worker/",
+        "cleanup_on_termination": true,
+        "credential_env_vars_allowed": false,
+        "state_persistence": "report_to_alpha_only"
+      },
+      "storage_policy": {
+        "approved_write_paths": ["/tmp/hoch-worker/"],
+        "google_drive_push": "via_alpha_only",
+        "no_secrets_on_disk": true
+      },
+      "operational_status": "NOT_PROVISIONED",
+      "provisioning_status": "PENDING",
+      "provisioning_required": [
+        "install_worker_daemon",
+        "generate_alpha_cert_pair",
+        "configure_approved_skill_list",
+        "verify_port_policy"
+      ]
+    },
+    {
+      "node_id": "neo-w1",
+      "display_name": "NEO (W1)",
+      "trust_tier": "GAMMA",
+      "hardware": {
+        "cpu": "x86_64 (TBD)",
+        "ram_gb": "TBD",
+        "storage_gb": "TBD",
+        "gpu": "NVIDIA GPU (TBD VRAM)",
+        "network": "Ethernet LAN"
+      },
+      "resource_limits": {
+        "max_cpu_pct": 60,
+        "max_gpu_pct": 90,
+        "max_ram_gb": "TBD",
+        "max_concurrent_agents": 2,
+        "max_concurrent_tasks": 4,
+        "max_disk_write_mb_per_min": 100,
+        "max_network_egress_mbps": "ALPHA_MEDIATED"
+      },
+      "approved_workloads": [
+        "llm_inference_approved_models",
+        "embedding_generation",
+        "image_classification_approved_datasets",
+        "cyber_analysis_isolated_sandbox"
+      ],
+      "denied_workloads": [
+        "governance_db_access",
+        "prompt_approval",
+        "pii_processing",
+        "financial_data_processing",
+        "self_initiated_internet_access",
+        "arbitrary_code_execution_outside_sandbox"
+      ],
+      "ephemeral_policy": {
+        "agent_process_lifetime_max_sec": 1800,
+        "task_tmp_dir": "/tmp/hoch-inference/",
+        "cleanup_on_termination": true,
+        "credential_env_vars_allowed": false,
+        "state_persistence": "inference_results_to_alpha_only",
+        "model_allowlist_enforced": true
+      },
+      "storage_policy": {
+        "approved_write_paths": ["/tmp/hoch-inference/", "/models/approved/"],
+        "google_drive_push": "never_direct",
+        "no_secrets_on_disk": true
+      },
+      "operational_status": "NOT_PROVISIONED",
+      "provisioning_status": "PENDING",
+      "provisioning_required": [
+        "install_inference_daemon",
+        "configure_model_allowlist",
+        "generate_alpha_cert_pair",
+        "verify_network_isolation"
+      ]
+    },
+    {
+      "node_id": "ipad-delta-1",
+      "display_name": "iPad",
+      "trust_tier": "DELTA",
+      "hardware": {
+        "cpu": "Apple Silicon (iPad)",
+        "ram_gb": "4–16 (model dependent)",
+        "storage_gb": "64+",
+        "gpu": "Integrated",
+        "network": "Wi-Fi"
+      },
+      "resource_limits": {
+        "max_cpu_pct": 0,
+        "max_ram_gb": 0,
+        "max_concurrent_agents": 0,
+        "max_concurrent_tasks": 0,
+        "note": "No compute resources allocated. Browser client only."
+      },
+      "approved_workloads": [
+        "dashboard_view_readonly",
+        "agent_status_view",
+        "audit_log_view"
+      ],
+      "denied_workloads": [
+        "all_execution_workloads",
+        "governance_writes",
+        "prompt_submission"
+      ],
+      "ephemeral_policy": {
+        "note": "No agent processes run on this node. Read-only browser session only."
+      },
+      "storage_policy": {
+        "note": "No local storage of swarm data permitted. Browser session cache only."
+      },
+      "operational_status": "MONITOR_ONLY",
+      "provisioning_status": "DEFINED",
+      "provisioning_required": ["browser_access_configured"]
+    },
+    {
+      "node_id": "iphone-delta-2",
+      "display_name": "iPhone",
+      "trust_tier": "DELTA",
+      "hardware": {
+        "cpu": "Apple Silicon (iPhone)",
+        "ram_gb": "4–8",
+        "storage_gb": "64+",
+        "gpu": "Integrated",
+        "network": "Wi-Fi + Cellular"
+      },
+      "resource_limits": {
+        "max_cpu_pct": 0,
+        "max_ram_gb": 0,
+        "max_concurrent_agents": 0,
+        "max_concurrent_tasks": 0,
+        "note": "No compute resources allocated. Emergency console only."
+      },
+      "approved_workloads": [
+        "critical_alert_view",
+        "go_nogo_status_view",
+        "emergency_stop_signal_future"
+      ],
+      "denied_workloads": [
+        "all_execution_workloads",
+        "governance_writes",
+        "prompt_submission",
+        "agent_approval"
+      ],
+      "ephemeral_policy": {
+        "note": "No agent processes run on this node."
+      },
+      "storage_policy": {
+        "note": "No local storage of swarm data. Emergency console browser only."
+      },
+      "operational_status": "MONITOR_ONLY",
+      "provisioning_status": "DEFINED",
+      "provisioning_required": ["browser_access_configured"]
+    }
+  ]
+}

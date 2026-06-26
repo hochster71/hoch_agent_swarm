@@ -13344,16 +13344,21 @@ window.exportSealPreviewJSON = exportSealPreviewJSON;
   // ── Status colour helpers ─────────────────────────────────────────────────────
   function statusColor(s) {
     const m = {
-      "COMPLETE":      "#8cff5c",
-      "LIVE":          "#8cff5c",
-      "IN_PROGRESS":   "#f59e0b",
-      "OPEN":          "#ff5f7a",
-      "PENDING":       "#9ca3af",
-      "UNKNOWN":       "#6b7280",
-      "STALE":         "#f59e0b",
-      "BROKEN":        "#ff5f7a",
-      "NO-GO":         "#ff5f7a",
-      "PENDING_VERIFICATION": "#f59e0b",
+      "COMPLETE":           "#8cff5c",
+      "LIVE":               "#8cff5c",
+      "RESOLVED":           "#8cff5c",
+      "ACTIVE":             "#8cff5c",
+      "IN_PROGRESS":        "#f59e0b",
+      "OPEN":               "#ff5f7a",
+      "PENDING":            "#9ca3af",
+      "UNKNOWN":            "#6b7280",
+      "STALE":              "#f59e0b",
+      "BROKEN":             "#ff5f7a",
+      "NO-GO":              "#ff5f7a",
+      "NOT_PROVISIONED":    "#f59e0b",
+      "MONITOR_ONLY":       "#62f5d5",
+      "DEFINED":            "#62f5d5",
+      "PENDING_VERIFICATION":"#f59e0b",
     };
     return m[s] || "#9ca3af";
   }
