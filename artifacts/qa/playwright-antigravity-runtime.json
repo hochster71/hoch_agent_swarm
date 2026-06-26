@@ -4,7 +4,7 @@
       "/opt/homebrew/Cellar/node/26.3.1/bin/node",
       "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/node_modules/.bin/playwright",
       "test",
-      "tests/e2e/release-evidence-archive-preview.spec.ts"
+      "tests/e2e/cybersecurity-factory.spec.ts"
     ],
     "configFile": "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/playwright.config.ts",
     "rootDir": "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/tests/e2e",
@@ -73,20 +73,20 @@
   },
   "suites": [
     {
-      "title": "release-evidence-archive-preview.spec.ts",
-      "file": "release-evidence-archive-preview.spec.ts",
+      "title": "cybersecurity-factory.spec.ts",
+      "file": "cybersecurity-factory.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "Release Evidence Archive Preview E2E",
-          "file": "release-evidence-archive-preview.spec.ts",
+          "title": "Cybersecurity Factory View Flow",
+          "file": "cybersecurity-factory.spec.ts",
           "line": 5,
           "column": 6,
           "specs": [
             {
-              "title": "calculates archive preview, renders metrics, displays warnings, and supports downloading manifests",
+              "title": "submits app idea and processes swarm pipeline successfully",
               "ok": true,
               "tags": [],
               "tests": [
@@ -101,25 +101,27 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 8717,
+                      "duration": 16820,
                       "errors": [],
-                      "stdout": [
-                        {
-                          "text": "Captured E2E archive preview screenshot at: /Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/artifacts/qa/release-evidence-archive-preview.png\n"
-                        }
-                      ],
+                      "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-06-26T20:26:35.175Z",
+                      "startTime": "2026-06-26T20:37:09.358Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "cybersecurity-factory-runtime",
+                          "contentType": "image/png",
+                          "path": "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/test-results/cybersecurity-factory-Cybe-2f5f4-swarm-pipeline-successfully-antigravity-chromium/attachments/cybersecurity-factory-runtime-d5b3d25f57d1f429de75f20aa0f678254e51c3e3.png"
+                        }
+                      ]
                     }
                   ],
                   "status": "expected"
                 }
               ],
-              "id": "ba1e96ae3eb3c3c21774-3e2afec01372096b0624",
-              "file": "release-evidence-archive-preview.spec.ts",
+              "id": "979df8291c54f8aad1b3-c5f970dc2768daf58d9f",
+              "file": "cybersecurity-factory.spec.ts",
               "line": 6,
               "column": 7
             }
@@ -130,8 +132,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-06-26T20:26:34.974Z",
-    "duration": 9143.651,
+    "startTime": "2026-06-26T20:37:09.119Z",
+    "duration": 17181.245,
     "expected": 1,
     "skipped": 0,
     "unexpected": 0,

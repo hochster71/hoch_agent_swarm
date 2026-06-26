@@ -1,7 +1,7 @@
 # HOCH Swarm Control Plane Operational Readiness & North Star Report
 
 **Release**: 0.1.6-ERROR-BUDGET-AWARE-AUTONOMY
-**Generated At**: 2026-06-26T20:33:03.520Z
+**Generated At**: 2026-06-26T20:35:24.811Z
 **Readiness Status**: PASS
 **Operational Readiness Score**: 100 / 100
 
@@ -35,13 +35,13 @@ All P0 endpoints on `http://localhost:8000` were queried.
 
 | Endpoint | Path | Status | Latency | Blockers Detected |
 | :--- | :--- | :--- | :--- | :--- |
-| **health** | `/health` | `PASS` | 30ms | None |
-| **baseline_lock** | `/api/v1/hochster/baseline/lock` | `PASS` | 313ms | None |
+| **health** | `/health` | `PASS` | 32ms | None |
+| **baseline_lock** | `/api/v1/hochster/baseline/lock` | `PASS` | 341ms | None |
 | **hochster_cluster_jobs** | `/api/v1/hochster/cluster/jobs` | `PASS` | 8ms | None |
 | **database_status** | `/api/v1/system/database/status` | `PASS` | 9ms | None |
-| **runtime_docker_health** | `/api/v1/runtime/docker-health` | `PASS` | 9ms | None |
-| **audit_events** | `/api/v1/audit/events` | `PASS` | 212ms | None |
-| **policy_status** | `/api/v1/policy/status` | `PASS` | 9ms | None |
+| **runtime_docker_health** | `/api/v1/runtime/docker-health` | `PASS` | 10ms | None |
+| **audit_events** | `/api/v1/audit/events` | `PASS` | 211ms | None |
+| **policy_status** | `/api/v1/policy/status` | `PASS` | 10ms | None |
 
 ---
 
