@@ -7017,19 +7017,41 @@ def production_readiness():
     controls_data, controls_truth = _load("hoch_northstar_controls.json")
     trust_data,    trust_truth    = _load("asset_trust_registry.json")
     profiles_data, profiles_truth = _load("cluster_worker_profiles.json")
+    port_data,     port_truth     = _load("port_hardening_audit.json")
 
-    # Derive P3 / P8 status from config file presence (truth-backed)
+    # ── P3 / P8 — complete if config files present ─────────────────────────────
     p3_status = "COMPLETE" if trust_truth    == "LIVE" else "PENDING"
     p8_status = "COMPLETE" if profiles_truth == "LIVE" else "PENDING"
     gap002_status = "RESOLVED" if p3_status == "COMPLETE" else "OPEN"
     gap009_status = "RESOLVED" if p8_status == "COMPLETE" else "OPEN"
 
-    # Patch PERT workstream statuses for P3 / P8
+    # ── P1 — doctrine sealed (northstar_sealed flag) ────────────────────────────
+    p1_sealed = controls_data.get("northstar_sealed", False)
+    p1_status = "IN_PROGRESS" if p1_sealed else "PENDING"
+    gap001_status = "IN_PROGRESS"  # doctrine written, runtime enforcement pending
+    gap006_status = "IN_PROGRESS"  # medium — doctrine sealed, full doctrine pending P2
+
+    # ── P4 — port audit: PARTIAL (swarm PASS, host non-swarm REVIEW_REQUIRED) ──
+    port_summary = port_data.get("summary", {})
+    p4_overall   = port_summary.get("overall_status", "UNKNOWN")
+    p4_swarm_ok  = port_summary.get("swarm_ports_compliant", 0) == 2 and port_truth == "LIVE"
+    p4_status    = "IN_PROGRESS" if port_truth == "LIVE" else "PENDING"
+    # GAP-008 moves to IN_PROGRESS (not RESOLVED) — swarm PASS, host non-swarm still REVIEW_REQUIRED
+    gap008_status = "IN_PROGRESS" if port_truth == "LIVE" else "OPEN"
+
+    # ── Patch PERT workstream statuses dynamically ──────────────────────────────
     pert_workstreams = pert_data.get("workstreams", [])
     for ws in pert_workstreams:
+        if ws["id"] == "P1":
+            ws["status"] = p1_status
+            ws["evidence_resolved"] = p1_sealed
         if ws["id"] == "P3":
             ws["status"] = p3_status
             ws["evidence_resolved"] = (trust_truth == "LIVE")
+        if ws["id"] == "P4":
+            ws["status"] = p4_status
+            ws["evidence_resolved"] = p4_swarm_ok
+            ws["swarm_pass"] = p4_swarm_ok
         if ws["id"] == "P8":
             ws["status"] = p8_status
             ws["evidence_resolved"] = (profiles_truth == "LIVE")
@@ -7050,20 +7072,23 @@ def production_readiness():
     except Exception:
         approval_summary = {"truth": "UNKNOWN"}
 
-    # Gap registry — dynamic status for P3/P8 gaps
+    # Gap registry — dynamic status updated per batch
     gaps = [
-        {"id":"GAP-001","area":"Ephemeral Execution", "severity":"HIGH",  "status":"OPEN",         "pert":"P1"},
-        {"id":"GAP-002","area":"Cluster Security",    "severity":"HIGH",  "status":gap002_status,  "pert":"P3",
-         "truth":trust_truth,    "evidence":"config/asset_trust_registry.json"    if p3_status=="COMPLETE" else "MISSING"},
-        {"id":"GAP-003","area":"Runtime Policy",      "severity":"HIGH",  "status":"OPEN",         "pert":"P2"},
-        {"id":"GAP-004","area":"QA Evidence",         "severity":"HIGH",  "status":"OPEN",         "pert":"P5"},
-        {"id":"GAP-005","area":"PERT Engine",         "severity":"MEDIUM","status":"IN_PROGRESS",  "pert":"P6"},
-        {"id":"GAP-006","area":"Northstar Doctrine",  "severity":"MEDIUM","status":"IN_PROGRESS",  "pert":"P1"},
-        {"id":"GAP-007","area":"Storage Policy",      "severity":"MEDIUM","status":"OPEN",         "pert":"P7"},
-        {"id":"GAP-008","area":"Service Hardening",   "severity":"HIGH",  "status":"OPEN",         "pert":"P4"},
-        {"id":"GAP-009","area":"Worker Profiles",     "severity":"HIGH",  "status":gap009_status,  "pert":"P8",
+        {"id":"GAP-001","area":"Ephemeral Execution","severity":"HIGH",  "status":gap001_status,  "pert":"P1",
+         "truth":controls_truth, "evidence":"artifacts/qa/northstar_doctrine.md (doctrine written; runtime enforcement pending P2)"},
+        {"id":"GAP-002","area":"Cluster Security",   "severity":"HIGH",  "status":gap002_status,  "pert":"P3",
+         "truth":trust_truth,    "evidence":"config/asset_trust_registry.json" if p3_status=="COMPLETE" else "MISSING"},
+        {"id":"GAP-003","area":"Runtime Policy",     "severity":"HIGH",  "status":"OPEN",         "pert":"P2"},
+        {"id":"GAP-004","area":"QA Evidence",        "severity":"HIGH",  "status":"OPEN",         "pert":"P5"},
+        {"id":"GAP-005","area":"PERT Engine",        "severity":"MEDIUM","status":"IN_PROGRESS",  "pert":"P6"},
+        {"id":"GAP-006","area":"Northstar Doctrine", "severity":"MEDIUM","status":gap006_status,  "pert":"P1",
+         "truth":controls_truth, "evidence":"config/hoch_northstar_controls.json (northstar_sealed=True)" if p1_sealed else "PENDING"},
+        {"id":"GAP-007","area":"Storage Policy",     "severity":"MEDIUM","status":"OPEN",         "pert":"P7"},
+        {"id":"GAP-008","area":"Service Hardening",  "severity":"HIGH",  "status":gap008_status,  "pert":"P4",
+         "truth":port_truth,     "evidence":"config/port_hardening_audit.json (8000/3000 PASS; 7 host ports REVIEW_REQUIRED)" if port_truth=="LIVE" else "MISSING"},
+        {"id":"GAP-009","area":"Worker Profiles",    "severity":"HIGH",  "status":gap009_status,  "pert":"P8",
          "truth":profiles_truth, "evidence":"config/cluster_worker_profiles.json" if p8_status=="COMPLETE" else "MISSING"},
-        {"id":"GAP-010","area":"E2E Audit Run",       "severity":"HIGH",  "status":"OPEN",         "pert":"P9"},
+        {"id":"GAP-010","area":"E2E Audit Run",      "severity":"HIGH",  "status":"OPEN",         "pert":"P9"},
     ]
 
     high_open = [g for g in gaps if g["severity"] == "HIGH" and g["status"] not in ("RESOLVED", "COMPLETE")]
@@ -7102,16 +7127,23 @@ def production_readiness():
         "pert_workstreams":  pert_workstreams,
         "critical_path":     pert_data.get("_meta", {}).get("critical_path", []),
         "northstar":         controls_data.get("northstar_statement", ""),
+        "northstar_sealed":  p1_sealed,
         "principles":        controls_data.get("principles", []),
         "control_domains":   controls_data.get("control_domains", []),
         "gaps":              gaps,
         "cluster_nodes":     cluster_nodes,
         "approval_summary":  approval_summary,
+        "port_summary":      port_summary,
         "pert_truth":        pert_truth,
         "controls_truth":    controls_truth,
         "trust_truth":       trust_truth,
         "profiles_truth":    profiles_truth,
+        "port_truth":        port_truth,
+        "p1_status":         p1_status,
+        "p1_sealed":         p1_sealed,
         "p3_status":         p3_status,
+        "p4_status":         p4_status,
+        "p4_swarm_pass":     p4_swarm_ok,
         "p8_status":         p8_status,
         "truth":             "LIVE",
     }
