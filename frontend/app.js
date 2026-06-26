@@ -12222,6 +12222,14 @@ window.exportSealPreviewJSON = exportSealPreviewJSON;
             const shortMission = (p.mission || "").length > 90
                 ? p.mission.slice(0, 90) + "…"
                 : (p.mission || "");
+            // Risk badge colours
+            const risk = (p.risk_level || "LOW").toUpperCase();
+            const riskStyle = {
+                LOW:     "background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.35);",
+                MEDIUM:  "background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.35);",
+                HIGH:    "background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.35);",
+                BLOCKED: "background:rgba(127,29,29,0.3);color:#fca5a5;border:1px solid rgba(239,68,68,0.5);",
+            }[risk] || "";
             return `
             <div class="prompt-library-card" data-id="${p.id}"
                 style="background: rgba(15,23,42,0.7); border: 1px solid ${c.border}; border-radius: 10px;
@@ -12231,13 +12239,13 @@ window.exportSealPreviewJSON = exportSealPreviewJSON;
                 onmouseout="this.style.background='rgba(15,23,42,0.7)';this.style.transform='';this.style.boxShadow=''">
                 <div style="display: flex; align-items: flex-start; gap: 8px; justify-content: space-between;">
                     <span style="font-family: monospace; font-size: 10px; color: ${c.text}; font-weight: bold; background: ${c.bg}; border: 1px solid ${c.border}; padding: 2px 6px; border-radius: 4px; white-space: nowrap;">${p.id}</span>
-                    <span style="font-size: 10px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.industry || ""}</span>
+                    <span style="font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; ${riskStyle}">${risk}</span>
                 </div>
                 <div style="font-size: 13px; font-weight: 600; color: #fff; line-height: 1.3;">${p.title}</div>
                 <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.5; flex: 1;">${shortMission}</div>
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
                     <span style="font-size: 10px; color: ${c.text}; background: ${c.bg}; padding: 2px 7px; border-radius: 10px; font-weight: 600;">${p.category}</span>
-                    <span style="font-size: 10px; color: var(--text-secondary);">View prompt →</span>
+                    <span style="font-size: 10px; color: var(--text-secondary);">${p.industry || ""} · View →</span>
                 </div>
             </div>`;
         }).join("");
@@ -12285,12 +12293,90 @@ window.exportSealPreviewJSON = exportSealPreviewJSON;
             badge.style.border = `1px solid ${c.border}`;
             badge.style.color = c.text;
         }
-        el("prompt-detail-id") && (el("prompt-detail-id").textContent = prompt.id);
-        el("prompt-detail-title") && (el("prompt-detail-title").textContent = prompt.title);
+        el("prompt-detail-id")       && (el("prompt-detail-id").textContent = prompt.id);
+        el("prompt-detail-title")    && (el("prompt-detail-title").textContent = prompt.title);
         el("prompt-detail-industry") && (el("prompt-detail-industry").textContent = `Industry: ${prompt.industry || "All Industries"}`);
-        el("prompt-detail-mission") && (el("prompt-detail-mission").textContent = prompt.mission || "");
-        el("prompt-detail-outputs") && (el("prompt-detail-outputs").textContent = prompt.outputs || "");
-        el("prompt-detail-text") && (el("prompt-detail-text").textContent = prompt.prompt || "");
+        el("prompt-detail-mission")  && (el("prompt-detail-mission").textContent = prompt.mission || "");
+        el("prompt-detail-outputs")  && (el("prompt-detail-outputs").textContent = prompt.outputs || "");
+        el("prompt-detail-text")     && (el("prompt-detail-text").textContent = prompt.prompt || "");
+
+        // ── Governance metadata ────────────────────────────────────────────────
+        const risk = (prompt.risk_level || "LOW").toUpperCase();
+        const riskColors = {
+            LOW:     { color: "#10b981", bg: "rgba(16,185,129,0.12)", border: "rgba(16,185,129,0.35)" },
+            MEDIUM:  { color: "#f59e0b", bg: "rgba(245,158,11,0.12)", border: "rgba(245,158,11,0.35)" },
+            HIGH:    { color: "#ef4444", bg: "rgba(239,68,68,0.12)",  border: "rgba(239,68,68,0.35)" },
+            BLOCKED: { color: "#fca5a5", bg: "rgba(127,29,29,0.3)",   border: "rgba(239,68,68,0.5)" },
+        };
+        const rc = riskColors[risk] || riskColors.LOW;
+
+        // Risk badge in detail header
+        let riskEl = el("prompt-detail-risk-badge");
+        if (!riskEl) {
+            riskEl = document.createElement("span");
+            riskEl.id = "prompt-detail-risk-badge";
+            riskEl.style.cssText = "font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:8px;";
+            const idEl = el("prompt-detail-id");
+            if (idEl && idEl.parentNode) idEl.parentNode.appendChild(riskEl);
+        }
+        riskEl.textContent = `${risk} RISK`;
+        riskEl.style.background = rc.bg;
+        riskEl.style.border = `1px solid ${rc.border}`;
+        riskEl.style.color = rc.color;
+
+        // Hash display
+        let hashEl = el("prompt-detail-hash");
+        if (!hashEl) {
+            hashEl = document.createElement("div");
+            hashEl.id = "prompt-detail-hash";
+            hashEl.style.cssText = "font-family:monospace;font-size:9px;color:var(--text-secondary);margin-top:4px;word-break:break-all;";
+            const idEl = el("prompt-detail-id");
+            if (idEl && idEl.parentNode) idEl.parentNode.appendChild(hashEl);
+        }
+        hashEl.textContent = prompt.sha256 ? `SHA-256: ${prompt.sha256.slice(0,32)}…` : "";
+
+        // Risk reasons
+        let reasonsEl = el("prompt-detail-risk-reasons");
+        if (!reasonsEl) {
+            reasonsEl = document.createElement("div");
+            reasonsEl.id = "prompt-detail-risk-reasons";
+            reasonsEl.style.cssText = "font-size:10px;margin-top:6px;line-height:1.5;";
+            const missionEl = el("prompt-detail-mission");
+            if (missionEl && missionEl.parentNode) missionEl.parentNode.insertBefore(reasonsEl, missionEl);
+        }
+        const reasons = (prompt.risk_reasons || []);
+        if (reasons.length) {
+            reasonsEl.style.color = rc.color;
+            reasonsEl.innerHTML = `<span style="opacity:0.7;">⚠ ${reasons.join(" · ")}</span>`;
+        } else {
+            reasonsEl.innerHTML = "";
+        }
+
+        // Update Use button label based on risk
+        const useBtn = el("prompt-detail-use");
+        if (useBtn) {
+            if (risk === "BLOCKED") {
+                useBtn.textContent = "🚫 Blocked";
+                useBtn.disabled = true;
+                useBtn.style.opacity = "0.5";
+                useBtn.style.cursor = "not-allowed";
+            } else if (risk === "HIGH") {
+                useBtn.textContent = "⚠ Request Approval";
+                useBtn.disabled = false;
+                useBtn.style.opacity = "1";
+                useBtn.style.cursor = "pointer";
+            } else if (risk === "MEDIUM") {
+                useBtn.textContent = "▶ Use (Rationale Required)";
+                useBtn.disabled = false;
+                useBtn.style.opacity = "1";
+                useBtn.style.cursor = "pointer";
+            } else {
+                useBtn.textContent = "▶ Send to Swarm";
+                useBtn.disabled = false;
+                useBtn.style.opacity = "1";
+                useBtn.style.cursor = "pointer";
+            }
+        }
 
         panel.classList.remove("hidden");
         panel.style.display = "flex";
@@ -12360,32 +12446,116 @@ window.exportSealPreviewJSON = exportSealPreviewJSON;
     // ---- "Send to Swarm" ----
     async function sendToSwarm(prompt) {
         if (!prompt) return;
+        const risk = (prompt.risk_level || "LOW").toUpperCase();
+        const useBtn = el("prompt-detail-use");
+
+        // BLOCKED — never send
+        if (risk === "BLOCKED") {
+            alert("This prompt is BLOCKED from execution. Contact a Security Officer for review.");
+            return;
+        }
+
+        // MEDIUM — require rationale
+        let rationale = "";
+        if (risk === "MEDIUM") {
+            rationale = window.prompt(
+                `This is a MEDIUM-risk prompt (${(prompt.risk_reasons||[]).join(", ") || "advisory flags"}).\n\nEnter your rationale for using it (required, min 10 chars):`
+            );
+            if (!rationale || rationale.trim().length < 10) {
+                alert("Rationale required for MEDIUM-risk prompts. Cancelled.");
+                return;
+            }
+        }
+
+        // HIGH — show info before requesting approval
+        if (risk === "HIGH") {
+            const reasons = (prompt.risk_reasons || []).join(", ") || "sensitive scope";
+            const ok = window.confirm(
+                `HIGH-RISK PROMPT: ${prompt.title}\n\nRisk factors: ${reasons}\n\n` +
+                `An operator approval request will be created.\nYou can approve it at:\n  GET /api/v1/prompts/pending-approvals\n  POST /api/v1/prompts/approve\n\nContinue?`
+            );
+            if (!ok) return;
+        }
+
+        // Route through governance gate
+        if (useBtn) { useBtn.disabled = true; useBtn.textContent = "⏳ Checking policy…"; }
         try {
-            const payload = {
-                task_type: prompt.category,
-                prompt: prompt.prompt,
-                system_prompt: `You are the ${prompt.title}. ${prompt.mission}`,
-                mode: "Execute",
-                operator_role: "Operator",
-            };
-            const res = await fetch(`${API_BASE}/api/tasks/run`, {
+            const selectRes = await fetch(`${API_BASE}/api/v1/prompts/select`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
+                body: JSON.stringify({
+                    prompt_id: prompt.id,
+                    agent_id: "UI_OPERATOR",
+                    mission_context: prompt.mission || "",
+                    rationale: rationale,
+                    requested_by: "Operator",
+                }),
             });
-            if (res.ok) {
-                const btn = el("prompt-detail-use");
-                if (btn) {
-                    const orig = btn.textContent;
-                    btn.textContent = "✓ Submitted to Swarm";
-                    btn.style.color = "#10b981";
-                    setTimeout(() => { btn.textContent = orig; btn.style.color = ""; }, 3000);
+            const result = await selectRes.json();
+            const decision = result.decision || "REJECTED";
+
+            if (useBtn) {
+                useBtn.disabled = false;
+                // Restore label after feedback
+                const restoreLabel = () => {
+                    if (risk === "HIGH") useBtn.textContent = "⚠ Request Approval";
+                    else if (risk === "MEDIUM") useBtn.textContent = "▶ Use (Rationale Required)";
+                    else useBtn.textContent = "▶ Send to Swarm";
+                };
+
+                if (decision === "ALLOWED" || decision === "ALLOWED_WITH_RATIONALE") {
+                    // Governance gate passed — now actually run in swarm
+                    const taskRes = await fetch(`${API_BASE}/api/tasks/run`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            task_type: prompt.category,
+                            prompt: prompt.prompt,
+                            system_prompt: `You are the ${prompt.title}. ${prompt.mission}`,
+                            mode: "Execute",
+                            operator_role: "Operator",
+                            prompt_id: prompt.id,
+                            prompt_sha256: prompt.sha256,
+                            ledger_id: result.ledger_id,
+                        }),
+                    });
+                    if (taskRes.ok) {
+                        useBtn.textContent = "✓ Submitted (logged)";
+                        useBtn.style.color = "#10b981";
+                        setTimeout(() => { useBtn.style.color = ""; restoreLabel(); }, 3500);
+                    } else {
+                        useBtn.textContent = "! Task submit failed";
+                        useBtn.style.color = "#ef4444";
+                        setTimeout(() => { useBtn.style.color = ""; restoreLabel(); }, 3000);
+                    }
+
+                } else if (decision === "PENDING_APPROVAL") {
+                    useBtn.textContent = "⏳ Awaiting Approval";
+                    useBtn.style.color = "#f59e0b";
+                    alert(
+                        `Approval request created.\n\n` +
+                        `Prompt: ${prompt.title}\n` +
+                        `Approval ID: ${result.approval_id}\n` +
+                        `Ledger ID: ${result.ledger_id}\n\n` +
+                        `Approve via:\n  POST /api/v1/prompts/approve\n  { "approval_id": "${result.approval_id}", "reviewed_by": "Operator" }`
+                    );
+                    setTimeout(() => { useBtn.style.color = ""; restoreLabel(); }, 5000);
+
+                } else if (decision === "RATIONALE_REQUIRED") {
+                    useBtn.style.color = "";
+                    restoreLabel();
+                    alert("Rationale required (min 10 chars). Please try again.");
+
+                } else {
+                    useBtn.textContent = "🚫 Rejected by policy";
+                    useBtn.style.color = "#ef4444";
+                    alert(`Policy gate rejected this prompt.\nReason: ${result.reason || "BLOCKED"}\n${result.policy_message || ""}`);
+                    setTimeout(() => { useBtn.style.color = ""; restoreLabel(); }, 4000);
                 }
-            } else {
-                alert("Swarm submission failed: HTTP " + res.status);
             }
         } catch (err) {
-            alert("Swarm submission error: " + err.message);
+            if (useBtn) { useBtn.disabled = false; }
+            alert("Governance gate error: " + err.message);
         }
     }
 

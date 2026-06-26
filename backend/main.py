@@ -6847,71 +6847,122 @@ def delete_evidence_graph_link_api(link_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 # ================================================================
-#  PROMPT LIBRARY — serve hoch_agent_swarm_prompt_library.json
+#  PROMPT LIBRARY — Governance-gated read-only knowledge source
+#  Policy: LOW=auto, MEDIUM=rationale, HIGH=approval, BLOCKED=reject
 # ================================================================
-import functools
+from backend.prompt_governance import (
+    get_all_prompts as _pg_get_all,
+    get_prompt_by_id as _pg_get_by_id,
+    get_categories as _pg_get_categories,
+    select_prompt as _pg_select,
+    approve_prompt as _pg_approve,
+    get_usage_ledger as _pg_ledger,
+    get_pending_approvals as _pg_pending,
+    ensure_ledger_table as _pg_init,
+)
 
-@functools.lru_cache(maxsize=1)
-def _load_prompt_library():
-    """Load prompt library JSON once and cache it."""
-    lib_path = os.path.join(os.path.dirname(__file__), "prompt_library.json")
-    try:
-        with open(lib_path, "r") as f:
-            return json.load(f)
-    except Exception as e:
-        return []
+# Initialise ledger tables at startup
+try:
+    _pg_init()
+except Exception as _e:
+    pass  # non-fatal — ledger tables created on first use
+
+
+# ── Read-only prompt library endpoints (now include sha256 + risk metadata) ───
 
 @app.get("/api/v1/prompt-library")
 def get_prompt_library(
     category: str = None,
     industry: str = None,
     search: str = None,
-    limit: int = 200
+    limit: int = 200,
 ):
-    """Return all prompts, with optional filters for category, industry, and full-text search."""
-    prompts = _load_prompt_library()
-    if category:
-        prompts = [p for p in prompts if p.get("category", "").lower() == category.lower()]
-    if industry:
-        prompts = [p for p in prompts if p.get("industry", "").lower() == industry.lower()]
-    if search:
-        q = search.lower()
-        prompts = [
-            p for p in prompts
-            if q in p.get("title", "").lower()
-            or q in p.get("mission", "").lower()
-            or q in p.get("prompt", "").lower()
-            or q in p.get("category", "").lower()
-            or q in p.get("id", "").lower()
-        ]
-    return {
-        "count": len(prompts[:limit]),
-        "total": len(_load_prompt_library()),
-        "prompts": prompts[:limit],
-        "source": "prompt_library.json",
-        "freshness": "static",
-    }
+    """Return all prompts with governance metadata (sha256, risk_level, allowed_modes, …)."""
+    return _pg_get_all(category=category, industry=industry, search=search, limit=limit)
+
 
 @app.get("/api/v1/prompt-library/categories")
 def get_prompt_library_categories():
     """Return unique categories and industries for filter UI."""
-    prompts = _load_prompt_library()
-    categories = sorted(set(p.get("category", "") for p in prompts if p.get("category")))
-    industries = sorted(set(p.get("industry", "") for p in prompts if p.get("industry")))
-    return {
-        "categories": categories,
-        "industries": industries,
-        "total_prompts": len(prompts),
-    }
+    return _pg_get_categories()
+
 
 @app.get("/api/v1/prompt-library/{prompt_id}")
-def get_prompt_by_id(prompt_id: str):
-    """Return a single prompt by its ID (e.g. QA-001, SAST-002)."""
-    prompts = _load_prompt_library()
-    for p in prompts:
-        if p.get("id", "").upper() == prompt_id.upper():
-            return p
-    raise HTTPException(status_code=404, detail=f"Prompt '{prompt_id}' not found")
+def get_prompt_library_by_id(prompt_id: str):
+    """Return a single prompt with full governance metadata by ID (e.g. QA-001)."""
+    p = _pg_get_by_id(prompt_id)
+    if not p:
+        raise HTTPException(status_code=404, detail=f"Prompt '{prompt_id}' not found")
+    return p
+
+
+# ── Governance gate endpoints ──────────────────────────────────────────────────
+
+class PromptSelectRequest(BaseModel):
+    prompt_id: str
+    agent_id: str = "OPERATOR"
+    mission_context: str = ""
+    rationale: str = ""
+    requested_by: str = "Operator"
+
+
+class PromptApproveRequest(BaseModel):
+    approval_id: str
+    reviewed_by: str = "Operator"
+    decision_note: str = ""
+    deny: bool = False
+
+
+@app.post("/api/v1/prompts/select")
+def prompt_select(req: PromptSelectRequest):
+    """
+    Prompt policy gate.
+    - LOW  prompt → decision: ALLOWED (auto-logged)
+    - MEDIUM       → decision: ALLOWED_WITH_RATIONALE (rationale required, logged)
+    - HIGH         → decision: PENDING_APPROVAL (creates approval request)
+    - BLOCKED      → decision: REJECTED (logged, operator alerted)
+    """
+    return _pg_select(
+        prompt_id=req.prompt_id,
+        agent_id=req.agent_id,
+        mission_context=req.mission_context,
+        rationale=req.rationale,
+        requested_by=req.requested_by,
+    )
+
+
+@app.post("/api/v1/prompts/approve")
+def prompt_approve(req: PromptApproveRequest):
+    """
+    Operator approves or denies a PENDING HIGH-risk prompt request.
+    Pass deny=true to reject the request.
+    """
+    result = _pg_approve(
+        approval_id=req.approval_id,
+        reviewed_by=req.reviewed_by,
+        decision_note=req.decision_note,
+        deny=req.deny,
+    )
+    if "error" in result:
+        raise HTTPException(status_code=404, detail=result["error"])
+    return result
+
+
+@app.get("/api/v1/prompts/usage-ledger")
+def prompt_usage_ledger(limit: int = 200, prompt_id: str = None):
+    """
+    Return audit log of all prompt selections and their governance decisions.
+    Each entry: prompt_id, sha256, risk_level, agent_id, decision, approved_by, logged_at.
+    """
+    return _pg_ledger(limit=limit, prompt_id=prompt_id)
+
+
+@app.get("/api/v1/prompts/pending-approvals")
+def prompt_pending_approvals():
+    """
+    Return all PENDING prompt approval requests (for Governance Cockpit queue).
+    """
+    return _pg_pending()
 
 # Mount frontend files at root (if frontend directory exists)
 
