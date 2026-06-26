@@ -227,25 +227,27 @@ TRIAL_REPORT="artifacts/crew_runs/<timestamp>/run_report.json"
 ### Step 7 — Compare run reports
 
 ```bash
-python3 -c "
-import json
-baseline = json.load(open('$BASELINE_REPORT'))
-trial    = json.load(open('$TRIAL_REPORT'))
-print('Baseline crewai:', baseline['crewai_version'])
-print('Trial    crewai:', trial['crewai_version'])
-print()
-for b, t in zip(baseline['canonical_artifacts'], trial['canonical_artifacts']):
-    match = '✓' if b['sha256'] == t['sha256'] else '✗ CHANGED'
-    print(f\"{match}  {b['path']}\")
-    if b['sha256'] != t['sha256']:
-        print(f'     baseline sha256: {b[\"sha256\"]}')
-        print(f'     trial    sha256: {t[\"sha256\"]}')
-"
+# Automated comparison — replaces the manual inline python3 script
+uv run compare_reports "$BASELINE_REPORT" "$TRIAL_REPORT"
+# exit 0 = PROMOTE, exit 1 = INVESTIGATE or BLOCK
 ```
 
-Artifact hashes changing is **expected** (model output varies run to run).
-The check is that `status` is `PASS` in both and `validation_status` is `VALID`
-for all artifacts.
+Machine-readable output:
+```bash
+uv run compare_reports --json "$BASELINE_REPORT" "$TRIAL_REPORT"
+```
+
+The tool diffs `status`, `crewai_version`, `mcp_stub_version`, `errors`,
+per-artifact `validation_status`, and size deltas.
+SHA-256 changes are noted as informational — artifact content varying run-to-run
+is expected for LLM output. The verdict is based on validation status, not hashes.
+
+| Verdict | Meaning |
+|---|---|
+| `PROMOTE` | Trial passed all gates — proceed to Step 8 |
+| `INVESTIGATE` | Trial passed but has non-fatal anomalies — review findings |
+| `BLOCK` | Trial failed or regressed — do not promote; see findings |
+
 
 ### Step 8 — Decision
 
