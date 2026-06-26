@@ -7116,6 +7116,34 @@ def skills_summary():
     }
 
 
+# ================================================================
+#  QA EVIDENCE MATRIX ENDPOINT — Batch PR-5 / PERT P5 / GAP-004
+# ================================================================
+
+@app.get("/api/v1/qa/evidence-matrix")
+def qa_evidence_matrix_endpoint():
+    """
+    Returns the full QA evidence matrix.
+    Maps Northstar controls → tests → evidence artifacts → gap remediation status.
+    truth=LIVE when config/qa_evidence_matrix.json is present.
+    Added: Batch PR-5
+    """
+    import json as _json, os as _os
+    path = _os.path.join(
+        _os.path.dirname(_os.path.dirname(__file__)), "config", "qa_evidence_matrix.json"
+    )
+    if not _os.path.exists(path):
+        return {"controls":[],"summary":{"matrix_status":"MISSING"},"gap_ref":"GAP-004","truth":"MISSING"}
+    data = _json.loads(open(path).read())
+    return {
+        "controls":  data.get("controls", []),
+        "summary":   data.get("summary", {}),
+        "gap_ref":   "GAP-004",
+        "pert_ref":  "P5",
+        "truth":     "LIVE",
+    }
+
+
 @app.post("/api/v1/prompts/expire-test")
 def prompt_expire_test_approvals():
     """
@@ -7155,6 +7183,7 @@ def production_readiness():
     profiles_data, profiles_truth = _load("cluster_worker_profiles.json")
     port_data,     port_truth     = _load("port_hardening_audit.json")
     skill_reg,     skill_truth    = _load("skill_registry.json")
+    qa_matrix,     qa_truth       = _load("qa_evidence_matrix.json")
 
     # ── P3 / P8 — complete if config files present ─────────────────────────────
     p3_status = "COMPLETE" if trust_truth    == "LIVE" else "PENDING"
@@ -7167,6 +7196,28 @@ def production_readiness():
     p1_status = "IN_PROGRESS" if p1_sealed else "PENDING"
     gap001_status = "IN_PROGRESS"  # doctrine written, runtime enforcement pending P2
     gap006_status = "IN_PROGRESS"  # doctrine sealed; principles written
+
+    # ── P5 — QA evidence matrix ───────────────────────────────────────────────
+    qa_summ         = qa_matrix.get("summary", {})
+    qa_controls     = len(qa_matrix.get("controls", []))
+    qa_tested       = qa_summ.get("tested", 0)
+    qa_pending      = qa_summ.get("pending", 0)
+    qa_tests_pass   = qa_summ.get("tests_pass", 0)
+    qa_tests_total  = qa_summ.get("total_tests", 0)
+    qa_matrix_ok    = qa_truth == "LIVE" and qa_controls >= 10
+    p5_status       = "IN_PROGRESS" if qa_matrix_ok else "PENDING"
+    # GAP-004: IN_PROGRESS once matrix exists; RESOLVED only after P9 E2E
+    gap004_status   = "IN_PROGRESS" if qa_matrix_ok else "OPEN"
+    qa_matrix_summary = {
+        "controls":    qa_controls,
+        "tested":      qa_tested,
+        "pending":     qa_pending,
+        "tests_pass":  qa_tests_pass,
+        "tests_total": qa_tests_total,
+        "ready_for_p9":qa_summ.get("ready_for_p9", False),
+        "matrix_status":qa_summ.get("matrix_status", "UNKNOWN"),
+        "truth":       qa_truth,
+    }
 
     # ── P2 — skill registry gate ───────────────────────────────────────────────
     try:
@@ -7211,6 +7262,10 @@ def production_readiness():
         if ws["id"] == "P8":
             ws["status"] = p8_status
             ws["evidence_resolved"] = (profiles_truth == "LIVE")
+        if ws["id"] == "P5":
+            ws["status"] = p5_status
+            ws["evidence_resolved"] = qa_matrix_ok
+            ws["controls_mapped"] = qa_controls
 
     # Live counts from ledger DB (non-fatal)
     approval_summary = {}
@@ -7236,7 +7291,8 @@ def production_readiness():
          "truth":trust_truth,    "evidence":"config/asset_trust_registry.json" if p3_status=="COMPLETE" else "MISSING"},
         {"id":"GAP-003","area":"Runtime Policy",     "severity":"HIGH",  "status":gap003_status,  "pert":"P2",
          "truth":skill_truth,    "evidence":f"config/skill_registry.json ({skill_gate_total} skills, fail-closed gate ACTIVE)" if skill_gate_ok else "PENDING"},
-        {"id":"GAP-004","area":"QA Evidence",        "severity":"HIGH",  "status":"OPEN",         "pert":"P5"},
+        {"id":"GAP-004","area":"QA Evidence",        "severity":"HIGH",  "status":gap004_status,  "pert":"P5",
+         "truth":qa_truth, "evidence":f"config/qa_evidence_matrix.json ({qa_controls} controls, {qa_tests_pass}/{qa_tests_total} tests PASS)" if qa_matrix_ok else "PENDING"},
         {"id":"GAP-005","area":"PERT Engine",        "severity":"MEDIUM","status":"IN_PROGRESS",  "pert":"P6"},
         {"id":"GAP-006","area":"Northstar Doctrine", "severity":"MEDIUM","status":gap006_status,  "pert":"P1",
          "truth":controls_truth, "evidence":"config/hoch_northstar_controls.json (northstar_sealed=True)" if p1_sealed else "PENDING"},
@@ -7305,6 +7361,9 @@ def production_readiness():
         "p8_status":         p8_status,
         "skill_gate":        skill_gate_summary,
         "skill_truth":       skill_truth,
+        "qa_matrix":         qa_matrix_summary,
+        "qa_truth":          qa_truth,
+        "p5_status":         p5_status,
         "truth":             "LIVE",
     }
 
