@@ -3877,31 +3877,15 @@
 <script type="module" src="/app.js"></script>
 
 <script>
-    // Theme Manager Persistence Script
+    // Theme Manager Persistence Script (Early application to prevent flash)
     (function() {
         const defaultTheme = "theme-green";
-        const savedTheme = localStorage.getItem("selected-theme") || defaultTheme;
+        const savedTheme = localStorage.getItem("selected-theme") || localStorage.getItem("hoch-theme") || defaultTheme;
         document.body.classList.add(savedTheme);
-        
-        document.addEventListener("DOMContentLoaded", () => {
-            const selector = document.getElementById("theme-selector");
-            if (selector) {
-                selector.value = savedTheme;
-                selector.addEventListener("change", (e) => {
-                    const newTheme = e.target.value;
-                    // Remove existing themes
-                    document.body.classList.forEach(cls => {
-                        if (cls.startsWith("theme-")) {
-                            document.body.classList.remove(cls);
-                        }
-                    });
-                    document.body.classList.add(newTheme);
-                    localStorage.setItem("selected-theme", newTheme);
-                });
-            }
-        });
+        document.documentElement.classList.add(savedTheme);
     })();
 </script>
+
 
 </body>
 </html>

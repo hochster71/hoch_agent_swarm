@@ -13676,3 +13676,57 @@ window.exportSealPreviewJSON = exportSealPreviewJSON;
     wirePRDashboard();
   }
 })();
+
+// ── Robust Kimi Theme Manager ────────────────────────────────────────────────
+(function() {
+  const DEFAULT_THEME = "theme-green";
+  const THEME_STORAGE_KEY = "selected-theme";
+  const THEME_STORAGE_KEY_ALT = "hoch-theme";
+
+  function applyTheme(themeName) {
+    const safeTheme = themeName || DEFAULT_THEME;
+    const themes = [
+      "theme-green",
+      "theme-blue",
+      "theme-pink",
+      "theme-purple",
+      "theme-cyan",
+      "theme-amber",
+      "theme-orange",
+      "theme-red",
+      "theme-silver",
+      "theme-mono"
+    ];
+
+    themes.forEach(t => {
+      document.documentElement.classList.remove(t);
+      document.body.classList.remove(t);
+    });
+
+    document.documentElement.classList.add(safeTheme);
+    document.body.classList.add(safeTheme);
+
+    localStorage.setItem(THEME_STORAGE_KEY, safeTheme);
+    localStorage.setItem(THEME_STORAGE_KEY_ALT, safeTheme);
+  }
+
+  function initThemeSelector() {
+    const saved = localStorage.getItem(THEME_STORAGE_KEY) || localStorage.getItem(THEME_STORAGE_KEY_ALT) || DEFAULT_THEME;
+    applyTheme(saved);
+
+    const selector = document.getElementById("theme-selector");
+    if (selector) {
+      selector.value = saved;
+      selector.addEventListener("change", event => {
+        applyTheme(event.target.value);
+      });
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initThemeSelector);
+  } else {
+    initThemeSelector();
+  }
+})();
+
