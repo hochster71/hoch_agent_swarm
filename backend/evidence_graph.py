@@ -179,6 +179,18 @@ def build_evidence_graph() -> dict:
             except Exception:
                 pass
 
+            # Missing artifacts
+            try:
+                missing = json.loads(row["missing_artifacts_json"])
+                for art in missing:
+                    art_id = art.get("id") if isinstance(art, dict) else art
+                    if art_id:
+                        missing_graph_id = f"artifact:{art_id}"
+                        add_node(missing_graph_id, "artifact", f"Missing Artifact: {art_id}", {"missing": True}, missing=True)
+                        add_edge(graph_id, missing_graph_id, "missing_evidence")
+            except Exception:
+                pass
+
         # 7. Formal Previews
         for row in conn.execute("SELECT * FROM formal_release_previews").fetchall():
             fp_id = row["formal_preview_id"]
@@ -244,6 +256,17 @@ def build_evidence_graph() -> dict:
                         add_edge(graph_id, f"artifact:{art['id']}", "attests_artifact")
                     elif isinstance(art, str):
                         add_edge(graph_id, f"artifact:{art}", "attests_artifact")
+            except Exception:
+                pass
+
+            try:
+                missing = json.loads(row["missing_artifacts_json"])
+                for art in missing:
+                    art_id = art.get("id") if isinstance(art, dict) else art
+                    if art_id:
+                        missing_graph_id = f"artifact:{art_id}"
+                        add_node(missing_graph_id, "artifact", f"Missing Attested Artifact: {art_id}", {"missing": True}, missing=True)
+                        add_edge(graph_id, missing_graph_id, "missing_evidence")
             except Exception:
                 pass
 

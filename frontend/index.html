@@ -2203,6 +2203,9 @@
                             <h3 style="font-size: 16px; font-weight: 700; color: #fff; margin: 0;">CROSS-RUNTIME EVIDENCE GRAPH LINEAGE</h3>
                         </div>
                         <div style="display: flex; align-items: center; gap: 10px;">
+                            <button id="btn-export-evidence-summary" class="btn btn-xs btn-outline btn-success hidden" style="display: flex; align-items: center; gap: 4px;">
+                                <i data-lucide="download" style="width: 12px; height: 12px;"></i> Export Evidence Summary
+                            </button>
                             <button id="btn-refresh-evidence-graph" class="btn btn-xs btn-outline" style="display: flex; align-items: center; gap: 4px;">
                                 <i data-lucide="refresh-cw" style="width: 12px; height: 12px;"></i> Refresh Graph
                             </button>
@@ -2214,6 +2217,12 @@
                         <div style="display: flex; flex-direction: column; gap: 15px; background: rgba(0,0,0,0.15); padding: 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.03);">
                              <div style="display: flex; gap: 10px; align-items: flex-end;">
                                 <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                                    <label style="font-size: 11px; color: var(--text-secondary);">Filter by Release Candidate</label>
+                                    <select id="evidence-graph-release-filter" style="background: rgba(0,0,0,0.25); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 12px; width: 100%;">
+                                        <option value="">-- All Candidates --</option>
+                                    </select>
+                                </div>
+                                <div style="flex: 1.5; display: flex; flex-direction: column; gap: 4px;">
                                     <label style="font-size: 11px; color: var(--text-secondary);">Select Starting Node to Trace</label>
                                     <select id="evidence-trace-start-select" style="background: rgba(0,0,0,0.25); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px 10px; color: #fff; font-size: 12px; width: 100%;">
                                         <option value="">-- No nodes loaded --</option>

@@ -35,37 +35,48 @@ test.describe("Cross-Runtime Evidence Graph E2E", () => {
     // 4. Click the Refresh Graph button
     const refreshBtn = page.locator("#btn-refresh-evidence-graph");
     await expect(refreshBtn).toBeVisible();
+    const refreshPromise = page.waitForResponse(response => 
+      response.url().includes("/api/v1/evidence/graph") && response.status() === 200
+    );
     await refreshBtn.click();
-    await page.waitForTimeout(500);
+    await refreshPromise;
+    await page.waitForTimeout(200);
 
-    // 5. Select a starting node in the trace dropdown
-    const startSelect = page.locator("#evidence-trace-start-select");
-    await expect(startSelect).toBeVisible();
-    
-    // Wait for options to load (should contain at least one real option)
+    // 5. Select a candidate in the Release Candidate filter
+    const releaseFilter = page.locator("#evidence-graph-release-filter");
+    await expect(releaseFilter).toBeVisible();
+
     await page.waitForFunction(() => {
-      const select = document.getElementById("evidence-trace-start-select") as HTMLSelectElement;
+      const select = document.getElementById("evidence-graph-release-filter") as HTMLSelectElement;
       return select && select.options.length > 1;
     }, { timeout: 10000 });
 
-    // Choose the second option (first real node since index 0 is placeholder)
     const optionValue = await page.evaluate(() => {
-      const select = document.getElementById("evidence-trace-start-select") as HTMLSelectElement;
+      const select = document.getElementById("evidence-graph-release-filter") as HTMLSelectElement;
       return select.options[1].value;
     });
-    
-    console.log(`Selected starting node: ${optionValue}`);
-    await startSelect.selectOption(optionValue);
 
-    // Click "Trace Lineage" button
-    const traceBtn = page.locator("#btn-trigger-evidence-trace");
-    await expect(traceBtn).toBeVisible();
-    await traceBtn.click();
+    console.log(`Selected Release Candidate filter value: ${optionValue}`);
+    const tracePromise = page.waitForResponse(response => 
+      response.url().includes("/api/v1/evidence/graph/trace/") && response.status() === 200
+    );
+    await releaseFilter.selectOption(optionValue);
+    await tracePromise;
     await page.waitForTimeout(500);
 
     // 6. Assert flow-chips are rendered in flow container
     const flowContainer = page.locator("#evidence-flow-container");
     await expect(flowContainer.locator(".evidence-node-chip").first()).toBeVisible();
+
+    // Verify export button is visible and trigger download
+    const exportBtn = page.locator("#btn-export-evidence-summary");
+    await expect(exportBtn).toBeVisible();
+    
+    console.log("Triggering client-side evidence summary download...");
+    const downloadPromise = page.waitForEvent("download");
+    await exportBtn.click();
+    const download = await downloadPromise;
+    console.log(`Downloaded evidence summary: ${download.suggestedFilename()}`);
 
     // Verify stats counters (Phase 21)
     const nodeCountEl = page.locator("#evidence-graph-node-count");
@@ -135,8 +146,11 @@ test.describe("Cross-Runtime Evidence Graph E2E", () => {
       await relationSelect.selectOption("associated_with");
       
       // Save link
+      const linkPromise = page.waitForResponse(response => 
+        response.url().includes("/api/v1/evidence/graph/link") && response.status() === 200
+      );
       await saveLinkBtn.click();
-      await page.waitForTimeout(500);
+      await linkPromise;
 
       // Verify that after saving, no browser console errors occurred
       expect(consoleErrors).toEqual([]);

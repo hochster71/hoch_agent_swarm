@@ -10115,6 +10115,177 @@ let activeTraceEdges = [];
 let visibleNodesLimit = 100;
 let visibleEdgesLimit = 150;
 
+function getSubgraphConnectedTo(startId, nodes, edges) {
+    const nodesMap = {};
+    nodes.forEach(n => nodesMap[n.id] = n);
+    
+    const adj = {};
+    edges.forEach(edge => {
+        adj[edge.source] = adj[edge.source] || [];
+        adj[edge.source].push({ neighbor: edge.target, edge });
+        adj[edge.target] = adj[edge.target] || [];
+        adj[edge.target].push({ neighbor: edge.source, edge });
+    });
+    
+    const visited = new Set([startId]);
+    const queue = [startId];
+    const traversedEdges = [];
+    
+    while (queue.length > 0) {
+        const curr = queue.shift();
+        const neighbors = adj[curr] || [];
+        neighbors.forEach(({ neighbor, edge }) => {
+            if (!visited.has(neighbor)) {
+                visited.add(neighbor);
+                queue.push(neighbor);
+            }
+            if (!traversedEdges.includes(edge)) {
+                traversedEdges.push(edge);
+            }
+        });
+    }
+    
+    const subNodes = Array.from(visited).map(id => nodesMap[id]).filter(Boolean);
+    return { nodes: subNodes, edges: traversedEdges };
+}
+
+async function exportEvidenceSummary() {
+    const startNodeId = document.getElementById("evidence-trace-start-select").value;
+    if (!activeTraceNodes || activeTraceNodes.length === 0 || !startNodeId) {
+        alert("No active lineage trace to export.");
+        return;
+    }
+
+    const timestamp = new Date().toISOString();
+    let doc = `# Release Readiness Evidence Chain Summary\n\n`;
+    doc += `**Traced Starting Node:** \`${startNodeId}\`\n`;
+    doc += `**Report Generated At:** ${timestamp}\n`;
+    doc += `**Total Nodes in Chain:** ${activeTraceNodes.length}\n`;
+    doc += `**Total Relationships/Edges:** ${activeTraceEdges.length}\n\n`;
+    doc += `---\n\n`;
+
+    // 1. Candidate Packets
+    const candidates = activeTraceNodes.filter(n => n.type === "candidate");
+    if (candidates.length > 0) {
+        doc += `## 📦 Release Candidates\n\n`;
+        candidates.forEach(c => {
+            const p = c.properties || {};
+            doc += `### Candidate: ${c.label}\n`;
+            doc += `- **Version:** \`${p.candidate_version || "N/A"}\`\n`;
+            doc += `- **Channel:** \`${p.candidate_channel || "N/A"}\`\n`;
+            doc += `- **Branch:** \`${p.branch || "N/A"}\`\n`;
+            doc += `- **Head SHA:** \`${p.head_sha || "N/A"}\`\n`;
+            doc += `- **QA Status:** \`${p.qa_status || "N/A"}\`\n`;
+            doc += `- **Packet Status:** \`${p.packet_status || "N/A"}\`\n`;
+            doc += `- **Release Ready:** \`${p.formal_release_ready ? "YES" : "NO"}\`\n\n`;
+        });
+    }
+
+    // 2. Formal Previews
+    const previews = activeTraceNodes.filter(n => n.type === "formal_preview");
+    if (previews.length > 0) {
+        doc += `## 🔍 Formal Previews\n\n`;
+        previews.forEach(fp => {
+            const p = fp.properties || {};
+            doc += `### Preview: ${fp.label}\n`;
+            doc += `- **Release Tag:** \`${p.release_tag || "N/A"}\`\n`;
+            doc += `- **Preview Status:** \`${p.preview_status || "N/A"}\`\n`;
+            doc += `- **Release Ready:** \`${p.formal_release_ready ? "YES" : "NO"}\`\n\n`;
+        });
+    }
+
+    // 3. Seal Dry Runs
+    const dryRuns = activeTraceNodes.filter(n => n.type === "seal_dry_run");
+    if (dryRuns.length > 0) {
+        doc += `## 🛡️ Seal Dry Runs\n\n`;
+        dryRuns.forEach(dr => {
+            const p = dr.properties || {};
+            doc += `### Seal Run ID: ${dr.id}\n`;
+            doc += `- **Operator:** \`${p.operator || "N/A"}\`\n`;
+            doc += `- **Seal Status:** \`${p.seal_status || "N/A"}\`\n`;
+            doc += `- **Report Path:** \`${p.seal_report_path || "N/A"}\`\n\n`;
+        });
+    }
+
+    // 4. Attestation Bundles
+    const attestations = activeTraceNodes.filter(n => n.type === "attestation");
+    if (attestations.length > 0) {
+        doc += `## 📜 Attestation Bundles\n\n`;
+        attestations.forEach(ab => {
+            const p = ab.properties || {};
+            doc += `### Attestation Bundle: ${ab.id}\n`;
+            doc += `- **Operator:** \`${p.created_by_operator || "N/A"}\`\n`;
+            doc += `- **Attestation Status:** \`${p.attestation_status || "N/A"}\`\n`;
+            doc += `- **No-Mutation Guarantee:** \`${p.no_mutation_guarantee ? "ACTIVE" : "NONE"}\`\n`;
+            doc += `- **Bundle Path:** \`${p.bundle_path || "N/A"}\`\n\n`;
+        });
+    }
+
+    // 5. Missing Evidence
+    const missingNodes = activeTraceNodes.filter(n => n.missing || n.properties?.missing || n.id.includes("missing") || n.type === "missing");
+    doc += `## ⚠️ Disclosed Missing Evidence & Blockers\n\n`;
+    if (missingNodes.length > 0) {
+        doc += `> [!WARNING]\n`;
+        doc += `> The following required evidence nodes or relationships are missing from this release chain:\n\n`;
+        missingNodes.forEach(m => {
+            doc += `- **[${m.type.toUpperCase()}]** Reference \`${m.id}\` is missing or unresolved.\n`;
+        });
+    } else {
+        doc += `> [!NOTE]\n`;
+        doc += `> No missing required evidence detected in this trace component. Chain integrity is 100% complete.\n`;
+    }
+    doc += `\n`;
+
+    // 6. Included Artifacts
+    const artifacts = activeTraceNodes.filter(n => n.type === "artifact" && !n.missing);
+    if (artifacts.length > 0) {
+        doc += `## 📁 Traced Artifacts & Provenance\n\n`;
+        doc += `| Artifact ID | Name | Hash (SHA-256) | Signature Status | Path |\n`;
+        doc += `|---|---|---|---|---|\n`;
+        artifacts.forEach(a => {
+            const p = a.properties || {};
+            doc += `| \`${a.id}\` | ${a.label} | \`${p.hash || "N/A"}\` | \`${p.signature_status || "unsigned"}\` | \`${p.path || "N/A"}\` |\n`;
+        });
+        doc += `\n`;
+    }
+
+    // 7. Approval Gates
+    const approvals = activeTraceNodes.filter(n => n.type === "approval");
+    if (approvals.length > 0) {
+        doc += `## 🔑 Approval Gates & Decisions\n\n`;
+        doc += `| Approval ID | Request ID | Risk | Status | Requested By |\n`;
+        doc += `|---|---|---|---|---|\n`;
+        approvals.forEach(ap => {
+            const p = ap.properties || {};
+            doc += `| \`${ap.id}\` | \`${p.request_id || "N/A"}\` | \`${p.risk_level || "low"}\` | \`${p.status || "pending"}\` | ${p.requested_by || "N/A"} |\n`;
+        });
+        doc += `\n`;
+    }
+
+    // 8. Model Inferences & Multi-Model Consensus
+    const inferences = activeTraceNodes.filter(n => n.type === "inference");
+    if (inferences.length > 0) {
+        doc += `## 🤖 AI Model Inferences & Swarm Routing\n\n`;
+        doc += `| Inference ID | Model ID | Status | Latency | Prompt/Response Hash |\n`;
+        doc += `|---|---|---|---|---|\n`;
+        inferences.forEach(inf => {
+            const p = inf.properties || {};
+            doc += `| \`${inf.id}\` | \`${p.model_id || "N/A"}\` | \`${p.status || "N/A"}\` | ${p.latency_ms || 0}ms | \`${(p.prompt_hash || "").substring(0, 10)}... / ${(p.response_hash || "").substring(0, 10)}...\` |\n`;
+        });
+        doc += `\n`;
+    }
+
+    // Trigger file download
+    const blob = new Blob([doc], { type: "text/markdown;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `evidence-summary-${startNodeId.replace(/:/g, "-")}.md`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
 async function initEvidenceGraphUI() {
     const btnRefresh = document.getElementById("btn-refresh-evidence-graph");
     if (btnRefresh) {
@@ -10127,6 +10298,31 @@ async function initEvidenceGraphUI() {
     const btnSaveLink = document.getElementById("btn-save-manual-link");
     if (btnSaveLink) {
         btnSaveLink.addEventListener("click", saveManualLink);
+    }
+    const btnExport = document.getElementById("btn-export-evidence-summary");
+    if (btnExport) {
+        btnExport.addEventListener("click", exportEvidenceSummary);
+    }
+    const releaseFilter = document.getElementById("evidence-graph-release-filter");
+    if (releaseFilter) {
+        releaseFilter.addEventListener("change", () => {
+            const selectedCandidateId = releaseFilter.value;
+            if (!selectedCandidateId) {
+                populateEvidenceDropdowns(localEvidenceGraphData ? (localEvidenceGraphData.nodes || []) : []);
+                return;
+            }
+
+            if (localEvidenceGraphData && localEvidenceGraphData.nodes) {
+                const subgraph = getSubgraphConnectedTo(selectedCandidateId, localEvidenceGraphData.nodes, localEvidenceGraphData.edges || []);
+                populateEvidenceDropdowns(subgraph.nodes, true);
+                
+                const startSelect = document.getElementById("evidence-trace-start-select");
+                if (startSelect) {
+                    startSelect.value = selectedCandidateId;
+                    traceEvidenceLineage();
+                }
+            }
+        });
     }
     const compactToggle = document.getElementById("evidence-graph-compact-toggle");
     if (compactToggle) {
@@ -10169,10 +10365,24 @@ async function loadEvidenceGraph() {
     }
 }
 
-function populateEvidenceDropdowns(nodes) {
+function populateEvidenceDropdowns(nodes, isFiltered = false) {
     const startSelect = document.getElementById("evidence-trace-start-select");
     const sourceSelect = document.getElementById("link-source-select");
     const targetSelect = document.getElementById("link-target-select");
+
+    if (!isFiltered) {
+        const releaseFilter = document.getElementById("evidence-graph-release-filter");
+        if (releaseFilter) {
+            releaseFilter.innerHTML = '<option value="">-- All Candidates --</option>';
+            const candidateNodes = nodes.filter(n => n.type === "candidate");
+            candidateNodes.sort((a, b) => a.label.localeCompare(b.label)).forEach(node => {
+                const opt = document.createElement("option");
+                opt.value = node.id;
+                opt.textContent = node.label;
+                releaseFilter.appendChild(opt);
+            });
+        }
+    }
 
     const selects = [startSelect, sourceSelect, targetSelect];
     selects.forEach(select => {
@@ -10259,12 +10469,21 @@ function renderEvidenceFlow(nodes, edges) {
     const nodeCountEl = document.getElementById("evidence-graph-node-count");
     const edgeCountEl = document.getElementById("evidence-graph-edge-count");
     const hiddenCountEl = document.getElementById("evidence-graph-hidden-count");
+    const exportBtn = document.getElementById("btn-export-evidence-summary");
 
     const totalNodesCount = nodes ? nodes.length : 0;
     const totalEdgesCount = edges ? edges.length : 0;
 
     if (nodeCountEl) nodeCountEl.textContent = totalNodesCount;
     if (edgeCountEl) edgeCountEl.textContent = totalEdgesCount;
+
+    if (exportBtn) {
+        if (totalNodesCount > 0) {
+            exportBtn.classList.remove("hidden");
+        } else {
+            exportBtn.classList.add("hidden");
+        }
+    }
 
     if (!nodes || nodes.length === 0) {
         container.innerHTML = "";
@@ -10326,8 +10545,16 @@ function renderEvidenceFlow(nodes, edges) {
         const card = document.createElement("div");
         card.className = "evidence-node-chip";
         card.id = "evidence-node-chip";
-        card.style.background = getBackgroundForNodeType(node.type);
-        card.style.border = getBorderForNodeType(node.type);
+        
+        const isMissing = node.missing || node.properties?.missing;
+        if (isMissing) {
+            card.style.background = 'rgba(239, 35, 60, 0.12)';
+            card.style.border = '1px dashed var(--accent-orange)';
+        } else {
+            card.style.background = getBackgroundForNodeType(node.type);
+            card.style.border = getBorderForNodeType(node.type);
+        }
+        
         card.style.borderRadius = "6px";
         card.style.padding = "10px 14px";
         card.style.cursor = "pointer";
@@ -10353,13 +10580,14 @@ function renderEvidenceFlow(nodes, edges) {
             card.style.outline = "2px solid var(--accent-teal)";
         });
 
-        const iconName = getIconForNodeType(node.type);
-        const colorName = getColorForNodeType(node.type);
+        const iconName = isMissing ? 'fa-exclamation-triangle' : getIconForNodeType(node.type);
+        const colorName = isMissing ? 'var(--accent-orange)' : getColorForNodeType(node.type);
+        const typeLabel = isMissing ? `${node.type.toUpperCase()} (MISSING)` : node.type.toUpperCase();
 
         card.innerHTML = `
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
                 <i class="fas ${iconName}" style="width: 14px; height: 14px; color: ${colorName};"></i>
-                <span class="badge" style="background: rgba(255,255,255,0.05); font-size: 8px; color: ${colorName}; border: 1px solid rgba(255,255,255,0.05);">${node.type.toUpperCase()}</span>
+                <span class="badge" style="background: rgba(255,255,255,0.05); font-size: 8px; color: ${colorName}; border: 1px solid rgba(255,255,255,0.05);">${typeLabel}</span>
             </div>
             <div style="font-size: 11px; font-weight: bold; color: #fff; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; margin-bottom: 4px;">${escapeHtml(node.label)}</div>
             <div style="font-size: 9px; color: var(--text-secondary); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; font-family: monospace;">${escapeHtml(node.id.substring(0, 24))}...</div>

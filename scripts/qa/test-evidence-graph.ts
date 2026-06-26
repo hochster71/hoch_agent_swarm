@@ -122,7 +122,9 @@ function runContractTest() {
       "evidence-graph-load-more-button",
       "evidence-graph-compact-toggle",
       "evidence-graph-large-warning",
-      "evidence-graph-empty-state"
+      "evidence-graph-empty-state",
+      "evidence-graph-release-filter",
+      "btn-export-evidence-summary"
     ];
 
     expectedHtmlIds.forEach(id => {
@@ -151,7 +153,11 @@ function runContractTest() {
       "visibleEdgesLimit",
       "evidence-graph-load-more-button",
       "evidence-graph-compact-toggle",
-      "DocumentFragment"
+      "DocumentFragment",
+      "evidence-graph-release-filter",
+      "btn-export-evidence-summary",
+      "getSubgraphConnectedTo",
+      "exportEvidenceSummary"
     ];
 
     expectedJsSnippets.forEach(snippet => {
