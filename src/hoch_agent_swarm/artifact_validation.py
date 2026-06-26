@@ -1,9 +1,21 @@
 """
-artifact_validation.py — Post-run artifact quality enforcement.
+artifact_validation.py — Validates crew output artifacts before git staging.
 
 Called automatically after every crew kickoff in main.py.
 Raises ArtifactValidationError on any violation so bad model output
 cannot silently pass through to git staging.
+
+Changelog:
+  v1 (Batch 2): garbage patterns, required headings, minimum char length.
+  v2 (Batch 12): semantic quality checks —
+    - placeholder detection (unresolved [TODO], {{...}}, [YOUR X])
+    - generic filler phrase detection (TBD, lorem ipsum, etc.)
+    - empty checklist item detection (bare '- [ ]')
+    - per-section minimum content length
+    - security audit: verdict section must contain a decision word
+    - security audit: findings section must reference a finding or no-issue verdict
+    - antigravity plan: integration steps must contain a numbered list
+    - antigravity plan: validation checklist must contain at least one item
 
 Usage:
     from hoch_agent_swarm.artifact_validation import validate_all_artifacts
@@ -17,6 +29,52 @@ import os
 import re
 from dataclasses import dataclass, field
 from typing import Optional
+
+# ---------------------------------------------------------------------------
+# Semantic quality check constants (v2)
+# ---------------------------------------------------------------------------
+
+# Unresolved placeholder patterns — model output that still has template markers
+_PLACEHOLDER_PATTERNS: list[tuple[str, str]] = [
+    (r"\[TODO\]", "unresolved [TODO] placeholder"),
+    (r"\[PLACEHOLDER\]", "unresolved [PLACEHOLDER] placeholder"),
+    (r"<TODO>", "unresolved <TODO> placeholder"),
+    (r"\{\{[^}]+\}\}", "unresolved {{...}} template variable"),
+    (r"\[YOUR [A-Z ]+\]", "unresolved [YOUR ...] placeholder"),
+    (r"INSERT [A-Z]+ HERE", "unresolved INSERT ... HERE placeholder"),
+]
+
+# Generic filler phrases that indicate the model produced boilerplate, not real output
+_FILLER_PHRASES: list[tuple[str, str]] = [
+    (r"(?i)\blorem ipsum\b", "generic filler: 'lorem ipsum'"),
+    (r"(?i)\bto be determined\b", "generic filler: 'to be determined'"),
+    (r"\b(?:N/A|n/a)\s*[-\u2013]\s*(?:N/A|n/a)\b", "generic filler: 'N/A - N/A' pattern"),
+    (r"(?i)^\s*placeholder text", "generic filler: 'placeholder text'"),
+    (r"(?i)fill(?:ed)? in later", "generic filler: 'fill in later'"),
+    (r"(?i)not yet written", "generic filler: 'not yet written'"),
+    (r"(?i)coming soon", "generic filler: 'coming soon'"),
+]
+
+# Empty checklist item — '- [ ]' with nothing meaningful following
+_EMPTY_CHECKLIST_RE = re.compile(r"^\s*-\s*\[\s*\]\s*$", re.MULTILINE)
+
+# Section minimum content length (chars, not counting the heading line itself)
+_SECTION_MIN_CHARS = 20
+
+# Verdict decision vocabulary — one of these must appear in the Verdict section
+_VERDICT_KEYWORDS = [
+    r"(?i)\bpass\b", r"(?i)\bfail\b", r"(?i)\bcompliant\b",
+    r"(?i)\bnon-compliant\b", r"(?i)\bconditional\b", r"(?i)\bblocked\b",
+    r"(?i)\bapproved\b", r"(?i)\brejected\b", r"(?i)\bclearance\b",
+    r"(?i)\bstatus\b", r"(?i)\bverdict\b",
+]
+
+# Findings vocabulary — must contain at least one of these in the Findings section
+_FINDINGS_KEYWORDS = [
+    r"(?i)\bfindings?\b", r"(?i)\bviolations?\b", r"(?i)\bissues?\b",
+    r"(?i)\bcredential\b", r"(?i)\bsecret\b",
+    r"(?i)\bdelegation\b", r"(?i)\btool\b", r"(?i)\baccess\b",
+]
 
 # ---------------------------------------------------------------------------
 # Paths
@@ -151,6 +209,219 @@ def _check_minimum_length(content: str, path: str, min_chars: int = 300) -> list
 
 
 # ---------------------------------------------------------------------------
+# Semantic quality check helpers (v2)
+# ---------------------------------------------------------------------------
+
+
+def _check_placeholders(content: str, path: str) -> list[str]:
+    """Detect unresolved template placeholders left in model output."""
+    errors = []
+    for pattern, description in _PLACEHOLDER_PATTERNS:
+        if re.search(pattern, content):
+            errors.append(f"[{path}] Unresolved placeholder: {description}")
+    return errors
+
+
+def _check_filler_phrases(content: str, path: str) -> list[str]:
+    """Detect generic filler phrases that indicate boilerplate, not real output."""
+    errors = []
+    for pattern, description in _FILLER_PHRASES:
+        if re.search(pattern, content, re.MULTILINE):
+            errors.append(f"[{path}] Generic filler detected: {description}")
+    return errors
+
+
+def _check_empty_checklists(content: str, path: str) -> list[str]:
+    """
+    Detect bare '- [ ]' checklist items with no trailing text.
+
+    Catches model output that generated the checklist structure but forgot
+    to fill in the item text, leaving '- [ ]' as a standalone line.
+    Intentional empty checkboxes are extremely rare in report artifacts.
+    """
+    matches = _EMPTY_CHECKLIST_RE.findall(content)
+    if matches:
+        return [
+            f"[{path}] Empty checklist item(s): {len(matches)} bare '- [ ]' "
+            "line(s) with no text — model output likely truncated or incomplete."
+        ]
+    return []
+
+
+def _extract_section_content(content: str, heading: str) -> str:
+    """
+    Extract the text content that follows a given markdown heading.
+
+    Returns everything between this heading and the next same-or-higher-level
+    heading (or end of document). Excludes the heading line itself.
+
+    Args:
+        heading: A markdown heading string such as '## Scope' or '# Title'.
+                 Must start with one or more '#' characters.
+    """
+    # Count leading '#' characters to determine the heading level
+    heading_stripped = heading.lstrip()
+    level = len(heading_stripped) - len(heading_stripped.lstrip("#"))
+    if level == 0:
+        return ""
+
+    heading_text = heading_stripped.lstrip("#").strip()
+
+    # Find the exact heading line in the content
+    start_match = re.search(
+        rf"(?m)^{"#" * level}\s+{re.escape(heading_text)}\s*$",
+        content,
+    )
+    if not start_match:
+        return ""
+
+    # Everything after the heading line
+    remainder = content[start_match.end():]
+
+    # Next boundary: any heading at the same or higher level
+    # i.e., a line starting with 1 to `level` '#' characters
+    boundary_re = re.compile(rf"(?m)^#{{1,{level}}}(?!#)\s")
+    end_match = boundary_re.search(remainder)
+    if end_match:
+        return remainder[: end_match.start()].strip()
+    return remainder.strip()
+
+
+def _check_section_content_lengths(
+    content: str,
+    path: str,
+    headings: list[str],
+    min_chars: int = _SECTION_MIN_CHARS,
+) -> list[str]:
+    """
+    Check that each required section has meaningful content below its heading.
+
+    A section heading that exists but has < min_chars of text beneath it
+    (before the next heading) indicates the model generated the structure
+    but failed to produce actual content.
+    """
+    errors = []
+    for heading in headings:
+        if heading not in content:
+            continue  # missing heading already caught by _check_headings
+        section_text = _extract_section_content(content, heading)
+        if len(section_text) < min_chars:
+            errors.append(
+                f"[{path}] Section '{heading}' has insufficient content: "
+                f"{len(section_text)} chars (minimum {min_chars}). "
+                "Model may have generated the heading but skipped the body."
+            )
+    return errors
+
+
+def _check_verdict_content(content: str, path: str) -> list[str]:
+    """
+    Check that the ## Verdict section contains an actual decision keyword.
+
+    Catches outputs where the model wrote '## Verdict' with no substance,
+    or only restated the heading text without a real verdict.
+    An empty or whitespace-only Verdict section is always an error.
+    """
+    verdict_text = _extract_section_content(content, "## Verdict")
+    if not verdict_text:
+        # Section heading exists but body is empty or absent entirely.
+        # Missing heading is handled by _check_headings. Empty body is our error.
+        if "## Verdict" in content:
+            return [
+                f"[{path}] '## Verdict' section is present but empty — "
+                "model output did not produce a decision."
+            ]
+        return []  # heading absent — let _check_headings report it
+
+    for kw in _VERDICT_KEYWORDS:
+        if re.search(kw, verdict_text):
+            return []
+
+    return [
+        f"[{path}] '## Verdict' section exists but contains no decision keyword "
+        f"(expected one of: pass, fail, compliant, conditional, blocked, approved, etc.). "
+        "Model output may be incomplete."
+    ]
+
+
+def _check_findings_content(content: str, path: str) -> list[str]:
+    """
+    Check that ## Findings section references at least one specific finding or
+    a no-issue verdict.
+
+    Catches outputs where the model left the Findings section empty or
+    produced a heading with only whitespace.
+    """
+    findings_text = _extract_section_content(content, "## Findings")
+    if not findings_text:
+        if "## Findings" in content:
+            return [
+                f"[{path}] '## Findings' section is present but empty — "
+                "model output did not produce any finding or no-issue statement."
+            ]
+        return []  # heading absent — let _check_headings report it
+
+    for kw in _FINDINGS_KEYWORDS:
+        if re.search(kw, findings_text):
+            return []
+
+    return [
+        f"[{path}] '## Findings' section exists but references no specific "
+        "finding, violation, or tool/access/credential/delegation keyword. "
+        "Model output may be generic or incomplete."
+    ]
+
+
+def _check_antigravity_integration_steps(content: str, path: str) -> list[str]:
+    """
+    Check that ## Antigravity Integration Steps contains a numbered list.
+
+    Real integration plans must have concrete, ordered steps. A section
+    with only prose or bullets (but no numbered items) indicates the model
+    did not produce an actionable plan.
+    """
+    if "## Antigravity Integration Steps" not in content:
+        return []  # missing heading caught by _check_headings
+
+    section_text = _extract_section_content(content, "## Antigravity Integration Steps")
+
+    # Look for at least one numbered list item: '1.' or '1)' at line start
+    if re.search(r"(?m)^\s*\d+[.)]", section_text):
+        return []
+
+    return [
+        f"[{path}] '## Antigravity Integration Steps' section contains no numbered "
+        "list items. Expected at least one '1. Step description' line. "
+        "Model output may not contain concrete ordered steps."
+    ]
+
+
+def _check_antigravity_validation_checklist(content: str, path: str) -> list[str]:
+    """
+    Check that ## Validation Checklist contains at least one item.
+
+    Accepts both bullet items ('- text', '* text') and numbered items ('1. text').
+    A checklist section with only whitespace is invalid.
+    """
+    if "## Validation Checklist" not in content:
+        return []  # missing heading caught by _check_headings
+
+    section_text = _extract_section_content(content, "## Validation Checklist")
+
+    # Accept bullet or numbered list items
+    if re.search(r"(?m)^\s*[-*+]\s+\S", section_text) or re.search(
+        r"(?m)^\s*\d+[.)]\s+\S", section_text
+    ):
+        return []
+
+    return [
+        f"[{path}] '## Validation Checklist' section contains no list items. "
+        "Expected at least one '- item' or '1. item' line. "
+        "Model output may have left the checklist empty."
+    ]
+
+
+# ---------------------------------------------------------------------------
 # Per-artifact validators
 # ---------------------------------------------------------------------------
 
@@ -166,9 +437,20 @@ def validate_security_audit(path: str = SECURITY_AUDIT_PATH) -> ValidationResult
         )
         return result
 
+    # v1 checks
     result.errors.extend(_check_minimum_length(content, path, min_chars=200))
     result.errors.extend(_check_headings(content, path, SECURITY_AUDIT_REQUIRED_HEADINGS))
     result.errors.extend(_check_garbage(content, path))
+
+    # v2 semantic checks
+    result.errors.extend(_check_placeholders(content, path))
+    result.errors.extend(_check_filler_phrases(content, path))
+    result.errors.extend(_check_empty_checklists(content, path))
+    result.errors.extend(
+        _check_section_content_lengths(content, path, SECURITY_AUDIT_REQUIRED_HEADINGS)
+    )
+    result.errors.extend(_check_verdict_content(content, path))
+    result.errors.extend(_check_findings_content(content, path))
 
     return result
 
@@ -184,9 +466,20 @@ def validate_antigravity_plan(path: str = ANTIGRAVITY_PLAN_PATH) -> ValidationRe
         )
         return result
 
+    # v1 checks
     result.errors.extend(_check_minimum_length(content, path, min_chars=500))
     result.errors.extend(_check_headings(content, path, ANTIGRAVITY_PLAN_REQUIRED_HEADINGS))
     result.errors.extend(_check_garbage(content, path))
+
+    # v2 semantic checks
+    result.errors.extend(_check_placeholders(content, path))
+    result.errors.extend(_check_filler_phrases(content, path))
+    result.errors.extend(_check_empty_checklists(content, path))
+    result.errors.extend(
+        _check_section_content_lengths(content, path, ANTIGRAVITY_PLAN_REQUIRED_HEADINGS)
+    )
+    result.errors.extend(_check_antigravity_integration_steps(content, path))
+    result.errors.extend(_check_antigravity_validation_checklist(content, path))
 
     return result
 
