@@ -365,8 +365,25 @@ We implemented a multi-model parallel inference orchestrator to support consensu
 
 ---
 
+## 22. Release Evidence Archive Builder Dry Run (Phase 28)
+We implemented a second-stage archive builder dry run to generate a fully auditable build plan:
+- **Backend Build Plan Endpoint (`backend/main.py` & `backend/runtime_execution_store.py`)**:
+  - Implemented `GET /api/v1/release/evidence/archive/build-plan` returning metrics, warnings, expected manifest hashes, planned archive checksums, and ordered archive operations.
+  - Automatically indexes current evidence and prunes entries for paths that no longer exist on disk to keep the SQLite index synchronized.
+  - Returns a detailed ordered list of simulated operations (`step`, `action`, `source`, `destination`, `size_bytes`, `status="PENDING"`).
+  - Enforces classification requirements: blocks execution (status `BLOCKED`) if any items remain in `needs-review` state or if `retain` evidence is missing.
+- **Frontend Dry Run Cockpit UI (`frontend/index.html` & `frontend/app.js`)**:
+  - Added the `#release-evidence-archive-build-plan-panel` card with controls to generate and inspect the build plan.
+  - Renders status badges, planned target paths, calculated SHA-256 hashes, validation warnings, and a detailed step-by-step ordered operations table.
+  - Implemented export triggers for Markdown and JSON representations of the planned build package.
+- **Verification & Zero-Mutation Safe Guard**:
+  - Validated via Playwright test `tests/e2e/release-evidence-archive-build-plan.spec.ts` capturing screenshot evidence at `artifacts/qa/release-evidence-archive-build-plan.png`.
+  - Assured strict zero-mutation constraints: no files are actually written, compressed, moved, or deleted under `dist/archives/` or any other location.
+
+---
+
 ### E2E Visual Verification
 
-Here is the captured E2E visual verification of the Live Model Provider Registry and Inference Test Cockpit:
+Here is the captured E2E visual verification of the Release Evidence Archive Builder Dry Run Cockpit:
 
-![E2E Model Provider Registry Cockpit Screenshot](/Users/michaelhoch/.gemini/antigravity/brain/c72fc948-b730-4420-b7dd-4e159a9aea6d/model-provider-registry-e2e.png)
+![E2E Archive Build Plan Screenshot](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/artifacts/qa/release-evidence-archive-build-plan.png)
