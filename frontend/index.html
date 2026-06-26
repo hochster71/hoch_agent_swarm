@@ -83,6 +83,11 @@
                     <i data-lucide="book-open"></i> <span>Prompt Library</span>
                     <span class="nav-status-indicator swarm-led-live" id="led-prompt-library" style="margin-left: auto; font-size: 14px; font-weight: bold;">●</span>
                 </a>
+                <a href="#" class="nav-item" id="nav-harmony-dashboard" style="border: 1px solid rgba(140,255,92,0.2); background: rgba(140,255,92,0.04); margin-top: 6px;">
+                    <i data-lucide="sparkles" style="color:#8cff5c;"></i>
+                    <span style="color:#8cff5c; font-weight:700;">Harmony Dashboard</span>
+                    <span class="nav-status-indicator" id="led-harmony" style="margin-left:auto; font-size:14px; font-weight:bold; color:#8cff5c; animation: agentHeartbeat 3s ease-in-out infinite;">●</span>
+                </a>
             </nav>
             <div class="profile-area">
                 <div class="avatar">MH</div>
@@ -2984,6 +2989,137 @@
                         </div>
                     </div>
                 </section>
+            </div>
+
+            <!-- ══════════════════════════════════════════════════════════════
+                 HOCH HARMONY DASHBOARD  (Batch Visual-1)
+                 Kimi-inspired animated command-center. Data-bound to live endpoints.
+                 Truth states: LIVE · STALE · MOCK · SYNTHETIC · APPROVAL_REQUIRED · PENDING
+                 ══════════════════════════════════════════════════════════════ -->
+            <div id="view-harmony-dashboard" class="hidden" style="height:100%; overflow-y:auto;">
+              <div class="kimi-shell" id="harmony-shell">
+
+                <!-- ── Sparkle particle layer ───────────────────────────────── -->
+                <div class="kimi-sparkle-layer" id="kimi-sparkle-bg" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;pointer-events:none;"></div>
+
+                <!-- ── Governance alert banners (shown only when real data triggers) ── -->
+                <div id="hd-gov-alerts" style="position:relative;z-index:2;display:flex;flex-direction:column;gap:6px;"></div>
+
+                <!-- ── Mission banner ────────────────────────────────────────── -->
+                <div class="kimi-mission-banner" id="hd-mission-banner" style="position:relative;z-index:2;">
+                  <div style="font-size:28px; animation: softFloat 4s ease-in-out infinite;">🤖</div>
+                  <div style="flex:1;">
+                    <div style="font-size:11px;color:var(--kimi-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;">HOCH Agent Swarm · Mission Control</div>
+                    <div id="hd-mission-title" style="font-size:18px;font-weight:700;color:var(--kimi-text);font-family:'Outfit',sans-serif;">Loading mission…</div>
+                    <div id="hd-mission-sub" style="font-size:11px;color:var(--kimi-muted);margin-top:2px;"></div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div style="font-size:10px;color:var(--kimi-muted);margin-bottom:4px;">SWARM EFFICIENCY</div>
+                    <div id="hd-efficiency-label" style="font-size:22px;font-weight:800;color:var(--kimi-green);">—</div>
+                    <div id="hd-mission-status-pill" class="kimi-status-pill kimi-pill-unknown" style="margin-top:4px;">UNKNOWN</div>
+                  </div>
+                </div>
+
+                <!-- ── Main 3-column grid ─────────────────────────────────────── -->
+                <div class="kimi-dashboard-grid" style="position:relative;z-index:2;flex:1;">
+
+                  <!-- ═══ LEFT COLUMN ════════════════════════════════════════ -->
+                  <div class="kimi-col">
+
+                    <!-- HOCH Bot mascot -->
+                    <div class="kimi-bot-card">
+                      <div class="kimi-bot-face">🤖</div>
+                      <div style="font-size:12px;font-weight:700;color:var(--kimi-text);">HOCH Swarm</div>
+                      <div style="font-size:10px;color:var(--kimi-muted);">Your AI mission team</div>
+                      <div id="hd-bot-message" style="font-size:11px;color:var(--kimi-green);margin-top:6px;line-height:1.5;min-height:44px;">Initializing…</div>
+                      <div id="hd-bot-status-row" style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:4px;"></div>
+                    </div>
+
+                    <!-- System status -->
+                    <div class="kimi-glow-card" style="padding:14px;">
+                      <div class="kimi-section-label">System Status</div>
+                      <div id="hd-sys-status" style="display:flex;flex-direction:column;gap:6px;font-size:11px;"></div>
+                    </div>
+
+                    <!-- Swarm efficiency ring -->
+                    <div class="kimi-glow-card" style="padding:14px;display:flex;flex-direction:column;align-items:center;gap:10px;">
+                      <div class="kimi-section-label" style="align-self:flex-start;">Swarm Efficiency Ring</div>
+                      <div class="kimi-progress-ring">
+                        <svg width="90" height="90" viewBox="0 0 90 90">
+                          <circle class="ring-bg"   cx="45" cy="45" r="38" stroke-width="7"/>
+                          <circle class="ring-fill" cx="45" cy="45" r="38" stroke-width="7"
+                                  id="hd-ring-fill"
+                                  stroke-dasharray="238.8" stroke-dashoffset="238.8"
+                                  style="transition: stroke-dashoffset 1.5s ease;"/>
+                        </svg>
+                        <div class="ring-label">
+                          <div id="hd-ring-pct" style="font-size:18px;font-weight:800;color:var(--kimi-green);">—</div>
+                          <div style="font-size:8px;color:var(--kimi-muted);">EFFICIENCY</div>
+                        </div>
+                      </div>
+                      <div id="hd-ring-truth" class="kimi-truth-badge">source: LOADING</div>
+                    </div>
+
+                  </div>
+
+                  <!-- ═══ CENTER COLUMN ══════════════════════════════════════ -->
+                  <div class="kimi-col">
+
+                    <!-- Agent swarm row -->
+                    <div class="kimi-panel" style="padding:14px;">
+                      <div class="kimi-section-label">Agent Swarm</div>
+                      <div id="hd-agent-row" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;"></div>
+                    </div>
+
+                    <!-- Mission board -->
+                    <div class="kimi-panel" style="padding:14px;flex:1;">
+                      <div class="kimi-section-label">Mission Board</div>
+                      <!-- header -->
+                      <div class="kimi-board-row kimi-board-header" style="background:rgba(140,255,92,0.04);border:none;padding:6px 14px;">
+                        <div>System</div><div>Type</div><div>Items</div><div>Truth</div><div>Status</div><div>Action</div>
+                      </div>
+                      <div id="hd-mission-board" style="display:flex;flex-direction:column;gap:4px;margin-top:4px;"></div>
+                    </div>
+
+                    <!-- Console ticker -->
+                    <div class="kimi-console" style="">
+                      <div style="font-size:9px;color:var(--kimi-muted);margin-bottom:6px;letter-spacing:1px;">▶ SWARM CONSOLE</div>
+                      <div id="hd-console-lines" style="display:flex;flex-direction:column;gap:2px;max-height:110px;overflow:hidden;"></div>
+                    </div>
+
+                  </div>
+
+                  <!-- ═══ RIGHT COLUMN ════════════════════════════════════════ -->
+                  <div class="kimi-col">
+
+                    <!-- Migration / runtime summary -->
+                    <div class="kimi-glow-card" style="padding:14px;">
+                      <div class="kimi-section-label">Runtime Summary</div>
+                      <div id="hd-runtime-summary" style="display:flex;flex-direction:column;gap:6px;font-size:11px;"></div>
+                    </div>
+
+                    <!-- Swarm vitals -->
+                    <div class="kimi-glow-card" style="padding:14px;">
+                      <div class="kimi-section-label">Swarm Vitals</div>
+                      <div class="kimi-vitals-grid" id="hd-vitals-grid"></div>
+                    </div>
+
+                    <!-- HOCH Says panel -->
+                    <div class="kimi-bot-card" style="padding:14px;">
+                      <div class="kimi-section-label" style="align-self:flex-start;">🤖 HOCH Says</div>
+                      <div id="hd-hoch-says" style="font-size:11px;color:var(--kimi-text);line-height:1.6;text-align:left;align-self:stretch;">Loading swarm intelligence…</div>
+                    </div>
+
+                    <!-- Prompt governance summary -->
+                    <div class="kimi-panel-strong" style="padding:14px;">
+                      <div class="kimi-section-label" style="color:var(--kimi-amber);">⚡ Prompt Governance</div>
+                      <div id="hd-gov-summary" style="display:flex;flex-direction:column;gap:8px;font-size:11px;"></div>
+                      <button class="btn btn-xs btn-outline" onclick="document.getElementById('nav-governance')?.click()" style="margin-top:10px;width:100%;font-size:10px;border-color:rgba(140,255,92,0.3);color:var(--kimi-green);">Open Governance Cockpit →</button>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- Red-Team Chaos View -->

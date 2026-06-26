@@ -12844,3 +12844,486 @@ window.exportSealPreviewJSON = exportSealPreviewJSON;
     // Initial load (deferred so DOM is ready)
     setTimeout(refresh, 800);
 })();
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  HOCH HARMONY DASHBOARD  (Batch Visual-1)
+//  Kimi-inspired animated command-center — data-bound to real HOCH endpoints.
+//  Truth states: LIVE · STALE · MOCK · SYNTHETIC · APPROVAL_REQUIRED · PENDING
+//  Nav ID: nav-harmony-dashboard  |  View ID: view-harmony-dashboard
+// ═══════════════════════════════════════════════════════════════════════════════
+(function () {
+  "use strict";
+
+  // ── helpers ──────────────────────────────────────────────────────────────────
+  function el(id) { return document.getElementById(id); }
+  function esc(s) { return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function ts()   { return new Date().toLocaleTimeString("en-US",{hour12:false}); }
+
+  // ── Status → pill class mapping ───────────────────────────────────────────────
+  const PILL = {
+    "LIVE":               "kimi-pill-live",
+    "running":            "kimi-pill-live",
+    "Active":             "kimi-pill-live",
+    "Self-Healing":       "kimi-pill-live",
+    "STALE":              "kimi-pill-stale",
+    "IDLE":               "kimi-pill-stale",
+    "Idle":               "kimi-pill-stale",
+    "MOCK":               "kimi-pill-mock",
+    "SYNTHETIC":          "kimi-pill-synthetic",
+    "BROKEN":             "kimi-pill-broken",
+    "error":              "kimi-pill-broken",
+    "APPROVAL_REQUIRED":  "kimi-pill-approval",
+    "PENDING":            "kimi-pill-pending",
+    "PENDING_APPROVAL":   "kimi-pill-pending",
+    "completed":          "kimi-pill-complete",
+    "COMPLETE":           "kimi-pill-complete",
+    "UNKNOWN":            "kimi-pill-unknown",
+  };
+  function pillClass(s) { return PILL[s] || "kimi-pill-unknown"; }
+
+  // ── Agent avatar gradient palette ─────────────────────────────────────────────
+  const GRAD = [
+    "linear-gradient(135deg,#1a6b2e,#0e3d1a)",
+    "linear-gradient(135deg,#163a5e,#0b2240)",
+    "linear-gradient(135deg,#3d1657,#21093a)",
+    "linear-gradient(135deg,#5e3a0b,#3a2006)",
+    "linear-gradient(135deg,#1a4a4a,#0b2c2c)",
+    "linear-gradient(135deg,#5c1b1b,#3a0e0e)",
+    "linear-gradient(135deg,#2a4a1a,#162a0a)",
+  ];
+  function agentGrad(i) { return GRAD[i % GRAD.length]; }
+
+  // ── Agent status → avatar modifier ───────────────────────────────────────────
+  function agentAvatarClass(status) {
+    const s = (status||"").toLowerCase();
+    if (s === "active" || s === "live" || s === "running") return "kimi-agent-online";
+    if (s === "idle")   return "kimi-agent-idle";
+    if (s === "pending_approval" || s === "approval_required") return "kimi-agent-pending";
+    if (s === "broken" || s === "error") return "kimi-agent-broken";
+    return "kimi-agent-idle";
+  }
+
+  // ── Mission board static definition (truth sourced per endpoint) ──────────────
+  const MISSION_ROWS = [
+    { name:"Prompt Library Governance", type:"GOVERNANCE",   nav:"nav-governance",       truthKey:"promptGov"  },
+    { name:"Agent Runtime",             type:"RUNTIME",      nav:"nav-hochster-runtime", truthKey:"agentRuntime"},
+    { name:"Asset Discovery",           type:"DISCOVERY",    nav:"nav-swarm-control",    truthKey:"assets"     },
+    { name:"Release Provenance",        type:"PROVENANCE",   nav:"nav-release-provenance",truthKey:"provenance" },
+    { name:"Cybersecurity Factory",     type:"SECURITY",     nav:"nav-cybersecurity-factory",truthKey:"cyber"  },
+    { name:"Runtime Audit",             type:"AUDIT",        nav:"nav-runtime-audit",    truthKey:"audit"      },
+    { name:"Governance Cockpit",        type:"GOVERNANCE",   nav:"nav-governance",       truthKey:"govCockpit" },
+  ];
+
+  // ── Status icon HTML ──────────────────────────────────────────────────────────
+  function statusIcon(s) {
+    if (!s || s === "UNKNOWN") return '<span style="color:#6b7280;font-size:14px;">○</span>';
+    const sl = s.toLowerCase();
+    if (sl === "live" || sl === "running" || sl === "active")
+      return '<span style="color:#8cff5c;font-size:14px;">✓</span>';
+    if (sl === "approval_required" || sl === "pending_approval")
+      return '<span style="color:#f59e0b;font-size:14px;">⚡</span>';
+    if (sl === "stale" || sl === "idle")
+      return '<span style="color:#f59e0b;font-size:14px;">◉</span>';
+    if (sl === "broken" || sl === "error")
+      return '<span style="color:#ff5f7a;font-size:14px;">✗</span>';
+    if (sl === "complete" || sl === "completed")
+      return '<span style="color:#8cff5c;font-size:14px;">✓</span>';
+    return '<span style="color:#9ca3af;font-size:14px;">○</span>';
+  }
+
+  // ── Board row HTML ────────────────────────────────────────────────────────────
+  function boardRowHtml(row, truthData) {
+    const td = truthData[row.truthKey] || {};
+    const status = td.status || "UNKNOWN";
+    const items  = td.items  != null ? td.items : "—";
+    const truth  = td.truth  || "UNKNOWN";
+    return `
+      <div class="kimi-board-row" style="cursor:pointer;" onclick="document.getElementById('${esc(row.nav)}')?.click()">
+        <div style="color:var(--kimi-text);font-weight:600;">${esc(row.name)}</div>
+        <div><span class="kimi-truth-badge">${esc(row.type)}</span></div>
+        <div style="color:var(--kimi-muted);">${esc(String(items))}</div>
+        <div><span class="kimi-truth-badge">${esc(truth)}</span></div>
+        <div>${statusIcon(status)}<span class="kimi-status-pill ${pillClass(status)}" style="margin-left:4px;">${esc(status)}</span></div>
+        <div><button class="btn btn-xs btn-outline" onclick="event.stopPropagation();document.getElementById('${esc(row.nav)}')?.click()" style="font-size:9px;padding:2px 6px;">Open</button></div>
+      </div>`;
+  }
+
+  // ── Console log queue ─────────────────────────────────────────────────────────
+  const _consoleLogs = [];
+  function addConsoleLog(msg, src) {
+    _consoleLogs.unshift({ time: ts(), msg, src: src || "API" });
+    if (_consoleLogs.length > 40) _consoleLogs.pop();
+    renderConsole();
+  }
+  function renderConsole() {
+    const container = el("hd-console-lines");
+    if (!container) return;
+    const lines = _consoleLogs.slice(0, 7);
+    container.innerHTML = lines.map((l, i) => `
+      <div class="kimi-console-line" style="animation-delay:${i * 0.06}s;">
+        <span class="kimi-console-ts">[${esc(l.time)}]</span>
+        <span class="kimi-console-prompt">▸</span>
+        <span>${esc(l.msg)}</span>
+        <span style="color:rgba(140,255,92,0.3);float:right;font-size:8px;">${esc(l.src)}</span>
+      </div>`).join("");
+  }
+
+  // ── Sparkle particles ─────────────────────────────────────────────────────────
+  function initSparkles() {
+    const layer = el("kimi-sparkle-bg");
+    if (!layer) return;
+    // Only spawn when dashboard is visible; check reduced motion
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    for (let i = 0; i < 22; i++) {
+      const s = document.createElement("div");
+      s.className = "kimi-sparkle";
+      s.style.cssText = `
+        left: ${Math.random() * 100}%;
+        top:  ${Math.random() * 100}%;
+        animation-delay: ${Math.random() * 6}s;
+        animation-duration: ${4 + Math.random() * 5}s;
+        width: ${1 + Math.random() * 3}px;
+        height: ${1 + Math.random() * 3}px;
+        opacity: 0;
+      `;
+      layer.appendChild(s);
+    }
+  }
+
+  // ── Progress ring update ──────────────────────────────────────────────────────
+  function updateRing(pct, truthLabel) {
+    const fill     = el("hd-ring-fill");
+    const pctEl    = el("hd-ring-pct");
+    const truthEl  = el("hd-ring-truth");
+    const banner   = el("hd-efficiency-label");
+    if (!fill) return;
+    const circumference = 238.8;
+    const clamped = Math.max(0, Math.min(100, pct || 0));
+    const offset  = circumference - (clamped / 100) * circumference;
+    fill.style.strokeDashoffset = offset;
+    const label = pct != null ? `${Math.round(clamped)}%` : "—";
+    if (pctEl)  pctEl.textContent  = label;
+    if (banner) banner.textContent = label;
+    if (truthEl) truthEl.textContent = `source: ${truthLabel || "LIVE"}`;
+  }
+
+  // ── Governance alert banners ──────────────────────────────────────────────────
+  function renderGovAlerts(govData) {
+    const container = el("hd-gov-alerts");
+    if (!container) return;
+    const alerts = [];
+    if (govData.pending_count > 0) {
+      alerts.push(`<div class="kimi-alert-banner">⚡ ${govData.pending_count} HIGH-risk prompt approval(s) PENDING — <a href="#" onclick="document.getElementById('nav-governance')?.click();return false;" style="color:var(--kimi-red);margin-left:4px;">Open Governance Cockpit</a></div>`);
+    }
+    if (govData.test_count > 0 && govData.approvals && govData.approvals.some(a => a.is_test && ["PENDING","APPROVED"].includes(a.status))) {
+      alerts.push(`<div class="kimi-warn-banner">⚠ Test-sourced approval(s) still active. Run "Expire Test Approvals" in Governance Cockpit.</div>`);
+    }
+    if (govData.active_count > 0) {
+      alerts.push(`<div class="kimi-warn-banner" style="background:rgba(140,255,92,0.06);border-color:rgba(140,255,92,0.25);color:var(--kimi-green);">✓ ${govData.active_count} active operator approval(s) · TTL 24h</div>`);
+    }
+    container.innerHTML = alerts.join("");
+  }
+
+  // ── Governance summary panel ──────────────────────────────────────────────────
+  function renderGovSummary(gov, ledger) {
+    const container = el("hd-gov-summary");
+    if (!container) return;
+    const rows = [
+      { label:"Total Approvals",  val: gov.total || 0,          color:"var(--kimi-text)" },
+      { label:"Pending",          val: gov.pending_count || 0,  color: gov.pending_count ? "var(--kimi-amber)" : "var(--kimi-green)" },
+      { label:"Active (Operator)",val: gov.active_count || 0,   color:"var(--kimi-green)" },
+      { label:"Test State",       val: gov.test_count || 0,     color: gov.test_count ? "var(--kimi-amber)" : "var(--kimi-muted)" },
+      { label:"Usage Ledger",     val: ledger.total || 0,       color:"var(--kimi-cyan)" },
+    ];
+    container.innerHTML = rows.map(r => `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+        <span style="color:var(--kimi-muted);">${esc(r.label)}</span>
+        <span style="font-weight:700;color:${r.color};">${esc(String(r.val))}</span>
+      </div>`).join("");
+  }
+
+  // ── HOCH Says — derives from real truth state ─────────────────────────────────
+  function computeHochSays(apiData, govData) {
+    const pending  = govData.pending_count || 0;
+    const testLive = (govData.approvals || []).filter(a => a.is_test && ["PENDING","APPROVED"].includes(a.status)).length;
+    const runs     = apiData._runs || [];
+    const activeRuns = runs.filter(r => r.status === "running").length;
+
+    if (pending > 0) {
+      return `⚡ ${pending} HIGH-risk prompt request(s) require operator approval. Review the Governance Cockpit before authorising swarm execution.`;
+    }
+    if (testLive > 0) {
+      return `⚠ Test approval state detected. Run "Expire Test Approvals" in Governance Cockpit to isolate from production execution.`;
+    }
+    if (activeRuns > 0) {
+      return `✓ ${activeRuns} mission run(s) active. Swarm is executing. Monitor Runtime Audit for live task provenance.`;
+    }
+    const agentTotal = apiData.total_agents || 0;
+    if (agentTotal > 0) {
+      return `${agentTotal} agents standing by. All governance gates clear. Ready to launch next mission.`;
+    }
+    return "Swarm is online. Governance integrity intact. Awaiting mission tasking.";
+  }
+
+  // ── Main render ───────────────────────────────────────────────────────────────
+  async function renderHarmonyDashboard() {
+    let apiData = {}, govData = {total:0,pending_count:0,active_count:0,test_count:0,approvals:[]};
+    let ledgerData = {total:0,entries:[]};
+    let runsData = [];
+    let auditData = {events:[]};
+
+    // ── Fetch all endpoints concurrently ────────────────────────────────────────
+    const base = (typeof API_BASE !== "undefined" && API_BASE) ? API_BASE : "http://127.0.0.1:8000";
+    const endpoints = [
+      { key:"status",    url: `${base}/api/status` },
+      { key:"gov",       url: `${base}/api/v1/prompts/approvals` },
+      { key:"ledger",    url: `${base}/api/v1/prompts/usage-ledger?limit=20` },
+      { key:"runs",      url: `${base}/api/v1/runs` },
+      { key:"audit",     url: `${base}/api/v1/audit/events` },
+    ];
+    const results = await Promise.allSettled(endpoints.map(e => fetch(e.url).then(r => r.json())));
+    results.forEach((r, i) => {
+      if (r.status === "fulfilled") {
+        const k = endpoints[i].key;
+        if (k === "status")  apiData    = r.value;
+        if (k === "gov")     govData    = r.value;
+        if (k === "ledger")  ledgerData = r.value;
+        if (k === "runs")    runsData   = Array.isArray(r.value) ? r.value : (r.value.data || []);
+        if (k === "audit")   auditData  = r.value.data || r.value;
+      }
+    });
+    apiData._runs = runsData;
+
+    // ── Mission banner ──────────────────────────────────────────────────────────
+    const latestRun = runsData[0];
+    const missionTitle = el("hd-mission-title");
+    const missionSub   = el("hd-mission-sub");
+    const missionPill  = el("hd-mission-status-pill");
+    if (latestRun && missionTitle) {
+      missionTitle.textContent = latestRun.name || "HOCH Agent Swarm Active";
+      if (missionSub)  missionSub.textContent  = `Run ID: ${latestRun.run_id} · Status: ${latestRun.status}`;
+      if (missionPill) {
+        missionPill.textContent = (latestRun.status || "UNKNOWN").toUpperCase();
+        missionPill.className   = `kimi-status-pill ${pillClass(latestRun.status)}`;
+      }
+      addConsoleLog(`Mission: ${latestRun.name} [${latestRun.status}]`, "runs");
+    } else if (missionTitle) {
+      missionTitle.textContent = "HOCH Agent Swarm — Standby";
+      if (missionPill) { missionPill.textContent = "STALE"; missionPill.className = "kimi-status-pill kimi-pill-stale"; }
+    }
+
+    // ── Progress ring — cpu_usage from api/status (truth: LIVE/SYNTHETIC) ───────
+    const cpuRaw = apiData.system_cpu || "";
+    const cpuPct = parseFloat(cpuRaw) || null;
+    // Efficiency = inverse of CPU (simple heuristic; labelled SYNTHETIC)
+    const effPct = cpuPct != null ? Math.max(0, 100 - cpuPct) : null;
+    updateRing(effPct, cpuPct != null ? "SYNTHETIC(api/status)" : "UNKNOWN");
+
+    // ── System status card ──────────────────────────────────────────────────────
+    const sysContainer = el("hd-sys-status");
+    if (sysContainer) {
+      const rows = [
+        { label:"API Health", val: apiData.status || "UNKNOWN", isRaw:true },
+        { label:"CPU",        val: apiData.system_cpu || "UNKNOWN" },
+        { label:"RAM",        val: apiData.system_ram || "UNKNOWN" },
+        { label:"Latency",    val: apiData.latency   || "UNKNOWN" },
+        { label:"Sync",       val: apiData.sync       || "UNKNOWN" },
+        { label:"Assets",     val: apiData.active_assets != null ? `${apiData.active_assets} active` : "UNKNOWN" },
+      ];
+      sysContainer.innerHTML = rows.map(r => `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+          <span style="color:var(--kimi-muted);">${esc(r.label)}</span>
+          <span style="font-weight:600;color:var(--kimi-green);font-size:10px;">${esc(String(r.val))}</span>
+        </div>`).join("");
+      addConsoleLog(`API Health: ${apiData.status || "UNKNOWN"} · CPU ${apiData.system_cpu || "?"}`, "api/status");
+    }
+
+    // ── Vitals ──────────────────────────────────────────────────────────────────
+    const vitalsGrid = el("hd-vitals-grid");
+    if (vitalsGrid) {
+      const nodes = apiData.nodes || [];
+      const totalAgents = apiData.total_agents || 0;
+      const activeNodes = nodes.filter(n => (n.status||"").toLowerCase() !== "offline").length;
+      const vitals = [
+        { label:"Total Agents",  val: totalAgents || "—" },
+        { label:"Active Nodes",  val: nodes.length ? `${activeNodes}/${nodes.length}` : "—" },
+        { label:"Active Assets", val: apiData.active_assets != null ? apiData.active_assets : "—" },
+        { label:"Active Runs",   val: runsData.filter(r => r.status==="running").length || "—" },
+        { label:"Gov. Pending",  val: govData.pending_count || 0 },
+        { label:"Ledger Events", val: ledgerData.total || 0 },
+      ];
+      vitalsGrid.innerHTML = vitals.map(v => `
+        <div class="kimi-vital-cell">
+          <span class="kimi-vital-lbl">${esc(v.label)}</span>
+          <span class="kimi-vital-val">${esc(String(v.val))}</span>
+        </div>`).join("");
+    }
+
+    // ── Agent swarm row ─────────────────────────────────────────────────────────
+    const agentRow = el("hd-agent-row");
+    if (agentRow) {
+      const nodes = apiData.nodes || [];
+      let agentCards = [];
+      nodes.forEach((node, ni) => {
+        (node.agents || []).slice(0, 2).forEach((agent, ai) => {
+          const initials = (agent.name||"??").split(/[-_\s]/).map(w=>w[0]||"").join("").slice(0,2).toUpperCase();
+          const gradIdx = ni * 3 + ai;
+          const avatarClass = agentAvatarClass(agent.status);
+          agentCards.push(`
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:54px;">
+              <div class="kimi-agent-avatar ${avatarClass}" style="background:${agentGrad(gradIdx)};" title="${esc(agent.description||"")}">
+                ${esc(initials)}
+              </div>
+              <div style="font-size:9px;font-weight:600;color:var(--kimi-text);text-align:center;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(agent.name)}</div>
+              <div style="font-size:8px;color:var(--kimi-muted);text-align:center;">${esc(agent.type||"Agent")}</div>
+              <span class="kimi-status-pill ${pillClass(agent.status||'IDLE')}" style="font-size:7px;padding:1px 4px;">${esc((agent.status||"IDLE").toUpperCase())}</span>
+            </div>`);
+        });
+        if (agentCards.length >= 8) return;
+      });
+      if (!agentCards.length) {
+        agentCards.push(`<div style="color:var(--kimi-muted);font-size:11px;">No agent data · source: UNKNOWN</div>`);
+      }
+      agentRow.innerHTML = agentCards.join("");
+    }
+
+    // ── Build truth data for mission board ──────────────────────────────────────
+    const govApprovals = govData.approvals || [];
+    const truthData = {
+      promptGov:   {
+        status: govData.pending_count > 0 ? "APPROVAL_REQUIRED" :
+                govApprovals.some(a => a.is_test && a.status !== "EXPIRED") ? "STALE" : "LIVE",
+        items:  `${govData.total} approvals`,
+        truth:  "LIVE",
+      },
+      agentRuntime: {
+        status: runsData.some(r => r.status === "running") ? "LIVE" : "STALE",
+        items:  `${runsData.filter(r=>r.status==="running").length} running`,
+        truth:  "LIVE",
+      },
+      assets: {
+        status: apiData.active_assets > 0 ? "LIVE" : "UNKNOWN",
+        items:  apiData.active_assets != null ? `${apiData.active_assets} assets` : "UNKNOWN",
+        truth:  "LIVE",
+      },
+      provenance: {
+        status: "STALE", items: "—", truth: "UNKNOWN",
+      },
+      cyber: {
+        status: "STALE", items: "—", truth: "UNKNOWN",
+      },
+      audit: {
+        status: (auditData.events || []).length > 0 ? "LIVE" : "STALE",
+        items:  (auditData.events || []).length,
+        truth:  "LIVE",
+      },
+      govCockpit: {
+        status: govData.pending_count > 0 ? "APPROVAL_REQUIRED" : "LIVE",
+        items:  `${govData.active_count} active`,
+        truth:  "LIVE",
+      },
+    };
+
+    // ── Mission board ──────────────────────────────────────────────────────────
+    const boardEl = el("hd-mission-board");
+    if (boardEl) {
+      boardEl.innerHTML = MISSION_ROWS.map(r => boardRowHtml(r, truthData)).join("");
+    }
+
+    // ── Runtime summary ─────────────────────────────────────────────────────────
+    const rtSummary = el("hd-runtime-summary");
+    if (rtSummary) {
+      const completed = runsData.filter(r => r.status === "completed").length;
+      const running   = runsData.filter(r => r.status === "running").length;
+      const rows = [
+        { label:"Total Runs",   val: runsData.length },
+        { label:"Running",      val: running,   color: running   ? "#8cff5c" : "var(--kimi-muted)" },
+        { label:"Completed",    val: completed, color: completed ? "#8cff5c" : "var(--kimi-muted)" },
+        { label:"Ledger Entries",val: ledgerData.total },
+        { label:"Audit Events", val: (auditData.events||[]).length },
+        { label:"Data source",  val: "api/runs + audit", color:"var(--kimi-muted)", small:true },
+      ];
+      rtSummary.innerHTML = rows.map(r => `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+          <span style="color:var(--kimi-muted);font-size:${r.small?"9px":"11px"};">${esc(r.label)}</span>
+          <span style="font-weight:700;color:${r.color||"var(--kimi-text)"};font-size:${r.small?"9px":"12px"};">${esc(String(r.val))}</span>
+        </div>`).join("");
+      addConsoleLog(`Runs: ${running} running · ${completed} completed`, "api/v1/runs");
+    }
+
+    // ── HOCH Says ─────────────────────────────────────────────────────────────────
+    const hochSays = el("hd-hoch-says");
+    if (hochSays) hochSays.textContent = computeHochSays(apiData, govData);
+
+    // ── Bot message + status row ─────────────────────────────────────────────────
+    const botMsg = el("hd-bot-message");
+    if (botMsg) {
+      if (govData.pending_count > 0) {
+        botMsg.textContent = `⚡ ${govData.pending_count} approval(s) needed before HIGH-risk execution.`;
+        botMsg.style.color = "var(--kimi-amber)";
+      } else {
+        botMsg.textContent = `✓ Governance clear. ${apiData.total_agents||"?"} agents available.`;
+        botMsg.style.color = "var(--kimi-green)";
+      }
+    }
+    const botStatusRow = el("hd-bot-status-row");
+    if (botStatusRow && apiData.status) {
+      botStatusRow.innerHTML = `
+        <span class="kimi-status-pill kimi-pill-live" style="font-size:9px;">ONLINE</span>
+        <span class="kimi-truth-badge">source: api/status</span>`;
+    }
+
+    // ── Governance alerts & summary ──────────────────────────────────────────────
+    renderGovAlerts(govData);
+    renderGovSummary(govData, ledgerData);
+
+    // ── Console: seed from audit events ─────────────────────────────────────────
+    const events = (auditData.events || []).slice(0, 5);
+    events.forEach(e => {
+      addConsoleLog(
+        `${e.actor?.name || "System"} → ${e.action?.summary || e.action?.type || "event"}`,
+        "api/v1/audit/events"
+      );
+    });
+    // Governance-derived console entries
+    if (govData.pending_count > 0) {
+      addConsoleLog(`⚡ ${govData.pending_count} HIGH-risk prompt(s) pending operator approval`, "derived:governance");
+    }
+    addConsoleLog(`Prompt governance: ${govData.total} records · ${ledgerData.total} ledger events`, "api/v1/prompts");
+    addConsoleLog(`Swarm status: ${apiData.status || "UNKNOWN"} · ${apiData.total_agents || "?"} agents`, "api/status");
+  }
+
+  // ── Nav wiring ─────────────────────────────────────────────────────────────────
+  // Insert nav-harmony-dashboard into the view switcher once DOM is ready
+  function wireHarmonyNav() {
+    const navBtn = el("nav-harmony-dashboard");
+    if (!navBtn) return;
+    navBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      // Show view
+      document.querySelectorAll("[id^='view-']").forEach(v => v.classList.add("hidden"));
+      const view = el("view-harmony-dashboard");
+      if (view) view.classList.remove("hidden");
+      // Active nav
+      document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+      navBtn.classList.add("active");
+      // Refresh lucide
+      if (window.lucide) window.lucide.createIcons();
+      // Init sparkles once
+      if (!navBtn._sparkled) { initSparkles(); navBtn._sparkled = true; }
+      // Fetch & render
+      renderHarmonyDashboard().catch(err => console.warn("[Harmony] render error:", err));
+    });
+  }
+
+  // ── Boot ──────────────────────────────────────────────────────────────────────
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", wireHarmonyNav);
+  } else {
+    wireHarmonyNav();
+  }
+
+  // Expose for console debugging
+  window.hochHarmony = { refresh: renderHarmonyDashboard };
+
+})();
