@@ -188,15 +188,22 @@ def evaluate_models(limit: int = 999, models: Optional[List[str]] = None) -> Dic
     models = models[:limit]
     results = []
     for model in models:
-        task_results = []
-        for task in TASKS:
-            raw = run_model(model, task["prompt"], task.get("max_seconds", 35) + 10)
-            task_results.append(score_response(task, raw))
-        cls = classify_model(model, task_results)
+        if is_protected(model):
+            task_results = []
+            state = "PROTECTED"
+            reason = "Protected dependency or embedding/router/policy/memory model."
+        else:
+            task_results = []
+            for task in TASKS:
+                raw = run_model(model, task["prompt"], task.get("max_seconds", 35) + 10)
+                task_results.append(score_response(task, raw))
+            cls = classify_model(model, task_results)
+            state = cls["state"]
+            reason = cls["reason"]
         results.append({
             "model": model,
-            "state": cls["state"],
-            "reason": cls["reason"],
+            "state": state,
+            "reason": reason,
             "protected": is_protected(model),
             "task_results": task_results,
         })

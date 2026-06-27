@@ -484,3 +484,23 @@ Created a secure, local model lifecycle system that benchmarks Ollama models on 
 - Added a static contract test [`scripts/qa/test-model-lifecycle-contract.ts`](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/scripts/qa/test-model-lifecycle-contract.ts).
 - Registered the `qa:model-lifecycle` task in [`package.json`](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/package.json) and appended it to the `qa:ui-contract` suite.
 - Re-run `npm run ci:validate` to ensure SBOM, provenance, and integrity checks pass successfully (100% green).
+
+---
+
+## PROTO-5B — Model Improvement & Training Gate
+
+### Purpose
+Engineered a programmatic model improvement and promotion engine that specializes trainable models by generating targeted Modelfiles (adjusting temperature and injecting structured system prompts), re-benchmarking performance, comparing scores, and conditionally promoting improvements while purging the redundant base model.
+
+### Implementation Details
+- **Improvement Layer**: Developed [`backend/model_improvement.py`](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/backend/model_improvement.py) to manage the improvement flow.
+- **Modelfile Specialization**: Leveraged Ollama's structured `/api/create` JSON payload (`from`, `system`, and `parameters` keys) to build custom model variants (e.g. `<base>-improved`) with zero-temperature enforcement and role-specific system prompts.
+- **Benchmarking & Diffing**: Automatically evaluates the specialized variant, diffs the score against the original model, and conditionally registers the model as a promotion candidate.
+- **Operator Safety purges**: Automatically deletes the original model if and only if the replacement wins the performance comparison and the original is verified as non-protected.
+- **REST Endpoints**: Registered `POST /api/v1/models/improve` route in [`backend/main.py`](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/backend/main.py).
+
+### QA & Verification
+- **Contract Verification**: Implemented [`scripts/qa/test-model-improvement-contract.ts`](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/scripts/qa/test-model-improvement-contract.ts) which checks endpoint availability, JSON payload structure, and reporting.
+- **Package Registration**: Integrated `qa:model-improvement` in [`package.json`](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/package.json) under the `qa:ui-contract` test suite.
+- **CI Integrity**: Run the entire integration verification suite yielding 100% PASS with full release SBOM/provenance tracking.
+
