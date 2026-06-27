@@ -1,0 +1,37 @@
+{
+  "phase": "V13_OPERATOR_DRY_RUN_REVIEW",
+  "review_status": "PENDING_OPERATOR_REVIEW",
+  "candidate_path": "artifacts/qa/visual_review/dry_run_candidate/control-plane.candidate.html",
+  "rollback_path": "artifacts/qa/visual_review/dry_run_candidate/ROLLBACK.md",
+  "active_cockpit_replacement_enabled": false,
+  "replacement_performed": false,
+  "operator_decision_options": [
+    "APPROVE_DRY_RUN_FOR_LOCAL_REPLACEMENT",
+    "APPROVE_WITH_MORE_CHANGES",
+    "REJECT_REPLACEMENT"
+  ],
+  "checklist": [
+    "candidate cockpit file exists",
+    "rollback file exists",
+    "baseline cockpit remains available",
+    "active replacement remains disabled",
+    "dry-run report confirms replacement_performed=false",
+    "candidate renders locally",
+    "source/freshness/evidence labels visible",
+    "FAIL-CLOSED states visible",
+    "no backend mutation",
+    "no prompt execution",
+    "no approval decision execution",
+    "no production deployment",
+    "no external publication"
+  ],
+  "blocked_actions": [
+    "full active cockpit replacement",
+    "backend mutation",
+    "prompt execution",
+    "approval decision execution",
+    "production deployment",
+    "external publication",
+    "security posture change"
+  ]
+}
