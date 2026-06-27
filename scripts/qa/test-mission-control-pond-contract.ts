@@ -50,8 +50,11 @@ if (!fs.existsSync(appJsPath)) {
   if (!content.includes("triggerKoiRipple")) {
     blockers.push(`app.js must define 'triggerKoiRipple'.`);
   }
-  if (!content.includes("koiEntities")) {
-    blockers.push(`app.js must register the 'koiEntities' configurations.`);
+  if (!content.includes("getDeterministicOrbit")) {
+    blockers.push(`app.js must implement 'getDeterministicOrbit' for dynamic entity mapping.`);
+  }
+  if (!content.includes("activeEntities")) {
+    blockers.push(`app.js must derive fish from dynamic activeEntities list.`);
   }
 }
 

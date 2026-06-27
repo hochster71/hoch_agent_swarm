@@ -821,16 +821,32 @@
         }
     }
 
-    // ── Koi Animation Layer (Batch UI-KOI-1 & PROTO-2) ───────────────────────────
-    const koiEntities = [
-        { id: "lmstudio-gemma-4-12b", width: 250, height: 250, duration: 40, top: "10%", left: "15%", reverse: false },
-        { id: "ollama-local", width: 320, height: 320, duration: 50, top: "20%", left: "45%", reverse: true },
-        { id: "local-swarm-api", width: 200, height: 200, duration: 30, top: "40%", left: "25%", reverse: false },
-        { id: "neo-commander", width: 280, height: 280, duration: 35, top: "15%", left: "60%", reverse: false },
-        { id: "cyber-commoner", width: 360, height: 360, duration: 60, top: "50%", left: "10%", reverse: true },
-        { id: "asset-scout", width: 400, height: 400, duration: 45, top: "35%", left: "35%", reverse: false },
-        { id: "footprint-sentinel", width: 440, height: 440, duration: 55, top: "25%", left: "70%", reverse: true }
-    ];
+    // ── Koi Animation Layer (Batch UI-KOI-1, PROTO-2 & Observability) ────────────
+    function getDeterministicOrbit(id) {
+        let hash = 0;
+        for (let i = 0; i < id.length; i++) {
+            hash = id.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        const absHash = Math.abs(hash);
+        const width = 200 + (absHash % 250); // 200px to 450px
+        const duration = 30 + (absHash % 45); // 30s to 75s
+        const top = `${10 + (absHash % 50)}%`; // 10% to 60%
+        const left = `${15 + ((absHash >> 2) % 65)}%`; // 15% to 80%
+        const reverse = (absHash % 2) === 0;
+        return { width, height: width, duration, top, left, reverse };
+    }
+
+    function createKoiSVG() {
+        return `
+            <svg viewBox="0 0 60 30" width="100%" height="100%" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path class="koi-body-path" d="M5,15 Q30,5 55,15 Q30,25 5,15 Z" fill="currentColor" opacity="0.8"/>
+                <path d="M25,8 Q20,2 15,5 Q18,8 20,8 Z" fill="currentColor" opacity="0.6"/>
+                <path d="M25,22 Q20,28 15,25 Q18,22 20,22 Z" fill="currentColor" opacity="0.6"/>
+                <path d="M5,15 Q0,10 2,5 Q5,10 5,15 Z" fill="currentColor" opacity="0.7"/>
+                <path d="M5,15 Q0,20 2,25 Q5,20 5,15 Z" fill="currentColor" opacity="0.7"/>
+            </svg>
+        `;
+    }
 
     function initializeKoiAnimation() {
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -842,46 +858,6 @@
         // Clear existing
         pond.innerHTML = "";
         koiFishInstances = {};
-
-        // Helper to create koi SVG using currentColor for dynamic status binding
-        function createKoiSVG() {
-            return `
-                <svg viewBox="0 0 60 30" width="100%" height="100%" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path class="koi-body-path" d="M5,15 Q30,5 55,15 Q30,25 5,15 Z" fill="currentColor" opacity="0.8"/>
-                    <path d="M25,8 Q20,2 15,5 Q18,8 20,8 Z" fill="currentColor" opacity="0.6"/>
-                    <path d="M25,22 Q20,28 15,25 Q18,22 20,22 Z" fill="currentColor" opacity="0.6"/>
-                    <path d="M5,15 Q0,10 2,5 Q5,10 5,15 Z" fill="currentColor" opacity="0.7"/>
-                    <path d="M5,15 Q0,20 2,25 Q5,20 5,15 Z" fill="currentColor" opacity="0.7"/>
-                </svg>
-            `;
-        }
-
-        koiEntities.forEach((cfg, idx) => {
-            const orbit = document.createElement("div");
-            orbit.className = "koi-orbit";
-            orbit.style.width = `${cfg.width}px`;
-            orbit.style.height = `${cfg.height}px`;
-            orbit.style.top = cfg.top;
-            orbit.style.left = cfg.left;
-            orbit.style.animationDuration = `${cfg.duration}s`;
-            if (cfg.reverse) {
-                orbit.style.animationDirection = "reverse";
-            }
-
-            const fish = document.createElement("div");
-            fish.className = "koi-fish state-live";
-            fish.style.top = "0px";
-            fish.style.left = "50%";
-            fish.style.transform = "translateX(-50%) rotate(90deg)";
-            fish.style.animationDelay = `${idx * 0.4}s`;
-            fish.innerHTML = createKoiSVG();
-
-            orbit.appendChild(fish);
-            pond.appendChild(orbit);
-
-            // Register fish instance
-            koiFishInstances[cfg.id] = orbit;
-        });
 
         // Document click triggers ripples
         document.addEventListener("click", (e) => {
@@ -934,55 +910,108 @@
             return;
         }
 
+        const pond = document.getElementById("koi-pond-layer");
+        if (!pond) return;
+
         const models = meshData.models || [];
         const agents = meshData.agents || [];
 
-        // 1. Update Models Statuses
+        // Build current active entity list based on live API registry data
+        const activeEntities = [];
+
+        // Models
         models.forEach(m => {
-            const orbit = koiFishInstances[m.id];
-            if (!orbit) return;
-            const fish = orbit.querySelector(".koi-fish");
-            if (!fish) return;
-
-            // Apply state class mapping
-            fish.className = "koi-fish";
-            const stateClass = `state-${m.status.toLowerCase().replace('_', '-')}`;
-            fish.classList.add(stateClass);
-
-            // Control orbit play status based on connectivity
-            orbit.classList.remove("swim-paused");
-            if (m.status === "BROKEN" || m.status === "OFFLINE") {
-                orbit.classList.add("swim-paused");
-            }
+            activeEntities.push({
+                id: m.id,
+                name: m.id,
+                type: "model",
+                status: m.status,
+                truth_state: m.truth_state,
+                endpoint: m.endpoint
+            });
         });
 
-        // 2. Update Agents Statuses
+        // Agents
         agents.forEach(a => {
-            const orbit = koiFishInstances[a.id];
-            if (!orbit) return;
-            const fish = orbit.querySelector(".koi-fish");
-            if (!fish) return;
+            activeEntities.push({
+                id: a.id,
+                name: a.name,
+                type: "agent",
+                status: a.status,
+                truth_state: a.truth_state,
+                endpoint: "/api/v1/model-mesh/config"
+            });
+        });
 
-            // Apply state class mapping
-            fish.className = "koi-fish";
-            const stateClass = `state-${a.truth_state.toLowerCase().replace('_', '-')}`;
-            fish.classList.add(stateClass);
+        // Local Swarm API
+        activeEntities.push({
+            id: "local-swarm-api",
+            name: "Local Swarm API",
+            type: "api",
+            status: "LIVE",
+            truth_state: "LIVE",
+            endpoint: "/api/v1/live-runtime/cockpit"
+        });
 
-            // Pause if broken/pending and not live
-            orbit.classList.remove("swim-paused");
-            if (a.truth_state === "BROKEN" || (a.truth_state === "PENDING" && a.status === "STALE")) {
-                orbit.classList.add("swim-paused");
+        // Remove fish elements for deactivated entities
+        const activeIds = activeEntities.map(e => e.id);
+        Object.keys(koiFishInstances).forEach(id => {
+            if (!activeIds.includes(id)) {
+                const orbit = koiFishInstances[id];
+                if (orbit) orbit.remove();
+                delete koiFishInstances[id];
             }
         });
 
-        // 3. Keep Local Swarm API active
-        const apiOrbit = koiFishInstances["local-swarm-api"];
-        if (apiOrbit) {
-            const fish = apiOrbit.querySelector(".koi-fish");
-            if (fish) {
-                fish.className = "koi-fish state-live";
+        // Spawn or update fish elements for active entities
+        activeEntities.forEach(ent => {
+            let orbit = koiFishInstances[ent.id];
+            if (!orbit) {
+                const cfg = getDeterministicOrbit(ent.id);
+                orbit = document.createElement("div");
+                orbit.className = "koi-orbit";
+                orbit.style.width = `${cfg.width}px`;
+                orbit.style.height = `${cfg.height}px`;
+                orbit.style.top = cfg.top;
+                orbit.style.left = cfg.left;
+                orbit.style.animationDuration = `${cfg.duration}s`;
+                if (cfg.reverse) {
+                    orbit.style.animationDirection = "reverse";
+                }
+
+                const fish = document.createElement("div");
+                fish.className = "koi-fish";
+                fish.style.top = "0px";
+                fish.style.left = "50%";
+                fish.style.transform = "translateX(-50%) rotate(90deg)";
+                fish.innerHTML = createKoiSVG();
+
+                // Audit metadata attributes binding
+                fish.setAttribute("data-entity-id", ent.id);
+                fish.setAttribute("data-entity-type", ent.type);
+                fish.setAttribute("data-source-endpoint", ent.endpoint);
+
+                orbit.appendChild(fish);
+                pond.appendChild(orbit);
+                koiFishInstances[ent.id] = orbit;
             }
-        }
+
+            // Update classes and dynamic state attributes
+            const fish = orbit.querySelector(".koi-fish");
+            if (fish) {
+                fish.setAttribute("data-truth-state", ent.truth_state);
+                fish.className = "koi-fish";
+                
+                const truthClass = `state-${ent.truth_state.toLowerCase().replace('_', '-')}`;
+                fish.classList.add(truthClass);
+
+                // Control orbit play state based on connectivity status
+                orbit.classList.remove("swim-paused");
+                if (ent.status === "BROKEN" || ent.status === "OFFLINE" || ent.truth_state === "MISSING_FROM_SCAN") {
+                    orbit.classList.add("swim-paused");
+                }
+            }
+        });
     }
 
     async function loadModelMeshView() {
