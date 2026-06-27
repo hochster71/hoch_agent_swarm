@@ -33,7 +33,14 @@ def generate_runtime_execution_audit() -> dict:
         evt = b.get("event", {})
         action = evt.get("action", {})
         meta = evt.get("metadata", {})
-        if action.get("type") == "HOCHSTER_SOLUTION_GENERATED" or evt.get("action", {}).get("type") == "HOCHSTER_SOLUTION_GENERATED":
+        
+        action_type = ""
+        if isinstance(action, dict):
+            action_type = action.get("type", "")
+        elif isinstance(action, str):
+            action_type = action
+            
+        if action_type == "HOCHSTER_SOLUTION_GENERATED":
             req_id = meta.get("request_id")
             if req_id and req_id not in solved_request_ids:
                 solved_request_ids.append(req_id)
@@ -59,7 +66,17 @@ def generate_runtime_execution_audit() -> dict:
         evt = b.get("event", {})
         action = evt.get("action", {})
         meta = evt.get("metadata", {})
-        if "override-safety-limits" in action.get("summary", "") or action.get("type") == "HOCHSTER_HIGH_RISK_ACTION_EXECUTED":
+        
+        action_type = ""
+        action_summary = ""
+        if isinstance(action, dict):
+            action_type = action.get("type", "")
+            action_summary = action.get("summary", "")
+        elif isinstance(action, str):
+            action_type = action
+            action_summary = action
+            
+        if "override-safety-limits" in action_summary or action_type == "HOCHSTER_HIGH_RISK_ACTION_EXECUTED":
             req_id = meta.get("request_id")
             corr_id = meta.get("correlation_id")
             

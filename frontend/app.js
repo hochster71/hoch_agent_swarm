@@ -948,6 +948,35 @@
                 });
             });
 
+            // Fetch generic approvals from /api/approval/requests
+            try {
+                const appRes = await fetch('/api/approval/requests');
+                const approvals = await appRes.json();
+                approvals.forEach(a => {
+                    if (a.status === "pending") {
+                        if (a.command && a.command.prompt) {
+                            gateItems.push({
+                                id: a.approval_id,
+                                title: `Governed Agent Launch: ${a.command.agent_id || 'Agent'}`,
+                                description: `Prompt: "${a.command.prompt}" | Target: ${a.command.target || 'swarm'}`,
+                                type: "agent_launch",
+                                severity: "medium"
+                            });
+                        } else if (a.approval_id !== "signing_waiver") {
+                            gateItems.push({
+                                id: a.approval_id,
+                                title: a.command ? `Command: ${a.command.raw_text}` : `Approval Request: ${a.approval_id}`,
+                                description: a.policy_context ? a.policy_context.approval_reason : "Awaiting operator authorization.",
+                                type: "generic",
+                                severity: "medium"
+                            });
+                        }
+                    }
+                });
+            } catch (err) {
+                console.error('[FlightDeck] failed to fetch approvals:', err);
+            }
+
             const gateCountBadge = el('gate-count-badge');
             if (gateCountBadge) gateCountBadge.textContent = gateItems.length;
 
@@ -962,7 +991,7 @@
                 </div>
             `).join('') || `<div style="color:var(--text-secondary); text-align:center; font-size:12px;">Zero pending approval gates</div>`;
 
-            // Bind approval gates click handlers
+            // Bind approval gates click handlers (Approve)
             gatesContainer.querySelectorAll('.btn-approve').forEach(btn => {
                 btn.addEventListener('click', async () => {
                     const gateId = btn.getAttribute('data-gate-id');
@@ -984,6 +1013,50 @@
                             }
                         } catch (err) {
                             console.error('[FlightDeck] failed to waive:', err);
+                        }
+                    } else {
+                        try {
+                            const submitRes = await fetch(`/api/approval/requests/${gateId}/decisions`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    decision: "approve",
+                                    reason: "Operator dynamic flight deck override",
+                                    operator: "Michael Hoch"
+                                })
+                            });
+                            if (submitRes.ok) {
+                                triggerGeneralRipple(window.innerWidth / 2, window.innerHeight / 2, "normal");
+                                loadAgentFlightDeckView();
+                            }
+                        } catch (err) {
+                            console.error('[FlightDeck] failed to approve request:', err);
+                        }
+                    }
+                });
+            });
+
+            // Bind approval gates click handlers (Reject)
+            gatesContainer.querySelectorAll('.btn-reject').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const gateId = btn.getAttribute('data-gate-id');
+                    const gateType = btn.getAttribute('data-gate-type');
+                    if (gateType !== "signing_waiver") {
+                        try {
+                            const submitRes = await fetch(`/api/approval/requests/${gateId}/decisions`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    decision: "reject",
+                                    reason: "Operator dynamic flight deck rejection",
+                                    operator: "Michael Hoch"
+                                })
+                            });
+                            if (submitRes.ok) {
+                                loadAgentFlightDeckView();
+                            }
+                        } catch (err) {
+                            console.error('[FlightDeck] failed to reject request:', err);
                         }
                     }
                 });
