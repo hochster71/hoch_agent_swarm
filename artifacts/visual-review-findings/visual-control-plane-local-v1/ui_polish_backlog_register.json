@@ -1,0 +1,18 @@
+{
+  "backlog": [
+    {
+      "id": "POLISH-01",
+      "target": "Theme selector select dropdown",
+      "description": "Align dropdown width with sidebar buttons.",
+      "severity": "Minor",
+      "status": "OPEN"
+    },
+    {
+      "id": "POLISH-02",
+      "target": "Metadata card labels",
+      "description": "Make metadata labels slightly bolder for better scannability.",
+      "severity": "Enhancement",
+      "status": "OPEN"
+    }
+  ]
+}
