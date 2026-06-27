@@ -1,0 +1,9 @@
+{
+  "decision_package_id": "DECISION-visual-control-plane-local-v1.0.0",
+  "track": "P17_OPERATOR_GO_NO_GO_DECISION_RECORD",
+  "integration_branch": "integration/visual-control-plane-local-v1",
+  "target_release": "v0.1.6-ERROR-BUDGET-AWARE-AUTONOMY",
+  "decision_status": "DECISION_RECORDED",
+  "local_preview_only": true,
+  "created_at": "2026-06-27T18:52:00-05:00"
+}
