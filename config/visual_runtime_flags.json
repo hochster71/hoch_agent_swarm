@@ -1,10 +1,11 @@
 {
-  "phase": "V8_FEATURE_FLAGGED_LOCAL_ACTIVATION",
+  "phase": "V10_LOCAL_COCKPIT_ALIAS_ACTIVATION",
   "local_only": true,
   "active_cockpit_replacement_enabled": false,
   "visual_preview_route_enabled": true,
+  "visual_cockpit_alias_enabled": true,
   "rollback_required": true,
-  "michael_hoch_approval_recorded": true,
+  "michael_hoch_final_approval_recorded": true,
   "backend_mutation_enabled": false,
   "prompt_execution_enabled": false,
   "approval_decision_execution_enabled": false,
@@ -13,5 +14,6 @@
   "security_posture_change_enabled": false,
   "fallback_route": "mockups/visual-control-plane/control-plane.html",
   "preview_route": "mockups/visual-control-plane/dashboard-preview.html",
-  "side_by_side_route": "mockups/visual-control-plane/side-by-side-review.html"
+  "side_by_side_route": "mockups/visual-control-plane/side-by-side-review.html",
+  "alias_route": "mockups/visual-control-plane/local-cockpit-alias.html"
 }

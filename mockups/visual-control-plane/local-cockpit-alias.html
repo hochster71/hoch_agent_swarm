@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HOCH Swarm - Local Cockpit Alias</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Global Preview Ops Bar -->
+  <header class="global-ops-bar" style="border-bottom: 2px solid var(--accent-cyan);">
+    <h1>HOCH Swarm Cockpit - Optional Local Alias</h1>
+    <div class="breadcrumbs">
+      <a href="index.html">SWARM</a> / <span class="active">ALIAS</span>
+    </div>
+    <span class="status-badge status-simulated">LOCAL OPTIONAL</span>
+  </header>
+
+  <main style="padding: var(--space-md);">
+    <div class="review-banner" style="background: rgba(6, 182, 212, 0.1); border: 2px solid var(--accent-cyan); color: var(--text-primary); padding: var(--space-md); border-radius: var(--border-radius-md); font-size: 14px; font-family: var(--font-mono); margin-bottom: var(--space-md); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 0 10px rgba(6, 182, 212, 0.2);">
+      <span>ℹ️ NOTICE: OPTIONAL LOCAL COCKPIT VIEW ACTIVE. active_cockpit_replacement_enabled=false</span>
+      <a href="control-plane.html" style="color: var(--accent-cyan); font-weight: bold; text-decoration: none;">Return to Baseline Cockpit ↩</a>
+    </div>
+
+    <!-- Embed polished preview -->
+    <div style="border: 1px solid var(--border-subtle); border-radius: var(--border-radius-md); overflow: hidden; height: 800px; background: var(--bg-secondary);">
+      <iframe src="dashboard-preview.html" style="width: 100%; height: 100%; border: none;"></iframe>
+    </div>
+  </main>
+</body>
+</html>
