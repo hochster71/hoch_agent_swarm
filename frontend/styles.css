@@ -3161,15 +3161,75 @@ body.theme-mono {
 }
 
 .koi-fish {
-  /* Legacy selector for contract compatibility */
+  position: absolute;
+  width: 50px;
+  height: 25px;
+  transform: translateX(-50%) rotate(90deg);
+  transition: opacity 0.5s ease, filter 0.5s ease;
+  color: var(--accent-teal, #10b981);
+}
+
+.koi-fish.state-live {
+  opacity: 0.85;
+  color: var(--accent-teal, #10b981);
+}
+
+.koi-fish.state-pending {
+  opacity: 0.55;
+  color: #f59e0b;
+}
+
+.koi-fish.state-broken {
+  opacity: 0.20;
+  color: #ef4444;
+}
+
+.koi-fish.state-approval-required {
+  opacity: 0.70;
+  color: #f59e0b;
 }
 
 .koi-ripple {
-  /* Legacy selector for contract compatibility */
+  position: absolute;
+  border: 1.5px solid var(--accent-teal);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  animation: koiRippleEffect 3.5s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.koi-ripple.ripple-broken {
+  border-color: #ef4444 !important;
+}
+
+.koi-ripple.ripple-warning {
+  border-color: #f59e0b !important;
 }
 
 .koi-orbit {
-  /* Legacy selector for contract compatibility */
+  position: absolute;
+  border: 1px dashed rgba(255, 255, 255, 0.04);
+  border-radius: 50%;
+  transform-origin: center;
+  animation: spin 30s linear infinite;
+  pointer-events: none;
+  transition: animation-duration 1s ease;
+}
+
+.koi-orbit.swim-paused {
+  animation-play-state: paused !important;
+}
+
+@keyframes koiRippleEffect {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(3.5);
+    opacity: 0;
+  }
 }
 
 #koi-runtime-canvas {
