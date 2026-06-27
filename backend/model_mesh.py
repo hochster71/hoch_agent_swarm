@@ -26,30 +26,46 @@ def load_model_mesh_data():
         except Exception:
             pass
 
+    # Build a lookup of open IP:port from findings
+    open_endpoints = set()
+    for f in findings:
+        if f.get("open"):
+            ip = f.get("ip", "")
+            port = f.get("port")
+            if ip and port:
+                open_endpoints.add(f"{ip}:{port}")
+                if ip == "127.0.0.1" or ip == "localhost":
+                    open_endpoints.add(f"127.0.0.1:{port}")
+                    open_endpoints.add(f"localhost:{port}")
+
     scanned_ports = {f.get("port") for f in findings if f.get("open")}
 
     # Evaluate model statuses based on truth policies
     models = mesh_data.get("models", [])
     for m in models:
         endpoint = m.get("endpoint", "")
-        # Standard ports
-        if "1234" in endpoint:
-            m["reachable"] = 1234 in scanned_ports
-            m["status"] = "LIVE" if m["reachable"] else "BROKEN"
-        elif "11434" in endpoint:
-            m["reachable"] = 11434 in scanned_ports
-            m["status"] = "LIVE" if m["reachable"] else "BROKEN"
-        elif "8000" in endpoint:
-            m["reachable"] = 8000 in scanned_ports
-            m["status"] = "LIVE" if m["reachable"] else "BROKEN"
-        else:
+        
+        # Check if it's a cloud provider
+        if any(c in endpoint.lower() for c in ("openai", "gemini", "google", "anthropic")):
             m["reachable"] = False
-            # Check if it's a cloud provider
-            if any(c in endpoint.lower() for c in ("openai", "gemini", "google", "anthropic")):
-                m["status"] = "APPROVAL_REQUIRED"
+            m["status"] = "APPROVAL_REQUIRED"
+            m["truth_state"] = "APPROVAL_REQUIRED"
+        else:
+            # Parse host/port from endpoint URL
+            import urllib.parse
+            parsed = urllib.parse.urlparse(endpoint)
+            netloc = parsed.netloc or parsed.path
+            
+            # Check reachability from scan
+            m["reachable"] = netloc in open_endpoints or (parsed.port in scanned_ports if parsed.port else False)
+            
+            if m["reachable"]:
+                m["status"] = "LIVE"
+                m["truth_state"] = "LIVE"
             else:
-                m["status"] = "PENDING"
-                
+                m["status"] = "EXPECTED"
+                m["truth_state"] = "MISSING_FROM_SCAN"
+
         # Inject performance telemetry
         if m["reachable"]:
             m["telemetry"] = {
@@ -67,7 +83,7 @@ def load_model_mesh_data():
                 "vram_gb": 0.0,
                 "ram_gb": 0.0,
                 "queue_depth": 0,
-                "error_count": 1
+                "error_count": 1 if m["status"] == "EXPECTED" else 0
             }
 
     # Evaluate agents and truth state rules
