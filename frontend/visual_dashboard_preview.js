@@ -276,8 +276,13 @@ function renderCardHTML(title, vm) {
     `;
   }
 
+  const isFailClosed = vm.state === 'FAIL-CLOSED';
+  const cardStyle = isFailClosed
+    ? 'border: 2px solid var(--accent-red); background: rgba(239, 68, 68, 0.05); shadow: 0 0 10px rgba(239, 68, 68, 0.2);'
+    : 'border-top: 3px solid var(--border-subtle);';
+
   return `
-    <div class="card" style="border-top: 3px solid var(--border-subtle);">
+    <div class="card" style="${cardStyle}">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-xs);">
         <h3 style="margin: 0; font-size: 14px;">${title}</h3>
         <span class="status-badge ${badgeClass}">${vm.state}</span>
@@ -293,9 +298,9 @@ function renderCardHTML(title, vm) {
         ${failClosedHTML}
       </div>
       <div class="meta-label-block">
-        <div><span style="color: var(--text-muted);">Source:</span> ${vm.source}</div>
-        <div><span style="color: var(--text-muted);">Freshness:</span> ${vm.freshness.timestamp ? (vm.freshness.fresh ? "FRESH" : "STALE") : "UNKNOWN"}</div>
-        <div><span style="color: var(--text-muted);">Evidence:</span> <span style="${evidenceClass}">${evidencePresent} (${vm.evidence.paths.join(', ') || 'none'})</span></div>
+        <div><span style="color: var(--accent-cyan); font-weight: bold;">[SRC] Source:</span> ${vm.source}</div>
+        <div><span style="color: ${vm.freshness.fresh ? 'var(--accent-green)' : 'var(--accent-amber)'}; font-weight: bold;">[TIME] Freshness:</span> ${vm.freshness.timestamp ? (vm.freshness.fresh ? "FRESH" : "STALE") : "UNKNOWN"}</div>
+        <div><span style="${evidenceClass}; font-weight: bold;">[EVID] Evidence:</span> ${evidencePresent} (${vm.evidence.paths.join(', ') || 'none'})</div>
       </div>
     </div>
   `;

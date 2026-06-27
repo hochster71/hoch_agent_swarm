@@ -49,31 +49,33 @@
     .preview-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: var(--space-md);
+      gap: 12px;
     }
     .preview-banner {
-      background: rgba(220, 53, 69, 0.1);
-      border: 1px solid var(--accent-red);
-      color: var(--text-primary);
-      padding: var(--space-sm) var(--space-md);
-      border-radius: var(--border-radius-sm);
-      font-size: 13px;
-      font-family: var(--font-mono);
+      background: rgba(220, 53, 69, 0.25);
+      border: 3px solid var(--accent-red);
+      color: #ffffff;
+      padding: var(--space-md);
+      border-radius: var(--border-radius-md);
+      font-size: 15px;
+      font-family: var(--font-sans);
+      font-weight: 700;
       margin-bottom: var(--space-md);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
     }
     .meta-label-block {
       margin-top: var(--space-sm);
       border-top: 1px solid var(--border-subtle);
       padding-top: var(--space-xs);
       font-size: 11px;
-      color: var(--text-muted);
+      color: var(--text-secondary);
       font-family: var(--font-mono);
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 3px;
     }
   </style>
 </head>

@@ -438,3 +438,36 @@ a:focus, button:focus, input:focus, select:focus {
   border-right: 1px solid var(--border-subtle);
   padding-right: var(--space-md);
 }
+
+/* Tablet & iPad Readability scaling */
+@media (max-width: 1024px) {
+  body {
+    padding: var(--space-sm);
+  }
+  .preview-layout {
+    flex-direction: column;
+  }
+  .preview-sidebar {
+    width: 100%;
+    margin-bottom: var(--space-sm);
+  }
+  .section-rail {
+    flex-direction: row;
+    flex-wrap: wrap;
+    border-right: none;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-right: 0;
+    padding-bottom: var(--space-sm);
+  }
+  .preview-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+  }
+}
+
+@media (max-width: 768px) {
+  .preview-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
