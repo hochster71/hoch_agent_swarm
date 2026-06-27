@@ -7720,6 +7720,22 @@ def get_prompts_categories_endpoint():
     categories = sorted(list(set(p["category"] for p in registry.prompts)))
     return categories
 
+class PromptRoutePlanRequest(BaseModel):
+    task_description: str
+    risk_level: str = "LOW"
+
+@app.get("/api/v1/prompts/router/rules")
+def get_prompts_router_rules_endpoint():
+    from backend.prompt_router import get_router
+    router = get_router()
+    return router.get_rules()
+
+@app.post("/api/v1/prompts/router/plan")
+def post_prompts_router_plan_endpoint(req: PromptRoutePlanRequest):
+    from backend.prompt_router import get_router
+    router = get_router()
+    return router.plan_route(req.task_description, req.risk_level)
+
 # ── Escalation Approval Queue Endpoints ───────────────────────────────────────
 @app.get("/api/v1/escalations/pending")
 def get_escalations_pending_endpoint():
