@@ -1,0 +1,9 @@
+{
+  "policy_name": "visual-cockpit-local-demo-no-execution",
+  "active": true,
+  "rules": [
+    "No mutating actions (POST/PUT/PATCH/DELETE) allowed from UI controls",
+    "No active agent execution paths wired",
+    "No operator approvals routed to live execution frameworks"
+  ]
+}

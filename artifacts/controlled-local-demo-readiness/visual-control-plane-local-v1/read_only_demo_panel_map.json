@@ -1,0 +1,14 @@
+{
+  "read_only_panels": [
+    {
+      "panel_id": "process_monitor_table",
+      "action_mutations_allowed": false,
+      "source_endpoint": "/api/v1/runtime/process/animation-state"
+    },
+    {
+      "panel_id": "health_status_indicator",
+      "action_mutations_allowed": false,
+      "source_endpoint": "/api/v1/runtime/process/health"
+    }
+  ]
+}
