@@ -1,0 +1,16 @@
+{
+  "visual_validation": [
+    {
+      "fix_id": "FIX-01",
+      "target": "Theme selector select dropdown",
+      "visual_proof": "cockpit-overview.png shows dropdown padding/borders aligned with nav links container.",
+      "status": "VALIDATED"
+    },
+    {
+      "fix_id": "FIX-02",
+      "target": "Metadata card labels",
+      "visual_proof": "runtime-health.png shows card label key texts rendered with bold typeface.",
+      "status": "VALIDATED"
+    }
+  ]
+}
