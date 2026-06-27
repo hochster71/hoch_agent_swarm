@@ -6,6 +6,7 @@
   "visual_cockpit_alias_enabled": true,
   "rollback_required": true,
   "michael_hoch_final_approval_recorded": true,
+  "michael_hoch_approval_recorded": true,
   "backend_mutation_enabled": false,
   "prompt_execution_enabled": false,
   "approval_decision_execution_enabled": false,
