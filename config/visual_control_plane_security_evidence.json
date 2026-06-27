@@ -1,0 +1,22 @@
+{
+  "track": "P4_SECURITY_ATO_EVIDENCE_PACKAGING",
+  "release_tag": "visual-control-plane-local-v1.0.0",
+  "integration_branch": "integration/visual-control-plane-local-v1",
+  "integration_head_commit": "11738361e1bb7778cbb6b70cdaf1260c12973d9f",
+  "evidence_standards": [
+    "NIST_SSDF_SP_800-218",
+    "SLSA_PROVENANCE_LEVEL_3",
+    "CYCLONEDX_SBOM"
+  ],
+  "blocked_actions": [
+    "production deployment",
+    "external publication",
+    "backend mutation",
+    "prompt execution",
+    "approval decision execution",
+    "security posture change",
+    "git push",
+    "merge directly to main"
+  ],
+  "evidence_package_status": "ATO_READY"
+}

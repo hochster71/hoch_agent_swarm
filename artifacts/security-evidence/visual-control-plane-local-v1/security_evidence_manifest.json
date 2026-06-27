@@ -1,0 +1,43 @@
+{
+  "phase": "P4_SECURITY_ATO_EVIDENCE_PACKAGING",
+  "operator": "Michael Hoch",
+  "local_only": true,
+  "evidence_manifest_status": "CERTIFIED",
+  "security_evaluation": {
+    "nist_ssdf_compliant": true,
+    "slsa_provenance_verified": true,
+    "sbom_transparency_passed": true,
+    "rollback_proof_valid": true,
+    "merge_strategy_documented": true,
+    "controlled_substitution_verified": true
+  },
+  "evidence_files": [
+    "artifacts/releases/visual-control-plane-local-archive/visual-control-plane-local.tar.gz",
+    "artifacts/releases/visual-control-plane-local-archive/archive_manifest.json",
+    "artifacts/releases/visual-control-plane-local-archive/archive_review.json",
+    "artifacts/releases/visual-control-plane-local-archive/final_review.json",
+    "artifacts/releases/visual-control-plane-local-archive/final_local_release_closure.json",
+    "artifacts/install-review/visual-control-plane-local/install_acceptance.json",
+    "artifacts/merge/visual-control-plane-local-v1/merge_readiness.json",
+    "artifacts/merge/visual-control-plane-local-v1/merge_result.json",
+    "config/visual_control_plane_merge_strategy.json",
+    "docs/merge-strategy/visual-control-plane-local-v1.md",
+    "docs/visual-control-plane/37_final_local_release_closure.md"
+  ],
+  "verification_metrics": {
+    "release_tag_present": true,
+    "git_history_linear": true,
+    "qa_checks_successful": true,
+    "ci_validate_successful": true
+  },
+  "blocked_actions": [
+    "production deployment",
+    "external publication",
+    "backend mutation",
+    "prompt execution",
+    "approval decision execution",
+    "security posture change",
+    "git push",
+    "merge directly to main"
+  ]
+}
