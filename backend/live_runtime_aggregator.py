@@ -394,6 +394,22 @@ def get_cockpit_data() -> dict[str, Any]:
             "approval_gated_count": 0
         }
 
+    # 14. Approval Gate Telemetry
+    try:
+        from backend.approval_gate import get_approval_gate
+        gate = get_approval_gate()
+        approval_gate_telemetry = gate.get_telemetry()
+    except Exception as exc:
+        approval_gate_telemetry = {
+            "state": "ERROR",
+            "pending_count": 0,
+            "approved_count": 0,
+            "denied_count": 0,
+            "deferred_count": 0,
+            "execution_enabled": False,
+            "error": str(exc)
+        }
+
     return {
         "truth": "LIVE",
         "generated_at": now_str,
@@ -410,6 +426,7 @@ def get_cockpit_data() -> dict[str, Any]:
             "port_hardening": ph_data,
             "autonomy_budget": ab_data,
             "device_registry": dr_data,
-            "prompt_registry": pr_registry_data
+            "prompt_registry": pr_registry_data,
+            "approval_gate": approval_gate_telemetry
         }
     }

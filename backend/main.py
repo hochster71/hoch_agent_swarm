@@ -7736,6 +7736,36 @@ def post_prompts_router_plan_endpoint(req: PromptRoutePlanRequest):
     router = get_router()
     return router.plan_route(req.task_description, req.risk_level)
 
+class ApprovalRequestModel(BaseModel):
+    task_description: str
+    route_plan: dict
+
+class ApprovalDecisionModel(BaseModel):
+    status: str
+    note: str = None
+
+@app.get("/api/v1/approvals/queue")
+def get_approvals_queue_endpoint():
+    from backend.approval_gate import get_approval_gate
+    gate = get_approval_gate()
+    return gate.load_queue()
+
+@app.post("/api/v1/approvals/request")
+def post_approvals_request_endpoint(req: ApprovalRequestModel):
+    from backend.approval_gate import get_approval_gate
+    gate = get_approval_gate()
+    return gate.create_request(req.task_description, req.route_plan)
+
+@app.post("/api/v1/approvals/{approval_id}/decision")
+def post_approval_decision_endpoint(approval_id: str, req: ApprovalDecisionModel):
+    from fastapi import HTTPException
+    from backend.approval_gate import get_approval_gate
+    gate = get_approval_gate()
+    try:
+        return gate.record_decision(approval_id, req.status, req.note)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
 # ── Escalation Approval Queue Endpoints ───────────────────────────────────────
 @app.get("/api/v1/escalations/pending")
 def get_escalations_pending_endpoint():
