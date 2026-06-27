@@ -400,3 +400,25 @@ Created a Kimi-style HOCH themed live mesh sentinel view that displays only disc
 
 ### Policy
 No fake topology. No fake CPU. No fake active assets. Every visible AI runtime must be discovery-backed or explicitly marked missing/degraded.
+
+---
+
+## PROTO-2 — HOCH Mission Control Pond
+
+### Purpose
+Linked the background Kimi-style visual animation layer (orbits of SVG Koi fish and ripples) directly to live runtime agent statuses and prompt ledger event streams.
+
+### Styling & CSS Overrides
+- Implemented state-based color styling in [`frontend/styles.css`](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/frontend/styles.css) (green for `state-live`, amber/yellow for `state-pending`, red for `state-broken`, and amber hue for `state-approval-required`).
+- Defined keyframes for `.koi-ripple` to trigger dynamic concentric rings with specific colors based on execution events (red for high risk, amber for warning, green/teal for normal).
+- Created a `.swim-paused` class to halt fish movement for offline/broken runtimes.
+
+### Frontend Integration & Ripples
+- Refactored `initializeKoiAnimation()` in [`frontend/app.js`](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/frontend/app.js) to generate exactly 7 separate background Koi fish, each revolving in a distinct coordinate orbit representing one of the active models (`lmstudio-gemma-4-12b`, `ollama-local`, `local-swarm-api`) and agents (`neo-commander`, `cyber-commoner`, `asset-scout`, `footprint-sentinel`).
+- Integrated `updateKoiPond()` into the global `fetchCockpit()` loop to synchronize fish states and swim speeds from live FastAPI API configuration updates.
+- Tracked the prompt usage ledger count. On detection of new entries, `triggerKoiRipple()` retrieves the calling agent's current DOM coordinates using `getBoundingClientRect()` to emit a dynamic status-colored water ripple directly centered on that fish.
+
+### QA & Compliance
+- Added a static contract check test [`scripts/qa/test-mission-control-pond-contract.ts`](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/scripts/qa/test-mission-control-pond-contract.ts).
+- Registered the `qa:mission-control-pond` task in [`package.json`](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/package.json) and appended it to the `qa:ui-contract` suite.
+- Re-compiled Vite assets and verified the entire integration pipeline successfully (`npm run ci:validate` passed 100%).

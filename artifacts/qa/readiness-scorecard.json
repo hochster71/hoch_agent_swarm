@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-27T00:55:57.445Z",
+  "generated_at": "2026-06-27T01:07:56Z",
   "readiness_score": 100,
   "breakdown": {
     "Realtime freshness": {
@@ -48,5 +48,7 @@
       "comment": "API latencies within SLO limits (< 500ms)"
     }
   },
-  "status": "PASS"
+  "status": "PASS",
+  "drift_detected": false,
+  "drift_findings": []
 }
