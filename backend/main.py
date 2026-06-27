@@ -8396,6 +8396,11 @@ async def api_delete_model(payload: dict):
     from backend.model_lifecycle import delete_model
     return delete_model(str(payload.get("model", "")), str(payload.get("approval", "")))
 
+@app.post("/api/v1/models/improve")
+async def api_improve_model(payload: dict):
+    from backend.model_improvement import run_improvement_flow
+    return run_improvement_flow(str(payload.get("model", "")))
+
 
 # Mount frontend files at root (if frontend directory exists)
 
