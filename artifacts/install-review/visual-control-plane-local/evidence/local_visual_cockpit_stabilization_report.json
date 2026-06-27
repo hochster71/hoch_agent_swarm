@@ -1,0 +1,28 @@
+{
+  "phase": "V19_LOCAL_VISUAL_COCKPIT_STABILIZATION",
+  "local_only": true,
+  "active_local_visual_cockpit": true,
+  "rollback_ready": true,
+  "backend_mutation_enabled": false,
+  "prompt_execution_enabled": false,
+  "approval_decision_execution_enabled": false,
+  "checks_passed": [
+    "active cockpit file exists",
+    "rollback file exists",
+    "local-only banner visible",
+    "preview/local status visible",
+    "source label visible",
+    "freshness label visible",
+    "evidence label visible",
+    "FAIL-CLOSED visible",
+    "no fake production status",
+    "no backend mutation path",
+    "no prompt execution path",
+    "no approval decision execution path",
+    "tablet/iPad responsive rules retained",
+    "CI validation retained",
+    "rollback instructions retained"
+  ],
+  "checks_failed": [],
+  "decision": "STABILIZATION_COMPLETE"
+}

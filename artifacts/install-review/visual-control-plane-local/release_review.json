@@ -1,0 +1,28 @@
+{
+  "phase": "V22_LOCAL_RELEASE_REVIEW",
+  "local_only": true,
+  "release_root": "artifacts/releases/visual-control-plane-local",
+  "review_status": "REVIEW_COMPLETE",
+  "deployment_performed": false,
+  "external_publication_enabled": false,
+  "production_deployment_enabled": false,
+  "backend_mutation_enabled": false,
+  "prompt_execution_enabled": false,
+  "approval_decision_execution_enabled": false,
+  "security_posture_change_enabled": false,
+  "manifest_verified": true,
+  "provenance_verified": true,
+  "rollback_verified": true,
+  "evidence_verified": true,
+  "hashes_verified": true,
+  "checks_failed": [],
+  "next_allowed_phase": "V23_LOCAL_RELEASE_FREEZE",
+  "blocked_actions": [
+    "backend mutation",
+    "prompt execution",
+    "approval decision execution",
+    "production deployment",
+    "external publication",
+    "security posture change"
+  ]
+}

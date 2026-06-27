@@ -1,0 +1,39 @@
+{
+  "phase": "V21_LOCAL_RELEASE_PACKAGE",
+  "builder": "HOCH Agent Swarm Antigravity local workflow",
+  "source_branch": "feature/visual-control-plane",
+  "source_head": "87e7551fbd301d5aeacf93debfac9205b04cbc80",
+  "created_at_utc": "2026-06-27T20:33:54Z",
+  "input_artifacts": [
+    {
+      "path": "mockups/visual-control-plane/control-plane.html",
+      "sha256": "66ea78146eeef41c52525f3e198cd5778bebda0e0e6e0a08a58004d33afda850"
+    },
+    {
+      "path": "mockups/visual-control-plane/styles.css",
+      "sha256": "193a201789d9f8349f812c208521d5181dec90229f9cce71f0b7d9599e12b216"
+    }
+  ],
+  "output_artifacts": [
+    {
+      "path": "artifacts/releases/visual-control-plane-local/control-plane.html",
+      "sha256": "66ea78146eeef41c52525f3e198cd5778bebda0e0e6e0a08a58004d33afda850"
+    },
+    {
+      "path": "artifacts/releases/visual-control-plane-local/styles.css",
+      "sha256": "193a201789d9f8349f812c208521d5181dec90229f9cce71f0b7d9599e12b216"
+    },
+    {
+      "path": "artifacts/releases/visual-control-plane-local/manifest.json"
+    },
+    {
+      "path": "artifacts/releases/visual-control-plane-local/provenance.json"
+    }
+  ],
+  "qa_commands": [
+    "npm run qa:visual-local-release-package"
+  ],
+  "ci_command": "npm run ci:validate",
+  "deployment_performed": false,
+  "external_publication_enabled": false
+}
