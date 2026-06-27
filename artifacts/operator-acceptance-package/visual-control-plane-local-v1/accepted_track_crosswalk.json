@@ -1,0 +1,29 @@
+{
+  "crosswalk": {
+    "P4_SECURITY_ATO": {
+      "certified_commit": "71b6fac",
+      "certification_status": "ATO_READY_LOCAL_PREVIEW",
+      "evidence_path": "artifacts/security-evidence/visual-control-plane-local-v1/"
+    },
+    "P2_BACKEND_BINDING": {
+      "certified_commit": "04a93c9",
+      "certification_status": "READINESS_VERIFIED",
+      "evidence_path": "artifacts/backend-runtime-binding-readiness/visual-control-plane-local-v1/"
+    },
+    "P3_FRONTEND_BINDING": {
+      "certified_commit": "e126a01",
+      "certification_status": "READINESS_VERIFIED",
+      "evidence_path": "artifacts/frontend-runtime-readiness/visual-control-plane-local-v1/"
+    },
+    "P6_RELEASE_CANDIDATE": {
+      "certified_commit": "0f5e78d",
+      "certification_status": "CONSOLIDATED_RC_ACCEPTED",
+      "evidence_path": "artifacts/local-preview-release-candidate/visual-control-plane-local-v1/"
+    },
+    "P7_LOCAL_DEMO": {
+      "certified_commit": "57cdf46",
+      "certification_status": "DEMO_READINESS_ACCEPTED",
+      "evidence_path": "artifacts/controlled-local-demo-readiness/visual-control-plane-local-v1/"
+    }
+  }
+}
