@@ -465,3 +465,22 @@ Engineered a secure, governed background agent spawning engine that binds intera
 - Updated [`package.json`](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/package.json) to register `qa:agent-spawn-runtime` and appended it to the `qa:ui-contract` verification chain.
 - Made the [`backend/hochster_runtime_audit.py`](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/backend/hochster_runtime_audit.py) engine robust against both string and dictionary action keys.
 - Executed `npm run ci:validate` verifying 100% pass across all 58 integration, readiness, and supply-chain checks.
+
+---
+
+## PROTO-5A — Model Lifecycle (Evaluation, Quarantine, and Deletion)
+
+### Purpose
+Created a secure, local model lifecycle system that benchmarks Ollama models on task-specific test configurations, quarantines weak performers, and enforces operator-approved deletions.
+
+### Backend & API
+- Created [`backend/model_lifecycle.py`](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/backend/model_lifecycle.py) containing evaluation, scoring, classification, and deletion logic.
+- Exposed model lifecycle routes in [`backend/main.py`](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/backend/main.py):
+  - `POST /api/v1/models/evaluate` for running benchmark tasks.
+  - `GET /api/v1/models/lifecycle-report` to retrieve findings.
+  - `POST /api/v1/models/delete` for approved deletion with confirmation phrases.
+
+### QA & Verification
+- Added a static contract test [`scripts/qa/test-model-lifecycle-contract.ts`](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/scripts/qa/test-model-lifecycle-contract.ts).
+- Registered the `qa:model-lifecycle` task in [`package.json`](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/package.json) and appended it to the `qa:ui-contract` suite.
+- Re-run `npm run ci:validate` to ensure SBOM, provenance, and integrity checks pass successfully (100% green).
