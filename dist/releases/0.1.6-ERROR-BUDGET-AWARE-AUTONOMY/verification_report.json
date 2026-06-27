@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-27T00:20:08.331Z",
+  "generated_at": "2026-06-27T00:56:02.445Z",
   "release": "0.1.6-ERROR-BUDGET-AWARE-AUTONOMY",
   "status": "PASS",
   "blockers": [],
@@ -17,10 +17,11 @@
   },
   "release_channel_policy_decision": "PASS",
   "release_channel": "formal:preview-1782506899-3ff44fee",
-  "tag_points_at_head": true,
-  "tag_status": "TAG_AT_HEAD",
+  "tag_points_at_head": false,
+  "tag_status": "STALE_TAG",
   "formal_release_blockers": [
-    "dirty_working_tree"
+    "dirty_working_tree",
+    "tag_stale"
   ],
   "allowed_release_actions": [
     "continue_local_dev",
