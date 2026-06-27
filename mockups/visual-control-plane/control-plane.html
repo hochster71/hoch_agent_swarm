@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HOCH AI OS — Mission Control</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="global-ops-bar">
+    <h1>HOCH AI OS // MISSION CONTROL</h1>
+    <div class="breadcrumbs">
+      <span>/ <a href="index.html">life-os</a> / control-plane</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html">North Star</a></li>
+      <li><a href="control-plane.html" class="active">Mission Control</a></li>
+      <li><a href="factory.html">Software Factory</a></li>
+    </ul>
+  </header>
+
+  <main style="max-width: 1400px; margin: 0 auto;">
+    <div class="grid-3col">
+      <!-- 1. Control Plane Status -->
+      <div class="card">
+        <h3>
+          Control Plane Status
+          <span class="status-badge status-live">LIVE</span>
+        </h3>
+        <div class="card-body">
+          <p>Commander Node: <strong style="color: var(--accent-cyan);">10.0.0.6 (MacBook Pro M5 Pro)</strong></p>
+          <p>Uptime: 14h 22m</p>
+          <p>Swarm Latency: 22ms</p>
+        </div>
+        <div class="card-source">
+          <span>Source: system.health</span>
+          <span>evidence: system.uptime</span>
+        </div>
+      </div>
+
+      <!-- 2. Known Assets Mesh -->
+      <div class="card">
+        <h3>
+          Known Assets Mesh
+          <span class="status-badge status-degraded">DEGRADED</span>
+        </h3>
+        <div class="card-body">
+          <p>Total Configured Assets: <strong>9</strong></p>
+          <p>Online: <strong style="color: var(--accent-green);">4</strong> | Offline: <strong style="color: var(--text-muted);">5</strong></p>
+          <p>Warning: 5 mobile clients are asleep.</p>
+        </div>
+        <div class="card-source">
+          <span>Source: known_asset_probe_report.json</span>
+          <span>Sample: yes</span>
+        </div>
+      </div>
+
+      <!-- 3. Model Runtime Health -->
+      <div class="card">
+        <h3>
+          Model Runtime Health
+          <span class="status-badge status-live">LIVE</span>
+        </h3>
+        <div class="card-body">
+          <p>Discovered Runtimes: <strong>2 active</strong></p>
+          <p>Ollama (10.0.0.207): <span style="color: var(--accent-green);">ONLINE</span></p>
+          <p>LM Studio (10.0.0.8): <span style="color: var(--accent-green);">ONLINE</span></p>
+        </div>
+        <div class="card-source">
+          <span>Source: discovery/ai-runtimes</span>
+          <span>Verified: yes</span>
+        </div>
+      </div>
+
+      <!-- 4. Prompt Router -->
+      <div class="card">
+        <h3>
+          Prompt Router Status
+          <span class="status-badge status-live">LIVE</span>
+        </h3>
+        <div class="card-body">
+          <p>Loaded Prompts: <strong style="color: var(--accent-violet);">103</strong></p>
+          <p>Active Policy: <span style="color: var(--accent-cyan);">Local First</span></p>
+          <p>Router State: <span style="color: var(--accent-green);">ENFORCED</span></p>
+        </div>
+        <div class="card-source">
+          <span>Source: config/prompt_control_plane.json</span>
+          <span>Evidence: prompt_governance.py</span>
+        </div>
+      </div>
+
+      <!-- 5. Human Approval Queue -->
+      <div class="card">
+        <h3>
+          Human Approval Queue
+          <span class="status-badge status-pending">PENDING</span>
+        </h3>
+        <div class="card-body">
+          <p>Pending Actions: <strong style="color: var(--accent-amber);">1</strong></p>
+          <p>Blocked Action: <span style="color: var(--accent-red);">QUARANTINE_DELETE_GATE</span></p>
+          <p>Awaiting: <span style="color: var(--text-primary);">Michael Hoch</span> signature.</p>
+        </div>
+        <div class="card-source">
+          <span>Source: escalations/pending</span>
+          <span>Evidence: approval_gate_report.json</span>
+        </div>
+      </div>
+
+      <!-- 6. ConMon Status -->
+      <div class="card">
+        <h3>
+          ConMon Compliance
+          <span class="status-badge status-live">LIVE</span>
+        </h3>
+        <div class="card-body">
+          <p>Daily Check: <strong style="color: var(--accent-green);">PASS (100%)</strong></p>
+          <p>Weekly Check: <strong style="color: var(--accent-green);">PASS (100%)</strong></p>
+          <p>Next Scan Scheduled: in 4h 12m</p>
+        </div>
+        <div class="card-source">
+          <span>Source: config/prompt_control_plane.json</span>
+          <span>Evidence: compliance_audit.log</span>
+        </div>
+      </div>
+
+      <!-- 7. Cyber Risk & Open Findings -->
+      <div class="card">
+        <h3>
+          Cyber Risk & Hardening
+          <span class="status-badge status-live">LIVE</span>
+        </h3>
+        <div class="card-body">
+          <p>Open Vulnerabilities: <strong style="color: var(--accent-green);">0</strong></p>
+          <p>Audited Ports: <strong>13</strong></p>
+          <p>Prompt Injection Protection: <span style="color: var(--accent-green);">ACTIVE</span></p>
+        </div>
+        <div class="card-source">
+          <span>Source: artifacts/pentest + ConMon</span>
+          <span>Sample: yes</span>
+        </div>
+      </div>
+
+      <!-- 8. Evidence Vault -->
+      <div class="card">
+        <h3>
+          Evidence Vault Freshness
+          <span class="status-badge status-live">LIVE</span>
+        </h3>
+        <div class="card-body">
+          <p>Total Provenance Files: <strong>56</strong></p>
+          <p>All QA Tests: <strong style="color: var(--accent-green);">94 of 94 PASS</strong></p>
+          <p>Manifest SHA-256: <span style="font-family: var(--font-mono); font-size: 10px;">c21a6185...</span></p>
+        </div>
+        <div class="card-source">
+          <span>Source: release-seal-attestation-bundle</span>
+          <span>Evidence: sbom.spdx.json</span>
+        </div>
+      </div>
+
+      <!-- 9. Production Readiness -->
+      <div class="card">
+        <h3>
+          Production Readiness
+          <span class="status-badge status-live">LIVE</span>
+        </h3>
+        <div class="card-body">
+          <p>Readiness Score: <strong style="color: var(--accent-green);">GO (98%)</strong></p>
+          <p>Fail-Closed Policy: <strong style="color: var(--accent-green);">ENFORCED</strong></p>
+          <p>Active Outages: <strong style="color: var(--accent-green);">0</strong></p>
+        </div>
+        <div class="card-source">
+          <span>Source: artifacts/qa/readiness-scorecard.json</span>
+          <span>Evidence: yes</span>
+        </div>
+      </div>
+
+      <!-- 10. System State Registry -->
+      <div class="card">
+        <h3>
+          System State Registry
+          <span class="status-badge status-simulated">SAMPLE</span>
+        </h3>
+        <div class="card-body">
+          <p>This panel shows all valid system states:</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;">
+            <span class="status-badge status-live">LIVE</span>
+            <span class="status-badge status-degraded">DEGRADED</span>
+            <span class="status-badge status-pending">PENDING</span>
+            <span class="status-badge status-simulated">SIMULATED</span>
+            <span class="status-badge status-stale">STALE</span>
+            <span class="status-badge status-fail-closed">FAIL-CLOSED</span>
+            <span class="status-badge status-unavailable">UNAVAILABLE</span>
+            <span class="status-badge status-unknown">UNKNOWN</span>
+          </div>
+        </div>
+        <div class="card-source">
+          <span>Source: config/visual_control_plane.json</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick navigation section mapping the 18 paths -->
+    <section class="card" style="margin-top: var(--space-md);">
+      <h3>Control Plane Directory Map</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-sm); margin-top: var(--space-sm); font-size: 12px; font-family: var(--font-mono);">
+        <div><a href="index.html">/</a> (North Star)</div>
+        <div><a href="control-plane.html">/control-plane</a> (Ops Bar)</div>
+        <div><a href="assets.html">/control-plane/assets</a> (Assets)</div>
+        <div><a href="models.html">/control-plane/models</a> (Models)</div>
+        <div><a href="prompts.html">/control-plane/prompts</a> (Prompts)</div>
+        <div><a href="agents.html">/control-plane/agents</a> (Agents)</div>
+        <div><a href="cyber.html">/control-plane/cyber</a> (Cyber/ConMon)</div>
+        <div><a href="evidence.html">/control-plane/evidence</a> (Evidence)</div>
+        <div><a href="approvals.html">/control-plane/approvals</a> (Approvals)</div>
+        <div><a href="factory.html">/factory</a> (Factory Hub)</div>
+        <div><a href="factory-apps.html">/factory/apps</a> (App Portfolio)</div>
+        <div><a href="factory-build-lanes.html">/factory/build-lanes</a> (Build Lanes)</div>
+        <div><a href="factory-release.html">/factory/release</a> (Release Gate)</div>
+        <div><a href="life.html">/life</a> (Life OS Hub)</div>
+        <div><a href="life-home.html">/life/home</a> (Home Ops)</div>
+        <div><a href="life-family.html">/life/family</a> (Family Support)</div>
+        <div><a href="life-hobbies.html">/life/hobbies</a> (Hobby Lab)</div>
+        <div><a href="life-humanity.html">/life/humanity</a> (Humanity Projects)</div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
