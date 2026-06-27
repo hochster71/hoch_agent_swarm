@@ -1,0 +1,19 @@
+{
+  "exported_folders": {
+    "P4_security": "artifacts/security-evidence/visual-control-plane-local-v1/",
+    "P2_backend_readiness": "artifacts/backend-runtime-binding-readiness/visual-control-plane-local-v1/",
+    "P3_frontend_readiness": "artifacts/frontend-runtime-readiness/visual-control-plane-local-v1/",
+    "P6_release_candidate": "artifacts/local-preview-release-candidate/visual-control-plane-local-v1/",
+    "P7_demo_readiness": "artifacts/controlled-local-demo-readiness/visual-control-plane-local-v1/",
+    "P8_operator_acceptance": "artifacts/operator-acceptance-package/visual-control-plane-local-v1/",
+    "P9_handoff": "artifacts/local-preview-handoff-package/visual-control-plane-local-v1/",
+    "P10_closure": "artifacts/final-local-preview-closure/visual-control-plane-local-v1/",
+    "P11_screenshots": "artifacts/ui-screenshot-evidence/visual-control-plane-local-v1/",
+    "P12_visual_findings": "artifacts/visual-review-findings/visual-control-plane-local-v1/",
+    "P13_remediation_plan": "artifacts/ui-polish-remediation-plan/visual-control-plane-local-v1/",
+    "P14_remediation_execution": "artifacts/ui-polish-remediation-execution/visual-control-plane-local-v1/",
+    "P15_post_remediation_review": "artifacts/post-remediation-visual-review/visual-control-plane-local-v1/",
+    "P16_final_seal": "artifacts/local-preview-final-candidate-seal/visual-control-plane-local-v1/",
+    "P17_operator_decision": "artifacts/operator-go-no-go-decision/visual-control-plane-local-v1/"
+  }
+}
