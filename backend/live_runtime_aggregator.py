@@ -34,14 +34,14 @@ def get_cockpit_data() -> dict[str, Any]:
 
     # 2. Local Models health
     try:
-        from backend.local_runtime_supervisor import SUPERVISOR
-        status = SUPERVISOR.status()
-        providers = status.get("providers", [])
-        if not providers:
+        from backend.live_runtime_discovery import load_ai_runtime_discovery
+        discovery = load_ai_runtime_discovery()
+        hosts = discovery.get("hosts", [])
+        if not hosts:
             lm_truth = "EMPTY"
         else:
-            any_unreachable = any(not p.get("reachable", False) for p in providers)
-            all_unreachable = all(not p.get("reachable", False) for p in providers)
+            any_unreachable = any(not h.get("reachable", False) for h in hosts)
+            all_unreachable = all(not h.get("reachable", False) for h in hosts)
             if all_unreachable:
                 lm_truth = "FAILED"
             elif any_unreachable:
@@ -50,17 +50,18 @@ def get_cockpit_data() -> dict[str, Any]:
                 lm_truth = "LIVE"
         lm_data = {
             "truth": lm_truth,
-            "source": "/api/v1/runtime/local-supervisor/status",
+            "source": "/api/v1/discovery/ai-runtimes",
             "last_updated": now_str,
-            "providers": providers
+            "hosts": hosts,
+            "stale_static_assets_rejected": True
         }
     except Exception as exc:
         lm_data = {
             "truth": "ERROR",
-            "source": "/api/v1/runtime/local-supervisor/status",
+            "source": "/api/v1/discovery/ai-runtimes",
             "last_updated": now_str,
             "error": str(exc),
-            "providers": []
+            "hosts": []
         }
 
     # 3. Model Router Status

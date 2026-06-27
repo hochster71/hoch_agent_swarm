@@ -15958,6 +15958,18 @@
       "requested_by": "Swarm Orchestrator",
       "created_at": "2026-06-26T23:42:08.846945+00:00",
       "decisions": []
+    },
+    {
+      "approval_id": "app-4f26",
+      "request_id": "run-15e4b885:T2-SPEC",
+      "correlation_id": "corr-5ef1bc",
+      "trace_id": "trace-3fa0f3",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-27T00:15:39.667889+00:00",
+      "decisions": []
     }
   ]
 }

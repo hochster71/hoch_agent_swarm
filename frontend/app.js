@@ -251,11 +251,11 @@
                 </div>`;
                 break;
             case 'local_models':
-                const models = data.providers || [];
+                const hosts = data.hosts || [];
                 html = `<div style="display:flex; flex-direction:column; gap:4px;">
-                    <div>Configured Providers: <strong style="color:#fff;">${models.length} engines</strong></div>
+                    <div>Discovered Runtimes: <strong style="color:#fff;">${hosts.length} engines</strong></div>
                     <div style="display:flex; gap:4px; flex-wrap:wrap; margin-top:2px;">
-                        ${models.map(m => `<span style="padding:2px 4px; background:rgba(255,255,255,0.05); border-radius:3px; color:${m.reachable ? '#10b981' : '#ef4444'}">${m.provider}</span>`).join('')}
+                        ${hosts.map(h => `<span style="padding:2px 4px; background:rgba(255,255,255,0.05); border-radius:3px; color:${h.reachable ? '#10b981' : '#ef4444'}">${h.host}:${h.port}</span>`).join('')}
                     </div>
                 </div>`;
                 break;
@@ -492,31 +492,52 @@
         const grid = el('local-models-grid');
         if (!grid) return;
         try {
-            const res = await fetch('/api/v1/runtime/local-supervisor/status');
+            const res = await fetch('/api/v1/discovery/ai-runtimes');
             const data = await res.json();
-            const providers = data.providers || [];
+            const hosts = data.hosts || [];
             
-            if (providers.length === 0) {
-                grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:var(--text-secondary);">No local model providers configured.</div>`;
+            if (hosts.length === 0) {
+                grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:var(--text-secondary);">No local model runtimes discovered.</div>`;
                 return;
             }
 
-            grid.innerHTML = providers.map(p => `
-                <div class="card" style="padding:16px; border:1px solid var(--border-glass); border-radius:8px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                        <h3 style="font-weight:bold; color:#fff;">${p.provider}</h3>
-                        <span class="badge ${p.reachable ? 'badge-success' : 'badge-danger'}" style="background:${p.reachable ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)'}; color:${p.reachable ? '#10b981' : '#ef4444'}">
-                            ${p.reachable ? 'REACHABLE' : 'UNREACHABLE'}
-                        </span>
+            grid.innerHTML = hosts.map(h => {
+                let badgeClass = h.reachable ? 'badge-success' : 'badge-danger';
+                let badgeColor = h.reachable ? '#10b981' : '#ef4444';
+                let badgeBg = h.reachable ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)';
+                let badgeText = h.reachable ? 'REACHABLE' : 'UNREACHABLE';
+                
+                if (h.status === 'MISSING_FROM_SCAN') {
+                    badgeClass = 'badge-info';
+                    badgeColor = '#ef4444';
+                    badgeBg = 'rgba(239,68,68,0.15)';
+                    badgeText = 'MISSING_FROM_SCAN';
+                }
+                
+                const modelNames = h.model_names || [];
+                const modelStr = modelNames.length > 0 ? modelNames.join(', ') : 'None';
+
+                return `
+                    <div class="card" style="padding:16px; border:1px solid var(--border-glass); border-radius:8px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                            <h3 style="font-weight:bold; color:#fff;">${h.kind.toUpperCase()}</h3>
+                            <span class="badge ${badgeClass}" style="background:${badgeBg}; color:${badgeColor}">
+                                ${badgeText}
+                            </span>
+                        </div>
+                        <div style="font-size:12px; display:flex; flex-direction:column; gap:4px; opacity:0.8;">
+                            <div>Endpoint: <strong>${h.host}:${h.port}</strong></div>
+                            <div>Reachable: <strong>${h.reachable ? 'TRUE' : 'FALSE'}</strong></div>
+                            <div>Status: <strong>${h.status}</strong></div>
+                            <div>Models Count: <strong>${h.model_count}</strong></div>
+                            <div>Models: <strong>${modelStr}</strong></div>
+                            <div>Last Scanned: <span style="font-size:10px; opacity:0.6;">${h.last_scanned || '-'}</span></div>
+                        </div>
                     </div>
-                    <div style="font-size:12px; display:flex; flex-direction:column; gap:4px; opacity:0.8;">
-                        <div>Latency: <strong>${p.latency_ms || '-'} ms</strong></div>
-                        <div>Available: <strong>${p.models ? p.models.join(', ') : 'None'}</strong></div>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         } catch (err) {
-            grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#ef4444;">Error fetching supervisor status</div>`;
+            grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#ef4444;">Error fetching discovery status</div>`;
         }
     }
 

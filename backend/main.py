@@ -7400,6 +7400,11 @@ def post_local_supervisor_check_once_endpoint():
     from backend.local_runtime_supervisor import SUPERVISOR
     return SUPERVISOR.check_once()
 
+@app.get("/api/v1/discovery/ai-runtimes")
+def get_discovery_ai_runtimes_endpoint():
+    from backend.live_runtime_discovery import load_ai_runtime_discovery
+    return load_ai_runtime_discovery()
+
 # ── Detection Engineering Endpoints ──────────────────────────────────────────
 @app.get("/api/v1/detections/events")
 def get_detections_events_endpoint(limit: int = 100):
