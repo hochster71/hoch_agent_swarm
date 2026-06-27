@@ -354,6 +354,46 @@ def get_cockpit_data() -> dict[str, Any]:
             "model_runtimes_proven": []
         }
 
+    # 13. Prompt Registry Status
+    try:
+        from backend.prompt_registry import get_registry
+        reg = get_registry()
+        
+        # Load registry report
+        report_path = base_dir / "artifacts" / "qa" / "prompt_registry" / "prompt_registry_report.json"
+        import json
+        if report_path.exists():
+            report_data = json.loads(report_path.read_text(encoding="utf-8"))
+        else:
+            report_data = {
+                "status": reg.status,
+                "total_prompts": len(reg.prompts),
+                "categories": {},
+                "security_critical_count": 0,
+                "approval_gated_count": 0
+            }
+            
+        pr_registry_data = {
+            "truth": report_data.get("status", "FAIL_CLOSED"),
+            "source": "/api/v1/prompts/registry",
+            "last_updated": now_str,
+            "total_prompts": report_data.get("total_prompts", 0),
+            "categories_count": len(report_data.get("categories", {})),
+            "security_critical_count": report_data.get("security_critical_count", 0),
+            "approval_gated_count": report_data.get("approval_gated_count", 0)
+        }
+    except Exception as exc:
+        pr_registry_data = {
+            "truth": "ERROR",
+            "source": "/api/v1/prompts/registry",
+            "last_updated": now_str,
+            "error": str(exc),
+            "total_prompts": 0,
+            "categories_count": 0,
+            "security_critical_count": 0,
+            "approval_gated_count": 0
+        }
+
     return {
         "truth": "LIVE",
         "generated_at": now_str,
@@ -369,6 +409,7 @@ def get_cockpit_data() -> dict[str, Any]:
             "local_outage_queue": oq_data,
             "port_hardening": ph_data,
             "autonomy_budget": ab_data,
-            "device_registry": dr_data
+            "device_registry": dr_data,
+            "prompt_registry": pr_registry_data
         }
     }

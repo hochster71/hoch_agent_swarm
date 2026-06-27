@@ -7697,6 +7697,29 @@ def get_live_runtime_cockpit_endpoint():
     from backend.live_runtime_aggregator import get_cockpit_data
     return get_cockpit_data()
 
+@app.get("/api/v1/prompts/registry")
+def get_prompts_registry_endpoint():
+    from backend.prompt_registry import get_registry
+    registry = get_registry()
+    return registry.prompts
+
+@app.get("/api/v1/prompts/registry/{prompt_id}")
+def get_prompt_by_id_endpoint(prompt_id: str):
+    from fastapi import HTTPException
+    from backend.prompt_registry import get_registry
+    registry = get_registry()
+    for p in registry.prompts:
+        if p["id"] == prompt_id:
+            return p
+    raise HTTPException(status_code=404, detail=f"Prompt {prompt_id} not found")
+
+@app.get("/api/v1/prompts/categories")
+def get_prompts_categories_endpoint():
+    from backend.prompt_registry import get_registry
+    registry = get_registry()
+    categories = sorted(list(set(p["category"] for p in registry.prompts)))
+    return categories
+
 # ── Escalation Approval Queue Endpoints ───────────────────────────────────────
 @app.get("/api/v1/escalations/pending")
 def get_escalations_pending_endpoint():
