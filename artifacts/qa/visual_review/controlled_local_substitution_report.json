@@ -1,0 +1,11 @@
+{
+  "phase": "V15_CONTROLLED_LOCAL_SUBSTITUTION",
+  "local_only": true,
+  "substitution_performed": true,
+  "backup_created": true,
+  "rollback_ready": true,
+  "backend_mutation_enabled": false,
+  "prompt_execution_enabled": false,
+  "approval_decision_execution_enabled": false,
+  "decision": "CONTROLLED_LOCAL_SUBSTITUTION_COMPLETE"
+}
