@@ -1,0 +1,8 @@
+{
+  "visual_inventories": {
+    "P11_pre_remediation": "artifacts/ui-screenshot-evidence/visual-control-plane-local-v1/screenshot_inventory.json",
+    "P14_post_remediation": "artifacts/ui-polish-remediation-execution/visual-control-plane-local-v1/post_remediation_screenshot_inventory.json"
+  },
+  "comparisons_total": 13,
+  "verification_state": "ALL_PASSED_AND_RESOLVED"
+}

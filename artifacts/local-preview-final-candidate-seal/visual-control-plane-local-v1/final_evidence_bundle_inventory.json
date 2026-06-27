@@ -1,0 +1,17 @@
+{
+  "directories": [
+    "artifacts/security-evidence/visual-control-plane-local-v1/",
+    "artifacts/backend-runtime-binding-readiness/visual-control-plane-local-v1/",
+    "artifacts/frontend-runtime-readiness/visual-control-plane-local-v1/",
+    "artifacts/local-preview-release-candidate/visual-control-plane-local-v1/",
+    "artifacts/controlled-local-demo-readiness/visual-control-plane-local-v1/",
+    "artifacts/operator-acceptance-package/visual-control-plane-local-v1/",
+    "artifacts/local-preview-handoff-package/visual-control-plane-local-v1/",
+    "artifacts/final-local-preview-closure/visual-control-plane-local-v1/",
+    "artifacts/ui-screenshot-evidence/visual-control-plane-local-v1/",
+    "artifacts/visual-review-findings/visual-control-plane-local-v1/",
+    "artifacts/ui-polish-remediation-plan/visual-control-plane-local-v1/",
+    "artifacts/ui-polish-remediation-execution/visual-control-plane-local-v1/",
+    "artifacts/post-remediation-visual-review/visual-control-plane-local-v1/"
+  ]
+}
