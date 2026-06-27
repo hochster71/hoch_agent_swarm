@@ -47,6 +47,10 @@
                     <i data-lucide="split"></i> <span>Model Router</span>
                     <span class="nav-status-indicator swarm-led-idle" id="led-model-router" style="margin-left: auto; font-size: 14px; font-weight: bold;">●</span>
                 </a>
+                <a href="#" class="nav-item" id="nav-model-mesh">
+                    <i data-lucide="network"></i> <span>AI Model Mesh</span>
+                    <span class="nav-status-indicator swarm-led-idle" id="led-model-mesh" style="margin-left: auto; font-size: 14px; font-weight: bold;">●</span>
+                </a>
                 <a href="#" class="nav-item" id="nav-escalations">
                     <i data-lucide="arrow-up-right"></i> <span>Escalations</span>
                     <span class="nav-status-indicator swarm-led-idle" id="led-escalations" style="margin-left: auto; font-size: 14px; font-weight: bold;">●</span>
@@ -312,6 +316,53 @@
                         </div>
                     </div>
                     <div id="local-models-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;"></div>
+                </section>
+            </div>
+
+            <!-- 3.1. AI Model Mesh View -->
+            <div id="view-model-mesh" class="view-section hidden">
+                <div style="display: grid; grid-template-columns: 320px 1fr 360px; gap: 18px;">
+                    <!-- Left Column: Bot Face & Agent Spin-Ups -->
+                    <section class="card" style="padding: 20px;">
+                        <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 12px; text-transform: uppercase; color: var(--accent-teal);">Swarm Sentinel Bot</h3>
+                        <div class="bot" style="height: 180px; border-radius: 12px; position: relative; overflow: hidden; background: radial-gradient(circle at center, rgba(16, 185, 129, 0.15), transparent 60%); display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-glass);">
+                            <div class="ring" style="width: 140px; height: 140px; border-radius: 50%; border: 1px dashed rgba(16, 185, 129, 0.3); position: absolute; animation: spin 8s linear infinite;"></div>
+                            <div class="bot-face" style="width: 80px; height: 80px; border-radius: 20px; background: linear-gradient(135deg, #0f172a, #1e293b); border: 1.5px solid var(--accent-teal); box-shadow: 0 0 25px rgba(16, 185, 129, 0.3); position: relative; animation: float 4s ease-in-out infinite;">
+                                <div class="eye left" style="position: absolute; top: 28px; left: 20px; width: 10px; height: 10px; background: var(--accent-teal); border-radius: 50%; box-shadow: 0 0 10px var(--accent-teal); animation: blink 4s infinite;"></div>
+                                <div class="eye right" style="position: absolute; top: 28px; right: 20px; width: 10px; height: 10px; background: var(--accent-teal); border-radius: 50%; box-shadow: 0 0 10px var(--accent-teal); animation: blink 4s infinite;"></div>
+                                <div class="mouth" style="position: absolute; left: 25px; bottom: 20px; width: 30px; height: 8px; border-bottom: 2px solid var(--accent-teal); border-radius: 0 0 15px 15px;"></div>
+                            </div>
+                        </div>
+                        <h3 style="font-size: 14px; font-weight: bold; margin: 20px 0 12px; text-transform: uppercase; color: var(--accent-teal);">Agent Spin-Up Profiles</h3>
+                        <div id="mesh-agents-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
+                    </section>
+
+                    <!-- Middle Column: Animated Conversation / Data Flow Graph -->
+                    <section class="card flow" id="mesh-flow-panel" style="padding: 20px; min-height: 520px; position: relative; overflow: hidden; display: flex; flex-direction: column;">
+                        <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 12px; text-transform: uppercase; color: var(--accent-teal);">Live Model / Agent Data Flow</h3>
+                        <div id="mesh-flow-graph" style="position: relative; flex-grow: 1; min-height: 400px; border: 1px solid var(--border-glass); border-radius: 12px; background: rgba(0, 0, 0, 0.2); overflow: hidden;">
+                            <!-- Connection lines, particle animations, and nodes injected via JS -->
+                        </div>
+                    </section>
+
+                    <!-- Right Column: Vitals & Conversation Logs -->
+                    <section class="card" style="padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+                        <div>
+                            <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 12px; text-transform: uppercase; color: var(--accent-teal);">Swarm Vitals</h3>
+                            <div id="mesh-vitals" style="display: flex; flex-direction: column; gap: 10px;"></div>
+                        </div>
+                        
+                        <div style="flex-grow: 1; display: flex; flex-direction: column;">
+                            <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 12px; text-transform: uppercase; color: var(--accent-teal);">Model Conversation Console</h3>
+                            <div class="console" id="mesh-console" style="flex-grow: 1; min-height: 200px; max-height: 320px; overflow-y: auto; font-family: monospace; font-size: 11px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-glass); padding: 12px; border-radius: 8px; display: flex; flex-direction: column; gap: 6px;"></div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Missing Capabilities / Gap List -->
+                <section class="card" style="padding: 20px; margin-top: 18px;">
+                    <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 12px; text-transform: uppercase; color: var(--accent-teal);">Model Mesh Gaps & Roadmaps</h3>
+                    <div id="mesh-gaps" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;"></div>
                 </section>
             </div>
 

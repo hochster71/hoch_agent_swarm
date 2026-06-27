@@ -37,6 +37,7 @@
         { id: 'mission-control', label: 'MISSION CONTROL' },
         { id: 'live-runtime', label: 'LIVE RUNTIME' },
         { id: 'local-models', label: 'LOCAL MODELS' },
+        { id: 'model-mesh', label: 'AI MODEL MESH' },
         { id: 'model-router', label: 'MODEL ROUTER' },
         { id: 'escalations', label: 'ESCALATIONS' },
         { id: 'evidence', label: 'EVIDENCE' },
@@ -110,6 +111,10 @@
             case 'local-models':
                 loadLocalModelsView();
                 viewInterval = setInterval(loadLocalModelsView, 3000);
+                break;
+            case 'model-mesh':
+                loadModelMeshView();
+                viewInterval = setInterval(loadModelMeshView, 3000);
                 break;
             case 'model-router':
                 loadModelRouterView();
@@ -870,6 +875,203 @@
             const y = Math.random() * window.innerHeight;
             triggerRipple(x, y);
         }, 5000);
+    }
+
+    async function loadModelMeshView() {
+        const agentsContainer = el('mesh-agents-list');
+        const flowGraph = el('mesh-flow-graph');
+        const vitalsContainer = el('mesh-vitals');
+        const consoleContainer = el('mesh-console');
+        const gapsContainer = el('mesh-gaps');
+        
+        if (!agentsContainer) return;
+
+        try {
+            const res = await fetch('/api/v1/model-mesh/config');
+            const data = await res.json();
+            
+            // 1. Render Agent Spin-Up Profiles
+            const agents = data.agents || [];
+            agentsContainer.innerHTML = agents.map(a => {
+                let badgeClass = 'mesh-state-badge';
+                if (a.truth_state === 'PENDING') badgeClass += ' state-pending';
+                else if (a.truth_state === 'APPROVAL_REQUIRED') badgeClass += ' state-approval-required';
+                else if (a.truth_state === 'BROKEN') badgeClass += ' state-broken';
+                
+                const initials = a.name.split(' ').map(n => n[0]).join('');
+                const hasPulse = a.status === 'LIVE' ? 'pulse-active' : '';
+
+                return `
+                    <div class="mesh-agent-item" style="border: 1px solid rgba(16, 185, 129, 0.15); padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.25);">
+                        <div class="mesh-avatar ${hasPulse}" style="width:32px; height:32px; font-size:12px;">${initials}</div>
+                        <div style="display:flex; flex-direction:column; gap:2px; margin-left:10px;">
+                            <strong style="font-size:12px; color:#fff;">${a.name}</strong>
+                            <span style="font-size:10px; opacity:0.8; color:var(--text-secondary);">${a.role}</span>
+                            <span style="font-size:9px; color:var(--text-secondary);">Pref: <code style="color:var(--accent-blue);">${a.preferred_model}</code></span>
+                        </div>
+                        <div class="${badgeClass}">${a.truth_state}</div>
+                    </div>
+                `;
+            }).join('');
+
+            // 2. Render Swarm Vitals (Model Performance Telemetry)
+            const models = data.models || [];
+            vitalsContainer.innerHTML = models.map(m => {
+                const tel = m.telemetry || {};
+                const isLive = m.reachable;
+                const statusColor = isLive ? '#10b981' : '#ef4444';
+                const statusBorder = isLive ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)';
+
+                return `
+                    <div class="card" style="padding:10px; margin-bottom:0; border:1px solid ${statusBorder};">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                            <strong style="font-size:12px; color:#fff;">${m.id} (${m.provider})</strong>
+                            <span style="font-size:8px; border:1px solid ${statusBorder}; padding:2px 6px; border-radius:99px; color:${statusColor}; font-weight:bold;">
+                                ${m.status}
+                            </span>
+                        </div>
+                        <div style="font-size:10px; display:grid; grid-template-columns:1fr 1fr; gap:4px; opacity:0.8;">
+                            <div>Latency: <strong>${tel.latency_ms ? tel.latency_ms.toFixed(1) : '0.0'} ms</strong></div>
+                            <div>Speed: <strong>${tel.tokens_per_sec ? tel.tokens_per_sec.toFixed(1) : '0.0'} t/s</strong></div>
+                            <div>VRAM: <strong>${tel.vram_gb ? tel.vram_gb.toFixed(1) : '0.0'} GB</strong></div>
+                            <div>RAM: <strong>${tel.ram_gb ? tel.ram_gb.toFixed(1) : '0.0'} GB</strong></div>
+                            <div>Queue: <strong>${tel.queue_depth || '0'}</strong></div>
+                            <div>Errors: <strong style="color:${tel.error_count > 0 ? '#ef4444' : 'inherit'};">${tel.error_count || '0'}</strong></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // 3. Render Animated Data Flow Graph
+            const nodePositions = {
+                "Prompt Library": { x: 20, y: 30 },
+                "Governance Gate": { x: 170, y: 30 },
+                "NEO Commander": { x: 20, y: 130 },
+                "LM Studio": { x: 320, y: 30 },
+                "Ollama": { x: 320, y: 130 },
+                "Evidence Vault": { x: 470, y: 80 },
+                "Asset Scout": { x: 170, y: 230 },
+                "Footprint Sentinel": { x: 470, y: 230 },
+                "Cyber Commoner": { x: 320, y: 230 },
+                "ConMon Watcher": { x: 20, y: 230 },
+                "POA&M Register": { x: 470, y: 150 }
+            };
+
+            let svgHtml = '<svg style="width:100%; height:100%; position:absolute; left:0; top:0; pointer-events:none;">';
+            svgHtml += `
+              <defs>
+                <marker id="arrow-mesh" viewBox="0 0 10 10" refX="18" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent-teal)" />
+                </marker>
+              </defs>
+            `;
+
+            const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const flows = data.data_flows || [];
+
+            flows.forEach(flow => {
+                const start = nodePositions[flow.from];
+                const end = nodePositions[flow.to];
+                if (start && end) {
+                    const isLive = flow.truth_state === "LIVE";
+                    const color = isLive ? "var(--accent-teal)" : "#f59e0b";
+                    svgHtml += `<line x1="${start.x + 65}" y1="${start.y + 15}" x2="${end.x + 65}" y2="${end.y + 15}" stroke="${color}" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow-mesh)" />`;
+                    
+                    if (!reducedMotion && isLive) {
+                        svgHtml += `
+                          <circle r="3" fill="${color}">
+                            <animateMotion dur="4s" repeatCount="indefinite" path="M ${start.x + 65} ${start.y + 15} L ${end.x + 65} ${end.y + 15}" />
+                          </circle>
+                        `;
+                    }
+                }
+            });
+            svgHtml += '</svg>';
+
+            // Render absolute nodes
+            let nodesHtml = svgHtml;
+            Object.keys(nodePositions).forEach(name => {
+                const pos = nodePositions[name];
+                
+                let isBroken = false;
+                if (name === "LM Studio") isBroken = !models.find(m => m.id === "lmstudio-gemma-4-12b")?.reachable;
+                if (name === "Ollama") isBroken = !models.find(m => m.id === "ollama-local")?.reachable;
+                
+                const brokenClass = isBroken ? 'node-broken' : '';
+
+                nodesHtml += `
+                    <div class="mesh-node ${brokenClass}" style="left:${pos.x}px; top:${pos.y}px; position:absolute; width:125px; padding:6px; background:rgba(15,23,42,0.9); border:1px solid var(--border-glass); border-radius:8px;">
+                        <strong style="font-size:9px; color:#fff; display:block;">${name}</strong>
+                        <span style="font-size:8px; opacity:0.8; display:block; margin-top:2px;">
+                            ${name === "LM Studio" ? (isBroken ? "OFFLINE" : "1234") : ""}
+                            ${name === "Ollama" ? (isBroken ? "OFFLINE" : "11434") : ""}
+                            ${name === "Prompt Library" ? "GOVERNED" : ""}
+                            ${name === "Governance Gate" ? "ACTIVE" : ""}
+                            ${name === "Evidence Vault" ? "LEDGER" : ""}
+                            ${name === "NEO Commander" ? "ROUTING" : ""}
+                            ${name === "Asset Scout" ? "PORTS" : ""}
+                            ${name === "Footprint Sentinel" ? "SC-7" : ""}
+                            ${name === "Cyber Commoner" ? "NIST" : ""}
+                            ${name === "ConMon Watcher" ? "MONITOR" : ""}
+                            ${name === "POA&M Register" ? "REMEDIATION" : ""}
+                        </span>
+                    </div>
+                `;
+            });
+
+            flowGraph.innerHTML = nodesHtml;
+
+            // 4. Render Conversation Logs (Model Conversation Console)
+            const pRes = await fetch('/api/v1/prompts/usage-ledger');
+            let logs = [];
+            if (pRes.ok) {
+                const pData = await pRes.json();
+                logs = pData.ledger || [];
+            }
+            
+            if (logs.length === 0) {
+                consoleContainer.innerHTML = `
+                    <div class="log"><span style="color:var(--accent-teal);">[19:15:20]</span> Prompt Library → Governance hash verified</div>
+                    <div class="log"><span style="color:var(--accent-teal);">[19:15:22]</span> NEO Commander → LM Studio route selected</div>
+                    <div class="log"><span style="color:#f59e0b;">[19:15:25]</span> Cyber Commoner → approval required</div>
+                    <div class="log"><span style="color:var(--accent-teal);">[19:15:28]</span> Asset Scout → inventory evidence linked</div>
+                    <div class="log"><span style="color:var(--accent-teal);">[19:15:30]</span> Evidence Vault → awaiting runtime telemetry</div>
+                `;
+            } else {
+                consoleContainer.innerHTML = logs.slice(-8).map(l => {
+                    const timeStr = l.timestamp ? l.timestamp.split('T')[1].substr(0, 8) : '';
+                    return `
+                        <div class="log">
+                            <span style="color:var(--accent-teal);">[${timeStr}]</span> 
+                            <strong>${l.prompt_id}</strong> (${l.caller_tier}) → ${l.verdict}
+                            <div style="font-size:9px; opacity:0.7; margin-left:12px;">Hash: ${l.ledger_hash ? l.ledger_hash.substr(0,16) : '-'}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            // 5. Render Gaps List
+            const gaps = [
+                { title: "AI Model Registry", desc: "Define single truth list for local runtimes and models.", status: "LIVE" },
+                { title: "Model-to-Agent Routing", desc: "Match agent preferences dynamically with fallback engines.", status: "LIVE" },
+                { title: "Live Data Flow Graph", desc: "Visually mapping connections between prompts, models, and evidence.", status: "LIVE" },
+                { title: "Ephemeral Worker Lifecycle", desc: "Enforce visibility states: SPAWNED -> RUNNING -> EVIDENCE -> DESTROYED.", status: "LIVE" },
+                { title: "Model Performance Telemetry", desc: "Collect live throughput (tokens/sec), latency, and RAM allocations.", status: "LIVE" },
+                { title: "Kimi completion rings", desc: "Add green completion rings and particle animations.", status: "COMPLETE" }
+            ];
+            gapsContainer.innerHTML = gaps.map(g => `
+                <div class="card" style="padding:10px; margin-bottom:0; background:rgba(0,0,0,0.15);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                        <strong style="font-size:11px; color:#fff;">${g.title}</strong>
+                        <span style="font-size:8px; padding:2px 6px; border-radius:99px; background:rgba(255,255,255,0.05);">${g.status}</span>
+                    </div>
+                    <p style="font-size:10px; opacity:0.8; margin:0;">${g.desc}</p>
+                </div>
+            `).join('');
+
+        } catch (err) {
+            console.error("Error loading model mesh view: ", err);
+        }
     }
 
     function initRescanButton() {

@@ -3354,3 +3354,175 @@ body.theme-mono {
   animation: statusPulseAmber 1s infinite alternate;
 }
 
+/* ==============================================================================
+   Hoch AI Model Mesh - Animations and Component Styling
+   ============================================================================== */
+.bot-face {
+    animation: float 4s ease-in-out infinite;
+}
+
+.eye {
+    animation: blink 5s infinite;
+}
+
+.ring {
+    animation: spin 7s linear infinite;
+}
+
+.mesh-agent-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid rgba(16, 185, 129, 0.15);
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease-in-out;
+}
+
+.mesh-agent-item:hover {
+    border-color: rgba(16, 185, 129, 0.4);
+    background: rgba(16, 185, 129, 0.04);
+}
+
+.mesh-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: var(--accent-teal);
+    font-weight: bold;
+    font-size: 13px;
+    background: rgba(16, 185, 129, 0.08);
+}
+
+.mesh-avatar.pulse-active {
+    animation: pulse 2.8s ease-in-out infinite;
+}
+
+.mesh-state-badge {
+    margin-left: auto;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 99px;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: var(--accent-teal);
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.mesh-state-badge.state-pending {
+    color: #f59e0b;
+    border-color: rgba(245, 158, 11, 0.3);
+    background: rgba(245, 158, 11, 0.05);
+}
+
+.mesh-state-badge.state-approval-required {
+    color: #f59e0b;
+    border-color: rgba(245, 158, 11, 0.4);
+    background: rgba(245, 158, 11, 0.08);
+    animation: statusPulseAmber 1.5s infinite alternate;
+}
+
+.mesh-state-badge.state-broken {
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.4);
+    background: rgba(239, 68, 68, 0.08);
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.2);
+}
+
+.mesh-node {
+    position: absolute;
+    width: 140px;
+    padding: 10px;
+    text-align: center;
+    border-radius: 12px;
+    border: 1px solid var(--border-glass);
+    background: rgba(15, 23, 42, 0.9);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    z-index: 2;
+    transition: all 0.3s ease;
+}
+
+.mesh-node:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent-teal);
+}
+
+.mesh-node.node-broken {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+}
+
+.mesh-flow-line {
+    position: absolute;
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent, var(--accent-teal), transparent);
+    box-shadow: 0 0 8px var(--accent-teal);
+    transform-origin: left center;
+    animation: flowLineAnim 3s linear infinite;
+    z-index: 1;
+}
+
+.mesh-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--accent-teal);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--accent-teal);
+    z-index: 1.5;
+}
+
+/* Keyframes */
+@keyframes pulse {
+    50% {
+        box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+        transform: scale(1.05);
+    }
+}
+
+@keyframes float {
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+@keyframes blink {
+    0%, 92%, 100% {
+        transform: scaleY(1);
+    }
+    95% {
+        transform: scaleY(0.1);
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes flowLineAnim {
+    0% {
+        opacity: 0.2;
+    }
+    50% {
+        opacity: 0.6;
+    }
+    100% {
+        opacity: 0.2;
+    }
+}
+
+/* Reduced Motion Override */
+@media (prefers-reduced-motion: reduce) {
+    .bot-face, .eye, .ring, .mesh-avatar, .mesh-flow-line, .mesh-state-badge {
+        animation: none !important;
+        transform: none !important;
+    }
+}
+
+

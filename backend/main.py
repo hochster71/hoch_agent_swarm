@@ -7264,6 +7264,11 @@ def get_model_status_endpoint():
         "default_model": model_registry.get_default_model()
     }
 
+@app.get("/api/v1/model-mesh/config")
+def get_model_mesh_config_endpoint():
+    from backend.model_mesh import load_model_mesh_data
+    return load_model_mesh_data()
+
 @app.get("/api/v1/models/audit-log")
 def get_model_audit_log_endpoint(limit: int = 50):
     from backend.model_router import audit_log
