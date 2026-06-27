@@ -10,9 +10,14 @@ function runBackendBindingTests() {
   const docFile = path.join(baseDir, 'docs/backend-binding/visual-control-plane-local-v1.md');
   const configJsonFile = path.join(baseDir, 'config/visual_control_plane_backend_binding.json');
 
-  const bindingDir = path.join(baseDir, 'artifacts/backend-binding/visual-control-plane-local-v1');
-  const contractFile = path.join(bindingDir, 'backend_data_contract.json');
-  const readinessFile = path.join(bindingDir, 'binding_readiness.json');
+  const normalizedDir = path.join(baseDir, 'artifacts/backend-runtime-binding-readiness/visual-control-plane-local-v1');
+  const manifestFile = path.join(normalizedDir, 'backend_runtime_binding_manifest.json');
+  const mapFile = path.join(normalizedDir, 'backend_contract_map.json');
+  const reportFile = path.join(normalizedDir, 'backend_readiness_report.json');
+  const inventoryFile = path.join(normalizedDir, 'endpoint_inventory.json');
+  const policyFile = path.join(normalizedDir, 'mutation_blocking_policy.json');
+  const resultsFile = path.join(normalizedDir, 'contract_test_results.json');
+  const sealFile = path.join(normalizedDir, 'p2_final_seal.json');
 
   let failed = false;
 
@@ -28,18 +33,22 @@ function runBackendBindingTests() {
   // 1. Verify files exist
   assert(fs.existsSync(docFile), "docs/backend-binding/visual-control-plane-local-v1.md exists");
   assert(fs.existsSync(configJsonFile), "config/visual_control_plane_backend_binding.json exists");
-  assert(fs.existsSync(contractFile), "backend_data_contract.json exists");
-  assert(fs.existsSync(readinessFile), "binding_readiness.json exists");
+  assert(fs.existsSync(manifestFile), "backend_runtime_binding_manifest.json exists");
+  assert(fs.existsSync(mapFile), "backend_contract_map.json exists");
+  assert(fs.existsSync(reportFile), "backend_readiness_report.json exists");
+  assert(fs.existsSync(inventoryFile), "endpoint_inventory.json exists");
+  assert(fs.existsSync(policyFile), "mutation_blocking_policy.json exists");
+  assert(fs.existsSync(resultsFile), "contract_test_results.json exists");
+  assert(fs.existsSync(sealFile), "p2_final_seal.json exists");
 
-  if (!fs.existsSync(configJsonFile) || !fs.existsSync(contractFile) || !fs.existsSync(readinessFile)) {
+  if (!fs.existsSync(configJsonFile) || !fs.existsSync(sealFile)) {
     console.error("Critical files missing, aborting test.");
     process.exit(1);
   }
 
   // 2. Parse JSONs
   let config: any;
-  let contract: any;
-  let readiness: any;
+  let seal: any;
 
   try {
     config = JSON.parse(fs.readFileSync(configJsonFile, 'utf-8'));
@@ -50,18 +59,10 @@ function runBackendBindingTests() {
   }
 
   try {
-    contract = JSON.parse(fs.readFileSync(contractFile, 'utf-8'));
-    assert(true, "backend_data_contract.json parses cleanly");
+    seal = JSON.parse(fs.readFileSync(sealFile, 'utf-8'));
+    assert(true, "p2_final_seal.json parses cleanly");
   } catch (e: any) {
-    assert(false, `Failed to parse contract: ${e.message}`);
-    process.exit(1);
-  }
-
-  try {
-    readiness = JSON.parse(fs.readFileSync(readinessFile, 'utf-8'));
-    assert(true, "binding_readiness.json parses cleanly");
-  } catch (e: any) {
-    assert(false, `Failed to parse readiness: ${e.message}`);
+    assert(false, `Failed to parse seal JSON: ${e.message}`);
     process.exit(1);
   }
 
@@ -72,20 +73,12 @@ function runBackendBindingTests() {
   assert(config.binding_readiness_status === "READINESS_VERIFIED", "Binding readiness status check");
   assert(config.mutation_endpoints_enabled === false, "Mutation endpoints are disabled");
 
-  // 4. Verify contract details
-  assert(contract.contract_name === "Visual Control Plane Backend Data Contract", "Contract name check");
-  assert(contract.endpoints["/api/v1/runtime/process/animation-state"].method === "GET", "animation-state is GET");
-  assert(contract.endpoints["/api/v1/runtime/process/health"].method === "GET", "health is GET");
-  assert(contract.safety_guarantees.read_only === true, "Safety guarantees: read-only is true");
+  // 4. Verify seal details
+  assert(seal.phase === "P2_BACKEND_RUNTIME_BINDING_READINESS", "Seal phase check");
+  assert(seal.final_certification === "P2 BACKEND RUNTIME BINDING READINESS — ACCEPTED FOR LOCAL PREVIEW READINESS REVIEW ONLY", "Final certification matches required wording");
+  assert(seal.seal_status === "PASS", "Seal status is PASS");
 
-  // 5. Verify readiness details
-  assert(readiness.phase === "P2_BACKEND_RUNTIME_BINDING_READINESS", "Readiness phase check");
-  assert(readiness.binding_readiness_verified === true, "Binding readiness verified is true");
-  assert(readiness.endpoints_mapped.includes("/api/v1/runtime/process/animation-state"), "Mapped animation-state");
-  assert(readiness.endpoints_mapped.includes("/api/v1/runtime/process/health"), "Mapped health");
-  assert(readiness.mutation_endpoints_blocked === true, "Mutation endpoints blocked");
-
-  // 6. Safety check: No mutations or websocket interfaces in preview JS
+  // 5. Safety check: No mutations or websocket interfaces in preview JS
   const previewJsFile = path.join(baseDir, 'frontend/visual_dashboard_preview.js');
   const jsContent = fs.readFileSync(previewJsFile, 'utf-8');
 

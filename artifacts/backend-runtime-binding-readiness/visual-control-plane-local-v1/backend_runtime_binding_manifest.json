@@ -1,0 +1,17 @@
+{
+  "track": "P2_BACKEND_RUNTIME_BINDING_READINESS",
+  "release_tag": "visual-control-plane-local-v1.0.0",
+  "integration_branch": "integration/visual-control-plane-local-v1",
+  "animation_state_endpoint": "/api/v1/runtime/process/animation-state",
+  "health_endpoint": "/api/v1/runtime/process/health",
+  "binding_readiness_status": "READINESS_VERIFIED",
+  "mutation_endpoints_enabled": false,
+  "blocked_actions": [
+    "production deployment",
+    "external publication",
+    "backend mutation",
+    "prompt execution",
+    "approval decision execution",
+    "security posture change"
+  ]
+}
