@@ -1,0 +1,32 @@
+{
+  "phase": "V27_LOCAL_INSTALL_ACCEPTANCE",
+  "operator": "Michael Hoch",
+  "decision": "ACCEPT_LOCAL_INSTALL",
+  "decision_scope": "local_only",
+  "install_review_root": "artifacts/install-review/visual-control-plane-local",
+  "install_review_performed": true,
+  "archive_verified": true,
+  "extract_verified": true,
+  "manifest_verified": true,
+  "provenance_verified": true,
+  "rollback_verified": true,
+  "evidence_verified": true,
+  "checks_failed": [],
+  "deployment_performed": false,
+  "external_publication_enabled": false,
+  "production_deployment_enabled": false,
+  "backend_mutation_enabled": false,
+  "prompt_execution_enabled": false,
+  "approval_decision_execution_enabled": false,
+  "security_posture_change_enabled": false,
+  "accepted_local_install": true,
+  "next_allowed_phase": "V28_FINAL_LOCAL_RELEASE_CLOSURE",
+  "blocked_actions": [
+    "backend mutation",
+    "prompt execution",
+    "approval decision execution",
+    "production deployment",
+    "external publication",
+    "security posture change"
+  ]
+}

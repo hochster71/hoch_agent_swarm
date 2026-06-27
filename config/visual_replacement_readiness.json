@@ -1,0 +1,46 @@
+{
+  "phase": "V11_CONTROLLED_LIVE_REPLACEMENT_READINESS_PLAN",
+  "replacement_ready": false,
+  "active_cockpit_replacement_enabled": false,
+  "local_only": true,
+  "operator_final_approval_required": true,
+  "rollback_verified_required": true,
+  "baseline_backup_required": true,
+  "error_budget": {
+    "zero_broken_dashboard_routes": true,
+    "zero_unsupported_state_labels": true,
+    "zero_fake_live_states": true,
+    "zero_backend_mutation_paths": true,
+    "zero_prompt_execution_paths": true,
+    "zero_approval_decision_execution_paths": true,
+    "zero_missing_rollback_steps": true,
+    "zero_high_critical_unresolved_ui_safety_findings": true
+  },
+  "readiness_gates": [
+    "operator final approval gate",
+    "baseline cockpit backup gate",
+    "rollback verified gate",
+    "visual parity gate",
+    "telemetry truth gate",
+    "state fallback gate",
+    "accessibility gate",
+    "tablet/ipad readability gate",
+    "error budget gate",
+    "security no-regression gate",
+    "local-only scope gate",
+    "backend mutation blocked gate",
+    "prompt execution blocked gate",
+    "approval decision execution blocked gate",
+    "CI/QA full pass gate"
+  ],
+  "blocked_actions": [
+    "full active cockpit replacement",
+    "backend mutation",
+    "prompt execution",
+    "approval decision execution",
+    "production deployment",
+    "external publication",
+    "security posture change"
+  ],
+  "next_allowed_phase": "V12_LOCAL_REPLACEMENT_DRY_RUN"
+}

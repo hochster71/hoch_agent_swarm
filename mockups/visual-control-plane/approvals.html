@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HOCH AI OS — Human Approvals Gate</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="global-ops-bar">
+    <h1>HOCH AI OS // HUMAN APPROVALS GATE</h1>
+    <div class="breadcrumbs">
+      <span>/ <a href="index.html">life-os</a> / <a href="control-plane.html">control-plane</a> / approvals</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html">North Star</a></li>
+      <li><a href="control-plane.html">Mission Control</a></li>
+      <li><a href="factory.html">Software Factory</a></li>
+    </ul>
+  </header>
+
+  <main style="max-width: 1000px; margin: 0 auto;">
+    <section class="card" style="margin-bottom: var(--space-md);">
+      <h3>
+        Michael Hoch Approval Gate
+        <span class="status-badge status-pending">PENDING</span>
+      </h3>
+      <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: var(--space-md);">
+        Gated operations requiring explicit confirmation before execution. The swarm enforces a strict fail-closed posture.
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+        <!-- Approval Request 1 -->
+        <div class="card" style="border-left: 4px solid var(--accent-amber);">
+          <div class="agent-header">
+            <strong style="color: var(--accent-amber);">Action: Model Deletion</strong>
+            <span class="status-badge status-pending">AWAITING DECISION</span>
+          </div>
+          <p style="font-size: 12px; color: var(--text-secondary); margin: var(--space-xs) 0;">
+            Requesting deletion of `llama2:latest` on host <code>10.0.0.207</code>. Benchmarks fell below accuracy threshold.
+          </p>
+          <div style="display: flex; gap: var(--space-sm); margin-top: var(--space-sm);">
+            <button style="padding: 4px 12px; font-size: 11px; background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent-green); color: var(--accent-green); border-radius: 4px; cursor: pointer;">Approve</button>
+            <button style="padding: 4px 12px; font-size: 11px; background: rgba(239, 68, 68, 0.1); border: 1px solid var(--accent-red); color: var(--accent-red); border-radius: 4px; cursor: pointer;">Deny</button>
+            <button style="padding: 4px 12px; font-size: 11px; background: var(--bg-panel-header); border: 1px solid var(--border-subtle); color: var(--text-secondary); border-radius: 4px; cursor: pointer;">Defer</button>
+          </div>
+        </div>
+
+        <!-- Approval Request 2 -->
+        <div class="card" style="opacity: 0.6;">
+          <div class="agent-header">
+            <strong>Action: Deploy Build Cell</strong>
+            <span class="status-badge status-simulated">APPROVED</span>
+          </div>
+          <p style="font-size: 12px; color: var(--text-secondary); margin: var(--space-xs) 0;">
+            Expose application factory workspace build artifact to WAN staging.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>Operations Requiring Approval</h3>
+      <ul style="list-style: square; padding-left: var(--space-lg); font-size: 12px; color: var(--text-secondary); display: flex; flex-direction: column; gap: var(--space-xs);">
+        <li>Model quarantine or deletion actions</li>
+        <li>Deleting files or directories</li>
+        <li>Moving large datasets between cluster compute nodes</li>
+        <li>Publishing content to public platforms</li>
+        <li>Deploying code changes to production workspaces</li>
+        <li>Submitting newly compiled applications to app stores</li>
+        <li>Spending financial resources (API credits, paid escalations)</li>
+        <li>Exposing ports to the Wide Area Network (WAN)</li>
+        <li>Changing API secrets, keys, or credentials</li>
+        <li>Modifying active security policies or swarm posture</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

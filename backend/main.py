@@ -7697,6 +7697,123 @@ def get_live_runtime_cockpit_endpoint():
     from backend.live_runtime_aggregator import get_cockpit_data
     return get_cockpit_data()
 
+@app.get("/api/v1/prompts/registry")
+def get_prompts_registry_endpoint():
+    from backend.prompt_registry import get_registry
+    registry = get_registry()
+    return registry.prompts
+
+@app.get("/api/v1/prompts/registry/{prompt_id}")
+def get_prompt_by_id_endpoint(prompt_id: str):
+    from fastapi import HTTPException
+    from backend.prompt_registry import get_registry
+    registry = get_registry()
+    for p in registry.prompts:
+        if p["id"] == prompt_id:
+            return p
+    raise HTTPException(status_code=404, detail=f"Prompt {prompt_id} not found")
+
+@app.get("/api/v1/prompts/categories")
+def get_prompts_categories_endpoint():
+    from backend.prompt_registry import get_registry
+    registry = get_registry()
+    categories = sorted(list(set(p["category"] for p in registry.prompts)))
+    return categories
+
+class PromptRoutePlanRequest(BaseModel):
+    task_description: str
+    risk_level: str = "LOW"
+
+@app.get("/api/v1/prompts/router/rules")
+def get_prompts_router_rules_endpoint():
+    from backend.prompt_router import get_router
+    router = get_router()
+    return router.get_rules()
+
+@app.post("/api/v1/prompts/router/plan")
+def post_prompts_router_plan_endpoint(req: PromptRoutePlanRequest):
+    from backend.prompt_router import get_router
+    router = get_router()
+    return router.plan_route(req.task_description, req.risk_level)
+
+class ApprovalRequestModel(BaseModel):
+    task_description: str
+    route_plan: dict
+
+class ApprovalDecisionModel(BaseModel):
+    status: str
+    note: str = None
+
+@app.get("/api/v1/approvals/queue")
+def get_approvals_queue_endpoint():
+    from backend.approval_gate import get_approval_gate
+    gate = get_approval_gate()
+    return gate.load_queue()
+
+@app.post("/api/v1/approvals/request")
+def post_approvals_request_endpoint(req: ApprovalRequestModel):
+    from backend.approval_gate import get_approval_gate
+    gate = get_approval_gate()
+    return gate.create_request(req.task_description, req.route_plan)
+
+@app.post("/api/v1/approvals/{approval_id}/decision")
+def post_approval_decision_endpoint(approval_id: str, req: ApprovalDecisionModel):
+    from fastapi import HTTPException
+    from backend.approval_gate import get_approval_gate
+    gate = get_approval_gate()
+    try:
+        return gate.record_decision(approval_id, req.status, req.note)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+from typing import Optional as OptType, List as ListType
+
+class EvidenceMissionRequestModel(BaseModel):
+    task_description: str
+    route_plan: dict
+    approval_id: OptType[str] = None
+    approval_status: OptType[str] = "NOT_REQUIRED"
+    facts_observed: OptType[ListType[str]] = []
+    assumptions: OptType[ListType[str]] = []
+    risks: OptType[ListType[str]] = []
+    validation_tests: OptType[ListType[str]] = []
+    evidence_artifacts: OptType[ListType[str]] = []
+    open_questions: OptType[ListType[str]] = []
+
+@app.post("/api/v1/evidence/mission")
+def post_evidence_mission_endpoint(req: EvidenceMissionRequestModel):
+    from backend.evidence_collector import EvidenceCollector
+    collector = EvidenceCollector()
+    payload = {
+        "task_description": req.task_description,
+        "route_plan": req.route_plan,
+        "approval_id": req.approval_id,
+        "approval_status": req.approval_status,
+        "facts_observed": req.facts_observed,
+        "assumptions": req.assumptions,
+        "risks": req.risks,
+        "validation_tests": req.validation_tests,
+        "evidence_artifacts": req.evidence_artifacts,
+        "open_questions": req.open_questions
+    }
+    return collector.create_mission_package(payload)
+
+@app.get("/api/v1/evidence/missions")
+def get_evidence_missions_endpoint():
+    from backend.evidence_collector import EvidenceCollector
+    collector = EvidenceCollector()
+    return collector.list_missions()
+
+@app.get("/api/v1/evidence/missions/{mission_id}")
+def get_evidence_mission_detail_endpoint(mission_id: str):
+    from fastapi import HTTPException
+    from backend.evidence_collector import EvidenceCollector
+    collector = EvidenceCollector()
+    m = collector.get_mission(mission_id)
+    if not m:
+        raise HTTPException(status_code=404, detail="Mission evidence package not found")
+    return m
+
 # ── Escalation Approval Queue Endpoints ───────────────────────────────────────
 @app.get("/api/v1/escalations/pending")
 def get_escalations_pending_endpoint():

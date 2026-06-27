@@ -302,26 +302,129 @@ def get_cockpit_data() -> dict[str, Any]:
 
     # 12. Device Service Registry
     try:
-        leases_path = base_dir / "config" / "cluster_worker_profiles.json"
-        devices_count = 0
-        if leases_path.exists():
-            leases_data = json.loads(leases_path.read_text(encoding="utf-8"))
-            devices_count = len(leases_data.get("workers", []))
-            if not devices_count:
-                devices_count = len(leases_data)
+        probe_path = base_dir / "artifacts" / "qa" / "known_assets" / "known_asset_probe_report.json"
+        config_path = base_dir / "config" / "known_assets.json"
         
+        devices_count = 9
+        online_count = 0
+        offline_count = 0
+        reporting_count = 0
+        runtimes_proven = []
+        
+        if probe_path.exists():
+            probe_data = json.loads(probe_path.read_text(encoding="utf-8"))
+            results = probe_data.get("results", [])
+            devices_count = len(results)
+            for r in results:
+                if r.get("ping") or r.get("open_ports"):
+                    online_count += 1
+                else:
+                    offline_count += 1
+                
+                # Check ports to identify model runtimes (Ollama/LM Studio)
+                open_ports = r.get("open_ports", [])
+                if 1234 in open_ports or 11434 in open_ports:
+                    runtimes_proven.append(f"{r.get('name')} ({r.get('ip')})")
+                    reporting_count += 1
+        elif config_path.exists():
+            config_data = json.loads(config_path.read_text(encoding="utf-8"))
+            devices_count = len(config_data.get("assets", []))
+            offline_count = devices_count
+            
         dr_data = {
-            "truth": "LIVE" if devices_count > 0 else "EMPTY",
+            "truth": "LIVE" if online_count > 0 else "DEGRADED",
             "source": "/api/v1/devices/service-registry",
             "last_updated": now_str,
-            "devices_count": devices_count
+            "devices_count": devices_count,
+            "online_count": online_count,
+            "offline_count": offline_count,
+            "reporting_count": reporting_count,
+            "model_runtimes_proven": runtimes_proven
         }
     except Exception as exc:
         dr_data = {
             "truth": "ERROR",
             "source": "/api/v1/devices/service-registry",
             "last_updated": now_str,
-            "devices_count": 0
+            "error": str(exc),
+            "devices_count": 9,
+            "online_count": 0,
+            "offline_count": 9,
+            "reporting_count": 0,
+            "model_runtimes_proven": []
+        }
+
+    # 13. Prompt Registry Status
+    try:
+        from backend.prompt_registry import get_registry
+        reg = get_registry()
+        
+        # Load registry report
+        report_path = base_dir / "artifacts" / "qa" / "prompt_registry" / "prompt_registry_report.json"
+        import json
+        if report_path.exists():
+            report_data = json.loads(report_path.read_text(encoding="utf-8"))
+        else:
+            report_data = {
+                "status": reg.status,
+                "total_prompts": len(reg.prompts),
+                "categories": {},
+                "security_critical_count": 0,
+                "approval_gated_count": 0
+            }
+            
+        pr_registry_data = {
+            "truth": report_data.get("status", "FAIL_CLOSED"),
+            "source": "/api/v1/prompts/registry",
+            "last_updated": now_str,
+            "total_prompts": report_data.get("total_prompts", 0),
+            "categories_count": len(report_data.get("categories", {})),
+            "security_critical_count": report_data.get("security_critical_count", 0),
+            "approval_gated_count": report_data.get("approval_gated_count", 0)
+        }
+    except Exception as exc:
+        pr_registry_data = {
+            "truth": "ERROR",
+            "source": "/api/v1/prompts/registry",
+            "last_updated": now_str,
+            "error": str(exc),
+            "total_prompts": 0,
+            "categories_count": 0,
+            "security_critical_count": 0,
+            "approval_gated_count": 0
+        }
+
+    # 14. Approval Gate Telemetry
+    try:
+        from backend.approval_gate import get_approval_gate
+        gate = get_approval_gate()
+        approval_gate_telemetry = gate.get_telemetry()
+    except Exception as exc:
+        approval_gate_telemetry = {
+            "state": "ERROR",
+            "pending_count": 0,
+            "approved_count": 0,
+            "denied_count": 0,
+            "deferred_count": 0,
+            "execution_enabled": False,
+            "error": str(exc)
+        }
+
+    # 15. Evidence Collector Telemetry
+    try:
+        from backend.evidence_collector import EvidenceCollector
+        collector = EvidenceCollector()
+        evidence_collector_telemetry = collector.get_stats()
+    except Exception as exc:
+        evidence_collector_telemetry = {
+            "state": "ERROR",
+            "mission_count": 0,
+            "fail_closed_count": 0,
+            "conditional_go_count": 0,
+            "go_count": 0,
+            "latest_mission_id": None,
+            "execution_enabled": False,
+            "error": str(exc)
         }
 
     return {
@@ -339,6 +442,9 @@ def get_cockpit_data() -> dict[str, Any]:
             "local_outage_queue": oq_data,
             "port_hardening": ph_data,
             "autonomy_budget": ab_data,
-            "device_registry": dr_data
+            "device_registry": dr_data,
+            "prompt_registry": pr_registry_data,
+            "approval_gate": approval_gate_telemetry,
+            "evidence_collector": evidence_collector_telemetry
         }
     }

@@ -13,6 +13,16 @@
     // Helper functions
     const el = (id) => document.getElementById(id);
 
+    function escapeHtml(str) {
+        if (str === null || str === undefined) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
     // Theme implementation
     function initTheme() {
         const themeSelector = el('theme-selector');
@@ -237,9 +247,10 @@
 
         Object.keys(cards).forEach(key => {
             const cardData = cards[key];
-            const dot = el(`dot-${key}`);
-            const stateLabel = el(`state-${key}`);
-            const body = el(`body-${key}`);
+            const htmlKey = key.replace(/_/g, '-');
+            const dot = el(`dot-${htmlKey}`);
+            const stateLabel = el(`state-${htmlKey}`);
+            const body = el(`body-${htmlKey}`);
 
             if (!cardData) return;
 
@@ -354,9 +365,16 @@
                 </div>`;
                 break;
             case 'device_registry':
+                const online = data.online_count || 0;
+                const offline = data.offline_count || 0;
+                const reporting = data.reporting_count || 0;
+                const runtimes = (data.model_runtimes_proven || []).map(r => r.split(' ')[0]).join(", ") || "None";
                 html = `<div style="display:flex; flex-direction:column; gap:4px;">
-                    <div>Registry workers: <strong style="color:#fff;">${data.devices_count || 0} profiles</strong></div>
-                    <div style="font-size:9px; opacity:0.8;">Local cluster worker profiles.</div>
+                    <div>Known Assets: <strong style="color:#fff;">${data.devices_count || 0}</strong></div>
+                    <div>Online: <span style="color:#10b981;">${online}</span> | Offline: <span style="color:#ef4444;">${offline}</span></div>
+                    <div style="font-size:9px; opacity:0.8; max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml((data.model_runtimes_proven || []).join(', '))}">
+                        Proven: <span style="color:#818cf8;">${runtimes}</span>
+                    </div>
                 </div>`;
                 break;
             default:
