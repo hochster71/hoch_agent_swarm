@@ -7,7 +7,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const baseUrl = process.env.UI_BASE_URL || "http://localhost:8000";
-const outDir = path.resolve(__dirname, "../artifacts/ui-screenshot-evidence/visual-control-plane-local-v1/screenshots");
+const outDir = process.env.SCREENSHOT_OUT_DIR
+  ? path.resolve(process.env.SCREENSHOT_OUT_DIR)
+  : path.resolve(__dirname, "../artifacts/ui-screenshot-evidence/visual-control-plane-local-v1/screenshots");
 
 fs.mkdirSync(outDir, { recursive: true });
 
@@ -79,7 +81,9 @@ async function runCapture() {
     results
   };
 
-  const resultsPath = path.resolve(__dirname, "../artifacts/ui-screenshot-evidence/visual-control-plane-local-v1/screenshot_capture_results.json");
+  const resultsPath = process.env.SCREENSHOT_OUT_DIR
+    ? path.join(path.dirname(path.resolve(process.env.SCREENSHOT_OUT_DIR)), "screenshot_capture_results.json")
+    : path.resolve(__dirname, "../artifacts/ui-screenshot-evidence/visual-control-plane-local-v1/screenshot_capture_results.json");
   fs.writeFileSync(resultsPath, JSON.stringify(resultsSummary, null, 2));
   console.log(`Capture summary written to ${resultsPath}`);
 }

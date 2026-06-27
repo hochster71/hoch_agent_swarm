@@ -3960,3 +3960,22 @@ body.theme-mono {
         transform: none;
     }
 }
+
+/* Theme Selector Polish */
+#theme-selector {
+    box-sizing: border-box;
+    width: 100% !important;
+    padding: 8px 12px !important;
+    border-radius: 8px !important;
+    font-size: 13px !important;
+    font-family: var(--font-body) !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid var(--border-glass) !important;
+    color: var(--text-primary) !important;
+    transition: all 0.2s ease-in-out;
+}
+
+#theme-selector:focus {
+    border-color: var(--accent-blue) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+}

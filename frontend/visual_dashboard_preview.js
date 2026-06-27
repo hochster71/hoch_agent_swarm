@@ -291,7 +291,7 @@ function renderCardHTML(title, vm) {
         <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: var(--space-sm);">${vm.summary}</p>
         <div style="font-size: 12px; font-family: var(--font-mono); display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
           ${Object.entries(vm.metrics).map(([k, v]) => `
-            <div><span style="color: var(--text-muted);">${k}:</span> ${typeof v === 'object' ? JSON.stringify(v) : v}</div>
+            <div><span style="color: var(--text-muted); font-weight: 600;">${k}:</span> ${typeof v === 'object' ? JSON.stringify(v) : v}</div>
           `).join('')}
         </div>
         ${approvalHTML}
