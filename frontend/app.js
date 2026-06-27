@@ -1126,6 +1126,7 @@
 
     // Initialization routine
     function init() {
+  initMeshSentinel();
         initTheme();
         initNavigation();
         initializeKoiAnimation();
@@ -1148,3 +1149,146 @@
     }
 
 })();
+
+
+
+let meshSentinelFilter = "all";
+
+async function fetchJsonSafe(url) {
+  const response = await fetch(url, { headers: { "Accept": "application/json" } });
+  if (!response.ok) {
+    throw new Error(`${url} returned ${response.status}`);
+  }
+  return response.json();
+}
+
+function meshTruthClass(truth) {
+  const value = String(truth || "EMPTY").toLowerCase().replaceAll("_", "-");
+  return `truth-${value}`;
+}
+
+function renderMeshSentinel(data) {
+  const map = document.getElementById("mesh-sentinel-map");
+  const alerts = document.getElementById("mesh-alerts");
+  const updated = document.getElementById("mesh-last-updated");
+  const truth = document.getElementById("mesh-truth-state");
+
+  if (!map) return;
+
+  const nodes = Array.isArray(data.nodes) ? data.nodes : [];
+  const alertItems = Array.isArray(data.alerts) ? data.alerts : [];
+
+  if (updated) updated.textContent = `Last updated: ${data.generated_at || "unknown"}`;
+  if (truth) truth.textContent = `Truth: ${data.truth || "EMPTY"}`;
+
+  const visibleNodes = nodes.filter(node => {
+    if (meshSentinelFilter === "all") return true;
+    if (meshSentinelFilter === "alerts") return String(node.truth || "").includes("UNEXPECTED");
+    if (meshSentinelFilter === "MISSING_FROM_SCAN") return node.truth === "MISSING_FROM_SCAN";
+    return node.kind === meshSentinelFilter;
+  });
+
+  if (!visibleNodes.length) {
+    map.innerHTML = '<p class="empty-state">No live mesh nodes match the selected filter.</p>';
+  } else {
+    map.innerHTML = visibleNodes.map(node => {
+      const models = Array.isArray(node.models) ? node.models : [];
+      const modelList = models.length
+        ? models.slice(0, 8).map(model => `<li>${escapeHtml(String(model))}</li>`).join("")
+        : "<li>No models returned by endpoint.</li>";
+
+      return `
+        <article class="mesh-node ${meshTruthClass(node.truth)}">
+          <div class="mesh-node-header">
+            <strong>${escapeHtml(node.label || node.id || "Unknown Node")}</strong>
+            <span class="status-pill">${escapeHtml(node.truth || "EMPTY")}</span>
+          </div>
+          <dl class="mesh-node-facts">
+            <div><dt>IP</dt><dd>${escapeHtml(node.ip || "unknown")}</dd></div>
+            <div><dt>Port</dt><dd>${escapeHtml(String(node.port || "unknown"))}</dd></div>
+            <div><dt>Kind</dt><dd>${escapeHtml(node.kind || "UNKNOWN")}</dd></div>
+            <div><dt>Reachable</dt><dd>${node.reachable ? "true" : "false"}</dd></div>
+            <div><dt>Models</dt><dd>${escapeHtml(String(node.model_count ?? models.length ?? 0))}</dd></div>
+            <div><dt>Source</dt><dd>${escapeHtml(node.source || "/api/v1/mesh-sentinel/map")}</dd></div>
+            <div><dt>Last scanned</dt><dd>${escapeHtml(node.last_scanned || "unknown")}</dd></div>
+          </dl>
+          <details>
+            <summary>Models</summary>
+            <ul>${modelList}</ul>
+          </details>
+        </article>
+      `;
+    }).join("");
+  }
+
+  if (alerts) {
+    if (!alertItems.length) {
+      alerts.innerHTML = '<p class="empty-state">No live mesh alerts.</p>';
+    } else {
+      alerts.innerHTML = alertItems.map(item => `
+        <article class="event-row ${meshTruthClass(item.severity)}">
+          <strong>${escapeHtml(item.severity || "INFO")}</strong>
+          <span>${escapeHtml(item.message || "Alert")}</span>
+          <code>${escapeHtml(item.source || "/api/v1/detections/events")}</code>
+        </article>
+      `).join("");
+    }
+  }
+}
+
+async function loadMeshSentinel() {
+  const map = document.getElementById("mesh-sentinel-map");
+  if (map) map.innerHTML = '<p class="empty-state">Loading live mesh sentinel data...</p>';
+  try {
+    const data = await fetchJsonSafe("/api/v1/mesh-sentinel/map");
+    renderMeshSentinel(data);
+  } catch (error) {
+    if (map) {
+      map.innerHTML = `<p class="error-state">Mesh Sentinel failed: ${escapeHtml(error.message)}</p>`;
+    }
+  }
+}
+
+async function rescanMeshSentinel() {
+  const button = document.getElementById("mesh-rescan-ai-runtimes");
+  const status = document.getElementById("mesh-scan-status");
+
+  if (button) button.disabled = true;
+  if (status) status.textContent = "Scanning...";
+
+  try {
+    await fetchJsonSafe("/api/v1/discovery/ai-runtimes/rescan", { method: "POST" });
+  } catch (_) {
+    const response = await fetch("/api/v1/discovery/ai-runtimes/rescan", { method: "POST" });
+    if (!response.ok) throw new Error(`rescan returned ${response.status}`);
+  }
+
+  await loadMeshSentinel();
+
+  if (status) status.textContent = "Scan Complete";
+  if (button) button.disabled = false;
+}
+
+function initMeshSentinel() {
+  document.querySelectorAll("[data-mesh-filter]").forEach(button => {
+    button.addEventListener("click", () => {
+      meshSentinelFilter = button.getAttribute("data-mesh-filter") || "all";
+      document.querySelectorAll("[data-mesh-filter]").forEach(item => item.classList.remove("active"));
+      button.classList.add("active");
+      loadMeshSentinel();
+    });
+  });
+
+  const refresh = document.getElementById("mesh-refresh");
+  if (refresh) refresh.addEventListener("click", loadMeshSentinel);
+
+  const rescan = document.getElementById("mesh-rescan-ai-runtimes");
+  if (rescan) rescan.addEventListener("click", () => {
+    rescanMeshSentinel().catch(error => {
+      const status = document.getElementById("mesh-scan-status");
+      if (status) status.textContent = `Scan Failed: ${error.message}`;
+      rescan.disabled = false;
+    });
+  });
+}
+

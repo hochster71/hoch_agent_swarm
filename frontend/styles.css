@@ -3526,3 +3526,131 @@ body.theme-mono {
 }
 
 
+
+/* PROTO-1 — HOCH Mesh Sentinel Map */
+.mesh-filters,
+.section-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.filter-chip,
+.primary-action,
+.secondary-action {
+  border: 1px solid rgba(120, 180, 255, 0.32);
+  background: rgba(5, 10, 20, 0.82);
+  color: #e8f2ff;
+  border-radius: 999px;
+  padding: 0.5rem 0.85rem;
+  cursor: pointer;
+}
+
+.filter-chip.active,
+.primary-action {
+  border-color: rgba(80, 220, 255, 0.76);
+  box-shadow: 0 0 18px rgba(80, 220, 255, 0.16);
+}
+
+.status-pill {
+  border: 1px solid rgba(150, 170, 190, 0.38);
+  border-radius: 999px;
+  padding: 0.35rem 0.65rem;
+  color: #d7e6f8;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.mesh-sentinel-map {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.mesh-node {
+  border: 1px solid rgba(130, 180, 255, 0.25);
+  background: linear-gradient(180deg, rgba(8, 14, 28, 0.95), rgba(2, 5, 12, 0.98));
+  border-radius: 18px;
+  padding: 1rem;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.36);
+}
+
+.mesh-node-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: start;
+  margin-bottom: 0.8rem;
+}
+
+.mesh-node-facts {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.45rem;
+  margin: 0;
+}
+
+.mesh-node-facts div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 0.35rem;
+}
+
+.mesh-node-facts dt {
+  color: #8ca4bd;
+}
+
+.mesh-node-facts dd {
+  margin: 0;
+  text-align: right;
+  color: #f1f7ff;
+  word-break: break-word;
+}
+
+.truth-live {
+  border-color: rgba(60, 255, 150, 0.52);
+}
+
+.truth-missing-from-scan,
+.truth-degraded {
+  border-color: rgba(255, 190, 80, 0.58);
+}
+
+.truth-unexpected-exposure,
+.truth-failed,
+.truth-error {
+  border-color: rgba(255, 80, 95, 0.62);
+}
+
+.event-list {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.event-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem 1rem;
+  border: 1px solid rgba(130, 180, 255, 0.22);
+  border-radius: 14px;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.event-row code {
+  grid-column: 1 / -1;
+  color: #9fb7d4;
+}
+
+.empty-state,
+.error-state {
+  color: #9fb7d4;
+  padding: 1rem;
+}
+
+.error-state {
+  color: #ff8d98;
+}

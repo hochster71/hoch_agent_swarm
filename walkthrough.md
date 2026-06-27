@@ -372,3 +372,31 @@ We have successfully integrated the HOCH AI Model Mesh into the codebase:
 - **FastAPI Endpoints**: Succeeded (`/api/v1/model-mesh/config` validated).
 - **Vite Build**: Success.
 - **Full CI Pipeline**: Completed successfully with 100% test passes.
+
+---
+
+## PROTO-1 — HOCH Mesh Sentinel Map
+
+### Purpose
+Created a Kimi-style HOCH themed live mesh sentinel view that displays only discovery-backed AI runtimes, missing expected runtimes, and exposure alerts.
+
+### Backend
+- Added `backend/mesh_sentinel.py`.
+- Added `GET /api/v1/mesh-sentinel/map`.
+- Reads `artifacts/network_discovery/ai_runtime_scan.json`.
+- Marks expected but absent NEO LM Studio as `MISSING_FROM_SCAN`.
+- Shows LM Studio only when `/v1/models` discovery proves reachability.
+- Shows Ollama only when `/api/tags` discovery proves reachability.
+
+### Frontend
+- Added `Mesh Sentinel` live view.
+- Added `Rescan AI Runtimes` action.
+- Added live node cards with source endpoint, truth state, last scanned, reachability, runtime kind, IP, port, and model count.
+
+### QA
+- Added `qa:mesh-sentinel`.
+- Added E2E smoke test.
+- Added QA evidence controls `MESH-SENTINEL-001` through `MESH-SENTINEL-006`.
+
+### Policy
+No fake topology. No fake CPU. No fake active assets. Every visible AI runtime must be discovery-backed or explicitly marked missing/degraded.

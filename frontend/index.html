@@ -94,7 +94,13 @@
                     <div class="profile-role">Helvetica Manager</div>
                 </div>
             </div>
-        </aside>
+        
+<button class="nav-item" data-view="mesh-sentinel" type="button">
+  <span class="nav-dot"></span>
+  <span>Mesh Sentinel</span>
+</button>
+
+</aside>
 
         <!-- Main Content Area -->
         <main class="main-content" id="main-content">
@@ -431,7 +437,54 @@
                 </section>
             </div>
             <div id="view-remediation-safety" class="hidden"></div>
-        </main>
+        
+
+<section class="view live-view" id="view-mesh-sentinel" data-view="mesh-sentinel" hidden>
+  <header class="section-header">
+    <div>
+      <p class="eyebrow">LIVE MESH</p>
+      <h2>HOCH Mesh Sentinel Map</h2>
+      <p class="muted">Discovery-backed AI runtime, missing asset, and exposure truth map.</p>
+    </div>
+    <div class="section-actions">
+      <button class="primary-action" id="mesh-rescan-ai-runtimes" type="button">Rescan AI Runtimes</button>
+      <button class="secondary-action" id="mesh-refresh" type="button">Refresh</button>
+      <span id="mesh-scan-status" class="status-pill">Idle</span>
+    </div>
+  </header>
+
+  <div class="mesh-filters" aria-label="Mesh Sentinel filters">
+    <button class="filter-chip active" data-mesh-filter="all" type="button">All</button>
+    <button class="filter-chip" data-mesh-filter="LM_STUDIO" type="button">LM Studio</button>
+    <button class="filter-chip" data-mesh-filter="OLLAMA" type="button">Ollama</button>
+    <button class="filter-chip" data-mesh-filter="MISSING_FROM_SCAN" type="button">Missing</button>
+    <button class="filter-chip" data-mesh-filter="alerts" type="button">Alerts</button>
+  </div>
+
+  <div class="live-card mesh-sentinel-card">
+    <div class="card-meta">
+      <span>Source: /api/v1/mesh-sentinel/map</span>
+      <span id="mesh-last-updated">Last updated: never</span>
+      <span id="mesh-truth-state">Truth: EMPTY</span>
+    </div>
+    <div id="mesh-sentinel-map" class="mesh-sentinel-map" aria-live="polite">
+      <p class="empty-state">Waiting for live mesh sentinel data.</p>
+    </div>
+  </div>
+
+  <div class="live-card">
+    <h3>Mesh Alerts</h3>
+    <div class="card-meta">
+      <span>Source: /api/v1/detections/events</span>
+      <span>Truth state: LIVE when alert events are present</span>
+    </div>
+    <div id="mesh-alerts" class="event-list">
+      <p class="empty-state">No mesh alerts loaded.</p>
+    </div>
+  </div>
+</section>
+
+</main>
     </div>
     <script type="module" src="app.js"></script>
 </body>

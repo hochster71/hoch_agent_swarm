@@ -8,6 +8,7 @@ from datetime import datetime, timedelta, timezone
 import asyncio
 import threading
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
+from backend.mesh_sentinel import build_mesh_sentinel_map
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -7414,6 +7415,14 @@ def post_local_supervisor_check_once_endpoint():
 def get_discovery_ai_runtimes_endpoint():
     from backend.live_runtime_discovery import load_ai_runtime_discovery
     return load_ai_runtime_discovery()
+
+
+
+@app.get("/api/v1/mesh-sentinel/map")
+async def get_mesh_sentinel_map():
+    """Return live Mesh Sentinel map using AI runtime discovery and alert state."""
+    return build_mesh_sentinel_map()
+
 
 @app.post("/api/v1/discovery/ai-runtimes/rescan")
 def post_discovery_ai_runtimes_rescan_endpoint():

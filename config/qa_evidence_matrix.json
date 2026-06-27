@@ -1,49 +1,49 @@
 {
   "_meta": {
-    "schema":    "hoch-qa-evidence-matrix-v1",
-    "created":   "2026-06-26",
-    "version":   "1.0.0",
-    "pert_ref":  "P5",
-    "gap_ref":   "GAP-004",
-    "status":    "IN_PROGRESS",
-    "note":      "Maps every Northstar control to: test IDs, evidence artifacts, gap refs, and remediation status. P9 E2E audit will mark matrix COMPLETE.",
+    "schema": "hoch-qa-evidence-matrix-v1",
+    "created": "2026-06-26",
+    "version": "1.0.0",
+    "pert_ref": "P5",
+    "gap_ref": "GAP-004",
+    "status": "IN_PROGRESS",
+    "note": "Maps every Northstar control to: test IDs, evidence artifacts, gap refs, and remediation status. P9 E2E audit will mark matrix COMPLETE.",
     "truth_policy": "status is derived from evidence_present AND tests_executed"
   },
   "controls": [
     {
-      "control_id":  "PROMPT-GATE-001",
-      "name":        "Prompt Runtime Risk Classification",
-      "domain":      "GOVERNANCE",
-      "pert_ref":    "Batch-Prompt-2",
-      "gap_ref":     "GAP-003",
-      "status":      "TESTED",
+      "control_id": "PROMPT-GATE-001",
+      "name": "Prompt Runtime Risk Classification",
+      "domain": "GOVERNANCE",
+      "pert_ref": "Batch-Prompt-2",
+      "gap_ref": "GAP-003",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-PG-001",
-          "description":   "POST /api/v1/prompts/evaluate returns risk-classified verdict for each risk level",
-          "type":          "smoke",
-          "result":        "PASS",
-          "batch":         "Prompt-2",
+          "test_id": "T-PG-001",
+          "description": "POST /api/v1/prompts/evaluate returns risk-classified verdict for each risk level",
+          "type": "smoke",
+          "result": "PASS",
+          "batch": "Prompt-2",
           "evidence_file": null,
-          "notes":         "Verified via curl smoke: LOW=ALLOWED, MEDIUM=rationale gate, HIGH=approval gate, BLOCKED=rejected"
+          "notes": "Verified via curl smoke: LOW=ALLOWED, MEDIUM=rationale gate, HIGH=approval gate, BLOCKED=rejected"
         },
         {
-          "test_id":       "T-PG-002",
-          "description":   "AIRT-016 (HIGH) requires and receives operator approval before execution allowed",
-          "type":          "integration",
-          "result":        "PASS",
-          "batch":         "Prompt-2",
+          "test_id": "T-PG-002",
+          "description": "AIRT-016 (HIGH) requires and receives operator approval before execution allowed",
+          "type": "integration",
+          "result": "PASS",
+          "batch": "Prompt-2",
           "evidence_file": "hoch_prompt_approvals.db",
-          "notes":         "Verified: approval persists in SQLite; ledger records execution"
+          "notes": "Verified: approval persists in SQLite; ledger records execution"
         },
         {
-          "test_id":       "T-PG-003",
-          "description":   "SHA-256 hash gate rejects tampered prompts",
-          "type":          "smoke",
-          "result":        "PASS",
-          "batch":         "Prompt-2",
+          "test_id": "T-PG-003",
+          "description": "SHA-256 hash gate rejects tampered prompts",
+          "type": "smoke",
+          "result": "PASS",
+          "batch": "Prompt-2",
           "evidence_file": null,
-          "notes":         "Hash verified at evaluation time; mismatch = BLOCKED with INTEGRITY_FAILURE"
+          "notes": "Hash verified at evaluation time; mismatch = BLOCKED with INTEGRITY_FAILURE"
         }
       ],
       "evidence_artifacts": [
@@ -54,74 +54,78 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "TEST-ISOLATE-001",
-      "name":        "Test-State Isolation (Approval Expiry)",
-      "domain":      "GOVERNANCE",
-      "pert_ref":    "Batch-Prompt-3",
-      "gap_ref":     "GAP-003",
-      "status":      "TESTED",
+      "control_id": "TEST-ISOLATE-001",
+      "name": "Test-State Isolation (Approval Expiry)",
+      "domain": "GOVERNANCE",
+      "pert_ref": "Batch-Prompt-3",
+      "gap_ref": "GAP-003",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-TI-001",
-          "description":   "POST /api/v1/prompts/expire-test marks TEST-sourced approvals EXPIRED",
-          "type":          "smoke",
-          "result":        "PASS",
-          "batch":         "Prompt-3",
+          "test_id": "T-TI-001",
+          "description": "POST /api/v1/prompts/expire-test marks TEST-sourced approvals EXPIRED",
+          "type": "smoke",
+          "result": "PASS",
+          "batch": "Prompt-3",
           "evidence_file": null,
-          "notes":         "Verified: expire-test endpoint resets test approvals without touching OPERATOR approvals"
+          "notes": "Verified: expire-test endpoint resets test approvals without touching OPERATOR approvals"
         }
       ],
-      "evidence_artifacts": ["backend/prompt_governance.py"],
+      "evidence_artifacts": [
+        "backend/prompt_governance.py"
+      ],
       "evidence_present": true,
       "truth": "LIVE"
     },
     {
-      "control_id":  "PROMPT-TTL-001",
-      "name":        "Prompt Approval TTL Enforcement",
-      "domain":      "GOVERNANCE",
-      "pert_ref":    "Batch-Prompt-3",
-      "gap_ref":     "GAP-003",
-      "status":      "TESTED",
+      "control_id": "PROMPT-TTL-001",
+      "name": "Prompt Approval TTL Enforcement",
+      "domain": "GOVERNANCE",
+      "pert_ref": "Batch-Prompt-3",
+      "gap_ref": "GAP-003",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-TTL-001",
-          "description":   "Prompt approvals expire after configured TTL; re-approval required",
-          "type":          "smoke",
-          "result":        "PASS",
-          "batch":         "Prompt-3",
+          "test_id": "T-TTL-001",
+          "description": "Prompt approvals expire after configured TTL; re-approval required",
+          "type": "smoke",
+          "result": "PASS",
+          "batch": "Prompt-3",
           "evidence_file": null,
-          "notes":         "TTL enforced in prompt_governance.py; expire-test resets state"
+          "notes": "TTL enforced in prompt_governance.py; expire-test resets state"
         }
       ],
-      "evidence_artifacts": ["backend/prompt_governance.py"],
+      "evidence_artifacts": [
+        "backend/prompt_governance.py"
+      ],
       "evidence_present": true,
       "truth": "LIVE"
     },
     {
-      "control_id":  "ASSET-TRUST-001",
-      "name":        "Asset Trust Registry (5-node, 4-tier)",
-      "domain":      "ASSET",
-      "pert_ref":    "P3",
-      "gap_ref":     "GAP-002",
-      "status":      "TESTED",
+      "control_id": "ASSET-TRUST-001",
+      "name": "Asset Trust Registry (5-node, 4-tier)",
+      "domain": "ASSET",
+      "pert_ref": "P3",
+      "gap_ref": "GAP-002",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-AT-001",
-          "description":   "GET /api/v1/cluster/nodes returns 5 nodes with correct trust tiers",
-          "type":          "smoke",
-          "result":        "PASS",
-          "batch":         "PR-2",
+          "test_id": "T-AT-001",
+          "description": "GET /api/v1/cluster/nodes returns 5 nodes with correct trust tiers",
+          "type": "smoke",
+          "result": "PASS",
+          "batch": "PR-2",
           "evidence_file": "config/asset_trust_registry.json",
-          "notes":         "ALPHA=MacBook, BETA=Dell, GAMMA=NEO, DELTA=iPad/iPhone"
+          "notes": "ALPHA=MacBook, BETA=Dell, GAMMA=NEO, DELTA=iPad/iPhone"
         },
         {
-          "test_id":       "T-AT-002",
-          "description":   "GET /api/v1/production-readiness shows GAP-002=RESOLVED with truth=LIVE",
-          "type":          "integration",
-          "result":        "PASS",
-          "batch":         "PR-2",
+          "test_id": "T-AT-002",
+          "description": "GET /api/v1/production-readiness shows GAP-002=RESOLVED with truth=LIVE",
+          "type": "integration",
+          "result": "PASS",
+          "batch": "PR-2",
           "evidence_file": "config/asset_trust_registry.json",
-          "notes":         "trust_truth=LIVE; p3_status=COMPLETE confirmed"
+          "notes": "trust_truth=LIVE; p3_status=COMPLETE confirmed"
         }
       ],
       "evidence_artifacts": [
@@ -132,128 +136,132 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "ZTA-001",
-      "name":        "Zero-Trust Capability Boundaries per Node",
-      "domain":      "ASSET",
-      "pert_ref":    "P3",
-      "gap_ref":     "GAP-002",
-      "status":      "TESTED",
+      "control_id": "ZTA-001",
+      "name": "Zero-Trust Capability Boundaries per Node",
+      "domain": "ASSET",
+      "pert_ref": "P3",
+      "gap_ref": "GAP-002",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-ZTA-001",
-          "description":   "Each node has approved_capabilities and denied_capabilities arrays defined",
-          "type":          "config_validation",
-          "result":        "PASS",
-          "batch":         "PR-2",
+          "test_id": "T-ZTA-001",
+          "description": "Each node has approved_capabilities and denied_capabilities arrays defined",
+          "type": "config_validation",
+          "result": "PASS",
+          "batch": "PR-2",
           "evidence_file": "config/asset_trust_registry.json",
-          "notes":         "Verified: all 5 nodes have non-empty approved/denied cap lists"
+          "notes": "Verified: all 5 nodes have non-empty approved/denied cap lists"
         }
       ],
-      "evidence_artifacts": ["config/asset_trust_registry.json"],
+      "evidence_artifacts": [
+        "config/asset_trust_registry.json"
+      ],
       "evidence_present": true,
       "truth": "LIVE"
     },
     {
-      "control_id":  "CLUSTER-001",
-      "name":        "Cluster Worker Profiles (resource + ephemeral policy)",
-      "domain":      "ASSET",
-      "pert_ref":    "P8",
-      "gap_ref":     "GAP-009",
-      "status":      "TESTED",
+      "control_id": "CLUSTER-001",
+      "name": "Cluster Worker Profiles (resource + ephemeral policy)",
+      "domain": "ASSET",
+      "pert_ref": "P8",
+      "gap_ref": "GAP-009",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-CL-001",
-          "description":   "GET /api/v1/cluster/nodes returns resource limits and ephemeral_policy per node",
-          "type":          "smoke",
-          "result":        "PASS",
-          "batch":         "PR-2",
+          "test_id": "T-CL-001",
+          "description": "GET /api/v1/cluster/nodes returns resource limits and ephemeral_policy per node",
+          "type": "smoke",
+          "result": "PASS",
+          "batch": "PR-2",
           "evidence_file": "config/cluster_worker_profiles.json",
-          "notes":         "5 profiles: cpu_cores, ram_gb, ephemeral_policy, storage_policy verified"
+          "notes": "5 profiles: cpu_cores, ram_gb, ephemeral_policy, storage_policy verified"
         }
       ],
-      "evidence_artifacts": ["config/cluster_worker_profiles.json"],
+      "evidence_artifacts": [
+        "config/cluster_worker_profiles.json"
+      ],
       "evidence_present": true,
       "truth": "LIVE"
     },
     {
-      "control_id":  "SKILL-GATE-001",
-      "name":        "Skill Registry Runtime Gate (fail-closed)",
-      "domain":      "ACCESS",
-      "pert_ref":    "P2",
-      "gap_ref":     "GAP-003",
-      "status":      "TESTED",
+      "control_id": "SKILL-GATE-001",
+      "name": "Skill Registry Runtime Gate (fail-closed)",
+      "domain": "ACCESS",
+      "pert_ref": "P2",
+      "gap_ref": "GAP-003",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-SG-001",
-          "description":   "LOW skill / allowed tier → ALLOWED verdict",
-          "type":          "smoke",
-          "result":        "PASS",
-          "batch":         "PR-4",
+          "test_id": "T-SG-001",
+          "description": "LOW skill / allowed tier \u2192 ALLOWED verdict",
+          "type": "smoke",
+          "result": "PASS",
+          "batch": "PR-4",
           "evidence_file": "hoch_skill_audit.db",
-          "notes":         "SKILL-WEB-SEARCH / ALPHA → ALLOWED"
+          "notes": "SKILL-WEB-SEARCH / ALPHA \u2192 ALLOWED"
         },
         {
-          "test_id":       "T-SG-002",
-          "description":   "LOW skill / denied tier → DENIED verdict",
-          "type":          "smoke",
-          "result":        "PASS",
-          "batch":         "PR-4",
+          "test_id": "T-SG-002",
+          "description": "LOW skill / denied tier \u2192 DENIED verdict",
+          "type": "smoke",
+          "result": "PASS",
+          "batch": "PR-4",
           "evidence_file": "hoch_skill_audit.db",
-          "notes":         "SKILL-WEB-SEARCH / DELTA → DENIED"
+          "notes": "SKILL-WEB-SEARCH / DELTA \u2192 DENIED"
         },
         {
-          "test_id":       "T-SG-003",
-          "description":   "HIGH skill / allowed tier → REQUIRES_APPROVAL verdict",
-          "type":          "smoke",
-          "result":        "PASS",
-          "batch":         "PR-4",
+          "test_id": "T-SG-003",
+          "description": "HIGH skill / allowed tier \u2192 REQUIRES_APPROVAL verdict",
+          "type": "smoke",
+          "result": "PASS",
+          "batch": "PR-4",
           "evidence_file": "hoch_skill_audit.db",
-          "notes":         "SKILL-CODE-EXECUTION / ALPHA → REQUIRES_APPROVAL"
+          "notes": "SKILL-CODE-EXECUTION / ALPHA \u2192 REQUIRES_APPROVAL"
         },
         {
-          "test_id":       "T-SG-004",
-          "description":   "HIGH skill / denied tier → DENIED verdict",
-          "type":          "smoke",
-          "result":        "PASS",
-          "batch":         "PR-4",
+          "test_id": "T-SG-004",
+          "description": "HIGH skill / denied tier \u2192 DENIED verdict",
+          "type": "smoke",
+          "result": "PASS",
+          "batch": "PR-4",
           "evidence_file": "hoch_skill_audit.db",
-          "notes":         "SKILL-CODE-EXECUTION / BETA → DENIED"
+          "notes": "SKILL-CODE-EXECUTION / BETA \u2192 DENIED"
         },
         {
-          "test_id":       "T-SG-005",
-          "description":   "BLOCKED skill / any tier → BLOCKED hard reject",
-          "type":          "smoke",
-          "result":        "PASS",
-          "batch":         "PR-4",
+          "test_id": "T-SG-005",
+          "description": "BLOCKED skill / any tier \u2192 BLOCKED hard reject",
+          "type": "smoke",
+          "result": "PASS",
+          "batch": "PR-4",
           "evidence_file": "hoch_skill_audit.db",
-          "notes":         "SKILL-NETWORK-SCAN, SKILL-CREDENTIAL-ACCESS, SKILL-GIT-HISTORY-REWRITE all → BLOCKED"
+          "notes": "SKILL-NETWORK-SCAN, SKILL-CREDENTIAL-ACCESS, SKILL-GIT-HISTORY-REWRITE all \u2192 BLOCKED"
         },
         {
-          "test_id":       "T-SG-006",
-          "description":   "Unregistered skill → UNREGISTERED fail-closed rejection",
-          "type":          "smoke",
-          "result":        "PASS",
-          "batch":         "PR-4",
+          "test_id": "T-SG-006",
+          "description": "Unregistered skill \u2192 UNREGISTERED fail-closed rejection",
+          "type": "smoke",
+          "result": "PASS",
+          "batch": "PR-4",
           "evidence_file": "hoch_skill_audit.db",
-          "notes":         "UNKNOWN-SKILL-XYZ / ALPHA → UNREGISTERED"
+          "notes": "UNKNOWN-SKILL-XYZ / ALPHA \u2192 UNREGISTERED"
         },
         {
-          "test_id":       "T-SG-007",
-          "description":   "All evaluations logged to SQLite audit DB",
-          "type":          "integration",
-          "result":        "PASS",
-          "batch":         "PR-4",
+          "test_id": "T-SG-007",
+          "description": "All evaluations logged to SQLite audit DB",
+          "type": "integration",
+          "result": "PASS",
+          "batch": "PR-4",
           "evidence_file": "hoch_skill_audit.db",
-          "notes":         "17 evals logged; all 5 verdict types present in audit log"
+          "notes": "17 evals logged; all 5 verdict types present in audit log"
         },
         {
-          "test_id":       "T-SG-008",
-          "description":   "POST /api/v1/skills/evaluate live endpoint returns correct verdict",
-          "type":          "e2e",
-          "result":        "PASS",
-          "batch":         "PR-4",
+          "test_id": "T-SG-008",
+          "description": "POST /api/v1/skills/evaluate live endpoint returns correct verdict",
+          "type": "e2e",
+          "result": "PASS",
+          "batch": "PR-4",
           "evidence_file": null,
-          "notes":         "Verified via curl: ALLOWED, REQUIRES_APPROVAL, BLOCKED, UNREGISTERED all confirmed via live endpoint"
+          "notes": "Verified via curl: ALLOWED, REQUIRES_APPROVAL, BLOCKED, UNREGISTERED all confirmed via live endpoint"
         }
       ],
       "evidence_artifacts": [
@@ -265,247 +273,265 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "RUNTIME-001",
-      "name":        "Runtime Policy Enforcement (full P2 gate)",
-      "domain":      "ACCESS",
-      "pert_ref":    "P2",
-      "gap_ref":     "GAP-003",
-      "status":      "TESTED",
+      "control_id": "RUNTIME-001",
+      "name": "Runtime Policy Enforcement (full P2 gate)",
+      "domain": "ACCESS",
+      "pert_ref": "P2",
+      "gap_ref": "GAP-003",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-RT-001",
-          "description":   "Agent invoking skill routes through /api/v1/skills/evaluate before execution",
-          "type":          "integration",
-          "result":        "PASS",
-          "batch":         "PR-7",
+          "test_id": "T-RT-001",
+          "description": "Agent invoking skill routes through /api/v1/skills/evaluate before execution",
+          "type": "integration",
+          "result": "PASS",
+          "batch": "PR-7",
           "evidence_file": "backend/main.py",
-          "notes":         "Verified: agent task dispatch intercepts and evaluates capability against Skill Gate dynamically."
+          "notes": "Verified: agent task dispatch intercepts and evaluates capability against Skill Gate dynamically."
         }
       ],
-      "evidence_artifacts": ["backend/skill_gate.py", "backend/main.py"],
+      "evidence_artifacts": [
+        "backend/skill_gate.py",
+        "backend/main.py"
+      ],
       "evidence_present": true,
       "truth": "LIVE"
     },
     {
-      "control_id":  "PORT-001",
-      "name":        "Swarm Port Hardening (localhost-only binding)",
-      "domain":      "NETWORK",
-      "pert_ref":    "P4",
-      "gap_ref":     "GAP-008",
-      "status":      "TESTED",
+      "control_id": "PORT-001",
+      "name": "Swarm Port Hardening (localhost-only binding)",
+      "domain": "NETWORK",
+      "pert_ref": "P4",
+      "gap_ref": "GAP-008",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-PT-001",
-          "description":   "lsof confirms port 8000 bound to 127.0.0.1 only",
-          "type":          "config_validation",
-          "result":        "PASS",
-          "batch":         "PR-3",
+          "test_id": "T-PT-001",
+          "description": "lsof confirms port 8000 bound to 127.0.0.1 only",
+          "type": "config_validation",
+          "result": "PASS",
+          "batch": "PR-3",
           "evidence_file": "config/port_hardening_audit.json",
-          "notes":         "Real lsof audit: 127.0.0.1:8000 confirmed. MacBook Pro (ALPHA node)."
+          "notes": "Real lsof audit: 127.0.0.1:8000 confirmed. MacBook Pro (ALPHA node)."
         },
         {
-          "test_id":       "T-PT-002",
-          "description":   "lsof confirms port 3000 bound to 127.0.0.1 only",
-          "type":          "config_validation",
-          "result":        "PASS",
-          "batch":         "PR-3",
+          "test_id": "T-PT-002",
+          "description": "lsof confirms port 3000 bound to 127.0.0.1 only",
+          "type": "config_validation",
+          "result": "PASS",
+          "batch": "PR-3",
           "evidence_file": "config/port_hardening_audit.json",
-          "notes":         "Real lsof audit: 127.0.0.1:3000 confirmed. MacBook Pro (ALPHA node)."
+          "notes": "Real lsof audit: 127.0.0.1:3000 confirmed. MacBook Pro (ALPHA node)."
         },
         {
-          "test_id":       "T-PT-003",
-          "description":   "7 non-swarm Python/Node processes LAN-exposed: identified, approved, or terminated",
-          "type":          "manual",
-          "result":        "PASS",
-          "batch":         "PR-7",
+          "test_id": "T-PT-003",
+          "description": "7 non-swarm Python/Node processes LAN-exposed: identified, approved, or terminated",
+          "type": "manual",
+          "result": "PASS",
+          "batch": "PR-7",
           "evidence_file": "config/port_hardening_audit.json",
-          "notes":         "Verified: all 11 non-swarm LAN ports have been identified and operator-approved/accepted."
+          "notes": "Verified: all 11 non-swarm LAN ports have been identified and operator-approved/accepted."
         }
       ],
-      "evidence_artifacts": ["config/port_hardening_audit.json"],
+      "evidence_artifacts": [
+        "config/port_hardening_audit.json"
+      ],
       "evidence_present": true,
       "truth": "LIVE"
     },
     {
-      "control_id":  "LAN-001",
-      "name":        "LAN Egress / Approval Gate",
-      "domain":      "NETWORK",
-      "pert_ref":    "P4",
-      "gap_ref":     "GAP-008",
-      "status":      "TESTED",
+      "control_id": "LAN-001",
+      "name": "LAN Egress / Approval Gate",
+      "domain": "NETWORK",
+      "pert_ref": "P4",
+      "gap_ref": "GAP-008",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-LAN-001",
-          "description":   "LAN egress policy documented and applied to swarm ports",
-          "type":          "config_validation",
-          "result":        "PASS",
-          "batch":         "PR-3",
+          "test_id": "T-LAN-001",
+          "description": "LAN egress policy documented and applied to swarm ports",
+          "type": "config_validation",
+          "result": "PASS",
+          "batch": "PR-3",
           "evidence_file": "config/port_hardening_audit.json",
-          "notes":         "Policy=REQUIRES_OPERATOR_APPROVAL for LAN egress. Applied to swarm processes."
+          "notes": "Policy=REQUIRES_OPERATOR_APPROVAL for LAN egress. Applied to swarm processes."
         },
         {
-          "test_id":       "T-LAN-002",
-          "description":   "All non-swarm LAN ports documented with action required",
-          "type":          "config_validation",
-          "result":        "PASS",
-          "batch":         "PR-7",
+          "test_id": "T-LAN-002",
+          "description": "All non-swarm LAN ports documented with action required",
+          "type": "config_validation",
+          "result": "PASS",
+          "batch": "PR-7",
           "evidence_file": "config/port_hardening_audit.json",
-          "notes":         "Verified: all 11 non-swarm LAN ports are dispositioned and operator-approved."
+          "notes": "Verified: all 11 non-swarm LAN ports are dispositioned and operator-approved."
         }
       ],
-      "evidence_artifacts": ["config/port_hardening_audit.json"],
+      "evidence_artifacts": [
+        "config/port_hardening_audit.json"
+      ],
       "evidence_present": true,
       "truth": "LIVE"
     },
     {
-      "control_id":  "EPHEMERAL-001",
-      "name":        "Worker Disposability (ephemeral execution)",
-      "domain":      "EPHEMERAL",
-      "pert_ref":    "P1",
-      "gap_ref":     "GAP-001",
-      "status":      "TESTED",
+      "control_id": "EPHEMERAL-001",
+      "name": "Worker Disposability (ephemeral execution)",
+      "domain": "EPHEMERAL",
+      "pert_ref": "P1",
+      "gap_ref": "GAP-001",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-EP-001",
-          "description":   "Agent execution uses transient/ephemeral worker environments (no persistent agent context)",
-          "type":          "architecture",
-          "result":        "PASS",
-          "batch":         "PR-3",
+          "test_id": "T-EP-001",
+          "description": "Agent execution uses transient/ephemeral worker environments (no persistent agent context)",
+          "type": "architecture",
+          "result": "PASS",
+          "batch": "PR-3",
           "evidence_file": "config/hoch_northstar_controls.json",
-          "notes":         "Doctrine sealed. Runtime TTL enforcement wired and verified."
+          "notes": "Doctrine sealed. Runtime TTL enforcement wired and verified."
         },
         {
-          "test_id":       "T-EP-002",
-          "description":   "Agent process terminates after task completion (ephemeral TTL)",
-          "type":          "integration",
-          "result":        "PASS",
-          "batch":         "PR-7",
+          "test_id": "T-EP-002",
+          "description": "Agent process terminates after task completion (ephemeral TTL)",
+          "type": "integration",
+          "result": "PASS",
+          "batch": "PR-7",
           "evidence_file": "backend/agent_runner.py",
-          "notes":         "Verified: agent runner enforces thread-level timeout TTL constraints during execution."
+          "notes": "Verified: agent runner enforces thread-level timeout TTL constraints during execution."
         }
       ],
-      "evidence_artifacts": ["artifacts/qa/northstar_doctrine.md", "config/hoch_northstar_controls.json", "backend/agent_runner.py"],
+      "evidence_artifacts": [
+        "artifacts/qa/northstar_doctrine.md",
+        "config/hoch_northstar_controls.json",
+        "backend/agent_runner.py"
+      ],
       "evidence_present": true,
       "truth": "LIVE"
     },
     {
-      "control_id":  "EPHEMERAL-002",
-      "name":        "Agent Process TTL Configuration",
-      "domain":      "EPHEMERAL",
-      "pert_ref":    "P1",
-      "gap_ref":     "GAP-001",
-      "status":      "TESTED",
+      "control_id": "EPHEMERAL-002",
+      "name": "Agent Process TTL Configuration",
+      "domain": "EPHEMERAL",
+      "pert_ref": "P1",
+      "gap_ref": "GAP-001",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-EP-003",
-          "description":   "Worker profiles define ephemeral_policy per node",
-          "type":          "config_validation",
-          "result":        "PASS",
-          "batch":         "PR-2",
+          "test_id": "T-EP-003",
+          "description": "Worker profiles define ephemeral_policy per node",
+          "type": "config_validation",
+          "result": "PASS",
+          "batch": "PR-2",
           "evidence_file": "config/cluster_worker_profiles.json",
-          "notes":         "All 5 nodes have ephemeral_policy defined in worker profiles."
+          "notes": "All 5 nodes have ephemeral_policy defined in worker profiles."
         },
         {
-          "test_id":       "T-EP-004",
-          "description":   "ephemeral_policy enforced at agent process spawn time",
-          "type":          "integration",
-          "result":        "PASS",
-          "batch":         "PR-7",
+          "test_id": "T-EP-004",
+          "description": "ephemeral_policy enforced at agent process spawn time",
+          "type": "integration",
+          "result": "PASS",
+          "batch": "PR-7",
           "evidence_file": "backend/main.py",
-          "notes":         "Verified: task dispatch resolves node-specific TTL config and passes it to agent runner."
+          "notes": "Verified: task dispatch resolves node-specific TTL config and passes it to agent runner."
         }
       ],
-      "evidence_artifacts": ["config/cluster_worker_profiles.json", "backend/main.py"],
+      "evidence_artifacts": [
+        "config/cluster_worker_profiles.json",
+        "backend/main.py"
+      ],
       "evidence_present": true,
       "truth": "LIVE"
     },
     {
-      "control_id":  "QA-MATRIX-001",
-      "name":        "QA Evidence Matrix (this document)",
-      "domain":      "AUDIT",
-      "pert_ref":    "P5",
-      "gap_ref":     "GAP-004",
-      "status":      "COMPLETE",
+      "control_id": "QA-MATRIX-001",
+      "name": "QA Evidence Matrix (this document)",
+      "domain": "AUDIT",
+      "pert_ref": "P5",
+      "gap_ref": "GAP-004",
+      "status": "COMPLETE",
       "tests": [
         {
-          "test_id":       "T-QM-001",
-          "description":   "config/qa_evidence_matrix.json exists, is valid JSON, and maps all 15 controls",
-          "type":          "config_validation",
-          "result":        "PASS",
-          "batch":         "PR-5",
+          "test_id": "T-QM-001",
+          "description": "config/qa_evidence_matrix.json exists, is valid JSON, and maps all 15 controls",
+          "type": "config_validation",
+          "result": "PASS",
+          "batch": "PR-5",
           "evidence_file": "config/qa_evidence_matrix.json",
-          "notes":         "This file. 15 controls mapped, 30 tests catalogued, evidence artifacts linked."
+          "notes": "This file. 15 controls mapped, 30 tests catalogued, evidence artifacts linked."
         },
         {
-          "test_id":       "T-QM-002",
-          "description":   "GET /api/v1/production-readiness reads qa_evidence_matrix.json and surfaces GAP-004 status",
-          "type":          "integration",
-          "result":        "PASS",
-          "batch":         "PR-5",
+          "test_id": "T-QM-002",
+          "description": "GET /api/v1/production-readiness reads qa_evidence_matrix.json and surfaces GAP-004 status",
+          "type": "integration",
+          "result": "PASS",
+          "batch": "PR-5",
           "evidence_file": "config/qa_evidence_matrix.json",
-          "notes":         "Verified: gap004_status=IN_PROGRESS from matrix summary"
+          "notes": "Verified: gap004_status=IN_PROGRESS from matrix summary"
         }
       ],
-      "evidence_artifacts": ["config/qa_evidence_matrix.json"],
+      "evidence_artifacts": [
+        "config/qa_evidence_matrix.json"
+      ],
       "evidence_present": true,
       "truth": "LIVE"
     },
     {
-      "control_id":  "EVIDENCE-001",
-      "name":        "Evidence Traceability (controls → tests → artifacts)",
-      "domain":      "AUDIT",
-      "pert_ref":    "P5",
-      "gap_ref":     "GAP-004",
-      "status":      "IN_PROGRESS",
+      "control_id": "EVIDENCE-001",
+      "name": "Evidence Traceability (controls \u2192 tests \u2192 artifacts)",
+      "domain": "AUDIT",
+      "pert_ref": "P5",
+      "gap_ref": "GAP-004",
+      "status": "IN_PROGRESS",
       "tests": [
         {
-          "test_id":       "T-EV-001",
-          "description":   "Every COMPLETE/TESTED control has at least one evidence_artifact linked",
-          "type":          "config_validation",
-          "result":        "PASS",
-          "batch":         "PR-5",
+          "test_id": "T-EV-001",
+          "description": "Every COMPLETE/TESTED control has at least one evidence_artifact linked",
+          "type": "config_validation",
+          "result": "PASS",
+          "batch": "PR-5",
           "evidence_file": "config/qa_evidence_matrix.json",
-          "notes":         "Verified: all TESTED controls have evidence_artifacts populated"
+          "notes": "Verified: all TESTED controls have evidence_artifacts populated"
         },
         {
-          "test_id":       "T-EV-002",
-          "description":   "All PENDING tests have pending_resolution notes",
-          "type":          "config_validation",
-          "result":        "PASS",
-          "batch":         "PR-5",
+          "test_id": "T-EV-002",
+          "description": "All PENDING tests have pending_resolution notes",
+          "type": "config_validation",
+          "result": "PASS",
+          "batch": "PR-5",
           "evidence_file": "config/qa_evidence_matrix.json",
-          "notes":         "Verified: PARTIAL controls carry pending_resolution strings"
+          "notes": "Verified: PARTIAL controls carry pending_resolution strings"
         },
         {
-          "test_id":       "T-EV-003",
-          "description":   "Evidence artifacts exist on disk (non-empty files)",
-          "type":          "integration",
-          "result":        "PASS",
-          "batch":         "P9",
+          "test_id": "T-EV-003",
+          "description": "Evidence artifacts exist on disk (non-empty files)",
+          "type": "integration",
+          "result": "PASS",
+          "batch": "P9",
           "evidence_file": "dist/attestations/",
-          "notes":         "Verified: all evidence files exist on disk with valid checksums."
+          "notes": "Verified: all evidence files exist on disk with valid checksums."
         }
       ],
-      "evidence_artifacts": ["config/qa_evidence_matrix.json"],
+      "evidence_artifacts": [
+        "config/qa_evidence_matrix.json"
+      ],
       "evidence_present": true,
       "truth": "LIVE"
     },
     {
-      "control_id":  "E2E-AUDIT-001",
-      "name":        "End-to-End Audit Run",
-      "domain":      "AUDIT",
-      "pert_ref":    "P9",
-      "gap_ref":     "GAP-010",
-      "status":      "TESTED",
+      "control_id": "E2E-AUDIT-001",
+      "name": "End-to-End Audit Run",
+      "domain": "AUDIT",
+      "pert_ref": "P9",
+      "gap_ref": "GAP-010",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-E2E-001",
-          "description":   "Full swarm lifecycle: task submitted → skill gate → approval gate → execution → ledger entry",
-          "type":          "e2e",
-          "result":        "PASS",
-          "batch":         "P9",
+          "test_id": "T-E2E-001",
+          "description": "Full swarm lifecycle: task submitted \u2192 skill gate \u2192 approval gate \u2192 execution \u2192 ledger entry",
+          "type": "e2e",
+          "result": "PASS",
+          "batch": "P9",
           "evidence_file": "dist/attestations/release_seal_attestation_bundle_manifest.json",
-          "notes":         "Verified: complete task execution and attestation bundle generation."
+          "notes": "Verified: complete task execution and attestation bundle generation."
         }
       ],
       "evidence_artifacts": [
@@ -515,21 +541,21 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "GO-NOGO-001",
-      "name":        "Go/No-Go Gate (final production verdict)",
-      "domain":      "AUDIT",
-      "pert_ref":    "P9",
-      "gap_ref":     "GAP-010",
-      "status":      "TESTED",
+      "control_id": "GO-NOGO-001",
+      "name": "Go/No-Go Gate (final production verdict)",
+      "domain": "AUDIT",
+      "pert_ref": "P9",
+      "gap_ref": "GAP-010",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-GNG-001",
-          "description":   "All HIGH gaps at RESOLVED; E2E audit passes; operator signs off",
-          "type":          "manual",
-          "result":        "PASS",
-          "batch":         "P9",
+          "test_id": "T-GNG-001",
+          "description": "All HIGH gaps at RESOLVED; E2E audit passes; operator signs off",
+          "type": "manual",
+          "result": "PASS",
+          "batch": "P9",
           "evidence_file": "config/release_authorization.json",
-          "notes":         "Verified: all high open gaps resolved, final readiness score is 100/100, and operator release_authorization.json is signed off."
+          "notes": "Verified: all high open gaps resolved, final readiness score is 100/100, and operator release_authorization.json is signed off."
         }
       ],
       "evidence_artifacts": [
@@ -541,30 +567,30 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "EVIDENCE-ARCHIVE-001",
-      "name":        "Release Evidence Archive & Preview",
-      "domain":      "AUDIT",
-      "pert_ref":    "P5",
-      "gap_ref":     "GAP-004",
-      "status":      "TESTED",
+      "control_id": "EVIDENCE-ARCHIVE-001",
+      "name": "Release Evidence Archive & Preview",
+      "domain": "AUDIT",
+      "pert_ref": "P5",
+      "gap_ref": "GAP-004",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-EA-001",
-          "description":   "GET /api/v1/release/evidence/archive/preview scans, indices, and simulated checksums retained files",
-          "type":          "smoke",
-          "result":        "PASS",
-          "batch":         "PR-5",
+          "test_id": "T-EA-001",
+          "description": "GET /api/v1/release/evidence/archive/preview scans, indices, and simulated checksums retained files",
+          "type": "smoke",
+          "result": "PASS",
+          "batch": "PR-5",
           "evidence_file": null,
-          "notes":         "Verified: returns calculated checksum, planned path, and categorization counts"
+          "notes": "Verified: returns calculated checksum, planned path, and categorization counts"
         },
         {
-          "test_id":       "T-EA-002",
-          "description":   "E2E calculates archive preview, renders warnings, and exports JSON/Markdown manifests",
-          "type":          "integration",
-          "result":        "PASS",
-          "batch":         "PR-5",
+          "test_id": "T-EA-002",
+          "description": "E2E calculates archive preview, renders warnings, and exports JSON/Markdown manifests",
+          "type": "integration",
+          "result": "PASS",
+          "batch": "PR-5",
           "evidence_file": "artifacts/qa/release-evidence-archive-preview.png",
-          "notes":         "Verified: Playwright test navigates dashboard, clicks Calculate Preview, and checks panel outputs"
+          "notes": "Verified: Playwright test navigates dashboard, clicks Calculate Preview, and checks panel outputs"
         }
       ],
       "evidence_artifacts": [
@@ -577,30 +603,30 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "EVIDENCE-ARCHIVE-002",
-      "name":        "Release Evidence Archive Builder & Dry Run",
-      "domain":      "AUDIT",
-      "pert_ref":    "P5",
-      "gap_ref":     "GAP-004",
-      "status":      "TESTED",
+      "control_id": "EVIDENCE-ARCHIVE-002",
+      "name": "Release Evidence Archive Builder & Dry Run",
+      "domain": "AUDIT",
+      "pert_ref": "P5",
+      "gap_ref": "GAP-004",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-EA-003",
-          "description":   "GET /api/v1/release/evidence/archive/build-plan returning ordered operations",
-          "type":          "smoke",
-          "result":        "PASS",
-          "batch":         "PR-5",
+          "test_id": "T-EA-003",
+          "description": "GET /api/v1/release/evidence/archive/build-plan returning ordered operations",
+          "type": "smoke",
+          "result": "PASS",
+          "batch": "PR-5",
           "evidence_file": null,
-          "notes":         "Verified: returns ordered list of archive steps, size limits, and blockages"
+          "notes": "Verified: returns ordered list of archive steps, size limits, and blockages"
         },
         {
-          "test_id":       "T-EA-004",
-          "description":   "E2E verifying planned archive steps, size limits, and blockages",
-          "type":          "integration",
-          "result":        "PASS",
-          "batch":         "PR-5",
+          "test_id": "T-EA-004",
+          "description": "E2E verifying planned archive steps, size limits, and blockages",
+          "type": "integration",
+          "result": "PASS",
+          "batch": "PR-5",
           "evidence_file": "artifacts/qa/release-evidence-archive-build-plan.png",
-          "notes":         "Verified: Playwright test checks manifest paths and build plan checksums"
+          "notes": "Verified: Playwright test checks manifest paths and build plan checksums"
         }
       ],
       "evidence_artifacts": [
@@ -613,30 +639,30 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "EVIDENCE-ARCHIVE-003",
-      "name":        "Release Evidence Archive Seal Preview",
-      "domain":      "AUDIT",
-      "pert_ref":    "P5",
-      "gap_ref":     "GAP-004",
-      "status":      "TESTED",
+      "control_id": "EVIDENCE-ARCHIVE-003",
+      "name": "Release Evidence Archive Seal Preview",
+      "domain": "AUDIT",
+      "pert_ref": "P5",
+      "gap_ref": "GAP-004",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-EA-005",
-          "description":   "GET /api/v1/release/evidence/archive/seal-preview generating secure custody metadata and checksums",
-          "type":          "smoke",
-          "result":        "PASS",
-          "batch":         "PR-5",
+          "test_id": "T-EA-005",
+          "description": "GET /api/v1/release/evidence/archive/seal-preview generating secure custody metadata and checksums",
+          "type": "smoke",
+          "result": "PASS",
+          "batch": "PR-5",
           "evidence_file": null,
-          "notes":         "Verified: returns SHA-256 seal_id, archive_id, operator, and status READY"
+          "notes": "Verified: returns SHA-256 seal_id, archive_id, operator, and status READY"
         },
         {
-          "test_id":       "T-EA-006",
-          "description":   "E2E verifying seal details and zero-mutation safety guidelines",
-          "type":          "integration",
-          "result":        "PASS",
-          "batch":         "PR-5",
+          "test_id": "T-EA-006",
+          "description": "E2E verifying seal details and zero-mutation safety guidelines",
+          "type": "integration",
+          "result": "PASS",
+          "batch": "PR-5",
           "evidence_file": "artifacts/qa/release-evidence-archive-seal-preview.png",
-          "notes":         "Verified: Playwright test checks custody seal details and no mutation of disk files"
+          "notes": "Verified: Playwright test checks custody seal details and no mutation of disk files"
         }
       ],
       "evidence_artifacts": [
@@ -649,30 +675,30 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "DAST-UI-NEGATIVE-001",
-      "name":        "DAST & Negative UI Testing for Unsigned Status",
-      "domain":      "AUDIT",
-      "pert_ref":    "P5",
-      "gap_ref":     "GAP-004",
-      "status":      "TESTED",
+      "control_id": "DAST-UI-NEGATIVE-001",
+      "name": "DAST & Negative UI Testing for Unsigned Status",
+      "domain": "AUDIT",
+      "pert_ref": "P5",
+      "gap_ref": "GAP-004",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-DA-001",
-          "description":   "XSS sanitization in Operator Ledger ledger and validation inputs",
-          "type":          "smoke",
-          "result":        "PASS",
-          "batch":         "PR-5",
+          "test_id": "T-DA-001",
+          "description": "XSS sanitization in Operator Ledger ledger and validation inputs",
+          "type": "smoke",
+          "result": "PASS",
+          "batch": "PR-5",
           "evidence_file": null,
-          "notes":         "Verified: input justifications are validated and escaping is applied correctly"
+          "notes": "Verified: input justifications are validated and escaping is applied correctly"
         },
         {
-          "test_id":       "T-DA-002",
-          "description":   "DAST spec validating invalid justification reasons, scope rejections, and double-spent blocks",
-          "type":          "integration",
-          "result":        "PASS",
-          "batch":         "PR-5",
+          "test_id": "T-DA-002",
+          "description": "DAST spec validating invalid justification reasons, scope rejections, and double-spent blocks",
+          "type": "integration",
+          "result": "PASS",
+          "batch": "PR-5",
           "evidence_file": "artifacts/qa/dast-xss-ledger-escaped.png",
-          "notes":         "Verified: Playwright checks invalid reasons blocked, scope rejections, and replay protection"
+          "notes": "Verified: Playwright checks invalid reasons blocked, scope rejections, and replay protection"
         }
       ],
       "evidence_artifacts": [
@@ -685,30 +711,30 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "CREWAI-ADAPTER-001",
-      "name":        "CrewAI Local Execution Adapter",
-      "domain":      "GOVERNANCE",
-      "pert_ref":    "Batch-Prompt-2",
-      "gap_ref":     "GAP-003",
-      "status":      "TESTED",
+      "control_id": "CREWAI-ADAPTER-001",
+      "name": "CrewAI Local Execution Adapter",
+      "domain": "GOVERNANCE",
+      "pert_ref": "Batch-Prompt-2",
+      "gap_ref": "GAP-003",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-CA-001",
-          "description":   "CrewAI execution adapter handles run logging and SQLite ledger bridge",
-          "type":          "smoke",
-          "result":        "PASS",
-          "batch":         "PR-5-Audit",
+          "test_id": "T-CA-001",
+          "description": "CrewAI execution adapter handles run logging and SQLite ledger bridge",
+          "type": "smoke",
+          "result": "PASS",
+          "batch": "PR-5-Audit",
           "evidence_file": "audit_report_4e44f3cb.md",
-          "notes":         "Verified by tests/test_crew_smoke.py and tests/test_run_report.py"
+          "notes": "Verified by tests/test_crew_smoke.py and tests/test_run_report.py"
         },
         {
-          "test_id":       "T-CA-002",
-          "description":   "Adapter CLI entry points (run_crew, train, replay, test, run_with_trigger) correctly parse arguments",
-          "type":          "smoke",
-          "result":        "PASS",
-          "batch":         "PR-5-Audit",
+          "test_id": "T-CA-002",
+          "description": "Adapter CLI entry points (run_crew, train, replay, test, run_with_trigger) correctly parse arguments",
+          "type": "smoke",
+          "result": "PASS",
+          "batch": "PR-5-Audit",
           "evidence_file": "implementation_plan_4e44f3cb.md",
-          "notes":         "Verified by tests/test_entry_points.py"
+          "notes": "Verified by tests/test_entry_points.py"
         }
       ],
       "evidence_artifacts": [
@@ -720,30 +746,30 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "ENV-PREFLIGHT-001",
-      "name":        "Environment Preflight Gating",
-      "domain":      "GOVERNANCE",
-      "pert_ref":    "Batch-Prompt-3",
-      "gap_ref":     "GAP-003",
-      "status":      "TESTED",
+      "control_id": "ENV-PREFLIGHT-001",
+      "name": "Environment Preflight Gating",
+      "domain": "GOVERNANCE",
+      "pert_ref": "Batch-Prompt-3",
+      "gap_ref": "GAP-003",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-EPF-001",
-          "description":   "Preflight gating checks .env existence, model configuration, and local Ollama server reachability",
-          "type":          "smoke",
-          "result":        "PASS",
-          "batch":         "PR-5-Audit",
+          "test_id": "T-EPF-001",
+          "description": "Preflight gating checks .env existence, model configuration, and local Ollama server reachability",
+          "type": "smoke",
+          "result": "PASS",
+          "batch": "PR-5-Audit",
           "evidence_file": "implementation_plan_4e44f3cb.md",
-          "notes":         "Verified by tests/test_trial_preflight.py"
+          "notes": "Verified by tests/test_trial_preflight.py"
         },
         {
-          "test_id":       "T-EPF-002",
-          "description":   "Preflight warning triggers when baseline run reports are absent",
-          "type":          "smoke",
-          "result":        "PASS",
-          "batch":         "PR-5-Audit",
+          "test_id": "T-EPF-002",
+          "description": "Preflight warning triggers when baseline run reports are absent",
+          "type": "smoke",
+          "result": "PASS",
+          "batch": "PR-5-Audit",
           "evidence_file": "implementation_plan_4e44f3cb.md",
-          "notes":         "Verified by tests/test_trial_preflight.py"
+          "notes": "Verified by tests/test_trial_preflight.py"
         }
       ],
       "evidence_artifacts": [
@@ -754,21 +780,21 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "MANIFEST-ALIGN-001",
-      "name":        "Agent Manifest Compliance",
-      "domain":      "GOVERNANCE",
-      "pert_ref":    "Batch-Prompt-2",
-      "gap_ref":     "GAP-003",
-      "status":      "TESTED",
+      "control_id": "MANIFEST-ALIGN-001",
+      "name": "Agent Manifest Compliance",
+      "domain": "GOVERNANCE",
+      "pert_ref": "Batch-Prompt-2",
+      "gap_ref": "GAP-003",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-MA-001",
-          "description":   "Runtime checks verify agent definitions align with yaml manifest and enforce agent limits",
-          "type":          "smoke",
-          "result":        "PASS",
-          "batch":         "PR-5-Audit",
+          "test_id": "T-MA-001",
+          "description": "Runtime checks verify agent definitions align with yaml manifest and enforce agent limits",
+          "type": "smoke",
+          "result": "PASS",
+          "batch": "PR-5-Audit",
           "evidence_file": "qa_test_strategy_4e44f3cb.md",
-          "notes":         "Verified by tests/test_manifest_alignment.py"
+          "notes": "Verified by tests/test_manifest_alignment.py"
         }
       ],
       "evidence_artifacts": [
@@ -779,39 +805,39 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "QUALITY-GATE-001",
-      "name":        "Operational Quality & RC Gating",
-      "domain":      "AUDIT",
-      "pert_ref":    "P5",
-      "gap_ref":     "GAP-004",
-      "status":      "TESTED",
+      "control_id": "QUALITY-GATE-001",
+      "name": "Operational Quality & RC Gating",
+      "domain": "AUDIT",
+      "pert_ref": "P5",
+      "gap_ref": "GAP-004",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-QG-001",
-          "description":   "Release candidate builder compiles manifests, checksums, and package reports",
-          "type":          "integration",
-          "result":        "PASS",
-          "batch":         "PR-5-Audit",
+          "test_id": "T-QG-001",
+          "description": "Release candidate builder compiles manifests, checksums, and package reports",
+          "type": "integration",
+          "result": "PASS",
+          "batch": "PR-5-Audit",
           "evidence_file": "qa_test_strategy_4e44f3cb.md",
-          "notes":         "Verified by tests/test_release_candidate.py and tests/test_rc_inspector.py"
+          "notes": "Verified by tests/test_release_candidate.py and tests/test_rc_inspector.py"
         },
         {
-          "test_id":       "T-QG-002",
-          "description":   "Quality gate inspects and compares baseline run logs to ensure no performance/security regressions",
-          "type":          "integration",
-          "result":        "PASS",
-          "batch":         "PR-5-Audit",
+          "test_id": "T-QG-002",
+          "description": "Quality gate inspects and compares baseline run logs to ensure no performance/security regressions",
+          "type": "integration",
+          "result": "PASS",
+          "batch": "PR-5-Audit",
           "evidence_file": "gap_analysis_4e44f3cb.md",
-          "notes":         "Verified by tests/test_compare_reports.py and tests/test_quality_gate.py"
+          "notes": "Verified by tests/test_compare_reports.py and tests/test_quality_gate.py"
         },
         {
-          "test_id":       "T-QG-003",
-          "description":   "Redaction and signature validation checks verify artifact safety before release sealing",
-          "type":          "integration",
-          "result":        "PASS",
-          "batch":         "PR-5-Audit",
+          "test_id": "T-QG-003",
+          "description": "Redaction and signature validation checks verify artifact safety before release sealing",
+          "type": "integration",
+          "result": "PASS",
+          "batch": "PR-5-Audit",
           "evidence_file": "audit_report_4e44f3cb.md",
-          "notes":         "Verified by tests/test_artifact_validation.py"
+          "notes": "Verified by tests/test_artifact_validation.py"
         }
       ],
       "evidence_artifacts": [
@@ -823,39 +849,39 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "MODEL-ROUTER-001",
-      "name":        "Local-First Execution Hierarchy",
-      "domain":      "MODEL_ROUTER",
-      "pert_ref":    "Batch-PR-7A",
-      "gap_ref":     "GAP-003",
-      "status":      "TESTED",
+      "control_id": "MODEL-ROUTER-001",
+      "name": "Local-First Execution Hierarchy",
+      "domain": "MODEL_ROUTER",
+      "pert_ref": "Batch-PR-7A",
+      "gap_ref": "GAP-003",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-MR-001",
-          "description":   "Verify registry parses models configuration from config/models.yaml",
-          "type":          "unit",
-          "result":        "PASS",
-          "batch":         "PR-7A",
+          "test_id": "T-MR-001",
+          "description": "Verify registry parses models configuration from config/models.yaml",
+          "type": "unit",
+          "result": "PASS",
+          "batch": "PR-7A",
           "evidence_file": null,
-          "notes":         "Verified by tests/test_model_registry.py"
+          "notes": "Verified by tests/test_model_registry.py"
         },
         {
-          "test_id":       "T-MR-002",
-          "description":   "Verify router tries local provider first and fails closed if offline",
-          "type":          "unit",
-          "result":        "PASS",
-          "batch":         "PR-7A",
+          "test_id": "T-MR-002",
+          "description": "Verify router tries local provider first and fails closed if offline",
+          "type": "unit",
+          "result": "PASS",
+          "batch": "PR-7A",
           "evidence_file": null,
-          "notes":         "Verified by tests/test_model_router_policy.py"
+          "notes": "Verified by tests/test_model_router_policy.py"
         },
         {
-          "test_id":       "T-MR-003",
-          "description":   "Verify run endpoint /api/v1/models/run is registered and functional",
-          "type":          "integration",
-          "result":        "PASS",
-          "batch":         "PR-7A",
+          "test_id": "T-MR-003",
+          "description": "Verify run endpoint /api/v1/models/run is registered and functional",
+          "type": "integration",
+          "result": "PASS",
+          "batch": "PR-7A",
           "evidence_file": null,
-          "notes":         "Verified by scripts/qa/test-model-router-contract.ts"
+          "notes": "Verified by scripts/qa/test-model-router-contract.ts"
         }
       ],
       "evidence_artifacts": [
@@ -867,39 +893,39 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "MODEL-ROUTER-002",
-      "name":        "Paid Model Governance & Escalation Policy",
-      "domain":      "MODEL_ROUTER",
-      "pert_ref":    "Batch-PR-7A",
-      "gap_ref":     "GAP-003",
-      "status":      "TESTED",
+      "control_id": "MODEL-ROUTER-002",
+      "name": "Paid Model Governance & Escalation Policy",
+      "domain": "MODEL_ROUTER",
+      "pert_ref": "Batch-PR-7A",
+      "gap_ref": "GAP-003",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-MR-004",
-          "description":   "Verify escalation validation blocks high-risk keywords",
-          "type":          "unit",
-          "result":        "PASS",
-          "batch":         "PR-7A",
+          "test_id": "T-MR-004",
+          "description": "Verify escalation validation blocks high-risk keywords",
+          "type": "unit",
+          "result": "PASS",
+          "batch": "PR-7A",
           "evidence_file": null,
-          "notes":         "Verified by tests/test_escalation_policy.py"
+          "notes": "Verified by tests/test_escalation_policy.py"
         },
         {
-          "test_id":       "T-MR-005",
-          "description":   "Verify escalation budget caps enforce zero budget",
-          "type":          "unit",
-          "result":        "PASS",
-          "batch":         "PR-7A",
+          "test_id": "T-MR-005",
+          "description": "Verify escalation budget caps enforce zero budget",
+          "type": "unit",
+          "result": "PASS",
+          "batch": "PR-7A",
           "evidence_file": null,
-          "notes":         "Verified by tests/test_escalation_policy.py"
+          "notes": "Verified by tests/test_escalation_policy.py"
         },
         {
-          "test_id":       "T-MR-006",
-          "description":   "Verify escalation policy is loaded and correctly evaluates requests",
-          "type":          "unit",
-          "result":        "PASS",
-          "batch":         "PR-7A",
+          "test_id": "T-MR-006",
+          "description": "Verify escalation policy is loaded and correctly evaluates requests",
+          "type": "unit",
+          "result": "PASS",
+          "batch": "PR-7A",
           "evidence_file": null,
-          "notes":         "Verified by tests/test_escalation_policy.py"
+          "notes": "Verified by tests/test_escalation_policy.py"
         }
       ],
       "evidence_artifacts": [
@@ -910,30 +936,30 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "MODEL-ROUTER-003",
-      "name":        "Model Routing Trust Tier & Skill Gating",
-      "domain":      "MODEL_ROUTER",
-      "pert_ref":    "Batch-PR-7A",
-      "gap_ref":     "GAP-003",
-      "status":      "TESTED",
+      "control_id": "MODEL-ROUTER-003",
+      "name": "Model Routing Trust Tier & Skill Gating",
+      "domain": "MODEL_ROUTER",
+      "pert_ref": "Batch-PR-7A",
+      "gap_ref": "GAP-003",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-MR-007",
-          "description":   "Verify skill evaluation denies DELTA nodes",
-          "type":          "unit",
-          "result":        "PASS",
-          "batch":         "PR-7A",
+          "test_id": "T-MR-007",
+          "description": "Verify skill evaluation denies DELTA nodes",
+          "type": "unit",
+          "result": "PASS",
+          "batch": "PR-7A",
           "evidence_file": null,
-          "notes":         "Verified by tests/test_model_router_policy.py"
+          "notes": "Verified by tests/test_model_router_policy.py"
         },
         {
-          "test_id":       "T-MR-008",
-          "description":   "Verify skill evaluation allows ALPHA/BETA/GAMMA tiers",
-          "type":          "unit",
-          "result":        "PASS",
-          "batch":         "PR-7A",
+          "test_id": "T-MR-008",
+          "description": "Verify skill evaluation allows ALPHA/BETA/GAMMA tiers",
+          "type": "unit",
+          "result": "PASS",
+          "batch": "PR-7A",
           "evidence_file": null,
-          "notes":         "Verified by tests/test_model_router_policy.py"
+          "notes": "Verified by tests/test_model_router_policy.py"
         }
       ],
       "evidence_artifacts": [
@@ -944,30 +970,30 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "MODEL-ROUTER-004",
-      "name":        "Model Routing Audit Ledger",
-      "domain":      "MODEL_ROUTER",
-      "pert_ref":    "Batch-PR-7A",
-      "gap_ref":     "GAP-003",
-      "status":      "TESTED",
+      "control_id": "MODEL-ROUTER-004",
+      "name": "Model Routing Audit Ledger",
+      "domain": "MODEL_ROUTER",
+      "pert_ref": "Batch-PR-7A",
+      "gap_ref": "GAP-003",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-MR-009",
-          "description":   "Verify confidence scorer gives low score for empty output",
-          "type":          "unit",
-          "result":        "PASS",
-          "batch":         "PR-7A",
+          "test_id": "T-MR-009",
+          "description": "Verify confidence scorer gives low score for empty output",
+          "type": "unit",
+          "result": "PASS",
+          "batch": "PR-7A",
           "evidence_file": null,
-          "notes":         "Verified by tests/test_model_router_policy.py"
+          "notes": "Verified by tests/test_model_router_policy.py"
         },
         {
-          "test_id":       "T-MR-010",
-          "description":   "Verify routing decisions are written to JSON Lines audit log",
-          "type":          "unit",
-          "result":        "PASS",
-          "batch":         "PR-7A",
+          "test_id": "T-MR-010",
+          "description": "Verify routing decisions are written to JSON Lines audit log",
+          "type": "unit",
+          "result": "PASS",
+          "batch": "PR-7A",
           "evidence_file": null,
-          "notes":         "Verified by tests/test_model_router_policy.py"
+          "notes": "Verified by tests/test_model_router_policy.py"
         }
       ],
       "evidence_artifacts": [
@@ -978,21 +1004,21 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "KOI-ANIMATION-001",
-      "name":        "Visual Koi Animation Layer & Interaction",
-      "domain":      "FRONTEND",
-      "pert_ref":    "Batch-UI-KOI-1",
-      "gap_ref":     "GAP-004",
-      "status":      "TESTED",
+      "control_id": "KOI-ANIMATION-001",
+      "name": "Visual Koi Animation Layer & Interaction",
+      "domain": "FRONTEND",
+      "pert_ref": "Batch-UI-KOI-1",
+      "gap_ref": "GAP-004",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-KOI-001",
-          "description":   "Verify #koi-pond-layer element, CSS classes, reduced-motion overrides, and JS initialization",
-          "type":          "contract",
-          "result":        "PASS",
-          "batch":         "UI-KOI-1",
+          "test_id": "T-KOI-001",
+          "description": "Verify #koi-pond-layer element, CSS classes, reduced-motion overrides, and JS initialization",
+          "type": "contract",
+          "result": "PASS",
+          "batch": "UI-KOI-1",
           "evidence_file": "artifacts/qa/koi-animation-contract-report.json",
-          "notes":         "Verified via static contract checks"
+          "notes": "Verified via static contract checks"
         }
       ],
       "evidence_artifacts": [
@@ -1005,30 +1031,30 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "LIVE-RUNTIME-001",
-      "name":        "Runtime Process Telemetry Bus",
-      "domain":      "GOVERNANCE",
-      "pert_ref":    "Batch-PR-11",
-      "gap_ref":     "GAP-004",
-      "status":      "TESTED",
+      "control_id": "LIVE-RUNTIME-001",
+      "name": "Runtime Process Telemetry Bus",
+      "domain": "GOVERNANCE",
+      "pert_ref": "Batch-PR-11",
+      "gap_ref": "GAP-004",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-LR-001",
-          "description":   "Verify RuntimeProcessBus successfully appends event records to JSON Lines format",
-          "type":          "unit",
-          "result":        "PASS",
-          "batch":         "PR-11",
+          "test_id": "T-LR-001",
+          "description": "Verify RuntimeProcessBus successfully appends event records to JSON Lines format",
+          "type": "unit",
+          "result": "PASS",
+          "batch": "PR-11",
           "evidence_file": "audit/runtime_process_events.jsonl",
-          "notes":         "Verified: process bus appends and manages events dynamically"
+          "notes": "Verified: process bus appends and manages events dynamically"
         },
         {
-          "test_id":       "T-LR-002",
-          "description":   "Verify RuntimeProcessBus.tail() correctly returns the last N records",
-          "type":          "unit",
-          "result":        "PASS",
-          "batch":         "PR-11",
+          "test_id": "T-LR-002",
+          "description": "Verify RuntimeProcessBus.tail() correctly returns the last N records",
+          "type": "unit",
+          "result": "PASS",
+          "batch": "PR-11",
           "evidence_file": null,
-          "notes":         "Verified: returns correct limit and structure"
+          "notes": "Verified: returns correct limit and structure"
         }
       ],
       "evidence_artifacts": [
@@ -1039,30 +1065,30 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "LIVE-RUNTIME-002",
-      "name":        "24/7 Local Runtime Supervisor",
-      "domain":      "GOVERNANCE",
-      "pert_ref":    "Batch-PR-11",
-      "gap_ref":     "GAP-004",
-      "status":      "TESTED",
+      "control_id": "LIVE-RUNTIME-002",
+      "name": "24/7 Local Runtime Supervisor",
+      "domain": "GOVERNANCE",
+      "pert_ref": "Batch-PR-11",
+      "gap_ref": "GAP-004",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-LR-003",
-          "description":   "Verify LocalRuntimeSupervisor correctly monitors reachable local model hosts",
-          "type":          "unit",
-          "result":        "PASS",
-          "batch":         "PR-11",
+          "test_id": "T-LR-003",
+          "description": "Verify LocalRuntimeSupervisor correctly monitors reachable local model hosts",
+          "type": "unit",
+          "result": "PASS",
+          "batch": "PR-11",
           "evidence_file": null,
-          "notes":         "Verified: local supervisor check_once verifies health status"
+          "notes": "Verified: local supervisor check_once verifies health status"
         },
         {
-          "test_id":       "T-LR-004",
-          "description":   "Verify LocalRuntimeSupervisor heartbeats are logged with correct event type",
-          "type":          "unit",
-          "result":        "PASS",
-          "batch":         "PR-11",
+          "test_id": "T-LR-004",
+          "description": "Verify LocalRuntimeSupervisor heartbeats are logged with correct event type",
+          "type": "unit",
+          "result": "PASS",
+          "batch": "PR-11",
           "evidence_file": "audit/runtime_process_events.jsonl",
-          "notes":         "Verified: health check heartbeats appended to events log"
+          "notes": "Verified: health check heartbeats appended to events log"
         }
       ],
       "evidence_artifacts": [
@@ -1072,21 +1098,21 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "LIVE-RUNTIME-003",
-      "name":        "Live Telemetry API Endpoints",
-      "domain":      "GOVERNANCE",
-      "pert_ref":    "Batch-PR-11",
-      "gap_ref":     "GAP-004",
-      "status":      "TESTED",
+      "control_id": "LIVE-RUNTIME-003",
+      "name": "Live Telemetry API Endpoints",
+      "domain": "GOVERNANCE",
+      "pert_ref": "Batch-PR-11",
+      "gap_ref": "GAP-004",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-LR-005",
-          "description":   "Verify /api/v1/runtime/process/events and /api/v1/runtime/process/animation-state serve telemetry properly",
-          "type":          "integration",
-          "result":        "PASS",
-          "batch":         "PR-11",
+          "test_id": "T-LR-005",
+          "description": "Verify /api/v1/runtime/process/events and /api/v1/runtime/process/animation-state serve telemetry properly",
+          "type": "integration",
+          "result": "PASS",
+          "batch": "PR-11",
           "evidence_file": null,
-          "notes":         "Verified: FastAPI endpoints return correctly formatted telemetry JSON"
+          "notes": "Verified: FastAPI endpoints return correctly formatted telemetry JSON"
         }
       ],
       "evidence_artifacts": [
@@ -1096,21 +1122,21 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "LIVE-RUNTIME-004",
-      "name":        "Visual Telemetry Pond & Canvas Contract",
-      "domain":      "FRONTEND",
-      "pert_ref":    "Batch-PR-11",
-      "gap_ref":     "GAP-004",
-      "status":      "TESTED",
+      "control_id": "LIVE-RUNTIME-004",
+      "name": "Visual Telemetry Pond & Canvas Contract",
+      "domain": "FRONTEND",
+      "pert_ref": "Batch-PR-11",
+      "gap_ref": "GAP-004",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-LR-006",
-          "description":   "Verify frontend elements and canvas draw loops exist and are styled correctly",
-          "type":          "contract",
-          "result":        "PASS",
-          "batch":         "PR-11",
+          "test_id": "T-LR-006",
+          "description": "Verify frontend elements and canvas draw loops exist and are styled correctly",
+          "type": "contract",
+          "result": "PASS",
+          "batch": "PR-11",
           "evidence_file": "artifacts/qa/live-runtime-koi-contract-report.json",
-          "notes":         "Verified: UI contract test passes successfully"
+          "notes": "Verified: UI contract test passes successfully"
         }
       ],
       "evidence_artifacts": [
@@ -1122,30 +1148,30 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "GOOGLE-FRONTIER-001",
-      "name":        "Governed Cloud Escalation Gate",
-      "domain":      "GOVERNANCE",
-      "pert_ref":    "Batch-PR-11",
-      "gap_ref":     "GAP-003",
-      "status":      "TESTED",
+      "control_id": "GOOGLE-FRONTIER-001",
+      "name": "Governed Cloud Escalation Gate",
+      "domain": "GOVERNANCE",
+      "pert_ref": "Batch-PR-11",
+      "gap_ref": "GAP-003",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-GF-001",
-          "description":   "Verify Google Frontier calls fail-closed if escalation is disabled",
-          "type":          "unit",
-          "result":        "PASS",
-          "batch":         "PR-11",
+          "test_id": "T-GF-001",
+          "description": "Verify Google Frontier calls fail-closed if escalation is disabled",
+          "type": "unit",
+          "result": "PASS",
+          "batch": "PR-11",
           "evidence_file": null,
-          "notes":         "Verified: global disable blocks Google AI calls"
+          "notes": "Verified: global disable blocks Google AI calls"
         },
         {
-          "test_id":       "T-GF-002",
-          "description":   "Verify Google Frontier calls fail if missing GOOGLE_API_KEY",
-          "type":          "unit",
-          "result":        "PASS",
-          "batch":         "PR-11",
+          "test_id": "T-GF-002",
+          "description": "Verify Google Frontier calls fail if missing GOOGLE_API_KEY",
+          "type": "unit",
+          "result": "PASS",
+          "batch": "PR-11",
           "evidence_file": null,
-          "notes":         "Verified: key verification blocks calls"
+          "notes": "Verified: key verification blocks calls"
         }
       ],
       "evidence_artifacts": [
@@ -1156,30 +1182,30 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "GOOGLE-FRONTIER-002",
-      "name":        "Escalation Approval Verification",
-      "domain":      "GOVERNANCE",
-      "pert_ref":    "Batch-PR-11",
-      "gap_ref":     "GAP-003",
-      "status":      "TESTED",
+      "control_id": "GOOGLE-FRONTIER-002",
+      "name": "Escalation Approval Verification",
+      "domain": "GOVERNANCE",
+      "pert_ref": "Batch-PR-11",
+      "gap_ref": "GAP-003",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-GF-003",
-          "description":   "Verify escalation is blocked without APPROVED record",
-          "type":          "unit",
-          "result":        "PASS",
-          "batch":         "PR-11",
+          "test_id": "T-GF-003",
+          "description": "Verify escalation is blocked without APPROVED record",
+          "type": "unit",
+          "result": "PASS",
+          "batch": "PR-11",
           "evidence_file": null,
-          "notes":         "Verified: approval-less requests are rejected"
+          "notes": "Verified: approval-less requests are rejected"
         },
         {
-          "test_id":       "T-GF-004",
-          "description":   "Verify expired approvals (TTL > 1 hour) are rejected",
-          "type":          "unit",
-          "result":        "PASS",
-          "batch":         "PR-11",
+          "test_id": "T-GF-004",
+          "description": "Verify expired approvals (TTL > 1 hour) are rejected",
+          "type": "unit",
+          "result": "PASS",
+          "batch": "PR-11",
           "evidence_file": null,
-          "notes":         "Verified: expired approval tokens are blocked"
+          "notes": "Verified: expired approval tokens are blocked"
         }
       ],
       "evidence_artifacts": [
@@ -1190,21 +1216,21 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "GOOGLE-FRONTIER-003",
-      "name":        "Escalation Budget Enforcement",
-      "domain":      "GOVERNANCE",
-      "pert_ref":    "Batch-PR-11",
-      "gap_ref":     "GAP-003",
-      "status":      "TESTED",
+      "control_id": "GOOGLE-FRONTIER-003",
+      "name": "Escalation Budget Enforcement",
+      "domain": "GOVERNANCE",
+      "pert_ref": "Batch-PR-11",
+      "gap_ref": "GAP-003",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-GF-005",
-          "description":   "Verify single-call cost cap check and budget limits check",
-          "type":          "unit",
-          "result":        "PASS",
-          "batch":         "PR-11",
+          "test_id": "T-GF-005",
+          "description": "Verify single-call cost cap check and budget limits check",
+          "type": "unit",
+          "result": "PASS",
+          "batch": "PR-11",
           "evidence_file": null,
-          "notes":         "Verified: prevents cost overruns"
+          "notes": "Verified: prevents cost overruns"
         }
       ],
       "evidence_artifacts": [
@@ -1215,30 +1241,30 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "GOOGLE-FRONTIER-004",
-      "name":        "Cloud Payload Safety Policies",
-      "domain":      "GOVERNANCE",
-      "pert_ref":    "Batch-PR-11",
-      "gap_ref":     "GAP-003",
-      "status":      "TESTED",
+      "control_id": "GOOGLE-FRONTIER-004",
+      "name": "Cloud Payload Safety Policies",
+      "domain": "GOVERNANCE",
+      "pert_ref": "Batch-PR-11",
+      "gap_ref": "GAP-003",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-GF-006",
-          "description":   "Verify high-risk keywords are blocked at the cloud gateway",
-          "type":          "unit",
-          "result":        "PASS",
-          "batch":         "PR-11",
+          "test_id": "T-GF-006",
+          "description": "Verify high-risk keywords are blocked at the cloud gateway",
+          "type": "unit",
+          "result": "PASS",
+          "batch": "PR-11",
           "evidence_file": null,
-          "notes":         "Verified: credentials and destructive keywords blocked"
+          "notes": "Verified: credentials and destructive keywords blocked"
         },
         {
-          "test_id":       "T-GF-007",
-          "description":   "Verify Google Frontier API execution is intercepted and logged",
-          "type":          "integration",
-          "result":        "PASS",
-          "batch":         "PR-11",
+          "test_id": "T-GF-007",
+          "description": "Verify Google Frontier API execution is intercepted and logged",
+          "type": "integration",
+          "result": "PASS",
+          "batch": "PR-11",
           "evidence_file": "audit/runtime_process_events.jsonl",
-          "notes":         "Verified: calls logged in events bus"
+          "notes": "Verified: calls logged in events bus"
         }
       ],
       "evidence_artifacts": [
@@ -1249,21 +1275,21 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "DETECT-ENG-001",
-      "name":        "Detection Event Bus",
-      "domain":      "GOVERNANCE",
-      "pert_ref":    "Batch-PR-13",
-      "gap_ref":     "GAP-004",
-      "status":      "TESTED",
+      "control_id": "DETECT-ENG-001",
+      "name": "Detection Event Bus",
+      "domain": "GOVERNANCE",
+      "pert_ref": "Batch-PR-13",
+      "gap_ref": "GAP-004",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-DE-001",
-          "description":   "Verify DetectionEventBus writes valid JSON Lines format",
-          "type":          "unit",
-          "result":        "PASS",
-          "batch":         "PR-13",
+          "test_id": "T-DE-001",
+          "description": "Verify DetectionEventBus writes valid JSON Lines format",
+          "type": "unit",
+          "result": "PASS",
+          "batch": "PR-13",
           "evidence_file": "audit/detection_events.jsonl",
-          "notes":         "Verified: event bus records normalized security events dynamically"
+          "notes": "Verified: event bus records normalized security events dynamically"
         }
       ],
       "evidence_artifacts": [
@@ -1274,57 +1300,57 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "DETECT-ENG-002",
-      "name":        "SIEM Rules Artifacts",
-      "domain":      "GOVERNANCE",
-      "pert_ref":    "Batch-PR-13",
-      "gap_ref":     "GAP-004",
-      "status":      "TESTED",
+      "control_id": "DETECT-ENG-002",
+      "name": "SIEM Rules Artifacts",
+      "domain": "GOVERNANCE",
+      "pert_ref": "Batch-PR-13",
+      "gap_ref": "GAP-004",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-DE-002",
-          "description":   "Verify rules inventory contains Splunk, Sigma, Elastic, and LogQL rules",
-          "type":          "unit",
-          "result":        "PASS",
-          "batch":         "PR-13",
+          "test_id": "T-DE-002",
+          "description": "Verify rules inventory contains Splunk, Sigma, Elastic, and LogQL rules",
+          "type": "unit",
+          "result": "PASS",
+          "batch": "PR-13",
           "evidence_file": null,
-          "notes":         "Verified: rules inventory endpoint and files present"
+          "notes": "Verified: rules inventory endpoint and files present"
         },
         {
-          "test_id":       "T-DE-003",
-          "description":   "Verify Splunk rules exist and are structured",
-          "type":          "unit",
-          "result":        "PASS",
-          "batch":         "PR-13",
+          "test_id": "T-DE-003",
+          "description": "Verify Splunk rules exist and are structured",
+          "type": "unit",
+          "result": "PASS",
+          "batch": "PR-13",
           "evidence_file": null,
-          "notes":         "Verified: Splunk rules exist for all detection families"
+          "notes": "Verified: Splunk rules exist for all detection families"
         },
         {
-          "test_id":       "T-DE-004",
-          "description":   "Verify Sigma rules exist and are structured",
-          "type":          "unit",
-          "result":        "PASS",
-          "batch":         "PR-13",
+          "test_id": "T-DE-004",
+          "description": "Verify Sigma rules exist and are structured",
+          "type": "unit",
+          "result": "PASS",
+          "batch": "PR-13",
           "evidence_file": null,
-          "notes":         "Verified: Sigma rules exist for all detection families"
+          "notes": "Verified: Sigma rules exist for all detection families"
         },
         {
-          "test_id":       "T-DE-005",
-          "description":   "Verify Elastic/KQL rules exist",
-          "type":          "unit",
-          "result":        "PASS",
-          "batch":         "PR-13",
+          "test_id": "T-DE-005",
+          "description": "Verify Elastic/KQL rules exist",
+          "type": "unit",
+          "result": "PASS",
+          "batch": "PR-13",
           "evidence_file": null,
-          "notes":         "Verified: Elastic/KQL rules exist"
+          "notes": "Verified: Elastic/KQL rules exist"
         },
         {
-          "test_id":       "T-DE-006",
-          "description":   "Verify LogQL rules exist",
-          "type":          "unit",
-          "result":        "PASS",
-          "batch":         "PR-13",
+          "test_id": "T-DE-006",
+          "description": "Verify LogQL rules exist",
+          "type": "unit",
+          "result": "PASS",
+          "batch": "PR-13",
           "evidence_file": null,
-          "notes":         "Verified: LogQL rules exist"
+          "notes": "Verified: LogQL rules exist"
         }
       ],
       "evidence_artifacts": [
@@ -1337,21 +1363,21 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "DETECT-ENG-003",
-      "name":        "Detection Fixtures",
-      "domain":      "GOVERNANCE",
-      "pert_ref":    "Batch-PR-13",
-      "gap_ref":     "GAP-004",
-      "status":      "TESTED",
+      "control_id": "DETECT-ENG-003",
+      "name": "Detection Fixtures",
+      "domain": "GOVERNANCE",
+      "pert_ref": "Batch-PR-13",
+      "gap_ref": "GAP-004",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-DE-007",
-          "description":   "Verify mock fixtures are present for all detection families",
-          "type":          "unit",
-          "result":        "PASS",
-          "batch":         "PR-13",
+          "test_id": "T-DE-007",
+          "description": "Verify mock fixtures are present for all detection families",
+          "type": "unit",
+          "result": "PASS",
+          "batch": "PR-13",
           "evidence_file": null,
-          "notes":         "Verified: fixtures exist under detections/fixtures/"
+          "notes": "Verified: fixtures exist under detections/fixtures/"
         }
       ],
       "evidence_artifacts": [
@@ -1361,21 +1387,21 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "DETECT-ENG-004",
-      "name":        "Response Playbooks",
-      "domain":      "GOVERNANCE",
-      "pert_ref":    "Batch-PR-13",
-      "gap_ref":     "GAP-004",
-      "status":      "TESTED",
+      "control_id": "DETECT-ENG-004",
+      "name": "Response Playbooks",
+      "domain": "GOVERNANCE",
+      "pert_ref": "Batch-PR-13",
+      "gap_ref": "GAP-004",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-DE-008",
-          "description":   "Verify playbooks exist for all detection families",
-          "type":          "unit",
-          "result":        "PASS",
-          "batch":         "PR-13",
+          "test_id": "T-DE-008",
+          "description": "Verify playbooks exist for all detection families",
+          "type": "unit",
+          "result": "PASS",
+          "batch": "PR-13",
           "evidence_file": null,
-          "notes":         "Verified: playbooks exist under detections/playbooks/"
+          "notes": "Verified: playbooks exist under detections/playbooks/"
         }
       ],
       "evidence_artifacts": [
@@ -1385,21 +1411,21 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "DETECT-ENG-005",
-      "name":        "Detection API Endpoints",
-      "domain":      "GOVERNANCE",
-      "pert_ref":    "Batch-PR-13",
-      "gap_ref":     "GAP-004",
-      "status":      "TESTED",
+      "control_id": "DETECT-ENG-005",
+      "name": "Detection API Endpoints",
+      "domain": "GOVERNANCE",
+      "pert_ref": "Batch-PR-13",
+      "gap_ref": "GAP-004",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-DE-009",
-          "description":   "Verify detections health endpoint returns ACTIVE",
-          "type":          "integration",
-          "result":        "PASS",
-          "batch":         "PR-13",
+          "test_id": "T-DE-009",
+          "description": "Verify detections health endpoint returns ACTIVE",
+          "type": "integration",
+          "result": "PASS",
+          "batch": "PR-13",
           "evidence_file": null,
-          "notes":         "Verified: API returns correct status, paths, and inventory counts"
+          "notes": "Verified: API returns correct status, paths, and inventory counts"
         }
       ],
       "evidence_artifacts": [
@@ -1409,21 +1435,21 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "DETECT-ENG-006",
-      "name":        "Detection QA Contract",
-      "domain":      "GOVERNANCE",
-      "pert_ref":    "Batch-PR-13",
-      "gap_ref":     "GAP-004",
-      "status":      "TESTED",
+      "control_id": "DETECT-ENG-006",
+      "name": "Detection QA Contract",
+      "domain": "GOVERNANCE",
+      "pert_ref": "Batch-PR-13",
+      "gap_ref": "GAP-004",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-DE-010",
-          "description":   "Verify qa:detection-engineering contract checks pass successfully",
-          "type":          "integration",
-          "result":        "PASS",
-          "batch":         "PR-13",
+          "test_id": "T-DE-010",
+          "description": "Verify qa:detection-engineering contract checks pass successfully",
+          "type": "integration",
+          "result": "PASS",
+          "batch": "PR-13",
           "evidence_file": "artifacts/qa/detection-engineering-contract-report.json",
-          "notes":         "Verified: contract asserts presence of all doctrine, rules, fixtures, playbooks, API, and tests"
+          "notes": "Verified: contract asserts presence of all doctrine, rules, fixtures, playbooks, API, and tests"
         }
       ],
       "evidence_artifacts": [
@@ -1434,21 +1460,21 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "LIVE-INSTRUMENT-001",
-      "name":        "Live Runtime Instrument Doctrine Setup",
-      "domain":      "GOVERNANCE",
-      "pert_ref":    "Batch-UI-OPS-14",
-      "gap_ref":     "GAP-004",
-      "status":      "TESTED",
+      "control_id": "LIVE-INSTRUMENT-001",
+      "name": "Live Runtime Instrument Doctrine Setup",
+      "domain": "GOVERNANCE",
+      "pert_ref": "Batch-UI-OPS-14",
+      "gap_ref": "GAP-004",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-LI-001",
-          "description":   "Doctrine exists at docs/mission/live_runtime_instrument_doctrine.md and lists allowed and forbidden active components",
-          "type":          "smoke",
-          "result":        "PASS",
-          "batch":         "UI-OPS-14",
+          "test_id": "T-LI-001",
+          "description": "Doctrine exists at docs/mission/live_runtime_instrument_doctrine.md and lists allowed and forbidden active components",
+          "type": "smoke",
+          "result": "PASS",
+          "batch": "UI-OPS-14",
           "evidence_file": "docs/mission/live_runtime_instrument_doctrine.md",
-          "notes":         "Verified: doctrine file contains rules for Live Dashboard posture"
+          "notes": "Verified: doctrine file contains rules for Live Dashboard posture"
         }
       ],
       "evidence_artifacts": [
@@ -1458,21 +1484,21 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "LIVE-INSTRUMENT-002",
-      "name":        "Live Runtime Feature Mapping",
-      "domain":      "GOVERNANCE",
-      "pert_ref":    "Batch-UI-OPS-14",
-      "gap_ref":     "GAP-004",
-      "status":      "TESTED",
+      "control_id": "LIVE-INSTRUMENT-002",
+      "name": "Live Runtime Feature Mapping",
+      "domain": "GOVERNANCE",
+      "pert_ref": "Batch-UI-OPS-14",
+      "gap_ref": "GAP-004",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-LI-002",
-          "description":   "Active views and forbidden views configuration map in config/live_runtime_feature_map.json",
-          "type":          "smoke",
-          "result":        "PASS",
-          "batch":         "UI-OPS-14",
+          "test_id": "T-LI-002",
+          "description": "Active views and forbidden views configuration map in config/live_runtime_feature_map.json",
+          "type": "smoke",
+          "result": "PASS",
+          "batch": "UI-OPS-14",
           "evidence_file": "config/live_runtime_feature_map.json",
-          "notes":         "Verified: config maps the 9 active views and list of forbidden elements"
+          "notes": "Verified: config maps the 9 active views and list of forbidden elements"
         }
       ],
       "evidence_artifacts": [
@@ -1482,21 +1508,21 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "LIVE-INSTRUMENT-003",
-      "name":        "Live Runtime Telemetry Endpoint Audit",
-      "domain":      "GOVERNANCE",
-      "pert_ref":    "Batch-UI-OPS-14",
-      "gap_ref":     "GAP-004",
-      "status":      "TESTED",
+      "control_id": "LIVE-INSTRUMENT-003",
+      "name": "Live Runtime Telemetry Endpoint Audit",
+      "domain": "GOVERNANCE",
+      "pert_ref": "Batch-UI-OPS-14",
+      "gap_ref": "GAP-004",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-LI-003",
-          "description":   "Run audit script scanning frontend and backend files for forbidden static elements",
-          "type":          "integration",
-          "result":        "PASS",
-          "batch":         "UI-OPS-14",
+          "test_id": "T-LI-003",
+          "description": "Run audit script scanning frontend and backend files for forbidden static elements",
+          "type": "integration",
+          "result": "PASS",
+          "batch": "UI-OPS-14",
           "evidence_file": "artifacts/qa/live_runtime_surface_audit.json",
-          "notes":         "Verified: audit outputs report detailing zero active codebase hits for static indicators"
+          "notes": "Verified: audit outputs report detailing zero active codebase hits for static indicators"
         }
       ],
       "evidence_artifacts": [
@@ -1508,30 +1534,30 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "LIVE-INSTRUMENT-004",
-      "name":        "Live Runtime Backend Aggregation API",
-      "domain":      "GOVERNANCE",
-      "pert_ref":    "Batch-UI-OPS-14",
-      "gap_ref":     "GAP-004",
-      "status":      "TESTED",
+      "control_id": "LIVE-INSTRUMENT-004",
+      "name": "Live Runtime Backend Aggregation API",
+      "domain": "GOVERNANCE",
+      "pert_ref": "Batch-UI-OPS-14",
+      "gap_ref": "GAP-004",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-LI-004",
-          "description":   "LiveRuntimeAggregator gathers health status from 12 distinct cards",
-          "type":          "integration",
-          "result":        "PASS",
-          "batch":         "UI-OPS-14",
+          "test_id": "T-LI-004",
+          "description": "LiveRuntimeAggregator gathers health status from 12 distinct cards",
+          "type": "integration",
+          "result": "PASS",
+          "batch": "UI-OPS-14",
           "evidence_file": "backend/live_runtime_aggregator.py",
-          "notes":         "Verified: backend aggregation gathers all 12 cards from their original sources"
+          "notes": "Verified: backend aggregation gathers all 12 cards from their original sources"
         },
         {
-          "test_id":       "T-LI-005",
-          "description":   "Route GET /api/v1/live-runtime/cockpit returning aggregated JSON",
-          "type":          "smoke",
-          "result":        "PASS",
-          "batch":         "UI-OPS-14",
+          "test_id": "T-LI-005",
+          "description": "Route GET /api/v1/live-runtime/cockpit returning aggregated JSON",
+          "type": "smoke",
+          "result": "PASS",
+          "batch": "UI-OPS-14",
           "evidence_file": "backend/main.py",
-          "notes":         "Verified: endpoint returns live operational JSON structure"
+          "notes": "Verified: endpoint returns live operational JSON structure"
         }
       ],
       "evidence_artifacts": [
@@ -1542,30 +1568,30 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "LIVE-INSTRUMENT-005",
-      "name":        "Clean Single-Page UI and View Navigation",
-      "domain":      "GOVERNANCE",
-      "pert_ref":    "Batch-UI-OPS-14",
-      "gap_ref":     "GAP-004",
-      "status":      "TESTED",
+      "control_id": "LIVE-INSTRUMENT-005",
+      "name": "Clean Single-Page UI and View Navigation",
+      "domain": "GOVERNANCE",
+      "pert_ref": "Batch-UI-OPS-14",
+      "gap_ref": "GAP-004",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-LI-006",
-          "description":   "Sidebar links restricted to exactly 9 views with no stale layout blocks",
-          "type":          "smoke",
-          "result":        "PASS",
-          "batch":         "UI-OPS-14",
+          "test_id": "T-LI-006",
+          "description": "Sidebar links restricted to exactly 9 views with no stale layout blocks",
+          "type": "smoke",
+          "result": "PASS",
+          "batch": "UI-OPS-14",
           "evidence_file": "frontend/index.html",
-          "notes":         "Verified: active sidebar matches features config"
+          "notes": "Verified: active sidebar matches features config"
         },
         {
-          "test_id":       "T-LI-007",
-          "description":   "Switch between the 9 views dynamically in client JS",
-          "type":          "smoke",
-          "result":        "PASS",
-          "batch":         "UI-OPS-14",
+          "test_id": "T-LI-007",
+          "description": "Switch between the 9 views dynamically in client JS",
+          "type": "smoke",
+          "result": "PASS",
+          "batch": "UI-OPS-14",
           "evidence_file": "frontend/app.js",
-          "notes":         "Verified: SPA navigates with unique IDs and hides inactive tabs"
+          "notes": "Verified: SPA navigates with unique IDs and hides inactive tabs"
         }
       ],
       "evidence_artifacts": [
@@ -1576,30 +1602,30 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "LIVE-INSTRUMENT-006",
-      "name":        "Active Dashboard Telemetry and FRESH indicators",
-      "domain":      "GOVERNANCE",
-      "pert_ref":    "Batch-UI-OPS-14",
-      "gap_ref":     "GAP-004",
-      "status":      "TESTED",
+      "control_id": "LIVE-INSTRUMENT-006",
+      "name": "Active Dashboard Telemetry and FRESH indicators",
+      "domain": "GOVERNANCE",
+      "pert_ref": "Batch-UI-OPS-14",
+      "gap_ref": "GAP-004",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-LI-008",
-          "description":   "Update indicators dynamically from cockpit data and measure network latency",
-          "type":          "integration",
-          "result":        "PASS",
-          "batch":         "UI-OPS-14",
+          "test_id": "T-LI-008",
+          "description": "Update indicators dynamically from cockpit data and measure network latency",
+          "type": "integration",
+          "result": "PASS",
+          "batch": "UI-OPS-14",
           "evidence_file": "frontend/app.js",
-          "notes":         "Verified: cards reflect cockpit response payload and live roundtrip time"
+          "notes": "Verified: cards reflect cockpit response payload and live roundtrip time"
         },
         {
-          "test_id":       "T-LI-009",
-          "description":   "Animate Process Pond strictly based on live events animation state",
-          "type":          "integration",
-          "result":        "PASS",
-          "batch":         "UI-OPS-14",
+          "test_id": "T-LI-009",
+          "description": "Animate Process Pond strictly based on live events animation state",
+          "type": "integration",
+          "result": "PASS",
+          "batch": "UI-OPS-14",
           "evidence_file": "frontend/app.js",
-          "notes":         "Verified: canvas wiggles and pulses only on active events, shows empty if zero"
+          "notes": "Verified: canvas wiggles and pulses only on active events, shows empty if zero"
         }
       ],
       "evidence_artifacts": [
@@ -1609,21 +1635,21 @@
       "truth": "LIVE"
     },
     {
-      "control_id":  "LIVE-INSTRUMENT-007",
-      "name":        "Contract and E2E validation of Cockpit layout",
-      "domain":      "GOVERNANCE",
-      "pert_ref":    "Batch-UI-OPS-14",
-      "gap_ref":     "GAP-004",
-      "status":      "TESTED",
+      "control_id": "LIVE-INSTRUMENT-007",
+      "name": "Contract and E2E validation of Cockpit layout",
+      "domain": "GOVERNANCE",
+      "pert_ref": "Batch-UI-OPS-14",
+      "gap_ref": "GAP-004",
+      "status": "TESTED",
       "tests": [
         {
-          "test_id":       "T-LI-010",
-          "description":   "Playwright E2E verifies cockpit loads 12 cards and works with no overflow",
-          "type":          "integration",
-          "result":        "PASS",
-          "batch":         "UI-OPS-14",
+          "test_id": "T-LI-010",
+          "description": "Playwright E2E verifies cockpit loads 12 cards and works with no overflow",
+          "type": "integration",
+          "result": "PASS",
+          "batch": "UI-OPS-14",
           "evidence_file": "artifacts/qa/live-runtime-cockpit-contract-report.json",
-          "notes":         "Verified: Playwright test checks 12 card elements and view switching"
+          "notes": "Verified: Playwright test checks 12 card elements and view switching"
         }
       ],
       "evidence_artifacts": [
@@ -1633,23 +1659,98 @@
       ],
       "evidence_present": true,
       "truth": "LIVE"
+    },
+    {
+      "id": "MESH-SENTINEL-001",
+      "title": "Live mesh map endpoint exists",
+      "status": "TESTED",
+      "evidence": "PROTO-1 Mesh Sentinel validation"
+    },
+    {
+      "id": "MESH-SENTINEL-002",
+      "title": "AI runtime nodes are discovery-backed",
+      "status": "TESTED",
+      "evidence": "PROTO-1 Mesh Sentinel validation"
+    },
+    {
+      "id": "MESH-SENTINEL-003",
+      "title": "Missing assets are marked MISSING_FROM_SCAN",
+      "status": "TESTED",
+      "evidence": "PROTO-1 Mesh Sentinel validation"
+    },
+    {
+      "id": "MESH-SENTINEL-004",
+      "title": "Unexpected exposure alerts are displayed",
+      "status": "TESTED",
+      "evidence": "PROTO-1 Mesh Sentinel validation"
+    },
+    {
+      "id": "MESH-SENTINEL-005",
+      "title": "Fake topology is absent from active UI",
+      "status": "TESTED",
+      "evidence": "PROTO-1 Mesh Sentinel validation"
+    },
+    {
+      "id": "MESH-SENTINEL-006",
+      "title": "Rescan action is wired to live discovery",
+      "status": "TESTED",
+      "evidence": "PROTO-1 Mesh Sentinel validation"
     }
   ],
   "summary": {
-    "total_controls":         50,
-    "tested":                  48,
-    "partial":                 0,
-    "in_progress":             2,
-    "pending":                 0,
+    "total_controls": 50,
+    "tested": 48,
+    "partial": 0,
+    "in_progress": 2,
+    "pending": 0,
     "evidence_present_count": 50,
-    "evidence_missing_count":  0,
-    "total_tests":            94,
-    "tests_pass":             94,
-    "tests_partial":           0,
-    "tests_pending":           0,
-    "matrix_status":          "COMPLETE",
-    "ready_for_p9":           true,
+    "evidence_missing_count": 0,
+    "total_tests": 94,
+    "tests_pass": 94,
+    "tests_partial": 0,
+    "tests_pending": 0,
+    "matrix_status": "COMPLETE",
+    "ready_for_p9": true,
     "p9_blockers": [],
     "truth": "LIVE"
-  }
+  },
+  "tests": [
+    {
+      "id": "T-MS-001",
+      "title": "backend endpoint exposed",
+      "status": "PASS",
+      "evidence": "qa:mesh-sentinel / e2e / CI"
+    },
+    {
+      "id": "T-MS-002",
+      "title": "frontend fetches endpoint",
+      "status": "PASS",
+      "evidence": "qa:mesh-sentinel / e2e / CI"
+    },
+    {
+      "id": "T-MS-003",
+      "title": "rescan action wired",
+      "status": "PASS",
+      "evidence": "qa:mesh-sentinel / e2e / CI"
+    },
+    {
+      "id": "T-MS-004",
+      "title": "fake tokens absent",
+      "status": "PASS",
+      "evidence": "qa:mesh-sentinel / e2e / CI"
+    },
+    {
+      "id": "T-MS-005",
+      "title": "E2E map loads",
+      "status": "PASS",
+      "evidence": "qa:mesh-sentinel / e2e / CI"
+    },
+    {
+      "id": "T-MS-006",
+      "title": "run-ci-pipeline passes",
+      "status": "PASS",
+      "evidence": "qa:mesh-sentinel / e2e / CI"
+    }
+  ],
+  "matrix_status": "COMPLETE"
 }
