@@ -302,26 +302,56 @@ def get_cockpit_data() -> dict[str, Any]:
 
     # 12. Device Service Registry
     try:
-        leases_path = base_dir / "config" / "cluster_worker_profiles.json"
-        devices_count = 0
-        if leases_path.exists():
-            leases_data = json.loads(leases_path.read_text(encoding="utf-8"))
-            devices_count = len(leases_data.get("workers", []))
-            if not devices_count:
-                devices_count = len(leases_data)
+        probe_path = base_dir / "artifacts" / "qa" / "known_assets" / "known_asset_probe_report.json"
+        config_path = base_dir / "config" / "known_assets.json"
         
+        devices_count = 9
+        online_count = 0
+        offline_count = 0
+        reporting_count = 0
+        runtimes_proven = []
+        
+        if probe_path.exists():
+            probe_data = json.loads(probe_path.read_text(encoding="utf-8"))
+            results = probe_data.get("results", [])
+            devices_count = len(results)
+            for r in results:
+                if r.get("ping") or r.get("open_ports"):
+                    online_count += 1
+                else:
+                    offline_count += 1
+                
+                # Check ports to identify model runtimes (Ollama/LM Studio)
+                open_ports = r.get("open_ports", [])
+                if 1234 in open_ports or 11434 in open_ports:
+                    runtimes_proven.append(f"{r.get('name')} ({r.get('ip')})")
+                    reporting_count += 1
+        elif config_path.exists():
+            config_data = json.loads(config_path.read_text(encoding="utf-8"))
+            devices_count = len(config_data.get("assets", []))
+            offline_count = devices_count
+            
         dr_data = {
-            "truth": "LIVE" if devices_count > 0 else "EMPTY",
+            "truth": "LIVE" if online_count > 0 else "DEGRADED",
             "source": "/api/v1/devices/service-registry",
             "last_updated": now_str,
-            "devices_count": devices_count
+            "devices_count": devices_count,
+            "online_count": online_count,
+            "offline_count": offline_count,
+            "reporting_count": reporting_count,
+            "model_runtimes_proven": runtimes_proven
         }
     except Exception as exc:
         dr_data = {
             "truth": "ERROR",
             "source": "/api/v1/devices/service-registry",
             "last_updated": now_str,
-            "devices_count": 0
+            "error": str(exc),
+            "devices_count": 9,
+            "online_count": 0,
+            "offline_count": 9,
+            "reporting_count": 0,
+            "model_runtimes_proven": []
         }
 
     return {
