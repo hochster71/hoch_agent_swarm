@@ -289,7 +289,7 @@ function adaptPipelineStage(payload) {
   };
 }
 
-module.exports = {
+const exportsObj = {
   normalizeState,
   isFresh,
   adaptCockpitTelemetry,
@@ -303,3 +303,9 @@ module.exports = {
   adaptAgentCard,
   adaptPipelineStage
 };
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = exportsObj;
+} else if (typeof window !== 'undefined') {
+  window['visualAdapters'] = exportsObj;
+}
