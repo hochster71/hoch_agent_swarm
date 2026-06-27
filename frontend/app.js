@@ -45,7 +45,8 @@
         { id: 'evidence', label: 'EVIDENCE' },
         { id: 'detections', label: 'DETECTIONS' },
         { id: 'readiness', label: 'READINESS' },
-        { id: 'settings', label: 'SETTINGS' }
+        { id: 'settings', label: 'SETTINGS' },
+        { id: 'agent-flight-deck', label: 'AGENT FLIGHT DECK' }
     ];
 
     function initNavigation() {
@@ -141,6 +142,10 @@
             case 'settings':
                 loadSettingsView();
                 viewInterval = setInterval(loadSettingsView, 5000);
+                break;
+            case 'agent-flight-deck':
+                loadAgentFlightDeckView();
+                viewInterval = setInterval(loadAgentFlightDeckView, 3000);
                 break;
         }
     }
@@ -821,6 +826,234 @@
         }
     }
 
+    // ── Loader: Agent Flight Deck View (PROTO-3) ──────────────────────────────
+    let isFlightDeckInitialized = false;
+    let selectedCampaignId = "";
+
+    async function loadAgentFlightDeckView() {
+        const selector = el('campaign-selector');
+        const campaignsContainer = el('lane-campaigns');
+        const tasksContainer = el('lane-tasks');
+        const rosterContainer = el('lane-roster');
+        const gatesContainer = el('lane-gates');
+
+        if (!campaignsContainer || !tasksContainer || !rosterContainer || !gatesContainer) return;
+
+        try {
+            // 1. Fetch campaigns (runs)
+            const runsRes = await fetch('/api/v1/runs');
+            const runs = await runsRes.json();
+            
+            // Populate active selector and campaign lane
+            const campaignCountBadge = el('campaign-count-badge');
+            if (campaignCountBadge) campaignCountBadge.textContent = runs.length;
+
+            // Render Campaigns Lane
+            campaignsContainer.innerHTML = runs.map(r => `
+                <div class="flight-card" data-run-id="${r.run_id}" style="cursor: pointer; border-left: 3px solid ${r.status === 'running' ? '#3b82f6' : (r.status === 'completed' ? '#10b981' : '#ef4444')};">
+                    <div class="flight-card-title">${r.name}</div>
+                    <div class="flight-card-meta">ID: ${r.run_id}</div>
+                    <span class="flight-card-badge status-badge ${r.status === 'running' ? 'warn' : (r.status === 'completed' ? 'success' : 'fail')}">${r.status}</span>
+                </div>
+            `).join('') || `<div style="color:var(--text-secondary); text-align:center; font-size:12px;">No active campaigns</div>`;
+
+            // Setup select dropdown options if changed or empty
+            const selectorIds = Array.from(selector.options).map(o => o.value);
+            const runIds = runs.map(r => r.run_id);
+            const needsOptionRefresh = runIds.some(id => !selectorIds.includes(id)) || selectorIds.some(id => !runIds.includes(id));
+            
+            if (needsOptionRefresh) {
+                selector.innerHTML = runs.map(r => `
+                    <option value="${r.run_id}" ${r.run_id === selectedCampaignId ? 'selected' : ''}>${r.name}</option>
+                `).join('');
+                if (runs.length > 0 && !selectedCampaignId) {
+                    selectedCampaignId = runs[0].run_id;
+                    selector.value = selectedCampaignId;
+                }
+            }
+
+            // Bind click listeners on campaign cards to select them
+            campaignsContainer.querySelectorAll('.flight-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const runId = card.getAttribute('data-run-id');
+                    if (runId) {
+                        selectedCampaignId = runId;
+                        selector.value = runId;
+                        loadActiveCampaignTasks();
+                    }
+                });
+            });
+
+            // 2. Fetch Tasks for selected campaign
+            if (selectedCampaignId) {
+                await loadActiveCampaignTasks();
+            } else {
+                tasksContainer.innerHTML = `<div style="color:var(--text-secondary); text-align:center; font-size:12px;">Select a campaign to view tasks</div>`;
+                const taskCountBadge = el('task-count-badge');
+                if (taskCountBadge) taskCountBadge.textContent = "0";
+            }
+
+            // 3. Fetch Agent Duty Roster
+            const agentsRes = await fetch('/api/v1/agents');
+            const agents = await agentsRes.json();
+            const agentCountBadge = el('agent-count-badge');
+            if (agentCountBadge) agentCountBadge.textContent = agents.length;
+
+            rosterContainer.innerHTML = agents.map(a => {
+                let tools = a.allowed_tools || [];
+                if (typeof tools === 'string') {
+                    try { tools = JSON.parse(tools); } catch(e) { tools = []; }
+                }
+                const toolsList = Array.isArray(tools) ? tools.slice(0, 3).join(', ') : '';
+                return `
+                    <div class="flight-card" style="border-left: 3px solid var(--accent-blue);">
+                        <div class="flight-card-title" style="display:flex; justify-content:space-between; align-items:center;">
+                            <span>${a.name || a.agent_id}</span>
+                            <span class="provenance-badge observed" style="font-size:8px;">${a.lifecycle || 'ACTIVE'}</span>
+                        </div>
+                        <div class="flight-card-meta">Role: ${a.role || 'Agent'}</div>
+                        <div class="flight-card-meta">File Scope: <code>${a.file_scopes || '/'}</code></div>
+                        <div class="flight-card-meta" style="font-size:9px; color:var(--text-secondary); margin-top:2px;">Tools: ${toolsList}${tools.length > 3 ? '...' : ''}</div>
+                    </div>
+                `;
+            }).join('') || `<div style="color:var(--text-secondary); text-align:center; font-size:12px;">No active agents registered</div>`;
+
+            // 4. Fetch Governance Gates
+            const gatesRes = await fetch('/api/v1/release/signing-policy');
+            const gatesData = await gatesRes.json();
+            const currentRelease = gatesData.current_release || {};
+            
+            const gateItems = [];
+            if (currentRelease.signature_status === "unsigned" && currentRelease.signing_waiver_status === "none") {
+                gateItems.push({
+                    id: "signing_waiver",
+                    title: "Release Cryptographic Signing Policy Block",
+                    description: `Release v${currentRelease.version} is unsigned. Cryptographic validation requires signing or an operator waiver.`,
+                    type: "signing_waiver",
+                    severity: "high"
+                });
+            }
+
+            // Also check for pending model routing or other policy overrides
+            const policyRes = await fetch('/api/v1/policies/decisions');
+            const policies = await policyRes.json();
+            const pendingDecisions = policies.filter(p => p.decision === "APPROVAL_REQUIRED" || p.decision === "BLOCK");
+            pendingDecisions.forEach(p => {
+                gateItems.push({
+                    id: `policy-${p.decision_id || Math.random().toString(36).substring(2, 8)}`,
+                    title: `Policy Override: ${p.rule_name || 'Verification Block'}`,
+                    description: p.reason || "Action requires operator override and compliance verification.",
+                    type: "policy_override",
+                    severity: "medium"
+                });
+            });
+
+            const gateCountBadge = el('gate-count-badge');
+            if (gateCountBadge) gateCountBadge.textContent = gateItems.length;
+
+            gatesContainer.innerHTML = gateItems.map(g => `
+                <div class="flight-card" style="border-left: 3px solid ${g.severity === 'high' ? '#ef4444' : '#f59e0b'};">
+                    <div class="flight-card-title">${g.title}</div>
+                    <div class="flight-card-meta">${g.description}</div>
+                    <div class="flight-gate-actions">
+                        <button class="flight-gate-btn btn-approve" data-gate-id="${g.id}" data-gate-type="${g.type}">Approve</button>
+                        <button class="flight-gate-btn btn-reject" data-gate-id="${g.id}" data-gate-type="${g.type}">Reject</button>
+                    </div>
+                </div>
+            `).join('') || `<div style="color:var(--text-secondary); text-align:center; font-size:12px;">Zero pending approval gates</div>`;
+
+            // Bind approval gates click handlers
+            gatesContainer.querySelectorAll('.btn-approve').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const gateId = btn.getAttribute('data-gate-id');
+                    const gateType = btn.getAttribute('data-gate-type');
+                    if (gateType === "signing_waiver") {
+                        try {
+                            const submitRes = await fetch('/api/v1/release/signing-waiver', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    reason: "Operator dynamic flight deck override waiver",
+                                    scope: "local_dev",
+                                    operator: "Michael Hoch"
+                                })
+                            });
+                            if (submitRes.ok) {
+                                triggerGeneralRipple(window.innerWidth / 2, window.innerHeight / 2, "normal");
+                                loadAgentFlightDeckView();
+                            }
+                        } catch (err) {
+                            console.error('[FlightDeck] failed to waive:', err);
+                        }
+                    }
+                });
+            });
+
+            // Initialize control listeners once
+            if (!isFlightDeckInitialized) {
+                selector.addEventListener('change', (e) => {
+                    selectedCampaignId = e.target.value;
+                    loadActiveCampaignTasks();
+                });
+
+                const launchBtn = el('btn-launch-campaign');
+                if (launchBtn) {
+                    launchBtn.addEventListener('click', async () => {
+                        try {
+                            const createRes = await fetch('/api/v1/runs', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ name: `Flight Campaign ${new Date().toLocaleTimeString()}` })
+                            });
+                            if (createRes.ok) {
+                                const newRun = await createRes.json();
+                                selectedCampaignId = newRun.run_id;
+                                isFlightDeckInitialized = false; // force refresh dropdown
+                                loadAgentFlightDeckView();
+                            }
+                        } catch (err) {
+                            console.error('[FlightDeck] failed to launch campaign:', err);
+                        }
+                    });
+                }
+
+                isFlightDeckInitialized = true;
+            }
+
+        } catch (err) {
+            console.error('[FlightDeck] load error:', err);
+        }
+    }
+
+    async function loadActiveCampaignTasks() {
+        const container = el('lane-tasks');
+        if (!container || !selectedCampaignId) return;
+
+        try {
+            const res = await fetch(`/api/v1/runs/${selectedCampaignId}/tasks`);
+            const tasks = await res.json();
+            const taskCountBadge = el('task-count-badge');
+            if (taskCountBadge) taskCountBadge.textContent = tasks.length;
+
+            container.innerHTML = tasks.map(t => {
+                const priorityColor = t.priority === 'critical' ? '#ef4444' : (t.priority === 'high' ? '#f59e0b' : '#3b82f6');
+                return `
+                    <div class="flight-card" style="border-left: 3px solid ${t.status === 'completed' ? '#10b981' : (t.status === 'running' ? '#3b82f6' : 'rgba(255,255,255,0.05)')};">
+                        <div class="flight-card-title">${t.title}</div>
+                        <div class="flight-card-meta">ID: ${t.id}</div>
+                        <div class="flight-card-meta">Agent: <code>${t.ownerAgentId || 'unassigned'}</code></div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+                            <span class="flight-card-badge status-badge ${t.status === 'running' ? 'warn' : (t.status === 'completed' ? 'success' : 'blocked')}">${t.status}</span>
+                            <span style="font-size:9px; color:${priorityColor}; font-weight:700; text-transform:uppercase;">${t.priority}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('') || `<div style="color:var(--text-secondary); text-align:center; font-size:12px;">No tasks in this campaign</div>`;
+        } catch (err) {
+            console.error('[FlightDeck] failed to load tasks:', err);
+        }
+    }
+
     // ── Koi Animation Layer (Batch UI-KOI-1, PROTO-2 & Observability) ────────────
     function getDeterministicOrbit(id) {
         let hash = 0;
@@ -1429,3 +1662,111 @@ function initMeshSentinel() {
   });
 }
 
+
+// PROTO-3A — 10-device swarm prototype and agent chat
+function renderDeviceSwarm(data) {
+  const summary = document.getElementById("device-swarm-summary");
+  const grid = document.getElementById("device-swarm-grid");
+  const consoleEl = document.getElementById("device-swarm-console");
+  if (!summary || !grid) return;
+
+  const s = data.summary || {};
+  summary.innerHTML = `
+    <div class="metric-card"><span>Devices</span><strong>${escapeHtml(String(s.device_count ?? 0))}</strong></div>
+    <div class="metric-card"><span>Model Runtimes</span><strong>${escapeHtml(String(s.model_runtime_count ?? 0))}</strong></div>
+    <div class="metric-card"><span>Models</span><strong>${escapeHtml(String(s.model_count ?? 0))}</strong></div>
+    <div class="metric-card"><span>Agents</span><strong>${escapeHtml(String((s.agents_available || []).length))}</strong></div>
+  `;
+
+  grid.innerHTML = (data.devices || []).map((d) => {
+    const runtimeBadges = (d.runtimes || []).map((r) =>
+      `<span class="pill model">${escapeHtml(r.runtime)}:${escapeHtml(String(r.port))} ${escapeHtml(r.truth_state)}</span>`
+    ).join("");
+    const modelBadges = (d.models || []).slice(0, 10).map((m) =>
+      `<span class="pill model">${escapeHtml(m)}</span>`
+    ).join("");
+    const agentBadges = (d.agents_available || []).map((a) =>
+      `<span class="pill agent">${escapeHtml(a)}</span>`
+    ).join("");
+
+    const klass = d.runtime_count > 0 ? "live" : d.truth_state === "MISSING_FROM_SCAN" ? "missing" : "service";
+
+    return `
+      <article class="device-swarm-card ${klass}">
+        <h4>${escapeHtml(d.name || d.ip || "Unknown Device")}</h4>
+        <dl>
+          <div><dt>IP</dt><dd>${escapeHtml(d.ip || "unknown")}</dd></div>
+          <div><dt>MAC</dt><dd>${escapeHtml(d.mac || "unknown")}</dd></div>
+          <div><dt>Type</dt><dd>${escapeHtml(d.device_type || "UNKNOWN")}</dd></div>
+          <div><dt>Truth</dt><dd>${escapeHtml(d.truth_state || "UNKNOWN")}</dd></div>
+          <div><dt>Ports</dt><dd>${escapeHtml((d.open_ports || []).join(", ") || "none")}</dd></div>
+          <div><dt>Source</dt><dd>${escapeHtml(d.source || "unknown")}</dd></div>
+        </dl>
+        <div class="pill-zone">${runtimeBadges}${modelBadges}${agentBadges}</div>
+      </article>
+    `;
+  }).join("");
+
+  if (consoleEl) {
+    consoleEl.textContent = JSON.stringify({
+      generated_at: data.generated_at,
+      summary: data.summary,
+      source: data.source
+    }, null, 2);
+  }
+}
+
+async function loadDeviceSwarm() {
+  const status = document.getElementById("device-swarm-status");
+  if (status) status.textContent = "Loading...";
+  try {
+    const data = await fetchJsonSafe("/api/v1/swarm/devices?limit=10");
+    renderDeviceSwarm(data);
+    if (status) status.textContent = "Live";
+  } catch (error) {
+    if (status) status.textContent = "Error";
+    const consoleEl = document.getElementById("device-swarm-console");
+    if (consoleEl) consoleEl.textContent = `Device swarm load failed: ${error.message}`;
+  }
+}
+
+async function rescanDeviceSwarm() {
+  const status = document.getElementById("device-swarm-status");
+  if (status) status.textContent = "Scanning...";
+  const data = await fetchJsonSafe("/api/v1/swarm/devices/rescan?limit=10", { method: "POST" });
+  renderDeviceSwarm(data);
+  if (status) status.textContent = "Scan Complete";
+}
+
+async function sendDeviceSwarmPrompt() {
+  const payload = {
+    agent: document.getElementById("device-swarm-agent")?.value || "Mission Commander",
+    target: document.getElementById("device-swarm-target")?.value || "swarm",
+    prompt: document.getElementById("device-swarm-prompt")?.value || ""
+  };
+  const out = await fetchJsonSafe("/api/v1/swarm/agent-chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+  const consoleEl = document.getElementById("device-swarm-console");
+  if (consoleEl) consoleEl.textContent = JSON.stringify(out, null, 2);
+}
+
+function initDeviceSwarmPrototype() {
+  document.getElementById("device-swarm-rescan")?.addEventListener("click", () => {
+    rescanDeviceSwarm().catch((error) => {
+      const consoleEl = document.getElementById("device-swarm-console");
+      if (consoleEl) consoleEl.textContent = `Rescan failed: ${error.message}`;
+    });
+  });
+  document.getElementById("device-swarm-send")?.addEventListener("click", () => {
+    sendDeviceSwarmPrompt().catch((error) => {
+      const consoleEl = document.getElementById("device-swarm-console");
+      if (consoleEl) consoleEl.textContent = `Agent prompt failed: ${error.message}`;
+    });
+  });
+  loadDeviceSwarm();
+}
+
+document.addEventListener("DOMContentLoaded", initDeviceSwarmPrototype);

@@ -71,6 +71,10 @@
                     <i data-lucide="settings"></i> <span>Settings</span>
                     <span class="nav-status-indicator swarm-led-idle" id="led-settings" style="margin-left: auto; font-size: 14px; font-weight: bold;">●</span>
                 </a>
+                <a href="#" class="nav-item" id="nav-agent-flight-deck">
+                    <i data-lucide="layout-grid"></i> <span>Agent Flight Deck</span>
+                    <span class="nav-status-indicator swarm-led-idle" id="led-agent-flight-deck" style="margin-left: auto; font-size: 14px; font-weight: bold;">●</span>
+                </a>
             </nav>
             <div class="theme-selector-container" style="padding: 10px 0; border-top: 1px solid var(--border-glass); margin-top: 10px;">
                 <label for="theme-selector" style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; display: block; margin-bottom: 5px;">Visual Theme</label>
@@ -95,6 +99,12 @@
                 </div>
             </div>
         
+
+<button class="nav-item" data-view="device-swarm" type="button">
+  <span class="nav-dot"></span>
+  <span>Device Swarm</span>
+</button>
+
 <button class="nav-item" data-view="mesh-sentinel" type="button">
   <span class="nav-dot"></span>
   <span>Mesh Sentinel</span>
@@ -436,6 +446,60 @@
                     <div id="settings-device-list" style="display: flex; flex-direction: column; gap: 12px; margin-top: 10px;"></div>
                 </section>
             </div>
+            <!-- 10. Agent Flight Deck View -->
+            <div id="view-agent-flight-deck" class="view-section hidden">
+                <section class="card" style="padding: 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; gap: 16px;">
+                    <div>
+                        <h2 style="font-size: 18px; font-weight: 700; color: #fff;">Agent Flight Deck</h2>
+                        <p style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Dynamic multi-lane Swarm mission controller, task logs, and security verification.</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <label for="campaign-selector" style="font-size: 12px; color: var(--text-secondary);">Active Campaign:</label>
+                        <select id="campaign-selector" style="background: var(--bg-surface); border: 1px solid var(--border-glass); color: var(--text-primary); border-radius: 4px; padding: 6px 12px; font-size: 12px; outline: none; cursor: pointer; min-width: 150px;"></select>
+                        <button id="btn-launch-campaign" class="btn" style="padding: 6px 16px; font-size: 12px; border-radius: 4px; background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4); color: #34d399; cursor: pointer; transition: all 0.2s;">
+                            New Campaign
+                        </button>
+                    </div>
+                </section>
+                
+                <div class="flight-deck-grid">
+                    <!-- Column 1: Campaigns -->
+                    <div class="flight-lane">
+                        <div class="flight-lane-header">
+                            <span>Campaigns</span>
+                            <span class="badge" id="campaign-count-badge">0</span>
+                        </div>
+                        <div class="flight-lane-body" id="lane-campaigns"></div>
+                    </div>
+                    
+                    <!-- Column 2: Task Flow -->
+                    <div class="flight-lane">
+                        <div class="flight-lane-header">
+                            <span>Task Flow</span>
+                            <span class="badge" id="task-count-badge">0</span>
+                        </div>
+                        <div class="flight-lane-body" id="lane-tasks"></div>
+                    </div>
+                    
+                    <!-- Column 3: Agent Duty Roster -->
+                    <div class="flight-lane">
+                        <div class="flight-lane-header">
+                            <span>Agent Duty Roster</span>
+                            <span class="badge" id="agent-count-badge">0</span>
+                        </div>
+                        <div class="flight-lane-body" id="lane-roster"></div>
+                    </div>
+                    
+                    <!-- Column 4: Governance Gates -->
+                    <div class="flight-lane">
+                        <div class="flight-lane-header">
+                            <span>Governance Gates</span>
+                            <span class="badge" id="gate-count-badge">0</span>
+                        </div>
+                        <div class="flight-lane-body" id="lane-gates"></div>
+                    </div>
+                </div>
+            </div>
             <div id="view-remediation-safety" class="hidden"></div>
         
 
@@ -480,6 +544,57 @@
     </div>
     <div id="mesh-alerts" class="event-list">
       <p class="empty-state">No mesh alerts loaded.</p>
+    </div>
+  </div>
+</section>
+
+
+
+<section class="view live-view" id="view-device-swarm" data-view="device-swarm" hidden>
+  <header class="section-header">
+    <div>
+      <p class="eyebrow">LIVE DEVICE SWARM</p>
+      <h2>HOCH 10-Device Agent Swarm</h2>
+      <p class="muted">All network devices visible. AI runtimes proof-backed. Agent chat stages governed work.</p>
+    </div>
+    <div class="section-actions">
+      <button class="primary-action" id="device-swarm-rescan" type="button">Rescan Full Swarm</button>
+      <span id="device-swarm-status" class="status-pill">Idle</span>
+    </div>
+  </header>
+
+  <div class="device-swarm-summary" id="device-swarm-summary"></div>
+
+  <div class="device-swarm-layout">
+    <div class="live-card">
+      <h3>10-Device Mesh</h3>
+      <div class="card-meta">
+        <span>Source: /api/v1/swarm/devices</span>
+        <span>Truth: live scan + model endpoint proof</span>
+      </div>
+      <div id="device-swarm-grid" class="device-swarm-grid"></div>
+    </div>
+
+    <div class="live-card">
+      <h3>Agent Intelligence Chat</h3>
+      <div class="agent-chat-grid">
+        <select id="device-swarm-agent">
+          <option>Mission Commander</option>
+          <option>Asset Scout</option>
+          <option>Model Router</option>
+          <option>QA Auditor</option>
+          <option>Cyber Commoner</option>
+          <option>ConMon Watcher</option>
+          <option>Footprint Sentinel</option>
+          <option>Self-Heal Engineer</option>
+          <option>Gap Analyst</option>
+          <option>Release Captain</option>
+        </select>
+        <input id="device-swarm-target" value="swarm" placeholder="Target device/IP/role">
+        <textarea id="device-swarm-prompt" rows="6" placeholder="Prompt the swarm. Example: audit all model runtimes, gap analyze missing devices, spin up QA and self-heal agents."></textarea>
+        <button class="primary-action" id="device-swarm-send" type="button">Stage Agent Prompt</button>
+      </div>
+      <pre id="device-swarm-console" class="device-swarm-console">Waiting for scan.</pre>
     </div>
   </div>
 </section>

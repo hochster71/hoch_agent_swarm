@@ -8033,6 +8033,23 @@ def cluster_nodes_detail():
     }
 
 
+# ── Device Swarm Endpoints (PROTO-1 / PROTO-3 / test-device-swarm-prototype-contract)
+@app.get("/api/v1/swarm/devices")
+def get_swarm_devices(limit: int = 10):
+    from backend.swarm_device_mesh import get_cached_or_scan
+    return get_cached_or_scan(limit=limit)
+
+@app.post("/api/v1/swarm/devices/rescan")
+def post_swarm_devices_rescan(limit: int = 10):
+    from backend.swarm_device_mesh import scan_device_swarm
+    return scan_device_swarm(limit=limit)
+
+@app.post("/api/v1/swarm/agent-chat")
+def post_swarm_agent_chat(payload: dict):
+    from backend.swarm_device_mesh import agent_chat
+    return agent_chat(payload)
+
+
 # Mount frontend files at root (if frontend directory exists)
 
 frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../frontend/dist"))
