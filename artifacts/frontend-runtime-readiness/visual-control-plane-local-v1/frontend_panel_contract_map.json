@@ -1,0 +1,28 @@
+{
+  "panel_mappings": [
+    {
+      "panel_id": "process_monitor_table",
+      "consumes_endpoint": "/api/v1/runtime/process/animation-state",
+      "mapped_fields": {
+        "event_id": "event_id",
+        "process_type": "process_type",
+        "state": "state",
+        "model": "model",
+        "confidence": "confidence_score",
+        "animation": {
+          "sprite": "visual.sprite",
+          "color": "visual.color",
+          "motion": "visual.motion"
+        }
+      }
+    },
+    {
+      "panel_id": "health_status_indicator",
+      "consumes_endpoint": "/api/v1/runtime/process/health",
+      "mapped_fields": {
+        "overall_status": "status",
+        "failures_detected": "has_failures"
+      }
+    }
+  ]
+}

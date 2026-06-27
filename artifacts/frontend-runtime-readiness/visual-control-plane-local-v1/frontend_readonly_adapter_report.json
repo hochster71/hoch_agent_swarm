@@ -1,0 +1,10 @@
+{
+  "adapter_file": "frontend/visual_adapters.js",
+  "semantics": "GET_ONLY",
+  "mutation_methods_found": [],
+  "endpoints_polled": [
+    "/api/v1/runtime/process/animation-state",
+    "/api/v1/runtime/process/health"
+  ],
+  "polling_allowed_locally": true
+}
