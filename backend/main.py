@@ -4531,6 +4531,11 @@ async def startup_event():
     app.state.readiness_daemon = daemon
     daemon.start()
 
+    # Start continuous discovery daemon
+    from backend.discovery_daemon import DAEMON as discovery_daemon
+    app.state.discovery_daemon = discovery_daemon
+    discovery_daemon.start()
+
     # Seed validation evidence for past solved requests to align history
     try:
         blocks = get_ledger_blocks()
@@ -7404,6 +7409,11 @@ def post_local_supervisor_check_once_endpoint():
 def get_discovery_ai_runtimes_endpoint():
     from backend.live_runtime_discovery import load_ai_runtime_discovery
     return load_ai_runtime_discovery()
+
+@app.post("/api/v1/discovery/ai-runtimes/rescan")
+def post_discovery_ai_runtimes_rescan_endpoint():
+    from backend.discovery_daemon import DAEMON
+    return DAEMON.scan_now()
 
 # ── Detection Engineering Endpoints ──────────────────────────────────────────
 @app.get("/api/v1/detections/events")

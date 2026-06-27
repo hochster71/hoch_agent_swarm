@@ -302,7 +302,15 @@
             <!-- 3. Local Models View -->
             <div id="view-local-models" class="view-section hidden">
                 <section class="card" style="padding: 20px;">
-                    <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 15px;">Ollama Provider Engines</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h2 style="font-size: 18px; font-weight: 700; margin: 0;">Local AI Runtimes</h2>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span id="scan-status" style="font-size: 12px; color: var(--text-secondary); opacity: 0.8;"></span>
+                            <button id="btn-rescan-runtimes" class="btn" style="padding: 6px 12px; font-size: 12px; border-radius: 4px; background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); color: #60a5fa; cursor: pointer; transition: all 0.2s;">
+                                Rescan AI Runtimes
+                            </button>
+                        </div>
+                    </div>
                     <div id="local-models-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;"></div>
                 </section>
             </div>

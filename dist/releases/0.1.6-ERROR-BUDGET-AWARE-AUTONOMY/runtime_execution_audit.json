@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-27T00:16:13.114079+00:00",
+  "generated_at": "2026-06-27T00:20:07.859756+00:00",
   "base_url": "http://localhost:8000",
   "tool_calls_checked": 6,
   "tool_calls_with_trace": 6,
@@ -12,11 +12,11 @@
   "status": "PASS",
   "source": "live",
   "source_id": "audit.runtime.execution",
-  "observed_at": "2026-06-27T00:16:13.114091+00:00",
-  "received_at": "2026-06-27T00:16:13.114093+00:00",
+  "observed_at": "2026-06-27T00:20:07.859769+00:00",
+  "received_at": "2026-06-27T00:20:07.859771+00:00",
   "ttl_ms": 10000,
   "freshness": "live",
-  "correlation_id": "corr-audit-exec-6261b0a4",
+  "correlation_id": "corr-audit-exec-3b74e847",
   "evidence_refs": [
     "database.swarm_ledger"
   ]

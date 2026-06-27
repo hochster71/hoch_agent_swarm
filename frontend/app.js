@@ -872,11 +872,62 @@
         }, 5000);
     }
 
+    function initRescanButton() {
+        const btn = el('btn-rescan-runtimes');
+        const statusSpan = el('scan-status');
+        if (!btn) return;
+
+        btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            btn.disabled = true;
+            btn.style.opacity = '0.5';
+            btn.style.cursor = 'not-allowed';
+            if (statusSpan) {
+                statusSpan.textContent = 'Scanning...';
+                statusSpan.style.color = '#3b82f6';
+            }
+
+            try {
+                const res = await fetch('/api/v1/discovery/ai-runtimes/rescan', {
+                    method: 'POST'
+                });
+                if (res.ok) {
+                    if (statusSpan) {
+                        statusSpan.textContent = 'Scan Complete';
+                        statusSpan.style.color = '#10b981';
+                    }
+                    await loadLocalModelsView();
+                    await fetchCockpit();
+                } else {
+                    if (statusSpan) {
+                        statusSpan.textContent = 'Scan Failed';
+                        statusSpan.style.color = '#ef4444';
+                    }
+                }
+            } catch (err) {
+                if (statusSpan) {
+                    statusSpan.textContent = 'Error';
+                    statusSpan.style.color = '#ef4444';
+                }
+            } finally {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+                setTimeout(() => {
+                    if (statusSpan && (statusSpan.textContent.startsWith('Scan') || statusSpan.textContent === 'Error')) {
+                        statusSpan.textContent = '';
+                    }
+                }, 3000);
+            }
+        });
+    }
+
     // Initialization routine
     function init() {
         initTheme();
         initNavigation();
         initializeKoiAnimation();
+        initRescanButton();
         
         // Initial fetches
         fetchCockpit();
