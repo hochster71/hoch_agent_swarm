@@ -8050,6 +8050,13 @@ def post_swarm_agent_chat(payload: dict):
     return agent_chat(payload)
 
 
+@app.get("/prototype/device-swarm")
+def get_prototype_device_swarm():
+    from fastapi.responses import HTMLResponse
+    from backend.device_swarm_server import HTML
+    return HTMLResponse(content=HTML, headers={"Cache-Control": "no-store, no-cache, must-revalidate, max-age=0"})
+
+
 # Mount frontend files at root (if frontend directory exists)
 
 frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../frontend/dist"))
