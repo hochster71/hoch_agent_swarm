@@ -1,0 +1,16 @@
+{
+  "risks": [
+    {
+      "risk_id": "RSK-001",
+      "description": "Accidental exposure of mutation endpoints in local development mode",
+      "mitigation": "Strict contract-level test block assertions verifying no socket/EventSource/POST/PUT/DELETE hooks are enabled",
+      "status": "MITIGATED"
+    },
+    {
+      "risk_id": "RSK-002",
+      "description": "Unauthorized production deployment attempts",
+      "mitigation": "CI validate and deployment commands are decoupled and restricted from triggering production releases",
+      "status": "MITIGATED"
+    }
+  ]
+}

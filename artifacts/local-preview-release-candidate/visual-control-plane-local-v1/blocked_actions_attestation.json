@@ -1,0 +1,17 @@
+{
+  "attestation": {
+    "signer": "Michael Hoch",
+    "role": "Operator / Deployer",
+    "timestamp": "2026-06-27T18:15:00-05:00",
+    "attested_facts": {
+      "production_deployment_performed": false,
+      "git_push_performed": false,
+      "main_merge_performed": false,
+      "backend_mutation_performed": false,
+      "prompt_execution_performed": false,
+      "approval_decision_execution_performed": false,
+      "external_publication_performed": false,
+      "actual_ato_authorization_claimed": false
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "phase": "P6_LOCAL_PREVIEW_RELEASE_CANDIDATE",
+  "operator": "Michael Hoch",
+  "local_only": true,
+  "final_certification": "P6 LOCAL PREVIEW RELEASE CANDIDATE — ACCEPTED FOR LOCAL PREVIEW REVIEW ONLY",
+  "seal_status": "PASS",
+  "timestamp": "2026-06-27T18:15:00-05:00",
+  "blocked_actions": [
+    "production deployment",
+    "external publication",
+    "backend mutation",
+    "prompt execution",
+    "approval decision execution",
+    "security posture change"
+  ]
+}
