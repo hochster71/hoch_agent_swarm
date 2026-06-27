@@ -410,6 +410,23 @@ def get_cockpit_data() -> dict[str, Any]:
             "error": str(exc)
         }
 
+    # 15. Evidence Collector Telemetry
+    try:
+        from backend.evidence_collector import EvidenceCollector
+        collector = EvidenceCollector()
+        evidence_collector_telemetry = collector.get_stats()
+    except Exception as exc:
+        evidence_collector_telemetry = {
+            "state": "ERROR",
+            "mission_count": 0,
+            "fail_closed_count": 0,
+            "conditional_go_count": 0,
+            "go_count": 0,
+            "latest_mission_id": None,
+            "execution_enabled": False,
+            "error": str(exc)
+        }
+
     return {
         "truth": "LIVE",
         "generated_at": now_str,
@@ -427,6 +444,7 @@ def get_cockpit_data() -> dict[str, Any]:
             "autonomy_budget": ab_data,
             "device_registry": dr_data,
             "prompt_registry": pr_registry_data,
-            "approval_gate": approval_gate_telemetry
+            "approval_gate": approval_gate_telemetry,
+            "evidence_collector": evidence_collector_telemetry
         }
     }
