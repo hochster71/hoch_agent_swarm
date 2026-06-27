@@ -422,3 +422,46 @@ Linked the background Kimi-style visual animation layer (orbits of SVG Koi fish 
 - Added a static contract check test [`scripts/qa/test-mission-control-pond-contract.ts`](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/scripts/qa/test-mission-control-pond-contract.ts).
 - Registered the `qa:mission-control-pond` task in [`package.json`](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/package.json) and appended it to the `qa:ui-contract` suite.
 - Re-compiled Vite assets and verified the entire integration pipeline successfully (`npm run ci:validate` passed 100%).
+
+---
+
+## PROTO-3 — HOCH Agent Flight Deck
+
+### Purpose
+Created a central Agent Flight Deck panel providing operators with comprehensive visual control and lifecycle monitoring of swarm campaign execution lanes.
+
+### Backend & API
+- Registered `POST /api/v1/runs` endpoint in [`backend/main.py`](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/backend/main.py) to trigger a simulated swarm run.
+- Configured dynamic execution lanes: **Governance Gates** (staged requests awaiting override approval), **Planning Corridor** (active sub-agent reasoning loops), **Execution Lanes** (active command dispatches), and **Audit Archive** (completed run ledgers).
+- Implemented operator signing waivers for quick policy compliance approvals and rejections.
+
+### Frontend Integration
+- Added `#view-agent-flight-deck` panel to [`frontend/index.html`](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/frontend/index.html).
+- Implemented real-time dynamic card rendering for campaigns, active tasks, agent rosters, and gated safety waiver prompts in [`frontend/app.js`](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/frontend/app.js).
+- Wired manual campaign execution triggers and approval/rejection actions to backend handlers.
+
+### QA & Compliance
+- Added a static contract check test [`scripts/qa/test-agent-flight-deck-contract.ts`](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/scripts/qa/test-agent-flight-deck-contract.ts).
+- Registered `qa:agent-flight-deck` in [`package.json`](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/package.json) and linked it to the `qa:ui-contract` suite.
+
+---
+
+## PROTO-4 — Governed Agent Spawn Runtime
+
+### Purpose
+Engineered a secure, governed background agent spawning engine that binds interactive user chat inputs directly to operational safety approval gates, background execution loops, self-healing node routing, and cryptographically verified ledger entries.
+
+### Backend & Core Logic
+- Updated `post_swarm_agent_chat` in [`backend/main.py`](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/backend/main.py) to stage a pending run, create blocked execution tasks, and register an `agent_launch` approval gate.
+- Integrated operator approval actions to intercept `agent_launch` decisions and spawn the background thread handler.
+- Implemented `execute_agent_run_background` executing a local LLM or fallback query, performing subnet scans, enforcing automatic self-healing standby routing (promoting candidate node `10.0.0.115` to active status if `10.0.0.8` is offline), writing the detailed JSON evidence artifact to `/artifacts/evidence/`, and logging a cryptographic audit block to the SQLite ledger database.
+
+### Frontend Governance & Flight Deck
+- Updated [`frontend/app.js`](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/frontend/app.js) to poll and render active `agent_launch` approval gates in the "Governance Gates" lane of the Agent Flight Deck.
+- Wired the "Approve" and "Reject" action buttons to dispatch decisions to `POST /api/approval/requests/{id}/decisions`, transitioning the UI state live.
+
+### Verification & Compliance
+- Created the contract test script [`scripts/qa/test-agent-spawn-runtime-contract.ts`](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/scripts/qa/test-agent-spawn-runtime-contract.ts) to assert that staging, approval, background execution, and ledger logging are fully compliant.
+- Updated [`package.json`](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/package.json) to register `qa:agent-spawn-runtime` and appended it to the `qa:ui-contract` verification chain.
+- Made the [`backend/hochster_runtime_audit.py`](file:///Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/backend/hochster_runtime_audit.py) engine robust against both string and dictionary action keys.
+- Executed `npm run ci:validate` verifying 100% pass across all 58 integration, readiness, and supply-chain checks.
