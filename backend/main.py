@@ -8373,6 +8373,30 @@ def get_prototype_device_swarm():
     return HTMLResponse(content=HTML, headers={"Cache-Control": "no-store, no-cache, must-revalidate, max-age=0"})
 
 
+@app.post("/api/v1/models/evaluate")
+async def api_evaluate_models(payload: dict | None = None):
+    from backend.model_lifecycle import evaluate_models
+    payload = payload or {}
+    return evaluate_models(
+        limit=int(payload.get("limit", 999)),
+        models=payload.get("models"),
+    )
+
+@app.get("/api/v1/models/lifecycle-report")
+async def api_model_lifecycle_report():
+    import json
+    from pathlib import Path
+    p = Path("artifacts/qa/model_lifecycle/latest_model_lifecycle_report.json")
+    if not p.exists():
+        return {"truth": "MISSING", "reason": "No lifecycle report exists. Run POST /api/v1/models/evaluate first."}
+    return json.loads(p.read_text(encoding="utf-8"))
+
+@app.post("/api/v1/models/delete")
+async def api_delete_model(payload: dict):
+    from backend.model_lifecycle import delete_model
+    return delete_model(str(payload.get("model", "")), str(payload.get("approval", "")))
+
+
 # Mount frontend files at root (if frontend directory exists)
 
 frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../frontend/dist"))
