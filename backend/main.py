@@ -1565,7 +1565,7 @@ def promote_release(req: PromoteRequest):
         details="Promotion succeeded: Mutating git tags, artifact signing, package publishing, and prod deployment simulated."
     )
     
-    return {
+    res_val = {
         "status": "success",
         "message": f"Formal release promotion for candidate {req.candidate_packet_id} executed successfully.",
         "details": {
@@ -1575,6 +1575,25 @@ def promote_release(req: PromoteRequest):
             "deployed": True
         }
     }
+    
+    # Log to immutable ledger
+    from backend.preflight_gate import GATE
+    from backend.ledger_manager import log_operator_action
+    log_operator_action(
+        action_name="release_promotion",
+        endpoint="/api/v1/release/promote",
+        preflight=GATE.run_preflight(),
+        decision="OVERRIDE" if req.override else "GO",
+        override_reason="Bypassed by operator" if req.override else "",
+        execution_output=res_val,
+        artifact_refs=[
+            "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/release_manifest.json",
+            "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/sbom.spdx.json"
+        ],
+        recovery_command="git tag -d v0.1.6-ERROR-BUDGET-AWARE-AUTONOMY && git push --delete origin v0.1.6-ERROR-BUDGET-AWARE-AUTONOMY"
+    )
+    
+    return res_val
 
 class ExecutionPlanRequest(BaseModel):
     candidate_packet_id: str
@@ -3181,6 +3200,20 @@ async def create_swarm_run(payload: dict):
     run_id = f"run-{uuid.uuid4().hex[:8]}"
     name = payload.get("name", f"Swarm Run {datetime.now().strftime('%Y-%m-%d %H:%M')}")
     persist_swarm_run(run_id, name, "running")
+    
+    # Log to immutable ledger
+    from backend.preflight_gate import GATE
+    from backend.ledger_manager import log_operator_action
+    log_operator_action(
+        action_name="swarm_run",
+        endpoint="/api/v1/runs",
+        preflight=GATE.run_preflight(),
+        decision="OVERRIDE" if override else "GO",
+        override_reason="Bypassed by operator" if override else "",
+        execution_output={"run_id": run_id, "name": name},
+        artifact_refs=["/Users/michaelhoch/hoch_agent_swarm/run_report.json"],
+        recovery_command=f"python3 scripts/control/stop_run.py {run_id}"
+    )
     
     # Load tasks template from task_graph.json
     tasks_template = []
@@ -6644,6 +6677,24 @@ def api_get_v1_audit_events():
         "evidence_refs": ["ledger.blocks"]
     }
 
+@app.get("/api/v1/ledger/blocks")
+def api_get_ledger_blocks():
+    from backend.ledger_manager import get_ledger_blocks
+    return get_ledger_blocks()
+
+@app.get("/api/v1/ledger/verify")
+def api_verify_ledger():
+    from backend.ledger_manager import verify_ledger_chain
+    return verify_ledger_chain()
+
+@app.get("/api/v1/ledger/evidence-pack/{block_idx}")
+def api_get_evidence_pack(block_idx: int):
+    from backend.ledger_manager import generate_evidence_pack
+    try:
+        return generate_evidence_pack(block_idx)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
 @app.get("/api/v1/policy/status")
 def api_get_policy_status():
     return {
@@ -7155,6 +7206,21 @@ def trigger_crewai_ingestion(override: bool = False):
     from backend.crewai_ingestion_bridge import run_crewai_ingestion
     try:
         res = run_crewai_ingestion()
+        
+        # Log to immutable ledger
+        from backend.preflight_gate import GATE
+        from backend.ledger_manager import log_operator_action
+        log_operator_action(
+            action_name="crewai_ingestion",
+            endpoint="/api/v1/ingest/crewai",
+            preflight=GATE.run_preflight(),
+            decision="OVERRIDE" if override else "GO",
+            override_reason="Bypassed by operator" if override else "",
+            execution_output={"scanned": res.get("scanned", 0), "ingested": res.get("ingested", 0)},
+            artifact_refs=["/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/backend/swarm_ledger.db"],
+            recovery_command="sqlite3 backend/swarm_ledger.db 'VACUUM;'"
+        )
+        
         return {
             "status": "success",
             "scanned": res.get("scanned", 0),
@@ -7621,7 +7687,23 @@ def post_migration_resume_endpoint(override: bool = False):
     from backend.execution_policy import POLICY_ENGINE
     POLICY_ENGINE.enforce("resume_migration", override)
     from backend.migration_runner import RUNNER
-    return RUNNER.resume_migration()
+    res = RUNNER.resume_migration()
+    
+    # Log to immutable ledger
+    from backend.preflight_gate import GATE
+    from backend.ledger_manager import log_operator_action
+    log_operator_action(
+        action_name="resume_migration",
+        endpoint="/api/v1/migration/resume",
+        preflight=GATE.run_preflight(),
+        decision="OVERRIDE" if override else "GO",
+        override_reason="Bypassed by operator" if override else "",
+        execution_output=res,
+        artifact_refs=["/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/control/rclone-exclude.txt"],
+        recovery_command="killall rclone"
+    )
+    
+    return res
 
 @app.get("/api/v1/preflight/status")
 def get_preflight_status_endpoint():

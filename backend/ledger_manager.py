@@ -214,3 +214,127 @@ def verify_ledger_chain() -> dict:
 def uuid_like_hash(data: dict) -> str:
     serialized = json.dumps(data, separators=(',', ':'), sort_keys=True)
     return hashlib.md5(serialized.encode("utf-8")).hexdigest()[:12]
+
+def log_operator_action(
+    action_name: str,
+    endpoint: str,
+    preflight: dict,
+    decision: str,
+    override_reason: str = "",
+    execution_output: dict = None,
+    artifact_refs: list = None,
+    recovery_command: str = ""
+) -> dict:
+    import subprocess
+    from pathlib import Path
+    
+    COCKPIT_DIR = Path("/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm")
+    
+    # Get Git SHA & dirty state
+    git_sha = "unknown"
+    git_dirty = False
+    try:
+        res = subprocess.run(["git", "rev-parse", "HEAD"], cwd=COCKPIT_DIR, capture_output=True, text=True, timeout=1.0)
+        if res.returncode == 0:
+            git_sha = res.stdout.strip()
+        res_status = subprocess.run(["git", "status", "--porcelain"], cwd=COCKPIT_DIR, capture_output=True, text=True, timeout=1.0)
+        git_dirty = bool(res_status.stdout.strip())
+    except Exception:
+        pass
+        
+    git_state = {
+        "commit_sha": git_sha,
+        "dirty": git_dirty
+    }
+
+    event = {
+        "id": f"evt-{uuid_like_hash({'timestamp': datetime.utcnow().isoformat(), 'action': action_name})}",
+        "actor": {
+            "id": "operator",
+            "name": "System Operator",
+            "type": "operator",
+            "role": "System Operator"
+        },
+        "action": {
+            "type": "OPERATOR_ACTION",
+            "name": action_name,
+            "endpoint": endpoint,
+            "summary": f"Executed high-impact action: {action_name}"
+        },
+        "preflight": preflight,
+        "decision": decision,
+        "override_reason": override_reason,
+        "execution_context": {
+            "git_state": git_state,
+            "execution_output": execution_output or {},
+            "recovery_command": recovery_command,
+            "artifact_refs": artifact_refs or []
+        },
+        "result": "success",
+        "severity": "info",
+        "timestamp": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+    }
+
+    return add_event_to_ledger(event)
+
+def generate_evidence_pack(block_idx: int) -> dict:
+    from pathlib import Path
+    init_db()
+    # Find block
+    block = None
+    blocks = get_ledger_blocks()
+    for b in blocks:
+        if b["index"] == block_idx:
+            block = b
+            break
+            
+    if not block:
+        raise ValueError(f"Block at index {block_idx} not found in immutable ledger.")
+        
+    # Run chain verification
+    verification = verify_ledger_chain()
+    
+    # Process artifact references
+    artifact_refs = block["event"].get("execution_context", {}).get("artifact_refs", [])
+    artifacts_content = []
+    
+    for ref in artifact_refs:
+        ref_path = Path(ref)
+        if ref_path.exists() and ref_path.is_file():
+            try:
+                content_bytes = ref_path.read_bytes()
+                sha256 = hashlib.sha256(content_bytes).hexdigest()
+                
+                is_text = False
+                text_content = ""
+                if ref_path.suffix in [".json", ".jsonl", ".txt", ".md", ".yaml", ".yml", ".spdx"] and len(content_bytes) < 1024 * 1024:
+                    try:
+                        text_content = content_bytes.decode("utf-8")
+                        is_text = True
+                    except Exception:
+                        pass
+                
+                artifacts_content.append({
+                    "path": str(ref_path),
+                    "size_bytes": len(content_bytes),
+                    "sha256": sha256,
+                    "is_text": is_text,
+                    "content": text_content if is_text else "[Binary / Large Content]"
+                })
+            except Exception as e:
+                artifacts_content.append({
+                    "path": str(ref_path),
+                    "error": f"Failed to read file: {e}"
+                })
+        else:
+            artifacts_content.append({
+                "path": str(ref_path),
+                "error": "File does not exist or is not a file"
+            })
+            
+    return {
+        "ledger_block": block,
+        "chain_verification": verification,
+        "artifacts_content": artifacts_content,
+        "generated_at": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+    }

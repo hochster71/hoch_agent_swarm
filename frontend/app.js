@@ -1220,6 +1220,7 @@
     }
 
     async function loadEvidenceView() {
+        loadActionLedger();
         const stats = el('evidence-stats');
         const tbody = el('evidence-matrix-tbody');
         if (!tbody) return;
@@ -3040,6 +3041,7 @@
         initModelStorageButton();
         initMigrationButton();
         initPreflightButton();
+        initLedgerButtons();
         
         // Initial fetches
         fetchCockpit();
@@ -3048,6 +3050,146 @@
 
         // Load default view
         switchView('mission-control');
+    }
+
+    async function loadActionLedger() {
+        const tbody = el('ledger-tbody');
+        if (!tbody) return;
+        try {
+            const res = await fetch('/api/v1/ledger/blocks');
+            if (!res.ok) throw new Error('Failed to fetch ledger blocks');
+            const blocks = await res.json();
+            
+            if (blocks.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:15px; color:var(--text-secondary);">No action ledger records found.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = blocks.map(b => {
+                const evt = b.event || {};
+                const action = evt.action || {};
+                const preflight = evt.preflight || {};
+                
+                let decisionColor = '#10b981'; // GO
+                let decisionBg = 'rgba(16, 185, 129, 0.1)';
+                let decisionBorder = 'rgba(16, 185, 129, 0.2)';
+                if (evt.decision === 'OVERRIDE' || evt.decision === 'OVERRIDDEN') {
+                    decisionColor = '#fbbf24'; // OVERRIDE
+                    decisionBg = 'rgba(245, 158, 11, 0.1)';
+                    decisionBorder = 'rgba(245, 158, 11, 0.2)';
+                }
+
+                const tsStr = b.timestamp ? new Date(b.timestamp).toLocaleString() : 'N/A';
+
+                return `
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.03);">
+                        <td style="padding:10px 8px; font-family:monospace; color:var(--text-secondary); font-weight:bold;">#${b.index}</td>
+                        <td style="padding:10px 8px; color:var(--text-secondary);">${tsStr}</td>
+                        <td style="padding:10px 8px; font-weight:500; color:#fff;">
+                            <span style="color:#818cf8; font-family:monospace; font-weight:bold;">${action.name || 'UNKNOWN'}</span>
+                            <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">${action.endpoint || ''}</div>
+                        </td>
+                        <td style="padding:10px 8px; font-weight:bold; color:${preflight.overall_score >= 80 ? '#10b981' : '#f87171'};">
+                            ${preflight.overall_score !== undefined ? preflight.overall_score + '%' : 'N/A'}
+                        </td>
+                        <td style="padding:10px 8px;">
+                            <span style="padding:2px 6px; border-radius:4px; font-size:11px; font-weight:bold; color:${decisionColor}; background:${decisionBg}; border:1px solid ${decisionBorder};">
+                                ${evt.decision || 'GO'}
+                            </span>
+                        </td>
+                        <td style="padding:10px 8px; text-align:right;">
+                            <button class="btn btn-secondary btn-download-pack" data-idx="${b.index}" style="padding:4px 8px; font-size:11px;">
+                                Download Pack
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            tbody.querySelectorAll('.btn-download-pack').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const idx = btn.getAttribute('data-idx');
+                    downloadEvidencePack(idx);
+                });
+            });
+
+        } catch (err) {
+            console.error('Error loading action ledger:', err);
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:15px; color:#ef4444;">Error loading operator action ledger</td></tr>`;
+        }
+    }
+
+    async function downloadEvidencePack(blockIdx) {
+        try {
+            const res = await fetch(`/api/v1/ledger/evidence-pack/${blockIdx}`);
+            if (!res.ok) throw new Error('Evidence pack generation failed');
+            const data = await res.json();
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `evidence_pack_block_${blockIdx}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error('Failed to download evidence pack:', err);
+            alert('Failed to download evidence pack. See console for details.');
+        }
+    }
+
+    async function verifyLedgerIntegrity() {
+        const badge = el('ledger-integrity-badge');
+        const btn = el('btn-verify-ledger');
+        if (!badge || !btn) return;
+        
+        btn.disabled = true;
+        btn.textContent = 'Verifying...';
+        badge.textContent = 'Cryptographic Chain: VERIFYING...';
+        badge.style.background = 'rgba(255, 255, 255, 0.05)';
+        badge.style.color = 'var(--text-secondary)';
+        badge.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+
+        try {
+            const res = await fetch('/api/v1/ledger/verify');
+            if (!res.ok) throw new Error('Integrity verification check failed');
+            const result = await res.json();
+
+            if (result.is_valid) {
+                badge.textContent = 'Cryptographic Chain: Verified';
+                badge.style.background = 'rgba(16, 185, 129, 0.1)';
+                badge.style.color = '#10b981';
+                badge.style.borderColor = 'rgba(16, 185, 129, 0.2)';
+            } else {
+                badge.textContent = 'Cryptographic Chain: CORRUPTED!';
+                badge.style.background = 'rgba(239, 68, 68, 0.1)';
+                badge.style.color = '#ef4444';
+                badge.style.borderColor = 'rgba(239, 68, 68, 0.2)';
+                alert(`Ledger corruption detected! Affected blocks: ${result.corrupted_block_indices.join(', ')}`);
+            }
+        } catch (err) {
+            console.error(err);
+            badge.textContent = 'Cryptographic Chain: Error';
+            badge.style.background = 'rgba(239, 68, 68, 0.1)';
+            badge.style.color = '#ef4444';
+            badge.style.borderColor = 'rgba(239, 68, 68, 0.2)';
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Verify Chain Integrity';
+        }
+    }
+
+    function initLedgerButtons() {
+        const btn = el('btn-verify-ledger');
+        if (btn) {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                verifyLedgerIntegrity();
+            });
+        }
     }
 
     // Run initialization once DOM is ready

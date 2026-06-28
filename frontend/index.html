@@ -502,6 +502,35 @@
                         </table>
                     </div>
                 </section>
+
+                <section class="card" style="padding: 20px; margin-top: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h2 style="font-size: 18px; font-weight: 700; margin: 0;">Immutable Operator Action Ledger</h2>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <span id="ledger-integrity-badge" style="padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2);">
+                                Cryptographic Chain: Verified
+                            </span>
+                            <button id="btn-verify-ledger" class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;">Verify Chain Integrity</button>
+                        </div>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 13px;" id="ledger-table">
+                            <thead>
+                                <tr style="border-bottom: 1px solid var(--border-glass); text-align: left;">
+                                    <th style="padding: 8px;">Block Index</th>
+                                    <th style="padding: 8px;">Timestamp</th>
+                                    <th style="padding: 8px;">Action / Endpoint</th>
+                                    <th style="padding: 8px;">Preflight Score</th>
+                                    <th style="padding: 8px;">Decision</th>
+                                    <th style="padding: 8px; text-align: right;">Evidence Pack</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ledger-tbody">
+                                <tr><td colspan="6" style="text-align:center; padding:15px; color:var(--text-secondary);">Querying action ledger...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
             </div>
 
             <!-- 7. Detections View -->
