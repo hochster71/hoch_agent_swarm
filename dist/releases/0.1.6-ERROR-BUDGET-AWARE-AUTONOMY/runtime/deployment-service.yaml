@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: swarm-deployment
+  namespace: default
+  labels:
+    app: hoch-agent-swarm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hoch-agent-swarm
+  template:
+    metadata:
+      labels:
+        app: hoch-agent-swarm
+    spec:
+      containers:
+      - name: backend
+        image: hochster71/hoch-agent-swarm:v0.1.6-ERROR-BUDGET-AWARE-AUTONOMY
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - secretRef:
+            name: swarm-secrets
+        livenessProbe:
+          httpGet:
+            path: /api/v1/hochster/health
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 30
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /api/v1/readiness/status
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 15
+        resources:
+          limits:
+            cpu: "2"
+            memory: 4Gi
+          requests:
+            cpu: "1"
+            memory: 2Gi
+      - name: cockpit-ui
+        image: hochster71/hoch-swarm-dashboard:v1.1.0
+        ports:
+        - containerPort: 8085
+        livenessProbe:
+          httpGet:
+            path: /index.html
+            port: 8085
+          initialDelaySeconds: 5
+          periodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: swarm-service
+  namespace: default
+spec:
+  type: ClusterIP
+  selector:
+    app: hoch-agent-swarm
+  ports:
+  - name: backend
+    protocol: TCP
+    port: 8000
+    targetPort: 8000
+  - name: cockpit-ui
+    protocol: TCP
+    port: 8085
+    targetPort: 8085
