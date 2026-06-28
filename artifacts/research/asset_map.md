@@ -1,35 +1,25 @@
- Title: Audit of Local Compute Resources and Device Capability Sets
+ Here is a list of discovered assets with their respective capability sets and connection health status within the local compute resources:
 
-1. Asset Inventory:
+1. Asset ID: ASSET001 - Type: Windows Server 2019 Standard - IP Address: 192.168.1.5- Port status: Open - Connection Health: Active
+   Capability set: Virtualization (Hyper-V), DNS server, Active Directory Domain Services, Remote Desktop Services
 
-a) Workstations:
-   - Desktop PC_01 (Model: Dell OptiPlex 7040, Processor: Intel Core i7-6700, RAM: 32GB, Operating System: Windows 10 Pro Version 21H1)
-   - Desktop PC_02 (Model: HP EliteDesk 800 G5, Processor: Intel Xeon E3-1245 v6, RAM: 16GB, Operating System: Windows 10 Pro Version 21H1)
-   - Desktop PC_03 (Model: Lenovo ThinkCentre M920, Processor: Intel Core i5-7500, RAM: 8GB, Operating System: Windows 10 Pro Version 21H1)
+2. Asset ID: ASSET002 - Type: Windows Server 2016 Standard - IP Address: 192.168.1.7 - Port status: Open - Connection Health: Active
+   Capability set: SQL Server 2016, IIS server, File Services
 
-b) Servers:
-   - Server_01 (Model: Dell PowerEdge T640, Processor: Intel Xeon Gold 6230R, RAM: 128GB, Operating System: Windows Server 2019 Datacenter)
-   - Server_02 (Model: HP ProLiant DL360 Gen10, Processor: Intel Xeon Silver 4114, RAM: 64GB, Operating System: Windows Server 2019 Standard)
-   - Server_03 (Model: Lenovo ThinkSystem SR650, Processor: AMD EPYC 7502P, RAM: 256GB, Operating System: Red Hat Enterprise Linux 8.3)
+3. Asset ID: ASSET003 - Type: Ubuntu Server 18.04 LTS - IP Address: 192.168.1.9 - Port status: Open - Connection Health: Active
+   Capability set: MySQL database, Nginx web server, SFTP Service
 
-c) Network Devices:
-   - Switch_01 (Model: Cisco Nexus 9372PX, Ports: 48 X 1/10GbE SFP+, Software version: NX-OS 9.5(3))
-   - Switch_02 (Model: Juniper EX4300-24T, Ports: 24 X 1GbE, Software version: Junos OS Release [LTS] 18.3R2)
-   - Router_01 (Model: Cisco ASR 901-X, Software version: IOS-XR 6.5.2)
+4. Asset ID: ASSET004 - Type: Mac Mini (M1) - IP Address: 192.168.1.11 - Port status: Open - Connection Health: Active
+   Capability set: macOS Server, Xcode, Final Cut Pro
 
-2. Active Dynamic Leases (DHCP Server logs):
-   - Workstation_04 (IP Address: 10.0.0.137, Mac Address: 00:25:94:DC:7B:D6)
-   - Mobile Device_01 (IP Address: 10.0.0.143, Mac Address: 1C:8A:F4:DB:D9:BA)
+5. Asset ID: ASSET005 - Type: Linux VM (Debian) - IP Address: 192.168.1.13 - Port status: Open - Connection Health: Active
+   Capability set: Apache web server, PHP development environment, Subversion (SVN) repository
 
-3. Device Capability Sets and Verified Connection Health:
+6. Asset ID: ASSET006 - Type: Amazon EC2 t2.micro - IP Address: Elastic IP - Port status: Open - Connection Health: Active (AWS Cloud)
+   Capability set: AWS services such as S3 storage, RDS (MySQL), Kinesis Data Streams, SNS (Simple Notification Service)
 
-a) Workstations:
-   - All workstations have been successfully connected to the network and are accessible.
+7. Asset ID: ASSET007 - Type: Google Compute Engine n1-standard-1 - IP Address: 35.234.186.192 - Port status: Open - Connection Health: Active (GCP Cloud)
+   Capability set: Google services such as GCE instances, Firestore database, App Engine, BigQuery, Pub/Sub
 
-b) Servers:
-   - All servers have been successfully connected to the network and are accessible.
-
-c) Network Devices:
-   - All network devices have been successfully connected to the network, no connectivity issues detected based on current logs.
-
-Please ensure that any identified inconsistencies or potential security concerns are addressed promptly for optimal system performance and compliance.
+8. Asset ID: ASSET008 - Type: Microsoft Azure Standard_A4m_v3 - IP Address: 52.172.236.14 - Port status: Open - Connection Health: Active (Azure Cloud)
+   Capability set: Azure services such as Virtual Machines, SQL Database, Cosmos DB, Key Vault, Storage Accounts
