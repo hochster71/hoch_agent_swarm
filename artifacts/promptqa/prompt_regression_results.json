@@ -4,1308 +4,1308 @@
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.835136+00:00"
+    "timestamp": "2026-06-28T15:50:42.269514+00:00"
   },
   "AG-001": {
     "id": "AG-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835175+00:00"
+    "timestamp": "2026-06-28T15:50:42.269554+00:00"
   },
   "AI-001": {
     "id": "AI-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835191+00:00"
+    "timestamp": "2026-06-28T15:50:42.269570+00:00"
   },
   "AI-002": {
     "id": "AI-002",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835205+00:00"
+    "timestamp": "2026-06-28T15:50:42.269584+00:00"
   },
   "AI-003": {
     "id": "AI-003",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.835218+00:00"
+    "timestamp": "2026-06-28T15:50:42.269597+00:00"
   },
   "AIRT-016": {
     "id": "AIRT-016",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.835235+00:00"
+    "timestamp": "2026-06-28T15:50:42.269615+00:00"
   },
   "ARCHSEC-008": {
     "id": "ARCHSEC-008",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.835252+00:00"
+    "timestamp": "2026-06-28T15:50:42.269632+00:00"
   },
   "AUD-001": {
     "id": "AUD-001",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.835267+00:00"
+    "timestamp": "2026-06-28T15:50:42.269647+00:00"
   },
   "AUD-002": {
     "id": "AUD-002",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835282+00:00"
+    "timestamp": "2026-06-28T15:50:42.269662+00:00"
   },
   "AUD-003": {
     "id": "AUD-003",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835296+00:00"
+    "timestamp": "2026-06-28T15:50:42.269676+00:00"
   },
   "AUD-004": {
     "id": "AUD-004",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835312+00:00"
+    "timestamp": "2026-06-28T15:50:42.269692+00:00"
   },
   "AUTHZ-027": {
     "id": "AUTHZ-027",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.835328+00:00"
+    "timestamp": "2026-06-28T15:50:42.269709+00:00"
   },
   "BIZ-019": {
     "id": "BIZ-019",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.835344+00:00"
+    "timestamp": "2026-06-28T15:50:42.269725+00:00"
   },
   "BLUE-017": {
     "id": "BLUE-017",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.835360+00:00"
+    "timestamp": "2026-06-28T15:50:42.269741+00:00"
   },
   "BRAIN-001": {
     "id": "BRAIN-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835389+00:00"
+    "timestamp": "2026-06-28T15:50:42.269769+00:00"
   },
   "BRAIN-002": {
     "id": "BRAIN-002",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.835415+00:00"
+    "timestamp": "2026-06-28T15:50:42.269795+00:00"
   },
   "BRAIN-003": {
     "id": "BRAIN-003",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835441+00:00"
+    "timestamp": "2026-06-28T15:50:42.269821+00:00"
   },
   "BRAIN-004": {
     "id": "BRAIN-004",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835465+00:00"
+    "timestamp": "2026-06-28T15:50:42.269846+00:00"
   },
   "BRAIN-005": {
     "id": "BRAIN-005",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835490+00:00"
+    "timestamp": "2026-06-28T15:50:42.269871+00:00"
   },
   "BRAIN-006": {
     "id": "BRAIN-006",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835514+00:00"
+    "timestamp": "2026-06-28T15:50:42.269895+00:00"
   },
   "BRAIN-007": {
     "id": "BRAIN-007",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835538+00:00"
+    "timestamp": "2026-06-28T15:50:42.269918+00:00"
   },
   "BRAIN-008": {
     "id": "BRAIN-008",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.835562+00:00"
+    "timestamp": "2026-06-28T15:50:42.269943+00:00"
   },
   "BRAIN-009": {
     "id": "BRAIN-009",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835586+00:00"
+    "timestamp": "2026-06-28T15:50:42.269967+00:00"
   },
   "BRAIN-010": {
     "id": "BRAIN-010",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835609+00:00"
+    "timestamp": "2026-06-28T15:50:42.269992+00:00"
   },
   "BREAK-021": {
     "id": "BREAK-021",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.835624+00:00"
+    "timestamp": "2026-06-28T15:50:42.270007+00:00"
   },
   "CHAOS-024": {
     "id": "CHAOS-024",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.835639+00:00"
+    "timestamp": "2026-06-28T15:50:42.270021+00:00"
   },
   "CHG-012": {
     "id": "CHG-012",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.835653+00:00"
+    "timestamp": "2026-06-28T15:50:42.270036+00:00"
   },
   "CODE-001": {
     "id": "CODE-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835668+00:00"
+    "timestamp": "2026-06-28T15:50:42.270051+00:00"
   },
   "CODE-002": {
     "id": "CODE-002",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835684+00:00"
+    "timestamp": "2026-06-28T15:50:42.270064+00:00"
   },
   "CODE-003": {
     "id": "CODE-003",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835698+00:00"
+    "timestamp": "2026-06-28T15:50:42.270078+00:00"
   },
   "CODE-004": {
     "id": "CODE-004",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835710+00:00"
+    "timestamp": "2026-06-28T15:50:42.270090+00:00"
   },
   "CODE-005": {
     "id": "CODE-005",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835723+00:00"
+    "timestamp": "2026-06-28T15:50:42.270104+00:00"
   },
   "CONST-001": {
     "id": "CONST-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835747+00:00"
+    "timestamp": "2026-06-28T15:50:42.270129+00:00"
   },
   "CONTRACT-001": {
     "id": "CONTRACT-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835771+00:00"
+    "timestamp": "2026-06-28T15:50:42.270156+00:00"
   },
   "CORR-001": {
     "id": "CORR-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835795+00:00"
+    "timestamp": "2026-06-28T15:50:42.270181+00:00"
   },
   "COURTS-001": {
     "id": "COURTS-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835820+00:00"
+    "timestamp": "2026-06-28T15:50:42.270205+00:00"
   },
   "CRM-001": {
     "id": "CRM-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835843+00:00"
+    "timestamp": "2026-06-28T15:50:42.270229+00:00"
   },
   "DAST-001": {
     "id": "DAST-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835855+00:00"
+    "timestamp": "2026-06-28T15:50:42.270241+00:00"
   },
   "DAST-002": {
     "id": "DAST-002",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835869+00:00"
+    "timestamp": "2026-06-28T15:50:42.270255+00:00"
   },
   "DAST-003": {
     "id": "DAST-003",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835883+00:00"
+    "timestamp": "2026-06-28T15:50:42.270269+00:00"
   },
   "DBSEC-010": {
     "id": "DBSEC-010",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.835899+00:00"
+    "timestamp": "2026-06-28T15:50:42.270285+00:00"
   },
   "DEV-001": {
     "id": "DEV-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835913+00:00"
+    "timestamp": "2026-06-28T15:50:42.270300+00:00"
   },
   "DEV-002": {
     "id": "DEV-002",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835927+00:00"
+    "timestamp": "2026-06-28T15:50:42.270314+00:00"
   },
   "DEV-003": {
     "id": "DEV-003",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835943+00:00"
+    "timestamp": "2026-06-28T15:50:42.270330+00:00"
   },
   "DEV-004": {
     "id": "DEV-004",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835957+00:00"
+    "timestamp": "2026-06-28T15:50:42.270346+00:00"
   },
   "DEV-005": {
     "id": "DEV-005",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835970+00:00"
+    "timestamp": "2026-06-28T15:50:42.270360+00:00"
   },
   "DEV-006": {
     "id": "DEV-006",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835983+00:00"
+    "timestamp": "2026-06-28T15:50:42.270373+00:00"
   },
   "DOD-001": {
     "id": "DOD-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.835996+00:00"
+    "timestamp": "2026-06-28T15:50:42.270387+00:00"
   },
   "DOD-002": {
     "id": "DOD-002",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.836009+00:00"
+    "timestamp": "2026-06-28T15:50:42.270400+00:00"
   },
   "DOD-003": {
     "id": "DOD-003",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.836023+00:00"
+    "timestamp": "2026-06-28T15:50:42.270414+00:00"
   },
   "DRIFT-013": {
     "id": "DRIFT-013",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.836038+00:00"
+    "timestamp": "2026-06-28T15:50:42.270430+00:00"
   },
   "DRQA-023": {
     "id": "DRQA-023",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.836053+00:00"
+    "timestamp": "2026-06-28T15:50:42.270444+00:00"
   },
   "EDU-001": {
     "id": "EDU-001",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.836066+00:00"
+    "timestamp": "2026-06-28T15:50:42.270456+00:00"
   },
   "ELECTION-001": {
     "id": "ELECTION-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.836090+00:00"
+    "timestamp": "2026-06-28T15:50:42.270481+00:00"
   },
   "EMERG-001": {
     "id": "EMERG-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.836114+00:00"
+    "timestamp": "2026-06-28T15:50:42.270504+00:00"
   },
   "EN-001": {
     "id": "EN-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.836126+00:00"
+    "timestamp": "2026-06-28T15:50:42.270516+00:00"
   },
   "EN-002": {
     "id": "EN-002",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.836139+00:00"
+    "timestamp": "2026-06-28T15:50:42.270529+00:00"
   },
   "ENV-001": {
     "id": "ENV-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.836163+00:00"
+    "timestamp": "2026-06-28T15:50:42.270555+00:00"
   },
   "EXCEPT-022": {
     "id": "EXCEPT-022",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.836178+00:00"
+    "timestamp": "2026-06-28T15:50:42.270570+00:00"
   },
   "EXECRISK-030": {
     "id": "EXECRISK-030",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.836216+00:00"
+    "timestamp": "2026-06-28T15:50:42.270585+00:00"
   },
   "FAC-001": {
     "id": "FAC-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.836253+00:00"
+    "timestamp": "2026-06-28T15:50:42.270610+00:00"
   },
   "FAR-001": {
     "id": "FAR-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.836280+00:00"
+    "timestamp": "2026-06-28T15:50:42.270634+00:00"
   },
   "FIN-001": {
     "id": "FIN-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.836295+00:00"
+    "timestamp": "2026-06-28T15:50:42.270648+00:00"
   },
   "FIN-002": {
     "id": "FIN-002",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.836309+00:00"
+    "timestamp": "2026-06-28T15:50:42.270661+00:00"
   },
   "FINOPS-001": {
     "id": "FINOPS-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.836335+00:00"
+    "timestamp": "2026-06-28T15:50:42.270685+00:00"
   },
   "FOOD-001": {
     "id": "FOOD-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.836358+00:00"
+    "timestamp": "2026-06-28T15:50:42.270708+00:00"
   },
   "GAP-001": {
     "id": "GAP-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.836387+00:00"
+    "timestamp": "2026-06-28T15:50:42.270728+00:00"
   },
   "GAP-002": {
     "id": "GAP-002",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.836415+00:00"
+    "timestamp": "2026-06-28T15:50:42.270751+00:00"
   },
   "GAP-003": {
     "id": "GAP-003",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.836439+00:00"
+    "timestamp": "2026-06-28T15:50:42.270775+00:00"
   },
   "GAP-004": {
     "id": "GAP-004",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.836462+00:00"
+    "timestamp": "2026-06-28T15:50:42.270797+00:00"
   },
   "GAP-005": {
     "id": "GAP-005",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.836487+00:00"
+    "timestamp": "2026-06-28T15:50:42.270821+00:00"
   },
   "GAP-006": {
     "id": "GAP-006",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.836510+00:00"
+    "timestamp": "2026-06-28T15:50:42.270844+00:00"
   },
   "GAP-007": {
     "id": "GAP-007",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.836533+00:00"
+    "timestamp": "2026-06-28T15:50:42.270867+00:00"
   },
   "GAP-008": {
     "id": "GAP-008",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.836555+00:00"
+    "timestamp": "2026-06-28T15:50:42.270889+00:00"
   },
   "GOV-001": {
     "id": "GOV-001",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.836570+00:00"
+    "timestamp": "2026-06-28T15:50:42.270903+00:00"
   },
   "GOV-002": {
     "id": "GOV-002",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.836583+00:00"
+    "timestamp": "2026-06-28T15:50:42.270916+00:00"
   },
   "GOVFRAME-001": {
     "id": "GOVFRAME-001",
     "regression_pass": true,
     "total_assertions": 11,
     "passed_assertions": 11,
-    "timestamp": "2026-06-28T15:46:35.836602+00:00"
+    "timestamp": "2026-06-28T15:50:42.270935+00:00"
   },
   "GOVFRAME-002": {
     "id": "GOVFRAME-002",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.836619+00:00"
+    "timestamp": "2026-06-28T15:50:42.270953+00:00"
   },
   "GOVFRAME-003": {
     "id": "GOVFRAME-003",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.836636+00:00"
+    "timestamp": "2026-06-28T15:50:42.270970+00:00"
   },
   "GOVFRAME-004": {
     "id": "GOVFRAME-004",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.836654+00:00"
+    "timestamp": "2026-06-28T15:50:42.270987+00:00"
   },
   "GOVFRAME-005": {
     "id": "GOVFRAME-005",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.836675+00:00"
+    "timestamp": "2026-06-28T15:50:42.271008+00:00"
   },
   "GOVFRAME-006": {
     "id": "GOVFRAME-006",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.836700+00:00"
+    "timestamp": "2026-06-28T15:50:42.271032+00:00"
   },
   "GOVFRAME-007": {
     "id": "GOVFRAME-007",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.836724+00:00"
+    "timestamp": "2026-06-28T15:50:42.271056+00:00"
   },
   "GOVFRAME-008": {
     "id": "GOVFRAME-008",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.836748+00:00"
+    "timestamp": "2026-06-28T15:50:42.271079+00:00"
   },
   "GOVFRAME-009": {
     "id": "GOVFRAME-009",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.836771+00:00"
+    "timestamp": "2026-06-28T15:50:42.271103+00:00"
   },
   "GOVFRAME-010": {
     "id": "GOVFRAME-010",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.836796+00:00"
+    "timestamp": "2026-06-28T15:50:42.271128+00:00"
   },
   "GOVFRAME-011": {
     "id": "GOVFRAME-011",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.836820+00:00"
+    "timestamp": "2026-06-28T15:50:42.271151+00:00"
   },
   "GOVFRAME-012": {
     "id": "GOVFRAME-012",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.836843+00:00"
+    "timestamp": "2026-06-28T15:50:42.271175+00:00"
   },
   "GOVFRAME-013": {
     "id": "GOVFRAME-013",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.836860+00:00"
+    "timestamp": "2026-06-28T15:50:42.271191+00:00"
   },
   "GOVFRAME-014": {
     "id": "GOVFRAME-014",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.836885+00:00"
+    "timestamp": "2026-06-28T15:50:42.271216+00:00"
   },
   "GOVFRAME-015": {
     "id": "GOVFRAME-015",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.836908+00:00"
+    "timestamp": "2026-06-28T15:50:42.271239+00:00"
   },
   "GOVFRAME-016": {
     "id": "GOVFRAME-016",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.836932+00:00"
+    "timestamp": "2026-06-28T15:50:42.271263+00:00"
   },
   "GOVFRAME-017": {
     "id": "GOVFRAME-017",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.836956+00:00"
+    "timestamp": "2026-06-28T15:50:42.271289+00:00"
   },
   "GOVFRAME-018": {
     "id": "GOVFRAME-018",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.836980+00:00"
+    "timestamp": "2026-06-28T15:50:42.271312+00:00"
   },
   "GRANTS-001": {
     "id": "GRANTS-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837003+00:00"
+    "timestamp": "2026-06-28T15:50:42.271335+00:00"
   },
   "HC-001": {
     "id": "HC-001",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.837017+00:00"
+    "timestamp": "2026-06-28T15:50:42.271349+00:00"
   },
   "HC-002": {
     "id": "HC-002",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837029+00:00"
+    "timestamp": "2026-06-28T15:50:42.271361+00:00"
   },
   "HOSP-001": {
     "id": "HOSP-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837054+00:00"
+    "timestamp": "2026-06-28T15:50:42.271385+00:00"
   },
   "HR-001": {
     "id": "HR-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837077+00:00"
+    "timestamp": "2026-06-28T15:50:42.271408+00:00"
   },
   "IAM-009": {
     "id": "IAM-009",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.837093+00:00"
+    "timestamp": "2026-06-28T15:50:42.271423+00:00"
   },
   "IND-001": {
     "id": "IND-001",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.837110+00:00"
+    "timestamp": "2026-06-28T15:50:42.271439+00:00"
   },
   "IND-002": {
     "id": "IND-002",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.837125+00:00"
+    "timestamp": "2026-06-28T15:50:42.271456+00:00"
   },
   "IND-003": {
     "id": "IND-003",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.837141+00:00"
+    "timestamp": "2026-06-28T15:50:42.271472+00:00"
   },
   "IND-004": {
     "id": "IND-004",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.837156+00:00"
+    "timestamp": "2026-06-28T15:50:42.271487+00:00"
   },
   "IND-005": {
     "id": "IND-005",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.837172+00:00"
+    "timestamp": "2026-06-28T15:50:42.271503+00:00"
   },
   "IND-006": {
     "id": "IND-006",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.837186+00:00"
+    "timestamp": "2026-06-28T15:50:42.271518+00:00"
   },
   "IND-007": {
     "id": "IND-007",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.837201+00:00"
+    "timestamp": "2026-06-28T15:50:42.271533+00:00"
   },
   "IND-008": {
     "id": "IND-008",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.837216+00:00"
+    "timestamp": "2026-06-28T15:50:42.271547+00:00"
   },
   "IND-009": {
     "id": "IND-009",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.837230+00:00"
+    "timestamp": "2026-06-28T15:50:42.271562+00:00"
   },
   "IND-010": {
     "id": "IND-010",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.837245+00:00"
+    "timestamp": "2026-06-28T15:50:42.271576+00:00"
   },
   "IND-011": {
     "id": "IND-011",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.837260+00:00"
+    "timestamp": "2026-06-28T15:50:42.271591+00:00"
   },
   "IND-012": {
     "id": "IND-012",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.837275+00:00"
+    "timestamp": "2026-06-28T15:50:42.271606+00:00"
   },
   "IND-013": {
     "id": "IND-013",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.837290+00:00"
+    "timestamp": "2026-06-28T15:50:42.271622+00:00"
   },
   "IND-014": {
     "id": "IND-014",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.837305+00:00"
+    "timestamp": "2026-06-28T15:50:42.271641+00:00"
   },
   "IND-015": {
     "id": "IND-015",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.837319+00:00"
+    "timestamp": "2026-06-28T15:50:42.271655+00:00"
   },
   "INS-001": {
     "id": "INS-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837344+00:00"
+    "timestamp": "2026-06-28T15:50:42.271679+00:00"
   },
   "IR-001": {
     "id": "IR-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837357+00:00"
+    "timestamp": "2026-06-28T15:50:42.271692+00:00"
   },
   "LEG-001": {
     "id": "LEG-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837371+00:00"
+    "timestamp": "2026-06-28T15:50:42.271705+00:00"
   },
   "LOG-011": {
     "id": "LOG-011",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.837386+00:00"
+    "timestamp": "2026-06-28T15:50:42.271721+00:00"
   },
   "MEDIA-001": {
     "id": "MEDIA-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837410+00:00"
+    "timestamp": "2026-06-28T15:50:42.271745+00:00"
   },
   "MFG-001": {
     "id": "MFG-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837424+00:00"
+    "timestamp": "2026-06-28T15:50:42.271758+00:00"
   },
   "MFG-002": {
     "id": "MFG-002",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837437+00:00"
+    "timestamp": "2026-06-28T15:50:42.271771+00:00"
   },
   "MIG-025": {
     "id": "MIG-025",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.837452+00:00"
+    "timestamp": "2026-06-28T15:50:42.271786+00:00"
   },
   "MOB-QA-001": {
     "id": "MOB-QA-001",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.837468+00:00"
+    "timestamp": "2026-06-28T15:50:42.271802+00:00"
   },
   "NONPROFIT-001": {
     "id": "NONPROFIT-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837493+00:00"
+    "timestamp": "2026-06-28T15:50:42.271826+00:00"
   },
   "OPS-001": {
     "id": "OPS-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837506+00:00"
+    "timestamp": "2026-06-28T15:50:42.271839+00:00"
   },
   "OPS-002": {
     "id": "OPS-002",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837519+00:00"
+    "timestamp": "2026-06-28T15:50:42.271853+00:00"
   },
   "OSSLIC-015": {
     "id": "OSSLIC-015",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.837535+00:00"
+    "timestamp": "2026-06-28T15:50:42.271868+00:00"
   },
   "PATCH-006": {
     "id": "PATCH-006",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.837549+00:00"
+    "timestamp": "2026-06-28T15:50:42.271882+00:00"
   },
   "PENTEST-007": {
     "id": "PENTEST-007",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.837564+00:00"
+    "timestamp": "2026-06-28T15:50:42.271897+00:00"
   },
   "PMO-001": {
     "id": "PMO-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837587+00:00"
+    "timestamp": "2026-06-28T15:50:42.271922+00:00"
   },
   "PRIV-003": {
     "id": "PRIV-003",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.837603+00:00"
+    "timestamp": "2026-06-28T15:50:42.271938+00:00"
   },
   "PROC-001": {
     "id": "PROC-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837626+00:00"
+    "timestamp": "2026-06-28T15:50:42.271961+00:00"
   },
   "PROMPT-001": {
     "id": "PROMPT-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837651+00:00"
+    "timestamp": "2026-06-28T15:50:42.271985+00:00"
   },
   "PROMPT-002": {
     "id": "PROMPT-002",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837675+00:00"
+    "timestamp": "2026-06-28T15:50:42.272009+00:00"
   },
   "PROMPT-003": {
     "id": "PROMPT-003",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837699+00:00"
+    "timestamp": "2026-06-28T15:50:42.272034+00:00"
   },
   "PROMPT-004": {
     "id": "PROMPT-004",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837722+00:00"
+    "timestamp": "2026-06-28T15:50:42.272057+00:00"
   },
   "PROMPT-005": {
     "id": "PROMPT-005",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837740+00:00"
+    "timestamp": "2026-06-28T15:50:42.272075+00:00"
   },
   "PROMPT-006": {
     "id": "PROMPT-006",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837763+00:00"
+    "timestamp": "2026-06-28T15:50:42.272098+00:00"
   },
   "PROMPT-007": {
     "id": "PROMPT-007",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837786+00:00"
+    "timestamp": "2026-06-28T15:50:42.272121+00:00"
   },
   "PROMPT-008": {
     "id": "PROMPT-008",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837810+00:00"
+    "timestamp": "2026-06-28T15:50:42.272145+00:00"
   },
   "PROP-001": {
     "id": "PROP-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837834+00:00"
+    "timestamp": "2026-06-28T15:50:42.272168+00:00"
   },
   "PROSERV-001": {
     "id": "PROSERV-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837857+00:00"
+    "timestamp": "2026-06-28T15:50:42.272192+00:00"
   },
   "PROV-014": {
     "id": "PROV-014",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.837873+00:00"
+    "timestamp": "2026-06-28T15:50:42.272206+00:00"
   },
   "PUBHEALTH-001": {
     "id": "PUBHEALTH-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837896+00:00"
+    "timestamp": "2026-06-28T15:50:42.272230+00:00"
   },
   "PURPLE-018": {
     "id": "PURPLE-018",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.837911+00:00"
+    "timestamp": "2026-06-28T15:50:42.272245+00:00"
   },
   "QA-001": {
     "id": "QA-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837927+00:00"
+    "timestamp": "2026-06-28T15:50:42.272262+00:00"
   },
   "QA-002": {
     "id": "QA-002",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837941+00:00"
+    "timestamp": "2026-06-28T15:50:42.272276+00:00"
   },
   "QA-003": {
     "id": "QA-003",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837956+00:00"
+    "timestamp": "2026-06-28T15:50:42.272291+00:00"
   },
   "QA-004": {
     "id": "QA-004",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837970+00:00"
+    "timestamp": "2026-06-28T15:50:42.272305+00:00"
   },
   "QA-005": {
     "id": "QA-005",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837985+00:00"
+    "timestamp": "2026-06-28T15:50:42.272321+00:00"
   },
   "QA-006": {
     "id": "QA-006",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.837999+00:00"
+    "timestamp": "2026-06-28T15:50:42.272335+00:00"
   },
   "QA-007": {
     "id": "QA-007",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.838013+00:00"
+    "timestamp": "2026-06-28T15:50:42.272350+00:00"
   },
   "RATE-026": {
     "id": "RATE-026",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.838028+00:00"
+    "timestamp": "2026-06-28T15:50:42.272364+00:00"
   },
   "RECORDS-001": {
     "id": "RECORDS-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.838052+00:00"
+    "timestamp": "2026-06-28T15:50:42.272389+00:00"
   },
   "REL-004": {
     "id": "REL-004",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.838067+00:00"
+    "timestamp": "2026-06-28T15:50:42.272403+00:00"
   },
   "RESEARCH-001": {
     "id": "RESEARCH-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.838091+00:00"
+    "timestamp": "2026-06-28T15:50:42.272427+00:00"
   },
   "RET-001": {
     "id": "RET-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.838103+00:00"
+    "timestamp": "2026-06-28T15:50:42.272440+00:00"
   },
   "RET-002": {
     "id": "RET-002",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.838116+00:00"
+    "timestamp": "2026-06-28T15:50:42.272453+00:00"
   },
   "SAAS-001": {
     "id": "SAAS-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.838129+00:00"
+    "timestamp": "2026-06-28T15:50:42.272465+00:00"
   },
   "SAAS-002": {
     "id": "SAAS-002",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.838142+00:00"
+    "timestamp": "2026-06-28T15:50:42.272478+00:00"
   },
   "SAST-001": {
     "id": "SAST-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.838156+00:00"
+    "timestamp": "2026-06-28T15:50:42.272493+00:00"
   },
   "SAST-002": {
     "id": "SAST-002",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.838169+00:00"
+    "timestamp": "2026-06-28T15:50:42.272505+00:00"
   },
   "SAST-003": {
     "id": "SAST-003",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.838181+00:00"
+    "timestamp": "2026-06-28T15:50:42.272517+00:00"
   },
   "SAST-004": {
     "id": "SAST-004",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.838193+00:00"
+    "timestamp": "2026-06-28T15:50:42.272530+00:00"
   },
   "SDLC-028": {
     "id": "SDLC-028",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.838208+00:00"
+    "timestamp": "2026-06-28T15:50:42.272545+00:00"
   },
   "SLG-001": {
     "id": "SLG-001",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.838223+00:00"
+    "timestamp": "2026-06-28T15:50:42.272560+00:00"
   },
   "SMARTCITY-001": {
     "id": "SMARTCITY-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.838247+00:00"
+    "timestamp": "2026-06-28T15:50:42.272584+00:00"
   },
   "SWARM-001": {
     "id": "SWARM-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.838271+00:00"
+    "timestamp": "2026-06-28T15:50:42.272607+00:00"
   },
   "SWARM-002": {
     "id": "SWARM-002",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.838294+00:00"
+    "timestamp": "2026-06-28T15:50:42.272631+00:00"
   },
   "SWARM-003": {
     "id": "SWARM-003",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.838321+00:00"
+    "timestamp": "2026-06-28T15:50:42.272659+00:00"
   },
   "SWARM-004": {
     "id": "SWARM-004",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.838344+00:00"
+    "timestamp": "2026-06-28T15:50:42.272682+00:00"
   },
   "SWARM-005": {
     "id": "SWARM-005",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.838368+00:00"
+    "timestamp": "2026-06-28T15:50:42.272705+00:00"
   },
   "SWARM-006": {
     "id": "SWARM-006",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.838391+00:00"
+    "timestamp": "2026-06-28T15:50:42.272729+00:00"
   },
   "SWARM-007": {
     "id": "SWARM-007",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.838416+00:00"
+    "timestamp": "2026-06-28T15:50:42.272757+00:00"
   },
   "SWARM-008": {
     "id": "SWARM-008",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.838439+00:00"
+    "timestamp": "2026-06-28T15:50:42.272780+00:00"
   },
   "SWARM-009": {
     "id": "SWARM-009",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.838462+00:00"
+    "timestamp": "2026-06-28T15:50:42.272804+00:00"
   },
   "SWARM-010": {
     "id": "SWARM-010",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.838486+00:00"
+    "timestamp": "2026-06-28T15:50:42.272827+00:00"
   },
   "SWARM-011": {
     "id": "SWARM-011",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.838510+00:00"
+    "timestamp": "2026-06-28T15:50:42.272852+00:00"
   },
   "SWARM-012": {
     "id": "SWARM-012",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.838533+00:00"
+    "timestamp": "2026-06-28T15:50:42.272875+00:00"
   },
   "TEL-001": {
     "id": "TEL-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.838546+00:00"
+    "timestamp": "2026-06-28T15:50:42.272888+00:00"
   },
   "THREAT-002": {
     "id": "THREAT-002",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.838561+00:00"
+    "timestamp": "2026-06-28T15:50:42.272904+00:00"
   },
   "TRAIN-001": {
     "id": "TRAIN-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.838585+00:00"
+    "timestamp": "2026-06-28T15:50:42.272931+00:00"
   },
   "TRN-001": {
     "id": "TRN-001",
     "regression_pass": true,
     "total_assertions": 9,
     "passed_assertions": 9,
-    "timestamp": "2026-06-28T15:46:35.838598+00:00"
+    "timestamp": "2026-06-28T15:50:42.272944+00:00"
   },
   "UXSEC-020": {
     "id": "UXSEC-020",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.838612+00:00"
+    "timestamp": "2026-06-28T15:50:42.272959+00:00"
   },
   "VULN-005": {
     "id": "VULN-005",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.838628+00:00"
+    "timestamp": "2026-06-28T15:50:42.272974+00:00"
   },
   "XWALK-029": {
     "id": "XWALK-029",
     "regression_pass": true,
     "total_assertions": 10,
     "passed_assertions": 10,
-    "timestamp": "2026-06-28T15:46:35.838640+00:00"
+    "timestamp": "2026-06-28T15:50:42.272986+00:00"
   }
 }

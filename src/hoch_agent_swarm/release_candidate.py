@@ -75,6 +75,7 @@ _CANONICAL_ARTIFACTS: dict[str, str] = {
     "prompt_lineage_json":                "artifacts/promptqa/prompt_lineage.json",
     "docker_gap_analysis":                "artifacts/docker1/docker_gap_analysis.md",
     "live_screenshot_manifest":           "artifacts/live_screenshots/manifest.json",
+    "final_reviewer_packet":              "artifacts/reports/final_reviewer_packet.md",
 }
 
 
