@@ -1,7 +1,7 @@
 {
   "current_track": "PR",
-  "last_completed_phase": "PR14",
-  "next_phase": "PR15",
+  "last_completed_phase": "PR15",
+  "next_phase": "PR16",
   "no_drift_required": true,
   "local_commit_allowed": true,
   "push_allowed": false,
