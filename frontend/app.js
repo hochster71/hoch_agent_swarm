@@ -690,6 +690,30 @@
             if (!timelineContent) return;
 
             try {
+                // Verify integrity
+                try {
+                    const verifyRes = await fetch('/api/v1/orchestrator/history/verify');
+                    if (verifyRes.ok) {
+                        const verifyData = await verifyRes.json();
+                        const integrityBadge = el('clawde-audit-integrity');
+                        if (integrityBadge) {
+                            if (verifyData.status === 'success') {
+                                integrityBadge.textContent = 'INTEGRITY: SECURE';
+                                integrityBadge.style.background = 'rgba(16, 185, 129, 0.1)';
+                                integrityBadge.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+                                integrityBadge.style.color = '#34d399';
+                            } else {
+                                integrityBadge.textContent = 'TAMPER DETECTED';
+                                integrityBadge.style.background = 'rgba(239, 68, 68, 0.1)';
+                                integrityBadge.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+                                integrityBadge.style.color = '#f87171';
+                            }
+                        }
+                    }
+                } catch (err) {
+                    console.error("Error verifying log integrity:", err);
+                }
+
                 const res = await fetch('/api/v1/orchestrator/history');
                 if (!res.ok) throw new Error(`HTTP status ${res.status}`);
                 const data = await res.json();

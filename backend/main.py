@@ -4204,12 +4204,15 @@ def log_orchestrator_action(
     decision_note = None
 ):
     import sqlite3
+    import time
     from datetime import datetime, timezone
     from backend.hochster_cluster import DB_PATH
+    from backend.ledger_manager import add_event_to_ledger
+    
     conn = sqlite3.connect(DB_PATH, timeout=30)
+    now = datetime.now(timezone.utc).isoformat()
     try:
         conn.execute("PRAGMA busy_timeout=30000")
-        now = datetime.now(timezone.utc).isoformat()
         conn.execute(
             """
             INSERT INTO orchestrator_run_history (
@@ -4227,6 +4230,40 @@ def log_orchestrator_action(
         print(f"[log_orchestrator_action] Error: {e}")
     finally:
         conn.close()
+
+    try:
+        event = {
+            "id": f"evt-orch-{int(time.time()*1000)}",
+            "timestamp": now,
+            "actor": {
+                "id": operator.lower().replace(" ", "-"),
+                "name": operator,
+                "type": "operator",
+                "role": "Release Authority"
+            },
+            "action": {
+                "type": f"ORCHESTRATION_{action.upper()}",
+                "summary": decision_note or f"Orchestrator action: {action} (Phase: {phase})"
+            },
+            "target": {
+                "type": "phase",
+                "id": phase.lower(),
+                "name": f"Orchestration Phase {phase}"
+            },
+            "result": status,
+            "severity": "info" if status in ["success", "approved"] else "warning",
+            "provenance": {
+                "source": "control_tower",
+                "evidence_refs": [evidence_seal_path] if evidence_seal_path else []
+            },
+            "policy": {
+                "required": True,
+                "result": "approved" if status == "approved" else "pending"
+            }
+        }
+        add_event_to_ledger(event)
+    except Exception as e:
+        print(f"[log_orchestrator_action] Error writing to ledger: {e}")
 
 @app.on_event("startup")
 async def startup_event():
@@ -8765,6 +8802,14 @@ async def execute_orchestrator_phase(payload: dict):
     body = payload or {}
     phase = body.get("phase") or default_phase
     
+    # Strict validation
+    valid_phases = ["PR16", "PR17", "PR18"]
+    if phase not in valid_phases:
+        raise HTTPException(status_code=400, detail=f"Invalid phase specified: {phase}. Supported phases are {valid_phases}.")
+        
+    if ".." in phase or "/" in phase or "\\" in phase:
+        raise HTTPException(status_code=400, detail="Path traversal elements detected in phase parameter")
+    
     # 1. Verify approval file exists and is APPROVED
     approval_path = base_dir / f"artifacts/orchestrator/approvals/decision_{phase}_execute.json"
     if not approval_path.exists():
@@ -8908,9 +8953,24 @@ async def request_phase_execution(payload: dict):
     # Safely extract payload parameters with fallbacks
     body = payload or {}
     phase = body.get("phase") or default_phase
+    
+    # Strict validation
+    valid_phases = ["PR16", "PR17", "PR18", "COMPLETED"]
+    if phase not in valid_phases:
+        raise HTTPException(status_code=400, detail=f"Invalid phase specified: {phase}. Supported phases are {valid_phases}.")
+        
+    if ".." in phase or "/" in phase or "\\" in phase:
+        raise HTTPException(status_code=400, detail="Path traversal elements detected in phase parameter")
+        
     decision = body.get("decision") or "requested"
     operator = body.get("operator") or "Michael Hoch"
     scope = body.get("scope") or "local dry-run only"
+    
+    import re
+    if not re.match(r"^[a-zA-Z0-9_\-\s\.]+$", operator):
+        raise HTTPException(status_code=400, detail="Invalid character in operator parameter")
+    if not re.match(r"^[a-zA-Z0-9_\-\s\.]+$", scope):
+        raise HTTPException(status_code=400, detail="Invalid character in scope parameter")
     
     approvals_dir = base_dir / "artifacts/orchestrator/approvals"
     os.makedirs(approvals_dir, exist_ok=True)
@@ -9022,6 +9082,68 @@ async def get_orchestrator_history():
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to fetch history: {str(e)}")
+    finally:
+        conn.close()
+
+@app.get("/api/v1/orchestrator/history/verify")
+async def verify_orchestrator_history():
+    import sqlite3
+    from backend.hochster_cluster import DB_PATH
+    from backend.ledger_manager import verify_ledger_chain, get_ledger_blocks
+    
+    # 1. Verify ledger hash chain integrity
+    chain_status = verify_ledger_chain()
+    if not chain_status.get("is_valid", False):
+        return {
+            "status": "corrupted",
+            "reason": "Immutable ledger hash chain verification failed",
+            "detail": chain_status
+        }
+        
+    # 2. Compare history database records with ledger blocks
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    try:
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM orchestrator_run_history ORDER BY id ASC")
+        history_rows = cursor.fetchall()
+        
+        blocks = get_ledger_blocks()
+        orch_blocks = [b for b in blocks if b["event_id"].startswith("evt-orch-")]
+        
+        # Check matching record count
+        if len(history_rows) != len(orch_blocks):
+            return {
+                "status": "corrupted",
+                "reason": f"Record count mismatch: history has {len(history_rows)} records, but ledger has {len(orch_blocks)} blocks.",
+                "history_count": len(history_rows),
+                "ledger_count": len(orch_blocks)
+            }
+            
+        # Validate details of each block
+        for i, row in enumerate(history_rows):
+            block = orch_blocks[i]
+            event = block["event"]
+            
+            # Cross-reference properties
+            if row["phase"].lower() != event["target"]["id"]:
+                return {
+                    "status": "corrupted",
+                    "reason": f"Phase mismatch at record {row['id']}: DB has {row['phase']}, but Ledger has {event['target']['id']}"
+                }
+            if row["status"] != event["result"]:
+                return {
+                    "status": "corrupted",
+                    "reason": f"Status mismatch at record {row['id']}: DB has {row['status']}, but Ledger has {event['result']}"
+                }
+                
+        return {
+            "status": "success",
+            "verification_msg": f"Audit log integrity validated. Cross-referenced {len(history_rows)} records successfully.",
+            "ledger_verification": chain_status
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to verify history: {str(e)}")
     finally:
         conn.close()
 

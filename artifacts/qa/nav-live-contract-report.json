@@ -1,90 +1,109 @@
 {
-  "generated_at": "2026-06-27T01:37:40.856Z",
+  "generated_at": "2026-06-28T04:44:48.795Z",
   "base_url": "http://localhost:8000",
-  "status": "PASS",
+  "status": "BLOCK",
   "results": [
     {
       "id": "readiness-autopilot",
       "label": "Readiness Autopilot",
       "endpoint": "/api/v1/readiness/status",
-      "status": "PASS",
-      "http_status": 200,
-      "blockers": [],
+      "status": "BLOCK",
+      "blockers": [
+        "fetch failed"
+      ],
       "warnings": []
     },
     {
       "id": "hochster-runtime",
       "label": "HOCHSTER Runtime",
       "endpoint": "/api/v1/hochster/health",
-      "status": "PASS",
-      "http_status": 200,
-      "blockers": [],
+      "status": "BLOCK",
+      "blockers": [
+        "fetch failed"
+      ],
       "warnings": []
     },
     {
       "id": "remediation-safety",
       "label": "Remediation Safety",
       "endpoint": "/api/v1/readiness/budget-report",
-      "status": "PASS",
-      "http_status": 200,
-      "blockers": [],
+      "status": "BLOCK",
+      "blockers": [
+        "fetch failed"
+      ],
       "warnings": []
     },
     {
       "id": "runtime-audit",
       "label": "Runtime Audit",
       "endpoint": "/api/v1/audit/runtime/execution",
-      "status": "PASS",
-      "http_status": 200,
-      "blockers": [],
+      "status": "BLOCK",
+      "blockers": [
+        "fetch failed"
+      ],
       "warnings": []
     },
     {
       "id": "error-budget",
       "label": "Error Budget",
       "endpoint": "/api/v1/readiness/budget-report",
-      "status": "PASS",
-      "http_status": 200,
-      "blockers": [],
+      "status": "BLOCK",
+      "blockers": [
+        "fetch failed"
+      ],
       "warnings": []
     },
     {
       "id": "release-provenance",
       "label": "Release Provenance",
       "endpoint": "/api/v1/hochster/baseline/lock",
-      "status": "PASS",
-      "http_status": 200,
-      "blockers": [],
+      "status": "BLOCK",
+      "blockers": [
+        "fetch failed"
+      ],
       "warnings": []
     },
     {
       "id": "swarm-control",
       "label": "Swarm Control",
       "endpoint": "/api/v1/agents/status",
-      "status": "PASS",
-      "http_status": 200,
-      "blockers": [],
+      "status": "BLOCK",
+      "blockers": [
+        "fetch failed"
+      ],
       "warnings": []
     },
     {
       "id": "mission-intel",
       "label": "Mission Intel",
       "endpoint": "/api/v1/audit/events",
-      "status": "PASS",
-      "http_status": 200,
-      "blockers": [],
+      "status": "BLOCK",
+      "blockers": [
+        "fetch failed"
+      ],
       "warnings": []
     },
     {
       "id": "timeline-replay",
       "label": "Timeline Replay",
       "endpoint": "/api/v1/audit/events",
-      "status": "PASS",
-      "http_status": 200,
-      "blockers": [],
+      "status": "BLOCK",
+      "blockers": [
+        "fetch failed"
+      ],
       "warnings": []
     }
   ],
-  "blockers": [],
+  "blockers": [
+    "Readiness Autopilot: fetch failed",
+    "HOCHSTER Runtime: fetch failed",
+    "Remediation Safety: fetch failed",
+    "Runtime Audit: fetch failed",
+    "Error Budget: fetch failed",
+    "Release Provenance: fetch failed",
+    "Swarm Control: fetch failed",
+    "Mission Intel: fetch failed",
+    "Timeline Replay: fetch failed"
+  ],
   "warnings": []
 }
