@@ -6730,6 +6730,26 @@ def api_download_handoff_packet():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to generate handoff packet: {e}")
 
+@app.get("/api/v1/ato/evidence-package")
+def api_get_ato_evidence_package():
+    from backend.ato_manager import get_ato_evidence_package
+    return get_ato_evidence_package()
+
+@app.get("/api/v1/ato/evidence-package/download")
+def api_download_ato_evidence_package():
+    from backend.ato_manager import create_ato_evidence_zip
+    from fastapi.responses import StreamingResponse
+    import io
+    try:
+        zip_bytes = create_ato_evidence_zip()
+        return StreamingResponse(
+            io.BytesIO(zip_bytes),
+            media_type="application/zip",
+            headers={"Content-Disposition": "attachment; filename=ato_evidence_package.zip"}
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to generate ATO evidence package: {e}")
+
 @app.get("/api/v1/policy/status")
 def api_get_policy_status():
     return {

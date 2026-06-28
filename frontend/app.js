@@ -58,7 +58,8 @@
         { id: 'settings', label: 'SETTINGS' },
         { id: 'agent-flight-deck', label: 'AGENT FLIGHT DECK' },
         { id: 'clawde', label: 'CLAWDE CONTROL TOWER' },
-        { id: 'handoff', label: 'RELEASE REVIEW & HANDOFF' }
+        { id: 'handoff', label: 'RELEASE REVIEW & HANDOFF' },
+        { id: 'ato', label: 'ATO EVIDENCE BUILDER' }
     ];
 
     function initNavigation() {
@@ -166,6 +167,10 @@
             case 'handoff':
                 loadHandoffView();
                 viewInterval = setInterval(loadHandoffView, 3000);
+                break;
+            case 'ato':
+                loadAtoView();
+                viewInterval = setInterval(loadAtoView, 3000);
                 break;
         }
     }
@@ -3048,6 +3053,7 @@
         initPreflightButton();
         initLedgerButtons();
         initHandoffButtons();
+        initAtoButtons();
         
         // Initial fetches
         fetchCockpit();
@@ -3347,6 +3353,111 @@
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 exportHandoffPacket();
+            });
+        }
+    }
+
+    async function loadAtoView() {
+        try {
+            const res = await fetch('/api/v1/ato/evidence-package');
+            if (!res.ok) throw new Error('Failed to fetch ATO evidence package');
+            const data = await res.json();
+            
+            const stmtEl = el('ato-statement-banner');
+            if (stmtEl) stmtEl.textContent = data.statement || '';
+            
+            const noticeEl = el('ato-status-notice');
+            if (noticeEl) noticeEl.textContent = data.status_notice || '';
+            
+            const matrixTbody = el('ato-matrix-tbody');
+            if (matrixTbody) {
+                const matrix = data.control_matrix || [];
+                matrixTbody.innerHTML = matrix.map(c => `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                        <td style="padding: 6px; font-weight: bold; color: var(--accent-teal);">${c.control_id}</td>
+                        <td style="padding: 6px; color: #fff;">${c.control_name} <span style="font-size:10px; color:var(--text-secondary); display:block;">${c.description}</span></td>
+                        <td style="padding: 6px; text-align: right; font-weight: bold; color: #10b981;">${c.status}</td>
+                    </tr>
+                `).join('');
+            }
+            
+            const checklistTbody = el('ato-checklist-tbody');
+            if (checklistTbody) {
+                const checklist = data.ao_checklist || [];
+                checklistTbody.innerHTML = checklist.map(chk => `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                        <td style="padding: 6px; color: #fff;">${chk.description}</td>
+                        <td style="padding: 6px; text-align: right; font-weight: bold; color: #fbbf24;">${chk.status}</td>
+                    </tr>
+                `).join('');
+            }
+            
+            const riskTbody = el('ato-risk-tbody');
+            if (riskTbody) {
+                const risks = data.residual_risks || [];
+                riskTbody.innerHTML = risks.map(r => `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                        <td style="padding: 6px; font-weight: bold; color: #fff;">${r.risk_id}: ${r.title}</td>
+                        <td style="padding: 6px; color: ${r.likelihood === 'High' ? '#f87171' : '#fbbf24'};">${r.likelihood}/${r.impact}</td>
+                        <td style="padding: 6px; color: var(--text-secondary);">${r.mitigation}</td>
+                        <td style="padding: 6px; text-align: right; font-weight: bold; color: #818cf8;">${r.status}</td>
+                    </tr>
+                `).join('');
+            }
+            
+            const poamTbody = el('ato-poam-tbody');
+            if (poamTbody) {
+                const poams = data.poam || [];
+                poamTbody.innerHTML = poams.map(p => `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                        <td style="padding: 6px; font-weight: bold; color: #fff;">${p.poam_id}: ${p.title}</td>
+                        <td style="padding: 6px; color: var(--text-secondary);">${p.scheduled_completion}</td>
+                        <td style="padding: 6px; text-align: right; font-weight: bold; color: ${p.status === 'OPEN' ? '#fbbf24' : '#60a5fa'};">${p.status}</td>
+                    </tr>
+                `).join('');
+            }
+            
+        } catch (err) {
+            console.error('Failed to load ATO details:', err);
+        }
+    }
+
+    async function exportAtoPackage() {
+        const btn = el('btn-export-ato-package');
+        if (!btn) return;
+        
+        btn.disabled = true;
+        const originalText = btn.textContent;
+        btn.textContent = 'Exporting...';
+        
+        try {
+            const res = await fetch('/api/v1/ato/evidence-package/download');
+            if (!res.ok) throw new Error('ATO evidence package generation failed');
+            const blob = await res.blob();
+            
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ato_evidence_package.zip`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error('Failed to export ATO package:', err);
+            alert('Failed to export ATO package. See console for details.');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = originalText;
+        }
+    }
+
+    function initAtoButtons() {
+        const btn = el('btn-export-ato-package');
+        if (btn) {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                exportAtoPackage();
             });
         }
     }
