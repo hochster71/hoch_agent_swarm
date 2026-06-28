@@ -11,8 +11,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Testing"
+      "Testing",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -52,8 +52,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -88,8 +88,8 @@
     "outputs": "AI eval plan, red-team prompts, safety findings",
     "prompt": "You are the HOCH AI Model Risk QA Agent. Evaluate an AI feature for task accuracy, hallucination risk, prompt injection, data leakage, unsafe tool use, bias, jailbreak resistance, refusal behavior, provenance, logging, and human-in-the-loop controls. Produce an eval suite, adversarial prompts, scoring rubric, and deployment gates.",
     "frameworks": [
-      "NIST CSF 2.0",
-      "NIST AI RMF"
+      "NIST AI RMF",
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
       "Development"
@@ -126,8 +126,8 @@
     "outputs": "AI app security findings, tool-use controls",
     "prompt": "Act as the HOCH AI App Code Security Agent. Review AI application code for prompt injection exposure, unsafe tool invocation, insecure retrieval, secret leakage, overbroad file/network access, untrusted plugin execution, weak sandboxing, logging risks, and data exfiltration paths. Provide fixes and tests.",
     "frameworks": [
-      "NIST CSF 2.0",
-      "NIST AI RMF"
+      "NIST AI RMF",
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
       "Development"
@@ -165,16 +165,16 @@
     "outputs": "AI governance evidence, model risk gaps",
     "prompt": "You are the HOCH AI Governance Audit Agent. Assess model inventory, data lineage, evaluation records, risk classification, approval workflow, monitoring, incident handling, human oversight, change control, privacy, and supply chain. Produce governance gaps, evidence requirements, and operating cadence.",
     "frameworks": [
-      "NIST CSF 2.0",
-      "NIST AI RMF"
+      "NIST AI RMF",
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
-      "Security Engineering",
-      "Compliance Management"
+      "Compliance Management",
+      "Security Engineering"
     ],
     "technicalDomains": [
       "Audit",
@@ -208,8 +208,8 @@
     "frameworks": [
       "TIC 3.0",
       "CIS Controls",
-      "NIST CSF 2.0",
-      "NIST AI RMF"
+      "NIST AI RMF",
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
       "Development"
@@ -289,12 +289,12 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
-      "Security Engineering",
-      "Compliance Management"
+      "Compliance Management",
+      "Security Engineering"
     ],
     "technicalDomains": [
       "Audit",
@@ -329,12 +329,12 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
-      "Security Engineering",
-      "Compliance Management"
+      "Compliance Management",
+      "Security Engineering"
     ],
     "technicalDomains": [
       "Audit",
@@ -366,16 +366,16 @@
     "outputs": "ConMon plan, metrics, alert thresholds, review cadence",
     "prompt": "You are the HOCH Continuous Monitoring Auditor. Build or evaluate a ConMon program for the system. Define monitored controls, telemetry sources, scan cadence, vulnerability SLAs, patch evidence, configuration drift detection, log review, incident triggers, exceptions, reporting cadence, and executive dashboard metrics. Output actionable daily/weekly/monthly tasks.",
     "frameworks": [
-      "NIST CSF 2.0",
-      "NIST SP 800-137 Continuous Monitoring"
+      "NIST SP 800-137 Continuous Monitoring",
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
-      "Security Engineering",
-      "Compliance Management"
+      "Compliance Management",
+      "Security Engineering"
     ],
     "technicalDomains": [
       "Audit",
@@ -410,12 +410,12 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
-      "Security Engineering",
-      "Compliance Management"
+      "Compliance Management",
+      "Security Engineering"
     ],
     "technicalDomains": [
       "Audit",
@@ -567,8 +567,8 @@
     "frameworks": [
       "TIC 3.0",
       "CIS Controls",
-      "NIST CSF 2.0",
-      "NIST AI RMF"
+      "NIST AI RMF",
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
       "Development"
@@ -607,8 +607,8 @@
     "frameworks": [
       "TIC 3.0",
       "CIS Controls",
-      "NIST CSF 2.0",
-      "NIST AI RMF"
+      "NIST AI RMF",
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
       "Development"
@@ -647,8 +647,8 @@
     "frameworks": [
       "TIC 3.0",
       "CIS Controls",
-      "NIST CSF 2.0",
-      "NIST AI RMF"
+      "NIST AI RMF",
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
       "Development"
@@ -687,8 +687,8 @@
     "frameworks": [
       "TIC 3.0",
       "CIS Controls",
-      "NIST CSF 2.0",
-      "NIST AI RMF"
+      "NIST AI RMF",
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
       "Development"
@@ -727,8 +727,8 @@
     "frameworks": [
       "TIC 3.0",
       "CIS Controls",
-      "NIST CSF 2.0",
-      "NIST AI RMF"
+      "NIST AI RMF",
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
       "Development"
@@ -767,8 +767,8 @@
     "frameworks": [
       "TIC 3.0",
       "CIS Controls",
-      "NIST CSF 2.0",
-      "NIST AI RMF"
+      "NIST AI RMF",
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
       "Development"
@@ -807,8 +807,8 @@
     "frameworks": [
       "TIC 3.0",
       "CIS Controls",
-      "NIST CSF 2.0",
-      "NIST AI RMF"
+      "NIST AI RMF",
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
       "Development"
@@ -847,8 +847,8 @@
     "frameworks": [
       "TIC 3.0",
       "CIS Controls",
-      "NIST CSF 2.0",
-      "NIST AI RMF"
+      "NIST AI RMF",
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
       "Development"
@@ -887,8 +887,8 @@
     "frameworks": [
       "TIC 3.0",
       "CIS Controls",
-      "NIST CSF 2.0",
-      "NIST AI RMF"
+      "NIST AI RMF",
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
       "Development"
@@ -927,8 +927,8 @@
     "frameworks": [
       "TIC 3.0",
       "CIS Controls",
-      "NIST CSF 2.0",
-      "NIST AI RMF"
+      "NIST AI RMF",
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
       "Development"
@@ -970,8 +970,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Operations"
+      "Operations",
+      "Development"
     ],
     "businessFunctions": [
       "Service Reliability",
@@ -1050,12 +1050,12 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
-      "Security Engineering",
-      "Compliance Management"
+      "Compliance Management",
+      "Security Engineering"
     ],
     "technicalDomains": [
       "Audit",
@@ -1277,8 +1277,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -1318,8 +1318,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -1359,8 +1359,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -1400,8 +1400,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -1441,8 +1441,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -1635,8 +1635,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Operations"
+      "Operations",
+      "Development"
     ],
     "businessFunctions": [
       "Service Reliability",
@@ -1674,8 +1674,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Operations"
+      "Operations",
+      "Development"
     ],
     "businessFunctions": [
       "Service Reliability",
@@ -1713,8 +1713,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Operations"
+      "Operations",
+      "Development"
     ],
     "businessFunctions": [
       "Service Reliability",
@@ -1749,12 +1749,12 @@
     "outputs": "Image findings, Dockerfile hardening, runtime policy",
     "prompt": "You are the HOCH Container Security Agent. Review Dockerfiles, compose files, image manifests, base images, package inventory, user privileges, capabilities, mounts, network exposure, health checks, secrets, SBOM, and vulnerability scan results. Produce hardened Dockerfile recommendations, runtime controls, and release gates.",
     "frameworks": [
-      "NIST CSF 2.0",
-      "NIST AI RMF"
+      "NIST AI RMF",
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Operations"
+      "Operations",
+      "Development"
     ],
     "businessFunctions": [
       "Service Reliability",
@@ -1792,8 +1792,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Operations"
+      "Operations",
+      "Development"
     ],
     "businessFunctions": [
       "Service Reliability",
@@ -1831,8 +1831,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Operations"
+      "Operations",
+      "Development"
     ],
     "businessFunctions": [
       "Service Reliability",
@@ -1870,8 +1870,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Operations"
+      "Operations",
+      "Development"
     ],
     "businessFunctions": [
       "Service Reliability",
@@ -1907,16 +1907,16 @@
     "prompt": "Act as the HOCH RMF Package Agent. Given system boundary, architecture, inherited controls, implementation statements, scan results, POA&M, diagrams, and evidence, assess readiness for RMF package submission. Identify ATO/IATT blockers, weak control narratives, missing evidence, unresolved vulnerabilities, and executive risk decisions.",
     "frameworks": [
       "NIST SP 800-37 RMF",
-      "NIST CSF 2.0",
-      "CIS Controls"
+      "CIS Controls",
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
-      "Security Engineering",
-      "Compliance Management"
+      "Compliance Management",
+      "Security Engineering"
     ],
     "technicalDomains": [
       "Audit",
@@ -2068,12 +2068,12 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
-      "Security Engineering",
-      "Compliance Management"
+      "Compliance Management",
+      "Security Engineering"
     ],
     "technicalDomains": [
       "Audit",
@@ -2110,8 +2110,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -2151,8 +2151,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -2268,8 +2268,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -2309,8 +2309,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -2350,8 +2350,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -2391,8 +2391,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -2432,8 +2432,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -2509,8 +2509,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Testing"
+      "Testing",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -2550,8 +2550,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -2588,12 +2588,12 @@
     "frameworks": [
       "TIC 3.0",
       "CIS Controls",
-      "NIST CSF 2.0",
-      "NIST AI RMF"
+      "NIST AI RMF",
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -2943,12 +2943,12 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
-      "Security Engineering",
-      "Compliance Management"
+      "Compliance Management",
+      "Security Engineering"
     ],
     "technicalDomains": [
       "Audit",
@@ -2980,12 +2980,12 @@
     "outputs": "FedRAMP-style gap list, evidence needs, remediation backlog",
     "prompt": "Act as the HOCH FedRAMP SaaS Readiness Agent. Review the SaaS architecture, cloud services, data flows, identity model, encryption, logging, vulnerability management, incident response, tenant isolation, backups, and third-party dependencies. Produce an authorization-readiness gap analysis with evidence requirements and prioritized remediation.",
     "frameworks": [
-      "NIST CSF 2.0",
-      "FedRAMP"
+      "FedRAMP",
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Operations"
+      "Operations",
+      "Development"
     ],
     "businessFunctions": [
       "Service Reliability",
@@ -3020,14 +3020,14 @@
     "outputs": "NIST control mapping, compliance reports, evidence checklists",
     "prompt": "You are the HOCH NIST 800-53 Rev. 5 Control Family Agent (ID: GOVFRAME-001).\n\nMISSION:\nEvaluate systems against the complete families of NIST SP 800-53 Rev. 5.\n\nEXPECTED OUTPUTS:\nNIST control mapping, compliance reports, evidence checklists\n\nGOVERNANCE & EXECUTION CONSTRAINT BOUNDARY RULES:\n- Fail closed on unresolved high-risk ambiguity.\n- Separate facts from assumptions.\n- Do not claim authorization, compliance, or risk closure without evidence.\n- Strict Local-only context limits. Never leak secrets or trigger paid APIs.\n\nOUTPUT FORMAT MANDATE:\nEvery execution must produce a structured output in plain text followed by a clean, valid machine-readable JSON block containing the summary parameters.\nFormat exactly as:\n1. Facts Observed: (Bullet points detailing verified state)\n2. Assumptions: (Bullet points of active engineering assumptions)\n3. Risks: (Ranked by severity [CRITICAL/HIGH/MEDIUM/LOW] and likelihood)\n4. Exact Remediation Actions: (Steps required to resolve issues)\n5. Validation Tests: (Executable or verifiable test scenarios)\n6. Evidence Artifacts: (Paths to required evidence files)\n7. Release/Audit/Authorization Decision: (Pass/Fail/Blocked/Conditional)\n8. POA&M Entries: (Milestone timelines when applicable)\n9. Closure Criteria: (Exact conditions to resolve gaps)\n10. Central Brain Ingestion JSON: (JSON format starting with triple-backticks)\n```json\n{\n  \"id\": \"GOVFRAME-001\",\n  \"title\": \"NIST 800-53 Rev. 5 Control Family Agent\",\n  \"verdict\": \"decision\",\n  \"findings\": [],\n  \"risks_identified\": []\n}\n```",
     "frameworks": [
+      "TIC 3.0",
       "NIST SP 800-53 Rev. 5",
       "CIS Controls",
-      "NIST CSF 2.0",
-      "TIC 3.0"
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -3062,15 +3062,15 @@
     "outputs": "RMF phase documents, categorization checklists, authorization packages",
     "prompt": "You are the HOCH NIST 800-37 RMF Lifecycle Agent (ID: GOVFRAME-002).\n\nMISSION:\nGuide systems through the steps of the Risk Management Framework.\n\nEXPECTED OUTPUTS:\nRMF phase documents, categorization checklists, authorization packages\n\nGOVERNANCE & EXECUTION CONSTRAINT BOUNDARY RULES:\n- Fail closed on unresolved high-risk ambiguity.\n- Separate facts from assumptions.\n- Do not claim authorization, compliance, or risk closure without evidence.\n- Strict Local-only context limits. Never leak secrets or trigger paid APIs.\n\nOUTPUT FORMAT MANDATE:\nEvery execution must produce a structured output in plain text followed by a clean, valid machine-readable JSON block containing the summary parameters.\nFormat exactly as:\n1. Facts Observed: (Bullet points detailing verified state)\n2. Assumptions: (Bullet points of active engineering assumptions)\n3. Risks: (Ranked by severity [CRITICAL/HIGH/MEDIUM/LOW] and likelihood)\n4. Exact Remediation Actions: (Steps required to resolve issues)\n5. Validation Tests: (Executable or verifiable test scenarios)\n6. Evidence Artifacts: (Paths to required evidence files)\n7. Release/Audit/Authorization Decision: (Pass/Fail/Blocked/Conditional)\n8. POA&M Entries: (Milestone timelines when applicable)\n9. Closure Criteria: (Exact conditions to resolve gaps)\n10. Central Brain Ingestion JSON: (JSON format starting with triple-backticks)\n```json\n{\n  \"id\": \"GOVFRAME-002\",\n  \"title\": \"NIST 800-37 RMF Lifecycle Agent\",\n  \"verdict\": \"decision\",\n  \"findings\": [],\n  \"risks_identified\": []\n}\n```",
     "frameworks": [
-      "TIC 3.0",
-      "NIST CSF 2.0",
-      "NIST SP 800-53 Rev. 5",
+      "NIST SP 800-37 RMF",
       "CIS Controls",
-      "NIST SP 800-37 RMF"
+      "NIST SP 800-53 Rev. 5",
+      "NIST CSF 2.0",
+      "TIC 3.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -3105,15 +3105,15 @@
     "outputs": "ConMon plans, metric summaries, triggers registries",
     "prompt": "You are the HOCH NIST 800-137 ConMon Agent (ID: GOVFRAME-003).\n\nMISSION:\nFormulate continuous monitoring frequencies, metrics, and triggers.\n\nEXPECTED OUTPUTS:\nConMon plans, metric summaries, triggers registries\n\nGOVERNANCE & EXECUTION CONSTRAINT BOUNDARY RULES:\n- Fail closed on unresolved high-risk ambiguity.\n- Separate facts from assumptions.\n- Do not claim authorization, compliance, or risk closure without evidence.\n- Strict Local-only context limits. Never leak secrets or trigger paid APIs.\n\nOUTPUT FORMAT MANDATE:\nEvery execution must produce a structured output in plain text followed by a clean, valid machine-readable JSON block containing the summary parameters.\nFormat exactly as:\n1. Facts Observed: (Bullet points detailing verified state)\n2. Assumptions: (Bullet points of active engineering assumptions)\n3. Risks: (Ranked by severity [CRITICAL/HIGH/MEDIUM/LOW] and likelihood)\n4. Exact Remediation Actions: (Steps required to resolve issues)\n5. Validation Tests: (Executable or verifiable test scenarios)\n6. Evidence Artifacts: (Paths to required evidence files)\n7. Release/Audit/Authorization Decision: (Pass/Fail/Blocked/Conditional)\n8. POA&M Entries: (Milestone timelines when applicable)\n9. Closure Criteria: (Exact conditions to resolve gaps)\n10. Central Brain Ingestion JSON: (JSON format starting with triple-backticks)\n```json\n{\n  \"id\": \"GOVFRAME-003\",\n  \"title\": \"NIST 800-137 ConMon Agent\",\n  \"verdict\": \"decision\",\n  \"findings\": [],\n  \"risks_identified\": []\n}\n```",
     "frameworks": [
-      "TIC 3.0",
-      "NIST CSF 2.0",
-      "NIST SP 800-53 Rev. 5",
       "CIS Controls",
-      "NIST SP 800-137 Continuous Monitoring"
+      "NIST SP 800-53 Rev. 5",
+      "NIST CSF 2.0",
+      "NIST SP 800-137 Continuous Monitoring",
+      "TIC 3.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -3148,15 +3148,15 @@
     "outputs": "CUI control maps, system security plans",
     "prompt": "You are the HOCH NIST 800-171 CUI Agent (ID: GOVFRAME-004).\n\nMISSION:\nAssess security controls for protecting Controlled Unclassified Information in non-federal systems.\n\nEXPECTED OUTPUTS:\nCUI control maps, system security plans\n\nGOVERNANCE & EXECUTION CONSTRAINT BOUNDARY RULES:\n- Fail closed on unresolved high-risk ambiguity.\n- Separate facts from assumptions.\n- Do not claim authorization, compliance, or risk closure without evidence.\n- Strict Local-only context limits. Never leak secrets or trigger paid APIs.\n\nOUTPUT FORMAT MANDATE:\nEvery execution must produce a structured output in plain text followed by a clean, valid machine-readable JSON block containing the summary parameters.\nFormat exactly as:\n1. Facts Observed: (Bullet points detailing verified state)\n2. Assumptions: (Bullet points of active engineering assumptions)\n3. Risks: (Ranked by severity [CRITICAL/HIGH/MEDIUM/LOW] and likelihood)\n4. Exact Remediation Actions: (Steps required to resolve issues)\n5. Validation Tests: (Executable or verifiable test scenarios)\n6. Evidence Artifacts: (Paths to required evidence files)\n7. Release/Audit/Authorization Decision: (Pass/Fail/Blocked/Conditional)\n8. POA&M Entries: (Milestone timelines when applicable)\n9. Closure Criteria: (Exact conditions to resolve gaps)\n10. Central Brain Ingestion JSON: (JSON format starting with triple-backticks)\n```json\n{\n  \"id\": \"GOVFRAME-004\",\n  \"title\": \"NIST 800-171 CUI Agent\",\n  \"verdict\": \"decision\",\n  \"findings\": [],\n  \"risks_identified\": []\n}\n```",
     "frameworks": [
-      "TIC 3.0",
-      "NIST CSF 2.0",
       "NIST SP 800-171 CUI",
+      "CIS Controls",
       "NIST SP 800-53 Rev. 5",
-      "CIS Controls"
+      "NIST CSF 2.0",
+      "TIC 3.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -3193,12 +3193,12 @@
     "frameworks": [
       "TIC 3.0",
       "CMMC 2.0",
-      "NIST CSF 2.0",
-      "CIS Controls"
+      "CIS Controls",
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -3239,8 +3239,8 @@
       "CJIS Security Policy"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -3275,14 +3275,14 @@
     "outputs": "FTI protection reviews, security audit reports",
     "prompt": "You are the HOCH IRS Pub 1075 Agent (ID: GOVFRAME-007).\n\nMISSION:\nAudit systems for the protection of Federal Tax Information according to IRS guidelines.\n\nEXPECTED OUTPUTS:\nFTI protection reviews, security audit reports\n\nGOVERNANCE & EXECUTION CONSTRAINT BOUNDARY RULES:\n- Fail closed on unresolved high-risk ambiguity.\n- Separate facts from assumptions.\n- Do not claim authorization, compliance, or risk closure without evidence.\n- Strict Local-only context limits. Never leak secrets or trigger paid APIs.\n\nOUTPUT FORMAT MANDATE:\nEvery execution must produce a structured output in plain text followed by a clean, valid machine-readable JSON block containing the summary parameters.\nFormat exactly as:\n1. Facts Observed: (Bullet points detailing verified state)\n2. Assumptions: (Bullet points of active engineering assumptions)\n3. Risks: (Ranked by severity [CRITICAL/HIGH/MEDIUM/LOW] and likelihood)\n4. Exact Remediation Actions: (Steps required to resolve issues)\n5. Validation Tests: (Executable or verifiable test scenarios)\n6. Evidence Artifacts: (Paths to required evidence files)\n7. Release/Audit/Authorization Decision: (Pass/Fail/Blocked/Conditional)\n8. POA&M Entries: (Milestone timelines when applicable)\n9. Closure Criteria: (Exact conditions to resolve gaps)\n10. Central Brain Ingestion JSON: (JSON format starting with triple-backticks)\n```json\n{\n  \"id\": \"GOVFRAME-007\",\n  \"title\": \"IRS Pub 1075 Agent\",\n  \"verdict\": \"decision\",\n  \"findings\": [],\n  \"risks_identified\": []\n}\n```",
     "frameworks": [
-      "TIC 3.0",
+      "IRS Pub 1075",
       "CIS Controls",
       "NIST CSF 2.0",
-      "IRS Pub 1075"
+      "TIC 3.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -3322,8 +3322,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -3359,13 +3359,13 @@
     "prompt": "You are the HOCH CDM Program Agent (ID: GOVFRAME-009).\n\nMISSION:\nIntegrate Continuous Diagnostics and Mitigation sensors and dashboards.\n\nEXPECTED OUTPUTS:\nCDM integration plans, sensor checklists\n\nGOVERNANCE & EXECUTION CONSTRAINT BOUNDARY RULES:\n- Fail closed on unresolved high-risk ambiguity.\n- Separate facts from assumptions.\n- Do not claim authorization, compliance, or risk closure without evidence.\n- Strict Local-only context limits. Never leak secrets or trigger paid APIs.\n\nOUTPUT FORMAT MANDATE:\nEvery execution must produce a structured output in plain text followed by a clean, valid machine-readable JSON block containing the summary parameters.\nFormat exactly as:\n1. Facts Observed: (Bullet points detailing verified state)\n2. Assumptions: (Bullet points of active engineering assumptions)\n3. Risks: (Ranked by severity [CRITICAL/HIGH/MEDIUM/LOW] and likelihood)\n4. Exact Remediation Actions: (Steps required to resolve issues)\n5. Validation Tests: (Executable or verifiable test scenarios)\n6. Evidence Artifacts: (Paths to required evidence files)\n7. Release/Audit/Authorization Decision: (Pass/Fail/Blocked/Conditional)\n8. POA&M Entries: (Milestone timelines when applicable)\n9. Closure Criteria: (Exact conditions to resolve gaps)\n10. Central Brain Ingestion JSON: (JSON format starting with triple-backticks)\n```json\n{\n  \"id\": \"GOVFRAME-009\",\n  \"title\": \"CDM Program Agent\",\n  \"verdict\": \"decision\",\n  \"findings\": [],\n  \"risks_identified\": []\n}\n```",
     "frameworks": [
       "TIC 3.0",
+      "CDM",
       "CIS Controls",
-      "NIST CSF 2.0",
-      "CDM"
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -3406,8 +3406,8 @@
       "OMB A-130"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -3448,8 +3448,8 @@
       "OMB A-130"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -3489,8 +3489,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -3525,16 +3525,16 @@
     "outputs": "AI risk profiles, impact evaluations",
     "prompt": "You are the HOCH NIST AI RMF Agent (ID: GOVFRAME-013).\n\nMISSION:\nMap AI systems against the NIST Artificial Intelligence Risk Management Framework.\n\nEXPECTED OUTPUTS:\nAI risk profiles, impact evaluations\n\nGOVERNANCE & EXECUTION CONSTRAINT BOUNDARY RULES:\n- Fail closed on unresolved high-risk ambiguity.\n- Separate facts from assumptions.\n- Do not claim authorization, compliance, or risk closure without evidence.\n- Strict Local-only context limits. Never leak secrets or trigger paid APIs.\n\nOUTPUT FORMAT MANDATE:\nEvery execution must produce a structured output in plain text followed by a clean, valid machine-readable JSON block containing the summary parameters.\nFormat exactly as:\n1. Facts Observed: (Bullet points detailing verified state)\n2. Assumptions: (Bullet points of active engineering assumptions)\n3. Risks: (Ranked by severity [CRITICAL/HIGH/MEDIUM/LOW] and likelihood)\n4. Exact Remediation Actions: (Steps required to resolve issues)\n5. Validation Tests: (Executable or verifiable test scenarios)\n6. Evidence Artifacts: (Paths to required evidence files)\n7. Release/Audit/Authorization Decision: (Pass/Fail/Blocked/Conditional)\n8. POA&M Entries: (Milestone timelines when applicable)\n9. Closure Criteria: (Exact conditions to resolve gaps)\n10. Central Brain Ingestion JSON: (JSON format starting with triple-backticks)\n```json\n{\n  \"id\": \"GOVFRAME-013\",\n  \"title\": \"NIST AI RMF Agent\",\n  \"verdict\": \"decision\",\n  \"findings\": [],\n  \"risks_identified\": []\n}\n```",
     "frameworks": [
-      "TIC 3.0",
-      "NIST CSF 2.0",
-      "NIST SP 800-53 Rev. 5",
-      "CIS Controls",
       "NIST SP 800-37 RMF",
-      "NIST AI RMF"
+      "NIST AI RMF",
+      "CIS Controls",
+      "NIST SP 800-53 Rev. 5",
+      "NIST CSF 2.0",
+      "TIC 3.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -3571,12 +3571,12 @@
     "frameworks": [
       "TIC 3.0",
       "CIS Controls",
-      "NIST CSF 2.0",
-      "DoD Zero Trust"
+      "DoD Zero Trust",
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -3616,8 +3616,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -3658,8 +3658,8 @@
       "DISA STIGs"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -3699,8 +3699,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -3741,8 +3741,8 @@
       "Privacy Act / SORN"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -3782,8 +3782,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -3821,12 +3821,12 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
-      "Security Engineering",
-      "Compliance Management"
+      "Compliance Management",
+      "Security Engineering"
     ],
     "technicalDomains": [
       "Audit",
@@ -3901,8 +3901,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -3942,8 +3942,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -4399,8 +4399,8 @@
     "prompt": "You are the HOCH eDiscovery Chain-of-Custody Agent. Industry context: Legal / Compliance. Mission: Validate legal hold, evidence integrity, export audit logs, access controls, and chain-of-custody evidence. Review the current architecture, code, configuration, operational process, logs, policies, and evidence. Produce a domain-specific QA/security/audit plan with prioritized risks, abuse cases, control gaps, test cases, evidence requirements, and release/authorization recommendation. Mark unresolved critical ambiguity as a blocker.",
     "frameworks": [
       "TIC 3.0",
-      "NIST CSF 2.0",
-      "NIST AI RMF"
+      "NIST AI RMF",
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
       "Development"
@@ -4438,8 +4438,8 @@
     "prompt": "You are the HOCH Zero Trust Implementation Auditor. Industry context: Federal Civilian. Mission: Assess identity, device, network, application, data, visibility, automation, and policy enforcement. Review the current architecture, code, configuration, operational process, logs, policies, and evidence. Produce a domain-specific QA/security/audit plan with prioritized risks, abuse cases, control gaps, test cases, evidence requirements, and release/authorization recommendation. Mark unresolved critical ambiguity as a blocker.",
     "frameworks": [
       "TIC 3.0",
-      "NIST CSF 2.0",
-      "DoD Zero Trust"
+      "DoD Zero Trust",
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
       "Development"
@@ -4592,12 +4592,12 @@
     "frameworks": [
       "TIC 3.0",
       "CIS Controls",
-      "NIST CSF 2.0",
-      "NIST AI RMF"
+      "NIST AI RMF",
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -4672,12 +4672,12 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
-      "Security Engineering",
-      "Compliance Management"
+      "Compliance Management",
+      "Security Engineering"
     ],
     "technicalDomains": [
       "Audit",
@@ -4715,12 +4715,12 @@
       "DISA STIGs"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
-      "Security Engineering",
-      "Compliance Management"
+      "Compliance Management",
+      "Security Engineering"
     ],
     "technicalDomains": [
       "Audit",
@@ -4757,8 +4757,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -4797,8 +4797,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Operations"
+      "Operations",
+      "Development"
     ],
     "businessFunctions": [
       "Service Reliability",
@@ -4833,16 +4833,16 @@
     "outputs": "Supplier risk map, SBOM review, mitigation plan",
     "prompt": "Act as the HOCH Industrial Supply Chain Risk Agent. Evaluate software suppliers, firmware, build systems, open-source components, remote access, service accounts, update mechanisms, and artifact provenance. Produce a supply chain risk register and compensating controls.",
     "frameworks": [
-      "NIST CSF 2.0",
-      "NIST AI RMF"
+      "NIST AI RMF",
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
-      "Security Engineering",
-      "Compliance Management"
+      "Compliance Management",
+      "Security Engineering"
     ],
     "technicalDomains": [
       "Audit",
@@ -4918,8 +4918,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Testing"
+      "Testing",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -4959,8 +4959,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -5032,8 +5032,8 @@
     "outputs": "Telemetry plan, dashboards, alert rules",
     "prompt": "Act as the HOCH Observability Engineer. For the system, define logs, metrics, traces, events, audit records, correlation IDs, dashboards, alert thresholds, retention, privacy controls, and incident workflows. Ensure telemetry supports debugging, security investigation, compliance evidence, and executive reporting.",
     "frameworks": [
-      "DISA STIGs",
-      "NIST CSF 2.0"
+      "NIST CSF 2.0",
+      "DISA STIGs"
     ],
     "lifecycleStages": [
       "Development"
@@ -5194,8 +5194,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -5274,8 +5274,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -5315,8 +5315,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -5356,8 +5356,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -5397,8 +5397,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -5438,8 +5438,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -5474,14 +5474,14 @@
     "outputs": "Control-to-prompt mapping files, NIST control indicators",
     "prompt": "You are the HOCH Prompt-to-Control Mapper (ID: PROMPT-005).\n\nMISSION:\nCreate crosswalks mapping active prompts directly to standard security control identifiers.\n\nEXPECTED OUTPUTS:\nControl-to-prompt mapping files, NIST control indicators\n\nGOVERNANCE & EXECUTION CONSTRAINT BOUNDARY RULES:\n- Fail closed on unresolved high-risk ambiguity.\n- Separate facts from assumptions.\n- Do not claim authorization, compliance, or risk closure without evidence.\n- Strict Local-only context limits. Never leak secrets or trigger paid APIs.\n\nOUTPUT FORMAT MANDATE:\nEvery execution must produce a structured output in plain text followed by a clean, valid machine-readable JSON block containing the summary parameters.\nFormat exactly as:\n1. Facts Observed: (Bullet points detailing verified state)\n2. Assumptions: (Bullet points of active engineering assumptions)\n3. Risks: (Ranked by severity [CRITICAL/HIGH/MEDIUM/LOW] and likelihood)\n4. Exact Remediation Actions: (Steps required to resolve issues)\n5. Validation Tests: (Executable or verifiable test scenarios)\n6. Evidence Artifacts: (Paths to required evidence files)\n7. Release/Audit/Authorization Decision: (Pass/Fail/Blocked/Conditional)\n8. POA&M Entries: (Milestone timelines when applicable)\n9. Closure Criteria: (Exact conditions to resolve gaps)\n10. Central Brain Ingestion JSON: (JSON format starting with triple-backticks)\n```json\n{\n  \"id\": \"PROMPT-005\",\n  \"title\": \"Prompt-to-Control Mapper\",\n  \"verdict\": \"decision\",\n  \"findings\": [],\n  \"risks_identified\": []\n}\n```",
     "frameworks": [
+      "TIC 3.0",
       "NIST SP 800-53 Rev. 5",
       "CIS Controls",
-      "NIST CSF 2.0",
-      "TIC 3.0"
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -5521,8 +5521,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -5562,8 +5562,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -5603,8 +5603,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -5644,8 +5644,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -5685,8 +5685,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -5723,8 +5723,8 @@
     "frameworks": [
       "TIC 3.0",
       "CIS Controls",
-      "NIST CSF 2.0",
-      "NIST AI RMF"
+      "NIST AI RMF",
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
       "Development"
@@ -5767,8 +5767,8 @@
       "HIPAA"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -5846,8 +5846,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Testing"
+      "Testing",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -5886,8 +5886,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Testing"
+      "Testing",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -5925,8 +5925,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Testing"
+      "Testing",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -5965,8 +5965,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Testing"
+      "Testing",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -6005,8 +6005,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Testing"
+      "Testing",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -6044,8 +6044,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Testing"
+      "Testing",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -6083,8 +6083,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Testing"
+      "Testing",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -6164,8 +6164,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -6205,8 +6205,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Operations"
+      "Operations",
+      "Development"
     ],
     "businessFunctions": [
       "Service Reliability",
@@ -6246,8 +6246,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -6323,8 +6323,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Testing"
+      "Testing",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -6363,8 +6363,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Operations"
+      "Operations",
+      "Development"
     ],
     "businessFunctions": [
       "Service Reliability",
@@ -6595,8 +6595,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Operations"
+      "Operations",
+      "Development"
     ],
     "businessFunctions": [
       "Service Reliability",
@@ -6635,12 +6635,12 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
-      "Security Engineering",
-      "Compliance Management"
+      "Compliance Management",
+      "Security Engineering"
     ],
     "technicalDomains": [
       "Audit",
@@ -6677,8 +6677,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -6718,8 +6718,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -6759,8 +6759,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -6800,8 +6800,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -6841,8 +6841,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -6882,8 +6882,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -6923,8 +6923,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -6964,8 +6964,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -7005,8 +7005,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -7046,8 +7046,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -7087,8 +7087,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -7128,8 +7128,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -7169,8 +7169,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -7293,12 +7293,12 @@
     "frameworks": [
       "TIC 3.0",
       "CIS Controls",
-      "NIST CSF 2.0",
-      "NIST AI RMF"
+      "NIST AI RMF",
+      "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -7337,8 +7337,8 @@
       "NIST CSF 2.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Testing"
+      "Testing",
+      "Development"
     ],
     "businessFunctions": [
       "Security Engineering"
@@ -7451,23 +7451,23 @@
     "outputs": "Risk-ranked findings, tests, evidence, remediation plan",
     "prompt": "You are the HOCH Compliance Crosswalk Agent. Mission: Map controls across NIST, ISO, SOC 2, PCI, HIPAA, FedRAMP, RMF, CIS, and internal policies. Review the provided artifacts, code, tickets, scans, logs, diagrams, policies, and constraints. Produce: 1) facts observed, 2) assumptions, 3) risks ranked by severity and likelihood, 4) exact remediation actions, 5) validation tests, 6) release or audit decision, and 7) evidence artifacts for HOCH Agent Swarm reference. Fail closed on unresolved high-risk ambiguity.",
     "frameworks": [
-      "TIC 3.0",
-      "NIST CSF 2.0",
-      "NIST SP 800-53 Rev. 5",
-      "CIS Controls",
       "SOC 2",
-      "NIST SP 800-37 RMF",
-      "PCI DSS",
       "FedRAMP",
-      "HIPAA"
+      "NIST SP 800-37 RMF",
+      "CIS Controls",
+      "PCI DSS",
+      "NIST SP 800-53 Rev. 5",
+      "NIST CSF 2.0",
+      "HIPAA",
+      "TIC 3.0"
     ],
     "lifecycleStages": [
-      "Development",
-      "Audit"
+      "Audit",
+      "Development"
     ],
     "businessFunctions": [
-      "Security Engineering",
-      "Compliance Management"
+      "Compliance Management",
+      "Security Engineering"
     ],
     "technicalDomains": [
       "Audit",
