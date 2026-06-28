@@ -1,0 +1,369 @@
+{
+  "checksum_register": {
+    "package.json": {
+      "sha256": "094d737ee8703e820e630bf9a80f50088afa5a65d6e8e63029a5c405d4e043a1",
+      "category": "configuration",
+      "locked": true
+    },
+    "backend/production_hardening/audit_ledger_helper.py": {
+      "sha256": "013d2e2067b601249d3f6ea3db0362292e451f0abf088edb3124f66574cd89bf",
+      "category": "hardening",
+      "locked": true
+    },
+    "backend/production_hardening/auth_adapter.py": {
+      "sha256": "b5200411dbf15650c9d2dbef385bdd4b374297a6b0fa3d135f86bcfeb81aa906",
+      "category": "hardening",
+      "locked": true
+    },
+    "backend/production_hardening/backup_recovery_scripts.py": {
+      "sha256": "4f23232ec09e98e0946aac45826997e617c2ce02f649f1dfe2364894c4b4672d",
+      "category": "hardening",
+      "locked": true
+    },
+    "backend/production_hardening/mutation_gate.py": {
+      "sha256": "008f352a27f0c65a92d744b284a95d0e32a3665e08bed17cf6a9a9a0eb7c2ae2",
+      "category": "hardening",
+      "locked": true
+    },
+    "backend/production_hardening/observability_scaffolding.py": {
+      "sha256": "34c7fd1c51568a65cd87e65e6bb92ec35c281823faf3217c6082340704089ee9",
+      "category": "hardening",
+      "locked": true
+    },
+    "backend/production_hardening/test_scaffolding_validation.py": {
+      "sha256": "7a15addacc71460e296fd26eb186c9bc65570bb1a22652684ed0bec3fef938c4",
+      "category": "hardening",
+      "locked": true
+    },
+    "backend/production_hardening/tls_scaffolding.py": {
+      "sha256": "6851272411674eb70d24a210ee3dcbebc278e88ec7f8d6893d8caa37038710ad",
+      "category": "hardening",
+      "locked": true
+    },
+    "scripts/qa/test-production-architecture-design-contract.ts": {
+      "sha256": "92f35f15b9f7d1a1d0a21358ce390340560e4f1f159273dbebb9b39403394b3c",
+      "category": "qa",
+      "locked": true
+    },
+    "scripts/qa/test-production-control-evidence-mapping-contract.ts": {
+      "sha256": "d574c96cf066a39e5fd01a1aac9d31c78cb2bade3cda1a46d25e99063465ee74",
+      "category": "qa",
+      "locked": true
+    },
+    "scripts/qa/test-production-control-implementation-execution-contract.ts": {
+      "sha256": "c551ebbe09e9b3730eba4858d3446bbeeef5984c911d409ee9a4d896331d2951",
+      "category": "qa",
+      "locked": true
+    },
+    "scripts/qa/test-production-control-implementation-plan-contract.ts": {
+      "sha256": "ca58a88abac488be3e3931a863c3c266f9b7378438b9a3f23e43f4f9c269e331",
+      "category": "qa",
+      "locked": true
+    },
+    "scripts/qa/test-production-control-integration-validation-contract.ts": {
+      "sha256": "08949dafd4dbfe27b533e13986ddadc7ac1531fa60116e8c7700569290de9e74",
+      "category": "qa",
+      "locked": true
+    },
+    "scripts/qa/test-production-final-candidate-seal-contract.ts": {
+      "sha256": "00e1a75565333d735c06a29e2580b282940cf4e12e6df9ab2eb5605e43380e35",
+      "category": "qa",
+      "locked": true
+    },
+    "scripts/qa/test-production-readiness-authorization-contract.ts": {
+      "sha256": "3bc14af5d3008b54730eca05bc4d80df14988490a6108ea0a2cf016d9a07bcb8",
+      "category": "qa",
+      "locked": true
+    },
+    "scripts/qa/test-production-readiness-risk-register-contract.ts": {
+      "sha256": "501dd519ceb51d1227e2878cf1e5fc3c27ac2229e4b9da3c1eb523f19350baee",
+      "category": "qa",
+      "locked": true
+    },
+    "scripts/qa/test-production-remediation-closure-plan-contract.ts": {
+      "sha256": "134123f94ba075484b313e77bb93d10b8c0ac05203180881f0b0cc5efebdc1a9",
+      "category": "qa",
+      "locked": true
+    },
+    "scripts/qa/test-production-remediation-execution-contract.ts": {
+      "sha256": "ce7ef69bc78eeaff528398819ad36016c38a42a73b526c99ea844298f22885ab",
+      "category": "qa",
+      "locked": true
+    },
+    "scripts/qa/test-production-remediation-validation-contract.ts": {
+      "sha256": "e30e8c76a856432fd612816b1633d84647a8052e82db99670a8a4a2544f1557f",
+      "category": "qa",
+      "locked": true
+    },
+    "scripts/qa/test-production-requirements-baseline-contract.ts": {
+      "sha256": "e7518d837356840a64544f5eb55312737f16cedd1771ea45323ffd388ad3e6d9",
+      "category": "qa",
+      "locked": true
+    },
+    "artifacts/production-readiness-authorization/visual-control-plane-local-v1/pr1_final_seal.json": {
+      "sha256": "0536c5373f91443e4b023e33a61d20e4e55eeb96353f7fa2af3e1b881d1bc83e",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-readiness-authorization/visual-control-plane-local-v1/production_gap_analysis.json": {
+      "sha256": "140170ff0ccd4eb56094700a0028ae862afeb992570984e19deae3092f47c0b8",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-readiness-authorization/visual-control-plane-local-v1/production_readiness_blocked_actions.json": {
+      "sha256": "0d5ddbcbb3af477a8cdf7b51bf70e63515417a965da0fcff4ec3925cef988cfc",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-readiness-authorization/visual-control-plane-local-v1/production_readiness_boundary_attestation.json": {
+      "sha256": "a5da5e72ee81e09811d4e777a7af8866d8f10bfa8eb8bdb8641b97f74f525bec",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-readiness-authorization/visual-control-plane-local-v1/production_readiness_manifest.json": {
+      "sha256": "f7c64e2664250aa7fc003a14e6d5a6502a402d78154e9feb40b47f684401d5ed",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-requirements-baseline/visual-control-plane-local-v1/pr2_final_seal.json": {
+      "sha256": "b7b3cd41c5f77d06bdbf5ac8233443b5e74c53a89057f3ef0a7ad3a274dc9ebf",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-requirements-baseline/visual-control-plane-local-v1/production_requirements_baseline.json": {
+      "sha256": "c71ef34efc7a36bb5b6a476188f9b53a9a8393d8025336e42b329822098f9247",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-requirements-baseline/visual-control-plane-local-v1/production_requirements_manifest.json": {
+      "sha256": "c3234acae74758fa85ac72102a898c01bec3feb092c56b81f3c778f7d07237f0",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-requirements-baseline/visual-control-plane-local-v1/requirements_blocked_actions.json": {
+      "sha256": "0d5ddbcbb3af477a8cdf7b51bf70e63515417a965da0fcff4ec3925cef988cfc",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-requirements-baseline/visual-control-plane-local-v1/requirements_boundary_attestation.json": {
+      "sha256": "e1601a2da7e1da42911f5b9e50c3d690983f8c9f0cac1deb94af429d58068b1a",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-architecture-design/visual-control-plane-local-v1/architecture_blocked_actions.json": {
+      "sha256": "0d5ddbcbb3af477a8cdf7b51bf70e63515417a965da0fcff4ec3925cef988cfc",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-architecture-design/visual-control-plane-local-v1/architecture_boundary_attestation.json": {
+      "sha256": "ec7948b61f53b9913549160c853389453d4432ed520bc250f43c4edfbdb51ab5",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-architecture-design/visual-control-plane-local-v1/pr3_final_seal.json": {
+      "sha256": "5d9151a8722b84f07664ea8f1d8bf2cad49f6ac552a1cc584502af3a70fc53ac",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-architecture-design/visual-control-plane-local-v1/production_architecture_design.json": {
+      "sha256": "641e2e42ea59ba1b54f4f3839de0b88e13730bd5de050bb60af06f9950e1c615",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-architecture-design/visual-control-plane-local-v1/production_architecture_manifest.json": {
+      "sha256": "4520454e3e04d084b48dfacf7087dba0901d151109693575ce3d790f4b179250",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-control-implementation-plan/visual-control-plane-local-v1/plan_blocked_actions.json": {
+      "sha256": "0d5ddbcbb3af477a8cdf7b51bf70e63515417a965da0fcff4ec3925cef988cfc",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-control-implementation-plan/visual-control-plane-local-v1/plan_boundary_attestation.json": {
+      "sha256": "2f5c3c73cf46551eb9b9a7563196b2c680b0863c3e256109a3d6bf0faf3f6fdb",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-control-implementation-plan/visual-control-plane-local-v1/pr4_final_seal.json": {
+      "sha256": "2d21480cc6fae8d00b813bfd3feefe6a0bc5d645b20d720477ec3f3e850fe072",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-control-implementation-plan/visual-control-plane-local-v1/production_control_implementation_plan.json": {
+      "sha256": "5a1fe4f25f5835704cbf4ef0ad0cf7c4569c9bca335a46d542105689a9f2fe2e",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-control-implementation-plan/visual-control-plane-local-v1/production_implementation_plan_manifest.json": {
+      "sha256": "9d5644a354e948b0b4a3a1987a9ec7bc04e0852f348a0f5c9692b10f5d1fb4b4",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-control-implementation-execution/visual-control-plane-local-v1/pr5_final_seal.json": {
+      "sha256": "411fc08398cf5b1e48655e36d69b9684f8a1b60f7ce543845f887d4e3dd63110",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-control-implementation-execution/visual-control-plane-local-v1/production_execution_blocked_actions.json": {
+      "sha256": "b1e136c67ed519657b5b63809c32b932da3fc55334601dd4b767f734d2663641",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-control-implementation-execution/visual-control-plane-local-v1/production_execution_boundary_attestation.json": {
+      "sha256": "5838f25b949d62cae5786b12b3801ebcf0e0d425907a6d892b7200273edf0e75",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-control-implementation-execution/visual-control-plane-local-v1/production_execution_manifest.json": {
+      "sha256": "2223c426db400b0f64c87527913b35d983925232e31b58708bc828bfa729180a",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-control-integration-validation/visual-control-plane-local-v1/pr6_final_seal.json": {
+      "sha256": "ce6a15b64d3daef6688f6f6a616445218c4e8a2fd1260e94edd00be2a81b78de",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-control-integration-validation/visual-control-plane-local-v1/production_validation_blocked_actions.json": {
+      "sha256": "b1e136c67ed519657b5b63809c32b932da3fc55334601dd4b767f734d2663641",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-control-integration-validation/visual-control-plane-local-v1/production_validation_boundary_attestation.json": {
+      "sha256": "ce2cb7ad4d6c38381a54d715fcc403f825ba34e666320d2e419c956a7e9f291e",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-control-integration-validation/visual-control-plane-local-v1/production_validation_manifest.json": {
+      "sha256": "4d705c46fa77d7c565692f2a88100b649e1db09ee3c0aaf9e697ed3ad97cbfbb",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-control-evidence-mapping/visual-control-plane-local-v1/evidence_blocked_actions.json": {
+      "sha256": "b1e136c67ed519657b5b63809c32b932da3fc55334601dd4b767f734d2663641",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-control-evidence-mapping/visual-control-plane-local-v1/evidence_boundary_attestation.json": {
+      "sha256": "ac89229723103be1f045c3027f1f24c6e53b046d5d2105640afbbc20bb500baa",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-control-evidence-mapping/visual-control-plane-local-v1/pr7_final_seal.json": {
+      "sha256": "d66b0a31d80a17a1d968febf0e057705a2c8fd158979414337c77e24bf85e02f",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-control-evidence-mapping/visual-control-plane-local-v1/production_control_evidence_mapping.json": {
+      "sha256": "283b5a9daac273dd91d8f9844679310cb862e3d347c84a393f5fed85a562984c",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-control-evidence-mapping/visual-control-plane-local-v1/production_evidence_manifest.json": {
+      "sha256": "6a76c9d81aedf531847223986d2772270f3ed81c3fe18e705f04b64dcd75edfe",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-readiness-risk-register/visual-control-plane-local-v1/pr8_final_seal.json": {
+      "sha256": "0a7f0d95c7245f561c8baa17e35709876a56f8717a681a2eb80309b462745322",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-readiness-risk-register/visual-control-plane-local-v1/production_readiness_risk_register.json": {
+      "sha256": "c3029176b0150587a5194f2cc40fd3ecbf862fefd6c75ee9ae7583db60052433",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-readiness-risk-register/visual-control-plane-local-v1/production_risk_manifest.json": {
+      "sha256": "41ea5b49f2f47743d9907abc5357eeb9815515121d2700b08caba663b9321357",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-readiness-risk-register/visual-control-plane-local-v1/risk_blocked_actions.json": {
+      "sha256": "b1e136c67ed519657b5b63809c32b932da3fc55334601dd4b767f734d2663641",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-readiness-risk-register/visual-control-plane-local-v1/risk_boundary_attestation.json": {
+      "sha256": "e7dcdf534295f0b1176b9fd2ed7a4ca7e212d2e79bbc9f3807d57b6f03fb7863",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-readiness-remediation-closure-plan/visual-control-plane-local-v1/pr9_final_seal.json": {
+      "sha256": "f979961235679a8fac8b654d7bbb9201065421eb9327494bcd521ca5cbb1ac97",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-readiness-remediation-closure-plan/visual-control-plane-local-v1/production_remediation_closure_manifest.json": {
+      "sha256": "8ff33542cea1ee5a1eea5c0dd99c2d8d36094e4fc1157296f3ceff106552276d",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-readiness-remediation-closure-plan/visual-control-plane-local-v1/production_remediation_closure_plan.json": {
+      "sha256": "2d48e4f9f9c970187400c70d5874b9143a6c49bfa54f6f198b8e02b49753dd84",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-readiness-remediation-closure-plan/visual-control-plane-local-v1/remediation_closure_blocked_actions.json": {
+      "sha256": "fda45a490ba975973e4f266d0961f1237343a60a84db3104aaf5dd6f2861a126",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-readiness-remediation-closure-plan/visual-control-plane-local-v1/remediation_closure_boundary_attestation.json": {
+      "sha256": "8ee0ecf573e9d02eb88ea49d4e49cda44d1a3731396066d334310db2218179d5",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-readiness-remediation-execution/visual-control-plane-local-v1/pr10_final_seal.json": {
+      "sha256": "82c4f02176d695a4b8020b9a0b64e1cb2c0222b99960e42edfdeb86c775c140f",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-readiness-remediation-execution/visual-control-plane-local-v1/production_remediation_manifest.json": {
+      "sha256": "5af4c648d503eaf469af77f023625886a74d8baa8219c93d99ce3f205c47f3ba",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-readiness-remediation-execution/visual-control-plane-local-v1/remediation_blocked_actions.json": {
+      "sha256": "de27896deb0c76d3e429cfff8e6bc1170bc1d8da7ecc435bf27fe5322b6d381d",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-readiness-remediation-execution/visual-control-plane-local-v1/remediation_boundary_attestation.json": {
+      "sha256": "7d363c9804784efb8457fe66f31aef9a1a8d077730bf15d6d561f6ec8625ec5a",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-readiness-remediation-execution/visual-control-plane-local-v1/remediation_execution_evidence.json": {
+      "sha256": "250b9eba8520f77160d6a6b4172daaa29ba2d56d831617ed1a55f6e655a23e01",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-readiness-remediation-validation/visual-control-plane-local-v1/pr11_final_seal.json": {
+      "sha256": "ce22e16523fff9a99542cea9944d624d0be6855e19a747d587378dbdb835888b",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-readiness-remediation-validation/visual-control-plane-local-v1/production_validation_manifest.json": {
+      "sha256": "dfa0ed777e9fd4e5e88fecd10a3dd83f5806152bb43b9243724994e4a2296d7e",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-readiness-remediation-validation/visual-control-plane-local-v1/remediation_validation_residual_risk.json": {
+      "sha256": "02bc2e2f37bdbe7c803f9429155f4de3d62802887d6d4c256435c9cfa5bdaf23",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-readiness-remediation-validation/visual-control-plane-local-v1/validation_blocked_actions.json": {
+      "sha256": "52bbf2c831cf81986ae88219aa38316f3ab0d074bd5cf8658b8a21b332c4ac34",
+      "category": "evidence",
+      "locked": true
+    },
+    "artifacts/production-readiness-remediation-validation/visual-control-plane-local-v1/validation_boundary_attestation.json": {
+      "sha256": "a6e926e1eaa29f2c66a1c063ddc92096e30e7c26116d85b6dbb14df45cdd5e2b",
+      "category": "evidence",
+      "locked": true
+    }
+  }
+}
