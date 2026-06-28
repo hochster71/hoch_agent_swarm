@@ -3,7 +3,7 @@ import os
 import unittest
 import tempfile
 import sqlite3
-from tls_scaffolding import NGINX_PROXY_TEMPLATE
+from tls_scaffolding import NGINX_PROXY_TEMPLATE, verify_tls_socket_version
 from auth_adapter import OidcAuthAdapter
 from audit_ledger_helper import AuditLedgerHelper
 from mutation_gate import MutationGate
@@ -15,6 +15,8 @@ class TestProductionHardeningScaffolding(unittest.TestCase):
     def test_tls_scaffolding(self):
         self.assertTrue(len(NGINX_PROXY_TEMPLATE) > 100)
         self.assertIn("ssl_protocols TLSv1.3;", NGINX_PROXY_TEMPLATE)
+        self.assertTrue(verify_tls_socket_version("TLSv1.3"))
+        self.assertFalse(verify_tls_socket_version("TLSv1.2"))
 
     def test_auth_adapter(self):
         adapter = OidcAuthAdapter(issuer="https://accounts.google.com", client_id="test-client-id")
@@ -25,6 +27,13 @@ class TestProductionHardeningScaffolding(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             adapter.validate_token("invalid-token")
+
+        # Test JWT parsing validation
+        # payload: {"sub": "user-123", "roles": ["operator"], "iss": "https://accounts.google.com"}
+        # base64: eyJzdWIiOiAidXNlci0xMjMiLCAicm9sZXMiOiBbIm9wZXJhdG9yIl0sICJpc3MiOiAiaHR0cHM6Ly9hY2NvdW50cy5nb29nbGUuY29tIn0= (padded/unpadded)
+        mock_jwt = "header.eyJzdWIiOiAidXNlci0xMjMiLCAicm9sZXMiOiBbIm9wZXJhdG9yIl0sICJpc3MiOiAiaHR0cHM6Ly9hY2NvdW50cy5nb29nbGUuY29tIn0.sig"
+        decoded = adapter.validate_token(mock_jwt)
+        self.assertEqual(decoded["sub"], "user-123")
 
     def test_audit_ledger(self):
         with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as tmp:
@@ -50,13 +59,17 @@ class TestProductionHardeningScaffolding(unittest.TestCase):
 
     def test_mutation_gate(self):
         gate = MutationGate(verification_endpoint="http://localhost/verify")
-        self.assertTrue(gate.authorize_mutation({"mutate": "something"}, "sig-approved-token"))
+        self.assertTrue(gate.authorize_mutation({"mutate": "something"}, "sig-approved-token", nonce="nonce-1"))
+
+        # Replay mutation within same gate with duplicate nonce throws PermissionError
+        with self.assertRaises(PermissionError):
+            gate.authorize_mutation({"mutate": "something"}, "sig-approved-token", nonce="nonce-1")
 
         with self.assertRaises(PermissionError):
-            gate.authorize_mutation({"mutate": "something"}, "sig-rejected-token")
+            gate.authorize_mutation({"mutate": "something"}, "sig-rejected-token", nonce="nonce-2")
 
         with self.assertRaises(PermissionError):
-            gate.authorize_mutation({"mutate": "something"}, "")
+            gate.authorize_mutation({"mutate": "something"}, "", nonce="nonce-3")
 
     def test_observability(self):
         exporter = PrometheusMetricsExporter()

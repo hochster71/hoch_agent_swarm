@@ -1,0 +1,9 @@
+{
+  "track_id": "PR10",
+  "track_name": "Production Readiness Remediation Execution",
+  "prior_dependency": "PR9",
+  "branch_name": "integration/visual-control-plane-local-v1",
+  "current_head": "e46399551d2e0602ac2304a53034bff9024b4391",
+  "evidence_folder_path": "artifacts/production-readiness-remediation-execution/visual-control-plane-local-v1",
+  "certification_wording": "PR10 PRODUCTION READINESS REMEDIATION EXECUTION — ACCEPTED FOR REMEDIATION EXECUTION ONLY"
+}
