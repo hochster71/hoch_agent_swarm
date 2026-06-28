@@ -57,7 +57,8 @@
         { id: 'readiness', label: 'READINESS' },
         { id: 'settings', label: 'SETTINGS' },
         { id: 'agent-flight-deck', label: 'AGENT FLIGHT DECK' },
-        { id: 'clawde', label: 'CLAWDE CONTROL TOWER' }
+        { id: 'clawde', label: 'CLAWDE CONTROL TOWER' },
+        { id: 'handoff', label: 'RELEASE REVIEW & HANDOFF' }
     ];
 
     function initNavigation() {
@@ -161,6 +162,10 @@
             case 'clawde':
                 loadClawdeView();
                 viewInterval = setInterval(loadClawdeView, 3000);
+                break;
+            case 'handoff':
+                loadHandoffView();
+                viewInterval = setInterval(loadHandoffView, 3000);
                 break;
         }
     }
@@ -3042,6 +3047,7 @@
         initMigrationButton();
         initPreflightButton();
         initLedgerButtons();
+        initHandoffButtons();
         
         // Initial fetches
         fetchCockpit();
@@ -3226,6 +3232,121 @@
             btnExport.addEventListener('click', (e) => {
                 e.preventDefault();
                 exportAuditBundle();
+            });
+        }
+    }
+
+    async function loadHandoffView() {
+        try {
+            const res = await fetch('/api/v1/handoff/status');
+            if (!res.ok) throw new Error('Failed to fetch handoff status');
+            const data = await res.json();
+            
+            const git = data.git || {};
+            const branchEl = el('handoff-git-branch');
+            if (branchEl) branchEl.textContent = git.branch || 'N/A';
+            
+            const shaEl = el('handoff-git-sha');
+            if (shaEl) shaEl.textContent = git.commit_sha ? git.commit_sha.substring(0, 8) : 'N/A';
+            
+            const treeEl = el('handoff-git-tree');
+            if (treeEl) {
+                treeEl.textContent = git.dirty ? 'DIRTY WORKING TREE' : 'CLEAN';
+                treeEl.style.color = git.dirty ? '#f87171' : '#10b981';
+            }
+            
+            const tagEl = el('handoff-release-tag');
+            if (tagEl) tagEl.textContent = git.active_tag || 'N/A';
+            
+            const gates = data.gates || {};
+            
+            const preflightEl = el('handoff-preflight-score');
+            if (preflightEl) {
+                preflightEl.textContent = gates.preflight_score !== undefined ? gates.preflight_score + '%' : 'N/A';
+                preflightEl.style.color = gates.preflight_pass ? '#10b981' : '#f87171';
+            }
+            
+            const ledgerEl = el('handoff-ledger-verification');
+            if (ledgerEl) {
+                ledgerEl.textContent = gates.ledger_pass ? 'PASSED (VERIFIED)' : 'CORRUPTED/FAILED';
+                ledgerEl.style.color = gates.ledger_pass ? '#10b981' : '#f87171';
+            }
+            
+            const complianceEl = el('handoff-compliance-status');
+            if (complianceEl) {
+                complianceEl.textContent = gates.compliance_pass ? 'COMPLIANT' : 'NON-COMPLIANT';
+                complianceEl.style.color = gates.compliance_pass ? '#10b981' : '#f87171';
+            }
+            
+            const healthEl = el('handoff-model-health');
+            if (healthEl) {
+                healthEl.textContent = gates.model_health_pass ? 'HEALTHY' : 'UNHEALTHY / OFFLINE';
+                healthEl.style.color = gates.model_health_pass ? '#10b981' : '#f87171';
+            }
+            
+            const tbody = el('handoff-manifest-tbody');
+            if (tbody) {
+                const manifest = data.manifest || [];
+                if (manifest.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 15px; color: var(--text-secondary);">No handoff files defined.</td></tr>`;
+                } else {
+                    tbody.innerHTML = manifest.map(m => `
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                            <td style="padding: 10px 8px; font-family: monospace; font-weight: bold; color: #fff;">${m.file}</td>
+                            <td style="padding: 10px 8px; color: var(--text-secondary);">${m.desc}</td>
+                            <td style="padding: 10px 8px; font-family: monospace; color: #818cf8;">
+                                ${m.status === 'READY' ? 'Auto-Signed' : '--'}
+                            </td>
+                            <td style="padding: 10px 8px; text-align: right;">
+                                <span style="font-weight: bold; color: ${m.status === 'READY' ? '#10b981' : '#f87171'};">
+                                    ${m.status}
+                                </span>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            }
+        } catch (err) {
+            console.error('Failed to load handoff details:', err);
+        }
+    }
+
+    async function exportHandoffPacket() {
+        const btn = el('btn-export-handoff-packet');
+        if (!btn) return;
+        
+        btn.disabled = true;
+        const originalText = btn.textContent;
+        btn.textContent = 'Exporting...';
+        
+        try {
+            const res = await fetch('/api/v1/handoff/packet/download');
+            if (!res.ok) throw new Error('Handoff packet generation failed');
+            const blob = await res.blob();
+            
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `release_candidate_handoff_packet.zip`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error('Failed to export handoff packet:', err);
+            alert('Failed to export handoff packet. See console for details.');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = originalText;
+        }
+    }
+
+    function initHandoffButtons() {
+        const btn = el('btn-export-handoff-packet');
+        if (btn) {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                exportHandoffPacket();
             });
         }
     }

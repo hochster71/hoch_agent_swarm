@@ -6710,6 +6710,26 @@ def api_download_evidence_bundle():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to generate audit review bundle: {e}")
 
+@app.get("/api/v1/handoff/status")
+def api_get_handoff_status():
+    from backend.ledger_manager import get_handoff_status
+    return get_handoff_status()
+
+@app.get("/api/v1/handoff/packet/download")
+def api_download_handoff_packet():
+    from backend.ledger_manager import create_handoff_packet
+    from fastapi.responses import StreamingResponse
+    import io
+    try:
+        zip_bytes = create_handoff_packet()
+        return StreamingResponse(
+            io.BytesIO(zip_bytes),
+            media_type="application/zip",
+            headers={"Content-Disposition": "attachment; filename=release_candidate_handoff_packet.zip"}
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to generate handoff packet: {e}")
+
 @app.get("/api/v1/policy/status")
 def api_get_policy_status():
     return {

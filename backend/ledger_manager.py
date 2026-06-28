@@ -375,3 +375,103 @@ def create_audit_review_bundle() -> bytes:
         zip_file.writestr("manifest.sha256", "".join(manifest_lines))
         
     return zip_buffer.getvalue()
+
+def get_handoff_status() -> dict:
+    import subprocess
+    from pathlib import Path
+    
+    branch = ""
+    commit_sha = ""
+    is_dirty = True
+    
+    try:
+        branch = subprocess.check_output(["git", "branch", "--show-current"], text=True).strip()
+        commit_sha = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+        status_out = subprocess.check_output(["git", "status", "--porcelain"], text=True).strip()
+        is_dirty = len(status_out) > 0
+    except Exception:
+        pass
+        
+    active_tag = "0.1.6-ERROR-BUDGET-AWARE-AUTONOMY"
+    
+    from backend.preflight_gate import GATE
+    preflight = GATE.run_preflight()
+    preflight_score = preflight.get("overall_score", 0)
+    preflight_pass = preflight.get("go_no_go") == "GO"
+    
+    from backend.ledger_manager import verify_ledger_chain
+    ledger_verify = verify_ledger_chain()
+    ledger_pass = ledger_verify.get("is_valid", False)
+    
+    from backend.model_health_monitor import MONITOR
+    model_health = MONITOR.scan_health(force=False)
+    providers = model_health.get("providers", {})
+    health_pass = any(p.get("status") == "online" for p in providers.values()) if providers else False
+    
+    manifest = [
+        {"file": "swarm_ledger.db", "desc": "SQLite immutable action ledger database", "status": "READY"},
+        {"file": "ledger_blocks.json", "desc": "JSON export of ledger transactions list", "status": "READY"},
+        {"file": "preflight_status.json", "desc": "Latest preflight checklist status report", "status": "READY"},
+        {"file": "model_health.json", "desc": "Model health diagnostics and probe metrics", "status": "READY"},
+        {"file": "run_report.json", "desc": "Latest Crew campaign run metrics", "status": "READY" if Path("run_report.json").exists() else "NOT_FOUND"},
+        {"file": "manifest.sha256", "desc": "Cryptographic checksum index file", "status": "READY"}
+    ]
+    
+    return {
+        "git": {
+            "branch": branch,
+            "commit_sha": commit_sha,
+            "dirty": is_dirty,
+            "active_tag": active_tag
+        },
+        "gates": {
+            "preflight_score": preflight_score,
+            "preflight_pass": preflight_pass,
+            "ledger_pass": ledger_pass,
+            "model_health_pass": health_pass,
+            "compliance_pass": preflight_pass and ledger_pass and health_pass
+        },
+        "manifest": manifest
+    }
+
+def create_handoff_packet() -> bytes:
+    import io
+    import zipfile
+    import json
+    import os
+    import hashlib
+    from pathlib import Path
+    
+    status = get_handoff_status()
+    
+    from backend.ledger_manager import get_ledger_blocks, DB_FILE
+    blocks = get_ledger_blocks()
+    
+    from backend.preflight_gate import GATE
+    preflight = GATE.run_preflight()
+    
+    from backend.model_health_monitor import MONITOR
+    model_health = MONITOR.scan_health(force=False)
+    
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
+        zip_file.writestr("ledger_blocks.json", json.dumps(blocks, indent=2))
+        zip_file.writestr("preflight_status.json", json.dumps(preflight, indent=2))
+        zip_file.writestr("model_health.json", json.dumps(model_health, indent=2))
+        zip_file.writestr("handoff_status.json", json.dumps(status, indent=2))
+        
+        if os.path.exists(DB_FILE):
+            zip_file.write(DB_FILE, "swarm_ledger.db")
+            
+        if os.path.exists("run_report.json"):
+            zip_file.write("run_report.json", "run_report.json")
+            
+        manifest_lines = []
+        for name in zip_file.namelist():
+            content = zip_file.read(name)
+            h = hashlib.sha256(content).hexdigest()
+            manifest_lines.append(f"{h}  {name}\n")
+            
+        zip_file.writestr("manifest.sha256", "".join(manifest_lines))
+        
+    return zip_buffer.getvalue()
