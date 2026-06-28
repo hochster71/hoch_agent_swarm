@@ -467,6 +467,59 @@ def api_tv_health():
     backend = get_tv_backend()
     return jsonify(backend.get_health())
 
+@app.route("/api/tv/diagnostic")
+def api_tv_diagnostic():
+    from hoch_agent_swarm.tv_backend import get_tv_backend
+    backend = get_tv_backend()
+    channels = backend.parse_m3u_playlist()
+    if not channels:
+        return jsonify({
+            "success": False,
+            "message": "No channels found in playlist cache to diagnose."
+        })
+    
+    # Check first channel
+    ch = channels[0]
+    url = ch["url"]
+    
+    import urllib.request
+    import urllib.error
+    
+    status_code = None
+    error_msg = None
+    try:
+        req = urllib.request.Request(
+            url, 
+            headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+        )
+        with urllib.request.urlopen(req, timeout=3) as response:
+            status_code = response.getcode()
+    except urllib.error.HTTPError as e:
+        status_code = e.code
+        error_msg = str(e.reason)
+    except urllib.error.URLError as e:
+        error_msg = str(e.reason)
+    except Exception as e:
+        error_msg = str(e)
+        
+    if status_code in (200, 206, 302):
+        return jsonify({
+            "success": True,
+            "channel_name": ch["name"],
+            "url": url,
+            "status_code": status_code,
+            "message": f"Drogon permits direct media-player access (HTTP {status_code})."
+        })
+    else:
+        return jsonify({
+            "success": False,
+            "channel_name": ch["name"],
+            "url": url,
+            "status_code": status_code,
+            "error": error_msg or f"HTTP {status_code}",
+            "message": f"Direct access check returned: {error_msg or f'HTTP {status_code}'}. Drogon might block direct media-player requests without specialized headers, active cookies, or user agent matching."
+        })
+
 @app.route("/api/tv/channels")
 def api_tv_channels():
     from flask import request
@@ -677,6 +730,25 @@ DASHBOARD_HTML = r"""<!DOCTYPE html>
       color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
+    }
+
+    /* ---- Switch ---- */
+    .switch {
+      position: relative; display: inline-block; width: 44px; height: 22px;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+      background-color: var(--bg3); border: 1px solid var(--border);
+      transition: .2s; border-radius: 22px;
+    }
+    .slider:before {
+      position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px;
+      background-color: var(--muted); transition: .2s; border-radius: 50%;
+    }
+    input:checked + .slider { background-color: var(--accent); }
+    input:checked + .slider:before {
+      transform: translateX(22px); background-color: #fff;
     }
 
     /* Animated gradient background */
@@ -1012,6 +1084,11 @@ DASHBOARD_HTML = r"""<!DOCTYPE html>
     <div class="nav-section-label">Media & Streaming</div>
     <button class="nav-item" id="nav-hochtv" onclick="showPage('hochtv')">
       <span class="icon">📺</span> HOCH TV
+    </button>
+
+    <div class="nav-section-label">Operator</div>
+    <button class="nav-item" id="nav-operator" onclick="showPage('operator')">
+      <span class="icon">⚙️</span> Operator Console
     </button>
   </nav>
 
@@ -1696,6 +1773,178 @@ DASHBOARD_HTML = r"""<!DOCTYPE html>
       </div>
     </div>
 
+    <!-- ===== OPERATOR CONSOLE ===== -->
+    <div class="page" id="page-operator">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Operator Launch & Health Cockpit</div>
+          <div class="page-sub">Centralized operational health monitoring and simulation injection</div>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="refresh-btn" onclick="runStreamDiagnostics()" style="background:var(--accent);color:#fff">🔍 Run Stream Diagnostic</button>
+          <button class="refresh-btn" onclick="resetTVCache()" style="background:var(--bg3);border:1px solid var(--border)">🧹 Reset Cache</button>
+          <button class="refresh-btn" onclick="loadOperatorHealth()">↻ Refresh</button>
+        </div>
+      </div>
+
+      <!-- Compliance notice -->
+      <div class="card" style="margin-bottom:20px;border-left:4px solid var(--yellow)">
+        <div style="padding:15px;font-size:13px">
+          <strong>⚠️ ATO-SUPPORTING EVIDENCE PACKAGE: READY FOR REVIEW</strong><br/>
+          <span style="color:var(--muted)">The system has ATO-supporting evidence prepared for review. Actual ATO has not been granted. No authorization claim is being made. Risks are not fully eliminated.</span>
+        </div>
+      </div>
+
+      <!-- Live stream diagnostic status -->
+      <div id="diagnostic-banner" style="display:none;margin-bottom:20px;padding:15px 20px;border-radius:var(--radius)"></div>
+
+      <!-- Operator Layout Grid -->
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:20px">
+        <div>
+          <!-- Subsystem Health Status -->
+          <div class="card" style="margin-bottom:20px">
+            <div class="card-header">📊 Component Health Registry</div>
+            <div style="padding:20px">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px">
+                
+                <div style="padding:15px;background:var(--bg2);border-radius:var(--radius);border:1px solid var(--border)">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                    <span style="font-weight:600">🧠 PromptBrain</span>
+                    <span id="health-pb-status" class="badge">—</span>
+                  </div>
+                  <div style="font-size:12px;color:var(--muted)">
+                    Total Prompts: <span id="health-pb-count" style="color:var(--text)">—</span><br/>
+                    Registry: <span style="color:var(--green)">ENABLED</span>
+                  </div>
+                </div>
+
+                <div style="padding:15px;background:var(--bg2);border-radius:var(--radius);border:1px solid var(--border)">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                    <span style="font-weight:600">⚡ PromptQA</span>
+                    <span id="health-pq-status" class="badge">—</span>
+                  </div>
+                  <div style="font-size:12px;color:var(--muted)">
+                    Average QA Score: <span id="health-pq-score" style="color:var(--text)">—</span>%<br/>
+                    Regression Gate: <span style="color:var(--green)">GATED</span>
+                  </div>
+                </div>
+
+                <div style="padding:15px;background:var(--bg2);border-radius:var(--radius);border:1px solid var(--border)">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                    <span style="font-weight:600">📁 EvidenceBrain</span>
+                    <span id="health-eb-status" class="badge">—</span>
+                  </div>
+                  <div style="font-size:12px;color:var(--muted)">
+                    Nodes: <span id="health-eb-nodes" style="color:var(--text)">—</span> | Edges: <span id="health-eb-edges" style="color:var(--text)">—</span><br/>
+                    Store: <span style="color:var(--accent)">SQLite Local</span>
+                  </div>
+                </div>
+
+                <div style="padding:15px;background:var(--bg2);border-radius:var(--radius);border:1px solid var(--border)">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                    <span style="font-weight:600">⚖️ CyberGov Linkage</span>
+                    <span id="health-cg-status" class="badge">—</span>
+                  </div>
+                  <div style="font-size:12px;color:var(--muted)">
+                    Framework Nodes: <span style="color:var(--text)">NIST 800-53</span><br/>
+                    Source Feeds: <span style="color:var(--green)">CONNECTED</span>
+                  </div>
+                </div>
+
+                <div style="padding:15px;background:var(--bg2);border-radius:var(--radius);border:1px solid var(--border)">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                    <span style="font-weight:600">🛡️ ConMon Drift Detector</span>
+                    <span id="health-cm-status" class="badge">—</span>
+                  </div>
+                  <div style="font-size:12px;color:var(--muted)">
+                    Status: <span id="health-cm-drift" style="color:var(--text)">No drift</span><br/>
+                    Alarms: <span style="color:var(--accent)">Active monitoring</span>
+                  </div>
+                </div>
+
+                <div style="padding:15px;background:var(--bg2);border-radius:var(--radius);border:1px solid var(--border)">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                    <span style="font-weight:600">📺 HOCH TV IPTV Cache</span>
+                    <span id="health-tv-status" class="badge">—</span>
+                  </div>
+                  <div style="font-size:12px;color:var(--muted)">
+                    Cached Channels: <span id="health-tv-count" style="color:var(--text)">—</span><br/>
+                    Offline Mode: <span id="health-tv-mode" style="color:var(--text)">—</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- Git Sealing & Integrity Status -->
+          <div class="card">
+            <div class="card-header">🔒 Release Sealing & Integrity Attestation</div>
+            <div style="padding:20px">
+              <table style="width:100%;border-collapse:collapse;font-size:13px">
+                <tr style="border-bottom:1px solid var(--border)">
+                  <td style="padding:10px 0;font-weight:600;color:var(--muted)">Release Seal Tag</td>
+                  <td style="padding:10px 0;text-align:right;font-family:monospace;font-weight:bold" id="git-seal-tag">—</td>
+                </tr>
+                <tr style="border-bottom:1px solid var(--border)">
+                  <td style="padding:10px 0;font-weight:600;color:var(--muted)">Attestation Verification</td>
+                  <td style="padding:10px 0;text-align:right" id="git-seal-verified">—</td>
+                </tr>
+                <tr style="border-bottom:1px solid var(--border)">
+                  <td style="padding:10px 0;font-weight:600;color:var(--muted)">Repository Status</td>
+                  <td style="padding:10px 0;text-align:right" id="git-clean-status">—</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <!-- Simulation Cockpit -->
+          <div class="card">
+            <div class="card-header">⚙️ Simulation Cockpit</div>
+            <div style="padding:20px">
+              <div style="font-size:12px;color:var(--muted);margin-bottom:15px">Simulate runtime drifts, offline operations, and compliance failures.</div>
+              
+              <div style="margin-bottom:20px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                  <span style="font-size:13px;font-weight:600">TV Offline Mode</span>
+                  <label class="switch">
+                    <input type="checkbox" id="toggle-tv-offline" onchange="toggleSimulation('tv_offline_mode', this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div style="font-size:11px;color:var(--muted)">Forces the IPTV player to utilize mock playlist fallbacks.</div>
+              </div>
+
+              <div style="margin-bottom:20px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                  <span style="font-size:13px;font-weight:600">QA Sweep Failure</span>
+                  <label class="switch">
+                    <input type="checkbox" id="toggle-qa-failure" onchange="toggleSimulation('qa_simulation_failures', this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div style="font-size:11px;color:var(--muted)">Simulates failing test assertions below approval threshold.</div>
+              </div>
+
+              <div style="margin-bottom:20px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                  <span style="font-size:13px;font-weight:600">ConMon Drift Alarm</span>
+                  <label class="switch">
+                    <input type="checkbox" id="toggle-cm-drift" onchange="toggleSimulation('conmon_drift_alarm', this)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div style="font-size:11px;color:var(--muted)">Raises a simulated drift alarm across all dashboard components.</div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </main>
 </div>
 
@@ -1715,7 +1964,7 @@ function showPage(name) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
   document.getElementById('nav-' + name).classList.add('active');
-  const loaders = { overview: loadOverview, runs: loadRuns, rcs: loadRCs, artifacts: loadArtifacts, git: loadGit, promptbrain: loadPromptBrain, evidencebrain: loadEvidenceBrain, promptqa: loadPromptQa, hochtv: loadHochTV };
+  const loaders = { overview: loadOverview, runs: loadRuns, rcs: loadRCs, artifacts: loadArtifacts, git: loadGit, promptbrain: loadPromptBrain, evidencebrain: loadEvidenceBrain, promptqa: loadPromptQa, hochtv: loadHochTV, operator: loadOperatorHealth };
   if (loaders[name]) loaders[name]();
 }
 
@@ -2850,8 +3099,151 @@ function escapeJs(str) {
   return str.replace(/'/g, "\\'").replace(/"/g, '\\"');
 }
 
+function escapeHtml(unsafe) {
+  if (!unsafe) return '';
+  return String(unsafe)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+// ---- Operator Console ----
+async function loadOperatorHealth() {
+  try {
+    const data = await fetchJSON('/api/v1/operator/health');
+    
+    // Set status badges and text
+    document.getElementById('health-pb-status').className = 'badge ' + (data.components.PromptBrain.status === 'HEALTHY' ? 'pass' : 'fail');
+    document.getElementById('health-pb-status').textContent = data.components.PromptBrain.status;
+    document.getElementById('health-pb-count').textContent = data.components.PromptBrain.prompts_count;
+    
+    document.getElementById('health-pq-status').className = 'badge ' + (data.components.PromptQA.status === 'HEALTHY' ? 'pass' : 'fail');
+    document.getElementById('health-pq-status').textContent = data.components.PromptQA.status;
+    document.getElementById('health-pq-score').textContent = data.components.PromptQA.average_score;
+    
+    document.getElementById('health-eb-status').className = 'badge ' + (data.components.EvidenceBrain.status === 'HEALTHY' ? 'pass' : 'fail');
+    document.getElementById('health-eb-status').textContent = data.components.EvidenceBrain.status;
+    document.getElementById('health-eb-nodes').textContent = data.components.EvidenceBrain.nodes_count;
+    document.getElementById('health-eb-edges').textContent = data.components.EvidenceBrain.edges_count;
+    
+    document.getElementById('health-cg-status').className = 'badge ' + (data.components.CyberGov.status === 'HEALTHY' ? 'pass' : 'fail');
+    document.getElementById('health-cg-status').textContent = data.components.CyberGov.status;
+    
+    document.getElementById('health-cm-status').className = 'badge ' + (data.components.ConMon.status === 'HEALTHY' ? 'pass' : 'fail');
+    document.getElementById('health-cm-status').textContent = data.components.ConMon.status;
+    document.getElementById('health-cm-drift').textContent = data.components.ConMon.drift_detected ? 'DRIFT ALARM ACTIVE' : 'No drift';
+    if (data.components.ConMon.drift_detected) {
+      document.getElementById('health-cm-drift').style.color = 'var(--red)';
+    } else {
+      document.getElementById('health-cm-drift').style.color = 'var(--muted)';
+    }
+    
+    document.getElementById('health-tv-status').className = 'badge ' + (data.components['HOCH TV'].status === 'HEALTHY' ? 'pass' : 'fail');
+    document.getElementById('health-tv-status').textContent = data.components['HOCH TV'].status;
+    document.getElementById('health-tv-count').textContent = data.components['HOCH TV'].channels_count;
+    document.getElementById('health-tv-mode').textContent = data.components['HOCH TV'].offline_mode ? 'Mock (Offline)' : 'Live (Drogon.TV)';
+    
+    // Toggles
+    document.getElementById('toggle-tv-offline').checked = data.demo_config.tv_offline_mode;
+    document.getElementById('toggle-qa-failure').checked = data.demo_config.qa_simulation_failures;
+    document.getElementById('toggle-cm-drift').checked = data.demo_config.conmon_drift_alarm;
+    
+    // Git
+    document.getElementById('git-seal-tag').textContent = data.git.tag;
+    document.getElementById('git-seal-verified').className = data.git.seal_verified ? 'badge pass' : 'badge fail';
+    document.getElementById('git-seal-verified').textContent = data.git.seal_verified ? 'VERIFIED (v0.1.0-rc5)' : 'UNVERIFIED';
+    document.getElementById('git-clean-status').className = data.git.clean ? 'badge pass' : 'badge info';
+    document.getElementById('git-clean-status').textContent = data.git.clean ? 'CLEAN WORKING TREE' : 'DIRTY';
+    
+    // Global alarm banner
+    const globalAlarm = document.getElementById('operator-global-alarm');
+    if (data.status === 'DEGRADED' || data.components.ConMon.drift_detected || data.components.PromptQA.status === 'FAILING') {
+      globalAlarm.style.display = 'block';
+      if (data.components.ConMon.drift_detected) {
+        document.getElementById('alarm-title').textContent = 'CONMON COMPLIANCE DRIFT ALARM';
+        document.getElementById('alarm-desc').textContent = 'Continuous Monitoring detected unauthorized system modifications or security posture drift!';
+      } else if (data.components.PromptQA.status === 'FAILING') {
+        document.getElementById('alarm-title').textContent = 'PROMPT QA REGRESSION BLOCK';
+        document.getElementById('alarm-desc').textContent = 'Prompt QA average quality score has dropped below the release-grade regression gate (85%)!';
+      } else {
+        document.getElementById('alarm-title').textContent = 'RUNTIME DEGRADATION DETECTED';
+        document.getElementById('alarm-desc').textContent = 'One or more subsystem health indicators are failing. Review the Operator Console.';
+      }
+    } else {
+      globalAlarm.style.display = 'none';
+    }
+  } catch (e) {
+    console.error('Failed to load operator health:', e);
+  }
+}
+
+async function toggleSimulation(key, checkbox) {
+  try {
+    await fetchJSON('/api/v1/operator/demo-toggle', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key: key, value: checkbox.checked })
+    });
+    await loadOperatorHealth();
+  } catch(e) {
+    alert('Failed to toggle simulation: ' + e.message);
+  }
+}
+
+async function resetTVCache() {
+  if (!confirm('Are you sure you want to clear the M3U and EPG caches and force a reload?')) return;
+  try {
+    await fetchJSON('/api/v1/operator/reset-cache', { method: 'POST' });
+    alert('Cache successfully cleared and reloaded.');
+    await loadOperatorHealth();
+  } catch (e) {
+    alert('Failed to reset cache: ' + e.message);
+  }
+}
+
+async function runStreamDiagnostics() {
+  const banner = document.getElementById('diagnostic-banner');
+  banner.style.display = 'block';
+  banner.style.background = 'var(--bg3)';
+  banner.style.border = '1px solid var(--border)';
+  banner.style.color = 'var(--text)';
+  banner.innerHTML = '⚡ Initiating connection to Drogon.TV stream endpoint. Checking local player access permissions...';
+  
+  try {
+    const res = await fetchJSON('/api/tv/diagnostic');
+    if (res.success) {
+      banner.style.background = 'rgba(34,211,165,0.15)';
+      banner.style.border = '1px solid var(--green)';
+      banner.style.color = 'var(--green)';
+      banner.innerHTML = `
+        <strong>✅ DIRECT STREAM PING SUCCESSFUL</strong><br/>
+        <span style="font-size:13px">Pinged channel "${escapeHtml(res.channel_name)}" URL: <code style="word-break:break-all">${escapeHtml(res.url)}</code><br/>
+        Response: ${escapeHtml(res.message)}</span>
+      `;
+    } else {
+      banner.style.background = 'rgba(244,63,94,0.15)';
+      banner.style.border = '1px solid var(--red)';
+      banner.style.color = 'var(--red)';
+      banner.innerHTML = `
+        <strong>⚠️ DIRECT STREAM ACCESS FAILURE / DRIFT DETECTED</strong><br/>
+        <span style="font-size:13px">Attempted connection to stream URL: <code style="word-break:break-all">${escapeHtml(res.url)}</code><br/>
+        Reason: ${escapeHtml(res.message || res.error)}</span>
+      `;
+    }
+  } catch(e) {
+    banner.style.background = 'rgba(244,63,94,0.15)';
+    banner.style.border = '1px solid var(--red)';
+    banner.style.color = 'var(--red)';
+    banner.innerHTML = `<strong>❌ Diagnostic Execution Failed:</strong> ${escapeHtml(e.message)}`;
+  }
+}
+
 // ---- Init ----
 loadOverview();
+loadOperatorHealth(); // Run operator health check initially to check for global alarms
+setInterval(loadOperatorHealth, 5000); // Poll operator health status every 5 seconds to keep global alarm dynamically updated
 </script>
 </body>
 </html>"""
