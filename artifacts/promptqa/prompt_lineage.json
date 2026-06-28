@@ -4,13 +4,13 @@
       "version": 1,
       "status": "superseded",
       "score": 57.1,
-      "timestamp": "2026-06-28T15:53:09.164522+00:00"
+      "timestamp": "2026-06-28T15:53:27.215449+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.164523+00:00"
+      "timestamp": "2026-06-28T15:53:27.215449+00:00"
     }
   ],
   "AG-001": [
@@ -18,13 +18,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.164552+00:00"
+      "timestamp": "2026-06-28T15:53:27.215479+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.164553+00:00"
+      "timestamp": "2026-06-28T15:53:27.215480+00:00"
     }
   ],
   "AI-001": [
@@ -32,13 +32,13 @@
       "version": 1,
       "status": "superseded",
       "score": 61.9,
-      "timestamp": "2026-06-28T15:53:09.164567+00:00"
+      "timestamp": "2026-06-28T15:53:27.215494+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.164568+00:00"
+      "timestamp": "2026-06-28T15:53:27.215495+00:00"
     }
   ],
   "AI-002": [
@@ -46,13 +46,13 @@
       "version": 1,
       "status": "superseded",
       "score": 61.0,
-      "timestamp": "2026-06-28T15:53:09.164581+00:00"
+      "timestamp": "2026-06-28T15:53:27.215509+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.164582+00:00"
+      "timestamp": "2026-06-28T15:53:27.215510+00:00"
     }
   ],
   "AI-003": [
@@ -60,13 +60,13 @@
       "version": 1,
       "status": "superseded",
       "score": 62.9,
-      "timestamp": "2026-06-28T15:53:09.164594+00:00"
+      "timestamp": "2026-06-28T15:53:27.215522+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.164595+00:00"
+      "timestamp": "2026-06-28T15:53:27.215523+00:00"
     }
   ],
   "AIRT-016": [
@@ -74,13 +74,13 @@
       "version": 1,
       "status": "superseded",
       "score": 75.2,
-      "timestamp": "2026-06-28T15:53:09.164611+00:00"
+      "timestamp": "2026-06-28T15:53:27.215540+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.164612+00:00"
+      "timestamp": "2026-06-28T15:53:27.215541+00:00"
     }
   ],
   "ARCHSEC-008": [
@@ -88,13 +88,13 @@
       "version": 1,
       "status": "superseded",
       "score": 73.3,
-      "timestamp": "2026-06-28T15:53:09.164628+00:00"
+      "timestamp": "2026-06-28T15:53:27.215558+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.164629+00:00"
+      "timestamp": "2026-06-28T15:53:27.215558+00:00"
     }
   ],
   "AUD-001": [
@@ -102,13 +102,13 @@
       "version": 1,
       "status": "superseded",
       "score": 62.9,
-      "timestamp": "2026-06-28T15:53:09.164643+00:00"
+      "timestamp": "2026-06-28T15:53:27.215572+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.164644+00:00"
+      "timestamp": "2026-06-28T15:53:27.215573+00:00"
     }
   ],
   "AUD-002": [
@@ -116,13 +116,13 @@
       "version": 1,
       "status": "superseded",
       "score": 61.9,
-      "timestamp": "2026-06-28T15:53:09.164657+00:00"
+      "timestamp": "2026-06-28T15:53:27.215587+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.164658+00:00"
+      "timestamp": "2026-06-28T15:53:27.215587+00:00"
     }
   ],
   "AUD-003": [
@@ -130,13 +130,13 @@
       "version": 1,
       "status": "superseded",
       "score": 58.1,
-      "timestamp": "2026-06-28T15:53:09.164671+00:00"
+      "timestamp": "2026-06-28T15:53:27.215601+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.164672+00:00"
+      "timestamp": "2026-06-28T15:53:27.215601+00:00"
     }
   ],
   "AUD-004": [
@@ -144,13 +144,13 @@
       "version": 1,
       "status": "superseded",
       "score": 55.2,
-      "timestamp": "2026-06-28T15:53:09.164686+00:00"
+      "timestamp": "2026-06-28T15:53:27.215616+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.164687+00:00"
+      "timestamp": "2026-06-28T15:53:27.215617+00:00"
     }
   ],
   "AUTHZ-027": [
@@ -158,13 +158,13 @@
       "version": 1,
       "status": "superseded",
       "score": 75.2,
-      "timestamp": "2026-06-28T15:53:09.164703+00:00"
+      "timestamp": "2026-06-28T15:53:27.215633+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.164704+00:00"
+      "timestamp": "2026-06-28T15:53:27.215634+00:00"
     }
   ],
   "BIZ-019": [
@@ -172,13 +172,13 @@
       "version": 1,
       "status": "superseded",
       "score": 73.3,
-      "timestamp": "2026-06-28T15:53:09.164719+00:00"
+      "timestamp": "2026-06-28T15:53:27.215650+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.164720+00:00"
+      "timestamp": "2026-06-28T15:53:27.215650+00:00"
     }
   ],
   "BLUE-017": [
@@ -186,13 +186,13 @@
       "version": 1,
       "status": "superseded",
       "score": 73.3,
-      "timestamp": "2026-06-28T15:53:09.164735+00:00"
+      "timestamp": "2026-06-28T15:53:27.215666+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.164738+00:00"
+      "timestamp": "2026-06-28T15:53:27.215666+00:00"
     }
   ],
   "BRAIN-001": [
@@ -200,13 +200,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.164766+00:00"
+      "timestamp": "2026-06-28T15:53:27.215695+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.164766+00:00"
+      "timestamp": "2026-06-28T15:53:27.215695+00:00"
     }
   ],
   "BRAIN-002": [
@@ -214,13 +214,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.164792+00:00"
+      "timestamp": "2026-06-28T15:53:27.215720+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.164793+00:00"
+      "timestamp": "2026-06-28T15:53:27.215721+00:00"
     }
   ],
   "BRAIN-003": [
@@ -228,13 +228,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.164818+00:00"
+      "timestamp": "2026-06-28T15:53:27.215745+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.164819+00:00"
+      "timestamp": "2026-06-28T15:53:27.215746+00:00"
     }
   ],
   "BRAIN-004": [
@@ -242,13 +242,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.164843+00:00"
+      "timestamp": "2026-06-28T15:53:27.215770+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.164844+00:00"
+      "timestamp": "2026-06-28T15:53:27.215771+00:00"
     }
   ],
   "BRAIN-005": [
@@ -256,13 +256,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.164868+00:00"
+      "timestamp": "2026-06-28T15:53:27.215795+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.164869+00:00"
+      "timestamp": "2026-06-28T15:53:27.215796+00:00"
     }
   ],
   "BRAIN-006": [
@@ -270,13 +270,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.164893+00:00"
+      "timestamp": "2026-06-28T15:53:27.215819+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.164894+00:00"
+      "timestamp": "2026-06-28T15:53:27.215820+00:00"
     }
   ],
   "BRAIN-007": [
@@ -284,13 +284,13 @@
       "version": 1,
       "status": "superseded",
       "score": 84.8,
-      "timestamp": "2026-06-28T15:53:09.164917+00:00"
+      "timestamp": "2026-06-28T15:53:27.215843+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.164917+00:00"
+      "timestamp": "2026-06-28T15:53:27.215843+00:00"
     }
   ],
   "BRAIN-008": [
@@ -298,13 +298,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.164942+00:00"
+      "timestamp": "2026-06-28T15:53:27.215868+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.164943+00:00"
+      "timestamp": "2026-06-28T15:53:27.215869+00:00"
     }
   ],
   "BRAIN-009": [
@@ -312,13 +312,13 @@
       "version": 1,
       "status": "superseded",
       "score": 84.8,
-      "timestamp": "2026-06-28T15:53:09.164966+00:00"
+      "timestamp": "2026-06-28T15:53:27.215891+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.164966+00:00"
+      "timestamp": "2026-06-28T15:53:27.215892+00:00"
     }
   ],
   "BRAIN-010": [
@@ -326,13 +326,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.164990+00:00"
+      "timestamp": "2026-06-28T15:53:27.215915+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.164991+00:00"
+      "timestamp": "2026-06-28T15:53:27.215916+00:00"
     }
   ],
   "BREAK-021": [
@@ -340,13 +340,13 @@
       "version": 1,
       "status": "superseded",
       "score": 73.3,
-      "timestamp": "2026-06-28T15:53:09.165005+00:00"
+      "timestamp": "2026-06-28T15:53:27.215930+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165006+00:00"
+      "timestamp": "2026-06-28T15:53:27.215930+00:00"
     }
   ],
   "CHAOS-024": [
@@ -354,13 +354,13 @@
       "version": 1,
       "status": "superseded",
       "score": 73.3,
-      "timestamp": "2026-06-28T15:53:09.165021+00:00"
+      "timestamp": "2026-06-28T15:53:27.215945+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165021+00:00"
+      "timestamp": "2026-06-28T15:53:27.215945+00:00"
     }
   ],
   "CHG-012": [
@@ -368,13 +368,13 @@
       "version": 1,
       "status": "superseded",
       "score": 73.3,
-      "timestamp": "2026-06-28T15:53:09.165035+00:00"
+      "timestamp": "2026-06-28T15:53:27.215959+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165036+00:00"
+      "timestamp": "2026-06-28T15:53:27.215959+00:00"
     }
   ],
   "CODE-001": [
@@ -382,13 +382,13 @@
       "version": 1,
       "status": "superseded",
       "score": 59.0,
-      "timestamp": "2026-06-28T15:53:09.165050+00:00"
+      "timestamp": "2026-06-28T15:53:27.215974+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165051+00:00"
+      "timestamp": "2026-06-28T15:53:27.215974+00:00"
     }
   ],
   "CODE-002": [
@@ -396,13 +396,13 @@
       "version": 1,
       "status": "superseded",
       "score": 58.1,
-      "timestamp": "2026-06-28T15:53:09.165063+00:00"
+      "timestamp": "2026-06-28T15:53:27.215987+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165064+00:00"
+      "timestamp": "2026-06-28T15:53:27.215987+00:00"
     }
   ],
   "CODE-003": [
@@ -410,13 +410,13 @@
       "version": 1,
       "status": "superseded",
       "score": 58.1,
-      "timestamp": "2026-06-28T15:53:09.165077+00:00"
+      "timestamp": "2026-06-28T15:53:27.216001+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165078+00:00"
+      "timestamp": "2026-06-28T15:53:27.216001+00:00"
     }
   ],
   "CODE-004": [
@@ -424,13 +424,13 @@
       "version": 1,
       "status": "superseded",
       "score": 62.9,
-      "timestamp": "2026-06-28T15:53:09.165089+00:00"
+      "timestamp": "2026-06-28T15:53:27.216013+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165090+00:00"
+      "timestamp": "2026-06-28T15:53:27.216013+00:00"
     }
   ],
   "CODE-005": [
@@ -438,13 +438,13 @@
       "version": 1,
       "status": "superseded",
       "score": 58.1,
-      "timestamp": "2026-06-28T15:53:09.165103+00:00"
+      "timestamp": "2026-06-28T15:53:27.216026+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165103+00:00"
+      "timestamp": "2026-06-28T15:53:27.216026+00:00"
     }
   ],
   "CONST-001": [
@@ -452,13 +452,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.165128+00:00"
+      "timestamp": "2026-06-28T15:53:27.216050+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165128+00:00"
+      "timestamp": "2026-06-28T15:53:27.216051+00:00"
     }
   ],
   "CONTRACT-001": [
@@ -466,13 +466,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.165151+00:00"
+      "timestamp": "2026-06-28T15:53:27.216074+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165152+00:00"
+      "timestamp": "2026-06-28T15:53:27.216075+00:00"
     }
   ],
   "CORR-001": [
@@ -480,13 +480,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.165176+00:00"
+      "timestamp": "2026-06-28T15:53:27.216099+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165176+00:00"
+      "timestamp": "2026-06-28T15:53:27.216099+00:00"
     }
   ],
   "COURTS-001": [
@@ -494,13 +494,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.165201+00:00"
+      "timestamp": "2026-06-28T15:53:27.216123+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165201+00:00"
+      "timestamp": "2026-06-28T15:53:27.216124+00:00"
     }
   ],
   "CRM-001": [
@@ -508,7 +508,7 @@
       "version": 1,
       "status": "active",
       "score": 85.7,
-      "timestamp": "2026-06-28T15:53:09.165222+00:00"
+      "timestamp": "2026-06-28T15:53:27.216145+00:00"
     }
   ],
   "DAST-001": [
@@ -516,13 +516,13 @@
       "version": 1,
       "status": "superseded",
       "score": 58.1,
-      "timestamp": "2026-06-28T15:53:09.165236+00:00"
+      "timestamp": "2026-06-28T15:53:27.216158+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165236+00:00"
+      "timestamp": "2026-06-28T15:53:27.216159+00:00"
     }
   ],
   "DAST-002": [
@@ -530,13 +530,13 @@
       "version": 1,
       "status": "superseded",
       "score": 59.0,
-      "timestamp": "2026-06-28T15:53:09.165250+00:00"
+      "timestamp": "2026-06-28T15:53:27.216172+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165251+00:00"
+      "timestamp": "2026-06-28T15:53:27.216173+00:00"
     }
   ],
   "DAST-003": [
@@ -544,13 +544,13 @@
       "version": 1,
       "status": "superseded",
       "score": 58.1,
-      "timestamp": "2026-06-28T15:53:09.165265+00:00"
+      "timestamp": "2026-06-28T15:53:27.216186+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165265+00:00"
+      "timestamp": "2026-06-28T15:53:27.216187+00:00"
     }
   ],
   "DBSEC-010": [
@@ -558,13 +558,13 @@
       "version": 1,
       "status": "superseded",
       "score": 73.3,
-      "timestamp": "2026-06-28T15:53:09.165280+00:00"
+      "timestamp": "2026-06-28T15:53:27.216201+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165281+00:00"
+      "timestamp": "2026-06-28T15:53:27.216202+00:00"
     }
   ],
   "DEV-001": [
@@ -572,13 +572,13 @@
       "version": 1,
       "status": "superseded",
       "score": 63.8,
-      "timestamp": "2026-06-28T15:53:09.165295+00:00"
+      "timestamp": "2026-06-28T15:53:27.216216+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165295+00:00"
+      "timestamp": "2026-06-28T15:53:27.216217+00:00"
     }
   ],
   "DEV-002": [
@@ -586,13 +586,13 @@
       "version": 1,
       "status": "superseded",
       "score": 57.1,
-      "timestamp": "2026-06-28T15:53:09.165309+00:00"
+      "timestamp": "2026-06-28T15:53:27.216230+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165309+00:00"
+      "timestamp": "2026-06-28T15:53:27.216231+00:00"
     }
   ],
   "DEV-003": [
@@ -600,13 +600,13 @@
       "version": 1,
       "status": "superseded",
       "score": 53.3,
-      "timestamp": "2026-06-28T15:53:09.165325+00:00"
+      "timestamp": "2026-06-28T15:53:27.216246+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165325+00:00"
+      "timestamp": "2026-06-28T15:53:27.216246+00:00"
     }
   ],
   "DEV-004": [
@@ -614,13 +614,13 @@
       "version": 1,
       "status": "superseded",
       "score": 55.2,
-      "timestamp": "2026-06-28T15:53:09.165338+00:00"
+      "timestamp": "2026-06-28T15:53:27.216259+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165339+00:00"
+      "timestamp": "2026-06-28T15:53:27.216260+00:00"
     }
   ],
   "DEV-005": [
@@ -628,13 +628,13 @@
       "version": 1,
       "status": "superseded",
       "score": 57.1,
-      "timestamp": "2026-06-28T15:53:09.165351+00:00"
+      "timestamp": "2026-06-28T15:53:27.216273+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165352+00:00"
+      "timestamp": "2026-06-28T15:53:27.216273+00:00"
     }
   ],
   "DEV-006": [
@@ -642,13 +642,13 @@
       "version": 1,
       "status": "superseded",
       "score": 57.1,
-      "timestamp": "2026-06-28T15:53:09.165365+00:00"
+      "timestamp": "2026-06-28T15:53:27.216286+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165365+00:00"
+      "timestamp": "2026-06-28T15:53:27.216286+00:00"
     }
   ],
   "DOD-001": [
@@ -656,13 +656,13 @@
       "version": 1,
       "status": "superseded",
       "score": 61.9,
-      "timestamp": "2026-06-28T15:53:09.165378+00:00"
+      "timestamp": "2026-06-28T15:53:27.216299+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165379+00:00"
+      "timestamp": "2026-06-28T15:53:27.216300+00:00"
     }
   ],
   "DOD-002": [
@@ -670,13 +670,13 @@
       "version": 1,
       "status": "superseded",
       "score": 61.9,
-      "timestamp": "2026-06-28T15:53:09.165391+00:00"
+      "timestamp": "2026-06-28T15:53:27.216312+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165392+00:00"
+      "timestamp": "2026-06-28T15:53:27.216313+00:00"
     }
   ],
   "DOD-003": [
@@ -684,13 +684,13 @@
       "version": 1,
       "status": "superseded",
       "score": 61.0,
-      "timestamp": "2026-06-28T15:53:09.165405+00:00"
+      "timestamp": "2026-06-28T15:53:27.216326+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165405+00:00"
+      "timestamp": "2026-06-28T15:53:27.216326+00:00"
     }
   ],
   "DRIFT-013": [
@@ -698,13 +698,13 @@
       "version": 1,
       "status": "superseded",
       "score": 73.3,
-      "timestamp": "2026-06-28T15:53:09.165420+00:00"
+      "timestamp": "2026-06-28T15:53:27.216341+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165421+00:00"
+      "timestamp": "2026-06-28T15:53:27.216342+00:00"
     }
   ],
   "DRQA-023": [
@@ -712,13 +712,13 @@
       "version": 1,
       "status": "superseded",
       "score": 73.3,
-      "timestamp": "2026-06-28T15:53:09.165435+00:00"
+      "timestamp": "2026-06-28T15:53:27.216355+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165436+00:00"
+      "timestamp": "2026-06-28T15:53:27.216356+00:00"
     }
   ],
   "EDU-001": [
@@ -726,13 +726,13 @@
       "version": 1,
       "status": "superseded",
       "score": 61.9,
-      "timestamp": "2026-06-28T15:53:09.165448+00:00"
+      "timestamp": "2026-06-28T15:53:27.216368+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165449+00:00"
+      "timestamp": "2026-06-28T15:53:27.216369+00:00"
     }
   ],
   "ELECTION-001": [
@@ -740,13 +740,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.165473+00:00"
+      "timestamp": "2026-06-28T15:53:27.216394+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165473+00:00"
+      "timestamp": "2026-06-28T15:53:27.216394+00:00"
     }
   ],
   "EMERG-001": [
@@ -754,7 +754,7 @@
       "version": 1,
       "status": "active",
       "score": 85.7,
-      "timestamp": "2026-06-28T15:53:09.165495+00:00"
+      "timestamp": "2026-06-28T15:53:27.216416+00:00"
     }
   ],
   "EN-001": [
@@ -762,13 +762,13 @@
       "version": 1,
       "status": "superseded",
       "score": 62.9,
-      "timestamp": "2026-06-28T15:53:09.165508+00:00"
+      "timestamp": "2026-06-28T15:53:27.216429+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165509+00:00"
+      "timestamp": "2026-06-28T15:53:27.216429+00:00"
     }
   ],
   "EN-002": [
@@ -776,13 +776,13 @@
       "version": 1,
       "status": "superseded",
       "score": 57.1,
-      "timestamp": "2026-06-28T15:53:09.165521+00:00"
+      "timestamp": "2026-06-28T15:53:27.216442+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165522+00:00"
+      "timestamp": "2026-06-28T15:53:27.216442+00:00"
     }
   ],
   "ENV-001": [
@@ -790,13 +790,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.165546+00:00"
+      "timestamp": "2026-06-28T15:53:27.216467+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165547+00:00"
+      "timestamp": "2026-06-28T15:53:27.216468+00:00"
     }
   ],
   "EXCEPT-022": [
@@ -804,13 +804,13 @@
       "version": 1,
       "status": "superseded",
       "score": 73.3,
-      "timestamp": "2026-06-28T15:53:09.165561+00:00"
+      "timestamp": "2026-06-28T15:53:27.216482+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165562+00:00"
+      "timestamp": "2026-06-28T15:53:27.216483+00:00"
     }
   ],
   "EXECRISK-030": [
@@ -818,13 +818,13 @@
       "version": 1,
       "status": "superseded",
       "score": 73.3,
-      "timestamp": "2026-06-28T15:53:09.165578+00:00"
+      "timestamp": "2026-06-28T15:53:27.216498+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165578+00:00"
+      "timestamp": "2026-06-28T15:53:27.216498+00:00"
     }
   ],
   "FAC-001": [
@@ -832,13 +832,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.165602+00:00"
+      "timestamp": "2026-06-28T15:53:27.216523+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165603+00:00"
+      "timestamp": "2026-06-28T15:53:27.216523+00:00"
     }
   ],
   "FAR-001": [
@@ -846,13 +846,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.165627+00:00"
+      "timestamp": "2026-06-28T15:53:27.216547+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165627+00:00"
+      "timestamp": "2026-06-28T15:53:27.216547+00:00"
     }
   ],
   "FIN-001": [
@@ -860,13 +860,13 @@
       "version": 1,
       "status": "superseded",
       "score": 56.2,
-      "timestamp": "2026-06-28T15:53:09.165640+00:00"
+      "timestamp": "2026-06-28T15:53:27.216561+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165641+00:00"
+      "timestamp": "2026-06-28T15:53:27.216561+00:00"
     }
   ],
   "FIN-002": [
@@ -874,13 +874,13 @@
       "version": 1,
       "status": "superseded",
       "score": 57.1,
-      "timestamp": "2026-06-28T15:53:09.165653+00:00"
+      "timestamp": "2026-06-28T15:53:27.216573+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165654+00:00"
+      "timestamp": "2026-06-28T15:53:27.216574+00:00"
     }
   ],
   "FINOPS-001": [
@@ -888,13 +888,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.165677+00:00"
+      "timestamp": "2026-06-28T15:53:27.216597+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165678+00:00"
+      "timestamp": "2026-06-28T15:53:27.216598+00:00"
     }
   ],
   "FOOD-001": [
@@ -902,7 +902,7 @@
       "version": 1,
       "status": "active",
       "score": 85.7,
-      "timestamp": "2026-06-28T15:53:09.165698+00:00"
+      "timestamp": "2026-06-28T15:53:27.216618+00:00"
     }
   ],
   "GAP-001": [
@@ -910,13 +910,13 @@
       "version": 1,
       "status": "superseded",
       "score": 84.8,
-      "timestamp": "2026-06-28T15:53:09.165720+00:00"
+      "timestamp": "2026-06-28T15:53:27.216640+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165721+00:00"
+      "timestamp": "2026-06-28T15:53:27.216641+00:00"
     }
   ],
   "GAP-002": [
@@ -924,13 +924,13 @@
       "version": 1,
       "status": "superseded",
       "score": 81.0,
-      "timestamp": "2026-06-28T15:53:09.165743+00:00"
+      "timestamp": "2026-06-28T15:53:27.216663+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165744+00:00"
+      "timestamp": "2026-06-28T15:53:27.216664+00:00"
     }
   ],
   "GAP-003": [
@@ -938,13 +938,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.165767+00:00"
+      "timestamp": "2026-06-28T15:53:27.216687+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165767+00:00"
+      "timestamp": "2026-06-28T15:53:27.216687+00:00"
     }
   ],
   "GAP-004": [
@@ -952,13 +952,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.165789+00:00"
+      "timestamp": "2026-06-28T15:53:27.216709+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165790+00:00"
+      "timestamp": "2026-06-28T15:53:27.216710+00:00"
     }
   ],
   "GAP-005": [
@@ -966,13 +966,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.165814+00:00"
+      "timestamp": "2026-06-28T15:53:27.216733+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165815+00:00"
+      "timestamp": "2026-06-28T15:53:27.216734+00:00"
     }
   ],
   "GAP-006": [
@@ -980,13 +980,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.165837+00:00"
+      "timestamp": "2026-06-28T15:53:27.216756+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165838+00:00"
+      "timestamp": "2026-06-28T15:53:27.216757+00:00"
     }
   ],
   "GAP-007": [
@@ -994,13 +994,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.165859+00:00"
+      "timestamp": "2026-06-28T15:53:27.216779+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165860+00:00"
+      "timestamp": "2026-06-28T15:53:27.216780+00:00"
     }
   ],
   "GAP-008": [
@@ -1008,13 +1008,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.165882+00:00"
+      "timestamp": "2026-06-28T15:53:27.216801+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165882+00:00"
+      "timestamp": "2026-06-28T15:53:27.216802+00:00"
     }
   ],
   "GOV-001": [
@@ -1022,13 +1022,13 @@
       "version": 1,
       "status": "superseded",
       "score": 59.0,
-      "timestamp": "2026-06-28T15:53:09.165896+00:00"
+      "timestamp": "2026-06-28T15:53:27.216815+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165897+00:00"
+      "timestamp": "2026-06-28T15:53:27.216816+00:00"
     }
   ],
   "GOV-002": [
@@ -1036,13 +1036,13 @@
       "version": 1,
       "status": "superseded",
       "score": 62.9,
-      "timestamp": "2026-06-28T15:53:09.165909+00:00"
+      "timestamp": "2026-06-28T15:53:27.216828+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165910+00:00"
+      "timestamp": "2026-06-28T15:53:27.216829+00:00"
     }
   ],
   "GOVFRAME-001": [
@@ -1050,13 +1050,13 @@
       "version": 1,
       "status": "superseded",
       "score": 85.7,
-      "timestamp": "2026-06-28T15:53:09.165928+00:00"
+      "timestamp": "2026-06-28T15:53:27.216847+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165928+00:00"
+      "timestamp": "2026-06-28T15:53:27.216847+00:00"
     }
   ],
   "GOVFRAME-002": [
@@ -1064,13 +1064,13 @@
       "version": 1,
       "status": "superseded",
       "score": 85.7,
-      "timestamp": "2026-06-28T15:53:09.165945+00:00"
+      "timestamp": "2026-06-28T15:53:27.216864+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165946+00:00"
+      "timestamp": "2026-06-28T15:53:27.216865+00:00"
     }
   ],
   "GOVFRAME-003": [
@@ -1078,13 +1078,13 @@
       "version": 1,
       "status": "superseded",
       "score": 85.7,
-      "timestamp": "2026-06-28T15:53:09.165963+00:00"
+      "timestamp": "2026-06-28T15:53:27.216881+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165964+00:00"
+      "timestamp": "2026-06-28T15:53:27.216882+00:00"
     }
   ],
   "GOVFRAME-004": [
@@ -1092,13 +1092,13 @@
       "version": 1,
       "status": "superseded",
       "score": 85.7,
-      "timestamp": "2026-06-28T15:53:09.165981+00:00"
+      "timestamp": "2026-06-28T15:53:27.216899+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.165981+00:00"
+      "timestamp": "2026-06-28T15:53:27.216899+00:00"
     }
   ],
   "GOVFRAME-005": [
@@ -1106,13 +1106,13 @@
       "version": 1,
       "status": "superseded",
       "score": 85.7,
-      "timestamp": "2026-06-28T15:53:09.166001+00:00"
+      "timestamp": "2026-06-28T15:53:27.216919+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166002+00:00"
+      "timestamp": "2026-06-28T15:53:27.216920+00:00"
     }
   ],
   "GOVFRAME-006": [
@@ -1120,13 +1120,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.166026+00:00"
+      "timestamp": "2026-06-28T15:53:27.216944+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166026+00:00"
+      "timestamp": "2026-06-28T15:53:27.216944+00:00"
     }
   ],
   "GOVFRAME-007": [
@@ -1134,13 +1134,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.166050+00:00"
+      "timestamp": "2026-06-28T15:53:27.216967+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166050+00:00"
+      "timestamp": "2026-06-28T15:53:27.216968+00:00"
     }
   ],
   "GOVFRAME-008": [
@@ -1148,13 +1148,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.166073+00:00"
+      "timestamp": "2026-06-28T15:53:27.216991+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166074+00:00"
+      "timestamp": "2026-06-28T15:53:27.216992+00:00"
     }
   ],
   "GOVFRAME-009": [
@@ -1162,13 +1162,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.166097+00:00"
+      "timestamp": "2026-06-28T15:53:27.217014+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166098+00:00"
+      "timestamp": "2026-06-28T15:53:27.217015+00:00"
     }
   ],
   "GOVFRAME-010": [
@@ -1176,13 +1176,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.166123+00:00"
+      "timestamp": "2026-06-28T15:53:27.217040+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166124+00:00"
+      "timestamp": "2026-06-28T15:53:27.217040+00:00"
     }
   ],
   "GOVFRAME-011": [
@@ -1190,13 +1190,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.166147+00:00"
+      "timestamp": "2026-06-28T15:53:27.217063+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166148+00:00"
+      "timestamp": "2026-06-28T15:53:27.217064+00:00"
     }
   ],
   "GOVFRAME-012": [
@@ -1204,13 +1204,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.166171+00:00"
+      "timestamp": "2026-06-28T15:53:27.217087+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166171+00:00"
+      "timestamp": "2026-06-28T15:53:27.217087+00:00"
     }
   ],
   "GOVFRAME-013": [
@@ -1218,13 +1218,13 @@
       "version": 1,
       "status": "superseded",
       "score": 85.7,
-      "timestamp": "2026-06-28T15:53:09.166188+00:00"
+      "timestamp": "2026-06-28T15:53:27.217104+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166189+00:00"
+      "timestamp": "2026-06-28T15:53:27.217105+00:00"
     }
   ],
   "GOVFRAME-014": [
@@ -1232,13 +1232,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.166212+00:00"
+      "timestamp": "2026-06-28T15:53:27.217128+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166213+00:00"
+      "timestamp": "2026-06-28T15:53:27.217129+00:00"
     }
   ],
   "GOVFRAME-015": [
@@ -1246,13 +1246,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.166235+00:00"
+      "timestamp": "2026-06-28T15:53:27.217152+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166236+00:00"
+      "timestamp": "2026-06-28T15:53:27.217153+00:00"
     }
   ],
   "GOVFRAME-016": [
@@ -1260,13 +1260,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.166260+00:00"
+      "timestamp": "2026-06-28T15:53:27.217200+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166260+00:00"
+      "timestamp": "2026-06-28T15:53:27.217201+00:00"
     }
   ],
   "GOVFRAME-017": [
@@ -1274,13 +1274,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.166283+00:00"
+      "timestamp": "2026-06-28T15:53:27.217228+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166283+00:00"
+      "timestamp": "2026-06-28T15:53:27.217229+00:00"
     }
   ],
   "GOVFRAME-018": [
@@ -1288,13 +1288,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.166306+00:00"
+      "timestamp": "2026-06-28T15:53:27.217254+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166307+00:00"
+      "timestamp": "2026-06-28T15:53:27.217255+00:00"
     }
   ],
   "GRANTS-001": [
@@ -1302,13 +1302,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.166330+00:00"
+      "timestamp": "2026-06-28T15:53:27.217278+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166330+00:00"
+      "timestamp": "2026-06-28T15:53:27.217279+00:00"
     }
   ],
   "HC-001": [
@@ -1316,13 +1316,13 @@
       "version": 1,
       "status": "superseded",
       "score": 64.8,
-      "timestamp": "2026-06-28T15:53:09.166343+00:00"
+      "timestamp": "2026-06-28T15:53:27.217293+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166344+00:00"
+      "timestamp": "2026-06-28T15:53:27.217293+00:00"
     }
   ],
   "HC-002": [
@@ -1330,13 +1330,13 @@
       "version": 1,
       "status": "superseded",
       "score": 60.0,
-      "timestamp": "2026-06-28T15:53:09.166356+00:00"
+      "timestamp": "2026-06-28T15:53:27.217306+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166357+00:00"
+      "timestamp": "2026-06-28T15:53:27.217306+00:00"
     }
   ],
   "HOSP-001": [
@@ -1344,13 +1344,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.166381+00:00"
+      "timestamp": "2026-06-28T15:53:27.217331+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166382+00:00"
+      "timestamp": "2026-06-28T15:53:27.217331+00:00"
     }
   ],
   "HR-001": [
@@ -1358,13 +1358,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.166404+00:00"
+      "timestamp": "2026-06-28T15:53:27.217355+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166405+00:00"
+      "timestamp": "2026-06-28T15:53:27.217355+00:00"
     }
   ],
   "IAM-009": [
@@ -1372,13 +1372,13 @@
       "version": 1,
       "status": "superseded",
       "score": 75.2,
-      "timestamp": "2026-06-28T15:53:09.166420+00:00"
+      "timestamp": "2026-06-28T15:53:27.217372+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166421+00:00"
+      "timestamp": "2026-06-28T15:53:27.217372+00:00"
     }
   ],
   "IND-001": [
@@ -1386,13 +1386,13 @@
       "version": 1,
       "status": "superseded",
       "score": 68.6,
-      "timestamp": "2026-06-28T15:53:09.166436+00:00"
+      "timestamp": "2026-06-28T15:53:27.217388+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166437+00:00"
+      "timestamp": "2026-06-28T15:53:27.217388+00:00"
     }
   ],
   "IND-002": [
@@ -1400,13 +1400,13 @@
       "version": 1,
       "status": "superseded",
       "score": 65.7,
-      "timestamp": "2026-06-28T15:53:09.166453+00:00"
+      "timestamp": "2026-06-28T15:53:27.217404+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166454+00:00"
+      "timestamp": "2026-06-28T15:53:27.217405+00:00"
     }
   ],
   "IND-003": [
@@ -1414,13 +1414,13 @@
       "version": 1,
       "status": "superseded",
       "score": 65.7,
-      "timestamp": "2026-06-28T15:53:09.166469+00:00"
+      "timestamp": "2026-06-28T15:53:27.217420+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166469+00:00"
+      "timestamp": "2026-06-28T15:53:27.217421+00:00"
     }
   ],
   "IND-004": [
@@ -1428,13 +1428,13 @@
       "version": 1,
       "status": "superseded",
       "score": 65.7,
-      "timestamp": "2026-06-28T15:53:09.166484+00:00"
+      "timestamp": "2026-06-28T15:53:27.217436+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166484+00:00"
+      "timestamp": "2026-06-28T15:53:27.217437+00:00"
     }
   ],
   "IND-005": [
@@ -1442,13 +1442,13 @@
       "version": 1,
       "status": "superseded",
       "score": 65.7,
-      "timestamp": "2026-06-28T15:53:09.166500+00:00"
+      "timestamp": "2026-06-28T15:53:27.217452+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166501+00:00"
+      "timestamp": "2026-06-28T15:53:27.217453+00:00"
     }
   ],
   "IND-006": [
@@ -1456,13 +1456,13 @@
       "version": 1,
       "status": "superseded",
       "score": 65.7,
-      "timestamp": "2026-06-28T15:53:09.166515+00:00"
+      "timestamp": "2026-06-28T15:53:27.217467+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166515+00:00"
+      "timestamp": "2026-06-28T15:53:27.217467+00:00"
     }
   ],
   "IND-007": [
@@ -1470,13 +1470,13 @@
       "version": 1,
       "status": "superseded",
       "score": 65.7,
-      "timestamp": "2026-06-28T15:53:09.166530+00:00"
+      "timestamp": "2026-06-28T15:53:27.217482+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166531+00:00"
+      "timestamp": "2026-06-28T15:53:27.217483+00:00"
     }
   ],
   "IND-008": [
@@ -1484,13 +1484,13 @@
       "version": 1,
       "status": "superseded",
       "score": 65.7,
-      "timestamp": "2026-06-28T15:53:09.166545+00:00"
+      "timestamp": "2026-06-28T15:53:27.217497+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166546+00:00"
+      "timestamp": "2026-06-28T15:53:27.217498+00:00"
     }
   ],
   "IND-009": [
@@ -1498,13 +1498,13 @@
       "version": 1,
       "status": "superseded",
       "score": 67.6,
-      "timestamp": "2026-06-28T15:53:09.166560+00:00"
+      "timestamp": "2026-06-28T15:53:27.217512+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166561+00:00"
+      "timestamp": "2026-06-28T15:53:27.217512+00:00"
     }
   ],
   "IND-010": [
@@ -1512,13 +1512,13 @@
       "version": 1,
       "status": "superseded",
       "score": 65.7,
-      "timestamp": "2026-06-28T15:53:09.166575+00:00"
+      "timestamp": "2026-06-28T15:53:27.217527+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166575+00:00"
+      "timestamp": "2026-06-28T15:53:27.217527+00:00"
     }
   ],
   "IND-011": [
@@ -1526,13 +1526,13 @@
       "version": 1,
       "status": "superseded",
       "score": 65.7,
-      "timestamp": "2026-06-28T15:53:09.166590+00:00"
+      "timestamp": "2026-06-28T15:53:27.217542+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166591+00:00"
+      "timestamp": "2026-06-28T15:53:27.217542+00:00"
     }
   ],
   "IND-012": [
@@ -1540,13 +1540,13 @@
       "version": 1,
       "status": "superseded",
       "score": 65.7,
-      "timestamp": "2026-06-28T15:53:09.166605+00:00"
+      "timestamp": "2026-06-28T15:53:27.217556+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166606+00:00"
+      "timestamp": "2026-06-28T15:53:27.217557+00:00"
     }
   ],
   "IND-013": [
@@ -1554,13 +1554,13 @@
       "version": 1,
       "status": "superseded",
       "score": 68.6,
-      "timestamp": "2026-06-28T15:53:09.166621+00:00"
+      "timestamp": "2026-06-28T15:53:27.217571+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166621+00:00"
+      "timestamp": "2026-06-28T15:53:27.217572+00:00"
     }
   ],
   "IND-014": [
@@ -1568,13 +1568,13 @@
       "version": 1,
       "status": "superseded",
       "score": 68.6,
-      "timestamp": "2026-06-28T15:53:09.166635+00:00"
+      "timestamp": "2026-06-28T15:53:27.217586+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166636+00:00"
+      "timestamp": "2026-06-28T15:53:27.217587+00:00"
     }
   ],
   "IND-015": [
@@ -1582,13 +1582,13 @@
       "version": 1,
       "status": "superseded",
       "score": 69.5,
-      "timestamp": "2026-06-28T15:53:09.166649+00:00"
+      "timestamp": "2026-06-28T15:53:27.217600+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166650+00:00"
+      "timestamp": "2026-06-28T15:53:27.217601+00:00"
     }
   ],
   "INS-001": [
@@ -1596,13 +1596,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.166674+00:00"
+      "timestamp": "2026-06-28T15:53:27.217625+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166675+00:00"
+      "timestamp": "2026-06-28T15:53:27.217626+00:00"
     }
   ],
   "IR-001": [
@@ -1610,13 +1610,13 @@
       "version": 1,
       "status": "superseded",
       "score": 58.1,
-      "timestamp": "2026-06-28T15:53:09.166688+00:00"
+      "timestamp": "2026-06-28T15:53:27.217639+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166688+00:00"
+      "timestamp": "2026-06-28T15:53:27.217640+00:00"
     }
   ],
   "LEG-001": [
@@ -1624,13 +1624,13 @@
       "version": 1,
       "status": "superseded",
       "score": 56.2,
-      "timestamp": "2026-06-28T15:53:09.166701+00:00"
+      "timestamp": "2026-06-28T15:53:27.217652+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166702+00:00"
+      "timestamp": "2026-06-28T15:53:27.217653+00:00"
     }
   ],
   "LOG-011": [
@@ -1638,13 +1638,13 @@
       "version": 1,
       "status": "superseded",
       "score": 73.3,
-      "timestamp": "2026-06-28T15:53:09.166717+00:00"
+      "timestamp": "2026-06-28T15:53:27.217668+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166718+00:00"
+      "timestamp": "2026-06-28T15:53:27.217669+00:00"
     }
   ],
   "MEDIA-001": [
@@ -1652,13 +1652,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.166742+00:00"
+      "timestamp": "2026-06-28T15:53:27.217693+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166742+00:00"
+      "timestamp": "2026-06-28T15:53:27.217693+00:00"
     }
   ],
   "MFG-001": [
@@ -1666,13 +1666,13 @@
       "version": 1,
       "status": "superseded",
       "score": 59.0,
-      "timestamp": "2026-06-28T15:53:09.166755+00:00"
+      "timestamp": "2026-06-28T15:53:27.217706+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166756+00:00"
+      "timestamp": "2026-06-28T15:53:27.217706+00:00"
     }
   ],
   "MFG-002": [
@@ -1680,13 +1680,13 @@
       "version": 1,
       "status": "superseded",
       "score": 61.0,
-      "timestamp": "2026-06-28T15:53:09.166768+00:00"
+      "timestamp": "2026-06-28T15:53:27.217718+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166768+00:00"
+      "timestamp": "2026-06-28T15:53:27.217719+00:00"
     }
   ],
   "MIG-025": [
@@ -1694,13 +1694,13 @@
       "version": 1,
       "status": "superseded",
       "score": 75.2,
-      "timestamp": "2026-06-28T15:53:09.166783+00:00"
+      "timestamp": "2026-06-28T15:53:27.217734+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166784+00:00"
+      "timestamp": "2026-06-28T15:53:27.217734+00:00"
     }
   ],
   "MOB-QA-001": [
@@ -1708,13 +1708,13 @@
       "version": 1,
       "status": "superseded",
       "score": 75.2,
-      "timestamp": "2026-06-28T15:53:09.166799+00:00"
+      "timestamp": "2026-06-28T15:53:27.217750+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166800+00:00"
+      "timestamp": "2026-06-28T15:53:27.217751+00:00"
     }
   ],
   "NONPROFIT-001": [
@@ -1722,13 +1722,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.166824+00:00"
+      "timestamp": "2026-06-28T15:53:27.217775+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166824+00:00"
+      "timestamp": "2026-06-28T15:53:27.217775+00:00"
     }
   ],
   "OPS-001": [
@@ -1736,13 +1736,13 @@
       "version": 1,
       "status": "superseded",
       "score": 59.0,
-      "timestamp": "2026-06-28T15:53:09.166837+00:00"
+      "timestamp": "2026-06-28T15:53:27.217788+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166838+00:00"
+      "timestamp": "2026-06-28T15:53:27.217788+00:00"
     }
   ],
   "OPS-002": [
@@ -1750,13 +1750,13 @@
       "version": 1,
       "status": "superseded",
       "score": 56.2,
-      "timestamp": "2026-06-28T15:53:09.166851+00:00"
+      "timestamp": "2026-06-28T15:53:27.217801+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166851+00:00"
+      "timestamp": "2026-06-28T15:53:27.217802+00:00"
     }
   ],
   "OSSLIC-015": [
@@ -1764,13 +1764,13 @@
       "version": 1,
       "status": "superseded",
       "score": 73.3,
-      "timestamp": "2026-06-28T15:53:09.166867+00:00"
+      "timestamp": "2026-06-28T15:53:27.217817+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166867+00:00"
+      "timestamp": "2026-06-28T15:53:27.217817+00:00"
     }
   ],
   "PATCH-006": [
@@ -1778,13 +1778,13 @@
       "version": 1,
       "status": "superseded",
       "score": 73.3,
-      "timestamp": "2026-06-28T15:53:09.166881+00:00"
+      "timestamp": "2026-06-28T15:53:27.217831+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166882+00:00"
+      "timestamp": "2026-06-28T15:53:27.217832+00:00"
     }
   ],
   "PENTEST-007": [
@@ -1792,13 +1792,13 @@
       "version": 1,
       "status": "superseded",
       "score": 73.3,
-      "timestamp": "2026-06-28T15:53:09.166896+00:00"
+      "timestamp": "2026-06-28T15:53:27.217846+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166896+00:00"
+      "timestamp": "2026-06-28T15:53:27.217847+00:00"
     }
   ],
   "PMO-001": [
@@ -1806,13 +1806,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.166920+00:00"
+      "timestamp": "2026-06-28T15:53:27.217870+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166920+00:00"
+      "timestamp": "2026-06-28T15:53:27.217871+00:00"
     }
   ],
   "PRIV-003": [
@@ -1820,13 +1820,13 @@
       "version": 1,
       "status": "superseded",
       "score": 73.3,
-      "timestamp": "2026-06-28T15:53:09.166935+00:00"
+      "timestamp": "2026-06-28T15:53:27.217886+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166936+00:00"
+      "timestamp": "2026-06-28T15:53:27.217886+00:00"
     }
   ],
   "PROC-001": [
@@ -1834,13 +1834,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.166959+00:00"
+      "timestamp": "2026-06-28T15:53:27.217909+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166960+00:00"
+      "timestamp": "2026-06-28T15:53:27.217910+00:00"
     }
   ],
   "PROMPT-001": [
@@ -1848,13 +1848,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.166984+00:00"
+      "timestamp": "2026-06-28T15:53:27.217934+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.166985+00:00"
+      "timestamp": "2026-06-28T15:53:27.217935+00:00"
     }
   ],
   "PROMPT-002": [
@@ -1862,13 +1862,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.167009+00:00"
+      "timestamp": "2026-06-28T15:53:27.217958+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167009+00:00"
+      "timestamp": "2026-06-28T15:53:27.217959+00:00"
     }
   ],
   "PROMPT-003": [
@@ -1876,13 +1876,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.167033+00:00"
+      "timestamp": "2026-06-28T15:53:27.217983+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167033+00:00"
+      "timestamp": "2026-06-28T15:53:27.217983+00:00"
     }
   ],
   "PROMPT-004": [
@@ -1890,13 +1890,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.167056+00:00"
+      "timestamp": "2026-06-28T15:53:27.218006+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167056+00:00"
+      "timestamp": "2026-06-28T15:53:27.218007+00:00"
     }
   ],
   "PROMPT-005": [
@@ -1904,13 +1904,13 @@
       "version": 1,
       "status": "superseded",
       "score": 84.8,
-      "timestamp": "2026-06-28T15:53:09.167074+00:00"
+      "timestamp": "2026-06-28T15:53:27.218024+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167074+00:00"
+      "timestamp": "2026-06-28T15:53:27.218025+00:00"
     }
   ],
   "PROMPT-006": [
@@ -1918,13 +1918,13 @@
       "version": 1,
       "status": "superseded",
       "score": 84.8,
-      "timestamp": "2026-06-28T15:53:09.167097+00:00"
+      "timestamp": "2026-06-28T15:53:27.218048+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167098+00:00"
+      "timestamp": "2026-06-28T15:53:27.218048+00:00"
     }
   ],
   "PROMPT-007": [
@@ -1932,13 +1932,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.167120+00:00"
+      "timestamp": "2026-06-28T15:53:27.218071+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167120+00:00"
+      "timestamp": "2026-06-28T15:53:27.218071+00:00"
     }
   ],
   "PROMPT-008": [
@@ -1946,13 +1946,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.167144+00:00"
+      "timestamp": "2026-06-28T15:53:27.218095+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167144+00:00"
+      "timestamp": "2026-06-28T15:53:27.218095+00:00"
     }
   ],
   "PROP-001": [
@@ -1960,13 +1960,13 @@
       "version": 1,
       "status": "superseded",
       "score": 81.9,
-      "timestamp": "2026-06-28T15:53:09.167168+00:00"
+      "timestamp": "2026-06-28T15:53:27.218119+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167169+00:00"
+      "timestamp": "2026-06-28T15:53:27.218119+00:00"
     }
   ],
   "PROSERV-001": [
@@ -1974,13 +1974,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.167192+00:00"
+      "timestamp": "2026-06-28T15:53:27.218142+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167193+00:00"
+      "timestamp": "2026-06-28T15:53:27.218143+00:00"
     }
   ],
   "PROV-014": [
@@ -1988,13 +1988,13 @@
       "version": 1,
       "status": "superseded",
       "score": 75.2,
-      "timestamp": "2026-06-28T15:53:09.167207+00:00"
+      "timestamp": "2026-06-28T15:53:27.218157+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167208+00:00"
+      "timestamp": "2026-06-28T15:53:27.218158+00:00"
     }
   ],
   "PUBHEALTH-001": [
@@ -2002,13 +2002,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.167231+00:00"
+      "timestamp": "2026-06-28T15:53:27.218181+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167232+00:00"
+      "timestamp": "2026-06-28T15:53:27.218182+00:00"
     }
   ],
   "PURPLE-018": [
@@ -2016,13 +2016,13 @@
       "version": 1,
       "status": "superseded",
       "score": 73.3,
-      "timestamp": "2026-06-28T15:53:09.167246+00:00"
+      "timestamp": "2026-06-28T15:53:27.218196+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167246+00:00"
+      "timestamp": "2026-06-28T15:53:27.218196+00:00"
     }
   ],
   "QA-001": [
@@ -2030,13 +2030,13 @@
       "version": 1,
       "status": "superseded",
       "score": 64.8,
-      "timestamp": "2026-06-28T15:53:09.167262+00:00"
+      "timestamp": "2026-06-28T15:53:27.218212+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167262+00:00"
+      "timestamp": "2026-06-28T15:53:27.218213+00:00"
     }
   ],
   "QA-002": [
@@ -2044,13 +2044,13 @@
       "version": 1,
       "status": "superseded",
       "score": 58.1,
-      "timestamp": "2026-06-28T15:53:09.167276+00:00"
+      "timestamp": "2026-06-28T15:53:27.218226+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167276+00:00"
+      "timestamp": "2026-06-28T15:53:27.218227+00:00"
     }
   ],
   "QA-003": [
@@ -2058,13 +2058,13 @@
       "version": 1,
       "status": "superseded",
       "score": 64.8,
-      "timestamp": "2026-06-28T15:53:09.167291+00:00"
+      "timestamp": "2026-06-28T15:53:27.218241+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167291+00:00"
+      "timestamp": "2026-06-28T15:53:27.218242+00:00"
     }
   ],
   "QA-004": [
@@ -2072,13 +2072,13 @@
       "version": 1,
       "status": "superseded",
       "score": 55.2,
-      "timestamp": "2026-06-28T15:53:09.167305+00:00"
+      "timestamp": "2026-06-28T15:53:27.218255+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167305+00:00"
+      "timestamp": "2026-06-28T15:53:27.218256+00:00"
     }
   ],
   "QA-005": [
@@ -2086,13 +2086,13 @@
       "version": 1,
       "status": "superseded",
       "score": 58.1,
-      "timestamp": "2026-06-28T15:53:09.167320+00:00"
+      "timestamp": "2026-06-28T15:53:27.218271+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167321+00:00"
+      "timestamp": "2026-06-28T15:53:27.218272+00:00"
     }
   ],
   "QA-006": [
@@ -2100,13 +2100,13 @@
       "version": 1,
       "status": "superseded",
       "score": 58.1,
-      "timestamp": "2026-06-28T15:53:09.167334+00:00"
+      "timestamp": "2026-06-28T15:53:27.218285+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167335+00:00"
+      "timestamp": "2026-06-28T15:53:27.218285+00:00"
     }
   ],
   "QA-007": [
@@ -2114,13 +2114,13 @@
       "version": 1,
       "status": "superseded",
       "score": 53.3,
-      "timestamp": "2026-06-28T15:53:09.167349+00:00"
+      "timestamp": "2026-06-28T15:53:27.218300+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167349+00:00"
+      "timestamp": "2026-06-28T15:53:27.218300+00:00"
     }
   ],
   "RATE-026": [
@@ -2128,13 +2128,13 @@
       "version": 1,
       "status": "superseded",
       "score": 73.3,
-      "timestamp": "2026-06-28T15:53:09.167363+00:00"
+      "timestamp": "2026-06-28T15:53:27.218314+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167364+00:00"
+      "timestamp": "2026-06-28T15:53:27.218315+00:00"
     }
   ],
   "RECORDS-001": [
@@ -2142,13 +2142,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.167387+00:00"
+      "timestamp": "2026-06-28T15:53:27.218339+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167388+00:00"
+      "timestamp": "2026-06-28T15:53:27.218339+00:00"
     }
   ],
   "REL-004": [
@@ -2156,13 +2156,13 @@
       "version": 1,
       "status": "superseded",
       "score": 73.3,
-      "timestamp": "2026-06-28T15:53:09.167402+00:00"
+      "timestamp": "2026-06-28T15:53:27.218353+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167402+00:00"
+      "timestamp": "2026-06-28T15:53:27.218354+00:00"
     }
   ],
   "RESEARCH-001": [
@@ -2170,13 +2170,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.167427+00:00"
+      "timestamp": "2026-06-28T15:53:27.218378+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167427+00:00"
+      "timestamp": "2026-06-28T15:53:27.218378+00:00"
     }
   ],
   "RET-001": [
@@ -2184,13 +2184,13 @@
       "version": 1,
       "status": "superseded",
       "score": 59.0,
-      "timestamp": "2026-06-28T15:53:09.167439+00:00"
+      "timestamp": "2026-06-28T15:53:27.218390+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167440+00:00"
+      "timestamp": "2026-06-28T15:53:27.218391+00:00"
     }
   ],
   "RET-002": [
@@ -2198,13 +2198,13 @@
       "version": 1,
       "status": "superseded",
       "score": 57.1,
-      "timestamp": "2026-06-28T15:53:09.167452+00:00"
+      "timestamp": "2026-06-28T15:53:27.218403+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167452+00:00"
+      "timestamp": "2026-06-28T15:53:27.218404+00:00"
     }
   ],
   "SAAS-001": [
@@ -2212,13 +2212,13 @@
       "version": 1,
       "status": "superseded",
       "score": 62.9,
-      "timestamp": "2026-06-28T15:53:09.167464+00:00"
+      "timestamp": "2026-06-28T15:53:27.218416+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167465+00:00"
+      "timestamp": "2026-06-28T15:53:27.218417+00:00"
     }
   ],
   "SAAS-002": [
@@ -2226,13 +2226,13 @@
       "version": 1,
       "status": "superseded",
       "score": 56.2,
-      "timestamp": "2026-06-28T15:53:09.167477+00:00"
+      "timestamp": "2026-06-28T15:53:27.218430+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167478+00:00"
+      "timestamp": "2026-06-28T15:53:27.218431+00:00"
     }
   ],
   "SAST-001": [
@@ -2240,13 +2240,13 @@
       "version": 1,
       "status": "superseded",
       "score": 61.0,
-      "timestamp": "2026-06-28T15:53:09.167492+00:00"
+      "timestamp": "2026-06-28T15:53:27.218444+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167492+00:00"
+      "timestamp": "2026-06-28T15:53:27.218445+00:00"
     }
   ],
   "SAST-002": [
@@ -2254,13 +2254,13 @@
       "version": 1,
       "status": "superseded",
       "score": 56.2,
-      "timestamp": "2026-06-28T15:53:09.167505+00:00"
+      "timestamp": "2026-06-28T15:53:27.218458+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167505+00:00"
+      "timestamp": "2026-06-28T15:53:27.218459+00:00"
     }
   ],
   "SAST-003": [
@@ -2268,13 +2268,13 @@
       "version": 1,
       "status": "superseded",
       "score": 58.1,
-      "timestamp": "2026-06-28T15:53:09.167517+00:00"
+      "timestamp": "2026-06-28T15:53:27.218470+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167517+00:00"
+      "timestamp": "2026-06-28T15:53:27.218471+00:00"
     }
   ],
   "SAST-004": [
@@ -2282,13 +2282,13 @@
       "version": 1,
       "status": "superseded",
       "score": 58.1,
-      "timestamp": "2026-06-28T15:53:09.167529+00:00"
+      "timestamp": "2026-06-28T15:53:27.218483+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167530+00:00"
+      "timestamp": "2026-06-28T15:53:27.218484+00:00"
     }
   ],
   "SDLC-028": [
@@ -2296,13 +2296,13 @@
       "version": 1,
       "status": "superseded",
       "score": 73.3,
-      "timestamp": "2026-06-28T15:53:09.167544+00:00"
+      "timestamp": "2026-06-28T15:53:27.218498+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167545+00:00"
+      "timestamp": "2026-06-28T15:53:27.218499+00:00"
     }
   ],
   "SLG-001": [
@@ -2310,13 +2310,13 @@
       "version": 1,
       "status": "superseded",
       "score": 61.0,
-      "timestamp": "2026-06-28T15:53:09.167559+00:00"
+      "timestamp": "2026-06-28T15:53:27.218512+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167559+00:00"
+      "timestamp": "2026-06-28T15:53:27.218513+00:00"
     }
   ],
   "SMARTCITY-001": [
@@ -2324,13 +2324,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.167583+00:00"
+      "timestamp": "2026-06-28T15:53:27.218537+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167583+00:00"
+      "timestamp": "2026-06-28T15:53:27.218537+00:00"
     }
   ],
   "SWARM-001": [
@@ -2338,13 +2338,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.167607+00:00"
+      "timestamp": "2026-06-28T15:53:27.218560+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167607+00:00"
+      "timestamp": "2026-06-28T15:53:27.218561+00:00"
     }
   ],
   "SWARM-002": [
@@ -2352,13 +2352,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.167631+00:00"
+      "timestamp": "2026-06-28T15:53:27.218584+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167631+00:00"
+      "timestamp": "2026-06-28T15:53:27.218584+00:00"
     }
   ],
   "SWARM-003": [
@@ -2366,13 +2366,13 @@
       "version": 1,
       "status": "superseded",
       "score": 84.8,
-      "timestamp": "2026-06-28T15:53:09.167656+00:00"
+      "timestamp": "2026-06-28T15:53:27.218610+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167657+00:00"
+      "timestamp": "2026-06-28T15:53:27.218610+00:00"
     }
   ],
   "SWARM-004": [
@@ -2380,13 +2380,13 @@
       "version": 1,
       "status": "superseded",
       "score": 84.8,
-      "timestamp": "2026-06-28T15:53:09.167679+00:00"
+      "timestamp": "2026-06-28T15:53:27.218632+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167679+00:00"
+      "timestamp": "2026-06-28T15:53:27.218633+00:00"
     }
   ],
   "SWARM-005": [
@@ -2394,13 +2394,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.167702+00:00"
+      "timestamp": "2026-06-28T15:53:27.218656+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167703+00:00"
+      "timestamp": "2026-06-28T15:53:27.218656+00:00"
     }
   ],
   "SWARM-006": [
@@ -2408,13 +2408,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.167727+00:00"
+      "timestamp": "2026-06-28T15:53:27.218681+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167728+00:00"
+      "timestamp": "2026-06-28T15:53:27.218681+00:00"
     }
   ],
   "SWARM-007": [
@@ -2422,13 +2422,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.167751+00:00"
+      "timestamp": "2026-06-28T15:53:27.218705+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167752+00:00"
+      "timestamp": "2026-06-28T15:53:27.218705+00:00"
     }
   ],
   "SWARM-008": [
@@ -2436,13 +2436,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.167775+00:00"
+      "timestamp": "2026-06-28T15:53:27.218728+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167775+00:00"
+      "timestamp": "2026-06-28T15:53:27.218729+00:00"
     }
   ],
   "SWARM-009": [
@@ -2450,13 +2450,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.167798+00:00"
+      "timestamp": "2026-06-28T15:53:27.218751+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167799+00:00"
+      "timestamp": "2026-06-28T15:53:27.218752+00:00"
     }
   ],
   "SWARM-010": [
@@ -2464,13 +2464,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.167822+00:00"
+      "timestamp": "2026-06-28T15:53:27.218775+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167823+00:00"
+      "timestamp": "2026-06-28T15:53:27.218775+00:00"
     }
   ],
   "SWARM-011": [
@@ -2478,13 +2478,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.167847+00:00"
+      "timestamp": "2026-06-28T15:53:27.218799+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167848+00:00"
+      "timestamp": "2026-06-28T15:53:27.218800+00:00"
     }
   ],
   "SWARM-012": [
@@ -2492,13 +2492,13 @@
       "version": 1,
       "status": "superseded",
       "score": 82.9,
-      "timestamp": "2026-06-28T15:53:09.167871+00:00"
+      "timestamp": "2026-06-28T15:53:27.218823+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167871+00:00"
+      "timestamp": "2026-06-28T15:53:27.218823+00:00"
     }
   ],
   "TEL-001": [
@@ -2506,13 +2506,13 @@
       "version": 1,
       "status": "superseded",
       "score": 60.0,
-      "timestamp": "2026-06-28T15:53:09.167884+00:00"
+      "timestamp": "2026-06-28T15:53:27.218835+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167884+00:00"
+      "timestamp": "2026-06-28T15:53:27.218836+00:00"
     }
   ],
   "THREAT-002": [
@@ -2520,13 +2520,13 @@
       "version": 1,
       "status": "superseded",
       "score": 73.3,
-      "timestamp": "2026-06-28T15:53:09.167899+00:00"
+      "timestamp": "2026-06-28T15:53:27.218850+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167900+00:00"
+      "timestamp": "2026-06-28T15:53:27.218851+00:00"
     }
   ],
   "TRAIN-001": [
@@ -2534,13 +2534,13 @@
       "version": 1,
       "status": "superseded",
       "score": 83.8,
-      "timestamp": "2026-06-28T15:53:09.167923+00:00"
+      "timestamp": "2026-06-28T15:53:27.218873+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167924+00:00"
+      "timestamp": "2026-06-28T15:53:27.218873+00:00"
     }
   ],
   "TRN-001": [
@@ -2548,13 +2548,13 @@
       "version": 1,
       "status": "superseded",
       "score": 57.1,
-      "timestamp": "2026-06-28T15:53:09.167937+00:00"
+      "timestamp": "2026-06-28T15:53:27.218885+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167938+00:00"
+      "timestamp": "2026-06-28T15:53:27.218886+00:00"
     }
   ],
   "UXSEC-020": [
@@ -2562,13 +2562,13 @@
       "version": 1,
       "status": "superseded",
       "score": 75.2,
-      "timestamp": "2026-06-28T15:53:09.167952+00:00"
+      "timestamp": "2026-06-28T15:53:27.218900+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167953+00:00"
+      "timestamp": "2026-06-28T15:53:27.218900+00:00"
     }
   ],
   "VULN-005": [
@@ -2576,13 +2576,13 @@
       "version": 1,
       "status": "superseded",
       "score": 73.3,
-      "timestamp": "2026-06-28T15:53:09.167967+00:00"
+      "timestamp": "2026-06-28T15:53:27.218915+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167968+00:00"
+      "timestamp": "2026-06-28T15:53:27.218915+00:00"
     }
   ],
   "XWALK-029": [
@@ -2590,13 +2590,13 @@
       "version": 1,
       "status": "superseded",
       "score": 75.2,
-      "timestamp": "2026-06-28T15:53:09.167980+00:00"
+      "timestamp": "2026-06-28T15:53:27.218926+00:00"
     },
     {
       "version": 2,
       "status": "pending_review",
       "score": 95.2,
-      "timestamp": "2026-06-28T15:53:09.167981+00:00"
+      "timestamp": "2026-06-28T15:53:27.218927+00:00"
     }
   ],
   "TEST-HIGH": [
