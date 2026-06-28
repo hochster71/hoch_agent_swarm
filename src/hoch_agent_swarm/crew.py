@@ -1,6 +1,7 @@
 from crewai import Agent, Crew, Process, Task, LLM
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
+from hoch_agent_swarm.model_router import ModelRouter
 import os
 
 
@@ -11,20 +12,11 @@ class HochAgentSwarm():
     agents: list[BaseAgent]
     tasks: list[Task]
 
-    @property
-    def local_llm(self) -> LLM:
-        model_name = os.getenv("MODEL", "ollama/llama3.1:8b")
-        base_url = os.getenv("API_BASE", "http://localhost:11434")
-        return LLM(
-            model=model_name,
-            base_url=base_url,
-        )
-
     @agent
     def asset_mapper(self) -> Agent:
         return Agent(
             config=self.agents_config['asset_mapper'], # type: ignore[index]
-            llm=self.local_llm,
+            llm=ModelRouter.resolve_agent_llm('asset_mapper'),
             verbose=True
         )
 
@@ -32,7 +24,7 @@ class HochAgentSwarm():
     def swarm_architect(self) -> Agent:
         return Agent(
             config=self.agents_config['swarm_architect'], # type: ignore[index]
-            llm=self.local_llm,
+            llm=ModelRouter.resolve_agent_llm('swarm_architect'),
             verbose=True
         )
 
@@ -40,7 +32,7 @@ class HochAgentSwarm():
     def agent_combinator(self) -> Agent:
         return Agent(
             config=self.agents_config['agent_combinator'], # type: ignore[index]
-            llm=self.local_llm,
+            llm=ModelRouter.resolve_agent_llm('agent_combinator'),
             verbose=True
         )
 
@@ -48,7 +40,7 @@ class HochAgentSwarm():
     def security_operator(self) -> Agent:
         return Agent(
             config=self.agents_config['security_operator'], # type: ignore[index]
-            llm=self.local_llm,
+            llm=ModelRouter.resolve_agent_llm('security_operator'),
             verbose=True
         )
 
@@ -56,7 +48,7 @@ class HochAgentSwarm():
     def execution_planner(self) -> Agent:
         return Agent(
             config=self.agents_config['execution_planner'], # type: ignore[index]
-            llm=self.local_llm,
+            llm=ModelRouter.resolve_agent_llm('execution_planner'),
             verbose=True
         )
 
@@ -64,7 +56,7 @@ class HochAgentSwarm():
     def synthesis_director(self) -> Agent:
         return Agent(
             config=self.agents_config['synthesis_director'], # type: ignore[index]
-            llm=self.local_llm,
+            llm=ModelRouter.resolve_agent_llm('synthesis_director'),
             verbose=True
         )
 
@@ -72,7 +64,7 @@ class HochAgentSwarm():
     def antigravity_integration_operator(self) -> Agent:
         return Agent(
             config=self.agents_config['antigravity_integration_operator'], # type: ignore[index]
-            llm=self.local_llm,
+            llm=ModelRouter.resolve_agent_llm('antigravity_integration_operator'),
             verbose=True
         )
 
