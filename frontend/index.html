@@ -1760,6 +1760,9 @@
                             <p style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Controlled local-only Drogon.TV M3U stream playback & EPG metadata catalog.</p>
                         </div>
                         <div style="display: flex; gap: 10px; align-items: center;">
+                            <button id="btn-tv-toggle-layout" class="btn" style="padding: 8px 16px; font-size: 12px; font-weight: bold; background: rgba(255,255,255,0.1); border: 1px solid var(--border-glass); color: #fff;">
+                                View EPG Timeline
+                            </button>
                             <button id="btn-tv-reload" class="btn btn-primary" style="padding: 8px 16px; font-size: 12px; font-weight: bold; background: var(--accent-teal); border: none;">
                                 Reload Playlist
                             </button>
@@ -1770,27 +1773,35 @@
                     </div>
 
                     <!-- Health status indicator bar -->
-                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px;" id="tv-status-bar">
-                        <div class="card" style="padding: 10px; background: rgba(0,0,0,0.25); text-align: center;">
-                            <div style="font-size: 9px; color: var(--text-secondary); text-transform: uppercase;">Connection Health</div>
-                            <div style="font-size: 14px; font-weight: bold; color: #10b981; margin-top: 4px;" id="tv-health-indicator">Checking...</div>
+                    <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 20px;" id="tv-status-bar">
+                        <div class="card" style="padding: 8px; background: rgba(0,0,0,0.25); text-align: center;">
+                            <div style="font-size: 8px; color: var(--text-secondary); text-transform: uppercase;">Connection Health</div>
+                            <div style="font-size: 12px; font-weight: bold; color: #10b981; margin-top: 4px;" id="tv-health-indicator">Checking...</div>
                         </div>
-                        <div class="card" style="padding: 10px; background: rgba(0,0,0,0.25); text-align: center;">
-                            <div style="font-size: 9px; color: var(--text-secondary); text-transform: uppercase;">Channels Loaded</div>
-                            <div style="font-size: 14px; font-weight: bold; color: #fff; margin-top: 4px;" id="tv-channels-count">0</div>
+                        <div class="card" style="padding: 8px; background: rgba(0,0,0,0.25); text-align: center;">
+                            <div style="font-size: 8px; color: var(--text-secondary); text-transform: uppercase;">Channels Loaded</div>
+                            <div style="font-size: 12px; font-weight: bold; color: #fff; margin-top: 4px;" id="tv-channels-count">0</div>
                         </div>
-                        <div class="card" style="padding: 10px; background: rgba(0,0,0,0.25); text-align: center;">
-                            <div style="font-size: 9px; color: var(--text-secondary); text-transform: uppercase;">EPG Status</div>
-                            <div style="font-size: 14px; font-weight: bold; color: #fff; margin-top: 4px;" id="tv-epg-indicator">Not Loaded</div>
+                        <div class="card" style="padding: 8px; background: rgba(0,0,0,0.25); text-align: center;">
+                            <div style="font-size: 8px; color: var(--text-secondary); text-transform: uppercase;">EPG Status</div>
+                            <div style="font-size: 12px; font-weight: bold; color: #fff; margin-top: 4px;" id="tv-epg-indicator">Not Loaded</div>
                         </div>
-                        <div class="card" style="padding: 10px; background: rgba(0,0,0,0.25); text-align: center;">
-                            <div style="font-size: 9px; color: var(--text-secondary); text-transform: uppercase;">Last Cache Refresh</div>
-                            <div style="font-size: 14px; font-weight: bold; color: #fff; margin-top: 4px;" id="tv-loaded-indicator">Never</div>
+                        <div class="card" style="padding: 8px; background: rgba(0,0,0,0.25); text-align: center;">
+                            <div style="font-size: 8px; color: var(--text-secondary); text-transform: uppercase;">Playlist Cache</div>
+                            <div style="font-size: 12px; font-weight: bold; color: #fff; margin-top: 4px;" id="tv-playlist-cache-indicator">0 H / 0 M</div>
+                        </div>
+                        <div class="card" style="padding: 8px; background: rgba(0,0,0,0.25); text-align: center;">
+                            <div style="font-size: 8px; color: var(--text-secondary); text-transform: uppercase;">EPG Cache</div>
+                            <div style="font-size: 12px; font-weight: bold; color: #fff; margin-top: 4px;" id="tv-epg-cache-indicator">0 H / 0 M</div>
+                        </div>
+                        <div class="card" style="padding: 8px; background: rgba(0,0,0,0.25); text-align: center;">
+                            <div style="font-size: 8px; color: var(--text-secondary); text-transform: uppercase;">Security Audit</div>
+                            <div style="font-size: 11px; font-weight: bold; color: #10b981; margin-top: 4px;" id="tv-security-indicator">SAFE</div>
                         </div>
                     </div>
 
-                    <!-- Workspace Layout -->
-                    <div style="display: grid; grid-template-columns: 320px 1fr; gap: 20px; height: 600px; max-height: 70vh;">
+                    <!-- Standard Workspace Layout -->
+                    <div id="tv-standard-view" style="display: grid; grid-template-columns: 320px 1fr; gap: 20px; height: 600px; max-height: 70vh;">
                         
                         <!-- Left Sidebar: Channels & Filters -->
                         <div style="display: flex; flex-direction: column; border-right: 1px solid var(--border-glass); padding-right: 20px; overflow-y: hidden;">
@@ -1848,6 +1859,9 @@
                                         <p style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;" id="tv-playing-group">Category: None</p>
                                     </div>
                                     <div style="display: flex; gap: 8px;">
+                                        <button id="tv-btn-show-history" class="btn" style="padding: 6px 12px; font-size: 11px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: #fff; font-weight: bold; cursor: pointer; border-radius: 4px; display: none;">
+                                            Diagnostics History
+                                        </button>
                                         <button id="tv-btn-test-stream" class="btn" style="padding: 6px 12px; font-size: 11px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; font-weight: bold; cursor: pointer; border-radius: 4px; display: none;">
                                             Test Connection
                                         </button>
@@ -1864,6 +1878,20 @@
                                         <div style="color: var(--text-secondary); font-style: italic; font-size: 11px;">Select a channel to view the EPG guide.</div>
                                     </div>
                                 </div>
+
+                                <!-- Diagnostics History panel (hidden by default) -->
+                                <div id="tv-diagnostics-history-container" style="display: none; border-top: 1px solid var(--border-glass); padding-top: 10px;">
+                                    <div style="font-size: 11px; font-weight: bold; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px; justify-content: space-between;">
+                                        <span style="display: flex; align-items: center; gap: 6px;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-history"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+                                            Diagnostics History (Last 10 Runs)
+                                        </span>
+                                        <button id="tv-btn-close-history" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 10px;">[Close]</button>
+                                    </div>
+                                    <div id="tv-diagnostics-history-list" style="display: flex; flex-direction: column; gap: 4px; max-height: 120px; overflow-y: auto; font-family: monospace; font-size: 10px;">
+                                        <div style="color: var(--text-secondary); font-style: italic;">No diagnostics run yet.</div>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Diagnostic Console -->
@@ -1873,6 +1901,17 @@
                                     [system] TV service console is idle.
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Workspace Layout -->
+                    <div id="tv-timeline-view" style="display: none; flex-direction: column; gap: 15px; height: 600px; max-height: 70vh; overflow-y: auto; background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 8px; padding: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 10px;">
+                            <span style="font-size: 13px; font-weight: bold; color: #fff;">EPG Timeline Scheduler Grid</span>
+                            <span style="font-size: 11px; color: var(--text-secondary);">Click on any program block to tune to that channel.</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 10px; overflow-x: auto; flex-grow: 1;" id="tv-timeline-grid">
+                            <!-- Populated dynamically by app.js -->
                         </div>
                     </div>
                 </section>

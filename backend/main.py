@@ -6905,6 +6905,38 @@ def api_get_tv_groups_health():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/api/tv/cache/status")
+def api_get_tv_cache_status():
+    from backend.tv_manager import get_cache_observability
+    try:
+        return get_cache_observability()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/tv/channel/{id}/test/history")
+def api_get_tv_channel_test_history(id: str):
+    from backend.tv_manager import get_channel_diagnostics_history
+    try:
+        return get_channel_diagnostics_history(id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/tv/timeline")
+def api_get_tv_timeline():
+    from backend.tv_manager import get_tv_timeline
+    try:
+        return get_tv_timeline()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/tv/security-audit")
+def api_get_tv_security_audit():
+    from backend.tv_manager import run_tv_security_audit
+    try:
+        return run_tv_security_audit()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/api/tv/playlist.m3u")
 def api_get_tv_playlist(force: bool = False):
     from backend.tv_manager import get_raw_playlist

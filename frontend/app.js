@@ -4245,6 +4245,8 @@ import Hls from 'hls.js';
         await loadTvGroups();
         await loadTvChannels();
         await loadGroupHealth();
+        await loadCacheStatus();
+        await runSecurityAudit();
     }
 
     async function runTvHealthCheck() {
@@ -4495,6 +4497,7 @@ import Hls from 'hls.js';
             }
             
             await loadGroupHealth();
+            await loadDiagnosticsHistory(channelId);
         } catch (err) {
             logTvDiag(`Connectivity test failed: ${err.message}`, true);
         } finally {
@@ -4610,8 +4613,14 @@ import Hls from 'hls.js';
             testBtn.style.display = 'inline-block';
         }
 
+        const showHistoryBtn = el('tv-btn-show-history');
+        if (showHistoryBtn) {
+            showHistoryBtn.style.display = 'inline-block';
+        }
+
         addToRecents(channel.id);
         loadEpgSchedule(channel.id);
+        loadDiagnosticsHistory(channel.id);
 
         if (currentHls) {
             currentHls.destroy();
@@ -4619,6 +4628,36 @@ import Hls from 'hls.js';
         }
 
         const streamUrl = channel.streamUrl;
+        
+        let playbackRetryCount = 0;
+        const maxPlaybackRetries = 3;
+        let retryTimeout = null;
+
+        function triggerPlaybackRetry(msg) {
+            if (playbackRetryCount < maxPlaybackRetries) {
+                playbackRetryCount++;
+                logTvDiag(`[player] Playback retry attempt ${playbackRetryCount}/${maxPlaybackRetries} due to: ${msg}`);
+                if (retryTimeout) clearTimeout(retryTimeout);
+                retryTimeout = setTimeout(() => {
+                    logTvDiag(`[player] Executing retry ${playbackRetryCount}...`);
+                    if (currentHls) {
+                        currentHls.loadSource(streamUrl);
+                        currentHls.attachMedia(video);
+                    } else {
+                        video.load();
+                    }
+                    video.play().catch(err => {
+                        logTvDiag(`[player] Play command during retry failed: ${err.message}`, true);
+                    });
+                }, 2000);
+            } else {
+                logTvDiag(`[player] Maximum retries (${maxPlaybackRetries}) reached. Failing closed.`, true);
+                if (errorOverlay && errorText) {
+                    errorText.textContent = `${msg} (All retry attempts failed)`;
+                    errorOverlay.style.display = 'flex';
+                }
+            }
+        }
         
         video.onerror = (e) => {
             const err = video.error;
@@ -4630,10 +4669,7 @@ import Hls from 'hls.js';
                 else if (err.code === 4) errMsg = 'The media resource was not supported or could not be played.';
             }
             logTvDiag(`HTML5 Video Error: ${errMsg}`, true);
-            if (errorOverlay && errorText) {
-                errorText.textContent = `${errMsg} (Code: ${err ? err.code : 'unknown'})`;
-                errorOverlay.style.display = 'flex';
-            }
+            triggerPlaybackRetry(errMsg);
         };
 
         if (streamUrl.toLowerCase().includes('.m3u8')) {
@@ -4659,11 +4695,8 @@ import Hls from 'hls.js';
                                 hls.recoverMediaError();
                                 break;
                             default:
-                                logTvDiag('Cannot recover from fatal stream error.', true);
-                                if (errorOverlay && errorText) {
-                                    errorText.textContent = `HLS stream parse error: ${data.details}`;
-                                    errorOverlay.style.display = 'flex';
-                                }
+                                logTvDiag('Cannot recover from fatal stream error, triggering retry.', true);
+                                triggerPlaybackRetry(`HLS ${data.type} error: ${data.details}`);
                                 break;
                         }
                     }
@@ -4693,6 +4726,8 @@ import Hls from 'hls.js';
                 await loadTvChannels(true);
                 await runTvHealthCheck();
                 await loadGroupHealth();
+                await loadCacheStatus();
+                await runSecurityAudit();
                 btnReload.disabled = false;
                 btnReload.textContent = 'Reload Playlist';
             });
@@ -4706,8 +4741,40 @@ import Hls from 'hls.js';
                 btnHealth.textContent = 'Running...';
                 await runTvHealthCheck();
                 await loadGroupHealth();
+                await loadCacheStatus();
+                await runSecurityAudit();
                 btnHealth.disabled = false;
                 btnHealth.textContent = 'Run Health Check';
+            });
+        }
+
+        const btnLayout = el('btn-tv-toggle-layout');
+        if (btnLayout) {
+            btnLayout.addEventListener('click', (e) => {
+                e.preventDefault();
+                toggleTvLayout();
+            });
+        }
+
+        const showHistoryBtn = el('tv-btn-show-history');
+        if (showHistoryBtn) {
+            showHistoryBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const container = el('tv-diagnostics-history-container');
+                if (container) {
+                    container.style.display = 'block';
+                }
+            });
+        }
+
+        const closeHistoryBtn = el('tv-btn-close-history');
+        if (closeHistoryBtn) {
+            closeHistoryBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const container = el('tv-diagnostics-history-container');
+                if (container) {
+                    container.style.display = 'none';
+                }
             });
         }
 
@@ -4743,6 +4810,228 @@ import Hls from 'hls.js';
                     runPlaybackTest(currentPlayingChannel.id);
                 }
             });
+        }
+    }
+
+    async function loadDiagnosticsHistory(channelId) {
+        const historyList = el('tv-diagnostics-history-list');
+        if (!historyList) return;
+        historyList.innerHTML = '<div style="color: var(--text-secondary); font-style: italic;">Loading diagnostics history...</div>';
+        
+        try {
+            const res = await fetch(`/api/tv/channel/${channelId}/test/history`);
+            if (!res.ok) throw new Error('Failed to fetch history');
+            const data = await res.json();
+            
+            if (!data || data.length === 0) {
+                historyList.innerHTML = '<div style="color: var(--text-secondary); font-style: italic;">No previous diagnostics runs.</div>';
+                return;
+            }
+            
+            historyList.innerHTML = '';
+            data.slice().reverse().forEach(run => {
+                const statusColor = run.status === 'healthy' ? '#10b981' : '#ef4444';
+                const time = run.timestamp.split('T')[1].substring(0,8);
+                const info = run.status === 'healthy' ? `${run.latencyMs}ms` : (run.error || 'failed');
+                
+                const div = document.createElement('div');
+                div.style.cssText = 'display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.02); padding: 2px 0;';
+                div.innerHTML = `
+                    <span style="color: var(--text-secondary);">${escapeHtml(time)}</span>
+                    <span style="color: ${statusColor}; font-weight: bold;">${run.status.toUpperCase()}</span>
+                    <span style="color: #fff;">${escapeHtml(info)}</span>
+                `;
+                historyList.appendChild(div);
+            });
+        } catch (err) {
+            historyList.innerHTML = `<div style="color: #ef4444;">Error: ${escapeHtml(err.message)}</div>`;
+        }
+    }
+
+    async function loadTimelineGrid() {
+        const gridContainer = el('tv-timeline-grid');
+        if (!gridContainer) return;
+        gridContainer.innerHTML = '<div style="color: var(--text-secondary); font-style: italic; padding: 20px; text-align: center;">Loading EPG schedule timeline...</div>';
+        
+        try {
+            const res = await fetch('/api/tv/timeline');
+            if (!res.ok) throw new Error('Timeline fetch failed');
+            const channels = await res.json();
+            
+            if (!channels || channels.length === 0) {
+                gridContainer.innerHTML = '<div style="color: var(--text-secondary); font-style: italic; padding: 20px; text-align: center;">No schedule schedules found. Click Reload Playlist.</div>';
+                return;
+            }
+            
+            gridContainer.innerHTML = '';
+            
+            // Build hourly markers at top of grid
+            const headerRow = document.createElement('div');
+            headerRow.style.cssText = 'display: flex; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 6px; margin-bottom: 6px; gap: 10px; min-width: 800px;';
+            headerRow.innerHTML = `<div style="width: 150px; min-width: 150px; font-size: 11px; font-weight: bold; color: var(--text-secondary);">CHANNEL</div>`;
+            
+            // Render 6 hourly slots starting from now
+            const now = new Date();
+            const startHour = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours());
+            for (let i = 0; i < 6; i++) {
+                const markerTime = new Date(startHour.getTime() + i * 3600000);
+                const timeString = markerTime.toTimeString().substring(0, 5);
+                headerRow.innerHTML += `<div style="flex: 1; text-align: left; font-size: 11px; font-weight: bold; color: var(--text-secondary); border-left: 1px solid rgba(255,255,255,0.05); padding-left: 8px;">${timeString}</div>`;
+            }
+            gridContainer.appendChild(headerRow);
+            
+            channels.forEach(c => {
+                const row = document.createElement('div');
+                row.style.cssText = 'display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.02); min-width: 800px;';
+                
+                const logoHtml = c.logo ? 
+                    `<img src="${escapeHtml(c.logo)}" style="width: 20px; height: 20px; object-fit: contain; border-radius: 2px;" onerror="this.src='data:image/svg+xml;utf8,<svg></svg>'">` : 
+                    `<i data-lucide="tv" style="width: 12px; height: 12px; color: var(--text-secondary);"></i>`;
+                
+                row.innerHTML = `
+                    <div class="timeline-channel-cell" style="width: 150px; min-width: 150px; display: flex; align-items: center; gap: 8px; cursor: pointer;" title="Tune in to ${escapeHtml(c.name)}">
+                        ${logoHtml}
+                        <span style="font-size: 12px; font-weight: bold; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(c.name)}</span>
+                    </div>
+                `;
+                
+                // Add listener to channel cell to play channel
+                row.querySelector('.timeline-channel-cell').addEventListener('click', () => {
+                    // switch back to standard view to play
+                    toggleTvLayout(false);
+                    playTvChannel(c);
+                });
+
+                // Horizontal timeline container for program blocks
+                const scheduleContainer = document.createElement('div');
+                scheduleContainer.style.cssText = 'flex-grow: 1; display: flex; gap: 8px; height: 36px;';
+                
+                const programs = c.programs || [];
+                if (programs.length === 0) {
+                    const noEp = document.createElement('div');
+                    noEp.style.cssText = 'flex: 1; background: rgba(255,255,255,0.01); border: 1px dashed var(--border-glass); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--text-secondary);';
+                    noEp.textContent = 'No Schedule Data';
+                    scheduleContainer.appendChild(noEp);
+                } else {
+                    // Display up to 3 programs
+                    programs.slice(0, 3).forEach(p => {
+                        const block = document.createElement('div');
+                        block.style.cssText = 'flex: 1; background: rgba(16, 185, 129, 0.03); border: 1px solid rgba(16, 185, 129, 0.15); border-radius: 4px; padding: 4px 8px; display: flex; flex-direction: column; justify-content: center; cursor: pointer; transition: all 0.2s; overflow: hidden;';
+                        block.innerHTML = `
+                            <div style="font-size: 10px; font-weight: bold; color: var(--accent-teal); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(formatEpgTime(p.start))} - ${escapeHtml(formatEpgTime(p.stop))}</div>
+                            <div style="font-size: 11px; font-weight: bold; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${escapeHtml(p.title)}">${escapeHtml(p.title)}</div>
+                        `;
+                        block.addEventListener('mouseenter', () => {
+                            block.style.background = 'rgba(16, 185, 129, 0.08)';
+                            block.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+                        });
+                        block.addEventListener('mouseleave', () => {
+                            block.style.background = 'rgba(16, 185, 129, 0.03)';
+                            block.style.borderColor = 'rgba(16, 185, 129, 0.15)';
+                        });
+                        block.addEventListener('click', () => {
+                            toggleTvLayout(false);
+                            playTvChannel(c);
+                        });
+                        scheduleContainer.appendChild(block);
+                    });
+                }
+                
+                row.appendChild(scheduleContainer);
+                gridContainer.appendChild(row);
+            });
+            
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+        } catch (err) {
+            gridContainer.innerHTML = `<div style="color: #ef4444; padding: 20px; text-align: center;">Error loading timeline: ${escapeHtml(err.message)}</div>`;
+        }
+    }
+
+    function toggleTvLayout(forceTimeline) {
+        const timelineBtn = el('btn-tv-toggle-layout');
+        const standardView = el('tv-standard-view');
+        const timelineView = el('tv-timeline-view');
+        
+        if (!timelineBtn || !standardView || !timelineView) return;
+        
+        isTimelineView = forceTimeline !== undefined ? forceTimeline : !isTimelineView;
+        
+        if (isTimelineView) {
+            standardView.style.display = 'none';
+            timelineView.style.display = 'flex';
+            timelineBtn.textContent = 'View Channels List';
+            loadTimelineGrid();
+        } else {
+            standardView.style.display = 'grid';
+            timelineView.style.display = 'none';
+            timelineBtn.textContent = 'View EPG Timeline';
+        }
+    }
+
+    async function loadCacheStatus() {
+        try {
+            const res = await fetch('/api/tv/cache/status');
+            if (!res.ok) throw new Error('Failed to fetch cache status');
+            const data = await res.json();
+            
+            const playlistIndicator = el('tv-playlist-cache-indicator');
+            if (playlistIndicator && data.playlist) {
+                const playlist = data.playlist;
+                playlistIndicator.textContent = `${playlist.hitCount} H / ${playlist.missCount} M`;
+                playlistIndicator.title = `Status: ${playlist.status}\nSize: ${playlist.sizeBytes} bytes\nHash: ${playlist.hash.substring(0,8)}...`;
+                if (playlist.status === 'error') {
+                    playlistIndicator.style.color = '#ef4444';
+                } else if (playlist.status === 'fresh') {
+                    playlistIndicator.style.color = '#10b981';
+                } else {
+                    playlistIndicator.style.color = '#fff';
+                }
+            }
+            
+            const epgIndicator = el('tv-epg-cache-indicator');
+            if (epgIndicator && data.epg) {
+                const epg = data.epg;
+                epgIndicator.textContent = `${epg.hitCount} H / ${epg.missCount} M`;
+                epgIndicator.title = `Status: ${epg.status}\nSize: ${epg.sizeBytes} bytes\nHash: ${epg.hash.substring(0,8)}...`;
+                if (epg.status === 'error') {
+                    epgIndicator.style.color = '#ef4444';
+                } else if (epg.status === 'fresh') {
+                    epgIndicator.style.color = '#10b981';
+                } else {
+                    epgIndicator.style.color = '#fff';
+                }
+            }
+        } catch (err) {
+            logTvDiag(`Error loading cache observability: ${err.message}`, true);
+        }
+    }
+
+    async function runSecurityAudit() {
+        const securityIndicator = el('tv-security-indicator');
+        if (!securityIndicator) return;
+        securityIndicator.textContent = 'Auditing...';
+        securityIndicator.style.color = '#fff';
+        
+        try {
+            const res = await fetch('/api/tv/security-audit');
+            if (!res.ok) throw new Error('Security audit query failed');
+            const data = await res.json();
+            
+            securityIndicator.textContent = data.status;
+            if (data.status === 'SAFE') {
+                securityIndicator.style.color = '#10b981';
+                securityIndicator.title = `Checked at ${data.checkedAt}. Checked files: ${data.scannedFiles.join(', ')}. Zero credentials exposed.`;
+            } else {
+                securityIndicator.style.color = '#ef4444';
+                securityIndicator.title = `Checked at ${data.checkedAt}. Warning: ${data.findings.join('; ')}`;
+                logTvDiag(`Security Audit warnings: ${data.findings.join('; ')}`, true);
+            }
+        } catch (err) {
+            securityIndicator.textContent = 'ERROR';
+            securityIndicator.style.color = '#ef4444';
+            logTvDiag(`Security audit failed: ${err.message}`, true);
         }
     }
 
