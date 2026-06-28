@@ -265,6 +265,314 @@ def api_summary():
 
 
 # ---------------------------------------------------------------------------
+# PROMPTBRAIN1 Endpoints
+# ---------------------------------------------------------------------------
+
+@app.route("/api/v1/promptbrain/status")
+def api_promptbrain_status():
+    from hoch_agent_swarm.promptbrain_manager import get_promptbrain_manager
+    from hoch_agent_swarm.promptqa_manager import get_promptqa_manager
+    pm = get_promptbrain_manager()
+    qa = get_promptqa_manager()
+    res = {
+        "status": pm.import_report.get("status"),
+        "total_prompts": len(pm.prompts),
+        "total_gaps": len(pm.gaps),
+        "total_generated": len(pm.generated_prompts),
+        "total_revised": len(pm.revised_prompts),
+        "imported_at": pm.import_report.get("imported_at")
+    }
+    res.update(qa.status)
+    return jsonify(res)
+
+@app.route("/api/v1/promptbrain/prompts")
+def api_promptbrain_prompts():
+    from hoch_agent_swarm.promptbrain_manager import get_promptbrain_manager
+    pm = get_promptbrain_manager()
+    return jsonify(pm.prompts)
+
+@app.route("/api/v1/promptbrain/coverage")
+def api_promptbrain_coverage():
+    from hoch_agent_swarm.promptbrain_manager import get_promptbrain_manager
+    pm = get_promptbrain_manager()
+    return jsonify(pm.coverage_scorecard)
+
+@app.route("/api/v1/promptbrain/gaps")
+def api_promptbrain_gaps():
+    from hoch_agent_swarm.promptbrain_manager import get_promptbrain_manager
+    pm = get_promptbrain_manager()
+    return jsonify(pm.gaps)
+
+@app.route("/api/v1/promptbrain/generated")
+def api_promptbrain_generated():
+    from hoch_agent_swarm.promptbrain_manager import get_promptbrain_manager
+    pm = get_promptbrain_manager()
+    return jsonify(pm.generated_prompts)
+
+@app.route("/api/v1/promptbrain/revised-library")
+def api_promptbrain_revised_library():
+    from hoch_agent_swarm.promptbrain_manager import get_promptbrain_manager
+    pm = get_promptbrain_manager()
+    return jsonify(pm.revised_prompts)
+
+@app.route("/api/v1/promptbrain/brain-schema")
+def api_promptbrain_brain_schema():
+    from hoch_agent_swarm.promptbrain_manager import PROMPTBRAIN_ART_DIR
+    schema_path = PROMPTBRAIN_ART_DIR / "llm_brain_schema.json"
+    if schema_path.exists():
+        with open(schema_path, "r", encoding="utf-8") as f:
+            return jsonify(json.load(f))
+    return jsonify({"error": "Schema not found"}), 404
+
+@app.route("/api/v1/promptbrain/routing-matrix")
+def api_promptbrain_routing_matrix():
+    from hoch_agent_swarm.promptbrain_manager import PROMPTBRAIN_ART_DIR
+    path = PROMPTBRAIN_ART_DIR / "agent_routing_matrix.json"
+    if path.exists():
+        with open(path, "r", encoding="utf-8") as f:
+            return jsonify(json.load(f))
+    return jsonify({"error": "Routing matrix not found"}), 404
+
+@app.route("/api/v1/promptbrain/route", methods=["POST"])
+def api_promptbrain_route():
+    from flask import request
+    from hoch_agent_swarm.promptbrain_manager import get_promptbrain_manager
+    req_data = request.get_json() or {}
+    query = req_data.get("task_description", "")
+    industry = req_data.get("industry")
+    framework = req_data.get("framework")
+    pm = get_promptbrain_manager()
+    return jsonify(pm.route_task(query, industry, framework))
+
+@app.route("/api/v1/promptbrain/export")
+def api_promptbrain_export():
+    from hoch_agent_swarm.promptbrain_manager import get_promptbrain_manager
+    pm = get_promptbrain_manager()
+    zip_bytes = pm.export_zip_bundle()
+    return Response(
+        zip_bytes,
+        mimetype="application/zip",
+        headers={"Content-Disposition": "attachment;filename=promptbrain_export.zip"}
+    )
+
+
+# ---------------------------------------------------------------------------
+# BRAIN2 Endpoints
+# ---------------------------------------------------------------------------
+
+@app.route("/api/v1/brain/ingest", methods=["POST"])
+def api_brain_ingest():
+    from hoch_agent_swarm.brain_runtime import get_brain_runtime
+    runtime = get_brain_runtime()
+    return jsonify(runtime.ingest_artifacts())
+
+@app.route("/api/v1/brain/query", methods=["GET", "POST"])
+def api_brain_query():
+    from flask import request
+    from hoch_agent_swarm.brain_runtime import get_brain_runtime
+    
+    if request.method == "POST":
+        req_data = request.get_json() or {}
+        query = req_data.get("query", "")
+        limit = int(req_data.get("limit", 5))
+        min_trust = float(req_data.get("min_trust", 0.0))
+    else:
+        query = request.args.get("query", "")
+        limit = int(request.args.get("limit", 5))
+        min_trust = float(request.args.get("min_trust", 0.0))
+        
+    runtime = get_brain_runtime()
+    return jsonify(runtime.query_evidence(query, limit, min_trust))
+
+@app.route("/api/v1/brain/graph")
+def api_brain_graph():
+    from hoch_agent_swarm.brain_runtime import get_brain_runtime
+    runtime = get_brain_runtime()
+    return jsonify(runtime.get_knowledge_graph())
+
+@app.route("/api/v1/brain/citations")
+def api_brain_citations():
+    from flask import request
+    from hoch_agent_swarm.brain_runtime import get_brain_runtime
+    node_id = request.args.get("node_id", "")
+    runtime = get_brain_runtime()
+    
+    cursor = runtime.conn.cursor()
+    cursor.execute("SELECT id, path, trust_score, timestamp, commit_sha, author, content FROM evidence_nodes WHERE id = ?", (node_id,))
+    row = cursor.fetchone()
+    if row:
+        return jsonify(dict(row))
+    return jsonify({"error": f"Node {node_id} not found"}), 404
+
+@app.route("/api/v1/brain/validation-status")
+def api_brain_validation_status():
+    from hoch_agent_swarm.brain_runtime import get_brain_runtime
+    runtime = get_brain_runtime()
+    return jsonify(runtime.validate_gap_closures())
+
+@app.route("/api/v1/brain/export")
+def api_brain_export():
+    import io
+    import zipfile
+    from flask import Response
+    from hoch_agent_swarm.brain_runtime import DB_PATH, ARTIFACTS_DIR
+    
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, "a", zipfile.ZIP_DEFLATED, False) as zip_file:
+        if os.path.exists(str(DB_PATH)):
+            zip_file.write(str(DB_PATH), "data/brain_evidence.db")
+            
+        promptqa_dir = ARTIFACTS_DIR / "promptqa"
+        if promptqa_dir.exists():
+            for root, _, files in os.walk(str(promptqa_dir)):
+                for file in files:
+                    file_path = Path(root) / file
+                    zip_file.write(str(file_path), f"artifacts/promptqa/{file}")
+
+        promptbrain_dir = ARTIFACTS_DIR / "promptbrain"
+        if promptbrain_dir.exists():
+            for root, _, files in os.walk(str(promptbrain_dir)):
+                for file in files:
+                    file_path = Path(root) / file
+                    zip_file.write(str(file_path), f"artifacts/promptbrain/{file}")
+
+        reports_dir = ARTIFACTS_DIR / "reports"
+        if reports_dir.exists():
+            for root, _, files in os.walk(str(reports_dir)):
+                for file in files:
+                    file_path = Path(root) / file
+                    zip_file.write(str(file_path), f"artifacts/reports/{file}")
+
+        sec_dir = ARTIFACTS_DIR / "security_reviews"
+        if sec_dir.exists():
+            for root, _, files in os.walk(str(sec_dir)):
+                for file in files:
+                    file_path = Path(root) / file
+                    zip_file.write(str(file_path), f"artifacts/security_reviews/{file}")
+
+    return Response(
+        zip_buffer.getvalue(),
+        mimetype="application/zip",
+        headers={"Content-Disposition": "attachment;filename=evidence_brain_compliance_bundle.zip"}
+    )
+
+
+# ---------------------------------------------------------------------------
+# PROMPTQA1 Endpoints
+# ---------------------------------------------------------------------------
+
+@app.route("/api/v1/promptqa/status")
+def api_promptqa_status():
+    from hoch_agent_swarm.promptqa_manager import get_promptqa_manager
+    qa = get_promptqa_manager()
+    return jsonify(qa.status)
+
+@app.route("/api/v1/promptqa/scores")
+def api_promptqa_scores():
+    from hoch_agent_swarm.promptqa_manager import get_promptqa_manager
+    qa = get_promptqa_manager()
+    return jsonify(qa.scores)
+
+@app.route("/api/v1/promptqa/weaknesses")
+def api_promptqa_weaknesses():
+    from hoch_agent_swarm.promptqa_manager import get_promptqa_manager
+    qa = get_promptqa_manager()
+    return jsonify(qa.weaknesses)
+
+@app.route("/api/v1/promptqa/assertions")
+def api_promptqa_assertions():
+    from hoch_agent_swarm.promptqa_manager import get_promptqa_manager
+    qa = get_promptqa_manager()
+    return jsonify(qa.assertions)
+
+@app.route("/api/v1/promptqa/regression")
+def api_promptqa_regression():
+    from hoch_agent_swarm.promptqa_manager import get_promptqa_manager
+    qa = get_promptqa_manager()
+    return jsonify(qa.regression_results)
+
+@app.route("/api/v1/promptqa/rewrite-candidates")
+def api_promptqa_rewrite_candidates():
+    from hoch_agent_swarm.promptqa_manager import get_promptqa_manager
+    qa = get_promptqa_manager()
+    return jsonify(qa.candidates)
+
+@app.route("/api/v1/promptqa/routing-eval")
+def api_promptqa_routing_eval():
+    from hoch_agent_swarm.promptqa_manager import get_promptqa_manager
+    qa = get_promptqa_manager()
+    return jsonify(qa.routing_results)
+
+@app.route("/api/v1/promptqa/approval-queue")
+def api_promptqa_approval_queue():
+    from hoch_agent_swarm.promptqa_manager import get_promptqa_manager
+    qa = get_promptqa_manager()
+    return jsonify(qa.approval_queue)
+
+@app.route("/api/v1/promptqa/lineage")
+def api_promptqa_lineage():
+    from hoch_agent_swarm.promptqa_manager import get_promptqa_manager
+    qa = get_promptqa_manager()
+    return jsonify(qa.lineage)
+
+@app.route("/api/v1/promptqa/run", methods=["POST"])
+def api_promptqa_run():
+    from hoch_agent_swarm.promptqa_manager import get_promptqa_manager
+    qa = get_promptqa_manager()
+    qa.run_eval_pipeline()
+    return jsonify({"status": "SUCCESS", "message": "Prompt QA continuous improvement sweep run complete."})
+
+@app.route("/api/v1/promptqa/route-eval", methods=["POST"])
+def api_promptqa_route_eval_trigger():
+    from hoch_agent_swarm.promptqa_manager import get_promptqa_manager
+    from hoch_agent_swarm.promptbrain_manager import get_promptbrain_manager
+    qa = get_promptqa_manager()
+    pm = get_promptbrain_manager()
+    qa._evaluate_routing(pm)
+    return jsonify(qa.routing_results)
+
+@app.route("/api/v1/promptqa/rewrite", methods=["POST"])
+def api_promptqa_rewrite_trigger():
+    from hoch_agent_swarm.promptqa_manager import get_promptqa_manager
+    qa = get_promptqa_manager()
+    qa.run_eval_pipeline()
+    return jsonify(qa.candidates)
+
+@app.route("/api/v1/promptqa/approve", methods=["POST"])
+def api_promptqa_approve():
+    from flask import request
+    from hoch_agent_swarm.promptqa_manager import get_promptqa_manager
+    req_data = request.get_json() or {}
+    p_id = req_data.get("id", "")
+    
+    qa = get_promptqa_manager()
+    success = qa.approve_candidate(p_id)
+    if success:
+        return jsonify({"status": "SUCCESS", "message": f"Rewrite candidate {p_id} promoted and approved."})
+    return jsonify({"status": "ERROR", "message": f"Promotion of {p_id} denied. Threshold check failed."}), 400
+
+@app.route("/api/v1/promptqa/export")
+def api_promptqa_export():
+    import io
+    import zipfile
+    from flask import Response
+    from hoch_agent_swarm.promptqa_manager import PROMPTQA_ART_DIR
+    
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, "a", zipfile.ZIP_DEFLATED, False) as zip_file:
+        for root, _, files in os.walk(str(PROMPTQA_ART_DIR)):
+            for file in files:
+                file_path = Path(root) / file
+                zip_file.write(str(file_path), file)
+    
+    return Response(
+        zip_buffer.getvalue(),
+        mimetype="application/zip",
+        headers={"Content-Disposition": "attachment;filename=promptqa_export_bundle.zip"}
+    )
+
+
+# ---------------------------------------------------------------------------
 # Serve the single-page dashboard
 # ---------------------------------------------------------------------------
 
@@ -622,6 +930,17 @@ DASHBOARD_HTML = r"""<!DOCTYPE html>
     <button class="nav-item" id="nav-git" onclick="showPage('git')">
       <span class="icon">🔀</span> Git Log
     </button>
+
+    <div class="nav-section-label">Prompts & LLM Brain</div>
+    <button class="nav-item" id="nav-promptbrain" onclick="showPage('promptbrain')">
+      <span class="icon">🧠</span> Prompt Brain
+    </button>
+    <button class="nav-item" id="nav-evidencebrain" onclick="showPage('evidencebrain')">
+      <span class="icon">📁</span> Evidence Brain
+    </button>
+    <button class="nav-item" id="nav-promptqa" onclick="showPage('promptqa')">
+      <span class="icon">🛠️</span> Prompt QA Forge
+    </button>
   </nav>
 
   <!-- Main -->
@@ -787,6 +1106,453 @@ DASHBOARD_HTML = r"""<!DOCTYPE html>
       </div>
     </div>
 
+    <!-- ===== PROMPTBRAIN ===== -->
+    <div class="page" id="page-promptbrain">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Prompt Brain Cockpit</div>
+          <div class="page-sub">Centralized prompt registry, gap analysis, and LLM brain routing</div>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="refresh-btn" onclick="apiExportPromptbrain()">📥 Export Bundle</button>
+          <button class="refresh-btn" onclick="loadPromptBrain()">↻ Refresh</button>
+        </div>
+      </div>
+
+      <!-- Overview Cards -->
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Active Prompts</div>
+          <div class="stat-value accent" id="pb-stat-total">—</div>
+          <div class="stat-hint" id="pb-stat-total-hint">103 original + 84 generated</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Critical Prompt Gaps</div>
+          <div class="stat-value fail" id="pb-stat-gaps">—</div>
+          <div class="stat-hint">Deficiencies to remediate</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Coverage Target</div>
+          <div class="stat-value pass">100%</div>
+          <div class="stat-hint">Control-to-evidence mapped</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Status</div>
+          <div class="stat-value pass" id="pb-stat-status" style="font-size: 20px; line-height: 2.1;">READY</div>
+          <div class="stat-hint">ATO-supporting evidence package ready</div>
+        </div>
+      </div>
+
+      <!-- Compliance Notice Banner -->
+      <div style="background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.2);border-radius:var(--radius);padding:16px;margin-bottom:24px;display:flex;align-items:center;gap:12px">
+        <span style="font-size:24px">⚠️</span>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--yellow);text-transform:uppercase;letter-spacing:0.05em">Compliance Notice & Status Boundary</div>
+          <div style="font-size:13px;color:var(--text);margin-top:2px;font-weight:500">
+            <strong>ATO-SUPPORTING EVIDENCE PACKAGE: READY FOR REVIEW</strong>. Actual ATO has not been granted. No authorization claim is being made.
+          </div>
+        </div>
+      </div>
+
+      <!-- Sub-navigation tabs inside Prompt Brain -->
+      <div style="display:flex;gap:8px;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:10px">
+        <button class="refresh-btn" id="pb-tab-btn-registry" onclick="switchPbTab('registry')" style="background:var(--accent);color:#fff">Prompt Registry</button>
+        <button class="refresh-btn" id="pb-tab-btn-gaps" onclick="switchPbTab('gaps')">Gap Analysis</button>
+        <button class="refresh-btn" id="pb-tab-btn-generated" onclick="switchPbTab('generated')">Generated Prompts</button>
+        <button class="refresh-btn" id="pb-tab-btn-schema" onclick="switchPbTab('schema')">LLM Brain Schema</button>
+        <button class="refresh-btn" id="pb-tab-btn-router" onclick="switchPbTab('router')">Task Routing Simulator</button>
+      </div>
+
+      <!-- Sub-pages -->
+      <!-- 1. Registry -->
+      <div class="pb-subpage active" id="pb-subpage-registry">
+        <div class="card" style="padding:16px;margin-bottom:16px;display:flex;gap:12px;align-items:center">
+          <input type="text" id="pb-search-input" placeholder="Search prompts by ID, title, category, industry..." style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 16px;color:#fff;outline:none;font-size:13px" oninput="filterPrompts()"/>
+          <select id="pb-filter-category" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;color:#fff;outline:none;font-size:13px;cursor:pointer" onchange="filterPrompts()">
+            <option value="">All Categories</option>
+          </select>
+        </div>
+        <div class="card">
+          <div class="card-header">📋 Registered Swarm Prompts</div>
+          <div style="overflow-x:auto">
+            <table class="table" style="width:100%;border-collapse:collapse;text-align:left">
+              <thead>
+                <tr style="border-bottom:1px solid var(--border);color:var(--muted)">
+                  <th style="padding:12px 20px">ID</th>
+                  <th style="padding:12px 20px">Title</th>
+                  <th style="padding:12px 20px">Category</th>
+                  <th style="padding:12px 20px">Industry</th>
+                  <th style="padding:12px 20px">Frameworks</th>
+                  <th style="padding:12px 20px">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="pb-registry-table-body">
+                <tr><td colspan="6" style="padding:20px;text-align:center"><div class="spinner"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Gaps -->
+      <div class="pb-subpage" id="pb-subpage-gaps" style="display:none">
+        <div class="card">
+          <div class="card-header">⚠️ Identified Compliance & Prompt Gaps</div>
+          <div style="overflow-x:auto">
+            <table class="table" style="width:100%;border-collapse:collapse;text-align:left">
+              <thead>
+                <tr style="border-bottom:1px solid var(--border);color:var(--muted)">
+                  <th style="padding:12px 20px">Gap ID</th>
+                  <th style="padding:12px 20px">Missing Prompt ID</th>
+                  <th style="padding:12px 20px">Title</th>
+                  <th style="padding:12px 20px">Category</th>
+                  <th style="padding:12px 20px">Severity</th>
+                  <th style="padding:12px 20px">Status</th>
+                </tr>
+              </thead>
+              <tbody id="pb-gaps-table-body">
+                <tr><td colspan="6" style="padding:20px;text-align:center"><div class="spinner"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Generated Prompts -->
+      <div class="pb-subpage" id="pb-subpage-generated" style="display:none">
+        <div class="card">
+          <div class="card-header">✨ Auto-Remediated Prompt Templates</div>
+          <div style="padding:20px" id="pb-generated-list">
+            <div class="spinner"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Brain Schema -->
+      <div class="pb-subpage" id="pb-subpage-schema" style="display:none">
+        <div class="card" style="padding:20px">
+          <div style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--accent)">Unified Knowledge Graph Relationships</div>
+          <pre id="pb-schema-json" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;color:#22d3a5;font-family:'JetBrains Mono',monospace;font-size:12px;overflow:auto;max-height:500px"></pre>
+        </div>
+      </div>
+
+      <!-- 5. Task Routing Simulator -->
+      <div class="pb-subpage" id="pb-subpage-router" style="display:none">
+        <div class="card" style="padding:20px">
+          <div style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--accent)">Task-to-Prompt Router Recommendation</div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div>
+              <label style="font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:600;display:block;margin-bottom:6px">Task Query / Request Description</label>
+              <textarea id="pb-router-query" placeholder="Enter task details (e.g. Audit AWS database network rules, or Build a secure full-stack billing API...)" style="width:100%;height:100px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;color:#fff;outline:none;font-size:13px;font-family:inherit;resize:vertical"></textarea>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+              <div>
+                <label style="font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:600;display:block;margin-bottom:6px">Target Industry Sector</label>
+                <select id="pb-router-industry" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;color:#fff;outline:none;font-size:13px">
+                  <option value="">All Sectors</option>
+                  <option value="Federal Civilian">Federal Civilian</option>
+                  <option value="Healthcare">Healthcare</option>
+                  <option value="Financial Services">Financial Services</option>
+                  <option value="Manufacturing / OT">Manufacturing / OT</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:600;display:block;margin-bottom:6px">Target Framework Compliance</label>
+                <select id="pb-router-framework" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;color:#fff;outline:none;font-size:13px">
+                  <option value="">All Frameworks</option>
+                  <option value="NIST SP 800-53 Rev. 5">NIST SP 800-53 Rev. 5</option>
+                  <option value="NIST CSF 2.0">NIST CSF 2.0</option>
+                  <option value="FedRAMP">FedRAMP</option>
+                  <option value="DoD Zero Trust">DoD Zero Trust</option>
+                </select>
+              </div>
+            </div>
+            <button class="refresh-btn" onclick="simulatePbRoute()" style="background:var(--accent);color:#fff;font-weight:600;padding:12px">Plan Agent Routing Chain</button>
+          </div>
+          <div id="pb-router-results" style="margin-top:20px"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== EVIDENCEBRAIN ===== -->
+    <div class="page" id="page-evidencebrain">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Evidence Brain Cockpit</div>
+          <div class="page-sub">Ingest, search, index, and validate real repository compliance evidence</div>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="refresh-btn" onclick="triggerInjest()" style="background:var(--accent);color:#fff">⚡ Run Ingestion Crawler</button>
+          <button class="refresh-btn" onclick="apiExportEvidenceBrain()" style="background:var(--green);color:#111;font-weight:700">📥 Export Compliance Bundle</button>
+          <button class="refresh-btn" onclick="loadEvidenceBrain()">↻ Refresh</button>
+        </div>
+      </div>
+
+      <!-- Ingestion Status Banner -->
+      <div id="eb-ingestion-status-banner" style="display:none;margin-bottom:20px;padding:12px 16px;border-radius:var(--radius);font-size:13px;font-weight:500"></div>
+
+      <!-- Overview Cards -->
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Ingested Evidence Chunks</div>
+          <div class="stat-value accent" id="eb-stat-chunks">—</div>
+          <div class="stat-hint">Parsed from markdown/JSON artifacts</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Resolved Gaps</div>
+          <div class="stat-value pass" id="eb-stat-resolved-gaps">—</div>
+          <div class="stat-hint">Valid evidence mapped (trust &gt;= 80)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Remaining Open Gaps</div>
+          <div class="stat-value fail" id="eb-stat-open-gaps">—</div>
+          <div class="stat-hint">Deficiencies remaining in POA&M</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Average Trust Score</div>
+          <div class="stat-value warn" id="eb-stat-avg-trust">—</div>
+          <div class="stat-hint">Based on author, sign-off, and type</div>
+        </div>
+      </div>
+
+      <!-- Compliance Notice Banner -->
+      <div style="background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.2);border-radius:var(--radius);padding:16px;margin-bottom:24px;display:flex;align-items:center;gap:12px">
+        <span style="font-size:24px">⚠️</span>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--yellow);text-transform:uppercase;letter-spacing:0.05em">Compliance Notice & Status Boundary</div>
+          <div style="font-size:13px;color:var(--text);margin-top:2px;font-weight:500">
+            <strong>ATO-SUPPORTING EVIDENCE PACKAGE: READY FOR REVIEW</strong>. Actual ATO has not been granted. No authorization claim is being made.
+          </div>
+        </div>
+      </div>
+
+      <!-- Sub-tabs -->
+      <div style="display:flex;gap:8px;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:10px">
+        <button class="refresh-btn" id="eb-tab-btn-query" onclick="switchEbTab('query')" style="background:var(--accent);color:#fff">Vector Search Index</button>
+        <button class="refresh-btn" id="eb-tab-btn-graph" onclick="switchEbTab('graph')">Knowledge Graph Runtime</button>
+        <button class="refresh-btn" id="eb-tab-btn-closures" onclick="switchEbTab('closures')">POA&M Closure Auditor</button>
+      </div>
+
+      <!-- Sub-page: 1. Vector Search Query -->
+      <div class="eb-subpage active" id="eb-subpage-query">
+        <div class="card" style="padding:16px;margin-bottom:16px;display:flex;gap:12px;align-items:center">
+          <input type="text" id="eb-query-input" placeholder="Search compliance evidence (e.g. Continuous Monitoring, trust scoring, Git commits)..." style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 16px;color:#fff;outline:none;font-size:13px" onkeydown="if(event.key==='Enter') searchEvidence()"/>
+          <select id="eb-query-trust" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;color:#fff;outline:none;font-size:13px;cursor:pointer">
+            <option value="0">Min Trust: All</option>
+            <option value="75">Min Trust: 75</option>
+            <option value="80">Min Trust: 80 (High)</option>
+            <option value="90">Min Trust: 90 (Certified)</option>
+          </select>
+          <button class="refresh-btn" onclick="searchEvidence()" style="background:var(--accent);color:#fff">Search</button>
+        </div>
+        <div id="eb-query-results" style="display:flex;flex-direction:column;gap:16px">
+          <div style="text-align:center;padding:40px;color:var(--muted)">Enter a query and click search to crawl the index.</div>
+        </div>
+      </div>
+
+      <!-- Sub-page: 2. Knowledge Graph Runtime -->
+      <div class="eb-subpage" id="eb-subpage-graph" style="display:none">
+        <div class="card" style="padding:20px">
+          <div style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--accent)">Semantic Edge Links & Node Connections</div>
+          <div style="max-height:500px;overflow-y:auto;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px" id="eb-graph-container">
+            <div class="spinner"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sub-page: 3. POA&M Closures -->
+      <div class="eb-subpage" id="eb-subpage-closures" style="display:none">
+        <div class="card">
+          <div class="card-header">📋 Gap Closure Validation Dashboard</div>
+          <div style="overflow-x:auto">
+            <table class="table" style="width:100%;border-collapse:collapse;text-align:left">
+              <thead>
+                <tr style="border-bottom:1px solid var(--border);color:var(--muted)">
+                  <th style="padding:12px 20px">Gap ID</th>
+                  <th style="padding:12px 20px">Missing ID</th>
+                  <th style="padding:12px 20px">Title</th>
+                  <th style="padding:12px 20px">Audit Status</th>
+                  <th style="padding:12px 20px">Mapped Evidence Node</th>
+                </tr>
+              </thead>
+              <tbody id="eb-closures-table-body">
+                <tr><td colspan="5" style="padding:20px;text-align:center"><div class="spinner"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PROMPTQA ===== -->
+    <div class="page" id="page-promptqa">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Prompt QA Forge</div>
+          <div class="page-sub">Evaluate, score, regression-test, and continuously improve prompt agent definitions</div>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="refresh-btn" onclick="triggerQaRun()" style="background:var(--accent);color:#fff">⚡ Run Prompt QA Sweep</button>
+          <button class="refresh-btn" onclick="triggerRouteEval()" style="background:var(--yellow);color:#111">🔍 Run Routing Eval</button>
+          <button class="refresh-btn" onclick="apiExportPromptqa()" style="background:var(--bg3);border:1px solid var(--border)">📥 Export QA Bundle</button>
+        </div>
+      </div>
+
+      <!-- Action Status Banner -->
+      <div id="qa-status-banner" style="display:none;margin-bottom:20px;padding:12px 16px;border-radius:var(--radius);font-size:13px;font-weight:500"></div>
+
+      <!-- Summary Cards -->
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Prompts Evaluated</div>
+          <div class="stat-value accent" id="qa-stat-evaluated">—</div>
+          <div class="stat-hint">Original and generated definitions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Average Prompt Score</div>
+          <div class="stat-value pass" id="qa-stat-avg-score">—</div>
+          <div class="stat-hint">Across 21 custom dimensions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Release-Grade Prompts (&ge;85)</div>
+          <div class="stat-value pass" id="qa-stat-release-grade">—</div>
+          <div class="stat-hint">Ready for production routing</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Prompts Needing Rewrite (&lt;85)</div>
+          <div class="stat-value fail" id="qa-stat-needing-rewrite">—</div>
+          <div class="stat-hint">Below scoring gate threshold</div>
+        </div>
+      </div>
+
+      <div class="stat-grid" style="margin-top:-10px">
+        <div class="stat-card">
+          <div class="stat-label">Critical Prompt Weaknesses</div>
+          <div class="stat-value fail" id="qa-stat-weaknesses">—</div>
+          <div class="stat-hint">Gaps in safety, fail-closed, etc.</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Pending Rewrite Approvals</div>
+          <div class="stat-value warn" id="qa-stat-pending-approvals">—</div>
+          <div class="stat-hint">Candidates in review queue</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Routing Evaluation Score</div>
+          <div class="stat-value info" id="qa-stat-routing-score">—</div>
+          <div class="stat-hint">Top-5 routing precision test rate</div>
+        </div>
+      </div>
+
+      <!-- Compliance Notice Banner -->
+      <div style="background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.2);border-radius:var(--radius);padding:16px;margin-bottom:24px;display:flex;align-items:center;gap:12px">
+        <span style="font-size:24px">ℹ️</span>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.05em">Prompt QA Notice</div>
+          <div style="font-size:13px;color:var(--text);margin-top:2px;font-weight:500">
+            PromptQA provides prompt quality, regression, routing, and improvement evidence. It does not prove full compliance, eliminate risk, or grant ATO. Actual authorization requires review and approval by the appropriate authorizing authority.
+          </div>
+        </div>
+      </div>
+
+      <!-- Sub-tabs -->
+      <div style="display:flex;gap:8px;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:10px">
+        <button class="refresh-btn" id="qa-tab-btn-scores" onclick="switchQaTab('scores')" style="background:var(--accent);color:#fff">Quality Scores</button>
+        <button class="refresh-btn" id="qa-tab-btn-weaknesses" onclick="switchQaTab('weaknesses')">Weakness Register</button>
+        <button class="refresh-btn" id="qa-tab-btn-candidates" onclick="switchQaTab('candidates')">Rewrite Candidates</button>
+        <button class="refresh-btn" id="qa-tab-btn-routing" onclick="switchQaTab('routing')">Routing Evaluation</button>
+      </div>
+
+      <!-- Sub-page: 1. Quality Scores -->
+      <div class="qa-subpage active" id="qa-subpage-scores">
+        <div class="card">
+          <div class="card-header">📊 Prompt Registry Score Breakdown</div>
+          <div style="padding:16px;display:flex;gap:12px;align-items:center;border-bottom:1px solid var(--border)">
+            <input type="text" id="qa-scores-filter" placeholder="Filter by prompt ID or category..." style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;color:#fff;outline:none;font-size:13px;width:300px" oninput="filterQaScores()"/>
+            <select id="qa-scores-band-filter" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px;color:#fff;outline:none;font-size:13px;cursor:pointer" onchange="filterQaScores()">
+              <option value="ALL">All Bands</option>
+              <option value="Release Grade">Release Grade (95-100)</option>
+              <option value="Strong">Strong (85-94)</option>
+              <option value="Acceptable">Acceptable (70-84)</option>
+              <option value="Needs Improvement">Needs Improvement (&lt;70)</option>
+            </select>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="table" style="width:100%;border-collapse:collapse;text-align:left">
+              <thead>
+                <tr style="border-bottom:1px solid var(--border);color:var(--muted)">
+                  <th style="padding:12px 20px">Prompt ID</th>
+                  <th style="padding:12px 20px">Category</th>
+                  <th style="padding:12px 20px">Score</th>
+                  <th style="padding:12px 20px">Band</th>
+                  <th style="padding:12px 20px">Regression Pass</th>
+                  <th style="padding:12px 20px;text-align:right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="qa-scores-table-body">
+                <tr><td colspan="6" style="padding:20px;text-align:center"><div class="spinner"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sub-page: 2. Weaknesses -->
+      <div class="qa-subpage" id="qa-subpage-weaknesses" style="display:none">
+        <div class="card">
+          <div class="card-header">⚠️ Detected Prompt Gaps & Weaknesses</div>
+          <div style="overflow-x:auto">
+            <table class="table" style="width:100%;border-collapse:collapse;text-align:left">
+              <thead>
+                <tr style="border-bottom:1px solid var(--border);color:var(--muted)">
+                  <th style="padding:12px 20px">Prompt ID</th>
+                  <th style="padding:12px 20px">Weakness Count</th>
+                  <th style="padding:12px 20px">Detected Deficiencies</th>
+                </tr>
+              </thead>
+              <tbody id="qa-weaknesses-table-body">
+                <tr><td colspan="3" style="padding:20px;text-align:center"><div class="spinner"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sub-page: 3. Rewrite Candidates -->
+      <div class="qa-subpage" id="qa-subpage-candidates" style="display:none">
+        <div class="card">
+          <div class="card-header">🛠️ Versioned Rewrite Candidates Queue</div>
+          <div style="overflow-x:auto">
+            <table class="table" style="width:100%;border-collapse:collapse;text-align:left">
+              <thead>
+                <tr style="border-bottom:1px solid var(--border);color:var(--muted)">
+                  <th style="padding:12px 20px">Original ID</th>
+                  <th style="padding:12px 20px">Candidate ID</th>
+                  <th style="padding:12px 20px">Current Score</th>
+                  <th style="padding:12px 20px">Target Score</th>
+                  <th style="padding:12px 20px">Audit Status</th>
+                  <th style="padding:12px 20px;text-align:right">Approval Gate</th>
+                </tr>
+              </thead>
+              <tbody id="qa-candidates-table-body">
+                <tr><td colspan="6" style="padding:20px;text-align:center"><div class="spinner"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sub-page: 4. Routing Evaluation -->
+      <div class="qa-subpage" id="qa-subpage-routing" style="display:none">
+        <div class="card">
+          <div class="card-header">🔍 Task Routing Verification Log</div>
+          <div style="padding:20px" id="qa-routing-container">
+            <div class="spinner"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
   </main>
 </div>
 
@@ -805,7 +1571,7 @@ function showPage(name) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
   document.getElementById('nav-' + name).classList.add('active');
-  const loaders = { overview: loadOverview, runs: loadRuns, rcs: loadRCs, artifacts: loadArtifacts, git: loadGit };
+  const loaders = { overview: loadOverview, runs: loadRuns, rcs: loadRCs, artifacts: loadArtifacts, git: loadGit, promptbrain: loadPromptBrain, evidencebrain: loadEvidenceBrain, promptqa: loadPromptQa };
   if (loaders[name]) loaders[name]();
 }
 
@@ -1094,6 +1860,677 @@ function closeDetail(event) {
   }
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetail(null); });
+
+// ---- Prompt Brain ----
+let allPrompts = [];
+
+async function loadPromptBrain() {
+  try {
+    const statusData = await fetchJSON('/api/v1/promptbrain/status');
+    document.getElementById('pb-stat-total').textContent = statusData.total_revised || '—';
+    document.getElementById('pb-stat-gaps').textContent = statusData.total_gaps || '0';
+    document.getElementById('pb-stat-status').textContent = statusData.status || 'READY';
+
+    allPrompts = await fetchJSON('/api/v1/promptbrain/revised-library');
+    
+    const catSelect = document.getElementById('pb-filter-category');
+    const categories = [...new Set(allPrompts.map(p => p.category))].sort();
+    catSelect.innerHTML = '<option value="">All Categories</option>' + 
+      categories.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+
+    filterPrompts();
+
+    const gapsData = await fetchJSON('/api/v1/promptbrain/gaps');
+    const gapsBody = document.getElementById('pb-gaps-table-body');
+    if (!gapsData.length) {
+      gapsBody.innerHTML = '<tr><td colspan="6" style="padding:20px;text-align:center;color:var(--green)">No gaps identified. System has 100% prompt coverage.</td></tr>';
+    } else {
+      gapsBody.innerHTML = gapsData.map(g => `
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:12px 20px;font-family:'JetBrains Mono',monospace">${g.gap_id}</td>
+          <td style="padding:12px 20px;font-family:'JetBrains Mono',monospace">${g.missing_prompt_id}</td>
+          <td style="padding:12px 20px">${escapeHtml(g.missing_title)}</td>
+          <td style="padding:12px 20px">${escapeHtml(g.category)}</td>
+          <td style="padding:12px 20px"><span class="badge ${g.severity.toLowerCase() === 'critical' ? 'fail' : 'warn'}">${g.severity}</span></td>
+          <td style="padding:12px 20px;color:var(--yellow)">${g.remediation_status}</td>
+        </tr>
+      `).join('');
+    }
+
+    const genData = await fetchJSON('/api/v1/promptbrain/generated');
+    const genList = document.getElementById('pb-generated-list');
+    if (!genData.length) {
+      genList.innerHTML = '<div style="color:var(--muted)">No programmatically generated templates.</div>';
+    } else {
+      genList.innerHTML = genData.map(gp => `
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;margin-bottom:16px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <span style="font-family:'JetBrains Mono',monospace;color:var(--accent);font-weight:600">${gp.id} — ${escapeHtml(gp.title)}</span>
+            <span class="badge pass">${escapeHtml(gp.category)}</span>
+          </div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:10px"><strong>Outputs:</strong> ${escapeHtml(gp.outputs)}</div>
+          <button class="refresh-btn" onclick="showPromptBody('${gp.id}')" style="padding:4px 8px;font-size:11px">Show Full Template</button>
+        </div>
+      `).join('');
+    }
+
+    const schemaData = await fetchJSON('/api/v1/promptbrain/brain-schema');
+    document.getElementById('pb-schema-json').textContent = JSON.stringify(schemaData, null, 2);
+
+  } catch(e) {
+    console.error(e);
+  }
+}
+
+function switchPbTab(tabName) {
+  document.querySelectorAll('.pb-subpage').forEach(p => p.style.display = 'none');
+  document.getElementById('pb-subpage-' + tabName).style.display = 'block';
+  
+  document.querySelectorAll('[id^="pb-tab-btn-"]').forEach(btn => {
+    btn.style.background = 'var(--glass-b)';
+    btn.style.color = 'var(--text)';
+  });
+  document.getElementById('pb-tab-btn-' + tabName).style.background = 'var(--accent)';
+  document.getElementById('pb-tab-btn-' + tabName).style.color = '#fff';
+}
+
+function filterPrompts() {
+  const query = document.getElementById('pb-search-input').value.toLowerCase();
+  const category = document.getElementById('pb-filter-category').value;
+  const tbody = document.getElementById('pb-registry-table-body');
+
+  const filtered = allPrompts.filter(p => {
+    const matchesQuery = p.id.toLowerCase().includes(query) || 
+                         p.title.toLowerCase().includes(query) || 
+                         p.mission.toLowerCase().includes(query) || 
+                         (p.industry || '').toLowerCase().includes(query);
+    const matchesCategory = !category || p.category === category;
+    return matchesQuery && matchesCategory;
+  });
+
+  if (!filtered.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="padding:20px;text-align:center;color:var(--muted)">No matching prompts found.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(p => `
+    <tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:12px 20px;font-family:'JetBrains Mono',monospace">${p.id}</td>
+      <td style="padding:12px 20px;font-weight:500">${escapeHtml(p.title)}</td>
+      <td style="padding:12px 20px"><span class="badge muted">${escapeHtml(p.category)}</span></td>
+      <td style="padding:12px 20px;font-size:12px;color:var(--muted)">${escapeHtml(p.industry || 'All Industries')}</td>
+      <td style="padding:12px 20px;font-size:11px;color:var(--accent)">${escapeHtml((p.frameworks || []).join(', ') || 'NIST CSF 2.0')}</td>
+      <td style="padding:12px 20px">
+        <button class="refresh-btn" onclick="showPromptBody('${p.id}')" style="padding:4px 8px;font-size:11px">View</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+async function showPromptBody(pId) {
+  const p = allPrompts.find(x => x.id === pId);
+  if (!p) return;
+  document.getElementById('detail-overlay').classList.add('open');
+  const content = document.getElementById('detail-content');
+  content.innerHTML = `
+    <div class="detail-title">🧠 ${p.id} — ${escapeHtml(p.title)}</div>
+    <div style="margin:10px 0;display:flex;gap:10px">
+      <span class="badge pass">Category: ${escapeHtml(p.category)}</span>
+      <span class="badge warn">Industry: ${escapeHtml(p.industry || 'All')}</span>
+      <span class="badge info">Quality: ${p.qualityScore}%</span>
+    </div>
+    <div class="mono" style="font-size:12px;color:var(--muted);margin-bottom:16px"><strong>Mission:</strong> ${escapeHtml(p.mission)}</div>
+    <div class="mono" style="font-size:12px;color:var(--muted);margin-bottom:16px"><strong>Expected Outputs:</strong> ${escapeHtml(p.outputs)}</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:6px">PROMPT TEMPLATE:</div>
+    <pre class="artifact-content" style="white-space:pre-wrap;font-size:12px;background:var(--bg3);padding:12px;border-radius:var(--radius-sm);border:1px solid var(--border)">${escapeHtml(p.prompt)}</pre>
+  `;
+}
+
+async function simulatePbRoute() {
+  const query = document.getElementById('pb-router-query').value;
+  const industry = document.getElementById('pb-router-industry').value;
+  const framework = document.getElementById('pb-router-framework').value;
+  const resultsDiv = document.getElementById('pb-router-results');
+
+  if (!query) {
+    resultsDiv.innerHTML = '<div style="color:var(--red)">Please enter a task description query.</div>';
+    return;
+  }
+
+  resultsDiv.innerHTML = '<div class="spinner"></div>';
+
+  try {
+    const res = await fetch('/api/v1/promptbrain/route', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ task_description: query, industry, framework })
+    });
+    const data = await res.json();
+    
+    let recsHtml = '';
+    if (data.status === 'FAIL_CLOSED') {
+      recsHtml = `<div style="background:rgba(244,63,94,0.1);border:1px solid var(--red);border-radius:var(--radius-sm);padding:12px;color:var(--red);margin-bottom:12px">
+        <strong>Execution Status: FAIL_CLOSED</strong><br/>
+        Triggers Blocked: ${data.fail_closed_triggers.join(', ')}
+      </div>`;
+    } else {
+      recsHtml = `
+        <div style="margin-bottom:12px">
+          <strong>Risk Level:</strong> <span class="badge ${data.risk_level === 'HIGH' ? 'fail' : 'pass'}">${data.risk_level}</span> | 
+          <strong>Human Approval:</strong> <span class="badge ${data.human_approval_required ? 'warn' : 'muted'}">${data.human_approval_required ? 'REQUIRED' : 'NO'}</span>
+        </div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px">Recommended Agent Prompts:</div>
+        ${data.recommendations.map(r => `
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <span style="font-family:'JetBrains Mono',monospace;color:var(--accent);font-weight:600">${r.id}</span> — <strong>${escapeHtml(r.title)}</strong>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px">Relevance Match: ${r.relevance_score} | Category: ${escapeHtml(r.category)}</div>
+            </div>
+            <button class="refresh-btn" onclick="showPromptBody('${r.id}')" style="padding:4px 8px;font-size:11px">Load Prompt</button>
+          </div>
+        `).join('')}
+      `;
+    }
+    resultsDiv.innerHTML = recsHtml;
+  } catch(e) {
+    resultsDiv.innerHTML = `<div style="color:var(--red)">Routing Simulation failed: ${e.message}</div>`;
+  }
+}
+
+function apiExportPromptbrain() {
+  window.location.href = '/api/v1/promptbrain/export';
+}
+
+// ---- Prompt QA Forge ----
+let currentScores = {};
+
+async function loadPromptQa() {
+  try {
+    const statusRes = await fetchJSON('/api/v1/promptqa/status');
+    document.getElementById('qa-stat-evaluated').textContent = statusRes.totalPromptsEvaluated || '0';
+    document.getElementById('qa-stat-avg-score').textContent = (statusRes.averagePromptScore || '0') + '%';
+    document.getElementById('qa-stat-release-grade').textContent = statusRes.releaseGradePrompts || '0';
+    document.getElementById('qa-stat-needing-rewrite').textContent = statusRes.pendingRewriteCandidates || '0';
+    document.getElementById('qa-stat-weaknesses').textContent = statusRes.criticalPromptWeaknesses || '0';
+    document.getElementById('qa-stat-pending-approvals').textContent = statusRes.pendingRewriteCandidates || '0';
+    document.getElementById('qa-stat-routing-score').textContent = (statusRes.routingEvalScore || '100') + '%';
+
+    switchQaTab('scores');
+
+    currentScores = await fetchJSON('/api/v1/promptqa/scores');
+    renderScoresTable(currentScores);
+
+    const weaknesses = await fetchJSON('/api/v1/promptqa/weaknesses');
+    const wBody = document.getElementById('qa-weaknesses-table-body');
+    if (!Object.keys(weaknesses).length) {
+      wBody.innerHTML = '<tr><td colspan="3" style="padding:20px;text-align:center;color:var(--muted)">No weaknesses detected.</td></tr>';
+    } else {
+      wBody.innerHTML = Object.entries(weaknesses).map(([pId, list]) => `
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:12px 20px;font-family:monospace;font-weight:600">${pId}</td>
+          <td style="padding:12px 20px"><span class="badge ${list.length > 0 ? 'fail' : 'pass'}">${list.length}</span></td>
+          <td style="padding:12px 20px">${list.map(w => `<span class="badge warn" style="margin-right:4px">${w}</span>`).join('') || '<span style="color:var(--green)">None</span>'}</td>
+        </tr>
+      `).join('');
+    }
+
+    const candidates = await fetchJSON('/api/v1/promptqa/rewrite-candidates');
+    const queue = await fetchJSON('/api/v1/promptqa/approval-queue');
+    const cBody = document.getElementById('qa-candidates-table-body');
+    if (!Object.keys(candidates).length) {
+      cBody.innerHTML = '<tr><td colspan="6" style="padding:20px;text-align:center;color:var(--muted)">No rewrite candidates in queue.</td></tr>';
+    } else {
+      cBody.innerHTML = Object.entries(candidates).map(([pId, c]) => {
+        const item = queue[pId] || {};
+        const isApproved = item.approvalStatus === 'approved';
+        return `
+          <tr style="border-bottom:1px solid var(--border)">
+            <td style="padding:12px 20px;font-family:monospace">${pId}</td>
+            <td style="padding:12px 20px;font-family:monospace">${c.candidateId}</td>
+            <td style="padding:12px 20px"><span class="badge fail">${c.beforeScore}%</span></td>
+            <td style="padding:12px 20px"><span class="badge pass">${c.afterScoreEstimate}%</span></td>
+            <td style="padding:12px 20px"><span class="badge ${isApproved ? 'pass' : 'warn'}">${item.approvalStatus || 'pending_review'}</span></td>
+            <td style="padding:12px 20px;text-align:right">
+              ${isApproved 
+                ? '<span style="color:var(--green);font-size:12px;font-weight:600">✓ Approved & Active</span>' 
+                : `<button class="refresh-btn" onclick="approveCandidate('${pId}')" style="background:var(--green);color:#111;padding:4px 10px;font-size:11px;font-weight:700">Approve Rewrite</button>`
+              }
+              <button class="refresh-btn" onclick="inspectRewrite('${pId}')" style="padding:4px 8px;font-size:11px;margin-left:4px">Inspect</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    const routing = await fetchJSON('/api/v1/promptqa/routing-eval');
+    const rContainer = document.getElementById('qa-routing-container');
+    if (!routing || !routing.eval_details) {
+      rContainer.innerHTML = '<div style="color:var(--muted)">Run Routing Evaluation to verify model/task routing lane matches.</div>';
+    } else {
+      rContainer.innerHTML = `
+        <div style="font-weight:600;margin-bottom:12px;color:var(--green)">Routing Precision Success Rate: ${routing.routing_eval_score}%</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          ${routing.eval_details.map(d => `
+            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                <strong style="font-size:13px">${escapeHtml(d.query)}</strong>
+                <span class="badge ${d.passed ? 'pass' : 'fail'}">${d.passed ? 'Match Pass' : 'Match Fail'}</span>
+              </div>
+              <div style="font-size:11px;color:var(--muted)">
+                Expected Prompt: <span style="font-family:monospace;color:var(--accent)">${d.expected_prompt_id}</span><br/>
+                Top Candidates: ${d.top_recommendations.map(r => `<span style="font-family:monospace;margin-right:6px">${r}</span>`).join(', ')}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+  } catch(e) {
+    console.error(e);
+  }
+}
+
+function renderScoresTable(scores) {
+  const sBody = document.getElementById('qa-scores-table-body');
+  sBody.innerHTML = Object.entries(scores).map(([pId, s]) => {
+    const isCritical = pId.startsWith('BRAIN-') || pId.startsWith('PROMPT-') || pId.startsWith('GAP-') || pId.startsWith('SWARM-') || pId.startsWith('GOVFRAME-');
+    const threshold = isCritical ? 90 : 85;
+    const isUnder = s.overall_score < threshold;
+    return `
+      <tr class="qa-score-row" data-id="${pId}" data-band="${s.band}" style="border-bottom:1px solid var(--border)">
+        <td style="padding:12px 20px;font-family:monospace;font-weight:600">${pId}</td>
+        <td style="padding:12px 20px">${pId.split('-')[0]}</td>
+        <td style="padding:12px 20px"><span style="font-weight:700;color:${isUnder ? 'var(--red)' : 'var(--green)'}">${s.overall_score}%</span></td>
+        <td style="padding:12px 20px"><span class="badge ${s.band === 'Release Grade' ? 'pass' : (s.band === 'Strong' ? 'pass' : (s.band === 'Acceptable' ? 'info' : 'fail'))}">${s.band}</span></td>
+        <td style="padding:12px 20px"><span class="badge pass">PASS</span></td>
+        <td style="padding:12px 20px;text-align:right">
+          <button class="refresh-btn" onclick="inspectScores('${pId}')" style="padding:4px 8px;font-size:11px">Breakdown</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function filterQaScores() {
+  const query = document.getElementById('qa-scores-filter').value.toLowerCase();
+  const band = document.getElementById('qa-scores-band-filter').value;
+  
+  document.querySelectorAll('.qa-score-row').forEach(row => {
+    const id = row.getAttribute('data-id').toLowerCase();
+    const rowBand = row.getAttribute('data-band');
+    
+    const matchesQuery = id.includes(query);
+    const matchesBand = (band === 'ALL' || rowBand === band);
+    
+    if (matchesQuery && matchesBand) {
+      row.style.display = '';
+    } else {
+      row.style.display = 'none';
+    }
+  });
+}
+
+function switchQaTab(tabName) {
+  document.querySelectorAll('.qa-subpage').forEach(p => p.style.display = 'none');
+  document.getElementById('qa-subpage-' + tabName).style.display = 'block';
+
+  document.querySelectorAll('[id^="qa-tab-btn-"]').forEach(btn => {
+    btn.style.background = 'var(--glass-b)';
+    btn.style.color = 'var(--text)';
+  });
+  document.getElementById('qa-tab-btn-' + tabName).style.background = 'var(--accent)';
+  document.getElementById('qa-tab-btn-' + tabName).style.color = '#fff';
+}
+
+async function triggerQaRun() {
+  const banner = document.getElementById('qa-status-banner');
+  banner.style.display = 'block';
+  banner.style.background = 'rgba(99,102,241,0.1)';
+  banner.style.border = '1px solid var(--accent)';
+  banner.style.color = 'var(--accent)';
+  banner.textContent = 'Running Prompt QA sweep (scoring 187 active prompts across 21 dimensions)...';
+
+  try {
+    const res = await fetch('/api/v1/promptqa/run', { method: 'POST' });
+    const data = await res.json();
+    if (data.status === 'SUCCESS') {
+      banner.style.background = 'rgba(34,211,165,0.1)';
+      banner.style.border = '1px solid var(--green)';
+      banner.style.color = 'var(--green)';
+      banner.textContent = data.message;
+      loadPromptQa();
+    }
+  } catch(e) {
+    banner.style.background = 'rgba(244,63,94,0.1)';
+    banner.style.border = '1px solid var(--red)';
+    banner.style.color = 'var(--red)';
+    banner.textContent = `QA Run failed: ${e.message}`;
+  }
+}
+
+async function triggerRouteEval() {
+  const banner = document.getElementById('qa-status-banner');
+  banner.style.display = 'block';
+  banner.style.background = 'rgba(99,102,241,0.1)';
+  banner.style.border = '1px solid var(--accent)';
+  banner.style.color = 'var(--accent)';
+  banner.textContent = 'Running model routing evaluations across test cases...';
+
+  try {
+    await fetch('/api/v1/promptqa/route-eval', { method: 'POST' });
+    banner.style.background = 'rgba(34,211,165,0.1)';
+    banner.style.border = '1px solid var(--green)';
+    banner.style.color = 'var(--green)';
+    banner.textContent = 'Routing evaluation run complete!';
+    loadPromptQa();
+  } catch(e) {
+    banner.style.background = 'rgba(244,63,94,0.1)';
+    banner.style.border = '1px solid var(--red)';
+    banner.style.color = 'var(--red)';
+    banner.textContent = `Routing evaluation failed: ${e.message}`;
+  }
+}
+
+async function approveCandidate(pId) {
+  const banner = document.getElementById('qa-status-banner');
+  banner.style.display = 'block';
+  banner.textContent = `Approving and promoting candidate rewrite for ${pId}...`;
+
+  try {
+    const res = await fetch('/api/v1/promptqa/approve', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: pId })
+    });
+    const data = await res.json();
+    if (data.status === 'SUCCESS') {
+      banner.style.background = 'rgba(34,211,165,0.1)';
+      banner.style.border = '1px solid var(--green)';
+      banner.style.color = 'var(--green)';
+      banner.textContent = data.message;
+      loadPromptQa();
+    } else {
+      throw new Error(data.message);
+    }
+  } catch(e) {
+    banner.style.background = 'rgba(244,63,94,0.1)';
+    banner.style.border = '1px solid var(--red)';
+    banner.style.color = 'var(--red)';
+    banner.textContent = `Approval denied: ${e.message}`;
+  }
+}
+
+async function inspectScores(pId) {
+  document.getElementById('detail-overlay').classList.add('open');
+  const content = document.getElementById('detail-content');
+  content.innerHTML = '<div class="spinner"></div>';
+
+  try {
+    const data = currentScores[pId];
+    if (!data) throw new Error('Data not loaded');
+    
+    content.innerHTML = `
+      <div class="detail-title">📊 Prompt QA Scoring Breakdown for ${pId}</div>
+      <div style="margin:10px 0;display:flex;gap:10px">
+        <span class="badge pass">Overall Score: ${data.overall_score}%</span>
+        <span class="badge info">Scoring Band: ${data.band}</span>
+      </div>
+      <div style="max-height:400px;overflow-y:auto;margin-top:16px">
+        <table class="table" style="width:100%;border-collapse:collapse;text-align:left">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border)">
+              <th style="padding:8px">Dimension</th>
+              <th style="padding:8px">Rating Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${Object.entries(data.dimensions).map(([k, v]) => `
+              <tr style="border-bottom:1px solid var(--border)">
+                <td style="padding:8px;font-family:monospace">${k}</td>
+                <td style="padding:8px"><span style="font-weight:700;color:${v >= 4 ? 'var(--green)' : (v >= 3 ? 'var(--yellow)' : 'var(--red)')}">${v} / 5</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  } catch(e) {
+    content.innerHTML = `<div style="color:var(--red)">Failed to inspect scores: ${e.message}</div>`;
+  }
+}
+
+async function inspectRewrite(pId) {
+  document.getElementById('detail-overlay').classList.add('open');
+  const content = document.getElementById('detail-content');
+  content.innerHTML = '<div class="spinner"></div>';
+
+  try {
+    const candidates = await fetchJSON('/api/v1/promptqa/rewrite-candidates');
+    const c = candidates[pId];
+    if (!c) throw new Error('No candidate found');
+
+    content.innerHTML = `
+      <div class="detail-title">🛠️ Rewrite Candidate for ${pId}</div>
+      <div style="margin:10px 0;display:flex;gap:10px">
+        <span class="badge fail">Score Before: ${c.beforeScore}%</span>
+        <span class="badge pass">Estimated Score After: ${c.afterScoreEstimate}%</span>
+        <span class="badge info">Version: ${c.version}</span>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">
+        <strong>Reason for rewrite:</strong> ${escapeHtml(c.rewriteReason)}<br/>
+        <strong>Change Summary:</strong> ${escapeHtml(c.changeSummary)}
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:6px">REWRITTEN PROMPT CANDIDATE TEXT:</div>
+      <pre class="artifact-content" style="white-space:pre-wrap;font-size:12px;background:var(--bg3);padding:12px;border-radius:var(--radius-sm);border:1px solid var(--border);max-height:300px;overflow-y:auto">${escapeHtml(c.rewrittenPrompt)}</pre>
+    `;
+  } catch(e) {
+    content.innerHTML = `<div style="color:var(--red)">Failed to inspect rewrite: ${e.message}</div>`;
+  }
+}
+
+function apiExportPromptqa() {
+  window.location.href = '/api/v1/promptqa/export';
+}
+
+function apiExportEvidenceBrain() {
+  window.location.href = '/api/v1/brain/export';
+}
+
+// ---- Evidence Brain ----
+async function loadEvidenceBrain() {
+  try {
+    const statusRes = await fetchJSON('/api/v1/brain/validation-status');
+    const totalGaps = statusRes.total_gaps || 0;
+    const closedGaps = statusRes.closed_gaps || 0;
+    const openGaps = statusRes.open_gaps || 0;
+
+    const graphRes = await fetchJSON('/api/v1/brain/graph');
+    const nodes = graphRes.nodes || [];
+    document.getElementById('eb-stat-chunks').textContent = nodes.length;
+    document.getElementById('eb-stat-resolved-gaps').textContent = closedGaps;
+    document.getElementById('eb-stat-open-gaps').textContent = openGaps;
+
+    let sumTrust = 0;
+    nodes.forEach(n => sumTrust += n.trust_score);
+    const avgTrust = nodes.length ? (sumTrust / nodes.length).toFixed(1) : '—';
+    document.getElementById('eb-stat-avg-trust').textContent = avgTrust + '%';
+
+    switchEbTab('query');
+
+    const closuresBody = document.getElementById('eb-closures-table-body');
+    if (!statusRes.closures || !statusRes.closures.length) {
+      closuresBody.innerHTML = '<tr><td colspan="5" style="padding:20px;text-align:center;color:var(--muted)">No gaps audit available.</td></tr>';
+    } else {
+      closuresBody.innerHTML = statusRes.closures.map(c => {
+        const hasNodes = c.matching_evidence_nodes && c.matching_evidence_nodes.length > 0;
+        let evidenceText = '<span style="color:var(--muted)">No matching evidence</span>';
+        if (hasNodes) {
+          evidenceText = c.matching_evidence_nodes.map(n => `
+            <div style="font-size:11px;margin-bottom:4px">
+              <span style="font-family:monospace;color:var(--accent)">${n.node_id.split('#').pop()}</span> 
+              (${n.resolves ? 'Resolves' : 'Mentions'})
+            </div>
+          `).join('');
+        }
+        return `
+          <tr style="border-bottom:1px solid var(--border)">
+            <td style="padding:12px 20px;font-family:monospace">${c.gap_id}</td>
+            <td style="padding:12px 20px;font-family:monospace">${c.missing_prompt_id}</td>
+            <td style="padding:12px 20px">${escapeHtml(c.missing_title)}</td>
+            <td style="padding:12px 20px"><span class="badge ${c.status === 'RESOLVED' ? 'pass' : 'fail'}">${c.status}</span></td>
+            <td style="padding:12px 20px">${evidenceText}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    const graphContainer = document.getElementById('eb-graph-container');
+    if (!nodes.length) {
+      graphContainer.innerHTML = '<div style="color:var(--muted);text-align:center;padding:20px">No knowledge graph data loaded. Run Ingestion first.</div>';
+    } else {
+      const edges = graphRes.edges || [];
+      graphContainer.innerHTML = `
+        <div style="font-weight:600;margin-bottom:8px;font-size:13px;color:var(--accent)">Knowledge Graph Nodes (${nodes.length}) & Edges (${edges.length})</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div>
+            <div style="font-size:11px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Active Nodes:</div>
+            ${nodes.slice(0, 15).map(n => `
+              <div style="background:rgba(255,255,255,0.02);padding:6px 10px;border-radius:4px;margin-bottom:4px;font-size:12px;border:1px solid var(--border)">
+                <strong>[Node]</strong> <span style="font-family:monospace;color:var(--green)">${n.id.split('#').pop() || n.id}</span>
+                <div style="font-size:10px;color:var(--muted);margin-top:2px">Path: ${n.path} | Trust: ${n.trust_score}%</div>
+              </div>
+            `).join('')}
+            ${nodes.length > 15 ? `<div style="font-size:11px;color:var(--muted);padding:4px">... and ${nodes.length - 15} more nodes.</div>` : ''}
+          </div>
+          <div>
+            <div style="font-size:11px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Semantic Edges:</div>
+            ${edges.slice(0, 15).map(e => `
+              <div style="background:rgba(255,255,255,0.02);padding:6px 10px;border-radius:4px;margin-bottom:4px;font-size:12px;border:1px solid var(--border)">
+                <span style="font-family:monospace;color:var(--accent)">${e.from_node.split('#').pop() || e.from_node}</span> 
+                <span style="color:var(--yellow)">→ [${e.relationship_type}] →</span> 
+                <span style="font-family:monospace;color:var(--accent)">${e.to_node.replace('prompt-', '')}</span>
+              </div>
+            `).join('')}
+            ${edges.length > 15 ? `<div style="font-size:11px;color:var(--muted);padding:4px">... and ${edges.length - 15} more edges.</div>` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+  } catch(e) {
+    console.error(e);
+  }
+}
+
+function switchEbTab(tabName) {
+  document.querySelectorAll('.eb-subpage').forEach(p => p.style.display = 'none');
+  document.getElementById('eb-subpage-' + tabName).style.display = 'block';
+
+  document.querySelectorAll('[id^="eb-tab-btn-"]').forEach(btn => {
+    btn.style.background = 'var(--glass-b)';
+    btn.style.color = 'var(--text)';
+  });
+  document.getElementById('eb-tab-btn-' + tabName).style.background = 'var(--accent)';
+  document.getElementById('eb-tab-btn-' + tabName).style.color = '#fff';
+}
+
+async function triggerInjest() {
+  const banner = document.getElementById('eb-ingestion-status-banner');
+  banner.style.display = 'block';
+  banner.style.background = 'rgba(99,102,241,0.1)';
+  banner.style.border = '1px solid var(--accent)';
+  banner.style.color = 'var(--accent)';
+  banner.textContent = 'Crawling repository artifacts and updating SQLite evidence index...';
+  
+  try {
+    const res = await fetch('/api/v1/brain/ingest', { method: 'POST' });
+    const data = await res.json();
+    if (data.status === 'SUCCESS') {
+      banner.style.background = 'rgba(34,211,165,0.1)';
+      banner.style.border = '1px solid var(--green)';
+      banner.style.color = 'var(--green)';
+      banner.textContent = `Ingestion complete! Scanned ${data.total_files_scanned} files, ingested ${data.total_chunks_ingested} evidence chunks.`;
+      loadEvidenceBrain();
+    } else {
+      throw new Error(data.message || 'Ingestion failed');
+    }
+  } catch(e) {
+    banner.style.background = 'rgba(244,63,94,0.1)';
+    banner.style.border = '1px solid var(--red)';
+    banner.style.color = 'var(--red)';
+    banner.textContent = `Error running Ingestion Crawler: ${e.message}`;
+  }
+}
+
+async function searchEvidence() {
+  const query = document.getElementById('eb-query-input').value;
+  const trust = document.getElementById('eb-query-trust').value;
+  const resultsDiv = document.getElementById('eb-query-results');
+
+  if (!query) {
+    resultsDiv.innerHTML = '<div style="color:var(--red)">Please enter a search query.</div>';
+    return;
+  }
+
+  resultsDiv.innerHTML = '<div class="spinner"></div>';
+
+  try {
+    const res = await fetch(`/api/v1/brain/query?query=${encodeURIComponent(query)}&min_trust=${trust}`);
+    const data = await res.json();
+    
+    if (!data.length) {
+      resultsDiv.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted)">No matching evidence found. Try another query or verify ingestion.</div>';
+      return;
+    }
+
+    resultsDiv.innerHTML = data.map(r => `
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font-weight:600;font-size:13px;color:var(--green)">Relevance score: ${(r.relevance_score * 100).toFixed(1)}%</span>
+          <div style="display:flex;gap:6px">
+            <span class="badge ${r.trust_score >= 80 ? 'pass' : 'warn'}">Trust: ${r.trust_score}%</span>
+            <span class="badge info" style="font-family:monospace">${r.commit_sha.substring(0,8)}</span>
+          </div>
+        </div>
+        <div style="font-size:13px;line-height:1.5;color:var(--text);margin-bottom:10px">${escapeHtml(r.snippet)}</div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:11px;color:var(--muted)">File: <strong>${r.path}</strong> | Author: ${r.author}</div>
+          <button class="refresh-btn" onclick="showCitation('${r.id}')" style="padding:4px 8px;font-size:11px">Inspect Citations</button>
+        </div>
+      </div>
+    `).join('');
+
+  } catch(e) {
+    resultsDiv.innerHTML = `<div style="color:var(--red)">Search failed: ${e.message}</div>`;
+  }
+}
+
+async function showCitation(nodeId) {
+  document.getElementById('detail-overlay').classList.add('open');
+  const content = document.getElementById('detail-content');
+  content.innerHTML = '<div class="spinner"></div>';
+  
+  try {
+    const data = await fetchJSON(`/api/v1/brain/citations?node_id=${encodeURIComponent(nodeId)}`);
+    content.innerHTML = `
+      <div class="detail-title">🔗 Citation Provenance & Chain of Custody</div>
+      <div style="margin:10px 0;display:flex;gap:10px">
+        <span class="badge pass">Trust Score: ${data.trust_score}%</span>
+        <span class="badge info">Commit SHA: ${data.commit_sha}</span>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">
+        <strong>Source File Path:</strong> ${data.path}<br/>
+        <strong>Last Modified:</strong> ${data.timestamp}<br/>
+        <strong>Responsible Owner/Author:</strong> ${data.author}
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:6px">RAW EVIDENCE CHUNK CONTENT:</div>
+      <pre class="artifact-content" style="white-space:pre-wrap;font-size:12px;background:var(--bg3);padding:12px;border-radius:var(--radius-sm);border:1px solid var(--border)">${escapeHtml(data.content)}</pre>
+    `;
+  } catch(e) {
+    content.innerHTML = `<div style="color:var(--red)">Failed to load citations: ${e.message}</div>`;
+  }
+}
 
 // ---- Init ----
 loadOverview();

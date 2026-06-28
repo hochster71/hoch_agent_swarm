@@ -57,6 +57,22 @@ _CANONICAL_ARTIFACTS: dict[str, str] = {
     "release_packet":             "artifacts/reports/release_packet.md",
     "asset_map":                  "artifacts/research/asset_map.md",
     "security_audit_report":      "artifacts/security_reviews/security_audit_report.md",
+    "revised_master_prompt_library_json": "artifacts/promptbrain/revised_master_prompt_library.json",
+    "revised_master_prompt_library_md":   "artifacts/promptbrain/revised_master_prompt_library.md",
+    "llm_brain_schema_json":              "artifacts/promptbrain/llm_brain_schema.json",
+    "prompt_coverage_scorecard_json":     "artifacts/promptbrain/prompt_coverage_scorecard.json",
+    "gap_analysis_json":                  "artifacts/promptbrain/gap_analysis.json",
+    "brain_evidence_db":                  "data/brain_evidence.db",
+    "prompt_quality_scores_json":         "artifacts/promptqa/prompt_quality_scores.json",
+    "prompt_quality_scores_md":           "artifacts/promptqa/prompt_quality_scores.md",
+    "prompt_weakness_register_json":      "artifacts/promptqa/prompt_weakness_register.json",
+    "prompt_weakness_register_md":        "artifacts/promptqa/prompt_weakness_register.md",
+    "prompt_assertions_json":             "artifacts/promptqa/prompt_assertions.json",
+    "prompt_regression_results_json":      "artifacts/promptqa/prompt_regression_results.json",
+    "prompt_rewrite_candidates_json":      "artifacts/promptqa/prompt_rewrite_candidates.json",
+    "routing_eval_results_json":          "artifacts/promptqa/routing_eval_results.json",
+    "prompt_approval_queue_json":         "artifacts/promptqa/prompt_approval_queue.json",
+    "prompt_lineage_json":                "artifacts/promptqa/prompt_lineage.json",
 }
 
 

@@ -76,10 +76,10 @@ def parse_audit_verdict(audit_path):
     verdict_text = _extract_section_content(content, "## Verdict")
     if not verdict_text:
         return "FAILED"
-    if "COMPLIANT" in verdict_text.upper() or "PASS" in verdict_text.upper():
-        return "COMPLIANT"
-    elif "NON-COMPLIANT" in verdict_text.upper() or "FAIL" in verdict_text.upper():
+    if "NON-COMPLIANT" in verdict_text.upper() or "FAIL" in verdict_text.upper():
         return "NON-COMPLIANT"
+    elif "COMPLIANT" in verdict_text.upper() or "PASS" in verdict_text.upper():
+        return "COMPLIANT"
     return "COMPLIANT"  # Default fallback if valid
 
 def calculate_quality_score(validation_passed, audit_path, plan_path):

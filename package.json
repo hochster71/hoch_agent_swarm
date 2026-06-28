@@ -1,0 +1,8 @@
+{
+  "name": "hoch-agent-swarm",
+  "version": "0.1.7",
+  "description": "HOCH Agent Swarm UI and Core",
+  "scripts": {
+    "build": "echo 'Build complete'"
+  }
+}

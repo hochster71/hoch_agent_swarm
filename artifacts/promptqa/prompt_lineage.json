@@ -1,0 +1,2612 @@
+{
+  "AERO-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 57.1,
+      "timestamp": "2026-06-28T14:37:30.461836+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.461837+00:00"
+    }
+  ],
+  "AG-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.461869+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.461870+00:00"
+    }
+  ],
+  "AI-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 61.9,
+      "timestamp": "2026-06-28T14:37:30.461885+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.461886+00:00"
+    }
+  ],
+  "AI-002": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 61.0,
+      "timestamp": "2026-06-28T14:37:30.461901+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.461902+00:00"
+    }
+  ],
+  "AI-003": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 62.9,
+      "timestamp": "2026-06-28T14:37:30.461915+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.461916+00:00"
+    }
+  ],
+  "AIRT-016": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 75.2,
+      "timestamp": "2026-06-28T14:37:30.461934+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.461935+00:00"
+    }
+  ],
+  "ARCHSEC-008": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 73.3,
+      "timestamp": "2026-06-28T14:37:30.461956+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.461957+00:00"
+    }
+  ],
+  "AUD-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 62.9,
+      "timestamp": "2026-06-28T14:37:30.461972+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.461973+00:00"
+    }
+  ],
+  "AUD-002": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 61.9,
+      "timestamp": "2026-06-28T14:37:30.461988+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.461988+00:00"
+    }
+  ],
+  "AUD-003": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 58.1,
+      "timestamp": "2026-06-28T14:37:30.462004+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462004+00:00"
+    }
+  ],
+  "AUD-004": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 55.2,
+      "timestamp": "2026-06-28T14:37:30.462020+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462021+00:00"
+    }
+  ],
+  "AUTHZ-027": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 75.2,
+      "timestamp": "2026-06-28T14:37:30.462038+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462038+00:00"
+    }
+  ],
+  "BIZ-019": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 73.3,
+      "timestamp": "2026-06-28T14:37:30.462055+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462056+00:00"
+    }
+  ],
+  "BLUE-017": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 73.3,
+      "timestamp": "2026-06-28T14:37:30.462072+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462072+00:00"
+    }
+  ],
+  "BRAIN-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.462101+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462102+00:00"
+    }
+  ],
+  "BRAIN-002": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.462129+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462129+00:00"
+    }
+  ],
+  "BRAIN-003": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.462156+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462157+00:00"
+    }
+  ],
+  "BRAIN-004": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.462183+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462183+00:00"
+    }
+  ],
+  "BRAIN-005": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.462209+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462209+00:00"
+    }
+  ],
+  "BRAIN-006": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.462235+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462236+00:00"
+    }
+  ],
+  "BRAIN-007": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 84.8,
+      "timestamp": "2026-06-28T14:37:30.462260+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462261+00:00"
+    }
+  ],
+  "BRAIN-008": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.462287+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462288+00:00"
+    }
+  ],
+  "BRAIN-009": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 84.8,
+      "timestamp": "2026-06-28T14:37:30.462312+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462312+00:00"
+    }
+  ],
+  "BRAIN-010": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.462337+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462338+00:00"
+    }
+  ],
+  "BREAK-021": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 73.3,
+      "timestamp": "2026-06-28T14:37:30.462353+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462354+00:00"
+    }
+  ],
+  "CHAOS-024": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 73.3,
+      "timestamp": "2026-06-28T14:37:30.462370+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462371+00:00"
+    }
+  ],
+  "CHG-012": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 73.3,
+      "timestamp": "2026-06-28T14:37:30.462386+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462387+00:00"
+    }
+  ],
+  "CODE-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 59.0,
+      "timestamp": "2026-06-28T14:37:30.462402+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462408+00:00"
+    }
+  ],
+  "CODE-002": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 58.1,
+      "timestamp": "2026-06-28T14:37:30.462422+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462423+00:00"
+    }
+  ],
+  "CODE-003": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 58.1,
+      "timestamp": "2026-06-28T14:37:30.462438+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462438+00:00"
+    }
+  ],
+  "CODE-004": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 62.9,
+      "timestamp": "2026-06-28T14:37:30.462450+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462451+00:00"
+    }
+  ],
+  "CODE-005": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 58.1,
+      "timestamp": "2026-06-28T14:37:30.462465+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462465+00:00"
+    }
+  ],
+  "CONST-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.462491+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462492+00:00"
+    }
+  ],
+  "CONTRACT-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.462517+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462517+00:00"
+    }
+  ],
+  "CORR-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.462542+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462543+00:00"
+    }
+  ],
+  "COURTS-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.462569+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462569+00:00"
+    }
+  ],
+  "CRM-001": [
+    {
+      "version": 1,
+      "status": "active",
+      "score": 85.7,
+      "timestamp": "2026-06-28T14:37:30.462592+00:00"
+    }
+  ],
+  "DAST-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 58.1,
+      "timestamp": "2026-06-28T14:37:30.462613+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462613+00:00"
+    }
+  ],
+  "DAST-002": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 59.0,
+      "timestamp": "2026-06-28T14:37:30.462628+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462629+00:00"
+    }
+  ],
+  "DAST-003": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 58.1,
+      "timestamp": "2026-06-28T14:37:30.462643+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462644+00:00"
+    }
+  ],
+  "DBSEC-010": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 73.3,
+      "timestamp": "2026-06-28T14:37:30.462660+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462660+00:00"
+    }
+  ],
+  "DEV-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 63.8,
+      "timestamp": "2026-06-28T14:37:30.462675+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462676+00:00"
+    }
+  ],
+  "DEV-002": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 57.1,
+      "timestamp": "2026-06-28T14:37:30.462691+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462691+00:00"
+    }
+  ],
+  "DEV-003": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 53.3,
+      "timestamp": "2026-06-28T14:37:30.462708+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462709+00:00"
+    }
+  ],
+  "DEV-004": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 55.2,
+      "timestamp": "2026-06-28T14:37:30.462725+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462726+00:00"
+    }
+  ],
+  "DEV-005": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 57.1,
+      "timestamp": "2026-06-28T14:37:30.462740+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462740+00:00"
+    }
+  ],
+  "DEV-006": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 57.1,
+      "timestamp": "2026-06-28T14:37:30.462754+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462754+00:00"
+    }
+  ],
+  "DOD-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 61.9,
+      "timestamp": "2026-06-28T14:37:30.462769+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462769+00:00"
+    }
+  ],
+  "DOD-002": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 61.9,
+      "timestamp": "2026-06-28T14:37:30.462783+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462784+00:00"
+    }
+  ],
+  "DOD-003": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 61.0,
+      "timestamp": "2026-06-28T14:37:30.462798+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462799+00:00"
+    }
+  ],
+  "DRIFT-013": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 73.3,
+      "timestamp": "2026-06-28T14:37:30.462815+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462816+00:00"
+    }
+  ],
+  "DRQA-023": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 73.3,
+      "timestamp": "2026-06-28T14:37:30.462831+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462832+00:00"
+    }
+  ],
+  "EDU-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 61.9,
+      "timestamp": "2026-06-28T14:37:30.462846+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462846+00:00"
+    }
+  ],
+  "ELECTION-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.462873+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462874+00:00"
+    }
+  ],
+  "EMERG-001": [
+    {
+      "version": 1,
+      "status": "active",
+      "score": 85.7,
+      "timestamp": "2026-06-28T14:37:30.462898+00:00"
+    }
+  ],
+  "EN-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 62.9,
+      "timestamp": "2026-06-28T14:37:30.462915+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462915+00:00"
+    }
+  ],
+  "EN-002": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 57.1,
+      "timestamp": "2026-06-28T14:37:30.462929+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462930+00:00"
+    }
+  ],
+  "ENV-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.462956+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462956+00:00"
+    }
+  ],
+  "EXCEPT-022": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 73.3,
+      "timestamp": "2026-06-28T14:37:30.462973+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462973+00:00"
+    }
+  ],
+  "EXECRISK-030": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 73.3,
+      "timestamp": "2026-06-28T14:37:30.462990+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.462990+00:00"
+    }
+  ],
+  "FAC-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.463016+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463017+00:00"
+    }
+  ],
+  "FAR-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.463043+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463043+00:00"
+    }
+  ],
+  "FIN-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 56.2,
+      "timestamp": "2026-06-28T14:37:30.463058+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463059+00:00"
+    }
+  ],
+  "FIN-002": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 57.1,
+      "timestamp": "2026-06-28T14:37:30.463072+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463073+00:00"
+    }
+  ],
+  "FINOPS-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.463098+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463099+00:00"
+    }
+  ],
+  "FOOD-001": [
+    {
+      "version": 1,
+      "status": "active",
+      "score": 85.7,
+      "timestamp": "2026-06-28T14:37:30.463122+00:00"
+    }
+  ],
+  "GAP-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 84.8,
+      "timestamp": "2026-06-28T14:37:30.463145+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463146+00:00"
+    }
+  ],
+  "GAP-002": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 81.0,
+      "timestamp": "2026-06-28T14:37:30.463170+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463171+00:00"
+    }
+  ],
+  "GAP-003": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.463196+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463196+00:00"
+    }
+  ],
+  "GAP-004": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.463220+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463220+00:00"
+    }
+  ],
+  "GAP-005": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.463245+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463246+00:00"
+    }
+  ],
+  "GAP-006": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.463270+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463271+00:00"
+    }
+  ],
+  "GAP-007": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.463294+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463295+00:00"
+    }
+  ],
+  "GAP-008": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.463318+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463319+00:00"
+    }
+  ],
+  "GOV-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 59.0,
+      "timestamp": "2026-06-28T14:37:30.463334+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463335+00:00"
+    }
+  ],
+  "GOV-002": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 62.9,
+      "timestamp": "2026-06-28T14:37:30.463349+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463350+00:00"
+    }
+  ],
+  "GOVFRAME-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 85.7,
+      "timestamp": "2026-06-28T14:37:30.463369+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463370+00:00"
+    }
+  ],
+  "GOVFRAME-002": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 85.7,
+      "timestamp": "2026-06-28T14:37:30.463389+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463389+00:00"
+    }
+  ],
+  "GOVFRAME-003": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 85.7,
+      "timestamp": "2026-06-28T14:37:30.463408+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463409+00:00"
+    }
+  ],
+  "GOVFRAME-004": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 85.7,
+      "timestamp": "2026-06-28T14:37:30.463427+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463428+00:00"
+    }
+  ],
+  "GOVFRAME-005": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 85.7,
+      "timestamp": "2026-06-28T14:37:30.463449+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463450+00:00"
+    }
+  ],
+  "GOVFRAME-006": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.463475+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463476+00:00"
+    }
+  ],
+  "GOVFRAME-007": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.463500+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463501+00:00"
+    }
+  ],
+  "GOVFRAME-008": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.463526+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463526+00:00"
+    }
+  ],
+  "GOVFRAME-009": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.463551+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463552+00:00"
+    }
+  ],
+  "GOVFRAME-010": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.463579+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463580+00:00"
+    }
+  ],
+  "GOVFRAME-011": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.463604+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463605+00:00"
+    }
+  ],
+  "GOVFRAME-012": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.463629+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463629+00:00"
+    }
+  ],
+  "GOVFRAME-013": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 85.7,
+      "timestamp": "2026-06-28T14:37:30.463648+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463648+00:00"
+    }
+  ],
+  "GOVFRAME-014": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.463673+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463674+00:00"
+    }
+  ],
+  "GOVFRAME-015": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.463698+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463699+00:00"
+    }
+  ],
+  "GOVFRAME-016": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.463724+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463725+00:00"
+    }
+  ],
+  "GOVFRAME-017": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.463749+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463749+00:00"
+    }
+  ],
+  "GOVFRAME-018": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.463774+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463775+00:00"
+    }
+  ],
+  "GRANTS-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.463799+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463800+00:00"
+    }
+  ],
+  "HC-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 64.8,
+      "timestamp": "2026-06-28T14:37:30.463815+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463815+00:00"
+    }
+  ],
+  "HC-002": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 60.0,
+      "timestamp": "2026-06-28T14:37:30.463829+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463829+00:00"
+    }
+  ],
+  "HOSP-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.463855+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463855+00:00"
+    }
+  ],
+  "HR-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.463879+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463880+00:00"
+    }
+  ],
+  "IAM-009": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 75.2,
+      "timestamp": "2026-06-28T14:37:30.463896+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463896+00:00"
+    }
+  ],
+  "IND-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 68.6,
+      "timestamp": "2026-06-28T14:37:30.463913+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463914+00:00"
+    }
+  ],
+  "IND-002": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 65.7,
+      "timestamp": "2026-06-28T14:37:30.463933+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463934+00:00"
+    }
+  ],
+  "IND-003": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 65.7,
+      "timestamp": "2026-06-28T14:37:30.463950+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463951+00:00"
+    }
+  ],
+  "IND-004": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 65.7,
+      "timestamp": "2026-06-28T14:37:30.463967+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463968+00:00"
+    }
+  ],
+  "IND-005": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 65.7,
+      "timestamp": "2026-06-28T14:37:30.463984+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.463985+00:00"
+    }
+  ],
+  "IND-006": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 65.7,
+      "timestamp": "2026-06-28T14:37:30.464000+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464001+00:00"
+    }
+  ],
+  "IND-007": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 65.7,
+      "timestamp": "2026-06-28T14:37:30.464017+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464017+00:00"
+    }
+  ],
+  "IND-008": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 65.7,
+      "timestamp": "2026-06-28T14:37:30.464032+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464033+00:00"
+    }
+  ],
+  "IND-009": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 67.6,
+      "timestamp": "2026-06-28T14:37:30.464048+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464049+00:00"
+    }
+  ],
+  "IND-010": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 65.7,
+      "timestamp": "2026-06-28T14:37:30.464064+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464064+00:00"
+    }
+  ],
+  "IND-011": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 65.7,
+      "timestamp": "2026-06-28T14:37:30.464080+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464081+00:00"
+    }
+  ],
+  "IND-012": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 65.7,
+      "timestamp": "2026-06-28T14:37:30.464096+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464096+00:00"
+    }
+  ],
+  "IND-013": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 68.6,
+      "timestamp": "2026-06-28T14:37:30.464112+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464113+00:00"
+    }
+  ],
+  "IND-014": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 68.6,
+      "timestamp": "2026-06-28T14:37:30.464128+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464129+00:00"
+    }
+  ],
+  "IND-015": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 69.5,
+      "timestamp": "2026-06-28T14:37:30.464144+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464144+00:00"
+    }
+  ],
+  "INS-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.464170+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464171+00:00"
+    }
+  ],
+  "IR-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 58.1,
+      "timestamp": "2026-06-28T14:37:30.464185+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464185+00:00"
+    }
+  ],
+  "LEG-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 56.2,
+      "timestamp": "2026-06-28T14:37:30.464199+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464200+00:00"
+    }
+  ],
+  "LOG-011": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 73.3,
+      "timestamp": "2026-06-28T14:37:30.464216+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464216+00:00"
+    }
+  ],
+  "MEDIA-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.464241+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464242+00:00"
+    }
+  ],
+  "MFG-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 59.0,
+      "timestamp": "2026-06-28T14:37:30.464256+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464256+00:00"
+    }
+  ],
+  "MFG-002": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 61.0,
+      "timestamp": "2026-06-28T14:37:30.464270+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464270+00:00"
+    }
+  ],
+  "MIG-025": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 75.2,
+      "timestamp": "2026-06-28T14:37:30.464286+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464287+00:00"
+    }
+  ],
+  "MOB-QA-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 75.2,
+      "timestamp": "2026-06-28T14:37:30.464304+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464304+00:00"
+    }
+  ],
+  "NONPROFIT-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.464330+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464331+00:00"
+    }
+  ],
+  "OPS-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 59.0,
+      "timestamp": "2026-06-28T14:37:30.464344+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464345+00:00"
+    }
+  ],
+  "OPS-002": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 56.2,
+      "timestamp": "2026-06-28T14:37:30.464359+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464360+00:00"
+    }
+  ],
+  "OSSLIC-015": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 73.3,
+      "timestamp": "2026-06-28T14:37:30.464376+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464377+00:00"
+    }
+  ],
+  "PATCH-006": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 73.3,
+      "timestamp": "2026-06-28T14:37:30.464392+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464392+00:00"
+    }
+  ],
+  "PENTEST-007": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 73.3,
+      "timestamp": "2026-06-28T14:37:30.464407+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464408+00:00"
+    }
+  ],
+  "PMO-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.464432+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464433+00:00"
+    }
+  ],
+  "PRIV-003": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 73.3,
+      "timestamp": "2026-06-28T14:37:30.464449+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464450+00:00"
+    }
+  ],
+  "PROC-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.464475+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464475+00:00"
+    }
+  ],
+  "PROMPT-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.464501+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464502+00:00"
+    }
+  ],
+  "PROMPT-002": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.464527+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464527+00:00"
+    }
+  ],
+  "PROMPT-003": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.464553+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464553+00:00"
+    }
+  ],
+  "PROMPT-004": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.464577+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464578+00:00"
+    }
+  ],
+  "PROMPT-005": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 84.8,
+      "timestamp": "2026-06-28T14:37:30.464596+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464597+00:00"
+    }
+  ],
+  "PROMPT-006": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 84.8,
+      "timestamp": "2026-06-28T14:37:30.464620+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464621+00:00"
+    }
+  ],
+  "PROMPT-007": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.464644+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464645+00:00"
+    }
+  ],
+  "PROMPT-008": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.464669+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464670+00:00"
+    }
+  ],
+  "PROP-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 81.9,
+      "timestamp": "2026-06-28T14:37:30.464694+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464695+00:00"
+    }
+  ],
+  "PROSERV-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.464720+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464720+00:00"
+    }
+  ],
+  "PROV-014": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 75.2,
+      "timestamp": "2026-06-28T14:37:30.464736+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464737+00:00"
+    }
+  ],
+  "PUBHEALTH-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.464762+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464762+00:00"
+    }
+  ],
+  "PURPLE-018": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 73.3,
+      "timestamp": "2026-06-28T14:37:30.464777+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464778+00:00"
+    }
+  ],
+  "QA-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 64.8,
+      "timestamp": "2026-06-28T14:37:30.464794+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464795+00:00"
+    }
+  ],
+  "QA-002": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 58.1,
+      "timestamp": "2026-06-28T14:37:30.464809+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464809+00:00"
+    }
+  ],
+  "QA-003": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 64.8,
+      "timestamp": "2026-06-28T14:37:30.464825+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464826+00:00"
+    }
+  ],
+  "QA-004": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 55.2,
+      "timestamp": "2026-06-28T14:37:30.464840+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464841+00:00"
+    }
+  ],
+  "QA-005": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 58.1,
+      "timestamp": "2026-06-28T14:37:30.464857+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464858+00:00"
+    }
+  ],
+  "QA-006": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 58.1,
+      "timestamp": "2026-06-28T14:37:30.464872+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464872+00:00"
+    }
+  ],
+  "QA-007": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 53.3,
+      "timestamp": "2026-06-28T14:37:30.464887+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464888+00:00"
+    }
+  ],
+  "RATE-026": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 73.3,
+      "timestamp": "2026-06-28T14:37:30.464903+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464904+00:00"
+    }
+  ],
+  "RECORDS-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.464929+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464930+00:00"
+    }
+  ],
+  "REL-004": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 73.3,
+      "timestamp": "2026-06-28T14:37:30.464945+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464945+00:00"
+    }
+  ],
+  "RESEARCH-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.464971+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464972+00:00"
+    }
+  ],
+  "RET-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 59.0,
+      "timestamp": "2026-06-28T14:37:30.464984+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464985+00:00"
+    }
+  ],
+  "RET-002": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 57.1,
+      "timestamp": "2026-06-28T14:37:30.464998+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.464999+00:00"
+    }
+  ],
+  "SAAS-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 62.9,
+      "timestamp": "2026-06-28T14:37:30.465012+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.465012+00:00"
+    }
+  ],
+  "SAAS-002": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 56.2,
+      "timestamp": "2026-06-28T14:37:30.465026+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.465027+00:00"
+    }
+  ],
+  "SAST-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 61.0,
+      "timestamp": "2026-06-28T14:37:30.465041+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.465042+00:00"
+    }
+  ],
+  "SAST-002": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 56.2,
+      "timestamp": "2026-06-28T14:37:30.465055+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.465055+00:00"
+    }
+  ],
+  "SAST-003": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 58.1,
+      "timestamp": "2026-06-28T14:37:30.465068+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.465068+00:00"
+    }
+  ],
+  "SAST-004": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 58.1,
+      "timestamp": "2026-06-28T14:37:30.465082+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.465083+00:00"
+    }
+  ],
+  "SDLC-028": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 73.3,
+      "timestamp": "2026-06-28T14:37:30.465098+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.465099+00:00"
+    }
+  ],
+  "SLG-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 61.0,
+      "timestamp": "2026-06-28T14:37:30.465114+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.465115+00:00"
+    }
+  ],
+  "SMARTCITY-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.465140+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.465141+00:00"
+    }
+  ],
+  "SWARM-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.465166+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.465166+00:00"
+    }
+  ],
+  "SWARM-002": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.465191+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.465192+00:00"
+    }
+  ],
+  "SWARM-003": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 84.8,
+      "timestamp": "2026-06-28T14:37:30.465218+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.465219+00:00"
+    }
+  ],
+  "SWARM-004": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 84.8,
+      "timestamp": "2026-06-28T14:37:30.465242+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.465242+00:00"
+    }
+  ],
+  "SWARM-005": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.465266+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.465267+00:00"
+    }
+  ],
+  "SWARM-006": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.465293+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.465293+00:00"
+    }
+  ],
+  "SWARM-007": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.465318+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.465318+00:00"
+    }
+  ],
+  "SWARM-008": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.465342+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.465343+00:00"
+    }
+  ],
+  "SWARM-009": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.465367+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.465368+00:00"
+    }
+  ],
+  "SWARM-010": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.465392+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.465393+00:00"
+    }
+  ],
+  "SWARM-011": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.465419+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.465419+00:00"
+    }
+  ],
+  "SWARM-012": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 82.9,
+      "timestamp": "2026-06-28T14:37:30.465443+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.465444+00:00"
+    }
+  ],
+  "TEL-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 60.0,
+      "timestamp": "2026-06-28T14:37:30.465457+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.465458+00:00"
+    }
+  ],
+  "THREAT-002": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 73.3,
+      "timestamp": "2026-06-28T14:37:30.465474+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.465474+00:00"
+    }
+  ],
+  "TRAIN-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 83.8,
+      "timestamp": "2026-06-28T14:37:30.465499+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.465500+00:00"
+    }
+  ],
+  "TRN-001": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 57.1,
+      "timestamp": "2026-06-28T14:37:30.465514+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.465515+00:00"
+    }
+  ],
+  "UXSEC-020": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 75.2,
+      "timestamp": "2026-06-28T14:37:30.465530+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.465531+00:00"
+    }
+  ],
+  "VULN-005": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 73.3,
+      "timestamp": "2026-06-28T14:37:30.465547+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.465548+00:00"
+    }
+  ],
+  "XWALK-029": [
+    {
+      "version": 1,
+      "status": "superseded",
+      "score": 75.2,
+      "timestamp": "2026-06-28T14:37:30.465560+00:00"
+    },
+    {
+      "version": 2,
+      "status": "pending_review",
+      "score": 95.2,
+      "timestamp": "2026-06-28T14:37:30.465561+00:00"
+    }
+  ],
+  "TEST-HIGH": [
+    {
+      "version": 1,
+      "status": "archived"
+    },
+    {
+      "version": 2,
+      "status": "active"
+    }
+  ]
+}
