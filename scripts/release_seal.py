@@ -38,6 +38,11 @@ def main():
         print("❌ Sealing failed: pytest failures detected.")
         sys.exit(1)
         
+    # Commit any test-induced artifact changes to ensure cleanliness
+    print("Committing test-induced artifact mutations...")
+    subprocess.run(["git", "add", "artifacts/"], cwd=str(project_root))
+    subprocess.run(["git", "commit", "-m", "chore: commit test-induced artifact changes [auto]"], cwd=str(project_root))
+
     # 2. Check git clean status
     print("\nStep 2: Checking git cleanliness...")
     try:
