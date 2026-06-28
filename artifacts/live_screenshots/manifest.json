@@ -3,13 +3,13 @@
   "runtime": "docker-compose-linux",
   "tool": "playwright-chromium-linux",
   "dashboardUrl": "http://hoch-app:8086",
-  "capturedAt": "2026-06-28T21:01:10Z",
+  "capturedAt": "2026-06-28T21:35:12Z",
   "pages": [
     {
       "id": "overview",
       "file": "overview.png",
       "status": "captured",
-      "sha256": "b1ef677b880c3031eff7d30e4a9e0cc2026f19ac53bdb0ba3bc9a1474f4fe180",
+      "sha256": "443ab4b30b2a2ed72f3c93c525121074fe44cdad2277baca535a153854d180c8",
       "selectorUsed": "#nav-overview",
       "error": ""
     },
@@ -17,7 +17,7 @@
       "id": "promptbrain",
       "file": "promptbrain.png",
       "status": "captured",
-      "sha256": "97461dfeb64354f34a903d4df08dc147fa9d003b596db2ea7fc7d5191b663a9c",
+      "sha256": "b3d7a8783e138a24f81931fc0f14fdefa402602575869ea33022d6353b0fe83e",
       "selectorUsed": "#nav-promptbrain",
       "error": ""
     },
@@ -25,7 +25,7 @@
       "id": "promptqa",
       "file": "promptqa.png",
       "status": "captured",
-      "sha256": "c3bc5a45c2f8d9911f8539ae7f7aaf95250fc02966b28142e65303f649b4f94e",
+      "sha256": "7fc2505614d6534f538eb25d4f50e1c185ae1e8255c2dcb8c0c201f4f9c84a81",
       "selectorUsed": "#nav-promptqa",
       "error": ""
     },
@@ -33,7 +33,7 @@
       "id": "evidencebrain",
       "file": "evidencebrain.png",
       "status": "captured",
-      "sha256": "830522f9f582b8c18bf41e0b8f4fb7c91778f9e77a51ec5756109845ffcc2a82",
+      "sha256": "4ba9e6ffcdac357f518fdd677879267da5051f4b9c69f00c5a6c30c85493db09",
       "selectorUsed": "#nav-evidencebrain",
       "error": ""
     },
@@ -41,7 +41,7 @@
       "id": "hochtv",
       "file": "hochtv.png",
       "status": "captured",
-      "sha256": "c321586b07fa12f30134feb8b9d655691505665a7a8bd7d3aef743e07ab84050",
+      "sha256": "0f59acb046eb6c2845f2c58a055e1d3e66d5cf764f986a7644ee431c023e664b",
       "selectorUsed": "#nav-hochtv",
       "error": ""
     },
@@ -49,7 +49,7 @@
       "id": "operator",
       "file": "operator.png",
       "status": "captured",
-      "sha256": "02a6e6ee4866b59cb12fa1c2560e4bb7a29047660fdbc5e6d65368f3759492fb",
+      "sha256": "43ac818472f5ae30485d971d29911729d9df2db613c91dee6f4e931baa3b4d30",
       "selectorUsed": "#nav-operator",
       "error": ""
     }
