@@ -204,7 +204,7 @@ class TVBackend:
             return None
 
     def rewrite_hls_playlist(self, channel_id: str, playlist_text: str, base_url: str) -> str:
-        from urllib.parse import urljoin, quote
+        from urllib.parse import urljoin
         import urllib.parse
         lines = playlist_text.splitlines()
         rewritten_lines = []
@@ -223,7 +223,8 @@ class TVBackend:
                     parsed_abs = urllib.parse.urlparse(abs_url)
                     if parsed_base.query and not parsed_abs.query:
                         abs_url = abs_url + ("?" + parsed_base.query)
-                    local_url = f"/api/tv/stream/{channel_id}/asset?url={quote(abs_url)}"
+                    hex_url = abs_url.encode("utf-8").hex()
+                    local_url = f"/api/tv/stream/{channel_id}/asset?url={hex_url}"
                     new_line = new_line.replace(f'"{match}"', f'"{local_url}"').replace(f"'{match}'", f"'{local_url}'")
                 rewritten_lines.append(new_line)
             else:
@@ -232,7 +233,8 @@ class TVBackend:
                 parsed_abs = urllib.parse.urlparse(abs_url)
                 if parsed_base.query and not parsed_abs.query:
                     abs_url = abs_url + ("?" + parsed_base.query)
-                local_url = f"/api/tv/stream/{channel_id}/asset?url={quote(abs_url)}"
+                hex_url = abs_url.encode("utf-8").hex()
+                local_url = f"/api/tv/stream/{channel_id}/asset?url={hex_url}"
                 rewritten_lines.append(local_url)
                 
         return "\n".join(rewritten_lines)

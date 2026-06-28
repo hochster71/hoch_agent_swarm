@@ -78,6 +78,7 @@ _CANONICAL_ARTIFACTS: dict[str, str] = {
     "final_reviewer_packet":              "artifacts/reports/final_reviewer_packet.md",
     "evidence_traceability_matrix":       "artifacts/reports/evidence_traceability_matrix.md",
     "acceptance_signoff_package":        "artifacts/reports/acceptance_signoff_package.md",
+    "tv5_hls_proxy_docs":                 "docs/TV5_HLS_PROXY.md",
 }
 
 

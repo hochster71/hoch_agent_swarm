@@ -8,6 +8,7 @@ dependencies = [
     "crewai[tools]>=1.15.0,<2",
     "mcp",
     "flask>=3.0",
+    "flask-cors>=4.0",
 ]
 
 [project.scripts]

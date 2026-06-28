@@ -50,7 +50,23 @@ except ImportError:
     from flask import Flask, jsonify, send_file, abort
     from flask.wrappers import Response  # type: ignore
 
+from flask_cors import CORS
+
 app = Flask(__name__, static_folder=None)
+CORS(app, resources={r"/*": {"origins": "*", "methods": ["GET", "POST", "OPTIONS"], "allow_headers": ["Content-Type"]}})
+
+@app.route('/<path:path>.map')
+def serve_sourcemap(path):
+    """Return 204 No Content for missing .map files instead of 404."""
+    return '', 204
+
+@app.errorhandler(404)
+def handle_404(error):
+    """Suppress 404 errors for .map files."""
+    from flask import request
+    if request.path.endswith('.map'):
+        return '', 204
+    return error
 
 
 # ---------------------------------------------------------------------------
@@ -2035,6 +2051,7 @@ DASHBOARD_HTML = r"""<!DOCTYPE html>
             <div style="background:#000;position:relative;padding-top:56.25%">
               <video id="tv-video-player" controls autoplay style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain"></video>
             </div>
+            <div id="tv-hls-diagnostics" style="display:none;padding:10px 15px;background:rgba(224,86,86,0.15);border-bottom:1px solid rgba(224,86,86,0.3);color:var(--red);font-size:12px;font-family:monospace;white-space:pre-wrap;word-break:break-all"></div>
             <div style="padding:15px;display:flex;justify-content:space-between;align-items:center;background:var(--bg2)">
               <div id="tv-channel-title" style="font-weight:600;font-size:16px">No Channel Selected</div>
               <div id="tv-channel-stream-url" style="font-size:11px;color:var(--muted);word-break:break-all"></div>
@@ -3283,6 +3300,15 @@ async function playTVChannel(chId) {
   const title = document.getElementById('tv-channel-title');
   const urlEl = document.getElementById('tv-channel-stream-url');
   const epgContainer = document.getElementById('tv-epg-container');
+  const diagEl = document.getElementById('tv-hls-diagnostics');
+
+  if (diagEl) {
+    diagEl.style.display = 'none';
+    diagEl.textContent = '';
+  }
+
+  // Clear previous native video error listener
+  video.onerror = null;
 
   title.textContent = 'Loading...';
   urlEl.textContent = '';
@@ -3306,6 +3332,17 @@ async function playTVChannel(chId) {
       activeHls = null;
     }
 
+    // Set up video native error handling
+    video.onerror = function() {
+      const err = video.error;
+      if (err && diagEl) {
+        diagEl.style.display = 'block';
+        diagEl.textContent = `⚠️ HTML5 Video Error:
+- Code: ${err.code}
+- Message: ${err.message || 'Unknown media error'}`;
+      }
+    };
+
     if (playbackUrl.endsWith('.m3u8') || playbackUrl.includes('.m3u8')) {
       if (Hls.isSupported()) {
         activeHls = new Hls();
@@ -3316,6 +3353,37 @@ async function playTVChannel(chId) {
         });
         activeHls.on(Hls.Events.ERROR, function(event, data) {
           console.error("HLS error:", data);
+          if (diagEl) {
+            diagEl.style.display = 'block';
+            let errMsg = `⚠️ HLS Player Error:
+- Type: ${data.type}
+- Details: ${data.details}
+- Fatal: ${data.fatal}`;
+            if (data.response) {
+              errMsg += `\n- HTTP Status: ${data.response.code} (${data.response.text || 'No status text'})`;
+              if (data.response.url) {
+                errMsg += `\n- URL: ${data.response.url}`;
+              }
+            }
+            diagEl.textContent = errMsg;
+          }
+          if (data.fatal) {
+            switch (data.type) {
+              case Hls.ErrorTypes.NETWORK_ERROR:
+                if (diagEl) diagEl.textContent += "\n[System] Fatal network error. Retrying stream connection...";
+                activeHls.startLoad();
+                break;
+              case Hls.ErrorTypes.MEDIA_ERROR:
+                if (diagEl) diagEl.textContent += "\n[System] Fatal media error. Recovering player buffer...";
+                activeHls.recoverMediaError();
+                break;
+              default:
+                if (diagEl) diagEl.textContent += "\n[System] Unrecoverable error. Recreating player required.";
+                activeHls.destroy();
+                activeHls = null;
+                break;
+            }
+          }
         });
       } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
         video.src = playbackUrl;
@@ -3347,6 +3415,10 @@ async function playTVChannel(chId) {
   } catch (e) {
     title.textContent = 'Error';
     epgContainer.innerHTML = `<div style="color:var(--red)">Failed to load channel details: ${e.message}</div>`;
+    if (diagEl) {
+      diagEl.style.display = 'block';
+      diagEl.textContent = `⚠️ Channel Load Error:\n- Failed to retrieve details or playback URL: ${e.message}`;
+    }
   }
 }
 
