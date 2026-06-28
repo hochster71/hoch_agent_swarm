@@ -1,9 +1,9 @@
 # CURRENT_STATE.md — Swarm State Handoff
 
 ## Release Metadata
-- **Current Release Tag**: `v0.1.0-rc17`
-- **Latest Commit**: `6e62d51`
-- **Release Candidate Configuration**: [release_candidate.json](file:///Users/michaelhoch/hoch_agent_swarm/artifacts/release_candidates/20260628T213616/release_candidate.json)
+- **Current Release Tag**: `v0.1.0-rc18`
+- **Latest Commit**: `53c0a9f`
+- **Release Candidate Configuration**: [release_candidate.json](file:///Users/michaelhoch/hoch_agent_swarm/artifacts/release_candidates/20260628T214506/release_candidate.json)
 
 ## Test Status
 - **Host Unit/Integration Tests**: 554 / 554 automated tests passing (`PYTHONPATH=src:. uv run pytest`).
@@ -14,7 +14,7 @@
 - **Docker Daemon**: Active
 - **Running Container**: `hoch-agent-swarm-app` (healthy, running dashboard application)
 - **UI URL**: http://localhost:8086
-- **Operator Health Status**: Subsystems healthy. PromptQA average score is `73.1` (reporting degraded status as expected by design for simulation parameters).
+- **Operator Health Status**: Subsystems healthy. PromptQA average score is `73.1` (reporting baseline degraded status as expected by design).
 
 ## Playback Mode & Security Controls (HOCH TV)
 - **Playback Path**: http://localhost:8086/api/tv/stream/<channel_id>/master.m3u8
@@ -42,7 +42,7 @@ PYTHONPATH=src:. uv run pytest
 ./scripts/docker_test.sh
 
 # Seal next release candidate
-uv run python scripts/release_seal.py v0.1.0-rc18
+uv run python scripts/release_seal.py v0.1.0-rc19
 ```
 
 ## Security & Compliance Boundary Declarations
@@ -53,4 +53,4 @@ uv run python scripts/release_seal.py v0.1.0-rc18
 - **System is local-only unless explicitly configured otherwise.**
 
 ---
-*Created dynamically at the end of DRIFTSIM1 (2026-06-28).*
+*Created dynamically at the end of RESET1 (2026-06-28).*

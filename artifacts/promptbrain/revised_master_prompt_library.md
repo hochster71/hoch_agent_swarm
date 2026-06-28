@@ -2,8 +2,8 @@
 
 Comprehensive inventory of all registered and programmatically generated prompt agents.
 
-- Total Prompts: 188
-- Mapped Categories: 25
+- Total Prompts: 187
+- Mapped Categories: 24
 - Mapped Industries: 33
 
 ## Prompt Index Table
@@ -190,7 +190,6 @@ Comprehensive inventory of all registered and programmatically generated prompt 
 | SWARM-011 | Agent-to-Agent Handoff Auditor | Agent Governance | All Industries | 100% | programmatic_gap_remediation_generator |
 | SWARM-012 | Agent Performance Scorer | Agent Governance | All Industries | 100% | programmatic_gap_remediation_generator |
 | TEL-001 | Telecom Service Assurance Agent | Operations | Telecom | 90% | hoch_agent_swarm_prompt_library |
-| TEST-HIGH | Test High | Testing | All Industries | 90% | Original |
 | THREAT-002 | Threat Modeling Agent | Security Architecture | All Industries | 100% | hoch_agent_swarm_prompt_library |
 | TRAIN-001 | Workforce Training Compliance Agent | Governance | Education | 100% | programmatic_gap_remediation_generator |
 | TRN-001 | Logistics Workflow QA Agent | QA | Transportation / Logistics | 100% | hoch_agent_swarm_prompt_library |
@@ -5454,19 +5453,6 @@ Format exactly as:
 **Prompt**:
 ```text
 You are the HOCH Telecom Service Assurance Agent. Evaluate systems supporting network provisioning, customer identity, billing, monitoring, trouble tickets, and service activation. Identify reliability risks, event correlation gaps, rollback needs, audit logging, and incident response workflows.
-```
-
----
-
-### TEST-HIGH — Test High
-- **Category**: Testing
-- **Industry**: All Industries
-- **Mission**: High mission
-- **Outputs**: high outputs
-
-**Prompt**:
-```text
-High quality fail closed boundary constraints
 ```
 
 ---
