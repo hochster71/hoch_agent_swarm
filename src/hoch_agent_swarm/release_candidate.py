@@ -73,6 +73,7 @@ _CANONICAL_ARTIFACTS: dict[str, str] = {
     "routing_eval_results_json":          "artifacts/promptqa/routing_eval_results.json",
     "prompt_approval_queue_json":         "artifacts/promptqa/prompt_approval_queue.json",
     "prompt_lineage_json":                "artifacts/promptqa/prompt_lineage.json",
+    "docker_gap_analysis":                "artifacts/docker1/docker_gap_analysis.md",
 }
 
 

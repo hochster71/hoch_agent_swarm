@@ -1,0 +1,49 @@
+services:
+  hoch-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hoch-agent-swarm-app
+    environment:
+      SWARM_UI_PORT: "8086"
+      PYTHONPATH: "src:."
+      HOCH_LOCAL_ONLY: "1"
+    ports:
+      - "8086:8086"
+    volumes:
+      - ./artifacts:/app/artifacts
+      - ./data:/app/data
+      - ./docs:/app/docs
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8086/api/v1/operator/health', timeout=5).read()"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+  screenshot-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.screenshot
+    container_name: hoch-agent-swarm-screenshot-worker
+    profiles:
+      - screenshots
+    environment:
+      DASHBOARD_URL: "http://hoch-app:8086"
+    volumes:
+      - ./artifacts/live_screenshots:/app/artifacts/live_screenshots
+    depends_on:
+      hoch-app:
+        condition: service_healthy
+  test-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hoch-agent-swarm-test-runner
+    profiles:
+      - test
+    environment:
+      PYTHONPATH: "src:."
+    volumes:
+      - ./artifacts:/app/artifacts
+      - ./data:/app/data
+    command: ["uv", "run", "pytest"]
