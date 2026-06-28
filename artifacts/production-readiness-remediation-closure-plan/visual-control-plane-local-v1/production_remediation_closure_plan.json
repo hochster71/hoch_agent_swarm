@@ -1,0 +1,79 @@
+{
+  "remediation_closure_plan": {
+    "tls_transport": {
+      "remediation_action": "Configure Let's Encrypt automated solver and bind TLS 1.3 protocol limits in NGINX config",
+      "closure_criteria": "Active listener responds exclusively to TLS 1.3 HTTPS handshakes on port 443 with trusted certs",
+      "validation_steps": [
+        "1. Deploy NGINX reverse-proxy sidecar in GKE pod namespace",
+        "2. Execute `openssl s_client -connect <host>:443 -tls1_3` to verify secure handshake",
+        "3. Execute `openssl s_client -connect <host>:443 -tls1_2` to verify rejection of outdated TLS versions"
+      ],
+      "required_evidence": "tls_handshake_audit.log"
+    },
+    "authn_authz": {
+      "remediation_action": "Replace OIDC mock validate claims in auth_adapter.py with public Google Cloud JWKS validations",
+      "closure_criteria": "API rejects tokens lacking matching cryptographic key signatures or invalid issuer claims",
+      "validation_steps": [
+        "1. Deploy auth_adapter.py to staging container",
+        "2. Submit HTTP request with expired token, check for 401 response",
+        "3. Submit HTTP request with valid OIDC token, check for 200 response"
+      ],
+      "required_evidence": "auth_validation_run.json"
+    },
+    "audit_ledger": {
+      "remediation_action": "Provision Cloud SQL PostgreSQL DB and point AuditLedgerHelper connections to PostgreSQL schemas",
+      "closure_criteria": "All write transactions write successfully to PostgreSQL with secure IAM service account bindings",
+      "validation_steps": [
+        "1. Provision db instance using terraform configs",
+        "2. Run database migration task creating audit_ledger tables",
+        "3. Run integration script recording 100 sequential events, verify counts in DB console"
+      ],
+      "required_evidence": "db_migration_evidence.json"
+    },
+    "mutation_safety": {
+      "remediation_action": "Integrate Redis cache for nonce storage and validate dual-operator signatures in MutationGate",
+      "closure_criteria": "Replay mutation payloads throw cryptographic exception, rejecting secondary executions",
+      "validation_steps": [
+        "1. Send mutation event with signed nonce token",
+        "2. Attempt to resend identical payload within 5 seconds, verify 403 replay block"
+      ],
+      "required_evidence": "nonce_replay_test_run.log"
+    },
+    "supply_chain": {
+      "remediation_action": "Enable GKE Binary Authorization policies in Kubernetes production cluster mappings",
+      "closure_criteria": "GKE blocks scheduling of pods utilizing container images without valid Cosign signatures",
+      "validation_steps": [
+        "1. Attempt to deploy unsigned test image, verify scheduler returns validation error",
+        "2. Attempt to deploy signed release image, verify successful scheduling"
+      ],
+      "required_evidence": "binary_authorization_policy.yaml"
+    },
+    "observability": {
+      "remediation_action": "Apply Istio/Envoy authorization policies blocking external ingress traffic on metrics endpoints",
+      "closure_criteria": "Metrics endpoint `/metrics` returns 403 Forbidden to external IP addresses, open to internal Prometheus scraper",
+      "validation_steps": [
+        "1. Send curl request to `/metrics` from external IP, verify blocked",
+        "2. Send curl request from internal scraper container, verify metrics payload returns"
+      ],
+      "required_evidence": "observability_policy_rules.json"
+    },
+    "backup_recovery": {
+      "remediation_action": "Write automated pg_dump scripts and cron schedules testing database restores weekly",
+      "closure_criteria": "Nightly dumps are verified on staging database clones with zero table integrity errors",
+      "validation_steps": [
+        "1. Trigger restore cron script manually",
+        "2. Check that return code matches 0 and verify logs show database status ok"
+      ],
+      "required_evidence": "restore_run_results.json"
+    },
+    "compliance": {
+      "remediation_action": "Configure CI/CD pipelines compiling signed release provenance bundles automatically on merge",
+      "closure_criteria": "Provenance jsonl generated, signed with cosign key, and pushed to GCS bucket for ATO packages",
+      "validation_steps": [
+        "1. Trigger staging merge build pipeline",
+        "2. Verify artifacts `provenance.intoto.jsonl.sig` exists in release repository bucket"
+      ],
+      "required_evidence": "signed_provenance_manifest.json"
+    }
+  }
+}
