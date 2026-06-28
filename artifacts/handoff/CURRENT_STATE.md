@@ -1,9 +1,9 @@
 # CURRENT_STATE.md — Swarm State Handoff
 
 ## Release Metadata
-- **Current Release Tag**: `v0.1.0-rc15`
-- **Latest Commit**: `ce6d3c8`
-- **Release Candidate Configuration**: [release_candidate.json](file:///Users/michaelhoch/hoch_agent_swarm/artifacts/release_candidates/20260628T164855/release_candidate.json)
+- **Current Release Tag**: `v0.1.0-rc16`
+- **Latest Commit**: `ff48d4a`
+- **Release Candidate Configuration**: [release_candidate.json](file:///Users/michaelhoch/hoch_agent_swarm/artifacts/release_candidates/20260628T212149/release_candidate.json)
 
 ## Test Status
 - **Host Unit/Integration Tests**: 554 / 554 automated tests passing (`PYTHONPATH=src:. uv run pytest`).
@@ -42,7 +42,7 @@ PYTHONPATH=src:. uv run pytest
 ./scripts/docker_test.sh
 
 # Seal next release candidate
-uv run python scripts/release_seal.py v0.1.0-rc16
+uv run python scripts/release_seal.py v0.1.0-rc17
 ```
 
 ## Security & Compliance Boundary Declarations
