@@ -831,6 +831,22 @@
                 }
             }
 
+            // Update button status
+            const btnResume = el('btn-resume-migration');
+            if (btnResume) {
+                if (data.migration_active) {
+                    btnResume.disabled = true;
+                    btnResume.textContent = 'Migration Resumed...';
+                    btnResume.style.opacity = '0.5';
+                    btnResume.style.cursor = 'not-allowed';
+                } else {
+                    btnResume.disabled = false;
+                    btnResume.textContent = 'Resume Guarded Migration';
+                    btnResume.style.opacity = '1';
+                    btnResume.style.cursor = 'pointer';
+                }
+            }
+
             const total = data.total_files || 0;
             const completed = data.completed_files || 0;
             const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
@@ -2848,6 +2864,26 @@
         });
     }
 
+    function initMigrationButton() {
+        const btn = el('btn-resume-migration');
+        if (!btn) return;
+        btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            btn.disabled = true;
+            btn.textContent = 'Resuming...';
+            btn.style.opacity = '0.5';
+            btn.style.cursor = 'not-allowed';
+            try {
+                const res = await fetch('/api/v1/migration/resume', { method: 'POST' });
+                const rdata = await res.json();
+                console.log(rdata.message);
+                await loadMigrationStatus();
+            } catch (err) {
+                console.error(err);
+            }
+        });
+    }
+
     // Initialization routine
     function init() {
   initMeshSentinel();
@@ -2857,6 +2893,7 @@
         initRescanButton();
         initModelHealthButton();
         initModelStorageButton();
+        initMigrationButton();
         
         // Initial fetches
         fetchCockpit();

@@ -7608,6 +7608,11 @@ def get_migration_status_endpoint():
     from backend.migration_monitor import MONITOR
     return MONITOR.get_status()
 
+@app.post("/api/v1/migration/resume")
+def post_migration_resume_endpoint():
+    from backend.migration_runner import RUNNER
+    return RUNNER.resume_migration()
+
 @app.get("/api/v1/model-mesh/config")
 def get_model_mesh_config_endpoint():
     from backend.model_mesh import load_model_mesh_data
