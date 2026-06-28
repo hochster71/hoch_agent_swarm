@@ -6750,6 +6750,11 @@ def api_download_ato_evidence_package():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to generate ATO evidence package: {e}")
 
+@app.get("/api/v1/staging/dry-run")
+def api_get_staging_dry_run():
+    from backend.staging_manager import run_staging_validation
+    return run_staging_validation()
+
 @app.get("/api/v1/policy/status")
 def api_get_policy_status():
     return {

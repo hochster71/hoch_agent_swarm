@@ -59,7 +59,8 @@
         { id: 'agent-flight-deck', label: 'AGENT FLIGHT DECK' },
         { id: 'clawde', label: 'CLAWDE CONTROL TOWER' },
         { id: 'handoff', label: 'RELEASE REVIEW & HANDOFF' },
-        { id: 'ato', label: 'ATO EVIDENCE BUILDER' }
+        { id: 'ato', label: 'ATO EVIDENCE BUILDER' },
+        { id: 'staging', label: 'STAGING DRY RUN' }
     ];
 
     function initNavigation() {
@@ -171,6 +172,9 @@
             case 'ato':
                 loadAtoView();
                 viewInterval = setInterval(loadAtoView, 3000);
+                break;
+            case 'staging':
+                loadStagingView();
                 break;
         }
     }
@@ -3054,6 +3058,7 @@
         initLedgerButtons();
         initHandoffButtons();
         initAtoButtons();
+        initStagingButtons();
         
         // Initial fetches
         fetchCockpit();
@@ -3458,6 +3463,65 @@
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 exportAtoPackage();
+            });
+        }
+    }
+
+    async function loadStagingView() {
+        try {
+            const res = await fetch('/api/v1/staging/dry-run');
+            if (!res.ok) throw new Error('Failed to fetch staging status');
+            const data = await res.json();
+            
+            const noticeEl = el('staging-status-notice');
+            if (noticeEl) noticeEl.textContent = `Status: ${data.status} | Sealed Tag: ${data.staging_tag}`;
+            
+            const bannerEl = el('staging-statement-banner');
+            if (bannerEl) bannerEl.textContent = data.compliance.statement;
+            
+            const complianceEl = el('staging-compliance-notice');
+            if (complianceEl) complianceEl.textContent = data.compliance.notice;
+            
+            const tbody = el('staging-checkpoints-tbody');
+            if (tbody) {
+                tbody.innerHTML = data.checkpoints.map(cp => `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                        <td style="padding: 10px; font-weight: bold; color: #fff;">${cp.name}</td>
+                        <td style="padding: 10px; color: var(--text-secondary);">${cp.description}</td>
+                        <td style="padding: 10px; text-align: right; font-weight: bold; color: ${cp.status === 'PASS' ? '#10b981' : cp.status === 'WARN' ? '#fbbf24' : '#f87171'};">${cp.status}</td>
+                    </tr>
+                `).join('');
+            }
+        } catch (err) {
+            console.error('Failed to load staging view:', err);
+        }
+    }
+
+    async function executeStagingDryRun() {
+        const btn = el('btn-run-staging-dryrun');
+        if (!btn) return;
+        
+        btn.disabled = true;
+        const originalText = btn.textContent;
+        btn.textContent = 'Probing Staging...';
+        
+        try {
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            await loadStagingView();
+        } catch (err) {
+            console.error('Failed to execute staging dry run:', err);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = originalText;
+        }
+    }
+
+    function initStagingButtons() {
+        const btn = el('btn-run-staging-dryrun');
+        if (btn) {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                executeStagingDryRun();
             });
         }
     }
