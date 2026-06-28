@@ -1066,7 +1066,14 @@
             const reg = data.registry || {};
             const state = data.state || {};
             const paths = data.paths || {};
-            const blockedActions = data.blocked_actions || [];
+            let blockedActions = [];
+            if (data.blocked_actions) {
+                if (Array.isArray(data.blocked_actions)) {
+                    blockedActions = data.blocked_actions;
+                } else if (Array.isArray(data.blocked_actions.blocked_actions)) {
+                    blockedActions = data.blocked_actions.blocked_actions;
+                }
+            }
 
             phaseSpan.textContent = reg.next_phase || '--';
             completedSpan.textContent = reg.last_completed_phase || '--';
