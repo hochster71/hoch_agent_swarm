@@ -648,6 +648,63 @@
                         </div>
                     </div>
 
+                    <!-- Swarm Observability & Model Performance Dashboard -->
+                    <div style="margin-top: 20px; background: rgba(10, 15, 30, 0.5); border: 1px solid var(--border-glass); padding: 18px; border-radius: 10px;" id="clawde-swarm-observability-panel">
+                        <h3 style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--accent-teal); margin: 0; margin-bottom: 14px; letter-spacing: 0.05em; display: flex; align-items: center; justify-content: space-between;">
+                            <span style="display: flex; align-items: center; gap: 6px;">
+                                <i data-lucide="gauge" style="width: 14px; height: 14px;"></i> Swarm Observability & Local Model Performance
+                            </span>
+                            <button id="clawde-btn-ingest-run" class="btn" style="background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.3); color: #818cf8; font-size: 10px; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: all 0.2s;">
+                                Sync Swarm Reports
+                            </button>
+                        </h3>
+                        
+                        <!-- Overall Swarm Stats -->
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px;" id="observability-summary-stats">
+                            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); padding: 10px 14px; border-radius: 8px; text-align: left;">
+                                <span style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; font-weight: 600;">Total Tokens</span>
+                                <div style="font-size: 18px; font-weight: 700; color: #a5b4fc; margin-top: 2px;" id="obs-stat-tokens">0</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); padding: 10px 14px; border-radius: 8px; text-align: left;">
+                                <span style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; font-weight: 600;">Runtime Duration</span>
+                                <div style="font-size: 18px; font-weight: 700; color: #a5b4fc; margin-top: 2px;" id="obs-stat-runtime">0s</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); padding: 10px 14px; border-radius: 8px; text-align: left;">
+                                <span style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; font-weight: 600;">Success / Failure</span>
+                                <div style="font-size: 16px; font-weight: 700; color: #10b981; margin-top: 2px;" id="obs-stat-status">PASS</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); padding: 10px 14px; border-radius: 8px; text-align: left;">
+                                <span style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; font-weight: 600;">Fallback Events</span>
+                                <div style="font-size: 18px; font-weight: 700; color: #34d399; margin-top: 2px;" id="obs-stat-fallbacks">0</div>
+                            </div>
+                        </div>
+
+                        <!-- Per-Agent Observability Grid/Table -->
+                        <div style="overflow-x: auto; background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 8px;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 11px; text-align: left;" id="observability-details-table">
+                                <thead>
+                                    <tr style="background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border-glass); font-weight: 600;">
+                                        <th style="padding: 10px 12px; color: var(--accent-teal);">Agent</th>
+                                        <th style="padding: 10px 12px;">Task Class</th>
+                                        <th style="padding: 10px 12px;">Selected Model</th>
+                                        <th style="padding: 10px 12px;">Fallback Used</th>
+                                        <th style="padding: 10px 12px; text-align: right;">Runtime</th>
+                                        <th style="padding: 10px 12px; text-align: right;">Tokens</th>
+                                        <th style="padding: 10px 12px;">Artifact Result</th>
+                                        <th style="padding: 10px 12px; text-align: right;">Validation Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="observability-details-tbody">
+                                    <tr>
+                                        <td colspan="8" style="padding: 20px; text-align: center; color: var(--text-secondary);">
+                                            No run telemetry ingested yet. Click Sync Swarm Reports.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
                     <!-- Debug Panel -->
                     <div style="background: rgba(0,0,0,0.25); border: 1px solid var(--border-glass); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 8px; margin-top: 20px;">
                         <h3 style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--accent-teal); letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px; margin: 0; margin-bottom: 6px;">

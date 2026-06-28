@@ -1204,6 +1204,13 @@
                 consoleContent.textContent += `Run:\n  cat artifacts/orchestrator/generated-prompts/${nextPhase}.md\n\nSubmit this file to the operator for manual gating approval.\n`;
             });
         }
+
+        const btnSyncRun = el('clawde-btn-ingest-run');
+        if (btnSyncRun) {
+            btnSyncRun.addEventListener('click', () => {
+                syncObservabilityDashboard();
+            });
+        }
     }
 
     async function loadClawdeView() {
@@ -1555,12 +1562,137 @@
             // Load history list
             await loadClawdeHistory();
 
+            // Load observability dashboard
+            await loadObservabilityDashboard();
+
         } catch (err) {
             console.error("Error loading CLAWDE Control Tower state:", err);
             if (dbgApi) {
                 dbgApi.textContent = 'OFFLINE';
                 dbgApi.style.color = '#f87171';
             }
+        }
+    }
+
+    async function syncObservabilityDashboard() {
+        const btn = el('clawde-btn-ingest-run');
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = 'Syncing...';
+        }
+        try {
+            const ingestRes = await fetch('/api/v1/ingest/crewai', { method: 'POST' });
+            if (ingestRes.ok) {
+                await loadObservabilityDashboard();
+            }
+        } catch (err) {
+            console.error('Failed to sync observability metrics:', err);
+        } finally {
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = 'Sync Swarm Reports';
+            }
+        }
+    }
+
+    async function loadObservabilityDashboard() {
+        const tbody = el('observability-details-tbody');
+        if (!tbody) return;
+        try {
+            const res = await fetch('/api/v1/ingest/crewai/artifacts');
+            const artifacts = await res.json();
+            const reports = artifacts.filter(a => a.artifact_type === 'crew_run_report');
+            
+            if (reports.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="padding: 20px; text-align: center; color: var(--text-secondary);">No run telemetry found. Run the swarm first.</td></tr>`;
+                return;
+            }
+            
+            const latest = reports[0];
+            const context = latest.run_context || {};
+            const metrics = context.metrics || {};
+            const tokenUsage = metrics.total_token_usage || {};
+            const tasks = metrics.tasks || [];
+            
+            // Update overall summary cards
+            if (el('obs-stat-tokens')) {
+                el('obs-stat-tokens').textContent = tokenUsage.total_tokens !== undefined ? tokenUsage.total_tokens.toLocaleString() : 'N/A';
+            }
+            if (el('obs-stat-runtime')) {
+                el('obs-stat-runtime').textContent = metrics.total_runtime_seconds !== undefined ? `${metrics.total_runtime_seconds}s` : 'N/A';
+            }
+            
+            const statusEl = el('obs-stat-status');
+            if (statusEl) {
+                const statusText = context.status || 'PASS';
+                statusEl.textContent = statusText;
+                if (statusText === 'PASS') {
+                    statusEl.style.color = '#10b981';
+                } else {
+                    statusEl.style.color = '#ef4444';
+                }
+            }
+            
+            // Count fallback events
+            let fallbacksCount = 0;
+            tasks.forEach(t => {
+                if (t.fallback_event) fallbacksCount++;
+            });
+            if (el('obs-stat-fallbacks')) {
+                el('obs-stat-fallbacks').textContent = fallbacksCount;
+            }
+            
+            // Build task rows
+            if (tasks.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="padding: 20px; text-align: center; color: var(--text-secondary);">Report exists but contains no task metrics.</td></tr>`;
+                return;
+            }
+            
+            const agentToClass = {
+                "asset_mapper": "fast_classification",
+                "swarm_architect": "planning_docs",
+                "agent_combinator": "coding_repair",
+                "security_operator": "security_audit",
+                "execution_planner": "planning_docs",
+                "synthesis_director": "planning_docs",
+                "antigravity_integration_operator": "planning_docs"
+            };
+
+            tbody.innerHTML = tasks.map(t => {
+                const fallbackBadge = t.fallback_event 
+                    ? `<span style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 9px;">FALLBACK</span>`
+                    : `<span style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 9px;">PRIMARY</span>`;
+                
+                const validationStatus = t.validation_status || t.artifact_quality || 'NOT_APPLICABLE';
+                const qualityBadge = validationStatus === 'VALID'
+                    ? `<span style="color: #34d399; font-weight: bold;">VALID</span>`
+                    : validationStatus === 'INVALID'
+                    ? `<span style="color: #f87171; font-weight: bold;">INVALID</span>`
+                    : `<span style="color: var(--text-secondary);">${validationStatus}</span>`;
+                
+                const taskClass = t.task_class || agentToClass[t.agent_key] || 'unknown';
+                const tokensVal = t.tokens !== undefined ? t.tokens.toLocaleString() : 'N/A';
+                const artifactRes = t.artifact_result || 'None';
+
+                return `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.2s;">
+                        <td style="padding: 10px 12px; font-weight: 500;">
+                            <div style="color: #fff; font-size: 12px;">${t.agent_role}</div>
+                            <div style="color: var(--text-secondary); font-size: 10px; margin-top: 2px;">${t.task_name}</div>
+                        </td>
+                        <td style="padding: 10px 12px; color: #a5b4fc;">${taskClass}</td>
+                        <td style="padding: 10px 12px; font-family: monospace; color: #e0e7ff;">${t.model}</td>
+                        <td style="padding: 10px 12px;">${fallbackBadge}</td>
+                        <td style="padding: 10px 12px; text-align: right; color: #fbbf24; font-weight: 500;">${t.runtime_seconds_estimate}s</td>
+                        <td style="padding: 10px 12px; text-align: right; color: #c7d2fe;">${tokensVal}</td>
+                        <td style="padding: 10px 12px; font-family: monospace; color: var(--text-secondary);">${artifactRes}</td>
+                        <td style="padding: 10px 12px; text-align: right;">${qualityBadge}</td>
+                    </tr>
+                `;
+            }).join('');
+        } catch (err) {
+            console.error('Error loading observability dashboard:', err);
+            tbody.innerHTML = `<tr><td colspan="8" style="padding: 20px; text-align: center; color: #ef4444;">Error loading observability data.</td></tr>`;
         }
     }
 
