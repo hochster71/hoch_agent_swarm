@@ -1,7 +1,15 @@
 import pytest
 from fastapi.testclient import TestClient
 from backend.main import app
-from backend.tv_manager import parse_m3u_playlist, get_channels_data, get_raw_playlist, get_epg_xml
+from backend.tv_manager import (
+    parse_m3u_playlist, 
+    get_channels_data, 
+    get_raw_playlist, 
+    get_epg_xml,
+    get_channel_epg,
+    ping_channel_playback,
+    get_groups_health
+)
 
 client = TestClient(app)
 
@@ -57,3 +65,26 @@ def test_tv_endpoints():
     data_str = str(health).lower()
     for claim in blocked_claims:
         assert claim.lower() not in data_str
+
+def test_tv_epg_and_diagnostics():
+    # Load EPG guide for a simulated channel
+    resp = client.get("/api/tv/channel/cnn/epg")
+    assert resp.status_code == 200
+    epg = resp.json()
+    assert isinstance(epg, list)
+    assert len(epg) > 0
+    assert "title" in epg[0]
+    assert "description" in epg[0]
+    
+    # Run a playback diagnostic test
+    resp = client.post("/api/tv/channel/cnn/test")
+    assert resp.status_code == 200
+    diag = resp.json()
+    assert "status" in diag
+    
+    # Get group health stats
+    resp = client.get("/api/tv/groups/health")
+    assert resp.status_code == 200
+    ghealth = resp.json()
+    assert isinstance(ghealth, dict)
+

@@ -6881,6 +6881,30 @@ def api_get_tv_channel(id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/api/tv/channel/{id}/epg")
+def api_get_tv_channel_epg(id: str):
+    from backend.tv_manager import get_channel_epg
+    try:
+        return get_channel_epg(id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/tv/channel/{id}/test")
+def api_test_tv_channel(id: str):
+    from backend.tv_manager import ping_channel_playback
+    try:
+        return ping_channel_playback(id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/tv/groups/health")
+def api_get_tv_groups_health():
+    from backend.tv_manager import get_groups_health
+    try:
+        return get_groups_health()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/api/tv/playlist.m3u")
 def api_get_tv_playlist(force: bool = False):
     from backend.tv_manager import get_raw_playlist
