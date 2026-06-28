@@ -1,0 +1,35 @@
+__pycache__/
+*.pyc
+*.db
+backend/swarm_ledger.db
+artifacts/
+!artifacts/pentest/
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+.DS_Store
+
+# Python runtime artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Local/generated release artifacts
+dist/*.sha256
+dist/releases/*.tar.gz
+dist/releases/*.tar.gz.sha256
+
+# Local runtime / generated app scaffolds
+server/
+
+# Generated release evidence not tracked by default
+dist/releases/*/north_star_report.md
+dist/releases/v0.1.1-HOCHSTER-CLUSTER-HARDENING/
+
+# Playwright runtime output
+test-results/
+playwright-report/
+uvicorn.log
+audit/
+

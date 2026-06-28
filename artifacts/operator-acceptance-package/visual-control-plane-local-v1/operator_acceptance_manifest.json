@@ -1,0 +1,8 @@
+{
+  "track": "P8_HUMAN_REVIEW_OPERATOR_ACCEPTANCE_PACKAGE",
+  "release_candidate": "RC-visual-control-plane-local-v1.0.0",
+  "integration_branch": "integration/visual-control-plane-local-v1",
+  "operator": "Michael Hoch",
+  "scope": "local_preview_human_review_only",
+  "created_at": "2026-06-27T18:30:00-05:00"
+}

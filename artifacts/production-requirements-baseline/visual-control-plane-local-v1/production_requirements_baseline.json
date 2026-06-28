@@ -1,0 +1,49 @@
+{
+  "requirements": {
+    "transport_security": {
+      "tls": "TLS 1.3 enforced for all interfaces",
+      "cert_model": "Local cert model using trusted CA",
+      "reverse_proxy": "Optional reverse proxy (NGINX/Envoy) for rate limiting and TLS offloading"
+    },
+    "authn_authz": {
+      "model": "OAuth2/OIDC integrated with centralized identity provider",
+      "roles": ["read_only", "operator", "admin"],
+      "privilege": "Least privilege principle enforced"
+    },
+    "auditability": {
+      "ledger": "Immutable audit ledger tracking all operator interactions",
+      "event_ids": "Unique, traceable UUID event IDs mapped to every request",
+      "actions": "Log of all operator actions (approved, executed, failed)"
+    },
+    "supply_chain": {
+      "sbom": "Automated SPDX JSON SBOM generated on every commit/tag",
+      "provenance": "SLSA level 3 compliant in-toto provenance mapping",
+      "signing": "Cosign container/artifact keyless or key-based signing",
+      "checksum": "Strict directory-level and artifact-level SHA256 checksum policy"
+    },
+    "runtime_safety": {
+      "mutation_gates": "All database/system write requests require dual-operator approval",
+      "approval_gates": "Multi-party consensus required for any run-level prompt changes",
+      "execution_policy": "Strict dry-run validation before actual execution"
+    },
+    "deployment": {
+      "separation": "Strict physical/logical isolation between local_dev, staging, and production environments",
+      "rollback": "Automated zero-downtime rollback triggers on health check failures",
+      "release_gates": "Automated contract testing verification at deployment gates"
+    },
+    "observability": {
+      "logs": "Structured JSON logging containing trace and correlation IDs",
+      "health": "Active endpoint health probes verifying telemetry binding",
+      "metrics": "INP, LCP, error rates, and resource utilization dashboards",
+      "error_boundaries": "UI error boundaries isolating component failure cascades"
+    },
+    "backup_recovery": {
+      "retention": "30-day immutable database backup policy",
+      "restore_validation": "Automated weekly restore testing in isolated sandbox"
+    },
+    "compliance": {
+      "ato_evidence": "Traceable NIST/SLSA security evidence artifact generation",
+      "disclaimer": "Produces ATO-supporting evidence, does not make actual ATO claim"
+    }
+  }
+}

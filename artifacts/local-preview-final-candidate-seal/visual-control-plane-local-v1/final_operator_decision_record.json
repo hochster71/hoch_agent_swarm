@@ -1,0 +1,7 @@
+{
+  "decision": {
+    "status": "APPROVED",
+    "reasons": "All evidence files validated. Direct local binding and visual review matches the required criteria.",
+    "recommendation": "Gate P17 - Operator Go / No-Go Decision"
+  }
+}

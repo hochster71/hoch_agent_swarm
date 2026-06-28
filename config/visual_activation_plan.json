@@ -1,0 +1,64 @@
+{
+  "name": "HOCH Visual Control Plane Activation Plan",
+  "version": "0.1.0",
+  "phase": "V6_OPERATOR_REVIEW_AND_ACTIVATION_PLAN",
+  "visual_preview_enabled": true,
+  "active_cockpit_replacement_enabled": false,
+  "michael_hoch_approval_required": true,
+  "rollback_required": true,
+  "activation_scope": "local_only",
+  "operator_review_checklist": [
+    "preview page loads locally",
+    "dark theme consistent",
+    "no fake LIVE state",
+    "all fallback states visible",
+    "stale data renders STALE",
+    "missing source renders UNAVAILABLE",
+    "security ambiguity renders FAIL-CLOSED",
+    "approval controls are visual-only",
+    "no backend mutation",
+    "no WebSocket/EventSource",
+    "active cockpit remains unchanged",
+    "rollback path documented"
+  ],
+  "visual_acceptance_criteria": [
+    "dark theme matches Outfit/Roboto fonts",
+    "warning banners visible on preview",
+    "disabled controls clear"
+  ],
+  "state_truth_acceptance_criteria": [
+    "fallback states mapped via pure visual_adapters.js functions",
+    "untrusted telemetry states marked stale"
+  ],
+  "accessibility_acceptance_criteria": [
+    "keyboard focus outlines visible",
+    "color contrast ratio meets dark design constraints",
+    "reduced motion rules active"
+  ],
+  "rollback_steps": [
+    "preserve current active cockpit file",
+    "keep preview isolated",
+    "disable feature flag",
+    "restore prior frontend/app.js if needed",
+    "rerun qa:ui-contract",
+    "rerun ci:validate",
+    "confirm /api/v1/live-runtime/cockpit still returns JSON"
+  ],
+  "feature_flags": {
+    "active_cockpit_replacement_enabled": false,
+    "visual_preview_enabled": true
+  },
+  "blocked_actions": [
+    "production deployment",
+    "external publication",
+    "backend mutation",
+    "prompt execution",
+    "approval decision execution",
+    "security posture change"
+  ],
+  "decision_table": [
+    { "condition": "all review checklist items pass", "decision": "GO" },
+    { "condition": "minor visual issues present but safety intact", "decision": "CONDITIONAL_GO" },
+    { "condition": "any safety or data integrity item fails", "decision": "NO_GO" }
+  ]
+}

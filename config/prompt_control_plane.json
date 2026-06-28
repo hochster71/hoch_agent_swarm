@@ -1,0 +1,305 @@
+{
+  "name": "HOCH Agent Swarm Prompt Control Plane",
+  "version": "0.1.0",
+  "production_status": "phase_1_governance_seed",
+  "release_decision": "CONDITIONAL_GO_DOCUMENTATION_AND_CONFIG_ONLY",
+  "north_star_metric": "Validated Positive Production Outcomes Per Week",
+  "domains": [
+    "personal_life",
+    "family_support",
+    "home_operations",
+    "business_execution",
+    "hoch_application_software_factory",
+    "cybersecurity",
+    "hobbies",
+    "app_development",
+    "positive_ai_for_humanity"
+  ],
+  "control_plane_nodes": [
+    {
+      "node_id": "macbook-pro-m5",
+      "ip": "10.0.0.6",
+      "role": "primary_control_plane",
+      "platform": "macOS",
+      "services": ["fastapi_backend", "dashboard_ui", "scheduler", "ledger_db"]
+    },
+    {
+      "node_id": "imac-m4",
+      "ip": "10.0.0.241",
+      "role": "secondary_home_runtime",
+      "platform": "macOS",
+      "services": ["ollama_runtime"]
+    },
+    {
+      "node_id": "apple-neo",
+      "ip": "10.0.0.8",
+      "role": "compute_worker",
+      "platform": "macOS",
+      "services": ["lmstudio_runtime"]
+    },
+    {
+      "node_id": "dell-xps",
+      "ip": "10.0.0.207",
+      "role": "compute_worker",
+      "platform": "windows_linux",
+      "services": ["ollama_runtime"]
+    }
+  ],
+  "source_prompt_library_files": [
+    "hoch_agent_swarm_prompt_library.html",
+    "hoch_agent_swarm_prompt_library.md",
+    "hoch_agent_swarm_prompt_library.json",
+    "hoch_agent_swarm_prompt_library.csv",
+    "hoch_agent_swarm_prompt_manifest.json"
+  ],
+  "allowed_autonomous_actions": [
+    "read_local_workspace_files",
+    "execute_web_searches",
+    "compile_local_documentation_drafts",
+    "run_local_test_suites",
+    "execute_sast_and_linter_checks",
+    "generate_evidence_manifests"
+  ],
+  "human_approval_required_actions": [
+    "delete_move_rename_project_files",
+    "modify_firewall_or_exposed_ports",
+    "update_secrets_or_api_credentials",
+    "enable_external_network_tunnels",
+    "process_payments_or_charge_apis",
+    "dispatch_external_emails_or_messages",
+    "submit_app_store_packages",
+    "modify_model_lifecycle_states",
+    "commit_or_merge_to_release_branches"
+  ],
+  "prohibited_actions": [
+    "disable_telemetry_or_audit_logs",
+    "weaken_sandbox_security_posture",
+    "inject_unverified_third_party_scripts",
+    "fabricate_test_or_scan_evidence",
+    "execute_destructive_system_cleanup"
+  ],
+  "fail_closed_triggers": [
+    "unresolved_high_risk_ambiguity",
+    "conflicting_safety_instructions",
+    "validation_test_failures",
+    "network_scanning_timeouts",
+    "missing_node_credentials"
+  ],
+  "prompt_routing_rules": [
+    {
+      "task_type": "coding",
+      "chain": ["Architect", "Builder", "SAST", "QA", "Release Gatekeeper"]
+    },
+    {
+      "task_type": "cybersecurity",
+      "chain": ["Threat Modeler", "SAST/DAST", "Control Gap Analyst", "ConMon Auditor"]
+    },
+    {
+      "task_type": "personal_home_family_data",
+      "chain": ["Privacy Engineer", "Safety Reviewer", "Human Approval Gate"]
+    },
+    {
+      "task_type": "app_store_release",
+      "chain": ["QA Auditor", "Security Certifier", "Evidence Gatherer", "Human Approval Gate"]
+    },
+    {
+      "task_type": "ambiguous",
+      "chain": ["Planner", "Researcher", "Risk Classifier"]
+    },
+    {
+      "task_type": "prompt_injection_tool_misuse",
+      "chain": ["Red Team Prompt Agent", "Build Breaker", "Human Approval"]
+    },
+    {
+      "task_type": "production_impacting",
+      "chain": ["Release Readiness Gatekeeper", "Michael Hoch Approval"]
+    }
+  ],
+  "evidence_required": [
+    "mission.json",
+    "selected_prompts.json",
+    "assumptions.md",
+    "risks.md",
+    "actions.md",
+    "validation.md",
+    "evidence_manifest.json"
+  ],
+  "conmon_cadence": {
+    "daily": [
+      "verify_known_assets_connectivity",
+      "check_model_runtimes_health",
+      "audit_siem_for_critical_findings",
+      "monitor_failed_jobs_in_ledger",
+      "scan_logs_for_prompt_safety_events",
+      "verify_backup_status"
+    ],
+    "weekly": [
+      "run_sast_sca_and_secrets_scanners",
+      "verify_dependency_drift",
+      "audit_control_plane_exposed_ports",
+      "check_evidence_timestamps",
+      "assess_release_branch_readiness"
+    ],
+    "monthly": [
+      "run_full_integration_test_suite",
+      "validate_disaster_recovery_restores",
+      "review_model_lifecycle_classifications",
+      "check_prompt_library_drift",
+      "refresh_risk_register",
+      "map_validated_tests_to_controls"
+    ],
+    "quarterly": [
+      "evaluate_north_star_metric",
+      "review_and_reset_okrs",
+      "audit_control_plane_architecture",
+      "execute_prompt_injection_red_teaming",
+      "assess_automation_business_value"
+    ]
+  },
+  "key_metrics": {
+    "north_star": [
+      "validated_positive_production_outcomes_per_week"
+    ],
+    "control_plane": [
+      "known_assets_reporting_percentage",
+      "agent_heartbeat_health_consecutive",
+      "model_endpoint_latency_and_success_rate",
+      "prompt_router_success_rate",
+      "tool_call_failure_rate"
+    ],
+    "security": [
+      "open_critical_high_findings_count",
+      "prompt_injection_test_pass_rate",
+      "secrets_findings_count",
+      "sbom_freshness_days",
+      "external_exposure_count",
+      "conmon_evidence_freshness"
+    ],
+    "production": [
+      "idea_to_prototype_duration",
+      "prototype_to_release_duration",
+      "qa_first_pass_rate",
+      "release_gate_pass_rate",
+      "rework_loops_per_task"
+    ]
+  },
+  "production_phases": [
+    {
+      "phase": 0,
+      "name": "baseline_inventory_and_safety",
+      "objective": "Verify repository state and index assets.",
+      "scope": "code_base_files_and_endpoints",
+      "exit_criteria": "all_routes_and_files_indexed",
+      "release_gate": "local_check_pass",
+      "rollback_condition": "uvicorn_startup_failure"
+    },
+    {
+      "phase": 1,
+      "name": "governance_doctrine_and_config",
+      "objective": "Seed documentation and verify configuration.",
+      "scope": "governance_docs_and_qa_contract",
+      "exit_criteria": "qa_contract_pass",
+      "release_gate": "conditional_go",
+      "rollback_condition": "contract_test_failure"
+    },
+    {
+      "phase": 2,
+      "name": "prompt_registry_loader",
+      "objective": "Load prompt library JSON and build index.",
+      "scope": "registry_api_endpoint",
+      "exit_criteria": "registry_returns_103_prompts",
+      "release_gate": "test_pass",
+      "rollback_condition": "server_internal_error"
+    },
+    {
+      "phase": 3,
+      "name": "prompt_router",
+      "objective": "Route and wrap prompts with safety contract.",
+      "scope": "router_service_selected_prompts",
+      "exit_criteria": "prompt_chaining_resolved",
+      "release_gate": "simulated_route_validation",
+      "rollback_condition": "prompt_format_distortion"
+    },
+    {
+      "phase": 4,
+      "name": "approval_gate",
+      "objective": "Stage material actions for manual review.",
+      "scope": "approval_queue_ui_and_endpoints",
+      "exit_criteria": "blocked_actions_queued",
+      "release_gate": "manual_click_signoff",
+      "rollback_condition": "autonomous_bypass"
+    },
+    {
+      "phase": 5,
+      "name": "evidence_collector",
+      "objective": "Create evidence manifest for execution loops.",
+      "scope": "manifest_generator_ledger_integration",
+      "exit_criteria": "manifest_inserted_to_ledger",
+      "release_gate": "manifest_checksum_check",
+      "rollback_condition": "ledger_write_failure"
+    },
+    {
+      "phase": 6,
+      "name": "dashboard_integration",
+      "objective": "Render cockpit cards on dashboard UI.",
+      "scope": "index_html_app_js_cockpit_cards",
+      "exit_criteria": "cards_render_completely",
+      "release_gate": "e2e_ui_test_pass",
+      "rollback_condition": "loading_states_hung"
+    },
+    {
+      "phase": 7,
+      "name": "cybersecurity_and_conmon",
+      "objective": "Wire ConMon runners and safety scanners.",
+      "scope": "secrets_scanner_and_red_team_harness",
+      "exit_criteria": "automated_reports_generating",
+      "release_gate": "security_audit_verify",
+      "rollback_condition": "pipeline_perf_degraded"
+    },
+    {
+      "phase": 8,
+      "name": "ephemeral_pipeline_executor",
+      "objective": "Execute agent tasks in isolated workspaces.",
+      "scope": "workspace_allocator_and_cleanup",
+      "exit_criteria": "workspace_teardown_successful",
+      "release_gate": "safe_mode_verification",
+      "rollback_condition": "leaked_files_detected"
+    },
+    {
+      "phase": 9,
+      "name": "app_factory_runtime",
+      "objective": "Establish App Factory compile and signing.",
+      "scope": "compile_and_signing_helpers",
+      "exit_criteria": "verifiable_binaries_generated",
+      "release_gate": "signing_policy_verification",
+      "rollback_condition": "signature_falsification"
+    },
+    {
+      "phase": 10,
+      "name": "final_production",
+      "objective": "Achieve fully integrated HOCH AI OS.",
+      "scope": "entire_system_live",
+      "exit_criteria": "100_percent_qa_passing",
+      "release_gate": "go_decision",
+      "rollback_condition": "system_instability"
+    }
+  ],
+  "cybersecurity_frameworks": [
+    "NIST SSDF",
+    "NIST AI RMF",
+    "OWASP LLM Top 10",
+    "SLSA"
+  ],
+  "dashboard_cards": [
+    "Prompt Control Plane",
+    "Prompt Registry",
+    "Prompt Router Status",
+    "Human Approval Queue",
+    "Fail-Closed Events",
+    "ConMon Metrics",
+    "North Star Progress",
+    "Agent Loop State",
+    "Prompt Injection Test Status"
+  ],
+  "next_phase": "phase_2_prompt_registry_loader"
+}

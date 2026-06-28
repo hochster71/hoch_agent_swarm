@@ -1,2254 +1,3723 @@
-// Initialize Lucide Icons
-lucide.createIcons();
+(function () {
+    'use strict';
 
-// Initialize Mermaid.js with custom dark base theme variables
-mermaid.initialize({
-    startOnLoad: false,
-    theme: 'base',
-    themeVariables: {
-        background: '#0b0f19',
-        primaryColor: '#161c2d',
-        primaryTextColor: '#f3f4f6',
-        primaryBorderColor: 'rgba(255, 255, 255, 0.08)',
-        lineColor: '#3b82f6',
-        secondaryColor: '#1f2937',
-        tertiaryColor: '#111827',
-        edgeLabelBackground: '#0b0f19',
-        nodeBorder: 'rgba(255, 255, 255, 0.1)',
-        mainBkg: '#161c2d',
-        actorBkg: '#161c2d'
-    },
-    securityLevel: 'loose',
-    logLevel: 3
-});
+    // Global state variables
+    let activeView = 'mission-control';
+    let cockpitInterval = null;
+    let viewInterval = null;
+    let pondAnimationId = null;
+    let pondProcesses = [];
+    let koiFishInstances = {};
+    let lastLedgerCount = 0;
 
-// UI Elements
-const latencyVal = document.getElementById("latency-val");
-const statusBadge = document.getElementById("cluster-status-badge");
-const activeAssetsBadge = document.getElementById("active-assets-badge");
-const deploymentsTbody = document.getElementById("deployments-tbody");
-const totalAgentsVal = document.getElementById("total-agents-val");
-const cpuPercentVal = document.getElementById("cpu-percent-val");
-const cpuGaugeBar = document.getElementById("cpu-gauge-bar");
-const ramUsageVal = document.getElementById("ram-usage-val");
-const ramGaugeBar = document.getElementById("ram-gauge-bar");
+    // Helper functions
+    const el = (id) => document.getElementById(id);
 
-// Modal Elements
-const modalContainer = document.getElementById("modal-container");
-const btnCloseModal = document.getElementById("btn-close-modal");
-const modalNodeTitle = document.getElementById("modal-node-title");
-const modalNodeIp = document.getElementById("modal-node-ip");
-const modalNodeSpecs = document.getElementById("modal-node-specs");
-const modalNodeRole = document.getElementById("modal-node-role");
-const modalNodeLatency = document.getElementById("modal-node-latency");
-const modalAgentsContainer = document.getElementById("modal-agents-container");
-
-// Tab Navigation Elements
-const navItems = {
-    dashboard: { nav: document.getElementById("nav-dashboard"), view: document.getElementById("view-dashboard") },
-    assets: { nav: document.getElementById("nav-assets"), view: document.getElementById("view-assets") },
-    swarms: { nav: document.getElementById("nav-swarms"), view: document.getElementById("view-swarms") },
-    tasks: { nav: document.getElementById("nav-tasks"), view: document.getElementById("view-tasks") },
-    metrics: { nav: document.getElementById("nav-metrics"), view: document.getElementById("view-metrics") },
-    security: { nav: document.getElementById("nav-security"), view: document.getElementById("view-security") },
-    settings: { nav: document.getElementById("nav-settings"), view: document.getElementById("view-settings") },
-    pert: { nav: document.getElementById("nav-pert"), view: document.getElementById("view-pert") },
-    mission: { nav: document.getElementById("nav-mission"), view: document.getElementById("view-mission") }
-};
-
-// Security Audit & Sub-tab Elements
-const subtabAudit = document.getElementById("subtab-audit");
-
-// ================================================================
-//  STATUS HELPER — maps status string → CSS class
-// ================================================================
-function getStatusClass(status) {
-    switch ((status || "").toLowerCase().replace(/ /g, "-")) {
-        case "active":        return "status-active";
-        case "triaging":      return "status-triaging";
-        case "self-healing":  return "status-self-healing";
-        case "reasoning":     return "status-reasoning";
-        case "deploying":     return "status-deploying";
-        default:              return "status-active";  // all nodes online
-    }
-}
-
-// Status label text map
-const STATUS_LABELS = {
-    "Active":       "● ACTIVE",
-    "Triaging":     "◈ TRIAGING",
-    "Self-Healing": "⟳ SELF-HEALING",
-    "Reasoning":    "⊙ REASONING",
-    "Deploying":    "▲ DEPLOYING",
-};
-
-const subtabGap = document.getElementById("subtab-gap");
-const securityAuditContent = document.getElementById("security-audit-content");
-const securityGapContent = document.getElementById("security-gap-content");
-const securityGapTbody = document.getElementById("security-gap-tbody");
-const assetsGridContainer = document.getElementById("assets-grid-container");
-
-// Dynamic Tasks & Settings Elements
-const tasksTbody = document.getElementById("tasks-tbody");
-const settingsNodesTbody = document.getElementById("settings-nodes-tbody");
-const formRegisterNode = document.getElementById("form-register-node");
-const btnRegisterNode = document.getElementById("btn-register-node");
-
-// Security Audit Elements
-const btnRunAudit = document.getElementById("btn-run-audit");
-const auditScorePercent = document.getElementById("audit-score-percent");
-const auditPassedCount = document.getElementById("audit-passed-count");
-const auditWarningsCount = document.getElementById("audit-warnings-count");
-const auditFailedCount = document.getElementById("audit-failed-count");
-const securityControlsList = document.getElementById("security-controls-list");
-
-const btnSubmitTask = document.getElementById("btn-submit-task");
-const taskTypeSelect = document.getElementById("task-type-select");
-const promptInput = document.getElementById("prompt-input");
-const taskOutputBox = document.getElementById("task-output-box");
-const logOutputContent = document.getElementById("log-output-content");
-
-const btnZoom = document.getElementById("btn-zoom");
-const btnReset = document.getElementById("btn-reset");
-const mermaidGraph = document.getElementById("mermaid-graph");
-
-// Base API URL
-const API_BASE = window.location.origin;
-
-// State management
-let currentNodes = [];
-let baseMermaidGraph = "";
-
-// SVG Drag/Zoom Coordinates
-let panX = 0;
-let panY = 0;
-let scale = 1.0;
-let isPanning = false;
-let startPanX = 0;
-let startPanY = 0;
-
-// Chart.js State
-let liveChart = null;
-let chartCpuData = [];
-let chartRamData = [];
-let chartLabels = [];
-
-// Particle Swarm Nodes Layout coordinates
-const nodesMap = {
-    MGR: { x: 0.15, y: 0.28 },
-    SCHED: { x: 0.34, y: 0.28 },
-    L1: { x: 0.53, y: 0.15 },
-    W1: { x: 0.53, y: 0.35 },
-    L2: { x: 0.53, y: 0.55 },
-    L3: { x: 0.53, y: 0.75 },
-    SWARM_A: { x: 0.83, y: 0.25 },
-    SWARM_B: { x: 0.83, y: 0.65 }
-};
-let particles = [];
-let animationFrameId = null;
-
-// Initialize Dashboard Metrics & Websocket
-async function initDashboard() {
-    try {
-        initMetricsChart();
-        initDashboardCharts();
-        animateSwarmFlow();
-        initSwarmGlobe();
-
-        // Security / governance bootstrap logs
-        logToConsoleTerminal("KernelHub", "Tac-C2 Kernel Hub initialization successful.", "system");
-        logToConsoleTerminal("CDAO-RAI", "DoD governance RAI compliance parameters active and verified.", "system");
-        logToConsoleTerminal("ZeroTrust", "DoD ZTA security enforcement checklist: 100% compliant.", "info");
-
-        const response = await fetch(`${API_BASE}/api/status`);
-        if (response.ok) {
-            const data = await response.json();
-            updateUI(data);
-        }
-        setupWebsocket();
-        fetchAndRenderTasks();
-        // Mission Intel bootstrap — load brief + start feed polling
-        setTimeout(() => {
-            loadIntelBrief("dash-intel-brief-text", "mission-brief-ts");
-            startMissionPolling();
-        }, 1200);
-    } catch (err) {
-        console.error("Error initializing dashboard: ", err);
-        // Fallback polling if WebSocket fails
-        setInterval(pollMetrics, 3000);
-    }
-}
-
-// Poll metrics via standard HTTP
-async function pollMetrics() {
-    try {
-        const response = await fetch(`${API_BASE}/api/status`);
-        if (response.ok) {
-            const data = await response.json();
-            updateUI(data);
-        }
-    } catch (err) {
-        console.warn("Polling failed: ", err);
-    }
-}
-
-// WebSocket Live updates with automatic HTTP polling fallback
-let wsFailCount = 0;
-let wsFallbackToPolling = false;
-
-function setupWebsocket() {
-    if (wsFallbackToPolling) return;
-
-    const wsProto = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const wsUrl = `${wsProto}//${window.location.host}/ws/metrics`;
-    const ws = new WebSocket(wsUrl);
-
-    ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        updateUI(data);
-        wsFailCount = 0; // Reset count on successful message
-    };
-
-    ws.onclose = () => {
-        wsFailCount++;
-        if (wsFailCount >= 3) {
-            console.warn("WebSocket repeatedly failed. Falling back to HTTP polling...");
-            wsFallbackToPolling = true;
-            setInterval(pollMetrics, 3000);
-            return;
-        }
-        console.warn("WebSocket closed. Reconnecting in 3 seconds...");
-        setTimeout(setupWebsocket, 3000);
-    };
-
-    ws.onerror = (err) => {
-        console.error("WebSocket error: ", err);
-        ws.close();
-    };
-}
-
-// Update DOM with metrics data
-function updateUI(data) {
-    if (statusBadge) statusBadge.textContent = data.status;
-    if (activeAssetsBadge) activeAssetsBadge.textContent = `${data.active_assets} ASSETS ACTIVE`;
-    if (totalAgentsVal) totalAgentsVal.textContent = data.total_agents;
-    
-    if (cpuPercentVal) cpuPercentVal.textContent = data.system_cpu;
-    if (cpuGaugeBar) cpuGaugeBar.style.width = data.system_cpu;
-
-    let ramPercent = 30;
-    if (data.system_ram) {
-        if (ramUsageVal) ramUsageVal.textContent = data.system_ram;
-        const ramParts = data.system_ram.split("/");
-        if (ramParts.length === 2) {
-            const used = parseFloat(ramParts[0]);
-            const total = parseFloat(ramParts[1]);
-            ramPercent = Math.round((used / total) * 100);
-            if (ramGaugeBar) ramGaugeBar.style.width = `${ramPercent}%`;
-        }
+    function escapeHtml(str) {
+        if (str === null || str === undefined) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
     }
 
-    // Update Chart.js lines
-    if (liveChart) {
-        const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        chartLabels.push(timeStr);
-        chartCpuData.push(parseInt(data.system_cpu));
-        chartRamData.push(ramPercent);
+    // Theme implementation
+    function initTheme() {
+        const themeSelector = el('theme-selector');
+        if (!themeSelector) return;
         
-        if (chartLabels.length > 20) {
-            chartLabels.shift();
-            chartCpuData.shift();
-            chartRamData.shift();
-        }
-        liveChart.update();
-    }
+        const savedTheme = localStorage.getItem('hoch-theme') || 'theme-green';
+        themeSelector.value = savedTheme;
+        applyTheme(savedTheme);
 
-    // Update Dashboard Widgets Charts dynamically
-    if (workloadChart && data.system_cpu) {
-        const cpuVal = parseInt(data.system_cpu);
-        workloadChart.data.datasets[0].data[5] = cpuVal;
-        workloadChart.data.datasets[1].data[4] = cpuVal - 2;
-        workloadChart.data.datasets[1].data[5] = cpuVal;
-        workloadChart.data.datasets[1].data[6] = cpuVal + 2;
-        workloadChart.data.datasets[1].data[7] = cpuVal + 5;
-        workloadChart.update();
-    }
-
-    if (resourceChart && data.nodes) {
-        let swarmALoad = 0;
-        let swarmBLoad = 0;
-        data.nodes.forEach(node => {
-            if (node.id === "L1" || node.id === "W1") {
-                swarmALoad += node.cpu_usage;
-            } else if (node.id === "L2" || node.id === "L3") {
-                swarmBLoad += node.cpu_usage;
-            }
+        themeSelector.addEventListener('change', (e) => {
+            const theme = e.target.value;
+            localStorage.setItem('hoch-theme', theme);
+            applyTheme(theme);
         });
-        const total = Math.max(1, swarmALoad + swarmBLoad);
-        const aPercent = Math.round((swarmALoad / total) * 80);
-        const bPercent = Math.round((swarmBLoad / total) * 80);
-        resourceChart.data.datasets[0].data = [aPercent, bPercent, 100 - aPercent - bPercent];
-        resourceChart.update();
     }
 
-    // Populate active deployment table
-    if (data.nodes) {
-        currentNodes = data.nodes;
-        populateTable(data.nodes);
-        updateMermaidTopology(data.nodes);
-        renderAssetsView(data.nodes);
-        
-        // Also refresh settings list if visible
-        if (navItems.settings.nav && navItems.settings.nav.classList.contains("active")) {
-            renderSettingsNodesList(data.nodes);
-        }
-    }
-}
-
-// State variables for topology paths
-let currentPaths = {};
-
-// Render active deployments as premium tactical cards
-function populateTable(nodes) {
-    deploymentsTbody.innerHTML = "";
-    nodes.forEach(node => {
-        const card = document.createElement("div");
-        card.className = "asset-console-card";
-        
-        let statusClass = "status-idle";
-        if (node.status === "Active") statusClass = "status-active";
-        else if (node.status === "Underutilized") statusClass = "status-underutilized";
-
-        let osIcon = "monitor";
-        if (node.os.toLowerCase().includes("mac")) osIcon = "apple";
-        else if (node.os.toLowerCase().includes("win")) osIcon = "terminal";
-        else if (node.os.toLowerCase().includes("ios")) osIcon = "smartphone";
-        else if (node.os.toLowerCase().includes("ipad")) osIcon = "tablet";
-        else if (node.os.toLowerCase().includes("linux")) osIcon = "server";
-
-        // Separate specs info
-        const specsParts = node.specs.split(",");
-        const ramDiskText = specsParts.join(" / ");
-
-        card.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 12px; text-align: left;">
-                <i data-lucide="${osIcon}" class="asset-os-icon" style="width: 18px; height: 18px; color: var(--text-secondary);"></i>
-                <div style="display: flex; flex-direction: column; min-width: 0; flex: 1;">
-                    <span style="font-size: 12px; font-weight: 600; color: #fff; letter-spacing: 0.3px;">${node.name}</span>
-                    <span style="font-size: 9px; color: var(--text-secondary); margin-top: 1px;">${node.ip} &bull; ${ramDiskText}</span>
-                    <span class="node-activity-ticker">${node.activity || node.role}</span>
-                </div>
-            </div>
-            <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
-                <span class="node-status-label ${getStatusClass(node.status)}">${STATUS_LABELS[node.status] || node.status}</span>
-                <span style="font-size: 9px; color: var(--text-secondary); background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; font-family: monospace;">${node.total_agents} AGENTS</span>
-                <span class="status-pulse-dot ${getStatusClass(node.status)}"></span>
-            </div>
-        `;
-
-        
-        card.addEventListener("click", () => {
-            openModalForNode(node);
-        });
-        
-        deploymentsTbody.appendChild(card);
-    });
-    lucide.createIcons();
-}
-
-// Function to update the node coordinates from the rendered SVG elements
-function updateNodesMap() {
-    // Left empty since we define coordinates directly inside our custom SVG builder
-}
-
-// Render dynamic custom SVG Topology Layout representing Zero Trust enclaves and C2 architecture
-async function updateMermaidTopology(nodes, executingNodeId = null) {
-    const wrapper = document.querySelector(".mermaid-container-wrapper");
-    const canvas = document.getElementById("agent-flow-canvas");
-    if (!wrapper || !canvas) return;
-
-    // ViewBox coordinates
-    const width = 800;
-    const height = 500;
-
-    canvas.width = width;
-    canvas.height = height;
-
-    // Find Master Node
-    const masterNode = nodes.find(n => n.id === "L1") || nodes[0];
-    if (!masterNode) return;
-
-    // Sort remaining nodes into compute/coder nodes vs client/mobile nodes
-    const workers = nodes.filter(n => n.id !== masterNode.id);
-
-    // Positions mapping
-    const masterX = 100;
-    const masterY = 250;
-    const schedX = 290;
-    const schedY = 160;
-    const lbX = 290;
-    const lbY = 340;
-    const workerX = 540;
-
-    // Distribute workers vertically in the right-most column
-    const workersCount = workers.length;
-    const startY = 40;
-    const endY = 460;
-    const gapY = workersCount > 1 ? (endY - startY) / (workersCount - 1) : 0;
-
-    const workerPositions = {};
-    workers.forEach((node, i) => {
-        workerPositions[node.id] = workersCount > 1 ? startY + i * gapY : 250;
-    });
-
-    let pathsHtml = "";
-    currentPaths = {};
-
-    // 1. Master Hub -> Scheduler connection curve (Dotted Cyan X-axis transport)
-    const masterToSchedPath = getBezierPathString(masterX, masterY, schedX - 60, schedY);
-    pathsHtml += `<path d="${masterToSchedPath}" stroke="rgba(0, 229, 255, 0.45)" stroke-width="1.8" stroke-dasharray="4, 4" fill="none" />`;
-    currentPaths["master-sched"] = getBezierPoints(masterX, masterY, schedX - 60, schedY);
-
-    // 2. Master Hub -> Load Balancer connection curve (Dotted Cyan X-axis transport)
-    const masterToLbPath = getBezierPathString(masterX, masterY, lbX - 60, lbY);
-    pathsHtml += `<path d="${masterToLbPath}" stroke="rgba(0, 229, 255, 0.45)" stroke-width="1.8" stroke-dasharray="4, 4" fill="none" />`;
-    currentPaths["master-lb"] = getBezierPoints(masterX, masterY, lbX - 60, lbY);
-
-    // 3. Orchestrator -> Worker connection curves
-    workers.forEach(node => {
-        const wY = workerPositions[node.id] + 35; // Center of the 70px card
-        const isCoder = !node.os.toLowerCase().includes("ios") && !node.os.toLowerCase().includes("ipad");
-
-        let fromX, fromY, strokeColor, dashArray, pathKey;
-        if (isCoder) {
-            fromX = schedX + 60;
-            fromY = schedY;
-            strokeColor = "rgba(0, 229, 255, 0.35)"; // Dotted Cyan for horizontal code pipelines
-            dashArray = "4, 4";
-            pathKey = `sched-${node.id}`;
-        } else {
-            fromX = lbX + 60;
-            fromY = lbY;
-            strokeColor = "rgba(16, 185, 129, 0.45)"; // Solid Green/Teal for vertical edge streams
-            dashArray = "none";
-            pathKey = `lb-${node.id}`;
-        }
-
-        const pathD = getBezierPathString(fromX, fromY, workerX, wY);
-        pathsHtml += `<path d="${pathD}" stroke="${strokeColor}" stroke-width="1.5" stroke-dasharray="${dashArray}" fill="none" />`;
-        currentPaths[pathKey] = getBezierPoints(fromX, fromY, workerX, wY);
-
-        // Display IP label along path
-        const midX = fromX + (workerX - fromX) * 0.55;
-        const midY = fromY + (wY - fromY) * 0.45 - 4;
-        pathsHtml += `<text x="${midX}" y="${midY}" text-anchor="middle" fill="${isCoder ? 'rgba(0, 229, 255, 0.4)' : 'rgba(16, 185, 129, 0.55)'}" style="font-family: monospace; font-size: 8px; font-weight: bold;">${node.ip}</text>`;
-    });
-
-    let nodesHtml = "";
-
-    // Gradient defs
-    nodesHtml += `
-    <defs>
-        <linearGradient id="masterGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#1e3c72" />
-            <stop offset="100%" stop-color="#2a52be" />
-        </linearGradient>
-    </defs>
-    `;
-
-    // Render Master Hub
-    const isMasterExecuting = executingNodeId === masterNode.id;
-    nodesHtml += `
-    <g transform="translate(${masterX}, ${masterY})" style="cursor: pointer;" onclick="openModalForNodeById('${masterNode.id}')">
-        <circle cx="0" cy="0" r="45" fill="none" stroke="rgba(0, 229, 255, 0.45)" stroke-width="2" stroke-dasharray="10 15">
-            <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="20s" repeatCount="indefinite" />
-        </circle>
-        <circle cx="0" cy="0" r="38" fill="none" stroke="rgba(168, 85, 247, 0.45)" stroke-width="1.5" stroke-dasharray="6 8">
-            <animateTransform attributeName="transform" type="rotate" from="360" to="0" dur="12s" repeatCount="indefinite" />
-        </circle>
-        <circle cx="0" cy="0" r="30" fill="url(#masterGrad)" stroke="${isMasterExecuting ? '#ef4444' : 'rgba(0, 229, 255, 0.6)'}" stroke-width="2.5" style="filter: drop-shadow(0 0 8px ${isMasterExecuting ? 'rgba(239,68,68,0.7)' : 'rgba(0, 229, 255, 0.5)'});" />
-        <text x="0" y="3" text-anchor="middle" fill="#ffffff" style="font-family: 'Outfit', sans-serif; font-size: 8px; font-weight: 700; letter-spacing: 0.5px;">CLUSTER MGR</text>
-        <text x="0" y="13" text-anchor="middle" fill="rgba(255,255,255,0.7)" style="font-family: monospace; font-size: 7px;">${masterNode.ip}</text>
-    </g>
-    `;
-
-    // Render Task Scheduler
-    nodesHtml += `
-    <g transform="translate(${schedX - 60}, ${schedY - 25})" style="cursor: pointer;" onclick="openModalForNodeById('${masterNode.id}')">
-        <rect x="0" y="0" width="120" height="50" rx="6" ry="6" fill="#161c2d" stroke="rgba(59, 130, 246, 0.55)" stroke-width="1.5" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));" />
-        <text x="60" y="20" text-anchor="middle" fill="#fff" style="font-family: 'Outfit', sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 0.5px;">TASK SCHEDULER</text>
-        <text x="60" y="35" text-anchor="middle" fill="var(--accent-teal)" style="font-family: monospace; font-size: 8px; font-weight: bold;">ACTIVE (OK)</text>
-    </g>
-    `;
-
-    // Render Load Balancer
-    nodesHtml += `
-    <g transform="translate(${lbX - 60}, ${lbY - 25})" style="cursor: pointer;">
-        <rect x="0" y="0" width="120" height="50" rx="6" ry="6" fill="#161c2d" stroke="rgba(168, 85, 247, 0.55)" stroke-width="1.5" style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));" />
-        <text x="60" y="20" text-anchor="middle" fill="#fff" style="font-family: 'Outfit', sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 0.5px;">LOAD BALANCER</text>
-        <text x="60" y="35" text-anchor="middle" fill="var(--accent-teal)" style="font-family: monospace; font-size: 8px; font-weight: bold;">ACTIVE (OK)</text>
-    </g>
-    `;
-
-    // Render Worker Node Cards
-    workers.forEach(node => {
-        const wY = workerPositions[node.id];
-        let statusClass = "status-idle";
-        if (node.status === "Active") statusClass = "status-active";
-        else if (node.status === "Underutilized") statusClass = "status-underutilized";
-
-        const executingClass = executingNodeId === node.id ? 'executing' : '';
-        const nodeStroke = executingNodeId === node.id ? '#ef4444' : 'rgba(255, 255, 255, 0.08)';
-
-        let osIcon = "monitor";
-        if (node.os.toLowerCase().includes("mac")) osIcon = "apple";
-        else if (node.os.toLowerCase().includes("win")) osIcon = "terminal";
-        else if (node.os.toLowerCase().includes("ios")) osIcon = "smartphone";
-        else if (node.os.toLowerCase().includes("ipad")) osIcon = "tablet";
-        else if (node.os.toLowerCase().includes("linux")) osIcon = "server";
-
-        nodesHtml += `
-        <foreignObject x="${workerX}" y="${wY}" width="200" height="80">
-            <div xmlns="http://www.w3.org/1999/xhtml" class="topology-node-card ${executingClass}" onclick="openModalForNodeById('${node.id}')" style="box-sizing: border-box; width: 100%; height: 100%; background: rgba(22, 28, 45, 0.85); backdrop-filter: blur(8px); border: 1px solid ${nodeStroke}; border-radius: 8px; padding: 8px 12px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.4); overflow: hidden;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div style="display: flex; align-items: center; gap: 6px; min-width: 0; flex: 1;">
-                        <i data-lucide="${osIcon}" style="width: 12px; height: 12px; color: var(--text-secondary); flex-shrink: 0;"></i>
-                        <span style="font-size: 11px; font-weight: bold; color: #fff; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; max-width: 110px;">${node.name}</span>
-                    </div>
-                    <span class="node-status-label ${getStatusClass(node.status)}" style="font-size: 8px; padding: 1px 5px;">${node.status}</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 8px; color: var(--text-secondary); margin-top: 2px;">
-                    <span>${node.ip}</span>
-                    <span>CPU: ${node.cpu_usage}%</span>
-                </div>
-                <div class="node-activity-ticker" style="font-size: 8px; max-width: 180px;">${node.activity || node.role}</div>
-                <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-top: 2px; overflow: hidden; max-height: 16px;">
-                    ${node.agents && node.agents.length > 0 
-                        ? node.agents.map(a => `<span class="agent-pill ${a.type.includes('GORDY') ? 'gordy' : ''}" style="font-size: 7px; padding: 1px 3px; border-radius: 3px; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.25); color: #c084fc; font-family: monospace; white-space: nowrap;">${a.name.split('-')[0]}</span>`).join('') 
-                        : `<span style="font-size: 7px; color: var(--text-secondary);">No active agents</span>`}
-                </div>
-            </div>
-        </foreignObject>
-        `;
-
-    });
-
-    // Populate SVG
-    mermaidGraph.innerHTML = `
-    <svg id="topology-svg" width="100%" height="100%" viewBox="0 0 ${width} ${height}" style="overflow: visible; transition: transform 0.05s ease-out; transform-origin: center center;">
-        <g id="svg-paths">${pathsHtml}</g>
-        <g id="svg-nodes">${nodesHtml}</g>
-    </svg>
-    `;
-
-    // Apply transforms
-    const svg = mermaidGraph.querySelector("svg");
-    if (svg) {
-        svg.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+    function applyTheme(themeClass) {
+        document.body.className = '';
+        document.body.classList.add(themeClass);
     }
 
-    // Rebind zoom/pan
-    setupSvgPanZoom();
+    // View Switching
+    const views = [
+        { id: 'mission-control', label: 'MISSION CONTROL' },
+        { id: 'live-runtime', label: 'LIVE RUNTIME' },
+        { id: 'local-models', label: 'LOCAL MODELS' },
+        { id: 'model-mesh', label: 'AI MODEL MESH' },
+        { id: 'model-router', label: 'MODEL ROUTER' },
+        { id: 'escalations', label: 'ESCALATIONS' },
+        { id: 'evidence', label: 'EVIDENCE' },
+        { id: 'detections', label: 'DETECTIONS' },
+        { id: 'readiness', label: 'READINESS' },
+        { id: 'settings', label: 'SETTINGS' },
+        { id: 'agent-flight-deck', label: 'AGENT FLIGHT DECK' },
+        { id: 'clawde', label: 'CLAWDE CONTROL TOWER' },
+        { id: 'handoff', label: 'RELEASE REVIEW & HANDOFF' },
+        { id: 'ato', label: 'ATO EVIDENCE BUILDER' }
+    ];
 
-    // Render icons inside SVG foreignObject
-    lucide.createIcons();
-}
-
-window.openModalForNodeById = function(nodeId) {
-    const node = currentNodes.find(n => n.id === nodeId);
-    if (node) openModalForNode(node);
-};
-
-// SVG curve calculations
-function getBezierPathString(x1, y1, x2, y2) {
-    const dx = (x2 - x1) * 0.55;
-    return `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
-}
-
-function getBezierPoints(x1, y1, x2, y2) {
-    const dx = (x2 - x1) * 0.55;
-    return {
-        p0: { x: x1, y: y1 },
-        p1: { x: x1 + dx, y: y1 },
-        p2: { x: x2 - dx, y: y2 },
-        p3: { x: x2, y: y2 }
-    };
-}
-
-// Spawns particle bursts along specific bezier paths
-function spawnTaskParticles(targetNodeId) {
-    const isCoder = targetNodeId === "L2" || targetNodeId === "L3" || targetNodeId === "W1" || targetNodeId === "L1";
-    const path1Key = isCoder ? "master-sched" : "master-lb";
-    const path2Key = isCoder ? `sched-${targetNodeId}` : `lb-${targetNodeId}`;
-    
-    const pts1 = currentPaths[path1Key];
-    const pts2 = currentPaths[path2Key];
-    
-    if (pts1 && pts2) {
-        const color = isCoder ? "rgba(0, 229, 255, 0.85)" : "rgba(16, 185, 129, 0.85)";
-        
-        for (let i = 0; i < 5; i++) {
-            setTimeout(() => {
-                particles.push({
-                    progress: 0,
-                    speed: 0.024,
-                    size: 3.5,
-                    color: color,
-                    p0: pts1.p0,
-                    p1: pts1.p1,
-                    p2: pts1.p2,
-                    p3: pts1.p3,
-                    onComplete: () => {
-                        particles.push({
-                            progress: 0,
-                            speed: 0.018,
-                            size: 3.5,
-                            color: color,
-                            p0: pts2.p0,
-                            p1: pts2.p1,
-                            p2: pts2.p2,
-                            p3: pts2.p3
-                        });
-                    }
+    function initNavigation() {
+        views.forEach(v => {
+            const navBtn = el(`nav-${v.id}`);
+            if (navBtn) {
+                navBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    switchView(v.id);
                 });
-            }, i * 150);
-        }
-    }
-}
-
-// Dispatch task to swarm backend
-btnSubmitTask.addEventListener("click", async () => {
-    const prompt = promptInput.value.trim();
-    if (!prompt) {
-        alert("Please enter a task instruction.");
-        return;
-    }
-
-    const taskType = taskTypeSelect.value;
-    
-    taskOutputBox.classList.remove("hidden");
-    logOutputContent.innerHTML = `<span style="color:var(--text-secondary)">[System] Dispatching task to cluster...</span><br/>`;
-    logToConsoleTerminal("Scheduler", `Task dispatch requested: "${prompt}" (Type: ${taskType})`, "system");
-    btnSubmitTask.disabled = true;
-
-    try {
-        const response = await fetch(`${API_BASE}/api/tasks/run`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                task_type: taskType,
-                prompt: prompt
-            })
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            
-            // Highlight target node
-            const targetNode = data.routed_node;
-            logOutputContent.innerHTML += `<span style="color:var(--accent-blue)">[Scheduler] Routed to ${targetNode.name} (${targetNode.ip})</span><br/>`;
-            logToConsoleTerminal("Orchestrator", `Routed task to ${targetNode.name} (${targetNode.ip})`, "info");
-            
-            // Re-render topology highlighting the routed node
-            const responseStatus = await fetch(`${API_BASE}/api/status`);
-            if (responseStatus.ok) {
-                const statusData = await responseStatus.json();
-                updateMermaidTopology(statusData.nodes, targetNode.id);
-            }
-
-            // Trigger animation packet flow bursts
-            spawnTaskParticles(targetNode.id);
-
-            // Simulate typewriter effect for execution log
-            logOutputContent.innerHTML += `<span style="color:var(--accent-teal)">[Swarm Runner] Node executing task...</span><br/>`;
-            setTimeout(() => {
-                logOutputContent.innerHTML += `<span style="color:#ffffff">${data.result}</span><br/>`;
-                logOutputContent.innerHTML += `<span style="color:var(--accent-teal)">[Success] Swarm execution task complete.</span>`;
-                logOutputContent.scrollTop = logOutputContent.scrollHeight;
-                
-                logToConsoleTerminal("SwarmRunner", `Task finished on ${targetNode.name}. Status: COMPLETED`, "info");
-                
-                btnSubmitTask.disabled = false;
-                promptInput.value = ""; // Clear input bar
-                fetchAndRenderTasks(); // Refresh history
-            }, 1500);
-
-        } else {
-            logOutputContent.innerHTML += `<span style="color:#ef4444">[Error] Failed to execute swarm task.</span>`;
-            logToConsoleTerminal("Scheduler", "Task execution failed.", "error");
-            btnSubmitTask.disabled = false;
-        }
-    } catch (err) {
-        logOutputContent.innerHTML += `<span style="color:#ef4444">[Error] Connection lost to control plane: ${err.message}</span>`;
-        logToConsoleTerminal("Connection", `Error: ${err.message}`, "error");
-        btnSubmitTask.disabled = false;
-    }
-});
-
-// Zoom and Reset controls for topology layout
-btnZoom.addEventListener("click", () => {
-    scale = scale >= 1.8 ? 1.0 : scale + 0.2;
-    const svg = mermaidGraph.querySelector("svg");
-    if (svg) svg.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
-});
-
-btnReset.addEventListener("click", () => {
-    scale = 1.0;
-    panX = 0;
-    panY = 0;
-    const svg = mermaidGraph.querySelector("svg");
-    if (svg) svg.style.transform = `translate(0px, 0px) scale(1.0)`;
-});
-
-// Modal Logic to display node specs and Gordy profiles
-function openModalForNode(node) {
-    modalNodeTitle.textContent = node.name;
-    modalNodeIp.textContent = node.ip;
-    modalNodeSpecs.textContent = node.specs;
-    modalNodeRole.textContent = `${node.os} (${node.role})`;
-    modalNodeLatency.textContent = `${node.latency_ms || 1.2}ms`;
-
-    modalAgentsContainer.innerHTML = "";
-    if (node.agents && node.agents.length > 0) {
-        node.agents.forEach(agent => {
-            const isGordy = agent.type.includes("GORDY") || agent.type.includes("Docker Coder");
-            const typeClass = isGordy ? "agent-type agent-type-gordy" : "agent-type";
-            
-            const card = document.createElement("div");
-            card.className = "agent-card";
-            card.innerHTML = `
-                <div class="agent-card-header">
-                    <span class="agent-name">${agent.name}</span>
-                    <span class="${typeClass}">${agent.type}</span>
-                </div>
-                <p class="agent-desc">${agent.description}</p>
-                <div class="agent-status-badge">
-                    <span class="dot" style="background-color: var(--accent-teal)"></span>
-                    <span style="color: var(--text-secondary); margin-left: 4px;">Status: ${agent.status}</span>
-                </div>
-            `;
-            modalAgentsContainer.appendChild(card);
-        });
-    } else {
-        modalAgentsContainer.innerHTML = `<p style="color:var(--text-secondary);font-size:14px;grid-column:1/-1;text-align:center;padding:24px 0;">No active agent containers deployed on this node.</p>`;
-    }
-
-    modalContainer.classList.remove("hidden");
-    lucide.createIcons(); // Re-render X icon inside modal
-}
-
-// Close Modal Controls
-btnCloseModal.addEventListener("click", () => {
-    modalContainer.classList.add("hidden");
-});
-
-modalContainer.addEventListener("click", (e) => {
-    if (e.target === modalContainer) {
-        modalContainer.classList.add("hidden");
-    }
-});
-
-// Close modal on Escape key
-document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-        modalContainer.classList.add("hidden");
-    }
-});
-
-// View Tab Navigation - Generic switcher
-Object.keys(navItems).forEach(key => {
-    const item = navItems[key];
-    if (item.nav && item.view) {
-        item.nav.addEventListener("click", (e) => {
-            e.preventDefault();
-            // Remove active class from all nav items, add to current
-            Object.values(navItems).forEach(x => {
-                if (x.nav) x.nav.classList.remove("active");
-                if (x.view) x.view.classList.add("hidden");
-            });
-            item.nav.classList.add("active");
-            item.view.classList.remove("hidden");
-
-            // Custom actions on tab switches
-            if (key === "security") {
-                triggerSecurityAudit();
-            } else if (key === "assets") {
-                renderAssetsView(currentNodes);
-            } else if (key === "tasks") {
-                fetchAndRenderTasks();
-            } else if (key === "settings") {
-                renderSettingsNodesList(currentNodes);
             }
         });
     }
-});
 
-// Sub-tabs in Security View
-if (subtabAudit && subtabGap) {
-    subtabAudit.addEventListener("click", () => {
-        subtabAudit.classList.add("active");
-        subtabGap.classList.remove("active");
-        securityAuditContent.classList.remove("hidden");
-        securityGapContent.classList.add("hidden");
-    });
-    
-    subtabGap.addEventListener("click", () => {
-        subtabGap.classList.add("active");
-        subtabAudit.classList.remove("active");
-        securityGapContent.classList.remove("hidden");
-        securityAuditContent.classList.add("hidden");
-    });
-}
+    function switchView(viewId) {
+        activeView = viewId;
 
-// Render all node cards inside Assets tab grid
-function renderAssetsView(nodes) {
-    if (!assetsGridContainer || !nodes) return;
-    assetsGridContainer.innerHTML = "";
-
-    nodes.forEach(node => {
-        const card = document.createElement("div");
-        card.className = "asset-detail-card";
-        const sc = getStatusClass(node.status);
-
-        // Build agent capsules list
-        let capsulesHtml = "";
-        if (node.agents && node.agents.length > 0) {
-            node.agents.forEach(agent => {
-                const isGordy = agent.type.includes("GORDY") || agent.type.includes("Docker Coder");
-                const capsuleClass = isGordy ? "agent-capsule agent-capsule-gordy" : "agent-capsule";
-                const agentSC = getStatusClass(agent.status);
-                capsulesHtml += `<span class="${capsuleClass}" style="cursor:default" title="${agent.description || ''}">${agent.name} <span class="node-status-label ${agentSC}" style="font-size:7px; padding:1px 4px; margin-left:2px;">${agent.status}</span></span>`;
-            });
-        } else {
-            capsulesHtml = `<span style="font-size:11px; color:var(--text-secondary);">No agents active</span>`;
-        }
-
-        card.innerHTML = `
-            <div class="asset-card-title-row">
-                <span class="asset-card-title">${node.name}</span>
-                <span class="node-status-label ${sc}">${STATUS_LABELS[node.status] || node.status}</span>
-            </div>
-            <div class="node-activity-ticker" style="margin-top: 4px; margin-bottom: 8px; font-size: 10px;">${node.activity || node.role}</div>
-
-                <div><strong>IP Address:</strong> ${node.ip}</div>
-                <div><strong>Role/OS:</strong> ${node.os} (${node.role})</div>
-                <div><strong>Specifications:</strong> ${node.specs}</div>
-                <div><strong>CPU Usage:</strong> ${node.cpu_usage}%</div>
-                <div><strong>RAM Usage:</strong> ${node.ram_usage}%</div>
-                <div><strong>Latency:</strong> ${node.latency_ms || 1.2}ms</div>
-            </div>
-            <div style="margin-top: 12px;">
-                <div style="font-size: 11px; text-transform: uppercase; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px;">Deployed Agent Containers</div>
-                <div class="asset-agents-capsules">
-                    ${capsulesHtml}
-                </div>
-            </div>
-        `;
-
-        card.addEventListener("click", () => {
-            openModalForNode(node);
+        // Reset sidebar active classes
+        views.forEach(v => {
+            const btn = el(`nav-${v.id}`);
+            if (btn) btn.classList.remove('active');
+            const viewDiv = el(`view-${v.id}`);
+            if (viewDiv) viewDiv.classList.add('hidden');
         });
 
-        assetsGridContainer.appendChild(card);
-    });
-}
+        const activeBtn = el(`nav-${viewId}`);
+        if (activeBtn) activeBtn.classList.add('active');
 
-// Run Security Audit and render RMF Scorecard
-async function triggerSecurityAudit() {
-    securityControlsList.innerHTML = `<p style="color:var(--text-secondary); text-align:center; padding: 24px;">Running cybersecurity RMF compliance assessment audit...</p>`;
-    if (securityGapTbody) {
-        securityGapTbody.innerHTML = `<tr><td colspan="5" style="color:var(--text-secondary); text-align:center; padding: 24px;">Running audit. Gap analysis generating...</td></tr>`;
+        const activeDiv = el(`view-${viewId}`);
+        if (activeDiv) activeDiv.classList.remove('hidden');
+
+        // Update header subnet label
+        const targetView = views.find(v => v.id === viewId);
+        const headerSubnet = el('header-subnet-title');
+        if (headerSubnet && targetView) {
+            headerSubnet.textContent = `[${targetView.label}]`;
+        }
+
+        // Clean up sub-view pollers & animations
+        if (viewInterval) {
+            clearInterval(viewInterval);
+            viewInterval = null;
+        }
+        if (pondAnimationId) {
+            cancelAnimationFrame(pondAnimationId);
+            pondAnimationId = null;
+        }
+
+        // Trigger view-specific loaders
+        triggerViewLoader(viewId);
+
+        // Refresh lucide icons
+        if (window.lucide) window.lucide.createIcons();
     }
-    btnRunAudit.disabled = true;
 
-    try {
-        const response = await fetch(`${API_BASE}/api/security/audit`);
-        if (response.ok) {
-            const data = await response.json();
-            
-            // Update scorecard UI
-            auditScorePercent.textContent = data.compliance_score;
-            auditPassedCount.textContent = data.stats.passed;
-            auditWarningsCount.textContent = data.stats.warnings;
-            auditFailedCount.textContent = data.stats.failed;
-
-            // Render controls checklist
-            securityControlsList.innerHTML = "";
-            data.controls.forEach(control => {
-                let statusClass = "status-idle";
-                if (control.status === "PASS") statusClass = "status-active";
-                else if (control.status === "WARNING") statusClass = "status-underutilized";
-                else if (control.status === "FAIL") statusClass = "text-danger";
-
-                const card = document.createElement("div");
-                card.className = "control-item-card";
-                
-                let detailsHtml = "";
-                control.details.forEach(detail => {
-                    detailsHtml += `<li>${detail}</li>`;
-                });
-
-                card.innerHTML = `
-                    <div class="control-item-header">
-                        <div class="control-code-name">
-                            <span class="control-code">${control.control}</span>
-                            <span class="control-name">${control.name}</span>
-                        </div>
-                        <span class="status-indicator ${statusClass}"><span class="dot" style="background-color:currentColor"></span> ${control.status}</span>
-                    </div>
-                    <ul class="control-details-list">
-                        ${detailsHtml}
-                    </ul>
-                `;
-                securityControlsList.appendChild(card);
-            });
-            
-            // Generate the Gap Analysis report
-            renderGapReport(data.controls);
-            
-            lucide.createIcons();
-        } else {
-            securityControlsList.innerHTML = `<p style="color:#ef4444; text-align:center; padding: 24px;">Failed to complete cybersecurity compliance audit check.</p>`;
+    function triggerViewLoader(viewId) {
+        switch (viewId) {
+            case 'mission-control':
+                // Handled by the global loop
+                break;
+            case 'live-runtime':
+                loadLiveRuntimeView();
+                viewInterval = setInterval(loadLiveRuntimeView, 3000);
+                break;
+            case 'local-models':
+                loadLocalModelsView();
+                viewInterval = setInterval(loadLocalModelsView, 3000);
+                break;
+            case 'model-mesh':
+                loadModelMeshView();
+                viewInterval = setInterval(loadModelMeshView, 3000);
+                break;
+            case 'model-router':
+                loadModelRouterView();
+                viewInterval = setInterval(loadModelRouterView, 3000);
+                break;
+            case 'escalations':
+                loadEscalationsView();
+                viewInterval = setInterval(loadEscalationsView, 3000);
+                break;
+            case 'evidence':
+                loadEvidenceView();
+                viewInterval = setInterval(loadEvidenceView, 3000);
+                break;
+            case 'detections':
+                loadDetectionsView();
+                viewInterval = setInterval(loadDetectionsView, 3000);
+                break;
+            case 'readiness':
+                loadReadinessView();
+                viewInterval = setInterval(loadReadinessView, 3000);
+                break;
+            case 'settings':
+                loadSettingsView();
+                viewInterval = setInterval(loadSettingsView, 5000);
+                break;
+            case 'agent-flight-deck':
+                loadAgentFlightDeckView();
+                viewInterval = setInterval(loadAgentFlightDeckView, 3000);
+                break;
+            case 'clawde':
+                loadClawdeView();
+                viewInterval = setInterval(loadClawdeView, 3000);
+                break;
+            case 'handoff':
+                loadHandoffView();
+                viewInterval = setInterval(loadHandoffView, 3000);
+                break;
+            case 'ato':
+                loadAtoView();
+                viewInterval = setInterval(loadAtoView, 3000);
+                break;
         }
-    } catch (err) {
-        securityControlsList.innerHTML = `<p style="color:#ef4444; text-align:center; padding: 24px;">Connection lost to security controller: ${err.message}</p>`;
-    } finally {
-        btnRunAudit.disabled = false;
     }
-}
 
-// Generate the Gap Analysis report
-function renderGapReport(controls) {
-    if (!securityGapTbody) return;
-    securityGapTbody.innerHTML = "";
-
-    controls.forEach(control => {
-        const tr = document.createElement("tr");
-        
-        let statusClass = "status-idle";
-        if (control.status === "PASS") statusClass = "status-active";
-        else if (control.status === "WARNING") statusClass = "status-underutilized";
-        else if (control.status === "FAIL") statusClass = "text-danger";
-
-        // Map identified gap and remediation command based on control status and type
-        let gapDesc = "";
-        let remediationHtml = "";
-
-        if (control.status === "PASS") {
-            gapDesc = "None (Compliant). Control is active and verified.";
-            remediationHtml = `<span style="color: var(--text-secondary);">None Required</span>`;
-        } else {
-            // For failed or warning controls, provide explicit gaps and remediation commands
-            if (control.control === "AC-3") {
-                gapDesc = control.details.join(" ") || "Unsafe SSH key directory/file permissions detected.";
-                remediationHtml = `<div class="remediation-cmd-container">chmod 700 ~/.ssh && chmod 600 ~/.ssh/*</div>
-                                   <button class="btn btn-primary btn-xs" style="margin-top: 6px; font-size:11px; padding: 4px 8px; width:100%;" onclick="patchControl('${control.control}')"><i data-lucide="shield-alert" style="width:12px;height:12px;"></i> Patch Control</button>`;
-            } else if (control.control === "AC-17") {
-                gapDesc = control.details.join(" ") || "Weak SSH configurations detected. Password authentication or root login enabled.";
-                remediationHtml = `<div class="remediation-cmd-container">sudo sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config</div>
-                                   <button class="btn btn-primary btn-xs" style="margin-top: 6px; font-size:11px; padding: 4px 8px; width:100%;" onclick="patchControl('${control.control}')"><i data-lucide="shield-alert" style="width:12px;height:12px;"></i> Patch Control</button>`;
-            } else if (control.control === "AU-12") {
-                gapDesc = control.details.join(" ") || "No standard system logging daemon found running.";
-                remediationHtml = `<div class="remediation-cmd-container">sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.syslogd.plist</div>
-                                   <button class="btn btn-primary btn-xs" style="margin-top: 6px; font-size:11px; padding: 4px 8px; width:100%;" onclick="patchControl('${control.control}')"><i data-lucide="shield-alert" style="width:12px;height:12px;"></i> Patch Control</button>`;
-            } else if (control.control === "SI-2") {
-                gapDesc = control.details.join(" ") || "Critical system partition usage exceeded threshold.";
-                remediationHtml = `<div class="remediation-cmd-container">docker system prune -a --volumes && rclone move /data/ gdrive:swarm_backup</div>
-                                   <button class="btn btn-primary btn-xs" style="margin-top: 6px; font-size:11px; padding: 4px 8px; width:100%;" onclick="patchControl('${control.control}')"><i data-lucide="shield-alert" style="width:12px;height:12px;"></i> Patch Control</button>`;
-            } else {
-                gapDesc = control.details.join(" ");
-                remediationHtml = `<span style="color: var(--text-secondary);">Audit host settings manually</span>`;
-            }
-        }
-
-        tr.innerHTML = `
-            <td><code>${control.control}</code></td>
-            <td><strong>${control.name}</strong></td>
-            <td><span class="status-indicator ${statusClass}"><span class="dot" style="background-color:currentColor"></span> ${control.status}</span></td>
-            <td style="max-width: 250px; font-size: 13px; line-height: 1.4; color: var(--text-secondary);">${gapDesc}</td>
-            <td>${remediationHtml}</td>
-        `;
-        securityGapTbody.appendChild(tr);
-    });
-}
-
-btnRunAudit.addEventListener("click", triggerSecurityAudit);
-
-// Fetch and render tasks history table
-async function fetchAndRenderTasks() {
-    if (!tasksTbody) return;
-    try {
-        const response = await fetch(`${API_BASE}/api/tasks`);
-        if (response.ok) {
-            const tasks = await response.json();
-            tasksTbody.innerHTML = "";
-            if (tasks.length === 0) {
-                tasksTbody.innerHTML = `<tr><td colspan="5" style="color:var(--text-secondary); text-align:center; padding: 24px;">No tasks run in this session.</td></tr>`;
-                return;
-            }
-            tasks.forEach(task => {
-                const tr = document.createElement("tr");
-                tr.innerHTML = `
-                    <td><code>${task.task_id}</code></td>
-                    <td><strong>${task.task_type}</strong></td>
-                    <td>${task.node_name}</td>
-                    <td>${task.duration}</td>
-                    <td><span class="status-indicator status-active"><span class="dot" style="background-color: var(--accent-teal)"></span> ${task.status}</span></td>
-                `;
-                tasksTbody.appendChild(tr);
-            });
-        }
-    } catch (err) {
-        console.error("Failed to load task history: ", err);
-    }
-}
-
-// Render settings asset management table
-function renderSettingsNodesList(nodes) {
-    if (!settingsNodesTbody || !nodes) return;
-    settingsNodesTbody.innerHTML = "";
-    
-    nodes.forEach(node => {
-        const tr = document.createElement("tr");
-        
-        const isControlPlane = node.id === "L1";
-        const removeButtonHtml = isControlPlane 
-            ? `<span style="color:var(--text-secondary); font-size:11px;">Protected</span>`
-            : `<button class="btn btn-outline btn-xs" style="border-color:#ef4444; color:#ef4444; display: inline-flex; align-items: center; gap: 4px;" onclick="removeNode('${node.id}')"><i data-lucide="trash-2" style="width:12px;height:12px;"></i> Deregister</button>`;
-
-        tr.innerHTML = `
-            <td><strong>${node.name}</strong><br/><small style="color:var(--text-secondary)">${node.os} (${node.role})</small></td>
-            <td><code>${node.ip}</code></td>
-            <td>${removeButtonHtml}</td>
-        `;
-        settingsNodesTbody.appendChild(tr);
-    });
-    lucide.createIcons();
-}
-
-// Register a new node
-if (btnRegisterNode) {
-    btnRegisterNode.addEventListener("click", async (e) => {
-        e.preventDefault();
-        
-        const id = document.getElementById("reg-node-id").value.trim().toUpperCase();
-        const name = document.getElementById("reg-node-name").value.trim();
-        const ip = document.getElementById("reg-node-ip").value.trim();
-        const role = document.getElementById("reg-node-role").value.trim();
-        const specs = document.getElementById("reg-node-specs").value.trim();
-        const os = document.getElementById("reg-node-os").value;
-
-        if (!id || !name || !ip || !role || !specs) {
-            alert("All fields are required to register a new swarm asset.");
-            return;
-        }
-
-        const payload = { id, name, ip, role, specs, os, total_agents: 0, status: "Active" };
-
+    // Global Cockpit Fetch & Render
+    async function fetchCockpit() {
+        const startTime = Date.now();
         try {
-            const response = await fetch(`${API_BASE}/api/nodes/add`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
+            const res = await fetch('/api/v1/live-runtime/cockpit');
+            const data = await res.json();
+            const latency = Date.now() - startTime;
+            
+            // Update header network latency
+            const latencyVal = el('latency-val');
+            if (latencyVal) {
+                latencyVal.textContent = `${latency}ms`;
+            }
 
-            if (response.ok) {
-                const res = await response.json();
-                if (res.status === "SUCCESS") {
-                    alert(`Successfully registered node '${name}' in swarm.`);
-                    if (formRegisterNode) formRegisterNode.reset();
-                    
-                    const statusRes = await fetch(`${API_BASE}/api/status`);
-                    if (statusRes.ok) {
-                        const data = await statusRes.json();
-                        updateUI(data);
-                        renderSettingsNodesList(data.nodes);
-                    }
-                } else {
-                    alert("Failed to register node.");
+            const syncStatus = el('sync-status-text');
+            if (syncStatus) {
+                syncStatus.textContent = 'ONLINE';
+                syncStatus.style.color = '#10b981';
+            }
+
+            renderCockpitCards(data.cards);
+            updateHeaderStatus(data.cards);
+
+            // Fetch model mesh config in parallel for Koi pond binding
+            const meshRes = await fetch('/api/v1/model-mesh/config');
+            if (meshRes.ok) {
+                const meshData = await meshRes.json();
+                updateKoiPond(meshData);
+            }
+
+            // Monitor ledger count for active execution ripples
+            const ledgerRes = await fetch('/api/v1/prompts/usage-ledger');
+            if (ledgerRes.ok) {
+                const ledgerData = await ledgerRes.json();
+                const currentCount = (ledgerData.ledger || []).length;
+                if (lastLedgerCount !== 0 && currentCount > lastLedgerCount) {
+                    const newEntries = ledgerData.ledger.slice(lastLedgerCount);
+                    newEntries.forEach(entry => {
+                        const agentId = entry.agent_id ? entry.agent_id.toLowerCase().replace('_', '-') : null;
+                        if (agentId && koiFishInstances[agentId]) {
+                            triggerKoiRipple(agentId, entry.risk_level === "HIGH" ? "broken" : "normal");
+                        } else if (koiFishInstances["local-swarm-api"]) {
+                            triggerKoiRipple("local-swarm-api", "warning");
+                        }
+                    });
                 }
+                lastLedgerCount = currentCount;
             }
         } catch (err) {
-            alert("Error connecting to control plane: " + err.message);
+            console.error('[Cockpit] fetch error:', err);
+            const syncStatus = el('sync-status-text');
+            if (syncStatus) {
+                syncStatus.textContent = 'ERROR';
+                syncStatus.style.color = '#ef4444';
+            }
         }
-    });
-}
+    }
 
-// Remove a registered node
-window.removeNode = async function(nodeId) {
-    if (!confirm(`Are you sure you want to deregister node '${nodeId}' from the swarm?`)) return;
+    function updateHeaderStatus(cards) {
+        // Status Badge: GO or NO-GO
+        const statusBadge = el('cluster-status-badge');
+        if (statusBadge && cards.readiness) {
+            const verdict = cards.readiness.go_no_go || 'NO-GO';
+            statusBadge.className = 'badge';
+            if (verdict === 'GO') {
+                statusBadge.classList.add('badge-success');
+                statusBadge.textContent = 'STATUS: GO';
+            } else {
+                statusBadge.classList.add('badge-info');
+                statusBadge.textContent = `STATUS: ${verdict}`;
+            }
+        }
 
-    try {
-        const response = await fetch(`${API_BASE}/api/nodes/remove/${nodeId}`, {
-            method: "DELETE"
+        // Active Assets Count
+        const assetsBadge = el('active-assets-badge');
+        if (assetsBadge && cards.device_registry) {
+            const count = cards.device_registry.devices_count || 0;
+            assetsBadge.className = 'badge badge-info';
+            assetsBadge.textContent = `${count} DEVICES ACTIVE`;
+        }
+    }
+
+    function renderCockpitCards(cards) {
+        if (!cards) return;
+
+        Object.keys(cards).forEach(key => {
+            const cardData = cards[key];
+            const htmlKey = key.replace(/_/g, '-');
+            const dot = el(`dot-${htmlKey}`);
+            const stateLabel = el(`state-${htmlKey}`);
+            const body = el(`body-${htmlKey}`);
+
+            if (!cardData) return;
+
+            // Apply truth state to dot
+            if (dot) {
+                dot.className = 'cockpit-indicator-dot';
+                const truthClass = `state-${(cardData.truth || 'empty').toLowerCase().replace('_', '-')}`;
+                dot.classList.add(truthClass);
+            }
+
+            // Apply state label
+            if (stateLabel) {
+                stateLabel.textContent = cardData.truth || 'UNKNOWN';
+                stateLabel.style.color = getStateColor(cardData.truth);
+            }
+
+            // Render custom content inside bodies
+            if (body) {
+                body.innerHTML = formatCardBody(key, cardData);
+            }
         });
+    }
 
-        if (response.ok) {
-            const res = await response.json();
-            if (res.status === "SUCCESS") {
-                alert(`Deregistered node '${nodeId}'.`);
-                const statusRes = await fetch(`${API_BASE}/api/status`);
-                if (statusRes.ok) {
-                    const data = await statusRes.json();
-                    updateUI(data);
-                    renderSettingsNodesList(data.nodes);
+    function getStateColor(state) {
+        switch (state) {
+            case 'LIVE': return '#10b981';
+            case 'DEGRADED': return '#f59e0b';
+            case 'FAILED': return '#ef4444';
+            case 'ERROR': return '#ef4444';
+            case 'EMPTY': return '#6b7280';
+            case 'APPROVAL_REQUIRED': return '#f59e0b';
+            case 'ASSUMPTION': return '#a855f7';
+            default: return '#f3f4f6';
+        }
+    }
+
+    function formatCardBody(key, data) {
+        let html = '';
+        switch (key) {
+            case 'runtime_process':
+                const numEvents = data.items ? data.items.length : 0;
+                html = `<div style="display:flex; flex-direction:column; gap:4px;">
+                    <div>Tail size: <strong style="color:#fff;">${numEvents} events</strong></div>
+                    <div style="font-size:10px; opacity:0.8; font-family:monospace; max-height:48px; overflow:hidden;">
+                        ${data.items && data.items.length > 0 ? `Latest: ${data.items[0].process_type} (${data.items[0].state})` : 'Queue empty'}
+                    </div>
+                </div>`;
+                break;
+            case 'local_models':
+                const hosts = data.hosts || [];
+                html = `<div style="display:flex; flex-direction:column; gap:4px;">
+                    <div>Discovered Runtimes: <strong style="color:#fff;">${hosts.length} engines</strong></div>
+                    <div style="display:flex; gap:4px; flex-wrap:wrap; margin-top:2px;">
+                        ${hosts.map(h => `<span style="padding:2px 4px; background:rgba(255,255,255,0.05); border-radius:3px; color:${h.reachable ? '#10b981' : '#ef4444'}">${h.host}:${h.port}</span>`).join('')}
+                    </div>
+                </div>`;
+                break;
+            case 'model_router':
+                html = `<div style="display:flex; flex-direction:column; gap:4px;">
+                    <div>Routing Policy: <strong style="color:#fff;">${data.local_first ? 'Local First' : 'Cloud Direct'}</strong></div>
+                    <div>Default Model: <code style="color:#818cf8;">${data.default_model || 'None'}</code></div>
+                </div>`;
+                break;
+            case 'escalations':
+                const escCount = data.pending ? data.pending.length : 0;
+                html = `<div style="display:flex; flex-direction:column; gap:4px;">
+                    <div>Escalated requests: <strong style="color:${escCount > 0 ? '#f59e0b' : '#fff'};">${escCount} pending</strong></div>
+                    ${escCount > 0 ? `<div style="font-size:9px; color:#f59e0b;">Decision gate is currently locked.</div>` : '<div style="font-size:9px; color:#10b981;">No active blocks.</div>'}
+                </div>`;
+                break;
+            case 'detections':
+                const detCount = data.recent_events ? data.recent_events.length : 0;
+                html = `<div style="display:flex; flex-direction:column; gap:4px;">
+                    <div>Recent alerts: <strong style="color:#fff;">${detCount} events</strong></div>
+                    <div>SIEM Coverage: <span style="color:#10b981;">Splunk, Sigma, Elastic, LogQL</span></div>
+                </div>`;
+                break;
+            case 'readiness':
+                html = `<div style="display:flex; flex-direction:column; gap:4px;">
+                    <div>Scorecard: <strong style="color:#10b981; font-size:14px;">${data.score || 0}%</strong></div>
+                    <div>Authorization: <span style="color:${data.go_no_go === 'GO' ? '#10b981' : '#ef4444'}">${data.go_no_go || 'UNKNOWN'}</span></div>
+                </div>`;
+                break;
+            case 'evidence':
+                html = `<div style="display:flex; flex-direction:column; gap:4px;">
+                    <div>Verified Controls: <strong style="color:#fff;">${data.controls || 0}</strong></div>
+                    <div>Passing tests: <strong style="color:#10b981;">${data.tests_passed || 0} / ${data.tests || 0}</strong></div>
+                </div>`;
+                break;
+            case 'immutability':
+                html = `<div style="display:flex; flex-direction:column; gap:4px;">
+                    <div>Post-build posture: <strong style="color:#a855f7;">IMMUTABLE</strong></div>
+                    <div style="font-size:9px; opacity:0.8;">Locked against runtime edits.</div>
+                </div>`;
+                break;
+            case 'local_outage_queue':
+                html = `<div style="display:flex; flex-direction:column; gap:4px;">
+                    <div>Outage items count: <strong style="color:#fff;">${data.queued_items_count || 0}</strong></div>
+                    <div>Autoreplay daemon: <span style="color:#10b981;">ACTIVE</span></div>
+                </div>`;
+                break;
+            case 'port_hardening':
+                html = `<div style="display:flex; flex-direction:column; gap:4px;">
+                    <div>Overall status: <strong style="color:${data.overall_status === 'PASS' ? '#10b981' : '#ef4444'};">${data.overall_status || 'UNKNOWN'}</strong></div>
+                    <div>Ports audited: <strong style="color:#fff;">${data.ports_count || 0} ports</strong></div>
+                </div>`;
+                break;
+            case 'autonomy_budget':
+                html = `<div style="display:flex; flex-direction:column; gap:4px;">
+                    <div>Remaining budget: <strong style="color:#10b981;">${data.remaining_error_budget || 0}%</strong></div>
+                    <div>Level: <span style="color:#3b82f6;">${data.autonomy_level || 'UNKNOWN'}</span></div>
+                </div>`;
+                break;
+            case 'device_registry':
+                const online = data.online_count || 0;
+                const offline = data.offline_count || 0;
+                const reporting = data.reporting_count || 0;
+                const runtimes = (data.model_runtimes_proven || []).map(r => r.split(' ')[0]).join(", ") || "None";
+                html = `<div style="display:flex; flex-direction:column; gap:4px;">
+                    <div>Known Assets: <strong style="color:#fff;">${data.devices_count || 0}</strong></div>
+                    <div>Online: <span style="color:#10b981;">${online}</span> | Offline: <span style="color:#ef4444;">${offline}</span></div>
+                    <div style="font-size:9px; opacity:0.8; max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml((data.model_runtimes_proven || []).join(', '))}">
+                        Proven: <span style="color:#818cf8;">${runtimes}</span>
+                    </div>
+                </div>`;
+                break;
+            default:
+                html = `<div>Loading card data...</div>`;
+        }
+        return html;
+    }
+
+    // ── Loader: Live Runtime View ───────────────────────────────────────────
+    async function loadLiveRuntimeView() {
+        try {
+            const res = await fetch('/api/v1/runtime/process/animation-state');
+            const data = await res.json();
+            
+            const pondIndicator = el('pond-status-indicator');
+            if (pondIndicator) {
+                pondIndicator.className = 'badge badge-success';
+                pondIndicator.textContent = data.truth || 'LIVE';
+            }
+
+            pondProcesses = data.processes || [];
+            
+            const overlay = el('pond-empty-overlay');
+            if (pondProcesses.length === 0) {
+                if (overlay) overlay.style.display = 'flex';
+                if (pondIndicator) {
+                    pondIndicator.className = 'badge badge-info';
+                    pondIndicator.textContent = 'EMPTY';
                 }
             } else {
-                alert("Failed to deregister node.");
+                if (overlay) overlay.style.display = 'none';
+                startPondAnimation();
+            }
+
+            renderProcessEventList(pondProcesses);
+        } catch (err) {
+            console.error('[Pond] load error:', err);
+            const overlay = el('pond-empty-overlay');
+            if (overlay) {
+                overlay.textContent = 'ERROR loading telemetry';
+                overlay.style.display = 'flex';
             }
         }
-    } catch (err) {
-        alert("Error: " + err.message);
-    }
-};
-
-// Start dashboard on load
-window.addEventListener("DOMContentLoaded", initDashboard);
-
-// Setup custom SVG dragging and wheel-zoom on Mermaid SVG
-// Sync pan/zoom coordinates directly between SVG and overlay particle Canvas
-function setupSvgPanZoom() {
-    const svg = mermaidGraph.querySelector("svg");
-    const canvas = document.getElementById("agent-flow-canvas");
-    if (!svg) return;
-
-    const applyTransform = () => {
-        const transStr = `translate(${panX}px, ${panY}px) scale(${scale})`;
-        svg.style.transform = transStr;
-        if (canvas) {
-            canvas.style.transform = transStr;
-        }
-    };
-
-    svg.style.transition = "transform 0.05s ease-out";
-    svg.style.transformOrigin = "center center";
-    if (canvas) {
-        canvas.style.transition = "transform 0.05s ease-out";
-        canvas.style.transformOrigin = "center center";
-    }
-    applyTransform();
-
-    // Scroll wheel zoom
-    mermaidGraph.onwheel = function(e) {
-        e.preventDefault();
-        const zoomFactor = 0.08;
-        if (e.deltaY < 0) {
-            scale = Math.min(3.0, scale + zoomFactor);
-        } else {
-            scale = Math.max(0.4, scale - zoomFactor);
-        }
-        applyTransform();
-    };
-
-    // Mouse drag-panning
-    mermaidGraph.onmousedown = function(e) {
-        if (e.button !== 0) return; // Left click only
-        isPanning = true;
-        startPanX = e.clientX - panX;
-        startPanY = e.clientY - panY;
-        mermaidGraph.style.cursor = "grabbing";
-    };
-
-    window.onmousemove = function(e) {
-        if (!isPanning) return;
-        panX = e.clientX - startPanX;
-        panY = e.clientY - startPanY;
-        applyTransform();
-    };
-
-    window.onmouseup = function() {
-        if (isPanning) {
-            isPanning = false;
-            mermaidGraph.style.cursor = "default";
-        }
-    };
-}
-
-// Initialize Chart.js Line Chart
-function initMetricsChart() {
-    const ctx = document.getElementById("live-metrics-chart");
-    if (!ctx) return;
-
-    liveChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: chartLabels,
-            datasets: [
-                {
-                    label: 'Cluster CPU Usage (%)',
-                    data: chartCpuData,
-                    borderColor: '#3b82f6',
-                    backgroundColor: 'rgba(59, 130, 246, 0.04)',
-                    borderWidth: 2.5,
-                    tension: 0.35,
-                    fill: true
-                },
-                {
-                    label: 'Cluster RAM Allocation (%)',
-                    data: chartRamData,
-                    borderColor: '#a855f7',
-                    backgroundColor: 'rgba(168, 85, 247, 0.04)',
-                    borderWidth: 2.5,
-                    tension: 0.35,
-                    fill: true
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    min: 0,
-                    max: 100,
-                    grid: { color: 'rgba(255, 255, 255, 0.04)' },
-                    ticks: { color: '#9ca3af', font: { family: 'Inter' } }
-                },
-                x: {
-                    grid: { display: false },
-                    ticks: { color: '#9ca3af', font: { family: 'Inter' } }
-                }
-            },
-            plugins: {
-                legend: {
-                    labels: { color: '#f3f4f6', font: { family: 'Outfit', weight: '500' } }
-                }
-            }
-        }
-    });
-}
-
-// 2D HTML5 Canvas Swarm Particle Flow Animation
-function animateSwarmFlow() {
-    const canvas = document.getElementById("agent-flow-canvas");
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-
-    const width = canvas.width;
-    const height = canvas.height;
-
-    ctx.clearRect(0, 0, width, height);
-
-    // Draw background glowing connection paths (matching SVG layout for visual richness)
-    ctx.lineWidth = 1.5;
-    Object.keys(currentPaths).forEach(key => {
-        const pts = currentPaths[key];
-        ctx.beginPath();
-        ctx.moveTo(pts.p0.x, pts.p0.y);
-        
-        ctx.bezierCurveTo(pts.p1.x, pts.p1.y, pts.p2.x, pts.p2.y, pts.p3.x, pts.p3.y);
-        
-        const isCoder = key.startsWith("sched") || key === "master-sched" || key === "master-lb";
-        if (isCoder) {
-            ctx.setLineDash([3, 5]); // Dotted for X-axis
-            ctx.strokeStyle = "rgba(0, 229, 255, 0.15)";
-        } else {
-            ctx.setLineDash([]); // Solid for Y-axis
-            ctx.strokeStyle = "rgba(16, 185, 129, 0.2)";
-        }
-        ctx.stroke();
-    });
-
-    // Update and render particle stream
-    for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
-        p.progress += p.speed;
-
-        if (p.progress >= 1.0) {
-            if (p.onComplete) p.onComplete();
-            particles.splice(i, 1);
-            continue;
-        }
-
-        // Cubic Bezier interpolation
-        const t = p.progress;
-        const mt = 1 - t;
-        const mt2 = mt * mt;
-        const mt3 = mt2 * mt;
-        const t2 = t * t;
-        const t3 = t2 * t;
-
-        const curX = mt3 * p.p0.x + 3 * mt2 * t * p.p1.x + 3 * mt * t2 * p.p2.x + t3 * p.p3.x;
-        const curY = mt3 * p.p0.y + 3 * mt2 * t * p.p1.y + 3 * mt * t2 * p.p2.y + t3 * p.p3.y;
-
-        // Radial gradient glow
-        ctx.beginPath();
-        const glow = ctx.createRadialGradient(curX, curY, 0, curX, curY, p.size * 2.2);
-        glow.addColorStop(0, p.color);
-        glow.addColorStop(1, "transparent");
-        ctx.fillStyle = glow;
-        ctx.arc(curX, curY, p.size * 2.5, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Core dot
-        ctx.beginPath();
-        ctx.fillStyle = "#ffffff";
-        ctx.arc(curX, curY, p.size * 0.6, 0, Math.PI * 2);
-        ctx.fill();
     }
 
-    // Gentle random pulse packets when idle
-    if (Math.random() < 0.03 && particles.length < 15) {
-        const keys = Object.keys(currentPaths);
-        if (keys.length > 0) {
-            const key = keys[Math.floor(Math.random() * keys.length)];
-            const pts = currentPaths[key];
-            const isCoder = key.startsWith("sched") || key === "master-sched" || key === "master-lb";
-            const color = isCoder ? "rgba(0, 229, 255, 0.75)" : "rgba(16, 185, 129, 0.75)";
-            
-            particles.push({
-                progress: 0,
-                speed: 0.012 + Math.random() * 0.008,
-                size: 3 + Math.random() * 1.5,
-                color: color,
-                p0: pts.p0,
-                p1: pts.p1,
-                p2: pts.p2,
-                p3: pts.p3
-            });
+    function renderProcessEventList(processes) {
+        const container = el('live-process-event-list');
+        if (!container) return;
+        if (processes.length === 0) {
+            container.innerHTML = `<div style="color:var(--text-secondary); text-align:center;">No recent events</div>`;
+            return;
         }
+        container.innerHTML = processes.map(p => {
+            const color = p.visual.color === 'red' ? '#ef4444' : (p.visual.color === 'amber' ? '#f59e0b' : '#10b981');
+            return `<div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.03); padding:4px 0;">
+                <span style="color:#818cf8;">${p.process_type}</span>
+                <span style="color:${color}; font-weight:bold;">${p.state}</span>
+                <span style="color:var(--text-secondary);">${p.model || p.provider || '-'}</span>
+            </div>`;
+        }).join('');
     }
 
-    animationFrameId = requestAnimationFrame(animateSwarmFlow);
-}
+    // Process Pond Animation logic
+    function startPondAnimation() {
+        const canvas = el('live-pond-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
 
-function spawnParticlePath(from, to, nextLeg = null, color = "rgba(0, 229, 255, 0.8)") {
-    // Backwards compatibility fallback if needed
-}
+        // Handle canvas sizing
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
 
-// 3D Fibonacci Sphere Rotating Mesh Globe Engine
-let globeAngleY = 0;
-let globeAngleX = 0.3;
-
-function initSwarmGlobe() {
-    const canvas = document.getElementById("swarm-globe-canvas");
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-
-    // Generate static 3D coordinate nodes on a sphere
-    const points = [];
-    const count = 75;
-    const goldenRatio = (1 + Math.sqrt(5)) / 2;
-    const goldenAngle = 2 * Math.PI * (1 - 1 / goldenRatio);
-
-    for (let i = 0; i < count; i++) {
-        const y = 1 - (i / (count - 1)) * 2; // y goes from 1 to -1
-        const radius = Math.sqrt(1 - y * y);
-        const theta = goldenAngle * i;
-        const x = Math.cos(theta) * radius;
-        const z = Math.sin(theta) * radius;
-        points.push({ x, y, z });
-    }
-
-    function drawGlobe() {
-        if (!document.getElementById("swarm-globe-canvas")) return;
-
-        // Auto-scale canvas resolution to wrapper container size
-        const rect = canvas.parentNode.getBoundingClientRect();
-        if (canvas.width !== rect.width || canvas.height !== rect.height) {
-            canvas.width = rect.width;
-            canvas.height = rect.height;
-        }
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        const cx = canvas.width / 2;
-        const cy = canvas.height / 2;
-        const rVal = Math.min(cx, cy) * 0.8;
-
-        globeAngleY += 0.004; // Rotate speed
-
-        const cosY = Math.cos(globeAngleY);
-        const sinY = Math.sin(globeAngleY);
-        const cosX = Math.cos(globeAngleX);
-        const sinX = Math.sin(globeAngleX);
-
-        // Map 3D coords to projected 2D coordinates
-        const projected = points.map(p => {
-            // Rotation Y
-            let x1 = p.x * cosY - p.z * sinY;
-            let z1 = p.x * sinY + p.z * cosY;
-
-            // Rotation X
-            let y2 = p.y * cosX - z1 * sinX;
-            let z2 = p.y * sinX + z1 * cosX;
-
-            // Perspective scale
-            const fov = 3.0;
-            const dist = 2.0;
-            const scale2D = fov / (fov + z2 * dist);
-
+        // Initialize particles if they don't exist
+        const particles = pondProcesses.map(p => {
             return {
-                x: cx + x1 * rVal * scale2D,
-                y: cy + y2 * rVal * scale2D,
-                z: z2,
-                scale: scale2D
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                vx: (Math.random() - 0.5) * (p.visual.speed === 'fast' ? 4 : 1.5),
+                vy: (Math.random() - 0.5) * (p.visual.speed === 'fast' ? 4 : 1.5),
+                radius: p.visual.pulse ? 8 + Math.random() * 4 : 6,
+                color: getVisualColor(p.visual.color),
+                type: p.process_type,
+                state: p.state,
+                pulseSpeed: 0.05 + Math.random() * 0.05,
+                pulseVal: 0
             };
         });
 
-        // Draw connections
-        ctx.lineWidth = 0.5;
-        for (let i = 0; i < count; i++) {
-            for (let j = i + 1; j < count; j++) {
-                const p1 = points[i];
-                const p2 = points[j];
-
-                // 3D Distance calculation
-                const dx = p1.x - p2.x;
-                const dy = p1.y - p2.y;
-                const dz = p1.z - p2.z;
-                const distSq = dx*dx + dy*dy + dz*dz;
-
-                if (distSq < 0.22) {
-                    const proj1 = projected[i];
-                    const proj2 = projected[j];
-
-                    const avgZ = (proj1.z + proj2.z) / 2;
-                    const opacity = Math.max(0.02, Math.min(0.35, (1 - avgZ) * 0.22));
-
-                    ctx.strokeStyle = `rgba(0, 229, 255, ${opacity})`;
-                    ctx.beginPath();
-                    ctx.moveTo(proj1.x, proj1.y);
-                    ctx.lineTo(proj2.x, proj2.y);
-                    ctx.stroke();
-                }
-            }
+        if (pondAnimationId) {
+            cancelAnimationFrame(pondAnimationId);
         }
 
-        // Draw nodes
-        projected.forEach(p => {
-            const opacity = Math.max(0.1, Math.min(0.85, (1 - p.z) * 0.45));
-            const size = Math.max(1, p.scale * 2.0);
+        function animate() {
+            ctx.fillStyle = 'rgba(11, 15, 25, 0.2)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            let color = `rgba(0, 229, 255, ${opacity})`; // Cyan for front
-            if (p.z > 0.25) {
-                color = `rgba(168, 85, 247, ${opacity * 0.65})`; // Purple for back
-            }
-
-            ctx.fillStyle = color;
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Core highlight
-            if (p.z < -0.75) {
-                ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, size * 0.45, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        });
-
-        requestAnimationFrame(drawGlobe);
-    }
-
-    drawGlobe();
-}
-
-// Initialize workload and resource analytics widgets charts
-let workloadChart = null;
-let resourceChart = null;
-
-function initDashboardCharts() {
-    const workloadCtx = document.getElementById("console-workload-chart");
-    if (workloadCtx) {
-        workloadChart = new Chart(workloadCtx, {
-            type: 'line',
-            data: {
-                labels: ['t-50s', 't-40s', 't-30s', 't-20s', 't-10s', 'now', 't+10s', 't+20s'],
-                datasets: [
-                    {
-                        label: 'Actual Load',
-                        data: [42, 45, 48, 52, 58, 60, null, null],
-                        borderColor: '#00e5ff',
-                        backgroundColor: 'rgba(0, 229, 255, 0.05)',
-                        borderWidth: 2,
-                        tension: 0.4,
-                        fill: true
-                    },
-                    {
-                        label: 'Predictive Model',
-                        data: [null, null, null, null, 58, 60, 62, 65],
-                        borderColor: 'rgba(168, 85, 247, 0.8)',
-                        borderDash: [5, 5],
-                        borderWidth: 2,
-                        tension: 0.4,
-                        fill: false
+            // Draw connections between nearby particles
+            ctx.lineWidth = 0.5;
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 120) {
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${0.12 * (1 - dist / 120)})`;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
                     }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: { display: false, min: 0, max: 100 },
-                    x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.4)', font: { size: 8 } } }
-                },
-                plugins: {
-                    legend: { display: false }
                 }
             }
-        });
+
+            // Update and draw particles
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+
+                // Bounce off boundaries
+                if (p.x < p.radius || p.x > canvas.width - p.radius) p.vx *= -1;
+                if (p.y < p.radius || p.y > canvas.height - p.radius) p.vy *= -1;
+
+                // Wiggle/pulse size
+                p.pulseVal += p.pulseSpeed;
+                const currentRadius = p.radius + Math.sin(p.pulseVal) * 2;
+
+                // Draw glowing core
+                const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, currentRadius * 2);
+                grad.addColorStop(0, p.color);
+                grad.addColorStop(1, 'transparent');
+
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, currentRadius * 2, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Draw central solid point
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Text tag
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx.font = '9px monospace';
+                ctx.fillText(p.type.split('_').pop() || '', p.x + currentRadius + 2, p.y + 3);
+            });
+
+            pondAnimationId = requestAnimationFrame(animate);
+        }
+
+        animate();
     }
 
-    const resourceCtx = document.getElementById("console-resource-chart");
-    if (resourceCtx) {
-        resourceChart = new Chart(resourceCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Swarm A', 'Swarm B', 'Spare'],
-                datasets: [{
-                    data: [45, 35, 20],
-                    backgroundColor: ['rgba(0, 229, 255, 0.7)', 'rgba(168, 85, 247, 0.7)', 'rgba(255, 255, 255, 0.2)'],
-                    borderRadius: 4,
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.6)', font: { size: 9 } } },
-                    x: { display: false, max: 100 }
-                },
-                plugins: {
-                    legend: { display: false }
+    function getVisualColor(colorName) {
+        switch (colorName) {
+            case 'green': return 'rgba(16, 185, 129, 0.4)';
+            case 'amber': return 'rgba(245, 158, 11, 0.4)';
+            case 'red': return 'rgba(239, 68, 68, 0.4)';
+            case 'purple': return 'rgba(168, 85, 247, 0.4)';
+            case 'cyan': return 'rgba(6, 182, 212, 0.4)';
+            case 'silver': return 'rgba(156, 163, 175, 0.4)';
+            default: return 'rgba(59, 130, 246, 0.4)';
+        }
+    }
+
+    // ── Loader: Local Models View ──────────────────────────────────────────
+    async function loadLocalModelsView() {
+        const grid = el('local-models-grid');
+        if (!grid) return;
+        try {
+            const res = await fetch('/api/v1/discovery/ai-runtimes');
+            const data = await res.json();
+            const hosts = data.hosts || [];
+            
+            if (hosts.length === 0) {
+                grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:var(--text-secondary);">No local model runtimes discovered.</div>`;
+                return;
+            }
+
+            grid.innerHTML = hosts.map(h => {
+                let badgeClass = h.reachable ? 'badge-success' : 'badge-danger';
+                let badgeColor = h.reachable ? '#10b981' : '#ef4444';
+                let badgeBg = h.reachable ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)';
+                let badgeText = h.reachable ? 'REACHABLE' : 'UNREACHABLE';
+                
+                if (h.status === 'MISSING_FROM_SCAN') {
+                    badgeClass = 'badge-info';
+                    badgeColor = '#ef4444';
+                    badgeBg = 'rgba(239,68,68,0.15)';
+                    badgeText = 'MISSING_FROM_SCAN';
                 }
-            }
-        });
-    }
-}
+                
+                const modelNames = h.model_names || [];
+                const modelStr = modelNames.length > 0 ? modelNames.join(', ') : 'None';
 
-// Terminal logs controller
-const consoleTerminalLogs = document.getElementById("console-terminal-logs");
-const terminalSearch = document.getElementById("terminal-search");
-let allTerminalLogs = [];
-
-function logToConsoleTerminal(module, message, type = "info") {
-    const timestamp = new Date().toISOString().replace('T', ' ').substr(0, 19);
-    let color = "#4ade80"; // Green
-    if (type === "warn") color = "#f97316"; // Orange
-    else if (type === "error") color = "#ef4444"; // Red
-    else if (type === "system") color = "#00e5ff"; // Cyan
-
-    const logText = `[${timestamp}] [${module.toUpperCase()}] ${message}`;
-    allTerminalLogs.push({ text: logText, color, type });
-
-    if (allTerminalLogs.length > 80) allTerminalLogs.shift();
-    renderTerminalLogs();
-}
-
-function renderTerminalLogs() {
-    if (!consoleTerminalLogs) return;
-    const query = terminalSearch ? terminalSearch.value.trim().toLowerCase() : "";
-    
-    const filtered = allTerminalLogs.filter(log => log.text.toLowerCase().includes(query));
-    
-    consoleTerminalLogs.innerHTML = filtered.map(log => 
-        `<div style="color: ${log.color}; margin-bottom: 2px; line-height: 1.4;">${log.text}</div>`
-    ).join('');
-    
-    consoleTerminalLogs.scrollTop = consoleTerminalLogs.scrollHeight;
-}
-
-if (terminalSearch) {
-    terminalSearch.addEventListener("input", renderTerminalLogs);
-}
-
-// Heartbeat background generator
-setInterval(() => {
-    const modules = ["ControlPlane", "Scheduler", "DockerRunner", "Telemetry", "SecurityMonitor"];
-    const actions = [
-        "Vitals telemetry successfully broadcasted.",
-        "Heartbeat check passed for all container nodes.",
-        "RMF ConMon policy rules validated.",
-        "Active connection pool healthy.",
-        "Allocated dynamic resources updated in analytics panel.",
-        "Flushed local execution buffer."
-    ];
-    const mod = modules[Math.floor(Math.random() * modules.length)];
-    const act = actions[Math.floor(Math.random() * actions.length)];
-    logToConsoleTerminal(mod, act, "info");
-}, 7000);
-
-// One-Click compliance repair action
-window.patchControl = async function(controlId) {
-    const patchConfirm = confirm(`Execute automated compliance remediation for control: ${controlId}?`);
-    if (!patchConfirm) return;
-
-    try {
-        const response = await fetch(`${API_BASE}/api/security/patch`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ control_id: controlId })
-        });
-
-        if (response.ok) {
-            const result = await response.json();
-            alert(`Remediation Result:\nStatus: ${result.status}\nDetails: ${result.details}`);
-            logToConsoleTerminal("SecurityMonitor", `Patched control ${controlId}: ${result.details}`, "system");
-            triggerSecurityAudit(); // Refresh scorecard and gap checklist
-        } else {
-            alert("Remediation execution failed on Control Plane.");
-            logToConsoleTerminal("SecurityMonitor", `Patch failed on control ${controlId}`, "error");
-        }
-    } catch (err) {
-        alert("Remediation connection error: " + err.message);
-        logToConsoleTerminal("SecurityMonitor", `Patch connection error: ${err.message}`, "error");
-    }
-};
-
-/* ================================================================
-   PHASE 9 — PERT Analysis Controller
-   ================================================================ */
-
-// ---- State ----
-let pertData = null;   // last API response
-let pertSvgPanX = 0, pertSvgPanY = 0, pertSvgScale = 1.0;
-let pertIsPanning = false, pertPanStartX = 0, pertPanStartY = 0;
-
-// ---- Elements (lazy-resolved after DOM ready) ----
-function getPertEl(id) { return document.getElementById(id); }
-
-// ---- Fetch PERT data from backend and refresh all views ----
-async function loadPertData() {
-    try {
-        const resp = await fetch(`${API_BASE}/api/pert`);
-        if (!resp.ok) throw new Error(`PERT API ${resp.status}`);
-        pertData = await resp.json();
-        renderPertDiagram(pertData);
-        renderPertTable(pertData);
-        renderPertStats(pertData);
-        logToConsoleTerminal("PertEngine", `PERT network refreshed — ${pertData.tasks.length} tasks, duration: ${pertData.project_duration.toFixed(2)}s`, "info");
-    } catch (err) {
-        console.warn("PERT load error:", err);
-    }
-}
-
-// ================================================================
-//  DAG LAYOUT SOLVER  (Sugiyama-lite column / rank assignment)
-// ================================================================
-function computeDagLayout(tasks) {
-    // Build adjacency lists
-    const byId = {};
-    tasks.forEach(t => { byId[t.id] = t; });
-
-    // Kahn BFS to assign columns (depth ranks)
-    const inDeg = {};
-    const children = {};
-    tasks.forEach(t => {
-        inDeg[t.id] = (t.predecessors || []).length;
-        children[t.id] = [];
-    });
-    tasks.forEach(t => {
-        (t.predecessors || []).forEach(p => {
-            if (children[p]) children[p].push(t.id);
-        });
-    });
-
-    const rank = {};
-    const queue = tasks.filter(t => inDeg[t.id] === 0).map(t => t.id);
-    queue.forEach(id => { rank[id] = 0; });
-
-    while (queue.length > 0) {
-        const cur = queue.shift();
-        (children[cur] || []).forEach(ch => {
-            rank[ch] = Math.max(rank[ch] || 0, (rank[cur] || 0) + 1);
-            inDeg[ch]--;
-            if (inDeg[ch] === 0) queue.push(ch);
-        });
-    }
-
-    // Group by rank (column)
-    const cols = {};
-    tasks.forEach(t => {
-        const r = rank[t.id] || 0;
-        if (!cols[r]) cols[r] = [];
-        cols[r].push(t.id);
-    });
-
-    const maxCol = Math.max(...Object.keys(cols).map(Number));
-    const NODE_W = 130, NODE_H = 60, COL_GAP = 60, ROW_GAP = 18;
-
-    // Compute per-node (x, y) pixel positions
-    const positions = {};
-    Object.keys(cols).forEach(colStr => {
-        const col = Number(colStr);
-        const ids = cols[col];
-        ids.forEach((id, rowIdx) => {
-            const x = col * (NODE_W + COL_GAP) + 20;
-            const y = rowIdx * (NODE_H + ROW_GAP) + 20;
-            positions[id] = { x, y, w: NODE_W, h: NODE_H };
-        });
-    });
-
-    // Canvas dimensions
-    const maxX = Math.max(...Object.values(positions).map(p => p.x + p.w)) + 30;
-    const maxY = Math.max(...Object.values(positions).map(p => p.y + p.h)) + 30;
-
-    return { positions, maxX, maxY, rank };
-}
-
-// ================================================================
-//  SVG RENDERER
-// ================================================================
-function renderPertDiagram(data) {
-    const container = getPertEl("pert-diagram-svg-container");
-    if (!container) return;
-
-    const tasks = data.tasks || [];
-    if (tasks.length === 0) {
-        container.innerHTML = `
-            <div class="pert-empty-state">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
-                </svg>
-                <span>Add tasks to visualize the PERT network</span>
-            </div>`;
-        return;
-    }
-
-    const critSet = new Set(data.critical_path || []);
-    const { positions, maxX, maxY } = computeDagLayout(tasks);
-    const byId = {};
-    tasks.forEach(t => { byId[t.id] = t; });
-
-    // Build SVG
-    const svgNS = "http://www.w3.org/2000/svg";
-    const svg = document.createElementNS(svgNS, "svg");
-    svg.setAttribute("width", "100%");
-    svg.setAttribute("height", "100%");
-    svg.setAttribute("viewBox", `0 0 ${maxX} ${maxY}`);
-    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
-    svg.style.overflow = "visible";
-
-    // ---- Defs: arrow markers ----
-    const defs = document.createElementNS(svgNS, "defs");
-    ["critical", "normal"].forEach(type => {
-        const marker = document.createElementNS(svgNS, "marker");
-        marker.setAttribute("id", `arrow-${type}`);
-        marker.setAttribute("markerWidth", "8");
-        marker.setAttribute("markerHeight", "8");
-        marker.setAttribute("refX", "6");
-        marker.setAttribute("refY", "3");
-        marker.setAttribute("orient", "auto");
-        const poly = document.createElementNS(svgNS, "polygon");
-        poly.setAttribute("points", "0 0, 8 3, 0 6");
-        poly.setAttribute("class", `pert-arrow-${type}`);
-        marker.appendChild(poly);
-        defs.appendChild(marker);
-    });
-    svg.appendChild(defs);
-
-    // ---- Pan/zoom group ----
-    const g = document.createElementNS(svgNS, "g");
-    g.setAttribute("id", "pert-dag-group");
-    g.setAttribute("transform", `translate(${pertSvgPanX},${pertSvgPanY}) scale(${pertSvgScale})`);
-
-    // ---- Draw edges first (behind nodes) ----
-    tasks.forEach(task => {
-        (task.predecessors || []).forEach(predId => {
-            if (!positions[predId] || !positions[task.id]) return;
-            const src = positions[predId];
-            const dst = positions[task.id];
-            const isCrit = critSet.has(predId) && critSet.has(task.id);
-
-            // Bezier control points
-            const x1 = src.x + src.w;
-            const y1 = src.y + src.h / 2;
-            const x2 = dst.x;
-            const y2 = dst.y + dst.h / 2;
-            const cx1 = x1 + (x2 - x1) * 0.45;
-            const cy1 = y1;
-            const cx2 = x1 + (x2 - x1) * 0.55;
-            const cy2 = y2;
-
-            const path = document.createElementNS(svgNS, "path");
-            path.setAttribute("d", `M${x1},${y1} C${cx1},${cy1} ${cx2},${cy2} ${x2},${y2}`);
-            path.setAttribute("fill", "none");
-            path.setAttribute("class", isCrit ? "pert-edge-critical" : "pert-edge-normal");
-            path.setAttribute("marker-end", `url(#arrow-${isCrit ? "critical" : "normal"})`);
-            g.appendChild(path);
-        });
-    });
-
-    // ---- Draw nodes ----
-    tasks.forEach(task => {
-        const pos = positions[task.id];
-        if (!pos) return;
-        const isCrit = critSet.has(task.id);
-        const slack = typeof task.slack === "number" ? task.slack : Infinity;
-
-        const nodeG = document.createElementNS(svgNS, "g");
-        nodeG.setAttribute("class", "pert-node");
-        nodeG.setAttribute("transform", `translate(${pos.x},${pos.y})`);
-        nodeG.setAttribute("data-task-id", task.id);
-        nodeG.style.cursor = "pointer";
-
-        // Background rect
-        const rectClass = isCrit ? "critical" : (slack > 2 ? "slack-high" : "non-critical");
-        const rect = document.createElementNS(svgNS, "rect");
-        rect.setAttribute("width", pos.w);
-        rect.setAttribute("height", pos.h);
-        rect.setAttribute("rx", "8");
-        rect.setAttribute("ry", "8");
-        rect.setAttribute("fill", isCrit ? "rgba(239,68,68,0.12)" : "rgba(30,41,59,0.85)");
-        rect.setAttribute("class", `pert-node-rect ${rectClass}`);
-        nodeG.appendChild(rect);
-
-        // Task ID label (top-left)
-        const idText = document.createElementNS(svgNS, "text");
-        idText.setAttribute("x", "10");
-        idText.setAttribute("y", "17");
-        idText.setAttribute("font-size", "10");
-        idText.setAttribute("font-weight", "700");
-        idText.setAttribute("font-family", "monospace");
-        idText.setAttribute("fill", isCrit ? "#f87171" : "#60a5fa");
-        idText.textContent = task.id;
-        nodeG.appendChild(idText);
-
-        // Task name (center)
-        const nameText = document.createElementNS(svgNS, "text");
-        nameText.setAttribute("x", pos.w / 2);
-        nameText.setAttribute("y", "34");
-        nameText.setAttribute("text-anchor", "middle");
-        nameText.setAttribute("font-size", "9");
-        nameText.setAttribute("fill", "rgba(255,255,255,0.8)");
-        const shortName = task.name.length > 16 ? task.name.slice(0, 15) + "…" : task.name;
-        nameText.textContent = shortName;
-        nodeG.appendChild(nameText);
-
-        // ES/EF row
-        const esText = document.createElementNS(svgNS, "text");
-        esText.setAttribute("x", "8");
-        esText.setAttribute("y", pos.h - 8);
-        esText.setAttribute("font-size", "8");
-        esText.setAttribute("fill", "rgba(255,255,255,0.45)");
-        const te = typeof task.te === "number" ? task.te.toFixed(1) : "?";
-        const es = typeof task.es === "number" ? task.es.toFixed(1) : "?";
-        const ef = typeof task.ef === "number" ? task.ef.toFixed(1) : "?";
-        esText.textContent = `TE:${te}  ES:${es}  EF:${ef}`;
-        nodeG.appendChild(esText);
-
-        // Slack badge (top-right corner)
-        const slackTxt = document.createElementNS(svgNS, "text");
-        slackTxt.setAttribute("x", pos.w - 8);
-        slackTxt.setAttribute("y", "17");
-        slackTxt.setAttribute("text-anchor", "end");
-        slackTxt.setAttribute("font-size", "9");
-        slackTxt.setAttribute("font-weight", "700");
-        slackTxt.setAttribute("fill", isCrit ? "#f87171" : (slack < 2 ? "#fbbf24" : "#2dd4bf"));
-        slackTxt.textContent = `σ${typeof task.slack === "number" ? task.slack.toFixed(1) : "∞"}`;
-        nodeG.appendChild(slackTxt);
-
-        // Tooltip data via title element
-        const titleEl = document.createElementNS(svgNS, "title");
-        titleEl.textContent = [
-            `Task: ${task.name}`,
-            `TE: ${te}d  Slack: ${typeof task.slack === "number" ? task.slack.toFixed(2) : "N/A"}`,
-            `ES: ${es}  EF: ${ef}`,
-            `LS: ${typeof task.ls === "number" ? task.ls.toFixed(1) : "?"} LF: ${typeof task.lf === "number" ? task.lf.toFixed(1) : "?"}`,
-            isCrit ? "⚠ CRITICAL PATH" : ""
-        ].filter(Boolean).join("  |  ");
-        nodeG.appendChild(titleEl);
-
-        g.appendChild(nodeG);
-    });
-
-    svg.appendChild(g);
-    container.innerHTML = "";
-    container.appendChild(svg);
-
-    // ---- Wire pan / zoom on the SVG ----
-    bindPertSvgPanZoom(svg, g);
-}
-
-// ================================================================
-//  SVG PAN/ZOOM BINDINGS
-// ================================================================
-function bindPertSvgPanZoom(svg, group) {
-    function applyTransform() {
-        group.setAttribute("transform", `translate(${pertSvgPanX},${pertSvgPanY}) scale(${pertSvgScale})`);
-    }
-
-    svg.addEventListener("mousedown", e => {
-        pertIsPanning = true;
-        pertPanStartX = e.clientX - pertSvgPanX;
-        pertPanStartY = e.clientY - pertSvgPanY;
-        svg.style.cursor = "grabbing";
-    });
-    window.addEventListener("mousemove", e => {
-        if (!pertIsPanning) return;
-        pertSvgPanX = e.clientX - pertPanStartX;
-        pertSvgPanY = e.clientY - pertPanStartY;
-        applyTransform();
-    });
-    window.addEventListener("mouseup", () => {
-        pertIsPanning = false;
-        if (svg) svg.style.cursor = "default";
-    });
-    svg.addEventListener("wheel", e => {
-        e.preventDefault();
-        const delta = e.deltaY > 0 ? 0.9 : 1.1;
-        pertSvgScale = Math.min(3, Math.max(0.3, pertSvgScale * delta));
-        applyTransform();
-    }, { passive: false });
-}
-
-// ================================================================
-//  TABLE RENDERER
-// ================================================================
-function renderPertTable(data) {
-    const tbody = getPertEl("pert-tasks-tbody");
-    if (!tbody) return;
-    const critSet = new Set(data.critical_path || []);
-    tbody.innerHTML = "";
-    (data.tasks || []).forEach(task => {
-        const isCrit = critSet.has(task.id);
-        const slack = typeof task.slack === "number" ? task.slack : null;
-        const slackClass = isCrit ? "critical" : (slack !== null && slack < 2 ? "low-slack" : "slack-ok");
-        const slackLabel = isCrit ? "CRIT" : (slack !== null ? slack.toFixed(1) : "N/A");
-        const preds = (task.predecessors || []).join(", ") || "—";
-        const te = typeof task.te === "number" ? task.te.toFixed(2) : "—";
-        const es = typeof task.es === "number" ? task.es.toFixed(2) : "—";
-        const ef = typeof task.ef === "number" ? task.ef.toFixed(2) : "—";
-        const ls = typeof task.ls === "number" ? task.ls.toFixed(2) : "—";
-        const lf = typeof task.lf === "number" ? task.lf.toFixed(2) : "—";
-        const omp = `${task.optimistic}/${task.most_likely}/${task.pessimistic}`;
-
-        const tr = document.createElement("tr");
-        if (isCrit) tr.classList.add("critical-row");
-        tr.innerHTML = `
-            <td>${task.id}</td>
-            <td>${task.name}</td>
-            <td style="font-size:10px; color:var(--text-secondary);">${preds}</td>
-            <td style="font-size:10px; font-family:monospace;">${omp}</td>
-            <td style="font-weight:600;">${te}</td>
-            <td style="font-size:10px; font-family:monospace;">${es}&nbsp;/&nbsp;${ef}</td>
-            <td style="font-size:10px; font-family:monospace;">${ls}&nbsp;/&nbsp;${lf}</td>
-            <td><span class="pert-slack-badge ${slackClass}">${slackLabel}</span></td>
-            <td><button class="btn-pert-del" onclick="deletePertTask('${task.id}')">✕ Del</button></td>`;
-        tbody.appendChild(tr);
-    });
-}
-
-// ================================================================
-//  STATS PANEL RENDERER
-// ================================================================
-function renderPertStats(data) {
-    const durationEl = getPertEl("pert-duration-val");
-    const stddevEl = getPertEl("pert-stddev-val");
-    const seqEl = getPertEl("pert-critical-path-seq");
-
-    if (durationEl) durationEl.textContent = `${(data.project_duration || 0).toFixed(2)}d`;
-    if (stddevEl) stddevEl.textContent = `±${(data.project_stddev || 0).toFixed(2)}d`;
-
-    if (seqEl) {
-        const cp = data.critical_path || [];
-        if (cp.length === 0) {
-            seqEl.innerHTML = `<span style="color:var(--text-secondary); font-size:10px;">No tasks yet</span>`;
-        } else {
-            seqEl.innerHTML = cp.map((id, i) =>
-                `<span class="pert-path-pill">${id}${
-                    i < cp.length - 1 ? '<span class="pert-path-arrow">→</span>' : ''
-                }</span>`
-            ).join(" ");
-        }
-    }
-}
-
-// ================================================================
-//  TASK CRUD CALLBACKS
-// ================================================================
-async function savePertTask(e) {
-    e.preventDefault();
-    const id      = (getPertEl("pert-task-id")?.value || "").trim().toUpperCase();
-    const name    = (getPertEl("pert-task-name")?.value || "").trim();
-    const opt     = parseFloat(getPertEl("pert-task-opt")?.value);
-    const likely  = parseFloat(getPertEl("pert-task-likely")?.value);
-    const pess    = parseFloat(getPertEl("pert-task-pess")?.value);
-    const predsRaw = (getPertEl("pert-task-preds")?.value || "").trim();
-    const preds   = predsRaw ? predsRaw.split(/[,\s]+/).map(p => p.trim().toUpperCase()).filter(Boolean) : [];
-
-    if (!id || !name || isNaN(opt) || isNaN(likely) || isNaN(pess)) {
-        alert("Please fill all required fields (ID, Name, O, M, P).");
-        return;
-    }
-    if (opt > likely || likely > pess) {
-        alert("Time estimates must satisfy: Optimistic ≤ Most Likely ≤ Pessimistic.");
-        return;
-    }
-
-    try {
-        const resp = await fetch(`${API_BASE}/api/pert/task`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id, name, optimistic: opt, most_likely: likely, pessimistic: pess, predecessors: preds })
-        });
-        if (!resp.ok) {
-            const errData = await resp.json().catch(() => ({}));
-            throw new Error(errData.detail || resp.statusText);
-        }
-        // Clear form
-        ["pert-task-id","pert-task-name","pert-task-opt","pert-task-likely","pert-task-pess","pert-task-preds"]
-            .forEach(id => { const el = getPertEl(id); if (el) el.value = ""; });
-        logToConsoleTerminal("PertEngine", `Task ${id} (${name}) added to PERT network.`, "info");
-        await loadPertData();
-    } catch (err) {
-        alert("Error saving task: " + err.message);
-        logToConsoleTerminal("PertEngine", `Save task failed: ${err.message}`, "error");
-    }
-}
-
-window.deletePertTask = async function(taskId) {
-    if (!confirm(`Remove task ${taskId} from the PERT network?`)) return;
-    try {
-        const resp = await fetch(`${API_BASE}/api/pert/task/${taskId}`, { method: "DELETE" });
-        if (!resp.ok) throw new Error(await resp.text());
-        logToConsoleTerminal("PertEngine", `Task ${taskId} removed from PERT network.`, "info");
-        await loadPertData();
-    } catch (err) {
-        alert("Error deleting task: " + err.message);
-    }
-};
-
-async function resetPertTasks() {
-    if (!confirm("Reset PERT network to the default sample workflow?")) return;
-    try {
-        const resp = await fetch(`${API_BASE}/api/pert/reset`, { method: "POST" });
-        if (!resp.ok) throw new Error(await resp.text());
-        logToConsoleTerminal("PertEngine", "PERT network reset to default sample workflow.", "system");
-        await loadPertData();
-    } catch (err) {
-        alert("Error resetting PERT: " + err.message);
-    }
-}
-
-// ================================================================
-//  BOOT — wire up PERT tab activation
-// ================================================================
-(function initPertModule() {
-    // Lazy-init: trigger load when the PERT tab is first clicked
-    const navPert = document.getElementById("nav-pert");
-    let pertLoaded = false;
-    if (navPert) {
-        navPert.addEventListener("click", async () => {
-            if (!pertLoaded) {
-                pertLoaded = true;
-                await loadPertData();
-            }
-        });
-    }
-
-    // Form submission
-    const form = document.getElementById("form-pert-task");
-    if (form) form.addEventListener("submit", savePertTask);
-
-    // Reset button
-    const btnReset = document.getElementById("btn-reset-pert");
-    if (btnReset) btnReset.addEventListener("click", resetPertTasks);
-})();
-
-
-// ================================================================
-//  PHASE 10: MISSION INTELLIGENCE MODULE
-// ================================================================
-
-// --- Status colour map (left-border of feed rows) ---
-const MISSION_STATUS_COLOURS = {
-    "Active":       "#10b981",
-    "Triaging":     "#f59e0b",
-    "Self-Healing": "#a855f7",
-    "Reasoning":    "#3b82f6",
-    "Deploying":    "#06b6d4",
-};
-
-/**
- * Fetch /api/mission/feed and render events into the given container.
- * @param {string} containerId  — ID of the <div> to render into
- */
-async function loadMissionFeed(containerId = "mission-event-feed") {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-    try {
-        const resp = await fetch(`${API_BASE}/api/mission/feed?limit=30`);
-        if (!resp.ok) return;
-        const { events } = await resp.json();
-        if (!events || events.length === 0) return;
-
-        container.innerHTML = "";
-        events.forEach(ev => {
-            const borderCol = MISSION_STATUS_COLOURS[ev.status] || "#10b981";
-            const sc = getStatusClass(ev.status);
-            const row = document.createElement("div");
-            row.className = "mission-event-row";
-            row.style.cssText = `
-                display: flex; align-items: flex-start; gap: 10px;
-                padding: 7px 10px; border-radius: 6px;
-                background: rgba(255,255,255,0.03);
-                border-left: 3px solid ${borderCol};
-                transition: background 0.2s;
-                flex-shrink: 0;
-            `;
-            row.innerHTML = `
-                <span style="font-size: 9px; color: var(--text-secondary); font-family: monospace; white-space: nowrap; margin-top: 1px;">${ev.ts}</span>
-                <div style="display: flex; flex-direction: column; min-width: 0; flex: 1;">
-                    <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                        <span style="font-size: 10px; font-weight: 700; color: #fff; font-family: monospace;">${ev.icon} ${ev.node_id}</span>
-                        <span class="node-status-label ${sc}" style="font-size: 7px; padding: 1px 5px;">${ev.status}</span>
-                        <span style="font-size: 9px; color: var(--text-secondary); font-family: monospace;">CPU ${ev.cpu}% · RAM ${ev.ram}%</span>
+                return `
+                    <div class="card" style="padding:16px; border:1px solid var(--border-glass); border-radius:8px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                            <h3 style="font-weight:bold; color:#fff;">${h.kind.toUpperCase()}</h3>
+                            <span class="badge ${badgeClass}" style="background:${badgeBg}; color:${badgeColor}">
+                                ${badgeText}
+                            </span>
+                        </div>
+                        <div style="font-size:12px; display:flex; flex-direction:column; gap:4px; opacity:0.8;">
+                            <div>Endpoint: <strong>${h.host}:${h.port}</strong></div>
+                            <div>Reachable: <strong>${h.reachable ? 'TRUE' : 'FALSE'}</strong></div>
+                            <div>Status: <strong>${h.status}</strong></div>
+                            <div>Models Count: <strong>${h.model_count}</strong></div>
+                            <div>Models: <strong>${modelStr}</strong></div>
+                            <div>Last Scanned: <span style="font-size:10px; opacity:0.6;">${h.last_scanned || '-'}</span></div>
+                        </div>
                     </div>
-                    <span style="font-size: 10px; color: var(--text-secondary); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${ev.activity}</span>
+                `;
+            }).join('');
+        } catch (err) {
+            grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#ef4444;">Error fetching discovery status</div>`;
+        }
+    }
+
+    async function loadModelHealth(force = false) {
+        const healthContainer = el('model-health-container');
+        if (!healthContainer) return;
+        
+        if (force) {
+            healthContainer.innerHTML = `
+                <div style="text-align: center; color: var(--text-secondary); padding: 20px;">
+                    <span class="pulse-glow" style="display: inline-block; width: 8px; height: 8px; background: var(--accent-teal); border-radius: 50%; margin-right: 8px; animation: led-pulse 1.5s infinite;"></span>
+                    Scanning all local model endpoints, checking sizes and chat compatibility (this can take 2-4s)...
                 </div>
             `;
-            row.addEventListener("mouseenter", () => row.style.background = "rgba(255,255,255,0.06)");
-            row.addEventListener("mouseleave", () => row.style.background = "rgba(255,255,255,0.03)");
-            container.appendChild(row);
-        });
-    } catch (e) {
-        console.warn("Mission feed load error:", e);
-    }
-}
-
-/**
- * Typewriter-animates the Intel Brief into a target element.
- */
-let _briefTypewriterTimer = null;
-function typewriterAnimate(el, text, speed = 12) {
-    if (_briefTypewriterTimer) clearInterval(_briefTypewriterTimer);
-    el.textContent = "";
-    let i = 0;
-    _briefTypewriterTimer = setInterval(() => {
-        el.textContent += text[i] || "";
-        i++;
-        if (i >= text.length) clearInterval(_briefTypewriterTimer);
-    }, speed);
-}
-
-/**
- * Fetch /api/mission/brief and display with typewriter animation.
- * @param {string} textElId — ID of the <div> for the brief text
- * @param {string} tsElId   — ID of the timestamp label (optional)
- */
-async function loadIntelBrief(textElId = "mission-intel-brief-text", tsElId = "mission-brief-ts") {
-    const textEl = document.getElementById(textElId);
-    const tsEl   = tsElId ? document.getElementById(tsElId) : null;
-    if (!textEl) return;
-    try {
-        const resp = await fetch(`${API_BASE}/api/mission/brief`);
-        if (!resp.ok) return;
-        const { brief, ts } = await resp.json();
-        // Colour the header line differently
-        typewriterAnimate(textEl, brief, 10);
-        if (tsEl && ts) tsEl.textContent = ts.replace("T", " ").split(".")[0] + "Z";
-    } catch (e) {
-        console.warn("Intel brief load error:", e);
-        if (textEl) textEl.textContent = "[ Brief unavailable — server may be restarting ]";
-    }
-}
-
-/**
- * Fetch /api/nodes/ping and render a latency table.
- */
-async function loadPingTable(containerId = "mission-ping-table") {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-    container.innerHTML = `<span style="font-size:11px;color:var(--text-secondary);font-style:italic;">Pinging all nodes...</span>`;
-    try {
-        const resp = await fetch(`${API_BASE}/api/nodes/ping`);
-        if (!resp.ok) throw new Error("Ping API error");
-        const { pings } = await resp.json();
-        container.innerHTML = "";
-        Object.entries(pings).forEach(([nodeId, info]) => {
-            const ms = info.latency_ms;
-            let latColour = "#10b981";  // green
-            let latLabel  = `${ms} ms`;
-            if (ms < 0)        { latColour = "#6b7280"; latLabel = "BLOCKED"; }
-            else if (ms > 50)  { latColour = "#ef4444"; }
-            else if (ms > 10)  { latColour = "#f59e0b"; }
-
-            const row = document.createElement("div");
-            row.style.cssText = "display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:rgba(255,255,255,0.03);border-radius:6px;gap:10px;";
-            row.innerHTML = `
-                <span style="font-family:monospace;font-size:11px;font-weight:700;color:#fff;">${nodeId}</span>
-                <span style="font-size:10px;color:var(--text-secondary);flex:1;margin-left:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${info.name}</span>
-                <span style="font-size:10px;color:var(--text-secondary);font-family:monospace;">${info.ip}</span>
-                <span class="ping-badge" style="
-                    font-family:monospace;font-size:10px;font-weight:700;
-                    padding:2px 10px;border-radius:12px;
-                    background:${latColour}22;
-                    border:1px solid ${latColour}55;
-                    color:${latColour};
-                    white-space:nowrap;
-                ">${latLabel}</span>
-            `;
-            container.appendChild(row);
-        });
-    } catch (e) {
-        console.warn("Ping load error:", e);
-        container.innerHTML = `<span style="font-size:11px;color:#ef4444;">Ping request failed — check backend.</span>`;
-    }
-}
-
-/** Polling intervals for mission module. */
-let _missionFeedInterval = null;
-
-function startMissionPolling() {
-    // Clear any old intervals
-    if (_missionFeedInterval) clearInterval(_missionFeedInterval);
-
-    // Immediately load
-    loadMissionFeed("mission-event-feed");
-    loadMissionFeed("dash-mission-feed"); // Dashboard strip (if exists)
-
-    // Poll feed every 4 seconds
-    _missionFeedInterval = setInterval(() => {
-        loadMissionFeed("mission-event-feed");
-    }, 4000);
-}
-
-// ---- Boot IIFE: wire Mission Intel tab ----
-(function initMissionModule() {
-    const navMission = document.getElementById("nav-mission");
-    if (!navMission) return;
-
-    let missionActivated = false;
-
-    navMission.addEventListener("click", async () => {
-        if (!missionActivated) {
-            missionActivated = true;
-            // Full-page feed
-            await loadMissionFeed("mission-event-feed");
-            await loadIntelBrief("mission-intel-brief-text", "mission-brief-ts");
         }
-        // Refresh feed on every visit
-        loadMissionFeed("mission-event-feed");
-    });
 
-    // Refresh Brief button (full-page view)
-    const btnRefreshBrief = document.getElementById("btn-mission-refresh-brief");
-    if (btnRefreshBrief) {
-        btnRefreshBrief.addEventListener("click", () => {
-            loadIntelBrief("mission-intel-brief-text", "mission-brief-ts");
+        try {
+            const url = force ? '/api/v1/models/health/trigger' : '/api/v1/models/health';
+            const method = force ? 'POST' : 'GET';
+            const res = await fetch(url, { method });
+            const data = await res.json();
+
+            // 1. Render Fallback Readiness Cards
+            const readinessHtml = (data.fallback_readiness || []).map(fr => {
+                let colorVal = '#10b981';
+                let bgVal = 'rgba(16, 185, 129, 0.08)';
+                let borderVal = 'rgba(16, 185, 129, 0.25)';
+                if (fr.status === 'AMBER') {
+                    colorVal = '#fbbf24';
+                    bgVal = 'rgba(251, 191, 36, 0.08)';
+                    borderVal = 'rgba(251, 191, 36, 0.25)';
+                } else if (fr.status === 'RED') {
+                    colorVal = '#f87171';
+                    bgVal = 'rgba(248, 113, 113, 0.08)';
+                    borderVal = 'rgba(248, 113, 113, 0.25)';
+                }
+
+                return `
+                    <div style="background: ${bgVal}; border: 1px solid ${borderVal}; padding: 14px; border-radius: 8px; display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong style="color: #fff; font-size: 13px; text-transform: uppercase;">${fr.class_name.replace('_', ' ')}</strong>
+                            <span style="color: ${colorVal}; font-weight: bold; font-size: 10px; border: 1px solid ${colorVal}; padding: 2px 6px; border-radius: 4px; background: rgba(0,0,0,0.2);">${fr.status}</span>
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.4;">${fr.message}</div>
+                        <div style="font-size: 11px; display: flex; gap: 10px; margin-top: 4px;">
+                            <div>Primary: <code style="color: #a5b4fc;">${fr.primary || 'none'}</code></div>
+                            <div>Fallback: <code style="color: #c7d2fe;">${fr.fallback || 'none'}</code></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // 2. Render Models Status Table
+            const rowsHtml = (data.models || []).map(m => {
+                let statusColor = '#10b981';
+                let statusText = m.status;
+                if (m.status === 'MISSING') {
+                    statusColor = '#f59e0b';
+                } else if (m.status === 'FAILING' || m.status === 'OFFLINE') {
+                    statusColor = '#ef4444';
+                }
+
+                let sizeBadge = '';
+                if (m.size_category === 'HEAVY') {
+                    sizeBadge = '<span style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); padding: 1px 4px; border-radius: 3px; font-size: 9px; font-weight: bold; margin-left: 6px;">HEAVY (Slow Local)</span>';
+                } else if (m.size_category === 'LIGHT') {
+                    sizeBadge = '<span style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); padding: 1px 4px; border-radius: 3px; font-size: 9px; font-weight: bold; margin-left: 6px;">LIGHT</span>';
+                }
+
+                const latencyText = m.latency_ms > 0 ? `${m.latency_ms.toFixed(0)} ms` : 'N/A';
+                const errDetail = m.compatibility_error ? `<div style="color: #ef4444; font-size: 9px; margin-top: 2px;">${m.compatibility_error}</div>` : '';
+
+                return `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <td style="padding: 10px 12px; font-weight: 500; color: #fff; font-family: monospace;">${m.raw_name}</td>
+                        <td style="padding: 10px 12px;">
+                            ${m.size_bytes > 0 ? (m.size_bytes / 1024 / 1024 / 1024).toFixed(2) + ' GB' : 'Unknown'}
+                            ${sizeBadge}
+                        </td>
+                        <td style="padding: 10px 12px; font-weight: bold; color: ${statusColor};">${statusText}</td>
+                        <td style="padding: 10px 12px; text-align: right; color: #fbbf24;">${latencyText}</td>
+                        <td style="padding: 10px 12px; color: var(--text-secondary); max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            ${m.status === 'HEALTHY' ? '<span style="color: #34d399;">Passed</span>' : (m.status === 'MISSING' ? 'Model not pulled' : 'Check failed')}
+                            ${errDetail}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            healthContainer.innerHTML = `
+                <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">
+                    Last Health Scan: <strong>${new Date(data.last_checked).toLocaleString()}</strong>
+                </div>
+                
+                <h4 style="font-size: 13px; font-weight: bold; color: #fff; margin-bottom: 8px;">Task Routing Fallback Safety</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-bottom: 16px;">
+                    ${readinessHtml}
+                </div>
+
+                <h4 style="font-size: 13px; font-weight: bold; color: #fff; margin-bottom: 8px;">Model Health & Latencies</h4>
+                <div style="overflow-x: auto; background: rgba(0,0,0,0.15); border: 1px solid var(--border-glass); border-radius: 8px;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 11px; text-align: left;">
+                        <thead>
+                            <tr style="background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border-glass); font-weight: 600;">
+                                <th style="padding: 10px 12px; color: var(--accent-teal);">Model Reference</th>
+                                <th style="padding: 10px 12px;">Disk Size</th>
+                                <th style="padding: 10px 12px;">Status</th>
+                                <th style="padding: 10px 12px; text-align: right;">Ping Latency</th>
+                                <th style="padding: 10px 12px;">Compatibility Test</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rowsHtml}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        } catch (err) {
+            console.error(err);
+            healthContainer.innerHTML = `<div style="color: #ef4444; padding: 20px; text-align: center;">Error fetching model health metrics</div>`;
+        }
+    }
+
+    async function loadModelStoragePolicy(generate = false) {
+        const storageContainer = el('model-storage-container');
+        if (!storageContainer) return;
+
+        if (generate) {
+            storageContainer.innerHTML = `
+                <div style="text-align: center; color: var(--text-secondary); padding: 20px;">
+                    <span class="pulse-glow" style="display: inline-block; width: 8px; height: 8px; background: var(--accent-teal); border-radius: 50%; margin-right: 8px; animation: led-pulse 1.5s infinite;"></span>
+                    Generating rclone-exclude.txt filter file...
+                </div>
+            `;
+        }
+
+        try {
+            const url = generate ? '/api/v1/models/storage-policy/generate' : '/api/v1/models/storage-policy';
+            const method = generate ? 'POST' : 'GET';
+            const res = await fetch(url, { method });
+            const data = await res.json();
+
+            // Status message
+            let fileStatusHtml = '';
+            if (data.exclude_file_exists) {
+                fileStatusHtml = `<span style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 10px;">EXCLUDE FILE GENERATED</span>`;
+            } else {
+                fileStatusHtml = `<span style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 10px;">EXCLUDE FILE MISSING</span>`;
+            }
+
+            const formattedSize = (data.total_protected_bytes / 1024 / 1024 / 1024).toFixed(2);
+
+            // Manifests list
+            const manifestsHtml = (data.protected_manifests || []).map(m => {
+                return `<li><code style="color: #a5b4fc;">${m}</code></li>`;
+            }).join('');
+
+            // Blobs list
+            const blobsHtml = (data.protected_blobs || []).map(b => {
+                const blobSize = b.size_bytes > 0 ? `(${(b.size_bytes / 1024 / 1024 / 1024).toFixed(2)} GB)` : '(missing)';
+                const statusColor = b.exists ? '#34d399' : '#f87171';
+                const statusText = b.exists ? 'protected' : 'missing';
+                return `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; border-bottom: 1px solid rgba(255,255,255,0.03); font-family: monospace; font-size: 11px;">
+                        <span style="color: var(--text-secondary);">${b.filename} ${blobSize}</span>
+                        <span style="color: ${statusColor}; font-weight: bold; font-size: 9px; text-transform: uppercase;">${statusText}</span>
+                    </div>
+                `;
+            }).join('');
+
+            storageContainer.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
+                    <div style="font-size: 12px; color: var(--text-secondary);">
+                        Exclude File Path: <code style="color: #fff; font-size: 11px;">${data.exclude_file_path}</code>
+                    </div>
+                    <div>${fileStatusHtml}</div>
+                </div>
+
+                ${data.message ? `<div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); color: #34d399; font-size: 11px; padding: 10px; border-radius: 6px; margin-bottom: 12px;">${data.message}</div>` : ''}
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-bottom: 12px;">
+                    <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-glass); padding: 14px; border-radius: 8px;">
+                        <h4 style="font-size: 12px; font-weight: bold; color: #fff; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Active Policy Summary</h4>
+                        <div style="display: flex; flex-direction: column; gap: 6px; font-size: 12px;">
+                            <div>Protected Disk Footprint: <strong style="color: #fbbf24; font-size: 14px;">${formattedSize} GB</strong></div>
+                            <div>Protected Manifests: <strong style="color: #fff;">${data.protected_manifests.length}</strong></div>
+                            <div>Protected Storage Blobs: <strong style="color: #fff;">${data.protected_blobs.length}</strong></div>
+                        </div>
+                        <h5 style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 12px; margin-bottom: 6px;">Protected Manifest Files:</h5>
+                        <ul style="margin: 0; padding-left: 16px; font-size: 11px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 3px;">
+                            ${manifestsHtml}
+                        </ul>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-glass); padding: 14px; border-radius: 8px; display: flex; flex-direction: column;">
+                        <h4 style="font-size: 12px; font-weight: bold; color: #fff; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Protected Storage Blobs (Excludes)</h4>
+                        <div style="flex-grow: 1; max-height: 200px; overflow-y: auto; background: rgba(0,0,0,0.15); border: 1px solid var(--border-glass); border-radius: 6px; padding: 6px;">
+                            ${blobsHtml || '<div style="color:var(--text-secondary); text-align:center; padding:15px;">No blobs protected.</div>'}
+                        </div>
+                    </div>
+                </div>
+            `;
+        } catch (err) {
+            console.error(err);
+            storageContainer.innerHTML = `<div style="color: #ef4444; padding: 20px; text-align: center;">Error fetching model storage policy</div>`;
+        }
+    }
+
+    async function loadMigrationStatus() {
+        const container = el('migration-status-container');
+        const badge = el('migration-active-badge');
+        if (!container) return;
+
+        try {
+            const res = await fetch('/api/v1/migration/status');
+            const data = await res.json();
+
+            // Update badge status
+            if (badge) {
+                if (data.migration_active) {
+                    badge.textContent = 'MIGRATION ACTIVE';
+                    badge.style.background = 'rgba(59, 130, 246, 0.15)';
+                    badge.style.color = '#60a5fa';
+                    badge.style.border = '1px solid rgba(59,130,246,0.3)';
+                } else {
+                    badge.textContent = 'MIGRATION INACTIVE';
+                    badge.style.background = 'rgba(255, 255, 255, 0.05)';
+                    badge.style.color = 'var(--text-secondary)';
+                    badge.style.border = '1px solid rgba(255,255,255,0.1)';
+                }
+            }
+
+            // Update button status
+            const btnResume = el('btn-resume-migration');
+            if (btnResume) {
+                if (data.migration_active) {
+                    btnResume.disabled = true;
+                    btnResume.textContent = 'Migration Resumed...';
+                    btnResume.style.opacity = '0.5';
+                    btnResume.style.cursor = 'not-allowed';
+                } else {
+                    btnResume.disabled = false;
+                    btnResume.textContent = 'Resume Guarded Migration';
+                    btnResume.style.opacity = '1';
+                    btnResume.style.cursor = 'pointer';
+                }
+            }
+
+            const total = data.total_files || 0;
+            const completed = data.completed_files || 0;
+            const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+            const spaceRecoveredGB = (data.total_space_recovered_bytes / 1024 / 1024 / 1024).toFixed(2);
+            const spacePendingGB = (data.total_space_pending_bytes / 1024 / 1024 / 1024).toFixed(2);
+
+            // Generate progress bar HTML
+            const progressBarHtml = `
+                <div style="margin-bottom: 12px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 11px;">
+                        <span style="color: var(--text-secondary);">Sync Progress</span>
+                        <strong style="color: var(--accent-teal);">${percent}% (${completed} / ${total} files)</strong>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); height: 8px; border-radius: 99px; overflow: hidden; display: flex;">
+                        <div style="background: var(--accent-teal); width: ${percent}%; height: 100%; border-radius: 99px; transition: width 0.4s ease;"></div>
+                    </div>
+                </div>
+            `;
+
+            // Skipped / Protected list
+            const protectedList = (data.target_files || [])
+                .filter(f => f.status === 'SKIPPED_PROTECTED')
+                .map(f => `<li><code style="color: #60a5fa;">${f.filename}</code></li>`)
+                .join('');
+
+            // Files table rows
+            const fileRows = (data.target_files || []).map(f => {
+                let statusColor = '#34d399';
+                if (f.status === 'PENDING') statusColor = '#fbbf24';
+                if (f.status === 'FAILED') statusColor = '#ef4444';
+                if (f.status === 'SKIPPED_PROTECTED') statusColor = '#60a5fa';
+
+                const sizeText = f.size_bytes > 0 ? `${(f.size_bytes / 1024 / 1024 / 1024).toFixed(2)} GB` : '-';
+                
+                return `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 11px;">
+                        <td style="padding: 6px 8px; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-secondary);" title="${f.absolute_path}">${f.filename}</td>
+                        <td style="padding: 6px 8px; text-align: right; color: var(--text-secondary);">${sizeText}</td>
+                        <td style="padding: 6px 8px; text-align: right; font-weight: bold; color: ${statusColor}; font-size: 9px; text-transform: uppercase;">${f.status}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            const fileTableHtml = `
+                <div style="background: rgba(0,0,0,0.15); border: 1px solid var(--border-glass); border-radius: 6px; overflow: hidden; display: flex; flex-direction: column;">
+                    <div style="padding: 8px 12px; border-bottom: 1px solid var(--border-glass); font-size: 11px; font-weight: bold; text-transform: uppercase; color: #fff;">File Execution Log (Preview)</div>
+                    <div style="max-height: 180px; overflow-y: auto;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: rgba(255,255,255,0.02); font-size: 10px; text-transform: uppercase; color: var(--text-secondary); text-align: left; border-bottom: 1px solid var(--border-glass);">
+                                    <th style="padding: 6px 8px;">File</th>
+                                    <th style="padding: 6px 8px; text-align: right;">Size</th>
+                                    <th style="padding: 6px 8px; text-align: right;">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${fileRows || '<tr><td colspan="3" style="text-align:center; padding:15px; color:var(--text-secondary);">No migration files found.</td></tr>'}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            // Log Tail Panel
+            const logLinesHtml = (data.log_tail || [])
+                .map(line => `<div style="padding: 2px 0;">${line}</div>`)
+                .join('');
+
+            // Recovery commands
+            const recoveryHtml = Object.entries(data.recovery_commands || {}).map(([key, cmd]) => {
+                return `
+                    <div style="margin-bottom: 8px;">
+                        <div style="font-size: 10px; font-weight: bold; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 2px;">${key.replace('_', ' ')}</div>
+                        <div style="display: flex; gap: 6px;">
+                            <input type="text" readonly value='${cmd}' style="flex-grow: 1; font-family: monospace; font-size: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); color: #fff; padding: 4px 8px; border-radius: 4px;">
+                            <button onclick="navigator.clipboard.writeText('${cmd.replace(/'/g, "\\'")}')" class="btn" style="padding: 2px 8px; font-size: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: #fff; border-radius: 4px;">Copy</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                ${progressBarHtml}
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-bottom: 12px;">
+                    <!-- Migration Statistics -->
+                    <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-glass); padding: 14px; border-radius: 8px;">
+                        <h4 style="font-size: 12px; font-weight: bold; color: #fff; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Migration Statistics</h4>
+                        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px;">
+                            <div style="display: flex; justify-content: space-between;"><span>Space Recovered:</span><strong style="color: #34d399; font-size: 13px;">${spaceRecoveredGB} GB</strong></div>
+                            <div style="display: flex; justify-content: space-between;"><span>Space Pending:</span><strong style="color: #fbbf24;">${spacePendingGB} GB</strong></div>
+                            <div style="display: flex; justify-content: space-between;"><span>Completed Files:</span><strong style="color: #fff;">${completed}</strong></div>
+                            <div style="display: flex; justify-content: space-between;"><span>Skipped Protected:</span><strong style="color: #60a5fa;">${data.skipped_protected}</strong></div>
+                            <div style="display: flex; justify-content: space-between;"><span>Failed:</span><strong style="color: #ef4444;">${data.failed_files}</strong></div>
+                        </div>
+
+                        ${protectedList ? `
+                        <h5 style="font-size: 10px; font-weight: bold; color: #fff; margin-top: 14px; margin-bottom: 6px; text-transform: uppercase;">Skipped Active Models:</h5>
+                        <ul style="margin: 0; padding-left: 16px; font-size: 10px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 3px; max-height: 80px; overflow-y: auto;">
+                            ${protectedList}
+                        </ul>
+                        ` : ''}
+                    </div>
+
+                    <!-- File list log -->
+                    ${fileTableHtml}
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;">
+                    <!-- Terminal Log Tail -->
+                    <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-glass); padding: 14px; border-radius: 8px; display: flex; flex-direction: column;">
+                        <h4 style="font-size: 12px; font-weight: bold; color: #fff; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Rclone Terminal Output</h4>
+                        <div style="flex-grow: 1; font-family: monospace; font-size: 10px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-glass); border-radius: 6px; padding: 10px; color: #34d399; overflow-y: auto; max-height: 180px; min-height: 120px;">
+                            ${logLinesHtml || '<div style="color:var(--text-secondary);">No logs written.</div>'}
+                        </div>
+                    </div>
+
+                    <!-- Recovery Console -->
+                    <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-glass); padding: 14px; border-radius: 8px;">
+                        <h4 style="font-size: 12px; font-weight: bold; color: #fff; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Recovery Actions console</h4>
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            ${recoveryHtml}
+                        </div>
+                    </div>
+                </div>
+            `;
+        } catch (err) {
+            console.error(err);
+            container.innerHTML = `<div style="color: #ef4444; padding: 20px; text-align: center;">Error loading storage migration status</div>`;
+        }
+    }
+
+    // ── Loader: Model Router View ──────────────────────────────────────────
+    async function loadModelRouterView() {
+        const container = el('model-router-details');
+        if (!container) return;
+        try {
+            const res = await fetch('/api/v1/models/status');
+            const data = await res.json();
+
+            container.innerHTML = `
+                <div class="card" style="padding:20px; border:1px solid var(--border-glass);">
+                    <h3 style="font-weight:bold; color:#fff; font-size:15px; margin-bottom:12px;">Active Rule Settings</h3>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap:12px; font-size:13px;">
+                        <div>Local-First Routing: <strong style="color:${data.local_first ? '#10b981' : '#f59e0b'}">${data.local_first ? 'ENABLED' : 'DISABLED'}</strong></div>
+                        <div>Default System Model: <code style="color:#818cf8;">${data.default_model || '-'}</code></div>
+                        <div>Default Paid Model: <code style="color:#a855f7;">${data.default_paid_model || '-'}</code></div>
+                    </div>
+                </div>
+                <div class="card" style="padding:20px; border:1px solid var(--border-glass);">
+                    <h3 style="font-weight:bold; color:#fff; font-size:15px; margin-bottom:12px;">Enabled Local Providers</h3>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        ${data.enabled_local_providers && data.enabled_local_providers.length > 0
+                            ? data.enabled_local_providers.map(p => `<span class="badge badge-info">${p}</span>`).join('')
+                            : '<span style="color:var(--text-secondary);">None</span>'}
+                    </div>
+                </div>
+            `;
+            
+            // Trigger health and storage load
+            loadModelHealth(false);
+            loadModelStoragePolicy(false);
+            loadMigrationStatus();
+        } catch (err) {
+            container.innerHTML = `<div style="color:#ef4444; text-align:center;">Error fetching routing settings</div>`;
+        }
+    }
+
+    // ── Loader: Escalations View ────────────────────────────────────────────
+    async function loadEscalationsView() {
+        const list = el('escalations-approval-list');
+        if (!list) return;
+        try {
+            const res = await fetch('/api/v1/escalations/pending');
+            const pending = await res.json();
+
+            if (pending.length === 0) {
+                list.innerHTML = `<div style="text-align:center; color:var(--text-secondary); padding:20px;">No pending paid provider escalations in queue.</div>`;
+                return;
+            }
+
+            list.innerHTML = pending.map(app => `
+                <div class="card" style="padding:16px; border:1px solid var(--border-glass); border-radius:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                    <div style="display:flex; flex-direction:column; gap:4px; text-align:left;">
+                        <span style="font-weight:bold; font-size:14px; color:#fff;">Approval ID: ${app.approval_id}</span>
+                        <span style="font-size:12px; color:var(--text-secondary);">Task description: ${app.task_description}</span>
+                        <span style="font-size:11px; color:#f59e0b;">Target Paid Model: ${app.target_model}</span>
+                    </div>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn btn-outline btn-xs" onclick="window.hochRemediateEscalation('${app.approval_id}', 'DENIED')" style="color:#ef4444; border-color:rgba(239,68,68,0.3);">Deny</button>
+                        <button class="btn btn-primary btn-xs" onclick="window.hochRemediateEscalation('${app.approval_id}', 'APPROVED')" style="background:#10b981; border-color:#10b981; color:#fff;">Approve</button>
+                    </div>
+                </div>
+            `).join('');
+        } catch (err) {
+            list.innerHTML = `<div style="color:#ef4444; text-align:center;">Error fetching pending approvals queue</div>`;
+        }
+    }
+
+    // Remediation Approve/Deny action
+    window.hochRemediateEscalation = async function (approvalId, status) {
+        try {
+            const res = await fetch('/api/v1/escalations/approve', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ approval_id: approvalId, status: status })
+            });
+            if (res.ok) {
+                loadEscalationsView();
+                fetchCockpit();
+            } else {
+                alert('Action failed');
+            }
+        } catch (err) {
+                    console.error('[Remediate] post failed:', err);
+        }
+    };
+
+    // ── Loader: Evidence View ───────────────────────────────────────────────
+    async function loadClawdeView() {
+        async function loadClawdeHistory() {
+            const timelineContent = el('clawde-audit-timeline-content');
+            if (!timelineContent) return;
+
+            try {
+                // Verify integrity
+                try {
+                    const verifyRes = await fetch('/api/v1/orchestrator/history/verify');
+                    if (verifyRes.ok) {
+                        const verifyData = await verifyRes.json();
+                        const integrityBadge = el('clawde-audit-integrity');
+                        if (integrityBadge) {
+                            if (verifyData.status === 'success') {
+                                integrityBadge.textContent = 'INTEGRITY: SECURE';
+                                integrityBadge.style.background = 'rgba(16, 185, 129, 0.1)';
+                                integrityBadge.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+                                integrityBadge.style.color = '#34d399';
+                            } else {
+                                integrityBadge.textContent = 'TAMPER DETECTED';
+                                integrityBadge.style.background = 'rgba(239, 68, 68, 0.1)';
+                                integrityBadge.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+                                integrityBadge.style.color = '#f87171';
+                            }
+                        }
+                    }
+                } catch (err) {
+                    console.error("Error verifying log integrity:", err);
+                }
+
+                const res = await fetch('/api/v1/orchestrator/history');
+                if (!res.ok) throw new Error(`HTTP status ${res.status}`);
+                const data = await res.json();
+                const history = data.history || [];
+
+                if (history.length === 0) {
+                    timelineContent.innerHTML = `
+                        <div style="font-size: 12px; color: var(--text-secondary); text-align: center; margin: 15px 0;">
+                            No history records found. Perform requests, approvals, or executions to start the ledger.
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '';
+                history.forEach(item => {
+                    let badgeColor = 'rgba(59, 130, 246, 0.15)';
+                    let badgeTextColor = '#60a5fa';
+                    let badgeBorderColor = 'rgba(59, 130, 246, 0.3)';
+                    
+                    if (item.action === 'approve') {
+                        badgeColor = 'rgba(16, 185, 129, 0.15)';
+                        badgeTextColor = '#34d399';
+                        badgeBorderColor = 'rgba(16, 185, 129, 0.3)';
+                    } else if (item.action === 'execute') {
+                        if (item.status === 'success') {
+                            badgeColor = 'rgba(16, 185, 129, 0.15)';
+                            badgeTextColor = '#34d399';
+                            badgeBorderColor = 'rgba(16, 185, 129, 0.3)';
+                        } else {
+                            badgeColor = 'rgba(239, 68, 68, 0.15)';
+                            badgeTextColor = '#f87171';
+                            badgeBorderColor = 'rgba(239, 68, 68, 0.3)';
+                        }
+                    } else if (item.action === 'execute_start') {
+                        badgeColor = 'rgba(245, 158, 11, 0.15)';
+                        badgeTextColor = '#fbbf24';
+                        badgeBorderColor = 'rgba(245, 158, 11, 0.3)';
+                    } else if (item.action === 'transition') {
+                        badgeColor = 'rgba(139, 92, 246, 0.15)';
+                        badgeTextColor = '#a78bfa';
+                        badgeBorderColor = 'rgba(139, 92, 246, 0.3)';
+                    }
+
+                    const actionLabel = item.action.toUpperCase().replace('_', ' ');
+                    const localTime = new Date(item.timestamp).toLocaleString();
+                    
+                    let detailsHtml = '';
+                    if (item.action === 'execute' && (item.stdout || item.stderr)) {
+                        detailsHtml = `
+                            <details style="margin-top: 6px; cursor: pointer;">
+                                <summary style="font-size: 11px; color: var(--accent-teal); font-weight: 600;">View Execution Output</summary>
+                                <pre style="margin: 6px 0 0 0; background: #020406; border: 1px solid rgba(255,255,255,0.05); padding: 8px; border-radius: 4px; font-family: monospace; font-size: 11px; color: #34d399; max-height: 150px; overflow-y: auto; white-space: pre-wrap; word-break: break-all;">${item.stdout || ''}${item.stderr ? '\nERRORS:\n' + item.stderr : ''}</pre>
+                            </details>
+                        `;
+                    }
+
+                    let sealHtml = '';
+                    if (item.evidence_seal_path) {
+                        const sealFilename = item.evidence_seal_path.split('/').pop();
+                        sealHtml = `
+                            <div style="font-size: 11px; color: var(--accent-teal); font-weight: bold; margin-top: 4px; display: flex; align-items: center; gap: 4px;">
+                                <span style="display:inline-block; width:6px; height:6px; background:#14b8a6; border-radius:50%;"></span>
+                                Evidence Seal: <a href="file:///${item.evidence_seal_path}" target="_blank" style="color: #2dd4bf; text-decoration: underline; font-family: monospace; word-break: break-all;">${sealFilename}</a>
+                            </div>
+                        `;
+                    }
+
+                    html += `
+                        <div style="display: flex; gap: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); padding: 10px 14px; border-radius: 8px; align-items: flex-start; justify-content: space-between;">
+                            <div style="display: flex; gap: 12px; align-items: flex-start; flex: 1;">
+                                <div style="display: flex; flex-direction: column; gap: 4px; align-items: center; min-width: 90px;">
+                                    <span style="font-size: 10px; font-weight: bold; padding: 2px 8px; border-radius: 4px; background: ${badgeColor}; color: ${badgeTextColor}; border: 1px solid ${badgeBorderColor}; text-align: center; width: 100%; display: block; box-sizing: border-box;">
+                                        ${actionLabel}
+                                    </span>
+                                    <span style="font-size: 10px; font-weight: 600; color: #fff; background: rgba(255,255,255,0.06); padding: 1px 6px; border-radius: 3px;">
+                                        ${item.phase}
+                                    </span>
+                                </div>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 12px; font-weight: 600; color: #fff;">
+                                        ${item.decision_note || (item.action === 'execute' ? `Execution ${item.status}` : `${actionLabel} event`)}
+                                    </div>
+                                    <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">
+                                        Operator: <span style="color:#fff; font-weight:500;">${item.operator}</span> | Scope: <span style="color:#fff; font-weight:500;">${item.scope}</span>
+                                        ${item.returncode !== null ? ` | Exit Code: <span style="color:#f87171; font-weight:bold;">${item.returncode}</span>` : ''}
+                                    </div>
+                                    ${sealHtml}
+                                    ${detailsHtml}
+                                </div>
+                            </div>
+                            <div style="font-size: 11px; color: var(--text-secondary); text-align: right; white-space: nowrap; margin-top: 2px;">
+                                ${localTime}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                timelineContent.innerHTML = html;
+            } catch (err) {
+                console.error("Error loading CLAWDE history:", err);
+                timelineContent.innerHTML = `
+                    <div style="font-size: 12px; color: #f87171; text-align: center; margin: 15px 0;">
+                        Failed to load history ledger: ${err.message}
+                    </div>
+                `;
+            }
+        }
+
+        loadClawdeHistory();
+
+        const phaseSpan = el('clawde-current-phase');
+        const tbody = el('evidence-matrix-tbody');
+        if (!tbody) return;
+        try {
+            const res = await fetch('/api/v1/qa/evidence-matrix');
+            const data = await res.json();
+            // ... (rest of function)
+        } catch (err) {
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:15px; color:#ef4444;">Error fetching evidence matrix</td></tr>`;
+        }
+    }
+
+    async function loadEvidenceView() {
+        loadActionLedger();
+        const stats = el('evidence-stats');
+        const tbody = el('evidence-matrix-tbody');
+        if (!tbody) return;
+        try {
+            const res = await fetch('/api/v1/qa/evidence-matrix');
+            const data = await res.json();
+            
+            if (stats) {
+                stats.innerHTML = `
+                    <div class="card" style="padding:12px; background:rgba(255,255,255,0.02); border:1px solid var(--border-glass);">
+                        <span style="font-size:11px; color:var(--text-secondary);">Verified Controls</span>
+                        <div style="font-size:20px; font-weight:bold; color:#fff;">${data.controls ? data.controls.length : 0}</div>
+                    </div>
+                    <div class="card" style="padding:12px; background:rgba(255,255,255,0.02); border:1px solid var(--border-glass);">
+                        <span style="font-size:11px; color:var(--text-secondary);">Tests Passing</span>
+                        <div style="font-size:20px; font-weight:bold; color:#10b981;">${data.summary ? data.summary.tests_pass : 0} / ${data.summary ? data.summary.total_tests : 0}</div>
+                    </div>
+                `;
+            }
+
+            const controlsList = data.controls || [];
+            if (controlsList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:15px; color:var(--text-secondary);">No evidence cataloged.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = controlsList.map(c => `
+                <tr style="border-bottom:1px solid rgba(255,255,255,0.03);">
+                    <td style="padding:10px 8px; font-family:monospace; color:#818cf8; font-weight:bold;">${c.control_id}</td>
+                    <td style="padding:10px 8px; font-weight:500; color:#fff;">${c.name}</td>
+                    <td style="padding:10px 8px; color:var(--text-secondary); max-width:400px;">${c.description}</td>
+                    <td style="padding:10px 8px;">
+                        <span style="color:${c.status === 'PASS' ? '#10b981' : '#ef4444'}; font-weight:bold;">● ${c.status}</span>
+                    </td>
+                </tr>
+            `).join('');
+        } catch (err) {
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:15px; color:#ef4444;">Error fetching evidence matrix</td></tr>`;
+        }
+    }
+
+    // ── Loader: Detections View ─────────────────────────────────────────────
+    async function loadDetectionsView() {
+        const rulesGrid = el('detections-rules-list');
+        const eventList = el('detections-event-list');
+        if (!rulesGrid) return;
+        try {
+            // Load detection status and health
+            const res = await fetch('/api/v1/detections/health');
+            const data = await res.json();
+            
+            // Rules count
+            const rules = [
+                { id: 'SPL-001', dialect: 'Splunk', name: 'Escalation Limit Exceeded', severity: 'high' },
+                { id: 'SIG-002', dialect: 'Sigma', name: 'Unauthorized Model Call', severity: 'critical' },
+                { id: 'KQL-003', dialect: 'Elastic/KQL', name: 'Rapid Budget Burn Rate', severity: 'medium' },
+                { id: 'LQL-004', dialect: 'LogQL', name: 'Process Execution Timeout', severity: 'low' }
+            ];
+
+            rulesGrid.innerHTML = rules.map(r => `
+                <div class="card" style="padding:12px; border:1px solid var(--border-glass);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <span style="font-family:monospace; font-size:10px; color:#818cf8; font-weight:bold;">${r.id}</span>
+                        <span style="font-size:9px; text-transform:uppercase; font-weight:bold; color:${r.severity === 'critical' || r.severity === 'high' ? '#ef4444' : '#f59e0b'}">${r.severity}</span>
+                    </div>
+                    <h4 style="font-weight:bold; font-size:12px; color:#fff; margin-bottom:4px;">${r.name}</h4>
+                    <div style="font-size:10px; color:var(--text-secondary);">Dialect: <code style="color:#10b981;">${r.dialect}</code></div>
+                </div>
+            `).join('');
+
+            // Render event log stream
+            if (eventList) {
+                const events = data.recent_events || [];
+                if (events.length === 0) {
+                    eventList.innerHTML = `<div style="text-align:center; color:var(--text-secondary); padding:10px;">No alerts triggered</div>`;
+                    return;
+                }
+                eventList.innerHTML = events.map(e => `
+                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.03); padding:4px 0; font-size:11px;">
+                        <span style="color:#ef4444; font-weight:bold;">[${e.severity.toUpperCase()}]</span>
+                        <span style="color:#fff;">${e.rule_id} — ${e.message}</span>
+                        <span style="color:var(--text-secondary);">${e.timestamp.split('T')[1].substring(0, 8)}</span>
+                    </div>
+                `).join('');
+            }
+        } catch (err) {
+            rulesGrid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#ef4444;">Error loading detections</div>`;
+        }
+    }
+
+    async function loadReadinessView() {
+        const container = el('preflight-gate-container');
+        const badge = el('preflight-status-badge');
+        if (!container) return;
+
+        try {
+            const res = await fetch('/api/v1/preflight/status');
+            const data = await res.json();
+
+            // Update badge status
+            if (badge) {
+                if (data.go_no_go === 'GO') {
+                    badge.textContent = 'SYSTEM GO';
+                    badge.style.background = 'rgba(16, 185, 129, 0.15)';
+                    badge.style.color = '#34d399';
+                    badge.style.border = '1px solid rgba(16,185,129,0.3)';
+                } else {
+                    badge.textContent = 'SYSTEM NO-GO';
+                    badge.style.background = 'rgba(239, 68, 68, 0.15)';
+                    badge.style.color = '#f87171';
+                    badge.style.border = '1px solid rgba(239,68,68,0.3)';
+                }
+            }
+
+            // Checks list rendering
+            const checksHtml = (data.checks || []).map(c => {
+                let statusColor = '#34d399';
+                let statusText = 'PASS';
+                if (c.status === 'WARN') {
+                    statusColor = '#fbbf24';
+                    statusText = 'WARN';
+                }
+                if (c.status === 'FAIL') {
+                    statusColor = '#f87171';
+                    statusText = 'FAIL';
+                }
+
+                return `
+                    <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-glass); padding: 14px; border-radius: 8px; display: flex; flex-direction: column; gap: 6px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong style="color: #fff; font-size: 13px;">${c.name}</strong>
+                            <span style="color: ${statusColor}; font-weight: bold; font-size: 11px; text-transform: uppercase; padding: 2px 8px; background: rgba(0,0,0,0.15); border-radius: 4px; border: 1px solid rgba(255,255,255,0.05);">${statusText}</span>
+                        </div>
+                        <p style="font-size: 12px; color: var(--text-secondary); margin: 0; line-height: 1.4;">${c.message}</p>
+                        ${c.remediation ? `
+                        <div style="background: rgba(245, 158, 11, 0.04); border: 1px solid rgba(245, 158, 11, 0.15); border-radius: 6px; padding: 8px 10px; margin-top: 4px; font-size: 11px; color: #fbcb58; display: flex; flex-direction: column; gap: 4px;">
+                            <span style="font-weight: bold; font-size: 9px; text-transform: uppercase; color: #fbbf24;">Remediation Suggestion:</span>
+                            <span>${c.remediation}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-glass); padding: 16px; border-radius: 8px; margin-bottom: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <span style="font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Overall Preflight Readiness Score</span>
+                            <div style="font-size: 32px; font-weight: 800; color: ${data.go_no_go === 'GO' ? 'var(--accent-teal)' : '#f87171'}; margin-top: 4px;">${data.overall_score}%</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <span style="font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Last Scanned</span>
+                            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">${new Date(data.timestamp).toLocaleTimeString()}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px;">
+                    ${checksHtml || '<div style="color:var(--text-secondary); text-align:center; padding:20px;">No preflight checks configured.</div>'}
+                </div>
+            `;
+        } catch (err) {
+            container.innerHTML = `<div style="color:#ef4444; text-align:center;">Error fetching preflight checklist metrics</div>`;
+        }
+    }
+
+    // ── Loader: Settings View ───────────────────────────────────────────────
+    async function loadSettingsView() {
+        const container = el('settings-device-list');
+        if (!container) return;
+        try {
+            const res = await fetch('/api/v1/live-runtime/cockpit');
+            const data = await res.json();
+            const regCard = data.cards.device_registry || {};
+            
+            container.innerHTML = `
+                <div class="card" style="padding:16px; border:1px solid var(--border-glass); border-radius:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <h3 style="font-weight:bold; color:#fff;">Cluster Registry Node profiles</h3>
+                        <span class="badge badge-info">${regCard.devices_count || 0} registered</span>
+                    </div>
+                    <p style="font-size:12px; color:var(--text-secondary); line-height:1.5;">
+                        Cluster workers profiles are fetched dynamically from <code>config/cluster_worker_profiles.json</code>.
+                        All nodes are authenticated under the local network mesh and governed by authorization levels.
+                    </p>
+                </div>
+            `;
+        } catch (err) {
+            container.innerHTML = `<div style="color:#ef4444; text-align:center;">Error loading settings profiles</div>`;
+        }
+    }
+
+    // ── Loader: CLAWDE Control Tower View ────────────────────────────────────
+    let isClawdeInitialized = false;
+    let activeApprovalId = null;
+    let selectedPhase = null;
+    const phaseFilesMap = {
+        "PR16": {
+            prompt: "artifacts/orchestrator/generated-prompts/PR16.md",
+            report: "artifacts/orchestrator/reports/PR16_orchestrator_report.json",
+            seal: "artifacts/phase-orchestrator/visual-control-plane-local-v1/pr16_final_seal.json"
+        },
+        "PR17": {
+            prompt: "artifacts/orchestrator/generated-prompts/PR17.md",
+            report: "artifacts/orchestrator/reports/PR17_orchestrator_report.json",
+            seal: "artifacts/production-readiness-final-candidate-seal/visual-control-plane-local-v1/pr17_final_seal"
+        },
+        "PR18": {
+            prompt: "artifacts/orchestrator/generated-prompts/PR18.md",
+            report: "artifacts/orchestrator/reports/PR18_orchestrator_report.json",
+            seal: "artifacts/production-readiness-final-candidate-seal/visual-control-plane-local-v1/pr18_final_seal.json"
+        },
+        "COMPLETED": {
+            prompt: "None",
+            report: "None",
+            seal: "None"
+        }
+    };
+
+    function initClawdeControls() {
+        if (isClawdeInitialized) return;
+        isClawdeInitialized = true;
+        
+        const btnNoDrift = el('clawde-btn-no-drift');
+        const btnRender = el('clawde-btn-render-phase');
+        const btnExecute = el('clawde-btn-execute-phase');
+        const btnViewPrompt = el('clawde-btn-view-prompt');
+        const btnViewReport = el('clawde-btn-view-report');
+        const btnViewEvidence = el('clawde-btn-view-evidence');
+        const btnHandoff = el('clawde-btn-handoff');
+        const btnRequest = el('clawde-btn-request-execution');
+        const btnApprove = el('clawde-btn-approve-execution');
+        const consoleArea = el('clawde-console-area');
+        const consoleContent = el('clawde-console-content');
+        const consoleClose = el('clawde-console-close');
+        const banner = el('clawde-status-banner');
+
+        if (consoleClose && consoleArea) {
+            consoleClose.addEventListener('click', () => {
+                consoleArea.style.display = 'none';
+            });
+        }
+
+        function showBanner(message, isError) {
+            if (!banner) return;
+            banner.textContent = message;
+            banner.style.display = 'block';
+            if (isError) {
+                banner.style.background = 'rgba(239, 68, 68, 0.15)';
+                banner.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+                banner.style.color = '#f87171';
+            } else {
+                banner.style.background = 'rgba(16, 185, 129, 0.15)';
+                banner.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+                banner.style.color = '#34d399';
+            }
+        }
+
+        function hideBanner() {
+            if (banner) banner.style.display = 'none';
+        }
+
+        async function triggerRunner(actionName, endpoint, payload = null) {
+            if (!consoleArea || !consoleContent) return;
+            consoleArea.style.display = 'block';
+            hideBanner();
+            
+            consoleContent.textContent += `\n[${actionName.toUpperCase()}] Running runner...\nPOST ${endpoint}\n`;
+            if (payload) {
+                consoleContent.textContent += `Payload: ${JSON.stringify(payload)}\n`;
+            }
+            
+            try {
+                const res = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: payload ? JSON.stringify(payload) : undefined
+                });
+                const data = await res.json();
+                
+                if (data.status === 'success') {
+                    consoleContent.textContent += `[PASS] Completed successfully.\n\nSTDOUT:\n${data.stdout || ''}\n`;
+                    showBanner(`Successfully executed ${actionName}!`, false);
+                } else {
+                    const errDetail = data.stderr || data.detail || 'Unknown error occurred.';
+                    consoleContent.textContent += `[FAIL] Failed (exit code ${data.returncode || 'error'}).\n\nSTDOUT:\n${data.stdout || ''}\n\nSTDERR:\n${errDetail}\n`;
+                    showBanner(`Failed to execute ${actionName}: ${errDetail}`, true);
+                }
+                // Refresh the view immediately
+                loadClawdeView();
+            } catch (err) {
+                consoleContent.textContent += `[ERROR] Failed to contact backend: ${err.message}\n`;
+                showBanner(`Failed to contact backend: ${err.message}`, true);
+            }
+        }
+
+        if (btnNoDrift) {
+            btnNoDrift.addEventListener('click', () => {
+                triggerRunner('no-drift check', '/api/v1/orchestrator/run-runner');
+            });
+        }
+
+        if (btnRender) {
+            btnRender.addEventListener('click', () => {
+                triggerRunner('render phase', '/api/v1/orchestrator/run-runner');
+            });
+        }
+
+        if (btnExecute) {
+            btnExecute.addEventListener('click', () => {
+                const activePhase = el('clawde-current-phase')?.textContent || 'PR17';
+                consoleContent.textContent = `[EXECUTE CLICKED] Starting execution...\n`;
+                triggerRunner('execute phase', '/api/v1/orchestrator/execute-phase', { phase: activePhase });
+            });
+        }
+
+        if (btnRequest) {
+            btnRequest.addEventListener('click', async () => {
+                if (!consoleArea || !consoleContent) return;
+                consoleArea.style.display = 'block';
+                hideBanner();
+                const activePhase = el('clawde-current-phase')?.textContent || 'PR17';
+                consoleContent.textContent = `[REQUEST CLICKED] Requesting execution for phase ${activePhase}...\n`;
+                consoleContent.textContent += `POST /api/v1/orchestrator/request-execution\n`;
+                
+                try {
+                    const res = await fetch('/api/v1/orchestrator/request-execution', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ phase: activePhase, decision: 'requested' })
+                    });
+                    const data = await res.json();
+                    consoleContent.textContent += `Response: ${JSON.stringify(data, null, 2)}\n`;
+                    showBanner(`Approval request registered for ${activePhase}.`, false);
+                    loadClawdeView();
+                } catch (err) {
+                    consoleContent.textContent += `[ERROR] Failed to request approval: ${err.message}\n`;
+                    showBanner(`Failed to request approval: ${err.message}`, true);
+                }
+            });
+        }
+
+        if (btnApprove) {
+            btnApprove.addEventListener('click', async () => {
+                if (!consoleArea || !consoleContent) return;
+                consoleArea.style.display = 'block';
+                hideBanner();
+                const activePhase = el('clawde-current-phase')?.textContent || 'PR17';
+                consoleContent.textContent = `[APPROVE CLICKED] Approving execution for phase ${activePhase}...\n`;
+                consoleContent.textContent += `POST /api/v1/orchestrator/request-execution\n`;
+                
+                try {
+                    const res = await fetch('/api/v1/orchestrator/request-execution', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ phase: activePhase, decision: 'approved' })
+                    });
+                    const data = await res.json();
+                    consoleContent.textContent += `Response: ${JSON.stringify(data, null, 2)}\n`;
+                    showBanner(`Approval decision granted for ${activePhase}.`, false);
+                    loadClawdeView();
+                } catch (err) {
+                    consoleContent.textContent += `[ERROR] Failed to approve execution: ${err.message}\n`;
+                    showBanner(`Failed to approve execution: ${err.message}`, true);
+                }
+            });
+        }
+
+        const showPath = (btn, pathField, name) => {
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    if (!consoleArea || !consoleContent) return;
+                    consoleArea.style.display = 'block';
+                    const pathVal = el(pathField)?.textContent || el(pathField)?.value || '--';
+                    consoleContent.textContent = `[INFO] Path to ${name}:\n${pathVal}\n\nTo view or edit this file, use your local editor or the Antigravity shell.\n`;
+                });
+            }
+        };
+
+        showPath(btnViewPrompt, 'clawde-generated-prompt-path', 'Generated Prompt');
+        showPath(btnViewReport, 'clawde-latest-report-path', 'Latest Orchestrator Report');
+        showPath(btnViewEvidence, 'clawde-evidence-seal-path', 'Latest Evidence Seal');
+
+        if (btnHandoff) {
+            btnHandoff.addEventListener('click', () => {
+                if (!consoleArea || !consoleContent) return;
+                consoleArea.style.display = 'block';
+                consoleContent.textContent = `[HANDOFF] Preparing handoff package...\n`;
+                
+                const nextPhase = el('clawde-current-phase')?.textContent || 'PR17';
+                consoleContent.textContent += `[INFO] Handoff package ready for phase: ${nextPhase}\n`;
+                consoleContent.textContent += `Run:\n  cat artifacts/orchestrator/generated-prompts/${nextPhase}.md\n\nSubmit this file to the operator for manual gating approval.\n`;
+            });
+        }
+
+        const btnSyncRun = el('clawde-btn-ingest-run');
+        if (btnSyncRun) {
+            btnSyncRun.addEventListener('click', () => {
+                syncObservabilityDashboard();
+            });
+        }
+    }
+
+    async function loadClawdeView() {
+        initClawdeControls();
+        
+        const phaseSpan = el('clawde-current-phase');
+        const completedSpan = el('clawde-last-completed');
+        const driftSpan = el('clawde-drift-status');
+        const promptCode = el('clawde-generated-prompt-path');
+        const reportCode = el('clawde-latest-report-path');
+        const sealCode = el('clawde-evidence-seal-path');
+        const blockedContainer = el('clawde-blocked-actions-container');
+        
+        const approvalBadge = el('clawde-approval-status-badge');
+        const btnRequest = el('clawde-btn-request-execution');
+        const btnApprove = el('clawde-btn-approve-execution');
+        const btnExecute = el('clawde-btn-execute-phase');
+
+        // Debug panel elements
+        const dbgApi = el('clawde-dbg-api-status');
+        const dbgCwd = el('clawde-dbg-cwd');
+        const dbgRepo = el('clawde-dbg-repo-root');
+        const dbgActive = el('clawde-dbg-active-phase');
+        const dbgApprovalPath = el('clawde-dbg-approval-path');
+        const dbgApprovalExists = el('clawde-dbg-approval-exists');
+        const dbgRunnerExists = el('clawde-dbg-runner-exists');
+        const dbgPromptExists = el('clawde-dbg-prompt-exists');
+        const dbgReturncode = el('clawde-dbg-returncode');
+
+        if (!phaseSpan) return;
+
+        try {
+            const res = await fetch('/api/v1/orchestrator/status');
+            const data = await res.json();
+            
+            const reg = data.registry || {};
+            const state = data.state || {};
+            const paths = data.paths || {};
+            let blockedActions = [];
+            if (data.blocked_actions) {
+                if (Array.isArray(data.blocked_actions)) {
+                    blockedActions = data.blocked_actions;
+                } else if (Array.isArray(data.blocked_actions.blocked_actions)) {
+                    blockedActions = data.blocked_actions.blocked_actions;
+                }
+            }
+
+            // Set next phase & last completed values
+            const nextPhase = reg.next_phase || 'PR17';
+            const lastCompleted = reg.last_completed_phase || 'PR16';
+
+            if (!selectedPhase) {
+                selectedPhase = nextPhase;
+            }
+
+            phaseSpan.textContent = selectedPhase;
+            completedSpan.textContent = lastCompleted;
+
+            // Render Phase Cards
+            const cardsContainer = el('clawde-phase-cards-container');
+            if (cardsContainer) {
+                const phaseOrder = ["PR16", "PR17", "PR18", "COMPLETED"];
+                const phaseMeta = {
+                    "PR16": { title: "PR16: Plan", desc: "Cutover Plan" },
+                    "PR17": { title: "PR17: Cutover", desc: "Cutover Execution" },
+                    "PR18": { title: "PR18: Validate", desc: "Post-Cutover Validation" },
+                    "COMPLETED": { title: "COMPLETED", desc: "Release Sealed" }
+                };
+
+                cardsContainer.innerHTML = phaseOrder.map(p => {
+                    const meta = phaseMeta[p];
+                    let cardState = 'pending';
+                    let ledClass = '';
+                    let statusLabel = 'Locked';
+                    let statusColor = '#6b7280'; // gray
+
+                    if (p === nextPhase) {
+                        cardState = 'active';
+                        ledClass = 'led-active';
+                        statusLabel = 'Active';
+                        statusColor = '#fbbf24'; // amber
+                    } else {
+                        let isDone = false;
+                        if (nextPhase === 'COMPLETED') {
+                            isDone = true;
+                        } else {
+                            const completedList = [];
+                            if (lastCompleted === 'PR16') completedList.push('PR16');
+                            if (lastCompleted === 'PR17') completedList.push('PR16', 'PR17');
+                            if (lastCompleted === 'PR18') completedList.push('PR16', 'PR17', 'PR18');
+                            if (completedList.includes(p)) isDone = true;
+                        }
+                        
+                        if (isDone) {
+                            cardState = 'completed';
+                            statusLabel = 'Completed';
+                            statusColor = '#10b981'; // green
+                        }
+                    }
+
+                    let borderClass = '';
+                    if (p === selectedPhase) {
+                        borderClass = 'selected-phase';
+                    } else if (cardState === 'active') {
+                        borderClass = 'active-phase';
+                    } else if (cardState === 'completed') {
+                        borderClass = 'completed-phase';
+                    }
+
+                    let ledStyle = `width: 8px; height: 8px; border-radius: 50%; display: inline-block; background: ${statusColor};`;
+                    if (cardState === 'active') {
+                        ledStyle += ' box-shadow: 0 0 8px currentColor;';
+                    }
+
+                    return `
+                        <div class="phase-card ${borderClass}" data-phase="${p}">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 12px; font-weight: 700; color: #fff;">${meta.title}</span>
+                                <span class="${ledClass}" style="${ledStyle}"></span>
+                            </div>
+                            <span style="font-size: 10px; color: var(--text-secondary); line-height: 1.2;">${meta.desc}</span>
+                            <span style="font-size: 9px; font-weight: bold; color: ${statusColor}; margin-top: 4px; text-transform: uppercase;">${statusLabel}</span>
+                        </div>
+                    `;
+                }).join('');
+
+                cardsContainer.querySelectorAll('.phase-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        selectedPhase = card.getAttribute('data-phase');
+                        loadClawdeView();
+                    });
+                });
+            }
+
+            // Update Selected Phase title & status light in inspector
+            const selectedStatusLight = el('clawde-selected-status-light');
+            if (selectedStatusLight) {
+                let statusColor = '#6b7280'; // gray
+                if (selectedPhase === nextPhase) {
+                    statusColor = '#fbbf24'; // amber
+                } else {
+                    let isDone = false;
+                    if (nextPhase === 'COMPLETED') {
+                        isDone = true;
+                    } else {
+                        const completedList = [];
+                        if (lastCompleted === 'PR16') completedList.push('PR16');
+                        if (lastCompleted === 'PR17') completedList.push('PR16', 'PR17');
+                        if (lastCompleted === 'PR18') completedList.push('PR16', 'PR17', 'PR18');
+                        if (completedList.includes(selectedPhase)) isDone = true;
+                    }
+                    if (isDone) statusColor = '#10b981'; // green
+                }
+                selectedStatusLight.style.background = statusColor;
+            }
+
+            // Drift Status
+            const driftText = state.drift_status || 'ZERO DRIFT DETECTED';
+            if (driftSpan) {
+                driftSpan.textContent = driftText;
+                if (driftText === 'ZERO DRIFT DETECTED' || driftText === 'PASS') {
+                    driftSpan.style.background = 'rgba(16, 185, 129, 0.1)';
+                    driftSpan.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+                    driftSpan.style.color = '#34d399';
+                } else {
+                    driftSpan.style.background = 'rgba(239, 68, 68, 0.1)';
+                    driftSpan.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+                    driftSpan.style.color = '#f87171';
+                }
+            }
+
+            // Populate selected phase files map paths
+            const phasePaths = phaseFilesMap[selectedPhase] || { prompt: "None", report: "None", seal: "None" };
+            if (promptCode) promptCode.textContent = phasePaths.prompt;
+            if (reportCode) reportCode.textContent = phasePaths.report;
+            if (sealCode) sealCode.textContent = phasePaths.seal;
+
+            // Render Blocked Actions
+            if (blockedContainer) {
+                if (blockedActions.length === 0) {
+                    blockedContainer.innerHTML = `<div style="color:var(--text-secondary); text-align:center; font-size:12px;">No blocked actions defined.</div>`;
+                } else {
+                    blockedContainer.innerHTML = blockedActions.map(act => `
+                        <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.02); padding:8px 12px; border-radius:6px; border:1px solid rgba(255,255,255,0.03);">
+                            <div>
+                                <span style="font-size:13px; font-weight:600; color:#fff; display:block;">${act.action}</span>
+                                <span style="font-size:11px; color:var(--text-secondary);">${act.rationale || ''}</span>
+                            </div>
+                            <span style="font-size:11px; font-weight:bold; color:#f87171; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2); padding:2px 8px; border-radius:4px;">BLOCKED</span>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // Load and update Approval Gate Status
+            const activePhase = reg.next_phase || 'PR17';
+            
+            // Check deterministic decision JSON in /api/v1/orchestrator/debug (which scans approval files)
+            const dbgRes = await fetch('/api/v1/orchestrator/debug');
+            const dbgData = await dbgRes.json();
+            
+            const approvalFile = `decision_${activePhase}_execute.json`;
+            const approvalExists = dbgData.approval_decision_files && dbgData.approval_decision_files.includes(approvalFile);
+            
+            let status = 'NO REQUEST';
+            
+            if (approvalExists) {
+                try {
+                    const appRes = await fetch('/api/v1/approvals/queue');
+                    const approvalsQueue = await appRes.json();
+                    let matchedApproval = null;
+                    for (const app of approvalsQueue) {
+                        if (app.task_description && app.task_description.toLowerCase().includes(activePhase.toLowerCase())) {
+                            matchedApproval = app;
+                            break;
+                        }
+                    }
+                    if (matchedApproval) {
+                        status = matchedApproval.status;
+                    } else {
+                        status = 'APPROVED';
+                    }
+                } catch (e) {
+                    status = 'APPROVED';
+                }
+            }
+            
+            const lockoutNotice = el('clawde-gate-lockout-notice');
+            if (selectedPhase === nextPhase) {
+                if (lockoutNotice) lockoutNotice.style.display = 'none';
+                if (approvalBadge) {
+                    approvalBadge.textContent = status;
+                    if (status === 'APPROVED') {
+                        approvalBadge.style.background = 'rgba(16, 185, 129, 0.1)';
+                        approvalBadge.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+                        approvalBadge.style.color = '#34d399';
+                        if (btnRequest) btnRequest.style.display = 'none';
+                        if (btnApprove) btnApprove.style.display = 'none';
+                        if (btnExecute) {
+                            btnExecute.removeAttribute('disabled');
+                            btnExecute.style.opacity = '1';
+                            btnExecute.style.cursor = 'pointer';
+                        }
+                    } else if (status === 'PENDING') {
+                        approvalBadge.style.background = 'rgba(245, 158, 11, 0.1)';
+                        approvalBadge.style.borderColor = 'rgba(245, 158, 11, 0.3)';
+                        approvalBadge.style.color = '#fbbf24';
+                        if (btnRequest) btnRequest.style.display = 'none';
+                        if (btnApprove) btnApprove.style.display = 'inline-block';
+                        if (btnExecute) {
+                            btnExecute.setAttribute('disabled', 'true');
+                            btnExecute.style.opacity = '0.5';
+                            btnExecute.style.cursor = 'not-allowed';
+                        }
+                    } else {
+                        approvalBadge.style.background = 'rgba(255,255,255,0.05)';
+                        approvalBadge.style.borderColor = 'rgba(255,255,255,0.1)';
+                        approvalBadge.style.color = 'var(--text-secondary)';
+                        if (btnRequest) btnRequest.style.display = 'inline-block';
+                        if (btnApprove) btnApprove.style.display = 'none';
+                        if (btnExecute) {
+                            btnExecute.setAttribute('disabled', 'true');
+                            btnExecute.style.opacity = '0.5';
+                            btnExecute.style.cursor = 'not-allowed';
+                        }
+                    }
+                }
+            } else {
+                if (btnRequest) btnRequest.style.display = 'none';
+                if (btnApprove) btnApprove.style.display = 'none';
+                if (btnExecute) {
+                    btnExecute.setAttribute('disabled', 'true');
+                    btnExecute.style.opacity = '0.5';
+                    btnExecute.style.cursor = 'not-allowed';
+                }
+                if (approvalBadge) {
+                    approvalBadge.textContent = 'LOCKED';
+                    approvalBadge.style.background = 'rgba(255,255,255,0.03)';
+                    approvalBadge.style.borderColor = 'rgba(255,255,255,0.08)';
+                    approvalBadge.style.color = 'var(--text-secondary)';
+                }
+                if (lockoutNotice) {
+                    lockoutNotice.style.display = 'block';
+                    let message = 'This phase is locked.';
+                    let isDone = false;
+                    if (nextPhase === 'COMPLETED') {
+                        isDone = true;
+                    } else {
+                        const completedList = [];
+                        if (lastCompleted === 'PR16') completedList.push('PR16');
+                        if (lastCompleted === 'PR17') completedList.push('PR16', 'PR17');
+                        if (lastCompleted === 'PR18') completedList.push('PR16', 'PR17', 'PR18');
+                        if (completedList.includes(selectedPhase)) isDone = true;
+                    }
+                    if (isDone) {
+                        message = 'This phase has already been completed.';
+                    } else {
+                        message = `This phase is locked until phase ${nextPhase} is executed.`;
+                    }
+                    lockoutNotice.textContent = message;
+                }
+            }
+
+            // Gated execution buttons state management
+            const btnNoDrift = el('clawde-btn-no-drift');
+            const btnRender = el('clawde-btn-render-phase');
+            const isActivePhaseSelected = selectedPhase === nextPhase;
+            const buttonsToGate = [btnNoDrift, btnRender];
+            buttonsToGate.forEach(btn => {
+                if (btn) {
+                    if (isActivePhaseSelected) {
+                        btn.removeAttribute('disabled');
+                        btn.style.opacity = '1';
+                        btn.style.cursor = 'pointer';
+                    } else {
+                        btn.setAttribute('disabled', 'true');
+                        btn.style.opacity = '0.4';
+                        btn.style.cursor = 'not-allowed';
+                    }
+                }
+            });
+
+            // Populate Debug Panel values
+            if (dbgApi) {
+                dbgApi.textContent = 'ONLINE';
+                dbgApi.style.color = '#34d399';
+            }
+            if (dbgCwd) dbgCwd.textContent = dbgData.cwd || '--';
+            if (dbgRepo) dbgRepo.textContent = dbgData.repo_root || '--';
+            if (dbgActive) dbgActive.textContent = dbgData.active_phase || '--';
+            if (dbgApprovalPath) dbgApprovalPath.textContent = `artifacts/orchestrator/approvals/${approvalFile}`;
+            if (dbgApprovalExists) {
+                dbgApprovalExists.textContent = approvalExists ? 'YES' : 'NO';
+                dbgApprovalExists.style.color = approvalExists ? '#34d399' : '#f87171';
+            }
+            if (dbgRunnerExists) {
+                dbgRunnerExists.textContent = dbgData.builder_runner_path_exists ? 'YES' : 'NO';
+                dbgRunnerExists.style.color = dbgData.builder_runner_path_exists ? '#34d399' : '#f87171';
+            }
+            if (dbgPromptExists) {
+                dbgPromptExists.textContent = dbgData.generated_prompt_exists ? 'YES' : 'NO';
+                dbgPromptExists.style.color = dbgData.generated_prompt_exists ? '#34d399' : '#f87171';
+            }
+            if (dbgReturncode) {
+                // Set default/last run status code
+                dbgReturncode.textContent = '0';
+            }
+
+            // Load history list
+            await loadClawdeHistory();
+
+            // Load observability dashboard
+            await loadObservabilityDashboard();
+
+        } catch (err) {
+            console.error("Error loading CLAWDE Control Tower state:", err);
+            if (dbgApi) {
+                dbgApi.textContent = 'OFFLINE';
+                dbgApi.style.color = '#f87171';
+            }
+        }
+    }
+
+    async function syncObservabilityDashboard() {
+        const btn = el('clawde-btn-ingest-run');
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = 'Syncing...';
+        }
+        try {
+            const ingestRes = await fetch('/api/v1/ingest/crewai', { method: 'POST' });
+            if (ingestRes.ok) {
+                await loadObservabilityDashboard();
+            }
+        } catch (err) {
+            console.error('Failed to sync observability metrics:', err);
+        } finally {
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = 'Sync Swarm Reports';
+            }
+        }
+    }
+
+    async function loadObservabilityDashboard() {
+        const tbody = el('observability-details-tbody');
+        if (!tbody) return;
+        try {
+            const res = await fetch('/api/v1/ingest/crewai/artifacts');
+            const artifacts = await res.json();
+            const reports = artifacts.filter(a => a.artifact_type === 'crew_run_report');
+            
+            if (reports.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="padding: 20px; text-align: center; color: var(--text-secondary);">No run telemetry found. Run the swarm first.</td></tr>`;
+                return;
+            }
+            
+            const latest = reports[0];
+            const context = latest.run_context || {};
+            const metrics = context.metrics || {};
+            const tokenUsage = metrics.total_token_usage || {};
+            const tasks = metrics.tasks || [];
+            
+            // Update overall summary cards
+            if (el('obs-stat-tokens')) {
+                el('obs-stat-tokens').textContent = tokenUsage.total_tokens !== undefined ? tokenUsage.total_tokens.toLocaleString() : 'N/A';
+            }
+            if (el('obs-stat-runtime')) {
+                el('obs-stat-runtime').textContent = metrics.total_runtime_seconds !== undefined ? `${metrics.total_runtime_seconds}s` : 'N/A';
+            }
+            
+            const statusEl = el('obs-stat-status');
+            if (statusEl) {
+                const statusText = context.status || 'PASS';
+                statusEl.textContent = statusText;
+                if (statusText === 'PASS') {
+                    statusEl.style.color = '#10b981';
+                } else {
+                    statusEl.style.color = '#ef4444';
+                }
+            }
+            
+            // Count fallback events
+            let fallbacksCount = 0;
+            tasks.forEach(t => {
+                if (t.fallback_event) fallbacksCount++;
+            });
+            if (el('obs-stat-fallbacks')) {
+                el('obs-stat-fallbacks').textContent = fallbacksCount;
+            }
+            
+            // Build task rows
+            if (tasks.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="padding: 20px; text-align: center; color: var(--text-secondary);">Report exists but contains no task metrics.</td></tr>`;
+                return;
+            }
+            
+            const agentToClass = {
+                "asset_mapper": "fast_classification",
+                "swarm_architect": "planning_docs",
+                "agent_combinator": "coding_repair",
+                "security_operator": "security_audit",
+                "execution_planner": "planning_docs",
+                "synthesis_director": "planning_docs",
+                "antigravity_integration_operator": "planning_docs"
+            };
+
+            tbody.innerHTML = tasks.map(t => {
+                const fallbackBadge = t.fallback_event 
+                    ? `<span style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 9px;">FALLBACK</span>`
+                    : `<span style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 9px;">PRIMARY</span>`;
+                
+                const validationStatus = t.validation_status || t.artifact_quality || 'NOT_APPLICABLE';
+                const qualityBadge = validationStatus === 'VALID'
+                    ? `<span style="color: #34d399; font-weight: bold;">VALID</span>`
+                    : validationStatus === 'INVALID'
+                    ? `<span style="color: #f87171; font-weight: bold;">INVALID</span>`
+                    : `<span style="color: var(--text-secondary);">${validationStatus}</span>`;
+                
+                const taskClass = t.task_class || agentToClass[t.agent_key] || 'unknown';
+                const tokensVal = t.tokens !== undefined ? t.tokens.toLocaleString() : 'N/A';
+                const artifactRes = t.artifact_result || 'None';
+
+                return `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.2s;">
+                        <td style="padding: 10px 12px; font-weight: 500;">
+                            <div style="color: #fff; font-size: 12px;">${t.agent_role}</div>
+                            <div style="color: var(--text-secondary); font-size: 10px; margin-top: 2px;">${t.task_name}</div>
+                        </td>
+                        <td style="padding: 10px 12px; color: #a5b4fc;">${taskClass}</td>
+                        <td style="padding: 10px 12px; font-family: monospace; color: #e0e7ff;">${t.model}</td>
+                        <td style="padding: 10px 12px;">${fallbackBadge}</td>
+                        <td style="padding: 10px 12px; text-align: right; color: #fbbf24; font-weight: 500;">${t.runtime_seconds_estimate}s</td>
+                        <td style="padding: 10px 12px; text-align: right; color: #c7d2fe;">${tokensVal}</td>
+                        <td style="padding: 10px 12px; font-family: monospace; color: var(--text-secondary);">${artifactRes}</td>
+                        <td style="padding: 10px 12px; text-align: right;">${qualityBadge}</td>
+                    </tr>
+                `;
+            }).join('');
+        } catch (err) {
+            console.error('Error loading observability dashboard:', err);
+            tbody.innerHTML = `<tr><td colspan="8" style="padding: 20px; text-align: center; color: #ef4444;">Error loading observability data.</td></tr>`;
+        }
+    }
+
+
+    // ── Loader: Agent Flight Deck View (PROTO-3) ──────────────────────────────
+    let isFlightDeckInitialized = false;
+    let selectedCampaignId = "";
+
+    async function loadAgentFlightDeckView() {
+        const selector = el('campaign-selector');
+        const campaignsContainer = el('lane-campaigns');
+        const tasksContainer = el('lane-tasks');
+        const rosterContainer = el('lane-roster');
+        const gatesContainer = el('lane-gates');
+
+        if (!campaignsContainer || !tasksContainer || !rosterContainer || !gatesContainer) return;
+
+        try {
+            // 1. Fetch campaigns (runs)
+            const runsRes = await fetch('/api/v1/runs');
+            const runs = await runsRes.json();
+            
+            // Populate active selector and campaign lane
+            const campaignCountBadge = el('campaign-count-badge');
+            if (campaignCountBadge) campaignCountBadge.textContent = runs.length;
+
+            // Render Campaigns Lane
+            campaignsContainer.innerHTML = runs.map(r => `
+                <div class="flight-card" data-run-id="${r.run_id}" style="cursor: pointer; border-left: 3px solid ${r.status === 'running' ? '#3b82f6' : (r.status === 'completed' ? '#10b981' : '#ef4444')};">
+                    <div class="flight-card-title">${r.name}</div>
+                    <div class="flight-card-meta">ID: ${r.run_id}</div>
+                    <span class="flight-card-badge status-badge ${r.status === 'running' ? 'warn' : (r.status === 'completed' ? 'success' : 'fail')}">${r.status}</span>
+                </div>
+            `).join('') || `<div style="color:var(--text-secondary); text-align:center; font-size:12px;">No active campaigns</div>`;
+
+            // Setup select dropdown options if changed or empty
+            const selectorIds = Array.from(selector.options).map(o => o.value);
+            const runIds = runs.map(r => r.run_id);
+            const needsOptionRefresh = runIds.some(id => !selectorIds.includes(id)) || selectorIds.some(id => !runIds.includes(id));
+            
+            if (needsOptionRefresh) {
+                selector.innerHTML = runs.map(r => `
+                    <option value="${r.run_id}" ${r.run_id === selectedCampaignId ? 'selected' : ''}>${r.name}</option>
+                `).join('');
+                if (runs.length > 0 && !selectedCampaignId) {
+                    selectedCampaignId = runs[0].run_id;
+                    selector.value = selectedCampaignId;
+                }
+            }
+
+            // Bind click listeners on campaign cards to select them
+            campaignsContainer.querySelectorAll('.flight-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const runId = card.getAttribute('data-run-id');
+                    if (runId) {
+                        selectedCampaignId = runId;
+                        selector.value = runId;
+                        loadActiveCampaignTasks();
+                    }
+                });
+            });
+
+            // 2. Fetch Tasks for selected campaign
+            if (selectedCampaignId) {
+                await loadActiveCampaignTasks();
+            } else {
+                tasksContainer.innerHTML = `<div style="color:var(--text-secondary); text-align:center; font-size:12px;">Select a campaign to view tasks</div>`;
+                const taskCountBadge = el('task-count-badge');
+                if (taskCountBadge) taskCountBadge.textContent = "0";
+            }
+
+            // 3. Fetch Agent Duty Roster
+            const agentsRes = await fetch('/api/v1/agents');
+            const agents = await agentsRes.json();
+            const agentCountBadge = el('agent-count-badge');
+            if (agentCountBadge) agentCountBadge.textContent = agents.length;
+
+            rosterContainer.innerHTML = agents.map(a => {
+                let tools = a.allowed_tools || [];
+                if (typeof tools === 'string') {
+                    try { tools = JSON.parse(tools); } catch(e) { tools = []; }
+                }
+                const toolsList = Array.isArray(tools) ? tools.slice(0, 3).join(', ') : '';
+                return `
+                    <div class="flight-card" style="border-left: 3px solid var(--accent-blue);">
+                        <div class="flight-card-title" style="display:flex; justify-content:space-between; align-items:center;">
+                            <span>${a.name || a.agent_id}</span>
+                            <span class="provenance-badge observed" style="font-size:8px;">${a.lifecycle || 'ACTIVE'}</span>
+                        </div>
+                        <div class="flight-card-meta">Role: ${a.role || 'Agent'}</div>
+                        <div class="flight-card-meta">File Scope: <code>${a.file_scopes || '/'}</code></div>
+                        <div class="flight-card-meta" style="font-size:9px; color:var(--text-secondary); margin-top:2px;">Tools: ${toolsList}${tools.length > 3 ? '...' : ''}</div>
+                    </div>
+                `;
+            }).join('') || `<div style="color:var(--text-secondary); text-align:center; font-size:12px;">No active agents registered</div>`;
+
+            // 4. Fetch Governance Gates
+            const gatesRes = await fetch('/api/v1/release/signing-policy');
+            const gatesData = await gatesRes.json();
+            const currentRelease = gatesData.current_release || {};
+            
+            const gateItems = [];
+            if (currentRelease.signature_status === "unsigned" && currentRelease.signing_waiver_status === "none") {
+                gateItems.push({
+                    id: "signing_waiver",
+                    title: "Release Cryptographic Signing Policy Block",
+                    description: `Release v${currentRelease.version} is unsigned. Cryptographic validation requires signing or an operator waiver.`,
+                    type: "signing_waiver",
+                    severity: "high"
+                });
+            }
+
+            // Also check for pending model routing or other policy overrides
+            const policyRes = await fetch('/api/v1/policies/decisions');
+            const policies = await policyRes.json();
+            const pendingDecisions = policies.filter(p => p.decision === "APPROVAL_REQUIRED" || p.decision === "BLOCK");
+            pendingDecisions.forEach(p => {
+                gateItems.push({
+                    id: `policy-${p.decision_id || Math.random().toString(36).substring(2, 8)}`,
+                    title: `Policy Override: ${p.rule_name || 'Verification Block'}`,
+                    description: p.reason || "Action requires operator override and compliance verification.",
+                    type: "policy_override",
+                    severity: "medium"
+                });
+            });
+
+            // Fetch generic approvals from /api/approval/requests
+            try {
+                const appRes = await fetch('/api/approval/requests');
+                const approvals = await appRes.json();
+                approvals.forEach(a => {
+                    if (a.status === "pending") {
+                        if (a.command && a.command.prompt) {
+                            gateItems.push({
+                                id: a.approval_id,
+                                title: `Governed Agent Launch: ${a.command.agent_id || 'Agent'}`,
+                                description: `Prompt: "${a.command.prompt}" | Target: ${a.command.target || 'swarm'}`,
+                                type: "agent_launch",
+                                severity: "medium"
+                            });
+                        } else if (a.approval_id !== "signing_waiver") {
+                            gateItems.push({
+                                id: a.approval_id,
+                                title: a.command ? `Command: ${a.command.raw_text}` : `Approval Request: ${a.approval_id}`,
+                                description: a.policy_context ? a.policy_context.approval_reason : "Awaiting operator authorization.",
+                                type: "generic",
+                                severity: "medium"
+                            });
+                        }
+                    }
+                });
+            } catch (err) {
+                console.error('[FlightDeck] failed to fetch approvals:', err);
+            }
+
+            const gateCountBadge = el('gate-count-badge');
+            if (gateCountBadge) gateCountBadge.textContent = gateItems.length;
+
+            gatesContainer.innerHTML = gateItems.map(g => `
+                <div class="flight-card" style="border-left: 3px solid ${g.severity === 'high' ? '#ef4444' : '#f59e0b'};">
+                    <div class="flight-card-title">${g.title}</div>
+                    <div class="flight-card-meta">${g.description}</div>
+                    <div class="flight-gate-actions">
+                        <button class="flight-gate-btn btn-approve" data-gate-id="${g.id}" data-gate-type="${g.type}">Approve</button>
+                        <button class="flight-gate-btn btn-reject" data-gate-id="${g.id}" data-gate-type="${g.type}">Reject</button>
+                    </div>
+                </div>
+            `).join('') || `<div style="color:var(--text-secondary); text-align:center; font-size:12px;">Zero pending approval gates</div>`;
+
+            // Bind approval gates click handlers (Approve)
+            gatesContainer.querySelectorAll('.btn-approve').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const gateId = btn.getAttribute('data-gate-id');
+                    const gateType = btn.getAttribute('data-gate-type');
+                    if (gateType === "signing_waiver") {
+                        try {
+                            const submitRes = await fetch('/api/v1/release/signing-waiver', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    reason: "Operator dynamic flight deck override waiver",
+                                    scope: "local_dev",
+                                    operator: "Michael Hoch"
+                                })
+                            });
+                            if (submitRes.ok) {
+                                triggerGeneralRipple(window.innerWidth / 2, window.innerHeight / 2, "normal");
+                                loadAgentFlightDeckView();
+                            }
+                        } catch (err) {
+                            console.error('[FlightDeck] failed to waive:', err);
+                        }
+                    } else {
+                        try {
+                            const submitRes = await fetch(`/api/approval/requests/${gateId}/decisions`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    decision: "approve",
+                                    reason: "Operator dynamic flight deck override",
+                                    operator: "Michael Hoch"
+                                })
+                            });
+                            if (submitRes.ok) {
+                                triggerGeneralRipple(window.innerWidth / 2, window.innerHeight / 2, "normal");
+                                loadAgentFlightDeckView();
+                            }
+                        } catch (err) {
+                            console.error('[FlightDeck] failed to approve request:', err);
+                        }
+                    }
+                });
+            });
+
+            // Bind approval gates click handlers (Reject)
+            gatesContainer.querySelectorAll('.btn-reject').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const gateId = btn.getAttribute('data-gate-id');
+                    const gateType = btn.getAttribute('data-gate-type');
+                    if (gateType !== "signing_waiver") {
+                        try {
+                            const submitRes = await fetch(`/api/approval/requests/${gateId}/decisions`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    decision: "reject",
+                                    reason: "Operator dynamic flight deck rejection",
+                                    operator: "Michael Hoch"
+                                })
+                            });
+                            if (submitRes.ok) {
+                                loadAgentFlightDeckView();
+                            }
+                        } catch (err) {
+                            console.error('[FlightDeck] failed to reject request:', err);
+                        }
+                    }
+                });
+            });
+
+            // Initialize control listeners once
+            if (!isFlightDeckInitialized) {
+                selector.addEventListener('change', (e) => {
+                    selectedCampaignId = e.target.value;
+                    loadActiveCampaignTasks();
+                });
+
+                const launchBtn = el('btn-launch-campaign');
+                if (launchBtn) {
+                    launchBtn.addEventListener('click', async () => {
+                        const triggerLaunch = async (override = false) => {
+                            try {
+                                const createRes = await fetch('/api/v1/runs', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        name: `Flight Campaign ${new Date().toLocaleTimeString()}`,
+                                        override: override
+                                    })
+                                });
+                                if (createRes.status === 400) {
+                                    const rdata = await createRes.json();
+                                    if (rdata.detail && rdata.detail.error === 'PREFLIGHT_BLOCKED') {
+                                        const failedChecks = (rdata.detail.checks || []).filter(c => c.status !== 'PASS');
+                                        showPreflightBlocker(failedChecks, () => triggerLaunch(true));
+                                        return;
+                                    }
+                                }
+                                if (createRes.ok) {
+                                    const newRun = await createRes.json();
+                                    selectedCampaignId = newRun.run_id;
+                                    isFlightDeckInitialized = false; // force refresh dropdown
+                                    loadAgentFlightDeckView();
+                                }
+                            } catch (err) {
+                                console.error('[FlightDeck] failed to launch campaign:', err);
+                            }
+                        };
+                        await triggerLaunch(false);
+                    });
+                }
+
+                isFlightDeckInitialized = true;
+            }
+
+        } catch (err) {
+            console.error('[FlightDeck] load error:', err);
+        }
+    }
+
+    async function loadActiveCampaignTasks() {
+        const container = el('lane-tasks');
+        if (!container || !selectedCampaignId) return;
+
+        try {
+            const res = await fetch(`/api/v1/runs/${selectedCampaignId}/tasks`);
+            const tasks = await res.json();
+            const taskCountBadge = el('task-count-badge');
+            if (taskCountBadge) taskCountBadge.textContent = tasks.length;
+
+            container.innerHTML = tasks.map(t => {
+                const priorityColor = t.priority === 'critical' ? '#ef4444' : (t.priority === 'high' ? '#f59e0b' : '#3b82f6');
+                return `
+                    <div class="flight-card" style="border-left: 3px solid ${t.status === 'completed' ? '#10b981' : (t.status === 'running' ? '#3b82f6' : 'rgba(255,255,255,0.05)')};">
+                        <div class="flight-card-title">${t.title}</div>
+                        <div class="flight-card-meta">ID: ${t.id}</div>
+                        <div class="flight-card-meta">Agent: <code>${t.ownerAgentId || 'unassigned'}</code></div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+                            <span class="flight-card-badge status-badge ${t.status === 'running' ? 'warn' : (t.status === 'completed' ? 'success' : 'blocked')}">${t.status}</span>
+                            <span style="font-size:9px; color:${priorityColor}; font-weight:700; text-transform:uppercase;">${t.priority}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('') || `<div style="color:var(--text-secondary); text-align:center; font-size:12px;">No tasks in this campaign</div>`;
+        } catch (err) {
+            console.error('[FlightDeck] failed to load tasks:', err);
+        }
+    }
+
+    // ── Koi Animation Layer (Batch UI-KOI-1, PROTO-2 & Observability) ────────────
+    function getDeterministicOrbit(id) {
+        let hash = 0;
+        for (let i = 0; i < id.length; i++) {
+            hash = id.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        const absHash = Math.abs(hash);
+        const width = 200 + (absHash % 250); // 200px to 450px
+        const duration = 30 + (absHash % 45); // 30s to 75s
+        const top = `${10 + (absHash % 50)}%`; // 10% to 60%
+        const left = `${15 + ((absHash >> 2) % 65)}%`; // 15% to 80%
+        const reverse = (absHash % 2) === 0;
+        return { width, height: width, duration, top, left, reverse };
+    }
+
+    function createKoiSVG() {
+        return `
+            <svg viewBox="0 0 60 30" width="100%" height="100%" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path class="koi-body-path" d="M5,15 Q30,5 55,15 Q30,25 5,15 Z" fill="currentColor" opacity="0.8"/>
+                <path d="M25,8 Q20,2 15,5 Q18,8 20,8 Z" fill="currentColor" opacity="0.6"/>
+                <path d="M25,22 Q20,28 15,25 Q18,22 20,22 Z" fill="currentColor" opacity="0.6"/>
+                <path d="M5,15 Q0,10 2,5 Q5,10 5,15 Z" fill="currentColor" opacity="0.7"/>
+                <path d="M5,15 Q0,20 2,25 Q5,20 5,15 Z" fill="currentColor" opacity="0.7"/>
+            </svg>
+        `;
+    }
+
+    function initializeKoiAnimation() {
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            return;
+        }
+        const pond = document.getElementById("koi-pond-layer");
+        if (!pond) return;
+
+        // Clear existing
+        pond.innerHTML = "";
+        koiFishInstances = {};
+
+        // Document click triggers ripples
+        document.addEventListener("click", (e) => {
+            if (e.target.tagName !== "BUTTON" && e.target.tagName !== "A" && e.target.tagName !== "INPUT" && e.target.tagName !== "SELECT") {
+                triggerGeneralRipple(e.clientX, e.clientY);
+            }
+        });
+
+        // Random background ripples
+        setInterval(() => {
+            if (document.hidden) return;
+            const x = Math.random() * window.innerWidth;
+            const y = Math.random() * window.innerHeight;
+            triggerGeneralRipple(x, y);
+        }, 5000);
+    }
+
+    function triggerGeneralRipple(x, y, type = "normal") {
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        const pond = document.getElementById("koi-pond-layer");
+        if (!pond) return;
+
+        const ripple = document.createElement("div");
+        ripple.className = "koi-ripple";
+        if (type === "broken") ripple.classList.add("ripple-broken");
+        if (type === "warning") ripple.classList.add("ripple-warning");
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+        pond.appendChild(ripple);
+        setTimeout(() => {
+            ripple.remove();
+        }, 3500);
+    }
+
+    function triggerKoiRipple(entityId, type = "normal") {
+        const orbit = koiFishInstances[entityId];
+        if (!orbit) return;
+        const fish = orbit.querySelector(".koi-fish");
+        if (!fish) return;
+
+        const rect = fish.getBoundingClientRect();
+        const x = rect.left + rect.width / 2;
+        const y = rect.top + rect.height / 2;
+
+        triggerGeneralRipple(x, y, type);
+    }
+
+    function updateKoiPond(meshData) {
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            return;
+        }
+
+        const pond = document.getElementById("koi-pond-layer");
+        if (!pond) return;
+
+        const models = meshData.models || [];
+        const agents = meshData.agents || [];
+
+        // Build current active entity list based on live API registry data
+        const activeEntities = [];
+
+        // Models
+        models.forEach(m => {
+            activeEntities.push({
+                id: m.id,
+                name: m.id,
+                type: "model",
+                status: m.status,
+                truth_state: m.truth_state,
+                endpoint: m.endpoint
+            });
+        });
+
+        // Agents
+        agents.forEach(a => {
+            activeEntities.push({
+                id: a.id,
+                name: a.name,
+                type: "agent",
+                status: a.status,
+                truth_state: a.truth_state,
+                endpoint: "/api/v1/model-mesh/config"
+            });
+        });
+
+        // Local Swarm API
+        activeEntities.push({
+            id: "local-swarm-api",
+            name: "Local Swarm API",
+            type: "api",
+            status: "LIVE",
+            truth_state: "LIVE",
+            endpoint: "/api/v1/live-runtime/cockpit"
+        });
+
+        // Remove fish elements for deactivated entities
+        const activeIds = activeEntities.map(e => e.id);
+        Object.keys(koiFishInstances).forEach(id => {
+            if (!activeIds.includes(id)) {
+                const orbit = koiFishInstances[id];
+                if (orbit) orbit.remove();
+                delete koiFishInstances[id];
+            }
+        });
+
+        // Spawn or update fish elements for active entities
+        activeEntities.forEach(ent => {
+            let orbit = koiFishInstances[ent.id];
+            if (!orbit) {
+                const cfg = getDeterministicOrbit(ent.id);
+                orbit = document.createElement("div");
+                orbit.className = "koi-orbit";
+                orbit.style.width = `${cfg.width}px`;
+                orbit.style.height = `${cfg.height}px`;
+                orbit.style.top = cfg.top;
+                orbit.style.left = cfg.left;
+                orbit.style.animationDuration = `${cfg.duration}s`;
+                if (cfg.reverse) {
+                    orbit.style.animationDirection = "reverse";
+                }
+
+                const fish = document.createElement("div");
+                fish.className = "koi-fish";
+                fish.style.top = "0px";
+                fish.style.left = "50%";
+                fish.style.transform = "translateX(-50%) rotate(90deg)";
+                fish.innerHTML = createKoiSVG();
+
+                // Audit metadata attributes binding
+                fish.setAttribute("data-entity-id", ent.id);
+                fish.setAttribute("data-entity-type", ent.type);
+                fish.setAttribute("data-source-endpoint", ent.endpoint);
+
+                orbit.appendChild(fish);
+                pond.appendChild(orbit);
+                koiFishInstances[ent.id] = orbit;
+            }
+
+            // Update classes and dynamic state attributes
+            const fish = orbit.querySelector(".koi-fish");
+            if (fish) {
+                fish.setAttribute("data-truth-state", ent.truth_state);
+                fish.className = "koi-fish";
+                
+                const truthClass = `state-${ent.truth_state.toLowerCase().replace('_', '-')}`;
+                fish.classList.add(truthClass);
+
+                // Control orbit play state based on connectivity status
+                orbit.classList.remove("swim-paused");
+                if (ent.status === "BROKEN" || ent.status === "OFFLINE" || ent.truth_state === "MISSING_FROM_SCAN") {
+                    orbit.classList.add("swim-paused");
+                }
+            }
         });
     }
 
-    // Ping All button
-    const btnPingAll = document.getElementById("btn-mission-ping-all");
-    if (btnPingAll) {
-        btnPingAll.addEventListener("click", () => {
-            loadPingTable("mission-ping-table");
+    async function loadModelMeshView() {
+        const agentsContainer = el('mesh-agents-list');
+        const flowGraph = el('mesh-flow-graph');
+        const vitalsContainer = el('mesh-vitals');
+        const consoleContainer = el('mesh-console');
+        const gapsContainer = el('mesh-gaps');
+        
+        if (!agentsContainer) return;
+
+        try {
+            const res = await fetch('/api/v1/model-mesh/config');
+            const data = await res.json();
+            
+            // 1. Render Agent Spin-Up Profiles
+            const agents = data.agents || [];
+            agentsContainer.innerHTML = agents.map(a => {
+                let badgeClass = 'mesh-state-badge';
+                if (a.truth_state === 'PENDING') badgeClass += ' state-pending';
+                else if (a.truth_state === 'APPROVAL_REQUIRED') badgeClass += ' state-approval-required';
+                else if (a.truth_state === 'BROKEN') badgeClass += ' state-broken';
+                
+                const initials = a.name.split(' ').map(n => n[0]).join('');
+                const hasPulse = a.status === 'LIVE' ? 'pulse-active' : '';
+
+                return `
+                    <div class="mesh-agent-item" style="border: 1px solid rgba(16, 185, 129, 0.15); padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.25);">
+                        <div class="mesh-avatar ${hasPulse}" style="width:32px; height:32px; font-size:12px;">${initials}</div>
+                        <div style="display:flex; flex-direction:column; gap:2px; margin-left:10px;">
+                            <strong style="font-size:12px; color:#fff;">${a.name}</strong>
+                            <span style="font-size:10px; opacity:0.8; color:var(--text-secondary);">${a.role}</span>
+                            <span style="font-size:9px; color:var(--text-secondary);">Pref: <code style="color:var(--accent-blue);">${a.preferred_model}</code></span>
+                        </div>
+                        <div class="${badgeClass}">${a.truth_state}</div>
+                    </div>
+                `;
+            }).join('');
+
+            // 2. Render Swarm Vitals (Model Performance Telemetry)
+            const models = data.models || [];
+            vitalsContainer.innerHTML = models.map(m => {
+                const tel = m.telemetry || {};
+                const isLive = m.reachable;
+                const statusColor = isLive ? '#10b981' : '#ef4444';
+                const statusBorder = isLive ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)';
+
+                return `
+                    <div class="card" style="padding:10px; margin-bottom:0; border:1px solid ${statusBorder};">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                            <strong style="font-size:12px; color:#fff;">${m.id} (${m.provider})</strong>
+                            <span style="font-size:8px; border:1px solid ${statusBorder}; padding:2px 6px; border-radius:99px; color:${statusColor}; font-weight:bold;">
+                                ${m.status}
+                            </span>
+                        </div>
+                        <div style="font-size:10px; display:grid; grid-template-columns:1fr 1fr; gap:4px; opacity:0.8;">
+                            <div>Latency: <strong>${tel.latency_ms ? tel.latency_ms.toFixed(1) : '0.0'} ms</strong></div>
+                            <div>Speed: <strong>${tel.tokens_per_sec ? tel.tokens_per_sec.toFixed(1) : '0.0'} t/s</strong></div>
+                            <div>VRAM: <strong>${tel.vram_gb ? tel.vram_gb.toFixed(1) : '0.0'} GB</strong></div>
+                            <div>RAM: <strong>${tel.ram_gb ? tel.ram_gb.toFixed(1) : '0.0'} GB</strong></div>
+                            <div>Queue: <strong>${tel.queue_depth || '0'}</strong></div>
+                            <div>Errors: <strong style="color:${tel.error_count > 0 ? '#ef4444' : 'inherit'};">${tel.error_count || '0'}</strong></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // 3. Render Animated Data Flow Graph
+            const nodePositions = {
+                "Prompt Library": { x: 20, y: 30 },
+                "Governance Gate": { x: 170, y: 30 },
+                "NEO Commander": { x: 20, y: 130 },
+                "LM Studio": { x: 320, y: 30 },
+                "Ollama": { x: 320, y: 130 },
+                "Evidence Vault": { x: 470, y: 80 },
+                "Asset Scout": { x: 170, y: 230 },
+                "Footprint Sentinel": { x: 470, y: 230 },
+                "Cyber Commoner": { x: 320, y: 230 },
+                "ConMon Watcher": { x: 20, y: 230 },
+                "POA&M Register": { x: 470, y: 150 }
+            };
+
+            let svgHtml = '<svg style="width:100%; height:100%; position:absolute; left:0; top:0; pointer-events:none;">';
+            svgHtml += `
+              <defs>
+                <marker id="arrow-mesh" viewBox="0 0 10 10" refX="18" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent-teal)" />
+                </marker>
+              </defs>
+            `;
+
+            const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const flows = data.data_flows || [];
+
+            flows.forEach(flow => {
+                const start = nodePositions[flow.from];
+                const end = nodePositions[flow.to];
+                if (start && end) {
+                    const isLive = flow.truth_state === "LIVE";
+                    const color = isLive ? "var(--accent-teal)" : "#f59e0b";
+                    svgHtml += `<line x1="${start.x + 65}" y1="${start.y + 15}" x2="${end.x + 65}" y2="${end.y + 15}" stroke="${color}" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow-mesh)" />`;
+                    
+                    if (!reducedMotion && isLive) {
+                        svgHtml += `
+                          <circle r="3" fill="${color}">
+                            <animateMotion dur="4s" repeatCount="indefinite" path="M ${start.x + 65} ${start.y + 15} L ${end.x + 65} ${end.y + 15}" />
+                          </circle>
+                        `;
+                    }
+                }
+            });
+            svgHtml += '</svg>';
+
+            // Render absolute nodes
+            let nodesHtml = svgHtml;
+            Object.keys(nodePositions).forEach(name => {
+                const pos = nodePositions[name];
+                
+                let isBroken = false;
+                if (name === "LM Studio") isBroken = !models.find(m => m.id === "lmstudio-gemma-4-12b")?.reachable;
+                if (name === "Ollama") isBroken = !models.find(m => m.id === "ollama-local")?.reachable;
+                
+                const brokenClass = isBroken ? 'node-broken' : '';
+
+                nodesHtml += `
+                    <div class="mesh-node ${brokenClass}" style="left:${pos.x}px; top:${pos.y}px; position:absolute; width:125px; padding:6px; background:rgba(15,23,42,0.9); border:1px solid var(--border-glass); border-radius:8px;">
+                        <strong style="font-size:9px; color:#fff; display:block;">${name}</strong>
+                        <span style="font-size:8px; opacity:0.8; display:block; margin-top:2px;">
+                            ${name === "LM Studio" ? (isBroken ? "OFFLINE" : "1234") : ""}
+                            ${name === "Ollama" ? (isBroken ? "OFFLINE" : "11434") : ""}
+                            ${name === "Prompt Library" ? "GOVERNED" : ""}
+                            ${name === "Governance Gate" ? "ACTIVE" : ""}
+                            ${name === "Evidence Vault" ? "LEDGER" : ""}
+                            ${name === "NEO Commander" ? "ROUTING" : ""}
+                            ${name === "Asset Scout" ? "PORTS" : ""}
+                            ${name === "Footprint Sentinel" ? "SC-7" : ""}
+                            ${name === "Cyber Commoner" ? "NIST" : ""}
+                            ${name === "ConMon Watcher" ? "MONITOR" : ""}
+                            ${name === "POA&M Register" ? "REMEDIATION" : ""}
+                        </span>
+                    </div>
+                `;
+            });
+
+            flowGraph.innerHTML = nodesHtml;
+
+            // 4. Render Conversation Logs (Model Conversation Console)
+            const pRes = await fetch('/api/v1/prompts/usage-ledger');
+            let logs = [];
+            if (pRes.ok) {
+                const pData = await pRes.json();
+                logs = pData.ledger || [];
+            }
+            
+            if (logs.length === 0) {
+                consoleContainer.innerHTML = `
+                    <div class="log"><span style="color:var(--accent-teal);">[19:15:20]</span> Prompt Library → Governance hash verified</div>
+                    <div class="log"><span style="color:var(--accent-teal);">[19:15:22]</span> NEO Commander → LM Studio route selected</div>
+                    <div class="log"><span style="color:#f59e0b;">[19:15:25]</span> Cyber Commoner → approval required</div>
+                    <div class="log"><span style="color:var(--accent-teal);">[19:15:28]</span> Asset Scout → inventory evidence linked</div>
+                    <div class="log"><span style="color:var(--accent-teal);">[19:15:30]</span> Evidence Vault → awaiting runtime telemetry</div>
+                `;
+            } else {
+                consoleContainer.innerHTML = logs.slice(-8).map(l => {
+                    const timeStr = l.timestamp ? l.timestamp.split('T')[1].substr(0, 8) : '';
+                    return `
+                        <div class="log">
+                            <span style="color:var(--accent-teal);">[${timeStr}]</span> 
+                            <strong>${l.prompt_id}</strong> (${l.caller_tier}) → ${l.verdict}
+                            <div style="font-size:9px; opacity:0.7; margin-left:12px;">Hash: ${l.ledger_hash ? l.ledger_hash.substr(0,16) : '-'}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            // 5. Render Gaps List
+            const gaps = [
+                { title: "AI Model Registry", desc: "Define single truth list for local runtimes and models.", status: "LIVE" },
+                { title: "Model-to-Agent Routing", desc: "Match agent preferences dynamically with fallback engines.", status: "LIVE" },
+                { title: "Live Data Flow Graph", desc: "Visually mapping connections between prompts, models, and evidence.", status: "LIVE" },
+                { title: "Ephemeral Worker Lifecycle", desc: "Enforce visibility states: SPAWNED -> RUNNING -> EVIDENCE -> DESTROYED.", status: "LIVE" },
+                { title: "Model Performance Telemetry", desc: "Collect live throughput (tokens/sec), latency, and RAM allocations.", status: "LIVE" },
+                { title: "Kimi completion rings", desc: "Add green completion rings and particle animations.", status: "COMPLETE" }
+            ];
+            gapsContainer.innerHTML = gaps.map(g => `
+                <div class="card" style="padding:10px; margin-bottom:0; background:rgba(0,0,0,0.15);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                        <strong style="font-size:11px; color:#fff;">${g.title}</strong>
+                        <span style="font-size:8px; padding:2px 6px; border-radius:99px; background:rgba(255,255,255,0.05);">${g.status}</span>
+                    </div>
+                    <p style="font-size:10px; opacity:0.8; margin:0;">${g.desc}</p>
+                </div>
+            `).join('');
+
+        } catch (err) {
+            console.error("Error loading model mesh view: ", err);
+        }
+    }
+
+    function initRescanButton() {
+        const btn = el('btn-rescan-runtimes');
+        const statusSpan = el('scan-status');
+        if (!btn) return;
+
+        btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            btn.disabled = true;
+            btn.style.opacity = '0.5';
+            btn.style.cursor = 'not-allowed';
+            if (statusSpan) {
+                statusSpan.textContent = 'Scanning...';
+                statusSpan.style.color = '#3b82f6';
+            }
+
+            try {
+                const res = await fetch('/api/v1/discovery/ai-runtimes/rescan', {
+                    method: 'POST'
+                });
+                if (res.ok) {
+                    if (statusSpan) {
+                        statusSpan.textContent = 'Scan Complete';
+                        statusSpan.style.color = '#10b981';
+                    }
+                    await loadLocalModelsView();
+                    await fetchCockpit();
+                } else {
+                    if (statusSpan) {
+                        statusSpan.textContent = 'Scan Failed';
+                        statusSpan.style.color = '#ef4444';
+                    }
+                }
+            } catch (err) {
+                if (statusSpan) {
+                    statusSpan.textContent = 'Error';
+                    statusSpan.style.color = '#ef4444';
+                }
+            } finally {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+                setTimeout(() => {
+                    if (statusSpan && (statusSpan.textContent.startsWith('Scan') || statusSpan.textContent === 'Error')) {
+                        statusSpan.textContent = '';
+                    }
+                }, 3000);
+            }
         });
     }
 
-    // Dashboard Intel Brief refresh button
-    const btnRefreshDash = document.getElementById("btn-refresh-brief");
-    if (btnRefreshDash) {
-        btnRefreshDash.addEventListener("click", () => {
-            loadIntelBrief("dash-intel-brief-text", null);
+    function initModelHealthButton() {
+        const btn = el('btn-trigger-model-health');
+        if (!btn) return;
+        btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            btn.disabled = true;
+            btn.textContent = 'Scanning...';
+            btn.style.opacity = '0.5';
+            btn.style.cursor = 'not-allowed';
+            try {
+                await loadModelHealth(true);
+            } catch (err) {
+                console.error(err);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Scan Local Model Health';
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+            }
         });
     }
+
+    function initModelStorageButton() {
+        const btn = el('btn-generate-exclude-list');
+        if (!btn) return;
+        btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            btn.disabled = true;
+            btn.textContent = 'Generating...';
+            btn.style.opacity = '0.5';
+            btn.style.cursor = 'not-allowed';
+            try {
+                await loadModelStoragePolicy(true);
+            } catch (err) {
+                console.error(err);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Generate Exclude Filter File';
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+            }
+        });
+    }
+
+    function showPreflightBlocker(checks, onOverride) {
+        const modal = el('preflight-blocker-modal');
+        const list = el('modal-failed-checks-list');
+        const btnCancel = el('btn-close-preflight-modal');
+        const btnOverride = el('btn-override-preflight');
+        if (!modal || !list) return;
+
+        // Populate checks
+        list.innerHTML = checks.map(c => {
+            let color = '#f87171';
+            let bg = 'rgba(239, 68, 68, 0.05)';
+            let border = 'rgba(239, 68, 68, 0.15)';
+            if (c.status === 'WARN') {
+                color = '#fbbf24';
+                bg = 'rgba(245, 158, 11, 0.04)';
+                border = 'rgba(245, 158, 11, 0.15)';
+            }
+            return `
+                <div style="background: ${bg}; border: 1px solid ${border}; padding: 8px 12px; border-radius: 6px; display: flex; flex-direction: column; gap: 4px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <strong style="color: #fff; font-size: 12px;">${c.name}</strong>
+                        <span style="color: ${color}; font-weight: bold; font-size: 9px; text-transform: uppercase;">${c.status}</span>
+                    </div>
+                    <p style="font-size: 11px; color: var(--text-secondary); margin: 0; line-height: 1.3;">${c.message}</p>
+                </div>
+            `;
+        }).join('');
+
+        modal.style.display = 'flex';
+
+        // Rebind handlers
+        const cleanup = () => {
+            modal.style.display = 'none';
+        };
+
+        btnCancel.onclick = (e) => {
+            e.preventDefault();
+            cleanup();
+        };
+
+        btnOverride.onclick = async (e) => {
+            e.preventDefault();
+            btnOverride.disabled = true;
+            btnOverride.textContent = 'Executing...';
+            try {
+                await onOverride();
+            } catch (err) {
+                console.error(err);
+            } finally {
+                btnOverride.disabled = false;
+                btnOverride.textContent = 'Override & Execute';
+                cleanup();
+            }
+        };
+    }
+
+    function initMigrationButton() {
+        const btn = el('btn-resume-migration');
+        if (!btn) return;
+        btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            const triggerResume = async (override = false) => {
+                btn.disabled = true;
+                btn.textContent = 'Resuming...';
+                btn.style.opacity = '0.5';
+                btn.style.cursor = 'not-allowed';
+                try {
+                    const res = await fetch(`/api/v1/migration/resume?override=${override}`, { method: 'POST' });
+                    if (res.status === 400) {
+                        const rdata = await res.json();
+                        if (rdata.detail && rdata.detail.error === 'PREFLIGHT_BLOCKED') {
+                            const failedChecks = (rdata.detail.checks || []).filter(c => c.status !== 'PASS');
+                            showPreflightBlocker(failedChecks, () => triggerResume(true));
+                            // Restore button
+                            btn.disabled = false;
+                            btn.textContent = 'Resume Guarded Migration';
+                            btn.style.opacity = '1';
+                            btn.style.cursor = 'pointer';
+                            return;
+                        }
+                    }
+                    if (res.ok) {
+                        const rdata = await res.json();
+                        console.log(rdata.message);
+                        await loadMigrationStatus();
+                    }
+                } catch (err) {
+                    console.error(err);
+                    btn.disabled = false;
+                    btn.textContent = 'Resume Guarded Migration';
+                    btn.style.opacity = '1';
+                    btn.style.cursor = 'pointer';
+                }
+            };
+
+            await triggerResume(false);
+        });
+    }
+
+    function initPreflightButton() {
+        const btn = el('btn-trigger-preflight');
+        if (!btn) return;
+        btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            btn.disabled = true;
+            btn.textContent = 'Scanning...';
+            btn.style.opacity = '0.5';
+            btn.style.cursor = 'not-allowed';
+            try {
+                await loadReadinessView();
+            } catch (err) {
+                console.error(err);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Run Preflight Scan';
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+            }
+        });
+    }
+
+    // Initialization routine
+    function init() {
+  initMeshSentinel();
+        initTheme();
+        initNavigation();
+        initializeKoiAnimation();
+        initRescanButton();
+        initModelHealthButton();
+        initModelStorageButton();
+        initMigrationButton();
+        initPreflightButton();
+        initLedgerButtons();
+        initHandoffButtons();
+        initAtoButtons();
+        
+        // Initial fetches
+        fetchCockpit();
+        // Setup cockpit polling interval
+        cockpitInterval = setInterval(fetchCockpit, 3000);
+
+        // Load default view
+        switchView('mission-control');
+    }
+
+    async function loadActionLedger() {
+        const tbody = el('ledger-tbody');
+        if (!tbody) return;
+        try {
+            const res = await fetch('/api/v1/ledger/blocks');
+            if (!res.ok) throw new Error('Failed to fetch ledger blocks');
+            const blocks = await res.json();
+            
+            if (blocks.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:15px; color:var(--text-secondary);">No action ledger records found.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = blocks.map(b => {
+                const evt = b.event || {};
+                const action = evt.action || {};
+                const preflight = evt.preflight || {};
+                
+                let decisionColor = '#10b981'; // GO
+                let decisionBg = 'rgba(16, 185, 129, 0.1)';
+                let decisionBorder = 'rgba(16, 185, 129, 0.2)';
+                if (evt.decision === 'OVERRIDE' || evt.decision === 'OVERRIDDEN') {
+                    decisionColor = '#fbbf24'; // OVERRIDE
+                    decisionBg = 'rgba(245, 158, 11, 0.1)';
+                    decisionBorder = 'rgba(245, 158, 11, 0.2)';
+                }
+
+                const tsStr = b.timestamp ? new Date(b.timestamp).toLocaleString() : 'N/A';
+
+                return `
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.03);">
+                        <td style="padding:10px 8px; font-family:monospace; color:var(--text-secondary); font-weight:bold;">#${b.index}</td>
+                        <td style="padding:10px 8px; color:var(--text-secondary);">${tsStr}</td>
+                        <td style="padding:10px 8px; font-weight:500; color:#fff;">
+                            <span style="color:#818cf8; font-family:monospace; font-weight:bold;">${action.name || 'UNKNOWN'}</span>
+                            <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">${action.endpoint || ''}</div>
+                        </td>
+                        <td style="padding:10px 8px; font-weight:bold; color:${preflight.overall_score >= 80 ? '#10b981' : '#f87171'};">
+                            ${preflight.overall_score !== undefined ? preflight.overall_score + '%' : 'N/A'}
+                        </td>
+                        <td style="padding:10px 8px;">
+                            <span style="padding:2px 6px; border-radius:4px; font-size:11px; font-weight:bold; color:${decisionColor}; background:${decisionBg}; border:1px solid ${decisionBorder};">
+                                ${evt.decision || 'GO'}
+                            </span>
+                        </td>
+                        <td style="padding:10px 8px; text-align:right;">
+                            <button class="btn btn-secondary btn-download-pack" data-idx="${b.index}" style="padding:4px 8px; font-size:11px;">
+                                Download Pack
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            tbody.querySelectorAll('.btn-download-pack').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const idx = btn.getAttribute('data-idx');
+                    downloadEvidencePack(idx);
+                });
+            });
+
+        } catch (err) {
+            console.error('Error loading action ledger:', err);
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:15px; color:#ef4444;">Error loading operator action ledger</td></tr>`;
+        }
+    }
+
+    async function downloadEvidencePack(blockIdx) {
+        try {
+            const res = await fetch(`/api/v1/ledger/evidence-pack/${blockIdx}`);
+            if (!res.ok) throw new Error('Evidence pack generation failed');
+            const data = await res.json();
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `evidence_pack_block_${blockIdx}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error('Failed to download evidence pack:', err);
+            alert('Failed to download evidence pack. See console for details.');
+        }
+    }
+
+    async function verifyLedgerIntegrity() {
+        const badge = el('ledger-integrity-badge');
+        const btn = el('btn-verify-ledger');
+        if (!badge || !btn) return;
+        
+        btn.disabled = true;
+        btn.textContent = 'Verifying...';
+        badge.textContent = 'Cryptographic Chain: VERIFYING...';
+        badge.style.background = 'rgba(255, 255, 255, 0.05)';
+        badge.style.color = 'var(--text-secondary)';
+        badge.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+
+        try {
+            const res = await fetch('/api/v1/ledger/verify');
+            if (!res.ok) throw new Error('Integrity verification check failed');
+            const result = await res.json();
+
+            if (result.is_valid) {
+                badge.textContent = 'Cryptographic Chain: Verified';
+                badge.style.background = 'rgba(16, 185, 129, 0.1)';
+                badge.style.color = '#10b981';
+                badge.style.borderColor = 'rgba(16, 185, 129, 0.2)';
+            } else {
+                badge.textContent = 'Cryptographic Chain: CORRUPTED!';
+                badge.style.background = 'rgba(239, 68, 68, 0.1)';
+                badge.style.color = '#ef4444';
+                badge.style.borderColor = 'rgba(239, 68, 68, 0.2)';
+                alert(`Ledger corruption detected! Affected blocks: ${result.corrupted_block_indices.join(', ')}`);
+            }
+        } catch (err) {
+            console.error(err);
+            badge.textContent = 'Cryptographic Chain: Error';
+            badge.style.background = 'rgba(239, 68, 68, 0.1)';
+            badge.style.color = '#ef4444';
+            badge.style.borderColor = 'rgba(239, 68, 68, 0.2)';
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Verify Chain Integrity';
+        }
+    }
+
+    async function exportAuditBundle() {
+        const btn = el('btn-export-audit-bundle');
+        if (!btn) return;
+        
+        btn.disabled = true;
+        const originalText = btn.textContent;
+        btn.textContent = 'Exporting...';
+        
+        try {
+            const res = await fetch('/api/v1/ledger/evidence-bundle/download');
+            if (!res.ok) throw new Error('Audit bundle generation failed');
+            const blob = await res.blob();
+            
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `audit_evidence_review_bundle.zip`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error('Failed to export audit review bundle:', err);
+            alert('Failed to export audit review bundle. See console for details.');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = originalText;
+        }
+    }
+
+    function initLedgerButtons() {
+        const btnVerify = el('btn-verify-ledger');
+        if (btnVerify) {
+            btnVerify.addEventListener('click', (e) => {
+                e.preventDefault();
+                verifyLedgerIntegrity();
+            });
+        }
+        
+        const btnExport = el('btn-export-audit-bundle');
+        if (btnExport) {
+            btnExport.addEventListener('click', (e) => {
+                e.preventDefault();
+                exportAuditBundle();
+            });
+        }
+    }
+
+    async function loadHandoffView() {
+        try {
+            const res = await fetch('/api/v1/handoff/status');
+            if (!res.ok) throw new Error('Failed to fetch handoff status');
+            const data = await res.json();
+            
+            const git = data.git || {};
+            const branchEl = el('handoff-git-branch');
+            if (branchEl) branchEl.textContent = git.branch || 'N/A';
+            
+            const shaEl = el('handoff-git-sha');
+            if (shaEl) shaEl.textContent = git.commit_sha ? git.commit_sha.substring(0, 8) : 'N/A';
+            
+            const treeEl = el('handoff-git-tree');
+            if (treeEl) {
+                treeEl.textContent = git.dirty ? 'DIRTY WORKING TREE' : 'CLEAN';
+                treeEl.style.color = git.dirty ? '#f87171' : '#10b981';
+            }
+            
+            const tagEl = el('handoff-release-tag');
+            if (tagEl) tagEl.textContent = git.active_tag || 'N/A';
+            
+            const gates = data.gates || {};
+            
+            const preflightEl = el('handoff-preflight-score');
+            if (preflightEl) {
+                preflightEl.textContent = gates.preflight_score !== undefined ? gates.preflight_score + '%' : 'N/A';
+                preflightEl.style.color = gates.preflight_pass ? '#10b981' : '#f87171';
+            }
+            
+            const ledgerEl = el('handoff-ledger-verification');
+            if (ledgerEl) {
+                ledgerEl.textContent = gates.ledger_pass ? 'PASSED (VERIFIED)' : 'CORRUPTED/FAILED';
+                ledgerEl.style.color = gates.ledger_pass ? '#10b981' : '#f87171';
+            }
+            
+            const complianceEl = el('handoff-compliance-status');
+            if (complianceEl) {
+                complianceEl.textContent = gates.compliance_pass ? 'COMPLIANT' : 'NON-COMPLIANT';
+                complianceEl.style.color = gates.compliance_pass ? '#10b981' : '#f87171';
+            }
+            
+            const healthEl = el('handoff-model-health');
+            if (healthEl) {
+                healthEl.textContent = gates.model_health_pass ? 'HEALTHY' : 'UNHEALTHY / OFFLINE';
+                healthEl.style.color = gates.model_health_pass ? '#10b981' : '#f87171';
+            }
+            
+            const tbody = el('handoff-manifest-tbody');
+            if (tbody) {
+                const manifest = data.manifest || [];
+                if (manifest.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 15px; color: var(--text-secondary);">No handoff files defined.</td></tr>`;
+                } else {
+                    tbody.innerHTML = manifest.map(m => `
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                            <td style="padding: 10px 8px; font-family: monospace; font-weight: bold; color: #fff;">${m.file}</td>
+                            <td style="padding: 10px 8px; color: var(--text-secondary);">${m.desc}</td>
+                            <td style="padding: 10px 8px; font-family: monospace; color: #818cf8;">
+                                ${m.status === 'READY' ? 'Auto-Signed' : '--'}
+                            </td>
+                            <td style="padding: 10px 8px; text-align: right;">
+                                <span style="font-weight: bold; color: ${m.status === 'READY' ? '#10b981' : '#f87171'};">
+                                    ${m.status}
+                                </span>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            }
+        } catch (err) {
+            console.error('Failed to load handoff details:', err);
+        }
+    }
+
+    async function exportHandoffPacket() {
+        const btn = el('btn-export-handoff-packet');
+        if (!btn) return;
+        
+        btn.disabled = true;
+        const originalText = btn.textContent;
+        btn.textContent = 'Exporting...';
+        
+        try {
+            const res = await fetch('/api/v1/handoff/packet/download');
+            if (!res.ok) throw new Error('Handoff packet generation failed');
+            const blob = await res.blob();
+            
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `release_candidate_handoff_packet.zip`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error('Failed to export handoff packet:', err);
+            alert('Failed to export handoff packet. See console for details.');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = originalText;
+        }
+    }
+
+    function initHandoffButtons() {
+        const btn = el('btn-export-handoff-packet');
+        if (btn) {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                exportHandoffPacket();
+            });
+        }
+    }
+
+    async function loadAtoView() {
+        try {
+            const res = await fetch('/api/v1/ato/evidence-package');
+            if (!res.ok) throw new Error('Failed to fetch ATO evidence package');
+            const data = await res.json();
+            
+            const stmtEl = el('ato-statement-banner');
+            if (stmtEl) stmtEl.textContent = data.statement || '';
+            
+            const noticeEl = el('ato-status-notice');
+            if (noticeEl) noticeEl.textContent = data.status_notice || '';
+            
+            const matrixTbody = el('ato-matrix-tbody');
+            if (matrixTbody) {
+                const matrix = data.control_matrix || [];
+                matrixTbody.innerHTML = matrix.map(c => `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                        <td style="padding: 6px; font-weight: bold; color: var(--accent-teal);">${c.control_id}</td>
+                        <td style="padding: 6px; color: #fff;">${c.control_name} <span style="font-size:10px; color:var(--text-secondary); display:block;">${c.description}</span></td>
+                        <td style="padding: 6px; text-align: right; font-weight: bold; color: #10b981;">${c.status}</td>
+                    </tr>
+                `).join('');
+            }
+            
+            const checklistTbody = el('ato-checklist-tbody');
+            if (checklistTbody) {
+                const checklist = data.ao_checklist || [];
+                checklistTbody.innerHTML = checklist.map(chk => `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                        <td style="padding: 6px; color: #fff;">${chk.description}</td>
+                        <td style="padding: 6px; text-align: right; font-weight: bold; color: #fbbf24;">${chk.status}</td>
+                    </tr>
+                `).join('');
+            }
+            
+            const riskTbody = el('ato-risk-tbody');
+            if (riskTbody) {
+                const risks = data.residual_risks || [];
+                riskTbody.innerHTML = risks.map(r => `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                        <td style="padding: 6px; font-weight: bold; color: #fff;">${r.risk_id}: ${r.title}</td>
+                        <td style="padding: 6px; color: ${r.likelihood === 'High' ? '#f87171' : '#fbbf24'};">${r.likelihood}/${r.impact}</td>
+                        <td style="padding: 6px; color: var(--text-secondary);">${r.mitigation}</td>
+                        <td style="padding: 6px; text-align: right; font-weight: bold; color: #818cf8;">${r.status}</td>
+                    </tr>
+                `).join('');
+            }
+            
+            const poamTbody = el('ato-poam-tbody');
+            if (poamTbody) {
+                const poams = data.poam || [];
+                poamTbody.innerHTML = poams.map(p => `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                        <td style="padding: 6px; font-weight: bold; color: #fff;">${p.poam_id}: ${p.title}</td>
+                        <td style="padding: 6px; color: var(--text-secondary);">${p.scheduled_completion}</td>
+                        <td style="padding: 6px; text-align: right; font-weight: bold; color: ${p.status === 'OPEN' ? '#fbbf24' : '#60a5fa'};">${p.status}</td>
+                    </tr>
+                `).join('');
+            }
+            
+        } catch (err) {
+            console.error('Failed to load ATO details:', err);
+        }
+    }
+
+    async function exportAtoPackage() {
+        const btn = el('btn-export-ato-package');
+        if (!btn) return;
+        
+        btn.disabled = true;
+        const originalText = btn.textContent;
+        btn.textContent = 'Exporting...';
+        
+        try {
+            const res = await fetch('/api/v1/ato/evidence-package/download');
+            if (!res.ok) throw new Error('ATO evidence package generation failed');
+            const blob = await res.blob();
+            
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ato_evidence_package.zip`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error('Failed to export ATO package:', err);
+            alert('Failed to export ATO package. See console for details.');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = originalText;
+        }
+    }
+
+    function initAtoButtons() {
+        const btn = el('btn-export-ato-package');
+        if (btn) {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                exportAtoPackage();
+            });
+        }
+    }
+
+    // Run initialization once DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+
 })();
+
+
+
+let meshSentinelFilter = "all";
+
+async function fetchJsonSafe(url) {
+  const response = await fetch(url, { headers: { "Accept": "application/json" } });
+  if (!response.ok) {
+    throw new Error(`${url} returned ${response.status}`);
+  }
+  return response.json();
+}
+
+function meshTruthClass(truth) {
+  const value = String(truth || "EMPTY").toLowerCase().replaceAll("_", "-");
+  return `truth-${value}`;
+}
+
+function renderMeshSentinel(data) {
+  const map = document.getElementById("mesh-sentinel-map");
+  const alerts = document.getElementById("mesh-alerts");
+  const updated = document.getElementById("mesh-last-updated");
+  const truth = document.getElementById("mesh-truth-state");
+
+  if (!map) return;
+
+  const nodes = Array.isArray(data.nodes) ? data.nodes : [];
+  const alertItems = Array.isArray(data.alerts) ? data.alerts : [];
+
+  if (updated) updated.textContent = `Last updated: ${data.generated_at || "unknown"}`;
+  if (truth) truth.textContent = `Truth: ${data.truth || "EMPTY"}`;
+
+  const visibleNodes = nodes.filter(node => {
+    if (meshSentinelFilter === "all") return true;
+    if (meshSentinelFilter === "alerts") return String(node.truth || "").includes("UNEXPECTED");
+    if (meshSentinelFilter === "MISSING_FROM_SCAN") return node.truth === "MISSING_FROM_SCAN";
+    return node.kind === meshSentinelFilter;
+  });
+
+  if (!visibleNodes.length) {
+    map.innerHTML = '<p class="empty-state">No live mesh nodes match the selected filter.</p>';
+  } else {
+    map.innerHTML = visibleNodes.map(node => {
+      const models = Array.isArray(node.models) ? node.models : [];
+      const modelList = models.length
+        ? models.slice(0, 8).map(model => `<li>${escapeHtml(String(model))}</li>`).join("")
+        : "<li>No models returned by endpoint.</li>";
+
+      return `
+        <article class="mesh-node ${meshTruthClass(node.truth)}">
+          <div class="mesh-node-header">
+            <strong>${escapeHtml(node.label || node.id || "Unknown Node")}</strong>
+            <span class="status-pill">${escapeHtml(node.truth || "EMPTY")}</span>
+          </div>
+          <dl class="mesh-node-facts">
+            <div><dt>IP</dt><dd>${escapeHtml(node.ip || "unknown")}</dd></div>
+            <div><dt>Port</dt><dd>${escapeHtml(String(node.port || "unknown"))}</dd></div>
+            <div><dt>Kind</dt><dd>${escapeHtml(node.kind || "UNKNOWN")}</dd></div>
+            <div><dt>Reachable</dt><dd>${node.reachable ? "true" : "false"}</dd></div>
+            <div><dt>Models</dt><dd>${escapeHtml(String(node.model_count ?? models.length ?? 0))}</dd></div>
+            <div><dt>Source</dt><dd>${escapeHtml(node.source || "/api/v1/mesh-sentinel/map")}</dd></div>
+            <div><dt>Last scanned</dt><dd>${escapeHtml(node.last_scanned || "unknown")}</dd></div>
+          </dl>
+          <details>
+            <summary>Models</summary>
+            <ul>${modelList}</ul>
+          </details>
+        </article>
+      `;
+    }).join("");
+  }
+
+  if (alerts) {
+    if (!alertItems.length) {
+      alerts.innerHTML = '<p class="empty-state">No live mesh alerts.</p>';
+    } else {
+      alerts.innerHTML = alertItems.map(item => `
+        <article class="event-row ${meshTruthClass(item.severity)}">
+          <strong>${escapeHtml(item.severity || "INFO")}</strong>
+          <span>${escapeHtml(item.message || "Alert")}</span>
+          <code>${escapeHtml(item.source || "/api/v1/detections/events")}</code>
+        </article>
+      `).join("");
+    }
+  }
+}
+
+async function loadMeshSentinel() {
+  const map = document.getElementById("mesh-sentinel-map");
+  if (map) map.innerHTML = '<p class="empty-state">Loading live mesh sentinel data...</p>';
+  try {
+    const data = await fetchJsonSafe("/api/v1/mesh-sentinel/map");
+    renderMeshSentinel(data);
+  } catch (error) {
+    if (map) {
+      map.innerHTML = `<p class="error-state">Mesh Sentinel failed: ${escapeHtml(error.message)}</p>`;
+    }
+  }
+}
+
+async function rescanMeshSentinel() {
+  const button = document.getElementById("mesh-rescan-ai-runtimes");
+  const status = document.getElementById("mesh-scan-status");
+
+  if (button) button.disabled = true;
+  if (status) status.textContent = "Scanning...";
+
+  try {
+    await fetchJsonSafe("/api/v1/discovery/ai-runtimes/rescan", { method: "POST" });
+  } catch (_) {
+    const response = await fetch("/api/v1/discovery/ai-runtimes/rescan", { method: "POST" });
+    if (!response.ok) throw new Error(`rescan returned ${response.status}`);
+  }
+
+  await loadMeshSentinel();
+
+  if (status) status.textContent = "Scan Complete";
+  if (button) button.disabled = false;
+}
+
+function initMeshSentinel() {
+  document.querySelectorAll("[data-mesh-filter]").forEach(button => {
+    button.addEventListener("click", () => {
+      meshSentinelFilter = button.getAttribute("data-mesh-filter") || "all";
+      document.querySelectorAll("[data-mesh-filter]").forEach(item => item.classList.remove("active"));
+      button.classList.add("active");
+      loadMeshSentinel();
+    });
+  });
+
+  const refresh = document.getElementById("mesh-refresh");
+  if (refresh) refresh.addEventListener("click", loadMeshSentinel);
+
+  const rescan = document.getElementById("mesh-rescan-ai-runtimes");
+  if (rescan) rescan.addEventListener("click", () => {
+    rescanMeshSentinel().catch(error => {
+      const status = document.getElementById("mesh-scan-status");
+      if (status) status.textContent = `Scan Failed: ${error.message}`;
+      rescan.disabled = false;
+    });
+  });
+}
+
+
+// PROTO-3A — 10-device swarm prototype and agent chat
+function renderDeviceSwarm(data) {
+  const summary = document.getElementById("device-swarm-summary");
+  const grid = document.getElementById("device-swarm-grid");
+  const consoleEl = document.getElementById("device-swarm-console");
+  if (!summary || !grid) return;
+
+  const s = data.summary || {};
+  summary.innerHTML = `
+    <div class="metric-card"><span>Devices</span><strong>${escapeHtml(String(s.device_count ?? 0))}</strong></div>
+    <div class="metric-card"><span>Model Runtimes</span><strong>${escapeHtml(String(s.model_runtime_count ?? 0))}</strong></div>
+    <div class="metric-card"><span>Models</span><strong>${escapeHtml(String(s.model_count ?? 0))}</strong></div>
+    <div class="metric-card"><span>Agents</span><strong>${escapeHtml(String((s.agents_available || []).length))}</strong></div>
+  `;
+
+  grid.innerHTML = (data.devices || []).map((d) => {
+    const runtimeBadges = (d.runtimes || []).map((r) =>
+      `<span class="pill model">${escapeHtml(r.runtime)}:${escapeHtml(String(r.port))} ${escapeHtml(r.truth_state)}</span>`
+    ).join("");
+    const modelBadges = (d.models || []).slice(0, 10).map((m) =>
+      `<span class="pill model">${escapeHtml(m)}</span>`
+    ).join("");
+    const agentBadges = (d.agents_available || []).map((a) =>
+      `<span class="pill agent">${escapeHtml(a)}</span>`
+    ).join("");
+
+    const klass = d.runtime_count > 0 ? "live" : d.truth_state === "MISSING_FROM_SCAN" ? "missing" : "service";
+
+    return `
+      <article class="device-swarm-card ${klass}">
+        <h4>${escapeHtml(d.name || d.ip || "Unknown Device")}</h4>
+        <dl>
+          <div><dt>IP</dt><dd>${escapeHtml(d.ip || "unknown")}</dd></div>
+          <div><dt>MAC</dt><dd>${escapeHtml(d.mac || "unknown")}</dd></div>
+          <div><dt>Type</dt><dd>${escapeHtml(d.device_type || "UNKNOWN")}</dd></div>
+          <div><dt>Truth</dt><dd>${escapeHtml(d.truth_state || "UNKNOWN")}</dd></div>
+          <div><dt>Ports</dt><dd>${escapeHtml((d.open_ports || []).join(", ") || "none")}</dd></div>
+          <div><dt>Source</dt><dd>${escapeHtml(d.source || "unknown")}</dd></div>
+        </dl>
+        <div class="pill-zone">${runtimeBadges}${modelBadges}${agentBadges}</div>
+      </article>
+    `;
+  }).join("");
+
+  if (consoleEl) {
+    consoleEl.textContent = JSON.stringify({
+      generated_at: data.generated_at,
+      summary: data.summary,
+      source: data.source
+    }, null, 2);
+  }
+}
+
+async function loadDeviceSwarm() {
+  const status = document.getElementById("device-swarm-status");
+  if (status) status.textContent = "Loading...";
+  try {
+    const data = await fetchJsonSafe("/api/v1/swarm/devices?limit=10");
+    renderDeviceSwarm(data);
+    if (status) status.textContent = "Live";
+  } catch (error) {
+    if (status) status.textContent = "Error";
+    const consoleEl = document.getElementById("device-swarm-console");
+    if (consoleEl) consoleEl.textContent = `Device swarm load failed: ${error.message}`;
+  }
+}
+
+async function rescanDeviceSwarm() {
+  const status = document.getElementById("device-swarm-status");
+  if (status) status.textContent = "Scanning...";
+  const data = await fetchJsonSafe("/api/v1/swarm/devices/rescan?limit=10", { method: "POST" });
+  renderDeviceSwarm(data);
+  if (status) status.textContent = "Scan Complete";
+}
+
+async function sendDeviceSwarmPrompt() {
+  const payload = {
+    agent: document.getElementById("device-swarm-agent")?.value || "Mission Commander",
+    target: document.getElementById("device-swarm-target")?.value || "swarm",
+    prompt: document.getElementById("device-swarm-prompt")?.value || ""
+  };
+  const out = await fetchJsonSafe("/api/v1/swarm/agent-chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+  const consoleEl = document.getElementById("device-swarm-console");
+  if (consoleEl) consoleEl.textContent = JSON.stringify(out, null, 2);
+}
+
+function initDeviceSwarmPrototype() {
+  document.getElementById("device-swarm-rescan")?.addEventListener("click", () => {
+    rescanDeviceSwarm().catch((error) => {
+      const consoleEl = document.getElementById("device-swarm-console");
+      if (consoleEl) consoleEl.textContent = `Rescan failed: ${error.message}`;
+    });
+  });
+  document.getElementById("device-swarm-send")?.addEventListener("click", () => {
+    sendDeviceSwarmPrompt().catch((error) => {
+      const consoleEl = document.getElementById("device-swarm-console");
+      if (consoleEl) consoleEl.textContent = `Agent prompt failed: ${error.message}`;
+    });
+  });
+  loadDeviceSwarm();
+}
+
+document.addEventListener("DOMContentLoaded", initDeviceSwarmPrototype);

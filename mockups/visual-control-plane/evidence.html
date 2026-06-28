@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HOCH AI OS — Evidence Vault</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="global-ops-bar">
+    <h1>HOCH AI OS // EVIDENCE VAULT</h1>
+    <div class="breadcrumbs">
+      <span>/ <a href="index.html">life-os</a> / <a href="control-plane.html">control-plane</a> / evidence</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html">North Star</a></li>
+      <li><a href="control-plane.html">Mission Control</a></li>
+      <li><a href="factory.html">Software Factory</a></li>
+    </ul>
+  </header>
+
+  <main style="max-width: 1200px; margin: 0 auto;">
+    <div class="grid-3col" style="margin-bottom: var(--space-md);">
+      <div class="card">
+        <h3>Software Bill of Materials (SBOM) <span class="status-badge status-live">LIVE</span></h3>
+        <p>File: <code>sbom.spdx.json</code></p>
+        <p>Status: <span style="color: var(--accent-green);">VERIFIED</span></p>
+        <p>Dependencies tracked: <strong>142 node modules</strong></p>
+        <div class="card-source">Source: supply/sbom</div>
+      </div>
+
+      <div class="card">
+        <h3>Supply-Chain Provenance <span class="status-badge status-live">LIVE</span></h3>
+        <p>File: <code>provenance.intoto.jsonl</code></p>
+        <p>Status: <span style="color: var(--accent-green);">VERIFIED</span></p>
+        <p>Build Attestation Level: <strong>SLSA Level 3</strong></p>
+        <div class="card-source">Source: supply/provenance</div>
+      </div>
+
+      <div class="card">
+        <h3>Evidence Freshness <span class="status-badge status-live">LIVE</span></h3>
+        <p>Latest Seal: <code>2026-06-27T17:08:48Z</code></p>
+        <p>Chain-of-Custody: <span style="color: var(--accent-green);">LOCKED</span></p>
+        <p>SHA-256 Hash: <span style="font-family: var(--font-mono); font-size: 10px;">57eb352e4dc24...</span></p>
+        <div class="card-source">Source: release-seal-attestation-bundle</div>
+      </div>
+    </div>
+
+    <section class="card">
+      <h3>
+        Audit Logs &amp; Validation Evidence
+        <span class="status-badge status-simulated">SIMULATED</span>
+      </h3>
+      <ul style="list-style: none; display: flex; flex-direction: column; gap: var(--space-sm); font-size: 12px; margin-top: var(--space-sm);">
+        <li style="border-bottom: 1px solid var(--border-subtle); padding-bottom: var(--space-xs);">
+          <strong>Verification Report</strong>: <code>verification_report.json</code> (Success)
+        </li>
+        <li style="border-bottom: 1px solid var(--border-subtle); padding-bottom: var(--space-xs);">
+          <strong>Tool Call Trace Log</strong>: <code>tool_call_trace_summary.json</code> (Cleared)
+        </li>
+        <li style="border-bottom: 1px solid var(--border-subtle); padding-bottom: var(--space-xs);">
+          <strong>Data Redaction Report</strong>: <code>redaction_report.json</code> (Checked)
+        </li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

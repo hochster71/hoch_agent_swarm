@@ -1,0 +1,157 @@
+import type { AiSystemRecord } from "./governanceTypes";
+
+export const initialAiSystems: AiSystemRecord[] = [
+  {
+    system_id: "cluster-intel",
+    name: "Cluster Intel Agent",
+    type: "agent",
+    owner: "Swarm Team",
+    description: "Monitors overall cluster telemetry, aggregates logs, and generates natural language system health summaries.",
+    status: "approved",
+    risk_tier: "high",
+    capabilities: ["System Monitoring", "Log Summarization", "Alert Generation"],
+    data_access: {
+      classification: "confidential",
+      pii_access: false,
+      secret_access: true,
+    },
+    autonomy: {
+      can_recommend: true,
+      can_execute: false,
+      requires_human_approval: true,
+      max_execution_scope: "Read cluster health & describe state",
+    },
+    controls: [
+      { control_id: "NIST-AI-1.1", framework: "NIST_AI_RMF", status: "implemented", evidence_refs: ["evidence.nist_rmf.1.1"] },
+      { control_id: "AC-17", framework: "NIST_800_53", status: "implemented", evidence_refs: ["evidence.800_53.ac17"] },
+      { control_id: "SAMM-SM-1.1", framework: "OWASP_SAMM", status: "partial", evidence_refs: [] },
+    ],
+    review: {
+      reviewed_at: "2026-05-22T08:00:00Z",
+      reviewed_by: "Michael Hoch",
+      next_review_due: "2026-11-22T08:00:00Z",
+    },
+  },
+  {
+    system_id: "workload-optimizer",
+    name: "Workload Optimizer",
+    type: "agent",
+    owner: "Ops Team",
+    description: "Dynamically rebalances tasks and container distribution across cluster worker nodes (L1, L2, L3, W1).",
+    status: "under_review",
+    risk_tier: "high",
+    capabilities: ["Node Workload Balancing", "Dynamic Task Scheduling", "Docker Instance Control"],
+    data_access: {
+      classification: "internal",
+      pii_access: false,
+      secret_access: false,
+    },
+    autonomy: {
+      can_recommend: true,
+      can_execute: true,
+      requires_human_approval: true,
+      max_execution_scope: "Rearrange active Docker tasks on nodes",
+    },
+    controls: [
+      { control_id: "NIST-AI-1.2", framework: "NIST_AI_RMF", status: "partial", evidence_refs: [] },
+      { control_id: "AC-3", framework: "NIST_800_53", status: "missing", evidence_refs: [] },
+      { control_id: "SAMM-SM-1.2", framework: "OWASP_SAMM", status: "implemented", evidence_refs: ["evidence.samm.sm12"] },
+    ],
+    review: {
+      reviewed_at: "2026-05-18T10:30:00Z",
+      reviewed_by: "Sarah Chen",
+      next_review_due: "2026-06-18T10:30:00Z",
+    },
+  },
+  {
+    system_id: "telemetry-analyzer",
+    name: "Telemetry Analyzer",
+    type: "model",
+    owner: "Data Team",
+    description: "Neural network model calculating anomaly scores and predicting workload trends from CPU/RAM patterns.",
+    status: "approved",
+    risk_tier: "medium",
+    capabilities: ["Metric Clustering", "Anomalous Load Prediction", "Correlation Modeling"],
+    data_access: {
+      classification: "public",
+      pii_access: false,
+      secret_access: false,
+    },
+    autonomy: {
+      can_recommend: true,
+      can_execute: false,
+      requires_human_approval: false,
+      max_execution_scope: "Write predictive insights to dashboard",
+    },
+    controls: [
+      { control_id: "NIST-AI-2.1", framework: "NIST_AI_RMF", status: "implemented", evidence_refs: ["evidence.nist_rmf.2.1"] },
+      { control_id: "SI-2", framework: "NIST_800_53", status: "implemented", evidence_refs: ["evidence.800_53.si2"] },
+    ],
+    review: {
+      reviewed_at: "2026-05-20T14:15:00Z",
+      reviewed_by: "Alex Rivera",
+      next_review_due: "2026-11-20T14:15:00Z",
+    },
+  },
+  {
+    system_id: "auto-remediation",
+    name: "Auto Remediation Swarm",
+    type: "swarm",
+    owner: "Ops Team",
+    description: "Autonomous swarm that executes security patch scripts and system cleanups without human approval.",
+    status: "restricted",
+    risk_tier: "critical",
+    capabilities: ["Host Security Patching", "Vulnerability Remediation", "Docker Volume Pruning"],
+    data_access: {
+      classification: "restricted",
+      pii_access: true,
+      secret_access: true,
+    },
+    autonomy: {
+      can_recommend: true,
+      can_execute: true,
+      requires_human_approval: false,
+      max_execution_scope: "Modify host permissions & prune volumes",
+    },
+    controls: [
+      { control_id: "NIST-AI-3.1", framework: "NIST_AI_RMF", status: "missing", evidence_refs: [] },
+      { control_id: "AC-6", framework: "NIST_800_53", status: "missing", evidence_refs: [] },
+      { control_id: "SAMM-SM-2.1", framework: "OWASP_SAMM", status: "missing", evidence_refs: [] },
+    ],
+    review: {
+      reviewed_at: "2026-05-10T09:00:00Z",
+      reviewed_by: "System",
+      next_review_due: "2026-06-10T09:00:00Z",
+    },
+  },
+  {
+    system_id: "policy-adviser",
+    name: "Policy Adviser",
+    type: "agent",
+    owner: "Security Team",
+    description: "Evaluates proposed swarm actions against ZTA policies and determines override verification levels.",
+    status: "approved",
+    risk_tier: "medium",
+    capabilities: ["Policy Enforcement", "Guardrail Verification", "Risk Assessment"],
+    data_access: {
+      classification: "internal",
+      pii_access: false,
+      secret_access: false,
+    },
+    autonomy: {
+      can_recommend: true,
+      can_execute: false,
+      requires_human_approval: true,
+      max_execution_scope: "Block policy-violating swarm commands",
+    },
+    controls: [
+      { control_id: "NIST-AI-4.1", framework: "NIST_AI_RMF", status: "implemented", evidence_refs: ["evidence.nist_rmf.4.1"] },
+      { control_id: "AC-17", framework: "NIST_800_53", status: "implemented", evidence_refs: ["evidence.800_53.ac17"] },
+    ],
+    review: {
+      reviewed_at: "2026-05-21T11:45:00Z",
+      reviewed_by: "Michael Hoch",
+      next_review_due: "2026-11-21T11:45:00Z",
+    },
+  }
+];

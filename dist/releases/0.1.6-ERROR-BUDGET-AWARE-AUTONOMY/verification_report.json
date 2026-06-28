@@ -1,0 +1,31 @@
+{
+  "generated_at": "2026-06-28T04:45:08.837Z",
+  "release": "0.1.6-ERROR-BUDGET-AWARE-AUTONOMY",
+  "status": "PASS",
+  "blockers": [],
+  "warnings": [],
+  "signing_policy": {
+    "decision": "PASS",
+    "cosign_enabled": false,
+    "enable_cosign_signing_set": false,
+    "is_formal_release": false,
+    "signing_policy_status": "PASS",
+    "signature_status": "waived",
+    "release_finalization_status": "local_dev_pass"
+  },
+  "release_channel_policy_decision": "PASS",
+  "release_channel": "formal:preview-1782506899-3ff44fee",
+  "tag_points_at_head": false,
+  "tag_status": "STALE_TAG",
+  "formal_release_blockers": [
+    "dirty_working_tree",
+    "tag_stale"
+  ],
+  "allowed_release_actions": [
+    "continue_local_dev",
+    "create_candidate_release",
+    "request_formal_release_approval",
+    "request_tag_alignment_approval"
+  ],
+  "operator_approval_required": false
+}

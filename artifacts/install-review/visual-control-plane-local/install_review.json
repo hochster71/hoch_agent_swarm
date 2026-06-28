@@ -1,0 +1,20 @@
+{
+  "phase": "V26_LOCAL_INSTALL_REVIEW",
+  "local_only": true,
+  "install_review_performed": true,
+  "archive_verified": true,
+  "extract_verified": true,
+  "manifest_verified": true,
+  "provenance_verified": true,
+  "rollback_verified": true,
+  "evidence_verified": true,
+  "deployment_performed": false,
+  "external_publication_enabled": false,
+  "production_deployment_enabled": false,
+  "backend_mutation_enabled": false,
+  "prompt_execution_enabled": false,
+  "approval_decision_execution_enabled": false,
+  "security_posture_change_enabled": false,
+  "checks_failed": [],
+  "decision": "INSTALL_REVIEW_COMPLETE"
+}

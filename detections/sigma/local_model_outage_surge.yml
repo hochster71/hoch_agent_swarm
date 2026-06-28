@@ -1,0 +1,20 @@
+title: HOCH Agent Swarm Local Model Outage Surge
+id: eeb12345-9b99-4c9a-97fb-local-outage-surge
+status: experimental
+description: Detects when local model health check checks fail repeatedly indicating service degradation.
+logsource:
+  product: hoch_agent_swarm
+  service: runtime_process
+detection:
+  selection_health:
+    process_type: LOCAL_MODEL_HEALTH
+    state: FAILED
+  condition: selection_health
+fields:
+  - provider
+  - state
+  - process_type
+level: medium
+tags:
+  - attack.impact
+  - hoch.agent_swarm

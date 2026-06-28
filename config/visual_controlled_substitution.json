@@ -1,0 +1,18 @@
+{
+  "phase": "V15_CONTROLLED_LOCAL_SUBSTITUTION",
+  "local_only": true,
+  "controlled_substitution_allowed": true,
+  "active_cockpit_replacement_enabled": true,
+  "backend_mutation_enabled": false,
+  "prompt_execution_enabled": false,
+  "approval_decision_execution_enabled": false,
+  "external_publication_enabled": false,
+  "production_deployment_enabled": false,
+  "security_posture_change_enabled": false,
+  "baseline_cockpit_path": "mockups/visual-control-plane/control-plane.html",
+  "candidate_path": "artifacts/qa/visual_review/dry_run_candidate/control-plane.candidate.html",
+  "backup_root": "artifacts/qa/visual_review/active_substitution_backups",
+  "rollback_path": "artifacts/qa/visual_review/active_substitution/ROLLBACK.md",
+  "rollback_required": true,
+  "next_allowed_phase": "V16_LOCAL_SUBSTITUTION_VALIDATION_AND_ROLLBACK_PROOF"
+}

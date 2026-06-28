@@ -1,0 +1,66 @@
+{
+  "release": {
+    "version": "v0.1.2-SUPPLY-CHAIN-PROVENANCE",
+    "codename": "Supply Chain Provenance",
+    "generated_at": "2026-06-24T19:03:58.785Z",
+    "generated_by": "generate-release-manifest.ts",
+    "git_commit_sha": "5984bcf61c6d7443aa4d525ca780234b1fb38cac",
+    "git_branch": "release/v0.1.2-supply-chain-provenance",
+    "ci_provider": "local"
+  },
+  "artifacts": [
+    {
+      "path": "dist/releases/v0.1.2-SUPPLY-CHAIN-PROVENANCE/baseline_evidence_pack.json",
+      "type": "evidence_pack",
+      "sha256": "9d0bf636d2361e0602845ac8ca9f23cd8c3403d29912c7b82df4cefadf04e48c"
+    },
+    {
+      "path": "dist/releases/v0.1.2-SUPPLY-CHAIN-PROVENANCE/baseline_evidence_pack.json.sha256",
+      "type": "checksum",
+      "sha256": "70a7af9f983b058bc698ff3c6851c676dbd53fcb8c808258e8f79baea7febb4a"
+    },
+    {
+      "path": "dist/releases/v0.1.2-SUPPLY-CHAIN-PROVENANCE/provenance.intoto.jsonl",
+      "type": "provenance",
+      "sha256": "0147167a5987432edbd8c7cd3fdc498ab161d575e715ba4bccbe6dcf0077b386"
+    },
+    {
+      "path": "dist/releases/v0.1.2-SUPPLY-CHAIN-PROVENANCE/sbom.spdx.json",
+      "type": "sbom",
+      "sha256": "44422eb028772367d22aaf2466c01ed1354a2869aaa145271003a9f2e4a66c7b"
+    },
+    {
+      "path": "dist/releases/v0.1.2-SUPPLY-CHAIN-PROVENANCE/decision_memo.md",
+      "type": "decision_memo",
+      "sha256": "28fedaf9b537b9aba5fb5e4c4c8dc4f5758a097c5607884c0c5ccc2aeea768f7"
+    },
+    {
+      "path": "dist/releases/v0.1.2-SUPPLY-CHAIN-PROVENANCE/verification_report.json",
+      "type": "verification_report",
+      "sha256": "eb007a4ce764d7a189f86b86a28293aae3c0d5885d0deeded7019c9dee231968"
+    }
+  ],
+  "docker": [],
+  "baseline_chain": {
+    "previous": "v0.1.0-RT-LOCK",
+    "hardening": "v0.1.1-HOCHSTER-CLUSTER-HARDENING",
+    "current": "v0.1.2-SUPPLY-CHAIN-PROVENANCE"
+  },
+  "integrity": {
+    "signed": false,
+    "signature_refs": [],
+    "provenance_ref": "dist/releases/v0.1.2-SUPPLY-CHAIN-PROVENANCE/provenance.intoto.jsonl",
+    "sbom_ref": "dist/releases/v0.1.2-SUPPLY-CHAIN-PROVENANCE/sbom.spdx.json"
+  },
+  "hochster": {
+    "cluster_jobs_completed": 9,
+    "cluster_jobs_blocked": 0,
+    "missing_trace_ids": [],
+    "missing_evidence_refs": []
+  },
+  "decision": {
+    "status": "PASS",
+    "blockers": [],
+    "warnings": []
+  }
+}

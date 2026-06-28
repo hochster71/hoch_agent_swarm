@@ -1,0 +1,8 @@
+{
+  "track": "P7_CONTROLLED_LOCAL_DEMO_READINESS",
+  "release_candidate": "RC-visual-control-plane-local-v1.0.0",
+  "integration_branch": "integration/visual-control-plane-local-v1",
+  "local_demo_mode_active": true,
+  "sandboxed": true,
+  "created_at": "2026-06-27T18:18:00-05:00"
+}

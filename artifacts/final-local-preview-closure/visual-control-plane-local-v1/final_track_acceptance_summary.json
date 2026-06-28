@@ -1,0 +1,39 @@
+{
+  "track_acceptance": {
+    "P4_SECURITY_ATO": {
+      "commit": "71b6fac",
+      "decision": "AUTHORIZE_LOCAL_PREVIEW",
+      "accepted_by": "Operator"
+    },
+    "P2_BACKEND_BINDING": {
+      "commit": "04a93c9",
+      "decision": "READONLY_BINDING_ACCEPTED",
+      "accepted_by": "Operator"
+    },
+    "P3_FRONTEND_BINDING": {
+      "commit": "e126a01",
+      "decision": "FRONTEND_BINDING_ACCEPTED",
+      "accepted_by": "Operator"
+    },
+    "P6_RELEASE_CANDIDATE": {
+      "commit": "0f5e78d",
+      "decision": "CONSOLIDATED_RC_ACCEPTED",
+      "accepted_by": "Operator"
+    },
+    "P7_LOCAL_DEMO": {
+      "commit": "57cdf46",
+      "decision": "DEMO_READINESS_ACCEPTED",
+      "accepted_by": "Operator"
+    },
+    "P8_OPERATOR_ACCEPTANCE": {
+      "commit": "8298442",
+      "decision": "APPROVE_LOCAL_PREVIEW",
+      "accepted_by": "Operator"
+    },
+    "P9_LOCAL_PREVIEW_ARCHIVE": {
+      "commit": "3a0126e",
+      "decision": "HANDOFF_ARCHIVE_ACCEPTED",
+      "accepted_by": "Operator"
+    }
+  }
+}

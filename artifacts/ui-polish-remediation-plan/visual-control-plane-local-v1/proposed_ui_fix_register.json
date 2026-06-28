@@ -1,0 +1,16 @@
+{
+  "proposed_fixes": [
+    {
+      "id": "FIX-01",
+      "target": "Theme selector select dropdown",
+      "proposal": "Set dropdown width to 100% and align padding/margins with .nav-links elements in styles.css.",
+      "complexity": "Low"
+    },
+    {
+      "id": "FIX-02",
+      "target": "Metadata card labels",
+      "proposal": "Increase font-weight of label elements in telemetry card renderer to 600 in visual_dashboard_preview.js.",
+      "complexity": "Low"
+    }
+  ]
+}

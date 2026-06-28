@@ -1,0 +1,19 @@
+{
+  "prior_seals": {
+    "P4": "artifacts/security-evidence/visual-control-plane-local-v1/security_evidence_manifest.json",
+    "P2": "artifacts/backend-runtime-binding-readiness/visual-control-plane-local-v1/p2_final_seal.json",
+    "P3": "artifacts/frontend-runtime-readiness/visual-control-plane-local-v1/p3_final_seal.json",
+    "P6": "artifacts/local-preview-release-candidate/visual-control-plane-local-v1/p6_final_seal.json",
+    "P7": "artifacts/controlled-local-demo-readiness/visual-control-plane-local-v1/p7_final_seal.json",
+    "P8": "artifacts/operator-acceptance-package/visual-control-plane-local-v1/p8_final_seal.json",
+    "P9": "artifacts/local-preview-handoff-package/visual-control-plane-local-v1/p9_final_seal.json",
+    "P10": "artifacts/final-local-preview-closure/visual-control-plane-local-v1/p10_final_seal.json",
+    "P11": "artifacts/ui-screenshot-evidence/visual-control-plane-local-v1/p11_final_seal.json",
+    "P12": "artifacts/visual-review-findings/visual-control-plane-local-v1/p12_final_seal.json",
+    "P13": "artifacts/ui-polish-remediation-plan/visual-control-plane-local-v1/p13_final_seal.json",
+    "P14": "artifacts/ui-polish-remediation-execution/visual-control-plane-local-v1/p14_final_seal.json",
+    "P15": "artifacts/post-remediation-visual-review/visual-control-plane-local-v1/p15_final_seal.json",
+    "P16": "artifacts/local-preview-final-candidate-seal/visual-control-plane-local-v1/p16_final_seal.json",
+    "P17": "artifacts/operator-go-no-go-decision/visual-control-plane-local-v1/p17_final_seal.json"
+  }
+}

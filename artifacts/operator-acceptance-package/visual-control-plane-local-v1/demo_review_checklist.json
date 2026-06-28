@@ -1,0 +1,14 @@
+{
+  "checklist_items": [
+    {
+      "item_id": "D-001",
+      "instruction": "Launch local demo server and verify the landing page renders cleanly",
+      "status": "COMPLETED"
+    },
+    {
+      "item_id": "D-002",
+      "instruction": "Observe console output and check for the absence of write method attempts",
+      "status": "COMPLETED"
+    }
+  ]
+}

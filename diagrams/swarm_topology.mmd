@@ -17,13 +17,16 @@ graph LR
     
     %% Compute Nodes
     L1("MBP MS PRO (CONTROL PLANE) [L1]<br/>IP: 10.0.0.6 | 24GB RAM | 1TB SSD<br/>Orchestrates all tasks"):::nodeL1
-    L2("MICHAEL'S IMAC [L2]<br/>IP: 10.0.0.91 | Coder Node<br/>SSH Available"):::nodeL2
+    L2("MICHAEL'S IMAC [L2]<br/>IP: 10.0.0.92 | Coder Node<br/>SSH Available"):::nodeL2
     L3("HOCH-MESH MACBOOK NEO [L3]<br/>IP: 10.0.0.8 | Coder Node<br/>SSH + DOCKER | Gordon Agent Ready"):::nodeL3
     W1("DELL 9440 [W1]<br/>IP: 10.0.0.207 | Coder Node<br/>SSH + DOCKER | Full Task Exec"):::W1
     
     %% Mobile Agents
     IPAD("IPAD PRO 12'' [Agent]<br/>IP: 10.0.0.120<br/>Lightweight Agent | Limited Compute"):::mobile
     IPHONE("IPHONE 15 PRO MAX<br/>IP: 10.0.0.74<br/>Lightweight Agent | Limited Compute"):::mobile
+    IPAD_PRO_11("Michael's iPad pro 11'' [IPAD_PRO_11]<br/>IP: 10.0.0.44<br/>Edge Client | Apple M4"):::mobile
+    IPAD_MINI_1("iPad mini MUU62LL/A [IPAD_MINI_1]<br/>IP: 10.0.0.91<br/>Edge Client | A12 Bionic"):::mobile
+    IPAD_MINI_2("iPad mini MGNV2LL/A [IPAD_MINI_2]<br/>IP: 10.0.0.137<br/>Edge Client | A7"):::mobile
     
     %% Pipelines
     subgraph L1_Pipe [L1 Execution Pipelines]
@@ -70,5 +73,11 @@ graph LR
     %% Mobile node connections
     L3 --> IPAD
     W1 --> IPHONE
+    L3 --> IPAD_PRO_11
+    L3 --> IPAD_MINI_1
+    L3 --> IPAD_MINI_2
     IPAD --> MOBILE_AGENTS
     IPHONE --> MOBILE_AGENTS
+    IPAD_PRO_11 --> MOBILE_AGENTS
+    IPAD_MINI_1 --> MOBILE_AGENTS
+    IPAD_MINI_2 --> MOBILE_AGENTS

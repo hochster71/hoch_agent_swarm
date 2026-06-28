@@ -1,0 +1,14 @@
+{
+  "residual_risks": [
+    {
+      "id": "RISK-01",
+      "limit": "No production runtime access.",
+      "control": "FastAPI routes read-only, control-plane has no post endpoints."
+    },
+    {
+      "id": "RISK-02",
+      "limit": "Dashboard is isolated to localhost.",
+      "control": "No WebSockets, no EventSource listeners added to visual_dashboard_preview.js."
+    }
+  ]
+}

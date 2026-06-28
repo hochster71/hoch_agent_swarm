@@ -1,0 +1,29 @@
+title: HOCH Agent Swarm Google Frontier Policy Block
+id: fed12345-9b99-4c9a-97fb-google-frontier-block
+status: experimental
+description: Detects when the Google frontier escalation router blocks execution due to policy, budget, or payload flags.
+logsource:
+  product: hoch_agent_swarm
+  service: model_routing
+detection:
+  selection_provider:
+    provider: google_gemini
+  selection_blocked:
+    verdict: BLOCKED
+  selection_reasons:
+    reason:
+      - payload_canonicalization_blocked
+      - budget_exceeded
+      - approval_required
+  condition: selection_provider and (selection_blocked or selection_reasons)
+fields:
+  - provider
+  - model
+  - verdict
+  - reason
+  - task_id
+  - approval_id
+level: high
+tags:
+  - attack.exfiltration
+  - hoch.agent_swarm

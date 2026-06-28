@@ -1,0 +1,9 @@
+{
+  "manifest_id": "SCREENSHOT-EVIDENCE-visual-control-plane-local-v1.0.0",
+  "track": "P11_SCREENSHOT_VISUAL_EVIDENCE_CAPTURE",
+  "integration_branch": "integration/visual-control-plane-local-v1",
+  "target_release": "v0.1.6-ERROR-BUDGET-AWARE-AUTONOMY",
+  "visual_status": "COMPLETED",
+  "local_preview_only": true,
+  "created_at": "2026-06-27T18:39:00-05:00"
+}

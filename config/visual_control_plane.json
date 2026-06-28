@@ -1,0 +1,133 @@
+{
+  "name": "HOCH Agent Swarm Visual Control Plane Config",
+  "version": "0.1.0",
+  "theme_tokens": {
+    "colors": {
+      "bg_primary": "#030303",
+      "bg_secondary": "#0B0B0D",
+      "bg_panel_header": "#111116",
+      "bg_panel_active": "#17171F",
+      "text_primary": "#F5F7FA",
+      "text_secondary": "#AAB0BD",
+      "text_muted": "#686E7A",
+      "border_subtle": "#24242E",
+      "border_focus": "#3b82f6"
+    },
+    "accents": {
+      "cyan": "#06b6d4",
+      "green": "#10b981",
+      "amber": "#f59e0b",
+      "red": "#ef4444",
+      "violet": "#8b5cf6",
+      "blue": "#3b82f6"
+    },
+    "typography": {
+      "font_sans": "'Outfit', 'Inter', -apple-system, sans-serif",
+      "font_mono": "'SFMono-Regular', Consolas, 'Liberation Mono', monospace"
+    }
+  },
+  "routes": [
+    { "path": "/", "title": "North Star Landing" },
+    { "path": "/control-plane", "title": "Mission Control Overview" },
+    { "path": "/control-plane/assets", "title": "Known Assets" },
+    { "path": "/control-plane/models", "title": "Local Models & Router" },
+    { "path": "/control-plane/prompts", "title": "Prompt Registry" },
+    { "path": "/control-plane/agents", "title": "Agent Flight Deck" },
+    { "path": "/control-plane/cyber", "title": "Cyber Defense & ConMon" },
+    { "path": "/control-plane/evidence", "title": "Evidence Vault" },
+    { "path": "/control-plane/approvals", "title": "Human Approval Queue" },
+    { "path": "/factory", "title": "Software Factory Overview" },
+    { "path": "/factory/apps", "title": "App Portfolio" },
+    { "path": "/factory/build-lanes", "title": "Ephemeral Build Lanes" },
+    { "path": "/factory/release", "title": "Release Gate" },
+    { "path": "/life", "title": "Life OS" },
+    { "path": "/life/home", "title": "Home Operations" },
+    { "path": "/life/family", "title": "Family Support" },
+    { "path": "/life/hobbies", "title": "Hobby Lab" },
+    { "path": "/life/humanity", "title": "Humanity Projects" }
+  ],
+  "dashboard_cards": [
+    { "id": "control_plane_status", "name": "Control Plane Status", "grid": "top_left" },
+    { "id": "known_assets_mesh", "name": "Known Assets Mesh", "grid": "top_center_left" },
+    { "id": "model_runtimes", "name": "Discovered Runtimes", "grid": "top_center_right" },
+    { "id": "prompt_router", "name": "Prompt Control Plane", "grid": "middle_left" },
+    { "id": "agent_loop_state", "name": "Swarm Execution Loop", "grid": "middle_center" },
+    { "id": "human_approval_queue", "name": "Decision Gate", "grid": "middle_right" },
+    { "id": "fail_closed_events", "name": "Fail-Closed Monitor", "grid": "bottom_left" },
+    { "id": "cyber_risk", "name": "Security & Hardening", "grid": "bottom_center_left" },
+    { "id": "evidence_freshness", "name": "Evidence Vault", "grid": "bottom_center_right" },
+    { "id": "conmon_status", "name": "Continuous Compliance", "grid": "bottom_right" }
+  ],
+  "agent_card_schema": {
+    "fields": [
+      "agent_name",
+      "prompt_id",
+      "category",
+      "mission",
+      "current_task",
+      "model_assigned",
+      "tools_allowed",
+      "autonomy_level",
+      "risk_level",
+      "approval_required",
+      "evidence_status",
+      "last_heartbeat",
+      "current_loop_phase",
+      "output_quality_score",
+      "fail_closed_state"
+    ]
+  },
+  "graphic_families": [
+    { "family": "planner_research", "accent": "blue_white", "icon": "constellation" },
+    { "family": "builder_architect", "accent": "violet", "icon": "grid" },
+    { "family": "qa", "accent": "green", "icon": "matrix" },
+    { "family": "cyber_red_team", "accent": "red_amber", "icon": "shield" },
+    { "family": "audit_evidence", "accent": "grey_purple", "icon": "ledger" },
+    { "family": "conmon_sre", "accent": "teal", "icon": "heartbeat" },
+    { "family": "app_factory", "accent": "cyan", "icon": "pipeline" },
+    { "family": "family_home", "accent": "moonlight", "icon": "home" },
+    { "family": "hobby_humanity", "accent": "gold", "icon": "spark" }
+  ],
+  "motion_rules": [
+    { "effect": "heartbeat_pulse", "target": "active_agent_beacons", "duration": "2s", "easing": "cubic-bezier" },
+    { "effect": "scan_sweep", "target": "active_probes", "duration": "3s", "easing": "linear" },
+    { "effect": "pipeline_conveyor", "target": "build_lane_tasks", "duration": "1s", "easing": "ease-in-out" },
+    { "effect": "lock_gate_close", "target": "gate_indicators", "duration": "0.5s", "easing": "ease-out" }
+  ],
+  "state_labels": [
+    "LIVE",
+    "DEGRADED",
+    "PENDING",
+    "SIMULATED",
+    "STALE",
+    "FAIL-CLOSED",
+    "UNAVAILABLE",
+    "UNKNOWN"
+  ],
+  "accessibility_rules": [
+    "wcag_aa_contrast",
+    "no_color_only_meaning",
+    "keyboard_focus_states",
+    "aria_labels_for_telemetry",
+    "reduced_motion_override"
+  ],
+  "implementation_phases": [
+    { "phase": "V0", "name": "visual_doctrine_docs" },
+    { "phase": "V1", "name": "static_mock_pages" },
+    { "phase": "V2", "name": "component_library" },
+    { "phase": "V3", "name": "data_bound_cards" },
+    { "phase": "V4", "name": "agent_graphics_and_prompt_links" },
+    { "phase": "V5", "name": "control_plane_maps" },
+    { "phase": "V6", "name": "app_factory_pipeline_visuals" },
+    { "phase": "V7", "name": "cyber_conmon_evidence_visuals" },
+    { "phase": "V8", "name": "visual_qa_and_a11y_pass" },
+    { "phase": "V9", "name": "production_ui_seal" }
+  ],
+  "prompt_library_source_files": [
+    "hoch_agent_swarm_prompt_library.html",
+    "hoch_agent_swarm_prompt_library.md",
+    "hoch_agent_swarm_prompt_library.json",
+    "hoch_agent_swarm_prompt_library.csv",
+    "hoch_agent_swarm_prompt_manifest.json"
+  ]
+}

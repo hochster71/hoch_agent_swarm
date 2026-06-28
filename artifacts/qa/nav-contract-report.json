@@ -1,0 +1,20 @@
+{
+  "generated_at": "2026-06-28T04:44:48.375Z",
+  "status": "PASS",
+  "required_labels": [
+    "Readiness Autopilot",
+    "HOCHSTER Runtime",
+    "Remediation Safety",
+    "Runtime Audit",
+    "Error Budget",
+    "Release Provenance",
+    "Swarm Control",
+    "Mission Intel",
+    "Timeline Replay"
+  ],
+  "forbidden_labels": [
+    "PERT Analysis",
+    "Security Audit"
+  ],
+  "blockers": []
+}

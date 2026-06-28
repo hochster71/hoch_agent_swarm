@@ -1,0 +1,223 @@
+{
+  "report_id": "qa_localhost_8000_1782621902506",
+  "base_url": "http://localhost:8000",
+  "started_at": "2026-06-28T04:45:01.999Z",
+  "completed_at": "2026-06-28T04:45:02.506Z",
+  "status": "PASS",
+  "checks": [
+    {
+      "name": "health",
+      "path": "/health",
+      "required": true,
+      "status": "PASS",
+      "http_status": 200,
+      "latency_ms": 31,
+      "blockers": [],
+      "warnings": [],
+      "payload_summary": {
+        "keys": [
+          "data",
+          "source",
+          "source_id",
+          "observed_at",
+          "received_at",
+          "ttl_ms",
+          "freshness",
+          "correlation_id",
+          "evidence_refs"
+        ],
+        "source": "live",
+        "source_id": "system.health",
+        "freshness": "live",
+        "correlation_id": "corr_health",
+        "evidence_ref_count": 1
+      }
+    },
+    {
+      "name": "baseline_lock",
+      "path": "/api/v1/hochster/baseline/lock",
+      "required": true,
+      "status": "PASS",
+      "http_status": 200,
+      "latency_ms": 485,
+      "blockers": [],
+      "warnings": [],
+      "payload_summary": {
+        "keys": [
+          "data",
+          "report",
+          "source",
+          "source_id",
+          "observed_at",
+          "received_at",
+          "ttl_ms",
+          "freshness",
+          "correlation_id",
+          "evidence_refs",
+          "otel"
+        ],
+        "source": "live",
+        "source_id": "hochster.baseline.lock",
+        "freshness": "live",
+        "correlation_id": "corr-16f15ba72537",
+        "evidence_ref_count": 1,
+        "decision": {
+          "status": "PASS",
+          "blockers": [],
+          "exceptions": [],
+          "approved_by": "Security Swarm"
+        }
+      }
+    },
+    {
+      "name": "hochster_cluster_jobs",
+      "path": "/api/v1/hochster/cluster/jobs",
+      "required": true,
+      "status": "PASS",
+      "http_status": 200,
+      "latency_ms": 8,
+      "blockers": [],
+      "warnings": [],
+      "payload_summary": {
+        "keys": [
+          "data",
+          "source",
+          "source_id",
+          "observed_at",
+          "received_at",
+          "ttl_ms",
+          "freshness",
+          "correlation_id",
+          "evidence_refs"
+        ],
+        "source": "live",
+        "source_id": "hochster.cluster.jobs",
+        "freshness": "live",
+        "correlation_id": "corr_hochster_cluster_jobs",
+        "evidence_ref_count": 1,
+        "summary": {
+          "jobs_expected": 9,
+          "jobs_completed": 9,
+          "jobs_passed": 8,
+          "jobs_blocked": 0,
+          "missing_trace_ids": [],
+          "missing_evidence_refs": []
+        }
+      }
+    },
+    {
+      "name": "database_status",
+      "path": "/api/v1/system/database/status",
+      "required": true,
+      "status": "PASS",
+      "http_status": 200,
+      "latency_ms": 9,
+      "blockers": [],
+      "warnings": [],
+      "payload_summary": {
+        "keys": [
+          "data",
+          "source",
+          "source_id",
+          "observed_at",
+          "received_at",
+          "ttl_ms",
+          "freshness",
+          "correlation_id",
+          "evidence_refs"
+        ],
+        "source": "live",
+        "source_id": "system.database.status",
+        "freshness": "live",
+        "correlation_id": "corr_database_status",
+        "evidence_ref_count": 2
+      }
+    },
+    {
+      "name": "runtime_docker_health",
+      "path": "/api/v1/runtime/docker-health",
+      "required": false,
+      "status": "PASS",
+      "http_status": 200,
+      "latency_ms": 10,
+      "blockers": [],
+      "warnings": [],
+      "payload_summary": {
+        "keys": [
+          "data",
+          "source",
+          "source_id",
+          "observed_at",
+          "received_at",
+          "ttl_ms",
+          "freshness",
+          "correlation_id",
+          "evidence_refs"
+        ],
+        "source": "live",
+        "source_id": "runtime.docker_health",
+        "freshness": "live",
+        "correlation_id": "corr_docker_health",
+        "evidence_ref_count": 1
+      }
+    },
+    {
+      "name": "audit_events",
+      "path": "/api/v1/audit/events",
+      "required": true,
+      "status": "PASS",
+      "http_status": 200,
+      "latency_ms": 305,
+      "blockers": [],
+      "warnings": [],
+      "payload_summary": {
+        "keys": [
+          "data",
+          "source",
+          "source_id",
+          "observed_at",
+          "received_at",
+          "ttl_ms",
+          "freshness",
+          "correlation_id",
+          "evidence_refs"
+        ],
+        "source": "live",
+        "source_id": "audit.events",
+        "freshness": "live",
+        "correlation_id": "corr_audit_events",
+        "evidence_ref_count": 1
+      }
+    },
+    {
+      "name": "policy_status",
+      "path": "/api/v1/policy/status",
+      "required": true,
+      "status": "PASS",
+      "http_status": 200,
+      "latency_ms": 10,
+      "blockers": [],
+      "warnings": [],
+      "payload_summary": {
+        "keys": [
+          "data",
+          "source",
+          "source_id",
+          "observed_at",
+          "received_at",
+          "ttl_ms",
+          "freshness",
+          "correlation_id",
+          "evidence_refs"
+        ],
+        "source": "live",
+        "source_id": "policy.status",
+        "freshness": "live",
+        "correlation_id": "corr_policy_status",
+        "evidence_ref_count": 1
+      }
+    }
+  ],
+  "blockers": [],
+  "warnings": []
+}

@@ -1,0 +1,34 @@
+{
+  "phase": "V23_LOCAL_RELEASE_FREEZE",
+  "local_only": true,
+  "freeze_declared": true,
+  "deployment_performed": false,
+  "release_root": "artifacts/releases/visual-control-plane-local",
+  "source_review_status": "REVIEW_COMPLETE",
+  "manifest_verified": true,
+  "provenance_verified": true,
+  "rollback_verified": true,
+  "evidence_verified": true,
+  "hashes_verified": true,
+  "checks_failed": [],
+  "blocked_actions": [
+    "backend mutation",
+    "prompt execution",
+    "approval decision execution",
+    "production deployment",
+    "external publication",
+    "security posture change"
+  ],
+  "frozen_files": [
+    "control-plane.html",
+    "styles.css",
+    "ROLLBACK.md",
+    "README.md",
+    "manifest.json",
+    "provenance.json",
+    "release_review.json",
+    "local_operator_acceptance.json",
+    "local_visual_cockpit_stabilization_report.json",
+    "reapply_local_visual_cockpit_report.json"
+  ]
+}

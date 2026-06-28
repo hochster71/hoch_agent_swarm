@@ -1,0 +1,82 @@
+{
+  "spdxVersion": "SPDX-2.3",
+  "dataLicense": "CC0-1.0",
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "name": "hoch-agent-swarm",
+  "documentNamespace": "https://hoch-agent-swarm.local/sbom/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/1782621907411",
+  "creationInfo": {
+    "created": "2026-06-28T04:45:07.411Z",
+    "creators": [
+      "Tool: hoch-agent-swarm-generate-sbom"
+    ]
+  },
+  "packages": [
+    {
+      "SPDXID": "SPDXRef-Package--playwright-test",
+      "name": "@playwright/test",
+      "versionInfo": "^1.61.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION"
+    },
+    {
+      "SPDXID": "SPDXRef-Package--tailwindcss-cli",
+      "name": "@tailwindcss/cli",
+      "versionInfo": "^4.3.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-tailwindcss",
+      "name": "tailwindcss",
+      "versionInfo": "^4.3.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-tsx",
+      "name": "tsx",
+      "versionInfo": "^4.7.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-typescript",
+      "name": "typescript",
+      "versionInfo": "^5.3.3",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION"
+    }
+  ],
+  "documentDescribes": [
+    "SPDXRef-Package--playwright-test",
+    "SPDXRef-Package--tailwindcss-cli",
+    "SPDXRef-Package-tailwindcss",
+    "SPDXRef-Package-tsx",
+    "SPDXRef-Package-typescript"
+  ],
+  "externalDocumentRefs": [
+    {
+      "externalDocumentId": "DocumentRef-package-lock",
+      "spdxDocument": "package-lock.json",
+      "checksum": {
+        "algorithm": "SHA256",
+        "checksumValue": "77ffce18797003f0457c42341c1b28c5ca95a03787abe4fd0fc7501e3853de22"
+      }
+    }
+  ]
+}

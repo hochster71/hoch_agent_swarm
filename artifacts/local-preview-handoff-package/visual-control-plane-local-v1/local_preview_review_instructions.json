@@ -1,0 +1,16 @@
+{
+  "instructions": [
+    {
+      "step": "Verify local workspace environment is clean and integration branch is active",
+      "command": "git branch && git status"
+    },
+    {
+      "step": "Launch the local FastAPI service dynamically bound to mock telemetry status",
+      "command": "npm run start:service-container"
+    },
+    {
+      "step": "Open local browser instance to review static UI elements and indicators",
+      "url": "http://localhost:8000/dist/index.html"
+    }
+  ]
+}

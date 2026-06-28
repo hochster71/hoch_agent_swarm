@@ -1,0 +1,24 @@
+{
+  "source_branch": "feature/visual-control-plane",
+  "target_branch": "integration/visual-control-plane-local-v1",
+  "release_tag": "visual-control-plane-local-v1.0.0",
+  "pre_merge_target_head": "2ef42275ff5062c1d55c8955e18b043f89fe9fa0",
+  "post_merge_target_head": "fb9700d6ef16e53096058e5f225e36bf2cfa186d",
+  "merge_commit": "fb9700d6ef16e53096058e5f225e36bf2cfa186d",
+  "conflicts_detected": false,
+  "qa_passed": true,
+  "ci_validate_passed": true,
+  "deployment_performed": false,
+  "push_performed": false,
+  "merge_to_main_performed": false,
+  "blocked_actions": [
+    "merge directly to main",
+    "git push",
+    "production deployment",
+    "external publication",
+    "backend mutation",
+    "prompt execution",
+    "approval decision execution",
+    "security posture change"
+  ]
+}

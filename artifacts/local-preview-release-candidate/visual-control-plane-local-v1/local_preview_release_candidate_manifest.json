@@ -1,0 +1,9 @@
+{
+  "release_candidate_id": "RC-visual-control-plane-local-v1.0.0",
+  "track": "P6_LOCAL_PREVIEW_RELEASE_CANDIDATE",
+  "target_branch": "integration/visual-control-plane-local-v1",
+  "safe_base_tag": "visual-control-plane-local-v1.0.0",
+  "created_at": "2026-06-27T18:15:00-05:00",
+  "boundary_enforced": "LOCAL_PREVIEW_ONLY",
+  "deployment_performed": false
+}

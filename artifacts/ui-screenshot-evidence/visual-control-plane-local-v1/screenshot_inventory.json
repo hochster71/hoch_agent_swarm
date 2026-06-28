@@ -1,0 +1,17 @@
+{
+  "inventory": {
+    "cockpit-overview.png": "Default Cockpit View showing general Mission Control widgets.",
+    "runtime-health.png": "Live Runtime View tracking processes and jobs.",
+    "process-monitor.png": "Model Router View showing routing schemas.",
+    "evidence-status.png": "Evidence View tracking release integrity verification logs.",
+    "blocked-actions.png": "Settings View checking blocked API paths.",
+    "security-ato-readiness.png": "Readiness View verifying NIST compliance checklists.",
+    "backend-binding-readiness.png": "Local Models View demonstrating supervisor controls.",
+    "frontend-runtime-readiness.png": "AI Model Mesh View illustrating network layouts.",
+    "local-preview-release-candidate.png": "Device Swarm View displaying prototype layouts.",
+    "controlled-local-demo-readiness.png": "Mesh Sentinel View illustrating swarm sentinel nodes.",
+    "operator-acceptance-package.png": "Full Dashboard Mockup with sidebar and controls.",
+    "local-preview-handoff-package.png": "Local Preview Handoff Release layout.",
+    "final-local-preview-closure.png": "Install Review layout showing closeout parameters."
+  }
+}

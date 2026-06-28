@@ -1,0 +1,23 @@
+{
+  "autonomous_allowed": [
+    "read repository files",
+    "render phase prompts",
+    "create local evidence artifacts",
+    "create local QA scripts",
+    "run local QA",
+    "run local CI validation",
+    "create local git commits",
+    "update phase state"
+  ],
+  "human_approval_required": [
+    "git push",
+    "main merge",
+    "production deployment",
+    "production secrets",
+    "live external service binding",
+    "prompt execution",
+    "approval execution",
+    "external publication",
+    "actual ATO claim"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "accepted_tracks": {
+    "P4_SECURITY_ATO_EVIDENCE_PACKAGING": {
+      "commit": "71b6fac",
+      "status": "ATO_READY",
+      "decision": "AUTHORIZE_LOCAL_PREVIEW"
+    },
+    "P2_BACKEND_RUNTIME_BINDING_READINESS": {
+      "commit": "04a93c9",
+      "status": "READINESS_VERIFIED",
+      "decision": "READONLY_BINDING_ACCEPTED"
+    },
+    "P3_FRONTEND_RUNTIME_READINESS": {
+      "commit": "e126a01",
+      "status": "READINESS_VERIFIED",
+      "decision": "FRONTEND_BINDING_ACCEPTED"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "seal_dry_run_id": "seal-dry-1782422050-ce19c344",
+  "formal_preview_id": "preview-1782422047-e0132718",
+  "candidate_packet_id": "packet-1782422046-b23c1e2e",
+  "candidate_version": "0.1.7-candidate.3",
+  "created_at": "2026-06-25T21:14:10.006803+00:00",
+  "operator": "Michael Hoch",
+  "head_sha": "0424ac0968f64e0da90c6dbd3efe7ba37995ef78",
+  "branch": "release/v0.1.6-error-budget-aware-autonomy",
+  "release_tag": "v0.1.7-candidate.3",
+  "seal_status": "SEAL_BLOCKED",
+  "formal_release_blockers": [
+    "working tree is dirty",
+    "QA tests not fully passed",
+    "signing policy not satisfied",
+    "release tag does not point at HEAD"
+  ],
+  "seal_manifest_path": "dist/formal-previews/preview-1782422047-e0132718/formal_release_seal_dry_run_manifest.json",
+  "seal_report_path": "dist/formal-previews/preview-1782422047-e0132718/formal_release_seal_dry_run_report.md"
+}

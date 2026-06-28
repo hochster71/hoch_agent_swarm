@@ -1,0 +1,40 @@
+{
+  "spdxVersion": "SPDX-2.3",
+  "dataLicense": "CC0-1.0",
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "name": "hoch-agent-swarm",
+  "documentNamespace": "https://hoch-agent-swarm.local/sbom/0.1.4-OPERATIONAL-READINESS-AUTOPILOT/1782329314180",
+  "creationInfo": {
+    "created": "2026-06-24T19:28:34.180Z",
+    "creators": [
+      "Tool: hoch-agent-swarm-generate-sbom"
+    ]
+  },
+  "packages": [
+    {
+      "SPDXID": "SPDXRef-Package-tsx",
+      "name": "tsx",
+      "versionInfo": "^4.7.1",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION"
+    },
+    {
+      "SPDXID": "SPDXRef-Package-typescript",
+      "name": "typescript",
+      "versionInfo": "^5.3.3",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION"
+    }
+  ],
+  "documentDescribes": [
+    "SPDXRef-Package-tsx",
+    "SPDXRef-Package-typescript"
+  ],
+  "externalDocumentRefs": []
+}

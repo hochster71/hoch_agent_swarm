@@ -1,0 +1,12 @@
+{
+  "boundary_enforcement": {
+    "production_deployment": "BLOCKED",
+    "git_push": "BLOCKED",
+    "main_merge": "BLOCKED",
+    "backend_mutation": "BLOCKED",
+    "prompt_execution": "BLOCKED",
+    "approval_execution": "BLOCKED",
+    "external_publication": "BLOCKED",
+    "actual_ato_claim": "BLOCKED"
+  }
+}

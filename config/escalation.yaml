@@ -1,0 +1,53 @@
+escalation:
+  enabled: false
+  require_human_approval: true
+  daily_budget_usd: 0
+  monthly_budget_usd: 0
+  allowed_reasons:
+    - local_models_failed
+    - local_models_disagree
+    - high_value_code_review
+    - security_risk_review
+    - rmf_ato_review
+    - executive_final_review
+  blocked_task_types:
+    - credential_handling
+    - secrets_extraction
+    - destructive_file_ops
+    - money_movement
+    - external_network_attack
+    - production_deployment_without_approval
+  high_risk_keywords:
+    - delete
+    - destroy
+    - credentials
+    - password
+    - secret
+    - token
+    - deploy
+    - production
+    - rmf
+    - ato
+    - vulnerability
+    - exploit
+
+google_frontier:
+  enabled: false
+  provider: google_gemini
+  require_paid_billing: true
+  require_api_key_env: GOOGLE_API_KEY
+  require_human_approval: true
+  daily_budget_usd: 5
+  monthly_budget_usd: 50
+  max_single_call_usd: 1
+  allowed_models:
+    - gemini-3.1-flash-lite
+    - gemini-3.1-pro-preview
+    - gemini-3.5-flash
+  blocked_payload_classes:
+    - secrets
+    - credentials
+    - raw_family_data
+    - raw_work_sensitive_data
+    - destructive_commands
+    - production_deployment_without_approval

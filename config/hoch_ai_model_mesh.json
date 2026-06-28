@@ -1,0 +1,152 @@
+{
+  "schema": "hoch.ai_model_mesh.v1",
+  "truth_policy": {
+    "no_fake_completion": true,
+    "cloud_disabled_by_default": true,
+    "external_model_requires_approval": true,
+    "high_risk_prompt_requires_approval": true,
+    "all_model_calls_logged": true
+  },
+  "models": [
+    {
+      "id": "lmstudio-gemma-4-12b",
+      "provider": "LM Studio",
+      "endpoint": "http://127.0.0.1:1234/v1",
+      "host": "MacBook Pro",
+      "status": "EXPECTED",
+      "use_cases": [
+        "planning",
+        "coding",
+        "reasoning",
+        "summarization"
+      ],
+      "risk": "LOW",
+      "default_for": [
+        "Mission Commander",
+        "Prompt Librarian",
+        "QA Auditor"
+      ],
+      "truth_state": "MISSING_FROM_SCAN",
+      "truth_source": "/api/v1/discovery/ai-runtimes",
+      "promotion_rule": "Promote to LIVE only if /v1/models responds."
+    },
+    {
+      "id": "ollama-local",
+      "provider": "Ollama",
+      "endpoint": "http://127.0.0.1:11434",
+      "host": "MacBook Pro",
+      "status": "EXPECTED",
+      "use_cases": [
+        "fast local inference",
+        "fallback",
+        "utility tasks"
+      ],
+      "risk": "LOW",
+      "default_for": [
+        "Asset Scout",
+        "ConMon Watcher",
+        "Footprint Sentinel"
+      ],
+      "truth_state": "MISSING_FROM_SCAN",
+      "truth_source": "/api/v1/discovery/ai-runtimes",
+      "promotion_rule": "Promote to LIVE only if Ollama API responds on 11434."
+    }
+  ],
+  "agents": [
+    {
+      "id": "neo-commander",
+      "name": "NEO Commander",
+      "role": "Swarm mission lead",
+      "preferred_model": "lmstudio-gemma-4-12b",
+      "fallback_model": "ollama-local",
+      "status": "LIVE",
+      "truth_state": "LIVE",
+      "skills": [
+        "planning",
+        "routing",
+        "PERT",
+        "mission recovery"
+      ],
+      "risk_gate": "MEDIUM"
+    },
+    {
+      "id": "cyber-commoner",
+      "name": "Cyber Commoner",
+      "role": "NIST Rev 5 / ConMon / RMF auditor",
+      "preferred_model": "lmstudio-gemma-4-12b",
+      "fallback_model": "ollama-local",
+      "status": "PENDING",
+      "truth_state": "PENDING",
+      "skills": [
+        "NIST 800-53",
+        "POA&M",
+        "ConMon",
+        "evidence review"
+      ],
+      "risk_gate": "HIGH"
+    },
+    {
+      "id": "asset-scout",
+      "name": "Asset Scout",
+      "role": "Device and service inventory",
+      "preferred_model": "ollama-local",
+      "fallback_model": "lmstudio-gemma-4-12b",
+      "status": "LIVE",
+      "truth_state": "LIVE",
+      "skills": [
+        "asset inventory",
+        "port mapping",
+        "trust tiering"
+      ],
+      "risk_gate": "LOW"
+    },
+    {
+      "id": "footprint-sentinel",
+      "name": "Footprint Sentinel",
+      "role": "Exposure and digital footprint monitor",
+      "preferred_model": "ollama-local",
+      "fallback_model": "lmstudio-gemma-4-12b",
+      "status": "APPROVAL_REQUIRED",
+      "truth_state": "APPROVAL_REQUIRED",
+      "skills": [
+        "ports",
+        "tunnels",
+        "public exposure",
+        "SC-7"
+      ],
+      "risk_gate": "HIGH"
+    }
+  ],
+  "data_flows": [
+    {
+      "from": "Prompt Library",
+      "to": "Governance Gate",
+      "type": "prompt_selection",
+      "truth_state": "LIVE"
+    },
+    {
+      "from": "Governance Gate",
+      "to": "NEO Commander",
+      "type": "approved_prompt",
+      "truth_state": "LIVE"
+    },
+    {
+      "from": "NEO Commander",
+      "to": "LM Studio",
+      "type": "model_call",
+      "truth_state": "LIVE"
+    },
+    {
+      "from": "Asset Scout",
+      "to": "Evidence Vault",
+      "type": "inventory_evidence",
+      "truth_state": "LIVE"
+    },
+    {
+      "from": "ConMon Watcher",
+      "to": "POA&M Register",
+      "type": "finding_to_remediation",
+      "truth_state": "PENDING"
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+/Users/michaelhoch/hoch_agent_swarm_prompt_library/hoch_agent_swarm_prompt_library.csv
+/Users/michaelhoch/hoch_agent_swarm_prompt_library/hoch_agent_swarm_prompt_library.html
+/Users/michaelhoch/hoch_agent_swarm_prompt_library/hoch_agent_swarm_prompt_library.json
+/Users/michaelhoch/hoch_agent_swarm_prompt_library/hoch_agent_swarm_prompt_library.md
+/Users/michaelhoch/hoch_agent_swarm_prompt_library/hoch_agent_swarm_prompt_manifest.json

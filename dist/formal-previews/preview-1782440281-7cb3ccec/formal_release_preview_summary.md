@@ -1,0 +1,37 @@
+# Formal Release Finalization Preview — `preview-1782440281-7cb3ccec`
+
+## Metadata
+- **Candidate Packet ID**: packet-1782440280-eab308f3
+- **Version**: 0.1.7-candidate.3
+- **Generated At**: 2026-06-26T02:18:01.781157+00:00
+- **Git HEAD SHA**: `3ac5c327b868ad703bd1a4af51bd61435eedaebd`
+- **Git Branch**: `release/v0.1.6-error-budget-aware-autonomy`
+- **Release Tag**: `v0.1.7-candidate.3` (pointing at `none`)
+- **Tag Points at HEAD**: False
+- **Working Tree Clean**: False
+- **Formal Release Ready**: **NO**
+- **Preview Status**: **`PREVIEW_WARN`**
+
+---
+
+## Safety Disclaimers
+- ⚠️ **No Tags Are Created**
+- 🔒 **No Signing Is Performed**
+- 🚀 **No Publishing Is Performed**
+- 🔍 **Preview Only**
+
+---
+
+## Formal Release Blockers
+- working tree is dirty
+- QA tests not fully passed
+- signing policy not satisfied
+- release tag does not point at HEAD
+
+---
+
+## Required Operator Actions
+- commit or stash unstaged changes
+- run QA suite and fix test failures
+- enable signing provider or approve waiver
+- align release tag

@@ -1,0 +1,24 @@
+{
+  "runbook_steps": [
+    {
+      "step_number": 1,
+      "instruction": "Verify working directory is local development sandbox",
+      "command": "git branch --show-current"
+    },
+    {
+      "step_number": 2,
+      "instruction": "Launch local FastAPI application in debug/read-only mode",
+      "command": "python3 -m uvicorn backend.main:app --port 8000 --host 0.0.0.0"
+    },
+    {
+      "step_number": 3,
+      "instruction": "Open the browser to local cockpit preview index page",
+      "url": "http://localhost:8000/dist/index.html"
+    },
+    {
+      "step_number": 4,
+      "instruction": "Validate animation updates and health status rendering cleanly",
+      "verification": "Check console logs for visual adapter read-only polling ticks"
+    }
+  ]
+}

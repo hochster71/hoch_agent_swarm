@@ -1,0 +1,5 @@
+index=hoch_agent_swarm sourcetype=hoch:runtime_process
+process_type="LOCAL_MODEL_HEALTH" state="FAILED"
+| bin _time span=10m
+| stats count by _time provider
+| where count >= 3

@@ -1,0 +1,78 @@
+{
+  "cockpit_healthy": {
+    "truth": "LIVE",
+    "generated_at": "2026-06-27T18:00:00Z",
+    "cards": {
+      "runtime_process": { "truth": "LIVE" },
+      "approval_gate": { "state": "LIVE", "pending_count": 0 }
+    }
+  },
+  "cockpit_missing": null,
+  "cockpit_stale": {
+    "truth": "LIVE",
+    "generated_at": "2026-06-27T12:00:00Z",
+    "cards": {
+      "runtime_process": { "truth": "LIVE" }
+    }
+  },
+  "prompt_registry_103": {
+    "prompts": [
+      { "id": "P1", "title": "Lead Dev" }
+    ],
+    "count": 103,
+    "timestamp": "2026-06-27T18:00:00Z"
+  },
+  "prompt_registry_missing": null,
+  "known_assets_9_devices": {
+    "timestamp": "2026-06-27T18:00:00Z",
+    "devices": [
+      { "id": "d1", "ip": "10.0.0.6", "name": "command-node", "active": true }
+    ],
+    "count": 9
+  },
+  "approval_queue_pending": {
+    "approvals": [
+      {
+        "approval_id": "app-12345",
+        "status": "PENDING",
+        "task_description": "Deploy code to cluster",
+        "risk_level": "HIGH",
+        "human_approval_required": true
+      }
+    ]
+  },
+  "approval_queue_fail_closed": {
+    "approvals": [
+      {
+        "approval_id": "app-67890",
+        "status": "FAIL_CLOSED",
+        "task_description": "Unauthorized bypass attempt",
+        "risk_level": "FAIL_CLOSED",
+        "human_approval_required": true
+      }
+    ]
+  },
+  "evidence_manifest_present": {
+    "release": "0.1.6-ERROR-BUDGET-AWARE-AUTONOMY",
+    "artifacts": [
+      { "path": "mission.json", "sha256": "abc123xyz" }
+    ]
+  },
+  "evidence_manifest_missing": null,
+  "prompt_router_plan_approval": {
+    "task_description": "Publish release code",
+    "route_plan": {
+      "mission_type": "RELEASE",
+      "risk_level": "HIGH",
+      "human_approval_required": true
+    }
+  },
+  "prompt_router_fail_closed": {
+    "task_description": "Force delete models",
+    "route_plan": {
+      "mission_type": "ADMIN",
+      "risk_level": "FAIL_CLOSED",
+      "human_approval_required": true
+    }
+  }
+}

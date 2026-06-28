@@ -1,0 +1,8 @@
+{
+  "classifications": {
+    "Critical": "Must be fixed immediately (breaks layout or functionality).",
+    "Major": "High visibility issue affecting usability.",
+    "Minor": "Low visibility layout alignment or padding tweak.",
+    "Enhancement": "Recommended visual Polish for premium aesthetics."
+  }
+}

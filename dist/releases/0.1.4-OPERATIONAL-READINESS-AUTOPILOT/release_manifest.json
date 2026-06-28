@@ -1,0 +1,76 @@
+{
+  "release": {
+    "version": "0.1.4-OPERATIONAL-READINESS-AUTOPILOT",
+    "codename": "Hochster Runtime Execution Audit",
+    "generated_at": "2026-06-24T19:28:35.664Z",
+    "generated_by": "generate-release-manifest.ts",
+    "git_commit_sha": "e69c9158e63de641fbebeaebb3e6fe01c195d959",
+    "git_branch": "release/v0.1.4-operational-readiness-autopilot",
+    "ci_provider": "local"
+  },
+  "artifacts": [
+    {
+      "path": "dist/releases/0.1.4-OPERATIONAL-READINESS-AUTOPILOT/baseline_evidence_pack.json",
+      "type": "evidence_pack",
+      "sha256": "6a2a863a2a88e45ed1635f8c32aea359862062b9ebb8ec3e0c3a2e9cd8f72771"
+    },
+    {
+      "path": "dist/releases/0.1.4-OPERATIONAL-READINESS-AUTOPILOT/baseline_evidence_pack.json.sha256",
+      "type": "checksum",
+      "sha256": "7d2762dde7534683efc862b3749622f4f7b6e28f4a7eafa190c97c9acb60cb52"
+    },
+    {
+      "path": "dist/releases/0.1.4-OPERATIONAL-READINESS-AUTOPILOT/provenance.intoto.jsonl",
+      "type": "provenance",
+      "sha256": "94b6d0c0a6e411963d6b408153f41fb2abddf54a241a1c1e936bc0757d021430"
+    },
+    {
+      "path": "dist/releases/0.1.4-OPERATIONAL-READINESS-AUTOPILOT/sbom.spdx.json",
+      "type": "sbom",
+      "sha256": "72e2ef7f0fea623cc0a1dd61084349be7fccb1ece4bff78c39eecdfe4ddff0c5"
+    },
+    {
+      "path": "dist/releases/0.1.4-OPERATIONAL-READINESS-AUTOPILOT/runtime_execution_audit.json",
+      "type": "runtime_execution_audit",
+      "sha256": "0db197878cfdc511479a1796dc6e445bee80505e5ac0f47ec458043c4fa6a99d"
+    },
+    {
+      "path": "dist/releases/0.1.4-OPERATIONAL-READINESS-AUTOPILOT/tool_call_trace_summary.json",
+      "type": "tool_call_trace_summary",
+      "sha256": "5b8750369eb41af72fe52b49a8eb27274f3a6249feae77f2e684222d40104d1c"
+    },
+    {
+      "path": "dist/releases/0.1.4-OPERATIONAL-READINESS-AUTOPILOT/redaction_report.json",
+      "type": "redaction_report",
+      "sha256": "a573dc6d8a7fe51e2922181e1ae5bdef7bb4ab0e9ab28010018ce79d4bdb335e"
+    },
+    {
+      "path": "dist/releases/0.1.4-OPERATIONAL-READINESS-AUTOPILOT/approval_gate_report.json",
+      "type": "approval_gate_report",
+      "sha256": "12ce3a03ee579c8a501b375a68ef58a199bcadaefef0e09c1853f62eadda34fb"
+    }
+  ],
+  "docker": [],
+  "baseline_chain": {
+    "previous": "v0.1.1-HOCHSTER-CLUSTER-HARDENING",
+    "hardening": "v0.1.2-SUPPLY-CHAIN-PROVENANCE",
+    "current": "0.1.4-OPERATIONAL-READINESS-AUTOPILOT"
+  },
+  "integrity": {
+    "signed": false,
+    "signature_refs": [],
+    "provenance_ref": "dist/releases/0.1.4-OPERATIONAL-READINESS-AUTOPILOT/provenance.intoto.jsonl",
+    "sbom_ref": "dist/releases/0.1.4-OPERATIONAL-READINESS-AUTOPILOT/sbom.spdx.json"
+  },
+  "hochster": {
+    "cluster_jobs_completed": 9,
+    "cluster_jobs_blocked": 0,
+    "missing_trace_ids": [],
+    "missing_evidence_refs": []
+  },
+  "decision": {
+    "status": "PASS",
+    "blockers": [],
+    "warnings": []
+  }
+}

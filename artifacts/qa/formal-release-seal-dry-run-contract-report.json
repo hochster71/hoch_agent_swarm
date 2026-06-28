@@ -1,0 +1,29 @@
+{
+  "generated_at": "2026-06-27T01:37:51.343Z",
+  "status": "PASS",
+  "results": {
+    "backend_contains_api_route": true,
+    "backend_contains_list_route": true,
+    "manifest_file_written": true,
+    "report_file_written": true,
+    "backend_no_git_tag_mutation": true,
+    "backend_no_git_push_mutation": true,
+    "html_has_id_seal_panel": true,
+    "html_has_id_preview_select": true,
+    "html_has_id_operator_input": true,
+    "html_has_id_execute_button": true,
+    "html_has_id_seal_status": true,
+    "html_has_id_seal_id": true,
+    "html_has_id_manifest_path": true,
+    "html_has_id_report_path": true,
+    "html_has_id_blockers": true,
+    "html_has_id_history_list": true,
+    "appjs_has_init_function": true,
+    "appjs_has_load_function": true,
+    "appjs_has_execute_function": true,
+    "appjs_has_history_function": true,
+    "package_json_has_qa_script": true,
+    "tailwind_css_compiled_exists": true
+  },
+  "issues": []
+}

@@ -1,0 +1,9 @@
+{
+  "generated_at": "2026-06-24T19:28:36.380Z",
+  "release": "0.1.4-OPERATIONAL-READINESS-AUTOPILOT",
+  "status": "PASS",
+  "blockers": [],
+  "warnings": [
+    "Release artifacts are not cryptographically signed yet"
+  ]
+}

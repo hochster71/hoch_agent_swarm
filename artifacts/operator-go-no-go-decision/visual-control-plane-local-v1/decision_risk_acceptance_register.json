@@ -1,0 +1,7 @@
+{
+  "risk_acceptance": {
+    "unresolved_findings_count": 0,
+    "residual_risk_rating": "NONE",
+    "mitigation_verification_reference": "artifacts/post-remediation-visual-review/visual-control-plane-local-v1/residual_visual_findings_register.json"
+  }
+}

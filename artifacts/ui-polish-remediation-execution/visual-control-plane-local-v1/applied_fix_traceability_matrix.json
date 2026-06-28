@@ -1,0 +1,14 @@
+{
+  "applied_fixes": {
+    "POLISH-01": {
+      "fix_id": "FIX-01",
+      "applied": true,
+      "outcome": "Theme selector aligns perfectly within sidebar boundaries."
+    },
+    "POLISH-02": {
+      "fix_id": "FIX-02",
+      "applied": true,
+      "outcome": "Card labels display with font-weight: 600 for improved scannability."
+    }
+  }
+}

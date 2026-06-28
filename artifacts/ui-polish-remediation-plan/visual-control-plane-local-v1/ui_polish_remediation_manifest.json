@@ -1,0 +1,9 @@
+{
+  "remediation_plan_id": "REMEDIATION-PLAN-visual-control-plane-local-v1.0.0",
+  "track": "P13_LOCAL_PREVIEW_UI_POLISH_REMEDIATION_PLAN",
+  "integration_branch": "integration/visual-control-plane-local-v1",
+  "target_release": "v0.1.6-ERROR-BUDGET-AWARE-AUTONOMY",
+  "plan_status": "PLAN_COMPILED",
+  "local_preview_only": true,
+  "created_at": "2026-06-27T18:42:00-05:00"
+}

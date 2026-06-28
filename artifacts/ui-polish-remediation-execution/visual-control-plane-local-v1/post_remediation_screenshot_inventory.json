@@ -1,0 +1,56 @@
+{
+  "screenshots": [
+    {
+      "file": "cockpit-overview.png",
+      "description": "Post-remediation Cockpit Overview dashboard."
+    },
+    {
+      "file": "runtime-health.png",
+      "description": "Post-remediation live runtime status view."
+    },
+    {
+      "file": "process-monitor.png",
+      "description": "Post-remediation process execution stages."
+    },
+    {
+      "file": "evidence-status.png",
+      "description": "Post-remediation evidence checklist."
+    },
+    {
+      "file": "blocked-actions.png",
+      "description": "Post-remediation blocked action logs."
+    },
+    {
+      "file": "security-ato-readiness.png",
+      "description": "Post-remediation cybersecurity readiness controls checklist."
+    },
+    {
+      "file": "backend-binding-readiness.png",
+      "description": "Post-remediation local models and backend mapping view."
+    },
+    {
+      "file": "frontend-runtime-readiness.png",
+      "description": "Post-remediation model mesh graph representation."
+    },
+    {
+      "file": "local-preview-release-candidate.png",
+      "description": "Post-remediation release candidate metadata summary."
+    },
+    {
+      "file": "controlled-local-demo-readiness.png",
+      "description": "Post-remediation local preview runbook controls."
+    },
+    {
+      "file": "operator-acceptance-package.png",
+      "description": "Post-remediation local mockup cockpit presentation."
+    },
+    {
+      "file": "local-preview-handoff-package.png",
+      "description": "Post-remediation local release package overview."
+    },
+    {
+      "file": "final-local-preview-closure.png",
+      "description": "Post-remediation closeout parameters summary."
+    }
+  ]
+}

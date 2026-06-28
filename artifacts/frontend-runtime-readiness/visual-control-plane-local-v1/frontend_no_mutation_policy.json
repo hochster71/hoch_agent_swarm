@@ -1,0 +1,11 @@
+{
+  "policy_name": "visual-cockpit-frontend-no-mutation",
+  "active": true,
+  "enforced_rules": [
+    "No WebSocket connections created",
+    "No EventSource listeners initiated",
+    "No mutating HTTP calls (POST, PUT, PATCH, DELETE)",
+    "No execution hooks connected to active agents",
+    "No approval decision inputs wired to live backends"
+  ]
+}

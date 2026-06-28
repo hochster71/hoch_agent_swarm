@@ -1,0 +1,81 @@
+{
+  "release": {
+    "version": "0.1.5-AUTONOMOUS-REMEDIATION-SAFETY-GATES",
+    "codename": "Hochster Runtime Execution Audit",
+    "generated_at": "2026-06-24T19:42:17.064Z",
+    "generated_by": "generate-release-manifest.ts",
+    "git_commit_sha": "007d45207043fba7b4406c304cae952112be0be4",
+    "git_branch": "release/v0.1.5-autonomous-remediation-safety-gates",
+    "ci_provider": "local"
+  },
+  "artifacts": [
+    {
+      "path": "dist/releases/0.1.5-AUTONOMOUS-REMEDIATION-SAFETY-GATES/baseline_evidence_pack.json",
+      "type": "evidence_pack",
+      "sha256": "fdcec59bb24e731f3ae9b26af8366aa0e86a9e762ce73c7b9db4783e732b1595"
+    },
+    {
+      "path": "dist/releases/0.1.5-AUTONOMOUS-REMEDIATION-SAFETY-GATES/baseline_evidence_pack.json.sha256",
+      "type": "checksum",
+      "sha256": "90e34e64b3aeb42a6aa4b47f70f752be1bb4200b67bd486402a924f1eb963cc9"
+    },
+    {
+      "path": "dist/releases/0.1.5-AUTONOMOUS-REMEDIATION-SAFETY-GATES/provenance.intoto.jsonl",
+      "type": "provenance",
+      "sha256": "9b5c38b8800844cb954d159e587037e63c78d4793ab909fb1c5db4e363e04186"
+    },
+    {
+      "path": "dist/releases/0.1.5-AUTONOMOUS-REMEDIATION-SAFETY-GATES/sbom.spdx.json",
+      "type": "sbom",
+      "sha256": "170b30b0322ddcb4c34bf156ffa302435689a23cd5a3c0364f44845573d29d98"
+    },
+    {
+      "path": "dist/releases/0.1.5-AUTONOMOUS-REMEDIATION-SAFETY-GATES/verification_report.json",
+      "type": "verification_report",
+      "sha256": "e2390fa2fb171a8031c87eec7b403208f1858dbf47268bba667617c31a64e267"
+    },
+    {
+      "path": "dist/releases/0.1.5-AUTONOMOUS-REMEDIATION-SAFETY-GATES/runtime_execution_audit.json",
+      "type": "runtime_execution_audit",
+      "sha256": "5626b7e69807e5d7002e1f5737abb1b527b834ded5ba6e7769a3c829e5d3d482"
+    },
+    {
+      "path": "dist/releases/0.1.5-AUTONOMOUS-REMEDIATION-SAFETY-GATES/tool_call_trace_summary.json",
+      "type": "tool_call_trace_summary",
+      "sha256": "5ae7f4730e0f5f8360e341016e8d0172961552c9828586f9553251ea8d9fd738"
+    },
+    {
+      "path": "dist/releases/0.1.5-AUTONOMOUS-REMEDIATION-SAFETY-GATES/redaction_report.json",
+      "type": "redaction_report",
+      "sha256": "a573dc6d8a7fe51e2922181e1ae5bdef7bb4ab0e9ab28010018ce79d4bdb335e"
+    },
+    {
+      "path": "dist/releases/0.1.5-AUTONOMOUS-REMEDIATION-SAFETY-GATES/approval_gate_report.json",
+      "type": "approval_gate_report",
+      "sha256": "12ce3a03ee579c8a501b375a68ef58a199bcadaefef0e09c1853f62eadda34fb"
+    }
+  ],
+  "docker": [],
+  "baseline_chain": {
+    "previous": "v0.1.1-HOCHSTER-CLUSTER-HARDENING",
+    "hardening": "v0.1.2-SUPPLY-CHAIN-PROVENANCE",
+    "current": "0.1.5-AUTONOMOUS-REMEDIATION-SAFETY-GATES"
+  },
+  "integrity": {
+    "signed": false,
+    "signature_refs": [],
+    "provenance_ref": "dist/releases/0.1.5-AUTONOMOUS-REMEDIATION-SAFETY-GATES/provenance.intoto.jsonl",
+    "sbom_ref": "dist/releases/0.1.5-AUTONOMOUS-REMEDIATION-SAFETY-GATES/sbom.spdx.json"
+  },
+  "hochster": {
+    "cluster_jobs_completed": 9,
+    "cluster_jobs_blocked": 0,
+    "missing_trace_ids": [],
+    "missing_evidence_refs": []
+  },
+  "decision": {
+    "status": "PASS",
+    "blockers": [],
+    "warnings": []
+  }
+}
