@@ -40,6 +40,8 @@ audit_security_task:
     ## Replay Protection Status
     ## Findings
     ## Verdict
+    Do not modify the heading name (it must be exactly "## Verdict" with no additional text or colons).
+    The body of the Verdict section must contain at least 20 characters of explanatory text, including the clear decision keyword (e.g., PASS, COMPLIANT, or FAIL). For example: "The security configurations are COMPLIANT with the security requirements."
     Do not include code blocks, JSON, Python expressions, or pseudocode. Plain prose and markdown lists only.
   expected_output: >
     A structured markdown security audit report with all required sections filled in.
