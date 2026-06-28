@@ -6755,6 +6755,16 @@ def api_get_staging_dry_run():
     from backend.staging_manager import run_staging_validation
     return run_staging_validation()
 
+@app.get("/api/v1/deployment/status")
+def api_get_deployment_status():
+    from backend.deployment_manager import get_deployment_status
+    return get_deployment_status()
+
+@app.post("/api/v1/deployment/execute")
+def api_execute_production_deployment():
+    from backend.deployment_manager import execute_production_deployment
+    return execute_production_deployment()
+
 @app.get("/api/v1/policy/status")
 def api_get_policy_status():
     return {

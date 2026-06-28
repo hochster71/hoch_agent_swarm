@@ -60,7 +60,8 @@
         { id: 'clawde', label: 'CLAWDE CONTROL TOWER' },
         { id: 'handoff', label: 'RELEASE REVIEW & HANDOFF' },
         { id: 'ato', label: 'ATO EVIDENCE BUILDER' },
-        { id: 'staging', label: 'STAGING DRY RUN' }
+        { id: 'staging', label: 'STAGING DRY RUN' },
+        { id: 'deploy', label: 'PRODUCTION DEPLOYMENT' }
     ];
 
     function initNavigation() {
@@ -175,6 +176,9 @@
                 break;
             case 'staging':
                 loadStagingView();
+                break;
+            case 'deploy':
+                loadDeployView();
                 break;
         }
     }
@@ -3059,6 +3063,7 @@
         initHandoffButtons();
         initAtoButtons();
         initStagingButtons();
+        initDeployButtons();
         
         // Initial fetches
         fetchCockpit();
@@ -3522,6 +3527,75 @@
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 executeStagingDryRun();
+            });
+        }
+    }
+
+    async function loadDeployView() {
+        try {
+            const res = await fetch('/api/v1/deployment/status');
+            if (!res.ok) throw new Error('Failed to fetch deployment status');
+            const data = await res.json();
+            
+            const noticeEl = el('deploy-status-notice');
+            if (noticeEl) noticeEl.textContent = `Status: ${data.status} | Last Updated: ${data.last_updated || 'Never'}`;
+            
+            const bannerEl = el('deploy-statement-banner');
+            if (bannerEl) bannerEl.textContent = data.compliance.statement;
+            
+            const complianceEl = el('deploy-compliance-notice');
+            if (complianceEl) complianceEl.textContent = data.compliance.notice;
+            
+            const tbody = el('deploy-checkpoints-tbody');
+            if (tbody) {
+                if (data.checkpoints && data.checkpoints.length > 0) {
+                    tbody.innerHTML = data.checkpoints.map(cp => `
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                            <td style="padding: 10px; font-weight: bold; color: #fff;">${cp.name}</td>
+                            <td style="padding: 10px; text-align: right; font-weight: bold; color: ${cp.status === 'PASS' ? '#10b981' : '#f87171'};">${cp.status}</td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="2" style="text-align: center; padding: 15px; color: var(--text-secondary);">Click 'Execute Production Deployment' to deploy...</td></tr>`;
+                }
+            }
+            
+            const logsEl = el('deploy-console-logs');
+            if (logsEl) {
+                logsEl.textContent = data.logs.join('\n');
+                logsEl.scrollTop = logsEl.scrollHeight;
+            }
+        } catch (err) {
+            console.error('Failed to load deployment view:', err);
+        }
+    }
+
+    async function executeProductionDeployment() {
+        const btn = el('btn-run-deploy');
+        if (!btn) return;
+        
+        btn.disabled = true;
+        const originalText = btn.textContent;
+        btn.textContent = 'Deploying...';
+        
+        try {
+            const res = await fetch('/api/v1/deployment/execute', { method: 'POST' });
+            if (!res.ok) throw new Error('Failed to trigger deployment execution');
+            await loadDeployView();
+        } catch (err) {
+            console.error('Failed to execute production deployment:', err);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = originalText;
+        }
+    }
+
+    function initDeployButtons() {
+        const btn = el('btn-run-deploy');
+        if (btn) {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                executeProductionDeployment();
             });
         }
     }
