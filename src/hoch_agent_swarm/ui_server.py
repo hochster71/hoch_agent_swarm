@@ -24,7 +24,9 @@ from typing import Any
 # ---------------------------------------------------------------------------
 _HERE = Path(__file__).resolve().parent
 PROJECT_ROOT = _HERE.parent.parent  # src/hoch_agent_swarm -> src -> project root
-if not (PROJECT_ROOT / "pyproject.toml").exists():
+if not (PROJECT_ROOT / "artifacts").exists() and Path("/app/artifacts").exists():
+    PROJECT_ROOT = Path("/app")
+elif not (PROJECT_ROOT / "pyproject.toml").exists():
     PROJECT_ROOT = Path.cwd()
 
 ARTIFACTS_DIR = PROJECT_ROOT / "artifacts"

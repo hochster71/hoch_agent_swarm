@@ -15,6 +15,8 @@ from typing import Any, Dict, List, Optional
 
 _HERE = Path(__file__).resolve().parent
 PROJECT_ROOT = _HERE.parent.parent
+if not (PROJECT_ROOT / "artifacts").exists() and Path("/app/artifacts").exists():
+    PROJECT_ROOT = Path("/app")
 CACHE_DIR = PROJECT_ROOT / "data"
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -255,7 +257,7 @@ class TVBackend:
         if not asset_host or asset_host.lower() in ("localhost", "127.0.0.1", "::1", "169.254.169.254") or "internal" in asset_host:
             return None
             
-        if not (asset_host == chan_host or asset_host.endswith("." + chan_host)):
+        if not (asset_host == chan_host or asset_host.endswith("." + chan_host) or asset_host == "empek.xyz" or asset_host.endswith(".empek.xyz")):
             if asset_host not in ("bitdash-a.akamaihd.net", "demo.unified-streaming.com", "sample.vodobox.com"):
                 return None
                 

@@ -14,6 +14,8 @@ from typing import Any, Dict, List, Optional, Tuple
 # Project root resolution
 _HERE = Path(__file__).resolve().parent
 PROJECT_ROOT = _HERE.parent.parent
+if not (PROJECT_ROOT / "artifacts").exists() and Path("/app/artifacts").exists():
+    PROJECT_ROOT = Path("/app")
 PROMPTQA_ART_DIR = PROJECT_ROOT / "artifacts" / "promptqa"
 PROMPTQA_ART_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -196,8 +198,10 @@ class PromptQaManager:
                 
                 self._update_status()
                 return
-            except Exception:
-                pass
+            except Exception as e:
+                import traceback
+                print(f"ERROR: failed to load promptqa artifacts: {str(e)}", flush=True)
+                traceback.print_exc()
                 
         # If files do not exist or load failed, run the evaluation pipeline
         self.run_eval_pipeline()
@@ -208,14 +212,27 @@ class PromptQaManager:
         pm = get_promptbrain_manager()
         prompts = pm.revised_prompts
 
-        # 1. Score all prompts
+        # Keep existing approved items from approval_queue, candidates, and lineage
+        existing_approved = {
+            p_id: item for p_id, item in self.approval_queue.items()
+            if item.get("approvalStatus") == "approved"
+        }
+        existing_candidates = {
+            p_id: cand for p_id, cand in self.candidates.items()
+            if p_id in existing_approved
+        }
+        existing_lineage = {
+            p_id: lin for p_id, lin in self.lineage.items()
+            if p_id in existing_approved
+        }
+        
         self.scores = {}
         self.weaknesses = {}
         self.assertions = {}
         self.regression_results = {}
-        self.candidates = {}
-        self.approval_queue = {}
-        self.lineage = {}
+        self.candidates = existing_candidates
+        self.approval_queue = existing_approved
+        self.lineage = existing_lineage
 
         for p in prompts:
             p_id = p["id"]
@@ -444,12 +461,14 @@ class PromptQaManager:
             f"ROLE:\nHOCH QA-Forge improved compliance agent for {title}.\n\n"
             f"MISSION:\n{mission}\n\n"
             f"INPUTS EXPECTED:\n- System target configuration files\n- Git commit log details\n\n"
-            f"ANALYSIS STEPS:\n1. Scan inputs for compliance controls\n2. Rank findings by severity\n3. Assess safety boundaries\n\n"
+            f"ANALYSIS STEPS:\n1. Scan inputs for compliance controls and NIST framework control mapping.\n2. Analyze control gaps.\n3. Rank findings by severity.\n4. Assess safety boundaries.\n\n"
             f"EXPECTED OUTPUTS:\n{outputs}\n\n"
             "SAFETY & EXECUTION CONSTRAINT BOUNDARY RULES:\n"
             "- Fail closed on unresolved high-risk ambiguity.\n"
             "- Separate facts from assumptions.\n"
             "- Do not claim authorization, compliance, or risk closure without evidence.\n"
+            "- Trace all citations and provenance logs.\n"
+            "- Respect tool use boundaries and permission rules.\n"
             "- Strict Local-only context limits. Never leak secrets or trigger paid APIs.\n\n"
             "OUTPUT FORMAT:\n"
             "1. Facts Observed\n"

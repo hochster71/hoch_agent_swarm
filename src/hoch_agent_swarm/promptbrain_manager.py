@@ -16,6 +16,8 @@ from typing import Any, Dict, List, Optional
 # Project root resolution
 _HERE = Path(__file__).resolve().parent
 PROJECT_ROOT = _HERE.parent.parent
+if not (PROJECT_ROOT / "artifacts").exists() and Path("/app/artifacts").exists():
+    PROJECT_ROOT = Path("/app")
 ARTIFACTS_DIR = PROJECT_ROOT / "artifacts"
 PROMPTBRAIN_ART_DIR = ARTIFACTS_DIR / "promptbrain"
 PROMPTBRAIN_ART_DIR.mkdir(parents=True, exist_ok=True)
@@ -46,7 +48,7 @@ MISSING_FAMILIES = [
     {"id": "PROMPT-008", "category": "Prompt Governance", "industry": "All Industries", "title": "Prompt Drift Detection Agent", "mission": "Scan live prompt usage for runtime variations or deviation from baseline behavior.", "outputs": "Runtime drift alerts, configuration logs"},
 
     {"id": "GAP-001", "category": "Gap Analysis", "industry": "All Industries", "title": "Universal Gap Analysis Commander", "mission": "Coordinate full-system checks for compliance, prompt, and tool coverage gaps.", "outputs": "Universal gap matrices, remediation orders list"},
-    {"id": "GAP-002", "category": "Gap Analysis", "industry": "All Industries", "title": "Gap-to-POA&M Converter", "mission": "Translate identified system deficiencies directly into actionable Plans of Action & Milestones.", "outputs": "POA&M trackers, milestone maps"},
+    {"id": "GAP-002", "category": "Gap Analysis", "industry": "All Industries", "title": "Gap-to-POA&M Converter", "mission": "Translate identified system deficiencies directly into actionable Plans of Action & Milestones.", "outputs": "POA&M trackers, milestone maps, actionable remediation milestones"},
     {"id": "GAP-003", "category": "Gap Analysis", "industry": "All Industries", "title": "Remediation Dependency Planner", "mission": "Order and sequence remediation activities based on technical and operational dependencies.", "outputs": "Dependency topologies, remediation checklists"},
     {"id": "GAP-004", "category": "Gap Analysis", "industry": "All Industries", "title": "Closure Evidence Validator", "mission": "Verify that artifacts submitted for POA&M closure satisfy all required control objectives.", "outputs": "Evidence audits, validation criteria lists"},
     {"id": "GAP-005", "category": "Gap Analysis", "industry": "All Industries", "title": "Compensating Control Designer", "mission": "Design alternative controls when standard requirements cannot be fully implemented due to platform limits.", "outputs": "Compensating control definitions, risk mitigation plans"},
@@ -122,12 +124,17 @@ def build_safety_prompt(p_id: str, title: str, mission: str, outputs: str) -> st
     return (
         f"You are the HOCH {title} (ID: {p_id}).\n\n"
         f"MISSION:\n{mission}\n\n"
+        f"EXPECTED INPUTS:\n- Local system configurations and compliance data.\n\n"
         f"EXPECTED OUTPUTS:\n{outputs}\n\n"
         "GOVERNANCE & EXECUTION CONSTRAINT BOUNDARY RULES:\n"
         "- Fail closed on unresolved high-risk ambiguity.\n"
         "- Separate facts from assumptions.\n"
         "- Do not claim authorization, compliance, or risk closure without evidence.\n"
-        "- Strict Local-only context limits. Never leak secrets or trigger paid APIs.\n\n"
+        "- Strict Local-only context limits. Never leak secrets or trigger paid APIs.\n"
+        "- Map findings to NIST, FedRAMP, CMMC, or ISO control framework standards.\n"
+        "- Document gap remediation timelines when applicable.\n"
+        "- Verify tool permissions and respect execution boundaries.\n"
+        "- Maintain exact citations and provenance records for all data inputs.\n\n"
         "OUTPUT FORMAT MANDATE:\n"
         "Every execution must produce a structured output in plain text followed by a clean, valid machine-readable JSON block containing the summary parameters.\n"
         "Format exactly as:\n"
@@ -509,7 +516,7 @@ class PromptBrainManager:
         """Merges imported prompts with generated prompts, exporting master manifests in JSON, MD, and CSV."""
         all_ids = set(p["id"] for p in self.prompts)
         
-        self.revised_prompts = list(self.prompts)
+        self.revised_prompts = [dict(p) for p in self.prompts]
         
         for gp in self.generated_prompts:
             if gp["id"] in all_ids:
@@ -518,6 +525,26 @@ class PromptBrainManager:
                 self.revised_prompts.append(gp_copy)
             else:
                 self.revised_prompts.append(gp)
+
+        # Overlay approved rewrite candidates
+        approval_queue_path = PROJECT_ROOT / "artifacts" / "promptqa" / "prompt_approval_queue.json"
+        candidates_path = PROJECT_ROOT / "artifacts" / "promptqa" / "prompt_rewrite_candidates.json"
+        if approval_queue_path.exists() and candidates_path.exists():
+            try:
+                with open(approval_queue_path, "r") as f:
+                    queue = json.load(f)
+                with open(candidates_path, "r") as f:
+                    candidates = json.load(f)
+                for p_id, item in queue.items():
+                    if item.get("approvalStatus") == "approved" and p_id in candidates:
+                        rewritten = candidates[p_id].get("rewrittenPrompt")
+                        if rewritten:
+                            for p in self.revised_prompts:
+                                if p["id"] == p_id:
+                                    p["prompt"] = rewritten
+                                    break
+            except Exception:
+                pass
 
         self.save_revised_master_library()
 
@@ -807,21 +834,28 @@ class PromptBrainManager:
         t_lower = (title or "").lower()
         p_lower = (prompt or "").lower()
 
-        if "nist" in p_lower or "800-53" in p_lower:
+        # Strip safety boundaries section to avoid matching template compliance keywords
+        clean_p = p_lower
+        for marker in ["governance & execution", "safety & execution", "constraint boundary rules", "safety_boundaries"]:
+            if marker in clean_p:
+                clean_p = clean_p.split(marker)[0]
+                break
+
+        if "nist" in clean_p or "800-53" in clean_p or "800-53" in t_lower:
             fws.append("NIST SP 800-53 Rev. 5")
-        if "rmf" in p_lower or "800-37" in p_lower:
+        if "rmf" in clean_p or "800-37" in clean_p or "800-37" in t_lower:
             fws.append("NIST SP 800-37 RMF")
-        if "continuous monitoring" in p_lower or "conmon" in p_lower:
+        if "continuous monitoring" in clean_p or "conmon" in clean_p or "continuous monitoring" in t_lower:
             fws.append("NIST SP 800-137 Continuous Monitoring")
-        if "cui" in p_lower or "800-171" in p_lower:
+        if "cui" in clean_p or "800-171" in clean_p or "800-171" in t_lower:
             fws.append("NIST SP 800-171 CUI")
         if "ai" in c_lower or "ai" in t_lower:
             fws.append("NIST AI RMF")
-        if "fedramp" in p_lower:
+        if "fedramp" in clean_p or "fedramp" in t_lower:
             fws.append("FedRAMP")
-        if "cmmc" in p_lower:
+        if "cmmc" in clean_p or "cmmc" in t_lower:
             fws.append("CMMC 2.0")
-        if "cjis" in p_lower:
+        if "cjis" in clean_p or "cjis" in t_lower:
             fws.append("CJIS Security Policy")
         if "irs" in p_lower or "1075" in p_lower:
             fws.append("IRS Pub 1075")

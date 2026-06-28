@@ -18,8 +18,8 @@
       "expected_prompt_id": "PUBHEALTH-001",
       "top_recommendations": [
         "PUBHEALTH-001",
-        "BRAIN-007",
-        "BRAIN-001"
+        "IND-008",
+        "IND-009"
       ],
       "passed": true
     },
@@ -28,8 +28,8 @@
       "expected_prompt_id": "CONTRACT-001",
       "top_recommendations": [
         "CONTRACT-001",
-        "RECORDS-001",
-        "IND-011"
+        "IND-011",
+        "LEG-001"
       ],
       "passed": true
     },
@@ -39,7 +39,7 @@
       "top_recommendations": [
         "SMARTCITY-001",
         "DBSEC-010",
-        "CRM-001"
+        "AG-001"
       ],
       "passed": true
     },
@@ -48,11 +48,11 @@
       "expected_prompt_id": "FINOPS-001",
       "top_recommendations": [
         "FINOPS-001",
-        "CHG-012",
-        "AUD-001"
+        "FIN-001",
+        "LEG-001"
       ],
       "passed": true
     }
   ],
-  "timestamp": "2026-06-28T21:45:05.086058+00:00"
+  "timestamp": "2026-06-28T22:56:26.661226+00:00"
 }

@@ -157,7 +157,7 @@
     "industry": "All Industries",
     "title": "Gap-to-POA&M Converter",
     "mission": "Translate identified system deficiencies directly into actionable Plans of Action & Milestones.",
-    "outputs": "POA&M trackers, milestone maps"
+    "outputs": "POA&M trackers, milestone maps, actionable remediation milestones"
   },
   {
     "id": "GAP-003",

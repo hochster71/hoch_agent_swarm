@@ -35,6 +35,7 @@ This document maps the coverage metrics of the HOCH Agent Swarm prompt library.
 | Framework | Prompt Count |
 | --- | --- |
 | CIS Controls | 31 |
+| CJIS Security Policy | 1 |
 | DISA STIGs | 2 |
 | DoD Zero Trust | 1 |
 | FedRAMP | 2 |

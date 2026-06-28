@@ -122,7 +122,15 @@ def test_validation_gap_closures(tmp_path):
     """)
     br.conn.commit()
 
-    res = br.validate_gap_closures()
+    from unittest.mock import patch, MagicMock
+    mock_qa = MagicMock()
+    mock_qa.scores = {}
+    mock_qa.regression_results = {}
+
+    with patch("hoch_agent_swarm.promptqa_manager.get_promptqa_manager", return_value=mock_qa):
+        with patch("src.hoch_agent_swarm.promptqa_manager.get_promptqa_manager", return_value=mock_qa, create=True):
+            res = br.validate_gap_closures()
+        
     assert res["status"] == "AUDITED"
     # Find BRAIN-001 gap closure
     closures = res["closures"]

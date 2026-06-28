@@ -17,6 +17,8 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 # Project root resolution
 _HERE = Path(__file__).resolve().parent
 PROJECT_ROOT = _HERE.parent.parent
+if not (PROJECT_ROOT / "artifacts").exists() and Path("/app/artifacts").exists():
+    PROJECT_ROOT = Path("/app")
 DB_DIR = PROJECT_ROOT / "data"
 DB_DIR.mkdir(parents=True, exist_ok=True)
 DB_PATH = DB_DIR / "brain_evidence.db"

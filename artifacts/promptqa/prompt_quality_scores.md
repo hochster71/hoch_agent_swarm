@@ -2,190 +2,190 @@
 
 | Prompt ID | Overall Score | Band | Passed Tests |
 | --- | --- | --- | --- |
-| AERO-001 | 57.1% | Needs Improvement | PASS |
-| AG-001 | 83.8% | Acceptable | PASS |
-| AI-001 | 61.9% | Needs Improvement | PASS |
-| AI-002 | 61.0% | Needs Improvement | PASS |
-| AI-003 | 62.9% | Needs Improvement | PASS |
-| AIRT-016 | 75.2% | Acceptable | PASS |
-| ARCHSEC-008 | 73.3% | Acceptable | PASS |
-| AUD-001 | 62.9% | Needs Improvement | PASS |
-| AUD-002 | 61.9% | Needs Improvement | PASS |
-| AUD-003 | 58.1% | Needs Improvement | PASS |
-| AUD-004 | 55.2% | Needs Improvement | PASS |
-| AUTHZ-027 | 75.2% | Acceptable | PASS |
-| BIZ-019 | 73.3% | Acceptable | PASS |
-| BLUE-017 | 73.3% | Acceptable | PASS |
-| BRAIN-001 | 82.9% | Acceptable | PASS |
-| BRAIN-002 | 82.9% | Acceptable | PASS |
-| BRAIN-003 | 82.9% | Acceptable | PASS |
-| BRAIN-004 | 82.9% | Acceptable | PASS |
-| BRAIN-005 | 82.9% | Acceptable | PASS |
-| BRAIN-006 | 82.9% | Acceptable | PASS |
-| BRAIN-007 | 84.8% | Acceptable | PASS |
-| BRAIN-008 | 82.9% | Acceptable | PASS |
-| BRAIN-009 | 84.8% | Acceptable | PASS |
-| BRAIN-010 | 82.9% | Acceptable | PASS |
-| BREAK-021 | 73.3% | Acceptable | PASS |
-| CHAOS-024 | 73.3% | Acceptable | PASS |
-| CHG-012 | 73.3% | Acceptable | PASS |
-| CODE-001 | 59.0% | Needs Improvement | PASS |
-| CODE-002 | 58.1% | Needs Improvement | PASS |
-| CODE-003 | 58.1% | Needs Improvement | PASS |
-| CODE-004 | 62.9% | Needs Improvement | PASS |
-| CODE-005 | 58.1% | Needs Improvement | PASS |
-| CONST-001 | 83.8% | Acceptable | PASS |
-| CONTRACT-001 | 83.8% | Acceptable | PASS |
-| CORR-001 | 83.8% | Acceptable | PASS |
-| COURTS-001 | 83.8% | Acceptable | PASS |
-| CRM-001 | 85.7% | Strong | PASS |
-| DAST-001 | 58.1% | Needs Improvement | PASS |
-| DAST-002 | 59.0% | Needs Improvement | PASS |
-| DAST-003 | 58.1% | Needs Improvement | PASS |
-| DBSEC-010 | 73.3% | Acceptable | PASS |
-| DEV-001 | 63.8% | Needs Improvement | PASS |
-| DEV-002 | 57.1% | Needs Improvement | PASS |
-| DEV-003 | 53.3% | Needs Improvement | PASS |
-| DEV-004 | 55.2% | Needs Improvement | PASS |
-| DEV-005 | 57.1% | Needs Improvement | PASS |
-| DEV-006 | 57.1% | Needs Improvement | PASS |
-| DOD-001 | 61.9% | Needs Improvement | PASS |
-| DOD-002 | 61.9% | Needs Improvement | PASS |
-| DOD-003 | 61.0% | Needs Improvement | PASS |
-| DRIFT-013 | 73.3% | Acceptable | PASS |
-| DRQA-023 | 73.3% | Acceptable | PASS |
-| EDU-001 | 61.9% | Needs Improvement | PASS |
-| ELECTION-001 | 83.8% | Acceptable | PASS |
-| EMERG-001 | 85.7% | Strong | PASS |
-| EN-001 | 62.9% | Needs Improvement | PASS |
-| EN-002 | 57.1% | Needs Improvement | PASS |
-| ENV-001 | 83.8% | Acceptable | PASS |
-| EXCEPT-022 | 73.3% | Acceptable | PASS |
-| EXECRISK-030 | 73.3% | Acceptable | PASS |
-| FAC-001 | 83.8% | Acceptable | PASS |
-| FAR-001 | 83.8% | Acceptable | PASS |
-| FIN-001 | 56.2% | Needs Improvement | PASS |
-| FIN-002 | 57.1% | Needs Improvement | PASS |
-| FINOPS-001 | 83.8% | Acceptable | PASS |
-| FOOD-001 | 85.7% | Strong | PASS |
-| GAP-001 | 84.8% | Acceptable | PASS |
-| GAP-002 | 81.0% | Acceptable | PASS |
-| GAP-003 | 82.9% | Acceptable | PASS |
-| GAP-004 | 82.9% | Acceptable | PASS |
-| GAP-005 | 82.9% | Acceptable | PASS |
-| GAP-006 | 82.9% | Acceptable | PASS |
-| GAP-007 | 82.9% | Acceptable | PASS |
-| GAP-008 | 82.9% | Acceptable | PASS |
-| GOV-001 | 59.0% | Needs Improvement | PASS |
-| GOV-002 | 62.9% | Needs Improvement | PASS |
-| GOVFRAME-001 | 85.7% | Strong | PASS |
-| GOVFRAME-002 | 85.7% | Strong | PASS |
-| GOVFRAME-003 | 85.7% | Strong | PASS |
-| GOVFRAME-004 | 85.7% | Strong | PASS |
-| GOVFRAME-005 | 85.7% | Strong | PASS |
-| GOVFRAME-006 | 83.8% | Acceptable | PASS |
-| GOVFRAME-007 | 83.8% | Acceptable | PASS |
-| GOVFRAME-008 | 83.8% | Acceptable | PASS |
-| GOVFRAME-009 | 83.8% | Acceptable | PASS |
-| GOVFRAME-010 | 83.8% | Acceptable | PASS |
-| GOVFRAME-011 | 83.8% | Acceptable | PASS |
-| GOVFRAME-012 | 83.8% | Acceptable | PASS |
-| GOVFRAME-013 | 85.7% | Strong | PASS |
-| GOVFRAME-014 | 83.8% | Acceptable | PASS |
-| GOVFRAME-015 | 83.8% | Acceptable | PASS |
-| GOVFRAME-016 | 83.8% | Acceptable | PASS |
-| GOVFRAME-017 | 83.8% | Acceptable | PASS |
-| GOVFRAME-018 | 83.8% | Acceptable | PASS |
-| GRANTS-001 | 83.8% | Acceptable | PASS |
-| HC-001 | 64.8% | Needs Improvement | PASS |
-| HC-002 | 60.0% | Needs Improvement | PASS |
-| HOSP-001 | 83.8% | Acceptable | PASS |
-| HR-001 | 83.8% | Acceptable | PASS |
-| IAM-009 | 75.2% | Acceptable | PASS |
-| IND-001 | 68.6% | Needs Improvement | PASS |
-| IND-002 | 65.7% | Needs Improvement | PASS |
-| IND-003 | 65.7% | Needs Improvement | PASS |
-| IND-004 | 65.7% | Needs Improvement | PASS |
-| IND-005 | 65.7% | Needs Improvement | PASS |
-| IND-006 | 65.7% | Needs Improvement | PASS |
-| IND-007 | 65.7% | Needs Improvement | PASS |
-| IND-008 | 65.7% | Needs Improvement | PASS |
-| IND-009 | 67.6% | Needs Improvement | PASS |
-| IND-010 | 65.7% | Needs Improvement | PASS |
-| IND-011 | 65.7% | Needs Improvement | PASS |
-| IND-012 | 65.7% | Needs Improvement | PASS |
-| IND-013 | 68.6% | Needs Improvement | PASS |
-| IND-014 | 68.6% | Needs Improvement | PASS |
-| IND-015 | 69.5% | Needs Improvement | PASS |
-| INS-001 | 83.8% | Acceptable | PASS |
-| IR-001 | 58.1% | Needs Improvement | PASS |
-| LEG-001 | 56.2% | Needs Improvement | PASS |
-| LOG-011 | 73.3% | Acceptable | PASS |
-| MEDIA-001 | 83.8% | Acceptable | PASS |
-| MFG-001 | 59.0% | Needs Improvement | PASS |
-| MFG-002 | 61.0% | Needs Improvement | PASS |
-| MIG-025 | 75.2% | Acceptable | PASS |
-| MOB-QA-001 | 75.2% | Acceptable | PASS |
-| NONPROFIT-001 | 83.8% | Acceptable | PASS |
-| OPS-001 | 59.0% | Needs Improvement | PASS |
-| OPS-002 | 56.2% | Needs Improvement | PASS |
-| OSSLIC-015 | 73.3% | Acceptable | PASS |
-| PATCH-006 | 73.3% | Acceptable | PASS |
-| PENTEST-007 | 73.3% | Acceptable | PASS |
-| PMO-001 | 83.8% | Acceptable | PASS |
-| PRIV-003 | 73.3% | Acceptable | PASS |
-| PROC-001 | 83.8% | Acceptable | PASS |
-| PROMPT-001 | 82.9% | Acceptable | PASS |
-| PROMPT-002 | 82.9% | Acceptable | PASS |
-| PROMPT-003 | 82.9% | Acceptable | PASS |
-| PROMPT-004 | 82.9% | Acceptable | PASS |
-| PROMPT-005 | 84.8% | Acceptable | PASS |
-| PROMPT-006 | 84.8% | Acceptable | PASS |
-| PROMPT-007 | 82.9% | Acceptable | PASS |
-| PROMPT-008 | 82.9% | Acceptable | PASS |
-| PROP-001 | 81.9% | Acceptable | PASS |
-| PROSERV-001 | 83.8% | Acceptable | PASS |
-| PROV-014 | 75.2% | Acceptable | PASS |
-| PUBHEALTH-001 | 83.8% | Acceptable | PASS |
-| PURPLE-018 | 73.3% | Acceptable | PASS |
-| QA-001 | 64.8% | Needs Improvement | PASS |
-| QA-002 | 58.1% | Needs Improvement | PASS |
-| QA-003 | 64.8% | Needs Improvement | PASS |
-| QA-004 | 55.2% | Needs Improvement | PASS |
-| QA-005 | 58.1% | Needs Improvement | PASS |
-| QA-006 | 58.1% | Needs Improvement | PASS |
-| QA-007 | 53.3% | Needs Improvement | PASS |
-| RATE-026 | 73.3% | Acceptable | PASS |
-| RECORDS-001 | 83.8% | Acceptable | PASS |
-| REL-004 | 73.3% | Acceptable | PASS |
-| RESEARCH-001 | 83.8% | Acceptable | PASS |
-| RET-001 | 59.0% | Needs Improvement | PASS |
-| RET-002 | 57.1% | Needs Improvement | PASS |
-| SAAS-001 | 62.9% | Needs Improvement | PASS |
-| SAAS-002 | 56.2% | Needs Improvement | PASS |
-| SAST-001 | 61.0% | Needs Improvement | PASS |
-| SAST-002 | 56.2% | Needs Improvement | PASS |
-| SAST-003 | 58.1% | Needs Improvement | PASS |
-| SAST-004 | 58.1% | Needs Improvement | PASS |
-| SDLC-028 | 73.3% | Acceptable | PASS |
-| SLG-001 | 61.0% | Needs Improvement | PASS |
-| SMARTCITY-001 | 83.8% | Acceptable | PASS |
-| SWARM-001 | 82.9% | Acceptable | PASS |
-| SWARM-002 | 82.9% | Acceptable | PASS |
-| SWARM-003 | 84.8% | Acceptable | PASS |
-| SWARM-004 | 84.8% | Acceptable | PASS |
-| SWARM-005 | 82.9% | Acceptable | PASS |
-| SWARM-006 | 82.9% | Acceptable | PASS |
-| SWARM-007 | 82.9% | Acceptable | PASS |
-| SWARM-008 | 82.9% | Acceptable | PASS |
-| SWARM-009 | 82.9% | Acceptable | PASS |
-| SWARM-010 | 82.9% | Acceptable | PASS |
-| SWARM-011 | 82.9% | Acceptable | PASS |
-| SWARM-012 | 82.9% | Acceptable | PASS |
-| TEL-001 | 60.0% | Needs Improvement | PASS |
-| THREAT-002 | 73.3% | Acceptable | PASS |
-| TRAIN-001 | 83.8% | Acceptable | PASS |
-| TRN-001 | 57.1% | Needs Improvement | PASS |
-| UXSEC-020 | 75.2% | Acceptable | PASS |
-| VULN-005 | 73.3% | Acceptable | PASS |
-| XWALK-029 | 75.2% | Acceptable | PASS |
+| AERO-001 | 91.4% | Strong | PASS |
+| AG-001 | 91.4% | Strong | PASS |
+| AI-001 | 91.4% | Strong | PASS |
+| AI-002 | 91.4% | Strong | PASS |
+| AI-003 | 91.4% | Strong | PASS |
+| AIRT-016 | 90.5% | Strong | PASS |
+| ARCHSEC-008 | 90.5% | Strong | PASS |
+| AUD-001 | 90.5% | Strong | PASS |
+| AUD-002 | 90.5% | Strong | PASS |
+| AUD-003 | 90.5% | Strong | PASS |
+| AUD-004 | 90.5% | Strong | PASS |
+| AUTHZ-027 | 90.5% | Strong | PASS |
+| BIZ-019 | 90.5% | Strong | PASS |
+| BLUE-017 | 90.5% | Strong | PASS |
+| BRAIN-001 | 90.5% | Strong | PASS |
+| BRAIN-002 | 90.5% | Strong | PASS |
+| BRAIN-003 | 90.5% | Strong | PASS |
+| BRAIN-004 | 90.5% | Strong | PASS |
+| BRAIN-005 | 90.5% | Strong | PASS |
+| BRAIN-006 | 90.5% | Strong | PASS |
+| BRAIN-007 | 90.5% | Strong | PASS |
+| BRAIN-008 | 90.5% | Strong | PASS |
+| BRAIN-009 | 90.5% | Strong | PASS |
+| BRAIN-010 | 90.5% | Strong | PASS |
+| BREAK-021 | 90.5% | Strong | PASS |
+| CHAOS-024 | 90.5% | Strong | PASS |
+| CHG-012 | 90.5% | Strong | PASS |
+| CODE-001 | 90.5% | Strong | PASS |
+| CODE-002 | 90.5% | Strong | PASS |
+| CODE-003 | 90.5% | Strong | PASS |
+| CODE-004 | 90.5% | Strong | PASS |
+| CODE-005 | 90.5% | Strong | PASS |
+| CONST-001 | 91.4% | Strong | PASS |
+| CONTRACT-001 | 91.4% | Strong | PASS |
+| CORR-001 | 91.4% | Strong | PASS |
+| COURTS-001 | 91.4% | Strong | PASS |
+| CRM-001 | 91.4% | Strong | PASS |
+| DAST-001 | 90.5% | Strong | PASS |
+| DAST-002 | 90.5% | Strong | PASS |
+| DAST-003 | 90.5% | Strong | PASS |
+| DBSEC-010 | 90.5% | Strong | PASS |
+| DEV-001 | 90.5% | Strong | PASS |
+| DEV-002 | 90.5% | Strong | PASS |
+| DEV-003 | 90.5% | Strong | PASS |
+| DEV-004 | 90.5% | Strong | PASS |
+| DEV-005 | 90.5% | Strong | PASS |
+| DEV-006 | 90.5% | Strong | PASS |
+| DOD-001 | 91.4% | Strong | PASS |
+| DOD-002 | 91.4% | Strong | PASS |
+| DOD-003 | 91.4% | Strong | PASS |
+| DRIFT-013 | 90.5% | Strong | PASS |
+| DRQA-023 | 90.5% | Strong | PASS |
+| EDU-001 | 91.4% | Strong | PASS |
+| ELECTION-001 | 91.4% | Strong | PASS |
+| EMERG-001 | 91.4% | Strong | PASS |
+| EN-001 | 91.4% | Strong | PASS |
+| EN-002 | 91.4% | Strong | PASS |
+| ENV-001 | 91.4% | Strong | PASS |
+| EXCEPT-022 | 90.5% | Strong | PASS |
+| EXECRISK-030 | 90.5% | Strong | PASS |
+| FAC-001 | 91.4% | Strong | PASS |
+| FAR-001 | 91.4% | Strong | PASS |
+| FIN-001 | 91.4% | Strong | PASS |
+| FIN-002 | 91.4% | Strong | PASS |
+| FINOPS-001 | 91.4% | Strong | PASS |
+| FOOD-001 | 91.4% | Strong | PASS |
+| GAP-001 | 90.5% | Strong | PASS |
+| GAP-002 | 90.5% | Strong | PASS |
+| GAP-003 | 90.5% | Strong | PASS |
+| GAP-004 | 90.5% | Strong | PASS |
+| GAP-005 | 90.5% | Strong | PASS |
+| GAP-006 | 90.5% | Strong | PASS |
+| GAP-007 | 90.5% | Strong | PASS |
+| GAP-008 | 90.5% | Strong | PASS |
+| GOV-001 | 91.4% | Strong | PASS |
+| GOV-002 | 91.4% | Strong | PASS |
+| GOVFRAME-001 | 91.4% | Strong | PASS |
+| GOVFRAME-002 | 91.4% | Strong | PASS |
+| GOVFRAME-003 | 91.4% | Strong | PASS |
+| GOVFRAME-004 | 91.4% | Strong | PASS |
+| GOVFRAME-005 | 91.4% | Strong | PASS |
+| GOVFRAME-006 | 91.4% | Strong | PASS |
+| GOVFRAME-007 | 91.4% | Strong | PASS |
+| GOVFRAME-008 | 91.4% | Strong | PASS |
+| GOVFRAME-009 | 91.4% | Strong | PASS |
+| GOVFRAME-010 | 91.4% | Strong | PASS |
+| GOVFRAME-011 | 91.4% | Strong | PASS |
+| GOVFRAME-012 | 91.4% | Strong | PASS |
+| GOVFRAME-013 | 91.4% | Strong | PASS |
+| GOVFRAME-014 | 91.4% | Strong | PASS |
+| GOVFRAME-015 | 91.4% | Strong | PASS |
+| GOVFRAME-016 | 91.4% | Strong | PASS |
+| GOVFRAME-017 | 91.4% | Strong | PASS |
+| GOVFRAME-018 | 91.4% | Strong | PASS |
+| GRANTS-001 | 91.4% | Strong | PASS |
+| HC-001 | 91.4% | Strong | PASS |
+| HC-002 | 91.4% | Strong | PASS |
+| HOSP-001 | 91.4% | Strong | PASS |
+| HR-001 | 91.4% | Strong | PASS |
+| IAM-009 | 90.5% | Strong | PASS |
+| IND-001 | 91.4% | Strong | PASS |
+| IND-002 | 91.4% | Strong | PASS |
+| IND-003 | 91.4% | Strong | PASS |
+| IND-004 | 91.4% | Strong | PASS |
+| IND-005 | 91.4% | Strong | PASS |
+| IND-006 | 91.4% | Strong | PASS |
+| IND-007 | 91.4% | Strong | PASS |
+| IND-008 | 91.4% | Strong | PASS |
+| IND-009 | 91.4% | Strong | PASS |
+| IND-010 | 91.4% | Strong | PASS |
+| IND-011 | 91.4% | Strong | PASS |
+| IND-012 | 91.4% | Strong | PASS |
+| IND-013 | 91.4% | Strong | PASS |
+| IND-014 | 91.4% | Strong | PASS |
+| IND-015 | 91.4% | Strong | PASS |
+| INS-001 | 91.4% | Strong | PASS |
+| IR-001 | 90.5% | Strong | PASS |
+| LEG-001 | 91.4% | Strong | PASS |
+| LOG-011 | 90.5% | Strong | PASS |
+| MEDIA-001 | 91.4% | Strong | PASS |
+| MFG-001 | 91.4% | Strong | PASS |
+| MFG-002 | 91.4% | Strong | PASS |
+| MIG-025 | 90.5% | Strong | PASS |
+| MOB-QA-001 | 90.5% | Strong | PASS |
+| NONPROFIT-001 | 91.4% | Strong | PASS |
+| OPS-001 | 90.5% | Strong | PASS |
+| OPS-002 | 90.5% | Strong | PASS |
+| OSSLIC-015 | 90.5% | Strong | PASS |
+| PATCH-006 | 90.5% | Strong | PASS |
+| PENTEST-007 | 90.5% | Strong | PASS |
+| PMO-001 | 91.4% | Strong | PASS |
+| PRIV-003 | 90.5% | Strong | PASS |
+| PROC-001 | 91.4% | Strong | PASS |
+| PROMPT-001 | 90.5% | Strong | PASS |
+| PROMPT-002 | 90.5% | Strong | PASS |
+| PROMPT-003 | 90.5% | Strong | PASS |
+| PROMPT-004 | 90.5% | Strong | PASS |
+| PROMPT-005 | 90.5% | Strong | PASS |
+| PROMPT-006 | 90.5% | Strong | PASS |
+| PROMPT-007 | 90.5% | Strong | PASS |
+| PROMPT-008 | 90.5% | Strong | PASS |
+| PROP-001 | 89.5% | Strong | PASS |
+| PROSERV-001 | 91.4% | Strong | PASS |
+| PROV-014 | 90.5% | Strong | PASS |
+| PUBHEALTH-001 | 91.4% | Strong | PASS |
+| PURPLE-018 | 90.5% | Strong | PASS |
+| QA-001 | 90.5% | Strong | PASS |
+| QA-002 | 90.5% | Strong | PASS |
+| QA-003 | 90.5% | Strong | PASS |
+| QA-004 | 90.5% | Strong | PASS |
+| QA-005 | 90.5% | Strong | PASS |
+| QA-006 | 90.5% | Strong | PASS |
+| QA-007 | 90.5% | Strong | PASS |
+| RATE-026 | 90.5% | Strong | PASS |
+| RECORDS-001 | 91.4% | Strong | PASS |
+| REL-004 | 90.5% | Strong | PASS |
+| RESEARCH-001 | 91.4% | Strong | PASS |
+| RET-001 | 91.4% | Strong | PASS |
+| RET-002 | 91.4% | Strong | PASS |
+| SAAS-001 | 91.4% | Strong | PASS |
+| SAAS-002 | 91.4% | Strong | PASS |
+| SAST-001 | 90.5% | Strong | PASS |
+| SAST-002 | 90.5% | Strong | PASS |
+| SAST-003 | 90.5% | Strong | PASS |
+| SAST-004 | 90.5% | Strong | PASS |
+| SDLC-028 | 90.5% | Strong | PASS |
+| SLG-001 | 91.4% | Strong | PASS |
+| SMARTCITY-001 | 91.4% | Strong | PASS |
+| SWARM-001 | 90.5% | Strong | PASS |
+| SWARM-002 | 90.5% | Strong | PASS |
+| SWARM-003 | 90.5% | Strong | PASS |
+| SWARM-004 | 90.5% | Strong | PASS |
+| SWARM-005 | 90.5% | Strong | PASS |
+| SWARM-006 | 90.5% | Strong | PASS |
+| SWARM-007 | 90.5% | Strong | PASS |
+| SWARM-008 | 90.5% | Strong | PASS |
+| SWARM-009 | 90.5% | Strong | PASS |
+| SWARM-010 | 90.5% | Strong | PASS |
+| SWARM-011 | 90.5% | Strong | PASS |
+| SWARM-012 | 90.5% | Strong | PASS |
+| TEL-001 | 91.4% | Strong | PASS |
+| THREAT-002 | 90.5% | Strong | PASS |
+| TRAIN-001 | 91.4% | Strong | PASS |
+| TRN-001 | 91.4% | Strong | PASS |
+| UXSEC-020 | 90.5% | Strong | PASS |
+| VULN-005 | 90.5% | Strong | PASS |
+| XWALK-029 | 90.5% | Strong | PASS |
