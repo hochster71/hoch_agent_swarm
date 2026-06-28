@@ -6695,6 +6695,21 @@ def api_get_evidence_pack(block_idx: int):
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
+@app.get("/api/v1/ledger/evidence-bundle/download")
+def api_download_evidence_bundle():
+    from backend.ledger_manager import create_audit_review_bundle
+    from fastapi.responses import StreamingResponse
+    import io
+    try:
+        zip_bytes = create_audit_review_bundle()
+        return StreamingResponse(
+            io.BytesIO(zip_bytes),
+            media_type="application/zip",
+            headers={"Content-Disposition": "attachment; filename=audit_evidence_review_bundle.zip"}
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to generate audit review bundle: {e}")
+
 @app.get("/api/v1/policy/status")
 def api_get_policy_status():
     return {

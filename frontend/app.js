@@ -3182,12 +3182,50 @@
         }
     }
 
+    async function exportAuditBundle() {
+        const btn = el('btn-export-audit-bundle');
+        if (!btn) return;
+        
+        btn.disabled = true;
+        const originalText = btn.textContent;
+        btn.textContent = 'Exporting...';
+        
+        try {
+            const res = await fetch('/api/v1/ledger/evidence-bundle/download');
+            if (!res.ok) throw new Error('Audit bundle generation failed');
+            const blob = await res.blob();
+            
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `audit_evidence_review_bundle.zip`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error('Failed to export audit review bundle:', err);
+            alert('Failed to export audit review bundle. See console for details.');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = originalText;
+        }
+    }
+
     function initLedgerButtons() {
-        const btn = el('btn-verify-ledger');
-        if (btn) {
-            btn.addEventListener('click', (e) => {
+        const btnVerify = el('btn-verify-ledger');
+        if (btnVerify) {
+            btnVerify.addEventListener('click', (e) => {
                 e.preventDefault();
                 verifyLedgerIntegrity();
+            });
+        }
+        
+        const btnExport = el('btn-export-audit-bundle');
+        if (btnExport) {
+            btnExport.addEventListener('click', (e) => {
+                e.preventDefault();
+                exportAuditBundle();
             });
         }
     }

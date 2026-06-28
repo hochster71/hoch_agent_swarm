@@ -338,3 +338,40 @@ def generate_evidence_pack(block_idx: int) -> dict:
         "artifacts_content": artifacts_content,
         "generated_at": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
     }
+
+def create_audit_review_bundle() -> bytes:
+    import io
+    import zipfile
+    
+    blocks = get_ledger_blocks()
+    verification = verify_ledger_chain()
+    
+    from backend.preflight_gate import GATE
+    preflight = GATE.run_preflight()
+    
+    from backend.model_health_monitor import MONITOR
+    model_health = MONITOR.scan_health(force=False)
+    
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
+        blocks_data = json.dumps(blocks, indent=2)
+        zip_file.writestr("ledger_blocks.json", blocks_data)
+        
+        verify_data = json.dumps(verification, indent=2)
+        zip_file.writestr("chain_verification.json", verify_data)
+        
+        preflight_data = json.dumps(preflight, indent=2)
+        zip_file.writestr("preflight_status.json", preflight_data)
+        
+        health_data = json.dumps(model_health, indent=2)
+        zip_file.writestr("model_health.json", health_data)
+        
+        manifest_lines = []
+        for name in ["ledger_blocks.json", "chain_verification.json", "preflight_status.json", "model_health.json"]:
+            content = zip_file.read(name)
+            h = hashlib.sha256(content).hexdigest()
+            manifest_lines.append(f"{h}  {name}\n")
+            
+        zip_file.writestr("manifest.sha256", "".join(manifest_lines))
+        
+    return zip_buffer.getvalue()
