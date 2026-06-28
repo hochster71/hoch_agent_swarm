@@ -7,17 +7,11 @@ LIVE RUNTIME OR DELETE / QUARANTINE.
 
 ## Checklist
 - [x] Create backend Mesh Sentinel map aggregator
-- [x] Register /api/v1/mesh-sentinel/map endpoint
-- [x] Wire frontend Mesh Sentinel view
-- [x] Add Rescan AI Runtimes control
-- [x] Add static contract test
-- [x] Add E2E smoke test
-- [x] Register package scripts
-- [x] Update live runtime feature map
-- [x] Update QA evidence matrix
-- [ ] Run build
-- [ ] Run qa:mesh-sentinel
-- [ ] Run qa:ui-contract
+- [x] Add custom CSS classes and `@keyframes led-pulse` to `frontend/index.html` style section
+- [x] Update layout of `#view-clawde` card to add `#clawde-phase-cards-container` and `#clawde-selected-status-light` in `frontend/index.html`
+- [x] Add `#clawde-gate-lockout-notice` in Gated Execution Control inside `frontend/index.html`
+- [x] Update build version headers and app script tag to `UX2` in `frontend/index.html`
+- [/] Implement `selectedPhase` state and card selection controller logic in `frontend/app.js`:ui-contract
 - [ ] Run E2E runtime checks
 - [ ] Run CI pipeline
 - [ ] Commit and retag
