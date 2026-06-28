@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-27T01:37:44.708Z",
+  "generated_at": "2026-06-28T13:51:02.892Z",
   "status": "PASS",
   "errors": [],
   "findings": [
@@ -7,15 +7,15 @@
     "GET /api/status contains nodes list (count: 10)",
     "GET /api/v1/agents: 200 OK, fetched 14 agents",
     "Verified capability manifests for 14/14 agents",
-    "GET /api/v1/runs: 200 OK, current run count: 353",
-    "POST /api/v1/runs: 200 OK, created run_id: run-63a736af",
-    "GET /api/v1/runs/run-63a736af/tasks: 200 OK, retrieved 10 tasks",
-    "GET /api/v1/runs/run-63a736af/artifacts: 200 OK, retrieved 0 artifacts",
+    "GET /api/v1/runs: 200 OK, current run count: 457",
+    "POST /api/v1/runs: 200 OK, created run_id: run-3d0cc313",
+    "GET /api/v1/runs/run-3d0cc313/tasks: 200 OK, retrieved 10 tasks",
+    "GET /api/v1/runs/run-3d0cc313/artifacts: 200 OK, retrieved 0 artifacts",
     "GET /api/approval/requests: 200 OK, initial approvals count: 1",
     "POST execute T0-RECON: dispatched successfully",
     "Found pending approval request: app-101 after 0s",
     "POST /api/approval/requests/{approval_id}/decisions (first submission): 200 OK",
-    "Replay protection check: Found nonce (d843bc3fa146464c85ea56ce18104dcf) and decision_id (dec-6ad12bcb)",
+    "Replay protection check: Found nonce (86b23c6e4c2c40c393e1e98b3a4359d5) and decision_id (dec-5f1beafd)",
     "Replay protection confirmed: Second submission blocked with 400 Bad Request. Detail: \"Replay blocked: approval gate has already been decided\""
   ]
 }

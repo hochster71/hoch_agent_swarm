@@ -1,3 +1,4 @@
+import Hls from 'hls.js';
 (function () {
     'use strict';
 
@@ -75,7 +76,8 @@
         { id: 'cybergov-ao-review', label: 'AO REVIEW' },
         { id: 'binding-gate', label: 'LIVE BINDING GATE' },
         { id: 'live-exposure', label: 'LIVE EXPOSURE' },
-        { id: 'conmon-scheduler', label: 'CONMON SCHEDULER' }
+        { id: 'conmon-scheduler', label: 'CONMON SCHEDULER' },
+        { id: 'hoch-tv', label: 'HOCH TV' }
     ];
 
     function initNavigation() {
@@ -215,6 +217,9 @@
                 break;
             case 'conmon-scheduler':
                 loadConMonView();
+                break;
+            case 'hoch-tv':
+                loadHochTvView();
                 break;
         }
     }
@@ -3103,6 +3108,7 @@
         initBindingGateButtons();
         initLiveExposureButtons();
         initConMonButtons();
+        initTvButtons();
         
         // Initial fetches
         fetchCockpit();
@@ -4215,6 +4221,312 @@
         if (intervalSelect) {
             intervalSelect.addEventListener('change', (e) => {
                 updateConMonInterval(e.target.value);
+            });
+        }
+    }
+
+    // HOCH TV View & Player Integration
+    let tvChannels = [];
+    let tvGroups = [];
+    let currentHls = null;
+
+    function logTvDiag(msg, isError = false) {
+        const consoleEl = el('tv-diagnostics-logs');
+        if (!consoleEl) return;
+        const ts = new Date().toISOString().split('T')[1].slice(0, 8);
+        const color = isError ? '#ef4444' : '#10b981';
+        consoleEl.innerHTML += `<div style="color: ${color}">[${ts}] ${escapeHtml(msg)}</div>`;
+        consoleEl.scrollTop = consoleEl.scrollHeight;
+    }
+
+    async function loadHochTvView() {
+        logTvDiag('Loading HOCH TV View state...');
+        await runTvHealthCheck();
+        await loadTvGroups();
+        await loadTvChannels();
+    }
+
+    async function runTvHealthCheck() {
+        const healthIndicator = el('tv-health-indicator');
+        if (healthIndicator) {
+            healthIndicator.textContent = 'Checking...';
+            healthIndicator.style.color = '#eab308';
+        }
+
+        try {
+            const res = await fetch('/api/tv/health');
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+            
+            if (data.ok) {
+                if (healthIndicator) {
+                    healthIndicator.textContent = 'HEALTHY';
+                    healthIndicator.style.color = '#10b981';
+                }
+                logTvDiag(`Health check: nominal. ${data.channelCount} channels cached.`);
+            } else {
+                if (healthIndicator) {
+                    healthIndicator.textContent = 'DEGRADED';
+                    healthIndicator.style.color = '#ef4444';
+                }
+                logTvDiag(`Health check warning: ${data.diagnostics}`, true);
+            }
+            
+            const countEl = el('tv-channels-count');
+            if (countEl) countEl.textContent = data.channelCount;
+            
+            const epgEl = el('tv-epg-indicator');
+            if (epgEl) {
+                epgEl.textContent = data.epgConfigured ? 'CONFIGURED' : 'UNCONFIGURED';
+                epgEl.style.color = data.epgConfigured ? '#10b981' : '#a1a1aa';
+            }
+            
+            const loadedEl = el('tv-loaded-indicator');
+            if (loadedEl) {
+                loadedEl.textContent = data.playlistLoadedAt !== 'Never' ? 
+                    data.playlistLoadedAt.split('T')[1].slice(0, 8) : 'Never';
+            }
+        } catch (err) {
+            if (healthIndicator) {
+                healthIndicator.textContent = 'ERROR';
+                healthIndicator.style.color = '#ef4444';
+            }
+            logTvDiag(`Health check failed: ${err.message}`, true);
+        }
+    }
+
+    async function loadTvGroups() {
+        const filterSelect = el('tv-group-filter');
+        if (!filterSelect) return;
+        
+        try {
+            const res = await fetch('/api/tv/groups');
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const groups = await res.json();
+            tvGroups = groups;
+            
+            filterSelect.innerHTML = '<option value="ALL">All Categories</option>';
+            groups.forEach(g => {
+                const opt = document.createElement('option');
+                opt.value = g;
+                opt.textContent = g;
+                filterSelect.appendChild(opt);
+            });
+            logTvDiag(`Loaded ${groups.length} channel groups.`);
+        } catch (err) {
+            logTvDiag(`Failed to load channel groups: ${err.message}`, true);
+        }
+    }
+
+    async function loadTvChannels(force = false) {
+        const listEl = el('tv-channels-list');
+        if (!listEl) return;
+        listEl.innerHTML = '<div style="color: var(--text-secondary); text-align: center; margin-top: 30px;">Loading channels...</div>';
+
+        try {
+            const url = force ? '/api/tv/channels?force=true' : '/api/tv/channels';
+            const res = await fetch(url);
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                const detail = errData.detail || `HTTP ${res.status}`;
+                throw new Error(detail);
+            }
+            const channels = await res.json();
+            tvChannels = channels;
+            
+            renderTvChannels(channels);
+            logTvDiag(`Loaded ${channels.length} channels.`);
+            
+            const countEl = el('tv-channels-count');
+            if (countEl) countEl.textContent = channels.length;
+        } catch (err) {
+            listEl.innerHTML = `<div style="color: #ef4444; text-align: center; margin-top: 30px; font-size: 12px; padding: 10px;">${escapeHtml(err.message)}</div>`;
+            logTvDiag(`Failed to load channels: ${err.message}`, true);
+        }
+    }
+
+    function renderTvChannels(channels) {
+        const listEl = el('tv-channels-list');
+        if (!listEl) return;
+        
+        const filterVal = el('tv-group-filter') ? el('tv-group-filter').value : 'ALL';
+        const searchVal = el('tv-search') ? el('tv-search').value.toLowerCase().trim() : '';
+        
+        const filtered = channels.filter(c => {
+            const matchesGroup = (filterVal === 'ALL' || c.group === filterVal);
+            const matchesSearch = (!searchVal || c.name.toLowerCase().includes(searchVal));
+            return matchesGroup && matchesSearch;
+        });
+
+        if (filtered.length === 0) {
+            listEl.innerHTML = '<div style="color: var(--text-secondary); text-align: center; margin-top: 30px; font-size: 13px;">No matching channels found.</div>';
+            return;
+        }
+
+        listEl.innerHTML = '';
+        filtered.forEach(c => {
+            const div = document.createElement('div');
+            div.className = 'channel-item';
+            div.style.cssText = 'display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 4px; cursor: pointer; transition: all 0.2s;';
+            
+            div.addEventListener('mouseenter', () => {
+                div.style.background = 'rgba(255,255,255,0.06)';
+                div.style.borderColor = 'rgba(255,255,255,0.2)';
+            });
+            div.addEventListener('mouseleave', () => {
+                div.style.background = 'rgba(255,255,255,0.02)';
+                div.style.borderColor = 'var(--border-glass)';
+            });
+
+            const imgHtml = c.logo ? 
+                `<img src="${escapeHtml(c.logo)}" style="width: 24px; height: 24px; object-fit: contain; border-radius: 2px;" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2224%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22currentColor%22 stroke-width=%222%22><rect x=%222%22 y=%222%22 width=%2220%22 height=%2220%22 rx=%222.18%22 ry=%222.18%22></rect><line x1=%227%22 y1=%222%22 x2=%227%22 y2=%2222%22></line><line x1=%2217%22 y1=%222%22 x2=%2217%22 y2=%2222%22></line><line x1=%222%22 y1=%2212%22 x2=%2222%22 y2=%2212%22></line><line x1=%222%22 y1=%227%22 x2=%227%22 y2=%227%22></line><line x1=%222%22 y1=%2217%22 x2=%227%22 y2=%2217%22></line><line x1=%2217%22 y1=%2217%22 x2=%2222%22 y2=%2217%22></line><line x1=%2217%22 y1=%227%22 x2=%2222%22 y2=%227%22></line></svg>'">` :
+                `<div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); color: var(--text-secondary); border-radius: 2px;"><i data-lucide="tv" style="width: 14px; height: 14px;"></i></div>`;
+
+            div.innerHTML = `
+                ${imgHtml}
+                <div style="flex-grow: 1; min-width: 0;">
+                    <div style="font-size: 12px; font-weight: bold; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(c.name)}</div>
+                    <div style="font-size: 9px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(c.group)}</div>
+                </div>
+            `;
+            
+            div.addEventListener('click', () => {
+                playTvChannel(c);
+            });
+            listEl.appendChild(div);
+        });
+
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
+    }
+
+    function playTvChannel(channel) {
+        logTvDiag(`Initializing playback for: ${channel.name}`);
+        
+        const video = el('tv-player');
+        const placeholder = el('player-placeholder');
+        const errorOverlay = el('player-error-overlay');
+        const errorText = el('player-error-text');
+        
+        if (!video) return;
+
+        if (placeholder) placeholder.style.display = 'none';
+        if (errorOverlay) errorOverlay.style.display = 'none';
+
+        const playingName = el('tv-playing-name');
+        if (playingName) playingName.textContent = channel.name;
+        
+        const playingGroup = el('tv-playing-group');
+        if (playingGroup) playingGroup.textContent = `Category: ${channel.group}`;
+
+        if (currentHls) {
+            currentHls.destroy();
+            currentHls = null;
+        }
+
+        const streamUrl = channel.streamUrl;
+        
+        video.onerror = (e) => {
+            const err = video.error;
+            let errMsg = 'An unknown video error occurred.';
+            if (err) {
+                if (err.code === 1) errMsg = 'The fetching of the media resource was aborted by the user.';
+                else if (err.code === 2) errMsg = 'A network error caused the media download to fail.';
+                else if (err.code === 3) errMsg = 'An error occurred while decoding the media resource.';
+                else if (err.code === 4) errMsg = 'The media resource was not supported or could not be played.';
+            }
+            logTvDiag(`HTML5 Video Error: ${errMsg}`, true);
+            if (errorOverlay && errorText) {
+                errorText.textContent = `${errMsg} (Code: ${err ? err.code : 'unknown'})`;
+                errorOverlay.style.display = 'flex';
+            }
+        };
+
+        if (streamUrl.toLowerCase().includes('.m3u8')) {
+            if (Hls.isSupported()) {
+                const hls = new Hls({
+                    maxBufferLength: 10,
+                    enableWorker: true
+                });
+                hls.loadSource(streamUrl);
+                hls.attachMedia(video);
+                currentHls = hls;
+
+                hls.on(Hls.Events.ERROR, function (event, data) {
+                    if (data.fatal) {
+                        logTvDiag(`Fatal HLS error encountered: ${data.type} - ${data.details}`, true);
+                        switch (data.type) {
+                            case Hls.ErrorTypes.NETWORK_ERROR:
+                                logTvDiag('Fatal network error, attempting recovery...', true);
+                                hls.startLoad();
+                                break;
+                            case Hls.ErrorTypes.MEDIA_ERROR:
+                                logTvDiag('Fatal media error, attempting recovery...', true);
+                                hls.recoverMediaError();
+                                break;
+                            default:
+                                logTvDiag('Cannot recover from fatal stream error.', true);
+                                if (errorOverlay && errorText) {
+                                    errorText.textContent = `HLS stream parse error: ${data.details}`;
+                                    errorOverlay.style.display = 'flex';
+                                }
+                                break;
+                        }
+                    }
+                });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = streamUrl;
+            } else {
+                const noHlsMsg = 'HLS playback is not supported in this browser.';
+                logTvDiag(noHlsMsg, true);
+                if (errorOverlay && errorText) {
+                    errorText.textContent = noHlsMsg;
+                    errorOverlay.style.display = 'flex';
+                }
+            }
+        } else {
+            video.src = streamUrl;
+        }
+    }
+
+    function initTvButtons() {
+        const btnReload = el('btn-tv-reload');
+        if (btnReload) {
+            btnReload.addEventListener('click', async (e) => {
+                e.preventDefault();
+                btnReload.disabled = true;
+                btnReload.textContent = 'Reloading...';
+                await loadTvChannels(true);
+                await runTvHealthCheck();
+                btnReload.disabled = false;
+                btnReload.textContent = 'Reload Playlist';
+            });
+        }
+
+        const btnHealth = el('btn-tv-health');
+        if (btnHealth) {
+            btnHealth.addEventListener('click', async (e) => {
+                e.preventDefault();
+                btnHealth.disabled = true;
+                btnHealth.textContent = 'Running...';
+                await runTvHealthCheck();
+                btnHealth.disabled = false;
+                btnHealth.textContent = 'Run Health Check';
+            });
+        }
+
+        const searchInput = el('tv-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', () => {
+                renderTvChannels(tvChannels);
+            });
+        }
+
+        const groupFilter = el('tv-group-filter');
+        if (groupFilter) {
+            groupFilter.addEventListener('change', () => {
+                renderTvChannels(tvChannels);
             });
         }
     }

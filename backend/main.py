@@ -6820,6 +6820,87 @@ def api_update_conmon_schedule(body: dict):
     from backend.conmon_manager import update_conmon_schedule
     return update_conmon_schedule(body.get("interval", "Daily"))
 
+@app.get("/api/tv/health")
+def api_get_tv_health():
+    from backend.tv_manager import get_channels_data, get_tv_config, _PLAYLIST_CACHE
+    config = get_tv_config()
+    
+    channel_count = 0
+    ok = True
+    diagnostics = "Nominal state. Channel cache active."
+    
+    try:
+        channels = get_channels_data(force_refresh=False)
+        channel_count = len(channels)
+    except Exception as e:
+        ok = False
+        diagnostics = f"Playlist failure: {str(e)}"
+        
+    loaded_at_str = "Never"
+    if _PLAYLIST_CACHE["loaded_at"] > 0:
+        loaded_at_str = datetime.fromtimestamp(_PLAYLIST_CACHE["loaded_at"], tz=timezone.utc).isoformat()
+        
+    return {
+        "ok": ok,
+        "channelCount": channel_count,
+        "playlistLoadedAt": loaded_at_str,
+        "epgConfigured": bool(config["epg_url"]),
+        "cacheTtlSeconds": config["playlist_ttl"],
+        "diagnostics": diagnostics
+    }
+
+@app.get("/api/tv/channels")
+def api_get_tv_channels(force: bool = False):
+    from backend.tv_manager import get_channels_data
+    try:
+        return get_channels_data(force_refresh=force)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/tv/groups")
+def api_get_tv_groups(force: bool = False):
+    from backend.tv_manager import get_channels_data
+    try:
+        channels = get_channels_data(force_refresh=force)
+        groups = sorted(list(set(c["group"] for c in channels)))
+        return groups
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/tv/channel/{id}")
+def api_get_tv_channel(id: str):
+    from backend.tv_manager import get_channels_data
+    try:
+        channels = get_channels_data(force_refresh=False)
+        for c in channels:
+            if c["id"] == id:
+                return c
+        raise HTTPException(status_code=404, detail="Channel not found")
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/tv/playlist.m3u")
+def api_get_tv_playlist(force: bool = False):
+    from backend.tv_manager import get_raw_playlist
+    from fastapi import Response
+    try:
+        raw_m3u = get_raw_playlist(force_refresh=force)
+        return Response(content=raw_m3u, media_type="application/vnd.apple.mpegurl")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/tv/epg.xml")
+def api_get_tv_epg(force: bool = False):
+    from backend.tv_manager import get_epg_xml
+    from fastapi import Response
+    try:
+        xml_data = get_epg_xml(force_refresh=force)
+        return Response(content=xml_data, media_type="application/xml")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/api/v1/policy/status")
 def api_get_policy_status():
     return {

@@ -182,6 +182,9 @@
                 <a href="#" class="nav-item" id="nav-conmon-scheduler">
                     <i data-lucide="refresh-cw"></i> <span>ConMon Scheduler</span>
                 </a>
+                <a href="#" class="nav-item" id="nav-hoch-tv">
+                    <i data-lucide="tv"></i> <span>HOCH TV</span>
+                </a>
             </nav>
             <div class="theme-selector-container" style="padding: 10px 0; border-top: 1px solid var(--border-glass); margin-top: 10px;">
                 <label for="theme-selector" style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; display: block; margin-bottom: 5px;">Visual Theme</label>
@@ -1746,6 +1749,98 @@
             </div>
 
             <div id="view-remediation-safety" class="hidden"></div>
+
+            <!-- 29. HOCH TV View -->
+            <div id="view-hoch-tv" class="view-section hidden">
+                <section class="card" style="padding: 20px; border: 1px solid var(--border-glass);">
+                    <!-- Header -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 15px; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                        <div>
+                            <h2 style="font-size: 20px; font-weight: 700; color: #fff; margin: 0;">HOCH TV Media Portal</h2>
+                            <p style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Controlled local-only Drogon.TV M3U stream playback & EPG metadata catalog.</p>
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <button id="btn-tv-reload" class="btn btn-primary" style="padding: 8px 16px; font-size: 12px; font-weight: bold; background: var(--accent-teal); border: none;">
+                                Reload Playlist
+                            </button>
+                            <button id="btn-tv-health" class="btn" style="padding: 8px 16px; font-size: 12px; font-weight: bold; background: rgba(255,255,255,0.1); border: 1px solid var(--border-glass); color: #fff;">
+                                Run Health Check
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Health status indicator bar -->
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px;" id="tv-status-bar">
+                        <div class="card" style="padding: 10px; background: rgba(0,0,0,0.25); text-align: center;">
+                            <div style="font-size: 9px; color: var(--text-secondary); text-transform: uppercase;">Connection Health</div>
+                            <div style="font-size: 14px; font-weight: bold; color: #10b981; margin-top: 4px;" id="tv-health-indicator">Checking...</div>
+                        </div>
+                        <div class="card" style="padding: 10px; background: rgba(0,0,0,0.25); text-align: center;">
+                            <div style="font-size: 9px; color: var(--text-secondary); text-transform: uppercase;">Channels Loaded</div>
+                            <div style="font-size: 14px; font-weight: bold; color: #fff; margin-top: 4px;" id="tv-channels-count">0</div>
+                        </div>
+                        <div class="card" style="padding: 10px; background: rgba(0,0,0,0.25); text-align: center;">
+                            <div style="font-size: 9px; color: var(--text-secondary); text-transform: uppercase;">EPG Status</div>
+                            <div style="font-size: 14px; font-weight: bold; color: #fff; margin-top: 4px;" id="tv-epg-indicator">Not Loaded</div>
+                        </div>
+                        <div class="card" style="padding: 10px; background: rgba(0,0,0,0.25); text-align: center;">
+                            <div style="font-size: 9px; color: var(--text-secondary); text-transform: uppercase;">Last Cache Refresh</div>
+                            <div style="font-size: 14px; font-weight: bold; color: #fff; margin-top: 4px;" id="tv-loaded-indicator">Never</div>
+                        </div>
+                    </div>
+
+                    <!-- Workspace Layout -->
+                    <div style="display: grid; grid-template-columns: 320px 1fr; gap: 20px; height: 600px; max-height: 70vh;">
+                        
+                        <!-- Left Sidebar: Channels & Filters -->
+                        <div style="display: flex; flex-direction: column; border-right: 1px solid var(--border-glass); padding-right: 20px; overflow-y: hidden;">
+                            <div style="margin-bottom: 15px;">
+                                <input type="text" id="tv-search" placeholder="Search channels..." style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); color: #fff; border-radius: 4px; padding: 8px 12px; font-size: 13px; outline: none; margin-bottom: 10px;">
+                                <select id="tv-group-filter" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); color: #fff; border-radius: 4px; padding: 8px; font-size: 13px; outline: none;">
+                                    <option value="ALL">All Categories</option>
+                                </select>
+                            </div>
+                            
+                            <div style="flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;" id="tv-channels-list">
+                                <div style="color: var(--text-secondary); text-align: center; margin-top: 30px; font-size: 13px;">No channels loaded. Click Reload Playlist.</div>
+                            </div>
+                        </div>
+
+                        <!-- Right Area: Player & Logs -->
+                        <div style="display: flex; flex-direction: column; gap: 20px; overflow-y: auto;">
+                            <!-- Video Player Section -->
+                            <div class="card" style="padding: 15px; background: #000; border: 1px solid var(--border-glass); position: relative; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 380px;">
+                                <video id="tv-player" controls autoplay style="width: 100%; max-height: 340px; background: #000; border-radius: 4px;" playsinline></video>
+                                <div id="player-error-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); color: #ef4444; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; z-index: 10;">
+                                    <i data-lucide="alert-triangle" style="width: 48px; height: 48px; margin-bottom: 12px;"></i>
+                                    <h4 style="font-size: 16px; font-weight: bold; margin-bottom: 8px;">Stream Playback Error</h4>
+                                    <p id="player-error-text" style="font-size: 12px; max-width: 80%; color: var(--text-secondary); line-height: 1.5;"></p>
+                                </div>
+                                <div id="player-placeholder" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #08080c; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; color: var(--text-secondary);">
+                                    <i data-lucide="video" style="width: 48px; height: 48px; margin-bottom: 12px; color: var(--border-glass);"></i>
+                                    <p style="font-size: 13px;">Select a channel from the sidebar to begin playback.</p>
+                                </div>
+                            </div>
+
+                            <!-- Now Playing Metadata -->
+                            <div class="card" style="padding: 15px; background: rgba(0,0,0,0.25);">
+                                <h3 style="font-size: 14px; font-weight: bold; color: #fff; margin-bottom: 4px;" id="tv-playing-name">No Channel Selected</h3>
+                                <p style="font-size: 12px; color: var(--text-secondary); margin: 0;" id="tv-playing-group">Category: None</p>
+                            </div>
+
+                            <!-- Diagnostic Console -->
+                            <div class="card" style="padding: 15px; background: rgba(0,0,0,0.25);">
+                                <h3 style="font-size: 12px; font-weight: bold; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase;">Diagnostic Console Logs</h3>
+                                <div id="tv-diagnostics-logs" style="height: 100px; overflow-y: auto; font-family: monospace; font-size: 11px; color: #10b981; line-height: 1.6; padding: 10px; background: #050b08; border-radius: 4px; border: 1px solid rgba(16, 185, 129, 0.2);">
+                                    [system] TV service console is idle.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        
+
         
 
 <section class="view live-view" id="view-mesh-sentinel" data-view="mesh-sentinel" hidden>
