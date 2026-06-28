@@ -6805,6 +6805,21 @@ def api_execute_live_rollback():
     from backend.live_binding_manager import execute_live_rollback
     return execute_live_rollback()
 
+@app.get("/api/v1/conmon/status")
+def api_get_conmon_status():
+    from backend.conmon_manager import get_conmon_status
+    return get_conmon_status()
+
+@app.post("/api/v1/conmon/run")
+def api_execute_conmon_cycle():
+    from backend.conmon_manager import execute_conmon_cycle
+    return execute_conmon_cycle()
+
+@app.post("/api/v1/conmon/schedule/update")
+def api_update_conmon_schedule(body: dict):
+    from backend.conmon_manager import update_conmon_schedule
+    return update_conmon_schedule(body.get("interval", "Daily"))
+
 @app.get("/api/v1/policy/status")
 def api_get_policy_status():
     return {

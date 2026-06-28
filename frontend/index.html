@@ -179,6 +179,9 @@
                 <a href="#" class="nav-item" id="nav-live-exposure">
                     <i data-lucide="zap"></i> <span>Live Exposure Gate</span>
                 </a>
+                <a href="#" class="nav-item" id="nav-conmon-scheduler">
+                    <i data-lucide="refresh-cw"></i> <span>ConMon Scheduler</span>
+                </a>
             </nav>
             <div class="theme-selector-container" style="padding: 10px 0; border-top: 1px solid var(--border-glass); margin-top: 10px;">
                 <label for="theme-selector" style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; display: block; margin-bottom: 5px;">Visual Theme</label>
@@ -1652,6 +1655,92 @@
                     <h3 style="font-size: 14px; font-weight: bold; color: #fff; margin-bottom: 12px;">Live Boundary Validation Parameters</h3>
                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;" id="le-metrics-grid">
                         <!-- Populated dynamically -->
+                    </div>
+                </section>
+            </div>
+
+            <!-- 28. ConMon Scheduler View -->
+            <div id="view-conmon-scheduler" class="view-section hidden">
+                <section class="card" style="padding: 20px; border: 1px solid var(--border-glass);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 15px; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                        <div>
+                            <h2 style="font-size: 20px; font-weight: 700; color: #fff; margin: 0;">Continuous Monitoring Console (CONMON2)</h2>
+                            <p style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Automated compliance baseline schedule tracking, posture delta logs, and alert triggers.</p>
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <label style="font-size: 12px; color: var(--text-secondary);">Interval:</label>
+                            <select id="conmon-interval-select" style="background: var(--bg-surface); border: 1px solid var(--border-glass); color: #fff; border-radius: 4px; padding: 6px; font-size: 12px; cursor: pointer;">
+                                <option value="Hourly">Hourly</option>
+                                <option value="Daily">Daily</option>
+                                <option value="Weekly">Weekly</option>
+                            </select>
+                            <button id="btn-run-conmon-cycle" class="btn btn-primary" style="padding: 8px 16px; font-size: 12px; font-weight: bold; background: var(--accent-teal); border: none;">
+                                Execute Scan Cycle
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Safety Notice Banner -->
+                    <div class="cybergov-disclaimer-banner" style="padding: 12px; border-radius: 8px; font-size: 13px; font-weight: bold; margin-bottom: 20px; border: 1px solid rgba(245, 158, 11, 0.3); background: rgba(245, 158, 11, 0.1); color: #f59e0b; text-align: center;" id="cm-disclaimer-banner">
+                        SIMULATED CONTINUOUS COMPLIANCE POSTURE
+                    </div>
+
+                    <div style="padding: 15px; background: rgba(0,0,0,0.25); border: 1px solid var(--border-glass); border-radius: 6px; margin-bottom: 25px; line-height: 1.5;">
+                        <span style="font-weight: bold; color: #ef4444; font-size: 13px; display: block; margin-bottom: 8px;">Boundary Control Regulatory Notice</span>
+                        <span style="font-size: 12px; color: var(--text-secondary);" id="cm-regulatory-text">
+                            Continuous monitoring is simulated for controlled compliance evaluation. Actual ATO has not been granted. No authorization claim is being made.
+                        </span>
+                    </div>
+
+                    <!-- Alert Indicator Card -->
+                    <div id="conmon-alert-status-card" style="padding: 15px; border-radius: 6px; margin-bottom: 20px; font-size: 13px; font-weight: bold;">
+                        <!-- Populated dynamically -->
+                    </div>
+
+                    <!-- Status Display, Posture Deltas & Logs -->
+                    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px; margin-bottom: 25px;">
+                        <div style="display: flex; flex-direction: column; gap: 15px;">
+                            <div class="card" style="padding: 15px; text-align: center; background: rgba(0,0,0,0.25);">
+                                <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase;">Posture Score</div>
+                                <div style="font-size: 26px; font-weight: 800; color: #10b981; margin: 5px 0;" id="cm-score-text">88.0%</div>
+                                <div style="font-size: 11px; color: var(--text-secondary);" id="cm-score-delta">Delta: 0.0%</div>
+                            </div>
+                            <div class="card" style="padding: 15px; text-align: center; background: rgba(0,0,0,0.25);">
+                                <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase;">Active Alerts</div>
+                                <div style="font-size: 26px; font-weight: 800; color: #ef4444; margin: 5px 0;" id="cm-alerts-count">0</div>
+                                <div style="font-size: 10px; color: var(--text-secondary);" id="cm-last-run-text">Last run: Never</div>
+                            </div>
+                        </div>
+
+                        <div class="card" style="padding: 20px; background: rgba(0,0,0,0.25);">
+                            <h3 style="font-size: 14px; font-weight: bold; color: #fff; margin-bottom: 12px;">ConMon Daemon Event Log</h3>
+                            <div id="conmon-daemon-logs" style="height: 120px; overflow-y: auto; font-family: monospace; font-size: 11px; color: #10b981; line-height: 1.6; padding: 10px; background: #050b08; border-radius: 4px; border: 1px solid rgba(16, 185, 129, 0.2);">
+                                [system] Continuous monitoring daemon is live and listening.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Snapshot History List -->
+                    <h3 style="font-size: 14px; font-weight: bold; color: #fff; margin-bottom: 12px;">Evidence Snapshot Audit Log</h3>
+                    <div class="card" style="padding: 10px; overflow-x: auto; background: rgba(0,0,0,0.25);">
+                        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 12px;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid var(--border-glass); color: var(--text-secondary);">
+                                    <th style="padding: 8px;">Scan Time</th>
+                                    <th style="padding: 8px;">Interval</th>
+                                    <th style="padding: 8px;">Score</th>
+                                    <th style="padding: 8px;">Delta</th>
+                                    <th style="padding: 8px;">Breaches</th>
+                                    <th style="padding: 8px;">TLS Active</th>
+                                    <th style="padding: 8px;">Auth Gate</th>
+                                </tr>
+                            </thead>
+                            <tbody id="conmon-history-tbody">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; padding: 12px; color: var(--text-secondary);">No scans executed yet. Click "Execute Scan Cycle" to generate monitoring evidence.</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </section>
             </div>

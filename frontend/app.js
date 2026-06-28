@@ -74,7 +74,8 @@
         { id: 'cybergov-zero-trust', label: 'DOD ZERO TRUST' },
         { id: 'cybergov-ao-review', label: 'AO REVIEW' },
         { id: 'binding-gate', label: 'LIVE BINDING GATE' },
-        { id: 'live-exposure', label: 'LIVE EXPOSURE' }
+        { id: 'live-exposure', label: 'LIVE EXPOSURE' },
+        { id: 'conmon-scheduler', label: 'CONMON SCHEDULER' }
     ];
 
     function initNavigation() {
@@ -211,6 +212,9 @@
                 break;
             case 'live-exposure':
                 loadLiveExposureView();
+                break;
+            case 'conmon-scheduler':
+                loadConMonView();
                 break;
         }
     }
@@ -3098,6 +3102,7 @@
         initDeployButtons();
         initBindingGateButtons();
         initLiveExposureButtons();
+        initConMonButtons();
         
         // Initial fetches
         fetchCockpit();
@@ -4058,6 +4063,158 @@
             btnRoll.addEventListener('click', (e) => {
                 e.preventDefault();
                 triggerLiveRollback();
+            });
+        }
+    }
+
+    async function loadConMonView() {
+        try {
+            const res = await fetch('/api/v1/conmon/status');
+            if (!res.ok) throw new Error('Failed to fetch ConMon status');
+            const data = await res.json();
+            renderConMonData(data);
+        } catch (err) {
+            console.error('Failed to load ConMon view:', err);
+        }
+    }
+
+    function renderConMonData(data) {
+        const scoreEl = el('cm-score-text');
+        if (scoreEl) {
+            scoreEl.textContent = `${data.compliance_score.toFixed(1)}%`;
+            scoreEl.style.color = data.status === 'ALERTING' ? '#ef4444' : '#10b981';
+        }
+
+        const deltaEl = el('cm-score-delta');
+        if (deltaEl) {
+            const sign = data.delta > 0 ? '+' : '';
+            deltaEl.textContent = `Delta: ${sign}${data.delta.toFixed(1)}%`;
+            deltaEl.style.color = data.delta >= 0 ? '#10b981' : '#ef4444';
+        }
+
+        const alertsCountEl = el('cm-alerts-count');
+        if (alertsCountEl) {
+            alertsCountEl.textContent = data.active_alerts.length;
+            alertsCountEl.style.color = data.active_alerts.length > 0 ? '#ef4444' : '#10b981';
+        }
+
+        const lastRunEl = el('cm-last-run-text');
+        if (lastRunEl) {
+            lastRunEl.textContent = `Last run: ${data.last_run}`;
+        }
+
+        // Active Alerts Card
+        const alertCard = el('conmon-alert-status-card');
+        if (alertCard) {
+            if (data.active_alerts.length > 0) {
+                alertCard.style.background = 'rgba(239, 68, 68, 0.15)';
+                alertCard.style.color = '#ef4444';
+                alertCard.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+                alertCard.innerHTML = `
+                    <div style="font-weight: bold; margin-bottom: 8px;">Compliance Violations Detected:</div>
+                    <ul style="margin: 0; padding-left: 20px; font-size: 12px; line-height: 1.6;">
+                        ${data.active_alerts.map(a => `<li>[${a.severity}] ${escapeHtml(a.message)}</li>`).join('')}
+                    </ul>
+                `;
+            } else {
+                alertCard.style.background = 'rgba(16, 185, 129, 0.15)';
+                alertCard.style.color = '#10b981';
+                alertCard.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+                alertCard.innerHTML = 'All continuous compliance checks are passing. No active alerts.';
+            }
+        }
+
+        // Interval dropdown
+        const intervalSelect = el('conmon-interval-select');
+        if (intervalSelect) {
+            intervalSelect.value = data.schedule_interval;
+        }
+
+        // Event Logs console
+        const logsEl = el('conmon-daemon-logs');
+        if (logsEl && data.logs) {
+            logsEl.innerHTML = data.logs.map(log => `<div>${escapeHtml(log)}</div>`).join('');
+            logsEl.scrollTop = logsEl.scrollHeight;
+        }
+
+        // Evidence snapshot history table
+        const tbody = el('conmon-history-tbody');
+        if (tbody) {
+            if (data.history && data.history.length > 0) {
+                tbody.innerHTML = data.history.map(h => {
+                    const sign = h.delta > 0 ? '+' : '';
+                    const tlsBadge = h.live_metrics.tls_active ? 
+                        '<span style="color:#10b981; font-weight:bold;">ACTIVE</span>' : 
+                        '<span style="color:var(--text-secondary);">INACTIVE</span>';
+                    const authBadge = h.live_metrics.auth_enforced ? 
+                        '<span style="color:#10b981; font-weight:bold;">ACTIVE</span>' : 
+                        '<span style="color:var(--text-secondary);">INACTIVE</span>';
+                    
+                    return `
+                        <tr style="border-bottom: 1px solid var(--border-glass);">
+                            <td style="padding: 8px; font-family: monospace;">${h.timestamp}</td>
+                            <td style="padding: 8px;">${h.interval}</td>
+                            <td style="padding: 8px; font-weight: bold; color: ${h.alerts_count > 0 ? '#ef4444' : '#10b981'}">${h.compliance_score.toFixed(1)}%</td>
+                            <td style="padding: 8px; color: ${h.delta >= 0 ? '#10b981' : '#ef4444'}">${sign}${h.delta.toFixed(1)}%</td>
+                            <td style="padding: 8px; color: ${h.alerts_count > 0 ? '#ef4444' : '#10b981'}">${h.alerts_count}</td>
+                            <td style="padding: 8px;">${tlsBadge}</td>
+                            <td style="padding: 8px;">${authBadge}</td>
+                        </tr>
+                    `;
+                }).join('');
+            } else {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 12px; color: var(--text-secondary);">No scans executed yet. Click "Execute Scan Cycle" to generate monitoring evidence.</td></tr>`;
+            }
+        }
+    }
+
+    async function triggerConMonCycle() {
+        const btn = el('btn-run-conmon-cycle');
+        if (!btn) return;
+        btn.disabled = true;
+        btn.textContent = 'Scanning...';
+
+        try {
+            const res = await fetch('/api/v1/conmon/run', { method: 'POST' });
+            if (!res.ok) throw new Error('ConMon execution failed');
+            const data = await res.json();
+            renderConMonData(data);
+        } catch (err) {
+            console.error('Failed to trigger ConMon cycle:', err);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Execute Scan Cycle';
+        }
+    }
+
+    async function updateConMonInterval(interval) {
+        try {
+            const res = await fetch('/api/v1/conmon/schedule/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ interval })
+            });
+            if (!res.ok) throw new Error('Schedule update failed');
+            const data = await res.json();
+            renderConMonData(data);
+        } catch (err) {
+            console.error('Failed to update ConMon interval:', err);
+        }
+    }
+
+    function initConMonButtons() {
+        const btnRun = el('btn-run-conmon-cycle');
+        if (btnRun) {
+            btnRun.addEventListener('click', (e) => {
+                e.preventDefault();
+                triggerConMonCycle();
+            });
+        }
+
+        const intervalSelect = el('conmon-interval-select');
+        if (intervalSelect) {
+            intervalSelect.addEventListener('change', (e) => {
+                updateConMonInterval(e.target.value);
             });
         }
     }
