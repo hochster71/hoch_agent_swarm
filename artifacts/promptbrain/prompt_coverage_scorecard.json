@@ -42,19 +42,19 @@
     "Legal / Compliance": 2
   },
   "frameworks_covered": {
-    "NIST CSF 2.0": 103,
     "TIC 3.0": 60,
+    "NIST CSF 2.0": 103,
     "NIST SP 800-137 Continuous Monitoring": 1,
     "NIST AI RMF": 8,
     "DISA STIGs": 2,
     "FedRAMP": 2,
-    "CIS Controls": 31,
     "NIST SP 800-37 RMF": 2,
+    "CIS Controls": 31,
     "OMB A-130": 1,
-    "HIPAA": 1,
-    "SOC 2": 1,
-    "PCI DSS": 2,
     "NIST SP 800-53 Rev. 5": 1,
+    "PCI DSS": 2,
+    "SOC 2": 1,
+    "HIPAA": 1,
     "DoD Zero Trust": 1
   },
   "lifecycle_stages_covered": {
