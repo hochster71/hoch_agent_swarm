@@ -722,6 +722,91 @@
         }
     }
 
+    async function loadModelStoragePolicy(generate = false) {
+        const storageContainer = el('model-storage-container');
+        if (!storageContainer) return;
+
+        if (generate) {
+            storageContainer.innerHTML = `
+                <div style="text-align: center; color: var(--text-secondary); padding: 20px;">
+                    <span class="pulse-glow" style="display: inline-block; width: 8px; height: 8px; background: var(--accent-teal); border-radius: 50%; margin-right: 8px; animation: led-pulse 1.5s infinite;"></span>
+                    Generating rclone-exclude.txt filter file...
+                </div>
+            `;
+        }
+
+        try {
+            const url = generate ? '/api/v1/models/storage-policy/generate' : '/api/v1/models/storage-policy';
+            const method = generate ? 'POST' : 'GET';
+            const res = await fetch(url, { method });
+            const data = await res.json();
+
+            // Status message
+            let fileStatusHtml = '';
+            if (data.exclude_file_exists) {
+                fileStatusHtml = `<span style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 10px;">EXCLUDE FILE GENERATED</span>`;
+            } else {
+                fileStatusHtml = `<span style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 10px;">EXCLUDE FILE MISSING</span>`;
+            }
+
+            const formattedSize = (data.total_protected_bytes / 1024 / 1024 / 1024).toFixed(2);
+
+            // Manifests list
+            const manifestsHtml = (data.protected_manifests || []).map(m => {
+                return `<li><code style="color: #a5b4fc;">${m}</code></li>`;
+            }).join('');
+
+            // Blobs list
+            const blobsHtml = (data.protected_blobs || []).map(b => {
+                const blobSize = b.size_bytes > 0 ? `(${(b.size_bytes / 1024 / 1024 / 1024).toFixed(2)} GB)` : '(missing)';
+                const statusColor = b.exists ? '#34d399' : '#f87171';
+                const statusText = b.exists ? 'protected' : 'missing';
+                return `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; border-bottom: 1px solid rgba(255,255,255,0.03); font-family: monospace; font-size: 11px;">
+                        <span style="color: var(--text-secondary);">${b.filename} ${blobSize}</span>
+                        <span style="color: ${statusColor}; font-weight: bold; font-size: 9px; text-transform: uppercase;">${statusText}</span>
+                    </div>
+                `;
+            }).join('');
+
+            storageContainer.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
+                    <div style="font-size: 12px; color: var(--text-secondary);">
+                        Exclude File Path: <code style="color: #fff; font-size: 11px;">${data.exclude_file_path}</code>
+                    </div>
+                    <div>${fileStatusHtml}</div>
+                </div>
+
+                ${data.message ? `<div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); color: #34d399; font-size: 11px; padding: 10px; border-radius: 6px; margin-bottom: 12px;">${data.message}</div>` : ''}
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-bottom: 12px;">
+                    <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-glass); padding: 14px; border-radius: 8px;">
+                        <h4 style="font-size: 12px; font-weight: bold; color: #fff; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Active Policy Summary</h4>
+                        <div style="display: flex; flex-direction: column; gap: 6px; font-size: 12px;">
+                            <div>Protected Disk Footprint: <strong style="color: #fbbf24; font-size: 14px;">${formattedSize} GB</strong></div>
+                            <div>Protected Manifests: <strong style="color: #fff;">${data.protected_manifests.length}</strong></div>
+                            <div>Protected Storage Blobs: <strong style="color: #fff;">${data.protected_blobs.length}</strong></div>
+                        </div>
+                        <h5 style="font-size: 11px; font-weight: bold; color: #fff; margin-top: 12px; margin-bottom: 6px;">Protected Manifest Files:</h5>
+                        <ul style="margin: 0; padding-left: 16px; font-size: 11px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 3px;">
+                            ${manifestsHtml}
+                        </ul>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-glass); padding: 14px; border-radius: 8px; display: flex; flex-direction: column;">
+                        <h4 style="font-size: 12px; font-weight: bold; color: #fff; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Protected Storage Blobs (Excludes)</h4>
+                        <div style="flex-grow: 1; max-height: 200px; overflow-y: auto; background: rgba(0,0,0,0.15); border: 1px solid var(--border-glass); border-radius: 6px; padding: 6px;">
+                            ${blobsHtml || '<div style="color:var(--text-secondary); text-align:center; padding:15px;">No blobs protected.</div>'}
+                        </div>
+                    </div>
+                </div>
+            `;
+        } catch (err) {
+            console.error(err);
+            storageContainer.innerHTML = `<div style="color: #ef4444; padding: 20px; text-align: center;">Error fetching model storage policy</div>`;
+        }
+    }
+
     // ── Loader: Model Router View ──────────────────────────────────────────
     async function loadModelRouterView() {
         const container = el('model-router-details');
@@ -749,8 +834,9 @@
                 </div>
             `;
             
-            // Trigger health load
+            // Trigger health and storage load
             loadModelHealth(false);
+            loadModelStoragePolicy(false);
         } catch (err) {
             container.innerHTML = `<div style="color:#ef4444; text-align:center;">Error fetching routing settings</div>`;
         }
@@ -2583,6 +2669,28 @@
         });
     }
 
+    function initModelStorageButton() {
+        const btn = el('btn-generate-exclude-list');
+        if (!btn) return;
+        btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            btn.disabled = true;
+            btn.textContent = 'Generating...';
+            btn.style.opacity = '0.5';
+            btn.style.cursor = 'not-allowed';
+            try {
+                await loadModelStoragePolicy(true);
+            } catch (err) {
+                console.error(err);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Generate Exclude Filter File';
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+            }
+        });
+    }
+
     // Initialization routine
     function init() {
   initMeshSentinel();
@@ -2591,6 +2699,7 @@
         initializeKoiAnimation();
         initRescanButton();
         initModelHealthButton();
+        initModelStorageButton();
         
         // Initial fetches
         fetchCockpit();
