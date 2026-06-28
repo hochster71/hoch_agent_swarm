@@ -1,0 +1,9 @@
+{
+  "decision_track_id": "PR13-visual-control-plane-local-v1.0.0",
+  "track": "PR13_PRODUCTION_READINESS_OPERATOR_CONTROLLED_STAGING_GO_NO_GO_DECISION",
+  "integration_branch": "integration/visual-control-plane-local-v1",
+  "target_release": "v0.1.6-ERROR-BUDGET-AWARE-AUTONOMY",
+  "status": "OPERATOR_DECISION_GATE",
+  "local_preview_only": true,
+  "created_at": "2026-06-27T21:42:00-05:00"
+}
