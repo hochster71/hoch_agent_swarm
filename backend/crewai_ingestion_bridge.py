@@ -139,7 +139,7 @@ def run_crewai_ingestion() -> dict:
                             try:
                                 report_data = json.loads(content)
                                 if isinstance(report_data, dict):
-                                    for key in ["crew_name", "run_id", "agent", "status", "timestamp"]:
+                                    for key in ["crew_name", "run_id", "agent", "status", "timestamp", "metrics"]:
                                         if key in report_data:
                                             run_context[key] = report_data[key]
                             except Exception as je:
