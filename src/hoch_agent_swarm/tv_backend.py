@@ -75,6 +75,22 @@ class TVBackend:
 
     def refresh_from_source(self):
         """Fetches from Drogon URLs with mock fallbacks on connection issues."""
+        import json
+        demo_config_path = PROJECT_ROOT / "data" / "demo_config.json"
+        tv_offline_mode = False
+        if demo_config_path.exists():
+            try:
+                with open(demo_config_path, "r") as f:
+                    tv_offline_mode = json.load(f).get("tv_offline_mode", False)
+            except Exception:
+                pass
+
+        if tv_offline_mode:
+            self.m3u_path.write_text(MOCK_M3U, encoding="utf-8")
+            self.epg_path.write_text(MOCK_XMLTV, encoding="utf-8")
+            self.last_refreshed = datetime.now(timezone.utc).isoformat()
+            return
+
         # 1. Fetch M3U
         try:
             req = urllib.request.Request(PLAYLIST_URL, headers={"User-Agent": "Mozilla/5.0"})

@@ -99,7 +99,7 @@ def main():
         env = os.environ.copy()
         env["SWARM_UI_PORT"] = str(port)
         proc = subprocess.Popen(
-            [sys.executable, "-m", "hoch_agent_swarm.ui_server"],
+            [sys.executable, "-u", "-m", "hoch_agent_swarm.ui_server"],
             env=env
         )
         
@@ -124,9 +124,9 @@ def main():
     print(f"\n{BOLD}Running key route verification suite...{RESET}")
     base_url = f"http://127.0.0.1:{port}"
     r1 = verify_route(f"{base_url}/", "Home Page")
-    r2 = verify_route(f"{base_url}/api/v1/promptbrain/registry", "Prompt Registry API")
+    r2 = verify_route(f"{base_url}/api/v1/promptbrain/prompts", "Prompt Registry API")
     r3 = verify_route(f"{base_url}/api/v1/brain/query?q=compliance", "Evidence Query API")
-    r4 = verify_route(f"{base_url}/api/v1/promptqa/history", "Prompt QA Lineage API")
+    r4 = verify_route(f"{base_url}/api/v1/promptqa/lineage", "Prompt QA Lineage API")
     r5 = verify_route(f"{base_url}/api/v1/operator/health", "Operator Health Status API")
     r6 = verify_route(f"{base_url}/api/tv/health", "HOCH TV IPTV Health API")
     
