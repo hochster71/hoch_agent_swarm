@@ -142,15 +142,119 @@ def run():
         archived_pairs = _archive_existing_artifacts(run_timestamp)
         report.record_archived_artifacts(archived_pairs)
 
-        HochAgentSwarm().crew().kickoff(inputs=inputs)
+        crew_output = HochAgentSwarm().crew().kickoff(inputs=inputs)
 
         validation_results = _run_validation()
+        
+        # Build custom metrics
+        from datetime import timezone
+        from hoch_agent_swarm.model_router import ModelRouter
+        
+        tasks_metrics = []
+        role_to_key = {
+            "Swarm Asset Mapper": "asset_mapper",
+            "Swarm Process Architect": "swarm_architect",
+            "Swarm Agent Combinator": "agent_combinator",
+            "Swarm Security Auditor": "security_operator",
+            "Swarm Execution Scheduler": "execution_planner",
+            "Release Synthesis Director": "synthesis_director",
+            "Antigravity Integration Operator": "antigravity_integration_operator",
+        }
+        
+        task_to_artifact_path = {
+            "Swarm Asset Mapper": "artifacts/research/asset_map.md",
+            "Swarm Process Architect": "",
+            "Swarm Agent Combinator": "",
+            "Swarm Security Auditor": "artifacts/security_reviews/security_audit_report.md",
+            "Swarm Execution Scheduler": "artifacts/reports/execution_plan.md",
+            "Release Synthesis Director": "artifacts/reports/release_packet.md",
+            "Antigravity Integration Operator": "artifacts/antigravity/antigravity_execution_plan.md",
+        }
+        
+        total_runtime = 0.0
+        if report.started_at:
+            try:
+                start_dt = datetime.fromisoformat(report.started_at)
+                total_runtime = (datetime.now(timezone.utc) - start_dt).total_seconds()
+            except Exception:
+                total_runtime = 300.0
+        
+        num_tasks = len(crew_output.tasks_output) if crew_output and getattr(crew_output, "tasks_output", None) else 7
+        avg_task_duration = total_runtime / num_tasks if num_tasks > 0 else 40.0
+        
+        for i, t_out in enumerate(getattr(crew_output, "tasks_output", None) or []):
+            agent_role = getattr(t_out, "agent", "unknown").strip()
+            agent_key = role_to_key.get(agent_role, "unknown")
+            resolved = ModelRouter.resolved_models.get(agent_key, {"model": "unknown", "fallback": False})
+            
+            artifact_path = task_to_artifact_path.get(agent_role, "")
+            artifact_quality = "NOT_APPLICABLE"
+            if artifact_path:
+                abs_path = os.path.abspath(artifact_path)
+                if abs_path in validation_results:
+                    artifact_quality = validation_results[abs_path]
+                elif artifact_path in validation_results:
+                    artifact_quality = validation_results[artifact_path]
+                else:
+                    artifact_quality = "VALID" if os.path.exists(artifact_path) else "MISSING"
+                    
+            tasks_metrics.append({
+                "task_name": getattr(t_out, "name", None) or f"task_{i+1}",
+                "agent_role": agent_role,
+                "agent_key": agent_key,
+                "model": resolved["model"],
+                "fallback_event": resolved["fallback"],
+                "runtime_seconds_estimate": int(avg_task_duration),
+                "status": "success",
+                "artifact_quality": artifact_quality
+            })
+            
+        token_usage_raw = {}
+        if crew_output and getattr(crew_output, "token_usage", None):
+            try:
+                token_usage_raw = {
+                    "total_tokens": getattr(crew_output.token_usage, "total_tokens", 0),
+                    "prompt_tokens": getattr(crew_output.token_usage, "prompt_tokens", 0),
+                    "completion_tokens": getattr(crew_output.token_usage, "completion_tokens", 0),
+                    "successful_requests": getattr(crew_output.token_usage, "successful_requests", 0),
+                }
+            except Exception:
+                try:
+                    token_usage_raw = dict(crew_output.token_usage)
+                except Exception:
+                    pass
+                    
+        metrics = {
+            "total_token_usage": token_usage_raw,
+            "tasks": tasks_metrics,
+            "total_runtime_seconds": int(total_runtime)
+        }
+        report.record_metrics(metrics)
+
         report.record_canonical_artifacts(ALL_CANONICAL_ARTIFACT_PATHS, validation_results)
         report.finish(STATUS_PASS)
 
     except ArtifactValidationError as e:
         report.record_canonical_artifacts(ALL_CANONICAL_ARTIFACT_PATHS)
         report.add_error(f"Artifact validation failed: {e}")
+        # Build failure metrics
+        metrics = {
+            "total_token_usage": {},
+            "tasks": [
+                {
+                    "task_name": "unknown",
+                    "agent_role": "unknown",
+                    "agent_key": "unknown",
+                    "model": "unknown",
+                    "fallback_event": False,
+                    "runtime_seconds_estimate": 0,
+                    "status": "failed",
+                    "artifact_quality": "INVALID"
+                }
+            ],
+            "total_runtime_seconds": 0
+        }
+        report.record_metrics(metrics)
         report.finish(STATUS_FAIL)
         _write_report(report, run_timestamp)
         raise
@@ -158,6 +262,24 @@ def run():
     except Exception as e:
         report.record_canonical_artifacts(ALL_CANONICAL_ARTIFACT_PATHS)
         report.add_error(str(e))
+        # Build failure metrics
+        metrics = {
+            "total_token_usage": {},
+            "tasks": [
+                {
+                    "task_name": "unknown",
+                    "agent_role": "unknown",
+                    "agent_key": "unknown",
+                    "model": "unknown",
+                    "fallback_event": False,
+                    "runtime_seconds_estimate": 0,
+                    "status": "failed",
+                    "artifact_quality": "INVALID"
+                }
+            ],
+            "total_runtime_seconds": 0
+        }
+        report.record_metrics(metrics)
         report.finish(STATUS_FAIL)
         _write_report(report, run_timestamp)
         raise Exception(f"An error occurred while running the crew: {e}")

@@ -157,6 +157,7 @@ class RunReport:
     canonical_artifacts: list = field(default_factory=list)
     archived_previous_artifacts: list = field(default_factory=list)
     errors: list = field(default_factory=list)
+    metrics: dict = field(default_factory=dict)
 
     # ------------------------------------------------------------------
     # Factory
@@ -185,6 +186,7 @@ class RunReport:
             canonical_artifacts=[],
             archived_previous_artifacts=[],
             errors=[],
+            metrics={},
         )
 
     # ------------------------------------------------------------------
@@ -228,6 +230,10 @@ class RunReport:
         """Append an error message. Switches status to FAIL if not already."""
         self.errors.append(message)
         self.status = STATUS_FAIL
+
+    def record_metrics(self, data: dict) -> None:
+        """Record custom swarm execution metrics."""
+        self.metrics = data
 
     def finish(self, status: str) -> None:
         """Mark the run as complete with the given status and record completion time."""

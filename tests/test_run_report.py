@@ -418,10 +418,32 @@ class TestRunWritesReport:
         monkeypatch.setattr("hoch_agent_swarm.main._CANONICAL_ARTIFACTS", [])
         monkeypatch.setattr("hoch_agent_swarm.main._ARCHIVE_DIR", str(tmp_path / "crew_runs"))
 
+        # Mock CrewOutput and TaskOutput
+        class MockTaskOutput:
+            def __init__(self, name, agent, raw):
+                self.name = name
+                self.agent = agent
+                self.raw = raw
+
+        class MockTokenUsage:
+            def __init__(self):
+                self.total_tokens = 150
+                self.prompt_tokens = 100
+                self.completion_tokens = 50
+                self.successful_requests = 1
+
+        class MockCrewOutput:
+            def __init__(self):
+                self.tasks_output = [
+                    MockTaskOutput("map_assets", "Swarm Asset Mapper", "assets mapped"),
+                    MockTaskOutput("design_dag", "Swarm Process Architect", "dag designed")
+                ]
+                self.token_usage = MockTokenUsage()
+
         # Stub crew kickoff
         monkeypatch.setattr(
             "hoch_agent_swarm.main.HochAgentSwarm",
-            lambda: type("C", (), {"crew": lambda s: type("Crew", (), {"kickoff": lambda s, inputs: None})()})(),
+            lambda: type("C", (), {"crew": lambda s: type("Crew", (), {"kickoff": lambda s, inputs: MockCrewOutput()})()})(),
         )
         # Stub validation to succeed
         monkeypatch.setattr(
@@ -445,6 +467,16 @@ class TestRunWritesReport:
         data = json.loads(report_file.read_text())
         assert data["status"] == STATUS_PASS
         assert data["errors"] == []
+        
+        # Verify metrics fields are present
+        assert "metrics" in data
+        metrics = data["metrics"]
+        assert "total_token_usage" in metrics
+        assert metrics["total_token_usage"]["total_tokens"] == 150
+        assert "tasks" in metrics
+        assert len(metrics["tasks"]) == 2
+        assert metrics["tasks"][0]["agent_role"] == "Swarm Asset Mapper"
+        assert metrics["tasks"][0]["agent_key"] == "asset_mapper"
 
     def test_fail_report_written_on_crew_exception(self, tmp_path, monkeypatch):
         monkeypatch.chdir(tmp_path)

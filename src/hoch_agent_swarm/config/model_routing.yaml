@@ -4,19 +4,19 @@
 routing:
   fast_classification:
     primary: "ollama/mistral:7b"
-    fallback: "ollama/llama3.1:8b"
+    fallback: "ollama/gemma2:2b"
   
   planning_docs:
-    primary: "ollama/gemma4:latest"
-    fallback: "ollama/llama3.1:8b"
+    primary: "ollama/mistral:7b"
+    fallback: "ollama/gemma2:2b"
 
   coding_repair:
-    primary: "ollama/qwen2.5-coder:14b"
-    fallback: "ollama/deepseek-coder:6.7b"
+    primary: "ollama/mistral:7b"
+    fallback: "ollama/gemma2:2b"
 
   security_audit:
-    primary: "ollama/llama3.1:8b"
-    fallback: "ollama/qwen2.5-coder:14b"
+    primary: "ollama/mistral:7b"
+    fallback: "ollama/gemma2:2b"
 
 agents:
   asset_mapper: "fast_classification"

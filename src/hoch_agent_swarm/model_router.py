@@ -8,6 +8,7 @@ from crewai import LLM
 
 class ModelRouter:
     _available_models = None
+    resolved_models = {}  # agent_name -> { "model": str, "fallback": bool }
 
     @classmethod
     def get_available_models(cls, api_base: str) -> set[str]:
@@ -41,20 +42,24 @@ class ModelRouter:
         config_path = base_dir / "config" / "model_routing.yaml"
         
         if not config_path.exists():
+            cls.resolved_models[agent_name] = {"model": default_model, "fallback": False}
             return LLM(model=default_model, base_url=api_base)
 
         try:
             with open(config_path, "r") as f:
                 config = yaml.safe_load(f) or {}
         except Exception:
+            cls.resolved_models[agent_name] = {"model": default_model, "fallback": False}
             return LLM(model=default_model, base_url=api_base)
 
         agent_class = config.get("agents", {}).get(agent_name)
         if not agent_class:
+            cls.resolved_models[agent_name] = {"model": default_model, "fallback": False}
             return LLM(model=default_model, base_url=api_base)
 
         routing_rule = config.get("routing", {}).get(agent_class)
         if not routing_rule:
+            cls.resolved_models[agent_name] = {"model": default_model, "fallback": False}
             return LLM(model=default_model, base_url=api_base)
 
         primary = routing_rule.get("primary")
@@ -73,13 +78,16 @@ class ModelRouter:
         if primary:
             norm_primary = strip_prefix(primary)
             if norm_primary in available or primary in available:
+                cls.resolved_models[agent_name] = {"model": primary, "fallback": False}
                 return LLM(model=primary, base_url=api_base)
 
         # Check fallback
         if fallback:
             norm_fallback = strip_prefix(fallback)
             if norm_fallback in available or fallback in available:
+                cls.resolved_models[agent_name] = {"model": fallback, "fallback": True}
                 return LLM(model=fallback, base_url=api_base)
 
         # Final default fallback
+        cls.resolved_models[agent_name] = {"model": default_model, "fallback": True}
         return LLM(model=default_model, base_url=api_base)

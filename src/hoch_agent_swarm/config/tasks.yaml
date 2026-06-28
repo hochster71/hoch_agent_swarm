@@ -77,8 +77,9 @@ antigravity_integration_task:
     - Do NOT include any Python code, pseudocode, JSON fragments, code blocks, lambda expressions,
       random generators, placeholder variables, or raw data structures.
     - Every section heading listed below MUST appear in the output exactly as written.
-    - Do not modify the heading names (do not append trailing hashes like '##', colons, or any other trailing text to the heading lines).
-    - All content must be written in complete English sentences and bullet lists.
+    - Do not modify the heading names (do NOT append colons, hashes, or trailing strings like ' (TBD)', ' (To Be Decided)', or anything else).
+    - Under each heading, you MUST write at least 3-4 complete English sentences or a comprehensive markdown list of detailed steps.
+    - NEVER use placeholders like 'TBD', 'To Be Determined', 'Insert content here', or leave any section empty.
     Required output structure — use these exact headings in this order:
     # Hoch Agent Swarm Antigravity Execution Plan
     ## Mission
