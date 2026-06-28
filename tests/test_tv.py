@@ -168,3 +168,42 @@ def test_tv_proxy_segment(mock_urlopen):
         print("RESPONSE DATA:", res.data)
         assert res.status_code == 200
         assert res.data == b"MOCK_TS_DATA"
+
+@patch("urllib.request.urlopen")
+def test_tv_proxy_sub_playlist(mock_urlopen):
+    def mock_urlopen_sub_side_effect(req, *args, **kwargs):
+        url = req.full_url if hasattr(req, "full_url") else req
+        mock_resp = MagicMock()
+        if "drogon.tv" in url:
+            from hoch_agent_swarm.tv_backend import MOCK_M3U
+            mock_resp.read.return_value = MOCK_M3U.encode("utf-8")
+            mock_resp.headers.get.return_value = "text/plain"
+            mock_resp.info.return_value.get_content_type.return_value = "text/plain"
+        else:
+            import urllib.parse
+            parsed = urllib.parse.urlparse(url)
+            playlist = f"#EXTM3U\n{parsed.scheme}://{parsed.netloc}/segment1.ts"
+            mock_resp.read.return_value = playlist.encode("utf-8")
+            mock_resp.headers.get.return_value = "application/vnd.apple.mpegurl"
+            mock_resp.info.return_value.get_content_type.return_value = "application/vnd.apple.mpegurl"
+        mock_resp.__enter__.return_value = mock_resp
+        return mock_resp
+
+    mock_urlopen.side_effect = mock_urlopen_sub_side_effect
+
+    with app.test_client() as client:
+        res = client.get("/api/tv/channels")
+        channels = json.loads(res.data.decode("utf-8"))
+        ch_id = channels[0]["id"]
+        ch_url = channels[0]["url"]
+
+        import urllib.parse
+        parsed = urllib.parse.urlparse(ch_url)
+        sub_playlist_url = f"{parsed.scheme}://{parsed.netloc}/sub_playlist.m3u8"
+        hex_url = sub_playlist_url.encode("utf-8").hex()
+
+        res = client.get(f"/api/tv/stream/{ch_id}/asset?url={hex_url}")
+        assert res.status_code == 200
+        assert b"asset?url=" in res.data
+        assert f"{parsed.scheme}://{parsed.netloc}/segment1.ts".encode("utf-8") not in res.data
+

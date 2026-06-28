@@ -820,6 +820,12 @@ def api_tv_stream_asset(channel_id):
     
     if asset_url.endswith(".m3u8") or ".m3u8" in asset_url:
         content_type = "application/vnd.apple.mpegurl"
+        try:
+            playlist_text = data.decode("utf-8", errors="ignore")
+            rewritten = backend.rewrite_hls_playlist(channel_id, playlist_text, asset_url)
+            data = rewritten.encode("utf-8")
+        except Exception:
+            pass
     elif asset_url.endswith(".ts") or ".ts" in asset_url:
         content_type = "video/mp2t"
     elif asset_url.endswith(".m4s") or ".m4s" in asset_url:
