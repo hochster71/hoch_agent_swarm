@@ -6,7 +6,7 @@
     "beforeScore": 57.1,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215447+00:00"
+    "timestamp": "2026-06-28T15:56:00.351316+00:00"
   },
   "AG-001": {
     "id": "AG-001",
@@ -15,7 +15,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215478+00:00"
+    "timestamp": "2026-06-28T15:56:00.351348+00:00"
   },
   "AI-001": {
     "id": "AI-001",
@@ -24,7 +24,7 @@
     "beforeScore": 61.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215493+00:00"
+    "timestamp": "2026-06-28T15:56:00.351364+00:00"
   },
   "AI-002": {
     "id": "AI-002",
@@ -33,7 +33,7 @@
     "beforeScore": 61.0,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215508+00:00"
+    "timestamp": "2026-06-28T15:56:00.351379+00:00"
   },
   "AI-003": {
     "id": "AI-003",
@@ -42,7 +42,7 @@
     "beforeScore": 62.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215522+00:00"
+    "timestamp": "2026-06-28T15:56:00.351392+00:00"
   },
   "AIRT-016": {
     "id": "AIRT-016",
@@ -51,7 +51,7 @@
     "beforeScore": 75.2,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215539+00:00"
+    "timestamp": "2026-06-28T15:56:00.351411+00:00"
   },
   "ARCHSEC-008": {
     "id": "ARCHSEC-008",
@@ -60,7 +60,7 @@
     "beforeScore": 73.3,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215557+00:00"
+    "timestamp": "2026-06-28T15:56:00.351429+00:00"
   },
   "AUD-001": {
     "id": "AUD-001",
@@ -69,7 +69,7 @@
     "beforeScore": 62.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215572+00:00"
+    "timestamp": "2026-06-28T15:56:00.351445+00:00"
   },
   "AUD-002": {
     "id": "AUD-002",
@@ -78,7 +78,7 @@
     "beforeScore": 61.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215586+00:00"
+    "timestamp": "2026-06-28T15:56:00.351460+00:00"
   },
   "AUD-003": {
     "id": "AUD-003",
@@ -87,7 +87,7 @@
     "beforeScore": 58.1,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215600+00:00"
+    "timestamp": "2026-06-28T15:56:00.351475+00:00"
   },
   "AUD-004": {
     "id": "AUD-004",
@@ -96,7 +96,7 @@
     "beforeScore": 55.2,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215615+00:00"
+    "timestamp": "2026-06-28T15:56:00.351512+00:00"
   },
   "AUTHZ-027": {
     "id": "AUTHZ-027",
@@ -105,7 +105,7 @@
     "beforeScore": 75.2,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215632+00:00"
+    "timestamp": "2026-06-28T15:56:00.351537+00:00"
   },
   "BIZ-019": {
     "id": "BIZ-019",
@@ -114,7 +114,7 @@
     "beforeScore": 73.3,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215649+00:00"
+    "timestamp": "2026-06-28T15:56:00.351556+00:00"
   },
   "BLUE-017": {
     "id": "BLUE-017",
@@ -123,7 +123,7 @@
     "beforeScore": 73.3,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215665+00:00"
+    "timestamp": "2026-06-28T15:56:00.351573+00:00"
   },
   "BRAIN-001": {
     "id": "BRAIN-001",
@@ -132,7 +132,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215694+00:00"
+    "timestamp": "2026-06-28T15:56:00.351604+00:00"
   },
   "BRAIN-002": {
     "id": "BRAIN-002",
@@ -141,7 +141,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215720+00:00"
+    "timestamp": "2026-06-28T15:56:00.351632+00:00"
   },
   "BRAIN-003": {
     "id": "BRAIN-003",
@@ -150,7 +150,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215745+00:00"
+    "timestamp": "2026-06-28T15:56:00.351659+00:00"
   },
   "BRAIN-004": {
     "id": "BRAIN-004",
@@ -159,7 +159,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215770+00:00"
+    "timestamp": "2026-06-28T15:56:00.351684+00:00"
   },
   "BRAIN-005": {
     "id": "BRAIN-005",
@@ -168,7 +168,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215795+00:00"
+    "timestamp": "2026-06-28T15:56:00.351710+00:00"
   },
   "BRAIN-006": {
     "id": "BRAIN-006",
@@ -177,7 +177,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215819+00:00"
+    "timestamp": "2026-06-28T15:56:00.351735+00:00"
   },
   "BRAIN-007": {
     "id": "BRAIN-007",
@@ -186,7 +186,7 @@
     "beforeScore": 84.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215842+00:00"
+    "timestamp": "2026-06-28T15:56:00.351758+00:00"
   },
   "BRAIN-008": {
     "id": "BRAIN-008",
@@ -195,7 +195,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215867+00:00"
+    "timestamp": "2026-06-28T15:56:00.351785+00:00"
   },
   "BRAIN-009": {
     "id": "BRAIN-009",
@@ -204,7 +204,7 @@
     "beforeScore": 84.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215891+00:00"
+    "timestamp": "2026-06-28T15:56:00.351809+00:00"
   },
   "BRAIN-010": {
     "id": "BRAIN-010",
@@ -213,7 +213,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215915+00:00"
+    "timestamp": "2026-06-28T15:56:00.351834+00:00"
   },
   "BREAK-021": {
     "id": "BREAK-021",
@@ -222,7 +222,7 @@
     "beforeScore": 73.3,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215929+00:00"
+    "timestamp": "2026-06-28T15:56:00.351850+00:00"
   },
   "CHAOS-024": {
     "id": "CHAOS-024",
@@ -231,7 +231,7 @@
     "beforeScore": 73.3,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215944+00:00"
+    "timestamp": "2026-06-28T15:56:00.351866+00:00"
   },
   "CHG-012": {
     "id": "CHG-012",
@@ -240,7 +240,7 @@
     "beforeScore": 73.3,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215958+00:00"
+    "timestamp": "2026-06-28T15:56:00.351881+00:00"
   },
   "CODE-001": {
     "id": "CODE-001",
@@ -249,7 +249,7 @@
     "beforeScore": 59.0,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215973+00:00"
+    "timestamp": "2026-06-28T15:56:00.351897+00:00"
   },
   "CODE-002": {
     "id": "CODE-002",
@@ -258,7 +258,7 @@
     "beforeScore": 58.1,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.215986+00:00"
+    "timestamp": "2026-06-28T15:56:00.351912+00:00"
   },
   "CODE-003": {
     "id": "CODE-003",
@@ -267,7 +267,7 @@
     "beforeScore": 58.1,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216000+00:00"
+    "timestamp": "2026-06-28T15:56:00.351926+00:00"
   },
   "CODE-004": {
     "id": "CODE-004",
@@ -276,7 +276,7 @@
     "beforeScore": 62.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216012+00:00"
+    "timestamp": "2026-06-28T15:56:00.351939+00:00"
   },
   "CODE-005": {
     "id": "CODE-005",
@@ -285,7 +285,7 @@
     "beforeScore": 58.1,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216025+00:00"
+    "timestamp": "2026-06-28T15:56:00.351953+00:00"
   },
   "CONST-001": {
     "id": "CONST-001",
@@ -294,7 +294,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216050+00:00"
+    "timestamp": "2026-06-28T15:56:00.351979+00:00"
   },
   "CONTRACT-001": {
     "id": "CONTRACT-001",
@@ -303,7 +303,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216073+00:00"
+    "timestamp": "2026-06-28T15:56:00.352004+00:00"
   },
   "CORR-001": {
     "id": "CORR-001",
@@ -312,7 +312,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216098+00:00"
+    "timestamp": "2026-06-28T15:56:00.352030+00:00"
   },
   "COURTS-001": {
     "id": "COURTS-001",
@@ -321,7 +321,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216123+00:00"
+    "timestamp": "2026-06-28T15:56:00.352056+00:00"
   },
   "DAST-001": {
     "id": "DAST-001",
@@ -330,7 +330,7 @@
     "beforeScore": 58.1,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216158+00:00"
+    "timestamp": "2026-06-28T15:56:00.352092+00:00"
   },
   "DAST-002": {
     "id": "DAST-002",
@@ -339,7 +339,7 @@
     "beforeScore": 59.0,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216172+00:00"
+    "timestamp": "2026-06-28T15:56:00.352107+00:00"
   },
   "DAST-003": {
     "id": "DAST-003",
@@ -348,7 +348,7 @@
     "beforeScore": 58.1,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216186+00:00"
+    "timestamp": "2026-06-28T15:56:00.352121+00:00"
   },
   "DBSEC-010": {
     "id": "DBSEC-010",
@@ -357,7 +357,7 @@
     "beforeScore": 73.3,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216201+00:00"
+    "timestamp": "2026-06-28T15:56:00.352137+00:00"
   },
   "DEV-001": {
     "id": "DEV-001",
@@ -366,7 +366,7 @@
     "beforeScore": 63.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216215+00:00"
+    "timestamp": "2026-06-28T15:56:00.352152+00:00"
   },
   "DEV-002": {
     "id": "DEV-002",
@@ -375,7 +375,7 @@
     "beforeScore": 57.1,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216229+00:00"
+    "timestamp": "2026-06-28T15:56:00.352167+00:00"
   },
   "DEV-003": {
     "id": "DEV-003",
@@ -384,7 +384,7 @@
     "beforeScore": 53.3,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216245+00:00"
+    "timestamp": "2026-06-28T15:56:00.352183+00:00"
   },
   "DEV-004": {
     "id": "DEV-004",
@@ -393,7 +393,7 @@
     "beforeScore": 55.2,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216259+00:00"
+    "timestamp": "2026-06-28T15:56:00.352197+00:00"
   },
   "DEV-005": {
     "id": "DEV-005",
@@ -402,7 +402,7 @@
     "beforeScore": 57.1,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216272+00:00"
+    "timestamp": "2026-06-28T15:56:00.352210+00:00"
   },
   "DEV-006": {
     "id": "DEV-006",
@@ -411,7 +411,7 @@
     "beforeScore": 57.1,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216285+00:00"
+    "timestamp": "2026-06-28T15:56:00.352223+00:00"
   },
   "DOD-001": {
     "id": "DOD-001",
@@ -420,7 +420,7 @@
     "beforeScore": 61.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216298+00:00"
+    "timestamp": "2026-06-28T15:56:00.352237+00:00"
   },
   "DOD-002": {
     "id": "DOD-002",
@@ -429,7 +429,7 @@
     "beforeScore": 61.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216312+00:00"
+    "timestamp": "2026-06-28T15:56:00.352250+00:00"
   },
   "DOD-003": {
     "id": "DOD-003",
@@ -438,7 +438,7 @@
     "beforeScore": 61.0,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216325+00:00"
+    "timestamp": "2026-06-28T15:56:00.352265+00:00"
   },
   "DRIFT-013": {
     "id": "DRIFT-013",
@@ -447,7 +447,7 @@
     "beforeScore": 73.3,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216340+00:00"
+    "timestamp": "2026-06-28T15:56:00.352282+00:00"
   },
   "DRQA-023": {
     "id": "DRQA-023",
@@ -456,7 +456,7 @@
     "beforeScore": 73.3,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216354+00:00"
+    "timestamp": "2026-06-28T15:56:00.352297+00:00"
   },
   "EDU-001": {
     "id": "EDU-001",
@@ -465,7 +465,7 @@
     "beforeScore": 61.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216368+00:00"
+    "timestamp": "2026-06-28T15:56:00.352310+00:00"
   },
   "ELECTION-001": {
     "id": "ELECTION-001",
@@ -474,7 +474,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216393+00:00"
+    "timestamp": "2026-06-28T15:56:00.352336+00:00"
   },
   "EN-001": {
     "id": "EN-001",
@@ -483,7 +483,7 @@
     "beforeScore": 62.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216428+00:00"
+    "timestamp": "2026-06-28T15:56:00.352373+00:00"
   },
   "EN-002": {
     "id": "EN-002",
@@ -492,7 +492,7 @@
     "beforeScore": 57.1,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216441+00:00"
+    "timestamp": "2026-06-28T15:56:00.352386+00:00"
   },
   "ENV-001": {
     "id": "ENV-001",
@@ -501,7 +501,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216466+00:00"
+    "timestamp": "2026-06-28T15:56:00.352411+00:00"
   },
   "EXCEPT-022": {
     "id": "EXCEPT-022",
@@ -510,7 +510,7 @@
     "beforeScore": 73.3,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216481+00:00"
+    "timestamp": "2026-06-28T15:56:00.352427+00:00"
   },
   "EXECRISK-030": {
     "id": "EXECRISK-030",
@@ -519,7 +519,7 @@
     "beforeScore": 73.3,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216497+00:00"
+    "timestamp": "2026-06-28T15:56:00.352443+00:00"
   },
   "FAC-001": {
     "id": "FAC-001",
@@ -528,7 +528,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216522+00:00"
+    "timestamp": "2026-06-28T15:56:00.352468+00:00"
   },
   "FAR-001": {
     "id": "FAR-001",
@@ -537,7 +537,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216546+00:00"
+    "timestamp": "2026-06-28T15:56:00.352493+00:00"
   },
   "FIN-001": {
     "id": "FIN-001",
@@ -546,7 +546,7 @@
     "beforeScore": 56.2,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216560+00:00"
+    "timestamp": "2026-06-28T15:56:00.352508+00:00"
   },
   "FIN-002": {
     "id": "FIN-002",
@@ -555,7 +555,7 @@
     "beforeScore": 57.1,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216573+00:00"
+    "timestamp": "2026-06-28T15:56:00.352521+00:00"
   },
   "FINOPS-001": {
     "id": "FINOPS-001",
@@ -564,7 +564,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216597+00:00"
+    "timestamp": "2026-06-28T15:56:00.352545+00:00"
   },
   "GAP-001": {
     "id": "GAP-001",
@@ -573,7 +573,7 @@
     "beforeScore": 84.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216639+00:00"
+    "timestamp": "2026-06-28T15:56:00.352589+00:00"
   },
   "GAP-002": {
     "id": "GAP-002",
@@ -582,7 +582,7 @@
     "beforeScore": 81.0,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216663+00:00"
+    "timestamp": "2026-06-28T15:56:00.352613+00:00"
   },
   "GAP-003": {
     "id": "GAP-003",
@@ -591,7 +591,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216686+00:00"
+    "timestamp": "2026-06-28T15:56:00.352637+00:00"
   },
   "GAP-004": {
     "id": "GAP-004",
@@ -600,7 +600,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216708+00:00"
+    "timestamp": "2026-06-28T15:56:00.352660+00:00"
   },
   "GAP-005": {
     "id": "GAP-005",
@@ -609,7 +609,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216732+00:00"
+    "timestamp": "2026-06-28T15:56:00.352685+00:00"
   },
   "GAP-006": {
     "id": "GAP-006",
@@ -618,7 +618,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216755+00:00"
+    "timestamp": "2026-06-28T15:56:00.352708+00:00"
   },
   "GAP-007": {
     "id": "GAP-007",
@@ -627,7 +627,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216778+00:00"
+    "timestamp": "2026-06-28T15:56:00.352732+00:00"
   },
   "GAP-008": {
     "id": "GAP-008",
@@ -636,7 +636,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216800+00:00"
+    "timestamp": "2026-06-28T15:56:00.352755+00:00"
   },
   "GOV-001": {
     "id": "GOV-001",
@@ -645,7 +645,7 @@
     "beforeScore": 59.0,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216814+00:00"
+    "timestamp": "2026-06-28T15:56:00.352769+00:00"
   },
   "GOV-002": {
     "id": "GOV-002",
@@ -654,7 +654,7 @@
     "beforeScore": 62.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216827+00:00"
+    "timestamp": "2026-06-28T15:56:00.352783+00:00"
   },
   "GOVFRAME-001": {
     "id": "GOVFRAME-001",
@@ -663,7 +663,7 @@
     "beforeScore": 85.7,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216846+00:00"
+    "timestamp": "2026-06-28T15:56:00.352802+00:00"
   },
   "GOVFRAME-002": {
     "id": "GOVFRAME-002",
@@ -672,7 +672,7 @@
     "beforeScore": 85.7,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216863+00:00"
+    "timestamp": "2026-06-28T15:56:00.352819+00:00"
   },
   "GOVFRAME-003": {
     "id": "GOVFRAME-003",
@@ -681,7 +681,7 @@
     "beforeScore": 85.7,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216881+00:00"
+    "timestamp": "2026-06-28T15:56:00.352837+00:00"
   },
   "GOVFRAME-004": {
     "id": "GOVFRAME-004",
@@ -690,7 +690,7 @@
     "beforeScore": 85.7,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216898+00:00"
+    "timestamp": "2026-06-28T15:56:00.352855+00:00"
   },
   "GOVFRAME-005": {
     "id": "GOVFRAME-005",
@@ -699,7 +699,7 @@
     "beforeScore": 85.7,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216919+00:00"
+    "timestamp": "2026-06-28T15:56:00.352877+00:00"
   },
   "GOVFRAME-006": {
     "id": "GOVFRAME-006",
@@ -708,7 +708,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216943+00:00"
+    "timestamp": "2026-06-28T15:56:00.352902+00:00"
   },
   "GOVFRAME-007": {
     "id": "GOVFRAME-007",
@@ -717,7 +717,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216967+00:00"
+    "timestamp": "2026-06-28T15:56:00.352927+00:00"
   },
   "GOVFRAME-008": {
     "id": "GOVFRAME-008",
@@ -726,7 +726,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.216990+00:00"
+    "timestamp": "2026-06-28T15:56:00.352951+00:00"
   },
   "GOVFRAME-009": {
     "id": "GOVFRAME-009",
@@ -735,7 +735,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217014+00:00"
+    "timestamp": "2026-06-28T15:56:00.352975+00:00"
   },
   "GOVFRAME-010": {
     "id": "GOVFRAME-010",
@@ -744,7 +744,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217039+00:00"
+    "timestamp": "2026-06-28T15:56:00.353001+00:00"
   },
   "GOVFRAME-011": {
     "id": "GOVFRAME-011",
@@ -753,7 +753,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217063+00:00"
+    "timestamp": "2026-06-28T15:56:00.353025+00:00"
   },
   "GOVFRAME-012": {
     "id": "GOVFRAME-012",
@@ -762,7 +762,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217086+00:00"
+    "timestamp": "2026-06-28T15:56:00.353049+00:00"
   },
   "GOVFRAME-013": {
     "id": "GOVFRAME-013",
@@ -771,7 +771,7 @@
     "beforeScore": 85.7,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217103+00:00"
+    "timestamp": "2026-06-28T15:56:00.353066+00:00"
   },
   "GOVFRAME-014": {
     "id": "GOVFRAME-014",
@@ -780,7 +780,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217127+00:00"
+    "timestamp": "2026-06-28T15:56:00.353090+00:00"
   },
   "GOVFRAME-015": {
     "id": "GOVFRAME-015",
@@ -789,7 +789,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217152+00:00"
+    "timestamp": "2026-06-28T15:56:00.353114+00:00"
   },
   "GOVFRAME-016": {
     "id": "GOVFRAME-016",
@@ -798,7 +798,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217199+00:00"
+    "timestamp": "2026-06-28T15:56:00.353139+00:00"
   },
   "GOVFRAME-017": {
     "id": "GOVFRAME-017",
@@ -807,7 +807,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217228+00:00"
+    "timestamp": "2026-06-28T15:56:00.353163+00:00"
   },
   "GOVFRAME-018": {
     "id": "GOVFRAME-018",
@@ -816,7 +816,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217253+00:00"
+    "timestamp": "2026-06-28T15:56:00.353187+00:00"
   },
   "GRANTS-001": {
     "id": "GRANTS-001",
@@ -825,7 +825,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217278+00:00"
+    "timestamp": "2026-06-28T15:56:00.353212+00:00"
   },
   "HC-001": {
     "id": "HC-001",
@@ -834,7 +834,7 @@
     "beforeScore": 64.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217292+00:00"
+    "timestamp": "2026-06-28T15:56:00.353226+00:00"
   },
   "HC-002": {
     "id": "HC-002",
@@ -843,7 +843,7 @@
     "beforeScore": 60.0,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217305+00:00"
+    "timestamp": "2026-06-28T15:56:00.353238+00:00"
   },
   "HOSP-001": {
     "id": "HOSP-001",
@@ -852,7 +852,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217330+00:00"
+    "timestamp": "2026-06-28T15:56:00.353264+00:00"
   },
   "HR-001": {
     "id": "HR-001",
@@ -861,7 +861,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217354+00:00"
+    "timestamp": "2026-06-28T15:56:00.353287+00:00"
   },
   "IAM-009": {
     "id": "IAM-009",
@@ -870,7 +870,7 @@
     "beforeScore": 75.2,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217371+00:00"
+    "timestamp": "2026-06-28T15:56:00.353303+00:00"
   },
   "IND-001": {
     "id": "IND-001",
@@ -879,7 +879,7 @@
     "beforeScore": 68.6,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217387+00:00"
+    "timestamp": "2026-06-28T15:56:00.353320+00:00"
   },
   "IND-002": {
     "id": "IND-002",
@@ -888,7 +888,7 @@
     "beforeScore": 65.7,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217403+00:00"
+    "timestamp": "2026-06-28T15:56:00.353336+00:00"
   },
   "IND-003": {
     "id": "IND-003",
@@ -897,7 +897,7 @@
     "beforeScore": 65.7,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217420+00:00"
+    "timestamp": "2026-06-28T15:56:00.353353+00:00"
   },
   "IND-004": {
     "id": "IND-004",
@@ -906,7 +906,7 @@
     "beforeScore": 65.7,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217435+00:00"
+    "timestamp": "2026-06-28T15:56:00.353369+00:00"
   },
   "IND-005": {
     "id": "IND-005",
@@ -915,7 +915,7 @@
     "beforeScore": 65.7,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217451+00:00"
+    "timestamp": "2026-06-28T15:56:00.353386+00:00"
   },
   "IND-006": {
     "id": "IND-006",
@@ -924,7 +924,7 @@
     "beforeScore": 65.7,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217466+00:00"
+    "timestamp": "2026-06-28T15:56:00.353402+00:00"
   },
   "IND-007": {
     "id": "IND-007",
@@ -933,7 +933,7 @@
     "beforeScore": 65.7,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217482+00:00"
+    "timestamp": "2026-06-28T15:56:00.353418+00:00"
   },
   "IND-008": {
     "id": "IND-008",
@@ -942,7 +942,7 @@
     "beforeScore": 65.7,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217497+00:00"
+    "timestamp": "2026-06-28T15:56:00.353433+00:00"
   },
   "IND-009": {
     "id": "IND-009",
@@ -951,7 +951,7 @@
     "beforeScore": 67.6,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217511+00:00"
+    "timestamp": "2026-06-28T15:56:00.353449+00:00"
   },
   "IND-010": {
     "id": "IND-010",
@@ -960,7 +960,7 @@
     "beforeScore": 65.7,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217526+00:00"
+    "timestamp": "2026-06-28T15:56:00.353465+00:00"
   },
   "IND-011": {
     "id": "IND-011",
@@ -969,7 +969,7 @@
     "beforeScore": 65.7,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217541+00:00"
+    "timestamp": "2026-06-28T15:56:00.353481+00:00"
   },
   "IND-012": {
     "id": "IND-012",
@@ -978,7 +978,7 @@
     "beforeScore": 65.7,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217556+00:00"
+    "timestamp": "2026-06-28T15:56:00.353498+00:00"
   },
   "IND-013": {
     "id": "IND-013",
@@ -987,7 +987,7 @@
     "beforeScore": 68.6,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217571+00:00"
+    "timestamp": "2026-06-28T15:56:00.353514+00:00"
   },
   "IND-014": {
     "id": "IND-014",
@@ -996,7 +996,7 @@
     "beforeScore": 68.6,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217586+00:00"
+    "timestamp": "2026-06-28T15:56:00.353529+00:00"
   },
   "IND-015": {
     "id": "IND-015",
@@ -1005,7 +1005,7 @@
     "beforeScore": 69.5,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217599+00:00"
+    "timestamp": "2026-06-28T15:56:00.353544+00:00"
   },
   "INS-001": {
     "id": "INS-001",
@@ -1014,7 +1014,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217625+00:00"
+    "timestamp": "2026-06-28T15:56:00.353571+00:00"
   },
   "IR-001": {
     "id": "IR-001",
@@ -1023,7 +1023,7 @@
     "beforeScore": 58.1,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217639+00:00"
+    "timestamp": "2026-06-28T15:56:00.353586+00:00"
   },
   "LEG-001": {
     "id": "LEG-001",
@@ -1032,7 +1032,7 @@
     "beforeScore": 56.2,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217652+00:00"
+    "timestamp": "2026-06-28T15:56:00.353600+00:00"
   },
   "LOG-011": {
     "id": "LOG-011",
@@ -1041,7 +1041,7 @@
     "beforeScore": 73.3,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217667+00:00"
+    "timestamp": "2026-06-28T15:56:00.353616+00:00"
   },
   "MEDIA-001": {
     "id": "MEDIA-001",
@@ -1050,7 +1050,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217692+00:00"
+    "timestamp": "2026-06-28T15:56:00.353641+00:00"
   },
   "MFG-001": {
     "id": "MFG-001",
@@ -1059,7 +1059,7 @@
     "beforeScore": 59.0,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217705+00:00"
+    "timestamp": "2026-06-28T15:56:00.353654+00:00"
   },
   "MFG-002": {
     "id": "MFG-002",
@@ -1068,7 +1068,7 @@
     "beforeScore": 61.0,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217718+00:00"
+    "timestamp": "2026-06-28T15:56:00.353667+00:00"
   },
   "MIG-025": {
     "id": "MIG-025",
@@ -1077,7 +1077,7 @@
     "beforeScore": 75.2,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217733+00:00"
+    "timestamp": "2026-06-28T15:56:00.353684+00:00"
   },
   "MOB-QA-001": {
     "id": "MOB-QA-001",
@@ -1086,7 +1086,7 @@
     "beforeScore": 75.2,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217749+00:00"
+    "timestamp": "2026-06-28T15:56:00.353701+00:00"
   },
   "NONPROFIT-001": {
     "id": "NONPROFIT-001",
@@ -1095,7 +1095,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217774+00:00"
+    "timestamp": "2026-06-28T15:56:00.353726+00:00"
   },
   "OPS-001": {
     "id": "OPS-001",
@@ -1104,7 +1104,7 @@
     "beforeScore": 59.0,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217787+00:00"
+    "timestamp": "2026-06-28T15:56:00.353740+00:00"
   },
   "OPS-002": {
     "id": "OPS-002",
@@ -1113,7 +1113,7 @@
     "beforeScore": 56.2,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217801+00:00"
+    "timestamp": "2026-06-28T15:56:00.353754+00:00"
   },
   "OSSLIC-015": {
     "id": "OSSLIC-015",
@@ -1122,7 +1122,7 @@
     "beforeScore": 73.3,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217816+00:00"
+    "timestamp": "2026-06-28T15:56:00.353770+00:00"
   },
   "PATCH-006": {
     "id": "PATCH-006",
@@ -1131,7 +1131,7 @@
     "beforeScore": 73.3,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217831+00:00"
+    "timestamp": "2026-06-28T15:56:00.353786+00:00"
   },
   "PENTEST-007": {
     "id": "PENTEST-007",
@@ -1140,7 +1140,7 @@
     "beforeScore": 73.3,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217845+00:00"
+    "timestamp": "2026-06-28T15:56:00.353801+00:00"
   },
   "PMO-001": {
     "id": "PMO-001",
@@ -1149,7 +1149,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217869+00:00"
+    "timestamp": "2026-06-28T15:56:00.353826+00:00"
   },
   "PRIV-003": {
     "id": "PRIV-003",
@@ -1158,7 +1158,7 @@
     "beforeScore": 73.3,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217885+00:00"
+    "timestamp": "2026-06-28T15:56:00.353842+00:00"
   },
   "PROC-001": {
     "id": "PROC-001",
@@ -1167,7 +1167,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217909+00:00"
+    "timestamp": "2026-06-28T15:56:00.353866+00:00"
   },
   "PROMPT-001": {
     "id": "PROMPT-001",
@@ -1176,7 +1176,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217934+00:00"
+    "timestamp": "2026-06-28T15:56:00.353891+00:00"
   },
   "PROMPT-002": {
     "id": "PROMPT-002",
@@ -1185,7 +1185,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217958+00:00"
+    "timestamp": "2026-06-28T15:56:00.353916+00:00"
   },
   "PROMPT-003": {
     "id": "PROMPT-003",
@@ -1194,7 +1194,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.217982+00:00"
+    "timestamp": "2026-06-28T15:56:00.353941+00:00"
   },
   "PROMPT-004": {
     "id": "PROMPT-004",
@@ -1203,7 +1203,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218006+00:00"
+    "timestamp": "2026-06-28T15:56:00.353965+00:00"
   },
   "PROMPT-005": {
     "id": "PROMPT-005",
@@ -1212,7 +1212,7 @@
     "beforeScore": 84.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218024+00:00"
+    "timestamp": "2026-06-28T15:56:00.353983+00:00"
   },
   "PROMPT-006": {
     "id": "PROMPT-006",
@@ -1221,7 +1221,7 @@
     "beforeScore": 84.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218047+00:00"
+    "timestamp": "2026-06-28T15:56:00.354007+00:00"
   },
   "PROMPT-007": {
     "id": "PROMPT-007",
@@ -1230,7 +1230,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218070+00:00"
+    "timestamp": "2026-06-28T15:56:00.354030+00:00"
   },
   "PROMPT-008": {
     "id": "PROMPT-008",
@@ -1239,7 +1239,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218094+00:00"
+    "timestamp": "2026-06-28T15:56:00.354055+00:00"
   },
   "PROP-001": {
     "id": "PROP-001",
@@ -1248,7 +1248,7 @@
     "beforeScore": 81.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218118+00:00"
+    "timestamp": "2026-06-28T15:56:00.354080+00:00"
   },
   "PROSERV-001": {
     "id": "PROSERV-001",
@@ -1257,7 +1257,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218142+00:00"
+    "timestamp": "2026-06-28T15:56:00.354104+00:00"
   },
   "PROV-014": {
     "id": "PROV-014",
@@ -1266,7 +1266,7 @@
     "beforeScore": 75.2,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218157+00:00"
+    "timestamp": "2026-06-28T15:56:00.354120+00:00"
   },
   "PUBHEALTH-001": {
     "id": "PUBHEALTH-001",
@@ -1275,7 +1275,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218180+00:00"
+    "timestamp": "2026-06-28T15:56:00.354145+00:00"
   },
   "PURPLE-018": {
     "id": "PURPLE-018",
@@ -1284,7 +1284,7 @@
     "beforeScore": 73.3,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218195+00:00"
+    "timestamp": "2026-06-28T15:56:00.354161+00:00"
   },
   "QA-001": {
     "id": "QA-001",
@@ -1293,7 +1293,7 @@
     "beforeScore": 64.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218211+00:00"
+    "timestamp": "2026-06-28T15:56:00.354177+00:00"
   },
   "QA-002": {
     "id": "QA-002",
@@ -1302,7 +1302,7 @@
     "beforeScore": 58.1,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218226+00:00"
+    "timestamp": "2026-06-28T15:56:00.354192+00:00"
   },
   "QA-003": {
     "id": "QA-003",
@@ -1311,7 +1311,7 @@
     "beforeScore": 64.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218241+00:00"
+    "timestamp": "2026-06-28T15:56:00.354208+00:00"
   },
   "QA-004": {
     "id": "QA-004",
@@ -1320,7 +1320,7 @@
     "beforeScore": 55.2,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218255+00:00"
+    "timestamp": "2026-06-28T15:56:00.354222+00:00"
   },
   "QA-005": {
     "id": "QA-005",
@@ -1329,7 +1329,7 @@
     "beforeScore": 58.1,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218271+00:00"
+    "timestamp": "2026-06-28T15:56:00.354238+00:00"
   },
   "QA-006": {
     "id": "QA-006",
@@ -1338,7 +1338,7 @@
     "beforeScore": 58.1,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218284+00:00"
+    "timestamp": "2026-06-28T15:56:00.354252+00:00"
   },
   "QA-007": {
     "id": "QA-007",
@@ -1347,7 +1347,7 @@
     "beforeScore": 53.3,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218299+00:00"
+    "timestamp": "2026-06-28T15:56:00.354268+00:00"
   },
   "RATE-026": {
     "id": "RATE-026",
@@ -1356,7 +1356,7 @@
     "beforeScore": 73.3,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218314+00:00"
+    "timestamp": "2026-06-28T15:56:00.354283+00:00"
   },
   "RECORDS-001": {
     "id": "RECORDS-001",
@@ -1365,7 +1365,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218338+00:00"
+    "timestamp": "2026-06-28T15:56:00.354308+00:00"
   },
   "REL-004": {
     "id": "REL-004",
@@ -1374,7 +1374,7 @@
     "beforeScore": 73.3,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218352+00:00"
+    "timestamp": "2026-06-28T15:56:00.354322+00:00"
   },
   "RESEARCH-001": {
     "id": "RESEARCH-001",
@@ -1383,7 +1383,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218377+00:00"
+    "timestamp": "2026-06-28T15:56:00.354348+00:00"
   },
   "RET-001": {
     "id": "RET-001",
@@ -1392,7 +1392,7 @@
     "beforeScore": 59.0,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218390+00:00"
+    "timestamp": "2026-06-28T15:56:00.354361+00:00"
   },
   "RET-002": {
     "id": "RET-002",
@@ -1401,7 +1401,7 @@
     "beforeScore": 57.1,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218403+00:00"
+    "timestamp": "2026-06-28T15:56:00.354374+00:00"
   },
   "SAAS-001": {
     "id": "SAAS-001",
@@ -1410,7 +1410,7 @@
     "beforeScore": 62.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218416+00:00"
+    "timestamp": "2026-06-28T15:56:00.354387+00:00"
   },
   "SAAS-002": {
     "id": "SAAS-002",
@@ -1419,7 +1419,7 @@
     "beforeScore": 56.2,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218429+00:00"
+    "timestamp": "2026-06-28T15:56:00.354400+00:00"
   },
   "SAST-001": {
     "id": "SAST-001",
@@ -1428,7 +1428,7 @@
     "beforeScore": 61.0,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218444+00:00"
+    "timestamp": "2026-06-28T15:56:00.354415+00:00"
   },
   "SAST-002": {
     "id": "SAST-002",
@@ -1437,7 +1437,7 @@
     "beforeScore": 56.2,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218457+00:00"
+    "timestamp": "2026-06-28T15:56:00.354428+00:00"
   },
   "SAST-003": {
     "id": "SAST-003",
@@ -1446,7 +1446,7 @@
     "beforeScore": 58.1,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218469+00:00"
+    "timestamp": "2026-06-28T15:56:00.354441+00:00"
   },
   "SAST-004": {
     "id": "SAST-004",
@@ -1455,7 +1455,7 @@
     "beforeScore": 58.1,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218482+00:00"
+    "timestamp": "2026-06-28T15:56:00.354454+00:00"
   },
   "SDLC-028": {
     "id": "SDLC-028",
@@ -1464,7 +1464,7 @@
     "beforeScore": 73.3,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218497+00:00"
+    "timestamp": "2026-06-28T15:56:00.354470+00:00"
   },
   "SLG-001": {
     "id": "SLG-001",
@@ -1473,7 +1473,7 @@
     "beforeScore": 61.0,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218512+00:00"
+    "timestamp": "2026-06-28T15:56:00.354485+00:00"
   },
   "SMARTCITY-001": {
     "id": "SMARTCITY-001",
@@ -1482,7 +1482,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218536+00:00"
+    "timestamp": "2026-06-28T15:56:00.354510+00:00"
   },
   "SWARM-001": {
     "id": "SWARM-001",
@@ -1491,7 +1491,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218560+00:00"
+    "timestamp": "2026-06-28T15:56:00.354535+00:00"
   },
   "SWARM-002": {
     "id": "SWARM-002",
@@ -1500,7 +1500,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218583+00:00"
+    "timestamp": "2026-06-28T15:56:00.354560+00:00"
   },
   "SWARM-003": {
     "id": "SWARM-003",
@@ -1509,7 +1509,7 @@
     "beforeScore": 84.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218609+00:00"
+    "timestamp": "2026-06-28T15:56:00.354586+00:00"
   },
   "SWARM-004": {
     "id": "SWARM-004",
@@ -1518,7 +1518,7 @@
     "beforeScore": 84.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218631+00:00"
+    "timestamp": "2026-06-28T15:56:00.354609+00:00"
   },
   "SWARM-005": {
     "id": "SWARM-005",
@@ -1527,7 +1527,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218655+00:00"
+    "timestamp": "2026-06-28T15:56:00.354634+00:00"
   },
   "SWARM-006": {
     "id": "SWARM-006",
@@ -1536,7 +1536,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218680+00:00"
+    "timestamp": "2026-06-28T15:56:00.354659+00:00"
   },
   "SWARM-007": {
     "id": "SWARM-007",
@@ -1545,7 +1545,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218704+00:00"
+    "timestamp": "2026-06-28T15:56:00.354684+00:00"
   },
   "SWARM-008": {
     "id": "SWARM-008",
@@ -1554,7 +1554,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218727+00:00"
+    "timestamp": "2026-06-28T15:56:00.354708+00:00"
   },
   "SWARM-009": {
     "id": "SWARM-009",
@@ -1563,7 +1563,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218751+00:00"
+    "timestamp": "2026-06-28T15:56:00.354732+00:00"
   },
   "SWARM-010": {
     "id": "SWARM-010",
@@ -1572,7 +1572,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218774+00:00"
+    "timestamp": "2026-06-28T15:56:00.354756+00:00"
   },
   "SWARM-011": {
     "id": "SWARM-011",
@@ -1581,7 +1581,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218799+00:00"
+    "timestamp": "2026-06-28T15:56:00.354781+00:00"
   },
   "SWARM-012": {
     "id": "SWARM-012",
@@ -1590,7 +1590,7 @@
     "beforeScore": 82.9,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218822+00:00"
+    "timestamp": "2026-06-28T15:56:00.354805+00:00"
   },
   "TEL-001": {
     "id": "TEL-001",
@@ -1599,7 +1599,7 @@
     "beforeScore": 60.0,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218835+00:00"
+    "timestamp": "2026-06-28T15:56:00.354819+00:00"
   },
   "THREAT-002": {
     "id": "THREAT-002",
@@ -1608,7 +1608,7 @@
     "beforeScore": 73.3,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218850+00:00"
+    "timestamp": "2026-06-28T15:56:00.354835+00:00"
   },
   "TRAIN-001": {
     "id": "TRAIN-001",
@@ -1617,7 +1617,7 @@
     "beforeScore": 83.8,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218872+00:00"
+    "timestamp": "2026-06-28T15:56:00.354873+00:00"
   },
   "TRN-001": {
     "id": "TRN-001",
@@ -1626,7 +1626,7 @@
     "beforeScore": 57.1,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218885+00:00"
+    "timestamp": "2026-06-28T15:56:00.354887+00:00"
   },
   "UXSEC-020": {
     "id": "UXSEC-020",
@@ -1635,7 +1635,7 @@
     "beforeScore": 75.2,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218899+00:00"
+    "timestamp": "2026-06-28T15:56:00.354903+00:00"
   },
   "VULN-005": {
     "id": "VULN-005",
@@ -1644,7 +1644,7 @@
     "beforeScore": 73.3,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218914+00:00"
+    "timestamp": "2026-06-28T15:56:00.354918+00:00"
   },
   "XWALK-029": {
     "id": "XWALK-029",
@@ -1653,11 +1653,11 @@
     "beforeScore": 75.2,
     "afterScoreEstimate": 95.2,
     "approvalStatus": "pending_review",
-    "timestamp": "2026-06-28T15:53:27.218925+00:00"
+    "timestamp": "2026-06-28T15:56:00.354931+00:00"
   },
   "TEST-HIGH": {
     "approvalStatus": "approved",
     "approverPlaceholder": "sec-officer-signature",
-    "timestamp": "2026-06-28T15:53:27.227585+00:00"
+    "timestamp": "2026-06-28T15:56:00.364037+00:00"
   }
 }

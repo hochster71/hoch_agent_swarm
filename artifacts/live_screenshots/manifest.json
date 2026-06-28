@@ -3,13 +3,13 @@
   "runtime": "docker-compose-linux",
   "tool": "playwright-chromium-linux",
   "dashboardUrl": "http://hoch-app:8086",
-  "capturedAt": "2026-06-28T15:45:14Z",
+  "capturedAt": "2026-06-28T15:55:31Z",
   "pages": [
     {
       "id": "overview",
       "file": "overview.png",
       "status": "captured",
-      "sha256": "aa925c0046c9a48098afb29e004ede5e7569430307d02ba0c5c1a7ba5f3e744a",
+      "sha256": "4aea58a6c77ce197dee2f0cf7d94592045ccbb96842073292ba718187c2be033",
       "selectorUsed": "#nav-overview",
       "error": ""
     },
@@ -17,7 +17,7 @@
       "id": "promptbrain",
       "file": "promptbrain.png",
       "status": "captured",
-      "sha256": "f8a3c6f3ffb57395b17368c6885caf408f45b09bc858c6e32786fdb4a48bc6bc",
+      "sha256": "89c2e83ea12bbe67e0ef5bc3410f6d722b741429d6ffac74964f2d43fe27a4a1",
       "selectorUsed": "#nav-promptbrain",
       "error": ""
     },
@@ -33,7 +33,7 @@
       "id": "evidencebrain",
       "file": "evidencebrain.png",
       "status": "captured",
-      "sha256": "6864d210684ab5bab75a82940bd08e7ac8a9ff834b6a9c881dbeff22b80823e3",
+      "sha256": "bf0cc861d268df357fb67465872ef8da217860f57bac799a172d82fd7d4758ff",
       "selectorUsed": "#nav-evidencebrain",
       "error": ""
     },
@@ -49,7 +49,7 @@
       "id": "operator",
       "file": "operator.png",
       "status": "captured",
-      "sha256": "20b2b68735269636d35383c9fbb4cc1485f50b03e09e69b98271b026bc728556",
+      "sha256": "85838595b83b3ecefc95237d3be34324d223a7445428023586c53ca2d609de9c",
       "selectorUsed": "#nav-operator",
       "error": ""
     }
