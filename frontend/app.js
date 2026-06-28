@@ -807,6 +807,162 @@
         }
     }
 
+    async function loadMigrationStatus() {
+        const container = el('migration-status-container');
+        const badge = el('migration-active-badge');
+        if (!container) return;
+
+        try {
+            const res = await fetch('/api/v1/migration/status');
+            const data = await res.json();
+
+            // Update badge status
+            if (badge) {
+                if (data.migration_active) {
+                    badge.textContent = 'MIGRATION ACTIVE';
+                    badge.style.background = 'rgba(59, 130, 246, 0.15)';
+                    badge.style.color = '#60a5fa';
+                    badge.style.border = '1px solid rgba(59,130,246,0.3)';
+                } else {
+                    badge.textContent = 'MIGRATION INACTIVE';
+                    badge.style.background = 'rgba(255, 255, 255, 0.05)';
+                    badge.style.color = 'var(--text-secondary)';
+                    badge.style.border = '1px solid rgba(255,255,255,0.1)';
+                }
+            }
+
+            const total = data.total_files || 0;
+            const completed = data.completed_files || 0;
+            const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+            const spaceRecoveredGB = (data.total_space_recovered_bytes / 1024 / 1024 / 1024).toFixed(2);
+            const spacePendingGB = (data.total_space_pending_bytes / 1024 / 1024 / 1024).toFixed(2);
+
+            // Generate progress bar HTML
+            const progressBarHtml = `
+                <div style="margin-bottom: 12px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 11px;">
+                        <span style="color: var(--text-secondary);">Sync Progress</span>
+                        <strong style="color: var(--accent-teal);">${percent}% (${completed} / ${total} files)</strong>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); height: 8px; border-radius: 99px; overflow: hidden; display: flex;">
+                        <div style="background: var(--accent-teal); width: ${percent}%; height: 100%; border-radius: 99px; transition: width 0.4s ease;"></div>
+                    </div>
+                </div>
+            `;
+
+            // Skipped / Protected list
+            const protectedList = (data.target_files || [])
+                .filter(f => f.status === 'SKIPPED_PROTECTED')
+                .map(f => `<li><code style="color: #60a5fa;">${f.filename}</code></li>`)
+                .join('');
+
+            // Files table rows
+            const fileRows = (data.target_files || []).map(f => {
+                let statusColor = '#34d399';
+                if (f.status === 'PENDING') statusColor = '#fbbf24';
+                if (f.status === 'FAILED') statusColor = '#ef4444';
+                if (f.status === 'SKIPPED_PROTECTED') statusColor = '#60a5fa';
+
+                const sizeText = f.size_bytes > 0 ? `${(f.size_bytes / 1024 / 1024 / 1024).toFixed(2)} GB` : '-';
+                
+                return `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 11px;">
+                        <td style="padding: 6px 8px; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-secondary);" title="${f.absolute_path}">${f.filename}</td>
+                        <td style="padding: 6px 8px; text-align: right; color: var(--text-secondary);">${sizeText}</td>
+                        <td style="padding: 6px 8px; text-align: right; font-weight: bold; color: ${statusColor}; font-size: 9px; text-transform: uppercase;">${f.status}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            const fileTableHtml = `
+                <div style="background: rgba(0,0,0,0.15); border: 1px solid var(--border-glass); border-radius: 6px; overflow: hidden; display: flex; flex-direction: column;">
+                    <div style="padding: 8px 12px; border-bottom: 1px solid var(--border-glass); font-size: 11px; font-weight: bold; text-transform: uppercase; color: #fff;">File Execution Log (Preview)</div>
+                    <div style="max-height: 180px; overflow-y: auto;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: rgba(255,255,255,0.02); font-size: 10px; text-transform: uppercase; color: var(--text-secondary); text-align: left; border-bottom: 1px solid var(--border-glass);">
+                                    <th style="padding: 6px 8px;">File</th>
+                                    <th style="padding: 6px 8px; text-align: right;">Size</th>
+                                    <th style="padding: 6px 8px; text-align: right;">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${fileRows || '<tr><td colspan="3" style="text-align:center; padding:15px; color:var(--text-secondary);">No migration files found.</td></tr>'}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            // Log Tail Panel
+            const logLinesHtml = (data.log_tail || [])
+                .map(line => `<div style="padding: 2px 0;">${line}</div>`)
+                .join('');
+
+            // Recovery commands
+            const recoveryHtml = Object.entries(data.recovery_commands || {}).map(([key, cmd]) => {
+                return `
+                    <div style="margin-bottom: 8px;">
+                        <div style="font-size: 10px; font-weight: bold; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 2px;">${key.replace('_', ' ')}</div>
+                        <div style="display: flex; gap: 6px;">
+                            <input type="text" readonly value='${cmd}' style="flex-grow: 1; font-family: monospace; font-size: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); color: #fff; padding: 4px 8px; border-radius: 4px;">
+                            <button onclick="navigator.clipboard.writeText('${cmd.replace(/'/g, "\\'")}')" class="btn" style="padding: 2px 8px; font-size: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: #fff; border-radius: 4px;">Copy</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                ${progressBarHtml}
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-bottom: 12px;">
+                    <!-- Migration Statistics -->
+                    <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-glass); padding: 14px; border-radius: 8px;">
+                        <h4 style="font-size: 12px; font-weight: bold; color: #fff; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Migration Statistics</h4>
+                        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px;">
+                            <div style="display: flex; justify-content: space-between;"><span>Space Recovered:</span><strong style="color: #34d399; font-size: 13px;">${spaceRecoveredGB} GB</strong></div>
+                            <div style="display: flex; justify-content: space-between;"><span>Space Pending:</span><strong style="color: #fbbf24;">${spacePendingGB} GB</strong></div>
+                            <div style="display: flex; justify-content: space-between;"><span>Completed Files:</span><strong style="color: #fff;">${completed}</strong></div>
+                            <div style="display: flex; justify-content: space-between;"><span>Skipped Protected:</span><strong style="color: #60a5fa;">${data.skipped_protected}</strong></div>
+                            <div style="display: flex; justify-content: space-between;"><span>Failed:</span><strong style="color: #ef4444;">${data.failed_files}</strong></div>
+                        </div>
+
+                        ${protectedList ? `
+                        <h5 style="font-size: 10px; font-weight: bold; color: #fff; margin-top: 14px; margin-bottom: 6px; text-transform: uppercase;">Skipped Active Models:</h5>
+                        <ul style="margin: 0; padding-left: 16px; font-size: 10px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 3px; max-height: 80px; overflow-y: auto;">
+                            ${protectedList}
+                        </ul>
+                        ` : ''}
+                    </div>
+
+                    <!-- File list log -->
+                    ${fileTableHtml}
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;">
+                    <!-- Terminal Log Tail -->
+                    <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-glass); padding: 14px; border-radius: 8px; display: flex; flex-direction: column;">
+                        <h4 style="font-size: 12px; font-weight: bold; color: #fff; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Rclone Terminal Output</h4>
+                        <div style="flex-grow: 1; font-family: monospace; font-size: 10px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-glass); border-radius: 6px; padding: 10px; color: #34d399; overflow-y: auto; max-height: 180px; min-height: 120px;">
+                            ${logLinesHtml || '<div style="color:var(--text-secondary);">No logs written.</div>'}
+                        </div>
+                    </div>
+
+                    <!-- Recovery Console -->
+                    <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-glass); padding: 14px; border-radius: 8px;">
+                        <h4 style="font-size: 12px; font-weight: bold; color: #fff; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Recovery Actions console</h4>
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            ${recoveryHtml}
+                        </div>
+                    </div>
+                </div>
+            `;
+        } catch (err) {
+            console.error(err);
+            container.innerHTML = `<div style="color: #ef4444; padding: 20px; text-align: center;">Error loading storage migration status</div>`;
+        }
+    }
+
     // ── Loader: Model Router View ──────────────────────────────────────────
     async function loadModelRouterView() {
         const container = el('model-router-details');
@@ -837,6 +993,7 @@
             // Trigger health and storage load
             loadModelHealth(false);
             loadModelStoragePolicy(false);
+            loadMigrationStatus();
         } catch (err) {
             container.innerHTML = `<div style="color:#ef4444; text-align:center;">Error fetching routing settings</div>`;
         }
