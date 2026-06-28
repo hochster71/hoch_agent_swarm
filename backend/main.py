@@ -4161,12 +4161,80 @@ async def websocket_endpoint(websocket: WebSocket):
 #  IMMUTABLE LEDGER & AUDIT ENDPOINTS
 # ================================================================
 
+def init_orchestrator_history_table():
+    import sqlite3
+    from backend.hochster_cluster import DB_PATH
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    try:
+        conn.execute("PRAGMA busy_timeout=30000")
+        conn.execute("PRAGMA journal_mode=WAL")
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS orchestrator_run_history (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                timestamp TEXT NOT NULL,
+                phase TEXT NOT NULL,
+                action TEXT NOT NULL,
+                status TEXT NOT NULL,
+                operator TEXT NOT NULL,
+                scope TEXT NOT NULL,
+                returncode INTEGER,
+                stdout TEXT,
+                stderr TEXT,
+                evidence_seal_path TEXT,
+                decision_note TEXT,
+                created_at TEXT NOT NULL
+            )
+            """
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+def log_orchestrator_action(
+    phase: str,
+    action: str,
+    status: str,
+    operator: str = "Michael Hoch",
+    scope: str = "local dry-run only",
+    returncode = None,
+    stdout = None,
+    stderr = None,
+    evidence_seal_path = None,
+    decision_note = None
+):
+    import sqlite3
+    from datetime import datetime, timezone
+    from backend.hochster_cluster import DB_PATH
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    try:
+        conn.execute("PRAGMA busy_timeout=30000")
+        now = datetime.now(timezone.utc).isoformat()
+        conn.execute(
+            """
+            INSERT INTO orchestrator_run_history (
+                timestamp, phase, action, status, operator, scope,
+                returncode, stdout, stderr, evidence_seal_path, decision_note, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                now, phase, action, status, operator, scope,
+                returncode, stdout, stderr, evidence_seal_path, decision_note, now
+            )
+        )
+        conn.commit()
+    except Exception as e:
+        print(f"[log_orchestrator_action] Error: {e}")
+    finally:
+        conn.close()
+
 @app.on_event("startup")
 async def startup_event():
     # 1. Initialize DB
     init_db()
     init_hochster_cluster_tables()
     init_execution_store_tables()
+    init_orchestrator_history_table()
     init_default_agent_model_policies()
     
     # Start Local Runtime Supervisor
@@ -8736,6 +8804,14 @@ async def execute_orchestrator_phase(payload: dict):
         raise HTTPException(status_code=404, detail="builder_runner.py script not found")
         
     try:
+        # Log execution start
+        log_orchestrator_action(
+            phase=phase,
+            action="execute_start",
+            status="running",
+            decision_note=f"Starting runner execution for phase {phase}"
+        )
+
         res = subprocess.run(
             ["python3", str(runner_script), "--phase", phase],
             capture_output=True,
@@ -8754,6 +8830,32 @@ async def execute_orchestrator_phase(payload: dict):
             
         report_path = base_dir / f"artifacts/orchestrator/reports/{phase}_execution_report.json"
         
+        # Determine evidence seal path
+        seal_rel = f"artifacts/production-readiness-final-candidate-seal/visual-control-plane-local-v1/{phase.lower()}_final_seal.json"
+        seal_full = base_dir / seal_rel
+        seal_path_str = seal_rel if seal_full.exists() else None
+
+        # Log the execution action
+        status_str = "success" if res.returncode == 0 else "failed"
+        log_orchestrator_action(
+            phase=phase,
+            action="execute",
+            status=status_str,
+            returncode=res.returncode,
+            stdout=res.stdout,
+            stderr=res.stderr,
+            evidence_seal_path=seal_path_str
+        )
+
+        # Log transition if successful
+        if res.returncode == 0:
+            log_orchestrator_action(
+                phase=phase,
+                action="transition",
+                status="success",
+                decision_note=f"Transitioned phase {phase} to next active phase: {next_active_phase}"
+            )
+
         return {
             "status": "success" if res.returncode == 0 else "error",
             "phase": phase,
@@ -8765,6 +8867,14 @@ async def execute_orchestrator_phase(payload: dict):
             "next_active_phase": next_active_phase
         }
     except Exception as e:
+        log_orchestrator_action(
+            phase=phase,
+            action="execute",
+            status="failed",
+            returncode=1,
+            stdout="",
+            stderr=str(e)
+        )
         return {
             "status": "error",
             "phase": phase,
@@ -8860,6 +8970,17 @@ async def request_phase_execution(payload: dict):
                 
     gate.save_queue(queue)
     
+    # Log the orchestrator action
+    action_type = "approve" if status == "APPROVED" else "request"
+    log_orchestrator_action(
+        phase=phase,
+        action=action_type,
+        status=status.lower(),
+        operator=operator,
+        scope=scope,
+        decision_note=f"Approved for {scope}" if status == "APPROVED" else "Requested execution"
+    )
+    
     return {
         "status": "success",
         "approval_id": approval_doc["approval_id"],
@@ -8867,6 +8988,42 @@ async def request_phase_execution(payload: dict):
         "phase": phase,
         "path": str(target_path)
     }
+
+@app.get("/api/v1/orchestrator/history")
+async def get_orchestrator_history():
+    import sqlite3
+    from backend.hochster_cluster import DB_PATH
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    try:
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM orchestrator_run_history ORDER BY id DESC")
+        rows = cursor.fetchall()
+        
+        history = []
+        for r in rows:
+            history.append({
+                "id": r["id"],
+                "timestamp": r["timestamp"],
+                "phase": r["phase"],
+                "action": r["action"],
+                "status": r["status"],
+                "operator": r["operator"],
+                "scope": r["scope"],
+                "returncode": r["returncode"],
+                "stdout": r["stdout"],
+                "stderr": r["stderr"],
+                "evidence_seal_path": r["evidence_seal_path"],
+                "decision_note": r["decision_note"]
+            })
+        return {
+            "status": "success",
+            "history": history
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch history: {str(e)}")
+    finally:
+        conn.close()
 
 
 

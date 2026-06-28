@@ -679,11 +679,140 @@
                 alert('Action failed');
             }
         } catch (err) {
-            console.error('[Remediate] post failed:', err);
+                    console.error('[Remediate] post failed:', err);
         }
     };
 
     // ── Loader: Evidence View ───────────────────────────────────────────────
+    async function loadClawdeView() {
+        async function loadClawdeHistory() {
+            const timelineContent = el('clawde-audit-timeline-content');
+            if (!timelineContent) return;
+
+            try {
+                const res = await fetch('/api/v1/orchestrator/history');
+                if (!res.ok) throw new Error(`HTTP status ${res.status}`);
+                const data = await res.json();
+                const history = data.history || [];
+
+                if (history.length === 0) {
+                    timelineContent.innerHTML = `
+                        <div style="font-size: 12px; color: var(--text-secondary); text-align: center; margin: 15px 0;">
+                            No history records found. Perform requests, approvals, or executions to start the ledger.
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '';
+                history.forEach(item => {
+                    let badgeColor = 'rgba(59, 130, 246, 0.15)';
+                    let badgeTextColor = '#60a5fa';
+                    let badgeBorderColor = 'rgba(59, 130, 246, 0.3)';
+                    
+                    if (item.action === 'approve') {
+                        badgeColor = 'rgba(16, 185, 129, 0.15)';
+                        badgeTextColor = '#34d399';
+                        badgeBorderColor = 'rgba(16, 185, 129, 0.3)';
+                    } else if (item.action === 'execute') {
+                        if (item.status === 'success') {
+                            badgeColor = 'rgba(16, 185, 129, 0.15)';
+                            badgeTextColor = '#34d399';
+                            badgeBorderColor = 'rgba(16, 185, 129, 0.3)';
+                        } else {
+                            badgeColor = 'rgba(239, 68, 68, 0.15)';
+                            badgeTextColor = '#f87171';
+                            badgeBorderColor = 'rgba(239, 68, 68, 0.3)';
+                        }
+                    } else if (item.action === 'execute_start') {
+                        badgeColor = 'rgba(245, 158, 11, 0.15)';
+                        badgeTextColor = '#fbbf24';
+                        badgeBorderColor = 'rgba(245, 158, 11, 0.3)';
+                    } else if (item.action === 'transition') {
+                        badgeColor = 'rgba(139, 92, 246, 0.15)';
+                        badgeTextColor = '#a78bfa';
+                        badgeBorderColor = 'rgba(139, 92, 246, 0.3)';
+                    }
+
+                    const actionLabel = item.action.toUpperCase().replace('_', ' ');
+                    const localTime = new Date(item.timestamp).toLocaleString();
+                    
+                    let detailsHtml = '';
+                    if (item.action === 'execute' && (item.stdout || item.stderr)) {
+                        detailsHtml = `
+                            <details style="margin-top: 6px; cursor: pointer;">
+                                <summary style="font-size: 11px; color: var(--accent-teal); font-weight: 600;">View Execution Output</summary>
+                                <pre style="margin: 6px 0 0 0; background: #020406; border: 1px solid rgba(255,255,255,0.05); padding: 8px; border-radius: 4px; font-family: monospace; font-size: 11px; color: #34d399; max-height: 150px; overflow-y: auto; white-space: pre-wrap; word-break: break-all;">${item.stdout || ''}${item.stderr ? '\nERRORS:\n' + item.stderr : ''}</pre>
+                            </details>
+                        `;
+                    }
+
+                    let sealHtml = '';
+                    if (item.evidence_seal_path) {
+                        const sealFilename = item.evidence_seal_path.split('/').pop();
+                        sealHtml = `
+                            <div style="font-size: 11px; color: var(--accent-teal); font-weight: bold; margin-top: 4px; display: flex; align-items: center; gap: 4px;">
+                                <span style="display:inline-block; width:6px; height:6px; background:#14b8a6; border-radius:50%;"></span>
+                                Evidence Seal: <a href="file:///${item.evidence_seal_path}" target="_blank" style="color: #2dd4bf; text-decoration: underline; font-family: monospace; word-break: break-all;">${sealFilename}</a>
+                            </div>
+                        `;
+                    }
+
+                    html += `
+                        <div style="display: flex; gap: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); padding: 10px 14px; border-radius: 8px; align-items: flex-start; justify-content: space-between;">
+                            <div style="display: flex; gap: 12px; align-items: flex-start; flex: 1;">
+                                <div style="display: flex; flex-direction: column; gap: 4px; align-items: center; min-width: 90px;">
+                                    <span style="font-size: 10px; font-weight: bold; padding: 2px 8px; border-radius: 4px; background: ${badgeColor}; color: ${badgeTextColor}; border: 1px solid ${badgeBorderColor}; text-align: center; width: 100%; display: block; box-sizing: border-box;">
+                                        ${actionLabel}
+                                    </span>
+                                    <span style="font-size: 10px; font-weight: 600; color: #fff; background: rgba(255,255,255,0.06); padding: 1px 6px; border-radius: 3px;">
+                                        ${item.phase}
+                                    </span>
+                                </div>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 12px; font-weight: 600; color: #fff;">
+                                        ${item.decision_note || (item.action === 'execute' ? `Execution ${item.status}` : `${actionLabel} event`)}
+                                    </div>
+                                    <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">
+                                        Operator: <span style="color:#fff; font-weight:500;">${item.operator}</span> | Scope: <span style="color:#fff; font-weight:500;">${item.scope}</span>
+                                        ${item.returncode !== null ? ` | Exit Code: <span style="color:#f87171; font-weight:bold;">${item.returncode}</span>` : ''}
+                                    </div>
+                                    ${sealHtml}
+                                    ${detailsHtml}
+                                </div>
+                            </div>
+                            <div style="font-size: 11px; color: var(--text-secondary); text-align: right; white-space: nowrap; margin-top: 2px;">
+                                ${localTime}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                timelineContent.innerHTML = html;
+            } catch (err) {
+                console.error("Error loading CLAWDE history:", err);
+                timelineContent.innerHTML = `
+                    <div style="font-size: 12px; color: #f87171; text-align: center; margin: 15px 0;">
+                        Failed to load history ledger: ${err.message}
+                    </div>
+                `;
+            }
+        }
+
+        loadClawdeHistory();
+
+        const phaseSpan = el('clawde-current-phase');
+        const tbody = el('evidence-matrix-tbody');
+        if (!tbody) return;
+        try {
+            const res = await fetch('/api/v1/qa/evidence-matrix');
+            const data = await res.json();
+            // ... (rest of function)
+        } catch (err) {
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:15px; color:#ef4444;">Error fetching evidence matrix</td></tr>`;
+        }
+    }
+
     async function loadEvidenceView() {
         const stats = el('evidence-stats');
         const tbody = el('evidence-matrix-tbody');
@@ -1211,6 +1340,9 @@
                 // Set default/last run status code
                 dbgReturncode.textContent = '0';
             }
+
+            // Load history list
+            await loadClawdeHistory();
 
         } catch (err) {
             console.error("Error loading CLAWDE Control Tower state:", err);
