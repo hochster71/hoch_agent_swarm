@@ -1,0 +1,68 @@
+{
+  "remediation_validation_residual_risk": [
+    {
+      "risk_id": "RSK-TLS-001",
+      "domain": "TLS / transport",
+      "validation_status": "VALIDATED_LOCAL_TESTS_PASS",
+      "validation_summary": "Passed local NGINX regex search and verify_tls_socket_version unit test assertion verifying TLSv1.3 exclusive constraint.",
+      "residual_risk_description": "Active SSL socket enforcement depends on Kubernetes Ingress controller configuration mapping in the live cluster.",
+      "residual_severity": "LOW"
+    },
+    {
+      "risk_id": "RSK-AUTH-002",
+      "domain": "AuthN/AuthZ",
+      "validation_status": "VALIDATED_LOCAL_TESTS_PASS",
+      "validation_summary": "Passed mock base64 token parsing validations verifying matching signature fields and issuer claims locally.",
+      "residual_risk_description": "Live production token validation requires external OIDC provider reachability for public JWKS resolution.",
+      "residual_severity": "LOW"
+    },
+    {
+      "risk_id": "RSK-AUD-003",
+      "domain": "Audit ledger",
+      "validation_status": "VALIDATED_LOCAL_TESTS_PASS",
+      "validation_summary": "Passed temporary local SQLite DB persistence write testing with correct auto-generated UUID fields.",
+      "residual_risk_description": "Sqlite is for local/staging only; production requires migrations to GCP Cloud SQL PostgreSQL instance.",
+      "residual_severity": "LOW"
+    },
+    {
+      "risk_id": "RSK-MUT-004",
+      "domain": "Mutation safety",
+      "validation_status": "VALIDATED_LOCAL_TESTS_PASS",
+      "validation_summary": "Passed double-submit and replay protection testing inside MutationGate utilizing a local dictionary nonce cache.",
+      "residual_risk_description": "Local dictionary cache is volatile and not shared across horizontal pod scalings; requires Redis mapping in production.",
+      "residual_severity": "LOW"
+    },
+    {
+      "risk_id": "RSK-SPL-005",
+      "domain": "Supply chain",
+      "validation_status": "VALIDATED_LOCAL_TESTS_PASS",
+      "validation_summary": "Passed generate-release-manifest pipeline validation verifying SBOM and in-toto provenance files generation.",
+      "residual_risk_description": "Validates creation but not policy enforcement at deployment; depends on proper GKE Binary Authorization configuration.",
+      "residual_severity": "LOW"
+    },
+    {
+      "risk_id": "RSK-OBS-006",
+      "domain": "Observability",
+      "validation_status": "VALIDATED_LOCAL_TESTS_PASS",
+      "validation_summary": "Passed Prometheus request and denial counter instrumentation unit testing.",
+      "residual_risk_description": "Exporter exposes port 8000; relies on Istio network rules to prevent public access in production.",
+      "residual_severity": "LOW"
+    },
+    {
+      "risk_id": "RSK-REC-007",
+      "domain": "Backup/recovery",
+      "validation_status": "VALIDATED_LOCAL_TESTS_PASS",
+      "validation_summary": "Passed copy routines and sqlite database schema validation tests on backup snapshots.",
+      "residual_risk_description": "Local file replication only; production requires Cloud Storage replication and retention configurations.",
+      "residual_severity": "LOW"
+    },
+    {
+      "risk_id": "RSK-CMP-008",
+      "domain": "Compliance",
+      "validation_status": "VALIDATED_LOCAL_TESTS_PASS",
+      "validation_summary": "Passed CI release manifest compilation validation successfully.",
+      "residual_risk_description": "Compliance artifacts are stored locally; requires GCS bucket retention rules and access control mapping.",
+      "residual_severity": "LOW"
+    }
+  ]
+}
