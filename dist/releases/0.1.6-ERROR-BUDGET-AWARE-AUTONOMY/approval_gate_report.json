@@ -3505,31 +3505,6 @@
       ]
     },
     {
-      "approval_id": "app-38d7",
-      "request_id": "run-fd8e81ff:T5-SWARM-DASHBOARD",
-      "correlation_id": "corr-8d117f",
-      "trace_id": "trace-dd288b",
-      "action_type": "TASK_EXECUTION",
-      "risk_level": "low",
-      "status": "approved",
-      "requested_by": "Swarm Orchestrator",
-      "created_at": "2026-06-25T16:33:57.794403+00:00",
-      "decisions": [
-        {
-          "decision_id": "dec-7ca321ed",
-          "request_id": "run-fd8e81ff:T5-SWARM-DASHBOARD",
-          "run_id": "run-fd8e81ff",
-          "task_id": "T5-SWARM-DASHBOARD",
-          "operator": "Michael Hoch",
-          "decision": "approved",
-          "decision_time": "2026-06-25T16:33:57.793401+00:00",
-          "nonce": "37e25baa8ba648ba942d8a4b6b8f5cdf",
-          "prior_state": "pending",
-          "next_state": "approved"
-        }
-      ]
-    },
-    {
       "approval_id": "app-0fdf",
       "request_id": "run-eb58e4d8:T4-CORE-ENGINE",
       "correlation_id": "corr-ffd85a",
@@ -16129,6 +16104,1222 @@
           "reason": "Contract test auto-approval",
           "decision_time": "2026-06-27T01:55:19.914345+00:00",
           "nonce": "fe6f2ccf06744436bab5ce967f6b052a",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-4570",
+      "request_id": "run-12dec959:T2-SPEC",
+      "correlation_id": "corr-81f746",
+      "trace_id": "trace-1a3c18",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T04:49:59.865000+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-cc0d",
+      "request_id": "run-swarm-528ff0:T1-EXEC",
+      "correlation_id": "corr-8db0a0",
+      "trace_id": "trace-0cc22d",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T04:50:14.058680+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-c05914c0",
+          "request_id": "run-swarm-528ff0:T1-EXEC",
+          "run_id": "run-swarm-528ff0",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T04:50:14.058200+00:00",
+          "nonce": "adb231f0e20c431b9476d1e33eb2645d",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-31f8",
+      "request_id": "run-9144d2fc:T2-SPEC",
+      "correlation_id": "corr-a1f962",
+      "trace_id": "trace-bea80c",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T04:50:51.646623+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-8359",
+      "request_id": "run-swarm-188bc9:T1-EXEC",
+      "correlation_id": "corr-e4dc7e",
+      "trace_id": "trace-8867cb",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T04:51:05.958679+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-ed689adc",
+          "request_id": "run-swarm-188bc9:T1-EXEC",
+          "run_id": "run-swarm-188bc9",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T04:51:05.958166+00:00",
+          "nonce": "10ce332f804046b9bcd4208f826fcf8d",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-d1ea",
+      "request_id": "run-584b4b54:T2-SPEC",
+      "correlation_id": "corr-38ee56",
+      "trace_id": "trace-7c28e3",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T04:51:34.896597+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-5dc5",
+      "request_id": "run-swarm-e4516a:T1-EXEC",
+      "correlation_id": "corr-b07afa",
+      "trace_id": "trace-a92d03",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T04:51:49.184287+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-bfbd4a5b",
+          "request_id": "run-swarm-e4516a:T1-EXEC",
+          "run_id": "run-swarm-e4516a",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T04:51:49.183662+00:00",
+          "nonce": "d2717e834dbe42fc9d29315e3a4ae4ae",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-ef5b",
+      "request_id": "run-5b5c29dc:T2-SPEC",
+      "correlation_id": "corr-dcc445",
+      "trace_id": "trace-6f48a6",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T04:52:16.382484+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-abdd",
+      "request_id": "run-swarm-efcdc5:T1-EXEC",
+      "correlation_id": "corr-6699f5",
+      "trace_id": "trace-e8e8b1",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T04:52:31.215816+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-48b2b4b2",
+          "request_id": "run-swarm-efcdc5:T1-EXEC",
+          "run_id": "run-swarm-efcdc5",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T04:52:31.215294+00:00",
+          "nonce": "eb793bf304ba41ba8852ff32ae9faee1",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-a468",
+      "request_id": "run-f907e250:T2-SPEC",
+      "correlation_id": "corr-a241bc",
+      "trace_id": "trace-dd2a33",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T04:53:32.241026+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-a8aa",
+      "request_id": "run-swarm-bad6c8:T1-EXEC",
+      "correlation_id": "corr-b38c62",
+      "trace_id": "trace-63b78c",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T04:53:45.727278+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-008a9430",
+          "request_id": "run-swarm-bad6c8:T1-EXEC",
+          "run_id": "run-swarm-bad6c8",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T04:53:45.726788+00:00",
+          "nonce": "a2960b2121f34893b4cb31ea8c9eac8e",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-efef",
+      "request_id": "run-0fadc884:T2-SPEC",
+      "correlation_id": "corr-c7d529",
+      "trace_id": "trace-22e96b",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T04:54:36.979300+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-b161",
+      "request_id": "run-swarm-763780:T1-EXEC",
+      "correlation_id": "corr-824f70",
+      "trace_id": "trace-1864e6",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T04:54:50.689137+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-1b785ae2",
+          "request_id": "run-swarm-763780:T1-EXEC",
+          "run_id": "run-swarm-763780",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T04:54:50.688670+00:00",
+          "nonce": "89cfa340f252495388089c90ad39383a",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-9edd",
+      "request_id": "run-f057063e:T2-SPEC",
+      "correlation_id": "corr-a7132c",
+      "trace_id": "trace-14e284",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T04:55:43.461931+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-7fa2",
+      "request_id": "run-swarm-c0e9e2:T1-EXEC",
+      "correlation_id": "corr-a4c038",
+      "trace_id": "trace-daaa08",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T04:55:57.638809+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-8407108e",
+          "request_id": "run-swarm-c0e9e2:T1-EXEC",
+          "run_id": "run-swarm-c0e9e2",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T04:55:57.638127+00:00",
+          "nonce": "7ff3d8fb85d0473d96cbae3b7cb1688b",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-f742",
+      "request_id": "run-96eb8dc2:T2-SPEC",
+      "correlation_id": "corr-586e26",
+      "trace_id": "trace-89e605",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T04:56:53.019162+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-e132",
+      "request_id": "run-swarm-cfcc97:T1-EXEC",
+      "correlation_id": "corr-1832c4",
+      "trace_id": "trace-b22314",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T04:57:07.518002+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-124116a1",
+          "request_id": "run-swarm-cfcc97:T1-EXEC",
+          "run_id": "run-swarm-cfcc97",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T04:57:07.517458+00:00",
+          "nonce": "20fb8841886142a993583dc4c220aef6",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-8949",
+      "request_id": "run-1ae5c9a4:T2-SPEC",
+      "correlation_id": "corr-cbfe03",
+      "trace_id": "trace-b70dcc",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T10:19:54.532396+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-0f06",
+      "request_id": "run-swarm-54d3cd:T1-EXEC",
+      "correlation_id": "corr-85ef42",
+      "trace_id": "trace-f6a859",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T10:20:09.131103+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-84d2309b",
+          "request_id": "run-swarm-54d3cd:T1-EXEC",
+          "run_id": "run-swarm-54d3cd",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T10:20:09.130594+00:00",
+          "nonce": "bf6e29b6954d4808a2ff5af63aa61b1b",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-72c0",
+      "request_id": "run-5c4ef610:T2-SPEC",
+      "correlation_id": "corr-4ea40b",
+      "trace_id": "trace-7baebc",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T10:41:54.072707+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-b599",
+      "request_id": "run-swarm-58f146:T1-EXEC",
+      "correlation_id": "corr-8d7969",
+      "trace_id": "trace-714cc7",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T10:42:08.118778+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-5e851784",
+          "request_id": "run-swarm-58f146:T1-EXEC",
+          "run_id": "run-swarm-58f146",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T10:42:08.118384+00:00",
+          "nonce": "f7b96295274c407298c2b7cb0f29a13d",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-beb3",
+      "request_id": "run-83378e6a:T2-SPEC",
+      "correlation_id": "corr-e2ea64",
+      "trace_id": "trace-74347e",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T10:58:29.637253+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-7f51",
+      "request_id": "run-swarm-8d28c6:T1-EXEC",
+      "correlation_id": "corr-e30870",
+      "trace_id": "trace-2bf2ad",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T10:58:43.248875+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-10694b27",
+          "request_id": "run-swarm-8d28c6:T1-EXEC",
+          "run_id": "run-swarm-8d28c6",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T10:58:43.248529+00:00",
+          "nonce": "c9e0c011ce6b4c78a6f91d98159f3166",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-ae8f",
+      "request_id": "run-ee69664a:T2-SPEC",
+      "correlation_id": "corr-0d1dec",
+      "trace_id": "trace-419bfb",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T11:11:26.638548+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-2e75",
+      "request_id": "run-swarm-6f13c8:T1-EXEC",
+      "correlation_id": "corr-b74f4d",
+      "trace_id": "trace-a6e8ed",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T11:11:40.115759+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-7cc9f260",
+          "request_id": "run-swarm-6f13c8:T1-EXEC",
+          "run_id": "run-swarm-6f13c8",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T11:11:40.115401+00:00",
+          "nonce": "a1e6b65780594d2ebe13ab32a31c2e41",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-30d1",
+      "request_id": "run-9365c40f:T2-SPEC",
+      "correlation_id": "corr-d26a1a",
+      "trace_id": "trace-2f705c",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T11:16:37.482295+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-ac55",
+      "request_id": "run-swarm-e6fc57:T1-EXEC",
+      "correlation_id": "corr-b3a50f",
+      "trace_id": "trace-18c841",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T11:16:52.111794+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-b850caa6",
+          "request_id": "run-swarm-e6fc57:T1-EXEC",
+          "run_id": "run-swarm-e6fc57",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T11:16:52.111363+00:00",
+          "nonce": "319971a24ef84eb79cf8bd8fe7bdcd61",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-ad1d",
+      "request_id": "run-426bab76:T2-SPEC",
+      "correlation_id": "corr-fb6cc5",
+      "trace_id": "trace-13fd3e",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T11:24:04.700935+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-422a",
+      "request_id": "run-swarm-4c3524:T1-EXEC",
+      "correlation_id": "corr-9fc9f0",
+      "trace_id": "trace-fb49c0",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T11:24:18.706826+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-79581052",
+          "request_id": "run-swarm-4c3524:T1-EXEC",
+          "run_id": "run-swarm-4c3524",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T11:24:18.706445+00:00",
+          "nonce": "3d7d2f34cc0a4c5c83ab8f0fc915c7f7",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-8a41",
+      "request_id": "run-0101f788:T2-SPEC",
+      "correlation_id": "corr-7a9c8b",
+      "trace_id": "trace-ebb58a",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T11:27:55.477543+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-c9d8",
+      "request_id": "run-swarm-d242c6:T1-EXEC",
+      "correlation_id": "corr-32662b",
+      "trace_id": "trace-fb400c",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T11:28:10.560102+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-dbc7062e",
+          "request_id": "run-swarm-d242c6:T1-EXEC",
+          "run_id": "run-swarm-d242c6",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T11:28:10.559663+00:00",
+          "nonce": "309511d1566343a1a1bd85ccdbfce7d3",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-6857",
+      "request_id": "run-e0bb9e75:T2-SPEC",
+      "correlation_id": "corr-6ea364",
+      "trace_id": "trace-4ec8d9",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T11:31:06.676383+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-38d7",
+      "request_id": "run-swarm-8b3a5a:T1-EXEC",
+      "correlation_id": "corr-aaabc8",
+      "trace_id": "trace-dbb3ec",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T11:31:21.289717+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-b1b36052",
+          "request_id": "run-swarm-8b3a5a:T1-EXEC",
+          "run_id": "run-swarm-8b3a5a",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T11:31:21.289344+00:00",
+          "nonce": "1009f4d6a3c54c8fa767337167a070ca",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-4a05",
+      "request_id": "run-440156ee:T2-SPEC",
+      "correlation_id": "corr-aead99",
+      "trace_id": "trace-b93ef0",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T11:36:50.586762+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-778b",
+      "request_id": "run-swarm-c55b2d:T1-EXEC",
+      "correlation_id": "corr-e340d0",
+      "trace_id": "trace-f281b9",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T11:37:04.736988+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-aa487160",
+          "request_id": "run-swarm-c55b2d:T1-EXEC",
+          "run_id": "run-swarm-c55b2d",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T11:37:04.736493+00:00",
+          "nonce": "959217565c324ca49641e9c63d3bffe5",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-5210",
+      "request_id": "run-46bc1676:T2-SPEC",
+      "correlation_id": "corr-6d7072",
+      "trace_id": "trace-273c5f",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T11:42:03.851552+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-fa97",
+      "request_id": "run-swarm-68cffd:T1-EXEC",
+      "correlation_id": "corr-1c04fe",
+      "trace_id": "trace-1c7a6f",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T11:42:17.942938+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-d2b0f120",
+          "request_id": "run-swarm-68cffd:T1-EXEC",
+          "run_id": "run-swarm-68cffd",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T11:42:17.942579+00:00",
+          "nonce": "01226c76b95843288304fb366d583cb2",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-c234",
+      "request_id": "run-0de23aae:T2-SPEC",
+      "correlation_id": "corr-ef9101",
+      "trace_id": "trace-bf232d",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T11:45:22.993448+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-9ab0",
+      "request_id": "run-swarm-afcdc7:T1-EXEC",
+      "correlation_id": "corr-4dcbec",
+      "trace_id": "trace-74080c",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T11:45:37.266364+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-6aa5b1a2",
+          "request_id": "run-swarm-afcdc7:T1-EXEC",
+          "run_id": "run-swarm-afcdc7",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T11:45:37.265966+00:00",
+          "nonce": "24a09b740db845749d3bf81d13c630c5",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-740e",
+      "request_id": "run-e122e48b:T2-SPEC",
+      "correlation_id": "corr-9387a5",
+      "trace_id": "trace-9930fc",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T11:49:37.940089+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-6654",
+      "request_id": "run-swarm-53eb04:T1-EXEC",
+      "correlation_id": "corr-3261d7",
+      "trace_id": "trace-939c83",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T11:49:52.757484+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-c54ae048",
+          "request_id": "run-swarm-53eb04:T1-EXEC",
+          "run_id": "run-swarm-53eb04",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T11:49:52.757011+00:00",
+          "nonce": "bcfac32d0f654247b34c22500d061bd3",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-389a",
+      "request_id": "run-c3c5e268:T2-SPEC",
+      "correlation_id": "corr-833bf4",
+      "trace_id": "trace-bb029a",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T12:18:52.719996+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-35cd",
+      "request_id": "run-swarm-01d769:T1-EXEC",
+      "correlation_id": "corr-a9db78",
+      "trace_id": "trace-2ee419",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T12:19:07.027213+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-439db520",
+          "request_id": "run-swarm-01d769:T1-EXEC",
+          "run_id": "run-swarm-01d769",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T12:19:07.026813+00:00",
+          "nonce": "5413c6f3446545438112e7e5baf78fb3",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-8447",
+      "request_id": "run-ff73cef4:T2-SPEC",
+      "correlation_id": "corr-6c27c1",
+      "trace_id": "trace-122b82",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T12:24:45.603715+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-744b",
+      "request_id": "run-swarm-1a04e0:T1-EXEC",
+      "correlation_id": "corr-c1e3ae",
+      "trace_id": "trace-415e85",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T12:25:00.018406+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-9e1bb148",
+          "request_id": "run-swarm-1a04e0:T1-EXEC",
+          "run_id": "run-swarm-1a04e0",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T12:25:00.018025+00:00",
+          "nonce": "8489f655750645df95bbb8c48963ed9e",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-09f1",
+      "request_id": "run-921ab1af:T2-SPEC",
+      "correlation_id": "corr-d0438a",
+      "trace_id": "trace-ad9123",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T12:42:20.336894+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-8ec5",
+      "request_id": "run-swarm-b74589:T1-EXEC",
+      "correlation_id": "corr-735652",
+      "trace_id": "trace-579571",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T12:42:34.374806+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-85b9f04b",
+          "request_id": "run-swarm-b74589:T1-EXEC",
+          "run_id": "run-swarm-b74589",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T12:42:34.374402+00:00",
+          "nonce": "e5970c9bbf4c4ab8a8448ba0216cfc36",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-b823",
+      "request_id": "run-add23ec0:T2-SPEC",
+      "correlation_id": "corr-3554b9",
+      "trace_id": "trace-157d7c",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T12:43:39.873553+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-4064",
+      "request_id": "run-swarm-bee6bb:T1-EXEC",
+      "correlation_id": "corr-00bdfc",
+      "trace_id": "trace-16648e",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T12:43:53.883385+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-43be4b86",
+          "request_id": "run-swarm-bee6bb:T1-EXEC",
+          "run_id": "run-swarm-bee6bb",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T12:43:53.882724+00:00",
+          "nonce": "7f211c1b45c74ccd864e8973973ba2ea",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-dd79",
+      "request_id": "run-b96c6123:T2-SPEC",
+      "correlation_id": "corr-d18161",
+      "trace_id": "trace-72108d",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T12:51:47.579923+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-4fed",
+      "request_id": "run-swarm-6d81bc:T1-EXEC",
+      "correlation_id": "corr-b92060",
+      "trace_id": "trace-7b98a0",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T12:52:01.625459+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-805b5e66",
+          "request_id": "run-swarm-6d81bc:T1-EXEC",
+          "run_id": "run-swarm-6d81bc",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T12:52:01.625061+00:00",
+          "nonce": "0a100e74fb244f779bbc98349a21be0b",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-d7a8",
+      "request_id": "run-469c10ae:T2-SPEC",
+      "correlation_id": "corr-fe4a0c",
+      "trace_id": "trace-d113e5",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T12:58:15.409369+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-969f",
+      "request_id": "run-swarm-4834a3:T1-EXEC",
+      "correlation_id": "corr-4634a4",
+      "trace_id": "trace-6ac1ee",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T12:58:28.906277+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-f27f6ce3",
+          "request_id": "run-swarm-4834a3:T1-EXEC",
+          "run_id": "run-swarm-4834a3",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T12:58:28.905863+00:00",
+          "nonce": "3cb13c8a30d249b88d1b1d65d34cbc53",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-12c2",
+      "request_id": "run-deb6379f:T2-SPEC",
+      "correlation_id": "corr-a376de",
+      "trace_id": "trace-d3f1c9",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T13:02:55.884099+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-d2b0",
+      "request_id": "run-swarm-b13988:T1-EXEC",
+      "correlation_id": "corr-31f5ef",
+      "trace_id": "trace-09169c",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T13:03:12.557801+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-d368cdf3",
+          "request_id": "run-swarm-b13988:T1-EXEC",
+          "run_id": "run-swarm-b13988",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T13:03:12.557388+00:00",
+          "nonce": "7d3f6fa0874e48b7a87c0fcfe83b110c",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-feb9",
+      "request_id": "run-7cac461a:T2-SPEC",
+      "correlation_id": "corr-6e9710",
+      "trace_id": "trace-6a611c",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T13:03:40.803861+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-1938",
+      "request_id": "run-swarm-93d70e:T1-EXEC",
+      "correlation_id": "corr-06bbf8",
+      "trace_id": "trace-0945a1",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T13:03:57.294826+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-4f120752",
+          "request_id": "run-swarm-93d70e:T1-EXEC",
+          "run_id": "run-swarm-93d70e",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T13:03:57.294186+00:00",
+          "nonce": "36df32d099804dba8f7d64fec4d60fe8",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-ea13",
+      "request_id": "run-97c9203b:T2-SPEC",
+      "correlation_id": "corr-289821",
+      "trace_id": "trace-27367c",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T13:08:37.783720+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-87ce",
+      "request_id": "run-swarm-b2afb6:T1-EXEC",
+      "correlation_id": "corr-b965e4",
+      "trace_id": "trace-b1e2cb",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T13:08:51.533864+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-7e2d0ff4",
+          "request_id": "run-swarm-b2afb6:T1-EXEC",
+          "run_id": "run-swarm-b2afb6",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T13:08:51.533417+00:00",
+          "nonce": "ed35846e7302484291f511983c57b188",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-ca03",
+      "request_id": "run-504dc02b:T2-SPEC",
+      "correlation_id": "corr-b70c84",
+      "trace_id": "trace-007fd8",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T13:17:46.423385+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-a24a",
+      "request_id": "run-swarm-bfc6eb:T1-EXEC",
+      "correlation_id": "corr-03084f",
+      "trace_id": "trace-f2b6d8",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T13:18:00.468811+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-552cc6f2",
+          "request_id": "run-swarm-bfc6eb:T1-EXEC",
+          "run_id": "run-swarm-bfc6eb",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T13:18:00.468428+00:00",
+          "nonce": "02e07f9d1f104903941a967ec4aaceba",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-84d6",
+      "request_id": "run-c436f7d4:T2-SPEC",
+      "correlation_id": "corr-3a1c19",
+      "trace_id": "trace-ae3096",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T13:44:12.105912+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-77c4",
+      "request_id": "run-swarm-7c3308:T1-EXEC",
+      "correlation_id": "corr-19b408",
+      "trace_id": "trace-2326bd",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T13:44:25.945686+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-3d466798",
+          "request_id": "run-swarm-7c3308:T1-EXEC",
+          "run_id": "run-swarm-7c3308",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T13:44:25.945288+00:00",
+          "nonce": "0c324cae7436462588d192af98331fd1",
+          "prior_state": "pending",
+          "next_state": "approved"
+        }
+      ]
+    },
+    {
+      "approval_id": "app-3494",
+      "request_id": "run-3d0cc313:T2-SPEC",
+      "correlation_id": "corr-cf15e5",
+      "trace_id": "trace-960cda",
+      "action_type": "TASK_EXECUTION",
+      "risk_level": "low",
+      "status": "pending",
+      "requested_by": "Swarm Orchestrator",
+      "created_at": "2026-06-28T13:51:05.907582+00:00",
+      "decisions": []
+    },
+    {
+      "approval_id": "app-265d",
+      "request_id": "run-swarm-993ae7:T1-EXEC",
+      "correlation_id": "corr-53fa4d",
+      "trace_id": "trace-8e8a7a",
+      "action_type": "agent_launch",
+      "risk_level": "high",
+      "status": "approved",
+      "requested_by": "Operator: Michael Hoch",
+      "created_at": "2026-06-28T13:51:19.755725+00:00",
+      "decisions": [
+        {
+          "decision_id": "dec-7f84e35c",
+          "request_id": "run-swarm-993ae7:T1-EXEC",
+          "run_id": "run-swarm-993ae7",
+          "task_id": "T1-EXEC",
+          "operator": "QA Auto-Tester",
+          "decision": "approved",
+          "reason": "Contract test auto-approval",
+          "decision_time": "2026-06-28T13:51:19.755267+00:00",
+          "nonce": "57ce60cede7f4ee8a82da4461a074126",
           "prior_state": "pending",
           "next_state": "approved"
         }
