@@ -49,15 +49,15 @@
     "CIS Controls": 31,
     "NIST SP 800-37 RMF": 2,
     "OMB A-130": 1,
-    "PCI DSS": 2,
     "SOC 2": 1,
-    "HIPAA": 1,
     "NIST SP 800-53 Rev. 5": 1,
+    "PCI DSS": 2,
+    "HIPAA": 1,
     "DoD Zero Trust": 1
   },
   "lifecycle_stages": {
-    "Development": 103,
     "Testing": 12,
+    "Development": 103,
     "Audit": 17,
     "Operations": 13
   },
