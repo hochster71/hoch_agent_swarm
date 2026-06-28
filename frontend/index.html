@@ -568,6 +568,21 @@
                             <div style="background: rgba(0,0,0,0.25); border: 1px solid var(--border-glass); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 10px;" id="clawde-blocked-actions-container">
                                 <!-- Blocked actions will be dynamically injected here -->
                             </div>
+                            
+                            <!-- Gated Execution Control Panel -->
+                            <div style="background: rgba(0,0,0,0.25); border: 1px solid var(--border-glass); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 10px; margin-top: 16px;" id="clawde-gate-approval-actions">
+                                <h3 style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--accent-teal); letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px; margin: 0;">
+                                    <i data-lucide="key" style="width: 13px; height: 13px;"></i> Gated Execution Control
+                                </h3>
+                                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; margin-top: 4px;">
+                                    <span style="font-size: 11px; color: var(--text-secondary);">Execution Status:</span>
+                                    <span id="clawde-approval-status-badge" class="badge" style="font-weight: bold; font-size: 10px; padding: 3px 8px;">NO REQUEST</span>
+                                </div>
+                                <div style="display: flex; gap: 8px; margin-top: 4px;">
+                                    <button id="clawde-btn-request-execution" class="btn" style="background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.3); color: #60a5fa; font-size: 11px; padding: 6px 12px; border-radius: 4px; cursor: pointer; display: none;">Request Execution</button>
+                                    <button id="clawde-btn-approve-execution" class="btn" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; font-size: 11px; padding: 6px 12px; border-radius: 4px; cursor: pointer; display: none;">Approve Execution</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -575,6 +590,7 @@
                     <div style="border-top: 1px solid var(--border-glass); margin-top: 24px; padding-top: 20px; display: flex; flex-wrap: wrap; gap: 12px;" id="clawde-action-buttons">
                         <button id="clawde-btn-no-drift" class="btn" style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.30); color: #34d399; font-weight: 600; padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: all 0.2s;">Run No-Drift Check</button>
                         <button id="clawde-btn-render-phase" class="btn" style="background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.30); color: #60a5fa; font-weight: 600; padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: all 0.2s;">Render Next Phase</button>
+                        <button id="clawde-btn-execute-phase" class="btn" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.35); color: #f87171; font-weight: 600; padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: all 0.2s;">Execute Next Phase</button>
                         <button id="clawde-btn-view-prompt" class="btn" style="background: rgba(139, 92, 246, 0.12); border: 1px solid rgba(139, 92, 246, 0.30); color: #a78bfa; font-weight: 600; padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: all 0.2s;">Open Generated Prompt</button>
                         <button id="clawde-btn-view-report" class="btn" style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.30); color: #fbbf24; font-weight: 600; padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: all 0.2s;">Open Latest Report</button>
                         <button id="clawde-btn-view-evidence" class="btn" style="background: rgba(236, 72, 153, 0.12); border: 1px solid rgba(236, 72, 153, 0.30); color: #f472b6; font-weight: 600; padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: all 0.2s;">Open Evidence Folder</button>

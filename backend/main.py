@@ -8609,6 +8609,75 @@ async def run_orchestrator_runner():
             "detail": str(e)
         }
 
+@app.post("/api/v1/orchestrator/execute-phase")
+async def execute_orchestrator_phase():
+    import subprocess
+    from pathlib import Path
+    
+    base_dir = Path(__file__).resolve().parent.parent
+    runner_script = base_dir / "scripts/orchestrator/builder_runner.py"
+    
+    if not runner_script.exists():
+        raise HTTPException(status_code=404, detail="builder_runner.py script not found")
+        
+    try:
+        res = subprocess.run(
+            ["python3", str(runner_script)],
+            capture_output=True,
+            text=True,
+            cwd=str(base_dir)
+        )
+        return {
+            "status": "success" if res.returncode == 0 else "error",
+            "returncode": res.returncode,
+            "stdout": res.stdout,
+            "stderr": res.stderr
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "detail": str(e)
+        }
+
+@app.post("/api/v1/orchestrator/request-execution")
+async def request_phase_execution():
+    import json
+    from pathlib import Path
+    from backend.approval_gate import get_approval_gate
+    
+    base_dir = Path(__file__).resolve().parent.parent
+    registry_path = base_dir / "control/phase_registry.json"
+    
+    if not registry_path.exists():
+        raise HTTPException(status_code=404, detail="phase_registry.json not found")
+        
+    try:
+        with open(registry_path, "r") as f:
+            registry = json.load(f)
+        phase = registry.get("next_phase", "PR16")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to read registry: {str(e)}")
+        
+    gate = get_approval_gate()
+    task_desc = f"Execute phase {phase} prompt and compile local evidence plan"
+    route_plan = {
+        "risk_level": "LOW",
+        "human_approval_required": True,
+        "mission_type": "ORCHESTRATION_EXECUTION",
+        "blocked_actions": ["prompt execution"],
+        "selected_prompt_ids": [f"prompt-{phase.lower()}"],
+        "selected_prompt_titles": [f"Prompt Execution for {phase}"]
+    }
+    
+    # Check if a pending or approved request already exists in the queue to avoid duplicates
+    queue = gate.load_queue()
+    for app in queue:
+        if phase.lower() in app.get("task_description", "").lower() and app.get("status") in ["PENDING", "APPROVED"]:
+            return app
+            
+    return gate.create_request(task_desc, route_plan)
+
+
 
 # Mount frontend files at root (if frontend directory exists)
 

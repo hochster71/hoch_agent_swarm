@@ -4,5 +4,7 @@
   "drift_status": "UNKNOWN",
   "last_no_drift_check": null,
   "current_branch_expected": "integration/visual-control-plane-local-v1",
-  "terminal_stop_required_before_authority_boundary": true
+  "terminal_stop_required_before_authority_boundary": true,
+  "current_phase": "PR16",
+  "execution_status": "COMPLETED"
 }
