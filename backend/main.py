@@ -6790,6 +6790,21 @@ def api_run_binding_readiness_verification():
     from backend.binding_readiness_manager import run_binding_readiness_verification
     return run_binding_readiness_verification()
 
+@app.get("/api/v1/live-binding/status")
+def api_get_live_binding_status():
+    from backend.live_binding_manager import get_live_binding_status
+    return get_live_binding_status()
+
+@app.post("/api/v1/live-binding/execute")
+def api_execute_live_binding():
+    from backend.live_binding_manager import execute_live_binding
+    return execute_live_binding()
+
+@app.post("/api/v1/live-binding/rollback")
+def api_execute_live_rollback():
+    from backend.live_binding_manager import execute_live_rollback
+    return execute_live_rollback()
+
 @app.get("/api/v1/policy/status")
 def api_get_policy_status():
     return {

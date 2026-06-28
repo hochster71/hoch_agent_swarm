@@ -73,7 +73,8 @@
         { id: 'cybergov-cisa', label: 'CISA / KEV / CPG' },
         { id: 'cybergov-zero-trust', label: 'DOD ZERO TRUST' },
         { id: 'cybergov-ao-review', label: 'AO REVIEW' },
-        { id: 'binding-gate', label: 'LIVE BINDING GATE' }
+        { id: 'binding-gate', label: 'LIVE BINDING GATE' },
+        { id: 'live-exposure', label: 'LIVE EXPOSURE' }
     ];
 
     function initNavigation() {
@@ -207,6 +208,9 @@
                 break;
             case 'binding-gate':
                 loadBindingGateView();
+                break;
+            case 'live-exposure':
+                loadLiveExposureView();
                 break;
         }
     }
@@ -3093,6 +3097,7 @@
         initStagingButtons();
         initDeployButtons();
         initBindingGateButtons();
+        initLiveExposureButtons();
         
         // Initial fetches
         fetchCockpit();
@@ -3922,6 +3927,137 @@
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 executeBindingVerification();
+            });
+        }
+    }
+
+    async function loadLiveExposureView() {
+        try {
+            const res = await fetch('/api/v1/live-binding/status');
+            if (!res.ok) throw new Error('Failed to fetch live binding status');
+            const data = await res.json();
+            renderLiveExposureData(data);
+        } catch (err) {
+            console.error('Failed to load live exposure view:', err);
+        }
+    }
+
+    function renderLiveExposureData(data) {
+        const statusEl = el('le-status-text');
+        if (statusEl) {
+            statusEl.textContent = data.status;
+            let color = 'var(--text-secondary)';
+            if (data.status === 'LIVE') {
+                color = '#10b981';
+            } else if (data.status === 'DISCONNECTED') {
+                color = '#ef4444';
+            } else if (data.status === 'CONNECTING' || data.status === 'ROLLING_BACK') {
+                color = '#f59e0b';
+            }
+            statusEl.style.color = color;
+        }
+
+        const urlEl = el('le-external-url');
+        if (urlEl) {
+            urlEl.textContent = data.external_url ? `External URL: ${data.external_url}` : 'External URL: None';
+        }
+
+        const updatedEl = el('le-last-updated');
+        if (updatedEl) {
+            updatedEl.textContent = `Last updated: ${data.last_updated}`;
+        }
+
+        const logsEl = el('le-gateway-logs');
+        if (logsEl && data.logs) {
+            logsEl.innerHTML = data.logs.map(log => `<div>${escapeHtml(log)}</div>`).join('');
+            logsEl.scrollTop = logsEl.scrollHeight;
+        }
+
+        const gridEl = el('le-metrics-grid');
+        if (gridEl && data.metrics) {
+            const metricsList = [
+                { name: 'TLS Encryption Route', desc: 'HTTPS listener binding via TLS 1.3 protocol.', val: data.metrics.tls_active ? 'ACTIVE' : 'INACTIVE', ok: data.metrics.tls_active },
+                { name: 'Admin Auth Control', desc: 'Secure session authenticator gateway intercept.', val: data.metrics.auth_enforced ? 'ACTIVE' : 'INACTIVE', ok: data.metrics.auth_enforced },
+                { name: 'Network Route Limitation', desc: 'Only port 8443 exposed. Local ports isolated.', val: data.metrics.network_exposed_port ? `PORT ${data.metrics.network_exposed_port}` : 'ISOLATED', ok: !!data.metrics.network_exposed_port },
+                { name: 'Action Ledger Audit Seal', desc: 'Cryptographic block added to action ledger.', val: data.metrics.audit_logs_sealed ? 'SEALED' : 'OPEN', ok: data.metrics.audit_logs_sealed },
+                { name: 'ConMon Daily Scheduler', desc: 'Continuous compliance tracking enabled.', val: data.metrics.conmon_scheduler, ok: data.metrics.conmon_scheduler === 'ACTIVE' },
+                { name: 'Emergency Rollback Capsule', desc: 'Simulated automatic fallback path is armed.', val: data.metrics.rollback_capsule_armed ? 'ARMED' : 'DISARMED', ok: data.metrics.rollback_capsule_armed },
+                { name: 'CyberGov Sync Baseline', desc: 'Live scoreboard synchronized with portal.', val: data.metrics.cybergov_sync, ok: data.metrics.cybergov_sync === 'CONNECTED' }
+            ];
+
+            gridEl.innerHTML = metricsList.map(m => {
+                let badgeColor = '#f59e0b';
+                let badgeBg = 'rgba(245, 158, 11, 0.1)';
+                if (m.ok) {
+                    badgeColor = '#10b981';
+                    badgeBg = 'rgba(16, 185, 129, 0.1)';
+                } else if (m.val === 'INACTIVE' || m.val === 'DISCONNECTED') {
+                    badgeColor = '#ef4444';
+                    badgeBg = 'rgba(239, 68, 68, 0.1)';
+                }
+                
+                return `
+                    <div class="card" style="padding: 15px; background: rgba(0,0,0,0.15); border: 1px solid var(--border-glass); display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <h4 style="font-size: 13px; font-weight: bold; color: #fff; margin-bottom: 6px;">${m.name}</h4>
+                            <p style="font-size: 11px; color: var(--text-secondary); line-height: 1.4; margin-bottom: 12px;">${m.desc}</p>
+                        </div>
+                        <span style="align-self: flex-start; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; background: ${badgeBg}; color: ${badgeColor}; border: 1px solid ${badgeBg.replace('0.1', '0.3')};">
+                            ${m.val}
+                        </span>
+                    </div>
+                `;
+            }).join('');
+        }
+    }
+
+    async function triggerLiveBinding() {
+        const btn = el('btn-establish-live-binding');
+        if (!btn) return;
+        btn.disabled = true;
+        
+        try {
+            const res = await fetch('/api/v1/live-binding/execute', { method: 'POST' });
+            if (!res.ok) throw new Error('Failed to establish live binding');
+            const data = await res.json();
+            renderLiveExposureData(data);
+        } catch (err) {
+            console.error('Failed to establish live binding:', err);
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    async function triggerLiveRollback() {
+        const btn = el('btn-rollback-live-binding');
+        if (!btn) return;
+        btn.disabled = true;
+        
+        try {
+            const res = await fetch('/api/v1/live-binding/rollback', { method: 'POST' });
+            if (!res.ok) throw new Error('Failed to rollback live binding');
+            const data = await res.json();
+            renderLiveExposureData(data);
+        } catch (err) {
+            console.error('Failed to rollback live binding:', err);
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    function initLiveExposureButtons() {
+        const btnEst = el('btn-establish-live-binding');
+        if (btnEst) {
+            btnEst.addEventListener('click', (e) => {
+                e.preventDefault();
+                triggerLiveBinding();
+            });
+        }
+        const btnRoll = el('btn-rollback-live-binding');
+        if (btnRoll) {
+            btnRoll.addEventListener('click', (e) => {
+                e.preventDefault();
+                triggerLiveRollback();
             });
         }
     }
