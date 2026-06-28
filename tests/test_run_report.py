@@ -477,6 +477,10 @@ class TestRunWritesReport:
         assert len(metrics["tasks"]) == 2
         assert metrics["tasks"][0]["agent_role"] == "Swarm Asset Mapper"
         assert metrics["tasks"][0]["agent_key"] == "asset_mapper"
+        assert metrics["tasks"][0]["task_class"] == "fast_classification"
+        assert metrics["tasks"][0]["tokens"] == 75
+        assert metrics["tasks"][0]["artifact_result"] == "asset_map.md"
+        assert metrics["tasks"][0]["validation_status"] == "MISSING"
 
     def test_fail_report_written_on_crew_exception(self, tmp_path, monkeypatch):
         monkeypatch.chdir(tmp_path)

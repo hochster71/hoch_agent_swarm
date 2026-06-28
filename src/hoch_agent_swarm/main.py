@@ -181,7 +181,32 @@ def run():
         
         num_tasks = len(crew_output.tasks_output) if crew_output and getattr(crew_output, "tasks_output", None) else 7
         avg_task_duration = total_runtime / num_tasks if num_tasks > 0 else 40.0
-        
+
+        token_usage_raw = {}
+        if crew_output and getattr(crew_output, "token_usage", None):
+            try:
+                token_usage_raw = {
+                    "total_tokens": getattr(crew_output.token_usage, "total_tokens", 0),
+                    "prompt_tokens": getattr(crew_output.token_usage, "prompt_tokens", 0),
+                    "completion_tokens": getattr(crew_output.token_usage, "completion_tokens", 0),
+                    "successful_requests": getattr(crew_output.token_usage, "successful_requests", 0),
+                }
+            except Exception:
+                try:
+                    token_usage_raw = dict(crew_output.token_usage)
+                except Exception:
+                    pass
+
+        agent_to_class = {
+            "asset_mapper": "fast_classification",
+            "swarm_architect": "planning_docs",
+            "agent_combinator": "coding_repair",
+            "security_operator": "security_audit",
+            "execution_planner": "planning_docs",
+            "synthesis_director": "planning_docs",
+            "antigravity_integration_operator": "planning_docs",
+        }
+
         for i, t_out in enumerate(getattr(crew_output, "tasks_output", None) or []):
             agent_role = getattr(t_out, "agent", "unknown").strip()
             agent_key = role_to_key.get(agent_role, "unknown")
@@ -197,33 +222,27 @@ def run():
                     artifact_quality = validation_results[artifact_path]
                 else:
                     artifact_quality = "VALID" if os.path.exists(artifact_path) else "MISSING"
-                    
+            
+            task_tokens = 0
+            if token_usage_raw:
+                total_t = token_usage_raw.get("total_tokens", 0)
+                task_tokens = int(total_t / num_tasks) if num_tasks > 0 else 0
+
             tasks_metrics.append({
                 "task_name": getattr(t_out, "name", None) or f"task_{i+1}",
                 "agent_role": agent_role,
                 "agent_key": agent_key,
+                "task_class": agent_to_class.get(agent_key, "unknown"),
                 "model": resolved["model"],
                 "fallback_event": resolved["fallback"],
                 "runtime_seconds_estimate": int(avg_task_duration),
+                "tokens": task_tokens,
+                "artifact_result": os.path.basename(artifact_path) if artifact_path else "None",
+                "validation_status": artifact_quality,
                 "status": "success",
                 "artifact_quality": artifact_quality
             })
             
-        token_usage_raw = {}
-        if crew_output and getattr(crew_output, "token_usage", None):
-            try:
-                token_usage_raw = {
-                    "total_tokens": getattr(crew_output.token_usage, "total_tokens", 0),
-                    "prompt_tokens": getattr(crew_output.token_usage, "prompt_tokens", 0),
-                    "completion_tokens": getattr(crew_output.token_usage, "completion_tokens", 0),
-                    "successful_requests": getattr(crew_output.token_usage, "successful_requests", 0),
-                }
-            except Exception:
-                try:
-                    token_usage_raw = dict(crew_output.token_usage)
-                except Exception:
-                    pass
-                    
         metrics = {
             "total_token_usage": token_usage_raw,
             "tasks": tasks_metrics,
@@ -237,7 +256,6 @@ def run():
     except ArtifactValidationError as e:
         report.record_canonical_artifacts(ALL_CANONICAL_ARTIFACT_PATHS)
         report.add_error(f"Artifact validation failed: {e}")
-        # Build failure metrics
         metrics = {
             "total_token_usage": {},
             "tasks": [
@@ -245,9 +263,13 @@ def run():
                     "task_name": "unknown",
                     "agent_role": "unknown",
                     "agent_key": "unknown",
+                    "task_class": "unknown",
                     "model": "unknown",
                     "fallback_event": False,
                     "runtime_seconds_estimate": 0,
+                    "tokens": 0,
+                    "artifact_result": "None",
+                    "validation_status": "INVALID",
                     "status": "failed",
                     "artifact_quality": "INVALID"
                 }
@@ -262,7 +284,6 @@ def run():
     except Exception as e:
         report.record_canonical_artifacts(ALL_CANONICAL_ARTIFACT_PATHS)
         report.add_error(str(e))
-        # Build failure metrics
         metrics = {
             "total_token_usage": {},
             "tasks": [
@@ -270,9 +291,13 @@ def run():
                     "task_name": "unknown",
                     "agent_role": "unknown",
                     "agent_key": "unknown",
+                    "task_class": "unknown",
                     "model": "unknown",
                     "fallback_event": False,
                     "runtime_seconds_estimate": 0,
+                    "tokens": 0,
+                    "artifact_result": "None",
+                    "validation_status": "INVALID",
                     "status": "failed",
                     "artifact_quality": "INVALID"
                 }

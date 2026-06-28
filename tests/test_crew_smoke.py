@@ -29,7 +29,7 @@ GARBAGE_PATTERNS = [
     r'"dependencies"\s*:',    # JSON fragment
     r"class\s+\w+\(",         # Python class definition
     r"def\s+\w+\(",           # Python function definition
-    r"import\s+\w+",          # Python import
+    r"(?m)^\s*import\s+\w+",    # Python import at start of line
     r"```python",             # Fenced Python code block
 ]
 
