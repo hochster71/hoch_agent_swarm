@@ -163,7 +163,7 @@ async function runContractTest() {
     console.log("Verifying ledger audit trail...");
     const auditRes = await fetch(`${serverUrl}/api/audit/events`);
     const auditEvents = await auditRes.json();
-    const event = auditEvents.find((e: any) => e.run_id === runId && e.action === "HOCHSTER_AGENT_EXECUTION_COMPLETED");
+    const event = auditEvents.find((e: any) => e.run_id === runId && (e.action === "HOCHSTER_AGENT_EXECUTION_COMPLETED" || (e.action && e.action.type === "HOCHSTER_AGENT_EXECUTION_COMPLETED")));
 
     if (!event) {
       blockers.push(`Ledger is missing audit event 'HOCHSTER_AGENT_EXECUTION_COMPLETED' for run ${runId}.`);

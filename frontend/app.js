@@ -1005,6 +1005,29 @@
     // ── Loader: CLAWDE Control Tower View ────────────────────────────────────
     let isClawdeInitialized = false;
     let activeApprovalId = null;
+    let selectedPhase = null;
+    const phaseFilesMap = {
+        "PR16": {
+            prompt: "artifacts/orchestrator/generated-prompts/PR16.md",
+            report: "artifacts/orchestrator/reports/PR16_orchestrator_report.json",
+            seal: "artifacts/phase-orchestrator/visual-control-plane-local-v1/pr16_final_seal.json"
+        },
+        "PR17": {
+            prompt: "artifacts/orchestrator/generated-prompts/PR17.md",
+            report: "artifacts/orchestrator/reports/PR17_orchestrator_report.json",
+            seal: "artifacts/production-readiness-final-candidate-seal/visual-control-plane-local-v1/pr17_final_seal"
+        },
+        "PR18": {
+            prompt: "artifacts/orchestrator/generated-prompts/PR18.md",
+            report: "artifacts/orchestrator/reports/PR18_orchestrator_report.json",
+            seal: "artifacts/production-readiness-final-candidate-seal/visual-control-plane-local-v1/pr18_final_seal.json"
+        },
+        "COMPLETED": {
+            prompt: "None",
+            report: "None",
+            seal: "None"
+        }
+    };
 
     function initClawdeControls() {
         if (isClawdeInitialized) return;
@@ -1228,9 +1251,115 @@
                 }
             }
 
-            phaseSpan.textContent = reg.next_phase || '--';
-            completedSpan.textContent = reg.last_completed_phase || '--';
-            
+            // Set next phase & last completed values
+            const nextPhase = reg.next_phase || 'PR17';
+            const lastCompleted = reg.last_completed_phase || 'PR16';
+
+            if (!selectedPhase) {
+                selectedPhase = nextPhase;
+            }
+
+            phaseSpan.textContent = selectedPhase;
+            completedSpan.textContent = lastCompleted;
+
+            // Render Phase Cards
+            const cardsContainer = el('clawde-phase-cards-container');
+            if (cardsContainer) {
+                const phaseOrder = ["PR16", "PR17", "PR18", "COMPLETED"];
+                const phaseMeta = {
+                    "PR16": { title: "PR16: Plan", desc: "Cutover Plan" },
+                    "PR17": { title: "PR17: Cutover", desc: "Cutover Execution" },
+                    "PR18": { title: "PR18: Validate", desc: "Post-Cutover Validation" },
+                    "COMPLETED": { title: "COMPLETED", desc: "Release Sealed" }
+                };
+
+                cardsContainer.innerHTML = phaseOrder.map(p => {
+                    const meta = phaseMeta[p];
+                    let cardState = 'pending';
+                    let ledClass = '';
+                    let statusLabel = 'Locked';
+                    let statusColor = '#6b7280'; // gray
+
+                    if (p === nextPhase) {
+                        cardState = 'active';
+                        ledClass = 'led-active';
+                        statusLabel = 'Active';
+                        statusColor = '#fbbf24'; // amber
+                    } else {
+                        let isDone = false;
+                        if (nextPhase === 'COMPLETED') {
+                            isDone = true;
+                        } else {
+                            const completedList = [];
+                            if (lastCompleted === 'PR16') completedList.push('PR16');
+                            if (lastCompleted === 'PR17') completedList.push('PR16', 'PR17');
+                            if (lastCompleted === 'PR18') completedList.push('PR16', 'PR17', 'PR18');
+                            if (completedList.includes(p)) isDone = true;
+                        }
+                        
+                        if (isDone) {
+                            cardState = 'completed';
+                            statusLabel = 'Completed';
+                            statusColor = '#10b981'; // green
+                        }
+                    }
+
+                    let borderClass = '';
+                    if (p === selectedPhase) {
+                        borderClass = 'selected-phase';
+                    } else if (cardState === 'active') {
+                        borderClass = 'active-phase';
+                    } else if (cardState === 'completed') {
+                        borderClass = 'completed-phase';
+                    }
+
+                    let ledStyle = `width: 8px; height: 8px; border-radius: 50%; display: inline-block; background: ${statusColor};`;
+                    if (cardState === 'active') {
+                        ledStyle += ' box-shadow: 0 0 8px currentColor;';
+                    }
+
+                    return `
+                        <div class="phase-card ${borderClass}" data-phase="${p}">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 12px; font-weight: 700; color: #fff;">${meta.title}</span>
+                                <span class="${ledClass}" style="${ledStyle}"></span>
+                            </div>
+                            <span style="font-size: 10px; color: var(--text-secondary); line-height: 1.2;">${meta.desc}</span>
+                            <span style="font-size: 9px; font-weight: bold; color: ${statusColor}; margin-top: 4px; text-transform: uppercase;">${statusLabel}</span>
+                        </div>
+                    `;
+                }).join('');
+
+                cardsContainer.querySelectorAll('.phase-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        selectedPhase = card.getAttribute('data-phase');
+                        loadClawdeView();
+                    });
+                });
+            }
+
+            // Update Selected Phase title & status light in inspector
+            const selectedStatusLight = el('clawde-selected-status-light');
+            if (selectedStatusLight) {
+                let statusColor = '#6b7280'; // gray
+                if (selectedPhase === nextPhase) {
+                    statusColor = '#fbbf24'; // amber
+                } else {
+                    let isDone = false;
+                    if (nextPhase === 'COMPLETED') {
+                        isDone = true;
+                    } else {
+                        const completedList = [];
+                        if (lastCompleted === 'PR16') completedList.push('PR16');
+                        if (lastCompleted === 'PR17') completedList.push('PR16', 'PR17');
+                        if (lastCompleted === 'PR18') completedList.push('PR16', 'PR17', 'PR18');
+                        if (completedList.includes(selectedPhase)) isDone = true;
+                    }
+                    if (isDone) statusColor = '#10b981'; // green
+                }
+                selectedStatusLight.style.background = statusColor;
+            }
+
             // Drift Status
             const driftText = state.drift_status || 'ZERO DRIFT DETECTED';
             if (driftSpan) {
@@ -1246,9 +1375,11 @@
                 }
             }
 
-            if (promptCode) promptCode.textContent = paths.generated_prompt || '--';
-            if (reportCode) reportCode.textContent = paths.latest_report || '--';
-            if (sealCode) sealCode.textContent = paths.evidence_seal || '--';
+            // Populate selected phase files map paths
+            const phasePaths = phaseFilesMap[selectedPhase] || { prompt: "None", report: "None", seal: "None" };
+            if (promptCode) promptCode.textContent = phasePaths.prompt;
+            if (reportCode) reportCode.textContent = phasePaths.report;
+            if (sealCode) sealCode.textContent = phasePaths.seal;
 
             // Render Blocked Actions
             if (blockedContainer) {
@@ -1280,7 +1411,6 @@
             let status = 'NO REQUEST';
             
             if (approvalExists) {
-                // Fetch the approval doc to find status
                 try {
                     const appRes = await fetch('/api/v1/approvals/queue');
                     const approvalsQueue = await appRes.json();
@@ -1294,50 +1424,107 @@
                     if (matchedApproval) {
                         status = matchedApproval.status;
                     } else {
-                        status = 'APPROVED'; // If file exists but not in memory queue yet
+                        status = 'APPROVED';
                     }
                 } catch (e) {
                     status = 'APPROVED';
                 }
             }
             
-            if (approvalBadge) {
-                approvalBadge.textContent = status;
-                if (status === 'APPROVED') {
-                    approvalBadge.style.background = 'rgba(16, 185, 129, 0.1)';
-                    approvalBadge.style.borderColor = 'rgba(16, 185, 129, 0.3)';
-                    approvalBadge.style.color = '#34d399';
-                    if (btnRequest) btnRequest.style.display = 'none';
-                    if (btnApprove) btnApprove.style.display = 'none';
-                    if (btnExecute) {
-                        btnExecute.removeAttribute('disabled');
-                        btnExecute.style.opacity = '1';
-                        btnExecute.style.cursor = 'pointer';
-                    }
-                } else if (status === 'PENDING') {
-                    approvalBadge.style.background = 'rgba(245, 158, 11, 0.1)';
-                    approvalBadge.style.borderColor = 'rgba(245, 158, 11, 0.3)';
-                    approvalBadge.style.color = '#fbbf24';
-                    if (btnRequest) btnRequest.style.display = 'none';
-                    if (btnApprove) btnApprove.style.display = 'inline-block';
-                    if (btnExecute) {
-                        btnExecute.setAttribute('disabled', 'true');
-                        btnExecute.style.opacity = '0.5';
-                        btnExecute.style.cursor = 'not-allowed';
-                    }
-                } else {
-                    approvalBadge.style.background = 'rgba(255,255,255,0.05)';
-                    approvalBadge.style.borderColor = 'rgba(255,255,255,0.1)';
-                    approvalBadge.style.color = 'var(--text-secondary)';
-                    if (btnRequest) btnRequest.style.display = 'inline-block';
-                    if (btnApprove) btnApprove.style.display = 'none';
-                    if (btnExecute) {
-                        btnExecute.setAttribute('disabled', 'true');
-                        btnExecute.style.opacity = '0.5';
-                        btnExecute.style.cursor = 'not-allowed';
+            const lockoutNotice = el('clawde-gate-lockout-notice');
+            if (selectedPhase === nextPhase) {
+                if (lockoutNotice) lockoutNotice.style.display = 'none';
+                if (approvalBadge) {
+                    approvalBadge.textContent = status;
+                    if (status === 'APPROVED') {
+                        approvalBadge.style.background = 'rgba(16, 185, 129, 0.1)';
+                        approvalBadge.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+                        approvalBadge.style.color = '#34d399';
+                        if (btnRequest) btnRequest.style.display = 'none';
+                        if (btnApprove) btnApprove.style.display = 'none';
+                        if (btnExecute) {
+                            btnExecute.removeAttribute('disabled');
+                            btnExecute.style.opacity = '1';
+                            btnExecute.style.cursor = 'pointer';
+                        }
+                    } else if (status === 'PENDING') {
+                        approvalBadge.style.background = 'rgba(245, 158, 11, 0.1)';
+                        approvalBadge.style.borderColor = 'rgba(245, 158, 11, 0.3)';
+                        approvalBadge.style.color = '#fbbf24';
+                        if (btnRequest) btnRequest.style.display = 'none';
+                        if (btnApprove) btnApprove.style.display = 'inline-block';
+                        if (btnExecute) {
+                            btnExecute.setAttribute('disabled', 'true');
+                            btnExecute.style.opacity = '0.5';
+                            btnExecute.style.cursor = 'not-allowed';
+                        }
+                    } else {
+                        approvalBadge.style.background = 'rgba(255,255,255,0.05)';
+                        approvalBadge.style.borderColor = 'rgba(255,255,255,0.1)';
+                        approvalBadge.style.color = 'var(--text-secondary)';
+                        if (btnRequest) btnRequest.style.display = 'inline-block';
+                        if (btnApprove) btnApprove.style.display = 'none';
+                        if (btnExecute) {
+                            btnExecute.setAttribute('disabled', 'true');
+                            btnExecute.style.opacity = '0.5';
+                            btnExecute.style.cursor = 'not-allowed';
+                        }
                     }
                 }
+            } else {
+                if (btnRequest) btnRequest.style.display = 'none';
+                if (btnApprove) btnApprove.style.display = 'none';
+                if (btnExecute) {
+                    btnExecute.setAttribute('disabled', 'true');
+                    btnExecute.style.opacity = '0.5';
+                    btnExecute.style.cursor = 'not-allowed';
+                }
+                if (approvalBadge) {
+                    approvalBadge.textContent = 'LOCKED';
+                    approvalBadge.style.background = 'rgba(255,255,255,0.03)';
+                    approvalBadge.style.borderColor = 'rgba(255,255,255,0.08)';
+                    approvalBadge.style.color = 'var(--text-secondary)';
+                }
+                if (lockoutNotice) {
+                    lockoutNotice.style.display = 'block';
+                    let message = 'This phase is locked.';
+                    let isDone = false;
+                    if (nextPhase === 'COMPLETED') {
+                        isDone = true;
+                    } else {
+                        const completedList = [];
+                        if (lastCompleted === 'PR16') completedList.push('PR16');
+                        if (lastCompleted === 'PR17') completedList.push('PR16', 'PR17');
+                        if (lastCompleted === 'PR18') completedList.push('PR16', 'PR17', 'PR18');
+                        if (completedList.includes(selectedPhase)) isDone = true;
+                    }
+                    if (isDone) {
+                        message = 'This phase has already been completed.';
+                    } else {
+                        message = `This phase is locked until phase ${nextPhase} is executed.`;
+                    }
+                    lockoutNotice.textContent = message;
+                }
             }
+
+            // Gated execution buttons state management
+            const btnNoDrift = el('clawde-btn-no-drift');
+            const btnRender = el('clawde-btn-render-phase');
+            const isActivePhaseSelected = selectedPhase === nextPhase;
+            const buttonsToGate = [btnNoDrift, btnRender];
+            buttonsToGate.forEach(btn => {
+                if (btn) {
+                    if (isActivePhaseSelected) {
+                        btn.removeAttribute('disabled');
+                        btn.style.opacity = '1';
+                        btn.style.cursor = 'pointer';
+                    } else {
+                        btn.setAttribute('disabled', 'true');
+                        btn.style.opacity = '0.4';
+                        btn.style.cursor = 'not-allowed';
+                    }
+                }
+            });
 
             // Populate Debug Panel values
             if (dbgApi) {

@@ -9148,6 +9148,11 @@ async def verify_orchestrator_history():
         conn.close()
 
 
+@app.get("/api/v1/ubiquiti/inventory")
+async def api_ubiquiti_inventory():
+    from backend.ubiquiti_inventory import collect_ubiquiti_inventory
+    return collect_ubiquiti_inventory()
+
 
 # Mount frontend files at root (if frontend directory exists)
 

@@ -58,6 +58,7 @@ def main():
     success = True
     tests = [
         "npx tsx scripts/qa/test-autonomy-budget.ts",
+        "npm run qa:ui-contract",
         "npm run qa:readiness",
         "npm run supply:release"
     ]

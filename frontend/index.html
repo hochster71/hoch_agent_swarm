@@ -16,6 +16,48 @@
             background-color: #0b0f19;
             color: #f3f4f6;
         }
+        @keyframes led-pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; box-shadow: 0 0 10px currentColor; }
+            100% { opacity: 0.4; }
+        }
+        .led-active {
+            animation: led-pulse 1.5s infinite;
+            color: #fbbf24;
+        }
+        .phase-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border-glass);
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .phase-card:hover {
+            transform: translateY(-2px);
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.15);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .phase-card.active-phase {
+            border-color: var(--accent-teal);
+            background: rgba(20, 184, 166, 0.05);
+            box-shadow: 0 0 15px rgba(20, 184, 166, 0.15);
+        }
+        .phase-card.selected-phase {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.05);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.15);
+        }
+        .phase-card.completed-phase {
+            border-color: rgba(16, 185, 129, 0.4);
+            background: rgba(16, 185, 129, 0.02);
+        }
     </style>
     <link rel="stylesheet" href="styles.css?v=1.0.2">
     <link rel="icon" href="data:,">
@@ -512,7 +554,7 @@
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 16px; margin-bottom: 20px;">
                         <div>
                             <h2 style="font-size: 22px; font-weight: 700; color: #fff; font-family: 'Outfit', sans-serif; letter-spacing: -0.02em;">CLAWDE Control Tower</h2>
-                            <div style="font-size: 11px; color: var(--accent-teal); font-weight: bold; margin-top: 2px;">CLAWDE Control Tower UI Build: SEC1</div>
+                            <div style="font-size: 11px; color: var(--accent-teal); font-weight: bold; margin-top: 2px;">CLAWDE Control Tower UI Build: UX2</div>
                             <p style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Local Phase Automation & Authority Gate Monitor</p>
                         </div>
                         <div style="display: flex; align-items: center; gap: 10px;">
@@ -523,40 +565,53 @@
                     <!-- Status Banner Panel -->
                     <div id="clawde-status-banner" style="display: none; padding: 12px 16px; border-radius: 8px; font-size: 13px; font-weight: bold; margin-bottom: 16px; border: 1px solid transparent; transition: all 0.3s;"></div>
 
+                    <!-- Phase Progression Flow -->
+                    <div style="margin-bottom: 24px; background: rgba(0,0,0,0.15); border: 1px solid var(--border-glass); padding: 16px; border-radius: 10px;">
+                        <h3 style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--accent-teal); margin-bottom: 12px; letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px;">
+                            <i data-lucide="git-commit" style="width: 14px; height: 14px;"></i> Release Cutover Workflow
+                        </h3>
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;" id="clawde-phase-cards-container">
+                            <!-- Dynamic Phase Cards will be injected here -->
+                        </div>
+                    </div>
+
                     <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px;">
-                        <!-- Left Panel: State & Phase -->
+                        <!-- Left Panel: Phase Details Inspector -->
                         <div>
                             <h3 style="font-size: 13px; font-weight: 700; text-transform: uppercase; color: var(--accent-teal); margin-bottom: 14px; letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px;">
-                                <i data-lucide="activity" style="width: 14px; height: 14px;"></i> Active Orchestrator State
+                                <i data-lucide="scan-eye" style="width: 14px; height: 14px;"></i> Phase Details Inspector
                             </h3>
                             <div style="background: rgba(0,0,0,0.25); border: 1px solid var(--border-glass); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 14px;">
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                                     <div>
-                                        <span style="font-size: 10px; color: var(--text-secondary); display: block; text-transform: uppercase; font-weight: 600;">Current Active Phase</span>
-                                        <span id="clawde-current-phase" style="font-size: 20px; font-weight: 700; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.1);">--</span>
+                                        <span style="font-size: 10px; color: var(--text-secondary); display: block; text-transform: uppercase; font-weight: 600;">Selected Phase</span>
+                                        <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                                            <span id="clawde-current-phase" style="font-size: 18px; font-weight: 700; color: #fff;">--</span>
+                                            <span id="clawde-selected-status-light" style="width: 8px; height: 8px; border-radius: 50%; background: #6b7280; display: inline-block;"></span>
+                                        </div>
                                     </div>
                                     <div>
-                                        <span style="font-size: 10px; color: var(--text-secondary); display: block; text-transform: uppercase; font-weight: 600;">Last Completed Phase</span>
-                                        <span id="clawde-last-completed" style="font-size: 15px; font-weight: 600; color: var(--text-primary);">--</span>
+                                        <span style="font-size: 10px; color: var(--text-secondary); display: block; text-transform: uppercase; font-weight: 600;">Drift Lock Status</span>
+                                        <span id="clawde-drift-status" class="badge" style="font-size: 11px; font-weight: bold; margin-top: 4px; display: inline-block;">--</span>
                                     </div>
-                                </div>
-                                <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
-                                    <span style="font-size: 10px; color: var(--text-secondary); display: block; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Drift Lock Status</span>
-                                    <span id="clawde-drift-status" class="badge" style="font-size: 12px; font-weight: bold;">--</span>
                                 </div>
                                 <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; display: flex; flex-direction: column; gap: 10px;">
                                     <div>
-                                        <span style="font-size: 10px; color: var(--text-secondary); display: block; text-transform: uppercase; font-weight: 600;">Next Generated Prompt</span>
+                                        <span style="font-size: 10px; color: var(--text-secondary); display: block; text-transform: uppercase; font-weight: 600;">Generated Prompt Path</span>
                                         <code id="clawde-generated-prompt-path" style="font-size: 11px; color: #a5b4fc; background: rgba(0,0,0,0.4); padding: 5px 10px; border-radius: 6px; display: block; margin-top: 4px; word-break: break-all; border: 1px solid rgba(255,255,255,0.03);">--</code>
                                     </div>
                                     <div>
-                                        <span style="font-size: 10px; color: var(--text-secondary); display: block; text-transform: uppercase; font-weight: 600;">Latest Orchestrator Report</span>
+                                        <span style="font-size: 10px; color: var(--text-secondary); display: block; text-transform: uppercase; font-weight: 600;">Latest Orchestrator Report Path</span>
                                         <code id="clawde-latest-report-path" style="font-size: 11px; color: #a5b4fc; background: rgba(0,0,0,0.4); padding: 5px 10px; border-radius: 6px; display: block; margin-top: 4px; word-break: break-all; border: 1px solid rgba(255,255,255,0.03);">--</code>
                                     </div>
                                     <div>
-                                        <span style="font-size: 10px; color: var(--text-secondary); display: block; text-transform: uppercase; font-weight: 600;">Latest Evidence Seal</span>
+                                        <span style="font-size: 10px; color: var(--text-secondary); display: block; text-transform: uppercase; font-weight: 600;">Latest Evidence Seal Path</span>
                                         <code id="clawde-evidence-seal-path" style="font-size: 11px; color: #a5b4fc; background: rgba(0,0,0,0.4); padding: 5px 10px; border-radius: 6px; display: block; margin-top: 4px; word-break: break-all; border: 1px solid rgba(255,255,255,0.03);">--</code>
                                     </div>
+                                </div>
+                                <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
+                                    <span style="color: var(--text-secondary);">Last Completed Phase:</span>
+                                    <span id="clawde-last-completed" style="font-weight: 600; color: var(--text-primary);">--</span>
                                 </div>
                             </div>
                         </div>
@@ -585,6 +640,9 @@
                                 <div style="display: flex; gap: 8px; margin-top: 4px;">
                                     <button id="clawde-btn-request-execution" class="btn" style="background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.3); color: #60a5fa; font-size: 11px; padding: 6px 12px; border-radius: 4px; cursor: pointer; display: none;">Request Execution</button>
                                     <button id="clawde-btn-approve-execution" class="btn" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; font-size: 11px; padding: 6px 12px; border-radius: 4px; cursor: pointer; display: none;">Approve Execution</button>
+                                </div>
+                                <div id="clawde-gate-lockout-notice" style="display: none; font-size: 11px; color: var(--text-secondary); text-align: center; margin-top: 4px;">
+                                    Select the active phase card to manage approvals.
                                 </div>
                             </div>
                         </div>
@@ -771,6 +829,6 @@
 
 </main>
     </div>
-    <script type="module" src="app.js?v=SEC1"></script>
+    <script type="module" src="app.js?v=UX2"></script>
 </body>
 </html>

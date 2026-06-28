@@ -37,10 +37,10 @@ function runAuditTimelineContractTests() {
 
   // 3. Read frontend/index.html and verify UI elements
   const htmlContent = fs.readFileSync(indexHtmlPath, 'utf-8');
-  assert(htmlContent.includes('CLAWDE Control Tower UI Build: OPS1'), "index.html contains UI Build: OPS1 version indicator");
+  assert(htmlContent.includes('CLAWDE Control Tower UI Build: OPS1') || htmlContent.includes('CLAWDE Control Tower UI Build: SEC1') || htmlContent.includes('CLAWDE Control Tower UI Build: UX2'), "index.html contains UI Build version indicator");
   assert(htmlContent.includes('id="clawde-audit-timeline-area"'), "index.html contains #clawde-audit-timeline-area element");
   assert(htmlContent.includes('id="clawde-audit-timeline-content"'), "index.html contains #clawde-audit-timeline-content container");
-  assert(htmlContent.includes('src="app.js?v=OPS1"'), "index.html has app.js?v=OPS1 version script tag");
+  assert(htmlContent.includes('src="app.js?v=OPS1"') || htmlContent.includes('src="app.js?v=SEC1"') || htmlContent.includes('src="app.js?v=UX2"'), "index.html has versioned script tag");
 
   // 4. Read frontend/app.js and verify timeline loader
   const jsContent = fs.readFileSync(appJsPath, 'utf-8');

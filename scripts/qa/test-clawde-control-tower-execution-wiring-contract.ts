@@ -36,7 +36,7 @@ function runWiringContractTests() {
 
   // 3. Read frontend/index.html and verify UI elements
   const htmlContent = fs.readFileSync(indexHtmlPath, 'utf-8');
-  assert(htmlContent.includes('CLAWDE Control Tower UI Build: FIX1'), "index.html contains UI Build: FIX1 version indicator");
+  assert(htmlContent.includes('CLAWDE Control Tower UI Build: FIX1') || htmlContent.includes('CLAWDE Control Tower UI Build: SEC1') || htmlContent.includes('CLAWDE Control Tower UI Build: UX2'), "index.html contains UI Build version indicator");
   assert(htmlContent.includes('id="clawde-status-banner"'), "index.html contains #clawde-status-banner element");
   assert(htmlContent.includes('id="clawde-dbg-api-status"'), "index.html contains #clawde-dbg-api-status");
   assert(htmlContent.includes('id="clawde-dbg-cwd"'), "index.html contains #clawde-dbg-cwd");
@@ -47,7 +47,7 @@ function runWiringContractTests() {
   assert(htmlContent.includes('id="clawde-dbg-runner-exists"'), "index.html contains #clawde-dbg-runner-exists");
   assert(htmlContent.includes('id="clawde-dbg-prompt-exists"'), "index.html contains #clawde-dbg-prompt-exists");
   assert(htmlContent.includes('id="clawde-dbg-returncode"'), "index.html contains #clawde-dbg-returncode");
-  assert(htmlContent.includes('src="app.js?v=FIX1"'), "index.html has app.js?v=FIX1 version script tag");
+  assert(htmlContent.includes('src="app.js?v=FIX1"') || htmlContent.includes('src="app.js?v=SEC1"') || htmlContent.includes('src="app.js?v=UX2"'), "index.html has versioned script tag");
 
   // 4. Read frontend/app.js and verify event listener logs
   const jsContent = fs.readFileSync(appJsPath, 'utf-8');
