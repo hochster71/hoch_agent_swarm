@@ -518,9 +518,22 @@
 
             <!-- 8. Readiness View -->
             <div id="view-readiness" class="view-section hidden">
-                <section class="card" style="padding: 20px;">
-                    <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 15px;">Operational Readiness Gate</h2>
-                    <div id="readiness-gate-info" style="display: flex; flex-direction: column; gap: 20px;"></div>
+                <section class="card" style="padding: 20px; border: 1px solid var(--border-glass);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 10px;">
+                        <div>
+                            <h2 style="font-size: 18px; font-weight: 700; color: #fff; margin: 0;">Local System Preflight Gate</h2>
+                            <p style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Validates model health, storage limits, database sockets, ports, and execution state before campaigns launch.</p>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span id="preflight-status-badge" style="padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; text-transform: uppercase; background: rgba(255,255,255,0.05); color: var(--text-secondary);">Checking...</span>
+                            <button id="btn-trigger-preflight" class="btn btn-primary" style="padding: 6px 12px; font-size: 11px;">
+                                Run Preflight Scan
+                            </button>
+                        </div>
+                    </div>
+                    <div id="preflight-gate-container" style="display: flex; flex-direction: column; gap: 18px;">
+                        <div style="text-align: center; color: var(--text-secondary); padding: 20px;">Loading preflight checklist status...</div>
+                    </div>
                 </section>
             </div>
 

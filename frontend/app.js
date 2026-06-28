@@ -1310,51 +1310,80 @@
         }
     }
 
-    // ── Loader: Readiness View ──────────────────────────────────────────────
     async function loadReadinessView() {
-        const container = el('readiness-gate-info');
+        const container = el('preflight-gate-container');
+        const badge = el('preflight-status-badge');
         if (!container) return;
+
         try {
-            const res = await fetch('/api/v1/production-readiness');
+            const res = await fetch('/api/v1/preflight/status');
             const data = await res.json();
 
-            container.innerHTML = `
-                <div class="card" style="padding:20px; border:1px solid var(--border-glass);">
-                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
-                        <div>
-                            <span style="font-size:12px; color:var(--text-secondary); text-transform:uppercase;">Overall Readiness Score</span>
-                            <div style="font-size:36px; font-weight:800; color:#10b981; margin-top:4px;">${data.score || 0}%</div>
+            // Update badge status
+            if (badge) {
+                if (data.go_no_go === 'GO') {
+                    badge.textContent = 'SYSTEM GO';
+                    badge.style.background = 'rgba(16, 185, 129, 0.15)';
+                    badge.style.color = '#34d399';
+                    badge.style.border = '1px solid rgba(16,185,129,0.3)';
+                } else {
+                    badge.textContent = 'SYSTEM NO-GO';
+                    badge.style.background = 'rgba(239, 68, 68, 0.15)';
+                    badge.style.color = '#f87171';
+                    badge.style.border = '1px solid rgba(239,68,68,0.3)';
+                }
+            }
+
+            // Checks list rendering
+            const checksHtml = (data.checks || []).map(c => {
+                let statusColor = '#34d399';
+                let statusText = 'PASS';
+                if (c.status === 'WARN') {
+                    statusColor = '#fbbf24';
+                    statusText = 'WARN';
+                }
+                if (c.status === 'FAIL') {
+                    statusColor = '#f87171';
+                    statusText = 'FAIL';
+                }
+
+                return `
+                    <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-glass); padding: 14px; border-radius: 8px; display: flex; flex-direction: column; gap: 6px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong style="color: #fff; font-size: 13px;">${c.name}</strong>
+                            <span style="color: ${statusColor}; font-weight: bold; font-size: 11px; text-transform: uppercase; padding: 2px 8px; background: rgba(0,0,0,0.15); border-radius: 4px; border: 1px solid rgba(255,255,255,0.05);">${statusText}</span>
                         </div>
-                        <div style="text-align:right;">
-                            <span style="font-size:12px; color:var(--text-secondary); text-transform:uppercase;">Verdict</span>
-                            <div style="font-size:24px; font-weight:800; color:${data.go_no_go === 'GO' ? '#10b981' : '#ef4444'}; margin-top:4px;">${data.go_no_go || 'UNKNOWN'}</div>
+                        <p style="font-size: 12px; color: var(--text-secondary); margin: 0; line-height: 1.4;">${c.message}</p>
+                        ${c.remediation ? `
+                        <div style="background: rgba(245, 158, 11, 0.04); border: 1px solid rgba(245, 158, 11, 0.15); border-radius: 6px; padding: 8px 10px; margin-top: 4px; font-size: 11px; color: #fbcb58; display: flex; flex-direction: column; gap: 4px;">
+                            <span style="font-weight: bold; font-size: 9px; text-transform: uppercase; color: #fbbf24;">Remediation Suggestion:</span>
+                            <span>${c.remediation}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-glass); padding: 16px; border-radius: 8px; margin-bottom: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <span style="font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Overall Preflight Readiness Score</span>
+                            <div style="font-size: 32px; font-weight: 800; color: ${data.go_no_go === 'GO' ? 'var(--accent-teal)' : '#f87171'}; margin-top: 4px;">${data.overall_score}%</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <span style="font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Last Scanned</span>
+                            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">${new Date(data.timestamp).toLocaleTimeString()}</div>
                         </div>
                     </div>
                 </div>
-                <div class="card" style="padding:20px; border:1px solid var(--border-glass);">
-                    <h3 style="font-weight:bold; color:#fff; font-size:14px; margin-bottom:12px; text-transform:uppercase;">Readiness Gate Checks</h3>
-                    <div style="display:flex; flex-direction:column; gap:8px; font-size:13px;">
-                        <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.03); padding-bottom:6px;">
-                            <span>API Integrity check</span>
-                            <span style="color:#10b981; font-weight:bold;">PASS</span>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.03); padding-bottom:6px;">
-                            <span>Port Hardening enforcement</span>
-                            <span style="color:#10b981; font-weight:bold;">PASS</span>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.03); padding-bottom:6px;">
-                            <span>Autonomy budget allocation</span>
-                            <span style="color:#10b981; font-weight:bold;">PASS</span>
-                        </div>
-                        <div style="display:flex; justify-content:space-between;">
-                            <span>SIEM Rule compilation</span>
-                            <span style="color:#10b981; font-weight:bold;">PASS</span>
-                        </div>
-                    </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px;">
+                    ${checksHtml || '<div style="color:var(--text-secondary); text-align:center; padding:20px;">No preflight checks configured.</div>'}
                 </div>
             `;
         } catch (err) {
-            container.innerHTML = `<div style="color:#ef4444; text-align:center;">Error fetching production readiness metrics</div>`;
+            container.innerHTML = `<div style="color:#ef4444; text-align:center;">Error fetching preflight checklist metrics</div>`;
         }
     }
 
@@ -2884,6 +2913,28 @@
         });
     }
 
+    function initPreflightButton() {
+        const btn = el('btn-trigger-preflight');
+        if (!btn) return;
+        btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            btn.disabled = true;
+            btn.textContent = 'Scanning...';
+            btn.style.opacity = '0.5';
+            btn.style.cursor = 'not-allowed';
+            try {
+                await loadReadinessView();
+            } catch (err) {
+                console.error(err);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Run Preflight Scan';
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+            }
+        });
+    }
+
     // Initialization routine
     function init() {
   initMeshSentinel();
@@ -2894,6 +2945,7 @@
         initModelHealthButton();
         initModelStorageButton();
         initMigrationButton();
+        initPreflightButton();
         
         // Initial fetches
         fetchCockpit();

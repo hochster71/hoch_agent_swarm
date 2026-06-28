@@ -7613,6 +7613,11 @@ def post_migration_resume_endpoint():
     from backend.migration_runner import RUNNER
     return RUNNER.resume_migration()
 
+@app.get("/api/v1/preflight/status")
+def get_preflight_status_endpoint():
+    from backend.preflight_gate import GATE
+    return GATE.run_preflight()
+
 @app.get("/api/v1/model-mesh/config")
 def get_model_mesh_config_endpoint():
     from backend.model_mesh import load_model_mesh_data
