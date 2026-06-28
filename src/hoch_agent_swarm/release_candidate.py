@@ -76,6 +76,8 @@ _CANONICAL_ARTIFACTS: dict[str, str] = {
     "docker_gap_analysis":                "artifacts/docker1/docker_gap_analysis.md",
     "live_screenshot_manifest":           "artifacts/live_screenshots/manifest.json",
     "final_reviewer_packet":              "artifacts/reports/final_reviewer_packet.md",
+    "evidence_traceability_matrix":       "artifacts/reports/evidence_traceability_matrix.md",
+    "acceptance_signoff_package":        "artifacts/reports/acceptance_signoff_package.md",
 }
 
 
