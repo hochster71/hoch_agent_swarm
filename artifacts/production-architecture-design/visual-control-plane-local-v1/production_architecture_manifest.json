@@ -1,0 +1,9 @@
+{
+  "design_track_id": "PR3-visual-control-plane-local-v1.0.0",
+  "track": "PR3_PRODUCTION_ARCHITECTURE_DESIGN",
+  "integration_branch": "integration/visual-control-plane-local-v1",
+  "target_release": "v0.1.6-ERROR-BUDGET-AWARE-AUTONOMY",
+  "status": "ARCHITECTURE_DESIGN",
+  "local_preview_only": true,
+  "created_at": "2026-06-27T19:07:00-05:00"
+}

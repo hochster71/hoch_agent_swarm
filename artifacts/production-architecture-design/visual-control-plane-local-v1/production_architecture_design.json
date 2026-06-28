@@ -1,0 +1,39 @@
+{
+  "design": {
+    "security_architecture": {
+      "tls_boundary": "HTTPS terminated at Application Load Balancer with TLS 1.3 only",
+      "auth_gateway": "Reverse proxy routing through OIDC/OAuth2 authentication proxy before reaching control API",
+      "role_model": "RBAC mapping token scopes directly to FastAPI backend route dependencies"
+    },
+    "runtime_architecture": {
+      "read_write_separation": "Read-only GET endpoints isolated from POST/PUT/DELETE transaction endpoints",
+      "mutation_gate": "Transactional DB operations routed to temporary lock tables requiring review",
+      "approval_gate": "FastAPI authorization dependency requiring dual signatures for any run-level prompt activation"
+    },
+    "audit_architecture": {
+      "ledger": "Append-only ledger using schema-enforced DB restrictions preventing modifications",
+      "event_ids": "Unique UUID injected at HTTP middleware level and propagated to all sub-requests",
+      "accountability": "Operator identity bound to every ledger record with cryptographically signed logs"
+    },
+    "supply_chain": {
+      "process": "Automated pipeline compiling SPDX SBOM, in-toto provenance, and signing artifacts via cosign key pair"
+    },
+    "deployment_topology": {
+      "environments": "Isolated development, staging, and production environments with zero cross-network traffic allowed"
+    },
+    "observability": {
+      "logs": "CloudWatch/GCP Cloud Logging JSON format with structured trace parent attributes",
+      "metrics": "Prometheus metrics endpoint capturing runtime latency, error rates, and operator session lengths",
+      "health_checks": "Probes checking DB connection pool status, system CPU, and API readiness",
+      "alerting": "PagerDuty hooks triggered on P99 response time anomalies or unauthorized mutation attempts"
+    },
+    "recovery": {
+      "backup": "Encrypted daily block-level backups stored in multi-region GCS/S3 buckets",
+      "restore": "Weekly automated sandbox restore sequence verifying schema integrity",
+      "rollback": "GitOps-based automatic container image rollback on deployment health check failure"
+    },
+    "compliance": {
+      "evidence_model": "Evidence mapping table matching each control to NIST SP 800-53 / SLSA frameworks, outputting JSON bundles"
+    }
+  }
+}
