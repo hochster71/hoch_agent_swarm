@@ -56,7 +56,8 @@
         { id: 'detections', label: 'DETECTIONS' },
         { id: 'readiness', label: 'READINESS' },
         { id: 'settings', label: 'SETTINGS' },
-        { id: 'agent-flight-deck', label: 'AGENT FLIGHT DECK' }
+        { id: 'agent-flight-deck', label: 'AGENT FLIGHT DECK' },
+        { id: 'clawde', label: 'CLAWDE CONTROL TOWER' }
     ];
 
     function initNavigation() {
@@ -156,6 +157,10 @@
             case 'agent-flight-deck':
                 loadAgentFlightDeckView();
                 viewInterval = setInterval(loadAgentFlightDeckView, 3000);
+                break;
+            case 'clawde':
+                loadClawdeView();
+                viewInterval = setInterval(loadClawdeView, 3000);
                 break;
         }
     }
@@ -843,6 +848,159 @@
             container.innerHTML = `<div style="color:#ef4444; text-align:center;">Error loading settings profiles</div>`;
         }
     }
+
+    // ── Loader: CLAWDE Control Tower View ────────────────────────────────────
+    let isClawdeInitialized = false;
+
+    function initClawdeControls() {
+        if (isClawdeInitialized) return;
+        isClawdeInitialized = true;
+        
+        const btnNoDrift = el('clawde-btn-no-drift');
+        const btnRender = el('clawde-btn-render-phase');
+        const btnViewPrompt = el('clawde-btn-view-prompt');
+        const btnViewReport = el('clawde-btn-view-report');
+        const btnViewEvidence = el('clawde-btn-view-evidence');
+        const btnHandoff = el('clawde-btn-handoff');
+        const consoleArea = el('clawde-console-area');
+        const consoleContent = el('clawde-console-content');
+        const consoleClose = el('clawde-console-close');
+
+        if (consoleClose && consoleArea) {
+            consoleClose.addEventListener('click', () => {
+                consoleArea.style.display = 'none';
+            });
+        }
+
+        async function triggerRunner(actionName) {
+            if (!consoleArea || !consoleContent) return;
+            consoleArea.style.display = 'block';
+            consoleContent.textContent = `[${actionName.toUpperCase()}] Running runner script...\n`;
+            
+            try {
+                const res = await fetch('/api/v1/orchestrator/run-runner', {
+                    method: 'POST'
+                });
+                const data = await res.json();
+                
+                if (data.status === 'success') {
+                    consoleContent.textContent += `[PASS] Runner completed successfully.\n\nSTDOUT:\n${data.stdout}\n`;
+                } else {
+                    consoleContent.textContent += `[FAIL] Runner failed (exit code ${data.returncode || 'error'}).\n\nSTDOUT:\n${data.stdout || ''}\n\nSTDERR:\n${data.stderr || data.detail || ''}\n`;
+                }
+                // Refresh the view immediately
+                loadClawdeView();
+            } catch (err) {
+                consoleContent.textContent += `[ERROR] Failed to contact backend: ${err.message}\n`;
+            }
+        }
+
+        if (btnNoDrift) {
+            btnNoDrift.addEventListener('click', () => {
+                triggerRunner('no-drift check');
+            });
+        }
+
+        if (btnRender) {
+            btnRender.addEventListener('click', () => {
+                triggerRunner('render phase');
+            });
+        }
+
+        const showPath = (btn, pathField, name) => {
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    if (!consoleArea || !consoleContent) return;
+                    consoleArea.style.display = 'block';
+                    const pathVal = el(pathField)?.textContent || el(pathField)?.value || '--';
+                    consoleContent.textContent = `[INFO] Path to ${name}:\n${pathVal}\n\nTo view or edit this file, use your local editor or the Antigravity shell.\n`;
+                });
+            }
+        };
+
+        showPath(btnViewPrompt, 'clawde-generated-prompt-path', 'Generated Prompt');
+        showPath(btnViewReport, 'clawde-latest-report-path', 'Latest Orchestrator Report');
+        showPath(btnViewEvidence, 'clawde-evidence-seal-path', 'Latest Evidence Seal');
+
+        if (btnHandoff) {
+            btnHandoff.addEventListener('click', () => {
+                if (!consoleArea || !consoleContent) return;
+                consoleArea.style.display = 'block';
+                consoleContent.textContent = `[HANDOFF] Preparing handoff package...\n`;
+                
+                const nextPhase = el('clawde-current-phase')?.textContent || 'PR16';
+                consoleContent.textContent += `[INFO] Handoff package ready for phase: ${nextPhase}\n`;
+                consoleContent.textContent += `Run:\n  cat artifacts/orchestrator/generated-prompts/${nextPhase}.md\n\nSubmit this file to the operator for manual gating approval.\n`;
+            });
+        }
+    }
+
+    async function loadClawdeView() {
+        initClawdeControls();
+        
+        const phaseSpan = el('clawde-current-phase');
+        const completedSpan = el('clawde-last-completed');
+        const driftSpan = el('clawde-drift-status');
+        const promptCode = el('clawde-generated-prompt-path');
+        const reportCode = el('clawde-latest-report-path');
+        const sealCode = el('clawde-evidence-seal-path');
+        const blockedContainer = el('clawde-blocked-actions-container');
+
+        if (!phaseSpan) return;
+
+        try {
+            const res = await fetch('/api/v1/orchestrator/status');
+            const data = await res.json();
+            
+            const reg = data.registry || {};
+            const state = data.state || {};
+            const paths = data.paths || {};
+            const blockedActions = data.blocked_actions || [];
+
+            phaseSpan.textContent = reg.next_phase || '--';
+            completedSpan.textContent = reg.last_completed_phase || '--';
+            
+            // Drift Status
+            const driftText = state.drift_status || 'ZERO DRIFT DETECTED';
+            if (driftSpan) {
+                driftSpan.textContent = driftText;
+                if (driftText === 'ZERO DRIFT DETECTED' || driftText === 'PASS') {
+                    driftSpan.style.background = 'rgba(16, 185, 129, 0.1)';
+                    driftSpan.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+                    driftSpan.style.color = '#34d399';
+                } else {
+                    driftSpan.style.background = 'rgba(239, 68, 68, 0.1)';
+                    driftSpan.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+                    driftSpan.style.color = '#f87171';
+                }
+            }
+
+            if (promptCode) promptCode.textContent = paths.generated_prompt || '--';
+            if (reportCode) reportCode.textContent = paths.latest_report || '--';
+            if (sealCode) sealCode.textContent = paths.evidence_seal || '--';
+
+            // Render Blocked Actions
+            if (blockedContainer) {
+                if (blockedActions.length === 0) {
+                    blockedContainer.innerHTML = `<div style="color:var(--text-secondary); text-align:center; font-size:12px;">No blocked actions defined.</div>`;
+                } else {
+                    blockedContainer.innerHTML = blockedActions.map(act => `
+                        <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.02); padding:8px 12px; border-radius:6px; border:1px solid rgba(255,255,255,0.03);">
+                            <div>
+                                <span style="font-size:13px; font-weight:600; color:#fff; display:block;">${act.action}</span>
+                                <span style="font-size:11px; color:var(--text-secondary);">${act.rationale || ''}</span>
+                            </div>
+                            <span style="font-size:11px; font-weight:bold; color:#f87171; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2); padding:2px 8px; border-radius:4px;">BLOCKED</span>
+                        </div>
+                    `).join('');
+                }
+            }
+
+        } catch (err) {
+            console.error("Error loading CLAWDE Control Tower state:", err);
+        }
+    }
+
 
     // ── Loader: Agent Flight Deck View (PROTO-3) ──────────────────────────────
     let isFlightDeckInitialized = false;

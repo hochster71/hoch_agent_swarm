@@ -8518,6 +8518,97 @@ async def api_improve_model(payload: dict):
     from backend.model_improvement import run_improvement_flow
     return run_improvement_flow(str(payload.get("model", "")))
 
+@app.get("/api/v1/orchestrator/status")
+async def get_orchestrator_status():
+    import json
+    from pathlib import Path
+    
+    base_dir = Path(__file__).resolve().parent.parent
+    
+    registry_path = base_dir / "control/phase_registry.json"
+    state_path = base_dir / "control/phase_state.json"
+    blocked_path = base_dir / "control/blocked_actions.json"
+    policy_path = base_dir / "control/authority_policy.json"
+    
+    registry = {}
+    if registry_path.exists():
+        try:
+            registry = json.loads(registry_path.read_text(encoding="utf-8"))
+        except Exception as e:
+            registry = {"error": f"Failed to load registry: {str(e)}"}
+            
+    state = {}
+    if state_path.exists():
+        try:
+            state = json.loads(state_path.read_text(encoding="utf-8"))
+        except Exception as e:
+            state = {"error": f"Failed to load state: {str(e)}"}
+            
+    blocked = []
+    if blocked_path.exists():
+        try:
+            blocked = json.loads(blocked_path.read_text(encoding="utf-8"))
+        except Exception as e:
+            blocked = [{"error": f"Failed to load blocked: {str(e)}"}]
+            
+    policy = {}
+    if policy_path.exists():
+        try:
+            policy = json.loads(policy_path.read_text(encoding="utf-8"))
+        except Exception as e:
+            policy = {"error": f"Failed to load policy: {str(e)}"}
+
+    next_phase = registry.get("next_phase", "PR16")
+    prompt_path = f"artifacts/orchestrator/generated-prompts/{next_phase}.md"
+    report_path = f"artifacts/orchestrator/reports/{next_phase}_orchestrator_report.json"
+    
+    prompt_full = base_dir / prompt_path
+    report_full = base_dir / report_path
+    
+    seal_path = f"artifacts/phase-orchestrator/visual-control-plane-local-v1/phase_orchestrator_final_seal.json"
+    
+    return {
+        "registry": registry,
+        "state": state,
+        "blocked_actions": blocked,
+        "authority_policy": policy,
+        "paths": {
+            "generated_prompt": prompt_path if prompt_full.exists() else "None generated",
+            "latest_report": report_path if report_full.exists() else "None generated",
+            "evidence_seal": seal_path if (base_dir / seal_path).exists() else "None sealed"
+        }
+    }
+
+@app.post("/api/v1/orchestrator/run-runner")
+async def run_orchestrator_runner():
+    import subprocess
+    from pathlib import Path
+    
+    base_dir = Path(__file__).resolve().parent.parent
+    runner_script = base_dir / "scripts/orchestrator/next_phase_runner.py"
+    
+    if not runner_script.exists():
+        raise HTTPException(status_code=404, detail="next_phase_runner.py script not found")
+        
+    try:
+        res = subprocess.run(
+            ["python3", str(runner_script)],
+            capture_output=True,
+            text=True,
+            cwd=str(base_dir)
+        )
+        return {
+            "status": "success" if res.returncode == 0 else "error",
+            "returncode": res.returncode,
+            "stdout": res.stdout,
+            "stderr": res.stderr
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "detail": str(e)
+        }
+
 
 # Mount frontend files at root (if frontend directory exists)
 
