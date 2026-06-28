@@ -187,6 +187,84 @@ class TVBackend:
             pass
         return epg_data
 
+    def get_channel_stream_url(self, channel_id: str) -> Optional[str]:
+        channels = self.parse_m3u_playlist()
+        channel = next((c for c in channels if c["id"] == channel_id), None)
+        return channel["url"] if channel else None
+
+    def fetch_hls_playlist(self, channel_id: str) -> Optional[str]:
+        url = self.get_channel_stream_url(channel_id)
+        if not url:
+            return None
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+            with urllib.request.urlopen(req, timeout=10) as response:
+                return response.read().decode("utf-8", errors="ignore")
+        except Exception:
+            return None
+
+    def rewrite_hls_playlist(self, channel_id: str, playlist_text: str, base_url: str) -> str:
+        from urllib.parse import urljoin, quote
+        import urllib.parse
+        lines = playlist_text.splitlines()
+        rewritten_lines = []
+        for line in lines:
+            stripped = line.strip()
+            if not stripped:
+                rewritten_lines.append(line)
+                continue
+            
+            if stripped.startswith("#"):
+                new_line = line
+                matches = re.findall(r'URI=["\']([^"\']+)["\']', line)
+                for match in matches:
+                    abs_url = urljoin(base_url, match)
+                    parsed_base = urllib.parse.urlparse(base_url)
+                    parsed_abs = urllib.parse.urlparse(abs_url)
+                    if parsed_base.query and not parsed_abs.query:
+                        abs_url = abs_url + ("?" + parsed_base.query)
+                    local_url = f"/api/tv/stream/{channel_id}/asset?url={quote(abs_url)}"
+                    new_line = new_line.replace(f'"{match}"', f'"{local_url}"').replace(f"'{match}'", f"'{local_url}'")
+                rewritten_lines.append(new_line)
+            else:
+                abs_url = urljoin(base_url, stripped)
+                parsed_base = urllib.parse.urlparse(base_url)
+                parsed_abs = urllib.parse.urlparse(abs_url)
+                if parsed_base.query and not parsed_abs.query:
+                    abs_url = abs_url + ("?" + parsed_base.query)
+                local_url = f"/api/tv/stream/{channel_id}/asset?url={quote(abs_url)}"
+                rewritten_lines.append(local_url)
+                
+        return "\n".join(rewritten_lines)
+
+    def fetch_hls_asset(self, channel_id: str, asset_url: str) -> Optional[tuple[bytes, str]]:
+        import urllib.parse
+        channel_url = self.get_channel_stream_url(channel_id)
+        if not channel_url:
+            return None
+        
+        parsed_chan = urllib.parse.urlparse(channel_url)
+        parsed_asset = urllib.parse.urlparse(asset_url)
+        
+        chan_host = parsed_chan.hostname or ""
+        asset_host = parsed_asset.hostname or ""
+        
+        # Reject private ranges / loopback / SSRF
+        if not asset_host or asset_host.lower() in ("localhost", "127.0.0.1", "::1", "169.254.169.254") or "internal" in asset_host:
+            return None
+            
+        if not (asset_host == chan_host or asset_host.endswith("." + chan_host)):
+            if asset_host not in ("bitdash-a.akamaihd.net", "demo.unified-streaming.com", "sample.vodobox.com"):
+                return None
+                
+        try:
+            req = urllib.request.Request(asset_url, headers={"User-Agent": "Mozilla/5.0"})
+            with urllib.request.urlopen(req, timeout=12) as response:
+                content_type = response.headers.get("Content-Type", "application/octet-stream")
+                return response.read(), content_type
+        except Exception:
+            return None
+
     def get_health(self) -> Dict[str, Any]:
         channels = self.parse_m3u_playlist()
         groups = {c["group"] for c in channels}
@@ -201,6 +279,7 @@ class TVBackend:
                 "Actual ATO has not been granted. No authorization claim is being made."
             )
         }
+
 
 
 # Singleton TVBackend instance

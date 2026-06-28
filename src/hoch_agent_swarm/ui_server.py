@@ -719,6 +719,10 @@ def api_tv_channels():
     group_filter = request.args.get("group", "")
     
     channels = backend.parse_m3u_playlist()
+    for c in channels:
+        c["playbackUrl"] = f"/api/tv/stream/{c['id']}/master.m3u8"
+        c["proxyPlaybackEnabled"] = True
+        
     if group_filter:
         channels = [c for c in channels if c["group"].lower() == group_filter.lower()]
     return jsonify(channels)
@@ -740,10 +744,82 @@ def api_tv_channel(ch_id):
     if not channel:
         return jsonify({"error": f"Channel {ch_id} not found"}), 404
         
+    channel["playbackUrl"] = f"/api/tv/stream/{ch_id}/master.m3u8"
+    channel["proxyPlaybackEnabled"] = True
+    
     epg = backend.parse_epg_data()
     listings = epg.get(channel.get("tvg_id", ""), [])
     channel["epg"] = listings
     return jsonify(channel)
+
+@app.route("/api/tv/stream/<channel_id>/master.m3u8")
+def api_tv_stream_master(channel_id):
+    from flask import request, Response
+    from hoch_agent_swarm.tv_backend import get_tv_backend
+    backend = get_tv_backend()
+    channel_url = backend.get_channel_stream_url(channel_id)
+    if not channel_url:
+        return jsonify({"error": f"Channel {channel_id} not found"}), 404
+        
+    playlist_text = backend.fetch_hls_playlist(channel_id)
+    if playlist_text is None:
+        return jsonify({"error": f"Failed to retrieve stream playlist"}), 502
+        
+    rewritten = backend.rewrite_hls_playlist(channel_id, playlist_text, channel_url)
+    
+    response = Response(rewritten, mimetype="application/vnd.apple.mpegurl")
+    origin = request.headers.get("Origin", "")
+    allowed_origins = [
+        "http://localhost:8086", "http://127.0.0.1:8086",
+        "http://localhost:8085", "http://127.0.0.1:8085"
+    ]
+    if origin in allowed_origins:
+        response.headers["Access-Control-Allow-Origin"] = origin
+    else:
+        response.headers["Access-Control-Allow-Origin"] = "http://localhost:8086"
+    return response
+
+@app.route("/api/tv/stream/<channel_id>/asset")
+def api_tv_stream_asset(channel_id):
+    from flask import request, Response
+    from hoch_agent_swarm.tv_backend import get_tv_backend
+    backend = get_tv_backend()
+    
+    asset_url = request.args.get("url", "")
+    if not asset_url:
+        return jsonify({"error": "Missing url parameter"}), 400
+        
+    # Decode hex-encoded url if applicable
+    if len(asset_url) % 2 == 0 and all(c in "0123456789abcdefABCDEF" for c in asset_url) and not asset_url.startswith("http"):
+        try:
+            asset_url = bytes.fromhex(asset_url).decode("utf-8")
+        except Exception:
+            pass
+        
+    result = backend.fetch_hls_asset(channel_id, asset_url)
+    if result is None:
+        return jsonify({"error": "Forbidden or failed to retrieve asset"}), 403
+        
+    data, content_type = result
+    
+    if asset_url.endswith(".m3u8") or ".m3u8" in asset_url:
+        content_type = "application/vnd.apple.mpegurl"
+    elif asset_url.endswith(".ts") or ".ts" in asset_url:
+        content_type = "video/mp2t"
+    elif asset_url.endswith(".m4s") or ".m4s" in asset_url:
+        content_type = "video/iso.segment"
+        
+    response = Response(data, mimetype=content_type)
+    origin = request.headers.get("Origin", "")
+    allowed_origins = [
+        "http://localhost:8086", "http://127.0.0.1:8086",
+        "http://localhost:8085", "http://127.0.0.1:8085"
+    ]
+    if origin in allowed_origins:
+        response.headers["Access-Control-Allow-Origin"] = origin
+    else:
+        response.headers["Access-Control-Allow-Origin"] = "http://localhost:8086"
+    return response
 
 @app.route("/api/tv/playlist.m3u")
 def api_tv_playlist_m3u():
@@ -3214,8 +3290,15 @@ async function playTVChannel(chId) {
 
   try {
     const channel = await fetchJSON(`/api/tv/channel/${chId}`);
+    const playbackUrl = channel.playbackUrl || `/api/tv/stream/${channel.id}/master.m3u8`;
     title.textContent = channel.name;
-    urlEl.textContent = channel.url;
+    urlEl.innerHTML = `
+      <div style="text-align:right">
+        <div><strong>Proxy Playback URL:</strong> ${playbackUrl}</div>
+        <div style="font-size:10px;color:var(--green);margin-top:2px">Playback mode: Local HLS Proxy</div>
+        <div style="font-size:10px;color:var(--muted)">Remote direct browser load: disabled due to CORS</div>
+      </div>
+    `;
     playerHeader.textContent = `📺 Playing — ${channel.name}`;
 
     if (activeHls) {
@@ -3223,10 +3306,10 @@ async function playTVChannel(chId) {
       activeHls = null;
     }
 
-    if (channel.url.endsWith('.m3u8') || channel.url.includes('.m3u8')) {
+    if (playbackUrl.endsWith('.m3u8') || playbackUrl.includes('.m3u8')) {
       if (Hls.isSupported()) {
         activeHls = new Hls();
-        activeHls.loadSource(channel.url);
+        activeHls.loadSource(playbackUrl);
         activeHls.attachMedia(video);
         activeHls.on(Hls.Events.MANIFEST_PARSED, function() {
           video.play().catch(e => console.log("Play interrupted or autoplay blocked:", e));
@@ -3235,15 +3318,15 @@ async function playTVChannel(chId) {
           console.error("HLS error:", data);
         });
       } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = channel.url;
+        video.src = playbackUrl;
         video.addEventListener('canplay', function() {
           video.play().catch(e => console.log("Play interrupted or autoplay blocked:", e));
         });
       } else {
-        video.src = channel.url;
+        video.src = playbackUrl;
       }
     } else {
-      video.src = channel.url;
+      video.src = playbackUrl;
     }
 
     if (channel.epg && channel.epg.length > 0) {
