@@ -49,10 +49,10 @@
     "NIST SP 800-37 RMF": 2,
     "CIS Controls": 31,
     "OMB A-130": 1,
+    "SOC 2": 1,
+    "HIPAA": 1,
     "NIST SP 800-53 Rev. 5": 1,
     "PCI DSS": 2,
-    "HIPAA": 1,
-    "SOC 2": 1,
     "DoD Zero Trust": 1
   },
   "lifecycle_stages": {
