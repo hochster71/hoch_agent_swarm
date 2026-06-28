@@ -1530,9 +1530,12 @@ class PromoteRequest(BaseModel):
     candidate_packet_id: str
     operator: str
     authority_token: str
+    override: bool = False
 
 @app.post("/api/v1/release/promote")
 def promote_release(req: PromoteRequest):
+    from backend.execution_policy import POLICY_ENGINE
+    POLICY_ENGINE.enforce("release_promotion", req.override)
     import uuid
     
     token = get_active_authority_token(req.candidate_packet_id)
@@ -3172,6 +3175,9 @@ def get_swarm_runs():
 
 @app.post("/api/v1/runs")
 async def create_swarm_run(payload: dict):
+    override = payload.get("override", False)
+    from backend.execution_policy import POLICY_ENGINE
+    POLICY_ENGINE.enforce("swarm_run", override)
     run_id = f"run-{uuid.uuid4().hex[:8]}"
     name = payload.get("name", f"Swarm Run {datetime.now().strftime('%Y-%m-%d %H:%M')}")
     persist_swarm_run(run_id, name, "running")
@@ -7143,7 +7149,9 @@ def post_readiness_diagnose():
 # ================================================================
 
 @app.post("/api/v1/ingest/crewai")
-def trigger_crewai_ingestion():
+def trigger_crewai_ingestion(override: bool = False):
+    from backend.execution_policy import POLICY_ENGINE
+    POLICY_ENGINE.enforce("crewai_ingestion", override)
     from backend.crewai_ingestion_bridge import run_crewai_ingestion
     try:
         res = run_crewai_ingestion()
@@ -7609,7 +7617,9 @@ def get_migration_status_endpoint():
     return MONITOR.get_status()
 
 @app.post("/api/v1/migration/resume")
-def post_migration_resume_endpoint():
+def post_migration_resume_endpoint(override: bool = False):
+    from backend.execution_policy import POLICY_ENGINE
+    POLICY_ENGINE.enforce("resume_migration", override)
     from backend.migration_runner import RUNNER
     return RUNNER.resume_migration()
 

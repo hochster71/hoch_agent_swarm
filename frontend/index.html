@@ -938,6 +938,36 @@
 
 </main>
     </div>
+    <!-- Preflight Gate Override Modal -->
+    <div id="preflight-blocker-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); align-items: center; justify-content: center; z-index: 10000; transition: all 0.3s ease;">
+        <div class="card" style="width: 100%; max-width: 520px; padding: 24px; border: 1px solid rgba(239, 68, 68, 0.3); background: var(--bg-surface); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin: 20px;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(239, 68, 68, 0.15); display: flex; align-items: center; justify-content: center; color: #f87171; border: 1px solid rgba(239,68,68,0.3);">
+                    <i data-lucide="shield-alert" style="width: 20px; height: 20px;"></i>
+                </div>
+                <div>
+                    <h3 style="font-size: 16px; font-weight: 700; color: #fff; margin: 0;">Execution Blocked by Preflight Gate</h3>
+                    <span style="font-size: 11px; color: #f87171; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px;">NO-GO Status Active</span>
+                </div>
+            </div>
+            <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 16px;">
+                The action you requested cannot proceed automatically because one or more preflight checks have failed. Review the blocking items below.
+            </p>
+            
+            <div id="modal-failed-checks-list" style="display: flex; flex-direction: column; gap: 10px; max-height: 180px; overflow-y: auto; margin-bottom: 20px; padding-right: 4px;">
+                <!-- Dynamically populated -->
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 12px; border-top: 1px solid var(--border-glass); padding-top: 16px;">
+                <button id="btn-close-preflight-modal" class="btn" style="background: rgba(255,255,255,0.05); color: var(--text-secondary); border: 1px solid var(--border-glass); padding: 8px 16px; font-size: 12px; border-radius: 6px; cursor: pointer;">
+                    Cancel Action
+                </button>
+                <button id="btn-override-preflight" class="btn" style="background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #f87171; padding: 8px 16px; font-size: 12px; border-radius: 6px; cursor: pointer; font-weight: bold;">
+                    Override & Execute
+                </button>
+            </div>
+        </div>
+    </div>
     <script type="module" src="app.js?v=UX2"></script>
 </body>
 </html>

@@ -2354,21 +2354,35 @@
                 const launchBtn = el('btn-launch-campaign');
                 if (launchBtn) {
                     launchBtn.addEventListener('click', async () => {
-                        try {
-                            const createRes = await fetch('/api/v1/runs', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ name: `Flight Campaign ${new Date().toLocaleTimeString()}` })
-                            });
-                            if (createRes.ok) {
-                                const newRun = await createRes.json();
-                                selectedCampaignId = newRun.run_id;
-                                isFlightDeckInitialized = false; // force refresh dropdown
-                                loadAgentFlightDeckView();
+                        const triggerLaunch = async (override = false) => {
+                            try {
+                                const createRes = await fetch('/api/v1/runs', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        name: `Flight Campaign ${new Date().toLocaleTimeString()}`,
+                                        override: override
+                                    })
+                                });
+                                if (createRes.status === 400) {
+                                    const rdata = await createRes.json();
+                                    if (rdata.detail && rdata.detail.error === 'PREFLIGHT_BLOCKED') {
+                                        const failedChecks = (rdata.detail.checks || []).filter(c => c.status !== 'PASS');
+                                        showPreflightBlocker(failedChecks, () => triggerLaunch(true));
+                                        return;
+                                    }
+                                }
+                                if (createRes.ok) {
+                                    const newRun = await createRes.json();
+                                    selectedCampaignId = newRun.run_id;
+                                    isFlightDeckInitialized = false; // force refresh dropdown
+                                    loadAgentFlightDeckView();
+                                }
+                            } catch (err) {
+                                console.error('[FlightDeck] failed to launch campaign:', err);
                             }
-                        } catch (err) {
-                            console.error('[FlightDeck] failed to launch campaign:', err);
-                        }
+                        };
+                        await triggerLaunch(false);
                     });
                 }
 
@@ -2893,23 +2907,103 @@
         });
     }
 
+    function showPreflightBlocker(checks, onOverride) {
+        const modal = el('preflight-blocker-modal');
+        const list = el('modal-failed-checks-list');
+        const btnCancel = el('btn-close-preflight-modal');
+        const btnOverride = el('btn-override-preflight');
+        if (!modal || !list) return;
+
+        // Populate checks
+        list.innerHTML = checks.map(c => {
+            let color = '#f87171';
+            let bg = 'rgba(239, 68, 68, 0.05)';
+            let border = 'rgba(239, 68, 68, 0.15)';
+            if (c.status === 'WARN') {
+                color = '#fbbf24';
+                bg = 'rgba(245, 158, 11, 0.04)';
+                border = 'rgba(245, 158, 11, 0.15)';
+            }
+            return `
+                <div style="background: ${bg}; border: 1px solid ${border}; padding: 8px 12px; border-radius: 6px; display: flex; flex-direction: column; gap: 4px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <strong style="color: #fff; font-size: 12px;">${c.name}</strong>
+                        <span style="color: ${color}; font-weight: bold; font-size: 9px; text-transform: uppercase;">${c.status}</span>
+                    </div>
+                    <p style="font-size: 11px; color: var(--text-secondary); margin: 0; line-height: 1.3;">${c.message}</p>
+                </div>
+            `;
+        }).join('');
+
+        modal.style.display = 'flex';
+
+        // Rebind handlers
+        const cleanup = () => {
+            modal.style.display = 'none';
+        };
+
+        btnCancel.onclick = (e) => {
+            e.preventDefault();
+            cleanup();
+        };
+
+        btnOverride.onclick = async (e) => {
+            e.preventDefault();
+            btnOverride.disabled = true;
+            btnOverride.textContent = 'Executing...';
+            try {
+                await onOverride();
+            } catch (err) {
+                console.error(err);
+            } finally {
+                btnOverride.disabled = false;
+                btnOverride.textContent = 'Override & Execute';
+                cleanup();
+            }
+        };
+    }
+
     function initMigrationButton() {
         const btn = el('btn-resume-migration');
         if (!btn) return;
         btn.addEventListener('click', async (e) => {
             e.preventDefault();
-            btn.disabled = true;
-            btn.textContent = 'Resuming...';
-            btn.style.opacity = '0.5';
-            btn.style.cursor = 'not-allowed';
-            try {
-                const res = await fetch('/api/v1/migration/resume', { method: 'POST' });
-                const rdata = await res.json();
-                console.log(rdata.message);
-                await loadMigrationStatus();
-            } catch (err) {
-                console.error(err);
-            }
+            
+            const triggerResume = async (override = false) => {
+                btn.disabled = true;
+                btn.textContent = 'Resuming...';
+                btn.style.opacity = '0.5';
+                btn.style.cursor = 'not-allowed';
+                try {
+                    const res = await fetch(`/api/v1/migration/resume?override=${override}`, { method: 'POST' });
+                    if (res.status === 400) {
+                        const rdata = await res.json();
+                        if (rdata.detail && rdata.detail.error === 'PREFLIGHT_BLOCKED') {
+                            const failedChecks = (rdata.detail.checks || []).filter(c => c.status !== 'PASS');
+                            showPreflightBlocker(failedChecks, () => triggerResume(true));
+                            // Restore button
+                            btn.disabled = false;
+                            btn.textContent = 'Resume Guarded Migration';
+                            btn.style.opacity = '1';
+                            btn.style.cursor = 'pointer';
+                            return;
+                        }
+                    }
+                    if (res.ok) {
+                        const rdata = await res.json();
+                        console.log(rdata.message);
+                        await loadMigrationStatus();
+                    }
+                } catch (err) {
+                    console.error(err);
+                    btn.disabled = false;
+                    btn.textContent = 'Resume Guarded Migration';
+                    btn.style.opacity = '1';
+                    btn.style.cursor = 'pointer';
+                }
+            };
+
+            await triggerResume(false);
         });
     }
 
