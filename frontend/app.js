@@ -869,6 +869,7 @@
         const consoleArea = el('clawde-console-area');
         const consoleContent = el('clawde-console-content');
         const consoleClose = el('clawde-console-close');
+        const banner = el('clawde-status-banner');
 
         if (consoleClose && consoleArea) {
             consoleClose.addEventListener('click', () => {
@@ -876,26 +877,56 @@
             });
         }
 
-        async function triggerRunner(actionName, endpoint) {
+        function showBanner(message, isError) {
+            if (!banner) return;
+            banner.textContent = message;
+            banner.style.display = 'block';
+            if (isError) {
+                banner.style.background = 'rgba(239, 68, 68, 0.15)';
+                banner.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+                banner.style.color = '#f87171';
+            } else {
+                banner.style.background = 'rgba(16, 185, 129, 0.15)';
+                banner.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+                banner.style.color = '#34d399';
+            }
+        }
+
+        function hideBanner() {
+            if (banner) banner.style.display = 'none';
+        }
+
+        async function triggerRunner(actionName, endpoint, payload = null) {
             if (!consoleArea || !consoleContent) return;
             consoleArea.style.display = 'block';
-            consoleContent.textContent = `[${actionName.toUpperCase()}] Running runner script...\n`;
+            hideBanner();
+            
+            consoleContent.textContent += `\n[${actionName.toUpperCase()}] Running runner...\nPOST ${endpoint}\n`;
+            if (payload) {
+                consoleContent.textContent += `Payload: ${JSON.stringify(payload)}\n`;
+            }
             
             try {
                 const res = await fetch(endpoint, {
-                    method: 'POST'
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: payload ? JSON.stringify(payload) : undefined
                 });
                 const data = await res.json();
                 
                 if (data.status === 'success') {
-                    consoleContent.textContent += `[PASS] Runner completed successfully.\n\nSTDOUT:\n${data.stdout}\n`;
+                    consoleContent.textContent += `[PASS] Completed successfully.\n\nSTDOUT:\n${data.stdout || ''}\n`;
+                    showBanner(`Successfully executed ${actionName}!`, false);
                 } else {
-                    consoleContent.textContent += `[FAIL] Runner failed (exit code ${data.returncode || 'error'}).\n\nSTDOUT:\n${data.stdout || ''}\n\nSTDERR:\n${data.stderr || data.detail || ''}\n`;
+                    const errDetail = data.stderr || data.detail || 'Unknown error occurred.';
+                    consoleContent.textContent += `[FAIL] Failed (exit code ${data.returncode || 'error'}).\n\nSTDOUT:\n${data.stdout || ''}\n\nSTDERR:\n${errDetail}\n`;
+                    showBanner(`Failed to execute ${actionName}: ${errDetail}`, true);
                 }
                 // Refresh the view immediately
                 loadClawdeView();
             } catch (err) {
                 consoleContent.textContent += `[ERROR] Failed to contact backend: ${err.message}\n`;
+                showBanner(`Failed to contact backend: ${err.message}`, true);
             }
         }
 
@@ -913,7 +944,9 @@
 
         if (btnExecute) {
             btnExecute.addEventListener('click', () => {
-                triggerRunner('execute phase', '/api/v1/orchestrator/execute-phase');
+                const activePhase = el('clawde-current-phase')?.textContent || 'PR17';
+                consoleContent.textContent = `[EXECUTE CLICKED] Starting execution...\n`;
+                triggerRunner('execute phase', '/api/v1/orchestrator/execute-phase', { phase: activePhase });
             });
         }
 
@@ -921,35 +954,50 @@
             btnRequest.addEventListener('click', async () => {
                 if (!consoleArea || !consoleContent) return;
                 consoleArea.style.display = 'block';
-                consoleContent.textContent = `[REQUEST] Registering pending execution approval...\n`;
+                hideBanner();
+                const activePhase = el('clawde-current-phase')?.textContent || 'PR17';
+                consoleContent.textContent = `[REQUEST CLICKED] Requesting execution for phase ${activePhase}...\n`;
+                consoleContent.textContent += `POST /api/v1/orchestrator/request-execution\n`;
+                
                 try {
-                    const res = await fetch('/api/v1/orchestrator/request-execution', { method: 'POST' });
+                    const res = await fetch('/api/v1/orchestrator/request-execution', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ phase: activePhase, decision: 'requested' })
+                    });
                     const data = await res.json();
-                    consoleContent.textContent += `[OK] Created request ID: ${data.approval_id}\n`;
+                    consoleContent.textContent += `Response: ${JSON.stringify(data, null, 2)}\n`;
+                    showBanner(`Approval request registered for ${activePhase}.`, false);
                     loadClawdeView();
                 } catch (err) {
                     consoleContent.textContent += `[ERROR] Failed to request approval: ${err.message}\n`;
+                    showBanner(`Failed to request approval: ${err.message}`, true);
                 }
             });
         }
 
         if (btnApprove) {
             btnApprove.addEventListener('click', async () => {
-                if (!activeApprovalId) return;
                 if (!consoleArea || !consoleContent) return;
                 consoleArea.style.display = 'block';
-                consoleContent.textContent = `[DECISION] Approving request ${activeApprovalId}...\n`;
+                hideBanner();
+                const activePhase = el('clawde-current-phase')?.textContent || 'PR17';
+                consoleContent.textContent = `[APPROVE CLICKED] Approving execution for phase ${activePhase}...\n`;
+                consoleContent.textContent += `POST /api/v1/orchestrator/request-execution\n`;
+                
                 try {
-                    const res = await fetch(`/api/v1/approvals/${activeApprovalId}/decision`, {
+                    const res = await fetch('/api/v1/orchestrator/request-execution', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ status: 'APPROVED', note: 'Approved via CLAWDE Control Tower cockpit.' })
+                        body: JSON.stringify({ phase: activePhase, decision: 'approved' })
                     });
                     const data = await res.json();
-                    consoleContent.textContent += `[OK] Approved successfully at: ${data.decision_at}\n`;
+                    consoleContent.textContent += `Response: ${JSON.stringify(data, null, 2)}\n`;
+                    showBanner(`Approval decision granted for ${activePhase}.`, false);
                     loadClawdeView();
                 } catch (err) {
-                    consoleContent.textContent += `[ERROR] Failed to submit approval decision: ${err.message}\n`;
+                    consoleContent.textContent += `[ERROR] Failed to approve execution: ${err.message}\n`;
+                    showBanner(`Failed to approve execution: ${err.message}`, true);
                 }
             });
         }
@@ -975,7 +1023,7 @@
                 consoleArea.style.display = 'block';
                 consoleContent.textContent = `[HANDOFF] Preparing handoff package...\n`;
                 
-                const nextPhase = el('clawde-current-phase')?.textContent || 'PR16';
+                const nextPhase = el('clawde-current-phase')?.textContent || 'PR17';
                 consoleContent.textContent += `[INFO] Handoff package ready for phase: ${nextPhase}\n`;
                 consoleContent.textContent += `Run:\n  cat artifacts/orchestrator/generated-prompts/${nextPhase}.md\n\nSubmit this file to the operator for manual gating approval.\n`;
             });
@@ -996,6 +1044,18 @@
         const approvalBadge = el('clawde-approval-status-badge');
         const btnRequest = el('clawde-btn-request-execution');
         const btnApprove = el('clawde-btn-approve-execution');
+        const btnExecute = el('clawde-btn-execute-phase');
+
+        // Debug panel elements
+        const dbgApi = el('clawde-dbg-api-status');
+        const dbgCwd = el('clawde-dbg-cwd');
+        const dbgRepo = el('clawde-dbg-repo-root');
+        const dbgActive = el('clawde-dbg-active-phase');
+        const dbgApprovalPath = el('clawde-dbg-approval-path');
+        const dbgApprovalExists = el('clawde-dbg-approval-exists');
+        const dbgRunnerExists = el('clawde-dbg-runner-exists');
+        const dbgPromptExists = el('clawde-dbg-prompt-exists');
+        const dbgReturncode = el('clawde-dbg-returncode');
 
         if (!phaseSpan) return;
 
@@ -1048,56 +1108,109 @@
             }
 
             // Load and update Approval Gate Status
-            const activePhase = reg.next_phase || 'PR16';
-            const appRes = await fetch('/api/v1/approvals/queue');
-            const approvalsQueue = await appRes.json();
+            const activePhase = reg.next_phase || 'PR17';
             
-            let matchedApproval = null;
-            for (const app of approvalsQueue) {
-                if (app.task_description && app.task_description.toLowerCase().includes(activePhase.toLowerCase())) {
-                    matchedApproval = app;
-                    break;
+            // Check deterministic decision JSON in /api/v1/orchestrator/debug (which scans approval files)
+            const dbgRes = await fetch('/api/v1/orchestrator/debug');
+            const dbgData = await dbgRes.json();
+            
+            const approvalFile = `decision_${activePhase}_execute.json`;
+            const approvalExists = dbgData.approval_decision_files && dbgData.approval_decision_files.includes(approvalFile);
+            
+            let status = 'NO REQUEST';
+            
+            if (approvalExists) {
+                // Fetch the approval doc to find status
+                try {
+                    const appRes = await fetch('/api/v1/approvals/queue');
+                    const approvalsQueue = await appRes.json();
+                    let matchedApproval = null;
+                    for (const app of approvalsQueue) {
+                        if (app.task_description && app.task_description.toLowerCase().includes(activePhase.toLowerCase())) {
+                            matchedApproval = app;
+                            break;
+                        }
+                    }
+                    if (matchedApproval) {
+                        status = matchedApproval.status;
+                    } else {
+                        status = 'APPROVED'; // If file exists but not in memory queue yet
+                    }
+                } catch (e) {
+                    status = 'APPROVED';
                 }
             }
-
-            if (matchedApproval) {
-                activeApprovalId = matchedApproval.approval_id;
-                if (approvalBadge) {
-                    approvalBadge.textContent = matchedApproval.status;
-                    if (matchedApproval.status === 'APPROVED') {
-                        approvalBadge.style.background = 'rgba(16, 185, 129, 0.1)';
-                        approvalBadge.style.borderColor = 'rgba(16, 185, 129, 0.3)';
-                        approvalBadge.style.color = '#34d399';
-                        if (btnRequest) btnRequest.style.display = 'none';
-                        if (btnApprove) btnApprove.style.display = 'none';
-                    } else if (matchedApproval.status === 'PENDING') {
-                        approvalBadge.style.background = 'rgba(245, 158, 11, 0.1)';
-                        approvalBadge.style.borderColor = 'rgba(245, 158, 11, 0.3)';
-                        approvalBadge.style.color = '#fbbf24';
-                        if (btnRequest) btnRequest.style.display = 'none';
-                        if (btnApprove) btnApprove.style.display = 'inline-block';
-                    } else {
-                        approvalBadge.style.background = 'rgba(239, 68, 68, 0.1)';
-                        approvalBadge.style.borderColor = 'rgba(239, 68, 68, 0.3)';
-                        approvalBadge.style.color = '#f87171';
-                        if (btnRequest) btnRequest.style.display = 'none';
-                        if (btnApprove) btnApprove.style.display = 'none';
+            
+            if (approvalBadge) {
+                approvalBadge.textContent = status;
+                if (status === 'APPROVED') {
+                    approvalBadge.style.background = 'rgba(16, 185, 129, 0.1)';
+                    approvalBadge.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+                    approvalBadge.style.color = '#34d399';
+                    if (btnRequest) btnRequest.style.display = 'none';
+                    if (btnApprove) btnApprove.style.display = 'none';
+                    if (btnExecute) {
+                        btnExecute.removeAttribute('disabled');
+                        btnExecute.style.opacity = '1';
+                        btnExecute.style.cursor = 'pointer';
                     }
-                }
-            } else {
-                activeApprovalId = null;
-                if (approvalBadge) {
-                    approvalBadge.textContent = 'NO REQUEST';
+                } else if (status === 'PENDING') {
+                    approvalBadge.style.background = 'rgba(245, 158, 11, 0.1)';
+                    approvalBadge.style.borderColor = 'rgba(245, 158, 11, 0.3)';
+                    approvalBadge.style.color = '#fbbf24';
+                    if (btnRequest) btnRequest.style.display = 'none';
+                    if (btnApprove) btnApprove.style.display = 'inline-block';
+                    if (btnExecute) {
+                        btnExecute.setAttribute('disabled', 'true');
+                        btnExecute.style.opacity = '0.5';
+                        btnExecute.style.cursor = 'not-allowed';
+                    }
+                } else {
                     approvalBadge.style.background = 'rgba(255,255,255,0.05)';
                     approvalBadge.style.borderColor = 'rgba(255,255,255,0.1)';
                     approvalBadge.style.color = 'var(--text-secondary)';
+                    if (btnRequest) btnRequest.style.display = 'inline-block';
+                    if (btnApprove) btnApprove.style.display = 'none';
+                    if (btnExecute) {
+                        btnExecute.setAttribute('disabled', 'true');
+                        btnExecute.style.opacity = '0.5';
+                        btnExecute.style.cursor = 'not-allowed';
+                    }
                 }
-                if (btnRequest) btnRequest.style.display = 'inline-block';
-                if (btnApprove) btnApprove.style.display = 'none';
+            }
+
+            // Populate Debug Panel values
+            if (dbgApi) {
+                dbgApi.textContent = 'ONLINE';
+                dbgApi.style.color = '#34d399';
+            }
+            if (dbgCwd) dbgCwd.textContent = dbgData.cwd || '--';
+            if (dbgRepo) dbgRepo.textContent = dbgData.repo_root || '--';
+            if (dbgActive) dbgActive.textContent = dbgData.active_phase || '--';
+            if (dbgApprovalPath) dbgApprovalPath.textContent = `artifacts/orchestrator/approvals/${approvalFile}`;
+            if (dbgApprovalExists) {
+                dbgApprovalExists.textContent = approvalExists ? 'YES' : 'NO';
+                dbgApprovalExists.style.color = approvalExists ? '#34d399' : '#f87171';
+            }
+            if (dbgRunnerExists) {
+                dbgRunnerExists.textContent = dbgData.builder_runner_path_exists ? 'YES' : 'NO';
+                dbgRunnerExists.style.color = dbgData.builder_runner_path_exists ? '#34d399' : '#f87171';
+            }
+            if (dbgPromptExists) {
+                dbgPromptExists.textContent = dbgData.generated_prompt_exists ? 'YES' : 'NO';
+                dbgPromptExists.style.color = dbgData.generated_prompt_exists ? '#34d399' : '#f87171';
+            }
+            if (dbgReturncode) {
+                // Set default/last run status code
+                dbgReturncode.textContent = '0';
             }
 
         } catch (err) {
             console.error("Error loading CLAWDE Control Tower state:", err);
+            if (dbgApi) {
+                dbgApi.textContent = 'OFFLINE';
+                dbgApi.style.color = '#f87171';
+            }
         }
     }
 

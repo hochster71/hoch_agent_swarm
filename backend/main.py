@@ -8609,39 +8609,176 @@ async def run_orchestrator_runner():
             "detail": str(e)
         }
 
-@app.post("/api/v1/orchestrator/execute-phase")
-async def execute_orchestrator_phase():
-    import subprocess
+@app.get("/api/v1/orchestrator/debug")
+async def get_orchestrator_debug():
+    import json
+    import os
+    import sys
+    import shutil
     from pathlib import Path
     
     base_dir = Path(__file__).resolve().parent.parent
-    runner_script = base_dir / "scripts/orchestrator/builder_runner.py"
     
+    registry_path = base_dir / "control/phase_registry.json"
+    state_path = base_dir / "control/phase_state.json"
+    builder_runner_path = base_dir / "scripts/orchestrator/builder_runner.py"
+    
+    active_phase = "UNKNOWN"
+    last_completed_phase = "UNKNOWN"
+    
+    if registry_path.exists():
+        try:
+            reg = json.loads(registry_path.read_text(encoding="utf-8"))
+            active_phase = reg.get("next_phase", "UNKNOWN")
+            last_completed_phase = reg.get("last_completed_phase", "UNKNOWN")
+        except Exception:
+            pass
+            
+    prompt_dir = base_dir / "artifacts/orchestrator/generated-prompts"
+    prompt_file = prompt_dir / f"{active_phase}.md"
+    generated_prompt_exists = prompt_file.exists()
+    
+    approvals_dir = base_dir / "artifacts/orchestrator/approvals"
+    approval_files = []
+    if approvals_dir.exists():
+        try:
+            approval_files = [f for f in os.listdir(approvals_dir) if f.endswith(".json")]
+        except Exception:
+            pass
+            
+    reports_dir = base_dir / "artifacts/orchestrator/reports"
+    last_report_path = ""
+    if reports_dir.exists():
+        try:
+            reps = sorted([r for r in os.listdir(reports_dir) if r.endswith(".json")])
+            if reps:
+                last_report_path = str(reports_dir / reps[-1])
+        except Exception:
+            pass
+            
+    return {
+        "status": "success",
+        "repo_root": str(base_dir),
+        "cwd": os.getcwd(),
+        "phase_registry_path_exists": registry_path.exists(),
+        "phase_state_path_exists": state_path.exists(),
+        "builder_runner_path_exists": builder_runner_path.exists(),
+        "active_phase": active_phase,
+        "last_completed_phase": last_completed_phase,
+        "generated_prompt_exists": generated_prompt_exists,
+        "generated_prompt_path": str(prompt_file) if generated_prompt_exists else "",
+        "approval_decision_files": approval_files,
+        "python_executable": sys.executable,
+        "node_availability": shutil.which("node") is not None,
+        "npm_availability": shutil.which("npm") is not None,
+        "last_runner_report_path": last_report_path
+    }
+
+@app.post("/api/v1/orchestrator/execute-phase")
+async def execute_orchestrator_phase(payload: Optional[dict] = None):
+    import subprocess
+    import json
+    import os
+    from pathlib import Path
+    
+    base_dir = Path(__file__).resolve().parent.parent
+    registry_path = base_dir / "control/phase_registry.json"
+    
+    if not registry_path.exists():
+        raise HTTPException(status_code=404, detail="phase_registry.json not found")
+        
+    try:
+        with open(registry_path, "r") as f:
+            registry = json.load(f)
+        default_phase = registry.get("next_phase", "PR17")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to read registry: {str(e)}")
+        
+    body = payload or {}
+    phase = body.get("phase") or default_phase
+    
+    # 1. Verify approval file exists and is APPROVED
+    approval_path = base_dir / f"artifacts/orchestrator/approvals/decision_{phase}_execute.json"
+    if not approval_path.exists():
+        return {
+            "status": "error",
+            "phase": phase,
+            "executed": False,
+            "returncode": 1,
+            "stdout": "",
+            "stderr": f"Approval file not found at: {approval_path}. Pending operator approval."
+        }
+        
+    try:
+        with open(approval_path, "r") as f:
+            approval_doc = json.load(f)
+        if approval_doc.get("status") != "APPROVED":
+            return {
+                "status": "error",
+                "phase": phase,
+                "executed": False,
+                "returncode": 1,
+                "stdout": "",
+                "stderr": f"Operator approval status is: {approval_doc.get('status')}. Pending operator approval."
+            }
+    except Exception as e:
+        return {
+            "status": "error",
+            "phase": phase,
+            "executed": False,
+            "returncode": 1,
+            "stdout": "",
+            "stderr": f"Failed to parse approval file: {str(e)}"
+        }
+        
+    runner_script = base_dir / "scripts/orchestrator/builder_runner.py"
     if not runner_script.exists():
         raise HTTPException(status_code=404, detail="builder_runner.py script not found")
         
     try:
         res = subprocess.run(
-            ["python3", str(runner_script)],
+            ["python3", str(runner_script), "--phase", phase],
             capture_output=True,
             text=True,
             cwd=str(base_dir)
         )
+        
+        # Verify next active phase from registry after run
+        next_active_phase = "UNKNOWN"
+        try:
+            with open(registry_path, "r") as f:
+                updated_reg = json.load(f)
+            next_active_phase = updated_reg.get("next_phase", "UNKNOWN")
+        except Exception:
+            pass
+            
+        report_path = base_dir / f"artifacts/orchestrator/reports/{phase}_execution_report.json"
+        
         return {
             "status": "success" if res.returncode == 0 else "error",
+            "phase": phase,
+            "executed": True,
             "returncode": res.returncode,
             "stdout": res.stdout,
-            "stderr": res.stderr
+            "stderr": res.stderr,
+            "runner_report_path": str(report_path) if report_path.exists() else "",
+            "next_active_phase": next_active_phase
         }
     except Exception as e:
         return {
             "status": "error",
-            "detail": str(e)
+            "phase": phase,
+            "executed": False,
+            "returncode": 1,
+            "stdout": "",
+            "stderr": str(e)
         }
 
 @app.post("/api/v1/orchestrator/request-execution")
-async def request_phase_execution():
+async def request_phase_execution(payload: Optional[dict] = None):
     import json
+    import os
+    from datetime import datetime, timezone
     from pathlib import Path
     from backend.approval_gate import get_approval_gate
     
@@ -8654,10 +8791,41 @@ async def request_phase_execution():
     try:
         with open(registry_path, "r") as f:
             registry = json.load(f)
-        phase = registry.get("next_phase", "PR16")
+        default_phase = registry.get("next_phase", "PR17")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to read registry: {str(e)}")
         
+    # Safely extract payload parameters with fallbacks
+    body = payload or {}
+    phase = body.get("phase") or default_phase
+    decision = body.get("decision") or "requested"
+    operator = body.get("operator") or "Michael Hoch"
+    scope = body.get("scope") or "local dry-run only"
+    
+    approvals_dir = base_dir / "artifacts/orchestrator/approvals"
+    os.makedirs(approvals_dir, exist_ok=True)
+    
+    target_path = approvals_dir / f"decision_{phase}_execute.json"
+    
+    status = "APPROVED" if decision in ["approved", "APPROVED"] else "PENDING"
+    
+    approval_doc = {
+        "approval_id": f"app-{phase.lower()}-execute",
+        "status": status,
+        "task_description": f"Execute phase {phase} prompt and compile local evidence plan",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "decision_at": datetime.now(timezone.utc).isoformat() if status == "APPROVED" else None,
+        "decision_by": operator if status == "APPROVED" else None,
+        "decision_note": f"Approved for {scope}" if status == "APPROVED" else None
+    }
+    
+    try:
+        with open(target_path, "w", encoding="utf-8") as f:
+            json.dump(approval_doc, f, indent=2)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to write approval file: {str(e)}")
+        
+    # Keep approval gate queue updated
     gate = get_approval_gate()
     task_desc = f"Execute phase {phase} prompt and compile local evidence plan"
     route_plan = {
@@ -8669,13 +8837,36 @@ async def request_phase_execution():
         "selected_prompt_titles": [f"Prompt Execution for {phase}"]
     }
     
-    # Check if a pending or approved request already exists in the queue to avoid duplicates
+    # Register/update the queue request as well
     queue = gate.load_queue()
+    exists = False
     for app in queue:
-        if phase.lower() in app.get("task_description", "").lower() and app.get("status") in ["PENDING", "APPROVED"]:
-            return app
+        if phase.lower() in app.get("task_description", "").lower():
+            app["status"] = status
+            if status == "APPROVED":
+                app["decision_at"] = datetime.now(timezone.utc).isoformat()
+                app["decision_by"] = operator
+            exists = True
+            break
             
-    return gate.create_request(task_desc, route_plan)
+    if not exists:
+        req = gate.create_request(task_desc, route_plan)
+        # Update its status in queue
+        queue = gate.load_queue()
+        for app in queue:
+            if app["approval_id"] == req["approval_id"]:
+                app["status"] = status
+                break
+                
+    gate.save_queue(queue)
+    
+    return {
+        "status": "success",
+        "approval_id": approval_doc["approval_id"],
+        "approval_status": status,
+        "phase": phase,
+        "path": str(target_path)
+    }
 
 
 

@@ -512,12 +512,16 @@
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 16px; margin-bottom: 20px;">
                         <div>
                             <h2 style="font-size: 22px; font-weight: 700; color: #fff; font-family: 'Outfit', sans-serif; letter-spacing: -0.02em;">CLAWDE Control Tower</h2>
+                            <div style="font-size: 11px; color: var(--accent-teal); font-weight: bold; margin-top: 2px;">CLAWDE Control Tower UI Build: FIX1</div>
                             <p style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Local Phase Automation & Authority Gate Monitor</p>
                         </div>
                         <div style="display: flex; align-items: center; gap: 10px;">
                             <span class="badge" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); color: #10b981; font-weight: 600; padding: 6px 12px;">Operator: CLAWDE HOCH (Chief Code Predator)</span>
                         </div>
                     </div>
+
+                    <!-- Status Banner Panel -->
+                    <div id="clawde-status-banner" style="display: none; padding: 12px 16px; border-radius: 8px; font-size: 13px; font-weight: bold; margin-bottom: 16px; border: 1px solid transparent; transition: all 0.3s;"></div>
 
                     <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px;">
                         <!-- Left Panel: State & Phase -->
@@ -582,6 +586,51 @@
                                     <button id="clawde-btn-request-execution" class="btn" style="background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.3); color: #60a5fa; font-size: 11px; padding: 6px 12px; border-radius: 4px; cursor: pointer; display: none;">Request Execution</button>
                                     <button id="clawde-btn-approve-execution" class="btn" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; font-size: 11px; padding: 6px 12px; border-radius: 4px; cursor: pointer; display: none;">Approve Execution</button>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Debug Panel -->
+                    <div style="background: rgba(0,0,0,0.25); border: 1px solid var(--border-glass); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 8px; margin-top: 20px;">
+                        <h3 style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--accent-teal); letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px; margin: 0; margin-bottom: 6px;">
+                            <i data-lucide="info" style="width: 13px; height: 13px;"></i> Control Tower Debug Status
+                        </h3>
+                        <div style="font-size: 12px; color: var(--text-primary); display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px 20px;">
+                            <div>
+                                <span style="color: var(--text-secondary); font-weight: 600;">API Health status:</span>
+                                <span id="clawde-dbg-api-status" style="margin-left: 8px; font-weight: bold; color: #f87171;">OFFLINE</span>
+                            </div>
+                            <div>
+                                <span style="color: var(--text-secondary); font-weight: 600;">Backend CWD:</span>
+                                <span id="clawde-dbg-cwd" style="margin-left: 8px; font-family: monospace; word-break: break-all;">--</span>
+                            </div>
+                            <div>
+                                <span style="color: var(--text-secondary); font-weight: 600;">Repo Root:</span>
+                                <span id="clawde-dbg-repo-root" style="margin-left: 8px; font-family: monospace; word-break: break-all;">--</span>
+                            </div>
+                            <div>
+                                <span style="color: var(--text-secondary); font-weight: 600;">Active Phase:</span>
+                                <span id="clawde-dbg-active-phase" style="margin-left: 8px; font-weight: bold; color: #fff;">--</span>
+                            </div>
+                            <div>
+                                <span style="color: var(--text-secondary); font-weight: 600;">Approval Path:</span>
+                                <span id="clawde-dbg-approval-path" style="margin-left: 8px; font-family: monospace; word-break: break-all;">--</span>
+                            </div>
+                            <div>
+                                <span style="color: var(--text-secondary); font-weight: 600;">Approval Exists:</span>
+                                <span id="clawde-dbg-approval-exists" style="margin-left: 8px; font-weight: bold;">--</span>
+                            </div>
+                            <div>
+                                <span style="color: var(--text-secondary); font-weight: 600;">Runner Exists:</span>
+                                <span id="clawde-dbg-runner-exists" style="margin-left: 8px; font-weight: bold;">--</span>
+                            </div>
+                            <div>
+                                <span style="color: var(--text-secondary); font-weight: 600;">Prompt Exists:</span>
+                                <span id="clawde-dbg-prompt-exists" style="margin-left: 8px; font-weight: bold;">--</span>
+                            </div>
+                            <div>
+                                <span style="color: var(--text-secondary); font-weight: 600;">Last Returncode:</span>
+                                <span id="clawde-dbg-returncode" style="margin-left: 8px; font-weight: bold; color: #a5b4fc;">--</span>
                             </div>
                         </div>
                     </div>
@@ -709,6 +758,6 @@
 
 </main>
     </div>
-    <script type="module" src="app.js"></script>
+    <script type="module" src="app.js?v=FIX1"></script>
 </body>
 </html>

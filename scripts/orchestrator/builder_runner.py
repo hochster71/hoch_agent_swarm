@@ -21,27 +21,37 @@ def run_drift_check():
 
 def check_operator_approval(phase: str, base_dir: str) -> bool:
     print(f"[builder_runner] Checking operator approval for phase {phase}...")
+    
+    # 1. Primary path check (from FIX1)
+    fix1_path = os.path.join(base_dir, f"artifacts/orchestrator/approvals/decision_{phase}_execute.json")
+    if os.path.exists(fix1_path):
+        try:
+            with open(fix1_path, "r") as f:
+                decision = json.load(f)
+            if decision.get("status") == "APPROVED":
+                print(f"[builder_runner] Found approved decision at {fix1_path}")
+                return True
+        except Exception as e:
+            print(f"[builder_runner] Warning: failed to parse {fix1_path}: {e}")
+            
+    # 2. Existing path check (fallback for compatibility)
     decisions_dir = os.path.join(base_dir, "artifacts/approvals/decisions")
-    if not os.path.exists(decisions_dir):
-        return False
-        
-    for fname in os.listdir(decisions_dir):
-        if fname.startswith("decision_") and fname.endswith(".json"):
-            fpath = os.path.join(decisions_dir, fname)
-            try:
-                with open(fpath, "r") as f:
-                    decision = json.load(f)
-                desc = decision.get("task_description", "").lower()
-                status = decision.get("status", "")
-                
-                # Match matching phase approval (e.g. PR16 or prompt execution)
-                if phase.lower() in desc and status == "APPROVED":
-                    print(f"[builder_runner] Found approved decision: {fname}")
-                    return True
-            except Exception as e:
-                print(f"[builder_runner] Warning: failed to parse decision file {fname}: {e}")
-                
-    # Also check queue.json as fallback
+    if os.path.exists(decisions_dir):
+        for fname in os.listdir(decisions_dir):
+            if fname.startswith("decision_") and fname.endswith(".json"):
+                fpath = os.path.join(decisions_dir, fname)
+                try:
+                    with open(fpath, "r") as f:
+                        decision = json.load(f)
+                    desc = decision.get("task_description", "").lower()
+                    status = decision.get("status", "")
+                    if phase.lower() in desc and status == "APPROVED":
+                        print(f"[builder_runner] Found approved decision: {fname}")
+                        return True
+                except Exception as e:
+                    print(f"[builder_runner] Warning: failed to parse decision file {fname}: {e}")
+                    
+    # 3. Fallback queue check
     queue_path = os.path.join(base_dir, "artifacts/approvals/queue.json")
     if os.path.exists(queue_path):
         try:
@@ -178,6 +188,11 @@ def execute_pr18(evidence_dir: str):
     print(f"[builder_runner] Created: {seal_path}")
 
 def run_builder():
+    import argparse
+    parser = argparse.ArgumentParser(description="Builder Runner")
+    parser.add_argument("--phase", help="Phase to execute")
+    args = parser.parse_args()
+
     base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     
     # 1. Branch verification
@@ -200,6 +215,13 @@ def run_builder():
         registry = json.load(f)
         
     active_phase = registry.get("next_phase")
+    
+    # If phase is specified on CLI, verify it matches registry
+    if args.phase:
+        if args.phase != active_phase:
+            print(f"[builder_runner] FAIL: Specified phase '{args.phase}' does not match next registry phase '{active_phase}'")
+            sys.exit(1)
+
     if active_phase not in ["PR16", "PR17", "PR18"]:
         print(f"[builder_runner] FAIL: Phase '{active_phase}' not supported for automated builder execution.")
         sys.exit(1)
