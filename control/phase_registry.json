@@ -1,0 +1,16 @@
+{
+  "current_track": "PR",
+  "last_completed_phase": "PR13",
+  "next_phase": "PR14",
+  "no_drift_required": true,
+  "local_commit_allowed": true,
+  "push_allowed": false,
+  "main_merge_allowed": false,
+  "production_deployment_allowed": false,
+  "production_secrets_allowed": false,
+  "live_external_binding_allowed": false,
+  "prompt_execution_allowed": false,
+  "approval_execution_allowed": false,
+  "external_publication_allowed": false,
+  "actual_ato_claim_allowed": false
+}
