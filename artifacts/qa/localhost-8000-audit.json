@@ -1,8 +1,8 @@
 {
-  "report_id": "qa_localhost_8000_1782654716414",
+  "report_id": "qa_localhost_8000_1782654968907",
   "base_url": "http://localhost:8000",
-  "started_at": "2026-06-28T13:51:55.859Z",
-  "completed_at": "2026-06-28T13:51:56.414Z",
+  "started_at": "2026-06-28T13:56:08.280Z",
+  "completed_at": "2026-06-28T13:56:08.907Z",
   "status": "PASS",
   "checks": [
     {
@@ -11,7 +11,7 @@
       "required": true,
       "status": "PASS",
       "http_status": 200,
-      "latency_ms": 32,
+      "latency_ms": 43,
       "blockers": [],
       "warnings": [],
       "payload_summary": {
@@ -39,7 +39,7 @@
       "required": true,
       "status": "PASS",
       "http_status": 200,
-      "latency_ms": 532,
+      "latency_ms": 600,
       "blockers": [],
       "warnings": [],
       "payload_summary": {
@@ -59,7 +59,7 @@
         "source": "live",
         "source_id": "hochster.baseline.lock",
         "freshness": "live",
-        "correlation_id": "corr-3719e766de62",
+        "correlation_id": "corr-a4aaf36b3983",
         "evidence_ref_count": 1,
         "decision": {
           "status": "PASS",
@@ -75,7 +75,7 @@
       "required": true,
       "status": "PASS",
       "http_status": 200,
-      "latency_ms": 9,
+      "latency_ms": 15,
       "blockers": [],
       "warnings": [],
       "payload_summary": {
@@ -111,7 +111,7 @@
       "required": true,
       "status": "PASS",
       "http_status": 200,
-      "latency_ms": 10,
+      "latency_ms": 17,
       "blockers": [],
       "warnings": [],
       "payload_summary": {
@@ -139,7 +139,7 @@
       "required": false,
       "status": "PASS",
       "http_status": 200,
-      "latency_ms": 10,
+      "latency_ms": 17,
       "blockers": [],
       "warnings": [],
       "payload_summary": {
@@ -167,7 +167,7 @@
       "required": true,
       "status": "PASS",
       "http_status": 200,
-      "latency_ms": 329,
+      "latency_ms": 361,
       "blockers": [],
       "warnings": [],
       "payload_summary": {
@@ -195,7 +195,7 @@
       "required": true,
       "status": "PASS",
       "http_status": 200,
-      "latency_ms": 10,
+      "latency_ms": 18,
       "blockers": [],
       "warnings": [],
       "payload_summary": {

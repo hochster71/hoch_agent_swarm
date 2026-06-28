@@ -1,22 +1,22 @@
 {
-  "generated_at": "2026-06-28T13:52:02.102662+00:00",
+  "generated_at": "2026-06-28T13:56:14.983089+00:00",
   "base_url": "http://localhost:8000",
   "tool_calls_checked": 6,
   "tool_calls_with_trace": 6,
   "tool_calls_with_evidence": 6,
   "redactions_applied": 2,
   "solved_without_validation": 0,
-  "approval_required_actions": 769,
+  "approval_required_actions": 771,
   "approval_bypass_findings": [],
   "blockers": [],
   "status": "PASS",
   "source": "live",
   "source_id": "audit.runtime.execution",
-  "observed_at": "2026-06-28T13:52:02.102695+00:00",
-  "received_at": "2026-06-28T13:52:02.102698+00:00",
+  "observed_at": "2026-06-28T13:56:14.983114+00:00",
+  "received_at": "2026-06-28T13:56:14.983115+00:00",
   "ttl_ms": 10000,
   "freshness": "live",
-  "correlation_id": "corr-audit-exec-602b62cc",
+  "correlation_id": "corr-audit-exec-a77ba7d0",
   "evidence_refs": [
     "database.swarm_ledger"
   ]
