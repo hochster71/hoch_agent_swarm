@@ -11,17 +11,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install uv
 RUN pip install --no-cache-dir uv
 
-# Copy project specification files
+# Copy project specification files and local path dependencies
 COPY pyproject.toml uv.lock ./
+COPY dummy_mcp/ ./dummy_mcp/
 
 # Install dependencies (cached step)
-RUN uv sync --frozen --no-install-project
+RUN UV_CONCURRENCY=2 uv sync --frozen --no-install-project
 
 # Copy remaining repository source code
 COPY . .
 
 # Install the project itself in editable mode
-RUN uv sync --frozen
+RUN UV_CONCURRENCY=2 uv sync --frozen
 
 # Expose app port
 EXPOSE 8086

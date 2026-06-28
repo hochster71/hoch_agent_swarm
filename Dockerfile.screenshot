@@ -2,6 +2,9 @@ FROM mcr.microsoft.com/playwright/python:v1.49.1-noble
 
 WORKDIR /app
 
+# Install playwright python package
+RUN pip install --no-cache-dir playwright==1.49.1
+
 # Ensure screenshots directory is created
 RUN mkdir -p /app/artifacts/live_screenshots
 
