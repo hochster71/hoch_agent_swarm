@@ -8675,7 +8675,7 @@ async def get_orchestrator_debug():
     }
 
 @app.post("/api/v1/orchestrator/execute-phase")
-async def execute_orchestrator_phase(payload: Optional[dict] = None):
+async def execute_orchestrator_phase(payload: dict):
     import subprocess
     import json
     import os
@@ -8775,7 +8775,7 @@ async def execute_orchestrator_phase(payload: Optional[dict] = None):
         }
 
 @app.post("/api/v1/orchestrator/request-execution")
-async def request_phase_execution(payload: Optional[dict] = None):
+async def request_phase_execution(payload: dict):
     import json
     import os
     from datetime import datetime, timezone
