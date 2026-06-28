@@ -72,7 +72,8 @@
         { id: 'cybergov-audit', label: 'AUDIT REPORTS' },
         { id: 'cybergov-cisa', label: 'CISA / KEV / CPG' },
         { id: 'cybergov-zero-trust', label: 'DOD ZERO TRUST' },
-        { id: 'cybergov-ao-review', label: 'AO REVIEW' }
+        { id: 'cybergov-ao-review', label: 'AO REVIEW' },
+        { id: 'binding-gate', label: 'LIVE BINDING GATE' }
     ];
 
     function initNavigation() {
@@ -203,6 +204,9 @@
             case 'cybergov-zero-trust':
             case 'cybergov-ao-review':
                 loadCyberGovView();
+                break;
+            case 'binding-gate':
+                loadBindingGateView();
                 break;
         }
     }
@@ -3088,6 +3092,7 @@
         initAtoButtons();
         initStagingButtons();
         initDeployButtons();
+        initBindingGateButtons();
         
         // Initial fetches
         fetchCockpit();
@@ -3819,6 +3824,105 @@
             }
         } catch (err) {
             console.error('Failed to load CyberGov view:', err);
+        }
+    }
+
+    async function loadBindingGateView() {
+        try {
+            const res = await fetch('/api/v1/binding-readiness/status');
+            if (!res.ok) throw new Error('Failed to fetch binding readiness status');
+            const data = await res.json();
+            renderBindingGateData(data);
+        } catch (err) {
+            console.error('Failed to load binding readiness gate:', err);
+        }
+    }
+
+    function renderBindingGateData(data) {
+        const scoreEl = el('bg-readiness-score');
+        if (scoreEl) scoreEl.textContent = `${data.readiness_score}%`;
+        
+        const statusEl = el('bg-gate-status');
+        if (statusEl) {
+            statusEl.textContent = data.status;
+            let bg = 'rgba(255,255,255,0.05)';
+            let color = 'var(--text-secondary)';
+            if (data.status === 'PASS') {
+                bg = 'rgba(16, 185, 129, 0.15)';
+                color = '#10b981';
+            } else if (data.status === 'FAIL') {
+                bg = 'rgba(239, 68, 68, 0.15)';
+                color = '#ef4444';
+            }
+            statusEl.style.background = bg;
+            statusEl.style.color = color;
+        }
+        
+        const checkedEl = el('bg-last-checked');
+        if (checkedEl) checkedEl.textContent = `Last checked: ${data.last_checked}`;
+        
+        const logsEl = el('bg-verification-logs');
+        if (logsEl && data.logs) {
+            logsEl.innerHTML = data.logs.map(log => `<div>${escapeHtml(log)}</div>`).join('');
+            logsEl.scrollTop = logsEl.scrollHeight;
+        }
+        
+        const gridEl = el('bg-checkpoints-grid');
+        if (gridEl && data.checkpoints) {
+            gridEl.innerHTML = data.checkpoints.map(cp => {
+                let badgeColor = '#f59e0b';
+                let badgeBg = 'rgba(245, 158, 11, 0.1)';
+                if (cp.status === 'PASS') {
+                    badgeColor = '#10b981';
+                    badgeBg = 'rgba(16, 185, 129, 0.1)';
+                } else if (cp.status === 'FAIL') {
+                    badgeColor = '#ef4444';
+                    badgeBg = 'rgba(239, 68, 68, 0.1)';
+                }
+                
+                return `
+                    <div class="card" style="padding: 15px; background: rgba(0,0,0,0.15); border: 1px solid var(--border-glass); display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <h4 style="font-size: 13px; font-weight: bold; color: #fff; margin-bottom: 6px;">${cp.name}</h4>
+                            <p style="font-size: 11px; color: var(--text-secondary); line-height: 1.4; margin-bottom: 12px;">${cp.description}</p>
+                        </div>
+                        <span style="align-self: flex-start; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; background: ${badgeBg}; color: ${badgeColor}; border: 1px solid ${badgeBg.replace('0.1', '0.3')};">
+                            ${cp.status}
+                        </span>
+                    </div>
+                `;
+            }).join('');
+        }
+    }
+    
+    async function executeBindingVerification() {
+        const btn = el('btn-run-binding-verification');
+        if (!btn) return;
+        
+        btn.disabled = true;
+        const originalText = btn.textContent;
+        btn.textContent = 'Verifying...';
+        
+        try {
+            const res = await fetch('/api/v1/binding-readiness/verify', { method: 'POST' });
+            if (!res.ok) throw new Error('Failed to run binding gate verification');
+            const data = await res.json();
+            renderBindingGateData(data);
+        } catch (err) {
+            console.error('Failed to run verification:', err);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = originalText;
+        }
+    }
+    
+    function initBindingGateButtons() {
+        const btn = el('btn-run-binding-verification');
+        if (btn) {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                executeBindingVerification();
+            });
         }
     }
 

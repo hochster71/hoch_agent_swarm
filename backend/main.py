@@ -6780,6 +6780,16 @@ def api_get_cybergov_reports_bundle():
     from backend.cybergov_manager import generate_cybergov_reports_bundle
     return generate_cybergov_reports_bundle()
 
+@app.get("/api/v1/binding-readiness/status")
+def api_get_binding_readiness_status():
+    from backend.binding_readiness_manager import get_binding_readiness_status
+    return get_binding_readiness_status()
+
+@app.post("/api/v1/binding-readiness/verify")
+def api_run_binding_readiness_verification():
+    from backend.binding_readiness_manager import run_binding_readiness_verification
+    return run_binding_readiness_verification()
+
 @app.get("/api/v1/policy/status")
 def api_get_policy_status():
     return {
