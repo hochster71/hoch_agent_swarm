@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tv>
+  <channel id="news-channel">
+    <display-name>HOCH News</display-name>
+  </channel>
+  <programme start="20260628000000 +0000" stop="20260628235959 +0000" channel="news-channel">
+    <title>Global Security Swarm Report</title>
+    <desc>Continuous Monitoring feeds and compliance updates live from the HOCH Swarm.</desc>
+  </programme>
+  <channel id="sports-channel">
+    <display-name>HOCH Sports</display-name>
+  </channel>
+  <programme start="20260628000000 +0000" stop="20260628235959 +0000" channel="sports-channel">
+    <title>Swarm Execution Speedruns</title>
+    <desc>Live coverage of autonomous agent pipelines competing for minimum token counts.</desc>
+  </programme>
+  <channel id="movies-channel">
+    <display-name>HOCH Movies</display-name>
+  </channel>
+  <programme start="20260628000000 +0000" stop="20260628235959 +0000" channel="movies-channel">
+    <title>Tears of Steel (Agent Cut)</title>
+    <desc>Sci-Fi feature tracking autonomous drones securing high-trust compliance boundaries.</desc>
+  </programme>
+</tv>

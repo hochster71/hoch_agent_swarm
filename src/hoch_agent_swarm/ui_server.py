@@ -458,6 +458,73 @@ def api_brain_export():
 
 
 # ---------------------------------------------------------------------------
+# HOCH TV Endpoints
+# ---------------------------------------------------------------------------
+
+@app.route("/api/tv/health")
+def api_tv_health():
+    from hoch_agent_swarm.tv_backend import get_tv_backend
+    backend = get_tv_backend()
+    return jsonify(backend.get_health())
+
+@app.route("/api/tv/channels")
+def api_tv_channels():
+    from flask import request
+    from hoch_agent_swarm.tv_backend import get_tv_backend
+    backend = get_tv_backend()
+    group_filter = request.args.get("group", "")
+    
+    channels = backend.parse_m3u_playlist()
+    if group_filter:
+        channels = [c for c in channels if c["group"].lower() == group_filter.lower()]
+    return jsonify(channels)
+
+@app.route("/api/tv/groups")
+def api_tv_groups():
+    from hoch_agent_swarm.tv_backend import get_tv_backend
+    backend = get_tv_backend()
+    channels = backend.parse_m3u_playlist()
+    groups = sorted(list({c["group"] for c in channels if c.get("group")}))
+    return jsonify(groups)
+
+@app.route("/api/tv/channel/<ch_id>")
+def api_tv_channel(ch_id):
+    from hoch_agent_swarm.tv_backend import get_tv_backend
+    backend = get_tv_backend()
+    channels = backend.parse_m3u_playlist()
+    channel = next((c for c in channels if c["id"] == ch_id), None)
+    if not channel:
+        return jsonify({"error": f"Channel {ch_id} not found"}), 404
+        
+    epg = backend.parse_epg_data()
+    listings = epg.get(channel.get("tvg_id", ""), [])
+    channel["epg"] = listings
+    return jsonify(channel)
+
+@app.route("/api/tv/playlist.m3u")
+def api_tv_playlist_m3u():
+    from flask import Response
+    from hoch_agent_swarm.tv_backend import get_tv_backend
+    backend = get_tv_backend()
+    backend.load_cache()
+    if backend.m3u_path.exists():
+        content = backend.m3u_path.read_text(encoding="utf-8", errors="ignore")
+        return Response(content, mimetype="audio/x-mpegurl")
+    return Response("#EXTM3U\n", mimetype="audio/x-mpegurl")
+
+@app.route("/api/tv/epg.xml")
+def api_tv_epg_xml():
+    from flask import Response
+    from hoch_agent_swarm.tv_backend import get_tv_backend
+    backend = get_tv_backend()
+    backend.load_cache()
+    if backend.epg_path.exists():
+        content = backend.epg_path.read_text(encoding="utf-8", errors="ignore")
+        return Response(content, mimetype="application/xml")
+    return Response("<tv></tv>\n", mimetype="application/xml")
+
+
+# ---------------------------------------------------------------------------
 # PROMPTQA1 Endpoints
 # ---------------------------------------------------------------------------
 
@@ -940,6 +1007,11 @@ DASHBOARD_HTML = r"""<!DOCTYPE html>
     </button>
     <button class="nav-item" id="nav-promptqa" onclick="showPage('promptqa')">
       <span class="icon">🛠️</span> Prompt QA Forge
+    </button>
+    
+    <div class="nav-section-label">Media & Streaming</div>
+    <button class="nav-item" id="nav-hochtv" onclick="showPage('hochtv')">
+      <span class="icon">📺</span> HOCH TV
     </button>
   </nav>
 
@@ -1553,6 +1625,77 @@ DASHBOARD_HTML = r"""<!DOCTYPE html>
 
     </div>
 
+    <!-- ===== HOCH TV ===== -->
+    <div class="page" id="page-hochtv">
+      <div class="page-header">
+        <div>
+          <div class="page-title">HOCH TV IPTV Portal</div>
+          <div class="page-sub">Stream M3U Playlists and XMLTV EPG data safely via local proxy</div>
+        </div>
+        <div style="display:flex;gap:10px">
+          <a class="refresh-btn" href="/api/tv/playlist.m3u" target="_blank" style="background:var(--accent);color:#fff;text-decoration:none;display:inline-flex;align-items:center;padding:10px 16px;border-radius:var(--radius);font-size:13px;font-weight:600">📥 Playlist.m3u</a>
+          <a class="refresh-btn" href="/api/tv/epg.xml" target="_blank" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);text-decoration:none;display:inline-flex;align-items:center;padding:10px 16px;border-radius:var(--radius);font-size:13px;font-weight:600">📄 XMLTV EPG</a>
+          <button class="refresh-btn" onclick="refreshTVBackend()" style="background:var(--green);color:#111;font-weight:600">⚡ Refresh Playlist</button>
+        </div>
+      </div>
+
+      <!-- TV Health Panel -->
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-header">📺 IPTV Stream Monitor & Compliance Status</div>
+        <div style="padding:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px">
+          <div>
+            <span style="font-weight:600">Status:</span> <span id="tv-health-status" class="badge badge-pass">—</span>
+            <span style="margin-left:20px;font-weight:600">Total Channels:</span> <span id="tv-health-channels" style="color:var(--accent)">—</span>
+            <span style="margin-left:20px;font-weight:600">Categories:</span> <span id="tv-health-groups" style="color:var(--accent)">—</span>
+            <span style="margin-left:20px;font-weight:600">Last Synced:</span> <span id="tv-health-refreshed" style="color:var(--muted)">—</span>
+          </div>
+          <div style="font-size:12px;color:var(--muted);max-width:500px;text-align:right">
+            <strong>Notice:</strong> The system has ATO-supporting evidence prepared for review. Actual ATO has not been granted. No authorization claim is being made.
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Portal Grid: Left list of groups + channels, Right Player & EPG -->
+      <div style="display:grid;grid-template-columns:300px 1fr;gap:20px">
+        <!-- Sidebar Navigation -->
+        <div>
+          <div class="card" style="margin-bottom:15px">
+            <div class="card-header">📂 Categories</div>
+            <div style="max-height:200px;overflow-y:auto;padding:10px" id="tv-groups-list">
+              <div class="spinner"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">📺 Channels</div>
+            <div style="max-height:450px;overflow-y:auto;padding:10px" id="tv-channels-list">
+              <div style="padding:15px;color:var(--muted);text-align:center">Select a category...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Video Player & Program Guide -->
+        <div>
+          <div class="card" style="margin-bottom:20px">
+            <div class="card-header" id="tv-player-header">📺 Player — Select a Channel</div>
+            <div style="background:#000;position:relative;padding-top:56.25%">
+              <video id="tv-video-player" controls autoplay style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain"></video>
+            </div>
+            <div style="padding:15px;display:flex;justify-content:space-between;align-items:center;background:var(--bg2)">
+              <div id="tv-channel-title" style="font-weight:600;font-size:16px">No Channel Selected</div>
+              <div id="tv-channel-stream-url" style="font-size:11px;color:var(--muted);word-break:break-all"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">📅 XMLTV Electronic Program Guide (EPG)</div>
+            <div style="padding:20px" id="tv-epg-container">
+              <div style="color:var(--muted);text-align:center">EPG listings for the selected channel will appear here.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </main>
 </div>
 
@@ -1564,6 +1707,7 @@ DASHBOARD_HTML = r"""<!DOCTYPE html>
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script>
 // ---- Navigation ----
 function showPage(name) {
@@ -1571,7 +1715,7 @@ function showPage(name) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
   document.getElementById('nav-' + name).classList.add('active');
-  const loaders = { overview: loadOverview, runs: loadRuns, rcs: loadRCs, artifacts: loadArtifacts, git: loadGit, promptbrain: loadPromptBrain, evidencebrain: loadEvidenceBrain, promptqa: loadPromptQa };
+  const loaders = { overview: loadOverview, runs: loadRuns, rcs: loadRCs, artifacts: loadArtifacts, git: loadGit, promptbrain: loadPromptBrain, evidencebrain: loadEvidenceBrain, promptqa: loadPromptQa, hochtv: loadHochTV };
   if (loaders[name]) loaders[name]();
 }
 
@@ -2530,6 +2674,180 @@ async function showCitation(nodeId) {
   } catch(e) {
     content.innerHTML = `<div style="color:var(--red)">Failed to load citations: ${e.message}</div>`;
   }
+}
+
+// ---- HOCH TV ----
+let activeHls = null;
+
+async function loadHochTV() {
+  await loadTVHealth();
+  await loadTVGroups();
+}
+
+async function loadTVHealth() {
+  try {
+    const health = await fetchJSON('/api/tv/health');
+    document.getElementById('tv-health-status').textContent = health.status;
+    document.getElementById('tv-health-channels').textContent = health.channels_count;
+    document.getElementById('tv-health-groups').textContent = health.groups_count;
+    document.getElementById('tv-health-refreshed').textContent = health.last_refreshed ? new Date(health.last_refreshed).toLocaleString() : 'Never';
+  } catch (e) {
+    console.error('Failed to load TV health:', e);
+  }
+}
+
+async function loadTVGroups() {
+  const container = document.getElementById('tv-groups-list');
+  container.innerHTML = '<div class="spinner"></div>';
+  try {
+    const groups = await fetchJSON('/api/tv/groups');
+    if (!groups || groups.length === 0) {
+      container.innerHTML = '<div style="padding:10px;color:var(--muted)">No categories found.</div>';
+      return;
+    }
+    container.innerHTML = groups.map(g => `
+      <div class="list-item" onclick="selectTVGroup('${escapeJs(g)}', this)" style="padding:8px 12px;cursor:pointer;border-radius:var(--radius-sm);margin-bottom:4px;font-size:13px">
+        📁 ${escapeHtml(g)}
+      </div>
+    `).join('');
+    
+    if (groups.length > 0) {
+      const firstEl = container.firstElementChild;
+      if (firstEl) firstEl.click();
+    }
+  } catch (e) {
+    container.innerHTML = `<div style="color:var(--red);padding:10px">Error: ${e.message}</div>`;
+  }
+}
+
+async function selectTVGroup(groupName, element) {
+  const parent = document.getElementById('tv-groups-list');
+  parent.querySelectorAll('.list-item').forEach(el => {
+    el.style.background = 'transparent';
+    el.style.fontWeight = 'normal';
+  });
+  if (element) {
+    element.style.background = 'var(--bg3)';
+    element.style.fontWeight = 'bold';
+  }
+
+  const container = document.getElementById('tv-channels-list');
+  container.innerHTML = '<div class="spinner"></div>';
+  try {
+    const channels = await fetchJSON(`/api/tv/channels?group=${encodeURIComponent(groupName)}`);
+    if (!channels || channels.length === 0) {
+      container.innerHTML = '<div style="padding:15px;color:var(--muted)">No channels in this category.</div>';
+      return;
+    }
+    container.innerHTML = channels.map(c => `
+      <div class="list-item" onclick="playTVChannel('${c.id}')" style="padding:8px 12px;cursor:pointer;border-radius:var(--radius-sm);margin-bottom:4px;display:flex;align-items:center;gap:10px;font-size:13px">
+        ${c.logo ? `<img src="${escapeHtml(c.logo)}" style="width:24px;height:24px;object-fit:contain;border-radius:4px" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2224%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23666%22 stroke-width=%222%22><rect x=%222%22 y=%222%22 width=%2220%22 height=%2220%22 rx=%224%22></rect></svg>'"/>` : '📺'}
+        <div style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(c.name)}</div>
+      </div>
+    `).join('');
+  } catch (e) {
+    container.innerHTML = `<div style="color:var(--red);padding:15px">Error: ${e.message}</div>`;
+  }
+}
+
+async function playTVChannel(chId) {
+  const playerHeader = document.getElementById('tv-player-header');
+  const video = document.getElementById('tv-video-player');
+  const title = document.getElementById('tv-channel-title');
+  const urlEl = document.getElementById('tv-channel-stream-url');
+  const epgContainer = document.getElementById('tv-epg-container');
+
+  title.textContent = 'Loading...';
+  urlEl.textContent = '';
+  epgContainer.innerHTML = '<div class="spinner"></div>';
+
+  try {
+    const channel = await fetchJSON(`/api/tv/channel/${chId}`);
+    title.textContent = channel.name;
+    urlEl.textContent = channel.url;
+    playerHeader.textContent = `📺 Playing — ${channel.name}`;
+
+    if (activeHls) {
+      activeHls.destroy();
+      activeHls = null;
+    }
+
+    if (channel.url.endsWith('.m3u8') || channel.url.includes('.m3u8')) {
+      if (Hls.isSupported()) {
+        activeHls = new Hls();
+        activeHls.loadSource(channel.url);
+        activeHls.attachMedia(video);
+        activeHls.on(Hls.Events.MANIFEST_PARSED, function() {
+          video.play().catch(e => console.log("Play interrupted or autoplay blocked:", e));
+        });
+        activeHls.on(Hls.Events.ERROR, function(event, data) {
+          console.error("HLS error:", data);
+        });
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = channel.url;
+        video.addEventListener('canplay', function() {
+          video.play().catch(e => console.log("Play interrupted or autoplay blocked:", e));
+        });
+      } else {
+        video.src = channel.url;
+      }
+    } else {
+      video.src = channel.url;
+    }
+
+    if (channel.epg && channel.epg.length > 0) {
+      epgContainer.innerHTML = channel.epg.map(prog => {
+        const startStr = formatEpgTime(prog.start);
+        const stopStr = formatEpgTime(prog.stop);
+        return `
+          <div style="padding:12px;border-bottom:1px solid var(--border);margin-bottom:8px">
+            <div style="font-weight:600;font-size:14px;color:var(--yellow)">${escapeHtml(prog.title)}</div>
+            <div style="font-size:12px;color:var(--muted);margin:4px 0">${startStr} - ${stopStr}</div>
+            <div style="font-size:13px;color:var(--text)">${escapeHtml(prog.desc)}</div>
+          </div>
+        `;
+      }).join('');
+    } else {
+      epgContainer.innerHTML = '<div style="color:var(--muted);padding:10px">No program listings available for this channel.</div>';
+    }
+  } catch (e) {
+    title.textContent = 'Error';
+    epgContainer.innerHTML = `<div style="color:var(--red)">Failed to load channel details: ${e.message}</div>`;
+  }
+}
+
+async function refreshTVBackend() {
+  const btn = document.querySelector('button[onclick="refreshTVBackend()"]');
+  btn.textContent = 'Refreshing...';
+  btn.disabled = true;
+  try {
+    const res = await fetchJSON('/api/tv/health');
+    await loadHochTV();
+  } catch (e) {
+    alert('Refresh failed: ' + e.message);
+  } finally {
+    btn.textContent = '⚡ Refresh Playlist';
+    btn.disabled = false;
+  }
+}
+
+function formatEpgTime(xmlTime) {
+  if (!xmlTime || xmlTime.length < 14) return xmlTime;
+  try {
+    const yr = xmlTime.substring(0, 4);
+    const mo = xmlTime.substring(4, 6);
+    const dy = xmlTime.substring(6, 8);
+    const hr = xmlTime.substring(8, 10);
+    const mi = xmlTime.substring(10, 12);
+    const sc = xmlTime.substring(12, 14);
+    return `${yr}-${mo}-${dy} ${hr}:${mi}`;
+  } catch(e) {
+    return xmlTime;
+  }
+}
+
+function escapeJs(str) {
+  return str.replace(/'/g, "\\'").replace(/"/g, '\\"');
 }
 
 // ---- Init ----
