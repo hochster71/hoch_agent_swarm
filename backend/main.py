@@ -6765,6 +6765,21 @@ def api_execute_production_deployment():
     from backend.deployment_manager import execute_production_deployment
     return execute_production_deployment()
 
+@app.get("/api/v1/cybergov/data")
+def api_get_cybergov_data():
+    from backend.cybergov_manager import get_cybergov_data
+    return get_cybergov_data()
+
+@app.get("/api/v1/cybergov/scorecard")
+def api_get_cybergov_scorecard():
+    from backend.cybergov_manager import get_cybergov_scorecard
+    return get_cybergov_scorecard()
+
+@app.get("/api/v1/cybergov/reports-bundle")
+def api_get_cybergov_reports_bundle():
+    from backend.cybergov_manager import generate_cybergov_reports_bundle
+    return generate_cybergov_reports_bundle()
+
 @app.get("/api/v1/policy/status")
 def api_get_policy_status():
     return {

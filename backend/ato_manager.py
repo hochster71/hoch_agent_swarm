@@ -145,6 +145,13 @@ def create_ato_evidence_zip() -> bytes:
             for name in handoff_zip.namelist():
                 zip_file.writestr(f"handoff/{name}", handoff_zip.read(name))
                 
+        # Include CyberGov reports bundle
+        from backend.cybergov_manager import generate_cybergov_reports_bundle
+        reports_bundle = generate_cybergov_reports_bundle()
+        for report_key, report_content in reports_bundle.items():
+            filename = f"cybergov/{report_key}.json"
+            zip_file.writestr(filename, json.dumps(report_content, indent=2))
+                
         # Generate complete manifest.sha256 matching everything in the package
         manifest_lines = []
         for name in zip_file.namelist():

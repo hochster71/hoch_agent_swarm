@@ -61,7 +61,18 @@
         { id: 'handoff', label: 'RELEASE REVIEW & HANDOFF' },
         { id: 'ato', label: 'ATO EVIDENCE BUILDER' },
         { id: 'staging', label: 'STAGING DRY RUN' },
-        { id: 'deploy', label: 'PRODUCTION DEPLOYMENT' }
+        { id: 'deploy', label: 'PRODUCTION DEPLOYMENT' },
+        { id: 'cybergov-overview', label: 'CYBER OVERVIEW' },
+        { id: 'cybergov-controls', label: 'NIST 800-53 REV. 5' },
+        { id: 'cybergov-rmf', label: 'RMF LIFECYCLE' },
+        { id: 'cybergov-conmon', label: 'CONMON SCHEDULE' },
+        { id: 'cybergov-poam', label: 'POA&M WEAKNESSES' },
+        { id: 'cybergov-risks', label: 'RISK REGISTER' },
+        { id: 'cybergov-evidence', label: 'EVIDENCE VAULT' },
+        { id: 'cybergov-audit', label: 'AUDIT REPORTS' },
+        { id: 'cybergov-cisa', label: 'CISA / KEV / CPG' },
+        { id: 'cybergov-zero-trust', label: 'DOD ZERO TRUST' },
+        { id: 'cybergov-ao-review', label: 'AO REVIEW' }
     ];
 
     function initNavigation() {
@@ -179,6 +190,19 @@
                 break;
             case 'deploy':
                 loadDeployView();
+                break;
+            case 'cybergov-overview':
+            case 'cybergov-controls':
+            case 'cybergov-rmf':
+            case 'cybergov-conmon':
+            case 'cybergov-poam':
+            case 'cybergov-risks':
+            case 'cybergov-evidence':
+            case 'cybergov-audit':
+            case 'cybergov-cisa':
+            case 'cybergov-zero-trust':
+            case 'cybergov-ao-review':
+                loadCyberGovView();
                 break;
         }
     }
@@ -3597,6 +3621,204 @@
                 e.preventDefault();
                 executeProductionDeployment();
             });
+        }
+    }
+
+    async function loadCyberGovView() {
+        try {
+            const res = await fetch('/api/v1/cybergov/data');
+            if (!res.ok) throw new Error('Failed to fetch CyberGov data');
+            const data = await res.json();
+            
+            // Populate Scorecard Overview
+            const scorecard = data.scorecard;
+            if (scorecard) {
+                const tgFramework = el('cg-target-framework');
+                if (tgFramework) tgFramework.textContent = scorecard.framework_coverage_target;
+                
+                const tgTraceability = el('cg-target-traceability');
+                if (tgTraceability) tgTraceability.textContent = scorecard.control_traceability_target;
+                
+                const tgReporting = el('cg-target-reporting');
+                if (tgReporting) tgReporting.textContent = scorecard.reporting_coverage_target;
+                
+                const scoreImpl = el('cg-score-impl');
+                if (scoreImpl) scoreImpl.textContent = `${scorecard.implementation_score}%`;
+                
+                const scoreAssess = el('cg-score-assess');
+                if (scoreAssess) scoreAssess.textContent = `${scorecard.assessment_score}%`;
+                
+                const scoreConmon = el('cg-score-conmon');
+                if (scoreConmon) scoreConmon.textContent = scorecard.conmon_state;
+                
+                const scorePoams = el('cg-score-poams');
+                if (scorePoams) scorePoams.textContent = scorecard.open_poams;
+                
+                const noticeEl = el('cg-overview-notice');
+                if (noticeEl) noticeEl.textContent = `Security Status Statement: ${scorecard.compliance.notice}`;
+            }
+            
+            // Populate Controls Table
+            const controlsTbody = el('cg-controls-tbody');
+            if (controlsTbody && data.controls) {
+                controlsTbody.innerHTML = data.controls.map(c => `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                        <td style="padding: 10px; font-weight: bold; color: var(--accent-teal);">${c.control_id}</td>
+                        <td style="padding: 10px; color: #fff;">${c.title}</td>
+                        <td style="padding: 10px; color: var(--text-secondary);">${c.baseline_applicability}</td>
+                        <td style="padding: 10px;">
+                            <span style="padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; background: ${c.implementation_status === 'IMPLEMENTED' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)'}; color: ${c.implementation_status === 'IMPLEMENTED' ? '#10b981' : '#f59e0b'};">
+                                ${c.implementation_status}
+                            </span>
+                        </td>
+                        <td style="padding: 10px;">
+                            <span style="padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; background: ${c.assessment_status === 'ASSESSED_PASS' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)'}; color: ${c.assessment_status === 'ASSESSED_PASS' ? '#10b981' : '#ef4444'};">
+                                ${c.assessment_status}
+                            </span>
+                        </td>
+                        <td style="padding: 10px; color: var(--text-secondary);">${c.owner}</td>
+                        <td style="padding: 10px; color: var(--text-secondary);">${c.frequency}</td>
+                    </tr>
+                `).join('');
+            }
+            
+            // Populate RMF Steps
+            const rmfContainer = el('cg-rmf-steps');
+            if (rmfContainer && data.rmf_lifecycle) {
+                rmfContainer.innerHTML = data.rmf_lifecycle.map(step => `
+                    <div class="card" style="padding: 15px; background: rgba(0,0,0,0.15); display: flex; justify-content: space-between; align-items: center; border-left: 3px solid ${step.status === 'COMPLETE' ? '#10b981' : '#f59e0b'};">
+                        <div>
+                            <strong style="color: #fff; font-size: 13px;">${step.step}</strong>
+                            <p style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">${step.description}</p>
+                        </div>
+                        <span style="padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; background: ${step.status === 'COMPLETE' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)'}; color: ${step.status === 'COMPLETE' ? '#10b981' : '#f59e0b'}; border: 1px solid ${step.status === 'COMPLETE' ? 'rgba(16, 185, 129, 0.3)' : 'rgba(245, 158, 11, 0.3)'};">
+                            ${step.status}
+                        </span>
+                    </div>
+                `).join('');
+            }
+            
+            // Populate ConMon Schedule
+            const conmonTbody = el('cg-conmon-tbody');
+            if (conmonTbody && data.conmon_events) {
+                conmonTbody.innerHTML = data.conmon_events.map(ev => `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                        <td style="padding: 10px; font-weight: bold; color: #fff;">${ev.event_name}</td>
+                        <td style="padding: 10px; color: var(--text-secondary);">${ev.frequency}</td>
+                        <td style="padding: 10px; color: var(--text-secondary);">${ev.last_run}</td>
+                        <td style="padding: 10px;">
+                            <span style="padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; background: ${ev.status === 'PASS' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)'}; color: ${ev.status === 'PASS' ? '#10b981' : '#f59e0b'};">
+                                ${ev.status}
+                            </span>
+                        </td>
+                        <td style="padding: 10px; color: var(--text-secondary);">${ev.description}</td>
+                    </tr>
+                `).join('');
+            }
+            
+            // Populate POA&M Weaknesses
+            const poamTbody = el('cg-poam-tbody');
+            if (poamTbody && data.poams) {
+                poamTbody.innerHTML = data.poams.map(p => `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                        <td style="padding: 10px; font-weight: bold; color: var(--accent-teal);">${p.poam_id}</td>
+                        <td style="padding: 10px; color: #fff; font-weight: bold;">${p.title}</td>
+                        <td style="padding: 10px; color: var(--text-secondary);">${p.weakness_description}</td>
+                        <td style="padding: 10px; color: var(--text-secondary);">${p.owner}</td>
+                        <td style="padding: 10px; color: var(--text-secondary);">${p.scheduled_completion}</td>
+                        <td style="padding: 10px;">
+                            <span style="padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3);">
+                                ${p.status}
+                            </span>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+            
+            // Populate Risk Register
+            const risksTbody = el('cg-risks-tbody');
+            if (risksTbody && data.risks) {
+                risksTbody.innerHTML = data.risks.map(r => `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                        <td style="padding: 10px; font-weight: bold; color: var(--accent-teal);">${r.risk_id}</td>
+                        <td style="padding: 10px; color: #fff; font-weight: bold;">${r.title}</td>
+                        <td style="padding: 10px; color: #ef4444; font-weight: bold;">${r.severity}</td>
+                        <td style="padding: 10px; color: var(--text-secondary);">${r.likelihood}</td>
+                        <td style="padding: 10px; color: var(--text-secondary);">${r.mitigation}</td>
+                        <td style="padding: 10px;">
+                            <span style="padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);">
+                                ${r.acceptance_status}
+                            </span>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+            
+            // Populate Evidence Vault
+            const evidenceTbody = el('cg-evidence-tbody');
+            if (evidenceTbody && data.evidence) {
+                evidenceTbody.innerHTML = data.evidence.map(ev => `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                        <td style="padding: 10px; font-weight: bold; color: var(--accent-teal);">${ev.evidence_id}</td>
+                        <td style="padding: 10px; color: #fff; font-weight: bold;">${ev.name}</td>
+                        <td style="padding: 10px; font-family: monospace; color: var(--text-secondary);">${ev.path}</td>
+                        <td style="padding: 10px; font-family: monospace; color: var(--accent-teal);">${ev.hash}</td>
+                        <td style="padding: 10px; color: var(--text-secondary);">${ev.timestamp}</td>
+                    </tr>
+                `).join('');
+            }
+            
+            // Populate Zero Trust Crosswalk
+            const ztTbody = el('cg-zero-trust-tbody');
+            if (ztTbody && data.crosswalks) {
+                ztTbody.innerHTML = data.crosswalks.map(x => `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                        <td style="padding: 10px; font-weight: bold; color: var(--accent-teal);">${x.control_id}</td>
+                        <td style="padding: 10px; color: #fff; font-weight: bold;">${x.zt_pillar}</td>
+                        <td style="padding: 10px; color: var(--text-secondary);">${x.zt_capability}</td>
+                        <td style="padding: 10px; color: var(--text-secondary); font-family: monospace;">${x.csf_category}</td>
+                    </tr>
+                `).join('');
+            }
+            
+            // Fetch and Populate Audit Reports
+            const reportsRes = await fetch('/api/v1/cybergov/reports-bundle');
+            if (reportsRes.ok) {
+                const reportsData = await reportsRes.json();
+                const reportsGrid = el('cg-reports-grid');
+                if (reportsGrid) {
+                    reportsGrid.innerHTML = Object.entries(reportsData).map(([key, value]) => `
+                        <div class="card" style="padding: 15px; background: rgba(0,0,0,0.15); border: 1px solid var(--border-glass); display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <h4 style="font-size: 13px; font-weight: bold; color: #fff; margin-bottom: 6px;">${value.title || key}</h4>
+                                <p style="font-size: 11px; color: var(--text-secondary); line-height: 1.4;">Machine-readable compliance log mapping targets, continuous monitoring milestones, and checklists.</p>
+                            </div>
+                            <button class="btn btn-secondary btn-cg-download" data-report="${key}" style="padding: 6px 12px; font-size: 11px; font-weight: bold; margin-top: 12px; align-self: flex-start;">
+                                Export JSON Report
+                            </button>
+                        </div>
+                    `).join('');
+                    
+                    // Bind click handlers to report buttons
+                    document.querySelectorAll('.btn-cg-download').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            const reportKey = btn.getAttribute('data-report');
+                            const reportObj = reportsData[reportKey];
+                            
+                            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(reportObj, null, 2));
+                            const downloadAnchor = document.createElement('a');
+                            downloadAnchor.setAttribute("href", dataStr);
+                            downloadAnchor.setAttribute("download", `cybergov_report_${reportKey}.json`);
+                            document.body.appendChild(downloadAnchor);
+                            downloadAnchor.click();
+                            downloadAnchor.remove();
+                        });
+                    });
+                }
+            }
+        } catch (err) {
+            console.error('Failed to load CyberGov view:', err);
         }
     }
 
