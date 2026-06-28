@@ -1286,6 +1286,17 @@ DASHBOARD_HTML = r"""<!DOCTYPE html>
   <!-- Main -->
   <main class="main">
 
+    <!-- Global Alarm Banner -->
+    <div id="operator-global-alarm" style="display:none; background:rgba(244,63,94,0.15); border:1px solid var(--red); border-radius:var(--radius); padding:16px; margin-bottom:20px; box-shadow:0 8px 32px var(--shadow)">
+      <div style="display:flex; align-items:center; gap:12px">
+        <span style="font-size:24px">🚨</span>
+        <div>
+          <div id="alarm-title" style="font-weight:700; color:var(--red); font-size:14px; text-transform:uppercase; letter-spacing:0.05em">SYSTEM ALARM ACTIVE</div>
+          <div id="alarm-desc" style="font-size:12px; color:var(--text); margin-top:4px">Degradation or drift detected in continuous monitoring.</div>
+        </div>
+      </div>
+    </div>
+
     <!-- ===== OVERVIEW ===== -->
     <div class="page active" id="page-overview">
       <div class="page-header">
