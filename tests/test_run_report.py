@@ -435,8 +435,8 @@ class TestRunWritesReport:
         class MockCrewOutput:
             def __init__(self):
                 self.tasks_output = [
-                    MockTaskOutput("map_assets", "Swarm Asset Mapper", "assets mapped"),
-                    MockTaskOutput("design_dag", "Swarm Process Architect", "dag designed")
+                    MockTaskOutput("map_assets", "Chief Information Officer (CIO)", "assets mapped"),
+                    MockTaskOutput("design_dag", "Chief Operating Officer (COO)", "dag designed")
                 ]
                 self.token_usage = MockTokenUsage()
 
@@ -475,8 +475,8 @@ class TestRunWritesReport:
         assert metrics["total_token_usage"]["total_tokens"] == 150
         assert "tasks" in metrics
         assert len(metrics["tasks"]) == 2
-        assert metrics["tasks"][0]["agent_role"] == "Swarm Asset Mapper"
-        assert metrics["tasks"][0]["agent_key"] == "asset_mapper"
+        assert metrics["tasks"][0]["agent_role"] == "Chief Information Officer (CIO)"
+        assert metrics["tasks"][0]["agent_key"] == "cio"
         assert metrics["tasks"][0]["task_class"] == "fast_classification"
         assert metrics["tasks"][0]["tokens"] == 75
         assert metrics["tasks"][0]["artifact_result"] == "asset_map.md"

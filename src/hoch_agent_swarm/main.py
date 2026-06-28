@@ -152,24 +152,33 @@ def run():
         
         tasks_metrics = []
         role_to_key = {
-            "Swarm Asset Mapper": "asset_mapper",
-            "Swarm Process Architect": "swarm_architect",
-            "Swarm Agent Combinator": "agent_combinator",
-            "Swarm Security Auditor": "security_operator",
-            "Swarm Execution Scheduler": "execution_planner",
-            "Release Synthesis Director": "synthesis_director",
-            "Antigravity Integration Operator": "antigravity_integration_operator",
+            "Chief Executive Officer (CEO)": "ceo",
+            "Chief Financial Officer (CFO)": "cfo",
+            "Chief Operating Officer (COO)": "coo",
+            "Chief Information Officer (CIO)": "cio",
+            "Chief Marketing Officer (CMO)": "cmo",
+            "Chief Revenue Officer (CRO)": "cro",
         }
         
-        task_to_artifact_path = {
-            "Swarm Asset Mapper": "artifacts/research/asset_map.md",
-            "Swarm Process Architect": "",
-            "Swarm Agent Combinator": "",
-            "Swarm Security Auditor": "artifacts/security_reviews/security_audit_report.md",
-            "Swarm Execution Scheduler": "artifacts/reports/execution_plan.md",
-            "Release Synthesis Director": "artifacts/reports/release_packet.md",
-            "Antigravity Integration Operator": "artifacts/antigravity/antigravity_execution_plan.md",
-        }
+        task_configs = [
+            {"class": "fast_classification", "artifact": "artifacts/research/asset_map.md"},
+            {"class": "planning_docs", "artifact": ""},
+            {"class": "coding_repair", "artifact": ""},
+            {"class": "security_audit", "artifacts/security_reviews/security_audit_report.md" if True else "": "artifacts/security_reviews/security_audit_report.md"},
+            {"class": "planning_docs", "artifact": "artifacts/reports/execution_plan.md"},
+            {"class": "planning_docs", "artifact": "artifacts/reports/release_packet.md"},
+            {"class": "planning_docs", "artifact": "artifacts/antigravity/antigravity_execution_plan.md"},
+        ]
+        # Adjust task configs mapping helper to ensure dict syntax is clean
+        task_configs = [
+            {"class": "fast_classification", "artifact": "artifacts/research/asset_map.md"},
+            {"class": "planning_docs", "artifact": ""},
+            {"class": "coding_repair", "artifact": ""},
+            {"class": "security_audit", "artifact": "artifacts/security_reviews/security_audit_report.md"},
+            {"class": "planning_docs", "artifact": "artifacts/reports/execution_plan.md"},
+            {"class": "planning_docs", "artifact": "artifacts/reports/release_packet.md"},
+            {"class": "planning_docs", "artifact": "artifacts/antigravity/antigravity_execution_plan.md"},
+        ]
         
         total_runtime = 0.0
         if report.started_at:
@@ -197,22 +206,15 @@ def run():
                 except Exception:
                     pass
 
-        agent_to_class = {
-            "asset_mapper": "fast_classification",
-            "swarm_architect": "planning_docs",
-            "agent_combinator": "coding_repair",
-            "security_operator": "security_audit",
-            "execution_planner": "planning_docs",
-            "synthesis_director": "planning_docs",
-            "antigravity_integration_operator": "planning_docs",
-        }
-
         for i, t_out in enumerate(getattr(crew_output, "tasks_output", None) or []):
             agent_role = getattr(t_out, "agent", "unknown").strip()
             agent_key = role_to_key.get(agent_role, "unknown")
             resolved = ModelRouter.resolved_models.get(agent_key, {"model": "unknown", "fallback": False})
             
-            artifact_path = task_to_artifact_path.get(agent_role, "")
+            cfg = task_configs[i] if i < len(task_configs) else {"class": "unknown", "artifact": ""}
+            artifact_path = cfg["artifact"]
+            task_class = cfg["class"]
+            
             artifact_quality = "NOT_APPLICABLE"
             if artifact_path:
                 abs_path = os.path.abspath(artifact_path)
@@ -232,7 +234,7 @@ def run():
                 "task_name": getattr(t_out, "name", None) or f"task_{i+1}",
                 "agent_role": agent_role,
                 "agent_key": agent_key,
-                "task_class": agent_to_class.get(agent_key, "unknown"),
+                "task_class": task_class,
                 "model": resolved["model"],
                 "fallback_event": resolved["fallback"],
                 "runtime_seconds_estimate": int(avg_task_duration),

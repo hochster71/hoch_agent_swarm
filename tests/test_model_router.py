@@ -53,7 +53,7 @@ routing:
     primary: "ollama/mistral:7b"
     fallback: "ollama/llama3.1:8b"
 agents:
-  asset_mapper: "fast_classification"
+  cio: "fast_classification"
 """
     config_dir = tmp_path / "config"
     config_dir.mkdir()
@@ -63,7 +63,7 @@ agents:
     # Patch Path to point to tmp_path
     with patch.object(Path, "exists", return_value=True), \
          patch("builtins.open", MagicMock(return_value=open(config_file))):
-        llm = ModelRouter.resolve_agent_llm("asset_mapper")
+        llm = ModelRouter.resolve_agent_llm("cio")
         assert llm.model == "mistral:7b"
 
 def test_resolve_agent_llm_fallback_when_primary_missing(tmp_path, monkeypatch):
@@ -77,7 +77,7 @@ routing:
     primary: "ollama/mistral:7b"
     fallback: "ollama/llama3.1:8b"
 agents:
-  asset_mapper: "fast_classification"
+  cio: "fast_classification"
 """
     config_dir = tmp_path / "config"
     config_dir.mkdir()
@@ -87,7 +87,7 @@ agents:
     # Patch Path to point to tmp_path
     with patch.object(Path, "exists", return_value=True), \
          patch("builtins.open", MagicMock(return_value=open(config_file))):
-        llm = ModelRouter.resolve_agent_llm("asset_mapper")
+        llm = ModelRouter.resolve_agent_llm("cio")
         assert llm.model == "llama3.1:8b"
 
 def test_resolve_agent_llm_env_default_when_all_missing(tmp_path, monkeypatch):
@@ -102,7 +102,7 @@ routing:
     primary: "ollama/mistral:7b"
     fallback: "ollama/llama3.1:8b"
 agents:
-  asset_mapper: "fast_classification"
+  cio: "fast_classification"
 """
     config_dir = tmp_path / "config"
     config_dir.mkdir()
@@ -112,5 +112,5 @@ agents:
     # Patch Path to point to tmp_path
     with patch.object(Path, "exists", return_value=True), \
          patch("builtins.open", MagicMock(return_value=open(config_file))):
-        llm = ModelRouter.resolve_agent_llm("asset_mapper")
+        llm = ModelRouter.resolve_agent_llm("cio")
         assert llm.model == "default-model:latest"

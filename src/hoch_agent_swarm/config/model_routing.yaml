@@ -19,10 +19,9 @@ routing:
     fallback: "ollama/gemma2:2b"
 
 agents:
-  asset_mapper: "fast_classification"
-  swarm_architect: "planning_docs"
-  agent_combinator: "coding_repair"
-  security_operator: "security_audit"
-  execution_planner: "planning_docs"
-  synthesis_director: "planning_docs"
-  antigravity_integration_operator: "planning_docs"
+  ceo: "planning_docs"
+  cfo: "security_audit"
+  coo: "planning_docs"
+  cio: "coding_repair"
+  cmo: "planning_docs"
+  cro: "planning_docs"

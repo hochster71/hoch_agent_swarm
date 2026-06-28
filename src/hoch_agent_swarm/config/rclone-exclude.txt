@@ -1,0 +1,29 @@
+# Safe Model Storage Exclude List
+# Generated: 2026-06-28T11:18:02.174669Z
+# Active Routing Models: ollama/gemma2:2b, ollama/llama3.1:8b, ollama/mistral:7b
+#
+# Usage with rclone:
+#   rclone sync ~/.ollama/models/ remote:backup/models/ --exclude-from rclone-exclude.txt
+#
+
+# Protect manifest directories and active tags
+/manifests/registry.ollama.ai/library/gemma2/2b
+/manifests/registry.ollama.ai/library/llama3.1/8b
+/manifests/registry.ollama.ai/library/mistral/7b
+
+# Protect underlying model weights and config blobs
+/blobs/sha256-097a36493f718248845233af1d3fefe7a303f864fae13bc31a3a9704229378ca
+/blobs/sha256-0ba8f0e314b4264dfd19df045cde9d4c394a52474bf92ed6a3de22a4ca31a177
+/blobs/sha256-1064e17101bdd2460dd5c4e03e4f5cc1b38a4dee66084dc91faba294ccb64a92
+/blobs/sha256-1ff5b64b61b9a63146475a24f70d3ca2fd6fdeec44247987163479968896fc0b
+/blobs/sha256-2490e7468436707d5156d7959cf3c6341cc46ee323084cfa3fcf30fe76e397dc
+/blobs/sha256-43070e2d4e532684de521b885f385d0841030efa2b1a20bafb76133a5e1379c1
+/blobs/sha256-455f34728c9b5dd3376378bfb809ee166c145b0b4c1f1a6feca069055066ef9a
+/blobs/sha256-56bb8bd477a519ffa694fc449c2413c6f0e1d3b1c88fa7e3c9d88d3ae49d4dcb
+/blobs/sha256-667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29
+/blobs/sha256-7462734796d67c40ecec2ca98eddf970e171dbb6b370e43fd633ee75b69abe1b
+/blobs/sha256-948af2743fc78a328dcb3b0f5a31b3d75f415840fdb699e8b1235978392ecf85
+/blobs/sha256-e0a42594d802e5d31cdc786deb4823edb8adff66094d49de8fffe976d753e348
+/blobs/sha256-e18ad7af7efbfaecd8525e356861b84c240ece3a3effeb79d2aa7c0f258f71bd
+/blobs/sha256-ed11eda7790d05b49395598a42b155812b17e263214292f7b87d15e14003d337
+/blobs/sha256-f5074b1221da0f5a2910d33b642efa5b9eb58cfdddca1c79e16d7ad28aa2b31f

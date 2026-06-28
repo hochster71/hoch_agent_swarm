@@ -1,8 +1,7 @@
-from crewai import Agent, Crew, Process, Task, LLM
+from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
 from hoch_agent_swarm.model_router import ModelRouter
-import os
 
 
 @CrewBase
@@ -13,58 +12,50 @@ class HochAgentSwarm():
     tasks: list[Task]
 
     @agent
-    def asset_mapper(self) -> Agent:
+    def ceo(self) -> Agent:
         return Agent(
-            config=self.agents_config['asset_mapper'], # type: ignore[index]
-            llm=ModelRouter.resolve_agent_llm('asset_mapper'),
+            config=self.agents_config['ceo'], # type: ignore[index]
+            llm=ModelRouter.resolve_agent_llm('ceo'),
             verbose=True
         )
 
     @agent
-    def swarm_architect(self) -> Agent:
+    def cfo(self) -> Agent:
         return Agent(
-            config=self.agents_config['swarm_architect'], # type: ignore[index]
-            llm=ModelRouter.resolve_agent_llm('swarm_architect'),
+            config=self.agents_config['cfo'], # type: ignore[index]
+            llm=ModelRouter.resolve_agent_llm('cfo'),
             verbose=True
         )
 
     @agent
-    def agent_combinator(self) -> Agent:
+    def coo(self) -> Agent:
         return Agent(
-            config=self.agents_config['agent_combinator'], # type: ignore[index]
-            llm=ModelRouter.resolve_agent_llm('agent_combinator'),
+            config=self.agents_config['coo'], # type: ignore[index]
+            llm=ModelRouter.resolve_agent_llm('coo'),
             verbose=True
         )
 
     @agent
-    def security_operator(self) -> Agent:
+    def cio(self) -> Agent:
         return Agent(
-            config=self.agents_config['security_operator'], # type: ignore[index]
-            llm=ModelRouter.resolve_agent_llm('security_operator'),
+            config=self.agents_config['cio'], # type: ignore[index]
+            llm=ModelRouter.resolve_agent_llm('cio'),
             verbose=True
         )
 
     @agent
-    def execution_planner(self) -> Agent:
+    def cmo(self) -> Agent:
         return Agent(
-            config=self.agents_config['execution_planner'], # type: ignore[index]
-            llm=ModelRouter.resolve_agent_llm('execution_planner'),
+            config=self.agents_config['cmo'], # type: ignore[index]
+            llm=ModelRouter.resolve_agent_llm('cmo'),
             verbose=True
         )
 
     @agent
-    def synthesis_director(self) -> Agent:
+    def cro(self) -> Agent:
         return Agent(
-            config=self.agents_config['synthesis_director'], # type: ignore[index]
-            llm=ModelRouter.resolve_agent_llm('synthesis_director'),
-            verbose=True
-        )
-
-    @agent
-    def antigravity_integration_operator(self) -> Agent:
-        return Agent(
-            config=self.agents_config['antigravity_integration_operator'], # type: ignore[index]
-            llm=ModelRouter.resolve_agent_llm('antigravity_integration_operator'),
+            config=self.agents_config['cro'], # type: ignore[index]
+            llm=ModelRouter.resolve_agent_llm('cro'),
             verbose=True
         )
 

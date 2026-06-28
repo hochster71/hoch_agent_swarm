@@ -2,7 +2,7 @@
 Smoke tests for Hoch Agent Swarm workflow integrity.
 
 These tests verify:
-1. The crew can be instantiated (7 agents, 7 tasks wired correctly).
+1. The crew can be instantiated (6 agents, 7 tasks wired correctly).
 2. Durable artifact output paths are configured on the right tasks.
 3. Context dependencies are declared between tasks.
 4. After a real run, artifact files exist, are non-empty, and do not
@@ -67,9 +67,9 @@ class TestCrewInstantiation:
         self.swarm = HochAgentSwarm()
         self.crew = self.swarm.crew()
 
-    def test_crew_has_seven_agents(self):
-        assert len(self.crew.agents) == 7, (
-            f"Expected 7 agents, got {len(self.crew.agents)}"
+    def test_crew_has_six_agents(self):
+        assert len(self.crew.agents) == 6, (
+            f"Expected 6 agents, got {len(self.crew.agents)}"
         )
 
     def test_crew_has_seven_tasks(self):
@@ -80,13 +80,12 @@ class TestCrewInstantiation:
     def test_expected_agent_roles_present(self):
         roles = [a.role for a in self.crew.agents]
         for expected in [
-            "Swarm Asset Mapper",
-            "Swarm Process Architect",
-            "Swarm Agent Combinator",
-            "Swarm Security Auditor",
-            "Swarm Execution Scheduler",
-            "Release Synthesis Director",
-            "Antigravity Integration Operator",
+            "Chief Executive Officer (CEO)",
+            "Chief Financial Officer (CFO)",
+            "Chief Operating Officer (COO)",
+            "Chief Information Officer (CIO)",
+            "Chief Marketing Officer (CMO)",
+            "Chief Revenue Officer (CRO)",
         ]:
             assert any(expected in r for r in roles), (
                 f"Agent role '{expected}' not found in crew. Found: {roles}"
@@ -139,7 +138,7 @@ class TestCrewInstantiation:
         context dependency so downstream outputs are formally passed through.
         """
         # map_assets_task is the root — it has no prior task to depend on
-        ROOT_TASK_AGENT_ROLE = "Swarm Asset Mapper"
+        ROOT_TASK_AGENT_ROLE = "Chief Information Officer (CIO)"
 
         non_root_tasks = [
             t for t in self.crew.tasks

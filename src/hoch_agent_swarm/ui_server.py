@@ -641,6 +641,71 @@ DASHBOARD_HTML = r"""<!DOCTYPE html>
         <div class="card-header">⚡ Latest Run — Canonical Artifacts</div>
         <div id="overview-artifacts"><div class="spinner"></div></div>
       </div>
+      <div class="card" style="margin-top:24px">
+        <div class="card-header">👥 C-Suite Swarm Leadership Team</div>
+        <div style="padding:20px;display:grid;grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));gap:16px" id="csuite-roster">
+          <div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--radius);padding:16px;backdrop-filter:blur(12px)">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <span style="font-size:20px">👑</span>
+              <div>
+                <div style="font-size:13px;font-weight:600">Chief Executive Officer</div>
+                <div style="font-size:11px;color:var(--accent);font-family:'JetBrains Mono',monospace">ceo</div>
+              </div>
+            </div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.4">Leads the company, drives strategy and growth, represents the company, and oversees overall platform integration.</div>
+          </div>
+          <div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--radius);padding:16px;backdrop-filter:blur(12px)">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <span style="font-size:20px">⚖️</span>
+              <div>
+                <div style="font-size:13px;font-weight:600">Chief Financial Officer</div>
+                <div style="font-size:11px;color:var(--accent);font-family:'JetBrains Mono',monospace">cfo</div>
+              </div>
+            </div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.4">Manages platform risk, tracks execution performance, ensures stability, and enforces security compliance.</div>
+          </div>
+          <div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--radius);padding:16px;backdrop-filter:blur(12px)">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <span style="font-size:20px">⚙️</span>
+              <div>
+                <div style="font-size:13px;font-weight:600">Chief Operating Officer</div>
+                <div style="font-size:11px;color:var(--accent);font-family:'JetBrains Mono',monospace">coo</div>
+              </div>
+            </div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.4">Oversees daily operations, coordinates process execution, and designs multi-agent task structures.</div>
+          </div>
+          <div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--radius);padding:16px;backdrop-filter:blur(12px)">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <span style="font-size:20px">🔌</span>
+              <div>
+                <div style="font-size:13px;font-weight:600">Chief Information Officer</div>
+                <div style="font-size:11px;color:var(--accent);font-family:'JetBrains Mono',monospace">cio</div>
+              </div>
+            </div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.4">Defines tech strategy, audits compute resources, and dynamically assembles compliant agent configurations.</div>
+          </div>
+          <div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--radius);padding:16px;backdrop-filter:blur(12px)">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <span style="font-size:20px">📢</span>
+              <div>
+                <div style="font-size:13px;font-weight:600">Chief Marketing Officer</div>
+                <div style="font-size:11px;color:var(--accent);font-family:'JetBrains Mono',monospace">cmo</div>
+              </div>
+            </div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.4">Manages brand positioning, sets voice/tone, and synthesizes individual task outputs into release candidate packets.</div>
+          </div>
+          <div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--radius);padding:16px;backdrop-filter:blur(12px)">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <span style="font-size:20px">📈</span>
+              <div>
+                <div style="font-size:13px;font-weight:600">Chief Revenue Officer</div>
+                <div style="font-size:11px;color:var(--accent);font-family:'JetBrains Mono',monospace">cro</div>
+              </div>
+            </div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.4">Optimizes sales and execution pipeline performance, sets targets, and allocates resources to high-yield opportunities.</div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- ===== CREW RUNS ===== -->
@@ -855,6 +920,22 @@ async function showRunDetail(tsDir) {
         <span style="font-size:13px">${s.name}</span>
         <span style="font-size:12px;color:var(--muted);margin-left:auto">${s.detail||''}</span>
       </div>`).join('');
+    const tasks = ((rr.metrics || {}).tasks || []).map(t => `
+      <div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font-weight:600;font-size:13px">${escapeHtml(t.task_name).replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</span>
+          <span class="badge ${t.status === 'success' ? 'pass' : 'fail'}">${t.status}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:8px;font-size:11px;color:var(--muted)">
+          <div><strong>Agent:</strong> ${escapeHtml(t.agent_role)} (<span class="mono">${escapeHtml(t.agent_key)}</span>)</div>
+          <div><strong>Model:</strong> <span class="mono">${escapeHtml(t.model)}</span></div>
+          <div><strong>Class:</strong> <span class="mono">${escapeHtml(t.task_class)}</span></div>
+          <div><strong>Tokens:</strong> ${t.tokens}</div>
+          <div><strong>Artifact:</strong> <span class="mono">${escapeHtml(t.artifact_result)}</span></div>
+          <div><strong>Quality:</strong> ${badge(t.artifact_quality)}</div>
+        </div>
+      </div>
+    `).join('');
     content.innerHTML = `
       <div class="detail-title">🚀 Run — ${tsDir}</div>
       <div class="kv-grid">
@@ -865,6 +946,7 @@ async function showRunDetail(tsDir) {
         <div class="kv-item"><div class="kv-label">CrewAI</div><div class="kv-value">${rr.crewai_version||'—'}</div></div>
         <div class="kv-item"><div class="kv-label">Gate Verdict</div><div class="kv-value">${badge(gp.verdict||'—')}</div></div>
       </div>
+      ${tasks ? `<div class="section-title">Swarm Execution & Tasks Breakdown</div>${tasks}` : ''}
       ${artifacts ? `<div class="section-title">Canonical Artifacts</div>${artifacts}` : ''}
       ${gateSteps ? `<div class="section-title">Quality Gate Steps</div>${gateSteps}` : ''}
     `;

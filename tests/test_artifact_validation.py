@@ -61,14 +61,14 @@ crew running locally with Ollama llama3.1:8b.
 
 ## Agent Configuration Review
 
-All seven agents have allow_delegation set to false and max_iter set to 3.
+All six agents have allow_delegation set to false and max_iter set to 3.
 No agent is configured to spawn additional subagents dynamically.
 
 ## Tool Access Verification
 
 Each agent operates within the tool access tier defined in the manifest:
-- asset_mapper: read_only
-- security_operator: admin_gated
+- cio: read_only
+- cfo: admin_gated
 
 ## Secret Scrubbing Status
 

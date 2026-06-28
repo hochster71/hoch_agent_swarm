@@ -21,58 +21,50 @@ human_approval_required_for:
 
 # Hyper-Agent Archetypes
 archetypes:
-  asset_mapper:
-    domain: ops
-    mode: executor
-    tool_access: read_only
-    memory_scope: task_local
-    risk_level: low
-    description: "Maps discovered network nodes and physical cluster layout representations."
-
-  swarm_architect:
-    domain: strategy
-    mode: planner
-    tool_access: read_only
-    memory_scope: project_local
-    risk_level: medium
-    description: "Designs topological graphs and multi-agent coordination architectures."
-
-  agent_combinator:
-    domain: code
-    mode: executor
-    tool_access: write_gated
-    memory_scope: task_local
-    risk_level: medium
-    description: "Assembles and instantiates target agent configurations."
-
-  security_operator:
-    domain: security
-    mode: reviewer
-    tool_access: admin_gated
-    memory_scope: project_local
-    risk_level: high
-    description: "Audits command executions, file alterations, and network communication."
-
-  execution_planner:
-    domain: ops
-    mode: planner
-    tool_access: write_gated
-    memory_scope: project_local
-    risk_level: medium
-    description: "Schedules and structures multi-stage task pipelines."
-
-  synthesis_director:
-    domain: strategy
-    mode: synthesizer
-    tool_access: read_only
-    memory_scope: long_term
-    risk_level: low
-    description: "Gathers execution records and generates release candidate packets."
-
-  antigravity_integration_operator:
+  ceo:
     domain: product
     mode: synthesizer
     tool_access: write_gated
     memory_scope: project_local
     risk_level: medium
-    description: "Converts swarm runtime data and task outcomes into Antigravity artifacts."
+    description: "Chief Executive Officer. Leads the swarm, drives strategy, and oversees final integration plan."
+
+  cfo:
+    domain: security
+    mode: reviewer
+    tool_access: admin_gated
+    memory_scope: project_local
+    risk_level: high
+    description: "Chief Financial Officer. Ensures platform stability, tracks performance, and manages security audit risk."
+
+  coo:
+    domain: strategy
+    mode: planner
+    tool_access: read_only
+    memory_scope: project_local
+    risk_level: medium
+    description: "Chief Operating Officer. Designs topological graphs, coordinates execution, and manages daily operations."
+
+  cio:
+    domain: ops
+    mode: executor
+    tool_access: read_only
+    memory_scope: task_local
+    risk_level: low
+    description: "Chief Information Officer. Maps compute resources and dynamic leases, and dynamically assembles compliant agent configurations."
+
+  cmo:
+    domain: strategy
+    mode: synthesizer
+    tool_access: read_only
+    memory_scope: long_term
+    risk_level: low
+    description: "Chief Marketing Officer. Synthesizes individual task reports and represents the brand across release candidates."
+
+  cro:
+    domain: ops
+    mode: planner
+    tool_access: write_gated
+    memory_scope: project_local
+    risk_level: medium
+    description: "Chief Revenue Officer. Schedules execution pipelines, manages targets, and optimizes process routing."
