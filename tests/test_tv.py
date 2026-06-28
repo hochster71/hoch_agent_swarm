@@ -88,3 +88,53 @@ def test_tv_epg_and_diagnostics():
     ghealth = resp.json()
     assert isinstance(ghealth, dict)
 
+def test_tv_new_endpoints_observability():
+    # Resolve a valid channel ID from the playlist dynamically
+    resp_chan = client.get("/api/tv/channels")
+    assert resp_chan.status_code == 200
+    channels = resp_chan.json()
+    assert len(channels) > 0
+    channel_id = channels[0]["id"]
+
+    # 1. Timeline EPG scheduler grid
+    resp = client.get("/api/tv/timeline")
+    assert resp.status_code == 200
+    timeline = resp.json()
+    assert isinstance(timeline, list)
+    if len(timeline) > 0:
+        assert "name" in timeline[0]
+        assert "programs" in timeline[0]
+        
+    # 2. Cache status hit/miss counter
+    resp = client.get("/api/tv/cache/status")
+    assert resp.status_code == 200
+    cache_status = resp.json()
+    assert "playlist" in cache_status
+    assert "epg" in cache_status
+    assert "hitCount" in cache_status["playlist"]
+    assert "missCount" in cache_status["playlist"]
+    assert "status" in cache_status["playlist"]
+    
+    # 3. Security Audit Credential Scanning
+    resp = client.get("/api/tv/security-audit")
+    assert resp.status_code == 200
+    audit = resp.json()
+    assert audit["status"] == "SAFE"
+    assert "scannedFiles" in audit
+    assert "findings" in audit
+    assert len(audit["findings"]) == 0
+    
+    # 4. Diagnostics History endpoint
+    resp = client.get(f"/api/tv/channel/{channel_id}/test/history")
+    assert resp.status_code == 200
+    history = resp.json()
+    assert isinstance(history, list)
+    # Perform a test to populate history
+    resp_test = client.post(f"/api/tv/channel/{channel_id}/test")
+    assert resp_test.status_code == 200
+    resp_hist2 = client.get(f"/api/tv/channel/{channel_id}/test/history")
+    assert resp_hist2.status_code == 200
+    assert len(resp_hist2.json()) > 0
+
+
+
