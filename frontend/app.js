@@ -4244,6 +4244,7 @@ import Hls from 'hls.js';
         await runTvHealthCheck();
         await loadTvGroups();
         await loadTvChannels();
+        await loadGroupHealth();
     }
 
     async function runTvHealthCheck() {
@@ -4305,7 +4306,11 @@ import Hls from 'hls.js';
             const groups = await res.json();
             tvGroups = groups;
             
-            filterSelect.innerHTML = '<option value="ALL">All Categories</option>';
+            filterSelect.innerHTML = `
+                <option value="ALL">All Categories</option>
+                <option value="FAVORITES">⭐ Favorites</option>
+                <option value="RECENTS">⏰ Recent Channels</option>
+            `;
             groups.forEach(g => {
                 const opt = document.createElement('option');
                 opt.value = g;
@@ -4345,6 +4350,161 @@ import Hls from 'hls.js';
         }
     }
 
+    let tvFavorites = JSON.parse(localStorage.getItem('hoch-tv-favorites') || '[]');
+    let tvRecents = JSON.parse(localStorage.getItem('hoch-tv-recents') || '[]');
+    let currentPlayingChannel = null;
+
+    function redactFrontendUrl(url) {
+        if (!url) return '';
+        try {
+            return url.replace(/([?&])(token|auth|pass|key|secret|user|w|g)=([^&#]*)/gi, '$1$2=[REDACTED]');
+        } catch (e) {
+            return url;
+        }
+    }
+
+    async function loadGroupHealth() {
+        const healthList = el('tv-groups-health-list');
+        if (!healthList) return;
+        
+        try {
+            const res = await fetch('/api/tv/groups/health');
+            if (!res.ok) throw new Error('Failed to load group health');
+            const data = await res.json();
+            
+            healthList.innerHTML = '';
+            for (const g in data) {
+                const info = data[g];
+                const badgeColor = info.status === 'healthy' ? '#10b981' : 
+                                  info.status === 'degraded' ? '#eab308' : '#ef4444';
+                                  
+                const div = document.createElement('div');
+                div.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 4px 6px; background: rgba(0,0,0,0.15); border-radius: 3px;';
+                div.innerHTML = `
+                    <span style="color: #e4e4e7; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px;">${escapeHtml(g)}</span>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <span style="font-size: 10px; color: var(--text-secondary);">${info.healthyCount}/${info.total} OK</span>
+                        <span style="width: 8px; height: 8px; border-radius: 50%; background: ${badgeColor}; display: inline-block;" title="Status: ${info.status}"></span>
+                    </div>
+                `;
+                healthList.appendChild(div);
+            }
+        } catch (err) {
+            healthList.innerHTML = `<div style="color: #ef4444; font-size: 10px;">Failed to load health: ${escapeHtml(err.message)}</div>`;
+        }
+    }
+
+    function toggleFavorite(channelId) {
+        const idx = tvFavorites.indexOf(channelId);
+        if (idx === -1) {
+            tvFavorites.push(channelId);
+            logTvDiag(`Added channel to Favorites: ${channelId}`);
+        } else {
+            tvFavorites.splice(idx, 1);
+            logTvDiag(`Removed channel from Favorites: ${channelId}`);
+        }
+        localStorage.setItem('hoch-tv-favorites', JSON.stringify(tvFavorites));
+        
+        const favBtn = el('tv-btn-favorite');
+        if (favBtn) {
+            const isFav = tvFavorites.includes(channelId);
+            favBtn.querySelector('svg').setAttribute('fill', isFav ? '#f1c40f' : 'none');
+            favBtn.style.color = isFav ? '#f1c40f' : '#a1a1aa';
+        }
+        
+        renderTvChannels(tvChannels);
+    }
+
+    function addToRecents(channelId) {
+        const idx = tvRecents.indexOf(channelId);
+        if (idx !== -1) {
+            tvRecents.splice(idx, 1);
+        }
+        tvRecents.unshift(channelId);
+        if (tvRecents.length > 20) {
+            tvRecents.pop();
+        }
+        localStorage.setItem('hoch-tv-recents', JSON.stringify(tvRecents));
+    }
+
+    async function loadEpgSchedule(channelId) {
+        const epgContainer = el('tv-epg-schedule');
+        if (!epgContainer) return;
+        epgContainer.innerHTML = '<div style="color: var(--text-secondary); font-style: italic;">Loading schedule...</div>';
+        
+        try {
+            const res = await fetch(`/api/tv/channel/${channelId}/epg`);
+            if (!res.ok) throw new Error('EPG fetch failed');
+            const data = await res.json();
+            
+            if (!data || data.length === 0) {
+                epgContainer.innerHTML = '<div style="color: var(--text-secondary); font-style: italic;">No program guide available.</div>';
+                return;
+            }
+            
+            epgContainer.innerHTML = '';
+            data.forEach(p => {
+                const startStr = formatEpgTime(p.start);
+                const stopStr = formatEpgTime(p.stop);
+                
+                const div = document.createElement('div');
+                div.style.cssText = 'background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px 10px;';
+                div.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                        <span style="font-size: 11px; font-weight: bold; color: var(--accent-teal);">${escapeHtml(startStr)} - ${escapeHtml(stopStr)}</span>
+                    </div>
+                    <div style="font-size: 12px; font-weight: bold; color: #fff;">${escapeHtml(p.title)}</div>
+                    <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px; line-height: 1.4;">${escapeHtml(p.description)}</div>
+                `;
+                epgContainer.appendChild(div);
+            });
+        } catch (err) {
+            epgContainer.innerHTML = `<div style="color: #ef4444; font-size: 11px;">Error loading EPG: ${escapeHtml(err.message)}</div>`;
+        }
+    }
+
+    function formatEpgTime(timeStr) {
+        if (!timeStr || timeStr.length < 12) return timeStr;
+        try {
+            const hour = timeStr.substring(8, 10);
+            const min = timeStr.substring(10, 12);
+            return `${hour}:${min}`;
+        } catch (e) {
+            return timeStr;
+        }
+    }
+
+    async function runPlaybackTest(channelId) {
+        const testBtn = el('tv-btn-test-stream');
+        if (testBtn) {
+            testBtn.disabled = true;
+            testBtn.textContent = 'Testing...';
+        }
+        
+        logTvDiag(`Running playback connectivity diagnostics on: ${channelId}`);
+        
+        try {
+            const res = await fetch(`/api/tv/channel/${channelId}/test`, { method: 'POST' });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+            
+            if (data.status === 'healthy') {
+                logTvDiag(`Playback diagnostic PASS: ${channelId}. Latency: ${data.latencyMs}ms. Stream: ${redactFrontendUrl(data.url)}`);
+            } else {
+                logTvDiag(`Playback diagnostic FAIL: ${channelId}. Error: ${data.error}. Stream: ${redactFrontendUrl(data.url)}`, true);
+            }
+            
+            await loadGroupHealth();
+        } catch (err) {
+            logTvDiag(`Connectivity test failed: ${err.message}`, true);
+        } finally {
+            if (testBtn) {
+                testBtn.disabled = false;
+                testBtn.textContent = 'Test Connection';
+            }
+        }
+    }
+
     function renderTvChannels(channels) {
         const listEl = el('tv-channels-list');
         if (!listEl) return;
@@ -4352,11 +4512,21 @@ import Hls from 'hls.js';
         const filterVal = el('tv-group-filter') ? el('tv-group-filter').value : 'ALL';
         const searchVal = el('tv-search') ? el('tv-search').value.toLowerCase().trim() : '';
         
-        const filtered = channels.filter(c => {
-            const matchesGroup = (filterVal === 'ALL' || c.group === filterVal);
-            const matchesSearch = (!searchVal || c.name.toLowerCase().includes(searchVal));
-            return matchesGroup && matchesSearch;
-        });
+        let filtered = [];
+        if (filterVal === 'FAVORITES') {
+            filtered = channels.filter(c => tvFavorites.includes(c.id));
+        } else if (filterVal === 'RECENTS') {
+            filtered = tvRecents.map(rid => channels.find(c => c.id === rid)).filter(Boolean);
+        } else {
+            filtered = channels.filter(c => {
+                const matchesGroup = (filterVal === 'ALL' || c.group === filterVal);
+                return matchesGroup;
+            });
+        }
+        
+        if (searchVal) {
+            filtered = filtered.filter(c => c.name.toLowerCase().includes(searchVal));
+        }
 
         if (filtered.length === 0) {
             listEl.innerHTML = '<div style="color: var(--text-secondary); text-align: center; margin-top: 30px; font-size: 13px;">No matching channels found.</div>';
@@ -4382,11 +4552,17 @@ import Hls from 'hls.js';
                 `<img src="${escapeHtml(c.logo)}" style="width: 24px; height: 24px; object-fit: contain; border-radius: 2px;" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2224%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22currentColor%22 stroke-width=%222%22><rect x=%222%22 y=%222%22 width=%2220%22 height=%2220%22 rx=%222.18%22 ry=%222.18%22></rect><line x1=%227%22 y1=%222%22 x2=%227%22 y2=%2222%22></line><line x1=%2217%22 y1=%222%22 x2=%2217%22 y2=%2222%22></line><line x1=%222%22 y1=%2212%22 x2=%2222%22 y2=%2212%22></line><line x1=%222%22 y1=%227%22 x2=%227%22 y2=%227%22></line><line x1=%222%22 y1=%2217%22 x2=%227%22 y2=%2217%22></line><line x1=%2217%22 y1=%2217%22 x2=%2222%22 y2=%2217%22></line><line x1=%2217%22 y1=%227%22 x2=%2222%22 y2=%227%22></line></svg>'">` :
                 `<div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); color: var(--text-secondary); border-radius: 2px;"><i data-lucide="tv" style="width: 14px; height: 14px;"></i></div>`;
 
+            const isFav = tvFavorites.includes(c.id);
+            const starIcon = isFav ? '<span style="color: #f1c40f; font-size: 14px; margin-left: auto;">★</span>' : '';
+
             div.innerHTML = `
                 ${imgHtml}
-                <div style="flex-grow: 1; min-width: 0;">
-                    <div style="font-size: 12px; font-weight: bold; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(c.name)}</div>
-                    <div style="font-size: 9px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(c.group)}</div>
+                <div style="flex-grow: 1; min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 6px;">
+                    <div style="min-width: 0; flex-grow: 1;">
+                        <div style="font-size: 12px; font-weight: bold; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(c.name)}</div>
+                        <div style="font-size: 9px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(c.group)}</div>
+                    </div>
+                    ${starIcon}
                 </div>
             `;
             
@@ -4403,6 +4579,7 @@ import Hls from 'hls.js';
 
     function playTvChannel(channel) {
         logTvDiag(`Initializing playback for: ${channel.name}`);
+        currentPlayingChannel = channel;
         
         const video = el('tv-player');
         const placeholder = el('player-placeholder');
@@ -4419,6 +4596,22 @@ import Hls from 'hls.js';
         
         const playingGroup = el('tv-playing-group');
         if (playingGroup) playingGroup.textContent = `Category: ${channel.group}`;
+
+        const favBtn = el('tv-btn-favorite');
+        if (favBtn) {
+            favBtn.style.display = 'inline-flex';
+            const isFav = tvFavorites.includes(channel.id);
+            favBtn.querySelector('svg').setAttribute('fill', isFav ? '#f1c40f' : 'none');
+            favBtn.style.color = isFav ? '#f1c40f' : '#a1a1aa';
+        }
+
+        const testBtn = el('tv-btn-test-stream');
+        if (testBtn) {
+            testBtn.style.display = 'inline-block';
+        }
+
+        addToRecents(channel.id);
+        loadEpgSchedule(channel.id);
 
         if (currentHls) {
             currentHls.destroy();
@@ -4499,6 +4692,7 @@ import Hls from 'hls.js';
                 btnReload.textContent = 'Reloading...';
                 await loadTvChannels(true);
                 await runTvHealthCheck();
+                await loadGroupHealth();
                 btnReload.disabled = false;
                 btnReload.textContent = 'Reload Playlist';
             });
@@ -4511,6 +4705,7 @@ import Hls from 'hls.js';
                 btnHealth.disabled = true;
                 btnHealth.textContent = 'Running...';
                 await runTvHealthCheck();
+                await loadGroupHealth();
                 btnHealth.disabled = false;
                 btnHealth.textContent = 'Run Health Check';
             });
@@ -4527,6 +4722,26 @@ import Hls from 'hls.js';
         if (groupFilter) {
             groupFilter.addEventListener('change', () => {
                 renderTvChannels(tvChannels);
+            });
+        }
+
+        const btnFav = el('tv-btn-favorite');
+        if (btnFav) {
+            btnFav.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (currentPlayingChannel) {
+                    toggleFavorite(currentPlayingChannel.id);
+                }
+            });
+        }
+
+        const btnTest = el('tv-btn-test-stream');
+        if (btnTest) {
+            btnTest.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (currentPlayingChannel) {
+                    runPlaybackTest(currentPlayingChannel.id);
+                }
             });
         }
     }
