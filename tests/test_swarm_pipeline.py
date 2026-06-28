@@ -11,10 +11,15 @@ Uses a temporary test database to ensure the production database is not modified
 """
 
 import os
+import sys
 import sqlite3
 import json
 from datetime import datetime, timedelta
+from pathlib import Path
 import pytest
+
+# Inject project root into sys.path for test resolution
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import run_batch_swarm_analysis
 

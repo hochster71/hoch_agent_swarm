@@ -23,6 +23,7 @@ quality_gate = "hoch_agent_swarm.quality_gate:main"
 package_release_candidate = "hoch_agent_swarm.release_candidate:main"
 inspect_release_candidate = "hoch_agent_swarm.rc_inspector:main"
 swarm_ui = "hoch_agent_swarm.ui_server:main"
+operator_launch = "hoch_agent_swarm.operator_launcher:main"
 
 [build-system]
 requires = ["hatchling"]

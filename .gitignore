@@ -9,4 +9,8 @@ artifacts/crew_runs/
 artifacts/release_candidates/
 artifacts/validation_samples/
 *.db
+*.db-journal
+*.db-shm
+*.db-wal
+
 
