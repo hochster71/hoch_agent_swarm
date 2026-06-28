@@ -7583,6 +7583,16 @@ def get_model_status_endpoint():
         "default_model": model_registry.get_default_model()
     }
 
+@app.get("/api/v1/models/health")
+def get_model_health_endpoint():
+    from backend.model_health_monitor import MONITOR
+    return MONITOR.scan_health(force=False)
+
+@app.post("/api/v1/models/health/trigger")
+def post_model_health_trigger_endpoint():
+    from backend.model_health_monitor import MONITOR
+    return MONITOR.scan_health(force=True)
+
 @app.get("/api/v1/model-mesh/config")
 def get_model_mesh_config_endpoint():
     from backend.model_mesh import load_model_mesh_data

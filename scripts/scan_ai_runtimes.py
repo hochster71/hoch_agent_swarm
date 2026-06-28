@@ -80,7 +80,7 @@ def probe_host(host: str):
     return findings
 
 def main():
-    hosts = [f"{SUBNET}{i}" for i in range(1, 255)]
+    hosts = ["127.0.0.1"] + [f"{SUBNET}{i}" for i in range(1, 255)]
     started = time.time()
     all_findings = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=96) as ex:

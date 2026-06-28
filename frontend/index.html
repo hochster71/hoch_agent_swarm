@@ -434,6 +434,18 @@
                     <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 15px;">Routing Table Posture</h2>
                     <div id="model-router-details" style="display: flex; flex-direction: column; gap: 16px;"></div>
                 </section>
+                
+                <section class="card" style="padding: 20px; margin-top: 18px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h2 style="font-size: 18px; font-weight: 700; margin: 0;">Local Model Health & Fallback Monitor</h2>
+                        <button id="btn-trigger-model-health" class="btn btn-primary" style="padding: 6px 12px; font-size: 11px;">
+                            Scan Local Model Health
+                        </button>
+                    </div>
+                    <div id="model-health-container" style="display: flex; flex-direction: column; gap: 18px;">
+                        <div style="text-align: center; color: var(--text-secondary); padding: 20px;">Loading model health metrics...</div>
+                    </div>
+                </section>
             </div>
 
             <!-- 5. Escalations View -->

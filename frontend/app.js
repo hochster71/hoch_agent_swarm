@@ -602,6 +602,126 @@
         }
     }
 
+    async function loadModelHealth(force = false) {
+        const healthContainer = el('model-health-container');
+        if (!healthContainer) return;
+        
+        if (force) {
+            healthContainer.innerHTML = `
+                <div style="text-align: center; color: var(--text-secondary); padding: 20px;">
+                    <span class="pulse-glow" style="display: inline-block; width: 8px; height: 8px; background: var(--accent-teal); border-radius: 50%; margin-right: 8px; animation: led-pulse 1.5s infinite;"></span>
+                    Scanning all local model endpoints, checking sizes and chat compatibility (this can take 2-4s)...
+                </div>
+            `;
+        }
+
+        try {
+            const url = force ? '/api/v1/models/health/trigger' : '/api/v1/models/health';
+            const method = force ? 'POST' : 'GET';
+            const res = await fetch(url, { method });
+            const data = await res.json();
+
+            // 1. Render Fallback Readiness Cards
+            const readinessHtml = (data.fallback_readiness || []).map(fr => {
+                let colorVal = '#10b981';
+                let bgVal = 'rgba(16, 185, 129, 0.08)';
+                let borderVal = 'rgba(16, 185, 129, 0.25)';
+                if (fr.status === 'AMBER') {
+                    colorVal = '#fbbf24';
+                    bgVal = 'rgba(251, 191, 36, 0.08)';
+                    borderVal = 'rgba(251, 191, 36, 0.25)';
+                } else if (fr.status === 'RED') {
+                    colorVal = '#f87171';
+                    bgVal = 'rgba(248, 113, 113, 0.08)';
+                    borderVal = 'rgba(248, 113, 113, 0.25)';
+                }
+
+                return `
+                    <div style="background: ${bgVal}; border: 1px solid ${borderVal}; padding: 14px; border-radius: 8px; display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong style="color: #fff; font-size: 13px; text-transform: uppercase;">${fr.class_name.replace('_', ' ')}</strong>
+                            <span style="color: ${colorVal}; font-weight: bold; font-size: 10px; border: 1px solid ${colorVal}; padding: 2px 6px; border-radius: 4px; background: rgba(0,0,0,0.2);">${fr.status}</span>
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.4;">${fr.message}</div>
+                        <div style="font-size: 11px; display: flex; gap: 10px; margin-top: 4px;">
+                            <div>Primary: <code style="color: #a5b4fc;">${fr.primary || 'none'}</code></div>
+                            <div>Fallback: <code style="color: #c7d2fe;">${fr.fallback || 'none'}</code></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // 2. Render Models Status Table
+            const rowsHtml = (data.models || []).map(m => {
+                let statusColor = '#10b981';
+                let statusText = m.status;
+                if (m.status === 'MISSING') {
+                    statusColor = '#f59e0b';
+                } else if (m.status === 'FAILING' || m.status === 'OFFLINE') {
+                    statusColor = '#ef4444';
+                }
+
+                let sizeBadge = '';
+                if (m.size_category === 'HEAVY') {
+                    sizeBadge = '<span style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); padding: 1px 4px; border-radius: 3px; font-size: 9px; font-weight: bold; margin-left: 6px;">HEAVY (Slow Local)</span>';
+                } else if (m.size_category === 'LIGHT') {
+                    sizeBadge = '<span style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); padding: 1px 4px; border-radius: 3px; font-size: 9px; font-weight: bold; margin-left: 6px;">LIGHT</span>';
+                }
+
+                const latencyText = m.latency_ms > 0 ? `${m.latency_ms.toFixed(0)} ms` : 'N/A';
+                const errDetail = m.compatibility_error ? `<div style="color: #ef4444; font-size: 9px; margin-top: 2px;">${m.compatibility_error}</div>` : '';
+
+                return `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <td style="padding: 10px 12px; font-weight: 500; color: #fff; font-family: monospace;">${m.raw_name}</td>
+                        <td style="padding: 10px 12px;">
+                            ${m.size_bytes > 0 ? (m.size_bytes / 1024 / 1024 / 1024).toFixed(2) + ' GB' : 'Unknown'}
+                            ${sizeBadge}
+                        </td>
+                        <td style="padding: 10px 12px; font-weight: bold; color: ${statusColor};">${statusText}</td>
+                        <td style="padding: 10px 12px; text-align: right; color: #fbbf24;">${latencyText}</td>
+                        <td style="padding: 10px 12px; color: var(--text-secondary); max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            ${m.status === 'HEALTHY' ? '<span style="color: #34d399;">Passed</span>' : (m.status === 'MISSING' ? 'Model not pulled' : 'Check failed')}
+                            ${errDetail}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            healthContainer.innerHTML = `
+                <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">
+                    Last Health Scan: <strong>${new Date(data.last_checked).toLocaleString()}</strong>
+                </div>
+                
+                <h4 style="font-size: 13px; font-weight: bold; color: #fff; margin-bottom: 8px;">Task Routing Fallback Safety</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-bottom: 16px;">
+                    ${readinessHtml}
+                </div>
+
+                <h4 style="font-size: 13px; font-weight: bold; color: #fff; margin-bottom: 8px;">Model Health & Latencies</h4>
+                <div style="overflow-x: auto; background: rgba(0,0,0,0.15); border: 1px solid var(--border-glass); border-radius: 8px;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 11px; text-align: left;">
+                        <thead>
+                            <tr style="background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border-glass); font-weight: 600;">
+                                <th style="padding: 10px 12px; color: var(--accent-teal);">Model Reference</th>
+                                <th style="padding: 10px 12px;">Disk Size</th>
+                                <th style="padding: 10px 12px;">Status</th>
+                                <th style="padding: 10px 12px; text-align: right;">Ping Latency</th>
+                                <th style="padding: 10px 12px;">Compatibility Test</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rowsHtml}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        } catch (err) {
+            console.error(err);
+            healthContainer.innerHTML = `<div style="color: #ef4444; padding: 20px; text-align: center;">Error fetching model health metrics</div>`;
+        }
+    }
+
     // ── Loader: Model Router View ──────────────────────────────────────────
     async function loadModelRouterView() {
         const container = el('model-router-details');
@@ -628,6 +748,9 @@
                     </div>
                 </div>
             `;
+            
+            // Trigger health load
+            loadModelHealth(false);
         } catch (err) {
             container.innerHTML = `<div style="color:#ef4444; text-align:center;">Error fetching routing settings</div>`;
         }
@@ -2438,6 +2561,28 @@
         });
     }
 
+    function initModelHealthButton() {
+        const btn = el('btn-trigger-model-health');
+        if (!btn) return;
+        btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            btn.disabled = true;
+            btn.textContent = 'Scanning...';
+            btn.style.opacity = '0.5';
+            btn.style.cursor = 'not-allowed';
+            try {
+                await loadModelHealth(true);
+            } catch (err) {
+                console.error(err);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Scan Local Model Health';
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+            }
+        });
+    }
+
     // Initialization routine
     function init() {
   initMeshSentinel();
@@ -2445,6 +2590,7 @@
         initNavigation();
         initializeKoiAnimation();
         initRescanButton();
+        initModelHealthButton();
         
         // Initial fetches
         fetchCockpit();
