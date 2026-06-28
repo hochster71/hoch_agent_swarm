@@ -1112,7 +1112,7 @@ def index():
 # ---------------------------------------------------------------------------
 
 def main():
-    port = int(os.environ.get("SWARM_UI_PORT", "7788"))
+    port = int(os.environ.get("SWARM_UI_PORT", "8085"))
     print(f"\n  🚀  Hoch Agent Swarm Dashboard")
     print(f"  →   http://localhost:{port}\n")
     app.run(host="0.0.0.0", port=port, debug=False)
