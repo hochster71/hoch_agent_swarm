@@ -48,5 +48,14 @@ data/backups/
 data/qa_loop.log
 frontend/data/agent_registry.json
 server/
+backend/task_history.json
+data/demo_config.json
+data/production_tracker.json
+data/prompt_registry/
+data/tv_epg.xml
+data/tv_playlist.m3u
+docs/evidence/screenshots/
+frontend/app.js
+frontend/data/runtime_reliability.json
 
 
