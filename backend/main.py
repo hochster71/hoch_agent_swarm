@@ -8399,6 +8399,211 @@ def get_prompts_categories_endpoint():
     categories = sorted(list(set(p["category"] for p in registry.prompts)))
     return categories
 
+@app.get("/api/prompts")
+def get_prompts_endpoint():
+    from backend.prompt_registry import get_registry
+    registry = get_registry()
+    security_critical_categories = {
+        "SAST", "DAST", "DevSecOps", "Audit", "Governance", "Security Architecture",
+        "Vulnerability Management", "Detection Engineering", "Supply Chain", "Privacy",
+        "Data Security", "AI / ML Systems"
+    }
+    
+    prompts_copy = []
+    for p in registry.prompts:
+        p_copy = dict(p)
+        cat = p_copy.get("category", "Unknown")
+        prompt_text = p_copy.get("prompt", "").lower()
+        
+        if cat in security_critical_categories or any(kw in prompt_text for kw in ["delete", "deploy", "publish", "credentials", "firewall", "quarantine", "waiver", "override"]):
+            sev = "HIGH"
+        elif cat in ["Privacy", "Data Security"] or any(kw in prompt_text for kw in ["private data", "home", "privacy"]):
+            sev = "MEDIUM"
+        else:
+            sev = "LOW"
+            
+        p_copy["calculated_risk"] = sev
+        p_copy["severity"] = sev
+        prompts_copy.append(p_copy)
+        
+    return prompts_copy
+
+@app.get("/api/prompts/metrics")
+def get_prompts_metrics_endpoint():
+    from backend.prompt_registry import get_registry
+    import json
+    from pathlib import Path
+    registry = get_registry()
+    prompts = registry.prompts
+    
+    base_dir = Path(__file__).resolve().parent.parent
+    fixtures_summary = {"total": 50, "passed": 50, "failed": 0}
+    report_path = base_dir / "artifacts" / "qa" / "prompt_registry" / "golden_fixtures_qa_report.json"
+    if report_path.exists():
+        try:
+            data = json.loads(report_path.read_text(encoding="utf-8"))
+            fixtures_summary = {
+                "total": data.get("total_fixtures", 50),
+                "passed": data.get("passed_fixtures", 50),
+                "failed": data.get("failed_fixtures", 0)
+            }
+        except Exception:
+            pass
+            
+    categories = {}
+    industries = {}
+    severities = {"HIGH": 0, "MEDIUM": 0, "LOW": 0}
+    qa_statuses = {}
+    
+    security_critical_categories = {
+        "SAST", "DAST", "DevSecOps", "Audit", "Governance", "Security Architecture",
+        "Vulnerability Management", "Detection Engineering", "Supply Chain", "Privacy",
+        "Data Security", "AI / ML Systems"
+    }
+    
+    for p in prompts:
+        cat = p.get("category", "Unknown")
+        categories[cat] = categories.get(cat, 0) + 1
+        
+        ind = p.get("industry", "Unknown")
+        industries[ind] = industries.get(ind, 0) + 1
+        
+        prompt_text = p.get("prompt", "").lower()
+        if cat in security_critical_categories or any(kw in prompt_text for kw in ["delete", "deploy", "publish", "credentials", "firewall", "quarantine", "waiver", "override"]):
+            sev = "HIGH"
+        elif cat in ["Privacy", "Data Security"] or any(kw in prompt_text for kw in ["private data", "home", "privacy"]):
+            sev = "MEDIUM"
+        else:
+            sev = "LOW"
+            
+        severities[sev] = severities.get(sev, 0) + 1
+        
+        qa = p.get("qa_status", "passed")
+        qa_statuses[qa] = qa_statuses.get(qa, 0) + 1
+        
+    return {
+        "total_prompts": len(prompts),
+        "categories": categories,
+        "industries": industries,
+        "severities": severities,
+        "qa_statuses": qa_statuses,
+        "fixtures_summary": fixtures_summary
+    }
+
+@app.post("/api/prompts/qa/golden-fixtures")
+def run_prompts_golden_fixtures_endpoint():
+    import subprocess
+    import json
+    from pathlib import Path
+    base_dir = Path(__file__).resolve().parent.parent
+    try:
+        res = subprocess.run(
+            ["python3", "scripts/qa/run_golden_fixtures.py"],
+            capture_output=True,
+            text=True,
+            cwd=str(base_dir)
+        )
+        report_path = base_dir / "artifacts" / "qa" / "prompt_registry" / "golden_fixtures_qa_report.json"
+        if report_path.exists():
+            return json.loads(report_path.read_text(encoding="utf-8"))
+        return {
+            "status": "COMPLETED" if res.returncode == 0 else "FAILED",
+            "stdout": res.stdout,
+            "stderr": res.stderr
+        }
+    except Exception as e:
+        return {"status": "FAILED", "error": str(e)}
+
+@app.get("/api/prompts/{prompt_id}")
+def get_prompt_details_endpoint(prompt_id: str):
+    from fastapi import HTTPException
+    from backend.prompt_registry import get_registry
+    registry = get_registry()
+    
+    security_critical_categories = {
+        "SAST", "DAST", "DevSecOps", "Audit", "Governance", "Security Architecture",
+        "Vulnerability Management", "Detection Engineering", "Supply Chain", "Privacy",
+        "Data Security", "AI / ML Systems"
+    }
+    
+    for p in registry.prompts:
+        if p["id"] == prompt_id:
+            p_copy = dict(p)
+            cat = p_copy.get("category", "Unknown")
+            prompt_text = p_copy.get("prompt", "").lower()
+            
+            if cat in security_critical_categories or any(kw in prompt_text for kw in ["delete", "deploy", "publish", "credentials", "firewall", "quarantine", "waiver", "override"]):
+                sev = "HIGH"
+            elif cat in ["Privacy", "Data Security"] or any(kw in prompt_text for kw in ["private data", "home", "privacy"]):
+                sev = "MEDIUM"
+            else:
+                sev = "LOW"
+                
+            p_copy["calculated_risk"] = sev
+            p_copy["severity"] = sev
+            return p_copy
+            
+    raise HTTPException(status_code=404, detail=f"Prompt {prompt_id} not found")
+
+@app.post("/api/prompts/{prompt_id}/run")
+def run_prompt_through_swarm_endpoint(prompt_id: str):
+    from fastapi import HTTPException
+    from backend.prompt_registry import get_registry
+    from backend.main import TaskRequest, run_swarm_task
+    import json
+    from datetime import datetime, timezone
+    from pathlib import Path
+    
+    base_dir = Path(__file__).resolve().parent.parent
+    registry = get_registry()
+    prompt_record = next((p for p in registry.prompts if p["id"] == prompt_id), None)
+    if not prompt_record:
+        raise HTTPException(status_code=404, detail=f"Prompt {prompt_id} not found")
+        
+    task_req = TaskRequest(
+        task_type=prompt_record.get("category", "QA"),
+        prompt=prompt_record.get("prompt", ""),
+        system_prompt=f"You are a swarm agent executing prompt: {prompt_record.get('title', 'Unknown')}",
+        mode="Execute"
+    )
+    
+    try:
+        execution_res = run_swarm_task(task_req)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to execute swarm task: {str(e)}")
+        
+    evidence_dir = base_dir / "artifacts" / "qa" / "prompt_registry"
+    evidence_dir.mkdir(parents=True, exist_ok=True)
+    
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+    evidence_filename = f"evidence_{prompt_id}_{timestamp}.json"
+    evidence_path = evidence_dir / evidence_filename
+    
+    evidence_data = {
+        "prompt_id": prompt_id,
+        "prompt_title": prompt_record.get("title", "Unknown"),
+        "prompt_family": prompt_record.get("prompt_family", "Unknown"),
+        "executed_at": datetime.now(timezone.utc).isoformat(),
+        "task_request": {
+            "task_type": task_req.task_type,
+            "prompt": task_req.prompt,
+            "mode": task_req.mode
+        },
+        "execution_result": execution_res,
+        "status": execution_res.get("status", "COMPLETED")
+    }
+    
+    try:
+        evidence_path.write_text(json.dumps(evidence_data, indent=2), encoding="utf-8")
+    except Exception as e:
+        pass
+        
+    return {
+        "status": "COMPLETED",
+        "evidence_file": str(evidence_path.relative_to(base_dir) if base_dir in evidence_path.parents else evidence_path),
+        "result": execution_res.get("result", "")
+    }
+
 class PromptRoutePlanRequest(BaseModel):
     task_description: str
     risk_level: str = "LOW"

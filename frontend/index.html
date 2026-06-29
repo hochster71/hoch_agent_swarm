@@ -117,6 +117,10 @@
                     <i data-lucide="layout-grid"></i> <span>Agent Flight Deck</span>
                     <span class="nav-status-indicator swarm-led-idle" id="led-agent-flight-deck" style="margin-left: auto; font-size: 14px; font-weight: bold;">●</span>
                 </a>
+                <a href="#" class="nav-item" id="nav-prompt-catalog">
+                    <i data-lucide="book-open"></i> <span>Prompt Catalog</span>
+                    <span class="nav-status-indicator swarm-led-live" id="led-prompt-catalog" style="margin-left: auto; font-size: 14px; font-weight: bold; color: var(--accent-teal)">●</span>
+                </a>
                 <a href="#" class="nav-item" id="nav-clawde">
                     <i data-lucide="shield-check"></i> <span>Clawde Tower</span>
                     <span class="nav-status-indicator swarm-led-live" id="led-clawde" style="margin-left: auto; font-size: 14px; font-weight: bold; color: var(--accent-teal)">●</span>
@@ -735,6 +739,92 @@
             </div>
             <div id="view-remediation-safety" class="hidden"></div>
             
+            <!-- Prompt Catalog View -->
+            <div id="view-prompt-catalog" class="view-section hidden">
+                <section class="card" style="padding: 20px; background: rgba(10, 15, 30, 0.85); border: 1px solid var(--border-glass); border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); backdrop-filter: blur(12px); margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 16px; margin-bottom: 20px;">
+                        <div>
+                            <h2 style="font-size: 22px; font-weight: 700; color: #fff; font-family: 'Outfit', sans-serif; letter-spacing: -0.02em;">Prompt Registry Catalog</h2>
+                            <div style="font-size: 11px; color: var(--accent-teal); font-weight: bold; margin-top: 2px;">HOCH AGENT SWARM — V4 RUNTIME INTEGRATION</div>
+                            <p style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Dynamic registry of 354 prompts. Local-first, fail-closed, role-specific execution gates.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Metrics Section -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 20px;">
+                    <section class="card" style="padding: 16px; display: flex; align-items: center; gap: 12px; background: rgba(10, 15, 30, 0.85); border: 1px solid var(--border-glass); border-radius: 12px;">
+                        <div style="width: 44px; height: 44px; border-radius: 8px; background: rgba(14, 165, 233, 0.15); display: flex; align-items: center; justify-content: center; color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.3);">
+                            <i data-lucide="book-open" style="width: 22px; height: 22px;"></i>
+                        </div>
+                        <div>
+                            <p style="font-size: 10px; text-transform: uppercase; color: var(--text-secondary); margin: 0; font-weight: bold; letter-spacing: 0.5px;">Total Registry Prompts</p>
+                            <h3 id="prompt-metric-total" style="font-size: 20px; font-weight: 700; margin: 4px 0 0 0; color: #fff;">354</h3>
+                        </div>
+                    </section>
+                    <section class="card" style="padding: 16px; display: flex; align-items: center; gap: 12px; background: rgba(10, 15, 30, 0.85); border: 1px solid var(--border-glass); border-radius: 12px;">
+                        <div style="width: 44px; height: 44px; border-radius: 8px; background: rgba(245, 158, 11, 0.15); display: flex; align-items: center; justify-content: center; color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);">
+                            <i data-lucide="shield-alert" style="width: 22px; height: 22px;"></i>
+                        </div>
+                        <div>
+                            <p style="font-size: 10px; text-transform: uppercase; color: var(--text-secondary); margin: 0; font-weight: bold; letter-spacing: 0.5px;">High Risk Prompts</p>
+                            <h3 id="prompt-metric-high-risk" style="font-size: 20px; font-weight: 700; margin: 4px 0 0 0; color: #fbbf24;">101</h3>
+                        </div>
+                    </section>
+                    <section class="card" style="padding: 16px; display: flex; align-items: center; gap: 12px; background: rgba(10, 15, 30, 0.85); border: 1px solid var(--border-glass); border-radius: 12px;">
+                        <div style="width: 44px; height: 44px; border-radius: 8px; background: rgba(16, 185, 129, 0.15); display: flex; align-items: center; justify-content: center; color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);">
+                            <i data-lucide="check-circle" style="width: 22px; height: 22px;"></i>
+                        </div>
+                        <div>
+                            <p style="font-size: 10px; text-transform: uppercase; color: var(--text-secondary); margin: 0; font-weight: bold; letter-spacing: 0.5px;">Golden Fixtures Pass Rate</p>
+                            <h3 id="prompt-metric-pass-rate" style="font-size: 20px; font-weight: 700; margin: 4px 0 0 0; color: #34d399;">100%</h3>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Filters & Search Section -->
+                <section class="card" style="padding: 20px; background: rgba(10, 15, 30, 0.85); border: 1px solid var(--border-glass); border-radius: 12px; margin-bottom: 20px;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; align-items: center; margin-bottom: 12px;">
+                        <div>
+                            <label style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; font-weight: bold; display: block; margin-bottom: 4px;">Search Prompts</label>
+                            <input type="text" id="prompt-search-input" placeholder="Search by ID, title, mission..." style="width: 90%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); color: #fff; border-radius: 4px; padding: 6px 10px; font-size: 12px; outline: none;">
+                        </div>
+                        <div>
+                            <label style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; font-weight: bold; display: block; margin-bottom: 4px;">Sector</label>
+                            <select id="prompt-filter-sector" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); color: #fff; border-radius: 4px; padding: 6px; font-size: 12px; outline: none; cursor: pointer;">
+                                <option value="">All Sectors</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; font-weight: bold; display: block; margin-bottom: 4px;">Category</label>
+                            <select id="prompt-filter-category" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); color: #fff; border-radius: 4px; padding: 6px; font-size: 12px; outline: none; cursor: pointer;">
+                                <option value="">All Categories</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; font-weight: bold; display: block; margin-bottom: 4px;">Risk Level</label>
+                            <select id="prompt-filter-risk" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); color: #fff; border-radius: 4px; padding: 6px; font-size: 12px; outline: none; cursor: pointer;">
+                                <option value="">All Risk Levels</option>
+                                <option value="HIGH">HIGH</option>
+                                <option value="MEDIUM">MEDIUM</option>
+                                <option value="LOW">LOW</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-glass); padding-top: 12px;">
+                        <span id="prompt-filter-count" style="font-size: 11px; color: var(--text-secondary);">Showing -- prompts</span>
+                        <button id="btn-run-all-fixtures" class="btn" style="background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.3); color: #a78bfa; font-size: 11px; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 6px;">
+                            <i data-lucide="play" style="width: 12px; height: 12px;"></i> Run Golden Fixtures Suite
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Prompt Catalog Cards Grid -->
+                <div id="prompt-catalog-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; max-height: 55vh; overflow-y: auto; padding-right: 4px; margin-bottom: 20px;">
+                    <!-- Prompt Cards populated dynamically -->
+                </div>
+            </div>
+
             <!-- CLAWDE Control Tower View -->
             <div id="view-clawde" class="view-section hidden">
                 <section class="card" style="padding: 20px; background: rgba(10, 15, 30, 0.85); border: 1px solid var(--border-glass); border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); backdrop-filter: blur(12px);">
@@ -2222,7 +2312,70 @@
                 <!-- Dynamically populated -->
             </div>
         </div>
+    <!-- Prompt Detail Modal -->
+    <div id="prompt-detail-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); align-items: center; justify-content: center; z-index: 10000; transition: all 0.3s ease;">
+        <div class="card" style="width: 100%; max-width: 720px; padding: 24px; background: var(--bg-surface); border: 1px solid var(--border-glass); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin: 20px; display: flex; flex-direction: column; max-height: 85vh;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 14px; margin-bottom: 16px;">
+                <div>
+                    <h3 style="font-size: 16px; font-weight: 700; color: #fff; margin: 0;" id="prompt-modal-title">Prompt Details</h3>
+                    <span style="font-size: 11px; color: var(--accent-teal); text-transform: uppercase; font-weight: bold;" id="prompt-modal-id">PROMPT-001</span>
+                </div>
+                <button id="btn-close-prompt-modal" class="btn" style="background: transparent; border: none; color: var(--text-secondary); cursor: pointer; font-size: 18px;">&times;</button>
+            </div>
+            
+            <div style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-right: 6px;">
+                <!-- Metadata table -->
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 6px; padding: 12px; font-size: 12px;">
+                    <div><span style="color: var(--text-secondary);">Sector:</span> <strong id="prompt-modal-sector">--</strong></div>
+                    <div><span style="color: var(--text-secondary);">Category:</span> <strong id="prompt-modal-category">--</strong></div>
+                    <div><span style="color: var(--text-secondary);">Family:</span> <strong id="prompt-modal-family">--</strong></div>
+                    <div><span style="color: var(--text-secondary);">Phase:</span> <strong id="prompt-modal-phase">--</strong></div>
+                    <div><span style="color: var(--text-secondary);">Risk level:</span> <strong id="prompt-modal-risk">--</strong></div>
+                    <div><span style="color: var(--text-secondary);">QA Status:</span> <strong id="prompt-modal-qa">--</strong></div>
+                </div>
+
+                <div>
+                    <h4 style="font-size: 12px; color: var(--accent-teal); text-transform: uppercase; margin: 0 0 6px 0;">Mission & Goal</h4>
+                    <p id="prompt-modal-mission" style="font-size: 12px; line-height: 1.5; color: var(--text-primary); margin: 0; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 4px; border: 1px solid var(--border-glass);"></p>
+                </div>
+
+                <div>
+                    <h4 style="font-size: 12px; color: var(--accent-teal); text-transform: uppercase; margin: 0 0 6px 0;">Required Evidence & Approval Gate</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 12px;">
+                        <div id="prompt-modal-evidence" style="background: rgba(0,0,0,0.2); padding: 8px; border-radius: 4px; border: 1px solid var(--border-glass); color: var(--text-primary);"></div>
+                        <div id="prompt-modal-gate" style="background: rgba(0,0,0,0.2); padding: 8px; border-radius: 4px; border: 1px solid var(--border-glass); color: var(--text-primary);"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 style="font-size: 12px; color: var(--accent-teal); text-transform: uppercase; margin: 0 0 6px 0;">Prompt Text</h4>
+                    <pre id="prompt-modal-text" style="font-size: 11px; white-space: pre-wrap; word-wrap: break-word; background: rgba(0,0,0,0.4); border: 1px solid var(--border-glass); border-radius: 6px; padding: 12px; margin: 0; max-height: 180px; overflow-y: auto; color: var(--text-primary); font-family: monospace;"></pre>
+                </div>
+
+                <div id="prompt-modal-command-section" style="display: none;">
+                    <h4 style="font-size: 12px; color: var(--accent-teal); text-transform: uppercase; margin: 0 0 6px 0;">Stack Command Templates</h4>
+                    <pre id="prompt-modal-command" style="font-size: 11px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-glass); border-radius: 6px; padding: 10px; margin: 0; color: #a78bfa; font-family: monospace;"></pre>
+                </div>
+
+                <!-- Execution Console Box inside modal -->
+                <div id="prompt-modal-console-section" style="display: none;">
+                    <h4 style="font-size: 12px; color: var(--accent-teal); text-transform: uppercase; margin: 0 0 6px 0;">Swarm Execution Logs</h4>
+                    <pre id="prompt-modal-console" style="font-size: 11px; white-space: pre-wrap; background: #000; border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 6px; padding: 12px; margin: 0; height: 120px; overflow-y: auto; color: #34d399; font-family: monospace;"></pre>
+                    <div id="prompt-modal-evidence-link" style="font-size: 11px; color: var(--accent-teal); margin-top: 6px;"></div>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 12px; border-top: 1px solid var(--border-glass); padding-top: 16px; margin-top: 12px;">
+                <button id="btn-close-prompt-modal-bottom" class="btn" style="background: rgba(255,255,255,0.05); color: var(--text-secondary); border: 1px solid var(--border-glass); padding: 8px 16px; font-size: 12px; border-radius: 6px; cursor: pointer;">
+                    Close
+                </button>
+                <button id="btn-run-prompt-swarm" class="btn" style="background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4); color: #34d399; padding: 8px 16px; font-size: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 6px;">
+                    <i data-lucide="play" style="width: 14px; height: 14px;"></i> Run Prompt Through Swarm
+                </button>
+            </div>
+        </div>
     </div>
+
     <script type="module" src="app.js?v=UX2"></script>
 </body>
 </html>
