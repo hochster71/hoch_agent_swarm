@@ -3166,6 +3166,14 @@ import Hls from 'hls.js';
                 if (critSignal) {
                     criticalCount = parseInt(critSignal.value) || 0;
                 }
+                const loadSignal = stateData.signals.find(s => s.signal_id === 'michael_orchestration_load');
+                if (loadSignal) {
+                    loadScore = loadSignal.value;
+                }
+                const ownerlessSignal = stateData.signals.find(s => s.signal_id === 'ownerless_domain_count');
+                if (ownerlessSignal) {
+                    ownerlessCount = parseInt(ownerlessSignal.value) || 0;
+                }
             }
 
             if (el('meta-total-domains')) el('meta-total-domains').textContent = totalDomains;
@@ -11479,6 +11487,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (typeof initLiveProjectTracker === "function") {
         initLiveProjectTracker();
     }
+    if (typeof initFinalVerifier === "function") {
+        initFinalVerifier();
+    }
     if (typeof lucide !== 'undefined' && lucide.createIcons) {
         lucide.createIcons();
     }
@@ -11868,3 +11879,51 @@ window.fetchAndRenderProjectTracker = fetchAndRenderProjectTracker;
 window.fetchAndRenderConfidenceSummary = fetchAndRenderConfidenceSummary;
 window.fetchAndRenderMonetizationOffers = fetchAndRenderMonetizationOffers;
 window.triggerScenarioSimulation = triggerScenarioSimulation;
+
+function initFinalVerifier() {
+    fetchAndRenderFinalVerifier();
+    setInterval(fetchAndRenderFinalVerifier, 3000);
+}
+
+async function fetchAndRenderFinalVerifier() {
+    try {
+        const res = await fetch("/api/v1/final-verifier/verdict");
+        if (!res.ok) return;
+        const data = await res.json();
+        const verdict = data.verdict;
+
+        const badge = document.getElementById("final-verifier-badge");
+        if (badge) {
+            badge.textContent = verdict.status;
+            if (verdict.status === "VERIFIED") {
+                badge.style.background = "rgba(16, 185, 129, 0.15)";
+                badge.style.color = "#34d399";
+            } else {
+                badge.style.background = "rgba(239, 68, 68, 0.15)";
+                badge.style.color = "#f87171";
+            }
+        }
+
+        const countEl = document.getElementById("final-contradictions-count");
+        if (countEl) {
+            countEl.textContent = verdict.contradiction_checker.violations.length;
+            countEl.style.color = verdict.contradiction_checker.violations.length === 0 ? "#34d399" : "#fbbf24";
+        }
+
+        const scoreEl = document.getElementById("final-readiness-capped");
+        if (scoreEl) {
+            scoreEl.textContent = `${verdict.readiness_score}%`;
+            scoreEl.style.color = verdict.readiness_score >= 90 ? "#34d399" : (verdict.readiness_score >= 70 ? "#fbbf24" : "#f87171");
+        }
+
+        const timeEl = document.getElementById("final-verifier-timestamp");
+        if (timeEl) {
+            timeEl.textContent = new Date().toLocaleTimeString();
+        }
+    } catch (err) {
+        console.error("Error loading final verifier verdict:", err);
+    }
+}
+
+window.initFinalVerifier = initFinalVerifier;
+window.fetchAndRenderFinalVerifier = fetchAndRenderFinalVerifier;

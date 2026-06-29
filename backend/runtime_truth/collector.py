@@ -710,29 +710,70 @@ def collect_and_store_all():
     open_defect_count = 0
     critical_defect_count = 0
     warning_count = 0
-    new_warning_count = 0
+    warning_blocking_count = 0
+    warning_baselined_count = 0
+    warning_unknown_count = 0
+    verified_tool_count = 0
+    missing_tool_count = 0
+    configured_only_tool_count = 0
+    simulated_tool_count = 0
     security_finding_count = 0
     high_vulnerability_count = 0
     unowned_defect_count = 0
     zero_defect_gate_status = "PASS"
+    zero_defect_claim_status = "PASS"
     best_agent_routing_status = "ACTIVE"
     final_verifier_status = "VERIFIED"
 
     try:
         cursor = conn.cursor()
-        cursor.execute("SELECT count(*), sum(case when severity = 'CRITICAL' then 1 else 0 end), sum(case when owner_agent is null then 1 else 0 end) FROM coding_defects WHERE status = 'OPEN'")
-        row = cursor.fetchone()
-        if row:
-            open_defect_count = row[0] or 0
-            critical_defect_count = row[1] or 0
-            unowned_defect_count = row[2] or 0
+        cursor.execute("SELECT defect_id, description, severity, owner_agent FROM coding_defects WHERE status = 'OPEN'")
+        open_defects_list = cursor.fetchall()
+        open_defect_count = len(open_defects_list)
+        for row in open_defects_list:
+            if row[2] == "CRITICAL" or row[2] == "HIGH":
+                critical_defect_count += 1
+            if not row[3]:
+                unowned_defect_count += 1
+    except Exception:
+        pass
+
+    warning_false_positive_count = 0
+    try:
+        from backend.coding_control_plane.warning_baseline import WarningBaselineManager
+        wm = WarningBaselineManager()
+        baseline_warnings = wm.baseline.get("warnings", [])
+        warning_count = len(baseline_warnings)
+        
+        for w in baseline_warnings:
+            msg = w.get("message", "")
+            eval_res = wm.evaluate_warning(msg)
+            status = eval_res.get("status")
+            if status == "NEW_BLOCKING":
+                warning_blocking_count += 1
+            elif status == "BASELINED_OWNED":
+                warning_baselined_count += 1
+            elif status == "UNKNOWN_BLOCKING":
+                warning_unknown_count += 1
+            elif status == "FALSE_POSITIVE":
+                warning_false_positive_count += 1
     except Exception:
         pass
 
     try:
-        from backend.coding_control_plane.warning_baseline import WarningBaselineManager
-        wm = WarningBaselineManager()
-        warning_count = len(wm.baseline.get("warnings", []))
+        from backend.coding_control_plane.tool_registry import ToolRegistry
+        tr = ToolRegistry()
+        tools_list = tr.get_registered_tools()
+        for t in tools_list:
+            status = t.get("status")
+            if status == "installed":
+                verified_tool_count += 1
+            elif status == "missing":
+                missing_tool_count += 1
+            elif status == "configured_only":
+                configured_only_tool_count += 1
+            elif status == "simulated":
+                simulated_tool_count += 1
     except Exception:
         pass
 
@@ -754,19 +795,32 @@ def collect_and_store_all():
     except Exception:
         pass
 
-    if critical_defect_count > 0 or new_warning_count > 0 or high_vulnerability_count > 0 or unowned_defect_count > 0:
+    if (critical_defect_count > 0 or 
+        unowned_defect_count > 0 or 
+        warning_blocking_count > 0 or 
+        warning_unknown_count > 0 or 
+        high_vulnerability_count > 0):
         zero_defect_gate_status = "FAIL"
+        zero_defect_claim_status = "FAIL"
         final_verifier_status = "BLOCKED"
 
     defect_signals = [
         ("open_defect_count", "Open Defect Count", str(open_defect_count), "backend/coding_control_plane/defect_registry.py"),
         ("critical_defect_count", "Critical Defect Count", str(critical_defect_count), "backend/coding_control_plane/defect_registry.py"),
         ("warning_count", "Warning Count", str(warning_count), "backend/coding_control_plane/warning_baseline.py"),
-        ("new_warning_count", "New Warning Count", str(new_warning_count), "backend/coding_control_plane/warning_baseline.py"),
+        ("warning_blocking_count", "Blocking Warnings Count", str(warning_blocking_count), "backend/coding_control_plane/warning_baseline.py"),
+        ("warning_baselined_count", "Baselined Warnings Count", str(warning_baselined_count), "backend/coding_control_plane/warning_baseline.py"),
+        ("warning_unknown_count", "Unknown Warnings Count", str(warning_unknown_count), "backend/coding_control_plane/warning_baseline.py"),
+        ("warning_false_positive_count", "False Positive Warnings Count", str(warning_false_positive_count), "backend/coding_control_plane/warning_baseline.py"),
+        ("verified_tool_count", "Verified Tool Count", str(verified_tool_count), "backend/coding_control_plane/tool_registry.py"),
+        ("missing_tool_count", "Missing Tool Count", str(missing_tool_count), "backend/coding_control_plane/tool_registry.py"),
+        ("configured_only_tool_count", "Configured Only Tool Count", str(configured_only_tool_count), "backend/coding_control_plane/tool_registry.py"),
+        ("simulated_tool_count", "Simulated Tool Count", str(simulated_tool_count), "backend/coding_control_plane/tool_registry.py"),
         ("security_finding_count", "Security Finding Count", str(security_finding_count), "backend/security_ops/finding_ingestor.py"),
         ("high_vulnerability_count", "High Vulnerability Count", str(high_vulnerability_count), "backend/security_ops/vuln_register.py"),
         ("unowned_defect_count", "Unowned Defect Count", str(unowned_defect_count), "backend/coding_control_plane/defect_registry.py"),
         ("zero_defect_gate_status", "Zero-Defect Gate Status", zero_defect_gate_status, "scripts/zero_defect_gate.sh"),
+        ("zero_defect_claim_status", "Zero-Defect Claim Status", zero_defect_claim_status, "backend/coding_control_plane/final_verifier.py"),
         ("best_agent_routing_status", "Best Agent Routing Status", best_agent_routing_status, "backend/coding_control_plane/coding_agent_router.py"),
         ("final_verifier_status", "Final Verifier Status", final_verifier_status, "backend/coding_control_plane/final_verifier.py")
     ]
@@ -809,6 +863,79 @@ def collect_and_store_all():
         "",
         ""
     ))
+
+    # Commit current transaction so FinalVerdict can see the fresh signals
+    conn.commit()
+
+    # Collect Final Verifier Verdict
+    try:
+        from backend.final_verifier.final_verdict import FinalVerdict
+        verdict_data = FinalVerdict().get_final_verdict()
+        print(f"DEBUG: verdict_data readiness_score: {verdict_data['readiness_score']}")
+        print(f"DEBUG: verdict_data: {verdict_data}")
+        
+        conn.execute("""
+            INSERT OR REPLACE INTO runtime_truth_signals 
+            (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            "final_verifier_status",
+            "Final Verifier Release Verdict",
+            verdict_data["status"],
+            "backend/final_verifier/final_verdict.py",
+            "daemon",
+            heartbeat_time,
+            60,
+            "fresh",
+            1.0,
+            "",
+            "",
+            ""
+        ))
+
+        conn.execute("""
+            INSERT OR REPLACE INTO runtime_truth_signals 
+            (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            "contradiction_count",
+            "State Contradiction Count",
+            str(len(verdict_data["contradiction_checker"]["violations"])),
+            "backend/final_verifier/contradiction_checker.py",
+            "daemon",
+            heartbeat_time,
+            60,
+            "fresh",
+            1.0,
+            "",
+            "",
+            ""
+        ))
+
+        # Dynamically override the final readiness score with capped score
+        conn.execute("""
+            INSERT OR REPLACE INTO runtime_truth_signals 
+            (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            "readiness_score",
+            "Autonomous Readiness Rating",
+            f"{verdict_data['readiness_score']:.1f}",
+            "backend/final_verifier/readiness_cap_engine.py",
+            "daemon",
+            heartbeat_time,
+            60,
+            "fresh",
+            1.0,
+            "",
+            "",
+            ""
+        ))
+
+    except Exception as ex:
+        import traceback
+        traceback.print_exc()
+        print(f"Exception during final verifier verdict: {ex}")
 
     populate_source_map_internal(conn, heartbeat_time)
 
@@ -853,13 +980,22 @@ def populate_source_map_internal(conn, heartbeat_time):
         ("open_defect_count", "backend/coding_control_plane/defect_registry.py", "db_query", ""),
         ("critical_defect_count", "backend/coding_control_plane/defect_registry.py", "db_query", ""),
         ("warning_count", "backend/coding_control_plane/warning_baseline.py", "db_query", ""),
-        ("new_warning_count", "backend/coding_control_plane/warning_baseline.py", "db_query", ""),
+        ("warning_blocking_count", "backend/coding_control_plane/warning_baseline.py", "db_query", ""),
+        ("warning_baselined_count", "backend/coding_control_plane/warning_baseline.py", "db_query", ""),
+        ("warning_unknown_count", "backend/coding_control_plane/warning_baseline.py", "db_query", ""),
+        ("warning_false_positive_count", "backend/coding_control_plane/warning_baseline.py", "db_query", ""),
+        ("verified_tool_count", "backend/coding_control_plane/tool_registry.py", "db_query", ""),
+        ("missing_tool_count", "backend/coding_control_plane/tool_registry.py", "db_query", ""),
+        ("configured_only_tool_count", "backend/coding_control_plane/tool_registry.py", "db_query", ""),
+        ("simulated_tool_count", "backend/coding_control_plane/tool_registry.py", "db_query", ""),
         ("security_finding_count", "backend/security_ops/finding_ingestor.py", "db_query", ""),
         ("high_vulnerability_count", "backend/security_ops/vuln_register.py", "db_query", ""),
         ("unowned_defect_count", "backend/coding_control_plane/defect_registry.py", "db_query", ""),
         ("zero_defect_gate_status", "scripts/zero_defect_gate.sh", "bash_gate", ""),
+        ("zero_defect_claim_status", "backend/coding_control_plane/final_verifier.py", "daemon", ""),
         ("best_agent_routing_status", "backend/coding_control_plane/coding_agent_router.py", "supervisor_gate", ""),
-        ("final_verifier_status", "backend/coding_control_plane/final_verifier.py", "supervisor_gate", "")
+        ("final_verifier_status", "backend/final_verifier/final_verdict.py", "daemon", ""),
+        ("contradiction_count", "backend/final_verifier/contradiction_checker.py", "daemon", "")
     ]
     for key, url, source_type, checksum in entries:
         if source_type == "markdown_evidence":

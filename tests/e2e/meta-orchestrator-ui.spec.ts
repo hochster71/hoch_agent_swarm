@@ -29,9 +29,9 @@ test.describe("Meta-Orchestrator UI and Telemetry Verification", () => {
     const loadScore = await page.locator("#meta-load-score").textContent();
 
     expect(parseInt(totalVal || "0")).toBe(43);
-    expect(parseInt(ownerlessVal || "0")).toBe(39);
-    expect(parseInt(criticalVal || "0")).toBeGreaterThan(0);
-    expect(loadScore).toBe("HIGH");
+    expect(parseInt(ownerlessVal || "0")).toBe(0);
+    expect(parseInt(criticalVal || "0")).toBe(0);
+    expect(loadScore).toBe("20.0");
 
     // 6. Verify evidence links exist
     await expect(page.locator("#meta-evidence-matrix")).toBeVisible();

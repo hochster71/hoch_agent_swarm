@@ -306,6 +306,21 @@
                 </div>
             </header>
 
+            <!-- Final Verifier Sub-header Console -->
+            <div id="final-verifier-subheader" style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 8px 16px; border-bottom: 1px solid var(--border-glass); font-size: 11px;">
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <span style="font-weight: bold; color: var(--accent-purple);">[FINAL VERIFIER]:</span>
+                    <span id="final-verifier-badge" class="badge" style="background: rgba(239,68,68,0.15); color: #f87171; font-weight: bold;">BLOCKED</span>
+                    <span style="color: var(--text-secondary);">Contradictions: <span id="final-contradictions-count" style="color: #fff; font-weight: bold;">--</span></span>
+                    <span style="color: var(--text-secondary);">Readiness Score: <span id="final-readiness-capped" style="color: #fff; font-weight: bold;">--</span></span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px; color: var(--text-secondary);">
+                    <span>Provenance:</span>
+                    <span class="badge" style="background: rgba(139,92,246,0.15); color: #c084fc; font-size: 10px;">VERIFIED SOURCE MAP</span>
+                    <span id="final-verifier-timestamp" style="font-family: monospace;">--</span>
+                </div>
+            </div>
+
             <!-- 1. Mission Control / Cockpit View -->
             <div id="view-mission-control" class="view-section">
                 <!-- Sticky Cockpit Sub-Header -->

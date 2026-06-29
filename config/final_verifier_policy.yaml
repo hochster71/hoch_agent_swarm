@@ -1,0 +1,19 @@
+final_verifier_policy:
+  forbidden_words:
+    - "fully complete"
+    - "100%"
+    - "production ready"
+    - "no blockers"
+    - "best-in-class"
+    - "final"
+  rules:
+    critical_gaps_block_readiness: true
+    ownerless_domain_threshold: 10
+    buyer_validation_required_for_revenue: true
+    ui_container_required_for_completion: true
+    contradiction_blocks_go: true
+    freshness_threshold_seconds: 300
+    evidence_required_for_done: true
+    zero_unowned_defects_required_for_closure: true
+    block_release_on_high_vulns: true
+    block_release_on_new_warnings: true
