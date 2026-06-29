@@ -4,16 +4,34 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: hoch-agent-swarm-app
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
     environment:
       SWARM_UI_PORT: "8086"
       PYTHONPATH: "src:."
       HOCH_LOCAL_ONLY: "1"
+      UV_CACHE_DIR: "/tmp/uv-cache"
     ports:
       - "8086:8086"
     volumes:
       - ./artifacts:/app/artifacts
       - ./data:/app/data
       - ./docs:/app/docs
+      - type: tmpfs
+        target: /tmp
+        tmpfs:
+          mode: 1777
+      - type: tmpfs
+        target: /run
+        tmpfs:
+          mode: 1777
+      - type: tmpfs
+        target: /home/appuser/.cache
+        tmpfs:
+          mode: 0777
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8086/api/v1/operator/health', timeout=5).read()"]
       interval: 10s

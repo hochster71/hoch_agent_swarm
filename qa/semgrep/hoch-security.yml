@@ -1,0 +1,85 @@
+rules:
+  - id: hoch-path-traversal-flask
+    languages:
+      - python
+    severity: ERROR
+    metadata:
+      cwe: "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+      owasp: "A01:2021-Broken Access Control"
+      category: security
+    message: >-
+      Potential path traversal detected in Flask route. User-supplied path parameter
+      is used in a file system operation without resolving and validating the target
+      directory boundary.
+    pattern-either:
+      - pattern: |
+          @app.route(...)
+          def $FUNC(..., $VAR, ...):
+              ...
+              $PATH = os.path.join(..., $VAR, ...)
+              ...
+              open($PATH, ...)
+      - pattern: |
+          @app.route(...)
+          def $FUNC(..., $VAR, ...):
+              ...
+              $PATH = $DIR / $VAR
+              ...
+              $PATH.read_text(...)
+    pattern-not:
+      - pattern: |
+          @app.route(...)
+          def $FUNC(..., $VAR, ...):
+              ...
+              $PATH = ($DIR / $VAR).resolve()
+              ...
+              if not $PATH.is_relative_to($DIR.resolve()):
+                  ...
+                  abort(403)
+              ...
+
+  - id: hoch-secret-logging-traceback
+    languages:
+      - python
+    severity: WARNING
+    metadata:
+      cwe: "CWE-532: Insertion of Sensitive Information into Log File"
+      owasp: "A09:2021-Security Logging and Monitoring Failures"
+      category: security
+    message: >-
+      Logging of raw exception objects or tracebacks can accidentally leak sensitive variables
+      or credentials (e.g. API keys) stored in local stack frame scopes.
+    pattern-either:
+      - pattern: |
+          try:
+              ...
+          except Exception as $E:
+              ...
+              logger.error($E)
+      - pattern: |
+          try:
+              ...
+          except Exception as $E:
+              ...
+              print(..., $E, ...)
+      - pattern: |
+          try:
+              ...
+          except Exception as $E:
+              ...
+              logger.exception($E)
+
+  - id: hoch-weak-hash-usage
+    languages:
+      - python
+    severity: ERROR
+    metadata:
+      cwe: "CWE-328: Use of Weak Cryptographic Hash"
+      owasp: "A02:2021-Cryptographic Failures"
+      category: security
+    message: >-
+      Use of MD5 or SHA-1 hashing algorithm is insecure for digital signatures or audit ledgers.
+      Enforce SHA-256 or stronger.
+    pattern-either:
+      - pattern: hashlib.md5(...)
+      - pattern: hashlib.sha1(...)

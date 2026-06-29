@@ -35,6 +35,12 @@ def test_docker_compose_structure():
     
     # Check mounts
     volumes = services["hoch-app"].get("volumes", [])
-    vol_paths = [v.split(":")[0] for v in volumes]
+    vol_paths = []
+    for v in volumes:
+        if isinstance(v, str):
+            vol_paths.append(v.split(":")[0])
+        elif isinstance(v, dict) and "source" in v:
+            vol_paths.append(v["source"])
+            
     assert "./artifacts" in vol_paths
     assert "./data" in vol_paths

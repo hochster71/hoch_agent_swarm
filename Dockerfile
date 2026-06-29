@@ -24,6 +24,14 @@ COPY . .
 # Install the project itself in editable mode
 RUN UV_CONCURRENCY=2 uv sync --frozen
 
+# Create non-root system user and configure permissions
+RUN groupadd -g 10001 appgroup && \
+    useradd -u 10001 -g appgroup -s /bin/bash -m appuser && \
+    chown -R appuser:appgroup /app
+
+# Run as non-root user
+USER appuser
+
 # Expose app port
 EXPOSE 8086
 
@@ -31,5 +39,5 @@ EXPOSE 8086
 ENV PYTHONPATH="/app/src:/app"
 ENV SWARM_UI_PORT="8086"
 
-# Default command starts the operator cockpit launcher
-CMD ["uv", "run", "operator_launch"]
+# Default command starts the operator cockpit launcher directly using the venv python interpreter
+CMD ["/app/.venv/bin/python", "-m", "hoch_agent_swarm.operator_launcher"]
