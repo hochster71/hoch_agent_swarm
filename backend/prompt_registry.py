@@ -188,6 +188,29 @@ class PromptRegistry:
                     if approval_metadata:
                         p["approval_metadata"] = approval_metadata
 
+    def log_run_to_ledger(self, run_data: dict):
+        import json
+        import threading
+        ledger_path = self.base_dir / "data" / "prompt_registry" / "evidenceops_ledger.json"
+        ledger_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        lock = threading.Lock()
+        with lock:
+            try:
+                if ledger_path.exists():
+                    data = json.loads(ledger_path.read_text(encoding="utf-8"))
+                else:
+                    data = []
+            except Exception:
+                data = []
+                
+            data.append(run_data)
+            
+            try:
+                ledger_path.write_text(json.dumps(data, indent=2), encoding="utf-8")
+            except Exception:
+                pass
+
     def write_report(self, source_used: Optional[str]):
         report_dir = self.base_dir / "artifacts" / "qa" / "prompt_registry"
         report_dir.mkdir(parents=True, exist_ok=True)

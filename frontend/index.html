@@ -125,6 +125,10 @@
                     <i data-lucide="sliders"></i> <span>PromptOps Portal</span>
                     <span class="nav-status-indicator swarm-led-live" id="led-promptops" style="margin-left: auto; font-size: 14px; font-weight: bold; color: var(--accent-teal)">●</span>
                 </a>
+                <a href="#" class="nav-item" id="nav-evidenceops">
+                    <i data-lucide="file-spreadsheet"></i> <span>EvidenceOps Portal</span>
+                    <span class="nav-status-indicator swarm-led-live" id="led-evidenceops" style="margin-left: auto; font-size: 14px; font-weight: bold; color: var(--accent-teal)">●</span>
+                </a>
                 <a href="#" class="nav-item" id="nav-clawde">
                     <i data-lucide="shield-check"></i> <span>Clawde Tower</span>
                     <span class="nav-status-indicator swarm-led-live" id="led-clawde" style="margin-left: auto; font-size: 14px; font-weight: bold; color: var(--accent-teal)">●</span>
@@ -952,6 +956,132 @@
                         </div>
                     </section>
                 </div>
+            </div>
+
+            <!-- EvidenceOps View -->
+            <div id="view-evidenceops" class="view-section hidden">
+                <section class="card" style="padding: 20px; background: rgba(10, 15, 30, 0.85); border: 1px solid var(--border-glass); border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); backdrop-filter: blur(12px); margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 16px; margin-bottom: 20px;">
+                        <div>
+                            <h2 style="font-size: 22px; font-weight: 700; color: #fff; font-family: 'Outfit', sans-serif; letter-spacing: -0.02em;">EvidenceOps & Operator Telemetry</h2>
+                            <div style="font-size: 11px; color: var(--accent-teal); font-weight: bold; margin-top: 2px;">HOCH AGENT SWARM — V6 EVIDENCEOPS LAYER</div>
+                            <p style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Operational run ledger auditing, daily QA snapshots, exportable compliance bundles, and fail-closed runtime controls.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- EvidenceOps Telemetry Summary Cards -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 20px;">
+                    <section class="card" style="padding: 16px; background: rgba(10, 15, 30, 0.85); border: 1px solid var(--border-glass); border-radius: 12px; display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 40px; height: 40px; border-radius: 8px; background: rgba(14, 165, 233, 0.15); display: flex; align-items: center; justify-content: center; color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.3);">
+                            <i data-lucide="play-circle" style="width: 20px; height: 20px;"></i>
+                        </div>
+                        <div>
+                            <p style="font-size: 9px; text-transform: uppercase; color: var(--text-secondary); margin: 0; font-weight: bold; letter-spacing: 0.5px;">Ledger Runs</p>
+                            <h3 id="evidenceops-metric-runs" style="font-size: 18px; font-weight: 700; margin: 4px 0 0 0; color: #fff;">0</h3>
+                        </div>
+                    </section>
+                    <section class="card" style="padding: 16px; background: rgba(10, 15, 30, 0.85); border: 1px solid var(--border-glass); border-radius: 12px; display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 40px; height: 40px; border-radius: 8px; background: rgba(168, 85, 247, 0.15); display: flex; align-items: center; justify-content: center; color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3);">
+                            <i data-lucide="shield-check" style="width: 20px; height: 20px;"></i>
+                        </div>
+                        <div>
+                            <p style="font-size: 9px; text-transform: uppercase; color: var(--text-secondary); margin: 0; font-weight: bold; letter-spacing: 0.5px;">Approval Events</p>
+                            <h3 id="evidenceops-metric-approvals" style="font-size: 18px; font-weight: 700; margin: 4px 0 0 0; color: #c084fc;">0</h3>
+                        </div>
+                    </section>
+                    <section class="card" style="padding: 16px; background: rgba(10, 15, 30, 0.85); border: 1px solid var(--border-glass); border-radius: 12px; display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 40px; height: 40px; border-radius: 8px; background: rgba(245, 158, 11, 0.15); display: flex; align-items: center; justify-content: center; color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);">
+                            <i data-lucide="alert-triangle" style="width: 20px; height: 20px;"></i>
+                        </div>
+                        <div>
+                            <p style="font-size: 9px; text-transform: uppercase; color: var(--text-secondary); margin: 0; font-weight: bold; letter-spacing: 0.5px;">Fixture Drift</p>
+                            <h3 id="evidenceops-metric-drift" style="font-size: 18px; font-weight: 700; margin: 4px 0 0 0; color: #fbbf24;">0</h3>
+                        </div>
+                    </section>
+                    <section class="card" style="padding: 16px; background: rgba(10, 15, 30, 0.85); border: 1px solid var(--border-glass); border-radius: 12px; display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 40px; height: 40px; border-radius: 8px; background: rgba(239, 68, 68, 0.15); display: flex; align-items: center; justify-content: center; color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3);">
+                            <i data-lucide="ban" style="width: 20px; height: 20px;"></i>
+                        </div>
+                        <div>
+                            <p style="font-size: 9px; text-transform: uppercase; color: var(--text-secondary); margin: 0; font-weight: bold; letter-spacing: 0.5px;">Blocked CI Gates</p>
+                            <h3 id="evidenceops-metric-blocked-ci" style="font-size: 18px; font-weight: 700; margin: 4px 0 0 0; color: #f87171;">0</h3>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Exporter Panel and Daily Snapshot Row -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+                    <!-- Exporter Card -->
+                    <section class="card" style="padding: 16px; background: rgba(10, 15, 30, 0.85); border: 1px solid var(--border-glass); border-radius: 12px;">
+                        <h3 style="font-size: 14px; font-weight: bold; color: #fff; margin-bottom: 12px; font-family: 'Outfit', sans-serif;">Export Compliance Evidence Bundle</h3>
+                        <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">Compile full system run logs, output contracts, and dynamic hashes into a single zip and report formats (MD, CSV, JSON).</p>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button id="btn-evidenceops-export" class="btn" style="background: rgba(20, 184, 166, 0.15); border: 1px solid rgba(20, 184, 166, 0.3); color: var(--accent-teal); font-size: 12px; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 6px;">
+                                <i data-lucide="download"></i> Generate & Export Bundle
+                            </button>
+                        </div>
+                        <div id="evidenceops-export-links" style="margin-top: 16px; display: none; font-size: 12px; padding: 12px; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px dashed rgba(20,184,166,0.3);">
+                            <div style="font-weight: bold; color: var(--accent-teal); margin-bottom: 6px;">Export Completed! Downloads available:</div>
+                            <ul style="list-style-type: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 4px;">
+                                <li>📄 Markdown Report: <a id="export-link-md" href="#" target="_blank" style="color: #38bdf8; text-decoration: underline;">ledger_report.md</a></li>
+                                <li>📊 CSV Table: <a id="export-link-csv" href="#" target="_blank" style="color: #38bdf8; text-decoration: underline;">ledger_report.csv</a></li>
+                                <li>📦 JSON Ledger: <a id="export-link-json" href="#" target="_blank" style="color: #38bdf8; text-decoration: underline;">ledger_report.json</a></li>
+                                <li>📦 Zipped Bundle: <a id="export-link-zip" href="#" target="_blank" style="color: #38bdf8; text-decoration: underline; font-weight: bold;">evidenceops_bundle.zip</a></li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <!-- Daily QA Snapshot Card -->
+                    <section class="card" style="padding: 16px; background: rgba(10, 15, 30, 0.85); border: 1px solid var(--border-glass); border-radius: 12px;">
+                        <h3 style="font-size: 14px; font-weight: bold; color: #fff; margin-bottom: 12px; font-family: 'Outfit', sans-serif;">Daily QA Snapshot</h3>
+                        <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 12px;" id="evidenceops-snapshot-time">Snapshot Timestamp: --</p>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 12px;">
+                            <div style="background: rgba(255,255,255,0.02); padding: 8px; border-radius: 6px; border: 1px solid var(--border-glass);">
+                                <div style="color: var(--text-secondary); font-size: 10px; font-weight: bold; text-transform: uppercase;">Active Prompts</div>
+                                <div id="evidenceops-snap-active" style="font-size: 16px; font-weight: bold; color: #34d399; margin-top: 4px;">0</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.02); padding: 8px; border-radius: 6px; border: 1px solid var(--border-glass);">
+                                <div style="color: var(--text-secondary); font-size: 10px; font-weight: bold; text-transform: uppercase;">Failed Fixtures</div>
+                                <div id="evidenceops-snap-failed-fix" style="font-size: 16px; font-weight: bold; color: #f87171; margin-top: 4px;">0</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.02); padding: 8px; border-radius: 6px; border: 1px solid var(--border-glass);">
+                                <div style="color: var(--text-secondary); font-size: 10px; font-weight: bold; text-transform: uppercase;">Hash Drift (Alerts)</div>
+                                <div id="evidenceops-snap-hash-drift" style="font-size: 16px; font-weight: bold; color: #fbbf24; margin-top: 4px;">0</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.02); padding: 8px; border-radius: 6px; border: 1px solid var(--border-glass);">
+                                <div style="color: var(--text-secondary); font-size: 10px; font-weight: bold; text-transform: uppercase;">High-Risk Pending</div>
+                                <div id="evidenceops-snap-pending-hr" style="font-size: 16px; font-weight: bold; color: #c084fc; margin-top: 4px;">0</div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Run Ledger Table Card -->
+                <section class="card" style="padding: 16px; background: rgba(10, 15, 30, 0.85); border: 1px solid var(--border-glass); border-radius: 12px;">
+                    <h3 style="font-size: 14px; font-weight: bold; color: #fff; margin-bottom: 12px; font-family: 'Outfit', sans-serif;">System Execution Run Ledger</h3>
+                    <div style="max-height: 400px; overflow-y: auto;">
+                        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 11px;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid var(--border-glass); color: var(--text-secondary);">
+                                    <th style="padding: 6px;">Timestamp</th>
+                                    <th style="padding: 6px;">Prompt ID</th>
+                                    <th style="padding: 6px;">Version</th>
+                                    <th style="padding: 6px;">Model</th>
+                                    <th style="padding: 6px;">Agent Route</th>
+                                    <th style="padding: 6px;">Input Summary</th>
+                                    <th style="padding: 6px;">Output Contract</th>
+                                    <th style="padding: 6px;">Verdict</th>
+                                    <th style="padding: 6px;">Evidence File</th>
+                                </tr>
+                            </thead>
+                            <tbody id="evidenceops-ledger-list">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
 
             <!-- CLAWDE Control Tower View -->
             <div id="view-clawde" class="view-section hidden">

@@ -8551,15 +8551,34 @@ def run_prompt_through_swarm_endpoint(prompt_id: str):
     from backend.prompt_registry import get_registry
     from backend.main import TaskRequest, run_swarm_task
     import json
+    import uuid
     from datetime import datetime, timezone
     from pathlib import Path
     
     base_dir = Path(__file__).resolve().parent.parent
     registry = get_registry()
+    
+    # 1. Fail-closed: Registry load status check
+    if registry.status != "LIVE":
+        raise HTTPException(
+            status_code=503,
+            detail=f"Execution blocked: Prompt Registry is in '{registry.status}' state."
+        )
+        
     prompt_record = next((p for p in registry.prompts if p["id"] == prompt_id), None)
     if not prompt_record:
         raise HTTPException(status_code=404, detail=f"Prompt {prompt_id} not found")
         
+    # 2. Fail-closed: High-risk approval check
+    is_high_risk = prompt_record.get("severity") == "HIGH"
+    if is_high_risk:
+        state = prompt_record.get("lifecycle_state", "active")
+        if state != "active":
+            raise HTTPException(
+                status_code=403,
+                detail=f"Execution blocked: High-risk prompt {prompt_id} is in '{state}' state. Requires active approved state."
+            )
+            
     task_req = TaskRequest(
         task_type=prompt_record.get("category", "QA"),
         prompt=prompt_record.get("prompt", ""),
@@ -8568,15 +8587,17 @@ def run_prompt_through_swarm_endpoint(prompt_id: str):
     )
     
     success = True
+    execution_res = {}
+    error_detail = ""
+    
     try:
         execution_res = run_swarm_task(task_req)
+        registry.increment_usage(prompt_id, success=True)
     except Exception as e:
         success = False
+        error_detail = str(e)
         registry.increment_usage(prompt_id, success=False)
-        raise HTTPException(status_code=500, detail=f"Failed to execute swarm task: {str(e)}")
         
-    registry.increment_usage(prompt_id, success=True)
-    
     evidence_dir = base_dir / "artifacts" / "qa" / "prompt_registry"
     evidence_dir.mkdir(parents=True, exist_ok=True)
     
@@ -8588,8 +8609,8 @@ def run_prompt_through_swarm_endpoint(prompt_id: str):
         "prompt_id": prompt_id,
         "prompt_title": prompt_record.get("title", "Unknown"),
         "prompt_version": prompt_record.get("version", "3.0.0"),
-        "prompt_hash": prompt_record.get("hash", ""),
-        "model": execution_res.get("model", "openai/gpt-4o"),
+        "prompt_hash": prompt_record.get("hash") or prompt_record.get("last_known_hash", ""),
+        "model": execution_res.get("model", "openai/gpt-4o") if success else "Unknown",
         "agent_route": prompt_record.get("agent_role", "Unknown"),
         "input": task_req.prompt,
         "output_contract": prompt_record.get("outputs", []),
@@ -8599,21 +8620,44 @@ def run_prompt_through_swarm_endpoint(prompt_id: str):
             "prompt": task_req.prompt,
             "mode": task_req.mode
         },
-        "execution_result": execution_res,
-        "result": execution_res.get("result", ""),
+        "execution_result": execution_res if success else {"error": error_detail},
+        "result": execution_res.get("result", "") if success else f"Execution failed: {error_detail}",
         "status": "GO" if success else "NO-GO"
     }
     
     try:
         evidence_path.write_text(json.dumps(evidence_data, indent=2), encoding="utf-8")
-    except Exception as e:
+    except Exception:
         pass
+        
+    # Append execution record to run ledger
+    run_id = str(uuid.uuid4())
+    input_summary = task_req.prompt[:100] + ("..." if len(task_req.prompt) > 100 else "")
+    run_entry = {
+        "run_id": run_id,
+        "prompt_id": prompt_id,
+        "version": prompt_record.get("version", "3.0.0"),
+        "hash": prompt_record.get("hash") or prompt_record.get("last_known_hash", ""),
+        "model": execution_res.get("model", "openai/gpt-4o") if success else "Unknown",
+        "agent_route": prompt_record.get("agent_role") or prompt_record.get("category", "QA"),
+        "input_summary": input_summary,
+        "output_contract": str(prompt_record.get("outputs", "")),
+        "evidence_path": str(evidence_path.relative_to(base_dir) if base_dir in evidence_path.parents else evidence_path),
+        "verdict": "GO" if success else "NO-GO",
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+    
+    registry.log_run_to_ledger(run_entry)
+    
+    if not success:
+        raise HTTPException(status_code=500, detail=f"Failed to execute swarm task: {error_detail}")
         
     return {
         "status": "COMPLETED",
-        "evidence_file": str(evidence_path.relative_to(base_dir) if base_dir in evidence_path.parents else evidence_path),
+        "evidence_file": run_entry["evidence_path"],
         "result": execution_res.get("result", ""),
-        "evidence_data": evidence_data
+        "evidence_data": evidence_data,
+        "run_entry": run_entry
     }
 
 @app.get("/api/promptops/metrics")
@@ -8799,12 +8843,232 @@ def run_ci_gate_endpoint():
         elif state == "draft":
             errors.append(f"CI Gate Blocked: Prompt {p['id']} is a pending draft awaiting initial approval.")
             
+    # 4. Fail-closed: Block CI when fixture drift is detected
+    from backend.promptops_drift import analyze_drift
+    drift_findings = analyze_drift(base_dir)
+    if drift_findings:
+        for f in drift_findings:
+            errors.append(f"CI Gate Blocked: Fixture drift detected on prompt {f['prompt_id']}: {f['message']}")
+            
     status = "FAILED" if errors else "PASSED"
     
     return {
         "status": status,
         "errors": errors,
         "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+
+# ── EvidenceOps Phase 6 Endpoints ──────────────────────────────────────────────
+
+@app.get("/api/evidenceops/metrics")
+def get_evidenceops_metrics_endpoint():
+    from backend.prompt_registry import get_registry
+    from backend.promptops_drift import analyze_drift
+    import json
+    from pathlib import Path
+    from datetime import datetime, timezone
+    
+    registry = get_registry()
+    base_dir = Path(__file__).resolve().parent.parent
+    
+    ledger_path = base_dir / "data" / "prompt_registry" / "evidenceops_ledger.json"
+    total_runs = 0
+    if ledger_path.exists():
+        try:
+            runs = json.loads(ledger_path.read_text(encoding="utf-8"))
+            total_runs = len(runs)
+        except Exception:
+            pass
+            
+    prompts = registry.prompts
+    quarantined_count = 0
+    approval_events_count = 0
+    stale_count = 0
+    high_risk_count = 0
+    
+    for p in prompts:
+        state = p.get("lifecycle_state", "active")
+        if state == "quarantined":
+            quarantined_count += 1
+        elif state in ["draft", "review_required"]:
+            approval_events_count += 1
+            
+        if p.get("severity") == "HIGH":
+            high_risk_count += 1
+            
+        last_run = p.get("last_run_timestamp")
+        if last_run:
+            try:
+                lr_dt = datetime.fromisoformat(last_run.replace("Z", "+00:00"))
+                diff = datetime.now(timezone.utc) - lr_dt
+                if diff.days >= 30:
+                    stale_count += 1
+            except Exception:
+                pass
+        else:
+            stale_count += 1
+            
+    # Calculate fixture drift
+    drift_findings = analyze_drift(base_dir)
+    drift_count = len(drift_findings)
+    
+    # Blocked CI count matches current validation errors if any
+    ci_gate_res = run_ci_gate_endpoint()
+    blocked_ci_gates = len(ci_gate_res.get("errors", []))
+    
+    return {
+        "total_runs": total_runs,
+        "approval_events": approval_events_count,
+        "fixture_drift": drift_count,
+        "blocked_ci_gates": blocked_ci_gates,
+        "quarantined_prompts": quarantined_count,
+        "stale_prompts": stale_count
+    }
+
+@app.get("/api/evidenceops/runs")
+def get_evidenceops_runs_endpoint():
+    import json
+    from pathlib import Path
+    base_dir = Path(__file__).resolve().parent.parent
+    ledger_path = base_dir / "data" / "prompt_registry" / "evidenceops_ledger.json"
+    if ledger_path.exists():
+        try:
+            return json.loads(ledger_path.read_text(encoding="utf-8"))
+        except Exception:
+            return []
+    return []
+
+@app.get("/api/evidenceops/runs/{run_id}")
+def get_evidenceops_run_by_id_endpoint(run_id: str):
+    from fastapi import HTTPException
+    runs = get_evidenceops_runs_endpoint()
+    run = next((r for r in runs if r.get("run_id") == run_id), None)
+    if not run:
+        raise HTTPException(status_code=404, detail=f"Run {run_id} not found")
+    return run
+
+@app.post("/api/evidenceops/export")
+def post_evidenceops_export_endpoint():
+    import json
+    import csv
+    import zipfile
+    from pathlib import Path
+    from datetime import datetime, timezone
+    
+    base_dir = Path(__file__).resolve().parent.parent
+    export_dir = base_dir / "artifacts" / "qa" / "evidenceops"
+    export_dir.mkdir(parents=True, exist_ok=True)
+    
+    runs = get_evidenceops_runs_endpoint()
+    
+    # 1. Write JSON
+    json_path = export_dir / "ledger_report.json"
+    json_path.write_text(json.dumps(runs, indent=2), encoding="utf-8")
+    
+    # 2. Write CSV
+    csv_path = export_dir / "ledger_report.csv"
+    with open(csv_path, mode="w", encoding="utf-8", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["run_id", "prompt_id", "version", "hash", "model", "agent_route", "input_summary", "output_contract", "evidence_path", "verdict", "timestamp"])
+        for r in runs:
+            writer.writerow([
+                r.get("run_id", ""),
+                r.get("prompt_id", ""),
+                r.get("version", ""),
+                r.get("hash", ""),
+                r.get("model", ""),
+                r.get("agent_route", ""),
+                r.get("input_summary", ""),
+                r.get("output_contract", ""),
+                r.get("evidence_path", ""),
+                r.get("verdict", ""),
+                r.get("timestamp", "")
+            ])
+            
+    # 3. Write Markdown
+    md_path = export_dir / "ledger_report.md"
+    md_content = []
+    md_content.append("# EvidenceOps Run Ledger Report\n")
+    md_content.append(f"Generated at: {datetime.now(timezone.utc).isoformat()}\n")
+    md_content.append(f"Total runs: {len(runs)}\n")
+    md_content.append("| Run ID | Prompt ID | Version | Model | Agent Route | Verdict | Timestamp |")
+    md_content.append("| --- | --- | --- | --- | --- | --- | --- |")
+    for r in runs:
+        md_content.append(f"| `{r.get('run_id','')}` | **{r.get('prompt_id','')}** | {r.get('version','')} | {r.get('model','')} | {r.get('agent_route','')} | {r.get('verdict','')} | {r.get('timestamp','')} |")
+    md_path.write_text("\n".join(md_content), encoding="utf-8")
+    
+    # 4. Create ZIP
+    zip_path = export_dir / "evidenceops_bundle.zip"
+    with zipfile.ZipFile(zip_path, mode="w", compression=zipfile.ZIP_DEFLATED) as z:
+        z.write(md_path, arcname="ledger_report.md")
+        z.write(json_path, arcname="ledger_report.json")
+        z.write(csv_path, arcname="ledger_report.csv")
+        
+        # Add prompt execution evidence files
+        evidence_dir = base_dir / "artifacts" / "qa" / "prompt_registry"
+        if evidence_dir.exists():
+            for f in evidence_dir.glob("evidence_*.json"):
+                z.write(f, arcname=f"evidence_details/{f.name}")
+                
+    return {
+        "status": "COMPLETED",
+        "files": {
+            "markdown": str(md_path.relative_to(base_dir)),
+            "json": str(json_path.relative_to(base_dir)),
+            "csv": str(csv_path.relative_to(base_dir)),
+            "zip": str(zip_path.relative_to(base_dir))
+        }
+    }
+
+@app.get("/api/evidenceops/daily-snapshot")
+def get_evidenceops_daily_snapshot_endpoint():
+    from backend.prompt_registry import get_registry
+    from backend.promptops_drift import analyze_drift
+    import json
+    from pathlib import Path
+    from datetime import datetime, timezone
+    
+    registry = get_registry()
+    base_dir = Path(__file__).resolve().parent.parent
+    
+    # Calculate failed fixtures count
+    fixtures_path = base_dir / "artifacts" / "qa" / "prompt_registry" / "golden_fixtures_qa_report.json"
+    failed_fixtures = 0
+    if fixtures_path.exists():
+        try:
+            data = json.loads(fixtures_path.read_text(encoding="utf-8"))
+            passed = data.get("passed_fixtures", 50)
+            total = data.get("total_fixtures", 50)
+            failed_fixtures = max(0, total - passed)
+        except Exception:
+            pass
+            
+    prompts = registry.prompts
+    active_count = 0
+    hash_drift_count = 0
+    stale_review_count = 0
+    high_risk_awaiting_approval = 0
+    
+    for p in prompts:
+        state = p.get("lifecycle_state", "active")
+        if state == "active":
+            active_count += 1
+        elif state == "review_required":
+            hash_drift_count += 1
+            stale_review_count += 1
+        elif state == "draft":
+            stale_review_count += 1
+            
+        if p.get("severity") == "HIGH" and state != "active":
+            high_risk_awaiting_approval += 1
+            
+    return {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "active_prompts_count": active_count,
+        "failed_fixtures_count": failed_fixtures,
+        "hash_drift_count": hash_drift_count,
+        "stale_review_items_count": stale_review_count,
+        "high_risk_awaiting_approval": high_risk_awaiting_approval
     }
 
 class PromptRoutePlanRequest(BaseModel):

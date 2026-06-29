@@ -60,6 +60,7 @@ import Hls from 'hls.js';
         { id: 'agent-flight-deck', label: 'AGENT FLIGHT DECK' },
         { id: 'prompt-catalog', label: 'PROMPT CATALOG' },
         { id: 'promptops', label: 'PROMPTOPS PORTAL' },
+        { id: 'evidenceops', label: 'EVIDENCEOPS PORTAL' },
         { id: 'clawde', label: 'CLAWDE CONTROL TOWER' },
         { id: 'handoff', label: 'RELEASE REVIEW & HANDOFF' },
         { id: 'ato', label: 'ATO EVIDENCE BUILDER' },
@@ -185,6 +186,9 @@ import Hls from 'hls.js';
                 break;
             case 'promptops':
                 loadPromptOpsView();
+                break;
+            case 'evidenceops':
+                loadEvidenceOpsView();
                 break;
             case 'clawde':
                 loadClawdeView();
@@ -6121,8 +6125,108 @@ import Hls from 'hls.js';
         }
     }
 
+    async function loadEvidenceOpsView() {
+        try {
+            // 1. Fetch Metrics
+            const metrics = await fetchJsonSafe('/api/evidenceops/metrics');
+            const elRuns = el('evidenceops-metric-runs');
+            const elApprovals = el('evidenceops-metric-approvals');
+            const elDrift = el('evidenceops-metric-drift');
+            const elBlockedCI = el('evidenceops-metric-blocked-ci');
+            
+            if (elRuns) elRuns.textContent = metrics.total_runs ?? '0';
+            if (elApprovals) elApprovals.textContent = metrics.approval_events ?? '0';
+            if (elDrift) elDrift.textContent = metrics.fixture_drift ?? '0';
+            if (elBlockedCI) elBlockedCI.textContent = metrics.blocked_ci_gates ?? '0';
+
+            // 2. Fetch Snapshot
+            const snapshot = await fetchJsonSafe('/api/evidenceops/daily-snapshot');
+            const elSnapTime = el('evidenceops-snapshot-time');
+            const elSnapActive = el('evidenceops-snap-active');
+            const elSnapFailedFix = el('evidenceops-snap-failed-fix');
+            const elSnapHashDrift = el('evidenceops-snap-hash-drift');
+            const elSnapPendingHR = el('evidenceops-snap-pending-hr');
+            
+            if (elSnapTime) elSnapTime.textContent = `Snapshot Timestamp: ${snapshot.timestamp ? new Date(snapshot.timestamp).toLocaleString() : '--'}`;
+            if (elSnapActive) elSnapActive.textContent = snapshot.active_prompts_count ?? '0';
+            if (elSnapFailedFix) elSnapFailedFix.textContent = snapshot.failed_fixtures_count ?? '0';
+            if (elSnapHashDrift) elSnapHashDrift.textContent = snapshot.hash_drift_count ?? '0';
+            if (elSnapPendingHR) elSnapPendingHR.textContent = snapshot.high_risk_awaiting_approval ?? '0';
+
+            // 3. Fetch Runs Ledger
+            const runs = await fetchJsonSafe('/api/evidenceops/runs');
+            const ledgerList = el('evidenceops-ledger-list');
+            if (ledgerList) {
+                if (runs.length === 0) {
+                    ledgerList.innerHTML = '<tr><td colspan="9" style="padding: 10px; color: var(--text-secondary); text-align: center;">No execution runs recorded in the ledger yet.</td></tr>';
+                } else {
+                    // Sort descending by timestamp
+                    runs.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+                    ledgerList.innerHTML = runs.map(r => {
+                        const isGo = r.verdict === 'GO';
+                        const verdictStyle = isGo ? 'background: rgba(16, 185, 129, 0.15); color: #34d399;' : 'background: rgba(239, 68, 68, 0.15); color: #f87171;';
+                        return `
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <td style="padding: 8px; color: var(--text-secondary); white-space: nowrap;">${new Date(r.timestamp).toLocaleString()}</td>
+                                <td style="padding: 8px; font-family: monospace; font-weight: bold; color: var(--accent-teal);">${escapeHtml(r.prompt_id)}</td>
+                                <td style="padding: 8px; color: var(--text-secondary);">${escapeHtml(r.version)}</td>
+                                <td style="padding: 8px; color: var(--text-secondary);">${escapeHtml(r.model)}</td>
+                                <td style="padding: 8px; color: var(--text-secondary);">${escapeHtml(r.agent_route)}</td>
+                                <td style="padding: 8px; color: var(--text-secondary); max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(r.input_summary)}</td>
+                                <td style="padding: 8px; color: var(--text-secondary); max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(r.output_contract)}</td>
+                                <td style="padding: 8px;"><span class="status-pill" style="font-size: 9px; padding: 2px 6px; border-radius: 4px; ${verdictStyle}">${escapeHtml(r.verdict)}</span></td>
+                                <td style="padding: 8px; font-family: monospace;"><a href="/${r.evidence_path}" target="_blank" style="color: #38bdf8; text-decoration: underline;">evidence.json</a></td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            }
+
+            const exportBtn = el('btn-evidenceops-export');
+            if (exportBtn) {
+                exportBtn.onclick = runEvidenceOpsExport;
+            }
+
+        } catch (err) {
+            console.error("Error loading EvidenceOps view:", err);
+        }
+    }
+
+    async function runEvidenceOpsExport() {
+        const btn = el('btn-evidenceops-export');
+        const linksBox = el('evidenceops-export-links');
+        if (!btn) return;
+        
+        btn.disabled = true;
+        btn.innerHTML = '<i data-lucide="loader" class="spin"></i> Generating Bundle...';
+        if (window.lucide) window.lucide.createIcons();
+
+        try {
+            const res = await fetchJsonSafe('/api/evidenceops/export', {
+                method: 'POST'
+            });
+            
+            if (linksBox) {
+                linksBox.style.display = 'block';
+                el('export-link-md').href = '/' + res.files.markdown;
+                el('export-link-csv').href = '/' + res.files.csv;
+                el('export-link-json').href = '/' + res.files.json;
+                el('export-link-zip').href = '/' + res.files.zip;
+            }
+            alert('Evidence bundle successfully generated!');
+        } catch (err) {
+            alert(`Export failed: ${err.message}`);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i data-lucide="download"></i> Generate & Export Bundle';
+            if (window.lucide) window.lucide.createIcons();
+        }
+    }
+
     window.approvePromptFlow = approvePromptFlow;
     window.quarantinePrompt = quarantinePrompt;
+    window.loadEvidenceOpsView = loadEvidenceOpsView;
+    window.runEvidenceOpsExport = runEvidenceOpsExport;
     }
 
     // Run initialization once DOM is ready
