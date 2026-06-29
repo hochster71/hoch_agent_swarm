@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-test.describe("Cross-Runtime Evidence Graph E2E", () => {
+test.describe("@legacy @compat @deorbited Cross-Runtime Evidence Graph E2E", () => {
   test("triggers evidence trace, inspects node details, and persists a manual relationship", async ({ page }) => {
     // Dismiss all alert/confirm dialogs automatically
     page.on("dialog", async dialog => {

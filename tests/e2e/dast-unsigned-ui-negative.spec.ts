@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import * as fs from "fs";
 import * as path from "path";
 
-test.describe("DAST & Negative Security Testing - Release Signing Policy", () => {
+test.describe("@legacy @compat @deorbited DAST & Negative Security Testing - Release Signing Policy", () => {
   
   test("asserts that invalid scope request is rejected with 400", async ({ request }) => {
     const res = await request.post("/api/v1/release/signing-waiver", {

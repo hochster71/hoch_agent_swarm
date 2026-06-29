@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-test.describe("Device Service Health Lease Manager E2E", () => {
+test.describe("@legacy @compat @deorbited Device Service Health Lease Manager E2E", () => {
   test("registers, approves, updates leases, and asserts UI status badges", async ({ page }) => {
     const consoleErrors: string[] = [];
     page.on("console", msg => {

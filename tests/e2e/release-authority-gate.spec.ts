@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-test.describe("Formal Release Authority Gate E2E", () => {
+test.describe("@legacy @compat @deorbited Formal Release Authority Gate E2E", () => {
   test("implements authority gate by default, permits authority request with TEST_MODE, and gates promotion", async ({ page, request }) => {
     // 1. Go to dashboard with ?test_mode=true so frontend passes is_test=true
     await page.goto("/?test_mode=true");

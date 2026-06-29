@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-test.describe("Formal Release Execution Plan E2E", () => {
+test.describe("@legacy @compat @deorbited Formal Release Execution Plan E2E", () => {
   test("generatesordered execution plan, checks authority scopes, updates status, and exports plans", async ({ page }) => {
     // 1. Go to dashboard with ?test_mode=true
     await page.goto("/?test_mode=true");

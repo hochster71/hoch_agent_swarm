@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-test.describe("Operator Release Decision Room E2E", () => {
+test.describe("@legacy @compat @deorbited Operator Release Decision Room E2E", () => {
   test("evaluates candidate release, runs simulation, updates ledger, and exports decision memo", async ({ page }) => {
     // 1. Go to dashboard
     await page.goto("/");

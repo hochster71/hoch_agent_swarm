@@ -12,6 +12,10 @@ test.describe("Runtime Reliability E2E and Telemetry Validation", () => {
       }
     });
 
+    page.on("pageerror", (err) => {
+      consoleErrors.push("UNCAUGHT EXCEPTION: " + err.message + "\n" + err.stack);
+    });
+
     // Capture 404 response errors
     page.on("response", (response) => {
       if (response.status() === 404 && !response.url().includes("tailwind.css")) {
@@ -32,28 +36,60 @@ test.describe("Runtime Reliability E2E and Telemetry Validation", () => {
     const reliabilityView = page.locator("#view-runtime-reliability");
     await expect(reliabilityView).not.toHaveClass(/\bhidden\b/);
 
-    // 4. Assert header metadata
-    await expect(page.locator("#reliability-northstar-header")).toBeVisible();
-    await expect(page.locator("#reliability-status-badge")).toBeVisible();
+    try {
+      const parentInfo = await page.locator("#reliability-northstar-header").evaluate(el => {
+        return {
+          parentTagName: el.parentElement.tagName,
+          parentId: el.parentElement.id,
+          parentClass: el.parentElement.className,
+          grandparentTagName: el.parentElement.parentElement.tagName,
+          grandparentId: el.parentElement.parentElement.id,
+          grandparentClass: el.parentElement.parentElement.className
+        };
+      });
+      console.log("PARENT INFO:", parentInfo);
 
-    // 5. Assert budget ceiling and estimated monthly costs
-    await expect(page.locator("#rel-monthly-cost")).toBeVisible();
-    await expect(page.locator("#rel-budget-panel")).toContainText("$100/mo");
+      const computedStyle = await page.locator("#reliability-northstar-header").evaluate(el => {
+        const style = window.getComputedStyle(el);
+        return {
+          display: style.display,
+          visibility: style.visibility,
+          opacity: style.opacity,
+          width: el.offsetWidth,
+          height: el.offsetHeight,
+          parentDisplay: window.getComputedStyle(el.parentElement).display,
+          grandparentDisplay: window.getComputedStyle(el.parentElement.parentElement).display
+        };
+      });
+      console.log("COMPUTED STYLE:", computedStyle);
 
-    // 6. Assert registered agents and limits
-    await expect(page.locator("#rel-agent-ratio")).toContainText("300");
+      // 4. Assert header metadata
+      await expect(page.locator("#reliability-northstar-header")).toBeVisible();
+      await expect(page.locator("#reliability-status-badge")).toBeVisible();
 
-    // 7. Assert Redis queue details
-    await expect(page.locator("#rel-queue-status")).toBeVisible();
-    await expect(page.locator("#rel-queue-depth-val")).toContainText("0");
+      // 5. Assert budget ceiling and estimated monthly costs
+      await expect(page.locator("#rel-monthly-cost")).toBeVisible();
+      await expect(page.locator("#rel-budget-panel")).toContainText("$100/mo");
 
-    // 8. Assert host status
-    await expect(page.locator("#rel-primary-status")).toBeVisible();
-    await expect(page.locator("#rel-secondary-status")).toBeVisible();
+      // 6. Assert registered agents and limits
+      await expect(page.locator("#rel-agent-ratio")).toContainText("300");
 
-    // 9. Assert backup, watchdog, and failover readiness
-    await expect(page.locator("#rel-failover-ready")).toBeVisible();
-    await expect(page.locator("#rel-risks-list")).toContainText("No GPU on Secondary VPS");
+      // 7. Assert Redis queue details
+      await expect(page.locator("#rel-queue-status")).toBeVisible();
+      await expect(page.locator("#rel-queue-depth-val")).toContainText("0");
+
+      // 8. Assert host status
+      await expect(page.locator("#rel-primary-status")).toBeVisible();
+      await expect(page.locator("#rel-secondary-status")).toBeVisible();
+
+      // 9. Assert backup, watchdog, and failover readiness
+      await expect(page.locator("#rel-failover-ready")).toBeVisible();
+      await expect(page.locator("#rel-risks-list")).toContainText("No GPU on Secondary VPS");
+    } catch (err) {
+      console.log("TEST FAILURE OCCURRED. Captured Errors:\n", consoleErrors.join("\n"));
+      console.log("MAIN CONTENT HTML:\n", await page.locator("#main-content").innerHTML());
+      throw err;
+    }
 
     // Ensure zero runtime JS console errors or assets crashes
     expect(consoleErrors.length).toBe(0);

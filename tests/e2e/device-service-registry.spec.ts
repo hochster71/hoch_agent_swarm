@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-test.describe("Device-as-a-Service Registry E2E", () => {
+test.describe("@legacy @compat @deorbited Device-as-a-Service Registry E2E", () => {
   test("runs local device discovery, inspects details, and approves a node", async ({ page }) => {
     const consoleErrors: string[] = [];
     page.on("console", msg => {

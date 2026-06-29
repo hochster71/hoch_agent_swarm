@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-test.describe("Device Registry Topology E2E", () => {
+test.describe("@legacy @compat @deorbited Device Registry Topology E2E", () => {
   test("renders Cluster Command Map 2.0 and verifies Mobile Fleet Drawer details", async ({ page }) => {
     // Collect browser console errors
     const consoleErrors: string[] = [];

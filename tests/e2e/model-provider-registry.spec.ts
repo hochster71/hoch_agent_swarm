@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-test.describe("AI Model Provider Registry E2E", () => {
+test.describe("@legacy @compat @deorbited AI Model Provider Registry E2E", () => {
   test("registers, performs health checks, approves, and tests chat completions on a provider", async ({ page }) => {
     // Dismiss all alert/confirm dialogs automatically
     page.on("dialog", async dialog => {

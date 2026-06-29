@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import * as fs from "fs";
 import * as path from "path";
 
-test.describe("Operator Governance Command Center E2E", () => {
+test.describe("@legacy @compat @deorbited Operator Governance Command Center E2E", () => {
   test("navigates to Governance Cockpit and asserts all core panels are visible", async ({ page, request }) => {
     // 1. Assert backend governance summary API endpoint directly
     const apiResponse = await request.get("/api/v1/governance/summary");

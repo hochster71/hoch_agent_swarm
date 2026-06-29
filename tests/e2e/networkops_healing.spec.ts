@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import * as fs from "fs";
 import * as path from "path";
 
-test.describe("NetworkOps Self-Healing E2E Spec", () => {
+test.describe("@legacy @compat @deorbited NetworkOps Self-Healing E2E Spec", () => {
   test("loads NetworkOps view, triggers diagnostics, and requests healing approval", async ({ page }) => {
     // Navigate to dashboard root
     await page.goto("/", { waitUntil: "networkidle" });

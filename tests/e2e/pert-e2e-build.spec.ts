@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('PERT E2E Build and Critical Path Visualizer', () => {
+test.describe('@legacy @compat @deorbited PERT E2E Build and Critical Path Visualizer', () => {
   test('navigates to PERT E2E Build cockpit and verifies graph, critical path, duration, and gates', async ({ page }) => {
     // Capture console errors
     const consoleErrors: string[] = [];
