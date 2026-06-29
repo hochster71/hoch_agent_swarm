@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-06-28T13:56:09.400Z",
+  "timestamp": "2026-06-29T01:32:35.286Z",
   "status": "PASS",
   "blockers": [],
   "metrics": {
-    "tool_calls_checked": 6,
-    "tool_calls_with_trace": 6,
-    "tool_calls_with_evidence": 6,
-    "redactions_applied": 2,
+    "tool_calls_checked": 0,
+    "tool_calls_with_trace": 0,
+    "tool_calls_with_evidence": 0,
+    "redactions_applied": 0,
     "solved_without_validation": 0,
-    "approval_required_actions": 771
+    "approval_required_actions": 10
   }
 }

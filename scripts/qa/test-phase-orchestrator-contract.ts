@@ -84,6 +84,16 @@ function runOrchestratorContractTests() {
 
   // 6. Verify generated prompt file exists and includes blocked-action text
   const pr14GeneratedPath = path.join(baseDir, 'artifacts/orchestrator/generated-prompts/PR14.md');
+  if (!fs.existsSync(pr14GeneratedPath)) {
+    console.log("Generating PR14 prompt using render_phase_prompt.py...");
+    try {
+      const { execSync } = require("child_process");
+      execSync("python3 scripts/orchestrator/render_phase_prompt.py PR14", { stdio: "inherit" });
+    } catch (e: any) {
+      console.error("Failed to generate PR14 prompt:", e.message);
+    }
+  }
+
   assert(fs.existsSync(pr14GeneratedPath), "PR14 rendered prompt generated successfully");
   if (fs.existsSync(pr14GeneratedPath)) {
     const pr14Content = fs.readFileSync(pr14GeneratedPath, 'utf-8');

@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-06-28T13:56:09.827Z",
-  "readiness_score": 98,
+  "generated_at": "2026-06-29T01:32:35.750Z",
+  "readiness_score": 100,
   "breakdown": {
     "Realtime freshness": {
       "weight": 15,
@@ -44,8 +44,8 @@
     },
     "Performance readiness": {
       "weight": 5,
-      "score": 3,
-      "comment": "High latency detected"
+      "score": 5,
+      "comment": "API latencies within SLO limits (< 500ms)"
     }
   },
   "status": "PASS"

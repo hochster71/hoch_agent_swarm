@@ -33,7 +33,7 @@ def main():
     # 1. Start FastAPI server process
     print("Launching FastAPI server via Uvicorn...")
     server_process = subprocess.Popen(
-        ["python3", "-m", "uvicorn", "backend.main:app", "--port", "8000", "--host", "0.0.0.0"],
+        [sys.executable, "-m", "uvicorn", "backend.main:app", "--port", "8000", "--host", "0.0.0.0"],
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
         env={**os.environ, "PYTHONPATH": ".", "TEST_MODE": "true"}

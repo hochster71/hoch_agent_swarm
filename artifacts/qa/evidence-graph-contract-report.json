@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-06-28T13:55:23.133Z",
+  "generated_at": "2026-06-29T01:31:47.718Z",
   "status": "PASS",
   "errors": [],
   "findings": [
-    "Verified SQLite ledger DB file exists at: /Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/backend/swarm_ledger.db",
+    "Verified SQLite ledger DB file exists at: /Users/michaelhoch/hoch_agent_swarm/backend/swarm_ledger.db",
     "Table evidence_graph_links exists",
     "evidence_graph_links has column: link_id",
     "evidence_graph_links has column: source_graph_id",
