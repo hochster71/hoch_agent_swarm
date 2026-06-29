@@ -61,6 +61,8 @@ import Hls from 'hls.js';
         { id: 'prompt-catalog', label: 'PROMPT CATALOG' },
         { id: 'promptops', label: 'PROMPTOPS PORTAL' },
         { id: 'evidenceops', label: 'EVIDENCEOPS PORTAL' },
+        { id: 'modelops', label: 'MODELOPS PORTAL' },
+        { id: 'toolops', label: 'TOOLOPS PORTAL' },
         { id: 'clawde', label: 'CLAWDE CONTROL TOWER' },
         { id: 'handoff', label: 'RELEASE REVIEW & HANDOFF' },
         { id: 'ato', label: 'ATO EVIDENCE BUILDER' },
@@ -192,6 +194,9 @@ import Hls from 'hls.js';
                 break;
             case 'modelops':
                 loadModelOpsView();
+                break;
+            case 'toolops':
+                loadToolOpsView();
                 break;
             case 'clawde':
                 loadClawdeView();
@@ -6473,6 +6478,195 @@ import Hls from 'hls.js';
     window.runEvidenceOpsExport = runEvidenceOpsExport;
     window.loadModelOpsView = loadModelOpsView;
     window.runModelOpsHealthCheck = runModelOpsHealthCheck;
+
+    async function loadToolOpsView() {
+        try {
+            const state = await fetchJsonSafe('/api/toolops/blocked');
+            const tools = await fetchJsonSafe('/api/toolops/tools');
+            const auditLog = await fetchJsonSafe('/api/toolops/audit-log');
+            const policies = await fetchJsonSafe('/api/toolops/policies');
+
+            const allowedCount = (tools || []).length;
+            const blockedCount = (state.blocked_actions || []).length;
+            const pendingCount = (state.pending_approvals || []).length;
+            const totalCalls = (auditLog || []).filter(item => item.verdict === 'APPROVED' || item.verdict === 'OPERATOR_APPROVED').length;
+
+            const elAllowed = el('toolops-metric-allowed-count');
+            const elBlocked = el('toolops-metric-blocked-count');
+            const elPending = el('toolops-metric-pending-count');
+            const elTotal = el('toolops-metric-total-calls');
+
+            if (elAllowed) elAllowed.textContent = allowedCount;
+            if (elBlocked) elBlocked.textContent = blockedCount;
+            if (elPending) elPending.textContent = pendingCount;
+            if (elTotal) elTotal.textContent = totalCalls;
+
+            const inventoryList = el('toolops-inventory-list');
+            if (inventoryList) {
+                inventoryList.innerHTML = (tools || []).map(t => {
+                    const statusClass = t.status === 'active' ? 'text-success' : 'text-danger';
+                    const requiresApprovalText = t.requires_approval ? 
+                        '<span style="color: var(--accent-orange); font-weight: bold;">YES</span>' : 
+                        '<span style="color: var(--accent-teal);">NO</span>';
+                    const riskColor = t.risk_class === 'destructive' || t.risk_class === 'privileged' ? '#f87171' : 
+                                      t.risk_class === 'networked' ? '#fbbf24' : '#6ee7b7';
+                    
+                    return `
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <td style="padding: 8px; font-family: monospace; font-weight: bold; color: #fff;">${escapeHtml(t.tool_id)}</td>
+                            <td style="padding: 8px;">${escapeHtml(t.name)}</td>
+                            <td style="padding: 8px; text-transform: uppercase;">${escapeHtml(t.category)}</td>
+                            <td style="padding: 8px;"><span style="color: ${riskColor}; font-weight: bold;">${escapeHtml(t.risk_class)}</span></td>
+                            <td style="padding: 8px; font-family: monospace;">${escapeHtml(t.allowed_agents.join(', '))}</td>
+                            <td style="padding: 8px; font-family: monospace;">${escapeHtml(t.allowed_prompt_families.join(', '))}</td>
+                            <td style="padding: 8px;">${requiresApprovalText}</td>
+                            <td style="padding: 8px;" class="${statusClass}">${escapeHtml(t.status.toUpperCase())}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            const pendingList = el('toolops-pending-list');
+            if (pendingList) {
+                const pendingItems = state.pending_approvals || [];
+                const blockedItems = state.blocked_actions || [];
+                
+                let html = '';
+                
+                pendingItems.forEach(item => {
+                    html += `
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); background: rgba(245, 158, 11, 0.05);">
+                            <td style="padding: 8px; color: var(--text-secondary);">${new Date(item.timestamp).toLocaleTimeString()}</td>
+                            <td style="padding: 8px; font-family: monospace; color: #fff;">${escapeHtml(item.tool_id)}</td>
+                            <td style="padding: 8px; font-family: monospace;">${escapeHtml(item.agent_role)}</td>
+                            <td style="padding: 8px;"><span style="color: #f87171; font-weight: bold;">${escapeHtml(item.risk_class)}</span></td>
+                            <td style="padding: 8px;"><pre style="margin:0; font-size:9px; color: #cbd5e1;">${escapeHtml(JSON.stringify(item.params))}</pre></td>
+                            <td style="padding: 8px; color: #fbbf24; font-weight: bold;">PENDING APPROVAL</td>
+                            <td style="padding: 8px; text-align: right;">
+                                <button onclick="approveToolOpsAction('${item.action_id}')" class="btn" style="background: #10b981; border: none; color: #fff; font-size: 10px; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                                    Approve
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                blockedItems.forEach(item => {
+                    html += `
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); background: rgba(239, 68, 68, 0.05);">
+                            <td style="padding: 8px; color: var(--text-secondary);">${new Date(item.timestamp).toLocaleTimeString()}</td>
+                            <td style="padding: 8px; font-family: monospace; color: #fff;">${escapeHtml(item.tool_id)}</td>
+                            <td style="padding: 8px; font-family: monospace;">${escapeHtml(item.agent_role)}</td>
+                            <td style="padding: 8px;"><span style="color: #f87171; font-weight: bold;">BLOCKED</span></td>
+                            <td style="padding: 8px;"><pre style="margin:0; font-size:9px; color: #cbd5e1;">${escapeHtml(JSON.stringify(item.params))}</pre></td>
+                            <td style="padding: 8px; color: #ef4444; font-weight: bold; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(item.details)}">${escapeHtml(item.details)}</td>
+                            <td style="padding: 8px; text-align: right; color: var(--text-secondary);">BLOCKED</td>
+                        </tr>
+                    `;
+                });
+
+                if (html === '') {
+                    html = '<tr><td colspan="7" style="padding: 12px; text-align: center; color: var(--text-secondary);">No pending approvals or blocked actions.</td></tr>';
+                }
+                pendingList.innerHTML = html;
+            }
+
+            const policyList = el('toolops-policy-list');
+            if (policyList) {
+                policyList.innerHTML = (policies.policies || []).map(p => {
+                    return `
+                        <div style="padding: 8px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 6px;">
+                            <div style="display: flex; justify-content: space-between; font-weight: bold; color: #fff; margin-bottom: 4px;">
+                                <span>${escapeHtml(p.tool_id)}</span>
+                                <span style="color: ${p.requires_approval ? '#fbbf24' : '#6ee7b7'}; font-size: 10px;">
+                                    ${p.requires_approval ? 'Approval Required' : 'Auto-Allow'}
+                                </span>
+                            </div>
+                            <div style="font-size: 10px; color: var(--text-secondary);">
+                                Risk Class: <span style="color: #cbd5e1;">${escapeHtml(p.risk_class)}</span><br>
+                                Allowed Agents: <span style="font-family: monospace; color: #cbd5e1;">${escapeHtml(p.allowed_agents.join(', '))}</span><br>
+                                Allowed Families: <span style="font-family: monospace; color: #cbd5e1;">${escapeHtml(p.allowed_prompt_families.join(', '))}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            const auditList = el('toolops-audit-list');
+            if (auditList) {
+                auditList.innerHTML = (auditLog || []).map(log => {
+                    const color = log.verdict === 'APPROVED' || log.verdict === 'OPERATOR_APPROVED' ? '#a3e635' : '#f87171';
+                    return `
+                        <li style="color: ${color};">
+                            [${escapeHtml(log.timestamp.substring(11, 19))}] ${escapeHtml(log.verdict)}: 
+                            tool=${escapeHtml(log.tool_id)} agent=${escapeHtml(log.agent_role)} 
+                            details="${escapeHtml(log.details)}"
+                        </li>
+                    `;
+                }).join('');
+            }
+
+            const ciBtn = el('btn-toolops-ci-gate');
+            if (ciBtn) {
+                ciBtn.onclick = runToolOpsCiGate;
+            }
+
+        } catch (err) {
+            console.error("Error loading ToolOps view:", err);
+        }
+    }
+
+    async function approveToolOpsAction(actionId) {
+        try {
+            const res = await fetchJsonSafe('/api/toolops/approve', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action_id: actionId, operator: 'CLAWDE HOCH' })
+            });
+            if (res && res.verdict === 'APPROVED') {
+                await loadToolOpsView();
+            } else {
+                alert("Action approval failed.");
+            }
+        } catch (err) {
+            alert(`Approval failed: ${err.message}`);
+        }
+    }
+
+    async function runToolOpsCiGate() {
+        const statusEl = el('toolops-ci-status');
+        if (statusEl) {
+            statusEl.style.display = 'block';
+            statusEl.style.background = 'rgba(255,255,255,0.05)';
+            statusEl.style.color = '#fff';
+            statusEl.textContent = 'Running ToolOps compliance checks...';
+        }
+
+        try {
+            const res = await fetchJsonSafe('/api/toolops/ci-gate', { method: 'POST' });
+            if (statusEl) {
+                if (res.status === 'PASSED') {
+                    statusEl.style.background = 'rgba(16, 185, 129, 0.15)';
+                    statusEl.style.color = '#34d399';
+                    statusEl.textContent = '✓ CI COMPLIANCE GATE PASSED: All registry schemas and tool risk mappings are fully compliant.';
+                } else {
+                    statusEl.style.background = 'rgba(239, 68, 68, 0.15)';
+                    statusEl.style.color = '#f87171';
+                    statusEl.innerHTML = `✗ CI COMPLIANCE GATE FAILED:<br>${res.errors.join('<br>')}`;
+                }
+            }
+        } catch (err) {
+            if (statusEl) {
+                statusEl.style.background = 'rgba(239, 68, 68, 0.15)';
+                statusEl.style.color = '#f87171';
+                statusEl.textContent = `Error executing CI Gate: ${err.message}`;
+            }
+        }
+    }
+
+    window.loadToolOpsView = loadToolOpsView;
+    window.approveToolOpsAction = approveToolOpsAction;
+    window.runToolOpsCiGate = runToolOpsCiGate;
     window.triggerModelEval = triggerModelEval;
     }
 

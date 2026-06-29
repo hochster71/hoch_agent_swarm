@@ -133,6 +133,10 @@
                     <i data-lucide="cpu"></i> <span>ModelOps Portal</span>
                     <span class="nav-status-indicator swarm-led-live" id="led-modelops" style="margin-left: auto; font-size: 14px; font-weight: bold; color: var(--accent-teal)">●</span>
                 </a>
+                <a href="#" class="nav-item" id="nav-toolops">
+                    <i data-lucide="shield"></i> <span>ToolOps Portal</span>
+                    <span class="nav-status-indicator swarm-led-live" id="led-toolops" style="margin-left: auto; font-size: 14px; font-weight: bold; color: var(--accent-teal)">●</span>
+                </a>
                 <a href="#" class="nav-item" id="nav-clawde">
                     <i data-lucide="shield-check"></i> <span>Clawde Tower</span>
                     <span class="nav-status-indicator swarm-led-live" id="led-clawde" style="margin-left: auto; font-size: 14px; font-weight: bold; color: var(--accent-teal)">●</span>
@@ -1214,6 +1218,133 @@
                         </div>
                     </section>
                 </div>
+            </div>
+
+            <!-- ToolOps View -->
+            <div id="view-toolops" class="view-section hidden">
+                <section class="card" style="padding: 20px; background: rgba(10, 15, 30, 0.85); border: 1px solid var(--border-glass); border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); backdrop-filter: blur(12px); margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 16px; margin-bottom: 20px;">
+                        <div>
+                            <h2 style="font-size: 22px; font-weight: 700; color: #fff; font-family: 'Outfit', sans-serif; letter-spacing: -0.02em;">ToolOps & Agent Action Governance</h2>
+                            <div style="font-size: 11px; color: var(--accent-teal); font-weight: bold; margin-top: 2px;">HOCH AGENT SWARM — V8 TOOLOPS LAYER</div>
+                            <p style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Dynamic tool registry, action policy classification, human approval gates, parameter check, and CI compliance verification.</p>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button id="btn-toolops-ci-gate" class="btn" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; font-size: 11px; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 6px;">
+                                <i data-lucide="shield-check" style="width: 12px; height: 12px;"></i> Run CI Gate Check
+                            </button>
+                        </div>
+                    </div>
+                    <div id="toolops-ci-status" style="display: none; padding: 8px 12px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-bottom: 10px;"></div>
+                </section>
+
+                <!-- ToolOps Metrics -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 20px;">
+                    <section class="card" style="padding: 16px; background: rgba(10, 15, 30, 0.85); border: 1px solid var(--border-glass); border-radius: 12px; display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 40px; height: 40px; border-radius: 8px; background: rgba(56, 189, 248, 0.15); display: flex; align-items: center; justify-content: center; color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">
+                            <i data-lucide="wrench" style="width: 20px; height: 20px;"></i>
+                        </div>
+                        <div>
+                            <p style="font-size: 9px; text-transform: uppercase; color: var(--text-secondary); margin: 0; font-weight: bold; letter-spacing: 0.5px;">Registered Tools</p>
+                            <h3 id="toolops-metric-allowed-count" style="font-size: 18px; font-weight: 700; margin: 4px 0 0 0; color: #fff;">0</h3>
+                        </div>
+                    </section>
+                    <section class="card" style="padding: 16px; background: rgba(10, 15, 30, 0.85); border: 1px solid var(--border-glass); border-radius: 12px; display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 40px; height: 40px; border-radius: 8px; background: rgba(239, 68, 68, 0.15); display: flex; align-items: center; justify-content: center; color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3);">
+                            <i data-lucide="x-circle" style="width: 20px; height: 20px;"></i>
+                        </div>
+                        <div>
+                            <p style="font-size: 9px; text-transform: uppercase; color: var(--text-secondary); margin: 0; font-weight: bold; letter-spacing: 0.5px;">Blocked Calls</p>
+                            <h3 id="toolops-metric-blocked-count" style="font-size: 18px; font-weight: 700; margin: 4px 0 0 0; color: #f87171;">0</h3>
+                        </div>
+                    </section>
+                    <section class="card" style="padding: 16px; background: rgba(10, 15, 30, 0.85); border: 1px solid var(--border-glass); border-radius: 12px; display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 40px; height: 40px; border-radius: 8px; background: rgba(245, 158, 11, 0.15); display: flex; align-items: center; justify-content: center; color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);">
+                            <i data-lucide="clock" style="width: 20px; height: 20px;"></i>
+                        </div>
+                        <div>
+                            <p style="font-size: 9px; text-transform: uppercase; color: var(--text-secondary); margin: 0; font-weight: bold; letter-spacing: 0.5px;">Pending Approvals</p>
+                            <h3 id="toolops-metric-pending-count" style="font-size: 18px; font-weight: 700; margin: 4px 0 0 0; color: #fbbf24;">0</h3>
+                        </div>
+                    </section>
+                    <section class="card" style="padding: 16px; background: rgba(10, 15, 30, 0.85); border: 1px solid var(--border-glass); border-radius: 12px; display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 40px; height: 40px; border-radius: 8px; background: rgba(16, 185, 129, 0.15); display: flex; align-items: center; justify-content: center; color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);">
+                            <i data-lucide="check-circle" style="width: 20px; height: 20px;"></i>
+                        </div>
+                        <div>
+                            <p style="font-size: 9px; text-transform: uppercase; color: var(--text-secondary); margin: 0; font-weight: bold; letter-spacing: 0.5px;">Total Tool Calls</p>
+                            <h3 id="toolops-metric-total-calls" style="font-size: 18px; font-weight: 700; margin: 4px 0 0 0; color: #10b981;">0</h3>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Tool Registry Inventory Row -->
+                <section class="card" style="padding: 16px; background: rgba(10, 15, 30, 0.85); border: 1px solid var(--border-glass); border-radius: 12px; margin-bottom: 20px;">
+                    <h3 style="font-size: 14px; font-weight: bold; color: #fff; margin-bottom: 12px; font-family: 'Outfit', sans-serif;">Authorized Tool Registry</h3>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 11px;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid var(--border-glass); color: var(--text-secondary);">
+                                    <th style="padding: 6px;">Tool ID</th>
+                                    <th style="padding: 6px;">Name</th>
+                                    <th style="padding: 6px;">Category</th>
+                                    <th style="padding: 6px;">Risk Class</th>
+                                    <th style="padding: 6px;">Allowed Agents</th>
+                                    <th style="padding: 6px;">Allowed Families</th>
+                                    <th style="padding: 6px;">Requires Approval</th>
+                                    <th style="padding: 6px;">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="toolops-inventory-list">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Blocked Actions & Pending Approvals Row -->
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 20px;">
+                    <!-- Pending Approvals & Blocked Queue -->
+                    <section class="card" style="padding: 16px; background: rgba(10, 15, 30, 0.85); border: 1px solid var(--border-glass); border-radius: 12px;">
+                        <h3 style="font-size: 14px; font-weight: bold; color: #fff; margin-bottom: 12px; font-family: 'Outfit', sans-serif;">Pending Action Requests & Blocked Queue</h3>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 11px;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid var(--border-glass); color: var(--text-secondary);">
+                                        <th style="padding: 6px;">Timestamp</th>
+                                        <th style="padding: 6px;">Tool</th>
+                                        <th style="padding: 6px;">Agent</th>
+                                        <th style="padding: 6px;">Risk Class</th>
+                                        <th style="padding: 6px;">Params</th>
+                                        <th style="padding: 6px;">Reason / Status</th>
+                                        <th style="padding: 6px; text-align: right;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="toolops-pending-list">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <!-- Policy Authorization Matrix Summary -->
+                    <section class="card" style="padding: 16px; background: rgba(10, 15, 30, 0.85); border: 1px solid var(--border-glass); border-radius: 12px;">
+                        <h3 style="font-size: 14px; font-weight: bold; color: #fff; margin-bottom: 12px; font-family: 'Outfit', sans-serif;">Action Security Policies</h3>
+                        <div id="toolops-policy-list" style="font-size: 11px; display: flex; flex-direction: column; gap: 10px;">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Tool Execution Audit Log Terminal -->
+                <section class="card" style="padding: 16px; background: rgba(10, 15, 30, 0.85); border: 1px solid var(--border-glass); border-radius: 12px;">
+                    <h3 style="font-size: 14px; font-weight: bold; color: #fff; margin-bottom: 12px; font-family: 'Outfit', sans-serif;">Action Execution Audit Trail</h3>
+                    <div style="max-height: 250px; overflow-y: auto; background: rgba(0,0,0,0.4); border: 1px solid var(--border-glass); border-radius: 6px; padding: 12px; font-family: 'Courier New', monospace;">
+                        <ul id="toolops-audit-list" style="list-style: none; padding: 0; margin: 0; font-size: 11px; color: #a3e635; display: flex; flex-direction: column; gap: 4px;">
+                            <!-- Populated dynamically -->
+                        </ul>
+                    </div>
+                </section>
             </div>
 
             <!-- CLAWDE Control Tower View -->
