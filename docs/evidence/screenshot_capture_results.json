@@ -1,6 +1,6 @@
 {
   "baseUrl": "http://localhost:8000",
-  "timestamp": "2026-06-29T16:11:14.234Z",
+  "timestamp": "2026-06-29T16:16:59.198Z",
   "results": [
     {
       "name": "cockpit-overview.png",
@@ -56,6 +56,11 @@
       "name": "operator-governance.png",
       "captured": true,
       "path": "/Users/michaelhoch/hoch_agent_swarm/docs/evidence/screenshots/operator-governance.png"
+    },
+    {
+      "name": "finance-command-center.png",
+      "captured": true,
+      "path": "/Users/michaelhoch/hoch_agent_swarm/docs/evidence/screenshots/finance-command-center.png"
     },
     {
       "name": "operator-acceptance-package.png",
