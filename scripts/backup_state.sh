@@ -22,13 +22,12 @@ mkdir -p "$BACKUP_DIR"
 
 # Collect state files: databases, configuration, and evidence
 # Avoid backing up node_modules or large git history
-tar -czf "$BACKUP_FILE" \
+tar --exclude="data/backups" -czf "$BACKUP_FILE" \
     backend/swarm_ledger.db \
     hoch_skill_audit.db \
     cybersecurity_diagrams.db \
     data/ \
-    docs/evidence/ \
-    --exclude="data/backups"
+    docs/evidence/
 
 echo "[PASS] Backup created successfully: $BACKUP_FILE"
 exit 0

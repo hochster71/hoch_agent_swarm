@@ -31,7 +31,7 @@ fi
 DISK_USAGE=$(df -h . | awk 'NR==2 {print $5}')
 
 # 3. Check App Local Health endpoint if running
-LOCAL_API_HEALTH=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8086/api/v1/operator/health || echo "500")
+LOCAL_API_HEALTH=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/health || echo "500")
 if [ "$LOCAL_API_HEALTH" -eq 200 ] || [ "$LOCAL_API_HEALTH" -eq 204 ]; then
     APP_STATUS="UP"
 fi
