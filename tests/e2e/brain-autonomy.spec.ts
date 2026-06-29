@@ -75,4 +75,55 @@ test.describe('Brain LLM Gated Autonomy Control Plane', () => {
     // Check for console errors
     expect(consoleErrors).toEqual([]);
   });
+
+  test('verifies RC27 identity-aware artifact workflow delivery and security blocks', async ({ page }) => {
+    // Navigate to page
+    await page.goto('http://127.0.0.1:8000');
+
+    // Click sidebar "Command Center" tab
+    const ccNav = page.locator('#nav-production-command-center');
+    await ccNav.click();
+
+    // Locators
+    const requesterSelect = page.locator('#artifact-requester-select');
+    const promptInput = page.locator('#artifact-prompt-input');
+    const targetSelect = page.locator('#artifact-target-select');
+    const triggerBtn = page.locator('#btn-trigger-artifact-workflow');
+
+    // 1. Unknown user request (Guest)
+    await requesterSelect.selectOption('guest');
+    await promptInput.fill('Generate compliance brief');
+    await triggerBtn.click();
+
+    // Verify block in UI
+    const classBadge = page.locator('#ui-class-badge');
+    await expect(classBadge).toContainText('BLOCKED');
+    const stepsContainer = page.locator('#ui-workflow-steps');
+    await expect(stepsContainer).toContainText('[BLOCKED]');
+
+    // 2. Alison Hoch request (Trusted Family)
+    await requesterSelect.selectOption('alison');
+    await promptInput.fill('Generate pool maintenance presentation slide deck for school chores');
+    await targetSelect.selectOption('family_shared');
+    await triggerBtn.click();
+
+    // Verify workflow succeeds and delivers
+    await expect(classBadge).toContainText('FAMILY');
+    await expect(stepsContainer).toContainText('Handoff to allowlisted Google Drive path');
+    const targetAllowlist = page.locator('#ui-target-allowlist');
+    await expect(targetAllowlist).toContainText('VERIFIED (Pass)');
+    const receiptDetails = page.locator('#ui-receipt-details');
+    await expect(receiptDetails).toContainText('Receipt ID:');
+
+    // 3. Michael Hoch request (Owner)
+    await requesterSelect.selectOption('michael');
+    await promptInput.fill('Create presentation deck on RMF cybersecurity Zero Trust guidance');
+    await targetSelect.selectOption('family_shared');
+    await triggerBtn.click();
+
+    // Verify work internal success
+    await expect(classBadge).toContainText('WORK INTERNAL');
+    const rbacRole = page.locator('#ui-rbac-role');
+    await expect(rbacRole).toContainText('system_owner');
+  });
 });

@@ -75,6 +75,32 @@ def init_brain_tables():
                 created_at TEXT NOT NULL
             );
         """)
+
+        # 6. artifact_workflows
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS artifact_workflows (
+                id TEXT PRIMARY KEY,
+                session_id TEXT NOT NULL,
+                requester TEXT NOT NULL,
+                classification TEXT NOT NULL,
+                workflow_type TEXT NOT NULL,
+                status TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            );
+        """)
+
+        # 7. delivery_receipts
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS delivery_receipts (
+                id TEXT PRIMARY KEY,
+                workflow_id TEXT NOT NULL,
+                provider TEXT NOT NULL,
+                folder TEXT NOT NULL,
+                filename TEXT NOT NULL,
+                receipt_data TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            );
+        """)
         
         conn.commit()
         logger.info("Brain SQLite tables initialized successfully.")

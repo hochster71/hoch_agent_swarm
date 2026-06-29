@@ -10942,6 +10942,258 @@ def run_pert_build():
         raise HTTPException(status_code=500, detail=str(e))
 
 
+from backend.brain.orchestrator import BrainOrchestrator
+brain_orchestrator = BrainOrchestrator()
+
+@app.get("/api/v1/brain/status")
+def get_brain_status():
+    return brain_orchestrator.get_status()
+
+class ChatMessagePayload(BaseModel):
+    message: str
+
+@app.get("/api/v1/brain/chat")
+def get_brain_chat():
+    status = brain_orchestrator.get_status()
+    return {"status": "success", "messages": status["messages"]}
+
+@app.post("/api/v1/brain/chat")
+def post_brain_chat(payload: ChatMessagePayload):
+    try:
+        session_id = brain_orchestrator.chat.get_or_create_active_session()
+        # Add user message
+        brain_orchestrator.chat.add_message(session_id, "user", payload.message)
+        # Generate next suggestion recommendation
+        return brain_orchestrator.suggest_next_action()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/brain/suggest")
+def get_brain_suggest():
+    status = brain_orchestrator.get_status()
+    return {"status": "success", "activeSuggestion": status["activeSuggestion"]}
+
+class BrainFeedbackPayload(BaseModel):
+    suggestionId: str
+    decision: str
+    correction: str = None
+
+@app.post("/api/v1/brain/feedback")
+def post_brain_feedback(payload: BrainFeedbackPayload):
+    try:
+        return brain_orchestrator.submit_feedback(payload.suggestionId, payload.decision, payload.correction)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+class BrainModePayload(BaseModel):
+    mode: str
+
+@app.post("/api/v1/brain/mode")
+def post_brain_mode(payload: BrainModePayload):
+    success = brain_orchestrator.set_mode(payload.mode)
+    if success:
+        return {"status": "success", "mode": brain_orchestrator.mode}
+    else:
+        raise HTTPException(status_code=400, detail="Failed to set autonomy mode. Autonomy Readiness Score is below target gate.")
+
+class DoctrinePayload(BaseModel):
+    rules: list
+
+@app.get("/api/v1/brain/doctrine")
+def get_brain_doctrine():
+    status = brain_orchestrator.get_status()
+    return {"status": "success", "rules": status["doctrineRules"]}
+
+@app.put("/api/v1/brain/doctrine")
+def put_brain_doctrine(payload: DoctrinePayload):
+    try:
+        for r in payload.rules:
+            brain_orchestrator.doctrine.add_learned_rule(r, source="manual", confidence=1.0)
+        return {"status": "success"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/brain/readiness")
+def get_brain_readiness():
+    status = brain_orchestrator.get_status()
+    return {"status": "success", "readiness": status["readiness"]}
+
+@app.get("/api/v1/brain/escalations")
+def get_brain_escalations():
+    status = brain_orchestrator.get_status()
+    return {"status": "success", "escalations": status["escalations"]}
+
+
+# --- RC27 Artifact Autonomy API Endpoints ---
+from pydantic import BaseModel
+from typing import List, Dict, Any
+from backend.brain.data_classifier import DataClassifier
+from backend.brain.workflow_compiler import WorkflowCompiler
+from backend.rag.source_ranker import SourceRanker
+from backend.rag.citation_engine import CitationEngine
+from backend.artifacts.slide_factory import SlideFactory
+from backend.artifacts.pdf_exporter import PdfExporter
+from backend.artifacts.brand_renderer import BrandRenderer
+from backend.artifacts.artifact_qa import ArtifactQa
+from backend.connectors.google_drive_delivery import GoogleDriveDelivery
+from backend.brain.database import get_db_connection
+import json
+import uuid
+from datetime import datetime
+
+class WorkflowCompileRequest(BaseModel):
+    requester: str
+    text: str
+
+class SlideGenerationRequest(BaseModel):
+    requester: str
+    title: str
+    subtitle: str
+    slides: List[dict] # list of {"title": str, "bullets": List[str]}
+    target_name: str
+
+class PdfExportRequest(BaseModel):
+    requester: str
+    title: str
+    paragraphs: List[str]
+
+class ArtifactQaRequest(BaseModel):
+    filepath: str
+
+class RankSourcesRequest(BaseModel):
+    query: str
+
+class DeliveryRequest(BaseModel):
+    requester: str
+    filepath: str
+    target_name: str
+
+@app.post("/api/v1/workflows/compile")
+def compile_workflow(req: WorkflowCompileRequest):
+    compiler = WorkflowCompiler()
+    res = compiler.compile_intent(req.requester, req.text)
+    if not res.get("success", False):
+        raise HTTPException(status_code=403, detail=res.get("error"))
+        
+    # Save workflow in SQLite
+    workflow_id = f"wf-{str(uuid.uuid4())[:8]}"
+    conn = get_db_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO artifact_workflows (id, session_id, requester, classification, workflow_type, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (workflow_id, "default_session", req.requester, res["classification"], res["workflow_type"], "COMPILED", datetime.utcnow().isoformat() + "Z")
+        )
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=f"Database save failed: {e}")
+    finally:
+        conn.close()
+        
+    res["workflow_id"] = workflow_id
+    return res
+
+@app.post("/api/v1/artifacts/slides")
+def generate_slides(req: SlideGenerationRequest):
+    # Data classification & auth check first
+    classifier = DataClassifier()
+    check = classifier.classify_request(req.requester, req.title + " " + req.subtitle)
+    if not check["allowed"]:
+        raise HTTPException(status_code=403, detail=check["reason"])
+        
+    factory = SlideFactory()
+    filename = f"presentation_{str(uuid.uuid4())[:8]}.pptx"
+    filepath = os.path.abspath(os.path.join(os.path.dirname(__file__), f"../dist/artifacts/{filename}"))
+    
+    slides_content = [(s.get("title", ""), s.get("bullets", [])) for s in req.slides]
+    factory.create_deck(req.title, req.subtitle, slides_content, filepath)
+    
+    return {
+        "status": "success",
+        "filepath": filepath,
+        "filename": filename,
+        "classification": check["classification"]
+    }
+
+@app.post("/api/v1/artifacts/export/pdf")
+def export_pdf(req: PdfExportRequest):
+    exporter = PdfExporter()
+    filename = f"report_{str(uuid.uuid4())[:8]}.pdf"
+    filepath = os.path.abspath(os.path.join(os.path.dirname(__file__), f"../dist/artifacts/{filename}"))
+    exporter.export_pdf(req.title, req.paragraphs, filepath)
+    
+    return {
+        "status": "success",
+        "filepath": filepath,
+        "filename": filename
+    }
+
+@app.post("/api/v1/artifacts/qa")
+def verify_artifact_qa(req: ArtifactQaRequest):
+    qa = ArtifactQa()
+    res = qa.verify_artifact(req.filepath)
+    return res
+
+@app.post("/api/v1/rag/rank-sources")
+def rank_sources(req: RankSourcesRequest):
+    ranker = SourceRanker()
+    engine = CitationEngine()
+    ranked = ranker.rank_sources(req.query)
+    citations = engine.generate_citations(ranked)
+    return {
+        "ranked_sources": ranked,
+        "citations": citations
+    }
+
+@app.post("/api/v1/delivery/google-drive")
+def deliver_google_drive(req: DeliveryRequest):
+    delivery = GoogleDriveDelivery()
+    res = delivery.deliver_file(req.requester, req.filepath, req.target_name)
+    if not res.get("success", False):
+        raise HTTPException(status_code=400, detail=res.get("error"))
+        
+    # Save receipt to DB
+    receipt_id = res["receipt_id"]
+    conn = get_db_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO delivery_receipts (id, workflow_id, provider, folder, filename, receipt_data, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (receipt_id, "default_wf", res["provider"], res["folder"], res["filename"], json.dumps(res), datetime.utcnow().isoformat() + "Z")
+        )
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=f"Database save failed: {e}")
+    finally:
+        conn.close()
+        
+    return res
+
+@app.get("/api/v1/delivery/receipt/{receipt_id}")
+def get_delivery_receipt(receipt_id: str):
+    conn = get_db_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT id, workflow_id, provider, folder, filename, receipt_data, created_at FROM delivery_receipts WHERE id = ?", (receipt_id,))
+        row = cursor.fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Delivery receipt not found")
+        return {
+            "id": row[0],
+            "workflow_id": row[1],
+            "provider": row[2],
+            "folder": row[3],
+            "filename": row[4],
+            "receipt_data": json.loads(row[5]),
+            "created_at": row[6]
+        }
+    finally:
+        conn.close()
+
+
+
 # Mount frontend files at root (if frontend directory exists)
 
 frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../frontend/dist"))
