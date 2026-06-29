@@ -1,0 +1,44 @@
+escalation_policy:
+  escalate_events:
+    - event: "production release"
+      require_human: true
+      risk_level: "CRITICAL"
+    - event: "public network exposure"
+      require_human: true
+      risk_level: "CRITICAL"
+    - event: "credential change"
+      require_human: true
+      risk_level: "CRITICAL"
+    - event: "paid/cloud API use"
+      require_human: true
+      risk_level: "HIGH"
+    - event: "data deletion"
+      require_human: true
+      risk_level: "HIGH"
+    - event: "branch reset / history rewrite"
+      require_human: true
+      risk_level: "CRITICAL"
+    - event: "architecture replacement"
+      require_human: true
+      risk_level: "CRITICAL"
+    - event: "P0 repeated failure"
+      require_human: true
+      risk_level: "HIGH"
+    - event: "unknown policy action"
+      require_human: true
+      risk_level: "HIGH"
+  safe_events:
+    - event: "safe test rerun"
+      require_human: false
+    - event: "healthcheck"
+      require_human: false
+    - event: "backup"
+      require_human: false
+    - event: "evidence generation"
+      require_human: false
+    - event: "additive docs"
+      require_human: false
+    - event: "additive UI panel"
+      require_human: false
+    - event: "safe local Docker restart"
+      require_human: false

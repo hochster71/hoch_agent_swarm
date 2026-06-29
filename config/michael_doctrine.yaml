@@ -1,0 +1,32 @@
+michael_doctrine:
+  approval_preferences:
+  - approve additive changes with evidence
+  - reject architecture replacement
+  - reject vague completion claims
+  - require concrete file paths
+  - require build/test proof
+  - require rollback before risky actions
+  core_rules:
+  - preserve existing architecture
+  - integrate, do not replace
+  - local-first
+  - no paid cloud dependency unless explicitly approved
+  - dark UI only
+  - evidence before claiming done
+  - QA gates before commit
+  - no destructive cleanup
+  - keep AG integration intact
+  - use PERT critical path for execution priority
+  - fail closed on unknown authority
+  - Never write paid API keys to codebase
+  - 'Avoid action: Always double check the docker service states'
+  - 'Avoid action: Vague recommendations'
+  - 'Preferred action pattern: read_files'
+  escalation_required:
+  - credentials
+  - public network exposure
+  - paid APIs
+  - deletion
+  - production release
+  - branch reset
+  - Docker destructive prune

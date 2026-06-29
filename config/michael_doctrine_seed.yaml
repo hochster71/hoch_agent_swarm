@@ -1,0 +1,79 @@
+doctrine:
+  core_rules:
+    - "Preserve existing architecture (Integrate into current system; do not replace working baseline) [P0]"
+    - "Integrate, do not replace (Additive upgrades only unless explicitly approved) [P0]"
+    - "Local-first AI (Prefer LM Studio, Ollama, local models, local storage) [P0]"
+    - "No paid/cloud APIs by default (Block OpenAI/Anthropic/Gemini/cloud APIs unless explicitly approved) [P0]"
+    - "No destructive cleanup (Block rm -rf, git reset --hard, docker system prune, data wipes) [P0]"
+    - "Evidence before “done” (Never claim completion without test output, logs, screenshots, artifact, or evidence file) [P0]"
+    - "QA before commit (Build/test/security gates before commit or release claim) [P0]"
+    - "Dark UI only (Prefer black/deep-dark/xAI/SpaceX style command center UI) [P1]"
+    - "Fail closed (Unknown action, unknown tool, unknown risk = block or escalate) [P0]"
+    - "Michael is commander (Michael approves goals, risky actions, release decisions, and exceptions) [P0]"
+  approval_preferences:
+    - "Approve additive changes with evidence"
+    - "Reject architecture replacement"
+    - "Reject vague completion claims"
+    - "Require concrete file paths"
+    - "Require build/test proof"
+    - "Require rollback before risky actions"
+  escalation_required:
+    - "credentials"
+    - "public network exposure"
+    - "paid APIs"
+    - "deletion"
+    - "production release"
+    - "branch reset"
+    - "Docker destructive prune"
+  blocked_actions:
+    - "rm -rf"
+    - "git reset --hard"
+    - "docker system prune"
+    - "data wipes"
+    - "cloud fallback without approval"
+
+projects:
+  active_workstreams:
+    - "Hoch Agent Swarm: Primary local AI agent swarm/runtime/control plane [P0]"
+    - "CyberQRG-AI: Cybersecurity QRG/app/platform workstream [P1]"
+  recurring_workstreams:
+    - "BMC3 / SDA cyber workflows (RMF, ConMon, ATO, IL5/IL6, Sandbox, Ground, BATL, SIL) [P0]"
+    - "Dark Wolf / SAIC deliverables (Work-related cybersecurity leadership artifacts) [P0]"
+    - "Home network agents (Discover/classify/secure Rachio, Pentair, Vivint, Alexa, LAN devices) [P1]"
+  future_workstreams:
+    - "Hoch AI OS / HOCHOS (Home/work/life operating assistant concept) [P1]"
+    - "HOCH AI APPFAC (Local application factory for end-to-end app generation) [P1]"
+    - "HOCH DoD Software Factory (Government/DevSecOps software factory pattern) [P1]"
+    - "Family/home ops (Calendar, chores, pool, plants, routines, family planning) [P2]"
+
+autonomy:
+  modes:
+    - "Manual: Default fallback. All execution requires human input."
+    - "Suggest: Brain recommends next action; Michael must trigger execution."
+    - "Shadow: Brain predicts Michael's decision, logs predictions for learning."
+    - "Gated: Brain executes low-risk actions autonomously, escalates high-risk."
+    - "Autonomous: Brain executes all actions autonomously; Michael gets exceptions only."
+  readiness_metrics:
+    - "Prediction Accuracy: Target >= 90%"
+    - "Policy Pass Rate: Target 100%"
+    - "QA Pass Rate: Target 100%"
+    - "Evidence Completeness: Target 100%"
+  promotion_gates:
+    - "Manual -> Suggest: None"
+    - "Suggest -> Shadow: 5 approved suggestions"
+    - "Shadow -> Gated: 10 correct shadow predictions + 90% alignment score"
+    - "Gated -> Autonomous: 20 consecutive safe gated executions + 95% readiness score"
+
+qa:
+  required_gates:
+    - "Playwright cockpit validation (UI panels must render and show correct state) [P0]"
+    - "API contract tests (Brain, PERT, runtime, evidence, policy endpoints must have schema tests) [P0]"
+    - "Security gates (gitleaks, Semgrep, npm audit, pip audit, Trivy/OSV where available) [P0]"
+    - "Failure-injection tests (Kill backend/frontend/model endpoint and prove recovery/escalation) [P1]"
+  evidence_requirements:
+    - "Zero false completion (If tests fail or are skipped, status cannot be complete) [P0]"
+    - "Audit log everything (Every autonomous action gets event log and evidence pointer) [P0]"
+    - "Every meaningful action must produce or update evidence"
+  failure_rules:
+    - "Fail closed: Any test suite failure blocks commit/release."
+    - "Manual fallback: If a pipeline or runtime check degrades, drop to suggest/manual mode."
