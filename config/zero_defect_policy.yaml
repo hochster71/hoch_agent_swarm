@@ -27,3 +27,4 @@ zero_defect_policy:
     - "bash scripts/scan_hardcoded_status.sh"
     - "bash scripts/security_gate.sh"
     - "bash scripts/meta_orchestrator_gates.sh"
+    - "bash scripts/final_verifier_gate.sh"

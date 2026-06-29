@@ -11,6 +11,10 @@ def detect_contradictions() -> list[dict]:
     contradictions = []
     
     try:
+        # Clear old contradictions first
+        conn.execute("DELETE FROM runtime_contradictions")
+        conn.commit()
+
         # Fetch signals
         signals = {r["signal_id"]: r for r in conn.execute("SELECT * FROM runtime_truth_signals").fetchall()}
         heartbeats = {r["component"]: r for r in conn.execute("SELECT * FROM runtime_heartbeats").fetchall()}

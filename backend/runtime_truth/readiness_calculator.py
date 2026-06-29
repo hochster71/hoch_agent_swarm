@@ -19,7 +19,7 @@ def calculate_governed_readiness() -> dict:
             
         # 2. Fetch git status
         git_row = conn.execute("SELECT * FROM runtime_truth_signals WHERE signal_id = 'git_status'").fetchone()
-        if git_row and "modified" in str(git_row["value"]).lower():
+        if git_row and any(x in str(git_row["value"]).lower() for x in ["modified", "dirty"]):
             score = min(score, 90.0)
             caps.append(("git working tree is dirty", 90.0))
             
@@ -78,6 +78,15 @@ def calculate_governed_readiness() -> dict:
                 
         if ownerless_count > 0:
             caps.append(("business autonomy is NOT READY", 0.0))
+
+        # Query Final Verdict to get final aligned capped score
+        try:
+            from backend.final_verifier.final_verdict import FinalVerdict
+            verdict = FinalVerdict().get_final_verdict()
+            score = verdict["readiness_score"]
+            caps = [(c, score) for c in verdict["readiness_caps"]]
+        except Exception:
+            pass
             
         # Save score in SQLite
         conn.execute("""

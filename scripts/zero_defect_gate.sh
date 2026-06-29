@@ -10,6 +10,9 @@ npm run build
 echo "Running Python pytest suite..."
 uv run pytest
 
+echo "Restoring database state via collection pass..."
+curl -s -X POST http://127.0.0.1:8000/api/v1/runtime-truth/collect > /dev/null
+
 echo "Running Playwright E2E specs..."
 npx playwright test
 
@@ -29,15 +32,21 @@ get_signal_value() {
 
 OPEN_DEFECTS=$(get_signal_value "open_defect_count" || echo "0")
 CRITICAL_DEFECTS=$(get_signal_value "critical_defect_count" || echo "0")
-NEW_WARNINGS=$(get_signal_value "new_warning_count" || echo "0")
+BLOCKING_WARNINGS=$(get_signal_value "warning_blocking_count" || echo "0")
+UNKNOWN_WARNINGS=$(get_signal_value "warning_unknown_count" || echo "0")
 HIGH_VULNS=$(get_signal_value "high_vulnerability_count" || echo "0")
 UNOWNED_DEFECTS=$(get_signal_value "unowned_defect_count" || echo "0")
+MISSING_TOOLS=$(get_signal_value "missing_tool_count" || echo "0")
+ZERO_DEFECT_CLAIM=$(get_signal_value "zero_defect_claim_status" || echo "FAIL")
 
 echo "  [zero_defect_gate]: Open Defects: $OPEN_DEFECTS"
 echo "  [zero_defect_gate]: Critical Defects: $CRITICAL_DEFECTS"
-echo "  [zero_defect_gate]: New Warnings: $NEW_WARNINGS"
+echo "  [zero_defect_gate]: Blocking Warnings: $BLOCKING_WARNINGS"
+echo "  [zero_defect_gate]: Unknown Warnings: $UNKNOWN_WARNINGS"
 echo "  [zero_defect_gate]: High Vulnerabilities: $HIGH_VULNS"
 echo "  [zero_defect_gate]: Unowned Defects: $UNOWNED_DEFECTS"
+echo "  [zero_defect_gate]: Missing Tools: $MISSING_TOOLS"
+echo "  [zero_defect_gate]: Zero-Defect Claim: $ZERO_DEFECT_CLAIM"
 
 # 3. Assert zero-defect state rules
 if [ "$CRITICAL_DEFECTS" -gt 0 ]; then
@@ -45,8 +54,13 @@ if [ "$CRITICAL_DEFECTS" -gt 0 ]; then
   exit 1
 fi
 
-if [ "$NEW_WARNINGS" -gt 0 ]; then
-  echo "ERROR: zero_defect_gate failed: $NEW_WARNINGS new warnings detected!"
+if [ "$BLOCKING_WARNINGS" -gt 0 ]; then
+  echo "ERROR: zero_defect_gate failed: $BLOCKING_WARNINGS blocking warnings remain unresolved!"
+  exit 1
+fi
+
+if [ "$UNKNOWN_WARNINGS" -gt 0 ]; then
+  echo "ERROR: zero_defect_gate failed: $UNKNOWN_WARNINGS unknown warnings remain unresolved!"
   exit 1
 fi
 
@@ -57,6 +71,11 @@ fi
 
 if [ "$UNOWNED_DEFECTS" -gt 0 ]; then
   echo "ERROR: zero_defect_gate failed: $UNOWNED_DEFECTS unowned defects remain!"
+  exit 1
+fi
+
+if [ "$ZERO_DEFECT_CLAIM" = "PASS" ] && [ "$UNKNOWN_WARNINGS" -gt 0 ]; then
+  echo "ERROR: zero_defect_gate failed: Contradiction - claim says PASS but unknown warnings exist!"
   exit 1
 fi
 

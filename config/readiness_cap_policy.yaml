@@ -1,0 +1,9 @@
+readiness_cap_policy:
+  caps:
+    critical_gap: 80.0
+    missing_ui: 75.0
+    not_ready: 50.0
+  triggers:
+    critical_gap_count_threshold: 0
+    ownerless_domain_threshold: 10
+    high_vuln_threshold: 0

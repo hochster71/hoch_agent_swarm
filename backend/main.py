@@ -11596,6 +11596,11 @@ def post_accept_risk_endpoint(payload: dict):
     res = ar.record_accepted_risk(risk_id, defect_id, justification, expiration)
     return {"status": "success", "accepted_risk": res}
 
+@app.get("/api/v1/final-verifier/verdict")
+def get_final_verdict_endpoint():
+    from backend.final_verifier.final_verdict import FinalVerdict
+    return {"status": "success", "verdict": FinalVerdict().get_final_verdict()}
+
 # Mount frontend files at root (if frontend directory exists)
 
 frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../frontend/dist"))

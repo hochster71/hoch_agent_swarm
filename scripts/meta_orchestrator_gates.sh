@@ -3,10 +3,12 @@ set -euo pipefail
 
 echo "==> Running Meta-Orchestrator Prevention Gates..."
 
+# Trigger fresh collection pass first
+COLLECT_DATA=$(curl -s -X POST http://127.0.0.1:8000/api/v1/runtime-truth/collect)
+
 # Fetch telemetry signals via state endpoint
 STATE_DATA=$(curl -s http://127.0.0.1:8000/api/v1/runtime-truth/state)
 MAP_DATA=$(curl -s http://127.0.0.1:8000/api/v1/runtime-truth/source-map)
-COLLECT_DATA=$(curl -s -X POST http://127.0.0.1:8000/api/v1/runtime-truth/collect)
 
 # Helper function to get signal value
 get_signal_value() {
