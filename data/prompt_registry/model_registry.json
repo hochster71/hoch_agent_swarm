@@ -1,0 +1,86 @@
+[
+  {
+    "model_id": "ollama/llama3",
+    "provider": "ollama",
+    "endpoint": "http://localhost:11434",
+    "context_window": 8192,
+    "modality": "text",
+    "best_for": "general",
+    "risk_allowed": ["MEDIUM", "LOW"],
+    "status": "active",
+    "last_health_check": "2026-06-29T08:00:00Z",
+    "eval_score": 0.82
+  },
+  {
+    "model_id": "lm-studio/qwen2.5-7b-instruct",
+    "provider": "lm-studio",
+    "endpoint": "http://localhost:1234",
+    "context_window": 16384,
+    "modality": "text",
+    "best_for": "general",
+    "risk_allowed": ["MEDIUM", "LOW"],
+    "status": "active",
+    "last_health_check": "2026-06-29T08:00:00Z",
+    "eval_score": 0.85
+  },
+  {
+    "model_id": "ollama/codegemma",
+    "provider": "ollama",
+    "endpoint": "http://localhost:11434",
+    "context_window": 8192,
+    "modality": "text",
+    "best_for": "coding",
+    "risk_allowed": ["MEDIUM", "LOW"],
+    "status": "active",
+    "last_health_check": "2026-06-29T08:00:00Z",
+    "eval_score": 0.78
+  },
+  {
+    "model_id": "lm-studio/qwen2.5-coder-7b",
+    "provider": "lm-studio",
+    "endpoint": "http://localhost:1234",
+    "context_window": 16384,
+    "modality": "text",
+    "best_for": "coding",
+    "risk_allowed": ["MEDIUM", "LOW"],
+    "status": "active",
+    "last_health_check": "2026-06-29T08:00:00Z",
+    "eval_score": 0.88
+  },
+  {
+    "model_id": "ollama/deepseek-r1",
+    "provider": "ollama",
+    "endpoint": "http://localhost:11434",
+    "context_window": 32768,
+    "modality": "text",
+    "best_for": "reasoning",
+    "risk_allowed": ["HIGH", "MEDIUM", "LOW"],
+    "status": "active",
+    "last_health_check": "2026-06-29T08:00:00Z",
+    "eval_score": 0.92
+  },
+  {
+    "model_id": "ollama/llama-guard",
+    "provider": "ollama",
+    "endpoint": "http://localhost:11434",
+    "context_window": 4096,
+    "modality": "text",
+    "best_for": "security-review",
+    "risk_allowed": ["HIGH", "MEDIUM", "LOW"],
+    "status": "active",
+    "last_health_check": "2026-06-29T08:00:00Z",
+    "eval_score": 0.86
+  },
+  {
+    "model_id": "ollama/nomic-embed-text",
+    "provider": "ollama",
+    "endpoint": "http://localhost:11434",
+    "context_window": 2048,
+    "modality": "embeddings",
+    "best_for": "embeddings",
+    "risk_allowed": ["LOW"],
+    "status": "active",
+    "last_health_check": "2026-06-29T08:00:00Z",
+    "eval_score": 0.80
+  }
+]

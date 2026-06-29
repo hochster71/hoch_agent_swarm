@@ -24,3 +24,12 @@ LIVE RUNTIME OR DELETE / QUARANTINE.
 - [x] Write automated Phase 6 integration tests in `tests/test_evidenceops_v6.py`
 - [x] Run unit tests and contract suites to ensure no regressions
 - [x] Generate v6 validation evidencetag
+- [x] Initialize local tool registry files (`tool_registry.json` and `toolops_state.json`)
+- [x] Create `backend/toolops_manager.py` with registry management, action policy engine, host filtering, and parameters check
+- [x] Update `backend/main.py` with ToolOps REST endpoints (tools, policies, authorize, audit-log, blocked, approve, ci-gate)
+- [x] Integrate ToolOps checks into `/api/prompts/{prompt_id}/run`
+- [x] Add ToolOps sidebar link and dashboard view in `frontend/index.html`
+- [x] Wire up dashboard selectors, metrics, tables, override buttons, and audit trail in `frontend/app.js`
+- [x] Write automated tests in `tests/test_toolops_v8.py`
+- [x] Run full unit tests and contract suites to ensure no regressions
+- [x] Generate v8 validation evidencetag
