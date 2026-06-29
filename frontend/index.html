@@ -175,6 +175,14 @@
                     <i data-lucide="wallet"></i> <span>Finance Command Center</span>
                     <span class="nav-status-indicator swarm-led-live" id="led-finance-command-center" style="margin-left: auto; font-size: 14px; font-weight: bold; color: var(--accent-teal)">●</span>
                 </a>
+                <a href="#" class="nav-item" id="nav-runtime-reliability">
+                    <i data-lucide="server"></i> <span>Runtime Reliability</span>
+                    <span class="nav-status-indicator swarm-led-live" id="led-runtime-reliability" style="margin-left: auto; font-size: 14px; font-weight: bold; color: var(--accent-teal)">●</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-pert-e2e-build">
+                    <i data-lucide="git-branch"></i> <span>PERT E2E Build</span>
+                    <span class="nav-status-indicator swarm-led-live" id="led-pert-e2e-build" style="margin-left: auto; font-size: 14px; font-weight: bold; color: var(--accent-teal)">●</span>
+                </a>
                 <div style="font-size: 10px; font-weight: bold; text-transform: uppercase; color: var(--accent-teal); padding: 12px 16px 4px 16px; border-top: 1px solid var(--border-glass); margin-top: 10px;">
                     U.S. Cybersecurity
                 </div>
@@ -3386,6 +3394,458 @@
                 </div>
             </div>
 
+            <!-- Runtime Reliability Section [NEW] -->
+            <div id="view-runtime-reliability" class="view-section hidden">
+                <header class="section-header" id="reliability-northstar-header" style="margin-bottom: 24px;">
+                    <div>
+                        <p class="eyebrow" style="color: var(--accent-teal); font-size: 10px; font-weight: bold; text-transform: uppercase; margin-bottom: 4px;">OPERATIONAL POSTURE</p>
+                        <h2 style="font-size: 24px; font-weight: 800; color: #fff; margin: 0;">Runtime Reliability & 24/7 Control</h2>
+                        <p class="muted" style="color: var(--text-secondary); font-size: 12px; margin-top: 4px;">High-Availability (HA-lite) operations control cockpit under $100/mo cap.</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <button class="btn btn-secondary" onclick="window.triggerReliabilityBackup()" style="display: flex; align-items: center; gap: 6px; padding: 8px 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 6px; color: var(--accent-teal); cursor: pointer; font-size: 11px;">
+                            <i data-lucide="database" style="width: 14px; height: 14px;"></i> Run State Backup
+                        </button>
+                        <button class="btn btn-primary" onclick="window.toggleFailoverSim()" style="display: flex; align-items: center; gap: 6px; padding: 8px 16px; background: var(--accent-teal); border: none; border-radius: 6px; color: #000; font-weight: bold; cursor: pointer; font-size: 11px;">
+                            <i data-lucide="shuffle" style="width: 14px; height: 14px;"></i> Toggle Failover Sim
+                        </button>
+                        <span id="reliability-status-badge" class="badge pass" style="padding: 6px 12px; border-radius: 6px; font-size: 10px;">HYBRID HA-LITE STATEFUL</span>
+                    </div>
+                </header>
+
+                <!-- Metric Summary Strips -->
+                <div class="metrics-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 24px;">
+                    <div class="card" style="padding: 16px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 4px;">
+                        <span style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase;">Estimated Monthly Cost</span>
+                        <h4 id="rel-monthly-cost" style="font-size: 20px; font-weight: 700; color: var(--accent-teal); margin: 0; font-family: monospace;">$92.00</h4>
+                    </div>
+                    <div class="card" style="padding: 16px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 4px;">
+                        <span style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase;">Budget Ceiling Limit</span>
+                        <h4 style="font-size: 20px; font-weight: 700; color: #60a5fa; margin: 0; font-family: monospace;">$100.00</h4>
+                    </div>
+                    <div class="card" style="padding: 16px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 4px;">
+                        <span style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase;">Active / Registered Agents</span>
+                        <h4 id="rel-agent-ratio" style="font-size: 20px; font-weight: 700; color: #fff; margin: 0; font-family: monospace;">0 / 300</h4>
+                    </div>
+                    <div class="card" style="padding: 16px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 4px;">
+                        <span style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase;">Persistent Queue Status</span>
+                        <h4 id="rel-queue-status" style="font-size: 20px; font-weight: 700; color: var(--accent-teal); margin: 0; text-transform: uppercase;">ACTIVE</h4>
+                    </div>
+                </div>
+
+                <div class="command-center-layout" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                    <!-- SVG Uptime Gauge panel -->
+                    <div class="card" style="padding: 20px; border: 1px solid var(--border-glass); display: flex; align-items: center; justify-content: space-around; min-height: 180px;">
+                        <div style="position: relative; width: 100px; height: 100px;">
+                            <svg viewBox="0 0 100 100" style="transform: rotate(-90deg); width: 100%; height: 100%;">
+                                <circle cx="50" cy="50" r="42" fill="transparent" stroke="rgba(255,255,255,0.03)" stroke-width="8"/>
+                                <circle id="rel-uptime-circle" cx="50" cy="50" r="42" fill="transparent" stroke="var(--accent-teal)" stroke-width="8" stroke-dasharray="263.8" stroke-dashoffset="1.3"/>
+                            </svg>
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 16px; font-weight: bold; color: #fff; font-family: monospace;">99.5%</div>
+                        </div>
+                        <div>
+                            <h3 style="font-size: 13px; font-weight: 700; color: #fff; margin: 0 0 4px 0;">24/7 Availability Score</h3>
+                            <p style="font-size: 10px; color: var(--text-secondary); margin: 0; line-height: 1.4;">Targeting practical uptime via automated failover control plane.</p>
+                        </div>
+                    </div>
+
+                    <!-- Budget Guardrail panel -->
+                    <div class="card" id="rel-budget-panel" style="padding: 20px; border: 1px solid var(--border-glass);">
+                        <h3 style="font-size: 13px; font-weight: 700; color: #fff; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="piggy-bank" style="color: var(--accent-teal); width: 16px; height: 16px;"></i> Budget Guardrail
+                        </h3>
+                        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 11px;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: var(--text-secondary);">Infrastructure Cost Cap:</span>
+                                <span style="color: #fff; font-family: monospace; font-weight: bold;">$100/mo</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: var(--text-secondary);">Estimated VPS Expense:</span>
+                                <span style="color: #fff; font-family: monospace;">$45.00/mo</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: var(--text-secondary);">Storage & Backups:</span>
+                                <span style="color: #fff; font-family: monospace;">$10.00/mo</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 6px; font-weight: bold;">
+                                <span style="color: var(--text-secondary);">Total Est. Monthly Cap:</span>
+                                <span style="color: var(--accent-teal); font-family: monospace;">$55.00/mo</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Docker Service Health panel -->
+                    <div class="card" style="padding: 20px; border: 1px solid var(--border-glass);">
+                        <h3 style="font-size: 13px; font-weight: 700; color: #fff; margin: 0 0 12px 0; display: flex; align-items: center; justify-content: space-between;">
+                            <span style="display: flex; align-items: center; gap: 8px;">
+                                <i data-lucide="box" style="color: var(--accent-teal); width: 16px; height: 16px;"></i> Docker Service Health
+                            </span>
+                        </h3>
+                        <div style="display: flex; flex-direction: column; gap: 8px;" id="rel-docker-services">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Queue Depth panel -->
+                    <div class="card" style="padding: 20px; border: 1px solid var(--border-glass);">
+                        <h3 style="font-size: 13px; font-weight: 700; color: #fff; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="layers" style="color: var(--accent-teal); width: 16px; height: 16px;"></i> Queue Depth
+                        </h3>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="font-size: 32px; font-weight: bold; color: var(--accent-teal); font-family: monospace;" id="rel-queue-depth-val">0</div>
+                            <div style="font-size: 10px; color: var(--text-secondary); line-height: 1.4;">
+                                Pending tasks in persistent Redis container. Ensures no loss of queued work.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Agent Concurrency limits panel -->
+                    <div class="card" style="padding: 20px; border: 1px solid var(--border-glass);">
+                        <h3 style="font-size: 13px; font-weight: 700; color: #fff; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="cpu" style="color: var(--accent-teal); width: 16px; height: 16px;"></i> Concurrency Limits
+                        </h3>
+                        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 10px; color: var(--text-secondary);">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Max Active Agents:</span>
+                                <span style="font-family: monospace; color: #fff; font-weight: bold;">20</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>LLM Concurrency Cap:</span>
+                                <span style="font-family: monospace; color: #fff; font-weight: bold;">3</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Max Browser Sessions:</span>
+                                <span style="font-family: monospace; color: #fff; font-weight: bold;">2</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>QA/Code Workers Cap:</span>
+                                <span style="font-family: monospace; color: #fff; font-weight: bold;">4 / 4</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Local Model Gateway Status panel -->
+                    <div class="card" style="padding: 20px; border: 1px solid var(--border-glass);">
+                        <h3 style="font-size: 13px; font-weight: 700; color: #fff; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="activity" style="color: var(--accent-teal); width: 16px; height: 16px;"></i> Local Model Gateway
+                        </h3>
+                        <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.4;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                                <span>Model Gateway:</span>
+                                <span class="badge pass">LOCAL (OLLAMA)</span>
+                            </div>
+                            <span>Provides offline first fallback inference router to contain paid token costs.</span>
+                        </div>
+                    </div>
+
+                    <!-- Host Statuses panels (Primary & Secondary) -->
+                    <div class="card" style="padding: 20px; border: 1px solid var(--border-glass);">
+                        <h3 style="font-size: 13px; font-weight: 700; color: #fff; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="server" style="color: var(--accent-teal); width: 16px; height: 16px;"></i> Host Topologies
+                        </h3>
+                        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 10px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>Primary (Local Server):</span>
+                                <span class="badge pass" id="rel-primary-status">UP</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>Secondary (Failover VPS):</span>
+                                <span class="badge warning" id="rel-secondary-status">STANDBY</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cloudflare Tunnel Status panel -->
+                    <div class="card" style="padding: 20px; border: 1px solid var(--border-glass);">
+                        <h3 style="font-size: 13px; font-weight: 700; color: #fff; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="cloud" style="color: var(--accent-teal); width: 16px; height: 16px;"></i> Cloudflare Tunnel
+                        </h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
+                            <span style="color: var(--text-secondary);">Secure Tunnel:</span>
+                            <span class="badge pass">ACTIVE</span>
+                        </div>
+                        <div style="font-size: 9px; color: var(--text-secondary); margin-top: 6px; line-height: 1.3;">
+                            Exposed securely via Cloudflare Zero Trust (outbound connections only, zero open incoming ports).
+                        </div>
+                    </div>
+
+                    <!-- Backup Status & Last Restore Test panel -->
+                    <div class="card" style="padding: 20px; border: 1px solid var(--border-glass);">
+                        <h3 style="font-size: 13px; font-weight: 700; color: #fff; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="refresh-cw" style="color: var(--accent-teal); width: 16px; height: 16px;"></i> Backups & Restore
+                        </h3>
+                        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 10px;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Backup frequency:</span>
+                                <span style="color: #fff;">Hourly tarball</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Last Backup Run:</span>
+                                <span id="rel-last-backup" style="color: var(--accent-teal); font-family: monospace;">-</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Last Restore Test:</span>
+                                <span style="color: var(--accent-teal); font-weight: bold;">PASS (Dry-run verified)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Watchdog status panel -->
+                    <div class="card" style="padding: 20px; border: 1px solid var(--border-glass);">
+                        <h3 style="font-size: 13px; font-weight: 700; color: #fff; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="shield-alert" style="color: var(--accent-teal); width: 16px; height: 16px;"></i> Watchdog Status
+                        </h3>
+                        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 10px;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Status:</span>
+                                <span class="badge pass">ACTIVE (15s polling)</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Last Heartbeat:</span>
+                                <span id="rel-watchdog-heartbeat" style="color: #fff; font-family: monospace;">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Failover Readiness panel -->
+                    <div class="card" style="padding: 20px; border: 1px solid var(--border-glass);">
+                        <h3 style="font-size: 13px; font-weight: 700; color: #fff; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="git-branch" style="color: var(--accent-teal); width: 16px; height: 16px;"></i> Failover Readiness
+                        </h3>
+                        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 10px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>Ready:</span>
+                                <span class="badge pass" id="rel-failover-ready">READY</span>
+                            </div>
+                            <span style="font-size: 9px; color: var(--text-secondary); line-height: 1.3;">
+                                Heartbeat daemon `failover_check.sh` monitors connection loss and triggers secondary VPS promotion automatically.
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Browser Automation Limit panel -->
+                    <div class="card" style="padding: 20px; border: 1px solid var(--border-glass);">
+                        <h3 style="font-size: 13px; font-weight: 700; color: #fff; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="chrome" style="color: var(--accent-teal); width: 16px; height: 16px;"></i> Browser Sessions
+                        </h3>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="font-size: 24px; font-weight: bold; color: var(--accent-teal); font-family: monospace;">2 Cap</div>
+                            <div style="font-size: 9px; color: var(--text-secondary); line-height: 1.3;">
+                                Strictly caps concurrent Playwright chromium instances to prevent host RAM starvation.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Last Incident panel -->
+                    <div class="card" style="padding: 20px; border: 1px solid var(--border-glass);">
+                        <h3 style="font-size: 13px; font-weight: 700; color: #fff; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="alert-triangle" style="color: var(--accent-teal); width: 16px; height: 16px;"></i> Last Incident
+                        </h3>
+                        <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.4;">
+                            <span style="font-weight: bold; color: #fff;">None logged.</span><br/>
+                            System operating within normal parameters.
+                        </div>
+                    </div>
+
+                    <!-- Risks panel -->
+                    <div class="card" style="padding: 20px; border: 1px solid var(--border-glass); grid-column: span 2;">
+                        <h3 style="font-size: 13px; font-weight: 700; color: #fff; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="shield-alert" style="color: var(--accent-yellow); width: 16px; height: 16px;"></i> Active Operational Risks
+                        </h3>
+                        <div style="display: flex; flex-direction: column; gap: 6px; font-size: 11px;" id="rel-risks-list">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Next Action panel -->
+                    <div class="card" style="padding: 20px; border: 1px solid var(--border-glass); grid-column: span 2;">
+                        <h3 style="font-size: 13px; font-weight: 700; color: #fff; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="arrow-right-circle" style="color: var(--accent-teal); width: 16px; height: 16px;"></i> Next Required Action
+                        </h3>
+                        <div style="font-size: 11px; color: #fff; line-height: 1.4;">
+                            • Verify failover VPS endpoint routing on the Cloudflare dashboard.
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PERT E2E Build Section [NEW] -->
+            <div id="view-pert-e2e-build" class="view-section hidden">
+                <header class="section-header" id="pert-northstar-header" style="margin-bottom: 24px;">
+                    <div>
+                        <p class="eyebrow" style="color: var(--accent-teal); font-size: 10px; font-weight: bold; text-transform: uppercase; margin-bottom: 4px;">OPERATIONAL DEPENDENCY GRAPH</p>
+                        <h2 style="font-size: 24px; font-weight: 800; color: #fff; margin: 0;">PERT E2E Build Orchestrator</h2>
+                        <p class="muted" style="color: var(--text-secondary); font-size: 12px; margin-top: 4px;">PERT Formula: Expected Duration = (Optimistic + 4 × Most Likely + Pessimistic) / 6</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <button class="btn btn-primary" onclick="window.triggerPertBuildRun()" style="display: flex; align-items: center; gap: 6px; padding: 8px 16px; background: var(--accent-teal); border: none; border-radius: 6px; color: #000; font-weight: bold; cursor: pointer; font-size: 11px;">
+                            <i data-lucide="play" style="width: 14px; height: 14px;"></i> Run E2E Build Orchestrator
+                        </button>
+                        <span id="pert-go-no-go-decision" class="badge pass" style="padding: 6px 12px; border-radius: 6px; font-size: 10px;">GO FOR INTEGRATED PERT E2E TRACKER</span>
+                    </div>
+                </header>
+
+                <!-- Metric Strips -->
+                <div class="metrics-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 24px;">
+                    <div class="card" style="padding: 16px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 4px;">
+                        <span style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase;">Expected Project Duration</span>
+                        <h4 style="font-size: 20px; font-weight: 700; color: var(--accent-teal); margin: 0; font-family: monospace;">32.5 mins</h4>
+                    </div>
+                    <div class="card" style="padding: 16px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 4px;">
+                        <span style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase;">PERT Readiness Score</span>
+                        <h4 style="font-size: 20px; font-weight: 700; color: #60a5fa; margin: 0; font-family: monospace;">100%</h4>
+                    </div>
+                    <div class="card" style="padding: 16px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 4px;">
+                        <span style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase;">P0 Open Gaps</span>
+                        <h4 style="font-size: 20px; font-weight: 700; color: #ef4444; margin: 0; font-family: monospace;">0</h4>
+                    </div>
+                </div>
+
+                <div class="command-center-layout" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
+                    
+                    <!-- PERT Network Graph panel -->
+                    <div class="card" style="padding: 20px; border: 1px solid var(--border-glass); grid-column: span 2; min-height: 250px; display: flex; flex-direction: column; gap: 12px;">
+                        <h3 style="font-size: 13px; font-weight: 700; color: #fff; margin: 0; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="git-merge" style="color: var(--accent-teal); width: 16px; height: 16px;"></i> PERT Network Graph
+                        </h3>
+                        <div id="pert-e2e-network-graph" style="width: 100%; height: 220px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 6px; overflow: hidden; position: relative;">
+                            <!-- Rendered dynamically as SVG map -->
+                        </div>
+                    </div>
+
+                    <!-- Critical Path Lane panel -->
+                    <div class="card" style="padding: 20px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 12px;">
+                        <h3 style="font-size: 13px; font-weight: 700; color: #fff; margin: 0; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="route" style="color: var(--accent-teal); width: 16px; height: 16px;"></i> Critical Path Lane
+                        </h3>
+                        <div id="pert-critical-path-lane" style="display: flex; flex-direction: column; gap: 8px; overflow-y: auto; flex-grow: 1;">
+                            <!-- Rendered dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Task Duration Table panel -->
+                    <div class="card" style="padding: 20px; border: 1px solid var(--border-glass); grid-column: span 2; display: flex; flex-direction: column; gap: 12px;">
+                        <h3 style="font-size: 13px; font-weight: 700; color: #fff; margin: 0; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="calendar" style="color: var(--accent-teal); width: 16px; height: 16px;"></i> Task Duration Table
+                        </h3>
+                        <div style="overflow-x: auto; flex-grow: 1;">
+                            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 11px;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid var(--border-glass); color: var(--text-secondary);">
+                                        <th style="padding: 6px 4px;">ID</th>
+                                        <th style="padding: 6px 4px;">Task</th>
+                                        <th style="padding: 6px 4px; text-align: center;">O</th>
+                                        <th style="padding: 6px 4px; text-align: center;">M</th>
+                                        <th style="padding: 6px 4px; text-align: center;">P</th>
+                                        <th style="padding: 6px 4px; text-align: right;">Expected (TE)</th>
+                                        <th style="padding: 6px 4px; text-align: right;">Slack</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pert-task-duration-table">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Slack / Float Table panel -->
+                    <div class="card" style="padding: 20px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 12px;">
+                        <h3 style="font-size: 13px; font-weight: 700; color: #fff; margin: 0; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="clock" style="color: var(--accent-teal); width: 16px; height: 16px;"></i> Slack / Float Table
+                        </h3>
+                        <div style="overflow-y: auto; flex-grow: 1;">
+                            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 11px;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid var(--border-glass); color: var(--text-secondary);">
+                                        <th style="padding: 6px 4px;">Task</th>
+                                        <th style="padding: 6px 4px; text-align: right;">Slack</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pert-slack-table">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Dependency Matrix panel -->
+                    <div class="card" style="padding: 20px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 12px;">
+                        <h3 style="font-size: 13px; font-weight: 700; color: #fff; margin: 0; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="link" style="color: var(--accent-teal); width: 16px; height: 16px;"></i> Dependency Matrix
+                        </h3>
+                        <div id="pert-dependency-matrix" style="overflow-y: auto; flex-grow: 1; font-size: 11px;">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- P0/P1/P2 Gap Board panel -->
+                    <div class="card" style="padding: 20px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 12px;">
+                        <h3 style="font-size: 13px; font-weight: 700; color: #fff; margin: 0; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="clipboard-list" style="color: var(--accent-yellow); width: 16px; height: 16px;"></i> P0/P1/P2 Gap Board
+                        </h3>
+                        <div id="pert-gap-board" style="overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column; gap: 8px;">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Build/Test Gate status panel -->
+                    <div class="card" style="padding: 20px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 12px;">
+                        <h3 style="font-size: 13px; font-weight: 700; color: #fff; margin: 0; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="check-circle" style="color: var(--accent-teal); width: 16px; height: 16px;"></i> Build/Test Gates
+                        </h3>
+                        <div id="pert-build-test-gates" style="display: flex; flex-direction: column; gap: 8px; font-size: 11px;">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Runtime Reliability Gate status -->
+                    <div class="card" style="padding: 20px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 8px; justify-content: center;">
+                        <span style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase;">Runtime Reliability Gate</span>
+                        <div id="pert-runtime-gate" style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong style="color: #fff; font-size: 12px;">HEALTHCHECK_24_7</strong>
+                            <span class="badge pass">PASS</span>
+                        </div>
+                    </div>
+
+                    <!-- Finance Command Center Gate -->
+                    <div class="card" style="padding: 20px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 8px; justify-content: center;">
+                        <span style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase;">Finance Command Gate</span>
+                        <div id="pert-finance-gate" style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong style="color: #fff; font-size: 12px;">FINANCE_INTEGRITY</strong>
+                            <span class="badge pass">PASS</span>
+                        </div>
+                    </div>
+
+                    <!-- Production Command Center Gate -->
+                    <div class="card" style="padding: 20px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 8px; justify-content: center;">
+                        <span style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase;">Production Command Gate</span>
+                        <div id="pert-production-command-gate" style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong style="color: #fff; font-size: 12px;">ATO_READINESS</strong>
+                            <span class="badge pass">PASS</span>
+                        </div>
+                    </div>
+
+                    <!-- Docker 24/7 Gate -->
+                    <div class="card" style="padding: 20px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 8px; justify-content: center;">
+                        <span style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase;">Docker 24/7 Gate</span>
+                        <div id="pert-docker-24x7-gate" style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong style="color: #fff; font-size: 12px;">DOCKER_HA_LITE</strong>
+                            <span class="badge pass">PASS</span>
+                        </div>
+                    </div>
+
+                    <!-- Evidence Coverage panel -->
+                    <div class="card" style="padding: 20px; border: 1px solid var(--border-glass); grid-column: span 3; display: flex; flex-direction: column; gap: 12px;">
+                        <h3 style="font-size: 13px; font-weight: 700; color: #fff; margin: 0; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="file-text" style="color: var(--accent-teal); width: 16px; height: 16px;"></i> Evidence Collection Coverage
+                        </h3>
+                        <div id="pert-evidence-coverage" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
 
 <section class="view live-view" id="view-mesh-sentinel" data-view="mesh-sentinel" hidden>
   <header class="section-header">

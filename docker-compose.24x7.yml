@@ -1,0 +1,115 @@
+version: '3.8'
+
+services:
+  # Persistent Redis Queue
+  hoch-queue:
+    image: redis:7-alpine
+    container_name: hoch-queue
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    networks:
+      - hochster-net
+
+  # Master Control Plane API
+  hochster-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: hoch-agent-swarm/hochster-api:latest
+    container_name: hochster-api
+    restart: unless-stopped
+    depends_on:
+      hoch-queue:
+        condition: service_healthy
+    environment:
+      - HOCHSTER_MODE=control-plane
+      - HOCHSTER_MAX_INSTANCES=12
+      - HOCHSTER_TOOL_SANDBOX=docker
+      - HOCHSTER_AUDIT_ENABLED=true
+      - HOCHSTER_CALLBACKS_ENABLED=true
+      - REDIS_URL=redis://hoch-queue:6379/0
+    ports:
+      - "8787:8787"
+    volumes:
+      - hochster-cache:/var/lib/hochster
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - hochster-net
+
+  # Bounded Swarm Workers
+  hochster-worker:
+    image: hoch-agent-swarm/hochster-api:latest
+    depends_on:
+      hochster-api:
+        condition: service_started
+    deploy:
+      replicas: 2 # Controlled worker pool for budget cap
+    environment:
+      - HOCHSTER_WORKER_MODE=solver
+      - HOCHSTER_ALLOWED_TOOLS=filesystem,shell,docker,tests,security,diff_patch
+      - HOCHSTER_READ_ONLY_DOCKER=true
+      - REDIS_URL=redis://hoch-queue:6379/0
+    networks:
+      - hochster-net
+
+  # Hardened Application Services
+  hoch-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hoch-agent-swarm-app
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    environment:
+      SWARM_UI_PORT: "8086"
+      PYTHONPATH: "src:."
+      HOCH_LOCAL_ONLY: "1"
+      UV_CACHE_DIR: "/tmp/uv-cache"
+      REDIS_URL: "redis://hoch-queue:6379/0"
+    ports:
+      - "8086:8086"
+    volumes:
+      - ./artifacts:/app/artifacts
+      - ./data:/app/data
+      - ./docs:/app/docs
+      - type: tmpfs
+        target: /tmp
+        tmpfs:
+          mode: 1777
+      - type: tmpfs
+        target: /run
+        tmpfs:
+          mode: 1777
+      - type: tmpfs
+        target: /home/appuser/.cache
+        tmpfs:
+          mode: 0777
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8086/api/v1/operator/health', timeout=5).read()"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    networks:
+      - hochster-net
+
+volumes:
+  redis-data:
+  hochster-cache:
+
+networks:
+  hochster-net:
+    driver: bridge
