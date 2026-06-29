@@ -1,0 +1,59 @@
+# planning_theory_hypotheses.yaml
+# Testable hypotheses and validation conditions for planning theories
+
+hypotheses:
+  north_star_metric:
+    statement: "Focusing on revenue-ready customer offers shipped from existing assets reduces drift and increases autonomy."
+    metric: "validated_offers_shipped"
+    validation_operator: ">="
+    validation_value: 1
+  theory_of_constraints:
+    statement: "Subordinating all tasks to the primary constraint (monetization/packaging bottleneck) maximizes overall velocity."
+    metric: "bottleneck_wait_time_minutes"
+    validation_operator: "<="
+    validation_value: 30
+  ooda_loop:
+    statement: "Maintaining oriented cycle speeds under 10 seconds allows the swarm to self-heal before failures cascade."
+    metric: "mean_ooda_latency_seconds"
+    validation_operator: "<"
+    validation_value: 10
+  okrs:
+    statement: "Clear alignment between objectives and measurable key results increases execution confidence."
+    metric: "kr_achievement_percentage"
+    validation_operator: ">="
+    validation_value: 80
+  pert_cpm:
+    statement: "Mapping all tasks to a critical path ensures zero wasted engineering hours on non-critical milestones."
+    metric: "critical_path_slippage_minutes"
+    validation_operator: "<="
+    validation_value: 15
+  hoshin_kanri:
+    statement: "Cascading strategy from executive mission to individual tool invocations prevents task-level drift."
+    metric: "misaligned_tasks_count"
+    validation_operator: "=="
+    validation_value: 0
+  wardley_mapping:
+    statement: "Classifying system components along the evolution scale (Genesis to Commodity) guides appropriate technology selection."
+    metric: "commodity_components_used_percentage"
+    validation_operator: ">="
+    validation_value: 60
+  jtbd:
+    statement: "Aligning offer packaging directly with buyer jobs-to-be-done yields higher pilot conversion rates."
+    metric: "buyer_conversion_rate"
+    validation_operator: ">="
+    validation_value: 5
+  lean_build_measure_learn:
+    statement: "Running rapid, read-only monetization experiments minimizes customer development cycle time."
+    metric: "learning_cycle_count"
+    validation_operator: ">="
+    validation_value: 1
+  cyber_risk_governance:
+    statement: "Mandating cryptographic audits on all evidence prevents unverifiable claim generation."
+    metric: "verified_audit_percentage"
+    validation_operator: "=="
+    validation_value: 100
+  ai_rmf:
+    statement: "Using adversarial critique agents reduces risk of secret leakage and unintended mutations."
+    metric: "adversarial_flags_cleared_percentage"
+    validation_operator: "=="
+    validation_value: 100

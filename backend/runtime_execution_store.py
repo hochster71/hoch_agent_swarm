@@ -2624,40 +2624,43 @@ def scan_and_index_evidence() -> list[dict]:
                 continue
                 
             for item in full_dir.iterdir():
-                # For qa-artifact, skip subdirectories to avoid deep playwright-report indexing
-                if artifact_type == "qa-artifact" and item.is_dir():
-                    continue
-                # Skip system files like .DS_Store
-                if item.name == ".DS_Store" or item.name.startswith("."):
-                    continue
+                try:
+                    # For qa-artifact, skip subdirectories to avoid deep playwright-report indexing
+                    if artifact_type == "qa-artifact" and item.is_dir():
+                        continue
+                    # Skip system files like .DS_Store
+                    if item.name == ".DS_Store" or item.name.startswith("."):
+                        continue
+                        
+                    item_rel = str(item.relative_to(project_root))
+                    evidence_id = hashlib.sha256(item_rel.encode('utf-8')).hexdigest()
                     
-                item_rel = str(item.relative_to(project_root))
-                evidence_id = hashlib.sha256(item_rel.encode('utf-8')).hexdigest()
-                
-                # Check if already exists in DB
-                if evidence_id in existing:
-                    # Update file hash if changed (e.g. preview summary updated) but keep decision
-                    current_hash = get_path_hash(item)
-                    if existing[evidence_id]["file_hash"] != current_hash:
-                        conn.execute(
-                            "UPDATE release_evidence_retention SET file_hash = ? WHERE evidence_id = ?",
-                            (current_hash, evidence_id)
-                        )
+                    # Check if already exists in DB
+                    if evidence_id in existing:
+                        # Update file hash if changed (e.g. preview summary updated) but keep decision
+                        current_hash = get_path_hash(item)
+                        if existing[evidence_id]["file_hash"] != current_hash:
+                            conn.execute(
+                                "UPDATE release_evidence_retention SET file_hash = ? WHERE evidence_id = ?",
+                                (current_hash, evidence_id)
+                            )
+                        continue
+                    
+                    # If new, compute hash and created_at
+                    file_hash = get_path_hash(item)
+                    mtime = os.path.getmtime(item)
+                    created_at = datetime.fromtimestamp(mtime, timezone.utc).isoformat()
+                    
+                    new_records.append((
+                        evidence_id,
+                        artifact_type,
+                        item_rel,
+                        file_hash,
+                        "needs-review",
+                        created_at
+                    ))
+                except (FileNotFoundError, PermissionError):
                     continue
-                
-                # If new, compute hash and created_at
-                file_hash = get_path_hash(item)
-                mtime = os.path.getmtime(item)
-                created_at = datetime.fromtimestamp(mtime, timezone.utc).isoformat()
-                
-                new_records.append((
-                    evidence_id,
-                    artifact_type,
-                    item_rel,
-                    file_hash,
-                    "needs-review",
-                    created_at
-                ))
                 
         if new_records:
             conn.executemany(

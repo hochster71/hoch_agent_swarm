@@ -11226,6 +11226,231 @@ def get_monetization_policy():
         "prohibited_actions": harness.guard.prohibited_actions
     }
 
+@app.get("/api/v1/project-tracker/summary")
+def get_project_tracker_summary():
+    from backend.brain.northstar_governor import NorthStarGovernor
+    from backend.brain.constraint_engine import ConstraintEngine
+    from backend.brain.goal_line_guard import GoalLineGuard
+    from backend.brain.okr_tracker import OKRTracker
+
+    gov = NorthStarGovernor()
+    ns_check = gov.check_alignment("Verify release readiness and package top offers for deployment")
+    
+    constraint = ConstraintEngine()
+    bottlenecks = constraint.get_current_bottlenecks()
+
+    guard = GoalLineGuard()
+    gates = guard.evaluate_gate_matrix()
+
+    okr = OKRTracker()
+    okrs = okr.get_active_okrs()
+
+    return {
+        "status": "success",
+        "north_star_check": ns_check,
+        "bottlenecks": bottlenecks,
+        "gates": gates,
+        "okrs": okrs
+    }
+
+@app.get("/api/v1/confidence/summary")
+def get_confidence_summary():
+    from backend.brain.confidence_engine import ConfidenceEngine
+    engine = ConfidenceEngine()
+    return engine.evaluate_confidence()
+
+@app.get("/api/v1/theory-proof/summary")
+def get_theory_proof_summary():
+    from backend.brain.theory_proof_engine import TheoryProofEngine
+    engine = TheoryProofEngine()
+    return {
+        "status": "success",
+        "theories": engine.validate_theories()
+    }
+
+@app.get("/api/v1/monetization/offers")
+def get_monetization_offers():
+    from backend.monetization.revenue_offer_packager import RevenueOfferPackager
+    packager = RevenueOfferPackager()
+    return {
+        "status": "success",
+        "offers": packager.get_offers()
+    }
+
+@app.get("/api/v1/monetization/signals")
+def get_monetization_signals():
+    from backend.monetization.buyer_signal_tracker import BuyerSignalTracker
+    from backend.monetization.market_validator import MarketValidator
+    tracker = BuyerSignalTracker()
+    validator = MarketValidator()
+    return {
+        "status": "success",
+        "signals": tracker.get_signals(),
+        "market_validation": validator.evaluate_signals()
+    }
+
+@app.post("/api/v1/runtime/simulate")
+def post_runtime_simulate(payload: dict):
+    from backend.brain.scenario_simulator import ScenarioSimulator
+    from backend.brain.adversarial_reviewer import AdversarialReviewer
+    
+    scenario = payload.get("scenario", "standard")
+    
+    # Audit proposal with adversarial reviewer before simulating
+    reviewer = AdversarialReviewer()
+    audit_res = reviewer.scan_proposal(f"Trigger runtime simulation for {scenario}")
+    
+    simulator = ScenarioSimulator()
+    sim_res = simulator.run_simulation(scenario)
+    
+    return {
+        "status": "success",
+        "audit": audit_res,
+        "simulation": sim_res
+    }
+
+# Runtime Truth API Endpoints
+@app.post("/api/v1/runtime-truth/collect")
+def post_runtime_truth_collect():
+    from backend.runtime_truth.collector import collect_and_store_all
+    from backend.runtime_truth.freshness import check_signal_freshness
+    from backend.runtime_truth.contradiction_detector import detect_contradictions
+    from backend.runtime_truth.readiness_calculator import calculate_governed_readiness
+    
+    collect_and_store_all()
+    check_signal_freshness()
+    detect_contradictions()
+    readiness = calculate_governed_readiness()
+    
+    return {
+        "status": "success",
+        "readiness": readiness
+    }
+
+@app.get("/api/v1/runtime-truth/state")
+def get_runtime_truth_state():
+    import sqlite3
+    from backend.runtime_truth.state_store import DB_PATH, apply_pragmas
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    conn.row_factory = sqlite3.Row
+    try:
+        rows = conn.execute("SELECT * FROM runtime_truth_signals").fetchall()
+        return {
+            "status": "success",
+            "signals": [dict(r) for r in rows]
+        }
+    finally:
+        conn.close()
+
+@app.get("/api/v1/runtime-truth/source-map")
+def get_runtime_truth_source_map():
+    import sqlite3
+    from backend.runtime_truth.state_store import DB_PATH, apply_pragmas
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    conn.row_factory = sqlite3.Row
+    try:
+        rows = conn.execute("SELECT * FROM source_map").fetchall()
+        return {
+            "status": "success",
+            "source_map": [dict(r) for r in rows]
+        }
+    finally:
+        conn.close()
+
+@app.get("/api/v1/runtime-truth/contradictions")
+def get_runtime_truth_contradictions():
+    from backend.runtime_truth.contradiction_detector import detect_contradictions
+    res = detect_contradictions()
+    return {
+        "status": "success",
+        "contradictions": res
+    }
+
+@app.get("/api/v1/runtime-truth/audit-log")
+def get_runtime_truth_audit_log():
+    import sqlite3
+    from backend.runtime_truth.state_store import DB_PATH, apply_pragmas
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    conn.row_factory = sqlite3.Row
+    try:
+        rows = conn.execute("SELECT * FROM audit_events ORDER BY timestamp DESC").fetchall()
+        return {
+            "status": "success",
+            "events": [dict(r) for r in rows]
+        }
+    finally:
+        conn.close()
+
+@app.get("/api/v1/runtime-truth/freshness")
+def get_runtime_truth_freshness():
+    import sqlite3
+    from backend.runtime_truth.state_store import DB_PATH, apply_pragmas
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    conn.row_factory = sqlite3.Row
+    try:
+        rows = conn.execute("SELECT signal_id, freshness, last_updated FROM runtime_truth_signals").fetchall()
+        return {
+            "status": "success",
+            "freshness": [dict(r) for r in rows]
+        }
+    finally:
+        conn.close()
+
+@app.get("/api/v1/runtime-truth/heartbeats")
+def get_runtime_truth_heartbeats():
+    import sqlite3
+    from backend.runtime_truth.state_store import DB_PATH, apply_pragmas
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    conn.row_factory = sqlite3.Row
+    try:
+        rows = conn.execute("SELECT * FROM runtime_heartbeats").fetchall()
+        return {
+            "status": "success",
+            "heartbeats": [dict(r) for r in rows]
+        }
+    finally:
+        conn.close()
+
+@app.get("/api/v1/runtime-truth/evidence")
+def get_runtime_truth_evidence():
+    import sqlite3
+    from backend.runtime_truth.state_store import DB_PATH, apply_pragmas
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    apply_pragmas(conn)
+    conn.row_factory = sqlite3.Row
+    try:
+        rows = conn.execute("SELECT * FROM evidence_index").fetchall()
+        return {
+            "status": "success",
+            "evidence": [dict(r) for r in rows]
+        }
+    finally:
+        conn.close()
+
+@app.get("/api/v1/runtime-truth/version")
+def get_runtime_truth_version():
+    return {
+        "status": "success",
+        "backend_version": "0.1.6-v4-bootstrap",
+        "api_version": "v1"
+    }
+
+@app.post("/api/v1/runtime-truth/verify-claim")
+def post_runtime_truth_verify_claim(payload: dict):
+    from backend.runtime_truth.claim_guard import ClaimGuard
+    guard = ClaimGuard()
+    claim = payload.get("claim", "")
+    evidence = payload.get("evidence", [])
+    valid = guard.verify_claim(claim, evidence)
+    return {
+        "status": "success",
+        "verified": valid
+    }
 
 # Mount frontend files at root (if frontend directory exists)
 
