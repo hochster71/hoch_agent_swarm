@@ -551,3 +551,47 @@ Integrated a rich personal and business financial dashboard that computes metric
 - **E2E Playwright Tests**: Targeting [finance-command-center.spec.ts](file:///Users/michaelhoch/hoch_agent_swarm/tests/e2e/finance-command-center.spec.ts) successfully passed with 0 console warnings/errors.
 - **Release Evidence**: Generated proof log at [20260629-1117-finance-command-center.md](file:///Users/michaelhoch/hoch_agent_swarm/docs/evidence/finance-command-center/20260629-1117-finance-command-center.md).
 - **Commit History**: Committed under `feat(finance): add finance command center tab`.
+
+---
+
+## Part 7 — RC26: Michael-Aligned Brain Control Plane & Pre-seeded Configurations
+
+### Purpose
+Pre-seeded the Brain Control Plane with Michael Hoch's recurring operating doctrines, constraints, projects, allowed model routing parameters, and user roles to align decision-making to the operator's style before expanding autonomy.
+
+### Implementation Details
+- **Configuration Registries [NEW]**: Created 18 custom YAML and JSON pre-seed registries under `config/`:
+  - `config/michael_doctrine_seed.yaml`: Core rules, approval rules, and active workstreams.
+  - `config/michael_personality_profile.yaml`: Executive operator style constraints.
+  - `config/escalation_policy.yaml`: Rules for mandatory escalation vs auto-approval.
+  - `config/completion_gates.yaml`: Definition of Done proof gates.
+  - `config/model_policy.yaml`: Restricts endpoints to local loopback (Ollama/LM Studio).
+  - `config/michael_intent_patterns.yaml`: Maps shorthand user requests to structured intents.
+  - `config/preapproved_actions.yaml`: Low-risk auto-approved actions list.
+  - `config/artifact_policy.yaml`: Enforces document output file structuring.
+  - `config/claim_evidence_policy.yaml`: Strict verification criteria for completeness claims.
+  - `config/tool_registry.yaml`: Permitted tools capability inventory.
+  - `config/michael_training_examples.yaml`: Pre-seeded command-response pairs.
+  - `config/identity_registry.yaml`: Maps users (Michael, Alison, Caroline, Claire, Unknown) to authorities.
+  - `config/persona_policy.yaml`: Assisted vs command modes definition.
+  - `config/rbac_policy.yaml`: Capability access control lists.
+  - `config/brand/hoch_agent_swarm_brand.yaml`: Brand design elements.
+  - `config/delivery_targets.yaml`: Allowlisted destination folders.
+  - `config/trusted_cyber_sources.yaml`: Approved research sources.
+  - `config/workflow_templates.yaml`: Intent-to-workflow compilers.
+- **Backend Memory Refinements [MODIFIED]**:
+  - `backend/brain/doctrine_memory.py`: Enhanced rule syncing to load from both traditional and seed YAML files on database initialization.
+  - `backend/brain/approval_learner.py`: Corrected default prediction accuracy to 0.0 when history is empty, preventing artificial 100% readiness score spikes.
+  - `backend/brain/orchestrator.py`: Fixed SQL syntax issues and added query parameter bindings to human escalation queries.
+  - SQLite tables structured with unique UUID-based primary keys to prevent constraints collisions.
+
+### Verification Results
+- **Unit and Integration Tests**: All 5 test suites passed successfully:
+  - `tests/unit/test_autonomy_transitions.py` (Autonomy mode lockouts)
+  - `tests/unit/test_doctrine_memory.py` (Sync and rules persistence)
+  - `tests/unit/test_policy_decisions.py` (Action allowlist/denylist checks)
+  - `tests/integration/test_chat_integration.py` (Chat feed -> suggestion -> feedback flow)
+  - `tests/integration/test_confidence_learner.py` (Rejections reducing confidence scores)
+- **E2E Playwright Tests**: `tests/e2e/brain-autonomy.spec.ts` executed successfully verifying operator chat panels, suggested next actions, readiness scores, doctrine list renders, shadow logs, and dialog lockout validations when readiness score is below target gate.
+- **Evidence generated**: Logged at [20260629-171042-brain-rc26-preseed-alignment.md](file:///Users/michaelhoch/hoch_agent_swarm/docs/evidence/brain/20260629-171042-brain-rc26-preseed-alignment.md).
+- **Commit History**: Committed under `RC26/RC27 alignment: Add Michael doctrine and personality profile seeds, fix brain orchestrator query parameters and E2E Playwright tests`.
