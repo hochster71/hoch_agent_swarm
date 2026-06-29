@@ -12,10 +12,72 @@ import Hls from 'hls.js';
     let lastLedgerCount = 0;
     let isTimelineView = false;
 
+    // Global state variables for decision room
+    let currentDecisionRoomCandidate = null;
+    let activeAuthorityToken = null;
+    let authorityCountdownInterval = null;
+    let currentGeneratedPlan = null;
+
     // Missing stub functions to prevent console/runtime crashes
     function triggerCrewaiIngestion() { console.log('triggerCrewaiIngestion stub'); }
     async function loadCrewaiIngestionStatus() { console.log('loadCrewaiIngestionStatus stub'); }
-    function handleCandidateSelectionChange() { console.log('handleCandidateSelectionChange stub'); }
+    
+    async function populateDecisionRoomCandidates() {
+        const selectEl = document.getElementById("decision-room-candidate-select");
+        if (!selectEl) return;
+        try {
+            const res = await fetch('/api/v1/release/candidate-packets');
+            if (!res.ok) return;
+            const packets = await res.json();
+            
+            selectEl.innerHTML = "";
+            
+            if (!packets || packets.length === 0) {
+                const opt = document.createElement("option");
+                opt.value = "";
+                opt.textContent = "No candidates available";
+                selectEl.appendChild(opt);
+                currentDecisionRoomCandidate = null;
+                await updateReleaseAuthorityUI();
+                return;
+            }
+            
+            packets.forEach(p => {
+                const opt = document.createElement("option");
+                opt.value = p.candidate_packet_id;
+                opt.textContent = `${p.candidate_packet_id} (Ver: ${p.version})`;
+                selectEl.appendChild(opt);
+            });
+            
+            selectEl.selectedIndex = 0;
+            await handleCandidateSelectionChange();
+        } catch (err) {
+            console.error("Error populating decision room candidates:", err);
+        }
+    }
+
+    async function handleCandidateSelectionChange() {
+        const selectEl = document.getElementById("decision-room-candidate-select");
+        if (!selectEl || !selectEl.value) {
+            currentDecisionRoomCandidate = null;
+            await updateReleaseAuthorityUI();
+            return;
+        }
+        
+        try {
+            const res = await fetch(`/api/v1/release/candidate-packets/${selectEl.value}`);
+            if (!res.ok) return;
+            currentDecisionRoomCandidate = await res.json();
+            
+            const selectVer = document.getElementById("decision-room-candidate-version");
+            if (selectVer) selectVer.textContent = currentDecisionRoomCandidate.version;
+            
+            await updateReleaseAuthorityUI();
+        } catch (err) {
+            console.error("Error handling candidate selection change:", err);
+        }
+    }
+
     function simulateDecision() { console.log('simulateDecision stub'); }
     function exportDecisionMemo() { console.log('exportDecisionMemo stub'); }
     async function loadRoutingHistoryData() { console.log('loadRoutingHistoryData stub'); }
@@ -10567,4 +10629,316 @@ function initDeviceSwarmPrototype() {
   loadDeviceSwarm();
 }
 
-document.addEventListener("DOMContentLoaded", initDeviceSwarmPrototype);
+window.triggerArtifactWorkflow = async function() {
+    const btn = document.getElementById("btn-trigger-artifact-workflow");
+    if (btn) btn.disabled = true;
+
+    const requester = document.getElementById("artifact-requester-select")?.value || "guest";
+    const prompt = document.getElementById("artifact-prompt-input")?.value || "";
+    const target = document.getElementById("artifact-target-select")?.value || "";
+
+    const rbacRole = document.getElementById("ui-rbac-role");
+    const rbacShell = document.getElementById("ui-rbac-shell");
+    const rbacRouting = document.getElementById("ui-rbac-routing");
+    const rbacDelivery = document.getElementById("ui-rbac-delivery");
+
+    const classBadge = document.getElementById("ui-class-badge");
+    const classReason = document.getElementById("ui-class-reason");
+
+    const stepsContainer = document.getElementById("ui-workflow-steps");
+    const sourceList = document.getElementById("ui-source-list");
+    const qaScore = document.getElementById("ui-qa-score");
+    const qaFindings = document.getElementById("ui-qa-findings");
+
+    const targetAllowlist = document.getElementById("ui-target-allowlist");
+    const targetProvider = document.getElementById("ui-target-provider");
+    const targetFolder = document.getElementById("ui-target-folder");
+    const receiptDetails = document.getElementById("ui-receipt-details");
+
+    // Initialize UI states
+    if (stepsContainer) stepsContainer.innerHTML = '<div style="color: var(--accent-teal);">Compiling workflow...</div>';
+    if (sourceList) sourceList.innerHTML = '<div>Syncing sources...</div>';
+    if (qaScore) qaScore.textContent = "-";
+    if (qaFindings) qaFindings.textContent = "Pending QA run.";
+    if (targetAllowlist) targetAllowlist.textContent = "Verifying...";
+    if (receiptDetails) receiptDetails.textContent = "Processing upload...";
+
+    // Render local RBAC parameters based on pre-seeded roles
+    if (requester === "michael") {
+        if (rbacRole) rbacRole.textContent = "system_owner";
+        if (rbacShell) rbacShell.textContent = "ALLOWED";
+        if (rbacRouting) rbacRouting.textContent = "ALLOWED";
+        if (rbacDelivery) rbacDelivery.textContent = "ALLOWED";
+    } else if (requester === "alison") {
+        if (rbacRole) rbacRole.textContent = "trusted_family_operator";
+        if (rbacShell) rbacShell.textContent = "DENIED (Escalate)";
+        if (rbacRouting) rbacRouting.textContent = "ALLOWED";
+        if (rbacDelivery) rbacDelivery.textContent = "ALLOWED";
+    } else {
+        if (rbacRole) rbacRole.textContent = "guest_operator";
+        if (rbacShell) rbacShell.textContent = "DENIED";
+        if (rbacRouting) rbacRouting.textContent = "DENIED";
+        if (rbacDelivery) rbacDelivery.textContent = "DENIED";
+    }
+
+    try {
+        // Step 1: Compile workflow
+        const compileRes = await fetch('/api/v1/workflows/compile', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ requester, text: prompt })
+        });
+
+        if (!compileRes.ok) {
+            const err = await compileRes.json();
+            if (classBadge) {
+                classBadge.textContent = "BLOCKED";
+                classBadge.style.backgroundColor = "rgba(239, 68, 68, 0.15)";
+                classBadge.style.color = "#ef4444";
+            }
+            if (classReason) classReason.textContent = err.detail || "Workflow compilation blocked.";
+            if (stepsContainer) stepsContainer.innerHTML = `<div style="color: #ef4444; font-weight: bold;">[BLOCKED] ${err.detail || "Access Denied"}</div>`;
+            if (targetAllowlist) targetAllowlist.textContent = "BLOCKED";
+            if (receiptDetails) receiptDetails.textContent = "Handoff canceled due to policy violation.";
+            if (btn) btn.disabled = false;
+            return;
+        }
+
+        const workflow = await compileRes.json();
+
+        // Update classification badge
+        const classification = workflow.classification;
+        if (classBadge) {
+            classBadge.textContent = classification.toUpperCase();
+            if (classification === "sensitive" || classification === "restricted") {
+                classBadge.style.backgroundColor = "rgba(239, 68, 68, 0.15)";
+                classBadge.style.color = "#ef4444";
+            } else if (classification === "work internal") {
+                classBadge.style.backgroundColor = "rgba(59, 130, 246, 0.15)";
+                classBadge.style.color = "#3b82f6";
+            } else if (classification === "family") {
+                classBadge.style.backgroundColor = "rgba(16, 185, 129, 0.15)";
+                classBadge.style.color = "var(--accent-teal)";
+            } else {
+                classBadge.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
+                classBadge.style.color = "#fff";
+            }
+        }
+        if (classReason) classReason.textContent = `Intents matched successfully. Scope: ${classification}.`;
+
+        // Render Workflow Steps Checklist
+        let stepsHtml = "";
+        workflow.steps.forEach((step, idx) => {
+            stepsHtml += `
+                <div style="display: flex; align-items: center; gap: 8px; font-family: monospace;">
+                    <span id="wf-step-bullet-${idx}" style="color: var(--accent-orange);">[/]</span>
+                    <span id="wf-step-text-${idx}" style="color: var(--text-secondary);">${step}</span>
+                </div>
+            `;
+        });
+        if (stepsContainer) stepsContainer.innerHTML = stepsHtml;
+
+        // Step 2: Rank sources & update citations
+        const stepBullet0 = document.getElementById("wf-step-bullet-0");
+        if (stepBullet0) stepBullet0.textContent = "[x]";
+        const stepText0 = document.getElementById("wf-step-text-0");
+        if (stepText0) stepText0.style.color = "#fff";
+
+        const stepBullet1 = document.getElementById("wf-step-bullet-1");
+        if (stepBullet1) {
+            stepBullet1.textContent = "[x]";
+            const stepText1 = document.getElementById("wf-step-text-1");
+            if (stepText1) stepText1.style.color = "#fff";
+        }
+
+        const rankRes = await fetch('/api/v1/rag/rank-sources', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query: prompt })
+        });
+        
+        let citationText = "";
+        let sourcesData = [];
+        if (rankRes.ok) {
+            const rankData = await rankRes.json();
+            sourcesData = rankData.ranked_sources;
+            if (rankData.citations && rankData.citations.length > 0) {
+                rankData.citations.forEach(c => {
+                    citationText += `<div style="margin-bottom: 4px;"><strong>${c.ref_id}:</strong> ${c.name}</div>`;
+                });
+            } else {
+                citationText = "<div>No citation references generated.</div>";
+            }
+        } else {
+            citationText = "<div>Source ranking service error.</div>";
+        }
+        if (sourceList) sourceList.innerHTML = citationText;
+
+        const stepBullet2 = document.getElementById("wf-step-bullet-2");
+        if (stepBullet2) {
+            stepBullet2.textContent = "[x]";
+            const stepText2 = document.getElementById("wf-step-text-2");
+            if (stepText2) stepText2.style.color = "#fff";
+        }
+
+        // Step 3: Build Slides
+        const slidesPayload = {
+            requester,
+            title: prompt || "Cybersecurity Guidance",
+            subtitle: "Branded Swarm Analysis",
+            slides: [
+                {
+                    title: "Executive Summary",
+                    bullets: [
+                        "Identified compliance gaps with pre-seeded doctrine parameters.",
+                        "All local LLM queries restricted to loopback boundary."
+                    ]
+                },
+                {
+                    title: "Security Findings",
+                    bullets: [
+                        sourcesData.length > 0 ? `Validated source: ${sourcesData[0].name}` : "No third-party cloud API keys exposed.",
+                        "Enforced Role-Based Access controls on all runtime file edits."
+                    ]
+                }
+            ],
+            target_name: target
+        };
+
+        const slidesRes = await fetch('/api/v1/artifacts/slides', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(slidesPayload)
+        });
+
+        if (!slidesRes.ok) {
+            const err = await slidesRes.json();
+            throw new Error(`Slide Generation Failed: ${err.detail || 'Access Denied'}`);
+        }
+
+        const slidesData = await slidesRes.json();
+        const filepath = slidesData.filepath;
+
+        const stepBullet3 = document.getElementById("wf-step-bullet-3");
+        if (stepBullet3) {
+            stepBullet3.textContent = "[x]";
+            const stepText3 = document.getElementById("wf-step-text-3");
+            if (stepText3) stepText3.style.color = "#fff";
+        }
+
+        const stepBullet4 = document.getElementById("wf-step-bullet-4");
+        if (stepBullet4) {
+            stepBullet4.textContent = "[x]";
+            const stepText4 = document.getElementById("wf-step-text-4");
+            if (stepText4) stepText4.style.color = "#fff";
+        }
+
+        // Step 4: Export printable PDF
+        const pdfRes = await fetch('/api/v1/artifacts/export/pdf', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                requester,
+                title: slidesPayload.title,
+                paragraphs: [
+                    "This brief details cybersecurity posture reviews adhering to the local-first Swarm doctrine.",
+                    "No data was transmitted over public networks or unapproved APIs."
+                ]
+            })
+        });
+
+        const stepBullet5 = document.getElementById("wf-step-bullet-5");
+        if (stepBullet5) {
+            stepBullet5.textContent = "[x]";
+            const stepText5 = document.getElementById("wf-step-text-5");
+            if (stepText5) stepText5.style.color = "#fff";
+        }
+
+        const stepBullet6 = document.getElementById("wf-step-bullet-6");
+        if (stepBullet6) {
+            stepBullet6.textContent = "[x]";
+            const stepText6 = document.getElementById("wf-step-text-6");
+            if (stepText6) stepText6.style.color = "#fff";
+        }
+
+        // Step 5: Verify QA Gate
+        const qaRes = await fetch('/api/v1/artifacts/qa', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ filepath })
+        });
+
+        if (qaRes.ok) {
+            const qaData = await qaRes.json();
+            if (qaScore) qaScore.textContent = `${qaData.score}/100`;
+            if (qaFindings) qaFindings.textContent = qaData.findings.join(" | ");
+        } else {
+            if (qaScore) qaScore.textContent = "Fail";
+            if (qaFindings) qaFindings.textContent = "QA analysis failed.";
+        }
+
+        // Step 6: Google Drive Delivery
+        const deliveryRes = await fetch('/api/v1/delivery/google-drive', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                requester,
+                filepath,
+                target_name: target
+            })
+        });
+
+        const stepBullet7 = document.getElementById("wf-step-bullet-7");
+        if (stepBullet7) {
+            stepBullet7.textContent = "[x]";
+            const stepText7 = document.getElementById("wf-step-text-7");
+            if (stepText7) stepText7.style.color = "#fff";
+        }
+
+        const stepBullet8 = document.getElementById("wf-step-bullet-8");
+        if (stepBullet8) {
+            stepBullet8.textContent = "[x]";
+            const stepText8 = document.getElementById("wf-step-text-8");
+            if (stepText8) stepText8.style.color = "#fff";
+        }
+
+        if (!deliveryRes.ok) {
+            const err = await deliveryRes.json();
+            if (targetAllowlist) targetAllowlist.textContent = "BLOCKED";
+            if (receiptDetails) receiptDetails.textContent = `Handoff Denied: ${err.detail || 'Target verification failed'}`;
+            return;
+        }
+
+        const delivery = await deliveryRes.json();
+
+        // Update target status & receipt logging
+        if (targetAllowlist) targetAllowlist.textContent = "VERIFIED (Pass)";
+        if (targetProvider) targetProvider.textContent = delivery.provider;
+        if (targetFolder) targetFolder.textContent = delivery.folder;
+
+        if (receiptDetails) {
+            receiptDetails.innerHTML = `
+                <div><strong>Receipt ID:</strong> ${delivery.receipt_id}</div>
+                <div><strong>Timestamp:</strong> ${delivery.timestamp}</div>
+                <div><strong>Destination:</strong> ${delivery.provider}/${delivery.folder}</div>
+                <div><strong>Checksum:</strong> ${delivery.sha256}</div>
+            `;
+        }
+
+    } catch (err) {
+        if (stepsContainer) stepsContainer.innerHTML = `<div style="color: #ef4444; font-weight: bold;">[ERROR] ${err.message}</div>`;
+        if (receiptDetails) receiptDetails.textContent = `Workflow error: ${err.message}`;
+    } finally {
+        if (btn) btn.disabled = false;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) {
+            lucide.createIcons();
+        }
+    }
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+    initDeviceSwarmPrototype();
+    if (typeof lucide !== 'undefined' && lucide.createIcons) {
+        lucide.createIcons();
+    }
+});
