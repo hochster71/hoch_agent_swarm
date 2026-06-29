@@ -47,8 +47,9 @@ async function runCapture() {
   await captureTab("#nav-readiness", "security-ato-readiness.png");
   await captureTab("#nav-local-models", "backend-binding-readiness.png");
   await captureTab("#nav-model-mesh", "frontend-runtime-readiness.png");
-  await captureTab('button[data-view="device-swarm"]', "local-preview-release-candidate.png");
-  await captureTab('button[data-view="mesh-sentinel"]', "controlled-local-demo-readiness.png");
+  await captureTab("#nav-production-command-center", "production-command-center.png");
+  await captureTab("#nav-release-provenance", "release-provenance.png");
+  await captureTab("#nav-governance", "operator-governance.png");
 
   // 2. Capture Local Cockpit HTML files via file:/// scheme
   const projectRoot = path.resolve(__dirname, "../");
