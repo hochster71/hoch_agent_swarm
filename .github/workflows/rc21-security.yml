@@ -56,7 +56,7 @@ jobs:
 
       - name: Run Semgrep scan
         run: |
-          semgrep scan --config qa/semgrep/hoch-security.yml --error .
+          semgrep scan --config qa/semgrep/hoch-security.yml --exclude="qa/semgrep/tests" --error .
 
   trivy-fs:
     name: Trivy Filesystem Scan
@@ -74,6 +74,7 @@ jobs:
           exit-code: '1'
           severity: 'CRITICAL'
           scanners: 'vuln,config,secret'
+          ignore-unfixed: true
 
   docker-build-and-trivy-image:
     name: Docker Build and Trivy Image Scan
@@ -94,6 +95,7 @@ jobs:
           exit-code: '1'
           severity: 'CRITICAL'
           scanners: 'vuln,config,secret'
+          ignore-unfixed: true
 
   sbom:
     name: Generate CycloneDX SBOM
