@@ -3715,6 +3715,77 @@ class AgentModelPolicyRequest(BaseModel):
     quorum_size: int
     dissent_similarity_threshold: float
 
+class ControlPolicyUpdateRequest(BaseModel):
+    autonomy_level: str = None
+    profile: str = None
+    safety_status: str = None
+
+class ControlActionRequest(BaseModel):
+    action: str
+    target_tag: str = None
+
+# Operator Control Plane and Autonomy Level API
+@app.get("/api/v1/control/policy")
+def get_control_policy():
+    from backend.control_plane_manager import CONTROL_PLANE
+    return CONTROL_PLANE.get_policy()
+
+@app.post("/api/v1/control/policy")
+def update_control_policy(req: ControlPolicyUpdateRequest):
+    from backend.control_plane_manager import CONTROL_PLANE
+    return CONTROL_PLANE.update_policy(
+        autonomy_level=req.autonomy_level,
+        profile=req.profile,
+        safety_status=req.safety_status
+    )
+
+@app.post("/api/v1/control/action")
+def run_control_action(req: ControlActionRequest):
+    from backend.control_plane_manager import CONTROL_PLANE
+    if req.action == "pause":
+        return CONTROL_PLANE.update_policy(safety_status="paused")
+    elif req.action == "resume":
+        return CONTROL_PLANE.update_policy(safety_status="running")
+    elif req.action == "rollback":
+        if not req.target_tag:
+            raise HTTPException(status_code=400, detail="Missing target_tag parameter for rollback action")
+        res = CONTROL_PLANE.execute_rollback(req.target_tag)
+        if res.get("status") == "FAIL":
+            raise HTTPException(status_code=500, detail=res.get("error"))
+        return res
+    else:
+        raise HTTPException(status_code=400, detail=f"Invalid action: {req.action}")
+
+@app.get("/api/v1/control/live-swarm")
+def get_live_swarm():
+    # Return live telemetry log and approval request queues
+    global _mission_log, _mission_lock
+    from backend.approval_gate import get_approvals_queue
+    
+    with _mission_lock:
+        events = list(_mission_log)
+    events.reverse()
+    
+    try:
+        approvals = get_approvals_queue()
+    except Exception:
+        approvals = []
+        
+    return {
+        "events": events[:40],
+        "approval_queue": approvals
+    }
+
+@app.get("/api/v1/control/export-evidence")
+def export_control_evidence():
+    from backend.control_plane_manager import CONTROL_PLANE
+    from fastapi.responses import Response as FAResponse
+    zip_bytes = CONTROL_PLANE.export_evidence_pack()
+    return FAResponse(
+        content=zip_bytes,
+        media_type="application/zip",
+        headers={"Content-Disposition": "attachment; filename=hoch_mission_evidence.zip"}
+    )
 
 # Model Provider Registry Endpoints
 @app.get("/api/v1/models/providers")

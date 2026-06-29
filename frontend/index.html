@@ -822,8 +822,83 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Autonomy & Policy Control Panel -->
+                    <div style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background: rgba(10, 15, 30, 0.5); border: 1px solid var(--border-glass); padding: 18px; border-radius: 10px;">
+                        <!-- Left Sub-Panel: Autonomy Levels & Policy Profiles -->
+                        <div>
+                            <h3 style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--accent-teal); margin-bottom: 12px; letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px;">
+                                <i data-lucide="shield-check" style="width: 14px; height: 14px;"></i> Autonomy & Policy Gates
+                            </h3>
+                            
+                            <!-- Autonomy Level Buttons -->
+                            <div style="margin-bottom: 16px;">
+                                <span style="font-size: 10px; color: var(--text-secondary); display: block; text-transform: uppercase; font-weight: 600; margin-bottom: 6px;">Autonomy Mode Selector</span>
+                                <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="control-autonomy-container">
+                                    <button class="btn btn-autonomy" data-level="L0" title="Manual: All actions require operator approval" style="padding: 4px 8px; font-size: 11px; border-radius: 4px; border: 1px solid var(--border-glass); background: transparent; color: var(--text-secondary); cursor: pointer;">L0</button>
+                                    <button class="btn btn-autonomy" data-level="L1" title="Human-in-the-Loop: Plan approvals required" style="padding: 4px 8px; font-size: 11px; border-radius: 4px; border: 1px solid var(--border-glass); background: transparent; color: var(--text-secondary); cursor: pointer;">L1</button>
+                                    <button class="btn btn-autonomy" data-level="L2" title="Assisted: Write actions require approval" style="padding: 4px 8px; font-size: 11px; border-radius: 4px; border: 1px solid var(--border-glass); background: transparent; color: var(--text-secondary); cursor: pointer;">L2</button>
+                                    <button class="btn btn-autonomy" data-level="L3" title="Conditional: Budget gates active (< $5 auto)" style="padding: 4px 8px; font-size: 11px; border-radius: 4px; border: 1px solid var(--border-glass); background: transparent; color: var(--text-secondary); cursor: pointer;">L3</button>
+                                    <button class="btn btn-autonomy" data-level="L4" title="High Autonomy: Deployments gated" style="padding: 4px 8px; font-size: 11px; border-radius: 4px; border: 1px solid var(--border-glass); background: transparent; color: var(--text-secondary); cursor: pointer;">L4</button>
+                                    <button class="btn btn-autonomy" data-level="L5" title="Full Autonomy: Zero gates, full automation" style="padding: 4px 8px; font-size: 11px; border-radius: 4px; border: 1px solid var(--border-glass); background: transparent; color: var(--text-secondary); cursor: pointer;">L5</button>
+                                </div>
+                                <div id="autonomy-desc" style="font-size: 10px; color: var(--text-secondary); margin-top: 4px;">--</div>
+                            </div>
+                            
+                            <!-- Policy Profiles -->
+                            <div>
+                                <span style="font-size: 10px; color: var(--text-secondary); display: block; text-transform: uppercase; font-weight: 600; margin-bottom: 6px;">Active Policy Profile</span>
+                                <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="control-profile-container">
+                                    <button class="btn btn-profile" data-profile="home" title="IPTV / Media Allowed; Code blocked" style="padding: 4px 10px; font-size: 11px; border-radius: 4px; border: 1px solid var(--border-glass); background: transparent; color: var(--text-secondary); cursor: pointer;">Home</button>
+                                    <button class="btn btn-profile" data-profile="work" title="Coding / Swarms Allowed; TV blocked" style="padding: 4px 10px; font-size: 11px; border-radius: 4px; border: 1px solid var(--border-glass); background: transparent; color: var(--text-secondary); cursor: pointer;">Work</button>
+                                    <button class="btn btn-profile" data-profile="cyber" title="Security scan automation active" style="padding: 4px 10px; font-size: 11px; border-radius: 4px; border: 1px solid var(--border-glass); background: transparent; color: var(--text-secondary); cursor: pointer;">Cyber</button>
+                                    <button class="btn btn-profile" data-profile="tv" title="Only IPTV allowed" style="padding: 4px 10px; font-size: 11px; border-radius: 4px; border: 1px solid var(--border-glass); background: transparent; color: var(--text-secondary); cursor: pointer;">TV</button>
+                                </div>
+                                <div id="profile-desc" style="font-size: 10px; color: var(--text-secondary); margin-top: 4px;">--</div>
+                            </div>
+                        </div>
 
-                    <!-- Swarm Observability & Model Performance Dashboard -->
+                        <!-- Right Sub-Panel: Safety Controls & Local Model Registry -->
+                        <div>
+                            <h3 style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--accent-teal); margin-bottom: 12px; letter-spacing: 0.05em; display: flex; align-items: center; justify-content: space-between;">
+                                <span style="display: flex; align-items: center; gap: 6px;">
+                                    <i data-lucide="shield-alert" style="width: 14px; height: 14px;"></i> Safety & Local Models
+                                </span>
+                                <span id="safety-status-badge" class="badge" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.3); color: #34d399; font-weight: bold; font-size: 10px; padding: 2px 6px;">RUNNING</span>
+                            </h3>
+                            
+                            <!-- Safety Controls -->
+                            <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+                                <button id="control-btn-pause" class="btn" style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); color: #fbbf24; font-size: 11px; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">Pause Swarm</button>
+                                <button id="control-btn-resume" class="btn" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; font-size: 11px; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; display: none;">Resume Swarm</button>
+                                <button id="control-btn-export" class="btn" style="background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.3); color: #818cf8; font-size: 11px; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">Export Evidence</button>
+                            </div>
+                            
+                            <!-- Rollback Control -->
+                            <div style="margin-bottom: 16px; display: flex; gap: 8px; align-items: center;">
+                                <span style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; font-weight: 600;">Emergency Rollback</span>
+                                <input type="text" id="control-rollback-tag" placeholder="rc22-release-..." style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); color: #fff; font-size: 11px; padding: 4px 8px; border-radius: 4px; width: 140px;">
+                                <button id="control-btn-rollback" class="btn" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; font-size: 11px; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-weight: bold;">Trigger</button>
+                            </div>
+                            
+                            <!-- Model Registry Health -->
+                            <div>
+                                <span style="font-size: 10px; color: var(--text-secondary); display: block; text-transform: uppercase; font-weight: 600; margin-bottom: 6px;">Local Model Providers</span>
+                                <div style="display: flex; gap: 12px; font-size: 11px;">
+                                    <div style="display: flex; align-items: center; gap: 6px;">
+                                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #6b7280; display: inline-block;" id="model-health-lmstudio-dot"></span>
+                                        <span>LM Studio</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px;">
+                                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #6b7280; display: inline-block;" id="model-health-ollama-dot"></span>
+                                        <span>Ollama</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+ 
+                     <!-- Swarm Observability & Model Performance Dashboard -->
                     <div style="margin-top: 20px; background: rgba(10, 15, 30, 0.5); border: 1px solid var(--border-glass); padding: 18px; border-radius: 10px;" id="clawde-swarm-observability-panel">
                         <h3 style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--accent-teal); margin: 0; margin-bottom: 14px; letter-spacing: 0.05em; display: flex; align-items: center; justify-content: space-between;">
                             <span style="display: flex; align-items: center; gap: 6px;">
@@ -877,6 +952,14 @@
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+                        
+                        <!-- Telemetry Terminal Console -->
+                        <div style="margin-top: 14px;">
+                            <span style="font-size: 10px; color: var(--text-secondary); display: block; text-transform: uppercase; font-weight: 600; margin-bottom: 6px;">Live Swarm Telemetry Terminal</span>
+                            <div style="background: #050510; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 10px 14px; font-family: monospace; font-size: 11px; height: 160px; overflow-y: auto; color: #34d399; line-height: 1.5;" id="telemetry-log-stream">
+                                <div style="color: #6b7280;">[SYSTEM] Telemetry session initialized. Waiting for events...</div>
+                            </div>
                         </div>
                     </div>
 

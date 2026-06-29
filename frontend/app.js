@@ -1682,6 +1682,190 @@ import Hls from 'hls.js';
                 syncObservabilityDashboard();
             });
         }
+
+        // RC24: Control Plane & Autonomy selector wiring
+        const btnPause = el('control-btn-pause');
+        const btnResume = el('control-btn-resume');
+        const btnExport = el('control-btn-export');
+        const btnRollback = el('control-btn-rollback');
+        const inputRollback = el('control-rollback-tag');
+        
+        // Autonomy selector listeners
+        document.querySelectorAll('#control-autonomy-container .btn-autonomy').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const level = btn.getAttribute('data-level');
+                try {
+                    const res = await fetch('/api/v1/control/policy', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ autonomy_level: level })
+                    });
+                    const policy = await res.json();
+                    updatePolicyUI(policy);
+                } catch (err) {
+                    console.error("Failed to update autonomy level:", err);
+                }
+            });
+        });
+        
+        // Profile selector listeners
+        document.querySelectorAll('#control-profile-container .btn-profile').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const profile = btn.getAttribute('data-profile');
+                try {
+                    const res = await fetch('/api/v1/control/policy', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ profile })
+                    });
+                    const policy = await res.json();
+                    updatePolicyUI(policy);
+                } catch (err) {
+                    console.error("Failed to update policy profile:", err);
+                }
+            });
+        });
+        
+        if (btnPause) {
+            btnPause.addEventListener('click', async () => {
+                try {
+                    const res = await fetch('/api/v1/control/action', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'pause' })
+                    });
+                    const policy = await res.json();
+                    updatePolicyUI(policy);
+                } catch (err) {
+                    console.error("Failed to pause swarm:", err);
+                }
+            });
+        }
+        
+        if (btnResume) {
+            btnResume.addEventListener('click', async () => {
+                try {
+                    const res = await fetch('/api/v1/control/action', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'resume' })
+                    });
+                    const policy = await res.json();
+                    updatePolicyUI(policy);
+                } catch (err) {
+                    console.error("Failed to resume swarm:", err);
+                }
+            });
+        }
+        
+        if (btnExport) {
+            btnExport.addEventListener('click', () => {
+                window.location.href = '/api/v1/control/export-evidence';
+            });
+        }
+        
+        if (btnRollback) {
+            btnRollback.addEventListener('click', async () => {
+                const tag = inputRollback ? inputRollback.value : '';
+                if (!tag) {
+                    alert("Please enter a target tag for rollback.");
+                    return;
+                }
+                if (!confirm(`Are you sure you want to execute emergency rollback to ${tag}?`)) {
+                    return;
+                }
+                try {
+                    showBanner(`Executing rollback to ${tag}...`, false);
+                    const res = await fetch('/api/v1/control/action', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'rollback', target_tag: tag })
+                    });
+                    const data = await res.json();
+                    if (data.status === 'SUCCESS') {
+                        showBanner(`Rollback to ${tag} succeeded!`, false);
+                    } else {
+                        showBanner(`Rollback failed: ${data.error || 'unknown error'}`, true);
+                    }
+                } catch (err) {
+                    showBanner(`Rollback request failed: ${err.message}`, true);
+                }
+            });
+        }
+    }
+
+    function updatePolicyUI(policy) {
+        const autonomyDesc = el('autonomy-desc');
+        const profileDesc = el('profile-desc');
+        const safetyBadge = el('safety-status-badge');
+        const btnPause = el('control-btn-pause');
+        const btnResume = el('control-btn-resume');
+
+        const activeLevel = policy.selected_autonomy_level || 'L1';
+        const activeProfile = policy.active_profile || 'home';
+        const activeSafety = policy.safety_status || 'running';
+
+        // Select buttons styling
+        document.querySelectorAll('#control-autonomy-container .btn-autonomy').forEach(btn => {
+            if (btn.getAttribute('data-level') === activeLevel) {
+                btn.style.background = 'rgba(99, 102, 241, 0.25)';
+                btn.style.borderColor = 'var(--accent-teal)';
+                btn.style.color = '#fff';
+            } else {
+                btn.style.background = 'transparent';
+                btn.style.borderColor = 'var(--border-glass)';
+                btn.style.color = 'var(--text-secondary)';
+            }
+        });
+
+        document.querySelectorAll('#control-profile-container .btn-profile').forEach(btn => {
+            if (btn.getAttribute('data-profile') === activeProfile) {
+                btn.style.background = 'rgba(99, 102, 241, 0.25)';
+                btn.style.borderColor = 'var(--accent-teal)';
+                btn.style.color = '#fff';
+            } else {
+                btn.style.background = 'transparent';
+                btn.style.borderColor = 'var(--border-glass)';
+                btn.style.color = 'var(--text-secondary)';
+            }
+        });
+
+        // Set descriptions
+        const autonomyTips = {
+            "L0": "Manual: All actions require manual approval.",
+            "L1": "Human-in-the-Loop: Plan approvals required.",
+            "L2": "Assisted: Write actions require approval.",
+            "L3": "Conditional: Budget gates active (< $5 auto).",
+            "L4": "High Autonomy: Deployments gated.",
+            "L5": "Full Autonomy: Zero gates, full automation."
+        };
+        const profileTips = {
+            "home": "IPTV / Media Allowed; Code blocked.",
+            "work": "Coding / Swarms Allowed; TV blocked.",
+            "cyber": "Security scan automation active.",
+            "tv": "Only IPTV allowed."
+        };
+
+        if (autonomyDesc) autonomyDesc.textContent = autonomyTips[activeLevel] || '';
+        if (profileDesc) profileDesc.textContent = profileTips[activeProfile] || '';
+
+        // Safety Status
+        if (safetyBadge) {
+            safetyBadge.textContent = activeSafety.toUpperCase();
+            if (activeSafety === 'paused') {
+                safetyBadge.style.background = 'rgba(239, 68, 68, 0.15)';
+                safetyBadge.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+                safetyBadge.style.color = '#f87171';
+                if (btnPause) btnPause.style.display = 'none';
+                if (btnResume) btnResume.style.display = 'inline-block';
+            } else {
+                safetyBadge.style.background = 'rgba(16, 185, 129, 0.15)';
+                safetyBadge.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+                safetyBadge.style.color = '#34d399';
+                if (btnPause) btnPause.style.display = 'inline-block';
+                if (btnResume) btnResume.style.display = 'none';
+            }
+        }
     }
 
     async function loadReleaseStatus() {
@@ -2098,6 +2282,64 @@ import Hls from 'hls.js';
 
             // Load Release & Provenance Status
             await loadReleaseStatus();
+
+            // Load control plane policy
+            try {
+                const policyRes = await fetch('/api/v1/control/policy');
+                const policy = await policyRes.json();
+                updatePolicyUI(policy);
+            } catch (err) {
+                console.error("Failed to fetch control policy status:", err);
+            }
+
+            // Fetch model provider registry and health statuses
+            try {
+                const providersRes = await fetch('/api/v1/models/providers');
+                const providers = await providersRes.json();
+                
+                let lmstudioAvailable = false;
+                let ollamaAvailable = false;
+                
+                providers.forEach(p => {
+                    const status = p.health_status || 'unavailable';
+                    const type = p.provider_type || '';
+                    const isOk = status === 'available';
+                    
+                    if (p.model_provider_id === 'lmstudio' || type === 'lmstudio' || p.endpoint_url?.includes('1234')) {
+                        lmstudioAvailable = isOk;
+                    } else if (p.model_provider_id === 'ollama' || type === 'ollama' || p.endpoint_url?.includes('11434')) {
+                        ollamaAvailable = isOk;
+                    }
+                });
+                
+                const lmDot = el('model-health-lmstudio-dot');
+                const olDot = el('model-health-ollama-dot');
+                
+                if (lmDot) lmDot.style.background = lmstudioAvailable ? '#34d399' : '#f87171';
+                if (olDot) olDot.style.background = ollamaAvailable ? '#34d399' : '#f87171';
+            } catch (err) {
+                console.error("Failed to load local model health:", err);
+            }
+
+            // Fetch live telemetry logs
+            try {
+                const telemetryRes = await fetch('/api/v1/control/live-swarm');
+                const telemetry = await telemetryRes.json();
+                
+                const logBox = el('telemetry-log-stream');
+                if (logBox) {
+                    if (telemetry.events && telemetry.events.length > 0) {
+                        logBox.innerHTML = telemetry.events.map(ev => {
+                            const icon = ev.icon || '●';
+                            return `<div>[${ev.ts || ''}] ${icon} ${ev.name || ''} - Status: ${ev.status || ''} | ${ev.activity || ''} (CPU: ${ev.cpu || 0}%, RAM: ${ev.ram || 0}%)</div>`;
+                        }).join('');
+                    } else {
+                        logBox.innerHTML = `<div style="color: #6b7280;">[SYSTEM] Telemetry session initialized. Waiting for events...</div>`;
+                    }
+                }
+            } catch (err) {
+                console.error("Failed to load live telemetry:", err);
+            }
 
         } catch (err) {
             console.error("Error loading CLAWDE Control Tower state:", err);
