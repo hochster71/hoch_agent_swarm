@@ -10873,6 +10873,74 @@ def save_finance_tracker(updated_data: dict):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/api/v1/reliability/status")
+def get_reliability_status():
+    status_path = "/Users/michaelhoch/hoch_agent_swarm/frontend/data/runtime_reliability.json"
+    if not os.path.exists(status_path):
+        return {"status": "error", "message": "runtime_reliability.json not found"}
+    try:
+        with open(status_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+@app.post("/api/v1/reliability/toggle-failover")
+def toggle_failover():
+    status_path = "/Users/michaelhoch/hoch_agent_swarm/frontend/data/runtime_reliability.json"
+    try:
+        if os.path.exists(status_path):
+            with open(status_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            if data["failover"]["primaryStatus"] == "UP":
+                data["failover"]["primaryStatus"] = "DOWN"
+                data["failover"]["secondaryStatus"] = "ACTIVE"
+                data["failover"]["failoverReadiness"] = "FAILOVER_TRIGGERED"
+            else:
+                data["failover"]["primaryStatus"] = "UP"
+                data["failover"]["secondaryStatus"] = "STANDBY"
+                data["failover"]["failoverReadiness"] = "READY"
+            with open(status_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=2)
+            return {"status": "success", "data": data}
+        return {"status": "error", "message": "status file not found"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/v1/reliability/run-backup")
+def run_reliability_backup():
+    import subprocess
+    try:
+        res = subprocess.run(["bash", "/Users/michaelhoch/hoch_agent_swarm/scripts/backup_state.sh"], capture_output=True, text=True)
+        if res.returncode == 0:
+            return {"status": "success", "message": res.stdout.strip()}
+        else:
+            raise HTTPException(status_code=500, detail=res.stderr.strip())
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/pert/tracker")
+def get_pert_tracker():
+    tracker_path = "/Users/michaelhoch/hoch_agent_swarm/frontend/data/pert_tracker.json"
+    if not os.path.exists(tracker_path):
+        return {"status": "error", "message": "pert_tracker.json not found"}
+    try:
+        with open(tracker_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+@app.post("/api/v1/pert/tracker/run-build")
+def run_pert_build():
+    import subprocess
+    try:
+        res = subprocess.run(["bash", "/Users/michaelhoch/hoch_agent_swarm/scripts/pert_e2e_build.sh"], capture_output=True, text=True)
+        if res.returncode == 0:
+            return {"status": "success", "message": res.stdout.strip()}
+        else:
+            raise HTTPException(status_code=500, detail=res.stderr.strip())
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 # Mount frontend files at root (if frontend directory exists)
 

@@ -119,7 +119,9 @@ import Hls from 'hls.js';
         { id: "governance", viewId: "governance", label: "OPERATOR GOVERNANCE" },
         { id: "device-swarm", label: "DEVICE SWARM" },
         { id: "mesh-sentinel", label: "MESH SENTINEL" },
-        { id: "finance-command-center", viewId: "finance-command-center", label: "FINANCE COMMAND CENTER" }
+        { id: "finance-command-center", viewId: "finance-command-center", label: "FINANCE COMMAND CENTER" },
+        { id: "runtime-reliability", viewId: "runtime-reliability", label: "RUNTIME RELIABILITY" },
+        { id: "pert-e2e-build", viewId: "pert-e2e-build", label: "PERT E2E BUILD" }
     ];
 
     function initNavigation() {
@@ -302,6 +304,14 @@ import Hls from 'hls.js';
             case 'finance-command-center':
                 loadFinanceCommandCenterView();
                 viewInterval = setInterval(loadFinanceCommandCenterView, 3000);
+                break;
+            case 'runtime-reliability':
+                loadRuntimeReliabilityView();
+                viewInterval = setInterval(loadRuntimeReliabilityView, 3000);
+                break;
+            case 'pert-e2e-build':
+                loadPertE2eBuildView();
+                viewInterval = setInterval(loadPertE2eBuildView, 3000);
                 break;
         }
     }
@@ -1010,6 +1020,305 @@ import Hls from 'hls.js';
             console.error("Error loading Finance Command Center view:", err);
         }
     }
+
+    async function loadRuntimeReliabilityView() {
+        try {
+            const res = await fetch('/api/v1/reliability/status');
+            if (!res.ok) return;
+            const data = await res.json();
+
+            if (el('rel-monthly-cost')) el('rel-monthly-cost').textContent = formatCurrency(data.estimatedMonthlyCost);
+            
+            // Calculate active agents based on UP services or default to 2
+            const activeCount = data.services.filter(s => s.status === 'UP').length * 2;
+            if (el('rel-agent-ratio')) el('rel-agent-ratio').textContent = `${activeCount} / ${data.registeredAgents}`;
+            
+            if (el('rel-queue-status')) el('rel-queue-status').textContent = data.queue.status;
+            if (el('rel-queue-depth-val')) el('rel-queue-depth-val').textContent = data.queue.pendingTasks;
+            
+            if (el('rel-last-backup') && data.backups.lastBackup) {
+                el('rel-last-backup').textContent = new Date(data.backups.lastBackup).toLocaleTimeString();
+            }
+            if (el('rel-watchdog-heartbeat') && data.watchdog.lastHeartbeat) {
+                el('rel-watchdog-heartbeat').textContent = new Date(data.watchdog.lastHeartbeat).toLocaleTimeString();
+            }
+
+            const primaryEl = el('rel-primary-status');
+            if (primaryEl) {
+                primaryEl.textContent = data.failover.primaryStatus;
+                primaryEl.className = data.failover.primaryStatus === 'UP' ? 'badge pass' : 'badge fail';
+            }
+
+            const secondaryEl = el('rel-secondary-status');
+            if (secondaryEl) {
+                secondaryEl.textContent = data.failover.secondaryStatus;
+                secondaryEl.className = data.failover.secondaryStatus === 'ACTIVE' ? 'badge pass' : 'badge warning';
+            }
+
+            const failoverReadyEl = el('rel-failover-ready');
+            if (failoverReadyEl) {
+                failoverReadyEl.textContent = data.failover.failoverReadiness;
+                failoverReadyEl.className = data.failover.failoverReadiness === 'READY' ? 'badge pass' : 'badge fail';
+            }
+
+            const servicesEl = el('rel-docker-services');
+            if (servicesEl && data.services) {
+                servicesEl.innerHTML = data.services.map(s => {
+                    const badgeClass = s.status === 'UP' ? 'badge pass' : 'badge fail';
+                    return `
+                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.03); padding-bottom:6px;">
+                            <span style="color:#fff; font-size:11px;">${s.name}</span>
+                            <span class="${badgeClass}" style="font-size:9px;">${s.status}</span>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            const risksEl = el('rel-risks-list');
+            if (risksEl && data.risks) {
+                risksEl.innerHTML = data.risks.map(r => `
+                    <div style="color:var(--text-secondary); margin-bottom:4px; line-height:1.4;">• ${r}</div>
+                `).join('');
+            }
+
+            if (window.lucide) window.lucide.createIcons();
+        } catch (err) {
+            console.error("Error loading Runtime Reliability view:", err);
+        }
+    }
+
+    window.triggerReliabilityBackup = async function() {
+        try {
+            const res = await fetch('/api/v1/reliability/run-backup', { method: 'POST' });
+            if (res.ok) {
+                alert("Backup triggered successfully!");
+                loadRuntimeReliabilityView();
+            } else {
+                alert("Failed to run backup.");
+            }
+        } catch (err) {
+            console.error("Error triggering backup:", err);
+        }
+    };
+
+    window.toggleFailoverSim = async function() {
+        try {
+            const res = await fetch('/api/v1/reliability/toggle-failover', { method: 'POST' });
+            if (res.ok) {
+                alert("Failover simulation toggled!");
+                loadRuntimeReliabilityView();
+            } else {
+                alert("Failed to toggle failover.");
+            }
+        } catch (err) {
+            console.error("Error toggling failover:", err);
+        }
+    };
+
+    async function loadPertE2eBuildView() {
+        try {
+            const res = await fetch('/api/v1/pert/tracker');
+            if (!res.ok) return;
+            const data = await res.json();
+
+            // Render Decision
+            const decisionBadge = el('pert-go-no-go-decision');
+            if (decisionBadge) {
+                decisionBadge.textContent = data.summary.goNoGo;
+                decisionBadge.className = data.summary.goNoGo.includes('GO FOR') ? 'badge pass' : 'badge alert';
+            }
+
+            // Render SVG Network Graph
+            const graphContainer = el('pert-e2e-network-graph');
+            if (graphContainer) {
+                // Pre-defined coordinates
+                const coords = {
+                    "A": { x: 40, y: 110 },
+                    "B": { x: 120, y: 110 },
+                    "C": { x: 200, y: 60 },
+                    "D": { x: 200, y: 160 },
+                    "E": { x: 280, y: 20 },
+                    "F": { x: 280, y: 70 },
+                    "G": { x: 280, y: 120 },
+                    "H": { x: 280, y: 170 },
+                    "I": { x: 280, y: 220 },
+                    "J": { x: 360, y: 220 },
+                    "K": { x: 420, y: 70 },
+                    "L": { x: 500, y: 70 },
+                    "M": { x: 580, y: 70 },
+                    "O": { x: 360, y: 60 },
+                    "N": { x: 440, y: 160 },
+                    "P": { x: 500, y: 20 },
+                    "Q": { x: 500, y: 170 },
+                    "R": { x: 660, y: 70 },
+                    "S": { x: 740, y: 110 },
+                    "T": { x: 820, y: 110 }
+                };
+
+                let edgesSvg = '';
+                data.edges.forEach(edge => {
+                    const fromCoord = coords[edge.from];
+                    const toCoord = coords[edge.to];
+                    if (fromCoord && toCoord) {
+                        const isCriticalEdge = data.criticalPath.includes(edge.from) && data.criticalPath.includes(edge.to);
+                        const strokeColor = isCriticalEdge ? '#ef4444' : 'rgba(255,255,255,0.15)';
+                        const strokeWidth = isCriticalEdge ? '3' : '1.5';
+                        edgesSvg += `
+                            <line x1="${fromCoord.x}" y1="${fromCoord.y}" x2="${toCoord.x}" y2="${toCoord.y}" 
+                                  stroke="${strokeColor}" stroke-width="${strokeWidth}" marker-end="url(#arrow)" />
+                        `;
+                    }
+                });
+
+                let nodesSvg = '';
+                data.tasks.forEach(task => {
+                    const coord = coords[task.id];
+                    if (coord) {
+                        const isCritical = data.criticalPath.includes(task.id);
+                        let fillColor = '#10b981'; // Completed
+                        if (task.status === 'active') fillColor = '#3b82f6';
+                        if (task.status === 'blocked') fillColor = '#ef4444';
+
+                        const borderStroke = isCritical ? '#ef4444' : 'rgba(255,255,255,0.3)';
+                        const borderWidth = isCritical ? '2' : '1';
+
+                        nodesSvg += `
+                            <g cursor="pointer">
+                                <circle cx="${coord.x}" cy="${coord.y}" r="12" fill="${fillColor}" stroke="${borderStroke}" stroke-width="${borderWidth}" />
+                                <text x="${coord.x}" y="${coord.y + 4}" fill="#000" font-size="9px" font-weight="bold" text-anchor="middle">${task.id}</text>
+                                <title>${task.name} (${task.status})&#13;Expected: ${task.te}m&#13;Slack: ${task.slack}m</title>
+                            </g>
+                        `;
+                    }
+                });
+
+                graphContainer.innerHTML = `
+                    <svg width="100%" height="100%" viewBox="0 0 900 250" style="background:#090d16;">
+                        <defs>
+                            <marker id="arrow" viewBox="0 0 10 10" refX="22" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(255,255,255,0.4)" />
+                            </marker>
+                        </defs>
+                        ${edgesSvg}
+                        ${nodesSvg}
+                    </svg>
+                `;
+            }
+
+            // Render Critical Path Lane
+            const criticalPathContainer = el('pert-critical-path-lane');
+            if (criticalPathContainer) {
+                criticalPathContainer.innerHTML = data.criticalPath.map(id => {
+                    const task = data.tasks.find(t => t.id === id);
+                    if (!task) return '';
+                    return `
+                        <div style="padding: 10px; background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong style="color: #ef4444; font-size: 11px;">[${task.id}] ${task.name}</strong>
+                                <div style="color: var(--text-secondary); font-size: 10px; margin-top: 2px;">Owner: ${task.owner}</div>
+                            </div>
+                            <div style="font-family: monospace; font-size: 11px; color: #fff;">${task.te} mins</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // Render Task Duration Table
+            const durationTable = el('pert-task-duration-table');
+            if (durationTable) {
+                durationTable.innerHTML = data.tasks.map(t => `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); color: #fff;">
+                        <td style="padding: 6px 4px; font-family: monospace; color: var(--accent-teal);">${t.id}</td>
+                        <td style="padding: 6px 4px;">${t.name}</td>
+                        <td style="padding: 6px 4px; text-align: center; color: var(--text-secondary);">${t.optimistic}</td>
+                        <td style="padding: 6px 4px; text-align: center; color: var(--text-secondary);">${t.most_likely}</td>
+                        <td style="padding: 6px 4px; text-align: center; color: var(--text-secondary);">${t.pessimistic}</td>
+                        <td style="padding: 6px 4px; text-align: right; font-weight: bold;">${t.te}m</td>
+                        <td style="padding: 6px 4px; text-align: right; color: ${t.slack === 0 ? '#ef4444' : 'var(--text-secondary)'};">${t.slack}m</td>
+                    </tr>
+                `).join('');
+            }
+
+            // Render Slack Table
+            const slackTable = el('pert-slack-table');
+            if (slackTable) {
+                slackTable.innerHTML = data.tasks.map(t => `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); color: #fff;">
+                        <td style="padding: 6px 4px;">${t.name}</td>
+                        <td style="padding: 6px 4px; text-align: right; color: ${t.slack === 0 ? '#ef4444' : 'var(--text-secondary)'};">${t.slack}m</td>
+                    </tr>
+                `).join('');
+            }
+
+            // Render Dependency Matrix
+            const depMatrix = el('pert-dependency-matrix');
+            if (depMatrix) {
+                depMatrix.innerHTML = data.tasks.map(t => {
+                    const preds = t.predecessors || [];
+                    return `
+                        <div style="padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between;">
+                            <span>${t.name}</span>
+                            <strong style="color: var(--accent-teal); font-family: monospace;">${preds.length > 0 ? preds.join(', ') : 'None'}</strong>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // Render P0/P1/P2 Gap Board
+            const gapBoard = el('pert-gap-board');
+            if (gapBoard) {
+                gapBoard.innerHTML = data.risks.map(r => `
+                    <div style="padding: 10px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 6px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <strong style="color: #fff; font-size: 11px;">${r.title}</strong>
+                            <span class="badge warning" style="font-size: 9px; padding: 2px 6px;">${r.level.toUpperCase()}</span>
+                        </div>
+                        <div style="color: var(--text-secondary); font-size: 10px;">Mitigation: ${r.mitigation}</div>
+                    </div>
+                `).join('');
+            }
+
+            // Render Build/Test Gates
+            const buildTestGates = el('pert-build-test-gates');
+            if (buildTestGates) {
+                buildTestGates.innerHTML = data.gates.map(g => `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <span>${g.name}</span>
+                        <span class="badge ${g.status === 'PASS' ? 'pass' : 'alert'}">${g.status}</span>
+                    </div>
+                `).join('');
+            }
+
+            // Render Evidence Coverage
+            const evidenceCoverage = el('pert-evidence-coverage');
+            if (evidenceCoverage) {
+                evidenceCoverage.innerHTML = data.evidence.map(e => `
+                    <div style="padding: 10px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 6px; display: flex; flex-direction: column; gap: 4px;">
+                        <strong style="color: #fff; font-size: 11px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${e.name}</strong>
+                        <a href="file:///${data.metadata.root}/${e.path}" target="_blank" style="color: var(--accent-teal); font-size: 10px; text-decoration: none;">View File</a>
+                    </div>
+                `).join('');
+            }
+
+            if (window.lucide) window.lucide.createIcons();
+        } catch (err) {
+            console.error("Error loading PERT view:", err);
+        }
+    }
+
+    window.triggerPertBuildRun = async function() {
+        try {
+            const res = await fetch('/api/v1/pert/tracker/run-build', { method: 'POST' });
+            if (res.ok) {
+                alert("E2E Build triggered successfully!");
+                loadPertE2eBuildView();
+            } else {
+                alert("Failed to trigger E2E Build.");
+            }
+        } catch (err) {
+            console.error("Error triggering E2E build:", err);
+        }
+    };
 
     async function triggerQaLoopExecution() {
         const consoleContainer = el('cc-loop-console-container');

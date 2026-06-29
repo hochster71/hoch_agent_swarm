@@ -1,0 +1,48 @@
+{
+  "mode": "hybrid-ha-lite",
+  "budgetMaxMonthly": 100,
+  "estimatedMonthlyCost": 92.00,
+  "availabilityTarget": "practical 24/7 with self-healing and failover",
+  "registeredAgents": 300,
+  "maxActiveAgents": 20,
+  "maxLlmConcurrent": 3,
+  "maxBrowserSessions": 2,
+  "services": [
+    { "name": "hoch-app", "status": "DOWN" },
+    { "name": "hochster-api", "status": "DOWN" },
+    { "name": "hoch-queue", "status": "DOWN" }
+  ],
+  "healthchecks": [
+    { "check": "docker_daemon", "status": "UP" },
+    { "check": "disk_space", "status": "OK", "details": "63% space used" }
+  ],
+  "queue": {
+    "backend": "redis",
+    "status": "DOWN",
+    "pendingTasks": 0
+  },
+  "database": {
+    "backend": "sqlite",
+    "status": "UP"
+  },
+  "backups": {
+    "enabled": true,
+    "lastBackup": "2026-06-29T16:31:29Z",
+    "status": "PASS"
+  },
+  "failover": {
+    "enabled": true,
+    "primaryStatus": "UP",
+    "secondaryStatus": "STANDBY",
+    "failoverReadiness": "READY"
+  },
+  "watchdog": {
+    "status": "ACTIVE",
+    "lastHeartbeat": "2026-06-29T16:31:29Z"
+  },
+  "risks": [
+    "No GPU on Secondary VPS",
+    "Primary Home ISP Outage risk mitigated by VPS Failover and Cloudflare Tunneling"
+  ],
+  "lastUpdated": "2026-06-29T16:31:29Z"
+}
