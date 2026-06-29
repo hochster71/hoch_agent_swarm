@@ -184,7 +184,7 @@ def parse_m3u_playlist(content: str) -> list:
                 # Sanitize ID for URLs
                 ch_id = re.sub(r'[^a-zA-Z0-9_-]', '_', ch_id)
                 if not ch_id or ch_id == "_":
-                    ch_id = hashlib.md5(line.encode("utf-8")).hexdigest()[:12]
+                    ch_id = hashlib.sha256(line.encode("utf-8")).hexdigest()[:12]
                 
                 current_channel["id"] = ch_id
                 channels.append(current_channel)
@@ -217,7 +217,7 @@ def get_channels_data(force_refresh: bool = False) -> list:
             _PLAYLIST_CACHE["raw_m3u"] = raw_str
             _PLAYLIST_CACHE["loaded_at"] = now
             _PLAYLIST_CACHE["size_bytes"] = len(raw_bytes)
-            _PLAYLIST_CACHE["hash"] = hashlib.md5(raw_bytes).hexdigest()
+            _PLAYLIST_CACHE["hash"] = hashlib.sha256(raw_bytes).hexdigest()
         except Exception as e:
             _PLAYLIST_CACHE["error"] = str(e)
             _PLAYLIST_CACHE["data"] = None  # Fail-closed
@@ -265,7 +265,7 @@ def get_epg_xml(force_refresh: bool = False) -> str:
             _EPG_CACHE["raw_xml"] = raw_str
             _EPG_CACHE["loaded_at"] = now
             _EPG_CACHE["size_bytes"] = len(raw_bytes)
-            _EPG_CACHE["hash"] = hashlib.md5(raw_bytes).hexdigest()
+            _EPG_CACHE["hash"] = hashlib.sha256(raw_bytes).hexdigest()
         except Exception as e:
             _EPG_CACHE["error"] = str(e)
             _EPG_CACHE["raw_xml"] = ""  # Fail-closed

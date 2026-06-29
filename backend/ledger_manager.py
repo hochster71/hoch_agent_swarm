@@ -213,7 +213,7 @@ def verify_ledger_chain() -> dict:
 
 def uuid_like_hash(data: dict) -> str:
     serialized = json.dumps(data, separators=(',', ':'), sort_keys=True)
-    return hashlib.md5(serialized.encode("utf-8")).hexdigest()[:12]
+    return hashlib.sha256(serialized.encode("utf-8")).hexdigest()[:12]
 
 def log_operator_action(
     action_name: str,

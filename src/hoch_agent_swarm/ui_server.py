@@ -247,10 +247,8 @@ def api_artifacts():
 @app.route("/api/artifact/<path:rel_path>")
 def api_artifact_content(rel_path: str):
     # Only serve from inside artifacts/ for safety
-    p = ARTIFACTS_DIR / rel_path
-    try:
-        p.resolve().relative_to(ARTIFACTS_DIR.resolve())
-    except ValueError:
+    p = (ARTIFACTS_DIR / rel_path).resolve()
+    if not p.is_relative_to(ARTIFACTS_DIR.resolve()):
         abort(403)
     if not p.exists() or not p.suffix == ".md":
         abort(404)

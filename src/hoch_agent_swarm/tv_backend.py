@@ -149,7 +149,7 @@ class TVBackend:
             else:
                 if current_channel is not None:
                     current_channel["url"] = line
-                    ch_id = hashlib.md5(line.encode("utf-8")).hexdigest()[:8]
+                    ch_id = hashlib.sha256(line.encode("utf-8")).hexdigest()[:8]
                     current_channel["id"] = ch_id
                     channels.append(current_channel)
                     current_channel = None
