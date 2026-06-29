@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Master Cluster Services
   hochster-api:
