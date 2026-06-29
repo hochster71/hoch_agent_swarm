@@ -659,6 +659,83 @@ import Hls from 'hls.js';
         } catch (err) {
             grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#ef4444;">Error fetching discovery status</div>`;
         }
+
+        // Load and populate the Router configuration panel
+        try {
+            const configRes = await fetch('/api/v1/models/registry');
+            if (configRes.ok) {
+                const config = await configRes.json();
+                const defaultProviderEl = el('router-default-provider');
+                const defaultModelEl = el('router-default-model');
+                const localFirstEl = el('router-local-first');
+                const paidEnabledEl = el('router-paid-enabled');
+                
+                if (defaultProviderEl) defaultProviderEl.value = config.default_provider || 'lmstudio';
+                if (defaultModelEl) defaultModelEl.value = config.default_model || '';
+                if (localFirstEl) localFirstEl.checked = !!config.local_first;
+                if (paidEnabledEl) paidEnabledEl.checked = !!config.paid_models_enabled;
+            }
+        } catch (err) {
+            console.error('Failed to load router config:', err);
+        }
+
+        const saveRouterBtn = el('btn-save-router-config');
+        if (saveRouterBtn && !saveRouterBtn.hasAttribute('data-bound')) {
+            saveRouterBtn.setAttribute('data-bound', 'true');
+            saveRouterBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                const defaultProvider = el('router-default-provider').value;
+                const defaultModel = el('router-default-model').value;
+                const localFirst = el('router-local-first').checked;
+                const paidEnabled = el('router-paid-enabled').checked;
+                
+                let currentRegistry = { providers: {} };
+                try {
+                    const currentRes = await fetch('/api/v1/models/registry');
+                    if (currentRes.ok) {
+                        currentRegistry = await currentRes.json();
+                    }
+                } catch(err) {}
+                
+                const updatedConfig = {
+                    ...currentRegistry,
+                    local_first: localFirst,
+                    paid_models_enabled: paidEnabled,
+                    default_provider: defaultProvider,
+                    default_model: defaultModel
+                };
+                
+                saveRouterBtn.disabled = true;
+                saveRouterBtn.textContent = 'Saving...';
+                
+                try {
+                    const postRes = await fetch('/api/v1/models/router/config', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(updatedConfig)
+                    });
+                    
+                    if (postRes.ok) {
+                        saveRouterBtn.textContent = 'Configuration Saved!';
+                        saveRouterBtn.style.color = '#34d399';
+                        saveRouterBtn.style.background = 'rgba(16, 185, 129, 0.15)';
+                    } else {
+                        saveRouterBtn.textContent = 'Save Failed';
+                        saveRouterBtn.style.color = '#f87171';
+                    }
+                } catch(err) {
+                    saveRouterBtn.textContent = 'Error Saving';
+                    saveRouterBtn.style.color = '#f87171';
+                } finally {
+                    setTimeout(() => {
+                        saveRouterBtn.disabled = false;
+                        saveRouterBtn.textContent = 'Save Routing Parameters';
+                        saveRouterBtn.style.color = '#34d399';
+                        saveRouterBtn.style.background = 'rgba(16, 185, 129, 0.2)';
+                    }, 2000);
+                }
+            });
+        }
     }
 
     async function loadModelHealth(force = false) {
@@ -1108,10 +1185,11 @@ import Hls from 'hls.js';
     // Remediation Approve/Deny action
     window.hochRemediateEscalation = async function (approvalId, status) {
         try {
-            const res = await fetch('/api/v1/escalations/approve', {
+            const endpoint = status === 'APPROVED' ? '/api/v1/escalations/approve' : '/api/v1/escalations/deny';
+            const res = await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ approval_id: approvalId, status: status })
+                body: JSON.stringify({ approval_id: approvalId, operator: 'operator' })
             });
             if (res.ok) {
                 loadEscalationsView();
@@ -1120,7 +1198,7 @@ import Hls from 'hls.js';
                 alert('Action failed');
             }
         } catch (err) {
-                    console.error('[Remediate] post failed:', err);
+            console.error('[Remediate] post failed:', err);
         }
     };
 
@@ -2341,6 +2419,61 @@ import Hls from 'hls.js';
                 console.error("Failed to load live telemetry:", err);
             }
 
+            const replayBtn = el('btn-replay-telemetry');
+            if (replayBtn && !replayBtn.hasAttribute('data-bound')) {
+                replayBtn.setAttribute('data-bound', 'true');
+                replayBtn.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    const logBox = el('telemetry-log-stream');
+                    if (!logBox) return;
+                    
+                    replayBtn.disabled = true;
+                    replayBtn.textContent = 'Replaying...';
+                    logBox.innerHTML = '<div style="color: #6b7280;">[SYSTEM] Initializing telemetry replay mode...</div>';
+                    
+                    try {
+                        const res = await fetch('/api/mission/feed');
+                        const data = await res.json();
+                        const events = data.events || [];
+                        
+                        if (events.length === 0) {
+                            logBox.innerHTML = '<div style="color: #6b7280;">[SYSTEM] No historical events found to replay.</div>';
+                            replayBtn.disabled = false;
+                            replayBtn.textContent = 'Replay Mission Events';
+                            return;
+                        }
+                        
+                        logBox.innerHTML = '';
+                        
+                        let idx = 0;
+                        const interval = setInterval(() => {
+                            if (idx >= events.length) {
+                                clearInterval(interval);
+                                replayBtn.disabled = false;
+                                replayBtn.textContent = 'Replay Mission Events';
+                                const completionDiv = document.createElement('div');
+                                completionDiv.style.color = '#10b981';
+                                completionDiv.textContent = '[SYSTEM] Log replay complete.';
+                                logBox.appendChild(completionDiv);
+                                logBox.scrollTop = logBox.scrollHeight;
+                                return;
+                            }
+                            
+                            const ev = events[idx];
+                            const logDiv = document.createElement('div');
+                            logDiv.textContent = `[Replayed - ${new Date(ev.timestamp).toLocaleTimeString()}] ${ev.message || ''}`;
+                            logBox.appendChild(logDiv);
+                            logBox.scrollTop = logBox.scrollHeight;
+                            idx++;
+                        }, 150);
+                    } catch (err) {
+                        logBox.innerHTML = `<div style="color: #ef4444;">[ERROR] Failed to replay mission events: ${err.message}</div>`;
+                        replayBtn.disabled = false;
+                        replayBtn.textContent = 'Replay Mission Events';
+                    }
+                });
+            }
+
         } catch (err) {
             console.error("Error loading CLAWDE Control Tower state:", err);
             if (dbgApi) {
@@ -2772,7 +2905,7 @@ import Hls from 'hls.js';
             container.innerHTML = tasks.map(t => {
                 const priorityColor = t.priority === 'critical' ? '#ef4444' : (t.priority === 'high' ? '#f59e0b' : '#3b82f6');
                 return `
-                    <div class="flight-card" style="border-left: 3px solid ${t.status === 'completed' ? '#10b981' : (t.status === 'running' ? '#3b82f6' : 'rgba(255,255,255,0.05)')};">
+                    <div class="flight-card task-card-item" data-task-id="${t.id}" style="border-left: 3px solid ${t.status === 'completed' ? '#10b981' : (t.status === 'running' ? '#3b82f6' : 'rgba(255,255,255,0.05)')}; cursor: pointer;">
                         <div class="flight-card-title">${t.title}</div>
                         <div class="flight-card-meta">ID: ${t.id}</div>
                         <div class="flight-card-meta">Agent: <code>${t.ownerAgentId || 'unassigned'}</code></div>
@@ -2783,9 +2916,182 @@ import Hls from 'hls.js';
                     </div>
                 `;
             }).join('') || `<div style="color:var(--text-secondary); text-align:center; font-size:12px;">No tasks in this campaign</div>`;
+
+            // Bind click events on task cards
+            document.querySelectorAll('.task-card-item').forEach(card => {
+                card.addEventListener('click', () => {
+                    const taskId = card.getAttribute('data-task-id');
+                    showTaskEvidenceModal(taskId);
+                });
+            });
+
+            // Build the execution DAG list dynamically!
+            const dagNodesContainer = el('flight-deck-dag-nodes');
+            if (dagNodesContainer) {
+                if (tasks && tasks.length > 0) {
+                    dagNodesContainer.innerHTML = tasks.map(t => {
+                        const isDone = t.status === 'completed';
+                        const isRunning = t.status === 'running';
+                        
+                        let nodeBg = 'rgba(255,255,255,0.02)';
+                        let borderCol = 'var(--border-glass)';
+                        let glow = '';
+                        
+                        if (isDone) {
+                            nodeBg = 'rgba(16, 185, 129, 0.1)';
+                            borderCol = '#10b981';
+                            glow = 'box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);';
+                        } else if (isRunning) {
+                            nodeBg = 'rgba(59, 130, 246, 0.1)';
+                            borderCol = '#3b82f6';
+                            glow = 'box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); animation: pulse 2s infinite;';
+                        }
+                        
+                        const deps = t.dependencies && t.dependencies.length > 0 ? t.dependencies.join(', ') : 'none';
+                        
+                        return `
+                            <div class="dag-node-box" data-task-id="${t.id}" style="background: ${nodeBg}; border: 1px solid ${borderCol}; padding: 12px; border-radius: 8px; min-width: 140px; cursor: pointer; transition: all 0.2s; ${glow}">
+                                <div style="font-weight: bold; font-size: 12px; color: #fff; margin-bottom: 4px;">${t.id}</div>
+                                <div style="font-size: 11px; color: var(--text-secondary); text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${t.title}</div>
+                                <div style="font-size: 9px; color: #6b7280; margin-top: 4px;">Deps: ${deps}</div>
+                            </div>
+                        `;
+                    }).join('<div style="color: var(--text-secondary); font-weight: bold;">→</div>');
+                    
+                    // Bind click events on DAG nodes
+                    document.querySelectorAll('.dag-node-box').forEach(box => {
+                        box.addEventListener('click', () => {
+                            const taskId = box.getAttribute('data-task-id');
+                            showTaskEvidenceModal(taskId);
+                        });
+                    });
+                } else {
+                    dagNodesContainer.innerHTML = '<div style="color: var(--text-secondary); font-size: 12px;">Select an active campaign to view DAG nodes.</div>';
+                }
+            }
         } catch (err) {
             console.error('[FlightDeck] failed to load tasks:', err);
         }
+    }
+
+    async function showTaskEvidenceModal(taskId) {
+        const modal = el('task-evidence-modal');
+        const modalSubtitle = el('evidence-modal-subtitle');
+        const modalContent = el('evidence-modal-content');
+        
+        if (!modal || !modalContent) return;
+        
+        modal.style.display = 'flex';
+        if (modalSubtitle) modalSubtitle.textContent = `Task ID: ${taskId}`;
+        modalContent.innerHTML = '<div style="color: var(--text-secondary); padding: 20px; text-align: center;">Loading evidence trail...</div>';
+        
+        try {
+            const res = await fetch(`/api/v1/runs/${selectedCampaignId}/tasks/${taskId}/evidence`);
+            if (!res.ok) throw new Error("Failed to load evidence.");
+            const data = await res.json();
+            
+            const t = data.task || {};
+            const tools = data.tool_calls || [];
+            const validation = data.validation_evidence || [];
+            const routing = data.model_routing || [];
+            
+            let html = `
+                <div>
+                    <h4 style="font-size: 12px; color: var(--accent-teal); text-transform: uppercase; margin-bottom: 6px;">Task Specification</h4>
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 8px; padding: 12px; font-size: 12px; display: flex; flex-direction: column; gap: 6px;">
+                        <div><strong style="color: #fff;">Title:</strong> ${t.title || ''}</div>
+                        <div><strong style="color: #fff;">Description:</strong> ${t.description || ''}</div>
+                        <div><strong style="color: #fff;">Priority:</strong> <span style="color: ${t.priority === 'critical' ? '#ef4444' : '#60a5fa'}">${t.priority}</span></div>
+                        <div><strong style="color: #fff;">Status:</strong> <span class="badge" style="font-size: 10px;">${t.status || ''}</span></div>
+                        <div><strong style="color: #fff;">Assigned Agent:</strong> <code>${t.ownerAgentId || 'none'}</code></div>
+                        <div><strong style="color: #fff;">Approval Required:</strong> ${t.approvalRequired ? 'YES' : 'NO'}</div>
+                    </div>
+                </div>
+            `;
+            
+            html += `
+                <div>
+                    <h4 style="font-size: 12px; color: var(--accent-teal); text-transform: uppercase; margin-bottom: 6px;">Model Router Fallback History</h4>
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 8px; padding: 12px; font-size: 11px;">
+            `;
+            if (routing.length > 0) {
+                html += routing.map(r => {
+                    const failoverInfo = r.event_type === 'route_failed_closed' ? `<span style="color: #ef4444;">[FAIL CLOSED] ${r.error || ''}</span>` : '';
+                    const successInfo = r.event_type === 'route_success' ? `<span style="color: #10b981;">[SUCCESS] Mapped to ${r.provider}/${r.model} (Confidence: ${r.confidence_score || 'N/A'})</span>` : '';
+                    return `
+                        <div style="border-bottom: 1px solid rgba(255,255,255,0.04); padding: 6px 0;">
+                            <div><strong>Timestamp:</strong> ${new Date(r.timestamp * 1000).toLocaleTimeString()}</div>
+                            <div><strong>Event:</strong> ${r.event_type}</div>
+                            <div><strong>Details:</strong> ${successInfo} ${failoverInfo}</div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                html += `<div style="color: var(--text-secondary); text-align: center; padding: 10px;">No model routing fallback events logged for this task.</div>`;
+            }
+            html += `</div></div>`;
+            
+            html += `
+                <div>
+                    <h4 style="font-size: 12px; color: var(--accent-teal); text-transform: uppercase; margin-bottom: 6px;">Executed Tool Calls</h4>
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 8px; padding: 12px; font-size: 11px;">
+            `;
+            if (tools.length > 0) {
+                html += tools.map(tc => {
+                    return `
+                        <div style="border-bottom: 1px solid rgba(255,255,255,0.04); padding: 8px 0;">
+                            <div><strong style="color: #fff;">Tool:</strong> <code>${tc.tool_name}</code></div>
+                            <div><strong>Arguments:</strong> <code style="word-break: break-all;">${tc.arguments}</code></div>
+                            <div style="margin-top: 4px; color: var(--text-secondary);"><strong>Output summary:</strong> ${tc.output_summary}</div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                html += `<div style="color: var(--text-secondary); text-align: center; padding: 10px;">No tool calls executed.</div>`;
+            }
+            html += `</div></div>`;
+            
+            html += `
+                <div>
+                    <h4 style="font-size: 12px; color: var(--accent-teal); text-transform: uppercase; margin-bottom: 6px;">Validation Evidence</h4>
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 8px; padding: 12px; font-size: 11px;">
+            `;
+            if (validation.length > 0) {
+                html += validation.map(ev => {
+                    return `
+                        <div style="border-bottom: 1px solid rgba(255,255,255,0.04); padding: 6px 0;">
+                            <div><strong>Evidence Ref:</strong> <code>${ev.evidence_id}</code></div>
+                            <div><strong>Validator:</strong> ${ev.validator_name}</div>
+                            <div><strong>Verdict:</strong> <span class="badge ${ev.status === 'PASS' ? 'success' : 'blocked'}">${ev.status}</span></div>
+                            <div style="color: var(--text-secondary); margin-top: 2px;">${ev.notes || ''}</div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                html += `<div style="color: var(--text-secondary); text-align: center; padding: 10px;">No schema validation evidence recorded.</div>`;
+            }
+            html += `</div></div>`;
+            
+            modalContent.innerHTML = html;
+        } catch (err) {
+            modalContent.innerHTML = `<div style="color: #f87171; padding: 20px; text-align: center;">Error loading evidence trail: ${err.message}</div>`;
+        }
+    }
+
+    const closeEvidenceBtn = el('btn-close-evidence-modal');
+    if (closeEvidenceBtn) {
+        closeEvidenceBtn.addEventListener('click', () => {
+            const modal = el('task-evidence-modal');
+            if (modal) modal.style.display = 'none';
+        });
+    }
+    const evidenceModal = el('task-evidence-modal');
+    if (evidenceModal) {
+        evidenceModal.addEventListener('click', (e) => {
+            if (e.target === evidenceModal) {
+                evidenceModal.style.display = 'none';
+            }
+        });
     }
 
     // ── Koi Animation Layer (Batch UI-KOI-1, PROTO-2 & Observability) ────────────

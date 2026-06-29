@@ -118,36 +118,64 @@ def route_and_run(
             output = try_local_provider(provider, model, prompt)
             local_success = True
         except RouterException as local_err:
-            # If local failure: emit MODEL_ROUTE FAILED
-            runtime_bus.emit(
-                RuntimeProcessType.MODEL_ROUTE,
-                RuntimeProcessState.FAILED,
-                "All local model routes failed. Paid escalation remains blocked unless explicitly approved.",
-                requires_approval=True,
-                escalation_used=False,
-                metadata={"errors": str(local_err)},
-            )
-            # Local failed. Check if we can escalate to paid cloud AI
-            if paid_enabled and esc_status.get("allowed", False):
-                # Simulate paid model escalation
-                output = f"[Escalated to cloud model OpenAI/gpt-5.5 due to: {local_err}] Run output simulated."
-                paid_escalation_used = True
-            else:
-                # Fail closed
-                audit_payload = {
-                    "provider": provider,
-                    "model": model,
-                    "task_type": task_type,
-                    "caller_tier": caller_tier,
-                    "caller_node": caller_node,
-                    "error": "No local model providers reachable and paid escalation is disabled.",
-                    "paid_escalation_attempted": False,
-                    "success": False
-                }
-                audit_log.log_routing_event("route_failed_closed", audit_payload)
-                raise RouterException(
-                    "No local model providers reachable, paid escalation disabled, no paid API call attempted."
+            # Fallback failover between local providers before paid escalation
+            fallback_provider = "ollama" if provider == "lmstudio" else "lmstudio"
+            providers = model_registry.get_providers()
+            fallback_success = False
+            if fallback_provider in providers and providers[fallback_provider].get("enabled", False):
+                fallback_models = providers[fallback_provider].get("models", [])
+                if fallback_models:
+                    fallback_model = fallback_models[0]
+                    try:
+                        # Log/Emit fallback attempt
+                        runtime_bus.emit(
+                            RuntimeProcessType.MODEL_ROUTE,
+                            RuntimeProcessState.RUNNING,
+                            f"Primary local provider {provider} failed. Attempting failover to fallback local provider {fallback_provider}.",
+                            provider=fallback_provider,
+                            model=fallback_model,
+                            escalation_used=False,
+                            metadata={"fallback_reason": str(local_err)},
+                        )
+                        output = try_local_provider(fallback_provider, fallback_model, prompt)
+                        provider = fallback_provider
+                        model = fallback_model
+                        local_success = True
+                        fallback_success = True
+                    except Exception as fallback_err:
+                        local_err = RouterException(f"Primary failed: {local_err}. Fallback failover also failed: {fallback_err}")
+            
+            if not fallback_success:
+                # If local failure: emit MODEL_ROUTE FAILED
+                runtime_bus.emit(
+                    RuntimeProcessType.MODEL_ROUTE,
+                    RuntimeProcessState.FAILED,
+                    "All local model routes failed. Paid escalation remains blocked unless explicitly approved.",
+                    requires_approval=True,
+                    escalation_used=False,
+                    metadata={"errors": str(local_err)},
                 )
+                # Local failed. Check if we can escalate to paid cloud AI
+                if paid_enabled and esc_status.get("allowed", False):
+                    # Simulate paid model escalation
+                    output = f"[Escalated to cloud model OpenAI/gpt-5.5 due to: {local_err}] Run output simulated."
+                    paid_escalation_used = True
+                else:
+                    # Fail closed
+                    audit_payload = {
+                        "provider": provider,
+                        "model": model,
+                        "task_type": task_type,
+                        "caller_tier": caller_tier,
+                        "caller_node": caller_node,
+                        "error": str(local_err),
+                        "paid_escalation_attempted": False,
+                        "success": False
+                    }
+                    audit_log.log_routing_event("route_failed_closed", audit_payload)
+                    raise RouterException(
+                        f"No local model providers reachable: {local_err}. Paid escalation disabled."
+                    )
     
     # 3. Evaluate confidence
     conf = confidence.evaluate_confidence(output)

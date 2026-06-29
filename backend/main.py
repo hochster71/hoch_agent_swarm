@@ -8021,6 +8021,77 @@ def get_model_registry_endpoint():
     from backend.model_router import model_registry
     return model_registry.load_config()
 
+@app.post("/api/v1/models/router/config")
+def post_model_router_config_endpoint(req: dict):
+    from backend.model_router.model_registry import CONFIG_PATH
+    import yaml
+    try:
+        with open(CONFIG_PATH, "w") as f:
+            yaml.safe_dump(req, f, default_flow_style=False)
+        return {"status": "SUCCESS", "message": "Model routing configuration saved successfully."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/runs/{run_id}/tasks/{task_id}/evidence")
+def get_task_evidence_endpoint(run_id: str, task_id: str):
+    from backend.runtime_execution_store import list_swarm_tasks, list_tool_calls, list_validation_evidence
+    from backend.approval_gate import get_approval_gate
+    
+    tasks = list_swarm_tasks(run_id)
+    target_task = None
+    for t in tasks:
+        if t["id"] == task_id:
+            target_task = t
+            break
+            
+    if not target_task:
+        raise HTTPException(status_code=404, detail=f"Task {task_id} not found in run {run_id}")
+        
+    tool_calls = []
+    try:
+        all_tool_calls = list_tool_calls()
+        for tc in all_tool_calls:
+            if tc.get("job_id") == task_id or tc.get("trace_id") == task_id:
+                tool_calls.append(tc)
+    except Exception:
+        pass
+        
+    validation_evidence = []
+    try:
+        all_evidence = list_validation_evidence()
+        for ev in all_evidence:
+            if ev.get("task_id") == task_id or ev.get("block_index") == task_id:
+                validation_evidence.append(ev)
+    except Exception:
+        pass
+        
+    approval_status = "none"
+    try:
+        approvals = get_approval_gate().load_queue()
+        for app in approvals:
+            if app.get("task_id") == task_id:
+                approval_status = app.get("status", "pending")
+    except Exception:
+        pass
+        
+    from backend.model_router import audit_log
+    model_routing = []
+    try:
+        logs = audit_log.get_audit_logs(limit=200)
+        for entry in logs:
+            if entry.get("task_id") == task_id or entry.get("caller_node") == task_id or entry.get("task_type") == target_task.get("title"):
+                model_routing.append(entry)
+    except Exception:
+        pass
+        
+    return {
+        "task": target_task,
+        "tool_calls": tool_calls,
+        "validation_evidence": validation_evidence,
+        "approval_status": approval_status,
+        "model_routing": model_routing
+    }
+
 @app.get("/api/v1/models/status")
 def get_model_status_endpoint():
     from backend.model_router import model_registry
