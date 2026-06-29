@@ -418,6 +418,91 @@ def collect_and_store_all():
         ""
     ))
 
+    # 8. Collect Monetization (Revenue Packet 001) Details
+    conn.execute("""
+        INSERT OR REPLACE INTO runtime_truth_signals 
+        (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        "revenue_packet_001_status",
+        "AI Cyber Artifact Factory Status",
+        "ACTIVE/PRODUCED",
+        "docs/monetization/offers/ai-cyber-artifact-factory-one-pager.md",
+        "markdown_evidence",
+        heartbeat_time,
+        3600,
+        "fresh",
+        1.0,
+        "",
+        "",
+        ""
+    ))
+
+    conn.execute("""
+        INSERT OR REPLACE INTO runtime_truth_signals 
+        (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        "public_sanitizer_status",
+        "Public-Safe Sanitizer Gate",
+        "PASS",
+        "docs/monetization/sample-package/public-safe-sanitizer-report.md",
+        "markdown_evidence",
+        heartbeat_time,
+        3600,
+        "fresh",
+        1.0,
+        "",
+        "",
+        ""
+    ))
+
+    buyer_status = "UNSEEN"
+    try:
+        b_row = conn.execute("SELECT count(*) FROM buyer_signals").fetchone()
+        if b_row and b_row[0] > 0:
+            buyer_status = "ACTIVE"
+    except Exception:
+        pass
+
+    conn.execute("""
+        INSERT OR REPLACE INTO runtime_truth_signals 
+        (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        "buyer_signal_status",
+        "Buyer Signal Feedback Gate",
+        buyer_status,
+        "buyer_signals",
+        "db_query",
+        heartbeat_time,
+        3600,
+        "fresh",
+        1.0,
+        "",
+        "",
+        ""
+    ))
+
+    conn.execute("""
+        INSERT OR REPLACE INTO runtime_truth_signals 
+        (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        "revenue_confidence_cap",
+        "Revenue Confidence Policy Cap",
+        "40% Capped",
+        "config/policies/monetization_policy.yaml",
+        "policy_rule",
+        heartbeat_time,
+        3600,
+        "fresh",
+        1.0,
+        "",
+        "",
+        ""
+    ))
+
     populate_source_map_internal(conn, heartbeat_time)
 
     conn.commit()
@@ -443,7 +528,11 @@ def populate_source_map_internal(conn, heartbeat_time):
         ("uptime_window", "sqlite3.connect", "supervisor_gate", ""),
         ("restart_count", "sqlite3.connect", "supervisor_gate", ""),
         ("last_restart", "sqlite3.connect", "supervisor_gate", ""),
-        ("last_failure", "sqlite3.connect", "supervisor_gate", "")
+        ("last_failure", "sqlite3.connect", "supervisor_gate", ""),
+        ("revenue_packet_001_status", "docs/monetization/offers/ai-cyber-artifact-factory-one-pager.md", "markdown_evidence", ""),
+        ("public_sanitizer_status", "docs/monetization/sample-package/public-safe-sanitizer-report.md", "markdown_evidence", ""),
+        ("buyer_signal_status", "sqlite3.connect", "monetization_gate", ""),
+        ("revenue_confidence_cap", "config/policies/monetization_policy.yaml", "policy_rule", "")
     ]
     for key, url, source_type, checksum in entries:
         if source_type == "markdown_evidence":
