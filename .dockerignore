@@ -1,0 +1,15 @@
+.git
+.venv
+__pycache__
+.pytest_cache
+.mypy_cache
+.ruff_cache
+node_modules
+dist
+build
+*.pyc
+*.db
+artifacts/release_candidates/*
+artifacts/live_screenshots/*
+.env
+.env.*

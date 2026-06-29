@@ -1,0 +1,763 @@
+{
+  "status": "AUDITED",
+  "critical_gaps_count": 26,
+  "high_gaps_count": 58,
+  "gaps": [
+    {
+      "gap_id": "GAP-TRAC-BRAIN-001",
+      "missing_prompt_id": "BRAIN-001",
+      "missing_title": "Central LLM Brain Architect",
+      "category": "LLM Brain",
+      "severity": "Critical",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-BRAIN-002",
+      "missing_prompt_id": "BRAIN-002",
+      "missing_title": "Evidence Ingestion Agent",
+      "category": "LLM Brain",
+      "severity": "Critical",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-BRAIN-003",
+      "missing_prompt_id": "BRAIN-003",
+      "missing_title": "Knowledge Graph Builder",
+      "category": "LLM Brain",
+      "severity": "Critical",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-BRAIN-004",
+      "missing_prompt_id": "BRAIN-004",
+      "missing_title": "Semantic Memory Curator",
+      "category": "LLM Brain",
+      "severity": "Critical",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-BRAIN-005",
+      "missing_prompt_id": "BRAIN-005",
+      "missing_title": "Duplicate Finding Reconciler",
+      "category": "LLM Brain",
+      "severity": "Critical",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-BRAIN-006",
+      "missing_prompt_id": "BRAIN-006",
+      "missing_title": "Source Trust Scoring Agent",
+      "category": "LLM Brain",
+      "severity": "Critical",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-BRAIN-007",
+      "missing_prompt_id": "BRAIN-007",
+      "missing_title": "Citation and Provenance Agent",
+      "category": "LLM Brain",
+      "severity": "Critical",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-BRAIN-008",
+      "missing_prompt_id": "BRAIN-008",
+      "missing_title": "Decision Memory Agent",
+      "category": "LLM Brain",
+      "severity": "Critical",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-BRAIN-009",
+      "missing_prompt_id": "BRAIN-009",
+      "missing_title": "Lessons Learned Agent",
+      "category": "LLM Brain",
+      "severity": "Critical",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-BRAIN-010",
+      "missing_prompt_id": "BRAIN-010",
+      "missing_title": "Brain Drift Auditor",
+      "category": "LLM Brain",
+      "severity": "Critical",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-PROMPT-001",
+      "missing_prompt_id": "PROMPT-001",
+      "missing_title": "Prompt Coverage Auditor",
+      "category": "Prompt Governance",
+      "severity": "Critical",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-PROMPT-002",
+      "missing_prompt_id": "PROMPT-002",
+      "missing_title": "Prompt Quality Scorer",
+      "category": "Prompt Governance",
+      "severity": "Critical",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-PROMPT-003",
+      "missing_prompt_id": "PROMPT-003",
+      "missing_title": "Prompt Version Control Agent",
+      "category": "Prompt Governance",
+      "severity": "Critical",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-PROMPT-004",
+      "missing_prompt_id": "PROMPT-004",
+      "missing_title": "Prompt Safety Reviewer",
+      "category": "Prompt Governance",
+      "severity": "Critical",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-PROMPT-005",
+      "missing_prompt_id": "PROMPT-005",
+      "missing_title": "Prompt-to-Control Mapper",
+      "category": "Prompt Governance",
+      "severity": "Critical",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-PROMPT-006",
+      "missing_prompt_id": "PROMPT-006",
+      "missing_title": "Prompt Routing Policy Agent",
+      "category": "Prompt Governance",
+      "severity": "Critical",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-PROMPT-007",
+      "missing_prompt_id": "PROMPT-007",
+      "missing_title": "Prompt Regression Tester",
+      "category": "Prompt Governance",
+      "severity": "Critical",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-PROMPT-008",
+      "missing_prompt_id": "PROMPT-008",
+      "missing_title": "Prompt Drift Detection Agent",
+      "category": "Prompt Governance",
+      "severity": "Critical",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-GAP-001",
+      "missing_prompt_id": "GAP-001",
+      "missing_title": "Universal Gap Analysis Commander",
+      "category": "Gap Analysis",
+      "severity": "Critical",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-GAP-002",
+      "missing_prompt_id": "GAP-002",
+      "missing_title": "Gap-to-POA&M Converter",
+      "category": "Gap Analysis",
+      "severity": "Critical",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-GAP-003",
+      "missing_prompt_id": "GAP-003",
+      "missing_title": "Remediation Dependency Planner",
+      "category": "Gap Analysis",
+      "severity": "Critical",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-GAP-004",
+      "missing_prompt_id": "GAP-004",
+      "missing_title": "Closure Evidence Validator",
+      "category": "Gap Analysis",
+      "severity": "Critical",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-GAP-005",
+      "missing_prompt_id": "GAP-005",
+      "missing_title": "Compensating Control Designer",
+      "category": "Gap Analysis",
+      "severity": "Critical",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-GAP-006",
+      "missing_prompt_id": "GAP-006",
+      "missing_title": "Residual Risk Acceptance Agent",
+      "category": "Gap Analysis",
+      "severity": "Critical",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-GAP-007",
+      "missing_prompt_id": "GAP-007",
+      "missing_title": "Gap Burn-Down Manager",
+      "category": "Gap Analysis",
+      "severity": "Critical",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-GAP-008",
+      "missing_prompt_id": "GAP-008",
+      "missing_title": "Control Closure QA Agent",
+      "category": "Gap Analysis",
+      "severity": "Critical",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-SWARM-001",
+      "missing_prompt_id": "SWARM-001",
+      "missing_title": "Agent Registry Curator",
+      "category": "Agent Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-SWARM-002",
+      "missing_prompt_id": "SWARM-002",
+      "missing_title": "Agent Capability Mapper",
+      "category": "Agent Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-SWARM-003",
+      "missing_prompt_id": "SWARM-003",
+      "missing_title": "Agent Tool Permission Auditor",
+      "category": "Agent Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-SWARM-004",
+      "missing_prompt_id": "SWARM-004",
+      "missing_title": "Agent Memory Boundary Agent",
+      "category": "Agent Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-SWARM-005",
+      "missing_prompt_id": "SWARM-005",
+      "missing_title": "Agent Task Router",
+      "category": "Agent Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-SWARM-006",
+      "missing_prompt_id": "SWARM-006",
+      "missing_title": "Agent Conflict Resolver",
+      "category": "Agent Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-SWARM-007",
+      "missing_prompt_id": "SWARM-007",
+      "missing_title": "Agent Output QA Judge",
+      "category": "Agent Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-SWARM-008",
+      "missing_prompt_id": "SWARM-008",
+      "missing_title": "Agent Evidence Validator",
+      "category": "Agent Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-SWARM-009",
+      "missing_prompt_id": "SWARM-009",
+      "missing_title": "Agent Autonomy Risk Auditor",
+      "category": "Agent Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-SWARM-010",
+      "missing_prompt_id": "SWARM-010",
+      "missing_title": "Human Approval Gatekeeper",
+      "category": "Agent Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-SWARM-011",
+      "missing_prompt_id": "SWARM-011",
+      "missing_title": "Agent-to-Agent Handoff Auditor",
+      "category": "Agent Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-SWARM-012",
+      "missing_prompt_id": "SWARM-012",
+      "missing_title": "Agent Performance Scorer",
+      "category": "Agent Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-GOVFRAME-001",
+      "missing_prompt_id": "GOVFRAME-001",
+      "missing_title": "NIST 800-53 Rev. 5 Control Family Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-GOVFRAME-002",
+      "missing_prompt_id": "GOVFRAME-002",
+      "missing_title": "NIST 800-37 RMF Lifecycle Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-GOVFRAME-003",
+      "missing_prompt_id": "GOVFRAME-003",
+      "missing_title": "NIST 800-137 ConMon Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-GOVFRAME-004",
+      "missing_prompt_id": "GOVFRAME-004",
+      "missing_title": "NIST 800-171 CUI Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-GOVFRAME-005",
+      "missing_prompt_id": "GOVFRAME-005",
+      "missing_title": "CMMC 2.0 Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-GOVFRAME-006",
+      "missing_prompt_id": "GOVFRAME-006",
+      "missing_title": "CJIS Security Policy Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-GOVFRAME-007",
+      "missing_prompt_id": "GOVFRAME-007",
+      "missing_title": "IRS Pub 1075 Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-GOVFRAME-008",
+      "missing_prompt_id": "GOVFRAME-008",
+      "missing_title": "TIC 3.0 Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-GOVFRAME-009",
+      "missing_prompt_id": "GOVFRAME-009",
+      "missing_title": "CDM Program Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-GOVFRAME-010",
+      "missing_prompt_id": "GOVFRAME-010",
+      "missing_title": "OMB A-130 Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-GOVFRAME-011",
+      "missing_prompt_id": "GOVFRAME-011",
+      "missing_title": "OMB M-21-31 Logging Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-GOVFRAME-012",
+      "missing_prompt_id": "GOVFRAME-012",
+      "missing_title": "CISA BOD/ED Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-GOVFRAME-013",
+      "missing_prompt_id": "GOVFRAME-013",
+      "missing_title": "NIST AI RMF Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-GOVFRAME-014",
+      "missing_prompt_id": "GOVFRAME-014",
+      "missing_title": "DoD Zero Trust Capability Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-GOVFRAME-015",
+      "missing_prompt_id": "GOVFRAME-015",
+      "missing_title": "DoD 8140 Workforce Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-GOVFRAME-016",
+      "missing_prompt_id": "GOVFRAME-016",
+      "missing_title": "DISA STIG Compliance Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-GOVFRAME-017",
+      "missing_prompt_id": "GOVFRAME-017",
+      "missing_title": "CNSSI 1253 Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-GOVFRAME-018",
+      "missing_prompt_id": "GOVFRAME-018",
+      "missing_title": "Privacy Act / SORN Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-ELECTION-001",
+      "missing_prompt_id": "ELECTION-001",
+      "missing_title": "Election Systems Security Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-GRANTS-001",
+      "missing_prompt_id": "GRANTS-001",
+      "missing_title": "Grants Compliance Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-FAR-001",
+      "missing_prompt_id": "FAR-001",
+      "missing_title": "FAR/DFARS Contracting Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-AG-001",
+      "missing_prompt_id": "AG-001",
+      "missing_title": "AgTech / USDA Data Security Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-FOOD-001",
+      "missing_prompt_id": "FOOD-001",
+      "missing_title": "Food Safety / Supply Chain Traceability Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-CONST-001",
+      "missing_prompt_id": "CONST-001",
+      "missing_title": "Construction Project Systems Risk Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-PROP-001",
+      "missing_prompt_id": "PROP-001",
+      "missing_title": "PropertyTech Privacy and Access Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-INS-001",
+      "missing_prompt_id": "INS-001",
+      "missing_title": "Insurance Claims Fraud / Data Governance Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-MEDIA-001",
+      "missing_prompt_id": "MEDIA-001",
+      "missing_title": "Content Rights / Streaming Security Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-HOSP-001",
+      "missing_prompt_id": "HOSP-001",
+      "missing_title": "Guest Data / Reservation Security Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-NONPROFIT-001",
+      "missing_prompt_id": "NONPROFIT-001",
+      "missing_title": "Donor Data / Grant Compliance Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-PROSERV-001",
+      "missing_prompt_id": "PROSERV-001",
+      "missing_title": "Client Confidentiality Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-HR-001",
+      "missing_prompt_id": "HR-001",
+      "missing_title": "HR Data Privacy Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-PUBHEALTH-001",
+      "missing_prompt_id": "PUBHEALTH-001",
+      "missing_title": "Public Health Data Governance Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-COURTS-001",
+      "missing_prompt_id": "COURTS-001",
+      "missing_title": "Judicial Case Management Security Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-CORR-001",
+      "missing_prompt_id": "CORR-001",
+      "missing_title": "Corrections Facility Systems Security Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-EMERG-001",
+      "missing_prompt_id": "EMERG-001",
+      "missing_title": "Emergency Management Systems Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-SMARTCITY-001",
+      "missing_prompt_id": "SMARTCITY-001",
+      "missing_title": "Smart Cities IoT Security Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-ENV-001",
+      "missing_prompt_id": "ENV-001",
+      "missing_title": "Environmental Sensor Data Integrity Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-RESEARCH-001",
+      "missing_prompt_id": "RESEARCH-001",
+      "missing_title": "Research Data / IP Protection Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-FINOPS-001",
+      "missing_prompt_id": "FINOPS-001",
+      "missing_title": "Finance Controls Auditor",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-PROC-001",
+      "missing_prompt_id": "PROC-001",
+      "missing_title": "Procurement Risk Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-CRM-001",
+      "missing_prompt_id": "CRM-001",
+      "missing_title": "CRM / Customer Data Security Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-RECORDS-001",
+      "missing_prompt_id": "RECORDS-001",
+      "missing_title": "Records Retention Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-TRAIN-001",
+      "missing_prompt_id": "TRAIN-001",
+      "missing_title": "Workforce Training Compliance Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-FAC-001",
+      "missing_prompt_id": "FAC-001",
+      "missing_title": "Facilities / Physical Security Systems Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-CONTRACT-001",
+      "missing_prompt_id": "CONTRACT-001",
+      "missing_title": "Contract Risk Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    },
+    {
+      "gap_id": "GAP-TRAC-PMO-001",
+      "missing_prompt_id": "PMO-001",
+      "missing_title": "Program Risk / Milestone Agent",
+      "category": "Governance",
+      "severity": "High",
+      "remediation_status": "OPEN",
+      "milestone": "POA&M Milestone - Ingest Generated Pack"
+    }
+  ]
+}

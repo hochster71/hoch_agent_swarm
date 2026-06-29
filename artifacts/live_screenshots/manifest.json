@@ -1,0 +1,57 @@
+{
+  "mode": "live-browser-capture",
+  "runtime": "docker-compose-linux",
+  "tool": "playwright-chromium-linux",
+  "dashboardUrl": "http://hoch-app:8086",
+  "capturedAt": "2026-06-28T21:43:34Z",
+  "pages": [
+    {
+      "id": "overview",
+      "file": "overview.png",
+      "status": "captured",
+      "sha256": "836134098879a9ee723c04d2b302a7ad36fb264a8bba9ffee7f330d14aee5a63",
+      "selectorUsed": "#nav-overview",
+      "error": ""
+    },
+    {
+      "id": "promptbrain",
+      "file": "promptbrain.png",
+      "status": "captured",
+      "sha256": "94b16c4a37d19a904c5da9dda0a769d3e8043345cbe525d7b90675c4e07c76da",
+      "selectorUsed": "#nav-promptbrain",
+      "error": ""
+    },
+    {
+      "id": "promptqa",
+      "file": "promptqa.png",
+      "status": "captured",
+      "sha256": "e6026170a090e185685d455bc92d96072f795e6420ff4c0923813584fbb29a02",
+      "selectorUsed": "#nav-promptqa",
+      "error": ""
+    },
+    {
+      "id": "evidencebrain",
+      "file": "evidencebrain.png",
+      "status": "captured",
+      "sha256": "da9be534ed53d4663e31513e3dbbd88d70486b92db918032a7494001585bef5b",
+      "selectorUsed": "#nav-evidencebrain",
+      "error": ""
+    },
+    {
+      "id": "hochtv",
+      "file": "hochtv.png",
+      "status": "captured",
+      "sha256": "c321586b07fa12f30134feb8b9d655691505665a7a8bd7d3aef743e07ab84050",
+      "selectorUsed": "#nav-hochtv",
+      "error": ""
+    },
+    {
+      "id": "operator",
+      "file": "operator.png",
+      "status": "captured",
+      "sha256": "978bd60c89cf186cfe23acb4c897e1cdcc1bfcfd9cf2821ccef36193cf0bcfb1",
+      "selectorUsed": "#nav-operator",
+      "error": ""
+    }
+  ]
+}

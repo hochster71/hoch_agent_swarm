@@ -1,0 +1,46 @@
+{
+  "routing_lanes": {
+    "coding": [
+      "CODE-001",
+      "CODE-002",
+      "SAST-001",
+      "QA-001",
+      "REL-004"
+    ],
+    "cybersecurity": [
+      "THREAT-002",
+      "SAST-001",
+      "DAST-002",
+      "AUD-002",
+      "AUD-003",
+      "REL-004"
+    ],
+    "ai_safety": [
+      "AI-001",
+      "AIRT-016",
+      "BREAK-021",
+      "EXCEPT-022"
+    ],
+    "privacy": [
+      "PRIV-003",
+      "UXSEC-020"
+    ],
+    "release": [
+      "QA-001",
+      "DEV-002",
+      "REL-004"
+    ],
+    "pentest": [
+      "PENTEST-007",
+      "VULN-005",
+      "PATCH-006",
+      "QA-001",
+      "REL-004"
+    ],
+    "ambiguous": [
+      "CODE-001",
+      "QA-001",
+      "AUD-002"
+    ]
+  }
+}

@@ -1,0 +1,98 @@
+map_assets_task:
+  description: >
+    Audit local compute resources, active dynamic leases, and device capability sets.
+    Identify available hosts and verify their connection health.
+  expected_output: >
+    A list of discovered assets and capability mappings.
+  agent: cio
+  output_file: artifacts/research/asset_map.md
+
+design_architecture_task:
+  description: >
+    Analyze the mapped assets and design a multi-agent process topology and task graph dependencies.
+    Define how task intents map to specific node capabilities.
+  expected_output: >
+    A description of the multi-agent execution topology.
+  agent: coo
+
+assemble_agents_task:
+  description: >
+    Compile and instantiate the agent class configurations required to support the designed architecture.
+    Enforce strict capability boundaries and ensure no unauthorized tool access.
+  expected_output: >
+    A summary of configured agent wrappers and allowed tools.
+  agent: cio
+
+audit_security_task:
+  description: >
+    Perform a thorough security audit on the assembled agent configurations and proposed execution steps.
+    Verify the following:
+    - Replay protection compliance: each task run is uniquely identified.
+    - Secret scrubbing: no secrets or environment variable values appear in logs or outputs.
+    - Tool access boundaries: each agent only accesses tools permitted by the manifest.
+    - Delegation bounds: no agent is configured to spawn additional agents dynamically.
+    Write a structured audit report in plain markdown using these exact section headings:
+    # Security Audit Report
+    ## Scope
+    ## Agent Configuration Review
+    ## Tool Access Verification
+    ## Secret Scrubbing Status
+    ## Replay Protection Status
+    ## Findings
+    ## Verdict
+    Do not modify the heading name (it must be exactly "## Verdict" with no additional text or colons).
+    The body of the Verdict section must contain at least 20 characters of explanatory text, including the clear decision keyword (e.g., PASS, COMPLIANT, or FAIL). For example: "The security configurations are COMPLIANT with the security requirements."
+    Do not include code blocks, JSON, Python expressions, or pseudocode. Plain prose and markdown lists only.
+  expected_output: >
+    A structured markdown security audit report with all required sections filled in.
+    Must be non-empty and directly usable as an audit record.
+  agent: cfo
+  output_file: artifacts/security_reviews/security_audit_report.md
+
+plan_execution_task:
+  description: >
+    Schedule and structure the multi-stage task pipeline, verifying error budgets and execution constraints.
+  expected_output: >
+    A structured sequential task execution plan.
+  agent: cro
+  output_file: artifacts/reports/execution_plan.md
+
+direct_synthesis_task:
+  description: >
+    Synthesize individual task execution reports and output evidence files into a release candidate packet format.
+  expected_output: >
+    A synthesized release packet manifest.
+  agent: cmo
+  output_file: artifacts/reports/release_packet.md
+
+antigravity_integration_task:
+  description: >
+    Review the swarm synthesis report and produce a production-grade Antigravity integration plan.
+    Integration context for this run:
+    - Antigravity Role: {antigravity_role}
+    - CrewAI Role: {crewai_role}
+    - Integration Mode: {integration_mode}
+    STRICT OUTPUT RULES — violations will fail validation:
+    - Write plain markdown only.
+    - Do NOT include any Python code, pseudocode, JSON fragments, code blocks, lambda expressions,
+      random generators, placeholder variables, or raw data structures.
+    - Every section heading listed below MUST appear in the output exactly as written.
+    - Do not modify the heading names (do NOT append colons, hashes, or trailing strings like ' (TBD)', ' (To Be Decided)', or anything else).
+    - Under each heading, you MUST write at least 3-4 complete English sentences or a comprehensive markdown list of detailed steps.
+    - NEVER use placeholders like 'TBD', 'To Be Determined', 'Insert content here', or leave any section empty.
+    Required output structure — use these exact headings in this order:
+    # Hoch Agent Swarm Antigravity Execution Plan
+    ## Mission
+    ## Inputs Reviewed
+    ## Crew Output Chain
+    ## Security Audit Summary
+    ## Antigravity Integration Steps
+    ## Local-Only Constraints
+    ## Validation Checklist
+    ## Next Actions
+  expected_output: >
+    A complete plain-markdown document with all eight required sections.
+    Must not contain code blocks, JSON, Python expressions, or pseudocode.
+    Must be non-empty and directly readable as an operator-facing integration plan.
+  agent: ceo
+  output_file: artifacts/antigravity/antigravity_execution_plan.md

@@ -1,0 +1,12 @@
+{
+  "policy_name": "Semantic Verification Bounds",
+  "max_distance_threshold": 0.35,
+  "minimum_trust_score": 80,
+  "fail_closed_on_drift": true,
+  "boundary_notices": [
+    "The system has ATO-supporting evidence prepared for review. Actual ATO has not been granted. No authorization claim is being made."
+  ],
+  "certifications": [
+    "ATO-SUPPORTING EVIDENCE PACKAGE: READY FOR REVIEW"
+  ]
+}

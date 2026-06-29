@@ -136,5 +136,3 @@ def test_tv_new_endpoints_observability():
     assert resp_hist2.status_code == 200
     assert len(resp_hist2.json()) > 0
 
-
-

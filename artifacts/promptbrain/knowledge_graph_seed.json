@@ -1,0 +1,304 @@
+{
+  "nodes": [
+    {
+      "id": "system-001",
+      "type": "systems",
+      "properties": {
+        "name": "Hoch Agent Swarm"
+      }
+    },
+    {
+      "id": "component-001",
+      "type": "components",
+      "properties": {
+        "name": "Prompt Brain UI"
+      }
+    },
+    {
+      "id": "agent-ceo",
+      "type": "agents",
+      "properties": {
+        "name": "CEO Agent"
+      }
+    },
+    {
+      "id": "framework-nist-800-53",
+      "type": "frameworks",
+      "properties": {
+        "name": "NIST SP 800-53 Rev. 5"
+      }
+    },
+    {
+      "id": "prompt-AERO-001",
+      "type": "prompts",
+      "properties": {
+        "title": "Aerospace Mission QA Agent",
+        "category": "QA"
+      }
+    },
+    {
+      "id": "prompt-AG-001",
+      "type": "prompts",
+      "properties": {
+        "title": "AgTech / USDA Data Security Agent",
+        "category": "Governance"
+      }
+    },
+    {
+      "id": "prompt-AI-001",
+      "type": "prompts",
+      "properties": {
+        "title": "AI Model Risk QA Agent",
+        "category": "AI / ML Systems"
+      }
+    },
+    {
+      "id": "prompt-AI-002",
+      "type": "prompts",
+      "properties": {
+        "title": "AI App Code Security Agent",
+        "category": "SAST"
+      }
+    },
+    {
+      "id": "prompt-AI-003",
+      "type": "prompts",
+      "properties": {
+        "title": "AI Governance Audit Agent",
+        "category": "Audit"
+      }
+    },
+    {
+      "id": "prompt-AIRT-016",
+      "type": "prompts",
+      "properties": {
+        "title": "Red Team Prompt Agent",
+        "category": "AI / ML Systems"
+      }
+    },
+    {
+      "id": "prompt-ARCHSEC-008",
+      "type": "prompts",
+      "properties": {
+        "title": "Secure Architecture Reviewer",
+        "category": "Security Architecture"
+      }
+    },
+    {
+      "id": "prompt-AUD-001",
+      "type": "prompts",
+      "properties": {
+        "title": "Internal Audit Evidence Collector",
+        "category": "Audit"
+      }
+    },
+    {
+      "id": "prompt-AUD-002",
+      "type": "prompts",
+      "properties": {
+        "title": "Control Gap Analyst",
+        "category": "Audit"
+      }
+    },
+    {
+      "id": "prompt-AUD-003",
+      "type": "prompts",
+      "properties": {
+        "title": "Continuous Monitoring Auditor",
+        "category": "Audit"
+      }
+    },
+    {
+      "id": "prompt-AUD-004",
+      "type": "prompts",
+      "properties": {
+        "title": "Third-Party Risk Auditor",
+        "category": "Audit"
+      }
+    },
+    {
+      "id": "prompt-AUTHZ-027",
+      "type": "prompts",
+      "properties": {
+        "title": "Authorization Matrix Agent",
+        "category": "Security Architecture"
+      }
+    },
+    {
+      "id": "prompt-BIZ-019",
+      "type": "prompts",
+      "properties": {
+        "title": "Business Logic Abuse Agent",
+        "category": "DAST"
+      }
+    },
+    {
+      "id": "prompt-BLUE-017",
+      "type": "prompts",
+      "properties": {
+        "title": "Blue Team Detection Engineer",
+        "category": "Detection Engineering"
+      }
+    },
+    {
+      "id": "prompt-BRAIN-001",
+      "type": "prompts",
+      "properties": {
+        "title": "Central LLM Brain Architect",
+        "category": "LLM Brain"
+      }
+    },
+    {
+      "id": "prompt-BRAIN-002",
+      "type": "prompts",
+      "properties": {
+        "title": "Evidence Ingestion Agent",
+        "category": "LLM Brain"
+      }
+    },
+    {
+      "id": "prompt-BRAIN-003",
+      "type": "prompts",
+      "properties": {
+        "title": "Knowledge Graph Builder",
+        "category": "LLM Brain"
+      }
+    },
+    {
+      "id": "prompt-BRAIN-004",
+      "type": "prompts",
+      "properties": {
+        "title": "Semantic Memory Curator",
+        "category": "LLM Brain"
+      }
+    },
+    {
+      "id": "prompt-BRAIN-005",
+      "type": "prompts",
+      "properties": {
+        "title": "Duplicate Finding Reconciler",
+        "category": "LLM Brain"
+      }
+    },
+    {
+      "id": "prompt-BRAIN-006",
+      "type": "prompts",
+      "properties": {
+        "title": "Source Trust Scoring Agent",
+        "category": "LLM Brain"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "component-001",
+      "to": "system-001",
+      "type": "part_of"
+    },
+    {
+      "from": "agent-ceo",
+      "to": "system-001",
+      "type": "member_of"
+    },
+    {
+      "from": "prompt-AERO-001",
+      "to": "framework-nist-800-53",
+      "type": "prompt_covers_framework"
+    },
+    {
+      "from": "prompt-AG-001",
+      "to": "framework-nist-800-53",
+      "type": "prompt_covers_framework"
+    },
+    {
+      "from": "prompt-AI-001",
+      "to": "framework-nist-800-53",
+      "type": "prompt_covers_framework"
+    },
+    {
+      "from": "prompt-AI-002",
+      "to": "framework-nist-800-53",
+      "type": "prompt_covers_framework"
+    },
+    {
+      "from": "prompt-AI-003",
+      "to": "framework-nist-800-53",
+      "type": "prompt_covers_framework"
+    },
+    {
+      "from": "prompt-AIRT-016",
+      "to": "framework-nist-800-53",
+      "type": "prompt_covers_framework"
+    },
+    {
+      "from": "prompt-ARCHSEC-008",
+      "to": "framework-nist-800-53",
+      "type": "prompt_covers_framework"
+    },
+    {
+      "from": "prompt-AUD-001",
+      "to": "framework-nist-800-53",
+      "type": "prompt_covers_framework"
+    },
+    {
+      "from": "prompt-AUD-002",
+      "to": "framework-nist-800-53",
+      "type": "prompt_covers_framework"
+    },
+    {
+      "from": "prompt-AUD-003",
+      "to": "framework-nist-800-53",
+      "type": "prompt_covers_framework"
+    },
+    {
+      "from": "prompt-AUD-004",
+      "to": "framework-nist-800-53",
+      "type": "prompt_covers_framework"
+    },
+    {
+      "from": "prompt-AUTHZ-027",
+      "to": "framework-nist-800-53",
+      "type": "prompt_covers_framework"
+    },
+    {
+      "from": "prompt-BIZ-019",
+      "to": "framework-nist-800-53",
+      "type": "prompt_covers_framework"
+    },
+    {
+      "from": "prompt-BLUE-017",
+      "to": "framework-nist-800-53",
+      "type": "prompt_covers_framework"
+    },
+    {
+      "from": "prompt-BRAIN-001",
+      "to": "framework-nist-800-53",
+      "type": "prompt_covers_framework"
+    },
+    {
+      "from": "prompt-BRAIN-002",
+      "to": "framework-nist-800-53",
+      "type": "prompt_covers_framework"
+    },
+    {
+      "from": "prompt-BRAIN-003",
+      "to": "framework-nist-800-53",
+      "type": "prompt_covers_framework"
+    },
+    {
+      "from": "prompt-BRAIN-004",
+      "to": "framework-nist-800-53",
+      "type": "prompt_covers_framework"
+    },
+    {
+      "from": "prompt-BRAIN-005",
+      "to": "framework-nist-800-53",
+      "type": "prompt_covers_framework"
+    },
+    {
+      "from": "prompt-BRAIN-006",
+      "to": "framework-nist-800-53",
+      "type": "prompt_covers_framework"
+    }
+  ]
+}

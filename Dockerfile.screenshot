@@ -1,0 +1,18 @@
+FROM mcr.microsoft.com/playwright/python:v1.49.1-noble
+
+WORKDIR /app
+
+# Install playwright python package
+RUN pip install --no-cache-dir playwright==1.49.1
+
+# Ensure screenshots directory is created
+RUN mkdir -p /app/artifacts/live_screenshots
+
+# Copy automation script
+COPY scripts/capture_live_screenshots.py /app/scripts/capture_live_screenshots.py
+
+# Set default environment and command
+ENV DASHBOARD_URL="http://hoch-app:8086"
+ENV PYTHONPATH="/app"
+
+CMD ["python", "/app/scripts/capture_live_screenshots.py"]
