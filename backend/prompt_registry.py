@@ -13,6 +13,7 @@ class PromptRegistry:
 
     def get_source_paths(self) -> List[Path]:
         return [
+            self.base_dir / "data" / "prompt_registry" / "hoch_agent_swarm_prompt_library_v3_enhanced.json",
             self.base_dir / "backend" / "prompt_library.json",
             Path("/Users/michaelhoch/hoch_agent_swarm_prompt_library/hoch_agent_swarm_prompt_library.json"),
             self.base_dir / "hoch_agent_swarm_prompt_library.json"
@@ -31,17 +32,31 @@ class PromptRegistry:
                 except Exception:
                     continue
 
-        if not loaded_data or not isinstance(loaded_data, list):
+        if not loaded_data:
             self.status = "FAIL_CLOSED"
             self.prompts = []
             self.write_report(None)
             return
 
+        # Extract prompts list if wrapped in a dict
+        prompts_list = []
+        if isinstance(loaded_data, dict) and "prompts" in loaded_data:
+            prompts_list = loaded_data["prompts"]
+        elif isinstance(loaded_data, list):
+            prompts_list = loaded_data
+        else:
+            self.status = "FAIL_CLOSED"
+            self.prompts = []
+            self.write_report(source_used)
+            return
+
         valid_prompts = []
-        required_fields = ["id", "category", "industry", "title", "mission", "outputs", "prompt"]
+        required_fields = ["id", "category", "industry", "title", "mission", "outputs"]
         
-        for p in loaded_data:
-            if all(p.get(field) for field in required_fields):
+        for p in prompts_list:
+            if "prompt_text" in p and "prompt" not in p:
+                p["prompt"] = p["prompt_text"]
+            if all(p.get(field) for field in required_fields) and p.get("prompt"):
                 valid_prompts.append(p)
 
         self.prompts = valid_prompts
