@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-test.describe("Formal Release Seal Dry Run E2E", () => {
+test.describe("@legacy @compat @deorbited Formal Release Seal Dry Run E2E", () => {
   test("runs preview, requests approval, approves preview, and executes seal dry run successfully", async ({ page }) => {
     // 1. Go to dashboard
     await page.goto("/");

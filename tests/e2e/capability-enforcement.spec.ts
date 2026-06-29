@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { execSync } from "child_process";
 
-test.describe("Capability Enforcement E2E", () => {
+test.describe("@legacy @compat @deorbited Capability Enforcement E2E", () => {
   test.afterAll(async () => {
     // Restore manifest database changes just in case
     try {

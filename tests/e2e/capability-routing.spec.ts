@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-test.describe("Device Capability Routing Center E2E", () => {
+test.describe("@legacy @compat @deorbited Device Capability Routing Center E2E", () => {
   test("switches to Governance view, loads routing decisions, and inspects a routing event", async ({ page }) => {
     // Collect browser console errors
     const consoleErrors: string[] = [];

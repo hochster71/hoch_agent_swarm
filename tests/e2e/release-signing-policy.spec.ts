@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import * as fs from "fs";
 import * as path from "path";
 
-test.describe("Release Signing Policy Gate E2E", () => {
+test.describe("@legacy @compat @deorbited Release Signing Policy Gate E2E", () => {
   test("loads the dashboard, navigates to Release Provenance, and asserts signing policy widgets", async ({ page, request }) => {
     // 1. Assert backend signing policy API endpoint directly
     const apiResponse = await request.get("/api/v1/release/signing-policy");

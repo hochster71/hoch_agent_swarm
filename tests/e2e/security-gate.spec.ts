@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Security Gate E2E Regression", () => {
+test.describe("@legacy @compat @deorbited Security Gate E2E Regression", () => {
   test("asserts that approval-required tasks block and resume correctly on operator decisions", async ({ request }) => {
     // 1. Create a new Swarm run
     const createRunResponse = await request.post("/api/v1/runs", {

@@ -18,6 +18,7 @@ export default defineConfig({
     screenshot: "only-on-failure",
     video: "retain-on-failure"
   },
+  grepInvert: process.env.COMPAT_TESTS ? undefined : /@legacy|@compat|@deorbited/,
   projects: [
     {
       name: "antigravity-chromium",

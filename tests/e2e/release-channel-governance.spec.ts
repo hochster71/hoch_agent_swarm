@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import * as fs from "fs";
 import * as path from "path";
 
-test.describe("Release Channel & Tag Governance E2E", () => {
+test.describe("@legacy @compat @deorbited Release Channel & Tag Governance E2E", () => {
   test("loads the dashboard, navigates to Release Provenance, and asserts channel widgets", async ({ page, request }) => {
     // 1. Assert backend API endpoint directly
     const apiResponse = await request.get("/api/v1/release/channel-governance");

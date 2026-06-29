@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-test.describe("CrewAI Ingestion Bridge E2E", () => {
+test.describe("@legacy @compat @deorbited CrewAI Ingestion Bridge E2E", () => {
   test("triggers ingestion, indexes plans and run reports, and updates the evidence graph", async ({ page }) => {
     // Dismiss all alert/confirm dialogs automatically
     page.on("dialog", async dialog => {

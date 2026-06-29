@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-test.describe("Release Evidence Archive Build Plan E2E", () => {
+test.describe("@legacy @compat @deorbited Release Evidence Archive Build Plan E2E", () => {
   test("asserts build plan state starts blocked, transitions to ready after retention classification, and supports export downloads", async ({ page }) => {
     // Collect browser console errors
     const consoleErrors: string[] = [];

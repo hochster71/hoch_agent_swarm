@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import * as fs from "fs";
 import * as path from "path";
 
-test.describe("Finance Command Center E2E and Validation Audit", () => {
+test.describe("@legacy @compat @deorbited Finance Command Center E2E and Validation Audit", () => {
   test("loads the Finance dashboard, validates rendering of panels, categories, and zero math deviations", async ({ page }) => {
     const consoleErrors: string[] = [];
     const asset404s: string[] = [];

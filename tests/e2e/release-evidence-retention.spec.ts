@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-test.describe("Release Evidence Retention Manager E2E", () => {
+test.describe("@legacy @compat @deorbited Release Evidence Retention Manager E2E", () => {
   test("indexes evidence, allows classification, and updates status metrics without disk mutation", async ({ page }) => {
     // 1. Go to dashboard with ?test_mode=true
     await page.goto("/?test_mode=true");

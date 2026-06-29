@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-test.describe("Candidate Release Packet Builder E2E", () => {
+test.describe("@legacy @compat @deorbited Candidate Release Packet Builder E2E", () => {
   test("navigates to Governance Cockpit, fills candidate form, triggers generation, and captures screenshot", async ({ page, request }) => {
     // 1. Go to dashboard
     await page.goto("/");

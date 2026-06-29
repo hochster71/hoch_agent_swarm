@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Topology Agent Overlay & Roster Runtime", () => {
+test.describe("@legacy @compat @deorbited Topology Agent Overlay & Roster Runtime", () => {
   test.skip("interacts with agents and runs the swarm animation successfully", async ({ page }, testInfo) => {
     page.on("console", msg => console.log(`BROWSER CONSOLE: ${msg.text()}`));
     page.on("pageerror", err => console.error(`BROWSER ERROR: ${err.message}`));

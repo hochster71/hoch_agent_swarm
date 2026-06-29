@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-test.describe("Release Evidence Archive Seal Preview E2E", () => {
+test.describe("@legacy @compat @deorbited Release Evidence Archive Seal Preview E2E", () => {
   test("asserts seal preview state starts blocked, transitions to ready after authority and classification setup, and supports export downloads", async ({ page }) => {
     // Collect browser console errors
     const consoleErrors: string[] = [];
