@@ -59,8 +59,8 @@
     "DoD Zero Trust": 1
   },
   "lifecycle_stages_covered": {
-    "Development": 103,
     "Testing": 12,
+    "Development": 103,
     "Audit": 17,
     "Operations": 13
   },
