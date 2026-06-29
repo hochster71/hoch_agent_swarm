@@ -1,0 +1,115 @@
+{
+  "schema_version": "1.0.0",
+  "entities": [
+    "systems",
+    "components",
+    "agents",
+    "prompts",
+    "controls",
+    "frameworks",
+    "findings",
+    "risks",
+    "poams",
+    "evidence",
+    "scans",
+    "tickets",
+    "commits",
+    "decisions",
+    "owners",
+    "sectors",
+    "missions",
+    "deployments",
+    "datasets",
+    "models",
+    "incidents",
+    "business_functions",
+    "lifecycle_stages"
+  ],
+  "relationships": [
+    {
+      "name": "prompt_covers_framework",
+      "from": "prompts",
+      "to": "frameworks"
+    },
+    {
+      "name": "prompt_covers_sector",
+      "from": "prompts",
+      "to": "sectors"
+    },
+    {
+      "name": "prompt_covers_lifecycle_stage",
+      "from": "prompts",
+      "to": "lifecycle_stages"
+    },
+    {
+      "name": "prompt_covers_business_function",
+      "from": "prompts",
+      "to": "business_functions"
+    },
+    {
+      "name": "agent_uses_prompt",
+      "from": "agents",
+      "to": "prompts"
+    },
+    {
+      "name": "finding_maps_to_control",
+      "from": "findings",
+      "to": "controls"
+    },
+    {
+      "name": "control_requires_evidence",
+      "from": "controls",
+      "to": "evidence"
+    },
+    {
+      "name": "evidence_closes_gap",
+      "from": "evidence",
+      "to": "gaps"
+    },
+    {
+      "name": "risk_generates_poam",
+      "from": "risks",
+      "to": "poams"
+    },
+    {
+      "name": "poam_requires_validation",
+      "from": "poams",
+      "to": "evidence"
+    },
+    {
+      "name": "commit_resolves_finding",
+      "from": "commits",
+      "to": "findings"
+    },
+    {
+      "name": "decision_accepts_risk",
+      "from": "decisions",
+      "to": "risks"
+    },
+    {
+      "name": "scan_detects_vulnerability",
+      "from": "scans",
+      "to": "risks"
+    },
+    {
+      "name": "system_supports_mission",
+      "from": "systems",
+      "to": "missions"
+    },
+    {
+      "name": "prompt_routes_to_agent",
+      "from": "prompts",
+      "to": "agents"
+    },
+    {
+      "name": "prompt_generates_evidence",
+      "from": "prompts",
+      "to": "evidence"
+    },
+    {
+      "name": "evidence_supports_authorization",
+      "from": "evidence",
+      "to": "decisions"
+    }
+  ]
+}

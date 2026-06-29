@@ -1,0 +1,13 @@
+{
+  "findings": [
+    {
+      "id": "RESUME-001",
+      "title": "Nested HLS Sub-Playlist Direct Load (CORS Blocker)",
+      "severity": "Medium",
+      "status": "FIXED",
+      "description": "Variant playlists (e.g. .m3u8 files fetched via the asset proxy) were served verbatim, causing the browser HLS player to query remote HLS URLs directly and fail due to CORS restrictions.",
+      "remediation": "Intercept fetched sub-playlists inside the Flask asset proxy endpoint, decode and rewrite their URIs using the backend rewrite engine, and serve the modified HLS playlist payload.",
+      "verification_test": "tests/test_tv.py::test_tv_proxy_sub_playlist"
+    }
+  ]
+}

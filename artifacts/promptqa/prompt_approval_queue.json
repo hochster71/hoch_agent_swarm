@@ -1,0 +1,1037 @@
+{
+  "TEST-HIGH": {
+    "approvalStatus": "approved",
+    "approverPlaceholder": "sec-officer-signature",
+    "timestamp": "2026-06-29T00:38:33.584618+00:00"
+  },
+  "AERO-001": {
+    "id": "AERO-001",
+    "candidate_id": "AERO-001-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 57.1,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.513973+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "AI-001": {
+    "id": "AI-001",
+    "candidate_id": "AI-001-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 61.9,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.518933+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "AI-002": {
+    "id": "AI-002",
+    "candidate_id": "AI-002-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 61.0,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.523965+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "AI-003": {
+    "id": "AI-003",
+    "candidate_id": "AI-003-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 62.9,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.528988+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "AIRT-016": {
+    "id": "AIRT-016",
+    "candidate_id": "AIRT-016-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 75.2,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.534056+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "ARCHSEC-008": {
+    "id": "ARCHSEC-008",
+    "candidate_id": "ARCHSEC-008-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 73.3,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.539274+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "AUD-001": {
+    "id": "AUD-001",
+    "candidate_id": "AUD-001-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 62.9,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.544694+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "AUD-002": {
+    "id": "AUD-002",
+    "candidate_id": "AUD-002-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 61.9,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.549644+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "AUD-003": {
+    "id": "AUD-003",
+    "candidate_id": "AUD-003-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 58.1,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.554597+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "AUD-004": {
+    "id": "AUD-004",
+    "candidate_id": "AUD-004-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 55.2,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.559570+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "AUTHZ-027": {
+    "id": "AUTHZ-027",
+    "candidate_id": "AUTHZ-027-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 75.2,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.564574+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "BIZ-019": {
+    "id": "BIZ-019",
+    "candidate_id": "BIZ-019-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 73.3,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.569593+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "BLUE-017": {
+    "id": "BLUE-017",
+    "candidate_id": "BLUE-017-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 73.3,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.574612+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "BREAK-021": {
+    "id": "BREAK-021",
+    "candidate_id": "BREAK-021-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 73.3,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.579612+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "CHAOS-024": {
+    "id": "CHAOS-024",
+    "candidate_id": "CHAOS-024-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 73.3,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.584647+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "CHG-012": {
+    "id": "CHG-012",
+    "candidate_id": "CHG-012-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 73.3,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.589920+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "CODE-001": {
+    "id": "CODE-001",
+    "candidate_id": "CODE-001-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 59.0,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.595918+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "CODE-002": {
+    "id": "CODE-002",
+    "candidate_id": "CODE-002-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 58.1,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.600998+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "CODE-003": {
+    "id": "CODE-003",
+    "candidate_id": "CODE-003-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 58.1,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.606406+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "CODE-004": {
+    "id": "CODE-004",
+    "candidate_id": "CODE-004-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 62.9,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.612604+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "CODE-005": {
+    "id": "CODE-005",
+    "candidate_id": "CODE-005-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 58.1,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.617971+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "DAST-001": {
+    "id": "DAST-001",
+    "candidate_id": "DAST-001-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 58.1,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.623287+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "DAST-002": {
+    "id": "DAST-002",
+    "candidate_id": "DAST-002-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 59.0,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.628352+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "DAST-003": {
+    "id": "DAST-003",
+    "candidate_id": "DAST-003-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 58.1,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.633461+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "DBSEC-010": {
+    "id": "DBSEC-010",
+    "candidate_id": "DBSEC-010-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 73.3,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.638796+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "DEV-001": {
+    "id": "DEV-001",
+    "candidate_id": "DEV-001-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 63.8,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.644155+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "DEV-002": {
+    "id": "DEV-002",
+    "candidate_id": "DEV-002-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 57.1,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.649312+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "DEV-003": {
+    "id": "DEV-003",
+    "candidate_id": "DEV-003-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 53.3,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.654430+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "DEV-004": {
+    "id": "DEV-004",
+    "candidate_id": "DEV-004-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 55.2,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.659563+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "DEV-005": {
+    "id": "DEV-005",
+    "candidate_id": "DEV-005-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 57.1,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.665038+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "DEV-006": {
+    "id": "DEV-006",
+    "candidate_id": "DEV-006-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 57.1,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.670419+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "DOD-001": {
+    "id": "DOD-001",
+    "candidate_id": "DOD-001-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 61.9,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.675591+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "DOD-002": {
+    "id": "DOD-002",
+    "candidate_id": "DOD-002-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 61.9,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.681277+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "DOD-003": {
+    "id": "DOD-003",
+    "candidate_id": "DOD-003-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 61.0,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.686670+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "DRIFT-013": {
+    "id": "DRIFT-013",
+    "candidate_id": "DRIFT-013-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 73.3,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.692569+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "DRQA-023": {
+    "id": "DRQA-023",
+    "candidate_id": "DRQA-023-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 73.3,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.697832+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "EDU-001": {
+    "id": "EDU-001",
+    "candidate_id": "EDU-001-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 61.9,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.703377+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "EN-001": {
+    "id": "EN-001",
+    "candidate_id": "EN-001-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 62.9,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.708895+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "EN-002": {
+    "id": "EN-002",
+    "candidate_id": "EN-002-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 57.1,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.714368+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "EXCEPT-022": {
+    "id": "EXCEPT-022",
+    "candidate_id": "EXCEPT-022-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 73.3,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.720075+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "EXECRISK-030": {
+    "id": "EXECRISK-030",
+    "candidate_id": "EXECRISK-030-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 73.3,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.725519+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "FIN-001": {
+    "id": "FIN-001",
+    "candidate_id": "FIN-001-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 56.2,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.731072+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "FIN-002": {
+    "id": "FIN-002",
+    "candidate_id": "FIN-002-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 57.1,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.736717+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "GOV-001": {
+    "id": "GOV-001",
+    "candidate_id": "GOV-001-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 59.0,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.742445+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "GOV-002": {
+    "id": "GOV-002",
+    "candidate_id": "GOV-002-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 62.9,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.747976+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "HC-001": {
+    "id": "HC-001",
+    "candidate_id": "HC-001-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 64.8,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.753563+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "HC-002": {
+    "id": "HC-002",
+    "candidate_id": "HC-002-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 60.0,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.759084+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "IAM-009": {
+    "id": "IAM-009",
+    "candidate_id": "IAM-009-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 75.2,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.764385+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "IND-001": {
+    "id": "IND-001",
+    "candidate_id": "IND-001-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 68.6,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.769689+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "IND-002": {
+    "id": "IND-002",
+    "candidate_id": "IND-002-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 65.7,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.775292+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "IND-003": {
+    "id": "IND-003",
+    "candidate_id": "IND-003-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 65.7,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.780870+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "IND-004": {
+    "id": "IND-004",
+    "candidate_id": "IND-004-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 65.7,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.786402+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "IND-005": {
+    "id": "IND-005",
+    "candidate_id": "IND-005-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 65.7,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.791706+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "IND-006": {
+    "id": "IND-006",
+    "candidate_id": "IND-006-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 65.7,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.797262+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "IND-007": {
+    "id": "IND-007",
+    "candidate_id": "IND-007-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 65.7,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.802910+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "IND-008": {
+    "id": "IND-008",
+    "candidate_id": "IND-008-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 65.7,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.808268+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "IND-009": {
+    "id": "IND-009",
+    "candidate_id": "IND-009-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 67.6,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.813824+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "IND-010": {
+    "id": "IND-010",
+    "candidate_id": "IND-010-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 65.7,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.819135+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "IND-011": {
+    "id": "IND-011",
+    "candidate_id": "IND-011-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 65.7,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.824664+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "IND-012": {
+    "id": "IND-012",
+    "candidate_id": "IND-012-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 65.7,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.830373+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "IND-013": {
+    "id": "IND-013",
+    "candidate_id": "IND-013-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 68.6,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.835852+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "IND-014": {
+    "id": "IND-014",
+    "candidate_id": "IND-014-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 68.6,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.841773+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "IND-015": {
+    "id": "IND-015",
+    "candidate_id": "IND-015-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 69.5,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.847549+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "IR-001": {
+    "id": "IR-001",
+    "candidate_id": "IR-001-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 58.1,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.853123+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "LEG-001": {
+    "id": "LEG-001",
+    "candidate_id": "LEG-001-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 56.2,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.858741+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "LOG-011": {
+    "id": "LOG-011",
+    "candidate_id": "LOG-011-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 73.3,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.864376+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "MFG-001": {
+    "id": "MFG-001",
+    "candidate_id": "MFG-001-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 59.0,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.869761+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "MFG-002": {
+    "id": "MFG-002",
+    "candidate_id": "MFG-002-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 61.0,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.875057+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "MIG-025": {
+    "id": "MIG-025",
+    "candidate_id": "MIG-025-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 75.2,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.880490+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "MOB-QA-001": {
+    "id": "MOB-QA-001",
+    "candidate_id": "MOB-QA-001-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 75.2,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.886105+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "OPS-001": {
+    "id": "OPS-001",
+    "candidate_id": "OPS-001-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 59.0,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.891523+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "OPS-002": {
+    "id": "OPS-002",
+    "candidate_id": "OPS-002-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 56.2,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.896889+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "OSSLIC-015": {
+    "id": "OSSLIC-015",
+    "candidate_id": "OSSLIC-015-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 73.3,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.902486+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "PATCH-006": {
+    "id": "PATCH-006",
+    "candidate_id": "PATCH-006-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 73.3,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.907829+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "PENTEST-007": {
+    "id": "PENTEST-007",
+    "candidate_id": "PENTEST-007-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 73.3,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.913264+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "PRIV-003": {
+    "id": "PRIV-003",
+    "candidate_id": "PRIV-003-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 73.3,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.918574+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "PROV-014": {
+    "id": "PROV-014",
+    "candidate_id": "PROV-014-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 75.2,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.923903+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "PURPLE-018": {
+    "id": "PURPLE-018",
+    "candidate_id": "PURPLE-018-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 73.3,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.929144+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "QA-001": {
+    "id": "QA-001",
+    "candidate_id": "QA-001-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 64.8,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.934729+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "QA-002": {
+    "id": "QA-002",
+    "candidate_id": "QA-002-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 58.1,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.940345+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "QA-003": {
+    "id": "QA-003",
+    "candidate_id": "QA-003-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 64.8,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.945921+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "QA-004": {
+    "id": "QA-004",
+    "candidate_id": "QA-004-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 55.2,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.951453+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "QA-005": {
+    "id": "QA-005",
+    "candidate_id": "QA-005-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 58.1,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.956799+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "QA-006": {
+    "id": "QA-006",
+    "candidate_id": "QA-006-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 58.1,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.962410+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "QA-007": {
+    "id": "QA-007",
+    "candidate_id": "QA-007-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 53.3,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.967896+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "RATE-026": {
+    "id": "RATE-026",
+    "candidate_id": "RATE-026-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 73.3,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.973437+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "REL-004": {
+    "id": "REL-004",
+    "candidate_id": "REL-004-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 73.3,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.978925+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "RET-001": {
+    "id": "RET-001",
+    "candidate_id": "RET-001-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 59.0,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.984710+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "RET-002": {
+    "id": "RET-002",
+    "candidate_id": "RET-002-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 57.1,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.990111+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "SAAS-001": {
+    "id": "SAAS-001",
+    "candidate_id": "SAAS-001-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 62.9,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:04.995686+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "SAAS-002": {
+    "id": "SAAS-002",
+    "candidate_id": "SAAS-002-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 56.2,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:05.001240+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "SAST-001": {
+    "id": "SAST-001",
+    "candidate_id": "SAST-001-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 61.0,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:05.006650+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "SAST-002": {
+    "id": "SAST-002",
+    "candidate_id": "SAST-002-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 56.2,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:05.012172+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "SAST-003": {
+    "id": "SAST-003",
+    "candidate_id": "SAST-003-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 58.1,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:05.017458+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "SAST-004": {
+    "id": "SAST-004",
+    "candidate_id": "SAST-004-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 58.1,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:05.023046+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "SDLC-028": {
+    "id": "SDLC-028",
+    "candidate_id": "SDLC-028-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 73.3,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:05.028573+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "SLG-001": {
+    "id": "SLG-001",
+    "candidate_id": "SLG-001-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 61.0,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:05.034291+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "TEL-001": {
+    "id": "TEL-001",
+    "candidate_id": "TEL-001-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 60.0,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:05.040049+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "THREAT-002": {
+    "id": "THREAT-002",
+    "candidate_id": "THREAT-002-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 73.3,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:05.045645+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "TRN-001": {
+    "id": "TRN-001",
+    "candidate_id": "TRN-001-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 57.1,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:05.051369+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "UXSEC-020": {
+    "id": "UXSEC-020",
+    "candidate_id": "UXSEC-020-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 75.2,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:05.056972+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "VULN-005": {
+    "id": "VULN-005",
+    "candidate_id": "VULN-005-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 73.3,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:05.062486+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  },
+  "XWALK-029": {
+    "id": "XWALK-029",
+    "candidate_id": "XWALK-029-CANDIDATE-V2",
+    "version": 2,
+    "beforeScore": 75.2,
+    "afterScoreEstimate": 95.2,
+    "approvalStatus": "approved",
+    "timestamp": "2026-06-28T22:14:05.068048+00:00",
+    "approverPlaceholder": "sec-officer-signature"
+  }
+}

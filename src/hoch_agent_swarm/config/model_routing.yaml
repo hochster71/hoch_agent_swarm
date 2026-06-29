@@ -1,0 +1,27 @@
+# Model Routing Configuration for Hoch Agent Swarm
+# Maps task classes / roles to specific Ollama / local models.
+
+routing:
+  fast_classification:
+    primary: "ollama/mistral:7b"
+    fallback: "ollama/gemma2:2b"
+  
+  planning_docs:
+    primary: "ollama/mistral:7b"
+    fallback: "ollama/gemma2:2b"
+
+  coding_repair:
+    primary: "ollama/mistral:7b"
+    fallback: "ollama/gemma2:2b"
+
+  security_audit:
+    primary: "ollama/mistral:7b"
+    fallback: "ollama/gemma2:2b"
+
+agents:
+  ceo: "planning_docs"
+  cfo: "security_audit"
+  coo: "planning_docs"
+  cio: "coding_repair"
+  cmo: "planning_docs"
+  cro: "planning_docs"

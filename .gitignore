@@ -1,35 +1,43 @@
-__pycache__/
-*.pyc
-*.db
-backend/swarm_ledger.db
-artifacts/
-!artifacts/pentest/
-node_modules/
-frontend/node_modules/
-frontend/dist/
-frontend/.env
-.DS_Store
-
-# Python runtime artifacts
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
+.venv/
+.venv*
+*.egg-info/
+build/
+dist/
 
-# Local/generated release artifacts
-dist/*.sha256
-dist/releases/*.tar.gz
-dist/releases/*.tar.gz.sha256
+# Env & secrets
+.env
+frontend/.env
 
-# Local runtime / generated app scaffolds
-server/
+# DB and storage
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+backend/swarm_ledger.db
 
-# Generated release evidence not tracked by default
-dist/releases/*/north_star_report.md
-dist/releases/v0.1.1-HOCHSTER-CLUSTER-HARDENING/
+# Artifacts & node modules
+node_modules/
+frontend/node_modules/
+frontend/dist/
+.DS_Store
 
-# Playwright runtime output
+# Playwright & test reports
 test-results/
 playwright-report/
 uvicorn.log
 audit/
+
+# Release candidate & runs
+artifacts/
+!artifacts/pentest/
+artifacts/crew_runs/
+artifacts/release_candidates/
+artifacts/validation_samples/
+dist/releases/
+dist/releases/*/north_star_report.md
+dist/releases/v0.1.1-HOCHSTER-CLUSTER-HARDENING/
 
