@@ -87,4 +87,24 @@ Implements the core execution layer converting Michael or Alison chat requests i
   - `tests/e2e/brain-autonomy.spec.ts` -> PASS (verifies Michael owner success, Alison family success, guest blocked validations)
 - **Compliance Evidence Record**: Logged under `docs/evidence/artifacts/20260629-1219-artifact-autonomy-verification.md`.
 
+---
 
+## 6. RC28/RC29A: Hardening & Monetization Sidecar Audit Harness
+
+### Hardening Accomplishments
+- **Delivery Modes Integration**:
+  - Configured `backend/connectors/google_drive_delivery.py` to inspect credentials environment and dynamically determine delivery mode (`dry_run` vs `real_upload`), outputting detailed receipt logs.
+- **Global QA & DevSecOps Security Gate Scripts**:
+  - `scripts/security_gate.sh`: Scans output directories to catch credential leaks, matching key/secret/password indicators.
+  - `scripts/qa_gate.sh`: Automates execution of the global regression suite (Python unit, integration, and Playwright tests).
+- **Compliance Evidence Record**: Logged under `docs/evidence/security/20260629-1228-security-gate-verification.md`.
+
+### Monetization Audit Harness (RC29A)
+- **Security & Read-Only Safeguard Components**:
+  - `backend/monetization/read_only_guard.py`: Dynamically intercepts file writes, restricting all outputs to three allowlisted folders. Raises `PermissionError` if writes leak outside, or if moving/deleting/renaming files.
+  - `backend/monetization/security_redactor.py`: Redacts tokens, passwords, and OpenAI `sk-...` keys from logged text.
+  - `backend/monetization/evidence_validator.py`: Ensures that no monetization claims are generated without linking to physical, non-empty files.
+  - `backend/monetization/audit_harness.py`: Orchestrates sweeps following constraints declared in `config/monetization_audit_policy.yaml`.
+- **API and UI Control Panels**:
+  - Mounted routes `/api/v1/monetization/audit` and `/api/v1/monetization/policy`.
+  - Added a dashboard control card displaying read-only state, allowed directories, blocked command names, and live execution status.
