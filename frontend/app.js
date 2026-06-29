@@ -48,6 +48,7 @@ import Hls from 'hls.js';
     // View Switching
     const views = [
         { id: 'mission-control', label: 'MISSION CONTROL' },
+        { id: 'production-command-center', viewId: 'production-command-center', label: 'PRODUCTION COMMAND CENTER' },
         { id: 'live-runtime', label: 'LIVE RUNTIME' },
         { id: 'local-models', label: 'LOCAL MODELS' },
         { id: 'model-mesh', label: 'AI MODEL MESH' },
@@ -81,8 +82,21 @@ import Hls from 'hls.js';
         { id: 'cybergov-ao-review', label: 'AO REVIEW' },
         { id: 'binding-gate', label: 'LIVE BINDING GATE' },
         { id: 'live-exposure', label: 'LIVE EXPOSURE' },
-        { id: 'conmon-scheduler', label: 'CONMON SCHEDULER' },
-        { id: 'hoch-tv', label: 'HOCH TV' }
+        { id: "conmon-scheduler", label: "CONMON SCHEDULER" },
+        { id: "hoch-tv", label: "HOCH TV" },
+        { id: "readiness-autopilot", viewId: "readiness-autopilot", label: "READINESS AUTOPILOT" },
+        { id: "hochster-runtime", viewId: "hochster-runtime", label: "HOCHSTER RUNTIME" },
+        { id: "remediation-safety", viewId: "remediation-safety", label: "REMEDIATION SAFETY" },
+        { id: "runtime-audit", viewId: "runtime-audit", label: "RUNTIME AUDIT" },
+        { id: "error-budget", viewId: "error-budget", label: "ERROR BUDGET" },
+        { id: "release-provenance", viewId: "release-provenance", label: "RELEASE PROVENANCE" },
+        { id: "swarm-control", viewId: "swarm-control", label: "SWARM CONTROL" },
+        { id: "mission-intel", viewId: "mission", label: "MISSION INTEL" },
+        { id: "timeline-replay", viewId: "replay", label: "TIMELINE REPLAY" },
+        { id: "cybersecurity-factory", viewId: "cybersecurity-factory", label: "CYBERSECURITY FACTORY" },
+        { id: "governance", viewId: "governance", label: "OPERATOR GOVERNANCE" },
+        { id: "device-swarm", label: "DEVICE SWARM" },
+        { id: "mesh-sentinel", label: "MESH SENTINEL" }
     ];
 
     function initNavigation() {
@@ -103,16 +117,25 @@ import Hls from 'hls.js';
         // Reset sidebar active classes
         views.forEach(v => {
             const btn = el(`nav-${v.id}`);
-            if (btn) btn.classList.remove('active');
-            const viewDiv = el(`view-${v.id}`);
-            if (viewDiv) viewDiv.classList.add('hidden');
+            if (btn) btn.classList.remove("active");
+            const vId = v.viewId || v.id;
+            const viewDiv = el(`view-${vId}`);
+            if (viewDiv) {
+                viewDiv.classList.add("hidden");
+                viewDiv.setAttribute("hidden", "");
+            }
         });
 
         const activeBtn = el(`nav-${viewId}`);
-        if (activeBtn) activeBtn.classList.add('active');
+        if (activeBtn) activeBtn.classList.add("active");
 
-        const activeDiv = el(`view-${viewId}`);
-        if (activeDiv) activeDiv.classList.remove('hidden');
+        const tgtView = views.find(v => v.id === viewId);
+        const resolvedViewId = tgtView ? (tgtView.viewId || tgtView.id) : viewId;
+        const activeDiv = el(`view-${resolvedViewId}`);
+        if (activeDiv) {
+            activeDiv.classList.remove("hidden");
+            activeDiv.removeAttribute("hidden");
+        }
 
         // Update header subnet label
         const targetView = views.find(v => v.id === viewId);
@@ -241,6 +264,406 @@ import Hls from 'hls.js';
             case 'hoch-tv':
                 loadHochTvView();
                 break;
+            case 'production-command-center':
+                loadProductionCommandCenterView();
+                viewInterval = setInterval(loadProductionCommandCenterView, 3000);
+                break;
+            case 'release-provenance':
+                fetchAndRenderReleaseProvenance();
+                viewInterval = setInterval(fetchAndRenderReleaseProvenance, 5000);
+                break;
+            case 'governance':
+                fetchAndRenderGovernanceSummary();
+                viewInterval = setInterval(fetchAndRenderGovernanceSummary, 5000);
+                break;
+        }
+    }
+
+    let qaLoopPoller = null;
+
+    async function loadProductionCommandCenterView() {
+        try {
+            const res = await fetch('/api/v1/production-tracker');
+            if (!res.ok) return;
+            const data = await res.json();
+
+            // 1. Last Updated Timestamp
+            const updatedEl = el('cc-last-updated');
+            if (updatedEl) {
+                updatedEl.textContent = `Last Updated: ${new Date().toLocaleTimeString()}`;
+            }
+
+            // 2. Score text & Circular Gauge
+            const scoreText = el('cc-score-text');
+            if (scoreText) scoreText.textContent = data.readiness_score;
+
+            const gaugeFill = el('cc-gauge-fill');
+            if (gaugeFill) {
+                const maxOffset = 251.2;
+                const offset = maxOffset - (maxOffset * (data.readiness_score || 0) / 100);
+                gaugeFill.style.strokeDashoffset = offset;
+            }
+
+            // 3. Drivers
+            if (el('cc-driver-build')) el('cc-driver-build').textContent = `${data.drivers.build_health}%`;
+            if (el('cc-driver-e2e')) el('cc-driver-e2e').textContent = `${data.drivers.e2e_pass_rate}%`;
+            if (el('cc-driver-stability')) el('cc-driver-stability').textContent = `${data.drivers.runtime_stability}%`;
+
+            // 4. Browser Telemetry
+            const chromeEl = el('cc-telemetry-chrome');
+            if (chromeEl) {
+                chromeEl.textContent = data.browser_telemetry.chrome_alive ? "ALIVE" : "OFFLINE";
+                chromeEl.style.color = data.browser_telemetry.chrome_alive ? "var(--accent-teal)" : "#ef4444";
+            }
+            const playwrightEl = el('cc-telemetry-playwright');
+            if (playwrightEl) {
+                playwrightEl.textContent = data.browser_telemetry.playwright_success ? "PASSING" : "FAILED";
+                playwrightEl.style.color = data.browser_telemetry.playwright_success ? "var(--accent-teal)" : "#ef4444";
+            }
+            const profileEl = el('cc-telemetry-profile');
+            if (profileEl) {
+                profileEl.textContent = data.browser_telemetry.clean_profile ? "CLEAN" : "DIRTY";
+                profileEl.style.color = data.browser_telemetry.clean_profile ? "var(--accent-blue)" : "var(--accent-yellow)";
+            }
+            const gpuEl = el('cc-telemetry-gpu');
+            if (gpuEl) {
+                gpuEl.textContent = (data.browser_telemetry.gpu_status || 'disabled').toUpperCase();
+                gpuEl.style.color = data.browser_telemetry.gpu_status === 'enabled' ? "var(--accent-teal)" : "var(--text-secondary)";
+            }
+            const extensionsEl = el('cc-telemetry-extensions');
+            if (extensionsEl) {
+                extensionsEl.textContent = (data.browser_telemetry.extensions && data.browser_telemetry.extensions.length > 0) ? data.browser_telemetry.extensions.join(', ') : 'None';
+            }
+
+            // 5. Git Status
+            const gitBranch = el('cc-git-branch');
+            if (gitBranch) gitBranch.textContent = data.git_status.branch || 'unknown';
+            
+            const gitTree = el('cc-git-tree');
+            if (gitTree) {
+                gitTree.textContent = data.git_status.working_tree_clean ? "CLEAN" : "DIRTY";
+                gitTree.style.color = data.git_status.working_tree_clean ? "var(--accent-teal)" : "var(--accent-yellow)";
+            }
+
+            const gitCommits = el('cc-git-commits');
+            if (gitCommits && data.git_status.recent_commits) {
+                gitCommits.innerHTML = data.git_status.recent_commits.map(c => `
+                    <div style="margin-bottom:4px; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">
+                        <span style="color:var(--accent-teal);">${c.substring(0, 7)}</span> ${c.substring(7)}
+                    </div>
+                `).join('');
+            }
+
+            // 6. Draw PERT Network SVG
+            const svg = el('cc-pert-svg');
+            if (svg && data.pert_graph) {
+                svg.innerHTML = '';
+                
+                // Draw connecting edge lines
+                data.pert_graph.edges.forEach(edge => {
+                    const fromNode = data.pert_graph.nodes.find(n => n.id === edge.from);
+                    const toNode = data.pert_graph.nodes.find(n => n.id === edge.to);
+                    if (fromNode && toNode) {
+                        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                        line.setAttribute("x1", fromNode.x);
+                        line.setAttribute("y1", fromNode.y);
+                        line.setAttribute("x2", toNode.x);
+                        line.setAttribute("y2", toNode.y);
+                        line.setAttribute("stroke", edge.critical ? "#ef4444" : "rgba(255,255,255,0.15)");
+                        line.setAttribute("stroke-width", edge.critical ? "2.5" : "1.5");
+                        if (!edge.critical) {
+                            line.setAttribute("stroke-dasharray", "4,4");
+                        }
+                        svg.appendChild(line);
+                    }
+                });
+
+                // Draw nodes
+                data.pert_graph.nodes.forEach(node => {
+                    const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                    g.style.cursor = 'pointer';
+
+                    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                    rect.setAttribute("x", node.x - 50);
+                    rect.setAttribute("y", node.y - 20);
+                    rect.setAttribute("width", 100);
+                    rect.setAttribute("height", 40);
+                    rect.setAttribute("rx", 6);
+                    
+                    let strokeColor = "var(--border-glass)";
+                    let fillColor = "rgba(16, 24, 48, 0.9)";
+                    if (node.status === "DONE") {
+                        strokeColor = "var(--accent-teal)";
+                    } else if (node.status === "IN_PROGRESS") {
+                        strokeColor = "var(--accent-yellow)";
+                        fillColor = "rgba(245, 158, 11, 0.1)";
+                    } else {
+                        strokeColor = "rgba(255,255,255,0.1)";
+                    }
+                    if (node.critical && node.status !== "DONE") {
+                        strokeColor = "#ef4444";
+                    }
+
+                    rect.setAttribute("stroke", strokeColor);
+                    rect.setAttribute("stroke-width", "2");
+                    rect.setAttribute("fill", fillColor);
+                    g.appendChild(rect);
+
+                    // Title
+                    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                    text.setAttribute("x", node.x);
+                    text.setAttribute("y", node.y + 4);
+                    text.setAttribute("text-anchor", "middle");
+                    text.setAttribute("fill", "#fff");
+                    text.setAttribute("font-size", "10px");
+                    text.setAttribute("font-family", "sans-serif");
+                    text.setAttribute("font-weight", "600");
+                    text.textContent = node.label;
+                    g.appendChild(text);
+
+                    svg.appendChild(g);
+                });
+            }
+
+            // 7. Live Task Board
+            const todoList = el('cc-task-list-todo');
+            const progressList = el('cc-task-list-progress');
+            const doneList = el('cc-task-list-done');
+            
+            let todoCount = 0, progressCount = 0, doneCount = 0;
+            if (todoList && progressList && doneList && data.tasks) {
+                todoList.innerHTML = '';
+                progressList.innerHTML = '';
+                doneList.innerHTML = '';
+
+                data.tasks.forEach(task => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.style.background = 'rgba(255,255,255,0.02)';
+                    card.style.border = task.critical_path ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid var(--border-glass)';
+                    card.style.padding = '10px';
+                    card.style.borderRadius = '6px';
+                    card.style.fontSize = '12px';
+                    card.style.lineHeight = '1.4';
+                    card.style.display = 'flex';
+                    card.style.flexDirection = 'column';
+                    card.style.gap = '4px';
+
+                    card.innerHTML = `
+                        <div style="font-weight:bold; color:#fff; display:flex; justify-content:space-between; align-items:center;">
+                            <span>${task.title}</span>
+                            ${task.critical_path ? '<span style="font-size:8px; color:#ef4444; border:1px solid #ef4444; padding:1px 4px; border-radius:3px; text-transform:uppercase;">Critical</span>' : ''}
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-secondary); margin-top:4px;">
+                            <span>Agent: ${task.assigned_agent}</span>
+                            <span>ID: ${task.task_id}</span>
+                        </div>
+                    `;
+
+                    if (task.status === 'DONE') {
+                        doneList.appendChild(card);
+                        doneCount++;
+                    } else if (task.status === 'IN_PROGRESS') {
+                        progressList.appendChild(card);
+                        progressCount++;
+                    } else {
+                        todoList.appendChild(card);
+                        todoCount++;
+                    }
+                });
+
+                if (el('cc-task-count-todo')) el('cc-task-count-todo').textContent = todoCount;
+                if (el('cc-task-count-progress')) el('cc-task-count-progress').textContent = progressCount;
+                if (el('cc-task-count-done')) el('cc-task-count-done').textContent = doneCount;
+            }
+
+            // 8. Defect Queue
+            const defectList = el('cc-defect-list');
+            if (defectList && data.defects) {
+                defectList.innerHTML = '';
+                if (data.defects.length === 0) {
+                    defectList.innerHTML = `<div style="color: var(--text-secondary); text-align: center; font-size: 12px; padding: 20px;">No defects detected.</div>`;
+                } else {
+                    data.defects.forEach(bug => {
+                        const div = document.createElement('div');
+                        div.className = 'card';
+                        div.style.background = 'rgba(255,255,255,0.02)';
+                        div.style.border = '1px solid var(--border-glass)';
+                        div.style.padding = '10px';
+                        div.style.borderRadius = '6px';
+                        div.style.fontSize = '12px';
+                        div.style.display = 'flex';
+                        div.style.flexDirection = 'column';
+                        div.style.gap = '4px';
+
+                        let severityColor = "var(--accent-blue)";
+                        if (bug.severity === "Critical") severityColor = "#ef4444";
+                        else if (bug.severity === "High") severityColor = "var(--accent-orange)";
+                        else if (bug.severity === "Medium") severityColor = "var(--accent-yellow)";
+
+                        div.innerHTML = `
+                            <div style="display:flex; justify-content:space-between; font-weight:bold; align-items:center;">
+                                <span style="color:#fff;">${bug.title}</span>
+                                <span style="font-size:9px; color:${severityColor}; border:1px solid ${severityColor}; padding:1px 4px; border-radius:3px;">${bug.severity}</span>
+                            </div>
+                            <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">${bug.description}</div>
+                            <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-secondary); margin-top:4px; border-top:1px solid rgba(255,255,255,0.03); padding-top:4px;">
+                                <span>Status: <strong style="color:${bug.status === 'RESOLVED' ? 'var(--accent-teal)' : 'var(--accent-yellow)'}">${bug.status}</strong></span>
+                                <span>${bug.defect_id}</span>
+                            </div>
+                        `;
+                        defectList.appendChild(div);
+                    });
+                }
+            }
+
+            // 9. Release Readiness Checklist
+            const checklistContainer = el('cc-checklist-container');
+            if (checklistContainer && data.checklist) {
+                checklistContainer.innerHTML = data.checklist.map(item => `
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 6px;">
+                        <span style="color: #fff;">${item.title}</span>
+                        <span class="badge" style="background: ${item.status === 'PASS' ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)'}; color: ${item.status === 'PASS' ? 'var(--accent-teal)' : '#ef4444'}; font-weight:bold; font-size:10px;">${item.status}</span>
+                    </div>
+                `).join('');
+            }
+
+            // 10. Evidence Pack Tracker
+            const evidenceContainer = el('cc-evidence-container');
+            if (evidenceContainer && data.evidence_packs) {
+                if (data.evidence_packs.length === 0) {
+                    evidenceContainer.innerHTML = `<div style="color: var(--text-secondary); text-align: center; font-size: 12px; padding: 20px;">No evidence files generated yet.</div>`;
+                } else {
+                    evidenceContainer.innerHTML = data.evidence_packs.map(pack => `
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 6px; font-size: 11px;">
+                            <a href="${pack.path}" target="_blank" style="color: var(--accent-teal); text-decoration: none; font-family: monospace;">${pack.name}</a>
+                            <span style="color: var(--text-secondary); font-size:10px;">${new Date(pack.timestamp).toLocaleTimeString()}</span>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            if (window.lucide) window.lucide.createIcons();
+        } catch (err) {
+            console.error("Error loading Production Command Center:", err);
+        }
+    }
+
+    async function triggerQaLoopExecution() {
+        const consoleContainer = el('cc-loop-console-container');
+        const consoleLog = el('cc-loop-console-log');
+        
+        if (consoleContainer) consoleContainer.style.display = 'block';
+        if (consoleLog) consoleLog.textContent = '[system] Triggering QA loop script execution...\n';
+
+        try {
+            const res = await fetch('/api/v1/production-tracker/run-qa-loop', { method: 'POST' });
+            const data = await res.json();
+            
+            if (consoleLog) consoleLog.textContent += `[system] ${data.message}\n`;
+            
+            // Start fast poller for logs
+            if (qaLoopPoller) clearInterval(qaLoopPoller);
+            qaLoopPoller = setInterval(async () => {
+                const statusRes = await fetch('/api/v1/production-tracker/run-qa-loop/status');
+                if (statusRes.ok) {
+                    const statusData = await statusRes.json();
+                    if (consoleLog) {
+                        consoleLog.textContent = statusData.log || '[system] Awaiting console output...';
+                        consoleLog.scrollTop = consoleLog.scrollHeight;
+                    }
+                    if (statusData.status === 'idle') {
+                        clearInterval(qaLoopPoller);
+                        qaLoopPoller = null;
+                        if (consoleLog) consoleLog.textContent += '\n[system] QA Runtime Loop finished execution.\n';
+                        loadProductionCommandCenterView();
+                    }
+                }
+            }, 500);
+        } catch (err) {
+            if (consoleLog) consoleLog.textContent += `[error] Failed to trigger QA loop: ${err.message}\n`;
+        }
+    }
+
+    async function fetchAndRenderReleaseProvenance() {
+        try {
+            const sigRes = await fetch('/api/v1/release/signing-policy');
+            if (sigRes.ok) {
+                const sigData = await sigRes.json();
+                const cur = sigData.current_release || {};
+                
+                const policyStatusEl = el('release-signing-policy-status');
+                if (policyStatusEl) {
+                    policyStatusEl.textContent = cur.signing_policy_status || 'UNKNOWN';
+                    policyStatusEl.className = cur.signing_policy_status === 'PASS' ? 'badge badge-success' : 'badge badge-danger';
+                }
+                
+                const sigStatusEl = el('release-signature-status');
+                if (sigStatusEl) sigStatusEl.textContent = (cur.signature_status || 'unsigned').toUpperCase();
+                
+                const finalStatusEl = el('release-finalization-status');
+                if (finalStatusEl) finalStatusEl.textContent = (cur.release_finalization_status || 'blocked').toUpperCase();
+                
+                const waiverStatusEl = el('release-signing-waiver-status');
+                if (waiverStatusEl) waiverStatusEl.textContent = (cur.signing_waiver_status || 'none').toUpperCase();
+            }
+            
+            const govRes = await fetch('/api/v1/release/channel-governance');
+            if (govRes.ok) {
+                const govData = await govRes.json();
+                
+                const chanPolicyStatusEl = el('release-channel-policy-status');
+                if (chanPolicyStatusEl) {
+                    const isPass = govData.working_tree_clean && govData.tag_alignment_status === 'TAG_AT_HEAD';
+                    chanPolicyStatusEl.textContent = isPass ? 'PASS' : 'WARN';
+                    chanPolicyStatusEl.className = isPass ? 'badge badge-success' : 'badge badge-warning';
+                }
+                
+                const chanCurEl = el('release-channel-current');
+                if (chanCurEl) chanCurEl.textContent = govData.current_channel || 'Local Dev';
+                
+                const tagCurEl = el('release-tag-current');
+                if (tagCurEl) tagCurEl.textContent = govData.release_tag || 'none';
+                
+                const tagStatusEl = el('release-tag-status');
+                if (tagStatusEl) tagStatusEl.textContent = govData.tag_status || 'UNKNOWN';
+                
+                const tagAlignEl = el('release-tag-alignment-status');
+                if (tagAlignEl) tagAlignEl.textContent = govData.tag_alignment_status || 'UNKNOWN';
+                
+                const headShaEl = el('release-tag-head-sha');
+                if (headShaEl) headShaEl.textContent = govData.head_sha || '...';
+                
+                const targetShaEl = el('release-tag-target-sha');
+                if (targetShaEl) targetShaEl.textContent = govData.tag_sha || '...';
+                
+                const formalFinalEl = el('release-formal-finalization-status');
+                if (formalFinalEl) {
+                    const isReady = govData.working_tree_clean && govData.tag_alignment_status === 'TAG_AT_HEAD';
+                    formalFinalEl.textContent = isReady ? 'Formal Release Ready' : 'Formal Release Blocked';
+                }
+            }
+            if (window.lucide) window.lucide.createIcons();
+        } catch (err) {
+            console.error("Error loading release provenance:", err);
+        }
+    }
+
+    function initCommandCenterButtons() {
+        const btnRun = el('btn-cc-run-qa-loop');
+        if (btnRun) {
+            btnRun.addEventListener('click', (e) => {
+                e.preventDefault();
+                triggerQaLoopExecution();
+            });
+        }
+        const btnClose = el('btn-cc-close-console');
+        if (btnClose) {
+            btnClose.addEventListener('click', (e) => {
+                e.preventDefault();
+                const consoleContainer = el('cc-loop-console-container');
+                if (consoleContainer) consoleContainer.style.display = 'none';
+            });
         }
     }
 
@@ -3722,6 +4145,18 @@ import Hls from 'hls.js';
 
     // Initialization routine
     function init() {
+        initDeviceRegistry();
+        initCrewaiIngestionBridge();
+        initReleaseDecisionRoom();
+        initReleaseEvidenceRetention();
+        initReleaseEvidenceArchivePreview();
+        initReleaseEvidenceArchiveBuildPlan();
+        initReleaseEvidenceArchiveSealPreview();
+        initFormalReleaseSealDryRun();
+        initCapabilityRouterUI();
+        initModelProviderRegistryUI();
+        initModelRouterUI();
+        
   initMeshSentinel();
         initTheme();
         initNavigation();
@@ -3740,6 +4175,7 @@ import Hls from 'hls.js';
         initLiveExposureButtons();
         initConMonButtons();
         initTvButtons();
+        initCommandCenterButtons();
         
         // Initial fetches
         fetchCockpit();
@@ -6668,7 +7104,2216 @@ import Hls from 'hls.js';
     window.approveToolOpsAction = approveToolOpsAction;
     window.runToolOpsCiGate = runToolOpsCiGate;
     window.triggerModelEval = triggerModelEval;
+
+
+// ==========================================
+// RESTORED GOVERNANCE & DE-ORBITED VIEWS STATE
+// ==========================================
+let currentNodes = [];
+let baseMermaidGraph = "";
+let lastTelemetryTime = Date.now();
+let telemetryIsStale = false;
+let selectedNodeId = null;
+let coreGroupExpanded = true;
+let mobileGroupExpanded = true;
+let edgeGroupExpanded = true;
+let panX = 0;
+let panY = 0;
+let scale = 1.0;
+let isPanning = false;
+let startPanX = 0;
+let startPanY = 0;
+const API_BASE = window.location.origin;
+
+async function initDeviceRegistry() {
+    const btnRunDiscovery = document.getElementById("device-discovery-run-button");
+    const btnRefreshRegistry = document.getElementById("device-service-refresh-button");
+    const btnApprove = document.getElementById("btn-device-approve");
+    const btnReject = document.getElementById("btn-device-reject");
+
+    if (btnRunDiscovery) {
+        btnRunDiscovery.addEventListener("click", executeDeviceDiscovery);
     }
+    if (btnRefreshRegistry) {
+        btnRefreshRegistry.addEventListener("click", loadRegistryData);
+    }
+    if (btnApprove) {
+        btnApprove.addEventListener("click", executeDeviceApproval);
+    }
+    if (btnReject) {
+        btnReject.addEventListener("click", executeDeviceRejection);
+    }
+
+    await loadRegistryData();
+}
+
+async function loadRegistryData() {
+    try {
+        const discRes = await fetch(`${API_BASE}/api/v1/devices/discovered`);
+        if (discRes.ok) {
+            const discovered = await discRes.json();
+            renderDiscoveredDevices(discovered);
+        }
+
+        const regRes = await fetch(`${API_BASE}/api/v1/devices/service-registry`);
+        if (regRes.ok) {
+            const approved = await regRes.json();
+            renderApprovedServiceNodes(approved);
+        }
+    } catch (err) {
+        console.error("Error loading registry data:", err);
+    }
+}
+
+async function executeDeviceDiscovery() {
+    const statusText = document.getElementById("device-discovery-status");
+    const btnRunDiscovery = document.getElementById("device-discovery-run-button");
+    if (statusText) statusText.innerText = "DISCOVERING...";
+    if (btnRunDiscovery) btnRunDiscovery.disabled = true;
+
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/devices/discover`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ enable_ping_sweep: false, enable_tcp_probes: false })
+        });
+        if (res.ok) {
+            logToConsoleTerminal("DaaSDiscovery", "Network discovery completed successfully. Recommended service enclaves updated.", "info");
+        } else {
+            logToConsoleTerminal("DaaSDiscovery", "Network discovery failed.", "error");
+        }
+    } catch (err) {
+        console.error("Discovery error:", err);
+        logToConsoleTerminal("DaaSDiscovery", "Error running discovery: " + err.message, "error");
+    } finally {
+        if (statusText) statusText.innerText = "IDLE";
+        if (btnRunDiscovery) btnRunDiscovery.disabled = false;
+        await loadRegistryData();
+    }
+}
+
+function renderDiscoveredDevices(devices) {
+    const listContainer = document.getElementById("discovered-device-list");
+    if (!listContainer) return;
+    listContainer.innerHTML = "";
+
+    if (!devices || devices.length === 0) {
+        listContainer.innerHTML = `<span style="font-size: 11px; color: var(--text-secondary); font-style: italic; text-align: center; padding: 12px 0;">No devices discovered yet. Trigger discovery to scan local network.</span>`;
+        return;
+    }
+
+    devices.forEach(dev => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.style.padding = "8px 12px";
+        div.style.cursor = "pointer";
+        div.style.border = "1px solid var(--border-glass)";
+        div.style.background = "rgba(255, 255, 255, 0.02)";
+        div.style.display = "flex";
+        div.style.justifyContent = "space-between";
+        div.style.alignItems = "center";
+        div.style.transition = "all 0.2s";
+        div.setAttribute("id", `discovered-card-${dev.node_id}`);
+        
+        div.onmouseover = () => {
+            div.style.background = "rgba(255, 255, 255, 0.06)";
+            div.style.borderColor = "var(--accent-teal)";
+        };
+        div.onmouseout = () => {
+            if (selectedDiscoveredDevice?.node_id !== dev.node_id) {
+                div.style.background = "rgba(255, 255, 255, 0.02)";
+                div.style.borderColor = "var(--border-glass)";
+            }
+        };
+
+        div.addEventListener("click", () => {
+            selectDiscoveredDevice(dev);
+        });
+
+        const left = document.createElement("div");
+        left.style.display = "flex";
+        left.style.flexDirection = "column";
+        left.style.textAlign = "left";
+
+        const name = document.createElement("span");
+        name.style.fontSize = "11px";
+        name.style.fontWeight = "bold";
+        name.style.color = "#fff";
+        name.innerText = dev.display_name;
+
+        const details = document.createElement("span");
+        details.style.fontSize = "9px";
+        details.style.color = "var(--text-secondary)";
+        details.style.fontFamily = "monospace";
+        details.innerText = `${dev.ip_address} | Class: ${dev.device_class}`;
+
+        left.appendChild(name);
+        left.appendChild(details);
+
+        const badge = document.createElement("span");
+        badge.className = "badge";
+        badge.style.fontSize = "8px";
+        badge.style.padding = "1px 4px";
+        
+        if (dev.onboarding_status === "approved") {
+            badge.style.background = "rgba(16, 185, 129, 0.15)";
+            badge.style.color = "#10b981";
+            badge.innerText = "Approved";
+        } else if (dev.onboarding_status === "rejected") {
+            badge.style.background = "rgba(239, 68, 68, 0.15)";
+            badge.style.color = "#ef4444";
+            badge.innerText = "Rejected";
+        } else {
+            badge.style.background = "rgba(59, 130, 246, 0.15)";
+            badge.style.color = "var(--accent-blue)";
+            badge.innerText = "Discovered";
+        }
+
+        div.appendChild(left);
+        div.appendChild(badge);
+        listContainer.appendChild(div);
+    });
+
+    if (selectedDiscoveredDevice) {
+        const activeCard = document.getElementById(`discovered-card-${selectedDiscoveredDevice.node_id}`);
+        if (activeCard) {
+            activeCard.style.background = "rgba(255, 255, 255, 0.08)";
+            activeCard.style.borderColor = "var(--accent-teal)";
+        }
+    }
+}
+
+function selectDiscoveredDevice(device) {
+    selectedDiscoveredDevice = device;
+    
+    document.querySelectorAll('[id^="discovered-card-"]').forEach(card => {
+        card.style.background = "rgba(255, 255, 255, 0.02)";
+        card.style.borderColor = "var(--border-glass)";
+    });
+    const activeCard = document.getElementById(`discovered-card-${device.node_id}`);
+    if (activeCard) {
+        activeCard.style.background = "rgba(255, 255, 255, 0.08)";
+        activeCard.style.borderColor = "var(--accent-teal)";
+    }
+
+    const panel = document.getElementById("device-service-approval-panel");
+    if (!panel) return;
+    panel.classList.remove("hidden");
+
+    document.getElementById("approval-device-name").innerText = device.display_name;
+    document.getElementById("approval-device-ip").innerText = `${device.ip_address} (${device.mac_address || "No MAC"})`;
+    
+    const classBadge = document.getElementById("approval-device-class");
+    classBadge.innerText = device.device_class;
+    
+    document.getElementById("approval-fleet-group").innerText = device.fleet_group;
+    document.getElementById("approval-compute-tier").innerText = device.compute_tier;
+    document.getElementById("approval-operator-notes").value = device.operator_notes || "";
+
+    const roleList = document.getElementById("device-service-role-list");
+    roleList.innerHTML = "";
+
+    const candidateRoles = device.service_roles && device.service_roles.length > 0
+        ? device.service_roles
+        : ["dashboard_receiver", "alert_wall", "release_status_display", "mobile_dashboard", "approval_terminal", "compute_worker"];
+
+    candidateRoles.forEach(role => {
+        const label = document.createElement("label");
+        label.style.display = "flex";
+        label.style.alignItems = "center";
+        label.style.gap = "4px";
+        label.style.fontSize = "10px";
+        label.style.color = "var(--text-secondary)";
+        label.style.background = "rgba(255, 255, 255, 0.03)";
+        label.style.border = "1px solid var(--border-glass)";
+        label.style.padding = "2px 6px";
+        label.style.borderRadius = "4px";
+        label.style.cursor = "pointer";
+
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.value = role;
+        cb.checked = true;
+        cb.style.margin = "0";
+
+        label.appendChild(cb);
+        label.appendChild(document.createTextNode(role));
+        roleList.appendChild(label);
+    });
+}
+
+async function executeDeviceApproval() {
+    if (!selectedDiscoveredDevice) return;
+    const operator = "Michael Hoch";
+    
+    const selectedRoles = [];
+    document.querySelectorAll('#device-service-role-list input[type="checkbox"]').forEach(cb => {
+        if (cb.checked) selectedRoles.push(cb.value);
+    });
+
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/devices/service-registry/${selectedDiscoveredDevice.node_id}/approve`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                operator: operator,
+                service_roles: selectedRoles
+            })
+        });
+        if (res.ok) {
+            logToConsoleTerminal("DaaSOnboarding", `Approved device ${selectedDiscoveredDevice.display_name} as active service node.`, "info");
+            const panel = document.getElementById("device-service-approval-panel");
+            if (panel) panel.classList.add("hidden");
+            selectedDiscoveredDevice = null;
+            await loadRegistryData();
+            if (window.refreshClusterTopologyStatus) {
+                await window.refreshClusterTopologyStatus();
+            }
+        }
+    } catch (err) {
+        console.error("Approval error:", err);
+    }
+}
+
+async function executeDeviceRejection() {
+    if (!selectedDiscoveredDevice) return;
+    const operator = "Michael Hoch";
+    const reason = "Operator rejected onboarding request.";
+
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/devices/service-registry/${selectedDiscoveredDevice.node_id}/reject`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                operator: operator,
+                reason: reason
+            })
+        });
+        if (res.ok) {
+            logToConsoleTerminal("DaaSOnboarding", `Rejected device ${selectedDiscoveredDevice.display_name}. Onboarding request denied.`, "warning");
+            const panel = document.getElementById("device-service-approval-panel");
+            if (panel) panel.classList.add("hidden");
+            selectedDiscoveredDevice = null;
+            await loadRegistryData();
+            if (window.refreshClusterTopologyStatus) {
+                await window.refreshClusterTopologyStatus();
+            }
+        }
+    } catch (err) {
+        console.error("Rejection error:", err);
+    }
+}
+
+function renderApprovedServiceNodes(nodes) {
+    const listContainer = document.getElementById("service-node-registry-list");
+    if (!listContainer) return;
+    listContainer.innerHTML = "";
+
+    if (!nodes || nodes.length === 0) {
+        listContainer.innerHTML = `<span style="font-size: 11px; color: var(--text-secondary); font-style: italic; text-align: center; padding: 12px 0;">No active service nodes approved.</span>`;
+        return;
+    }
+
+    nodes.forEach(node => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.style.padding = "8px 12px";
+        div.style.border = "1px solid rgba(16, 185, 129, 0.2)";
+        div.style.background = "rgba(16, 185, 129, 0.02)";
+        div.style.display = "flex";
+        div.style.justifyContent = "space-between";
+        div.style.alignItems = "center";
+
+        const left = document.createElement("div");
+        left.style.display = "flex";
+        left.style.flexDirection = "column";
+        left.style.textAlign = "left";
+
+        const name = document.createElement("span");
+        name.style.fontSize = "11px";
+        name.style.fontWeight = "bold";
+        name.style.color = "#fff";
+        name.innerText = node.display_name;
+
+        const details = document.createElement("span");
+        details.style.fontSize = "9px";
+        details.style.color = "var(--text-secondary)";
+        details.style.fontFamily = "monospace";
+        details.innerText = `Roles: ${node.service_roles.join(", ")}`;
+
+        left.appendChild(name);
+        left.appendChild(details);
+
+        const right = document.createElement("div");
+        right.style.display = "flex";
+        right.style.flexDirection = "column";
+        right.style.alignItems = "flex-end";
+        right.style.gap = "4px";
+
+        const statusBadge = document.createElement("span");
+        statusBadge.className = "badge";
+        statusBadge.style.fontSize = "8px";
+
+        if (node.lease) {
+            const leaseDiv = document.createElement("div");
+            leaseDiv.style.fontSize = "9px";
+            leaseDiv.style.color = "var(--text-secondary)";
+            leaseDiv.style.marginTop = "4px";
+            leaseDiv.style.display = "flex";
+            leaseDiv.style.gap = "8px";
+
+            const batterySpan = document.createElement("span");
+            batterySpan.innerHTML = `<i data-lucide="battery" style="width:10px; height:10px; display:inline-block; vertical-align:middle; margin-right:2px;"></i> ${node.lease.battery_level}% (${node.lease.power_source})`;
+
+            const netSpan = document.createElement("span");
+            netSpan.innerHTML = `<i data-lucide="wifi" style="width:10px; height:10px; display:inline-block; vertical-align:middle; margin-right:2px;"></i> ${node.lease.network_status}`;
+
+            const durationSpan = document.createElement("span");
+            durationSpan.innerText = `Lease: ${node.lease.availability} (${node.lease.lease_duration_seconds}s)`;
+
+            leaseDiv.appendChild(batterySpan);
+            leaseDiv.appendChild(netSpan);
+            leaseDiv.appendChild(durationSpan);
+            left.appendChild(leaseDiv);
+
+            if (node.lease.status === "active") {
+                statusBadge.style.background = "rgba(16, 185, 129, 0.15)";
+                statusBadge.style.color = "#10b981";
+                statusBadge.innerText = "Lease Active";
+            } else {
+                statusBadge.style.background = "rgba(239, 68, 68, 0.15)";
+                statusBadge.style.color = "#ef4444";
+                statusBadge.innerText = "Lease Expired";
+            }
+        } else {
+            statusBadge.style.background = "rgba(239, 68, 68, 0.15)";
+            statusBadge.style.color = "#ef4444";
+            statusBadge.innerText = "No Lease";
+        }
+
+        const operatorText = document.createElement("span");
+        operatorText.style.fontSize = "8px";
+        operatorText.style.color = "var(--text-secondary)";
+        operatorText.innerText = `By: ${node.approved_by_operator || "System"}`;
+
+        right.appendChild(statusBadge);
+        right.appendChild(operatorText);
+
+        div.appendChild(left);
+        div.appendChild(right);
+        listContainer.appendChild(div);
+    });
+}
+
+async function initCapabilityRouterUI() {
+    const refreshBtn = document.getElementById("device-routing-refresh-button");
+    if (refreshBtn) {
+        refreshBtn.addEventListener("click", loadRoutingHistoryData);
+    }
+    // Load data initially
+    await loadRoutingHistoryData();
+}
+
+async function initModelProviderRegistryUI() {
+    const registerBtn = document.getElementById("model-provider-register-button");
+    if (registerBtn) {
+        registerBtn.addEventListener("click", registerModelProvider);
+    }
+    
+    const healthCheckBtn = document.getElementById("model-provider-health-check-button");
+    if (healthCheckBtn) {
+        healthCheckBtn.addEventListener("click", runProviderHealthCheck);
+    }
+    
+    const discoverBtn = document.getElementById("model-provider-discover-models-button");
+    if (discoverBtn) {
+        discoverBtn.addEventListener("click", runProviderModelDiscovery);
+    }
+    
+    const approveBtn = document.getElementById("model-provider-approve-button");
+    if (approveBtn) {
+        approveBtn.addEventListener("click", runProviderApproval);
+    }
+    
+    const disableBtn = document.getElementById("model-provider-disable-button");
+    if (disableBtn) {
+        disableBtn.addEventListener("click", runProviderDisabling);
+    }
+    
+    const sendInferenceBtn = document.getElementById("inference-send-button");
+    if (sendInferenceBtn) {
+        sendInferenceBtn.addEventListener("click", sendTestInference);
+    }
+    
+    const multiExecuteBtn = document.getElementById("multi-model-execute-button");
+    if (multiExecuteBtn) {
+        multiExecuteBtn.addEventListener("click", executeMultiModelReasoning);
+    }
+    
+    const savePolicyBtn = document.getElementById("policy-save-button");
+    if (savePolicyBtn) {
+        savePolicyBtn.addEventListener("click", saveAgentModelPolicy);
+    }
+    
+    loadModelProviders();
+    loadInferenceHistory();
+    loadMultiModelHistory();
+    populateModelNodeSelect();
+    loadAgentModelPolicies();
+    loadPolicyDecisions();
+}
+
+async function loadModelProviders() {
+    const listEl = document.getElementById("model-provider-list");
+    const selectEl = document.getElementById("inference-provider-select");
+    if (!listEl) return;
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/models/providers`);
+        if (!res.ok) return;
+        const providers = await res.json();
+        
+        listEl.innerHTML = "";
+        if (selectEl) {
+            selectEl.innerHTML = `<option value="">-- Auto-Route (Capability Matching) --</option>`;
+        }
+        
+        const multiListEl = document.getElementById("multi-model-providers-list");
+        if (multiListEl) {
+            multiListEl.innerHTML = "";
+        }
+        
+        if (providers.length === 0) {
+            listEl.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-secondary); padding: 12px;">No model providers registered.</td></tr>`;
+            return;
+        }
+        
+        providers.forEach(p => {
+            const tr = document.createElement("tr");
+            tr.style.cursor = "pointer";
+            tr.addEventListener("click", () => selectProvider(p));
+            
+            const approvedBadge = p.approved_for_inference
+                ? `<span class="badge" style="background:rgba(16,185,129,0.15); color:var(--accent-teal);">APPROVED</span>`
+                : `<span class="badge" style="background:rgba(239,68,68,0.15); color:#ef4444;">INACTIVE</span>`;
+                
+            const sensitiveText = p.trusted_for_sensitive_context
+                ? `<span style="color:var(--accent-teal);">Trusted</span>`
+                : `<span style="color:var(--text-secondary);">Untrusted</span>`;
+                
+            let healthClass = "text-danger";
+            if (p.health_status === "available") healthClass = "text-success";
+            else if (p.health_status === "degraded") healthClass = "text-warning";
+            
+            tr.innerHTML = `
+                <td><strong>${p.display_name}</strong> <span style="font-size:9px; color:var(--text-secondary);">${p.model_provider_id}</span></td>
+                <td><span style="font-family:monospace;">${p.provider_type}</span></td>
+                <td><span style="font-family:monospace;">${p.default_model || "none"}</span></td>
+                <td>${sensitiveText}</td>
+                <td><span class="${healthClass} font-semibold" style="text-transform:uppercase;">${p.health_status}</span></td>
+                <td>${approvedBadge}</td>
+            `;
+            listEl.appendChild(tr);
+            
+            if (selectEl && p.approved_for_inference) {
+                const opt = document.createElement("option");
+                opt.value = p.model_provider_id;
+                opt.textContent = `${p.display_name} (${p.default_model})`;
+                selectEl.appendChild(opt);
+            }
+            
+            if (multiListEl && p.approved_for_inference) {
+                const label = document.createElement("label");
+                label.style.display = "flex";
+                label.style.alignItems = "center";
+                label.style.gap = "6px";
+                label.style.fontSize = "11px";
+                label.style.color = "#fff";
+                label.style.cursor = "pointer";
+                
+                const input = document.createElement("input");
+                input.type = "checkbox";
+                input.value = p.model_provider_id;
+                input.className = "multi-model-provider-checkbox";
+                input.style.accentColor = "var(--accent-blue)";
+                
+                label.appendChild(input);
+                label.appendChild(document.createTextNode(`${p.display_name} (${p.default_model})`));
+                multiListEl.appendChild(label);
+            }
+        });
+    } catch (err) {
+        console.error("Error loading model providers:", err);
+    }
+}
+
+async function initModelRouterUI() {
+    const base = (typeof API_BASE !== "undefined" && API_BASE) ? API_BASE : "http://127.0.0.1:8000";
+    const statusPill = el("mr-status-pill");
+    const localModel = el("mr-local-model");
+    const localFirstMode = el("mr-local-first-mode");
+    const escalationStatus = el("mr-escalation-status");
+    const auditLog = el("mr-audit-log");
+
+    if (!statusPill) return;
+
+    try {
+      const statusRes = await fetch(`${base}/api/v1/models/status`);
+      if (statusRes.ok) {
+        const data = await statusRes.json();
+        statusPill.textContent = "ONLINE";
+        statusPill.className = "kimi-status-pill kimi-pill-live";
+        localModel.textContent = data.default_model || "none";
+        
+        localFirstMode.textContent = data.local_first ? "ENABLED" : "DISABLED";
+        localFirstMode.style.color = data.local_first ? "#8cff5c" : "#ff5f7a";
+        
+        escalationStatus.textContent = data.paid_models_enabled ? "ENABLED" : "DISABLED";
+        escalationStatus.style.color = data.paid_models_enabled ? "#8cff5c" : "#ff5f7a";
+      } else {
+        statusPill.textContent = "OFFLINE";
+        statusPill.className = "kimi-status-pill kimi-pill-broken";
+      }
+    } catch (err) {
+      console.warn("[Model Router UI] Error fetching status:", err);
+      statusPill.textContent = "OFFLINE";
+      statusPill.className = "kimi-status-pill kimi-pill-broken";
+    }
+
+    try {
+      const auditRes = await fetch(`${base}/api/v1/models/audit-log?limit=5`);
+      if (auditRes.ok) {
+        const logs = await auditRes.json();
+        if (logs && logs.length > 0) {
+          auditLog.textContent = logs.map(l => {
+            const time = l.timestamp ? l.timestamp.split("T")[1].slice(0, 8) : "";
+            return `[${time}] ${l.decision || "route"}: ${l.model || "none"} (${l.task_type || "general"})`;
+          }).join("\n");
+        } else {
+          auditLog.textContent = "No routing events logged.";
+        }
+      }
+    } catch (err) {
+      console.warn("[Model Router UI] Error fetching audit logs:", err);
+    }
+  }
+
+async function initCrewaiIngestionBridge() {
+    const btn = document.getElementById("btn-trigger-crewai-ingest");
+    if (btn) {
+        btn.addEventListener("click", triggerCrewaiIngestion);
+    }
+    await loadCrewaiIngestionStatus();
+    if (typeof initEvidenceGraphUI === 'function') {
+        await initEvidenceGraphUI();
+    }
+}
+
+async function initReleaseDecisionRoom() {
+    const selectEl = document.getElementById("decision-room-candidate-select");
+    const approveBtn = document.getElementById("btn-decision-simulate-approve");
+    const rejectBtn = document.getElementById("btn-decision-simulate-reject");
+    const exportBtn = document.getElementById("btn-export-decision-memo");
+
+    if (selectEl) {
+        selectEl.addEventListener("change", handleCandidateSelectionChange);
+    }
+    if (approveBtn) {
+        approveBtn.addEventListener("click", () => simulateDecision("approved"));
+    }
+    if (rejectBtn) {
+        rejectBtn.addEventListener("click", () => simulateDecision("rejected"));
+    }
+    if (exportBtn) {
+        exportBtn.addEventListener("click", exportDecisionMemo);
+    }
+
+    const requestAuthBtn = document.getElementById("btn-request-authority");
+    const executeRealPromotionBtn = document.getElementById("btn-execute-real-promotion");
+    const cancelAuthBtn = document.getElementById("btn-modal-cancel-authority");
+    const grantAuthBtn = document.getElementById("btn-modal-grant-authority");
+    const confirmAuthChk = document.getElementById("chk-confirm-authority-scope");
+    const modalEl = document.getElementById("authority-request-modal");
+
+    if (requestAuthBtn) {
+        requestAuthBtn.addEventListener("click", () => {
+            if (!currentDecisionRoomCandidate) return;
+            const modalCandidateId = document.getElementById("modal-authority-candidate-id");
+            if (modalCandidateId) modalCandidateId.textContent = currentDecisionRoomCandidate.candidate_packet_id;
+            if (confirmAuthChk) confirmAuthChk.checked = false;
+            if (grantAuthBtn) grantAuthBtn.disabled = true;
+            if (modalEl) modalEl.classList.remove("hidden");
+        });
+    }
+
+    if (confirmAuthChk) {
+        confirmAuthChk.addEventListener("change", (e) => {
+            if (grantAuthBtn) grantAuthBtn.disabled = !e.target.checked;
+        });
+    }
+
+    if (cancelAuthBtn) {
+        cancelAuthBtn.addEventListener("click", () => {
+            if (modalEl) modalEl.classList.add("hidden");
+        });
+    }
+
+    if (grantAuthBtn) {
+        grantAuthBtn.addEventListener("click", async () => {
+            if (!currentDecisionRoomCandidate) return;
+            const isTest = window.location.search.includes("test_mode=true");
+            try {
+                const res = await fetch(`${API_BASE}/api/v1/release/authority/request`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        candidate_packet_id: currentDecisionRoomCandidate.candidate_packet_id,
+                        operator: "Michael Hoch",
+                        is_test: isTest
+                    })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    if (modalEl) modalEl.classList.add("hidden");
+                    alert(`Release Authority Token Granted successfully.\n` +
+                          `Token: ${data.token_value}\n` +
+                          `Expires: ${data.expires_at}`);
+                    await updateReleaseAuthorityUI();
+                } else {
+                    const err = await res.json();
+                    alert("Failed to request authority: " + (err.detail || "Forbidden"));
+                }
+            } catch (err) {
+                alert("Error requesting authority: " + err.message);
+            }
+        });
+    }
+
+    if (executeRealPromotionBtn) {
+        executeRealPromotionBtn.addEventListener("click", async () => {
+            if (!currentDecisionRoomCandidate || !activeAuthorityToken) {
+                alert("No active authority token found.");
+                return;
+            }
+
+            const confirmPromotion = confirm(`Are you sure you want to execute real promotion for candidate ${currentDecisionRoomCandidate.candidate_packet_id}?\n\nThis will trigger git tags mutation, cosign signing, package publishing, and prod deployment simulations.`);
+            if (!confirmPromotion) return;
+
+            try {
+                const res = await fetch(`${API_BASE}/api/v1/release/promote`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        candidate_packet_id: currentDecisionRoomCandidate.candidate_packet_id,
+                        operator: "Michael Hoch",
+                        authority_token: activeAuthorityToken
+                    })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    alert(`Real Promotion Executed Successfully!\n\nDetails:\n` +
+                          `- Git Tag: ${data.details.git_tag}\n` +
+                          `- Signed: ${data.details.signed}\n` +
+                          `- Published: ${data.details.published}\n` +
+                          `- Deployed: ${data.details.deployed}`);
+                    
+                    fetchAndRenderSigningPolicy();
+                    await updateReleaseAuthorityUI();
+                } else {
+                    const err = await res.json();
+                    alert("Promotion failed: " + (err.detail || "Forbidden"));
+                }
+            } catch (err) {
+                alert("Error executing promotion: " + err.message);
+            }
+        });
+    }
+
+    // Phase 25: Execution Plan event listeners
+    const generatePlanBtn = document.getElementById("btn-generate-execution-plan");
+    const exportPlanMdBtn = document.getElementById("btn-export-plan-markdown");
+    const exportPlanJsonBtn = document.getElementById("btn-export-plan-json");
+
+    if (generatePlanBtn) {
+        generatePlanBtn.addEventListener("click", generateExecutionPlan);
+    }
+    if (exportPlanMdBtn) {
+        exportPlanMdBtn.addEventListener("click", exportPlanMarkdown);
+    }
+    if (exportPlanJsonBtn) {
+        exportPlanJsonBtn.addEventListener("click", exportPlanJson);
+    }
+
+    await initReleaseEvidenceRetention();
+    await initReleaseEvidenceArchivePreview();
+    await initReleaseEvidenceArchiveBuildPlan();
+    await initReleaseEvidenceArchiveSealPreview();
+
+    await populateDecisionRoomCandidates();
+}
+
+async function updateReleaseAuthorityUI() {
+    const requestBtn = document.getElementById("btn-request-authority");
+    const executeBtn = document.getElementById("btn-execute-real-promotion");
+    const statusText = document.getElementById("gov-authority-status");
+    const badge = document.getElementById("gov-authority-badge");
+    const detailsContainer = document.getElementById("gov-authority-token-details");
+    const tokenValText = document.getElementById("gov-active-token-val");
+
+    if (!currentDecisionRoomCandidate) {
+        if (requestBtn) requestBtn.disabled = true;
+        if (executeBtn) executeBtn.classList.add("hidden");
+        if (statusText) {
+            statusText.textContent = "ABSENT (Preview Mode)";
+            statusText.style.color = "#ef4444";
+        }
+        if (badge) {
+            badge.textContent = "SIMULATION ONLY";
+            badge.style.backgroundColor = "rgba(239, 68, 68, 0.15)";
+            badge.style.color = "#ef4444";
+            badge.style.borderColor = "rgba(239, 68, 68, 0.3)";
+        }
+        if (detailsContainer) detailsContainer.classList.add("hidden");
+        clearInterval(authorityCountdownInterval);
+        activeAuthorityToken = null;
+
+        const generatePlanBtn = document.getElementById("btn-generate-execution-plan");
+        if (generatePlanBtn) generatePlanBtn.disabled = true;
+        const planDetails = document.getElementById("execution-plan-details");
+        if (planDetails) planDetails.classList.add("hidden");
+        const actionsContainer = document.getElementById("execution-plan-actions-container");
+        if (actionsContainer) actionsContainer.classList.add("hidden");
+        currentGeneratedPlan = null;
+
+        return;
+    }
+
+    const packetId = currentDecisionRoomCandidate.candidate_packet_id;
+
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/authority/state/${packetId}`);
+        if (!res.ok) return;
+        const data = await res.json();
+
+        const generatePlanBtn = document.getElementById("btn-generate-execution-plan");
+        if (generatePlanBtn) generatePlanBtn.disabled = false;
+
+        if (data.status === "active") {
+            activeAuthorityToken = data.token_value;
+            if (requestBtn) requestBtn.disabled = true;
+            if (executeBtn) executeBtn.classList.remove("hidden");
+            if (statusText) {
+                statusText.textContent = `GRANTED (Active - ${data.operator})`;
+                statusText.style.color = "var(--accent-teal)";
+            }
+            if (badge) {
+                badge.textContent = "AUTHORITY ACTIVE";
+                badge.style.backgroundColor = "rgba(20, 184, 166, 0.15)";
+                badge.style.color = "var(--accent-teal)";
+                badge.style.borderColor = "rgba(20, 184, 166, 0.3)";
+            }
+            if (detailsContainer) detailsContainer.classList.remove("hidden");
+            if (tokenValText) tokenValText.textContent = data.token_value;
+
+            startAuthorityCountdown(data.expires_at);
+        } else {
+            activeAuthorityToken = null;
+            if (requestBtn) requestBtn.disabled = false;
+            if (executeBtn) executeBtn.classList.add("hidden");
+            if (statusText) {
+                statusText.textContent = data.status === "expired" ? "EXPIRED (Preview Mode)" : "ABSENT (Preview Mode)";
+                statusText.style.color = "#ef4444";
+            }
+            if (badge) {
+                badge.textContent = "SIMULATION ONLY";
+                badge.style.backgroundColor = "rgba(239, 68, 68, 0.15)";
+                badge.style.color = "#ef4444";
+                badge.style.borderColor = "rgba(239, 68, 68, 0.3)";
+            }
+            if (detailsContainer) detailsContainer.classList.add("hidden");
+            clearInterval(authorityCountdownInterval);
+        }
+    } catch (err) {
+        console.error("Error fetching release authority state:", err);
+    }
+}
+
+function startAuthorityCountdown(expiresAt) {
+    clearInterval(authorityCountdownInterval);
+    const countdownEl = document.getElementById("gov-token-countdown");
+    if (!countdownEl) return;
+
+    const expTime = new Date(expiresAt).getTime();
+
+    function updateTimer() {
+        const now = new Date().getTime();
+        const diff = expTime - now;
+
+        if (diff <= 0) {
+            clearInterval(authorityCountdownInterval);
+            countdownEl.textContent = "00:00";
+            updateReleaseAuthorityUI();
+            return;
+        }
+
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        const minStr = String(minutes).padStart(2, "0");
+        const secStr = String(seconds).padStart(2, "0");
+
+        countdownEl.textContent = `${minStr}:${secStr}`;
+    }
+
+    updateTimer();
+    authorityCountdownInterval = setInterval(updateTimer, 1000);
+}
+
+async function generateExecutionPlan() {
+    if (!currentDecisionRoomCandidate) {
+        alert("No candidate packet selected.");
+        return;
+    }
+
+    const packetId = currentDecisionRoomCandidate.candidate_packet_id;
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/execution-plan/generate`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                candidate_packet_id: packetId,
+                operator: "Michael Hoch"
+            })
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            currentGeneratedPlan = data;
+
+            const tbody = document.getElementById("execution-plan-steps-tbody");
+            if (tbody) {
+                tbody.innerHTML = "";
+                data.steps.forEach(step => {
+                    const row = document.createElement("tr");
+                    row.style.borderBottom = "1px solid rgba(255,255,255,0.03)";
+                    
+                    const badgeColor = step.status === "SATISFIED" ? "var(--accent-teal)" : "var(--accent-orange)";
+                    const badgeBg = step.status === "SATISFIED" ? "rgba(20, 184, 166, 0.15)" : "rgba(239, 68, 68, 0.15)";
+                    const badgeBorder = step.status === "SATISFIED" ? "rgba(20, 184, 166, 0.3)" : "rgba(239, 68, 68, 0.3)";
+
+                    row.innerHTML = `
+                        <td style="padding: 8px 12px; font-weight: bold; color: var(--accent-blue);">${step.step}</td>
+                        <td style="padding: 8px 12px; font-weight: 500; color: #fff;">${step.title}</td>
+                        <td style="padding: 8px 12px;"><code style="font-family: monospace; color: var(--accent-teal); background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 4px; display: inline-block; max-width: 320px; overflow-x: auto; white-space: nowrap;">${step.command}</code></td>
+                        <td style="padding: 8px 12px; color: var(--text-secondary); font-family: monospace;">${step.scope_required}</td>
+                        <td style="padding: 8px 12px; text-align: center;">
+                            <span style="font-size: 10px; font-weight: bold; color: ${badgeColor}; background: ${badgeBg}; border: 1px solid ${badgeBorder}; padding: 2px 8px; border-radius: 4px; display: inline-block;">
+                                ${step.status}
+                            </span>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+
+            const details = document.getElementById("execution-plan-details");
+            if (details) details.classList.remove("hidden");
+            const actionsContainer = document.getElementById("execution-plan-actions-container");
+            if (actionsContainer) actionsContainer.classList.remove("hidden");
+
+        } else {
+            const err = await res.json();
+            alert("Failed to generate execution plan: " + (err.detail || "Unknown error"));
+        }
+    } catch (err) {
+        alert("Error generating execution plan: " + err.message);
+    }
+}
+
+function exportPlanMarkdown() {
+    if (!currentGeneratedPlan) {
+        alert("No plan generated to export.");
+        return;
+    }
+    const blob = new Blob([currentGeneratedPlan.markdown], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `formal-release-execution-plan-${currentGeneratedPlan.candidate_packet_id}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function exportPlanJson() {
+    if (!currentGeneratedPlan) {
+        alert("No plan generated to export.");
+        return;
+    }
+    const blob = new Blob([JSON.stringify(currentGeneratedPlan, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `formal-release-execution-plan-${currentGeneratedPlan.candidate_packet_id}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+async function initReleaseEvidenceRetention() {
+    const scanBtn = document.getElementById("btn-scan-evidence");
+    if (scanBtn) {
+        scanBtn.addEventListener("click", loadEvidenceRetentionList);
+    }
+    await loadEvidenceRetentionList();
+}
+
+async function loadEvidenceRetentionList() {
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/evidence/retention`);
+        if (!res.ok) return;
+        const data = await res.json();
+        const evidence = data.evidence || [];
+        
+        let total = evidence.length;
+        let review = 0;
+        let retained = 0;
+        let archived = 0;
+        let ignored = 0;
+        
+        const tbody = document.getElementById("retention-evidence-tbody");
+        if (tbody) {
+            tbody.innerHTML = "";
+            evidence.forEach(item => {
+                const dec = item.retention_decision;
+                if (dec === "needs-review") review++;
+                else if (dec === "retain") retained++;
+                else if (dec === "archive") archived++;
+                else if (dec === "ignore") ignored++;
+                
+                const row = document.createElement("tr");
+                row.style.borderBottom = "1px solid rgba(255,255,255,0.03)";
+                
+                let typeColor = "var(--text-secondary)";
+                let typeBg = "rgba(255,255,255,0.05)";
+                if (item.artifact_type === "candidate") {
+                    typeColor = "var(--accent-blue)";
+                    typeBg = "rgba(59, 130, 246, 0.15)";
+                } else if (item.artifact_type === "formal-preview") {
+                    typeColor = "var(--accent-purple)";
+                    typeBg = "rgba(168, 85, 247, 0.15)";
+                } else if (item.artifact_type === "attestation") {
+                    typeColor = "var(--accent-orange)";
+                    typeBg = "rgba(249, 115, 22, 0.15)";
+                } else if (item.artifact_type === "release-bundle") {
+                    typeColor = "var(--accent-teal)";
+                    typeBg = "rgba(20, 184, 166, 0.15)";
+                } else if (item.artifact_type === "qa-artifact") {
+                    typeColor = "var(--accent-cyan)";
+                    typeBg = "rgba(6, 182, 212, 0.15)";
+                } else if (item.artifact_type === "temporary-run") {
+                    typeColor = "#64748b";
+                    typeBg = "rgba(100, 116, 139, 0.15)";
+                }
+                
+                const selectId = `select-retention-${item.evidence_id}`;
+                const options = [
+                    { value: "needs-review", label: "NEEDS REVIEW" },
+                    { value: "retain", label: "RETAIN" },
+                    { value: "archive", label: "ARCHIVE" },
+                    { value: "ignore", label: "IGNORE" }
+                ];
+                
+                let selectHtml = `<select id="${selectId}" class="retention-decision-select" style="font-size: 9px; padding: 2px 4px; border-radius: 4px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); color: #fff;">`;
+                options.forEach(opt => {
+                    const sel = opt.value === dec ? "selected" : "";
+                    selectHtml += `<option value="${opt.value}" ${sel}>${opt.label}</option>`;
+                });
+                selectHtml += `</select>`;
+                
+                row.innerHTML = `
+                    <td style="padding: 6px 12px;">
+                        <span style="font-size: 9px; font-weight: bold; color: ${typeColor}; background: ${typeBg}; border: 1px solid ${typeColor}30; padding: 2px 6px; border-radius: 4px;">
+                            ${item.artifact_type.toUpperCase()}
+                        </span>
+                    </td>
+                    <td style="padding: 6px 12px; font-family: monospace; color: #fff; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.source_path}</td>
+                    <td style="padding: 6px 12px; font-family: monospace; color: var(--accent-teal);">${item.file_hash.substring(0, 12)}...</td>
+                    <td style="padding: 6px 12px; color: var(--text-secondary);">${new Date(item.created_at).toLocaleString()}</td>
+                    <td style="padding: 6px 12px; text-align: center;">${selectHtml}</td>
+                `;
+                tbody.appendChild(row);
+                
+                const selectEl = row.querySelector(`#${selectId}`);
+                if (selectEl) {
+                    selectEl.addEventListener("change", async (e) => {
+                        await classifyEvidence(item.evidence_id, e.target.value);
+                    });
+                }
+            });
+        }
+        
+        const totalEl = document.getElementById("retention-count-total");
+        const reviewEl = document.getElementById("retention-count-review");
+        const retainedEl = document.getElementById("retention-count-retained");
+        const archivedEl = document.getElementById("retention-count-archived");
+        const ignoredEl = document.getElementById("retention-count-ignored");
+        
+        if (totalEl) totalEl.textContent = total;
+        if (reviewEl) reviewEl.textContent = review;
+        if (retainedEl) retainedEl.textContent = retained;
+        if (archivedEl) archivedEl.textContent = archived;
+        if (ignoredEl) ignoredEl.textContent = ignored;
+        
+    } catch (err) {
+        console.error("Error loading retention evidence list:", err);
+    }
+}
+
+async function classifyEvidence(evidenceId, decision) {
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/evidence/retention/classify`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                evidence_id: evidenceId,
+                retention_decision: decision
+            })
+        });
+        if (res.ok) {
+            await loadEvidenceRetentionList();
+        } else {
+            const err = await res.json();
+            alert("Failed to classify evidence: " + (err.detail || "Unknown error"));
+        }
+    } catch (err) {
+        alert("Error classifying evidence: " + err.message);
+    }
+}
+
+async function initReleaseEvidenceArchivePreview() {
+    const calcBtn = document.getElementById("btn-calculate-archive-preview");
+    if (calcBtn) {
+        calcBtn.addEventListener("click", calculateArchivePreview);
+    }
+    const exportMdBtn = document.getElementById("btn-export-preview-markdown");
+    if (exportMdBtn) {
+        exportMdBtn.addEventListener("click", exportArchivePreviewMarkdown);
+    }
+    const exportJsonBtn = document.getElementById("btn-export-preview-json");
+    if (exportJsonBtn) {
+        exportJsonBtn.addEventListener("click", exportArchivePreviewJSON);
+    }
+}
+
+async function calculateArchivePreview() {
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/evidence/archive/preview`);
+        if (!res.ok) {
+            const err = await res.json();
+            alert("Failed to calculate archive preview: " + (err.detail || "Unknown error"));
+            return;
+        }
+        const data = await res.json();
+        lastArchivePreviewData = data;
+        
+        const detailsEl = document.getElementById("archive-preview-details");
+        if (detailsEl) {
+            detailsEl.classList.remove("hidden");
+        }
+        
+        const pathEl = document.getElementById("archive-preview-path");
+        if (pathEl) pathEl.textContent = data.planned_archive_path || "-";
+        
+        const checksumEl = document.getElementById("archive-preview-checksum");
+        if (checksumEl) checksumEl.textContent = data.checksum || "-";
+        
+        const inclEl = document.getElementById("archive-preview-count-included");
+        if (inclEl) inclEl.textContent = data.included_count;
+        
+        const exclEl = document.getElementById("archive-preview-count-excluded");
+        if (exclEl) exclEl.textContent = data.excluded_count;
+        
+        const reviewEl = document.getElementById("archive-preview-count-review");
+        if (reviewEl) reviewEl.textContent = data.needs_review_count;
+        
+        const missingEl = document.getElementById("archive-preview-count-missing");
+        if (missingEl) missingEl.textContent = data.missing_count;
+        
+        // Warnings
+        const warningsPanel = document.getElementById("archive-preview-warnings");
+        const warningsList = document.getElementById("archive-preview-warnings-list");
+        if (warningsPanel && warningsList) {
+            warningsList.innerHTML = "";
+            if (data.missing_count > 0 || data.needs_review_count > 0) {
+                warningsPanel.classList.remove("hidden");
+                if (data.missing_count > 0) {
+                    const li = document.createElement("li");
+                    li.innerHTML = `<strong>Missing Artifacts</strong>: ${data.missing_count} items exist in database index but are not present on disk.`;
+                    warningsList.appendChild(li);
+                }
+                if (data.needs_review_count > 0) {
+                    const li = document.createElement("li");
+                    li.innerHTML = `<strong>Needs Review</strong>: ${data.needs_review_count} items require operator retention decisions.`;
+                    warningsList.appendChild(li);
+                }
+            } else {
+                warningsPanel.classList.add("hidden");
+            }
+        }
+        
+        // Table populating
+        const tbody = document.getElementById("archive-preview-included-tbody");
+        if (tbody) {
+            tbody.innerHTML = "";
+            const included = (data.manifest && data.manifest.included_artifacts) || [];
+            // Sort by evidence_id
+            const sorted = [...included].sort((a, b) => a.evidence_id.localeCompare(b.evidence_id));
+            
+            if (sorted.length === 0) {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td colspan="3" style="padding: 12px; text-align: center; color: var(--text-secondary);">No artifacts selected for retention.</td>`;
+                tbody.appendChild(row);
+            } else {
+                sorted.forEach(item => {
+                    const row = document.createElement("tr");
+                    row.style.borderBottom = "1px solid rgba(255,255,255,0.03)";
+                    
+                    let typeColor = "var(--text-secondary)";
+                    let typeBg = "rgba(255,255,255,0.05)";
+                    if (item.artifact_type === "candidate") {
+                        typeColor = "var(--accent-blue)";
+                        typeBg = "rgba(59, 130, 246, 0.15)";
+                    } else if (item.artifact_type === "formal-preview") {
+                        typeColor = "var(--accent-purple)";
+                        typeBg = "rgba(168, 85, 247, 0.15)";
+                    } else if (item.artifact_type === "attestation") {
+                        typeColor = "var(--accent-orange)";
+                        typeBg = "rgba(249, 115, 22, 0.15)";
+                    } else if (item.artifact_type === "release-bundle") {
+                        typeColor = "var(--accent-teal)";
+                        typeBg = "rgba(20, 184, 166, 0.15)";
+                    } else if (item.artifact_type === "qa-artifact") {
+                        typeColor = "var(--accent-cyan)";
+                        typeBg = "rgba(6, 182, 212, 0.15)";
+                    } else if (item.artifact_type === "temporary-run") {
+                        typeColor = "#64748b";
+                        typeBg = "rgba(100, 116, 139, 0.15)";
+                    }
+                    
+                    row.innerHTML = `
+                        <td style="padding: 6px 12px;">
+                            <span style="font-size: 9px; font-weight: bold; color: ${typeColor}; background: ${typeBg}; border: 1px solid ${typeColor}30; padding: 2px 6px; border-radius: 4px;">
+                                ${item.artifact_type.toUpperCase()}
+                            </span>
+                        </td>
+                        <td style="padding: 6px 12px; font-family: monospace; color: #fff; max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.source_path}</td>
+                        <td style="padding: 6px 12px; font-family: monospace; color: var(--accent-teal);">${item.file_hash.substring(0, 12)}...</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+        }
+        
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
+    } catch (err) {
+        console.error("Error calculating archive preview:", err);
+        alert("Error calculating archive preview: " + err.message);
+    }
+}
+
+function exportArchivePreviewMarkdown() {
+    if (!lastArchivePreviewData || !lastArchivePreviewData.markdown) {
+        alert("Please calculate the preview first before exporting.");
+        return;
+    }
+    const blob = new Blob([lastArchivePreviewData.markdown], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "release-evidence-archive-preview.md";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function exportArchivePreviewJSON() {
+    if (!lastArchivePreviewData || !lastArchivePreviewData.manifest) {
+        alert("Please calculate the preview first before exporting.");
+        return;
+    }
+    const blob = new Blob([JSON.stringify(lastArchivePreviewData.manifest, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "release-evidence-archive-preview.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+async function initReleaseEvidenceArchiveBuildPlan() {
+    const genBtn = document.getElementById("btn-generate-archive-build-plan");
+    if (genBtn) {
+        genBtn.addEventListener("click", generateArchiveBuildPlan);
+    }
+    const exportMdBtn = document.getElementById("btn-export-build-plan-markdown");
+    if (exportMdBtn) {
+        exportMdBtn.addEventListener("click", exportBuildPlanMarkdown);
+    }
+    const exportJsonBtn = document.getElementById("btn-export-build-plan-json");
+    if (exportJsonBtn) {
+        exportJsonBtn.addEventListener("click", exportBuildPlanJSON);
+    }
+}
+
+async function generateArchiveBuildPlan() {
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/evidence/archive/build-plan`);
+        if (!res.ok) {
+            const err = await res.json();
+            alert("Failed to generate archive build plan: " + (err.detail || "Unknown error"));
+            return;
+        }
+        const data = await res.json();
+        lastArchiveBuildPlanData = data;
+        
+        const detailsEl = document.getElementById("archive-build-plan-details");
+        if (detailsEl) {
+            detailsEl.classList.remove("hidden");
+        }
+        
+        const statusEl = document.getElementById("archive-build-status");
+        if (statusEl) {
+            statusEl.textContent = data.build_plan_status;
+            if (data.build_plan_status === "READY") {
+                statusEl.style.color = "#10b981";
+                statusEl.style.background = "rgba(16, 185, 129, 0.15)";
+                statusEl.style.border = "1px solid rgba(16, 185, 129, 0.3)";
+            } else {
+                statusEl.style.color = "#f97316";
+                statusEl.style.background = "rgba(249, 115, 22, 0.15)";
+                statusEl.style.border = "1px solid rgba(249, 115, 22, 0.3)";
+            }
+        }
+        
+        const targetPathEl = document.getElementById("archive-build-target-path");
+        if (targetPathEl) targetPathEl.textContent = data.planned_archive_path || "-";
+        
+        const manifestPathEl = document.getElementById("archive-build-manifest-path");
+        if (manifestPathEl) manifestPathEl.textContent = data.planned_manifest_path || "-";
+        
+        const manifestHashEl = document.getElementById("archive-build-manifest-hash");
+        if (manifestHashEl) manifestHashEl.textContent = data.expected_manifest_hash || "-";
+        
+        const archiveChecksumEl = document.getElementById("archive-build-archive-checksum");
+        if (archiveChecksumEl) archiveChecksumEl.textContent = data.expected_archive_checksum || "-";
+        
+        // Warnings
+        const warningsPanel = document.getElementById("archive-build-plan-warnings");
+        const warningsList = document.getElementById("archive-build-plan-warnings-list");
+        if (warningsPanel && warningsList) {
+            warningsList.innerHTML = "";
+            if (data.build_plan_status === "BLOCKED") {
+                warningsPanel.classList.remove("hidden");
+                if (data.has_unclassified_evidence) {
+                    const li = document.createElement("li");
+                    li.innerHTML = `<strong>Unclassified Evidence</strong>: One or more evidence items are in "needs-review" state. Classification is required.`;
+                    warningsList.appendChild(li);
+                }
+                if (data.has_missing_evidence) {
+                    const li = document.createElement("li");
+                    li.innerHTML = `<strong>Missing Evidence</strong>: One or more evidence items exist in database but are not present on disk.`;
+                    warningsList.appendChild(li);
+                }
+            } else {
+                warningsPanel.classList.add("hidden");
+            }
+        }
+        
+        // Operations Table
+        const tbody = document.getElementById("archive-build-operations-tbody");
+        if (tbody) {
+            tbody.innerHTML = "";
+            const operations = data.operations || [];
+            
+            if (operations.length === 0) {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td colspan="6" style="padding: 12px; text-align: center; color: var(--text-secondary);">No build operations planned.</td>`;
+                tbody.appendChild(row);
+            } else {
+                operations.forEach(op => {
+                    const row = document.createElement("tr");
+                    row.style.borderBottom = "1px solid rgba(255,255,255,0.03)";
+                    
+                    let actionColor = "var(--text-secondary)";
+                    if (op.action === "INITIALIZE_DIRECTORY") actionColor = "var(--accent-blue)";
+                    else if (op.action === "GENERATE_MANIFEST") actionColor = "var(--accent-cyan)";
+                    else if (op.action === "PACKAGE_FILE") actionColor = "var(--accent-teal)";
+                    else if (op.action === "COMPRESS_ARCHIVE") actionColor = "var(--accent-purple)";
+                    
+                    row.innerHTML = `
+                        <td style="padding: 6px 12px; font-family: monospace; color: var(--text-secondary);">${op.step}</td>
+                        <td style="padding: 6px 12px;">
+                            <span style="font-size: 9px; font-weight: bold; color: ${actionColor};">
+                                ${op.action}
+                            </span>
+                        </td>
+                        <td style="padding: 6px 12px; font-family: monospace; color: #fff; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${op.source}</td>
+                        <td style="padding: 6px 12px; font-family: monospace; color: #fff; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${op.destination}</td>
+                        <td style="padding: 6px 12px; text-align: right; font-family: monospace; color: var(--accent-teal);">${op.size_bytes.toLocaleString()}</td>
+                        <td style="padding: 6px 12px; color: var(--text-secondary); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${op.description}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+        }
+        
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
+    } catch (err) {
+        console.error("Error generating archive build plan:", err);
+        alert("Error generating archive build plan: " + err.message);
+    }
+}
+
+function exportBuildPlanMarkdown() {
+    if (!lastArchiveBuildPlanData || !lastArchiveBuildPlanData.markdown) {
+        alert("Please generate the build plan first before exporting.");
+        return;
+    }
+    const blob = new Blob([lastArchiveBuildPlanData.markdown], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "release-evidence-archive-build-plan.md";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function exportBuildPlanJSON() {
+    if (!lastArchiveBuildPlanData || !lastArchiveBuildPlanData.manifest_payload) {
+        alert("Please generate the build plan first before exporting.");
+        return;
+    }
+    const blob = new Blob([JSON.stringify(lastArchiveBuildPlanData.manifest_payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "release-evidence-archive-build-plan.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+async function initReleaseEvidenceArchiveSealPreview() {
+    const genBtn = document.getElementById("btn-generate-archive-seal-preview");
+    if (genBtn) {
+        genBtn.addEventListener("click", generateArchiveSealPreview);
+    }
+    const exportMdBtn = document.getElementById("btn-export-seal-preview-markdown");
+    if (exportMdBtn) {
+        exportMdBtn.addEventListener("click", exportSealPreviewMarkdown);
+    }
+    const exportJsonBtn = document.getElementById("btn-export-seal-preview-json");
+    if (exportJsonBtn) {
+        exportJsonBtn.addEventListener("click", exportSealPreviewJSON);
+    }
+}
+
+async function generateArchiveSealPreview() {
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/evidence/archive/seal-preview`);
+        if (!res.ok) {
+            const err = await res.json();
+            alert("Failed to generate archive seal preview: " + (err.detail || "Unknown error"));
+            return;
+        }
+        const data = await res.json();
+        lastArchiveSealPreviewData = data;
+        
+        const detailsEl = document.getElementById("archive-seal-preview-details");
+        if (detailsEl) {
+            detailsEl.classList.remove("hidden");
+        }
+        
+        const statusEl = document.getElementById("archive-seal-status");
+        if (statusEl) {
+            statusEl.textContent = data.seal_readiness;
+            if (data.seal_readiness === "READY") {
+                statusEl.style.color = "#10b981";
+                statusEl.style.background = "rgba(16, 185, 129, 0.15)";
+                statusEl.style.border = "1px solid rgba(16, 185, 129, 0.3)";
+            } else {
+                statusEl.style.color = "#f97316";
+                statusEl.style.background = "rgba(249, 115, 22, 0.15)";
+                statusEl.style.border = "1px solid rgba(249, 115, 22, 0.3)";
+            }
+        }
+        
+        const candidateIdEl = document.getElementById("archive-seal-candidate-id");
+        if (candidateIdEl) candidateIdEl.textContent = data.candidate_packet_id || "-";
+        
+        const sealIdEl = document.getElementById("archive-seal-id");
+        if (sealIdEl) sealIdEl.textContent = data.seal_id || "-";
+        
+        const archiveIdEl = document.getElementById("archive-seal-archive-id");
+        if (archiveIdEl) archiveIdEl.textContent = data.archive_id || "-";
+        
+        const manifestHashEl = document.getElementById("archive-seal-manifest-hash");
+        if (manifestHashEl) manifestHashEl.textContent = data.manifest_hash || "-";
+        
+        const custodyPathEl = document.getElementById("archive-seal-custody-path");
+        if (custodyPathEl) custodyPathEl.textContent = data.custody_path || "-";
+        
+        const operatorEl = document.getElementById("archive-seal-operator");
+        if (operatorEl) operatorEl.textContent = data.operator || "-";
+        
+        // Warnings
+        const warningsPanel = document.getElementById("archive-seal-preview-warnings");
+        const warningsList = document.getElementById("archive-seal-preview-warnings-list");
+        if (warningsPanel && warningsList) {
+            warningsList.innerHTML = "";
+            if (data.seal_readiness === "BLOCKED") {
+                warningsPanel.classList.remove("hidden");
+                const blockers = data.blockers || [];
+                if (blockers.length === 0) {
+                    const li = document.createElement("li");
+                    li.innerHTML = `Blocked by custody verification constraints.`;
+                    warningsList.appendChild(li);
+                } else {
+                    blockers.forEach(b => {
+                        const li = document.createElement("li");
+                        li.innerHTML = `<strong>Blocker</strong>: ${b}`;
+                        warningsList.appendChild(li);
+                    });
+                }
+            } else {
+                warningsPanel.classList.add("hidden");
+            }
+        }
+        
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
+    } catch (err) {
+        console.error("Error generating archive seal preview:", err);
+        alert("Error generating archive seal preview: " + err.message);
+    }
+}
+
+function exportSealPreviewMarkdown() {
+    if (!lastArchiveSealPreviewData || !lastArchiveSealPreviewData.markdown) {
+        alert("Please generate the seal preview first before exporting.");
+        return;
+    }
+    const blob = new Blob([lastArchiveSealPreviewData.markdown], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "release-evidence-archive-seal-preview.md";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function exportSealPreviewJSON() {
+    if (!lastArchiveSealPreviewData || !lastArchiveSealPreviewData.seal_payload) {
+        alert("Please generate the seal preview first before exporting.");
+        return;
+    }
+    const blob = new Blob([JSON.stringify(lastArchiveSealPreviewData.seal_payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "release-evidence-archive-seal-preview.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+async function fetchAndRenderGovernanceSummary() {
+    try {
+        if (typeof loadApprovedPreviewsForDryRun === 'function') {
+            loadApprovedPreviewsForDryRun();
+        }
+        if (typeof loadSealDryRunHistory === 'function') {
+            loadSealDryRunHistory();
+        }
+        if (typeof loadSealDryRunsForAttestation === 'function') {
+            loadSealDryRunsForAttestation();
+        }
+        if (typeof loadAttestationHistory === 'function') {
+            loadAttestationHistory();
+        }
+        if (typeof fetchAndRenderCrewaiArtifacts === 'function') {
+            fetchAndRenderCrewaiArtifacts();
+        }
+        const res = await fetch(`${API_BASE}/api/v1/governance/summary`);
+        if (!res.ok) {
+            console.error("Failed to fetch governance summary");
+            return;
+        }
+        const data = await res.json();
+        
+        // 1. Pending count & list
+        const pendingCountEl = document.getElementById("gov-pending-count");
+        if (pendingCountEl) {
+            pendingCountEl.textContent = data.pending_gates.length;
+        }
+        
+        const pendingListEl = document.getElementById("gov-pending-list");
+        if (pendingListEl) {
+            pendingListEl.innerHTML = "";
+            if (data.pending_gates.length === 0) {
+                pendingListEl.innerHTML = `<p style="color:var(--text-secondary); text-align:center; padding: 20px; font-size:12px; margin:0;">No pending approval requests.</p>`;
+            } else {
+                data.pending_gates.forEach(gate => {
+                    const card = document.createElement("div");
+                    card.className = "card";
+                    card.style.background = "rgba(255,255,255,0.02)";
+                    card.style.border = "1px solid var(--border-glass)";
+                    card.style.borderRadius = "6px";
+                    card.style.padding = "10px";
+                    card.style.display = "flex";
+                    card.style.flexDirection = "column";
+                    card.style.gap = "6px";
+                    
+                    card.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px;">
+                            <strong style="color:var(--accent-yellow);">${gate.action_type.toUpperCase()}</strong>
+                            <span style="color:var(--text-secondary);">${gate.created_at}</span>
+                        </div>
+                        <div style="font-size:12px; color:#fff;"><strong>Request ID:</strong> ${gate.request_id}</div>
+                        <div style="font-size:11px; color:var(--text-secondary); line-height:1.4;">Requested by: ${gate.requested_by} (Risk: ${gate.risk_level})</div>
+                        <div style="display:flex; gap:10px; margin-top:4px;">
+                            <button class="btn btn-xs btn-primary" onclick="window.submitGovernanceApproval('${gate.approval_id}', 'approve')">Approve</button>
+                            <button class="btn btn-xs btn-danger" onclick="window.submitGovernanceApproval('${gate.approval_id}', 'reject')">Reject</button>
+                        </div>
+                    `;
+                    pendingListEl.appendChild(card);
+                });
+            }
+        }
+        
+        // 2. Blockers status & list
+        const blockersStatusEl = document.getElementById("gov-blockers-status");
+        if (blockersStatusEl) {
+            if (data.formal_release_blockers.length === 0) {
+                blockersStatusEl.textContent = "PASS";
+                blockersStatusEl.style.color = "var(--accent-teal)";
+                blockersStatusEl.style.background = "rgba(16,185,129,0.15)";
+            } else {
+                blockersStatusEl.textContent = "BLOCK";
+                blockersStatusEl.style.color = "#ef4444";
+                blockersStatusEl.style.background = "rgba(239,68,68,0.15)";
+            }
+        }
+        
+        const blockersListEl = document.getElementById("gov-blockers-list");
+        if (blockersListEl) {
+            blockersListEl.innerHTML = "";
+            if (data.formal_release_blockers.length === 0) {
+                blockersListEl.innerHTML = `<li style="display:flex; align-items:center; gap:8px; color:var(--accent-teal);"><i data-lucide="check-circle" style="width:14px; height:14px;"></i> All finalization gates satisfy release policy constraints.</li>`;
+            } else {
+                data.formal_release_blockers.forEach(blocker => {
+                    const li = document.createElement("li");
+                    li.style.display = "flex";
+                    li.style.alignItems = "center";
+                    li.style.gap = "8px";
+                    li.style.color = "#ef4444";
+                    let label = blocker;
+                    if (blocker === "dirty_working_tree") label = "Git Working Tree is Dirty (Unwaived)";
+                    else if (blocker === "qa_not_passed") label = "QA / Verification Pack is Not Passing (Unwaived)";
+                    else if (blocker === "signing_policy_not_passed") label = "Release Artifacts Are Unsigned (Unwaived)";
+                    else if (blocker === "tag_missing") label = "Git Release Tag is Missing (Unwaived)";
+                    else if (blocker === "tag_stale") label = "Git Release Tag points to non-HEAD commit (Unwaived)";
+                    else if (blocker === "operator_approval_missing") label = "Formal Channel Promotion requires Operator Gate";
+                    
+                    li.innerHTML = `<i data-lucide="alert-triangle" style="width:14px; height:14px; flex-shrink:0;"></i> <span>${label}</span>`;
+                    blockersListEl.appendChild(li);
+                });
+            }
+        }
+        
+        // 3. Active Policies & Waivers
+        const activeChanEl = document.getElementById("gov-active-channel");
+        if (activeChanEl) {
+            activeChanEl.textContent = data.active_channel;
+            if (data.active_channel === "formal") {
+                activeChanEl.style.color = "var(--accent-teal)";
+            } else if (data.active_channel === "candidate") {
+                activeChanEl.style.color = "var(--accent-yellow)";
+            } else {
+                activeChanEl.style.color = "var(--accent-blue)";
+            }
+        }
+        
+        const signingWaiverEl = document.getElementById("gov-signing-waiver");
+        if (signingWaiverEl) {
+            signingWaiverEl.textContent = data.signing_waiver;
+            if (data.signing_waiver === "waived") {
+                signingWaiverEl.style.color = "var(--accent-yellow)";
+            } else {
+                signingWaiverEl.style.color = "#fff";
+            }
+        }
+        
+        const tagAlignmentEl = document.getElementById("gov-tag-alignment");
+        if (tagAlignmentEl) {
+            tagAlignmentEl.textContent = data.tag_alignment_status;
+            if (data.tag_alignment_status === "TAG_AT_HEAD") {
+                tagAlignmentEl.style.color = "var(--accent-teal)";
+            } else {
+                tagAlignmentEl.style.color = "#ef4444";
+            }
+        }
+        
+        const testBypassEl = document.getElementById("gov-test-bypass-active");
+        if (testBypassEl) {
+            testBypassEl.textContent = data.test_bypass_hardening;
+            if (data.test_bypass_hardening === "ACTIVE") {
+                testBypassEl.style.color = "var(--accent-blue)";
+            } else {
+                testBypassEl.style.color = "var(--text-secondary)";
+            }
+        }
+        
+        // 4. Capability Enforcement Decisions
+        const capBody = document.getElementById("gov-capability-tbody");
+        if (capBody) {
+            capBody.innerHTML = "";
+            if (data.capability_decisions.length === 0) {
+                capBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-secondary); padding: 12px;">No capability decisions registered.</td></tr>`;
+            } else {
+                data.capability_decisions.forEach(item => {
+                    const row = document.createElement("tr");
+                    const timeStr = item.timestamp ? item.timestamp.substring(11, 19) : "";
+                    const allowedClass = item.decision === "ALLOW" ? "text-success" : (item.decision === "BLOCK" ? "text-danger" : "text-warning");
+                    row.innerHTML = `
+                        <td style="color:var(--text-secondary);">${timeStr}</td>
+                        <td><strong>${item.agent_id}</strong></td>
+                        <td style="font-family:monospace;">${item.tool}</td>
+                        <td><span class="${allowedClass} font-semibold">${item.decision}</span></td>
+                        <td style="color:var(--text-secondary);">${item.reason}</td>
+                    `;
+                    capBody.appendChild(row);
+                });
+            }
+        }
+        
+        // 5. Replay Protection Evidence
+        const replayBody = document.getElementById("gov-replay-tbody");
+        if (replayBody) {
+            replayBody.innerHTML = "";
+            if (data.replay_protection_evidence.length === 0) {
+                replayBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-secondary); padding: 12px;">No replay protection evidence recorded.</td></tr>`;
+            } else {
+                data.replay_protection_evidence.forEach(item => {
+                    const row = document.createElement("tr");
+                    const timeStr = item.timestamp ? item.timestamp.substring(11, 19) : "";
+                    row.innerHTML = `
+                        <td style="font-family:monospace; color:var(--accent-teal);">${item.decision_id}</td>
+                        <td style="font-family:monospace; color:var(--text-secondary);">${item.nonce ? item.nonce.substring(0, 16) + '...' : 'none'}</td>
+                        <td><span style="font-family:monospace;">${item.prior_state}</span> ➔ <span style="font-family:monospace; font-weight:600; color:var(--accent-teal);">${item.next_state}</span></td>
+                        <td style="color:var(--text-secondary);">${timeStr}</td>
+                    `;
+                    replayBody.appendChild(row);
+                });
+            }
+        }
+        
+        // 6. Historical Operator Decision Ledger
+        const ledgerBody = document.getElementById("gov-ledger-tbody");
+        if (ledgerBody) {
+            ledgerBody.innerHTML = "";
+            if (data.decision_ledger.length === 0) {
+                ledgerBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-secondary); padding: 12px;">No historical operator decisions recorded in ledger.</td></tr>`;
+            } else {
+                data.decision_ledger.forEach(item => {
+                    const row = document.createElement("tr");
+                    const colorClass = item.decision === "approved" ? "text-success" : "text-danger";
+                    row.innerHTML = `
+                        <td style="font-family:monospace; color:var(--accent-blue);">${item.decision_id}</td>
+                        <td><strong>${escapeHtml(item.operator)}</strong></td>
+                        <td style="font-family:monospace;">${item.action_type}</td>
+                        <td><span class="${colorClass} font-semibold">${item.decision.toUpperCase()}</span></td>
+                        <td style="color:var(--text-secondary);">${escapeHtml(item.reason || "none")}</td>
+                        <td style="color:var(--text-secondary);">${item.timestamp}</td>
+                    `;
+                    ledgerBody.appendChild(row);
+                });
+            }
+        }
+        
+        // Render candidate packets list as well
+        if (typeof fetchAndRenderCandidatePackets === "function") {
+            fetchAndRenderCandidatePackets();
+        }
+
+        // Trigger lucide icons rendering
+        if (typeof lucide !== "undefined" && typeof lucide.createIcons === "function") {
+            lucide.createIcons();
+        }
+        
+    } catch (err) {
+        console.error("Error fetching governance summary:", err);
+    }
+}
+
+async function checkApprovalStatusForPreview(formalPreviewId) {
+    const requestApprovalBtn = document.getElementById("formal-preview-request-approval-button");
+    const container = document.getElementById("formal-preview-approval-report-container");
+    const statusEl = document.getElementById("formal-preview-approval-status");
+    const reportPathEl = document.getElementById("formal-preview-approval-report-path");
+    
+    if (!formalPreviewId || formalPreviewId === "None") {
+        if (requestApprovalBtn) requestApprovalBtn.style.display = "none";
+        if (container) container.style.display = "none";
+        return;
+    }
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/governance/summary`);
+        if (!res.ok) return;
+        const data = await res.json();
+        
+        const targetReqId = `channel_decision:formal:${formalPreviewId}`;
+        
+        // 1. Check if pending
+        const pendingGate = data.pending_gates.find(g => g.request_id === targetReqId);
+        if (pendingGate) {
+            if (requestApprovalBtn) requestApprovalBtn.style.display = "none";
+            if (container) container.style.display = "flex";
+            if (statusEl) {
+                statusEl.textContent = "PENDING";
+                statusEl.style.color = "var(--accent-yellow)";
+            }
+            if (reportPathEl) reportPathEl.textContent = "none (awaiting decision)";
+            return;
+        }
+        
+        // 2. Check if decided in historical decision ledger
+        const historicalDecision = data.decision_ledger.find(d => d.request_id === targetReqId);
+        if (historicalDecision) {
+            if (requestApprovalBtn) requestApprovalBtn.style.display = "none";
+            if (container) container.style.display = "flex";
+            if (statusEl) {
+                const dec = historicalDecision.decision.toUpperCase();
+                statusEl.textContent = dec;
+                statusEl.style.color = dec === "APPROVED" ? "var(--accent-teal)" : "#ef4444";
+            }
+            if (reportPathEl) {
+                reportPathEl.textContent = `dist/formal-previews/${formalPreviewId}/formal_release_approval_report.json`;
+            }
+            return;
+        }
+        
+        // 3. No gate exists yet
+        if (requestApprovalBtn) requestApprovalBtn.style.display = "block";
+        if (container) container.style.display = "none";
+        
+    } catch (err) {
+        console.error("Error checking preview approval status:", err);
+    }
+}
+
+function initFormalReleaseSealDryRun() {
+    const executeBtn = document.getElementById("seal-dry-run-execute-button");
+    if (executeBtn) {
+        executeBtn.addEventListener("click", executeSealDryRun);
+    }
+    
+    loadApprovedPreviewsForDryRun();
+    loadSealDryRunHistory();
+}
+
+async function loadApprovedPreviewsForDryRun() {
+    const selectEl = document.getElementById("seal-dry-run-preview-select");
+    if (!selectEl) return;
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/formal-preview`);
+        if (!res.ok) return;
+        const previews = await res.json();
+        
+        selectEl.innerHTML = '<option value="">-- Select Approved Formal Preview --</option>';
+        
+        const approvedPreviews = previews.filter(p => p.operator_approval_status === "approved");
+        if (approvedPreviews.length === 0) {
+            selectEl.innerHTML = '<option value="">-- No approved previews found --</option>';
+            return;
+        }
+        
+        approvedPreviews.forEach(p => {
+            const opt = document.createElement("option");
+            opt.value = p.formal_preview_id;
+            opt.textContent = `${p.formal_preview_id} (Version: ${p.candidate_version})`;
+            selectEl.appendChild(opt);
+        });
+    } catch (err) {
+        console.error("Error loading approved previews for dry run:", err);
+    }
+}
+
+async function executeSealDryRun() {
+    const selectEl = document.getElementById("seal-dry-run-preview-select");
+    const operatorInput = document.getElementById("seal-dry-run-operator-input");
+    const executeBtn = document.getElementById("seal-dry-run-execute-button");
+    
+    if (!selectEl || !selectEl.value) {
+        alert("Please select an approved formal preview first.");
+        return;
+    }
+    
+    const previewId = selectEl.value;
+    const operator = operatorInput ? operatorInput.value : "Michael Hoch";
+    
+    if (executeBtn) {
+        executeBtn.disabled = true;
+        executeBtn.textContent = "Executing Dry Run...";
+    }
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/formal-preview/${previewId}/seal-dry-run`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ operator })
+        });
+        
+        if (res.ok) {
+            const data = await res.json();
+            
+            const statusEl = document.getElementById("seal-dry-run-status");
+            const idEl = document.getElementById("seal-dry-run-id");
+            const manifestPathEl = document.getElementById("seal-dry-run-manifest-path");
+            const reportPathEl = document.getElementById("seal-dry-run-report-path");
+            const blockersEl = document.getElementById("seal-dry-run-blockers");
+            
+            if (statusEl) {
+                statusEl.textContent = data.seal_status;
+                statusEl.style.color = data.seal_status === "SEAL_READY" ? "var(--accent-teal)" : "#ef4444";
+            }
+            if (idEl) idEl.textContent = data.seal_dry_run_id;
+            if (manifestPathEl) manifestPathEl.textContent = data.seal_manifest_path;
+            if (reportPathEl) reportPathEl.textContent = data.seal_report_path;
+            
+            if (blockersEl) {
+                blockersEl.innerHTML = "";
+                if (data.formal_release_blockers.length === 0) {
+                    blockersEl.innerHTML = `<li style="color: var(--accent-teal);">✅ No remaining blockers - Ready to seal!</li>`;
+                } else {
+                    data.formal_release_blockers.forEach(b => {
+                        const li = document.createElement("li");
+                        li.textContent = `• ${b}`;
+                        blockersEl.appendChild(li);
+                    });
+                }
+            }
+            
+            alert(`Seal Dry Run completed: ${data.seal_status}. Protects no-mutation guarantee.`);
+            loadSealDryRunHistory();
+            if (typeof loadSealDryRunsForAttestation === 'function') {
+                loadSealDryRunsForAttestation();
+            }
+        } else {
+            const errData = await res.json();
+            alert("Failed to execute Seal Dry Run: " + (errData.detail || "Unknown error"));
+        }
+    } catch (err) {
+        alert("Error executing Seal Dry Run: " + err.message);
+    } finally {
+        if (executeBtn) {
+            executeBtn.disabled = false;
+            executeBtn.textContent = "Execute Seal Dry Run";
+        }
+    }
+}
+
+async function loadSealDryRunHistory() {
+    const historyTbody = document.getElementById("seal-dry-run-history-list");
+    if (!historyTbody) return;
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/v1/release/seal-dry-run`);
+        if (!res.ok) return;
+        const runs = await res.json();
+        
+        historyTbody.innerHTML = "";
+        if (runs.length === 0) {
+            historyTbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-secondary);">No seal dry runs executed yet.</td></tr>`;
+            return;
+        }
+        
+        runs.forEach(r => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td style="font-family: monospace; color: var(--accent-teal);">${r.seal_dry_run_id}</td>
+                <td style="font-family: monospace;">${r.formal_preview_id}</td>
+                <td>v${r.candidate_version}</td>
+                <td style="font-weight: 600; color: ${r.seal_status === 'SEAL_READY' ? 'var(--accent-teal)' : '#ef4444'}">${r.seal_status}</td>
+                <td>${r.operator}</td>
+                <td>${r.created_at}</td>
+            `;
+            historyTbody.appendChild(tr);
+        });
+    } catch (err) {
+        console.error("Error loading seal dry run history:", err);
+    }
+}
+
+function renderClusterCommandMapV2(nodes) {
+    if (!nodes) nodes = currentNodes;
+    renderAgentCommandRail();
+    renderDeviceFleetDrawer(nodes);
+    renderClusterTopologyGroups(nodes);
+}
+
+function groupClusterDevicesByFleet(nodes) {
+    const core = [];
+    const mobile = [];
+    const edge = [];
+    const service = [];
+    
+    nodes.forEach(node => {
+        const group = node.fleet_group || "";
+        if (group === "core_compute" || node.id === "L1" || node.id === "L2" || node.id === "L3" || node.id === "W1") {
+            core.push(node);
+        } else if (group === "mobile_fleet" || (node.os && node.os.toLowerCase().includes("ipad")) || node.id === "IPAD" || node.id.includes("IPAD")) {
+            mobile.push(node);
+        } else if (group === "edge_phone" || (node.os && (node.os.toLowerCase().includes("ios") || node.os.toLowerCase().includes("iphone"))) || node.id === "IPHONE") {
+            edge.push(node);
+        } else {
+            service.push(node);
+        }
+    });
+    
+    return { core, mobile, edge, service };
+}
+
+function renderDeviceFleetDrawer(nodes) {
+    const coreSection = document.getElementById("cluster-device-core-section");
+    const mobileSection = document.getElementById("cluster-device-mobile-section");
+    const edgeSection = document.getElementById("cluster-device-edge-section");
+    
+    if (!coreSection || !mobileSection || !edgeSection) return;
+    
+    const { core, mobile, edge } = groupClusterDevicesByFleet(nodes);
+    
+    const buildCards = (groupNodes) => {
+        return groupNodes.map(node => {
+            const modelText = node.name.includes("MTXQ2LL/A") ? "MTXQ2LL/A" :
+                              node.name.includes("MUU62LL/A") ? "MUU62LL/A" :
+                              node.name.includes("MGNV2LL/A") ? "MGNV2LL/A" : "";
+            
+            const isSelected = selectedNodeId === node.id ? "selected" : "";
+            
+            let statusColor = "#6b7280";
+            if (node.status === "Active" || node.status === "OK") statusColor = "#10b981";
+            else if (node.status === "Reasoning") statusColor = "#3b82f6";
+            else if (node.status === "Self-Healing") statusColor = "#a855f7";
+            else if (node.status === "Triaging" || node.status === "Warning") statusColor = "#f59e0b";
+            
+            return `
+                <div class="fleet-device-card ${isSelected}" id="fleet-card-${node.id}" onclick="selectClusterNode('${node.id}')" style="margin-bottom: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 10px; font-weight: bold; color: #fff;">${escapeHtml(node.name)}</span>
+                        <span style="width: 5px; height: 5px; border-radius: 50%; background: ${statusColor}; display: inline-block;"></span>
+                    </div>
+                    ${modelText ? `<div style="font-size: 8px; font-family: monospace; color: var(--accent-teal); margin-top: 1px;">${modelText}</div>` : ""}
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 8px; color: var(--text-secondary); margin-top: 2px;">
+                        <span>${node.ip}</span>
+                        <span>CPU: ${node.cpu_usage || 0}%</span>
+                    </div>
+                </div>
+            `;
+        }).join("");
+    };
+    
+    coreSection.innerHTML = `
+        <div class="fleet-section-title"><i data-lucide="cpu" style="width: 10px; height: 10px;"></i> Core Compute</div>
+        ${buildCards(core)}
+    `;
+    mobileSection.innerHTML = `
+        <div class="fleet-section-title"><i data-lucide="tablet" style="width: 10px; height: 10px;"></i> Mobile Fleet</div>
+        ${buildCards(mobile)}
+    `;
+    edgeSection.innerHTML = `
+        <div class="fleet-section-title"><i data-lucide="smartphone" style="width: 10px; height: 10px;"></i> Edge Phones</div>
+        ${buildCards(edge)}
+    `;
+    
+    lucide.createIcons();
+}
+
+function renderSelectedNodeInspector(node) {
+    const inspector = document.getElementById("cluster-selected-node-inspector");
+    if (!inspector) return;
+    
+    if (!node) {
+        inspector.innerHTML = `<span style="font-size: 11px; color: var(--text-secondary); font-style: italic;">Select a node from the map or fleet list to inspect details.</span>`;
+        return;
+    }
+    
+    let statusColor = "#6b7280";
+    if (node.status === "Active" || node.status === "OK") statusColor = "#10b981";
+    else if (node.status === "Reasoning") statusColor = "#3b82f6";
+    else if (node.status === "Self-Healing") statusColor = "#a855f7";
+    else if (node.status === "Triaging" || node.status === "Warning") statusColor = "#f59e0b";
+
+    const modelVal = node.name.includes("MTXQ2LL/A") ? "MTXQ2LL/A" :
+                     node.name.includes("MUU62LL/A") ? "MUU62LL/A" :
+                     node.name.includes("MGNV2LL/A") ? "MGNV2LL/A" : 
+                     (node.id === "IPAD" ? "IPAD PRO 12\"" : "Standard Node");
+    
+    const linkedAgents = node.agents && node.agents.length > 0 
+        ? node.agents.map(a => a.name).join(", ") 
+        : "No active agents";
+        
+    const recommendedAction = node.status === "Warning" || node.status === "Triaging" 
+        ? "Initialize automated self-healing protocol or dispatch warning alert." 
+        : "Vitals sync stable. No operator actions required.";
+    
+    inspector.innerHTML = `
+        <div style="width: 100%; display: grid; grid-template-columns: repeat(4, 1fr) 2fr; gap: 12px; text-align: left; font-family: monospace; font-size: 10px;">
+            <div class="inspector-field">
+                <span class="inspector-label">NODE</span>
+                <span class="inspector-value" style="color: var(--accent-teal);">${escapeHtml(node.name)}</span>
+            </div>
+            <div class="inspector-field">
+                <span class="inspector-label">MODEL / IP</span>
+                <span class="inspector-value">${modelVal} (${node.ip})</span>
+            </div>
+            <div class="inspector-field">
+                <span class="inspector-label">STATUS / LOAD</span>
+                <span class="inspector-value" style="display: flex; align-items: center; gap: 4px;">
+                    <span style="width: 5px; height: 5px; border-radius: 50%; background: ${statusColor}; display: inline-block;"></span>
+                    ${node.status} (CPU: ${node.cpu_usage || 0}%)
+                </span>
+            </div>
+            <div class="inspector-field">
+                <span class="inspector-label">ACTIVE AGENTS</span>
+                <span class="inspector-value" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 130px;" title="${linkedAgents}">${linkedAgents}</span>
+            </div>
+            <div class="inspector-field">
+                <span class="inspector-label">RECOMMENDED ACTION</span>
+                <span class="inspector-value" style="color: #f59e0b;">${recommendedAction}</span>
+            </div>
+        </div>
+    `;
+}
+
+function selectClusterNode(nodeId) {
+    selectedNodeId = nodeId;
+    
+    document.querySelectorAll(".fleet-device-card").forEach(card => {
+        card.classList.toggle("selected", card.id === `fleet-card-${nodeId}`);
+    });
+    
+    const node = currentNodes.find(n => n.id === nodeId);
+    renderSelectedNodeInspector(node);
+    
+    renderClusterTopologyGroups(currentNodes);
+}
+
+function toggleClusterTopologyGroup(groupId) {
+    if (groupId === "mobile") {
+        mobileGroupExpanded = !mobileGroupExpanded;
+    } else if (groupId === "core") {
+        coreGroupExpanded = !coreGroupExpanded;
+    } else if (groupId === "edge") {
+        edgeGroupExpanded = !edgeGroupExpanded;
+    }
+    renderClusterTopologyGroups(currentNodes);
+}
+
+function fitClusterTopologyViewport() {
+    panX = 0;
+    panY = 0;
+    scale = 1.0;
+    const svg = mermaidGraph.querySelector("svg");
+    if (svg) {
+        svg.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+    }
+}
+
+async function refreshClusterTopologyStatus() {
+    try {
+        const response = await fetch(`${API_BASE}/api/status`);
+        if (response.ok) {
+            const data = await response.json();
+            updateUI(data);
+        }
+    } catch (err) {
+        console.warn("Manual sync failed: ", err);
+    }
+}
+
+
+
+// Expose restored functions to window to overwrite unused_views.js stubs
+window.initDeviceRegistry = initDeviceRegistry;
+window.loadRegistryData = loadRegistryData;
+window.executeDeviceDiscovery = executeDeviceDiscovery;
+window.renderDiscoveredDevices = renderDiscoveredDevices;
+window.selectDiscoveredDevice = selectDiscoveredDevice;
+window.executeDeviceApproval = executeDeviceApproval;
+window.executeDeviceRejection = executeDeviceRejection;
+window.renderApprovedServiceNodes = renderApprovedServiceNodes;
+window.initCapabilityRouterUI = initCapabilityRouterUI;
+window.initModelProviderRegistryUI = initModelProviderRegistryUI;
+window.loadModelProviders = loadModelProviders;
+window.initModelRouterUI = initModelRouterUI;
+window.initCrewaiIngestionBridge = initCrewaiIngestionBridge;
+window.initReleaseDecisionRoom = initReleaseDecisionRoom;
+window.updateReleaseAuthorityUI = updateReleaseAuthorityUI;
+window.startAuthorityCountdown = startAuthorityCountdown;
+window.generateExecutionPlan = generateExecutionPlan;
+window.exportPlanMarkdown = exportPlanMarkdown;
+window.exportPlanJson = exportPlanJson;
+window.initReleaseEvidenceRetention = initReleaseEvidenceRetention;
+window.loadEvidenceRetentionList = loadEvidenceRetentionList;
+window.classifyEvidence = classifyEvidence;
+window.initReleaseEvidenceArchivePreview = initReleaseEvidenceArchivePreview;
+window.calculateArchivePreview = calculateArchivePreview;
+window.exportArchivePreviewMarkdown = exportArchivePreviewMarkdown;
+window.exportArchivePreviewJSON = escapeHtml; // fallback or correct ref
+window.initReleaseEvidenceArchiveBuildPlan = initReleaseEvidenceArchiveBuildPlan;
+window.generateArchiveBuildPlan = generateArchiveBuildPlan;
+window.exportBuildPlanMarkdown = exportBuildPlanMarkdown;
+window.exportBuildPlanJSON = exportBuildPlanJSON;
+window.initReleaseEvidenceArchiveSealPreview = initReleaseEvidenceArchiveSealPreview;
+window.generateArchiveSealPreview = generateArchiveSealPreview;
+window.exportSealPreviewMarkdown = exportSealPreviewMarkdown;
+window.exportSealPreviewJSON = exportSealPreviewJSON;
+window.fetchAndRenderGovernanceSummary = fetchAndRenderGovernanceSummary;
+window.checkApprovalStatusForPreview = checkApprovalStatusForPreview;
+window.initFormalReleaseSealDryRun = initFormalReleaseSealDryRun;
+window.loadApprovedPreviewsForDryRun = loadApprovedPreviewsForDryRun;
+window.executeSealDryRun = executeSealDryRun;
+window.loadSealDryRunHistory = loadSealDryRunHistory;
+window.renderClusterCommandMapV2 = renderClusterCommandMapV2;
+window.groupClusterDevicesByFleet = groupClusterDevicesByFleet;
+window.renderDeviceFleetDrawer = renderDeviceFleetDrawer;
+window.renderSelectedNodeInspector = renderSelectedNodeInspector;
+window.selectClusterNode = selectClusterNode;
+window.toggleClusterTopologyGroup = toggleClusterTopologyGroup;
+window.fitClusterTopologyViewport = fitClusterTopologyViewport;
+window.refreshClusterTopologyStatus = refreshClusterTopologyStatus;
 
     // Run initialization once DOM is ready
     if (document.readyState === 'loading') {

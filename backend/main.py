@@ -10664,9 +10664,170 @@ async def api_ubiquiti_inventory():
     return collect_ubiquiti_inventory()
 
 
+@app.get("/api/v1/networkops/status")
+async def api_networkops_status():
+    from backend.networkops_manager import NetworkOpsManager
+    return NetworkOpsManager().get_status()
+
+
+@app.post("/api/v1/networkops/diagnose")
+async def api_networkops_diagnose():
+    from backend.networkops_manager import NetworkOpsManager
+    return NetworkOpsManager().run_diagnostics()
+
+
+@app.get("/api/v1/networkops/incidents")
+async def api_networkops_incidents():
+    from backend.networkops_manager import NetworkOpsManager
+    return NetworkOpsManager().get_incidents()
+
+
+@app.post("/api/v1/networkops/remediate/{incident_id}")
+async def api_networkops_remediate(incident_id: str):
+    from backend.networkops_manager import NetworkOpsManager
+    from backend.approval_gate import get_approval_gate
+    approvals = get_approval_gate().load_queue()
+    return NetworkOpsManager().execute_remediation(incident_id, approvals)
+
+
+@app.post("/api/v1/networkops/request-approval/{incident_id}")
+async def api_networkops_request_approval(incident_id: str):
+    from backend.networkops_manager import NetworkOpsManager
+    manager = NetworkOpsManager()
+    incidents = manager.get_incidents()
+    incident = next((i for i in incidents if i["incident_id"] == incident_id), None)
+    if not incident:
+        raise HTTPException(status_code=404, detail="Incident not found")
+        
+    # 1. Insert into SQLite approval gates
+    from backend.runtime_execution_store import persist_approval_gate
+    persist_approval_gate(
+        approval_id=incident_id,
+        request_id=incident_id,
+        correlation_id="networkops-corr",
+        trace_id="networkops-trace",
+        action_type=f"REMEDIATE_{incident_id}",
+        risk_level=incident["risk"],
+        status="pending",
+        requested_by="networkops_manager",
+        decisions=[]
+    )
+    
+    # 2. Insert into in-memory approvals list
+    with _approvals_lock:
+        exists = any(a["approval_id"] == incident_id for a in _approvals)
+        if not exists:
+            _approvals.insert(0, {
+                "approval_id": incident_id,
+                "request_id": incident_id,
+                "action_type": f"REMEDIATE_{incident_id}",
+                "status": "pending",
+                "risk_level": incident["risk"],
+                "task_description": f"NetworkOps Self-Healing: {incident['proposed_action']}",
+                "created_at": datetime.now(timezone.utc).isoformat()
+            })
+            
+    return {"status": "success", "message": f"Approval requested for incident {incident_id}"}
+
+
+# --- Favicon and Production Tracker Endpoints ---
+from fastapi import Response
+import subprocess
+import os
+import json
+
+_qa_loop_process = None
+
+@app.get("/favicon.ico", include_in_schema=False)
+def get_favicon_ico():
+    return Response(status_code=204)
+
+@app.get("/favicon.svg", include_in_schema=False)
+def get_favicon_svg():
+    return Response(status_code=204)
+
+@app.get("/api/v1/production-tracker")
+def get_production_tracker():
+    tracker_path = "/Users/michaelhoch/hoch_agent_swarm/data/production_tracker.json"
+    if not os.path.exists(tracker_path):
+        try:
+            subprocess.run(["uv", "run", "python", "/Users/michaelhoch/hoch_agent_swarm/scripts/init_command_center.py"], check=True)
+        except Exception as e:
+            print(f"Error initializing command center data: {e}")
+            return {"status": "error", "message": str(e)}
+            
+    try:
+        with open(tracker_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            
+        try:
+            res_branch = subprocess.run(["git", "branch", "--show-current"], stdout=subprocess.PIPE, text=True)
+            res_status = subprocess.run(["git", "status", "--short"], stdout=subprocess.PIPE, text=True)
+            res_log = subprocess.run(["git", "log", "-n", "3", "--oneline"], stdout=subprocess.PIPE, text=True)
+            
+            data["git_status"]["branch"] = res_branch.stdout.strip()
+            data["git_status"]["working_tree_clean"] = (len(res_status.stdout.strip()) == 0)
+            data["git_status"]["recent_commits"] = [line.strip() for line in res_log.stdout.split("\n") if line.strip()]
+        except Exception as git_err:
+            print(f"Git check error: {git_err}")
+
+        # Scan for generated evidence files under docs/evidence/
+        evidence_list = []
+        evidence_base = "/Users/michaelhoch/hoch_agent_swarm/docs/evidence"
+        if os.path.exists(evidence_base):
+            for root, dirs, files in os.walk(evidence_base):
+                for file in files:
+                    if file.endswith(".json") or file.endswith(".png") or file.endswith(".md"):
+                        rel_path = os.path.relpath(os.path.join(root, file), "/Users/michaelhoch/hoch_agent_swarm")
+                        evidence_list.append({
+                            "name": file,
+                            "path": f"/{rel_path}",
+                            "timestamp": datetime.fromtimestamp(os.path.getmtime(os.path.join(root, file)), timezone.utc).isoformat()
+                        })
+        data["evidence_packs"] = evidence_list
+        return data
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+@app.post("/api/v1/production-tracker/run-qa-loop")
+async def trigger_qa_loop():
+    global _qa_loop_process
+    if _qa_loop_process and _qa_loop_process.poll() is None:
+        return {"status": "running", "message": "QA loop is already executing."}
+        
+    try:
+        _qa_loop_process = subprocess.Popen(
+            ["bash", "/Users/michaelhoch/hoch_agent_swarm/scripts/qa_runtime_loop.sh"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+        return {"status": "success", "message": "QA loop execution triggered."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/production-tracker/run-qa-loop/status")
+def get_qa_loop_status():
+    global _qa_loop_process
+    is_running = (_qa_loop_process and _qa_loop_process.poll() is None)
+    
+    log_path = "/Users/michaelhoch/hoch_agent_swarm/data/qa_loop.log"
+    log_content = ""
+    if os.path.exists(log_path):
+        try:
+            with open(log_path, "r", encoding="utf-8") as f:
+                log_content = f.read()
+        except Exception:
+            pass
+            
+    return {
+        "status": "running" if is_running else "idle",
+        "log": log_content
+    }
+
 # Mount frontend files at root (if frontend directory exists)
 
 frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../frontend/dist"))
 if os.path.exists(frontend_path):
     app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
+
 
