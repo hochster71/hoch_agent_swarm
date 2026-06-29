@@ -9,10 +9,21 @@ logger = logging.getLogger("BrainOrchestrator")
 
 class BrainOrchestrator:
     def __init__(self, root_dir="/Users/michaelhoch/hoch_agent_swarm"):
-        self.root_dir = root_dir
-        self.policy_path = os.path.join(root_dir, "config/autonomy_policy.yaml")
-        self.tracker_path = os.path.join(root_dir, "frontend/data/pert_tracker.json")
-        self.agent_registry_path = os.path.join(root_dir, "frontend/data/agent_registry.json")
+        # Dynamically resolve root_dir to support container-first runtime
+        if os.path.exists("/app"):
+            root_dir = "/app"
+        elif root_dir == "/Users/michaelhoch/hoch_agent_swarm" or not os.path.exists(root_dir):
+            root_dir = os.environ.get("HOCHSTER_ROOT_DIR")
+            if not root_dir:
+                current_file = os.path.abspath(__file__)
+                if "backend" in current_file:
+                    root_dir = os.path.abspath(current_file.split("backend")[0])
+                else:
+                    root_dir = "/app"
+        self.root_dir = os.path.abspath(root_dir)
+        self.policy_path = os.path.join(self.root_dir, "config/autonomy_policy.yaml")
+        self.tracker_path = os.path.join(self.root_dir, "frontend/data/pert_tracker.json")
+        self.agent_registry_path = os.path.join(self.root_dir, "frontend/data/agent_registry.json")
         
         self.status = "IDLE"
         self.active_task = None

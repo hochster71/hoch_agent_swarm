@@ -1,0 +1,40 @@
+templates:
+  standard_contract: |
+    # PromptOps Bounded Contract: {mission_id}
+    Class: {prompt_class}
+    
+    ## Objective
+    {objective}
+    
+    ## Current Proven State
+    {current_proven_state}
+    
+    ## Exact Scope
+    {exact_scope}
+    
+    ## Non-Goals
+    {non_goals}
+    
+    ## Required Files
+    {required_files}
+    
+    ## Required Gates
+    {required_gates}
+    
+    ## Telemetry Signals
+    {runtime_truth_signals}
+    
+    ## Evidence Path
+    {evidence_path}
+    
+    ## Commit Policy
+    {commit_policy}
+    
+    ## Closeout Report Schema
+    {closeout_report_schema}
+    
+    ## Stop Conditions
+    {stop_conditions}
+    
+    ## Fake-Completion Controls
+    {fake_completion_controls}

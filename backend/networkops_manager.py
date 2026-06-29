@@ -4,11 +4,17 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Any, List
 
-DB_PATH = Path(__file__).resolve().parent / "swarm_ledger.db"
+if os.path.exists("/app"):
+    DB_PATH = Path("/app/backend/swarm_ledger.db")
+else:
+    DB_PATH = Path(__file__).resolve().parent / "swarm_ledger.db"
 
 class NetworkOpsManager:
     def __init__(self):
-        self.incidents_store_path = Path(__file__).resolve().parent / "db" / "networkops_incidents.json"
+        if os.path.exists("/app"):
+            self.incidents_store_path = Path("/app/backend/db/networkops_incidents.json")
+        else:
+            self.incidents_store_path = Path(__file__).resolve().parent / "db" / "networkops_incidents.json"
         self.incidents_store_path.parent.mkdir(parents=True, exist_ok=True)
         self._init_defaults()
 

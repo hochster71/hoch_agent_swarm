@@ -25,16 +25,17 @@ def test_docker_compose_structure():
         compose = yaml.safe_load(f)
     
     services = compose.get("services", {})
-    assert "hoch-app" in services
-    assert "screenshot-worker" in services
-    assert "test-runner" in services
+    assert "has-api" in services
+    assert "has-ui" in services
+    assert "has-worker" in services
+    assert "has-tools" in services
     
     # Check port exposure
-    ports = services["hoch-app"].get("ports", [])
-    assert "8086:8086" in ports
+    ports = services["has-ui"].get("ports", [])
+    assert "127.0.0.1:8080:8080" in ports
     
     # Check mounts
-    volumes = services["hoch-app"].get("volumes", [])
+    volumes = services["has-api"].get("volumes", [])
     vol_paths = []
     for v in volumes:
         if isinstance(v, str):
@@ -43,4 +44,4 @@ def test_docker_compose_structure():
             vol_paths.append(v["source"])
             
     assert "./artifacts" in vol_paths
-    assert "./data" in vol_paths
+    assert "./backend" in vol_paths

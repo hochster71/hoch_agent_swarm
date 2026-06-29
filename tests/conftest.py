@@ -1,6 +1,14 @@
-"""
-tests/conftest.py — shared fixtures for the hoch_agent_swarm test suite.
-"""
+import os
+import tempfile
+# Use a temporary database file for all tests to prevent locking/Bus Errors in Docker bind mounts
+db_path = os.path.join(tempfile.gettempdir(), "test_swarm_ledger.db")
+os.environ["HOCHSTER_DB_PATH"] = db_path
+
+# Pre-create all required registry and findings tables in the temp DB
+from backend.coding_control_plane.defect_registry import DefectRegistry
+from backend.security_ops.finding_ingestor import FindingIngestor
+DefectRegistry(db_path=db_path)
+FindingIngestor(db_path=db_path)
 
 import pytest
 

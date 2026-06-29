@@ -18,10 +18,20 @@ class GoalLineGuard:
             "secret_scanner": "PASS",
             "no_drift_lock": "PASS"
         }
-        
         is_blocked = False
         blockers = []
         
+        # Check final verifier status
+        try:
+            from backend.final_verifier.final_verdict import FinalVerdict
+            verdict = FinalVerdict().get_final_verdict()
+            if verdict["status"] == "BLOCKED":
+                is_blocked = True
+                for b in verdict["blocker_reporter"]["blockers"]:
+                    blockers.append(f"Blocked by final verifier: {b['type']} - {b['description']}")
+        except Exception:
+            pass
+
         # Verify if any blocker exists in sqlite database
         # For example, if there is a pending security issue or ATO block
         conn = sqlite3.connect(DB_PATH, timeout=30)

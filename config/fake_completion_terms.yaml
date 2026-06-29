@@ -1,0 +1,18 @@
+blacklisted_terms:
+  - "production ready"
+  - "complete"
+  - "done"
+  - "fully autonomous"
+  - "no blockers"
+  - "100%"
+  - "verified"
+  - "go"
+  - "clean"
+  - "secure"
+  - "e2e"
+  - "all"
+  - "best"
+  - "everything"
+severity: "HIGH"
+action_required: "BLOCK"
+override_permitted: false

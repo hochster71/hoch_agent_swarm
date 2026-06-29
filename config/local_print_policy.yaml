@@ -1,0 +1,9 @@
+local_print:
+  allowlist_printers:
+    - "HP-OfficeJet-Pro-WiFi"
+    - "HP-LaserJet-WiFi"
+    - "Local-Virtual-PDF-Printer"
+  require_preview: true
+  require_operator_approval: true
+  enable_wifi_handshake_simulation: true
+  log_print_evidence: true

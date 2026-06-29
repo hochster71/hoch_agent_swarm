@@ -1,0 +1,32 @@
+baby_rat_toy_safety:
+  allowed_materials:
+    - washable fabric
+    - fleece
+    - untreated wood
+    - cardboard
+    - paper tissues
+  avoid_materials:
+    - sharp wire
+    - painted wood
+    - treated wood
+    - small plastic pieces
+    - toxic glue
+    - toxic foam
+    - threads
+    - strings
+    - cedar
+    - pine
+  minimum_tunnel_diameter_inches: 2.5
+  supervision_required: true
+
+child_toy_safety:
+  maximum_acceptable_age_rating: 12
+  choking_hazard_keywords:
+    - "small parts"
+    - "choking hazard"
+    - "under 3 years"
+  trusted_sellers:
+    - "Amazon.com"
+    - "Official LEGO Store"
+    - "Target"
+  required_condition: "new/sealed"

@@ -11676,14 +11676,27 @@ async function fetchAndRenderProjectTracker() {
         
         // 1. Top bar metrics
         const rCount = document.getElementById("topbar-readiness");
-        if (rCount) rCount.textContent = data.gates.go_nogo === "GO" ? "100%" : "80%";
+        let realScore = "80%";
+        let status = data.gates.go_nogo;
+        try {
+            const vRes = await fetch("/api/v1/final-verifier/verdict");
+            if (vRes.ok) {
+                const vData = await vRes.json();
+                realScore = `${vData.verdict.readiness_score}%`;
+                status = vData.verdict.status === "VERIFIED" ? "GO" : "NO-GO";
+            }
+        } catch (e) {
+            console.error("Error fetching verdict for topbar:", e);
+        }
+        
+        if (rCount) rCount.textContent = realScore;
         
         const gNogo = document.getElementById("topbar-gonogo");
         if (gNogo) {
-            gNogo.textContent = data.gates.go_nogo === "GO" ? "GO FOR SWARM" : "NO-GO BLOCKED";
-            gNogo.style.background = data.gates.go_nogo === "GO" ? "rgba(20, 184, 166, 0.15)" : "rgba(239, 68, 68, 0.15)";
-            gNogo.style.color = data.gates.go_nogo === "GO" ? "var(--accent-teal)" : "#ef4444";
-            gNogo.style.borderColor = data.gates.go_nogo === "GO" ? "rgba(20, 184, 166, 0.3)" : "rgba(239, 68, 68, 0.3)";
+            gNogo.textContent = status === "GO" ? "GO FOR SWARM" : "NO-GO BLOCKED";
+            gNogo.style.background = status === "GO" ? "rgba(20, 184, 166, 0.15)" : "rgba(239, 68, 68, 0.15)";
+            gNogo.style.color = status === "GO" ? "var(--accent-teal)" : "#ef4444";
+            gNogo.style.borderColor = status === "GO" ? "rgba(20, 184, 166, 0.3)" : "rgba(239, 68, 68, 0.3)";
         }
         
         // Update updated timestamp
@@ -11891,37 +11904,70 @@ async function fetchAndRenderFinalVerifier() {
         if (!res.ok) return;
         const data = await res.json();
         const verdict = data.verdict;
-
-        const badge = document.getElementById("final-verifier-badge");
-        if (badge) {
-            badge.textContent = verdict.status;
-            if (verdict.status === "VERIFIED") {
-                badge.style.background = "rgba(16, 185, 129, 0.15)";
-                badge.style.color = "#34d399";
-            } else {
-                badge.style.background = "rgba(239, 68, 68, 0.15)";
-                badge.style.color = "#f87171";
-            }
-        }
-
-        const countEl = document.getElementById("final-contradictions-count");
-        if (countEl) {
-            countEl.textContent = verdict.contradiction_checker.violations.length;
-            countEl.style.color = verdict.contradiction_checker.violations.length === 0 ? "#34d399" : "#fbbf24";
-        }
-
-        const scoreEl = document.getElementById("final-readiness-capped");
-        if (scoreEl) {
-            scoreEl.textContent = `${verdict.readiness_score}%`;
-            scoreEl.style.color = verdict.readiness_score >= 90 ? "#34d399" : (verdict.readiness_score >= 70 ? "#fbbf24" : "#f87171");
-        }
-
+        
+        updateUIWithVerdict(verdict);
+        
         const timeEl = document.getElementById("final-verifier-timestamp");
         if (timeEl) {
             timeEl.textContent = new Date().toLocaleTimeString();
         }
     } catch (err) {
         console.error("Error loading final verifier verdict:", err);
+    }
+}
+
+function updateUIWithVerdict(verdict) {
+    // 1. Final Verifier Badge
+    const badge = document.getElementById("final-verifier-badge");
+    if (badge) {
+        badge.textContent = verdict.status;
+        if (verdict.status === "VERIFIED") {
+            badge.style.background = "rgba(16, 185, 129, 0.15)";
+            badge.style.color = "#34d399";
+        } else {
+            badge.style.background = "rgba(239, 68, 68, 0.15)";
+            badge.style.color = "#f87171";
+        }
+    }
+
+    // 2. Contradiction count
+    const countEl = document.getElementById("final-contradictions-count");
+    if (countEl) {
+        countEl.textContent = verdict.contradiction_checker.violations.length;
+        countEl.style.color = verdict.contradiction_checker.violations.length === 0 ? "#34d399" : "#fbbf24";
+    }
+
+    // 3. Readiness score
+    const scoreEl = document.getElementById("final-readiness-capped");
+    if (scoreEl) {
+        scoreEl.textContent = `${verdict.readiness_score}%`;
+        scoreEl.style.color = verdict.readiness_score >= 90 ? "#34d399" : (verdict.readiness_score >= 70 ? "#fbbf24" : "#f87171");
+    }
+
+    // 4. Topbar metrics
+    const rCount = document.getElementById("topbar-readiness");
+    if (rCount) {
+        rCount.textContent = `${verdict.readiness_score}%`;
+    }
+
+    const gNogo = document.getElementById("topbar-gonogo");
+    if (gNogo) {
+        gNogo.textContent = verdict.status === "VERIFIED" ? "GO FOR SWARM" : "NO-GO BLOCKED";
+        gNogo.style.background = verdict.status === "VERIFIED" ? "rgba(20, 184, 166, 0.15)" : "rgba(239, 68, 68, 0.15)";
+        gNogo.style.color = verdict.status === "VERIFIED" ? "var(--accent-teal)" : "#ef4444";
+        gNogo.style.borderColor = verdict.status === "VERIFIED" ? "rgba(20, 184, 166, 0.3)" : "rgba(239, 68, 68, 0.3)";
+    }
+
+    // 5. Production status in No-Drift Gate card
+    const prodStatus = document.getElementById("nodrift-prod-status");
+    if (prodStatus) {
+        if (verdict.status === "BLOCKED") {
+            prodStatus.textContent = "BLOCKED";
+            prodStatus.style.color = "#ef4444";
+        } else {
+            prodStatus.textContent = "ALLOWED";
+            prodStatus.style.color = "var(--accent-teal)";
+        }
     }
 }
 

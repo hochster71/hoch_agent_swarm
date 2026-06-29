@@ -22,6 +22,21 @@ class FinalVerdict:
         cap_res = self.cap_engine.calculate_caps()
         contradiction_res = self.contradiction.check_contradictions(readiness_override=cap_res["score"])
         blocker_res = self.blocker.get_active_blockers()
+
+        # Merge contradiction violations into blockers list
+        if not contradiction_res["is_valid"]:
+            if "blockers" not in blocker_res:
+                blocker_res["blockers"] = []
+            for v in contradiction_res["violations"]:
+                b_type = "RUNTIME_CONTRADICTION"
+                if "GO and NO-GO contradiction" in v:
+                    b_type = "GO_NO_GO_CONTRADICTION"
+                blocker_res["blockers"].append({
+                    "type": b_type,
+                    "description": v
+                })
+            blocker_res["blocker_count"] = len(blocker_res["blockers"])
+
         evidence_res = self.evidence.validate_recent_evidence()
         ui_truth_res = self.ui_truth.validate_ui_truth()
         defect_zero_res = self.defect_zero.validate_defects()

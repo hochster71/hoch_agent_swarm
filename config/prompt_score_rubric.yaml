@@ -1,0 +1,31 @@
+dimensions:
+  scope_clarity:
+    weight: 0.15
+    description: "Does the prompt define the exact files/scope/methods to touch?"
+  non_goals_defined:
+    weight: 0.10
+    description: "Does the prompt explicitly list non-goals or what NOT to touch?"
+  runtime_truth_required:
+    weight: 0.15
+    description: "Does the prompt require actual verification from Docker/K8s/API/UI truth?"
+  gate_requirements_defined:
+    weight: 0.10
+    description: "Are specific validation gates and check scripts listed?"
+  evidence_required:
+    weight: 0.15
+    description: "Is an evidence artifact path with timestamp required?"
+  final_report_schema_defined:
+    weight: 0.05
+    description: "Is a structured final report schema specified?"
+  anti_fake_claim_controls:
+    weight: 0.10
+    description: "Are there checks to prevent fake green/PASS claims?"
+  human_loop_reduction:
+    weight: 0.10
+    description: "Does the task reduce human loops by specifying fallback rules?"
+  rollback_or_stop_condition:
+    weight: 0.05
+    description: "Is there a stop or rollback condition defined for failures?"
+  integration_safety:
+    weight: 0.05
+    description: "Are existing system integrity and regression checks named?"

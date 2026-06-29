@@ -18,6 +18,7 @@ from backend.runtime_execution_store import (
 from backend.ledger_manager import get_ledger_blocks, verify_ledger_chain, add_event_to_ledger
 from backend.cluster_manager import ClusterManager
 from backend.remediation_safety import classify_remediation_risk, get_blast_radius
+PROJECT_ROOT = Path("/app") if os.path.exists("/app") else Path(__file__).resolve().parent.parent
 
 def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
@@ -166,7 +167,7 @@ class ReadinessDaemon:
             
         # Category 6: Supply-chain provenance (10%)
         # Check if v0.1.3 or v0.1.4 artifacts exist
-        dist_dir = Path(__file__).resolve().parent.parent / "dist" / "releases"
+        dist_dir = PROJECT_ROOT / "dist" / "releases"
         sc_exists = False
         for rel in ["v0.1.4-OPERATIONAL-READINESS-AUTOPILOT", "v0.1.3-HOCHSTER-RUNTIME-EXECUTION-AUDIT"]:
             p = dist_dir / rel
@@ -184,7 +185,7 @@ class ReadinessDaemon:
             drift_findings.append("Supply-chain release manifest files missing")
             
         # Category 7: CI repeatability (10%)
-        workflow_path = Path(__file__).resolve().parent.parent / ".github" / "workflows" / "supply-chain-provenance.yml"
+        workflow_path = PROJECT_ROOT / ".github" / "workflows" / "supply-chain-provenance.yml"
         ci_score = 10 if workflow_path.exists() else 0
         score += ci_score
         breakdown["CI repeatability"] = {
@@ -228,10 +229,12 @@ class ReadinessDaemon:
                 drift_findings=drift_findings
             )
         except Exception as e:
+            import traceback
             print(f"Error saving readiness report to DB: {e}")
+            traceback.print_exc()
             
         # 4. Write to JSON artifact so score generator/checks read it immediately!
-        artifacts_dir = Path(__file__).resolve().parent.parent / "artifacts" / "qa"
+        artifacts_dir = PROJECT_ROOT / "artifacts" / "qa"
         artifacts_dir.mkdir(parents=True, exist_ok=True)
         scorecard_path = artifacts_dir / "readiness-scorecard.json"
         

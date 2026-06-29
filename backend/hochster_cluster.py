@@ -7,7 +7,11 @@ import sqlite3
 from pathlib import Path
 
 Status = Literal["pass", "block", "warning", "not_run"]
-DB_PATH = Path(__file__).resolve().parent / "swarm_ledger.db"
+import os
+if os.path.exists("/app"):
+    DB_PATH = Path("/app/backend/swarm_ledger.db")
+else:
+    DB_PATH = Path(__file__).resolve().parent / "swarm_ledger.db"
 
 @dataclass
 class HochsterClusterJobResult:

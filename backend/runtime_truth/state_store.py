@@ -3,7 +3,15 @@ import json
 from pathlib import Path
 from datetime import datetime, timezone
 
-DB_PATH = Path(__file__).resolve().parent.parent / "swarm_ledger.db"
+import os
+DB_ENV_PATH = os.getenv("HOCHSTER_DB_PATH")
+if DB_ENV_PATH:
+    DB_PATH = Path(DB_ENV_PATH)
+else:
+    if os.path.exists("/app"):
+        DB_PATH = Path("/app/backend/swarm_ledger.db")
+    else:
+        DB_PATH = Path(__file__).resolve().parent.parent / "swarm_ledger.db"
 
 def apply_pragmas(conn):
     conn.execute("PRAGMA journal_mode=WAL;")
@@ -12,6 +20,19 @@ def apply_pragmas(conn):
 
 def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
+
+def resolve_root_dir(root_dir=None) -> str:
+    if os.path.exists("/app"):
+        return "/app"
+    if root_dir is None or root_dir == "/Users/michaelhoch/hoch_agent_swarm" or not os.path.exists(root_dir):
+        env_root = os.getenv("HOCHSTER_ROOT_DIR")
+        if env_root:
+            return os.path.abspath(env_root)
+        current_file = os.path.abspath(__file__)
+        if "backend" in current_file:
+            return os.path.abspath(current_file.split("backend")[0])
+        return "/app"
+    return os.path.abspath(root_dir)
 
 def init_runtime_truth_tables():
     conn = sqlite3.connect(DB_PATH, timeout=30)

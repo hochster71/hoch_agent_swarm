@@ -31,6 +31,16 @@ def test_final_verifier_integration_flow():
     verdict_sig = next(s for s in data["signals"] if s["signal_id"] == "final_verifier_status")
     assert verdict_sig["value"] == "BLOCKED"
 
+    # Query final-verifier verdict endpoint to verify blocker details
+    verdict_res = client.get("/api/v1/final-verifier/verdict")
+    assert verdict_res.status_code == 200
+    verdict_data = verdict_res.json()["verdict"]
+    assert verdict_data["status"] == "BLOCKED"
+    assert verdict_data["blocker_reporter"]["blocker_count"] >= 1
+    
+    blockers = verdict_data["blocker_reporter"]["blockers"]
+    assert any(b["type"] == "GO_NO_GO_CONTRADICTION" for b in blockers)
+
     # Clean up
     with sqlite3.connect(DB_PATH, timeout=60) as conn:
         conn.execute("DELETE FROM runtime_truth_signals WHERE signal_id IN ('production_go_status', 'production_nogo_status')")
