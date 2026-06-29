@@ -8651,6 +8651,41 @@ def run_prompt_through_swarm_endpoint(prompt_id: str):
         else:
             raise HTTPException(status_code=403, detail=err_msg)
             
+    # 4. ToolOps: Action & Tool Authorization Check
+    tools_list = prompt_record.get("tools", [])
+    agent_role = prompt_record.get("agent_role") or prompt_record.get("agent", "UnknownAgent")
+    prompt_family = prompt_record.get("category", "QA")
+    model_id = routing_decision["model_id"]
+    
+    from backend.toolops_manager import ToolOpsManager
+    toolops = ToolOpsManager()
+    tool_verdicts = []
+    
+    for tool_name in tools_list:
+        try:
+            # Setup mock execution params for safety checking
+            mock_params = {"context": f"Execution of prompt {prompt_id}"}
+            if tool_name in ["shell", "test_runner"]:
+                mock_params["command"] = prompt_record.get("prompt", "")[:200]
+            elif tool_name in ["file_write", "file_read", "file_delete"]:
+                mock_params["file_path"] = "workspace_file.py"
+            elif tool_name == "http_request":
+                mock_params["host"] = "github.com"
+                
+            auth_res = toolops.authorize_action(
+                tool_id=tool_name,
+                agent_role=agent_role,
+                prompt_family=prompt_family,
+                model_id=model_id,
+                params=mock_params
+            )
+            tool_verdicts.append(auth_res)
+        except ValueError as e:
+            raise HTTPException(
+                status_code=403,
+                detail=f"ToolOps authorization blocked tool '{tool_name}' for prompt '{prompt_id}': {str(e)}"
+            )
+            
     task_req = TaskRequest(
         task_type=prompt_record.get("category", "QA"),
         prompt=prompt_record.get("prompt", ""),
@@ -8706,7 +8741,8 @@ def run_prompt_through_swarm_endpoint(prompt_id: str):
         },
         "execution_result": execution_res if success else {"error": error_detail},
         "result": execution_res.get("result", "") if success else f"Execution failed: {error_detail}",
-        "status": "GO" if success else "NO-GO"
+        "status": "GO" if success else "NO-GO",
+        "tool_authorizations": tool_verdicts
     }
     
     try:
@@ -8730,7 +8766,8 @@ def run_prompt_through_swarm_endpoint(prompt_id: str):
         "output_contract": str(prompt_record.get("outputs", "")),
         "evidence_path": str(evidence_path.relative_to(base_dir) if base_dir in evidence_path.parents else evidence_path),
         "verdict": "GO" if success else "NO-GO",
-        "timestamp": datetime.now(timezone.utc).isoformat()
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "tools_used": tools_list
     }
     
     registry.log_run_to_ledger(run_entry)
@@ -8797,6 +8834,95 @@ def get_modelops_metrics_endpoint():
     from backend.modelops_manager import ModelOpsManager
     mgr = ModelOpsManager()
     return mgr.load_state()
+
+# ==========================================
+# TOOLOPS AGENT ACTION GOVERNANCE LAYER (v8)
+# ==========================================
+
+from pydantic import BaseModel
+from typing import Dict, Any, List
+
+class ToolAuthorizeRequest(BaseModel):
+    tool_id: str
+    agent_role: str
+    prompt_family: str
+    model_id: str
+    params: Dict[str, Any]
+
+class ActionApproveRequest(BaseModel):
+    action_id: str
+    operator: str
+
+@app.get("/api/toolops/tools")
+def get_toolops_tools():
+    from backend.toolops_manager import ToolOpsManager
+    mgr = ToolOpsManager()
+    return mgr.load_tools()
+
+@app.get("/api/toolops/policies")
+def get_toolops_policies():
+    from backend.toolops_manager import ToolOpsManager
+    mgr = ToolOpsManager()
+    tools = mgr.load_tools()
+    return {
+        "policies": [
+            {
+                "tool_id": t["tool_id"],
+                "risk_class": t["risk_class"],
+                "requires_approval": t["requires_approval"],
+                "allowed_agents": t["allowed_agents"],
+                "allowed_prompt_families": t["allowed_prompt_families"]
+            } for t in tools
+        ]
+    }
+
+@app.post("/api/toolops/authorize")
+def post_toolops_authorize(req: ToolAuthorizeRequest):
+    from backend.toolops_manager import ToolOpsManager
+    mgr = ToolOpsManager()
+    try:
+        res = mgr.authorize_action(
+            tool_id=req.tool_id,
+            agent_role=req.agent_role,
+            prompt_family=req.prompt_family,
+            model_id=req.model_id,
+            params=req.params
+        )
+        return res
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/toolops/audit-log")
+def get_toolops_audit_log():
+    from backend.toolops_manager import ToolOpsManager
+    mgr = ToolOpsManager()
+    state = mgr.load_state()
+    return state.get("audit_log", [])
+
+@app.get("/api/toolops/blocked")
+def get_toolops_blocked():
+    from backend.toolops_manager import ToolOpsManager
+    mgr = ToolOpsManager()
+    state = mgr.load_state()
+    return {
+        "blocked_actions": state.get("blocked_actions", []),
+        "pending_approvals": state.get("pending_approvals", [])
+    }
+
+@app.post("/api/toolops/approve")
+def post_toolops_approve(req: ActionApproveRequest):
+    from backend.toolops_manager import ToolOpsManager
+    mgr = ToolOpsManager()
+    try:
+        return mgr.approve_action(action_id=req.action_id, operator=req.operator)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/api/toolops/ci-gate")
+def post_toolops_ci_gate():
+    from backend.toolops_manager import ToolOpsManager
+    mgr = ToolOpsManager()
+    return mgr.run_ci_gate_check()
 
 @app.get("/api/promptops/metrics")
 def get_promptops_metrics_endpoint():
