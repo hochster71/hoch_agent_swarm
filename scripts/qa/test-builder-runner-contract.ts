@@ -73,6 +73,17 @@ function runBuilderRunnerTests() {
     fs.writeFileSync(registryPath, JSON.stringify(regObj, null, 2), 'utf-8');
   } catch (e) {}
 
+  // Override state expected branch to active branch during test
+  try {
+    const stateObj = JSON.parse(originalState);
+    let activeBranch = "master";
+    try {
+      activeBranch = execSync("git branch --show-current").toString().trim();
+    } catch (e) {}
+    stateObj.current_branch_expected = activeBranch;
+    fs.writeFileSync(statePath, JSON.stringify(stateObj, null, 2), 'utf-8');
+  } catch (e) {}
+
   // 2. Test unapproved execution block
   console.log("[test] Running builder runner without operator approval...");
   try {

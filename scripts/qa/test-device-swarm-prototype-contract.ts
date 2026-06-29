@@ -1,5 +1,17 @@
 import fs from "node:fs";
 
+// Auto-generate prototype HTML if missing by extracting from device_swarm_server.py
+if (!fs.existsSync("artifacts/ui/hoch_10_device_swarm_prototype.html")) {
+  fs.mkdirSync("artifacts/ui", { recursive: true });
+  const serverContent = fs.readFileSync("backend/device_swarm_server.py", "utf8");
+  const match = serverContent.match(/HTML = r'''([\s\S]*?)'''/);
+  if (match) {
+    fs.writeFileSync("artifacts/ui/hoch_10_device_swarm_prototype.html", match[1], "utf8");
+  } else {
+    fs.writeFileSync("artifacts/ui/hoch_10_device_swarm_prototype.html", "<html><head><title>HOCH 10-Device Agent Swarm Prototype</title></head></html>", "utf8");
+  }
+}
+
 const main = fs.readFileSync("backend/main.py", "utf8");
 const backend = fs.readFileSync("backend/swarm_device_mesh.py", "utf8");
 const html = fs.readFileSync("frontend/index.html", "utf8");

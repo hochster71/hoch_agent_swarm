@@ -1,0 +1,116 @@
+name: RC22 CI Enforced Provenance and Observability
+
+on:
+  push:
+    branches:
+      - master
+      - rc22-release-provenance-and-runtime-observability
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
+
+jobs:
+  validate-and-seal:
+    name: Build, Validate, and Sign Release Candidate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install Python dependencies
+        run: uv sync --frozen
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.5.0
+
+      - name: Run Python unit tests
+        run: uv run pytest -v --tb=short
+
+      - name: Run Semgrep scan
+        run: |
+          pip install semgrep
+          semgrep scan --config qa/semgrep/hoch-security.yml --exclude="qa/semgrep/tests" --error .
+
+      - name: Run Trivy FS scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'table'
+          exit-code: '1'
+          severity: 'CRITICAL'
+          scanners: 'vuln,config,secret'
+          ignore-unfixed: true
+
+      - name: Build Docker Image
+        run: |
+          docker build -t hoch_agent_swarm-hoch-app:latest .
+
+      - name: Run Trivy Image scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'hoch_agent_swarm-hoch-app:latest'
+          format: 'table'
+          exit-code: '1'
+          severity: 'CRITICAL'
+          scanners: 'vuln,config,secret'
+          ignore-unfixed: true
+
+      - name: Docker Compose Validation
+        run: |
+          docker compose config > compose_output.txt 2> compose_stderr.txt
+          cat compose_stderr.txt
+          if grep -q "obsolete" compose_stderr.txt; then
+            echo "[ERROR] Obsolete compose version attribute detected!"
+            exit 1
+          fi
+
+      - name: Run CI Service Pipeline (Uvicorn + supply chain generation & verification)
+        env:
+          ENABLE_COSIGN_SIGNING: "true"
+        run: |
+          # Run the pipeline runner which starts uvicorn in background,
+          # runs baseline validation, sbom/provenance generation, and cosign signing.
+          uv run python scripts/qa/run-ci-pipeline.py
+
+      - name: Find Release Manifest
+        id: manifest
+        run: |
+          MANIFEST_PATH=$(find dist/releases -name "release_manifest.json" | head -n 1)
+          echo "path=$MANIFEST_PATH" >> $GITHUB_OUTPUT
+          echo "Found manifest at: $MANIFEST_PATH"
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: ${{ steps.manifest.outputs.path }}
+
+      - name: Upload CI Artifact Evidence Pack
+        uses: actions/upload-artifact@v4
+        with:
+          name: rc22-ci-evidence-pack
+          path: dist/releases/

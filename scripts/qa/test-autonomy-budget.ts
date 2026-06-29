@@ -123,6 +123,11 @@ conn.commit()
 conn.close()
     `);
 
+    // Ensure standard cluster jobs are seeded
+    console.log("Seeding standard cluster jobs...");
+    const seedRes = await fetch(`${BASE_URL}/api/v1/hochster/baseline/lock`);
+    if (!seedRes.ok) throw new Error("Failed to seed standard cluster jobs");
+
     // Case 21: Healthy Budget (L4 Autonomy)
     console.log("\n[Case #21] Simulating 10 healthy readiness reports (Score 100)...");
     for (let i = 0; i < 10; i++) {

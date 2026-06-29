@@ -149,7 +149,7 @@ def route_inference_request(
 
 def write_inference_evidence(inference_run_id: str, data: dict) -> str:
     import os
-    workspace_root = Path("/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm")
+    workspace_root = Path(__file__).resolve().parent.parent
     evidence_dir = workspace_root / "artifacts" / "inference"
     evidence_dir.mkdir(parents=True, exist_ok=True)
     

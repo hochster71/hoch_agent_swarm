@@ -26,10 +26,14 @@ function main() {
     ? output.split("\n").map((line) => {
         try {
           const raw = JSON.parse(line);
+          let digest = raw.Digest || "";
+          if (!digest || digest === "<none>") {
+            digest = raw.ID ? (raw.ID.startsWith("sha256:") ? raw.ID : `sha256:${raw.ID}`) : "<none>";
+          }
           return {
             repository: raw.Repository || "",
             tag: raw.Tag || "",
-            digest: raw.Digest || "",
+            digest: digest,
             image_id: raw.ID || "",
             created_since: raw.CreatedSince || "",
             size: raw.Size || "",

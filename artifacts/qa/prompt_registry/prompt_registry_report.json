@@ -1,7 +1,7 @@
 {
   "status": "LIVE",
   "total_prompts": 103,
-  "source_used": "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/backend/prompt_library.json",
+  "source_used": "/Users/michaelhoch/hoch_agent_swarm/backend/prompt_library.json",
   "categories": {
     "QA": 12,
     "Audit": 15,
