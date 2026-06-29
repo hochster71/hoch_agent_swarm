@@ -737,6 +737,49 @@ async def api_submit_signing_waiver(payload: dict):
     else:
         raise HTTPException(status_code=400, detail="Invalid waiver scope")
 
+@app.get("/api/v1/release/status")
+def get_release_status():
+    version = "0.1.6"
+    try:
+        package_json_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../package.json"))
+        if os.path.exists(package_json_path):
+            with open(package_json_path, "r") as f:
+                package_json = json.load(f)
+                version = package_json.get("version", "0.1.6")
+    except Exception as e:
+        print(f"Error reading package.json version: {e}")
+
+    head_sha = run_git_command(["rev-parse", "HEAD"])
+    branch = run_git_command(["rev-parse", "--abbrev-ref", "HEAD"])
+    
+    # Get signing policy status
+    sig_policy = get_release_signing_policy()
+    sig_status = sig_policy.get("current_release", {}).get("signature_status", "unsigned")
+    
+    # Let's read drift status from phase_state.json if available
+    drift_status = "UNKNOWN"
+    try:
+        state_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../control/phase_state.json"))
+        if os.path.exists(state_path):
+            with open(state_path, "r") as f:
+                state_data = json.load(f)
+                drift_status = state_data.get("drift_status", "UNKNOWN")
+    except Exception:
+        pass
+        
+    return {
+        "version": version,
+        "branch": branch,
+        "commit": head_sha,
+        "signature_status": sig_status,
+        "drift_status": drift_status,
+        "ci_run_id": os.environ.get("GITHUB_RUN_ID"),
+        "ci_run_url": (
+            f"{os.environ.get('GITHUB_SERVER_URL')}/{os.environ.get('GITHUB_REPOSITORY')}/actions/runs/{os.environ.get('GITHUB_RUN_ID')}"
+            if os.environ.get("GITHUB_RUN_ID") else None
+        )
+    }
+
 @app.get("/api/v1/release/channel-governance")
 def get_release_channel_governance():
     version = "0.1.6"

@@ -1,10 +1,10 @@
-name: RC22 CI Enforced Provenance and Observability
+name: RC23 CI Enforced Branch Protection and Deployment Readiness
 
 on:
   push:
     branches:
       - master
-      - rc22-release-provenance-and-runtime-observability
+      - rc23-branch-protection-and-deployment-readiness
   pull_request:
     branches:
       - master
@@ -46,6 +46,17 @@ jobs:
 
       - name: Install Cosign
         uses: sigstore/cosign-installer@v3.5.0
+
+      - name: Verify Secrets Hygiene
+        run: |
+          echo "Scanning workspace for accidental GitHub PAT leakages..."
+          # Scan for classic (ghp_*) and fine-grained (github_pat_*) tokens
+          if grep -rEi "ghp_[a-zA-Z0-9]{36}|github_pat_[a-zA-Z0-9_]{82}" --exclude-dir={.git,.github,node_modules,venv,.venv,dist} .; then
+            echo "[ERROR] Detected exposed GitHub Personal Access Token!"
+            exit 1
+          else
+            echo "[PASS] No exposed GitHub PATs found."
+          fi
 
       - name: Run Python unit tests
         run: uv run pytest -v --tb=short
@@ -93,9 +104,11 @@ jobs:
         env:
           ENABLE_COSIGN_SIGNING: "true"
         run: |
-          # Run the pipeline runner which starts uvicorn in background,
-          # runs baseline validation, sbom/provenance generation, and cosign signing.
           uv run python scripts/qa/run-ci-pipeline.py
+
+      - name: Generate Automated Release Notes
+        run: |
+          npx tsx scripts/supply-chain/generate-release-notes.ts
 
       - name: Find Release Manifest
         id: manifest
@@ -112,5 +125,5 @@ jobs:
       - name: Upload CI Artifact Evidence Pack
         uses: actions/upload-artifact@v4
         with:
-          name: rc22-ci-evidence-pack
+          name: rc23-ci-evidence-pack
           path: dist/releases/

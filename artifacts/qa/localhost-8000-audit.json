@@ -1,8 +1,8 @@
 {
-  "report_id": "qa_localhost_8000_1782697495398",
+  "report_id": "qa_localhost_8000_1782698452183",
   "base_url": "http://localhost:8000",
-  "started_at": "2026-06-29T01:44:55.344Z",
-  "completed_at": "2026-06-29T01:44:55.398Z",
+  "started_at": "2026-06-29T02:00:52.130Z",
+  "completed_at": "2026-06-29T02:00:52.183Z",
   "status": "PASS",
   "checks": [
     {
@@ -11,7 +11,7 @@
       "required": true,
       "status": "PASS",
       "http_status": 200,
-      "latency_ms": 34,
+      "latency_ms": 35,
       "blockers": [],
       "warnings": [],
       "payload_summary": {
@@ -39,7 +39,7 @@
       "required": true,
       "status": "PASS",
       "http_status": 200,
-      "latency_ms": 32,
+      "latency_ms": 30,
       "blockers": [],
       "warnings": [],
       "payload_summary": {
@@ -59,7 +59,7 @@
         "source": "live",
         "source_id": "hochster.baseline.lock",
         "freshness": "live",
-        "correlation_id": "corr-f512cfbafe3a",
+        "correlation_id": "corr-d2a842af4d95",
         "evidence_ref_count": 1,
         "decision": {
           "status": "PASS",
@@ -75,7 +75,7 @@
       "required": true,
       "status": "PASS",
       "http_status": 200,
-      "latency_ms": 13,
+      "latency_ms": 12,
       "blockers": [],
       "warnings": [],
       "payload_summary": {
@@ -111,7 +111,7 @@
       "required": true,
       "status": "PASS",
       "http_status": 200,
-      "latency_ms": 11,
+      "latency_ms": 13,
       "blockers": [],
       "warnings": [],
       "payload_summary": {
@@ -139,7 +139,7 @@
       "required": false,
       "status": "PASS",
       "http_status": 200,
-      "latency_ms": 12,
+      "latency_ms": 13,
       "blockers": [],
       "warnings": [],
       "payload_summary": {
@@ -167,7 +167,7 @@
       "required": true,
       "status": "PASS",
       "http_status": 200,
-      "latency_ms": 22,
+      "latency_ms": 19,
       "blockers": [],
       "warnings": [],
       "payload_summary": {
@@ -195,7 +195,7 @@
       "required": true,
       "status": "PASS",
       "http_status": 200,
-      "latency_ms": 13,
+      "latency_ms": 14,
       "blockers": [],
       "warnings": [],
       "payload_summary": {
