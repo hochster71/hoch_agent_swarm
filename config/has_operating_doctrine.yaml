@@ -1,0 +1,8 @@
+doctrine:
+  name: "Hoch Agent Swarm Operating Doctrine"
+  version: "1.0.0"
+  principles:
+    - "Never allow dynamic status overrides without verifiable runtime truth"
+    - "Air-gapped operation is the primary security posture; third-party cloud writes are blocked by default"
+    - "Every architectural component must map to a registered domain with a designated owner agent"
+    - "Human cognitive load must be protected; escalate only true non-deterministic decisions"
