@@ -1,0 +1,22 @@
+{
+  "warnings": [
+    {
+      "message": "datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version",
+      "category": "DeprecationWarning",
+      "owner": "Refactor Agent",
+      "due_date": "2026-07-29"
+    },
+    {
+      "message": "Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.",
+      "category": "StarletteDeprecationWarning",
+      "owner": "Refactor Agent",
+      "due_date": "2026-07-29"
+    },
+    {
+      "message": "on_event is deprecated, use lifespan event handlers instead.",
+      "category": "DeprecationWarning",
+      "owner": "Refactor Agent",
+      "due_date": "2026-07-29"
+    }
+  ]
+}

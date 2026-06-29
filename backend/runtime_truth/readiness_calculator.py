@@ -41,6 +41,44 @@ def calculate_governed_readiness() -> dict:
             score = min(score, 60.0)
             caps.append(("no buyer signals / monetization outreach", 60.0))
             
+        # 6. Check Meta-Orchestrator signals
+        crit_gap_row = conn.execute("SELECT * FROM runtime_truth_signals WHERE signal_id = 'critical_gap_count'").fetchone()
+        crit_gap_count = 0
+        if crit_gap_row:
+            try:
+                crit_gap_count = int(crit_gap_row["value"])
+            except Exception:
+                crit_gap_count = 0
+            
+        if crit_gap_count > 0:
+            score = min(score, 80.0)
+            caps.append(("critical gaps exist", 80.0))
+            
+        # Check UI container presence
+        import os
+        project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        index_path = os.path.join(project_root, "frontend/index.html")
+        ui_missing = True
+        if os.path.exists(index_path):
+            with open(index_path, "r") as f:
+                if "view-meta-orchestrator" in f.read():
+                    ui_missing = False
+                    
+        if ui_missing:
+            score = min(score, 75.0)
+            caps.append(("missing view-meta-orchestrator UI container", 75.0))
+            
+        ownerless_row = conn.execute("SELECT * FROM runtime_truth_signals WHERE signal_id = 'ownerless_domain_count'").fetchone()
+        ownerless_count = 0
+        if ownerless_row:
+            try:
+                ownerless_count = int(ownerless_row["value"])
+            except Exception:
+                ownerless_count = 0
+                
+        if ownerless_count > 0:
+            caps.append(("business autonomy is NOT READY", 0.0))
+            
         # Save score in SQLite
         conn.execute("""
             INSERT OR REPLACE INTO readiness_scores (metric_name, score, cap_applied, reason, updated_at)

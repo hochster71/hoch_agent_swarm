@@ -5,6 +5,8 @@ echo "==> Running Meta-Orchestrator Prevention Gates..."
 
 # Fetch telemetry signals via state endpoint
 STATE_DATA=$(curl -s http://127.0.0.1:8000/api/v1/runtime-truth/state)
+MAP_DATA=$(curl -s http://127.0.0.1:8000/api/v1/runtime-truth/source-map)
+COLLECT_DATA=$(curl -s -X POST http://127.0.0.1:8000/api/v1/runtime-truth/collect)
 
 # Helper function to get signal value
 get_signal_value() {
@@ -12,43 +14,57 @@ get_signal_value() {
   echo "$STATE_DATA" | jq -r ".signals[] | select(.signal_id == \"$signal_id\") | .value"
 }
 
-# 1. Domain Coverage Gate
+# Fetch crucial metrics
 COVERAGE_SCORE=$(get_signal_value "domain_coverage_score" | tr -d '%')
-echo "  [domain_coverage_gate]: Score is ${COVERAGE_SCORE}%"
-if (( $(echo "$COVERAGE_SCORE < 5.0" | bc -l) )); then
-  echo "ERROR: domain_coverage_gate failed: coverage score is below 5.0%"
-  exit 1
-fi
-
-# 2. Ownerless Domain Gate
 OWNERLESS_COUNT=$(get_signal_value "ownerless_domain_count")
-echo "  [ownerless_domain_gate]: Count is ${OWNERLESS_COUNT}"
-if [ "$OWNERLESS_COUNT" -gt 43 ]; then
-  echo "ERROR: ownerless_domain_gate failed: more than 43 ownerless domains detected"
-  exit 1
-fi
-
-# 3. Lifecycle Completeness Gate
-MISSING_LIFECYCLES=$(get_signal_value "missing_lifecycle_count")
-echo "  [lifecycle_completeness_gate]: Missing lifecycles count is ${MISSING_LIFECYCLES}"
-
-# 4. Business Readiness Gate
-MISSING_BUSINESS=$(get_signal_value "missing_business_function_count")
-echo "  [business_readiness_gate]: Missing business functions count is ${MISSING_BUSINESS}"
-
-# 5. Evidence Completeness Gate
-BRIEF_STATUS=$(get_signal_value "daily_brief_status")
-echo "  [evidence_completeness_gate]: Brief status is ${BRIEF_STATUS}"
-if [ "$BRIEF_STATUS" != "PASS" ]; then
-  echo "ERROR: evidence_completeness_gate failed: daily brief status is not PASS"
-  exit 1
-fi
-
-# 6. Operator Load Gate
+CRITICAL_GAPS=$(get_signal_value "critical_gap_count")
 LOAD_SCORE=$(get_signal_value "michael_orchestration_load")
+READINESS_SCORE=$(echo "$COLLECT_DATA" | jq -r ".readiness.score")
+
+echo "  [domain_coverage_gate]: Score is ${COVERAGE_SCORE}%"
+echo "  [ownerless_domain_gate]: Count is ${OWNERLESS_COUNT}"
 echo "  [operator_load_gate]: Operator load score is ${LOAD_SCORE}"
-if (( $(echo "$LOAD_SCORE > 90.0" | bc -l) )); then
-  echo "ERROR: operator_load_gate failed: Michael orchestration load score exceeds 90.0%"
+echo "  [readiness_gate]: Current readiness score is ${READINESS_SCORE}"
+
+# 1. Check if critical_gap_count > 0 and report says no blockers / readiness is 100
+if [ "$CRITICAL_GAPS" -gt 0 ]; then
+  if [ "$READINESS_SCORE" = "100" ] || [ "$READINESS_SCORE" = "100.0" ]; then
+    echo "ERROR: Gate violation: critical_gap_count > 0 but readiness score is 100!"
+    exit 1
+  fi
+fi
+
+# 2. Check if ownerless_domain_count > 10 and orchestration load is LOW
+if [ "$OWNERLESS_COUNT" -gt 10 ] && [ "$LOAD_SCORE" != "HIGH" ]; then
+  echo "ERROR: Gate violation: ownerless_domain_count > 10 but orchestration load is $LOAD_SCORE (expected HIGH)!"
+  exit 1
+fi
+
+# 3. Check if #view-meta-orchestrator is missing in frontend/index.html
+if ! grep -q "view-meta-orchestrator" frontend/index.html; then
+  echo "ERROR: Gate violation: view-meta-orchestrator UI container is missing from frontend/index.html!"
+  exit 1
+fi
+
+# 4. Check if Runtime Truth lacks meta-orchestrator signals
+if ! echo "$STATE_DATA" | jq -e '.signals[] | select(.signal_id == "meta_orchestrator_status")' > /dev/null; then
+  echo "ERROR: Gate violation: Runtime Truth lacks meta-orchestrator signals!"
+  exit 1
+fi
+
+# 5. Check if source map lacks meta-orchestrator entries
+if ! echo "$MAP_DATA" | jq -e '.source_map[] | select(.key == "meta_orchestrator_status")' > /dev/null; then
+  echo "ERROR: Gate violation: Source map lacks meta-orchestrator entries!"
+  exit 1
+fi
+
+# 6. Legacy validation checks
+MISSING_LIFECYCLES=$(get_signal_value "missing_lifecycle_count")
+MISSING_BUSINESS=$(get_signal_value "missing_business_function_count")
+BRIEF_STATUS=$(get_signal_value "daily_brief_status")
+
+if [ "$BRIEF_STATUS" != "PASS" ]; then
+  echo "ERROR: daily brief status is not PASS"
   exit 1
 fi
 

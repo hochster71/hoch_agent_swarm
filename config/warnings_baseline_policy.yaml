@@ -1,0 +1,7 @@
+warnings_baseline_policy:
+  baseline_file: "config/known_warning_baseline.json"
+  fail_on_new_warnings: true
+  assign_legacy_to_owners: true
+  unowned_warning_allowed: false
+  default_legacy_owner: "Refactor Agent"
+  default_due_days: 30

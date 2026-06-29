@@ -11500,12 +11500,26 @@ def get_meta_orchestrator_daily_brief():
 @app.get("/api/v1/meta-orchestrator/decision-queue")
 def get_meta_orchestrator_decision_queue():
     from backend.meta_orchestrator.chief_of_staff import ChiefOfStaff
+    import sqlite3
+    from backend.runtime_truth.state_store import DB_PATH
     cos = ChiefOfStaff()
     decisions = cos.queue.get_pending_decisions()
+    
+    ownerless_count = 0
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        row = conn.execute("SELECT value FROM runtime_truth_signals WHERE signal_id = 'ownerless_domain_count'").fetchone()
+        if row:
+            ownerless_count = int(row[0])
+        conn.close()
+    except Exception:
+        pass
+
+    load_score = cos.queue.compute_orchestration_load()
     return {
         "status": "success",
         "decisions": decisions,
-        "load_score": cos.queue.compute_orchestration_load()
+        "load_score": "HIGH" if ownerless_count > 10 else load_score
     }
 
 @app.post("/api/v1/meta-orchestrator/run-gap-scan")
@@ -11532,6 +11546,55 @@ def post_meta_orchestrator_assign_owner(payload: dict):
         "status": "success",
         "domain": cos.registry.get_domain(domain_id)
     }
+
+@app.get("/api/v1/coding-control-plane/defects")
+def get_coding_defects_endpoint():
+    from backend.coding_control_plane.defect_registry import DefectRegistry
+    reg = DefectRegistry()
+    return {"status": "success", "defects": reg.get_defects()}
+
+@app.get("/api/v1/coding-control-plane/agent-scoreboard")
+def get_agent_scoreboard_endpoint():
+    from backend.coding_control_plane.agent_scoreboard import AgentScoreboard
+    sb = AgentScoreboard()
+    return {"status": "success", "scoreboard": sb.get_agent_scores()}
+
+@app.get("/api/v1/coding-control-plane/tools")
+def get_control_plane_tools_endpoint():
+    from backend.coding_control_plane.tool_registry import ToolRegistry
+    tr = ToolRegistry()
+    return {"status": "success", "tools": tr.get_registered_tools()}
+
+@app.get("/api/v1/security-ops/findings")
+def get_security_findings_endpoint():
+    from backend.security_ops.finding_ingestor import FindingIngestor
+    fi = FindingIngestor()
+    return {"status": "success", "findings": fi.get_open_findings()}
+
+@app.get("/api/v1/security-ops/vulns")
+def get_security_vulns_endpoint():
+    from backend.security_ops.vuln_register import VulnRegister
+    vr = VulnRegister()
+    return {"status": "success", "vulns": vr.get_vulns()}
+
+@app.get("/api/v1/security-ops/accepted-risks")
+def get_accepted_risks_endpoint():
+    from backend.security_ops.accepted_risk import AcceptedRisk
+    ar = AcceptedRisk()
+    return {"status": "success", "accepted_risks": ar.get_accepted_risks()}
+
+@app.post("/api/v1/security-ops/accept-risk")
+def post_accept_risk_endpoint(payload: dict):
+    from backend.security_ops.accepted_risk import AcceptedRisk
+    risk_id = payload.get("risk_id")
+    defect_id = payload.get("defect_id")
+    justification = payload.get("justification")
+    expiration = payload.get("expiration_date")
+    if not risk_id or not defect_id or not justification:
+        raise HTTPException(status_code=400, detail="Missing risk_id, defect_id, or justification")
+    ar = AcceptedRisk()
+    res = ar.record_accepted_risk(risk_id, defect_id, justification, expiration)
+    return {"status": "success", "accepted_risk": res}
 
 # Mount frontend files at root (if frontend directory exists)
 
