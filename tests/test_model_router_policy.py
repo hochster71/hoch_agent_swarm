@@ -38,3 +38,19 @@ def test_router_success_routing():
         assert res["output"] == "LOCAL ROUTER OK"
         assert res["paid_escalation_used"] is False
         assert res["audit_event_written"] is True
+
+def test_router_fallback_failover():
+    # If primary local provider (lmstudio) fails, check that it fails over to the fallback local provider (ollama).
+    def mock_try(provider, model, prompt):
+        if provider == "lmstudio":
+            raise router.RouterException("LM Studio offline")
+        elif provider == "ollama":
+            return "FALLBACK LOCAL OLLAMA OK"
+        raise router.RouterException("Unknown provider")
+
+    with patch("backend.model_router.router.try_local_provider", side_effect=mock_try):
+        res = router.route_and_run("Say hello")
+        assert res["provider"] == "ollama"
+        assert res["model"] == "qwen2.5-coder:7b"
+        assert res["output"] == "FALLBACK LOCAL OLLAMA OK"
+        assert res["paid_escalation_used"] is False
