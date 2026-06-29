@@ -131,10 +131,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/timezone@v1
-        continue-on-error: true # Workaround for non-essential setups
-      
-      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Validate Compose Config

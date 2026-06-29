@@ -3,6 +3,11 @@ from unittest.mock import patch, MagicMock
 from fastapi import HTTPException
 from backend.execution_policy import POLICY_ENGINE
 
+@pytest.fixture(autouse=True)
+def clean_ci_env(monkeypatch):
+    monkeypatch.delenv("CI", raising=False)
+    monkeypatch.delenv("TEST_MODE", raising=False)
+
 def test_execution_policy_go_by_default():
     # Setup mock preflight status returning GO
     mock_preflight = {
