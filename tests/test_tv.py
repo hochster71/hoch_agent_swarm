@@ -13,6 +13,28 @@ from backend.tv_manager import (
 
 client = TestClient(app)
 
+@pytest.fixture(autouse=True)
+def mock_drogon_fetch(monkeypatch):
+    def fake_fetch(url, description):
+        if "epg" in description.lower() or "epg" in url.lower():
+            return b"""<?xml version="1.0" encoding="UTF-8"?>
+<tv>
+  <channel id="cnn">
+    <display-name>CNN</display-name>
+  </channel>
+  <programme start="20260628000000 +0000" stop="20260628235959 +0000" channel="cnn">
+    <title>Global Security Swarm Report</title>
+    <desc>Continuous Monitoring feeds and compliance updates live.</desc>
+  </programme>
+</tv>
+"""
+        else:
+            return b"""#EXTM3U
+#EXTINF:-1 tvg-id="cnn" tvg-name="CNN" tvg-logo="http://example.com/cnn.png" group-title="News",CNN US
+http://localhost:8080/cnn/index.m3u8
+"""
+    monkeypatch.setattr("backend.tv_manager.fetch_drogon_data", fake_fetch)
+
 def test_m3u_parsing_local():
     # Test M3U parsing from string content
     sample_m3u = """#EXTM3U
