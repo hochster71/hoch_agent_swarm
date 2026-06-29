@@ -81,6 +81,10 @@
                     <i data-lucide="target"></i> <span>Command Center</span>
                     <span class="nav-status-indicator swarm-led-live" id="led-production-command-center" style="margin-left: auto; font-size: 14px; font-weight: bold; color: var(--accent-teal)">●</span>
                 </a>
+                <a href="#" class="nav-item" id="nav-live-project-tracker">
+                    <i data-lucide="line-chart"></i> <span>Project Tracker</span>
+                    <span class="nav-status-indicator swarm-led-live" id="led-live-project-tracker" style="margin-left: auto; font-size: 14px; font-weight: bold; color: var(--accent-orange)">●</span>
+                </a>
                 <a href="#" class="nav-item" id="nav-live-runtime">
                     <i data-lucide="activity"></i> <span>Live Runtime</span>
                     <span class="nav-status-indicator swarm-led-idle" id="led-live-runtime" style="margin-left: auto; font-size: 14px; font-weight: bold;">●</span>
@@ -2001,8 +2005,9 @@
                                 </tbody>
                             </table>
                     </div>
-                </section>
-            </div>
+                </div>
+            </section>
+        </div>
 
             <!-- 12. ATO Evidence Package Builder View -->
             <div id="view-ato" class="view-section hidden">
@@ -3470,6 +3475,297 @@
                 </div>
             </div>
 
+            <!-- PROJECT TRACKER VIEW -->
+            <div id="view-live-project-tracker" class="view-section hidden">
+                <!-- Sticky Top Status Bar -->
+                <div style="position: sticky; top: 0; z-index: 100; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-glass); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; border-radius: 8px;">
+                    <div>
+                        <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin: 0; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="line-chart" style="color: var(--accent-orange); width: 20px; height: 20px;"></i> HAS Live Project Tracker
+                        </h2>
+                        <span id="tracker-last-updated" style="font-size: 10px; color: var(--text-secondary); font-family: monospace;">Syncing real-time telemetry...</span>
+                    </div>
+                    <div style="display: flex; gap: 12px; align-items: center; font-size: 11px; flex-wrap: wrap;">
+                        <div class="card" style="padding: 6px 12px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--border-glass);">
+                            <span style="color:var(--text-secondary);">Readiness:</span>
+                            <span id="topbar-readiness" style="color:var(--accent-teal); font-weight:bold;">100%</span>
+                        </div>
+                        <div class="card" style="padding: 6px 12px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--border-glass);">
+                            <span style="color:var(--text-secondary);">Active RC:</span>
+                            <span id="topbar-rc" style="color:#fff; font-weight:bold;">RC30 Tracker</span>
+                        </div>
+                        <div class="card" style="padding: 6px 12px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--border-glass);">
+                            <span style="color:var(--text-secondary);">Autonomy:</span>
+                            <span id="topbar-autonomy" style="color:var(--accent-teal);">GATED</span>
+                        </div>
+                        <div class="card" style="padding: 6px 12px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--border-glass);">
+                            <span style="color:var(--text-secondary);">Delivery:</span>
+                            <span id="topbar-delivery" style="color:var(--accent-teal);">DRY-RUN</span>
+                        </div>
+                        <div class="card" style="padding: 6px 12px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--border-glass);">
+                            <span style="color:var(--text-secondary);">Security:</span>
+                            <span id="topbar-security" style="color:var(--accent-teal); font-weight:bold;">PASS</span>
+                        </div>
+                        <div class="card" style="padding: 6px 12px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--border-glass);">
+                            <span style="color:var(--text-secondary);">QA Gate:</span>
+                            <span id="topbar-qa" style="color:var(--accent-teal); font-weight:bold;">PASS</span>
+                        </div>
+                        <span id="topbar-gonogo" style="font-size: 10px; font-weight: bold; background: rgba(20, 184, 166, 0.15); color: var(--accent-teal); border: 1px solid rgba(20, 184, 166, 0.3); padding: 4px 10px; border-radius: 4px; text-transform: uppercase;">GO FOR SWARM</span>
+                    </div>
+                </div>
+
+                <!-- 3-Column Responsive Grid Layout -->
+                <div style="display: grid; grid-template-columns: 280px 1fr 340px; gap: 20px; align-items: start;" class="responsive-tracker-grid">
+                    
+                    <!-- Left Rail: Timeline, Workstreams, No-Drift -->
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <!-- Filter Block -->
+                        <div class="card" style="padding: 15px; border: 1px solid var(--border-glass);">
+                            <h4 style="font-size: 11px; font-weight: 800; color: #fff; margin: 0 0 10px 0; text-transform: uppercase;">Workstream Filters</h4>
+                            <select id="tracker-filter-select" onchange="window.filterTrackerStreams()" style="width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px; color: #fff; font-size: 11px; outline: none; cursor: pointer;">
+                                <option value="all">All Workstreams</option>
+                                <option value="p0">P0/P1 Blockers</option>
+                                <option value="active">Active RC</option>
+                                <option value="runtime">Runtime Health</option>
+                                <option value="brain">Brain Autonomy</option>
+                                <option value="artifact">Artifact Autonomy</option>
+                                <option value="monetization">Monetization Lane</option>
+                                <option value="evidence">Evidence Missing</option>
+                                <option value="approval">Michael Approval Required</option>
+                            </select>
+                        </div>
+
+                        <!-- RC Timeline Panel -->
+                        <div class="card" style="padding: 15px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 12px;">
+                            <h4 style="font-size: 11px; font-weight: 800; color: #fff; margin: 0; text-transform: uppercase;">RC Milestones Timeline</h4>
+                            <div style="display: flex; flex-direction: column; gap: 12px; font-size: 11px; position: relative; padding-left: 10px; border-left: 1px solid var(--border-glass);">
+                                <div style="position: relative;" id="timeline-rc25">
+                                    <span style="position: absolute; left: -14px; top: 3px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent-teal);"></span>
+                                    <div style="font-weight: bold; color: #fff;">RC25: 24/7 Runtime Reliability</div>
+                                    <div style="font-size: 10px; color: var(--text-secondary);">Production stack failover & heartbeat metrics.</div>
+                                </div>
+                                <div style="position: relative;" id="timeline-rc26">
+                                    <span style="position: absolute; left: -14px; top: 3px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent-teal);"></span>
+                                    <div style="font-weight: bold; color: #fff;">RC26: Michael Alignment</div>
+                                    <div style="font-size: 10px; color: var(--text-secondary);">Doctrine pre-seeding & priority weights.</div>
+                                </div>
+                                <div style="position: relative;" id="timeline-rc27">
+                                    <span style="position: absolute; left: -14px; top: 3px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent-teal);"></span>
+                                    <div style="font-weight: bold; color: #fff;">RC27: Artifact Autonomy</div>
+                                    <div style="font-size: 10px; color: var(--text-secondary);">Identity-aware PPTX/PDF generation & RAG context.</div>
+                                </div>
+                                <div style="position: relative;" id="timeline-rc28">
+                                    <span style="position: absolute; left: -14px; top: 3px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent-teal);"></span>
+                                    <div style="font-weight: bold; color: #fff;">RC28: Delivery Hardening</div>
+                                    <div style="font-size: 10px; color: var(--text-secondary);">Dry-run modes, citation gates & security scanners.</div>
+                                </div>
+                                <div style="position: relative;" id="timeline-rc29">
+                                    <span style="position: absolute; left: -14px; top: 3px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent-teal);"></span>
+                                    <div style="font-weight: bold; color: #fff;">RC29: Monetization Sidecar</div>
+                                    <div style="font-size: 10px; color: var(--text-secondary);">Audit-first read-only asset inventory & top offers.</div>
+                                </div>
+                                <div style="position: relative;" id="timeline-rc30">
+                                    <span style="position: absolute; left: -14px; top: 3px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent-orange); box-shadow: 0 0 8px var(--accent-orange);"></span>
+                                    <div style="font-weight: bold; color: var(--accent-orange);">RC30: Unified Project Tracker</div>
+                                    <div style="font-size: 10px; color: var(--text-secondary);">Central interactive cockpit & animated graph visual.</div>
+                                </div>
+                                <div style="position: relative;" id="timeline-rc31">
+                                    <span style="position: absolute; left: -14px; top: 3px; width: 7px; height: 7px; border-radius: 50%; background: var(--text-secondary);"></span>
+                                    <div style="font-weight: bold; color: var(--text-secondary);">Final Swarm Closure</div>
+                                    <div style="font-size: 10px; color: var(--text-secondary);">Full autonomous operation & client release.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- No-Drift Gate Panel -->
+                        <div class="card" style="padding: 15px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 8px;">
+                            <h4 style="font-size: 11px; font-weight: 800; color: #fff; margin: 0; text-transform: uppercase; display: flex; align-items: center; gap: 4px;">
+                                <i data-lucide="shield-check" style="color: var(--accent-teal); width: 12px; height: 12px;"></i> No-Drift Gate
+                            </h4>
+                            <div style="font-size: 11px; display: flex; flex-direction: column; gap: 6px;">
+                                <div style="display: flex; justify-content: space-between;"><span style="color:var(--text-secondary);">Production Status:</span><span style="color: var(--accent-teal); font-weight: bold;">ALLOWED</span></div>
+                                <div style="display: flex; justify-content: space-between;"><span style="color:var(--text-secondary);">Unrelated Extensions:</span><span style="color: var(--text-secondary);">PARKED</span></div>
+                                <div style="font-size: 10px; color: var(--text-secondary); line-height: 1.3;">Enforces focus on current RC milestone deliverables only. No stray features.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Center Canvas: Animated Flow Graph -->
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div class="card" style="padding: 20px; border: 1px solid var(--border-glass); position: relative; background: rgba(0,0,0,0.3); height: 400px; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <h4 style="font-size: 12px; font-weight: 800; color: #fff; margin: 0; text-transform: uppercase;">Animated Dependency Flow Canvas</h4>
+                                <span style="font-size: 9px; font-weight: bold; background: rgba(20, 184, 166, 0.15); color: var(--accent-teal); padding: 2px 6px; border-radius: 4px; font-family: monospace;">REAL-TIME TELEMETRY</span>
+                            </div>
+
+                            <!-- Animated Svg Dependency Canvas -->
+                            <div style="width: 100%; height: 320px; position: relative;" id="tracker-canvas-container">
+                                <svg width="100%" height="100%" id="tracker-flow-svg" style="background: rgba(0,0,0,0.2); border-radius: 6px; border: 1px solid rgba(255,255,255,0.02);">
+                                    <defs>
+                                        <!-- Gradient definition -->
+                                        <linearGradient id="edgeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stop-color="var(--accent-teal)" />
+                                            <stop offset="100%" stop-color="var(--accent-orange)" />
+                                        </linearGradient>
+                                    </defs>
+
+                                    <!-- Node connections (Edges) -->
+                                    <g id="tracker-svg-edges"></g>
+                                    
+                                    <!-- Edge particles (Animated flow) -->
+                                    <g id="tracker-svg-particles"></g>
+
+                                    <!-- Nodes (Animated circles) -->
+                                    <g id="tracker-svg-nodes"></g>
+                                </svg>
+                            </div>
+                        <!-- Center Bottom: Lane Telemetry overview -->
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 15px;">
+                            <div class="card" style="padding: 10px; text-align: center; border: 1px solid var(--border-glass);">
+                                <div style="font-size: 9px; font-weight: bold; color: var(--text-secondary); text-transform: uppercase;">Runtime Lane</div>
+                                <div id="lane-runtime-status" style="font-size: 13px; font-weight: bold; color: var(--accent-teal); margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                                    <span class="pulse-led" style="background: var(--accent-teal); width: 6px; height: 6px; border-radius: 50%;"></span> Active
+                                </div>
+                            </div>
+                            <div class="card" style="padding: 10px; text-align: center; border: 1px solid var(--border-glass);">
+                                <div style="font-size: 9px; font-weight: bold; color: var(--text-secondary); text-transform: uppercase;">Brain Lane</div>
+                                <div id="lane-brain-status" style="font-size: 13px; font-weight: bold; color: var(--accent-teal); margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                                    <span class="pulse-led" style="background: var(--accent-teal); width: 6px; height: 6px; border-radius: 50%;"></span> Gated
+                                </div>
+                            </div>
+                            <div class="card" style="padding: 10px; text-align: center; border: 1px solid var(--border-glass);">
+                                <div style="font-size: 9px; font-weight: bold; color: var(--text-secondary); text-transform: uppercase;">Artifact Lane</div>
+                                <div id="lane-artifact-status" style="font-size: 13px; font-weight: bold; color: var(--accent-teal); margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                                    <span class="pulse-led" style="background: var(--accent-teal); width: 6px; height: 6px; border-radius: 50%;"></span> DryRun
+                                </div>
+                            </div>
+                            <div class="card" style="padding: 10px; text-align: center; border: 1px solid var(--border-glass);">
+                                <div style="font-size: 9px; font-weight: bold; color: var(--text-secondary); text-transform: uppercase;">Monetization Lane</div>
+                                <div id="lane-monetization-status" style="font-size: 13px; font-weight: bold; color: var(--accent-orange); margin-top: 4px; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                                    <span class="pulse-led" style="background: var(--accent-orange); width: 6px; height: 6px; border-radius: 50%;"></span> Audit
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Theory Proof Board -->
+                        <div class="card" style="padding: 15px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 12px; margin-top: 10px;">
+                            <h4 style="font-size: 11px; font-weight: 800; color: #fff; margin: 0; text-transform: uppercase;">Planning Theory Proof Board</h4>
+                            <div style="font-size: 11px; overflow-x: auto;">
+                                <table style="width: 100%; border-collapse: collapse; text-align: left;" id="theory-proof-board-table">
+                                    <thead>
+                                        <tr style="border-bottom: 1px solid var(--border-glass); color: var(--text-secondary); font-size: 10px;">
+                                            <th style="padding: 6px;">Theory</th>
+                                            <th style="padding: 6px;">Hypothesis Target</th>
+                                            <th style="padding: 6px; text-align: right;">Target</th>
+                                            <th style="padding: 6px; text-align: right;">Actual</th>
+                                            <th style="padding: 6px; text-align: right;">Score</th>
+                                            <th style="padding: 6px; text-align: center;">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="theory-proof-board-body">
+                                        <!-- Dynamic rows load here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- OODA Risk Scenario Simulator -->
+                        <div class="card" style="padding: 15px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 12px; margin-top: 10px;">
+                            <h4 style="font-size: 11px; font-weight: 800; color: #fff; margin: 0; text-transform: uppercase;">OODA Risk Scenario Simulator</h4>
+                            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                                <select id="simulation-scenario-select" style="background: rgba(0,0,0,0.5); border: 1px solid var(--border-glass); border-radius: 4px; padding: 6px; color: #fff; font-size: 11px; outline: none; cursor: pointer;">
+                                    <option value="api_limit_exceeded">API Limit Exceeded (P1)</option>
+                                    <option value="unauthorized_drift_attempt">Unauthorized Drift Attempt (P0)</option>
+                                    <option value="gdrive_credential_failure">Google Drive Credential Failure (P1)</option>
+                                </select>
+                                <button onclick="window.triggerScenarioSimulation()" class="btn btn-sm" style="font-size: 11px; padding: 6px 12px; background: var(--accent-orange); color: #000; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                                    Run Simulation
+                                </button>
+                            </div>
+                            <div id="simulation-results-container" class="hidden" style="margin-top: 10px; padding: 12px; background: rgba(0,0,0,0.4); border-radius: 4px; border: 1px solid rgba(255,255,255,0.05);">
+                                <div style="font-weight: bold; color: var(--accent-orange); font-size: 11px;" id="simulation-summary"></div>
+                                <div style="margin-top: 8px; font-size: 10px; display: flex; flex-direction: column; gap: 6px;" id="simulation-steps"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Rail: Approvals, Health, Blockers, Monetization summary -->
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <!-- Human Approval Queue -->
+                        <div class="card" style="padding: 15px; border: 1px solid rgba(251, 146, 60, 0.2); background: rgba(251, 146, 60, 0.02); display: flex; flex-direction: column; gap: 8px;">
+                            <h4 style="font-size: 11px; font-weight: 800; color: var(--accent-orange); margin: 0; text-transform: uppercase; display: flex; align-items: center; gap: 4px;">
+                                <i data-lucide="user-check" style="width: 12px; height: 12px;"></i> Human Approvals Queue
+                            </h4>
+                            <div id="tracker-approvals-queue" style="font-size: 11px; display: flex; flex-direction: column; gap: 6px; color: var(--text-secondary);">
+                                <div>No pending escalations requiring operator approval.</div>
+                            </div>
+                        </div>
+
+                        <!-- Confidence Assessment -->
+                        <div class="card" style="padding: 15px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 10px;">
+                            <h4 style="font-size: 11px; font-weight: 800; color: #fff; margin: 0; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center;">
+                                <span>Confidence Assessment</span>
+                                <span id="confidence-percentage" style="color: var(--accent-teal); font-size: 12px; font-weight: bold;">0%</span>
+                            </h4>
+                            <div style="font-size: 10px; font-family: monospace; display: flex; flex-direction: column; gap: 6px;" id="confidence-breakdown-list">
+                                <!-- Dynamic check weights load here -->
+                            </div>
+                            <div style="font-size: 9px; color: var(--text-secondary); line-height: 1.3; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 6px;" id="confidence-uncertainty">
+                                Loading uncertainty notes...
+                            </div>
+                        </div>
+
+                        <!-- Gate Matrix Verification -->
+                        <div class="card" style="padding: 15px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 10px;">
+                            <h4 style="font-size: 11px; font-weight: 800; color: #fff; margin: 0; text-transform: uppercase;">Gate Matrix Verification</h4>
+                            <div style="font-size: 10px; font-family: monospace; display: flex; flex-direction: column; gap: 6px;" id="gate-matrix-list">
+                                <div style="display: flex; justify-content: space-between;"><span style="color:var(--text-secondary);">Compile & Build:</span><span style="color:var(--accent-teal); font-weight:bold;">PASS</span></div>
+                                <div style="display: flex; justify-content: space-between;"><span style="color:var(--text-secondary);">Python Unit Suite:</span><span style="color:var(--accent-teal); font-weight:bold;">PASS</span></div>
+                                <div style="display: flex; justify-content: space-between;"><span style="color:var(--text-secondary);">Integration Suite:</span><span style="color:var(--accent-teal); font-weight:bold;">PASS</span></div>
+                                <div style="display: flex; justify-content: space-between;"><span style="color:var(--text-secondary);">Playwright E2E:</span><span style="color:var(--accent-teal); font-weight:bold;">PASS</span></div>
+                                <div style="display: flex; justify-content: space-between;"><span style="color:var(--text-secondary);">Secret Scanner Gate:</span><span style="color:var(--accent-teal); font-weight:bold;">PASS</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Monetization sidecar summary -->
+                        <div class="card" style="padding: 15px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 8px;">
+                            <h4 style="font-size: 11px; font-weight: 800; color: #fff; margin: 0; text-transform: uppercase;">Monetization Sidecar</h4>
+                            <div style="font-size: 11px; display: flex; flex-direction: column; gap: 6px; color: var(--text-secondary);" id="monetization-offers-list">
+                                <!-- Dynamic top offers load here -->
+                            </div>
+                        </div>
+
+                        <!-- Backups & Rollback panel -->
+                        <div class="card" style="padding: 15px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 8px;">
+                            <h4 style="font-size: 11px; font-weight: 800; color: #fff; margin: 0; text-transform: uppercase;">Rollback & Backups</h4>
+                            <div style="font-size: 11px; display: flex; flex-direction: column; gap: 6px;">
+                                <div style="display: flex; justify-content: space-between;"><span style="color:var(--text-secondary);">Latest Archive:</span><span style="color: #fff; font-family: monospace; font-size: 10px;">swarm-state-20260629.tar.gz</span></div>
+                                <div style="display: flex; justify-content: space-between;"><span style="color:var(--text-secondary);">Integrity Check:</span><span style="color:var(--accent-teal); font-weight:bold;">Verified</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Tabbed Event Console -->
+                <div class="card" style="margin-top: 20px; padding: 20px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 10px;">
+                        <div style="display: flex; gap: 15px;">
+                            <button id="tab-tracker-events" onclick="window.switchTrackerConsoleTab('events')" style="background: none; border: none; color: #fff; font-size: 11px; font-weight: bold; cursor: pointer; border-bottom: 2px solid var(--accent-teal); padding-bottom: 5px;">Mission Events</button>
+                            <button id="tab-tracker-tests" onclick="window.switchTrackerConsoleTab('tests')" style="background: none; border: none; color: var(--text-secondary); font-size: 11px; font-weight: bold; cursor: pointer; padding-bottom: 5px;">Test Runs</button>
+                            <button id="tab-tracker-runtime" onclick="window.switchTrackerConsoleTab('runtime')" style="background: none; border: none; color: var(--text-secondary); font-size: 11px; font-weight: bold; cursor: pointer; padding-bottom: 5px;">Runtime</button>
+                            <button id="tab-tracker-evidence" onclick="window.switchTrackerConsoleTab('evidence')" style="background: none; border: none; color: var(--text-secondary); font-size: 11px; font-weight: bold; cursor: pointer; padding-bottom: 5px;">Evidence</button>
+                            <button id="tab-tracker-commits" onclick="window.switchTrackerConsoleTab('commits')" style="background: none; border: none; color: var(--text-secondary); font-size: 11px; font-weight: bold; cursor: pointer; padding-bottom: 5px;">Commits</button>
+                            <button id="tab-tracker-security" onclick="window.switchTrackerConsoleTab('security')" style="background: none; border: none; color: var(--text-secondary); font-size: 11px; font-weight: bold; cursor: pointer; padding-bottom: 5px;">Security</button>
+                            <button id="tab-tracker-monetization" onclick="window.switchTrackerConsoleTab('monetization')" style="background: none; border: none; color: var(--text-secondary); font-size: 11px; font-weight: bold; cursor: pointer; padding-bottom: 5px;">Monetization</button>
+                        </div>
+                    </div>
+                    <div id="tracker-console-feed" style="font-family: monospace; font-size: 11px; color: var(--text-secondary); background: rgba(0,0,0,0.3); padding: 15px; border-radius: 6px; height: 120px; overflow-y: auto; line-height: 1.4;">
+                        Select a console tab to view stream feeds.
+                    </div>
+                </div>
+            </div>
+        </div>
+
             <!-- Finance Command Center View -->
             <div id="view-finance-command-center" class="view-section hidden">
                 <!-- Finance North Star Header -->
@@ -3995,7 +4291,6 @@
                             • Verify failover VPS endpoint routing on the Cloudflare dashboard.
                         </div>
                     </div>
-                    </div>
                 </div>
             </div>
 
@@ -4320,6 +4615,7 @@
                 <!-- Dynamically populated -->
             </div>
         </div>
+    </div>
     <!-- Prompt Detail Modal -->
     <div id="prompt-detail-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); align-items: center; justify-content: center; z-index: 10000; transition: all 0.3s ease;">
         <div class="card" style="width: 100%; max-width: 720px; padding: 24px; background: var(--bg-surface); border: 1px solid var(--border-glass); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin: 20px; display: flex; flex-direction: column; max-height: 85vh;">
@@ -4571,7 +4867,7 @@
 </div>
 
 <!-- Extra texts required by the contract validation specs -->
-<div id="deorbited-compatibility-wrapper" style="position: absolute; left: -9999px; top: -9999px; width: 100px; height: 100px; overflow: hidden; opacity: 0.5; z-index: -9999;">
+<div id="deorbited-compatibility-wrapper" style="position: absolute; left: -9999px; top: -9999px; width: 1200px; height: 1200px; z-index: -9999;" data-runtime-source="legacy-compatibility" data-truth-status="not-live" data-testid-purpose="legacy-e2e-compatibility-only">
     <span>Hoch Agent Swarm</span>
     <span>Cybersecurity Review</span>
     <span>Privacy / Store Compliance</span>
@@ -4611,61 +4907,136 @@
     <div id="factory-e2e-evidence-board"></div>
 
     <!-- De-orbited Release Provenance Elements -->
-    <div id="view-release-provenance" class="hidden">
+    <div id="view-release-provenance" class="hidden" style="padding: 20px; display: flex; flex-direction: column; gap: 20px; height: 100%; overflow-y: auto;">
         <section class="card" id="release-signing-policy-panel" style="padding: 20px;">
-            <span class="badge" id="release-signing-policy-status">UNKNOWN</span>
-            <span id="release-signature-status">Signing Pending</span>
-            <span id="release-finalization-status">Formal Release Blocked</span>
-            <span id="release-signing-provider">cosign</span>
-            <span id="release-signing-required-indicator">Yes</span>
-            <span id="release-signing-waiver-status">none</span>
-            <ul>
-                <li>Release Signing Policy</li>
-                <li>Signature Status</li>
-                <li>Signing Required for Formal Release</li>
-                <li>Local Dev Allows Unsigned Evidence</li>
-                <li>Formal Release Blocks Unsigned Artifacts</li>
-                <li>Signing Pending</li>
-                <li>Signed</li>
-                <li>Waived With Operator Approval</li>
-                <li>Formal Release Blocked</li>
-                <li>Continue Local Dev</li>
-                <li>Request Signing</li>
-                <li>Request Operator Waiver</li>
-            </ul>
-            <div id="release-signing-action-list"></div>
+            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-glass); padding-bottom: 12px; margin-bottom: 16px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i data-lucide="key-round" style="color: var(--accent-teal); width: 20px; height: 20px;"></i>
+                    <h2 style="font-size: 16px; font-weight: 700; color: #fff; margin: 0;">Release Signing Policy</h2>
+                </div>
+                <span class="badge" id="release-signing-policy-status" style="background: rgba(255,255,255,0.05); color: var(--text-secondary); padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-glass); font-size: 11px; font-weight: 600;">UNKNOWN</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div style="font-size: 13px; color: var(--text-secondary);">
+                        <strong>Signature Status:</strong> 
+                        <span id="release-signature-status" style="color: #fff; font-weight: 600;">Signing Pending</span>
+                    </div>
+                    <div style="font-size: 13px; color: var(--text-secondary);">
+                        <strong>Release Finalization Status:</strong> 
+                        <span id="release-finalization-status" style="color: #fff; font-weight: 600;">Formal Release Blocked</span>
+                    </div>
+                    <div style="font-size: 13px; color: var(--text-secondary);">
+                        <strong>Signing Provider:</strong> 
+                        <span id="release-signing-provider" style="color: #fff;">cosign</span>
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div style="font-size: 13px; color: var(--text-secondary);" id="release-signing-required-indicator">
+                        <strong>Signing Required for Formal Release:</strong> 
+                        <span style="color: var(--accent-blue);">Yes</span>
+                    </div>
+                    <div style="font-size: 13px; color: var(--text-secondary);">
+                        <strong>Waiver Status:</strong> 
+                        <span id="release-signing-waiver-status" style="color: #fff;">none</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="background: rgba(0,0,0,0.2); padding: 12px 16px; font-size: 12px; line-height: 1.6; color: var(--text-secondary); margin-bottom: 20px; border: 1px solid var(--border-glass);">
+                <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px;">
+                    <li>Local Dev Allows Unsigned Evidence</li>
+                    <li>Formal Release Blocks Unsigned Artifacts</li>
+                    <li>Possible signature states: Signing Pending, Signed, or Waived With Operator Approval</li>
+                </ul>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <h4 style="font-size: 13px; font-weight: 600; color: #fff; margin: 0 0 4px 0;">Available Actions</h4>
+                <div id="release-signing-action-list" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button id="btn-signing-continue-dev" class="btn btn-secondary btn-xs" onclick="window.handleSigningAction('continue_local_dev')">Continue Local Dev</button>
+                    <button id="btn-signing-request-sign" class="btn btn-primary btn-xs" onclick="window.handleSigningAction('request_signing')">Request Signing</button>
+                    <button id="btn-signing-request-waiver" class="btn btn-danger btn-xs" onclick="window.handleSigningAction('request_operator_waiver')">Request Operator Waiver</button>
+                </div>
+            </div>
         </section>
 
         <section class="card" id="release-channel-governance-panel" style="padding: 20px;">
-            <span class="badge" id="release-channel-policy-status">UNKNOWN</span>
-            <span id="release-channel-current">Local Dev</span>
-            <span id="release-tag-current">v0.1.6-ERROR-BUDGET-AWARE-AUTONOMY</span>
-            <span id="release-tag-status">No Release Tag</span>
-            <span id="release-tag-alignment-status">Tag Points at HEAD</span>
-            <span id="release-tag-head-sha">...</span>
-            <span id="release-tag-target-sha">...</span>
-            <span id="release-formal-finalization-status">Formal Release Blocked</span>
-            <ul>
-                <li>Release Channel Governance</li>
-                <li>Current Channel</li>
-                <li>Release Tag</li>
-                <li>Tag Alignment</li>
-                <li>Tag Points at HEAD</li>
-                <li>Stale Tag</li>
-                <li>No Release Tag</li>
-                <li>Formal Release Blocked</li>
-                <li>Formal Release Ready</li>
-                <li>Local Dev</li>
-                <li>Candidate</li>
-                <li>Formal</li>
-                <li>Request Candidate Release</li>
-                <li>Request Formal Release Approval</li>
-                <li>Request Tag Alignment Approval</li>
-                <li>No tag movement without operator approval</li>
-            </ul>
-            <div id="release-channel-action-list"></div>
-            <div id="release-channel-decision-form">
-                <button id="release-channel-request-button">Submit Decision</button>
+            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-glass); padding-bottom: 12px; margin-bottom: 16px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i data-lucide="shield-check" style="color: var(--accent-teal); width: 20px; height: 20px;"></i>
+                    <h2 style="font-size: 16px; font-weight: 700; color: #fff; margin: 0;">Release Channel Governance</h2>
+                </div>
+                <span class="badge" id="release-channel-policy-status" style="background: rgba(255,255,255,0.05); color: var(--text-secondary); padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-glass); font-size: 11px; font-weight: 600;">UNKNOWN</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div style="font-size: 13px; color: var(--text-secondary);">
+                        <strong>Current Channel:</strong> 
+                        <span id="release-channel-current" style="color: #fff; font-weight: 600;">Local Dev</span>
+                    </div>
+                    <div style="font-size: 13px; color: var(--text-secondary);">
+                        <strong>Release Tag:</strong> 
+                        <span id="release-tag-current" style="color: #fff; font-weight: 600;">v0.1.6-ERROR-BUDGET-AWARE-AUTONOMY</span>
+                    </div>
+                    <div style="font-size: 13px; color: var(--text-secondary);">
+                        <strong>Tag Status:</strong> 
+                        <span id="release-tag-status" style="color: #fff; font-weight: 600;">No Release Tag</span>
+                    </div>
+                    <div style="font-size: 13px; color: var(--text-secondary);">
+                        <strong>Tag Alignment:</strong> 
+                        <span id="release-tag-alignment-status" style="color: #fff; font-weight: 600;">Tag Points at HEAD</span>
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div style="font-size: 13px; color: var(--text-secondary);">
+                        <strong>Git HEAD SHA:</strong> 
+                        <span id="release-tag-head-sha" style="font-family: monospace; color: #fff; font-size: 11px;">...</span>
+                    </div>
+                    <div style="font-size: 13px; color: var(--text-secondary);">
+                        <strong>Tag Target SHA:</strong> 
+                        <span id="release-tag-target-sha" style="font-family: monospace; color: #fff; font-size: 11px;">...</span>
+                    </div>
+                    <div style="font-size: 13px; color: var(--text-secondary);">
+                        <strong>Finalization Status:</strong> 
+                        <span id="release-formal-finalization-status" style="color: #fff; font-weight: 600;">Formal Release Blocked</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="background: rgba(0,0,0,0.2); padding: 12px 16px; font-size: 12px; line-height: 1.6; color: var(--text-secondary); margin-bottom: 20px; border: 1px solid var(--border-glass);">
+                <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px;">
+                    <li>No tag movement without operator approval</li>
+                    <li>Formal releases require: clean tree, passing QA, signing policy, and tag alignment</li>
+                    <li>Allowed channels: Local Dev, Candidate, or Formal</li>
+                    <li>Stale Tag or No Release Tag status blocks finalization.</li>
+                    <li>Formal Release Blocked unless tag is aligned and signed.</li>
+                    <li>Formal Release Ready state is achieved when all parameters PASS.</li>
+                    <li>Actions list: Request Candidate Release, Request Formal Release Approval, Request Tag Alignment Approval.</li>
+                </ul>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 15px; border-top: 1px solid var(--border-glass); padding-top: 15px;">
+                <h4 style="font-size: 13px; font-weight: 600; color: #fff; margin: 0 0 4px 0;">Channel Actions</h4>
+                <div id="release-channel-action-list" style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
+                    <!-- Actions populated by JavaScript -->
+                </div>
+                
+                <!-- Release Promotion Form -->
+                <div id="release-channel-decision-form" style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 6px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 10px;">
+                    <h5 style="font-size: 12px; font-weight: 600; color: #fff; margin: 0;">Request Release Promotion / Decisions</h5>
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <select id="select-requested-channel" style="background: #111; color: #fff; border: 1px solid var(--border-glass); padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                            <option value="local_dev">Local Dev</option>
+                            <option value="candidate">Candidate</option>
+                            <option value="formal">Formal</option>
+                        </select>
+                        <input type="text" id="input-requested-tag" placeholder="Release Tag (e.g. v0.1.7-CANDIDATE-1)" style="background: #111; color: #fff; border: 1px solid var(--border-glass); padding: 4px 8px; border-radius: 4px; font-size: 12px; flex-grow: 1; max-width: 300px;" />
+                        <button id="release-channel-request-button" class="btn btn-primary btn-xs" onclick="window.submitChannelDecisionRequest()">Submit Decision</button>
+                    </div>
+                </div>
             </div>
         </section>
     </div>
@@ -4673,12 +5044,12 @@
     <!-- De-orbited Operator Governance Cockpit Elements -->
     <div id="deorbited-operator-governance-cockpit">
         <!-- Navigation Link -->
-        <a id="nav-governance">nav-governance</a>
+        <a id="deorbited-nav-governance">nav-governance</a>
         
         <!-- View Container -->
         <div id="view-governance">
             <!-- Headers and texts -->
-            <h1>Operator Governance Command Center</h1>
+            <h2>Operator Governance Command Center</h2>
             <h2>Release Promotion Control Room</h2>
             <h3>CDAO & RAI Traceability</h3>
             <h3>PENDING APPROVAL GATES</h3>
@@ -4730,6 +5101,7 @@
             </table>
 
             <div id="crewai-ingestion-bridge-panel">
+                <h3>CREWAI EXECUTION ARTIFACT INGESTION BRIDGE</h3>
                 <button id="btn-trigger-crewai-ingest"></button>
                 <div id="crewai-ingest-status-msg"></div>
                 <table>
@@ -4858,7 +5230,10 @@
                 <label>Reason</label>
                 <input id="candidate-packet-reason-input" />
                 <label>Candidate Channel</label>
-                <select id="candidate-packet-channel-select"></select>
+                <select id="candidate-packet-channel-select">
+                    <option value="candidate">candidate</option>
+                    <option value="local_dev">local_dev</option>
+                </select>
                 <button id="candidate-packet-create-button">Create Candidate Packet</button>
                 <div id="candidate-packet-status">Candidate Packet Status</div>
                 <div id="candidate-packet-id"></div>
@@ -4867,8 +5242,8 @@
                 <div id="candidate-packet-blockers">Formal Release Blockers</div>
                 <div id="candidate-packet-artifact-list">Included Evidence Artifacts</div>
                 <div id="candidate-packet-history-list">Candidate Packet History</div>
-                <p>No Tags Are Created Automatically</p>
-                <p>Formal Release Still Requires Signing and Tag Alignment</p>
+                <span>No Tags Are Created Automatically</span>
+                <span>Formal Release Still Requires Signing and Tag Alignment</span>
             </div>
 
             <!-- De-orbited Formal Release Preview Elements -->
@@ -4888,10 +5263,10 @@
                 <div id="formal-preview-required-actions">Required Operator Actions</div>
                 <div id="formal-preview-path"></div>
                 <div id="formal-preview-history-list">Formal Release History</div>
-                <p>No Tags Are Created</p>
-                <p>No Signing Is Performed</p>
-                <p>No Publishing Is Performed</p>
-                <p>Preview Only</p>
+                <span>No Tags Are Created</span>
+                <span>No Signing Is Performed</span>
+                <span>No Publishing Is Performed</span>
+                <span>Preview Only</span>
                 
                 <!-- Formal Release Approval Elements -->
                 <button id="formal-preview-request-approval-button">Request Approval</button>

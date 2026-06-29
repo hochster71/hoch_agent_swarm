@@ -144,7 +144,7 @@ export const PullRequestAutomationPanel: React.FC<PullRequestAutomationPanelProp
           <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
           <div>
             <span className="font-semibold block">PR blocked by governance policy:</span>
-            {policy.blockers.map((b, idx) => (
+            {policy.blockers.map((b: string, idx: number) => (
               <div key={idx}>- {b}</div>
             ))}
           </div>
