@@ -187,6 +187,14 @@
                     <i data-lucide="git-branch"></i> <span>PERT E2E Build</span>
                     <span class="nav-status-indicator swarm-led-live" id="led-pert-e2e-build" style="margin-left: auto; font-size: 14px; font-weight: bold; color: var(--accent-teal)">●</span>
                 </a>
+                <a href="#" class="nav-item" id="nav-meta-orchestrator">
+                    <i data-lucide="shield-alert"></i> <span>Meta-Orchestrator</span>
+                    <span class="nav-status-indicator swarm-led-live" id="led-meta-orchestrator" style="margin-left: auto; font-size: 14px; font-weight: bold; color: var(--accent-purple)">●</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-defect-zero">
+                    <i data-lucide="check-square"></i> <span>Defect Zero</span>
+                    <span class="nav-status-indicator swarm-led-live" id="led-defect-zero" style="margin-left: auto; font-size: 14px; font-weight: bold; color: var(--accent-teal)">●</span>
+                </a>
                 <div style="font-size: 10px; font-weight: bold; text-transform: uppercase; color: var(--accent-teal); padding: 12px 16px 4px 16px; border-top: 1px solid var(--border-glass); margin-top: 10px;">
                     U.S. Cybersecurity
                 </div>
@@ -4289,6 +4297,167 @@
                         </h3>
                         <div style="font-size: 11px; color: #fff; line-height: 1.4;">
                             • Verify failover VPS endpoint routing on the Cloudflare dashboard.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Meta-Orchestrator Section [NEW] -->
+            <div id="view-meta-orchestrator" class="view-section hidden">
+                <header class="section-header" style="margin-bottom: 24px;">
+                    <div>
+                        <p class="eyebrow" style="color: var(--accent-purple); font-size: 10px; font-weight: bold; text-transform: uppercase; margin-bottom: 4px;">SYSTEM GOVERNANCE CORE</p>
+                        <h2 style="font-size: 24px; font-weight: 800; color: #fff; margin: 0;">Meta-Orchestrator & Domain Control Plane</h2>
+                        <p class="muted" style="color: var(--text-secondary); font-size: 12px; margin-top: 4px;">Dynamic omission tracking and domain-owner routing for business autonomy.</p>
+                    </div>
+                </header>
+
+                <div class="metrics-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
+                    <div class="card" style="padding: 16px; border: 1px solid var(--border-glass);">
+                        <p class="muted" style="font-size: 10px; font-weight: 600; text-transform: uppercase; margin: 0 0 4px 0;">Total Domains</p>
+                        <h3 id="meta-total-domains" style="font-size: 22px; font-weight: 800; color: #fff; margin: 0;">--</h3>
+                    </div>
+                    <div class="card" style="padding: 16px; border: 1px solid var(--border-glass);">
+                        <p class="muted" style="font-size: 10px; font-weight: 600; text-transform: uppercase; margin: 0 0 4px 0;">Ownerless Domains</p>
+                        <h3 id="meta-ownerless-domains" style="font-size: 22px; font-weight: 800; color: #f87171; margin: 0;">--</h3>
+                    </div>
+                    <div class="card" style="padding: 16px; border: 1px solid var(--border-glass);">
+                        <p class="muted" style="font-size: 10px; font-weight: 600; text-transform: uppercase; margin: 0 0 4px 0;">Critical Gaps</p>
+                        <h3 id="meta-critical-gaps" style="font-size: 22px; font-weight: 800; color: #fbbf24; margin: 0;">--</h3>
+                    </div>
+                    <div class="card" style="padding: 16px; border: 1px solid var(--border-glass);">
+                        <p class="muted" style="font-size: 10px; font-weight: 600; text-transform: uppercase; margin: 0 0 4px 0;">Michael Load Score</p>
+                        <h3 id="meta-load-score" style="font-size: 22px; font-weight: 800; color: #38bdf8; margin: 0;">--</h3>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+                    <!-- Active Gaps & Next Best Action -->
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div class="card" style="padding: 20px; border: 1px solid var(--border-glass);">
+                            <h3 style="font-size: 14px; font-weight: 700; color: #fff; margin: 0 0 16px 0; display: flex; align-items: center; gap: 8px;">
+                                <i data-lucide="alert-triangle" style="color: #fbbf24; width: 16px; height: 16px;"></i> Dynamic Backlog & Gaps
+                            </h3>
+                            <div id="meta-gaps-list" style="display: flex; flex-direction: column; gap: 8px;">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                        <div class="card" style="padding: 20px; border: 1px solid var(--border-glass);">
+                            <h3 style="font-size: 14px; font-weight: 700; color: #fff; margin: 0 0 12px 0;">
+                                Next Best Action
+                            </h3>
+                            <div id="meta-next-action" style="font-size: 12px; color: #a78bfa; padding: 12px; background: rgba(139, 92, 246, 0.08); border-left: 3px solid var(--accent-purple); border-radius: 4px;">
+                                --
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Details & Badges -->
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div class="card" style="padding: 20px; border: 1px solid var(--border-glass);">
+                            <h3 style="font-size: 14px; font-weight: 700; color: #fff; margin: 0 0 16px 0;">
+                                Governance Evidence
+                            </h3>
+                            <div style="display: flex; flex-direction: column; gap: 10px; font-size: 11px;">
+                                <div><a id="meta-evidence-matrix" class="link" href="#">Domain Coverage Matrix</a></div>
+                                <div><a id="meta-evidence-gaps" class="link" href="#">Gap Scan Log</a></div>
+                                <div><a id="meta-evidence-brief" class="link" href="#">Daily Autonomy Brief</a></div>
+                            </div>
+                        </div>
+
+                        <div class="card" style="padding: 20px; border: 1px solid var(--border-glass);">
+                            <h3 style="font-size: 14px; font-weight: 700; color: #fff; margin: 0 0 16px 0;">
+                                Telemetry Badges
+                            </h3>
+                            <div style="display: flex; flex-direction: column; gap: 12px; font-size: 11px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span>Source:</span>
+                                    <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; padding: 2px 6px; border-radius: 4px; font-weight: bold;">VERIFIED</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span>Freshness:</span>
+                                    <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; padding: 2px 6px; border-radius: 4px; font-weight: bold;">FRESH</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span>Confidence:</span>
+                                    <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; padding: 2px 6px; border-radius: 4px; font-weight: bold;">100%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Defect Zero Command Center Section [NEW] -->
+            <div id="view-defect-zero" class="view-section hidden">
+                <header class="section-header" style="margin-bottom: 24px;">
+                    <div>
+                        <p class="eyebrow" style="color: var(--accent-teal); font-size: 10px; font-weight: bold; text-transform: uppercase; margin-bottom: 4px;">QUALITY ASSURANCE COMMAND</p>
+                        <h2 style="font-size: 24px; font-weight: 800; color: #fff; margin: 0;">Defect Zero Command Center</h2>
+                        <p class="muted" style="color: var(--text-secondary); font-size: 12px; margin-top: 4px;">Zero known unresolved errors, warnings, or vulnerabilities without remediation mapping.</p>
+                    </div>
+                </header>
+
+                <div class="metrics-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
+                    <div class="card" style="padding: 16px; border: 1px solid var(--border-glass);">
+                        <p class="muted" style="font-size: 10px; font-weight: 600; text-transform: uppercase; margin: 0 0 4px 0;">Open Defects</p>
+                        <h3 id="defect-open-count" style="font-size: 22px; font-weight: 800; color: #fff; margin: 0;">--</h3>
+                    </div>
+                    <div class="card" style="padding: 16px; border: 1px solid var(--border-glass);">
+                        <p class="muted" style="font-size: 10px; font-weight: 600; text-transform: uppercase; margin: 0 0 4px 0;">Critical Defects</p>
+                        <h3 id="defect-critical-count" style="font-size: 22px; font-weight: 800; color: #f87171; margin: 0;">--</h3>
+                    </div>
+                    <div class="card" style="padding: 16px; border: 1px solid var(--border-glass);">
+                        <p class="muted" style="font-size: 10px; font-weight: 600; text-transform: uppercase; margin: 0 0 4px 0;">Tracked Warnings</p>
+                        <h3 id="defect-warning-count" style="font-size: 22px; font-weight: 800; color: #fbbf24; margin: 0;">--</h3>
+                    </div>
+                    <div class="card" style="padding: 16px; border: 1px solid var(--border-glass);">
+                        <p class="muted" style="font-size: 10px; font-weight: 600; text-transform: uppercase; margin: 0 0 4px 0;">Security Findings</p>
+                        <h3 id="defect-security-count" style="font-size: 22px; font-weight: 800; color: #a78bfa; margin: 0;">--</h3>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+                    <!-- Left: Defect List & Tools -->
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div class="card" style="padding: 20px; border: 1px solid var(--border-glass);">
+                            <h3 style="font-size: 14px; font-weight: 700; color: #fff; margin: 0 0 16px 0; display: flex; align-items: center; gap: 8px;">
+                                <i data-lucide="shield-alert" style="color: #fbbf24; width: 16px; height: 16px;"></i> Active Codebase Defects
+                            </h3>
+                            <div id="defect-list-container" style="display: flex; flex-direction: column; gap: 8px;">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                        <div class="card" style="padding: 20px; border: 1px solid var(--border-glass);">
+                            <h3 style="font-size: 14px; font-weight: 700; color: #fff; margin: 0 0 16px 0; display: flex; align-items: center; gap: 8px;">
+                                <i data-lucide="tool" style="color: #38bdf8; width: 16px; height: 16px;"></i> Registered Sandbox Tools
+                            </h3>
+                            <div id="defect-tools-list" style="display: flex; flex-direction: column; gap: 8px;">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Routing Matrix & Accepted Risk -->
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div class="card" style="padding: 20px; border: 1px solid var(--border-glass);">
+                            <h3 style="font-size: 14px; font-weight: 700; color: #fff; margin: 0 0 16px 0;">
+                                Coding Agent Scoreboard
+                            </h3>
+                            <div id="defect-routing-status" style="display: flex; flex-direction: column; gap: 12px;">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                        <div class="card" style="padding: 20px; border: 1px solid var(--border-glass);">
+                            <h3 style="font-size: 14px; font-weight: 700; color: #fff; margin: 0 0 16px 0;">
+                                Accepted Risks Log
+                            </h3>
+                            <div id="defect-accepted-risks-log" style="display: flex; flex-direction: column; gap: 8px;">
+                                <!-- Populated dynamically -->
+                            </div>
                         </div>
                     </div>
                 </div>

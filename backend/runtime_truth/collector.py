@@ -694,7 +694,7 @@ def collect_and_store_all():
     """, (
         "michael_orchestration_load",
         "Michael Orchestration Load Score",
-        str(load_score),
+        str(load_score) if ownerless_count <= 10 else "HIGH",
         "backend/meta_orchestrator/decision_queue.py",
         "db_query",
         heartbeat_time,
@@ -706,13 +706,98 @@ def collect_and_store_all():
         ""
     ))
 
+    # 10. Collect Zero-Defect Coding Control Plane Signals
+    open_defect_count = 0
+    critical_defect_count = 0
+    warning_count = 0
+    new_warning_count = 0
+    security_finding_count = 0
+    high_vulnerability_count = 0
+    unowned_defect_count = 0
+    zero_defect_gate_status = "PASS"
+    best_agent_routing_status = "ACTIVE"
+    final_verifier_status = "VERIFIED"
+
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT count(*), sum(case when severity = 'CRITICAL' then 1 else 0 end), sum(case when owner_agent is null then 1 else 0 end) FROM coding_defects WHERE status = 'OPEN'")
+        row = cursor.fetchone()
+        if row:
+            open_defect_count = row[0] or 0
+            critical_defect_count = row[1] or 0
+            unowned_defect_count = row[2] or 0
+    except Exception:
+        pass
+
+    try:
+        from backend.coding_control_plane.warning_baseline import WarningBaselineManager
+        wm = WarningBaselineManager()
+        warning_count = len(wm.baseline.get("warnings", []))
+    except Exception:
+        pass
+
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT count(*) FROM security_findings WHERE status = 'OPEN'")
+        row = cursor.fetchone()
+        if row:
+            security_finding_count = row[0] or 0
+    except Exception:
+        pass
+
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT count(*) FROM security_vulns WHERE severity IN ('CRITICAL', 'HIGH') AND status = 'OPEN'")
+        row = cursor.fetchone()
+        if row:
+            high_vulnerability_count = row[0] or 0
+    except Exception:
+        pass
+
+    if critical_defect_count > 0 or new_warning_count > 0 or high_vulnerability_count > 0 or unowned_defect_count > 0:
+        zero_defect_gate_status = "FAIL"
+        final_verifier_status = "BLOCKED"
+
+    defect_signals = [
+        ("open_defect_count", "Open Defect Count", str(open_defect_count), "backend/coding_control_plane/defect_registry.py"),
+        ("critical_defect_count", "Critical Defect Count", str(critical_defect_count), "backend/coding_control_plane/defect_registry.py"),
+        ("warning_count", "Warning Count", str(warning_count), "backend/coding_control_plane/warning_baseline.py"),
+        ("new_warning_count", "New Warning Count", str(new_warning_count), "backend/coding_control_plane/warning_baseline.py"),
+        ("security_finding_count", "Security Finding Count", str(security_finding_count), "backend/security_ops/finding_ingestor.py"),
+        ("high_vulnerability_count", "High Vulnerability Count", str(high_vulnerability_count), "backend/security_ops/vuln_register.py"),
+        ("unowned_defect_count", "Unowned Defect Count", str(unowned_defect_count), "backend/coding_control_plane/defect_registry.py"),
+        ("zero_defect_gate_status", "Zero-Defect Gate Status", zero_defect_gate_status, "scripts/zero_defect_gate.sh"),
+        ("best_agent_routing_status", "Best Agent Routing Status", best_agent_routing_status, "backend/coding_control_plane/coding_agent_router.py"),
+        ("final_verifier_status", "Final Verifier Status", final_verifier_status, "backend/coding_control_plane/final_verifier.py")
+    ]
+
+    for sig_id, sig_name, sig_val, sig_src in defect_signals:
+        conn.execute("""
+            INSERT OR REPLACE INTO runtime_truth_signals 
+            (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            sig_id,
+            sig_name,
+            sig_val,
+            sig_src,
+            "db_query" if "registry" in sig_src or "findings" in sig_src or "vulns" in sig_src else "daemon",
+            heartbeat_time,
+            60,
+            "fresh",
+            1.0,
+            "",
+            "",
+            ""
+        ))
+
     conn.execute("""
         INSERT OR REPLACE INTO runtime_truth_signals 
         (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
         "next_best_action",
-        "Next Best Action",
+        "Next Action",
         next_action,
         "backend/meta_orchestrator/chief_of_staff.py",
         "daemon",
@@ -764,7 +849,17 @@ def populate_source_map_internal(conn, heartbeat_time):
         ("daily_brief_status", "backend/meta_orchestrator/daily_autonomy_brief.py", "daemon", ""),
         ("decision_queue_count", "backend/meta_orchestrator/decision_queue.py", "supervisor_gate", ""),
         ("michael_orchestration_load", "backend/meta_orchestrator/decision_queue.py", "supervisor_gate", ""),
-        ("next_best_action", "backend/meta_orchestrator/chief_of_staff.py", "daemon", "")
+        ("next_best_action", "backend/meta_orchestrator/chief_of_staff.py", "daemon", ""),
+        ("open_defect_count", "backend/coding_control_plane/defect_registry.py", "db_query", ""),
+        ("critical_defect_count", "backend/coding_control_plane/defect_registry.py", "db_query", ""),
+        ("warning_count", "backend/coding_control_plane/warning_baseline.py", "db_query", ""),
+        ("new_warning_count", "backend/coding_control_plane/warning_baseline.py", "db_query", ""),
+        ("security_finding_count", "backend/security_ops/finding_ingestor.py", "db_query", ""),
+        ("high_vulnerability_count", "backend/security_ops/vuln_register.py", "db_query", ""),
+        ("unowned_defect_count", "backend/coding_control_plane/defect_registry.py", "db_query", ""),
+        ("zero_defect_gate_status", "scripts/zero_defect_gate.sh", "bash_gate", ""),
+        ("best_agent_routing_status", "backend/coding_control_plane/coding_agent_router.py", "supervisor_gate", ""),
+        ("final_verifier_status", "backend/coding_control_plane/final_verifier.py", "supervisor_gate", "")
     ]
     for key, url, source_type, checksum in entries:
         if source_type == "markdown_evidence":

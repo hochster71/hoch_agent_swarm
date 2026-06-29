@@ -55,9 +55,11 @@ data/prompt_registry/
 data/tv_epg.xml
 data/tv_playlist.m3u
 docs/evidence/screenshots/
-frontend/app.js
 frontend/data/runtime_reliability.json
 docs/evidence/brain/
 docs/evidence/monetization/*inventory-audit.md
+docs/evidence/meta-orchestrator/*-daily-autonomy-brief.md
+docs/evidence/meta-orchestrator/*-domain-coverage-matrix.md
+docs/evidence/meta-orchestrator/*-gap-scan.md
 
 
