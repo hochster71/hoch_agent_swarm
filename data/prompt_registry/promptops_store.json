@@ -12,9 +12,9 @@
   "QA-002": {
     "prompt_id": "QA-002",
     "lifecycle_state": "active",
-    "usage_count": 0,
+    "usage_count": 21,
     "failure_count": 0,
-    "last_run_timestamp": null,
+    "last_run_timestamp": "2026-06-29T13:29:35.164409+00:00",
     "last_known_hash": "c44f0d5e0f863b700f5d104ff620058b02a4f8a4762f7032d3088184ac1ba107",
     "original_hash": "7bdea9d4103df7a19499b9462e71f7ad67595abab27e2edead891468c3147d5a",
     "approval_metadata": null
@@ -72,14 +72,14 @@
   "AUD-001": {
     "prompt_id": "AUD-001",
     "lifecycle_state": "active",
-    "usage_count": 1,
+    "usage_count": 23,
     "failure_count": 0,
-    "last_run_timestamp": "2026-06-29T12:46:39.691546+00:00",
+    "last_run_timestamp": "2026-06-29T13:29:36.197507+00:00",
     "last_known_hash": "428b83588f73ba4199de2e301bd2b0bb6c631a075f55b0972113fc2148657c0a",
     "original_hash": "75daa23b99232415bba98fc92b4beaa8235e32d971d50185f2d83f575f21ed34",
     "approval_metadata": {
       "approved_by": "Michael Hoch",
-      "approved_at": "2026-06-29T12:46:39.762687+00:00",
+      "approved_at": "2026-06-29T13:29:36.268098+00:00",
       "role": "Owner",
       "approved_hash": "428b83588f73ba4199de2e301bd2b0bb6c631a075f55b0972113fc2148657c0a"
     }

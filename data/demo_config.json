@@ -1,5 +1,5 @@
 {
-  "tv_offline_mode": false,
+  "tv_offline_mode": true,
   "qa_simulation_failures": false,
   "conmon_drift_alarm": false
 }

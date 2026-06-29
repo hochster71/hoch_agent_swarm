@@ -1,0 +1,13 @@
+{
+  "total_routed_requests": 32,
+  "failed_calls": 0,
+  "fallback_count": 0,
+  "health_breakdown": {
+    "active": 6,
+    "inactive": 0,
+    "failed_eval": 1
+  },
+  "average_latency_ms": 22.77,
+  "failed_requests_log": [],
+  "fallback_usage_log": []
+}
