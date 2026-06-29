@@ -503,6 +503,228 @@ def collect_and_store_all():
         ""
     ))
 
+    # 9. Collect Meta-Orchestrator Details
+    cos_status = "RUNNING"
+    coverage_score = 0.0
+    ownerless_count = 0
+    critical_gaps = 0
+    missing_lifecycles = 0
+    missing_business_funcs = 0
+    daily_brief_ok = "PASS"
+    decision_count = 0
+    load_score = 0.0
+    next_action = "Review outstanding decisions."
+
+    try:
+        from backend.meta_orchestrator.chief_of_staff import ChiefOfStaff
+        cos = ChiefOfStaff()
+        res = cos.run_autonomy_loop()
+        metrics = res["metrics"]
+        gaps = res["gaps"]
+        decisions = res["decisions"]
+
+        coverage_score = metrics.get("domain_coverage_score", 0.0)
+        ownerless_count = metrics.get("ownerless_domains_count", 0)
+        critical_gaps = len([g for g in gaps if g["severity"] == "CRITICAL"])
+        missing_lifecycles = len([g for g in gaps if g["category"] == "lifecycle"])
+        missing_business_funcs = len([g for g in gaps if g["category"] == "business"])
+        decision_count = len(decisions)
+        load_score = metrics.get("michael_orchestration_load", 0.0)
+        if gaps:
+            next_action = gaps[0]["description"]
+    except Exception as e:
+        cos_status = f"ERROR: {str(e)}"
+
+    conn.execute("""
+        INSERT OR REPLACE INTO runtime_truth_signals 
+        (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        "meta_orchestrator_status",
+        "Meta-Orchestrator Health",
+        cos_status,
+        "backend/meta_orchestrator/chief_of_staff.py",
+        "daemon",
+        heartbeat_time,
+        60,
+        "fresh",
+        1.0,
+        "",
+        "",
+        ""
+    ))
+
+    conn.execute("""
+        INSERT OR REPLACE INTO runtime_truth_signals 
+        (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        "domain_coverage_score",
+        "Domain Coverage Score",
+        f"{coverage_score}%",
+        "backend/meta_orchestrator/coverage_matrix.py",
+        "db_query",
+        heartbeat_time,
+        60,
+        "fresh",
+        1.0,
+        "",
+        "",
+        ""
+    ))
+
+    conn.execute("""
+        INSERT OR REPLACE INTO runtime_truth_signals 
+        (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        "ownerless_domain_count",
+        "Ownerless Domains Count",
+        str(ownerless_count),
+        "backend/meta_orchestrator/coverage_matrix.py",
+        "db_query",
+        heartbeat_time,
+        60,
+        "fresh",
+        1.0,
+        "",
+        "",
+        ""
+    ))
+
+    conn.execute("""
+        INSERT OR REPLACE INTO runtime_truth_signals 
+        (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        "critical_gap_count",
+        "Critical Gaps Count",
+        str(critical_gaps),
+        "backend/meta_orchestrator/omission_detector.py",
+        "db_query",
+        heartbeat_time,
+        60,
+        "fresh",
+        1.0,
+        "",
+        "",
+        ""
+    ))
+
+    conn.execute("""
+        INSERT OR REPLACE INTO runtime_truth_signals 
+        (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        "missing_lifecycle_count",
+        "Missing Lifecycles Count",
+        str(missing_lifecycles),
+        "backend/gap_discovery/lifecycle_gap_scanner.py",
+        "db_query",
+        heartbeat_time,
+        60,
+        "fresh",
+        1.0,
+        "",
+        "",
+        ""
+    ))
+
+    conn.execute("""
+        INSERT OR REPLACE INTO runtime_truth_signals 
+        (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        "missing_business_function_count",
+        "Missing Business Functions",
+        str(missing_business_funcs),
+        "backend/gap_discovery/business_gap_scanner.py",
+        "db_query",
+        heartbeat_time,
+        60,
+        "fresh",
+        1.0,
+        "",
+        "",
+        ""
+    ))
+
+    conn.execute("""
+        INSERT OR REPLACE INTO runtime_truth_signals 
+        (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        "daily_brief_status",
+        "Daily Brief Gate Status",
+        daily_brief_ok,
+        "backend/meta_orchestrator/daily_autonomy_brief.py",
+        "daemon",
+        heartbeat_time,
+        60,
+        "fresh",
+        1.0,
+        "",
+        "",
+        ""
+    ))
+
+    conn.execute("""
+        INSERT OR REPLACE INTO runtime_truth_signals 
+        (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        "decision_queue_count",
+        "Decision Queue Length",
+        str(decision_count),
+        "backend/meta_orchestrator/decision_queue.py",
+        "db_query",
+        heartbeat_time,
+        60,
+        "fresh",
+        1.0,
+        "",
+        "",
+        ""
+    ))
+
+    conn.execute("""
+        INSERT OR REPLACE INTO runtime_truth_signals 
+        (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        "michael_orchestration_load",
+        "Michael Orchestration Load Score",
+        str(load_score),
+        "backend/meta_orchestrator/decision_queue.py",
+        "db_query",
+        heartbeat_time,
+        60,
+        "fresh",
+        1.0,
+        "",
+        "",
+        ""
+    ))
+
+    conn.execute("""
+        INSERT OR REPLACE INTO runtime_truth_signals 
+        (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        "next_best_action",
+        "Next Best Action",
+        next_action,
+        "backend/meta_orchestrator/chief_of_staff.py",
+        "daemon",
+        heartbeat_time,
+        60,
+        "fresh",
+        1.0,
+        "",
+        "",
+        ""
+    ))
+
     populate_source_map_internal(conn, heartbeat_time)
 
     conn.commit()
@@ -532,7 +754,17 @@ def populate_source_map_internal(conn, heartbeat_time):
         ("revenue_packet_001_status", "docs/monetization/offers/ai-cyber-artifact-factory-one-pager.md", "markdown_evidence", ""),
         ("public_sanitizer_status", "docs/monetization/sample-package/public-safe-sanitizer-report.md", "markdown_evidence", ""),
         ("buyer_signal_status", "sqlite3.connect", "monetization_gate", ""),
-        ("revenue_confidence_cap", "config/policies/monetization_policy.yaml", "policy_rule", "")
+        ("revenue_confidence_cap", "config/policies/monetization_policy.yaml", "policy_rule", ""),
+        ("meta_orchestrator_status", "backend/meta_orchestrator/chief_of_staff.py", "daemon", ""),
+        ("domain_coverage_score", "backend/meta_orchestrator/coverage_matrix.py", "supervisor_gate", ""),
+        ("ownerless_domain_count", "backend/meta_orchestrator/coverage_matrix.py", "supervisor_gate", ""),
+        ("critical_gap_count", "backend/meta_orchestrator/omission_detector.py", "supervisor_gate", ""),
+        ("missing_lifecycle_count", "backend/gap_discovery/lifecycle_gap_scanner.py", "supervisor_gate", ""),
+        ("missing_business_function_count", "backend/gap_discovery/business_gap_scanner.py", "supervisor_gate", ""),
+        ("daily_brief_status", "backend/meta_orchestrator/daily_autonomy_brief.py", "daemon", ""),
+        ("decision_queue_count", "backend/meta_orchestrator/decision_queue.py", "supervisor_gate", ""),
+        ("michael_orchestration_load", "backend/meta_orchestrator/decision_queue.py", "supervisor_gate", ""),
+        ("next_best_action", "backend/meta_orchestrator/chief_of_staff.py", "daemon", "")
     ]
     for key, url, source_type, checksum in entries:
         if source_type == "markdown_evidence":

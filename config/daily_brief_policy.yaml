@@ -1,0 +1,9 @@
+policy:
+  name: "Daily Autonomy Brief Policy"
+  include_metrics:
+    - "domain_coverage_score"
+    - "ownerless_domain_count"
+    - "critical_gap_count"
+    - "michael_orchestration_load"
+  archive_briefs: true
+  archive_directory: "docs/evidence/meta-orchestrator"

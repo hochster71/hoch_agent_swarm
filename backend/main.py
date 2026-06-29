@@ -11452,6 +11452,87 @@ def post_runtime_truth_verify_claim(payload: dict):
         "verified": valid
     }
 
+# Meta-Orchestrator APIs
+@app.get("/api/v1/meta-orchestrator/coverage")
+def get_meta_orchestrator_coverage():
+    from backend.meta_orchestrator.chief_of_staff import ChiefOfStaff
+    cos = ChiefOfStaff()
+    metrics = cos.coverage.compute_metrics()
+    return {
+        "status": "success",
+        "metrics": metrics,
+        "domains": cos.registry.get_all_domains()
+    }
+
+@app.get("/api/v1/meta-orchestrator/gaps")
+def get_meta_orchestrator_gaps():
+    from backend.meta_orchestrator.chief_of_staff import ChiefOfStaff
+    cos = ChiefOfStaff()
+    gaps = cos.detector.run_all_scans()
+    return {
+        "status": "success",
+        "gaps": gaps
+    }
+
+@app.get("/api/v1/meta-orchestrator/domain/{domain_id}")
+def get_meta_orchestrator_domain(domain_id: str):
+    from backend.meta_orchestrator.chief_of_staff import ChiefOfStaff
+    cos = ChiefOfStaff()
+    dom = cos.registry.get_domain(domain_id)
+    if not dom:
+        raise HTTPException(status_code=404, detail="Domain not found")
+    return {
+        "status": "success",
+        "domain": dom
+    }
+
+@app.get("/api/v1/meta-orchestrator/daily-brief")
+def get_meta_orchestrator_daily_brief():
+    from backend.meta_orchestrator.chief_of_staff import ChiefOfStaff
+    cos = ChiefOfStaff()
+    res = cos.run_autonomy_loop()
+    return {
+        "status": "success",
+        "brief": res["brief_md"],
+        "evidence_paths": res["evidence_paths"]
+    }
+
+@app.get("/api/v1/meta-orchestrator/decision-queue")
+def get_meta_orchestrator_decision_queue():
+    from backend.meta_orchestrator.chief_of_staff import ChiefOfStaff
+    cos = ChiefOfStaff()
+    decisions = cos.queue.get_pending_decisions()
+    return {
+        "status": "success",
+        "decisions": decisions,
+        "load_score": cos.queue.compute_orchestration_load()
+    }
+
+@app.post("/api/v1/meta-orchestrator/run-gap-scan")
+def post_meta_orchestrator_run_gap_scan():
+    from backend.meta_orchestrator.chief_of_staff import ChiefOfStaff
+    cos = ChiefOfStaff()
+    res = cos.run_autonomy_loop()
+    return {
+        "status": "success",
+        "metrics": res["metrics"],
+        "gaps": res["gaps"]
+    }
+
+@app.post("/api/v1/meta-orchestrator/assign-owner")
+def post_meta_orchestrator_assign_owner(payload: dict):
+    from backend.meta_orchestrator.chief_of_staff import ChiefOfStaff
+    cos = ChiefOfStaff()
+    domain_id = payload.get("domain_id")
+    owner_agent = payload.get("owner_agent")
+    if not domain_id or not owner_agent:
+        raise HTTPException(status_code=400, detail="Missing domain_id or owner_agent")
+    cos.registry.assign_owner(domain_id, owner_agent)
+    return {
+        "status": "success",
+        "domain": cos.registry.get_domain(domain_id)
+    }
+
 # Mount frontend files at root (if frontend directory exists)
 
 frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../frontend/dist"))

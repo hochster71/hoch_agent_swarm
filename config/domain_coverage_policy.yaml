@@ -1,0 +1,12 @@
+policy:
+  name: "Domain Coverage Policy"
+  min_required_domains: 40
+  target_maturity_level: "LEVELED"
+  critical_gap_threshold: 5
+  lifecycle_stages:
+    - "design"
+    - "develop"
+    - "test"
+    - "release"
+    - "operate"
+    - "retire"
