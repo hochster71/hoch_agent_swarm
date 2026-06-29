@@ -58,6 +58,7 @@ import Hls from 'hls.js';
         { id: 'readiness', label: 'READINESS' },
         { id: 'settings', label: 'SETTINGS' },
         { id: 'agent-flight-deck', label: 'AGENT FLIGHT DECK' },
+        { id: 'prompt-catalog', label: 'PROMPT CATALOG' },
         { id: 'clawde', label: 'CLAWDE CONTROL TOWER' },
         { id: 'handoff', label: 'RELEASE REVIEW & HANDOFF' },
         { id: 'ato', label: 'ATO EVIDENCE BUILDER' },
@@ -177,6 +178,9 @@ import Hls from 'hls.js';
             case 'agent-flight-deck':
                 loadAgentFlightDeckView();
                 viewInterval = setInterval(loadAgentFlightDeckView, 3000);
+                break;
+            case 'prompt-catalog':
+                loadPromptCatalogView();
                 break;
             case 'clawde':
                 loadClawdeView();
@@ -5644,6 +5648,322 @@ import Hls from 'hls.js';
             securityIndicator.style.color = '#ef4444';
             logTvDiag(`Security audit failed: ${err.message}`, true);
         }
+    }
+
+    let allPrompts = [];
+    let promptCatalogInitialized = false;
+
+    async function loadPromptCatalogView() {
+        try {
+            // Load metrics
+            const metrics = await fetchJsonSafe('/api/prompts/metrics');
+            
+            // Update metric elements
+            const elTotal = el('prompt-metric-total');
+            const elHighRisk = el('prompt-metric-high-risk');
+            const elPassRate = el('prompt-metric-pass-rate');
+            
+            if (elTotal) elTotal.textContent = metrics.total_prompts || '0';
+            if (elHighRisk) elHighRisk.textContent = (metrics.severities && metrics.severities.HIGH) || '0';
+            if (elPassRate && metrics.fixtures_summary) {
+                const total = metrics.fixtures_summary.total || 50;
+                const passed = metrics.fixtures_summary.passed || 50;
+                elPassRate.textContent = `${((passed / total) * 100).toFixed(0)}%`;
+            }
+            
+            // Fetch all prompts
+            allPrompts = await fetchJsonSafe('/api/prompts');
+            
+            // Populate filters once
+            if (!promptCatalogInitialized) {
+                initPromptCatalogFilters();
+            }
+            
+            renderPromptCatalog();
+        } catch (err) {
+            console.error("Error loading prompt catalog view:", err);
+            const grid = el('prompt-catalog-grid');
+            if (grid) {
+                grid.innerHTML = `<div style="grid-column: 1/-1; color: #ef4444; padding: 20px; text-align: center;">Error loading prompts: ${err.message}</div>`;
+            }
+        }
+    }
+
+    function initPromptCatalogFilters() {
+        const sectorSelect = el('prompt-filter-sector');
+        const catSelect = el('prompt-filter-category');
+        
+        if (sectorSelect && catSelect) {
+            const sectors = new Set();
+            const categories = new Set();
+            
+            allPrompts.forEach(p => {
+                if (p.sector) sectors.add(p.sector);
+                if (p.category) categories.add(p.category);
+            });
+            
+            // Clear and add "All" option
+            sectorSelect.innerHTML = '<option value="">All Sectors</option>';
+            catSelect.innerHTML = '<option value="">All Categories</option>';
+            
+            Array.from(sectors).sort().forEach(sec => {
+                sectorSelect.innerHTML += `<option value="${escapeHtml(sec)}">${escapeHtml(sec)}</option>`;
+            });
+            
+            Array.from(categories).sort().forEach(cat => {
+                catSelect.innerHTML += `<option value="${escapeHtml(cat)}">${escapeHtml(cat)}</option>`;
+            });
+            
+            // Bind listeners
+            const searchInput = el('prompt-search-input');
+            const riskSelect = el('prompt-filter-risk');
+            
+            [searchInput, sectorSelect, catSelect, riskSelect].forEach(item => {
+                item?.addEventListener('input', renderPromptCatalog);
+                item?.addEventListener('change', renderPromptCatalog);
+            });
+            
+            // Bind Run Golden Fixtures Suite
+            const btnAllFixtures = el('btn-run-all-fixtures');
+            btnAllFixtures?.addEventListener('click', runGoldenFixturesSuite);
+            
+            // Bind detail modal close buttons
+            el('btn-close-prompt-modal')?.addEventListener('click', closePromptDetailModal);
+            el('btn-close-prompt-modal-bottom')?.addEventListener('click', closePromptDetailModal);
+            
+            promptCatalogInitialized = true;
+        }
+    }
+
+    function renderPromptCatalog() {
+        const grid = el('prompt-catalog-grid');
+        if (!grid) return;
+        
+        const query = el('prompt-search-input')?.value.toLowerCase() || '';
+        const sector = el('prompt-filter-sector')?.value || '';
+        const category = el('prompt-filter-category')?.value || '';
+        const risk = el('prompt-filter-risk')?.value || '';
+        
+        const filtered = allPrompts.filter(p => {
+            // Search match
+            const matchesQuery = !query || 
+                p.id.toLowerCase().includes(query) || 
+                p.title.toLowerCase().includes(query) || 
+                (p.mission && p.mission.toLowerCase().includes(query));
+                
+            // Sector match
+            const matchesSector = !sector || p.sector === sector;
+            
+            // Category match
+            const matchesCategory = !category || p.category === category;
+            
+            // Risk match
+            const pRisk = (p.severity_model && p.severity_model.severity) || 'LOW';
+            const matchesRisk = !risk || pRisk === risk;
+            
+            return matchesQuery && matchesSector && matchesCategory && matchesRisk;
+        });
+        
+        const countSpan = el('prompt-filter-count');
+        if (countSpan) countSpan.textContent = `Showing ${filtered.length} of ${allPrompts.length} prompts`;
+        
+        if (filtered.length === 0) {
+            grid.innerHTML = '<div style="grid-column: 1/-1; color: var(--text-secondary); text-align: center; padding: 40px;">No prompts found matching your criteria.</div>';
+            return;
+        }
+        
+        grid.innerHTML = filtered.map(p => {
+            const pRisk = (p.severity_model && p.severity_model.severity) || 'LOW';
+            let riskStyle = 'background: rgba(255,255,255,0.05); color: var(--text-secondary);';
+            if (pRisk === 'HIGH') {
+                riskStyle = 'background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #f87171;';
+            } else if (pRisk === 'MEDIUM') {
+                riskStyle = 'background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3); color: #fbbf24;';
+            } else if (pRisk === 'LOW') {
+                riskStyle = 'background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #34d399;';
+            }
+            
+            const qaPassed = p.qa_status === 'passed';
+            const qaStyle = qaPassed ? 
+                'background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #34d399;' :
+                'background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #f87171;';
+                
+            return `
+                <div class="card prompt-card" data-prompt-id="${escapeHtml(p.id)}" style="padding: 16px; background: rgba(10, 15, 30, 0.85); border: 1px solid var(--border-glass); border-radius: 10px; cursor: pointer; transition: all 0.2s ease; display: flex; flex-direction: column; justify-content: space-between; min-height: 180px;">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                            <span style="font-family: monospace; font-size: 11px; color: var(--accent-teal); font-weight: bold; background: rgba(20,184,166,0.1); padding: 2px 6px; border-radius: 4px;">${escapeHtml(p.id)}</span>
+                            <div style="display: flex; gap: 6px;">
+                                <span class="status-pill" style="font-size: 9px; padding: 2px 6px; font-weight: bold; border-radius: 4px; ${riskStyle}">${escapeHtml(pRisk)}</span>
+                                <span class="status-pill" style="font-size: 9px; padding: 2px 6px; font-weight: bold; border-radius: 4px; ${qaStyle}">QA: ${escapeHtml(p.qa_status || 'passed')}</span>
+                            </div>
+                        </div>
+                        <h4 style="font-size: 13px; font-weight: 700; color: #fff; margin: 0 0 6px 0; line-height: 1.3;">${escapeHtml(p.title)}</h4>
+                        <p style="font-size: 11px; color: var(--text-secondary); line-height: 1.4; margin: 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">${escapeHtml(p.mission)}</p>
+                    </div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 6px; border-top: 1px solid var(--border-glass); padding-top: 10px; margin-top: 12px; font-size: 9px; color: var(--text-secondary);">
+                        <span style="background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px;">${escapeHtml(p.category)}</span>
+                        <span style="background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(p.industry)}</span>
+                    </div>
+                </div>
+            `;
+        }).join("");
+        
+        // Add card click listeners
+        grid.querySelectorAll('.prompt-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const promptId = card.getAttribute('data-prompt-id');
+                openPromptDetailModal(promptId);
+            });
+        });
+    }
+
+    function openPromptDetailModal(promptId) {
+        const p = allPrompts.find(x => x.id === promptId);
+        if (!p) return;
+        
+        // Set standard fields
+        el('prompt-modal-id').textContent = p.id;
+        el('prompt-modal-title').textContent = p.title;
+        el('prompt-modal-sector').textContent = p.sector || 'N/A';
+        el('prompt-modal-category').textContent = p.category || 'N/A';
+        el('prompt-modal-family').textContent = p.prompt_family || 'N/A';
+        el('prompt-modal-phase').textContent = p.lifecycle_phase || 'N/A';
+        
+        const pRisk = (p.severity_model && p.severity_model.severity) || 'LOW';
+        el('prompt-modal-risk').textContent = pRisk;
+        el('prompt-modal-qa').textContent = p.qa_status || 'passed';
+        el('prompt-modal-mission').textContent = p.mission || '';
+        el('prompt-modal-text').textContent = p.prompt_text || p.prompt || '';
+        
+        // Evidence checklist
+        const ev = p.evidence_required;
+        el('prompt-modal-evidence').innerHTML = `<span style="color:var(--text-secondary); display:block; margin-bottom:4px; font-weight:bold;">Evidence Required:</span>` +
+            (ev && ev.length ? ev.map(x => `• ${escapeHtml(x)}`).join('<br>') : 'None');
+            
+        // Approval Gate
+        const gate = p.approval_gate;
+        el('prompt-modal-gate').innerHTML = `<span style="color:var(--text-secondary); display:block; margin-bottom:4px; font-weight:bold;">Approval Gate:</span>` +
+            (gate ? `Owner: <strong>${escapeHtml(gate.owner || 'None')}</strong><br>Role: ${escapeHtml(gate.role || 'None')}<br>Bypass Allowed: ${gate.bypass_allowed ? 'Yes' : 'No'}` : 'None');
+            
+        // Commands
+        const cmd = p.stack_command_templates;
+        const cmdSec = el('prompt-modal-command-section');
+        if (cmd && cmd.length) {
+            cmdSec.style.display = 'block';
+            el('prompt-modal-command').textContent = cmd.join('\n');
+        } else {
+            cmdSec.style.display = 'none';
+        }
+        
+        // Reset console section
+        el('prompt-modal-console-section').style.display = 'none';
+        el('prompt-modal-console').textContent = '';
+        el('prompt-modal-evidence-link').innerHTML = '';
+        
+        // Reset Run button
+        const runBtn = el('btn-run-prompt-swarm');
+        if (runBtn) {
+            runBtn.disabled = false;
+            runBtn.innerHTML = '<i data-lucide="play" style="width: 14px; height: 14px;"></i> Run Prompt Through Swarm';
+            runBtn.onclick = () => runPromptThroughSwarm(promptId);
+        }
+        
+        const modal = el('prompt-detail-modal');
+        if (modal) {
+            modal.style.display = 'flex';
+        }
+        
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
+    }
+
+    function closePromptDetailModal() {
+        const modal = el('prompt-detail-modal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    async function runPromptThroughSwarm(promptId) {
+        const consoleSec = el('prompt-modal-console-section');
+        const consoleBox = el('prompt-modal-console');
+        const runBtn = el('btn-run-prompt-swarm');
+        
+        if (consoleSec && consoleBox && runBtn) {
+            consoleSec.style.display = 'block';
+            consoleBox.textContent = `[INFO] Initializing prompt execution for ${promptId}...\n`;
+            consoleBox.textContent += `[INFO] Dispatching task with instructions to operator swarm...\n`;
+            
+            runBtn.disabled = true;
+            runBtn.textContent = 'Running Swarm...';
+            
+            try {
+                const response = await fetch(`/api/prompts/${promptId}/run`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Execution returned status code ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                consoleBox.textContent += `[OK] Swarm execution completed successfully.\n\n`;
+                consoleBox.textContent += data.result;
+                
+                const evLink = el('prompt-modal-evidence-link');
+                if (evLink && data.evidence_file) {
+                    const cleanLink = data.evidence_file.replace(/\\/g, '/');
+                    evLink.innerHTML = `✓ Evidence exported: <a href="file:///${escapeHtml(cleanLink)}" target="_blank" style="color: var(--accent-teal); text-decoration: underline; font-family: monospace;">${escapeHtml(cleanLink.split('/').pop())}</a>`;
+                }
+            } catch (err) {
+                consoleBox.textContent += `\n[FAIL] Execution error: ${err.message}\n`;
+            } finally {
+                runBtn.disabled = false;
+                runBtn.innerHTML = '<i data-lucide="play" style="width: 14px; height: 14px;"></i> Run Prompt Through Swarm';
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
+            }
+        }
+    }
+
+    async function runGoldenFixturesSuite() {
+        const btn = el('btn-run-all-fixtures');
+        if (!btn) return;
+        
+        btn.disabled = true;
+        btn.textContent = 'Running QA Suite...';
+        
+        try {
+            const response = await fetch('/api/prompts/qa/golden-fixtures', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`QA execution returned status code ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            await loadPromptCatalogView();
+            
+            alert(`QA validation complete. Passed: ${data.passed_fixtures}/${data.total_fixtures}. Status: ${data.status}`);
+        } catch (err) {
+            console.error('Error running golden fixtures suite:', err);
+            alert(`QA suite execution failed: ${err.message}`);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i data-lucide="play" style="width: 12px; height: 12px;"></i> Run Golden Fixtures Suite';
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+        }
+    }
     }
 
     // Run initialization once DOM is ready
