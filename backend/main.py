@@ -7071,6 +7071,49 @@ def api_get_tv_epg(force: bool = False):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# ================================================================
+#  HLS PROXY — server-side CORS + 403 bypass for IPTV streams
+#  GET /api/hls/proxy?url=<percent-encoded remote URL>
+#
+#  The browser never fetches https://g1o.empek.xyz/... directly;
+#  all playlist + segment + key requests go through this handler.
+#  Hosts not in HLS_ALLOWED_HOSTS are rejected 403 (fail-closed).
+# ================================================================
+
+@app.get("/api/hls/proxy")
+def api_hls_proxy(url: str):
+    """
+    Proxy an HLS playlist or segment through the backend.
+
+    Query params
+    ------------
+    url  -- percent-encoded absolute URL of the upstream HLS asset.
+
+    Returns
+    -------
+    * For .m3u8 playlists  → application/vnd.apple.mpegurl
+                             with all segment URLs rewritten through
+                             this same proxy endpoint.
+    * For .ts/.m4s/.aac/.key → correct MIME type, streamed in chunks.
+    * Blocked host          → HTTP 403  (fail-closed).
+    * Upstream HTTP 403     → HTTP 502  with diagnostic detail.
+    * Missing segment (404) → HTTP 404  with diagnostic detail.
+    """
+    from backend.hls_proxy import proxy_hls_asset
+    return proxy_hls_asset(url)
+
+
+@app.get("/api/hls/proxy/info")
+def api_hls_proxy_info():
+    """Return the current HLS proxy allowlist so the frontend can inspect it."""
+    from backend.hls_proxy import HLS_ALLOWED_HOSTS
+    return {
+        "allowed_hosts": sorted(HLS_ALLOWED_HOSTS),
+        "proxy_endpoint": "/api/hls/proxy",
+        "usage": "GET /api/hls/proxy?url=<percent-encoded-remote-url>",
+    }
+
+
 @app.get("/api/v1/policy/status")
 def api_get_policy_status():
     return {
@@ -8579,10 +8622,40 @@ def run_prompt_through_swarm_endpoint(prompt_id: str):
                 detail=f"Execution blocked: High-risk prompt {prompt_id} is in '{state}' state. Requires active approved state."
             )
             
+    # 3. Model Routing & Guards
+    import time
+    from backend.modelops_manager import ModelOpsManager
+    modelops = ModelOpsManager()
+    risk_level = "HIGH" if is_high_risk else "LOW"
+    
+    start_time = time.time()
+    try:
+        routing_decision = modelops.route_request(
+            category=prompt_record.get("category", "QA"),
+            risk_level=risk_level,
+            prompt_id=prompt_id
+        )
+    except ValueError as e:
+        err_msg = str(e)
+        modelops.log_routing_attempt(
+            model_id=prompt_record.get("id", "Unknown"),
+            success=False,
+            fallback_used=False,
+            latency_ms=0.0,
+            error_msg=err_msg
+        )
+        if "UNAVAILABLE_APPROVED_MODEL" in err_msg or "UNKNOWN_MODEL_ENDPOINT" in err_msg:
+            raise HTTPException(status_code=503, detail=err_msg)
+        elif "FAILED_EVAL_STATUS" in err_msg:
+            raise HTTPException(status_code=400, detail=err_msg)
+        else:
+            raise HTTPException(status_code=403, detail=err_msg)
+            
     task_req = TaskRequest(
         task_type=prompt_record.get("category", "QA"),
         prompt=prompt_record.get("prompt", ""),
         system_prompt=f"You are a swarm agent executing prompt: {prompt_record.get('title', 'Unknown')}",
+        model=routing_decision["model_id"],
         mode="Execute"
     )
     
@@ -8598,6 +8671,15 @@ def run_prompt_through_swarm_endpoint(prompt_id: str):
         error_detail = str(e)
         registry.increment_usage(prompt_id, success=False)
         
+    latency = round((time.time() - start_time) * 1000.0, 2)
+    modelops.log_routing_attempt(
+        model_id=routing_decision["model_id"],
+        success=success,
+        fallback_used=routing_decision["fallback_used"],
+        latency_ms=latency,
+        error_msg=error_detail if not success else ""
+    )
+        
     evidence_dir = base_dir / "artifacts" / "qa" / "prompt_registry"
     evidence_dir.mkdir(parents=True, exist_ok=True)
     
@@ -8610,7 +8692,9 @@ def run_prompt_through_swarm_endpoint(prompt_id: str):
         "prompt_title": prompt_record.get("title", "Unknown"),
         "prompt_version": prompt_record.get("version", "3.0.0"),
         "prompt_hash": prompt_record.get("hash") or prompt_record.get("last_known_hash", ""),
-        "model": execution_res.get("model", "openai/gpt-4o") if success else "Unknown",
+        "model": routing_decision["model_id"],
+        "endpoint": routing_decision["endpoint"],
+        "latency_ms": latency,
         "agent_route": prompt_record.get("agent_role", "Unknown"),
         "input": task_req.prompt,
         "output_contract": prompt_record.get("outputs", []),
@@ -8638,7 +8722,9 @@ def run_prompt_through_swarm_endpoint(prompt_id: str):
         "prompt_id": prompt_id,
         "version": prompt_record.get("version", "3.0.0"),
         "hash": prompt_record.get("hash") or prompt_record.get("last_known_hash", ""),
-        "model": execution_res.get("model", "openai/gpt-4o") if success else "Unknown",
+        "model": routing_decision["model_id"],
+        "endpoint": routing_decision["endpoint"],
+        "latency_ms": latency,
         "agent_route": prompt_record.get("agent_role") or prompt_record.get("category", "QA"),
         "input_summary": input_summary,
         "output_contract": str(prompt_record.get("outputs", "")),
@@ -8659,6 +8745,58 @@ def run_prompt_through_swarm_endpoint(prompt_id: str):
         "evidence_data": evidence_data,
         "run_entry": run_entry
     }
+
+@app.get("/api/modelops/models")
+def get_modelops_models_endpoint():
+    from backend.modelops_manager import ModelOpsManager
+    mgr = ModelOpsManager()
+    return mgr.load_models()
+
+@app.get("/api/modelops/health")
+def run_modelops_health_endpoint():
+    from backend.modelops_manager import ModelOpsManager
+    mgr = ModelOpsManager()
+    return mgr.health_check_endpoints()
+
+@app.get("/api/modelops/routes")
+def get_modelops_routes_endpoint():
+    from backend.modelops_manager import ModelOpsManager
+    mgr = ModelOpsManager()
+    return mgr.get_routing_rules()
+
+class RouteModelRequest(BaseModel):
+    category: str
+    risk_level: str = "LOW"
+    prompt_id: str = ""
+
+@app.post("/api/modelops/route")
+def route_modelops_endpoint(req: RouteModelRequest):
+    from backend.modelops_manager import ModelOpsManager
+    from fastapi import HTTPException
+    mgr = ModelOpsManager()
+    try:
+        return mgr.route_request(category=req.category, risk_level=req.risk_level, prompt_id=req.prompt_id)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+class ModelEvalRequest(BaseModel):
+    model_id: str
+
+@app.post("/api/modelops/evals")
+def execute_modelops_eval_endpoint(req: ModelEvalRequest):
+    from backend.modelops_manager import ModelOpsManager
+    from fastapi import HTTPException
+    mgr = ModelOpsManager()
+    try:
+        return mgr.execute_eval(model_id=req.model_id)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/modelops/metrics")
+def get_modelops_metrics_endpoint():
+    from backend.modelops_manager import ModelOpsManager
+    mgr = ModelOpsManager()
+    return mgr.load_state()
 
 @app.get("/api/promptops/metrics")
 def get_promptops_metrics_endpoint():
