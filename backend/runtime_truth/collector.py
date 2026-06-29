@@ -260,6 +260,164 @@ def collect_and_store_all():
         ""
     ))
 
+    # 7. Collect Supervisor Details
+    restarts = 0
+    last_restart = "None"
+    last_failure = "None"
+    try:
+        s_row = conn.execute("SELECT count(*) FROM supervisor_events WHERE message LIKE '%start%'").fetchone()
+        if s_row:
+            restarts = max(0, s_row[0] - 1)
+        lr_row = conn.execute("SELECT timestamp FROM supervisor_events WHERE message LIKE '%start%' ORDER BY timestamp DESC LIMIT 1").fetchone()
+        if lr_row and restarts > 0:
+            last_restart = lr_row[0]
+        lf_row = conn.execute("SELECT timestamp FROM supervisor_events WHERE level = 'ERROR' ORDER BY timestamp DESC LIMIT 1").fetchone()
+        if lf_row:
+            last_failure = lf_row[0]
+    except Exception:
+        pass
+
+    import subprocess
+    svc_status = "STOPPED"
+    try:
+        res = subprocess.run(["launchctl", "list", "com.hoch.agent.swarm.runtime"], capture_output=True, text=True)
+        if res.returncode == 0:
+            svc_status = "RUNNING"
+    except Exception:
+        pass
+
+    wd_active = "INACTIVE"
+    try:
+        res = subprocess.run(["pgrep", "-f", "watchdog_loop.sh"], capture_output=True, text=True)
+        if res.stdout.strip():
+            wd_active = "ACTIVE"
+    except Exception:
+        pass
+
+    uptime_desc = "0s"
+    try:
+        up_row = conn.execute("SELECT window_start FROM uptime_windows ORDER BY window_start ASC LIMIT 1").fetchone()
+        if up_row:
+            start_t = datetime.fromisoformat(up_row[0])
+            elapsed = (datetime.now(timezone.utc) - start_t).total_seconds()
+            uptime_desc = f"{int(elapsed)}s"
+    except Exception:
+        pass
+
+    conn.execute("""
+        INSERT OR REPLACE INTO runtime_truth_signals 
+        (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        "supervisor_status",
+        "Supervisor Process Status",
+        svc_status,
+        "launchctl list com.hoch.agent.swarm.runtime",
+        "command",
+        heartbeat_time,
+        60,
+        "fresh",
+        1.0,
+        "",
+        "",
+        ""
+    ))
+
+    conn.execute("""
+        INSERT OR REPLACE INTO runtime_truth_signals 
+        (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        "watchdog_status",
+        "Watchdog Loop Status",
+        wd_active,
+        "pgrep -f watchdog_loop.sh",
+        "command",
+        heartbeat_time,
+        60,
+        "fresh",
+        1.0,
+        "",
+        "",
+        ""
+    ))
+
+    conn.execute("""
+        INSERT OR REPLACE INTO runtime_truth_signals 
+        (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        "uptime_window",
+        "Supervised Uptime Window",
+        uptime_desc,
+        "uptime_windows",
+        "db_query",
+        heartbeat_time,
+        60,
+        "fresh",
+        1.0,
+        "",
+        "",
+        ""
+    ))
+
+    conn.execute("""
+        INSERT OR REPLACE INTO runtime_truth_signals 
+        (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        "restart_count",
+        "Automatic Restart Count",
+        str(restarts),
+        "supervisor_events",
+        "db_query",
+        heartbeat_time,
+        60,
+        "fresh",
+        1.0,
+        "",
+        "",
+        ""
+    ))
+
+    conn.execute("""
+        INSERT OR REPLACE INTO runtime_truth_signals 
+        (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        "last_restart",
+        "Last Restart Timestamp",
+        last_restart,
+        "supervisor_events",
+        "db_query",
+        heartbeat_time,
+        60,
+        "fresh",
+        1.0,
+        "",
+        "",
+        ""
+    ))
+
+    conn.execute("""
+        INSERT OR REPLACE INTO runtime_truth_signals 
+        (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        "last_failure",
+        "Last Failure Timestamp",
+        last_failure,
+        "supervisor_events",
+        "db_query",
+        heartbeat_time,
+        60,
+        "fresh",
+        1.0,
+        "",
+        "",
+        ""
+    ))
+
     populate_source_map_internal(conn, heartbeat_time)
 
     conn.commit()
@@ -279,7 +437,13 @@ def populate_source_map_internal(conn, heartbeat_time):
         ("hardcoded_status_scan", "scripts/scan_hardcoded_status.sh", "bash_gate", ""),
         ("evidence_runtime_truth_audit", "docs/evidence/runtime-truth/20260629-1855-runtime-truth-audit.md", "markdown_evidence", ""),
         ("e2e_test_classification", "docs/evidence/runtime-truth/e2e-test-classification.md", "markdown_evidence", ""),
-        ("dirty_tree_classification", "docs/evidence/runtime-truth/20260629-1508-dirty-tree-classification.md", "markdown_evidence", "")
+        ("dirty_tree_classification", "docs/evidence/runtime-truth/20260629-1508-dirty-tree-classification.md", "markdown_evidence", ""),
+        ("supervisor_status", "scripts/runtime_supervisor_status.sh", "supervisor_gate", ""),
+        ("watchdog_status", "scripts/watchdog_loop.sh", "supervisor_gate", ""),
+        ("uptime_window", "sqlite3.connect", "supervisor_gate", ""),
+        ("restart_count", "sqlite3.connect", "supervisor_gate", ""),
+        ("last_restart", "sqlite3.connect", "supervisor_gate", ""),
+        ("last_failure", "sqlite3.connect", "supervisor_gate", "")
     ]
     for key, url, source_type, checksum in entries:
         if source_type == "markdown_evidence":
@@ -290,4 +454,5 @@ def populate_source_map_internal(conn, heartbeat_time):
             "INSERT OR REPLACE INTO source_map (key, source_url, source_type, checksum, last_checked) VALUES (?, ?, ?, ?, ?)",
             (key, url, source_type, checksum, heartbeat_time)
         )
+
 
