@@ -10936,6 +10936,60 @@ window.triggerArtifactWorkflow = async function() {
     }
 };
 
+window.triggerMonetizationAudit = async function() {
+    const btn = document.getElementById("btn-trigger-monetization-audit");
+    if (btn) btn.disabled = true;
+
+    const badge = document.getElementById("ui-monetization-badge");
+    const sweepResult = document.getElementById("ui-audit-sweep-result");
+    const redactor = document.getElementById("ui-audit-redactor");
+    const guard = document.getElementById("ui-audit-guard");
+    const timestamp = document.getElementById("ui-audit-timestamp");
+
+    if (sweepResult) sweepResult.textContent = "RUNNING...";
+
+    try {
+        const response = await fetch('/api/v1/monetization/audit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            if (sweepResult) {
+                sweepResult.textContent = data.status;
+                sweepResult.style.color = data.status === "PASS" ? "var(--accent-teal)" : "#ef4444";
+            }
+            if (redactor) {
+                redactor.textContent = data.secret_redaction_pass ? "Verified" : "Failed";
+                redactor.style.color = data.secret_redaction_pass ? "var(--accent-teal)" : "#ef4444";
+            }
+            if (guard) {
+                guard.textContent = data.write_path_pass ? "ReadOnly" : "Failed";
+                guard.style.color = data.write_path_pass ? "var(--accent-teal)" : "#ef4444";
+            }
+            if (timestamp) {
+                timestamp.textContent = new Date(data.timestamp).toLocaleString();
+            }
+        } else {
+            if (sweepResult) {
+                sweepResult.textContent = "ERROR";
+                sweepResult.style.color = "#ef4444";
+            }
+        }
+    } catch (err) {
+        if (sweepResult) {
+            sweepResult.textContent = "FAIL";
+            sweepResult.style.color = "#ef4444";
+        }
+    } finally {
+        if (btn) btn.disabled = false;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) {
+            lucide.createIcons();
+        }
+    }
+};
+
 document.addEventListener("DOMContentLoaded", () => {
     initDeviceSwarmPrototype();
     if (typeof lucide !== 'undefined' && lucide.createIcons) {

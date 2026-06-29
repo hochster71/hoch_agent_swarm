@@ -101,6 +101,19 @@ def init_brain_tables():
                 created_at TEXT NOT NULL
             );
         """)
+
+        # 8. monetization_audits
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS monetization_audits (
+                id TEXT PRIMARY KEY,
+                status TEXT NOT NULL,
+                write_path_pass INTEGER NOT NULL,
+                blocked_actions_pass INTEGER NOT NULL,
+                secret_redaction_pass INTEGER NOT NULL,
+                evidence_path TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            );
+        """)
         
         conn.commit()
         logger.info("Brain SQLite tables initialized successfully.")
