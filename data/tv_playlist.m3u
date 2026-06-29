@@ -1,7 +1,0 @@
-#EXTM3U
-#EXTINF:-1 tvg-id="news-channel" tvg-name="HOCH News" tvg-logo="https://raw.githubusercontent.com/hjort/logos/master/news.png" group-title="News",HOCH News Live
-http://sample.vodobox.com/planete_totale_iphone/planete_totale_iphone.m3u8
-#EXTINF:-1 tvg-id="sports-channel" tvg-name="HOCH Sports" tvg-logo="https://raw.githubusercontent.com/hjort/logos/master/sports.png" group-title="Sports",HOCH Sports Live
-https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8
-#EXTINF:-1 tvg-id="movies-channel" tvg-name="HOCH Movies" tvg-logo="https://raw.githubusercontent.com/hjort/logos/master/movies.png" group-title="Movies",HOCH Movies Live
-https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8
