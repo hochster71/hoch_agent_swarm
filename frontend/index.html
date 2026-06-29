@@ -791,6 +791,35 @@
                                     Select the active phase card to manage approvals.
                                 </div>
                             </div>
+                            
+                            <!-- Release & Provenance Status Panel -->
+                            <div style="background: rgba(10, 15, 30, 0.5); border: 1px solid var(--border-glass); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 10px; margin-top: 16px;">
+                                <h3 style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--accent-teal); letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px; margin: 0;">
+                                    <i data-lucide="shield-check" style="width: 13px; height: 13px;"></i> Release & Provenance Status
+                                </h3>
+                                <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; display: flex; flex-direction: column; gap: 8px; font-size: 11px;">
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span style="color: var(--text-secondary);">Active Release:</span>
+                                        <span id="release-status-version" style="font-weight: 600; color: #fff;">--</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span style="color: var(--text-secondary);">Branch:</span>
+                                        <span id="release-status-branch" style="font-weight: 600; color: #a5b4fc; word-break: break-all; text-align: right; max-width: 150px;">--</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <span style="color: var(--text-secondary);">Cosign Signature:</span>
+                                        <span id="release-status-signature" class="badge" style="font-weight: bold; font-size: 9px; padding: 1px 6px; border-radius: 4px;">--</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <span style="color: var(--text-secondary);">Zero-Drift:</span>
+                                        <span id="release-status-drift" class="badge" style="font-weight: bold; font-size: 9px; padding: 1px 6px; border-radius: 4px;">--</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center;" id="release-status-ci-row">
+                                        <span style="color: var(--text-secondary);">CI Build:</span>
+                                        <span id="release-status-ci" style="font-weight: 600; color: var(--text-primary);">--</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 

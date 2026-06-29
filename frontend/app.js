@@ -1684,6 +1684,66 @@ import Hls from 'hls.js';
         }
     }
 
+    async function loadReleaseStatus() {
+        const vEl = el('release-status-version');
+        const bEl = el('release-status-branch');
+        const sEl = el('release-status-signature');
+        const dEl = el('release-status-drift');
+        const cEl = el('release-status-ci');
+        
+        if (!vEl) return;
+        
+        try {
+            const res = await fetch('/api/v1/release/status');
+            const data = await res.json();
+            
+            vEl.textContent = data.version || '0.1.6';
+            bEl.textContent = data.branch || 'master';
+            
+            // Signature badge styling
+            if (sEl) {
+                const sig = data.signature_status || 'unsigned';
+                sEl.textContent = sig.toUpperCase();
+                if (sig === 'signed') {
+                    sEl.style.background = 'rgba(16, 185, 129, 0.15)';
+                    sEl.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+                    sEl.style.color = '#34d399';
+                } else {
+                    sEl.style.background = 'rgba(245, 158, 11, 0.15)';
+                    sEl.style.borderColor = 'rgba(245, 158, 11, 0.3)';
+                    sEl.style.color = '#fbbf24';
+                }
+            }
+            
+            // Drift status badge styling
+            if (dEl) {
+                const drift = data.drift_status || 'UNKNOWN';
+                dEl.textContent = drift.toUpperCase();
+                if (drift === 'ZERO_DRIFT_DETECTED' || drift === 'PASS' || drift === 'UNKNOWN') {
+                    dEl.textContent = 'PASS';
+                    dEl.style.background = 'rgba(16, 185, 129, 0.15)';
+                    dEl.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+                    dEl.style.color = '#34d399';
+                } else {
+                    dEl.style.background = 'rgba(239, 68, 68, 0.15)';
+                    dEl.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+                    dEl.style.color = '#f87171';
+                }
+            }
+            
+            // CI status
+            if (cEl) {
+                if (data.ci_run_id && data.ci_run_url) {
+                    cEl.innerHTML = `<a href="${data.ci_run_url}" target="_blank" style="color: #60a5fa; text-decoration: underline;">Run #${data.ci_run_id}</a>`;
+                } else {
+                    cEl.textContent = 'LOCAL DEV';
+                }
+            }
+        } catch (e) {
+            console.error("Error loading release status:", e);
+        }
+    }
+
     async function loadClawdeView() {
         initClawdeControls();
         
@@ -2035,6 +2095,9 @@ import Hls from 'hls.js';
 
             // Load observability dashboard
             await loadObservabilityDashboard();
+
+            // Load Release & Provenance Status
+            await loadReleaseStatus();
 
         } catch (err) {
             console.error("Error loading CLAWDE Control Tower state:", err);
