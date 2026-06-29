@@ -190,6 +190,9 @@ import Hls from 'hls.js';
             case 'evidenceops':
                 loadEvidenceOpsView();
                 break;
+            case 'modelops':
+                loadModelOpsView();
+                break;
             case 'clawde':
                 loadClawdeView();
                 viewInterval = setInterval(loadClawdeView, 3000);
@@ -4988,6 +4991,26 @@ import Hls from 'hls.js';
         }
     }
 
+    /**
+     * buildHlsProxyUrl(remoteUrl)
+     * ---------------------------
+     * Returns a same-origin /api/hls/proxy?url=<encoded> URL that the
+     * backend will fetch on behalf of the browser.  This eliminates the
+     * CORS error (browser never contacts g1o.empek.xyz directly) and the
+     * 403 rejection (backend sends the correct User-Agent / Referer).
+     *
+     * If remoteUrl is already a local path (starts with '/') it is
+     * returned unchanged so local test streams still work.
+     */
+    function buildHlsProxyUrl(remoteUrl) {
+        if (!remoteUrl) return remoteUrl;
+        // Local / relative URLs do not need proxying
+        if (remoteUrl.startsWith('/') || remoteUrl.startsWith('http://localhost') || remoteUrl.startsWith('http://127.0.0.1')) {
+            return remoteUrl;
+        }
+        return '/api/hls/proxy?url=' + encodeURIComponent(remoteUrl);
+    }
+
     async function loadGroupHealth() {
         const healthList = el('tv-groups-health-list');
         if (!healthList) return;
@@ -5206,12 +5229,12 @@ import Hls from 'hls.js';
     function playTvChannel(channel) {
         logTvDiag(`Initializing playback for: ${channel.name}`);
         currentPlayingChannel = channel;
-        
+
         const video = el('tv-player');
         const placeholder = el('player-placeholder');
         const errorOverlay = el('player-error-overlay');
         const errorText = el('player-error-text');
-        
+
         if (!video) return;
 
         if (placeholder) placeholder.style.display = 'none';
@@ -5219,7 +5242,7 @@ import Hls from 'hls.js';
 
         const playingName = el('tv-playing-name');
         if (playingName) playingName.textContent = channel.name;
-        
+
         const playingGroup = el('tv-playing-group');
         if (playingGroup) playingGroup.textContent = `Category: ${channel.group}`;
 
@@ -5232,14 +5255,10 @@ import Hls from 'hls.js';
         }
 
         const testBtn = el('tv-btn-test-stream');
-        if (testBtn) {
-            testBtn.style.display = 'inline-block';
-        }
+        if (testBtn) testBtn.style.display = 'inline-block';
 
         const showHistoryBtn = el('tv-btn-show-history');
-        if (showHistoryBtn) {
-            showHistoryBtn.style.display = 'inline-block';
-        }
+        if (showHistoryBtn) showHistoryBtn.style.display = 'inline-block';
 
         addToRecents(channel.id);
         loadEpgSchedule(channel.id);
@@ -5250,16 +5269,35 @@ import Hls from 'hls.js';
             currentHls = null;
         }
 
-        const streamUrl = channel.playbackUrl || channel.streamUrl;
-        
+        // ── Route the raw stream URL through the backend HLS proxy ────────
+        // The browser MUST NOT make direct cross-origin requests to remote
+        // CDNs (CORS block) or hosts that reject non-player User-Agents
+        // (HTTP 403).  buildHlsProxyUrl() wraps the URL in
+        //   /api/hls/proxy?url=<encoded>
+        // so the backend fetches it server-side and returns it on
+        // http://localhost, which is always same-origin.
+        const rawStreamUrl = channel.playbackUrl || channel.streamUrl;
+        const streamUrl = buildHlsProxyUrl(rawStreamUrl);
+
+        logTvDiag(`[proxy] Routing via /api/hls/proxy → ${redactFrontendUrl(rawStreamUrl)}`);
+
         let playbackRetryCount = 0;
         const maxPlaybackRetries = 3;
         let retryTimeout = null;
 
+        // ── Browser-safe error display helper ─────────────────────────────
+        function showPlayerError(msg) {
+            logTvDiag(`[player] Error: ${msg}`, true);
+            if (errorOverlay && errorText) {
+                errorText.textContent = msg;
+                errorOverlay.style.display = 'flex';
+            }
+        }
+
         function triggerPlaybackRetry(msg) {
             if (playbackRetryCount < maxPlaybackRetries) {
                 playbackRetryCount++;
-                logTvDiag(`[player] Playback retry attempt ${playbackRetryCount}/${maxPlaybackRetries} due to: ${msg}`);
+                logTvDiag(`[player] Retry ${playbackRetryCount}/${maxPlaybackRetries}: ${msg}`);
                 if (retryTimeout) clearTimeout(retryTimeout);
                 retryTimeout = setTimeout(() => {
                     logTvDiag(`[player] Executing retry ${playbackRetryCount}...`);
@@ -5275,66 +5313,89 @@ import Hls from 'hls.js';
                 }, 2000);
             } else {
                 logTvDiag(`[player] Maximum retries (${maxPlaybackRetries}) reached. Failing closed.`, true);
-                if (errorOverlay && errorText) {
-                    errorText.textContent = `${msg} (All retry attempts failed)`;
-                    errorOverlay.style.display = 'flex';
-                }
+                showPlayerError(`${msg} (All retry attempts failed)`);
             }
         }
-        
-        video.onerror = (e) => {
+
+        video.onerror = () => {
             const err = video.error;
             let errMsg = 'An unknown video error occurred.';
             if (err) {
-                if (err.code === 1) errMsg = 'The fetching of the media resource was aborted by the user.';
-                else if (err.code === 2) errMsg = 'A network error caused the media download to fail.';
-                else if (err.code === 3) errMsg = 'An error occurred while decoding the media resource.';
-                else if (err.code === 4) errMsg = 'The media resource was not supported or could not be played.';
+                if (err.code === 1) errMsg = 'Playback aborted by the user.';
+                else if (err.code === 2) errMsg = 'A network error prevented the media from loading.';
+                else if (err.code === 3) errMsg = 'A media decoding error occurred.';
+                else if (err.code === 4) errMsg = 'The media format is not supported by this browser.';
             }
             logTvDiag(`HTML5 Video Error: ${errMsg}`, true);
             triggerPlaybackRetry(errMsg);
         };
 
-        if (streamUrl.toLowerCase().includes('.m3u8')) {
-            if (Hls.isSupported()) {
+        if (rawStreamUrl && rawStreamUrl.toLowerCase().includes('.m3u8')) {
+            if (typeof Hls !== 'undefined' && Hls.isSupported()) {
                 const hls = new Hls({
                     maxBufferLength: 10,
-                    enableWorker: true
+                    enableWorker: true,
+                    // Tell hls.js how to load sub-resources: wrap every URL
+                    // through the same proxy so CORS is never violated.
+                    loader: class extends Hls.DefaultConfig.loader {
+                        load(context, config, callbacks) {
+                            // Rewrite any URL hls.js tries to load directly
+                            const origUrl = context.url || '';
+                            if (origUrl && !origUrl.startsWith('/api/hls/proxy')) {
+                                context.url = buildHlsProxyUrl(origUrl);
+                            }
+                            super.load(context, config, callbacks);
+                        }
+                    }
                 });
                 hls.loadSource(streamUrl);
                 hls.attachMedia(video);
                 currentHls = hls;
 
                 hls.on(Hls.Events.ERROR, function (event, data) {
-                    if (data.fatal) {
-                        logTvDiag(`Fatal HLS error encountered: ${data.type} - ${data.details}`, true);
-                        switch (data.type) {
-                            case Hls.ErrorTypes.NETWORK_ERROR:
-                                logTvDiag('Fatal network error, attempting recovery...', true);
-                                hls.startLoad();
-                                break;
-                            case Hls.ErrorTypes.MEDIA_ERROR:
-                                logTvDiag('Fatal media error, attempting recovery...', true);
-                                hls.recoverMediaError();
-                                break;
-                            default:
-                                logTvDiag('Cannot recover from fatal stream error, triggering retry.', true);
-                                triggerPlaybackRetry(`HLS ${data.type} error: ${data.details}`);
-                                break;
-                        }
+                    if (!data.fatal) return;
+                    logTvDiag(`Fatal HLS error: ${data.type} — ${data.details}`, true);
+
+                    // Map well-known proxy error codes to human-readable messages
+                    let userMsg = `HLS ${data.type} error: ${data.details}`;
+                    const respCode = data.response && data.response.code;
+                    if (respCode === 403 || (data.details && data.details.includes('403'))) {
+                        userMsg = 'CORS / upstream-blocked: The stream server returned HTTP 403. ' +
+                            'The channel may require an active subscription or the URL has expired.';
+                    } else if (respCode === 404 || (data.details && data.details.includes('404'))) {
+                        userMsg = 'Missing asset (404): An HLS segment or playlist was not found on the CDN. ' +
+                            'The stream may have been rotated. Try reloading the playlist.';
+                    } else if (data.details === Hls.ErrorDetails.MANIFEST_LOAD_ERROR ||
+                               data.details === Hls.ErrorDetails.MANIFEST_PARSING_ERROR) {
+                        userMsg = 'Playlist rewrite failure: The HLS manifest could not be loaded or parsed. ' +
+                            'Check the proxy logs for a HLS_PROXY_REWRITE_ERROR detail.';
+                    } else if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+                        userMsg = 'CORS / network failure: The browser was blocked from loading stream data. ' +
+                            'All requests are routed through /api/hls/proxy — verify the backend is reachable.';
+                    }
+
+                    switch (data.type) {
+                        case Hls.ErrorTypes.NETWORK_ERROR:
+                            logTvDiag('Attempting network recovery...', true);
+                            hls.startLoad();
+                            break;
+                        case Hls.ErrorTypes.MEDIA_ERROR:
+                            logTvDiag('Attempting media recovery...', true);
+                            hls.recoverMediaError();
+                            break;
+                        default:
+                            triggerPlaybackRetry(userMsg);
+                            break;
                     }
                 });
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                // Safari native HLS: pass the proxied URL directly
                 video.src = streamUrl;
             } else {
-                const noHlsMsg = 'HLS playback is not supported in this browser.';
-                logTvDiag(noHlsMsg, true);
-                if (errorOverlay && errorText) {
-                    errorText.textContent = noHlsMsg;
-                    errorOverlay.style.display = 'flex';
-                }
+                showPlayerError('HLS playback is not supported in this browser.');
             }
         } else {
+            // Non-HLS stream (plain MP4, etc.) — still proxy if remote
             video.src = streamUrl;
         }
     }
@@ -6223,10 +6284,196 @@ import Hls from 'hls.js';
         }
     }
 
+    async function loadModelOpsView() {
+        try {
+            // 1. Fetch Metrics
+            const metrics = await fetchJsonSafe('/api/modelops/metrics');
+            const elActive = el('modelops-metric-active');
+            const elRouted = el('modelops-metric-routed');
+            const elFallback = el('modelops-metric-fallback');
+            const elFailed = el('modelops-metric-failed');
+
+            if (elActive) elActive.textContent = metrics.health_breakdown?.active ?? '0';
+            if (elRouted) elRouted.textContent = metrics.total_routed_requests ?? '0';
+            if (elFallback) elFallback.textContent = metrics.fallback_count ?? '0';
+            if (elFailed) elFailed.textContent = metrics.failed_calls ?? '0';
+
+            // 2. Fetch Models and Populate Inventory Table and Eval Select
+            const models = await fetchJsonSafe('/api/modelops/models');
+            const inventoryList = el('modelops-inventory-list');
+            const evalSelect = el('modelops-eval-select');
+            
+            if (inventoryList) {
+                if (models.length === 0) {
+                    inventoryList.innerHTML = '<tr><td colspan="7" style="padding: 10px; color: var(--text-secondary); text-align: center;">No models registered in the registry.</td></tr>';
+                } else {
+                    inventoryList.innerHTML = models.map(m => {
+                        const statusColor = m.status === 'active' ? '#10b981' : (m.status === 'failed_eval' ? '#ef4444' : '#6b7280');
+                        const scoreDisplay = m.eval_score !== null ? m.eval_score.toFixed(2) : '--';
+                        return `
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <td style="padding: 8px; font-family: monospace; font-weight: bold; color: var(--accent-teal);">${escapeHtml(m.model_id)}</td>
+                                <td style="padding: 8px; text-transform: uppercase;">${escapeHtml(m.provider)}</td>
+                                <td style="padding: 8px; color: var(--text-secondary);">${escapeHtml(m.context_window.toString())} tokens</td>
+                                <td style="padding: 8px; color: var(--text-secondary); text-transform: capitalize;">${escapeHtml(m.best_for)}</td>
+                                <td style="padding: 8px; font-weight: bold; color: ${m.eval_score < 0.7 ? '#ef4444' : '#fff'};">${scoreDisplay}</td>
+                                <td style="padding: 8px;"><span style="color: ${statusColor}; font-weight: bold; display: flex; align-items: center; gap: 4px;"><span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: ${statusColor};"></span>${escapeHtml(m.status)}</span></td>
+                                <td style="padding: 8px; text-align: right;">
+                                    <button onclick="triggerModelEval('${escapeHtml(m.model_id)}')" class="btn" style="padding: 2px 6px; font-size: 9px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; font-weight: bold; cursor: pointer; border-radius: 4px;">Eval</button>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            }
+
+            if (evalSelect) {
+                evalSelect.innerHTML = models.map(m => `<option value="${escapeHtml(m.model_id)}">${escapeHtml(m.model_id)}</option>`).join('');
+            }
+
+            // 3. Fetch Routing Policies and Populate Table
+            const routesData = await fetchJsonSafe('/api/modelops/routes');
+            const policiesBox = el('modelops-routing-policies');
+            if (policiesBox && routesData.routing_policies) {
+                policiesBox.innerHTML = routesData.routing_policies.map(p => `
+                    <div style="background: rgba(255,255,255,0.02); padding: 8px; border-radius: 6px; border: 1px solid var(--border-glass);">
+                        <div style="font-weight: bold; color: var(--accent-teal); margin-bottom: 2px;">${escapeHtml(p.prompt_family)}</div>
+                        <div style="font-size: 10px; color: #fff; margin-bottom: 4px;">Preferred: <span style="font-family: monospace; color: #38bdf8;">${escapeHtml(p.preferred_model)}</span></div>
+                        <div style="font-size: 10px; color: var(--text-secondary);">Fallback: <span style="font-family: monospace;">${escapeHtml(p.fallback_model)}</span></div>
+                        <div style="font-size: 9px; color: var(--text-secondary); margin-top: 4px; font-style: italic;">${escapeHtml(p.description)}</div>
+                    </div>
+                `).join('');
+            }
+
+            // 4. Populate Failed Calls and Fallback Log
+            const failuresList = el('modelops-failures-list');
+            if (failuresList) {
+                const logs = [];
+                if (metrics.failed_requests_log) {
+                    metrics.failed_requests_log.forEach(f => {
+                        logs.push(`<li style="color: #f87171; border-left: 2px solid #ef4444; padding-left: 6px; margin-bottom: 4px;">
+                            <strong>[FAILURE]</strong> ${escapeHtml(new Date(f.timestamp).toLocaleTimeString())} - Model ${escapeHtml(f.model_id)}: ${escapeHtml(f.error)}
+                        </li>`);
+                    });
+                }
+                if (metrics.fallback_usage_log) {
+                    metrics.fallback_usage_log.forEach(f => {
+                        logs.push(`<li style="color: #fbbf24; border-left: 2px solid #f59e0b; padding-left: 6px; margin-bottom: 4px;">
+                            <strong>[FALLBACK]</strong> ${escapeHtml(new Date(f.timestamp).toLocaleTimeString())} - Failover from ${escapeHtml(f.requested_model)} to ${escapeHtml(f.fallback_model)}
+                        </li>`);
+                    });
+                }
+                if (logs.length === 0) {
+                    failuresList.innerHTML = '<li style="color: var(--text-secondary); text-align: center; padding: 10px;">No failovers or routing failures registered.</li>';
+                } else {
+                    failuresList.innerHTML = logs.join('');
+                }
+            }
+
+            // Bind Health check button
+            const healthBtn = el('btn-modelops-health');
+            if (healthBtn) {
+                healthBtn.onclick = runModelOpsHealthCheck;
+            }
+
+            // Bind eval runner button
+            const evalRunBtn = el('btn-modelops-run-eval');
+            if (evalRunBtn) {
+                evalRunBtn.onclick = () => {
+                    const selectEl = el('modelops-eval-select');
+                    if (selectEl) {
+                        triggerModelEval(selectEl.value);
+                    }
+                };
+            }
+
+        } catch (err) {
+            console.error("Error loading ModelOps view:", err);
+        }
+    }
+
+    async function runModelOpsHealthCheck() {
+        const btn = el('btn-modelops-health');
+        if (!btn) return;
+        btn.disabled = true;
+        btn.innerHTML = '<i data-lucide="loader" class="spin"></i> Checking Health...';
+        if (window.lucide) window.lucide.createIcons();
+
+        try {
+            await fetchJsonSafe('/api/modelops/health');
+            alert('Model health check verification complete. Registry updated.');
+            await loadModelOpsView();
+        } catch (err) {
+            alert(`Health check failed: ${err.message}`);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i data-lucide="activity"></i> Run Health Check';
+            if (window.lucide) window.lucide.createIcons();
+        }
+    }
+
+    async function triggerModelEval(modelId) {
+        const progressEl = el('modelops-eval-progress');
+        const progressBar = el('modelops-eval-progress-bar');
+        const progressPct = el('modelops-eval-progress-pct');
+        const resultEl = el('modelops-eval-result');
+
+        if (progressEl) progressEl.style.display = 'block';
+        if (resultEl) resultEl.style.display = 'none';
+
+        // Simulate progress bar increment animation
+        let pct = 0;
+        const interval = setInterval(() => {
+            pct += 10;
+            if (progressBar) progressBar.style.width = pct + '%';
+            if (progressPct) progressPct.textContent = pct + '%';
+            if (pct >= 100) {
+                clearInterval(interval);
+            }
+        }, 100);
+
+        try {
+            const res = await fetchJsonSafe('/api/modelops/evals', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ model_id: modelId })
+            });
+
+            // Wait a moment for visual completion
+            await new Promise(r => setTimeout(r, 1000));
+            if (progressEl) progressEl.style.display = 'none';
+
+            if (resultEl) {
+                resultEl.style.display = 'block';
+                const isPass = res.status !== 'failed_eval';
+                resultEl.style.background = isPass ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)';
+                resultEl.style.border = isPass ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(239, 68, 68, 0.3)';
+                resultEl.innerHTML = `
+                    <div style="font-weight: bold; color: ${isPass ? '#34d399' : '#f87171'}; font-size: 12px; margin-bottom: 4px;">
+                        ${isPass ? '✓ EVALUATION PASSED' : '✗ EVALUATION FAILED'}
+                    </div>
+                    <div style="font-size: 11px; color: #fff;">
+                        Model: <span style="font-family: monospace;">${escapeHtml(res.model_id)}</span><br>
+                        Accuracy/Compliance Score: <strong>${(res.eval_score * 100).toFixed(0)}%</strong> (Threshold: 70%)<br>
+                        New Status: <span style="font-weight: bold; color: ${isPass ? '#34d399' : '#f87171'};">${escapeHtml(res.status)}</span>
+                    </div>
+                `;
+            }
+            await loadModelOpsView();
+        } catch (err) {
+            clearInterval(interval);
+            if (progressEl) progressEl.style.display = 'none';
+            alert(`Evaluation run failed: ${err.message}`);
+        }
+    }
+
     window.approvePromptFlow = approvePromptFlow;
     window.quarantinePrompt = quarantinePrompt;
     window.loadEvidenceOpsView = loadEvidenceOpsView;
     window.runEvidenceOpsExport = runEvidenceOpsExport;
+    window.loadModelOpsView = loadModelOpsView;
+    window.runModelOpsHealthCheck = runModelOpsHealthCheck;
+    window.triggerModelEval = triggerModelEval;
     }
 
     // Run initialization once DOM is ready
