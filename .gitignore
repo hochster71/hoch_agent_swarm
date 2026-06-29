@@ -41,3 +41,12 @@ dist/releases/
 dist/releases/*/north_star_report.md
 dist/releases/v0.1.1-HOCHSTER-CLUSTER-HARDENING/
 
+# Local-only runtime artifacts
+a_wide_high_detail_ui_dashboard_screenshot_conc.png
+backend/db/
+data/backups/
+data/qa_loop.log
+frontend/data/agent_registry.json
+server/
+
+
