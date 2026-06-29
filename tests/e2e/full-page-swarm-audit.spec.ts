@@ -62,6 +62,8 @@ test.describe("Full-Page Swarm Traversal and Console Audit", () => {
     }
 
     // Check for errors
+    console.log("DEBUG CONSOLE ERRORS:", consoleErrors);
+    console.log("DEBUG 404 ASSETS:", asset404s);
     expect(consoleErrors, `Uncaught console errors detected: ${consoleErrors.join("\n")}`).toEqual([]);
     expect(asset404s, `404 asset load failures detected: ${asset404s.join("\n")}`).toEqual([]);
   });

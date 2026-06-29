@@ -580,6 +580,9 @@ import Hls from 'hls.js';
                 }
             }
 
+            // 11. Brain LLM Telemetry
+            await loadBrainAutonomyTelemetry();
+
             if (window.lucide) window.lucide.createIcons();
         } catch (err) {
             console.error("Error loading Production Command Center:", err);
@@ -10085,6 +10088,226 @@ window.selectClusterNode = selectClusterNode;
 window.toggleClusterTopologyGroup = toggleClusterTopologyGroup;
 window.fitClusterTopologyViewport = fitClusterTopologyViewport;
 window.refreshClusterTopologyStatus = refreshClusterTopologyStatus;
+
+    async function loadBrainAutonomyTelemetry() {
+        try {
+            const res = await fetch('/api/v1/brain/status');
+            if (!res.ok) return;
+            const data = await res.json();
+
+            // 1. Render Chat Messages
+            const chatMessages = el('brain-chat-messages');
+            if (chatMessages && data.messages) {
+                chatMessages.innerHTML = data.messages.map(msg => `
+                    <div style="margin-bottom: 8px; padding: 8px 12px; border-radius: 6px; max-width: 85%; ${
+                        msg.role === 'user' 
+                        ? 'background: rgba(96, 165, 250, 0.15); border: 1px solid rgba(96, 165, 250, 0.3); align-self: flex-end; margin-left: auto; color: #fff;' 
+                        : 'background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); align-self: flex-start; color: #fff;'
+                    }">
+                        <div style="font-size: 9px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 4px; font-weight: bold;">
+                            ${msg.role === 'user' ? 'Michael Hoch' : 'Brain LLM'}
+                        </div>
+                        <div style="word-break: break-word;">${msg.content}</div>
+                    </div>
+                `).join('');
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            // 2. Render Autonomy Mode active styling
+            const modeButtons = document.querySelectorAll('#brain-mode-selector button');
+            modeButtons.forEach(btn => {
+                const modeVal = btn.getAttribute('data-mode');
+                if (modeVal === data.mode) {
+                    btn.className = 'btn btn-mode active';
+                    btn.style.border = '1px solid var(--accent-teal)';
+                    btn.style.background = 'rgba(16, 185, 129, 0.1)';
+                    btn.style.color = 'var(--accent-teal)';
+                } else {
+                    btn.className = 'btn btn-mode';
+                    btn.style.border = '1px solid var(--border-glass)';
+                    btn.style.background = 'transparent';
+                    btn.style.color = 'var(--text-secondary)';
+                }
+            });
+
+            // 3. Render Readiness Score & Gauge
+            const readiness = data.readiness || {};
+            const scoreVal = readiness.score || 0;
+            if (el('brain-readiness-percentage')) {
+                el('brain-readiness-percentage').innerHTML = `
+                    ${scoreVal}%
+                    <span style="font-size: 8px; color: var(--text-secondary); text-transform: uppercase; margin-top: 2px;">Readiness</span>
+                `;
+            }
+            const readinessGauge = el('brain-readiness-gauge');
+            if (readinessGauge) {
+                const maxOffset = 263.8;
+                const offset = maxOffset - (maxOffset * scoreVal / 100);
+                readinessGauge.style.strokeDashoffset = offset;
+            }
+
+            // Readiness stats grid
+            if (el('readiness-prediction')) el('readiness-prediction').textContent = `${readiness.predictionAccuracy || 0}%`;
+            if (el('readiness-qa')) el('readiness-qa').textContent = `${readiness.qaPassRate || 0}%`;
+            if (el('readiness-policy')) el('readiness-policy').textContent = readiness.policyViolations || 0;
+            if (el('readiness-rollback')) el('readiness-rollback').textContent = `${readiness.rollbackAvailable || 0}%`;
+            if (el('readiness-forbidden')) el('readiness-forbidden').textContent = readiness.forbiddenActionAttempts || 0;
+            if (el('readiness-eligible')) {
+                el('readiness-eligible').textContent = readiness.eligibleForGated ? "YES" : "NO";
+                el('readiness-eligible').style.color = readiness.eligibleForGated ? "var(--accent-teal)" : "#ef4444";
+            }
+
+            // 4. Render Suggested Next Action Panel
+            const suggestionContainer = el('brain-suggestion-container');
+            if (suggestionContainer) {
+                if (!data.activeSuggestion) {
+                    suggestionContainer.innerHTML = '<div style="color: var(--text-secondary);">No action recommended yet. Click Send or type instructions to query suggestions.</div>';
+                } else {
+                    const sug = data.activeSuggestion;
+                    suggestionContainer.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+                            <strong style="color: #fff; font-size: 13px;">${sug.action.toUpperCase()}</strong>
+                            <div style="display:flex; gap: 6px;">
+                                <span class="badge" style="background: ${sug.riskLevel === 'HIGH' ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)'}; color: ${sug.riskLevel === 'HIGH' ? '#ef4444' : 'var(--accent-teal)'}; font-size: 9px; font-weight: bold;">
+                                    ${sug.riskLevel} RISK
+                                </span>
+                                <span class="badge warning" style="font-size: 9px;">${sug.confidence}% Match</span>
+                            </div>
+                        </div>
+                        <div style="color: var(--text-secondary); margin-bottom: 12px; font-family: monospace;">${sug.rationale}</div>
+                        
+                        <!-- Revision Input -->
+                        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 4px; border: 1px solid var(--border-glass);">
+                            <span style="font-size: 9px; color: var(--text-secondary); text-transform: uppercase;">Optional Revision Correction</span>
+                            <input type="text" id="brain-revision-text" placeholder="Add style rule or instruction (e.g. use dark UI)..." style="padding: 6px; font-size: 11px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 4px; color: #fff;">
+                        </div>
+
+                        <!-- Feedback action buttons -->
+                        <div style="display:flex; gap:8px;">
+                            <button class="btn btn-primary" onclick="window.submitBrainFeedback('${sug.id}', 'approved')" style="flex:1; padding:6px; font-size:11px; background:#10b981; color:#000; font-weight:bold; border:none; border-radius:4px; cursor:pointer;">Approve</button>
+                            <button class="btn btn-secondary" onclick="window.submitBrainFeedback('${sug.id}', 'rejected')" style="flex:1; padding:6px; font-size:11px; background:#ef4444; color:#fff; font-weight:bold; border:none; border-radius:4px; cursor:pointer;">Reject</button>
+                            <button class="btn" onclick="window.submitBrainFeedback('${sug.id}', 'rejected', document.getElementById('brain-revision-text').value)" style="flex:1; padding:6px; font-size:11px; background:rgba(255,255,255,0.05); color:#fff; border:1px solid var(--border-glass); border-radius:4px; cursor:pointer;">Revise & Reject</button>
+                        </div>
+                    `;
+                }
+            }
+
+            // 5. Render Doctrine Memory list
+            const doctrineList = el('brain-doctrine-list');
+            if (doctrineList && data.doctrineRules) {
+                if (data.doctrineRules.length === 0) {
+                    doctrineList.innerHTML = '<div style="color: var(--text-secondary); padding: 8px 0;">No active rules in memory.</div>';
+                } else {
+                    doctrineList.innerHTML = data.doctrineRules.map(rule => `
+                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.02); padding-bottom: 4px;">
+                            <span style="color:#fff; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 75%;">${rule.ruleText}</span>
+                            <span style="font-size: 8px; color: var(--accent-yellow); text-transform: uppercase;">${rule.source}</span>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // 6. Render Shadow Prediction Log
+            const predictionLog = el('brain-prediction-log');
+            if (predictionLog && data.shadowLogs) {
+                if (data.shadowLogs.length === 0) {
+                    predictionLog.innerHTML = '<div style="color: var(--text-secondary); padding: 4px 0;">Log is empty.</div>';
+                } else {
+                    predictionLog.innerHTML = data.shadowLogs.map(log => `
+                        <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.02); padding-bottom: 2px;">
+                            <span style="color: var(--text-secondary); max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${log.suggestedAction}</span>
+                            <span style="color: ${log.decision === 'approved' ? 'var(--accent-teal)' : log.decision === 'rejected' ? '#ef4444' : 'var(--accent-yellow)'}">${log.decision.toUpperCase()}</span>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // 7. Render Human Escalations
+            const escalationList = el('brain-escalation-list');
+            if (escalationList && data.escalations) {
+                if (data.escalations.length === 0) {
+                    escalationList.innerHTML = '<div style="color: var(--text-secondary); padding: 4px 0;">Escalation queue is empty.</div>';
+                } else {
+                    escalationList.innerHTML = data.escalations.map(esc => `
+                        <div style="border-bottom:1px solid rgba(239, 68, 68, 0.2); padding-bottom: 3px;">
+                            <span style="color:#ef4444; font-weight:bold; font-family:monospace;">${esc.action.toUpperCase()}</span>
+                            <p style="margin: 2px 0 0 0; color: var(--text-secondary); font-size: 9px;">${esc.reason}</p>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // 8. Render Evidence Files Trail
+            const evidenceContainer = el('cc-evidence-container');
+            if (evidenceContainer && data.evidenceFiles) {
+                if (data.evidenceFiles.length === 0) {
+                    evidenceContainer.innerHTML = '<div style="color: var(--text-secondary); text-align: center; font-size: 12px; padding: 20px;">No evidence files generated yet.</div>';
+                } else {
+                    evidenceContainer.innerHTML = data.evidenceFiles.map(pack => `
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 6px; font-size: 11px;">
+                            <a href="${pack.path}" target="_blank" style="color: var(--accent-teal); text-decoration: none; font-family: monospace;">${pack.name}</a>
+                            <span style="color: var(--text-secondary); font-size:10px;">${new Date(pack.timestamp).toLocaleTimeString()}</span>
+                        </div>
+                    `).join('');
+                }
+            }
+
+        } catch (err) {
+            console.error("Error loading Brain Autonomy telemetry:", err);
+        }
+    }
+
+    window.sendBrainOperatorMessage = async function() {
+        const inputEl = el('brain-chat-input');
+        if (!inputEl || !inputEl.value.trim()) return;
+
+        try {
+            const res = await fetch('/api/v1/brain/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: inputEl.value.trim() })
+            });
+            if (res.ok) {
+                inputEl.value = '';
+                await loadProductionCommandCenterView();
+            }
+        } catch (err) {
+            console.error("Error sending operator message:", err);
+        }
+    };
+
+    window.submitBrainFeedback = async function(suggestionId, decision, correction = '') {
+        try {
+            const res = await fetch('/api/v1/brain/feedback', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ suggestionId, decision, correction })
+            });
+            if (res.ok) {
+                await loadProductionCommandCenterView();
+            }
+        } catch (err) {
+            console.error("Error submitting brain feedback:", err);
+        }
+    };
+
+    window.setBrainAutonomyMode = async function(mode) {
+        try {
+            const res = await fetch('/api/v1/brain/mode', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mode })
+            });
+            if (res.ok) {
+                await loadProductionCommandCenterView();
+            } else {
+                const data = await res.json();
+                alert(data.detail || "Failed to switch autonomy mode.");
+            }
+        } catch (err) {
+            console.error("Error setting autonomy mode:", err);
+        }
+    };
 
     // Run initialization once DOM is ready
     if (document.readyState === 'loading') {

@@ -1,0 +1,17 @@
+trusted_cyber_sources:
+  sources:
+    - name: "CISA Cybersecurity Guidance"
+      url: "https://www.cisa.gov/cybersecurity-guidance"
+      confidence: 1.0
+    - name: "NIST AI Risk Management Framework"
+      url: "https://www.nist.gov/itl/ai-risk-management-framework"
+      confidence: 1.0
+    - name: "DoD CIO Zero Trust Reference Architecture"
+      url: "https://dodcio.defense.gov/library/"
+      confidence: 1.0
+    - name: "CISA Zero Trust Maturity Model"
+      url: "https://www.cisa.gov/zero-trust-maturity-model"
+      confidence: 1.0
+    - name: "NIST Secure Software Development Framework (SSDF)"
+      url: "https://csrc.nist.gov/Projects/ssdf"
+      confidence: 1.0

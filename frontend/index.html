@@ -3139,6 +3139,150 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Brain LLM Apprenticeship Control Plane (RC26) -->
+                <div class="card" style="padding: 20px; border: 1px solid var(--border-glass); margin-top: 20px; display: flex; flex-direction: column; gap: 20px; background: rgba(10, 15, 30, 0.7); backdrop-filter: blur(12px); border-radius: 8px;">
+                    <!-- Title & Autonomy Mode Selector Header -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 15px; flex-wrap: wrap; gap: 15px;">
+                        <div>
+                            <h3 style="font-size: 16px; font-weight: 800; color: #fff; margin: 0; display: flex; align-items: center; gap: 8px;">
+                                <i data-lucide="brain-circuit" style="color: var(--accent-teal); width: 20px; height: 20px;"></i> Brain LLM Apprenticeship Control Plane
+                            </h3>
+                            <p style="font-size: 11px; color: var(--text-secondary); margin: 4px 0 0 0;">Observe, train, and calibrate the Brain LLM towards gated autonomy.</p>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 15px; background: rgba(0,0,0,0.3); padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border-glass);">
+                            <span style="font-size: 11px; font-weight: bold; color: var(--text-secondary); text-transform: uppercase;">Autonomy Mode:</span>
+                            <div style="display: flex; gap: 5px;" id="brain-mode-selector">
+                                <button class="btn btn-mode" data-mode="manual" onclick="window.setBrainAutonomyMode('manual')" style="padding: 4px 8px; font-size: 10px; border-radius: 4px; border: 1px solid var(--border-glass); background: transparent; color: var(--text-secondary); font-weight: bold; cursor: pointer;">Manual</button>
+                                <button class="btn btn-mode active" data-mode="suggest" onclick="window.setBrainAutonomyMode('suggest')" style="padding: 4px 8px; font-size: 10px; border-radius: 4px; border: 1px solid var(--accent-teal); background: rgba(16, 185, 129, 0.1); color: var(--accent-teal); font-weight: bold; cursor: pointer;">Suggest</button>
+                                <button class="btn btn-mode" data-mode="shadow" onclick="window.setBrainAutonomyMode('shadow')" style="padding: 4px 8px; font-size: 10px; border-radius: 4px; border: 1px solid var(--border-glass); background: transparent; color: var(--text-secondary); font-weight: bold; cursor: pointer;">Shadow</button>
+                                <button class="btn btn-mode" data-mode="gated" onclick="window.setBrainAutonomyMode('gated')" style="padding: 4px 8px; font-size: 10px; border-radius: 4px; border: 1px solid var(--border-glass); background: transparent; color: var(--text-secondary); font-weight: bold; cursor: pointer;">Gated</button>
+                                <button class="btn btn-mode" data-mode="autonomous" onclick="window.setBrainAutonomyMode('autonomous')" style="padding: 4px 8px; font-size: 10px; border-radius: 4px; border: 1px solid var(--border-glass); background: transparent; color: var(--text-secondary); font-weight: bold; cursor: pointer;">Autonomous</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Grid Layout -->
+                    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px;">
+                        
+                        <!-- Left Column: Operator Chat & Readiness Metrics -->
+                        <div style="display: flex; flex-direction: column; gap: 20px;">
+                            
+                            <!-- ChatGPT Operator Chat Panel -->
+                            <div class="card" style="padding: 15px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 10px; background: rgba(0,0,0,0.2); height: 350px;">
+                                <h4 style="font-size: 12px; font-weight: 700; color: #fff; margin: 0; display: flex; align-items: center; gap: 6px;">
+                                    <i data-lucide="message-square" style="color: var(--accent-blue); width: 14px; height: 14px;"></i> Operator Chat Command Feed
+                                </h4>
+                                <div id="brain-chat-messages" style="flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 6px; border: 1px solid var(--border-glass); font-size: 12px;">
+                                    <!-- Messages rendered here -->
+                                </div>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <input type="text" id="brain-chat-input" placeholder="Enter commander instructions..." style="flex-grow: 1; padding: 10px; font-size: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); border-radius: 6px; color: #fff;" onkeydown="if(event.key==='Enter') window.sendBrainOperatorMessage()">
+                                    <button class="btn btn-primary" id="btn-brain-send-chat" onclick="window.sendBrainOperatorMessage()" style="padding: 10px 16px; font-size: 12px; background: var(--accent-teal); border: none; border-radius: 6px; color: #000; font-weight: bold; cursor: pointer;">Send</button>
+                                </div>
+                            </div>
+
+                            <!-- Autonomy Readiness Score & Target Gauges -->
+                            <div style="display: grid; grid-template-columns: 120px 1fr; gap: 15px; align-items: center; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 6px; border: 1px solid var(--border-glass);">
+                                <div style="position: relative; width: 90px; height: 90px; margin: 0 auto;">
+                                    <svg width="100%" height="100%" viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="42" stroke="rgba(255,255,255,0.05)" stroke-width="8" fill="none" />
+                                        <circle id="brain-readiness-gauge" cx="50" cy="50" r="42" stroke="var(--accent-teal)" stroke-width="8" fill="none" 
+                                            stroke-dasharray="263.8" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 50 50)" style="transition: stroke-dashoffset 0.8s ease-in-out;" />
+                                    </svg>
+                                    <div id="brain-readiness-percentage" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 18px; font-weight: 800; color: #fff;">
+                                        0%
+                                        <span style="font-size: 8px; color: var(--text-secondary); text-transform: uppercase; margin-top: 2px;">Readiness</span>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px 15px; font-size: 11px;">
+                                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 3px;">
+                                        <span style="color: var(--text-secondary);">Prediction Accuracy</span>
+                                        <span id="readiness-prediction" style="color: #fff; font-weight: bold;">0%</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 3px;">
+                                        <span style="color: var(--text-secondary);">QA Gate status</span>
+                                        <span id="readiness-qa" style="color: #fff; font-weight: bold;">0%</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 3px;">
+                                        <span style="color: var(--text-secondary);">Policy violations</span>
+                                        <span id="readiness-policy" style="color: var(--accent-teal); font-weight: bold;">0</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 3px;">
+                                        <span style="color: var(--text-secondary);">Rollback State</span>
+                                        <span id="readiness-rollback" style="color: var(--accent-teal); font-weight: bold;">100%</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 3px;">
+                                        <span style="color: var(--text-secondary);">Forbidden Attempts</span>
+                                        <span id="readiness-forbidden" style="color: var(--accent-teal); font-weight: bold;">0</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 3px;">
+                                        <span style="color: var(--text-secondary);">Eligible For Takeover</span>
+                                        <span id="readiness-eligible" style="color: #ef4444; font-weight: bold;">NO</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Suggestions, Memory, Shadow Logs, Policies -->
+                        <div style="display: flex; flex-direction: column; gap: 20px;">
+                            
+                            <!-- Suggested Next Action Panel -->
+                            <div class="card" style="padding: 15px; border: 1px solid var(--border-glass); background: rgba(16, 185, 129, 0.03); border-radius: 6px; display: flex; flex-direction: column; gap: 10px;">
+                                <h4 style="font-size: 12px; font-weight: 700; color: #fff; margin: 0; display: flex; align-items: center; gap: 6px;">
+                                    <i data-lucide="sparkles" style="color: var(--accent-teal); width: 14px; height: 14px;"></i> Suggested Next Action
+                                </h4>
+                                <div id="brain-suggestion-container" style="font-size: 12px; line-height: 1.4;">
+                                    <!-- Rendered dynamically -->
+                                    <div style="color: var(--text-secondary);">No action recommended yet. Click Send or type instructions to query suggestions.</div>
+                                </div>
+                            </div>
+
+                            <!-- Michael Doctrine Memory Panel -->
+                            <div class="card" style="padding: 15px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 10px;">
+                                <h4 style="font-size: 12px; font-weight: 700; color: #fff; margin: 0; display: flex; align-items: center; gap: 6px;">
+                                    <i data-lucide="book-open" style="color: var(--accent-yellow); width: 14px; height: 14px;"></i> Michael Doctrine Memory
+                                </h4>
+                                <div id="brain-doctrine-list" style="display: flex; flex-direction: column; gap: 6px; max-height: 140px; overflow-y: auto; font-size: 11px;">
+                                    <!-- Rendered dynamically -->
+                                </div>
+                            </div>
+
+                            <!-- Shadow Prediction Log & Escalation Queue -->
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                <!-- Prediction Log -->
+                                <div class="card" style="padding: 12px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 8px;">
+                                    <span style="font-size: 10px; font-weight: bold; color: var(--text-secondary); text-transform: uppercase;">Shadow Prediction Log</span>
+                                    <div id="brain-prediction-log" style="display: flex; flex-direction: column; gap: 6px; max-height: 100px; overflow-y: auto; font-size: 10px;">
+                                        <!-- Rendered dynamically -->
+                                    </div>
+                                </div>
+                                <!-- Human Escalations -->
+                                <div class="card" style="padding: 12px; border: 1px solid rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.02); display: flex; flex-direction: column; gap: 8px;">
+                                    <span style="font-size: 10px; font-weight: bold; color: #ef4444; text-transform: uppercase;">Human Escalations</span>
+                                    <div id="brain-escalation-list" style="display: flex; flex-direction: column; gap: 6px; max-height: 100px; overflow-y: auto; font-size: 10px;">
+                                        <!-- Rendered dynamically -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Policy Decisions Panel -->
+                            <div class="card" style="padding: 12px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 6px; font-size: 11px;">
+                                <span style="font-size: 10px; font-weight: bold; color: var(--text-secondary); text-transform: uppercase;">Autonomy Policy Engine</span>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; font-size: 10px; font-family: monospace;">
+                                    <div style="display: flex; justify-content: space-between;"><span style="color:var(--text-secondary);">read_files</span><span style="color:var(--accent-teal);">ALLOWED</span></div>
+                                    <div style="display: flex; justify-content: space-between;"><span style="color:var(--text-secondary);">run_tests</span><span style="color:var(--accent-teal);">ALLOWED</span></div>
+                                    <div style="display: flex; justify-content: space-between;"><span style="color:var(--text-secondary);">edit_code</span><span style="color:var(--accent-yellow);">STAGED ONLY</span></div>
+                                    <div style="display: flex; justify-content: space-between;"><span style="color:var(--text-secondary);">delete_files</span><span style="color:#ef4444;">MICHAEL ONLY</span></div>
+                                    <div style="display: flex; justify-content: space-between;"><span style="color:var(--text-secondary);">paid_api_usage</span><span style="color:#ef4444;">BLOCKED</span></div>
+                                    <div style="display: flex; justify-content: space-between;"><span style="color:var(--text-secondary);">production_release</span><span style="color:#ef4444;">BLOCKED</span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
             </div>
 
             <!-- Finance Command Center View -->

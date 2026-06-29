@@ -1,0 +1,40 @@
+persona_policy:
+  operators:
+    michael:
+      role: system_owner
+      can_approve:
+        - production_release
+        - architecture_change
+        - credential_change
+        - public_exposure
+        - paid_cloud_use
+      default_mode: command
+    alison:
+      role: trusted_family_operator
+      can_request:
+        - household_documents
+        - family_calendar_summaries
+        - printable_artifacts
+        - google_drive_delivery
+      cannot_approve:
+        - code_execution
+        - credential_change
+        - production_release
+        - public_network_exposure
+      default_mode: assisted
+    child_user:
+      role: protected_child
+      can_request:
+        - learning
+        - stories
+        - schedules
+        - safe_family_content
+      requires_guardian_approval:
+        - external_delivery
+        - account_access
+        - purchases
+        - public_sharing
+    unknown:
+      role: unauthenticated
+      allowed:
+        - general_chat_only

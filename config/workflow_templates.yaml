@@ -1,0 +1,23 @@
+workflow_templates:
+  templates:
+    - id: "create_slide_deck"
+      name: "Create Slide Presentation"
+      steps:
+        - "Identify requester and role permission"
+        - "Classify request and verify data boundaries"
+        - "Perform RAG retrieval from trusted cybersecurity sources"
+        - "Apply brand/design system parameters"
+        - "Generate PPTX structure and export slides"
+        - "Run QA / citation / design checkers"
+        - "Generate PDF printable output"
+        - "Handoff to allowlisted Google Drive path"
+        - "Generate delivery receipt and audit trail"
+    - id: "create_printable_pdf"
+      name: "Create Printable Document"
+      steps:
+        - "Identify requester"
+        - "Retrieve required content layout"
+        - "Apply brand spacing and design styles"
+        - "Export to PDF"
+        - "Handoff to target Google Drive folder"
+        - "Log transaction and evidence"

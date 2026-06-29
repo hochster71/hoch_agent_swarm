@@ -1,0 +1,35 @@
+claim_evidence_policy:
+  claims:
+    - claim: "complete"
+      required_evidence:
+        - "checklist"
+        - "tests"
+        - "evidence"
+    - claim: "production-ready"
+      required_evidence:
+        - "build"
+        - "e2e"
+        - "security"
+        - "runtime"
+        - "rollback"
+    - claim: "secure"
+      required_evidence:
+        - "security scan"
+        - "zero critical or high findings"
+    - claim: "24/7 running"
+      required_evidence:
+        - "sustained uptime log"
+    - claim: "autonomous"
+      required_evidence:
+        - "full mission lifecycle log"
+    - claim: "aligned"
+      required_evidence:
+        - "prediction accuracy log"
+        - "doctrine rule matching log"
+        - "feedback history log"
+    - claim: "local-only"
+      required_evidence:
+        - "model/network endpoint validation logs"
+    - claim: "no drift"
+      required_evidence:
+        - "clean git status"
