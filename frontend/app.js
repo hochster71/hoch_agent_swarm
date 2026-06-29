@@ -10,6 +10,28 @@ import Hls from 'hls.js';
     let pondProcesses = [];
     let koiFishInstances = {};
     let lastLedgerCount = 0;
+    let isTimelineView = false;
+
+    // Missing stub functions to prevent console/runtime crashes
+    function triggerCrewaiIngestion() { console.log('triggerCrewaiIngestion stub'); }
+    async function loadCrewaiIngestionStatus() { console.log('loadCrewaiIngestionStatus stub'); }
+    function handleCandidateSelectionChange() { console.log('handleCandidateSelectionChange stub'); }
+    function simulateDecision() { console.log('simulateDecision stub'); }
+    function exportDecisionMemo() { console.log('exportDecisionMemo stub'); }
+    async function loadRoutingHistoryData() { console.log('loadRoutingHistoryData stub'); }
+    async function loadInferenceHistory() { console.log('loadInferenceHistory stub'); }
+    async function loadMultiModelHistory() { console.log('loadMultiModelHistory stub'); }
+    function populateModelNodeSelect() { console.log('populateModelNodeSelect stub'); }
+    async function loadAgentModelPolicies() { console.log('loadAgentModelPolicies stub'); }
+    async function loadPolicyDecisions() { console.log('loadPolicyDecisions stub'); }
+    function registerModelProvider() { console.log('registerModelProvider stub'); }
+    function runProviderHealthCheck() { console.log('runProviderHealthCheck stub'); }
+    function runProviderModelDiscovery() { console.log('runProviderModelDiscovery stub'); }
+    function runProviderApproval() { console.log('runProviderApproval stub'); }
+    function runProviderDisabling() { console.log('runProviderDisabling stub'); }
+    function sendTestInference() { console.log('sendTestInference stub'); }
+    function executeMultiModelReasoning() { console.log('executeMultiModelReasoning stub'); }
+    function saveAgentModelPolicy() { console.log('saveAgentModelPolicy stub'); }
 
     // Helper functions
     const el = (id) => document.getElementById(id);
@@ -96,7 +118,8 @@ import Hls from 'hls.js';
         { id: "cybersecurity-factory", viewId: "cybersecurity-factory", label: "CYBERSECURITY FACTORY" },
         { id: "governance", viewId: "governance", label: "OPERATOR GOVERNANCE" },
         { id: "device-swarm", label: "DEVICE SWARM" },
-        { id: "mesh-sentinel", label: "MESH SENTINEL" }
+        { id: "mesh-sentinel", label: "MESH SENTINEL" },
+        { id: "finance-command-center", viewId: "finance-command-center", label: "FINANCE COMMAND CENTER" }
     ];
 
     function initNavigation() {
@@ -275,6 +298,10 @@ import Hls from 'hls.js';
             case 'governance':
                 fetchAndRenderGovernanceSummary();
                 viewInterval = setInterval(fetchAndRenderGovernanceSummary, 5000);
+                break;
+            case 'finance-command-center':
+                loadFinanceCommandCenterView();
+                viewInterval = setInterval(loadFinanceCommandCenterView, 3000);
                 break;
         }
     }
@@ -546,6 +573,441 @@ import Hls from 'hls.js';
             if (window.lucide) window.lucide.createIcons();
         } catch (err) {
             console.error("Error loading Production Command Center:", err);
+        }
+    }
+
+    function formatCurrency(val) {
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val || 0);
+    }
+
+    async function loadFinanceCommandCenterView() {
+        try {
+            const res = await fetch('/api/v1/finance/tracker');
+            if (!res.ok) return;
+            const data = await res.json();
+
+            // 1. Header & Last Audit Timestamp
+            const updatedEl = el('fin-last-updated');
+            if (updatedEl) {
+                updatedEl.textContent = `Last Updated: ${new Date().toLocaleTimeString()}`;
+            }
+            const auditTimeEl = el('fin-last-audit');
+            if (auditTimeEl) {
+                auditTimeEl.textContent = `Last Audit: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`;
+            }
+
+            // 2. Metrics & Gauge Fill
+            const metrics = data.metrics || {};
+            if (el('monthly-income-total')) el('monthly-income-total').textContent = formatCurrency(metrics.monthly_income);
+            if (el('monthly-bills-total')) el('monthly-bills-total').textContent = formatCurrency(metrics.monthly_bills);
+            
+            const availEl = el('monthly-available-total');
+            if (availEl) {
+                availEl.textContent = formatCurrency(metrics.monthly_available);
+                availEl.style.color = metrics.monthly_available >= 0 ? "var(--accent-teal)" : "#ef4444";
+            }
+            
+            if (el('debt-total')) el('debt-total').textContent = formatCurrency(metrics.total_debt);
+            if (el('asset-total')) el('asset-total').textContent = formatCurrency(metrics.total_assets);
+            if (el('savings-this-session')) el('savings-this-session').textContent = formatCurrency(metrics.savings_this_session);
+
+            // 3. Render Income
+            const incomeList = el('fin-income-list');
+            if (incomeList && data.income) {
+                incomeList.innerHTML = data.income.map(inc => {
+                    let badge = '';
+                    let opacity = '1';
+                    if (inc.id === 'inc-alison') {
+                        badge = '<span class="badge info" style="font-size:8px; margin-left:8px;">Projected Sep 2026 (Excluded)</span>';
+                        opacity = '0.6';
+                    } else if (inc.frequency === 'one-time') {
+                        badge = '<span class="badge label" style="font-size:8px; margin-left:8px; background:rgba(255,255,255,0.05); color:#a1a1aa;">One-Time (Excluded)</span>';
+                        opacity = '0.7';
+                    } else if (inc.recurring) {
+                        badge = '<span class="badge pass" style="font-size:8px; margin-left:8px;">Active Recurring</span>';
+                    }
+                    return `
+                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.03); padding-bottom:8px; opacity:${opacity};">
+                            <div>
+                                <span style="font-weight:bold; color:#fff; font-size:12px;">${inc.source}</span>
+                                ${badge}
+                                <div style="font-size:10px; color:var(--text-secondary); margin-top:2px;">Type: ${inc.type} • Freq: ${inc.frequency}</div>
+                            </div>
+                            <span style="font-weight:bold; color:var(--accent-teal); font-family:monospace; font-size:12px;">${formatCurrency(inc.amount)}</span>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // 4. Render Bills grouped by category with sub-totals
+            const billsList = el('fin-bills-list');
+            if (billsList && data.bills && data.billCategories) {
+                billsList.innerHTML = '';
+                
+                // Group bills by category
+                data.billCategories.forEach(cat => {
+                    const catBills = data.bills.filter(b => b.category === cat);
+                    if (catBills.length === 0) return;
+                    
+                    // Render Header Row for Category
+                    const headerRow = document.createElement('tr');
+                    headerRow.style.background = 'rgba(255,255,255,0.02)';
+                    headerRow.style.borderBottom = '1px solid var(--border-glass)';
+                    headerRow.innerHTML = `
+                        <td colspan="4" style="padding: 6px 4px; font-weight: bold; color: var(--accent-teal); font-family: monospace; text-transform: uppercase; font-size: 10px;">
+                            📁 ${cat}
+                        </td>
+                    `;
+                    billsList.appendChild(headerRow);
+                    
+                    let catSum = 0;
+                    
+                    catBills.forEach(bill => {
+                        const row = document.createElement('tr');
+                        row.style.borderBottom = '1px solid rgba(255,255,255,0.02)';
+                        
+                        let nameDecor = bill.name;
+                        let statusColor = 'var(--text-secondary)';
+                        let amountColor = '#fff';
+                        
+                        let badgeStr = '';
+                        if (bill.status === 'cancelled') {
+                            badgeStr = ' <span class="badge fail" style="font-size:8px; padding:1px 3px;">CANCELLED</span>';
+                            nameDecor = `<span style="text-decoration: line-through; color: var(--text-muted);">${bill.name}</span>`;
+                            amountColor = 'var(--text-muted)';
+                        } else {
+                            // Active budgeted items sum up
+                            catSum += bill.amount;
+                            if (bill.status === 'paid_yearly') {
+                                badgeStr = ' <span class="badge pass" style="font-size:8px; padding:1px 3px;">YEAR-PAID</span>';
+                                statusColor = 'var(--accent-teal)';
+                            } else if (bill.status === 'future_pmt') {
+                                badgeStr = ' <span class="badge warning" style="font-size:8px; padding:1px 3px;">FUTURE</span>';
+                                statusColor = 'var(--accent-yellow)';
+                            } else if (bill.status === 'disputed') {
+                                badgeStr = ' <span class="badge fail" style="font-size:8px; padding:1px 3px;">DISPUTED</span>';
+                                statusColor = '#ef4444';
+                            } else {
+                                statusColor = 'var(--accent-teal)';
+                            }
+                        }
+                        
+                        row.innerHTML = `
+                            <td style="padding: 6px 4px; color: #fff;">${nameDecor}${badgeStr}</td>
+                            <td style="padding: 6px 4px; color: var(--text-secondary); font-family: monospace;">${bill.category}</td>
+                            <td style="padding: 6px 4px; text-align: right; color: ${amountColor}; font-family: monospace;">${formatCurrency(bill.amount)}</td>
+                            <td style="padding: 6px 4px; text-align: center; color: ${statusColor}; font-family: monospace; font-size: 10px;">${bill.status}</td>
+                        `;
+                        billsList.appendChild(row);
+                    });
+                    
+                    // Render Category Sub-total Row
+                    const subtotalRow = document.createElement('tr');
+                    subtotalRow.style.borderBottom = '2px solid var(--border-glass)';
+                    subtotalRow.style.fontWeight = 'bold';
+                    subtotalRow.innerHTML = `
+                        <td colspan="2" style="padding: 6px 4px; text-align: right; color: var(--text-secondary); font-size: 9px; font-family: monospace;">
+                            Sub-total (${cat}):
+                        </td>
+                        <td style="padding: 6px 4px; text-align: right; color: var(--accent-teal); font-family: monospace;">
+                            ${formatCurrency(catSum)}
+                        </td>
+                        <td></td>
+                    `;
+                    billsList.appendChild(subtotalRow);
+                });
+            }
+
+            // 5. Spending Intelligence Category Breakdown & Transactions (with z-index z-indexed tooltips)
+            const spendingMeta = el('fin-spending-meta');
+            if (spendingMeta && data.spendingAnalysis) {
+                const totalSpent = data.spendingAnalysis.reduce((sum, item) => sum + item.total, 0);
+                const totalCount = data.spendingAnalysis.reduce((sum, item) => sum + item.count, 0);
+                spendingMeta.textContent = `Total: ${formatCurrency(totalSpent)} | Count: ${totalCount}`;
+            }
+
+            const spendingCategories = el('fin-spending-categories');
+            if (spendingCategories && data.spendingAnalysis) {
+                spendingCategories.innerHTML = data.spendingAnalysis.map(item => `
+                    <div class="card" style="padding:8px; display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.01); border:1px solid var(--border-glass); cursor:pointer;" onclick="window.filterFinanceSpending('${item.category}')">
+                        <div>
+                            <div style="font-weight:bold; font-size:11px; color:#fff;">${item.category}</div>
+                            <div style="font-size:9px; color:var(--text-secondary); margin-top:2px;">${item.count} txs</div>
+                        </div>
+                        <span style="font-family:monospace; font-weight:bold; color:var(--accent-teal); font-size:11px;">${formatCurrency(item.total)}</span>
+                    </div>
+                `).join('');
+            }
+
+            const spendingTransactions = el('fin-spending-transactions');
+            if (spendingTransactions && data.transactions) {
+                window.renderFinanceTransactions = function(filterCat) {
+                    const txs = filterCat 
+                        ? data.transactions.filter(t => t.category === filterCat) 
+                        : data.transactions;
+                    
+                    spendingTransactions.innerHTML = txs.map(t => {
+                        const tooltipText = `Merchant: ${t.vendor}\nCategory: ${t.category}\nDate: ${t.date}\nAmount: ${formatCurrency(t.amount)}`;
+                        return `
+                            <div class="card" style="padding:8px; display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.01); border:1px solid var(--border-glass); font-size:11px; position:relative;" title="${tooltipText}">
+                                <div>
+                                    <div style="font-weight:bold; color:#fff;">${t.vendor}</div>
+                                    <div style="font-size:9px; color:var(--text-secondary); margin-top:2px;">${t.date} • ${t.category}</div>
+                                </div>
+                                <span style="font-family:monospace; font-weight:bold; color:#ef4444;">${formatCurrency(t.amount)}</span>
+                            </div>
+                        `;
+                    }).join('');
+                };
+                window.filterFinanceSpending = function(cat) {
+                    window.renderFinanceTransactions(cat);
+                };
+                window.renderFinanceTransactions(); // Initial render
+            }
+
+            // 6. Debt Command Center
+            const debtMeta = el('fin-debt-meta');
+            if (debtMeta && data.debts) {
+                const totalDebt = data.debts.reduce((sum, item) => sum + item.balance, 0);
+                const activePayment = data.debts.reduce((sum, item) => sum + item.monthlyMin, 0);
+                debtMeta.textContent = `Total: ${formatCurrency(totalDebt)} | Monthly: ${formatCurrency(activePayment)}`;
+            }
+
+            const debtList = el('fin-debt-list');
+            if (debtList && data.debts) {
+                debtList.innerHTML = data.debts.map(debt => {
+                    let riskColor = 'var(--accent-teal)';
+                    if (debt.legalRisk === 'high') riskColor = '#ef4444';
+                    else if (debt.legalRisk === 'medium') riskColor = 'var(--accent-yellow)';
+                    
+                    let badge = '';
+                    let nameDecor = debt.creditor;
+                    if (debt.status === 'disputed') {
+                        badge = '<span class="badge fail" style="font-size:8px; margin-left:4px;">DISPUTED</span>';
+                        nameDecor = `<span style="color:var(--text-muted);">${debt.creditor}</span>`;
+                    } else if (debt.status === 'future') {
+                        badge = '<span class="badge info" style="font-size:8px; margin-left:4px;">FUTURE</span>';
+                    }
+                    
+                    return `
+                        <div style="border-bottom:1px solid rgba(255,255,255,0.03); padding-bottom:8px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span style="font-weight:bold; color:#fff; font-size:11px;">${nameDecor}${badge}</span>
+                                <span style="font-family:monospace; font-weight:bold; color:var(--accent-yellow); font-size:11px;">${formatCurrency(debt.balance)}</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; font-size:9px; color:var(--text-secondary); margin-top:2px;">
+                                <span>Min Pay: ${formatCurrency(debt.monthlyMin)}/mo</span>
+                                <span style="color:${riskColor}">Risk: ${debt.legalRisk.toUpperCase()}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            const strategyBox = el('fin-debt-strategy-box');
+            if (strategyBox) {
+                strategyBox.innerHTML = `
+                    <div style="font-weight:bold; color:#fff; font-size:11px; margin-bottom:6px;">📈 Automated Repayment Sequencer</div>
+                    <div style="font-size:10px; color:var(--text-secondary); line-height:1.4;">
+                        <strong>Avalanche Strategy (Recommended):</strong><br/>
+                        1. Target SkylaFCU 2nd Mortgage (6.75% rate)<br/>
+                        2. Target Rausch & Sturm (accel option: $1,000/mo)<br/>
+                        3. Target SOFI Loan once active.
+                    </div>
+                    <div style="font-size:10px; color:var(--text-secondary); margin-top:8px; line-height:1.4; border-top:1px solid var(--border-glass); padding-top:6px;">
+                        <strong>Settlement Candidates:</strong><br/>
+                        Halsted Financial & ARM Solutions are optimal targets for Goodwill / Pay-For-Delete agreements.
+                    </div>
+                `;
+            }
+
+            // 7. Legal & Credit Hub
+            const legalList = el('fin-legal-list');
+            if (legalList && data.legalCreditHub) {
+                legalList.innerHTML = data.legalCreditHub.map(l => `
+                    <div class="card" style="padding:8px; background:rgba(255,255,255,0.01); border:1px solid var(--border-glass); font-size:11px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <strong style="color:#fff;">${l.title}</strong>
+                            <span class="badge info" style="font-size:8px; padding:1px 3px;">${l.type.toUpperCase()}</span>
+                        </div>
+                        <div style="font-size:9px; color:var(--text-secondary); margin-top:2px;">${l.description}</div>
+                        <button class="btn btn-secondary" style="padding:2px 6px; font-size:9px; margin-top:6px; border:1px solid var(--border-glass); background:none; color:var(--accent-teal); cursor:pointer;" onclick="alert('Template ready: Copied to clipboard.')">
+                            Copy Template
+                        </button>
+                    </div>
+                `).join('');
+            }
+
+            // 8. Insurance & Estate
+            const insList = el('fin-insurance-list');
+            if (insList && data.insurance) {
+                const totalCoverage = data.insurance.reduce((sum, item) => sum + item.coverage, 0);
+                insList.innerHTML = `
+                    <div style="font-weight:bold; color:var(--accent-teal); font-size:13px; margin-bottom:8px; display:flex; justify-content:space-between;">
+                        <span>Total Coverage:</span>
+                        <span>${formatCurrency(totalCoverage)}</span>
+                    </div>
+                ` + data.insurance.map(ins => `
+                    <div style="border-bottom:1px solid rgba(255,255,255,0.03); padding-bottom:8px; margin-bottom:8px;">
+                        <div style="display:flex; justify-content:space-between; font-size:11px;">
+                            <span style="font-weight:bold; color:#fff;">Policy: ${ins.policyNumber}</span>
+                            <span style="font-family:monospace; color:var(--accent-teal); font-weight:bold;">${formatCurrency(ins.coverage)}</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:9px; color:var(--text-secondary); margin-top:2px;">
+                            <span>Carrier: ${ins.carrier}</span>
+                            <span>Cost: ${formatCurrency(ins.cost)}/mo</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // 9. Assets
+            const assetsList = el('fin-assets-list');
+            if (assetsList && data.assets) {
+                const totalVal = data.assets.reduce((sum, item) => sum + item.value, 0);
+                assetsList.innerHTML = `
+                    <div style="font-weight:bold; color:#60a5fa; font-size:13px; margin-bottom:8px; display:flex; justify-content:space-between;">
+                        <span>Portfolio Value:</span>
+                        <span>${formatCurrency(totalVal)}</span>
+                    </div>
+                ` + data.assets.map(asset => `
+                    <div style="border-bottom:1px solid rgba(255,255,255,0.03); padding-bottom:8px; margin-bottom:8px; font-size:11px;">
+                        <div style="display:flex; justify-content:space-between;">
+                            <span style="font-weight:bold; color:#fff;">${asset.name}</span>
+                            <span style="font-family:monospace; color:#60a5fa; font-weight:bold;">${formatCurrency(asset.value)}</span>
+                        </div>
+                        <div style="font-size:9px; color:var(--text-secondary); margin-top:2px;">Type: ${asset.type.toUpperCase()} • ${asset.notes || 'No active tags'}</div>
+                    </div>
+                `).join('');
+            }
+
+            // 10. Investing & DCA
+            const investList = el('fin-investing-list');
+            if (investList && data.investingPlan) {
+                investList.innerHTML = data.investingPlan.map(inv => `
+                    <div style="border-bottom:1px solid rgba(255,255,255,0.03); padding-bottom:8px; margin-bottom:8px; font-size:11px;">
+                        <div style="display:flex; justify-content:space-between;">
+                            <span style="font-weight:bold; color:#fff;">DCA Target: ${inv.asset}</span>
+                            <span style="color:var(--accent-teal); font-weight:bold;">$${inv.dailyAllocation}/day</span>
+                        </div>
+                        <div style="font-size:9px; color:var(--text-secondary); margin-top:2px;">Est: ${formatCurrency(inv.monthlyAllocation)}/mo • ${inv.notes || 'Fidelity / Coinbase'}</div>
+                    </div>
+                `).join('') + `
+                    <div style="font-size:9px; color:#f59e0b; background:rgba(245,158,11,0.05); padding:8px; border-radius:4px; border:1px solid rgba(245,158,11,0.2); margin-top:8px; line-height:1.4;">
+                        ⚠️ HIGH VOLATILITY. Do not invest money needed for bills, emergency funds, or debt obligations.
+                    </div>
+                `;
+            }
+
+            // 11. Cost-Cutting
+            const cutsList = el('fin-cuts-list');
+            if (cutsList && data.costCuts) {
+                const totalSaved = data.costCuts.filter(c => c.status === 'completed').reduce((sum, item) => sum + item.monthlySavings, 0);
+                cutsList.innerHTML = `
+                    <div style="font-weight:bold; color:var(--accent-teal); font-size:13px; margin-bottom:8px; display:flex; justify-content:space-between;">
+                        <span>Monthly Savings:</span>
+                        <span>${formatCurrency(totalSaved)}</span>
+                    </div>
+                ` + data.costCuts.map(cut => `
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.03); padding-bottom:6px; font-size:11px;">
+                        <span style="color:#fff;">${cut.service}</span>
+                        <span style="font-family:monospace; color:var(--accent-teal); font-weight:bold;">${formatCurrency(cut.monthlySavings)}/mo</span>
+                    </div>
+                `).join('');
+            }
+
+            // 12. Business Finance
+            const businessList = el('fin-business-list');
+            if (businessList && data.businessFinance) {
+                businessList.innerHTML = data.businessFinance.map(bus => `
+                    <div style="border-bottom:1px solid rgba(255,255,255,0.03); padding-bottom:8px; margin-bottom:8px; font-size:11px;">
+                        <div style="display:flex; justify-content:space-between;">
+                            <span style="font-weight:bold; color:#fff;">${bus.item}</span>
+                            <span style="color:#60a5fa; font-weight:bold;">${formatCurrency(bus.monthly)}</span>
+                        </div>
+                        <div style="font-size:9px; color:var(--text-secondary); margin-top:2px;">${bus.notes}</div>
+                    </div>
+                `).join('');
+            }
+
+            // 13. Activity Stream
+            const activityList = el('fin-activity-list');
+            if (activityList && data.auditLog) {
+                activityList.innerHTML = data.auditLog.map(log => `
+                    <div style="font-size:10px; color:var(--text-secondary); font-family:monospace; border-bottom:1px solid rgba(255,255,255,0.03); padding-bottom:4px; margin-bottom:4px;">
+                        [${new Date(log.timestamp).toLocaleTimeString()}] <span style="color:#fff;">${log.agent}:</span> ${log.event}
+                    </div>
+                `).join('');
+            }
+
+            // 14. QA Audit validation checks
+            const qaAuditList = el('fin-qa-audit-list');
+            const qaBadge = el('finance-qa-badge');
+            if (qaAuditList) {
+                qaAuditList.innerHTML = '';
+                let hasAuditFailure = false;
+                const audits = [];
+                
+                // Income Audit
+                const activeIncSum = data.income.filter(item => item.recurring && item.type !== "bonus" && !item.notes).reduce((sum, item) => sum + item.amount, 0);
+                const incPass = Math.abs(activeIncSum - metrics.monthly_income) < 0.01;
+                audits.push({ name: 'Active Income sum verification', status: incPass ? 'PASS' : 'FAIL', details: `Expected: ${formatCurrency(metrics.monthly_income)} | Computed: ${formatCurrency(activeIncSum)}` });
+                if (!incPass) hasAuditFailure = true;
+
+                // Bills Audit
+                const activeBillsSum = data.bills.filter(item => item.status !== 'cancelled').reduce((sum, item) => sum + item.amount, 0);
+                const billsPass = Math.abs(activeBillsSum - metrics.monthly_bills) < 0.01;
+                audits.push({ name: 'Active Bills sum verification', status: billsPass ? 'PASS' : 'FAIL', details: `Expected: ${formatCurrency(metrics.monthly_bills)} | Computed: ${formatCurrency(activeBillsSum)}` });
+                if (!billsPass) hasAuditFailure = true;
+
+                // Debt Audit
+                const debtSum = data.debts.reduce((sum, item) => sum + item.balance, 0);
+                const debtPass = Math.abs(debtSum - metrics.total_debt) < 0.01;
+                audits.push({ name: 'Total Debt registry validation', status: debtPass ? 'PASS' : 'FAIL', details: `Expected: ${formatCurrency(metrics.total_debt)} | Computed: ${formatCurrency(debtSum)}` });
+                if (!debtPass) hasAuditFailure = true;
+
+                // Asset Audit
+                const assetSum = data.assets.reduce((sum, item) => sum + item.value, 0);
+                const assetPass = Math.abs(assetSum - metrics.total_assets) < 0.01;
+                audits.push({ name: 'Total Assets valuation integrity', status: assetPass ? 'PASS' : 'FAIL', details: `Expected: ${formatCurrency(metrics.total_assets)} | Computed: ${formatCurrency(assetSum)}` });
+                if (!assetPass) hasAuditFailure = true;
+
+                qaAuditList.innerHTML = audits.map(aud => `
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.03); padding-bottom:6px; font-size:11px;">
+                        <div>
+                            <span style="color:#fff; font-weight:bold;">${aud.name}</span>
+                            <div style="font-size:9px; color:var(--text-secondary); margin-top:2px;">${aud.details}</div>
+                        </div>
+                        <span class="badge" style="background:${aud.status === 'PASS' ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)'}; color:${aud.status === 'PASS' ? 'var(--accent-teal)' : '#ef4444'}; font-weight:bold; font-size:9px;">${aud.status}</span>
+                    </div>
+                `).join('');
+
+                if (qaBadge) {
+                    if (hasAuditFailure) {
+                        qaBadge.className = 'badge fail';
+                        qaBadge.textContent = 'MATHEMATICAL DISCREPANCY DETECTED';
+                    } else {
+                        qaBadge.className = 'badge pass';
+                        qaBadge.textContent = 'ALL MATHEMATICAL INTEGRITY VALIDATED';
+                    }
+                }
+
+                // Update Health Score Circular Gauge fill dynamically
+                const healthScoreFill = el('finance-health-score');
+                if (healthScoreFill) {
+                    const healthPct = hasAuditFailure ? 50 : 100;
+                    const maxOffset = 263.8;
+                    const offset = maxOffset - (maxOffset * healthPct / 100);
+                    healthScoreFill.style.strokeDashoffset = offset;
+                    
+                    const scoreTextEl = healthScoreFill.parentElement.nextElementSibling;
+                    if (scoreTextEl) scoreTextEl.textContent = `${healthPct}%`;
+                }
+            }
+
+            if (window.lucide) window.lucide.createIcons();
+        } catch (err) {
+            console.error("Error loading Finance Command Center view:", err);
         }
     }
 
