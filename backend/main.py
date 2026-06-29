@@ -10824,6 +10824,56 @@ def get_qa_loop_status():
         "log": log_content
     }
 
+@app.get("/api/v1/finance/tracker")
+def get_finance_tracker():
+    tracker_path = "/Users/michaelhoch/hoch_agent_swarm/frontend/data/finance_tracker.json"
+    if not os.path.exists(tracker_path):
+        return {"status": "error", "message": "finance_tracker.json not found"}
+    try:
+        with open(tracker_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        # Dynamic calculations for QA audit checks
+        income_total = sum(item["amount"] for item in data.get("income", []) if item.get("recurring") and item.get("type") != "bonus" and "projected" not in item.get("notes", "").lower())
+        bills_total = sum(item["amount"] for item in data.get("bills", []) if item.get("status") in ["active", "future_pmt", "paid_yearly"] and item.get("status") != "cancelled")
+        
+        # Debts sum
+        debt_total = sum(item["balance"] for item in data.get("debts", []))
+        
+        # Assets sum
+        asset_total = sum(item["value"] for item in data.get("assets", []))
+        
+        # Savings monthly (from cancelled bills)
+        savings_total = sum(item["monthlySavings"] for item in data.get("costCuts", []))
+        
+        # Insurance coverage
+        insurance_total = sum(item["coverage"] for item in data.get("insurance", []))
+        
+        data["metrics"] = {
+            "monthly_income": round(income_total, 2),
+            "monthly_bills": round(bills_total, 2),
+            "monthly_available": round(income_total - bills_total, 2),
+            "total_debt": round(debt_total, 2),
+            "total_assets": round(asset_total, 2),
+            "savings_this_session": round(savings_total, 2),
+            "insurance_total": round(insurance_total, 2)
+        }
+        
+        return data
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+@app.post("/api/v1/finance/tracker")
+def save_finance_tracker(updated_data: dict):
+    tracker_path = "/Users/michaelhoch/hoch_agent_swarm/frontend/data/finance_tracker.json"
+    try:
+        with open(tracker_path, "w", encoding="utf-8") as f:
+            json.dump(updated_data, f, indent=2)
+        return {"status": "success", "message": "finance_tracker.json updated successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # Mount frontend files at root (if frontend directory exists)
 
 frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../frontend/dist"))

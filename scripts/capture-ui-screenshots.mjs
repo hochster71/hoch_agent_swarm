@@ -50,6 +50,7 @@ async function runCapture() {
   await captureTab("#nav-production-command-center", "production-command-center.png");
   await captureTab("#nav-release-provenance", "release-provenance.png");
   await captureTab("#nav-governance", "operator-governance.png");
+  await captureTab("#nav-finance-command-center", "finance-command-center.png");
 
   // 2. Capture Local Cockpit HTML files via file:/// scheme
   const projectRoot = path.resolve(__dirname, "../");

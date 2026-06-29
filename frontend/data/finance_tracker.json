@@ -1,0 +1,141 @@
+{
+  "metadata": {
+    "owner": "Michael Hoch",
+    "household": ["Michael Hoch", "Alison Hoch"],
+    "updatedAt": "2026-06-29T11:12:00Z",
+    "sourceNotes": [
+      "ADP, DFAS, and VA pension recurring records synced.",
+      "TruStage policy data aligned with June 2026 coverage statements."
+    ],
+    "disclaimer": "Planning dashboard only. Not legal, tax, or investment advice."
+  },
+  "income": [
+    { "id": "inc-adp", "source": "Dark Wolf Solutions (ADP Payroll)", "amount": 10913.20, "frequency": "monthly", "recurring": true, "type": "salary" },
+    { "id": "inc-dfas", "source": "DFAS Military Retirement", "amount": 4133.32, "frequency": "monthly", "recurring": true, "type": "pension" },
+    { "id": "inc-va", "source": "VA Disability Compensation", "amount": 4428.10, "frequency": "monthly", "recurring": true, "type": "benefits" },
+    { "id": "inc-alison", "source": "Alison MC Schools Tutor", "amount": 2275.00, "frequency": "monthly", "recurring": false, "type": "salary", "notes": "Projected starts September 2026; currently excluded from totals." },
+    { "id": "inc-bonus", "source": "ADP RTS Bonus", "amount": 4895.00, "frequency": "one-time", "recurring": false, "type": "bonus" }
+  ],
+  "billCategories": [
+    "Housing & Loans",
+    "Auto & Transport",
+    "Utilities",
+    "Insurance",
+    "Communications",
+    "Subscriptions",
+    "AI, Cybersecurity & Development",
+    "Family & Medical",
+    "Groceries & Necessities",
+    "Pet Supplies",
+    "Home Improvement",
+    "HOA Fees",
+    "Legal",
+    "Security & Future",
+    "Prior Debt"
+  ],
+  "bills": [
+    { "id": "bill-mortgage", "name": "PennyMac Mortgage", "amount": 2728.44, "category": "Housing & Loans", "status": "active", "autopay": true },
+    { "id": "bill-skyla", "name": "SkylaFCU 2nd Mortgage", "amount": 843.75, "category": "Housing & Loans", "status": "active", "autopay": true },
+    { "id": "bill-wf-auto", "name": "Michael Cybertruck Wells Fargo Auto", "amount": 1950.00, "category": "Auto & Transport", "status": "active", "autopay": true },
+    { "id": "bill-att-cell", "name": "AT&T Cellular", "amount": 350.00, "category": "Communications", "status": "active", "autopay": true },
+    { "id": "bill-alfa", "name": "Alfa Car Insurance", "amount": 166.67, "category": "Insurance", "status": "future_pmt", "notes": "$1,000 due semi-annually July 20" },
+    { "id": "bill-pools", "name": "New Wave Pools", "amount": 166.67, "category": "Home Improvement", "status": "future_pmt", "notes": "$2,000 due annually July 10" },
+    { "id": "bill-att-net", "name": "AT&T Internet", "amount": 78.53, "category": "Communications", "status": "active", "autopay": true },
+    { "id": "bill-disney", "name": "Disney+", "amount": 18.99, "category": "Subscriptions", "status": "active", "autopay": true },
+    { "id": "bill-amazon", "name": "Amazon Prime", "amount": 11.58, "category": "Subscriptions", "status": "active", "notes": "$139/year due April 8, 2027" },
+    { "id": "bill-docker", "name": "Docker", "amount": 14.35, "category": "AI, Cybersecurity & Development", "status": "active", "autopay": true },
+    { "id": "bill-drogon", "name": "DROGON.TV", "amount": 0.00, "category": "Subscriptions", "status": "paid_yearly", "notes": "Active annual plan, no monthly dues" },
+    { "id": "bill-yttv", "name": "YouTube TV", "amount": 73.00, "category": "Subscriptions", "status": "cancelled" },
+    { "id": "bill-chatgpt", "name": "OpenAI ChatGPT", "amount": 20.00, "category": "AI, Cybersecurity & Development", "status": "cancelled" },
+    { "id": "bill-starlink", "name": "Starlink", "amount": 120.00, "category": "Communications", "status": "cancelled" },
+    { "id": "bill-netflix", "name": "Netflix", "amount": 15.49, "category": "Subscriptions", "status": "cancelled" },
+    { "id": "bill-hulu", "name": "Hulu", "amount": 7.99, "category": "Subscriptions", "status": "cancelled" },
+    { "id": "bill-espn", "name": "ESPN+", "amount": 10.99, "category": "Subscriptions", "status": "cancelled" },
+    { "id": "bill-jetbrains", "name": "JetBrains", "amount": 14.90, "category": "AI, Cybersecurity & Development", "status": "cancelled" }
+  ],
+  "debts": [
+    { "id": "debt-rs", "creditor": "Rausch & Sturm / AMEX", "balance": 11000.00, "monthlyMin": 479.38, "status": "active", "disputed": false, "legalRisk": "medium" },
+    { "id": "debt-halsted", "creditor": "Halsted Financial", "balance": 2000.00, "monthlyMin": 238.09, "status": "active", "disputed": false, "legalRisk": "low" },
+    { "id": "debt-rcs", "creditor": "RCS", "balance": 1200.00, "monthlyMin": 50.00, "status": "active", "disputed": false, "legalRisk": "low" },
+    { "id": "debt-sofi-ns", "creditor": "SOFI / Northstar", "balance": 5000.00, "monthlyMin": 100.00, "status": "future", "disputed": false, "legalRisk": "low" },
+    { "id": "debt-sofi-loan", "creditor": "SOFI Loan", "balance": 70000.00, "monthlyMin": 200.00, "status": "active", "disputed": false, "legalRisk": "high", "notes": "Court papers served in Madison AL" },
+    { "id": "debt-td", "creditor": "TD Finance (Tesla Cybertruck)", "balance": 25000.00, "monthlyMin": 0.00, "status": "active", "disputed": false, "legalRisk": "medium", "notes": "Repossessed 2024 AWD Foundation Edition deficiency" },
+    { "id": "debt-wf", "creditor": "Wells Fargo (Tesla Model S)", "balance": 27000.00, "monthlyMin": 0.00, "status": "active", "disputed": false, "legalRisk": "medium", "notes": "Repossessed 2023 Model S AWD deficiency" },
+    { "id": "debt-arm", "creditor": "ARM Solutions (White Knight Pest)", "balance": 220.00, "monthlyMin": 0.00, "status": "disputed", "disputed": true, "legalRisk": "none" }
+  ],
+  "assets": [
+    { "id": "asset-401k", "name": "Dark Wolf ADP 401(k)", "value": 12000.00, "type": "retirement" },
+    { "id": "asset-beast", "name": "Michael Cybertruck Cyberbeast", "value": 110000.00, "type": "vehicle", "notes": "White, FSD lifetime, light bar" },
+    { "id": "asset-awd", "name": "Alison Cybertruck Foundation AWD", "value": 90000.00, "type": "vehicle", "notes": "Cinder Rose, FSD lifetime" }
+  ],
+  "insurance": [
+    { "id": "ins-trustage1", "policyNumber": "MC3532768", "carrier": "MEMBERS Life (Ethos)", "coverage": 300000.00, "beneficiary": "Alison Hoch", "cost": 134.00, "status": "active" },
+    { "id": "ins-trustage2", "policyNumber": "MC4475196 (App TSN009053363)", "carrier": "MEMBERS Life (Ethos)", "coverage": 400000.00, "beneficiary": "Alison Hoch", "cost": 201.00, "status": "pending" },
+    { "id": "ins-darkwolf", "policyNumber": "Employer Life", "carrier": "Dark Wolf Life", "coverage": 435000.00, "beneficiary": "Alison Hoch", "cost": 0.00, "status": "active" },
+    { "id": "ins-va", "policyNumber": "Burial Benefit", "carrier": "VA Burial", "coverage": 0.00, "beneficiary": "Alison Hoch", "cost": 0.00, "status": "pending", "notes": "Future benefits to be confirmed" }
+  ],
+  "spendingAnalysis": [
+    { "category": "Shopping", "total": 450.20, "count": 12 },
+    { "category": "Electronics", "total": 120.45, "count": 3 },
+    { "category": "Groceries", "total": 650.32, "count": 8 },
+    { "category": "Dining Out", "total": 340.50, "count": 15 },
+    { "category": "Personal Care", "total": 90.00, "count": 2 },
+    { "category": "Tesla Charging/Gas", "total": 180.75, "count": 9 },
+    { "category": "Kids", "total": 210.00, "count": 4 },
+    { "category": "Home", "total": 150.00, "count": 5 },
+    { "category": "Entertainment", "total": 85.00, "count": 6 },
+    { "category": "Vehicle Registration", "total": 320.00, "count": 1 },
+    { "category": "Other", "total": 240.10, "count": 10 }
+  ],
+  "transactions": [
+    { "date": "2026-06-25", "vendor": "Tesla Supercharger", "amount": 22.45, "category": "Tesla Charging/Gas" },
+    { "date": "2026-06-24", "vendor": "Publix", "amount": 84.32, "category": "Groceries" },
+    { "date": "2026-06-23", "vendor": "Amazon.com", "amount": 45.99, "category": "Shopping" },
+    { "date": "2026-06-22", "vendor": "Target", "amount": 120.50, "category": "Kids" },
+    { "date": "2026-06-20", "vendor": "Chick-Fil-A", "amount": 24.15, "category": "Dining Out" }
+  ],
+  "costCuts": [
+    { "service": "YouTube TV", "monthlySavings": 73.00, "status": "completed" },
+    { "service": "OpenAI ChatGPT", "monthlySavings": 20.00, "status": "completed" },
+    { "service": "Starlink", "monthlySavings": 120.00, "status": "completed" },
+    { "service": "Netflix", "monthlySavings": 15.49, "status": "completed" },
+    { "service": "Hulu", "monthlySavings": 7.99, "status": "completed" },
+    { "service": "ESPN+", "monthlySavings": 10.99, "status": "completed" },
+    { "service": "JetBrains", "monthlySavings": 14.90, "status": "completed" }
+  ],
+  "investingPlan": [
+    { "asset": "TSLA", "dailyAllocation": 5.00, "monthlyAllocation": 150.00, "setupStatus": "planned" },
+    { "asset": "BTC", "dailyAllocation": 5.00, "monthlyAllocation": 150.00, "setupStatus": "planned" },
+    { "asset": "SpaceX Proxy", "dailyAllocation": 5.00, "monthlyAllocation": 150.00, "setupStatus": "planned", "notes": "SpaceX direct shares unavailable; tracking proxy/alternatives separately." }
+  ],
+  "legalCreditHub": [
+    { "id": "letter-dispute", "title": "ARM Solutions Dispute Letter", "type": "dispute", "description": "Formal written dispute of White Knight Pest Control $220 invoice." },
+    { "id": "letter-validation", "title": "Debt Validation Letter Template", "type": "validation", "description": "Form to request proof of debt under FDCPA." },
+    { "id": "letter-goodwill", "title": "Goodwill Letter Template", "type": "goodwill", "description": "Request removal of late payment records." },
+    { "id": "letter-delete", "title": "Pay-For-Delete Agreement", "type": "agreement", "description": "Offer settlement in exchange for complete credit report deletion." }
+  ],
+  "businessFinance": [
+    { "item": "Business Income Placeholder", "monthly": 0.00, "annual": 0.00, "notes": "Reserved for future client revenue." },
+    { "item": "Home Office Deduction", "monthly": 0.00, "annual": 0.00, "notes": "Calculated square footage proportion." }
+  ],
+  "financeAgents": [
+    { "name": "Income Auditor", "role": "Tracks payroll, retirement, VA benefits, tutor income, and RTS bonuses.", "status": "idle" },
+    { "name": "Bill Guardian", "role": "Monitors all recurring utility, housing, and subscription bills.", "status": "idle" },
+    { "name": "Debt Payoff Strategist", "role": "Analyzes avalanche and snowball repayment sequences.", "status": "idle" },
+    { "name": "Legal & Credit Agent", "role": "Manages creditor templates, credit score improvement, and legal risk tracking.", "status": "idle" },
+    { "name": "Spending Intelligence Agent", "role": "Groups transaction logs to the penny and filters recurring transfers.", "status": "idle" },
+    { "name": "Cost-Cutting Agent", "role": "Calculates achieved savings and lists prospective downgrades.", "status": "idle" },
+    { "name": "Investing Agent", "role": "Manages DCA allocations, portfolio tracking, and growth projections.", "status": "idle" },
+    { "name": "Insurance & Estate Agent", "role": "Tracks life coverage levels and estate planning package delivery.", "status": "idle" },
+    { "name": "Business Finance Agent", "role": "Monitors client invoicing, expenses, and tax deductions.", "status": "idle" },
+    { "name": "Finance QA Agent", "role": "Audits math consistency and validates category schemas.", "status": "active" }
+  ],
+  "gaps": [
+    { "id": "gap-alison", "field": "Alison Income", "status": "NEEDS_INPUT", "description": "Requires exact tutoring hours verification for September activation." },
+    { "id": "gap-va-burial", "field": "VA Burial Amount", "status": "NEEDS_INPUT", "description": "Burial reimbursement claim value to be confirmed by VA." }
+  ],
+  "auditLog": [
+    { "timestamp": "2026-06-29T11:12:00Z", "agent": "Finance QA Agent", "event": "QA Math Audit passed successfully. No discrepancies found." }
+  ],
+  "metrics": {}
+}
