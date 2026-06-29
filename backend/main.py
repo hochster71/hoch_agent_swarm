@@ -11192,6 +11192,39 @@ def get_delivery_receipt(receipt_id: str):
     finally:
         conn.close()
 
+# --- RC29 Monetization Sidecar API Endpoints ---
+from backend.monetization.audit_harness import AuditHarness
+
+@app.post("/api/v1/monetization/audit")
+def run_monetization_audit():
+    harness = AuditHarness()
+    res = harness.execute_audit_sweep()
+    
+    # Save audit record to DB
+    conn = get_db_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO monetization_audits (id, status, write_path_pass, blocked_actions_pass, secret_redaction_pass, evidence_path, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (res["audit_id"], res["status"], 1 if res["write_path_pass"] else 0, 1 if res["blocked_actions_pass"] else 0, 1 if res["secret_redaction_pass"] else 0, res["evidence_filepath"], res["timestamp"])
+        )
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=f"Database save failed: {e}")
+    finally:
+        conn.close()
+        
+    return res
+
+@app.get("/api/v1/monetization/policy")
+def get_monetization_policy():
+    harness = AuditHarness()
+    return {
+        "read_only_mode": True,
+        "allowed_write_paths": harness.guard.allowed_paths,
+        "prohibited_actions": harness.guard.prohibited_actions
+    }
 
 
 # Mount frontend files at root (if frontend directory exists)

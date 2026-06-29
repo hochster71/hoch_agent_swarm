@@ -126,4 +126,30 @@ test.describe('Brain LLM Gated Autonomy Control Plane', () => {
     const rbacRole = page.locator('#ui-rbac-role');
     await expect(rbacRole).toContainText('system_owner');
   });
+
+  test('verifies RC29 monetization sidecar audit harness operations', async ({ page }) => {
+    // Navigate to page
+    await page.goto('http://127.0.0.1:8000');
+
+    // Click sidebar "Command Center" tab
+    const ccNav = page.locator('#nav-production-command-center');
+    await ccNav.click();
+
+    // Verify Monetization Audit panel components exist
+    const sweepResult = page.locator('#ui-audit-sweep-result');
+    await expect(sweepResult).toBeVisible();
+
+    const triggerBtn = page.locator('#btn-trigger-monetization-audit');
+    await expect(triggerBtn).toBeVisible();
+
+    // Run audit sweep
+    await triggerBtn.click();
+
+    // Verify sweep completes and shows PASS status
+    await expect(sweepResult).toContainText('PASS');
+    const redactorStatus = page.locator('#ui-audit-redactor');
+    await expect(redactorStatus).toContainText('Verified');
+    const guardStatus = page.locator('#ui-audit-guard');
+    await expect(guardStatus).toContainText('ReadOnly');
+  });
 });

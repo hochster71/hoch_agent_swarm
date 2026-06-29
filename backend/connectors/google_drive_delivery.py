@@ -40,6 +40,10 @@ class GoogleDriveDelivery:
                 "error": f"Requester '{requester}' is not authorized to deliver to target folder '{target_name}'."
             }
 
+        # Check credentials availability
+        has_credentials = os.getenv("GOOGLE_APPLICATION_CREDENTIALS") is not None or os.getenv("GD_CREDENTIALS") is not None
+        delivery_mode = "real_upload" if has_credentials else "dry_run"
+
         # Successful simulation (or copying file to a simulated GDrive root)
         simulated_drive_root = os.path.join(self.root_dir, "dist/google_drive_simulated", target_info["folder"])
         os.makedirs(simulated_drive_root, exist_ok=True)
@@ -61,9 +65,11 @@ class GoogleDriveDelivery:
         return {
             "success": True,
             "receipt_id": receipt_id,
+            "delivery_mode": delivery_mode,
             "provider": target_info["provider"],
             "folder": target_info["folder"],
             "filename": filename,
             "timestamp": datetime.utcnow().isoformat() + "Z",
-            "sha256": "simulated-sha256-checksum"
+            "sha256": "simulated-sha256-checksum",
+            "status": "DRY-RUN RECEIPT ONLY (Credentials Unavailable)" if delivery_mode == "dry_run" else "SUCCESSFULLY DELIVERED"
         }

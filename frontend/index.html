@@ -3413,6 +3413,60 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- RC29 Monetization Sidecar Audit panel -->
+                    <div class="card" style="margin-top: 20px; padding: 20px; border: 1px solid var(--border-glass); background: rgba(0, 0, 0, 0.25); display: flex; flex-direction: column; gap: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 10px;">
+                            <h4 style="font-size: 13px; font-weight: 800; color: #fff; margin: 0; display: flex; align-items: center; gap: 8px;">
+                                <i data-lucide="shield-alert" style="color: var(--accent-orange); width: 16px; height: 16px;"></i> RC29 Monetization Sidecar Audit Harness
+                            </h4>
+                            <span id="ui-monetization-badge" style="font-size: 9px; font-weight: bold; background: rgba(251, 146, 60, 0.15); color: var(--accent-orange); border: 1px solid rgba(251, 146, 60, 0.3); padding: 2px 6px; border-radius: 4px; text-transform: uppercase;">Audit Active</span>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px;">
+                            <!-- Allowed Output Paths Panel -->
+                            <div class="card" style="padding: 12px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 8px;">
+                                <span style="font-size: 10px; font-weight: bold; color: var(--text-secondary); text-transform: uppercase; display: flex; align-items: center; gap: 4px;">
+                                    <i data-lucide="folder-check" style="color: var(--accent-teal); width: 12px; height: 12px;"></i> Allowed Output Directories
+                                </span>
+                                <div style="font-size: 10px; font-family: monospace; color: var(--text-secondary); display: flex; flex-direction: column; gap: 4px;">
+                                    <div>1. data/monetization/</div>
+                                    <div>2. docs/evidence/monetization/</div>
+                                    <div>3. docs/planning/monetization/</div>
+                                </div>
+                            </div>
+
+                            <!-- Blocked Actions Panel -->
+                            <div class="card" style="padding: 12px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 8px;">
+                                <span style="font-size: 10px; font-weight: bold; color: var(--text-secondary); text-transform: uppercase; display: flex; align-items: center; gap: 4px;">
+                                    <i data-lucide="octagon-alert" style="color: var(--accent-orange); width: 12px; height: 12px;"></i> Blocked Command Substrings
+                                </span>
+                                <div style="font-size: 10px; font-family: monospace; color: var(--text-secondary); display: flex; flex-direction: column; gap: 4px;">
+                                    <div>Mutations: mv, rm, rename, delete</div>
+                                    <div>Operations: git clean, git reset, chmod, chown</div>
+                                </div>
+                            </div>
+
+                            <!-- Last Audit Result Panel -->
+                            <div class="card" style="padding: 12px; border: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 8px;">
+                                <span style="font-size: 10px; font-weight: bold; color: var(--text-secondary); text-transform: uppercase; display: flex; align-items: center; gap: 4px;">
+                                    <i data-lucide="activity" style="color: var(--accent-teal); width: 12px; height: 12px;"></i> Last Audit Status
+                                </span>
+                                <div style="font-size: 10px; font-family: monospace; display: flex; flex-direction: column; gap: 4px;">
+                                    <div style="display: flex; justify-content: space-between;"><span style="color:var(--text-secondary);">Sweep Result:</span><span id="ui-audit-sweep-result" style="color: var(--accent-teal); font-weight: bold;">PASS</span></div>
+                                    <div style="display: flex; justify-content: space-between;"><span style="color:var(--text-secondary);">Redactor Filter:</span><span id="ui-audit-redactor" style="color: var(--accent-teal);">Verified</span></div>
+                                    <div style="display: flex; justify-content: space-between;"><span style="color:var(--text-secondary);">Path Guard:</span><span id="ui-audit-guard" style="color: var(--accent-teal);">ReadOnly</span></div>
+                                    <div style="display: flex; justify-content: space-between;"><span style="color:var(--text-secondary);">Timestamp:</span><span id="ui-audit-timestamp" style="color: #fff;">-</span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                            <button id="btn-trigger-monetization-audit" class="btn btn-primary" onclick="window.triggerMonetizationAudit()" style="padding: 6px 15px; font-size: 11px; background: var(--accent-teal); border: none; border-radius: 4px; color: #000; font-weight: bold; cursor: pointer; height: 30px;">
+                                Run Security & Audit Sweep
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
