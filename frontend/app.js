@@ -4627,7 +4627,7 @@ import Hls from 'hls.js';
             currentHls = null;
         }
 
-        const streamUrl = channel.streamUrl;
+        const streamUrl = channel.playbackUrl || channel.streamUrl;
         
         let playbackRetryCount = 0;
         const maxPlaybackRetries = 3;
