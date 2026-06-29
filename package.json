@@ -16,7 +16,7 @@
     "supply:manifest": "npx tsx scripts/supply-chain/generate-release-manifest.ts",
     "supply:sign": "npx tsx scripts/supply-chain/sign-release-artifacts.ts",
     "supply:verify": "npx tsx scripts/supply-chain/verify-release-artifacts.ts",
-    "supply:release": "npm run baseline:hardening && npm run supply:sbom && npm run supply:provenance && npm run supply:manifest && npm run supply:verify && npm run supply:sign",
+    "supply:release": "npm run baseline:hardening && npm run supply:sbom && npm run supply:provenance && npm run supply:manifest && npm run supply:sign && npm run supply:verify",
     "test": "npx tsx scripts/baseline/verify-stale-green-regression.ts",
     "qa:audit-localhost": "npx tsx scripts/qa/audit-localhost-8000.ts",
     "qa:validate-evidence": "npx tsx scripts/qa/verify-hochster-runtime-evidence.ts",
