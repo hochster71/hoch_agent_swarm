@@ -1,6 +1,16 @@
 FROM mcr.microsoft.com/playwright/python:v1.49.1-noble
 
+LABEL org.opencontainers.image.title="Hoch Agent Swarm Screenshot Service" \
+      org.opencontainers.image.description="Automated UI Screenshot Capture Service for Hoch Agent Swarm" \
+      org.opencontainers.image.version="0.1.0" \
+      org.opencontainers.image.source="https://github.com/crewAIInc/crewAI" \
+      org.opencontainers.image.created="2026-06-29T17:33:53Z"
+
 WORKDIR /app
+
+# Create non-root user
+RUN groupadd --gid 10001 appuser \
+    && useradd --uid 10001 --gid 10001 --create-home --shell /usr/sbin/nologin appuser
 
 # Install playwright python package
 RUN pip install --no-cache-dir playwright==1.49.1
@@ -11,8 +21,17 @@ RUN mkdir -p /app/artifacts/live_screenshots
 # Copy automation script
 COPY scripts/capture_live_screenshots.py /app/scripts/capture_live_screenshots.py
 
+# Change ownership to appuser
+RUN chown -R appuser:appuser /app /home/appuser
+
 # Set default environment and command
-ENV DASHBOARD_URL="http://hoch-app:8086"
+ENV DASHBOARD_URL="http://has-ui"
 ENV PYTHONPATH="/app"
+
+# Add Healthcheck
+HEALTHCHECK --interval=10s --timeout=3s --start-period=10s --retries=3 \
+  CMD pgrep -f "capture_live_screenshots" || exit 1
+
+USER appuser
 
 CMD ["python", "/app/scripts/capture_live_screenshots.py"]

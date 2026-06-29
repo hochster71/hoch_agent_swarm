@@ -2,7 +2,11 @@ import sqlite3
 import re
 from pathlib import Path
 
-DB_PATH = Path(__file__).resolve().parent / "swarm_ledger.db"
+import os
+if os.path.exists("/app"):
+    DB_PATH = Path("/app/backend/swarm_ledger.db")
+else:
+    DB_PATH = Path(__file__).resolve().parent / "swarm_ledger.db"
 
 def is_sql_remediation_allowed(patch: str) -> bool:
     """

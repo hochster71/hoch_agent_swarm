@@ -187,7 +187,7 @@
     "qa:clawde-ux-upgrade": "npx tsx scripts/qa/test-clawde-ux-upgrade-contract.ts"
   },
   "devDependencies": {
-    "@playwright/test": "^1.61.1",
+    "@playwright/test": "^1.47.0",
     "@tailwindcss/cli": "^4.3.1",
     "tailwindcss": "^4.3.1",
     "tsx": "^4.7.1",

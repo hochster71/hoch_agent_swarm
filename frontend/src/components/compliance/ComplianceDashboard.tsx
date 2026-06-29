@@ -12,7 +12,9 @@ import {
   CheckCircle,
   Clock,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Play,
+  Lock
 } from "lucide-react";
 import { FRAMEWORKS } from "../../lib/compliance/frameworkRegistry";
 import { initialControls, initialEvidence, initialAttestations } from "../../lib/compliance/complianceFixtures";
@@ -35,6 +37,134 @@ export const ComplianceDashboard: React.FC = () => {
   const [attestationNotes, setAttestationNotes] = useState("");
 
   const [activeTab, setActiveTab] = useState<"frameworks" | "evidence" | "collectors" | "attestations">("frameworks");
+
+  // Shopping Gate state
+  const [signals, setSignals] = useState<any[]>([]);
+  const [shoppingQuery, setShoppingQuery] = useState("baby rat toys and tunnels for supervised playtime");
+  const [printApproved, setPrintApproved] = useState(false);
+  const [attemptPurchase, setAttemptPurchase] = useState(false);
+  const [childAge, setChildAge] = useState(5);
+  const [selectedMode, setSelectedMode] = useState("RESEARCH_AND_LINK_PREP");
+  const [shoppingResult, setShoppingResult] = useState<any>(null);
+  const [shoppingError, setShoppingError] = useState<string | null>(null);
+  const [isRunningQuery, setIsRunningQuery] = useState(false);
+
+  // PromptOps state
+  const [operatorPromptInput, setOperatorPromptInput] = useState("Build HAS e2e production ready no errors");
+  const [evaluationResult, setEvaluationResult] = useState<any>(null);
+  const [claimText, setClaimText] = useState("production ready");
+  const [claimResult, setClaimResult] = useState<any>(null);
+  const [claimError, setClaimError] = useState<string | null>(null);
+  const [isEvaluating, setIsEvaluating] = useState(false);
+  const [isSubmittingClaim, setIsSubmittingClaim] = useState(false);
+
+  const handleEvaluatePrompt = async () => {
+    setIsEvaluating(true);
+    setEvaluationResult(null);
+    try {
+      const res = await fetch("/api/v1/promptops/evaluate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: operatorPromptInput })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setEvaluationResult(data);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsEvaluating(false);
+      fetchSignals();
+    }
+  };
+
+  const handleSubmitClaim = async () => {
+    setIsSubmittingClaim(true);
+    setClaimResult(null);
+    setClaimError(null);
+    try {
+      const res = await fetch("/api/v1/promptops/submit-claim", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ claim: claimText })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setClaimResult(data);
+      } else {
+        setClaimError(data.detail || "Verification failed.");
+      }
+    } catch (err: any) {
+      setClaimError(err.message || "Network error.");
+    } finally {
+      setIsSubmittingClaim(false);
+      fetchSignals();
+    }
+  };
+
+  React.useEffect(() => {
+    if (activeTab === ("promptops" as any)) {
+      fetchSignals();
+      const interval = setInterval(fetchSignals, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [activeTab]);
+
+  const fetchSignals = async () => {
+    try {
+      const res = await fetch("/api/v1/runtime-truth/state");
+      const data = await res.json();
+      if (data.status === "success") {
+        setSignals(data.signals);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchSignals();
+  }, []);
+
+  React.useEffect(() => {
+    if (activeTab === ("shopping" as any)) {
+      fetchSignals();
+      const interval = setInterval(fetchSignals, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [activeTab]);
+
+  const handleRunShoppingResearch = async () => {
+    setIsRunningQuery(true);
+    setShoppingResult(null);
+    setShoppingError(null);
+    try {
+      const res = await fetch("/api/v1/operator-tasks/shopping-research", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          query: shoppingQuery,
+          child_age: childAge,
+          printer: "HP-OfficeJet-Pro-WiFi",
+          print_approved: printApproved,
+          attempt_purchase: attemptPurchase,
+          mode: selectedMode
+        })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setShoppingResult(data);
+      } else {
+        setShoppingError(data.detail || "Request failed.");
+      }
+    } catch (err: any) {
+      setShoppingError(err.message || "Network error.");
+    } finally {
+      setIsRunningQuery(false);
+      fetchSignals();
+    }
+  };
   const [logs, setLogs] = useState<string[]>([
     "2026-06-24 10:15:32 - [Collector] Initialized NIST SP 800-53 telemetry verify agent.",
     "2026-06-24 11:32:01 - [Collector] Scanned tenant directory hashes - integrity match 100%.",
@@ -308,6 +438,26 @@ export const ComplianceDashboard: React.FC = () => {
           }`}
         >
           Operator Sign-Off
+        </button>
+        <button
+          onClick={() => setActiveTab("shopping" as any)}
+          className={`px-4 py-2 border-b-2 text-sm font-semibold transition ${
+            activeTab === ("shopping" as any)
+              ? "border-blue-500 text-blue-400"
+              : "border-transparent text-slate-400 hover:text-white"
+          }`}
+        >
+          Shopping &amp; Print Gate
+        </button>
+        <button
+          onClick={() => setActiveTab("promptops" as any)}
+          className={`px-4 py-2 border-b-2 text-sm font-semibold transition ${
+            activeTab === ("promptops" as any)
+              ? "border-blue-500 text-blue-400"
+              : "border-transparent text-slate-400 hover:text-white"
+          }`}
+        >
+          PromptOps Portal
         </button>
       </div>
 
@@ -617,6 +767,411 @@ export const ComplianceDashboard: React.FC = () => {
               Sign and Submit Attestation
             </button>
           </form>
+        </div>
+      )}
+
+      {activeTab === ("shopping" as any) && (
+        <div className="space-y-6">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-bold flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-green-400" />
+              Shopping Research &amp; Print Gate
+            </h3>
+            <span className="text-xs px-2.5 py-1 rounded bg-blue-500/15 border border-blue-500/20 text-blue-400 font-bold uppercase tracking-wide">
+              Safe Bounded Mode Enforced
+            </span>
+          </div>
+
+          {/* Grid of the 7 Runtime Truth Signals */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { id: "shopping_research_gate_status", label: "Gate Status", defaultVal: "INACTIVE", icon: Shield },
+              { id: "purchase_block_status", label: "Purchase Block", defaultVal: "ENFORCED", icon: ShieldCheck },
+              { id: "print_approval_status", label: "Print Approval", defaultVal: "NOT_TRIGGERED", icon: FileText },
+              { id: "product_safety_screen_status", label: "Safety Screen", defaultVal: "PENDING", icon: AlertTriangle },
+              { id: "candidate_count", label: "Candidates Count", defaultVal: "0", icon: CheckCircle },
+              { id: "blocked_purchase_attempt_count", label: "Blocked Purchases", defaultVal: "0", icon: AlertCircle },
+              { id: "last_operator_task_mode", label: "Last Task Mode", defaultVal: "N/A", icon: Clock }
+            ].map(sig => {
+              const matchedSig = signals.find(s => s.signal_id === sig.id);
+              const val = matchedSig ? matchedSig.value : sig.defaultVal;
+              const IconComp = sig.icon;
+              return (
+                <div key={sig.id} className="glass-panel p-4 rounded-xl border border-white/5 bg-white/2 flex items-center gap-3">
+                  <div className="p-2.5 bg-blue-500/10 rounded-lg text-blue-400">
+                    <IconComp className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="text-[10px] text-slate-400 font-bold uppercase">{sig.label}</div>
+                    <div className="text-sm font-extrabold font-mono mt-0.5">{val}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Interactive controls and query panel */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-1 glass-panel p-4 rounded-xl border border-white/10 bg-white/1 space-y-4">
+              <h4 className="font-bold text-sm">Query Dispatcher</h4>
+              
+              <div className="space-y-2">
+                <button
+                  onClick={() => {
+                    setShoppingQuery("baby rat toys and tunnels for supervised playtime");
+                    setSelectedMode("RESEARCH_AND_LINK_PREP");
+                  }}
+                  className="w-full text-left text-xs p-2 bg-white/5 hover:bg-white/10 rounded border border-white/5 transition flex justify-between"
+                >
+                  <span>🐀 Baby Rat Toys Demo</span>
+                  <span className="text-slate-500">Preset</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setShoppingQuery("LEGO Disney princess sets for age 5 under budget");
+                    setSelectedMode("RESEARCH_AND_LINK_PREP");
+                  }}
+                  className="w-full text-left text-xs p-2 bg-white/5 hover:bg-white/10 rounded border border-white/5 transition flex justify-between"
+                >
+                  <span>🏰 LEGO Disney Demo</span>
+                  <span className="text-slate-500">Preset</span>
+                </button>
+              </div>
+
+              <div className="space-y-3 pt-2">
+                <div>
+                  <label className="block text-xs text-slate-400 font-bold mb-1">Search Query</label>
+                  <input
+                    type="text"
+                    value={shoppingQuery}
+                    onChange={e => setShoppingQuery(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded px-3 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs text-slate-400 font-bold mb-1">Task Mode</label>
+                  <select
+                    value={selectedMode}
+                    onChange={e => setSelectedMode(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded px-3 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500"
+                  >
+                    <option value="RESEARCH_ONLY">RESEARCH_ONLY</option>
+                    <option value="RESEARCH_AND_PRINT">RESEARCH_AND_PRINT</option>
+                    <option value="RESEARCH_AND_LINK_PREP">RESEARCH_AND_LINK_PREP</option>
+                    <option value="CART_DRAFT_REQUIRES_APPROVAL">CART_DRAFT_REQUIRES_APPROVAL</option>
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-xs text-slate-400 font-bold mb-1">Child Target Age</label>
+                    <input
+                      type="number"
+                      value={childAge}
+                      onChange={e => setChildAge(parseInt(e.target.value) || 5)}
+                      className="w-full bg-white/5 border border-white/10 rounded px-3 py-1.5 text-xs text-white focus:outline-none"
+                    />
+                  </div>
+                  <div className="flex flex-col justify-end">
+                    <label className="flex items-center gap-2 text-xs text-slate-300 select-none cursor-pointer pb-2">
+                      <input
+                        type="checkbox"
+                        checked={printApproved}
+                        onChange={e => setPrintApproved(e.target.checked)}
+                        className="rounded bg-white/5 border-white/10 text-blue-500"
+                      />
+                      Print Approved
+                    </label>
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t border-white/5">
+                  <label className="flex items-center gap-2 text-xs text-red-400 select-none cursor-pointer font-bold">
+                    <input
+                      type="checkbox"
+                      checked={attemptPurchase}
+                      onChange={e => setAttemptPurchase(e.target.checked)}
+                      className="rounded bg-white/5 border-white/10 text-red-500"
+                    />
+                    Attempt Purchase (Test Block)
+                  </label>
+                </div>
+
+                <button
+                  onClick={handleRunShoppingResearch}
+                  disabled={isRunningQuery}
+                  className="w-full py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 transition active:scale-95 rounded text-xs font-bold uppercase tracking-wider text-center mt-4"
+                >
+                  {isRunningQuery ? "DISPATCHING COMPLIANCE RUN..." : "RUN SHOPPING RESEARCH"}
+                </button>
+              </div>
+            </div>
+
+            <div className="lg:col-span-2 space-y-4">
+              {shoppingError && (
+                <div className="p-4 bg-red-950/40 border border-red-500/30 rounded-xl flex gap-3 text-red-400">
+                  <AlertCircle className="w-6 h-6 shrink-0 mt-0.5 text-red-500" />
+                  <div>
+                    <h5 className="font-extrabold text-sm uppercase tracking-wide">Security Gate: Violation Blocked</h5>
+                    <p className="text-xs mt-1 font-mono leading-relaxed">{shoppingError}</p>
+                  </div>
+                </div>
+              )}
+
+              {shoppingResult && (
+                <div className="glass-panel p-4 rounded-xl border border-white/10 bg-white/1 space-y-4">
+                  <div className="flex justify-between items-center border-b border-white/5 pb-2">
+                    <div>
+                      <h4 className="font-bold text-sm">Research Results</h4>
+                      <div className="text-[10px] text-slate-400 font-mono mt-0.5">
+                        Domain: {shoppingResult.domain} | Mode: {shoppingResult.mode}
+                      </div>
+                    </div>
+                    {shoppingResult.evidence_path && (
+                      <span className="text-[10px] px-2 py-0.5 bg-green-500/10 border border-green-500/20 text-green-400 rounded-full font-mono">
+                        Evidence Recorded
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Candidates table */}
+                  <div className="overflow-x-auto text-xs">
+                    <table className="w-full text-left">
+                      <thead>
+                        <tr className="text-slate-400 font-bold border-b border-white/5 pb-2">
+                          <th>Rank</th>
+                          <th>Product</th>
+                          <th>Price</th>
+                          <th>Seller</th>
+                          <th>Safety</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {shoppingResult.candidates.map((cand: any) => {
+                          const p = cand.product;
+                          const s = cand.safety_result;
+                          return (
+                            <tr key={p.id} className="border-b border-white/2 py-2">
+                              <td className="py-2 font-bold font-mono">{cand.rank}</td>
+                              <td className="py-2">
+                                <div>{p.title}</div>
+                                <div className="text-[10px] text-slate-500">{p.description}</div>
+                              </td>
+                              <td className="py-2 font-mono font-bold">${p.price.toFixed(2)}</td>
+                              <td className="py-2">{p.seller}</td>
+                              <td className="py-2">
+                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${s.passed ? "bg-green-500/10 text-green-400" : "bg-red-500/10 text-red-400"}`}>
+                                  {s.passed ? "SAFE" : "BLOCKED"}
+                                </span>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Print brief preview */}
+                  <div className="space-y-1">
+                    <div className="text-xs text-slate-400 font-bold uppercase">Print Brief Content:</div>
+                    <pre className="bg-slate-950 p-3 rounded-lg border border-white/5 font-mono text-[10px] text-slate-300 max-h-[160px] overflow-y-auto whitespace-pre-wrap leading-tight">
+                      {shoppingResult.brief}
+                    </pre>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+      {activeTab === ("promptops" as any) && (
+        <div className="space-y-6">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-bold flex items-center gap-2">
+              <Shield className="w-5 h-5 text-blue-400" />
+              PromptOps Closure Control Plane
+            </h3>
+            <span className="text-xs px-2.5 py-1 rounded bg-green-500/15 border border-green-500/20 text-green-400 font-bold uppercase tracking-wide">
+              Exception-Only Operator Model Active
+            </span>
+          </div>
+
+          {/* Grid of the 9 PromptOps Telemetry Signals */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {[
+              { id: "promptops_status", label: "PromptOps Status", defaultVal: "INACTIVE", icon: Shield },
+              { id: "prompt_score", label: "Quality Score", defaultVal: "0.0", icon: CheckCircle },
+              { id: "prompt_fake_completion_risk", label: "Fake Risk", defaultVal: "LOW", icon: AlertTriangle },
+              { id: "prompt_contract_status", label: "Contract State", defaultVal: "PENDING", icon: FileText },
+              { id: "gate_binding_status", label: "Gate Binding", defaultVal: "UNBOUND", icon: ShieldCheck },
+              { id: "closeout_authority_status", label: "Closeout Auth", defaultVal: "GATED", icon: Lock },
+              { id: "human_loop_reduction_status", label: "Operator Assist", defaultVal: "ACTIVE", icon: UserCheck },
+              { id: "last_prompt_class", label: "Last Prompt Class", defaultVal: "N/A", icon: Play },
+              { id: "last_prompt_contract_id", label: "Last Contract ID", defaultVal: "N/A", icon: Clock }
+            ].map(sig => {
+              const matchedSig = signals.find(s => s.signal_id === sig.id);
+              const val = matchedSig ? matchedSig.value : sig.defaultVal;
+              const IconComp = sig.icon;
+              return (
+                <div key={sig.id} className="glass-panel p-3 rounded-xl border border-white/5 bg-white/2 flex items-center gap-3">
+                  <div className="p-2 bg-blue-500/10 rounded-lg text-blue-400">
+                    <IconComp className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="text-[9px] text-slate-400 font-bold uppercase">{sig.label}</div>
+                    <div className="text-xs font-extrabold font-mono mt-0.5">{val}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left Column: Input Form */}
+            <div className="lg:col-span-1 glass-panel p-4 rounded-xl border border-white/10 bg-white/1 space-y-4">
+              <h4 className="font-bold text-sm">Prompt Evaluator &amp; Classifier</h4>
+              
+              <div className="space-y-2">
+                <button
+                  onClick={() => {
+                    setOperatorPromptInput("Build HAS e2e production ready no errors");
+                  }}
+                  className="w-full text-left text-xs p-2 bg-white/5 hover:bg-white/10 rounded border border-white/5 transition flex justify-between"
+                >
+                  <span>⚠️ Weak / Broad Prompt</span>
+                  <span className="text-slate-500">Preset</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setOperatorPromptInput("Fix Docker UI truth mismatch, prove API/UI BLOCKED/50.0, run docker_truth_check");
+                  }}
+                  className="w-full text-left text-xs p-2 bg-white/5 hover:bg-white/10 rounded border border-white/5 transition flex justify-between"
+                >
+                  <span>✅ Strong Scoped Prompt</span>
+                  <span className="text-slate-500">Preset</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setOperatorPromptInput("Add k3d Kubernetes lane but do not replace Compose until gates pass");
+                  }}
+                  className="w-full text-left text-xs p-2 bg-white/5 hover:bg-white/10 rounded border border-white/5 transition flex justify-between"
+                >
+                  <span>☸️ Kubernetes Lane</span>
+                  <span className="text-slate-500">Preset</span>
+                </button>
+              </div>
+
+              <div className="space-y-3 pt-2">
+                <div>
+                  <label className="block text-xs text-slate-400 font-bold mb-1">Raw Operator Prompt</label>
+                  <textarea
+                    rows={4}
+                    value={operatorPromptInput}
+                    onChange={e => setOperatorPromptInput(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded p-2.5 text-xs text-white focus:outline-none focus:border-blue-500 font-mono"
+                  />
+                </div>
+
+                <button
+                  onClick={handleEvaluatePrompt}
+                  disabled={isEvaluating}
+                  className="w-full py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 transition active:scale-95 rounded text-xs font-bold uppercase tracking-wider text-center"
+                >
+                  {isEvaluating ? "SCORES CALCULATION..." : "EVALUATE AND GENERATE CONTRACT"}
+                </button>
+              </div>
+
+              {/* Closeout Claim Verification Panel */}
+              <div className="pt-4 border-t border-white/5 space-y-3">
+                <h4 className="font-bold text-sm">Operator Closeout Claim</h4>
+                <div>
+                  <label className="block text-xs text-slate-400 font-bold mb-1">Completion Text</label>
+                  <input
+                    type="text"
+                    value={claimText}
+                    onChange={e => setClaimText(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded px-3 py-1.5 text-xs text-white focus:outline-none"
+                  />
+                </div>
+                <button
+                  onClick={handleSubmitClaim}
+                  disabled={isSubmittingClaim}
+                  className="w-full py-2 bg-green-600 hover:bg-green-500 disabled:bg-green-800 transition active:scale-95 rounded text-xs font-bold uppercase tracking-wider text-center"
+                >
+                  {isSubmittingClaim ? "VERIFYING TELEMETRY..." : "SUBMIT CLAIM & VERIFY GATES"}
+                </button>
+              </div>
+            </div>
+
+            {/* Right Column: Evaluation Results and Contract */}
+            <div className="lg:col-span-2 space-y-4">
+              {claimError && (
+                <div className="p-4 bg-red-950/40 border border-red-500/30 rounded-xl flex gap-3 text-red-400">
+                  <AlertCircle className="w-6 h-6 shrink-0 mt-0.5 text-red-500" />
+                  <div>
+                    <h5 className="font-extrabold text-sm uppercase tracking-wide">Closeout Gate: CLAIM REJECTED</h5>
+                    <p className="text-xs mt-1 font-mono leading-relaxed">{claimError}</p>
+                  </div>
+                </div>
+              )}
+
+              {claimResult && (
+                <div className="p-4 bg-green-950/40 border border-green-500/30 rounded-xl flex gap-3 text-green-400">
+                  <CheckCircle className="w-6 h-6 shrink-0 mt-0.5 text-green-500" />
+                  <div>
+                    <h5 className="font-extrabold text-sm uppercase tracking-wide">Closeout Gate: CLAIM APPROVED</h5>
+                    <p className="text-xs mt-1 font-mono leading-relaxed">{claimResult.message}</p>
+                  </div>
+                </div>
+              )}
+
+              {evaluationResult && (
+                <div className="glass-panel p-4 rounded-xl border border-white/10 bg-white/1 space-y-4">
+                  <div className="flex justify-between items-center border-b border-white/5 pb-2">
+                    <div>
+                      <h4 className="font-bold text-sm">Contract Specification</h4>
+                      <div className="text-[10px] text-slate-400 font-mono mt-0.5">
+                        ID: {evaluationResult.mission_id} | Class: {evaluationResult.prompt_class}
+                      </div>
+                    </div>
+                    <span className={`px-2.5 py-1 rounded text-xs font-bold ${
+                      evaluationResult.score_status === "EXECUTABLE"
+                        ? "bg-green-500/10 text-green-400"
+                        : evaluationResult.score_status === "NEEDS_PROMPTOPS_REWRITE"
+                        ? "bg-yellow-500/10 text-yellow-400"
+                        : "bg-red-500/10 text-red-400"
+                    }`}>
+                      {evaluationResult.score_status} ({evaluationResult.score}/100)
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 text-xs">
+                    <div>
+                      <div className="text-slate-400 font-bold">Fake Risk Level:</div>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${evaluationResult.risk_level === "HIGH" ? "bg-red-500/10 text-red-400" : "bg-green-500/10 text-green-400"}`}>
+                        {evaluationResult.risk_level}
+                      </span>
+                    </div>
+                    <div>
+                      <div className="text-slate-400 font-bold">Flagged Terms:</div>
+                      <div className="text-[10px] font-mono text-slate-300">
+                        {evaluationResult.flagged_terms.length > 0 ? evaluationResult.flagged_terms.join(", ") : "None"}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Contract Code Block */}
+                  <div className="space-y-1">
+                    <div className="text-xs text-slate-400 font-bold uppercase">Generated Contract:</div>
+                    <pre className="bg-slate-950 p-3 rounded-lg border border-white/5 font-mono text-[10px] text-slate-300 max-h-[220px] overflow-y-auto whitespace-pre-wrap leading-tight">
+                      {evaluationResult.rewritten_text}
+                    </pre>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -16,17 +16,28 @@ logger = logging.getLogger("BrainOrchestrator")
 
 class BrainOrchestrator:
     def __init__(self, root_dir="/Users/michaelhoch/hoch_agent_swarm"):
-        self.root_dir = root_dir
+        # Dynamically resolve root_dir to support container-first runtime
+        if os.path.exists("/app"):
+            root_dir = "/app"
+        elif root_dir == "/Users/michaelhoch/hoch_agent_swarm" or not os.path.exists(root_dir):
+            root_dir = os.environ.get("HOCHSTER_ROOT_DIR")
+            if not root_dir:
+                current_file = os.path.abspath(__file__)
+                if "backend" in current_file:
+                    root_dir = os.path.abspath(current_file.split("backend")[0])
+                else:
+                    root_dir = "/app"
+        self.root_dir = os.path.abspath(root_dir)
         self.mode = "suggest"
         
         self.model_router = ModelRouter()
-        self.policy = AutonomyPolicy(root_dir)
-        self.doctrine = DoctrineMemory(root_dir)
+        self.policy = AutonomyPolicy(self.root_dir)
+        self.doctrine = DoctrineMemory(self.root_dir)
         self.learner = ApprovalLearner()
         self.chat = ChatSession()
-        self.queue = MissionQueue(root_dir)
-        self.router = TaskRouter(root_dir)
-        self.evidence = EvidenceWriter(root_dir)
+        self.queue = MissionQueue(self.root_dir)
+        self.router = TaskRouter(self.root_dir)
+        self.evidence = EvidenceWriter(self.root_dir)
 
     def get_readiness_score(self) -> dict:
         accuracy = self.learner.get_prediction_accuracy()

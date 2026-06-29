@@ -8,7 +8,9 @@ from pathlib import Path
 from datetime import datetime, timezone
 from typing import Any, Dict, List
 
-ROUTING_PATH = Path("/Users/michaelhoch/hoch_agent_swarm/src/hoch_agent_swarm/config/model_routing.yaml")
+from backend.runtime_truth.state_store import resolve_root_dir
+ROOT = Path(resolve_root_dir())
+ROUTING_PATH = ROOT / "src/hoch_agent_swarm/config/model_routing.yaml"
 
 class ModelHealthMonitor:
     def __init__(self):

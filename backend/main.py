@@ -11368,6 +11368,117 @@ def get_runtime_truth_contradictions():
         "contradictions": res
     }
 
+class ShoppingResearchRequestPayload(BaseModel):
+    query: str
+    child_age: int = 5
+    printer: str = "HP-OfficeJet-Pro-WiFi"
+    print_approved: bool = False
+    attempt_purchase: bool = False
+    mode: str = None
+
+@app.post("/api/v1/operator-tasks/shopping-research")
+def run_shopping_research(payload: ShoppingResearchRequestPayload):
+    from backend.operator_tasks.shopping_research_gate import ShoppingResearchGate
+    gate = ShoppingResearchGate()
+    try:
+        config = {
+            "child_age": payload.child_age,
+            "printer": payload.printer,
+            "print_approved": payload.print_approved,
+            "attempt_purchase": payload.attempt_purchase
+        }
+        if payload.mode:
+            config["mode"] = payload.mode
+            
+        res = gate.execute_task(payload.query, config)
+        return res
+    except PermissionError as e:
+        raise HTTPException(status_code=403, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+class PromptEvaluationRequest(BaseModel):
+    prompt: str
+
+@app.post("/api/v1/promptops/evaluate")
+def evaluate_prompt(payload: PromptEvaluationRequest):
+    from datetime import datetime, timezone
+    from backend.promptops.prompt_classifier import PromptClassifier
+    from backend.promptops.prompt_scorecard import PromptScorecard
+    from backend.promptops.fake_completion_risk import FakeCompletionRisk
+    from backend.promptops.prompt_rewriter import PromptRewriter
+    from backend.promptops.prompt_history_store import PromptHistoryStore
+    from backend.promptops.promptops_runtime_truth import update_promptops_telemetry
+    
+    classifier = PromptClassifier()
+    scorecard = PromptScorecard()
+    risk_detector = FakeCompletionRisk()
+    rewriter = PromptRewriter()
+    history_store = PromptHistoryStore()
+    
+    p_class = classifier.classify(payload.prompt)
+    score_res = scorecard.evaluate(payload.prompt)
+    risk_res = risk_detector.detect_risk(payload.prompt)
+    contract = rewriter.rewrite(payload.prompt, p_class)
+    
+    result = {
+        "mission_id": contract["mission_id"],
+        "prompt_class": p_class,
+        "score": score_res["score"],
+        "score_status": score_res["status"],
+        "dimension_scores": score_res["dimension_scores"],
+        "risk_level": risk_res["risk_level"],
+        "flagged_terms": risk_res["flagged_terms"],
+        "rewritten_text": contract["rewritten_text"],
+        "contract": contract,
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+    
+    history_store.save_contract(result)
+    update_promptops_telemetry(contract, score_res, risk_res)
+    
+    return result
+
+@app.get("/api/v1/promptops/active-contract")
+def get_active_contract():
+    from backend.promptops.prompt_history_store import PromptHistoryStore
+    store = PromptHistoryStore()
+    latest = store.get_latest_contract()
+    if latest:
+        return latest
+    return {"status": "inactive", "message": "No active contract"}
+
+class SubmitClaimRequest(BaseModel):
+    claim: str
+
+@app.post("/api/v1/promptops/submit-claim")
+def submit_claim(payload: SubmitClaimRequest):
+    from backend.promptops.prompt_history_store import PromptHistoryStore
+    from backend.promptops.fake_completion_risk import FakeCompletionRisk
+    import subprocess
+    
+    store = PromptHistoryStore()
+    latest = store.get_latest_contract()
+    if not latest:
+        raise HTTPException(status_code=400, detail="No active prompt contract found. Please evaluate a prompt first.")
+        
+    risk_detector = FakeCompletionRisk()
+    risk_res = risk_detector.detect_risk(payload.claim)
+    
+    if risk_res["risk_level"] == "HIGH":
+        gate_res = subprocess.run(["bash", "scripts/promptops_gate.sh"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if gate_res.returncode != 0:
+            raise HTTPException(
+                status_code=403,
+                detail=f"CRITICAL SECURITY BLOCK: Claim '{payload.claim}' rejected. PromptOps Closure Gate failed with code {gate_res.returncode}. Output: {gate_res.stdout.decode()}"
+            )
+            
+    return {
+        "status": "APPROVED",
+        "message": "Claim verified against active PromptOps gates successfully.",
+        "risk_level": risk_res["risk_level"]
+    }
+
 @app.get("/api/v1/runtime-truth/audit-log")
 def get_runtime_truth_audit_log():
     import sqlite3
