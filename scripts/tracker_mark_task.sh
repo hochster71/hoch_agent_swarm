@@ -12,9 +12,17 @@ TASK_ID="$1"
 STATUS="$2"
 BLOCKER="$3"
 
+# Load secrets if present
+SECRETS_FILE="$HOME/.hoch-secrets/has-tracker.env"
+if [ -f "$SECRETS_FILE" ]; then
+    set -a
+    source "$SECRETS_FILE"
+    set +a
+fi
+
 export TRACKER_PORT=${TRACKER_PORT:-3001}
-export UI_USER=${UI_USER:-admin}
-export UI_PASS=${UI_PASS:-change-this-password}
+export UI_USER=${TRACKER_USER:-${UI_USER:-admin}}
+export UI_PASS=${TRACKER_PASSWORD:-${UI_PASS:-change-this-password}}
 
 echo "=================================================="
 echo "MARKING TASK STATUS"

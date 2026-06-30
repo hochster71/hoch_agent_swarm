@@ -1,17 +1,39 @@
 import { test, expect } from '@playwright/test';
+import * as fs from 'fs';
+import * as path from 'path';
+
+// Load secrets from ~/.hoch-secrets/has-tracker.env if it exists
+const secretsPath = path.join(process.env.HOME || '', '.hoch-secrets', 'has-tracker.env');
+let username = 'admin';
+let password = 'change-this-password';
+let port = '3001';
+
+if (fs.existsSync(secretsPath)) {
+  const content = fs.readFileSync(secretsPath, 'utf8');
+  content.split(/\r?\n/).forEach(line => {
+    const idx = line.indexOf('=');
+    if (idx !== -1) {
+      const key = line.slice(0, idx).trim();
+      const val = line.slice(idx + 1).trim();
+      if (key === 'TRACKER_USER') username = val;
+      if (key === 'TRACKER_PASSWORD') password = val;
+      if (key === 'TRACKER_PORT') port = val;
+    }
+  });
+}
 
 test.use({
+  baseURL: `http://localhost:${port}`,
   httpCredentials: {
-    username: 'admin',
-    password: 'change-this-password',
-  },
+    username,
+    password
+  }
 });
 
 test.describe('HAS/HASF Live Project Tracker Landscape E2E', () => {
   test('verifies landscape view renders and interacts correctly', async ({ page }) => {
     // Navigate directly to local tracker
-    const url = 'http://localhost:3001/';
-    await page.goto(url);
+    await page.goto('/');
 
     // Verify page loads
     await expect(page).toHaveTitle('HAS/HASF Live Project Tracker');
@@ -26,7 +48,7 @@ test.describe('HAS/HASF Live Project Tracker Landscape E2E', () => {
     await expect(landscapeView).toBeVisible();
 
     // Verify Landscape endpoint responds OK
-    const landscapeRes = await page.request.get('http://localhost:3001/api/landscape');
+    const landscapeRes = await page.request.get('/api/landscape');
     expect(landscapeRes.status()).toBe(200);
     const landscapeJson = await landscapeRes.json();
     expect(landscapeJson.northstar).toBeDefined();
