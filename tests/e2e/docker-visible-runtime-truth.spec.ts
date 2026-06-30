@@ -16,6 +16,11 @@ test.describe("Docker-First Visible Runtime Truth Verification", () => {
     const scoreEl = page.locator("#final-readiness-capped");
     await expect(scoreEl).toBeVisible();
 
+    // 2.5 Navigate to Live Project Tracker view
+    const trackerNav = page.locator("#nav-live-project-tracker");
+    await expect(trackerNav).toBeVisible();
+    await trackerNav.click();
+
     // 3. Verify topbar is synchronized with verifier block
     const rCount = page.locator("#topbar-readiness");
     await expect(rCount).toBeVisible();

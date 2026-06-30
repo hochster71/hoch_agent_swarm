@@ -13,7 +13,8 @@ export default defineConfig({
     ["html", { outputFolder: "artifacts/qa/playwright-report", open: "never" }]
   ],
   use: {
-    baseURL: process.env.E2E_BASE_URL || "http://localhost:8000",
+    baseURL: process.env.E2E_BASE_URL || "https://has.localhost",
+    ignoreHTTPSErrors: true,
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
     video: "retain-on-failure"

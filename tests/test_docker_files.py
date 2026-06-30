@@ -29,6 +29,7 @@ def test_docker_compose_structure():
     assert "has-ui" in services
     assert "has-worker" in services
     assert "has-tools" in services
+    assert "has-proxy" in services
     
     # Check port exposure
     ports = services["has-ui"].get("ports", [])

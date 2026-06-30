@@ -26,7 +26,7 @@ if echo "$compose_ps" | grep -E "0\.0\.0\.0|:::" >/dev/null; then
 fi
 
 # 2. Inspect containers using docker inspect for absolute validation of HostIp
-for container in has-api has-ui; do
+for container in has-api has-ui has-proxy; do
   echo "Inspecting host port bindings for $container..."
   host_ips=$(docker inspect --format='{{range $p, $conf := .NetworkSettings.Ports}}{{range $conf}}{{.HostIp}} {{end}}{{end}}' "$container")
   

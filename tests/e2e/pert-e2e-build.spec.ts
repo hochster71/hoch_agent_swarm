@@ -11,7 +11,7 @@ test.describe('@legacy @compat @deorbited PERT E2E Build and Critical Path Visua
     });
 
     // Navigate to page
-    await page.goto('http://127.0.0.1:8000');
+    await page.goto('/');
 
     // Wait for sidebar nav item to load
     const pertNav = page.locator('#nav-pert-e2e-build');
