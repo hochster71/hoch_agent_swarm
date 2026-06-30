@@ -10,6 +10,13 @@
     "primary_archive": "~/Library/CloudStorage/GoogleDrive-*/My Drive/AHS_ARCHIVE",
     "fallback_archive": "~/iCloud Drive (Archive)/AHS_ARCHIVE"
   },
+  "archive_priority": [
+    "Google Drive",
+    "iCloud Drive Archive"
+  ],
+  "fallback_allowed": true,
+  "fallback_requires_manifest_note": true,
+  "delete_local_after_archive": false,
   "allow_move_patterns": [
     "~/mesh-backup",
     "~/mesh-v3-backup",
