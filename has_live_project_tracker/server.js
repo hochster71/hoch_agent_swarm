@@ -1891,6 +1891,39 @@ const server = http.createServer((req, res) => {
     }
   }
 
+  if (url.pathname === "/api/inventory/github") {
+    try {
+      const data = readJson("github_inventory.json", []);
+      return sendJson(res, data);
+    } catch (err) {
+      res.writeHead(500, { "Content-Type": "text/plain" });
+      res.end(`Internal Server Error: ${err.message}`);
+      return;
+    }
+  }
+
+  if (url.pathname === "/api/inventory/local") {
+    try {
+      const data = readJson("local_inventory.json", []);
+      return sendJson(res, data);
+    } catch (err) {
+      res.writeHead(500, { "Content-Type": "text/plain" });
+      res.end(`Internal Server Error: ${err.message}`);
+      return;
+    }
+  }
+
+  if (url.pathname === "/api/inventory/cloud") {
+    try {
+      const data = readJson("cloud_inventory.json", []);
+      return sendJson(res, data);
+    } catch (err) {
+      res.writeHead(500, { "Content-Type": "text/plain" });
+      res.end(`Internal Server Error: ${err.message}`);
+      return;
+    }
+  }
+
   if (url.pathname === "/api/dora") {
     try {
       const dora = computeDoraMetrics();
