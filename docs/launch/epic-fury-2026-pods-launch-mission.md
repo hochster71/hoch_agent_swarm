@@ -32,7 +32,13 @@ This document outlines the structured, non-destructive revenue launch mission pl
 - **Step 5: E2E Telemetry Integration**
   - Verification: E2E Playwright test assertions run and register matching task names under the Control Plane telemetry graph.
 
-## 4. Current Blockers / Status
+## 4. iOS/Capacitor Readiness Plan
+- **Xcode Shell configuration**: Build shell points to Vercel production URL, using Swift Package Manager to link the Capacitor and RevenueCat SDK packages.
+- **Privacy Compliance**: Plist manifest `PrivacyInfo.xcprivacy` verified with appropriate usage reason justifications.
+- **App Store Requirements**: Universal single-icon asset and launch splash layouts configured. Missing screenshots and terms route must be addressed in App Store Connect submission phase.
+
+## 5. Current Blockers / Status
 - **Stripe & Supabase Vercel Secrets**: Local configurations exist, but the live endpoints are blocked until Vercel credentials are pushed to verify production payment pipelines.
+- **App Store Assets**: Missing iOS screenshots and a `/terms` EULA route.
 - **k3d Kubernetes Sidecar**: Idle/waiting state due to local Docker availability.
-- **Audit Result**: **GO** (Local source assets are 100% prepared).
+- **Overall Verdict**: **CONDITIONAL GO** (Web codebase ready; native iOS build configuration validated; App Store screenshots/terms and Vercel environments are pending).

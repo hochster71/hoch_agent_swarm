@@ -21,8 +21,13 @@
     "privacy_page": "/privacy",
     "support_page": "/support",
     "checkout_endpoint": "/api/stripe/checkout",
-    "webhook_endpoint": "/api/webhooks/stripe"
+    "webhook_endpoint": "/api/webhooks/stripe",
+    "ios_bundle_id": "com.epicfury.dashboard",
+    "ios_app_name": "Epic Fury 2026",
+    "ios_server_url": "https://epic-fury-2026.vercel.app",
+    "ios_privacy_manifest": "present",
+    "ios_spm_packages": ["capacitor-swift-pm", "RevenuecatPurchasesCapacitor"]
   },
-  "status": "READY_FOR_AUDIT",
+  "status": "CONDITIONAL_GO",
   "created_at": "2026-06-30T14:58:39-05:00"
 }
