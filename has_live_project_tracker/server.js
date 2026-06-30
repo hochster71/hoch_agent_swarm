@@ -1854,12 +1854,182 @@ function getGapsData(truth) {
   };
 }
 
+let sseClients = [];
+
+function formatSseEvent(evt) {
+  const ts = evt.ts || new Date().toISOString();
+  const id = evt.id || `evt-${ts.replace(/[^0-9]/g, "")}-${Math.floor(Math.random() * 1000000)}`;
+  const type = evt.type || "unknown_event";
+  let source = evt.source || "System Core";
+  let target = evt.target || "Global Registry";
+  let domain = evt.domain || "Tracker";
+  let severity = evt.severity || "info";
+  let status = evt.status || "success";
+  let task_id = evt.task_id || null;
+  let evidence_path = evt.evidence_path || null;
+  let payload_summary = evt.payload_summary || "";
+
+  if (type === "task_update" && evt.task) {
+    task_id = evt.task.id;
+    domain = evt.task.owner_domain || "Tracker";
+    source = evt.task.assigned_agent || "Live Tracker Runtime Agent";
+    target = "Evidence Vault";
+    payload_summary = `Task ${evt.task.id} updated: ${evt.task.name} is now ${evt.task.status}`;
+    if (evt.task.qa_verdict === "GO") severity = "success";
+    if (evt.task.status === "Done") {
+      status = "success";
+      severity = "success";
+    }
+  } else if (type === "heartbeat") {
+    source = "System Core";
+    target = "Control Plane UI";
+    domain = "Observability";
+    payload_summary = "Heartbeat check OK";
+  }
+
+  return { id, ts, type, source, target, domain, severity, status, task_id, evidence_path, payload_summary };
+}
+
+function broadcastEvent(evt) {
+  const formatted = formatSseEvent(evt);
+  const data = `data: ${JSON.stringify(formatted)}\n\n`;
+  sseClients.forEach(c => {
+    try {
+      c.res.write(data);
+    } catch {}
+  });
+}
+
+function sendMirrorHtml(res) {
+  const html = fs.readFileSync(path.join(ROOT, "tracker-mirror.html"), "utf8");
+  res.writeHead(200, { "Content-Type": "text/html", "Cache-Control": "no-store" });
+  res.end(html);
+}
+
 const server = http.createServer((req, res) => {
   if (!authOk(req)) return deny(res);
 
   const url = new URL(req.url, `http://${req.headers.host}`);
 
   if (url.pathname === "/" || url.pathname === "/index.html") return sendHtml(res);
+  
+  if (url.pathname === "/tracker-mirror") return sendMirrorHtml(res);
+
+  if (url.pathname === "/api/mirror-health") {
+    return sendJson(res, { status: "OK", mirror: "authenticated_same_origin" });
+  }
+
+  if (url.pathname === "/api/stream") {
+    res.writeHead(200, {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache, no-transform",
+      "Connection": "keep-alive"
+    });
+    res.write("retry: 10000\n\n");
+
+    let initialEvents = [];
+    try {
+      const ndjsonPath = path.join(DATA, "events.ndjson");
+      if (fs.existsSync(ndjsonPath)) {
+        initialEvents = fs.readFileSync(ndjsonPath, "utf8")
+          .trim()
+          .split("\n")
+          .filter(Boolean)
+          .slice(-10)
+          .map(JSON.parse);
+      }
+    } catch (err) {
+      console.error("Error reading events for SSE init:", err);
+    }
+
+    initialEvents.forEach(evt => {
+      res.write(`data: ${JSON.stringify(formatSseEvent(evt))}\n\n`);
+    });
+
+    const heartbeatInterval = setInterval(() => {
+      res.write(`data: ${JSON.stringify({
+        id: "evt-" + Date.now(),
+        ts: new Date().toISOString(),
+        type: "heartbeat",
+        source: "System Core",
+        target: "Control Plane UI",
+        domain: "Observability",
+        severity: "info",
+        status: "success",
+        payload_summary: "Heartbeat check OK"
+      })}\n\n`);
+    }, 15000);
+
+    const client = { res, heartbeatInterval };
+    sseClients.push(client);
+
+    req.on("close", () => {
+      clearInterval(heartbeatInterval);
+      sseClients = sseClients.filter(c => c !== client);
+    });
+    return;
+  }
+
+  if (url.pathname === "/api/topology") {
+    let recentEvents = [];
+    try {
+      const ndjsonPath = path.join(DATA, "events.ndjson");
+      if (fs.existsSync(ndjsonPath)) {
+        recentEvents = fs.readFileSync(ndjsonPath, "utf8")
+          .trim()
+          .split("\n")
+          .filter(Boolean)
+          .map(JSON.parse);
+      }
+    } catch {}
+
+    const eventCounts = {};
+    recentEvents.forEach(e => {
+      const type = e.type || "unknown";
+      eventCounts[type] = (eventCounts[type] || 0) + 1;
+    });
+
+    const nodes = [
+      { id: "personal_core", label: "HAS Personal Core", group: "core", health: "green", static_architecture: true },
+      { id: "business_core", label: "HAS Business Core", group: "core", health: "green", static_architecture: true },
+      { id: "hobby_core", label: "HAS Hobby Core", group: "core", health: "green", static_architecture: true },
+      { id: "agent_swarm", label: "Agent Swarm", group: "agents", health: "green", static_architecture: true },
+      { id: "github", label: "GitHub", group: "sources", health: "green", static_architecture: true },
+      { id: "local_disk", label: "Local Disk", group: "sources", health: "green", static_architecture: true },
+      { id: "cloud", label: "Cloud", group: "sources", health: "green", static_architecture: true },
+      { id: "global_registry", label: "Global Registry", group: "registry", health: "green", static_architecture: true },
+      { id: "build_factory", label: "Build Factory", group: "build", health: "green", static_architecture: true },
+      { id: "qa_gate", label: "QA Gate", group: "gates", health: "green", static_architecture: true },
+      { id: "raci_matrix", label: "RACI Matrix", group: "governance", health: "green", static_architecture: true },
+      { id: "evidence_vault", label: "Evidence Vault", group: "evidence", health: "green", static_architecture: true },
+      { id: "devsecops", label: "DevSecOps", group: "security", health: "green", static_architecture: true },
+      { id: "monetization", label: "Monetization", group: "business", health: "green", static_architecture: true }
+    ];
+
+    const edges = [
+      { from: "personal_core", to: "agent_swarm" },
+      { from: "business_core", to: "agent_swarm" },
+      { from: "hobby_core", to: "agent_swarm" },
+      { from: "github", to: "global_registry" },
+      { from: "local_disk", to: "global_registry" },
+      { from: "cloud", to: "global_registry" },
+      { from: "agent_swarm", to: "global_registry" },
+      { from: "agent_swarm", to: "build_factory" },
+      { from: "build_factory", to: "qa_gate" },
+      { from: "qa_gate", to: "evidence_vault" },
+      { from: "global_registry", to: "raci_matrix" },
+      { from: "raci_matrix", to: "evidence_vault" },
+      { from: "global_registry", to: "monetization" },
+      { from: "global_registry", to: "devsecops" }
+    ];
+
+    return sendJson(res, {
+      nodes,
+      edges,
+      latest_real_event_counts: eventCounts,
+      static_architecture: true
+    });
+  }
   
   if (url.pathname === "/api/truth") {
     return computeTruth()
@@ -2083,8 +2253,10 @@ const server = http.createServer((req, res) => {
         writeJson("tasks.json", tasks);
         
         try {
-          const line = JSON.stringify({ ts: new Date().toISOString(), type: "task_update", task_id: tasks[idx].id, task: tasks[idx] }) + "\n";
+          const eventObj = { ts: new Date().toISOString(), type: "task_update", task_id: tasks[idx].id, task: tasks[idx] };
+          const line = JSON.stringify(eventObj) + "\n";
           fs.appendFileSync(path.join(DATA, "events.ndjson"), line);
+          broadcastEvent(eventObj);
         } catch {}
 
         return sendJson(res, { ok: true, task: tasks[idx] });

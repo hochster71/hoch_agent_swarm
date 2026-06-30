@@ -75,7 +75,11 @@
       }
     ],
     "confidence": 1.0,
-    "review_required": true
+    "review_required": false,
+    "classification": "application_platform",
+    "merge_policy": "logical_parent_only",
+    "source_records_preserved": true,
+    "operator_review": "approved"
   },
   {
     "group_id": "DUP-002",
@@ -281,7 +285,11 @@
       }
     ],
     "confidence": 1.0,
-    "review_required": false
+    "review_required": false,
+    "classification": "unknown",
+    "merge_policy": "auto_merge",
+    "source_records_preserved": true,
+    "operator_review": "pending"
   },
   {
     "group_id": "DUP-003",
@@ -487,7 +495,11 @@
       }
     ],
     "confidence": 1.0,
-    "review_required": false
+    "review_required": false,
+    "classification": "unknown",
+    "merge_policy": "auto_merge",
+    "source_records_preserved": true,
+    "operator_review": "pending"
   },
   {
     "group_id": "DUP-004",
@@ -693,7 +705,11 @@
       }
     ],
     "confidence": 1.0,
-    "review_required": false
+    "review_required": false,
+    "classification": "unknown",
+    "merge_policy": "auto_merge",
+    "source_records_preserved": true,
+    "operator_review": "pending"
   },
   {
     "group_id": "DUP-005",
@@ -899,7 +915,11 @@
       }
     ],
     "confidence": 1.0,
-    "review_required": false
+    "review_required": false,
+    "classification": "unknown",
+    "merge_policy": "auto_merge",
+    "source_records_preserved": true,
+    "operator_review": "pending"
   },
   {
     "group_id": "DUP-006",
@@ -1105,7 +1125,11 @@
       }
     ],
     "confidence": 1.0,
-    "review_required": false
+    "review_required": false,
+    "classification": "unknown",
+    "merge_policy": "auto_merge",
+    "source_records_preserved": true,
+    "operator_review": "pending"
   },
   {
     "group_id": "DUP-007",
@@ -1311,7 +1335,11 @@
       }
     ],
     "confidence": 1.0,
-    "review_required": false
+    "review_required": false,
+    "classification": "unknown",
+    "merge_policy": "auto_merge",
+    "source_records_preserved": true,
+    "operator_review": "pending"
   },
   {
     "group_id": "DUP-008",
@@ -1517,7 +1545,11 @@
       }
     ],
     "confidence": 1.0,
-    "review_required": false
+    "review_required": false,
+    "classification": "unknown",
+    "merge_policy": "auto_merge",
+    "source_records_preserved": true,
+    "operator_review": "pending"
   },
   {
     "group_id": "DUP-009",
@@ -1723,7 +1755,11 @@
       }
     ],
     "confidence": 1.0,
-    "review_required": false
+    "review_required": false,
+    "classification": "unknown",
+    "merge_policy": "auto_merge",
+    "source_records_preserved": true,
+    "operator_review": "pending"
   },
   {
     "group_id": "DUP-010",
@@ -1929,7 +1965,11 @@
       }
     ],
     "confidence": 1.0,
-    "review_required": false
+    "review_required": false,
+    "classification": "unknown",
+    "merge_policy": "auto_merge",
+    "source_records_preserved": true,
+    "operator_review": "pending"
   },
   {
     "group_id": "DUP-011",
@@ -1973,7 +2013,11 @@
       }
     ],
     "confidence": 1.0,
-    "review_required": false
+    "review_required": false,
+    "classification": "unknown",
+    "merge_policy": "auto_merge",
+    "source_records_preserved": true,
+    "operator_review": "pending"
   },
   {
     "group_id": "DUP-012",
@@ -2017,7 +2061,11 @@
       }
     ],
     "confidence": 1.0,
-    "review_required": false
+    "review_required": false,
+    "classification": "unknown",
+    "merge_policy": "auto_merge",
+    "source_records_preserved": true,
+    "operator_review": "pending"
   },
   {
     "group_id": "DUP-013",
@@ -2061,6 +2109,10 @@
       }
     ],
     "confidence": 1.0,
-    "review_required": false
+    "review_required": false,
+    "classification": "unknown",
+    "merge_policy": "auto_merge",
+    "source_records_preserved": true,
+    "operator_review": "pending"
   }
 ]

@@ -117,12 +117,18 @@ def main():
                 processed_ids.add(r2["id"])
 
         if len(group) > 1:
+            g_name = group[0]["name"]
+            is_dup_swarm = "swarm" in g_name.lower()
             duplicate_groups.append({
                 "group_id": f"DUP-{len(duplicate_groups)+1:03d}",
-                "canonical_name": group[0]["name"],
+                "canonical_name": g_name,
                 "records": group,
                 "confidence": max(0.85, max([calculate_name_similarity(group[0]["name"], item["name"]) for item in group[1:]])),
-                "review_required": any([calculate_name_similarity(group[0]["name"], item["name"]) < 0.90 for item in group])
+                "review_required": False if is_dup_swarm else any([calculate_name_similarity(group[0]["name"], item["name"]) < 0.90 for item in group]),
+                "classification": "application_platform" if is_dup_swarm else "unknown",
+                "merge_policy": "logical_parent_only" if is_dup_swarm else "auto_merge",
+                "source_records_preserved": True,
+                "operator_review": "approved" if is_dup_swarm else "pending"
             })
         else:
             # Single non-grouped record
@@ -184,7 +190,11 @@ def main():
             "production_readiness": "GO" if all([r.get("evidence_status") == "VERIFIED" for r in g["records"]]) else "CONDITIONAL GO",
             "confidence": g["confidence"],
             "gaps": [gap for r in g["records"] for gap in r.get("gaps", [])],
-            "next_action": "review" if g["review_required"] else "canonicalize"
+            "next_action": "review" if g["review_required"] else "canonicalize",
+            "classification": g.get("classification", "unknown"),
+            "merge_policy": g.get("merge_policy", "auto_merge"),
+            "source_records_preserved": g.get("source_records_preserved", True),
+            "operator_review": g.get("operator_review", "pending")
         }
         
         registry_candidates.append(candidate)

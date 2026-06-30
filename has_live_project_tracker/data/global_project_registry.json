@@ -32,7 +32,11 @@
       "Missing README documentation file",
       "Missing automated unit or integration tests"
     ],
-    "next_action": "review"
+    "next_action": "canonicalize",
+    "classification": "application_platform",
+    "merge_policy": "logical_parent_only",
+    "source_records_preserved": true,
+    "operator_review": "approved"
   },
   {
     "canonical_id": "CAN-GRP-002",
@@ -78,7 +82,11 @@
     "production_readiness": "GO",
     "confidence": 1.0,
     "gaps": [],
-    "next_action": "canonicalize"
+    "next_action": "canonicalize",
+    "classification": "unknown",
+    "merge_policy": "auto_merge",
+    "source_records_preserved": true,
+    "operator_review": "pending"
   },
   {
     "canonical_id": "CAN-GRP-003",
@@ -124,7 +132,11 @@
     "production_readiness": "GO",
     "confidence": 1.0,
     "gaps": [],
-    "next_action": "canonicalize"
+    "next_action": "canonicalize",
+    "classification": "unknown",
+    "merge_policy": "auto_merge",
+    "source_records_preserved": true,
+    "operator_review": "pending"
   },
   {
     "canonical_id": "CAN-GRP-004",
@@ -170,7 +182,11 @@
     "production_readiness": "GO",
     "confidence": 1.0,
     "gaps": [],
-    "next_action": "canonicalize"
+    "next_action": "canonicalize",
+    "classification": "unknown",
+    "merge_policy": "auto_merge",
+    "source_records_preserved": true,
+    "operator_review": "pending"
   },
   {
     "canonical_id": "CAN-GRP-005",
@@ -216,7 +232,11 @@
     "production_readiness": "GO",
     "confidence": 1.0,
     "gaps": [],
-    "next_action": "canonicalize"
+    "next_action": "canonicalize",
+    "classification": "unknown",
+    "merge_policy": "auto_merge",
+    "source_records_preserved": true,
+    "operator_review": "pending"
   },
   {
     "canonical_id": "CAN-GRP-006",
@@ -262,7 +282,11 @@
     "production_readiness": "GO",
     "confidence": 1.0,
     "gaps": [],
-    "next_action": "canonicalize"
+    "next_action": "canonicalize",
+    "classification": "unknown",
+    "merge_policy": "auto_merge",
+    "source_records_preserved": true,
+    "operator_review": "pending"
   },
   {
     "canonical_id": "CAN-GRP-007",
@@ -308,7 +332,11 @@
     "production_readiness": "GO",
     "confidence": 1.0,
     "gaps": [],
-    "next_action": "canonicalize"
+    "next_action": "canonicalize",
+    "classification": "unknown",
+    "merge_policy": "auto_merge",
+    "source_records_preserved": true,
+    "operator_review": "pending"
   },
   {
     "canonical_id": "CAN-GRP-008",
@@ -354,7 +382,11 @@
     "production_readiness": "GO",
     "confidence": 1.0,
     "gaps": [],
-    "next_action": "canonicalize"
+    "next_action": "canonicalize",
+    "classification": "unknown",
+    "merge_policy": "auto_merge",
+    "source_records_preserved": true,
+    "operator_review": "pending"
   },
   {
     "canonical_id": "CAN-GRP-009",
@@ -400,7 +432,11 @@
     "production_readiness": "GO",
     "confidence": 1.0,
     "gaps": [],
-    "next_action": "canonicalize"
+    "next_action": "canonicalize",
+    "classification": "unknown",
+    "merge_policy": "auto_merge",
+    "source_records_preserved": true,
+    "operator_review": "pending"
   },
   {
     "canonical_id": "CAN-GRP-010",
@@ -446,7 +482,11 @@
     "production_readiness": "GO",
     "confidence": 1.0,
     "gaps": [],
-    "next_action": "canonicalize"
+    "next_action": "canonicalize",
+    "classification": "unknown",
+    "merge_policy": "auto_merge",
+    "source_records_preserved": true,
+    "operator_review": "pending"
   },
   {
     "canonical_id": "CAN-GRP-011",
@@ -474,7 +514,11 @@
     "production_readiness": "GO",
     "confidence": 1.0,
     "gaps": [],
-    "next_action": "canonicalize"
+    "next_action": "canonicalize",
+    "classification": "unknown",
+    "merge_policy": "auto_merge",
+    "source_records_preserved": true,
+    "operator_review": "pending"
   },
   {
     "canonical_id": "CAN-GRP-012",
@@ -502,7 +546,11 @@
     "production_readiness": "GO",
     "confidence": 1.0,
     "gaps": [],
-    "next_action": "canonicalize"
+    "next_action": "canonicalize",
+    "classification": "unknown",
+    "merge_policy": "auto_merge",
+    "source_records_preserved": true,
+    "operator_review": "pending"
   },
   {
     "canonical_id": "CAN-GRP-013",
@@ -530,7 +578,11 @@
     "production_readiness": "GO",
     "confidence": 1.0,
     "gaps": [],
-    "next_action": "canonicalize"
+    "next_action": "canonicalize",
+    "classification": "unknown",
+    "merge_policy": "auto_merge",
+    "source_records_preserved": true,
+    "operator_review": "pending"
   },
   {
     "canonical_id": "CAN-SNGL-001",

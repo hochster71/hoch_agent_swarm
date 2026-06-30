@@ -33,6 +33,7 @@ ENDPOINTS=(
   "/api/inventory/github"
   "/api/inventory/local"
   "/api/inventory/cloud"
+  "/api/mirror-health"
 )
 
 FAILED=0
