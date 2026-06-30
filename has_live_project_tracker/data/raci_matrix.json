@@ -1,0 +1,235 @@
+{
+  "definitions": {
+    "R": "Responsible (executes the work)",
+    "A": "Accountable (owns outcome and final verdict - exactly one)",
+    "C": "Consulted (provides required input/review)",
+    "I": "Informed (receives updates)"
+  },
+  "matrix": [
+    {
+      "id": "RACI-001",
+      "workstream": "Tracker runtime health",
+      "domain": "Tracker",
+      "accountable_agent": "Live Tracker Runtime Agent",
+      "responsible_agents": ["Live Tracker Runtime Agent"],
+      "consulted_agents": ["Production Acceleration Agent", "QA Auditor Agent", "Security Auditor Agent"],
+      "informed_agents": ["Master Orchestrator", "Evidence Collector Agent", "HASF Pipeline Agent", "PERT & Planning Agent"]
+    },
+    {
+      "id": "RACI-002",
+      "workstream": "Live API truth integration",
+      "domain": "Tracker",
+      "accountable_agent": "Live Tracker Runtime Agent",
+      "responsible_agents": ["Live Tracker Runtime Agent", "HASF Pipeline Agent"],
+      "consulted_agents": ["Master Orchestrator", "Production Acceleration Agent", "Data Consolidation Agent"],
+      "informed_agents": ["Evidence Collector Agent", "PERT & Planning Agent"]
+    },
+    {
+      "id": "RACI-003",
+      "workstream": "Landscape command center",
+      "domain": "Tracker",
+      "accountable_agent": "Live Tracker Runtime Agent",
+      "responsible_agents": ["Live Tracker Runtime Agent"],
+      "consulted_agents": ["Master Orchestrator", "Production Acceleration Agent", "HASF Pipeline Agent", "PERT & Planning Agent", "Data Consolidation Agent"],
+      "informed_agents": ["Security Auditor Agent", "Evidence Collector Agent"]
+    },
+    {
+      "id": "RACI-004",
+      "workstream": "Gap Analysis engine",
+      "domain": "Tracker",
+      "accountable_agent": "QA Auditor Agent",
+      "responsible_agents": ["Live Tracker Runtime Agent"],
+      "consulted_agents": ["Master Orchestrator", "Production Acceleration Agent", "Security Auditor Agent", "HASF Pipeline Agent", "PERT & Planning Agent", "Data Consolidation Agent", "Monetization & Compliance Agent", "Research & Innovation Agent", "Personal Life Agent", "Business Operations Agent"],
+      "informed_agents": ["Evidence Collector Agent"]
+    },
+    {
+      "id": "RACI-005",
+      "workstream": "DORA telemetry",
+      "domain": "Tracker",
+      "accountable_agent": "Live Tracker Runtime Agent",
+      "responsible_agents": ["Live Tracker Runtime Agent", "Evidence Collector Agent", "HASF Pipeline Agent"],
+      "consulted_agents": ["Master Orchestrator", "Production Acceleration Agent", "QA Auditor Agent", "Security Auditor Agent", "Data Consolidation Agent"],
+      "informed_agents": ["PERT & Planning Agent"]
+    },
+    {
+      "id": "RACI-006",
+      "workstream": "Production acceleration",
+      "domain": "Planning",
+      "accountable_agent": "Production Acceleration Agent",
+      "responsible_agents": ["Production Acceleration Agent", "PERT & Planning Agent"],
+      "consulted_agents": ["Master Orchestrator", "Live Tracker Runtime Agent", "QA Auditor Agent", "HASF Pipeline Agent", "Data Consolidation Agent", "Monetization & Compliance Agent", "Research & Innovation Agent"],
+      "informed_agents": ["Security Auditor Agent", "Evidence Collector Agent", "Personal Life Agent", "Business Operations Agent"]
+    },
+    {
+      "id": "RACI-007",
+      "workstream": "Critical path / PERT",
+      "domain": "Planning",
+      "accountable_agent": "PERT & Planning Agent",
+      "responsible_agents": ["Production Acceleration Agent", "PERT & Planning Agent"],
+      "consulted_agents": ["Master Orchestrator", "Live Tracker Runtime Agent", "QA Auditor Agent", "Research & Innovation Agent"],
+      "informed_agents": ["Security Auditor Agent", "Evidence Collector Agent"]
+    },
+    {
+      "id": "RACI-008",
+      "workstream": "Agent inventory",
+      "domain": "Data Consolidation",
+      "accountable_agent": "Data Consolidation Agent",
+      "responsible_agents": ["Live Tracker Runtime Agent", "Evidence Collector Agent", "Data Consolidation Agent"],
+      "consulted_agents": ["Master Orchestrator", "Production Acceleration Agent", "QA Auditor Agent", "Research & Innovation Agent", "Personal Life Agent", "Business Operations Agent"],
+      "informed_agents": ["Security Auditor Agent", "PERT & Planning Agent"]
+    },
+    {
+      "id": "RACI-009",
+      "workstream": "Build inventory",
+      "domain": "Data Consolidation",
+      "accountable_agent": "HASF Pipeline Agent",
+      "responsible_agents": ["Live Tracker Runtime Agent", "Evidence Collector Agent", "HASF Pipeline Agent"],
+      "consulted_agents": ["Master Orchestrator", "Production Acceleration Agent", "QA Auditor Agent", "Security Auditor Agent", "Data Consolidation Agent"],
+      "informed_agents": ["PERT & Planning Agent"]
+    },
+    {
+      "id": "RACI-010",
+      "workstream": "GitHub project inventory",
+      "domain": "Data Consolidation",
+      "accountable_agent": "Data Consolidation Agent",
+      "responsible_agents": ["Live Tracker Runtime Agent", "Evidence Collector Agent", "Data Consolidation Agent"],
+      "consulted_agents": ["Master Orchestrator", "Production Acceleration Agent", "QA Auditor Agent", "Security Auditor Agent", "HASF Pipeline Agent"],
+      "informed_agents": ["PERT & Planning Agent"]
+    },
+    {
+      "id": "RACI-011",
+      "workstream": "Local disk inventory",
+      "domain": "Data Consolidation",
+      "accountable_agent": "Data Consolidation Agent",
+      "responsible_agents": ["Live Tracker Runtime Agent", "Evidence Collector Agent", "Data Consolidation Agent"],
+      "consulted_agents": ["Master Orchestrator", "Production Acceleration Agent", "QA Auditor Agent", "Security Auditor Agent", "HASF Pipeline Agent"],
+      "informed_agents": ["PERT & Planning Agent"]
+    },
+    {
+      "id": "RACI-012",
+      "workstream": "Google Drive / iCloud inventory",
+      "domain": "Data Consolidation",
+      "accountable_agent": "Data Consolidation Agent",
+      "responsible_agents": ["Live Tracker Runtime Agent", "Evidence Collector Agent", "Data Consolidation Agent"],
+      "consulted_agents": ["Master Orchestrator", "Production Acceleration Agent", "QA Auditor Agent", "Security Auditor Agent", "HASF Pipeline Agent", "Personal Life Agent", "Business Operations Agent"],
+      "informed_agents": ["PERT & Planning Agent"]
+    },
+    {
+      "id": "RACI-013",
+      "workstream": "Deduplication/classification",
+      "domain": "Data Consolidation",
+      "accountable_agent": "Data Consolidation Agent",
+      "responsible_agents": ["Evidence Collector Agent", "Data Consolidation Agent"],
+      "consulted_agents": ["Master Orchestrator", "Production Acceleration Agent", "QA Auditor Agent", "Security Auditor Agent", "HASF Pipeline Agent", "Monetization & Compliance Agent", "Research & Innovation Agent", "Personal Life Agent", "Business Operations Agent"],
+      "informed_agents": ["PERT & Planning Agent"]
+    },
+    {
+      "id": "RACI-014",
+      "workstream": "Global project registry",
+      "domain": "Data Consolidation",
+      "accountable_agent": "Data Consolidation Agent",
+      "responsible_agents": ["Live Tracker Runtime Agent", "Evidence Collector Agent", "Data Consolidation Agent"],
+      "consulted_agents": ["Master Orchestrator", "Production Acceleration Agent", "QA Auditor Agent", "Security Auditor Agent", "HASF Pipeline Agent", "Monetization & Compliance Agent", "Research & Innovation Agent", "Personal Life Agent", "Business Operations Agent"],
+      "informed_agents": ["PERT & Planning Agent"]
+    },
+    {
+      "id": "RACI-015",
+      "workstream": "DevSecOps scan coverage",
+      "domain": "DevSecOps",
+      "accountable_agent": "Security Auditor Agent",
+      "responsible_agents": ["Security Auditor Agent", "HASF Pipeline Agent"],
+      "consulted_agents": ["Production Acceleration Agent", "QA Auditor Agent", "Data Consolidation Agent"],
+      "informed_agents": ["Master Orchestrator", "Evidence Collector Agent", "PERT & Planning Agent"]
+    },
+    {
+      "id": "RACI-016",
+      "workstream": "QA verdict gates",
+      "domain": "DevSecOps",
+      "accountable_agent": "QA Auditor Agent",
+      "responsible_agents": ["QA Auditor Agent"],
+      "consulted_agents": ["Production Acceleration Agent", "Live Tracker Runtime Agent", "Security Auditor Agent", "HASF Pipeline Agent", "Data Consolidation Agent"],
+      "informed_agents": ["Master Orchestrator", "Evidence Collector Agent", "PERT & Planning Agent"]
+    },
+    {
+      "id": "RACI-017",
+      "workstream": "Evidence pack generation",
+      "domain": "DevSecOps",
+      "accountable_agent": "Evidence Collector Agent",
+      "responsible_agents": ["Evidence Collector Agent"],
+      "consulted_agents": ["Master Orchestrator", "Production Acceleration Agent", "Live Tracker Runtime Agent", "QA Auditor Agent", "Security Auditor Agent", "HASF Pipeline Agent", "Data Consolidation Agent"],
+      "informed_agents": ["PERT & Planning Agent"]
+    },
+    {
+      "id": "RACI-018",
+      "workstream": "Snapshot scheduler",
+      "domain": "Runtime",
+      "accountable_agent": "Live Tracker Runtime Agent",
+      "responsible_agents": ["Live Tracker Runtime Agent"],
+      "consulted_agents": ["Production Acceleration Agent", "QA Auditor Agent", "Security Auditor Agent"],
+      "informed_agents": ["Master Orchestrator", "Evidence Collector Agent"]
+    },
+    {
+      "id": "RACI-019",
+      "workstream": "Disk pressure guard",
+      "domain": "Runtime",
+      "accountable_agent": "Live Tracker Runtime Agent",
+      "responsible_agents": ["Live Tracker Runtime Agent"],
+      "consulted_agents": ["Production Acceleration Agent", "QA Auditor Agent", "Security Auditor Agent"],
+      "informed_agents": ["Master Orchestrator", "Evidence Collector Agent"]
+    },
+    {
+      "id": "RACI-020",
+      "workstream": "Storage Steward archive policy",
+      "domain": "Runtime",
+      "accountable_agent": "Security Auditor Agent",
+      "responsible_agents": ["Evidence Collector Agent"],
+      "consulted_agents": ["Master Orchestrator", "Production Acceleration Agent", "Live Tracker Runtime Agent", "QA Auditor Agent", "Data Consolidation Agent", "Personal Life Agent", "Business Operations Agent"],
+      "informed_agents": ["Security Auditor Agent"]
+    },
+    {
+      "id": "RACI-021",
+      "workstream": "Monetization workflow",
+      "domain": "Monetization",
+      "accountable_agent": "Monetization & Compliance Agent",
+      "responsible_agents": ["Monetization & Compliance Agent"],
+      "consulted_agents": ["Master Orchestrator", "Production Acceleration Agent", "Live Tracker Runtime Agent", "QA Auditor Agent", "Security Auditor Agent", "Data Consolidation Agent", "Research & Innovation Agent"],
+      "informed_agents": ["Evidence Collector Agent", "Personal Life Agent"]
+    },
+    {
+      "id": "RACI-022",
+      "workstream": "Product backlog for monetizable apps",
+      "domain": "Monetization",
+      "accountable_agent": "Monetization & Compliance Agent",
+      "responsible_agents": ["Production Acceleration Agent"],
+      "consulted_agents": ["Master Orchestrator", "Live Tracker Runtime Agent", "QA Auditor Agent", "HASF Pipeline Agent", "PERT & Planning Agent", "Data Consolidation Agent", "Research & Innovation Agent", "Personal Life Agent", "Business Operations Agent"],
+      "informed_agents": ["Evidence Collector Agent"]
+    },
+    {
+      "id": "RACI-023",
+      "workstream": "Personal automation workflows",
+      "domain": "Personal Life",
+      "accountable_agent": "Personal Life Agent",
+      "responsible_agents": ["Personal Life Agent"],
+      "consulted_agents": ["Production Acceleration Agent", "PERT & Planning Agent", "Data Consolidation Agent", "Research & Innovation Agent"],
+      "informed_agents": ["Master Orchestrator", "Live Tracker Runtime Agent", "QA Auditor Agent", "Security Auditor Agent", "Evidence Collector Agent"]
+    },
+    {
+      "id": "RACI-024",
+      "workstream": "Business automation workflows",
+      "domain": "Business Ops",
+      "accountable_agent": "Business Operations Agent",
+      "responsible_agents": ["Business Operations Agent"],
+      "consulted_agents": ["Production Acceleration Agent", "PERT & Planning Agent", "Data Consolidation Agent", "Research & Innovation Agent"],
+      "informed_agents": ["Master Orchestrator", "Live Tracker Runtime Agent", "QA Auditor Agent", "Security Auditor Agent", "Evidence Collector Agent"]
+    },
+    {
+      "id": "RACI-025",
+      "workstream": "Research loop",
+      "domain": "Research",
+      "accountable_agent": "Research & Innovation Agent",
+      "responsible_agents": ["Research & Innovation Agent"],
+      "consulted_agents": ["Production Acceleration Agent", "PERT & Planning Agent", "Data Consolidation Agent"],
+      "informed_agents": ["Master Orchestrator", "Live Tracker Runtime Agent", "QA Auditor Agent", "Evidence Collector Agent"]
+    }
+  ]
+}
