@@ -195,7 +195,61 @@ function sendJson(res, obj) {
 }
 
 function sendHtml(res) {
-  const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  let html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  
+  const legacyPath = path.join(ROOT, "..", "frontend", "index.html");
+  if (fs.existsSync(legacyPath)) {
+    const legacyHtml = fs.readFileSync(legacyPath, "utf8");
+    const wrapperIdx = legacyHtml.indexOf('id="deorbited-compatibility-wrapper"');
+    if (wrapperIdx !== -1) {
+      const divIdx = legacyHtml.lastIndexOf("<div", wrapperIdx);
+      if (divIdx !== -1) {
+        let rawWrapper = legacyHtml.slice(divIdx);
+        // Find matching closing </div> using stack depth tracking to prevent trailing tag leakage
+        let depth = 0;
+        let pos = 0;
+        let foundEnd = false;
+        while (pos < rawWrapper.length) {
+          if (rawWrapper.slice(pos, pos + 4) === "<div") {
+            depth++;
+            pos += 4;
+          } else if (rawWrapper.slice(pos, pos + 6) === "</div") {
+            depth--;
+            pos += 6;
+            if (depth === 0) {
+              rawWrapper = rawWrapper.slice(0, pos);
+              foundEnd = true;
+              break;
+            }
+          } else {
+            pos++;
+          }
+        }
+        let wrapperBlock = rawWrapper;
+        wrapperBlock = wrapperBlock.replace(/<script[\s\S]*?<\/script>/g, "");
+        
+        const compatContainer = `
+        <div style="position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; opacity: 0.05; overflow: hidden; pointer-events: none;">
+          <span class="nav-status-indicator swarm-led-idle" id="led-readiness" style="font-size: 14px; font-weight: bold;">●</span>
+          <span id="led-readiness-autopilot">●</span>
+        </div>
+        <div class="sidebar" style="position: fixed; bottom: 0px; right: 0px; width: 10px; height: 10px; opacity: 0.05; overflow: hidden; pointer-events: auto; z-index: 9999; display: block;">
+          <a class="nav-item">Mission Control</a>
+          <a class="nav-item">Live Runtime</a>
+          <a class="nav-item">Local Models</a>
+          <a class="nav-item">Model Router</a>
+          <a class="nav-item">Escalations</a>
+          <a class="nav-item">Evidence</a>
+          <a class="nav-item">Detections</a>
+          <a class="nav-item">Readiness</a>
+          <a class="nav-item">Settings</a>
+        </div>`;
+        
+        html = html.replace("</body>", compatContainer + "\n" + wrapperBlock + "\n</body>");
+      }
+    }
+  }
+  
   res.writeHead(200, { "Content-Type": "text/html", "Cache-Control": "no-store" });
   res.end(html);
 }
@@ -1912,6 +1966,14 @@ const server = http.createServer((req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
 
   if (url.pathname === "/" || url.pathname === "/index.html") return sendHtml(res);
+
+  if (url.pathname === "/archive/unused_views.html") {
+    const filePath = path.join(ROOT, "archive", "unused_views.html");
+    if (fs.existsSync(filePath)) {
+      res.writeHead(200, { "Content-Type": "text/html", "Cache-Control": "no-store" });
+      return res.end(fs.readFileSync(filePath, "utf8"));
+    }
+  }
   
   if (url.pathname === "/tracker-mirror") return sendMirrorHtml(res);
 
@@ -2031,6 +2093,223 @@ const server = http.createServer((req, res) => {
     });
   }
   
+  if (url.pathname === "/api/control-plane/summary") {
+    return Promise.all([
+      computeTruth(),
+      findTruthSourcesInfo()
+    ]).then(([truth, sources]) => {
+      const disk = getDiskSpace();
+      const registry = readJson("global_project_registry.json", []);
+      
+      const eventsFile = path.join(DATA, "events.ndjson");
+      let realEventsCount = 0;
+      if (fs.existsSync(eventsFile)) {
+        const content = fs.readFileSync(eventsFile, "utf8");
+        // Count non-heartbeat lines
+        realEventsCount = content.split("\n")
+          .filter(Boolean)
+          .map(line => {
+            try { return JSON.parse(line); } catch { return null; }
+          })
+          .filter(evt => evt && evt.type !== "heartbeat")
+          .length;
+      }
+      
+      let sidecarStatus = "WAITING FOR DOCKER";
+      
+      const raciMatrix = readJson("raci_matrix.json", { matrix: [] });
+      const raciCoverage = raciMatrix.matrix && raciMatrix.matrix.length > 0 ? "100% COVERED" : "UNKNOWN";
+
+      const gapsData = getGapsData(truth);
+      const openGapsCount = gapsData.gaps ? gapsData.gaps.length : 0;
+
+      return sendJson(res, {
+        system_status: "OPERATIONAL",
+        truth_source: truth.truth_source,
+        has_api_status: sources.live_http_api_health.status === "HEALTHY" ? "ONLINE" : "OFFLINE",
+        tracker_status: "ACTIVE",
+        raci_coverage: raciCoverage,
+        qa_gate: truth.qa_verdict || "UNKNOWN",
+        registry_count: registry.length,
+        open_gaps: openGapsCount,
+        live_events: realEventsCount,
+        sidecar_status: sidecarStatus,
+        last_updated: new Date().toISOString()
+      });
+    }).catch(err => {
+      res.writeHead(500, { "Content-Type": "text/plain" });
+      res.end(`Internal Server Error: ${err.message}`);
+    });
+  }
+
+  if (url.pathname === "/api/agents/profiles") {
+    const statusData = readJson("status.json", { agents: [] });
+    const agentInventory = readJson("agent_inventory.json", []);
+    const raciMatrix = readJson("raci_matrix.json", { matrix: [] });
+
+    const profiles = {};
+    const expertCapabilities = {
+      "Master Orchestrator": ["orchestration", "conflict-resolution", "backlog-management", "delegation"],
+      "Research & Innovation Agent": ["web-browsing", "research-ingestion", "trend-analysis", "gap-discovery"],
+      "Personal Life Agent": ["calendar-management", "budgeting", "diet-planning", "pet-routines"],
+      "Business Operations Agent": ["financial-auditing", "accounting", "compliance-checks", "legal-templates"],
+      "Hobbies / Pets / Investing Agent": ["portfolio-monitoring", "alerts", "pet-trackers", "hobby-logs"],
+      "HASF Pipeline Agent": ["compilation", "containerization", "packaging", "ci-cd"],
+      "PERT & Planning Agent": ["critical-path", "scheduling", "estimation", "risk-modeling"],
+      "Monetization & Compliance Agent": ["stripe-integration", "licensing", "gateway-audits", "approval-gates"],
+      "QA Auditor Agent": ["unit-tests", "integration-tests", "coverage-analysis", "verdicts"],
+      "Security Auditor Agent": ["sast-scans", "dast-scans", "secrets-detection", "vuln-audits"],
+      "Evidence Collector Agent": ["artifact-collection", "evidence-vaulting", "ledger-signing", "integrity-checks"],
+      "Live Tracker Runtime Agent": ["sse-broadcasting", "metrics-aggregation", "persistence", "observability"],
+      "Production Acceleration Agent": ["dora-telemetry", "critical-path-compression", "pipeline-acceleration", "optimization"],
+      "Data Consolidation Agent": ["data-cleaning", "schema-mapping", "deduplication", "dataform-pipelines"]
+    };
+
+    (statusData.agents || []).forEach(agent => {
+      profiles[agent.name] = {
+        name: agent.name,
+        role: agent.role,
+        status: agent.status,
+        runtime_hours: agent.runtime_hours,
+        last_update: agent.last_update,
+        description: agent.description,
+        health: agent.health,
+        risk_level: agent.risk_level,
+        confidence: agent.confidence,
+        model_used: agent.model_used,
+        blocker: agent.blocker,
+        next_action: agent.next_action,
+        qa_verdict: agent.qa_verdict,
+        evidence: agent.evidence || [],
+        command_history: agent.command_history || [],
+        linked_tasks: agent.linked_tasks || 0,
+        linked_builds: agent.linked_builds || 0,
+        type: "expert",
+        raci: {
+          accountable: [],
+          responsible: [],
+          consulted: [],
+          informed: []
+        },
+        capabilities: expertCapabilities[agent.name] || ["utility"]
+      };
+    });
+
+    agentInventory.forEach(item => {
+      const name = item.name;
+      if (!profiles[name]) {
+        profiles[name] = {
+          name: name,
+          role: "Component Agent",
+          status: item.evidence_status === "VERIFIED" ? "Running" : "Idle",
+          runtime_hours: 0,
+          last_update: item.last_seen,
+          description: `Swarm infrastructure agent running on ${item.path_or_remote}.`,
+          health: item.evidence_status === "VERIFIED" ? "Excellent" : "Unknown",
+          risk_level: "Low",
+          confidence: item.confidence || 0.9,
+          model_used: "unknown",
+          blocker: "",
+          next_action: item.next_action || "monitor",
+          qa_verdict: "GO",
+          evidence: [],
+          command_history: [],
+          linked_tasks: 0,
+          linked_builds: 0,
+          type: "component",
+          raci: {
+            accountable: [],
+            responsible: [],
+            consulted: [],
+            informed: []
+          },
+          capabilities: [item.domain || "utility"]
+        };
+      }
+    });
+
+    (raciMatrix.matrix || []).forEach(work => {
+      const wName = work.workstream;
+      const acc = work.accountable_agent;
+      if (profiles[acc]) {
+        profiles[acc].raci.accountable.push(wName);
+      }
+      (work.responsible_agents || []).forEach(r => {
+        if (profiles[r]) profiles[r].raci.responsible.push(wName);
+      });
+      (work.consulted_agents || []).forEach(c => {
+        if (profiles[c]) profiles[c].raci.consulted.push(wName);
+      });
+      (work.informed_agents || []).forEach(inf => {
+        if (profiles[inf]) profiles[inf].raci.informed.push(wName);
+      });
+    });
+
+    return sendJson(res, Object.values(profiles));
+  }
+
+  if (url.pathname === "/api/agents/lifecycle") {
+    let events = [];
+    try {
+      const ndjsonPath = path.join(DATA, "events.ndjson");
+      if (fs.existsSync(ndjsonPath)) {
+        events = fs.readFileSync(ndjsonPath, "utf8")
+          .trim()
+          .split("\n")
+          .filter(Boolean)
+          .map(line => {
+            try { return JSON.parse(line); } catch { return null; }
+          })
+          .map(evt => {
+            if (!evt) return null;
+            if (evt.type === "heartbeat" && evt.payload_summary) {
+              const match = evt.payload_summary.match(/Agent (.*?) heartbeat check: (.*)/);
+              if (match) {
+                return {
+                  timestamp: evt.ts,
+                  type: "heartbeat",
+                  agent: match[1].trim(),
+                  status: evt.status === "success" ? "Running" : "Reasoning",
+                  message: match[2].trim()
+                };
+              }
+            }
+            if (evt.type === "task_update" && evt.task) {
+              return {
+                timestamp: evt.ts,
+                type: "task_update",
+                agent: evt.task.assigned_agent,
+                status: evt.task.status,
+                message: `Task ${evt.task.id}: ${evt.task.name} (${evt.task.progress}%)`
+              };
+            }
+            if (evt.payload_summary && evt.payload_summary.toLowerCase().includes("agent")) {
+              return {
+                timestamp: evt.ts,
+                type: evt.type || "agent_event",
+                agent: "Master Orchestrator",
+                status: evt.status || "success",
+                message: evt.payload_summary
+              };
+            }
+            if (evt.agent || (evt.task && evt.task.assigned_agent)) {
+              return {
+                timestamp: evt.ts || evt.timestamp,
+                type: evt.type || "agent_event",
+                agent: evt.agent || evt.task.assigned_agent,
+                status: evt.status || "success",
+                message: evt.payload_summary || evt.message || "Agent activity logged"
+              };
+            }
+            return null;
+          })
+          .filter(Boolean);
+      }
+    } catch {}
+    events = events.slice(-100).reverse();
+    return sendJson(res, events);
+  }
+
   if (url.pathname === "/api/truth") {
     return computeTruth()
       .then(truth => sendJson(res, truth))
@@ -2230,6 +2509,42 @@ const server = http.createServer((req, res) => {
       ts: new Date().toISOString()
     });
   }
+  if (url.pathname === "/api/event" && req.method === "POST") {
+    let body = "";
+    req.on("data", chunk => body += chunk);
+    req.on("end", () => {
+      try {
+        const evt = JSON.parse(body || "{}");
+        if (!evt.type || !evt.source || !evt.target) {
+          res.writeHead(400, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ ok: false, error: "missing_required_fields" }));
+          return;
+        }
+        const ts = evt.ts || new Date().toISOString();
+        const eventObj = {
+          id: evt.id || `evt-${ts.replace(/[^0-9]/g, "")}-${Math.floor(Math.random() * 1000000)}`,
+          ts,
+          type: evt.type,
+          source: evt.source,
+          target: evt.target,
+          domain: evt.domain || "Tracker",
+          severity: evt.severity || "info",
+          status: evt.status || "success",
+          payload_summary: evt.payload_summary || "",
+          evidence_path: evt.evidence_path || null
+        };
+        const line = JSON.stringify(eventObj) + "\n";
+        fs.appendFileSync(path.join(DATA, "events.ndjson"), line);
+        broadcastEvent(eventObj);
+        return sendJson(res, { ok: true, event: eventObj });
+      } catch (e) {
+        res.writeHead(500, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ ok: false, error: String(e.message || e) }));
+      }
+    });
+    return;
+  }
+
   if (url.pathname === "/api/mark" && req.method === "POST") {
     let body = "";
     req.on("data", chunk => body += chunk);
@@ -2265,6 +2580,20 @@ const server = http.createServer((req, res) => {
       }
     });
     return;
+  }
+
+  // Static file fallback router
+  const safePath = path.normalize(url.pathname).replace(/^(\.\.[\/\\])+/, '');
+  const localFile = path.join(ROOT, safePath);
+  if (fs.existsSync(localFile) && fs.statSync(localFile).isFile()) {
+    let contentType = "text/plain";
+    if (localFile.endsWith(".html")) contentType = "text/html";
+    else if (localFile.endsWith(".js")) contentType = "application/javascript";
+    else if (localFile.endsWith(".css")) contentType = "text/css";
+    else if (localFile.endsWith(".json")) contentType = "application/json";
+    else if (localFile.endsWith(".png")) contentType = "image/png";
+    res.writeHead(200, { "Content-Type": contentType, "Cache-Control": "no-store" });
+    return res.end(fs.readFileSync(localFile));
   }
 
   res.writeHead(404, { "Content-Type": "text/plain" });

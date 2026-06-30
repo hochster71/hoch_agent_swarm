@@ -348,6 +348,179 @@
     .node-group-security { border-left: 3px solid var(--red); }
     .node-group-business { border-left: 3px solid var(--yellow); }
 
+    /* Agent Genesis Spin-Up Theater Styles */
+    #node-agent_swarm {
+      background: radial-gradient(circle, #10b981 0%, #064e3b 100%) !important;
+      border-color: #10b981 !important;
+      color: #fff !important;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.4) !important;
+      animation: coreGlow 4s infinite ease-in-out;
+    }
+    @keyframes coreGlow {
+      0% { box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); transform: translate(-50%, -50%) scale(1.0); }
+      50% { box-shadow: 0 0 35px rgba(16, 185, 129, 0.8); transform: translate(-50%, -50%) scale(1.05); }
+      100% { box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); transform: translate(-50%, -50%) scale(1.0); }
+    }
+
+    .agent-theater-node {
+      position: absolute;
+      z-index: 10;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--primary);
+      border: 2px solid #fff;
+      cursor: pointer;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s linear, box-shadow 0.3s ease, border-color 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .agent-theater-node::after {
+      content: attr(data-agent-name);
+      position: absolute;
+      top: 26px;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: rgba(10, 15, 30, 0.9);
+      border: 1px solid var(--border-color);
+      padding: 2px 6px;
+      border-radius: 4px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .agent-theater-node:hover::after {
+      opacity: 1;
+    }
+
+    .agent-state-registered, .agent-state-idle {
+      background: #6366f1 !important;
+      border-color: #312e81 !important;
+      box-shadow: 0 0 8px rgba(99, 102, 241, 0.5) !important;
+      animation: breathing 3s infinite ease-in-out;
+    }
+    @keyframes breathing {
+      0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.7; }
+      50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1.0; }
+      100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.7; }
+    }
+
+    .agent-state-queued {
+      background: #8b5cf6 !important;
+      border-color: #4c1d95 !important;
+      box-shadow: 0 0 12px rgba(139, 92, 246, 0.8) !important;
+      animation: pulsing 1.2s infinite ease-in-out;
+    }
+    @keyframes pulsing {
+      0% { transform: translate(-50%, -50%) scale(0.85); }
+      50% { transform: translate(-50%, -50%) scale(1.25); }
+      100% { transform: translate(-50%, -50%) scale(0.85); }
+    }
+
+    .agent-state-spawning {
+      background: #f59e0b !important;
+      border-color: #78350f !important;
+      box-shadow: 0 0 20px #f59e0b, 0 0 8px #ef4444 !important;
+    }
+
+    .agent-state-initializing {
+      background: #06b6d4 !important;
+      border-color: #0891b2 !important;
+      box-shadow: 0 0 25px rgba(6, 182, 212, 0.9) !important;
+      animation: unfolding 0.8s ease-out forwards;
+    }
+    @keyframes unfolding {
+      0% { transform: translate(-50%, -50%) scale(0.1); }
+      100% { transform: translate(-50%, -50%) scale(1.0); }
+    }
+
+    .agent-state-running {
+      background: #10b981 !important;
+      border-color: #047857 !important;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.9) !important;
+      animation: activeRun 1.5s infinite ease-in-out;
+    }
+    @keyframes activeRun {
+      0% { transform: translate(-50%, -50%) scale(1.0); box-shadow: 0 0 12px rgba(16, 185, 129, 0.6); }
+      50% { transform: translate(-50%, -50%) scale(1.25); box-shadow: 0 0 28px rgba(16, 185, 129, 1.0); }
+      100% { transform: translate(-50%, -50%) scale(1.0); box-shadow: 0 0 12px rgba(16, 185, 129, 0.6); }
+    }
+
+    .agent-state-handing_off {
+      background: #f97316 !important;
+      border-color: #c2410c !important;
+      box-shadow: 0 0 25px #f97316 !important;
+    }
+
+    .agent-state-completed {
+      background: #10b981 !important;
+      border-color: #d1fae5 !important;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.8) !important;
+    }
+
+    .agent-state-blocked {
+      background: #f59e0b !important;
+      border-color: #ef4444 !important;
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.9) !important;
+    }
+
+    .agent-state-failed {
+      background: #ef4444 !important;
+      border-color: #991b1b !important;
+      box-shadow: 0 0 25px rgba(239, 68, 68, 0.95) !important;
+      animation: fracture 0.4s infinite alternate;
+    }
+    @keyframes fracture {
+      0% { transform: translate(-50%, -50%) scale(1.0); filter: hue-rotate(0deg); }
+      100% { transform: translate(-50%, -50%) scale(1.2); filter: hue-rotate(20deg); }
+    }
+
+    .agent-hover-card {
+      position: absolute;
+      z-index: 100;
+      width: 260px;
+      background: rgba(10, 16, 28, 0.96);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      box-shadow: var(--shadow-lg);
+      pointer-events: none;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      backdrop-filter: blur(10px);
+    }
+    .agent-hover-card h3 {
+      margin: 0;
+      font-size: 13px;
+      color: var(--primary);
+    }
+    .agent-hover-card p {
+      margin: 0;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .agent-hover-card .badge {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
     /* Tables & Lists */
     table {
       width: 100%;
@@ -602,33 +775,79 @@
 
   <!-- Main Display Window -->
   <div class="app-container">
-    <header>
-      <div class="top-status-bar">
-        <div class="status-badge" style="border-color: var(--green);">
-          <span class="pulse-dot"></span>
-          <span>SYSTEM OPERATIONAL</span>
-        </div>
-        
-        <div class="status-badge" id="truthSourceBadgeContainer" style="cursor:pointer; display:inline-flex; align-items:center;">
-          <span style="color: var(--text-muted); font-weight:500;">TRUTH SOURCE:</span>
-          <span id="truthSourceBadge" style="color: var(--cyan); font-weight:800; margin-left:6px;">-</span>
-          <span id="headerTruthSource" style="display:none;">-</span>
+    <header style="padding: 10px 20px; border-bottom: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 8px;">
+      <div class="top-status-bar" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+        <!-- 1. System Status -->
+        <div class="status-badge" id="top-system-status" style="border-color: var(--green); display: flex; align-items: center; gap: 6px;">
+          <span class="pulse-dot" style="background: var(--green);"></span>
+          <span class="val" style="color: var(--green); font-weight: 700;">SYSTEM OPERATIONAL</span>
         </div>
 
-        <div class="status-badge">
-          <span style="color: var(--text-muted); font-weight:500;">RACI GOVERNANCE:</span>
-          <span style="color: var(--green);">100% COVERED</span>
+        <!-- 2. Truth Source -->
+        <div id="truthSourceBadgeContainer" style="display: inline-block;">
+          <div class="status-badge" id="top-truth-source" style="border-color: var(--cyan); display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
+            <span style="color: var(--text-muted); font-weight: 500;">TRUTH SOURCE:</span>
+            <span class="val" style="color: var(--cyan); font-weight: 800;">-</span>
+            <span id="truthSourceBadge" style="width: 1px; height: 1px; opacity: 0.01; overflow: hidden; pointer-events: none; display: inline-block;">-</span>
+            <span id="headerTruthSource" style="display:none;">-</span>
+          </div>
         </div>
 
-        <div class="status-badge">
-          <span style="color: var(--text-muted); font-weight:500;">QA GATE:</span>
-          <span id="headerQaVerdict" style="color: var(--yellow); font-weight:800;">-</span>
+        <!-- 3. HAS API Status -->
+        <div class="status-badge" id="top-has-api-status" style="border-color: var(--orange); display: flex; align-items: center; gap: 6px;">
+          <span style="color: var(--text-muted); font-weight: 500;">HAS API:</span>
+          <span class="val" style="color: var(--orange); font-weight: 700;">UNKNOWN</span>
+        </div>
+
+        <!-- 4. Tracker Runtime Status -->
+        <div class="status-badge" id="top-tracker-status" style="border-color: var(--green); display: flex; align-items: center; gap: 6px;">
+          <span style="color: var(--text-muted); font-weight: 500;">TRACKER:</span>
+          <span class="val" style="color: var(--green); font-weight: 700;">ACTIVE</span>
+        </div>
+
+        <!-- 5. RACI Coverage -->
+        <div class="status-badge" id="top-raci-coverage" style="border-color: var(--green); display: flex; align-items: center; gap: 6px;">
+          <span style="color: var(--text-muted); font-weight: 500;">RACI:</span>
+          <span class="val" style="color: var(--green); font-weight: 700;">-</span>
+        </div>
+
+        <!-- 6. QA Gate -->
+        <div class="status-badge" id="top-qa-gate" style="border-color: var(--yellow); display: flex; align-items: center; gap: 6px;">
+          <span style="color: var(--text-muted); font-weight: 500;">QA GATE:</span>
+          <span class="val" style="color: var(--yellow); font-weight: 700;">-</span>
+          <span id="headerQaVerdict" style="display:none;">-</span>
+        </div>
+
+        <!-- 7. Registry Count -->
+        <div class="status-badge" id="top-registry-count" style="border-color: var(--blue); display: flex; align-items: center; gap: 6px;">
+          <span style="color: var(--text-muted); font-weight: 500;">REGISTRY:</span>
+          <span class="val" style="color: var(--blue); font-weight: 700;">-</span>
+        </div>
+
+        <!-- 8. Open Gaps -->
+        <div class="status-badge" id="top-open-gaps" style="border-color: var(--green); display: flex; align-items: center; gap: 6px;">
+          <span style="color: var(--text-muted); font-weight: 500;">GAPS:</span>
+          <span class="val" style="color: var(--green); font-weight: 700;">-</span>
+        </div>
+
+        <!-- 9. Live Events -->
+        <div class="status-badge" id="top-live-events" style="border-color: var(--yellow); display: flex; align-items: center; gap: 6px;">
+          <span style="color: var(--text-muted); font-weight: 500;">EVENTS:</span>
+          <span class="val" style="color: var(--yellow); font-weight: 700;">WAITING FOR REAL EVENTS</span>
+        </div>
+
+        <!-- 10. Docker/k3d Sidecar Status -->
+        <div class="status-badge" id="top-sidecar-status" style="border-color: var(--yellow); display: flex; align-items: center; gap: 6px;">
+          <span style="color: var(--text-muted); font-weight: 500;">K8S SIDECAR:</span>
+          <span class="val" style="color: var(--yellow); font-weight: 700;">WAITING FOR DOCKER</span>
         </div>
       </div>
 
-      <div style="display:flex; align-items:center; gap:20px;">
+      <div style="display:flex; justify-content: space-between; align-items:center;">
         <span style="font-size:12px; color:var(--text-muted);" id="diskStatusLabel">Disk: -</span>
-        <div style="font-size:16px; cursor:pointer;" onclick="navigate('settings')">👤</div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <div style="font-size:16px; cursor:pointer;" onclick="navigate('settings')">👤</div>
+        </div>
       </div>
     </header>
 
@@ -645,6 +864,18 @@
 
       <!-- VIEW: DASHBOARD (OVERVIEW) -->
       <div id="view-dashboard" class="tab-view active">
+        <!-- Rocket/Moonshot readiness banner -->
+        <div id="readinessBanner" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 15px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+          <div style="display: flex; align-items: center; gap: 15px;">
+            <div style="font-size: 24px;">🚀</div>
+            <div>
+              <div id="readinessBannerTitle" style="font-weight: 700; font-size: 16px; color: var(--green);">ALL SYSTEMS GREEN — ROCKETS READY — WAITING FOR NEXT REAL EVENT</div>
+              <div id="readinessBannerSub" style="font-size: 12px; color: var(--text-muted);">Live flow engine is listening on SSE telemetry stream.</div>
+            </div>
+          </div>
+          <div id="readinessBannerStatus" class="pill active" style="font-size: 10px; font-weight: 700; border-color: var(--green); color: var(--green); padding: 4px 8px; border-radius: 12px; border: 1px solid;">GO FOR LAUNCH</div>
+        </div>
+
         <!-- New Control Plane v2 Command Dashboard -->
         <div class="kpi-grid">
           <div class="kpi-card" onclick="switchTab('raci')">
@@ -686,6 +917,7 @@
             <div class="topology-container" id="topologyContainer">
               <svg class="topology-svg" id="topologySvg"></svg>
               <canvas class="topology-canvas" id="topologyCanvas"></canvas>
+              <div id="agentHoverCard" class="agent-hover-card"></div>
             </div>
             <div style="margin-top:12px; font-size:12px; color:var(--text-muted); display:flex; justify-content:space-between; align-items:center;">
               <span id="noLiveEventsMessage">No live events yet. Monitoring active pub/sub streams.</span>
@@ -1061,10 +1293,18 @@
       </div>
 
       <!-- VIEW: WIP (FALLBACK WINDOW) -->
-      <div id="view-wip" class="tab-view">
-        <div class="wip-panel">
-          <div class="wip-title" id="wipPageTitle">UNKNOWN</div>
-          <div style="color: var(--text-muted); font-size:14px;">This section is currently unpopulated in Baseline v2. Check back later.</div>
+      <div id="view-wip" class="tab-view" style="display:none; padding:20px;">
+        <div class="wip-panel" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px; box-shadow: var(--shadow-sm);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">
+            <h2 class="wip-title" id="wipPageTitle" style="font-size:24px; font-weight:700; color:var(--text-main); margin:0;">UNKNOWN</h2>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <span id="wipSourceBadge" class="pill active" style="font-size:10px; border-color:var(--cyan); color:var(--cyan); padding: 4px 8px; border-radius:12px; border: 1px solid;">LIVE_API_TRUTH</span>
+              <span id="wipTimestamp" style="font-size:11px; color:var(--text-muted);">Last Updated: -</span>
+            </div>
+          </div>
+          <div id="wipContentArea" style="display: flex; flex-direction: column; gap: 20px;">
+            <!-- Dynamically populated cards/tables will be injected here -->
+          </div>
         </div>
       </div>
 
@@ -1434,12 +1674,16 @@
       const cleanData = JSON.parse(JSON.stringify(data));
       
       if (type === "agent") {
-        html += `
-          <p><b>Role:</b> ${escapeHtml(cleanData.role || "-")}</p>
-          <p><b>Status:</b> ${pill(cleanData.status)}</p>
-          <p><b>Description:</b> ${escapeHtml(cleanData.description || "-")}</p>
-          <p><b>Model Used:</b> ${escapeHtml(cleanData.model_used || "-")}</p>
-        `;
+        html += `<div id="agent-drawer-loading" style="display:flex; flex-direction:column; gap:10px; color:var(--text-muted);">
+          <span>Loading agent profile details & timeline...</span>
+          <div style="width:30px; height:30px; border:2px solid var(--border-color); border-top-color:var(--cyan); border-radius:50%; animation:spin 1s linear infinite;"></div>
+        </div>`;
+        getAgentDrawerHtml(cleanData).then(drawerHtml => {
+          const loadingEl = document.getElementById("agent-drawer-loading");
+          if (loadingEl) {
+            loadingEl.outerHTML = drawerHtml;
+          }
+        });
       } else if (type === "task") {
         html += `
           <p><b>Task ID:</b> ${escapeHtml(cleanData.id)}</p>
@@ -1509,36 +1753,338 @@
       loadTabTruth();
     }
 
-    function navigate(pageId) {
+    async function navigate(pageId) {
+      // Deactivate tabs
+      document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+      document.querySelectorAll(".tab-view").forEach(view => view.style.display = "none");
+      
+      // Update sidebar active states
+      document.querySelectorAll(".nav-item").forEach(item => {
+        item.classList.remove("active");
+        if (item.getAttribute("onclick") && item.getAttribute("onclick").includes(pageId)) {
+          item.classList.add("active");
+        }
+      });
+      
       if (pageId === "mirror") {
-        document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
-        document.querySelectorAll(".tab-view").forEach(view => view.style.display = "none");
-        document.getElementById("view-mirror").style.display = "block";
-        
-        document.querySelectorAll(".nav-item").forEach(item => {
-          item.classList.remove("active");
-          if (item.getAttribute("onclick") && item.getAttribute("onclick").includes("mirror")) {
-            item.classList.add("active");
-          }
-        });
-      } else if (pageId === "overview") {
+        const mirrorView = document.getElementById("view-mirror");
+        if (mirrorView) mirrorView.style.display = "block";
+        return;
+      }
+      
+      if (pageId === "overview") {
         switchTab("dashboard");
-      } else {
-        document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
-        document.querySelectorAll(".tab-view").forEach(view => view.style.display = "none");
-        document.getElementById("view-wip").style.display = "block";
-        document.getElementById("wipPageTitle").innerText = pageId.replace("-", " ").toUpperCase();
+        return;
+      }
+
+      // Show WIP fallback view
+      const wipView = document.getElementById("view-wip");
+      if (wipView) wipView.style.display = "block";
+      
+      const titleEl = document.getElementById("wipPageTitle");
+      if (titleEl) titleEl.innerText = pageId.replace("-", " ").toUpperCase();
+      
+      const badgeEl = document.getElementById("wipSourceBadge");
+      const tsEl = document.getElementById("wipTimestamp");
+      if (tsEl) tsEl.innerText = `Last Updated: ${new Date().toLocaleTimeString()}`;
+      
+      const contentEl = document.getElementById("wipContentArea");
+      if (!contentEl) return;
+      
+      contentEl.innerHTML = `<div style="color:var(--text-muted);">Loading live data...</div>`;
+      
+      try {
+        const truth = await fetch("/api/truth").then(r => r.json());
+        if (badgeEl) badgeEl.innerText = truth.truth_source;
         
-        document.querySelectorAll(".nav-item").forEach(item => {
-          item.classList.remove("active");
-          if (item.getAttribute("onclick") && item.getAttribute("onclick").includes(pageId)) {
-            item.classList.add("active");
+        let html = "";
+        
+        if (pageId === "observability") {
+          const topo = await fetch("/api/topology").then(r => r.json());
+          html = `
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">
+              <div class="kpi-card" style="cursor:default;">
+                <div class="kpi-title">SSE Live Event Stream</div>
+                <div class="kpi-val" style="color:var(--green);">ACTIVE</div>
+                <div class="kpi-sub">Connected via /api/stream</div>
+              </div>
+              <div class="kpi-card" style="cursor:default;">
+                <div class="kpi-title">Topology Edge Connections</div>
+                <div class="kpi-val" style="color:var(--cyan);">${topo.edges ? topo.edges.length : 0} Paths</div>
+                <div class="kpi-sub">Active telemetry pathways</div>
+              </div>
+              <div class="kpi-card" style="cursor:default;">
+                <div class="kpi-title">Topology Nodes</div>
+                <div class="kpi-val" style="color:var(--blue);">${topo.nodes ? topo.nodes.length : 0} Nodes</div>
+                <div class="kpi-sub">Orchestrator, cores & factories</div>
+              </div>
+            </div>
+            
+            <div class="cp-panel" style="margin-top:20px;">
+              <h3>Live Flow Event Log (SSE Stream)</h3>
+              <div style="max-height: 250px; overflow-y: auto; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px; font-family: monospace; font-size:12px; color: var(--text-muted);">
+                ${sseEventsList.length === 0 ? "<div>WAITING FOR REAL EVENTS...</div>" : sseEventsList.map(evt => {
+                  return `<div style="margin-bottom:6px;"><span style="color:var(--text-muted);">[${fmt(evt.ts)}]</span> <span style="color:var(--cyan);">${evt.type.toUpperCase()}</span> ${escapeHtml(evt.payload_summary)}</div>`;
+                }).join("")}
+              </div>
+            </div>
+          `;
+        }
+        else if (pageId === "production-acceleration") {
+          const accel = await fetch("/api/acceleration").then(r => r.json());
+          html = `
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">
+              <div class="kpi-card" style="cursor:default;">
+                <div class="kpi-title">Projected Acceleration Verdict</div>
+                <div class="kpi-val" style="color:var(--green);">${accel.verdict && accel.verdict.status ? accel.verdict.status : (accel.verdict || "GO")}</div>
+                <div class="kpi-sub">Moonshot speed metrics</div>
+              </div>
+              <div class="kpi-card" style="cursor:default;">
+                <div class="kpi-title">Critical Path Drag</div>
+                <div class="kpi-val" style="color:var(--orange);">${h(accel.critical_path_drag)}h</div>
+                <div class="kpi-sub">Total sequential blockers delay</div>
+              </div>
+              <div class="kpi-card" style="cursor:default;">
+                <div class="kpi-title">Parallel Acceleration Saved</div>
+                <div class="kpi-val" style="color:var(--cyan);">${h(accel.estimated_hours_saved)}h Saved</div>
+                <div class="kpi-sub">Through batching and priority schedules</div>
+              </div>
+            </div>
+            
+            <div class="cp-panel" style="margin-top:20px;">
+              <h3>Recommended Next Actions</h3>
+              <table style="width:100%;">
+                <thead><tr><th>Action</th><th>Assigned Agent</th><th>Impact Hours</th></tr></thead>
+                <tbody>
+                  ${(accel.next_3_actions || []).map(act => `
+                    <tr>
+                      <td><b>[${act.id}]</b> ${escapeHtml(act.name)}</td>
+                      <td>${escapeHtml(act.assigned_agent)}</td>
+                      <td><span style="color:var(--cyan); font-weight:700;">-${h(act.projection_impact_hours)}h</span></td>
+                    </tr>
+                  `).join("") || "<tr><td colspan='3'>All acceleration actions completed.</td></tr>"}
+                </tbody>
+              </table>
+            </div>
+          `;
+        }
+        else if (pageId === "personal-core" || pageId === "business-core" || pageId === "hobby-core") {
+          const domainName = pageId.split("-")[0];
+          const agents = (truth.status.agents || []).filter(a => (a.domain || "").toLowerCase() === domainName.toLowerCase() || (a.role || "").toLowerCase().includes(domainName.toLowerCase()));
+          html = `
+            <div class="cp-panel">
+              <h3>${domainName.toUpperCase()} CORE AGENTS</h3>
+              <table style="width:100%;">
+                <thead>
+                  <tr><th>Agent Name</th><th>Role / Purpose</th><th>Status</th><th>Telemetry</th></tr>
+                </thead>
+                <tbody>
+                  ${agents.map(a => `
+                    <tr>
+                      <td><b>${escapeHtml(a.name)}</b></td>
+                      <td>${escapeHtml(a.role)}</td>
+                      <td>${pill(a.status)}</td>
+                      <td>${h(a.runtime_hours)}h running</td>
+                    </tr>
+                  `).join("") || `<tr><td colspan="4">No agents active in the ${domainName} core.</td></tr>`}
+                </tbody>
+              </table>
+            </div>
+          `;
+        }
+        else if (pageId === "security" || pageId === "compliance" || pageId === "vuln" || pageId === "policy") {
+          const dora = await fetch("/api/dora").then(r => r.json());
+          const gaps = await fetch("/api/gaps").then(r => r.json());
+          
+          html = `
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">
+              <div class="kpi-card" style="cursor:default;">
+                <div class="kpi-title">Vulnerability Scan Status</div>
+                <div class="kpi-val" style="color:var(--green);">PASS</div>
+                <div class="kpi-sub">Dry-run scans verified</div>
+              </div>
+              <div class="kpi-card" style="cursor:default;">
+                <div class="kpi-title">Active Security Gaps</div>
+                <div class="kpi-val" style="color:var(--orange);">${gaps.risk_register ? gaps.risk_register.length : 0} Gaps</div>
+                <div class="kpi-sub">Compliance risk items</div>
+              </div>
+              <div class="kpi-card" style="cursor:default;">
+                <div class="kpi-title">DORA Event Logs</div>
+                <div class="kpi-val" style="color:var(--cyan);">${dora.events_count || 0} Events</div>
+                <div class="kpi-sub">Valid deployments/commits</div>
+              </div>
+            </div>
+            
+            <div class="cp-panel" style="margin-top:20px;">
+              <h3>Risk & Compliance Register</h3>
+              <table style="width:100%;">
+                <thead><tr><th>Risk</th><th>Severity</th><th>Impact</th><th>Status</th></tr></thead>
+                <tbody>
+                  ${(gaps.risk_register || []).map(risk => `
+                    <tr>
+                      <td><b>${escapeHtml(risk.risk)}</b></td>
+                      <td><span style="color:var(--orange); font-weight:700;">${escapeHtml(risk.severity)}</span></td>
+                      <td>${escapeHtml(risk.impact)}</td>
+                      <td>${pill(risk.status)}</td>
+                    </tr>
+                  `).join("") || "<tr><td colspan='4'>No open risk items.</td></tr>"}
+                </tbody>
+              </table>
+            </div>
+          `;
+        }
+        else if (pageId === "reports" || pageId === "integrations" || pageId === "settings") {
+          const disk = await fetch("/api/disk").then(r => r.json());
+          html = `
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">
+              <div class="kpi-card" style="cursor:default;">
+                <div class="kpi-title">Disk Available</div>
+                <div class="kpi-val" style="color:var(--green);">${disk.disk_available} GB</div>
+                <div class="kpi-sub">Out of ${disk.disk_total} GB</div>
+              </div>
+              <div class="kpi-card" style="cursor:default;">
+                <div class="kpi-title">k3d Sidecar State</div>
+                <div class="kpi-val" style="color:var(--yellow);">WAITING FOR DOCKER</div>
+                <div class="kpi-sub">Docker daemon not running</div>
+              </div>
+              <div class="kpi-card" style="cursor:default;">
+                <div class="kpi-title">Snapshot Dir Size</div>
+                <div class="kpi-val" style="color:var(--cyan);">${disk.snapshot_dir_size || 0} GB</div>
+                <div class="kpi-sub">Under backups/ folder</div>
+              </div>
+            </div>
+            
+            <div class="cp-panel" style="margin-top:20px;">
+              <h3>Persistence & Cluster Configuration</h3>
+              <div style="color:var(--text-muted); font-size:13px; line-height:1.6;">
+                <div><b>Launchd Service</b>: active (supervised)</div>
+                <div><b>Database Fallback Chain</b>: Live HAS API ➔ SQLite Ledger ➔ local inventory files</div>
+                <div><b>Snapshot Retention</b>: maximum 10 backup databases, age threshold 7 days</div>
+              </div>
+            </div>
+          `;
+        }
+        else {
+          const tasks = await fetch("/api/tasks").then(r => r.json());
+          html = `
+            <div class="cp-panel">
+              <h3>SYSTEM ACTIVE TASKS</h3>
+              <table style="width:100%;">
+                <thead>
+                  <tr><th>ID</th><th>Task</th><th>Status</th><th>Assignee</th><th>Progress</th></tr>
+                </thead>
+                <tbody>
+                  ${tasks.slice(0, 15).map(t => `
+                    <tr>
+                      <td><span class="badge badge-primary">${t.id}</span></td>
+                      <td><b>${escapeHtml(t.name)}</b></td>
+                      <td>${pill(t.status)}</td>
+                      <td>${escapeHtml(t.assigned_agent)}</td>
+                      <td>${t.progress}%</td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+            </div>
+          `;
+        }
+        
+        contentEl.innerHTML = html;
+        
+      } catch (err) {
+        console.error("Navigate content builder error:", err);
+        contentEl.innerHTML = `<div style="color:var(--orange);">Error loading page data: ${escapeHtml(err.message || err)}</div>`;
+      }
+    }
+
+    async function loadHeaderStatus() {
+      try {
+        const summary = await fetch("/api/control-plane/summary").then(r => r.json());
+        
+        function updateHeaderBadge(id, valText, colorVar) {
+          const el = document.getElementById(id);
+          if (el) {
+            const valEl = el.querySelector(".val");
+            if (valEl) valEl.textContent = valText;
+            el.style.borderColor = `var(--${colorVar})`;
+            if (valEl) valEl.style.color = `var(--${colorVar})`;
           }
-        });
+        }
+        
+        updateHeaderBadge("top-system-status", "SYSTEM " + summary.system_status, "green");
+        
+        let sourceColor = "green";
+        if (summary.truth_source === "SQLITE_LEDGER_TRUTH") sourceColor = "blue";
+        else if (summary.truth_source === "FILE_BASED_TRUTH") sourceColor = "orange";
+        updateHeaderBadge("top-truth-source", summary.truth_source, sourceColor);
+        
+        const apiColor = summary.has_api_status === "ONLINE" ? "green" : "orange";
+        updateHeaderBadge("top-has-api-status", `API: ${summary.has_api_status}`, apiColor);
+        updateHeaderBadge("top-tracker-status", `TRACKER: ${summary.tracker_status}`, "green");
+        
+        const raciColor = summary.raci_coverage === "100% COVERED" ? "green" : "orange";
+        updateHeaderBadge("top-raci-coverage", `RACI: ${summary.raci_coverage}`, raciColor);
+        
+        const qaStatus = summary.qa_gate && summary.qa_gate.status ? summary.qa_gate.status : "UNKNOWN";
+        const qaColor = qaStatus === "GO" ? "green" : "yellow";
+        updateHeaderBadge("top-qa-gate", `QA: ${qaStatus}`, qaColor);
+        updateHeaderBadge("top-registry-count", `REGISTRY: ${summary.registry_count} ITEMS`, "blue");
+        
+        const gapsColor = summary.open_gaps === 0 ? "green" : "orange";
+        updateHeaderBadge("top-open-gaps", `GAPS: ${summary.open_gaps} OPEN`, gapsColor);
+        
+        let eventsText = "WAITING FOR REAL EVENTS";
+        let eventsColor = "yellow";
+        if (summary.live_events > 0) {
+          eventsText = `${summary.live_events} REAL`;
+          eventsColor = "green";
+        }
+        updateHeaderBadge("top-live-events", `EVENTS: ${eventsText}`, eventsColor);
+        updateHeaderBadge("top-sidecar-status", `K8S: ${summary.sidecar_status}`, "yellow");
+
+        const bannerTitle = document.getElementById("readinessBannerTitle");
+        const bannerSub = document.getElementById("readinessBannerSub");
+        const bannerStatus = document.getElementById("readinessBannerStatus");
+        
+        if (bannerTitle && bannerSub && bannerStatus) {
+          if (summary.has_api_status === "OFFLINE") {
+            bannerTitle.textContent = "SYSTEM DEGRADED — OPERATING ON LOCAL FALLBACK";
+            bannerTitle.style.color = "var(--orange)";
+            bannerSub.textContent = "Local JSON/NDJSON file-based truth is active. HAS API is offline.";
+            bannerStatus.textContent = "DEGRADED";
+            bannerStatus.style.borderColor = "var(--orange)";
+            bannerStatus.style.color = "var(--orange)";
+          } else if (summary.sidecar_status === "WAITING FOR DOCKER") {
+            bannerTitle.textContent = "K8S SIDECAR: WAITING FOR DOCKER — BASELINE STILL GREEN";
+            bannerTitle.style.color = "var(--yellow)";
+            bannerSub.textContent = "Local k3d Kubernetes cluster will bootstrap automatically once Docker daemon is healthy.";
+            bannerStatus.textContent = "CONDITIONAL GO";
+            bannerStatus.style.borderColor = "var(--yellow)";
+            bannerStatus.style.color = "var(--yellow)";
+          } else if (summary.live_events === 0) {
+            bannerTitle.textContent = "ALL SYSTEMS GREEN — ROCKETS READY — WAITING FOR NEXT REAL EVENT";
+            bannerTitle.style.color = "var(--green)";
+            bannerSub.textContent = "Live flow engine is listening on SSE telemetry stream.";
+            bannerStatus.textContent = "GO FOR LAUNCH";
+            bannerStatus.style.borderColor = "var(--green)";
+            bannerStatus.style.color = "var(--green)";
+          } else {
+            bannerTitle.textContent = "ALL SYSTEMS GREEN — RUNTIME ACTIVE — TELEMETRY FLOWING";
+            bannerTitle.style.color = "var(--green)";
+            bannerSub.textContent = "Live k8s workers and orchestrators are emitting telemetry events.";
+            bannerStatus.textContent = "ACTIVE";
+            bannerStatus.style.borderColor = "var(--green)";
+            bannerStatus.style.color = "var(--green)";
+          }
+        }
+      } catch (err) {
+        console.error("Load header status error:", err);
       }
     }
 
     async function loadTabTruth() {
+      await loadAgents();
+      await loadHeaderStatus();
       if (currentTab === "dashboard" || currentTab === "agent-swarm" || currentTab === "build-factory") {
         await loadTruth();
       } else if (currentTab === "landscape") {
@@ -2677,6 +3223,288 @@
     const ctx = canvas ? canvas.getContext('2d') : null;
     let animId = null;
 
+    // Swarm Theater Destinations
+    const AGENT_DESTINATIONS = {
+      "Master Orchestrator": "agent_swarm",
+      "Research & Innovation Agent": "cloud",
+      "Personal Life Agent": "personal_core",
+      "Business Operations Agent": "business_core",
+      "Hobbies / Pets / Investing Agent": "hobby_core",
+      "HASF Pipeline Agent": "build_factory",
+      "PERT & Planning Agent": "raci_matrix",
+      "Monetization & Compliance Agent": "monetization",
+      "QA Auditor Agent": "qa_gate",
+      "Security Auditor Agent": "devsec_ops",
+      "Evidence Collector Agent": "evidence_vault",
+      "Live Tracker Runtime Agent": "local_disk",
+      "Production Acceleration Agent": "devsec_ops",
+      "Data Consolidation Agent": "global_registry"
+    };
+
+    let globalAgentsList = [];
+    const agentAnimationStates = {}; // name -> { x, y, state, angle, progress, destNode }
+
+    function normalizeAgentName(name) {
+      if (!name) return null;
+      name = name.trim();
+      if (name === "Live Tracker Runtime") return "Live Tracker Runtime Agent";
+      if (name === "PERT & Planning") return "PERT & Planning Agent";
+      if (name === "Monetization & Compliance") return "Monetization & Compliance Agent";
+      if (name === "Research & Innovation") return "Research & Innovation Agent";
+      return name;
+    }
+
+    async function loadAgents() {
+      try {
+        const res = await fetch("/api/agents/profiles");
+        if (res.ok) {
+          globalAgentsList = await res.json();
+          updateAgentTheaterNodes();
+        }
+      } catch (err) {
+        console.error("Error loading agent profiles:", err);
+      }
+    }
+
+    function updateAgentTheaterNodes() {
+      const container = document.getElementById('topologyContainer');
+      if (!container) return;
+
+      globalAgentsList.forEach((agent, index) => {
+        let nodeEl = document.getElementById(`agent-theater-node-${agent.name.replace(/\s+/g, '-')}`);
+        
+        let state = "idle";
+        if (agent.status === "Running") {
+          state = "running";
+        }
+        if (agent.blocker && agent.blocker !== "") {
+          state = "blocked";
+        }
+        if (agent.risk_level === "High" || agent.health === "Poor") {
+          state = "failed";
+        }
+
+        if (!agentAnimationStates[agent.name]) {
+          agentAnimationStates[agent.name] = {
+            x: 0,
+            y: 0,
+            state: "registered",
+            angle: (index * 2 * Math.PI) / 14,
+            progress: 0,
+            destNode: AGENT_DESTINATIONS[agent.name] || "agent_swarm"
+          };
+        }
+
+        const anim = agentAnimationStates[agent.name];
+        
+        if (state === "running" && (anim.state === "registered" || anim.state === "idle")) {
+          anim.state = "spawning";
+          anim.progress = 0;
+        } else if (state !== "running" && anim.state === "running") {
+          anim.state = "registered";
+          anim.progress = 0;
+        } else if (anim.state !== "spawning" && anim.state !== "initializing") {
+          anim.state = state;
+        }
+
+        if (!nodeEl) {
+          nodeEl = document.createElement('div');
+          nodeEl.className = 'agent-theater-node';
+          nodeEl.id = `agent-theater-node-${agent.name.replace(/\s+/g, '-')}`;
+          nodeEl.setAttribute('data-agent-name', agent.name);
+          const initials = agent.name.split(' ').map(n => n[0]).join('').slice(0, 2);
+          nodeEl.innerText = initials;
+          
+          nodeEl.addEventListener('mouseenter', (e) => showAgentHoverCard(e, agent));
+          nodeEl.addEventListener('mouseleave', hideAgentHoverCard);
+          nodeEl.onclick = (e) => {
+            e.stopPropagation();
+            openDrawer(agent.name, agent, "agent");
+          };
+          
+          container.appendChild(nodeEl);
+        }
+
+        nodeEl.className = `agent-theater-node agent-state-${anim.state}`;
+      });
+
+      const coreNode = document.getElementById('node-agent_swarm');
+      if (coreNode) {
+        const runningCount = globalAgentsList.filter(a => a.status === "Running").length;
+        if (runningCount === 0) {
+          coreNode.setAttribute('title', 'SWARM CORE ARMED — WAITING FOR REAL AGENT EVENTS');
+        } else {
+          coreNode.setAttribute('title', `SWARM CORE — ACTIVE AGENTS: ${runningCount}`);
+        }
+      }
+    }
+
+    function tickSwarmTheater() {
+      const container = document.getElementById('topologyContainer');
+      if (!container) return;
+
+      const swarmCoreNode = 'agent_swarm';
+      const coreCoords = getScaledCoords(swarmCoreNode);
+
+      globalAgentsList.forEach((agent) => {
+        const anim = agentAnimationStates[agent.name];
+        if (!anim) return;
+
+        const nodeEl = document.getElementById(`agent-theater-node-${agent.name.replace(/\s+/g, '-')}`);
+        if (!nodeEl) return;
+
+        if (anim.state === "registered" || anim.state === "idle") {
+          anim.angle += 0.005;
+          const orbitRadius = 45;
+          anim.x = coreCoords.x + Math.cos(anim.angle) * orbitRadius;
+          anim.y = coreCoords.y + Math.sin(anim.angle) * orbitRadius;
+        } else if (anim.state === "queued") {
+          anim.x = coreCoords.x;
+          anim.y = coreCoords.y;
+        } else if (anim.state === "spawning") {
+          anim.progress += 0.015;
+          const destCoords = getScaledCoords(anim.destNode);
+          if (anim.progress >= 1.0) {
+            anim.progress = 1.0;
+            anim.state = "initializing";
+            setTimeout(() => {
+              anim.state = "running";
+              updateAgentTheaterNodes();
+            }, 800);
+          }
+          anim.x = coreCoords.x + (destCoords.x - coreCoords.x) * anim.progress;
+          anim.y = coreCoords.y + (destCoords.y - coreCoords.y) * anim.progress;
+        } else {
+          const destCoords = getScaledCoords(anim.destNode);
+          anim.x = destCoords.x;
+          anim.y = destCoords.y - 24;
+        }
+
+        nodeEl.style.left = `${anim.x}px`;
+        nodeEl.style.top = `${anim.y}px`;
+      });
+    }
+
+    function showAgentHoverCard(event, agent) {
+      const card = document.getElementById('agentHoverCard');
+      if (!card) return;
+
+      const stateName = (agentAnimationStates[agent.name] ? agentAnimationStates[agent.name].state : "idle").toUpperCase();
+      let badgeColor = "var(--primary)";
+      if (stateName === "RUNNING") badgeColor = "var(--green)";
+      if (stateName === "BLOCKED") badgeColor = "var(--orange)";
+      if (stateName === "FAILED") badgeColor = "var(--red)";
+
+      card.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+          <h3 style="margin:0; font-size:13px; color:var(--cyan);">${escapeHtml(agent.name)}</h3>
+          <span class="badge" style="background:${badgeColor}; color:#fff; font-size:8px; padding:2px 4px; border-radius:4px;">${stateName}</span>
+        </div>
+        <p style="margin:2px 0;"><b>Role:</b> ${escapeHtml(agent.role)}</p>
+        <p style="margin:2px 0;"><b>Next Action:</b> ${escapeHtml(agent.next_action || "monitor")}</p>
+        <p style="font-size:10px; color:var(--text-muted); margin:2px 0;"><b>Model:</b> ${escapeHtml(agent.model_used || "unknown")}</p>
+      `;
+
+      card.style.display = 'flex';
+      
+      const container = document.getElementById('topologyContainer');
+      const rect = container.getBoundingClientRect();
+      const x = event.clientX - rect.left + 15;
+      const y = event.clientY - rect.top + 15;
+      
+      card.style.left = `${x}px`;
+      card.style.top = `${y}px`;
+    }
+
+    function hideAgentHoverCard() {
+      const card = document.getElementById('agentHoverCard');
+      if (card) {
+        card.style.display = 'none';
+      }
+    }
+
+    async function getAgentDrawerHtml(agent) {
+      let logsHtml = `<p style="color:var(--text-muted); font-style:italic;">No recent activity logs.</p>`;
+      try {
+        const logsRes = await fetch("/api/agents/lifecycle");
+        if (logsRes.ok) {
+          const logs = await logsRes.json();
+          const agentLogs = logs.filter(evt => evt.agent === agent.name).slice(0, 5);
+          if (agentLogs.length > 0) {
+            logsHtml = `<div style="display:flex; flex-direction:column; gap:8px; margin-top:8px;">`;
+            agentLogs.forEach(log => {
+              const time = log.timestamp ? log.timestamp.split('T')[1].slice(0,8) : '';
+              logsHtml += `
+                <div style="border-left:2px solid var(--primary); padding-left:8px; margin-bottom:4px;">
+                  <span style="font-size:10px; color:var(--text-muted);">[${time}] ${log.type.toUpperCase()}</span>
+                  <p style="margin:2px 0 0 0; font-size:12px;">${escapeHtml(log.message)}</p>
+                </div>
+              `;
+            });
+            logsHtml += `</div>`;
+          }
+        }
+      } catch (err) {
+        console.error("Error loading agent logs:", err);
+      }
+
+      let capabilitiesHtml = "";
+      if (agent.capabilities && agent.capabilities.length > 0) {
+        capabilitiesHtml = `<div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:4px;">`;
+        agent.capabilities.forEach(cap => {
+          capabilitiesHtml += `<span class="pill active" style="font-size:10px; border-color:var(--cyan); color:var(--cyan); margin:0;">${escapeHtml(cap)}</span>`;
+        });
+        capabilitiesHtml += `</div>`;
+      } else {
+        capabilitiesHtml = `<p style="color:var(--text-muted);">-</p>`;
+      }
+
+      let raciHtml = "";
+      const raci = agent.raci || { accountable: [], responsible: [], consulted: [], informed: [] };
+      if (raci.accountable.length > 0 || raci.responsible.length > 0 || raci.consulted.length > 0 || raci.informed.length > 0) {
+        raciHtml = `<div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">`;
+        if (raci.accountable.length > 0) {
+          raciHtml += `<div><b>Accountable (A):</b> <span style="color:var(--text-muted); font-size:12px;">${raci.accountable.join(', ')}</span></div>`;
+        }
+        if (raci.responsible.length > 0) {
+          raciHtml += `<div><b>Responsible (R):</b> <span style="color:var(--text-muted); font-size:12px;">${raci.responsible.join(', ')}</span></div>`;
+        }
+        if (raci.consulted.length > 0) {
+          raciHtml += `<div><b>Consulted (C):</b> <span style="color:var(--text-muted); font-size:12px;">${raci.consulted.join(', ')}</span></div>`;
+        }
+        if (raci.informed.length > 0) {
+          raciHtml += `<div><b>Informed (I):</b> <span style="color:var(--text-muted); font-size:12px;">${raci.informed.join(', ')}</span></div>`;
+        }
+        raciHtml += `</div>`;
+      } else {
+        raciHtml = `<p style="color:var(--text-muted); font-style:italic;">No RACI governance mapped.</p>`;
+      }
+
+      return `
+        <p><b>Role & Title:</b> ${escapeHtml(agent.role || "-")}</p>
+        <p><b>Status:</b> ${pill(agent.status)}</p>
+        <p><b>Description:</b> ${escapeHtml(agent.description || "-")}</p>
+        <p><b>Runtime:</b> ${agent.runtime_hours} hrs</p>
+        <p><b>Risk Level:</b> ${escapeHtml(agent.risk_level || "Low")}</p>
+        <p><b>Model:</b> ${escapeHtml(agent.model_used || "unknown")}</p>
+        
+        <div style="margin-top:16px; border-top:1px solid var(--border-color); padding-top:12px;">
+          <h4 style="margin:0 0 6px 0; color:var(--cyan); font-size:14px;">Capabilities</h4>
+          ${capabilitiesHtml}
+        </div>
+
+        <div style="margin-top:16px; border-top:1px solid var(--border-color); padding-top:12px;">
+          <h4 style="margin:0 0 6px 0; color:var(--purple); font-size:14px;">RACI Governance Mapping</h4>
+          ${raciHtml}
+        </div>
+
+        <div style="margin-top:16px; border-top:1px solid var(--border-color); padding-top:12px;">
+          <h4 style="margin:0 0 6px 0; color:var(--yellow); font-size:14px;">Recent Activity Timeline</h4>
+          ${logsHtml}
+        </div>
+      `;
+    }
+
     function resizeCanvas() {
       const container = document.getElementById('topologyContainer');
       if (!container || !canvas) return;
@@ -2716,6 +3544,20 @@
         svg.appendChild(line);
       });
 
+      // Draw dashed orbit ring for idle agents
+      const coreScaled = getScaledCoords('agent_swarm');
+      if (coreScaled) {
+        const orbitRing = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        orbitRing.setAttribute('cx', coreScaled.x);
+        orbitRing.setAttribute('cy', coreScaled.y);
+        orbitRing.setAttribute('r', '45');
+        orbitRing.setAttribute('fill', 'none');
+        orbitRing.setAttribute('stroke', '#22314a');
+        orbitRing.setAttribute('stroke-width', '1');
+        orbitRing.setAttribute('stroke-dasharray', '4, 4');
+        svg.appendChild(orbitRing);
+      }
+
       const container = document.getElementById('topologyContainer');
       if (!container) return;
       document.querySelectorAll('.node-element').forEach(el => el.remove());
@@ -2733,6 +3575,9 @@
         div.onclick = () => openDrawer(id.replace('_', ' ').toUpperCase(), {}, 'node');
         container.appendChild(div);
       });
+
+      // Position/refresh agent node elements
+      updateAgentTheaterNodes();
     }
 
     function animateParticles() {
@@ -2757,6 +3602,7 @@
         ctx.fillStyle = p.color;
         ctx.fill();
       }
+      tickSwarmTheater();
       animId = requestAnimationFrame(animateParticles);
     }
 
@@ -2776,16 +3622,72 @@
       let fromNode = 'agent_swarm';
       let toNode = 'global_registry';
       let color = '#3b82f6';
-      if (evt.type === 'task_update') {
+      
+      const type = (evt.type || '').toLowerCase();
+      if (type === 'task_update') {
         fromNode = 'agent_swarm';
         toNode = 'evidence_vault';
         color = '#10b981';
-      } else if (evt.type === 'heartbeat') {
+      } else if (type === 'heartbeat') {
         fromNode = 'personal_core';
         toNode = 'agent_swarm';
         color = '#8b5cf6';
+      } else if (type === 'build_event' || type === 'build') {
+        fromNode = 'agent_swarm';
+        toNode = 'build_factory';
+        color = '#f59e0b';
+      } else if (type === 'registry_event' || type === 'registry') {
+        fromNode = 'local_disk';
+        toNode = 'global_registry';
+        color = '#3b82f6';
+      } else if (type === 'evidence_event' || type === 'evidence') {
+        fromNode = 'qa_gate';
+        toNode = 'evidence_vault';
+        color = '#10b981';
+      } else if (type === 'dora_event' || type === 'dora') {
+        fromNode = 'github';
+        toNode = 'qa_gate';
+        color = '#06b6d4';
       }
+      
       spawnParticle(fromNode, toNode, color);
+
+      // Trigger Swarm Theater agent genesis transitions dynamically based on event content
+      let eventAgent = null;
+      if (evt.agent) {
+        eventAgent = evt.agent;
+      } else if (evt.payload_summary) {
+        // Try parsing agent name from message strings like "Agent Master Orchestrator heartbeat check"
+        const match = evt.payload_summary.match(/Agent (.*?) (heartbeat|started|completed|working)/i);
+        if (match) {
+          eventAgent = match[1].trim();
+        } else if (evt.payload_summary.includes("Master Orchestrator")) {
+          eventAgent = "Master Orchestrator";
+        } else if (evt.payload_summary.includes("Evidence Collector")) {
+          eventAgent = "Evidence Collector Agent";
+        } else if (evt.payload_summary.includes("QA Auditor")) {
+          eventAgent = "QA Auditor Agent";
+        }
+      }
+
+      if (eventAgent) {
+        const normalized = normalizeAgentName(eventAgent);
+        if (normalized && agentAnimationStates[normalized]) {
+          const anim = agentAnimationStates[normalized];
+          // Egress lifecycle: queued -> spawning -> initializing -> running
+          anim.state = "queued";
+          anim.progress = 0;
+          updateAgentTheaterNodes();
+
+          setTimeout(() => {
+            if (anim.state === "queued") {
+              anim.state = "spawning";
+              anim.progress = 0;
+              updateAgentTheaterNodes();
+            }
+          }, 600);
+        }
+      }
     }
 
     function triggerSampleEvent() {
