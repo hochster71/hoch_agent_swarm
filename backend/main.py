@@ -11468,6 +11468,7 @@ class SubmitClaimRequest(BaseModel):
     claim: str
 
 @app.post("/api/v1/promptops/submit-claim")
+@app.post("/api/promptops/submit-claim")
 def submit_claim(payload: SubmitClaimRequest):
     from backend.promptops.prompt_history_store import PromptHistoryStore
     from backend.promptops.fake_completion_risk import FakeCompletionRisk
@@ -11481,7 +11482,28 @@ def submit_claim(payload: SubmitClaimRequest):
     risk_detector = FakeCompletionRisk()
     risk_res = risk_detector.detect_risk(payload.claim)
     
-    if risk_res["risk_level"] == "HIGH":
+    # Run the gate check if the claim contains any blacklisted terms (risk level HIGH or MEDIUM).
+    if risk_res["risk_level"] in ["HIGH", "MEDIUM"]:
+        import sqlite3
+        from backend.runtime_truth.state_store import DB_PATH, apply_pragmas
+        conn = sqlite3.connect(DB_PATH, timeout=30)
+        apply_pragmas(conn)
+        go_status = "NO-GO"
+        try:
+            row = conn.execute("SELECT value FROM runtime_truth_signals WHERE signal_id = 'active_release_go_status'").fetchone()
+            if row:
+                go_status = row[0]
+        except Exception:
+            pass
+        finally:
+            conn.close()
+            
+        if go_status == "NO-GO":
+            raise HTTPException(
+                status_code=403,
+                detail=f"CRITICAL SECURITY BLOCK: Claim '{payload.claim}' rejected. Active release status is NO-GO."
+            )
+            
         gate_res = subprocess.run(["bash", "scripts/promptops_gate.sh"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if gate_res.returncode != 0:
             raise HTTPException(

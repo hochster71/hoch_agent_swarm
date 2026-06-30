@@ -1044,7 +1044,7 @@ export const ComplianceDashboard: React.FC = () => {
                 </button>
                 <button
                   onClick={() => {
-                    setOperatorPromptInput("Fix Docker UI truth mismatch, prove API/UI BLOCKED/50.0, run docker_truth_check");
+                    setOperatorPromptInput("Fix Docker UI truth mismatch, prove API/UI BLOCKED/50.0, run docker_truth_check.sh. Non-goal: do not touch Kubernetes. Requires runtime truth. Gates: run docker_truth_check.sh. Evidence: docs/evidence/promptops/run.md. Schema: status, git_sha. Controls: prevent fake. Stop condition: exit on failure. Integration safety: run pytest.");
                   }}
                   className="w-full text-left text-xs p-2 bg-white/5 hover:bg-white/10 rounded border border-white/5 transition flex justify-between"
                 >
