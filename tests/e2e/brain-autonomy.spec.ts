@@ -15,7 +15,7 @@ test.describe('Brain LLM Gated Autonomy Control Plane', () => {
     });
 
     // Navigate to page
-    await page.goto('http://127.0.0.1:8000');
+    await page.goto('/');
 
     // Click sidebar "Command Center" tab
     const ccNav = page.locator('#nav-production-command-center');
@@ -78,7 +78,7 @@ test.describe('Brain LLM Gated Autonomy Control Plane', () => {
 
   test('verifies RC27 identity-aware artifact workflow delivery and security blocks', async ({ page }) => {
     // Navigate to page
-    await page.goto('http://127.0.0.1:8000');
+    await page.goto('/');
 
     // Click sidebar "Command Center" tab
     const ccNav = page.locator('#nav-production-command-center');
@@ -129,7 +129,7 @@ test.describe('Brain LLM Gated Autonomy Control Plane', () => {
 
   test('verifies RC29 monetization sidecar audit harness operations', async ({ page }) => {
     // Navigate to page
-    await page.goto('http://127.0.0.1:8000');
+    await page.goto('/');
 
     // Click sidebar "Command Center" tab
     const ccNav = page.locator('#nav-production-command-center');

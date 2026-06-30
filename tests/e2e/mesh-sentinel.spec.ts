@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 test("@legacy @compat @deorbited Mesh Sentinel live map loads without fake topology", async ({ page }) => {
-  await page.goto("http://127.0.0.1:8000/", { waitUntil: "networkidle" });
+  await page.goto("/", { waitUntil: "networkidle" });
 
   const nav = page.getByText("Mesh Sentinel", { exact: true });
   await expect(nav).toBeVisible();

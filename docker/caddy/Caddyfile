@@ -1,0 +1,20 @@
+has.localhost {
+    # Internal self-signed TLS certificates
+    tls internal
+
+    # Secure Headers
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Frame-Options "DENY"
+        X-Content-Type-Options "nosniff"
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' ws: wss: http: https:; frame-ancestors 'none';"
+        # Disable server signature
+        -Server
+    }
+
+    # Route API requests to has-api
+    reverse_proxy /api/* has-api:8000
+
+    # Route UI and static requests to has-ui
+    reverse_proxy * has-ui:8080
+}

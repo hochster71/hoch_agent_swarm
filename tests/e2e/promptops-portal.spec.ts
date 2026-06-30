@@ -7,7 +7,7 @@ test.describe("PromptOps Portal E2E Validation", () => {
     await expect(page.locator("body")).toBeVisible();
 
     // 2. Navigate to PromptOps tab
-    const promptopsTab = page.locator("button:has-text('PromptOps Portal')");
+    const promptopsTab = page.locator("#nav-promptops");
     await expect(promptopsTab).toBeVisible();
     await promptopsTab.click();
 

@@ -95,6 +95,29 @@ services:
     networks:
       - has-net
 
+  has-proxy:
+    image: caddy:2.7-alpine
+    container_name: has-proxy
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:443:443"
+      - "127.0.0.1:80:80"
+    volumes:
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      has-api:
+        condition: service_healthy
+      has-ui:
+        condition: service_healthy
+    networks:
+      - has-net
+
+volumes:
+  caddy_data:
+  caddy_config:
+
 networks:
   has-net:
     driver: bridge

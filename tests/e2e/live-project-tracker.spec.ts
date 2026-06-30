@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('HAS Live Project Tracker Command Center', () => {
   test('verifies the unified project tracker cockpit and tab routing', async ({ page }) => {
     // Navigate to page
-    await page.goto('http://127.0.0.1:8000');
+    await page.goto('/');
 
     // Click sidebar "Project Tracker" tab
     const trackerNav = page.locator('#nav-live-project-tracker');
