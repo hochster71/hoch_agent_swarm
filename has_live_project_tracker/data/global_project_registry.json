@@ -1,0 +1,1869 @@
+[
+  {
+    "canonical_id": "CAN-GRP-001",
+    "canonical_name": "hoch_agent_swarm",
+    "type": "repo",
+    "domain": "coder",
+    "source_records": [
+      "GITHUB-019",
+      "LOCAL-001",
+      "LOCAL-002"
+    ],
+    "paths": [
+      "/Users/michaelhoch/hoch_agent_swarm",
+      "/Users/michaelhoch/hoch_agent_swarm_prompt_library"
+    ],
+    "remotes": [
+      "https://github.com/hochster71/hoch_agent_swarm"
+    ],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "REQUIRES_SCAN",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [
+      "22 uncommitted local changes detected",
+      "Missing README documentation file",
+      "Missing automated unit or integration tests"
+    ],
+    "next_action": "review"
+  },
+  {
+    "canonical_id": "CAN-GRP-002",
+    "canonical_name": "icon.png",
+    "type": "asset",
+    "domain": "personal",
+    "source_records": [
+      "CLOUD-001",
+      "CLOUD-010",
+      "CLOUD-020",
+      "CLOUD-029",
+      "CLOUD-041",
+      "CLOUD-050",
+      "CLOUD-059",
+      "CLOUD-068",
+      "CLOUD-077",
+      "CLOUD-086",
+      "CLOUD-095"
+    ],
+    "paths": [
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/pm66oPPyaDwfGsGeGgNVdtxcXbw=.pkpass/icon.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/wcySa7AJN7ur1YLgDTALM4n7q4o=.pkpass/icon.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/2cW3FZ8STo1u44nnzLRzQJ7DEWc=.pkpass/icon.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/fhldeKsNK0QvdFM2FbBaxErsBjs=.pkpass/icon.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/P4QFW2h-4XLZ8Qb76nTqbBmAAUw=.pkpass/icon.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/-o46Rx8XLVtpEjL8C56m-jJng7A=.pkpass/icon.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/9RD2MoIDtzqsyBkeK073pH0ZsOc=.pkpass/icon.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/mCl8EHT5YdovZvjfPnOvoSd2LVs=.pkpass/icon.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/RIK8VHeG29Rotk-ZnObgNdDVAy0=.pkpass/icon.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/Jo1M9j-QR+wN4xzVknkabRyIKZg=.pkpass/icon.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/ftckFR6w5BY5dD4c2bEGphjLquc=.pkpass/icon.png"
+    ],
+    "remotes": [],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-GRP-003",
+    "canonical_name": "signature",
+    "type": "document",
+    "domain": "personal",
+    "source_records": [
+      "CLOUD-002",
+      "CLOUD-011",
+      "CLOUD-021",
+      "CLOUD-030",
+      "CLOUD-042",
+      "CLOUD-051",
+      "CLOUD-060",
+      "CLOUD-069",
+      "CLOUD-078",
+      "CLOUD-087",
+      "CLOUD-096"
+    ],
+    "paths": [
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/pm66oPPyaDwfGsGeGgNVdtxcXbw=.pkpass/signature",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/wcySa7AJN7ur1YLgDTALM4n7q4o=.pkpass/signature",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/2cW3FZ8STo1u44nnzLRzQJ7DEWc=.pkpass/signature",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/fhldeKsNK0QvdFM2FbBaxErsBjs=.pkpass/signature",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/P4QFW2h-4XLZ8Qb76nTqbBmAAUw=.pkpass/signature",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/-o46Rx8XLVtpEjL8C56m-jJng7A=.pkpass/signature",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/9RD2MoIDtzqsyBkeK073pH0ZsOc=.pkpass/signature",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/mCl8EHT5YdovZvjfPnOvoSd2LVs=.pkpass/signature",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/RIK8VHeG29Rotk-ZnObgNdDVAy0=.pkpass/signature",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/Jo1M9j-QR+wN4xzVknkabRyIKZg=.pkpass/signature",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/ftckFR6w5BY5dD4c2bEGphjLquc=.pkpass/signature"
+    ],
+    "remotes": [],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-GRP-004",
+    "canonical_name": "icon@2x.png",
+    "type": "asset",
+    "domain": "personal",
+    "source_records": [
+      "CLOUD-003",
+      "CLOUD-012",
+      "CLOUD-022",
+      "CLOUD-031",
+      "CLOUD-043",
+      "CLOUD-052",
+      "CLOUD-061",
+      "CLOUD-070",
+      "CLOUD-079",
+      "CLOUD-088",
+      "CLOUD-097"
+    ],
+    "paths": [
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/pm66oPPyaDwfGsGeGgNVdtxcXbw=.pkpass/icon@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/wcySa7AJN7ur1YLgDTALM4n7q4o=.pkpass/icon@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/2cW3FZ8STo1u44nnzLRzQJ7DEWc=.pkpass/icon@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/fhldeKsNK0QvdFM2FbBaxErsBjs=.pkpass/icon@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/P4QFW2h-4XLZ8Qb76nTqbBmAAUw=.pkpass/icon@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/-o46Rx8XLVtpEjL8C56m-jJng7A=.pkpass/icon@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/9RD2MoIDtzqsyBkeK073pH0ZsOc=.pkpass/icon@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/mCl8EHT5YdovZvjfPnOvoSd2LVs=.pkpass/icon@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/RIK8VHeG29Rotk-ZnObgNdDVAy0=.pkpass/icon@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/Jo1M9j-QR+wN4xzVknkabRyIKZg=.pkpass/icon@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/ftckFR6w5BY5dD4c2bEGphjLquc=.pkpass/icon@2x.png"
+    ],
+    "remotes": [],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-GRP-005",
+    "canonical_name": "logo.png",
+    "type": "asset",
+    "domain": "personal",
+    "source_records": [
+      "CLOUD-004",
+      "CLOUD-018",
+      "CLOUD-023",
+      "CLOUD-034",
+      "CLOUD-044",
+      "CLOUD-053",
+      "CLOUD-062",
+      "CLOUD-071",
+      "CLOUD-080",
+      "CLOUD-089",
+      "CLOUD-100"
+    ],
+    "paths": [
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/pm66oPPyaDwfGsGeGgNVdtxcXbw=.pkpass/logo.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/wcySa7AJN7ur1YLgDTALM4n7q4o=.pkpass/en.lproj/logo.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/2cW3FZ8STo1u44nnzLRzQJ7DEWc=.pkpass/logo.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/fhldeKsNK0QvdFM2FbBaxErsBjs=.pkpass/logo.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/P4QFW2h-4XLZ8Qb76nTqbBmAAUw=.pkpass/logo.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/-o46Rx8XLVtpEjL8C56m-jJng7A=.pkpass/logo.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/9RD2MoIDtzqsyBkeK073pH0ZsOc=.pkpass/logo.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/mCl8EHT5YdovZvjfPnOvoSd2LVs=.pkpass/logo.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/RIK8VHeG29Rotk-ZnObgNdDVAy0=.pkpass/logo.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/Jo1M9j-QR+wN4xzVknkabRyIKZg=.pkpass/logo.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/ftckFR6w5BY5dD4c2bEGphjLquc=.pkpass/logo.png"
+    ],
+    "remotes": [],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-GRP-006",
+    "canonical_name": "pass.json",
+    "type": "dataset",
+    "domain": "personal",
+    "source_records": [
+      "CLOUD-005",
+      "CLOUD-013",
+      "CLOUD-024",
+      "CLOUD-035",
+      "CLOUD-045",
+      "CLOUD-054",
+      "CLOUD-063",
+      "CLOUD-072",
+      "CLOUD-081",
+      "CLOUD-090",
+      "CLOUD-101"
+    ],
+    "paths": [
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/pm66oPPyaDwfGsGeGgNVdtxcXbw=.pkpass/pass.json",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/wcySa7AJN7ur1YLgDTALM4n7q4o=.pkpass/pass.json",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/2cW3FZ8STo1u44nnzLRzQJ7DEWc=.pkpass/pass.json",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/fhldeKsNK0QvdFM2FbBaxErsBjs=.pkpass/pass.json",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/P4QFW2h-4XLZ8Qb76nTqbBmAAUw=.pkpass/pass.json",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/-o46Rx8XLVtpEjL8C56m-jJng7A=.pkpass/pass.json",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/9RD2MoIDtzqsyBkeK073pH0ZsOc=.pkpass/pass.json",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/mCl8EHT5YdovZvjfPnOvoSd2LVs=.pkpass/pass.json",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/RIK8VHeG29Rotk-ZnObgNdDVAy0=.pkpass/pass.json",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/Jo1M9j-QR+wN4xzVknkabRyIKZg=.pkpass/pass.json",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/ftckFR6w5BY5dD4c2bEGphjLquc=.pkpass/pass.json"
+    ],
+    "remotes": [],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-GRP-007",
+    "canonical_name": "logo@2x.png",
+    "type": "asset",
+    "domain": "personal",
+    "source_records": [
+      "CLOUD-006",
+      "CLOUD-019",
+      "CLOUD-025",
+      "CLOUD-036",
+      "CLOUD-046",
+      "CLOUD-055",
+      "CLOUD-064",
+      "CLOUD-073",
+      "CLOUD-082",
+      "CLOUD-091",
+      "CLOUD-102"
+    ],
+    "paths": [
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/pm66oPPyaDwfGsGeGgNVdtxcXbw=.pkpass/logo@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/wcySa7AJN7ur1YLgDTALM4n7q4o=.pkpass/en.lproj/logo@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/2cW3FZ8STo1u44nnzLRzQJ7DEWc=.pkpass/logo@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/fhldeKsNK0QvdFM2FbBaxErsBjs=.pkpass/logo@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/P4QFW2h-4XLZ8Qb76nTqbBmAAUw=.pkpass/logo@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/-o46Rx8XLVtpEjL8C56m-jJng7A=.pkpass/logo@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/9RD2MoIDtzqsyBkeK073pH0ZsOc=.pkpass/logo@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/mCl8EHT5YdovZvjfPnOvoSd2LVs=.pkpass/logo@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/RIK8VHeG29Rotk-ZnObgNdDVAy0=.pkpass/logo@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/Jo1M9j-QR+wN4xzVknkabRyIKZg=.pkpass/logo@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/ftckFR6w5BY5dD4c2bEGphjLquc=.pkpass/logo@2x.png"
+    ],
+    "remotes": [],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-GRP-008",
+    "canonical_name": "strip@2x.png",
+    "type": "asset",
+    "domain": "personal",
+    "source_records": [
+      "CLOUD-007",
+      "CLOUD-014",
+      "CLOUD-026",
+      "CLOUD-037",
+      "CLOUD-047",
+      "CLOUD-056",
+      "CLOUD-065",
+      "CLOUD-074",
+      "CLOUD-083",
+      "CLOUD-092",
+      "CLOUD-103"
+    ],
+    "paths": [
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/pm66oPPyaDwfGsGeGgNVdtxcXbw=.pkpass/strip@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/wcySa7AJN7ur1YLgDTALM4n7q4o=.pkpass/strip@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/2cW3FZ8STo1u44nnzLRzQJ7DEWc=.pkpass/strip@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/fhldeKsNK0QvdFM2FbBaxErsBjs=.pkpass/strip@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/P4QFW2h-4XLZ8Qb76nTqbBmAAUw=.pkpass/strip@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/-o46Rx8XLVtpEjL8C56m-jJng7A=.pkpass/strip@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/9RD2MoIDtzqsyBkeK073pH0ZsOc=.pkpass/strip@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/mCl8EHT5YdovZvjfPnOvoSd2LVs=.pkpass/strip@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/RIK8VHeG29Rotk-ZnObgNdDVAy0=.pkpass/strip@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/Jo1M9j-QR+wN4xzVknkabRyIKZg=.pkpass/strip@2x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/ftckFR6w5BY5dD4c2bEGphjLquc=.pkpass/strip@2x.png"
+    ],
+    "remotes": [],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-GRP-009",
+    "canonical_name": "manifest.json",
+    "type": "dataset",
+    "domain": "personal",
+    "source_records": [
+      "CLOUD-008",
+      "CLOUD-015",
+      "CLOUD-027",
+      "CLOUD-038",
+      "CLOUD-048",
+      "CLOUD-057",
+      "CLOUD-066",
+      "CLOUD-075",
+      "CLOUD-084",
+      "CLOUD-093",
+      "CLOUD-104"
+    ],
+    "paths": [
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/pm66oPPyaDwfGsGeGgNVdtxcXbw=.pkpass/manifest.json",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/wcySa7AJN7ur1YLgDTALM4n7q4o=.pkpass/manifest.json",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/2cW3FZ8STo1u44nnzLRzQJ7DEWc=.pkpass/manifest.json",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/fhldeKsNK0QvdFM2FbBaxErsBjs=.pkpass/manifest.json",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/P4QFW2h-4XLZ8Qb76nTqbBmAAUw=.pkpass/manifest.json",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/-o46Rx8XLVtpEjL8C56m-jJng7A=.pkpass/manifest.json",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/9RD2MoIDtzqsyBkeK073pH0ZsOc=.pkpass/manifest.json",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/mCl8EHT5YdovZvjfPnOvoSd2LVs=.pkpass/manifest.json",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/RIK8VHeG29Rotk-ZnObgNdDVAy0=.pkpass/manifest.json",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/Jo1M9j-QR+wN4xzVknkabRyIKZg=.pkpass/manifest.json",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/ftckFR6w5BY5dD4c2bEGphjLquc=.pkpass/manifest.json"
+    ],
+    "remotes": [],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-GRP-010",
+    "canonical_name": "strip.png",
+    "type": "asset",
+    "domain": "personal",
+    "source_records": [
+      "CLOUD-009",
+      "CLOUD-016",
+      "CLOUD-028",
+      "CLOUD-040",
+      "CLOUD-049",
+      "CLOUD-058",
+      "CLOUD-067",
+      "CLOUD-076",
+      "CLOUD-085",
+      "CLOUD-094",
+      "CLOUD-106"
+    ],
+    "paths": [
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/pm66oPPyaDwfGsGeGgNVdtxcXbw=.pkpass/strip.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/wcySa7AJN7ur1YLgDTALM4n7q4o=.pkpass/strip.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/2cW3FZ8STo1u44nnzLRzQJ7DEWc=.pkpass/strip.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/fhldeKsNK0QvdFM2FbBaxErsBjs=.pkpass/strip.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/P4QFW2h-4XLZ8Qb76nTqbBmAAUw=.pkpass/strip.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/-o46Rx8XLVtpEjL8C56m-jJng7A=.pkpass/strip.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/9RD2MoIDtzqsyBkeK073pH0ZsOc=.pkpass/strip.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/mCl8EHT5YdovZvjfPnOvoSd2LVs=.pkpass/strip.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/RIK8VHeG29Rotk-ZnObgNdDVAy0=.pkpass/strip.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/Jo1M9j-QR+wN4xzVknkabRyIKZg=.pkpass/strip.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/ftckFR6w5BY5dD4c2bEGphjLquc=.pkpass/strip.png"
+    ],
+    "remotes": [],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-GRP-011",
+    "canonical_name": "strip@3x.png",
+    "type": "asset",
+    "domain": "personal",
+    "source_records": [
+      "CLOUD-032",
+      "CLOUD-098"
+    ],
+    "paths": [
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/fhldeKsNK0QvdFM2FbBaxErsBjs=.pkpass/strip@3x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/ftckFR6w5BY5dD4c2bEGphjLquc=.pkpass/strip@3x.png"
+    ],
+    "remotes": [],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-GRP-012",
+    "canonical_name": "logo@3x.png",
+    "type": "asset",
+    "domain": "personal",
+    "source_records": [
+      "CLOUD-033",
+      "CLOUD-099"
+    ],
+    "paths": [
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/fhldeKsNK0QvdFM2FbBaxErsBjs=.pkpass/logo@3x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/ftckFR6w5BY5dD4c2bEGphjLquc=.pkpass/logo@3x.png"
+    ],
+    "remotes": [],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-GRP-013",
+    "canonical_name": "icon@3x.png",
+    "type": "asset",
+    "domain": "personal",
+    "source_records": [
+      "CLOUD-039",
+      "CLOUD-105"
+    ],
+    "paths": [
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/fhldeKsNK0QvdFM2FbBaxErsBjs=.pkpass/icon@3x.png",
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/ftckFR6w5BY5dD4c2bEGphjLquc=.pkpass/icon@3x.png"
+    ],
+    "remotes": [],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-001",
+    "canonical_name": "KernelHub-Mgr",
+    "type": "agent",
+    "domain": "control",
+    "source_records": [
+      "AGENT-L1-KernelHub-Mgr"
+    ],
+    "paths": [],
+    "remotes": [],
+    "owner_agent": "Master Orchestrator",
+    "accountable_agent": "Master Orchestrator",
+    "responsible_agents": [
+      "Master Orchestrator"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 0.98,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-002",
+    "canonical_name": "TaskScheduler-01",
+    "type": "agent",
+    "domain": "control",
+    "source_records": [
+      "AGENT-L1-TaskScheduler-01"
+    ],
+    "paths": [],
+    "remotes": [],
+    "owner_agent": "Master Orchestrator",
+    "accountable_agent": "Master Orchestrator",
+    "responsible_agents": [
+      "Master Orchestrator"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 0.98,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-003",
+    "canonical_name": "Auditor-Proxy",
+    "type": "agent",
+    "domain": "control",
+    "source_records": [
+      "AGENT-L1-Auditor-Proxy"
+    ],
+    "paths": [],
+    "remotes": [],
+    "owner_agent": "Master Orchestrator",
+    "accountable_agent": "Master Orchestrator",
+    "responsible_agents": [
+      "Master Orchestrator"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 0.98,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-004",
+    "canonical_name": "ConMon-Sentinel",
+    "type": "agent",
+    "domain": "control",
+    "source_records": [
+      "AGENT-L1-ConMon-Sentinel"
+    ],
+    "paths": [],
+    "remotes": [],
+    "owner_agent": "Master Orchestrator",
+    "accountable_agent": "Master Orchestrator",
+    "responsible_agents": [
+      "Master Orchestrator"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 0.98,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-005",
+    "canonical_name": "Gordy-iMac-01",
+    "type": "agent",
+    "domain": "coder",
+    "source_records": [
+      "AGENT-L2-Gordy-iMac-01"
+    ],
+    "paths": [],
+    "remotes": [],
+    "owner_agent": "Master Orchestrator",
+    "accountable_agent": "Master Orchestrator",
+    "responsible_agents": [
+      "Master Orchestrator"
+    ],
+    "evidence_status": "UNVERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "CONDITIONAL GO",
+    "confidence": 0.98,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-006",
+    "canonical_name": "Parser-02",
+    "type": "agent",
+    "domain": "coder",
+    "source_records": [
+      "AGENT-L2-Parser-02"
+    ],
+    "paths": [],
+    "remotes": [],
+    "owner_agent": "Master Orchestrator",
+    "accountable_agent": "Master Orchestrator",
+    "responsible_agents": [
+      "Master Orchestrator"
+    ],
+    "evidence_status": "UNVERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "CONDITIONAL GO",
+    "confidence": 0.98,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-007",
+    "canonical_name": "Refactor-Agent-01",
+    "type": "agent",
+    "domain": "coder",
+    "source_records": [
+      "AGENT-L2-Refactor-Agent-01"
+    ],
+    "paths": [],
+    "remotes": [],
+    "owner_agent": "Master Orchestrator",
+    "accountable_agent": "Master Orchestrator",
+    "responsible_agents": [
+      "Master Orchestrator"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 0.98,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-008",
+    "canonical_name": "Gordy-Neo-01",
+    "type": "agent",
+    "domain": "deployer",
+    "source_records": [
+      "AGENT-L3-Gordy-Neo-01"
+    ],
+    "paths": [],
+    "remotes": [],
+    "owner_agent": "Master Orchestrator",
+    "accountable_agent": "Master Orchestrator",
+    "responsible_agents": [
+      "Master Orchestrator"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 0.98,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-009",
+    "canonical_name": "Deploy-Deployer",
+    "type": "agent",
+    "domain": "deployer",
+    "source_records": [
+      "AGENT-L3-Deploy-Deployer"
+    ],
+    "paths": [],
+    "remotes": [],
+    "owner_agent": "Master Orchestrator",
+    "accountable_agent": "Master Orchestrator",
+    "responsible_agents": [
+      "Master Orchestrator"
+    ],
+    "evidence_status": "UNVERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "CONDITIONAL GO",
+    "confidence": 0.98,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-010",
+    "canonical_name": "Gordy-App-Deployer",
+    "type": "agent",
+    "domain": "deployer",
+    "source_records": [
+      "AGENT-L3-Gordy-App-Deployer"
+    ],
+    "paths": [],
+    "remotes": [],
+    "owner_agent": "Master Orchestrator",
+    "accountable_agent": "Master Orchestrator",
+    "responsible_agents": [
+      "Master Orchestrator"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 0.98,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-011",
+    "canonical_name": "SelfHeal-Watchdog",
+    "type": "agent",
+    "domain": "deployer",
+    "source_records": [
+      "AGENT-L3-SelfHeal-Watchdog"
+    ],
+    "paths": [],
+    "remotes": [],
+    "owner_agent": "Master Orchestrator",
+    "accountable_agent": "Master Orchestrator",
+    "responsible_agents": [
+      "Master Orchestrator"
+    ],
+    "evidence_status": "UNVERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "CONDITIONAL GO",
+    "confidence": 0.98,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-012",
+    "canonical_name": "Gordy-Dell-01",
+    "type": "agent",
+    "domain": "coder",
+    "source_records": [
+      "AGENT-W1-Gordy-Dell-01"
+    ],
+    "paths": [],
+    "remotes": [],
+    "owner_agent": "Master Orchestrator",
+    "accountable_agent": "Master Orchestrator",
+    "responsible_agents": [
+      "Master Orchestrator"
+    ],
+    "evidence_status": "UNVERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "CONDITIONAL GO",
+    "confidence": 0.98,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-013",
+    "canonical_name": "Gordy-Dell-02",
+    "type": "agent",
+    "domain": "coder",
+    "source_records": [
+      "AGENT-W1-Gordy-Dell-02"
+    ],
+    "paths": [],
+    "remotes": [],
+    "owner_agent": "Master Orchestrator",
+    "accountable_agent": "Master Orchestrator",
+    "responsible_agents": [
+      "Master Orchestrator"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 0.98,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-014",
+    "canonical_name": "Optimizer-01",
+    "type": "agent",
+    "domain": "coder",
+    "source_records": [
+      "AGENT-W1-Optimizer-01"
+    ],
+    "paths": [],
+    "remotes": [],
+    "owner_agent": "Master Orchestrator",
+    "accountable_agent": "Master Orchestrator",
+    "responsible_agents": [
+      "Master Orchestrator"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 0.98,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-015",
+    "canonical_name": "SecurityScan-W1",
+    "type": "agent",
+    "domain": "coder",
+    "source_records": [
+      "AGENT-W1-SecurityScan-W1"
+    ],
+    "paths": [],
+    "remotes": [],
+    "owner_agent": "Master Orchestrator",
+    "accountable_agent": "Master Orchestrator",
+    "responsible_agents": [
+      "Master Orchestrator"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 0.98,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-016",
+    "canonical_name": "UI-Client-Pad",
+    "type": "agent",
+    "domain": "monitor",
+    "source_records": [
+      "AGENT-IPAD-UI-Client-Pad"
+    ],
+    "paths": [],
+    "remotes": [],
+    "owner_agent": "Master Orchestrator",
+    "accountable_agent": "Master Orchestrator",
+    "responsible_agents": [
+      "Master Orchestrator"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 0.98,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-017",
+    "canonical_name": "AlertBroker-Pad",
+    "type": "agent",
+    "domain": "monitor",
+    "source_records": [
+      "AGENT-IPAD-AlertBroker-Pad"
+    ],
+    "paths": [],
+    "remotes": [],
+    "owner_agent": "Master Orchestrator",
+    "accountable_agent": "Master Orchestrator",
+    "responsible_agents": [
+      "Master Orchestrator"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 0.98,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-018",
+    "canonical_name": "UI-Client-Phone",
+    "type": "agent",
+    "domain": "monitor",
+    "source_records": [
+      "AGENT-IPHONE-UI-Client-Phone"
+    ],
+    "paths": [],
+    "remotes": [],
+    "owner_agent": "Master Orchestrator",
+    "accountable_agent": "Master Orchestrator",
+    "responsible_agents": [
+      "Master Orchestrator"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 0.98,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-019",
+    "canonical_name": "PushRelay-01",
+    "type": "agent",
+    "domain": "monitor",
+    "source_records": [
+      "AGENT-IPHONE-PushRelay-01"
+    ],
+    "paths": [],
+    "remotes": [],
+    "owner_agent": "Master Orchestrator",
+    "accountable_agent": "Master Orchestrator",
+    "responsible_agents": [
+      "Master Orchestrator"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 0.98,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-020",
+    "canonical_name": "UI-Client-iPad-Pro-11",
+    "type": "agent",
+    "domain": "monitor",
+    "source_records": [
+      "AGENT-IPAD_PRO_11-UI-Client-iPad-Pro-11"
+    ],
+    "paths": [],
+    "remotes": [],
+    "owner_agent": "Master Orchestrator",
+    "accountable_agent": "Master Orchestrator",
+    "responsible_agents": [
+      "Master Orchestrator"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 0.98,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-021",
+    "canonical_name": "UI-Client-iPad-Mini-1",
+    "type": "agent",
+    "domain": "monitor",
+    "source_records": [
+      "AGENT-IPAD_MINI_1-UI-Client-iPad-Mini-1"
+    ],
+    "paths": [],
+    "remotes": [],
+    "owner_agent": "Master Orchestrator",
+    "accountable_agent": "Master Orchestrator",
+    "responsible_agents": [
+      "Master Orchestrator"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 0.98,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-022",
+    "canonical_name": "UI-Client-iPad-Mini-2",
+    "type": "agent",
+    "domain": "monitor",
+    "source_records": [
+      "AGENT-IPAD_MINI_2-UI-Client-iPad-Mini-2"
+    ],
+    "paths": [],
+    "remotes": [],
+    "owner_agent": "Master Orchestrator",
+    "accountable_agent": "Master Orchestrator",
+    "responsible_agents": [
+      "Master Orchestrator"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 0.98,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-023",
+    "canonical_name": "HAS Core Build",
+    "type": "build",
+    "domain": "deployer",
+    "source_records": [
+      "BUILD-001"
+    ],
+    "paths": [
+      "logs/builds/has-api.log"
+    ],
+    "remotes": [],
+    "owner_agent": "HASF Pipeline Agent",
+    "accountable_agent": "HASF Pipeline Agent",
+    "responsible_agents": [
+      "HASF Pipeline Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-024",
+    "canonical_name": "HASF Backend Build",
+    "type": "build",
+    "domain": "deployer",
+    "source_records": [
+      "BUILD-002"
+    ],
+    "paths": [
+      "logs/builds/has-worker.log"
+    ],
+    "remotes": [],
+    "owner_agent": "HASF Pipeline Agent",
+    "accountable_agent": "HASF Pipeline Agent",
+    "responsible_agents": [
+      "HASF Pipeline Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-025",
+    "canonical_name": "HASF Frontend Build",
+    "type": "build",
+    "domain": "deployer",
+    "source_records": [
+      "BUILD-003"
+    ],
+    "paths": [
+      "logs/builds/frontend.log"
+    ],
+    "remotes": [],
+    "owner_agent": "HASF Pipeline Agent",
+    "accountable_agent": "HASF Pipeline Agent",
+    "responsible_agents": [
+      "HASF Pipeline Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-026",
+    "canonical_name": "Live Tracker Build",
+    "type": "build",
+    "domain": "deployer",
+    "source_records": [
+      "BUILD-004"
+    ],
+    "paths": [
+      "has_live_project_tracker/tracker.log"
+    ],
+    "remotes": [],
+    "owner_agent": "HASF Pipeline Agent",
+    "accountable_agent": "HASF Pipeline Agent",
+    "responsible_agents": [
+      "HASF Pipeline Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-027",
+    "canonical_name": "Docker Compose Build",
+    "type": "build",
+    "domain": "deployer",
+    "source_records": [
+      "BUILD-005"
+    ],
+    "paths": [
+      "logs/builds/docker-compose.log"
+    ],
+    "remotes": [],
+    "owner_agent": "HASF Pipeline Agent",
+    "accountable_agent": "HASF Pipeline Agent",
+    "responsible_agents": [
+      "HASF Pipeline Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-028",
+    "canonical_name": "AG Bootstrap Build",
+    "type": "build",
+    "domain": "deployer",
+    "source_records": [
+      "BUILD-006"
+    ],
+    "paths": [
+      "logs/builds/ag-bootstrap.log"
+    ],
+    "remotes": [],
+    "owner_agent": "HASF Pipeline Agent",
+    "accountable_agent": "HASF Pipeline Agent",
+    "responsible_agents": [
+      "HASF Pipeline Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-029",
+    "canonical_name": "Prompt Registry Import",
+    "type": "build",
+    "domain": "security",
+    "source_records": [
+      "BUILD-007"
+    ],
+    "paths": [
+      "logs/builds/prompt-registry.log"
+    ],
+    "remotes": [],
+    "owner_agent": "HASF Pipeline Agent",
+    "accountable_agent": "HASF Pipeline Agent",
+    "responsible_agents": [
+      "HASF Pipeline Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-030",
+    "canonical_name": "QA Fixture Run",
+    "type": "build",
+    "domain": "security",
+    "source_records": [
+      "BUILD-008"
+    ],
+    "paths": [
+      "logs/builds/qa-fixture.log"
+    ],
+    "remotes": [],
+    "owner_agent": "HASF Pipeline Agent",
+    "accountable_agent": "HASF Pipeline Agent",
+    "responsible_agents": [
+      "HASF Pipeline Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-031",
+    "canonical_name": "Security Scan Run",
+    "type": "build",
+    "domain": "security",
+    "source_records": [
+      "BUILD-009"
+    ],
+    "paths": [
+      "logs/builds/security-scan.log"
+    ],
+    "remotes": [],
+    "owner_agent": "HASF Pipeline Agent",
+    "accountable_agent": "HASF Pipeline Agent",
+    "responsible_agents": [
+      "HASF Pipeline Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-032",
+    "canonical_name": "agentic-radar",
+    "type": "repository",
+    "domain": "governance",
+    "source_records": [
+      "GITHUB-001"
+    ],
+    "paths": [],
+    "remotes": [
+      "https://github.com/hochster71/agentic-radar"
+    ],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "HIGH",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-033",
+    "canonical_name": "ALISON-BABY-SIGN-CURRICULUM",
+    "type": "repository",
+    "domain": "coder",
+    "source_records": [
+      "GITHUB-002"
+    ],
+    "paths": [],
+    "remotes": [
+      "https://github.com/hochster71/ALISON-BABY-SIGN-CURRICULUM"
+    ],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-034",
+    "canonical_name": "autoforge",
+    "type": "repository",
+    "domain": "governance",
+    "source_records": [
+      "GITHUB-003"
+    ],
+    "paths": [],
+    "remotes": [
+      "https://github.com/hochster71/autoforge"
+    ],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "HIGH",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-035",
+    "canonical_name": "Certificate-to-Field---Security-Impact-Assessment-Interactive-Dashboard",
+    "type": "repository",
+    "domain": "coder",
+    "source_records": [
+      "GITHUB-004"
+    ],
+    "paths": [],
+    "remotes": [
+      "https://github.com/hochster71/Certificate-to-Field---Security-Impact-Assessment-Interactive-Dashboard"
+    ],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-036",
+    "canonical_name": "Certified-Information-System-Security-Professional-Training",
+    "type": "repository",
+    "domain": "coder",
+    "source_records": [
+      "GITHUB-005"
+    ],
+    "paths": [],
+    "remotes": [
+      "https://github.com/hochster71/Certified-Information-System-Security-Professional-Training"
+    ],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "HIGH",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-037",
+    "canonical_name": "cic-dynasec-c2",
+    "type": "repository",
+    "domain": "governance",
+    "source_records": [
+      "GITHUB-006"
+    ],
+    "paths": [],
+    "remotes": [
+      "https://github.com/hochster71/cic-dynasec-c2"
+    ],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-038",
+    "canonical_name": "Cyber-Security-Risk-Management-Construct-Interactive-Training-Dashboard-",
+    "type": "repository",
+    "domain": "coder",
+    "source_records": [
+      "GITHUB-007"
+    ],
+    "paths": [],
+    "remotes": [
+      "https://github.com/hochster71/Cyber-Security-Risk-Management-Construct-Interactive-Training-Dashboard-"
+    ],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "HIGH",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-039",
+    "canonical_name": "cyberqrg-web-suite",
+    "type": "repository",
+    "domain": "governance",
+    "source_records": [
+      "GITHUB-008"
+    ],
+    "paths": [],
+    "remotes": [
+      "https://github.com/hochster71/cyberqrg-web-suite"
+    ],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-040",
+    "canonical_name": "Cybersecurity-Reference-Data-Lake",
+    "type": "repository",
+    "domain": "governance",
+    "source_records": [
+      "GITHUB-009"
+    ],
+    "paths": [],
+    "remotes": [
+      "https://github.com/hochster71/Cybersecurity-Reference-Data-Lake"
+    ],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-041",
+    "canonical_name": "dynasec-ai-platform",
+    "type": "repository",
+    "domain": "governance",
+    "source_records": [
+      "GITHUB-010"
+    ],
+    "paths": [],
+    "remotes": [
+      "https://github.com/hochster71/dynasec-ai-platform"
+    ],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-042",
+    "canonical_name": "dynasec-ai-solutions-website",
+    "type": "repository",
+    "domain": "governance",
+    "source_records": [
+      "GITHUB-011"
+    ],
+    "paths": [],
+    "remotes": [
+      "https://github.com/hochster71/dynasec-ai-solutions-website"
+    ],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-043",
+    "canonical_name": "dynasec-homepage",
+    "type": "repository",
+    "domain": "governance",
+    "source_records": [
+      "GITHUB-012"
+    ],
+    "paths": [],
+    "remotes": [
+      "https://github.com/hochster71/dynasec-homepage"
+    ],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-044",
+    "canonical_name": "dynasec-stripe-webhook",
+    "type": "repository",
+    "domain": "governance",
+    "source_records": [
+      "GITHUB-013"
+    ],
+    "paths": [],
+    "remotes": [
+      "https://github.com/hochster71/dynasec-stripe-webhook"
+    ],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "HIGH",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-045",
+    "canonical_name": "dynasec-visibility",
+    "type": "repository",
+    "domain": "governance",
+    "source_records": [
+      "GITHUB-014"
+    ],
+    "paths": [],
+    "remotes": [
+      "https://github.com/hochster71/dynasec-visibility"
+    ],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-046",
+    "canonical_name": "generative-ai-for-beginners",
+    "type": "repository",
+    "domain": "governance",
+    "source_records": [
+      "GITHUB-015"
+    ],
+    "paths": [],
+    "remotes": [
+      "https://github.com/hochster71/generative-ai-for-beginners"
+    ],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-047",
+    "canonical_name": "Government_Shutdown_Interactive_Dashboard",
+    "type": "repository",
+    "domain": "coder",
+    "source_records": [
+      "GITHUB-016"
+    ],
+    "paths": [],
+    "remotes": [
+      "https://github.com/hochster71/Government_Shutdown_Interactive_Dashboard"
+    ],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-048",
+    "canonical_name": "Happy-Veterans-Day",
+    "type": "repository",
+    "domain": "coder",
+    "source_records": [
+      "GITHUB-017"
+    ],
+    "paths": [],
+    "remotes": [
+      "https://github.com/hochster71/Happy-Veterans-Day"
+    ],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-049",
+    "canonical_name": "hoch-ops-center",
+    "type": "repository",
+    "domain": "governance",
+    "source_records": [
+      "GITHUB-018"
+    ],
+    "paths": [],
+    "remotes": [
+      "https://github.com/hochster71/hoch-ops-center"
+    ],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-050",
+    "canonical_name": "mcp-for-beginners",
+    "type": "repository",
+    "domain": "governance",
+    "source_records": [
+      "GITHUB-020"
+    ],
+    "paths": [],
+    "remotes": [
+      "https://github.com/hochster71/mcp-for-beginners"
+    ],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-051",
+    "canonical_name": "OpenMemory",
+    "type": "repository",
+    "domain": "coder",
+    "source_records": [
+      "GITHUB-021"
+    ],
+    "paths": [],
+    "remotes": [
+      "https://github.com/hochster71/OpenMemory"
+    ],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-052",
+    "canonical_name": "RMF-Training-by-Michael-Hoch",
+    "type": "repository",
+    "domain": "governance",
+    "source_records": [
+      "GITHUB-022"
+    ],
+    "paths": [],
+    "remotes": [
+      "https://github.com/hochster71/RMF-Training-by-Michael-Hoch"
+    ],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "HIGH",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  },
+  {
+    "canonical_id": "CAN-SNGL-053",
+    "canonical_name": "pass.strings",
+    "type": "document",
+    "domain": "personal",
+    "source_records": [
+      "CLOUD-017"
+    ],
+    "paths": [
+      "/Users/michaelhoch/Library/CloudStorage/iCloudDrive-iCloudDrive (6-26-26 9:57\u202fPM)/com~apple~shoebox/UbiquitousCards/wcySa7AJN7ur1YLgDTALM4n7q4o=.pkpass/en.lproj/pass.strings"
+    ],
+    "remotes": [],
+    "owner_agent": "Data Consolidation Agent",
+    "accountable_agent": "Data Consolidation Agent",
+    "responsible_agents": [
+      "Data Consolidation Agent"
+    ],
+    "evidence_status": "VERIFIED",
+    "qa_status": "UNKNOWN",
+    "security_status": "VERIFIED",
+    "monetization_potential": "LOW",
+    "production_readiness": "GO",
+    "confidence": 1.0,
+    "gaps": [],
+    "next_action": "canonicalize"
+  }
+]

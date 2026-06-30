@@ -1,0 +1,80 @@
+[
+  {
+    "group_id": "DUP-001",
+    "canonical_name": "hoch_agent_swarm",
+    "records": [
+      {
+        "id": "GITHUB-019",
+        "name": "hoch_agent_swarm",
+        "source": "github.com",
+        "path_or_remote": "https://github.com/hochster71/hoch_agent_swarm",
+        "type": "repository",
+        "domain": "coder",
+        "owner_agent": "Data Consolidation Agent",
+        "evidence_status": "VERIFIED",
+        "confidence": 1.0,
+        "last_seen": "2026-06-30T17:49:06Z",
+        "gaps": [],
+        "next_action": "deduplicate"
+      },
+      {
+        "id": "LOCAL-001",
+        "name": "hoch_agent_swarm",
+        "source": "local_find",
+        "path_or_remote": "/Users/michaelhoch/hoch_agent_swarm",
+        "type": "folder",
+        "domain": "coder",
+        "owner_agent": "Data Consolidation Agent",
+        "evidence_status": "VERIFIED",
+        "confidence": 1.0,
+        "last_seen": "2026-06-30T17:49:07Z",
+        "gaps": [
+          "22 uncommitted local changes detected"
+        ],
+        "next_action": "deduplicate",
+        "path": "/Users/michaelhoch/hoch_agent_swarm",
+        "file_count": 4538,
+        "total_size_mb": 156.45,
+        "uncommitted_files_count": 22,
+        "uncommitted_files": [
+          "M has_live_project_tracker/data/cloud_inventory.json",
+          "M has_live_project_tracker/data/github_inventory.json",
+          "M has_live_project_tracker/data/local_inventory.json",
+          "M has_live_project_tracker/data/status.json",
+          "M has_live_project_tracker/data/tasks.json",
+          "M has_live_project_tracker/index.html",
+          "M has_live_project_tracker/server.js",
+          "M has_live_project_tracker/tracker.log",
+          "M hoch_agent_swarm/hoch_agent_swarm.xcodeproj/project.xcworkspace/xcuserdata/michaelhoch.xcuserdatad/UserInterfaceState.xcuserstate",
+          "M scripts/tracker_ingest_cloud.py",
+          "M scripts/tracker_ingest_github.py",
+          "M scripts/tracker_ingest_local.py",
+          "M scripts/tracker_inventory_report.sh",
+          "M scripts/tracker_sync_agents.py",
+          "M scripts/tracker_sync_builds.py"
+        ]
+      },
+      {
+        "id": "LOCAL-002",
+        "name": "hoch_agent_swarm_prompt_library",
+        "source": "local_find",
+        "path_or_remote": "/Users/michaelhoch/hoch_agent_swarm_prompt_library",
+        "type": "folder",
+        "domain": "coder",
+        "owner_agent": "Data Consolidation Agent",
+        "evidence_status": "VERIFIED",
+        "confidence": 1.0,
+        "last_seen": "2026-06-30T17:49:07Z",
+        "gaps": [],
+        "next_action": "deduplicate",
+        "path": "/Users/michaelhoch/hoch_agent_swarm_prompt_library",
+        "file_count": 19,
+        "total_size_mb": 5.46,
+        "uncommitted_files_count": 0,
+        "uncommitted_files": []
+      }
+    ],
+    "confidence": 1.0,
+    "review_required": true
+  }
+]

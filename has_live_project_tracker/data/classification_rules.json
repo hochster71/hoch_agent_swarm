@@ -1,0 +1,54 @@
+{
+  "rules": [
+    {
+      "type": "evidence",
+      "patterns": ["docs/evidence", "evidence/ui", "evidence-", ".spec.ts.log"],
+      "description": "Verification trails, test logs, and audit screenshots."
+    },
+    {
+      "type": "test",
+      "patterns": ["tests/", ".spec.ts", ".test.", "test_"],
+      "description": "Playwright, unit, and integration test specifications."
+    },
+    {
+      "type": "build_config",
+      "patterns": ["Dockerfile", "docker-compose", "package.json", "pyproject.toml", "plist", "makefile"],
+      "description": "Build, container, and daemon configuration files."
+    },
+    {
+      "type": "prompt",
+      "patterns": ["prompt_library", "prompts", ".prompt", "system_prompt"],
+      "description": "Swarm node instructions, system prompts, and structured templates."
+    },
+    {
+      "type": "script",
+      "patterns": ["scripts/", ".sh", ".py", ".bash"],
+      "description": "Automation utilities, deployment triggers, and ingestion scripts."
+    },
+    {
+      "type": "document",
+      "patterns": [".md", ".txt", ".pdf", "budget", "notes", "diet"],
+      "description": "General documentation, architecture guides, sheets, and checklists."
+    },
+    {
+      "type": "dataset",
+      "patterns": [".json", ".sqlite", ".db", ".ndjson", "inventory"],
+      "description": "Local structured databases and catalog lists."
+    },
+    {
+      "type": "asset",
+      "patterns": [".png", ".jpg", ".webp", ".ico", "logo", "icon"],
+      "description": "Static media assets and user interface icons."
+    },
+    {
+      "type": "agent",
+      "patterns": ["agent", "orchestrator", "watchdog", "proxy", "sentinel"],
+      "description": "Swarm cognitive units and runtime proxies."
+    },
+    {
+      "type": "service",
+      "patterns": ["has-api", "gateway", "backend"],
+      "description": "Swarm host service interfaces."
+    }
+  ]
+}
