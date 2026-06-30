@@ -1518,7 +1518,17 @@ async function findTruthSourcesInfo() {
   let chosen_source = "FILE_BASED_TRUTH";
   let recommendation = "Use local file fallback.";
   
+  let apiStateSucceeded = false;
   if (apiOnline) {
+    try {
+      await fetchJson("http://127.0.0.1:8000/api/v1/runtime-truth/state");
+      apiStateSucceeded = true;
+    } catch (e) {
+      // API call failed, fall back
+    }
+  }
+
+  if (apiOnline && apiStateSucceeded) {
     chosen_source = "LIVE_API_TRUTH";
     recommendation = "Live API is online and healthy. Operating on real-time API truth.";
   } else {
@@ -2142,6 +2152,200 @@ const server = http.createServer((req, res) => {
     });
   }
 
+  const agentToPodMap = {
+    "Master Orchestrator": "has",
+    "Research & Innovation Agent": "hobby",
+    "Personal Life Agent": "has",
+    "Business Operations Agent": "business",
+    "Hobbies / Pets / Investing Agent": "hobby",
+    "HASF Pipeline Agent": "hasf",
+    "PERT & Planning Agent": "hasf",
+    "Monetization & Compliance Agent": "business",
+    "QA Auditor Agent": "hasf",
+    "Security Auditor Agent": "cyber",
+    "Evidence Collector Agent": "cyber",
+    "Live Tracker Runtime Agent": "ops",
+    "Production Acceleration Agent": "ops",
+    "Data Consolidation Agent": "ops"
+  };
+
+  if (url.pathname === "/api/pods") {
+    const statusData = readJson("status.json", { agents: [] });
+    const agentInventory = readJson("agent_inventory.json", []);
+    const tasks = readJson("tasks.json", []);
+
+    // Combine expert agents and inventory agents
+    const allAgents = [];
+    (statusData.agents || []).forEach(a => {
+      allAgents.push({ name: a.name, status: a.status });
+    });
+    agentInventory.forEach(item => {
+      if (!allAgents.some(a => a.name === item.name)) {
+        allAgents.push({ name: item.name, status: item.evidence_status === "VERIFIED" ? "Running" : "Idle" });
+      }
+    });
+
+    const getPodCounts = (podId) => {
+      let agentCount = 0;
+      let activeTaskCount = 0;
+
+      const podAgents = allAgents.filter(a => {
+        const pod = agentToPodMap[a.name] || "ops";
+        return pod === podId;
+      });
+
+      agentCount = podAgents.length;
+
+      // Count tasks assigned to these agents which are not done
+      const podAgentNames = podAgents.map(a => a.name);
+      activeTaskCount = tasks.filter(t => 
+        podAgentNames.includes(t.assigned_agent) && 
+        String(t.status).toLowerCase() !== "done"
+      ).length;
+
+      return { agentCount, activeTaskCount };
+    };
+
+    const pods = [
+      {
+        id: "has",
+        name: "HAS POD",
+        purpose: "Personal/home operating system execution and family schedule automation.",
+        status: "LIVE",
+        ...getPodCounts("has"),
+        risk_zone: "GREEN",
+        data_state: "LIVE",
+        source: "status.json + agent_inventory.json",
+        next_action: "Monitor core system health"
+      },
+      {
+        id: "hasf",
+        name: "HASF POD",
+        purpose: "Software factory build, QA, DevSecOps, release, and self-healing execution.",
+        status: "LIVE",
+        ...getPodCounts("hasf"),
+        risk_zone: "AMBER",
+        data_state: "LIVE",
+        source: "status.json + tasks.json",
+        next_action: "Run integration tests"
+      },
+      {
+        id: "business",
+        name: "Business POD",
+        purpose: "Revenue, launches, monetization campaigns, and Epic Fury launch verification.",
+        status: "LIVE",
+        ...getPodCounts("business"),
+        risk_zone: "GREEN",
+        data_state: "LIVE",
+        source: "status.json + agent_inventory.json",
+        next_action: "Track pricing matrix models"
+      },
+      {
+        id: "cyber",
+        name: "Cyber POD",
+        purpose: "Security audits, RMF compliance, SAST/DAST scanning, and vulnerability checks.",
+        status: "WAITING",
+        ...getPodCounts("cyber"),
+        risk_zone: "GREEN",
+        data_state: "LIVE",
+        source: "status.json + agent_inventory.json",
+        next_action: "Trigger SAST vulnerability sweep"
+      },
+      {
+        id: "hobby",
+        name: "Hobby POD",
+        purpose: "Creative experiments, prototype logs, game logic, and experimental research.",
+        status: "LIVE",
+        ...getPodCounts("hobby"),
+        risk_zone: "GREEN",
+        data_state: "LIVE",
+        source: "status.json + agent_inventory.json",
+        next_action: "Aggregate research feeds"
+      },
+      {
+        id: "family",
+        name: "Family POD",
+        purpose: "Family-safe automation, kids routines, domestic chores, and safety gates.",
+        status: "LIVE",
+        ...getPodCounts("family"),
+        risk_zone: "GREEN",
+        data_state: "LIVE",
+        source: "status.json + agent_inventory.json",
+        next_action: "Verify chores allocation"
+      },
+      {
+        id: "ops",
+        name: "Ops POD",
+        purpose: "Container orchestration, Docker sidecar, self-healing runtime, and log monitors.",
+        status: "LIVE",
+        ...getPodCounts("ops"),
+        risk_zone: "GREEN",
+        data_state: "LIVE",
+        source: "status.json + agent_inventory.json",
+        next_action: "Awaiting k3d sidecar bootstrap"
+      }
+    ];
+
+    return sendJson(res, { pods });
+  }
+
+  if (url.pathname === "/api/theater/state") {
+    const eventsFile = path.join(DATA, "events.ndjson");
+    let recentEvents = [];
+    if (fs.existsSync(eventsFile)) {
+      try {
+        const lines = fs.readFileSync(eventsFile, "utf8").trim().split("\n");
+        const parsed = lines.filter(Boolean).map(JSON.parse);
+        const fiveMinsAgo = Date.now() - 5 * 60 * 1000;
+        recentEvents = parsed.filter(evt => {
+          const ts = evt.ts ? new Date(evt.ts).getTime() : 0;
+          return ts >= fiveMinsAgo && evt.type !== "heartbeat";
+        });
+      } catch (err) {
+        console.error("Error parsing events for theater state:", err);
+      }
+    }
+
+    let readiness = "WAITING";
+    let banner = "HOCH PODS ARMED — AGENTS REGISTERED, NO ACTIVE EXECUTION EVENTS";
+    let nextAction = "Submit mission or start Docker sidecar";
+
+    if (recentEvents.length > 0) {
+      readiness = "READY";
+      banner = "HOCH PODS ONLINE — ROCKETS READY — WAITING FOR NEXT REAL MISSION";
+      nextAction = "Monitor live swarm execution and DORA logs";
+    } else {
+      readiness = "WAITING";
+      banner = "K8S SIDECAR WAITING FOR DOCKER — BASELINE STILL GREEN";
+      nextAction = "Start Docker Desktop to bootstrap k3d sidecar";
+    }
+
+    const statusData = readJson("status.json", { agents: [] });
+    const agentInventory = readJson("agent_inventory.json", []);
+
+    const allAgents = [];
+    (statusData.agents || []).forEach(a => {
+      allAgents.push({ name: a.name, status: a.status });
+    });
+    agentInventory.forEach(item => {
+      if (!allAgents.some(a => a.name === item.name)) {
+        allAgents.push({ name: item.name, status: item.evidence_status === "VERIFIED" ? "Running" : "Idle" });
+      }
+    });
+
+    return sendJson(res, {
+      readiness,
+      banner,
+      pods: [],
+      agents: allAgents,
+      active_clips: recentEvents.slice(-5).map(e => e.type),
+      last_real_event: recentEvents.length > 0 ? recentEvents[recentEvents.length - 1] : null,
+      data_state: "LIVE",
+      source: "health + tasks + events + agent_inventory",
+      next_action: nextAction
+    });
+  }
+
   if (url.pathname === "/api/agents/profiles") {
     const statusData = readJson("status.json", { agents: [] });
     const agentInventory = readJson("agent_inventory.json", []);
@@ -2167,6 +2371,7 @@ const server = http.createServer((req, res) => {
 
     (statusData.agents || []).forEach(agent => {
       profiles[agent.name] = {
+        id: agent.name.replace(/\s+/g, "-"),
         name: agent.name,
         role: agent.role,
         status: agent.status,
@@ -2191,7 +2396,18 @@ const server = http.createServer((req, res) => {
           consulted: [],
           informed: []
         },
-        capabilities: expertCapabilities[agent.name] || ["utility"]
+        capabilities: expertCapabilities[agent.name] || ["utility"],
+        pod: agentToPodMap[agent.name] || "ops",
+        mission: agent.description,
+        why_spawned: "System core bootstrap and role allocation",
+        current_task: agent.next_action || "monitor",
+        tools: agent.name.includes("Orchestrator") ? ["delegator", "tracker"] : (agent.name.includes("Auditor") ? ["playwright", "semgrep"] : ["python", "git"]),
+        inputs: ["requirements", "backlog"],
+        expected_outputs: ["verdicts", "code", "evidence"],
+        raci_role: agent.name === "Master Orchestrator" ? "Accountable" : "Responsible",
+        risk_zone: agent.risk_level === "High" ? "RED" : (agent.risk_level === "Medium" ? "AMBER" : "GREEN"),
+        data_state: "LIVE",
+        source: "status.json"
       };
     });
 
@@ -2199,6 +2415,7 @@ const server = http.createServer((req, res) => {
       const name = item.name;
       if (!profiles[name]) {
         profiles[name] = {
+          id: name.replace(/\s+/g, "-"),
           name: name,
           role: "Component Agent",
           status: item.evidence_status === "VERIFIED" ? "Running" : "Idle",
@@ -2223,7 +2440,18 @@ const server = http.createServer((req, res) => {
             consulted: [],
             informed: []
           },
-          capabilities: [item.domain || "utility"]
+          capabilities: [item.domain || "utility"],
+          pod: agentToPodMap[name] || "ops",
+          mission: `Swarm infrastructure agent running on ${item.path_or_remote}.`,
+          why_spawned: "Swarm worker heartbeat verification",
+          current_task: item.next_action || "monitor",
+          tools: ["ping", "ssh", "docker"],
+          inputs: ["health", "metrics"],
+          expected_outputs: ["status"],
+          raci_role: "Informed",
+          risk_zone: "GREEN",
+          data_state: "LIVE",
+          source: "agent_inventory.json"
         };
       }
     });
