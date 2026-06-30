@@ -30,6 +30,9 @@ ENDPOINTS=(
   "/api/acceleration"
   "/api/raci"
   "/api/raci-heatmap"
+  "/api/inventory/github"
+  "/api/inventory/local"
+  "/api/inventory/cloud"
 )
 
 FAILED=0
