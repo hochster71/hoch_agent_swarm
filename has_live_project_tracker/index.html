@@ -989,6 +989,9 @@
         <div class="nav-item" onclick="switchTab('build-factory')">
           <span class="nav-icon">🏭</span>Build Factory
         </div>
+        <div class="nav-item" onclick="navigate('mission-control')">
+          <span class="nav-icon">🚀</span>Mission Control
+        </div>
         <div class="nav-item" onclick="navigate('observability')">
           <span class="nav-icon">🔍</span>Observability
         </div>
@@ -2124,7 +2127,448 @@
         
         let html = "";
         
-        if (pageId === "observability") {
+        if (pageId === "mission-control") {
+          // Initialize global helper functions if not already initialized
+          if (!window.submitMissionIntake) {
+            window.submitMissionIntake = async function() {
+              const goalInput = document.getElementById("missionGoalInput");
+              if (!goalInput || !goalInput.value.trim()) {
+                alert("Please enter a mission goal.");
+                return;
+              }
+              const goalText = goalInput.value.trim();
+              let target_pod = "ops";
+              let command = "verify_config";
+              let name = goalText;
+              let mission_id = `mission-${Date.now()}`;
+              
+              if (goalText.toLowerCase().includes("epic fury") || goalText.toLowerCase().includes("business")) {
+                target_pod = "business";
+                command = "launch_epic_fury";
+                name = "Business POD Epic Fury Launch Mission";
+                mission_id = `fury-${Date.now()}`;
+              }
+              
+              const btn = document.getElementById("missionSubmitBtn");
+              if (btn) btn.disabled = true;
+              try {
+                const res = await fetch("/api/v1/pods/mission/intake", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    mission_id,
+                    name,
+                    target_pod,
+                    command,
+                    parameters: {}
+                  })
+                });
+                if (!res.ok) throw new Error(await res.text());
+                const data = await res.json();
+                window.selectedMissionId = data.mission_id;
+                goalInput.value = "";
+                navigate('mission-control');
+              } catch (err) {
+                alert("Intake failed: " + err.message);
+              } finally {
+                if (btn) btn.disabled = false;
+              }
+            };
+          }
+          if (!window.selectMission) {
+            window.selectMission = function(missionId) {
+              window.selectedMissionId = missionId;
+              navigate('mission-control');
+            };
+          }
+          if (!window.approveMission) {
+            window.approveMission = async function(missionId, event) {
+              if (event) event.stopPropagation();
+              try {
+                const res = await fetch(`/api/v1/pods/missions/${missionId}/approve`, {
+                  method: "POST"
+                });
+                if (!res.ok) throw new Error(await res.text());
+                navigate('mission-control');
+              } catch (err) {
+                alert("Approval failed: " + err.message);
+              }
+            };
+          }
+
+          const missionsRes = await fetch("/api/v1/pods/missions").then(r => r.json());
+          const missions = missionsRes.missions || [];
+          
+          if (!window.selectedMissionId && missions.length > 0) {
+            window.selectedMissionId = missions[0].mission_id;
+          }
+          
+          let selectedMission = missions.find(m => m.mission_id === window.selectedMissionId);
+          let tasks = [];
+          if (window.selectedMissionId) {
+            try {
+              const tasksRes = await fetch(`/api/v1/pods/missions/${window.selectedMissionId}/graph`).then(r => r.json());
+              tasks = tasksRes.tasks || [];
+            } catch (e) {
+              console.error("Error loading tasks:", e);
+            }
+          }
+          
+          const totalMissions = missions.length;
+          const runningMissions = missions.filter(m => m.status === "RUNNING").length;
+          const pendingApproval = missions.filter(m => m.status === "WAITING_FOR_APPROVAL").length;
+          
+          let missionsListHtml = "";
+          if (missions.length === 0) {
+            missionsListHtml = `<div style="text-align:center; padding:30px; color:var(--text-muted);">No missions found. Submit a goal below to start.</div>`;
+          } else {
+            missionsListHtml = missions.map(m => {
+              const activeClass = m.mission_id === window.selectedMissionId ? 'active-mission-card' : '';
+              let badgeColor = 'var(--text-muted)';
+              let isPulsing = false;
+              if (m.status === 'RUNNING') { badgeColor = 'var(--green)'; isPulsing = true; }
+              else if (m.status === 'WAITING_FOR_APPROVAL') { badgeColor = 'var(--yellow)'; isPulsing = true; }
+              else if (m.status === 'COMPLETED') { badgeColor = 'var(--cyan)'; }
+              else if (m.status === 'FAILED') { badgeColor = 'var(--red)'; }
+              
+              return `
+                <div class="mission-card ${activeClass}" onclick="window.selectMission('${m.mission_id}')">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <span class="mission-id-badge">${escapeHtml(m.mission_id)}</span>
+                    <span class="mission-status-pill ${isPulsing ? 'pulsing-badge' : ''}" style="color:${badgeColor}; border-color:${badgeColor};">
+                      ${escapeHtml(m.status)}
+                    </span>
+                  </div>
+                  <div class="mission-goal-text">${escapeHtml(m.name)}</div>
+                  <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center; font-size:11px; color:var(--text-muted);">
+                    <span>POD: <b>${escapeHtml(m.target_pod.toUpperCase())}</b></span>
+                    <span>${new Date(m.created_at).toLocaleTimeString()}</span>
+                  </div>
+                  ${m.status === 'WAITING_FOR_APPROVAL' ? `
+                    <button class="approve-mission-btn" onclick="window.approveMission('${m.mission_id}', event)">
+                      ⚡ Approve & Deploy Swarm
+                    </button>
+                  ` : ''}
+                </div>
+              `;
+            }).join("");
+          }
+          
+          let graphHtml = "";
+          if (!selectedMission) {
+            graphHtml = `
+              <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:300px; color:var(--text-muted);">
+                <span>Select a mission from the list to view its live task graph.</span>
+              </div>
+            `;
+          } else {
+            graphHtml = `
+              <div class="selected-mission-header">
+                <h3>Mission: ${escapeHtml(selectedMission.name)}</h3>
+                <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">
+                  ID: <span style="font-family:monospace; color:var(--primary);">${escapeHtml(selectedMission.mission_id)}</span> | 
+                  Target POD: <span class="badge" style="border:1px solid var(--border-color); padding:2px 6px; border-radius:4px;">${escapeHtml(selectedMission.target_pod.toUpperCase())}</span> | 
+                  Command: <span style="font-family:monospace; color:var(--cyan);">${escapeHtml(selectedMission.command)}</span>
+                </div>
+              </div>
+              
+              <div class="graph-nodes-container">
+                ${tasks.map((t, idx) => {
+                  let stepStatusColor = 'var(--text-muted)';
+                  let isRunning = false;
+                  if (t.status === 'COMPLETED') stepStatusColor = 'var(--green)';
+                  else if (t.status === 'RUNNING') { stepStatusColor = 'var(--cyan)'; isRunning = true; }
+                  else if (t.status === 'FAILED') stepStatusColor = 'var(--red)';
+                  
+                  return `
+                    <div class="graph-node-wrapper">
+                      <div class="graph-step-number">Step ${t.step_index}</div>
+                      <div class="graph-node-card ${isRunning ? 'running-node' : ''}" style="border-color:${stepStatusColor}">
+                        <div class="graph-node-title">
+                          <b>${escapeHtml(t.name)}</b>
+                        </div>
+                        <div class="graph-node-agent">
+                          Agent: <span style="color:var(--primary); font-weight:600;">${escapeHtml(t.assigned_agent)}</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; font-size:11px;">
+                          <span style="color:${stepStatusColor}; font-weight:700;">${escapeHtml(t.status)}</span>
+                          ${t.evidence_path ? `<a href="/api/v1/pods/missions/${selectedMission.mission_id}/graph" target="_blank" style="color:var(--cyan); text-decoration:none;">📄 View Evidence</a>` : ''}
+                        </div>
+                      </div>
+                      ${idx < tasks.length - 1 ? `
+                        <div class="graph-arrow">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <polyline points="19 12 12 19 5 12"></polyline>
+                          </svg>
+                        </div>
+                      ` : ''}
+                    </div>
+                  `;
+                }).join("")}
+              </div>
+            `;
+          }
+          
+          html = `
+            <style>
+              .mission-control-layout {
+                display: grid;
+                grid-template-columns: 350px 1fr;
+                gap: 20px;
+                margin-top: 20px;
+                height: 500px;
+              }
+              .mission-sidebar {
+                background: rgba(0,0,0,0.15);
+                border: 1px solid var(--border-color);
+                border-radius: 10px;
+                padding: 15px;
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                overflow-y: auto;
+              }
+              .mission-graph-panel {
+                background: rgba(0,0,0,0.15);
+                border: 1px solid var(--border-color);
+                border-radius: 10px;
+                padding: 20px;
+                display: flex;
+                flex-direction: column;
+                overflow-y: auto;
+              }
+              .intake-card {
+                background: linear-gradient(135deg, var(--bg-hover) 0%, rgba(59, 130, 246, 0.1) 100%);
+                border: 1px solid var(--border-color);
+                border-radius: 10px;
+                padding: 20px;
+                margin-bottom: 10px;
+              }
+              .intake-title {
+                font-size: 16px;
+                font-weight: 700;
+                margin-bottom: 10px;
+                color: var(--text-main);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+              }
+              .intake-textarea {
+                width: 100%;
+                height: 70px;
+                background: rgba(0,0,0,0.3);
+                border: 1px solid var(--border-color);
+                border-radius: 6px;
+                padding: 10px;
+                color: var(--text-main);
+                font-family: inherit;
+                font-size: 13px;
+                resize: none;
+                outline: none;
+              }
+              .intake-textarea:focus {
+                border-color: var(--primary);
+              }
+              .submit-btn {
+                background: var(--primary);
+                color: #000;
+                border: none;
+                border-radius: 6px;
+                padding: 8px 16px;
+                font-weight: 700;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                margin-top: 10px;
+                transition: all 0.2s ease;
+              }
+              .submit-btn:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px var(--primary-glow);
+              }
+              .submit-btn:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+              }
+              .mission-card {
+                background: var(--bg-card);
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                padding: 12px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                margin-bottom: 10px;
+              }
+              .mission-card:hover {
+                border-color: var(--primary);
+                background: var(--bg-hover);
+              }
+              .active-mission-card {
+                border-color: var(--primary) !important;
+                background: rgba(59, 130, 246, 0.1) !important;
+                box-shadow: inset 0 0 10px rgba(59,130,246,0.15);
+              }
+              .mission-id-badge {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 11px;
+                color: var(--cyan);
+                background: rgba(6,182,212,0.1);
+                padding: 2px 6px;
+                border-radius: 4px;
+              }
+              .mission-status-pill {
+                font-size: 10px;
+                font-weight: 700;
+                border: 1px solid;
+                padding: 2px 6px;
+                border-radius: 10px;
+                text-transform: uppercase;
+              }
+              .mission-goal-text {
+                font-size: 13px;
+                font-weight: 600;
+                line-height: 1.4;
+                color: var(--text-main);
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+              }
+              .approve-mission-btn {
+                width: 100%;
+                background: var(--green);
+                color: #000;
+                border: none;
+                border-radius: 6px;
+                padding: 6px 12px;
+                font-weight: 700;
+                font-size: 11px;
+                margin-top: 10px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+              }
+              .approve-mission-btn:hover {
+                box-shadow: 0 4px 10px var(--green-glow);
+              }
+              .pulsing-badge {
+                animation: ssePulse 1.5s infinite;
+              }
+              .selected-mission-header {
+                border-bottom: 1px solid var(--border-color);
+                padding-bottom: 15px;
+                margin-bottom: 20px;
+              }
+              .selected-mission-header h3 {
+                margin: 0;
+                font-size: 18px;
+                font-weight: 700;
+              }
+              .graph-nodes-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+                padding: 20px 0;
+              }
+              .graph-node-wrapper {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+                max-width: 400px;
+              }
+              .graph-step-number {
+                font-size: 10px;
+                color: var(--text-muted);
+                text-transform: uppercase;
+                margin-bottom: 4px;
+              }
+              .graph-node-card {
+                width: 100%;
+                background: var(--bg-card);
+                border: 1.5px solid var(--border-color);
+                border-radius: 8px;
+                padding: 12px 16px;
+                box-shadow: var(--shadow-sm);
+                transition: all 0.2s ease;
+              }
+              .graph-node-card:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+              }
+              .running-node {
+                animation: activeNodeGlow 1.5s infinite alternate;
+              }
+              .graph-node-title {
+                font-size: 14px;
+                color: var(--text-main);
+                margin-bottom: 6px;
+              }
+              .graph-node-agent {
+                font-size: 12px;
+                color: var(--text-muted);
+              }
+              .graph-arrow {
+                margin: 10px 0;
+                color: var(--border-color);
+                display: flex;
+                justify-content: center;
+              }
+              @keyframes activeNodeGlow {
+                from { box-shadow: 0 0 5px rgba(6,182,212,0.1); border-color: var(--cyan); }
+                to { box-shadow: 0 0 15px rgba(6,182,212,0.4); border-color: #38bdf8; }
+              }
+              @keyframes ssePulse {
+                0% { opacity: 1; }
+                50% { opacity: 0.5; }
+                100% { opacity: 1; }
+              }
+            </style>
+            
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">
+              <div class="kpi-card" style="cursor:default;">
+                <div class="kpi-title">Total Swarm Missions</div>
+                <div class="kpi-val" style="color:var(--cyan);">${totalMissions}</div>
+                <div class="kpi-sub">Registered project workflows</div>
+              </div>
+              <div class="kpi-card" style="cursor:default;">
+                <div class="kpi-title">Running Swarms</div>
+                <div class="kpi-val" style="color:var(--green);">${runningMissions}</div>
+                <div class="kpi-sub">Active task execution graphs</div>
+              </div>
+              <div class="kpi-card" style="cursor:default;">
+                <div class="kpi-title">Pending Human Approval</div>
+                <div class="kpi-val" style="color:${pendingApproval > 0 ? 'var(--yellow)' : 'var(--text-muted)'};">
+                  ${pendingApproval}
+                </div>
+                <div class="kpi-sub">Missions awaiting manual release</div>
+              </div>
+            </div>
+            
+            <div class="mission-control-layout">
+              <div class="mission-sidebar">
+                <div class="intake-card">
+                  <div class="intake-title">🚀 Swarm Mission Intake</div>
+                  <textarea id="missionGoalInput" class="intake-textarea" placeholder="Enter Swarm Goal (e.g. Launch Business Epic Fury)"></textarea>
+                  <button id="missionSubmitBtn" class="submit-btn" onclick="window.submitMissionIntake()">
+                    Initialize Mission
+                  </button>
+                </div>
+                <div style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted); margin-bottom:5px;">Mission History</div>
+                <div style="flex:1; overflow-y:auto;">
+                  ${missionsListHtml}
+                </div>
+              </div>
+              <div class="mission-graph-panel">
+                ${graphHtml}
+              </div>
+            </div>
+          `;
+        }
+        else if (pageId === "observability") {
           const topo = await fetch("/api/topology").then(r => r.json());
           html = `
             <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">
@@ -3889,6 +4333,7 @@
     function toggleSecondaryTopologyView() {
       diagnosticsMode = !diagnosticsMode;
       drawStaticTopology();
+      renderPodsMovieStage();
     }
 
     function toggleReducedMotion() {

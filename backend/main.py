@@ -3329,6 +3329,80 @@ async def get_intel_brief():
     brief = _generate_intel_brief(status.get("nodes", []))
     return {"brief": brief, "ts": datetime.utcnow().isoformat() + "Z"}
 
+# T088–T095 Mission Control Routes
+class MissionIntakeRequest(BaseModel):
+    mission_id: str
+    name: str
+    target_pod: str
+    command: str
+    parameters: dict = {}
+
+@app.post("/api/v1/pods/mission/intake")
+def post_mission_intake(req: MissionIntakeRequest):
+    from backend.mission_control.boundary import validate_secure_boundary, BoundaryViolation
+    from backend.mission_control.permission_broker import verify_agent_permission, PermissionDenied
+    from backend.mission_control.router import register_mission_and_tasks, POD_AGENT_MAP
+    from backend.mission_control.epic_fury import execute_epic_fury_step
+    
+    try:
+        # 1. Boundary check
+        validate_secure_boundary(req.target_pod, req.command, req.parameters)
+        
+        # 2. Permission check
+        agent_name = POD_AGENT_MAP.get(req.target_pod, "Live Tracker Runtime Agent")
+        verify_agent_permission(agent_name, req.target_pod)
+        
+        # 3. Register mission and tasks
+        res = register_mission_and_tasks(req.mission_id, req.name, req.target_pod, req.command)
+        
+        # 4. Trigger steps 1 to 4 sequentially (Epic Fury specific)
+        if req.target_pod == "business":
+            for step in range(1, 5):
+                execute_epic_fury_step(req.mission_id, step)
+                
+        return res
+    except BoundaryViolation as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except PermissionDenied as e:
+        raise HTTPException(status_code=403, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/pods/missions")
+def get_all_missions():
+    from backend.runtime_truth.state_store import DB_PATH
+    import sqlite3
+    conn = sqlite3.connect(DB_PATH)
+    try:
+        conn.row_factory = sqlite3.Row
+        cur = conn.execute("SELECT * FROM mission_control_missions ORDER BY created_at DESC")
+        rows = cur.fetchall()
+        return {"missions": [dict(r) for r in rows]}
+    finally:
+        conn.close()
+
+@app.get("/api/v1/pods/missions/{mission_id}/graph")
+def get_mission_graph(mission_id: str):
+    from backend.runtime_truth.state_store import DB_PATH
+    import sqlite3
+    conn = sqlite3.connect(DB_PATH)
+    try:
+        conn.row_factory = sqlite3.Row
+        cur = conn.execute("SELECT * FROM mission_control_tasks WHERE mission_id = ? ORDER BY step_index ASC", (mission_id,))
+        rows = cur.fetchall()
+        return {"tasks": [dict(r) for r in rows]}
+    finally:
+        conn.close()
+
+@app.post("/api/v1/pods/missions/{mission_id}/approve")
+def post_mission_approval(mission_id: str):
+    from backend.mission_control.epic_fury import approve_epic_fury_mission
+    try:
+        res = approve_epic_fury_mission(mission_id)
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/api/nodes/ping")
 def ping_all_nodes():
     nodes = cluster_mgr.nodes
@@ -4427,6 +4501,9 @@ async def startup_event():
     init_execution_store_tables()
     init_orchestrator_history_table()
     init_default_agent_model_policies()
+    
+    from backend.mission_control.db import init_mission_control_tables
+    init_mission_control_tables()
     
     # Start Local Runtime Supervisor
     if os.getenv("DISABLE_LOCAL_RUNTIME_SUPERVISOR", "false").lower() != "true":
