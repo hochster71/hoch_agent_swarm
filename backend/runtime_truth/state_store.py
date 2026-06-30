@@ -22,17 +22,10 @@ def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 def resolve_root_dir(root_dir=None) -> str:
-    if os.path.exists("/app"):
-        return "/app"
-    if root_dir is None or root_dir == "/Users/michaelhoch/hoch_agent_swarm" or not os.path.exists(root_dir):
-        env_root = os.getenv("HOCHSTER_ROOT_DIR")
-        if env_root:
-            return os.path.abspath(env_root)
-        current_file = os.path.abspath(__file__)
-        if "backend" in current_file:
-            return os.path.abspath(current_file.split("backend")[0])
-        return "/app"
-    return os.path.abspath(root_dir)
+    from backend.runtime_paths import project_root
+    if root_dir is not None and os.path.exists(root_dir):
+        return os.path.abspath(root_dir)
+    return str(project_root())
 
 def init_runtime_truth_tables():
     conn = sqlite3.connect(DB_PATH, timeout=30)

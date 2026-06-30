@@ -15,7 +15,7 @@ class PromptRegistry:
         return [
             self.base_dir / "data" / "prompt_registry" / "hoch_agent_swarm_prompt_library_v3_enhanced.json",
             self.base_dir / "backend" / "prompt_library.json",
-            Path("/Users/michaelhoch/hoch_agent_swarm_prompt_library/hoch_agent_swarm_prompt_library.json"),
+            Path(os.getenv("HAS_PROMPT_LIBRARY_DIR", "/app/prompt_library")) / "hoch_agent_swarm_prompt_library.json",
             self.base_dir / "hoch_agent_swarm_prompt_library.json"
         ]
 

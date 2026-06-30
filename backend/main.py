@@ -1,5 +1,6 @@
 import os
 import time
+from backend.runtime_paths import project_root, data_root, evidence_root, optional_ag_scratch_root, optional_ag_brain_root
 import json
 import uuid
 import sys
@@ -1630,8 +1631,8 @@ def promote_release(req: PromoteRequest):
         override_reason="Bypassed by operator" if req.override else "",
         execution_output=res_val,
         artifact_refs=[
-            "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/release_manifest.json",
-            "/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/sbom.spdx.json"
+            str(optional_ag_scratch_root() / "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/release_manifest.json"),
+            str(optional_ag_scratch_root() / "dist/releases/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/sbom.spdx.json")
         ],
         recovery_command="git tag -d v0.1.6-ERROR-BUDGET-AWARE-AUTONOMY && git push --delete origin v0.1.6-ERROR-BUDGET-AWARE-AUTONOMY"
     )
@@ -3254,13 +3255,13 @@ async def create_swarm_run(payload: dict):
         decision="OVERRIDE" if override else "GO",
         override_reason="Bypassed by operator" if override else "",
         execution_output={"run_id": run_id, "name": name},
-        artifact_refs=["/Users/michaelhoch/hoch_agent_swarm/run_report.json"],
+        artifact_refs=[str(project_root() / "run_report.json")],
         recovery_command=f"python3 scripts/control/stop_run.py {run_id}"
     )
     
     # Load tasks template from task_graph.json
     tasks_template = []
-    task_graph_path = "/Users/michaelhoch/.gemini/antigravity/brain/c72fc948-b730-4420-b7dd-4e159a9aea6d/task_graph.json"
+    task_graph_path = str(optional_ag_brain_root() / "c72fc948-b730-4420-b7dd-4e159a9aea6d/task_graph.json")
     if os.path.exists(task_graph_path):
         try:
             with open(task_graph_path, "r") as f:
@@ -7636,7 +7637,7 @@ def trigger_crewai_ingestion(override: bool = False):
             decision="OVERRIDE" if override else "GO",
             override_reason="Bypassed by operator" if override else "",
             execution_output={"scanned": res.get("scanned", 0), "ingested": res.get("ingested", 0)},
-            artifact_refs=["/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/backend/swarm_ledger.db"],
+            artifact_refs=[str(optional_ag_scratch_root() / "backend/swarm_ledger.db")],
             recovery_command="sqlite3 backend/swarm_ledger.db 'VACUUM;'"
         )
         
@@ -8189,7 +8190,7 @@ def post_migration_resume_endpoint(override: bool = False):
         decision="OVERRIDE" if override else "GO",
         override_reason="Bypassed by operator" if override else "",
         execution_output=res,
-        artifact_refs=["/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/control/rclone-exclude.txt"],
+        artifact_refs=[str(optional_ag_scratch_root() / "control/rclone-exclude.txt")],
         recovery_command="killall rclone"
     )
     
@@ -10748,10 +10749,10 @@ def get_favicon_svg():
 
 @app.get("/api/v1/production-tracker")
 def get_production_tracker():
-    tracker_path = "/Users/michaelhoch/hoch_agent_swarm/data/production_tracker.json"
+    tracker_path = str(data_root() / "production_tracker.json")
     if not os.path.exists(tracker_path):
         try:
-            subprocess.run(["uv", "run", "python", "/Users/michaelhoch/hoch_agent_swarm/scripts/init_command_center.py"], check=True)
+            subprocess.run(["uv", "run", "python", str(project_root() / "scripts/init_command_center.py")], check=True)
         except Exception as e:
             print(f"Error initializing command center data: {e}")
             return {"status": "error", "message": str(e)}
@@ -10773,12 +10774,12 @@ def get_production_tracker():
 
         # Scan for generated evidence files under docs/evidence/
         evidence_list = []
-        evidence_base = "/Users/michaelhoch/hoch_agent_swarm/docs/evidence"
+        evidence_base = str(evidence_root())
         if os.path.exists(evidence_base):
             for root, dirs, files in os.walk(evidence_base):
                 for file in files:
                     if file.endswith(".json") or file.endswith(".png") or file.endswith(".md"):
-                        rel_path = os.path.relpath(os.path.join(root, file), "/Users/michaelhoch/hoch_agent_swarm")
+                        rel_path = os.path.relpath(os.path.join(root, file), str(project_root()))
                         evidence_list.append({
                             "name": file,
                             "path": f"/{rel_path}",
@@ -10797,7 +10798,7 @@ async def trigger_qa_loop():
         
     try:
         _qa_loop_process = subprocess.Popen(
-            ["bash", "/Users/michaelhoch/hoch_agent_swarm/scripts/qa_runtime_loop.sh"],
+            ["bash", str(project_root() / "scripts/qa_runtime_loop.sh")],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
         )
@@ -10810,7 +10811,7 @@ def get_qa_loop_status():
     global _qa_loop_process
     is_running = (_qa_loop_process and _qa_loop_process.poll() is None)
     
-    log_path = "/Users/michaelhoch/hoch_agent_swarm/data/qa_loop.log"
+    log_path = str(data_root() / "qa_loop.log")
     log_content = ""
     if os.path.exists(log_path):
         try:
@@ -10826,7 +10827,7 @@ def get_qa_loop_status():
 
 @app.get("/api/v1/finance/tracker")
 def get_finance_tracker():
-    tracker_path = "/Users/michaelhoch/hoch_agent_swarm/frontend/data/finance_tracker.json"
+    tracker_path = str(project_root() / "frontend/data/finance_tracker.json")
     if not os.path.exists(tracker_path):
         return {"status": "error", "message": "finance_tracker.json not found"}
     try:
@@ -10865,7 +10866,7 @@ def get_finance_tracker():
 
 @app.post("/api/v1/finance/tracker")
 def save_finance_tracker(updated_data: dict):
-    tracker_path = "/Users/michaelhoch/hoch_agent_swarm/frontend/data/finance_tracker.json"
+    tracker_path = str(project_root() / "frontend/data/finance_tracker.json")
     try:
         with open(tracker_path, "w", encoding="utf-8") as f:
             json.dump(updated_data, f, indent=2)
@@ -10875,7 +10876,7 @@ def save_finance_tracker(updated_data: dict):
 
 @app.get("/api/v1/reliability/status")
 def get_reliability_status():
-    status_path = "/Users/michaelhoch/hoch_agent_swarm/frontend/data/runtime_reliability.json"
+    status_path = str(project_root() / "frontend/data/runtime_reliability.json")
     if not os.path.exists(status_path):
         return {"status": "error", "message": "runtime_reliability.json not found"}
     try:
@@ -10886,7 +10887,7 @@ def get_reliability_status():
 
 @app.post("/api/v1/reliability/toggle-failover")
 def toggle_failover():
-    status_path = "/Users/michaelhoch/hoch_agent_swarm/frontend/data/runtime_reliability.json"
+    status_path = str(project_root() / "frontend/data/runtime_reliability.json")
     try:
         if os.path.exists(status_path):
             with open(status_path, "r", encoding="utf-8") as f:
@@ -10910,7 +10911,7 @@ def toggle_failover():
 def run_reliability_backup():
     import subprocess
     try:
-        res = subprocess.run(["bash", "/Users/michaelhoch/hoch_agent_swarm/scripts/backup_state.sh"], capture_output=True, text=True)
+        res = subprocess.run(["bash", str(project_root() / "scripts/backup_state.sh")], capture_output=True, text=True)
         if res.returncode == 0:
             return {"status": "success", "message": res.stdout.strip()}
         else:
@@ -10920,7 +10921,7 @@ def run_reliability_backup():
 
 @app.get("/api/v1/pert/tracker")
 def get_pert_tracker():
-    tracker_path = "/Users/michaelhoch/hoch_agent_swarm/frontend/data/pert_tracker.json"
+    tracker_path = str(project_root() / "frontend/data/pert_tracker.json")
     if not os.path.exists(tracker_path):
         return {"status": "error", "message": "pert_tracker.json not found"}
     try:
@@ -10933,7 +10934,7 @@ def get_pert_tracker():
 def run_pert_build():
     import subprocess
     try:
-        res = subprocess.run(["bash", "/Users/michaelhoch/hoch_agent_swarm/scripts/pert_e2e_build.sh"], capture_output=True, text=True)
+        res = subprocess.run(["bash", str(project_root() / "scripts/pert_e2e_build.sh")], capture_output=True, text=True)
         if res.returncode == 0:
             return {"status": "success", "message": res.stdout.strip()}
         else:

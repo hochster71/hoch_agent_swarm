@@ -226,9 +226,8 @@ def log_operator_action(
     recovery_command: str = ""
 ) -> dict:
     import subprocess
-    from pathlib import Path
-    
-    COCKPIT_DIR = Path("/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm")
+    from backend.runtime_paths import optional_ag_scratch_root
+    COCKPIT_DIR = optional_ag_scratch_root()
     
     # Get Git SHA & dirty state
     git_sha = "unknown"

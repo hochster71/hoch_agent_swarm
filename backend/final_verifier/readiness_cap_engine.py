@@ -72,6 +72,16 @@ class ReadinessCapEngine:
                     score = min(score, not_ready_cap)
                     caps.append(("GO/NO-GO contradiction active", not_ready_cap))
 
+                # Rule 4b: No active release GO source
+                try:
+                    manager = GoNoGoManager(db_path=self.db_path)
+                    summary = manager.process_and_update()
+                    if summary["active_go_count"] == 0 and summary["release_go_source"] == "none":
+                        score = min(score, not_ready_cap)
+                        caps.append(("No active release GO source", not_ready_cap))
+                except Exception:
+                    pass
+
                 # Rule 5: Open defects or vulnerabilities
                 open_defects = int(signals.get("open_defect_count", 0))
                 if open_defects > 0:

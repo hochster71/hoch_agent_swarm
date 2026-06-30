@@ -8,7 +8,10 @@ from backend.brain.database import get_db_connection
 logger = logging.getLogger("DoctrineMemory")
 
 class DoctrineMemory:
-    def __init__(self, root_dir="/Users/michaelhoch/hoch_agent_swarm"):
+    def __init__(self, root_dir=None):
+        from backend.runtime_paths import project_root
+        if root_dir is None:
+            root_dir = str(project_root())
         self.root_dir = root_dir
         self.yaml_path = os.path.join(root_dir, "config/michael_doctrine.yaml")
         self.sync_yaml_to_db()

@@ -2,7 +2,10 @@ import os
 import yaml
 
 class BrandRenderer:
-    def __init__(self, root_dir="/Users/michaelhoch/hoch_agent_swarm"):
+    def __init__(self, root_dir=None):
+        from backend.runtime_paths import project_root
+        if root_dir is None:
+            root_dir = str(project_root())
         self.root_dir = root_dir
         self.brand_path = os.path.join(root_dir, "config/brand/hoch_agent_swarm_brand.yaml")
 
