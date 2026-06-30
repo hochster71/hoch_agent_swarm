@@ -60,10 +60,15 @@ class ReadinessCapEngine:
                     score = min(score, missing_ui_cap)
                     caps.append(("missing UI container", missing_ui_cap))
 
-                # Rule 4: GO and NO-GO contradiction blocks Go
-                go_active = signals.get("production_go_status") == "GO"
-                nogo_active = signals.get("production_nogo_status") == "NO-GO"
-                if go_active and nogo_active:
+                from backend.runtime_truth.go_nogo_manager import GoNoGoManager
+                try:
+                    manager = GoNoGoManager(db_path=self.db_path)
+                    summary = manager.process_and_update()
+                    contradiction_active = summary["contradiction_status"] == "ACTIVE"
+                except Exception:
+                    contradiction_active = False
+
+                if contradiction_active:
                     score = min(score, not_ready_cap)
                     caps.append(("GO/NO-GO contradiction active", not_ready_cap))
 

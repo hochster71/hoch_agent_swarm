@@ -19,10 +19,16 @@ class ContradictionChecker:
         except Exception as e:
             return {"is_valid": False, "violations": [f"DB access error: {str(e)}"]}
 
-        # Rule 1: GO and NO-GO active contradiction
-        go_active = signals.get("production_go_status") == "GO"
-        nogo_active = signals.get("production_nogo_status") == "NO-GO"
-        if go_active and nogo_active:
+        # Leverage the go_nogo_manager
+        from backend.runtime_truth.go_nogo_manager import GoNoGoManager
+        try:
+            manager = GoNoGoManager(db_path=self.db_path)
+            summary = manager.process_and_update()
+            contradiction_active = summary["contradiction_status"] == "ACTIVE"
+        except Exception:
+            contradiction_active = False
+
+        if contradiction_active:
             violations.append("GO and NO-GO contradiction: both statuses are active simultaneously.")
 
         # Rule 2: 100% readiness with critical gaps
