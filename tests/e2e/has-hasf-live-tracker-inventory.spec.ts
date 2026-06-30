@@ -62,18 +62,18 @@ test.describe("Global Project Registry E2E Spec", () => {
     const cloudCount = page.locator("#regCloudCount");
     await expect(cloudCount).not.toHaveText("-");
 
-    // 4. Hover first local workspace row to trigger tooltip
-    const localRow = page.locator("#registryLocalRows").locator("text=hoch_agent_swarm").first();
-    await expect(localRow).toBeVisible();
-    await localRow.hover();
+    // 4. Hover first local workspace name cell to trigger tooltip
+    const localNameCell = page.locator(".registry-local-name-cell").first();
+    await expect(localNameCell).toBeVisible();
+    await localNameCell.hover();
     await page.waitForTimeout(200);
 
     // Verify tooltip shows up
     const tooltip = page.locator("#tooltip");
     await expect(tooltip).toBeVisible();
 
-    // 5. Click the local workspace row to verify drawer details open
-    await localRow.click();
+    // 5. Click the local name cell to verify drawer details open
+    await localNameCell.click();
     await page.waitForTimeout(200);
     const drawer = page.locator("#drawer");
     await expect(drawer).toBeVisible();

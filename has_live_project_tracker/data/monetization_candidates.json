@@ -1,0 +1,50 @@
+[
+  {
+    "canonical_id": "CAN-SNGL-032",
+    "canonical_name": "agentic-radar",
+    "domain": "governance",
+    "type": "repository",
+    "monetization_potential": "HIGH",
+    "owner_agent": "Data Consolidation Agent"
+  },
+  {
+    "canonical_id": "CAN-SNGL-034",
+    "canonical_name": "autoforge",
+    "domain": "governance",
+    "type": "repository",
+    "monetization_potential": "HIGH",
+    "owner_agent": "Data Consolidation Agent"
+  },
+  {
+    "canonical_id": "CAN-SNGL-036",
+    "canonical_name": "Certified-Information-System-Security-Professional-Training",
+    "domain": "coder",
+    "type": "repository",
+    "monetization_potential": "HIGH",
+    "owner_agent": "Data Consolidation Agent"
+  },
+  {
+    "canonical_id": "CAN-SNGL-038",
+    "canonical_name": "Cyber-Security-Risk-Management-Construct-Interactive-Training-Dashboard-",
+    "domain": "coder",
+    "type": "repository",
+    "monetization_potential": "HIGH",
+    "owner_agent": "Data Consolidation Agent"
+  },
+  {
+    "canonical_id": "CAN-SNGL-044",
+    "canonical_name": "dynasec-stripe-webhook",
+    "domain": "governance",
+    "type": "repository",
+    "monetization_potential": "HIGH",
+    "owner_agent": "Data Consolidation Agent"
+  },
+  {
+    "canonical_id": "CAN-SNGL-052",
+    "canonical_name": "RMF-Training-by-Michael-Hoch",
+    "domain": "governance",
+    "type": "repository",
+    "monetization_potential": "HIGH",
+    "owner_agent": "Data Consolidation Agent"
+  }
+]

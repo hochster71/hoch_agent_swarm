@@ -1,0 +1,10 @@
+[
+  {
+    "canonical_id": "CAN-GRP-001",
+    "canonical_name": "hoch_agent_swarm",
+    "domain": "coder",
+    "type": "repo",
+    "security_status": "REQUIRES_SCAN",
+    "owner_agent": "Data Consolidation Agent"
+  }
+]

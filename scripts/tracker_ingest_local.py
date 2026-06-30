@@ -3,9 +3,10 @@ import os
 import sys
 import json
 import subprocess
+from datetime import datetime
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-OUTPUT_PATH = os.path.join(SCRIPT_DIR, "..", "has_live_project_tracker", "data", "local_inventory.json")
+OUTPUT_PATH = os.path.join(SCRIPT_DIR, "..", "has_live_project_tracker", "data", "local_project_inventory.json")
 
 TARGET_DIRS = [
     os.path.expanduser("~/hoch_agent_swarm"),
@@ -21,7 +22,7 @@ def scan_directory(dir_path):
     extensions = {}
 
     for root, dirs, files in os.walk(dir_path):
-        # Skip git and venv folders
+        # Skip git, node_modules, and venv folders
         if '.git' in root or '.venv' in root or 'node_modules' in root:
             continue
         for f in files:
@@ -51,20 +52,47 @@ def scan_directory(dir_path):
         "total_size_mb": round(total_size / (1024 * 1024), 2),
         "extensions": extensions,
         "uncommitted_files_count": len(uncommitted),
-        "uncommitted_files": uncommitted[:15] # Top 15 uncommitted files
+        "uncommitted_files": uncommitted[:15]
     }
 
 def main():
     print("==================================================")
-    print("INGESTING LOCAL HARD DRIVE PROJECT INVENTORY (T008)")
+    print("INGESTING LOCAL STORAGE TO LOCAL INVENTORY (T008)")
     print("==================================================")
 
     inventory = []
-    for d in TARGET_DIRS:
+    timestamp = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+
+    for idx, d in enumerate(TARGET_DIRS):
         print(f"Scanning local directory: {d}...")
         res = scan_directory(d)
         if res:
-            inventory.append(res)
+            item_id = f"LOCAL-{idx+1:03d}"
+            
+            # Map uncommitted files to gaps
+            gaps = []
+            if res["uncommitted_files_count"] > 0:
+                gaps.append(f"{res['uncommitted_files_count']} uncommitted local changes detected")
+
+            inventory.append({
+                "id": item_id,
+                "name": res["name"],
+                "source": "local_find",
+                "path_or_remote": res["path"],
+                "type": "folder",
+                "domain": "coder",
+                "owner_agent": "Data Consolidation Agent",
+                "evidence_status": "VERIFIED",
+                "confidence": 1.0,
+                "last_seen": timestamp,
+                "gaps": gaps,
+                "next_action": "deduplicate",
+                "path": res["path"],
+                "file_count": res["file_count"],
+                "total_size_mb": res["total_size_mb"],
+                "uncommitted_files_count": res["uncommitted_files_count"],
+                "uncommitted_files": res["uncommitted_files"]
+            })
             print(f" • Done: {res['file_count']} files, {res['total_size_mb']} MB, {res['uncommitted_files_count']} uncommitted items.")
         else:
             print(f" • Warning: Directory {d} does not exist.")
@@ -74,7 +102,12 @@ def main():
     with open(OUTPUT_PATH, 'w', encoding='utf-8') as f:
         json.dump(inventory, f, indent=2)
 
-    print(f"Success: Wrote local inventory to {OUTPUT_PATH}.")
+    # Save legacy file data/local_inventory.json as well so existing UI paths/reports remain compatible
+    legacy_path = os.path.join(SCRIPT_DIR, "..", "has_live_project_tracker", "data", "local_inventory.json")
+    with open(legacy_path, 'w', encoding='utf-8') as f:
+        json.dump(inventory, f, indent=2)
+
+    print(f"Success: Wrote {len(inventory)} local workspaces to {OUTPUT_PATH}.")
 
 if __name__ == "__main__":
     main()

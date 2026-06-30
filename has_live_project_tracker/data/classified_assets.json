@@ -1,0 +1,1129 @@
+[
+  {
+    "raw_id": "GITHUB-019",
+    "name": "hoch_agent_swarm",
+    "type": "repo",
+    "canonical_id": "CAN-GRP-001",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "LOCAL-001",
+    "name": "hoch_agent_swarm",
+    "type": "repo",
+    "canonical_id": "CAN-GRP-001",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "LOCAL-002",
+    "name": "hoch_agent_swarm_prompt_library",
+    "type": "prompt",
+    "canonical_id": "CAN-GRP-001",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-001",
+    "name": "icon.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-002",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-010",
+    "name": "icon.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-002",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-020",
+    "name": "icon.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-002",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-029",
+    "name": "icon.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-002",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-041",
+    "name": "icon.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-002",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-050",
+    "name": "icon.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-002",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-059",
+    "name": "icon.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-002",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-068",
+    "name": "icon.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-002",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-077",
+    "name": "icon.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-002",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-086",
+    "name": "icon.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-002",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-095",
+    "name": "icon.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-002",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-002",
+    "name": "signature",
+    "type": "document",
+    "canonical_id": "CAN-GRP-003",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-011",
+    "name": "signature",
+    "type": "document",
+    "canonical_id": "CAN-GRP-003",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-021",
+    "name": "signature",
+    "type": "document",
+    "canonical_id": "CAN-GRP-003",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-030",
+    "name": "signature",
+    "type": "document",
+    "canonical_id": "CAN-GRP-003",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-042",
+    "name": "signature",
+    "type": "document",
+    "canonical_id": "CAN-GRP-003",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-051",
+    "name": "signature",
+    "type": "document",
+    "canonical_id": "CAN-GRP-003",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-060",
+    "name": "signature",
+    "type": "document",
+    "canonical_id": "CAN-GRP-003",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-069",
+    "name": "signature",
+    "type": "document",
+    "canonical_id": "CAN-GRP-003",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-078",
+    "name": "signature",
+    "type": "document",
+    "canonical_id": "CAN-GRP-003",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-087",
+    "name": "signature",
+    "type": "document",
+    "canonical_id": "CAN-GRP-003",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-096",
+    "name": "signature",
+    "type": "document",
+    "canonical_id": "CAN-GRP-003",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-003",
+    "name": "icon@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-004",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-012",
+    "name": "icon@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-004",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-022",
+    "name": "icon@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-004",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-031",
+    "name": "icon@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-004",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-043",
+    "name": "icon@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-004",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-052",
+    "name": "icon@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-004",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-061",
+    "name": "icon@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-004",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-070",
+    "name": "icon@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-004",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-079",
+    "name": "icon@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-004",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-088",
+    "name": "icon@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-004",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-097",
+    "name": "icon@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-004",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-004",
+    "name": "logo.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-005",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-018",
+    "name": "logo.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-005",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-023",
+    "name": "logo.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-005",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-034",
+    "name": "logo.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-005",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-044",
+    "name": "logo.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-005",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-053",
+    "name": "logo.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-005",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-062",
+    "name": "logo.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-005",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-071",
+    "name": "logo.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-005",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-080",
+    "name": "logo.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-005",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-089",
+    "name": "logo.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-005",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-100",
+    "name": "logo.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-005",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-005",
+    "name": "pass.json",
+    "type": "dataset",
+    "canonical_id": "CAN-GRP-006",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-013",
+    "name": "pass.json",
+    "type": "dataset",
+    "canonical_id": "CAN-GRP-006",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-024",
+    "name": "pass.json",
+    "type": "dataset",
+    "canonical_id": "CAN-GRP-006",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-035",
+    "name": "pass.json",
+    "type": "dataset",
+    "canonical_id": "CAN-GRP-006",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-045",
+    "name": "pass.json",
+    "type": "dataset",
+    "canonical_id": "CAN-GRP-006",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-054",
+    "name": "pass.json",
+    "type": "dataset",
+    "canonical_id": "CAN-GRP-006",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-063",
+    "name": "pass.json",
+    "type": "dataset",
+    "canonical_id": "CAN-GRP-006",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-072",
+    "name": "pass.json",
+    "type": "dataset",
+    "canonical_id": "CAN-GRP-006",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-081",
+    "name": "pass.json",
+    "type": "dataset",
+    "canonical_id": "CAN-GRP-006",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-090",
+    "name": "pass.json",
+    "type": "dataset",
+    "canonical_id": "CAN-GRP-006",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-101",
+    "name": "pass.json",
+    "type": "dataset",
+    "canonical_id": "CAN-GRP-006",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-006",
+    "name": "logo@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-007",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-019",
+    "name": "logo@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-007",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-025",
+    "name": "logo@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-007",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-036",
+    "name": "logo@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-007",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-046",
+    "name": "logo@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-007",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-055",
+    "name": "logo@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-007",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-064",
+    "name": "logo@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-007",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-073",
+    "name": "logo@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-007",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-082",
+    "name": "logo@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-007",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-091",
+    "name": "logo@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-007",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-102",
+    "name": "logo@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-007",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-007",
+    "name": "strip@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-008",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-014",
+    "name": "strip@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-008",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-026",
+    "name": "strip@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-008",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-037",
+    "name": "strip@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-008",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-047",
+    "name": "strip@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-008",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-056",
+    "name": "strip@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-008",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-065",
+    "name": "strip@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-008",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-074",
+    "name": "strip@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-008",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-083",
+    "name": "strip@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-008",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-092",
+    "name": "strip@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-008",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-103",
+    "name": "strip@2x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-008",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-008",
+    "name": "manifest.json",
+    "type": "dataset",
+    "canonical_id": "CAN-GRP-009",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-015",
+    "name": "manifest.json",
+    "type": "dataset",
+    "canonical_id": "CAN-GRP-009",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-027",
+    "name": "manifest.json",
+    "type": "dataset",
+    "canonical_id": "CAN-GRP-009",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-038",
+    "name": "manifest.json",
+    "type": "dataset",
+    "canonical_id": "CAN-GRP-009",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-048",
+    "name": "manifest.json",
+    "type": "dataset",
+    "canonical_id": "CAN-GRP-009",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-057",
+    "name": "manifest.json",
+    "type": "dataset",
+    "canonical_id": "CAN-GRP-009",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-066",
+    "name": "manifest.json",
+    "type": "dataset",
+    "canonical_id": "CAN-GRP-009",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-075",
+    "name": "manifest.json",
+    "type": "dataset",
+    "canonical_id": "CAN-GRP-009",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-084",
+    "name": "manifest.json",
+    "type": "dataset",
+    "canonical_id": "CAN-GRP-009",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-093",
+    "name": "manifest.json",
+    "type": "dataset",
+    "canonical_id": "CAN-GRP-009",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-104",
+    "name": "manifest.json",
+    "type": "dataset",
+    "canonical_id": "CAN-GRP-009",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-009",
+    "name": "strip.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-010",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-016",
+    "name": "strip.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-010",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-028",
+    "name": "strip.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-010",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-040",
+    "name": "strip.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-010",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-049",
+    "name": "strip.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-010",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-058",
+    "name": "strip.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-010",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-067",
+    "name": "strip.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-010",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-076",
+    "name": "strip.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-010",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-085",
+    "name": "strip.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-010",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-094",
+    "name": "strip.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-010",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-106",
+    "name": "strip.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-010",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-032",
+    "name": "strip@3x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-011",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-098",
+    "name": "strip@3x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-011",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-033",
+    "name": "logo@3x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-012",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-099",
+    "name": "logo@3x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-012",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-039",
+    "name": "icon@3x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-013",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-105",
+    "name": "icon@3x.png",
+    "type": "asset",
+    "canonical_id": "CAN-GRP-013",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "AGENT-L1-KernelHub-Mgr",
+    "name": "KernelHub-Mgr",
+    "type": "agent",
+    "canonical_id": "CAN-SNGL-001",
+    "confidence": 0.98
+  },
+  {
+    "raw_id": "AGENT-L1-TaskScheduler-01",
+    "name": "TaskScheduler-01",
+    "type": "agent",
+    "canonical_id": "CAN-SNGL-002",
+    "confidence": 0.98
+  },
+  {
+    "raw_id": "AGENT-L1-Auditor-Proxy",
+    "name": "Auditor-Proxy",
+    "type": "agent",
+    "canonical_id": "CAN-SNGL-003",
+    "confidence": 0.98
+  },
+  {
+    "raw_id": "AGENT-L1-ConMon-Sentinel",
+    "name": "ConMon-Sentinel",
+    "type": "agent",
+    "canonical_id": "CAN-SNGL-004",
+    "confidence": 0.98
+  },
+  {
+    "raw_id": "AGENT-L2-Gordy-iMac-01",
+    "name": "Gordy-iMac-01",
+    "type": "agent",
+    "canonical_id": "CAN-SNGL-005",
+    "confidence": 0.98
+  },
+  {
+    "raw_id": "AGENT-L2-Parser-02",
+    "name": "Parser-02",
+    "type": "agent",
+    "canonical_id": "CAN-SNGL-006",
+    "confidence": 0.98
+  },
+  {
+    "raw_id": "AGENT-L2-Refactor-Agent-01",
+    "name": "Refactor-Agent-01",
+    "type": "agent",
+    "canonical_id": "CAN-SNGL-007",
+    "confidence": 0.98
+  },
+  {
+    "raw_id": "AGENT-L3-Gordy-Neo-01",
+    "name": "Gordy-Neo-01",
+    "type": "agent",
+    "canonical_id": "CAN-SNGL-008",
+    "confidence": 0.98
+  },
+  {
+    "raw_id": "AGENT-L3-Deploy-Deployer",
+    "name": "Deploy-Deployer",
+    "type": "agent",
+    "canonical_id": "CAN-SNGL-009",
+    "confidence": 0.98
+  },
+  {
+    "raw_id": "AGENT-L3-Gordy-App-Deployer",
+    "name": "Gordy-App-Deployer",
+    "type": "agent",
+    "canonical_id": "CAN-SNGL-010",
+    "confidence": 0.98
+  },
+  {
+    "raw_id": "AGENT-L3-SelfHeal-Watchdog",
+    "name": "SelfHeal-Watchdog",
+    "type": "agent",
+    "canonical_id": "CAN-SNGL-011",
+    "confidence": 0.98
+  },
+  {
+    "raw_id": "AGENT-W1-Gordy-Dell-01",
+    "name": "Gordy-Dell-01",
+    "type": "agent",
+    "canonical_id": "CAN-SNGL-012",
+    "confidence": 0.98
+  },
+  {
+    "raw_id": "AGENT-W1-Gordy-Dell-02",
+    "name": "Gordy-Dell-02",
+    "type": "agent",
+    "canonical_id": "CAN-SNGL-013",
+    "confidence": 0.98
+  },
+  {
+    "raw_id": "AGENT-W1-Optimizer-01",
+    "name": "Optimizer-01",
+    "type": "agent",
+    "canonical_id": "CAN-SNGL-014",
+    "confidence": 0.98
+  },
+  {
+    "raw_id": "AGENT-W1-SecurityScan-W1",
+    "name": "SecurityScan-W1",
+    "type": "agent",
+    "canonical_id": "CAN-SNGL-015",
+    "confidence": 0.98
+  },
+  {
+    "raw_id": "AGENT-IPAD-UI-Client-Pad",
+    "name": "UI-Client-Pad",
+    "type": "agent",
+    "canonical_id": "CAN-SNGL-016",
+    "confidence": 0.98
+  },
+  {
+    "raw_id": "AGENT-IPAD-AlertBroker-Pad",
+    "name": "AlertBroker-Pad",
+    "type": "agent",
+    "canonical_id": "CAN-SNGL-017",
+    "confidence": 0.98
+  },
+  {
+    "raw_id": "AGENT-IPHONE-UI-Client-Phone",
+    "name": "UI-Client-Phone",
+    "type": "agent",
+    "canonical_id": "CAN-SNGL-018",
+    "confidence": 0.98
+  },
+  {
+    "raw_id": "AGENT-IPHONE-PushRelay-01",
+    "name": "PushRelay-01",
+    "type": "agent",
+    "canonical_id": "CAN-SNGL-019",
+    "confidence": 0.98
+  },
+  {
+    "raw_id": "AGENT-IPAD_PRO_11-UI-Client-iPad-Pro-11",
+    "name": "UI-Client-iPad-Pro-11",
+    "type": "agent",
+    "canonical_id": "CAN-SNGL-020",
+    "confidence": 0.98
+  },
+  {
+    "raw_id": "AGENT-IPAD_MINI_1-UI-Client-iPad-Mini-1",
+    "name": "UI-Client-iPad-Mini-1",
+    "type": "agent",
+    "canonical_id": "CAN-SNGL-021",
+    "confidence": 0.98
+  },
+  {
+    "raw_id": "AGENT-IPAD_MINI_2-UI-Client-iPad-Mini-2",
+    "name": "UI-Client-iPad-Mini-2",
+    "type": "agent",
+    "canonical_id": "CAN-SNGL-022",
+    "confidence": 0.98
+  },
+  {
+    "raw_id": "BUILD-001",
+    "name": "HAS Core Build",
+    "type": "build",
+    "canonical_id": "CAN-SNGL-023",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "BUILD-002",
+    "name": "HASF Backend Build",
+    "type": "build",
+    "canonical_id": "CAN-SNGL-024",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "BUILD-003",
+    "name": "HASF Frontend Build",
+    "type": "build",
+    "canonical_id": "CAN-SNGL-025",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "BUILD-004",
+    "name": "Live Tracker Build",
+    "type": "build",
+    "canonical_id": "CAN-SNGL-026",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "BUILD-005",
+    "name": "Docker Compose Build",
+    "type": "build",
+    "canonical_id": "CAN-SNGL-027",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "BUILD-006",
+    "name": "AG Bootstrap Build",
+    "type": "build",
+    "canonical_id": "CAN-SNGL-028",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "BUILD-007",
+    "name": "Prompt Registry Import",
+    "type": "build",
+    "canonical_id": "CAN-SNGL-029",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "BUILD-008",
+    "name": "QA Fixture Run",
+    "type": "build",
+    "canonical_id": "CAN-SNGL-030",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "BUILD-009",
+    "name": "Security Scan Run",
+    "type": "build",
+    "canonical_id": "CAN-SNGL-031",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "GITHUB-001",
+    "name": "agentic-radar",
+    "type": "repository",
+    "canonical_id": "CAN-SNGL-032",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "GITHUB-002",
+    "name": "ALISON-BABY-SIGN-CURRICULUM",
+    "type": "repository",
+    "canonical_id": "CAN-SNGL-033",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "GITHUB-003",
+    "name": "autoforge",
+    "type": "repository",
+    "canonical_id": "CAN-SNGL-034",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "GITHUB-004",
+    "name": "Certificate-to-Field---Security-Impact-Assessment-Interactive-Dashboard",
+    "type": "repository",
+    "canonical_id": "CAN-SNGL-035",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "GITHUB-005",
+    "name": "Certified-Information-System-Security-Professional-Training",
+    "type": "repository",
+    "canonical_id": "CAN-SNGL-036",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "GITHUB-006",
+    "name": "cic-dynasec-c2",
+    "type": "repository",
+    "canonical_id": "CAN-SNGL-037",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "GITHUB-007",
+    "name": "Cyber-Security-Risk-Management-Construct-Interactive-Training-Dashboard-",
+    "type": "repository",
+    "canonical_id": "CAN-SNGL-038",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "GITHUB-008",
+    "name": "cyberqrg-web-suite",
+    "type": "repository",
+    "canonical_id": "CAN-SNGL-039",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "GITHUB-009",
+    "name": "Cybersecurity-Reference-Data-Lake",
+    "type": "repository",
+    "canonical_id": "CAN-SNGL-040",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "GITHUB-010",
+    "name": "dynasec-ai-platform",
+    "type": "repository",
+    "canonical_id": "CAN-SNGL-041",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "GITHUB-011",
+    "name": "dynasec-ai-solutions-website",
+    "type": "repository",
+    "canonical_id": "CAN-SNGL-042",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "GITHUB-012",
+    "name": "dynasec-homepage",
+    "type": "repository",
+    "canonical_id": "CAN-SNGL-043",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "GITHUB-013",
+    "name": "dynasec-stripe-webhook",
+    "type": "repository",
+    "canonical_id": "CAN-SNGL-044",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "GITHUB-014",
+    "name": "dynasec-visibility",
+    "type": "repository",
+    "canonical_id": "CAN-SNGL-045",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "GITHUB-015",
+    "name": "generative-ai-for-beginners",
+    "type": "repository",
+    "canonical_id": "CAN-SNGL-046",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "GITHUB-016",
+    "name": "Government_Shutdown_Interactive_Dashboard",
+    "type": "repository",
+    "canonical_id": "CAN-SNGL-047",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "GITHUB-017",
+    "name": "Happy-Veterans-Day",
+    "type": "repository",
+    "canonical_id": "CAN-SNGL-048",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "GITHUB-018",
+    "name": "hoch-ops-center",
+    "type": "repository",
+    "canonical_id": "CAN-SNGL-049",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "GITHUB-020",
+    "name": "mcp-for-beginners",
+    "type": "repository",
+    "canonical_id": "CAN-SNGL-050",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "GITHUB-021",
+    "name": "OpenMemory",
+    "type": "repository",
+    "canonical_id": "CAN-SNGL-051",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "GITHUB-022",
+    "name": "RMF-Training-by-Michael-Hoch",
+    "type": "repository",
+    "canonical_id": "CAN-SNGL-052",
+    "confidence": 1.0
+  },
+  {
+    "raw_id": "CLOUD-017",
+    "name": "pass.strings",
+    "type": "document",
+    "canonical_id": "CAN-SNGL-053",
+    "confidence": 1.0
+  }
+]

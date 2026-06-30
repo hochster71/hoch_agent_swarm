@@ -785,6 +785,22 @@ function computeAcceleration() {
     next_3_actions.push("3. Swarm next available queued tasks to maximize parallel throughput.");
   }
 
+  // Load registry summary for acceleration actions
+  try {
+    const regSummaryPath = path.join(DATA, "registry_summary.json");
+    if (fs.existsSync(regSummaryPath)) {
+      const summary = JSON.parse(fs.readFileSync(regSummaryPath, "utf8"));
+      if (summary.total_gaps_count > 0) {
+        next_3_actions.push(`4. Resolve ${summary.total_gaps_count} global project registry gaps (README/tests/evidence).`);
+      }
+      if (summary.monetization_candidates_count > 0) {
+        next_3_actions.push(`5. Execute monetization validation for ${summary.monetization_candidates_count} high potential candidates.`);
+      }
+    }
+  } catch (err) {
+    console.error("Error reading registry summary for acceleration:", err);
+  }
+
   // Owner agent recommendations
   const owner_agent_assignments = safe_parallel_batch.map(t => ({
     task_id: t.id,
@@ -1532,7 +1548,8 @@ async function getLandscapeData() {
       total_evidences: totalEvidences,
       evidence_coverage_percent: Math.min(100, Math.round((totalEvidences / Math.max(1, truth.tasks.length)) * 100))
     },
-    raci_summary: computeRaci(truth.tasks, truth.status.agents).coverage_summary
+    raci_summary: computeRaci(truth.tasks, truth.status.agents).coverage_summary,
+    inventory_summary: readJson("inventory_summary.json", {})
   };
 }
 
@@ -1544,6 +1561,12 @@ function getGapsData(truth) {
   
   const plistPath = path.join(process.env.HOME || "", "Library", "LaunchAgents", "com.hochster71.has.tracker.plist");
   const hasLaunchdAgent = fs.existsSync(plistPath);
+
+  const invSummary = readJson("inventory_summary.json", null);
+  let inventoryStatus = "none";
+  if (invSummary) {
+    inventoryStatus = invSummary.overall_status === "VERIFIED" ? "full" : "partial";
+  }
 
   const gaps = [
     {
@@ -1622,6 +1645,65 @@ function getGapsData(truth) {
     });
   }
 
+  if (!invSummary) {
+    gaps.push({
+      id: "GAP-INV-001",
+      name: "Missing Project Inventories",
+      domain: "Data Consolidation",
+      severity: "P0",
+      owner: "Data Consolidation Agent",
+      blocker: "Project registry has no crawled agent, build, github, or local workspaces manifests",
+      fix: "Run scripts/tracker_run_ingest.sh to fetch files, API agents, and Docker pipelines",
+      criteria: "inventory_summary.json exists with total_items > 0",
+      linked_task: "T005",
+      evidence: "inventory_summary.json in data path",
+      verdict: "NO-GO"
+    });
+  } else if (invSummary.overall_status === "PARTIAL") {
+    gaps.push({
+      id: "GAP-INV-002",
+      name: "Partial Cloud Storage Crawl",
+      domain: "Data Consolidation",
+      severity: "P1",
+      owner: "Data Consolidation Agent",
+      blocker: invSummary.blockers.join("; ") || "iCloud Drive mount directory missing or permission-blocked",
+      fix: "Ensure Library/Mobile Documents permission or local mount point is mounted",
+      criteria: "iCloud and Google Drive directories scanned successfully",
+      linked_task: "T009",
+      evidence: "cloud_project_inventory.json overall_status is VERIFIED",
+      verdict: "CONDITIONAL GO"
+    });
+  }
+
+  // Load registry gaps if global_project_registry.json exists
+  try {
+    const regPath = path.join(DATA, "global_project_registry.json");
+    if (fs.existsSync(regPath)) {
+      const reg = JSON.parse(fs.readFileSync(regPath, "utf8"));
+      reg.forEach((c, idx) => {
+        if (c.gaps && c.gaps.length > 0) {
+          c.gaps.forEach((gStr, gIdx) => {
+            gaps.push({
+              id: `REG-GAP-${c.canonical_id}-${gIdx}`,
+              name: `Registry: ${c.canonical_name}`,
+              domain: "Global Registry",
+              severity: "P1",
+              owner: c.owner_agent || "Data Consolidation Agent",
+              blocker: gStr,
+              fix: c.next_action === "review" ? "Deduplication operator review" : "Add missing asset documentation/tests",
+              criteria: "Asset has E2E tests, README, and no uncommitted files",
+              linked_task: "T011",
+              evidence: "Canonical registry record gaps list empty",
+              verdict: "CONDITIONAL GO"
+            });
+          });
+        }
+      });
+    }
+  } catch (err) {
+    console.error("Error reading registry gaps:", err);
+  }
+
   if (disk.available < 25.0) {
     gaps.unshift({
       id: "GAP-DISK-001",
@@ -1672,7 +1754,7 @@ function getGapsData(truth) {
       { name: "evidence", status: "partial" },
       { name: "security", status: "partial" },
       { name: "monetization", status: "none" },
-      { name: "project inventory", status: "none" },
+      { name: "project inventory", status: inventoryStatus },
       { name: "telemetry", status: dora.unknown_metrics.length === 0 ? "full" : (dora.unknown_metrics.length < 5 ? "partial" : "none") },
       { name: "tests", status: "full" },
       { name: "docs", status: "full" },
@@ -1856,6 +1938,15 @@ const server = http.createServer((req, res) => {
       lines = fs.readFileSync(path.join(DATA, "events.ndjson"), "utf8").trim().split("\n").filter(Boolean).slice(-100).map(JSON.parse);
     } catch {}
     return sendJson(res, lines);
+  }
+  if (url.pathname === "/api/registry") {
+    return sendJson(res, readJson("global_project_registry.json", []));
+  }
+  if (url.pathname === "/api/dedupe") {
+    return sendJson(res, readJson("duplicate_groups.json", []));
+  }
+  if (url.pathname === "/api/inventory/summary") {
+    return sendJson(res, readJson("inventory_summary.json", {}));
   }
   if (url.pathname === "/api/acceleration") {
     try {
