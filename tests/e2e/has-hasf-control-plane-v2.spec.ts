@@ -42,10 +42,10 @@ test.describe("Control Plane v2 UI Shell verification", () => {
     await expect(statusBadge).toBeVisible();
 
     // 2. Verify sidebar groups
-    await expect(page.locator("text=Core Hub")).toBeVisible();
-    await expect(page.locator("text=Project Tracker")).toBeVisible();
-    await expect(page.locator("text=Platforms")).toBeVisible();
-    await expect(page.locator("text=DevSecOps")).toBeVisible();
+    await expect(page.locator("aside >> text=Core Hub")).toBeVisible();
+    await expect(page.locator("aside >> text=Project Tracker")).toBeVisible();
+    await expect(page.locator("aside >> text=Platforms")).toBeVisible();
+    await expect(page.locator("aside >> text=DevSecOps")).toBeVisible();
 
     // 3. Verify KPI cards
     await expect(page.locator("#kpiAgents")).toBeVisible();

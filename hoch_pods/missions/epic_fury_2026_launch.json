@@ -29,6 +29,12 @@
     "ios_privacy_manifest": "present",
     "ios_spm_packages": ["capacitor-swift-pm", "RevenuecatPurchasesCapacitor"]
   },
-  "status": "GO",
+  "status": "CONDITIONAL_GO",
+  "sub_statuses": {
+    "ios_build_sync": "GO",
+    "terms_route": "GO",
+    "capacitor_sync": "GO",
+    "app_store_submission": "BLOCKED"
+  },
   "created_at": "2026-06-30T14:58:39-05:00"
 }

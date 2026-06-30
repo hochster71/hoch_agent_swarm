@@ -49,6 +49,7 @@ test.describe("Control Plane All Pages Render", () => {
       { text: "Gap Analysis", type: "tab", id: "gapsListRows" },
       { text: "Agent Swarm", type: "tab", id: "agentsTable" },
       { text: "Build Factory", type: "tab", id: "buildsTable" },
+      { text: "Mission Control", type: "wip" },
       { text: "Observability", type: "wip" },
       { text: "Production Acceleration", type: "wip" },
       { text: "Security Center", type: "wip" },
