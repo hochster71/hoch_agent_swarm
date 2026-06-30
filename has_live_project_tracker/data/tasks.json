@@ -1418,10 +1418,10 @@
     "name": "Adopt HAS/HASF Shell Baseline v2",
     "owner_domain": "Tracker",
     "domain": "Tracker",
-    "status": "Running",
+    "status": "Done",
     "assigned_agent": "Live Tracker Runtime Agent",
     "started_at": "2026-06-30T17:53:00.000Z",
-    "completed_at": null,
+    "completed_at": "2026-06-30T18:19:00Z",
     "expected_hours": 8,
     "dependencies": [
       "T011"
@@ -1429,7 +1429,7 @@
     "depends_on": [
       "T011"
     ],
-    "progress": 50,
+    "progress": 100,
     "description": "Refactor the tracker UI into the dark control-plane shell matching the approved prototype layout.",
     "blocker": "",
     "evidence": [],
@@ -1441,17 +1441,17 @@
     "projection_impact_hours": 8,
     "next_action": "Complete UI refactoring",
     "stale_after_seconds": 300,
-    "updated_at": "2026-06-30T18:17:21.789Z"
+    "updated_at": "2026-06-30T18:19:00Z"
   },
   {
     "id": "T053",
     "name": "Add live animated data-flow layer",
     "owner_domain": "Observability",
     "domain": "Observability",
-    "status": "Queued",
+    "status": "Done",
     "assigned_agent": "Live Tracker Runtime Agent",
     "started_at": null,
-    "completed_at": null,
+    "completed_at": "2026-06-30T18:19:00Z",
     "expected_hours": 12,
     "dependencies": [
       "T052"
@@ -1459,7 +1459,7 @@
     "depends_on": [
       "T052"
     ],
-    "progress": 0,
+    "progress": 100,
     "description": "Create real animated visual flows driven by events.ndjson and live /api/stream telemetry.",
     "done_definition": "Dashboard animates live task, agent, build, registry, evidence, RACI, DORA, and security events with no simulated data.",
     "blocker": "Waiting on T052 Baseline shell",
@@ -1471,17 +1471,17 @@
     "projection_impact_hours": 12,
     "next_action": "Awaiting T052",
     "stale_after_seconds": 300,
-    "updated_at": "2026-06-30T17:53:00.000Z"
+    "updated_at": "2026-06-30T18:19:00Z"
   },
   {
     "id": "T054",
     "name": "Add SSE live event stream endpoint",
     "owner_domain": "Observability",
     "domain": "Observability",
-    "status": "Queued",
+    "status": "Done",
     "assigned_agent": "Live Tracker Runtime Agent",
     "started_at": null,
-    "completed_at": null,
+    "completed_at": "2026-06-30T18:19:00Z",
     "expected_hours": 6,
     "dependencies": [
       "T053"
@@ -1489,7 +1489,7 @@
     "depends_on": [
       "T053"
     ],
-    "progress": 0,
+    "progress": 100,
     "description": "Expose authenticated GET /api/stream using Server-Sent Events sourced from events.ndjson and live runtime updates.",
     "done_definition": "/api/stream emits real event objects and UI consumes them for live flow animation.",
     "blocker": "Waiting on T053 flow layer",
@@ -1501,17 +1501,17 @@
     "projection_impact_hours": 6,
     "next_action": "Awaiting T053",
     "stale_after_seconds": 300,
-    "updated_at": "2026-06-30T17:53:00.000Z"
+    "updated_at": "2026-06-30T18:19:00Z"
   },
   {
     "id": "T055",
     "name": "Add Control Plane page router",
     "owner_domain": "Tracker",
     "domain": "Tracker",
-    "status": "Queued",
+    "status": "Done",
     "assigned_agent": "Live Tracker Runtime Agent",
     "started_at": null,
-    "completed_at": null,
+    "completed_at": "2026-06-30T18:19:00Z",
     "expected_hours": 8,
     "dependencies": [
       "T052"
@@ -1519,7 +1519,7 @@
     "depends_on": [
       "T052"
     ],
-    "progress": 0,
+    "progress": 100,
     "description": "Formalize all HAS, HASF, Personal, Business, Hobby, DevSecOps, Governance, and Utility pages.",
     "done_definition": "All side-nav pages render with live data cards or explicit UNKNOWN/PARTIAL states.",
     "blocker": "Waiting on T052 Baseline shell",
@@ -1531,17 +1531,17 @@
     "projection_impact_hours": 8,
     "next_action": "Awaiting T052",
     "stale_after_seconds": 300,
-    "updated_at": "2026-06-30T17:53:00.000Z"
+    "updated_at": "2026-06-30T18:19:00Z"
   },
   {
     "id": "T056",
     "name": "Embed Live Tracker mirror into Control Plane v2",
     "owner_domain": "Tracker",
     "domain": "Tracker",
-    "status": "Queued",
+    "status": "Done",
     "assigned_agent": "Live Tracker Runtime Agent",
     "started_at": null,
-    "completed_at": null,
+    "completed_at": "2026-06-30T18:19:00Z",
     "expected_hours": 4,
     "optimistic_hours": 1,
     "most_likely_hours": 3,
@@ -1552,7 +1552,7 @@
     "depends_on": [
       "T052"
     ],
-    "progress": 0,
+    "progress": 100,
     "description": "Embed the current HAS/HASF Live Tracker permanently inside Control Plane v2 as a mirrored runtime cockpit while preserving port 3001 as the authoritative runtime.",
     "done_definition": "Control Plane v2 includes a Live Tracker Mirror page/dock that renders the current tracker state from real endpoints without duplicate state logic.",
     "blocker": "Waiting on T052 Baseline shell",
@@ -1564,17 +1564,17 @@
     "projection_impact_hours": 4,
     "next_action": "Awaiting T052",
     "stale_after_seconds": 300,
-    "updated_at": "2026-06-30T17:53:00.000Z"
+    "updated_at": "2026-06-30T18:19:00Z"
   },
   {
     "id": "T057",
     "name": "Add Live Tracker mirror health and auth validation",
     "owner_domain": "Observability",
     "domain": "Observability",
-    "status": "Queued",
+    "status": "Done",
     "assigned_agent": "QA Auditor Agent",
     "started_at": null,
-    "completed_at": null,
+    "completed_at": "2026-06-30T18:19:00Z",
     "expected_hours": 2,
     "optimistic_hours": 1,
     "most_likely_hours": 2,
@@ -1585,7 +1585,7 @@
     "depends_on": [
       "T056"
     ],
-    "progress": 0,
+    "progress": 100,
     "description": "Validate that the embedded mirror uses the same auth/session context, does not expose credentials, and reflects live endpoint health.",
     "done_definition": "Mirror page passes E2E, healthcheck confirms mirror route, and auth does not regress.",
     "blocker": "Waiting on T056 mirror integration",
@@ -1597,6 +1597,271 @@
     "projection_impact_hours": 2,
     "next_action": "Awaiting T056",
     "stale_after_seconds": 300,
-    "updated_at": "2026-06-30T17:53:00.000Z"
+    "updated_at": "2026-06-30T18:19:00Z"
+  },
+  {
+    "id": "T062",
+    "name": "Design Kubernetes sidecar runtime without changing baseline",
+    "owner_domain": "Runtime",
+    "domain": "Runtime",
+    "status": "Running",
+    "assigned_agent": "Production Acceleration Agent",
+    "started_at": "2026-06-30T18:25:00Z",
+    "completed_at": null,
+    "expected_hours": 4,
+    "optimistic_hours": 2,
+    "most_likely_hours": 4,
+    "pessimistic_hours": 8,
+    "dependencies": [
+      "T052",
+      "T053",
+      "T054",
+      "T056"
+    ],
+    "depends_on": [
+      "T052",
+      "T053",
+      "T054",
+      "T056"
+    ],
+    "progress": 50,
+    "description": "Design local Docker/Kubernetes sidecar runtime that preserves the current Control Plane v2 baseline while adding containerized worker execution.",
+    "blocker": "",
+    "evidence": [
+      "docs/evidence/ui/20260630-k8s-sidecar-runtime-plan.md"
+    ],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Architecture doc, manifests plan, resource limits, rollback plan, and sidecar-only migration path exist.",
+    "critical_path_reason": "Lays architecture and bounds container execution safely.",
+    "projection_impact_hours": 4,
+    "next_action": "Complete Docker/Kubernetes files design",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T18:25:00Z"
+  },
+  {
+    "id": "T063",
+    "name": "Containerize HAS/HASF sidecar workers",
+    "owner_domain": "Runtime",
+    "domain": "Runtime",
+    "status": "Queued",
+    "assigned_agent": "HASF Pipeline Agent",
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 12,
+    "optimistic_hours": 6,
+    "most_likely_hours": 12,
+    "pessimistic_hours": 24,
+    "dependencies": [
+      "T062"
+    ],
+    "depends_on": [
+      "T062"
+    ],
+    "progress": 0,
+    "description": "Create Dockerfiles and compose profiles for inventory, registry, event, evidence, and scan workers without replacing the baseline tracker/API.",
+    "blocker": "Waiting on T062 design",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Workers build locally, run with bounded CPU/memory, write event outputs, and do not modify baseline state unsafely.",
+    "critical_path_reason": "Enables reproducible worker container builds.",
+    "projection_impact_hours": 12,
+    "next_action": "Awaiting T062",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T18:25:00Z"
+  },
+  {
+    "id": "T064",
+    "name": "Create local k3d or kind cluster for HAS/HASF workers",
+    "owner_domain": "Runtime",
+    "domain": "Runtime",
+    "status": "Queued",
+    "assigned_agent": "HASF Pipeline Agent",
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 8,
+    "optimistic_hours": 4,
+    "most_likely_hours": 8,
+    "pessimistic_hours": 16,
+    "dependencies": [
+      "T063"
+    ],
+    "depends_on": [
+      "T063"
+    ],
+    "progress": 0,
+    "description": "Create local Kubernetes-in-Docker cluster for sidecar workers with namespace isolation, resource limits, persistent volumes, and health checks.",
+    "blocker": "Waiting on T063 containerization",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Cluster starts, worker namespace exists, test job runs, resource limits are enforced, and baseline :3001/:8000 remains untouched.",
+    "critical_path_reason": "Provides runtime orchestration and resource controls.",
+    "projection_impact_hours": 8,
+    "next_action": "Awaiting T063",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T18:25:00Z"
+  },
+  {
+    "id": "T065",
+    "name": "Wire Kubernetes worker events into Control Plane live flows",
+    "owner_domain": "Observability",
+    "domain": "Observability",
+    "status": "Queued",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 8,
+    "optimistic_hours": 4,
+    "most_likely_hours": 8,
+    "pessimistic_hours": 16,
+    "dependencies": [
+      "T064"
+    ],
+    "depends_on": [
+      "T064"
+    ],
+    "progress": 0,
+    "description": "Stream real Kubernetes worker events into events.ndjson and /api/stream so Control Plane v2 animates actual job/agent flow activity.",
+    "blocker": "Waiting on T064 cluster wired",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Control Plane live flow layer shows real Kubernetes job/worker events with no fake telemetry.",
+    "critical_path_reason": "Verifies live event telemetry loop over the mesh runtime.",
+    "projection_impact_hours": 8,
+    "next_action": "Awaiting T064",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T18:25:00Z"
+  },
+  {
+    "id": "T096",
+    "name": "Create HOCH PODS Launch Theater",
+    "owner_domain": "UI",
+    "status": "Done",
+    "assigned_agent": "Master Orchestrator",
+    "started_at": "",
+    "completed_at": "2026-06-30T19:06:28Z",
+    "expected_hours": 2,
+    "dependencies": [],
+    "progress": 100,
+    "description": "Replace the static swarm panel with a cinematic HOCH PODS launch theater where POD cores activate and agents spin up with profile cards.",
+    "blocker": "",
+    "evidence": [
+      "docs/evidence/ui/20260630-hoch-pods-launch-theater.md"
+    ],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "Implemented and verified via E2E playwright tests.",
+    "critical_path_reason": "High-priority HOCH PODS launch theater migration milestone.",
+    "projection_impact_hours": 2,
+    "next_action": "",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T097",
+    "name": "Add POD Core activation animations",
+    "owner_domain": "UI",
+    "status": "Done",
+    "assigned_agent": "Master Orchestrator",
+    "started_at": "",
+    "completed_at": "2026-06-30T19:06:28Z",
+    "expected_hours": 2,
+    "dependencies": [],
+    "progress": 100,
+    "description": "Animate HAS, HASF, Business, Cyber, Hobby, Family, and Ops POD cores as protected orchestration domains.",
+    "blocker": "",
+    "evidence": [
+      "docs/evidence/ui/20260630-hoch-pods-launch-theater.md"
+    ],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "Implemented and verified via E2E playwright tests.",
+    "critical_path_reason": "High-priority HOCH PODS launch theater migration milestone.",
+    "projection_impact_hours": 2,
+    "next_action": "",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T098",
+    "name": "Add agent skill popout cards",
+    "owner_domain": "UI",
+    "status": "Done",
+    "assigned_agent": "Master Orchestrator",
+    "started_at": "",
+    "completed_at": "2026-06-30T19:06:28Z",
+    "expected_hours": 2,
+    "dependencies": [],
+    "progress": 100,
+    "description": "Show animated agent skill/role/mission cards during agent spin-up.",
+    "blocker": "",
+    "evidence": [
+      "docs/evidence/ui/20260630-hoch-pods-launch-theater.md"
+    ],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "Implemented and verified via E2E playwright tests.",
+    "critical_path_reason": "High-priority HOCH PODS launch theater migration milestone.",
+    "projection_impact_hours": 2,
+    "next_action": "",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T099",
+    "name": "Add POD-to-agent lifecycle routing",
+    "owner_domain": "Observability",
+    "status": "Done",
+    "assigned_agent": "Master Orchestrator",
+    "started_at": "",
+    "completed_at": "2026-06-30T19:06:28Z",
+    "expected_hours": 2,
+    "dependencies": [],
+    "progress": 100,
+    "description": "Map agents to PODs, tasks, lifecycle states, and destination lanes using real data.",
+    "blocker": "",
+    "evidence": [
+      "docs/evidence/ui/20260630-hoch-pods-launch-theater.md"
+    ],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "Implemented and verified via E2E playwright tests.",
+    "critical_path_reason": "High-priority HOCH PODS launch theater migration milestone.",
+    "projection_impact_hours": 2,
+    "next_action": "",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T100",
+    "name": "Add HOCH PODS launch readiness banner",
+    "owner_domain": "Release",
+    "status": "Done",
+    "assigned_agent": "Master Orchestrator",
+    "started_at": "",
+    "completed_at": "2026-06-30T19:06:28Z",
+    "expected_hours": 2,
+    "dependencies": [],
+    "progress": 100,
+    "description": "Show rocket-ready, waiting, blocked, degraded, and launch-ready states across the Control Plane.",
+    "blocker": "",
+    "evidence": [
+      "docs/evidence/ui/20260630-hoch-pods-launch-theater.md"
+    ],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "Implemented and verified via E2E playwright tests.",
+    "critical_path_reason": "High-priority HOCH PODS launch theater migration milestone.",
+    "projection_impact_hours": 2,
+    "next_action": "",
+    "stale_after_seconds": 300
   }
 ]
