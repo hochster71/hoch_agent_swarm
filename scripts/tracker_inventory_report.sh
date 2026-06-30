@@ -3,47 +3,47 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DATA_DIR="$SCRIPT_DIR/../has_live_project_tracker/data"
+SUMMARY_FILE="$DATA_DIR/inventory_summary.json"
+
+if [ ! -f "$SUMMARY_FILE" ]; then
+    echo "Error: inventory_summary.json not found." >&2
+    exit 1
+fi
 
 echo "=================================================="
-echo "HAS/HASF GLOBAL PROJECT REGISTRY REPORT"
+echo "HAS/HASF TRACKER INVENTORY INGESTION REPORT"
 echo "=================================================="
 
-# 1. GitHub Inventory Summary
-if [ -f "$DATA_DIR/github_inventory.json" ]; then
-    REPOS=$(jq '. | length' "$DATA_DIR/github_inventory.json")
-    LANGUAGES=$(jq -r '[.[].language] | unique | .[]' "$DATA_DIR/github_inventory.json" | paste -sd, -)
-    echo "GitHub Repositories Discovered: $REPOS"
-    echo "Primary Languages:             $LANGUAGES"
-else
-    echo "GitHub Repositories:            [MISSING]"
+# Read values using jq
+AGENT_COUNT=$(jq '.agent_count' "$SUMMARY_FILE")
+BUILD_COUNT=$(jq '.build_count' "$SUMMARY_FILE")
+GITHUB_COUNT=$(jq '.github_count' "$SUMMARY_FILE")
+GITHUB_STATUS=$(jq -r '.github_status' "$SUMMARY_FILE")
+LOCAL_COUNT=$(jq '.local_count' "$SUMMARY_FILE")
+LOCAL_STATUS=$(jq -r '.local_status' "$SUMMARY_FILE")
+CLOUD_COUNT=$(jq '.cloud_count' "$SUMMARY_FILE")
+CLOUD_STATUS=$(jq -r '.cloud_status' "$SUMMARY_FILE")
+SUMMARY_VERDICT=$(jq -r '.overall_status' "$SUMMARY_FILE")
+
+echo "Agent Inventory Count:        $AGENT_COUNT"
+echo "Build Inventory Count:        $BUILD_COUNT"
+echo "GitHub Inventory Status:      $GITHUB_STATUS ($GITHUB_COUNT repos)"
+echo "Local Project Inventory Count: $LOCAL_COUNT"
+echo "Cloud Inventory Status:       $CLOUD_STATUS ($CLOUD_COUNT documents)"
+echo "Summary Verdict:              $SUMMARY_VERDICT"
+
+echo "--------------------------------------------------"
+echo "Remaining Partials:"
+# Get all blockers or list iCloud Drive partials
+jq -r '.blockers[]' "$SUMMARY_FILE" || echo "None"
+# Check if iCloud was skipped/missing
+if ! ls ~/Library/Mobile\ Documents/com~apple~CloudDocs &>/dev/null; then
+    echo " • iCloud Drive (Skipped: mount path absent or unreadable)"
 fi
 
 echo "--------------------------------------------------"
-
-# 2. Local Workspaces Summary
-if [ -f "$DATA_DIR/local_inventory.json" ]; then
-    WORKSPACES=$(jq '. | length' "$DATA_DIR/local_inventory.json")
-    TOTAL_FILES=$(jq '[.[].file_count] | add' "$DATA_DIR/local_inventory.json")
-    TOTAL_SIZE=$(jq '[.[].total_size_mb] | add' "$DATA_DIR/local_inventory.json")
-    echo "Local Workspace Folders:        $WORKSPACES"
-    echo "Total Files Scanned:            $TOTAL_FILES"
-    echo "Total Local Space Consumed:     $TOTAL_SIZE MB"
-else
-    echo "Local Workspace Catalog:        [MISSING]"
-fi
-
-echo "--------------------------------------------------"
-
-# 3. Cloud Documents Summary
-if [ -f "$DATA_DIR/cloud_inventory.json" ]; then
-    CLOUD_FILES=$(jq '. | length' "$DATA_DIR/cloud_inventory.json")
-    ICLOUD_COUNT=$(jq '[.[] | select(.provider == "iCloud Drive")] | length' "$DATA_DIR/cloud_inventory.json")
-    GDRIVE_COUNT=$(jq '[.[] | select(.provider == "Google Drive")] | length' "$DATA_DIR/cloud_inventory.json")
-    echo "Cloud Files Cataloged:          $CLOUD_FILES"
-    echo " • iCloud Drive Documents:      $ICLOUD_COUNT"
-    echo " • Google Drive Documents:      $GDRIVE_COUNT"
-else
-    echo "Cloud Documents Index:          [MISSING]"
-fi
-
+echo "Top Next Actions:"
+echo " 1. [T010] Deduplicate and classify local vs. remote workspaces."
+echo " 2. [T011] Integrate inventory data tables into the Live Tracker UI."
+echo " 3. Verify signature validations for incoming git commits."
 echo "=================================================="
