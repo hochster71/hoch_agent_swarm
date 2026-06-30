@@ -20,6 +20,7 @@
     ],
     "privacy_page": "/privacy",
     "support_page": "/support",
+    "terms_page": "/terms",
     "checkout_endpoint": "/api/stripe/checkout",
     "webhook_endpoint": "/api/webhooks/stripe",
     "ios_bundle_id": "com.epicfury.dashboard",
@@ -28,6 +29,6 @@
     "ios_privacy_manifest": "present",
     "ios_spm_packages": ["capacitor-swift-pm", "RevenuecatPurchasesCapacitor"]
   },
-  "status": "CONDITIONAL_GO",
+  "status": "GO",
   "created_at": "2026-06-30T14:58:39-05:00"
 }

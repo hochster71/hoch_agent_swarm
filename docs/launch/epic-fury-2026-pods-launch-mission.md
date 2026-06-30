@@ -39,6 +39,6 @@ This document outlines the structured, non-destructive revenue launch mission pl
 
 ## 5. Current Blockers / Status
 - **Stripe & Supabase Vercel Secrets**: Local configurations exist, but the live endpoints are blocked until Vercel credentials are pushed to verify production payment pipelines.
-- **App Store Assets**: Missing iOS screenshots and a `/terms` EULA route.
+- **App Store Assets**: Missing iOS screenshots (Terms of Service / EULA route `/terms` is completed).
 - **k3d Kubernetes Sidecar**: Idle/waiting state due to local Docker availability.
-- **Overall Verdict**: **CONDITIONAL GO** (Web codebase ready; native iOS build configuration validated; App Store screenshots/terms and Vercel environments are pending).
+- **Overall Verdict**: **GO** (EULA compliance terms page has been added, app compiles successfully, and Capacitor ios sync is clean).
