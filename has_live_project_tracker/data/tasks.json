@@ -996,6 +996,34 @@
     "projection_impact_hours": 8,
     "next_action": "Verify E2E tests and obtain launchd installation approval",
     "stale_after_seconds": 300,
-    "updated_at": "2026-06-30T14:12:00.000Z"
+    "updated_at": "2026-06-30T14:14:37.841Z"
+  },
+  {
+    "id": "T040",
+    "name": "Restore live HAS API feed on port 8000",
+    "owner_domain": "Tracker",
+    "status": "Running",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": "2026-06-30T14:14:00.000Z",
+    "completed_at": null,
+    "expected_hours": 2,
+    "optimistic_hours": 1,
+    "pessimistic_hours": 6,
+    "dependencies": [
+      "T039"
+    ],
+    "progress": 10,
+    "description": "Restore live HAS API feed on port 8000 by checking Docker daemon health and launching compose services.",
+    "blocker": "has-api container offline on port 8000",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Live HTTP API on port 8000 is accessible and registers healthy response.",
+    "critical_path_reason": "Enables live Swarm orchestration truth linkage.",
+    "projection_impact_hours": 2,
+    "next_action": "Check docker daemon status and start compose service",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T14:14:37.853Z"
   }
 ]

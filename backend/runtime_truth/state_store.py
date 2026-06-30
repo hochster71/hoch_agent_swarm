@@ -251,6 +251,18 @@ def init_runtime_truth_tables():
                 timestamp TEXT NOT NULL
             )
         """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS runtime_worker_mesh (
+                node_name TEXT PRIMARY KEY,
+                host TEXT NOT NULL,
+                ollama_base_url TEXT NOT NULL,
+                status TEXT NOT NULL,
+                routing_enabled INTEGER NOT NULL DEFAULT 0,
+                approval_required INTEGER NOT NULL DEFAULT 1,
+                models_observed TEXT,
+                last_seen TEXT NOT NULL
+            )
+        """)
         conn.commit()
     finally:
         conn.close()

@@ -92,6 +92,9 @@ test.describe("Runtime Reliability E2E and Telemetry Validation", () => {
     }
 
     // Ensure zero runtime JS console errors or assets crashes
+    if (consoleErrors.length > 0) {
+      console.log("CAPTURED BROWSER CONSOLE ERRORS:\n", consoleErrors.join("\n"));
+    }
     expect(consoleErrors.length).toBe(0);
     expect(asset404s.length).toBe(0);
   });
