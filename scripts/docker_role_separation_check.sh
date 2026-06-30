@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 set -e
 
+export DOCKER_API_VERSION=1.41
+
+# Pin Docker context to desktop-linux
+if docker context ls | grep -F "desktop-linux" >/dev/null; then
+  docker context use desktop-linux >/dev/null
+fi
+
+
 echo "=================================================="
 echo "DOCKER ROLE SEPARATION CHECK"
 echo "=================================================="

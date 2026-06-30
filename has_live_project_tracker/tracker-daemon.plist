@@ -6,7 +6,7 @@
     <string>com.hochster71.has.tracker</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/usr/local/bin/node</string>
+        <string>/opt/homebrew/bin/node</string>
         <string>server.js</string>
     </array>
     <key>WorkingDirectory</key>

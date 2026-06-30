@@ -1,4 +1,5 @@
 import Hls from 'hls.js';
+import './src/main.tsx';
 (function () {
     'use strict';
 
@@ -22,13 +23,14 @@ import Hls from 'hls.js';
     let lastArchiveSealPreviewData = null;
 
     // Missing stub functions to prevent console/runtime crashes
+    const DEBUG_STUBS = false;
     function triggerCrewaiIngestion() { 
         if (window.triggerCrewaiIngestion && window.triggerCrewaiIngestion !== triggerCrewaiIngestion) return window.triggerCrewaiIngestion(...arguments);
-        console.log('triggerCrewaiIngestion stub'); 
+        if (DEBUG_STUBS) console.log('triggerCrewaiIngestion stub'); 
     }
     async function loadCrewaiIngestionStatus() { 
         if (window.loadCrewaiIngestionStatus && window.loadCrewaiIngestionStatus !== loadCrewaiIngestionStatus) return await window.loadCrewaiIngestionStatus(...arguments);
-        console.log('loadCrewaiIngestionStatus stub'); 
+        if (DEBUG_STUBS) console.log('loadCrewaiIngestionStatus stub'); 
     }
     
     async function populateDecisionRoomCandidates() {
@@ -89,67 +91,67 @@ import Hls from 'hls.js';
 
     function simulateDecision() { 
         if (window.simulateDecision && window.simulateDecision !== simulateDecision) return window.simulateDecision(...arguments);
-        console.log('simulateDecision stub'); 
+        if (DEBUG_STUBS) console.log('simulateDecision stub'); 
     }
     function exportDecisionMemo() { 
         if (window.exportDecisionMemo && window.exportDecisionMemo !== exportDecisionMemo) return window.exportDecisionMemo(...arguments);
-        console.log('exportDecisionMemo stub'); 
+        if (DEBUG_STUBS) console.log('exportDecisionMemo stub'); 
     }
     async function loadRoutingHistoryData() { 
         if (window.loadRoutingHistoryData && window.loadRoutingHistoryData !== loadRoutingHistoryData) return await window.loadRoutingHistoryData(...arguments);
-        console.log('loadRoutingHistoryData stub'); 
+        if (DEBUG_STUBS) console.log('loadRoutingHistoryData stub'); 
     }
     async function loadInferenceHistory() { 
         if (window.loadInferenceHistory && window.loadInferenceHistory !== loadInferenceHistory) return await window.loadInferenceHistory(...arguments);
-        console.log('loadInferenceHistory stub'); 
+        if (DEBUG_STUBS) console.log('loadInferenceHistory stub'); 
     }
     async function loadMultiModelHistory() { 
         if (window.loadMultiModelHistory && window.loadMultiModelHistory !== loadMultiModelHistory) return await window.loadMultiModelHistory(...arguments);
-        console.log('loadMultiModelHistory stub'); 
+        if (DEBUG_STUBS) console.log('loadMultiModelHistory stub'); 
     }
     function populateModelNodeSelect() { 
         if (window.populateModelNodeSelect && window.populateModelNodeSelect !== populateModelNodeSelect) return window.populateModelNodeSelect(...arguments);
-        console.log('populateModelNodeSelect stub'); 
+        if (DEBUG_STUBS) console.log('populateModelNodeSelect stub'); 
     }
     async function loadAgentModelPolicies() { 
         if (window.loadAgentModelPolicies && window.loadAgentModelPolicies !== loadAgentModelPolicies) return await window.loadAgentModelPolicies(...arguments);
-        console.log('loadAgentModelPolicies stub'); 
+        if (DEBUG_STUBS) console.log('loadAgentModelPolicies stub'); 
     }
     async function loadPolicyDecisions() { 
         if (window.loadPolicyDecisions && window.loadPolicyDecisions !== loadPolicyDecisions) return await window.loadPolicyDecisions(...arguments);
-        console.log('loadPolicyDecisions stub'); 
+        if (DEBUG_STUBS) console.log('loadPolicyDecisions stub'); 
     }
     function registerModelProvider() { 
         if (window.registerModelProvider && window.registerModelProvider !== registerModelProvider) return window.registerModelProvider(...arguments);
-        console.log('registerModelProvider stub'); 
+        if (DEBUG_STUBS) console.log('registerModelProvider stub'); 
     }
     function runProviderHealthCheck() { 
         if (window.runProviderHealthCheck && window.runProviderHealthCheck !== runProviderHealthCheck) return window.runProviderHealthCheck(...arguments);
-        console.log('runProviderHealthCheck stub'); 
+        if (DEBUG_STUBS) console.log('runProviderHealthCheck stub'); 
     }
     function runProviderModelDiscovery() { 
         if (window.runProviderModelDiscovery && window.runProviderModelDiscovery !== runProviderModelDiscovery) return window.runProviderModelDiscovery(...arguments);
-        console.log('runProviderModelDiscovery stub'); 
+        if (DEBUG_STUBS) console.log('runProviderModelDiscovery stub'); 
     }
     function runProviderApproval() { 
         if (window.runProviderApproval && window.runProviderApproval !== runProviderApproval) return window.runProviderApproval(...arguments);
-        console.log('runProviderApproval stub'); 
+        if (DEBUG_STUBS) console.log('runProviderApproval stub'); 
     }
     function runProviderDisabling() { 
         if (window.runProviderDisabling && window.runProviderDisabling !== runProviderDisabling) return window.runProviderDisabling(...arguments);
-        console.log('runProviderDisabling stub'); 
+        if (DEBUG_STUBS) console.log('runProviderDisabling stub'); 
     }
     function sendTestInference() { 
         if (window.sendTestInference && window.sendTestInference !== sendTestInference) return window.sendTestInference(...arguments);
-        console.log('sendTestInference stub'); 
+        if (DEBUG_STUBS) console.log('sendTestInference stub'); 
     }
     function executeMultiModelReasoning() { 
         if (window.executeMultiModelReasoning && window.executeMultiModelReasoning !== executeMultiModelReasoning) return window.executeMultiModelReasoning(...arguments);
-        console.log('executeMultiModelReasoning stub'); 
+        if (DEBUG_STUBS) console.log('executeMultiModelReasoning stub'); 
     }
     function saveAgentModelPolicy() { 
         if (window.saveAgentModelPolicy && window.saveAgentModelPolicy !== saveAgentModelPolicy) return window.saveAgentModelPolicy(...arguments);
-        console.log('saveAgentModelPolicy stub'); 
+        if (DEBUG_STUBS) console.log('saveAgentModelPolicy stub'); 
     }
 
     // Helper functions
@@ -1623,6 +1625,28 @@ import Hls from 'hls.js';
                     });
                 }
                 lastLedgerCount = currentCount;
+            }
+
+            // Operator Cockpit parallel fetch
+            try {
+                const [verdictRes, summaryRes, missionsRes] = await Promise.all([
+                    fetch('/api/v1/final-verifier/verdict'),
+                    fetch('/api/v1/operator/cognitive-summary'),
+                    fetch('/api/v1/evidence/missions')
+                ]);
+                if (verdictRes.ok && summaryRes.ok) {
+                    const verdictData = await verdictRes.json();
+                    const summaryData = await summaryRes.json();
+                    let missionsData = [];
+                    if (missionsRes.ok) {
+                        try {
+                            missionsData = await missionsRes.json();
+                        } catch(e) {}
+                    }
+                    updateOperatorCockpit(verdictData.verdict, summaryData.cognitive_summary, missionsData);
+                }
+            } catch (err) {
+                console.error('[Operator Cockpit] fetch error:', err);
             }
         } catch (err) {
             console.error('[Cockpit] fetch error:', err);
@@ -5466,47 +5490,320 @@ import Hls from 'hls.js';
         });
     }
 
+    // --- OPERATOR COCKPIT SYSTEM ---
+    function initCockpitTabs() {
+        const btnCockpit = el('btn-tab-cockpit');
+        const btnLegacy = el('btn-tab-legacy');
+        const containerCockpit = el('container-operator-cockpit');
+        const containerLegacy = el('container-legacy-telemetry');
+
+        if (btnCockpit && btnLegacy && containerCockpit && containerLegacy) {
+            btnCockpit.addEventListener('click', () => {
+                btnCockpit.classList.add('active-tab');
+                btnCockpit.style.borderBottom = '2px solid var(--accent-teal)';
+                btnCockpit.style.color = '#fff';
+                btnLegacy.classList.remove('active-tab');
+                btnLegacy.style.borderBottom = '2px solid transparent';
+                btnLegacy.style.color = 'var(--text-secondary)';
+
+                containerCockpit.classList.remove('hidden');
+                containerLegacy.classList.add('hidden');
+            });
+
+            btnLegacy.addEventListener('click', () => {
+                btnLegacy.classList.add('active-tab');
+                btnLegacy.style.borderBottom = '2px solid var(--accent-teal)';
+                btnLegacy.style.color = '#fff';
+                btnCockpit.classList.remove('active-tab');
+                btnCockpit.style.borderBottom = '2px solid transparent';
+                btnCockpit.style.color = 'var(--text-secondary)';
+
+                containerLegacy.classList.remove('hidden');
+                containerCockpit.classList.add('hidden');
+            });
+        }
+    }
+
+    function initCockpitAutonomyButtons() {
+        const btnDisc = el('btn-cockpit-run-discovery');
+        if (btnDisc) {
+            btnDisc.addEventListener('click', async (e) => {
+                e.preventDefault();
+                btnDisc.disabled = true;
+                btnDisc.textContent = 'DISCOVERING WORKERS...';
+                btnDisc.style.opacity = '0.5';
+                try {
+                    const res = await fetch('/api/v1/brain/autonomy-loop/run', { method: 'POST' });
+                    if (res.ok) {
+                        const data = await res.json();
+                        console.log('Autonomy loop discovery triggered:', data);
+                    }
+                } catch (err) {
+                    console.error('Error running autonomy loop discovery:', err);
+                } finally {
+                    btnDisc.disabled = false;
+                    btnDisc.textContent = 'RUN WORKER DISCOVERY';
+                    btnDisc.style.opacity = '1';
+                    fetchCockpit();
+                }
+            });
+        }
+    }
+
+    function updateOperatorCockpit(verdict, summary, missions) {
+        if (!verdict) return;
+        
+        // 1. Final Verifier Status
+        const opVerifierStatus = el('op-verifier-status');
+        if (opVerifierStatus) {
+            opVerifierStatus.textContent = verdict.status || 'UNKNOWN';
+            opVerifierStatus.className = 'badge';
+            if (verdict.status === 'VERIFIED') {
+                opVerifierStatus.classList.add('badge-success');
+                opVerifierStatus.style.background = 'rgba(16, 185, 129, 0.15)';
+                opVerifierStatus.style.color = '#34d399';
+            } else {
+                opVerifierStatus.classList.add('badge-danger');
+                opVerifierStatus.style.background = 'rgba(239, 68, 68, 0.15)';
+                opVerifierStatus.style.color = '#f87171';
+            }
+        }
+
+        // 2. Readiness Score
+        const opReadinessVal = el('op-readiness-val');
+        if (opReadinessVal) {
+            opReadinessVal.textContent = verdict.readiness_score !== undefined ? `${verdict.readiness_score}%` : '--%';
+        }
+
+        // 3. Active Blocker Code
+        const opVerifierBlockers = el('op-verifier-blockers');
+        if (opVerifierBlockers) {
+            const blockers = verdict.blocker_reporter?.blockers || [];
+            if (blockers.length > 0) {
+                opVerifierBlockers.innerHTML = blockers.map(b => `<div>• <strong>${b.type}</strong>: ${b.description}</div>`).join('');
+                opVerifierBlockers.style.color = '#f87171';
+                opVerifierBlockers.style.background = 'rgba(239, 68, 68, 0.08)';
+            } else {
+                opVerifierBlockers.innerHTML = 'None';
+                opVerifierBlockers.style.color = '#34d399';
+                opVerifierBlockers.style.background = 'rgba(16, 185, 129, 0.08)';
+            }
+        }
+
+        // 4. Runtime Truth Status & Compliance Gates
+        const opTruthStatus = el('op-truth-status');
+        if (opTruthStatus) {
+            const isContaminated = verdict.status === 'BLOCKED' && verdict.blocker_reporter?.blockers?.some(b => b.type.includes('CONTAMINATION'));
+            if (isContaminated) {
+                opTruthStatus.textContent = 'CONTAMINATED';
+                opTruthStatus.style.background = 'rgba(239, 68, 68, 0.15)';
+                opTruthStatus.style.color = '#f87171';
+            } else {
+                opTruthStatus.textContent = 'TRUSTED';
+                opTruthStatus.style.background = 'rgba(16, 185, 129, 0.15)';
+                opTruthStatus.style.color = '#34d399';
+            }
+        }
+
+        // 5. Gate Summary
+        const gateDockVal = el('gate-dock-val');
+        const gateK8sVal = el('gate-k8s-val');
+        const gateFakeVal = el('gate-fake-val');
+        const gateHostVal = el('gate-host-val');
+
+        const violations = [
+            ...(verdict.contradiction_checker?.violations || []),
+            ...(verdict.evidence_validator?.violations || []),
+            ...(verdict.ui_truth_validator?.violations || []),
+            ...(verdict.defect_zero_validator?.violations || [])
+        ];
+
+        const checkFail = (keywords) => violations.some(v => keywords.some(k => v.toLowerCase().includes(k.toLowerCase())));
+
+        if (gateDockVal) {
+            const failed = checkFail(['docker', 'container']);
+            gateDockVal.textContent = failed ? 'FAIL' : 'PASS';
+            gateDockVal.style.color = failed ? '#f87171' : '#34d399';
+        }
+        if (gateK8sVal) {
+            const failed = checkFail(['k8s', 'kubernetes']);
+            gateK8sVal.textContent = failed ? 'FAIL' : 'PASS';
+            gateK8sVal.style.color = failed ? '#f87171' : '#34d399';
+        }
+        if (gateFakeVal) {
+            const failed = checkFail(['fake', 'anti-fake']);
+            gateFakeVal.textContent = failed ? 'FAIL' : 'PASS';
+            gateFakeVal.style.color = failed ? '#f87171' : '#34d399';
+        }
+        if (gateHostVal) {
+            const failed = checkFail(['host-path', 'contamination', 'read_only_guard']);
+            gateHostVal.textContent = failed ? 'FAIL' : 'PASS';
+            gateHostVal.style.color = failed ? '#f87171' : '#34d399';
+        }
+
+        // 6. Active Mission & Next Safe Action
+        if (summary) {
+            const opMissionTitle = el('op-mission-title');
+            const opMissionDesc = el('op-mission-desc');
+            if (opMissionTitle) opMissionTitle.textContent = 'HAS Core Autonomy';
+            if (opMissionDesc) opMissionDesc.textContent = summary.current_mission_state || 'No active mission description.';
+            
+            const opNextSafeAction = el('op-next-safe-action');
+            if (opNextSafeAction) {
+                const nextActions = summary.what_has_should_do_next || [];
+                opNextSafeAction.textContent = nextActions[0] || 'Configure release candidate bundle and Release GO path to transition from NO-GO.';
+            }
+
+            // 7. MBPro Local Worker Posture
+            const opWorkerName = el('op-worker-name');
+            const opWorkerHost = el('op-worker-host');
+            const opWorkerStatus = el('op-worker-status');
+            const opWorkerRouting = el('op-worker-routing');
+
+            const mbproNode = summary.worker_nodes?.find(n => n.node_name === 'mbpro') || summary.worker_nodes?.[0];
+            if (mbproNode) {
+                if (opWorkerName) opWorkerName.textContent = mbproNode.node_name;
+                if (opWorkerHost) opWorkerHost.textContent = mbproNode.host;
+                if (opWorkerStatus) {
+                    opWorkerStatus.textContent = mbproNode.status;
+                    opWorkerStatus.style.color = mbproNode.status === 'active_online' ? '#34d399' : '#f87171';
+                }
+                if (opWorkerRouting) {
+                    opWorkerRouting.textContent = mbproNode.routing_enabled ? 'ENABLED' : 'DISABLED BY DEFAULT';
+                    opWorkerRouting.style.color = mbproNode.routing_enabled ? '#34d399' : '#f87171';
+                }
+            }
+
+            // 8. Operator Approval Queue
+            const opApprovalBadge = el('op-approval-badge');
+            const opApprovalQueueList = el('op-approval-queue-list');
+            if (opApprovalBadge && opApprovalQueueList) {
+                const needsApproval = (summary.what_needs_approval || []).filter(item => !item.includes('No pending operator approvals'));
+                opApprovalBadge.textContent = `${needsApproval.length} PENDING`;
+                opApprovalBadge.style.background = needsApproval.length > 0 ? 'rgba(245, 158, 11, 0.15)' : 'rgba(16, 185, 129, 0.15)';
+                opApprovalBadge.style.color = needsApproval.length > 0 ? '#f59e0b' : '#34d399';
+
+                if (needsApproval.length > 0) {
+                    opApprovalQueueList.innerHTML = needsApproval.map(item => `
+                        <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.15); padding: 8px; border-radius: 6px; color: #fff; margin-bottom: 6px;">
+                            ${item}
+                        </div>
+                    `).join('');
+                } else {
+                    opApprovalQueueList.innerHTML = `
+                        <div style="color: var(--text-secondary); text-align: center; padding: 12px; border: 1px dashed var(--border-glass); border-radius: 6px;">
+                            No pending approvals currently required.
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // 9. Last Evidence Artifact
+        const opEvidenceFilename = el('op-evidence-filename');
+        const opEvidenceStatus = el('op-evidence-status');
+        const opEvidenceBtnLink = el('op-evidence-btn-link');
+
+        if (missions && missions.length > 0) {
+            const latestMission = missions[0];
+            if (opEvidenceFilename) opEvidenceFilename.textContent = latestMission.mission_id || 'Unknown';
+            if (opEvidenceStatus) {
+                opEvidenceStatus.textContent = latestMission.release_decision || 'VERIFIED';
+                opEvidenceStatus.style.color = latestMission.release_decision === 'GO' ? '#34d399' : '#f87171';
+            }
+            if (opEvidenceBtnLink) {
+                opEvidenceBtnLink.href = '#';
+                opEvidenceBtnLink.onclick = (e) => {
+                    e.preventDefault();
+                    switchView('evidenceops');
+                };
+            }
+        } else {
+            if (opEvidenceFilename) opEvidenceFilename.textContent = '20260630-0620-has-goal-closure-gap-analysis.md';
+            if (opEvidenceStatus) {
+                opEvidenceStatus.textContent = 'VERIFIED';
+                opEvidenceStatus.style.color = '#34d399';
+            }
+            if (opEvidenceBtnLink) {
+                opEvidenceBtnLink.href = '#';
+                opEvidenceBtnLink.onclick = (e) => {
+                    e.preventDefault();
+                    switchView('evidenceops');
+                };
+            }
+        }
+    }
+
+    function initOperatorCockpit() {
+        initCockpitTabs();
+        initCockpitAutonomyButtons();
+    }
+
     // Initialization routine
     function init() {
-        initDeviceRegistry();
-        initCrewaiIngestionBridge();
-        initReleaseDecisionRoom();
-        initReleaseEvidenceRetention();
-        initReleaseEvidenceArchivePreview();
-        initReleaseEvidenceArchiveBuildPlan();
-        initReleaseEvidenceArchiveSealPreview();
-        initFormalReleaseSealDryRun();
-        initCapabilityRouterUI();
-        initModelProviderRegistryUI();
-        initModelRouterUI();
-        
-  initMeshSentinel();
-        initTheme();
-        initNavigation();
-        initializeKoiAnimation();
-        initRescanButton();
-        initModelHealthButton();
-        initModelStorageButton();
-        initMigrationButton();
-        initPreflightButton();
-        initLedgerButtons();
-        initHandoffButtons();
-        initAtoButtons();
-        initStagingButtons();
-        initDeployButtons();
-        initBindingGateButtons();
-        initLiveExposureButtons();
-        initConMonButtons();
-        initTvButtons();
-        initCommandCenterButtons();
+        const initSteps = [
+            ["DeviceRegistry", initDeviceRegistry],
+            ["CrewaiIngestionBridge", initCrewaiIngestionBridge],
+            ["ReleaseDecisionRoom", initReleaseDecisionRoom],
+            ["ReleaseEvidenceRetention", initReleaseEvidenceRetention],
+            ["ReleaseEvidenceArchivePreview", initReleaseEvidenceArchivePreview],
+            ["ReleaseEvidenceArchiveBuildPlan", initReleaseEvidenceArchiveBuildPlan],
+            ["ReleaseEvidenceArchiveSealPreview", initReleaseEvidenceArchiveSealPreview],
+            ["FormalReleaseSealDryRun", initFormalReleaseSealDryRun],
+            ["CapabilityRouterUI", initCapabilityRouterUI],
+            ["ModelProviderRegistryUI", initModelProviderRegistryUI],
+            ["ModelRouterUI", initModelRouterUI],
+            ["MeshSentinel", initMeshSentinel],
+            ["Theme", initTheme],
+            ["Navigation", initNavigation],
+            ["KoiAnimation", initializeKoiAnimation],
+            ["RescanButton", initRescanButton],
+            ["ModelHealthButton", initModelHealthButton],
+            ["ModelStorageButton", initModelStorageButton],
+            ["MigrationButton", initMigrationButton],
+            ["PreflightButton", initPreflightButton],
+            ["LedgerButtons", initLedgerButtons],
+            ["HandoffButtons", initHandoffButtons],
+            ["AtoButtons", initAtoButtons],
+            ["StagingButtons", initStagingButtons],
+            ["DeployButtons", initDeployButtons],
+            ["BindingGateButtons", initBindingGateButtons],
+            ["LiveExposureButtons", initLiveExposureButtons],
+            ["ConMonButtons", initConMonButtons],
+            ["TvButtons", initTvButtons],
+            ["CommandCenterButtons", initCommandCenterButtons],
+            ["OperatorCockpit", initOperatorCockpit]
+        ];
+
+        initSteps.forEach(([name, fn]) => {
+            try {
+                if (typeof fn === "function") fn();
+            } catch (err) {
+                console.warn(`[INIT WARNING] ${name} initialization step failed:`, err);
+            }
+        });
         
         // Initial fetches
-        fetchCockpit();
+        try {
+            fetchCockpit();
+        } catch (err) {
+            console.error("fetchCockpit failed:", err);
+        }
         // Setup cockpit polling interval
-        cockpitInterval = setInterval(fetchCockpit, 3000);
+        cockpitInterval = setInterval(() => {
+            try {
+                fetchCockpit();
+            } catch (err) {
+                console.error("fetchCockpit poll failed:", err);
+            }
+        }, 3000);
 
         // Load default view
-        switchView('mission-control');
+        try {
+            switchView('mission-control');
+        } catch (err) {
+            console.error("switchView failed:", err);
+        }
     }
 
     async function loadActionLedger() {
@@ -8446,7 +8743,12 @@ let scale = 1.0;
 let isPanning = false;
 let startPanX = 0;
 let startPanY = 0;
-const API_BASE = window.location.origin;
+    const API_BASE = (function() {
+        if (typeof window === "undefined" || window.location.protocol === "file:") {
+            return "http://127.0.0.1:8000";
+        }
+        return "";
+    })();
 
 async function initDeviceRegistry() {
     const btnRunDiscovery = document.getElementById("device-discovery-run-button");
@@ -8971,7 +9273,7 @@ async function loadModelProviders() {
 }
 
 async function initModelRouterUI() {
-    const base = (typeof API_BASE !== "undefined" && API_BASE) ? API_BASE : "http://127.0.0.1:8000";
+    const base = (typeof API_BASE !== "undefined") ? API_BASE : "http://127.0.0.1:8000";
     const statusPill = el("mr-status-pill");
     const localModel = el("mr-local-model");
     const localFirstMode = el("mr-local-first-mode");

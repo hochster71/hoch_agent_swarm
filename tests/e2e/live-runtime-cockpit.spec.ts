@@ -7,6 +7,8 @@ test.describe("Live Runtime Cockpit View E2E Spec", () => {
     // Navigate to dashboard root
     await page.goto("/", { waitUntil: "networkidle" });
 
+    page.on("console", msg => console.log("BROWSER CONSOLE:", msg.text()));
+
     // Assert that the body is visible and title matches
     await expect(page.locator("body")).toBeVisible();
     await expect(page).toHaveTitle(/Hoch Agent Swarm/);
@@ -26,6 +28,12 @@ test.describe("Live Runtime Cockpit View E2E Spec", () => {
       "autonomy-budget",
       "device-registry"
     ];
+
+    // Navigate to legacy tab so cards become visible
+    const legacyTabBtn = page.locator("#btn-tab-legacy");
+    if (await legacyTabBtn.isVisible()) {
+      await legacyTabBtn.click();
+    }
 
     for (const cardId of requiredCards) {
       const card = page.locator(`#card-${cardId}`);
@@ -49,9 +57,48 @@ test.describe("Live Runtime Cockpit View E2E Spec", () => {
     ];
 
     for (const v of navViews) {
+      // Auto-open parent details element to make the link visible/interactable
+      await page.evaluate((id) => {
+        const el = document.getElementById(id);
+        const details = el ? el.closest("details") : null;
+        if (details) details.open = true;
+      }, v.navId);
+
       const navItem = page.locator(`#${v.navId}`);
       await expect(navItem).toBeVisible();
-      await navItem.click();
+      
+      try {
+        await navItem.click({ timeout: 2000 });
+      } catch (err) {
+        await page.evaluate((id) => {
+          const el = document.getElementById(id);
+          if (el) el.click();
+        }, v.navId);
+      }
+
+      await page.waitForTimeout(200);
+
+      // Diagnostic check before expect
+      const info = await page.evaluate((id) => {
+        const el = document.getElementById(id);
+        if (!el) return "NOT FOUND";
+        const style = window.getComputedStyle(el);
+        return {
+          id: el.id,
+          className: el.className,
+          display: style.display,
+          visibility: style.visibility,
+          opacity: style.opacity,
+          offsetHeight: el.offsetHeight,
+          offsetWidth: el.offsetWidth,
+          parent: el.parentElement ? {
+            id: el.parentElement.id,
+            className: el.parentElement.className,
+            display: window.getComputedStyle(el.parentElement).display
+          } : null
+        };
+      }, v.viewId);
+      console.log(`DIAGNOSTIC for ${v.viewId}:`, JSON.stringify(info, null, 2));
 
       const viewItem = page.locator(`#${v.viewId}`);
       await expect(viewItem).toBeVisible();

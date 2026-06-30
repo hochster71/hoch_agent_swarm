@@ -1,0 +1,177 @@
+---
+# Kubernetes NetworkPolicy for pod-to-pod communication security
+# Implements zero-trust networking model
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: hoch-api-netpol
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: has-api
+      role: api
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow from frontend
+    - from:
+        - podSelector:
+            matchLabels:
+              app: has-ui
+              role: frontend
+      ports:
+        - protocol: TCP
+          port: 8000
+    # Allow from worker
+    - from:
+        - podSelector:
+            matchLabels:
+              app: has-worker
+              role: worker
+      ports:
+        - protocol: TCP
+          port: 8000
+    # Allow from screenshot service
+    - from:
+        - podSelector:
+            matchLabels:
+              app: screenshot-worker
+              role: service
+      ports:
+        - protocol: TCP
+          port: 8000
+  egress:
+    # Allow DNS
+    - to:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+    # Allow to other services
+    - to:
+        - podSelector:
+            matchLabels:
+              app: has-worker
+      ports:
+        - protocol: TCP
+          port: 8000
+    # Allow external HTTPS for API calls
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - protocol: TCP
+          port: 443
+        - protocol: TCP
+          port: 80
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: hoch-worker-netpol
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: has-worker
+      role: worker
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow from API only
+    - from:
+        - podSelector:
+            matchLabels:
+              app: has-api
+              role: api
+      ports:
+        - protocol: TCP
+          port: 8000
+  egress:
+    # Allow DNS
+    - to:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+    # Allow to API
+    - to:
+        - podSelector:
+            matchLabels:
+              app: has-api
+              role: api
+      ports:
+        - protocol: TCP
+          port: 8000
+    # Allow external connections for monitoring/logging
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - protocol: TCP
+          port: 443
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: hoch-ui-netpol
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: has-ui
+      role: frontend
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow from external (ingress/loadbalancer)
+    - from:
+        - namespaceSelector: {}
+      ports:
+        - protocol: TCP
+          port: 80
+        - protocol: TCP
+          port: 8080
+  egress:
+    # Allow DNS
+    - to:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+    # Allow to API
+    - to:
+        - podSelector:
+            matchLabels:
+              app: has-api
+              role: api
+      ports:
+        - protocol: TCP
+          port: 8000
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: hoch-default-deny
+  namespace: default
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+  # Explicit deny-all; pods must be whitelisted by other policies

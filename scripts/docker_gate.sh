@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Verify and pin Docker context based on responsiveness
-if docker --context default ps >/dev/null 2>&1; then
-  docker context use default >/dev/null
-elif docker --context desktop-linux ps >/dev/null 2>&1; then
+export DOCKER_API_VERSION=1.41
+
+
+# Pin Docker context to desktop-linux
+if docker context ls | grep -F "desktop-linux" >/dev/null; then
   docker context use desktop-linux >/dev/null
-else
-  docker context use default >/dev/null || true
 fi
 
 echo "Docker context: $(docker context show)"
@@ -37,7 +36,7 @@ echo "Docker Daemon is healthy."
 
 # 2. Build and Start Services
 echo "Rebuilding and starting HAS services..."
-docker compose build has-api has-ui has-worker
+docker compose build --pull=false has-api has-ui has-worker
 bash scripts/docker_up.sh
 
 # 2.5 Run Docker Role Separation Check
