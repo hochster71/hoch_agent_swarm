@@ -21,7 +21,15 @@ class ReadOnlyGuard:
             with open(self.policy_path, "r") as f:
                 data = yaml.safe_load(f) or {}
             policy = data.get("monetization_audit_policy", {})
-            self.allowed_paths = [os.path.abspath(p) for p in policy.get("allowed_write_paths", self.allowed_paths)]
+            raw_paths = policy.get("allowed_write_paths", self.allowed_paths)
+            self.allowed_paths = []
+            for p in raw_paths:
+                if "hoch_agent_swarm" in p:
+                    p = p[p.find("hoch_agent_swarm") + len("hoch_agent_swarm"):]
+                    if p.startswith("/"):
+                        p = p[1:]
+                    p = os.path.join(self.root_dir, p)
+                self.allowed_paths.append(os.path.abspath(p))
             self.prohibited_actions = policy.get("prohibited_actions", self.prohibited_actions)
 
     def verify_write_path(self, filepath: str):
