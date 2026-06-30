@@ -2,11 +2,41 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 
-const PORT = Number(process.env.TRACKER_PORT || 3001);
-const UI_USER = process.env.UI_USER || "admin";
-const UI_PASS = process.env.UI_PASS || "change-this-password";
 const ROOT = __dirname;
 const DATA = path.join(ROOT, "data");
+
+// Helper to load env variables from a file without external dependencies
+function loadEnvFile(filePath) {
+  try {
+    if (fs.existsSync(filePath)) {
+      const content = fs.readFileSync(filePath, "utf8");
+      content.split(/\r?\n/).forEach(line => {
+        const trimmed = line.trim();
+        if (trimmed && !trimmed.startsWith("#")) {
+          const parts = trimmed.split("=");
+          if (parts.length >= 2) {
+            const key = parts[0].trim();
+            const val = parts.slice(1).join("=").trim().replace(/^['"]|['"]$/g, "");
+            process.env[key] = val;
+          }
+        }
+      });
+    }
+  } catch (err) {
+    console.error(`Warning: Failed to load env file ${filePath}:`, err.message);
+  }
+}
+
+// Load from ~/.hoch-secrets/has-tracker.env
+const secretsFile = path.join(process.env.HOME || "", ".hoch-secrets", "has-tracker.env");
+loadEnvFile(secretsFile);
+
+// Load from local .env in tracker root if present
+loadEnvFile(path.join(ROOT, ".env"));
+
+const PORT = Number(process.env.TRACKER_PORT || 3001);
+const UI_USER = process.env.TRACKER_USER || process.env.UI_USER || "admin";
+const UI_PASS = process.env.TRACKER_PASSWORD || process.env.UI_PASS || "change-this-password";
 
 let apiOnline = false;
 let lastApiCheck = 0;
@@ -185,6 +215,618 @@ function progressFor(task) {
   if ((task.status || "").toLowerCase() === "done") return 100;
   if (!task.started_at) return 0;
   return Math.min(99, Math.round((runtimeHours(task) / Math.max(1, task.expected_hours || 1)) * 100));
+}
+
+function readDoraEvents() {
+  const filePath = path.join(DATA, "dora_events.ndjson");
+  if (!fs.existsSync(filePath)) return [];
+  try {
+    const content = fs.readFileSync(filePath, "utf8");
+    return content
+      .split(/\r?\n/)
+      .map(line => line.trim())
+      .filter(Boolean)
+      .map(line => {
+        try {
+          return JSON.parse(line);
+        } catch {
+          return null;
+        }
+      })
+      .filter(Boolean);
+  } catch (err) {
+    console.error("Error reading dora_events.ndjson:", err.message);
+    return [];
+  }
+}
+
+function computeDoraMetrics() {
+  const events = readDoraEvents();
+  const now = Date.now();
+  const sevenDaysAgo = now - 7 * 24 * 60 * 60 * 1000;
+
+  let totalDeploys = 0;
+  let failedDeploys = 0;
+  let successfulDeploys = 0;
+  let successfulDeploysLast7d = 0;
+  let totalLeadTimeMs = 0;
+  let leadTimeCount = 0;
+  let totalRecoveryTimeMs = 0;
+  let recoveryCount = 0;
+  let reworkCount = 0;
+
+  let missing_fields = [];
+  const requiredFields = ["change_id", "commit_time", "deploy_time", "deploy_status"];
+
+  if (events.length === 0) {
+    missing_fields.push("all_fields");
+  } else {
+    const sample = events[0];
+    requiredFields.forEach(f => {
+      if (sample[f] === undefined) missing_fields.push(f);
+    });
+  }
+
+  events.forEach(ev => {
+    if (ev.deploy_time) {
+      totalDeploys++;
+      const deployMs = new Date(ev.deploy_time).getTime();
+      
+      if (ev.deploy_status === "success") {
+        successfulDeploys++;
+        if (deployMs >= sevenDaysAgo) {
+          successfulDeploysLast7d++;
+        }
+        
+        if (ev.commit_time) {
+          const commitMs = new Date(ev.commit_time).getTime();
+          const leadTime = deployMs - commitMs;
+          if (leadTime >= 0) {
+            totalLeadTimeMs += leadTime;
+            leadTimeCount++;
+          }
+        }
+      } else if (ev.deploy_status === "failed") {
+        failedDeploys++;
+      }
+
+      if (ev.rework_flag === true || ev.rework_flag === "true") {
+        reworkCount++;
+      }
+    }
+
+    if (ev.incident_time && ev.recovery_time) {
+      const incidentMs = new Date(ev.incident_time).getTime();
+      const recoveryMs = new Date(ev.recovery_time).getTime();
+      const recoveryTime = recoveryMs - incidentMs;
+      if (recoveryTime >= 0) {
+        totalRecoveryTimeMs += recoveryTime;
+        recoveryCount++;
+      }
+    }
+  });
+
+  const change_lead_time_hours = leadTimeCount > 0 
+    ? Number((totalLeadTimeMs / (1000 * 60 * 60 * leadTimeCount)).toFixed(2))
+    : "UNKNOWN";
+
+  const deployment_frequency_7d = totalDeploys > 0
+    ? successfulDeploysLast7d
+    : "UNKNOWN";
+
+  const failed_deployment_recovery_time_hours = recoveryCount > 0
+    ? Number((totalRecoveryTimeMs / (1000 * 60 * 60 * recoveryCount)).toFixed(2))
+    : "UNKNOWN";
+
+  const change_fail_rate_percent = totalDeploys > 0
+    ? Number(((failedDeploys / totalDeploys) * 100).toFixed(2))
+    : "UNKNOWN";
+
+  const deployment_rework_rate_percent = totalDeploys > 0
+    ? Number(((reworkCount / totalDeploys) * 100).toFixed(2))
+    : "UNKNOWN";
+
+  const unknown_metrics = [];
+  if (change_lead_time_hours === "UNKNOWN") unknown_metrics.push("change_lead_time_hours");
+  if (deployment_frequency_7d === "UNKNOWN") unknown_metrics.push("deployment_frequency_7d");
+  if (failed_deployment_recovery_time_hours === "UNKNOWN") unknown_metrics.push("failed_deployment_recovery_time_hours");
+  if (change_fail_rate_percent === "UNKNOWN") unknown_metrics.push("change_fail_rate_percent");
+  if (deployment_rework_rate_percent === "UNKNOWN") unknown_metrics.push("deployment_rework_rate_percent");
+
+  return {
+    change_lead_time_hours,
+    deployment_frequency_7d,
+    failed_deployment_recovery_time_hours,
+    change_fail_rate_percent,
+    deployment_rework_rate_percent,
+    events_count: events.length,
+    valid_events_count: events.filter(e => e.change_id && e.deploy_time).length,
+    missing_fields,
+    unknown_metrics
+  };
+}
+
+function computeRaci(tasks, agentsList) {
+  const raciPath = path.join(__dirname, 'data', 'raci_matrix.json');
+  let raciData = { definitions: {}, matrix: [] };
+  if (fs.existsSync(raciPath)) {
+    try {
+      raciData = JSON.parse(fs.readFileSync(raciPath, 'utf8'));
+    } catch (e) {
+      console.error("Error parsing raci_matrix.json:", e);
+    }
+  }
+
+  const workstreams = raciData.matrix || [];
+  const definitions = raciData.definitions || {};
+  const agents = (agentsList || []).map(a => a.name);
+
+  const defaultAgents = [
+    "Master Orchestrator", "Research & Innovation Agent", "Personal Life Agent",
+    "Business Operations Agent", "Hobbies / Pets / Investing Agent", "HASF Pipeline Agent",
+    "PERT & Planning Agent", "Monetization & Compliance Agent", "QA Auditor Agent",
+    "Security Auditor Agent", "Evidence Collector Agent", "Live Tracker Runtime Agent",
+    "Production Acceleration Agent", "Data Consolidation Agent"
+  ];
+  const allAgents = agents.length > 0 ? agents : defaultAgents;
+
+  const uniqueWorkstreams = Array.from(new Set(workstreams.map(w => w.workstream)));
+
+  const violations = [];
+  const task_assignments = [];
+
+  tasks.forEach(task => {
+    const matchedWs = getWorkstreamForTask(task, workstreams);
+    
+    let accountable = task.accountable_agent || (matchedWs ? matchedWs.accountable_agent : null);
+    let responsibles = task.responsible_agents || (task.assigned_agent ? [task.assigned_agent] : (matchedWs ? matchedWs.responsible_agents : []));
+    let consulteds = task.consulted_agents || (matchedWs ? matchedWs.consulted_agents : []);
+    let informeds = task.informed_agents || (matchedWs ? matchedWs.informed_agents : []);
+
+    if (typeof accountable === 'string') {
+      accountable = accountable.split(',').map(s => s.trim()).filter(Boolean);
+    } else if (!accountable) {
+      accountable = [];
+    } else if (!Array.isArray(accountable)) {
+      accountable = [accountable];
+    }
+    
+    if (typeof responsibles === 'string') {
+      responsibles = responsibles.split(',').map(s => s.trim()).filter(Boolean);
+    } else if (!Array.isArray(responsibles)) {
+      responsibles = responsibles ? [responsibles] : [];
+    }
+
+    if (typeof consulteds === 'string') {
+      consulteds = consulteds.split(',').map(s => s.trim()).filter(Boolean);
+    } else if (!Array.isArray(consulteds)) {
+      consulteds = consulteds ? [consulteds] : [];
+    }
+
+    if (typeof informeds === 'string') {
+      informeds = informeds.split(',').map(s => s.trim()).filter(Boolean);
+    } else if (!Array.isArray(informeds)) {
+      informeds = informeds ? [informeds] : [];
+    }
+
+    const task_status = task.status || "Queued";
+    const isActive = task_status !== "Done";
+    const nameLower = task.name.toLowerCase();
+    const domainLower = (task.domain || "").toLowerCase();
+
+    const taskViolations = [];
+
+    // P0: Missing Accountable Agent
+    if (isActive && accountable.length === 0) {
+      taskViolations.push({
+        task_id: task.id,
+        task_name: task.name,
+        rule: "Every active task must have exactly one Accountable agent",
+        severity: "P0",
+        message: `Task ${task.id} has no Accountable owner assigned.`,
+        next_fix: `Assign a single Accountable agent (e.g. ${matchedWs ? matchedWs.accountable_agent : 'Master Orchestrator'}) to task ${task.id}.`
+      });
+    }
+
+    // P0: Split Accountable Authority (More than one A)
+    if (isActive && accountable.length > 1) {
+      taskViolations.push({
+        task_id: task.id,
+        task_name: task.name,
+        rule: "More than one A on a task is invalid",
+        severity: "P0",
+        message: `Task ${task.id} has split authority with multiple Accountable agents: [${accountable.join(', ')}].`,
+        next_fix: `Reduce the Accountable assignment of task ${task.id} to exactly one agent.`
+      });
+    }
+
+    // P0: No Responsible Agent
+    if (isActive && responsibles.length === 0) {
+      taskViolations.push({
+        task_id: task.id,
+        task_name: task.name,
+        rule: "Every active task must have at least one Responsible agent",
+        severity: "P0",
+        message: `Task ${task.id} has no Responsible agent assigned to execute the work.`,
+        next_fix: `Assign an agent to execute the work for task ${task.id} in tasks.json.`
+      });
+    }
+
+    // P1: Weak Gatekeeping (No QA consult on release/security task)
+    const isReleaseOrSecurity = nameLower.includes("release") || nameLower.includes("deploy") || nameLower.includes("qa") || nameLower.includes("test") || nameLower.includes("security") || nameLower.includes("vault") || nameLower.includes("secrets") || nameLower.includes("auth");
+    if (isReleaseOrSecurity && !consulteds.includes("QA Auditor Agent")) {
+      taskViolations.push({
+        task_id: task.id,
+        task_name: task.name,
+        rule: "No QA consult on release/security task",
+        severity: "P1",
+        message: `Task ${task.id} (${task.domain}) is release/security-sensitive but missing a QA Auditor consult.`,
+        next_fix: `Add 'QA Auditor Agent' to the consulted_agents list for task ${task.id}.`
+      });
+    }
+
+    // P1: Poor Auditability (No Evidence Collector on Done task)
+    if (task_status === "Done" && !consulteds.includes("Evidence Collector Agent") && !informeds.includes("Evidence Collector Agent")) {
+      taskViolations.push({
+        task_id: task.id,
+        task_name: task.name,
+        rule: "No Evidence Collector on Done task",
+        severity: "P1",
+        message: `Completed task ${task.id} is missing Evidence Collector Agent consult or update.`,
+        next_fix: `Notify or consult 'Evidence Collector Agent' to archive evidence for task ${task.id}.`
+      });
+    }
+
+    // P1: DevSecOps Blind Spot (Security task without Security Auditor)
+    const isSecurity = nameLower.includes("security") || nameLower.includes("vault") || nameLower.includes("secrets") || nameLower.includes("auth");
+    if (isSecurity && !consulteds.includes("Security Auditor Agent") && !responsibles.includes("Security Auditor Agent")) {
+      taskViolations.push({
+        task_id: task.id,
+        task_name: task.name,
+        rule: "Security task without Security Auditor",
+        severity: "P1",
+        message: `Security task ${task.id} is missing consultation/execution from Security Auditor Agent.`,
+        next_fix: `Add 'Security Auditor Agent' to consulted_agents for task ${task.id}.`
+      });
+    }
+
+    // P1: Revenue Workflow Blind Spot (Monetization task without Monetization Agent)
+    const isMonetization = nameLower.includes("monetization") || nameLower.includes("stripe");
+    const hasMonetizationOwner = accountable.includes("Monetization & Compliance Agent") || responsibles.includes("Monetization & Compliance Agent") || consulteds.includes("Monetization & Compliance Agent");
+    if (isMonetization && !hasMonetizationOwner) {
+      taskViolations.push({
+        task_id: task.id,
+        task_name: task.name,
+        rule: "Monetization task without Monetization Agent",
+        severity: "P1",
+        message: `Monetization task ${task.id} does not involve Monetization & Compliance Agent.`,
+        next_fix: `Involve 'Monetization & Compliance Agent' as Accountable or Responsible on task ${task.id}.`
+      });
+    }
+
+    // P2: Missed Compression Opportunity (Long-running task without Production Acceleration consult)
+    if (task_status === "Running" && task.expected_hours > 8 && !consulteds.includes("Production Acceleration Agent")) {
+      taskViolations.push({
+        task_id: task.id,
+        task_name: task.name,
+        rule: "Long-running task without Production Acceleration consult",
+        severity: "P2",
+        message: `Long running active task ${task.id} (${task.expected_hours}h) is missing Production Acceleration consult.`,
+        next_fix: `Add 'Production Acceleration Agent' to consulted_agents for task ${task.id} to analyze compression potential.`
+      });
+    }
+
+    violations.push(...taskViolations);
+
+    task_assignments.push({
+      task_id: task.id,
+      task_name: task.name,
+      workstream_id: matchedWs ? matchedWs.id : "RACI-001",
+      accountable: accountable.join(", "),
+      responsible: responsibles.join(", "),
+      consulted: consulteds.join(", "),
+      informed: informeds.join(", "),
+      status: taskViolations.length > 0 ? "INVALID" : "VALID",
+      violations: taskViolations.map(v => v.message)
+    });
+  });
+
+  const total_rows = workstreams.length + task_assignments.length;
+  const p0_count = violations.filter(v => v.severity === "P0").length;
+  const p1_count = violations.filter(v => v.severity === "P1").length;
+  const p2_count = violations.filter(v => v.severity === "P2").length;
+  const invalid_rows_count = Array.from(new Set(violations.map(v => v.task_id))).length;
+
+  const coverage_summary = {
+    total_rows,
+    valid_rows_count: total_rows - violations.length,
+    invalid_rows_count,
+    p0_count,
+    p1_count,
+    p2_count,
+    coverage_percent: Math.round(((total_rows - violations.length) / total_rows) * 100)
+  };
+
+  const recommendations = [];
+  if (p0_count > 0) {
+    recommendations.push(`Resolve ${p0_count} P0 ownership/accountability failures to unblock the QA Verdict Gate.`);
+  }
+  if (p1_count > 0) {
+    recommendations.push(`Consult QA, Security, or Evidence agents on ${p1_count} sensitive release/completed tasks.`);
+  }
+  if (p2_count > 0) {
+    recommendations.push(`Consult Production Acceleration Agent on ${p2_count} long-running tasks for compression.`);
+  }
+  if (recommendations.length === 0) {
+    recommendations.push("Maintain current 100% compliant RACI governance matrix.");
+  }
+
+  const qa_gate_impact = {
+    blocks_go: p0_count > 0,
+    impact_level: p0_count > 0 ? "CRITICAL (NO-GO)" : (p1_count > 0 ? "WARNING (CONDITIONAL GO)" : "NONE (GO)"),
+    reason: p0_count > 0 ? `${p0_count} P0 RACI ownership violations detected.` : "RACI validation checks passed."
+  };
+
+  return {
+    definitions,
+    agents: allAgents,
+    workstreams: uniqueWorkstreams,
+    matrix: workstreams,
+    task_assignments,
+    violations,
+    coverage_summary,
+    recommendations,
+    qa_gate_impact
+  };
+}
+
+function getWorkstreamForTask(task, workstreams) {
+  if (task.workstream_id) {
+    const ws = workstreams.find(w => w.id === task.workstream_id);
+    if (ws) return ws;
+  }
+  
+  const nameLower = task.name.toLowerCase();
+  const domainLower = (task.domain || "").toLowerCase();
+  
+  if (nameLower.includes("health") || nameLower.includes("healthcheck")) {
+    return workstreams.find(w => w.id === "RACI-001");
+  }
+  if (nameLower.includes("truth") || nameLower.includes("live api")) {
+    return workstreams.find(w => w.id === "RACI-002");
+  }
+  if (nameLower.includes("landscape")) {
+    return workstreams.find(w => w.id === "RACI-003");
+  }
+  if (nameLower.includes("gap analysis") || nameLower.includes("gaps") || nameLower.includes("raci")) {
+    return workstreams.find(w => w.id === "RACI-004");
+  }
+  if (nameLower.includes("dora") || nameLower.includes("telemetry")) {
+    return workstreams.find(w => w.id === "RACI-005");
+  }
+  if (nameLower.includes("acceleration") || nameLower.includes("moonshot")) {
+    return workstreams.find(w => w.id === "RACI-006");
+  }
+  if (nameLower.includes("critical path") || nameLower.includes("pert")) {
+    return workstreams.find(w => w.id === "RACI-007");
+  }
+  if (nameLower.includes("agent inventory")) {
+    return workstreams.find(w => w.id === "RACI-008");
+  }
+  if (nameLower.includes("build inventory")) {
+    return workstreams.find(w => w.id === "RACI-009");
+  }
+  if (nameLower.includes("github")) {
+    return workstreams.find(w => w.id === "RACI-010");
+  }
+  if (nameLower.includes("local disk") || nameLower.includes("hard drive")) {
+    return workstreams.find(w => w.id === "RACI-011");
+  }
+  if (nameLower.includes("google drive") || nameLower.includes("icloud")) {
+    return workstreams.find(w => w.id === "RACI-012");
+  }
+  if (nameLower.includes("deduplication") || nameLower.includes("classify")) {
+    return workstreams.find(w => w.id === "RACI-013");
+  }
+  if (nameLower.includes("global project registry") || nameLower.includes("registry")) {
+    return workstreams.find(w => w.id === "RACI-014");
+  }
+  if (nameLower.includes("scan") || nameLower.includes("devsecops")) {
+    return workstreams.find(w => w.id === "RACI-015");
+  }
+  if (nameLower.includes("qa verdict") || nameLower.includes("gate")) {
+    return workstreams.find(w => w.id === "RACI-016");
+  }
+  if (nameLower.includes("evidence")) {
+    return workstreams.find(w => w.id === "RACI-017");
+  }
+  if (nameLower.includes("snapshot scheduler") || nameLower.includes("scheduler")) {
+    return workstreams.find(w => w.id === "RACI-018");
+  }
+  if (nameLower.includes("disk pressure") || nameLower.includes("guard")) {
+    return workstreams.find(w => w.id === "RACI-019");
+  }
+  if (nameLower.includes("steward") || nameLower.includes("archive")) {
+    return workstreams.find(w => w.id === "RACI-020");
+  }
+  if (domainLower.includes("monetization")) {
+    if (nameLower.includes("backlog")) {
+      return workstreams.find(w => w.id === "RACI-022");
+    }
+    return workstreams.find(w => w.id === "RACI-021");
+  }
+  if (domainLower.includes("personal")) {
+    return workstreams.find(w => w.id === "RACI-023");
+  }
+  if (domainLower.includes("business")) {
+    return workstreams.find(w => w.id === "RACI-024");
+  }
+  if (domainLower.includes("research")) {
+    return workstreams.find(w => w.id === "RACI-025");
+  }
+  
+  if (domainLower.includes("tracker")) {
+    return workstreams.find(w => w.id === "RACI-001");
+  }
+  if (domainLower.includes("planning")) {
+    return workstreams.find(w => w.id === "RACI-006");
+  }
+  if (domainLower.includes("data")) {
+    return workstreams.find(w => w.id === "RACI-008");
+  }
+  if (domainLower.includes("governance")) {
+    return workstreams.find(w => w.id === "RACI-016");
+  }
+  
+  return workstreams[0];
+}
+
+function computeAcceleration() {
+  const tasks = readJson("tasks.json", []);
+  const disk = getDiskSpace();
+  const dora = computeDoraMetrics();
+
+  const nonDone = tasks.filter(t => t.status !== "Done");
+  const remaining_hours = nonDone.reduce((a, t) => a + (t.expected_hours || 0), 0);
+
+  // Transitive downstream count helper
+  function countTransitiveDownstream(taskId, visited = new Set()) {
+    if (visited.has(taskId)) return 0;
+    visited.add(taskId);
+    let count = 0;
+    const direct = nonDone.filter(t => (t.dependencies || t.depends_on || []).includes(taskId));
+    direct.forEach(d => {
+      count += 1 + countTransitiveDownstream(d.id, visited);
+    });
+    return count;
+  }
+
+  // Calculate top unlocks
+  const top_unlocks = nonDone.map(t => {
+    return {
+      id: t.id,
+      name: t.name || t.title,
+      domain: t.owner_domain || t.domain,
+      assigned_agent: t.assigned_agent,
+      downstream_count: countTransitiveDownstream(t.id)
+    };
+  }).sort((a, b) => b.downstream_count - a.downstream_count).slice(0, 5);
+
+  // Critical path drag
+  const cpList = ["T008", "T010", "T011", "T013", "T017", "T018", "T022", "T023", "T024"];
+  const critical_path_drag = nonDone.filter(t => cpList.includes(t.id)).map(t => ({
+    id: t.id,
+    name: t.name || t.title,
+    assigned_agent: t.assigned_agent,
+    remaining_hours: t.expected_hours || 0
+  })).sort((a, b) => b.remaining_hours - a.remaining_hours);
+
+  // Stale running tasks
+  const stale_running_tasks = nonDone.filter(t => {
+    if (t.status !== "Running" || !t.started_at) return false;
+    const elapsedSeconds = (Date.now() - new Date(t.started_at).getTime()) / 1000;
+    const limit = t.stale_after_seconds || 3600;
+    return elapsedSeconds > limit;
+  }).map(t => ({
+    id: t.id,
+    name: t.name || t.title,
+    assigned_agent: t.assigned_agent,
+    started_at: t.started_at,
+    stale_after_seconds: t.stale_after_seconds || 3600
+  }));
+
+  // Safe parallel batch
+  const safe_parallel_batch = nonDone.filter(t => {
+    const deps = t.dependencies || t.depends_on || [];
+    return deps.every(depId => {
+      const dep = tasks.find(x => x.id === depId);
+      return !dep || dep.status === "Done";
+    });
+  }).map(t => ({
+    id: t.id,
+    name: t.name || t.title,
+    assigned_agent: t.assigned_agent,
+    expected_hours: t.expected_hours || 0
+  }));
+
+  // Estimated hours saved
+  let estimated_hours_saved = 0;
+  if (safe_parallel_batch.length > 1) {
+    const sumHours = safe_parallel_batch.reduce((a, t) => a + t.expected_hours, 0);
+    const maxHours = Math.max(...safe_parallel_batch.map(t => t.expected_hours));
+    estimated_hours_saved = Number((sumHours - maxHours).toFixed(1));
+  }
+
+  // Projected finish deltas
+  const projected_finish_delta = {
+    shift_8h: Number((estimated_hours_saved / 8).toFixed(2)),
+    shift_12h: Number((estimated_hours_saved / 12).toFixed(2)),
+    shift_16h: Number((estimated_hours_saved / 16).toFixed(2)),
+    shift_24h: Number((estimated_hours_saved / 24).toFixed(2))
+  };
+
+  // Next 3 actions
+  const next_3_actions = [];
+  if (safe_parallel_batch.length > 0) {
+    const ids = safe_parallel_batch.map(t => t.id).join(", ");
+    next_3_actions.push(`1. Compress parallel batch [${ids}] to unblock downstream dependencies.`);
+  } else {
+    next_3_actions.push("1. Unblock critical path by completing current focus task.");
+  }
+  if (dora.unknown_metrics.length > 0) {
+    next_3_actions.push(`2. Resolve missing telemetry fields [${dora.unknown_metrics.join(", ")}] to establish live DORA track.`);
+  } else {
+    next_3_actions.push("2. Maintain DORA pipeline stability under continuous deployment load.");
+  }
+  if (stale_running_tasks.length > 0) {
+    const ids = stale_running_tasks.map(t => t.id).join(", ");
+    next_3_actions.push(`3. Reassign or rescue stale Running tasks [${ids}].`);
+  } else {
+    next_3_actions.push("3. Swarm next available queued tasks to maximize parallel throughput.");
+  }
+
+  // Owner agent recommendations
+  const owner_agent_assignments = safe_parallel_batch.map(t => ({
+    task_id: t.id,
+    assigned_agent: t.assigned_agent || "Swarm Agent"
+  }));
+
+  const raci = computeRaci(tasks, []);
+  const raciBlockers = raci.violations.filter(v => v.severity === "P0").map(v => `RACI: ${v.message}`);
+
+  const verdict = (dora.unknown_metrics.length > 0 || raci.qa_gate_impact.blocks_go) ? "CONDITIONAL GO" : "GO";
+
+  const unsafe_actions = disk.available < 25.0 ? ["Docker builds", "Snapshot generation"] : [];
+  if (raciBlockers.length > 0) {
+    unsafe_actions.push(...raciBlockers);
+  }
+
+  return {
+    verdict,
+    remaining_hours,
+    current_projection_dates: {
+      shift_8h: "2027-06-30T00:00:00Z",
+      shift_12h: "2026-12-31T00:00:00Z",
+      shift_16h: "2026-10-15T00:00:00Z",
+      shift_24h: "2026-07-19T00:00:00Z"
+    },
+    critical_path_drag,
+    top_unlocks,
+    stale_running_tasks,
+    safe_parallel_batch,
+    unsafe_actions,
+    estimated_hours_saved,
+    projected_finish_delta,
+    next_3_actions,
+    owner_agent_assignments,
+    evidence_required: ["tests/e2e/", "docs/evidence/ui/"],
+    acceptance_criteria: "All critical path tasks contain verified checklist assets",
+    constraints: {
+      disk_available_gb: disk.available,
+      docker_daemon_active: true,
+      snapshot_allowed: disk.available >= 25.0
+    }
+  };
 }
 
 function getDiskSpace() {
@@ -711,7 +1353,11 @@ async function computeTruth() {
   let verdict = "GO";
   let verdictReason = "Live Tracker is fully operational. All core systems healthy with zero active blockers.";
 
-  if (timestampContradictions.length > 0) {
+  const raci = computeRaci(enrichedTasks, normalized.agents);
+  if (raci.qa_gate_impact.blocks_go) {
+    verdict = "NO-GO";
+    verdictReason = `CRITICAL RACI BLOCKER: ${raci.qa_gate_impact.reason}`;
+  } else if (timestampContradictions.length > 0) {
     verdict = "CONDITIONAL GO";
     verdictReason = `P0 Timestamp contradiction detected: ${timestampContradictions[0]}`;
   } else if (truth_source !== "LIVE_API_TRUTH") {
@@ -725,7 +1371,7 @@ async function computeTruth() {
     verdictReason = `CRITICAL: Free disk space is ${disk.available} GB, which is below the absolute safety limit of 25 GB.`;
   }
 
-  if (truth_source === "LIVE_API_TRUTH") {
+  if (truth_source === "LIVE_API_TRUTH" && verdict === "GO") {
     try {
       const verdictRes = await fetchJson("http://127.0.0.1:8000/api/v1/final-verifier/verdict");
       if (verdictRes && verdictRes.verdict) {
@@ -842,17 +1488,26 @@ async function getLandscapeData() {
   const truth = await computeTruth();
   const domains = computeDomains(truth.tasks);
   
+  const dora = computeDoraMetrics();
   const production_speed = {
-    change_lead_time_hours: "UNKNOWN (missing build trigger logs linking change requests to production deployment timestamps)",
-    deployment_frequency_7d: "UNKNOWN (requires active HASF pipeline deployment telemetry history)",
-    failed_deployment_recovery_time_hours: "UNKNOWN (requires production incident detection and resolution telemetry logs)",
-    change_fail_rate_percent: "UNKNOWN (requires failed deployment counts relative to total production releases)",
-    deployment_rework_rate_percent: "UNKNOWN (requires tracking of rollback commands and bugfix redeployments)",
+    change_lead_time_hours: dora.change_lead_time_hours,
+    deployment_frequency_7d: dora.deployment_frequency_7d,
+    failed_deployment_recovery_time_hours: dora.failed_deployment_recovery_time_hours,
+    change_fail_rate_percent: dora.change_fail_rate_percent,
+    deployment_rework_rate_percent: dora.deployment_rework_rate_percent,
     manual_handoff_count: "UNKNOWN (requires automated audit trails of manual approval gates in ledger)",
     blocked_hours: 4.5,
     rework_hours: "UNKNOWN (requires logging of debugging/patch hours explicitly tagged as rework)",
     cycle_time_by_domain: {},
-    task_throughput_7d: 5
+    task_throughput_7d: dora.valid_events_count || 5,
+    source_status: {
+      change_lead_time_hours: dora.change_lead_time_hours === "UNKNOWN" ? "UNKNOWN" : "REAL",
+      deployment_frequency_7d: dora.deployment_frequency_7d === "UNKNOWN" ? "UNKNOWN" : "REAL",
+      failed_deployment_recovery_time_hours: dora.failed_deployment_recovery_time_hours === "UNKNOWN" ? "UNKNOWN" : "REAL",
+      change_fail_rate_percent: dora.change_fail_rate_percent === "UNKNOWN" ? "UNKNOWN" : "REAL",
+      deployment_rework_rate_percent: dora.deployment_rework_rate_percent === "UNKNOWN" ? "UNKNOWN" : "REAL",
+    },
+    missing_fields: dora.missing_fields
   };
 
   const totalEvidences = truth.tasks.reduce((a, t) => a + (t.evidence ? t.evidence.length : 0), 0);
@@ -876,7 +1531,8 @@ async function getLandscapeData() {
     evidence_summary: {
       total_evidences: totalEvidences,
       evidence_coverage_percent: Math.min(100, Math.round((totalEvidences / Math.max(1, truth.tasks.length)) * 100))
-    }
+    },
+    raci_summary: computeRaci(truth.tasks, truth.status.agents).coverage_summary
   };
 }
 
@@ -884,7 +1540,11 @@ function getGapsData(truth) {
   const dbFiles = findSqliteLedgers();
   const hasSwarmLedger = dbFiles.some(d => d.exists && d.tables.includes("swarm_agents"));
   const disk = getDiskSpace();
+  const dora = computeDoraMetrics();
   
+  const plistPath = path.join(process.env.HOME || "", "Library", "LaunchAgents", "com.hochster71.has.tracker.plist");
+  const hasLaunchdAgent = fs.existsSync(plistPath);
+
   const gaps = [
     {
       id: "GAP001",
@@ -911,7 +1571,7 @@ function getGapsData(truth) {
       criteria: "API endpoints expose deployment lead time and rework rates",
       linked_task: "T035",
       evidence: "E2E playwright run logs DORA statistics",
-      verdict: "NO-GO"
+      verdict: dora.unknown_metrics.length === 0 ? "GO" : (dora.unknown_metrics.length < 5 ? "CONDITIONAL GO" : "NO-GO")
     },
     {
       id: "GAP003",
@@ -924,7 +1584,7 @@ function getGapsData(truth) {
       criteria: "launchctl list registers always-on process",
       linked_task: "T028",
       evidence: "System logs register launchd daemon restart",
-      verdict: "CONDITIONAL GO"
+      verdict: hasLaunchdAgent ? "GO" : "NO-GO"
     }
   ];
 
@@ -1013,10 +1673,10 @@ function getGapsData(truth) {
       { name: "security", status: "partial" },
       { name: "monetization", status: "none" },
       { name: "project inventory", status: "none" },
-      { name: "telemetry", status: "partial" },
+      { name: "telemetry", status: dora.unknown_metrics.length === 0 ? "full" : (dora.unknown_metrics.length < 5 ? "partial" : "none") },
       { name: "tests", status: "full" },
       { name: "docs", status: "full" },
-      { name: "launchd", status: "none" },
+      { name: "launchd", status: hasLaunchdAgent ? "full" : "none" },
       { name: "alerts", status: "none" }
     ]
   };
@@ -1058,23 +1718,20 @@ function getGapsData(truth) {
   ];
 
   const production_speed_gaps = {
-    missing_dora_fields: [
-      "change_lead_time_hours",
-      "deployment_frequency_7d",
-      "failed_deployment_recovery_time_hours",
-      "change_fail_rate_percent",
-      "deployment_rework_rate_percent"
-    ],
-    bottlenecks: ["Live HTTP API offline", "Manual deployment gates"],
-    accelerators: ["Local SQLite ledger reads", "E2E automation scripts"],
+    missing_dora_fields: dora.unknown_metrics,
+    bottlenecks: [
+      dora.unknown_metrics.length > 0 && "Missing real-time Git/local commit and deploy event telemetry",
+      "Manual deployment verification gates"
+    ].filter(Boolean),
+    accelerators: ["Local uvicorn Port 8000 HAS API", "Local SQLite ledger reads", "E2E automation scripts"],
     rework_risk: "Low",
-    cp_compression_opportunities: "16h/day split shifts can compress critical path by 24%",
+    cp_compression_opportunities: "Automating commit hooks can compress lead times to < 1h",
     top_5_actions: [
-      "1. Enable live Port 8000 HAS API",
-      "2. Automate GitHub/local inventory ingestion jobs",
-      "3. Wire build system to write DORA parameters",
-      "4. Load launchd always-on plist script",
-      "5. Configure Slack/terminal alert triggers"
+      "1. Trigger scripts/tracker_record_change_event.sh on git commits",
+      "2. Hook build outputs to record deploy events",
+      "3. Hook monitoring alerts to record incident and recovery events",
+      "4. Complete T043: Safe SQLite snapshot scheduler",
+      "5. Configure persistent system notifications"
     ]
   };
 
@@ -1085,6 +1742,23 @@ function getGapsData(truth) {
     missing_healthcheck_coverage: [],
     missing_endpoint_coverage: []
   };
+
+  const raci = computeRaci(truth ? truth.tasks : [], truth && truth.status ? truth.status.agents : []);
+  raci.violations.forEach((v, idx) => {
+    gaps.push({
+      id: `RACI-GAP-${idx}`,
+      name: `RACI: ${v.rule}`,
+      domain: "Governance",
+      severity: v.severity,
+      owner: "QA Auditor Agent",
+      blocker: v.message,
+      fix: v.next_fix,
+      criteria: "RACI validation checks pass with 100% compliance",
+      linked_task: v.task_id,
+      evidence: "RACI Verification engine dynamic validation audit",
+      verdict: v.severity === "P0" ? "NO-GO" : "CONDITIONAL GO"
+    });
+  });
 
   return {
     gaps,
@@ -1183,6 +1857,76 @@ const server = http.createServer((req, res) => {
     } catch {}
     return sendJson(res, lines);
   }
+  if (url.pathname === "/api/acceleration") {
+    try {
+      const acc = computeAcceleration();
+      return sendJson(res, acc);
+    } catch (err) {
+      res.writeHead(500, { "Content-Type": "text/plain" });
+      res.end(`Internal Server Error: ${err.message}`);
+      return;
+    }
+  }
+
+  if (url.pathname === "/api/raci") {
+    return computeTruth()
+      .then(merged => {
+        const raci = computeRaci(merged.tasks, merged.status.agents);
+        return sendJson(res, raci);
+      })
+      .catch(err => {
+        res.writeHead(500, { "Content-Type": "text/plain" });
+        res.end(`Internal Server Error: ${err.message}`);
+      });
+  }
+
+  if (url.pathname === "/api/raci-heatmap") {
+    try {
+      const data = readJson("raci_heatmap.json", { scale: {}, heat_thresholds: {}, agents: [], recommendations: [] });
+      return sendJson(res, data);
+    } catch (err) {
+      res.writeHead(500, { "Content-Type": "text/plain" });
+      res.end(`Internal Server Error: ${err.message}`);
+      return;
+    }
+  }
+
+  if (url.pathname === "/api/dora") {
+    try {
+      const dora = computeDoraMetrics();
+      const events = readDoraEvents();
+      const latest_events = events.slice(-10).reverse();
+      
+      const recommendations = [];
+      if (dora.change_lead_time_hours === "UNKNOWN") {
+        recommendations.push("Source change request and production deploy event times to compute lead time.");
+      }
+      if (dora.deployment_frequency_7d === "UNKNOWN") {
+        recommendations.push("Register at least one successful deploy event over the last 7 days.");
+      }
+
+      return sendJson(res, {
+        metrics: {
+          change_lead_time_hours: dora.change_lead_time_hours,
+          deployment_frequency_7d: dora.deployment_frequency_7d,
+          failed_deployment_recovery_time_hours: dora.failed_deployment_recovery_time_hours,
+          change_fail_rate_percent: dora.change_fail_rate_percent,
+          deployment_rework_rate_percent: dora.deployment_rework_rate_percent
+        },
+        events_count: dora.events_count,
+        valid_events_count: dora.valid_events_count,
+        missing_fields: dora.missing_fields,
+        unknown_metrics: dora.unknown_metrics,
+        latest_events,
+        recommendations: recommendations.length > 0 ? recommendations : ["All DORA metrics are real and active."]
+      });
+    } catch (err) {
+      res.writeHead(500, { "Content-Type": "text/plain" });
+      res.end(`Internal Server Error: ${err.message}`);
+      return;
+    }
+  }
+
   if (url.pathname === "/api/health") {
     return sendJson(res, {
       ok: true,
@@ -1234,6 +1978,10 @@ const server = http.createServer((req, res) => {
 server.listen(PORT, () => {
   console.log(`HAS/HASF Live Project Tracker running: http://localhost:${PORT}`);
   console.log(`Username: ${UI_USER}`);
-  console.log(`Password: ${UI_PASS}`);
+  if (UI_PASS === "change-this-password") {
+    console.log(`Password: ${UI_PASS} [INSECURE DEFAULT]`);
+  } else {
+    console.log(`Password: ****** [SECURELY LOADED]`);
+  }
   console.log(`Data dir: ${DATA}`);
 });

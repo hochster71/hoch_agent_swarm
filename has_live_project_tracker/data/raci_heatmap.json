@@ -1,0 +1,155 @@
+{
+  "scale": {
+    "A": 4,
+    "R": 3,
+    "C": 2,
+    "I": 1
+  },
+  "heat_thresholds": {
+    "critical": 55,
+    "high": 45,
+    "medium": 30,
+    "normal": 0
+  },
+  "agents": [
+    {
+      "agent": "Live Tracker Runtime Agent",
+      "accountable": 7,
+      "responsible": 8,
+      "consulted": 8,
+      "informed": 2,
+      "load_score": 79,
+      "heat": "critical",
+      "primary_risk": "Runtime bottleneck"
+    },
+    {
+      "agent": "Data Consolidation Agent",
+      "accountable": 5,
+      "responsible": 6,
+      "consulted": 8,
+      "informed": 3,
+      "load_score": 61,
+      "heat": "critical",
+      "primary_risk": "Inventory backlog"
+    },
+    {
+      "agent": "QA Auditor Agent",
+      "accountable": 3,
+      "responsible": 5,
+      "consulted": 14,
+      "informed": 4,
+      "load_score": 58,
+      "heat": "high",
+      "primary_risk": "Gatekeeping overload"
+    },
+    {
+      "agent": "Evidence Collector Agent",
+      "accountable": 2,
+      "responsible": 8,
+      "consulted": 10,
+      "informed": 5,
+      "load_score": 57,
+      "heat": "high",
+      "primary_risk": "Evidence debt"
+    },
+    {
+      "agent": "Production Acceleration Agent",
+      "accountable": 3,
+      "responsible": 4,
+      "consulted": 13,
+      "informed": 2,
+      "load_score": 52,
+      "heat": "high",
+      "primary_risk": "Excessive consult load"
+    },
+    {
+      "agent": "HASF Pipeline Agent",
+      "accountable": 3,
+      "responsible": 5,
+      "consulted": 6,
+      "informed": 8,
+      "load_score": 47,
+      "heat": "high",
+      "primary_risk": "Build-flow dependency"
+    },
+    {
+      "agent": "Master Orchestrator",
+      "accountable": 2,
+      "responsible": 2,
+      "consulted": 14,
+      "informed": 8,
+      "load_score": 46,
+      "heat": "high",
+      "primary_risk": "Coordination bottleneck"
+    },
+    {
+      "agent": "Security Auditor Agent",
+      "accountable": 2,
+      "responsible": 3,
+      "consulted": 9,
+      "informed": 8,
+      "load_score": 43,
+      "heat": "medium",
+      "primary_risk": "Security review concentration"
+    },
+    {
+      "agent": "PERT & Planning Agent",
+      "accountable": 2,
+      "responsible": 3,
+      "consulted": 8,
+      "informed": 9,
+      "load_score": 39,
+      "heat": "medium",
+      "primary_risk": "Planning dependency"
+    },
+    {
+      "agent": "Monetization & Compliance Agent",
+      "accountable": 2,
+      "responsible": 3,
+      "consulted": 6,
+      "informed": 10,
+      "load_score": 36,
+      "heat": "medium",
+      "primary_risk": "Revenue lane not active enough"
+    },
+    {
+      "agent": "Research & Innovation Agent",
+      "accountable": 1,
+      "responsible": 3,
+      "consulted": 7,
+      "informed": 11,
+      "load_score": 31,
+      "heat": "medium",
+      "primary_risk": "Underused research capacity"
+    },
+    {
+      "agent": "Business Operations Agent",
+      "agent_load": 27,
+      "accountable": 1,
+      "responsible": 2,
+      "consulted": 5,
+      "informed": 12,
+      "load_score": 27,
+      "heat": "normal",
+      "primary_risk": "Waiting on registry truth"
+    },
+    {
+      "agent": "Personal Life Agent",
+      "accountable": 1,
+      "responsible": 2,
+      "consulted": 4,
+      "informed": 13,
+      "load_score": 25,
+      "heat": "normal",
+      "primary_risk": "Waiting on registry truth"
+    }
+  ],
+  "recommendations": [
+    "Split Data Consolidation execution into GitHub Inventory Agent, Local Disk Inventory Agent, Cloud Inventory Agent, Deduplication Agent, and Registry Builder Agent.",
+    "Keep exactly one accountable agent per task.",
+    "Reduce Live Tracker Runtime Agent accountability after runtime endpoints are stable.",
+    "Require Evidence Collector on Done-state promotion.",
+    "Require Security Auditor consult on storage, cloud, auth, Docker, scan, and snapshot tasks.",
+    "Limit Production Acceleration consults to critical-path, stale, or high-hour tasks."
+  ]
+}

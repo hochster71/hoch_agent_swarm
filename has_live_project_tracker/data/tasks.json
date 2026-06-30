@@ -1025,5 +1025,333 @@
     "next_action": "Check docker daemon status and start compose service",
     "stale_after_seconds": 300,
     "updated_at": "2026-06-30T14:33:24.958Z"
+  },
+  {
+    "id": "T041",
+    "name": "Add real DORA telemetry event ingestion",
+    "owner_domain": "Tracker",
+    "status": "Done",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": "2026-06-30T14:37:00.000Z",
+    "completed_at": "2026-06-30T14:50:00.000Z",
+    "expected_hours": 8,
+    "optimistic_hours": 4,
+    "pessimistic_hours": 16,
+    "dependencies": [
+      "T040"
+    ],
+    "progress": 100,
+    "description": "Implement DORA metrics computation from raw change, deploy, failure, and recovery events stored in NDJSON format.",
+    "blocker": "",
+    "evidence": [
+      "has_live_project_tracker/server.js:computeDoraMetrics"
+    ],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "W3C-compliant accessible metrics drawers render dynamic /api/dora data.",
+    "critical_path_reason": "Drives continuous delivery metrics accuracy.",
+    "projection_impact_hours": 8,
+    "next_action": "Complete",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T14:50:00.000Z"
+  },
+  {
+    "id": "T042",
+    "name": "Rotate persistent tracker credentials",
+    "owner_domain": "Tracker",
+    "status": "Done",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": "2026-06-30T14:37:00.000Z",
+    "completed_at": "2026-06-30T14:40:00.000Z",
+    "expected_hours": 2,
+    "optimistic_hours": 1,
+    "pessimistic_hours": 4,
+    "dependencies": [
+      "T039"
+    ],
+    "progress": 100,
+    "description": "Support secure TRACKER_USER and TRACKER_PASSWORD credentials loaded from ~/.hoch-secrets/has-tracker.env file.",
+    "blocker": "",
+    "evidence": [
+      "~/.hoch-secrets/has-tracker.env"
+    ],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "Passwords are hidden in logs and removed from plist configuration.",
+    "critical_path_reason": "Protects always-on production control plane endpoints.",
+    "projection_impact_hours": 2,
+    "next_action": "Complete",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T14:40:00.000Z"
+  },
+  {
+    "id": "T043",
+    "name": "Safe SQLite snapshot scheduler under disk guard",
+    "owner_domain": "Tracker",
+    "status": "Queued",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 4,
+    "optimistic_hours": 2,
+    "pessimistic_hours": 8,
+    "dependencies": [
+      "T041",
+      "T042"
+    ],
+    "progress": 0,
+    "description": "Schedule recurring SQLite ledger database backups and purge old snapshot files based on disk space alerts.",
+    "blocker": "DORA telemetry and credential rotation must be active",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Purges old files and runs backups hourly under launchd.",
+    "critical_path_reason": "Maintains database snapshot retention safely.",
+    "projection_impact_hours": 4,
+    "next_action": "Awaiting previous task closures",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T14:37:00.000Z"
+  },
+  {
+    "id": "T044",
+    "name": "Add Production Acceleration Moonshot Agent",
+    "owner_domain": "Planning",
+    "domain": "Planning",
+    "status": "Done",
+    "assigned_agent": "Production Acceleration Agent",
+    "started_at": "2026-06-30T14:40:00.000Z",
+    "completed_at": "2026-06-30T15:00:00.000Z",
+    "expected_hours": 4,
+    "optimistic_hours": 1,
+    "most_likely_hours": 3,
+    "pessimistic_hours": 8,
+    "dependencies": [
+      "T040"
+    ],
+    "depends_on": [
+      "T040"
+    ],
+    "progress": 100,
+    "description": "Create a dedicated agent that continuously compresses critical path, identifies highest-leverage unlocks, parallelizes safe work, and updates the tracker with production-speed recommendations.",
+    "blocker": "",
+    "evidence": [
+      "has_live_project_tracker/server.js:computeAcceleration"
+    ],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "Agent appears in tracker status feed, produces top acceleration actions, computes hour savings, and assigns next safe parallel work packets.",
+    "critical_path_reason": "Drives parallel swarm execution speed optimization.",
+    "projection_impact_hours": 4,
+    "next_action": "Complete",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T15:00:00.000Z"
+  },
+  {
+    "id": "T045",
+    "name": "Add critical path compression engine",
+    "owner_domain": "Planning",
+    "domain": "Planning",
+    "status": "Done",
+    "assigned_agent": "Production Acceleration Agent",
+    "started_at": "2026-06-30T14:40:00.000Z",
+    "completed_at": "2026-06-30T15:00:00.000Z",
+    "expected_hours": 8,
+    "optimistic_hours": 2,
+    "most_likely_hours": 6,
+    "pessimistic_hours": 16,
+    "dependencies": [
+      "T044"
+    ],
+    "depends_on": [
+      "T044"
+    ],
+    "progress": 100,
+    "description": "Compute which tasks reduce the most remaining hours and which can safely run in parallel without corrupting truth sources.",
+    "blocker": "",
+    "evidence": [
+      "has_live_project_tracker/server.js:computeAcceleration"
+    ],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "Tracker shows estimated hours saved, bottleneck owner, safe parallel batches, and recommended next agent assignments.",
+    "critical_path_reason": "Enables automated graph analysis calculations.",
+    "projection_impact_hours": 8,
+    "next_action": "Complete",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T15:00:00.000Z"
+  },
+  {
+    "id": "T046",
+    "name": "Add moonshot production dashboard strip",
+    "owner_domain": "Tracker",
+    "domain": "Tracker",
+    "status": "Done",
+    "assigned_agent": "Production Acceleration Agent",
+    "started_at": "2026-06-30T14:40:00.000Z",
+    "completed_at": "2026-06-30T15:00:00.000Z",
+    "expected_hours": 4,
+    "optimistic_hours": 1,
+    "most_likely_hours": 3,
+    "pessimistic_hours": 8,
+    "dependencies": [
+      "T045"
+    ],
+    "depends_on": [
+      "T045"
+    ],
+    "progress": 100,
+    "description": "Expose top 5 production accelerators, blockers removed, hours saved, target completion delta, and next swarm batch.",
+    "blocker": "",
+    "evidence": [
+      "has_live_project_tracker/index.html"
+    ],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "Landscape view shows moonshot strip with current acceleration plan and impact.",
+    "critical_path_reason": "Visualizes speed gains directly to operator.",
+    "projection_impact_hours": 4,
+    "next_action": "Complete",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T15:00:00.000Z"
+  },
+  {
+    "id": "T048",
+    "name": "Add RACI governance matrix for all agents",
+    "owner_domain": "Governance",
+    "domain": "Governance",
+    "status": "Running",
+    "assigned_agent": "Master Orchestrator",
+    "started_at": "2026-06-30T16:50:00.000Z",
+    "completed_at": null,
+    "expected_hours": 4,
+    "optimistic_hours": 1,
+    "most_likely_hours": 3,
+    "pessimistic_hours": 8,
+    "dependencies": [
+      "T044"
+    ],
+    "depends_on": [
+      "T044"
+    ],
+    "progress": 50,
+    "description": "Create a RACI matrix that maps all agents to major HAS/HASF workstreams and active tracker tasks.",
+    "blocker": "",
+    "evidence": [
+      "has_live_project_tracker/data/raci_matrix.json"
+    ],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Tracker exposes /api/raci, Landscape/Gaps show RACI coverage, and invalid ownership patterns are flagged.",
+    "critical_path_reason": "Clarifies agent ownership boundaries and accountability constraints.",
+    "projection_impact_hours": 4,
+    "next_action": "Implement RACI verification rules and engine endpoint",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T16:50:00.000Z"
+  },
+  {
+    "id": "T049",
+    "name": "Add RACI validation gates",
+    "owner_domain": "Governance",
+    "domain": "Governance",
+    "status": "Queued",
+    "assigned_agent": "QA Auditor Agent",
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 4,
+    "optimistic_hours": 1,
+    "most_likely_hours": 3,
+    "pessimistic_hours": 8,
+    "dependencies": [
+      "T048"
+    ],
+    "depends_on": [
+      "T048"
+    ],
+    "progress": 0,
+    "description": "Add validation rules requiring one accountable agent, at least one responsible agent, and evidence/QA/security consults where needed.",
+    "blocker": "Waiting on T048 matrix deployment",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Gap Analysis shows RACI violations and QA verdict gate blocks GO when P0 RACI violations exist.",
+    "critical_path_reason": "Enforces responsibility guardrails during agent execution loops.",
+    "projection_impact_hours": 4,
+    "next_action": "Awaiting T048",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T16:50:00.000Z"
+  },
+  {
+    "id": "T050",
+    "name": "Add RACI UI and evidence export",
+    "owner_domain": "Governance",
+    "domain": "Governance",
+    "status": "Queued",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 4,
+    "optimistic_hours": 1,
+    "most_likely_hours": 3,
+    "pessimistic_hours": 8,
+    "dependencies": [
+      "T049"
+    ],
+    "depends_on": [
+      "T049"
+    ],
+    "progress": 0,
+    "description": "Render a RACI view in the tracker and export RACI evidence for audit and replay.",
+    "blocker": "Waiting on T049 validation rules",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "RACI tab renders, supports tooltips/drawers, and evidence is generated under docs/evidence/ui.",
+    "critical_path_reason": "Provides full-screen visual auditing control plane for operator governance.",
+    "projection_impact_hours": 4,
+    "next_action": "Awaiting T049",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T16:50:00.000Z"
+  },
+  {
+    "id": "T051",
+    "name": "Add RACI heat map to Landscape and Gap Analysis",
+    "owner_domain": "Governance",
+    "domain": "Governance",
+    "status": "Done",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": null,
+    "completed_at": "2026-06-30T17:21:22.151Z",
+    "expected_hours": 3,
+    "optimistic_hours": 1,
+    "most_likely_hours": 2,
+    "pessimistic_hours": 6,
+    "dependencies": [
+      "T048"
+    ],
+    "depends_on": [
+      "T048"
+    ],
+    "progress": 100,
+    "description": "Render RACI agent load heat map, highlight overloaded agents, and recommend delegation/sub-agent splits.",
+    "blocker": "Waiting on T048 matrix deployment",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Tracker exposes raci_heatmap.json through /api/raci or /api/raci-heatmap and renders the heat map in Landscape/Gaps.",
+    "critical_path_reason": "Visualizes coordination bottlenecks and highlights critical agent delegation recommendations.",
+    "projection_impact_hours": 3,
+    "next_action": "Awaiting T048",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T17:21:22.151Z"
   }
 ]

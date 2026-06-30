@@ -1,9 +1,17 @@
 #!/bin/bash
 set -euo pipefail
 
+# Load secrets if present
+SECRETS_FILE="$HOME/.hoch-secrets/has-tracker.env"
+if [ -f "$SECRETS_FILE" ]; then
+    set -a
+    source "$SECRETS_FILE"
+    set +a
+fi
+
 export TRACKER_PORT=${TRACKER_PORT:-3001}
-export UI_USER=${UI_USER:-admin}
-export UI_PASS=${UI_PASS:-change-this-password}
+export UI_USER=${TRACKER_USER:-${UI_USER:-admin}}
+export UI_PASS=${TRACKER_PASSWORD:-${UI_PASS:-change-this-password}}
 
 echo "=================================================="
 echo "RUNNING FULL TRACKER HEALTH CHECK"
@@ -18,6 +26,10 @@ ENDPOINTS=(
   "/api/landscape"
   "/api/gaps"
   "/api/disk"
+  "/api/dora"
+  "/api/acceleration"
+  "/api/raci"
+  "/api/raci-heatmap"
 )
 
 FAILED=0
