@@ -7,7 +7,10 @@ from backend.monetization.security_redactor import SecurityRedactor
 from backend.monetization.evidence_validator import EvidenceValidator
 
 class AuditHarness:
-    def __init__(self, root_dir="/Users/michaelhoch/hoch_agent_swarm"):
+    def __init__(self, root_dir=None):
+        from backend.runtime_paths import project_root
+        if root_dir is None:
+            root_dir = str(project_root())
         self.root_dir = root_dir
         self.guard = ReadOnlyGuard(root_dir)
         self.redactor = SecurityRedactor(root_dir)

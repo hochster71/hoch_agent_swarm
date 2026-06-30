@@ -5,7 +5,10 @@ from pptx.dml.color import RGBColor
 from backend.artifacts.brand_renderer import BrandRenderer
 
 class SlideFactory:
-    def __init__(self, root_dir="/Users/michaelhoch/hoch_agent_swarm"):
+    def __init__(self, root_dir=None):
+        from backend.runtime_paths import project_root
+        if root_dir is None:
+            root_dir = str(project_root())
         self.root_dir = root_dir
         self.renderer = BrandRenderer(root_dir)
 

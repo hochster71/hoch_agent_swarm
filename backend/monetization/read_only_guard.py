@@ -2,13 +2,16 @@ import os
 import yaml
 
 class ReadOnlyGuard:
-    def __init__(self, root_dir="/Users/michaelhoch/hoch_agent_swarm"):
+    def __init__(self, root_dir=None):
+        from backend.runtime_paths import project_root
+        if root_dir is None:
+            root_dir = str(project_root())
         self.root_dir = root_dir
         self.policy_path = os.path.join(root_dir, "config/monetization_audit_policy.yaml")
         self.allowed_paths = [
-            "/Users/michaelhoch/hoch_agent_swarm/data/monetization/",
-            "/Users/michaelhoch/hoch_agent_swarm/docs/evidence/monetization/",
-            "/Users/michaelhoch/hoch_agent_swarm/docs/planning/monetization/"
+            os.path.join(root_dir, "data/monetization/"),
+            os.path.join(root_dir, "docs/evidence/monetization/"),
+            os.path.join(root_dir, "docs/planning/monetization/")
         ]
         self.prohibited_actions = ["mv", "rm", "rename", "rsync --delete", "git clean", "git reset", "chmod", "chown"]
         self.load_policy()

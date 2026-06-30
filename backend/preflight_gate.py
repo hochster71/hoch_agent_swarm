@@ -9,14 +9,10 @@ from typing import Any, Dict, List
 from backend.model_health_monitor import MONITOR
 from backend.migration_monitor import MONITOR as MIGRATION_MONITOR
 
-if os.path.exists("/app"):
-    COCKPIT_DIR = Path("/app")
-    CAMPAIGN_DIR = Path("/app")
-    DB_PATH = Path("/app/backend/crewai_ingested_artifacts.db")
-else:
-    COCKPIT_DIR = Path("/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm")
-    CAMPAIGN_DIR = Path("/Users/michaelhoch/hoch_agent_swarm")
-    DB_PATH = Path("/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm/backend/crewai_ingested_artifacts.db")
+from backend.runtime_paths import project_root, optional_ag_scratch_root
+COCKPIT_DIR = optional_ag_scratch_root()
+CAMPAIGN_DIR = project_root()
+DB_PATH = COCKPIT_DIR / "backend/crewai_ingested_artifacts.db"
 
 class PreflightGate:
     def __init__(self):

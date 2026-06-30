@@ -270,7 +270,8 @@ def execute_multi_model_inference(
     }
 
 def write_multi_model_evidence(run_id: str, data: dict) -> str:
-    workspace_root = Path("/Users/michaelhoch/.gemini/antigravity/scratch/hoch-agent-swarm")
+    from backend.runtime_paths import optional_ag_scratch_root
+    workspace_root = optional_ag_scratch_root()
     evidence_dir = workspace_root / "artifacts" / "multi_model"
     evidence_dir.mkdir(parents=True, exist_ok=True)
     

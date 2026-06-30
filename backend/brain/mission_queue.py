@@ -5,7 +5,10 @@ import logging
 logger = logging.getLogger("MissionQueue")
 
 class MissionQueue:
-    def __init__(self, root_dir="/Users/michaelhoch/hoch_agent_swarm"):
+    def __init__(self, root_dir=None):
+        from backend.runtime_paths import project_root
+        if root_dir is None:
+            root_dir = str(project_root())
         self.tracker_path = os.path.join(root_dir, "frontend/data/pert_tracker.json")
 
     def get_next_pert_task(self) -> dict:

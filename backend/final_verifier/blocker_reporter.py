@@ -63,7 +63,6 @@ class BlockerReporter:
                 except Exception:
                     pass
 
-                # 6. Check blocking or unknown warnings
                 try:
                     cursor.execute("SELECT signal_id, value FROM runtime_truth_signals WHERE signal_id IN ('warning_blocking_count', 'warning_unknown_count')")
                     for row in cursor.fetchall():
@@ -73,6 +72,19 @@ class BlockerReporter:
                                 "type": "BLOCKING_WARNING",
                                 "description": f"There are {val} unresolved {row['signal_id']} warnings blocking release."
                             })
+                except Exception:
+                    pass
+
+                # 7. Check for NO_ACTIVE_RELEASE_GO blocker
+                from backend.runtime_truth.go_nogo_manager import GoNoGoManager
+                try:
+                    manager = GoNoGoManager(db_path=self.db_path)
+                    summary = manager.process_and_update()
+                    if summary["contradiction_status"] == "INACTIVE" and summary["active_go_count"] == 0 and summary["release_go_source"] == "none":
+                        blockers.append({
+                            "type": "NO_ACTIVE_RELEASE_GO",
+                            "description": "No valid release GO source is active."
+                        })
                 except Exception:
                     pass
 

@@ -9,7 +9,10 @@ matches=$(grep -rn "/Users/michaelhoch" ./backend \
   --exclude-dir=.venv \
   --exclude-dir=.git \
   --exclude-dir=dummy_mcp \
-  --exclude-dir=scripts || true)
+  --exclude-dir=scripts \
+  --exclude-dir=__pycache__ \
+  --exclude="*.db" \
+  --exclude="*.pyc" || true)
 
 if [ -n "$matches" ]; then
   echo "FAIL: Found host path contamination in production backend:"

@@ -90,11 +90,53 @@ def test_stale_go_stale_nogo(clean_db):
     engine = ReadinessCapEngine()
     caps_res = engine.calculate_caps()
     assert not any(c == "GO/NO-GO contradiction active" for c in caps_res["caps"])
+    assert any(c == "No active release GO source" for c in caps_res["caps"])
+    assert caps_res["score"] <= 50.0
 
     verdict_engine = FinalVerdict()
     verdict = verdict_engine.get_final_verdict()
     blockers = verdict["blocker_reporter"]["blockers"]
     assert not any(b["type"] == "GO_NO_GO_CONTRADICTION" for b in blockers)
+    assert any(b["type"] == "NO_ACTIVE_RELEASE_GO" for b in blockers)
+    assert verdict["status"] == "BLOCKED"
+
+def test_valid_release_go(clean_db):
+    manager = GoNoGoManager()
+    now_str = now_iso()
+    
+    conn = sqlite3.connect(DB_PATH)
+    try:
+        conn.execute("""
+            INSERT INTO runtime_truth_signals
+            (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence)
+            VALUES ('production_go_status', 'Go', 'GO', 'manual', 'user', ?, 60, 'fresh', 1.0)
+        """, (now_str,))
+        conn.commit()
+    finally:
+        conn.close()
+
+    res = manager.process_and_update()
+    assert res["contradiction_status"] == "INACTIVE"
+    assert res["release_go_status"] == "GO"
+
+    from backend.final_verifier.contradiction_checker import ContradictionChecker
+    from backend.final_verifier.readiness_cap_engine import ReadinessCapEngine
+    from backend.final_verifier.final_verdict import FinalVerdict
+
+    checker = ContradictionChecker()
+    cc_res = checker.check_contradictions()
+    assert cc_res["is_valid"] is True
+
+    engine = ReadinessCapEngine()
+    caps_res = engine.calculate_caps()
+    assert not any(c == "GO/NO-GO contradiction active" for c in caps_res["caps"])
+    assert not any(c == "No active release GO source" for c in caps_res["caps"])
+
+    verdict_engine = FinalVerdict()
+    verdict = verdict_engine.get_final_verdict()
+    blockers = verdict["blocker_reporter"]["blockers"]
+    assert not any(b["type"] == "GO_NO_GO_CONTRADICTION" for b in blockers)
+    assert not any(b["type"] == "NO_ACTIVE_RELEASE_GO" for b in blockers)
 
 def test_active_go_active_nogo(clean_db):
     manager = GoNoGoManager()

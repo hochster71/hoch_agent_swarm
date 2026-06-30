@@ -4,7 +4,10 @@ import uuid
 from datetime import datetime
 
 class GoogleDriveDelivery:
-    def __init__(self, root_dir="/Users/michaelhoch/hoch_agent_swarm"):
+    def __init__(self, root_dir=None):
+        from backend.runtime_paths import project_root
+        if root_dir is None:
+            root_dir = str(project_root())
         self.root_dir = root_dir
         self.targets_path = os.path.join(root_dir, "config/delivery_targets.yaml")
 

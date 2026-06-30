@@ -5,7 +5,10 @@ import logging
 logger = logging.getLogger("TaskRouter")
 
 class TaskRouter:
-    def __init__(self, root_dir="/Users/michaelhoch/hoch_agent_swarm"):
+    def __init__(self, root_dir=None):
+        from backend.runtime_paths import project_root
+        if root_dir is None:
+            root_dir = str(project_root())
         self.registry_path = os.path.join(root_dir, "config/agent_registry.yaml")
 
     def load_agents(self) -> list:
