@@ -793,6 +793,7 @@ async function computeTruth() {
 async function findTruthSourcesInfo() {
   await checkApiOnline();
   const dbFiles = findSqliteLedgers();
+  const dbInfo = dbFiles.find(d => d.exists && d.tables.includes("swarm_agents"));
   const apiHealth = {
     ok: apiOnline,
     url: "http://127.0.0.1:8000/health",
@@ -805,7 +806,6 @@ async function findTruthSourcesInfo() {
     chosen_source = "LIVE_API_TRUTH";
     recommendation = "Live API is online and healthy. Operating on real-time API truth.";
   } else {
-    const dbInfo = dbFiles.find(d => d.exists && d.tables.includes("swarm_agents"));
     if (dbInfo) {
       chosen_source = "SQLITE_LEDGER_TRUTH";
       recommendation = `API is offline. Using SQLite ledger database at ${dbInfo.path} as primary local truth.`;
@@ -816,10 +816,22 @@ async function findTruthSourcesInfo() {
   }
 
   return {
-    detected_live_api_health: apiHealth,
-    detected_db_files: dbFiles,
+    live_http_api_health: {
+      status: apiOnline ? "HEALTHY" : "OFFLINE",
+      url: "http://127.0.0.1:8000/health"
+    },
+    sqlite_ledger_truth_health: {
+      status: dbInfo ? "HEALTHY" : "OFFLINE",
+      path: dbInfo ? dbInfo.path : "backend/swarm_ledger.db"
+    },
+    file_fallback_health: {
+      status: "HEALTHY",
+      path: "has_live_project_tracker/data/"
+    },
     chosen_source,
     fallback_chain: ["LIVE_API_TRUTH", "SQLITE_LEDGER_TRUTH", "FILE_BASED_TRUTH"],
+    detected_live_api_health: apiHealth,
+    detected_db_files: dbFiles,
     last_refresh: new Date().toISOString(),
     warnings: [],
     recommendation

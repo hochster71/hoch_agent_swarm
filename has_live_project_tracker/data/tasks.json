@@ -1002,17 +1002,17 @@
     "id": "T040",
     "name": "Restore live HAS API feed on port 8000",
     "owner_domain": "Tracker",
-    "status": "Running",
+    "status": "Done",
     "assigned_agent": "Live Tracker Runtime Agent",
     "started_at": "2026-06-30T14:14:00.000Z",
-    "completed_at": null,
+    "completed_at": "2026-06-30T14:33:24.958Z",
     "expected_hours": 2,
     "optimistic_hours": 1,
     "pessimistic_hours": 6,
     "dependencies": [
       "T039"
     ],
-    "progress": 10,
+    "progress": 100,
     "description": "Restore live HAS API feed on port 8000 by checking Docker daemon health and launching compose services.",
     "blocker": "has-api container offline on port 8000",
     "evidence": [],
@@ -1024,6 +1024,6 @@
     "projection_impact_hours": 2,
     "next_action": "Check docker daemon status and start compose service",
     "stale_after_seconds": 300,
-    "updated_at": "2026-06-30T14:14:37.853Z"
+    "updated_at": "2026-06-30T14:33:24.958Z"
   }
 ]
