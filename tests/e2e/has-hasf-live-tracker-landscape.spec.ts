@@ -74,8 +74,8 @@ test.describe('HAS/HASF Live Project Tracker Landscape E2E', () => {
 
     // Dismiss tooltip
     await page.keyboard.press('Escape');
-    await expect(tooltip).not.toBeVisible();
     await page.mouse.move(0, 0);
+    await expect(tooltip).not.toBeVisible();
 
     // Click on domain lane to open details drawer
     await firstLane.click();
