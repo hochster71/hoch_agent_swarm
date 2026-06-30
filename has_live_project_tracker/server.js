@@ -2728,6 +2728,37 @@ const server = http.createServer((req, res) => {
     }
   }
 
+  if (url.pathname.startsWith("/api/v1/pods/")) {
+    let body = "";
+    req.on("data", chunk => body += chunk);
+    req.on("end", () => {
+      const targetUrl = `http://127.0.0.1:8000${url.pathname}${url.search || ""}`;
+      const http = require("http");
+      const forwardReq = http.request(
+        targetUrl,
+        {
+          method: req.method,
+          headers: {
+            "content-type": req.headers["content-type"] || "application/json"
+          }
+        },
+        (forwardRes) => {
+          res.writeHead(forwardRes.statusCode, forwardRes.headers);
+          forwardRes.pipe(res);
+        }
+      );
+      forwardReq.on("error", (err) => {
+        res.writeHead(500, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ error: err.message }));
+      });
+      if (req.method !== "GET" && req.method !== "HEAD") {
+        forwardReq.write(body);
+      }
+      forwardReq.end();
+    });
+    return;
+  }
+
   if (url.pathname === "/api/health") {
     return sendJson(res, {
       ok: true,
