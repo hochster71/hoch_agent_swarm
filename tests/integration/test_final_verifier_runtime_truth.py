@@ -6,18 +6,19 @@ from backend.runtime_truth.state_store import DB_PATH
 client = TestClient(app)
 
 def test_final_verifier_integration_flow():
-    # Insert contradicting signals into database
+    from backend.runtime_truth.state_store import now_iso
+    now_str = now_iso()
     with sqlite3.connect(DB_PATH, timeout=60) as conn:
         conn.execute("""
             INSERT OR REPLACE INTO runtime_truth_signals
             (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence)
-            VALUES ('production_go_status', 'Go Status', 'GO', 'test', 'test', '2026-06-29T12:00:00Z', 60, 'fresh', 1.0)
-        """)
+            VALUES ('production_go_status', 'Go Status', 'GO', 'manual', 'user', ?, 60, 'fresh', 1.0)
+        """, (now_str,))
         conn.execute("""
             INSERT OR REPLACE INTO runtime_truth_signals
             (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence)
-            VALUES ('production_nogo_status', 'NoGo Status', 'NO-GO', 'test', 'test', '2026-06-29T12:00:00Z', 60, 'fresh', 1.0)
-        """)
+            VALUES ('production_nogo_status', 'NoGo Status', 'NO-GO', 'computed', 'system', ?, 60, 'fresh', 1.0)
+        """, (now_str,))
         conn.commit()
 
     # Re-collect
@@ -48,3 +49,11 @@ def test_final_verifier_integration_flow():
 
     # Restore passing state
     client.post("/api/v1/runtime-truth/collect")
+
+def test_go_nogo_sources_endpoint():
+    res = client.get("/api/v1/runtime-truth/go-nogo-sources")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["status"] == "success"
+    assert "sources" in data
+    assert "summary" in data

@@ -11343,6 +11343,21 @@ def get_runtime_truth_state():
     finally:
         conn.close()
 
+@app.get("/api/v1/runtime-truth/go-nogo-sources")
+def get_go_nogo_sources():
+    from backend.runtime_truth.go_nogo_manager import GoNoGoManager
+    try:
+        manager = GoNoGoManager()
+        sources = manager.get_sources()
+        summary = manager.process_and_update()
+        return {
+            "status": "success",
+            "sources": sources,
+            "summary": summary
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/api/v1/runtime-truth/source-map")
 def get_runtime_truth_source_map():
     import sqlite3

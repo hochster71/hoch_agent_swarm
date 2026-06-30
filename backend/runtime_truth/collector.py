@@ -942,6 +942,12 @@ def collect_and_store_all():
     conn.commit()
     conn.close()
 
+    try:
+        from backend.runtime_truth.go_nogo_manager import GoNoGoManager
+        GoNoGoManager().process_and_update()
+    except Exception as e:
+        print(f"Error executing GoNoGoManager in collector: {e}")
+
 def populate_source_map_internal(conn, heartbeat_time):
     entries = [
         ("git_status", "git status --porcelain", "command", ""),
@@ -995,7 +1001,13 @@ def populate_source_map_internal(conn, heartbeat_time):
         ("zero_defect_claim_status", "backend/coding_control_plane/final_verifier.py", "daemon", ""),
         ("best_agent_routing_status", "backend/coding_control_plane/coding_agent_router.py", "supervisor_gate", ""),
         ("final_verifier_status", "backend/final_verifier/final_verdict.py", "daemon", ""),
-        ("contradiction_count", "backend/final_verifier/contradiction_checker.py", "daemon", "")
+        ("contradiction_count", "backend/final_verifier/contradiction_checker.py", "daemon", ""),
+        ("go_nogo_contradiction_status", "backend/runtime_truth/go_nogo_manager.py", "daemon", ""),
+        ("go_signal_source_count", "backend/runtime_truth/go_nogo_manager.py", "daemon", ""),
+        ("no_go_signal_source_count", "backend/runtime_truth/go_nogo_manager.py", "daemon", ""),
+        ("stale_go_signal_count", "backend/runtime_truth/go_nogo_manager.py", "daemon", ""),
+        ("active_release_go_status", "backend/runtime_truth/go_nogo_manager.py", "daemon", ""),
+        ("release_go_source", "backend/runtime_truth/go_nogo_manager.py", "daemon", "")
     ]
     for key, url, source_type, checksum in entries:
         if source_type == "markdown_evidence":
