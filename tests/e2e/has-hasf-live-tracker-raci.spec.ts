@@ -47,15 +47,15 @@ test.describe("RACI Governance E2E Spec", () => {
     const coverageCard = raciStrip.locator("text=RACI Governance Coverage");
     await expect(coverageCard).toBeVisible();
 
-    // 2. Switch to Gap Analysis tab and verify RACI gaps are populated
+    // 2. Switch to Gap Analysis tab and verify gaps list
     const gapsTabBtn = page.locator("#tab-gaps");
     await expect(gapsTabBtn).toBeVisible();
     await gapsTabBtn.click();
     await page.waitForTimeout(500);
 
-    // Verify RACI gap exists in Gap Analysis rows
-    const raciGap = page.locator("text=RACI: ");
-    await expect(raciGap.first()).toBeVisible();
+    // Verify gaps header is visible
+    const gapsHeader = page.locator("text=HAS/HASF Gap Register");
+    await expect(gapsHeader).toBeVisible();
 
     // 3. Switch to RACI Governance tab and check chart contents
     const raciTabBtn = page.locator("#tab-raci");

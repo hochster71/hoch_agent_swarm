@@ -322,6 +322,10 @@
     "owner_domain": "Gap Analysis",
     "status": "Queued",
     "assigned_agent": "QA Auditor Agent",
+    "consulted_agents": [
+      "QA Auditor Agent",
+      "Security Auditor Agent"
+    ],
     "started_at": null,
     "completed_at": null,
     "expected_hours": 40,
@@ -579,6 +583,9 @@
     "owner_domain": "QA",
     "status": "Queued",
     "assigned_agent": "QA Auditor Agent",
+    "consulted_agents": [
+      "QA Auditor Agent"
+    ],
     "started_at": null,
     "completed_at": null,
     "expected_hours": 40,
@@ -732,6 +739,9 @@
     "owner_domain": "QA",
     "status": "Queued",
     "assigned_agent": "QA Auditor Agent",
+    "consulted_agents": [
+      "QA Auditor Agent"
+    ],
     "started_at": null,
     "completed_at": null,
     "expected_hours": 16,
@@ -863,6 +873,9 @@
     "owner_domain": "Tracker",
     "status": "Done",
     "assigned_agent": "Live Tracker Runtime Agent",
+    "consulted_agents": [
+      "Evidence Collector Agent"
+    ],
     "started_at": "2026-06-30T13:56:00.000Z",
     "completed_at": "2026-06-30T13:58:14.554Z",
     "expected_hours": 16,
@@ -915,6 +928,9 @@
     "owner_domain": "Tracker",
     "status": "Done",
     "assigned_agent": "Live Tracker Runtime Agent",
+    "consulted_agents": [
+      "QA Auditor Agent"
+    ],
     "started_at": "2026-06-30T13:56:00.000Z",
     "completed_at": "2026-06-30T13:58:14.575Z",
     "expected_hours": 16,
@@ -1032,6 +1048,9 @@
     "owner_domain": "Tracker",
     "status": "Done",
     "assigned_agent": "Live Tracker Runtime Agent",
+    "consulted_agents": [
+      "Evidence Collector Agent"
+    ],
     "started_at": "2026-06-30T14:37:00.000Z",
     "completed_at": "2026-06-30T14:50:00.000Z",
     "expected_hours": 8,

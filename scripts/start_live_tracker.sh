@@ -4,17 +4,29 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-# Load env defaults
+# Load secrets if present
+SECRETS_FILE="$HOME/.hoch-secrets/has-tracker.env"
+if [ -f "$SECRETS_FILE" ]; then
+    echo "Sourcing secrets from $SECRETS_FILE"
+    set -a
+    source "$SECRETS_FILE"
+    set +a
+fi
+
 export TRACKER_PORT=${TRACKER_PORT:-3001}
-export UI_USER=${UI_USER:-admin}
-export UI_PASS=${UI_PASS:-change-this-password}
+export UI_USER=${TRACKER_USER:-${UI_USER:-admin}}
+export UI_PASS=${TRACKER_PASSWORD:-${UI_PASS:-change-this-password}}
 
 echo "=================================================="
 echo "STARTING HAS/HASF LIVE PROJECT TRACKER"
 echo "=================================================="
 echo "Port:       $TRACKER_PORT"
 echo "Username:   $UI_USER"
-echo "Password:   $UI_PASS"
+if [ "$UI_PASS" = "change-this-password" ]; then
+    echo "Password:   $UI_PASS [INSECURE DEFAULT]"
+else
+    echo "Password:   ****** [SECURELY LOADED]"
+fi
 echo "Project:    $PROJECT_ROOT"
 
 # Check if port is already in use

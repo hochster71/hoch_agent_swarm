@@ -1,17 +1,39 @@
 import { test, expect } from '@playwright/test';
+import * as fs from 'fs';
+import * as path from 'path';
+
+// Load secrets from ~/.hoch-secrets/has-tracker.env if it exists
+const secretsPath = path.join(process.env.HOME || '', '.hoch-secrets', 'has-tracker.env');
+let username = 'admin';
+let password = 'change-this-password';
+let port = '3001';
+
+if (fs.existsSync(secretsPath)) {
+  const content = fs.readFileSync(secretsPath, 'utf8');
+  content.split(/\r?\n/).forEach(line => {
+    const idx = line.indexOf('=');
+    if (idx !== -1) {
+      const key = line.slice(0, idx).trim();
+      const val = line.slice(idx + 1).trim();
+      if (key === 'TRACKER_USER') username = val;
+      if (key === 'TRACKER_PASSWORD') password = val;
+      if (key === 'TRACKER_PORT') port = val;
+    }
+  });
+}
 
 test.use({
+  baseURL: `http://localhost:${port}`,
   httpCredentials: {
-    username: 'admin',
-    password: 'change-this-password',
-  },
+    username,
+    password
+  }
 });
 
 test.describe('HAS/HASF Live Project Tracker Truth Sources E2E', () => {
   test('verifies truth source badges, tooltips, and drawer cockpit integration', async ({ page }) => {
     // Navigate directly to local tracker
-    const url = 'http://localhost:3001/';
-    await page.goto(url);
+    await page.goto('/');
 
     // Verify page loads and title is correct
     await expect(page).toHaveTitle('HAS/HASF Live Project Tracker');
@@ -20,12 +42,12 @@ test.describe('HAS/HASF Live Project Tracker Truth Sources E2E', () => {
     await page.waitForSelector('#truthSourceBadge');
 
     // 1. API endpoint verification
-    const healthRes = await page.request.get('http://localhost:3001/api/health');
+    const healthRes = await page.request.get('/api/health');
     expect(healthRes.status()).toBe(200);
     const healthJson = await healthRes.json();
     expect(healthJson.ok).toBe(true);
 
-    const sourcesRes = await page.request.get('http://localhost:3001/api/truth-sources');
+    const sourcesRes = await page.request.get('/api/truth-sources');
     expect(sourcesRes.status()).toBe(200);
     const sourcesJson = await sourcesRes.json();
     expect(sourcesJson.chosen_source).toBeDefined();
