@@ -49,6 +49,7 @@ test.describe("Control Plane v2 Live Flow Overlay & Topology verification", () =
     await expect(canvas).toBeVisible();
 
     // 4. Click a node to verify details Drawer opens
+    await page.locator("button >> text=Toggle Diagnostics Map").click();
     const localDiskNode = page.locator("#node-local_disk");
     await expect(localDiskNode).toBeVisible();
     await localDiskNode.click();
