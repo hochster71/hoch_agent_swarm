@@ -28,7 +28,7 @@ function loadEnvFile(filePath) {
 }
 
 // Load from ~/.hoch-secrets/has-tracker.env
-const secretsFile = path.join(process.env.HOME || "", ".hoch-secrets", "has-tracker.env");
+const secretsFile = path.join(require("os").homedir(), ".hoch-secrets", "has-tracker.env");
 loadEnvFile(secretsFile);
 
 // Load from local .env in tracker root if present
@@ -1623,7 +1623,7 @@ function getGapsData(truth) {
   const disk = getDiskSpace();
   const dora = computeDoraMetrics();
   
-  const plistPath = path.join(process.env.HOME || "", "Library", "LaunchAgents", "com.hochster71.has.tracker.plist");
+  const plistPath = path.join(require("os").homedir(), "Library", "LaunchAgents", "com.hochster71.has.tracker.plist");
   const hasLaunchdAgent = fs.existsSync(plistPath);
 
   const invSummary = readJson("inventory_summary.json", null);
@@ -2757,6 +2757,33 @@ const server = http.createServer((req, res) => {
       forwardReq.end();
     });
     return;
+  }
+  if (url.pathname === "/api/auth-check") {
+    const secretsFile = path.join(require("os").homedir(), ".hoch-secrets", "has-tracker.env");
+    const hasSecretsFile = fs.existsSync(secretsFile);
+    let authedUser = "unknown";
+    const header = req.headers.authorization || "";
+    const [scheme, encoded] = header.split(" ");
+    if (scheme === "Basic" && encoded) {
+      try {
+        const decoded = Buffer.from(encoded, "base64").toString("utf8");
+        const idx = decoded.indexOf(":");
+        if (idx >= 0) {
+          authedUser = decoded.slice(0, idx);
+        }
+      } catch {}
+    }
+    return sendJson(res, {
+      authenticated: true,
+      user: authedUser,
+      tracker_status: "online",
+      env_sources: {
+        secrets_file_path: secretsFile,
+        secrets_file_exists: hasSecretsFile,
+        local_env_exists: fs.existsSync(path.join(ROOT, ".env"))
+      },
+      ts: new Date().toISOString()
+    });
   }
 
   if (url.pathname === "/api/health") {

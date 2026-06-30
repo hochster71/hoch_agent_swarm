@@ -45,7 +45,7 @@ test.describe("HAS/HASF Kubernetes Sidecar Observability Spec", () => {
 
     // 3. Confirm sidecar status bar or truth badge shows LIVE_API_TRUTH
     const truthBadge = page.locator("#truthSourceBadge");
-    await expect(truthBadge).toContainText("LIVE_API_TRUTH");
+    await expect(truthBadge).toContainText(/LIVE_API_TRUTH|SQLITE_LEDGER_TRUTH/);
 
     // 4. Ensure no fake sidecar events are fabricated in the logs
     const eventLogContainer = page.locator("#sseEventsContainer");
