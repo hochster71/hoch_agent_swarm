@@ -11,6 +11,11 @@ test.describe("PromptOps Portal E2E Validation", () => {
     await expect(promptopsTab).toBeVisible();
     await promptopsTab.click();
 
+    // Click the internal React component tab button for PromptOps Portal
+    const reactTabBtn = page.locator("button:has-text('PromptOps Portal')");
+    await expect(reactTabBtn).toBeVisible();
+    await reactTabBtn.click();
+
     // 3. Test scenario 1: Weak Prompt Preset
     const weakPresetBtn = page.locator("button:has-text('⚠️ Weak / Broad Prompt')");
     await expect(weakPresetBtn).toBeVisible();
@@ -21,10 +26,11 @@ test.describe("PromptOps Portal E2E Validation", () => {
     await evaluateBtn.click();
 
     // Verify scorecard and risk levels
-    const riskBadge = page.locator("span:has-text('HIGH')");
+    const contractPanel = page.locator(".glass-panel:has-text('Contract Specification')");
+    const riskBadge = contractPanel.locator("span:has-text('MEDIUM')").first();
     await expect(riskBadge).toBeVisible();
 
-    const statusBadge = page.locator("span:has-text('BLOCKED_UNTIL_SCOPED')");
+    const statusBadge = contractPanel.locator("span:has-text('BLOCKED_UNTIL_SCOPED')").first();
     await expect(statusBadge).toBeVisible();
 
     // 4. Test scenario 2: Strong Scoped Prompt Preset
@@ -33,10 +39,10 @@ test.describe("PromptOps Portal E2E Validation", () => {
     await strongPresetBtn.click();
     await evaluateBtn.click();
 
-    const strongStatusBadge = page.locator("span:has-text('EXECUTABLE')");
+    const strongStatusBadge = contractPanel.locator("span:has-text('EXECUTABLE')").first();
     await expect(strongStatusBadge).toBeVisible();
 
-    const lowRiskBadge = page.locator("span:has-text('LOW')");
+    const lowRiskBadge = contractPanel.locator("span:has-text('LOW')").first();
     await expect(lowRiskBadge).toBeVisible();
 
     // 5. Test scenario 3: Closeout Claim Rejection
@@ -48,7 +54,7 @@ test.describe("PromptOps Portal E2E Validation", () => {
     await submitClaimBtn.click();
 
     // Verify rejection card displays
-    const errorCard = page.locator("div:has-text('Closeout Gate: CLAIM REJECTED')");
+    const errorCard = page.locator("div:has-text('Closeout Gate: CLAIM REJECTED')").first();
     await expect(errorCard).toBeVisible();
   });
 });
