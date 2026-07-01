@@ -1,0 +1,45 @@
+# Compute Utilization Gap Policy
+
+posture: SECURE
+tailnet_compute_nodes:
+  - machine: "michaels-macbook-pro"
+    tailscale_ip: "100.103.155.4"
+    role: "primary_control_runtime"
+    cores: 8
+    memory_gb: 16.0
+    allowed_jobs: ["pert_dashboard", "verification", "playwright", "cadence", "local_build"]
+    docker_limits:
+      cpu_ceiling: 2.0
+      memory_ceiling_gb: 4.0
+    estimated_utilization_percent: 75.0
+    goal_contribution_score: 85
+  - machine: "hoch-relay-001"
+    tailscale_ip: "100.87.18.15"
+    role: "private_relay_worker"
+    cores: 4
+    memory_gb: 8.0
+    allowed_jobs: ["relay_health", "private_worker_api", "safe_compute_probe", "port_check"]
+    docker_limits:
+      cpu_ceiling: 1.0
+      memory_ceiling_gb: 2.0
+    estimated_utilization_percent: 35.0
+    goal_contribution_score: 55
+  - machine: "iphone-15-pro-max"
+    tailscale_ip: "100.102.221.87"
+    role: "operator_mobile_monitor"
+    cores: 0
+    memory_gb: 0.0
+    allowed_jobs: ["dashboard_view", "approval_review"]
+    docker_limits:
+      cpu_ceiling: 0.0
+      memory_ceiling_gb: 0.0
+    estimated_utilization_percent: 0.0
+    goal_contribution_score: 10
+
+job_prioritization:
+  verification_jobs: 1
+  playwright_jobs: 2
+  cadence_refresh: 3
+  mirror_checks: 4
+  evidence_generation: 5
+  security_guardrail_checks: 6
