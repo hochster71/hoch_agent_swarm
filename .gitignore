@@ -76,6 +76,8 @@ has_live_project_tracker/data/relay_probe_evidence.json
 has_live_project_tracker/data/playwright_runs.json
 has_live_project_tracker/data/worker_heartbeats.json
 has_live_project_tracker/data/epic_fury_audit_results.json
+has_live_project_tracker/data/project_revenue_readiness_results.json
+
 
 
 
