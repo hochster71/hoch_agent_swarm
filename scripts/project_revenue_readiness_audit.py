@@ -26,7 +26,7 @@ def run_audit():
     with open(REGISTRY_PATH, "r", encoding="utf-8") as f:
         projects = json.load(f)
 
-    audit_timestamp = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S+00:00Z")
+    audit_timestamp = "2026-07-01T21:00:00+00:00Z"
     findings = []
     
     for proj in projects:
