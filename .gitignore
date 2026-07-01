@@ -90,3 +90,6 @@ backend/*.db.bak
 # VS Code local workspace settings
 .vscode/
 logs/
+
+# Stripe secrets
+.env.stripe.sandbox

@@ -47,6 +47,52 @@ def wrap_telemetry_dict(value, source, last_updated_iso=None, confidence="HIGH",
         "fallback_state": fallback
     }
 
+def check_stripe_sandbox_readiness() -> str:
+    """
+    Verifies Stripe sandbox readiness from local .env.stripe.sandbox file.
+    Does NOT leak secrets. Only returns PRESENT, MISSING, or INVALID.
+    """
+    root = get_project_root()
+    env_file = os.path.join(root, ".env.stripe.sandbox")
+    if not os.path.exists(env_file):
+        return "MISSING"
+    
+    try:
+        publishable_key = ""
+        secret_key = ""
+        with open(env_file, "r") as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                if "=" in line:
+                    parts = line.split("=", 1)
+                    key = parts[0].strip()
+                    val = parts[1].strip()
+                    if key == "STRIPE_PUBLISHABLE_KEY":
+                        publishable_key = val
+                    elif key == "STRIPE_SECRET_KEY":
+                        secret_key = val
+        
+        if not publishable_key or not secret_key:
+            return "INVALID"
+        
+        # Check prefixes
+        # Live key check: strictly block live mode keys
+        if (publishable_key.startswith("pk_live_") or 
+            secret_key.startswith("sk_live_") or 
+            secret_key.startswith("rk_live_")):
+            return "INVALID"
+            
+        # Sandbox / Test mode checks
+        if (publishable_key.startswith("pk_test_") and 
+            (secret_key.startswith("sk_test_") or secret_key.startswith("rk_test_"))):
+            return "PRESENT"
+            
+        return "INVALID"
+    except Exception:
+        return "INVALID"
+
 def get_tailscale_status():
     workers = {
         "michaels-macbook-pro": {"status": "ONLINE", "ip": "100.103.155.4"},
@@ -781,12 +827,14 @@ def get_pert_data():
     if len(required_evidence) > 0:
         evidence_coverage_percent = round((existing_evidence_count / len(required_evidence)) * 100.0, 1)
 
-    # Monetization Readiness score (cap at 50% if Stripe keys are missing/not configured)
-    stripe_configured = False
-    if stripe_configured:
+    # Calculate Stripe Sandbox status dynamically
+    stripe_sandbox_status = check_stripe_sandbox_readiness()
+
+    # Monetization Readiness score (cap at 50% if Stripe keys are missing/not configured or invalid)
+    if stripe_sandbox_status == "PRESENT":
         monetization_readiness_percent = evidence_coverage_percent
     else:
-        # Cap at 50% of the evidence coverage score since Stripe layer is missing
+        # Cap at 50% of the evidence coverage score since Stripe sandbox layer is missing/invalid
         monetization_readiness_percent = round(evidence_coverage_percent * 0.5, 1)
 
     evidence_gap_count = len(required_evidence) - existing_evidence_count
@@ -841,7 +889,7 @@ def get_pert_data():
     
     wrapped_monetization_readiness = wrap_telemetry_dict(monetization_readiness_percent, "monetization_readiness_policy_check", fallback="0.0")
     wrapped_evidence_gap_count = wrap_telemetry_dict(evidence_gap_count, "monetization_readiness_policy_check", fallback="0")
-    wrapped_stripe_readiness = wrap_telemetry_dict("NOT_CONFIGURED / APPROVAL_REQUIRED", "stripe_policy_check", fallback="NOT_CONFIGURED")
+    wrapped_stripe_readiness = wrap_telemetry_dict(stripe_sandbox_status, "stripe_policy_check", fallback="MISSING")
     wrapped_export_guardrail = wrap_telemetry_dict(guardrails_policy.get("do_not_expand_export_or_family", "FUTURE_NOT_NOW"), "guardrail_policy_audit", fallback="FUTURE_NOT_NOW")
     
     # queues
@@ -1711,8 +1759,14 @@ def get_dashboard():
                 document.getElementById("evidence-coverage").title = `Source: ${data.evidence_coverage_percent.source} | Freshness: ${data.evidence_coverage_percent.freshness}s`;
                 
                 const stripeStateEl = document.getElementById("stripe-sandbox-state");
-                stripeStateEl.textContent = mon.stripe_sandbox_readiness.value;
+                const stripeVal = mon.stripe_sandbox_readiness.value;
+                stripeStateEl.textContent = stripeVal;
                 stripeStateEl.title = `Source: ${mon.stripe_sandbox_readiness.source} | Freshness: ${mon.stripe_sandbox_readiness.freshness}s`;
+                if (stripeVal === "PRESENT") {
+                    stripeStateEl.style.color = "var(--accent-teal)";
+                } else {
+                    stripeStateEl.style.color = "var(--accent-red)";
+                }
 
                 // Populate evidence matrix table
                 const matrixTbody = document.getElementById("evidence-matrix-tbody");
