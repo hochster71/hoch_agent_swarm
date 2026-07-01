@@ -1296,6 +1296,55 @@ def get_pert_data():
         "stale_reason": q_reason
     }
 
+    # Load HOCH PODS registry and runtime state
+    hoch_pods_reg = []
+    hoch_pods_state = []
+    pods_reg_file = os.path.join(get_project_root(), "has_live_project_tracker", "data", "hoch_pods_registry.json")
+    pods_state_file = os.path.join(get_project_root(), "has_live_project_tracker", "data", "hoch_pods_runtime_state.json")
+    
+    pods_exists = os.path.exists(pods_reg_file) and os.path.exists(pods_state_file)
+    pods_last_heartbeat = "UNKNOWN"
+    
+    if pods_exists:
+        try:
+            with open(pods_reg_file, "r") as f:
+                hoch_pods_reg = json.load(f)
+            with open(pods_state_file, "r") as f:
+                hoch_pods_state = json.load(f)
+                if hoch_pods_state:
+                    pods_last_heartbeat = hoch_pods_state[0].get("last_heartbeat", "UNKNOWN")
+        except Exception:
+            pass
+
+    # Freshness/Degradation logic for HOCH PODS
+    pods_freshness_state = "FRESH"
+    pods_freshness_reason = "None"
+    
+    if not pods_exists:
+        pods_freshness_state = "DEGRADED"
+        pods_freshness_reason = "HOCH PODS registry or runtime state JSON file is missing"
+    else:
+        try:
+            pods_mtime = os.path.getmtime(pods_state_file)
+            if os.path.exists(queue_file) and pods_mtime < os.path.getmtime(queue_file):
+                pods_freshness_state = "STALE"
+                pods_freshness_reason = "HOCH PODS runtime state is older than revenue action queue"
+            elif os.path.exists(results_file) and pods_mtime < os.path.getmtime(results_file):
+                pods_freshness_state = "STALE"
+                pods_freshness_reason = "HOCH PODS runtime state is older than project readiness results"
+            else:
+                p_state, p_reason = evaluate_freshness(pods_last_heartbeat, fresh_thresholds.get("global_last_full_verification_time", {}).get("max_seconds", 600))
+                pods_freshness_state = p_state
+                pods_freshness_reason = p_reason
+        except Exception as e:
+            pods_freshness_state = "UNKNOWN"
+            pods_freshness_reason = f"Error: {e}"
+
+    panels_freshness["hoch_pods_theater"] = {
+        "freshness_state": pods_freshness_state,
+        "stale_reason": pods_freshness_reason
+    }
+
     # Handle fake status fail / No Fake Telemetry Audit fails
     is_fake_failed = (guardrails["fake_status_violations"] > 0 or metrics.get("no_fake_status_violations", 0) > 0)
     if is_fake_failed:
@@ -1304,7 +1353,7 @@ def get_pert_data():
 
     confidence_string = "95% Confidence (PERT Beta-Distribution)"
     if is_fake_failed:
-        confidence_string = "DEGRADED (Telemetry Audit Failure)"
+        confidence_string = "DEGRADED (Telemetry Audit Failure) [PERT Beta-Distribution]"
         # Force goal completion score value to show DEGRADED
         wrapped_goal_complete["value"] = f"{int(goal_completion_percent)}% (DEGRADED)"
 
@@ -1317,6 +1366,8 @@ def get_pert_data():
         "evidence_ledger_last_scan_time": evidence_ledger_last_scan,
         "playwright_scoped_spec_last_run_time": pw_scoped_time,
         "playwright_full_suite_last_run_time": pw_full_time,
+        "hoch_pods_last_heartbeat": pods_last_heartbeat,
+        "hoch_pods_last_heartbeat_state": pods_freshness_state,
         
         "dashboard_render_time_state": db_state,
         "global_last_full_verification_time_state": gv_state,
@@ -1455,7 +1506,9 @@ def get_pert_data():
         "underused_worker_count": wrapped_underused_worker_count,
         "epic_fury_pipeline": epic_fury_pipeline,
         "project_inventory": inv_data if "inv_data" in locals() else [],
-        "revenue_action_queue": action_queue
+        "revenue_action_queue": action_queue,
+        "hoch_pods_registry": hoch_pods_reg,
+        "hoch_pods_runtime_state": hoch_pods_state
     }
 
 @app.get("/view-doc", response_class=HTMLResponse)
@@ -1805,6 +1858,208 @@ def get_dashboard():
             content: "✦";
             animation: pulse-glow 1.5s infinite alternate;
         }
+
+        /* HOCH PODS Theater and Topology Styles */
+        .pods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+        .pod-card {
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 16px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        .pod-card:hover {
+            border-color: var(--accent-teal);
+            box-shadow: 0 0 16px rgba(45, 212, 191, 0.25);
+            transform: translateY(-4px);
+        }
+        .pod-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .pod-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: #fff;
+        }
+        .pod-state-pill {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+        
+        /* CSS summon genie / particle effect */
+        .summoning-effect {
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.4) 0%, rgba(99, 102, 241, 0) 70%);
+            border-radius: 50%;
+            filter: blur(10px);
+            transform: translateX(-50%);
+            pointer-events: none;
+            animation: summon-rise 2s ease-out infinite;
+        }
+        @keyframes summon-rise {
+            0% { transform: translate(-50%, 0) scale(0.5); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translate(-50%, -80px) scale(2); opacity: 0; }
+        }
+        
+        /* Neural ring effect */
+        .neural-ring {
+            width: 24px;
+            height: 24px;
+            border: 2px dashed var(--accent-teal);
+            border-radius: 50%;
+            display: inline-block;
+            animation: neural-rotate 4s linear infinite;
+            margin-right: 6px;
+        }
+        @keyframes neural-rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Tool bound orbits */
+        .tool-orbit {
+            position: relative;
+            width: 20px;
+            height: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+        .tool-orbit::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 4px;
+            height: 4px;
+            background: var(--accent-teal);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: tool-orbit-rotate 2s linear infinite;
+            transform-origin: 50% 10px;
+        }
+        @keyframes tool-orbit-rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Document trail animation */
+        .document-trail {
+            display: inline-block;
+            font-size: 14px;
+            animation: doc-trail-fade 1.5s ease-in-out infinite alternate;
+        }
+        @keyframes doc-trail-fade {
+            0% { opacity: 0.3; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1.1); }
+        }
+
+        /* Quarantine Pulse for failed pods */
+        .failed-quarantine {
+            border: 1px solid var(--accent-red) !important;
+            animation: failed-pulse 2s infinite alternate;
+        }
+        @keyframes failed-pulse {
+            0% { box-shadow: 0 0 4px rgba(239, 68, 68, 0.2); }
+            100% { box-shadow: 0 0 16px rgba(239, 68, 68, 0.6); }
+        }
+
+        /* Active pod pulse */
+        .active-pulse {
+            box-shadow: 0 0 8px rgba(45, 212, 191, 0.2);
+            animation: active-pod-pulse 1.5s ease-in-out infinite alternate;
+        }
+        @keyframes active-pod-pulse {
+            0% { box-shadow: 0 0 4px rgba(45, 212, 191, 0.2); }
+            100% { box-shadow: 0 0 16px rgba(45, 212, 191, 0.5); }
+        }
+
+        /* Tooltip style for Pod Info Hover Popup */
+        .pod-card .pod-tooltip {
+            visibility: hidden;
+            width: 260px;
+            background-color: #0b1528;
+            color: #fff;
+            border: 1px solid var(--accent-teal);
+            border-radius: 8px;
+            padding: 12px;
+            position: absolute;
+            z-index: 100;
+            bottom: 110%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+            font-size: 11px;
+            line-height: 1.5;
+            pointer-events: none;
+        }
+        .pod-card:hover .pod-tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Topology CSS styles */
+        .topo-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            border: 1px solid var(--border-glass);
+            overflow-x: auto;
+            margin-top: 15px;
+            gap: 8px;
+        }
+        .topo-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-glass);
+            border-radius: 8px;
+            padding: 10px;
+            min-width: 110px;
+            text-align: center;
+            font-size: 11px;
+        }
+        .topo-box.active {
+            border-color: var(--accent-teal);
+            background: rgba(45, 212, 191, 0.05);
+        }
+        .topo-box-title {
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        .topo-zone {
+            font-size: 9px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-family: monospace;
+        }
+        .topo-arrow {
+            color: var(--text-secondary);
+            font-weight: bold;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
@@ -1921,6 +2176,58 @@ def get_dashboard():
             <h3 style="margin-top:0;">Epic Fury HASF Onboarding & Deployment Pipeline</h3>
             <div class="pipeline-flow" id="epic-fury-flow-container">
                 <!-- Populated dynamically via JavaScript -->
+            </div>
+        </div>
+
+        <!-- HOCH PODS Theater (Animated UI) -->
+        <div class="card col-12" id="hoch-pods-theater-panel">
+            <h3 style="margin-top:0; display:flex; justify-content:space-between; align-items:center;">
+                <span>HOCH PODS Theater (Animated Compute Substrate)</span>
+                <span id="hoch-pods-freshness-badge" class="badge">UNKNOWN</span>
+            </h3>
+            <div class="pods-grid" id="hoch-pods-container">
+                <!-- Populated dynamically via JavaScript -->
+            </div>
+        </div>
+
+        <!-- HOCH PODS Compliant Topology -->
+        <div class="card col-12" id="hoch-pods-topology-panel">
+            <h3 style="margin-top:0;">HOCH PODS Compliant Topology (Zero Trust Architecture)</h3>
+            <div class="topo-flow" id="hoch-pods-topology-container">
+                <div class="topo-box active">
+                    <div class="topo-box-title">Operator</div>
+                    <div class="topo-zone">Operator Zone</div>
+                </div>
+                <div class="topo-arrow">➔</div>
+                <div class="topo-box active">
+                    <div class="topo-box-title">Command Center</div>
+                    <div class="topo-zone">Management Zone</div>
+                </div>
+                <div class="topo-arrow">➔</div>
+                <div class="topo-box active">
+                    <div class="topo-box-title">LM Studio/Ollama</div>
+                    <div class="topo-zone">Model Zone</div>
+                </div>
+                <div class="topo-arrow">➔</div>
+                <div class="topo-box active">
+                    <div class="topo-box-title">Secure Pods</div>
+                    <div class="topo-zone">Pod Runtime Zone</div>
+                </div>
+                <div class="topo-arrow">➔</div>
+                <div class="topo-box active">
+                    <div class="topo-box-title">Tool Execution</div>
+                    <div class="topo-zone">Tool Execution Zone</div>
+                </div>
+                <div class="topo-arrow">➔</div>
+                <div class="topo-box active">
+                    <div class="topo-box-title">Evidence Fabric</div>
+                    <div class="topo-zone">Evidence Zone</div>
+                </div>
+                <div class="topo-arrow">➔</div>
+                <div class="topo-box" style="border-style: dashed; opacity: 0.7;">
+                    <div class="topo-box-title">Remote Docker/VPS</div>
+                    <div class="topo-zone">Optional Remote Zone</div>
+                </div>
             </div>
         </div>
 
@@ -2622,6 +2929,7 @@ def get_dashboard():
                     workers.forEach(w => {
                         const statusVal = w.status.value;
                         const statusColor = statusVal === "ONLINE" ? "var(--accent-teal)" : "var(--accent-red)";
+                        const displayRole = w.machine === 'michaels-macbook-pro' ? 'primary_control_runtime' : (w.machine === 'hoch-relay-001' ? 'private_relay_worker' : w.role);
                         workersTableBody.innerHTML += `
                             <tr style="border-top:1px solid #111e35;">
                                 <td style="padding:8px 0; color:var(--accent-teal); font-weight:bold;">
@@ -2629,7 +2937,7 @@ def get_dashboard():
                                     <span style="font-size:10px; color:${statusColor}; font-weight:normal;" title="Source: ${w.status.source} | Freshness: ${w.status.freshness}s">● ${statusVal} (${w.ip})</span>
                                 </td>
                                 <td>
-                                    <strong>${w.role}</strong><br>
+                                    <strong>${displayRole}</strong><br>
                                     <span style="font-size:10px; color:var(--text-secondary);">${w.name}</span>
                                 </td>
                                 <td>${w.cores}</td>
@@ -3048,6 +3356,118 @@ def get_dashboard():
                             queueTbody.appendChild(row);
                         });
                     }
+                }
+
+                // HOCH PODS Theater Updates
+                const podsContainer = document.getElementById("hoch-pods-container");
+                const podsFreshnessBadge = document.getElementById("hoch-pods-freshness-badge");
+                
+                // Update panel freshness badge
+                if (data.freshness_authority && data.freshness_authority.panels && data.freshness_authority.panels.hoch_pods_theater) {
+                    const freshState = data.freshness_authority.panels.hoch_pods_theater.freshness_state;
+                    podsFreshnessBadge.textContent = freshState;
+                    podsFreshnessBadge.className = "badge";
+                    if (freshState === "FRESH") {
+                        podsFreshnessBadge.classList.add("badge-pass");
+                    } else if (freshState === "STALE") {
+                        podsFreshnessBadge.classList.add("badge-warn");
+                    } else {
+                        podsFreshnessBadge.classList.add("badge-fail");
+                    }
+                }
+                
+                if (podsContainer && data.hoch_pods_registry && data.hoch_pods_runtime_state) {
+                    podsContainer.innerHTML = "";
+                    data.hoch_pods_registry.forEach(podReg => {
+                        const podState = data.hoch_pods_runtime_state.find(s => s.pod_id === podReg.pod_id) || {};
+                        
+                        const stateStr = podState.state || podReg.default_state || "DORMANT";
+                        const isQuarantined = podState.policy_status === "FAIL" || stateStr === "QUARANTINED";
+                        
+                        let cardClass = "pod-card";
+                        if (isQuarantined) {
+                            cardClass += " failed-quarantine";
+                        } else if (stateStr === "EXECUTING" || stateStr === "POLICY_CHECK" || stateStr === "TOOL_BOUND" || stateStr === "EVIDENCE_WRITING") {
+                            cardClass += " active-pulse";
+                        }
+                        
+                        // Icon indicators based on state
+                        let iconHtml = "";
+                        if (stateStr === "SUMMONING") {
+                            iconHtml = `<div class="summoning-effect"></div>`;
+                        } else if (stateStr === "POLICY_CHECK") {
+                            iconHtml = `<span style="color:var(--accent-teal); font-size:16px; margin-right:6px;">🛡️</span>`;
+                        } else if (stateStr === "EXECUTING") {
+                            iconHtml = `<span class="neural-ring"></span>`;
+                        } else if (stateStr === "TOOL_BOUND") {
+                            iconHtml = `<span class="tool-orbit"></span>`;
+                        } else if (stateStr === "EVIDENCE_WRITING") {
+                            iconHtml = `<span class="document-trail">📝</span>`;
+                        }
+                        
+                        // Tooltip content
+                        let blockersHtml = "";
+                        if (podState.blockers && podState.blockers.length > 0) {
+                            blockersHtml = `<div style="margin-top:6px; color:var(--accent-red);"><strong>Blockers:</strong> ${podState.blockers.join(", ")}</div>`;
+                        }
+                        
+                        let evidenceHtml = "";
+                        if (podState.evidence_links && podState.evidence_links.length > 0) {
+                            evidenceHtml = `<div style="margin-top:6px; color:var(--accent-teal);"><strong>Evidence:</strong> ${podState.evidence_links.map(l => l.split('/').pop()).join(", ")}</div>`;
+                        }
+                        
+                        const tooltipContent = `
+                            <strong>${podReg.name} (${podReg.pod_id})</strong><br>
+                            <em>${podReg.description}</em><br>
+                            <div style="margin-top:6px;"><strong>Network:</strong> ${podReg.network_scope}</div>
+                            <div><strong>Secrets:</strong> ${podReg.secret_access.join(", ") || "None"}</div>
+                            <div><strong>Controls:</strong> ${podReg.control_families.join(", ")}</div>
+                            <div><strong>Assigned Node:</strong> ${podState.assigned_node || "None"}</div>
+                            <div><strong>Assigned Model:</strong> ${podState.assigned_model || "None"}</div>
+                            ${blockersHtml}
+                            ${evidenceHtml}
+                        `;
+                        
+                        // State pill classes
+                        let statePillStyle = "background: rgba(255,255,255,0.05); color: var(--text-secondary);";
+                        if (stateStr === "EXECUTING") {
+                            statePillStyle = "background: rgba(45,212,191,0.2); color: var(--accent-teal);";
+                        } else if (stateStr === "POLICY_CHECK") {
+                            statePillStyle = "background: rgba(99,102,241,0.2); color: #818cf8;";
+                        } else if (stateStr === "TOOL_BOUND") {
+                            statePillStyle = "background: rgba(245,158,11,0.2); color: var(--accent-yellow);";
+                        } else if (stateStr === "EVIDENCE_WRITING") {
+                            statePillStyle = "background: rgba(16,185,129,0.2); color: #34d399;";
+                        } else if (stateStr === "SUMMONING") {
+                            statePillStyle = "background: rgba(139,92,246,0.2); color: #a78bfa; animation: pulse-glow 1s infinite alternate;";
+                        } else if (stateStr === "BLOCKED") {
+                            statePillStyle = "background: rgba(239,68,68,0.2); color: var(--accent-red);";
+                        } else if (isQuarantined) {
+                            statePillStyle = "background: rgba(239,68,68,0.3); color: var(--accent-red); font-weight: bold;";
+                        }
+                        
+                        const podCard = document.createElement("div");
+                        podCard.className = cardClass;
+                        podCard.id = `pod-card-${podReg.pod_id}`;
+                        podCard.innerHTML = `
+                            ${iconHtml}
+                            <div class="pod-card-header">
+                                <span class="pod-title">${podReg.name}</span>
+                                <span class="pod-state-pill" style="${statePillStyle}">${stateStr}</span>
+                            </div>
+                            <div style="font-size:11px; color:var(--text-secondary); line-height:1.4; margin-bottom:8px;">
+                                ${podState.mission || podReg.description}
+                            </div>
+                            <div style="display:flex; justify-content:space-between; font-size:10px; color:rgba(255,255,255,0.4);">
+                                <span>Model: ${podState.assigned_model ? podState.assigned_model.split('/').pop() : "None"}</span>
+                                <span>Node: ${podState.assigned_node || "None"}</span>
+                            </div>
+                            <div class="pod-tooltip">
+                                ${tooltipContent}
+                            </div>
+                        `;
+                        podsContainer.appendChild(podCard);
+                    });
                 }
             } catch (err) {
                 console.error("Failed to load dashboard data:", err);

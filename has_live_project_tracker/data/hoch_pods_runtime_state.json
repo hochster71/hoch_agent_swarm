@@ -1,0 +1,135 @@
+[
+  {
+    "pod_id": "pod-cyber",
+    "state": "EXECUTING",
+    "mission": "Remediate critical path blocker: Resolve Missing Primary Repository Directory (Project: CyberQRG-AI)",
+    "assigned_model": "openai/gpt-4o",
+    "assigned_node": "Dell-Latitude-9440",
+    "assigned_tools": [
+      "semgrep",
+      "git-leaks",
+      "playwright",
+      "osv-scanner"
+    ],
+    "policy_status": "PASS",
+    "telemetry_status": "ONLINE",
+    "freshness_status": "FRESH",
+    "last_heartbeat": "2026-07-01T22:11:13.670647Z",
+    "evidence_links": [
+      "docs/evidence/business/project-revenue-readiness-audit.md"
+    ],
+    "blockers": []
+  },
+  {
+    "pod_id": "pod-qa",
+    "state": "POLICY_CHECK",
+    "mission": "Verify test coverage for: Implement Stripe Billing Integration",
+    "assigned_model": "openai/gpt-4o-mini",
+    "assigned_node": "iMac-24",
+    "assigned_tools": [
+      "playwright",
+      "npm-test"
+    ],
+    "policy_status": "PASS",
+    "telemetry_status": "ONLINE",
+    "freshness_status": "FRESH",
+    "last_heartbeat": "2026-07-01T22:11:13.670647Z",
+    "evidence_links": [
+      "docs/evidence/business/project-revenue-readiness-audit.md"
+    ],
+    "blockers": []
+  },
+  {
+    "pod_id": "pod-builder",
+    "state": "TOOL_BOUND",
+    "mission": "Compile production build bundle and run TypeScript typecheck checks.",
+    "assigned_model": "openai/gpt-4o",
+    "assigned_node": "M4-MBP",
+    "assigned_tools": [
+      "npm-run-build",
+      "tsc"
+    ],
+    "policy_status": "PASS",
+    "telemetry_status": "ONLINE",
+    "freshness_status": "FRESH",
+    "last_heartbeat": "2026-07-01T22:11:13.670647Z",
+    "evidence_links": [],
+    "blockers": []
+  },
+  {
+    "pod_id": "pod-revenue",
+    "state": "EVIDENCE_WRITING",
+    "mission": "Verify Stripe customer billing: Implement Stripe Billing Integration",
+    "assigned_model": "openai/gpt-4o",
+    "assigned_node": "M5-Pro-MBP",
+    "assigned_tools": [
+      "stripe-cli",
+      "curl"
+    ],
+    "policy_status": "BLOCKED",
+    "telemetry_status": "ONLINE",
+    "freshness_status": "FRESH",
+    "last_heartbeat": "2026-07-01T22:11:13.670647Z",
+    "evidence_links": [
+      "docs/evidence/business/project-revenue-readiness-audit.md"
+    ],
+    "blockers": [
+      "Stripe integration code is missing or unverified"
+    ]
+  },
+  {
+    "pod_id": "pod-audit",
+    "state": "SUMMONING",
+    "mission": "Audit compliance registries and generate evidence files.",
+    "assigned_model": "openai/gpt-4o-mini",
+    "assigned_node": "M5-Pro-MBP",
+    "assigned_tools": [
+      "sqlite3-cli",
+      "sha256sum"
+    ],
+    "policy_status": "PASS",
+    "telemetry_status": "ONLINE",
+    "freshness_status": "FRESH",
+    "last_heartbeat": "2026-07-01T22:11:13.670647Z",
+    "evidence_links": [],
+    "blockers": []
+  },
+  {
+    "pod_id": "pod-research",
+    "state": "DORMANT",
+    "mission": "Research IoT telemetry schema mapping options.",
+    "assigned_model": "openai/gpt-4o",
+    "assigned_node": "M4-MBP",
+    "assigned_tools": [
+      "web-search",
+      "fetch-url"
+    ],
+    "policy_status": "FAIL",
+    "telemetry_status": "ONLINE",
+    "freshness_status": "DEGRADED",
+    "last_heartbeat": "2026-07-01T22:11:13.670647Z",
+    "evidence_links": [],
+    "blockers": [
+      "Project repository path does not exist on disk"
+    ]
+  },
+  {
+    "pod_id": "pod-deploy",
+    "state": "BLOCKED",
+    "mission": "Deploy staging enclaves to cloud providers.",
+    "assigned_model": "openai/gpt-4o",
+    "assigned_node": "M5-Pro-MBP",
+    "assigned_tools": [
+      "docker-cli",
+      "vercel-cli"
+    ],
+    "policy_status": "BLOCKED",
+    "telemetry_status": "ONLINE",
+    "freshness_status": "FRESH",
+    "last_heartbeat": "2026-07-01T22:11:13.670647Z",
+    "evidence_links": [],
+    "blockers": [
+      "Deployment descriptor (vercel.json) is missing"
+    ]
+  }
+]
