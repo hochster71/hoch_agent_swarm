@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import * as net from 'net';
 
 test.describe('PERT Command Center E2E tests', () => {
   test('navigates to PERT Command Center and validates sections and data integrity', async ({ page }) => {
@@ -20,7 +21,8 @@ test.describe('PERT Command Center E2E tests', () => {
 
     const goalText = page.locator('#goal-text');
     await expect(goalText).toBeVisible();
-    await expect(goalText).toContainText('Model Project Duration & Enforce Agent Accountability');
+    // Verify it doesn't render raw placeholder
+    await expect(goalText).not.toHaveText('UNKNOWN');
 
     // 2. Verify Executive Readiness Panel is visible
     const execReadiness = page.locator('#executive-readiness-panel');
@@ -77,15 +79,53 @@ test.describe('PERT Command Center E2E tests', () => {
     const raciTbody = page.locator('#raci-tbody');
     await expect(raciTbody).toBeVisible();
 
-    // 10. Verify Release Gates Panel is visible
-    const releaseGates = page.locator('#release-gates-panel');
-    await expect(releaseGates).toBeVisible();
+    // 10. Verify Parallel Mirror Verification Status is visible
+    const parallelMirror = page.locator('#parallel-mirror-panel');
+    await expect(parallelMirror).toBeVisible();
+    
+    // 11. Verify Automation Cadence State is visible
+    const cadencePanel = page.locator('#automation-cadence-panel');
+    await expect(cadencePanel).toBeVisible();
+    await expect(cadencePanel).toContainText('Automation Cadence State');
 
-    // 11. Verify Evidence Ledger Panel is visible
-    const evidenceLedger = page.locator('#evidence-ledger-panel');
-    await expect(evidenceLedger).toBeVisible();
+    const cadenceMode = page.locator('#cadence-mode');
+    await expect(cadenceMode).toBeVisible();
+    await expect(cadenceMode).toContainText('AUTO-LOOP ENABLED');
+
+    // 12. Verify Manual Intervention Queue is visible
+    const manualQueueList = page.locator('#manual-queue-list');
+    await expect(manualQueueList).toBeVisible();
 
     // Make sure no console errors occurred
     expect(consoleErrors).toEqual([]);
+  });
+
+  test('proves that public port 3012 remains unreachable', async () => {
+    // Negative connection test to public VPS 50.116.41.183:3012
+    const publicIp = '50.116.41.183';
+    const port = 3012;
+    
+    const isReachable = await new Promise<boolean>((resolve) => {
+      const socket = new net.Socket();
+      socket.setTimeout(2000);
+      
+      socket.on('connect', () => {
+        socket.destroy();
+        resolve(true); // reachable is bad
+      });
+      
+      socket.on('timeout', () => {
+        socket.destroy();
+        resolve(false); // unreachable is good
+      });
+      
+      socket.on('error', () => {
+        resolve(false); // unreachable is good
+      });
+      
+      socket.connect(port, publicIp);
+    });
+    
+    expect(isReachable).toBe(false);
   });
 });

@@ -38,8 +38,9 @@ if [ -z "$API_RESPONSE" ]; then
 fi
 
 # Assert JSON properties
-echo "$API_RESPONSE" | jq -e '.north_star.baseline' >/dev/null
+echo "$API_RESPONSE" | jq -e '.contract.north_star' >/dev/null
 echo "$API_RESPONSE" | jq -e '.readiness.score' >/dev/null
+echo "$API_RESPONSE" | jq -e '.metrics.percent_goal_complete' >/dev/null
 echo "$API_RESPONSE" | jq -e '.pert_cpm.tasks' >/dev/null
 echo "$API_RESPONSE" | jq -e '.agents' >/dev/null
 echo "$API_RESPONSE" | jq -e '.next_actions' >/dev/null
