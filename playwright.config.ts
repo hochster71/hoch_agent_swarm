@@ -44,6 +44,7 @@ export default defineConfig({
     "**/rc43-telemetry-freshness.spec.ts",
     "**/rc44-epic-fury-flowchart.spec.ts",
     "**/rc45-revenue-readiness.spec.ts",
+    "**/rc46-revenue-action-queue.spec.ts",
   ],
   timeout: 45_000,
   fullyParallel: false,
