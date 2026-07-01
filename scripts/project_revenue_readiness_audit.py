@@ -172,8 +172,8 @@ def run_audit():
         proj["last_verified_at"] = audit_timestamp
         proj["freshness_status"] = "FRESH"
         
-        # Clean up duplicates in blockers list
-        proj["blockers"] = list(set(proj["blockers"]))
+        # Clean up duplicates in blockers list deterministically
+        proj["blockers"] = sorted(list(set(proj["blockers"])))
         
         # Determine next critical action based on blockers
         if proj["blockers"]:
