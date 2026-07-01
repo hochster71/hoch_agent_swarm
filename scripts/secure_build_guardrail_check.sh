@@ -67,6 +67,31 @@ else
     echo "  [PASS] Tag v0.1.8-cadence points to expected commit 9f52d77."
 fi
 
+# 6. Tailscale ACL Posture Check
+echo "Checking Tailscale ACL Posture..."
+POSTURE_FILE="$PROJECT_ROOT/config/tailscale_acl_posture.yaml"
+if [ -f "$POSTURE_FILE" ]; then
+    if grep -q "posture: SECURE" "$POSTURE_FILE"; then
+        echo "  [PASS] Tailscale ACL posture is verified SECURE."
+    else
+        echo "  [FAIL] Tailscale ACL posture is UNKNOWN or NOT SECURE."
+        APPROVAL_REQUIRED=$((APPROVAL_REQUIRED + 1))
+    fi
+else
+    echo "  [FAIL] Missing tailscale_acl_posture.yaml! Posture verification required."
+    APPROVAL_REQUIRED=$((APPROVAL_REQUIRED + 1))
+fi
+
+# 7. iPhone Monitor Only Check
+echo "Verifying mobile monitoring constraint..."
+# Audits that iphone-15-pro-max is only registered as monitor/approval role
+if grep -q "machine: \"iphone-15-pro-max\"" "$PROJECT_ROOT/config/usage_budget_policy.yaml"; then
+    echo "  [PASS] iPhone configured as operator mobile monitor only."
+else
+    echo "  [FAIL] iPhone is not configured with operator mobile monitor policy."
+    VIOLATIONS=$((VIOLATIONS + 1))
+fi
+
 # Write JSON metrics
 mkdir -p "$(dirname "$METRICS_FILE")"
 cat <<EOF > "$METRICS_FILE"
