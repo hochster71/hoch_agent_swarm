@@ -30,6 +30,7 @@ export default defineConfig({
     "**/anti-fake-runtime.spec.ts",
     "**/hoch200-compute-setup.spec.ts",
     "**/rc26-relay-routing.spec.ts",
+    "**/rc28-mission-execution-proof.spec.ts",
   ],
   timeout: 45_000,
   fullyParallel: false,
