@@ -34,6 +34,7 @@ export default defineConfig({
     "**/rc32-pert-command-center.spec.ts",
     "**/rc33-compute-utilization.spec.ts",
     "**/rc36-worker-dashboard.spec.ts",
+    "**/rc37-dispatch-metrics.spec.ts",
   ],
   timeout: 45_000,
   fullyParallel: false,
