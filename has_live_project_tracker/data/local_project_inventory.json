@@ -9,31 +9,17 @@
     "owner_agent": "Data Consolidation Agent",
     "evidence_status": "VERIFIED",
     "confidence": 1.0,
-    "last_seen": "2026-06-30T17:49:07Z",
+    "last_seen": "2026-07-01T19:22:14Z",
     "gaps": [
-      "22 uncommitted local changes detected"
+      "1 uncommitted local changes detected"
     ],
     "next_action": "deduplicate",
     "path": "/Users/michaelhoch/hoch_agent_swarm",
-    "file_count": 4538,
-    "total_size_mb": 156.45,
-    "uncommitted_files_count": 22,
+    "file_count": 4836,
+    "total_size_mb": 148.39,
+    "uncommitted_files_count": 1,
     "uncommitted_files": [
-      "M has_live_project_tracker/data/cloud_inventory.json",
-      "M has_live_project_tracker/data/github_inventory.json",
-      "M has_live_project_tracker/data/local_inventory.json",
-      "M has_live_project_tracker/data/status.json",
-      "M has_live_project_tracker/data/tasks.json",
-      "M has_live_project_tracker/index.html",
-      "M has_live_project_tracker/server.js",
-      "M has_live_project_tracker/tracker.log",
-      "M hoch_agent_swarm/hoch_agent_swarm.xcodeproj/project.xcworkspace/xcuserdata/michaelhoch.xcuserdatad/UserInterfaceState.xcuserstate",
-      "M scripts/tracker_ingest_cloud.py",
-      "M scripts/tracker_ingest_github.py",
-      "M scripts/tracker_ingest_local.py",
-      "M scripts/tracker_inventory_report.sh",
-      "M scripts/tracker_sync_agents.py",
-      "M scripts/tracker_sync_builds.py"
+      "M scripts/tracker_ingest_local.py"
     ]
   },
   {
@@ -46,12 +32,38 @@
     "owner_agent": "Data Consolidation Agent",
     "evidence_status": "VERIFIED",
     "confidence": 1.0,
-    "last_seen": "2026-06-30T17:49:07Z",
+    "last_seen": "2026-07-01T19:22:14Z",
     "gaps": [],
     "next_action": "deduplicate",
     "path": "/Users/michaelhoch/hoch_agent_swarm_prompt_library",
-    "file_count": 19,
-    "total_size_mb": 5.46,
+    "file_count": 20,
+    "total_size_mb": 5.5,
+    "uncommitted_files_count": 0,
+    "uncommitted_files": []
+  },
+  {
+    "id": "LOCAL-003",
+    "name": "Epic-fury-2026-main",
+    "source": "local_find",
+    "path_or_remote": "/Users/michaelhoch/Downloads/Epic-fury-2026-main",
+    "type": "folder",
+    "domain": "coder",
+    "owner_agent": "Data Consolidation Agent",
+    "evidence_status": "VERIFIED",
+    "confidence": 1.0,
+    "last_seen": "2026-07-01T19:22:14Z",
+    "gaps": [
+      {
+        "classification": "CSP_PREVIEW_TOOLING_GAP",
+        "description": "Vercel preview toolbar iframe is blocked by Content Security Policy: frame-src currently allows only https://js.stripe.com and https://hooks.stripe.com. https://vercel.live is blocked.",
+        "severity": "LOW (runtime) / MEDIUM (preview tooling)",
+        "remediation": "Add https://vercel.live to frame-src for preview/development environments"
+      }
+    ],
+    "next_action": "deduplicate",
+    "path": "/Users/michaelhoch/Downloads/Epic-fury-2026-main",
+    "file_count": 361,
+    "total_size_mb": 24.51,
     "uncommitted_files_count": 0,
     "uncommitted_files": []
   }
