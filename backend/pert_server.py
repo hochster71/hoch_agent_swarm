@@ -4,6 +4,7 @@ import math
 import sqlite3
 import subprocess
 import urllib.request
+import yaml
 from datetime import datetime, timezone
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
@@ -680,6 +681,57 @@ def get_pert_data():
         }
     ]
 
+    # Load monetization policy and check evidence gaps
+    policy_path = os.path.join(get_project_root(), "config", "monetization_readiness_policy.yaml")
+    required_evidence = []
+    guardrails_policy = {}
+    if os.path.exists(policy_path):
+        try:
+            with open(policy_path, "r") as f:
+                policy_data = yaml.safe_load(f)
+                required_evidence = policy_data.get("monetization_readiness", {}).get("required_evidence_files", [])
+                guardrails_policy = policy_data.get("monetization_readiness", {}).get("guardrails", {})
+        except Exception:
+            pass
+
+    evidence_matrix = []
+    existing_evidence_count = 0
+    for e_file in required_evidence:
+        full_path = os.path.join(get_project_root(), e_file)
+        exists = os.path.exists(full_path)
+        if exists:
+            existing_evidence_count += 1
+        evidence_matrix.append({
+            "file": e_file,
+            "basename": os.path.basename(e_file),
+            "status": "PRESENT" if exists else "MISSING"
+        })
+
+    if len(required_evidence) > 0:
+        monetization_readiness_percent = round((existing_evidence_count / len(required_evidence)) * 100.0, 1)
+    else:
+        monetization_readiness_percent = 0.0
+
+    evidence_gap_count = len(required_evidence) - existing_evidence_count
+
+    remaining_work = [
+        {
+            "id": t["id"],
+            "title": t["title"],
+            "owner": t["owner_agent"],
+            "blocker": t.get("blocker", ""),
+            "risk": t.get("risk_level", "Low"),
+            "te": t["te"]
+        } for t in pert_cpm["tasks"] if t["status"] != "completed"
+    ]
+
+    safe_next_actions = [
+        {"action": "Verify Parallel Mirror", "script": "bash scripts/has_parallel_mirror_verify.sh", "safe": True},
+        {"action": "Verify Swarm Scheduler local execution", "script": "bash scripts/rc35_compute_expansion_verify.sh", "safe": True},
+        {"action": "Run secure build checks", "script": "bash scripts/secure_build_guardrail_check.sh", "safe": True},
+        {"action": "Execute Playwright E2E suites", "script": "npx playwright test", "safe": True}
+    ]
+
     return {
         "readiness": {
             "score": metrics["percent_goal_complete"],
@@ -712,6 +764,16 @@ def get_pert_data():
         "next_actions": next_actions,
         "tailnet_workers": workers_list,
         "dispatch_history": get_dispatch_history(),
+        "monetization": {
+            "monetization_readiness_percent": monetization_readiness_percent,
+            "evidence_gap_count": evidence_gap_count,
+            "export_expansion_guardrail_status": guardrails_policy.get("do_not_expand_export_or_family", "FUTURE_NOT_NOW"),
+            "paid_services_configured": guardrails_policy.get("paid_services_configured", False),
+            "public_ports_exposed": guardrails_policy.get("public_ports_exposed", False),
+            "evidence_matrix": evidence_matrix,
+            "remaining_work": remaining_work,
+            "safe_next_actions": safe_next_actions
+        },
         "evidence_ledger": [
             {"rc": "RC25", "desc": "HOCH-200 relay setup evidence", "url": f"file://{get_project_root()}/docs/evidence/compute/hoch-200-setup-evidence.md"},
             {"rc": "RC26", "desc": "Swarm routing proxy integration", "url": f"file://{get_project_root()}/docs/evidence/compute/rc26-relay-routing-integration.md"},
@@ -722,7 +784,8 @@ def get_pert_data():
             {"rc": "RC33", "desc": "Swarm scheduler utilization proof", "url": f"file://{get_project_root()}/docs/evidence/compute/rc33-compute-utilization-swarm-scheduler.md"},
             {"rc": "RC34", "desc": "Usage budget and secure guardrails", "url": f"file://{get_project_root()}/docs/evidence/automation/rc34-usage-budget-secure-build-guardrails.md"},
             {"rc": "RC35", "desc": "Safe compute utilization expansion", "url": f"file://{get_project_root()}/docs/evidence/compute/rc35-safe-compute-utilization-expansion.md"},
-            {"rc": "RC36", "desc": "Worker visibility and utilization", "url": f"file://{get_project_root()}/docs/evidence/compute/rc36-worker-visibility-utilization-dashboard.md"}
+            {"rc": "RC36", "desc": "Worker visibility and utilization", "url": f"file://{get_project_root()}/docs/evidence/compute/rc36-worker-visibility-utilization-dashboard.md"},
+            {"rc": "RC37", "desc": "Worker job dispatch metrics", "url": f"file://{get_project_root()}/docs/evidence/compute/rc37-worker-job-dispatch-metrics.md"}
         ]
     }
 
@@ -1073,6 +1136,62 @@ def get_dashboard():
                 </table>
             </div>
         </div>
+
+        <!-- 14. Goal Completion Forecast & Remaining Work -->
+        <div class="card col-6" id="goal-forecast-panel">
+            <h3 style="margin-top:0;">Goal Completion Forecast</h3>
+            <p>Critical Path Remaining: <strong id="forecast-remaining-time" style="color:var(--accent-yellow);">0 mins</strong></p>
+            
+            <h4 style="margin:16px 0 8px 0; font-size:12px; text-transform:uppercase; color:var(--text-secondary);">Remaining Work Ledger</h4>
+            <div style="overflow-x:auto;">
+                <table style="width:100%; border-collapse:collapse; text-align:left; font-size:11px;">
+                    <thead>
+                        <tr style="border-bottom:1px solid #1e293b; color:var(--text-secondary);">
+                            <th>ID</th>
+                            <th>Workstream</th>
+                            <th>Owner</th>
+                            <th>Blocker</th>
+                        </tr>
+                    </thead>
+                    <tbody id="remaining-work-tbody">
+                        <!-- Loaded dynamically -->
+                    </tbody>
+                </table>
+            </div>
+
+            <h4 style="margin:16px 0 8px 0; font-size:12px; text-transform:uppercase; color:var(--accent-teal);">Safe Next Actions Queue</h4>
+            <div id="safe-actions-list" style="font-size:12px; line-height:1.6; display:flex; flex-direction:column; gap:8px;">
+                <!-- Loaded dynamically -->
+            </div>
+        </div>
+
+        <!-- 15. Monetization Readiness Sidecar -->
+        <div class="card col-6" id="monetization-readiness-panel">
+            <h3 style="margin-top:0;">Monetization Readiness Sidecar</h3>
+            <p>Readiness Score: <strong id="monetization-score" style="color:var(--accent-teal);">0%</strong> (Gaps: <span id="evidence-gaps-count">0</span> files)</p>
+            
+            <h4 style="margin:16px 0 8px 0; font-size:12px; text-transform:uppercase; color:var(--text-secondary);">Evidence Gap Matrix</h4>
+            <div style="max-height:150px; overflow-y:auto; border:1px solid #1e293b; border-radius:6px; padding:4px;">
+                <table style="width:100%; border-collapse:collapse; text-align:left; font-size:11px;">
+                    <thead>
+                        <tr style="border-bottom:1px solid #1e293b; color:var(--text-secondary);">
+                            <th>Evidence Log File</th>
+                            <th>Audit Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="evidence-matrix-tbody">
+                        <!-- Loaded dynamically -->
+                    </tbody>
+                </table>
+            </div>
+
+            <h4 style="margin:16px 0 8px 0; font-size:12px; text-transform:uppercase; color:var(--accent-yellow);">Compliance & Guardrail Ledger</h4>
+            <ul style="padding-left:20px; font-size:12px; line-height:1.6; margin:4px 0 0 0;">
+                <li>Do Not Expand Export/Family: <strong style="color:var(--accent-yellow);" id="guardrail-export">FUTURE_NOT_NOW</strong></li>
+                <li>Paid Services Configured: <strong style="color:var(--accent-teal);" id="guardrail-paid">FALSE</strong></li>
+                <li>Public Ports Exposed: <strong style="color:var(--accent-teal);" id="guardrail-ports">FALSE</strong></li>
+            </ul>
+        </div>
     </div>
 
     <script>
@@ -1339,6 +1458,70 @@ def get_dashboard():
                         });
                     }
                 }
+                // Populate monetization & goal readiness widgets
+                const mon = data.monetization || {};
+                document.getElementById("forecast-remaining-time").textContent = data.guardrails.critical_path_minutes_remaining + " mins";
+                
+                // Populate remaining work
+                const remainingTbody = document.getElementById("remaining-work-tbody");
+                if (remainingTbody) {
+                    remainingTbody.innerHTML = "";
+                    const remaining = mon.remaining_work || [];
+                    if (remaining.length === 0) {
+                        remainingTbody.innerHTML = "<tr><td colspan='4' style='color:var(--accent-teal); text-align:center;'>All WBS tasks completed!</td></tr>";
+                    } else {
+                        remaining.forEach(t => {
+                            remainingTbody.innerHTML += `
+                                <tr style="border-top:1px solid #111e35;">
+                                    <td><strong>${t.id}</strong></td>
+                                    <td>${t.title}</td>
+                                    <td>${t.owner}</td>
+                                    <td style="color:var(--accent-yellow); font-weight:bold;">${t.blocker || 'None'}</td>
+                                </tr>
+                            `;
+                        });
+                    }
+                }
+
+                // Populate safe next actions queue
+                const safeActionsList = document.getElementById("safe-actions-list");
+                if (safeActionsList) {
+                    safeActionsList.innerHTML = "";
+                    const safeActions = mon.safe_next_actions || [];
+                    safeActions.forEach(act => {
+                        safeActionsList.innerHTML += `
+                            <div style="border-left: 3px solid var(--accent-teal); padding-left: 8px;">
+                                <strong>${act.action}</strong><br>
+                                <code style="font-size:10px; color:var(--text-secondary);">${act.script}</code>
+                            </div>
+                        `;
+                    });
+                }
+
+                // Populate monetization readiness details
+                document.getElementById("monetization-score").textContent = mon.monetization_readiness_percent + "%";
+                document.getElementById("evidence-gaps-count").textContent = mon.evidence_gap_count;
+
+                // Populate evidence matrix table
+                const matrixTbody = document.getElementById("evidence-matrix-tbody");
+                if (matrixTbody) {
+                    matrixTbody.innerHTML = "";
+                    const matrix = mon.evidence_matrix || [];
+                    matrix.forEach(gap => {
+                        const statusColor = gap.status === "PRESENT" ? "var(--accent-teal)" : "var(--accent-red)";
+                        matrixTbody.innerHTML += `
+                            <tr style="border-top:1px solid #111e35;">
+                                <td>${gap.basename}</td>
+                                <td><strong style="color:${statusColor}; font-size:10px;">${gap.status}</strong></td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                // Compliance guardrails
+                document.getElementById("guardrail-export").textContent = mon.export_expansion_guardrail_status;
+                document.getElementById("guardrail-paid").textContent = mon.paid_services_configured ? "TRUE" : "FALSE";
+                document.getElementById("guardrail-ports").textContent = mon.public_ports_exposed ? "TRUE" : "FALSE";
 
             } catch (err) {
                 console.error("Failed to load dashboard data:", err);

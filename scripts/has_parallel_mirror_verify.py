@@ -55,7 +55,8 @@ def check_git_status():
             "tailscale",
             "rc35",
             "rc36",
-            "rc37"
+            "rc37",
+            "rc38"
         ]
         
         dirty = []
