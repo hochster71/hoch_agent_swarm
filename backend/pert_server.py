@@ -567,7 +567,8 @@ def scan_evidence_ledger():
         ("RC41", "Worker telemetry accuracy", "docs/evidence/compute/rc41-worker-telemetry-accuracy.md"),
         ("RC42", "Epic Fury CSP audit & integration", "docs/evidence/business/epic-fury-gap-analysis.md"),
         ("RC43", "Telemetry freshness authority", "docs/evidence/automation/rc43-telemetry-freshness-authority.md"),
-        ("RC44", "Epic Fury full code audit", "docs/evidence/business/epic-fury-full-code-audit.md")
+        ("RC44", "Epic Fury full code audit", "docs/evidence/business/epic-fury-full-code-audit.md"),
+        ("RC45", "Multi-project revenue readiness", "docs/evidence/business/project-revenue-readiness-audit.md")
     ]
     for rc, desc, rel_path in rc_mappings:
         full_path = os.path.join(get_project_root(), rel_path)
@@ -1234,6 +1235,24 @@ def get_pert_data():
         }
     }
 
+    # Load project revenue readiness scan timestamp
+    project_readiness_last_scan = "UNKNOWN"
+    inventory_file = os.path.join(get_project_root(), "has_live_project_tracker", "data", "project_revenue_readiness_results.json")
+    if os.path.exists(inventory_file):
+        try:
+            with open(inventory_file, "r") as f:
+                inv_data = json.load(f)
+                if inv_data and len(inv_data) > 0:
+                    project_readiness_last_scan = inv_data[0].get("last_verified_at", "UNKNOWN")
+        except Exception:
+            pass
+
+    pr_state, pr_reason = evaluate_freshness(project_readiness_last_scan, fresh_thresholds.get("global_last_full_verification_time", {}).get("max_seconds", 600))
+    panels_freshness["revenue_readiness"] = {
+        "freshness_state": pr_state,
+        "stale_reason": pr_reason
+    }
+
     # Handle fake status fail / No Fake Telemetry Audit fails
     is_fake_failed = (guardrails["fake_status_violations"] > 0 or metrics.get("no_fake_status_violations", 0) > 0)
     if is_fake_failed:
@@ -1391,7 +1410,8 @@ def get_pert_data():
         "relay_workers_online": wrapped_relay_workers_online,
         "idle_worker_count": wrapped_idle_worker_count,
         "underused_worker_count": wrapped_underused_worker_count,
-        "epic_fury_pipeline": epic_fury_pipeline
+        "epic_fury_pipeline": epic_fury_pipeline,
+        "project_inventory": inv_data if "inv_data" in locals() else []
     }
 
 @app.get("/view-doc", response_class=HTMLResponse)
@@ -1638,6 +1658,82 @@ def get_dashboard():
             0% { background-position: 0% 50%; }
             100% { background-position: 100% 50%; }
         }
+
+        /* Project Registry card styles */
+        .project-registry-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 16px;
+        }
+        .project-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .project-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--border-glow);
+            box-shadow: 0 4px 20px rgba(45, 212, 191, 0.15);
+        }
+        .project-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 8px;
+        }
+        .project-card-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .project-score-badge {
+            background: rgba(45, 212, 191, 0.1);
+            color: var(--accent-teal);
+            border: 1px solid var(--accent-teal);
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 4px;
+            padding: 2px 6px;
+        }
+        .project-score-badge.low {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--accent-red);
+            border-color: var(--accent-red);
+        }
+        .project-meta-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-bottom: 6px;
+            color: var(--text-secondary);
+        }
+        .project-meta-row strong {
+            color: #f8fafc;
+        }
+        .project-action-bar {
+            margin-top: 12px;
+            font-size: 11px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 6px;
+            padding: 8px;
+            border-left: 3px solid var(--accent-yellow);
+        }
+        .details-drawer {
+            margin-top: 20px;
+            background: rgba(9, 15, 30, 0.95);
+            border: 1px dashed rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 13px;
+        }
     </style>
 </head>
 <body>
@@ -1694,9 +1790,23 @@ def get_dashboard():
             <div style="font-size:11px; text-transform:uppercase; color:var(--text-secondary);">Accountability Score</div>
             <div class="metric-value" id="metric-accountability">0.0</div>
         </div>
-        <div class="card col-3">
             <div style="font-size:11px; text-transform:uppercase; color:var(--text-secondary);">Time Saved</div>
             <div class="metric-value" style="color:var(--accent-blue);" id="metric-time-saved">0 mins</div>
+        </div>
+
+        <!-- Revenue Readiness / Launch Assets Control Plane -->
+        <div class="card col-12" id="revenue-readiness-panel">
+            <h3 style="margin-top:0; display:flex; justify-content:space-between; align-items:center;">
+                <span>Launch Assets / Revenue Readiness</span>
+                <span id="revenue-readiness-freshness-badge" class="badge">UNKNOWN</span>
+            </h3>
+            <div class="project-registry-grid" id="project-registry-container">
+                <!-- Dynamically populated via JavaScript -->
+            </div>
+            <!-- Expanded Details Drawer -->
+            <div id="project-details-drawer" class="details-drawer" style="display:none;">
+                <!-- Selected project details rendered here -->
+            </div>
         </div>
 
         <!-- 4. PERT/CPM Network visualization -->
@@ -2256,6 +2366,127 @@ def get_dashboard():
                             }
                             epicFuryFlowContainer.appendChild(connDiv);
                         }
+                    });
+                }
+
+                // Revenue Readiness Registry Updates
+                const projectContainer = document.getElementById("project-registry-container");
+                const projectFreshnessBadge = document.getElementById("revenue-readiness-freshness-badge");
+                
+                // Update panel freshness badge
+                if (data.freshness_authority && data.freshness_authority.panels && data.freshness_authority.panels.revenue_readiness) {
+                    const freshState = data.freshness_authority.panels.revenue_readiness.freshness_state;
+                    projectFreshnessBadge.textContent = freshState;
+                    projectFreshnessBadge.className = "badge";
+                    if (freshState === "FRESH") {
+                        projectFreshnessBadge.classList.add("badge-pass");
+                    } else if (freshState === "STALE") {
+                        projectFreshnessBadge.classList.add("badge-warn");
+                    } else {
+                        projectFreshnessBadge.classList.add("badge-fail");
+                    }
+                }
+                
+                if (projectContainer && data.project_inventory) {
+                    projectContainer.innerHTML = "";
+                    data.project_inventory.forEach(proj => {
+                        const card = document.createElement("div");
+                        card.className = "project-card";
+                        card.id = `project-card-${proj.id}`;
+                        
+                        // Low score check
+                        const isLow = proj.revenue_readiness_score < 50;
+                        const scoreClass = isLow ? "project-score-badge low" : "project-score-badge";
+                        
+                        card.innerHTML = `
+                            <div class="project-card-header">
+                                <div class="project-card-title">${proj.name}</div>
+                                <span class="${scoreClass}">${proj.revenue_readiness_score}%</span>
+                            </div>
+                            <div class="project-meta-row">
+                                <span>Category:</span>
+                                <strong>${proj.category}</strong>
+                            </div>
+                            <div class="project-meta-row">
+                                <span>Security Posture:</span>
+                                <strong style="color:${proj.security_readiness_score < 70 ? 'var(--accent-red)' : 'var(--accent-teal)'}">${proj.security_readiness_score}%</strong>
+                            </div>
+                            <div class="project-meta-row">
+                                <span>Deployment:</span>
+                                <strong style="color:${proj.deployment_readiness_score < 70 ? 'var(--accent-red)' : 'var(--accent-teal)'}">${proj.deployment_readiness_score}%</strong>
+                            </div>
+                            <div class="project-meta-row" style="margin-top: 8px; font-size: 11px;">
+                                <span>Blockers:</span>
+                                <strong style="color:${proj.blockers.length > 0 ? 'var(--accent-red)' : 'var(--accent-teal)'}">${proj.blockers.length} active</strong>
+                            </div>
+                            <div class="project-action-bar">
+                                <strong>Next Action:</strong> ${proj.next_critical_action}
+                            </div>
+                        `;
+                        
+                        // Click to open detailed drawer
+                        card.onclick = () => {
+                            const drawer = document.getElementById("project-details-drawer");
+                            if (drawer) {
+                                drawer.style.display = "block";
+                                drawer.id = `project-details-drawer-${proj.id}`;
+                                
+                                // Evidence Links rendering
+                                let evidenceHtml = "";
+                                const evLinks = proj.evidence_links || {};
+                                if (Object.keys(evLinks).length > 0) {
+                                    evidenceHtml = "<ul>";
+                                    for (const [title, path] of Object.entries(evLinks)) {
+                                        evidenceHtml += `<li><a href="/view-doc?path=${encodeURIComponent(path)}" style="color:var(--accent-teal); text-decoration:none;">${title}</a></li>`;
+                                    }
+                                    evidenceHtml += "</ul>";
+                                } else {
+                                    evidenceHtml = "<p style='color:var(--text-secondary); margin-left: 20px;'>No evidence generated yet.</p>";
+                                }
+                                
+                                // Blockers rendering
+                                let blockersHtml = "";
+                                if (proj.blockers.length > 0) {
+                                    blockersHtml = "<ul style='color:var(--accent-red);'>";
+                                    proj.blockers.forEach(b => {
+                                        blockersHtml += `<li>❌ ${b}</li>`;
+                                    });
+                                    blockersHtml += "</ul>";
+                                } else {
+                                    blockersHtml = "<p style='color:var(--accent-teal); margin-left: 20px;'>✔️ No active launch blockers.</p>";
+                                }
+                                
+                                drawer.innerHTML = `
+                                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px dashed rgba(255,255,255,0.1); padding-bottom:8px; margin-bottom:12px;">
+                                        <h4 style="margin:0; color:var(--accent-teal);">${proj.name} Detail Breakdown</h4>
+                                        <button onclick="document.getElementById('project-details-drawer').style.display='none'" style="background:none; border:none; color:var(--text-secondary); cursor:pointer; font-size:16px;">✕</button>
+                                    </div>
+                                    <div class="grid" style="gap: 12px;">
+                                        <div class="col-6">
+                                            <strong>Deployment Target:</strong> ${proj.deployment_target}<br>
+                                            <strong>Domain:</strong> <a href="${proj.domain}" target="_blank" style="color:var(--accent-blue); text-decoration:none;">${proj.domain}</a><br>
+                                            <strong>Business Model:</strong> ${proj.business_model}<br>
+                                            <strong>Current Stage:</strong> <span style="color:var(--accent-yellow);">${proj.current_stage}</span>
+                                        </div>
+                                        <div class="col-6">
+                                            <strong>Stripe Required:</strong> ${proj.stripe_required ? 'Yes' : 'No'}<br>
+                                            <strong>Auth Required:</strong> ${proj.auth_required ? 'Yes' : 'No'}<br>
+                                            <strong>Last Audited:</strong> <span style="font-family:monospace; font-size:11px;">${proj.last_verified_at}</span>
+                                        </div>
+                                        <div class="col-6">
+                                            <strong style="color:var(--accent-red);">Active Blockers:</strong>
+                                            ${blockersHtml}
+                                        </div>
+                                        <div class="col-6">
+                                            <strong style="color:var(--accent-teal);">Evidence Documents:</strong>
+                                            ${evidenceHtml}
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        };
+                        
+                        projectContainer.appendChild(card);
                     });
                 }
 
