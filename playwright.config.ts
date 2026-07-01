@@ -33,6 +33,7 @@ export default defineConfig({
     "**/rc28-mission-execution-proof.spec.ts",
     "**/rc32-pert-command-center.spec.ts",
     "**/rc33-compute-utilization.spec.ts",
+    "**/rc36-worker-dashboard.spec.ts",
   ],
   timeout: 45_000,
   fullyParallel: false,
