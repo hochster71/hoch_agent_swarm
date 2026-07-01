@@ -1,0 +1,53 @@
+{
+  "stages": [
+    {
+      "id": "S1",
+      "name": "Source Discovery",
+      "status": "completed",
+      "source": "local_find (LOCAL-003)",
+      "location": "~/Downloads/Epic-fury-2026-main",
+      "details": "Click to view Onboarding Audit.",
+      "url": "/view-doc?path=docs/evidence/business/epic-fury-onboarding-audit.md"
+    },
+    {
+      "id": "S2",
+      "name": "Audit & Analysis",
+      "status": "completed",
+      "source": "qa_auditor_agent",
+      "details": "Check: no secrets / sandbox mode. Click to view Onboarding Audit.",
+      "url": "/view-doc?path=docs/evidence/business/epic-fury-onboarding-audit.md"
+    },
+    {
+      "id": "S3",
+      "name": "Environment Setup",
+      "status": "completed",
+      "source": "local_env",
+      "details": "Check: DB models, migrations. Click to view Gap Analysis.",
+      "url": "/view-doc?path=docs/evidence/business/epic-fury-gap-analysis.md"
+    },
+    {
+      "id": "S4",
+      "name": "CI Verification",
+      "status": "completed",
+      "source": "ci_pipeline",
+      "details": "Check: run_now_ci.sh, verify-payments.sh. Click to view Gap Analysis.",
+      "url": "/view-doc?path=docs/evidence/business/epic-fury-gap-analysis.md"
+    },
+    {
+      "id": "S5",
+      "name": "PERT Integration",
+      "status": "completed",
+      "source": "pert_engine",
+      "details": "Check: CPM / slack calculation. Click to view PERT Model.",
+      "url": "/view-doc?path=docs/evidence/business/epic-fury-pert-model.md"
+    },
+    {
+      "id": "S6",
+      "name": "Pipeline Visuals",
+      "status": "active",
+      "source": "cockpit_ui",
+      "details": "Goal: animated cockpit flowchart. Click to view PERT Model.",
+      "url": "/view-doc?path=docs/evidence/business/epic-fury-pert-model.md"
+    }
+  ]
+}
