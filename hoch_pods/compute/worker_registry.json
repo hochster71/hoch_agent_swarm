@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-06-30T22:00:00Z",
+  "registry": "hoch-compute-worker-registry",
+  "workers": [
+    {
+      "id": "HAS-WORKER-RELAY-001",
+      "hostname": "hoch-relay-001",
+      "provider": "Linode",
+      "region": "us-southeast",
+      "public_ipv4": "50.116.41.183",
+      "tailscale_ip": "100.87.18.15",
+      "tailscale_hostname": "hoch-relay-001",
+      "os": "Ubuntu 24.04.4 LTS",
+      "kernel": "6.8.0-124-generic",
+      "docker_version": "29.6.1",
+      "docker_compose_version": "v5.2.0",
+      "role": "relay",
+      "status": "ONLINE",
+      "relay_port": 3012,
+      "relay_port_public": false,
+      "capabilities": [
+        "relay",
+        "heartbeat-receiver",
+        "api",
+        "dashboard"
+      ],
+      "security": {
+        "ufw": "active",
+        "fail2ban": "active",
+        "port_3012_public": false
+      },
+      "last_seen": "2026-06-30T22:00:00Z",
+      "registered_at": "2026-06-30T22:00:00Z",
+      "epic": "HOCH-200",
+      "evidence_file": "/root/hoch200_node_status.txt"
+    }
+  ]
+}
