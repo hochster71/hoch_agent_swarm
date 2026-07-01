@@ -51,7 +51,8 @@ def check_git_status():
             "playwright.config.ts",
             "rc34",
             "usage_budget",
-            "secure_build"
+            "secure_build",
+            "tailscale"
         ]
         
         dirty = []
