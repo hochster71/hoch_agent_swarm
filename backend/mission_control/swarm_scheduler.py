@@ -1,6 +1,7 @@
 import os
 import json
 import sqlite3
+import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -138,7 +139,20 @@ def run_scheduler() -> dict:
             # Execute safe action
             print(f"[SCHEDULER] Dispatching task {task['task_id']} ({task['name']}) to {agent} ({profile['type']})")
             
-            # Simulate execution and evidence write
+            # Map task name/role to a safe local validation job command
+            cmd = ["bash", "scripts/local_compute_job_queue.sh"]
+            if "Market" in task["name"]:
+                cmd = ["bash", "scripts/rc34_usage_guardrail_verify.sh"]
+            elif "Pricing" in task["name"]:
+                cmd = ["bash", "scripts/rc32_automation_cadence_verify.sh"]
+            elif "Release" in task["name"]:
+                # Safe Playwright E2E spec execution
+                cmd = ["npx", "playwright", "test", "tests/e2e/rc33-compute-utilization.spec.ts"]
+            
+            print(f"[SCHEDULER] Invoking command: {' '.join(cmd)}")
+            res_proc = subprocess.run(cmd, capture_output=True, text=True, cwd=str(PROJECT_ROOT))
+            
+            status_val = "COMPLETED" if res_proc.returncode == 0 else "FAILED"
             evidence_file = f"artifacts/evidence/scheduler_{task['task_id']}.json"
             abs_evidence = PROJECT_ROOT / "has_live_project_tracker" / evidence_file
             os.makedirs(abs_evidence.parent, exist_ok=True)
@@ -149,19 +163,23 @@ def run_scheduler() -> dict:
                 "dispatched_worker": agent,
                 "worker_type": profile["type"],
                 "executed_at": now_iso(),
-                "status": "COMPLETED",
+                "status": status_val,
                 "cores_utilized": profile["cores"],
-                "memory_utilized_gb": profile["memory_gb"]
+                "memory_utilized_gb": profile["memory_gb"],
+                "command": cmd,
+                "exit_code": res_proc.returncode,
+                "stdout_snippet": res_proc.stdout[-500:] if res_proc.stdout else "",
+                "stderr_snippet": res_proc.stderr[-500:] if res_proc.stderr else ""
             }
             with open(abs_evidence, "w") as f:
                 json.dump(evidence_data, f, indent=2)
                 
-            # Update database status to COMPLETED
+            # Update database status
             conn.execute("""
                 UPDATE mission_control_tasks 
-                SET status = 'COMPLETED', evidence_path = ?, updated_at = ? 
+                SET status = ?, evidence_path = ?, updated_at = ? 
                 WHERE task_id = ?
-            """, (evidence_file, now_iso(), task["task_id"]))
+            """, (status_val, evidence_file, now_iso(), task["task_id"]))
             
             # If this is the compliance signoff (step 4), update mission to WAITING_FOR_APPROVAL
             if task["step_index"] == 4:
