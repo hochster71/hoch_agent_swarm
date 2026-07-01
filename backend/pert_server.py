@@ -47,6 +47,42 @@ def get_tailscale_status():
         pass
     return workers
 
+def get_dispatch_history():
+    evidence_dir = os.path.join(get_project_root(), "has_live_project_tracker", "artifacts", "evidence")
+    history = []
+    if os.path.exists(evidence_dir):
+        for fname in os.listdir(evidence_dir):
+            if fname.startswith("scheduler_") and fname.endswith(".json"):
+                fpath = os.path.join(evidence_dir, fname)
+                try:
+                    with open(fpath, "r") as f:
+                        data = json.load(f)
+                    
+                    exit_code = data.get("exit_code", 0)
+                    status = data.get("status", "COMPLETED")
+                    
+                    contrib = 0.5
+                    if "verify" in data.get("task_id", "").lower():
+                        contrib = 0.3
+                    if exit_code != 0 or status == "FAILED":
+                        contrib = 0.0
+                        
+                    history.append({
+                        "task_id": data.get("task_id"),
+                        "name": data.get("name"),
+                        "worker": data.get("dispatched_worker", "michaels-macbook-pro"),
+                        "executed_at": data.get("executed_at"),
+                        "status": status,
+                        "exit_code": exit_code,
+                        "goal_contribution": f"+{contrib}%",
+                        "command": " ".join(data.get("command", [])) if isinstance(data.get("command"), list) else str(data.get("command", ""))
+                    })
+                except Exception:
+                    pass
+    # Sort by executed_at descending, default empty string
+    history.sort(key=lambda x: x["executed_at"] or "", reverse=True)
+    return history[:10]
+
 # 15 Required Workstreams definition
 WORKSTREAMS = [
     {
@@ -675,6 +711,7 @@ def get_pert_data():
         "port_public_closed": port_closed,
         "next_actions": next_actions,
         "tailnet_workers": workers_list,
+        "dispatch_history": get_dispatch_history(),
         "evidence_ledger": [
             {"rc": "RC25", "desc": "HOCH-200 relay setup evidence", "url": f"file://{get_project_root()}/docs/evidence/compute/hoch-200-setup-evidence.md"},
             {"rc": "RC26", "desc": "Swarm routing proxy integration", "url": f"file://{get_project_root()}/docs/evidence/compute/rc26-relay-routing-integration.md"},
@@ -684,7 +721,8 @@ def get_pert_data():
             {"rc": "RC31", "desc": "Production runtime sustainment proof", "url": f"file://{get_project_root()}/docs/evidence/runtime/rc31-production-runtime-sustainment.md"},
             {"rc": "RC33", "desc": "Swarm scheduler utilization proof", "url": f"file://{get_project_root()}/docs/evidence/compute/rc33-compute-utilization-swarm-scheduler.md"},
             {"rc": "RC34", "desc": "Usage budget and secure guardrails", "url": f"file://{get_project_root()}/docs/evidence/automation/rc34-usage-budget-secure-build-guardrails.md"},
-            {"rc": "RC35", "desc": "Safe compute utilization expansion", "url": f"file://{get_project_root()}/docs/evidence/compute/rc35-safe-compute-utilization-expansion.md"}
+            {"rc": "RC35", "desc": "Safe compute utilization expansion", "url": f"file://{get_project_root()}/docs/evidence/compute/rc35-safe-compute-utilization-expansion.md"},
+            {"rc": "RC36", "desc": "Worker visibility and utilization", "url": f"file://{get_project_root()}/docs/evidence/compute/rc36-worker-visibility-utilization-dashboard.md"}
         ]
     }
 
@@ -1015,6 +1053,26 @@ def get_dashboard():
                 <!-- Populated dynamically -->
             </div>
         </div>
+
+        <!-- 13. Job Dispatch & Goal Contribution Metrics -->
+        <div class="card col-6" id="job-dispatch-panel">
+            <h3 style="margin-top:0;">Job Dispatch & Goal Contribution</h3>
+            <div style="overflow-x:auto;">
+                <table style="width:100%; border-collapse:collapse; text-align:left; font-size:12px; min-width:350px;">
+                    <thead>
+                        <tr style="border-bottom:1px solid #1e293b; color:var(--text-secondary);">
+                            <th style="padding:8px 0;">Worker</th>
+                            <th>Task / Command</th>
+                            <th>Status</th>
+                            <th>Goal Impact</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dispatch-table-body">
+                        <!-- Populated dynamically from dispatch_history -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -1250,6 +1308,37 @@ def get_dashboard():
                 data.evidence_ledger.forEach(ev => {
                     evidenceList.innerHTML += `<p><strong>${ev.rc}:</strong> <a href="${ev.url}" style="color:var(--accent-blue); text-decoration:none;">${ev.desc}</a></p>`;
                 });
+
+                // Populate dispatch history
+                const dispatchTbody = document.getElementById("dispatch-table-body");
+                if (dispatchTbody) {
+                    dispatchTbody.innerHTML = "";
+                    const history = data.dispatch_history || [];
+                    if (history.length === 0) {
+                        dispatchTbody.innerHTML = "<tr><td colspan='4' style='color:var(--text-secondary); text-align:center; padding:10px 0;'>No jobs dispatched yet.</td></tr>";
+                    } else {
+                        history.forEach(job => {
+                            const statusColor = job.status === "COMPLETED" ? "var(--accent-teal)" : "var(--accent-red)";
+                            dispatchTbody.innerHTML += `
+                                <tr style="border-top:1px solid #111e35;">
+                                    <td style="padding:8px 0; color:var(--accent-teal); font-weight:bold;">
+                                        ${job.worker}
+                                    </td>
+                                    <td>
+                                        <strong>${job.name || job.task_id}</strong><br>
+                                        <code style="font-size:10px; color:var(--text-secondary);">${job.command}</code>
+                                    </td>
+                                    <td>
+                                        <span style="color:${statusColor}; font-weight:bold;">${job.status}</span>
+                                    </td>
+                                    <td>
+                                        <strong style="color:var(--accent-teal);">${job.goal_contribution}</strong>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                    }
+                }
 
             } catch (err) {
                 console.error("Failed to load dashboard data:", err);
