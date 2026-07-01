@@ -100,7 +100,10 @@ def check_git_status():
             "execution_approval_queue",
             "safe-write-policy",
             "decision-log",
-            "simulate_execution_approval"
+            "simulate_execution_approval",
+            "rc52",
+            "governed_execution",
+            "governed-execution"
         ]
         
         dirty = []

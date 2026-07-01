@@ -32,8 +32,8 @@
       "docs/security/hoch-pods-safe-write-policy.md",
       "docs/evidence/runtime/hoch-execution-approval-queue.md"
     ],
-    "created_at": "2026-07-01T23:43:01.144126Z",
-    "last_verified_at": "2026-07-01T23:43:01.144126Z",
+    "created_at": "2026-07-01T23:49:08.708575Z",
+    "last_verified_at": "2026-07-01T23:49:08.708575Z",
     "freshness_status": "FRESH"
   },
   {
@@ -69,8 +69,8 @@
       "docs/security/hoch-pods-safe-write-policy.md",
       "docs/evidence/runtime/hoch-execution-approval-queue.md"
     ],
-    "created_at": "2026-07-01T23:43:01.144126Z",
-    "last_verified_at": "2026-07-01T23:43:01.144126Z",
+    "created_at": "2026-07-01T23:49:08.708575Z",
+    "last_verified_at": "2026-07-01T23:49:08.708575Z",
     "freshness_status": "FRESH"
   },
   {
@@ -88,7 +88,7 @@
     "risk_level": "MEDIUM",
     "execution_mode": "SAFE",
     "approval_required": true,
-    "approval_status": "PENDING",
+    "approval_status": "APPROVED",
     "allowed_without_approval": false,
     "blocked_reason": "",
     "affected_paths": [
@@ -107,8 +107,8 @@
       "docs/security/hoch-pods-safe-write-policy.md",
       "docs/evidence/runtime/hoch-execution-approval-queue.md"
     ],
-    "created_at": "2026-07-01T23:43:01.144126Z",
-    "last_verified_at": "2026-07-01T23:43:01.144126Z",
+    "created_at": "2026-07-01T23:49:08.708575Z",
+    "last_verified_at": "2026-07-01T23:49:08.823450Z",
     "freshness_status": "FRESH"
   },
   {
@@ -144,8 +144,8 @@
       "docs/security/hoch-pods-safe-write-policy.md",
       "docs/evidence/runtime/hoch-execution-approval-queue.md"
     ],
-    "created_at": "2026-07-01T23:43:01.144126Z",
-    "last_verified_at": "2026-07-01T23:43:01.144126Z",
+    "created_at": "2026-07-01T23:49:08.708575Z",
+    "last_verified_at": "2026-07-01T23:49:08.708575Z",
     "freshness_status": "FRESH"
   },
   {
@@ -183,8 +183,8 @@
       "docs/security/hoch-pods-safe-write-policy.md",
       "docs/evidence/runtime/hoch-execution-approval-queue.md"
     ],
-    "created_at": "2026-07-01T23:43:01.144126Z",
-    "last_verified_at": "2026-07-01T23:43:01.144126Z",
+    "created_at": "2026-07-01T23:49:08.708575Z",
+    "last_verified_at": "2026-07-01T23:49:08.708575Z",
     "freshness_status": "FRESH"
   },
   {
@@ -220,8 +220,8 @@
       "docs/security/hoch-pods-safe-write-policy.md",
       "docs/evidence/runtime/hoch-execution-approval-queue.md"
     ],
-    "created_at": "2026-07-01T23:43:01.144126Z",
-    "last_verified_at": "2026-07-01T23:43:01.144126Z",
+    "created_at": "2026-07-01T23:49:08.708575Z",
+    "last_verified_at": "2026-07-01T23:49:08.708575Z",
     "freshness_status": "FRESH"
   },
   {
@@ -257,8 +257,8 @@
       "docs/security/hoch-pods-safe-write-policy.md",
       "docs/evidence/runtime/hoch-execution-approval-queue.md"
     ],
-    "created_at": "2026-07-01T23:43:01.144126Z",
-    "last_verified_at": "2026-07-01T23:43:01.144126Z",
+    "created_at": "2026-07-01T23:49:08.708575Z",
+    "last_verified_at": "2026-07-01T23:49:08.708575Z",
     "freshness_status": "FRESH"
   }
 ]
