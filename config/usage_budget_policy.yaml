@@ -1,0 +1,7 @@
+max_files_changed: 10
+max_elapsed_minutes: 45
+max_new_scripts: 3
+max_new_tests: 2
+alert_threshold: 0.8
+budget_tier: STANDARD
+quota_reset_hours: 5
