@@ -1,0 +1,43 @@
+# HOCH-200 Relay Stack — VPS Docker Compose
+# ==========================================
+# Port 3012 is bound ONLY to Tailscale IP 100.87.18.15.
+# This compose file is deployed to /opt/hoch-relay/ on hoch-relay-001.
+
+services:
+  relay-api:
+    build:
+      context: .
+      dockerfile: relay-api/Dockerfile
+    image: hoch/relay-api:latest
+    container_name: hoch-relay-api
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: false          # /data volume needs writes
+    ports:
+      # CRITICAL: Bound to Tailscale IP only — NOT 0.0.0.0
+      - "100.87.18.15:3012:3012"
+    volumes:
+      - relay-data:/data
+      - ./dashboard:/app/static:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://127.0.0.1:3012/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+    networks:
+      - relay-net
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+
+volumes:
+  relay-data:
+    driver: local
+
+networks:
+  relay-net:
+    driver: bridge
