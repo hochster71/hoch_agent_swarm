@@ -1525,6 +1525,99 @@ def get_pert_data():
         "stale_reason": roi_model_freshness_reason
     }
 
+    # Soccer Freshness Authority (RC50.1)
+    def get_dir_max_mtime(path):
+        max_mtime = 0.0
+        if not os.path.exists(path):
+            return max_mtime
+        for root, dirs, files in os.walk(path):
+            dirs[:] = [d for d in dirs if d not in [".git", "node_modules", "dist", "build"]]
+            for file in files:
+                if file in ["audit_report.md", "hoch_hasf_soccer_audit_results.json"]:
+                    continue
+                try:
+                    mtime = os.path.getmtime(os.path.join(root, file))
+                    if mtime > max_mtime:
+                        max_mtime = mtime
+                except Exception:
+                    pass
+        return max_mtime
+
+    soccer_audit_state = "FRESH"
+    soccer_audit_reason = "None"
+    soccer_audit_file = os.path.join(get_project_root(), "has_live_project_tracker", "data", "hoch_hasf_soccer_audit_results.json")
+    soccer_source_dir = "/Users/michaelhoch/Downloads/hoch_hasf_soccer"
+    
+    # Pre-load audit results here for freshness modifications
+    soccer_audit_results = {}
+    if os.path.exists(soccer_audit_file):
+        try:
+            with open(soccer_audit_file, "r") as f:
+                soccer_audit_results = json.load(f)
+        except Exception:
+            pass
+
+    if not os.path.exists(soccer_audit_file):
+        soccer_audit_state = "DEGRADED"
+        soccer_audit_reason = "Soccer audit results file is missing"
+    else:
+        try:
+            audit_mtime = os.path.getmtime(soccer_audit_file)
+            source_max_mtime = get_dir_max_mtime(soccer_source_dir)
+            if source_max_mtime > audit_mtime:
+                soccer_audit_state = "STALE"
+                soccer_audit_reason = "Source files modified after latest onboarding audit"
+                if soccer_audit_results:
+                    soccer_audit_results["status"] = "STALE"
+        except Exception as e:
+            soccer_audit_state = "UNKNOWN"
+            soccer_audit_reason = str(e)
+
+    soccer_product_state = "FRESH"
+    soccer_product_reason = "None"
+    soccer_product_file = os.path.join(get_project_root(), "has_live_project_tracker", "data", "hoch_hasf_soccer_product_model.json")
+    
+    soccer_product_model = {}
+    if os.path.exists(soccer_product_file):
+        try:
+            with open(soccer_product_file, "r") as f:
+                soccer_product_model = json.load(f)
+        except Exception:
+            pass
+
+    if not os.path.exists(soccer_product_file):
+        soccer_product_state = "DEGRADED"
+        soccer_product_reason = "Soccer product model file is missing"
+    else:
+        try:
+            product_mtime = os.path.getmtime(soccer_product_file)
+            if os.path.exists(soccer_audit_file):
+                audit_mtime = os.path.getmtime(soccer_audit_file)
+                if product_mtime < audit_mtime:
+                    soccer_product_state = "STALE"
+                    soccer_product_reason = "Soccer product model is older than the latest onboarding audit"
+        except Exception as e:
+            soccer_product_state = "UNKNOWN"
+            soccer_product_reason = str(e)
+
+    # Propagate soccer audit stale to revenue readiness freshness
+    if soccer_audit_state in ["STALE", "DEGRADED"]:
+        pr_state = "STALE"
+        pr_reason = f"Readiness data is stale because soccer onboarding audit is {soccer_audit_state}"
+        panels_freshness["revenue_readiness"] = {
+            "freshness_state": pr_state,
+            "stale_reason": pr_reason
+        }
+
+    panels_freshness["hoch_hasf_soccer_audit"] = {
+        "freshness_state": soccer_audit_state,
+        "stale_reason": soccer_audit_reason
+    }
+    panels_freshness["hoch_hasf_soccer_product_model"] = {
+        "freshness_state": soccer_product_state,
+        "stale_reason": soccer_product_reason
+    }
+
     # Handle fake status fail / No Fake Telemetry Audit fails
     is_fake_failed = (guardrails["fake_status_violations"] > 0 or metrics.get("no_fake_status_violations", 0) > 0)
     if is_fake_failed:
@@ -1705,7 +1798,12 @@ def get_pert_data():
         "epic_fury_roi_model": epic_fury_roi_data,
         "ai_leadership_freshness": panels_freshness.get("ai_executive_leadership", {}),
         "finance_registry_freshness": panels_freshness.get("finance_agent_assignments", {}),
-        "roi_model_freshness": panels_freshness.get("epic_fury_roi_model", {})
+        "roi_model_freshness": panels_freshness.get("epic_fury_roi_model", {}),
+        "hoch_hasf_soccer_audit_results": soccer_audit_results,
+        "hoch_hasf_soccer_product_model": soccer_product_model,
+        "project_revenue_readiness_results": inv_data if "inv_data" in locals() else [],
+        "hoch_hasf_soccer_audit_freshness": panels_freshness.get("hoch_hasf_soccer_audit", {}),
+        "hoch_hasf_soccer_product_model_freshness": panels_freshness.get("hoch_hasf_soccer_product_model", {})
     }
 
 @app.get("/view-doc", response_class=HTMLResponse)
@@ -3183,6 +3281,58 @@ def get_dashboard():
 
                 <div style="margin-top: 15px; font-size: 10px; color: var(--hoch-muted); line-height: 1.4; background: rgba(5,7,13,0.4); padding: 10px; border-radius: 8px;">
                     <strong>Model Assumptions:</strong> Launch cost is estimated at $15,000. Operating costs are projected at $1,200/month. Net ARPU assumes tiered user packages.
+                </div>
+            </div>
+
+            <!-- 5. Soccer Onboarding Pipeline Panel (RC50.1) -->
+            <div class="card" id="hoch-hasf-soccer-pipeline-panel" style="background: var(--hoch-panel); border: 2px solid var(--hoch-border); border-radius: 16px; padding: 20px; box-shadow: 0 0 30px rgba(34, 246, 255, 0.05); position: relative; overflow: hidden; box-sizing: border-box; grid-column: span 2;">
+                <h3 style="margin-top:0; color:var(--hoch-cyan); display:flex; justify-content:space-between; align-items:center;">
+                    <span>⚽ HOCH HASF Soccer Intelligence Platform Onboarding Pipeline</span>
+                    <span id="soccer-pipeline-freshness-badge" class="badge">UNKNOWN</span>
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px; margin-top: 15px;">
+                    <!-- Left: Metadata and Status -->
+                    <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; padding: 15px; font-size: 11px; display: flex; flex-direction: column; gap: 8px;">
+                        <div><strong>Source Path:</strong> <span style="color:#fff; font-family:monospace; word-break:break-all;">/Users/michaelhoch/Downloads/hoch_hasf_soccer</span></div>
+                        <div><strong>Current Stage:</strong> <span class="badge" style="background:var(--hoch-blue); color:#fff;" id="soccer-stage-badge">intake_audit</span></div>
+                        <div><strong>Readiness Score:</strong> <span id="soccer-readiness-val" style="color:var(--hoch-cyan); font-weight:700; font-size:14px;">0%</span></div>
+                        <div><strong>Audit Status:</strong> <span id="soccer-audit-status-badge" class="badge">UNKNOWN</span></div>
+                        <div><strong>Last Verified:</strong> <span id="soccer-last-verified-val" style="color:var(--hoch-muted);">N/A</span></div>
+                        <div style="margin-top: 5px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;">
+                            <strong>Assigned AI Owners:</strong>
+                            <div style="margin-top: 4px; line-height: 1.4; color:var(--hoch-muted);" id="soccer-owners-list">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right: Gaps, Blockers, Actions and Evidence -->
+                    <div style="display: flex; flex-direction: column; gap: 15px; font-size: 11px;">
+                        <div style="background: rgba(255, 59, 92, 0.06); border: 1px solid var(--hoch-red); padding: 12px; border-radius: 8px;">
+                            <h4 style="margin-top:0; margin-bottom:8px; color:var(--hoch-red); font-size:12px;">Active Blockers & Gaps</h4>
+                            <ul style="margin:0; padding-left:15px; line-height:1.5; color:var(--hoch-muted);" id="soccer-blockers-list">
+                                <!-- Populated dynamically -->
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <strong>Next Critical Action:</strong>
+                            <div style="background: rgba(255, 176, 32, 0.08); border: 1px solid var(--hoch-amber); padding: 10px; border-radius: 8px; margin-top: 5px; color: #fff;" id="soccer-next-action-val">
+                                Run HASF onboarding audit and classify build/deploy/security gaps
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <strong>Evidence & Product Model Links:</strong>
+                            <div style="margin-top: 5px;" id="soccer-links-container">
+                                <a href="/view-doc?path=docs/evidence/business/hoch-hasf-soccer-onboarding-audit.md" style="color: var(--hoch-cyan); text-decoration: underline; margin-right: 12px;" target="_blank">Onboarding Audit</a>
+                                <a href="/view-doc?path=docs/evidence/business/hoch-hasf-soccer-gap-analysis.md" style="color: var(--hoch-cyan); text-decoration: underline; margin-right: 12px;" target="_blank">Gap Analysis</a>
+                                <a href="/view-doc?path=docs/evidence/business/hoch-hasf-soccer-pert-model.md" style="color: var(--hoch-cyan); text-decoration: underline; margin-right: 12px;" target="_blank">PERT Model</a>
+                                <a href="/view-doc?path=docs/business/hoch-hasf-soccer-product-model.md" style="color: var(--hoch-cyan); text-decoration: underline;" target="_blank">Product Model Strategy</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -4778,6 +4928,89 @@ def get_dashboard():
                             `;
                         });
                     }
+                }
+
+                // --- POPULATE SOCCER PIPELINE PANEL ---
+                const soccerProj = (data.project_inventory || []).find(p => p.id === "hoch-hasf-soccer") || {};
+                
+                // Soccer Freshness
+                if (data.hoch_hasf_soccer_audit_freshness) {
+                    const badge = document.getElementById("soccer-pipeline-freshness-badge");
+                    if (badge) {
+                        badge.textContent = data.hoch_hasf_soccer_audit_freshness.freshness_state || "UNKNOWN";
+                        badge.className = "badge";
+                        if (data.hoch_hasf_soccer_audit_freshness.freshness_state === "FRESH") badge.classList.add("badge-success");
+                        else if (data.hoch_hasf_soccer_audit_freshness.freshness_state === "STALE") badge.classList.add("badge-warn");
+                        else badge.classList.add("badge-danger");
+                        badge.title = data.hoch_hasf_soccer_audit_freshness.stale_reason || "";
+                    }
+                }
+                
+                // Stage
+                const soccerStage = document.getElementById("soccer-stage-badge");
+                if (soccerStage) {
+                    soccerStage.textContent = soccerProj.current_stage || "intake_audit";
+                }
+                
+                // Readiness Score
+                const soccerReadinessVal = document.getElementById("soccer-readiness-val");
+                if (soccerReadinessVal) {
+                    const score = soccerProj.revenue_readiness_score !== undefined ? soccerProj.revenue_readiness_score : 0;
+                    soccerReadinessVal.textContent = score + "%";
+                }
+                
+                // Audit Status
+                const soccerAuditStatus = document.getElementById("soccer-audit-status-badge");
+                if (soccerAuditStatus) {
+                    const statusStr = (data.hoch_hasf_soccer_audit_results || {}).status || "PENDING_AUDIT";
+                    soccerAuditStatus.textContent = statusStr;
+                    soccerAuditStatus.className = "badge";
+                    if (statusStr === "COMPLETED") {
+                        soccerAuditStatus.classList.add("badge-success");
+                    } else if (statusStr === "STALE" || statusStr === "PENDING_AUDIT") {
+                        soccerAuditStatus.classList.add("badge-warn");
+                    } else {
+                        soccerAuditStatus.classList.add("badge-danger");
+                    }
+                }
+                
+                // Last Verified
+                const soccerLastVerified = document.getElementById("soccer-last-verified-val");
+                if (soccerLastVerified) {
+                    soccerLastVerified.textContent = soccerProj.last_verified_at || "N/A";
+                }
+                
+                // Assigned AI Owners
+                const soccerOwnersList = document.getElementById("soccer-owners-list");
+                if (soccerOwnersList) {
+                    soccerOwnersList.innerHTML = `
+                        • <strong>Product Strategy:</strong> AI Product Officer<br>
+                        • <strong>Pricing & Finance:</strong> HASF Product Finance Manager<br>
+                        • <strong>Compliance & Data:</strong> AI Security & Compliance Officer<br>
+                        • <strong>Deployment & Build:</strong> AI Technical Director<br>
+                        • <strong>QA & Test Gate:</strong> AI QA & Release Authority
+                    `;
+                }
+                
+                // Active Blockers
+                const soccerBlockersList = document.getElementById("soccer-blockers-list");
+                if (soccerBlockersList) {
+                    soccerBlockersList.innerHTML = "";
+                    const blockers = soccerProj.blockers || [
+                        "Initial codebase audit required",
+                        "Deployment model not verified",
+                        "Monetization model not verified",
+                        "Security posture not verified"
+                    ];
+                    blockers.forEach(b => {
+                        soccerBlockersList.innerHTML += `<li>❌ ${b}</li>`;
+                    });
+                }
+                
+                // Next Action
+                const soccerNextAction = document.getElementById("soccer-next-action-val");
+                if (soccerNextAction) {
+                    soccerNextAction.textContent = soccerProj.next_critical_action || "Run HASF onboarding audit and classify build/deploy/security gaps";
                 }
 
                 if (isFirstLoad) {

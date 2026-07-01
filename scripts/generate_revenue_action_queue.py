@@ -149,6 +149,42 @@ BLOCKER_MAPPING = {
         "deployment_impact": 10,
         "recommended_agent": "Security Specialist",
         "dependency_order": 1
+    },
+    "Initial codebase audit required": {
+        "title": "Run Initial Codebase Audit",
+        "description": "Execute HASF onboarding audit and classify build/deploy/security gaps for hoch-hasf-soccer.",
+        "revenue_impact": 10,
+        "security_impact": 10,
+        "deployment_impact": 10,
+        "recommended_agent": "AI QA & Release Authority",
+        "dependency_order": 1
+    },
+    "Deployment model not verified": {
+        "title": "Establish Deployment Target",
+        "description": "Define and verify hosting architecture, Docker environment setup, and deployment target.",
+        "revenue_impact": 0,
+        "security_impact": 10,
+        "deployment_impact": 40,
+        "recommended_agent": "AI Technical Director",
+        "dependency_order": 2
+    },
+    "Monetization model not verified": {
+        "title": "Define Monetization Model",
+        "description": "Confirm the pricing model, subscription packages, and verify Stripe test-mode paths for soccer analytics.",
+        "revenue_impact": 35,
+        "security_impact": 0,
+        "deployment_impact": 15,
+        "recommended_agent": "HASF Product Finance Manager",
+        "dependency_order": 3
+    },
+    "Security posture not verified": {
+        "title": "Verify Authentication Model",
+        "description": "Review parental consent policies (COPPA) and implement login/session controls.",
+        "revenue_impact": 10,
+        "security_impact": 40,
+        "deployment_impact": 10,
+        "recommended_agent": "AI Security & Compliance Officer",
+        "dependency_order": 2
     }
 }
 

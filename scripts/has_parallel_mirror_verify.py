@@ -91,7 +91,11 @@ def check_git_status():
             "finance-operations-brief.md",
             "rc39",
             "hoch_compute_nodes_retired.json",
-            "rc49-hoch-pod-scheduler.spec.ts"
+            "rc49-hoch-pod-scheduler.spec.ts",
+            "rc50_1",
+            "soccer",
+            "project_inventory",
+            "rc45-revenue-readiness.spec.ts"
         ]
         
         dirty = []

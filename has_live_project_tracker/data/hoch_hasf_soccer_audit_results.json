@@ -1,0 +1,66 @@
+{
+  "status": "COMPLETED",
+  "timestamp": "2026-07-01T23:32:09.354338+00:00Z",
+  "findings": {
+    "directory_exists": {
+      "status": "PASS",
+      "details": "Source directory found at /Users/michaelhoch/Downloads/hoch_hasf_soccer"
+    },
+    "git_repo_status": {
+      "status": "WARNING",
+      "details": "No local .git directory found (untracked or packaged source)"
+    },
+    "package_manifests": {
+      "status": "PASS",
+      "details": "package.json found in project root"
+    },
+    "framework_classification": {
+      "status": "PASS",
+      "details": "Detected framework: React (v19.2.7) with Vite build tooling"
+    },
+    "deployment_descriptors": {
+      "status": "PASS",
+      "details": "Dockerfile: Present, docker-compose.yml: Present"
+    },
+    "environment_configuration_example": {
+      "status": "FAIL",
+      "details": "No .env.example found. Developers lack template configuration"
+    },
+    "authentication_security": {
+      "status": "FAIL",
+      "details": "No user authentication or session access controls implemented"
+    },
+    "stripe_monetization": {
+      "status": "FAIL",
+      "details": "No Stripe payment gateway elements found in codebase"
+    },
+    "automated_tests": {
+      "status": "FAIL",
+      "details": "No automated tests discovered. Test coverage is 0%"
+    },
+    "cicd_pipeline": {
+      "status": "FAIL",
+      "details": "No CI/CD pipeline or action workflows found"
+    },
+    "credentials_exposure": {
+      "status": "PASS",
+      "details": "No raw secret keys exposed in inspected source files"
+    },
+    "documentation": {
+      "status": "PASS",
+      "details": "README.md documentation is present in project root"
+    },
+    "model_data_assets": {
+      "status": "WARNING",
+      "details": "No local model weight assets found in public/assets"
+    },
+    "soccer_analytics_modules": {
+      "status": "PASS",
+      "details": "Onboarded specialized soccer views: CoachDashboard=True, ParentPortal=True, DrillLibrary=True"
+    },
+    "api_integration_handlers": {
+      "status": "PASS",
+      "details": "External fetch/axios API integration handlers detected"
+    }
+  }
+}

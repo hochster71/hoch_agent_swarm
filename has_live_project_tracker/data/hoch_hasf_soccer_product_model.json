@@ -1,0 +1,40 @@
+{
+  "product_id": "hoch-hasf-soccer",
+  "name": "HOCH HASF Soccer Intelligence Platform",
+  "product_hypothesis": "Applying computer vision and AI analytics to youth and amateur soccer videos provides actionable coaching metrics, injury avoidance, and parental insights that traditional scouting lacks.",
+  "target_users": [
+    "Youth Club Coaches",
+    "Amateur/Academy Players",
+    "Parents of Student-Athletes"
+  ],
+  "possible_revenue_models": [
+    "Premium monthly subscription ($15-$45/month)",
+    "Pay-per-video upload analytics ($5 per match)",
+    "Enterprise club licensing"
+  ],
+  "app_store_positioning": "The Ultimate AI Assistant for Soccer Coaches and Parents — track tactical drills, analyze play patterns, and enforce Jayanthi injury boundaries from mobile video uploads.",
+  "soccer_intelligence_features": [
+    "Computer vision tracking of player positioning and spacing mesh",
+    "Drill library with tactical movement tutorials",
+    "Weekly workload analytics vs age to avoid physical overuse"
+  ],
+  "prediction_risk_disclaimer_requirements": [
+    "AI prediction data is for athletic development only.",
+    "Not a substitute for professional medical/clinical injury diagnoses.",
+    "Compliance with local sports betting restrictions (no prediction outcomes sold to gambling operators)."
+  ],
+  "training_education_mode": {
+    "supported": true,
+    "description": "Interactive parent and child onboarding tutorials detailing soccer rules and tactical fundamentals."
+  },
+  "data_source_assumptions": [
+    "Amateur-captured video frame rates of 30-60 FPS",
+    "Mobile phone standard camera resolution"
+  ],
+  "competitive_differentiation": "Privacy-focused design: video frame calculations are processed locally on the client's device, never exposing child identification metadata to cloud databases (COPPA zero-data stance).",
+  "mvp_readiness_state": "Frontend layout and visual enclaves are complete; Supabase backend authentication and Stripe checkout routes are missing.",
+  "required_validation": [
+    "Perform Verifiable Parental Consent (VPC) review",
+    "Validate offline computer vision processing performance on mobile nodes"
+  ]
+}

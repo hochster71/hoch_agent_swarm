@@ -59,7 +59,9 @@ bash scripts/rc49_5_refresh_truth_cascade.sh
 # 2. Run Playwright E2E test suite for all cascade targets
 echo "Running Playwright E2E cascade tests..."
 npx playwright test \
+    tests/e2e/rc50_1-hoch-hasf-soccer-pipeline.spec.ts \
     tests/e2e/rc50-ai-business-structure.spec.ts \
+    tests/e2e/rc49_7-compute-node-pruning.spec.ts \
     tests/e2e/rc49_6-hoch-pods-visual-fidelity.spec.ts \
     tests/e2e/rc49_5-telemetry-truth-freshness.spec.ts \
     tests/e2e/rc49-hoch-pod-scheduler.spec.ts \

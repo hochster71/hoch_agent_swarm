@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-01T23:13:26.678488+00:00Z",
+  "generated_at": "2026-07-01T23:32:09.698840+00:00Z",
   "monetization_state": {
     "readiness_score": "100%",
     "stripe_sandbox_readiness": "FAIL"
@@ -149,63 +149,100 @@
     },
     {
       "rank": 3,
+      "title": "Implement Stripe Billing Integration",
+      "description": "Configure Stripe client libraries and set up test/live api keys for payment flows.",
+      "status": "READY"
+    },
+    {
+      "rank": 4,
+      "title": "Define Monetization Model",
+      "description": "Confirm the pricing model, subscription packages, and verify Stripe test-mode paths for soccer analytics.",
+      "status": "READY"
+    },
+    {
+      "rank": 5,
       "title": "Integrate IoT Telemetry Schema",
       "description": "Define AWS IoT Core message schema and write ingestion handlers for telemetry payloads.",
       "status": "BLOCKED"
     },
     {
-      "rank": 4,
+      "rank": 6,
       "title": "Create Project Package Manifests",
       "description": "Initialize package.json, requirements.txt, pyproject.toml, or Cargo.toml build descriptors.",
       "status": "READY"
     },
     {
-      "rank": 5,
+      "rank": 7,
       "title": "Define Monetization Strategy",
       "description": "Formulate exact pricing models, API tier limits, or license agreements in markdown.",
       "status": "READY"
     },
     {
-      "rank": 6,
+      "rank": 8,
       "title": "Implement User Authentication System",
       "description": "Set up secure sign-in, JWT session controls, and roles using Supabase Auth or native sessions.",
       "status": "BLOCKED"
     },
     {
-      "rank": 7,
-      "title": "Link Project Path to Local Disk",
-      "description": "Configure the local file path for project repository assets to enable code inspection.",
-      "status": "READY"
-    },
-    {
-      "rank": 8,
-      "title": "Link Project Path to Local Disk",
-      "description": "Configure the local file path for project repository assets to enable code inspection.",
-      "status": "READY"
-    },
-    {
       "rank": 9,
+      "title": "Implement User Authentication System",
+      "description": "Set up secure sign-in, JWT session controls, and roles using Supabase Auth or native sessions.",
+      "status": "READY"
+    },
+    {
+      "rank": 10,
+      "title": "Verify Authentication Model",
+      "description": "Review parental consent policies (COPPA) and implement login/session controls.",
+      "status": "READY"
+    },
+    {
+      "rank": 11,
+      "title": "Link Project Path to Local Disk",
+      "description": "Configure the local file path for project repository assets to enable code inspection.",
+      "status": "READY"
+    },
+    {
+      "rank": 12,
+      "title": "Link Project Path to Local Disk",
+      "description": "Configure the local file path for project repository assets to enable code inspection.",
+      "status": "READY"
+    },
+    {
+      "rank": 13,
+      "title": "Establish Deployment Target",
+      "description": "Define and verify hosting architecture, Docker environment setup, and deployment target.",
+      "status": "READY"
+    },
+    {
+      "rank": 14,
       "title": "Create Deployment Configuration Files",
       "description": "Write standard deployment descriptors like Dockerfile, vercel.json, or docker-compose.yml.",
       "status": "BLOCKED"
     },
     {
-      "rank": 10,
+      "rank": 15,
       "title": "Establish Project Git Repository",
       "description": "Initialize a fresh git repository and push basic project structure to tracking origin.",
       "status": "READY"
     },
     {
-      "rank": 11,
+      "rank": 16,
       "title": "Restore Repository Source Code",
       "description": "Populate missing source files, modules, and directories for project codebase.",
+      "status": "READY"
+    },
+    {
+      "rank": 17,
+      "title": "Configure Automated Testing",
+      "description": "Set up unit testing frameworks and write initial suite verifying system invariants.",
       "status": "READY"
     }
   ],
   "required_approvals": [
     "Stripe live credentials configuration deployment",
-    "Promotion of release candidate tag v0.1.14-ai-business-structure",
-    "Final sign-off on Epic Fury pricing tiers base rates change"
+    "Promotion of release candidate tag v0.1.14-hoch-hasf-soccer-pipeline",
+    "Final sign-off on Epic Fury pricing tiers base rates change",
+    "Approval of HOCH HASF Soccer Platform intake audit & product model"
   ],
   "evidence_links": [
     "docs/business/epic-fury-roi-projection.md",
