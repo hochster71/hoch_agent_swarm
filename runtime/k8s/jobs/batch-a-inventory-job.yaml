@@ -1,0 +1,55 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: batch-a-inventory
+  namespace: has-workers
+spec:
+  template:
+    spec:
+      serviceAccountName: sidecar-worker-sa
+      containers:
+        - name: inventory-worker
+          image: has-worker:latest
+          imagePullPolicy: Never
+          command:
+            - /bin/bash
+            - -c
+            - |
+              echo "Starting Batch A Ingestions..."
+              /tracker-data/scripts/k8s_sidecar_emit_event.sh "registry_event" "local_disk" "global_registry" "info" "success" "K8s worker batch-a-inventory: Starting inventory scans..."
+              
+              # Run ingestions in dry-run mode or report mode
+              python3 /tracker-data/scripts/tracker_ingest_local.py
+              python3 /tracker-data/scripts/tracker_ingest_github.py
+              python3 /tracker-data/scripts/tracker_ingest_cloud.py
+              
+              /tracker-data/scripts/k8s_sidecar_emit_event.sh "registry_event" "local_disk" "global_registry" "info" "success" "K8s worker batch-a-inventory: Ingestion complete."
+          resources:
+            requests:
+              cpu: "100m"
+              memory: 128Mi
+            limits:
+              cpu: "500m"
+              memory: 512Mi
+          envFrom:
+            - secretRef:
+                name: has-tracker-secrets
+          env:
+            - name: TRACKER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: has-worker-config
+                  key: TRACKER_PORT
+            - name: TRACKER_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: has-worker-config
+                  key: TRACKER_HOST
+          volumeMounts:
+            - name: tracker-data-vol
+              mountPath: /tracker-data
+      restartPolicy: OnFailure
+      volumes:
+        - name: tracker-data-vol
+          persistentVolumeClaim:
+            claimName: tracker-data-pvc
