@@ -53,6 +53,7 @@ export default defineConfig({
     "**/rc50-ai-business-structure.spec.ts",
     "**/rc49_7-compute-node-pruning.spec.ts",
     "**/rc50_1-hoch-hasf-soccer-pipeline.spec.ts",
+    "**/rc51-execution-approval-queue.spec.ts",
   ],
   timeout: 45_000,
   fullyParallel: false,
