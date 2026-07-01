@@ -38,7 +38,7 @@ def evaluate_node_score(pod, node, health):
 
     # 5. Model availability check
     pod_model = pod.get("allowed_models", [])
-    node_models = health.get("models_detected", []) or node.get("available_models", [])
+    node_models = list(set((health.get("models_detected", []) or []) + (node.get("available_models", []) or [])))
     # Check if there is at least one model match
     model_match = any(m in node_models for m in pod_model)
     if not model_match:
@@ -46,7 +46,7 @@ def evaluate_node_score(pod, node, health):
 
     # 6. Tool availability check
     pod_tools = pod.get("allowed_tools", [])
-    node_tools = health.get("tools_detected", []) or node.get("available_tools", [])
+    node_tools = list(set((health.get("tools_detected", []) or []) + (node.get("available_tools", []) or [])))
     # We check if the node has at least one of the tools or is capable. For strict tools:
     # If the pod specifies allowed tools, let's verify if the node can execute at least one tool
     tool_match = any(t in node_tools for t in pod_tools)

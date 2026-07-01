@@ -50,6 +50,8 @@ export default defineConfig({
     "**/rc49-hoch-pod-scheduler.spec.ts",
     "**/rc49_5-telemetry-truth-freshness.spec.ts",
     "**/rc49_6-hoch-pods-visual-fidelity.spec.ts",
+    "**/rc50-ai-business-structure.spec.ts",
+    "**/rc49_7-compute-node-pruning.spec.ts",
   ],
   timeout: 45_000,
   fullyParallel: false,

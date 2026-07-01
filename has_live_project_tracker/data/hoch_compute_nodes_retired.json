@@ -1,0 +1,30 @@
+[
+  {
+    "node_id": "m4-mbp",
+    "display_name": "M4-MBP",
+    "retired_reason": "Retired as no-longer-needed per RC49.7 pruning",
+    "retired_at": "2026-07-01T22:55:00Z",
+    "last_known_status": "DEGRADED"
+  },
+  {
+    "node_id": "imac-24",
+    "display_name": "iMac-24",
+    "retired_reason": "Retired as no-longer-needed per RC49.7 pruning",
+    "retired_at": "2026-07-01T22:55:00Z",
+    "last_known_status": "DEGRADED"
+  },
+  {
+    "node_id": "dell-neo",
+    "display_name": "Dell-Neo",
+    "retired_reason": "Retired as no-longer-needed per RC49.7 pruning",
+    "retired_at": "2026-07-01T22:55:00Z",
+    "last_known_status": "DEGRADED"
+  },
+  {
+    "node_id": "local-models",
+    "display_name": "Local-Models",
+    "retired_reason": "Retired as no-longer-needed per RC49.7 pruning",
+    "retired_at": "2026-07-01T22:55:00Z",
+    "last_known_status": "ONLINE"
+  }
+]

@@ -1,0 +1,131 @@
+{
+  "scenarios": [
+    {
+      "scenario_id": "conservative",
+      "name": "Conservative",
+      "monthly_installs": 500,
+      "paid_conversion_rate": 2.0,
+      "paid_users_month_1": 10,
+      "projected_paid_users_month_6": 60,
+      "weighted_arpu": 19.99,
+      "estimated_net_arpu": 18.99,
+      "month_1_net_revenue": 189.90,
+      "month_6_mrr": 1139.40,
+      "annualized_run_rate": 13672.80,
+      "launch_cost_assumption": 15000.0,
+      "monthly_operating_cost_assumption": 1200.0,
+      "roi_estimate": -35.0,
+      "assumptions": [
+        "Minimal user engagement",
+        "Higher support overhead",
+        "Lowest tier subscription preference"
+      ],
+      "risks": [
+        "Unfavorable reviews on initial store launch",
+        "Delayed marketing rollout"
+      ],
+      "required_validation": [
+        "Verify Stripe basic checkout functionality in test sandbox"
+      ],
+      "evidence_links": [
+        "docs/business/epic-fury-roi-projection.md"
+      ]
+    },
+    {
+      "scenario_id": "realistic",
+      "name": "Realistic",
+      "monthly_installs": 2000,
+      "paid_conversion_rate": 3.5,
+      "paid_users_month_1": 70,
+      "projected_paid_users_month_6": 420,
+      "weighted_arpu": 24.99,
+      "estimated_net_arpu": 23.74,
+      "month_1_net_revenue": 1661.80,
+      "month_6_mrr": 9970.80,
+      "annualized_run_rate": 119649.60,
+      "launch_cost_assumption": 15000.0,
+      "monthly_operating_cost_assumption": 1200.0,
+      "roi_estimate": 120.0,
+      "assumptions": [
+        "Moderate organic download conversions",
+        "Steady retention curves",
+        "Tier 2 (Pro) subscription tier selection mix"
+      ],
+      "risks": [
+        "Competitor pricing pressure",
+        "Stripe webhook delivery latency"
+      ],
+      "required_validation": [
+        "Verify Stripe webhook signature check code",
+        "Audit public port exposures on billing servers"
+      ],
+      "evidence_links": [
+        "docs/business/epic-fury-roi-projection.md"
+      ]
+    },
+    {
+      "scenario_id": "strong",
+      "name": "Strong",
+      "monthly_installs": 5000,
+      "paid_conversion_rate": 5.0,
+      "paid_users_month_1": 250,
+      "projected_paid_users_month_6": 1500,
+      "weighted_arpu": 29.99,
+      "estimated_net_arpu": 28.49,
+      "month_1_net_revenue": 7122.50,
+      "month_6_mrr": 42735.00,
+      "annualized_run_rate": 512820.00,
+      "launch_cost_assumption": 15000.0,
+      "monthly_operating_cost_assumption": 1200.0,
+      "roi_estimate": 450.0,
+      "assumptions": [
+        "Strong product-market fit feedback loop",
+        "High retention curves",
+        "Balanced Pro and Enterprise tier user distribution mix"
+      ],
+      "risks": [
+        "Scaling limits on local database read capacities",
+        "Billing server hosting downtime"
+      ],
+      "required_validation": [
+        "Conduct stress load tests on webhook receivers",
+        "Verify double percent signs prevention in billing UI"
+      ],
+      "evidence_links": [
+        "docs/business/epic-fury-roi-projection.md"
+      ]
+    },
+    {
+      "scenario_id": "breakout",
+      "name": "Breakout",
+      "monthly_installs": 15000,
+      "paid_conversion_rate": 7.5,
+      "paid_users_month_1": 1125,
+      "projected_paid_users_month_6": 6750,
+      "weighted_arpu": 34.99,
+      "estimated_net_arpu": 33.24,
+      "month_1_net_revenue": 37395.00,
+      "month_6_mrr": 224370.00,
+      "annualized_run_rate": 2692440.00,
+      "launch_cost_assumption": 15000.0,
+      "monthly_operating_cost_assumption": 1200.0,
+      "roi_estimate": 1800.0,
+      "assumptions": [
+        "Exponential viral coefficient growth loops",
+        "Near-zero churn rates",
+        "Heavy enterprise subscription tier selection mix"
+      ],
+      "risks": [
+        "Substantial API token consumption billing costs",
+        "Severe regulatory audit compliance requirements"
+      ],
+      "required_validation": [
+        "Enforce strict rate limits on payment routes",
+        "Run full E2E Playwright test suite gates before deploy promotion"
+      ],
+      "evidence_links": [
+        "docs/business/epic-fury-roi-projection.md"
+      ]
+    }
+  ]
+}

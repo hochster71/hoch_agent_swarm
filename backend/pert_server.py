@@ -1433,6 +1433,98 @@ def get_pert_data():
         "stale_reason": sched_freshness_reason
     }
 
+    # Load HOCH AI Executive Leadership, Finance Agent Assignments, and Epic Fury ROI Model
+    ai_leadership_data = []
+    ai_leadership_file = os.path.join(get_project_root(), "has_live_project_tracker", "data", "ai_executive_leadership.json")
+    if os.path.exists(ai_leadership_file):
+        try:
+            with open(ai_leadership_file, "r") as f:
+                ai_leadership_data = json.load(f)
+        except Exception:
+            pass
+
+    finance_assignments_data = []
+    finance_assignments_file = os.path.join(get_project_root(), "has_live_project_tracker", "data", "finance_agent_assignments.json")
+    if os.path.exists(finance_assignments_file):
+        try:
+            with open(finance_assignments_file, "r") as f:
+                finance_assignments_data = json.load(f)
+        except Exception:
+            pass
+
+    epic_fury_roi_data = []
+    epic_fury_roi_file = os.path.join(get_project_root(), "has_live_project_tracker", "data", "epic_fury_roi_model.json")
+    if os.path.exists(epic_fury_roi_file):
+        try:
+            with open(epic_fury_roi_file, "r") as f:
+                epic_fury_roi_data = json.load(f)
+        except Exception:
+            pass
+
+    # AI leadership registry freshness
+    ai_leadership_freshness_state = "FRESH"
+    ai_leadership_freshness_reason = "None"
+    if not os.path.exists(ai_leadership_file):
+        ai_leadership_freshness_state = "DEGRADED"
+        ai_leadership_freshness_reason = "AI leadership registry JSON is missing"
+    else:
+        try:
+            time_now = datetime.now().timestamp()
+            file_mtime = os.path.getmtime(ai_leadership_file)
+            if time_now - file_mtime > 600.0:
+                ai_leadership_freshness_state = "STALE"
+                ai_leadership_freshness_reason = "AI leadership registry is older than 600 seconds"
+        except Exception as e:
+            ai_leadership_freshness_state = "UNKNOWN"
+            ai_leadership_freshness_reason = str(e)
+
+    # Finance assignments freshness
+    finance_assignments_freshness_state = "FRESH"
+    finance_assignments_freshness_reason = "None"
+    if not os.path.exists(finance_assignments_file):
+        finance_assignments_freshness_state = "DEGRADED"
+        finance_assignments_freshness_reason = "Finance agent assignments JSON is missing"
+    else:
+        try:
+            time_now = datetime.now().timestamp()
+            file_mtime = os.path.getmtime(finance_assignments_file)
+            if time_now - file_mtime > 600.0:
+                finance_assignments_freshness_state = "STALE"
+                finance_assignments_freshness_reason = "Finance agent assignments registry is older than 600 seconds"
+        except Exception as e:
+            finance_assignments_freshness_state = "UNKNOWN"
+            finance_assignments_freshness_reason = str(e)
+
+    # ROI model freshness
+    roi_model_freshness_state = "FRESH"
+    roi_model_freshness_reason = "None"
+    if not os.path.exists(epic_fury_roi_file):
+        roi_model_freshness_state = "DEGRADED"
+        roi_model_freshness_reason = "Epic Fury ROI model JSON is missing"
+    else:
+        try:
+            time_now = datetime.now().timestamp()
+            file_mtime = os.path.getmtime(epic_fury_roi_file)
+            if time_now - file_mtime > 600.0:
+                roi_model_freshness_state = "STALE"
+                roi_model_freshness_reason = "Epic Fury ROI model is older than 600 seconds"
+        except Exception as e:
+            roi_model_freshness_state = "UNKNOWN"
+            roi_model_freshness_reason = str(e)
+
+    panels_freshness["ai_executive_leadership"] = {
+        "freshness_state": ai_leadership_freshness_state,
+        "stale_reason": ai_leadership_freshness_reason
+    }
+    panels_freshness["finance_agent_assignments"] = {
+        "freshness_state": finance_assignments_freshness_state,
+        "stale_reason": finance_assignments_freshness_reason
+    }
+    panels_freshness["epic_fury_roi_model"] = {
+        "freshness_state": roi_model_freshness_state,
+        "stale_reason": roi_model_freshness_reason
+    }
+
     # Handle fake status fail / No Fake Telemetry Audit fails
     is_fake_failed = (guardrails["fake_status_violations"] > 0 or metrics.get("no_fake_status_violations", 0) > 0)
     if is_fake_failed:
@@ -1607,7 +1699,13 @@ def get_pert_data():
         "hoch_pods_runtime_state": hoch_pods_state,
         "hoch_compute_nodes": hoch_comp_nodes,
         "hoch_compute_node_health": hoch_comp_health,
-        "hoch_pod_schedule": hoch_pod_sched
+        "hoch_pod_schedule": hoch_pod_sched,
+        "ai_executive_leadership": ai_leadership_data,
+        "finance_agent_assignments": finance_assignments_data,
+        "epic_fury_roi_model": epic_fury_roi_data,
+        "ai_leadership_freshness": panels_freshness.get("ai_executive_leadership", {}),
+        "finance_registry_freshness": panels_freshness.get("finance_agent_assignments", {}),
+        "roi_model_freshness": panels_freshness.get("epic_fury_roi_model", {})
     }
 
 @app.get("/view-doc", response_class=HTMLResponse)
@@ -2951,6 +3049,143 @@ def get_dashboard():
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- ------------------------------------------------------------- -->
+        <!-- HOCH AI EXECUTIVE GOVERNANCE & FINANCE OPS -->
+        <!-- ------------------------------------------------------------- -->
+        <div class="col-12" id="hoch-executive-governance-surface" style="margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; box-sizing: border-box; width: 100%;">
+            
+            <!-- 1. AI Executive Leadership Panel -->
+            <div class="card" id="ai-executive-leadership-panel" style="background: var(--hoch-panel); border: 2px solid var(--hoch-border); border-radius: 16px; padding: 20px; box-shadow: 0 0 30px rgba(34, 246, 255, 0.05); position: relative; overflow: hidden; box-sizing: border-box;">
+                <h3 style="margin-top:0; color:var(--hoch-cyan); display:flex; justify-content:space-between; align-items:center;">
+                    <span>AI Executive Leadership & Org Chart</span>
+                    <span id="ai-leadership-freshness-badge" class="badge">UNKNOWN</span>
+                </h3>
+                
+                <!-- Founder Authority Callout -->
+                <div style="background: rgba(43, 124, 255, 0.1); border: 1px solid var(--hoch-blue); padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 12px;">
+                    👑 <strong>Final Approval Authority:</strong> <span style="color:#fff; font-weight:700;">Michael Hoch</span> (Founder & Owner)
+                    <div style="font-size:10px; color:var(--hoch-muted); margin-top:2px;">Day-to-day operations are delegated to AI Executives. Michael Hoch holds absolute veto and signing authority on all high-risk releases.</div>
+                </div>
+
+                <!-- Org chart representation -->
+                <div style="font-size:11px; color:#a2a7b8; margin-bottom:15px; border:1px solid rgba(255,255,255,0.05); border-radius:8px; padding:12px; background:rgba(0,0,0,0.2);">
+                    <strong style="color:var(--hoch-cyan);">AI Reporting Hierarchy:</strong>
+                    <div style="margin-top:8px; line-height:1.6;">
+                        • <strong>Michael Hoch</strong> (Owner)<br>
+                        &nbsp;&nbsp; ├── <strong>AI Chief Operating Officer</strong> (HAS Commander) → Operations<br>
+                        &nbsp;&nbsp; │&nbsp;&nbsp;&nbsp;&nbsp; ├── <strong>AI Technical Director</strong> & <strong>AI Product Officer</strong><br>
+                        &nbsp;&nbsp; │&nbsp;&nbsp;&nbsp;&nbsp; └── <strong>AI Security & Compliance Officer</strong><br>
+                        &nbsp;&nbsp; ├── <strong>AI Chief Financial Officer</strong> (HASF Finance Manager) → Finance<br>
+                        &nbsp;&nbsp; │&nbsp;&nbsp;&nbsp;&nbsp; └── <strong>AI Growth & Launch Director</strong><br>
+                        &nbsp;&nbsp; └── <strong>AI QA & Release Authority</strong> & <strong>AI Chief of Staff</strong>
+                    </div>
+                </div>
+
+                <!-- AI Executives Container -->
+                <div id="ai-executives-container" style="max-height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+
+            <!-- 2. Authority Boundaries Panel -->
+            <div class="card" id="authority-boundaries-panel" style="background: var(--hoch-panel); border: 2px solid var(--hoch-border); border-radius: 16px; padding: 20px; box-shadow: 0 0 30px rgba(34, 246, 255, 0.05); position: relative; overflow: hidden; box-sizing: border-box;">
+                <h3 style="margin-top:0; color:var(--hoch-amber);">Authority & Governance Boundaries</h3>
+                
+                <div style="display: grid; grid-template-columns: 1fr; gap: 15px;">
+                    <div style="background: rgba(57, 255, 136, 0.06); border: 1px solid var(--hoch-green); padding: 12px; border-radius: 8px;">
+                        <h4 style="margin-top:0; margin-bottom:8px; color:var(--hoch-green); font-size:12px;">✅ Autonomous Execution Allowed (Without Human Gate)</h4>
+                        <ul style="margin:0; padding-left:15px; font-size:11px; line-height:1.5; color:var(--hoch-muted);">
+                            <li>Read-only state scanning and telemetry gathering</li>
+                            <li>Compute node matching and pod placement updates</li>
+                            <li>Running Playwright E2E testing suites</li>
+                            <li>Simulating ROI scenario parameters and CAC checks</li>
+                        </ul>
+                    </div>
+
+                    <div style="background: rgba(255, 59, 92, 0.06); border: 1px solid var(--hoch-red); padding: 12px; border-radius: 8px;">
+                        <h4 style="margin-top:0; margin-bottom:8px; color:var(--hoch-red); font-size:12px;">🚨 Human Approval REQUIRED (Michael Hoch Signature Gate)</h4>
+                        <ul style="margin:0; padding-left:15px; font-size:11px; line-height:1.5; color:var(--hoch-muted);">
+                            <li>Production deployment of Stripe monetization code (W12)</li>
+                            <li>Modifying pricing model tiers and ARPU levels</li>
+                            <li>Destructive commands (file deletion, container termination)</li>
+                            <li>Promoting release candidate git tags</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; font-size: 11px;">
+                    Evidence Links: 
+                    <a href="/view-doc?path=docs/business/hasf-ai-authority-boundaries.md" style="color: var(--hoch-cyan); text-decoration: underline;" target="_blank">Authority Boundaries Docs</a> |
+                    <a href="/view-doc?path=docs/business/hasf-ai-business-operating-model.md" style="color: var(--hoch-cyan); text-decoration: underline;" target="_blank">Business Operating Model</a>
+                </div>
+            </div>
+
+            <!-- 3. Finance Operations Panel -->
+            <div class="card" id="finance-operations-panel" style="background: var(--hoch-panel); border: 2px solid var(--hoch-border); border-radius: 16px; padding: 20px; box-shadow: 0 0 30px rgba(34, 246, 255, 0.05); position: relative; overflow: hidden; box-sizing: border-box;">
+                <h3 style="margin-top:0; color:var(--hoch-cyan); display:flex; justify-content:space-between; align-items:center;">
+                    <span>Finance Manager & Analyst Assignments</span>
+                    <span id="finance-registry-freshness-badge" class="badge">UNKNOWN</span>
+                </h3>
+                
+                <div style="margin-bottom: 12px; font-size: 11px;">
+                    Brief Link: 
+                    <a href="/view-doc?path=docs/evidence/business/finance-operations-brief.md" style="color: var(--hoch-cyan); text-decoration: underline;" target="_blank">Finance Operations Brief Evidence</a>
+                </div>
+
+                <!-- Stripe monetization status and dependency block -->
+                <div style="background: rgba(255, 176, 32, 0.08); border: 1px solid var(--hoch-amber); padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 11px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <strong>Stripe / W12 Monetization Dependency:</strong>
+                        <div style="color:var(--hoch-muted); margin-top:2px;">Requires checkout verification to unlock goal completion.</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <span id="fin-stripe-status-pill" class="badge badge-warn">PENDING</span>
+                    </div>
+                </div>
+
+                <div id="finance-agents-container" style="max-height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+
+            <!-- 4. Epic Fury ROI Projections Panel -->
+            <div class="card" id="epic-fury-roi-panel" style="background: var(--hoch-panel); border: 2px solid var(--hoch-border); border-radius: 16px; padding: 20px; box-shadow: 0 0 30px rgba(34, 246, 255, 0.05); position: relative; overflow: hidden; box-sizing: border-box;">
+                <h3 style="margin-top:0; color:var(--hoch-cyan); display:flex; justify-content:space-between; align-items:center;">
+                    <span>Epic Fury ROI Model Scenarios</span>
+                    <span id="roi-model-freshness-badge" class="badge">UNKNOWN</span>
+                </h3>
+                
+                <div style="margin-bottom: 12px; font-size: 11px;">
+                    Pricing Link: 
+                    <a href="/view-doc?path=docs/business/epic-fury-pricing-model.md" style="color: var(--hoch-cyan); text-decoration: underline;" target="_blank">Pricing Tiers</a> | 
+                    <a href="/view-doc?path=docs/business/epic-fury-unit-economics.md" style="color: var(--hoch-cyan); text-decoration: underline;" target="_blank">Unit Economics Model</a>
+                </div>
+
+                <div style="overflow-x:auto; width: 100%;">
+                    <table style="width:100%; border-collapse:collapse; font-size: 11px;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid rgba(255,255,255,0.05); text-align: left;">
+                                <th style="padding:8px; color:var(--hoch-cyan);">Scenario</th>
+                                <th style="padding:8px; color:var(--hoch-cyan);">Installs</th>
+                                <th style="padding:8px; color:var(--hoch-cyan);">Conv. %</th>
+                                <th style="padding:8px; color:var(--hoch-cyan);">MRR (M6)</th>
+                                <th style="padding:8px; color:var(--hoch-cyan);">Run Rate</th>
+                                <th style="padding:8px; color:var(--hoch-cyan);">ROI</th>
+                            </tr>
+                        </thead>
+                        <tbody id="roi-scenarios-table-body">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="margin-top: 15px; font-size: 10px; color: var(--hoch-muted); line-height: 1.4; background: rgba(5,7,13,0.4); padding: 10px; border-radius: 8px;">
+                    <strong>Model Assumptions:</strong> Launch cost is estimated at $15,000. Operating costs are projected at $1,200/month. Net ARPU assumes tiered user packages.
+                </div>
+            </div>
+            
         </div>
 
         <!-- 5. Task List Table -->
@@ -4393,6 +4628,156 @@ def get_dashboard():
                             </div>
                         `;
                     });
+                }
+
+                // --- POPULATE AI EXECUTIVE LEADERSHIP AND FINANCE OPERATIONS PANEL ---
+                
+                // AI Leadership freshness
+                if (data.ai_leadership_freshness) {
+                    const badge = document.getElementById("ai-leadership-freshness-badge");
+                    if (badge) {
+                        badge.textContent = data.ai_leadership_freshness.freshness_state || "UNKNOWN";
+                        badge.className = "badge";
+                        if (data.ai_leadership_freshness.freshness_state === "FRESH") badge.classList.add("badge-success");
+                        else if (data.ai_leadership_freshness.freshness_state === "STALE") badge.classList.add("badge-warn");
+                        else badge.classList.add("badge-danger");
+                        badge.title = data.ai_leadership_freshness.stale_reason || "";
+                    }
+                }
+                
+                // Finance registry freshness
+                if (data.finance_registry_freshness) {
+                    const badge = document.getElementById("finance-registry-freshness-badge");
+                    if (badge) {
+                        badge.textContent = data.finance_registry_freshness.freshness_state || "UNKNOWN";
+                        badge.className = "badge";
+                        if (data.finance_registry_freshness.freshness_state === "FRESH") badge.classList.add("badge-success");
+                        else if (data.finance_registry_freshness.freshness_state === "STALE") badge.classList.add("badge-warn");
+                        else badge.classList.add("badge-danger");
+                        badge.title = data.finance_registry_freshness.stale_reason || "";
+                    }
+                }
+                
+                // ROI model freshness
+                if (data.roi_model_freshness) {
+                    const badge = document.getElementById("roi-model-freshness-badge");
+                    if (badge) {
+                        badge.textContent = data.roi_model_freshness.freshness_state || "UNKNOWN";
+                        badge.className = "badge";
+                        if (data.roi_model_freshness.freshness_state === "FRESH") badge.classList.add("badge-success");
+                        else if (data.roi_model_freshness.freshness_state === "STALE") badge.classList.add("badge-warn");
+                        else badge.classList.add("badge-danger");
+                        badge.title = data.roi_model_freshness.stale_reason || "";
+                    }
+                }
+
+                // Stripe monetization status / W12 blocker status
+                if (data.w12_blocker_status) {
+                    const stripePill = document.getElementById("fin-stripe-status-pill");
+                    if (stripePill) {
+                        const stripeStatus = data.w12_blocker_status.value || "PENDING";
+                        stripePill.textContent = stripeStatus;
+                        stripePill.className = "badge";
+                        if (stripeStatus === "COMPLIANT") {
+                            stripePill.classList.add("badge-success");
+                        } else if (stripeStatus === "PENDING" || stripeStatus === "STALE") {
+                            stripePill.classList.add("badge-warn");
+                        } else {
+                            stripePill.classList.add("badge-danger");
+                        }
+                    }
+                }
+
+                // AI Executives Grid
+                if (data.ai_executive_leadership) {
+                    const container = document.getElementById("ai-executives-container");
+                    if (container) {
+                        container.innerHTML = "";
+                        data.ai_executive_leadership.forEach(exec => {
+                            const statusColor = exec.status === "ACTIVE" ? "var(--hoch-green)" : "var(--hoch-muted)";
+                            const reportsHtml = exec.reports_to !== "None (Self)" && exec.reports_to !== "founder" ? ` | Reports to: <code>${exec.reports_to}</code>` : "";
+                            
+                            container.innerHTML += `
+                                <div style="background: rgba(5,7,13,0.5); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 10px; font-size: 11px;">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                                        <strong style="color: #fff; font-size:12px;">${exec.title}</strong>
+                                        <span style="font-size:10px; color:${statusColor}; font-weight:bold;">● ${exec.status}</span>
+                                    </div>
+                                    <div style="color:var(--hoch-muted); margin-bottom:4px;">
+                                        Human Equivalent: <strong>${exec.human_equivalent}</strong>${reportsHtml}
+                                    </div>
+                                    <div style="color:var(--text-secondary); margin-bottom:4px;">
+                                        Mission: ${exec.mission}
+                                    </div>
+                                    <div style="color:var(--hoch-cyan);">
+                                        Authority: <strong>${exec.authority_level}</strong>
+                                    </div>
+                                    <div style="margin-top:5px; font-size:10px; color:var(--hoch-muted);">
+                                        Assigned: <code>${exec.assigned_agents.join(", ")}</code>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
+                }
+
+                // Finance Agent Assignments
+                if (data.finance_agent_assignments) {
+                    const container = document.getElementById("finance-agents-container");
+                    if (container) {
+                        container.innerHTML = "";
+                        data.finance_agent_assignments.forEach(agent => {
+                            const statusColor = agent.status === "ACTIVE" ? "var(--hoch-green)" : "var(--hoch-muted)";
+                            container.innerHTML += `
+                                <div style="background: rgba(5,7,13,0.5); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 10px; font-size: 11px;">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                                        <strong style="color: #fff; font-size:12px;">${agent.title}</strong>
+                                        <span style="font-size:10px; color:${statusColor}; font-weight:bold;">● ${agent.status}</span>
+                                    </div>
+                                    <div style="color:var(--hoch-muted); margin-bottom:4px;">
+                                        Scope: <strong>${agent.product_scope}</strong> | Cadence: <code>${agent.cadence}</code>
+                                    </div>
+                                    <div style="color:var(--text-secondary); margin-bottom:4px;">
+                                        Responsibilities: ${agent.responsibilities.join("; ")}
+                                    </div>
+                                    <div style="color:var(--hoch-cyan);">
+                                        Decision Rights: <em>${agent.decision_rights.join(", ")}</em>
+                                    </div>
+                                    <div style="font-size:10px; color:var(--hoch-amber); margin-top:2px;">
+                                        Requires approval for: ${agent.approval_required_for.join(", ") || "None"}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
+                }
+
+                // Epic Fury ROI Scenarios Table
+                if (data.epic_fury_roi_model && data.epic_fury_roi_model.scenarios) {
+                    const tbody = document.getElementById("roi-scenarios-table-body");
+                    if (tbody) {
+                        tbody.innerHTML = "";
+                        data.epic_fury_roi_model.scenarios.forEach(sc => {
+                            const roiColor = sc.roi_estimate >= 0 ? "var(--hoch-green)" : "var(--hoch-red)";
+                            const installsFormatted = sc.monthly_installs.toLocaleString();
+                            const mrrFormatted = sc.month_6_mrr.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                            const runRateFormatted = sc.annualized_run_rate.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                            
+                            const convRateStr = sc.paid_conversion_rate.toString().replace("%", "") + "%";
+                            const roiStr = sc.roi_estimate.toString().replace("%", "") + "%";
+
+                            tbody.innerHTML += `
+                                <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                                    <td style="padding:8px; font-weight:bold; color:#fff;">${sc.name}</td>
+                                    <td style="padding:8px; color:var(--hoch-muted);">${installsFormatted}</td>
+                                    <td style="padding:8px; color:var(--hoch-muted);">${convRateStr}</td>
+                                    <td style="padding:8px; color:#fff;">$${mrrFormatted}</td>
+                                    <td style="padding:8px; color:#fff;">$${runRateFormatted}</td>
+                                    <td style="padding:8px; font-weight:bold; color:${roiColor};">${roiStr}</td>
+                                </tr>
+                            `;
+                        });
+                    }
                 }
 
                 if (isFirstLoad) {

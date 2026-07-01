@@ -74,13 +74,13 @@ test.describe('RC49.6 HOCH PODS Visual Fidelity & Cockpit Layout E2E Tests', () 
         const nodeMatrix = page.locator('#hoch-nodes-card-matrix');
         await expect(nodeMatrix).toBeVisible();
         const nodeCards = nodeMatrix.locator('.compute-node-card');
-        expect(await nodeCards.count()).toBeGreaterThanOrEqual(5);
+        expect(await nodeCards.count()).toBeGreaterThanOrEqual(3);
 
         // Check that table rows exist
         const tableBody = page.locator('#hoch-nodes-table-body');
         await expect(tableBody).toBeVisible();
         const rows = tableBody.locator('tr');
-        expect(await rows.count()).toBeGreaterThanOrEqual(5);
+        expect(await rows.count()).toBeGreaterThanOrEqual(3);
 
         // Verify evidence links
         const healthEvidenceLink = page.locator('a[href*="hoch-compute-node-health.md"]');

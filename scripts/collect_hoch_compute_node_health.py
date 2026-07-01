@@ -165,10 +165,7 @@ def main():
             # Remote/manual nodes. We never fake status.
             status = "UNKNOWN"
             status_reason = "No telemetry ping response. Manual verification required."
-            if node_id in ["m4-mbp", "imac-24", "dell-neo"]:
-                status = "DEGRADED"
-                status_reason = "Node offline. Daemon inactive."
-            elif node_id == "docker-runtime":
+            if node_id == "docker-runtime":
                 # Docker is available locally, we can mark local docker runtime as ONLINE
                 if local_health["tools_available"]["docker"]:
                     status = "ONLINE"
@@ -176,13 +173,6 @@ def main():
                 else:
                     status = "DEGRADED"
                     status_reason = "Local docker daemon unreachable."
-            elif node_id == "local-models":
-                if local_health["model_endpoints_available"]["ollama_lmstudio"]:
-                    status = "ONLINE"
-                    status_reason = "LM Studio / Ollama port responsive."
-                else:
-                    status = "DEGRADED"
-                    status_reason = "Local model server ports closed."
 
             health_records.append({
                 "node_id": node_id,
