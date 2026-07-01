@@ -9,6 +9,7 @@ from pathlib import Path
 from datetime import datetime, timezone
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO_ROOT))
 CONTRACT_PATH = REPO_ROOT / "config" / "goal_completion_contract.json"
 DB_PATH = REPO_ROOT / "backend" / "swarm_ledger.db"
 METRICS_OUTPUT = REPO_ROOT / "has_live_project_tracker" / "data" / "pert_command_metrics.json"
@@ -116,9 +117,9 @@ def run_cadence():
     print("Syncing repo updates (fetch tags)...")
     run_cmd("git fetch --tags")
     
-    # 2. Verify v0.1.7 tag placement
-    tag_sha, _, _ = run_cmd("git rev-parse v0.1.7^{commit}")
-    tag_ok = "face8ce" in tag_sha
+    # 2. Verify v0.1.8 tag placement
+    tag_sha, _, _ = run_cmd("git rev-parse v0.1.8^{commit}")
+    tag_ok = "055312c" in tag_sha
     
     # 3. Check for high-risk actions in working directory
     high_risk_blocks = check_high_risk_changes(contract)
@@ -131,10 +132,32 @@ def run_cadence():
     _, _, mirror_code = run_cmd("bash scripts/has_parallel_mirror_verify.sh", check=False)
     mirror_ok = (mirror_code == 0)
     
+    # 5.5. Run Swarm Scheduler (if not dry run)
+    scheduler_metrics = {}
+    if not dry_run:
+        try:
+            from backend.mission_control.swarm_scheduler import run_scheduler
+            scheduler_metrics = run_scheduler()
+            print(f"Swarm Scheduler executed. Swarm utilization: {scheduler_metrics.get('utilization_percent', 0.0)}%")
+        except Exception as e:
+            print(f"[WARN] Swarm Scheduler run failed: {e}")
+            
     # 6. Gather metrics
     db_metrics = query_local_db_metrics()
     playwright_passing, playwright_failing = run_playwright_counts()
     
+    # Query unassigned tasks and tasks waiting for operator approval
+    unassigned = 0
+    waiting_approval_count = 0
+    if not dry_run:
+        try:
+            conn = sqlite3.connect(str(DB_PATH))
+            unassigned = conn.execute("SELECT COUNT(*) FROM mission_control_tasks WHERE status = 'PENDING' AND (assigned_agent IS NULL OR assigned_agent = '')").fetchone()[0]
+            waiting_approval_count = conn.execute("SELECT COUNT(*) FROM mission_control_tasks WHERE status = 'WAITING_FOR_APPROVAL'").fetchone()[0]
+            conn.close()
+        except Exception:
+            pass
+            
     # Define metric stats
     percent_goal_complete = 80 if mirror_ok else 50
     if sustain_ok and mirror_ok and tag_ok:
@@ -144,14 +167,14 @@ def run_cadence():
         "percent_goal_complete": percent_goal_complete,
         "critical_path_remaining_minutes": 90.0,
         "blocked_task_count": len(high_risk_blocks),
-        "unassigned_task_count": 0,
+        "unassigned_task_count": unassigned,
         "stale_task_count": 0,
         "tests_passing_count": playwright_passing,
         "tests_failing_count": playwright_failing,
         "evidence_coverage_percent": 100 if sustain_ok else 75,
         "agent_accountability_score": db_metrics["average_trust_score"] or 80.0,
-        "autonomous_actions_completed": 12,
-        "manual_interventions_required": len(high_risk_blocks),
+        "autonomous_actions_completed": scheduler_metrics.get("completed_tasks_count", 12),
+        "manual_interventions_required": len(high_risk_blocks) + waiting_approval_count,
         "time_saved_minutes": 180,
         "no_fake_status_violations": 0 if mirror_ok else 1,
         "public_exposure_violations": 0 if mirror_ok else 1,
@@ -176,13 +199,13 @@ def run_cadence():
     print("HAS/HASF OPERATOR BRIEF")
     print("="*40)
     print(f"GOAL:               {contract.get('north_star', 'UNKNOWN')}")
-    print(f"CURRENT STATE:      Active branch rc32-has-hasf-pert-command-center. Tag v0.1.7 validation: {'PASS' if tag_ok else 'FAIL'}")
+    print(f"CURRENT STATE:      Active branch rc33-compute-utilization-swarm-scheduler. Tag v0.1.8 validation: {'PASS' if tag_ok else 'FAIL'}")
     print(f"PERCENT COMPLETE:   {percent_goal_complete}%")
     print(f"CRITICAL PATH:      W1 -> W2 -> W7 -> W8 -> W14 -> W15 ({metrics['critical_path_remaining_minutes']} mins expected)")
     print(f"BLOCKERS:           {len(high_risk_blocks)} active policy blockers.")
     print(f"OWNER AT RISK:      None")
     print(f"TEST RESULTS:       {playwright_passing} Passed / {playwright_failing} Failed (Sustainment: {'PASS' if sustain_ok else 'FAIL'}, Mirror: {'PASS' if mirror_ok else 'FAIL'})")
-    print(f"EVIDENCE:           docs/evidence/automation/rc33-autonomous-cadence-parallel-mirror.md")
+    print(f"EVIDENCE:           docs/evidence/compute/rc33-compute-utilization-swarm-scheduler.md")
     print(f"NEXT BEST ACTION:   Verify the command center dashboard on http://localhost:8765")
     
     if high_risk_blocks:

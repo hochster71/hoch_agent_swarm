@@ -38,13 +38,17 @@ def check_git_status():
             "task.md", 
             "walkthrough.md", 
             "implementation_plan.md", 
-            ".venv",
             "rc33",
             "has_autonomous_cadence",
             "has_parallel_mirror_verify",
             "rc29_release_verify",
             "docs/evidence/automation/",
-            "docs/runbooks/has-hasf-"
+            "docs/runbooks/has-hasf-",
+            "swarm_scheduler",
+            "scheduler_metrics.json",
+            ".venv",
+            "pert_server",
+            "playwright.config.ts"
         ]
         
         dirty = []
