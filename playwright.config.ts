@@ -36,6 +36,7 @@ export default defineConfig({
     "**/rc36-worker-dashboard.spec.ts",
     "**/rc37-dispatch-metrics.spec.ts",
     "**/rc38-goal-readiness.spec.ts",
+    "**/rc39-telemetry-truth.spec.ts",
   ],
   timeout: 45_000,
   fullyParallel: false,

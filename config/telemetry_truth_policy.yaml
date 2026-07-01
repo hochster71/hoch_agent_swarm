@@ -1,0 +1,32 @@
+# config/telemetry_truth_policy.yaml
+policy_version: "1.0.0"
+telemetry_truth:
+  required_fields:
+    - backend_status
+    - relay_status
+    - port_public_closed
+    - tests_passing
+    - tests_failing
+    - evidence_coverage
+    - accountability_score
+    - time_saved
+    - active_workers_count
+    - total_workers_count
+    - worker_statuses
+    - job_dispatch_history
+    - goal_completion_percent
+    - monetization_readiness_percent
+    - stripe_sandbox_readiness
+    - high_risk_approval_queue
+    - manual_intervention_queue
+    - guardrail_violations
+  schema_requirements:
+    - value
+    - source
+    - last_updated
+    - freshness
+    - confidence
+    - fallback_state
+  freshness_thresholds:
+    default_max_minutes: 10
+    telemetry_logs_max_minutes: 10
