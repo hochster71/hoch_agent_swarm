@@ -1,0 +1,14 @@
+posture: SECURE
+verified_at: "2026-07-01T09:16:00-05:00"
+verified_by: "michael.b.hoch"
+notes: "ACL configured on Tailscale Admin Console to enforce deny-by-default between worker nodes."
+devices:
+  michaels-macbook-pro:
+    tailscale_ip: "100.103.155.4"
+    access: ALLOWED
+  hoch-relay-001:
+    tailscale_ip: "100.87.18.15"
+    access: PRIVATE_ONLY
+  iphone-15-pro-max:
+    tailscale_ip: "100.102.221.87"
+    access: MONITOR_ONLY

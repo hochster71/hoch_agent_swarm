@@ -538,6 +538,50 @@ def get_pert_data():
         except Exception:
             pass
 
+    # Load usage metrics
+    usage = {
+        "ag_usage_risk": "LOW",
+        "files_changed_this_cycle": 0,
+        "elapsed_minutes_this_cycle": 0,
+        "new_scripts_count": 0,
+        "new_tests_count": 0
+    }
+    usage_file = os.path.join(get_project_root(), "has_live_project_tracker", "data", "usage_metrics.json")
+    if os.path.exists(usage_file):
+        try:
+            with open(usage_file, "r") as f:
+                usage.update(json.load(f))
+        except Exception:
+            pass
+
+    # Load guardrail metrics
+    guardrails = {
+        "security_guardrail_violations": 0,
+        "public_exposure_violations": 0,
+        "fake_status_violations": 0,
+        "approval_required_count": 0
+    }
+    guardrails_file = os.path.join(get_project_root(), "has_live_project_tracker", "data", "guardrail_metrics.json")
+    if os.path.exists(guardrails_file):
+        try:
+            with open(guardrails_file, "r") as f:
+                guardrails.update(json.load(f))
+        except Exception:
+            pass
+
+    # Load job queue
+    job_queue = {
+        "local_compute_jobs_completed": 0,
+        "local_compute_jobs_queued": 0
+    }
+    job_queue_file = os.path.join(get_project_root(), "has_live_project_tracker", "data", "job_queue.json")
+    if os.path.exists(job_queue_file):
+        try:
+            with open(job_queue_file, "r") as f:
+                job_queue.update(json.load(f))
+        except Exception:
+            pass
+
     return {
         "readiness": {
             "score": metrics["percent_goal_complete"],
@@ -548,6 +592,19 @@ def get_pert_data():
         "contract": contract,
         "metrics": metrics,
         "scheduler": scheduler,
+        "guardrails": {
+            "ag_usage_risk": usage["ag_usage_risk"],
+            "files_changed_this_cycle": usage["files_changed_this_cycle"],
+            "elapsed_minutes_this_cycle": usage["elapsed_minutes_this_cycle"],
+            "local_compute_jobs_queued": job_queue["local_compute_jobs_queued"],
+            "local_compute_jobs_completed": job_queue["local_compute_jobs_completed"],
+            "security_guardrail_violations": guardrails["security_guardrail_violations"],
+            "approval_required_count": guardrails["approval_required_count"],
+            "public_exposure_violations": guardrails["public_exposure_violations"],
+            "fake_status_violations": guardrails["fake_status_violations"],
+            "goal_progress_percent": metrics["percent_goal_complete"],
+            "critical_path_minutes_remaining": pert_cpm["expected_duration"]
+        },
         "pert_cpm": pert_cpm,
         "agents": agent_scores,
         "doctrine_rules_count": rules_count,
@@ -562,7 +619,8 @@ def get_pert_data():
             {"rc": "RC28", "desc": "Mission execution E2E proof", "url": f"file://{get_project_root()}/docs/evidence/compute/rc28-mission-execution-proof.md"},
             {"rc": "RC29", "desc": "RC25-RC28 release consolidation", "url": f"file://{get_project_root()}/docs/evidence/compute/rc29-release-consolidation.md"},
             {"rc": "RC31", "desc": "Production runtime sustainment proof", "url": f"file://{get_project_root()}/docs/evidence/runtime/rc31-production-runtime-sustainment.md"},
-            {"rc": "RC33", "desc": "Swarm scheduler utilization proof", "url": f"file://{get_project_root()}/docs/evidence/compute/rc33-compute-utilization-swarm-scheduler.md"}
+            {"rc": "RC33", "desc": "Swarm scheduler utilization proof", "url": f"file://{get_project_root()}/docs/evidence/compute/rc33-compute-utilization-swarm-scheduler.md"},
+            {"rc": "RC34", "desc": "Usage budget and secure guardrails", "url": f"file://{get_project_root()}/docs/evidence/automation/rc34-usage-budget-secure-build-guardrails.md"}
         ]
     }
 
@@ -896,6 +954,19 @@ def get_dashboard():
             </div>
         </div>
 
+        <!-- 10.5. Usage Budget & Secure Build Guardrails -->
+        <div class="card col-6" id="usage-budget-panel">
+            <h3 style="margin-top:0;">Usage Budget & Guardrails</h3>
+            <p>AG Quota Usage Risk: <strong id="ag-usage-risk" style="color:var(--accent-teal);">LOW</strong></p>
+            <ul style="padding-left:20px; font-size:13px; line-height:1.8;">
+                <li>Files Changed This Cycle: <strong id="files-changed-cycle" style="color:var(--accent-yellow);">0</strong></li>
+                <li>Elapsed Cycle Minutes: <strong id="elapsed-minutes" style="color:var(--accent-teal);">0</strong></li>
+                <li>Local Compute Jobs Queued: <strong id="local-jobs-queued" style="color:var(--accent-blue);">0</strong></li>
+                <li>Local Compute Jobs Completed: <strong id="local-jobs-completed" style="color:var(--accent-teal);">0</strong></li>
+                <li>Security Guardrail Violations: <strong id="guardrail-violations" style="color:var(--accent-teal);">0</strong></li>
+            </ul>
+        </div>
+
         <!-- 11. Release Gates -->
         <div class="card col-6" id="release-gates-panel">
             <h3 style="margin-top:0;">Release Gates Check</h3>
@@ -988,6 +1059,30 @@ def get_dashboard():
                         approvalQueueList.innerHTML += `<p><strong>${item.id}:</strong> ${item.action}</p>`;
                         manualQueueList.innerHTML += `<p style='color:var(--accent-red);'><strong>[BLOCKED]</strong> Awaiting operator input for ${item.id}</p>`;
                     });
+                }
+
+                // Usage budget updates
+                const gd = data.guardrails || {};
+                const usageRisk = document.getElementById("ag-usage-risk");
+                usageRisk.textContent = gd.ag_usage_risk || "LOW";
+                if (gd.ag_usage_risk === "HIGH") {
+                    usageRisk.style.color = "var(--accent-red)";
+                } else if (gd.ag_usage_risk === "MEDIUM") {
+                    usageRisk.style.color = "var(--accent-yellow)";
+                } else {
+                    usageRisk.style.color = "var(--accent-teal)";
+                }
+                document.getElementById("files-changed-cycle").textContent = gd.files_changed_this_cycle || 0;
+                document.getElementById("elapsed-minutes").textContent = gd.elapsed_minutes_this_cycle || 0;
+                document.getElementById("local-jobs-queued").textContent = gd.local_compute_jobs_queued || 0;
+                document.getElementById("local-jobs-completed").textContent = gd.local_compute_jobs_completed || 0;
+                
+                const violationsEl = document.getElementById("guardrail-violations");
+                violationsEl.textContent = gd.security_guardrail_violations || 0;
+                if (gd.security_guardrail_violations > 0) {
+                    violationsEl.style.color = "var(--accent-red)";
+                } else {
+                    violationsEl.style.color = "var(--accent-teal)";
                 }
 
                 // Risks & Blockers list
