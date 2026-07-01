@@ -38,6 +38,7 @@ export default defineConfig({
     "**/rc38-goal-readiness.spec.ts",
     "**/rc39-telemetry-truth.spec.ts",
     "**/rc39-qa-audit-alignment.spec.ts",
+    "**/rc40-compute-gap-pert.spec.ts",
   ],
   timeout: 45_000,
   fullyParallel: false,

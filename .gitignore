@@ -71,6 +71,7 @@ has_live_project_tracker/data/pert_command_metrics.json
 has_live_project_tracker/data/usage_metrics.json
 has_live_project_tracker/data/guardrail_metrics.json
 has_live_project_tracker/data/job_queue.json
+has_live_project_tracker/data/compute_gap_metrics.json
 
 # Tracker local backups & archived dead code
 has_live_project_tracker/backups/
