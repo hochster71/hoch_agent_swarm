@@ -1,6 +1,6 @@
 # Finance Operations Brief — HASF Governance & ROI
 
-*Generated At: 2026-07-01T22:48:46.290717+00:00Z*
+*Generated At: 2026-07-01T23:13:26.678488+00:00Z*
 *Operational Authority: AI Chief Financial Officer — HASF Finance Manager*
 
 ---

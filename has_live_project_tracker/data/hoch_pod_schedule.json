@@ -17,7 +17,7 @@
       "osv-scanner"
     ],
     "justification_rationale": "Assigned to M5-Pro-MBP. Reason: Compatible. Node status: ONLINE, matched tools: 4.",
-    "last_scheduled_at": "2026-07-01T23:03:31.995642+00:00Z"
+    "last_scheduled_at": "2026-07-01T23:13:27.586764+00:00Z"
   },
   {
     "pod_id": "pod-qa",
@@ -35,7 +35,7 @@
       "npm-test"
     ],
     "justification_rationale": "Assigned to M5-Pro-MBP. Reason: Compatible. Node status: ONLINE, matched tools: 2.",
-    "last_scheduled_at": "2026-07-01T23:03:31.995778+00:00Z"
+    "last_scheduled_at": "2026-07-01T23:13:27.586865+00:00Z"
   },
   {
     "pod_id": "pod-builder",
@@ -53,7 +53,7 @@
       "tsc"
     ],
     "justification_rationale": "Assigned to M5-Pro-MBP. Reason: Compatible. Node status: ONLINE, matched tools: 1.",
-    "last_scheduled_at": "2026-07-01T23:03:31.995786+00:00Z"
+    "last_scheduled_at": "2026-07-01T23:13:27.586872+00:00Z"
   },
   {
     "pod_id": "pod-revenue",
@@ -71,7 +71,7 @@
       "curl"
     ],
     "justification_rationale": "Assigned to M5-Pro-MBP. Reason: Compatible. Node status: ONLINE, matched tools: 1.",
-    "last_scheduled_at": "2026-07-01T23:03:31.995790+00:00Z"
+    "last_scheduled_at": "2026-07-01T23:13:27.586876+00:00Z"
   },
   {
     "pod_id": "pod-audit",
@@ -89,7 +89,7 @@
       "sha256sum"
     ],
     "justification_rationale": "Assigned to M5-Pro-MBP. Reason: Compatible. Node status: ONLINE, matched tools: 2.",
-    "last_scheduled_at": "2026-07-01T23:03:31.995794+00:00Z"
+    "last_scheduled_at": "2026-07-01T23:13:27.586879+00:00Z"
   },
   {
     "pod_id": "pod-research",
@@ -107,7 +107,7 @@
       "fetch-url"
     ],
     "justification_rationale": "Pod is DORMANT. No compute resources allocated.",
-    "last_scheduled_at": "2026-07-01T23:03:31.995795+00:00Z"
+    "last_scheduled_at": "2026-07-01T23:13:27.586881+00:00Z"
   },
   {
     "pod_id": "pod-deploy",
@@ -125,6 +125,6 @@
       "vercel-cli"
     ],
     "justification_rationale": "Assigned to M5-Pro-MBP. Reason: Compatible. Node status: ONLINE, matched tools: 2.",
-    "last_scheduled_at": "2026-07-01T23:03:31.995799+00:00Z"
+    "last_scheduled_at": "2026-07-01T23:13:27.586885+00:00Z"
   }
 ]
