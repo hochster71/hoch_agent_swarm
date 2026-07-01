@@ -16,7 +16,9 @@ CORE_NODE_CAPABILITIES = {
     "IPHONE": ["mobile_dashboard"],
     "IPAD_PRO_11": ["mobile_dashboard", "approval_terminal"],
     "IPAD_MINI_1": ["mobile_dashboard", "approval_terminal"],
-    "IPAD_MINI_2": ["mobile_dashboard", "approval_terminal"]
+    "IPAD_MINI_2": ["mobile_dashboard", "approval_terminal"],
+    # RC26: VPS relay worker — relay/heartbeat/api only, never general compute
+    "RELAY-001": ["relay", "heartbeat", "api"],
 }
 
 def extract_required_capabilities(task_type: str, prompt: str, explicit_caps: list[str] = None) -> list[str]:
@@ -54,6 +56,11 @@ def extract_required_capabilities(task_type: str, prompt: str, explicit_caps: li
     # Check for mobile ui dashboard tasks
     if task_type == "mobile" or "mobile" in prompt_lower or "ui dashboard" in prompt_lower:
         req_caps.append("mobile_dashboard")
+        return req_caps
+
+    # RC26: Check for relay/heartbeat tasks — route to RELAY-001
+    if task_type in ("relay_forward", "heartbeat", "relay") or "relay" in prompt_lower or "heartbeat" in prompt_lower:
+        req_caps.append("relay")
         return req_caps
 
     # Default to general compute

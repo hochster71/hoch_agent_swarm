@@ -1,0 +1,24 @@
+{
+  "_meta": {
+    "schema": "hoch-relay-routing-policy-v1",
+    "epic": "RC26",
+    "created": "2026-07-01",
+    "note": "Routing policy for HAS-WORKER-RELAY-001. Relay worker handles relay_forward, heartbeat, and relay task types only. Public port 3012 is never exposed."
+  },
+  "schema_version": "1.0",
+  "worker_id": "HAS-WORKER-RELAY-001",
+  "node_id": "RELAY-001",
+  "eligible_task_types": ["relay_forward", "heartbeat", "relay"],
+  "eligible_capabilities": ["relay", "heartbeat", "api"],
+  "routing_priority": 0.5,
+  "fallback_node": "L1",
+  "constraints": {
+    "require_tailscale": true,
+    "port_public_exposed": false,
+    "max_concurrent_tasks": 5,
+    "tailscale_ip": "100.87.18.15",
+    "relay_port": 3012
+  },
+  "approved_by": "operator",
+  "approved_at": "2026-07-01"
+}
