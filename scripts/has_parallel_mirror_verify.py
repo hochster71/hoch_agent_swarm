@@ -78,7 +78,20 @@ def check_git_status():
             "docs/design",
             "rc49_6_hoch_pods_visual_fidelity_verify.sh",
             "rc49_6-hoch-pods-visual-fidelity.spec.ts",
-            "rc49_5-telemetry-truth-freshness.spec.ts"
+            "rc49_7_compute_node_pruning_verify.sh",
+            "rc49_5-telemetry-truth-freshness.spec.ts",
+            "rc49_7-compute-node-pruning.spec.ts",
+            "docs/business",
+            "ai_executive_leadership.json",
+            "finance_agent_assignments.json",
+            "epic_fury_roi_model.json",
+            "rc50",
+            "generate_finance_operations_brief.py",
+            "finance_operations_brief.json",
+            "finance-operations-brief.md",
+            "rc39",
+            "hoch_compute_nodes_retired.json",
+            "rc49-hoch-pod-scheduler.spec.ts"
         ]
         
         dirty = []

@@ -1,0 +1,214 @@
+{
+  "generated_at": "2026-07-01T22:48:46.290717+00:00Z",
+  "monetization_state": {
+    "readiness_score": "100%",
+    "stripe_sandbox_readiness": "FAIL"
+  },
+  "w12_blocker_status": "PENDING",
+  "roi_scenarios": [
+    {
+      "scenario_id": "conservative",
+      "name": "Conservative",
+      "monthly_installs": 500,
+      "paid_conversion_rate": 2.0,
+      "paid_users_month_1": 10,
+      "projected_paid_users_month_6": 60,
+      "weighted_arpu": 19.99,
+      "estimated_net_arpu": 18.99,
+      "month_1_net_revenue": 189.9,
+      "month_6_mrr": 1139.4,
+      "annualized_run_rate": 13672.8,
+      "launch_cost_assumption": 15000.0,
+      "monthly_operating_cost_assumption": 1200.0,
+      "roi_estimate": -35.0,
+      "assumptions": [
+        "Minimal user engagement",
+        "Higher support overhead",
+        "Lowest tier subscription preference"
+      ],
+      "risks": [
+        "Unfavorable reviews on initial store launch",
+        "Delayed marketing rollout"
+      ],
+      "required_validation": [
+        "Verify Stripe basic checkout functionality in test sandbox"
+      ],
+      "evidence_links": [
+        "docs/business/epic-fury-roi-projection.md"
+      ]
+    },
+    {
+      "scenario_id": "realistic",
+      "name": "Realistic",
+      "monthly_installs": 2000,
+      "paid_conversion_rate": 3.5,
+      "paid_users_month_1": 70,
+      "projected_paid_users_month_6": 420,
+      "weighted_arpu": 24.99,
+      "estimated_net_arpu": 23.74,
+      "month_1_net_revenue": 1661.8,
+      "month_6_mrr": 9970.8,
+      "annualized_run_rate": 119649.6,
+      "launch_cost_assumption": 15000.0,
+      "monthly_operating_cost_assumption": 1200.0,
+      "roi_estimate": 120.0,
+      "assumptions": [
+        "Moderate organic download conversions",
+        "Steady retention curves",
+        "Tier 2 (Pro) subscription tier selection mix"
+      ],
+      "risks": [
+        "Competitor pricing pressure",
+        "Stripe webhook delivery latency"
+      ],
+      "required_validation": [
+        "Verify Stripe webhook signature check code",
+        "Audit public port exposures on billing servers"
+      ],
+      "evidence_links": [
+        "docs/business/epic-fury-roi-projection.md"
+      ]
+    },
+    {
+      "scenario_id": "strong",
+      "name": "Strong",
+      "monthly_installs": 5000,
+      "paid_conversion_rate": 5.0,
+      "paid_users_month_1": 250,
+      "projected_paid_users_month_6": 1500,
+      "weighted_arpu": 29.99,
+      "estimated_net_arpu": 28.49,
+      "month_1_net_revenue": 7122.5,
+      "month_6_mrr": 42735.0,
+      "annualized_run_rate": 512820.0,
+      "launch_cost_assumption": 15000.0,
+      "monthly_operating_cost_assumption": 1200.0,
+      "roi_estimate": 450.0,
+      "assumptions": [
+        "Strong product-market fit feedback loop",
+        "High retention curves",
+        "Balanced Pro and Enterprise tier user distribution mix"
+      ],
+      "risks": [
+        "Scaling limits on local database read capacities",
+        "Billing server hosting downtime"
+      ],
+      "required_validation": [
+        "Conduct stress load tests on webhook receivers",
+        "Verify double percent signs prevention in billing UI"
+      ],
+      "evidence_links": [
+        "docs/business/epic-fury-roi-projection.md"
+      ]
+    },
+    {
+      "scenario_id": "breakout",
+      "name": "Breakout",
+      "monthly_installs": 15000,
+      "paid_conversion_rate": 7.5,
+      "paid_users_month_1": 1125,
+      "projected_paid_users_month_6": 6750,
+      "weighted_arpu": 34.99,
+      "estimated_net_arpu": 33.24,
+      "month_1_net_revenue": 37395.0,
+      "month_6_mrr": 224370.0,
+      "annualized_run_rate": 2692440.0,
+      "launch_cost_assumption": 15000.0,
+      "monthly_operating_cost_assumption": 1200.0,
+      "roi_estimate": 1800.0,
+      "assumptions": [
+        "Exponential viral coefficient growth loops",
+        "Near-zero churn rates",
+        "Heavy enterprise subscription tier selection mix"
+      ],
+      "risks": [
+        "Substantial API token consumption billing costs",
+        "Severe regulatory audit compliance requirements"
+      ],
+      "required_validation": [
+        "Enforce strict rate limits on payment routes",
+        "Run full E2E Playwright test suite gates before deploy promotion"
+      ],
+      "evidence_links": [
+        "docs/business/epic-fury-roi-projection.md"
+      ]
+    }
+  ],
+  "next_actions": [
+    {
+      "rank": 1,
+      "title": "Resolve Missing Primary Repository Directory",
+      "description": "Establish the project repository directory and link it into primary builds for HASF discovery.",
+      "status": "READY"
+    },
+    {
+      "rank": 2,
+      "title": "Implement Stripe Billing Integration",
+      "description": "Configure Stripe client libraries and set up test/live api keys for payment flows.",
+      "status": "BLOCKED"
+    },
+    {
+      "rank": 3,
+      "title": "Integrate IoT Telemetry Schema",
+      "description": "Define AWS IoT Core message schema and write ingestion handlers for telemetry payloads.",
+      "status": "BLOCKED"
+    },
+    {
+      "rank": 4,
+      "title": "Create Project Package Manifests",
+      "description": "Initialize package.json, requirements.txt, pyproject.toml, or Cargo.toml build descriptors.",
+      "status": "READY"
+    },
+    {
+      "rank": 5,
+      "title": "Define Monetization Strategy",
+      "description": "Formulate exact pricing models, API tier limits, or license agreements in markdown.",
+      "status": "READY"
+    },
+    {
+      "rank": 6,
+      "title": "Implement User Authentication System",
+      "description": "Set up secure sign-in, JWT session controls, and roles using Supabase Auth or native sessions.",
+      "status": "BLOCKED"
+    },
+    {
+      "rank": 7,
+      "title": "Link Project Path to Local Disk",
+      "description": "Configure the local file path for project repository assets to enable code inspection.",
+      "status": "READY"
+    },
+    {
+      "rank": 8,
+      "title": "Link Project Path to Local Disk",
+      "description": "Configure the local file path for project repository assets to enable code inspection.",
+      "status": "READY"
+    },
+    {
+      "rank": 9,
+      "title": "Create Deployment Configuration Files",
+      "description": "Write standard deployment descriptors like Dockerfile, vercel.json, or docker-compose.yml.",
+      "status": "BLOCKED"
+    },
+    {
+      "rank": 10,
+      "title": "Establish Project Git Repository",
+      "description": "Initialize a fresh git repository and push basic project structure to tracking origin.",
+      "status": "READY"
+    },
+    {
+      "rank": 11,
+      "title": "Restore Repository Source Code",
+      "description": "Populate missing source files, modules, and directories for project codebase.",
+      "status": "READY"
+    }
+  ],
+  "required_approvals": [
+    "Stripe live credentials configuration deployment",
+    "Promotion of release candidate tag v0.1.14-ai-business-structure",
+    "Final sign-off on Epic Fury pricing tiers base rates change"
+  ],
+  "evidence_links": [
+    "docs/business/epic-fury-roi-projection.md",
+    "docs/evidence/business/project-revenue-readiness-audit.md"
+  ]
+}

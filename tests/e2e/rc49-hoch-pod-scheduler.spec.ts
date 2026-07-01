@@ -11,7 +11,7 @@ test.describe('RC49 HOCH PODS Compute Scheduler & Node Health E2E Tests', () => 
         // Assert compute nodes registry
         expect(data.hoch_compute_nodes).toBeDefined();
         expect(Array.isArray(data.hoch_compute_nodes)).toBeTruthy();
-        expect(data.hoch_compute_nodes.length).toBeGreaterThanOrEqual(5);
+        expect(data.hoch_compute_nodes.length).toBeGreaterThanOrEqual(3);
         
         const mbp = data.hoch_compute_nodes.find(n => n.node_id === 'm5-pro-mbp');
         expect(mbp).toBeDefined();
@@ -21,7 +21,7 @@ test.describe('RC49 HOCH PODS Compute Scheduler & Node Health E2E Tests', () => 
         // Assert compute node health authority
         expect(data.hoch_compute_node_health).toBeDefined();
         expect(Array.isArray(data.hoch_compute_node_health)).toBeTruthy();
-        expect(data.hoch_compute_node_health.length).toBeGreaterThanOrEqual(5);
+        expect(data.hoch_compute_node_health.length).toBeGreaterThanOrEqual(3);
         
         const mbpHealth = data.hoch_compute_node_health.find(h => h.node_id === 'm5-pro-mbp');
         expect(mbpHealth).toBeDefined();
@@ -49,18 +49,14 @@ test.describe('RC49 HOCH PODS Compute Scheduler & Node Health E2E Tests', () => 
         const nodesTable = page.locator('#hoch-nodes-table-body');
         await expect(nodesTable).toBeVisible();
         
-        // Verify we render at least 5 nodes
+        // Verify we render at least 3 nodes
         const rows = nodesTable.locator('tr');
         const rowCount = await rows.count();
-        expect(rowCount).toBeGreaterThanOrEqual(5);
+        expect(rowCount).toBeGreaterThanOrEqual(3);
         
         // Verify specific nodes and status are visible
         await expect(nodesTable).toContainText('M5-Pro-MBP');
-        await expect(nodesTable).toContainText('M4-MBP');
-        await expect(nodesTable).toContainText('iMac-24');
-        await expect(nodesTable).toContainText('Dell-Neo');
         await expect(nodesTable).toContainText('ONLINE');
-        await expect(nodesTable).toContainText('DEGRADED');
         
         // Verify evidence links are present
         const healthEvidenceLink = page.locator('a[href*="hoch-compute-node-health.md"]');
@@ -72,7 +68,7 @@ test.describe('RC49 HOCH PODS Compute Scheduler & Node Health E2E Tests', () => 
         const rationaleContainer = page.locator('#hoch-scheduler-rationale-container');
         await expect(rationaleContainer).toBeVisible();
         await expect(rationaleContainer).toContainText('Cyber Pod');
-        await expect(rationaleContainer).toContainText('BLOCKED_COMPUTE');
+        await expect(rationaleContainer).toContainText('SCHEDULED');
         await expect(rationaleContainer).toContainText('DORMANT');
         
         // Verify no placeholder indicators

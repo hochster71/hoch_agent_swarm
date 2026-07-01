@@ -1,0 +1,220 @@
+[
+  {
+    "agent_id": "has_finance_manager",
+    "title": "HAS Finance Manager",
+    "product_scope": "HOCH HAS Governance",
+    "responsibilities": [
+      "Track system-wide compute operating costs",
+      "Monitor resource token utilization ledger",
+      "Draft global compute allocation briefs"
+    ],
+    "inputs": [
+      "has_compute_nodes.json",
+      "worker_heartbeats.json"
+    ],
+    "outputs": [
+      "has_global_compute_cost_model.json"
+    ],
+    "decision_rights": [
+      "Allocate local compute priority tiers"
+    ],
+    "approval_required_for": [
+      "Modifying local node budget caps"
+    ],
+    "cadence": "DAILY",
+    "evidence_links": [
+      "docs/evidence/business/finance-operations-brief.md"
+    ],
+    "status": "ACTIVE"
+  },
+  {
+    "agent_id": "hasf_product_finance_manager",
+    "title": "HASF Product Finance Manager",
+    "product_scope": "HOCH HASF SaaS Products",
+    "responsibilities": [
+      "Oversee SaaS tier billing workflows",
+      "Manage customer billing telemetry",
+      "Verify Stripe product sync"
+    ],
+    "inputs": [
+      "epic_fury_roi_model.json",
+      "project_revenue_readiness_results.json"
+    ],
+    "outputs": [
+      "finance_operations_brief.json"
+    ],
+    "decision_rights": [
+      "Generate revenue readiness score ratings"
+    ],
+    "approval_required_for": [
+      "Altering target ARPU expectations"
+    ],
+    "cadence": "WEEKLY",
+    "evidence_links": [
+      "docs/evidence/business/finance-operations-brief.md"
+    ],
+    "status": "ACTIVE"
+  },
+  {
+    "agent_id": "epic_fury_revenue_analyst",
+    "title": "Epic Fury Revenue Analyst",
+    "product_scope": "Epic Fury Expansion",
+    "responsibilities": [
+      "Analyze monthly install conversions",
+      "Generate ROI scenario projections",
+      "Track conversion rate trends"
+    ],
+    "inputs": [
+      "epic_fury_pipeline_state.json",
+      "revenue_action_queue.json"
+    ],
+    "outputs": [
+      "epic_fury_roi_projections_run.json"
+    ],
+    "decision_rights": [
+      "Update conversion rate parameters in ROI models"
+    ],
+    "approval_required_for": [
+      "Publishing public ROI statements"
+    ],
+    "cadence": "WEEKLY",
+    "evidence_links": [
+      "docs/business/epic-fury-roi-projection.md"
+    ],
+    "status": "ACTIVE"
+  },
+  {
+    "agent_id": "stripe_monetization_controller",
+    "title": "Stripe Monetization Controller",
+    "product_scope": "Stripe Gateway Integration",
+    "responsibilities": [
+      "Verify Stripe webhook signature check code",
+      "Inspect test sandbox publishable/secret credentials",
+      "Enforce fail-closed billing policy constraints"
+    ],
+    "inputs": [
+      ".env",
+      "stripe-sandbox-initialization.md"
+    ],
+    "outputs": [
+      "stripe_sandbox_validation_evidence.json"
+    ],
+    "decision_rights": [
+      "Mark Stripe sandbox readiness state as PASS/FAIL"
+    ],
+    "approval_required_for": [
+      "Initializing Stripe production/live operations keys"
+    ],
+    "cadence": "ON_RELEASE",
+    "evidence_links": [
+      "docs/security/stripe-sandbox-initialization.md"
+    ],
+    "status": "ACTIVE"
+  },
+  {
+    "agent_id": "pricing_packaging_analyst",
+    "title": "Pricing & Packaging Analyst",
+    "product_scope": "SaaS Tiers Definition",
+    "responsibilities": [
+      "Review pricing tier limits and thresholds",
+      "Analyze ARPU optimization potentials",
+      "Draft tier packaging schemas"
+    ],
+    "inputs": [
+      "epic_fury_pricing_model.md"
+    ],
+    "outputs": [
+      "pricing_packaging_recommendation.json"
+    ],
+    "decision_rights": [
+      "Recommend pricing tier adjustments"
+    ],
+    "approval_required_for": [
+      "Altering actual SaaS tier base prices"
+    ],
+    "cadence": "MONTHLY",
+    "evidence_links": [
+      "docs/business/epic-fury-pricing-model.md"
+    ],
+    "status": "ACTIVE"
+  },
+  {
+    "agent_id": "cac_ltv_churn_analyst",
+    "title": "CAC/LTV/Churn Analyst",
+    "product_scope": "Unit Economics Strategy",
+    "responsibilities": [
+      "Calculate CAC metrics from user campaigns",
+      "Track average churn duration",
+      "Compute LTV:CAC operating ratio"
+    ],
+    "inputs": [
+      "epic_fury_unit_economics.md"
+    ],
+    "outputs": [
+      "unit_economics_dashboard_metrics.json"
+    ],
+    "decision_rights": [
+      "Adjust churn target baseline limits"
+    ],
+    "approval_required_for": [
+      "Adjusting customer retention budget models"
+    ],
+    "cadence": "MONTHLY",
+    "evidence_links": [
+      "docs/business/epic-fury-unit-economics.md"
+    ],
+    "status": "ACTIVE"
+  },
+  {
+    "agent_id": "revenue_evidence_collector",
+    "title": "Revenue Evidence Collector",
+    "product_scope": "Finance Compliance Auditing",
+    "responsibilities": [
+      "Inspect project-revenue-readiness-results",
+      "Verify existence of Stripe config logs",
+      "Compile evidence references index"
+    ],
+    "inputs": [
+      "project_revenue_readiness_results.json"
+    ],
+    "outputs": [
+      "sealed_revenue_evidence_archive.json"
+    ],
+    "decision_rights": [
+      "Scan and tag revenue readiness files"
+    ],
+    "approval_required_for": [],
+    "cadence": "ON_AUDIT",
+    "evidence_links": [
+      "docs/evidence/business/project-revenue-readiness-audit.md"
+    ],
+    "status": "ACTIVE"
+  },
+  {
+    "agent_id": "fintech_compliance_advisor",
+    "title": "Fintech Compliance Finance Advisor",
+    "product_scope": "Regulatory Financial Posture",
+    "responsibilities": [
+      "Enforce compliance rules (NIST AC/SC)",
+      "Audit public port exposures on billing enclaves",
+      "Verify secrets prevention rules"
+    ],
+    "inputs": [
+      "verify_stripe_sandbox_config.py"
+    ],
+    "outputs": [
+      "fintech_compliance_audit_attestation.json"
+    ],
+    "decision_rights": [
+      "Block release candidate builds violating DTM 25-003"
+    ],
+    "approval_required_for": [
+      "Granting special compliance exclusions"
+    ],
+    "cadence": "ON_AUDIT",
+    "evidence_links": [
+      "docs/security/stripe-sandbox-initialization.md"
+    ],
+    "status": "ACTIVE"
+  }
+]

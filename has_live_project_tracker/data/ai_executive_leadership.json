@@ -1,0 +1,232 @@
+[
+  {
+    "role_id": "founder",
+    "title": "Founder / Owner / Final Approval Authority",
+    "human_equivalent": "Michael Hoch",
+    "mission": "Final authority on all decisions, resource allocation, and security/pricing/monetization posture updates.",
+    "authority_level": "Level 5 (Ultimate Authority)",
+    "can_execute_without_approval": [
+      "Any action"
+    ],
+    "requires_human_approval_for": [],
+    "assigned_agents": [
+      "Michael Hoch (Human Owner)"
+    ],
+    "evidence_responsibilities": [
+      "Signing off on candidate releases",
+      "Approving Stripe monetization checkout deployments"
+    ],
+    "reports_to": "None (Self)",
+    "status": "ACTIVE"
+  },
+  {
+    "role_id": "coo",
+    "title": "AI Chief Operating Officer — HAS Commander",
+    "human_equivalent": "AI Executive - Operations",
+    "mission": "Orchestrate local secure pods, direct compute schedules, and compile operational logs.",
+    "authority_level": "Level 4 (Executive Operations)",
+    "can_execute_without_approval": [
+      "Pod task scheduling",
+      "Local node matching",
+      "Read-only logs collection"
+    ],
+    "requires_human_approval_for": [
+      "High-risk executions",
+      "Destructive server commands"
+    ],
+    "assigned_agents": [
+      "has-commander-agent-v2"
+    ],
+    "evidence_responsibilities": [
+      "Pod placement justification",
+      "Node health logs"
+    ],
+    "reports_to": "founder",
+    "status": "ACTIVE"
+  },
+  {
+    "role_id": "mission_ops",
+    "title": "AI Mission Operations Director",
+    "human_equivalent": "AI Director - Ops Execution",
+    "mission": "Monitor live pod state transitions and manage execution queue prioritizations.",
+    "authority_level": "Level 3 (Operational Directives)",
+    "can_execute_without_approval": [
+      "Executing safe test suites",
+      "Staging local workspace states"
+    ],
+    "requires_human_approval_for": [
+      "Staging release approval",
+      "External host writes"
+    ],
+    "assigned_agents": [
+      "mission-ops-sentinel-v1"
+    ],
+    "evidence_responsibilities": [
+      "Pod heartbeat status",
+      "Playwright run JSON reports"
+    ],
+    "reports_to": "coo",
+    "status": "ACTIVE"
+  },
+  {
+    "role_id": "cfo",
+    "title": "AI Chief Financial Officer — HASF Finance Manager",
+    "human_equivalent": "AI Executive - Finance",
+    "mission": "Oversee pricing strategies, track Stripe sandbox status, and compile ROI scenario evidence.",
+    "authority_level": "Level 4 (Executive Finance)",
+    "can_execute_without_approval": [
+      "Generating pricing recommendations",
+      "Checking Stripe test transaction logs"
+    ],
+    "requires_human_approval_for": [
+      "Modifying production pricing plans",
+      "Updating Stripe live keys"
+    ],
+    "assigned_agents": [
+      "hasf-finance-manager-v2"
+    ],
+    "evidence_responsibilities": [
+      "Finance operations brief",
+      "Revenue action queue verification"
+    ],
+    "reports_to": "founder",
+    "status": "ACTIVE"
+  },
+  {
+    "role_id": "tech_director",
+    "title": "AI Technical Director",
+    "human_equivalent": "AI Executive - Engineering",
+    "mission": "Direct code build paths, manage dev-test environments, and verify TypeScript compilations.",
+    "authority_level": "Level 3 (Engineering Authority)",
+    "can_execute_without_approval": [
+      "Compiling development bundles",
+      "Running local check/lint tools"
+    ],
+    "requires_human_approval_for": [
+      "Merging changes to master branch",
+      "Altering network routing rules"
+    ],
+    "assigned_agents": [
+      "tech-director-build-bot"
+    ],
+    "evidence_responsibilities": [
+      "TypeScript compiler logs",
+      "Build verification checks"
+    ],
+    "reports_to": "coo",
+    "status": "ACTIVE"
+  },
+  {
+    "role_id": "security_officer",
+    "title": "AI Security & Compliance Officer",
+    "human_equivalent": "AI Executive - Cybersecurity",
+    "mission": "Enforce zero-trust posture, check for secrets leakage, and oversee public port exposure bounds.",
+    "authority_level": "Level 4 (Security Control)",
+    "can_execute_without_approval": [
+      "Running secrets scanning scripts",
+      "Auditing active ports"
+    ],
+    "requires_human_approval_for": [
+      "Configuring firewall exceptions",
+      "Adding trusted remote networks"
+    ],
+    "assigned_agents": [
+      "security-sentinel-compliance"
+    ],
+    "evidence_responsibilities": [
+      "Secrets scanning logs",
+      "Public port check records"
+    ],
+    "reports_to": "coo",
+    "status": "ACTIVE"
+  },
+  {
+    "role_id": "product_officer",
+    "title": "AI Product Officer",
+    "human_equivalent": "AI Executive - Product Strategy",
+    "mission": "Manage feature packaging, subscription tiers design, and user checkout workflows.",
+    "authority_level": "Level 3 (Product Definition)",
+    "can_execute_without_approval": [
+      "Proposing pricing tier details",
+      "Documenting product feature lists"
+    ],
+    "requires_human_approval_for": [
+      "Deploying new pricing tier models"
+    ],
+    "assigned_agents": [
+      "product-ops-analyst"
+    ],
+    "evidence_responsibilities": [
+      "Product pricing briefs",
+      "Tier description schemas"
+    ],
+    "reports_to": "coo",
+    "status": "ACTIVE"
+  },
+  {
+    "role_id": "growth_director",
+    "title": "AI Growth & Launch Director",
+    "human_equivalent": "AI Director - User Growth",
+    "mission": "Analyze CAC, LTV, churn rate goals, and direct Epic Fury marketing campaign integrations.",
+    "authority_level": "Level 3 (Growth Operations)",
+    "can_execute_without_approval": [
+      "Simulating CAC/LTV projections",
+      "Compiling user acquisition statistics"
+    ],
+    "requires_human_approval_for": [
+      "Allocating external advertising budgets"
+    ],
+    "assigned_agents": [
+      "growth-launch-strategist"
+    ],
+    "evidence_responsibilities": [
+      "Unit economics summaries"
+    ],
+    "reports_to": "cfo",
+    "status": "ACTIVE"
+  },
+  {
+    "role_id": "qa_release",
+    "title": "AI QA & Release Authority",
+    "human_equivalent": "AI Director - Release Compliance",
+    "mission": "Enforce release signing policy, verify test compliance metrics, and check release packets.",
+    "authority_level": "Level 4 (Compliance Sign-off)",
+    "can_execute_without_approval": [
+      "Triggering Playwright E2E suites",
+      "Staging release metadata"
+    ],
+    "requires_human_approval_for": [
+      "Signing off on release candidate tag promotion"
+    ],
+    "assigned_agents": [
+      "qa-release-gatekeeper"
+    ],
+    "evidence_responsibilities": [
+      "Release packet sign-offs",
+      "Full test coverage attestations"
+    ],
+    "reports_to": "founder",
+    "status": "ACTIVE"
+  },
+  {
+    "role_id": "chief_of_staff",
+    "title": "AI Chief of Staff",
+    "human_equivalent": "AI Executive - Admin Operations",
+    "mission": "Coordinate executive queues, audit alignments, and manage leadership dashboards.",
+    "authority_level": "Level 3 (Administrative Command)",
+    "can_execute_without_approval": [
+      "Updating dashboard layout details",
+      "Formatting report tables"
+    ],
+    "requires_human_approval_for": [],
+    "assigned_agents": [
+      "chief-of-staff-liaison"
+    ],
+    "evidence_responsibilities": [
+      "WBS task status updates",
+      "Executive alignment logs"
+    ],
+    "reports_to": "founder",
+    "status": "ACTIVE"
+  }
+]
