@@ -48,7 +48,11 @@ def check_git_status():
             "scheduler_metrics.json",
             ".venv",
             "pert_server",
-            "playwright.config.ts"
+            "playwright.config.ts",
+            "rc34",
+            "usage_budget",
+            "secure_build",
+            "tailscale"
         ]
         
         dirty = []

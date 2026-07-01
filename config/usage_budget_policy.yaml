@@ -1,0 +1,24 @@
+max_files_changed: 10
+max_elapsed_minutes: 45
+max_new_scripts: 3
+max_new_tests: 2
+alert_threshold: 0.8
+budget_tier: STANDARD
+quota_reset_hours: 5
+
+tailnet_workers:
+  - machine: "michaels-macbook-pro"
+    tailscale_ip: "100.103.155.4"
+    role: "primary_control_runtime"
+    allowed_jobs: ["pert_dashboard", "verification", "playwright", "cadence", "local_build"]
+    blocked_jobs: ["public_exposure", "paid_purchase", "tag_move_without_approval"]
+  - machine: "hoch-relay-001"
+    tailscale_ip: "100.87.18.15"
+    role: "private_relay_worker"
+    allowed_jobs: ["relay_health", "private_worker_api", "safe_compute_probe"]
+    blocked_jobs: ["public_3012", "open_firewall", "external_deploy_without_approval"]
+  - machine: "iphone-15-pro-max"
+    tailscale_ip: "100.102.221.87"
+    role: "operator_mobile_monitor"
+    allowed_jobs: ["dashboard_view", "approval_review"]
+    blocked_jobs: ["build_execution", "destructive_commands"]
