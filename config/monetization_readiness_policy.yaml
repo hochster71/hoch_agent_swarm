@@ -9,7 +9,9 @@ monetization_readiness:
     - docs/evidence/compute/rc27-doctrine-db-migration.md
     - docs/evidence/compute/rc28-mission-execution-proof.md
     - docs/evidence/compute/rc29-release-consolidation.md
+    - docs/evidence/compute/rc30-final-verification.md
     - docs/evidence/runtime/rc31-production-runtime-sustainment.md
+    - docs/evidence/pert/rc32-has-hasf-pert-command-center.md
     - docs/evidence/compute/rc33-compute-utilization-swarm-scheduler.md
     - docs/evidence/automation/rc34-usage-budget-secure-build-guardrails.md
     - docs/evidence/compute/rc35-safe-compute-utilization-expansion.md
