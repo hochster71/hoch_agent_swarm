@@ -566,7 +566,8 @@ def scan_evidence_ledger():
         ("RC40", "Compute gap & PERT recalibration", "docs/evidence/compute/rc40-compute-utilization-gap-pert-analysis.md"),
         ("RC41", "Worker telemetry accuracy", "docs/evidence/compute/rc41-worker-telemetry-accuracy.md"),
         ("RC42", "Epic Fury CSP audit & integration", "docs/evidence/business/epic-fury-gap-analysis.md"),
-        ("RC43", "Telemetry freshness authority", "docs/evidence/automation/rc43-telemetry-freshness-authority.md")
+        ("RC43", "Telemetry freshness authority", "docs/evidence/automation/rc43-telemetry-freshness-authority.md"),
+        ("RC44", "Epic Fury full code audit", "docs/evidence/business/epic-fury-full-code-audit.md")
     ]
     for rc, desc, rel_path in rc_mappings:
         full_path = os.path.join(get_project_root(), rel_path)
@@ -1289,6 +1290,16 @@ def get_pert_data():
     # Override monitor-only client counts in worker metrics
     wrapped_monitor_clients["value"] = monitor_only_total
 
+    # Load epic fury pipeline state
+    epic_fury_pipeline = {"stages": []}
+    fury_state_file = os.path.join(get_project_root(), "has_live_project_tracker", "data", "epic_fury_pipeline_state.json")
+    if os.path.exists(fury_state_file):
+        try:
+            with open(fury_state_file, "r") as f:
+                epic_fury_pipeline = json.load(f)
+        except Exception:
+            pass
+
     return {
         "readiness": {
             "score": wrapped_goal_complete,
@@ -1379,7 +1390,8 @@ def get_pert_data():
         "build_capable_workers_online": wrapped_build_capable_online,
         "relay_workers_online": wrapped_relay_workers_online,
         "idle_worker_count": wrapped_idle_worker_count,
-        "underused_worker_count": wrapped_underused_worker_count
+        "underused_worker_count": wrapped_underused_worker_count,
+        "epic_fury_pipeline": epic_fury_pipeline
     }
 
 @app.get("/view-doc", response_class=HTMLResponse)
@@ -1560,7 +1572,7 @@ def get_dashboard():
             background: rgba(45, 212, 191, 0.2);
             border-color: var(--accent-teal);
             box-shadow: 0 0 12px var(--accent-teal);
-            animation: pulse-glow 2s infinite alternate;
+            animation: pulse-glow 2s infinite alternate, bounce-active 2s infinite ease-in-out;
         }
         .pipeline-stage.completed .stage-dot {
             background: rgba(45, 212, 191, 0.1);
@@ -1583,7 +1595,9 @@ def get_dashboard():
             transform: translateY(-12px);
         }
         .pipeline-connector.active {
-            background: var(--accent-teal);
+            background: linear-gradient(90deg, var(--accent-teal), #6366f1, var(--accent-teal));
+            background-size: 200% 200%;
+            animation: flow-active 2s linear infinite;
             box-shadow: 0 0 8px var(--accent-teal);
         }
         
@@ -1615,6 +1629,14 @@ def get_dashboard():
         @keyframes pulse-glow {
             from { box-shadow: 0 0 4px var(--accent-teal); }
             to { box-shadow: 0 0 16px var(--accent-teal); }
+        }
+        @keyframes bounce-active {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+        @keyframes flow-active {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
         }
     </style>
 </head>
@@ -1689,73 +1711,7 @@ def get_dashboard():
         <div class="card col-12" id="epic-fury-pipeline-panel">
             <h3 style="margin-top:0;">Epic Fury HASF Onboarding & Deployment Pipeline</h3>
             <div class="pipeline-flow" id="epic-fury-flow-container">
-                <div class="pipeline-stage completed" onclick="location.href='/view-doc?path=docs/evidence/business/epic-fury-onboarding-audit.md'">
-                    <div class="stage-dot">1</div>
-                    <div class="stage-name">Source Discovery</div>
-                    <div class="tooltip">
-                        <strong>Source Discovery</strong><br>
-                        Status: COMPLETED<br>
-                        Source: local_find (LOCAL-003)<br>
-                        Location: ~/Downloads/Epic-fury-2026-main<br>
-                        Click to view Onboarding Audit.
-                    </div>
-                </div>
-                <div class="pipeline-connector active"></div>
-                <div class="pipeline-stage completed" onclick="location.href='/view-doc?path=docs/evidence/business/epic-fury-onboarding-audit.md'">
-                    <div class="stage-dot">2</div>
-                    <div class="stage-name">Audit & Analysis</div>
-                    <div class="tooltip">
-                        <strong>Audit & Analysis</strong><br>
-                        Status: COMPLETED<br>
-                        Source: qa_auditor_agent<br>
-                        Check: no secrets / sandbox mode<br>
-                        Click to view Onboarding Audit.
-                    </div>
-                </div>
-                <div class="pipeline-connector active"></div>
-                <div class="pipeline-stage completed" onclick="location.href='/view-doc?path=docs/evidence/business/epic-fury-gap-analysis.md'">
-                    <div class="stage-dot">3</div>
-                    <div class="stage-name">Environment Setup</div>
-                    <div class="tooltip">
-                        <strong>Environment Setup</strong><br>
-                        Status: COMPLETED<br>
-                        Check: DB models, migrations<br>
-                        Click to view Gap Analysis.
-                    </div>
-                </div>
-                <div class="pipeline-connector active"></div>
-                <div class="pipeline-stage completed" onclick="location.href='/view-doc?path=docs/evidence/business/epic-fury-gap-analysis.md'">
-                    <div class="stage-dot">4</div>
-                    <div class="stage-name">CI Verification</div>
-                    <div class="tooltip">
-                        <strong>CI Verification</strong><br>
-                        Status: COMPLETED<br>
-                        Check: run_now_ci.sh, verify-payments.sh<br>
-                        Click to view Gap Analysis.
-                    </div>
-                </div>
-                <div class="pipeline-connector active"></div>
-                <div class="pipeline-stage active" onclick="location.href='/view-doc?path=docs/evidence/business/epic-fury-pert-model.md'">
-                    <div class="stage-dot">5</div>
-                    <div class="stage-name">PERT Integration</div>
-                    <div class="tooltip">
-                        <strong>PERT Integration</strong><br>
-                        Status: ACTIVE<br>
-                        Check: CPM / slack calculation<br>
-                        Click to view PERT Model.
-                    </div>
-                </div>
-                <div class="pipeline-connector"></div>
-                <div class="pipeline-stage" onclick="location.href='/view-doc?path=docs/evidence/business/epic-fury-pert-model.md'">
-                    <div class="stage-dot">6</div>
-                    <div class="stage-name">Pipeline Visuals</div>
-                    <div class="tooltip">
-                        <strong>Pipeline Visuals</strong><br>
-                        Status: PENDING<br>
-                        Goal: animated cockpit flowchart<br>
-                        Click to view PERT Model.
-                    </div>
-                </div>
+                <!-- Populated dynamically via JavaScript -->
             </div>
         </div>
 
@@ -2241,6 +2197,65 @@ def get_dashboard():
                     queue.forEach(item => {
                         approvalQueueList.innerHTML += `<p><strong>${item.id}:</strong> ${item.action}</p>`;
                         manualQueueList.innerHTML += `<p style='color:var(--accent-red);'><strong>[BLOCKED]</strong> Awaiting operator input for ${item.id}</p>`;
+                    });
+                }
+
+                // Epic Fury Pipeline flowchart updates
+                const epicFuryFlowContainer = document.getElementById("epic-fury-flow-container");
+                if (epicFuryFlowContainer && data.epic_fury_pipeline && data.epic_fury_pipeline.stages) {
+                    epicFuryFlowContainer.innerHTML = "";
+                    const stages = data.epic_fury_pipeline.stages;
+                    stages.forEach((stage, idx) => {
+                        // Create stage element
+                        const stageDiv = document.createElement("div");
+                        let statusClass = stage.status; // e.g. "completed", "active", "pending"
+                        if (statusClass === "active") {
+                            stageDiv.className = "pipeline-stage active";
+                        } else if (statusClass === "completed") {
+                            stageDiv.className = "pipeline-stage completed";
+                        } else {
+                            stageDiv.className = "pipeline-stage";
+                        }
+                        
+                        stageDiv.onclick = () => {
+                            if (stage.url) {
+                                location.href = stage.url;
+                            }
+                        };
+                        
+                        const dotDiv = document.createElement("div");
+                        dotDiv.className = "stage-dot";
+                        dotDiv.textContent = idx + 1;
+                        stageDiv.appendChild(dotDiv);
+                        
+                        const nameDiv = document.createElement("div");
+                        nameDiv.className = "stage-name";
+                        nameDiv.textContent = stage.name;
+                        stageDiv.appendChild(nameDiv);
+                        
+                        const tooltipDiv = document.createElement("div");
+                        tooltipDiv.className = "tooltip";
+                        tooltipDiv.innerHTML = `
+                            <strong>${stage.name}</strong><br>
+                            Status: ${stage.status.toUpperCase()}<br>
+                            Source: ${stage.source || "N/A"}<br>
+                            ${stage.location ? `Location: ${stage.location}<br>` : ""}
+                            ${stage.details ? `${stage.details}` : ""}
+                        `;
+                        stageDiv.appendChild(tooltipDiv);
+                        
+                        epicFuryFlowContainer.appendChild(stageDiv);
+                        
+                        // Create connector if not the last stage
+                        if (idx < stages.length - 1) {
+                            const connDiv = document.createElement("div");
+                            if (stage.status === "completed") {
+                                connDiv.className = "pipeline-connector active";
+                            } else {
+                                connDiv.className = "pipeline-connector";
+                            }
+                            epicFuryFlowContainer.appendChild(connDiv);
+                        }
                     });
                 }
 
