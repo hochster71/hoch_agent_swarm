@@ -1,0 +1,43 @@
+security_remediation_policy:
+  severity_actions:
+    CRITICAL:
+      action: "BLOCK_RELEASE"
+      sla_hours: 1
+    HIGH:
+      action: "BLOCK_RELEASE"
+      sla_hours: 4
+    MEDIUM:
+      action: "ASSIGN_PLAN"
+      sla_hours: 24
+    LOW:
+      action: "TRACK_ONLY"
+      sla_hours: 168
+  permission_tiers:
+    auto_fix:
+      - "formatting"
+      - "lint autofix"
+      - "minor type fixes"
+      - "test fixture update"
+      - "dead import removal"
+      - "documentation link repair"
+      - "UI text mismatch"
+      - "source-map display bug"
+      - "known dependency patch with passing tests"
+    requires_approval:
+      - "database migrations"
+      - "auth changes"
+      - "permission changes"
+      - "network exposure"
+      - "HomeOps/device writes"
+      - "credential handling"
+      - "major dependency upgrades"
+      - "deleting files"
+      - "public deployment"
+      - "payment/pricing/customer messaging"
+    blocked:
+      - "secret rotation"
+      - "external data sharing"
+      - "camera/audio device control"
+      - "finance/legal final decisions"
+      - "destructive git history operations"
+      - "production deployment"

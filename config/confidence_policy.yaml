@@ -1,0 +1,16 @@
+# confidence_policy.yaml
+# Declares weights and limits for evidence-based confidence calculations
+
+confidence_caps:
+  max_confidence_without_payment: 0.95
+  max_confidence_without_evidence: 0.20
+  absolute_max_confidence: 0.98
+
+evidence_weights:
+  npm_build_pass: 0.15
+  pytest_pass: 0.15
+  playwright_e2e_pass: 0.20
+  git_status_clean: 0.10
+  security_audit_clean: 0.20
+  read_only_mutations_verified: 0.10
+  buyer_signals_verified: 0.10

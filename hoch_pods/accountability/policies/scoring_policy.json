@@ -1,0 +1,23 @@
+{
+  "weights": {
+    "requirement_compliance": 0.20,
+    "evidence_quality": 0.15,
+    "test_accuracy": 0.15,
+    "operator_acceptance": 0.15,
+    "regression_avoidance": 0.10,
+    "raci_compliance": 0.10,
+    "security_compliance": 0.10,
+    "timeliness": 0.05
+  },
+  "penalties": {
+    "claimed_go_without_evidence": 20,
+    "ui_work_without_screenshot": 15,
+    "control_plane_work_without_browser_access_proof": 20,
+    "fake_telemetry_as_real": 30,
+    "broke_regression_suite": 25,
+    "exposed_secret": 50,
+    "user_rejected_result_after_go_claim": 20,
+    "raci_violation": 15,
+    "direct_main_mutation_without_approval": 50
+  }
+}

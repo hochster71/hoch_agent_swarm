@@ -1,0 +1,146 @@
+---
+# Kubernetes Pod Security Policy - restricts container capabilities
+# Apply before deploying pods
+
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: hoch-restricted
+  annotations:
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: 'runtime/default'
+    apparmor.security.beta.kubernetes.io/allowedProfileNames: 'runtime/default'
+    seccomp.security.alpha.kubernetes.io/defaultProfileName: 'runtime/default'
+    apparmor.security.beta.kubernetes.io/defaultProfileName: 'runtime/default'
+spec:
+  # Privilege and Access Settings
+  privileged: false
+  allowPrivilegeEscalation: false
+  
+  # User and Group Settings
+  runAsUser:
+    rule: 'MustRunAsNonRoot'
+  runAsGroup:
+    rule: 'MustRunAs'
+    ranges:
+      - min: 10001
+        max: 10001
+  fsGroup:
+    rule: 'MustRunAs'
+    ranges:
+      - min: 10001
+        max: 10001
+  supplementalGroups:
+    rule: 'RunAsAny'
+  
+  # Capabilities
+  requiredDropCapabilities:
+    - ALL
+  defaultAddCapabilities: []
+  allowedCapabilities: []
+  
+  # Volume Types
+  volumes:
+    - 'configMap'
+    - 'emptyDir'
+    - 'projected'
+    - 'secret'
+    - 'downwardAPI'
+    - 'persistentVolumeClaim'
+  
+  # Host Access
+  hostNetwork: false
+  hostIPC: false
+  hostPID: false
+  
+  # SELinux
+  seLinux:
+    rule: 'MustRunAs'
+    seLinuxOptions:
+      level: 's0:c123,c456'
+  
+  # Read-Only Root Filesystem
+  readOnlyRootFilesystem: false
+
+---
+# ClusterRole for Pod Security Policy
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: hoch-psp-user
+rules:
+  - apiGroups: ['policy']
+    resources: ['podsecuritypolicies']
+    verbs: ['use']
+    resourceNames:
+      - hoch-restricted
+
+---
+# ClusterRoleBinding to apply PSP to service accounts
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: hoch-psp-all-serviceaccounts
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: hoch-psp-user
+subjects:
+  - kind: Group
+    name: system:serviceaccounts
+    apiGroup: rbac.authorization.k8s.io
+
+---
+# Resource Quota - limit resource consumption
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: hoch-compute-quota
+  namespace: default
+spec:
+  hard:
+    requests.cpu: "8"
+    requests.memory: "16Gi"
+    limits.cpu: "16"
+    limits.memory: "32Gi"
+    pods: "20"
+    services: "10"
+    services.loadbalancers: "2"
+  scopeSelector:
+    matchExpressions:
+      - operator: In
+        scopeName: PriorityClass
+        values: ["high", "medium"]
+
+---
+# Network Policy - deny all ingress by default
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: hoch-deny-all-ingress
+  namespace: default
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+  # No ingress rules = deny all
+
+---
+# Network Policy - allow DNS
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: hoch-allow-dns
+  namespace: default
+spec:
+  podSelector: {}
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53

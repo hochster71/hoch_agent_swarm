@@ -1,0 +1,9 @@
+policy:
+  name: "Domain Owner Assignment Policy"
+  auto_assign_ownerless: true
+  fallback_owner: "chief_of_staff"
+  governance:
+    require_signoff:
+      - "Finance"
+      - "Legal/Risk"
+      - "Cybersecurity"

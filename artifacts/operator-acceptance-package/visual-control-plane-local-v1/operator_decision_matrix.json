@@ -1,0 +1,15 @@
+{
+  "matrix": {
+    "allowed_decisions": [
+      "APPROVE_LOCAL_PREVIEW",
+      "REJECT_LOCAL_PREVIEW",
+      "DEFER_LOCAL_PREVIEW"
+    ],
+    "selected_decision": "APPROVE_LOCAL_PREVIEW",
+    "justification": "All evidence packages (P4, P2, P3, P6, P7) pass schema contracts and remain fully read-only bounded.",
+    "action_restrictions": {
+      "operational_triggers_allowed": false,
+      "production_deployments_allowed": false
+    }
+  }
+}

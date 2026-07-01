@@ -1,0 +1,60 @@
+{
+  "phase": "V23_LOCAL_RELEASE_FREEZE",
+  "local_only": true,
+  "release_root": "artifacts/releases/visual-control-plane-local",
+  "generated_at_utc": "2026-06-27T22:36:04Z",
+  "deployment_performed": false,
+  "external_publication_enabled": false,
+  "files": [
+    {
+      "path": "artifacts/releases/visual-control-plane-local/control-plane.html",
+      "sha256": "66ea78146eeef41c52525f3e198cd5778bebda0e0e6e0a08a58004d33afda850",
+      "size_bytes": 5232
+    },
+    {
+      "path": "artifacts/releases/visual-control-plane-local/styles.css",
+      "sha256": "193a201789d9f8349f812c208521d5181dec90229f9cce71f0b7d9599e12b216",
+      "size_bytes": 11663
+    },
+    {
+      "path": "artifacts/releases/visual-control-plane-local/ROLLBACK.md",
+      "sha256": "41a0cb80210f0636f984100e5c811ed934c792ca3c1ddeb457b642955532f8c4",
+      "size_bytes": 300
+    },
+    {
+      "path": "artifacts/releases/visual-control-plane-local/README.md",
+      "sha256": "84db77d8e6855151636f12dd6ae0b3bc3afa4407c8cbc1577135ca5e8e1f9299",
+      "size_bytes": 561
+    },
+    {
+      "path": "artifacts/releases/visual-control-plane-local/manifest.json",
+      "sha256": "e9ffdc97e4344b2e371702bae67dba01150ba5dd8b8e98992ee0078bdd42493a",
+      "size_bytes": 2156
+    },
+    {
+      "path": "artifacts/releases/visual-control-plane-local/provenance.json",
+      "sha256": "9842c14e0f16c47598f5c977b55838d2263c8a8fc4690ef25146fce7ba46a02d",
+      "size_bytes": 1339
+    },
+    {
+      "path": "artifacts/releases/visual-control-plane-local/release_review.json",
+      "sha256": "7c3ba2636ff3dee6df2febe802f8da407b94e5a3a6fa4317c9594bade87eb0bb",
+      "size_bytes": 869
+    },
+    {
+      "path": "artifacts/releases/visual-control-plane-local/evidence/local_operator_acceptance.json",
+      "sha256": "4b730b2d9898b72055117b73626cd9b105f9730092c29a76926c1abcc8fb94d5",
+      "size_bytes": 931
+    },
+    {
+      "path": "artifacts/releases/visual-control-plane-local/evidence/local_visual_cockpit_stabilization_report.json",
+      "sha256": "da3068eb9c4f0bb07ddd75b5c29f086c29778470394692048a4022d3ebc2bba3",
+      "size_bytes": 853
+    },
+    {
+      "path": "artifacts/releases/visual-control-plane-local/evidence/reapply_local_visual_cockpit_report.json",
+      "sha256": "0d97ab19b5403b334f0b2160eb6e4c7651672b4c8d27546aebd795d9e315c083",
+      "size_bytes": 330
+    }
+  ]
+}

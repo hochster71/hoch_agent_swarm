@@ -1,0 +1,66 @@
+# Hoch Agent Swarm Autonomy Policy Matrix
+version: "1.0"
+updatedAt: "2026-06-29T16:50:00Z"
+
+policies:
+  - actionType: "read_files"
+    brainLlmAllowed: true
+    michaelApprovalRequired: false
+    description: "Reading local text files, documentation, and config files."
+
+  - actionType: "run_tests"
+    brainLlmAllowed: true
+    michaelApprovalRequired: false
+    description: "Running local test scripts and healthcheck assertions."
+
+  - actionType: "generate_plans"
+    brainLlmAllowed: true
+    michaelApprovalRequired: false
+    description: "Creating markdown implementation plans and todo lists."
+
+  - actionType: "edit_docs"
+    brainLlmAllowed: true
+    michaelApprovalRequired: false
+    description: "Writing and updating project markdown logs, evidence files, or runbooks."
+
+  - actionType: "edit_code"
+    brainLlmAllowed: true
+    michaelApprovalRequired: false
+    stagedOnly: true
+    description: "Modifying application frontend/backend code (staged writes only)."
+
+  - actionType: "commit_changes"
+    brainLlmAllowed: true
+    michaelApprovalRequired: false
+    evidenceRequired: true
+    description: "Committing code changes to repository, requiring E2E evidence artifacts."
+
+  - actionType: "control_docker"
+    brainLlmAllowed: true
+    michaelApprovalRequired: false
+    description: "Starting, stopping, or restarting local Docker HA-lite services."
+
+  - actionType: "delete_files"
+    brainLlmAllowed: false
+    michaelApprovalRequired: true
+    description: "Deleting workspace source files or database objects."
+
+  - actionType: "modify_credentials"
+    brainLlmAllowed: false
+    michaelApprovalRequired: true
+    description: "Updating system environment variables, keys, or security certs."
+
+  - actionType: "external_exposure"
+    brainLlmAllowed: false
+    michaelApprovalRequired: true
+    description: "Exposing API or database ports externally or launching new public tunnels."
+
+  - actionType: "paid_api_usage"
+    brainLlmAllowed: false
+    michaelApprovalRequired: true
+    description: "Querying cloud services with pay-per-token models."
+
+  - actionType: "production_release"
+    brainLlmAllowed: false
+    michaelApprovalRequired: true
+    description: "Merging code to main branch or triggering full production deploy."

@@ -1,0 +1,17 @@
+{
+  "inventory_type": "read_only_visual_endpoints",
+  "endpoints": [
+    {
+      "path": "/api/v1/runtime/process/animation-state",
+      "method": "GET",
+      "purpose": "Stream animation process events",
+      "security_scope": "local_preview"
+    },
+    {
+      "path": "/api/v1/runtime/process/health",
+      "method": "GET",
+      "purpose": "Query cluster health metrics",
+      "security_scope": "local_preview"
+    }
+  ]
+}

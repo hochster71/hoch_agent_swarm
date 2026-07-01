@@ -1,0 +1,47 @@
+FROM mcr.microsoft.com/playwright:v1.47.0-noble
+
+LABEL org.opencontainers.image.title="Hoch Agent Swarm Tools" \
+      org.opencontainers.image.description="Testing and Verification Tools for Hoch Agent Swarm" \
+      org.opencontainers.image.version="0.1.0" \
+      org.opencontainers.image.source="https://github.com/crewAIInc/crewAI" \
+      org.opencontainers.image.created="2026-06-29T17:33:53Z"
+
+WORKDIR /app
+
+# Install python and uv, and create non-root user
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 \
+    python3-pip \
+    python3-venv \
+    curl \
+    git \
+    sqlite3 \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --gid 10001 appuser \
+    && useradd --uid 10001 --gid 10001 --create-home --shell /usr/sbin/nologin appuser
+
+RUN pip3 install --no-cache-dir uv --break-system-packages
+
+# Copy project specification files
+COPY pyproject.toml uv.lock ./
+COPY package*.json ./
+COPY frontend/package*.json ./frontend/
+COPY dummy_mcp/ ./dummy_mcp/
+
+# Install python and node dependencies
+RUN UV_CONCURRENCY=2 uv sync --frozen --no-install-project
+RUN npm ci && npm ci --prefix frontend
+
+# Copy repository source code
+COPY . .
+
+# Install project and change ownership to appuser
+RUN UV_CONCURRENCY=2 uv sync --frozen \
+    && chown -R appuser:appuser /app /home/appuser
+
+ENV PYTHONPATH="/app/src:/app"
+
+USER appuser
+
+# Default cmd runs tests
+CMD ["bash", "scripts/docker_gate.sh"]

@@ -1,0 +1,35 @@
+{
+  "inventory": {
+    "P4": {
+      "path": "artifacts/security-evidence/visual-control-plane-local-v1/",
+      "files": [
+        "security_evidence_manifest.json",
+        "ato_readiness_report.json"
+      ]
+    },
+    "P2": {
+      "path": "artifacts/backend-runtime-binding-readiness/visual-control-plane-local-v1/",
+      "files": [
+        "backend_runtime_binding_manifest.json",
+        "backend_contract_map.json",
+        "backend_readiness_report.json",
+        "endpoint_inventory.json",
+        "mutation_blocking_policy.json",
+        "contract_test_results.json",
+        "p2_final_seal.json"
+      ]
+    },
+    "P3": {
+      "path": "artifacts/frontend-runtime-readiness/visual-control-plane-local-v1/",
+      "files": [
+        "frontend_runtime_readiness_manifest.json",
+        "frontend_panel_contract_map.json",
+        "frontend_fixture_inventory.json",
+        "frontend_readonly_adapter_report.json",
+        "frontend_no_mutation_policy.json",
+        "frontend_contract_test_results.json",
+        "p3_final_seal.json"
+      ]
+    }
+  }
+}

@@ -1,0 +1,30 @@
+zero_defect_policy:
+  enforcement:
+    zero_unresolved_without_metadata: true
+    allow_self_approval: false
+    warnings_as_errors: true
+    progressive_fail_closed: true
+  defect_severities:
+    - severity: "CRITICAL"
+      remediation_sla_seconds: 300
+      blocks_release: true
+    - severity: "HIGH"
+      remediation_sla_seconds: 3600
+      blocks_release: true
+    - severity: "MEDIUM"
+      remediation_sla_seconds: 86400
+      blocks_release: false
+      requires_remediation_plan: true
+    - severity: "LOW"
+      remediation_sla_seconds: 604800
+      blocks_release: false
+      requires_tracking: true
+  gates:
+    - "npm run build"
+    - "uv run pytest"
+    - "npx playwright test"
+    - "bash scripts/anti_fake_gate.sh"
+    - "bash scripts/scan_hardcoded_status.sh"
+    - "bash scripts/security_gate.sh"
+    - "bash scripts/meta_orchestrator_gates.sh"
+    - "bash scripts/final_verifier_gate.sh"

@@ -1,0 +1,18 @@
+delivery_targets:
+  michael_private:
+    provider: "google_drive"
+    folder: "Hoch Agent Swarm/Private"
+    allowed_requesters:
+      - "michael"
+  alison_printables:
+    provider: "google_drive"
+    folder: "Hoch Family/Alison/Printables"
+    allowed_requesters:
+      - "michael"
+      - "alison"
+  family_shared:
+    provider: "google_drive"
+    folder: "Hoch Family/Shared"
+    allowed_requesters:
+      - "michael"
+      - "alison"

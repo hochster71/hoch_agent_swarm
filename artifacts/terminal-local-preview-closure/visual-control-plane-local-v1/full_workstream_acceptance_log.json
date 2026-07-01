@@ -1,0 +1,72 @@
+{
+  "acceptance_log": {
+    "P2": {
+      "status": "ACCEPTED",
+      "commit": "04a93c9"
+    },
+    "P3": {
+      "status": "ACCEPTED",
+      "commit": "e126a01"
+    },
+    "P4": {
+      "status": "ACCEPTED",
+      "commit": "71b6fac"
+    },
+    "P6": {
+      "status": "ACCEPTED",
+      "commit": "0f5e78d"
+    },
+    "P7": {
+      "status": "ACCEPTED",
+      "commit": "57cdf46"
+    },
+    "P8": {
+      "status": "ACCEPTED",
+      "commit": "8298442"
+    },
+    "P9": {
+      "status": "ACCEPTED",
+      "commit": "3a0126e"
+    },
+    "P10": {
+      "status": "ACCEPTED",
+      "commit": "fb105f3"
+    },
+    "P11": {
+      "status": "ACCEPTED",
+      "commit": "5b60572"
+    },
+    "P12": {
+      "status": "ACCEPTED",
+      "commit": "ec4de64"
+    },
+    "P13": {
+      "status": "ACCEPTED",
+      "commit": "f22e374"
+    },
+    "P14": {
+      "status": "ACCEPTED",
+      "commit": "d1fdf20"
+    },
+    "P15": {
+      "status": "ACCEPTED",
+      "commit": "f966229"
+    },
+    "P16": {
+      "status": "ACCEPTED",
+      "commit": "68d8780"
+    },
+    "P17": {
+      "status": "ACCEPTED",
+      "commit": "edb9037"
+    },
+    "P18": {
+      "status": "ACCEPTED",
+      "commit": "152a3d1"
+    },
+    "P19": {
+      "status": "ACCEPTED",
+      "commit": "4c044b9"
+    }
+  }
+}

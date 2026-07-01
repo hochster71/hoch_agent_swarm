@@ -1,0 +1,53 @@
+rbac_policy:
+  roles:
+    michael:
+      role_name: "system_owner"
+      capabilities:
+        - "create_slides"
+        - "save_to_drive"
+        - "access_work_artifacts"
+        - "run_shell_commands"
+        - "modify_repo"
+        - "use_external_sources"
+        - "share_publicly"
+        - "print_ready_export"
+        - "change_autonomy_mode"
+    alison:
+      role_name: "trusted_family_operator"
+      capabilities:
+        - "create_slides"
+        - "save_to_drive"
+        - "use_external_sources"
+        - "print_ready_export"
+      restricted_capabilities:
+        - "run_shell_commands"
+        - "modify_repo"
+        - "access_work_artifacts"
+        - "change_autonomy_mode"
+    child:
+      role_name: "protected_child"
+      capabilities:
+        - "create_slides"
+      requires_approval:
+        - "save_to_drive"
+        - "use_external_sources"
+        - "print_ready_export"
+      blocked_capabilities:
+        - "access_work_artifacts"
+        - "run_shell_commands"
+        - "modify_repo"
+        - "share_publicly"
+        - "change_autonomy_mode"
+    unknown:
+      role_name: "unauthenticated"
+      capabilities: []
+      blocked_capabilities:
+        - "create_slides"
+        - "save_to_drive"
+        - "access_work_artifacts"
+        - "run_shell_commands"
+        - "modify_repo"
+        - "use_external_sources"
+        - "share_publicly"
+        - "print_ready_export"
+        - "change_autonomy_mode"

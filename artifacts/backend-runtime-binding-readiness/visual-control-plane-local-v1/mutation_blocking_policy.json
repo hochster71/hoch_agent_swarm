@@ -1,0 +1,19 @@
+{
+  "policy_name": "visual-control-plane-local-mutation-blocking",
+  "active": true,
+  "blocked_methods": [
+    "POST",
+    "PUT",
+    "PATCH",
+    "DELETE"
+  ],
+  "blocked_routes": [
+    "/api/v1/prompt/execute",
+    "/api/v1/approval/decision",
+    "/api/v1/remediation/execute"
+  ],
+  "external_connection_blocking": {
+    "websockets_disabled": true,
+    "eventsource_disabled": true
+  }
+}

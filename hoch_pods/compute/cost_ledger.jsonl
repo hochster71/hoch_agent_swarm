@@ -1,0 +1,2 @@
+{"date":"2026-06-01","node":"hoch-relay-001","provider":"Linode","line_item":"Nanode 1GB VPS — June 2026","amount_usd":5.00,"currency":"USD","billing_period":"2026-06","category":"compute","epic":"HOCH-200","notes":"Prorated first month"}
+{"date":"2026-07-01","node":"hoch-relay-001","provider":"Linode","line_item":"Nanode 1GB VPS — July 2026","amount_usd":5.00,"currency":"USD","billing_period":"2026-07","category":"compute","epic":"HOCH-200","notes":"Full month, relay stack deployed"}

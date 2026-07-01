@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HOCH Swarm - Visual Control Plane Preview</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    .preview-header-bar {
+      background: var(--bg-card);
+      border-bottom: 2px solid var(--accent-red);
+      padding: var(--space-md);
+      margin-bottom: var(--space-md);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .preview-title-block h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent-red);
+      margin: 0;
+      letter-spacing: 0.05em;
+    }
+    .preview-title-block p {
+      margin: 4px 0 0 0;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .preview-layout {
+      display: flex;
+      gap: var(--space-md);
+    }
+    .preview-sidebar {
+      width: 220px;
+      flex-shrink: 0;
+    }
+    .preview-main-content {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 12px;
+    }
+    .preview-banner {
+      background: rgba(220, 53, 69, 0.25);
+      border: 3px solid var(--accent-red);
+      color: #ffffff;
+      padding: var(--space-md);
+      border-radius: var(--border-radius-md);
+      font-size: 15px;
+      font-family: var(--font-sans);
+      font-weight: 700;
+      margin-bottom: var(--space-md);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+    }
+    .meta-label-block {
+      margin-top: var(--space-sm);
+      border-top: 1px solid var(--border-subtle);
+      padding-top: var(--space-xs);
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Global Preview Ops Bar -->
+  <header class="preview-header-bar">
+    <div class="preview-title-block">
+      <h1>HOCH SYSTEM CONTROL PREVIEW</h1>
+      <p>PREVIEW ONLY — NOT LIVE CONTROL</p>
+    </div>
+    <div class="breadcrumbs">
+      <a href="index.html">SWARM</a> / <a href="dashboard-preview.html" class="active">PREVIEW</a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html">NORTH STAR</a></li>
+      <li><a href="control-plane.html">MISSION CONTROL</a></li>
+      <li><a href="dashboard-preview.html" class="active">PREVIEW</a></li>
+    </ul>
+  </header>
+
+  <main style="padding: 0 var(--space-md) var(--space-xl) var(--space-md);">
+    <!-- Warning Banner -->
+    <div class="preview-banner">
+      <span>⚠️ WARNING: SAFE FRONTEND DATA ADAPTER PLAYGROUND. STATE MUTATION BLOCKED.</span>
+      <span class="status-badge status-simulated">SANDBOXED</span>
+    </div>
+
+    <div class="preview-layout">
+      <!-- Section Rail / Sidebar Navigation -->
+      <aside class="preview-sidebar" id="section-rail-container">
+        <!-- Will be dynamically populated -->
+      </aside>
+
+      <!-- Main Dashboard Panels -->
+      <div class="preview-main-content">
+        <!-- 1. Ops Header Status Summary -->
+        <div id="ops-header-container"></div>
+
+        <!-- 2. Metric Strip ribbon -->
+        <div id="metric-strip-container"></div>
+
+        <!-- 3. Telemetry Cards (High Density Grid) -->
+        <div class="preview-grid" id="telemetry-cards-container"></div>
+
+        <!-- 4. Approval Gates Section -->
+        <section class="component-section">
+          <h2 style="font-size: 16px; margin-bottom: var(--space-sm); color: var(--accent-cyan); text-transform: uppercase;">Operator Approval Decision Queue</h2>
+          <div class="preview-grid" id="approval-queue-container"></div>
+        </section>
+
+        <!-- 5. Verification & Evidence section -->
+        <section class="component-section">
+          <h2 style="font-size: 16px; margin-bottom: var(--space-sm); color: var(--accent-cyan); text-transform: uppercase;">Cryptographic Verification Manifest</h2>
+          <div class="preview-grid" id="evidence-manifest-container"></div>
+        </section>
+
+        <!-- 6. System State Registry Definition -->
+        <div id="state-registry-container"></div>
+
+        <!-- 7. High Density Logs / Console Output -->
+        <div id="terminal-panel-container"></div>
+      </div>
+    </div>
+  </main>
+
+  <!--
+    Local Cockpit Verification Markers:
+    - Status: LOCAL PREVIEW COCKPIT
+    - Integrity: FAIL-CLOSED
+    - Metadata: Source [SRC]
+    - Telemetry: Freshness [TIME]
+    - Verification: Evidence [EVID]
+  -->
+
+  <!-- Load pure adapters and dashboard renderer script -->
+  <script src="../../frontend/visual_adapters.js"></script>
+  <script src="../../frontend/visual_dashboard_preview.js"></script>
+</body>
+</html>

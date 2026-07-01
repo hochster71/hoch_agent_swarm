@@ -1,0 +1,34 @@
+name: Baseline Lock Gate
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  baseline-lock:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Node dependencies
+        run: npm ci
+      - name: Run stale/static scan
+        run: npm run baseline:scan-static
+      - name: Run stale-green regression
+        run: npm run test -- --grep "stale telemetry"
+      - name: Run API contract validation
+        run: npm run baseline:validate-api
+      - name: Run audit validation
+        run: npm run baseline:validate-audit
+      - name: Capture Docker digests
+        run: npm run baseline:capture-digests
+      - name: Generate evidence pack
+        run: npm run baseline:evidence
+      - name: Checksum evidence pack
+        run: npm run baseline:checksum
+      - name: Evaluate baseline lock
+        run: npm run baseline:evaluate

@@ -1,0 +1,24 @@
+{
+  "source_branch_exists": true,
+  "target_branch_name": "integration/visual-control-plane-local-v1",
+  "release_tag_exists": true,
+  "final_release_commit": "c96f79db1295b95ea4c885fe8ca718b57731215b",
+  "working_tree_clean_before_merge": true,
+  "merge_to_main_allowed": false,
+  "push_allowed": false,
+  "deployment_performed": false,
+  "blocked_actions": [
+    "merge directly to main",
+    "git push",
+    "production deployment",
+    "external publication",
+    "backend mutation",
+    "prompt execution",
+    "approval decision execution",
+    "security posture change"
+  ],
+  "qa_commands": [
+    "npm run qa:visual-merge-strategy"
+  ],
+  "ci_command": "npm run ci:validate"
+}

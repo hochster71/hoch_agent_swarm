@@ -1,0 +1,56 @@
+{
+  "prior_tracks": {
+    "P4": {
+      "title": "Security / ATO Evidence Packaging",
+      "commit": "71b6fac feat: package cybersecurity and ATO evidence for visual release"
+    },
+    "P2": {
+      "title": "Backend Runtime Binding Readiness",
+      "commit": "04a93c9 chore: normalize P2 backend runtime binding evidence"
+    },
+    "P3": {
+      "title": "Frontend Runtime Readiness",
+      "commit": "e126a01 feat: map visual control plane frontend panels to read-only backend contracts"
+    },
+    "P6": {
+      "title": "Local Preview Release Candidate",
+      "commit": "0f5e78d feat: consolidate local preview release candidate evidence"
+    },
+    "P7": {
+      "title": "Controlled Local Demo Readiness",
+      "commit": "57cdf46 feat: establish P7 controlled local demo readiness evidence package"
+    },
+    "P8": {
+      "title": "Human Review / Operator Acceptance Package",
+      "commit": "8298442 feat: establish P8 human review and operator acceptance package"
+    },
+    "P9": {
+      "title": "Local Preview Archive / Handoff Package",
+      "commit": "3a0126e feat: establish P9 local preview archive and handoff package"
+    },
+    "P10": {
+      "title": "Final Local Preview Closure Memo",
+      "commit": "fb105f3 feat: establish P10 final local preview closure memo"
+    },
+    "P11": {
+      "title": "Screenshot / Visual Evidence Capture",
+      "commit": "5b60572 feat: establish P11 screenshot and visual evidence capture"
+    },
+    "P12": {
+      "title": "Visual Review Findings / UI Polish Backlog",
+      "commit": "ec4de64 feat: establish P12 visual review findings and UI polish backlog"
+    },
+    "P13": {
+      "title": "Local Preview UI Polish Remediation Plan",
+      "commit": "f22e374 feat: establish P13 local preview UI polish remediation plan"
+    },
+    "P14": {
+      "title": "Local Preview UI Polish Remediation Execution",
+      "commit": "d1fdf20 feat: apply P14 local preview UI polish fixes and generate screenshots"
+    },
+    "P15": {
+      "title": "Post-Remediation Visual Evidence Review",
+      "commit": "f966229 feat: establish P15 post-remediation visual review"
+    }
+  }
+}

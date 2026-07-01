@@ -1,0 +1,20 @@
+{
+  "gap_analysis": {
+    "network_boundaries": {
+      "local": "Localhost-only preview, read-only mocks, no WebSockets or EventSource",
+      "production_requirement": "Secure WSS (WebSocket Secure) or HTTPS with token authentication, TLS termination, CORS limits"
+    },
+    "authentication_and_secrets": {
+      "local": "None, runs strictly on local user context",
+      "production_requirement": "IAM authorization, GCP Secret Manager for API keys, OAuth2 flow for operator cockpit"
+    },
+    "signature_policy": {
+      "local": "Waived (ENABLE_COSIGN_SIGNING skipped)",
+      "production_requirement": "Strict Cosign signature required for all release artifacts, verified at deployment gate"
+    },
+    "database_mutations": {
+      "local": "Zero mutation capability, mock read-only telemetry",
+      "production_requirement": "Write operations governed by transaction ledgers and explicit approval gate verification"
+    }
+  }
+}

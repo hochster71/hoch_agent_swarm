@@ -1,0 +1,48 @@
+default_model: google/gemma-4-12b-qat
+default_provider: lmstudio
+local_first: true
+paid_models_enabled: false
+providers:
+  anthropic:
+    api_style: anthropic
+    base_url: https://api.anthropic.com
+    enabled: false
+    models:
+    - claude-sonnet
+    type: paid
+  google_gemini:
+    api_style: google_gemini
+    base_url: https://generativelanguage.googleapis.com
+    enabled: false
+    models:
+    - gemini-3.1-flash-lite
+    - gemini-3.1-pro-preview
+    - gemini-3.5-flash
+    type: paid
+  lmstudio:
+    api_style: openai_compatible
+    base_url: http://localhost:1234/v1
+    enabled: true
+    models:
+    - google/gemma-4-12b-qat
+    - google/gemma-4-e4b
+    type: local
+  ollama:
+    api_style: ollama
+    base_url: http://localhost:11434
+    enabled: true
+    models:
+    - qwen2.5-coder:7b
+    - qwen2.5-coder:14b
+    - llama3.1:8b
+    - mistral:7b
+    - deepseek-coder:6.7b
+    type: local
+  openai:
+    api_style: openai
+    base_url: https://api.openai.com/v1
+    enabled: false
+    models:
+    - gpt-5.5
+    - gpt-5.5-thinking
+    type: paid

@@ -1,0 +1,226 @@
+{
+  "_meta": {
+    "schema": "hoch-asset-trust-v1",
+    "created": "2026-06-26",
+    "version": "1.0.0",
+    "doctrine": "Zero-trust within cluster. Each node authenticated per-request. No implicit trust.",
+    "pert_ref": "P3",
+    "status": "ACTIVE"
+  },
+  "trust_tiers": {
+    "ALPHA": {
+      "description": "Control Plane — highest privilege. Hosts API, governance DB, orchestrator. All agent approvals go through ALPHA.",
+      "can_approve_agents": true,
+      "can_write_governance_db": true,
+      "can_route_to_all_tiers": true,
+      "can_receive_from": ["ALPHA", "BETA", "GAMMA", "DELTA"],
+      "can_initiate_to": ["ALPHA", "BETA", "GAMMA", "DELTA"]
+    },
+    "BETA": {
+      "description": "Edge Worker — compute tasks, file processing, API calls. Cannot approve agents or write governance DB.",
+      "can_approve_agents": false,
+      "can_write_governance_db": false,
+      "can_route_to_all_tiers": false,
+      "can_receive_from": ["ALPHA"],
+      "can_initiate_to": ["ALPHA"]
+    },
+    "GAMMA": {
+      "description": "Inference Node — GPU/ML tasks only. Isolated from governance DB. Read-only access to approved model artifacts.",
+      "can_approve_agents": false,
+      "can_write_governance_db": false,
+      "can_route_to_all_tiers": false,
+      "can_receive_from": ["ALPHA"],
+      "can_initiate_to": ["ALPHA"],
+      "isolation_note": "GAMMA nodes must not be routed financial, PII, or governance payloads without explicit ALPHA override."
+    },
+    "DELTA": {
+      "description": "Monitor / Console — read-only visibility. Cannot execute agents or write any swarm state.",
+      "can_approve_agents": false,
+      "can_write_governance_db": false,
+      "can_route_to_all_tiers": false,
+      "can_receive_from": ["ALPHA"],
+      "can_initiate_to": [],
+      "read_only": true
+    }
+  },
+  "nodes": [
+    {
+      "node_id": "macbook-pro-l1",
+      "display_name": "MacBook Pro (L1)",
+      "role": "Control Plane",
+      "trust_tier": "ALPHA",
+      "hardware": "Apple Silicon M-series",
+      "os": "macOS",
+      "location": "LOCAL",
+      "network_interface": "localhost + LAN",
+      "api_host": "127.0.0.1",
+      "api_port": 8000,
+      "frontend_port": 3000,
+      "status": "ACTIVE",
+      "approved_capabilities": [
+        "orchestrate_agents",
+        "write_governance_db",
+        "approve_prompts",
+        "route_tasks",
+        "serve_api",
+        "serve_frontend",
+        "read_prompt_library",
+        "execute_low_risk_prompts",
+        "execute_medium_risk_prompts_with_rationale",
+        "read_audit_log",
+        "write_audit_log"
+      ],
+      "denied_capabilities": [
+        "direct_internet_egress_without_approval",
+        "write_outside_approved_paths",
+        "execute_high_risk_without_operator_approval",
+        "run_unapproved_skills"
+      ],
+      "port_policy": {
+        "8000": { "protocol": "HTTP", "access": "localhost_only", "approved": true },
+        "3000": { "protocol": "HTTP", "access": "localhost_only", "approved": true },
+        "lan_egress": "REQUIRES_OPERATOR_APPROVAL"
+      },
+      "evidence": "config/asset_trust_registry.json"
+    },
+    {
+      "node_id": "dell-l2",
+      "display_name": "Dell (L2)",
+      "role": "Edge Worker",
+      "trust_tier": "BETA",
+      "hardware": "x86_64 workstation",
+      "os": "Linux (assumed)",
+      "location": "LOCAL_LAN",
+      "network_interface": "LAN",
+      "api_host": "TBD",
+      "api_port": "TBD",
+      "frontend_port": null,
+      "status": "NOT_PROVISIONED",
+      "approved_capabilities": [
+        "execute_assigned_tasks",
+        "read_approved_artifacts",
+        "report_results_to_alpha",
+        "run_approved_skills"
+      ],
+      "denied_capabilities": [
+        "approve_prompts",
+        "write_governance_db",
+        "read_governance_db",
+        "access_prompt_library_directly",
+        "execute_high_risk_prompts",
+        "initiate_lan_egress_without_alpha_route"
+      ],
+      "port_policy": {
+        "worker_port": "TBD",
+        "lan_egress": "ALPHA_MEDIATED_ONLY"
+      },
+      "evidence": "config/asset_trust_registry.json",
+      "provisioning_required": ["worker_daemon", "alpha_cert_pair", "approved_skill_list"]
+    },
+    {
+      "node_id": "neo-w1",
+      "display_name": "NEO (W1)",
+      "role": "Inference Node",
+      "trust_tier": "GAMMA",
+      "hardware": "GPU workstation / NVIDIA",
+      "os": "Linux (assumed)",
+      "location": "LOCAL_LAN",
+      "network_interface": "LAN",
+      "api_host": "TBD",
+      "api_port": "TBD",
+      "frontend_port": null,
+      "status": "NOT_PROVISIONED",
+      "approved_capabilities": [
+        "run_inference_tasks",
+        "load_approved_models",
+        "return_inference_results_to_alpha"
+      ],
+      "denied_capabilities": [
+        "approve_prompts",
+        "write_governance_db",
+        "read_governance_db",
+        "handle_financial_data",
+        "handle_pii",
+        "handle_governance_payloads",
+        "execute_arbitrary_code_outside_inference_sandbox"
+      ],
+      "port_policy": {
+        "inference_port": "TBD",
+        "lan_egress": "ALPHA_MEDIATED_ONLY",
+        "internet": "BLOCKED_BY_DEFAULT"
+      },
+      "evidence": "config/asset_trust_registry.json",
+      "provisioning_required": ["inference_daemon", "alpha_cert_pair", "model_allowlist"]
+    },
+    {
+      "node_id": "ipad-delta-1",
+      "display_name": "iPad",
+      "role": "Secondary Monitor",
+      "trust_tier": "DELTA",
+      "hardware": "Apple iPad",
+      "os": "iPadOS",
+      "location": "LOCAL_WIFI",
+      "network_interface": "WiFi",
+      "api_host": "N/A",
+      "api_port": null,
+      "frontend_port": null,
+      "status": "MONITOR_ONLY",
+      "approved_capabilities": [
+        "view_dashboard_read_only",
+        "view_agent_status_read_only",
+        "view_audit_log_read_only"
+      ],
+      "denied_capabilities": [
+        "approve_prompts",
+        "execute_agents",
+        "write_any_swarm_state",
+        "access_governance_db",
+        "access_prompt_library"
+      ],
+      "port_policy": {
+        "access": "READ_ONLY_VIA_BROWSER",
+        "write": "BLOCKED"
+      },
+      "evidence": "config/asset_trust_registry.json",
+      "provisioning_required": ["browser_only_access", "no_app_install_required"]
+    },
+    {
+      "node_id": "iphone-delta-2",
+      "display_name": "iPhone",
+      "role": "Emergency Console",
+      "trust_tier": "DELTA",
+      "hardware": "Apple iPhone",
+      "os": "iOS",
+      "location": "LOCAL_WIFI",
+      "network_interface": "WiFi",
+      "api_host": "N/A",
+      "api_port": null,
+      "frontend_port": null,
+      "status": "MONITOR_ONLY",
+      "approved_capabilities": [
+        "view_critical_alerts_read_only",
+        "view_go_nogo_status_read_only",
+        "send_emergency_stop_signal_via_approved_endpoint"
+      ],
+      "denied_capabilities": [
+        "approve_prompts",
+        "execute_agents",
+        "write_any_swarm_state",
+        "access_governance_db",
+        "access_prompt_library"
+      ],
+      "port_policy": {
+        "access": "READ_ONLY_VIA_BROWSER",
+        "write": "BLOCKED_EXCEPT_EMERGENCY_STOP"
+      },
+      "emergency_stop": {
+        "endpoint": "POST /api/v1/swarm/emergency-stop",
+        "requires": "physical_device_auth + operator_pin",
+        "approved": false,
+        "note": "Endpoint not yet implemented — future P4 work"
+      },
+      "evidence": "config/asset_trust_registry.json",
+      "provisioning_required": ["browser_only_access"]
+    }
+  ]
+}

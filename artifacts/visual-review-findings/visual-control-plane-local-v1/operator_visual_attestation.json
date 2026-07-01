@@ -1,0 +1,11 @@
+{
+  "attestation": {
+    "signer": "Michael Hoch",
+    "timestamp": "2026-06-27T18:40:00-05:00",
+    "attested_facts": {
+      "findings_are_visual_only": true,
+      "backlog_items_preserve_sandbox": true,
+      "no_active_modifications_performed": true
+    }
+  }
+}

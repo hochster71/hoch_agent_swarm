@@ -1,0 +1,18 @@
+{
+  "phase": "V21_LOCAL_RELEASE_PACKAGE",
+  "local_only": true,
+  "package_created": true,
+  "deployment_performed": false,
+  "production_deployment_enabled": false,
+  "external_publication_enabled": false,
+  "backend_mutation_enabled": false,
+  "prompt_execution_enabled": false,
+  "approval_decision_execution_enabled": false,
+  "security_posture_change_enabled": false,
+  "accepted_cockpit_path": "mockups/visual-control-plane/control-plane.html",
+  "release_root": "artifacts/releases/visual-control-plane-local",
+  "rollback_path": "artifacts/releases/visual-control-plane-local/ROLLBACK.md",
+  "manifest_path": "artifacts/releases/visual-control-plane-local/manifest.json",
+  "provenance_path": "artifacts/releases/visual-control-plane-local/provenance.json",
+  "next_allowed_phase": "V22_LOCAL_RELEASE_REVIEW"
+}

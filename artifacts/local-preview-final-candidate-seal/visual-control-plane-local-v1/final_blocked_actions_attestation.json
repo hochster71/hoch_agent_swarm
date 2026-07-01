@@ -1,0 +1,10 @@
+{
+  "blocked_actions": {
+    "git_push_to_main": "BLOCKED",
+    "production_deployment": "BLOCKED",
+    "backend_mutations": "BLOCKED",
+    "prompt_execution": "BLOCKED",
+    "approval_decision_execution": "BLOCKED",
+    "external_publication": "BLOCKED"
+  }
+}

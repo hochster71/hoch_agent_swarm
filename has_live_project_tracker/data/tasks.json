@@ -1,0 +1,1867 @@
+[
+  {
+    "id": "T001",
+    "name": "Create live tracker runtime folder and server",
+    "owner_domain": "Tracker",
+    "status": "Done",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": "2026-06-30T13:00:00.000Z",
+    "completed_at": "2026-06-30T13:15:00.000Z",
+    "expected_hours": 1,
+    "dependencies": [],
+    "progress": 100,
+    "description": "Initialize the directory structure and main HTTP server module for the project tracker.",
+    "blocker": "",
+    "evidence": [
+      "has_live_project_tracker/server.js"
+    ],
+    "output_artifacts": [
+      "has_live_project_tracker/server.js"
+    ],
+    "command_history": [
+      "mkdir has_live_project_tracker"
+    ],
+    "qa_verdict": "GO",
+    "done_definition": "Directory exists and server.js file contains basic HTTP server logic.",
+    "critical_path_reason": "First foundational step of the Live Tracker runtime setup.",
+    "projection_impact_hours": 1,
+    "next_action": "Proceed to dark themed UI dashboard design",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T002",
+    "name": "Create dark UI dashboard shell",
+    "owner_domain": "Tracker",
+    "status": "Done",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": "2026-06-30T13:15:00.000Z",
+    "completed_at": "2026-06-30T13:45:00.000Z",
+    "expected_hours": 2,
+    "dependencies": [
+      "T001"
+    ],
+    "progress": 100,
+    "description": "Develop the HTML and CSS styling for the high-tech dark theme dashboard.",
+    "blocker": "",
+    "evidence": [
+      "has_live_project_tracker/index.html"
+    ],
+    "output_artifacts": [
+      "has_live_project_tracker/index.html"
+    ],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "index.html exists and renders a dark theme stylesheet with standard panels.",
+    "critical_path_reason": "Enables visual layout rendering for the dashboard checklist.",
+    "projection_impact_hours": 2,
+    "next_action": "Add basic auth controls",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T003",
+    "name": "Add auth and protected live endpoints",
+    "owner_domain": "Tracker",
+    "status": "Done",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": "2026-06-30T13:45:00.000Z",
+    "completed_at": "2026-06-30T14:00:00.000Z",
+    "expected_hours": 1,
+    "dependencies": [
+      "T001"
+    ],
+    "progress": 100,
+    "description": "Secure all /api routes and index page with Local Basic Authentication.",
+    "blocker": "",
+    "evidence": [
+      "has_live_project_tracker/server.js:authOk"
+    ],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "Unauthenticated curls to /api routes return 401 Unauthorized status.",
+    "critical_path_reason": "Secures internal project checklists and telemetry from exposure.",
+    "projection_impact_hours": 1,
+    "next_action": "Bind checklist mapping logic",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T004",
+    "name": "Add truth-linked project checklist",
+    "owner_domain": "Tracker",
+    "status": "Done",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": "2026-06-30T13:00:00.000Z",
+    "completed_at": "2026-06-30T13:39:11.682Z",
+    "expected_hours": 4,
+    "dependencies": [
+      "T002",
+      "T003"
+    ],
+    "progress": 100,
+    "description": "Load the one-year milestone plan into tasks.json and dynamically bind it to UI rows.",
+    "blocker": "",
+    "evidence": [
+      "has_live_project_tracker/data/tasks.json"
+    ],
+    "output_artifacts": [
+      "has_live_project_tracker/data/tasks.json"
+    ],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "Tasks checklist table is successfully populated dynamically from data/tasks.json.",
+    "critical_path_reason": "Core tracking checklist must render for subsequent integration milestones.",
+    "projection_impact_hours": 4,
+    "next_action": "Map agents status feeds",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T005",
+    "name": "Map all HAS agents to tracker status feed",
+    "owner_domain": "HAS",
+    "status": "Done",
+    "assigned_agent": "Master Orchestrator",
+    "started_at": "2026-06-30T13:39:14.101Z",
+    "completed_at": "2026-06-30T17:38:17.212Z",
+    "expected_hours": 8,
+    "dependencies": [
+      "T004"
+    ],
+    "progress": 100,
+    "description": "Synchronize statuses of the 12 agents in the main swarm with data/status.json.",
+    "blocker": "",
+    "evidence": [
+      "has_live_project_tracker/data/agent_inventory.json"
+    ],
+    "output_artifacts": [
+      "has_live_project_tracker/data/agent_inventory.json"
+    ],
+    "consulted_agents": [
+      "Evidence Collector Agent"
+    ],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "All 12 agents have real-time statuses and runtime metrics updated in status.json.",
+    "critical_path_reason": "Blocks swarm synchronization and local worker health validations.",
+    "projection_impact_hours": 8,
+    "next_action": "Expose endpoint and hook to agent runner process",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T17:38:17.212Z"
+  },
+  {
+    "id": "T006",
+    "name": "Map all HASF builds to tracker build feed",
+    "owner_domain": "HASF",
+    "status": "Done",
+    "assigned_agent": "HASF Pipeline Agent",
+    "started_at": "2026-06-30T14:00:00.000Z",
+    "completed_at": "2026-06-30T17:38:29.734Z",
+    "expected_hours": 8,
+    "dependencies": [
+      "T004"
+    ],
+    "progress": 100,
+    "description": "Synchronize statuses of the 9 DevSecOps builds with data/status.json.",
+    "blocker": "",
+    "evidence": [
+      "has_live_project_tracker/data/build_inventory.json"
+    ],
+    "output_artifacts": [
+      "has_live_project_tracker/data/build_inventory.json"
+    ],
+    "consulted_agents": [
+      "Evidence Collector Agent"
+    ],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "All 9 builds have exit codes, artifact targets, and logs mapped in status.json.",
+    "critical_path_reason": "Blocks software factory build reporting and deployment metrics.",
+    "projection_impact_hours": 8,
+    "next_action": "Add post-build event dispatcher hook",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T17:38:29.734Z"
+  },
+  {
+    "id": "T007",
+    "name": "Ingest hochster71 GitHub project inventory",
+    "owner_domain": "Data Consolidation",
+    "status": "Done",
+    "assigned_agent": "Master Orchestrator",
+    "started_at": "2026-06-30T14:00:00.000Z",
+    "completed_at": "2026-06-30T17:38:42.156Z",
+    "expected_hours": 24,
+    "dependencies": [
+      "T004"
+    ],
+    "progress": 100,
+    "description": "Clones all repositories from hochster71's GitHub account and generates metadata indexes.",
+    "blocker": "",
+    "evidence": [
+      "has_live_project_tracker/data/github_inventory.json"
+    ],
+    "output_artifacts": [
+      "has_live_project_tracker/data/github_inventory.json"
+    ],
+    "consulted_agents": [
+      "Evidence Collector Agent"
+    ],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "Consolidated list of GitHub repositories, hashes, and domains is logged.",
+    "critical_path_reason": "Essential dependency to deduplicate codebase versions.",
+    "projection_impact_hours": 24,
+    "next_action": "Configure GitHub PAT credentials and run fetch script",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T17:38:42.156Z"
+  },
+  {
+    "id": "T008",
+    "name": "Ingest local hard drive project inventory",
+    "owner_domain": "Data Consolidation",
+    "status": "Done",
+    "assigned_agent": "Master Orchestrator",
+    "started_at": "2026-06-30T14:00:00.000Z",
+    "completed_at": "2026-06-30T17:38:49.702Z",
+    "expected_hours": 32,
+    "dependencies": [
+      "T004"
+    ],
+    "progress": 100,
+    "description": "Traverses local storage directories to index code snippets, workspace configurations, and offline logs.",
+    "blocker": "",
+    "evidence": [
+      "has_live_project_tracker/data/local_project_inventory.json"
+    ],
+    "output_artifacts": [
+      "has_live_project_tracker/data/local_project_inventory.json"
+    ],
+    "consulted_agents": [
+      "Evidence Collector Agent"
+    ],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "Uncommitted local folders are scanned and indexed with path details.",
+    "critical_path_reason": "Ensures no active local scripts are missed during consolidation.",
+    "projection_impact_hours": 32,
+    "next_action": "Execute local find/scan index script",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T17:38:49.702Z"
+  },
+  {
+    "id": "T009",
+    "name": "Ingest Google Drive and iCloud Drive inventory",
+    "owner_domain": "Data Consolidation",
+    "status": "Done",
+    "assigned_agent": "Master Orchestrator",
+    "started_at": "2026-06-30T14:00:00.000Z",
+    "completed_at": "2026-06-30T17:38:57.172Z",
+    "expected_hours": 32,
+    "dependencies": [
+      "T004"
+    ],
+    "progress": 100,
+    "description": "Gathers personal documents, budgeting files, checklists, and diet files from cloud storage mountpoints.",
+    "blocker": "",
+    "evidence": [
+      "has_live_project_tracker/data/cloud_project_inventory.json"
+    ],
+    "output_artifacts": [
+      "has_live_project_tracker/data/cloud_project_inventory.json"
+    ],
+    "consulted_agents": [
+      "Evidence Collector Agent"
+    ],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "All cloud files are resolved to absolute host paths and index metadata.",
+    "critical_path_reason": "Critical for personal and business domain mapping.",
+    "projection_impact_hours": 32,
+    "next_action": "Check directory mounts and list contents",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T17:38:57.172Z"
+  },
+  {
+    "id": "T010",
+    "name": "Deduplicate and classify applications, snippets, docs, assets",
+    "owner_domain": "Data Consolidation",
+    "status": "Queued",
+    "assigned_agent": "Master Orchestrator",
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 40,
+    "dependencies": [
+      "T007",
+      "T008",
+      "T009"
+    ],
+    "progress": 0,
+    "description": "Computes SHA256 hashes of all ingested files to eliminate duplicates and group them by domain (personal, business, hobby).",
+    "blocker": "",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "De-duplicated master dataset is saved as a structured project database.",
+    "critical_path_reason": "Blocks building the global registry.",
+    "projection_impact_hours": 40,
+    "next_action": "Run de-duplication script and output statistics",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T011",
+    "name": "Build global HAS/HASF project registry",
+    "owner_domain": "Data Consolidation",
+    "status": "Queued",
+    "assigned_agent": "Master Orchestrator",
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 24,
+    "dependencies": [
+      "T010"
+    ],
+    "progress": 0,
+    "description": "Builds a unified index metadata dashboard exposing all projects, modifications, and active scopes.",
+    "blocker": "",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Global index registry file exists and contains metadata for all consolidated folders.",
+    "critical_path_reason": "Enables gap analyses and schedule allocations.",
+    "projection_impact_hours": 24,
+    "next_action": "Write JSON database with index structures",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T012",
+    "name": "Run gap analysis across applications and prompt library",
+    "owner_domain": "Gap Analysis",
+    "status": "Queued",
+    "assigned_agent": "QA Auditor Agent",
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 32,
+    "dependencies": [
+      "T011"
+    ],
+    "progress": 0,
+    "description": "Compares prompt templates and tools with specifications to find functional or architectural gaps.",
+    "blocker": "",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Gap analysis report is compiled and saved under docs/evidence/.",
+    "critical_path_reason": "Enables schedule prioritization and Northstar plan alignment.",
+    "projection_impact_hours": 32,
+    "next_action": "Run prompt parser checks and file inspections",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T013",
+    "name": "Run DevSec gap analysis: SAST, DAST, SCA, secrets, containers",
+    "owner_domain": "Gap Analysis",
+    "status": "Queued",
+    "assigned_agent": "QA Auditor Agent",
+    "consulted_agents": [
+      "QA Auditor Agent",
+      "Security Auditor Agent"
+    ],
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 40,
+    "dependencies": [
+      "T011"
+    ],
+    "progress": 0,
+    "description": "Audits current codebase container limits, security scanners integration, and hardcoded secrets.",
+    "blocker": "",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Vulnerability findings and scanning holes are categorized by severity.",
+    "critical_path_reason": "Direct dependency for setting up software factory security gates.",
+    "projection_impact_hours": 40,
+    "next_action": "Execute test security scans and log holes",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T014",
+    "name": "Run personal/home-life automation gap analysis",
+    "owner_domain": "HAS Personal",
+    "status": "Queued",
+    "assigned_agent": "Personal Life Agent",
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 24,
+    "dependencies": [
+      "T011"
+    ],
+    "progress": 0,
+    "description": "Examines existing workflows for calendar synchronization, pet scheduling, and family budgets.",
+    "blocker": "",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Home automation gaps list exists and has clear remediation actions.",
+    "critical_path_reason": "Identifies necessary API wrappers for calendars/checklists.",
+    "projection_impact_hours": 24,
+    "next_action": "Review iCloud calendar hooks",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T015",
+    "name": "Run business/finance/legal/HR automation gap analysis",
+    "owner_domain": "HAS Business",
+    "status": "Queued",
+    "assigned_agent": "Business Operations Agent",
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 24,
+    "dependencies": [
+      "T011"
+    ],
+    "progress": 0,
+    "description": "Identifies manual workflow constraints in personal tax calculations, accounting inputs, and legal records.",
+    "blocker": "",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Business gap list compiles, outlining HR template and document tool omissions.",
+    "critical_path_reason": "Forms the backlog for finance automation.",
+    "projection_impact_hours": 24,
+    "next_action": "Check bank accounting api wrappers",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T016",
+    "name": "Run hobbies/pets/investing/research automation gap analysis",
+    "owner_domain": "HAS Hobbies",
+    "status": "Queued",
+    "assigned_agent": "Research & Innovation Agent",
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 24,
+    "dependencies": [
+      "T011"
+    ],
+    "progress": 0,
+    "description": "Audits current investment tracking tools, aquarium/pet telemetry logs, and research aggregators.",
+    "blocker": "",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Hobby metrics gap report is generated.",
+    "critical_path_reason": "Identifies research scraping and ingestion needs.",
+    "projection_impact_hours": 24,
+    "next_action": "Scan local sensor/port outputs",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T017",
+    "name": "Create 12-month PERT schedule with critical path",
+    "owner_domain": "Planning",
+    "status": "Queued",
+    "assigned_agent": "PERT & Planning Agent",
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 24,
+    "dependencies": [
+      "T012",
+      "T013",
+      "T014",
+      "T015",
+      "T016"
+    ],
+    "progress": 0,
+    "description": "Constructs the master PERT scheduling network graph based on optimistic, realistic, and pessimistic estimates.",
+    "blocker": "",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "PERT charts and critical path calculations are committed to the docs directory.",
+    "critical_path_reason": "Provides the overall dependency timeline.",
+    "projection_impact_hours": 24,
+    "next_action": "Synthesize all gap reports and calculate optimistic/pessimistic ranges",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T018",
+    "name": "Create Northstar plan to halve production time",
+    "owner_domain": "Planning",
+    "status": "Queued",
+    "assigned_agent": "PERT & Planning Agent",
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 16,
+    "dependencies": [
+      "T017"
+    ],
+    "progress": 0,
+    "description": "Drafts the strategic acceleration plan focusing on thin vertical slices and automated DevSecOps loops.",
+    "blocker": "",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Northstar plan details exit conditions, testing automation steps, and targets.",
+    "critical_path_reason": "Defines the core priority weightings for all subsequent features.",
+    "projection_impact_hours": 16,
+    "next_action": "Establish task completion speed targets",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T019",
+    "name": "Build always-running research agent loop",
+    "owner_domain": "HAS Research",
+    "status": "Queued",
+    "assigned_agent": "Research & Innovation Agent",
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 40,
+    "dependencies": [
+      "T018"
+    ],
+    "progress": 0,
+    "description": "Implements the daemon loop scraping industry RSS feeds, pre-filtering topics, and appending backlog items.",
+    "blocker": "",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Scraping daemon triggers automatically and populates tracker status files.",
+    "critical_path_reason": "Key task to ensure the research agent feed functions.",
+    "projection_impact_hours": 40,
+    "next_action": "Write python loop with feedparser integration",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T020",
+    "name": "Build HAS personal-life autonomy workflows",
+    "owner_domain": "HAS Personal",
+    "status": "Queued",
+    "assigned_agent": "Personal Life Agent",
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 80,
+    "dependencies": [
+      "T014",
+      "T018"
+    ],
+    "progress": 0,
+    "description": "Constructs the diet planner, family calendar reconciler, and pet activity tracker modules.",
+    "blocker": "",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Diet plans, calendar syncs, and pet checklists show active integration.",
+    "critical_path_reason": "Core milestone for personal life lane automation.",
+    "projection_impact_hours": 80,
+    "next_action": "Draft diet schema and recipe database integration",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T021",
+    "name": "Build HAS business autonomy workflows",
+    "owner_domain": "HAS Business",
+    "status": "Queued",
+    "assigned_agent": "Business Operations Agent",
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 80,
+    "dependencies": [
+      "T015",
+      "T018"
+    ],
+    "progress": 0,
+    "description": "Constructs automated ledger parsing, compliance reporting, and document drafting templates.",
+    "blocker": "",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Tax forecasts and HR contracts generate automatically based on variables.",
+    "critical_path_reason": "Core milestone for business/financial operations.",
+    "projection_impact_hours": 80,
+    "next_action": "Build document rendering functions",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T022",
+    "name": "Build HASF spec-to-deploy software factory lane",
+    "owner_domain": "HASF",
+    "status": "Queued",
+    "assigned_agent": "HASF Pipeline Agent",
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 160,
+    "dependencies": [
+      "T013",
+      "T018"
+    ],
+    "progress": 0,
+    "description": "Establishes the autonomous software factory loop (Code-Gen -> Unit Tests -> SAST/DAST Scan -> CD Release).",
+    "blocker": "",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Pipeline accepts specs, passes unit tests/security scans, and triggers local deployment.",
+    "critical_path_reason": "Blocks autonomous integration capabilities.",
+    "projection_impact_hours": 160,
+    "next_action": "Integrate Docker deployment loops and Playwright gates",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T023",
+    "name": "Integrate QA verdict gates: GO, CONDITIONAL GO, NO-GO",
+    "owner_domain": "QA",
+    "status": "Queued",
+    "assigned_agent": "QA Auditor Agent",
+    "consulted_agents": [
+      "QA Auditor Agent"
+    ],
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 40,
+    "dependencies": [
+      "T022"
+    ],
+    "progress": 0,
+    "description": "Wires formal QA gates checking evidence availability, vulnerability counts, and unit tests before approval.",
+    "blocker": "",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Releases are blocked unless the QA Auditor produces a formal GO verdict.",
+    "critical_path_reason": "Essential for deployment safety checks.",
+    "projection_impact_hours": 40,
+    "next_action": "Write validation functions for Docker image status",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T024",
+    "name": "Integrate Stripe or brokered monetization workflow with human approval gate",
+    "owner_domain": "Monetization",
+    "status": "Queued",
+    "assigned_agent": "Monetization & Compliance Agent",
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 80,
+    "dependencies": [
+      "T021",
+      "T022",
+      "T023"
+    ],
+    "progress": 0,
+    "description": "Wires payment service gateway subscriptions, pricing tables, and invoice checks under human-approved flows.",
+    "blocker": "",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Transactional endpoints run successfully and require explicitly logged user approval.",
+    "critical_path_reason": "Ensures absolute containment and security of financial records.",
+    "projection_impact_hours": 80,
+    "next_action": "Setup Stripe API sandbox and routing paths",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T025",
+    "name": "Create product backlog for monetizable applications",
+    "owner_domain": "Monetization",
+    "status": "Queued",
+    "assigned_agent": "Monetization & Compliance Agent",
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 40,
+    "dependencies": [
+      "T012",
+      "T019"
+    ],
+    "progress": 0,
+    "description": "Documents a curated set of monetizable applications derived from application scanning and news analysis.",
+    "blocker": "",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Pricing plans, features list, and release paths exist for 5 candidate systems.",
+    "critical_path_reason": "Directs future software factory coding tasks.",
+    "projection_impact_hours": 40,
+    "next_action": "Analyze competitors and pricing margins",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T026",
+    "name": "Connect tracker to real HAS/HASF event stream",
+    "owner_domain": "Tracker",
+    "status": "Running",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": "2026-06-30T14:00:00.000Z",
+    "completed_at": null,
+    "expected_hours": 40,
+    "dependencies": [
+      "T004"
+    ],
+    "progress": 10,
+    "description": "Upgrades the tracker endpoints to parse the live Python backend main ledger database directly.",
+    "blocker": "",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Tracker queries SQLite swarm_ledger.db runtime_truth state for projections.",
+    "critical_path_reason": "Removes simulated data reliance.",
+    "projection_impact_hours": 40,
+    "next_action": "Configure database file polling and write node-sqlite3 queries",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T027",
+    "name": "Add production logging, audit evidence, and replayable event history",
+    "owner_domain": "Tracker",
+    "status": "Running",
+    "assigned_agent": "QA Auditor Agent",
+    "started_at": "2026-06-30T14:00:00.000Z",
+    "completed_at": null,
+    "expected_hours": 40,
+    "dependencies": [
+      "T004"
+    ],
+    "progress": 10,
+    "description": "Appends and streams detailed event block chains for auditing and replay capabilities.",
+    "blocker": "",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "A complete, append-only history is queryable via /api/events.",
+    "critical_path_reason": "Verifies historical system changes securely.",
+    "projection_impact_hours": 40,
+    "next_action": "Setup append-only write locks on data/events.ndjson",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T028",
+    "name": "Add launchd service to keep tracker running on Mac",
+    "owner_domain": "Runtime",
+    "status": "Queued",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 8,
+    "dependencies": [
+      "T026"
+    ],
+    "progress": 0,
+    "description": "Deploys a custom plist agent under LaunchAgents to ensure automatic daemon boot.",
+    "blocker": "",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "launchctl list displays the tracker agent running.",
+    "critical_path_reason": "Secures always-on tracking compliance.",
+    "projection_impact_hours": 8,
+    "next_action": "Write plist configuration file",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T029",
+    "name": "Run final QA on tracker truth linkage and projections",
+    "owner_domain": "QA",
+    "status": "Queued",
+    "assigned_agent": "QA Auditor Agent",
+    "consulted_agents": [
+      "QA Auditor Agent"
+    ],
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 16,
+    "dependencies": [
+      "T027",
+      "T028"
+    ],
+    "progress": 0,
+    "description": "Validates variance formulas, critical path traversals, and projection data bounds.",
+    "blocker": "",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Automation scripts verify correct dashboard rendering under load.",
+    "critical_path_reason": "Ensures data precision before promotion.",
+    "projection_impact_hours": 16,
+    "next_action": "Write automation test scripts",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T030",
+    "name": "Promote tracker as always-on HAS/HASF project command center",
+    "owner_domain": "Production",
+    "status": "Queued",
+    "assigned_agent": "Master Orchestrator",
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 8,
+    "dependencies": [
+      "T029"
+    ],
+    "progress": 0,
+    "description": "Pins the Live Tracker on the operator console as the primary truth command center.",
+    "blocker": "",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Dashboard is accessible and all checks show green/production state.",
+    "critical_path_reason": "Completes the Live Project Tracker roadmap.",
+    "projection_impact_hours": 8,
+    "next_action": "Clean workspace and finalize documentation",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T032",
+    "name": "Bind HAS/HASF Live Tracker to live API / SQLite ledger truth",
+    "owner_domain": "Tracker",
+    "status": "Done",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": "2026-06-30T13:40:00.000Z",
+    "completed_at": "2026-06-30T13:45:00.000Z",
+    "expected_hours": 16,
+    "dependencies": [
+      "T026"
+    ],
+    "progress": 100,
+    "description": "Binds the tracker to live API and SQLite database truth dynamically with fallback failover.",
+    "blocker": "",
+    "evidence": [
+      "has_live_project_tracker/server.js",
+      "tests/e2e/has-hasf-live-tracker-truth-sources.spec.ts"
+    ],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "E2E truth source integration test suite passes successfully.",
+    "critical_path_reason": "Binds data to database truth.",
+    "projection_impact_hours": 16,
+    "next_action": "Build Landscape Command Center",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T033",
+    "name": "Add landscape command center view",
+    "owner_domain": "Tracker",
+    "status": "Done",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": "2026-06-30T13:56:00.000Z",
+    "completed_at": "2026-06-30T13:58:14.531Z",
+    "expected_hours": 24,
+    "dependencies": [
+      "T032"
+    ],
+    "progress": 100,
+    "description": "Create a high-tech wide landscape view mapping all domains, agents, builds, and DORA telemetry.",
+    "blocker": "",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Landscape tab renders domains, agent grid, critical path, and build strips.",
+    "critical_path_reason": "Foundational view of the advanced landscape command center.",
+    "projection_impact_hours": 24,
+    "next_action": "Build Gap Analysis View",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T13:58:14.531Z"
+  },
+  {
+    "id": "T034",
+    "name": "Add gap analysis view",
+    "owner_domain": "Tracker",
+    "status": "Done",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": "2026-06-30T13:56:00.000Z",
+    "completed_at": "2026-06-30T13:58:14.543Z",
+    "expected_hours": 16,
+    "dependencies": [
+      "T033"
+    ],
+    "progress": 100,
+    "description": "Build the gap list, capability matrix, risk register, and missing data reports.",
+    "blocker": "",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Gap Analysis tab renders capability coverage matrix and risk tables.",
+    "critical_path_reason": "Verifies gaps in the project codebase and automation.",
+    "projection_impact_hours": 16,
+    "next_action": "Add DORA speed metrics panel",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T13:58:14.543Z"
+  },
+  {
+    "id": "T035",
+    "name": "Add production speed / DORA metrics panel",
+    "owner_domain": "Tracker",
+    "status": "Done",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "consulted_agents": [
+      "Evidence Collector Agent"
+    ],
+    "started_at": "2026-06-30T13:56:00.000Z",
+    "completed_at": "2026-06-30T13:58:14.554Z",
+    "expected_hours": 16,
+    "dependencies": [
+      "T033"
+    ],
+    "progress": 100,
+    "description": "Calculate and render lead time, deployment frequency, change fail rate, and rework hours.",
+    "blocker": "",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "DORA metrics section displays throughput, stability, and lead time stats.",
+    "critical_path_reason": "Measures system development velocity objectively.",
+    "projection_impact_hours": 16,
+    "next_action": "Build PERT critical path rail",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T13:58:14.554Z"
+  },
+  {
+    "id": "T036",
+    "name": "Add PERT / critical path landscape rail",
+    "owner_domain": "Tracker",
+    "status": "Done",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": "2026-06-30T13:56:00.000Z",
+    "completed_at": "2026-06-30T13:58:14.564Z",
+    "expected_hours": 16,
+    "dependencies": [
+      "T033"
+    ],
+    "progress": 100,
+    "description": "Implement optimistic, likely, and pessimistic PERT task models to project path drag.",
+    "blocker": "",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "PERT expected hours and critical path flags are displayed on the path rail.",
+    "critical_path_reason": "Provides statistical backing for swarm projections.",
+    "projection_impact_hours": 16,
+    "next_action": "Write E2E test specs for landscape",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T13:58:14.564Z"
+  },
+  {
+    "id": "T037",
+    "name": "Add landscape and gap analysis E2E tests",
+    "owner_domain": "Tracker",
+    "status": "Done",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "consulted_agents": [
+      "QA Auditor Agent"
+    ],
+    "started_at": "2026-06-30T13:56:00.000Z",
+    "completed_at": "2026-06-30T13:58:14.575Z",
+    "expected_hours": 16,
+    "dependencies": [
+      "T034",
+      "T035",
+      "T036"
+    ],
+    "progress": 100,
+    "description": "Write Playwright spec files to verify render states, tooltip focus, and detail drawers.",
+    "blocker": "",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Playwright runs and reports 100% success on new specs.",
+    "critical_path_reason": "Guarantees zero regressions in Landscape and Gap views.",
+    "projection_impact_hours": 16,
+    "next_action": "Publish reports and ledgers",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T13:58:14.575Z"
+  },
+  {
+    "id": "T038",
+    "name": "Add disk-pressure guard and snapshot retention policy",
+    "owner_domain": "Tracker",
+    "status": "Done",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": "2026-06-30T14:10:00.000Z",
+    "completed_at": "2026-06-30T14:12:00.000Z",
+    "expected_hours": 16,
+    "dependencies": [
+      "T037"
+    ],
+    "progress": 100,
+    "description": "Expose /api/disk and enforce safe snapshot bounds ensuring absolute and preferred limits.",
+    "blocker": "",
+    "evidence": [
+      "has_live_project_tracker/server.js:getDiskSpace",
+      "scripts/tracker_disk_check.sh"
+    ],
+    "output_artifacts": [
+      "scripts/tracker_disk_check.sh"
+    ],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "API blocks snapshot execution when free disk space falls under 25GB.",
+    "critical_path_reason": "Safeguards Mac filesystem from saturation.",
+    "projection_impact_hours": 16,
+    "next_action": "Implement launchd persistence plan",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T14:12:00.000Z"
+  },
+  {
+    "id": "T039",
+    "name": "Add launchd persistence plan",
+    "owner_domain": "Tracker",
+    "status": "Done",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": "2026-06-30T14:10:00.000Z",
+    "completed_at": "2026-06-30T14:12:00.000Z",
+    "expected_hours": 8,
+    "dependencies": [
+      "T038"
+    ],
+    "progress": 100,
+    "description": "Design a plist daemon config to persist the node service on boot and sleep wakeup.",
+    "blocker": "",
+    "evidence": [
+      "has_live_project_tracker/tracker-daemon.plist"
+    ],
+    "output_artifacts": [
+      "has_live_project_tracker/tracker-daemon.plist"
+    ],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "Plists are mapped and detailed in docs, ready for user-approved activation.",
+    "critical_path_reason": "Prepares server for always-on background tracking.",
+    "projection_impact_hours": 8,
+    "next_action": "Verify E2E tests and obtain launchd installation approval",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T14:14:37.841Z"
+  },
+  {
+    "id": "T040",
+    "name": "Restore live HAS API feed on port 8000",
+    "owner_domain": "Tracker",
+    "status": "Done",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": "2026-06-30T14:14:00.000Z",
+    "completed_at": "2026-06-30T14:33:24.958Z",
+    "expected_hours": 2,
+    "optimistic_hours": 1,
+    "pessimistic_hours": 6,
+    "dependencies": [
+      "T039"
+    ],
+    "progress": 100,
+    "description": "Restore live HAS API feed on port 8000 by checking Docker daemon health and launching compose services.",
+    "blocker": "has-api container offline on port 8000",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Live HTTP API on port 8000 is accessible and registers healthy response.",
+    "critical_path_reason": "Enables live Swarm orchestration truth linkage.",
+    "projection_impact_hours": 2,
+    "next_action": "Check docker daemon status and start compose service",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T14:33:24.958Z"
+  },
+  {
+    "id": "T041",
+    "name": "Add real DORA telemetry event ingestion",
+    "owner_domain": "Tracker",
+    "status": "Done",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "consulted_agents": [
+      "Evidence Collector Agent"
+    ],
+    "started_at": "2026-06-30T14:37:00.000Z",
+    "completed_at": "2026-06-30T14:50:00.000Z",
+    "expected_hours": 8,
+    "optimistic_hours": 4,
+    "pessimistic_hours": 16,
+    "dependencies": [
+      "T040"
+    ],
+    "progress": 100,
+    "description": "Implement DORA metrics computation from raw change, deploy, failure, and recovery events stored in NDJSON format.",
+    "blocker": "",
+    "evidence": [
+      "has_live_project_tracker/server.js:computeDoraMetrics"
+    ],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "W3C-compliant accessible metrics drawers render dynamic /api/dora data.",
+    "critical_path_reason": "Drives continuous delivery metrics accuracy.",
+    "projection_impact_hours": 8,
+    "next_action": "Complete",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T14:50:00.000Z"
+  },
+  {
+    "id": "T042",
+    "name": "Rotate persistent tracker credentials",
+    "owner_domain": "Tracker",
+    "status": "Done",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": "2026-06-30T14:37:00.000Z",
+    "completed_at": "2026-06-30T14:40:00.000Z",
+    "expected_hours": 2,
+    "optimistic_hours": 1,
+    "pessimistic_hours": 4,
+    "dependencies": [
+      "T039"
+    ],
+    "progress": 100,
+    "description": "Support secure TRACKER_USER and TRACKER_PASSWORD credentials loaded from ~/.hoch-secrets/has-tracker.env file.",
+    "blocker": "",
+    "evidence": [
+      "~/.hoch-secrets/has-tracker.env"
+    ],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "Passwords are hidden in logs and removed from plist configuration.",
+    "critical_path_reason": "Protects always-on production control plane endpoints.",
+    "projection_impact_hours": 2,
+    "next_action": "Complete",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T14:40:00.000Z"
+  },
+  {
+    "id": "T043",
+    "name": "Safe SQLite snapshot scheduler under disk guard",
+    "owner_domain": "Tracker",
+    "status": "Queued",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 4,
+    "optimistic_hours": 2,
+    "pessimistic_hours": 8,
+    "dependencies": [
+      "T041",
+      "T042"
+    ],
+    "progress": 0,
+    "description": "Schedule recurring SQLite ledger database backups and purge old snapshot files based on disk space alerts.",
+    "blocker": "DORA telemetry and credential rotation must be active",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Purges old files and runs backups hourly under launchd.",
+    "critical_path_reason": "Maintains database snapshot retention safely.",
+    "projection_impact_hours": 4,
+    "next_action": "Awaiting previous task closures",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T14:37:00.000Z"
+  },
+  {
+    "id": "T044",
+    "name": "Add Production Acceleration Moonshot Agent",
+    "owner_domain": "Planning",
+    "domain": "Planning",
+    "status": "Done",
+    "assigned_agent": "Production Acceleration Agent",
+    "started_at": "2026-06-30T14:40:00.000Z",
+    "completed_at": "2026-06-30T15:00:00.000Z",
+    "expected_hours": 4,
+    "optimistic_hours": 1,
+    "most_likely_hours": 3,
+    "pessimistic_hours": 8,
+    "dependencies": [
+      "T040"
+    ],
+    "depends_on": [
+      "T040"
+    ],
+    "progress": 100,
+    "description": "Create a dedicated agent that continuously compresses critical path, identifies highest-leverage unlocks, parallelizes safe work, and updates the tracker with production-speed recommendations.",
+    "blocker": "",
+    "evidence": [
+      "has_live_project_tracker/server.js:computeAcceleration"
+    ],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "Agent appears in tracker status feed, produces top acceleration actions, computes hour savings, and assigns next safe parallel work packets.",
+    "critical_path_reason": "Drives parallel swarm execution speed optimization.",
+    "projection_impact_hours": 4,
+    "next_action": "Complete",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T15:00:00.000Z"
+  },
+  {
+    "id": "T045",
+    "name": "Add critical path compression engine",
+    "owner_domain": "Planning",
+    "domain": "Planning",
+    "status": "Done",
+    "assigned_agent": "Production Acceleration Agent",
+    "started_at": "2026-06-30T14:40:00.000Z",
+    "completed_at": "2026-06-30T15:00:00.000Z",
+    "expected_hours": 8,
+    "optimistic_hours": 2,
+    "most_likely_hours": 6,
+    "pessimistic_hours": 16,
+    "dependencies": [
+      "T044"
+    ],
+    "depends_on": [
+      "T044"
+    ],
+    "progress": 100,
+    "description": "Compute which tasks reduce the most remaining hours and which can safely run in parallel without corrupting truth sources.",
+    "blocker": "",
+    "evidence": [
+      "has_live_project_tracker/server.js:computeAcceleration"
+    ],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "Tracker shows estimated hours saved, bottleneck owner, safe parallel batches, and recommended next agent assignments.",
+    "critical_path_reason": "Enables automated graph analysis calculations.",
+    "projection_impact_hours": 8,
+    "next_action": "Complete",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T15:00:00.000Z"
+  },
+  {
+    "id": "T046",
+    "name": "Add moonshot production dashboard strip",
+    "owner_domain": "Tracker",
+    "domain": "Tracker",
+    "status": "Done",
+    "assigned_agent": "Production Acceleration Agent",
+    "started_at": "2026-06-30T14:40:00.000Z",
+    "completed_at": "2026-06-30T15:00:00.000Z",
+    "expected_hours": 4,
+    "optimistic_hours": 1,
+    "most_likely_hours": 3,
+    "pessimistic_hours": 8,
+    "dependencies": [
+      "T045"
+    ],
+    "depends_on": [
+      "T045"
+    ],
+    "progress": 100,
+    "description": "Expose top 5 production accelerators, blockers removed, hours saved, target completion delta, and next swarm batch.",
+    "blocker": "",
+    "evidence": [
+      "has_live_project_tracker/index.html"
+    ],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "Landscape view shows moonshot strip with current acceleration plan and impact.",
+    "critical_path_reason": "Visualizes speed gains directly to operator.",
+    "projection_impact_hours": 4,
+    "next_action": "Complete",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T15:00:00.000Z"
+  },
+  {
+    "id": "T048",
+    "name": "Add RACI governance matrix for all agents",
+    "owner_domain": "Governance",
+    "domain": "Governance",
+    "status": "Running",
+    "assigned_agent": "Master Orchestrator",
+    "started_at": "2026-06-30T16:50:00.000Z",
+    "completed_at": null,
+    "expected_hours": 4,
+    "optimistic_hours": 1,
+    "most_likely_hours": 3,
+    "pessimistic_hours": 8,
+    "dependencies": [
+      "T044"
+    ],
+    "depends_on": [
+      "T044"
+    ],
+    "progress": 50,
+    "description": "Create a RACI matrix that maps all agents to major HAS/HASF workstreams and active tracker tasks.",
+    "blocker": "",
+    "evidence": [
+      "has_live_project_tracker/data/raci_matrix.json"
+    ],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Tracker exposes /api/raci, Landscape/Gaps show RACI coverage, and invalid ownership patterns are flagged.",
+    "critical_path_reason": "Clarifies agent ownership boundaries and accountability constraints.",
+    "projection_impact_hours": 4,
+    "next_action": "Implement RACI verification rules and engine endpoint",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T16:50:00.000Z"
+  },
+  {
+    "id": "T049",
+    "name": "Add RACI validation gates",
+    "owner_domain": "Governance",
+    "domain": "Governance",
+    "status": "Queued",
+    "assigned_agent": "QA Auditor Agent",
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 4,
+    "optimistic_hours": 1,
+    "most_likely_hours": 3,
+    "pessimistic_hours": 8,
+    "dependencies": [
+      "T048"
+    ],
+    "depends_on": [
+      "T048"
+    ],
+    "progress": 0,
+    "description": "Add validation rules requiring one accountable agent, at least one responsible agent, and evidence/QA/security consults where needed.",
+    "blocker": "Waiting on T048 matrix deployment",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Gap Analysis shows RACI violations and QA verdict gate blocks GO when P0 RACI violations exist.",
+    "critical_path_reason": "Enforces responsibility guardrails during agent execution loops.",
+    "projection_impact_hours": 4,
+    "next_action": "Awaiting T048",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T16:50:00.000Z"
+  },
+  {
+    "id": "T050",
+    "name": "Add RACI UI and evidence export",
+    "owner_domain": "Governance",
+    "domain": "Governance",
+    "status": "Queued",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 4,
+    "optimistic_hours": 1,
+    "most_likely_hours": 3,
+    "pessimistic_hours": 8,
+    "dependencies": [
+      "T049"
+    ],
+    "depends_on": [
+      "T049"
+    ],
+    "progress": 0,
+    "description": "Render a RACI view in the tracker and export RACI evidence for audit and replay.",
+    "blocker": "Waiting on T049 validation rules",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "RACI tab renders, supports tooltips/drawers, and evidence is generated under docs/evidence/ui.",
+    "critical_path_reason": "Provides full-screen visual auditing control plane for operator governance.",
+    "projection_impact_hours": 4,
+    "next_action": "Awaiting T049",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T16:50:00.000Z"
+  },
+  {
+    "id": "T051",
+    "name": "Add RACI heat map to Landscape and Gap Analysis",
+    "owner_domain": "Governance",
+    "domain": "Governance",
+    "status": "Done",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": null,
+    "completed_at": "2026-06-30T17:21:22.151Z",
+    "expected_hours": 3,
+    "optimistic_hours": 1,
+    "most_likely_hours": 2,
+    "pessimistic_hours": 6,
+    "dependencies": [
+      "T048"
+    ],
+    "depends_on": [
+      "T048"
+    ],
+    "progress": 100,
+    "description": "Render RACI agent load heat map, highlight overloaded agents, and recommend delegation/sub-agent splits.",
+    "blocker": "Waiting on T048 matrix deployment",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Tracker exposes raci_heatmap.json through /api/raci or /api/raci-heatmap and renders the heat map in Landscape/Gaps.",
+    "critical_path_reason": "Visualizes coordination bottlenecks and highlights critical agent delegation recommendations.",
+    "projection_impact_hours": 3,
+    "next_action": "Awaiting T048",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T17:21:22.151Z"
+  },
+  {
+    "id": "T052",
+    "name": "Adopt HAS/HASF Shell Baseline v2",
+    "owner_domain": "Tracker",
+    "domain": "Tracker",
+    "status": "Done",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": "2026-06-30T17:53:00.000Z",
+    "completed_at": "2026-06-30T18:19:00Z",
+    "expected_hours": 8,
+    "dependencies": [
+      "T011"
+    ],
+    "depends_on": [
+      "T011"
+    ],
+    "progress": 100,
+    "description": "Refactor the tracker UI into the dark control-plane shell matching the approved prototype layout.",
+    "blocker": "",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Overview, side navigation, KPI cards, core architecture panel, registry, agent, build, RACI, gap, and evidence sections render from live data.",
+    "critical_path_reason": "Sets up Baseline v2 layout control plane.",
+    "projection_impact_hours": 8,
+    "next_action": "Complete UI refactoring",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T18:19:00Z"
+  },
+  {
+    "id": "T053",
+    "name": "Add live animated data-flow layer",
+    "owner_domain": "Observability",
+    "domain": "Observability",
+    "status": "Done",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": null,
+    "completed_at": "2026-06-30T18:19:00Z",
+    "expected_hours": 12,
+    "dependencies": [
+      "T052"
+    ],
+    "depends_on": [
+      "T052"
+    ],
+    "progress": 100,
+    "description": "Create real animated visual flows driven by events.ndjson and live /api/stream telemetry.",
+    "done_definition": "Dashboard animates live task, agent, build, registry, evidence, RACI, DORA, and security events with no simulated data.",
+    "blocker": "Waiting on T052 Baseline shell",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "critical_path_reason": "Required for live Swarm status observability.",
+    "projection_impact_hours": 12,
+    "next_action": "Awaiting T052",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T18:19:00Z"
+  },
+  {
+    "id": "T054",
+    "name": "Add SSE live event stream endpoint",
+    "owner_domain": "Observability",
+    "domain": "Observability",
+    "status": "Done",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": null,
+    "completed_at": "2026-06-30T18:19:00Z",
+    "expected_hours": 6,
+    "dependencies": [
+      "T053"
+    ],
+    "depends_on": [
+      "T053"
+    ],
+    "progress": 100,
+    "description": "Expose authenticated GET /api/stream using Server-Sent Events sourced from events.ndjson and live runtime updates.",
+    "done_definition": "/api/stream emits real event objects and UI consumes them for live flow animation.",
+    "blocker": "Waiting on T053 flow layer",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "critical_path_reason": "Low-risk SSE real-time data pipe to UI.",
+    "projection_impact_hours": 6,
+    "next_action": "Awaiting T053",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T18:19:00Z"
+  },
+  {
+    "id": "T055",
+    "name": "Add Control Plane page router",
+    "owner_domain": "Tracker",
+    "domain": "Tracker",
+    "status": "Done",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": null,
+    "completed_at": "2026-06-30T18:19:00Z",
+    "expected_hours": 8,
+    "dependencies": [
+      "T052"
+    ],
+    "depends_on": [
+      "T052"
+    ],
+    "progress": 100,
+    "description": "Formalize all HAS, HASF, Personal, Business, Hobby, DevSecOps, Governance, and Utility pages.",
+    "done_definition": "All side-nav pages render with live data cards or explicit UNKNOWN/PARTIAL states.",
+    "blocker": "Waiting on T052 Baseline shell",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "critical_path_reason": "Required for page-based presentation controls.",
+    "projection_impact_hours": 8,
+    "next_action": "Awaiting T052",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T18:19:00Z"
+  },
+  {
+    "id": "T056",
+    "name": "Embed Live Tracker mirror into Control Plane v2",
+    "owner_domain": "Tracker",
+    "domain": "Tracker",
+    "status": "Done",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": null,
+    "completed_at": "2026-06-30T18:19:00Z",
+    "expected_hours": 4,
+    "optimistic_hours": 1,
+    "most_likely_hours": 3,
+    "pessimistic_hours": 8,
+    "dependencies": [
+      "T052"
+    ],
+    "depends_on": [
+      "T052"
+    ],
+    "progress": 100,
+    "description": "Embed the current HAS/HASF Live Tracker permanently inside Control Plane v2 as a mirrored runtime cockpit while preserving port 3001 as the authoritative runtime.",
+    "done_definition": "Control Plane v2 includes a Live Tracker Mirror page/dock that renders the current tracker state from real endpoints without duplicate state logic.",
+    "blocker": "Waiting on T052 Baseline shell",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "critical_path_reason": "Embeds working tracker inside new UI.",
+    "projection_impact_hours": 4,
+    "next_action": "Awaiting T052",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T18:19:00Z"
+  },
+  {
+    "id": "T057",
+    "name": "Add Live Tracker mirror health and auth validation",
+    "owner_domain": "Observability",
+    "domain": "Observability",
+    "status": "Done",
+    "assigned_agent": "QA Auditor Agent",
+    "started_at": null,
+    "completed_at": "2026-06-30T18:19:00Z",
+    "expected_hours": 2,
+    "optimistic_hours": 1,
+    "most_likely_hours": 2,
+    "pessimistic_hours": 4,
+    "dependencies": [
+      "T056"
+    ],
+    "depends_on": [
+      "T056"
+    ],
+    "progress": 100,
+    "description": "Validate that the embedded mirror uses the same auth/session context, does not expose credentials, and reflects live endpoint health.",
+    "done_definition": "Mirror page passes E2E, healthcheck confirms mirror route, and auth does not regress.",
+    "blocker": "Waiting on T056 mirror integration",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "critical_path_reason": "Ensures mirror route integrity and same-origin auth controls.",
+    "projection_impact_hours": 2,
+    "next_action": "Awaiting T056",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T18:19:00Z"
+  },
+  {
+    "id": "T062",
+    "name": "Design Kubernetes sidecar runtime without changing baseline",
+    "owner_domain": "Runtime",
+    "domain": "Runtime",
+    "status": "Running",
+    "assigned_agent": "Production Acceleration Agent",
+    "started_at": "2026-06-30T18:25:00Z",
+    "completed_at": null,
+    "expected_hours": 4,
+    "optimistic_hours": 2,
+    "most_likely_hours": 4,
+    "pessimistic_hours": 8,
+    "dependencies": [
+      "T052",
+      "T053",
+      "T054",
+      "T056"
+    ],
+    "depends_on": [
+      "T052",
+      "T053",
+      "T054",
+      "T056"
+    ],
+    "progress": 50,
+    "description": "Design local Docker/Kubernetes sidecar runtime that preserves the current Control Plane v2 baseline while adding containerized worker execution.",
+    "blocker": "",
+    "evidence": [
+      "docs/evidence/ui/20260630-k8s-sidecar-runtime-plan.md"
+    ],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Architecture doc, manifests plan, resource limits, rollback plan, and sidecar-only migration path exist.",
+    "critical_path_reason": "Lays architecture and bounds container execution safely.",
+    "projection_impact_hours": 4,
+    "next_action": "Complete Docker/Kubernetes files design",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T18:25:00Z"
+  },
+  {
+    "id": "T063",
+    "name": "Containerize HAS/HASF sidecar workers",
+    "owner_domain": "Runtime",
+    "domain": "Runtime",
+    "status": "Queued",
+    "assigned_agent": "HASF Pipeline Agent",
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 12,
+    "optimistic_hours": 6,
+    "most_likely_hours": 12,
+    "pessimistic_hours": 24,
+    "dependencies": [
+      "T062"
+    ],
+    "depends_on": [
+      "T062"
+    ],
+    "progress": 0,
+    "description": "Create Dockerfiles and compose profiles for inventory, registry, event, evidence, and scan workers without replacing the baseline tracker/API.",
+    "blocker": "Waiting on T062 design",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Workers build locally, run with bounded CPU/memory, write event outputs, and do not modify baseline state unsafely.",
+    "critical_path_reason": "Enables reproducible worker container builds.",
+    "projection_impact_hours": 12,
+    "next_action": "Awaiting T062",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T18:25:00Z"
+  },
+  {
+    "id": "T064",
+    "name": "Create local k3d or kind cluster for HAS/HASF workers",
+    "owner_domain": "Runtime",
+    "domain": "Runtime",
+    "status": "Queued",
+    "assigned_agent": "HASF Pipeline Agent",
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 8,
+    "optimistic_hours": 4,
+    "most_likely_hours": 8,
+    "pessimistic_hours": 16,
+    "dependencies": [
+      "T063"
+    ],
+    "depends_on": [
+      "T063"
+    ],
+    "progress": 0,
+    "description": "Create local Kubernetes-in-Docker cluster for sidecar workers with namespace isolation, resource limits, persistent volumes, and health checks.",
+    "blocker": "Waiting on T063 containerization",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Cluster starts, worker namespace exists, test job runs, resource limits are enforced, and baseline :3001/:8000 remains untouched.",
+    "critical_path_reason": "Provides runtime orchestration and resource controls.",
+    "projection_impact_hours": 8,
+    "next_action": "Awaiting T063",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T18:25:00Z"
+  },
+  {
+    "id": "T065",
+    "name": "Wire Kubernetes worker events into Control Plane live flows",
+    "owner_domain": "Observability",
+    "domain": "Observability",
+    "status": "Queued",
+    "assigned_agent": "Live Tracker Runtime Agent",
+    "started_at": null,
+    "completed_at": null,
+    "expected_hours": 8,
+    "optimistic_hours": 4,
+    "most_likely_hours": 8,
+    "pessimistic_hours": 16,
+    "dependencies": [
+      "T064"
+    ],
+    "depends_on": [
+      "T064"
+    ],
+    "progress": 0,
+    "description": "Stream real Kubernetes worker events into events.ndjson and /api/stream so Control Plane v2 animates actual job/agent flow activity.",
+    "blocker": "Waiting on T064 cluster wired",
+    "evidence": [],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "UNKNOWN",
+    "done_definition": "Control Plane live flow layer shows real Kubernetes job/worker events with no fake telemetry.",
+    "critical_path_reason": "Verifies live event telemetry loop over the mesh runtime.",
+    "projection_impact_hours": 8,
+    "next_action": "Awaiting T064",
+    "stale_after_seconds": 300,
+    "updated_at": "2026-06-30T18:25:00Z"
+  },
+  {
+    "id": "T096",
+    "name": "Create HOCH PODS Launch Theater",
+    "owner_domain": "UI",
+    "status": "Done",
+    "assigned_agent": "Master Orchestrator",
+    "started_at": "",
+    "completed_at": "2026-06-30T19:06:28Z",
+    "expected_hours": 2,
+    "dependencies": [],
+    "progress": 100,
+    "description": "Replace the static swarm panel with a cinematic HOCH PODS launch theater where POD cores activate and agents spin up with profile cards.",
+    "blocker": "",
+    "evidence": [
+      "docs/evidence/ui/20260630-hoch-pods-launch-theater.md"
+    ],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "Implemented and verified via E2E playwright tests.",
+    "critical_path_reason": "High-priority HOCH PODS launch theater migration milestone.",
+    "projection_impact_hours": 2,
+    "next_action": "",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T097",
+    "name": "Add POD Core activation animations",
+    "owner_domain": "UI",
+    "status": "Done",
+    "assigned_agent": "Master Orchestrator",
+    "started_at": "",
+    "completed_at": "2026-06-30T19:06:28Z",
+    "expected_hours": 2,
+    "dependencies": [],
+    "progress": 100,
+    "description": "Animate HAS, HASF, Business, Cyber, Hobby, Family, and Ops POD cores as protected orchestration domains.",
+    "blocker": "",
+    "evidence": [
+      "docs/evidence/ui/20260630-hoch-pods-launch-theater.md"
+    ],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "Implemented and verified via E2E playwright tests.",
+    "critical_path_reason": "High-priority HOCH PODS launch theater migration milestone.",
+    "projection_impact_hours": 2,
+    "next_action": "",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T098",
+    "name": "Add agent skill popout cards",
+    "owner_domain": "UI",
+    "status": "Done",
+    "assigned_agent": "Master Orchestrator",
+    "started_at": "",
+    "completed_at": "2026-06-30T19:06:28Z",
+    "expected_hours": 2,
+    "dependencies": [],
+    "progress": 100,
+    "description": "Show animated agent skill/role/mission cards during agent spin-up.",
+    "blocker": "",
+    "evidence": [
+      "docs/evidence/ui/20260630-hoch-pods-launch-theater.md"
+    ],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "Implemented and verified via E2E playwright tests.",
+    "critical_path_reason": "High-priority HOCH PODS launch theater migration milestone.",
+    "projection_impact_hours": 2,
+    "next_action": "",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T099",
+    "name": "Add POD-to-agent lifecycle routing",
+    "owner_domain": "Observability",
+    "status": "Done",
+    "assigned_agent": "Master Orchestrator",
+    "started_at": "",
+    "completed_at": "2026-06-30T19:06:28Z",
+    "expected_hours": 2,
+    "dependencies": [],
+    "progress": 100,
+    "description": "Map agents to PODs, tasks, lifecycle states, and destination lanes using real data.",
+    "blocker": "",
+    "evidence": [
+      "docs/evidence/ui/20260630-hoch-pods-launch-theater.md"
+    ],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "Implemented and verified via E2E playwright tests.",
+    "critical_path_reason": "High-priority HOCH PODS launch theater migration milestone.",
+    "projection_impact_hours": 2,
+    "next_action": "",
+    "stale_after_seconds": 300
+  },
+  {
+    "id": "T100",
+    "name": "Add HOCH PODS launch readiness banner",
+    "owner_domain": "Release",
+    "status": "Done",
+    "assigned_agent": "Master Orchestrator",
+    "started_at": "",
+    "completed_at": "2026-06-30T19:06:28Z",
+    "expected_hours": 2,
+    "dependencies": [],
+    "progress": 100,
+    "description": "Show rocket-ready, waiting, blocked, degraded, and launch-ready states across the Control Plane.",
+    "blocker": "",
+    "evidence": [
+      "docs/evidence/ui/20260630-hoch-pods-launch-theater.md"
+    ],
+    "output_artifacts": [],
+    "command_history": [],
+    "qa_verdict": "GO",
+    "done_definition": "Implemented and verified via E2E playwright tests.",
+    "critical_path_reason": "High-priority HOCH PODS launch theater migration milestone.",
+    "projection_impact_hours": 2,
+    "next_action": "",
+    "stale_after_seconds": 300
+  }
+]

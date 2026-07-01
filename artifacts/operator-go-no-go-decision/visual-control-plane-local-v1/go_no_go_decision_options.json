@@ -1,0 +1,22 @@
+{
+  "options": [
+    {
+      "decision": "GO",
+      "scope": "local preview review only",
+      "rationale": "Recommended because all local QA validation contracts and visual checks have passed successfully.",
+      "selected": true
+    },
+    {
+      "decision": "NO-GO",
+      "scope": "local preview review only",
+      "rationale": "Unselected. Only applicable if critical QA/CI regressions were found.",
+      "selected": false
+    },
+    {
+      "decision": "DEFER",
+      "scope": "local preview review only",
+      "rationale": "Unselected. Only applicable if additional out-of-scope manual verification were needed.",
+      "selected": false
+    }
+  ]
+}

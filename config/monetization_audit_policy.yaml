@@ -1,0 +1,32 @@
+monetization_audit_policy:
+  read_only_mode: true
+  allowed_write_paths:
+    - "/Users/michaelhoch/hoch_agent_swarm/data/monetization/"
+    - "/Users/michaelhoch/hoch_agent_swarm/docs/evidence/monetization/"
+    - "/Users/michaelhoch/hoch_agent_swarm/docs/planning/monetization/"
+  scan_paths:
+    - "/Users/michaelhoch/hoch_agent_swarm"
+    - "/Users/michaelhoch/.gemini/antigravity/brain"
+    - "/Users/michaelhoch/Documents"
+    - "/Users/michaelhoch/Desktop"
+    - "/Users/michaelhoch/Downloads"
+    - "/Users/michaelhoch/Library/Mobile Documents"
+    - "/Users/michaelhoch/Library/CloudStorage"
+  prohibited_actions:
+    - "mv"
+    - "rm"
+    - "rename"
+    - "rsync --delete"
+    - "git clean"
+    - "git reset"
+    - "chmod"
+    - "chown"
+  redact_patterns:
+    - "api[_-]?key"
+    - "key"
+    - "secret"
+    - "token"
+    - "password"
+    - "private_key"
+    - "ssh"
+    - "sk-[a-zA-Z0-9_-]{20,}"

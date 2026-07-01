@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AgentScore",
+  "type": "OBJECT",
+  "properties": {
+    "agent_id": { "type": "STRING" },
+    "agent_name": { "type": "STRING" },
+    "mission_id": { "type": "STRING" },
+    "task_id": { "type": "STRING" },
+    "raci_role": { "type": "STRING", "enum": ["Responsible", "Accountable", "Consulted", "Informed"] },
+    "score": { "type": "INTEGER", "minimum": 0, "maximum": 100 },
+    "band": { "type": "STRING", "enum": ["GOLD", "GREEN", "AMBER", "RED", "BLACK"] },
+    "status": { "type": "STRING" },
+    "gate_results": {
+      "type": "OBJECT",
+      "properties": {
+        "requirement_gate": { "type": "STRING", "enum": ["PASS", "FAIL", "N/A"] },
+        "runtime_gate": { "type": "STRING", "enum": ["PASS", "FAIL", "N/A"] },
+        "evidence_gate": { "type": "STRING", "enum": ["PASS", "FAIL", "N/A"] },
+        "qa_gate": { "type": "STRING", "enum": ["PASS", "FAIL", "N/A"] },
+        "security_gate": { "type": "STRING", "enum": ["PASS", "FAIL", "N/A"] },
+        "visual_parity_gate": { "type": "STRING", "enum": ["PASS", "FAIL", "N/A"] },
+        "operator_access_gate": { "type": "STRING", "enum": ["PASS", "FAIL", "N/A"] },
+        "human_acceptance_gate": { "type": "STRING", "enum": ["PASS", "FAIL", "N/A"] }
+      },
+      "additionalProperties": true
+    },
+    "penalties": {
+      "type": "ARRAY",
+      "items": { "type": "STRING" }
+    },
+    "remedy": { "type": "STRING" },
+    "next_allowed_roles": {
+      "type": "ARRAY",
+      "items": { "type": "STRING" }
+    },
+    "restricted_actions": {
+      "type": "ARRAY",
+      "items": { "type": "STRING" }
+    },
+    "evidence": {
+      "type": "ARRAY",
+      "items": { "type": "STRING" }
+    },
+    "updated_at": { "type": "STRING" }
+  },
+  "required": ["agent_id", "agent_name", "score", "band", "gate_results"]
+}

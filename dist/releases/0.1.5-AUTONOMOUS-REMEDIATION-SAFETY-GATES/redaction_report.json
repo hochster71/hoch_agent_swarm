@@ -1,0 +1,16 @@
+{
+  "redaction_events": [
+    {
+      "id": "red_d0e15ba8",
+      "trace_id": "ff2efa4901ee435eb1304af7563aca4f",
+      "original_length": 118,
+      "redacted_length": 95,
+      "redactions_count": 2,
+      "redacted_keys": [
+        "private_key",
+        "jwt"
+      ],
+      "created_at": "2026-06-24T19:17:30.241370+00:00"
+    }
+  ]
+}

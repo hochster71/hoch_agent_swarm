@@ -1,5 +1,5 @@
 # Safe Model Storage Exclude List
-# Generated: 2026-06-28T11:18:02.174669Z
+# Generated: 2026-06-29T21:27:40.161666Z
 # Active Routing Models: ollama/gemma2:2b, ollama/llama3.1:8b, ollama/mistral:7b
 #
 # Usage with rclone:

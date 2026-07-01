@@ -1,0 +1,3 @@
+sum by (provider) (
+  count_over_time({app="hoch-agent-swarm"} | json | process_type="LOCAL_MODEL_HEALTH" | state="FAILED" [10m])
+) >= 3

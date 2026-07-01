@@ -1,0 +1,19 @@
+{
+  "rollup_status": "PASS",
+  "qa_suites": {
+    "qa:visual-security-evidence": "PASS",
+    "qa:visual-backend-binding": "PASS",
+    "qa:frontend-runtime-readiness": "PASS",
+    "qa:local-preview-release-candidate": "PASS",
+    "qa:controlled-local-demo-readiness": "PASS",
+    "qa:operator-acceptance-package": "PASS",
+    "qa:local-preview-handoff-package": "PASS",
+    "qa:final-local-preview-closure": "PASS",
+    "qa:ui-screenshot-evidence": "PASS",
+    "qa:visual-review-findings": "PASS",
+    "qa:ui-polish-remediation-plan": "PASS",
+    "qa:ui-polish-remediation-execution": "PASS",
+    "qa:post-remediation-visual-review": "PASS",
+    "ci:validate": "PASS"
+  }
+}

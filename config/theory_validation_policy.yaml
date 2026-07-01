@@ -1,0 +1,48 @@
+# theory_validation_policy.yaml
+# Declares target thresholds and verification criteria for the 11 planning theories
+
+validation_thresholds:
+  north_star_metric:
+    target_score: 0.90
+    check_interval_seconds: 3600
+    required_evidence: "revenue_offer_generation"
+  theory_of_constraints:
+    target_score: 0.85
+    check_interval_seconds: 3600
+    required_evidence: "bottleneck_resolution_metrics"
+  ooda_loop:
+    target_score: 0.95
+    check_interval_seconds: 1800
+    required_evidence: "remediation_speed_logs"
+  okrs:
+    target_score: 0.80
+    check_interval_seconds: 7200
+    required_evidence: "objective_key_results"
+  pert_cpm:
+    target_score: 0.90
+    check_interval_seconds: 1800
+    required_evidence: "critical_path_integrity"
+  hoshin_kanri:
+    target_score: 0.85
+    check_interval_seconds: 7200
+    required_evidence: "alignment_matrices"
+  wardley_mapping:
+    target_score: 0.80
+    check_interval_seconds: 14400
+    required_evidence: "asset_evolution_maps"
+  jtbd:
+    target_score: 0.90
+    check_interval_seconds: 3600
+    required_evidence: "buyer_utility_signals"
+  lean_build_measure_learn:
+    target_score: 0.85
+    check_interval_seconds: 3600
+    required_evidence: "experiment_history_ledger"
+  cyber_risk_governance:
+    target_score: 0.98
+    check_interval_seconds: 900
+    required_evidence: "risk_reviewer_audit_trails"
+  ai_rmf:
+    target_score: 0.95
+    check_interval_seconds: 1800
+    required_evidence: "adversarial_security_reports"

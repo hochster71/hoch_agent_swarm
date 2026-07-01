@@ -1,0 +1,4 @@
+index=hoch_agent_swarm sourcetype=hoch:model_routing
+(provider="google_gemini" OR event_family="GOOGLE_FRONTIER")
+(verdict="BLOCKED" OR reason="payload_canonicalization_blocked" OR reason="budget_exceeded" OR reason="approval_required")
+| table _time provider model verdict reason task_id approval_id

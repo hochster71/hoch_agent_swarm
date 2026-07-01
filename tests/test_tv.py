@@ -1,209 +1,160 @@
-# -*- coding: utf-8 -*-
-"""
-test_tv.py — Test suite for HOCH TV/Drogon.TV integration.
-"""
-
-from __future__ import annotations
-import json
 import pytest
-from pathlib import Path
-from tempfile import TemporaryDirectory
-from unittest.mock import patch, MagicMock
-from hoch_agent_swarm.tv_backend import TVBackend, MOCK_M3U, MOCK_XMLTV
-from hoch_agent_swarm.ui_server import app
+from fastapi.testclient import TestClient
+from backend.main import app
+from backend.tv_manager import (
+    parse_m3u_playlist, 
+    get_channels_data, 
+    get_raw_playlist, 
+    get_epg_xml,
+    get_channel_epg,
+    ping_channel_playback,
+    get_groups_health
+)
 
-def test_m3u_parsing():
-    with TemporaryDirectory() as tmpdir:
-        cache_dir = Path(tmpdir)
-        backend = TVBackend(cache_dir=cache_dir)
-        
-        # Test default load creates mock fallback if empty
-        assert backend.m3u_path.exists()
-        assert backend.epg_path.exists()
-        
-        channels = backend.parse_m3u_playlist()
-        assert len(channels) > 0
-        for ch in channels:
-            assert "id" in ch
-            assert "name" in ch
-            assert "url" in ch
-            assert "group" in ch
-            assert "logo" in ch
+client = TestClient(app)
 
-def test_xmltv_parsing():
-    with TemporaryDirectory() as tmpdir:
-        cache_dir = Path(tmpdir)
-        backend = TVBackend(cache_dir=cache_dir)
-        
-        epg = backend.parse_epg_data()
-        assert len(epg) > 0
-        # Check that program listings exist for mock channels
-        assert "news-channel" in epg
-        news_programs = epg["news-channel"]
-        assert len(news_programs) > 0
-        assert news_programs[0]["title"] == "Global Security Swarm Report"
+@pytest.fixture(autouse=True)
+def mock_drogon_fetch(monkeypatch):
+    def fake_fetch(url, description):
+        if "epg" in description.lower() or "epg" in url.lower():
+            return b"""<?xml version="1.0" encoding="UTF-8"?>
+<tv>
+  <channel id="cnn">
+    <display-name>CNN</display-name>
+  </channel>
+  <programme start="20260628000000 +0000" stop="20260628235959 +0000" channel="cnn">
+    <title>Global Security Swarm Report</title>
+    <desc>Continuous Monitoring feeds and compliance updates live.</desc>
+  </programme>
+</tv>
+"""
+        else:
+            return b"""#EXTM3U
+#EXTINF:-1 tvg-id="cnn" tvg-name="CNN" tvg-logo="http://example.com/cnn.png" group-title="News",CNN US
+http://localhost:8080/cnn/index.m3u8
+"""
+    monkeypatch.setattr("backend.tv_manager.fetch_drogon_data", fake_fetch)
+
+def test_m3u_parsing_local():
+    # Test M3U parsing from string content
+    sample_m3u = """#EXTM3U
+#EXTINF:-1 tvg-id="cnn" tvg-name="CNN" tvg-logo="http://example.com/cnn.png" group-title="News",CNN US
+http://localhost:8080/cnn/index.m3u8
+#EXTINF:-1 tvg-id="hbo" tvg-name="HBO" group-title="Movies",HBO HD
+http://localhost:8080/hbo/index.m3u8
+"""
+    channels = parse_m3u_playlist(sample_m3u)
+    assert len(channels) == 2
+    assert channels[0]["name"] == "CNN US"
+    assert channels[0]["group"] == "News"
+    assert channels[0]["logo"] == "http://example.com/cnn.png"
+    assert channels[0]["streamUrl"] == "http://localhost:8080/cnn/index.m3u8"
+    assert channels[1]["name"] == "HBO HD"
+    assert channels[1]["group"] == "Movies"
+    assert channels[1]["streamUrl"] == "http://localhost:8080/hbo/index.m3u8"
 
 def test_tv_endpoints():
-    with app.test_client() as client:
-        # 1. Health endpoint
-        res = client.get("/api/tv/health")
-        assert res.status_code == 200
-        data = json.loads(res.data.decode("utf-8"))
-        assert data["status"] == "HEALTHY"
-        assert "channels_count" in data
-        assert "groups_count" in data
-        assert "compliance_notice" in data
-        assert "ATO-SUPPORTING EVIDENCE" in data["compliance_notice"]
+    # Get initial groups
+    resp = client.get("/api/tv/groups")
+    assert resp.status_code == 200
+    groups = resp.json()
+    assert isinstance(groups, list)
+    
+    # Get channels list
+    resp = client.get("/api/tv/channels")
+    assert resp.status_code == 200
+    channels = resp.json()
+    assert isinstance(channels, list)
+    
+    # Get health diagnostics
+    resp = client.get("/api/tv/health")
+    assert resp.status_code == 200
+    health = resp.json()
+    assert "ok" in health
+    assert "channelCount" in health
+    assert "epgConfigured" in health
+    assert "playlistLoadedAt" in health
+    
+    # Validate no blocked/unauthorized claims exist in response
+    blocked_claims = [
+        "Public service operational",
+        "Externally exposed production service",
+        "Authorized to Operate",
+        "ATO granted",
+        "Risk eliminated",
+        "100% secure"
+    ]
+    data_str = str(health).lower()
+    for claim in blocked_claims:
+        assert claim.lower() not in data_str
+
+def test_tv_epg_and_diagnostics():
+    # Load EPG guide for a simulated channel
+    resp = client.get("/api/tv/channel/cnn/epg")
+    assert resp.status_code == 200
+    epg = resp.json()
+    assert isinstance(epg, list)
+    assert len(epg) > 0
+    assert "title" in epg[0]
+    assert "description" in epg[0]
+    
+    # Run a playback diagnostic test
+    resp = client.post("/api/tv/channel/cnn/test")
+    assert resp.status_code == 200
+    diag = resp.json()
+    assert "status" in diag
+    
+    # Get group health stats
+    resp = client.get("/api/tv/groups/health")
+    assert resp.status_code == 200
+    ghealth = resp.json()
+    assert isinstance(ghealth, dict)
+
+def test_tv_new_endpoints_observability():
+    # Resolve a valid channel ID from the playlist dynamically
+    resp_chan = client.get("/api/tv/channels")
+    assert resp_chan.status_code == 200
+    channels = resp_chan.json()
+    assert len(channels) > 0
+    channel_id = channels[0]["id"]
+
+    # 1. Timeline EPG scheduler grid
+    resp = client.get("/api/tv/timeline")
+    assert resp.status_code == 200
+    timeline = resp.json()
+    assert isinstance(timeline, list)
+    if len(timeline) > 0:
+        assert "name" in timeline[0]
+        assert "programs" in timeline[0]
         
-        # 2. Groups endpoint
-        res = client.get("/api/tv/groups")
-        assert res.status_code == 200
-        groups = json.loads(res.data.decode("utf-8"))
-        assert len(groups) > 0
-        first_group = groups[0]
-        
-        # 3. Channels endpoint
-        res = client.get("/api/tv/channels")
-        assert res.status_code == 200
-        channels = json.loads(res.data.decode("utf-8"))
-        assert len(channels) > 0
-        
-        # Test filtering by group
-        res = client.get(f"/api/tv/channels?group={first_group}")
-        assert res.status_code == 200
-        group_channels = json.loads(res.data.decode("utf-8"))
-        assert len(group_channels) > 0
-        for ch in group_channels:
-            assert ch["group"] == first_group
-
-        # 4. Specific channel info
-        ch_id = channels[0]["id"]
-        res = client.get(f"/api/tv/channel/{ch_id}")
-        assert res.status_code == 200
-        channel_info = json.loads(res.data.decode("utf-8"))
-        assert channel_info["id"] == ch_id
-        assert "epg" in channel_info
-
-        # 5. Raw M3U endpoint
-        res = client.get("/api/tv/playlist.m3u")
-        assert res.status_code == 200
-        assert res.mimetype == "audio/x-mpegurl"
-        assert b"#EXTM3U" in res.data
-
-        # 6. Raw XML endpoint
-        res = client.get("/api/tv/epg.xml")
-        assert res.status_code == 200
-        assert res.mimetype == "application/xml"
-        assert b"<tv" in res.data
-
-@patch("urllib.request.urlopen")
-def test_tv_proxy_master_playlist(mock_urlopen):
-    def mock_urlopen_master_side_effect(req, *args, **kwargs):
-        url = req.full_url if hasattr(req, "full_url") else req
-        mock_resp = MagicMock()
-        if "drogon.tv" in url:
-            from hoch_agent_swarm.tv_backend import MOCK_M3U
-            mock_resp.read.return_value = MOCK_M3U.encode("utf-8")
-            mock_resp.headers.get.return_value = "text/plain"
-            mock_resp.info.return_value.get_content_type.return_value = "text/plain"
-        else:
-            mock_resp.read.return_value = b"#EXTM3U\n#EXT-X-STREAM-INF:BANDWIDTH=1280000\nchunklist.m3u8\nhttp://example.com/live.ts"
-            mock_resp.headers.get.return_value = "application/vnd.apple.mpegurl"
-            mock_resp.info.return_value.get_content_type.return_value = "application/vnd.apple.mpegurl"
-        mock_resp.__enter__.return_value = mock_resp
-        return mock_resp
-
-    mock_urlopen.side_effect = mock_urlopen_master_side_effect
-
-    with app.test_client() as client:
-        # Get channel id
-        res = client.get("/api/tv/channels")
-        channels = json.loads(res.data.decode("utf-8"))
-        ch_id = channels[0]["id"]
-
-        # Call master proxy endpoint
-        res = client.get(f"/api/tv/stream/{ch_id}/master.m3u8")
-        assert res.status_code == 200
-        assert b"asset?url=" in res.data
-
-@patch("urllib.request.urlopen")
-def test_tv_proxy_segment(mock_urlopen):
-    def mock_urlopen_segment_side_effect(req, *args, **kwargs):
-        url = req.full_url if hasattr(req, "full_url") else req
-        mock_resp = MagicMock()
-        if "drogon.tv" in url:
-            from hoch_agent_swarm.tv_backend import MOCK_M3U
-            mock_resp.read.return_value = MOCK_M3U.encode("utf-8")
-            mock_resp.headers.get.return_value = "text/plain"
-            mock_resp.info.return_value.get_content_type.return_value = "text/plain"
-        else:
-            mock_resp.read.return_value = b"MOCK_TS_DATA"
-            mock_resp.headers.get.return_value = "video/mp2t"
-            mock_resp.info.return_value.get_content_type.return_value = "video/mp2t"
-        mock_resp.__enter__.return_value = mock_resp
-        return mock_resp
-
-    mock_urlopen.side_effect = mock_urlopen_segment_side_effect
-
-    with app.test_client() as client:
-        # Get channel id and url
-        res = client.get("/api/tv/channels")
-        channels = json.loads(res.data.decode("utf-8"))
-        print("CHANNELS:", channels)
-        ch_id = channels[0]["id"]
-        ch_url = channels[0]["url"]
-        print("CH_ID:", ch_id)
-        print("CH_URL:", ch_url)
-
-        # Build segment URL matching the channel's domain
-        import urllib.parse
-        parsed = urllib.parse.urlparse(ch_url)
-        segment_url = f"{parsed.scheme}://{parsed.netloc}/segment1.ts"
-        print("SEGMENT_URL:", segment_url)
-        hex_url = segment_url.encode("utf-8").hex()
-        print("HEX_URL:", hex_url)
-
-        res = client.get(f"/api/tv/stream/{ch_id}/asset?url={hex_url}")
-        print("RESPONSE STATUS:", res.status_code)
-        print("RESPONSE DATA:", res.data)
-        assert res.status_code == 200
-        assert res.data == b"MOCK_TS_DATA"
-
-@patch("urllib.request.urlopen")
-def test_tv_proxy_sub_playlist(mock_urlopen):
-    def mock_urlopen_sub_side_effect(req, *args, **kwargs):
-        url = req.full_url if hasattr(req, "full_url") else req
-        mock_resp = MagicMock()
-        if "drogon.tv" in url:
-            from hoch_agent_swarm.tv_backend import MOCK_M3U
-            mock_resp.read.return_value = MOCK_M3U.encode("utf-8")
-            mock_resp.headers.get.return_value = "text/plain"
-            mock_resp.info.return_value.get_content_type.return_value = "text/plain"
-        else:
-            import urllib.parse
-            parsed = urllib.parse.urlparse(url)
-            playlist = f"#EXTM3U\n{parsed.scheme}://{parsed.netloc}/segment1.ts"
-            mock_resp.read.return_value = playlist.encode("utf-8")
-            mock_resp.headers.get.return_value = "application/vnd.apple.mpegurl"
-            mock_resp.info.return_value.get_content_type.return_value = "application/vnd.apple.mpegurl"
-        mock_resp.__enter__.return_value = mock_resp
-        return mock_resp
-
-    mock_urlopen.side_effect = mock_urlopen_sub_side_effect
-
-    with app.test_client() as client:
-        res = client.get("/api/tv/channels")
-        channels = json.loads(res.data.decode("utf-8"))
-        ch_id = channels[0]["id"]
-        ch_url = channels[0]["url"]
-
-        import urllib.parse
-        parsed = urllib.parse.urlparse(ch_url)
-        sub_playlist_url = f"{parsed.scheme}://{parsed.netloc}/sub_playlist.m3u8"
-        hex_url = sub_playlist_url.encode("utf-8").hex()
-
-        res = client.get(f"/api/tv/stream/{ch_id}/asset?url={hex_url}")
-        assert res.status_code == 200
-        assert b"asset?url=" in res.data
-        assert f"{parsed.scheme}://{parsed.netloc}/segment1.ts".encode("utf-8") not in res.data
+    # 2. Cache status hit/miss counter
+    resp = client.get("/api/tv/cache/status")
+    assert resp.status_code == 200
+    cache_status = resp.json()
+    assert "playlist" in cache_status
+    assert "epg" in cache_status
+    assert "hitCount" in cache_status["playlist"]
+    assert "missCount" in cache_status["playlist"]
+    assert "status" in cache_status["playlist"]
+    
+    # 3. Security Audit Credential Scanning
+    resp = client.get("/api/tv/security-audit")
+    assert resp.status_code == 200
+    audit = resp.json()
+    assert audit["status"] == "SAFE"
+    assert "scannedFiles" in audit
+    assert "findings" in audit
+    assert len(audit["findings"]) == 0
+    
+    # 4. Diagnostics History endpoint
+    resp = client.get(f"/api/tv/channel/{channel_id}/test/history")
+    assert resp.status_code == 200
+    history = resp.json()
+    assert isinstance(history, list)
+    # Perform a test to populate history
+    resp_test = client.post(f"/api/tv/channel/{channel_id}/test")
+    assert resp_test.status_code == 200
+    resp_hist2 = client.get(f"/api/tv/channel/{channel_id}/test/history")
+    assert resp_hist2.status_code == 200
+    assert len(resp_hist2.json()) > 0
 

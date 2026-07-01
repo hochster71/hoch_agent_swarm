@@ -1,0 +1,14 @@
+{
+  "modified_files": [
+    {
+      "file": "frontend/styles.css",
+      "change_type": "CSS_STYLING",
+      "purpose": "Polish alignment of theme selector dropdown."
+    },
+    {
+      "file": "frontend/visual_dashboard_preview.js",
+      "change_type": "JS_RENDERING",
+      "purpose": "Increase font-weight of metric labels inside telemetry card renderer."
+    }
+  ]
+}

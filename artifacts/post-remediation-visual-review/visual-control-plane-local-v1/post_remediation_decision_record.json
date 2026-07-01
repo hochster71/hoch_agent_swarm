@@ -1,0 +1,7 @@
+{
+  "decision": {
+    "status": "APPROVED",
+    "reasons": "All P12 visual findings successfully resolved by P14 remediation changes. Working tree is verified safe.",
+    "next_gate": "P16_LOCAL_PREVIEW_FINAL_CANDIDATE_SEAL"
+  }
+}

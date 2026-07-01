@@ -1,0 +1,65 @@
+{
+  "assets": [
+    {
+      "name": "MacBook Pro M5 Pro",
+      "ip": "10.0.0.6",
+      "role": "control plane"
+    },
+    {
+      "name": "Apple NEO",
+      "ip": "10.0.0.8",
+      "role": "compute worker"
+    },
+    {
+      "name": "iMac",
+      "ip": "10.0.0.241",
+      "role": "Ollama runtime, known reporting node"
+    },
+    {
+      "name": "Dell XPS 9440",
+      "ip": "10.0.0.207",
+      "role": "compute worker"
+    },
+    {
+      "name": "iPad Pro 12",
+      "ip": "10.0.0.120",
+      "role": "mobile_lmstudio_runtime",
+      "platform": "iPadOS + Locally AI / LM Studio-compatible runtime",
+      "expected_services": [
+        "ping_or_arp_presence",
+        "lmstudio_native_api_1234",
+        "openai_compatible_v1_models_1234",
+        "openai_compatible_chat_1234"
+      ],
+      "runtime_hint": "Probe http://IP:1234/api/v1/models and http://IP:1234/v1/models"
+    },
+    {
+      "name": "iPad Pro",
+      "ip": "10.0.0.44",
+      "role": "mobile_lmstudio_runtime",
+      "platform": "iPadOS + Locally AI / LM Studio-compatible runtime",
+      "expected_services": [
+        "ping_or_arp_presence",
+        "lmstudio_native_api_1234",
+        "openai_compatible_v1_models_1234",
+        "openai_compatible_chat_1234"
+      ],
+      "runtime_hint": "Probe http://IP:1234/api/v1/models and http://IP:1234/v1/models"
+    },
+    {
+      "name": "iPad mini",
+      "ip": "10.0.0.137",
+      "role": "mobile client"
+    },
+    {
+      "name": "iPad mini",
+      "ip": "10.0.0.91",
+      "role": "mobile client"
+    },
+    {
+      "name": "iPhone 15 Pro Max",
+      "ip": "10.0.0.74",
+      "role": "mobile client"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "inventory_name": "Visual Cockpit Local Preview Fixtures",
+  "fixtures": [
+    {
+      "fixture_id": "visual_adapters.test-fixtures.json",
+      "path": "frontend/visual_adapters.test-fixtures.json",
+      "purpose": "Provide mock process states and animation parameters for read-only preview"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "approval_id": "app-pr18-execute",
+  "status": "APPROVED",
+  "task_description": "Execute phase PR18 prompt and compile local evidence plan",
+  "created_at": "2026-06-28T04:20:57.802515+00:00",
+  "decision_at": "2026-06-28T04:20:57.802527+00:00",
+  "decision_by": "Michael Hoch",
+  "decision_note": "Approved for simulated local dry-run only"
+}

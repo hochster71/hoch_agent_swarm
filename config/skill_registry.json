@@ -1,0 +1,277 @@
+{
+  "_meta": {
+    "schema": "hoch-skill-registry-v1",
+    "created": "2026-06-26",
+    "version": "1.0.0",
+    "pert_ref": "P2",
+    "gap_ref": "GAP-003",
+    "status": "ACTIVE",
+    "policy": "fail-closed — unregistered skills are BLOCKED by default",
+    "approval_authority": "Operator via /api/v1/skills/approve",
+    "audit": "every evaluation logged to skill_audit ledger"
+  },
+  "risk_levels": {
+    "LOW":     { "approval_required": false, "auto_allow_tiers": ["ALPHA","BETA","GAMMA","DELTA"] },
+    "MEDIUM":  { "approval_required": false, "auto_allow_tiers": ["ALPHA","BETA","GAMMA"], "rationale_required": true },
+    "HIGH":    { "approval_required": true,  "auto_allow_tiers": [],  "operator_gate": true },
+    "BLOCKED": { "approval_required": false, "auto_allow_tiers": [],  "hard_reject": true }
+  },
+  "skills": [
+    {
+      "id": "SKILL-WEB-SEARCH",
+      "name": "Web Search",
+      "description": "Search the web via approved search API. Read-only.",
+      "risk_level": "LOW",
+      "approval_required": false,
+      "allowed_caller_tiers": ["ALPHA","BETA","GAMMA"],
+      "denied_caller_tiers":  ["DELTA"],
+      "max_calls_per_task":   10,
+      "evidence": "Standard research tool — read-only, no write side effects"
+    },
+    {
+      "id": "SKILL-FILE-READ",
+      "name": "File Read",
+      "description": "Read approved file paths within the swarm workspace.",
+      "risk_level": "LOW",
+      "approval_required": false,
+      "allowed_caller_tiers": ["ALPHA","BETA","GAMMA"],
+      "denied_caller_tiers":  ["DELTA"],
+      "path_restrictions":    ["approved_paths_only"],
+      "evidence": "Read-only within approved paths — no mutation"
+    },
+    {
+      "id": "SKILL-AUDIT-LOG-READ",
+      "name": "Audit Log Read",
+      "description": "Read the swarm audit/usage ledger. Read-only.",
+      "risk_level": "LOW",
+      "approval_required": false,
+      "allowed_caller_tiers": ["ALPHA"],
+      "denied_caller_tiers":  ["BETA","GAMMA","DELTA"],
+      "evidence": "ALPHA-only to prevent lateral info leakage"
+    },
+    {
+      "id": "SKILL-REPORT-GENERATE",
+      "name": "Report Generation",
+      "description": "Generate markdown/JSON reports from swarm state. Write to approved output paths only.",
+      "risk_level": "LOW",
+      "approval_required": false,
+      "allowed_caller_tiers": ["ALPHA","BETA"],
+      "denied_caller_tiers":  ["GAMMA","DELTA"],
+      "evidence": "Output-only, no external calls"
+    },
+    {
+      "id": "SKILL-MEMORY-READ",
+      "name": "Agent Memory Read",
+      "description": "Read agent short/long-term memory store. Read-only.",
+      "risk_level": "LOW",
+      "approval_required": false,
+      "allowed_caller_tiers": ["ALPHA","BETA","GAMMA"],
+      "denied_caller_tiers":  ["DELTA"],
+      "evidence": "Read-only memory access"
+    },
+    {
+      "id": "SKILL-FILE-WRITE",
+      "name": "File Write",
+      "description": "Write to approved paths within swarm workspace. Creates or overwrites files.",
+      "risk_level": "MEDIUM",
+      "approval_required": false,
+      "rationale_required": true,
+      "allowed_caller_tiers": ["ALPHA","BETA"],
+      "denied_caller_tiers":  ["GAMMA","DELTA"],
+      "path_restrictions":    ["approved_write_paths_only"],
+      "evidence": "Write capability — restricted to approved paths; GAMMA/DELTA denied"
+    },
+    {
+      "id": "SKILL-API-CALL-EXTERNAL",
+      "name": "External API Call",
+      "description": "Make HTTP requests to external APIs not on the approved internal list.",
+      "risk_level": "MEDIUM",
+      "approval_required": false,
+      "rationale_required": true,
+      "allowed_caller_tiers": ["ALPHA"],
+      "denied_caller_tiers":  ["BETA","GAMMA","DELTA"],
+      "domain_allowlist_required": true,
+      "evidence": "External network call — ALPHA-only, domain allowlist enforced"
+    },
+    {
+      "id": "SKILL-AGENT-SPAWN",
+      "name": "Agent Spawn",
+      "description": "Spawn a sub-agent task on the swarm. Creates ephemeral worker.",
+      "risk_level": "MEDIUM",
+      "approval_required": false,
+      "rationale_required": true,
+      "allowed_caller_tiers": ["ALPHA"],
+      "denied_caller_tiers":  ["BETA","GAMMA","DELTA"],
+      "evidence": "Only ALPHA can initiate new agent lifecycle"
+    },
+    {
+      "id": "SKILL-MODEL-INFERENCE",
+      "name": "Model Inference",
+      "description": "Run LLM inference via approved model on NEO (GAMMA) node.",
+      "risk_level": "MEDIUM",
+      "approval_required": false,
+      "rationale_required": true,
+      "allowed_caller_tiers": ["ALPHA","GAMMA"],
+      "denied_caller_tiers":  ["BETA","DELTA"],
+      "model_allowlist_required": true,
+      "evidence": "GAMMA inference node only; model allowlist must be enforced"
+    },
+    {
+      "id": "SKILL-MODEL-ROUTE",
+      "name": "Model Route",
+      "description": "Route prompt execution to local or paid models under governed escalation.",
+      "risk_level": "MEDIUM",
+      "approval_required": false,
+      "rationale_required": true,
+      "allowed_caller_tiers": ["ALPHA", "BETA", "GAMMA"],
+      "denied_caller_tiers": ["DELTA"],
+      "audit_required": true,
+      "evidence": "Model routing capability — restricted to approved tiers; DELTA denied"
+    },
+    {
+      "id": "SKILL-AUDIT-LOG-WRITE",
+      "name": "Audit Log Write",
+      "description": "Append to the swarm audit/evidence ledger.",
+      "risk_level": "MEDIUM",
+      "approval_required": false,
+      "rationale_required": true,
+      "allowed_caller_tiers": ["ALPHA"],
+      "denied_caller_tiers":  ["BETA","GAMMA","DELTA"],
+      "evidence": "ALPHA-only to maintain audit integrity"
+    },
+    {
+      "id": "SKILL-MEMORY-WRITE",
+      "name": "Agent Memory Write",
+      "description": "Write to agent memory store. Persists state across tasks.",
+      "risk_level": "MEDIUM",
+      "approval_required": false,
+      "rationale_required": true,
+      "allowed_caller_tiers": ["ALPHA","BETA"],
+      "denied_caller_tiers":  ["GAMMA","DELTA"],
+      "evidence": "Memory mutation — GAMMA/DELTA denied"
+    },
+    {
+      "id": "SKILL-CODE-EXECUTION",
+      "name": "Code Execution",
+      "description": "Execute arbitrary code in an isolated sandbox. High mutation risk.",
+      "risk_level": "HIGH",
+      "approval_required": true,
+      "operator_gate": true,
+      "allowed_caller_tiers": ["ALPHA"],
+      "denied_caller_tiers":  ["BETA","GAMMA","DELTA"],
+      "sandbox_required": true,
+      "evidence": "Requires operator approval — high mutation/escape risk"
+    },
+    {
+      "id": "SKILL-SHELL-COMMAND",
+      "name": "Shell Command",
+      "description": "Execute a shell command on the host. Very high risk — escape potential.",
+      "risk_level": "HIGH",
+      "approval_required": true,
+      "operator_gate": true,
+      "allowed_caller_tiers": ["ALPHA"],
+      "denied_caller_tiers":  ["BETA","GAMMA","DELTA"],
+      "allowlist_required": true,
+      "evidence": "Requires operator approval + command allowlist enforcement"
+    },
+    {
+      "id": "SKILL-DATABASE-WRITE",
+      "name": "Database Write",
+      "description": "Write to a persistent database (SQLite, Postgres, etc.). Risk of state corruption.",
+      "risk_level": "HIGH",
+      "approval_required": true,
+      "operator_gate": true,
+      "allowed_caller_tiers": ["ALPHA"],
+      "denied_caller_tiers":  ["BETA","GAMMA","DELTA"],
+      "evidence": "DB write — ALPHA-only, operator approval required"
+    },
+    {
+      "id": "SKILL-EMAIL-SEND",
+      "name": "Email / Notification Send",
+      "description": "Send email or push notification externally. Irreversible side effect.",
+      "risk_level": "HIGH",
+      "approval_required": true,
+      "operator_gate": true,
+      "allowed_caller_tiers": ["ALPHA"],
+      "denied_caller_tiers":  ["BETA","GAMMA","DELTA"],
+      "evidence": "External comms — irreversible, operator approval required"
+    },
+    {
+      "id": "SKILL-SWARM-ORCHESTRATE",
+      "name": "Swarm Orchestrate",
+      "description": "Send orchestration commands to the entire swarm (broadcast task, kill all agents, etc.).",
+      "risk_level": "HIGH",
+      "approval_required": true,
+      "operator_gate": true,
+      "allowed_caller_tiers": ["ALPHA"],
+      "denied_caller_tiers":  ["BETA","GAMMA","DELTA"],
+      "evidence": "Full swarm control — ALPHA-only, operator approval required"
+    },
+    {
+      "id": "SKILL-PROMPT-LIBRARY-READ",
+      "name": "Prompt Library Read",
+      "description": "Read approved prompts from the HOCH prompt library (read-only).",
+      "risk_level": "LOW",
+      "approval_required": false,
+      "allowed_caller_tiers": ["ALPHA","BETA","GAMMA"],
+      "denied_caller_tiers":  ["DELTA"],
+      "evidence": "Read-only access to sealed prompt library"
+    },
+    {
+      "id": "SKILL-PROMPT-EXECUTE",
+      "name": "Prompt Execute",
+      "description": "Execute a prompt from the prompt library through the runtime governance gate.",
+      "risk_level": "HIGH",
+      "approval_required": true,
+      "operator_gate": true,
+      "allowed_caller_tiers": ["ALPHA"],
+      "denied_caller_tiers":  ["BETA","GAMMA","DELTA"],
+      "governance_gate_required": true,
+      "evidence": "Routes through /api/v1/prompts/evaluate — risk-classified per prompt"
+    },
+    {
+      "id": "SKILL-NETWORK-SCAN",
+      "name": "Network Scan",
+      "description": "Active network scanning / port scanning. Prohibited in all contexts.",
+      "risk_level": "BLOCKED",
+      "approval_required": false,
+      "hard_reject": true,
+      "allowed_caller_tiers": [],
+      "denied_caller_tiers":  ["ALPHA","BETA","GAMMA","DELTA"],
+      "evidence": "HARD BLOCKED — active recon prohibited in all cluster contexts"
+    },
+    {
+      "id": "SKILL-CREDENTIAL-ACCESS",
+      "name": "Credential / Secret Access",
+      "description": "Access to secrets, API keys, credentials, or env vars containing secrets.",
+      "risk_level": "BLOCKED",
+      "approval_required": false,
+      "hard_reject": true,
+      "allowed_caller_tiers": [],
+      "denied_caller_tiers":  ["ALPHA","BETA","GAMMA","DELTA"],
+      "evidence": "HARD BLOCKED — credentials never passed to agent processes"
+    },
+    {
+      "id": "SKILL-SYSTEM-MODIFY",
+      "name": "System Modification",
+      "description": "Modify system-level config, install software, change OS settings.",
+      "risk_level": "BLOCKED",
+      "approval_required": false,
+      "hard_reject": true,
+      "allowed_caller_tiers": [],
+      "denied_caller_tiers":  ["ALPHA","BETA","GAMMA","DELTA"],
+      "evidence": "HARD BLOCKED — system mutation outside operator terminal prohibited"
+    },
+    {
+      "id": "SKILL-GIT-HISTORY-REWRITE",
+      "name": "Git History Rewrite",
+      "description": "Force-push, rebase, reset --hard, or any git history mutation.",
+      "risk_level": "BLOCKED",
+      "approval_required": false,
+      "hard_reject": true,
+      "allowed_caller_tiers": [],
+      "denied_caller_tiers":  ["ALPHA","BETA","GAMMA","DELTA"],
+      "evidence": "HARD BLOCKED — audit trail integrity must be preserved"
+    }
+  ]
+}

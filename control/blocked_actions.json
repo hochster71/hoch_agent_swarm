@@ -1,0 +1,58 @@
+{
+  "blocked_actions": [
+    {
+      "action": "production deployment",
+      "status": "BLOCKED",
+      "performed": false,
+      "requires_human_approval": true
+    },
+    {
+      "action": "git push",
+      "status": "BLOCKED",
+      "performed": false,
+      "requires_human_approval": true
+    },
+    {
+      "action": "main merge",
+      "status": "BLOCKED",
+      "performed": false,
+      "requires_human_approval": true
+    },
+    {
+      "action": "production secrets",
+      "status": "BLOCKED",
+      "performed": false,
+      "requires_human_approval": true
+    },
+    {
+      "action": "live external service binding",
+      "status": "BLOCKED",
+      "performed": false,
+      "requires_human_approval": true
+    },
+    {
+      "action": "prompt execution",
+      "status": "BLOCKED",
+      "performed": false,
+      "requires_human_approval": true
+    },
+    {
+      "action": "approval execution",
+      "status": "BLOCKED",
+      "performed": false,
+      "requires_human_approval": true
+    },
+    {
+      "action": "external publication",
+      "status": "BLOCKED",
+      "performed": false,
+      "requires_human_approval": true
+    },
+    {
+      "action": "actual ATO claim",
+      "status": "BLOCKED",
+      "performed": false,
+      "requires_human_approval": true
+    }
+  ]
+}

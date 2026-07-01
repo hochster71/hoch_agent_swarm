@@ -1,0 +1,16 @@
+{
+  "track": "P3_FRONTEND_RUNTIME_READINESS",
+  "release_tag": "visual-control-plane-local-v1.0.0",
+  "integration_branch": "integration/visual-control-plane-local-v1",
+  "frontend_cockpit_root": "frontend/",
+  "safety_status": "LOCAL_PREVIEW_ONLY",
+  "deployment_performed": false,
+  "blocked_actions": [
+    "production deployment",
+    "external publication",
+    "backend mutation",
+    "prompt execution",
+    "approval decision execution",
+    "security posture change"
+  ]
+}

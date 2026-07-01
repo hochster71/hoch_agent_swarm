@@ -1,0 +1,12 @@
+{
+  "visual_notes": [
+    {
+      "area": "Mission Control Cockpit",
+      "notes": "Colors match the premium dark mode (Kimi Green baseline). Typography is Inter. Glow effects and backdrop filters align with specifications."
+    },
+    {
+      "area": "Blocked Action Attestations",
+      "notes": "Modals correctly state that production mutation is blocked in local preview."
+    }
+  ]
+}

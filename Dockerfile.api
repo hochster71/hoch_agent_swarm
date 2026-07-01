@@ -1,0 +1,53 @@
+FROM python:3.13-slim
+
+LABEL org.opencontainers.image.title="hoch-agent-swarm-has-api" \
+      org.opencontainers.image.description="FastAPI API Control Plane for Hoch Agent Swarm" \
+      org.opencontainers.image.version="0.1.0" \
+      org.opencontainers.image.source="https://github.com/crewAIInc/crewAI" \
+      org.opencontainers.image.created="2026-06-29T17:33:53Z" \
+      org.hoch.role="api" \
+      org.hoch.service="has-api"
+
+WORKDIR /app
+
+# Install system dependencies and create non-root user
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    git \
+    sqlite3 \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --gid 10001 appuser \
+    && useradd --uid 10001 --gid 10001 --create-home --shell /usr/sbin/nologin appuser
+
+# Install uv
+RUN pip install --no-cache-dir uv
+
+# Copy project specification files
+COPY pyproject.toml uv.lock ./
+COPY dummy_mcp/ ./dummy_mcp/
+
+# Install python dependencies
+RUN UV_CONCURRENCY=2 uv sync --frozen --no-install-project
+
+# Copy repository source code
+COPY . .
+
+# Install project and change ownership to appuser
+RUN UV_CONCURRENCY=2 uv sync --frozen \
+    && touch /app/.has-role-api \
+    && chown -R appuser:appuser /app /home/appuser
+
+# Expose FastAPI port
+EXPOSE 8000
+
+ENV PYTHONPATH="/app/src:/app"
+ENV PORT="8000"
+
+# Add Healthcheck
+HEALTHCHECK --interval=10s --timeout=3s --start-period=20s --retries=3 \
+  CMD curl -fsS http://localhost:8000/api/v1/runtime-truth/state || exit 1
+
+USER appuser
+
+# Default cmd runs uvicorn
+CMD ["/app/.venv/bin/python", "-m", "uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,0 +1,79 @@
+{
+  "drift_policy": {
+    "policy_name": "No-Drift Control Strategy",
+    "required_new_phase_for_change": true,
+    "drift_detection_required": true,
+    "ci_failure_on_drift": true,
+    "operator_unlock_required": true,
+    "allowed_change_process": "Any intentional change to the locked files requires opening a new numbered remediation phase (e.g. PR13), generating updated checksum locks, and sealing the new phase under a new certification tag.",
+    "locked_paths": [
+      "package.json",
+      "backend/production_hardening/audit_ledger_helper.py",
+      "backend/production_hardening/auth_adapter.py",
+      "backend/production_hardening/backup_recovery_scripts.py",
+      "backend/production_hardening/mutation_gate.py",
+      "backend/production_hardening/observability_scaffolding.py",
+      "backend/production_hardening/test_scaffolding_validation.py",
+      "backend/production_hardening/tls_scaffolding.py",
+      "scripts/qa/test-production-*.ts",
+      "artifacts/production-readiness-authorization/visual-control-plane-local-v1/*.json",
+      "artifacts/production-requirements-baseline/visual-control-plane-local-v1/*.json",
+      "artifacts/production-architecture-design/visual-control-plane-local-v1/*.json",
+      "artifacts/production-control-implementation-plan/visual-control-plane-local-v1/*.json",
+      "artifacts/production-control-implementation-execution/visual-control-plane-local-v1/*.json",
+      "artifacts/production-control-integration-validation/visual-control-plane-local-v1/*.json",
+      "artifacts/production-control-evidence-mapping/visual-control-plane-local-v1/*.json",
+      "artifacts/production-readiness-risk-register/visual-control-plane-local-v1/*.json",
+      "artifacts/production-readiness-remediation-closure-plan/visual-control-plane-local-v1/*.json",
+      "artifacts/production-readiness-remediation-execution/visual-control-plane-local-v1/*.json",
+      "artifacts/production-readiness-remediation-validation/visual-control-plane-local-v1/*.json"
+    ],
+    "blocked_actions": [
+      {
+        "action": "production deployment",
+        "status": "BLOCKED",
+        "performed": false
+      },
+      {
+        "action": "git push",
+        "status": "BLOCKED",
+        "performed": false
+      },
+      {
+        "action": "main merge",
+        "status": "BLOCKED",
+        "performed": false
+      },
+      {
+        "action": "production secrets",
+        "status": "BLOCKED",
+        "performed": false
+      },
+      {
+        "action": "live external service binding",
+        "status": "BLOCKED",
+        "performed": false
+      },
+      {
+        "action": "prompt execution",
+        "status": "BLOCKED",
+        "performed": false
+      },
+      {
+        "action": "approval execution",
+        "status": "BLOCKED",
+        "performed": false
+      },
+      {
+        "action": "external publication",
+        "status": "BLOCKED",
+        "performed": false
+      },
+      {
+        "action": "actual ATO claim",
+        "status": "BLOCKED",
+        "performed": false
+      }
+    ]
+  }
+}

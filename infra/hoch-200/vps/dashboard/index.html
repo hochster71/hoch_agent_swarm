@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HOCH-200 Relay Dashboard — hoch-relay-001</title>
+  <meta name="description" content="HOCH-200 relay node status dashboard — Tailscale-internal" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ---- Reset & Tokens ---- */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #0a0d14;
+      --surface:      rgba(255,255,255,0.05);
+      --surface-hi:   rgba(255,255,255,0.08);
+      --border:       rgba(255,255,255,0.10);
+      --border-hi:    rgba(255,255,255,0.18);
+      --accent:       #22d3ee;
+      --accent-dim:   rgba(34,211,238,0.15);
+      --accent-glow:  rgba(34,211,238,0.35);
+      --green:        #4ade80;
+      --green-dim:    rgba(74,222,128,0.15);
+      --amber:        #fbbf24;
+      --amber-dim:    rgba(251,191,36,0.15);
+      --red:          #f87171;
+      --red-dim:      rgba(248,113,113,0.15);
+      --text-1:       #f1f5f9;
+      --text-2:       #94a3b8;
+      --text-3:       #64748b;
+      --font-mono:    'JetBrains Mono', monospace;
+      --font-sans:    'Inter', system-ui, sans-serif;
+      --radius:       12px;
+      --radius-sm:    8px;
+      --transition:   0.2s ease;
+    }
+
+    html { font-size: 16px; }
+    body {
+      background: var(--bg);
+      color: var(--text-1);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* ---- Background grid ---- */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(34,211,238,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34,211,238,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ---- Header ---- */
+    header {
+      position: relative;
+      z-index: 10;
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      background: rgba(10,13,20,0.7);
+    }
+
+    .logo-group { display: flex; align-items: center; gap: 12px; }
+    .logo-badge {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--accent), #6366f1);
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 14px; color: #fff;
+      box-shadow: 0 0 16px var(--accent-glow);
+    }
+    .logo-text { font-size: 15px; font-weight: 600; letter-spacing: -0.02em; }
+    .logo-sub { font-size: 11px; color: var(--text-3); font-family: var(--font-mono); margin-top: 1px; }
+
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .ts-badge {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(34,211,238,0.25);
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: 11px; font-family: var(--font-mono); color: var(--accent);
+    }
+    .ts-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 6px var(--accent);
+      animation: pulse 2s infinite;
+    }
+
+    /* ---- Main ---- */
+    main {
+      position: relative; z-index: 10;
+      flex: 1;
+      padding: 32px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .page-title {
+      font-size: 28px; font-weight: 700;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, var(--text-1), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 6px;
+    }
+    .page-sub { font-size: 13px; color: var(--text-3); margin-bottom: 32px; }
+
+    /* ---- Status banner ---- */
+    #gate-banner {
+      display: flex; align-items: center; gap: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 28px;
+      backdrop-filter: blur(8px);
+    }
+    #gate-banner.pass   { border-color: rgba(74,222,128,0.3); background: var(--green-dim); }
+    #gate-banner.warn   { border-color: rgba(251,191,36,0.3); background: var(--amber-dim); }
+    #gate-banner.fail   { border-color: rgba(248,113,113,0.3); background: var(--red-dim); }
+
+    .gate-icon { font-size: 24px; }
+    .gate-label { font-weight: 600; font-size: 15px; }
+    .gate-sub   { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+    .gate-status {
+      margin-left: auto;
+      font-family: var(--font-mono); font-size: 12px; font-weight: 600;
+      padding: 4px 12px; border-radius: 999px;
+      background: var(--surface-hi);
+    }
+    #gate-banner.pass .gate-status { color: var(--green); }
+    #gate-banner.warn .gate-status { color: var(--amber); }
+    #gate-banner.fail .gate-status { color: var(--red); }
+
+    /* ---- Grid ---- */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    /* ---- Card ---- */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      backdrop-filter: blur(8px);
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .card:hover {
+      border-color: var(--border-hi);
+      box-shadow: 0 0 24px rgba(34,211,238,0.06);
+    }
+    .card-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .card-title {
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-3);
+    }
+    .card-icon { font-size: 18px; }
+
+    /* ---- Stat ---- */
+    .stat-value {
+      font-size: 32px; font-weight: 700;
+      letter-spacing: -0.03em;
+      font-family: var(--font-mono);
+    }
+    .stat-label { font-size: 12px; color: var(--text-2); margin-top: 4px; }
+    .stat-green { color: var(--green); }
+    .stat-amber { color: var(--amber); }
+    .stat-red   { color: var(--red); }
+    .stat-accent { color: var(--accent); }
+
+    /* ---- Worker card ---- */
+    .worker-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px;
+      background: var(--surface-hi);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      margin-bottom: 10px;
+      transition: border-color var(--transition);
+    }
+    .worker-row:hover { border-color: rgba(74,222,128,0.3); }
+
+    .worker-led {
+      width: 10px; height: 10px; border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .worker-led.online  { background: var(--green); box-shadow: 0 0 8px var(--green); animation: pulse 2s infinite; }
+    .worker-led.offline { background: var(--red); }
+    .worker-led.unknown { background: var(--text-3); }
+
+    .worker-info { flex: 1; }
+    .worker-id   { font-family: var(--font-mono); font-size: 13px; font-weight: 500; }
+    .worker-meta { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+
+    .worker-badge {
+      font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+      padding: 3px 8px; border-radius: 999px;
+    }
+    .worker-badge.online  { background: var(--green-dim); color: var(--green); border: 1px solid rgba(74,222,128,0.3); }
+    .worker-badge.offline { background: var(--red-dim);   color: var(--red);   border: 1px solid rgba(248,113,113,0.3); }
+    .worker-badge.unknown { background: var(--surface-hi); color: var(--text-3); border: 1px solid var(--border); }
+
+    /* ---- Check list ---- */
+    .check-list { list-style: none; }
+    .check-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+    .check-item:last-child { border-bottom: none; }
+    .check-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+    .check-text { flex: 1; }
+    .check-label { font-weight: 500; }
+    .check-detail { font-size: 11px; color: var(--text-3); margin-top: 2px; font-family: var(--font-mono); }
+
+    /* ---- Info table ---- */
+    .info-table { width: 100%; border-collapse: collapse; }
+    .info-table tr td {
+      padding: 9px 4px;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .info-table tr:last-child td { border-bottom: none; }
+    .info-table .key { color: var(--text-3); width: 38%; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+    .info-table .val { font-family: var(--font-mono); font-size: 12px; color: var(--text-1); }
+    .info-table .val.green { color: var(--green); }
+    .info-table .val.red   { color: var(--red); }
+    .info-table .val.accent { color: var(--accent); }
+
+    /* ---- Heartbeat log ---- */
+    #heartbeat-log {
+      height: 120px; overflow-y: auto;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      font-family: var(--font-mono); font-size: 11px; color: var(--text-2);
+    }
+    .hb-entry { margin-bottom: 4px; }
+    .hb-ts    { color: var(--accent); }
+
+    /* ---- Footer ---- */
+    footer {
+      position: relative; z-index: 10;
+      text-align: center;
+      padding: 16px;
+      font-size: 11px;
+      color: var(--text-3);
+      border-top: 1px solid var(--border);
+    }
+
+    /* ---- Animations ---- */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.45; }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .card { animation: fadeIn 0.4s ease both; }
+    .card:nth-child(2) { animation-delay: 0.05s; }
+    .card:nth-child(3) { animation-delay: 0.10s; }
+
+    /* ---- Loading shimmer ---- */
+    .shimmer {
+      background: linear-gradient(90deg, var(--surface) 25%, var(--surface-hi) 50%, var(--surface) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 4px;
+      color: transparent;
+    }
+    @keyframes shimmer {
+      0%   { background-position: -200% 0; }
+      100% { background-position:  200% 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo-group">
+      <div class="logo-badge">H2</div>
+      <div>
+        <div class="logo-text">HOCH-200 Relay</div>
+        <div class="logo-sub">hoch-relay-001 · Tailscale-internal</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="ts-badge">
+        <div class="ts-dot"></div>
+        100.87.18.15:3012
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <h1 class="page-title">Relay Control Dashboard</h1>
+    <p class="page-sub" id="last-refresh">Loading…</p>
+
+    <!-- Gate Banner -->
+    <div id="gate-banner" class="warn">
+      <div class="gate-icon">⚡</div>
+      <div>
+        <div class="gate-label" id="gate-label">Checking relay status…</div>
+        <div class="gate-sub"  id="gate-sub">Polling /health endpoint</div>
+      </div>
+      <div class="gate-status" id="gate-status-pill">…</div>
+    </div>
+
+    <!-- Stat row -->
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Worker Status</span>
+          <span class="card-icon">🖥️</span>
+        </div>
+        <div class="stat-value stat-green" id="stat-worker-status">—</div>
+        <div class="stat-label">HAS-WORKER-RELAY-001</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">API Health</span>
+          <span class="card-icon">💚</span>
+        </div>
+        <div class="stat-value stat-green" id="stat-api-health">—</div>
+        <div class="stat-label">Relay API /health</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Port Exposure</span>
+          <span class="card-icon">🔒</span>
+        </div>
+        <div class="stat-value stat-green" id="stat-port-exposure">PRIVATE</div>
+        <div class="stat-label">Port 3012 — Tailscale only</div>
+      </div>
+    </div>
+
+    <!-- Worker registry + Node info -->
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Worker Registry</span>
+          <span class="card-icon">📋</span>
+        </div>
+        <div id="worker-list">
+          <div class="worker-row">
+            <div class="worker-led online"></div>
+            <div class="worker-info">
+              <div class="worker-id">HAS-WORKER-RELAY-001</div>
+              <div class="worker-meta" id="worker-meta">Loading…</div>
+            </div>
+            <div class="worker-badge online" id="worker-badge">ONLINE</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Node Info</span>
+          <span class="card-icon">🔵</span>
+        </div>
+        <table class="info-table">
+          <tbody id="node-info-table">
+            <tr><td class="key">Hostname</td><td class="val" id="ni-hostname">hoch-relay-001</td></tr>
+            <tr><td class="key">Public IPv4</td><td class="val">50.116.41.183</td></tr>
+            <tr><td class="key">Tailscale IP</td><td class="val accent">100.87.18.15</td></tr>
+            <tr><td class="key">OS</td><td class="val">Ubuntu 24.04.4 LTS</td></tr>
+            <tr><td class="key">Docker</td><td class="val">29.6.1</td></tr>
+            <tr><td class="key">Port 3012 Public</td><td class="val red">NO — UFW BLOCKED</td></tr>
+            <tr><td class="key">Epic</td><td class="val accent">HOCH-200</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Checks + Heartbeat log -->
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Verification Checks</span>
+          <span class="card-icon">✅</span>
+        </div>
+        <ul class="check-list" id="check-list">
+          <li class="check-item">
+            <span class="check-icon">✅</span>
+            <div class="check-text">
+              <div class="check-label">UFW active, port 3012 not public</div>
+              <div class="check-detail">ufw status: active · eth0:3012 = no rule</div>
+            </div>
+          </li>
+          <li class="check-item">
+            <span class="check-icon">✅</span>
+            <div class="check-text">
+              <div class="check-label">Docker containers running</div>
+              <div class="check-detail">hoch-relay-api · Up · healthy</div>
+            </div>
+          </li>
+          <li class="check-item">
+            <span class="check-icon">✅</span>
+            <div class="check-text">
+              <div class="check-label">Tailscale reachable</div>
+              <div class="check-detail">http://100.87.18.15:3012/health → 200 OK</div>
+            </div>
+          </li>
+          <li class="check-item">
+            <span class="check-icon">✅</span>
+            <div class="check-text">
+              <div class="check-label">fail2ban active</div>
+              <div class="check-detail">Service status: active (running)</div>
+            </div>
+          </li>
+          <li class="check-item">
+            <span class="check-icon" id="check-browser-icon">⏳</span>
+            <div class="check-text">
+              <div class="check-label">Browser access via Tailscale</div>
+              <div class="check-detail" id="check-browser-detail">Polling…</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Live Status Feed</span>
+          <span class="card-icon">📡</span>
+        </div>
+        <div id="heartbeat-log">
+          <div class="hb-entry"><span class="hb-ts">—</span> Initializing…</div>
+        </div>
+        <div style="margin-top: 12px; display: flex; gap: 8px;">
+          <button id="btn-refresh" onclick="fetchAll()" style="
+            background: var(--accent-dim); border: 1px solid rgba(34,211,238,0.3);
+            color: var(--accent); border-radius: var(--radius-sm);
+            padding: 6px 14px; font-size: 12px; font-family: var(--font-sans);
+            cursor: pointer; font-weight: 500; transition: background 0.2s;
+          ">↻ Refresh</button>
+          <button id="btn-heartbeat" onclick="sendHeartbeat()" style="
+            background: var(--green-dim); border: 1px solid rgba(74,222,128,0.3);
+            color: var(--green); border-radius: var(--radius-sm);
+            padding: 6px 14px; font-size: 12px; font-family: var(--font-sans);
+            cursor: pointer; font-weight: 500; transition: background 0.2s;
+          ">♥ Ping Heartbeat</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    HOCH-200 Relay Stack · hoch-relay-001 · Tailscale-internal ·
+    <span id="footer-ts">—</span>
+  </footer>
+
+  <script>
+    const BASE = window.location.origin;
+    let pollInterval = null;
+
+    function nowISO() {
+      return new Date().toISOString().replace('T', ' ').slice(0, 19) + 'Z';
+    }
+
+    function log(msg, type = 'info') {
+      const el = document.getElementById('heartbeat-log');
+      const color = type === 'ok' ? '#4ade80' : type === 'err' ? '#f87171' : '#22d3ee';
+      const entry = document.createElement('div');
+      entry.className = 'hb-entry';
+      entry.innerHTML = `<span class="hb-ts" style="color:${color}">[${nowISO()}]</span> ${msg}`;
+      el.prepend(entry);
+      // Keep max 40 entries
+      while (el.children.length > 40) el.removeChild(el.lastChild);
+    }
+
+    function setGate(status, label, sub) {
+      const banner = document.getElementById('gate-banner');
+      banner.className = status; // pass / warn / fail
+      document.getElementById('gate-label').textContent = label;
+      document.getElementById('gate-sub').textContent = sub;
+      const pill = document.getElementById('gate-status-pill');
+      const pillMap = { pass: 'CONDITIONAL_GO', warn: 'CHECKING', fail: 'FAIL' };
+      pill.textContent = pillMap[status] || status.toUpperCase();
+    }
+
+    async function fetchHealth() {
+      try {
+        const r = await fetch(`${BASE}/health`, { cache: 'no-store' });
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        const d = await r.json();
+        document.getElementById('stat-api-health').textContent = 'OK';
+        document.getElementById('stat-worker-status').textContent =
+          d.worker_status === 'ONLINE' ? 'ONLINE' : (d.worker_status || 'UNKNOWN');
+        const wBadge = document.getElementById('worker-badge');
+        const wLed   = document.querySelector('.worker-led');
+        const status = d.worker_status || 'UNKNOWN';
+        wBadge.textContent = status;
+        wBadge.className = 'worker-badge ' + status.toLowerCase();
+        wLed.className    = 'worker-led '  + status.toLowerCase();
+        document.getElementById('worker-meta').textContent =
+          `hoch-relay-001 · 100.87.18.15 · last: ${d.ts}`;
+        log(`/health → OK · worker=${d.worker} · ts=${d.ts}`, 'ok');
+        return true;
+      } catch (e) {
+        document.getElementById('stat-api-health').textContent = 'ERR';
+        log(`/health error: ${e.message}`, 'err');
+        return false;
+      }
+    }
+
+    async function fetchStatus() {
+      try {
+        const r = await fetch(`${BASE}/api/status`, { cache: 'no-store' });
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        const d = await r.json();
+        // Port exposure indicator
+        const exposed = d.port_public_exposed;
+        document.getElementById('stat-port-exposure').textContent = exposed ? '⚠ PUBLIC' : 'PRIVATE';
+        document.getElementById('stat-port-exposure').className =
+          'stat-value ' + (exposed ? 'stat-red' : 'stat-green');
+        log(`/api/status → epic=${d.epic} · port_public=${d.port_public_exposed}`, 'ok');
+      } catch (e) {
+        log(`/api/status error: ${e.message}`, 'err');
+      }
+    }
+
+    async function fetchAll() {
+      const ts = nowISO();
+      document.getElementById('last-refresh').textContent = `Last refreshed: ${ts}`;
+      document.getElementById('footer-ts').textContent = ts;
+
+      const healthOk = await fetchHealth();
+      await fetchStatus();
+
+      // Update browser-access check
+      if (healthOk) {
+        document.getElementById('check-browser-icon').textContent = '✅';
+        document.getElementById('check-browser-detail').textContent =
+          `Dashboard loaded via Tailscale · ${window.location.host}`;
+        setGate('pass', 'Relay stack operational — browser access confirmed', 'All checks passing · HOCH-200 relay online');
+      } else {
+        document.getElementById('check-browser-icon').textContent = '❌';
+        document.getElementById('check-browser-detail').textContent = 'Health check failed';
+        setGate('fail', 'Health check failed', 'Relay API unreachable');
+      }
+    }
+
+    async function sendHeartbeat() {
+      try {
+        const r = await fetch(`${BASE}/api/heartbeat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ source: 'dashboard-ui', ts: new Date().toISOString() }),
+        });
+        const d = await r.json();
+        log(`Heartbeat sent · accepted=${d.accepted} · ts=${d.ts}`, 'ok');
+      } catch (e) {
+        log(`Heartbeat error: ${e.message}`, 'err');
+      }
+    }
+
+    // Initial load + auto-refresh every 30s
+    fetchAll();
+    pollInterval = setInterval(fetchAll, 30_000);
+  </script>
+</body>
+</html>

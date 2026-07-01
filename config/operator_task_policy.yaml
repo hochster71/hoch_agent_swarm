@@ -1,0 +1,29 @@
+allowed_domains:
+  - CHILD_TOYS
+  - PET_TOYS
+  - HOUSEHOLD
+  - CYBER_TOOLS
+  - ELECTRONICS
+
+allowed_actions:
+  - web_search_products
+  - compare_prices
+  - classify_safety
+  - rank_candidates
+  - generate_summary
+  - generate_printable_pdf_or_text
+  - print_to_local_wifi_printer_after_approval
+  - open_purchase_link_after_approval
+  - create_cart_draft_after_approval
+
+blocked_until_framework_exists:
+  - purchase
+  - checkout
+  - payment_submission
+  - saved_payment_change
+  - shipping_address_change
+  - bitcoin_transfer
+  - crypto_purchase
+  - stock_trade
+  - investment_execution
+  - subscription_signup

@@ -1,0 +1,54 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: registry-build
+  namespace: has-workers
+spec:
+  template:
+    spec:
+      serviceAccountName: sidecar-worker-sa
+      containers:
+        - name: registry-worker
+          image: has-worker:latest
+          imagePullPolicy: Never
+          command:
+            - /bin/bash
+            - -c
+            - |
+              echo "Starting Registry build and deduplication..."
+              /tracker-data/scripts/k8s_sidecar_emit_event.sh "registry_event" "local_disk" "global_registry" "info" "success" "K8s worker registry-build: Starting deduplication..."
+              
+              # Run dedupe and registry builder
+              python3 /tracker-data/scripts/tracker_dedupe_classify.py
+              python3 /tracker-data/scripts/tracker_build_registry.py
+              
+              /tracker-data/scripts/k8s_sidecar_emit_event.sh "registry_event" "local_disk" "global_registry" "info" "success" "K8s worker registry-build: Global registry compiled."
+          resources:
+            requests:
+              cpu: "100m"
+              memory: 128Mi
+            limits:
+              cpu: "500m"
+              memory: 512Mi
+          envFrom:
+            - secretRef:
+                name: has-tracker-secrets
+          env:
+            - name: TRACKER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: has-worker-config
+                  key: TRACKER_PORT
+            - name: TRACKER_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: has-worker-config
+                  key: TRACKER_HOST
+          volumeMounts:
+            - name: tracker-data-vol
+              mountPath: /tracker-data
+      restartPolicy: OnFailure
+      volumes:
+        - name: tracker-data-vol
+          persistentVolumeClaim:
+            claimName: tracker-data-pvc

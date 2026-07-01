@@ -1,0 +1,11 @@
+{
+  "traceability_matrix": {
+    "P4_security": "artifacts/security-evidence/visual-control-plane-local-v1/",
+    "P2_backend_binding": "artifacts/backend-runtime-binding-readiness/visual-control-plane-local-v1/",
+    "P3_frontend_binding": "artifacts/frontend-runtime-readiness/visual-control-plane-local-v1/",
+    "P6_release_candidate": "artifacts/local-preview-release-candidate/visual-control-plane-local-v1/",
+    "P7_local_demo": "artifacts/controlled-local-demo-readiness/visual-control-plane-local-v1/",
+    "P8_operator_acceptance": "artifacts/operator-acceptance-package/visual-control-plane-local-v1/",
+    "P9_local_preview_archive": "artifacts/local-preview-handoff-package/visual-control-plane-local-v1/"
+  }
+}
