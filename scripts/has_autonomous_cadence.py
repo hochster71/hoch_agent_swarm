@@ -129,8 +129,12 @@ def run_cadence():
     sustain_ok = (sustain_code == 0)
     
     # 5. Run parallel mirror verify
-    _, _, mirror_code = run_cmd("bash scripts/has_parallel_mirror_verify.sh", check=False)
+    mirror_stdout, mirror_stderr, mirror_code = run_cmd("bash scripts/has_parallel_mirror_verify.sh", check=False)
     mirror_ok = (mirror_code == 0)
+    if not mirror_ok:
+        print("[CADENCE WARNING] Mirror verification failed:")
+        print("STDOUT:", mirror_stdout)
+        print("STDERR:", mirror_stderr)
     
     # 5.5. Run Swarm Scheduler (if not dry run)
     scheduler_metrics = {}
@@ -195,17 +199,18 @@ def run_cadence():
         print("[DRY-RUN] Skipping metrics output file write.")
         
     # Operator Brief Output
+    active_branch, _, _ = run_cmd("git rev-parse --abbrev-ref HEAD")
     print("\n" + "="*40)
     print("HAS/HASF OPERATOR BRIEF")
     print("="*40)
     print(f"GOAL:               {contract.get('north_star', 'UNKNOWN')}")
-    print(f"CURRENT STATE:      Active branch rc33-compute-utilization-swarm-scheduler. Tag v0.1.8 validation: {'PASS' if tag_ok else 'FAIL'}")
+    print(f"CURRENT STATE:      Active branch {active_branch}. Tag v0.1.8 validation: {'PASS' if tag_ok else 'FAIL'}")
     print(f"PERCENT COMPLETE:   {percent_goal_complete}%")
     print(f"CRITICAL PATH:      W1 -> W2 -> W7 -> W8 -> W14 -> W15 ({metrics['critical_path_remaining_minutes']} mins expected)")
     print(f"BLOCKERS:           {len(high_risk_blocks)} active policy blockers.")
     print(f"OWNER AT RISK:      None")
     print(f"TEST RESULTS:       {playwright_passing} Passed / {playwright_failing} Failed (Sustainment: {'PASS' if sustain_ok else 'FAIL'}, Mirror: {'PASS' if mirror_ok else 'FAIL'})")
-    print(f"EVIDENCE:           docs/evidence/compute/rc33-compute-utilization-swarm-scheduler.md")
+    print(f"EVIDENCE:           docs/evidence/business/rc38-goal-completion-monetization-readiness.md")
     print(f"NEXT BEST ACTION:   Verify the command center dashboard on http://localhost:8765")
     
     if high_risk_blocks:
