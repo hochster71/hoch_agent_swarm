@@ -14,7 +14,7 @@
     "policy_status": "PASS",
     "telemetry_status": "ONLINE",
     "freshness_status": "FRESH",
-    "last_heartbeat": "2026-07-01T23:03:31.281362Z",
+    "last_heartbeat": "2026-07-01T23:13:26.877522Z",
     "evidence_links": [
       "docs/evidence/business/project-revenue-readiness-audit.md"
     ],
@@ -33,7 +33,7 @@
     "policy_status": "PASS",
     "telemetry_status": "ONLINE",
     "freshness_status": "FRESH",
-    "last_heartbeat": "2026-07-01T23:03:31.281362Z",
+    "last_heartbeat": "2026-07-01T23:13:26.877522Z",
     "evidence_links": [
       "docs/evidence/business/project-revenue-readiness-audit.md"
     ],
@@ -52,7 +52,7 @@
     "policy_status": "PASS",
     "telemetry_status": "ONLINE",
     "freshness_status": "FRESH",
-    "last_heartbeat": "2026-07-01T23:03:31.281362Z",
+    "last_heartbeat": "2026-07-01T23:13:26.877522Z",
     "evidence_links": [],
     "blockers": []
   },
@@ -69,7 +69,7 @@
     "policy_status": "BLOCKED",
     "telemetry_status": "ONLINE",
     "freshness_status": "FRESH",
-    "last_heartbeat": "2026-07-01T23:03:31.281362Z",
+    "last_heartbeat": "2026-07-01T23:13:26.877522Z",
     "evidence_links": [
       "docs/evidence/business/project-revenue-readiness-audit.md"
     ],
@@ -90,7 +90,7 @@
     "policy_status": "PASS",
     "telemetry_status": "ONLINE",
     "freshness_status": "FRESH",
-    "last_heartbeat": "2026-07-01T23:03:31.281362Z",
+    "last_heartbeat": "2026-07-01T23:13:26.877522Z",
     "evidence_links": [],
     "blockers": []
   },
@@ -107,7 +107,7 @@
     "policy_status": "FAIL",
     "telemetry_status": "ONLINE",
     "freshness_status": "DEGRADED",
-    "last_heartbeat": "2026-07-01T23:03:31.281362Z",
+    "last_heartbeat": "2026-07-01T23:13:26.877522Z",
     "evidence_links": [],
     "blockers": [
       "Project repository path does not exist on disk"
@@ -126,7 +126,7 @@
     "policy_status": "BLOCKED",
     "telemetry_status": "ONLINE",
     "freshness_status": "FRESH",
-    "last_heartbeat": "2026-07-01T23:03:31.281362Z",
+    "last_heartbeat": "2026-07-01T23:13:26.877522Z",
     "evidence_links": [],
     "blockers": [
       "Deployment descriptor (vercel.json) is missing"
