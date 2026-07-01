@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agent-heartbeat
+  namespace: has-workers
+  labels:
+    app: agent-heartbeat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: agent-heartbeat
+  template:
+    metadata:
+      labels:
+        app: agent-heartbeat
+    spec:
+      serviceAccountName: sidecar-worker-sa
+      containers:
+        - name: heartbeat-worker
+          image: has-worker:latest
+          imagePullPolicy: Never
+          command:
+            - /bin/bash
+            - -c
+            - |
+              echo "Starting persistent agent heartbeat loop..."
+              while true; do
+                python3 /tracker-data/scripts/tracker_emit_agent_heartbeat.sh
+                sleep 60
+              done
+          resources:
+            requests:
+              cpu: "50m"
+              memory: 64Mi
+            limits:
+              cpu: "100m"
+              memory: 128Mi
+          envFrom:
+            - secretRef:
+                name: has-tracker-secrets
+          env:
+            - name: TRACKER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: has-worker-config
+                  key: TRACKER_PORT
+            - name: TRACKER_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: has-worker-config
+                  key: TRACKER_HOST
+          volumeMounts:
+            - name: tracker-data-vol
+              mountPath: /tracker-data
+      volumes:
+        - name: tracker-data-vol
+          persistentVolumeClaim:
+            claimName: tracker-data-pvc
