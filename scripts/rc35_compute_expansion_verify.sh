@@ -36,17 +36,22 @@ echo "  [PASS] scheduler_metrics.json exists."
 
 # Check 4: Verify real subprocess execution evidence
 echo "Running Check 4: Check execution evidence file contents..."
-EVIDENCE_FILES=$(find has_live_project_tracker/artifacts/evidence -name "scheduler_*.json" 2>/dev/null || true)
-if [ -z "$EVIDENCE_FILES" ]; then
+SCHEDULED_TASK=$(python3 -c "import json; d=json.load(open('has_live_project_tracker/data/scheduler_metrics.json')); print(d['scheduled_this_cycle'][0] if d.get('scheduled_this_cycle') else '')")
+
+if [ -z "$SCHEDULED_TASK" ]; then
     echo "  [PASS] No pending tasks were scheduled this cycle (scheduler returned IDLE/completed state)."
 else
-    # Inspect one evidence file to make sure it includes real command output details
-    FIRST_FILE=$(echo "$EVIDENCE_FILES" | head -n 1)
-    echo "  Checking evidence file: $FIRST_FILE"
-    if grep -q '"command":' "$FIRST_FILE" && grep -q '"exit_code":' "$FIRST_FILE"; then
-        echo "  [PASS] Evidence file contains real subprocess execution details."
+    EVIDENCE_FILE="has_live_project_tracker/artifacts/evidence/scheduler_${SCHEDULED_TASK}.json"
+    echo "  Checking evidence file for task ${SCHEDULED_TASK}: ${EVIDENCE_FILE}"
+    if [ -f "$EVIDENCE_FILE" ]; then
+        if grep -q '"command":' "$EVIDENCE_FILE" && grep -q '"exit_code":' "$EVIDENCE_FILE"; then
+            echo "  [PASS] Evidence file contains real subprocess execution details."
+        else
+            echo "  [FAIL] Evidence file lacks command/exit_code fields!"
+            exit 1
+        fi
     else
-        echo "  [FAIL] Evidence file lacks command/exit_code fields!"
+        echo "  [FAIL] Evidence file ${EVIDENCE_FILE} does not exist!"
         exit 1
     fi
 fi
