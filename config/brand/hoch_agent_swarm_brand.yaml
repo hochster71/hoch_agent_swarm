@@ -1,0 +1,35 @@
+brand_design_system:
+  theme: "deep-dark"
+  colors:
+    background: "#0a0a0c"
+    surface: "#121216"
+    border: "rgba(255, 255, 255, 0.08)"
+    text_primary: "#f3f4f6"
+    text_secondary: "#9ca3af"
+    accent_teal: "#10b981"
+    accent_yellow: "#fbbf24"
+    accent_red: "#ef4444"
+    graphite: "#1f2937"
+  fonts:
+    primary: "Outfit"
+    secondary: "Inter"
+    code: "Fira Code"
+  logo:
+    placement: "title-left"
+    footer_text: "Hoch Agent Swarm Command Center"
+  slides:
+    layouts:
+      - "Title Slide"
+      - "Agenda / Content List"
+      - "Section Divider"
+      - "Two Column Detail"
+      - "Table / Comparison Grid"
+      - "Chronological Timeline"
+      - "Architecture Diagram View"
+    footer:
+      show_version: true
+      show_date: true
+      show_evidence_pointer: true
+    export_formats:
+      - "PPTX"
+      - "PDF"

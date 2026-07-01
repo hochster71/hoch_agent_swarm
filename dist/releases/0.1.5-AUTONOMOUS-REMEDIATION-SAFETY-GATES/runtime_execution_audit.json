@@ -1,0 +1,13 @@
+{
+  "generated_at": "2026-06-24T19:42:17.038946+00:00",
+  "base_url": "http://localhost:8000",
+  "tool_calls_checked": 6,
+  "tool_calls_with_trace": 6,
+  "tool_calls_with_evidence": 6,
+  "redactions_applied": 2,
+  "solved_without_validation": 0,
+  "approval_required_actions": 1,
+  "approval_bypass_findings": [],
+  "blockers": [],
+  "status": "PASS"
+}

@@ -1,0 +1,16 @@
+{
+  "phase": "V24_LOCAL_RELEASE_ARCHIVE",
+  "local_only": true,
+  "archive_created": true,
+  "archive_checksum_verified": true,
+  "source_freeze_verified": true,
+  "deployment_performed": false,
+  "external_publication_enabled": false,
+  "production_deployment_enabled": false,
+  "backend_mutation_enabled": false,
+  "prompt_execution_enabled": false,
+  "approval_decision_execution_enabled": false,
+  "security_posture_change_enabled": false,
+  "checks_failed": [],
+  "decision": "ARCHIVE_COMPLETE"
+}

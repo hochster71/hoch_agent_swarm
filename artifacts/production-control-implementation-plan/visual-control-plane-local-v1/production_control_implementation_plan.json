@@ -1,0 +1,66 @@
+{
+  "implementation_plan": {
+    "tls_transport": {
+      "sequence": [
+        "1. Provision SSL certificate via Let's Encrypt / Google Managed Certificates",
+        "2. Configure Application Load Balancer to terminate TLS 1.3",
+        "3. Configure NGINX reverse-proxy sidecar in container pod to route HTTPS to FastAPI"
+      ],
+      "cert_handling": "Automated renewal via DNS-01 challenges, zero manual key exposure",
+      "reverse_proxy": "Envoy proxy deployed at front boundary of the cluster namespace"
+    },
+    "authn_authz": {
+      "oauth2_oidc_integration": "Google Cloud Identity Platform Integration configured as FastAPI security dependency",
+      "role_matrix": {
+        "read_only": ["GET /api/v1/telemetry", "GET /api/v1/status"],
+        "operator": ["GET /api/v1/telemetry", "GET /api/v1/status", "POST /api/v1/prompts/validate"],
+        "admin": ["*"]
+      },
+      "session_policy": "Token TTL set to 1 hour, rotation enabled, refresh token stored securely in HTTP-only secure cookie"
+    },
+    "audit_ledger": {
+      "event_design": "Ledger table with event_uuid, actor_identity, action, timestamp, payload_hash, signature",
+      "schema": "CREATE TABLE audit_ledger (id SERIAL PRIMARY KEY, event_uuid UUID UNIQUE, actor VARCHAR(255), action VARCHAR(100), metadata JSONB, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);",
+      "retention": "7-year retention policy, archived to cold storage GCS buckets with Object Lifecycle Management"
+    },
+    "mutation_safety": {
+      "approval_gate_design": "FastAPI middleware intercepts mutating routes, checks signature payload from verification provider",
+      "write_path_blocking_policy": "All non-GET requests block by default unless accompanied by active approval token"
+    },
+    "supply_chain": {
+      "rollout_plan": [
+        "1. Enable GitHub Actions / Cloud Build SBOM generation step",
+        "2. Store generated SBOM and in-toto provenance artifacts in Artifact Registry",
+        "3. Enable GKE Binary Authorization verifying Cosign signatures on container deployment"
+      ]
+    },
+    "environment_separation": {
+      "boundaries": {
+        "local": "Local development sandboxes, mock data only",
+        "staging": "Identical clone of production, connected to staging database and test sensors",
+        "production": "Production-grade hardened cluster, strictly regulated access control"
+      },
+      "promotion_gates": "Pull request -> Staging deploy -> Automated contract validation -> Manual operator approval -> Production release"
+    },
+    "observability": {
+      "logging": "Winston/FastAPI structured log format writing to stdout, collected by OpenTelemetry Collector",
+      "metrics": "Prometheus exporter tracking active sessions, prompt throughput, and API request latency",
+      "health": "Health checks integrated into Kubernetes liveness/readiness probes",
+      "alerting": "Alertmanager rules paging operators on rate of 5xx HTTP responses or database replication lag"
+    },
+    "recovery": {
+      "backup_test_plan": "Automated restore tests run every Tuesday, verifying zero data corruption in temporary test schemas",
+      "restore_sequence": "1. Retrieve latest snapshot. 2. Provision isolated DB. 3. Re-apply WAL archives. 4. Verify connectivity.",
+      "rollback_sequence": "Kubernetes deployment rollback initiated automatically if target pods fail liveness check for 3 minutes"
+    },
+    "compliance_evidence": {
+      "package_artifacts": [
+        "verification_report.json",
+        "provenance.intoto.jsonl",
+        "sbom.spdx.json",
+        "autonomy_budget_report.json",
+        "approval_gate_report.json"
+      ]
+    }
+  }
+}

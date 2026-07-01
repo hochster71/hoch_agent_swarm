@@ -1,0 +1,16 @@
+{
+  "phase": "V16_LOCAL_SUBSTITUTION_VALIDATION_AND_ROLLBACK_PROOF",
+  "local_only": true,
+  "rollback_required": true,
+  "rollback_executed": true,
+  "baseline_restored": true,
+  "backend_mutation_enabled": false,
+  "prompt_execution_enabled": false,
+  "approval_decision_execution_enabled": false,
+  "external_publication_enabled": false,
+  "production_deployment_enabled": false,
+  "security_posture_change_enabled": false,
+  "rollback_path": "artifacts/qa/visual_review/active_substitution/ROLLBACK.md",
+  "baseline_cockpit_path": "mockups/visual-control-plane/control-plane.html",
+  "next_allowed_phase": "V17_OPERATOR_POST_ROLLBACK_DECISION"
+}

@@ -1,0 +1,40 @@
+{
+  "mission_id": "fury-epic-launch-2026",
+  "name": "Epic Fury 2026 Revenue Launch Mission",
+  "target_pod": "business",
+  "repository": {
+    "name": "epic-fury-2026",
+    "local_path": "/Users/michaelhoch/epic-fury-build/epic-fury-2026",
+    "stack": "Next.js 15, React 19, Supabase, TailwindCSS",
+    "monetization": {
+      "web": "Stripe",
+      "mobile": "RevenueCat / Apple In-App Purchases"
+    }
+  },
+  "audit": {
+    "build_command": "npm run build",
+    "test_commands": [
+      "npm run test:contract",
+      "npm run test:smoke",
+      "npm run test:api-hardening"
+    ],
+    "privacy_page": "/privacy",
+    "support_page": "/support",
+    "terms_page": "/terms",
+    "checkout_endpoint": "/api/stripe/checkout",
+    "webhook_endpoint": "/api/webhooks/stripe",
+    "ios_bundle_id": "com.epicfury.dashboard",
+    "ios_app_name": "Epic Fury 2026",
+    "ios_server_url": "https://epic-fury-2026.vercel.app",
+    "ios_privacy_manifest": "present",
+    "ios_spm_packages": ["capacitor-swift-pm", "RevenuecatPurchasesCapacitor"]
+  },
+  "status": "CONDITIONAL_GO",
+  "sub_statuses": {
+    "ios_build_sync": "GO",
+    "terms_route": "GO",
+    "capacitor_sync": "GO",
+    "app_store_submission": "BLOCKED"
+  },
+  "created_at": "2026-06-30T14:58:39-05:00"
+}

@@ -1,67 +1,123 @@
 services:
-  hoch-app:
+  has-api:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: hoch-agent-swarm-app
+      dockerfile: Dockerfile.api
+    container_name: has-api
+    image: hoch-agent-swarm/has-api:latest
+    restart: unless-stopped
     security_opt:
       - no-new-privileges:true
     cap_drop:
       - ALL
-    read_only: true
-    environment:
-      SWARM_UI_PORT: "8086"
-      PYTHONPATH: "src:."
-      HOCH_LOCAL_ONLY: "1"
-      UV_CACHE_DIR: "/tmp/uv-cache"
     ports:
-      - "8086:8086"
+      - "127.0.0.1:8000:8000"
     volumes:
-      - ./artifacts:/app/artifacts
-      - ./data:/app/data
+      - ./backend:/app/backend
       - ./docs:/app/docs
-      - type: tmpfs
-        target: /tmp
-        tmpfs:
-          mode: 1777
-      - type: tmpfs
-        target: /run
-        tmpfs:
-          mode: 1777
-      - type: tmpfs
-        target: /home/appuser/.cache
-        tmpfs:
-          mode: 0777
+      - ./artifacts:/app/artifacts
+      - ./config:/app/config
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8086/api/v1/operator/health', timeout=5).read()"]
+      test: ["CMD-SHELL", "curl -f http://127.0.0.1:8000/api/v1/runtime-truth/state || exit 1"]
+      interval: 30s
+      timeout: 15s
+      retries: 10
+      start_period: 20s
+    networks:
+      - has-net
+
+  has-ui:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: has-ui
+    image: hoch-agent-swarm/has-ui:latest
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      has-api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:8080/ || exit 1"]
       interval: 10s
       timeout: 5s
-      retries: 12
-      start_period: 20s
-  screenshot-worker:
+      retries: 5
+      start_period: 5s
+    networks:
+      - has-net
+
+  has-worker:
     build:
       context: .
-      dockerfile: Dockerfile.screenshot
-    container_name: hoch-agent-swarm-screenshot-worker
-    profiles:
-      - screenshots
-    environment:
-      DASHBOARD_URL: "http://hoch-app:8086"
+      dockerfile: Dockerfile.worker
+    container_name: has-worker
+    image: hoch-agent-swarm/has-worker:latest
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
     volumes:
-      - ./artifacts/live_screenshots:/app/artifacts/live_screenshots
-    depends_on:
-      hoch-app:
-        condition: service_healthy
-  test-runner:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: hoch-agent-swarm-test-runner
-    profiles:
-      - test
-    environment:
-      PYTHONPATH: "src:."
-    volumes:
+      - ./backend:/app/backend
+      - ./docs:/app/docs
       - ./artifacts:/app/artifacts
-      - ./data:/app/data
-    command: ["uv", "run", "pytest"]
+      - ./config:/app/config
+    depends_on:
+      has-api:
+        condition: service_healthy
+    networks:
+      - has-net
+
+  has-tools:
+    build:
+      context: .
+      dockerfile: Dockerfile.tools
+    container_name: has-tools
+    image: hoch-agent-swarm/has-tools:latest
+    profiles:
+      - tools
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    volumes:
+      - ./backend:/app/backend
+      - ./docs:/app/docs
+      - ./artifacts:/app/artifacts
+      - ./config:/app/config
+      - ./tests:/app/tests
+      - ./scripts:/app/scripts
+    networks:
+      - has-net
+
+  has-proxy:
+    image: caddy:2.7-alpine
+    container_name: has-proxy
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:443:443"
+      - "127.0.0.1:80:80"
+    volumes:
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      has-api:
+        condition: service_healthy
+      has-ui:
+        condition: service_healthy
+    networks:
+      - has-net
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+networks:
+  has-net:
+    driver: bridge

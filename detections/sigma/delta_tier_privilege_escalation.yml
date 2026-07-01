@@ -1,0 +1,30 @@
+title: HOCH Agent Swarm DELTA Tier Privilege Escalation Attempt
+id: 6bdf2008-9b99-4c9a-97fb-delta-priv-esc
+status: experimental
+description: Detects low-trust DELTA callers attempting high-risk capabilities or receiving non-denied verdicts.
+logsource:
+  product: hoch_agent_swarm
+  service: skill_gate
+detection:
+  selection_delta:
+    caller_tier: DELTA
+  selection_high_risk_skill:
+    skill_id:
+      - SKILL-SHELL-COMMAND
+      - SKILL-CODE-EXECUTION
+      - SKILL-SYSTEM-MODIFY
+  selection_bad_verdict:
+    verdict:
+      - ALLOWED
+      - REQUIRES_APPROVAL
+  condition: selection_delta and (selection_high_risk_skill or selection_bad_verdict)
+fields:
+  - caller_node
+  - caller_tier
+  - skill_id
+  - verdict
+  - reason
+level: critical
+tags:
+  - attack.privilege-escalation
+  - hoch.agent_swarm

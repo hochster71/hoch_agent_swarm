@@ -1,0 +1,12 @@
+{
+  "boundary_attestation": {
+    "signer": "Michael Hoch",
+    "timestamp": "2026-06-27T18:42:00-05:00",
+    "attested_facts": {
+      "no_production_remediation": true,
+      "no_backend_mutation_planned": true,
+      "no_prompt_execution_planned": true,
+      "fixes_are_local_css_js_only": true
+    }
+  }
+}

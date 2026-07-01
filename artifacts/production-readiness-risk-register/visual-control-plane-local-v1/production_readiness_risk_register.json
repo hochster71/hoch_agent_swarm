@@ -1,0 +1,76 @@
+{
+  "risk_register": {
+    "tls_transport": {
+      "risk_id": "RSK-TLS-001",
+      "risk_description": "Use of self-signed SSL certificates in development could lead to MITM vulnerability if pushed directly to production.",
+      "severity": "HIGH",
+      "mitigation": "Enforce Let's Encrypt certificates managed automatically via Kubernetes cert-manager.",
+      "remediation_plan": "Configure automated cert-manager DNS-01 challenge solver prior to production promotion.",
+      "owner": "Infrastructure Team",
+      "target_date": "2026-07-15"
+    },
+    "authn_authz": {
+      "risk_id": "RSK-AUTH-002",
+      "risk_description": "Lack of centralized OIDC provider configuration in local preview scaffolding allows bypass with mock tokens.",
+      "severity": "CRITICAL",
+      "mitigation": "Scaffolding checks token signature against Google Identity Platform public JWKS.",
+      "remediation_plan": "Replace mock token validation in auth_adapter.py with PyJWT issuer validation mapping.",
+      "owner": "Identity Team",
+      "target_date": "2026-07-20"
+    },
+    "audit_ledger": {
+      "risk_id": "RSK-AUD-003",
+      "risk_description": "Local sqlite database utilized for audit storage lacks hardware HSM/ledger tamper-evidence verification.",
+      "severity": "MEDIUM",
+      "mitigation": "Staging/production environments to use Cloud SQL PostgreSQL with IAM auditing log forwarding enabled.",
+      "remediation_plan": "Bind AuditLedgerHelper to write directly to Cloud SQL with cloud-sql-proxy sidecars.",
+      "owner": "Compliance Team",
+      "target_date": "2026-07-30"
+    },
+    "mutation_safety": {
+      "risk_id": "RSK-MUT-004",
+      "risk_description": "Dual-operator approval signature token is static/scaffolded, vulnerable to replay attacks.",
+      "severity": "HIGH",
+      "mitigation": "Implement cryptographic nonces and short token TTLs checked by verification provider.",
+      "remediation_plan": "Deploy signature verifier service validating nonces from Redis session stores.",
+      "owner": "Security Engineering",
+      "target_date": "2026-07-25"
+    },
+    "supply_chain": {
+      "risk_id": "RSK-SPL-005",
+      "risk_description": "Lack of automated container signature verification during deployment stage.",
+      "severity": "HIGH",
+      "mitigation": "Configure GKE Binary Authorization to block non-signed Cosign image digests.",
+      "remediation_plan": "Enable Binary Authorization policy on the GKE cluster mapping the release registry.",
+      "owner": "SecOps Team",
+      "target_date": "2026-07-10"
+    },
+    "observability": {
+      "risk_id": "RSK-OBS-006",
+      "risk_description": "Prometheus metrics exporter endpoint `/metrics` lacks access control/encryption, exposing operational telemetry.",
+      "severity": "MEDIUM",
+      "mitigation": "Route exporter through local Envoy sidecar proxy requiring mutual TLS validation.",
+      "remediation_plan": "Apply internal mTLS mesh rules to all pods containing the metrics exporter.",
+      "owner": "Observability Team",
+      "target_date": "2026-08-05"
+    },
+    "backup_recovery": {
+      "risk_id": "RSK-REC-007",
+      "risk_description": "SQLite backup copy2 function might fail under high concurrent write loads (database locked error).",
+      "severity": "MEDIUM",
+      "mitigation": "Enforce WAL mode on SQLite, or use native PostgreSQL pg_dump utility for staging/production.",
+      "remediation_plan": "Integrate pg_dump automated cron jobs into backup recovery lifecycle scripts.",
+      "owner": "Database Operations",
+      "target_date": "2026-07-28"
+    },
+    "compliance": {
+      "risk_id": "RSK-CMP-008",
+      "risk_description": "Compliance evidence packages are generated manually in current CLI tracks, causing verification delays.",
+      "severity": "LOW",
+      "mitigation": "Automate compliance manifest rollups inside the CI/CD pipeline validate steps.",
+      "remediation_plan": "Create GitHub Actions workflow generating signed provenance on every successful branch merge.",
+      "owner": "Release Engineering",
+      "target_date": "2026-08-10"
+    }
+  }
+}

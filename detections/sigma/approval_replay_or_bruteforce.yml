@@ -1,0 +1,26 @@
+title: HOCH Agent Swarm Approval Replay or Brute Force Attempt
+id: bcd12345-9b99-4c9a-97fb-replay-bruteforce
+status: experimental
+description: Detects multiple denied, not found, or replayed prompt approvals indicating brute-forcing.
+logsource:
+  product: hoch_agent_swarm
+  service: prompt_governance
+detection:
+  selection_status:
+    status:
+      - DENIED
+      - NOT_FOUND
+  selection_verdict:
+    verdict:
+      - APPROVAL_ALREADY_USED
+      - APPROVAL_HASH_MISMATCH
+  condition: selection_status or selection_verdict
+fields:
+  - actor
+  - approval_id
+  - prompt_id
+  - task_id
+level: high
+tags:
+  - attack.credential-access
+  - hoch.agent_swarm

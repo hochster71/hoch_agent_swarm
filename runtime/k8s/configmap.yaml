@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: has-worker-config
+  namespace: has-workers
+data:
+  TRACKER_PORT: "3001"
+  TRACKER_HOST: "host.k3d.internal"
+  DATA_DIR: "/tracker-data/has_live_project_tracker/data"
+  EVENTS_LOG: "/tracker-data/has_live_project_tracker/data/events.ndjson"
+  DORA_LOG: "/tracker-data/has_live_project_tracker/data/dora_events.ndjson"
+  STATUS_LOG: "/tracker-data/has_live_project_tracker/data/status.json"
+  TASKS_LOG: "/tracker-data/has_live_project_tracker/data/tasks.json"
+  DRY_RUN: "true"

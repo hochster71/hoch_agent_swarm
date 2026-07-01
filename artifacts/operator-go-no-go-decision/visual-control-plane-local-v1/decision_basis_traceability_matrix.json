@@ -1,0 +1,28 @@
+{
+  "traceability_sources": {
+    "P16_seal": {
+      "path": "artifacts/local-preview-final-candidate-seal/visual-control-plane-local-v1/p16_final_seal.json",
+      "status": "PASS"
+    },
+    "P15_review": {
+      "path": "artifacts/post-remediation-visual-review/visual-control-plane-local-v1/p15_final_seal.json",
+      "status": "PASS"
+    },
+    "P14_remediation": {
+      "path": "artifacts/ui-polish-remediation-execution/visual-control-plane-local-v1/ui_polish_remediation_execution_manifest.json",
+      "status": "PASS"
+    },
+    "P10_closure": {
+      "path": "artifacts/final-local-preview-closure/visual-control-plane-local-v1/closure_memo.json",
+      "status": "PASS"
+    },
+    "P9_handoff": {
+      "path": "artifacts/local-preview-handoff-package/visual-control-plane-local-v1/local_preview_handoff_manifest.json",
+      "status": "PASS"
+    },
+    "P8_acceptance": {
+      "path": "artifacts/operator-acceptance-package/visual-control-plane-local-v1/operator_acceptance_manifest.json",
+      "status": "PASS"
+    }
+  }
+}

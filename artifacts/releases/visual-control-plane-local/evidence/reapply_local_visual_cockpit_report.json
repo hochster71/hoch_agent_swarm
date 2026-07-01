@@ -1,0 +1,11 @@
+{
+  "phase": "V18_REAPPLY_LOCAL_VISUAL_COCKPIT",
+  "local_only": true,
+  "reapply_performed": true,
+  "backup_created": true,
+  "rollback_ready": true,
+  "backend_mutation_enabled": false,
+  "prompt_execution_enabled": false,
+  "approval_decision_execution_enabled": false,
+  "decision": "REAPPLY_LOCAL_VISUAL_COCKPIT_COMPLETE"
+}

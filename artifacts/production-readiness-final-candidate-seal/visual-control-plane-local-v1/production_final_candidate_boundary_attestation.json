@@ -1,0 +1,11 @@
+{
+  "production_final_candidate_boundary_attestation": {
+    "signer": "Michael Hoch",
+    "timestamp": "2026-06-27T21:39:00-05:00",
+    "attested_facts": {
+      "no_drift_lock_only": true,
+      "zero_production_deploy_capability": true,
+      "isolated_from_production": true
+    }
+  }
+}

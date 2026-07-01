@@ -1,0 +1,54 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: evidence-pack
+  namespace: has-workers
+spec:
+  schedule: "*/10 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: sidecar-worker-sa
+          containers:
+            - name: evidence-worker
+              image: has-worker:latest
+              imagePullPolicy: Never
+              command:
+                - /bin/bash
+                - -c
+                - |
+                  echo "Starting evidence event synchronization..."
+                  /tracker-data/scripts/tracker_emit_evidence_event.sh
+              resources:
+                requests:
+                  cpu: "50m"
+                  memory: 64Mi
+                limits:
+                  cpu: "100m"
+                  memory: 128Mi
+              envFrom:
+                - secretRef:
+                    name: has-tracker-secrets
+              env:
+                - name: TRACKER_PORT
+                  valueFrom:
+                    configMapKeyRef:
+                      name: has-worker-config
+                      key: TRACKER_PORT
+                - name: TRACKER_HOST
+                  valueFrom:
+                    configMapKeyRef:
+                      name: has-worker-config
+                      key: TRACKER_HOST
+              volumeMounts:
+                - name: tracker-data-vol
+                  mountPath: /tracker-data
+          restartPolicy: OnFailure
+          volumes:
+            - name: tracker-data-vol
+              persistentVolumeClaim:
+                claimName: tracker-data-pvc

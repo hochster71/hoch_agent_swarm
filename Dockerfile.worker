@@ -1,0 +1,15 @@
+FROM python:3.10-slim
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    sqlite3 \
+    curl \
+    bash \
+    procps \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set up working directory
+WORKDIR /tracker-data
+
+# Set default command
+CMD ["/bin/bash"]

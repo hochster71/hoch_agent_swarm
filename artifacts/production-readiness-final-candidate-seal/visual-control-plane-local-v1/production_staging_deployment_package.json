@@ -1,0 +1,23 @@
+{
+  "staging_deployment_package": {
+    "release_tag": "v0.1.6-ERROR-BUDGET-AWARE-AUTONOMY-staging",
+    "codename": "Controlled Staging Preview Package",
+    "timestamp": "2026-06-27T21:45:00-05:00",
+    "staging_targets": {
+      "api_server": "localhost:8000 (simulated-staging)",
+      "database": "sqlite:db.sqlite (simulated-staging)",
+      "dashboard_interface": "local_dev_preview (simulated-staging)"
+    },
+    "activation_strategy": "simulated_local_activation",
+    "simulated_triggers": {
+      "mock_auth_handshake": true,
+      "sandbox_hardening_validation": true,
+      "read_only_local_verification": true
+    },
+    "package_metadata": {
+      "branch": "integration/visual-control-plane-local-v1",
+      "commit_ref": "f1d3b2ca104dbdf06d90db2cfabde0cfbefccf35",
+      "operator": "Michael Hoch"
+    }
+  }
+}

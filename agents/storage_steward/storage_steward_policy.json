@@ -1,0 +1,49 @@
+{
+  "agent": "AHS_STORAGE_STEWARD",
+  "mode": "safe_archive_only",
+  "disk_thresholds": {
+    "warn_below_gib": 100,
+    "act_below_gib": 50,
+    "critical_below_gib": 25
+  },
+  "destinations": {
+    "primary_archive": "~/Library/CloudStorage/GoogleDrive-*/My Drive/AHS_ARCHIVE",
+    "fallback_archive": "~/iCloud Drive (Archive)/AHS_ARCHIVE"
+  },
+  "archive_priority": [
+    "Google Drive",
+    "iCloud Drive Archive"
+  ],
+  "fallback_allowed": true,
+  "fallback_requires_manifest_note": true,
+  "delete_local_after_archive": false,
+  "allow_move_patterns": [
+    "~/mesh-backup",
+    "~/mesh-v3-backup",
+    "~/mesh-os-backup*",
+    "~/free-local-ai-backups",
+    "~/digital-twin-os.BACKUP.*",
+    "~/Desktop/*backup*",
+    "~/Desktop/DisplayBackup_*",
+    "~/Desktop/HASF-RETURN-BACKUP",
+    "~/hasf-mesh-studio/*backup*",
+    "~/hasf-mesh-studio/*.bak-*",
+    "~/hasf-mesh-studio/pert-*-backup-*.sh"
+  ],
+  "deny_patterns": [
+    "~/hoch_agent_swarm",
+    "~/hoch-swarm",
+    "~/.ollama",
+    "~/.docker",
+    "~/.ssh",
+    "~/.gnupg",
+    "~/Library",
+    "*/.git",
+    "*/node_modules",
+    "*/.venv"
+  ],
+  "delete_local_after_move": false,
+  "requires_manifest": true,
+  "requires_checksum": true,
+  "operator_approval_required_for_delete": true
+}

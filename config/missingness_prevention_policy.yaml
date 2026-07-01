@@ -1,0 +1,14 @@
+policy:
+  name: "Missingness Prevention Policy"
+  enabled: true
+  questions:
+    - "What domain does this belong to?"
+    - "Is there an owner agent?"
+    - "Is there a lifecycle?"
+    - "Is there evidence?"
+    - "Is there a gate?"
+    - "Is there a Runtime Truth signal?"
+    - "Is there a business impact?"
+    - "Is there a risk?"
+    - "Is there a next action?"
+    - "Does Michael actually need to decide this?"

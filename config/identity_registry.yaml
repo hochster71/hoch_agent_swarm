@@ -1,0 +1,26 @@
+identities:
+  - username: "michael"
+    full_name: "Michael Hoch"
+    role: "system_owner"
+    authority: "admin"
+    allowed_scopes: ["system", "work", "family", "restricted"]
+  - username: "alison"
+    full_name: "Alison Hoch"
+    role: "trusted_family_operator"
+    authority: "operator"
+    allowed_scopes: ["family", "public"]
+  - username: "caroline"
+    full_name: "Caroline Hoch"
+    role: "protected_child"
+    authority: "user"
+    allowed_scopes: ["family_safe"]
+  - username: "claire"
+    full_name: "Claire Hoch"
+    role: "protected_child"
+    authority: "user"
+    allowed_scopes: ["family_safe"]
+  - username: "unknown"
+    full_name: "Guest"
+    role: "unauthenticated"
+    authority: "none"
+    allowed_scopes: ["public"]

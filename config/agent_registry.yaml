@@ -1,0 +1,35 @@
+project: "Hoch Agent Swarm"
+version: "1.0"
+agents:
+  - id: "brain-llm"
+    name: "Brain LLM"
+    role: "Mission commander"
+    capabilities: ["observe", "plan", "route", "escalate"]
+  - id: "pert-manager"
+    name: "PERT Manager"
+    role: "Schedule control"
+    capabilities: ["calculate_pert", "update_slack"]
+  - id: "qa-agent"
+    name: "QA Agent"
+    role: "Playwright testing"
+    capabilities: ["npm_build", "playwright_test"]
+  - id: "security-agent"
+    name: "Security Agent"
+    role: "Secrets auditor"
+    capabilities: ["secrets_scan", "dependency_check"]
+  - id: "runtime-agent"
+    name: "Runtime Agent"
+    role: "Docker health monitor"
+    capabilities: ["docker_check", "cpu_monitor"]
+  - id: "backup-agent"
+    name: "Backup Agent"
+    role: "State snapshot recorder"
+    capabilities: ["sqlite_backup", "tar_snapshot"]
+  - id: "code-agent"
+    name: "Code Agent"
+    role: "Dashboard developer"
+    capabilities: ["python_edit", "javascript_edit"]
+  - id: "evidence-agent"
+    name: "Evidence Agent"
+    role: "Audit logger"
+    capabilities: ["write_markdown", "log_audit"]

@@ -1,0 +1,69 @@
+{
+  "screenshot_reviews": [
+    {
+      "file": "cockpit-overview.png",
+      "remarks": "Layout matches Figma design exactly. Grid is aligned. Glow effects render smoothly on Chrome.",
+      "issues_found": 0
+    },
+    {
+      "file": "runtime-health.png",
+      "remarks": "Health indicators are visible. The pulsating dot renders correctly.",
+      "issues_found": 0
+    },
+    {
+      "file": "process-monitor.png",
+      "remarks": "Process stages are mapped. Text sizes are readable.",
+      "issues_found": 0
+    },
+    {
+      "file": "evidence-status.png",
+      "remarks": "Checklists are aligned. Link tags are correctly formatted.",
+      "issues_found": 0
+    },
+    {
+      "file": "blocked-actions.png",
+      "remarks": "Blocked actions table renders properly. Visual indicators are clear.",
+      "issues_found": 0
+    },
+    {
+      "file": "security-ato-readiness.png",
+      "remarks": "Checklist elements render with correct padding.",
+      "issues_found": 0
+    },
+    {
+      "file": "backend-binding-readiness.png",
+      "remarks": "Mocks and read-only indicators are visible.",
+      "issues_found": 0
+    },
+    {
+      "file": "frontend-runtime-readiness.png",
+      "remarks": "Model mesh topology rendering is aligned.",
+      "issues_found": 0
+    },
+    {
+      "file": "local-preview-release-candidate.png",
+      "remarks": "Consolidated metadata renders correctly.",
+      "issues_found": 0
+    },
+    {
+      "file": "controlled-local-demo-readiness.png",
+      "remarks": "Runbook sections render with correct contrast.",
+      "issues_found": 0
+    },
+    {
+      "file": "operator-acceptance-package.png",
+      "remarks": "Attestation checkmarks render clean.",
+      "issues_found": 0
+    },
+    {
+      "file": "local-preview-handoff-package.png",
+      "remarks": "Index listings render with appropriate spacers.",
+      "issues_found": 0
+    },
+    {
+      "file": "final-local-preview-closure.png",
+      "remarks": "Closeout parameters display in correct fonts.",
+      "issues_found": 0
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "baseUrl": "http://localhost:8000",
+  "timestamp": "2026-06-29T16:16:59.198Z",
+  "results": [
+    {
+      "name": "cockpit-overview.png",
+      "captured": true,
+      "path": "/Users/michaelhoch/hoch_agent_swarm/docs/evidence/screenshots/cockpit-overview.png"
+    },
+    {
+      "name": "runtime-health.png",
+      "captured": true,
+      "path": "/Users/michaelhoch/hoch_agent_swarm/docs/evidence/screenshots/runtime-health.png"
+    },
+    {
+      "name": "process-monitor.png",
+      "captured": true,
+      "path": "/Users/michaelhoch/hoch_agent_swarm/docs/evidence/screenshots/process-monitor.png"
+    },
+    {
+      "name": "evidence-status.png",
+      "captured": true,
+      "path": "/Users/michaelhoch/hoch_agent_swarm/docs/evidence/screenshots/evidence-status.png"
+    },
+    {
+      "name": "blocked-actions.png",
+      "captured": true,
+      "path": "/Users/michaelhoch/hoch_agent_swarm/docs/evidence/screenshots/blocked-actions.png"
+    },
+    {
+      "name": "security-ato-readiness.png",
+      "captured": true,
+      "path": "/Users/michaelhoch/hoch_agent_swarm/docs/evidence/screenshots/security-ato-readiness.png"
+    },
+    {
+      "name": "backend-binding-readiness.png",
+      "captured": true,
+      "path": "/Users/michaelhoch/hoch_agent_swarm/docs/evidence/screenshots/backend-binding-readiness.png"
+    },
+    {
+      "name": "frontend-runtime-readiness.png",
+      "captured": true,
+      "path": "/Users/michaelhoch/hoch_agent_swarm/docs/evidence/screenshots/frontend-runtime-readiness.png"
+    },
+    {
+      "name": "production-command-center.png",
+      "captured": true,
+      "path": "/Users/michaelhoch/hoch_agent_swarm/docs/evidence/screenshots/production-command-center.png"
+    },
+    {
+      "name": "release-provenance.png",
+      "captured": true,
+      "path": "/Users/michaelhoch/hoch_agent_swarm/docs/evidence/screenshots/release-provenance.png"
+    },
+    {
+      "name": "operator-governance.png",
+      "captured": true,
+      "path": "/Users/michaelhoch/hoch_agent_swarm/docs/evidence/screenshots/operator-governance.png"
+    },
+    {
+      "name": "finance-command-center.png",
+      "captured": true,
+      "path": "/Users/michaelhoch/hoch_agent_swarm/docs/evidence/screenshots/finance-command-center.png"
+    },
+    {
+      "name": "operator-acceptance-package.png",
+      "captured": true,
+      "path": "/Users/michaelhoch/hoch_agent_swarm/docs/evidence/screenshots/operator-acceptance-package.png"
+    },
+    {
+      "name": "local-preview-handoff-package.png",
+      "captured": true,
+      "path": "/Users/michaelhoch/hoch_agent_swarm/docs/evidence/screenshots/local-preview-handoff-package.png"
+    },
+    {
+      "name": "final-local-preview-closure.png",
+      "captured": true,
+      "path": "/Users/michaelhoch/hoch_agent_swarm/docs/evidence/screenshots/final-local-preview-closure.png"
+    }
+  ]
+}

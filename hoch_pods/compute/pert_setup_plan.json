@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0",
+  "epic": "HOCH-200",
+  "title": "HOCH-200 Base VPS + Relay Stack — PERT Setup Plan",
+  "generated_at": "2026-06-30",
+  "phases": [
+    {
+      "id": "P1",
+      "name": "Provision VPS",
+      "description": "Provision Linode VPS (Ubuntu 24.04), assign hostname hoch-relay-001",
+      "dependencies": [],
+      "duration_optimistic_days": 0.25,
+      "duration_most_likely_days": 0.5,
+      "duration_pessimistic_days": 1.0,
+      "pert_expected_days": 0.5,
+      "status": "COMPLETE",
+      "deliverable": "Running VPS at 50.116.41.183",
+      "completed_at": "2026-06-30"
+    },
+    {
+      "id": "P2",
+      "name": "Harden Base OS",
+      "description": "Configure UFW (deny 3012 public), install fail2ban, apply kernel updates",
+      "dependencies": ["P1"],
+      "duration_optimistic_days": 0.25,
+      "duration_most_likely_days": 0.5,
+      "duration_pessimistic_days": 1.0,
+      "pert_expected_days": 0.5,
+      "status": "COMPLETE",
+      "deliverable": "ufw active, fail2ban active, evidence file written",
+      "completed_at": "2026-06-30"
+    },
+    {
+      "id": "P3",
+      "name": "Install Docker Stack",
+      "description": "Install Docker 29.6.1, Docker Compose v5.2.0, verify daemon running",
+      "dependencies": ["P2"],
+      "duration_optimistic_days": 0.25,
+      "duration_most_likely_days": 0.5,
+      "duration_pessimistic_days": 1.0,
+      "pert_expected_days": 0.5,
+      "status": "COMPLETE",
+      "deliverable": "docker and docker compose operational",
+      "completed_at": "2026-06-30"
+    },
+    {
+      "id": "P4",
+      "name": "Deploy Relay Stack",
+      "description": "Build + deploy relay-api container bound to Tailscale IP 100.87.18.15:3012",
+      "dependencies": ["P3"],
+      "duration_optimistic_days": 0.25,
+      "duration_most_likely_days": 0.5,
+      "duration_pessimistic_days": 2.0,
+      "pert_expected_days": 0.625,
+      "status": "IN_PROGRESS",
+      "deliverable": "hoch-relay-api container healthy, /health returns OK",
+      "completed_at": null
+    },
+    {
+      "id": "P5",
+      "name": "Verify + Evidence",
+      "description": "Run hoch200_verify_vps.sh, confirm browser access, generate evidence doc, run E2E tests",
+      "dependencies": ["P4"],
+      "duration_optimistic_days": 0.25,
+      "duration_most_likely_days": 0.5,
+      "duration_pessimistic_days": 1.0,
+      "pert_expected_days": 0.5,
+      "status": "PENDING",
+      "deliverable": "hoch-200-setup-evidence.md, E2E tests pass, CONDITIONAL_GO confirmed",
+      "completed_at": null
+    }
+  ],
+  "critical_path": ["P1", "P2", "P3", "P4", "P5"],
+  "total_pert_expected_days": 2.625,
+  "notes": "Port 3012 must not be public — this is a hard constraint validated in P4 and P5."
+}

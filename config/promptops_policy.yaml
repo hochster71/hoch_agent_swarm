@@ -1,0 +1,29 @@
+execution_threshold: 80
+rewrite_threshold: 60
+strict_mode: true
+enforce_contracts: true
+allowed_override_actors:
+  - "Operator"
+  - "michael"
+telemetry_frequency_seconds: 5
+
+operator_model:
+  name: EXCEPTION_ONLY_OPERATOR_MODEL
+  default_behavior: "Convert rough operator intent into executable contracts"
+  michael_required_for:
+    - spending_money
+    - purchasing
+    - investments
+    - external_send
+    - destructive_file_actions
+    - production_promotion
+    - security_risk_acceptance
+    - credential_changes
+  michael_not_required_for:
+    - prompt_scoring
+    - prompt_rewriting
+    - gate_binding
+    - evidence_generation
+    - non-destructive tests
+    - local-only diagnostics
+    - blocked-status reporting

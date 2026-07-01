@@ -55,7 +55,20 @@ except ImportError:
 from flask_cors import CORS
 
 app = Flask(__name__, static_folder=None)
-CORS(app, resources={r"/*": {"origins": "*", "methods": ["GET", "POST", "OPTIONS"], "allow_headers": ["Content-Type"]}})
+CORS(app, supports_credentials=True)
+
+@app.after_request
+def after_request(response):
+    from flask import request
+    origin = request.headers.get("Origin")
+    if origin:
+        response.headers["Access-Control-Allow-Origin"] = origin
+    else:
+        response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Credentials"] = "true"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS, PUT, DELETE"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With"
+    return response
 
 @app.route('/<path:path>.map')
 def serve_sourcemap(path):
@@ -247,10 +260,8 @@ def api_artifacts():
 @app.route("/api/artifact/<path:rel_path>")
 def api_artifact_content(rel_path: str):
     # Only serve from inside artifacts/ for safety
-    p = ARTIFACTS_DIR / rel_path
-    try:
-        p.resolve().relative_to(ARTIFACTS_DIR.resolve())
-    except ValueError:
+    p = (ARTIFACTS_DIR / rel_path).resolve()
+    if not p.is_relative_to(ARTIFACTS_DIR.resolve()):
         abort(403)
     if not p.exists() or not p.suffix == ".md":
         abort(404)
@@ -351,7 +362,7 @@ def api_promptbrain_routing_matrix():
             return jsonify(json.load(f))
     return jsonify({"error": "Routing matrix not found"}), 404
 
-@app.route("/api/v1/promptbrain/route", methods=["POST"])
+@app.route("/api/v1/promptbrain/route", methods=["POST", "OPTIONS"])
 def api_promptbrain_route():
     from flask import request
     from hoch_agent_swarm.promptbrain_manager import get_promptbrain_manager
@@ -378,7 +389,7 @@ def api_promptbrain_export():
 # BRAIN2 Endpoints
 # ---------------------------------------------------------------------------
 
-@app.route("/api/v1/brain/ingest", methods=["POST"])
+@app.route("/api/v1/brain/ingest", methods=["POST", "OPTIONS"])
 def api_brain_ingest():
     from hoch_agent_swarm.brain_runtime import get_brain_runtime
     runtime = get_brain_runtime()
@@ -600,7 +611,7 @@ def api_operator_health():
         }
     })
 
-@app.route("/api/v1/operator/demo-toggle", methods=["POST"])
+@app.route("/api/v1/operator/demo-toggle", methods=["POST", "OPTIONS"])
 def api_operator_demo_toggle():
     from flask import request
     data = request.get_json() or {}
@@ -637,7 +648,7 @@ def api_operator_demo_toggle():
             
     return jsonify({"success": False, "error": "Invalid toggle name"}), 400
 
-@app.route("/api/v1/operator/reset-cache", methods=["POST"])
+@app.route("/api/v1/operator/reset-cache", methods=["POST", "OPTIONS"])
 def api_operator_reset_cache():
     try:
         from hoch_agent_swarm.tv_backend import get_tv_backend
@@ -926,14 +937,14 @@ def api_promptqa_lineage():
     qa = get_promptqa_manager()
     return jsonify(qa.lineage)
 
-@app.route("/api/v1/promptqa/run", methods=["POST"])
+@app.route("/api/v1/promptqa/run", methods=["POST", "OPTIONS"])
 def api_promptqa_run():
     from hoch_agent_swarm.promptqa_manager import get_promptqa_manager
     qa = get_promptqa_manager()
     qa.run_eval_pipeline()
     return jsonify({"status": "SUCCESS", "message": "Prompt QA continuous improvement sweep run complete."})
 
-@app.route("/api/v1/promptqa/route-eval", methods=["POST"])
+@app.route("/api/v1/promptqa/route-eval", methods=["POST", "OPTIONS"])
 def api_promptqa_route_eval_trigger():
     from hoch_agent_swarm.promptqa_manager import get_promptqa_manager
     from hoch_agent_swarm.promptbrain_manager import get_promptbrain_manager
@@ -942,14 +953,14 @@ def api_promptqa_route_eval_trigger():
     qa._evaluate_routing(pm)
     return jsonify(qa.routing_results)
 
-@app.route("/api/v1/promptqa/rewrite", methods=["POST"])
+@app.route("/api/v1/promptqa/rewrite", methods=["POST", "OPTIONS"])
 def api_promptqa_rewrite_trigger():
     from hoch_agent_swarm.promptqa_manager import get_promptqa_manager
     qa = get_promptqa_manager()
     qa.run_eval_pipeline()
     return jsonify(qa.candidates)
 
-@app.route("/api/v1/promptqa/approve", methods=["POST"])
+@app.route("/api/v1/promptqa/approve", methods=["POST", "OPTIONS"])
 def api_promptqa_approve():
     from flask import request
     from hoch_agent_swarm.promptqa_manager import get_promptqa_manager

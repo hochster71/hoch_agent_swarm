@@ -1,0 +1,8 @@
+agent_scoreboard_policy:
+  min_pass_rate_for_routing: 80.0
+  remediation_allowed_sandbox_levels:
+    "Claude Code": "High"
+    "Codex CLI": "High"
+    "Aider": "High"
+    "Ruff Agent": "Low"
+    "Pytest Agent": "Low"

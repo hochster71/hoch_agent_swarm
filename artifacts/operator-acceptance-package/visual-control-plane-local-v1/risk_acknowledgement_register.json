@@ -1,0 +1,10 @@
+{
+  "acknowledged_risks": [
+    {
+      "risk_id": "OPERATIONAL-01",
+      "description": "Risk of operator mistaking local demo approval for production ATO",
+      "mitigation_enforced": "Strict final certification wording explicitly containing 'ACCEPTED FOR LOCAL PREVIEW HUMAN REVIEW ONLY'",
+      "status": "ACKNOWLEDGED"
+    }
+  ]
+}

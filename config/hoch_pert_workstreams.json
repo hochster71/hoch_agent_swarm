@@ -1,0 +1,205 @@
+{
+  "_meta": {
+    "schema": "hoch-pert-v1",
+    "created": "2026-06-26",
+    "doctrine": "Local-first ephemeral cybersecurity-hardened AI swarm cluster",
+    "critical_path": [
+      "P1",
+      "P3",
+      "P4",
+      "P8",
+      "P9"
+    ]
+  },
+  "workstreams": [
+    {
+      "id": "P1",
+      "name": "Seal Ephemeral Swarm Doctrine",
+      "description": "Define and seal the doctrine that all agents/workers run as ephemeral processes: no persistent state outside approved storage, no credentials in env vars, no long-lived execution tokens. Produces northstar_doctrine.md artifact.",
+      "depends_on": [],
+      "owner_agent": "NEO Commander",
+      "severity": "HIGH",
+      "status": "IN_PROGRESS",
+      "evidence_required": [
+        "artifacts/qa/northstar_doctrine.md"
+      ],
+      "controls": [
+        "EPHEMERAL-001",
+        "DOCTRINE-001"
+      ],
+      "estimated_hours": 2,
+      "on_critical_path": true,
+      "evidence_file": "artifacts/qa/northstar_doctrine.md",
+      "pr3_note": "Doctrine written + sealed as artifact; runtime ephemeral enforcement pending P2"
+    },
+    {
+      "id": "P2",
+      "name": "Skill Registry Runtime Gate",
+      "description": "Enforce that agent skill routing is validated at runtime against an approved skill registry, not just conceptually routed. Skills not in registry are blocked before execution.",
+      "depends_on": [
+        "P1"
+      ],
+      "owner_agent": "Cyber Commoner",
+      "severity": "HIGH",
+      "status": "PENDING",
+      "evidence_required": [
+        "config/skill_registry.json",
+        "tests/test_skill_gate.py"
+      ],
+      "controls": [
+        "SKILL-GATE-001",
+        "RUNTIME-001"
+      ],
+      "estimated_hours": 4,
+      "on_critical_path": false
+    },
+    {
+      "id": "P3",
+      "name": "Asset Trust Registry",
+      "description": "Build a static trust-tier model for each cluster node: MacBook Pro (CONTROL PLANE), Dell (EDGE WORKER), NEO (INFERENCE NODE), iPad (SECONDARY MONITOR), iPhone (EMERGENCY CONSOLE). Each tier gets approved capabilities and denied capabilities.",
+      "depends_on": [
+        "P1"
+      ],
+      "owner_agent": "Asset Scout",
+      "severity": "HIGH",
+      "status": "PENDING",
+      "evidence_required": [
+        "config/asset_trust_registry.json"
+      ],
+      "controls": [
+        "ASSET-TRUST-001",
+        "ZTA-001"
+      ],
+      "estimated_hours": 3,
+      "on_critical_path": true
+    },
+    {
+      "id": "P4",
+      "name": "Port Hardening + LAN Approval Gate",
+      "description": "Audit all LAN-exposed ports. Require explicit operator approval for any service reachable beyond localhost. Block unapproved ports via firewall policy documented in config.",
+      "depends_on": [
+        "P3"
+      ],
+      "owner_agent": "Footprint Sentinel",
+      "severity": "HIGH",
+      "status": "IN_PROGRESS",
+      "evidence_required": [
+        "artifacts/qa/port_hardening_report.md"
+      ],
+      "controls": [
+        "PORT-001",
+        "LAN-001",
+        "FIREWALL-001"
+      ],
+      "estimated_hours": 3,
+      "on_critical_path": true,
+      "evidence_file": "config/port_hardening_audit.json",
+      "pr3_note": "Swarm ports 8000/3000 PASS (localhost-only); 7 host non-swarm LAN ports REVIEW_REQUIRED"
+    },
+    {
+      "id": "P5",
+      "name": "QA Evidence Matrix",
+      "description": "Create a unified matrix mapping each QA test \u2192 control \u2192 evidence artifact \u2192 remediation status. Replaces scattered per-batch evidence files with a single source of truth.",
+      "depends_on": [
+        "P1"
+      ],
+      "owner_agent": "Evidence Clerk",
+      "severity": "HIGH",
+      "status": "PENDING",
+      "evidence_required": [
+        "artifacts/qa/production_readiness_audit.md"
+      ],
+      "controls": [
+        "QA-MATRIX-001",
+        "EVIDENCE-001"
+      ],
+      "estimated_hours": 2,
+      "on_critical_path": false
+    },
+    {
+      "id": "P6",
+      "name": "PERT Dashboard UI",
+      "description": "Surface the PERT workstream graph, critical path, and ETA in the Governance Cockpit \u2192 Production Readiness panel. Each workstream must show truth-state label.",
+      "depends_on": [
+        "P5"
+      ],
+      "owner_agent": "Task Quartermaster",
+      "severity": "MEDIUM",
+      "status": "IN_PROGRESS",
+      "evidence_required": [
+        "frontend/index.html (Production Readiness panel)"
+      ],
+      "controls": [
+        "UI-PERT-001"
+      ],
+      "estimated_hours": 3,
+      "on_critical_path": false
+    },
+    {
+      "id": "P7",
+      "name": "Google Drive Default Storage Policy",
+      "description": "Define and enforce the policy: all swarm output artifacts default to local ephemeral storage first, then are pushed to Google Drive on mission completion. No credentials stored in repo.",
+      "depends_on": [
+        "P3"
+      ],
+      "owner_agent": "Storage Steward",
+      "severity": "MEDIUM",
+      "status": "PENDING",
+      "evidence_required": [
+        "config/storage_policy.json"
+      ],
+      "controls": [
+        "STORAGE-001",
+        "GDRIVE-001"
+      ],
+      "estimated_hours": 2,
+      "on_critical_path": false
+    },
+    {
+      "id": "P8",
+      "name": "Cluster Worker Profiles: Mac/Dell/NEO/iPad/iPhone",
+      "description": "Define hardware profiles, capability tiers, approved workload types, and resource limits for each cluster node. Stored in config/cluster_worker_profiles.json and surfaced in UI.",
+      "depends_on": [
+        "P3"
+      ],
+      "owner_agent": "Performance Tutor",
+      "severity": "HIGH",
+      "status": "PENDING",
+      "evidence_required": [
+        "config/cluster_worker_profiles.json"
+      ],
+      "controls": [
+        "CLUSTER-001",
+        "WORKLOAD-001"
+      ],
+      "estimated_hours": 3,
+      "on_critical_path": true
+    },
+    {
+      "id": "P9",
+      "name": "End-to-End Audit Run",
+      "description": "Execute a full end-to-end audit run across all workstreams P2\u2013P8. Produce a signed production readiness report. This is the final Go/No-Go gate.",
+      "depends_on": [
+        "P2",
+        "P3",
+        "P4",
+        "P5",
+        "P6",
+        "P7",
+        "P8"
+      ],
+      "owner_agent": "QA Auditor",
+      "severity": "HIGH",
+      "status": "PENDING",
+      "evidence_required": [
+        "artifacts/qa/production_readiness_audit.md (sealed)"
+      ],
+      "controls": [
+        "E2E-AUDIT-001",
+        "GO-NOGO-001"
+      ],
+      "estimated_hours": 4,
+      "on_critical_path": true
+    }
+  ]
+}

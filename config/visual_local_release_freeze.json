@@ -1,0 +1,19 @@
+{
+  "phase": "V23_LOCAL_RELEASE_FREEZE",
+  "local_only": true,
+  "release_root": "artifacts/releases/visual-control-plane-local",
+  "freeze_declared": true,
+  "deployment_performed": false,
+  "external_publication_enabled": false,
+  "production_deployment_enabled": false,
+  "backend_mutation_enabled": false,
+  "prompt_execution_enabled": false,
+  "approval_decision_execution_enabled": false,
+  "security_posture_change_enabled": false,
+  "manifest_path": "artifacts/releases/visual-control-plane-local/manifest.json",
+  "provenance_path": "artifacts/releases/visual-control-plane-local/provenance.json",
+  "release_review_path": "artifacts/releases/visual-control-plane-local/release_review.json",
+  "freeze_record_path": "artifacts/releases/visual-control-plane-local/freeze_record.json",
+  "hash_ledger_path": "artifacts/releases/visual-control-plane-local/hash_ledger.json",
+  "next_allowed_phase": "V24_LOCAL_RELEASE_ARCHIVE"
+}

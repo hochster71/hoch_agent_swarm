@@ -1,0 +1,9 @@
+{
+  "fixtures": [
+    {
+      "fixture_id": "visual_adapters.test-fixtures.json",
+      "path": "frontend/visual_adapters.test-fixtures.json",
+      "purpose": "Provide sandbox animation loops and state variables without invoking active agent backends"
+    }
+  ]
+}

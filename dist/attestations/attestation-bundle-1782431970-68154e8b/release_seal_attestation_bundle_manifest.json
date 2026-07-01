@@ -1,0 +1,76 @@
+{
+  "attestation_bundle_id": "attestation-bundle-1782431970-68154e8b",
+  "seal_dry_run_id": "seal-dry-1782431969-da3bc202",
+  "formal_preview_id": "preview-1782431967-25671a95",
+  "candidate_packet_id": "packet-1782431965-64419222",
+  "created_at": "2026-06-25T23:59:30.547382+00:00",
+  "operator": "Michael Hoch",
+  "reason": "Attestation bundle after Phase 12 seal dry run",
+  "head_sha": "96a44f4f069c8b04f6a7f3a50675cd96c7c12907",
+  "branch": "release/v0.1.6-error-budget-aware-autonomy",
+  "release_tag": "v0.1.7-candidate.4",
+  "seal_status": "SEAL_BLOCKED",
+  "formal_release_ready": false,
+  "no_mutation_guarantee": true,
+  "included_artifacts": [
+    "dist/candidates/packet-1782431965-64419222/candidate_packet_manifest.json",
+    "dist/candidates/packet-1782431965-64419222/candidate_packet_summary.md",
+    "dist/formal-previews/preview-1782431967-25671a95/formal_release_preview_manifest.json",
+    "dist/formal-previews/preview-1782431967-25671a95/formal_release_preview_summary.md",
+    "dist/formal-previews/preview-1782431967-25671a95/formal_release_approval_report.json",
+    "dist/formal-previews/preview-1782431967-25671a95/formal_release_approval_report.md",
+    "dist/formal-previews/preview-1782431967-25671a95/formal_release_seal_dry_run_manifest.json",
+    "dist/formal-previews/preview-1782431967-25671a95/formal_release_seal_dry_run_report.md",
+    "artifacts/qa/readiness-scorecard.json",
+    "artifacts/qa/localhost-8000-audit.json",
+    "artifacts/qa/autonomy-budget-audit.json",
+    "artifacts/qa/north-star-readiness-report.md",
+    "artifacts/qa/formal-release-approval.png",
+    "artifacts/qa/formal-release-preview.png",
+    "artifacts/qa/candidate-release-packet.png",
+    "artifacts/qa/formal-release-seal-dry-run.png"
+  ],
+  "missing_artifacts": [
+    "dist/releases/0.1.7-candidate.4/baseline_evidence_pack.json",
+    "dist/releases/0.1.7-candidate.4/release_manifest.json",
+    "dist/releases/0.1.7-candidate.4/provenance.intoto.jsonl",
+    "dist/releases/0.1.7-candidate.4/sbom.spdx.json",
+    "dist/releases/0.1.7-candidate.4/runtime_execution_audit.json",
+    "dist/releases/0.1.7-candidate.4/tool_call_trace_summary.json",
+    "dist/releases/0.1.7-candidate.4/redaction_report.json",
+    "dist/releases/0.1.7-candidate.4/approval_gate_report.json",
+    "dist/releases/0.1.7-candidate.4/verification_report.json",
+    "dist/releases/0.1.7-candidate.4/autonomy_budget_report.json"
+  ],
+  "artifact_checksums": {
+    "dist/candidates/packet-1782431965-64419222/candidate_packet_manifest.json": "6672bf65b9d704e461b89bea81310773399c41aa6ce01e5169e352794e48d8a2",
+    "dist/candidates/packet-1782431965-64419222/candidate_packet_summary.md": "86b9c61e35f88cfa37464bca78b87dd221bb0a6aa6a025bf501851c71c0c5e0b",
+    "dist/formal-previews/preview-1782431967-25671a95/formal_release_preview_manifest.json": "0fabcc58100753c5a7424d802e963248c4261ee42e930662ce77e5c0b09554d0",
+    "dist/formal-previews/preview-1782431967-25671a95/formal_release_preview_summary.md": "8eb39703584e53591a837b5857d05e62baeb99dd89512896448fc99ea766b8f7",
+    "dist/formal-previews/preview-1782431967-25671a95/formal_release_approval_report.json": "053a685b72cb062fc2fa955aaba47b908a3cc64bc72bc46fe2ea580825dc8c94",
+    "dist/formal-previews/preview-1782431967-25671a95/formal_release_approval_report.md": "ad3e4f06afc6ed2035c9ea497373c2867aee83da89805bf19bb6a3e5feaba2a6",
+    "dist/formal-previews/preview-1782431967-25671a95/formal_release_seal_dry_run_manifest.json": "007a5fac1c7a6396f96e21be0ede961d17f4519ab2703fb5164df9201b50de44",
+    "dist/formal-previews/preview-1782431967-25671a95/formal_release_seal_dry_run_report.md": "d3d53b6692f06e948099c8270249e30caceed7f704446918eaa528ee6c4f2625",
+    "artifacts/qa/readiness-scorecard.json": "53c3fedc4160748f57b0bfa19a0836fd1a01a5218f86022ba4dc65a1bcb3d400",
+    "artifacts/qa/localhost-8000-audit.json": "b6f738bb8679c27ad8861e10c7db5ad63cc9b80e312302ef061dd1dbc8eed7b4",
+    "artifacts/qa/autonomy-budget-audit.json": "283ccfc6fd1ec9b43423fa299c7b16a84b4fc62640b1b0adefc6459910d3adc1",
+    "artifacts/qa/north-star-readiness-report.md": "566b9ff650d8ac25510a5dbeb212404b85e063bea2093392494c5b39546e1b26",
+    "artifacts/qa/formal-release-approval.png": "b134a4492473c801403fbd957f694be77e7bb68ee282175327fca34da99c117e",
+    "artifacts/qa/formal-release-preview.png": "23656791510938fd1aec1588f177655bb88f942738cf4086d17438f97aaaa918",
+    "artifacts/qa/candidate-release-packet.png": "2d4d7ed23c63009f5609ad3294f75eab404cc5d2e9bc5c8bd995b2be3b3357ed",
+    "artifacts/qa/formal-release-seal-dry-run.png": "08c2f3171338ad70bd45f2c0d600a19ae3c00bd85ee0fa683f42c3a0d893029f"
+  },
+  "signing_policy": "BLOCK",
+  "release_channel_governance": "PASS",
+  "governance_summary": {
+    "operator_approval": "approved"
+  },
+  "qa_summary": {
+    "qa_status": "WARN",
+    "readiness_status": "PASS"
+  },
+  "evidence_paths": {
+    "manifest": "dist/attestations/attestation-bundle-1782431970-68154e8b/release_seal_attestation_bundle_manifest.json",
+    "summary": "dist/attestations/attestation-bundle-1782431970-68154e8b/release_seal_attestation_bundle_summary.md"
+  }
+}

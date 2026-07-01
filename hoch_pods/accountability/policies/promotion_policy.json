@@ -1,0 +1,13 @@
+{
+  "consecutive_success_required": {
+    "tier_2_to_tier_3": 2,
+    "tier_3_to_tier_4": 3,
+    "tier_4_to_tier_5": 5
+  },
+  "trust_score_thresholds": {
+    "tier_2": 50,
+    "tier_3": 70,
+    "tier_4": 85,
+    "tier_5": 95
+  }
+}

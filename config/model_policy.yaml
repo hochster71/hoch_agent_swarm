@@ -1,0 +1,12 @@
+model_policy:
+  allowed_endpoints:
+    - "http://127.0.0.1:1234/v1"
+    - "http://localhost:1234/v1"
+    - "http://127.0.0.1:11434"
+    - "http://localhost:11434"
+  blocked_endpoints:
+    - "https://api.openai.com"
+    - "https://api.anthropic.com"
+    - "https://generativelanguage.googleapis.com"
+    - "https://api.groq.com"
+    - "https://openrouter.ai"

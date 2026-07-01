@@ -1,0 +1,452 @@
+{
+  "metadata": {
+    "project": "Hoch Agent Swarm",
+    "mode": "PERT E2E Build",
+    "updatedAt": "2026-06-29T16:31:29.630916Z",
+    "status": "planning",
+    "root": "/Users/michaelhoch/hoch_agent_swarm"
+  },
+  "summary": {
+    "northStar": "Production Readiness Score",
+    "readinessScore": 100,
+    "goNoGo": "GO FOR INTEGRATED PERT E2E TRACKER",
+    "criticalPathStatus": "optimal",
+    "estimatedCompletionMinutes": 32.5,
+    "p0Open": 0,
+    "p1Open": 0,
+    "p2Open": 0
+  },
+  "tasks": [
+    {
+      "id": "A",
+      "name": "Root discovery",
+      "optimistic": 1,
+      "most_likely": 2,
+      "pessimistic": 3,
+      "te": 2.0,
+      "slack": 0.0,
+      "status": "completed",
+      "owner": "Discovery Agent",
+      "predecessors": []
+    },
+    {
+      "id": "B",
+      "name": "Current app inventory",
+      "optimistic": 2,
+      "most_likely": 3,
+      "pessimistic": 4,
+      "te": 3.0,
+      "slack": 0.0,
+      "status": "completed",
+      "owner": "Discovery Agent",
+      "predecessors": [
+        "A"
+      ]
+    },
+    {
+      "id": "C",
+      "name": "Build command detection",
+      "optimistic": 1,
+      "most_likely": 2,
+      "pessimistic": 3,
+      "te": 2.0,
+      "slack": 4.5,
+      "status": "completed",
+      "owner": "Build Agent",
+      "predecessors": [
+        "B"
+      ]
+    },
+    {
+      "id": "D",
+      "name": "Existing test inventory",
+      "optimistic": 2,
+      "most_likely": 4,
+      "pessimistic": 6,
+      "te": 4.0,
+      "slack": 0.0,
+      "status": "completed",
+      "owner": "QA Agent",
+      "predecessors": [
+        "B"
+      ]
+    },
+    {
+      "id": "E",
+      "name": "Production Command Center verification",
+      "optimistic": 1,
+      "most_likely": 2,
+      "pessimistic": 3,
+      "te": 2.0,
+      "slack": 10.0,
+      "status": "completed",
+      "owner": "QA Agent",
+      "predecessors": []
+    },
+    {
+      "id": "F",
+      "name": "Finance Command Center verification",
+      "optimistic": 1,
+      "most_likely": 2,
+      "pessimistic": 3,
+      "te": 2.0,
+      "slack": 10.0,
+      "status": "completed",
+      "owner": "QA Agent",
+      "predecessors": []
+    },
+    {
+      "id": "G",
+      "name": "Runtime Reliability verification",
+      "optimistic": 1,
+      "most_likely": 2,
+      "pessimistic": 3,
+      "te": 2.0,
+      "slack": 10.0,
+      "status": "completed",
+      "owner": "QA Agent",
+      "predecessors": []
+    },
+    {
+      "id": "H",
+      "name": "Docker 24/7 config validation",
+      "optimistic": 2,
+      "most_likely": 3,
+      "pessimistic": 10,
+      "te": 4.0,
+      "slack": 12.0,
+      "status": "completed",
+      "owner": "Reliability Agent",
+      "predecessors": []
+    },
+    {
+      "id": "I",
+      "name": "QA runtime loop validation",
+      "optimistic": 1,
+      "most_likely": 3,
+      "pessimistic": 5,
+      "te": 3.0,
+      "slack": 0.0,
+      "status": "completed",
+      "owner": "QA Agent",
+      "predecessors": []
+    },
+    {
+      "id": "J",
+      "name": "Browser automation stability",
+      "optimistic": 1,
+      "most_likely": 2,
+      "pessimistic": 3,
+      "te": 2.0,
+      "slack": 0.0,
+      "status": "completed",
+      "owner": "Browser Agent",
+      "predecessors": []
+    },
+    {
+      "id": "K",
+      "name": "PERT UI integration",
+      "optimistic": 2,
+      "most_likely": 4,
+      "pessimistic": 6,
+      "te": 4.0,
+      "slack": 10.0,
+      "status": "completed",
+      "owner": "UI Agent",
+      "predecessors": [
+        "E",
+        "F",
+        "G"
+      ]
+    },
+    {
+      "id": "L",
+      "name": "North Star metric integration",
+      "optimistic": 1,
+      "most_likely": 2,
+      "pessimistic": 3,
+      "te": 2.0,
+      "slack": 10.0,
+      "status": "completed",
+      "owner": "UI Agent",
+      "predecessors": [
+        "K"
+      ]
+    },
+    {
+      "id": "M",
+      "name": "Evidence generation",
+      "optimistic": 1,
+      "most_likely": 2,
+      "pessimistic": 3,
+      "te": 2.0,
+      "slack": 10.0,
+      "status": "completed",
+      "owner": "Auditor Agent",
+      "predecessors": [
+        "L"
+      ]
+    },
+    {
+      "id": "N",
+      "name": "Playwright E2E tests",
+      "optimistic": 3,
+      "most_likely": 5,
+      "pessimistic": 7,
+      "te": 5.0,
+      "slack": 0.0,
+      "status": "completed",
+      "owner": "QA Agent",
+      "predecessors": [
+        "D",
+        "I",
+        "J"
+      ]
+    },
+    {
+      "id": "O",
+      "name": "Build validation",
+      "optimistic": 2,
+      "most_likely": 3,
+      "pessimistic": 4,
+      "te": 3.0,
+      "slack": 4.5,
+      "status": "completed",
+      "owner": "Build Agent",
+      "predecessors": [
+        "C"
+      ]
+    },
+    {
+      "id": "P",
+      "name": "Security gate validation",
+      "optimistic": 1,
+      "most_likely": 2,
+      "pessimistic": 3,
+      "te": 2.0,
+      "slack": 8.0,
+      "status": "completed",
+      "owner": "Security Agent",
+      "predecessors": []
+    },
+    {
+      "id": "Q",
+      "name": "Runtime health validation",
+      "optimistic": 1,
+      "most_likely": 2,
+      "pessimistic": 3,
+      "te": 2.0,
+      "slack": 12.0,
+      "status": "completed",
+      "owner": "Reliability Agent",
+      "predecessors": [
+        "H"
+      ]
+    },
+    {
+      "id": "R",
+      "name": "Documentation and runbooks",
+      "optimistic": 2,
+      "most_likely": 3,
+      "pessimistic": 4,
+      "te": 3.0,
+      "slack": 10.0,
+      "status": "completed",
+      "owner": "Doc Agent",
+      "predecessors": [
+        "M"
+      ]
+    },
+    {
+      "id": "S",
+      "name": "Final GO/NO-GO decision",
+      "optimistic": 1,
+      "most_likely": 2,
+      "pessimistic": 3,
+      "te": 2.0,
+      "slack": 0.0,
+      "status": "completed",
+      "owner": "Lead Architect",
+      "predecessors": [
+        "N",
+        "O",
+        "P",
+        "Q",
+        "R"
+      ]
+    },
+    {
+      "id": "T",
+      "name": "Commit if validated",
+      "optimistic": 1,
+      "most_likely": 2,
+      "pessimistic": 3,
+      "te": 2.0,
+      "slack": 0.0,
+      "status": "completed",
+      "owner": "Release Agent",
+      "predecessors": [
+        "S"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "A",
+      "to": "B"
+    },
+    {
+      "from": "B",
+      "to": "C"
+    },
+    {
+      "from": "B",
+      "to": "D"
+    },
+    {
+      "from": "C",
+      "to": "O"
+    },
+    {
+      "from": "D",
+      "to": "N"
+    },
+    {
+      "from": "E",
+      "to": "K"
+    },
+    {
+      "from": "F",
+      "to": "K"
+    },
+    {
+      "from": "G",
+      "to": "K"
+    },
+    {
+      "from": "H",
+      "to": "Q"
+    },
+    {
+      "from": "I",
+      "to": "N"
+    },
+    {
+      "from": "J",
+      "to": "N"
+    },
+    {
+      "from": "K",
+      "to": "L"
+    },
+    {
+      "from": "L",
+      "to": "M"
+    },
+    {
+      "from": "M",
+      "to": "R"
+    },
+    {
+      "from": "N",
+      "to": "S"
+    },
+    {
+      "from": "O",
+      "to": "S"
+    },
+    {
+      "from": "P",
+      "to": "S"
+    },
+    {
+      "from": "Q",
+      "to": "S"
+    },
+    {
+      "from": "R",
+      "to": "S"
+    },
+    {
+      "from": "S",
+      "to": "T"
+    }
+  ],
+  "criticalPath": [
+    "A",
+    "B",
+    "D",
+    "I",
+    "J",
+    "N",
+    "S",
+    "T"
+  ],
+  "gates": [
+    {
+      "id": "g-build",
+      "name": "Gate 1 \u2014 App Build",
+      "status": "PASS"
+    },
+    {
+      "id": "g-ui",
+      "name": "Gate 2 \u2014 UI Render",
+      "status": "PASS"
+    },
+    {
+      "id": "g-e2e",
+      "name": "Gate 3 \u2014 Playwright E2E",
+      "status": "PASS"
+    },
+    {
+      "id": "g-docker",
+      "name": "Gate 4 \u2014 Docker Config",
+      "status": "PASS"
+    },
+    {
+      "id": "g-runtime",
+      "name": "Gate 5 \u2014 Runtime Healthcheck",
+      "status": "PASS"
+    },
+    {
+      "id": "g-security",
+      "name": "Gate 6 \u2014 Security Check",
+      "status": "PASS"
+    },
+    {
+      "id": "g-evidence",
+      "name": "Gate 7 \u2014 Evidence Collection",
+      "status": "PASS"
+    },
+    {
+      "id": "g-decision",
+      "name": "Gate 8 \u2014 GO/NO-GO Verification",
+      "status": "PASS"
+    }
+  ],
+  "risks": [
+    {
+      "title": "Zero GPU VPS degraded mode",
+      "level": "medium",
+      "mitigation": "Fallback routing to local inference endpoint"
+    },
+    {
+      "title": "Home ISP disruption risk",
+      "level": "low",
+      "mitigation": "Cloudflare Tunnel failover backup route"
+    }
+  ],
+  "evidence": [
+    {
+      "name": "latest-pert-gap-analysis.md",
+      "path": "docs/evidence/pert/latest-pert-gap-analysis.md"
+    }
+  ],
+  "auditLog": [
+    {
+      "timestamp": "2026-06-29T16:30:00Z",
+      "agent": "PERT Build Orchestrator",
+      "event": "Initialized E2E Build tracker data model successfully"
+    }
+  ]
+}

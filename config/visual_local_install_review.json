@@ -1,0 +1,17 @@
+{
+  "phase": "V26_LOCAL_INSTALL_REVIEW",
+  "local_only": true,
+  "install_review_performed": true,
+  "deployment_performed": false,
+  "external_publication_enabled": false,
+  "production_deployment_enabled": false,
+  "backend_mutation_enabled": false,
+  "prompt_execution_enabled": false,
+  "approval_decision_execution_enabled": false,
+  "security_posture_change_enabled": false,
+  "archive_path": "artifacts/releases/visual-control-plane-local-archive/visual-control-plane-local.tar.gz",
+  "archive_sha256": "ee6c558a86de4f19e0d4b54bd8fc1251c74e26298345580d45ebc8d7b81edbbc",
+  "install_review_root": "artifacts/install-review/visual-control-plane-local",
+  "install_review_path": "artifacts/install-review/visual-control-plane-local/install_review.json",
+  "next_allowed_phase": "V27_LOCAL_INSTALL_ACCEPTANCE"
+}

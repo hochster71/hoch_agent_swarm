@@ -1,0 +1,14 @@
+{
+  "limitations": [
+    {
+      "id": "LIM-01",
+      "scope_limit": "No production runtime access allowed.",
+      "remediation": "Hardcoded read-only endpoints and sandboxed fetch logic deployed."
+    },
+    {
+      "id": "LIM-02",
+      "scope_limit": "Mutative control interactions are stubbed and display warning modals only.",
+      "remediation": "Disconnected prompt execution and operator gating loops."
+    }
+  ]
+}

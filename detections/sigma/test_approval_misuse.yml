@@ -1,0 +1,24 @@
+title: HOCH Agent Swarm Test Approval Misuse
+id: aef12345-9b99-4c9a-97fb-test-approval-misuse
+status: experimental
+description: Detects when test-sourced approvals are active or bypass automated expiration.
+logsource:
+  product: hoch_agent_swarm
+  service: prompt_governance
+detection:
+  selection_fields:
+    source: TEST
+    status: APPROVED
+  condition: selection_fields
+fields:
+  - approval_id
+  - prompt_id
+  - agent_id
+  - task_id
+  - source
+  - status
+  - expires_at
+level: critical
+tags:
+  - attack.defense-evasion
+  - hoch.agent_swarm

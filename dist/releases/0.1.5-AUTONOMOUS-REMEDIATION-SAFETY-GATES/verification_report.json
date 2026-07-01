@@ -1,0 +1,9 @@
+{
+  "generated_at": "2026-06-24T19:42:17.674Z",
+  "release": "0.1.5-AUTONOMOUS-REMEDIATION-SAFETY-GATES",
+  "status": "PASS",
+  "blockers": [],
+  "warnings": [
+    "Release artifacts are not cryptographically signed yet"
+  ]
+}

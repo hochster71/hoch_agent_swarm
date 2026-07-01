@@ -1,0 +1,18 @@
+{
+  "discovered_routes": [
+    { "path": "/", "element": "#view-mission-control", "active": true },
+    { "path": "/", "element": "#view-live-runtime", "active": true },
+    { "path": "/", "element": "#view-local-models", "active": true },
+    { "path": "/", "element": "#view-model-mesh", "active": true },
+    { "path": "/", "element": "#view-model-router", "active": true },
+    { "path": "/", "element": "#view-escalations", "active": true },
+    { "path": "/", "element": "#view-evidence", "active": true },
+    { "path": "/", "element": "#view-detections", "active": true },
+    { "path": "/", "element": "#view-readiness", "active": true },
+    { "path": "/", "element": "#view-settings", "active": true },
+    { "path": "/", "element": "#view-agent-flight-deck", "active": true },
+    { "path": "file:///mockups/visual-control-plane/control-plane.html", "element": "body", "active": true },
+    { "path": "file:///artifacts/releases/visual-control-plane-local/control-plane.html", "element": "body", "active": true },
+    { "path": "file:///artifacts/install-review/visual-control-plane-local/control-plane.html", "element": "body", "active": true }
+  ]
+}

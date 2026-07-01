@@ -1,0 +1,10 @@
+{
+  "track_id": "PR12A",
+  "track_name": "Production Readiness No-Drift Lock",
+  "dependency_range": "PR1 through PR11",
+  "branch": "integration/visual-control-plane-local-v1",
+  "head_commit_before_pr12": "ff343a1b9e2b9cc5f68547c273e91c797194e972",
+  "certification": "PR12A PRODUCTION READINESS NO-DRIFT LOCK — ACCEPTED FOR NO-DRIFT ENFORCEMENT ONLY",
+  "local_preview_only": true,
+  "created_at": "2026-06-27T21:39:00-05:00"
+}

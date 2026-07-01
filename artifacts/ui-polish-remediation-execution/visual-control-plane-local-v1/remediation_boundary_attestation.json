@@ -1,0 +1,12 @@
+{
+  "remediation_boundary": {
+    "signer": "Michael Hoch",
+    "timestamp": "2026-06-27T18:44:00-05:00",
+    "attested_facts": {
+      "no_production_deployment": true,
+      "no_git_push_to_main": true,
+      "no_mutating_api_routes_added": true,
+      "preview_boundary_preserved": true
+    }
+  }
+}

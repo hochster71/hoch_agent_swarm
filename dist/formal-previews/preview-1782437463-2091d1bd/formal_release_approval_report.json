@@ -1,0 +1,48 @@
+{
+  "report_id": "rep-54daed13",
+  "formal_preview_id": "preview-1782437463-2091d1bd",
+  "request_id": "channel_decision:formal:preview-1782437463-2091d1bd",
+  "approval_id": "app-86899a7b",
+  "created_at": "2026-06-26T01:31:04.294380+00:00",
+  "operator": "Michael Hoch",
+  "decision": "approved",
+  "reason": "Simulated formal release approval for E2E testing",
+  "replay_protection": {
+    "nonce": "e5e18f01c58a49cd8b641607252fbfa7",
+    "prior_state": "pending",
+    "next_state": "approved"
+  },
+  "preview_metadata": {
+    "formal_preview_id": "preview-1782437463-2091d1bd",
+    "candidate_packet_id": "packet-1782437461-1d623800",
+    "candidate_version": "0.1.7-candidate.2",
+    "created_at": "2026-06-26T01:31:03.331011+00:00",
+    "head_sha": "41280d6798560a674d3676afb0a7d1d7a86c36ed",
+    "branch": "release/v0.1.6-error-budget-aware-autonomy",
+    "release_tag": "v0.1.7-candidate.2",
+    "tag_sha": "",
+    "tag_points_at_head": false,
+    "tag_status": "NO_RELEASE_TAG",
+    "signing_policy_status": "BLOCK",
+    "release_channel_policy_status": "PASS",
+    "working_tree_clean": false,
+    "qa_status": "WARN",
+    "readiness_status": "PASS",
+    "operator_approval_status": "approved",
+    "formal_release_ready": false,
+    "formal_release_blockers": [
+      "working tree is dirty",
+      "QA tests not fully passed",
+      "signing policy not satisfied",
+      "release tag does not point at HEAD"
+    ],
+    "required_operator_actions": [
+      "commit or stash unstaged changes",
+      "run QA suite and fix test failures",
+      "enable signing provider or approve waiver",
+      "align release tag"
+    ],
+    "preview_manifest_path": "dist/formal-previews/preview-1782437463-2091d1bd/formal_release_preview_manifest.json",
+    "preview_status": "preview_warn"
+  }
+}

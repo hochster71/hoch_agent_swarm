@@ -1,0 +1,8 @@
+{
+  "orchestrator_track_id": "ORCH-visual-control-plane-local-v1.0.0",
+  "track": "PHASE_ORCHESTRATOR",
+  "integration_branch": "integration/visual-control-plane-local-v1",
+  "status": "ORCHESTRATOR_ESTABLISHED",
+  "local_preview_only": true,
+  "created_at": "2026-06-27T21:47:00-05:00"
+}

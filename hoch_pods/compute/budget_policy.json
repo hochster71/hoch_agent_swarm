@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "epic": "HOCH-200",
+  "policy_name": "hoch-compute-budget-policy-v1",
+  "effective_date": "2026-06-30",
+  "currency": "USD",
+  "billing_period": "monthly",
+  "nodes": {
+    "hoch-relay-001": {
+      "provider": "Linode",
+      "plan": "Nanode 1GB",
+      "monthly_cap_usd": 12.00,
+      "monthly_alert_threshold_usd": 10.00,
+      "alert_channel": "ops-alerts",
+      "auto_shutdown_on_overrun": false,
+      "notes": "Base VPS for relay stack. Under $5/mo typical."
+    }
+  },
+  "global_compute_monthly_cap_usd": 50.00,
+  "global_alert_threshold_pct": 80,
+  "egress_alert_gb_per_month": 100,
+  "cost_review_cadence": "weekly",
+  "ledger_file": "hoch_pods/compute/cost_ledger.jsonl",
+  "owner": "michael-hoch",
+  "last_reviewed": "2026-06-30"
+}

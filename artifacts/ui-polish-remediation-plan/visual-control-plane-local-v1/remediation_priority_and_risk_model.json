@@ -1,0 +1,14 @@
+{
+  "risk_model": {
+    "FIX-01": {
+      "priority": "LOW",
+      "risk": "MINIMAL",
+      "impact": "Visual alignment only. Zero functional impact."
+    },
+    "FIX-02": {
+      "priority": "LOW",
+      "risk": "MINIMAL",
+      "impact": "Card label styling only. Zero functional impact."
+    }
+  }
+}

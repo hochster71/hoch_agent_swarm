@@ -1,0 +1,14 @@
+{
+  "validation_plan": [
+    {
+      "step": "1",
+      "action": "Run capture-ui-screenshots script after applying layout changes.",
+      "expected_outcome": "Screenshots saved showing aligned dropdown and bold labels."
+    },
+    {
+      "step": "2",
+      "action": "Execute the visual contract tests suite.",
+      "expected_outcome": "All contract validation scripts return PASS."
+    }
+  ]
+}

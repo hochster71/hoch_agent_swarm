@@ -1,0 +1,3 @@
+event.dataset : "hoch_agent_swarm.model_routing" and
+provider : "google_gemini" and
+(verdict : "BLOCKED" or reason : "approval_required" or reason : "budget_exceeded")

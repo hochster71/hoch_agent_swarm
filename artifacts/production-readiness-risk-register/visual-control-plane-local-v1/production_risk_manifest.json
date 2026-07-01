@@ -1,0 +1,9 @@
+{
+  "risk_track_id": "PR8-visual-control-plane-local-v1.0.0",
+  "track": "PR8_PRODUCTION_READINESS_RISK_REGISTER_POAM",
+  "integration_branch": "integration/visual-control-plane-local-v1",
+  "target_release": "v0.1.6-ERROR-BUDGET-AWARE-AUTONOMY",
+  "status": "RISK_REGISTER_POAM",
+  "local_preview_only": true,
+  "created_at": "2026-06-27T19:25:00-05:00"
+}

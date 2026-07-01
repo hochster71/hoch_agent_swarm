@@ -1,0 +1,83 @@
+graph LR
+    %% Styles and Node Styling Definitions
+    classDef master fill:#2a52be,stroke:#89a8ff,stroke-width:2px,color:#fff;
+    classDef scheduler fill:#1f3354,stroke:#3b82f6,stroke-width:2px,color:#fff;
+    classDef nodeL1 fill:#34495e,stroke:#2ecc71,stroke-width:2px,color:#fff;
+    classDef nodeL2 fill:#2c3e50,stroke:#3498db,stroke-width:2px,color:#fff;
+    classDef nodeL3 fill:#2c3e50,stroke:#9b59b6,stroke-width:2px,color:#fff;
+    classDef nodeW1 fill:#2c3e50,stroke:#e67e22,stroke-width:2px,color:#fff;
+    classDef mobile fill:#7f8c8d,stroke:#bdc3c7,stroke-width:1px,color:#fff;
+    classDef swarm fill:#4a274c,stroke:#e91e63,stroke-width:2px,color:#fff;
+    classDef pipeline fill:#16a085,stroke:#1abc9c,stroke-width:1px,color:#fff;
+
+    %% Nodes
+    MGR("CLUSTER MGR<br/>(MASTER)"):::master
+    SCHED("TASK SCHEDULER"):::scheduler
+    LB("Load Balancer"):::scheduler
+    
+    %% Compute Nodes
+    L1("MBP MS PRO (CONTROL PLANE) [L1]<br/>IP: 10.0.0.6 | 24GB RAM | 1TB SSD<br/>Orchestrates all tasks"):::nodeL1
+    L2("MICHAEL'S IMAC [L2]<br/>IP: 10.0.0.92 | Coder Node<br/>SSH Available"):::nodeL2
+    L3("HOCH-MESH MACBOOK NEO [L3]<br/>IP: 10.0.0.8 | Coder Node<br/>SSH + DOCKER | Gordon Agent Ready"):::nodeL3
+    W1("DELL 9440 [W1]<br/>IP: 10.0.0.207 | Coder Node<br/>SSH + DOCKER | Full Task Exec"):::W1
+    
+    %% Mobile Agents
+    IPAD("IPAD PRO 12'' [Agent]<br/>IP: 10.0.0.120<br/>Lightweight Agent | Limited Compute"):::mobile
+    IPHONE("IPHONE 15 PRO MAX<br/>IP: 10.0.0.74<br/>Lightweight Agent | Limited Compute"):::mobile
+    IPAD_PRO_11("Michael's iPad pro 11'' [IPAD_PRO_11]<br/>IP: 10.0.0.44<br/>Edge Client | Apple M4"):::mobile
+    IPAD_MINI_1("iPad mini MUU62LL/A [IPAD_MINI_1]<br/>IP: 10.0.0.91<br/>Edge Client | A12 Bionic"):::mobile
+    IPAD_MINI_2("iPad mini MGNV2LL/A [IPAD_MINI_2]<br/>IP: 10.0.0.137<br/>Edge Client | A7"):::mobile
+    
+    %% Pipelines
+    subgraph L1_Pipe [L1 Execution Pipelines]
+        L1_ING[DATA INGEST]:::pipeline
+        L1_AI[GEN AI]:::pipeline
+        L1_IDX[INDEXING]:::pipeline
+    end
+
+    subgraph L2_Pipe [L2 Execution Pipelines]
+        L2_ING[DATA INGEST]:::pipeline
+        L2_AI[GEN AI]:::pipeline
+        L2_IDX[INDEXING]:::pipeline
+    end
+
+    %% Swarms
+    SWARM_A("AGENT SWARM ALPHA<br/>85% Load"):::swarm
+    SWARM_B("AGENT SWARM BETA<br/>92% Load"):::swarm
+    MOBILE_AGENTS("MOBILE AGENTS<br/>iPad/iPhone<br/>22% Load"):::swarm
+
+    %% Connections
+    MGR --> LB --> SCHED
+    
+    SCHED --> L1
+    SCHED --> L2
+    SCHED --> L3
+    SCHED --> W1
+    
+    %% L1 pipelines to Alpha Swarm
+    L1 --> L1_ING
+    L1 --> L1_AI
+    L1 --> L1_IDX
+    L1_ING --> SWARM_A
+    L1_AI --> SWARM_A
+    L1_IDX --> SWARM_A
+
+    %% L2 pipelines to Beta Swarm
+    L2 --> L2_ING
+    L2 --> L2_AI
+    L2 --> L2_IDX
+    L2_ING --> SWARM_B
+    L2_AI --> SWARM_B
+    L2_IDX --> SWARM_B
+
+    %% Mobile node connections
+    L3 --> IPAD
+    W1 --> IPHONE
+    L3 --> IPAD_PRO_11
+    L3 --> IPAD_MINI_1
+    L3 --> IPAD_MINI_2
+    IPAD --> MOBILE_AGENTS
+    IPHONE --> MOBILE_AGENTS
+    IPAD_PRO_11 --> MOBILE_AGENTS
+    IPAD_MINI_1 --> MOBILE_AGENTS
+    IPAD_MINI_2 --> MOBILE_AGENTS

@@ -1,0 +1,19 @@
+{
+  "demotion_triggers": {
+    "gate_failure_count_threshold": 2,
+    "consecutive_failures": 1
+  },
+  "remediation_workflows": {
+    "Tier 3: Supervised": {
+      "requires_reviewer": true,
+      "can_mark_go_independently": false,
+      "restricted_tasks": ["ui_release", "security_hardening", "production_deploy"]
+    },
+    "Tier 2: Restricted": {
+      "requires_reviewer": true,
+      "can_mark_go_independently": false,
+      "write_permission": "approved_only",
+      "allowed_actions": ["read", "analyze", "recommend", "run_tests"]
+    }
+  }
+}

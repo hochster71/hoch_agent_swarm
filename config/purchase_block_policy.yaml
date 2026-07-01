@@ -1,0 +1,21 @@
+hard_purchase_blocks:
+  checkout_urls:
+    - "/checkout"
+    - "/cart/checkout"
+    - "/pay"
+    - "/finalize"
+  blocked_actions:
+    - purchase
+    - checkout
+    - payment_submission
+    - saved_payment_change
+    - shipping_address_change
+    - bitcoin_transfer
+    - crypto_purchase
+    - stock_trade
+    - investment_execution
+    - subscription_signup
+  enforcement:
+    mode: "STRICT"
+    raise_exception_on_violation: true
+    audit_on_violation: true

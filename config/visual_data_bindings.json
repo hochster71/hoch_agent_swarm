@@ -1,0 +1,361 @@
+{
+  "name": "HOCH Visual Control Plane Data Bindings",
+  "version": "0.1.0",
+  "phase": "V3_DATA_BINDING_PLAN",
+  "runtime_binding_enabled": false,
+  "live_dashboard_replacement_enabled": false,
+  "default_refresh_strategy": "polling",
+  "state_labels": [
+    "LIVE",
+    "DEGRADED",
+    "PENDING",
+    "SIMULATED",
+    "STALE",
+    "FAIL-CLOSED",
+    "UNAVAILABLE",
+    "UNKNOWN"
+  ],
+  "sources": [
+    {
+      "name": "live_runtime_cockpit",
+      "type": "REST",
+      "path": "/api/v1/live-runtime/cockpit"
+    },
+    {
+      "name": "prompts_registry",
+      "type": "REST",
+      "path": "/api/v1/prompts/registry"
+    },
+    {
+      "name": "prompts_categories",
+      "type": "REST",
+      "path": "/api/v1/prompts/categories"
+    },
+    {
+      "name": "prompts_router_rules",
+      "type": "REST",
+      "path": "/api/v1/prompts/router/rules"
+    },
+    {
+      "name": "prompts_router_plan",
+      "type": "REST",
+      "path": "/api/v1/prompts/router/plan"
+    },
+    {
+      "name": "known_asset_probe_report",
+      "type": "ARTIFACT",
+      "path": "artifacts/qa/known_assets/known_asset_probe_report.json"
+    },
+    {
+      "name": "prompt_registry_report",
+      "type": "ARTIFACT",
+      "path": "artifacts/qa/prompt_registry/prompt_registry_report.json"
+    },
+    {
+      "name": "pentest_evidence_manifest",
+      "type": "ARTIFACT",
+      "path": "artifacts/pentest/evidence_manifest.json"
+    },
+    {
+      "name": "prompt_control_plane_config",
+      "type": "STATIC",
+      "path": "config/prompt_control_plane.json"
+    },
+    {
+      "name": "visual_control_plane_config",
+      "type": "STATIC",
+      "path": "config/visual_control_plane.json"
+    }
+  ],
+  "component_bindings": [
+    {
+      "component_name": "ops-header",
+      "source_type": "REST",
+      "source_path": "/api/v1/live-runtime/cockpit",
+      "refresh_strategy": "polling",
+      "refresh_interval_seconds": 10,
+      "required_fields": ["generated_at", "truth"],
+      "state_mapping": {
+        "LIVE": "LIVE",
+        "DEGRADED": "DEGRADED",
+        "missing_source": "UNAVAILABLE"
+      },
+      "freshness_seconds": 30,
+      "fallback_state": "UNKNOWN",
+      "evidence_required": "system.uptime",
+      "fail_closed_conditions": ["system_halted"],
+      "human_approval_required": false,
+      "notes": "Displays current system operating status"
+    },
+    {
+      "component_name": "status-pill",
+      "source_type": "REST",
+      "source_path": "/api/v1/live-runtime/cockpit",
+      "refresh_strategy": "polling",
+      "refresh_interval_seconds": 5,
+      "required_fields": ["truth"],
+      "state_mapping": {
+        "LIVE": "LIVE",
+        "DEGRADED": "DEGRADED",
+        "PENDING": "PENDING",
+        "SIMULATED": "SIMULATED",
+        "STALE": "STALE",
+        "FAIL-CLOSED": "FAIL-CLOSED",
+        "UNAVAILABLE": "UNAVAILABLE",
+        "UNKNOWN": "UNKNOWN"
+      },
+      "freshness_seconds": 15,
+      "fallback_state": "UNKNOWN",
+      "evidence_required": "endpoint_health",
+      "fail_closed_conditions": ["policy_violation"],
+      "human_approval_required": false,
+      "notes": "State transitions must match active endpoint status"
+    },
+    {
+      "component_name": "telemetry-card",
+      "source_type": "REST",
+      "source_path": "/api/v1/live-runtime/cockpit",
+      "refresh_strategy": "polling",
+      "refresh_interval_seconds": 10,
+      "required_fields": ["cards"],
+      "state_mapping": {
+        "LIVE": "LIVE",
+        "DEGRADED": "DEGRADED",
+        "missing": "UNAVAILABLE",
+        "stale": "STALE"
+      },
+      "freshness_seconds": 30,
+      "fallback_state": "UNAVAILABLE",
+      "evidence_required": "evidence_pack",
+      "fail_closed_conditions": ["budget_exceeded"],
+      "human_approval_required": false,
+      "notes": "High-density factual data cards"
+    },
+    {
+      "component_name": "agent-card",
+      "source_type": "FUTURE",
+      "source_path": "/api/v1/agents/status",
+      "refresh_strategy": "polling",
+      "refresh_interval_seconds": 15,
+      "required_fields": ["id", "role", "prompt_id"],
+      "state_mapping": {
+        "mock": "SIMULATED",
+        "missing": "UNKNOWN"
+      },
+      "freshness_seconds": 60,
+      "fallback_state": "SIMULATED",
+      "evidence_required": "agent_audit_ledger",
+      "fail_closed_conditions": ["unauthorized_delegation"],
+      "human_approval_required": true,
+      "notes": "Represents active agent execution role"
+    },
+    {
+      "component_name": "approval-card",
+      "source_type": "FUTURE",
+      "source_path": "/api/v1/approvals/queue",
+      "refresh_strategy": "polling",
+      "refresh_interval_seconds": 5,
+      "required_fields": ["approval_id", "status"],
+      "state_mapping": {
+        "pending": "PENDING",
+        "approved": "LIVE",
+        "denied": "FAIL-CLOSED"
+      },
+      "freshness_seconds": 10,
+      "fallback_state": "PENDING",
+      "evidence_required": "operator_signature",
+      "fail_closed_conditions": ["signature_missing", "unresolved_ambiguity"],
+      "human_approval_required": true,
+      "notes": "Strictly requires operator human approval; can trigger fail-closed"
+    },
+    {
+      "component_name": "evidence-card",
+      "source_type": "ARTIFACT",
+      "source_path": "artifacts/pentest/evidence_manifest.json",
+      "refresh_strategy": "manual",
+      "refresh_interval_seconds": 3600,
+      "required_fields": ["release", "artifacts"],
+      "state_mapping": {
+        "valid": "LIVE",
+        "missing": "UNAVAILABLE",
+        "expired": "STALE"
+      },
+      "freshness_seconds": 86400,
+      "fallback_state": "UNAVAILABLE",
+      "evidence_required": "provenance_ref",
+      "fail_closed_conditions": ["integrity_failed"],
+      "human_approval_required": false,
+      "notes": "Displays release cryptographic hashes"
+    },
+    {
+      "component_name": "pipeline-stage",
+      "source_type": "FUTURE",
+      "source_path": "artifacts/qa/factory/pipeline_status.json",
+      "refresh_strategy": "polling",
+      "refresh_interval_seconds": 30,
+      "required_fields": ["current_stage", "status"],
+      "state_mapping": {
+        "active": "LIVE",
+        "pending": "PENDING",
+        "halted": "FAIL-CLOSED"
+      },
+      "freshness_seconds": 120,
+      "fallback_state": "PENDING",
+      "evidence_required": "build_logs",
+      "fail_closed_conditions": ["test_failed"],
+      "human_approval_required": false,
+      "notes": "Conveyor line stages visualization"
+    },
+    {
+      "component_name": "node-map-card",
+      "source_type": "ARTIFACT",
+      "source_path": "artifacts/qa/known_assets/known_asset_probe_report.json",
+      "refresh_strategy": "polling",
+      "refresh_interval_seconds": 30,
+      "required_fields": ["results"],
+      "state_mapping": {
+        "healthy": "LIVE",
+        "unreachable": "UNAVAILABLE"
+      },
+      "freshness_seconds": 300,
+      "fallback_state": "UNAVAILABLE",
+      "evidence_required": "ping_latency",
+      "fail_closed_conditions": ["rogue_device_detected"],
+      "human_approval_required": false,
+      "notes": "Mesh cluster active topography"
+    },
+    {
+      "component_name": "prompt-card",
+      "source_type": "REST",
+      "source_path": "/api/v1/prompts/registry",
+      "refresh_strategy": "polling",
+      "refresh_interval_seconds": 60,
+      "required_fields": ["id", "title", "prompt"],
+      "state_mapping": {
+        "live": "LIVE",
+        "missing": "UNAVAILABLE"
+      },
+      "freshness_seconds": 600,
+      "fallback_state": "UNAVAILABLE",
+      "evidence_required": "registry_manifest",
+      "fail_closed_conditions": ["hash_mismatch"],
+      "human_approval_required": false,
+      "notes": "Displays prompt metadata"
+    },
+    {
+      "component_name": "risk-badge",
+      "source_type": "REST",
+      "source_path": "/api/v1/prompts/router/plan",
+      "refresh_strategy": "polling",
+      "refresh_interval_seconds": 10,
+      "required_fields": ["risk_level"],
+      "state_mapping": {
+        "LOW": "LIVE",
+        "HIGH": "DEGRADED",
+        "FAIL_CLOSED": "FAIL-CLOSED"
+      },
+      "freshness_seconds": 30,
+      "fallback_state": "UNKNOWN",
+      "evidence_required": "router_policy_match",
+      "fail_closed_conditions": ["security_ambiguity"],
+      "human_approval_required": false,
+      "notes": "Visualizes task plan risk level"
+    },
+    {
+      "component_name": "state-registry",
+      "source_type": "STATIC",
+      "source_path": "config/visual_control_plane.json",
+      "refresh_strategy": "static",
+      "refresh_interval_seconds": 0,
+      "required_fields": ["state_labels"],
+      "state_mapping": {
+        "active": "LIVE"
+      },
+      "freshness_seconds": 0,
+      "fallback_state": "UNKNOWN",
+      "evidence_required": "static_config_parse",
+      "fail_closed_conditions": [],
+      "human_approval_required": false,
+      "notes": "State definitions catalog"
+    },
+    {
+      "component_name": "terminal-panel",
+      "source_type": "ARTIFACT",
+      "source_path": "artifacts/qa/prompt_registry/prompt_registry_report.json",
+      "refresh_strategy": "polling",
+      "refresh_interval_seconds": 10,
+      "required_fields": ["timestamp", "total_prompts"],
+      "state_mapping": {
+        "ok": "LIVE",
+        "error": "DEGRADED"
+      },
+      "freshness_seconds": 60,
+      "fallback_state": "UNAVAILABLE",
+      "evidence_required": "report_hash",
+      "fail_closed_conditions": ["tampering_detected"],
+      "human_approval_required": false,
+      "notes": "High-density stdout/stderr console logs"
+    },
+    {
+      "component_name": "metric-strip",
+      "source_type": "REST",
+      "source_path": "/api/v1/live-runtime/cockpit",
+      "refresh_strategy": "polling",
+      "refresh_interval_seconds": 10,
+      "required_fields": ["cards"],
+      "state_mapping": {
+        "online": "LIVE",
+        "offline": "UNAVAILABLE"
+      },
+      "freshness_seconds": 30,
+      "fallback_state": "UNAVAILABLE",
+      "evidence_required": "uptime_counter",
+      "fail_closed_conditions": ["device_drop"],
+      "human_approval_required": false,
+      "notes": "Horizontal KPI counters strip"
+    },
+    {
+      "component_name": "section-rail",
+      "source_type": "STATIC",
+      "source_path": "config/visual_control_plane.json",
+      "refresh_strategy": "static",
+      "refresh_interval_seconds": 0,
+      "required_fields": ["routes"],
+      "state_mapping": {
+        "active": "LIVE"
+      },
+      "freshness_seconds": 0,
+      "fallback_state": "UNKNOWN",
+      "evidence_required": "config_validation",
+      "fail_closed_conditions": [],
+      "human_approval_required": false,
+      "notes": "Vertical sub-page routing panel"
+    }
+  ],
+  "freshness_policy": {
+    "live_max_age_seconds": 30,
+    "stale_max_age_seconds": 300,
+    "expired_fallback": "STALE"
+  },
+  "fallback_policy": {
+    "missing_source": "UNAVAILABLE",
+    "security_ambiguity": "FAIL-CLOSED",
+    "unimplemented": "PENDING",
+    "static_mock": "SIMULATED",
+    "partial_evidence": "DEGRADED"
+  },
+  "communication_strategy": {
+    "telemetry_polling": "REST polling for normal telemetry dashboard card updates",
+    "live_streaming": "SSE (Server-Sent Events) candidate for one-way active status notifications",
+    "bidirectional_control": "WebSocket candidate only for future bidirectional task and agent interaction commands"
+  },
+  "human_approval_policy": {
+    "approval_required_actions": [
+      "deploy", "publish", "delete", "spend", "app store", "firewall", "router", 
+      "secrets", "credentials", "family", "private data", "production", 
+      "external", "network", "model deletion", "security posture"
+    ],
+    "fail_closed_on_bypass": true
+  },
+  "next_phase": "V4_CONTROLLED_DASHBOARD_ADAPTERS"
+}

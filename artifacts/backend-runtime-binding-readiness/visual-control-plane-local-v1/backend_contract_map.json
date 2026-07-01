@@ -1,0 +1,49 @@
+{
+  "contract_name": "Visual Control Plane Backend Data Contract",
+  "endpoints": {
+    "/api/v1/runtime/process/animation-state": {
+      "method": "GET",
+      "response_schema": {
+        "truth": "string",
+        "animation_mode": "string",
+        "decorative_only": "boolean",
+        "events_path": "string",
+        "koi_enabled": "boolean",
+        "processes": "array"
+      },
+      "process_item_schema": {
+        "event_id": "string",
+        "process_type": "string",
+        "state": "string",
+        "agent_id": "string",
+        "provider": "string",
+        "model": "string",
+        "confidence_score": "number",
+        "visual": {
+          "sprite": "string",
+          "color": "string",
+          "motion": "string",
+          "speed": "string",
+          "trail": "string",
+          "pulse": "boolean"
+        }
+      }
+    },
+    "/api/v1/runtime/process/health": {
+      "method": "GET",
+      "response_schema": {
+        "status": "string",
+        "has_failures": "boolean",
+        "event_count": "number"
+      }
+    }
+  },
+  "safety_guarantees": {
+    "read_only": true,
+    "mutation_endpoints_blocked": [
+      "/api/v1/prompt/execute",
+      "/api/v1/approval/decision",
+      "/api/v1/remediation/execute"
+    ]
+  }
+}

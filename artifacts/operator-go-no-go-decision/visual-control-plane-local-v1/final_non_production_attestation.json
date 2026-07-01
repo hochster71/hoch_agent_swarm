@@ -1,0 +1,7 @@
+{
+  "non_production_attestation": {
+    "signer": "Michael Hoch",
+    "timestamp": "2026-06-27T18:52:00-05:00",
+    "statement": "I hereby attest that this GO decision is strictly limited to local preview review and does not authorize production deployment or any operational changes."
+  }
+}

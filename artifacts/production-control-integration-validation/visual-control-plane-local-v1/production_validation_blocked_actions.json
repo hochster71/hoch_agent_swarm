@@ -1,0 +1,12 @@
+{
+  "blocked_actions": {
+    "git_push": "BLOCKED",
+    "production_deployment": "BLOCKED",
+    "main_merge": "BLOCKED",
+    "production_secrets": "BLOCKED",
+    "live_external_service_binding": "BLOCKED",
+    "prompt_execution": "BLOCKED",
+    "approval_execution": "BLOCKED",
+    "external_publication": "BLOCKED"
+  }
+}

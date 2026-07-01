@@ -1,0 +1,11 @@
+{
+  "boundary_enforcement": {
+    "boundary_type": "LOCAL_PREVIEW_ONLY",
+    "working_directory_isolated": true,
+    "production_binding_prevented": true,
+    "credentials_isolation": {
+      "gcp_production_credentials_blocked": true,
+      "local_preview_mock_fixtures_active": true
+    }
+  }
+}

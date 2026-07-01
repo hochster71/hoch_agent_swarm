@@ -1,0 +1,9 @@
+{
+  "operator_decision": {
+    "selected_option": "GO",
+    "authorized_scope": "local preview review only",
+    "unauthorized_scope": "production deployment, live backend mutation, prompt execution, approval execution, actual ATO authorization, external publication",
+    "timestamp": "2026-06-27T18:52:00-05:00",
+    "recorded_by": "Michael Hoch"
+  }
+}

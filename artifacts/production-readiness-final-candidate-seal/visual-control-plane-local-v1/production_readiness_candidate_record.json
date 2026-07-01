@@ -1,0 +1,86 @@
+{
+  "production_readiness_candidate_record": {
+    "release": "v0.1.6-ERROR-BUDGET-AWARE-AUTONOMY",
+    "integration_branch": "integration/visual-control-plane-local-v1",
+    "status": "SEALED_LOCAL_CANDIDATE",
+    "consolidated_tracks": [
+      {
+        "track": "PR1",
+        "description": "Production Readiness Authorization",
+        "head_commit": "aa532ad",
+        "status": "ACCEPTED"
+      },
+      {
+        "track": "PR2",
+        "description": "Production Control Plane Requirements Baseline",
+        "head_commit": "ae60f0f",
+        "status": "ACCEPTED"
+      },
+      {
+        "track": "PR3",
+        "description": "Production Architecture & Control Design",
+        "head_commit": "3c1d4c5",
+        "status": "ACCEPTED"
+      },
+      {
+        "track": "PR4",
+        "description": "Production Security Control Implementation Plan",
+        "head_commit": "1658e4f",
+        "status": "ACCEPTED"
+      },
+      {
+        "track": "PR5",
+        "description": "Production Security Control Implementation Execution",
+        "head_commit": "cc8cae7",
+        "status": "ACCEPTED"
+      },
+      {
+        "track": "PR6",
+        "description": "Production Security Control Integration Validation",
+        "head_commit": "3d6ebc0",
+        "status": "ACCEPTED"
+      },
+      {
+        "track": "PR7",
+        "description": "Production Security Control Evidence Mapping",
+        "head_commit": "535b20d",
+        "status": "ACCEPTED"
+      },
+      {
+        "track": "PR8",
+        "description": "Production Readiness Risk Register & POA&M",
+        "head_commit": "5f3ee7e",
+        "status": "ACCEPTED"
+      },
+      {
+        "track": "PR9",
+        "description": "Production Readiness Remediation Closure Plan",
+        "head_commit": "e463995",
+        "status": "ACCEPTED"
+      },
+      {
+        "track": "PR10",
+        "description": "Production Readiness Remediation Execution",
+        "head_commit": "41c3072",
+        "status": "ACCEPTED"
+      },
+      {
+        "track": "PR11",
+        "description": "Production Readiness Remediation Validation & Residual Risk Review",
+        "head_commit": "ff343a1",
+        "status": "ACCEPTED"
+      }
+    ],
+    "residual_risk_summary": {
+      "RSK-TLS-001": "LOW",
+      "RSK-AUTH-002": "LOW",
+      "RSK-AUD-003": "LOW",
+      "RSK-MUT-004": "LOW",
+      "RSK-SPL-005": "LOW",
+      "RSK-OBS-006": "LOW",
+      "RSK-REC-007": "LOW",
+      "RSK-CMP-008": "LOW"
+    },
+    "attestation": "All security requirements have been validated locally. Staging tests pass and all risks have been reduced to LOW residual posture."
+  }
+}

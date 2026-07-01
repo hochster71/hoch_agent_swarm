@@ -1,0 +1,11 @@
+policy:
+  name: "Escalation Policy"
+  max_unresolved_escalations: 10
+  auto_mitigate_non_critical: true
+  rules:
+    - condition: "financial_impact > 1000"
+      escalate_to: "operator"
+    - condition: "security_risk == 'HIGH'"
+      escalate_to: "operator"
+    - condition: "untracked_license_found == true"
+      escalate_to: "operator"

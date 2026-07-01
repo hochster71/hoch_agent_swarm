@@ -1,0 +1,95 @@
+{
+  "comparisons": [
+    {
+      "file": "cockpit-overview.png",
+      "p11_sha": "5b60572",
+      "p14_sha": "d1fdf20",
+      "status": "APPROVED",
+      "change_detected": "Bolder metadata labels and aligned sidebar selector visible."
+    },
+    {
+      "file": "runtime-health.png",
+      "p11_sha": "5b60572",
+      "p14_sha": "d1fdf20",
+      "status": "APPROVED",
+      "change_detected": "Card layout labels rendered bold for readability."
+    },
+    {
+      "file": "process-monitor.png",
+      "p11_sha": "5b60572",
+      "p14_sha": "d1fdf20",
+      "status": "APPROVED",
+      "change_detected": "Visual only changes preserved."
+    },
+    {
+      "file": "evidence-status.png",
+      "p11_sha": "5b60572",
+      "p14_sha": "d1fdf20",
+      "status": "APPROVED",
+      "change_detected": "No layout regressions."
+    },
+    {
+      "file": "blocked-actions.png",
+      "p11_sha": "5b60572",
+      "p14_sha": "d1fdf20",
+      "status": "APPROVED",
+      "change_detected": "Layout elements aligned correctly."
+    },
+    {
+      "file": "security-ato-readiness.png",
+      "p11_sha": "5b60572",
+      "p14_sha": "d1fdf20",
+      "status": "APPROVED",
+      "change_detected": "No adjustments required."
+    },
+    {
+      "file": "backend-binding-readiness.png",
+      "p11_sha": "5b60572",
+      "p14_sha": "d1fdf20",
+      "status": "APPROVED",
+      "change_detected": "Read-only mappings intact."
+    },
+    {
+      "file": "frontend-runtime-readiness.png",
+      "p11_sha": "5b60572",
+      "p14_sha": "d1fdf20",
+      "status": "APPROVED",
+      "change_detected": "Bolder card metrics."
+    },
+    {
+      "file": "local-preview-release-candidate.png",
+      "p11_sha": "5b60572",
+      "p14_sha": "d1fdf20",
+      "status": "APPROVED",
+      "change_detected": "Header styling aligned."
+    },
+    {
+      "file": "controlled-local-demo-readiness.png",
+      "p11_sha": "5b60572",
+      "p14_sha": "d1fdf20",
+      "status": "APPROVED",
+      "change_detected": "No layout regressions."
+    },
+    {
+      "file": "operator-acceptance-package.png",
+      "p11_sha": "5b60572",
+      "p14_sha": "d1fdf20",
+      "status": "APPROVED",
+      "change_detected": "No layout regressions."
+    },
+    {
+      "file": "local-preview-handoff-package.png",
+      "p11_sha": "5b60572",
+      "p14_sha": "d1fdf20",
+      "status": "APPROVED",
+      "change_detected": "No layout regressions."
+    },
+    {
+      "file": "final-local-preview-closure.png",
+      "p11_sha": "5b60572",
+      "p14_sha": "d1fdf20",
+      "status": "APPROVED",
+      "change_detected": "No layout regressions."
+    }
+  ]
+}

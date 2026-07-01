@@ -1,0 +1,18 @@
+{
+  "agent_count": 22,
+  "agent_status": "VERIFIED",
+  "build_count": 9,
+  "build_status": "VERIFIED",
+  "github_count": 22,
+  "github_status": "VERIFIED",
+  "local_count": 2,
+  "local_status": "VERIFIED",
+  "cloud_count": 106,
+  "cloud_status": "VERIFIED",
+  "total_items": 161,
+  "overall_status": "VERIFIED",
+  "blockers": [
+    "22 uncommitted local changes detected"
+  ],
+  "last_updated": "2026-06-30T17:49:09Z"
+}

@@ -1,0 +1,329 @@
+import fs from "node:fs";
+import path from "node:path";
+
+interface ContractResult {
+  generated_at: string;
+  status: "PASS" | "FAIL";
+  blockers: string[];
+}
+
+function runContractTest() {
+  console.log("==================================================");
+  console.log("STARTING OPERATOR GOVERNANCE COCKPIT CONTRACT TEST");
+  console.log("==================================================");
+
+  const blockers: string[] = [];
+
+  const mainPyPath = "backend/main.py";
+  if (!fs.existsSync(mainPyPath)) {
+    blockers.push(`Missing backend/main.py`);
+  } else {
+    const mainPy = fs.readFileSync(mainPyPath, "utf8");
+    if (!mainPy.includes("/api/v1/governance/summary")) {
+      blockers.push("backend/main.py missing /api/v1/governance/summary endpoint");
+    }
+    if (!mainPy.includes("/api/v1/release/simulate-decision")) {
+      blockers.push("backend/main.py missing /api/v1/release/simulate-decision endpoint");
+    }
+    if (!mainPy.includes("/api/v1/release/authority/request")) {
+      blockers.push("backend/main.py missing /api/v1/release/authority/request endpoint");
+    }
+    if (!mainPy.includes("/api/v1/release/promote")) {
+      blockers.push("backend/main.py missing /api/v1/release/promote endpoint");
+    }
+    if (!mainPy.includes("/api/v1/release/execution-plan/generate")) {
+      blockers.push("backend/main.py missing /api/v1/release/execution-plan/generate endpoint");
+    }
+    if (!mainPy.includes("/api/v1/release/evidence/retention")) {
+      blockers.push("backend/main.py missing /api/v1/release/evidence/retention endpoint");
+    }
+    if (!mainPy.includes("/api/v1/release/evidence/retention/classify")) {
+      blockers.push("backend/main.py missing /api/v1/release/evidence/retention/classify endpoint");
+    }
+    if (!mainPy.includes("/api/v1/release/evidence/archive/preview")) {
+      blockers.push("backend/main.py missing /api/v1/release/evidence/archive/preview endpoint");
+    }
+    if (!mainPy.includes("/api/v1/release/evidence/archive/build-plan")) {
+      blockers.push("backend/main.py missing /api/v1/release/evidence/archive/build-plan endpoint");
+    }
+    if (!mainPy.includes("/api/v1/release/evidence/archive/seal-preview")) {
+      blockers.push("backend/main.py missing /api/v1/release/evidence/archive/seal-preview endpoint");
+    }
+    if (!mainPy.includes("TEST_MODE =")) {
+      blockers.push("backend/main.py missing TEST_MODE definition");
+    }
+    if (!mainPy.includes("[TEST-ONLY]")) {
+      blockers.push("backend/main.py missing test-only log string");
+    }
+  }
+
+  const htmlPath = "frontend/archive/unused_views.html";
+  if (!fs.existsSync(htmlPath)) {
+    blockers.push(`Missing frontend/archive/unused_views.html`);
+  } else {
+    const html = fs.readFileSync(htmlPath, "utf8");
+
+    // Check DOM IDs
+    const requiredIds = [
+      "nav-governance",
+      "view-governance",
+      "gov-pending-list",
+      "gov-pending-count",
+      "gov-blockers-list",
+      "gov-blockers-status",
+      "gov-active-channel",
+      "gov-signing-waiver",
+      "gov-tag-alignment",
+      "gov-test-bypass-active",
+      "gov-capability-tbody",
+      "gov-replay-tbody",
+      "gov-ledger-tbody",
+      "crewai-ingestion-bridge-panel",
+      "btn-trigger-crewai-ingest",
+      "crewai-ingest-status-msg",
+      "crewai-plans-tbody",
+      "crewai-runs-tbody",
+      "release-decision-room-panel",
+      "decision-room-candidate-select",
+      "btn-decision-simulate-approve",
+      "btn-decision-simulate-reject",
+      "btn-export-decision-memo",
+      "decision-room-details-grid",
+      "dec-status-packet",
+      "dec-status-preview",
+      "dec-status-dry-run",
+      "dec-status-attestation",
+      "dec-check-signing",
+      "dec-check-channel",
+      "dec-check-gates",
+      "dec-check-readiness",
+      "dec-blockers-warning-list",
+      "dec-graph-total-nodes",
+      "dec-graph-missing-nodes",
+      "dec-graph-integrity",
+      "release-authority-gate-panel",
+      "gov-authority-badge",
+      "gov-authority-status",
+      "gov-authority-token-details",
+      "gov-active-token-val",
+      "gov-token-countdown",
+      "btn-request-authority",
+      "btn-execute-real-promotion",
+      "authority-request-modal",
+      "modal-authority-candidate-id",
+      "chk-confirm-authority-scope",
+      "btn-modal-cancel-authority",
+      "btn-modal-grant-authority",
+      "release-execution-plan-panel",
+      "btn-generate-execution-plan",
+      "execution-plan-details",
+      "execution-plan-steps-tbody",
+      "btn-export-plan-markdown",
+      "btn-export-plan-json",
+      "release-evidence-retention-panel",
+      "btn-scan-evidence",
+      "retention-count-total",
+      "retention-count-review",
+      "retention-count-retained",
+      "retention-count-archived",
+      "retention-count-ignored",
+      "retention-evidence-tbody",
+      "release-evidence-archive-preview-panel",
+      "btn-calculate-archive-preview",
+      "archive-preview-details",
+      "archive-preview-path",
+      "archive-preview-checksum",
+      "archive-preview-count-included",
+      "archive-preview-count-excluded",
+      "archive-preview-count-review",
+      "archive-preview-count-missing",
+      "archive-preview-warnings",
+      "archive-preview-warnings-list",
+      "btn-export-preview-markdown",
+      "btn-export-preview-json",
+      "archive-preview-included-tbody",
+      "release-evidence-archive-build-plan-panel",
+      "btn-generate-archive-build-plan",
+      "archive-build-plan-details",
+      "archive-build-status",
+      "archive-build-target-path",
+      "archive-build-manifest-path",
+      "archive-build-manifest-hash",
+      "archive-build-archive-checksum",
+      "archive-build-plan-warnings",
+      "archive-build-plan-warnings-list",
+      "btn-export-build-plan-markdown",
+      "btn-export-build-plan-json",
+      "archive-build-operations-tbody",
+      "release-evidence-archive-seal-preview-panel",
+      "btn-generate-archive-seal-preview",
+      "archive-seal-preview-details",
+      "archive-seal-status",
+      "archive-seal-candidate-id",
+      "archive-seal-id",
+      "archive-seal-archive-id",
+      "archive-seal-manifest-hash",
+      "archive-seal-custody-path",
+      "archive-seal-operator",
+      "archive-seal-preview-warnings",
+      "archive-seal-preview-warnings-list",
+      "btn-export-seal-preview-markdown",
+      "btn-export-seal-preview-json"
+    ];
+    for (const id of requiredIds) {
+      if (!html.includes(`id="${id}"`)) {
+        blockers.push(`frontend/index.html missing DOM ID: ${id}`);
+      }
+    }
+
+    // Check visible text
+    const requiredTexts = [
+      "Operator Governance Command Center",
+      "PENDING APPROVAL GATES",
+      "FORMAL RELEASE BLOCKERS",
+      "ACTIVE POLICIES & WAIVERS",
+      "CAPABILITY ENFORCEMENT DECISIONS",
+      "REPLAY-PROTECTION INTEGRITY EVIDENCE",
+      "HISTORICAL OPERATOR DECISION LEDGER",
+      "CREWAI EXECUTION ARTIFACT INGESTION BRIDGE",
+      "OPERATOR RELEASE DECISION ROOM",
+      "RELEASE PROMOTION PIPELINE STATUS",
+      "COMPLIANCE & GOVERNANCE CHECKS",
+      "DETECTED BLOCKERS & MISSING EVIDENCE",
+      "EVIDENCE GRAPH COMPLETENESS",
+      "FORMAL RELEASE AUTHORITY GATE",
+      "RESTRICTED PRODUCTION ACTIONS",
+      "CONFIRM RELEASE AUTHORITY REQUEST",
+      "FORMAL RELEASE EXECUTION DRY-RUN PLANNER",
+      "ORDERED EXECUTION PROTOCOL",
+      "RELEASE EVIDENCE RETENTION POLICY MANAGER",
+      "RELEASE EVIDENCE ARCHIVE PREVIEW",
+      "PLANNED INCLUDED ARTIFACTS",
+      "RELEASE EVIDENCE ARCHIVE BUILDER DRY RUN",
+      "Ordered Build Operations",
+      "DRY-RUN & ROLLBACK SAFETY ASSURANCE",
+      "RELEASE EVIDENCE ARCHIVE SEAL PREVIEW",
+      "CUSTODY SEAL SAFE-GUARD INVARIANT"
+    ];
+    for (const text of requiredTexts) {
+      if (!html.includes(text)) {
+        blockers.push(`frontend/index.html missing required text: "${text}"`);
+      }
+    }
+  }
+
+  const appJsPath = "frontend/archive/unused_views.js";
+  if (!fs.existsSync(appJsPath)) {
+    blockers.push(`Missing frontend/archive/unused_views.js`);
+  } else {
+    const appJs = fs.readFileSync(appJsPath, "utf8");
+    if (!appJs.includes("governance: { nav: document.getElementById(\"nav-governance\")")) {
+      blockers.push("frontend/app.js does not map nav-governance");
+    }
+    if (!appJs.includes("fetchAndRenderGovernanceSummary")) {
+      blockers.push("frontend/app.js does not define fetchAndRenderGovernanceSummary");
+    }
+    if (!appJs.includes("window.fetchAndRenderGovernanceSummary")) {
+      blockers.push("frontend/app.js does not expose window.fetchAndRenderGovernanceSummary");
+    }
+    if (!appJs.includes("initCrewaiIngestionBridge")) {
+      blockers.push("frontend/app.js does not define initCrewaiIngestionBridge");
+    }
+    if (!appJs.includes("window.initCrewaiIngestionBridge")) {
+      blockers.push("frontend/app.js does not expose window.initCrewaiIngestionBridge");
+    }
+    if (!appJs.includes("initReleaseDecisionRoom")) {
+      blockers.push("frontend/app.js does not define initReleaseDecisionRoom");
+    }
+    if (!appJs.includes("window.initReleaseDecisionRoom")) {
+      blockers.push("frontend/app.js does not expose window.initReleaseDecisionRoom");
+    }
+    if (!appJs.includes("updateReleaseAuthorityUI")) {
+      blockers.push("frontend/app.js does not define updateReleaseAuthorityUI");
+    }
+    if (!appJs.includes("startAuthorityCountdown")) {
+      blockers.push("frontend/app.js does not define startAuthorityCountdown");
+    }
+    if (!appJs.includes("generateExecutionPlan")) {
+      blockers.push("frontend/app.js does not define generateExecutionPlan");
+    }
+    if (!appJs.includes("exportPlanMarkdown")) {
+      blockers.push("frontend/app.js does not define exportPlanMarkdown");
+    }
+    if (!appJs.includes("exportPlanJson")) {
+      blockers.push("frontend/app.js does not define exportPlanJson");
+    }
+    if (!appJs.includes("initReleaseEvidenceRetention")) {
+      blockers.push("frontend/app.js does not define initReleaseEvidenceRetention");
+    }
+    if (!appJs.includes("loadEvidenceRetentionList")) {
+      blockers.push("frontend/app.js does not define loadEvidenceRetentionList");
+    }
+    if (!appJs.includes("classifyEvidence")) {
+      blockers.push("frontend/app.js does not define classifyEvidence");
+    }
+    if (!appJs.includes("initReleaseEvidenceArchivePreview")) {
+      blockers.push("frontend/app.js does not define initReleaseEvidenceArchivePreview");
+    }
+    if (!appJs.includes("calculateArchivePreview")) {
+      blockers.push("frontend/app.js does not define calculateArchivePreview");
+    }
+    if (!appJs.includes("exportArchivePreviewMarkdown")) {
+      blockers.push("frontend/app.js does not define exportArchivePreviewMarkdown");
+    }
+    if (!appJs.includes("exportArchivePreviewJSON")) {
+      blockers.push("frontend/app.js does not define exportArchivePreviewJSON");
+    }
+    if (!appJs.includes("initReleaseEvidenceArchiveBuildPlan")) {
+      blockers.push("frontend/app.js does not define initReleaseEvidenceArchiveBuildPlan");
+    }
+    if (!appJs.includes("generateArchiveBuildPlan")) {
+      blockers.push("frontend/app.js does not define generateArchiveBuildPlan");
+    }
+    if (!appJs.includes("exportBuildPlanMarkdown")) {
+      blockers.push("frontend/app.js does not define exportBuildPlanMarkdown");
+    }
+    if (!appJs.includes("exportBuildPlanJSON")) {
+      blockers.push("frontend/app.js does not define exportBuildPlanJSON");
+    }
+    if (!appJs.includes("initReleaseEvidenceArchiveSealPreview")) {
+      blockers.push("frontend/app.js does not define initReleaseEvidenceArchiveSealPreview");
+    }
+    if (!appJs.includes("generateArchiveSealPreview")) {
+      blockers.push("frontend/app.js does not define generateArchiveSealPreview");
+    }
+    if (!appJs.includes("exportSealPreviewMarkdown")) {
+      blockers.push("frontend/app.js does not define exportSealPreviewMarkdown");
+    }
+    if (!appJs.includes("exportSealPreviewJSON")) {
+      blockers.push("frontend/app.js does not define exportSealPreviewJSON");
+    }
+  }
+
+  const report: ContractResult = {
+    generated_at: new Date().toISOString(),
+    status: blockers.length === 0 ? "PASS" : "FAIL",
+    blockers
+  };
+
+  const reportDir = "artifacts/qa";
+  if (!fs.existsSync(reportDir)) {
+    fs.mkdirSync(reportDir, { recursive: true });
+  }
+
+  fs.writeFileSync(
+    path.join(reportDir, "operator-governance-contract-report.json"),
+    JSON.stringify(report, null, 2)
+  );
+
+  console.log(`Operator Governance Cockpit Contract Test completed with status: ${report.status}`);
+  if (report.status === "FAIL") {
+    console.error("Blockers found:", report.blockers);
+    process.exit(1);
+  } else {
+    console.log("All operator governance cockpit contract checks passed successfully!");
+    process.exit(0);
+  }
+}
+
+runContractTest();

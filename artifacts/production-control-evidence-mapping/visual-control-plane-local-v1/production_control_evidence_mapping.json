@@ -1,0 +1,60 @@
+{
+  "evidence_mapping": {
+    "tls_transport": {
+      "control_id": "SEC-TLS-1.3",
+      "scaffolding_source": "backend/production_hardening/tls_scaffolding.py",
+      "validation_test": "backend/production_hardening/test_scaffolding_validation.py::TestProductionHardeningScaffolding::test_tls_scaffolding",
+      "target_evidence": "verification_report.json",
+      "status": "VALIDATED"
+    },
+    "authn_authz": {
+      "control_id": "SEC-AUTH-OIDC",
+      "scaffolding_source": "backend/production_hardening/auth_adapter.py",
+      "validation_test": "backend/production_hardening/test_scaffolding_validation.py::TestProductionHardeningScaffolding::test_auth_adapter",
+      "target_evidence": "verification_report.json",
+      "status": "VALIDATED"
+    },
+    "audit_ledger": {
+      "control_id": "SEC-AUDIT-APPEND-ONLY",
+      "scaffolding_source": "backend/production_hardening/audit_ledger_helper.py",
+      "validation_test": "backend/production_hardening/test_scaffolding_validation.py::TestProductionHardeningScaffolding::test_audit_ledger",
+      "target_evidence": "verification_report.json",
+      "status": "VALIDATED"
+    },
+    "mutation_safety": {
+      "control_id": "SEC-GATE-FAIL-CLOSED",
+      "scaffolding_source": "backend/production_hardening/mutation_gate.py",
+      "validation_test": "backend/production_hardening/test_scaffolding_validation.py::TestProductionHardeningScaffolding::test_mutation_gate",
+      "target_evidence": "verification_report.json",
+      "status": "VALIDATED"
+    },
+    "observability": {
+      "control_id": "SEC-OBS-METRICS",
+      "scaffolding_source": "backend/production_hardening/observability_scaffolding.py",
+      "validation_test": "backend/production_hardening/test_scaffolding_validation.py::TestProductionHardeningScaffolding::test_observability",
+      "target_evidence": "verification_report.json",
+      "status": "VALIDATED"
+    },
+    "backup_recovery": {
+      "control_id": "SEC-RECOV-INTEGRITY",
+      "scaffolding_source": "backend/production_hardening/backup_recovery_scripts.py",
+      "validation_test": "backend/production_hardening/test_scaffolding_validation.py::TestProductionHardeningScaffolding::test_backup_recovery",
+      "target_evidence": "verification_report.json",
+      "status": "VALIDATED"
+    },
+    "supply_chain": {
+      "control_id": "SEC-SUPPLY-PROVENANCE",
+      "scaffolding_source": "scripts/supply-chain/",
+      "validation_test": "npx tsx scripts/supply-chain/verify-release-artifacts.ts",
+      "target_evidence": "provenance.intoto.jsonl, sbom.spdx.json",
+      "status": "VALIDATED"
+    },
+    "compliance": {
+      "control_id": "SEC-COMP-ATO",
+      "scaffolding_source": "artifacts/",
+      "validation_test": "npm run qa:ui-contract",
+      "target_evidence": "pr7_final_seal.json",
+      "status": "VALIDATED"
+    }
+  }
+}

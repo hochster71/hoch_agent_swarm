@@ -1,0 +1,16 @@
+{
+  "phase": "V12_LOCAL_REPLACEMENT_DRY_RUN",
+  "dry_run_only": true,
+  "active_cockpit_replacement_enabled": false,
+  "local_only": true,
+  "backend_mutation_enabled": false,
+  "prompt_execution_enabled": false,
+  "approval_decision_execution_enabled": false,
+  "baseline_cockpit_path": "mockups/visual-control-plane/control-plane.html",
+  "candidate_source_path": "mockups/visual-control-plane/dashboard-preview.html",
+  "candidate_output_path": "artifacts/qa/visual_review/dry_run_candidate/control-plane.candidate.html",
+  "backup_root": "artifacts/qa/visual_review/dry_run_backups",
+  "rollback_required": true,
+  "replacement_performed": false,
+  "next_allowed_phase": "V13_OPERATOR_DRY_RUN_REVIEW"
+}

@@ -1,0 +1,58 @@
+{
+  "candidate_blocked_actions": [
+    {
+      "action": "production deployment",
+      "status": "BLOCKED",
+      "performed": false,
+      "rationale": "Changes live runtime state; crosses operational authority boundaries."
+    },
+    {
+      "action": "git push",
+      "status": "BLOCKED",
+      "performed": false,
+      "rationale": "Publishes code outside local repository; requires code integrity review."
+    },
+    {
+      "action": "main merge",
+      "status": "BLOCKED",
+      "performed": false,
+      "rationale": "Changes canonical branch; requires formal pull request verification."
+    },
+    {
+      "action": "production secrets",
+      "status": "BLOCKED",
+      "performed": false,
+      "rationale": "Introduces sensitive material; forbidden in source code or local previews."
+    },
+    {
+      "action": "live external binding",
+      "status": "BLOCKED",
+      "performed": false,
+      "rationale": "Connects to real services/users; could cause unexpected side-effects."
+    },
+    {
+      "action": "prompt execution",
+      "status": "BLOCKED",
+      "performed": false,
+      "rationale": "Could trigger agent actions without manual confirmation gates."
+    },
+    {
+      "action": "approval execution",
+      "status": "BLOCKED",
+      "performed": false,
+      "rationale": "Could approve real mutations in live control environments."
+    },
+    {
+      "action": "external publication",
+      "status": "BLOCKED",
+      "performed": false,
+      "rationale": "Makes artifacts public; violates confidentiality guidelines before release."
+    },
+    {
+      "action": "actual ATO claim",
+      "status": "BLOCKED",
+      "performed": false,
+      "rationale": "Requires formal authorization authority from government/security sponsors."
+    }
+  ]
+}
