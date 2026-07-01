@@ -95,6 +95,11 @@ from backend.mission_control.accountability_engine import (
     get_ledger,
     update_agent_score
 )
+from backend.relay_worker_adapter import (
+    fetch_relay_health,
+    fetch_relay_registry,
+    get_relay_combined_status,
+)
 
 # Load version dynamically from package.json
 try:
@@ -572,6 +577,54 @@ def api_eval_agent_score(payload: AccountabilityEvalRequest):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+# ---------------------------------------------------------------------------
+# RC26: Relay proxy endpoints — proxy VPS relay API through local backend
+# UI never calls 100.87.18.15 directly; all relay access goes through here.
+# worker_status is always "ONLINE" | "UNKNOWN" — never "PASS" or synthesised.
+# ---------------------------------------------------------------------------
+
+@app.get("/api/v1/relay/health")
+def api_relay_health():
+    """Live relay health check. Returns UNKNOWN if relay is unreachable."""
+    try:
+        result = fetch_relay_health()
+        if result is None:
+            return {"worker_status": "UNKNOWN", "reachable": False, "worker": "HAS-WORKER-RELAY-001"}
+        # Normalise: only pass through ONLINE literally
+        raw_status = result.get("worker_status", "UNKNOWN")
+        result["worker_status"] = "ONLINE" if raw_status == "ONLINE" else "UNKNOWN"
+        result["reachable"] = True
+        return result
+    except Exception as e:
+        return {"worker_status": "UNKNOWN", "reachable": False, "error": str(e)}
+
+@app.get("/api/v1/relay/registry")
+def api_relay_registry():
+    """Live relay worker registry. Returns empty workers list if relay is unreachable."""
+    try:
+        result = fetch_relay_registry()
+        if result is None:
+            return {"workers": [], "reachable": False, "worker_status": "UNKNOWN"}
+        result["reachable"] = True
+        return result
+    except Exception as e:
+        return {"workers": [], "reachable": False, "error": str(e)}
+
+@app.get("/api/v1/relay/status")
+def api_relay_status():
+    """Combined relay status: live health + registry + policy metadata.
+    port_public_exposed is always False — immutable HOCH-200 constraint.
+    """
+    try:
+        return get_relay_combined_status()
+    except Exception as e:
+        return {
+            "worker_status": "UNKNOWN",
+            "reachable": False,
+            "port_public_exposed": False,
+            "error": str(e)
+        }
 
 @app.get("/api/v1/release/signing-policy")
 def get_release_signing_policy():
