@@ -2,6 +2,7 @@ import os
 import json
 import math
 import sqlite3
+import subprocess
 import urllib.request
 from datetime import datetime, timezone
 from fastapi import FastAPI, HTTPException
@@ -21,6 +22,30 @@ def get_db_path():
 
 def get_project_root():
     return os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
+def get_tailscale_status():
+    workers = {
+        "michaels-macbook-pro": {"status": "ONLINE", "ip": "100.103.155.4"},
+        "hoch-relay-001": {"status": "OFFLINE", "ip": "100.87.18.15"},
+        "iphone-15-pro-max": {"status": "OFFLINE", "ip": "100.102.221.87"}
+    }
+    try:
+        res = subprocess.run(["tailscale", "status"], capture_output=True, text=True, timeout=2)
+        if res.returncode == 0:
+            for line in res.stdout.splitlines():
+                parts = line.split()
+                if len(parts) >= 2:
+                    ip = parts[0]
+                    name = parts[1]
+                    for w_name, w_info in workers.items():
+                        if w_name in name or w_info["ip"] == ip:
+                            if "offline" in line.lower():
+                                w_info["status"] = "OFFLINE"
+                            elif "active" in line.lower() or "direct" in line.lower() or name == "michaels-macbook-pro":
+                                w_info["status"] = "ONLINE"
+    except Exception:
+        pass
+    return workers
 
 # 15 Required Workstreams definition
 WORKSTREAMS = [
@@ -582,6 +607,43 @@ def get_pert_data():
         except Exception:
             pass
 
+    ts_status = get_tailscale_status()
+    workers_list = [
+        {
+            "machine": "michaels-macbook-pro",
+            "name": "MacBook Pro Primary control/runtime",
+            "ip": "100.103.155.4",
+            "role": "primary_control_runtime",
+            "cores": 2,
+            "memory": "4.0 GB",
+            "status": ts_status["michaels-macbook-pro"]["status"],
+            "allowed_jobs": "pert_dashboard, verification, playwright, cadence, local_build",
+            "blocked_jobs": "public_exposure, paid_purchase, tag_move_without_approval"
+        },
+        {
+            "machine": "hoch-relay-001",
+            "name": "Linux hoch-relay-001 worker",
+            "ip": "100.87.18.15",
+            "role": "private_relay_worker",
+            "cores": 4,
+            "memory": "8.0 GB",
+            "status": ts_status["hoch-relay-001"]["status"],
+            "allowed_jobs": "relay_health, private_worker_api, safe_compute_probe",
+            "blocked_jobs": "public_3012, open_firewall, external_deploy_without_approval"
+        },
+        {
+            "machine": "iphone-15-pro-max",
+            "name": "iOS mobile monitoring client",
+            "ip": "100.102.221.87",
+            "role": "operator_mobile_monitor",
+            "cores": 2,
+            "memory": "4.0 GB",
+            "status": ts_status["iphone-15-pro-max"]["status"],
+            "allowed_jobs": "dashboard_view, approval_review",
+            "blocked_jobs": "build_execution, destructive_commands"
+        }
+    ]
+
     return {
         "readiness": {
             "score": metrics["percent_goal_complete"],
@@ -612,6 +674,7 @@ def get_pert_data():
         "relay_status": relay_status,
         "port_public_closed": port_closed,
         "next_actions": next_actions,
+        "tailnet_workers": workers_list,
         "evidence_ledger": [
             {"rc": "RC25", "desc": "HOCH-200 relay setup evidence", "url": f"file://{get_project_root()}/docs/evidence/compute/hoch-200-setup-evidence.md"},
             {"rc": "RC26", "desc": "Swarm routing proxy integration", "url": f"file://{get_project_root()}/docs/evidence/compute/rc26-relay-routing-integration.md"},
@@ -620,7 +683,8 @@ def get_pert_data():
             {"rc": "RC29", "desc": "RC25-RC28 release consolidation", "url": f"file://{get_project_root()}/docs/evidence/compute/rc29-release-consolidation.md"},
             {"rc": "RC31", "desc": "Production runtime sustainment proof", "url": f"file://{get_project_root()}/docs/evidence/runtime/rc31-production-runtime-sustainment.md"},
             {"rc": "RC33", "desc": "Swarm scheduler utilization proof", "url": f"file://{get_project_root()}/docs/evidence/compute/rc33-compute-utilization-swarm-scheduler.md"},
-            {"rc": "RC34", "desc": "Usage budget and secure guardrails", "url": f"file://{get_project_root()}/docs/evidence/automation/rc34-usage-budget-secure-build-guardrails.md"}
+            {"rc": "RC34", "desc": "Usage budget and secure guardrails", "url": f"file://{get_project_root()}/docs/evidence/automation/rc34-usage-budget-secure-build-guardrails.md"},
+            {"rc": "RC35", "desc": "Safe compute utilization expansion", "url": f"file://{get_project_root()}/docs/evidence/compute/rc35-safe-compute-utilization-expansion.md"}
         ]
     }
 
@@ -885,42 +949,8 @@ def get_dashboard():
                         <th>Capabilities</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td style="padding:8px 0; color:var(--accent-teal); font-weight:bold;">HAS-WORKER-RELAY-001</td>
-                        <td>ARM64 VPS compute node</td>
-                        <td>4</td>
-                        <td>8.0 GB</td>
-                        <td>networking, relay, proxy, security, verification</td>
-                    </tr>
-                    <tr style="border-top:1px solid #111e35;">
-                        <td style="padding:8px 0; color:var(--accent-teal); font-weight:bold;">Live Tracker Runtime Agent</td>
-                        <td>Local Primary compute node</td>
-                        <td>2</td>
-                        <td>4.0 GB</td>
-                        <td>ops, family, status, tracker, general</td>
-                    </tr>
-                    <tr style="border-top:1px solid #111e35;">
-                        <td style="padding:8px 0; color:var(--accent-teal); font-weight:bold;">Monetization & Compliance Agent</td>
-                        <td>Secure sandbox compliance node</td>
-                        <td>2</td>
-                        <td>4.0 GB</td>
-                        <td>business, money, billing, stripe</td>
-                    </tr>
-                    <tr style="border-top:1px solid #111e35;">
-                        <td style="padding:8px 0; color:var(--accent-teal); font-weight:bold;">Security Auditor Agent</td>
-                        <td>Isolated audit sandbox</td>
-                        <td>2</td>
-                        <td>4.0 GB</td>
-                        <td>cyber, security, audit</td>
-                    </tr>
-                    <tr style="border-top:1px solid #111e35;">
-                        <td style="padding:8px 0; color:var(--accent-teal); font-weight:bold;">Master Orchestrator</td>
-                        <td>Coordinator control node</td>
-                        <td>4</td>
-                        <td>8.0 GB</td>
-                        <td>orchestration, general</td>
-                    </tr>
+                <tbody id="workers-table-body">
+                    <!-- Loaded dynamically from tailnet_workers -->
                 </tbody>
             </table>
         </div>
@@ -1083,6 +1113,36 @@ def get_dashboard():
                     violationsEl.style.color = "var(--accent-red)";
                 } else {
                     violationsEl.style.color = "var(--accent-teal)";
+                }
+
+                // Populate tailnet workers table
+                const workersTableBody = document.getElementById("workers-table-body");
+                if (workersTableBody) {
+                    workersTableBody.innerHTML = "";
+                    const workers = data.tailnet_workers || [];
+                    workers.forEach(w => {
+                        const statusColor = w.status === "ONLINE" ? "var(--accent-teal)" : "var(--accent-red)";
+                        workersTableBody.innerHTML += `
+                            <tr style="border-top:1px solid #111e35;">
+                                <td style="padding:8px 0; color:var(--accent-teal); font-weight:bold;">
+                                    ${w.machine}<br>
+                                    <span style="font-size:10px; color:${statusColor}; font-weight:normal;">● ${w.status} (${w.ip})</span>
+                                </td>
+                                <td>
+                                    <strong>${w.role}</strong><br>
+                                    <span style="font-size:10px; color:var(--text-secondary);">${w.name}</span>
+                                </td>
+                                <td>${w.cores}</td>
+                                <td>${w.memory}</td>
+                                <td>
+                                    <div style="font-size:10px;">
+                                        <span style="color:var(--accent-teal);">Allowed:</span> ${w.allowed_jobs}<br>
+                                        <span style="color:var(--accent-yellow);">Blocked:</span> ${w.blocked_jobs}
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    });
                 }
 
                 // Risks & Blockers list
