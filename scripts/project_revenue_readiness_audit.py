@@ -99,9 +99,9 @@ def run_audit():
                     try:
                         with open(file_path, "r", encoding="utf-8", errors="ignore") as code_f:
                             content = code_f.read()
-                            if "stripe" in content.lower() or "sk_test" in content or "sk_live" in content:
+                            if re.search(r'\bstripe\b', content.lower()) or "sk_test" in content or "sk_live" in content:
                                 has_stripe = True
-                            if "auth" in content.lower() or "login" in content.lower() or "supabase.auth" in content:
+                            if re.search(r'\bauth\b', content.lower()) or re.search(r'\blogin\b', content.lower()) or "supabase.auth" in content:
                                 has_auth = True
                             
                             # Real secret exposure check (non-placeholder sk_live_ or sk_test_)
@@ -157,6 +157,44 @@ def run_audit():
                 proj["blockers"].append("Epic Fury Stripe test-mode bypass is not validated")
             if not has_payment_enforcement:
                 proj["blockers"].append("Epic Fury public user payment enforcement is unverified")
+
+
+        # Specific audit logic for HOCH HASF Soccer (RC50.1)
+        if proj["id"] == "hoch-hasf-soccer":
+            if not has_stripe:
+                if "Monetization model not verified" not in proj["blockers"]:
+                    proj["blockers"].append("Monetization model not verified")
+            else:
+                if "Monetization model not verified" in proj["blockers"]:
+                    proj["blockers"].remove("Monetization model not verified")
+
+            if not has_auth:
+                if "Security posture not verified" not in proj["blockers"]:
+                    proj["blockers"].append("Security posture not verified")
+            else:
+                if "Security posture not verified" in proj["blockers"]:
+                    proj["blockers"].remove("Security posture not verified")
+
+            if proj.get("deployment_target") == "TBD after audit":
+                if "Deployment model not verified" not in proj["blockers"]:
+                    proj["blockers"].append("Deployment model not verified")
+
+            audit_results_file = os.path.join(PROJECT_ROOT, "has_live_project_tracker/data/hoch_hasf_soccer_audit_results.json")
+            if not os.path.exists(audit_results_file):
+                if "Initial codebase audit required" not in proj["blockers"]:
+                    proj["blockers"].append("Initial codebase audit required")
+            else:
+                try:
+                    with open(audit_results_file, "r", encoding="utf-8") as af:
+                        audit_data = json.load(af)
+                    if audit_data.get("status") == "STALE":
+                        if "Initial codebase audit required" not in proj["blockers"]:
+                            proj["blockers"].append("Initial codebase audit required")
+                    else:
+                        if "Initial codebase audit required" in proj["blockers"]:
+                            proj["blockers"].remove("Initial codebase audit required")
+                except Exception:
+                    pass
 
         # Calculate Scores
         # 1. Revenue Readiness

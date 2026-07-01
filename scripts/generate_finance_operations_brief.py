@@ -80,8 +80,9 @@ def main():
     # Determine next required human approvals
     required_approvals = [
         "Stripe live credentials configuration deployment",
-        "Promotion of release candidate tag v0.1.14-ai-business-structure",
-        "Final sign-off on Epic Fury pricing tiers base rates change"
+        "Promotion of release candidate tag v0.1.14-hoch-hasf-soccer-pipeline",
+        "Final sign-off on Epic Fury pricing tiers base rates change",
+        "Approval of HOCH HASF Soccer Platform intake audit & product model"
     ]
     
     brief_json = {

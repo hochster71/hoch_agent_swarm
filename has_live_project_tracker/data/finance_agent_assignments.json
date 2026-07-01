@@ -34,14 +34,17 @@
     "responsibilities": [
       "Oversee SaaS tier billing workflows",
       "Manage customer billing telemetry",
-      "Verify Stripe product sync"
+      "Verify Stripe product sync",
+      "Own pricing model and ROI scenario projection for HOCH HASF Soccer Platform"
     ],
     "inputs": [
       "epic_fury_roi_model.json",
-      "project_revenue_readiness_results.json"
+      "project_revenue_readiness_results.json",
+      "hoch_hasf_soccer_product_model.json"
     ],
     "outputs": [
-      "finance_operations_brief.json"
+      "finance_operations_brief.json",
+      "hoch_hasf_soccer_pricing_attestation.json"
     ],
     "decision_rights": [
       "Generate revenue readiness score ratings"
@@ -51,7 +54,8 @@
     ],
     "cadence": "WEEKLY",
     "evidence_links": [
-      "docs/evidence/business/finance-operations-brief.md"
+      "docs/evidence/business/finance-operations-brief.md",
+      "docs/business/hoch-hasf-soccer-product-model.md"
     ],
     "status": "ACTIVE"
   },

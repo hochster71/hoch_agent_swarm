@@ -72,7 +72,7 @@
     "role_id": "cfo",
     "title": "AI Chief Financial Officer — HASF Finance Manager",
     "human_equivalent": "AI Executive - Finance",
-    "mission": "Oversee pricing strategies, track Stripe sandbox status, and compile ROI scenario evidence.",
+    "mission": "Oversee pricing strategies, track Stripe sandbox status, compile ROI scenario evidence, and own pricing and ROI model for HOCH HASF Soccer Platform.",
     "authority_level": "Level 4 (Executive Finance)",
     "can_execute_without_approval": [
       "Generating pricing recommendations",
@@ -87,7 +87,8 @@
     ],
     "evidence_responsibilities": [
       "Finance operations brief",
-      "Revenue action queue verification"
+      "Revenue action queue verification",
+      "Soccer product pricing and ROI model validation"
     ],
     "reports_to": "founder",
     "status": "ACTIVE"
@@ -120,7 +121,7 @@
     "role_id": "security_officer",
     "title": "AI Security & Compliance Officer",
     "human_equivalent": "AI Executive - Cybersecurity",
-    "mission": "Enforce zero-trust posture, check for secrets leakage, and oversee public port exposure bounds.",
+    "mission": "Enforce zero-trust posture, check for secrets leakage, oversee public port exposure bounds, and own sports-data/security/compliance reviews for HOCH HASF Soccer Platform.",
     "authority_level": "Level 4 (Security Control)",
     "can_execute_without_approval": [
       "Running secrets scanning scripts",
@@ -135,7 +136,8 @@
     ],
     "evidence_responsibilities": [
       "Secrets scanning logs",
-      "Public port check records"
+      "Public port check records",
+      "Soccer platform COPPA and data privacy audit"
     ],
     "reports_to": "coo",
     "status": "ACTIVE"
@@ -144,7 +146,7 @@
     "role_id": "product_officer",
     "title": "AI Product Officer",
     "human_equivalent": "AI Executive - Product Strategy",
-    "mission": "Manage feature packaging, subscription tiers design, and user checkout workflows.",
+    "mission": "Manage feature packaging, subscription tiers design, user checkout workflows, and own HOCH HASF Soccer Platform product classification.",
     "authority_level": "Level 3 (Product Definition)",
     "can_execute_without_approval": [
       "Proposing pricing tier details",
@@ -158,7 +160,8 @@
     ],
     "evidence_responsibilities": [
       "Product pricing briefs",
-      "Tier description schemas"
+      "Tier description schemas",
+      "Soccer platform product feature classification and roadmap"
     ],
     "reports_to": "coo",
     "status": "ACTIVE"
@@ -167,7 +170,7 @@
     "role_id": "growth_director",
     "title": "AI Growth & Launch Director",
     "human_equivalent": "AI Director - User Growth",
-    "mission": "Analyze CAC, LTV, churn rate goals, and direct Epic Fury marketing campaign integrations.",
+    "mission": "Analyze CAC, LTV, churn rate goals, direct Epic Fury marketing campaign integrations, and own app store / launch packaging for HOCH HASF Soccer Platform.",
     "authority_level": "Level 3 (Growth Operations)",
     "can_execute_without_approval": [
       "Simulating CAC/LTV projections",
@@ -180,7 +183,8 @@
       "growth-launch-strategist"
     ],
     "evidence_responsibilities": [
-      "Unit economics summaries"
+      "Unit economics summaries",
+      "Soccer platform App Store metadata and launch assets package"
     ],
     "reports_to": "cfo",
     "status": "ACTIVE"
@@ -189,7 +193,7 @@
     "role_id": "qa_release",
     "title": "AI QA & Release Authority",
     "human_equivalent": "AI Director - Release Compliance",
-    "mission": "Enforce release signing policy, verify test compliance metrics, and check release packets.",
+    "mission": "Enforce release signing policy, verify test compliance metrics, check release packets, and own test and verification readiness for HOCH HASF Soccer Platform.",
     "authority_level": "Level 4 (Compliance Sign-off)",
     "can_execute_without_approval": [
       "Triggering Playwright E2E suites",
@@ -203,7 +207,8 @@
     ],
     "evidence_responsibilities": [
       "Release packet sign-offs",
-      "Full test coverage attestations"
+      "Full test coverage attestations",
+      "Soccer platform E2E test verification reports"
     ],
     "reports_to": "founder",
     "status": "ACTIVE"

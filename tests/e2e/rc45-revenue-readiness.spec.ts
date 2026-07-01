@@ -20,7 +20,7 @@ test.describe('RC45 Revenue Readiness E2E Tests', () => {
 
     // Validate at least 5 project cards render
     const cards = page.locator('.project-card');
-    await expect(cards).toHaveCount(5);
+    await expect(cards).toHaveCount(6);
 
     // Validate Epic Fury 2026 card elements and score formatting
     const epicFuryCard = page.locator('#project-card-epic-fury-2026');

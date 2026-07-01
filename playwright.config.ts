@@ -52,6 +52,7 @@ export default defineConfig({
     "**/rc49_6-hoch-pods-visual-fidelity.spec.ts",
     "**/rc50-ai-business-structure.spec.ts",
     "**/rc49_7-compute-node-pruning.spec.ts",
+    "**/rc50_1-hoch-hasf-soccer-pipeline.spec.ts",
   ],
   timeout: 45_000,
   fullyParallel: false,

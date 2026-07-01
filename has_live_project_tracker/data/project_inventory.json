@@ -112,5 +112,34 @@
     "next_critical_action": "Establish AquaForge simulation script to mock IoT data payloads",
     "last_verified_at": "2026-07-01T20:00:00Z",
     "freshness_status": "FRESH"
+  },
+  {
+    "id": "hoch-hasf-soccer",
+    "name": "HOCH HASF Soccer Intelligence Platform",
+    "repo_path": "/Users/michaelhoch/Downloads/hoch_hasf_soccer",
+    "category": "AI Sports Intelligence / Soccer Analytics",
+    "business_model": "subscription / training / analytics / prediction intelligence",
+    "deployment_target": "TBD after audit",
+    "domain": "TBD after audit",
+    "stripe_required": true,
+    "auth_required": true,
+    "current_stage": "intake_audit",
+    "revenue_readiness_score": 0,
+    "security_readiness_score": 0,
+    "deployment_readiness_score": 0,
+    "evidence_links": {
+      "Onboarding Audit": "docs/evidence/business/hoch-hasf-soccer-onboarding-audit.md",
+      "Gap Analysis": "docs/evidence/business/hoch-hasf-soccer-gap-analysis.md",
+      "PERT Model": "docs/evidence/business/hoch-hasf-soccer-pert-model.md"
+    },
+    "blockers": [
+      "Initial codebase audit required",
+      "Deployment model not verified",
+      "Monetization model not verified",
+      "Security posture not verified"
+    ],
+    "next_critical_action": "Run HASF onboarding audit and classify build/deploy/security gaps",
+    "last_verified_at": "2026-07-01T23:28:00Z",
+    "freshness_status": "PENDING_AUDIT"
   }
 ]
