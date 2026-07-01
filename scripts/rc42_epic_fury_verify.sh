@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
+# scripts/rc42_epic_fury_verify.sh — Comprehensive verification cascade for RC42
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 echo "=================================================="
-echo "RUNNING RC41 EPIC FURY ONBOARDING VERIFICATION"
+echo "RUNNING RC42 EPIC FURY CSP AUDIT VERIFICATION"
 echo "=================================================="
 
 # Activate virtualenv if present
@@ -35,18 +36,23 @@ else
     exit 1
 fi
 
-# Check 3: Run Telemetry Truth Compliance Audit
-echo "Running Check 3: Telemetry Truth compliance audit..."
+# Check 3: Content Security Policy Audit
+echo "Running Check 3: Content Security Policy static audit..."
+python3 scripts/epic_fury_csp_audit.py
+echo "  [PASS] Content Security Policy audit passed."
+
+# Check 4: Run Telemetry Truth Compliance Audit
+echo "Running Check 4: Telemetry Truth compliance audit..."
 bash scripts/telemetry_truth_check.sh
 echo "  [PASS] Telemetry Truth compliance audit passed."
 
-# Check 4: Run Playwright E2E Onboarding test
-echo "Running Check 4: Playwright E2E Epic Fury test..."
-npx playwright test tests/e2e/rc41-epic-fury-onboarding.spec.ts
+# Check 5: Run Playwright E2E Epic Fury test
+echo "Running Check 5: Playwright E2E Epic Fury test..."
+npx playwright test tests/e2e/rc42-epic-fury-csp-audit.spec.ts
 echo "  [PASS] Playwright E2E test passed."
 
-# Check 5: Port 3012 Public Exposure Check
-echo "Running Check 5: Port 3012 Public Exposure Check..."
+# Check 6: Port 3012 Public Exposure Check
+echo "Running Check 6: Port 3012 Public Exposure Check..."
 if python3 -c "import socket; s = socket.socket(); s.settimeout(2); s.connect(('50.116.41.183', 3012))" 2>/dev/null; then
     echo "  [FAIL] Port 3012 is reachable from public IP!"
     exit 1
@@ -55,5 +61,5 @@ else
 fi
 
 echo "=================================================="
-echo ">> SUCCESS: All RC41 Epic Fury checks PASS!"
+echo ">> SUCCESS: All RC42 Epic Fury checks PASS!"
 echo "=================================================="
