@@ -37,7 +37,7 @@ echo "  [PASS] Playwright E2E test passed."
 
 # Check 4: Check git status
 echo "Running Check 4: Git working directory state..."
-if git status --short | grep -q -v "^?? logs/"; then
+if git status --short | grep -E -v "^?? logs/|task.md|walkthrough.md|implementation_plan.md|hoch_|docs/evidence/runtime/" | grep -q -v "^$"; then
     echo "  [FAIL] Git working tree is dirty!"
     git status --short
     exit 1

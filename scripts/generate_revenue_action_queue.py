@@ -164,9 +164,11 @@ def generate_queue():
     with open(RESULTS_PATH, "r", encoding="utf-8") as f:
         projects = json.load(f)
 
-    # Use fixed timestamp for deterministic builds
-    audit_timestamp = "2026-07-01T21:00:00+00:00Z"
-    
+    # Use dynamic ISO 8601 UTC timestamp
+    from datetime import timezone
+    audit_timestamp = datetime.now(timezone.utc).isoformat()
+    if not audit_timestamp.endswith("Z"):
+        audit_timestamp += "Z"
     actions = []
 
     for proj in projects:
