@@ -1,0 +1,116 @@
+[
+  {
+    "id": "hoch-agent-swarm",
+    "name": "Hoch Agent Swarm / HASF",
+    "repo_path": "/Users/michaelhoch/hoch_agent_swarm",
+    "category": "AI Agent Orchestration",
+    "business_model": "SaaS Subscription / Premium API Tokens",
+    "deployment_target": "VPS / Custom Host",
+    "domain": "http://127.0.0.1:8765",
+    "stripe_required": true,
+    "auth_required": true,
+    "current_stage": "Production Alpha / Live Telemetry",
+    "revenue_readiness_score": 0,
+    "security_readiness_score": 0,
+    "deployment_readiness_score": 0,
+    "evidence_links": {
+      "Goal Completion & Monetization": "docs/evidence/business/rc38-goal-completion-monetization-readiness.md",
+      "Telemetry fresh checklist": "docs/evidence/automation/rc43-telemetry-freshness-authority.md"
+    },
+    "blockers": [],
+    "next_critical_action": "Verify Stripe sandbox keys and gate compliance before live staging",
+    "last_verified_at": "2026-07-01T20:00:00Z",
+    "freshness_status": "FRESH"
+  },
+  {
+    "id": "epic-fury-2026",
+    "name": "Epic Fury 2026",
+    "repo_path": "/Users/michaelhoch/epic-fury-build/epic-fury-2026",
+    "category": "Fintech / High-frequency Trading Strategy Engine",
+    "business_model": "Licensing / Commission Splits",
+    "deployment_target": "Vercel / Cloud Run",
+    "domain": "https://epic-fury-2026.vercel.app",
+    "stripe_required": true,
+    "auth_required": true,
+    "current_stage": "Onboarded Audit Phase",
+    "revenue_readiness_score": 0,
+    "security_readiness_score": 0,
+    "deployment_readiness_score": 0,
+    "evidence_links": {
+      "Code Audit Report": "docs/evidence/business/epic-fury-full-code-audit.md",
+      "CSP Gap Analysis": "docs/evidence/business/epic-fury-gap-analysis.md"
+    },
+    "blockers": [],
+    "next_critical_action": "Fix Vercel Toolbar frame-src CSP validation failure for preview staging",
+    "last_verified_at": "2026-07-01T20:00:00Z",
+    "freshness_status": "FRESH"
+  },
+  {
+    "id": "cyberqrg-ai",
+    "name": "CyberQRG-AI",
+    "repo_path": "/Users/michaelhoch/iCloud Drive (Archive)/New Build QRG/CyberQRG",
+    "category": "AI Security / QR Code Vulnerability Scanner",
+    "business_model": "Pay-per-scan / B2B API licensing",
+    "deployment_target": "AWS ECS / iOS App Store",
+    "domain": "https://cyberqrg.ai",
+    "stripe_required": true,
+    "auth_required": true,
+    "current_stage": "Proof of Concept / Local Archive",
+    "revenue_readiness_score": 0,
+    "security_readiness_score": 0,
+    "deployment_readiness_score": 0,
+    "evidence_links": {},
+    "blockers": [
+      "No direct project directory or repository available in primary builds"
+    ],
+    "next_critical_action": "Stitch local archived repository back into active HASF deployment workspace",
+    "last_verified_at": "2026-07-01T20:00:00Z",
+    "freshness_status": "FRESH"
+  },
+  {
+    "id": "omniseek-sentinel",
+    "name": "OmniSeek / OmniSeek Sentinel",
+    "repo_path": "/Users/michaelhoch/omniseek",
+    "category": "Semantic search aggregator",
+    "business_model": "SaaS Subscription / Ads / Enterprise Search",
+    "deployment_target": "GCP Cloud Run / Vercel",
+    "domain": "https://omniseek.ai",
+    "stripe_required": false,
+    "auth_required": false,
+    "current_stage": "Planning / Concept Wireframe",
+    "revenue_readiness_score": 0,
+    "security_readiness_score": 0,
+    "deployment_readiness_score": 0,
+    "evidence_links": {},
+    "blockers": [
+      "Missing repository assets",
+      "Missing monetization model definition"
+    ],
+    "next_critical_action": "Initialize repository structure and define deployment pipeline",
+    "last_verified_at": "2026-07-01T20:00:00Z",
+    "freshness_status": "FRESH"
+  },
+  {
+    "id": "aquaforge",
+    "name": "AquaForge",
+    "repo_path": "/Users/michaelhoch/aquaforge",
+    "category": "IoT Water Analytics telemetry",
+    "business_model": "Hardware + Subscription",
+    "deployment_target": "AWS IoT Core / Custom Frontend",
+    "domain": "https://aquaforge.io",
+    "stripe_required": true,
+    "auth_required": true,
+    "current_stage": "Pre-Alpha concept validation",
+    "revenue_readiness_score": 0,
+    "security_readiness_score": 0,
+    "deployment_readiness_score": 0,
+    "evidence_links": {},
+    "blockers": [
+      "Missing code repository",
+      "Hardware telemetry schema not integrated"
+    ],
+    "next_critical_action": "Establish AquaForge simulation script to mock IoT data payloads",
+    "last_verified_at": "2026-07-01T20:00:00Z",
+    "freshness_status": "FRESH"
+  }
+]

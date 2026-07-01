@@ -43,6 +43,7 @@ export default defineConfig({
     "**/rc42-epic-fury-csp-audit.spec.ts",
     "**/rc43-telemetry-freshness.spec.ts",
     "**/rc44-epic-fury-flowchart.spec.ts",
+    "**/rc45-revenue-readiness.spec.ts",
   ],
   timeout: 45_000,
   fullyParallel: false,
