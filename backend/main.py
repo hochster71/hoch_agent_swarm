@@ -11118,6 +11118,8 @@ def run_pert_build():
         raise HTTPException(status_code=500, detail=str(e))
 
 
+from backend.brain.database import init_brain_tables as _init_brain_tables
+_init_brain_tables()  # RC27: ensure doctrine_rules and all brain tables exist before DoctrineMemory.sync_yaml_to_db() runs
 from backend.brain.orchestrator import BrainOrchestrator
 brain_orchestrator = BrainOrchestrator()
 
