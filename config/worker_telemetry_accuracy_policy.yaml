@@ -1,0 +1,47 @@
+# Worker Telemetry Accuracy Policy (RC41)
+version: "1.0"
+policy_name: "Worker Utilization Telemetry Accuracy"
+
+allowed_roles:
+  - "build_worker"
+  - "relay_worker"
+  - "operator_mobile_monitor"
+
+workers:
+  michaels-macbook-pro:
+    role: "build_worker"
+    build_execution: "allowed"
+    default_source: "local_host"
+    confidence_level: 1.0
+
+  hoch-relay-001:
+    role: "relay_worker"
+    build_execution: "allowed"
+    default_source: "tailscale_network_discovery"
+    probe_source: "relay_health_probe"
+    confidence_level: 0.95
+
+  iphone-15-pro-max:
+    role: "operator_mobile_monitor"
+    build_execution: "blocked"
+    job_dispatch: "NOT_APPLICABLE"
+    last_job_time: "N/A — monitor-only"
+    last_probe_time: "N/A — no CLI support on iOS / monitor-only"
+    utilization: 0.0
+    goal_contribution: "monitoring only"
+    confidence_level: 1.0
+    not_applicable_reason: "no CLI support on iOS / monitor-only"
+
+telemetry_fields:
+  - "worker_id"
+  - "role"
+  - "online_status"
+  - "last_heartbeat"
+  - "last_job_time"
+  - "last_probe_time"
+  - "last_evidence_file"
+  - "data_source"
+  - "freshness"
+  - "confidence"
+  - "unknown_reason"
+  - "not_applicable_reason"

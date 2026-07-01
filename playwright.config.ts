@@ -39,6 +39,7 @@ export default defineConfig({
     "**/rc39-telemetry-truth.spec.ts",
     "**/rc39-qa-audit-alignment.spec.ts",
     "**/rc40-compute-gap-pert.spec.ts",
+    "**/rc41-worker-telemetry-accuracy.spec.ts",
   ],
   timeout: 45_000,
   fullyParallel: false,
