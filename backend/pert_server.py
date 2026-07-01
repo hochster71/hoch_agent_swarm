@@ -1470,6 +1470,15 @@ def get_pert_data():
         except Exception:
             pass
 
+    governed_execution_data = []
+    governed_execution_file = os.path.join(get_project_root(), "has_live_project_tracker", "data", "governed_execution_log.json")
+    if os.path.exists(governed_execution_file):
+        try:
+            with open(governed_execution_file, "r") as f:
+                governed_execution_data = json.load(f)
+        except Exception:
+            pass
+
     # AI leadership registry freshness
     ai_leadership_freshness_state = "FRESH"
     ai_leadership_freshness_reason = "None"
@@ -1554,6 +1563,47 @@ def get_pert_data():
             approval_queue_state = "UNKNOWN"
             approval_queue_reason = str(e)
             execution_authority_status = "UNKNOWN"
+
+    # Governed Execution Freshness & Status (RC52)
+    pending_safe_actions = False
+    safe_action_types = ["READ_ONLY", "LOCAL_SAFE_WRITE"]
+    approved_proposals = [p for p in approval_queue_data if p.get("action_type") in safe_action_types and p.get("approval_status") == "APPROVED"]
+    run_proposal_ids = {log.get("proposal_id") for log in governed_execution_data if log.get("status") == "SUCCESS"}
+    for p in approved_proposals:
+        if p.get("proposal_id") not in run_proposal_ids:
+            pending_safe_actions = True
+            break
+
+    gov_exec_freshness_state = "FRESH"
+    gov_exec_freshness_reason = "None"
+    gov_exec_status = "HEALTHY"
+
+    if not os.path.exists(governed_execution_file):
+        if pending_safe_actions:
+            gov_exec_freshness_state = "DEGRADED"
+            gov_exec_freshness_reason = "Governed execution log is missing but approved safe actions are pending"
+            gov_exec_status = "DEGRADED"
+        else:
+            gov_exec_freshness_state = "FRESH"
+            gov_exec_freshness_reason = "None"
+            gov_exec_status = "HEALTHY"
+    else:
+        try:
+            log_mtime = os.path.getmtime(governed_execution_file)
+            queue_mtime = os.path.getmtime(approval_queue_file) if os.path.exists(approval_queue_file) else 0
+            if pending_safe_actions and log_mtime < queue_mtime:
+                gov_exec_freshness_state = "STALE"
+                gov_exec_freshness_reason = "Governed execution log is stale; approved safe actions are pending execution"
+                gov_exec_status = "STALE"
+        except Exception as e:
+            gov_exec_freshness_state = "UNKNOWN"
+            gov_exec_freshness_reason = str(e)
+            gov_exec_status = "UNKNOWN"
+
+    panels_freshness["hoch_governed_execution"] = {
+        "freshness_state": gov_exec_freshness_state,
+        "stale_reason": gov_exec_freshness_reason
+    }
 
     panels_freshness["hoch_execution_approval"] = {
         "freshness_state": approval_queue_state,
@@ -1854,7 +1904,10 @@ def get_pert_data():
         "hoch_hasf_soccer_product_model_freshness": panels_freshness.get("hoch_hasf_soccer_product_model", {}),
         "hoch_execution_approval_queue": approval_queue_data,
         "execution_approval_freshness": panels_freshness.get("hoch_execution_approval", {}),
-        "execution_authority_status": execution_authority_status
+        "execution_authority_status": execution_authority_status,
+        "governed_execution_log": governed_execution_data,
+        "governed_execution_status": gov_exec_status,
+        "governed_execution_freshness": panels_freshness.get("hoch_governed_execution", {})
     }
 
 @app.get("/view-doc", response_class=HTMLResponse)
@@ -3424,6 +3477,62 @@ def get_dashboard():
                 <div style="margin-top:20px; border-top:1px solid rgba(255,255,255,0.05); padding-top:12px; font-size:10px; display:flex; justify-content:space-between; color:var(--hoch-muted);">
                     <div>Policy: <a href="/view-doc?path=docs/security/hoch-pods-safe-write-policy.md" style="color:var(--hoch-cyan); text-decoration:underline;" target="_blank">Safe Write Policy (NIST-AC-6)</a></div>
                     <div>Log: <a href="/view-doc?path=docs/evidence/runtime/execution-approval-decision-log.md" style="color:var(--hoch-cyan); text-decoration:underline;" target="_blank">Decision Log</a></div>
+                </div>
+            </div>
+
+            <!-- 7. Governed Execution Runner Panel (RC52) -->
+            <div class="card" id="governed-execution-runner-panel" style="background: var(--hoch-panel); border: 2px solid var(--hoch-border); border-radius: 16px; padding: 20px; box-shadow: 0 0 30px rgba(34, 246, 255, 0.05); position: relative; overflow: hidden; box-sizing: border-box; grid-column: span 2; margin-top: 20px;">
+                <h3 style="margin-top:0; color:var(--hoch-cyan); display:flex; justify-content:space-between; align-items:center;">
+                    <span>⚙️ Governed Swarm Execution Runner Cockpit</span>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <span style="font-size:11px; color:var(--hoch-muted);">Safety State:</span>
+                        <span id="governed-execution-status-badge" class="badge">UNKNOWN</span>
+                        <span id="governed-execution-freshness-badge" class="badge">UNKNOWN</span>
+                    </div>
+                </h3>
+
+                <div style="background: rgba(34, 246, 255, 0.05); border: 1px solid var(--hoch-cyan); padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 11px; line-height: 1.4;">
+                    🛡️ <strong>Sandboxed Governed Execution Layer:</strong> Only allowlisted, safe dispatcher actions (`READ_ONLY` and `LOCAL_SAFE_WRITE`) can run. Execution defaults to dry-run or staged mode, producing cryptographic audit log evidence and staging verification output automatically.
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <!-- Left: Governed Execution Log -->
+                    <div style="display:flex; flex-direction:column; gap:12px;">
+                        <h4 style="margin-top:0; color:var(--hoch-cyan); border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:8px; font-size:13px;">Governed Execution Run Log</h4>
+                        <div id="governed-execution-logs-container" style="display:flex; flex-direction:column; gap:12px; max-height:400px; overflow-y:auto; padding-right:5px;">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Right: Policy Classes Grid -->
+                    <div style="display:flex; flex-direction:column; gap:15px; font-size:11px;">
+                        <div style="background: rgba(0, 0, 0, 0.2); padding:15px; border-radius:8px; border:1px solid rgba(255,255,255,0.05);">
+                            <h4 style="margin-top:0; color:var(--hoch-cyan); font-size:12px;">Permitted Safe Classes (Runner-Allowed)</h4>
+                            <ul style="margin:5px 0 0 0; padding-left:15px; line-height:1.6; color:var(--hoch-green);">
+                                <li><strong>READ_ONLY</strong> (Allowed without approval if allowed_without_approval=true)</li>
+                                <li><strong>LOCAL_SAFE_WRITE</strong> (Permitted only if approval_status=APPROVED)</li>
+                            </ul>
+                        </div>
+
+                        <div style="background: rgba(255, 59, 92, 0.06); padding:15px; border-radius:8px; border:1px solid var(--hoch-red);">
+                            <h4 style="margin-top:0; color:var(--hoch-red); font-size:12px;">Hard-Blocked Unsafe Classes (Runner-Blocked)</h4>
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px; font-family:monospace; font-size:10px; color:var(--hoch-muted);">
+                                <div style="border-left:2px solid var(--hoch-red); padding-left:6px;">❌ REPO_WRITE</div>
+                                <div style="border-left:2px solid var(--hoch-red); padding-left:6px;">❌ NETWORK_WRITE</div>
+                                <div style="border-left:2px solid var(--hoch-red); padding-left:6px;">❌ SECRET_ACCESS</div>
+                                <div style="border-left:2px solid var(--hoch-red); padding-left:6px;">❌ STRIPE_LIVE_CONFIG</div>
+                                <div style="border-left:2px solid var(--hoch-red); padding-left:6px;">❌ DEPLOYMENT</div>
+                                <div style="border-left:2px solid var(--hoch-red); padding-left:6px;">❌ DESTRUCTIVE</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer with Evidence Links -->
+                <div style="margin-top:20px; border-top:1px solid rgba(255,255,255,0.05); padding-top:12px; font-size:10px; display:flex; justify-content:space-between; color:var(--hoch-muted);">
+                    <div>Safety Model: <a href="/view-doc?path=docs/security/governed-execution-safety-model.md" style="color:var(--hoch-cyan); text-decoration:underline;" target="_blank">NIST-AC-6 Safety Model</a></div>
+                    <div>Rollback: <a href="/view-doc?path=docs/evidence/runtime/governed-execution-rollback-plan.md" style="color:var(--hoch-cyan); text-decoration:underline; margin-right:12px;" target="_blank">Staged Rollback Plan</a></div>
+                    <div>Log: <a href="/view-doc?path=docs/evidence/runtime/governed-execution-log.md" style="color:var(--hoch-cyan); text-decoration:underline;" target="_blank">Execution Evidence Log</a></div>
                 </div>
             </div>
             
@@ -5209,6 +5318,78 @@ def get_dashboard():
                     }
                     if (quarantinedContainer.innerHTML === "") {
                         quarantinedContainer.innerHTML = `<div style="color:var(--hoch-muted); text-align:center; padding:20px;">No quarantined actions.</div>`;
+                    }
+                }
+
+                // --- POPULATE GOVERNED EXECUTION RUNNER PANEL ---
+                if (data.governed_execution_freshness) {
+                    const badge = document.getElementById("governed-execution-freshness-badge");
+                    if (badge) {
+                        badge.textContent = data.governed_execution_freshness.freshness_state || "UNKNOWN";
+                        badge.className = "badge";
+                        if (data.governed_execution_freshness.freshness_state === "FRESH") badge.classList.add("badge-success");
+                        else if (data.governed_execution_freshness.freshness_state === "STALE") badge.classList.add("badge-warn");
+                        else badge.classList.add("badge-danger");
+                        badge.title = data.governed_execution_freshness.stale_reason || "";
+                    }
+                }
+
+                if (data.governed_execution_status) {
+                    const badge = document.getElementById("governed-execution-status-badge");
+                    if (badge) {
+                        badge.textContent = data.governed_execution_status || "UNKNOWN";
+                        badge.className = "badge";
+                        if (data.governed_execution_status === "HEALTHY") badge.classList.add("badge-success");
+                        else if (data.governed_execution_status === "STALE") badge.classList.add("badge-warn");
+                        else badge.classList.add("badge-danger");
+                    }
+                }
+
+                const execLogsContainer = document.getElementById("governed-execution-logs-container");
+                if (execLogsContainer && data.governed_execution_log) {
+                    execLogsContainer.innerHTML = "";
+                    
+                    data.governed_execution_log.slice().reverse().forEach(log => {
+                        let statusClass = "badge-success";
+                        if (log.status === "FAILED" || log.status === "BLOCKED") statusClass = "badge-danger";
+                        
+                        let modeStyle = log.execution_mode === "DRY_RUN" ? "color:var(--hoch-cyan);" : "color:var(--hoch-green);";
+                        
+                        const logCardHtml = `
+                            <div class="execution-log-card" style="background: rgba(5,7,13,0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 12px; font-size: 11px; display:flex; flex-direction:column; gap:6px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <span style="font-family:monospace; color:var(--hoch-muted); font-size:10px;">${log.execution_id} (${log.proposal_id})</span>
+                                    <span class="badge ${statusClass}">${log.status}</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:6px;">
+                                    <strong style="color:#fff;">Class: <code style="color:#fff;">${log.action_type}</code></strong>
+                                    <span style="font-size:10px; font-family:monospace; ${modeStyle}">${log.execution_mode}</span>
+                                </div>
+                                <div style="color:var(--text-secondary); line-height:1.4;">
+                                    <strong>Dispatcher Action:</strong> <code>${(log.commands_or_dispatcher_actions || []).join(', ') || 'None'}</code>
+                                </div>
+                                ${log.blocked_reason ? `
+                                <div style="color:var(--hoch-red); background:rgba(255,59,92,0.1); padding:8px; border-radius:4px; font-size:10px; margin-top:2px;">
+                                    <strong>Blocked Reason:</strong> ${log.blocked_reason}
+                                </div>
+                                ` : `
+                                <div style="background:rgba(0,0,0,0.2); padding:8px; border-radius:4px; font-size:10px; color:var(--hoch-muted); display:flex; flex-direction:column; gap:4px; margin-top:4px;">
+                                    <div>📂 <strong>Staged Paths:</strong> <code>${(log.affected_paths || []).join(', ') || 'None'}</code></div>
+                                    <div>↩ <strong>Rollback Plan:</strong> ${log.rollback_artifacts || 'None'}</div>
+                                    <div>✓ <strong>Verification:</strong> ${log.verification_results || 'None'}</div>
+                                </div>
+                                `}
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px; border-top:1px solid rgba(255,255,255,0.05); padding-top:6px; font-size:9px; color:var(--hoch-muted);">
+                                    <span>By: ${log.executed_by}</span>
+                                    <span>Time: ${log.completed_at.slice(11, 19)} UTC</span>
+                                </div>
+                            </div>
+                        `;
+                        execLogsContainer.innerHTML += logCardHtml;
+                    });
+
+                    if (execLogsContainer.innerHTML === "") {
+                        execLogsContainer.innerHTML = `<div style="color:var(--hoch-muted); text-align:center; padding:20px;">No execution logs found.</div>`;
                     }
                 }
 

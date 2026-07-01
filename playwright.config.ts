@@ -54,6 +54,7 @@ export default defineConfig({
     "**/rc49_7-compute-node-pruning.spec.ts",
     "**/rc50_1-hoch-hasf-soccer-pipeline.spec.ts",
     "**/rc51-execution-approval-queue.spec.ts",
+    "**/rc52-governed-execution-runner.spec.ts",
   ],
   timeout: 45_000,
   fullyParallel: false,

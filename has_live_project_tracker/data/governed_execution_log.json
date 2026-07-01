@@ -1,0 +1,136 @@
+[
+  {
+    "execution_id": "exec-1782949748",
+    "proposal_id": "prop-cyber-gitleaks",
+    "action_type": "READ_ONLY",
+    "execution_mode": "DRY_RUN",
+    "status": "SUCCESS",
+    "started_at": "2026-07-01T23:49:08.746686Z",
+    "completed_at": "2026-07-01T23:49:08.746686Z",
+    "executed_by": "Swarm Operator (Dry Run)",
+    "affected_paths": [
+      "/"
+    ],
+    "commands_or_dispatcher_actions": [
+      "validate_no_live_secrets"
+    ],
+    "dry_run": true,
+    "staged_outputs": "Simulated dry-run output of validate_no_live_secrets on M5-Pro-MBP",
+    "rollback_artifacts": "Not required for read-only static scanning.",
+    "verification_results": "Simulated verification logic for validate_no_live_secrets: PASS",
+    "evidence_links": [
+      "docs/security/governed-execution-safety-model.md",
+      "docs/evidence/runtime/governed-execution-log.md"
+    ],
+    "blocked_reason": ""
+  },
+  {
+    "execution_id": "exec-1782949748",
+    "proposal_id": "prop-builder-compile",
+    "action_type": "LOCAL_SAFE_WRITE",
+    "execution_mode": "STAGED_EXECUTION",
+    "status": "BLOCKED",
+    "started_at": "2026-07-01T23:49:08.784930Z",
+    "completed_at": "2026-07-01T23:49:08.784930Z",
+    "executed_by": "Swarm Governed Runner",
+    "affected_paths": [],
+    "commands_or_dispatcher_actions": [],
+    "dry_run": false,
+    "staged_outputs": "",
+    "rollback_artifacts": "",
+    "verification_results": "",
+    "evidence_links": [
+      "docs/security/governed-execution-safety-model.md",
+      "docs/evidence/runtime/governed-execution-log.md"
+    ],
+    "blocked_reason": "Local safe write action requires APPROVED status. Current status: PENDING"
+  },
+  {
+    "execution_id": "exec-1782949748",
+    "proposal_id": "prop-builder-compile",
+    "action_type": "LOCAL_SAFE_WRITE",
+    "execution_mode": "STAGED_EXECUTION",
+    "status": "SUCCESS",
+    "started_at": "2026-07-01T23:49:08.862234Z",
+    "completed_at": "2026-07-01T23:49:08.864292Z",
+    "executed_by": "Swarm Governed Runner",
+    "affected_paths": [
+      "/Users/michaelhoch/hoch_agent_swarm/docs/evidence/runtime/governed-execution-brief.md"
+    ],
+    "commands_or_dispatcher_actions": [
+      "generate_markdown_brief"
+    ],
+    "dry_run": false,
+    "staged_outputs": "Generated brief at /Users/michaelhoch/hoch_agent_swarm/docs/evidence/runtime/governed-execution-brief.md",
+    "rollback_artifacts": "Clean target dist/ folder and rebuild from source.",
+    "verification_results": "Verification check: Run build artifacts and check presence of main.js. -> PASS",
+    "evidence_links": [
+      "docs/security/governed-execution-safety-model.md",
+      "docs/evidence/runtime/governed-execution-log.md"
+    ],
+    "blocked_reason": ""
+  },
+  {
+    "execution_id": "exec-1782949748",
+    "proposal_id": "prop-deploy-vercel",
+    "action_type": "DEPLOYMENT",
+    "execution_mode": "STAGED_EXECUTION",
+    "status": "BLOCKED",
+    "started_at": "2026-07-01T23:49:08.902943Z",
+    "completed_at": "2026-07-01T23:49:08.902943Z",
+    "executed_by": "Swarm Governed Runner",
+    "affected_paths": [],
+    "commands_or_dispatcher_actions": [],
+    "dry_run": false,
+    "staged_outputs": "",
+    "rollback_artifacts": "",
+    "verification_results": "",
+    "evidence_links": [
+      "docs/security/governed-execution-safety-model.md",
+      "docs/evidence/runtime/governed-execution-log.md"
+    ],
+    "blocked_reason": "Execution of unsafe action type 'DEPLOYMENT' is prohibited under the safe-write model."
+  },
+  {
+    "execution_id": "exec-1782949748",
+    "proposal_id": "prop-research-scrape",
+    "action_type": "NETWORK_WRITE",
+    "execution_mode": "STAGED_EXECUTION",
+    "status": "BLOCKED",
+    "started_at": "2026-07-01T23:49:08.941625Z",
+    "completed_at": "2026-07-01T23:49:08.941625Z",
+    "executed_by": "Swarm Governed Runner",
+    "affected_paths": [],
+    "commands_or_dispatcher_actions": [],
+    "dry_run": false,
+    "staged_outputs": "",
+    "rollback_artifacts": "",
+    "verification_results": "",
+    "evidence_links": [
+      "docs/security/governed-execution-safety-model.md",
+      "docs/evidence/runtime/governed-execution-log.md"
+    ],
+    "blocked_reason": "Execution of unsafe action type 'NETWORK_WRITE' is prohibited under the safe-write model."
+  },
+  {
+    "execution_id": "exec-1782949748",
+    "proposal_id": "prop-audit-purge",
+    "action_type": "DESTRUCTIVE",
+    "execution_mode": "STAGED_EXECUTION",
+    "status": "BLOCKED",
+    "started_at": "2026-07-01T23:49:08.979643Z",
+    "completed_at": "2026-07-01T23:49:08.979643Z",
+    "executed_by": "Swarm Governed Runner",
+    "affected_paths": [],
+    "commands_or_dispatcher_actions": [],
+    "dry_run": false,
+    "staged_outputs": "",
+    "rollback_artifacts": "",
+    "verification_results": "",
+    "evidence_links": [
+      "docs/security/governed-execution-safety-model.md",
+      "docs/evidence/runtime/governed-execution-log.md"
+    ],
+    "blocked_reason": "Execution of unsafe action type 'DESTRUCTIVE' is prohibited under the safe-write model."
+  }
+]
