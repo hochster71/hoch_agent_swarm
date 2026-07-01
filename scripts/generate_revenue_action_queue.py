@@ -122,6 +122,33 @@ BLOCKER_MAPPING = {
         "deployment_impact": 20,
         "recommended_agent": "Platform Engineer",
         "dependency_order": 2
+    },
+    "Epic Fury admin preview bypass is not implemented": {
+        "title": "Implement Epic Fury Admin Preview Bypass",
+        "description": "Create an entitlement helper in lib/entitlements.ts to support owner access bypass without Stripe customer payment.",
+        "revenue_impact": 30,
+        "security_impact": 10,
+        "deployment_impact": 10,
+        "recommended_agent": "Fintech Engineer",
+        "dependency_order": 1
+    },
+    "Epic Fury Stripe test-mode bypass is not validated": {
+        "title": "Configure Stripe Test-Mode Validation",
+        "description": "Verify Epic Fury handles EPIC_FURY_STRIPE_TEST_MODE correctly to simulate subscriptions using test customer IDs.",
+        "revenue_impact": 25,
+        "security_impact": 5,
+        "deployment_impact": 5,
+        "recommended_agent": "Fintech Engineer",
+        "dependency_order": 2
+    },
+    "Epic Fury public user payment enforcement is unverified": {
+        "title": "Verify Public User Stripe Enforcement",
+        "description": "Ensure normal public users are strictly gated and prompted to subscribe before accessing premium features.",
+        "revenue_impact": 35,
+        "security_impact": 20,
+        "deployment_impact": 10,
+        "recommended_agent": "Security Specialist",
+        "dependency_order": 1
     }
 }
 

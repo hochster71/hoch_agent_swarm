@@ -118,6 +118,42 @@ def run_audit():
         if os.path.isdir(os.path.join(repo_path, "tests")) or os.path.isdir(os.path.join(repo_path, "test")):
             has_tests = True
 
+        # Specific audit logic for Epic Fury 2026 (RC47)
+        if proj["id"] == "epic-fury-2026":
+            has_entitlements = False
+            has_internal_preview_logic = False
+            has_payment_enforcement = False
+            
+            entitlements_path = os.path.join(repo_path, "lib/entitlements.ts")
+            if os.path.exists(entitlements_path):
+                has_entitlements = True
+                try:
+                    with open(entitlements_path, "r", encoding="utf-8") as ent_f:
+                        ent_content = ent_f.read()
+                        if "getEntitlement" in ent_content and "founder_override" in ent_content:
+                            has_internal_preview_logic = True
+                except Exception:
+                    pass
+
+            # Check if middleware integrates entitlements
+            middleware_path = os.path.join(repo_path, "middleware.ts")
+            subgate_path = os.path.join(repo_path, "components/SubscriberGate.tsx")
+            if os.path.exists(middleware_path) and os.path.exists(subgate_path):
+                try:
+                    with open(middleware_path, "r", encoding="utf-8") as mid_f:
+                        mid_content = mid_f.read()
+                        if "getEntitlement" in mid_content:
+                            has_payment_enforcement = True
+                except Exception:
+                    pass
+
+            if not has_entitlements or not has_internal_preview_logic:
+                proj["blockers"].append("Epic Fury admin preview bypass is not implemented")
+            if not has_internal_preview_logic:
+                proj["blockers"].append("Epic Fury Stripe test-mode bypass is not validated")
+            if not has_payment_enforcement:
+                proj["blockers"].append("Epic Fury public user payment enforcement is unverified")
+
         # Calculate Scores
         # 1. Revenue Readiness
         rev_score = 100
