@@ -247,7 +247,19 @@ def verify_no_fake_status():
         except Exception:
             pass
 
-    print("  [PASS] Telemetry contains no fake PASS status labels.")
+    # 3. Verify telemetry truth compliance
+    try:
+        import subprocess
+        res = subprocess.run(["bash", str(REPO_ROOT / "scripts" / "telemetry_truth_check.sh")], capture_output=True)
+        if res.returncode != 0:
+            print("  [FAIL] Telemetry truth check failed!")
+            print(res.stdout.decode())
+            return False
+    except Exception as e:
+        print(f"  [FAIL] Failed to run telemetry truth check: {e}")
+        return False
+
+    print("  [PASS] Telemetry contains no fake PASS status labels and complies with telemetry truth schema.")
     return True
 
 def main():

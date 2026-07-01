@@ -24,6 +24,29 @@ def get_db_path():
 def get_project_root():
     return os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
+def wrap_telemetry_dict(value, source, last_updated_iso=None, confidence="HIGH", fallback="UNKNOWN"):
+    if not last_updated_iso:
+        last_updated_iso = datetime.now(timezone.utc).isoformat() + "Z"
+    
+    freshness_sec = 0.0
+    try:
+        ts_str = last_updated_iso.rstrip("Z")
+        dt = datetime.fromisoformat(ts_str)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        freshness_sec = round((datetime.now(timezone.utc) - dt).total_seconds(), 2)
+    except Exception:
+        pass
+        
+    return {
+        "value": value,
+        "source": source,
+        "last_updated": last_updated_iso,
+        "freshness": freshness_sec,
+        "confidence": confidence,
+        "fallback_state": fallback
+    }
+
 def get_tailscale_status():
     workers = {
         "michaels-macbook-pro": {"status": "ONLINE", "ip": "100.103.155.4"},
@@ -73,7 +96,7 @@ def get_dispatch_history():
                         "name": data.get("name"),
                         "worker": data.get("dispatched_worker", "michaels-macbook-pro"),
                         "executed_at": data.get("executed_at"),
-                        "status": status,
+                        "status": wrap_telemetry_dict(status, "swarm_scheduler_dispatch_logs", data.get("executed_at"), fallback="UNKNOWN"),
                         "exit_code": exit_code,
                         "goal_contribution": f"+{contrib}%",
                         "command": " ".join(data.get("command", [])) if isinstance(data.get("command"), list) else str(data.get("command", ""))
@@ -653,7 +676,7 @@ def get_pert_data():
             "role": "primary_control_runtime",
             "cores": 2,
             "memory": "4.0 GB",
-            "status": ts_status["michaels-macbook-pro"]["status"],
+            "status": wrap_telemetry_dict(ts_status["michaels-macbook-pro"]["status"], "tailscale_cli_status", fallback="UNKNOWN"),
             "allowed_jobs": "pert_dashboard, verification, playwright, cadence, local_build",
             "blocked_jobs": "public_exposure, paid_purchase, tag_move_without_approval"
         },
@@ -664,7 +687,7 @@ def get_pert_data():
             "role": "private_relay_worker",
             "cores": 4,
             "memory": "8.0 GB",
-            "status": ts_status["hoch-relay-001"]["status"],
+            "status": wrap_telemetry_dict(ts_status["hoch-relay-001"]["status"], "tailscale_cli_status", fallback="UNKNOWN"),
             "allowed_jobs": "relay_health, private_worker_api, safe_compute_probe",
             "blocked_jobs": "public_3012, open_firewall, external_deploy_without_approval"
         },
@@ -675,7 +698,7 @@ def get_pert_data():
             "role": "operator_mobile_monitor",
             "cores": 2,
             "memory": "4.0 GB",
-            "status": ts_status["iphone-15-pro-max"]["status"],
+            "status": wrap_telemetry_dict(ts_status["iphone-15-pro-max"]["status"], "tailscale_cli_status", fallback="UNKNOWN"),
             "allowed_jobs": "dashboard_view, approval_review",
             "blocked_jobs": "build_execution, destructive_commands"
         }
@@ -732,9 +755,45 @@ def get_pert_data():
         {"action": "Execute Playwright E2E suites", "script": "npx playwright test", "safe": True}
     ]
 
+    # Wrap all required coverage fields in telemetry truth structure
+    metrics_ts = metrics.get("timestamp")
+    wrapped_backend_status = wrap_telemetry_dict(backend_status, "localhost_probe", fallback="UNKNOWN")
+    wrapped_relay_status = wrap_telemetry_dict(relay_status, "relay_vps_health_endpoint", fallback="UNKNOWN")
+    wrapped_port_closed = wrap_telemetry_dict(port_closed, "vps_port_exposure_check", fallback="UNKNOWN")
+    
+    wrapped_tests_passing = wrap_telemetry_dict(metrics["tests_passing_count"], "playwright_test_stats", metrics_ts, fallback="0")
+    wrapped_tests_failing = wrap_telemetry_dict(metrics["tests_failing_count"], "playwright_test_stats", metrics_ts, fallback="0")
+    wrapped_evidence_coverage = wrap_telemetry_dict(metrics["evidence_coverage_percent"], "evidence_ledger_audit", metrics_ts, fallback="0.0")
+    wrapped_accountability = wrap_telemetry_dict(metrics["agent_accountability_score"], "agent_trust_db", metrics_ts, fallback="0.0")
+    wrapped_time_saved = wrap_telemetry_dict(metrics["time_saved_minutes"], "cadence_telemetry", metrics_ts, fallback="0")
+    
+    wrapped_active_workers = wrap_telemetry_dict(scheduler["active_workers_count"], "tailscale_network_discovery", scheduler.get("timestamp"), fallback="0")
+    wrapped_total_workers = wrap_telemetry_dict(scheduler["total_workers_count"], "tailscale_network_discovery", scheduler.get("timestamp"), fallback="3")
+    
+    wrapped_goal_complete = wrap_telemetry_dict(metrics["percent_goal_complete"], "autonomous_cadence_telemetry", metrics_ts, fallback="0.0")
+    
+    wrapped_monetization_readiness = wrap_telemetry_dict(monetization_readiness_percent, "monetization_readiness_policy_check", fallback="0.0")
+    wrapped_evidence_gap_count = wrap_telemetry_dict(evidence_gap_count, "monetization_readiness_policy_check", fallback="0")
+    wrapped_stripe_readiness = wrap_telemetry_dict("NOT_CONFIGURED", "stripe_policy_check", fallback="NOT_CONFIGURED")
+    wrapped_export_guardrail = wrap_telemetry_dict(guardrails_policy.get("do_not_expand_export_or_family", "FUTURE_NOT_NOW"), "guardrail_policy_audit", fallback="FUTURE_NOT_NOW")
+    
+    # queues
+    high_risk_approval_list = metrics.get("approval_queue", [])
+    manual_intervention_list = []
+    if len(high_risk_approval_list) > 0:
+        manual_intervention_list = [{"id": item.get("id"), "status": "BLOCKED"} for item in high_risk_approval_list]
+        
+    wrapped_approval_queue = wrap_telemetry_dict(high_risk_approval_list, "has_approval_queue_ledger", metrics_ts, fallback=[])
+    wrapped_intervention_queue = wrap_telemetry_dict(manual_intervention_list, "has_intervention_ledger", metrics_ts, fallback=[])
+    
+    # violations
+    wrapped_security_violations = wrap_telemetry_dict(guardrails["security_guardrail_violations"], "guardrail_policy_audit", fallback="0")
+    wrapped_public_violations = wrap_telemetry_dict(guardrails["public_exposure_violations"], "guardrail_policy_audit", fallback="0")
+    wrapped_fake_violations = wrap_telemetry_dict(guardrails["fake_status_violations"], "guardrail_policy_audit", fallback="0")
+
     return {
         "readiness": {
-            "score": metrics["percent_goal_complete"],
+            "score": wrapped_goal_complete,
             "window": f"{pert_cpm['expected_duration']} minutes expected time",
             "confidence": "95% Confidence (PERT Beta-Distribution)",
             "timestamp": datetime.now(timezone.utc).isoformat() + "Z"
@@ -748,26 +807,36 @@ def get_pert_data():
             "elapsed_minutes_this_cycle": usage["elapsed_minutes_this_cycle"],
             "local_compute_jobs_queued": job_queue["local_compute_jobs_queued"],
             "local_compute_jobs_completed": job_queue["local_compute_jobs_completed"],
-            "security_guardrail_violations": guardrails["security_guardrail_violations"],
+            "security_guardrail_violations": wrapped_security_violations,
             "approval_required_count": guardrails["approval_required_count"],
-            "public_exposure_violations": guardrails["public_exposure_violations"],
-            "fake_status_violations": guardrails["fake_status_violations"],
-            "goal_progress_percent": metrics["percent_goal_complete"],
+            "public_exposure_violations": wrapped_public_violations,
+            "fake_status_violations": wrapped_fake_violations,
+            "goal_progress_percent": wrapped_goal_complete,
             "critical_path_minutes_remaining": pert_cpm["expected_duration"]
         },
         "pert_cpm": pert_cpm,
         "agents": agent_scores,
         "doctrine_rules_count": rules_count,
-        "backend_status": backend_status,
-        "relay_status": relay_status,
-        "port_public_closed": port_closed,
+        "backend_status": wrapped_backend_status,
+        "relay_status": wrapped_relay_status,
+        "port_public_closed": wrapped_port_closed,
         "next_actions": next_actions,
         "tailnet_workers": workers_list,
         "dispatch_history": get_dispatch_history(),
+        "tests_passing_count": wrapped_tests_passing,
+        "tests_failing_count": wrapped_tests_failing,
+        "evidence_coverage_percent": wrapped_evidence_coverage,
+        "agent_accountability_score": wrapped_accountability,
+        "time_saved_minutes": wrapped_time_saved,
+        "active_workers_count": wrapped_active_workers,
+        "total_workers_count": wrapped_total_workers,
+        "high_risk_approval_queue": wrapped_approval_queue,
+        "manual_intervention_queue": wrapped_intervention_queue,
         "monetization": {
-            "monetization_readiness_percent": monetization_readiness_percent,
-            "evidence_gap_count": evidence_gap_count,
-            "export_expansion_guardrail_status": guardrails_policy.get("do_not_expand_export_or_family", "FUTURE_NOT_NOW"),
+            "monetization_readiness_percent": wrapped_monetization_readiness,
+            "evidence_gap_count": wrapped_evidence_gap_count,
+            "stripe_sandbox_readiness": wrapped_stripe_readiness,
+            "export_expansion_guardrail_status": wrapped_export_guardrail,
             "paid_services_configured": guardrails_policy.get("paid_services_configured", False),
             "public_ports_exposed": guardrails_policy.get("public_ports_exposed", False),
             "evidence_matrix": evidence_matrix,
@@ -785,7 +854,8 @@ def get_pert_data():
             {"rc": "RC34", "desc": "Usage budget and secure guardrails", "url": f"file://{get_project_root()}/docs/evidence/automation/rc34-usage-budget-secure-build-guardrails.md"},
             {"rc": "RC35", "desc": "Safe compute utilization expansion", "url": f"file://{get_project_root()}/docs/evidence/compute/rc35-safe-compute-utilization-expansion.md"},
             {"rc": "RC36", "desc": "Worker visibility and utilization", "url": f"file://{get_project_root()}/docs/evidence/compute/rc36-worker-visibility-utilization-dashboard.md"},
-            {"rc": "RC37", "desc": "Worker job dispatch metrics", "url": f"file://{get_project_root()}/docs/evidence/compute/rc37-worker-job-dispatch-metrics.md"}
+            {"rc": "RC37", "desc": "Worker job dispatch metrics", "url": f"file://{get_project_root()}/docs/evidence/compute/rc37-worker-job-dispatch-metrics.md"},
+            {"rc": "RC38", "desc": "Goal forecast and monetization readiness", "url": f"file://{get_project_root()}/docs/evidence/business/rc38-goal-completion-monetization-readiness.md"}
         ]
     }
 
@@ -1204,14 +1274,24 @@ def get_dashboard():
                 const contractGoal = data.contract.north_star || "UNKNOWN";
                 document.getElementById("goal-text").textContent = contractGoal;
                 
-                const percent = data.metrics.percent_goal_complete;
+                const percent = data.readiness.score.value;
                 document.getElementById("readiness-score").textContent = "Goal Completion: " + percent + "%";
+                document.getElementById("readiness-score").title = `Source: ${data.readiness.score.source} | Freshness: ${data.readiness.score.freshness}s | Confidence: ${data.readiness.score.confidence}`;
                 
                 // Metrics widgets
-                document.getElementById("metric-tests").textContent = data.metrics.tests_passing_count + " / " + data.metrics.tests_failing_count;
-                document.getElementById("metric-evidence").textContent = data.metrics.evidence_coverage_percent + "%";
-                document.getElementById("metric-accountability").textContent = data.metrics.agent_accountability_score;
-                document.getElementById("metric-time-saved").textContent = data.metrics.time_saved_minutes + " mins";
+                const passingCount = data.tests_passing_count.value;
+                const failingCount = data.tests_failing_count.value;
+                document.getElementById("metric-tests").textContent = passingCount + " / " + failingCount;
+                document.getElementById("metric-tests").title = `Source: ${data.tests_passing_count.source} | Freshness: ${data.tests_passing_count.freshness}s | Confidence: ${data.tests_passing_count.confidence}`;
+
+                document.getElementById("metric-evidence").textContent = data.evidence_coverage_percent.value + "%";
+                document.getElementById("metric-evidence").title = `Source: ${data.evidence_coverage_percent.source} | Freshness: ${data.evidence_coverage_percent.freshness}s | Confidence: ${data.evidence_coverage_percent.confidence}`;
+
+                document.getElementById("metric-accountability").textContent = data.agent_accountability_score.value;
+                document.getElementById("metric-accountability").title = `Source: ${data.agent_accountability_score.source} | Freshness: ${data.agent_accountability_score.freshness}s | Confidence: ${data.agent_accountability_score.confidence}`;
+
+                document.getElementById("metric-time-saved").textContent = data.time_saved_minutes.value + " mins";
+                document.getElementById("metric-time-saved").title = `Source: ${data.time_saved_minutes.source} | Freshness: ${data.time_saved_minutes.freshness}s | Confidence: ${data.time_saved_minutes.confidence}`;
 
                 // Swarm Scheduler updates
                 const sched = data.scheduler || {};
@@ -1223,7 +1303,8 @@ def get_dashboard():
                     schedState.className = "badge badge-warn";
                 }
                 document.getElementById("swarm-utilization").textContent = (sched.utilization_percent || 0.0) + "%";
-                document.getElementById("swarm-active-workers").textContent = (sched.active_workers_count || 0) + " / " + (sched.total_workers_count || 5);
+                document.getElementById("swarm-active-workers").textContent = (data.active_workers_count.value || 0) + " / " + (data.total_workers_count.value || 3);
+                document.getElementById("swarm-active-workers").title = `Source: ${data.active_workers_count.source} | Freshness: ${data.active_workers_count.freshness}s`;
                 document.getElementById("swarm-cores").textContent = (sched.cores_allocated || 0) + " Cores";
                 document.getElementById("swarm-memory").textContent = (sched.memory_allocated_gb || 0.0) + " GB";
 
@@ -1234,21 +1315,24 @@ def get_dashboard():
 
                 // Runtime Status
                 const bStatus = document.getElementById("backend-status");
-                bStatus.textContent = data.backend_status;
-                bStatus.className = "badge " + (data.backend_status === "ONLINE" ? "badge-pass" : "badge-warn");
+                bStatus.textContent = data.backend_status.value;
+                bStatus.className = "badge " + (data.backend_status.value === "ONLINE" ? "badge-pass" : "badge-warn");
+                bStatus.title = `Source: ${data.backend_status.source} | Freshness: ${data.backend_status.freshness}s | Confidence: ${data.backend_status.confidence}`;
 
                 const rStatus = document.getElementById("relay-status");
-                rStatus.textContent = data.relay_status;
-                rStatus.className = "badge " + (data.relay_status === "ONLINE" ? "badge-pass" : "badge-warn");
+                rStatus.textContent = data.relay_status.value;
+                rStatus.className = "badge " + (data.relay_status.value === "ONLINE" ? "badge-pass" : "badge-warn");
+                rStatus.title = `Source: ${data.relay_status.source} | Freshness: ${data.relay_status.freshness}s | Confidence: ${data.relay_status.confidence}`;
 
                 const pStatus = document.getElementById("port-status");
-                pStatus.textContent = data.port_public_closed ? "CLOSED" : "EXPOSED";
-                pStatus.className = "badge " + (data.port_public_closed ? "badge-pass" : "badge-fail");
+                pStatus.textContent = data.port_public_closed.value ? "CLOSED" : "EXPOSED";
+                pStatus.className = "badge " + (data.port_public_closed.value ? "badge-pass" : "badge-fail");
+                pStatus.title = `Source: ${data.port_public_closed.source} | Freshness: ${data.port_public_closed.freshness}s | Confidence: ${data.port_public_closed.confidence}`;
 
                 // Parallel Mirror Verification details
                 document.getElementById("mirror-tag").textContent = data.metrics.tag_integrity_status === "VALID" ? "PASS" : "FAIL";
                 document.getElementById("mirror-doctrine").textContent = data.doctrine_rules_count > 0 ? "PASS" : "FAIL";
-                document.getElementById("mirror-relay").textContent = data.relay_status === "ONLINE" ? "PASS" : "UNKNOWN";
+                document.getElementById("mirror-relay").textContent = data.relay_status.value === "ONLINE" ? "PASS" : "UNKNOWN";
                 document.getElementById("mirror-nofake").textContent = data.metrics.no_fake_status_violations === 0 ? "PASS" : "FAIL";
 
                 // Automation Cadence and Approval Queues
@@ -1285,8 +1369,9 @@ def get_dashboard():
                 document.getElementById("local-jobs-completed").textContent = gd.local_compute_jobs_completed || 0;
                 
                 const violationsEl = document.getElementById("guardrail-violations");
-                violationsEl.textContent = gd.security_guardrail_violations || 0;
-                if (gd.security_guardrail_violations > 0) {
+                const secViolations = gd.security_guardrail_violations ? gd.security_guardrail_violations.value : 0;
+                violationsEl.textContent = secViolations;
+                if (secViolations > 0) {
                     violationsEl.style.color = "var(--accent-red)";
                 } else {
                     violationsEl.style.color = "var(--accent-teal)";
@@ -1298,12 +1383,13 @@ def get_dashboard():
                     workersTableBody.innerHTML = "";
                     const workers = data.tailnet_workers || [];
                     workers.forEach(w => {
-                        const statusColor = w.status === "ONLINE" ? "var(--accent-teal)" : "var(--accent-red)";
+                        const statusVal = w.status.value;
+                        const statusColor = statusVal === "ONLINE" ? "var(--accent-teal)" : "var(--accent-red)";
                         workersTableBody.innerHTML += `
                             <tr style="border-top:1px solid #111e35;">
                                 <td style="padding:8px 0; color:var(--accent-teal); font-weight:bold;">
                                     ${w.machine}<br>
-                                    <span style="font-size:10px; color:${statusColor}; font-weight:normal;">● ${w.status} (${w.ip})</span>
+                                    <span style="font-size:10px; color:${statusColor}; font-weight:normal;" title="Source: ${w.status.source} | Freshness: ${w.status.freshness}s">● ${statusVal} (${w.ip})</span>
                                 </td>
                                 <td>
                                     <strong>${w.role}</strong><br>
@@ -1413,13 +1499,13 @@ def get_dashboard():
                 document.getElementById("gate-db").textContent = data.doctrine_rules_count > 0 ? "PASS (" + data.doctrine_rules_count + " rules)" : "FAIL (0 rules)";
                 document.getElementById("gate-db").className = data.doctrine_rules_count > 0 ? "" : "badge-fail";
                 
-                document.getElementById("gate-relay").textContent = data.relay_status === "ONLINE" ? "ONLINE" : "UNKNOWN";
-                document.getElementById("gate-relay").className = data.relay_status === "ONLINE" ? "" : "badge-warn";
+                document.getElementById("gate-relay").textContent = data.relay_status.value === "ONLINE" ? "ONLINE" : "UNKNOWN";
+                document.getElementById("gate-relay").className = data.relay_status.value === "ONLINE" ? "" : "badge-warn";
 
-                document.getElementById("gate-mission").textContent = data.backend_status === "ONLINE" ? "VERIFIED" : "UNKNOWN";
+                document.getElementById("gate-mission").textContent = data.backend_status.value === "ONLINE" ? "VERIFIED" : "UNKNOWN";
                 
-                document.getElementById("gate-port").textContent = data.port_public_closed ? "ISOLATED" : "EXPOSED";
-                document.getElementById("gate-port").className = data.port_public_closed ? "" : "badge-fail";
+                document.getElementById("gate-port").textContent = data.port_public_closed.value ? "ISOLATED" : "EXPOSED";
+                document.getElementById("gate-port").className = data.port_public_closed.value ? "" : "badge-fail";
 
                 // Evidence Ledger list
                 const evidenceList = document.getElementById("evidence-list");
@@ -1437,7 +1523,8 @@ def get_dashboard():
                         dispatchTbody.innerHTML = "<tr><td colspan='4' style='color:var(--text-secondary); text-align:center; padding:10px 0;'>No jobs dispatched yet.</td></tr>";
                     } else {
                         history.forEach(job => {
-                            const statusColor = job.status === "COMPLETED" ? "var(--accent-teal)" : "var(--accent-red)";
+                            const statusVal = job.status.value;
+                            const statusColor = statusVal === "COMPLETED" ? "var(--accent-teal)" : "var(--accent-red)";
                             dispatchTbody.innerHTML += `
                                 <tr style="border-top:1px solid #111e35;">
                                     <td style="padding:8px 0; color:var(--accent-teal); font-weight:bold;">
@@ -1448,7 +1535,7 @@ def get_dashboard():
                                         <code style="font-size:10px; color:var(--text-secondary);">${job.command}</code>
                                     </td>
                                     <td>
-                                        <span style="color:${statusColor}; font-weight:bold;">${job.status}</span>
+                                        <span style="color:${statusColor}; font-weight:bold;" title="Source: ${job.status.source} | Freshness: ${job.status.freshness}s">${statusVal}</span>
                                     </td>
                                     <td>
                                         <strong style="color:var(--accent-teal);">${job.goal_contribution}</strong>
@@ -1499,8 +1586,9 @@ def get_dashboard():
                 }
 
                 // Populate monetization readiness details
-                document.getElementById("monetization-score").textContent = mon.monetization_readiness_percent + "%";
-                document.getElementById("evidence-gaps-count").textContent = mon.evidence_gap_count;
+                document.getElementById("monetization-score").textContent = mon.monetization_readiness_percent.value + "%";
+                document.getElementById("monetization-score").title = `Source: ${mon.monetization_readiness_percent.source} | Freshness: ${mon.monetization_readiness_percent.freshness}s`;
+                document.getElementById("evidence-gaps-count").textContent = mon.evidence_gap_count.value;
 
                 // Populate evidence matrix table
                 const matrixTbody = document.getElementById("evidence-matrix-tbody");
@@ -1519,7 +1607,8 @@ def get_dashboard():
                 }
 
                 // Compliance guardrails
-                document.getElementById("guardrail-export").textContent = mon.export_expansion_guardrail_status;
+                document.getElementById("guardrail-export").textContent = mon.export_expansion_guardrail_status.value;
+                document.getElementById("guardrail-export").title = `Source: ${mon.export_expansion_guardrail_status.source} | Freshness: ${mon.export_expansion_guardrail_status.freshness}s`;
                 document.getElementById("guardrail-paid").textContent = mon.paid_services_configured ? "TRUE" : "FALSE";
                 document.getElementById("guardrail-ports").textContent = mon.public_ports_exposed ? "TRUE" : "FALSE";
 
