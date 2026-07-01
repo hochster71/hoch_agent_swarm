@@ -1002,6 +1002,41 @@ def get_pert_data():
         "underused_worker_count": wrapped_underused_worker_count
     }
 
+@app.get("/view-doc", response_class=HTMLResponse)
+def view_doc(path: str):
+    project_root = get_project_root()
+    abs_path = os.path.abspath(os.path.join(project_root, path.lstrip("/")))
+    if not abs_path.startswith(project_root):
+        return HTMLResponse("Access Denied", status_code=403)
+    if not os.path.exists(abs_path):
+        return HTMLResponse("File Not Found", status_code=404)
+    with open(abs_path, "r") as f:
+        content = f.read()
+    import markdown
+    html = markdown.markdown(content, extensions=['tables'])
+    return HTMLResponse(f"""
+    <html>
+        <head>
+            <title>{os.path.basename(path)}</title>
+            <style>
+                body {{ background: #070f1e; color: #cbd5e1; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; line-height: 1.6; }}
+                h1, h2, h3 {{ color: #2dd4bf; border-bottom: 1px solid #1e293b; padding-bottom: 8px; }}
+                table {{ width: 100%; border-collapse: collapse; margin: 20px 0; }}
+                th, td {{ padding: 12px; border: 1px solid #1e293b; text-align: left; }}
+                th {{ background: #0b1528; color: #2dd4bf; }}
+                pre, code {{ background: #0b1528; padding: 2px 6px; border-radius: 4px; font-family: monospace; color: #e2e8f0; }}
+                pre {{ padding: 16px; overflow-x: auto; }}
+                a {{ color: #2dd4bf; text-decoration: none; }}
+                a:hover {{ text-decoration: underline; }}
+            </style>
+        </head>
+        <body>
+            <p><a href="/">&larr; Back to Command Center</a></p>
+            {html}
+        </body>
+    </html>
+    """)
+
 @app.get("/", response_class=HTMLResponse)
 def get_dashboard():
     html_content = """<!DOCTYPE html>
@@ -1101,6 +1136,106 @@ def get_dashboard():
             margin: 8px 0 0 0;
             color: var(--accent-teal);
         }
+        
+        /* Animated Pipeline Styles */
+        .pipeline-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            border: 1px solid var(--border-glass);
+            overflow-x: auto;
+            margin-top: 15px;
+        }
+        .pipeline-stage {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            min-width: 100px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .pipeline-stage:hover {
+            transform: scale(1.1);
+        }
+        .pipeline-stage .stage-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid var(--border-glass);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+        .pipeline-stage.active .stage-dot {
+            background: rgba(45, 212, 191, 0.2);
+            border-color: var(--accent-teal);
+            box-shadow: 0 0 12px var(--accent-teal);
+            animation: pulse-glow 2s infinite alternate;
+        }
+        .pipeline-stage.completed .stage-dot {
+            background: rgba(45, 212, 191, 0.1);
+            border-color: var(--accent-teal);
+        }
+        .pipeline-stage .stage-name {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .pipeline-stage.active .stage-name {
+            color: var(--text-main);
+        }
+        .pipeline-connector {
+            flex-grow: 1;
+            height: 2px;
+            background: var(--border-glass);
+            margin: 0 10px;
+            position: relative;
+            transform: translateY(-12px);
+        }
+        .pipeline-connector.active {
+            background: var(--accent-teal);
+            box-shadow: 0 0 8px var(--accent-teal);
+        }
+        
+        .pipeline-stage .tooltip {
+            visibility: hidden;
+            width: 220px;
+            background-color: #0b1528;
+            color: #fff;
+            text-align: left;
+            border: 1px solid var(--accent-teal);
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 10;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -110px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 11px;
+            line-height: 1.4;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+        .pipeline-stage:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        @keyframes pulse-glow {
+            from { box-shadow: 0 0 4px var(--accent-teal); }
+            to { box-shadow: 0 0 16px var(--accent-teal); }
+        }
     </style>
 </head>
 <body>
@@ -1162,6 +1297,80 @@ def get_dashboard():
             <h3 style="margin-top:0;">PERT / CPM Activity Network (15 Required Workstreams)</h3>
             <div class="cpm-network" id="network-container">
                 <!-- Node blocks generated dynamically -->
+            </div>
+        </div>
+
+        <!-- Epic Fury Onboarding & Deployment Pipeline Flowchart -->
+        <div class="card col-12" id="epic-fury-pipeline-panel">
+            <h3 style="margin-top:0;">Epic Fury HASF Onboarding & Deployment Pipeline</h3>
+            <div class="pipeline-flow" id="epic-fury-flow-container">
+                <div class="pipeline-stage completed" onclick="location.href='/view-doc?path=docs/evidence/business/epic-fury-onboarding-audit.md'">
+                    <div class="stage-dot">1</div>
+                    <div class="stage-name">Source Discovery</div>
+                    <div class="tooltip">
+                        <strong>Source Discovery</strong><br>
+                        Status: COMPLETED<br>
+                        Source: local_find (LOCAL-003)<br>
+                        Location: ~/Downloads/Epic-fury-2026-main<br>
+                        Click to view Onboarding Audit.
+                    </div>
+                </div>
+                <div class="pipeline-connector active"></div>
+                <div class="pipeline-stage completed" onclick="location.href='/view-doc?path=docs/evidence/business/epic-fury-onboarding-audit.md'">
+                    <div class="stage-dot">2</div>
+                    <div class="stage-name">Audit & Analysis</div>
+                    <div class="tooltip">
+                        <strong>Audit & Analysis</strong><br>
+                        Status: COMPLETED<br>
+                        Source: qa_auditor_agent<br>
+                        Check: no secrets / sandbox mode<br>
+                        Click to view Onboarding Audit.
+                    </div>
+                </div>
+                <div class="pipeline-connector active"></div>
+                <div class="pipeline-stage completed" onclick="location.href='/view-doc?path=docs/evidence/business/epic-fury-gap-analysis.md'">
+                    <div class="stage-dot">3</div>
+                    <div class="stage-name">Environment Setup</div>
+                    <div class="tooltip">
+                        <strong>Environment Setup</strong><br>
+                        Status: COMPLETED<br>
+                        Check: DB models, migrations<br>
+                        Click to view Gap Analysis.
+                    </div>
+                </div>
+                <div class="pipeline-connector active"></div>
+                <div class="pipeline-stage completed" onclick="location.href='/view-doc?path=docs/evidence/business/epic-fury-gap-analysis.md'">
+                    <div class="stage-dot">4</div>
+                    <div class="stage-name">CI Verification</div>
+                    <div class="tooltip">
+                        <strong>CI Verification</strong><br>
+                        Status: COMPLETED<br>
+                        Check: run_now_ci.sh, verify-payments.sh<br>
+                        Click to view Gap Analysis.
+                    </div>
+                </div>
+                <div class="pipeline-connector active"></div>
+                <div class="pipeline-stage active" onclick="location.href='/view-doc?path=docs/evidence/business/epic-fury-pert-model.md'">
+                    <div class="stage-dot">5</div>
+                    <div class="stage-name">PERT Integration</div>
+                    <div class="tooltip">
+                        <strong>PERT Integration</strong><br>
+                        Status: ACTIVE<br>
+                        Check: CPM / slack calculation<br>
+                        Click to view PERT Model.
+                    </div>
+                </div>
+                <div class="pipeline-connector"></div>
+                <div class="pipeline-stage" onclick="location.href='/view-doc?path=docs/evidence/business/epic-fury-pert-model.md'">
+                    <div class="stage-dot">6</div>
+                    <div class="stage-name">Pipeline Visuals</div>
+                    <div class="tooltip">
+                        <strong>Pipeline Visuals</strong><br>
+                        Status: PENDING<br>
+                        Goal: animated cockpit flowchart<br>
+                        Click to view PERT Model.
+                    </div>
+                </div>
             </div>
         </div>
 
