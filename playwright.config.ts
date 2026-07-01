@@ -27,7 +27,8 @@ export default defineConfig({
   testMatch: [
     "**/has-hasf-*.spec.ts",
     "**/antigravity-runtime.spec.ts",
-    "**/anti-fake-runtime.spec.ts"
+    "**/anti-fake-runtime.spec.ts",
+    "**/hoch200-compute-setup.spec.ts"
   ],
   timeout: 45_000,
   fullyParallel: false,
