@@ -37,6 +37,7 @@ export default defineConfig({
     "**/rc37-dispatch-metrics.spec.ts",
     "**/rc38-goal-readiness.spec.ts",
     "**/rc39-telemetry-truth.spec.ts",
+    "**/rc39-qa-audit-alignment.spec.ts",
   ],
   timeout: 45_000,
   fullyParallel: false,
