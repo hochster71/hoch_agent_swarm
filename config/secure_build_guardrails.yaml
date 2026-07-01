@@ -1,0 +1,18 @@
+blocked_actions:
+  - public port exposure
+  - tag movement
+  - paid service purchase
+  - credential or secret changes
+  - destructive deletes
+  - external deploy/publish
+  - email/send actions
+  - firewall open rules
+required_checks:
+  - no secrets committed
+  - no .env committed
+  - no runtime DB committed
+  - no logs/NDJSON committed
+  - no public 3012 exposure
+  - no fake PASS/ONLINE/READY synthesis
+  - no git add .
+  - tag integrity preserved
