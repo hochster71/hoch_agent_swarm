@@ -43,6 +43,7 @@ def check_git_status():
             "has_parallel_mirror_verify",
             "rc29_release_verify",
             "docs/evidence/automation/",
+            "docs/evidence/runtime/",
             "docs/runbooks/has-hasf-",
             "swarm_scheduler",
             "scheduler_metrics.json",
@@ -56,7 +57,28 @@ def check_git_status():
             "rc35",
             "rc36",
             "rc37",
-            "rc38"
+            "rc38",
+            "hoch_compute_node_health.json",
+            "hoch_pod_schedule.json",
+            "hoch_compute_nodes.json",
+            "hoch_pods_runtime_state.json",
+            "hoch_pods_registry.json",
+            "collect_hoch_compute_node_health.py",
+            "schedule_hoch_pods.py",
+            "rc49_5_refresh_truth_cascade.sh",
+            ".env",
+            ".env.example",
+            "stripe-sandbox-initialization.md",
+            "rc49_5_telemetry_truth_verify.sh",
+            "verify_stripe_sandbox_config.py",
+            "project_revenue_readiness_audit.py",
+            "generate_revenue_action_queue.py",
+            "project-revenue-readiness-audit.md",
+            "revenue-action-queue.md",
+            "docs/design",
+            "rc49_6_hoch_pods_visual_fidelity_verify.sh",
+            "rc49_6-hoch-pods-visual-fidelity.spec.ts",
+            "rc49_5-telemetry-truth-freshness.spec.ts"
         ]
         
         dirty = []

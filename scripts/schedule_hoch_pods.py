@@ -24,8 +24,8 @@ def evaluate_node_score(pod, node, health):
         
     # 2. Check if health data exists and node is online/degraded
     status = health.get("status", "UNKNOWN")
-    if status == "UNKNOWN" or status == "MANUAL_VERIFY_REQUIRED":
-        return -50, "Node telemetry status is UNKNOWN/MANUAL_VERIFY_REQUIRED."
+    if status in ["UNKNOWN", "MANUAL_VERIFY_REQUIRED", "DEGRADED"]:
+        return -50, f"Node telemetry status is {status} (offline/degraded)."
         
     # 3. Secrets policy: do not assign secret-bearing work if secrets_allowed = false
     pod_secrets = pod.get("secret_access", [])
@@ -109,11 +109,22 @@ def main():
     # Clean stale health data check (Default 600s threshold)
     # Check modification time of health file
     health_mtime = os.path.getmtime(health_file)
-    seconds_since_health_update = time_diff = datetime.now().timestamp() - health_mtime
+    seconds_since_health_update = datetime.now().timestamp() - health_mtime
     is_health_stale = seconds_since_health_update > 600.0
+    
+    # Check modification time of queue and state file
+    queue_mtime = os.path.getmtime(queue_file)
+    is_queue_stale = (datetime.now().timestamp() - queue_mtime) > 600.0
+    
+    state_mtime = os.path.getmtime(state_file)
+    is_state_stale = (datetime.now().timestamp() - state_mtime) > 600.0
     
     if is_health_stale:
         print("[WARNING] Compute node health authority data is STALE (>600s). No active workloads will be scheduled.")
+    if is_queue_stale:
+        print("[WARNING] Upstream Revenue Action Queue is STALE (>600s). Fresh downstream scheduling may be based on stale data.")
+    if is_state_stale:
+        print("[WARNING] Upstream HOCH PODS Runtime State is STALE (>600s). Fresh downstream scheduling may be based on stale data.")
 
     schedule = []
     
@@ -133,6 +144,14 @@ def main():
         network_zone = "None"
         secrets_exposed = False
         model_assigned = state_info.get("assigned_model") or (pod["allowed_models"][0] if pod.get("allowed_models") else "None")
+        
+        # Enforce cloud model label planned/unconfirmed if not explicitly approved
+        is_cloud_model = any(cloud in model_assigned.lower() for cloud in ["gpt-", "claude", "gemini"])
+        if is_cloud_model:
+            approved = pod.get("model_approved", False) or state_info.get("model_approved", False)
+            if not approved:
+                model_assigned = f"{model_assigned} (planned/unconfirmed)"
+                
         tools_required = pod.get("allowed_tools", [])
 
         if is_active:

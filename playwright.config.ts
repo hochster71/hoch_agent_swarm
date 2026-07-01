@@ -48,6 +48,8 @@ export default defineConfig({
     "**/rc47-epic-fury-admin-access.spec.ts",
     "**/rc48-hoch-pods-architecture.spec.ts",
     "**/rc49-hoch-pod-scheduler.spec.ts",
+    "**/rc49_5-telemetry-truth-freshness.spec.ts",
+    "**/rc49_6-hoch-pods-visual-fidelity.spec.ts",
   ],
   timeout: 45_000,
   fullyParallel: false,

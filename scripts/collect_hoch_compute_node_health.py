@@ -136,7 +136,7 @@ def main():
             
         if is_local:
             status = "ONLINE"
-            status_reason = "None - Primary local controller fully responsive."
+            status_reason = "Primary local controller fully responsive."
             tools = [k for k, v in local_health["tools_available"].items() if v]
             # Map tools
             mapped_tools = []

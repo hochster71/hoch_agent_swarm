@@ -1023,7 +1023,28 @@ def get_pert_data():
         evidence_coverage_percent = round((existing_evidence_count / len(required_evidence)) * 100.0, 1)
 
     # Monetization Readiness score (cap at 50% if Stripe keys are missing/not configured)
-    stripe_configured = False
+    stripe_pub = os.environ.get("STRIPE_PUBLISHABLE_KEY", "")
+    stripe_sec = os.environ.get("STRIPE_SECRET_KEY", "")
+    
+    # Check .env file if not in environment variables
+    env_file_path = os.path.join(get_project_root(), ".env")
+    if os.path.exists(env_file_path):
+        try:
+            with open(env_file_path, "r") as f:
+                for line in f:
+                    if "=" in line:
+                        k, v = line.strip().split("=", 1)
+                        v = v.strip().strip('"').strip("'")
+                        if k == "STRIPE_PUBLISHABLE_KEY":
+                            stripe_pub = v
+                        elif k == "STRIPE_SECRET_KEY":
+                            stripe_sec = v
+        except Exception:
+            pass
+
+    stripe_configured = bool(stripe_pub.startswith("pk_test_") and stripe_sec.startswith("sk_test_"))
+    stripe_sandbox_status = "TEST_CONFIGURED" if stripe_configured else "NOT_CONFIGURED"
+
     if stripe_configured:
         monetization_readiness_percent = evidence_coverage_percent
     else:
@@ -1082,7 +1103,7 @@ def get_pert_data():
     
     wrapped_monetization_readiness = wrap_telemetry_dict(monetization_readiness_percent, "monetization_readiness_policy_check", fallback="0.0")
     wrapped_evidence_gap_count = wrap_telemetry_dict(evidence_gap_count, "monetization_readiness_policy_check", fallback="0")
-    wrapped_stripe_readiness = wrap_telemetry_dict("NOT_CONFIGURED / APPROVAL_REQUIRED", "stripe_policy_check", fallback="NOT_CONFIGURED")
+    wrapped_stripe_readiness = wrap_telemetry_dict("TEST_CONFIGURED" if stripe_configured else "NOT_CONFIGURED / APPROVAL_REQUIRED", "stripe_policy_check", fallback="NOT_CONFIGURED")
     wrapped_export_guardrail = wrap_telemetry_dict(guardrails_policy.get("do_not_expand_export_or_family", "FUTURE_NOT_NOW"), "guardrail_policy_audit", fallback="FUTURE_NOT_NOW")
     
     # queues
@@ -1130,7 +1151,8 @@ def get_pert_data():
     wrapped_quota_saved_min = wrap_telemetry_dict(compute_gap.get("quota_saved_minutes", 60), "acceleration_metrics", last_updated_ts, fallback=0)
     wrapped_pert_remaining_min = wrap_telemetry_dict(compute_gap.get("pert_remaining_minutes", 90.0), "cpm_analysis", last_updated_ts, fallback="90.0")
     wrapped_goal_completion_pct = wrap_telemetry_dict(compute_gap.get("goal_completion_percent", 90.0), "autonomous_cadence_telemetry", last_updated_ts, fallback="90.0")
-    wrapped_w12_blocker_status = wrap_telemetry_dict(compute_gap.get("w12_blocker_status", "PENDING"), "cpm_analysis", last_updated_ts, fallback="PENDING")
+    w12_val = "TEST_CONFIGURED" if stripe_configured else "PENDING"
+    wrapped_w12_blocker_status = wrap_telemetry_dict(w12_val, "stripe_sandbox_check", last_updated_ts, fallback="PENDING")
     wrapped_minutes_saved = wrap_telemetry_dict(compute_gap.get("minutes_saved", 180), "acceleration_metrics", last_updated_ts, fallback=0)
     wrapped_evidence_generated = wrap_telemetry_dict(compute_gap.get("evidence_generated", 0), "acceleration_metrics", last_updated_ts, fallback=0)
     wrapped_proj_before = wrap_telemetry_dict(compute_gap.get("projected_completion_before_compute_utilization", "90.0 mins"), "cpm_analysis", last_updated_ts, fallback="90.0 mins")
@@ -1544,6 +1566,14 @@ def get_pert_data():
         "playwright_e2e": playwright_split,
         "freshness_authority": freshness_authority,
         
+        # Explicit status objects for telemetry truth and Stripe sandbox
+        "revenue_readiness_freshness": panels_freshness.get("revenue_readiness", {}),
+        "revenue_action_queue_freshness": panels_freshness.get("revenue_action_queue", {}),
+        "hoch_pods_runtime_freshness": panels_freshness.get("hoch_pods_theater", {}),
+        "hoch_pod_scheduler_freshness": panels_freshness.get("hoch_pod_scheduler", {}),
+        "stripe_sandbox_status": wrap_telemetry_dict(stripe_sandbox_status, "stripe_sandbox_check", last_updated_ts, fallback="NOT_CONFIGURED"),
+        "no_fake_telemetry_audit": wrap_telemetry_dict("PASS" if not is_fake_failed else "FAIL", "guardrail_policy_audit", last_updated_ts, fallback="FAIL"),
+        
         # Required Metrics for E2E
         "compute_utilization_percent": wrapped_compute_utilization,
         "idle_compute_percent": wrapped_idle_compute,
@@ -1634,6 +1664,19 @@ def get_dashboard():
             --accent-blue: #3b82f6;
             --accent-yellow: #eab308;
             --accent-red: #ef4444;
+
+            /* HOCH PODS Design Tokens */
+            --hoch-bg: #05070d;
+            --hoch-panel: rgba(8, 13, 26, 0.92);
+            --hoch-panel-2: rgba(10, 18, 34, 0.86);
+            --hoch-cyan: #22f6ff;
+            --hoch-blue: #2b7cff;
+            --hoch-purple: #a855f7;
+            --hoch-green: #39ff88;
+            --hoch-amber: #ffb020;
+            --hoch-red: #ff3b5c;
+            --hoch-muted: #8b9bb4;
+            --hoch-border: rgba(34, 246, 255, 0.26);
         }
         body {
             background-color: var(--bg-base);
@@ -2124,10 +2167,462 @@ def get_dashboard():
             text-transform: uppercase;
             font-family: monospace;
         }
-        .topo-arrow {
-            color: var(--text-secondary);
-            font-weight: bold;
-            font-size: 16px;
+        }
+
+        /* ------------------------------------------------------------- */
+        /* HOCH PODS VISUAL FIDELITY COMMAND SURFACE STYLES */
+        /* ------------------------------------------------------------- */
+        #hoch-pods-command-surface {
+            background: var(--hoch-bg);
+            border: 2px solid var(--hoch-border);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 0 40px rgba(34, 246, 255, 0.08), inset 0 0 20px rgba(34, 246, 255, 0.04);
+            margin-top: 30px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        #hoch-pods-command-surface::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: linear-gradient(rgba(34, 246, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(34, 246, 255, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        #hoch-pods-header-rail {
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--hoch-border);
+            padding-bottom: 12px;
+        }
+        
+        .pods-surface-grid {
+            z-index: 2;
+            display: grid;
+            grid-template-columns: 260px 1fr 300px;
+            gap: 20px;
+        }
+        
+        @media (max-width: 1200px) {
+            .pods-surface-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        #hoch-pods-compute-rail {
+            background: var(--hoch-panel-2);
+            border: 1px solid var(--hoch-border);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-height: 700px;
+            overflow-y: auto;
+        }
+        
+        .compute-node-card {
+            background: rgba(5, 7, 13, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .compute-node-card:hover {
+            border-color: var(--hoch-cyan);
+            box-shadow: 0 0 10px rgba(34, 246, 255, 0.15);
+        }
+        .compute-node-card.status-online {
+            border-left: 4px solid var(--hoch-green);
+        }
+        .compute-node-card.status-degraded {
+            border-left: 4px solid var(--hoch-amber);
+        }
+        .compute-node-card.status-offline {
+            border-left: 4px solid var(--hoch-red);
+        }
+
+        .pods-center-workspace {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        #hoch-pods-topology-panel {
+            background: var(--hoch-panel);
+            border: 1px solid var(--hoch-border);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .topo-rail-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            overflow-x: auto;
+            padding: 10px 0;
+            position: relative;
+        }
+
+        .topo-zone-card {
+            background: rgba(5, 7, 13, 0.8);
+            border: 1px solid rgba(34, 246, 255, 0.15);
+            border-radius: 8px;
+            padding: 10px;
+            min-width: 110px;
+            text-align: center;
+            font-size: 11px;
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+        .topo-zone-card:hover {
+            border-color: var(--hoch-cyan);
+            box-shadow: 0 0 12px rgba(34, 246, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        .topo-zone-card.active {
+            border-color: var(--hoch-green);
+            box-shadow: 0 0 8px rgba(57, 255, 136, 0.15);
+        }
+        .topo-zone-card.inactive {
+            opacity: 0.6;
+            border-style: dashed;
+            border-color: var(--hoch-muted);
+        }
+
+        .topo-trust-rail {
+            flex-grow: 1;
+            height: 2px;
+            background: linear-gradient(90deg, var(--hoch-green) 50%, var(--hoch-cyan) 100%);
+            margin: 0 5px;
+            position: relative;
+            min-width: 20px;
+            opacity: 0.8;
+        }
+        .topo-trust-rail.dashed {
+            background: repeating-linear-gradient(90deg, var(--hoch-muted) 0px, var(--hoch-muted) 4px, transparent 4px, transparent 8px);
+        }
+        
+        #hoch-pods-theater-panel {
+            background: var(--hoch-panel);
+            border: 1px solid var(--hoch-border);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        
+        .pods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .pod-capsule {
+            background: rgba(5, 7, 13, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 16px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+        .pod-capsule:hover {
+            transform: translateY(-4px) scale(1.02);
+            border-color: rgba(34, 246, 255, 0.4);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6), 0 0 15px rgba(34, 246, 255, 0.1);
+        }
+        
+        .pod-core {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--hoch-muted);
+            opacity: 0.8;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .pod-animation-ring {
+            position: absolute;
+            top: 4px; right: 4px;
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            pointer-events: none;
+        }
+
+        .pods-side-rails {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        #hoch-pods-hardening-panel {
+            background: var(--hoch-panel);
+            border: 1px solid var(--hoch-border);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        #hoch-pods-compliance-panel {
+            background: var(--hoch-panel);
+            border: 1px solid var(--hoch-border);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .compliance-card {
+            background: rgba(5, 7, 13, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 11px;
+            transition: all 0.3s ease;
+        }
+        .compliance-card:hover {
+            border-color: var(--hoch-cyan);
+            box-shadow: 0 0 8px rgba(34, 246, 255, 0.1);
+        }
+
+        /* ------------------------------------------------------------- */
+        /* CSS ANIMATIONS FOR LIFECYCLE STAGES */
+        /* ------------------------------------------------------------- */
+        .pod-state-dormant {
+            border-color: rgba(139, 155, 180, 0.2);
+        }
+        .pod-state-dormant .pod-core {
+            background: #2b394f;
+            box-shadow: 0 0 6px rgba(43, 57, 79, 0.4);
+            animation: sleepPulse 3s infinite ease-in-out;
+        }
+        @keyframes sleepPulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+        }
+
+        .pod-state-summoning {
+            border-color: rgba(168, 85, 247, 0.4);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.15);
+        }
+        .pod-state-summoning .pod-core {
+            background: var(--hoch-purple);
+            box-shadow: 0 0 12px var(--hoch-purple);
+            animation: summoningPulse 1.5s infinite alternate ease-in-out;
+        }
+        .pod-state-summoning::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0; height: 30px;
+            background: linear-gradient(0deg, rgba(168, 85, 247, 0.2) 0%, transparent 100%);
+            animation: summonSmoke 2s infinite ease-in-out;
+            pointer-events: none;
+        }
+        @keyframes summoningPulse {
+            0% { transform: scale(0.9); box-shadow: 0 0 8px var(--hoch-purple); }
+            100% { transform: scale(1.1); box-shadow: 0 0 16px var(--hoch-purple); }
+        }
+        @keyframes summonSmoke {
+            0% { opacity: 0.2; transform: translateY(0); }
+            50% { opacity: 0.6; }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+
+        .pod-state-booting {
+            border-color: rgba(34, 246, 255, 0.4);
+        }
+        .pod-state-booting .pod-core {
+            background: var(--hoch-cyan);
+            box-shadow: 0 0 12px var(--hoch-cyan);
+        }
+        .pod-state-booting .pod-animation-ring {
+            border: 1px solid var(--hoch-cyan);
+            animation: bootRing 1.2s infinite linear;
+        }
+        .pod-state-booting::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: var(--hoch-cyan);
+            box-shadow: 0 0 8px var(--hoch-cyan);
+            animation: scanline 2s infinite linear;
+            z-index: 3;
+            pointer-events: none;
+        }
+        @keyframes bootRing {
+            0% { transform: scale(0.3); opacity: 1; }
+            100% { transform: scale(1.1); opacity: 0; }
+        }
+        @keyframes scanline {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        .pod-state-policy-check {
+            border-color: rgba(255, 176, 32, 0.4);
+        }
+        .pod-state-policy-check .pod-core {
+            background: var(--hoch-amber);
+            box-shadow: 0 0 10px var(--hoch-amber);
+            animation: shieldPulse 1s infinite alternate;
+        }
+        @keyframes shieldPulse {
+            0% { opacity: 0.5; filter: brightness(0.8); }
+            100% { opacity: 1; filter: brightness(1.2); }
+        }
+
+        .pod-state-model-bound {
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+        .pod-state-model-bound .pod-core {
+            background: var(--hoch-blue);
+            box-shadow: 0 0 12px var(--hoch-blue);
+        }
+        .pod-state-model-bound .pod-animation-ring {
+            border: 1.5px dashed var(--hoch-blue);
+            animation: neuralOrbit 4s infinite linear;
+        }
+        @keyframes neuralOrbit {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .pod-state-tool-bound {
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+        .pod-state-tool-bound .pod-core {
+            background: var(--hoch-blue);
+            box-shadow: 0 0 12px var(--hoch-blue);
+        }
+        .pod-state-tool-bound .pod-animation-ring::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 50%;
+            width: 6px; height: 6px;
+            background: var(--hoch-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 6px var(--hoch-cyan);
+        }
+        .pod-state-tool-bound .pod-animation-ring {
+            animation: neuralOrbit 3s infinite linear;
+        }
+
+        .pod-state-executing {
+            border-color: var(--hoch-cyan);
+            box-shadow: 0 0 20px rgba(34, 246, 255, 0.25);
+        }
+        .pod-state-executing .pod-core {
+            background: var(--hoch-cyan);
+            box-shadow: 0 0 14px var(--hoch-cyan);
+            animation: executingPulse 0.8s infinite alternate ease-in-out;
+        }
+        @keyframes executingPulse {
+            0% { transform: scale(0.85); box-shadow: 0 0 6px var(--hoch-cyan); }
+            100% { transform: scale(1.15); box-shadow: 0 0 20px var(--hoch-cyan); }
+        }
+
+        .pod-state-evidence-writing {
+            border-color: var(--hoch-green);
+        }
+        .pod-state-evidence-writing .pod-core {
+            background: var(--hoch-green);
+            box-shadow: 0 0 12px var(--hoch-green);
+        }
+        .pod-state-evidence-writing::after {
+            content: '📄';
+            font-size: 10px;
+            position: absolute;
+            top: 20px; right: 20px;
+            animation: docStream 1.5s infinite ease-in;
+            opacity: 0;
+        }
+        @keyframes docStream {
+            0% { transform: translate(0, 0) scale(1); opacity: 0; }
+            30% { opacity: 1; }
+            100% { transform: translate(-20px, 40px) scale(0.6); opacity: 0; }
+        }
+
+        .pod-state-complete {
+            border-color: var(--hoch-green);
+            box-shadow: 0 0 15px rgba(57, 255, 136, 0.15);
+        }
+        .pod-state-complete .pod-core {
+            background: var(--hoch-green);
+            box-shadow: 0 0 14px var(--hoch-green);
+        }
+
+        .pod-state-blocked {
+            border-color: var(--hoch-amber);
+            animation: containmentFlash 2s infinite ease-in-out;
+        }
+        .pod-state-blocked .pod-core {
+            background: var(--hoch-amber);
+            box-shadow: 0 0 10px var(--hoch-amber);
+        }
+        @keyframes containmentFlash {
+            0%, 100% { border-color: rgba(255, 176, 32, 0.4); box-shadow: 0 0 5px rgba(255, 176, 32, 0.1); }
+            50% { border-color: var(--hoch-red); box-shadow: 0 0 20px rgba(255, 59, 92, 0.3); }
+        }
+
+        .pod-state-failed {
+            border-color: var(--hoch-red);
+            box-shadow: 0 0 18px rgba(255, 59, 92, 0.2);
+        }
+        .pod-state-failed .pod-core {
+            background: var(--hoch-red);
+            box-shadow: 0 0 14px var(--hoch-red);
+            animation: quarantineBreath 2.5s infinite ease-in-out;
+        }
+        @keyframes quarantineBreath {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; box-shadow: 0 0 20px var(--hoch-red); }
+        }
+
+        .pod-popover {
+            display: none;
+            position: absolute;
+            background: rgba(8, 13, 26, 0.98);
+            border: 1px solid var(--hoch-cyan);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 11px;
+            width: 240px;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            pointer-events: none;
+        }
+        .pod-capsule:hover .pod-popover {
+            display: block;
+            top: 50px;
+            left: 10px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
+            .pod-capsule:hover {
+                transform: none !important;
+            }
         }
     </style>
 </head>
@@ -2248,93 +2743,212 @@ def get_dashboard():
             </div>
         </div>
 
-        <!-- HOCH PODS Theater (Animated UI) -->
-        <div class="card col-12" id="hoch-pods-theater-panel">
-            <h3 style="margin-top:0; display:flex; justify-content:space-between; align-items:center;">
-                <span>HOCH PODS Theater (Animated Compute Substrate)</span>
-                <span id="hoch-pods-freshness-badge" class="badge">UNKNOWN</span>
-            </h3>
-            <div class="pods-grid" id="hoch-pods-container">
-                <!-- Populated dynamically via JavaScript -->
-            </div>
-        </div>
-
-        <!-- HOCH PODS Compliant Topology -->
-        <div class="card col-12" id="hoch-pods-topology-panel">
-            <h3 style="margin-top:0;">HOCH PODS Compliant Topology (Zero Trust Architecture)</h3>
-            <div class="topo-flow" id="hoch-pods-topology-container">
-                <div class="topo-box active">
-                    <div class="topo-box-title">Operator</div>
-                    <div class="topo-zone">Operator Zone</div>
+        <!-- ------------------------------------------------------------- -->
+        <!-- HOCH PODS SECURE AGENT RUNTIME COCKPIT -->
+        <!-- ------------------------------------------------------------- -->
+        <div class="col-12" id="hoch-pods-command-surface">
+            <!-- Header status rail -->
+            <div id="hoch-pods-header-rail">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <span style="font-size:24px;">🚀</span>
+                    <div>
+                        <h2 style="margin:0; font-size:16px; font-weight:800; color:#fff; border:none; padding:0; text-shadow:0 0 10px rgba(34,246,255,0.4);">HOCH PODS Command Surface</h2>
+                        <span style="font-size:10px; color:var(--hoch-muted);">Secure Runtime Computing Substrate</span>
+                    </div>
                 </div>
-                <div class="topo-arrow">➔</div>
-                <div class="topo-box active">
-                    <div class="topo-box-title">Command Center</div>
-                    <div class="topo-zone">Management Zone</div>
-                </div>
-                <div class="topo-arrow">➔</div>
-                <div class="topo-box active">
-                    <div class="topo-box-title">LM Studio/Ollama</div>
-                    <div class="topo-zone">Model Zone</div>
-                </div>
-                <div class="topo-arrow">➔</div>
-                <div class="topo-box active">
-                    <div class="topo-box-title">Secure Pods</div>
-                    <div class="topo-zone">Pod Runtime Zone</div>
-                </div>
-                <div class="topo-arrow">➔</div>
-                <div class="topo-box active">
-                    <div class="topo-box-title">Tool Execution</div>
-                    <div class="topo-zone">Tool Execution Zone</div>
-                </div>
-                <div class="topo-arrow">➔</div>
-                <div class="topo-box active">
-                    <div class="topo-box-title">Evidence Fabric</div>
-                    <div class="topo-zone">Evidence Zone</div>
-                </div>
-                <div class="topo-arrow">➔</div>
-                <div class="topo-box" style="border-style: dashed; opacity: 0.7;">
-                    <div class="topo-box-title">Remote Docker/VPS</div>
-                    <div class="topo-zone">Optional Remote Zone</div>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <span class="badge" id="hoch-pods-freshness-badge">UNKNOWN</span>
+                    <span class="badge" id="hoch-scheduler-freshness-badge">UNKNOWN</span>
                 </div>
             </div>
-        </div>
-
-        <!-- HOCH PODS Scheduler and Compute Node Matrix -->
-        <div class="card col-12" id="hoch-pod-scheduler-panel">
-            <h3 style="margin-top:0; display:flex; justify-content:space-between; align-items:center;">
-                <span>HOCH PODS Compute Scheduler & Node Health Authority</span>
-                <span id="hoch-scheduler-freshness-badge" class="badge">UNKNOWN</span>
-            </h3>
             
-            <div style="margin-bottom: 15px; font-size: 12px; color: var(--text-secondary);">
-                Evidence Links: 
-                <a href="/view-doc?path=docs/evidence/runtime/hoch-compute-node-health.md" style="color: var(--accent-teal); text-decoration: underline;" target="_blank">Compute Node Health Evidence</a> | 
-                <a href="/view-doc?path=docs/evidence/runtime/hoch-pod-scheduler-evidence.md" style="color: var(--accent-teal); text-decoration: underline;" target="_blank">Pod Placement Scheduler Evidence</a>
+            <div class="pods-surface-grid">
+                <!-- Left: Compute Pool Rail -->
+                <div>
+                    <h3 style="margin-top:0; font-size:12px; font-weight:800; text-transform:uppercase; color:var(--hoch-cyan); border-bottom:1px solid var(--hoch-border); padding-bottom:6px; margin-bottom:12px;">Compute Pool Rail</h3>
+                    <div id="hoch-pods-compute-rail">
+                        <!-- Populated dynamically via JS node cards -->
+                    </div>
+                </div>
+
+                <!-- Center/Main: Theater and Topology -->
+                <div class="pods-center-workspace">
+                    <!-- Topology Map -->
+                    <div id="hoch-pods-topology-panel">
+                        <h3 style="margin-top:0; font-size:12px; font-weight:800; text-transform:uppercase; color:var(--hoch-cyan); border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:6px; margin-bottom:12px;">Zero Trust Compliant Topology Map</h3>
+                        <div class="topo-rail-container" id="hoch-pods-topology-container">
+                            <div class="topo-zone-card active" id="topo-zone-operator">
+                                <div style="font-size:18px; margin-bottom:2px;">🧑‍💻</div>
+                                <strong style="color:#fff;">Operator Zone</strong>
+                                <div style="font-size:8px; color:var(--hoch-green); margin-top:2px;">Posture: SECURED</div>
+                                <div style="font-size:8px; color:var(--text-secondary);">Default Deny</div>
+                            </div>
+                            <div class="topo-trust-rail" id="rail-1"></div>
+                            
+                            <div class="topo-zone-card active" id="topo-zone-management">
+                                <div style="font-size:18px; margin-bottom:2px;">🛡️</div>
+                                <strong style="color:#fff;">Management Zone</strong>
+                                <div style="font-size:8px; color:var(--hoch-green); margin-top:2px;">Posture: COMPLIANT</div>
+                                <div style="font-size:8px; color:var(--text-secondary);">Controls: 14</div>
+                            </div>
+                            <div class="topo-trust-rail" id="rail-2"></div>
+                            
+                            <div class="topo-zone-card active" id="topo-zone-model">
+                                <div style="font-size:18px; margin-bottom:2px;">🧠</div>
+                                <strong style="color:#fff;">Model Zone</strong>
+                                <div style="font-size:8px; color:var(--hoch-green); margin-top:2px;">Posture: ISOLATED</div>
+                                <div style="font-size:8px; color:var(--text-secondary);">Ollama / LMS</div>
+                            </div>
+                            <div class="topo-trust-rail" id="rail-3"></div>
+                            
+                            <div class="topo-zone-card active" id="topo-zone-runtime">
+                                <div style="font-size:18px; margin-bottom:2px;">⚡</div>
+                                <strong style="color:#fff;">Pod Runtime Zone</strong>
+                                <div style="font-size:8px; color:var(--hoch-green); margin-top:2px;">Posture: CONTAINED</div>
+                                <div style="font-size:8px; color:var(--text-secondary);">HOCH PODS</div>
+                            </div>
+                            <div class="topo-trust-rail" id="rail-4"></div>
+                            
+                            <div class="topo-zone-card active" id="topo-zone-tool">
+                                <div style="font-size:18px; margin-bottom:2px;">🛠️</div>
+                                <strong style="color:#fff;">Tool Execution Zone</strong>
+                                <div style="font-size:8px; color:var(--hoch-green); margin-top:2px;">Posture: RESTRICTED</div>
+                                <div style="font-size:8px; color:var(--text-secondary);">Scoped Allow</div>
+                            </div>
+                            <div class="topo-trust-rail" id="rail-5"></div>
+                            
+                            <div class="topo-zone-card active" id="topo-zone-evidence">
+                                <div style="font-size:18px; margin-bottom:2px;">📋</div>
+                                <strong style="color:#fff;">Evidence Zone</strong>
+                                <div style="font-size:8px; color:var(--hoch-green); margin-top:2px;">Posture: AUDIT_READY</div>
+                                <div style="font-size:8px; color:var(--text-secondary);">Ledger Sealed</div>
+                            </div>
+                            <div class="topo-trust-rail dashed" id="rail-6"></div>
+                            
+                            <div class="topo-zone-card inactive" id="topo-zone-remote">
+                                <div style="font-size:18px; margin-bottom:2px;">🌐</div>
+                                <strong style="color:var(--hoch-muted);">Optional Remote Zone</strong>
+                                <div style="font-size:8px; color:var(--hoch-muted); margin-top:2px;">Posture: UNTRUSTED</div>
+                                <div style="font-size:8px; color:var(--text-secondary);">Optional VPS</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pod Theater Panel -->
+                    <div id="hoch-pods-theater-panel">
+                        <h3 style="margin-top:0; font-size:12px; font-weight:800; text-transform:uppercase; color:var(--hoch-cyan); border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:6px; margin-bottom:12px;">Animated Pod Theater</h3>
+                        <div class="pods-grid" id="hoch-pods-container">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Hardening & Compliance side rails -->
+                <div class="pods-side-rails">
+                    <!-- Hardening panel -->
+                    <div id="hoch-pods-hardening-panel">
+                        <h3 style="margin-top:0; font-size:12px; font-weight:800; text-transform:uppercase; color:var(--hoch-amber); border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:6px; margin-bottom:12px;">HOCH PODS Hardening Guide</h3>
+                        <ul style="padding-left:15px; font-size:11px; line-height:1.6; list-style-type:square; color:var(--text-secondary); margin:0;">
+                            <li>Zero trust by design</li>
+                            <li>Default deny network</li>
+                            <li>Local first execution</li>
+                            <li>Least privilege access</li>
+                            <li>No secrets in code</li>
+                            <li>Audit everything</li>
+                            <li>Supply chain verification</li>
+                            <li>Isolate and contain</li>
+                            <li>Verify continuously</li>
+                            <li>Fail securely</li>
+                            <li style="color:var(--hoch-red); font-weight:bold; list-style-type:none; margin-top:8px;">No shortcuts. No exceptions. No fake green.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Compliance panel -->
+                    <div id="hoch-pods-compliance-panel">
+                        <h3 style="margin-top:0; font-size:12px; font-weight:800; text-transform:uppercase; color:var(--hoch-cyan); border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:6px; margin-bottom:12px;">Compliance & Control Mapping</h3>
+                        <div style="max-height: 250px; overflow-y: auto;">
+                            <div class="compliance-card">
+                                <strong style="color:var(--hoch-cyan);">NIST SP 800-207</strong>
+                                <div style="color:var(--hoch-muted); font-size:10px; margin-top:2px;">
+                                    • Identity & Device validation<br>
+                                    • Scoped session authorization<br>
+                                    • Continuous policy verification
+                                </div>
+                            </div>
+                            <div class="compliance-card">
+                                <strong style="color:var(--hoch-cyan);">NIST SP 800-53 Rev. 5</strong>
+                                <div style="color:var(--hoch-muted); font-size:10px; margin-top:2px;">
+                                    • Access Controls (AC)<br>
+                                    • Audit and Accountability (AU)<br>
+                                    • System and Comm Protection (SC)
+                                </div>
+                            </div>
+                            <div class="compliance-card">
+                                <strong style="color:var(--hoch-cyan);">CISA ZTMM 2.0</strong>
+                                <div style="color:var(--hoch-muted); font-size:10px; margin-top:2px;">
+                                    • Applications & workloads isolation<br>
+                                    • Visibility & analytics logs<br>
+                                    • Automation and orchestration
+                                </div>
+                            </div>
+                            <div class="compliance-card">
+                                <strong style="color:var(--hoch-cyan);">DoD Zero Trust Strategy</strong>
+                                <div style="color:var(--hoch-muted); font-size:10px; margin-top:2px;">
+                                    • Data security & tagging<br>
+                                    • Continuous audit verification<br>
+                                    • Scoped allow execution bounds
+                                </div>
+                            </div>
+                            <div class="compliance-card">
+                                <strong style="color:var(--hoch-cyan);">DTM 25-003</strong>
+                                <div style="color:var(--hoch-muted); font-size:10px; margin-top:2px;">
+                                    • Local-first compute containment<br>
+                                    • Secrets prevention constraints<br>
+                                    • Sealed evidence fabric
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div style="overflow-x:auto;">
-                <table style="width:100%; border-collapse:collapse; margin-bottom: 20px;">
-                    <thead>
-                        <tr style="border-bottom: 2px solid #111e35; text-align: left;">
-                            <th style="padding:10px; color:var(--accent-teal);">Node ID</th>
-                            <th style="padding:10px; color:var(--accent-teal);">Type / Role</th>
-                            <th style="padding:10px; color:var(--accent-teal);">Zone</th>
-                            <th style="padding:10px; color:var(--accent-teal);">Resources</th>
-                            <th style="padding:10px; color:var(--accent-teal);">Status / Telemetry</th>
-                            <th style="padding:10px; color:var(--accent-teal);">Assigned Pods</th>
-                        </tr>
-                    </thead>
-                    <tbody id="hoch-nodes-table-body" style="font-size:12px;">
+            <!-- Bottom: Scheduler & Health matrix -->
+            <div id="hoch-pod-scheduler-panel" style="margin-top:20px; border-top:1px solid var(--hoch-border); padding-top:20px;">
+                <h3 style="margin-top:0; font-size:14px; font-weight:800; text-transform:uppercase; color:var(--hoch-cyan); margin-bottom:12px;">Compute Scheduler & Node Health Authority</h3>
+                <div style="margin-bottom: 12px; font-size: 11px; color: var(--text-secondary);">
+                    Evidence Links: 
+                    <a href="/view-doc?path=docs/evidence/runtime/hoch-compute-node-health.md" style="color: var(--hoch-cyan); text-decoration: underline;" target="_blank">Compute Node Health Evidence</a> | 
+                    <a href="/view-doc?path=docs/evidence/runtime/hoch-pod-scheduler-evidence.md" style="color: var(--hoch-cyan); text-decoration: underline;" target="_blank">Pod Placement Scheduler Evidence</a>
+                </div>
+                
+                <!-- Compute node cards matrix -->
+                <div id="hoch-nodes-card-matrix" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:12px; margin-bottom:15px;">
+                    <!-- Populated dynamically via JS node cards -->
+                </div>
+
+                <div style="overflow-x:auto;">
+                    <table style="width:100%; border-collapse:collapse; margin-bottom: 20px;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid rgba(255,255,255,0.05); text-align: left;">
+                                <th style="padding:10px; color:var(--hoch-cyan);">Node ID</th>
+                                <th style="padding:10px; color:var(--hoch-cyan);">Type / Role</th>
+                                <th style="padding:10px; color:var(--hoch-cyan);">Zone</th>
+                                <th style="padding:10px; color:var(--hoch-cyan);">Resources</th>
+                                <th style="padding:10px; color:var(--hoch-cyan);">Status / Telemetry</th>
+                                <th style="padding:10px; color:var(--hoch-cyan);">Assigned Pods</th>
+                            </tr>
+                        </thead>
+                        <tbody id="hoch-nodes-table-body" style="font-size:12px;">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="background:rgba(5, 7, 13, 0.7); border:1px solid rgba(255,255,255,0.05); padding:15px; border-radius:8px;">
+                    <h4 style="margin-top:0; color:var(--hoch-cyan);">Pod Placement & Scheduling Rationale</h4>
+                    <div id="hoch-scheduler-rationale-container" style="font-size:11px; line-height:1.5; color:var(--hoch-muted);">
                         <!-- Populated dynamically via JS -->
-                    </tbody>
-                </table>
-            </div>
-
-            <div style="background:#050b14; border:1px solid #111e35; padding:15px; border-radius:4px;">
-                <h4 style="margin-top:0; color:var(--accent-teal);">Pod Placement & Scheduling Rationale</h4>
-                <div id="hoch-scheduler-rationale-container" style="font-size:12px; line-height:1.5;">
-                    <!-- Populated dynamically via JS -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -2688,12 +3302,15 @@ def get_dashboard():
                 const contractGoal = data.contract.north_star || "UNKNOWN";
                 document.getElementById("goal-text").textContent = contractGoal;
                 
-                const percent = data.readiness.score.value;
-                if (typeof percent === 'string' && percent.includes('%')) {
-                    document.getElementById("readiness-score").textContent = "Goal Completion: " + percent;
-                } else {
-                    document.getElementById("readiness-score").textContent = "Goal Completion: " + percent + "%";
+                const percentRaw = data.readiness.score.value;
+                let percent = percentRaw;
+                if (typeof percentRaw === 'string') {
+                    const match = percentRaw.match(/[0-9]+/);
+                    if (match) {
+                        percent = match[0];
+                    }
                 }
+                document.getElementById("readiness-score").textContent = "Goal Completion: " + percent + "%";
                 document.getElementById("readiness-score").title = `Source: ${data.readiness.score.source} | Freshness: ${data.readiness.score.freshness}s | Confidence: ${data.readiness.score.confidence}`;
                 
                 // Metrics widgets
@@ -3268,6 +3885,11 @@ def get_dashboard():
                 const stripeStateEl = document.getElementById("stripe-sandbox-state");
                 stripeStateEl.textContent = mon.stripe_sandbox_readiness.value;
                 stripeStateEl.title = `Source: ${mon.stripe_sandbox_readiness.source} | Freshness: ${mon.stripe_sandbox_readiness.freshness}s`;
+                if (mon.stripe_sandbox_readiness.value === "TEST_CONFIGURED") {
+                    stripeStateEl.style.color = "var(--accent-teal)";
+                } else {
+                    stripeStateEl.style.color = "var(--accent-red)";
+                }
 
                 // Populate evidence matrix table
                 const matrixTbody = document.getElementById("evidence-matrix-tbody");
@@ -3492,12 +4114,20 @@ def get_dashboard():
                         const stateStr = podState.state || podReg.default_state || "DORMANT";
                         const isQuarantined = podState.policy_status === "FAIL" || stateStr === "QUARANTINED";
                         
-                        let cardClass = "pod-card";
-                        if (isQuarantined) {
-                            cardClass += " failed-quarantine";
-                        } else if (stateStr === "EXECUTING" || stateStr === "POLICY_CHECK" || stateStr === "TOOL_BOUND" || stateStr === "EVIDENCE_WRITING") {
-                            cardClass += " active-pulse";
-                        }
+                        // Map state to capsule classes
+                        let stateClass = "pod-state-dormant";
+                        if (stateStr === "SUMMONING") stateClass = "pod-state-summoning";
+                        else if (stateStr === "BOOTING") stateClass = "pod-state-booting";
+                        else if (stateStr === "POLICY_CHECK") stateClass = "pod-state-policy-check";
+                        else if (stateStr === "MODEL_BOUND") stateClass = "pod-state-model-bound";
+                        else if (stateStr === "TOOL_BOUND") stateClass = "pod-state-tool-bound";
+                        else if (stateStr === "EXECUTING") stateClass = "pod-state-executing";
+                        else if (stateStr === "EVIDENCE_WRITING") stateClass = "pod-state-evidence-writing";
+                        else if (stateStr === "COMPLETE") stateClass = "pod-state-complete";
+                        else if (stateStr === "BLOCKED") stateClass = "pod-state-blocked";
+                        else if (isQuarantined || stateStr === "FAILED") stateClass = "pod-state-failed";
+                        
+                        let cardClass = `pod-capsule ${stateClass}`;
                         
                         // Icon indicators based on state
                         let iconHtml = "";
@@ -3524,14 +4154,41 @@ def get_dashboard():
                             evidenceHtml = `<div style="margin-top:6px; color:var(--accent-teal);"><strong>Evidence:</strong> ${podState.evidence_links.map(l => l.split('/').pop()).join(", ")}</div>`;
                         }
                         
+                        // Match with scheduler assignment
+                        const schedMatch = (data.hoch_pod_schedule || []).find(p => p.pod_id === podReg.pod_id) || {};
+                        let nodeToShow = schedMatch.assigned_node_name || podState.assigned_node || "None";
+                        let modelToShow = schedMatch.model_assigned || podState.assigned_model || "None";
+                        
+                        // Enforce unconfirmed label if not scheduled/active
+                        if (schedMatch.status === "SCHEDULED") {
+                            // Already has assigned node and model
+                        } else if (schedMatch.status === "BLOCKED_COMPUTE") {
+                            nodeToShow = "BLOCKED";
+                            modelToShow = "None";
+                        } else if (schedMatch.status === "DORMANT" || stateStr === "DORMANT") {
+                            nodeToShow = "None";
+                            modelToShow = "None";
+                        } else {
+                            if (nodeToShow && nodeToShow !== "None") {
+                                if (!nodeToShow.includes("planned/unconfirmed")) {
+                                    nodeToShow = nodeToShow + " (planned/unconfirmed)";
+                                }
+                            }
+                            if (modelToShow && modelToShow !== "None") {
+                                if (!modelToShow.includes("planned/unconfirmed")) {
+                                    modelToShow = modelToShow + " (planned/unconfirmed)";
+                                }
+                            }
+                        }
+
                         const tooltipContent = `
                             <strong>${podReg.name} (${podReg.pod_id})</strong><br>
                             <em>${podReg.description}</em><br>
                             <div style="margin-top:6px;"><strong>Network:</strong> ${podReg.network_scope}</div>
-                            <div><strong>Secrets:</strong> ${podReg.secret_access.join(", ") || "None"}</div>
+                            <div><strong>Secrets:</strong> ${podReg["secret_access"].join(", ") || "None"}</div>
                             <div><strong>Controls:</strong> ${podReg.control_families.join(", ")}</div>
-                            <div><strong>Assigned Node:</strong> ${podState.assigned_node || "None"}</div>
-                            <div><strong>Assigned Model:</strong> ${podState.assigned_model || "None"}</div>
+                            <div><strong>Assigned Node:</strong> ${nodeToShow}</div>
+                            <div><strong>Assigned Model:</strong> ${modelToShow}</div>
                             ${blockersHtml}
                             ${evidenceHtml}
                         `;
@@ -3555,22 +4212,28 @@ def get_dashboard():
                         }
                         
                         const podCard = document.createElement("div");
-                        podCard.className = cardClass;
+                        podCard.className = `pod-card ${cardClass}`;
                         podCard.id = `pod-card-${podReg.pod_id}`;
                         podCard.innerHTML = `
-                            ${iconHtml}
-                            <div class="pod-card-header">
-                                <span class="pod-title">${podReg.name}</span>
-                                <span class="pod-state-pill" style="${statePillStyle}">${stateStr}</span>
+                            <div class="pod-core"></div>
+                            <div class="pod-animation-ring"></div>
+                            <div class="pod-card-header" style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                                <span class="pod-title" style="font-weight:700; color:#fff; font-size:12px;">${podReg.name}</span>
+                                <span class="pod-state-pill badge" style="${statePillStyle}; font-size:9px; padding:2px 6px;">${stateStr}</span>
                             </div>
-                            <div style="font-size:11px; color:var(--text-secondary); line-height:1.4; margin-bottom:8px;">
-                                ${podState.mission || podReg.description}
+                            <div style="font-size:10px; color:var(--hoch-muted); line-height:1.3; margin:4px 0 8px 0; min-height:26px;">
+                                ${podReg.description}
                             </div>
-                            <div style="display:flex; justify-content:space-between; font-size:10px; color:rgba(255,255,255,0.4);">
-                                <span>Model: ${podState.assigned_model ? podState.assigned_model.split('/').pop() : "None"}</span>
-                                <span>Node: ${podState.assigned_node || "None"}</span>
+                            <div style="font-size:9px; color:var(--text-secondary); margin-bottom: 2px;">
+                                <strong>Mission:</strong> ${podState.mission || "None"}
                             </div>
-                            <div class="pod-tooltip">
+                            <div style="font-size:9px; color:var(--text-secondary); margin-bottom: 2px;">
+                                <strong>Model:</strong> ${modelToShow ? modelToShow.split('/').pop() : "None"}
+                            </div>
+                            <div style="font-size:9px; color:var(--text-secondary);">
+                                <strong>Node:</strong> ${nodeToShow}
+                            </div>
+                            <div class="pod-tooltip pod-popover">
                                 ${tooltipContent}
                             </div>
                         `;
@@ -3591,6 +4254,53 @@ def get_dashboard():
                     } else {
                         schedulerFreshnessBadge.classList.add("badge-fail");
                     }
+                }
+
+                // Populate Node Cards Matrix and Compute Rail Pool cards
+                const computeRail = document.getElementById("hoch-pods-compute-rail");
+                const matrixContainer = document.getElementById("hoch-nodes-card-matrix");
+                if (data.hoch_compute_nodes) {
+                    if (computeRail) computeRail.innerHTML = "";
+                    if (matrixContainer) matrixContainer.innerHTML = "";
+                    
+                    data.hoch_compute_nodes.forEach(node => {
+                        const health = (data.hoch_compute_node_health || []).find(h => h.node_id === node.node_id) || {};
+                        const nodeStatus = health.status || node.status;
+                        const statusClass = nodeStatus === "ONLINE" ? "status-online" : (nodeStatus === "DEGRADED" ? "status-degraded" : "status-offline");
+                        
+                        const cpu = health.cpu_count ? `${health.cpu_count} Cores` : node.cpu_class || "N/A";
+                        const ram = health.memory_gb ? `${health.memory_gb}GB` : node.memory_gb || "N/A";
+                        const assignedPods = (data.hoch_pod_schedule || []).filter(p => p.assigned_node_id === node.node_id && p.status === "SCHEDULED").map(p => p.pod_id.replace('pod-', '')).join(", ") || "None";
+
+                        const cardHtml = `
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; width:100%;">
+                                <strong style="color:#fff; font-size:12px;">${node.display_name}</strong>
+                                <span class="badge ${nodeStatus === 'ONLINE' ? 'badge-pass' : (nodeStatus === 'DEGRADED' ? 'badge-warn' : 'badge-fail')}" style="font-size:8px; padding:1px 4px;">${nodeStatus}</span>
+                            </div>
+                            <div style="font-size:10px; color:var(--text-secondary); line-height:1.4;">
+                                <div><strong>Role:</strong> ${node.role}</div>
+                                <div><strong>Zone:</strong> ${node.zone || node.network_zone}</div>
+                                <div><strong>Specs:</strong> ${cpu} / ${ram}</div>
+                                <div><strong>Pods:</strong> <span style="color:var(--hoch-cyan);">${assignedPods}</span></div>
+                            </div>
+                        `;
+
+                        if (computeRail) {
+                            const railCard = document.createElement("div");
+                            railCard.className = `compute-node-card ${statusClass}`;
+                            railCard.id = `compute-rail-node-${node.node_id}`;
+                            railCard.innerHTML = cardHtml;
+                            computeRail.appendChild(railCard);
+                        }
+
+                        if (matrixContainer) {
+                            const matrixCard = document.createElement("div");
+                            matrixCard.className = `compute-node-card ${statusClass}`;
+                            matrixCard.id = `scheduler-node-card-${node.node_id}`;
+                            matrixCard.innerHTML = cardHtml;
+                            matrixContainer.appendChild(matrixCard);
+                        }
+                    });
                 }
 
                 const nodesTableBody = document.getElementById("hoch-nodes-table-body");
@@ -3666,11 +4376,11 @@ def get_dashboard():
                         const toolsHtml = p.tools_required && p.tools_required.length > 0 ? ` | Tools: <code>${p.tools_required.join(", ")}</code>` : "";
                         
                         rationaleContainer.innerHTML += `
-                            <div style="border-bottom:1px solid #111e35; padding:8px 0; margin-bottom:8px;">
+                            <div style="border-bottom:1px solid rgba(255,255,255,0.05); padding:8px 0; margin-bottom:8px;">
                                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                                    <strong style="color:var(--accent-teal); font-size:13px;">${p.pod_name} (${p.pod_id})</strong>
+                                    <strong style="color:var(--hoch-cyan); font-size:12px;">${p.pod_name} (${p.pod_id})</strong>
                                     <span>
-                                        <span style="color:${statusColor}; font-weight:bold; font-size:11px;">[${p.status}]</span>
+                                        <span style="color:${statusColor}; font-weight:bold; font-size:10px;">[${p.status}]</span>
                                         ${secretsHtml}
                                     </span>
                                 </div>
@@ -3684,11 +4394,64 @@ def get_dashboard():
                         `;
                     });
                 }
+
+                if (isFirstLoad) {
+                    setTimeout(runLaunchSequence, 100);
+                    isFirstLoad = false;
+                }
             } catch (err) {
                 console.error("Failed to load dashboard data:", err);
             }
         }
         
+        let isFirstLoad = true;
+
+        function runLaunchSequence() {
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                return;
+            }
+            
+            const surface = document.getElementById("hoch-pods-command-surface");
+            if (surface) {
+                surface.style.opacity = "0";
+                surface.style.transition = "opacity 0.8s ease-out";
+                setTimeout(() => {
+                    surface.style.opacity = "1";
+                }, 100);
+            }
+            
+            const podCards = document.querySelectorAll(".pod-capsule");
+            podCards.forEach((card, idx) => {
+                card.style.opacity = "0";
+                card.style.transform = "scale(0.9)";
+                card.style.transition = "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)";
+                setTimeout(() => {
+                    card.style.opacity = "1";
+                    card.style.transform = "scale(1)";
+                }, 400 + idx * 80);
+            });
+            
+            const nodeCards = document.querySelectorAll(".compute-node-card");
+            nodeCards.forEach((card, idx) => {
+                card.style.opacity = "0";
+                card.style.transform = "translateY(10px)";
+                card.style.transition = "all 0.4s ease-out";
+                setTimeout(() => {
+                    card.style.opacity = "1";
+                    card.style.transform = "translateY(0)";
+                }, 800 + idx * 60);
+            });
+            
+            const rails = document.querySelectorAll(".topo-trust-rail");
+            rails.forEach((rail, idx) => {
+                rail.style.width = "0";
+                rail.style.transition = "width 0.5s ease-in-out";
+                setTimeout(() => {
+                    rail.style.width = "100%";
+                }, 200 + idx * 100);
+            });
+        }
+
         loadData();
         setInterval(loadData, 5000);
     </script>

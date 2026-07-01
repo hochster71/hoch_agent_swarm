@@ -26,7 +26,11 @@ def run_audit():
     with open(REGISTRY_PATH, "r", encoding="utf-8") as f:
         projects = json.load(f)
 
-    audit_timestamp = "2026-07-01T21:00:00+00:00Z"
+    from datetime import timezone
+    audit_timestamp = datetime.now(timezone.utc).isoformat()
+    # ensure it ends with Z (some isoformat calls do or don't append it depending on tz info)
+    if not audit_timestamp.endswith("Z"):
+        audit_timestamp += "Z"
     findings = []
     
     for proj in projects:

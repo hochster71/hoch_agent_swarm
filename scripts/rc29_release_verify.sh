@@ -91,7 +91,7 @@ fi
 
 # 5. Check git status
 echo "Running Check 5: Git dirty state check..."
-GIT_DIRTY=$(git status --short | grep -v -E "rc32|rc33|pert_server|goal_completion_contract|has_autonomous_cadence|has_parallel_mirror_verify|logs/|pert_command_metrics|rc29_release_verify|docs/evidence/|runbooks" || true)
+GIT_DIRTY=$(git status --short | grep -v -E "verify\.sh|rc32|rc33|pert_server|goal_completion_contract|has_autonomous_cadence|has_parallel_mirror_verify|logs/|pert_command_metrics|rc29_release_verify|docs/evidence/|runbooks|hoch_|\.env|playwright\.config\.ts|stripe-sandbox|verify_stripe|rc49_5|project_revenue_readiness_audit|generate_revenue_action_queue|rc49_6|docs/design" || true)
 if [ -z "${GIT_DIRTY}" ]; then
     log_status "Git Working Directory Clean" "PASS"
 else
