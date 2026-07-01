@@ -59,6 +59,7 @@ bash scripts/rc49_5_refresh_truth_cascade.sh
 # 2. Run Playwright E2E test suite for all cascade targets
 echo "Running Playwright E2E cascade tests..."
 npx playwright test \
+    tests/e2e/rc51-execution-approval-queue.spec.ts \
     tests/e2e/rc50_1-hoch-hasf-soccer-pipeline.spec.ts \
     tests/e2e/rc50-ai-business-structure.spec.ts \
     tests/e2e/rc49_7-compute-node-pruning.spec.ts \
@@ -81,5 +82,5 @@ echo "Running RC34 verification script..."
 bash scripts/rc34_usage_guardrail_verify.sh
 
 echo "=========================================================="
-echo "CASCADE SUCCESS: All verification gates (RC34-RC50) PASS!"
+echo "CASCADE SUCCESS: All verification gates (RC34-RC51) PASS!"
 echo "=========================================================="

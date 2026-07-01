@@ -95,7 +95,12 @@ def check_git_status():
             "rc50_1",
             "soccer",
             "project_inventory",
-            "rc45-revenue-readiness.spec.ts"
+            "rc45-revenue-readiness.spec.ts",
+            "rc51",
+            "execution_approval_queue",
+            "safe-write-policy",
+            "decision-log",
+            "simulate_execution_approval"
         ]
         
         dirty = []

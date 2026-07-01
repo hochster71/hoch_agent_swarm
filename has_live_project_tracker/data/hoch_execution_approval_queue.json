@@ -1,0 +1,264 @@
+[
+  {
+    "proposal_id": "prop-cyber-gitleaks",
+    "pod_id": "pod-cyber",
+    "pod_name": "Cyber Pod",
+    "executive_owner": "AI Security & Compliance Officer",
+    "finance_or_product_owner": "Fintech Compliance Finance Advisor",
+    "project_id": "hoch-agent-swarm",
+    "project_name": "Hoch Agent Swarm / HASF",
+    "scheduled_node": "M5-Pro-MBP",
+    "action_title": "Scan Codebase for Secrets Exposure",
+    "action_description": "Execute local GitLeaks scan on the repository to prevent unmasked secret key leakage.",
+    "action_type": "READ_ONLY",
+    "risk_level": "LOW",
+    "execution_mode": "SAFE",
+    "approval_required": false,
+    "approval_status": "APPROVED",
+    "allowed_without_approval": true,
+    "blocked_reason": "",
+    "affected_paths": [
+      "/"
+    ],
+    "affected_services": [
+      "git-leaks"
+    ],
+    "external_impact": "None (local process run only)",
+    "secret_access_required": false,
+    "network_access_required": false,
+    "rollback_plan": "Not required for read-only static scanning.",
+    "verification_plan": "Verify scan exit code is 0.",
+    "evidence_links": [
+      "docs/security/hoch-pods-safe-write-policy.md",
+      "docs/evidence/runtime/hoch-execution-approval-queue.md"
+    ],
+    "created_at": "2026-07-01T23:43:01.144126Z",
+    "last_verified_at": "2026-07-01T23:43:01.144126Z",
+    "freshness_status": "FRESH"
+  },
+  {
+    "proposal_id": "prop-qa-playwright",
+    "pod_id": "pod-qa",
+    "pod_name": "QA Pod",
+    "executive_owner": "AI QA & Release Authority",
+    "finance_or_product_owner": "Revenue Evidence Collector",
+    "project_id": "hoch-agent-swarm",
+    "project_name": "Hoch Agent Swarm / HASF",
+    "scheduled_node": "M5-Pro-MBP",
+    "action_title": "Run Local Playwright Integration Suite",
+    "action_description": "Run local E2E specs tests verifying telemetry cockpit panels.",
+    "action_type": "LOCAL_SAFE_WRITE",
+    "risk_level": "LOW",
+    "execution_mode": "SAFE",
+    "approval_required": false,
+    "approval_status": "APPROVED",
+    "allowed_without_approval": true,
+    "blocked_reason": "",
+    "affected_paths": [
+      "tests/e2e/"
+    ],
+    "affected_services": [
+      "playwright"
+    ],
+    "external_impact": "None (local browser automation test)",
+    "secret_access_required": false,
+    "network_access_required": false,
+    "rollback_plan": "Not required for local stateless tests.",
+    "verification_plan": "Inspect HTML run reports for 0 failures.",
+    "evidence_links": [
+      "docs/security/hoch-pods-safe-write-policy.md",
+      "docs/evidence/runtime/hoch-execution-approval-queue.md"
+    ],
+    "created_at": "2026-07-01T23:43:01.144126Z",
+    "last_verified_at": "2026-07-01T23:43:01.144126Z",
+    "freshness_status": "FRESH"
+  },
+  {
+    "proposal_id": "prop-builder-compile",
+    "pod_id": "pod-builder",
+    "pod_name": "Builder Pod",
+    "executive_owner": "AI Technical Director",
+    "finance_or_product_owner": "None",
+    "project_id": "hoch-agent-swarm",
+    "project_name": "Hoch Agent Swarm / HASF",
+    "scheduled_node": "M5-Pro-MBP",
+    "action_title": "TypeScript Production Build Compilation",
+    "action_description": "Compile the production bundle and generate type-checking reports.",
+    "action_type": "LOCAL_SAFE_WRITE",
+    "risk_level": "MEDIUM",
+    "execution_mode": "SAFE",
+    "approval_required": true,
+    "approval_status": "PENDING",
+    "allowed_without_approval": false,
+    "blocked_reason": "",
+    "affected_paths": [
+      "backend/"
+    ],
+    "affected_services": [
+      "tsc",
+      "vite"
+    ],
+    "external_impact": "Generates static build bundle on node filesystem.",
+    "secret_access_required": false,
+    "network_access_required": false,
+    "rollback_plan": "Clean target dist/ folder and rebuild from source.",
+    "verification_plan": "Run build artifacts and check presence of main.js.",
+    "evidence_links": [
+      "docs/security/hoch-pods-safe-write-policy.md",
+      "docs/evidence/runtime/hoch-execution-approval-queue.md"
+    ],
+    "created_at": "2026-07-01T23:43:01.144126Z",
+    "last_verified_at": "2026-07-01T23:43:01.144126Z",
+    "freshness_status": "FRESH"
+  },
+  {
+    "proposal_id": "prop-revenue-stripe",
+    "pod_id": "pod-revenue",
+    "pod_name": "Revenue Pod",
+    "executive_owner": "AI Chief Financial Officer \u2014 HASF Finance Manager",
+    "finance_or_product_owner": "Stripe Monetization Controller",
+    "project_id": "hoch-hasf-soccer",
+    "project_name": "HOCH HASF Soccer Intelligence Platform",
+    "scheduled_node": "M5-Pro-MBP",
+    "action_title": "Stripe Live Key Sandbox Initialization",
+    "action_description": "Provision live API keys for HOCH HASF Soccer monetization pipeline.",
+    "action_type": "STRIPE_LIVE_CONFIG",
+    "risk_level": "CRITICAL",
+    "execution_mode": "UNSAFE",
+    "approval_required": true,
+    "approval_status": "PENDING",
+    "allowed_without_approval": false,
+    "blocked_reason": "Stripe live configurations always require explicit Michael Hoch approval",
+    "affected_paths": [
+      ".env"
+    ],
+    "affected_services": [
+      "stripe-cli"
+    ],
+    "external_impact": "Configures live payment gateway settings.",
+    "secret_access_required": true,
+    "network_access_required": false,
+    "rollback_plan": "Remove secret live keys and restore backup env template.",
+    "verification_plan": "Verify Stripe signature check validates locally.",
+    "evidence_links": [
+      "docs/security/hoch-pods-safe-write-policy.md",
+      "docs/evidence/runtime/hoch-execution-approval-queue.md"
+    ],
+    "created_at": "2026-07-01T23:43:01.144126Z",
+    "last_verified_at": "2026-07-01T23:43:01.144126Z",
+    "freshness_status": "FRESH"
+  },
+  {
+    "proposal_id": "prop-deploy-vercel",
+    "pod_id": "pod-deploy",
+    "pod_name": "Deploy Pod",
+    "executive_owner": "AI Chief Operating Officer \u2014 HAS Commander",
+    "finance_or_product_owner": "None",
+    "project_id": "epic-fury-2026",
+    "project_name": "Epic Fury 2026",
+    "scheduled_node": "M5-Pro-MBP",
+    "action_title": "Deploy Production Image to Cloud Run",
+    "action_description": "Trigger Docker build and deploy to Vercel/Cloud Run for Epic Fury 2026.",
+    "action_type": "DEPLOYMENT",
+    "risk_level": "CRITICAL",
+    "execution_mode": "UNSAFE",
+    "approval_required": true,
+    "approval_status": "PENDING",
+    "allowed_without_approval": false,
+    "blocked_reason": "Deployments to production environments always require Michael Hoch signature",
+    "affected_paths": [
+      "Dockerfile",
+      "vercel.json"
+    ],
+    "affected_services": [
+      "docker-cli",
+      "vercel-cli"
+    ],
+    "external_impact": "Releases new application version to public internet domain.",
+    "secret_access_required": true,
+    "network_access_required": true,
+    "rollback_plan": "Revert to previous working deployment tag version.",
+    "verification_plan": "Run staging health probe checking endpoint return 200.",
+    "evidence_links": [
+      "docs/security/hoch-pods-safe-write-policy.md",
+      "docs/evidence/runtime/hoch-execution-approval-queue.md"
+    ],
+    "created_at": "2026-07-01T23:43:01.144126Z",
+    "last_verified_at": "2026-07-01T23:43:01.144126Z",
+    "freshness_status": "FRESH"
+  },
+  {
+    "proposal_id": "prop-research-scrape",
+    "pod_id": "pod-research",
+    "pod_name": "Research Pod",
+    "executive_owner": "AI Product Officer",
+    "finance_or_product_owner": "HASF Product Finance Manager",
+    "project_id": "hoch-hasf-soccer",
+    "project_name": "HOCH HASF Soccer Intelligence Platform",
+    "scheduled_node": "None",
+    "action_title": "Web Scrape Soccer Training Metadata",
+    "action_description": "Perform bulk scraping of external coaching sites to update recommended drills.",
+    "action_type": "NETWORK_WRITE",
+    "risk_level": "HIGH",
+    "execution_mode": "SAFE",
+    "approval_required": true,
+    "approval_status": "PENDING",
+    "allowed_without_approval": false,
+    "blocked_reason": "External network write actions require administrative sign-off",
+    "affected_paths": [
+      "has_live_project_tracker/data/"
+    ],
+    "affected_services": [
+      "fetch-url"
+    ],
+    "external_impact": "Sends outgoing HTTP requests to target remote APIs.",
+    "secret_access_required": false,
+    "network_access_required": true,
+    "rollback_plan": "Wipe scraped json records cache.",
+    "verification_plan": "Run json structure validity linter.",
+    "evidence_links": [
+      "docs/security/hoch-pods-safe-write-policy.md",
+      "docs/evidence/runtime/hoch-execution-approval-queue.md"
+    ],
+    "created_at": "2026-07-01T23:43:01.144126Z",
+    "last_verified_at": "2026-07-01T23:43:01.144126Z",
+    "freshness_status": "FRESH"
+  },
+  {
+    "proposal_id": "prop-audit-purge",
+    "pod_id": "pod-audit",
+    "pod_name": "Audit Pod",
+    "executive_owner": "AI Chief of Staff",
+    "finance_or_product_owner": "None",
+    "project_id": "None",
+    "project_name": "None",
+    "scheduled_node": "M5-Pro-MBP",
+    "action_title": "Purge Historical Database Log Archives",
+    "action_description": "Delete sqlite3 database logs older than 90 days.",
+    "action_type": "DESTRUCTIVE",
+    "risk_level": "CRITICAL",
+    "execution_mode": "UNSAFE",
+    "approval_required": true,
+    "approval_status": "REJECTED",
+    "allowed_without_approval": false,
+    "blocked_reason": "Destructive database purge actions are denied by default under safe-write policy",
+    "affected_paths": [
+      "has_live_project_tracker/data/global_project_registry.sqlite"
+    ],
+    "affected_services": [
+      "sqlite3-cli"
+    ],
+    "external_impact": "Irreversible loss of local historical telemetry data.",
+    "secret_access_required": false,
+    "network_access_required": false,
+    "rollback_plan": "Restore database backup snapshot.",
+    "verification_plan": "Verify row count matching.",
+    "evidence_links": [
+      "docs/security/hoch-pods-safe-write-policy.md",
+      "docs/evidence/runtime/hoch-execution-approval-queue.md"
+    ],
+    "created_at": "2026-07-01T23:43:01.144126Z",
+    "last_verified_at": "2026-07-01T23:43:01.144126Z",
+    "freshness_status": "FRESH"
+  }
+]

@@ -1461,6 +1461,15 @@ def get_pert_data():
         except Exception:
             pass
 
+    approval_queue_data = []
+    approval_queue_file = os.path.join(get_project_root(), "has_live_project_tracker", "data", "hoch_execution_approval_queue.json")
+    if os.path.exists(approval_queue_file):
+        try:
+            with open(approval_queue_file, "r") as f:
+                approval_queue_data = json.load(f)
+        except Exception:
+            pass
+
     # AI leadership registry freshness
     ai_leadership_freshness_state = "FRESH"
     ai_leadership_freshness_reason = "None"
@@ -1511,6 +1520,45 @@ def get_pert_data():
         except Exception as e:
             roi_model_freshness_state = "UNKNOWN"
             roi_model_freshness_reason = str(e)
+
+    # Approval queue freshness (RC51)
+    approval_queue_state = "FRESH"
+    approval_queue_reason = "None"
+    execution_authority_status = "HEALTHY"
+
+    if not os.path.exists(approval_queue_file):
+        approval_queue_state = "DEGRADED"
+        approval_queue_reason = "Execution approval queue JSON is missing"
+        execution_authority_status = "DEGRADED"
+    else:
+        try:
+            queue_mtime = os.path.getmtime(approval_queue_file)
+            
+            # Check pod schedule
+            pod_schedule_file = os.path.join(get_project_root(), "has_live_project_tracker", "data", "hoch_pod_schedule.json")
+            if os.path.exists(pod_schedule_file):
+                sched_mtime = os.path.getmtime(pod_schedule_file)
+                if queue_mtime < sched_mtime:
+                    approval_queue_state = "STALE"
+                    approval_queue_reason = "Approval queue is older than the latest pod schedule"
+                    execution_authority_status = "STALE"
+
+            # Check AI executive leadership registry
+            if os.path.exists(ai_leadership_file):
+                lead_mtime = os.path.getmtime(ai_leadership_file)
+                if queue_mtime < lead_mtime:
+                    approval_queue_state = "STALE"
+                    approval_queue_reason = "Approval queue is older than the latest executive leadership registry"
+                    execution_authority_status = "STALE"
+        except Exception as e:
+            approval_queue_state = "UNKNOWN"
+            approval_queue_reason = str(e)
+            execution_authority_status = "UNKNOWN"
+
+    panels_freshness["hoch_execution_approval"] = {
+        "freshness_state": approval_queue_state,
+        "stale_reason": approval_queue_reason
+    }
 
     panels_freshness["ai_executive_leadership"] = {
         "freshness_state": ai_leadership_freshness_state,
@@ -1803,7 +1851,10 @@ def get_pert_data():
         "hoch_hasf_soccer_product_model": soccer_product_model,
         "project_revenue_readiness_results": inv_data if "inv_data" in locals() else [],
         "hoch_hasf_soccer_audit_freshness": panels_freshness.get("hoch_hasf_soccer_audit", {}),
-        "hoch_hasf_soccer_product_model_freshness": panels_freshness.get("hoch_hasf_soccer_product_model", {})
+        "hoch_hasf_soccer_product_model_freshness": panels_freshness.get("hoch_hasf_soccer_product_model", {}),
+        "hoch_execution_approval_queue": approval_queue_data,
+        "execution_approval_freshness": panels_freshness.get("hoch_execution_approval", {}),
+        "execution_authority_status": execution_authority_status
     }
 
 @app.get("/view-doc", response_class=HTMLResponse)
@@ -3333,6 +3384,46 @@ def get_dashboard():
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- 6. Swarm Execution Approval Queue Panel (RC51) -->
+            <div class="card" id="hoch-execution-approval-panel" style="background: var(--hoch-panel); border: 2px solid var(--hoch-border); border-radius: 16px; padding: 20px; box-shadow: 0 0 30px rgba(34, 246, 255, 0.05); position: relative; overflow: hidden; box-sizing: border-box; grid-column: span 2; margin-top: 20px;">
+                <h3 style="margin-top:0; color:var(--hoch-cyan); display:flex; justify-content:space-between; align-items:center;">
+                    <span>🛡️ Autonomous Execution Approval Queue & Safe Write Gates</span>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <span style="font-size:11px; color:var(--hoch-muted);">Authority:</span>
+                        <span id="execution-authority-badge" class="badge">UNKNOWN</span>
+                        <span id="approval-queue-freshness-badge" class="badge">UNKNOWN</span>
+                    </div>
+                </h3>
+
+                <div style="background: rgba(255, 176, 32, 0.05); border: 1px solid var(--hoch-amber); padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 11px; line-height: 1.4;">
+                    🔒 <strong>Zero-Trust Write Gate Guardrails Active:</strong> Destructive commands are blocked-by-default. All external network writes, Stripe configurations, repository commits, and deployments require explicit sign-off by **Michael Hoch (Founder & Owner)**. Read-only and local safe writes are allowed with staged evidence.
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <!-- Left Column: Active Proposals Queue -->
+                    <div style="display:flex; flex-direction:column; gap:12px;">
+                        <h4 style="margin-top:0; color:var(--hoch-cyan); border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:8px; font-size:13px;">Active Proposals & Sign-off State</h4>
+                        <div id="execution-proposals-container" style="display:flex; flex-direction:column; gap:12px; max-height:450px; overflow-y:auto; padding-right:5px;">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Quarantined & Blocked Actions -->
+                    <div style="display:flex; flex-direction:column; gap:12px; background:rgba(0,0,0,0.15); border:1px solid rgba(255, 59, 92, 0.1); border-radius:8px; padding:15px;">
+                        <h4 style="margin-top:0; color:var(--hoch-red); border-bottom:1px solid rgba(255,59,92,0.15); padding-bottom:8px; font-size:13px;">Quarantined & Policies Blocked Actions</h4>
+                        <div id="quarantined-actions-container" style="display:flex; flex-direction:column; gap:12px; max-height:420px; overflow-y:auto; padding-right:5px;">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer with Policy Links -->
+                <div style="margin-top:20px; border-top:1px solid rgba(255,255,255,0.05); padding-top:12px; font-size:10px; display:flex; justify-content:space-between; color:var(--hoch-muted);">
+                    <div>Policy: <a href="/view-doc?path=docs/security/hoch-pods-safe-write-policy.md" style="color:var(--hoch-cyan); text-decoration:underline;" target="_blank">Safe Write Policy (NIST-AC-6)</a></div>
+                    <div>Log: <a href="/view-doc?path=docs/evidence/runtime/execution-approval-decision-log.md" style="color:var(--hoch-cyan); text-decoration:underline;" target="_blank">Decision Log</a></div>
                 </div>
             </div>
             
@@ -5011,6 +5102,114 @@ def get_dashboard():
                 const soccerNextAction = document.getElementById("soccer-next-action-val");
                 if (soccerNextAction) {
                     soccerNextAction.textContent = soccerProj.next_critical_action || "Run HASF onboarding audit and classify build/deploy/security gaps";
+                }
+
+                // --- POPULATE EXECUTION APPROVAL QUEUE PANEL ---
+                if (data.execution_approval_freshness) {
+                    const badge = document.getElementById("approval-queue-freshness-badge");
+                    if (badge) {
+                        badge.textContent = data.execution_approval_freshness.freshness_state || "UNKNOWN";
+                        badge.className = "badge";
+                        if (data.execution_approval_freshness.freshness_state === "FRESH") badge.classList.add("badge-success");
+                        else if (data.execution_approval_freshness.freshness_state === "STALE") badge.classList.add("badge-warn");
+                        else badge.classList.add("badge-danger");
+                        badge.title = data.execution_approval_freshness.stale_reason || "";
+                    }
+                }
+
+                if (data.execution_authority_status) {
+                    const badge = document.getElementById("execution-authority-badge");
+                    if (badge) {
+                        badge.textContent = data.execution_authority_status || "UNKNOWN";
+                        badge.className = "badge";
+                        if (data.execution_authority_status === "HEALTHY") badge.classList.add("badge-success");
+                        else if (data.execution_authority_status === "STALE") badge.classList.add("badge-warn");
+                        else badge.classList.add("badge-danger");
+                    }
+                }
+
+                const proposalsContainer = document.getElementById("execution-proposals-container");
+                const quarantinedContainer = document.getElementById("quarantined-actions-container");
+
+                if (proposalsContainer && quarantinedContainer && data.hoch_execution_approval_queue) {
+                    proposalsContainer.innerHTML = "";
+                    quarantinedContainer.innerHTML = "";
+
+                    data.hoch_execution_approval_queue.forEach(p => {
+                        // Risk color
+                        let riskColor = "var(--hoch-cyan)";
+                        let riskBorder = "rgba(255,255,255,0.05)";
+                        if (p.risk_level === "CRITICAL") {
+                            riskColor = "var(--hoch-red)";
+                            riskBorder = "1px solid var(--hoch-red)";
+                        } else if (p.risk_level === "HIGH") {
+                            riskColor = "var(--hoch-amber)";
+                        } else if (p.risk_level === "MEDIUM") {
+                            riskColor = "var(--hoch-yellow)";
+                        } else {
+                            riskColor = "var(--hoch-green)";
+                        }
+
+                        // Status pill style
+                        let statusClass = "badge-warn";
+                        if (p.approval_status === "APPROVED") statusClass = "badge-success";
+                        else if (p.approval_status === "REJECTED") statusClass = "badge-danger";
+                        else if (p.approval_status === "NEEDS_MORE_EVIDENCE") statusClass = "badge-purple";
+
+                        // Sign-off requirements text
+                        let signOffText = "";
+                        if (p.action_type === "STRIPE_LIVE_CONFIG" || p.action_type === "DEPLOYMENT") {
+                            signOffText = `<span style="color:var(--hoch-red); font-weight:bold; font-size:10px;">👑 Michael Hoch Sign-off REQUIRED</span>`;
+                        } else if (p.action_type === "REPO_WRITE" || p.action_type === "NETWORK_WRITE" || p.action_type === "SECRET_ACCESS") {
+                            signOffText = `<span style="color:var(--hoch-amber); font-size:10px;">⚠️ Role approval required (${p.executive_owner})</span>`;
+                        } else {
+                            signOffText = `<span style="color:var(--hoch-green); font-size:10px;">✓ Autonomous (Read-only/Safe Local Write)</span>`;
+                        }
+
+                        const cardHtml = `
+                            <div class="proposal-card" style="background: rgba(5,7,13,0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 12px; font-size: 11px; display:flex; flex-direction:column; gap:6px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <span style="font-family:monospace; color:var(--hoch-muted); font-size:10px;">${p.proposal_id} (${p.pod_name})</span>
+                                    <span class="badge ${statusClass}">${p.approval_status}</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:6px;">
+                                    <strong style="color:#fff; font-size:12px;">${p.action_title}</strong>
+                                    <span class="badge" style="background:rgba(255,255,255,0.05); color:${riskColor}; border:${riskBorder}; font-size:9px;">${p.risk_level} RISK</span>
+                                </div>
+                                <div style="color:var(--text-secondary); line-height:1.4;">
+                                    ${p.action_description}
+                                </div>
+                                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; color:var(--hoch-muted); font-size:10px; margin-top:4px;">
+                                    <div>Type: <code style="color:#fff;">${p.action_type}</code></div>
+                                    <div>Node: <code style="color:#fff;">${p.scheduled_node}</code></div>
+                                    <div>Project: <span style="color:#fff;">${p.project_name}</span></div>
+                                    <div>Mode: <code style="color:#fff;">${p.execution_mode}</code></div>
+                                </div>
+                                <div style="background:rgba(0,0,0,0.2); padding:8px; border-radius:4px; font-size:10px; color:var(--hoch-muted); display:flex; flex-direction:column; gap:4px; margin-top:4px;">
+                                    <div>↩ <strong>Rollback Plan:</strong> ${p.rollback_plan}</div>
+                                    <div>✓ <strong>Verification:</strong> ${p.verification_plan}</div>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px; border-top:1px solid rgba(255,255,255,0.05); padding-top:6px;">
+                                    ${signOffText}
+                                    ${p.blocked_reason ? `<span style="color:var(--hoch-red); font-style:italic; font-size:10px;">Blocked: ${p.blocked_reason}</span>` : ""}
+                                </div>
+                            </div>
+                        `;
+
+                        // Categorize
+                        if (p.action_type === "DESTRUCTIVE" || p.approval_status === "REJECTED") {
+                            quarantinedContainer.innerHTML += cardHtml;
+                        } else {
+                            proposalsContainer.innerHTML += cardHtml;
+                        }
+                    });
+
+                    if (proposalsContainer.innerHTML === "") {
+                        proposalsContainer.innerHTML = `<div style="color:var(--hoch-muted); text-align:center; padding:20px;">No active proposals.</div>`;
+                    }
+                    if (quarantinedContainer.innerHTML === "") {
+                        quarantinedContainer.innerHTML = `<div style="color:var(--hoch-muted); text-align:center; padding:20px;">No quarantined actions.</div>`;
+                    }
                 }
 
                 if (isFirstLoad) {
