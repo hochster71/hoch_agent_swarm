@@ -1345,6 +1345,72 @@ def get_pert_data():
         "stale_reason": pods_freshness_reason
     }
 
+    # Load HOCH PODS scheduler and compute node data
+    hoch_comp_nodes = []
+    hoch_comp_health = []
+    hoch_pod_sched = []
+    
+    comp_nodes_file = os.path.join(get_project_root(), "has_live_project_tracker", "data", "hoch_compute_nodes.json")
+    comp_health_file = os.path.join(get_project_root(), "has_live_project_tracker", "data", "hoch_compute_node_health.json")
+    pod_sched_file = os.path.join(get_project_root(), "has_live_project_tracker", "data", "hoch_pod_schedule.json")
+    
+    sched_exists = os.path.exists(comp_nodes_file) and os.path.exists(comp_health_file) and os.path.exists(pod_sched_file)
+    
+    if os.path.exists(comp_nodes_file):
+        try:
+            with open(comp_nodes_file, "r") as f:
+                hoch_comp_nodes = json.load(f)
+        except Exception:
+            pass
+            
+    if os.path.exists(comp_health_file):
+        try:
+            with open(comp_health_file, "r") as f:
+                hoch_comp_health = json.load(f)
+        except Exception:
+            pass
+            
+    if os.path.exists(pod_sched_file):
+        try:
+            with open(pod_sched_file, "r") as f:
+                hoch_pod_sched = json.load(f)
+        except Exception:
+            pass
+
+    # Scheduler freshness logic
+    sched_freshness_state = "FRESH"
+    sched_freshness_reason = "None"
+    
+    if not sched_exists:
+        sched_freshness_state = "DEGRADED"
+        sched_freshness_reason = "HOCH Compute registry, health or schedule JSON is missing"
+    else:
+        try:
+            health_mtime = os.path.getmtime(comp_health_file)
+            sched_mtime = os.path.getmtime(pod_sched_file)
+            pods_mtime_val = os.path.getmtime(pods_state_file) if os.path.exists(pods_state_file) else 0
+            
+            # Check if health data is older than 600s
+            time_now = datetime.now().timestamp()
+            if time_now - health_mtime > 600.0:
+                sched_freshness_state = "STALE"
+                sched_freshness_reason = "Compute node health data is stale (>600s)"
+            # Check if schedule is older than runtime state or node health
+            elif sched_mtime < pods_mtime_val:
+                sched_freshness_state = "STALE"
+                sched_freshness_reason = "Pod schedule is older than pod runtime state"
+            elif sched_mtime < health_mtime:
+                sched_freshness_state = "STALE"
+                sched_freshness_reason = "Pod schedule is older than node health"
+        except Exception as e:
+            sched_freshness_state = "UNKNOWN"
+            sched_freshness_reason = f"Error: {e}"
+
+    panels_freshness["hoch_pod_scheduler"] = {
+        "freshness_state": sched_freshness_state,
+        "stale_reason": sched_freshness_reason
+    }
+
     # Handle fake status fail / No Fake Telemetry Audit fails
     is_fake_failed = (guardrails["fake_status_violations"] > 0 or metrics.get("no_fake_status_violations", 0) > 0)
     if is_fake_failed:
@@ -1508,7 +1574,10 @@ def get_pert_data():
         "project_inventory": inv_data if "inv_data" in locals() else [],
         "revenue_action_queue": action_queue,
         "hoch_pods_registry": hoch_pods_reg,
-        "hoch_pods_runtime_state": hoch_pods_state
+        "hoch_pods_runtime_state": hoch_pods_state,
+        "hoch_compute_nodes": hoch_comp_nodes,
+        "hoch_compute_node_health": hoch_comp_health,
+        "hoch_pod_schedule": hoch_pod_sched
     }
 
 @app.get("/view-doc", response_class=HTMLResponse)
@@ -2227,6 +2296,45 @@ def get_dashboard():
                 <div class="topo-box" style="border-style: dashed; opacity: 0.7;">
                     <div class="topo-box-title">Remote Docker/VPS</div>
                     <div class="topo-zone">Optional Remote Zone</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HOCH PODS Scheduler and Compute Node Matrix -->
+        <div class="card col-12" id="hoch-pod-scheduler-panel">
+            <h3 style="margin-top:0; display:flex; justify-content:space-between; align-items:center;">
+                <span>HOCH PODS Compute Scheduler & Node Health Authority</span>
+                <span id="hoch-scheduler-freshness-badge" class="badge">UNKNOWN</span>
+            </h3>
+            
+            <div style="margin-bottom: 15px; font-size: 12px; color: var(--text-secondary);">
+                Evidence Links: 
+                <a href="/view-doc?path=docs/evidence/runtime/hoch-compute-node-health.md" style="color: var(--accent-teal); text-decoration: underline;" target="_blank">Compute Node Health Evidence</a> | 
+                <a href="/view-doc?path=docs/evidence/runtime/hoch-pod-scheduler-evidence.md" style="color: var(--accent-teal); text-decoration: underline;" target="_blank">Pod Placement Scheduler Evidence</a>
+            </div>
+
+            <div style="overflow-x:auto;">
+                <table style="width:100%; border-collapse:collapse; margin-bottom: 20px;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid #111e35; text-align: left;">
+                            <th style="padding:10px; color:var(--accent-teal);">Node ID</th>
+                            <th style="padding:10px; color:var(--accent-teal);">Type / Role</th>
+                            <th style="padding:10px; color:var(--accent-teal);">Zone</th>
+                            <th style="padding:10px; color:var(--accent-teal);">Resources</th>
+                            <th style="padding:10px; color:var(--accent-teal);">Status / Telemetry</th>
+                            <th style="padding:10px; color:var(--accent-teal);">Assigned Pods</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hoch-nodes-table-body" style="font-size:12px;">
+                        <!-- Populated dynamically via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="background:#050b14; border:1px solid #111e35; padding:15px; border-radius:4px;">
+                <h4 style="margin-top:0; color:var(--accent-teal);">Pod Placement & Scheduling Rationale</h4>
+                <div id="hoch-scheduler-rationale-container" style="font-size:12px; line-height:1.5;">
+                    <!-- Populated dynamically via JS -->
                 </div>
             </div>
         </div>
@@ -3467,6 +3575,113 @@ def get_dashboard():
                             </div>
                         `;
                         podsContainer.appendChild(podCard);
+                    });
+                }
+
+                // HOCH PODS Scheduler Updates
+                const schedulerFreshnessBadge = document.getElementById("hoch-scheduler-freshness-badge");
+                if (schedulerFreshnessBadge && data.freshness_authority && data.freshness_authority.panels && data.freshness_authority.panels.hoch_pod_scheduler) {
+                    const freshState = data.freshness_authority.panels.hoch_pod_scheduler.freshness_state;
+                    schedulerFreshnessBadge.textContent = freshState;
+                    schedulerFreshnessBadge.className = "badge";
+                    if (freshState === "FRESH") {
+                        schedulerFreshnessBadge.classList.add("badge-pass");
+                    } else if (freshState === "STALE") {
+                        schedulerFreshnessBadge.classList.add("badge-warn");
+                    } else {
+                        schedulerFreshnessBadge.classList.add("badge-fail");
+                    }
+                }
+
+                const nodesTableBody = document.getElementById("hoch-nodes-table-body");
+                if (nodesTableBody && data.hoch_compute_nodes) {
+                    nodesTableBody.innerHTML = "";
+                    data.hoch_compute_nodes.forEach(node => {
+                        // Find matching health record
+                        const health = (data.hoch_compute_node_health || []).find(h => h.node_id === node.node_id) || {};
+                        const nodeStatus = health.status || node.status;
+                        const statusReason = health.status_reason || "No status reason provided.";
+                        
+                        let statusColor = "var(--accent-teal)";
+                        if (nodeStatus === "DEGRADED") statusColor = "var(--accent-yellow)";
+                        if (nodeStatus === "UNKNOWN" || nodeStatus === "MANUAL_VERIFY_REQUIRED") statusColor = "var(--accent-red)";
+                        
+                        // Find assigned pods
+                        const assignedPods = (data.hoch_pod_schedule || []).filter(p => p.assigned_node_id === node.node_id && p.status === "SCHEDULED");
+                        let podsHtml = "";
+                        if (assignedPods.length > 0) {
+                            assignedPods.forEach(p => {
+                                podsHtml += `<span class="badge badge-pass" style="margin-right:4px; font-size:9px;">${p.pod_name}</span>`;
+                            });
+                        } else {
+                            podsHtml = `<span style="color:var(--text-secondary); font-style:italic;">Idle</span>`;
+                        }
+
+                        // Resources detail
+                        let cpu = node.cpu_class;
+                        let mem = node.memory_gb;
+                        let disk = node.disk_gb;
+                        if (health.cpu_count && health.cpu_count > 0) {
+                            cpu = `${health.cpu_count} Cores`;
+                        }
+                        if (health.memory_gb && health.memory_gb > 0) {
+                            mem = health.memory_gb;
+                        }
+                        if (health.disk_gb && health.disk_gb > 0) {
+                            disk = health.disk_gb;
+                        }
+                        const resourcesStr = `${cpu} / ${mem} GB RAM / ${disk} GB Disk`;
+
+                        nodesTableBody.innerHTML += `
+                            <tr style="border-top:1px solid #111e35;">
+                                <td style="padding:10px; font-weight:bold; color:var(--accent-teal);">
+                                    ${node.display_name}<br>
+                                    <span style="font-size:10px; color:var(--text-secondary); font-weight:normal;">${node.node_id}</span>
+                                </td>
+                                <td style="padding:10px;">
+                                    <strong>${node.role}</strong><br>
+                                    <span style="font-size:10px; color:var(--text-secondary); font-weight:normal;">${node.node_type}</span>
+                                </td>
+                                <td style="padding:10px; color:var(--text-secondary);">${node.network_zone}</td>
+                                <td style="padding:10px; color:var(--text-secondary);">${resourcesStr}</td>
+                                <td style="padding:10px;">
+                                    <span style="color:${statusColor}; font-weight:bold;">● ${nodeStatus}</span><br>
+                                    <span style="font-size:9px; color:var(--text-secondary);" title="${statusReason}">${statusReason.substring(0, 40)}${statusReason.length > 40 ? '...' : ''}</span>
+                                </td>
+                                <td style="padding:10px;">${podsHtml}</td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                const rationaleContainer = document.getElementById("hoch-scheduler-rationale-container");
+                if (rationaleContainer && data.hoch_pod_schedule) {
+                    rationaleContainer.innerHTML = "";
+                    data.hoch_pod_schedule.forEach(p => {
+                        let statusColor = "var(--accent-teal)";
+                        if (p.status === "BLOCKED_COMPUTE") statusColor = "var(--accent-red)";
+                        if (p.status === "DORMANT") statusColor = "var(--text-secondary)";
+                        
+                        const secretsHtml = p.secrets_exposed ? `<span style="color:var(--accent-red); margin-left:10px;">🔒 Secrets Exposed</span>` : "";
+                        const toolsHtml = p.tools_required && p.tools_required.length > 0 ? ` | Tools: <code>${p.tools_required.join(", ")}</code>` : "";
+                        
+                        rationaleContainer.innerHTML += `
+                            <div style="border-bottom:1px solid #111e35; padding:8px 0; margin-bottom:8px;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                                    <strong style="color:var(--accent-teal); font-size:13px;">${p.pod_name} (${p.pod_id})</strong>
+                                    <span>
+                                        <span style="color:${statusColor}; font-weight:bold; font-size:11px;">[${p.status}]</span>
+                                        ${secretsHtml}
+                                    </span>
+                                </div>
+                                <div style="color:var(--text-secondary); font-size:11px; margin-bottom:4px;">
+                                    Workload Class: <strong>${p.workload_class}</strong> | Model: <code>${p.model_assigned}</code>${toolsHtml}
+                                </div>
+                                <div style="font-family:monospace; font-size:10px; background:#02060c; padding:6px; border-radius:4px; color:#cbd5e1;">
+                                    ${p.justification_rationale}
+                                </div>
+                            </div>
+                        `;
                     });
                 }
             } catch (err) {

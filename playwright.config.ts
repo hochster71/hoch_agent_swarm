@@ -47,6 +47,7 @@ export default defineConfig({
     "**/rc46-revenue-action-queue.spec.ts",
     "**/rc47-epic-fury-admin-access.spec.ts",
     "**/rc48-hoch-pods-architecture.spec.ts",
+    "**/rc49-hoch-pod-scheduler.spec.ts",
   ],
   timeout: 45_000,
   fullyParallel: false,

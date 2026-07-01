@@ -1,0 +1,130 @@
+[
+  {
+    "pod_id": "pod-cyber",
+    "pod_name": "Cyber Pod",
+    "state": "EXECUTING",
+    "assigned_node_id": "m5-pro-mbp",
+    "assigned_node_name": "M5-Pro-MBP",
+    "status": "SCHEDULED",
+    "workload_class": "security",
+    "network_zone": "Management Zone",
+    "secrets_exposed": true,
+    "model_assigned": "openai/gpt-4o",
+    "tools_required": [
+      "semgrep",
+      "git-leaks",
+      "playwright",
+      "osv-scanner"
+    ],
+    "justification_rationale": "Assigned to M5-Pro-MBP. Reason: Compatible. Node status: ONLINE, matched tools: 1.",
+    "last_scheduled_at": "2026-07-01T22:15:23.043845+00:00Z"
+  },
+  {
+    "pod_id": "pod-qa",
+    "pod_name": "QA Pod",
+    "state": "POLICY_CHECK",
+    "assigned_node_id": "m5-pro-mbp",
+    "assigned_node_name": "M5-Pro-MBP",
+    "status": "SCHEDULED",
+    "workload_class": "quality",
+    "network_zone": "Management Zone",
+    "secrets_exposed": false,
+    "model_assigned": "openai/gpt-4o-mini",
+    "tools_required": [
+      "playwright",
+      "npm-test"
+    ],
+    "justification_rationale": "Assigned to M5-Pro-MBP. Reason: Compatible. Node status: ONLINE, matched tools: 2.",
+    "last_scheduled_at": "2026-07-01T22:15:23.043992+00:00Z"
+  },
+  {
+    "pod_id": "pod-builder",
+    "pod_name": "Builder Pod",
+    "state": "TOOL_BOUND",
+    "assigned_node_id": "m5-pro-mbp",
+    "assigned_node_name": "M5-Pro-MBP",
+    "status": "SCHEDULED",
+    "workload_class": "engineering",
+    "network_zone": "Management Zone",
+    "secrets_exposed": false,
+    "model_assigned": "openai/gpt-4o",
+    "tools_required": [
+      "npm-run-build",
+      "tsc"
+    ],
+    "justification_rationale": "Assigned to M5-Pro-MBP. Reason: Compatible. Node status: ONLINE, matched tools: 1.",
+    "last_scheduled_at": "2026-07-01T22:15:23.043999+00:00Z"
+  },
+  {
+    "pod_id": "pod-revenue",
+    "pod_name": "Revenue Pod",
+    "state": "EVIDENCE_WRITING",
+    "assigned_node_id": "None",
+    "assigned_node_name": "None",
+    "status": "BLOCKED_COMPUTE",
+    "workload_class": "monetization",
+    "network_zone": "None",
+    "secrets_exposed": false,
+    "model_assigned": "openai/gpt-4o",
+    "tools_required": [
+      "stripe-cli",
+      "curl"
+    ],
+    "justification_rationale": "Scheduling blocked. Constraints violated on all candidate nodes: M5-Pro-MBP: Tool mismatch: node lacks required tools ['stripe-cli', 'curl'].; M4-MBP: Workload mismatch: pod domain 'monetization' not allowed on node.; iMac-24: Workload mismatch: pod domain 'monetization' not allowed on node.; Dell-Neo: Workload mismatch: pod domain 'monetization' not allowed on node.; Local-Models: Workload mismatch: pod domain 'monetization' not allowed on node.; Docker-Runtime: Workload mismatch: pod domain 'monetization' not allowed on node.; Optional-Remote-VPS: Workload mismatch: pod domain 'monetization' not allowed on node.",
+    "last_scheduled_at": "2026-07-01T22:15:23.044006+00:00Z"
+  },
+  {
+    "pod_id": "pod-audit",
+    "pod_name": "Audit Pod",
+    "state": "SUMMONING",
+    "assigned_node_id": "None",
+    "assigned_node_name": "None",
+    "status": "BLOCKED_COMPUTE",
+    "workload_class": "governance",
+    "network_zone": "None",
+    "secrets_exposed": false,
+    "model_assigned": "openai/gpt-4o-mini",
+    "tools_required": [
+      "sqlite3-cli",
+      "sha256sum"
+    ],
+    "justification_rationale": "Scheduling blocked. Constraints violated on all candidate nodes: M5-Pro-MBP: Tool mismatch: node lacks required tools ['sqlite3-cli', 'sha256sum'].; M4-MBP: Workload mismatch: pod domain 'governance' not allowed on node.; iMac-24: Workload mismatch: pod domain 'governance' not allowed on node.; Dell-Neo: Workload mismatch: pod domain 'governance' not allowed on node.; Local-Models: Workload mismatch: pod domain 'governance' not allowed on node.; Docker-Runtime: Workload mismatch: pod domain 'governance' not allowed on node.; Optional-Remote-VPS: Workload mismatch: pod domain 'governance' not allowed on node.",
+    "last_scheduled_at": "2026-07-01T22:15:23.044011+00:00Z"
+  },
+  {
+    "pod_id": "pod-research",
+    "pod_name": "Research Pod",
+    "state": "DORMANT",
+    "assigned_node_id": "None",
+    "assigned_node_name": "None",
+    "status": "DORMANT",
+    "workload_class": "research",
+    "network_zone": "None",
+    "secrets_exposed": false,
+    "model_assigned": "openai/gpt-4o",
+    "tools_required": [
+      "web-search",
+      "fetch-url"
+    ],
+    "justification_rationale": "Pod is DORMANT. No compute resources allocated.",
+    "last_scheduled_at": "2026-07-01T22:15:23.044013+00:00Z"
+  },
+  {
+    "pod_id": "pod-deploy",
+    "pod_name": "Deploy Pod",
+    "state": "BLOCKED",
+    "assigned_node_id": "m5-pro-mbp",
+    "assigned_node_name": "M5-Pro-MBP",
+    "status": "SCHEDULED",
+    "workload_class": "operations",
+    "network_zone": "Management Zone",
+    "secrets_exposed": true,
+    "model_assigned": "openai/gpt-4o",
+    "tools_required": [
+      "docker-cli",
+      "vercel-cli"
+    ],
+    "justification_rationale": "Assigned to M5-Pro-MBP. Reason: Compatible. Node status: ONLINE, matched tools: 1.",
+    "last_scheduled_at": "2026-07-01T22:15:23.044017+00:00Z"
+  }
+]
