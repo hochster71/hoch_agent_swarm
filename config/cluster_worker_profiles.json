@@ -251,6 +251,65 @@
       "operational_status": "MONITOR_ONLY",
       "provisioning_status": "DEFINED",
       "provisioning_required": ["browser_access_configured"]
+    },
+    {
+      "node_id": "hoch-relay-001",
+      "display_name": "hoch-relay-001 (RELAY-001)",
+      "trust_tier": "RELAY",
+      "epic": "HOCH-200",
+      "rc": "RC26",
+      "hardware": {
+        "cpu": "1 vCPU (Linode Nanode)",
+        "ram_gb": 1,
+        "storage_gb": 25,
+        "gpu": "None",
+        "network": "Tailscale (100.87.18.15)"
+      },
+      "resource_limits": {
+        "max_cpu_pct": 60,
+        "max_ram_gb": 0.8,
+        "max_concurrent_agents": 1,
+        "max_concurrent_tasks": 5,
+        "max_disk_write_mb_per_min": 10,
+        "max_network_egress_mbps": 5
+      },
+      "approved_workloads": [
+        "relay_forward",
+        "heartbeat"
+      ],
+      "denied_workloads": [
+        "compute",
+        "build",
+        "qa",
+        "gpu_inference",
+        "governance_db_access",
+        "prompt_approval",
+        "pii_processing",
+        "arbitrary_code_execution"
+      ],
+      "ephemeral_policy": {
+        "agent_process_lifetime_max_sec": 60,
+        "task_tmp_dir": "/tmp/hoch-relay/",
+        "cleanup_on_termination": true,
+        "credential_env_vars_allowed": false,
+        "state_persistence": "relay_only"
+      },
+      "storage_policy": {
+        "approved_write_paths": ["/tmp/hoch-relay/", "/data/"],
+        "google_drive_push": "never",
+        "no_secrets_on_disk": true
+      },
+      "network_policy": {
+        "tailscale_ip": "100.87.18.15",
+        "public_ipv4": "50.116.41.183",
+        "relay_port": 3012,
+        "port_3012_public": false,
+        "ufw": "active",
+        "fail2ban": "active"
+      },
+      "operational_status": "ACTIVE",
+      "provisioning_status": "COMPLETE",
+      "provisioning_required": []
     }
   ]
 }
