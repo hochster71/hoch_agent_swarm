@@ -1075,7 +1075,7 @@ def get_pert_data():
     wrapped_monitor_clients = wrap_telemetry_dict(monitor_only_clients, "tailscale_network_discovery", scheduler.get("timestamp"), fallback="0")
     wrapped_offline_clients = wrap_telemetry_dict(offline_clients, "tailscale_network_discovery", scheduler.get("timestamp"), fallback="0")
     
-    wrapped_goal_complete = wrap_telemetry_dict(goal_completion_percent, "autonomous_cadence_telemetry", metrics_ts, fallback="0.0")
+    wrapped_goal_complete = wrap_telemetry_dict(int(goal_completion_percent), "autonomous_cadence_telemetry", metrics_ts, fallback="0.0")
     
     wrapped_monetization_readiness = wrap_telemetry_dict(monetization_readiness_percent, "monetization_readiness_policy_check", fallback="0.0")
     wrapped_evidence_gap_count = wrap_telemetry_dict(evidence_gap_count, "monetization_readiness_policy_check", fallback="0")
@@ -1243,7 +1243,7 @@ def get_pert_data():
     if is_fake_failed:
         confidence_string = "DEGRADED (Telemetry Audit Failure)"
         # Force goal completion score value to show DEGRADED
-        wrapped_goal_complete["value"] = f"{goal_completion_percent}% (DEGRADED)"
+        wrapped_goal_complete["value"] = f"{int(goal_completion_percent)}% (DEGRADED)"
 
     freshness_authority = {
         "dashboard_render_time": render_time_str,
@@ -2109,7 +2109,11 @@ def get_dashboard():
                 document.getElementById("goal-text").textContent = contractGoal;
                 
                 const percent = data.readiness.score.value;
-                document.getElementById("readiness-score").textContent = "Goal Completion: " + percent + "%";
+                if (typeof percent === 'string' && percent.includes('%')) {
+                    document.getElementById("readiness-score").textContent = "Goal Completion: " + percent;
+                } else {
+                    document.getElementById("readiness-score").textContent = "Goal Completion: " + percent + "%";
+                }
                 document.getElementById("readiness-score").title = `Source: ${data.readiness.score.source} | Freshness: ${data.readiness.score.freshness}s | Confidence: ${data.readiness.score.confidence}`;
                 
                 // Metrics widgets
