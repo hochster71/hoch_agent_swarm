@@ -11,7 +11,13 @@
     "confidence": 1.0,
     "last_seen": "2026-07-01T19:22:14Z",
     "gaps": [
-      "1 uncommitted local changes detected"
+      "1 uncommitted local changes detected",
+      {
+        "classification": "TELEMETRY_FRESHNESS_GAP",
+        "description": "Cockpit mixes stale JSON snapshots, fresh worker probes, and manual updates, lacking explicit separate freshness bounds and time-series authority.",
+        "severity": "HIGH (operator trust)",
+        "remediation": "Implement Telemetry Freshness Authority with 8 separate timestamps, strict policy thresholds, and anti-stale UI degradation."
+      }
     ],
     "next_action": "deduplicate",
     "path": "/Users/michaelhoch/hoch_agent_swarm",
