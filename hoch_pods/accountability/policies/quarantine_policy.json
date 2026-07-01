@@ -1,0 +1,15 @@
+{
+  "quarantine_triggers": [
+    "exposed_secret",
+    "direct_main_mutation_without_approval",
+    "fake_telemetry_as_real"
+  ],
+  "treatment": {
+    "Tier 1: Quarantined": {
+      "autonomous_execution": false,
+      "write_access": false,
+      "go_recommendation": false,
+      "allowed_actions": ["summarize", "explain", "remediation_plan"]
+    }
+  }
+}

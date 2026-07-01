@@ -89,6 +89,12 @@ from backend.runtime_execution_store import (
     persist_agent_model_policy_db,
     list_agent_model_policy_logs_db
 )
+from backend.mission_control.accountability_engine import (
+    get_all_agents,
+    get_agent,
+    get_ledger,
+    update_agent_score
+)
 
 # Load version dynamically from package.json
 try:
@@ -527,6 +533,45 @@ def get_agent_capability_audit(agent_id: str):
         "manifest": manifest,
         "last_decisions": decisions
     }
+
+@app.get("/api/v1/accountability/agents")
+def api_get_accountability_agents():
+    try:
+        return get_all_agents()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/accountability/ledger")
+def api_get_accountability_ledger():
+    try:
+        return get_ledger()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+class AccountabilityEvalRequest(BaseModel):
+    agent_id: str
+    score_dimensions: dict = None
+    penalties_score: int = 0
+    reason: str = ""
+    required_remedy: str = ""
+
+@app.post("/api/v1/accountability/eval")
+def api_eval_agent_score(payload: AccountabilityEvalRequest):
+    try:
+        res = update_agent_score(
+            agent_id=payload.agent_id,
+            score_dimensions=payload.score_dimensions,
+            penalties_score=payload.penalties_score,
+            reason=payload.reason,
+            required_remedy=payload.required_remedy
+        )
+        if not res:
+            raise HTTPException(status_code=404, detail=f"Agent {payload.agent_id} not found")
+        return res
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/v1/release/signing-policy")
 def get_release_signing_policy():

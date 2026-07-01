@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GateFailure",
+  "type": "OBJECT",
+  "properties": {
+    "gate_name": { "type": "STRING" },
+    "agent_id": { "type": "STRING" },
+    "task_id": { "type": "STRING" },
+    "failure_reason": { "type": "STRING" },
+    "expected_value": { "type": "STRING" },
+    "actual_value": { "type": "STRING" },
+    "timestamp": { "type": "STRING" }
+  },
+  "required": ["gate_name", "agent_id", "task_id", "failure_reason"]
+}

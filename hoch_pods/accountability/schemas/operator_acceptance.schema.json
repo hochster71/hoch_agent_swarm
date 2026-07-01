@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "OperatorAcceptance",
+  "type": "OBJECT",
+  "properties": {
+    "operator_id": { "type": "STRING" },
+    "decision": { "type": "STRING", "enum": ["Accept", "Reject", "Conditional Accept"] },
+    "reason": { "type": "STRING" },
+    "required_remedy": { "type": "STRING" },
+    "target_mission_id": { "type": "STRING" },
+    "target_task_id": { "type": "STRING" },
+    "target_agent_id": { "type": "STRING" },
+    "timestamp": { "type": "STRING" }
+  },
+  "required": ["decision", "reason", "target_task_id"]
+}

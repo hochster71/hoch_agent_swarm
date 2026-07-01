@@ -1,0 +1,11 @@
+{
+  "operator_review_required": {
+    "ui_work": true,
+    "control_plane_work": true,
+    "release_work": true
+  },
+  "remediation_creation": {
+    "on_rejection": true,
+    "auto_quarantine_score_below": 50
+  }
+}

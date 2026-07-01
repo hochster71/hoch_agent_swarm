@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AgentDiscipline",
+  "type": "OBJECT",
+  "properties": {
+    "agent_id": { "type": "STRING" },
+    "agent_name": { "type": "STRING" },
+    "prior_band": { "type": "STRING" },
+    "new_band": { "type": "STRING" },
+    "action_type": { "type": "STRING", "enum": ["remediate", "promote", "quarantine", "restrict"] },
+    "reason": { "type": "STRING" },
+    "remedy": { "type": "STRING" },
+    "restricted_actions": {
+      "type": "ARRAY",
+      "items": { "type": "STRING" }
+    },
+    "timestamp": { "type": "STRING" }
+  },
+  "required": ["agent_id", "new_band", "action_type", "reason"]
+}
