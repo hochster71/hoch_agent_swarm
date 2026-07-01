@@ -12,7 +12,7 @@ This report audits the monetization readiness, security posture, and deployment 
 | --- | --- | --- | --- | --- | --- |
 | Hoch Agent Swarm / HASF | **100%** | 100% | 100% | 0 | Ready for live release / staging stage |
 | Epic Fury 2026 | **100%** | 100% | 100% | 0 | Ready for live release / staging stage |
-| CyberQRG-AI | **0%** | 70% | 50% | 5 | Resolve critical blocker: No direct project directory or repository available in primary builds |
+| CyberQRG-AI | **0%** | 70% | 50% | 5 | Resolve critical blocker: Authentication flow is not implemented |
 | OmniSeek / OmniSeek Sentinel | **0%** | 0% | 0% | 3 | Initialize repository structure and define deployment pipeline |
 | AquaForge | **0%** | 0% | 0% | 3 | Establish AquaForge simulation script to mock IoT data payloads |
 
@@ -39,12 +39,12 @@ This report audits the monetization readiness, security posture, and deployment 
 - **Deployment Target**: `AWS ECS / iOS App Store`
 - **Business Model**: `Pay-per-scan / B2B API licensing`
 - **Active Blockers**:
-  - ❌ No direct project directory or repository available in primary builds
-  - ❌ Deployment descriptor (vercel.json, Dockerfile) is missing
   - ❌ Authentication flow is not implemented
+  - ❌ Deployment descriptor (vercel.json, Dockerfile) is missing
   - ❌ Missing project build manifests/package descriptors
+  - ❌ No direct project directory or repository available in primary builds
   - ❌ Stripe integration code is missing or unverified
-- **Next Action**: Resolve critical blocker: No direct project directory or repository available in primary builds
+- **Next Action**: Resolve critical blocker: Authentication flow is not implemented
 
 ### OmniSeek / OmniSeek Sentinel
 - **Category**: `Semantic search aggregator`
