@@ -446,5 +446,26 @@
       "evidence": [],
       "stale_after_seconds": 300
     }
+  ],
+  "relay_workers": [
+    {
+      "id": "HAS-WORKER-RELAY-001",
+      "name": "Relay Worker (hoch-relay-001)",
+      "role": "VPS Relay",
+      "status": "UNKNOWN",
+      "status_source": "/api/v1/relay/health",
+      "tailscale_ip": "100.87.18.15",
+      "relay_port": 3012,
+      "port_public_exposed": false,
+      "last_seen": null,
+      "epic": "HOCH-200",
+      "rc": "RC26",
+      "capabilities": [
+        "relay",
+        "heartbeat",
+        "api"
+      ],
+      "description": "VPS relay node on Linode Nanode. Accessible only via Tailscale. Status is live-fetched from /api/v1/relay/health; UNKNOWN at rest until first poll."
+    }
   ]
 }
