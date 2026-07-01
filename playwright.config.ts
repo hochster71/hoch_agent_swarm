@@ -35,6 +35,7 @@ export default defineConfig({
     "**/rc33-compute-utilization.spec.ts",
     "**/rc36-worker-dashboard.spec.ts",
     "**/rc37-dispatch-metrics.spec.ts",
+    "**/rc38-goal-readiness.spec.ts",
   ],
   timeout: 45_000,
   fullyParallel: false,
