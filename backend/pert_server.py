@@ -568,7 +568,8 @@ def scan_evidence_ledger():
         ("RC42", "Epic Fury CSP audit & integration", "docs/evidence/business/epic-fury-gap-analysis.md"),
         ("RC43", "Telemetry freshness authority", "docs/evidence/automation/rc43-telemetry-freshness-authority.md"),
         ("RC44", "Epic Fury full code audit", "docs/evidence/business/epic-fury-full-code-audit.md"),
-        ("RC45", "Multi-project revenue readiness", "docs/evidence/business/project-revenue-readiness-audit.md")
+        ("RC45", "Multi-project revenue readiness", "docs/evidence/business/project-revenue-readiness-audit.md"),
+        ("RC46", "Revenue action queue & critical path autopilot", "docs/evidence/business/revenue-action-queue.md")
     ]
     for rc, desc, rel_path in rc_mappings:
         full_path = os.path.join(get_project_root(), rel_path)
@@ -1253,6 +1254,48 @@ def get_pert_data():
         "stale_reason": pr_reason
     }
 
+    # Load revenue action queue
+    action_queue = []
+    queue_file = os.path.join(get_project_root(), "has_live_project_tracker", "data", "revenue_action_queue.json")
+    results_file = os.path.join(get_project_root(), "has_live_project_tracker", "data", "project_revenue_readiness_results.json")
+    inventory_file_path = os.path.join(get_project_root(), "has_live_project_tracker", "data", "project_inventory.json")
+    
+    queue_last_scan = "UNKNOWN"
+    queue_exists = os.path.exists(queue_file)
+    
+    if queue_exists:
+        try:
+            with open(queue_file, "r") as f:
+                action_queue = json.load(f)
+                if action_queue:
+                    queue_last_scan = action_queue[0].get("last_verified_at", "UNKNOWN")
+        except Exception:
+            pass
+
+    # Basic freshness check based on timestamp
+    q_state, q_reason = evaluate_freshness(queue_last_scan, fresh_thresholds.get("global_last_full_verification_time", {}).get("max_seconds", 600))
+    
+    # Overwrite if file is missing or older than results/inventory
+    if not queue_exists:
+        q_state = "DEGRADED"
+        q_reason = "revenue action queue JSON file does not exist"
+    else:
+        try:
+            q_mtime = os.path.getmtime(queue_file)
+            if os.path.exists(results_file) and q_mtime < os.path.getmtime(results_file):
+                q_state = "STALE"
+                q_reason = "queue file is older than project readiness results"
+            elif os.path.exists(inventory_file_path) and q_mtime < os.path.getmtime(inventory_file_path):
+                q_state = "STALE"
+                q_reason = "queue file is older than project inventory"
+        except Exception:
+            pass
+
+    panels_freshness["revenue_action_queue"] = {
+        "freshness_state": q_state,
+        "stale_reason": q_reason
+    }
+
     # Handle fake status fail / No Fake Telemetry Audit fails
     is_fake_failed = (guardrails["fake_status_violations"] > 0 or metrics.get("no_fake_status_violations", 0) > 0)
     if is_fake_failed:
@@ -1411,7 +1454,8 @@ def get_pert_data():
         "idle_worker_count": wrapped_idle_worker_count,
         "underused_worker_count": wrapped_underused_worker_count,
         "epic_fury_pipeline": epic_fury_pipeline,
-        "project_inventory": inv_data if "inv_data" in locals() else []
+        "project_inventory": inv_data if "inv_data" in locals() else [],
+        "revenue_action_queue": action_queue
     }
 
 @app.get("/view-doc", response_class=HTMLResponse)
@@ -1734,6 +1778,33 @@ def get_dashboard():
             padding: 16px;
             font-size: 13px;
         }
+        
+        /* Action Queue styling */
+        #action-queue-table th, #action-queue-table td {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .action-row-highlight {
+            border: 2px solid var(--accent-yellow) !important;
+            box-shadow: inset 0 0 8px rgba(234, 179, 8, 0.15), 0 0 12px rgba(234, 179, 8, 0.2) !important;
+            background: rgba(234, 179, 8, 0.08) !important;
+        }
+        .rank-number {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .rank-number-top {
+            font-weight: 900;
+            font-size: 15px;
+            color: var(--accent-yellow);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .rank-number-top::before {
+            content: "✦";
+            animation: pulse-glow 1.5s infinite alternate;
+        }
     </style>
 </head>
 <body>
@@ -1806,6 +1877,34 @@ def get_dashboard():
             <!-- Expanded Details Drawer -->
             <div id="project-details-drawer" class="details-drawer" style="display:none;">
                 <!-- Selected project details rendered here -->
+            </div>
+        </div>
+
+        <!-- Revenue Action Queue / Critical Path Autopilot -->
+        <div class="card col-12" id="revenue-action-queue-panel">
+            <h3 style="margin-top:0; display:flex; justify-content:space-between; align-items:center;">
+                <span>Critical Path Revenue Actions / Executable Queue</span>
+                <span id="revenue-action-queue-freshness-badge" class="badge">UNKNOWN</span>
+            </h3>
+            <div style="overflow-x:auto; margin-top:16px;">
+                <table style="width:100%; border-collapse:collapse; text-align:left; font-size:13px;" id="action-queue-table">
+                    <thead>
+                        <tr style="border-bottom:2px solid #1e293b; color:var(--text-secondary); text-transform:uppercase; font-size:11px;">
+                            <th style="padding:10px 8px; width:70px;">Rank</th>
+                            <th style="padding:10px 8px; width:150px;">Project</th>
+                            <th style="padding:10px 8px;">Action Details</th>
+                            <th style="padding:10px 8px; width:180px;">Recommended Agent</th>
+                            <th style="padding:10px 8px; text-align:center; width:90px;">Rev Impact</th>
+                            <th style="padding:10px 8px; text-align:center; width:90px;">Sec Impact</th>
+                            <th style="padding:10px 8px; text-align:center; width:90px;">Dep Impact</th>
+                            <th style="padding:10px 8px; text-align:center; width:90px;">Status</th>
+                            <th style="padding:10px 8px; width:130px;">Evidence Links</th>
+                        </tr>
+                    </thead>
+                    <tbody id="action-queue-tbody">
+                        <!-- Populated dynamically via JavaScript -->
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -2872,6 +2971,84 @@ def get_dashboard():
                 document.getElementById("accel-jobs-completed").title = `Source: ${data.safe_jobs_completed.source} | Freshness: ${data.safe_jobs_completed.freshness}s`;
                 document.getElementById("accel-quota-saved").textContent = data.quota_saved_minutes.value + " mins";
                 document.getElementById("accel-quota-saved").title = `Source: ${data.quota_saved_minutes.source} | Freshness: ${data.quota_saved_minutes.freshness}s`;
+
+                // Revenue Action Queue Updates
+                const queueTbody = document.getElementById("action-queue-tbody");
+                const queueFreshnessBadge = document.getElementById("revenue-action-queue-freshness-badge");
+                
+                // Update panel freshness badge
+                if (data.freshness_authority && data.freshness_authority.panels && data.freshness_authority.panels.revenue_action_queue) {
+                    const freshState = data.freshness_authority.panels.revenue_action_queue.freshness_state;
+                    queueFreshnessBadge.textContent = freshState;
+                    queueFreshnessBadge.className = "badge";
+                    if (freshState === "FRESH") {
+                        queueFreshnessBadge.classList.add("badge-pass");
+                    } else if (freshState === "STALE") {
+                        queueFreshnessBadge.classList.add("badge-warn");
+                    } else {
+                        queueFreshnessBadge.classList.add("badge-fail");
+                    }
+                }
+                
+                if (queueTbody) {
+                    queueTbody.innerHTML = "";
+                    const queue = data.revenue_action_queue || [];
+                    
+                    if (queue.length === 0) {
+                        const emptyRow = document.createElement("tr");
+                        emptyRow.innerHTML = `
+                            <td colspan="9" style="text-align:center; padding:20px; color:var(--text-secondary); font-style:italic;">
+                                DEGRADED / STALE: No active actions generated or queue file unavailable.
+                            </td>
+                        `;
+                        queueTbody.appendChild(emptyRow);
+                    } else {
+                        queue.forEach(act => {
+                            const row = document.createElement("tr");
+                            row.id = `action-row-${act.critical_path_rank}`;
+                            
+                            // Visually highlight Rank 1 target action
+                            const isTop = act.critical_path_rank === 1;
+                            if (isTop) {
+                                row.className = "action-row-highlight";
+                            }
+                            
+                            const rankCellClass = isTop ? "rank-number-top" : "rank-number";
+                            const rankContent = isTop ? `1` : `${act.critical_path_rank}`;
+                            
+                            const statusColor = act.status === "READY" ? "var(--accent-teal)" : "var(--accent-yellow)";
+                            
+                            // Evidence links render
+                            let linksHtml = "";
+                            if (act.evidence_links && act.evidence_links.length > 0) {
+                                act.evidence_links.forEach(link => {
+                                    const base = link.split('/').pop();
+                                    linksHtml += `<a href="/view-doc?path=${encodeURIComponent(link)}" style="color:var(--accent-blue); text-decoration:none; margin-right:8px; display:inline-block;" class="action-evidence-link">${base}</a>`;
+                                });
+                            } else {
+                                linksHtml = "<span style='color:var(--text-secondary);'>None</span>";
+                            }
+                            
+                            row.innerHTML = `
+                                <td style="padding:12px 8px;"><span class="${rankCellClass}">${rankContent}</span></td>
+                                <td style="padding:12px 8px; font-weight:bold; color:#fff;">${act.project_name}</td>
+                                <td style="padding:12px 8px;">
+                                    <div style="font-weight:bold; color:var(--accent-blue);">${act.title}</div>
+                                    <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">${act.description}</div>
+                                    <div style="font-size:10px; color:rgba(255,255,255,0.3); margin-top:2px;">Source: ${act.blocker_source}</div>
+                                </td>
+                                <td style="padding:12px 8px;"><span class="badge" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#fff; font-size:11px;">${act.recommended_agent}</span></td>
+                                <td style="padding:12px 8px; text-align:center; font-weight:bold; color:var(--accent-teal);">${act.revenue_impact}%</td>
+                                <td style="padding:12px 8px; text-align:center; font-weight:bold; color:var(--accent-teal);">${act.security_impact}%</td>
+                                <td style="padding:12px 8px; text-align:center; font-weight:bold; color:var(--accent-teal);">${act.deployment_impact}%</td>
+                                <td style="padding:12px 8px; text-align:center;"><strong style="color:${statusColor}; font-size:11px; text-transform:uppercase;">${act.status}</strong></td>
+                                <td style="padding:12px 8px;">${linksHtml}</td>
+                            `;
+                            
+                            queueTbody.appendChild(row);
+                        });
+                    }
+                }
             } catch (err) {
                 console.error("Failed to load dashboard data:", err);
             }
