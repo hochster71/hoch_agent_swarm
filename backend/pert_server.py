@@ -517,6 +517,27 @@ def get_pert_data():
             "impact": "Maintains 100% verified status"
         })
 
+    # Load scheduler metrics
+    scheduler = {
+        "scheduler_state": "IDLE",
+        "utilization_percent": 0.0,
+        "active_workers_count": 0,
+        "total_workers_count": 5,
+        "running_tasks_count": 0,
+        "completed_tasks_count": 0,
+        "cores_allocated": 0,
+        "memory_allocated_gb": 0.0,
+        "scheduled_this_cycle": [],
+        "timestamp": datetime.now(timezone.utc).isoformat() + "Z"
+    }
+    scheduler_file = os.path.join(get_project_root(), "has_live_project_tracker", "data", "scheduler_metrics.json")
+    if os.path.exists(scheduler_file):
+        try:
+            with open(scheduler_file, "r") as f:
+                scheduler.update(json.load(f))
+        except Exception:
+            pass
+
     return {
         "readiness": {
             "score": metrics["percent_goal_complete"],
@@ -526,6 +547,7 @@ def get_pert_data():
         },
         "contract": contract,
         "metrics": metrics,
+        "scheduler": scheduler,
         "pert_cpm": pert_cpm,
         "agents": agent_scores,
         "doctrine_rules_count": rules_count,
@@ -539,7 +561,8 @@ def get_pert_data():
             {"rc": "RC27", "desc": "Doctrine DB sync fix", "url": f"file://{get_project_root()}/docs/evidence/compute/rc27-doctrine-db-migration.md"},
             {"rc": "RC28", "desc": "Mission execution E2E proof", "url": f"file://{get_project_root()}/docs/evidence/compute/rc28-mission-execution-proof.md"},
             {"rc": "RC29", "desc": "RC25-RC28 release consolidation", "url": f"file://{get_project_root()}/docs/evidence/compute/rc29-release-consolidation.md"},
-            {"rc": "RC31", "desc": "Production runtime sustainment proof", "url": f"file://{get_project_root()}/docs/evidence/runtime/rc31-production-runtime-sustainment.md"}
+            {"rc": "RC31", "desc": "Production runtime sustainment proof", "url": f"file://{get_project_root()}/docs/evidence/runtime/rc31-production-runtime-sustainment.md"},
+            {"rc": "RC33", "desc": "Swarm scheduler utilization proof", "url": f"file://{get_project_root()}/docs/evidence/compute/rc33-compute-utilization-swarm-scheduler.md"}
         ]
     }
 
@@ -769,6 +792,80 @@ def get_dashboard():
                 </tbody>
             </table>
         </div>
+        
+        <!-- 8.5. Compute Swarm Scheduler & Resource Utilization -->
+        <div class="card col-12" id="swarm-scheduler-panel">
+            <h3 style="margin-top:0; display:flex; justify-content:space-between; align-items:center;">
+                <span>Compute Swarm Scheduler</span>
+                <span class="badge badge-pass" id="scheduler-state" style="font-size:12px;">IDLE</span>
+            </h3>
+            <div class="grid" style="grid-gap:15px; margin-bottom:15px;">
+                <div class="card col-3" style="background:#0e1627; border:1px solid #1a2c4e; padding:12px; margin-bottom:0;">
+                    <div style="font-size:11px; text-transform:uppercase; color:var(--text-secondary);">Swarm Utilization</div>
+                    <div class="metric-value" id="swarm-utilization" style="font-size:24px; margin-top:5px; color:var(--accent-teal);">0.0%</div>
+                </div>
+                <div class="card col-3" style="background:#0e1627; border:1px solid #1a2c4e; padding:12px; margin-bottom:0;">
+                    <div style="font-size:11px; text-transform:uppercase; color:var(--text-secondary);">Active Workers</div>
+                    <div class="metric-value" id="swarm-active-workers" style="font-size:24px; margin-top:5px; color:var(--accent-blue);">0 / 5</div>
+                </div>
+                <div class="card col-3" style="background:#0e1627; border:1px solid #1a2c4e; padding:12px; margin-bottom:0;">
+                    <div style="font-size:11px; text-transform:uppercase; color:var(--text-secondary);">Cores Allocated</div>
+                    <div class="metric-value" id="swarm-cores" style="font-size:24px; margin-top:5px; color:var(--accent-yellow);">0 Cores</div>
+                </div>
+                <div class="card col-3" style="background:#0e1627; border:1px solid #1a2c4e; padding:12px; margin-bottom:0;">
+                    <div style="font-size:11px; text-transform:uppercase; color:var(--text-secondary);">Memory Allocated</div>
+                    <div class="metric-value" id="swarm-memory" style="font-size:24px; margin-top:5px; color:var(--accent-purple);">0.0 GB</div>
+                </div>
+            </div>
+            <table style="width:100%; border-collapse:collapse; text-align:left; font-size:12px;">
+                <thead>
+                    <tr style="border-bottom:1px solid #1e293b; color:var(--text-secondary);">
+                        <th style="padding:8px 0;">Worker Node</th>
+                        <th>Type</th>
+                        <th>Cores</th>
+                        <th>Memory</th>
+                        <th>Capabilities</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding:8px 0; color:var(--accent-teal); font-weight:bold;">HAS-WORKER-RELAY-001</td>
+                        <td>ARM64 VPS compute node</td>
+                        <td>4</td>
+                        <td>8.0 GB</td>
+                        <td>networking, relay, proxy, security, verification</td>
+                    </tr>
+                    <tr style="border-top:1px solid #111e35;">
+                        <td style="padding:8px 0; color:var(--accent-teal); font-weight:bold;">Live Tracker Runtime Agent</td>
+                        <td>Local Primary compute node</td>
+                        <td>2</td>
+                        <td>4.0 GB</td>
+                        <td>ops, family, status, tracker, general</td>
+                    </tr>
+                    <tr style="border-top:1px solid #111e35;">
+                        <td style="padding:8px 0; color:var(--accent-teal); font-weight:bold;">Monetization & Compliance Agent</td>
+                        <td>Secure sandbox compliance node</td>
+                        <td>2</td>
+                        <td>4.0 GB</td>
+                        <td>business, money, billing, stripe</td>
+                    </tr>
+                    <tr style="border-top:1px solid #111e35;">
+                        <td style="padding:8px 0; color:var(--accent-teal); font-weight:bold;">Security Auditor Agent</td>
+                        <td>Isolated audit sandbox</td>
+                        <td>2</td>
+                        <td>4.0 GB</td>
+                        <td>cyber, security, audit</td>
+                    </tr>
+                    <tr style="border-top:1px solid #111e35;">
+                        <td style="padding:8px 0; color:var(--accent-teal); font-weight:bold;">Master Orchestrator</td>
+                        <td>Coordinator control node</td>
+                        <td>4</td>
+                        <td>8.0 GB</td>
+                        <td>orchestration, general</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
         <!-- 9. Parallel Mirror Verification Status -->
         <div class="card col-6" id="parallel-mirror-panel">
@@ -837,6 +934,20 @@ def get_dashboard():
                 document.getElementById("metric-evidence").textContent = data.metrics.evidence_coverage_percent + "%";
                 document.getElementById("metric-accountability").textContent = data.metrics.agent_accountability_score;
                 document.getElementById("metric-time-saved").textContent = data.metrics.time_saved_minutes + " mins";
+
+                // Swarm Scheduler updates
+                const sched = data.scheduler || {};
+                const schedState = document.getElementById("scheduler-state");
+                schedState.textContent = sched.scheduler_state || "IDLE";
+                if (sched.scheduler_state === "ACTIVE") {
+                    schedState.className = "badge badge-pass";
+                } else {
+                    schedState.className = "badge badge-warn";
+                }
+                document.getElementById("swarm-utilization").textContent = (sched.utilization_percent || 0.0) + "%";
+                document.getElementById("swarm-active-workers").textContent = (sched.active_workers_count || 0) + " / " + (sched.total_workers_count || 5);
+                document.getElementById("swarm-cores").textContent = (sched.cores_allocated || 0) + " Cores";
+                document.getElementById("swarm-memory").textContent = (sched.memory_allocated_gb || 0.0) + " GB";
 
                 // Executive Readiness
                 document.getElementById("completion-window").textContent = data.readiness.window;
