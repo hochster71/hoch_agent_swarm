@@ -33,7 +33,7 @@ fi
 
 # 3. No public 3012 exposure
 echo "Testing public port 3012 unreachable..."
-if nc -vz -w 3 50.116.41.183 3012 2>/dev/null; then
+if python3 -c 'import socket; s=socket.socket(); s.settimeout(3.0); s.connect(("50.116.41.183", 3012))' 2>/dev/null; then
     echo "  [FAIL] Public port 3012 is exposed!"
     PUBLIC_EXPOSURE=$((PUBLIC_EXPOSURE + 1))
     VIOLATIONS=$((VIOLATIONS + 1))
