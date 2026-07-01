@@ -1,0 +1,31 @@
+{
+  "goal_id": "HAS-HASF-FULL-BUILDOUT",
+  "north_star": "Complete and monetize Hoch Agent Swarm / HASF with verified autonomous execution, live command center, secure relay, evidence ledger, and operator-trusted automation.",
+  "completion_definition": [
+    "Local runtime starts reliably",
+    "PERT dashboard shows current project truth",
+    "Agents have assigned owners and RACI",
+    "Critical path is visible",
+    "Tests prove backend, relay, doctrine, mission execution, UI, and sustainment",
+    "No public 3012 exposure",
+    "No fake PASS/ONLINE states",
+    "All high-risk actions require approval",
+    "Metrics show progress to GOAL",
+    "Michael no longer has to manually copy/paste routine commands"
+  ],
+  "automation_policy": {
+    "auto_execute_low_risk": true,
+    "require_approval_for_high_risk": true,
+    "blocked_without_approval": [
+      "secrets",
+      "credentials",
+      "public exposure",
+      "money",
+      "email/calendar/send actions",
+      "destructive filesystem operations",
+      "production deploy",
+      "tag movement",
+      "external network changes"
+    ]
+  }
+}
