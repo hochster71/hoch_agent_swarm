@@ -11,6 +11,7 @@ dist/
 # Env & secrets
 .env
 frontend/.env
+.secrets/
 
 # DB and storage
 *.db
