@@ -62,4 +62,24 @@ docs/evidence/meta-orchestrator/*-daily-autonomy-brief.md
 docs/evidence/meta-orchestrator/*-domain-coverage-matrix.md
 docs/evidence/meta-orchestrator/*-gap-scan.md
 
+# Runtime logs & ephemeral event streams (never commit)
+has_live_project_tracker/tracker.log
+has_live_project_tracker/data/events.ndjson
 
+# Tracker local backups & archived dead code
+has_live_project_tracker/backups/
+has_live_project_tracker/archive/
+
+# Database backups
+*.db.bak
+backend/*.db.bak
+
+# SQLite snapshot files
+*.sqlite
+*.sqlite3
+
+# Xcode per-user IDE state (binary, machine-local)
+*.xcuserstate
+
+# VS Code local workspace settings
+.vscode/
