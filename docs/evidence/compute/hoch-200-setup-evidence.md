@@ -142,3 +142,20 @@ Verified:
 
 Verdict:
 HOCH-200 compute foundation is GO as a secure 24/7 relay foundation.
+
+## SSH Hardening Result
+
+Status: GO
+
+Verified:
+- Removed public OpenSSH rule from Anywhere.
+- Removed public IPv6 OpenSSH rule from Anywhere (v6).
+- Preserved SSH access only from current home public IP: 99.22.37.25.
+- UFW default remains deny incoming, allow outgoing, deny routed.
+- Public dashboard port 3012 remains unlisted and closed.
+
+Final UFW posture:
+22/tcp ALLOW IN 99.22.37.25
+
+Verdict:
+HOCH-200 SSH bootstrap exposure has been reduced from internet-wide SSH to source-restricted SSH.
