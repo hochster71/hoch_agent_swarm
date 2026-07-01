@@ -10,7 +10,8 @@ OUTPUT_PATH = os.path.join(SCRIPT_DIR, "..", "has_live_project_tracker", "data",
 
 TARGET_DIRS = [
     os.path.expanduser("~/hoch_agent_swarm"),
-    os.path.expanduser("~/hoch_agent_swarm_prompt_library")
+    os.path.expanduser("~/hoch_agent_swarm_prompt_library"),
+    os.path.expanduser("~/Downloads/Epic-fury-2026-main")
 ]
 
 def scan_directory(dir_path):
