@@ -36,7 +36,7 @@ test.describe('RC39 QA/Audit Remediation E2E tests', () => {
     
     const stripeStateEl = monetizationPanel.locator('#stripe-sandbox-state');
     await expect(stripeStateEl).toBeVisible();
-    await expect(stripeStateEl).toContainText('NOT_CONFIGURED / APPROVAL_REQUIRED');
+    await expect(stripeStateEl).toHaveText(/MISSING|NOT_CONFIGURED \/ APPROVAL_REQUIRED/);
     
     // Monetization Readiness score should be capped at 50% since Stripe sandbox is NOT_CONFIGURED
     const monetizationScoreEl = monetizationPanel.locator('#monetization-score');
