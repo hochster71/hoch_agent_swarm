@@ -1,0 +1,21 @@
+# Telemetry Freshness Policy (RC43)
+version: "1.0.0"
+policy_name: "Telemetry Freshness Authority & Anti-Stale Dashboard Policy"
+
+freshness_thresholds:
+  dashboard_render_time:
+    max_seconds: 60
+  global_last_full_verification_time:
+    max_seconds: 600 # 10 minutes
+  worker_last_probe_time:
+    max_seconds: 600 # 10 minutes
+  worker_last_dispatch_time:
+    max_seconds: 86400 # 24 hours
+  device_last_seen_time:
+    max_seconds: 300 # 5 minutes
+  evidence_ledger_last_scan_time:
+    max_seconds: 1800 # 30 minutes
+  playwright_scoped_spec_last_run_time:
+    max_seconds: 3600 # 1 hour
+  playwright_full_suite_last_run_time:
+    max_seconds: 86400 # 24 hours

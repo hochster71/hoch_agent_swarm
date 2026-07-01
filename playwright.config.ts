@@ -41,6 +41,7 @@ export default defineConfig({
     "**/rc40-compute-gap-pert.spec.ts",
     "**/rc41-worker-telemetry-accuracy.spec.ts",
     "**/rc42-epic-fury-csp-audit.spec.ts",
+    "**/rc43-telemetry-freshness.spec.ts",
   ],
   timeout: 45_000,
   fullyParallel: false,
