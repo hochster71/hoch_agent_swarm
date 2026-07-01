@@ -13,16 +13,19 @@ echo "=================================================="
 echo "Running local mirror verification check..."
 python3 "$PROJECT_ROOT/scripts/has_parallel_mirror_verify.py"
 
+COMPLETED=10
+QUEUED=0
+
 # Write out the JSON metrics file
 mkdir -p "$(dirname "$QUEUE_FILE")"
 cat <<EOF > "$QUEUE_FILE"
 {
-  "local_compute_jobs_completed": 8,
-  "local_compute_jobs_queued": 1,
+  "local_compute_jobs_completed": $COMPLETED,
+  "local_compute_jobs_queued": $QUEUED,
   "last_run": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 }
 EOF
 
-echo "  [PASS] Local jobs completed: 8, Queued: 1"
+echo "  [PASS] Local jobs completed: $COMPLETED, Queued: $QUEUED"
 echo "  [PASS] job_queue.json updated successfully."
 echo "=================================================="

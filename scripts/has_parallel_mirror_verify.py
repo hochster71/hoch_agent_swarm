@@ -52,7 +52,8 @@ def check_git_status():
             "rc34",
             "usage_budget",
             "secure_build",
-            "tailscale"
+            "tailscale",
+            "rc35"
         ]
         
         dirty = []
