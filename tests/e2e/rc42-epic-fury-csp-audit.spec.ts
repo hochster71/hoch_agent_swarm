@@ -2,9 +2,9 @@ import { test, expect } from '@playwright/test';
 import * as fs from 'fs';
 import * as path from 'path';
 
-test.describe('RC41 Epic Fury Onboarding E2E tests', () => {
-  test('navigates to PERT cockpit and validates Epic Fury pipeline flowchart', async ({ page }) => {
-    // 1. Verify LOCAL-003 exists in local project inventory
+test.describe('RC42 Epic Fury CSP Audit E2E tests', () => {
+  test('navigates to PERT cockpit and validates Epic Fury pipeline flowchart and CSP gaps', async ({ page }) => {
+    // 1. Verify LOCAL-003 exists in local project inventory and contains CSP gap finding
     const inventoryPath = path.join(__dirname, '../../has_live_project_tracker/data/local_project_inventory.json');
     expect(fs.existsSync(inventoryPath)).toBe(true);
     
@@ -12,6 +12,11 @@ test.describe('RC41 Epic Fury Onboarding E2E tests', () => {
     const epicFuryItem = inventory.find(item => item.id === 'LOCAL-003');
     expect(epicFuryItem).toBeDefined();
     expect(epicFuryItem.name).toBe('Epic-fury-2026-main');
+
+    // Verify CSP gap finding
+    const cspGap = epicFuryItem.gaps.find((g: any) => g.classification === 'CSP_PREVIEW_TOOLING_GAP');
+    expect(cspGap).toBeDefined();
+    expect(cspGap.severity).toContain('LOW');
 
     // 2. Load the PERT cockpit
     await page.goto('http://127.0.0.1:8765/');

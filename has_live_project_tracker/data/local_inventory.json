@@ -52,7 +52,14 @@
     "evidence_status": "VERIFIED",
     "confidence": 1.0,
     "last_seen": "2026-07-01T19:22:14Z",
-    "gaps": [],
+    "gaps": [
+      {
+        "classification": "CSP_PREVIEW_TOOLING_GAP",
+        "description": "Vercel preview toolbar iframe is blocked by Content Security Policy: frame-src currently allows only https://js.stripe.com and https://hooks.stripe.com. https://vercel.live is blocked.",
+        "severity": "LOW (runtime) / MEDIUM (preview tooling)",
+        "remediation": "Add https://vercel.live to frame-src for preview/development environments"
+      }
+    ],
     "next_action": "deduplicate",
     "path": "/Users/michaelhoch/Downloads/Epic-fury-2026-main",
     "file_count": 361,

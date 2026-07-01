@@ -40,7 +40,7 @@ export default defineConfig({
     "**/rc39-qa-audit-alignment.spec.ts",
     "**/rc40-compute-gap-pert.spec.ts",
     "**/rc41-worker-telemetry-accuracy.spec.ts",
-    "**/rc41-epic-fury-onboarding.spec.ts",
+    "**/rc42-epic-fury-csp-audit.spec.ts",
   ],
   timeout: 45_000,
   fullyParallel: false,
