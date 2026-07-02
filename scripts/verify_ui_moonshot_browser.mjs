@@ -12,7 +12,7 @@ try {
   const normalizedBody = body.toUpperCase();
 
   const required = [
-    'HOCH PODS THEATER V5',
+    'HOCH PODS THEATER V6',
     'STORYBOARD-DRIVEN AGENT SPIN-UP',
     'HOCH PODS STORYBOARD THEATER',
     'AGENT QUEUE',
@@ -44,6 +44,10 @@ try {
 
   const spirit = await page.locator('#agentSpirit').count();
   if (spirit !== 1) throw new Error('MOONSHOT_AGENT_SPIRIT_MISSING');
+
+
+  const beam = await page.locator('#launchBeam').count();
+  if (beam !== 1) throw new Error('MOONSHOT_LAUNCH_BEAM_MISSING');
 
   const skill = await page.locator('#skillCard').count();
   if (skill !== 1) throw new Error('MOONSHOT_SKILL_CARD_MISSING');

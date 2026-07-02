@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>HOCH PODS Theater V5</title>
+<title>HOCH PODS Theater V6</title>
 <style>
 :root{
   --bg:#02030a;
@@ -516,12 +516,163 @@ body:before{
   .truthGrid,.statusRiver{grid-template-columns:1fr}
   .header{grid-template-columns:1fr}
 }
+
+/* MOONSHOT V6 CAPSULE + HUMANOID AGENT FIDELITY */
+.corePod{
+  width:150px !important;
+  height:216px !important;
+  border-radius:86px 86px 30px 30px !important;
+  background:
+    radial-gradient(circle at 50% 18%,#02030a 0 16px, var(--cyan) 17px 23px, transparent 24px),
+    linear-gradient(180deg,#ffffff 0%,#9af6ff 18%,#49e7ff 46%,#174d7d 78%,#06162a 100%) !important;
+  border:1px solid rgba(154,246,255,.62);
+  box-shadow:
+    0 0 120px rgba(73,231,255,.70),
+    0 0 28px rgba(255,255,255,.30) inset,
+    0 18px 80px rgba(47,123,255,.28) !important;
+}
+.corePod:before{
+  display:none !important;
+}
+.corePod:after{
+  left:44px !important;
+  bottom:-116px !important;
+  width:64px !important;
+  height:140px !important;
+  background:
+    radial-gradient(circle at 50% 20%,#fff7c2,transparent 18%),
+    linear-gradient(180deg,var(--amber),var(--red),transparent) !important;
+  opacity:.95;
+}
+
+.podNode{
+  min-height:86px !important;
+  padding-top:34px !important;
+}
+.podNode:before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:8px;
+  width:52px;
+  height:16px;
+  transform:translateX(-50%);
+  border-radius:50%;
+  border:1px solid var(--podColor);
+  background:radial-gradient(circle at 50% 50%,var(--podGlow),rgba(2,3,10,.76) 65%);
+  box-shadow:0 0 24px var(--podGlow);
+}
+.podNode:after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:2px;
+  width:26px;
+  height:28px;
+  transform:translateX(-50%);
+  border-radius:14px 14px 10px 10px;
+  background:linear-gradient(180deg,var(--podColor),rgba(255,255,255,.08));
+  opacity:.58;
+  filter:blur(.2px);
+}
+
+.agentSpirit{
+  width:54px !important;
+  height:112px !important;
+  border-radius:30px 30px 18px 18px !important;
+  background:
+    radial-gradient(circle at 50% 14%,rgba(255,255,255,.92) 0 7px,transparent 8px),
+    linear-gradient(180deg,var(--podColor),rgba(255,255,255,.18) 48%,rgba(2,3,10,.18)) !important;
+  box-shadow:
+    0 0 52px var(--podGlow),
+    0 0 18px rgba(255,255,255,.16) inset !important;
+}
+.agentSpirit:before{
+  left:14px !important;
+  top:-24px !important;
+  width:26px !important;
+  height:26px !important;
+  border:2px solid var(--podColor) !important;
+  box-shadow:0 0 24px var(--podGlow);
+}
+.agentSpirit:after{
+  content:"";
+  position:absolute;
+  left:-18px;
+  top:34px;
+  width:90px;
+  height:46px;
+  border-radius:50%;
+  border-left:2px solid var(--podColor);
+  border-right:2px solid var(--podColor);
+  opacity:.58;
+  filter:blur(.2px);
+}
+.agentSpirit.active{
+  animation:agentLaunchV6 6.4s ease-in-out forwards !important;
+}
+
+.skillCard{
+  width:340px !important;
+  min-height:214px !important;
+  border-width:1px !important;
+  background:
+    linear-gradient(180deg,rgba(3,24,18,.98),rgba(2,3,10,.94)),
+    radial-gradient(circle at 20% 10%,var(--podGlow),transparent 34%) !important;
+}
+.skillCard:before{
+  content:"SKILL PROFILE ACQUIRED";
+  display:block;
+  color:var(--podColor);
+  font-size:10px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+.skillCell{
+  min-height:54px;
+}
+.skillCell b{
+  color:var(--podColor) !important;
+}
+
+.launchBeam{
+  position:absolute;
+  z-index:4;
+  width:90px;
+  height:190px;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  background:linear-gradient(180deg,transparent,var(--podGlow),transparent);
+  clip-path:polygon(45% 0,55% 0,100% 100%,0 100%);
+  opacity:0;
+  pointer-events:none;
+}
+.launchBeam.active{
+  animation:beamPulse 6.4s ease-in-out forwards;
+}
+
+@keyframes beamPulse{
+  0%,100%{opacity:0;transform:translate(-50%,-50%) scale(.72)}
+  14%,62%{opacity:.68;transform:translate(-50%,-50%) scale(1)}
+}
+@keyframes agentLaunchV6{
+  0%{opacity:0;left:50%;top:66%;transform:translate(-50%,-50%) scale(.40) rotate(0deg)}
+  14%{opacity:1;left:50%;top:54%;transform:translate(-50%,-50%) scale(.82) rotate(0deg)}
+  28%{opacity:1;left:50%;top:45%;transform:translate(-50%,-50%) scale(1.02) rotate(-2deg)}
+  48%{opacity:1;left:var(--targetX);top:var(--targetY);transform:translate(-50%,-50%) scale(1.08) rotate(5deg)}
+  72%{opacity:1;left:var(--targetX);top:var(--targetY);transform:translate(-50%,-50%) scale(1) rotate(0deg)}
+  88%{opacity:.8;left:50%;top:54%;transform:translate(-50%,-50%) scale(.86) rotate(0deg)}
+  100%{opacity:.12;left:50%;top:66%;transform:translate(-50%,-50%) scale(.45) rotate(0deg)}
+}
+
 </style>
 </head>
 <body>
 <header class="header">
   <div class="brand">
-    <h1>HOCH PODS Theater V5</h1>
+    <h1>HOCH PODS Theater V6</h1>
     <div class="sub">storyboard-driven agent spin-up · pod return cycle · live PERT · live gaps · live runners</div>
   </div>
   <div class="pills">
@@ -587,6 +738,7 @@ body:before{
           <div class="ring r3"></div>
           <div class="corePod"></div>
 
+          <div class="launchBeam" id="launchBeam"></div>
           <div class="agentSpirit" id="agentSpirit"></div>
 
           <div class="skillCard" id="skillCard">
@@ -668,7 +820,7 @@ body:before{
     <section class="panel">
       <h2>Evidence Console</h2>
       <div class="body">
-        <pre class="console" id="console">booting HOCH PODS Theater V5...</pre>
+        <pre class="console" id="console">booting HOCH PODS Theater V6...</pre>
       </div>
     </section>
   </aside>
@@ -761,6 +913,15 @@ function playCycle(metrics, stale){
 
   $("currentScene").textContent = `Scene ${sceneNum + 1}: ${storyboard[sceneNum]}`;
   $("currentAgent").textContent = p.agent;
+
+  const beam = $("launchBeam");
+  if (beam) {
+    beam.classList.remove("active");
+    beam.style.setProperty("--podColor", p.color);
+    beam.style.setProperty("--podGlow", p.glow);
+    void beam.offsetWidth;
+    beam.classList.add("active");
+  }
 
   const spirit = $("agentSpirit");
   spirit.classList.remove("active");
@@ -879,7 +1040,7 @@ async function load(){
 
     playCycle(metrics, stale);
 
-    lines.push("MOONSHOT_V5: ONLINE");
+    lines.push("MOONSHOT_V6: ONLINE");
     lines.push(`GOAL: ${pct}%`);
     lines.push(`FRESHNESS_SOURCES: ${freshKeys.length}`);
     lines.push(`FRESH: ${fresh}`);
@@ -887,7 +1048,7 @@ async function load(){
     lines.push(`BLOCKED_TASKS: ${metrics.blocked_task_count ?? "--"}`);
     lines.push("CYCLE: emerge -> reveal -> assign -> deploy -> evidence -> return");
   }catch(e){
-    setConsole(["MOONSHOT_V5: DEGRADED", String(e)]);
+    setConsole(["MOONSHOT_V6: DEGRADED", String(e)]);
   }
   if(lines.length) setConsole(lines);
 }
