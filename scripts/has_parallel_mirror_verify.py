@@ -115,8 +115,8 @@ def check_git_status():
             "make_prototype_v2_side_by_side.py",
             "has-hasf-cockpit-theater.spec.ts",
             "has-hasf-prototype-v2.spec.ts",
-            "has-hasf-prototype.spec.ts",
-            "tools/"
+            "tools/",
+            "rc53"
         ]
         
         dirty = []

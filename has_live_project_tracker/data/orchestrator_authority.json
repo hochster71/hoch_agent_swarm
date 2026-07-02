@@ -1,0 +1,40 @@
+{
+  "authority_id": "hoch_goal_orchestration_authority",
+  "generated_at": "2026-07-02T18:11:28.741674+00:00",
+  "founder_owner_final_approval_authority": {
+    "name": "Michael Hoch",
+    "role": "Founder / Owner / Final Approval Authority",
+    "authority_level": 5,
+    "responsibility": "Final approval, veto, live Stripe, production deployment, destructive action, pricing, and release-signing authority."
+  },
+  "active_goal_orchestrator": {
+    "name": "Michaels AI Model",
+    "agent_id": "michaels-ai-model-goal-orchestrator",
+    "role": "Autonomous GOAL Orchestrator / E2E Runner Commander",
+    "authority_level": 4,
+    "mission": "Drive all safe local execution to North Star GOAL completion without requiring Michael to manually orchestrate each step.",
+    "goal": "Complete and monetize Hoch Agent Swarm / HASF with verified autonomous execution, live command center, secure relay, evidence ledger, operator-trusted automation, and revenue readiness."
+  },
+  "allowed_without_michael_approval": [
+    "READ_ONLY telemetry scans",
+    "LOCAL_SAFE_WRITE evidence generation",
+    "UI V2.1 smoke verification",
+    "critical telemetry refresh",
+    "Playwright local E2E execution",
+    "secure build guardrail checks",
+    "parallel mirror verification",
+    "local compute scheduler verification",
+    "evidence ledger updates"
+  ],
+  "requires_michael_approval": [
+    "Stripe live key initialization",
+    "production deployment",
+    "public port/firewall exposure",
+    "destructive file/database actions",
+    "pricing model changes",
+    "release tag promotion",
+    "external network write operations"
+  ],
+  "operating_mode": "AUTO_GOAL_LOOP_SAFE_LOCAL",
+  "status": "ACTIVE"
+}

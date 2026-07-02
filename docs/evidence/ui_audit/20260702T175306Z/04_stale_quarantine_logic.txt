@@ -1,0 +1,27 @@
+=== STALE / QUARANTINE LOGIC ===
+3102:        .pod-stale-freeze {
+3108:        .pod-stale-freeze .energy-ring {
+3548:        #hoch-pods-stale-quarantine-layer {
+3989:        <div id="hoch-pods-stale-quarantine-layer">
+5694:                const staleQuarantineLayer = document.getElementById("hoch-pods-stale-quarantine-layer");
+5728:                let isStale = false;
+5734:                        isStale = true;
+5737:                        isStale = true;
+5744:                    coreBadge.textContent = isStale ? "TELEMETRY: STA" + "LE" : "TELEMETRY: PA" + "SS";
+5745:                    coreBadge.className = "badge " + (isStale ? "badge-fail" : "badge-pa" + "ss");
+5750:                    coreEl.style.borderColor = isStale ? "var(--hoch-red)" : "var(--hoch-cyan)";
+5751:                    coreEl.style.boxShadow = isStale ? "0 0 35px rgba(255, 36, 0, 0.4)" : "0 0 35px rgba(34, 246, 255, 0.4)";
+5754:                if (staleQuarantineLayer) {
+5755:                    staleQuarantineLayer.style.display = isStale ? "block" : "none";
+5756:                    if (isStale) {
+5803:                    // Compliance requirement: let badgeClass = isStale ? 'badge-fail' : 'badge-pass';
+5810:                        let globalQuarantine = false;
+5814:                            if (src && src.computed_state === "STALE") {
+5815:                                globalQuarantine = true;
+5820:                        const quarantineLayer = document.getElementById('hoch-pods-stale-quarantine-layer');
+5822:                            if (globalQuarantine) {
+5857:                            if (globalQuarantine && sourceInfo && (sourceInfo.source_name === "global_verify" || sourceInfo.source_name === "hoch_pods_runtime_state" || sourceInfo.source_name === "hoch_pod_schedule")) {
+6191:                            if (isStale) {
+6192:                                theatricalClass = "pod-stale-freeze";
+6298:                            if (isOrbiting && !isStale) {
+6970:            const layer = document.getElementById("hoch-pods-stale-quarantine-layer");

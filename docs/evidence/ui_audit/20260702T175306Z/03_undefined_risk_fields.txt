@@ -1,0 +1,20 @@
+=== UNDEFINED RISK FIELDS ===
+5139:                        const isLow = proj.revenue_readiness_score < 50;
+5145:                                <span class="${scoreClass}">${proj.revenue_readiness_score}%</span>
+5153:                                <strong style="color:${proj.security_readiness_score < 70 ? 'var(--accent-red)' : 'var(--accent-teal)'}">${proj.security_readiness_score}%</strong>
+5157:                                <strong style="color:${proj.deployment_readiness_score < 70 ? 'var(--accent-red)' : 'var(--accent-teal)'}">${proj.deployment_readiness_score}%</strong>
+5718:                        sum += p.readiness_score || 0;
+6223:                            let nodeToShow = schedMatch.assigned_node_name || podState.assigned_node || "None";
+6224:                            let modelToShow = schedMatch.model_assigned || podState.assigned_model || "None";
+6258:                                    document.getElementById("drawer-role").textContent = podReg.role;
+6262:                                    document.getElementById("drawer-action").textContent = schedMatch.action_title || "None";
+6263:                                    document.getElementById("drawer-project").textContent = podState.assigned_project || "None";
+6264:                                    document.getElementById("drawer-exec-owner").textContent = podState.executive_owner || "None";
+6265:                                    document.getElementById("drawer-product-owner").textContent = podState.product_owner || "None";
+6266:                                    document.getElementById("drawer-node").textContent = schedMatch.assigned_node_name || podState.assigned_node || "None";
+6267:                                    document.getElementById("drawer-model").textContent = schedMatch.model_assigned || podState.assigned_model || "None";
+6268:                                    document.getElementById("drawer-heartbeat").textContent = podState.heartbeat_status || "UNKNOWN";
+6502:                                    Workload Class: <strong>${p.workload_class}</strong> | Model: <code>${p.model_assigned}</code>${toolsHtml}
+6639:                    const score = soccerProj.revenue_readiness_score !== undefined ? soccerProj.revenue_readiness_score : 0;
+6744:                            signOffText = `<span style="color:var(--hoch-amber); font-size:10px;">⚠️ Role approval required (${p.executive_owner})</span>`;
+6756:                                    <strong style="color:#fff; font-size:12px;">${p.action_title}</strong>

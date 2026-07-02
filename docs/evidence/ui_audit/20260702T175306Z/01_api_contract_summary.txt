@@ -1,0 +1,60 @@
+API CONTRACT SUMMARY
+================================================================================
+top_level_keys: 86
+
+CRITICAL SOURCES
+global_verify: state=STALE age=1446.6 max=600.0 source=/Users/michaelhoch/hoch_agent_swarm/has_live_project_tracker/data/global_verify.json reason=elapsed 1446.6s > allowed 600s
+hoch_pods_runtime_state: state=STALE age=1446.6 max=600.0 source=/Users/michaelhoch/hoch_agent_swarm/has_live_project_tracker/data/hoch_pods_runtime_state.json reason=elapsed 1446.6s > allowed 600s
+hoch_pod_schedule: state=STALE age=1446.6 max=600.0 source=/Users/michaelhoch/hoch_agent_swarm/has_live_project_tracker/data/hoch_pod_schedule.json reason=elapsed 1446.6s > allowed 600s
+playwright_spec: state=STALE age=79366.0 max=3600.0 source=DYNAMIC_STATE reason=elapsed 79366.0s > allowed 3600s
+revenue_readiness: state=STALE age=14282.3 max=600.0 source=/Users/michaelhoch/hoch_agent_swarm/has_live_project_tracker/data/project_revenue_readiness_results.json reason=elapsed 14282.3s > allowed 600s
+revenue_action_queue: state=STALE age=14282.3 max=600.0 source=/Users/michaelhoch/hoch_agent_swarm/has_live_project_tracker/data/revenue_action_queue.json reason=elapsed 14282.3s > allowed 600s
+hoch_compute_node_health: state=STALE age=14282.3 max=600.0 source=/Users/michaelhoch/hoch_agent_swarm/has_live_project_tracker/data/hoch_compute_node_health.json reason=elapsed 14282.3s > allowed 600s
+hoch_governed_execution: state=STALE age=14282.3 max=1800.0 source=/Users/michaelhoch/hoch_agent_swarm/has_live_project_tracker/data/governed_execution_log.json reason=elapsed 14282.3s > allowed 1800s
+hoch_execution_approval: state=STALE age=14282.3 max=600.0 source=/Users/michaelhoch/hoch_agent_swarm/has_live_project_tracker/data/hoch_execution_approval_queue.json reason=elapsed 14282.3s > allowed 600s
+
+PANEL STATES
+agent_trust_scores: STALE | elapsed 1446.6s > allowed 600s
+ai_executive_leadership: STALE | elapsed 14282.3s > allowed 600s
+doctrine_rules: STALE | elapsed 1446.6s > allowed 600s
+epic_fury_roi_model: STALE | elapsed 14282.3s > allowed 600s
+evidence_ledger: FRESH | None
+evidence_ledger_audit: FRESH | None
+executive_readiness: STALE | failing E2E tests: 0; 3 critical telemetry sources are STALE
+finance_agent_assignments: STALE | elapsed 14282.3s > allowed 600s
+hoch_execution_approval: STALE | elapsed 14282.3s > allowed 600s
+hoch_governed_execution: STALE | elapsed 14282.3s > allowed 1800s
+hoch_hasf_soccer_audit: STALE | elapsed 14282.3s > allowed 600s
+hoch_hasf_soccer_product_model: STALE | elapsed 14282.3s > allowed 600s
+hoch_pod_scheduler: STALE | elapsed 1446.6s > allowed 600s
+hoch_pods_theater: STALE | elapsed 1446.6s > allowed 600s
+local_backend_health: STALE | elapsed 1446.6s > allowed 600s
+pert_recalibration: STALE | elapsed 1446.6s > allowed 600s
+playwright_e2e: STALE | elapsed 79366.0s > allowed 3600s
+playwright_e2e_json_report: STALE | elapsed 79366.0s > allowed 3600s
+raci_matrix: STALE | elapsed 1446.6s > allowed 600s
+revenue_action_queue: STALE | elapsed 14282.3s > allowed 600s
+revenue_readiness: STALE | elapsed 14282.3s > allowed 600s
+risks_blockers: STALE | elapsed 14282.3s > allowed 600s
+runtime_status: STALE | elapsed 1446.6s > allowed 600s
+tailscale_network: STALE | elapsed 1446.6s > allowed 600s
+vps_port_exposure: STALE | elapsed 1446.6s > allowed 600s
+wbs_schedule: STALE | elapsed 1446.6s > allowed 600s
+worker_metrics: STALE | elapsed 1446.6s > allowed 600s
+worker_utilization_ledger: STALE | elapsed 1446.6s > allowed 600s
+
+UI DATA SHAPES
+hoch_pods_registry: list len=7
+hoch_pods_runtime_state: list len=7
+hoch_pod_schedule: list len=24
+hoch_compute_nodes: list len=3
+hoch_compute_node_health: list len=3
+project_revenue_readiness_results: list len=6
+revenue_action_queue: list len=17
+
+SCHEDULE FIELD SAMPLE
+{'pod_id': None, 'agent_id': 'has_command', 'pod_name': None, 'agent_name': 'HAS Command', 'assigned_runner': 'has-qa-runner-mac', 'assigned_node_name': None, 'model_assigned': None, 'action_title': None, 'workload_class': None}
+{'pod_id': None, 'agent_id': 'hasf_factory', 'pod_name': None, 'agent_name': 'HASF Factory', 'assigned_runner': 'has-qa-runner-mac', 'assigned_node_name': None, 'model_assigned': None, 'action_title': None, 'workload_class': None}
+{'pod_id': None, 'agent_id': 'runtime_truth', 'pod_name': None, 'agent_name': 'Runtime Truth', 'assigned_runner': 'has-qa-runner-mac', 'assigned_node_name': None, 'model_assigned': None, 'action_title': None, 'workload_class': None}
+{'pod_id': None, 'agent_id': 'stale_watchdog', 'pod_name': None, 'agent_name': 'Stale Watchdog', 'assigned_runner': 'has-qa-runner-mac', 'assigned_node_name': None, 'model_assigned': None, 'action_title': None, 'workload_class': None}
+{'pod_id': None, 'agent_id': 'qa_gatekeeper', 'pod_name': None, 'agent_name': 'QA Gatekeeper', 'assigned_runner': 'has-qa-runner-mac', 'assigned_node_name': None, 'model_assigned': None, 'action_title': None, 'workload_class': None}

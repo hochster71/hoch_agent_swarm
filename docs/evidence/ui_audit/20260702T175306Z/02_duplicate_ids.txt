@@ -1,0 +1,7 @@
+=== DUPLICATE IDS ===
+2x hoch-pods-storyboard-grid
+2x hoch-pods-status-overview
+2x hoch-pods-data-flow-visualization
+2x hoch-pods-evidence-archive
+2x hoch-pods-system-confirmation
+2x hoch-pods-mission-ready

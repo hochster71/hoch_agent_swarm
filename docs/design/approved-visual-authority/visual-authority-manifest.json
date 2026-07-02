@@ -1,0 +1,50 @@
+{
+  "doctrine": "HOCH_PODS_VISUAL_AUTHORITY_NO_VARIANCE",
+  "status": "LOCKED",
+  "approved_images_only": true,
+  "no_variance": true,
+  "control_plane": {
+    "canonical_path": "docs/design/approved-visual-authority/hoch-control-plane-authority.png",
+    "sha256": "2cb2aa32d7d449b187ef0e391309433ec66477edee1b6b3b4a449bcadef6b8c2",
+    "allowed_use": [
+      "UI control plane",
+      "product-card visual language",
+      "task-run visual language",
+      "operator control styling"
+    ]
+  },
+  "hoch_pods_theater": {
+    "canonical_path": "docs/design/approved-visual-authority/hoch-pods-theater-authority.jpeg",
+    "sha256": "98daa2b07b0a6ed71429b4d34afd69e7d54fc22c933002f1189a56eef676c1b4",
+    "allowed_use": [
+      "Hoch Pods Mission Control Theater",
+      "agent lift-off",
+      "agent spin-up",
+      "agent orbit",
+      "task traversal",
+      "mission timeline",
+      "pod docking",
+      "landing",
+      "securing agents into Hoch Pods",
+      "final GO / NO-GO theater panels"
+    ]
+  },
+  "forbidden": [
+    "alternate themes",
+    "generated substitutes",
+    "detached mockups",
+    "random screenshots",
+    "old prototype screenshots as runtime authority",
+    "unapproved image references",
+    "visual drift",
+    "silent replacement",
+    "release-authority-gate.png as authority",
+    "a_wide_high_detail_ui_dashboard_screenshot_conc as authority"
+  ],
+  "import_recovery": "hoch-approved-visual-authority 2/ → canonical doctrine path (hashes verified)",
+  "last_verified": "2026-07-02",
+  "review_files": [
+    "docs/evidence/ui/approved-visual-authority-review.md",
+    "docs/evidence/ui/approved-visual-authority-review.html"
+  ]
+}
