@@ -11386,6 +11386,11 @@ function renderAppleTelemetry(devices) {
     const chargeIcon = d.charging_state === "charging" ? "⚡ " : "";
     const uptimeStr = formatUptime(d.uptime_seconds);
 
+    const isReal = !!d.real_telemetry;
+    const badgeText = isReal ? "REAL" : "PLACEHOLDER";
+    const badgeBg = isReal ? "rgba(16, 185, 129, 0.2)" : "rgba(156, 163, 175, 0.2)";
+    const badgeColor = isReal ? "#10b981" : "#9ca3af";
+
     return `
       <article class="device-swarm-card live" style="border: 1px solid rgba(22, 28, 45, 0.45); background: rgba(34, 246, 255, 0.02);">
         <h4 style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
@@ -11398,6 +11403,9 @@ function renderAppleTelemetry(devices) {
           <div><dt>IP</dt><dd>${escapeHtml(d.local_ip || "unknown")}</dd></div>
           <div><dt>Type</dt><dd>${escapeHtml(d.device_type)}</dd></div>
           <div><dt>OS</dt><dd>${escapeHtml(d.os_version)}</dd></div>
+          <div><dt>Telemetry</dt><dd><span class="pill" style="background: ${badgeBg}; color: ${badgeColor}; padding: 1px 4px; border-radius: 4px; font-weight: bold; font-size: 8px;">${badgeText}</span></dd></div>
+          <div><dt>Confidence</dt><dd>${escapeHtml(d.confidence || "low")}</dd></div>
+          <div><dt>Source</dt><dd>${escapeHtml(d.source || "unknown")}</dd></div>
           <div><dt>CPU</dt><dd>${d.cpu_load_percent}%</dd></div>
           <div><dt>RAM</dt><dd>${d.memory_usage_percent}%</dd></div>
           <div><dt>Disk</dt><dd>${d.disk_usage_percent}%</dd></div>

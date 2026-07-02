@@ -17,6 +17,8 @@ def get_db_conn():
 def init_apple_telemetry_table():
     conn = get_db_conn()
     try:
+        # Drop table to apply the new schema cleanly
+        conn.execute("DROP TABLE IF EXISTS apple_device_telemetry")
         conn.execute("""
             CREATE TABLE IF NOT EXISTS apple_device_telemetry (
                 device_id TEXT PRIMARY KEY,
@@ -33,6 +35,9 @@ def init_apple_telemetry_table():
                 available_storage_gb REAL,
                 thermal_status TEXT,
                 health_status TEXT,
+                source TEXT,
+                real_telemetry INTEGER,
+                confidence TEXT,
                 last_seen TEXT NOT NULL
             )
         """)
@@ -112,13 +117,13 @@ def get_local_mac_details() -> dict:
         "os_version": os_ver,
         "available_storage_gb": avail_storage,
         "thermal_status": "nominal",
-        "health_status": "healthy"
+        "health_status": "healthy",
+        "source": "local_host_pmset",
+        "real_telemetry": True,
+        "confidence": "high"
     }
 
 def get_paired_devices_status() -> list[dict]:
-    # Construct read-only simulated Apple devices status (iPhone, iPad, Watch, AirPods, iMac)
-    # This ensures zero dependency on iCloud / cloud services and complies with local-only constraints.
-    ts = now_iso()
     return [
         {
             "device_id": "imac_workstation",
@@ -134,7 +139,10 @@ def get_paired_devices_status() -> list[dict]:
             "os_version": "macOS 14.5",
             "available_storage_gb": 480.0,
             "thermal_status": "nominal",
-            "health_status": "healthy"
+            "health_status": "healthy",
+            "source": "placeholder_seed",
+            "real_telemetry": False,
+            "confidence": "low"
         },
         {
             "device_id": "iphone_operator",
@@ -150,7 +158,10 @@ def get_paired_devices_status() -> list[dict]:
             "os_version": "iOS 17.5.1",
             "available_storage_gb": 32.5,
             "thermal_status": "nominal",
-            "health_status": "healthy"
+            "health_status": "healthy",
+            "source": "placeholder_seed",
+            "real_telemetry": False,
+            "confidence": "low"
         },
         {
             "device_id": "ipad_operator",
@@ -166,7 +177,10 @@ def get_paired_devices_status() -> list[dict]:
             "os_version": "iPadOS 17.5.1",
             "available_storage_gb": 128.0,
             "thermal_status": "nominal",
-            "health_status": "healthy"
+            "health_status": "healthy",
+            "source": "placeholder_seed",
+            "real_telemetry": False,
+            "confidence": "low"
         },
         {
             "device_id": "watch_operator",
@@ -182,7 +196,10 @@ def get_paired_devices_status() -> list[dict]:
             "os_version": "watchOS 10.5",
             "available_storage_gb": 16.0,
             "thermal_status": "nominal",
-            "health_status": "healthy"
+            "health_status": "healthy",
+            "source": "placeholder_seed",
+            "real_telemetry": False,
+            "confidence": "low"
         },
         {
             "device_id": "airpods_operator",
@@ -198,7 +215,10 @@ def get_paired_devices_status() -> list[dict]:
             "os_version": "Firmware 6A324",
             "available_storage_gb": 0.0,
             "thermal_status": "nominal",
-            "health_status": "healthy"
+            "health_status": "healthy",
+            "source": "placeholder_seed",
+            "real_telemetry": False,
+            "confidence": "low"
         }
     ]
 
@@ -218,14 +238,14 @@ def collect_and_store_apple_telemetry() -> list[dict]:
                     device_id, device_name, device_type, local_ip, battery_percent,
                     charging_state, memory_usage_percent, disk_usage_percent,
                     cpu_load_percent, uptime_seconds, os_version, available_storage_gb,
-                    thermal_status, health_status, last_seen
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    thermal_status, health_status, source, real_telemetry, confidence, last_seen
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 d["device_id"], d["device_name"], d["device_type"], d["local_ip"],
                 d["battery_percent"], d["charging_state"], d["memory_usage_percent"],
                 d["disk_usage_percent"], d["cpu_load_percent"], d["uptime_seconds"],
                 d["os_version"], d["available_storage_gb"], d["thermal_status"],
-                d["health_status"], ts
+                d["health_status"], d["source"], int(d["real_telemetry"]), d["confidence"], ts
             ))
         conn.commit()
     finally:
@@ -234,17 +254,20 @@ def collect_and_store_apple_telemetry() -> list[dict]:
     return all_devices
 
 def get_cached_apple_telemetry() -> list[dict]:
-    init_apple_telemetry_table()
     conn = get_db_conn()
     devices = []
     try:
-        rows = conn.execute("SELECT * FROM apple_device_telemetry").fetchall()
-        for r in rows:
-            devices.append(dict(r))
+        # Check if table exists first
+        table_exists = conn.execute("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='apple_device_telemetry'").fetchone()[0]
+        if table_exists > 0:
+            rows = conn.execute("SELECT * FROM apple_device_telemetry").fetchall()
+            for r in rows:
+                row_dict = dict(r)
+                row_dict["real_telemetry"] = bool(row_dict["real_telemetry"])
+                devices.append(row_dict)
     finally:
         conn.close()
         
     if not devices:
-        # Fallback to direct collection if cache is empty
         return collect_and_store_apple_telemetry()
     return devices
