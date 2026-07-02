@@ -112,6 +112,42 @@ body:after{
   place-items:center;
   overflow:hidden;
 }
+
+.approved-visual-layer{
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(90deg,rgba(2,3,10,.82),rgba(2,3,10,.35),rgba(2,3,10,.86)),
+    url("/assets/hoch-pods-visual-authority") center center / cover no-repeat;
+  opacity:.34;
+  filter:saturate(1.18) contrast(1.08);
+  transform:scale(1.04);
+  pointer-events:none;
+}
+.approved-visual-layer:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 50% 48%,transparent 0 20%,rgba(2,3,10,.52) 58%,rgba(2,3,10,.88) 100%),
+    linear-gradient(180deg,rgba(73,231,255,.08),transparent 42%);
+}
+.visual-authority-ribbon{
+  position:absolute;
+  top:14px;
+  left:14px;
+  z-index:4;
+  padding:7px 10px;
+  border-radius:999px;
+  border:1px solid rgba(73,231,255,.34);
+  background:rgba(2,3,10,.62);
+  color:var(--cyan2);
+  font-size:10px;
+  letter-spacing:.11em;
+  text-transform:uppercase;
+  box-shadow:0 0 24px rgba(73,231,255,.16);
+}
+
 .orbit{
   position:absolute;border:1px solid rgba(73,231,255,.12);border-radius:50%;
   animation:spin 18s linear infinite;
@@ -257,6 +293,8 @@ body:after{
 
   <section>
     <section class="panel hero">
+      <div class="approved-visual-layer"></div>
+      <div class="visual-authority-ribbon">Approved HOCH PODS Visual Authority</div>
       <div class="orbit o1"></div><div class="orbit o2"></div><div class="orbit o3"></div><div class="orbit o4"></div>
       <div class="rocket"></div>
       <div class="launch-title">

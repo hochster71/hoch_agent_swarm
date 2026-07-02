@@ -7436,3 +7436,16 @@ def hoch_pods_moonshot_ui():
     if not ui_path.exists():
         return HTMLResponse("<h1>HOCH PODS Moonshot UI missing</h1>", status_code=404)
     return HTMLResponse(ui_path.read_text())
+
+
+# HOCH PODS approved visual authority image
+@app.get("/assets/hoch-pods-visual-authority")
+def hoch_pods_visual_authority_image():
+    from fastapi.responses import FileResponse
+    from pathlib import Path
+
+    image_path = Path("docs/design/approved-visual-authority/hoch-pods-has-hasf-approved-authority.jpeg")
+    if not image_path.exists():
+        return FileResponse("docs/design/approved-visual-authority/hoch-pods-theater-authority.jpeg")
+    return FileResponse(image_path)
+
