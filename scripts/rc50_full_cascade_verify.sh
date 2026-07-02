@@ -52,13 +52,18 @@ for i in {1..10}; do
     sleep 1
 done
 
-# 1.5 Refresh telemetry truth cascade to ensure all files have fresh timestamps
+# 1.5 Run visual compliance audit first
+echo "Running visual compliance audit..."
+python3 scripts/audit_hoch_pods_theater_visual_compliance.py
+
+# 1.6 Refresh telemetry truth cascade to ensure all files have fresh timestamps
 echo "Refreshing telemetry truth cascade..."
 bash scripts/rc49_5_refresh_truth_cascade.sh
 
 # 2. Run Playwright E2E test suite for all cascade targets
 echo "Running Playwright E2E cascade tests..."
 npx playwright test \
+    tests/e2e/rc52_1-hoch-pods-agent-liftoff-theater.spec.ts \
     tests/e2e/rc52_1-hoch-pods-space-swarm-theater.spec.ts \
     tests/e2e/rc52-governed-execution-runner.spec.ts \
     tests/e2e/rc51-execution-approval-queue.spec.ts \
