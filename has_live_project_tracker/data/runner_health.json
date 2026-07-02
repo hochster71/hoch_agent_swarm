@@ -1,0 +1,20 @@
+{
+  "generated_at": "2026-07-02T10:39:17.375808",
+  "github_owner": "hochster71",
+  "repo": "hochster71/hoch_agent_swarm",
+  "labels": [
+    "self-hosted",
+    "has-qa-runner",
+    "has-release-runner"
+  ],
+  "status": "ONLINE",
+  "last_heartbeat": "2026-07-02T10:39:17.375810",
+  "qa_runner": "PASS",
+  "release_runner": "PASS",
+  "workflows": [
+    "has-qa-runner.yml",
+    "has-release-runner.yml"
+  ],
+  "live_ui_status": "PROVEN / PASS",
+  "message": "Runner architecture updated. Visual doctrine and blank image reset preserved. No deployment, no Stripe, no paid providers."
+}

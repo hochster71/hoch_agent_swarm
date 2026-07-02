@@ -1,0 +1,42 @@
+{
+  "generated_at": "2026-07-02T18:47:21.839420+00:00",
+  "status": "PASS",
+  "results": [
+    {
+      "command": "python3 scripts/generate_global_verify.py",
+      "ok": true,
+      "returncode": 0,
+      "stdout_tail": "GLOBAL_VERIFY: PASS\n",
+      "stderr_tail": ""
+    },
+    {
+      "command": "python3 scripts/generate_hoch_pods_runtime_state.py",
+      "ok": true,
+      "returncode": 0,
+      "stdout_tail": "==================================================\nRUNNING HOCH PODS RUNTIME STATE COMPILER\n==================================================\n[PASS] Loaded registry containing 7 pods.\n[PASS] Loaded 17 actions from revenue queue.\n[PASS] Loaded project revenue readiness results.\n[PASS] Saved compiled runtime states to: /Users/michaelhoch/hoch_agent_swarm/has_live_project_tracker/data/hoch_pods_runtime_state.json\n[PASS] Saved markdown evidence report to: /Users/michaelhoch/hoch_agent_swarm/docs/evidence/runtime/hoch-pods-runtime-evidence.md\n",
+      "stderr_tail": ""
+    },
+    {
+      "command": "python3 scripts/normalize_hoch_pods_runtime_state.py",
+      "ok": true,
+      "returncode": 0,
+      "stdout_tail": "NORMALIZE_HOCH_PODS_RUNTIME_STATE: PASS records=7\n",
+      "stderr_tail": ""
+    },
+    {
+      "command": "python3 scripts/generate_hoch_pod_schedule.py",
+      "ok": true,
+      "returncode": 0,
+      "stdout_tail": "HOCH_POD_SCHEDULE: FRESH\n",
+      "stderr_tail": ""
+    },
+    {
+      "command": "python3 scripts/verify_live_telemetry_freshness.py",
+      "ok": true,
+      "returncode": 0,
+      "stdout_tail": "LIVE_TELEMETRY_FRESHNESS: PASS\n",
+      "stderr_tail": ""
+    }
+  ],
+  "single_next_action": "Reload http://127.0.0.1:8765/ and confirm quarantine is cleared."
+}

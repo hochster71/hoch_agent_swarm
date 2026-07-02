@@ -1,0 +1,46 @@
+{
+  "generated_at": "2026-07-02T18:47:21.877010+00:00",
+  "status": "PASS",
+  "required_telemetry": [
+    {
+      "telemetry_id": "global_verify",
+      "path": "has_live_project_tracker/data/global_verify.json",
+      "exists": true,
+      "valid_json": true,
+      "fresh": true,
+      "stale_state": "FRESH",
+      "errors": [],
+      "generated_at": "2026-07-02T18:47:19.315540+00:00",
+      "freshness_sla_minutes": 30,
+      "age_minutes": 0.04
+    },
+    {
+      "telemetry_id": "hoch_pods_runtime_state",
+      "path": "has_live_project_tracker/data/hoch_pods_runtime_state.json",
+      "exists": true,
+      "valid_json": true,
+      "fresh": true,
+      "stale_state": "FRESH",
+      "errors": [],
+      "record_count": 7,
+      "generated_at": "2026-07-02T18:47:21.799958+00:00",
+      "freshness_sla_minutes": 30,
+      "age_minutes": 0.0
+    },
+    {
+      "telemetry_id": "hoch_pod_schedule",
+      "path": "has_live_project_tracker/data/hoch_pod_schedule.json",
+      "exists": true,
+      "valid_json": true,
+      "fresh": true,
+      "stale_state": "FRESH",
+      "errors": [],
+      "generated_at": "2026-07-02T18:47:21.818615+00:00",
+      "freshness_sla_minutes": 45,
+      "age_minutes": 0.0
+    }
+  ],
+  "quarantine_active": false,
+  "unfreeze_allowed": true,
+  "single_next_action": "Continue scheduled live telemetry refresh."
+}
