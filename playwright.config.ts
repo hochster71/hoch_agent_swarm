@@ -55,6 +55,7 @@ export default defineConfig({
     "**/rc50_1-hoch-hasf-soccer-pipeline.spec.ts",
     "**/rc51-execution-approval-queue.spec.ts",
     "**/rc52-governed-execution-runner.spec.ts",
+    "**/rc52_1-hoch-pods-space-swarm-theater.spec.ts",
   ],
   timeout: 45_000,
   fullyParallel: false,
