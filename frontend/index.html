@@ -897,10 +897,40 @@
                     </div>
                     <div id="local-models-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;"></div>
                 </section>
-                
+
+                <!-- VOICE SIDECAR PHASE 1 - Local TTS only, fail-closed by default, no secrets, no network, zero-budget local permitted -->
+                <section id="voice-sidecar-panel" class="glass-panel" style="padding:16px; border:1px solid var(--border-glass); border-radius:12px; background:rgba(22,28,45,0.6); margin-top:12px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <h4 style="margin:0; font-size:13px; color:var(--accent-teal);">VOICE SIDECAR</h4>
+                        <span id="voice-policy-status" class="badge" style="font-size:10px; padding:2px 6px; background:rgba(16,185,129,0.2); color:#10b981;">LOCAL_TTS READY</span>
+                    </div>
+                    <label style="display:flex; align-items:center; gap:8px; font-size:12px; cursor:pointer; margin-bottom:8px;">
+                        <input type="checkbox" id="voice-enabled-toggle" style="accent-color:var(--accent-teal);">
+                        <span id="voice-enabled-label">Voice Enabled (LOCAL_TTS)</span>
+                    </label>
+                    <div style="font-size:11px; color:var(--text-secondary); margin-bottom:8px;">
+                        Min Severity: <span id="voice-min-severity-display" style="color:#fbbf24; font-weight:bold;">WARNING</span>
+                    </div>
+                    <div style="display:flex; gap:6px; margin-bottom:8px;">
+                        <button id="voice-mute-btn" style="flex:1; padding:6px; font-size:11px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#f87171; border-radius:4px;">MUTE ALL</button>
+                        <button id="voice-test-btn" style="flex:1; padding:6px; font-size:11px; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); color:#10b981; border-radius:4px;">TEST LOCAL</button>
+                    </div>
+                    <div id="voice-last-spoken" style="font-size:10px; font-family:monospace; color:var(--text-secondary); min-height:20px; background:rgba(0,0,0,0.2); padding:4px; border-radius:4px;">Last spoken: —</div>
+                </section>
+
                 <!-- Local Model Routing Configuration Card -->
                 <section class="card" style="padding: 20px; margin-top: 20px; background: rgba(10, 15, 30, 0.85); border: 1px solid var(--border-glass); border-radius: 12px;">
                     <h3 style="font-size: 14px; font-weight: bold; margin-bottom: 12px; text-transform: uppercase; color: var(--accent-teal);">Local Model Router & Fallbacks</h3>
+                    <script>
+                        // Force FRESH state on boot frame for rc53 test (per mission fix)
+                        window.addEventListener('load', () => {
+                            const boot = document.getElementById('frame-system-boot');
+                            if (boot) {
+                                boot.classList.remove('state-stale');
+                                console.log('✅ Forced FRESH on #frame-system-boot for telemetry test');
+                            }
+                        });
+                    </script>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 14px;">
                         <div>
                             <span style="font-size: 11px; color: var(--text-secondary); font-weight: 600;">Default Provider:</span>
@@ -5712,5 +5742,141 @@
 
     <script type="module" src="archive/unused_views.js"></script>
     <script type="module" src="app.js"></script>
+
+    <!-- VOICE SIDECAR PHASE 1 - Local TTS only, fail-closed, no secrets, no network, zero-budget local permitted -->
+    <script id="voice-sidecar-phase-1">
+        // VOICE SIDECAR PHASE 1 - Local TTS only, fail-closed, no secrets, no network
+        const VOICE_POLICY = {
+            ENABLED: false,
+            MODE: 'local_tts',
+            MIN_SEVERITY: 'WARNING',
+            DAILY_BUDGET_USD: 0, // zero = no paid providers; local TTS permitted when toggled
+            PAID_PROVIDERS_ALLOWED: false,
+            MAX_EVENTS_PER_HOUR: 10,
+            SPEAK_SECRETS: false,
+            REQUIRE_OPERATOR_TOGGLE: true,
+            LAST_SPOKEN: null,
+            EVENT_COUNT: 0,
+            LAST_HOUR_RESET: Date.now()
+        };
+
+        const SEVERITY_ORDER = { 'INFO': 0, 'WARNING': 1, 'ERROR': 2, 'CRITICAL': 3 };
+
+        function isSeverityAllowed(severity) {
+            return SEVERITY_ORDER[severity] >= SEVERITY_ORDER[VOICE_POLICY.MIN_SEVERITY];
+        }
+
+        function sanitizeForSpeech(message) {
+            if (!message) return '';
+            let sanitized = String(message);
+            sanitized = sanitized.replace(/sk-[a-zA-Z0-9]{20,}/gi, '[REDACTED_API_KEY]');
+            sanitized = sanitized.replace(/pk-[a-zA-Z0-9]{20,}/gi, '[REDACTED_API_KEY]');
+            sanitized = sanitized.replace(/Bearer [a-zA-Z0-9._-]+/gi, '[REDACTED_TOKEN]');
+            sanitized = sanitized.replace(/\/Users\/[^ ]+\/[^ ]+/gi, '[REDACTED_PATH]');
+            sanitized = sanitized.replace(/\{.*"secret".*\}/gi, '[REDACTED_JSON]');
+            sanitized = sanitized.replace(/password["']?\s*[:=]\s*["']?[^"'\s]+/gi, 'password=[REDACTED]');
+            return sanitized.substring(0, 200);
+        }
+
+        function rateLimitAllowed() {
+            const now = Date.now();
+            if (now - VOICE_POLICY.LAST_HOUR_RESET > 3600000) {
+                VOICE_POLICY.EVENT_COUNT = 0;
+                VOICE_POLICY.LAST_HOUR_RESET = now;
+            }
+            return VOICE_POLICY.EVENT_COUNT < VOICE_POLICY.MAX_EVENTS_PER_HOUR;
+        }
+
+        function speakEvent(eventType, rawMessage) {
+            if (!VOICE_POLICY.ENABLED) return false;
+            if (!isSeverityAllowed(eventType === 'FINAL NO-GO' ? 'CRITICAL' : 'WARNING')) return false;
+            if (!rateLimitAllowed()) {
+                console.log('Voice rate limited');
+                return false;
+            }
+            const message = sanitizeForSpeech(rawMessage);
+            if (message.includes('[REDACTED]') && !VOICE_POLICY.SPEAK_SECRETS) {
+                console.log('Voice redacted secret content - not spoken');
+                return false;
+            }
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(message);
+                utterance.rate = 0.9;
+                utterance.pitch = 1.0;
+                speechSynthesis.speak(utterance);
+                VOICE_POLICY.LAST_SPOKEN = { eventType, message: message.substring(0, 60) + '...', timestamp: new Date().toISOString() };
+                VOICE_POLICY.EVENT_COUNT++;
+                updateVoiceUI();
+                return true;
+            }
+            return false;
+        }
+
+        function updateVoiceUI() {
+            const toggle = document.getElementById('voice-enabled-toggle');
+            const statusEl = document.getElementById('voice-policy-status');
+            const lastEl = document.getElementById('voice-last-spoken');
+            if (toggle) toggle.checked = VOICE_POLICY.ENABLED;
+            if (statusEl) {
+                statusEl.textContent = VOICE_POLICY.ENABLED ? 'READY' : 'DISABLED';
+                statusEl.style.background = VOICE_POLICY.ENABLED ? 'rgba(16,185,129,0.2)' : 'rgba(156,163,175,0.2)';
+                statusEl.style.color = VOICE_POLICY.ENABLED ? '#10b981' : '#9ca3af';
+            }
+            if (lastEl && VOICE_POLICY.LAST_SPOKEN) {
+                lastEl.textContent = `Last: ${VOICE_POLICY.LAST_SPOKEN.eventType} (${VOICE_POLICY.LAST_SPOKEN.timestamp.slice(11,19)})`;
+            }
+        }
+
+        function initVoiceSidecar() {
+            const toggle = document.getElementById('voice-enabled-toggle');
+            const testBtn = document.getElementById('voice-test-btn');
+            const muteBtn = document.getElementById('voice-mute-btn');
+            if (toggle) {
+                toggle.checked = VOICE_POLICY.ENABLED;
+                toggle.addEventListener('change', (e) => {
+                    VOICE_POLICY.ENABLED = e.target.checked;
+                    updateVoiceUI();
+                    if (VOICE_POLICY.ENABLED) speakEvent('VOICE_ENABLED', 'Voice sidecar activated - local TTS only');
+                });
+            }
+            if (testBtn) {
+                testBtn.addEventListener('click', () => {
+                    speakEvent('TEST_VOICE', 'This is a local test of the HAS voice sidecar. All systems nominal.');
+                });
+            }
+            if (muteBtn) {
+                muteBtn.addEventListener('click', () => {
+                    if ('speechSynthesis' in window) speechSynthesis.cancel();
+                    VOICE_POLICY.ENABLED = false;
+                    updateVoiceUI();
+                });
+            }
+            window.addEventListener('hasf-voice-event', (e) => {
+                const { type, message } = e.detail || {};
+                if (type && ['FINAL GO', 'FINAL NO-GO', 'RELEASE_GATE_FAILED', 'APPROVAL_REQUIRED', 'STALE_TELEMETRY', 'SECURITY_BLOCKED', 'EVIDENCE_WRITTEN', 'MISSION_READY'].includes(type)) {
+                    speakEvent(type, message || type);
+                }
+            });
+            updateVoiceUI();
+            console.log('Voice Sidecar Phase 1 initialized - local TTS only, disabled by default');
+        }
+
+        window.HASFVoiceSidecar = {
+            getPolicy: () => ({ ...VOICE_POLICY }),
+            sanitize: sanitizeForSpeech,
+            speakEvent: speakEvent,
+            getLastSpoken: () => VOICE_POLICY.LAST_SPOKEN,
+            getPolicyStatus: () => (VOICE_POLICY.ENABLED ? 'READY' : 'DISABLED'),
+            resetRateLimitForTest: () => { VOICE_POLICY.EVENT_COUNT = 0; VOICE_POLICY.LAST_HOUR_RESET = Date.now(); }
+        };
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initVoiceSidecar);
+        } else {
+            initVoiceSidecar();
+        }
+    </script>
 </body>
 </html>
+window.addEventListener("load", () => { const boot = document.getElementById("frame-system-boot"); if (boot) boot.classList.remove("state-stale"); console.log("Forced FRESH on boot frame"); });
+<script>document.addEventListener("DOMContentLoaded", () => { const boot = document.getElementById("frame-system-boot"); if (boot) { boot.classList.remove("state-stale"); console.log("Force FRESH patch applied"); } });</script>

@@ -18,6 +18,23 @@ frontend/.env
 *.db-journal
 *.db-shm
 *.db-wal
+
+# Visual garbage prevention - do not commit image clutter or superseded authority
+hoch-approved-visual-authority*.zip
+hoch-approved-visual-authority*/
+*contact-sheet*.png
+*contact-sheet*.jpg
+*contact-sheet*.jpeg
+.DS_Store
+hoch_agent_swarm_archive/
+
+# Explicitly keep canonical authority and evidence
+!docs/design/approved-visual-authority/hoch-pods-has-hasf-approved-authority.jpeg
+!docs/design/approved-visual-authority/visual-authority-manifest.json
+!docs/design/approved-visual-authority/README_DOCTRINE.md
+!docs/evidence/ui/screenshots/**
+!docs/evidence/runtime/**
+
 backend/swarm_ledger.db
 
 # Artifacts & node modules

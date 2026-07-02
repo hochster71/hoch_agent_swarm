@@ -1,0 +1,56 @@
+{
+  "assets": [
+    {
+      "id": "has-local-loopback-8765",
+      "name": "HAS Local Runtime - Loopback",
+      "type": "local_runtime",
+      "provider": "local",
+      "monthly_cost_usd": 0,
+      "host": "127.0.0.1",
+      "port": 8765,
+      "health_url": "http://127.0.0.1:8765/api/pert/data",
+      "ui_url": "http://127.0.0.1:8765/ui-moonshot",
+      "intended_use": "Primary live HAS/HASF local control plane, PERT API, Moonshot UI, telemetry refresh, browser QA verification.",
+      "status": "active"
+    },
+    {
+      "id": "has-local-lan-8765",
+      "name": "HAS Local Runtime - LAN",
+      "type": "local_lan_runtime",
+      "provider": "local",
+      "monthly_cost_usd": 0,
+      "host": "10.0.0.10",
+      "port": 8765,
+      "health_url": "http://10.0.0.10:8765/api/pert/data",
+      "ui_url": "http://10.0.0.10:8765/ui-moonshot",
+      "intended_use": "LAN-visible HAS/HASF runtime if Uvicorn is bound to 0.0.0.0. Currently expected to fail if server is bound only to 127.0.0.1.",
+      "status": "verify_lan_binding"
+    },
+    {
+      "id": "operator-iphone",
+      "name": "Michael iPhone Operator Monitor",
+      "type": "mobile_monitor",
+      "provider": "local_network",
+      "monthly_cost_usd": 0,
+      "host": "10.0.0.74",
+      "port": null,
+      "health_url": "",
+      "ui_url": "",
+      "intended_use": "Operator monitor only. Not a HAS compute node.",
+      "status": "monitor_only"
+    },
+    {
+      "id": "online-server-60",
+      "name": "hoch-relay-001",
+      "type": "cloud_server",
+      "provider": "vps",
+      "monthly_cost_usd": 60,
+      "host": "50.116.41.183",
+      "port": 3012,
+      "health_url": "http://100.87.18.15:3012/health",
+      "ui_url": "http://100.87.18.15:3012",
+      "intended_use": "Tailscale relay endpoint and command server. Access is gated via SSH key authentication on port 22, and public port 3012 is kept strictly closed/unreachable.",
+      "status": "active"
+    }
+  ]
+}

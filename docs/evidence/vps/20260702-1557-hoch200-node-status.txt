@@ -1,0 +1,82 @@
+=== HOCH-200 NODE STATUS ===
+Wed Jul  1 03:15:44 AM UTC 2026
+
+=== HOSTNAME ===
+ Static hostname: hoch-relay-001
+       Icon name: computer-vm
+         Chassis: vm 🖴
+      Machine ID: 142f852395a246deb8b7b8cb683b4dcd
+         Boot ID: 410bf1dd00224c9d81f1d84cc29622a7
+  Virtualization: kvm
+Operating System: Ubuntu 24.04.4 LTS
+          Kernel: Linux 6.8.0-124-generic
+    Architecture: x86-64
+ Hardware Vendor: Linode
+  Hardware Model: Compute Instance
+Firmware Version: Not Specified
+
+=== KERNEL ===
+Linux hoch-relay-001 6.8.0-124-generic #124-Ubuntu SMP PREEMPT_DYNAMIC Tue May 26 13:00:45 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+
+=== MEMORY ===
+               total        used        free      shared  buff/cache   available
+Mem:            23Gi       571Mi        22Gi       1.0Mi       396Mi        22Gi
+Swap:          495Mi          0B       495Mi
+
+=== DISK ===
+Filesystem      Size  Used Avail Use% Mounted on
+tmpfs           2.4G 1012K  2.4G   1% /run
+/dev/sda         20G  3.7G   15G  21% /
+tmpfs            12G     0   12G   0% /dev/shm
+tmpfs           5.0M     0  5.0M   0% /run/lock
+tmpfs           2.4G   12K  2.4G   1% /run/user/0
+
+=== NETWORK ===
+lo               UNKNOWN        127.0.0.1/8 ::1/128 
+eth0             UP             50.116.41.183/24 2600:3c02::2000:c0ff:fe55:9040/64 fe80::2000:c0ff:fe55:9040/64 
+tailscale0       UNKNOWN        100.87.18.15/32 fd7a:115c:a1e0::cd39:1210/128 fe80::9d61:56f3:a5fb:105e/64 
+docker0          DOWN           172.17.0.1/16 
+
+=== TAILSCALE ===
+100.87.18.15    hoch-relay-001     michael.b.hoch@  linux  -                          
+100.102.221.87  iphone-15-pro-max  michael.b.hoch@  iOS    offline, last seen 8d ago  
+
+100.87.18.15
+
+=== DOCKER ===
+Docker version 29.6.1, build 8900f1d
+Docker Compose version v5.2.0
+active
+
+=== FIREWALL ===
+Status: active
+Logging: on (low)
+Default: deny (incoming), allow (outgoing), deny (routed)
+New profiles: skip
+
+To                         Action      From
+--                         ------      ----
+22/tcp (OpenSSH)           ALLOW IN    Anywhere                  
+22/tcp (OpenSSH (v6))      ALLOW IN    Anywhere (v6)             
+
+
+=== FAIL2BAN ===
+active
+Status for the jail: sshd
+|- Filter
+|  |- Currently failed:	0
+|  |- Total failed:	0
+|  `- Journal matches:	_SYSTEMD_UNIT=sshd.service + _COMM=sshd
+`- Actions
+   |- Currently banned:	0
+   |- Total banned:	0
+   `- Banned IP list:	
+
+=== HOCH RELAY DIR ===
+total 24
+drwxr-xr-x 6 root root 4096 Jul  1 03:10 .
+drwxr-xr-x 4 root root 4096 Jul  1 03:10 ..
+drwxr-xr-x 2 root root 4096 Jul  1 03:10 config
+drwxr-xr-x 2 root root 4096 Jul  1 03:10 data
+drwxr-xr-x 2 root root 4096 Jul  1 03:10 evidence
+drwxr-xr-x 2 root root 4096 Jul  1 03:10 logs
