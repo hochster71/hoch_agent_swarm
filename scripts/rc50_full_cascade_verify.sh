@@ -8,7 +8,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 echo "=========================================================="
-echo "STARTING FULL VERIFICATION CASCADE (RC34 - RC50)"
+echo "STARTING FULL VERIFICATION CASCADE (RC34 - RC52.1)"
 echo "=========================================================="
 
 # Activate virtualenv if present
@@ -59,6 +59,7 @@ bash scripts/rc49_5_refresh_truth_cascade.sh
 # 2. Run Playwright E2E test suite for all cascade targets
 echo "Running Playwright E2E cascade tests..."
 npx playwright test \
+    tests/e2e/rc52_1-hoch-pods-space-swarm-theater.spec.ts \
     tests/e2e/rc52-governed-execution-runner.spec.ts \
     tests/e2e/rc51-execution-approval-queue.spec.ts \
     tests/e2e/rc50_1-hoch-hasf-soccer-pipeline.spec.ts \
@@ -83,5 +84,5 @@ echo "Running RC34 verification script..."
 bash scripts/rc34_usage_guardrail_verify.sh
 
 echo "=========================================================="
-echo "CASCADE SUCCESS: All verification gates (RC34-RC52) PASS!"
+echo "CASCADE SUCCESS: All verification gates (RC34-RC52.1) PASS!"
 echo "=========================================================="

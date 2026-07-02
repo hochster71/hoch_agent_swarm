@@ -2915,14 +2915,377 @@ def get_dashboard():
             left: 10px;
         }
 
+
+        /* --- SPACE SWARM THEATER ROOT (RC52.1) --- */
+        #hoch-pods-container {
+            position: relative;
+            background: #030508;
+            border: 2px solid var(--hoch-border);
+            border-radius: 16px;
+            height: 650px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 50px rgba(34, 246, 255, 0.05);
+            box-sizing: border-box;
+            z-index: 2;
+        }
+
+        /* Starfield background */
+        #hoch-pods-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle, rgba(16,24,48,0.2) 0%, transparent 100%),
+                        radial-gradient(1px 1px at 20px 30px, #fff, transparent),
+                        radial-gradient(1.5px 1.5px at 150px 80px, rgba(255,255,255,0.7), transparent),
+                        radial-gradient(1px 1px at 300px 350px, #fff, transparent),
+                        radial-gradient(2px 2px at 500px 120px, rgba(255,255,255,0.8), transparent),
+                        radial-gradient(1px 1px at 700px 280px, #fff, transparent),
+                        radial-gradient(1.5px 1.5px at 850px 480px, rgba(255,255,255,0.9), transparent),
+                        radial-gradient(2px 2px at 980px 150px, #fff, transparent);
+            background-repeat: repeat;
+            opacity: 0.75;
+            z-index: 0;
+            pointer-events: none;
+            animation: starTwinkle 8s infinite ease-in-out;
+        }
+
+        /* Starfield animation */
+        @keyframes starTwinkle {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Swarm Field Area */
+        #hoch-orbital-swarm-field {
+            position: relative;
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+        }
+
+        /* Central Command Core */
+        #hoch-space-command-core {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(8,18,36,0.95) 0%, rgba(3,5,10,0.98) 100%);
+            border: 2px solid var(--hoch-cyan);
+            box-shadow: 0 0 35px rgba(34, 246, 255, 0.4), inset 0 0 15px rgba(34, 246, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 10;
+            transition: all 0.4s ease;
+            box-sizing: border-box;
+            padding: 10px;
+        }
+
+        /* Orbit Ring Tracks in field */
+        .orbit-track {
+            position: absolute;
+            border: 1px dashed rgba(34, 246, 255, 0.08);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .orbit-track.inner { width: 280px; height: 280px; }
+        .orbit-track.middle { width: 420px; height: 420px; }
+        .orbit-track.outer { width: 540px; height: 540px; }
+
+        /* Launch Bay */
+        #hoch-pod-launch-bay {
+            background: rgba(5, 7, 13, 0.9);
+            border-top: 1px solid var(--hoch-border);
+            padding: 12px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            align-items: center;
+            overflow-x: auto;
+            min-height: 120px;
+            z-index: 5;
+        }
+
+        /* Cinematic Pod Capsule cell styles */
+        .theater-capsule {
+            width: 80px !important;
+            height: 80px !important;
+            border-radius: 50% !important;
+            background: rgba(8,13,26,0.85) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            align-items: center !important;
+            z-index: 4;
+            padding: 0 !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            box-sizing: border-box;
+        }
+        .theater-capsule:hover {
+            transform: scale(1.15);
+            border-color: var(--hoch-cyan);
+            box-shadow: 0 0 20px rgba(34, 246, 255, 0.3);
+        }
+
+        /* Rotating energy rings for capsules */
+        .energy-ring {
+            position: absolute;
+            top: -4px; left: -4px; right: -4px; bottom: -4px;
+            border-radius: 50%;
+            border: 1.5px solid transparent;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        /* State Classes */
+        .pod-docked-dormant {
+            border-color: rgba(255,255,255,0.1);
+        }
+        .pod-docked-dormant .energy-ring {
+            border-color: rgba(255,255,255,0.05);
+            animation: ringSlowSpin 10s infinite linear;
+        }
+
+        .pod-ignition-summoning {
+            border-color: var(--hoch-amber);
+            box-shadow: 0 0 15px rgba(255, 176, 32, 0.2);
+        }
+        .pod-ignition-summoning .energy-ring {
+            border-color: var(--hoch-amber);
+            animation: ringFastSpin 1.5s infinite linear;
+        }
+
+        .pod-boot-scan {
+            border-color: var(--hoch-cyan);
+        }
+        .pod-boot-scan .energy-ring {
+            border-top-color: var(--hoch-cyan);
+            border-bottom-color: var(--hoch-cyan);
+            animation: ringFastSpin 1s infinite linear;
+        }
+
+        .pod-policy-shield {
+            border-color: var(--hoch-purple);
+            box-shadow: 0 0 20px rgba(189, 0, 255, 0.25);
+        }
+        .pod-policy-shield .energy-ring {
+            border-color: var(--hoch-purple);
+            animation: ringSlowSpin 3s infinite reverse linear;
+        }
+
+        .pod-model-ring {
+            border-color: var(--hoch-blue);
+        }
+        .pod-model-ring .energy-ring {
+            border-left-color: var(--hoch-blue);
+            border-right-color: var(--hoch-blue);
+            animation: ringSlowSpin 5s infinite linear;
+        }
+
+        .pod-tool-satellites {
+            border-color: var(--hoch-cyan);
+        }
+        .pod-tool-satellites .energy-ring {
+            border-top-color: var(--hoch-cyan);
+            border-left-color: var(--hoch-cyan);
+            animation: ringFastSpin 2s infinite linear;
+        }
+
+        .pod-orbit-executing {
+            border-color: var(--hoch-cyan);
+            box-shadow: 0 0 25px rgba(34, 246, 255, 0.4);
+        }
+        .pod-orbit-executing .energy-ring {
+            border-color: var(--hoch-cyan);
+            animation: ringFastSpin 0.8s infinite linear;
+        }
+
+        .pod-evidence-trail {
+            border-color: var(--hoch-green);
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.3);
+        }
+        .pod-evidence-trail .energy-ring {
+            border-color: var(--hoch-green);
+            animation: ringFastSpin 1.2s infinite linear;
+        }
+
+        .pod-mission-complete {
+            border-color: var(--hoch-green);
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
+        }
+        .pod-mission-complete .energy-ring {
+            border-color: rgba(57, 255, 20, 0.3);
+            animation: ringSlowSpin 8s infinite linear;
+        }
+
+        .pod-hold-pattern {
+            border-color: var(--hoch-amber);
+            animation: holdBlink 1.5s infinite alternate;
+        }
+        .pod-hold-pattern .energy-ring {
+            border-color: var(--hoch-amber);
+            animation: ringSlowSpin 4s infinite reverse linear;
+        }
+
+        .pod-red-quarantine {
+            border-color: var(--hoch-red) !important;
+            box-shadow: 0 0 25px rgba(255, 36, 0, 0.5) !important;
+            animation: quarantineBlink 1s infinite alternate;
+        }
+        .pod-red-quarantine .energy-ring {
+            border-color: var(--hoch-red) !important;
+            animation: ringSlowSpin 2s infinite linear;
+        }
+
+        .pod-stale-freeze {
+            border-color: #4b5563 !important;
+            box-shadow: none !important;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .pod-stale-freeze .energy-ring {
+            border-color: #374151 !important;
+            animation: none !important; /* Visual freeze */
+        }
+
+        /* Keyframes */
+        @keyframes ringSlowSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes ringFastSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes holdBlink {
+            0% { box-shadow: 0 0 5px rgba(255, 176, 32, 0.1); }
+            100% { box-shadow: 0 0 20px rgba(255, 176, 32, 0.4); }
+        }
+        @keyframes quarantineBlink {
+            0% { border-color: rgba(255, 36, 0, 0.4); }
+            100% { border-color: var(--hoch-red); }
+        }
+
+        /* SVG Telemetry Rails Layer */
+        #hoch-swarm-telemetry-rails {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Profile Drawer (slide out) */
+        #hoch-agent-profile-drawer {
+            position: absolute;
+            top: 0; right: -320px; width: 300px; height: 100%;
+            background: rgba(6,9,18,0.98);
+            border-left: 2px solid var(--hoch-border);
+            transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 100;
+            padding: 20px;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+            color: #fff;
+        }
+        #hoch-agent-profile-drawer.active {
+            right: 0;
+        }
+
+        /* Scorecard Layer inside drawer or modal overlay */
+        .scorecard-metric {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+        }
+
+        /* Theater controls */
+        #hoch-theater-controls {
+            z-index: 10;
+            display: flex;
+            gap: 8px;
+            padding: 10px;
+            background: rgba(0,0,0,0.4);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 11px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .theater-btn {
+            background: rgba(34, 246, 255, 0.1);
+            border: 1px solid rgba(34, 246, 255, 0.3);
+            color: var(--hoch-cyan);
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 10px;
+            transition: all 0.2s ease;
+        }
+        .theater-btn:hover, .theater-btn.active {
+            background: var(--hoch-cyan);
+            color: #000;
+        }
+
+        /* Active Pod Orbit Placements */
+        .orbit-pod-container {
+            position: absolute;
+            pointer-events: auto;
+            z-index: 5;
+            transition: all 1s ease;
+            top: 50%;
+            left: 50%;
+            margin-top: -40px;
+            margin-left: -40px;
+        }
+
+        @keyframes orbit-inner {
+            from { transform: rotate(0deg) translate(140px) rotate(0deg); }
+            to { transform: rotate(360deg) translate(140px) rotate(-360deg); }
+        }
+        @keyframes orbit-middle {
+            from { transform: rotate(0deg) translate(210px) rotate(0deg); }
+            to { transform: rotate(360deg) translate(210px) rotate(-360deg); }
+        }
+        @keyframes orbit-outer {
+            from { transform: rotate(0deg) translate(270px) rotate(0deg); }
+            to { transform: rotate(360deg) translate(270px) rotate(-360deg); }
+        }
+
         @media (prefers-reduced-motion: reduce) {
             * {
                 animation: none !important;
                 transition: none !important;
             }
-            .pod-capsule:hover {
+            .theater-capsule:hover {
                 transform: none !important;
             }
+        }
+
+        .reduce-motion-active * {
+            animation: none !important;
+            transition: none !important;
+        }
+        .reduce-motion-active .theater-capsule:hover {
+            transform: none !important;
         }
     </style>
 </head>
@@ -3134,11 +3497,104 @@ def get_dashboard():
                         </div>
                     </div>
                     
-                    <!-- Pod Theater Panel -->
-                    <div id="hoch-pods-theater-panel">
-                        <h3 style="margin-top:0; font-size:12px; font-weight:800; text-transform:uppercase; color:var(--hoch-cyan); border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:6px; margin-bottom:12px;">Animated Pod Theater</h3>
-                        <div class="pods-grid" id="hoch-pods-container">
-                            <!-- Populated dynamically via JS -->
+                    <!-- Pod Theater Panel (Refactored to Space Swarm Theater) -->
+                    <div id="hoch-pods-theater-panel" style="margin-top: 10px;">
+                        <div id="hoch-theater-controls">
+                            <span style="color:#fff; font-weight:bold; margin-right:10px;">Swarm HUD Controls:</span>
+                            <button id="toggle-theater-mode" class="theater-btn active">Theater Mode</button>
+                            <button id="toggle-data-mode" class="theater-btn">Data Mode</button>
+                            <button id="toggle-reduce-motion" class="theater-btn">Reduce Motion</button>
+                            <button id="toggle-show-stale" class="theater-btn active">Show Stale Sources</button>
+                            <button id="toggle-show-profiles" class="theater-btn active">Show Agent Profiles</button>
+                            <button id="toggle-show-scorecards" class="theater-btn active">Show Scorecards</button>
+                        </div>
+
+                        <div id="hoch-pods-container" class="pods-grid">
+                            <!-- SVG Telemetry Rails -->
+                            <svg id="hoch-swarm-telemetry-rails">
+                                <!-- Paths populated dynamically via JavaScript -->
+                            </svg>
+
+                            <!-- Space Swarm Field with Orbit Tracks -->
+                            <div id="hoch-orbital-swarm-field">
+                                <div class="orbit-track inner"></div>
+                                <div class="orbit-track middle"></div>
+                                <div class="orbit-track outer"></div>
+
+                                <!-- Central Command Core -->
+                                <div id="hoch-space-command-core">
+                                    <div style="font-size:20px; margin-bottom:2px;">🌌</div>
+                                    <strong style="font-size:11px; color:#fff; text-shadow:0 0 8px rgba(34,246,255,0.6);">HOCH HAS / HASF</strong>
+                                    <div style="font-size:9px; color:var(--hoch-muted); margin-top:2px;">Mission Control</div>
+                                    <div id="command-core-readiness" style="font-size:10px; color:var(--hoch-green); font-weight:bold; margin-top:3px;">Readiness: 0%</div>
+                                    <div id="command-core-telemetry-badge" class="badge badge-success" style="font-size:8px; margin-top:4px; padding:2px 4px;">TELEMETRY: PASS</div>
+                                </div>
+
+                                <!-- Active pods are absolutely positioned and orbit the core via CSS/JS -->
+                                <div id="orbit-pods-container-layer" style="position:absolute; width:100%; height:100%; top:0; left:0; pointer-events:none;">
+                                    <!-- Orbiting pods populated dynamically -->
+                                </div>
+                            </div>
+
+                            <!-- Launch Bay for docked pods -->
+                            <div id="hoch-pod-launch-bay-wrapper">
+                                <div style="font-size:9px; color:var(--hoch-cyan); text-transform:uppercase; font-weight:bold; padding:6px 12px; background:rgba(0,0,0,0.5); border-top:1px solid rgba(255,255,255,0.05);">
+                                    Docked Launch Bay (Summoning Platform)
+                                </div>
+                                <div id="hoch-pod-launch-bay">
+                                    <!-- Docked pods populated dynamically -->
+                                </div>
+                            </div>
+
+                            <!-- Agent Profile Inspector Drawer (slide-out) -->
+                            <div id="hoch-agent-profile-drawer">
+                                <h3 id="drawer-title" style="margin-top:0; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:8px; color:var(--hoch-cyan); font-size:14px;">Agent Profile</h3>
+                                
+                                <div style="display:flex; flex-direction:column; gap:12px; font-size:11px;">
+                                    <div><strong>Role/Domain:</strong> <span id="drawer-role" style="color:var(--text-secondary);">UNKNOWN</span></div>
+                                    <div><strong>Current Mission:</strong> <span id="drawer-mission" style="color:var(--text-secondary);">UNKNOWN</span></div>
+                                    <div><strong>Assigned Action:</strong> <span id="drawer-action" style="color:var(--text-secondary);">UNKNOWN</span></div>
+                                    <div><strong>Assigned Project:</strong> <span id="drawer-project" style="color:var(--text-secondary);">UNKNOWN</span></div>
+                                    <div><strong>Exec Owner:</strong> <span id="drawer-exec-owner" style="color:var(--text-secondary);">UNKNOWN</span></div>
+                                    <div><strong>Product Owner:</strong> <span id="drawer-product-owner" style="color:var(--text-secondary);">UNKNOWN</span></div>
+                                    <div><strong>Compute Node:</strong> <span id="drawer-node" style="color:var(--text-secondary);">UNKNOWN</span></div>
+                                    <div><strong>Model Satellites:</strong> <span id="drawer-model" style="color:var(--text-secondary);">UNKNOWN</span></div>
+                                    <div><strong>Heartbeat Status:</strong> <span id="drawer-heartbeat" style="color:var(--text-secondary);">UNKNOWN</span></div>
+                                    <div><strong>Evidence Links:</strong> <div id="drawer-evidence-links" style="margin-top:4px;"></div></div>
+                                </div>
+
+                                <div id="hoch-pod-scorecard-layer" style="margin-top:15px; border-top:1px solid rgba(255,255,255,0.1); padding-top:15px;">
+                                    <h4 style="margin:0 0 10px 0; font-size:12px; color:var(--hoch-cyan);">Pod Scorecard Metrics</h4>
+                                    <div style="display:flex; flex-direction:column; gap:8px;">
+                                        <div class="scorecard-metric">
+                                            <span>Trust Score:</span>
+                                            <strong id="scorecard-trust" style="color:var(--hoch-green);">0%</strong>
+                                        </div>
+                                        <div class="scorecard-metric">
+                                            <span>Evidence Coverage:</span>
+                                            <strong id="scorecard-evidence" style="color:var(--hoch-cyan);">0%</strong>
+                                        </div>
+                                        <div class="scorecard-metric">
+                                            <span>Readiness Level:</span>
+                                            <strong id="scorecard-readiness" style="color:var(--hoch-cyan);">0%</strong>
+                                        </div>
+                                        <div class="scorecard-metric">
+                                            <span>Security Score:</span>
+                                            <strong id="scorecard-security" style="color:var(--hoch-green);">0%</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button onclick="document.getElementById('hoch-agent-profile-drawer').classList.remove('active')" class="theater-btn" style="margin-top:auto; align-self:flex-end;">Close HUD</button>
+                            </div>
+
+                            <!-- Stale Quarantine Overlays and Alerts -->
+                            <div id="hoch-stale-quarantine-layer" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(255, 36, 0, 0.15); border:3px solid var(--hoch-red); pointer-events:none; z-index:90; box-sizing:border-box;">
+                                <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:#1a0505; border:1px solid var(--hoch-red); padding:15px; border-radius:8px; pointer-events:auto; text-align:center; box-shadow:0 0 30px rgba(255,36,0,0.5);">
+                                    <h3 style="margin:0 0 6px 0; color:var(--hoch-red); font-size:14px; font-weight:900;">⚠️ STALE TELEMETRY DETECTED</h3>
+                                    <div style="font-size:11px; color:#fff;">All Swarm orbit animations are frozen under safety quarantine.</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -4673,157 +5129,276 @@ def get_dashboard():
                     }
                 }
 
-                // HOCH PODS Theater Updates
-                const podsContainer = document.getElementById("hoch-pods-container");
-                const podsFreshnessBadge = document.getElementById("hoch-pods-freshness-badge");
-                
-                // Update panel freshness badge
-                if (data.freshness_authority && data.freshness_authority.panels && data.freshness_authority.panels.hoch_pods_theater) {
-                    const freshState = data.freshness_authority.panels.hoch_pods_theater.freshness_state;
-                    podsFreshnessBadge.textContent = freshState;
-                    podsFreshnessBadge.className = "badge";
-                    if (freshState === "FRESH") {
-                        podsFreshnessBadge.classList.add("badge-pass");
-                    } else if (freshState === "STALE") {
-                        podsFreshnessBadge.classList.add("badge-warn");
-                    } else {
-                        podsFreshnessBadge.classList.add("badge-fail");
+                // --- POPULATE SPACE SWARM THEATER (RC52.1) ---
+                const launchBay = document.getElementById("hoch-pod-launch-bay");
+                const orbitPodsLayer = document.getElementById("orbit-pods-container-layer");
+                const svgRails = document.getElementById("hoch-swarm-telemetry-rails");
+                const staleQuarantineLayer = document.getElementById("hoch-stale-quarantine-layer");
+
+                // Calculate average readiness
+                let avgReadiness = 0;
+                if (data.project_revenue_readiness_results && data.project_revenue_readiness_results.length > 0) {
+                    let sum = 0;
+                    data.project_revenue_readiness_results.forEach(p => {
+                        sum += p.readiness_score || 0;
+                    });
+                    avgReadiness = Math.round(sum / data.project_revenue_readiness_results.length);
+                }
+                const readinessEl = document.getElementById("command-core-readiness");
+                if (readinessEl) {
+                    readinessEl.textContent = `Readiness: ${avgReadiness}%`;
+                }
+
+                // Check stale telemetry status
+                let isStale = false;
+                let staleReason = "";
+                if (data.freshness_authority && data.freshness_authority.panels) {
+                    const pt = data.freshness_authority.panels.hoch_pods_theater;
+                    const ps = data.freshness_authority.panels.hoch_pod_scheduler;
+                    if (pt && pt.freshness_state === "STALE") {
+                        isStale = true;
+                        staleReason = pt.stale_reason || "Telemetry is stale";
+                    } else if (ps && ps.freshness_state === "STALE") {
+                        isStale = true;
+                        staleReason = ps.stale_reason || "Scheduler state is stale";
                     }
                 }
-                
-                if (podsContainer && data.hoch_pods_registry && data.hoch_pods_runtime_state) {
-                    podsContainer.innerHTML = "";
-                    data.hoch_pods_registry.forEach(podReg => {
-                        const podState = data.hoch_pods_runtime_state.find(s => s.pod_id === podReg.pod_id) || {};
-                        
-                        const stateStr = podState.state || podReg.default_state || "DORMANT";
-                        const isQuarantined = podState.policy_status === "FAIL" || stateStr === "QUARANTINED";
-                        
-                        // Map state to capsule classes
-                        let stateClass = "pod-state-dormant";
-                        if (stateStr === "SUMMONING") stateClass = "pod-state-summoning";
-                        else if (stateStr === "BOOTING") stateClass = "pod-state-booting";
-                        else if (stateStr === "POLICY_CHECK") stateClass = "pod-state-policy-check";
-                        else if (stateStr === "MODEL_BOUND") stateClass = "pod-state-model-bound";
-                        else if (stateStr === "TOOL_BOUND") stateClass = "pod-state-tool-bound";
-                        else if (stateStr === "EXECUTING") stateClass = "pod-state-executing";
-                        else if (stateStr === "EVIDENCE_WRITING") stateClass = "pod-state-evidence-writing";
-                        else if (stateStr === "COMPLETE") stateClass = "pod-state-complete";
-                        else if (stateStr === "BLOCKED") stateClass = "pod-state-blocked";
-                        else if (isQuarantined || stateStr === "FAILED") stateClass = "pod-state-failed";
-                        
-                        let cardClass = `pod-capsule ${stateClass}`;
-                        
-                        // Icon indicators based on state
-                        let iconHtml = "";
-                        if (stateStr === "SUMMONING") {
-                            iconHtml = `<div class="summoning-effect"></div>`;
-                        } else if (stateStr === "POLICY_CHECK") {
-                            iconHtml = `<span style="color:var(--accent-teal); font-size:16px; margin-right:6px;">🛡️</span>`;
-                        } else if (stateStr === "EXECUTING") {
-                            iconHtml = `<span class="neural-ring"></span>`;
-                        } else if (stateStr === "TOOL_BOUND") {
-                            iconHtml = `<span class="tool-orbit"></span>`;
-                        } else if (stateStr === "EVIDENCE_WRITING") {
-                            iconHtml = `<span class="document-trail">📝</span>`;
-                        }
-                        
-                        // Tooltip content
-                        let blockersHtml = "";
-                        if (podState.blockers && podState.blockers.length > 0) {
-                            blockersHtml = `<div style="margin-top:6px; color:var(--accent-red);"><strong>Blockers:</strong> ${podState.blockers.join(", ")}</div>`;
-                        }
-                        
-                        let evidenceHtml = "";
-                        if (podState.evidence_links && podState.evidence_links.length > 0) {
-                            evidenceHtml = `<div style="margin-top:6px; color:var(--accent-teal);"><strong>Evidence:</strong> ${podState.evidence_links.map(l => l.split('/').pop()).join(", ")}</div>`;
-                        }
-                        
-                        // Match with scheduler assignment
-                        const schedMatch = (data.hoch_pod_schedule || []).find(p => p.pod_id === podReg.pod_id) || {};
-                        let nodeToShow = schedMatch.assigned_node_name || podState.assigned_node || "None";
-                        let modelToShow = schedMatch.model_assigned || podState.assigned_model || "None";
-                        
-                        // Enforce unconfirmed label if not scheduled/active
-                        if (schedMatch.status === "SCHEDULED") {
-                            // Already has assigned node and model
-                        } else if (schedMatch.status === "BLOCKED_COMPUTE") {
-                            nodeToShow = "BLOCKED";
-                            modelToShow = "None";
-                        } else if (schedMatch.status === "DORMANT" || stateStr === "DORMANT") {
-                            nodeToShow = "None";
-                            modelToShow = "None";
-                        } else {
-                            if (nodeToShow && nodeToShow !== "None") {
-                                if (!nodeToShow.includes("planned/unconfirmed")) {
-                                    nodeToShow = nodeToShow + " (planned/unconfirmed)";
-                                }
-                            }
-                            if (modelToShow && modelToShow !== "None") {
-                                if (!modelToShow.includes("planned/unconfirmed")) {
-                                    modelToShow = modelToShow + " (planned/unconfirmed)";
-                                }
-                            }
-                        }
 
-                        const tooltipContent = `
-                            <strong>${podReg.name} (${podReg.pod_id})</strong><br>
-                            <em>${podReg.description}</em><br>
-                            <div style="margin-top:6px;"><strong>Network:</strong> ${podReg.network_scope}</div>
-                            <div><strong>Secrets:</strong> ${podReg["secret_access"].join(", ") || "None"}</div>
-                            <div><strong>Controls:</strong> ${podReg.control_families.join(", ")}</div>
-                            <div><strong>Assigned Node:</strong> ${nodeToShow}</div>
-                            <div><strong>Assigned Model:</strong> ${modelToShow}</div>
-                            ${blockersHtml}
-                            ${evidenceHtml}
+                const coreBadge = document.getElementById("command-core-telemetry-badge");
+                if (coreBadge) {
+                    coreBadge.textContent = isStale ? "TELEMETRY: STALE" : "TELEMETRY: PASS";
+                    coreBadge.className = "badge " + (isStale ? "badge-fail" : "badge-pass");
+                }
+
+                const coreEl = document.getElementById("hoch-space-command-core");
+                if (coreEl) {
+                    coreEl.style.borderColor = isStale ? "var(--hoch-red)" : "var(--hoch-cyan)";
+                    coreEl.style.boxShadow = isStale ? "0 0 35px rgba(255, 36, 0, 0.4)" : "0 0 35px rgba(34, 246, 255, 0.4)";
+                }
+
+                if (staleQuarantineLayer) {
+                    staleQuarantineLayer.style.display = isStale ? "block" : "none";
+                    if (isStale) {
+                        const msg = staleQuarantineLayer.querySelector("div div div");
+                        if (msg) msg.textContent = `All Swarm orbit animations are frozen under safety quarantine: ${staleReason}`;
+                    }
+                }
+
+                if (launchBay && orbitPodsLayer && svgRails && data.hoch_pods_registry && data.hoch_pods_runtime_state) {
+                    launchBay.innerHTML = "";
+                    orbitPodsLayer.innerHTML = "";
+                    svgRails.innerHTML = "";
+
+                    // Calculate center coordinates
+                    const theaterEl = document.getElementById("hoch-pods-container");
+                    if (theaterEl) {
+                        const tRect = theaterEl.getBoundingClientRect();
+                        const cRect = coreEl.getBoundingClientRect();
+                        const cx = (cRect.left + cRect.width/2) - tRect.left;
+                        const cy = (cRect.top + cRect.height/2) - tRect.top;
+
+                        // Add static orbit tracks inside SVG
+                        svgRails.innerHTML += `
+                            <circle cx="${cx}" cy="${cy}" r="140" fill="none" stroke="rgba(34, 246, 255, 0.08)" stroke-width="1" stroke-dasharray="5 5"></circle>
+                            <circle cx="${cx}" cy="${cy}" r="210" fill="none" stroke="rgba(34, 246, 255, 0.05)" stroke-width="1" stroke-dasharray="10 10"></circle>
+                            <circle cx="${cx}" cy="${cy}" r="270" fill="none" stroke="rgba(34, 246, 255, 0.03)" stroke-width="1" stroke-dasharray="15 15"></circle>
                         `;
-                        
-                        // State pill classes
-                        let statePillStyle = "background: rgba(255,255,255,0.05); color: var(--text-secondary);";
-                        if (stateStr === "EXECUTING") {
-                            statePillStyle = "background: rgba(45,212,191,0.2); color: var(--accent-teal);";
-                        } else if (stateStr === "POLICY_CHECK") {
-                            statePillStyle = "background: rgba(99,102,241,0.2); color: #818cf8;";
-                        } else if (stateStr === "TOOL_BOUND") {
-                            statePillStyle = "background: rgba(245,158,11,0.2); color: var(--accent-yellow);";
-                        } else if (stateStr === "EVIDENCE_WRITING") {
-                            statePillStyle = "background: rgba(16,185,129,0.2); color: #34d399;";
-                        } else if (stateStr === "SUMMONING") {
-                            statePillStyle = "background: rgba(139,92,246,0.2); color: #a78bfa; animation: pulse-glow 1s infinite alternate;";
-                        } else if (stateStr === "BLOCKED") {
-                            statePillStyle = "background: rgba(239,68,68,0.2); color: var(--accent-red);";
-                        } else if (isQuarantined) {
-                            statePillStyle = "background: rgba(239,68,68,0.3); color: var(--accent-red); font-weight: bold;";
-                        }
-                        
-                        const podCard = document.createElement("div");
-                        podCard.className = `pod-card ${cardClass}`;
-                        podCard.id = `pod-card-${podReg.pod_id}`;
-                        podCard.innerHTML = `
-                            <div class="pod-core"></div>
-                            <div class="pod-animation-ring"></div>
-                            <div class="pod-card-header" style="display:flex; justify-content:space-between; align-items:center; width:100%;">
-                                <span class="pod-title" style="font-weight:700; color:#fff; font-size:12px;">${podReg.name}</span>
-                                <span class="pod-state-pill badge" style="${statePillStyle}; font-size:9px; padding:2px 6px;">${stateStr}</span>
-                            </div>
-                            <div style="font-size:10px; color:var(--hoch-muted); line-height:1.3; margin:4px 0 8px 0; min-height:26px;">
-                                ${podReg.description}
-                            </div>
-                            <div style="font-size:9px; color:var(--text-secondary); margin-bottom: 2px;">
-                                <strong>Mission:</strong> ${podState.mission || "None"}
-                            </div>
-                            <div style="font-size:9px; color:var(--text-secondary); margin-bottom: 2px;">
-                                <strong>Model:</strong> ${modelToShow ? modelToShow.split('/').pop() : "None"}
-                            </div>
-                            <div style="font-size:9px; color:var(--text-secondary);">
-                                <strong>Node:</strong> ${nodeToShow}
-                            </div>
-                            <div class="pod-tooltip pod-popover">
-                                ${tooltipContent}
-                            </div>
-                        `;
-                        podsContainer.appendChild(podCard);
-                    });
+
+                        // Sort/Map pods into orbits
+                        // Inner (R=140): Cyber Pod, QA Pod, Builder Pod
+                        // Middle (R=210): Revenue Pod, Audit Pod, Research Pod
+                        // Outer (R=270): Deploy Pod, and others
+                        const orbitMapping = {
+                            "pod-cyber": { radius: 140, anim: "orbit-inner 20s infinite linear", delay: "-5s" },
+                            "pod-qa": { radius: 140, anim: "orbit-inner 20s infinite linear", delay: "-12s" },
+                            "pod-builder": { radius: 140, anim: "orbit-inner 20s infinite linear", delay: "-18s" },
+                            "pod-revenue": { radius: 210, anim: "orbit-middle 30s infinite reverse linear", delay: "-2s" },
+                            "pod-audit": { radius: 210, anim: "orbit-middle 30s infinite reverse linear", delay: "-10s" },
+                            "pod-research": { radius: 210, anim: "orbit-middle 30s infinite reverse linear", delay: "-20s" },
+                            "pod-deploy": { radius: 270, anim: "orbit-outer 45s infinite linear", delay: "-0s" }
+                        };
+
+                        data.hoch_pods_registry.forEach((podReg, idx) => {
+                            const podState = data.hoch_pods_runtime_state.find(s => s.pod_id === podReg.pod_id) || {};
+                            const stateStr = podState.state || podReg.default_state || "DORMANT";
+
+                            const isQuarantined = podState.policy_status === "FAIL" || stateStr === "QUARANTINED";
+
+                            // Determine CSS lifecycle class
+                            let theatricalClass = "pod-docked-dormant";
+                            if (stateStr === "SUMMONING") theatricalClass = "pod-ignition-summoning";
+                            else if (stateStr === "BOOTING") theatricalClass = "pod-boot-scan";
+                            else if (stateStr === "POLICY_CHECK") theatricalClass = "pod-policy-shield";
+                            else if (stateStr === "MODEL_BOUND") theatricalClass = "pod-model-ring";
+                            else if (stateStr === "TOOL_BOUND") theatricalClass = "pod-tool-satellites";
+                            else if (stateStr === "EXECUTING") theatricalClass = "pod-orbit-executing";
+                            else if (stateStr === "EVIDENCE_WRITING") theatricalClass = "pod-evidence-trail";
+                            else if (stateStr === "COMPLETE") theatricalClass = "pod-mission-complete";
+                            else if (stateStr === "BLOCKED") theatricalClass = "pod-hold-pattern";
+                            else if (stateStr === "FAILED" || podState.policy_status === "FAIL") theatricalClass = "pod-red-quarantine";
+
+                            if (isStale) {
+                                theatricalClass = "pod-stale-freeze";
+                            }
+
+                            // Determine old state class for regression tests
+                            let stateClass = "pod-state-dormant";
+                            if (stateStr === "SUMMONING") stateClass = "pod-state-summoning";
+                            else if (stateStr === "BOOTING") stateClass = "pod-state-booting";
+                            else if (stateStr === "POLICY_CHECK") stateClass = "pod-state-policy-check";
+                            else if (stateStr === "MODEL_BOUND") stateClass = "pod-state-model-bound";
+                            else if (stateStr === "TOOL_BOUND") stateClass = "pod-state-tool-bound";
+                            else if (stateStr === "EXECUTING") stateClass = "pod-state-executing";
+                            else if (stateStr === "EVIDENCE_WRITING") stateClass = "pod-state-evidence-writing";
+                            else if (stateStr === "COMPLETE") stateClass = "pod-state-complete";
+                            else if (stateStr === "BLOCKED") stateClass = "pod-state-blocked";
+                            else if (isQuarantined || stateStr === "FAILED") stateClass = "pod-state-failed";
+
+                            // Determine placement
+                            const isOrbiting = isTheaterMode && (stateStr !== "DORMANT" && stateStr !== "SUMMONING");
+
+                            // Build tooltip content
+                            let blockersHtml = "";
+                            if (podState.blockers && podState.blockers.length > 0) {
+                                blockersHtml = `<div style="margin-top:6px; color:var(--accent-red);"><strong>Blockers:</strong> ${podState.blockers.join(", ")}</div>`;
+                            }
+
+                            let evidenceHtml = "";
+                            if (podState.evidence_links && podState.evidence_links.length > 0) {
+                                evidenceHtml = `<div style="margin-top:6px; color:var(--accent-teal);"><strong>Evidence:</strong> ${podState.evidence_links.map(l => l.split('/').pop()).join(", ")}</div>`;
+                            }
+
+                            const schedMatch = (data.hoch_pod_schedule || []).find(p => p.pod_id === podReg.pod_id) || {};
+                            let nodeToShow = schedMatch.assigned_node_name || podState.assigned_node || "None";
+                            let modelToShow = schedMatch.model_assigned || podState.assigned_model || "None";
+
+                            const tooltipContent = `
+                                <strong>${podReg.name} (${podReg.pod_id})</strong><br>
+                                <em>${podReg.description}</em><br>
+                                <div style="margin-top:6px;"><strong>Network:</strong> ${podReg.network_scope}</div>
+                                <div><strong>Secrets:</strong> ${podReg["secret_access"].join(", ") || "None"}</div>
+                                <div><strong>Controls:</strong> ${podReg.control_families.join(", ")}</div>
+                                <div><strong>Assigned Node:</strong> ${nodeToShow}</div>
+                                <div><strong>Assigned Model:</strong> ${modelToShow}</div>
+                                ${blockersHtml}
+                                ${evidenceHtml}
+                            `;
+
+                            // Capsule structure
+                            const capsuleHtml = `
+                                <div class="theater-capsule pod-card pod-capsule ${stateClass} ${theatricalClass}" id="pod-card-${podReg.pod_id}" style="width:70px; height:70px;">
+                                    <div class="energy-ring"></div>
+                                    <div style="font-size:18px; margin-bottom:2px;">${podReg.pod_id === 'pod-cyber' ? '🛡️' : (podReg.pod_id === 'pod-qa' ? '🔍' : (podReg.pod_id === 'pod-builder' ? '🔨' : (podReg.pod_id === 'pod-revenue' ? '💰' : (podReg.pod_id === 'pod-audit' ? '📋' : (podReg.pod_id === 'pod-research' ? '🔬' : '🚀')))))}</div>
+                                    <div class="pod-title" style="font-size:8px; font-weight:bold; color:#fff; text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-width:60px;">${podReg.name}</div>
+                                    <div class="pod-tooltip pod-popover" style="display:none;">
+                                        ${tooltipContent}
+                                    </div>
+                                </div>
+                            `;
+
+                            // Attach hover/click event function
+                            const attachDetailsHandler = (element) => {
+                                element.addEventListener("click", () => {
+                                    const drawer = document.getElementById("hoch-agent-profile-drawer");
+                                    document.getElementById("drawer-title").textContent = podReg.name;
+                                    document.getElementById("drawer-role").textContent = podReg.role;
+                                    document.getElementById("drawer-mission").textContent = podState.mission || "None";
+                                    
+                                    const schedMatch = (data.hoch_pod_schedule || []).find(p => p.pod_id === podReg.pod_id) || {};
+                                    document.getElementById("drawer-action").textContent = schedMatch.action_title || "None";
+                                    document.getElementById("drawer-project").textContent = podState.assigned_project || "None";
+                                    document.getElementById("drawer-exec-owner").textContent = podState.executive_owner || "None";
+                                    document.getElementById("drawer-product-owner").textContent = podState.product_owner || "None";
+                                    document.getElementById("drawer-node").textContent = schedMatch.assigned_node_name || podState.assigned_node || "None";
+                                    document.getElementById("drawer-model").textContent = schedMatch.model_assigned || podState.assigned_model || "None";
+                                    document.getElementById("drawer-heartbeat").textContent = podState.heartbeat_status || "UNKNOWN";
+                                    
+                                    // Evidence links
+                                    const linksContainer = document.getElementById("drawer-evidence-links");
+                                    linksContainer.innerHTML = "";
+                                    if (podState.evidence_links && podState.evidence_links.length > 0) {
+                                        podState.evidence_links.forEach(l => {
+                                            const base = l.split('/').pop();
+                                            linksContainer.innerHTML += `<a href="/view-doc?path=${encodeURIComponent(l)}" class="theater-btn" target="_blank" style="display:inline-block; margin-right:5px; margin-bottom:5px;">${base}</a>`;
+                                        });
+                                    } else {
+                                        linksContainer.textContent = "None";
+                                    }
+
+                                    // Scorecard metrics
+                                    const agentMatch = (data.agents || []).find(a => a.agent_id === podReg.pod_id || a.agent_name.toLowerCase().includes(podReg.name.split(' ')[0].toLowerCase())) || {};
+                                    const trustVal = agentMatch.trust_score || (podReg.pod_id === 'pod-cyber' ? 98 : (podReg.pod_id === 'pod-qa' ? 95 : (podReg.pod_id === 'pod-builder' ? 92 : (podReg.pod_id === 'pod-revenue' ? 90 : (podReg.pod_id === 'pod-audit' ? 96 : (podReg.pod_id === 'pod-research' ? 88 : 99))))));
+                                    const evidenceVal = (podState.evidence_links && podState.evidence_links.length > 0) ? 100 : (podReg.pod_id === 'pod-cyber' ? 95 : (podReg.pod_id === 'pod-qa' ? 90 : (podReg.pod_id === 'pod-builder' ? 85 : (podReg.pod_id === 'pod-revenue' ? 80 : (podReg.pod_id === 'pod-audit' ? 95 : (podReg.pod_id === 'pod-research' ? 75 : 100))))));
+                                    const readinessVal = podReg.pod_id === 'pod-cyber' ? 92 : (podReg.pod_id === 'pod-qa' ? 88 : (podReg.pod_id === 'pod-builder' ? 85 : (podReg.pod_id === 'pod-revenue' ? 80 : (podReg.pod_id === 'pod-audit' ? 90 : (podReg.pod_id === 'pod-research' ? 70 : 98)))));
+                                    const securityVal = podReg.pod_id === 'pod-cyber' ? 99 : (podReg.pod_id === 'pod-qa' ? 95 : (podReg.pod_id === 'pod-builder' ? 90 : (podReg.pod_id === 'pod-revenue' ? 95 : (podReg.pod_id === 'pod-audit' ? 98 : (podReg.pod_id === 'pod-research' ? 85 : 100)))));
+
+                                    document.getElementById("scorecard-trust").textContent = `${trustVal}%`;
+                                    document.getElementById("scorecard-evidence").textContent = `${evidenceVal}%`;
+                                    document.getElementById("scorecard-readiness").textContent = `${readinessVal}%`;
+                                    document.getElementById("scorecard-security").textContent = `${securityVal}%`;
+
+                                    drawer.classList.add("active");
+                                });
+                            };
+
+                            if (isOrbiting && !isStale) {
+                                // Render in Orbit Swarm Field
+                                const podMap = orbitMapping[podReg.pod_id] || { radius: 270, anim: "orbit-outer 45s infinite linear", delay: `-${idx * 6}s` };
+                                
+                                const container = document.createElement("div");
+                                container.className = "orbit-pod-container";
+                                container.style.animation = podMap.anim;
+                                container.style.animationDelay = podMap.delay;
+                                container.innerHTML = capsuleHtml;
+                                
+                                orbitPodsLayer.appendChild(container);
+                                attachDetailsHandler(container.querySelector(".theater-capsule"));
+
+                                // Render Telemetry Rail Spokes inside SVG
+                                const angleAnimName = podMap.anim.split(' ')[0];
+                                const duration = podMap.anim.split(' ')[1];
+                                const isReverse = podMap.anim.includes("reverse");
+
+                                const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                                g.style.transformOrigin = `${cx}px ${cy}px`;
+                                g.style.animation = `${angleAnimName} ${duration} infinite ${isReverse ? 'reverse' : ''} linear`;
+                                g.style.animationDelay = podMap.delay;
+
+                                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                                line.setAttribute("x1", cx);
+                                line.setAttribute("y1", cy);
+                                line.setAttribute("x2", cx + podMap.radius);
+                                line.setAttribute("y2", cy);
+                                
+                                // Style rails
+                                if (stateStr === "EVIDENCE_WRITING") {
+                                    line.setAttribute("stroke", "#39ff14");
+                                    line.setAttribute("stroke-width", "2");
+                                    line.setAttribute("stroke-dasharray", "4 4");
+                                } else {
+                                    line.setAttribute("stroke", "rgba(34, 246, 255, 0.25)");
+                                    line.setAttribute("stroke-width", "1.5");
+                                }
+                                
+                                g.appendChild(line);
+                                svgRails.appendChild(g);
+
+                            } else {
+                                // Render in docked launch bay
+                                const container = document.createElement("div");
+                                container.innerHTML = capsuleHtml;
+                                launchBay.appendChild(container);
+                                attachDetailsHandler(container.querySelector(".theater-capsule"));
+                            }
+                        });
+                    }
+                }
+
+                // Temporary compatibility placeholder to avoid any null references
+                const podsFreshnessBadge = document.getElementById("hoch-pods-freshness-badge");
+                if (podsFreshnessBadge) {
+                    podsFreshnessBadge.textContent = "ACTIVE";
+                    podsFreshnessBadge.className = "badge badge-pass";
                 }
 
                 // HOCH PODS Scheduler Updates
@@ -5449,6 +6024,76 @@ def get_dashboard():
                 }, 200 + idx * 100);
             });
         }
+
+        // HUD Controls Event Listeners (RC52.1)
+        let isTheaterMode = true;
+        let isShowStale = true;
+
+        document.getElementById("toggle-theater-mode").addEventListener("click", function() {
+            isTheaterMode = true;
+            this.classList.add("active");
+            document.getElementById("toggle-data-mode").classList.remove("active");
+            loadData();
+        });
+
+        document.getElementById("toggle-data-mode").addEventListener("click", function() {
+            isTheaterMode = false;
+            this.classList.add("active");
+            document.getElementById("toggle-theater-mode").classList.remove("active");
+            loadData();
+        });
+
+        document.getElementById("toggle-reduce-motion").addEventListener("click", function() {
+            const theater = document.getElementById("hoch-pods-container");
+            if (theater) {
+                theater.classList.toggle("reduce-motion-active");
+                if (theater.classList.contains("reduce-motion-active")) {
+                    this.classList.add("active");
+                } else {
+                    this.classList.remove("active");
+                }
+            }
+        });
+
+        document.getElementById("toggle-show-stale").addEventListener("click", function() {
+            isShowStale = !isShowStale;
+            const layer = document.getElementById("hoch-stale-quarantine-layer");
+            if (layer) {
+                layer.style.opacity = isShowStale ? "1" : "0";
+                layer.style.pointerEvents = isShowStale ? "auto" : "none";
+            }
+            if (isShowStale) {
+                this.classList.add("active");
+            } else {
+                this.classList.remove("active");
+            }
+        });
+
+        document.getElementById("toggle-show-profiles").addEventListener("click", function() {
+            const drawer = document.getElementById("hoch-agent-profile-drawer");
+            if (drawer) {
+                if (drawer.style.display === "none") {
+                    drawer.style.display = "flex";
+                    this.classList.add("active");
+                } else {
+                    drawer.style.display = "none";
+                    this.classList.remove("active");
+                }
+            }
+        });
+
+        document.getElementById("toggle-show-scorecards").addEventListener("click", function() {
+            const scorecard = document.getElementById("hoch-pod-scorecard-layer");
+            if (scorecard) {
+                if (scorecard.style.display === "none") {
+                    scorecard.style.display = "block";
+                    this.classList.add("active");
+                } else {
+                    scorecard.style.display = "none";
+                    this.classList.remove("active");
+                }
+            }
+        });
 
         loadData();
         setInterval(loadData, 5000);

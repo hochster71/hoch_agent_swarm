@@ -18,6 +18,9 @@ fi
 
 cd "$PROJECT_ROOT"
 
+echo "0. Running Soccer Onboarding Audit..."
+python3 scripts/hoch_hasf_soccer_onboarding_audit.py
+
 echo "1. Running Project Revenue Readiness Audit..."
 python3 scripts/project_revenue_readiness_audit.py
 

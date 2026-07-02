@@ -103,7 +103,10 @@ def check_git_status():
             "simulate_execution_approval",
             "rc52",
             "governed_execution",
-            "governed-execution"
+            "governed-execution",
+            "rc52_1",
+            "space_swarm_theater",
+            "space-swarm-theater"
         ]
         
         dirty = []
