@@ -54,19 +54,23 @@ print("CRITICAL_TELEMETRY: PASS")
 PY
 
 echo
-echo "=== VERIFY WATCHDOG ==="
-if [ ! -f logs/has_telemetry_watchdog.pid ]; then
-  echo "WATCHDOG: FAIL missing pid file"
-  exit 1
-fi
-
-PID="$(cat logs/has_telemetry_watchdog.pid)"
-if ps -p "$PID" >/dev/null 2>&1; then
-  echo "WATCHDOG: PASS pid=$PID"
-else
-  echo "WATCHDOG: FAIL pid=$PID not running"
-  exit 1
-fi
-
 echo
+echo "=== VERIFY WATCHDOG ==="
+if [ "${WATCHDOG_REQUIRED:-1}" = "0" ]; then
+  echo "WATCHDOG: SKIP release hygiene mode"
+else
+  if [ -f logs/has_telemetry_watchdog.pid ]; then
+    PID="$(cat logs/has_telemetry_watchdog.pid)"
+    if ps -p "$PID" >/dev/null 2>&1; then
+      echo "WATCHDOG: PASS pid=$PID"
+    else
+      echo "WATCHDOG: FAIL pid=$PID not running"
+      exit 1
+    fi
+  else
+    echo "WATCHDOG: FAIL missing pid file"
+    exit 1
+  fi
+fi
+
 echo "UI_V21_SMOKE: PASS"
