@@ -12,16 +12,15 @@ try {
   const normalizedBody = body.toUpperCase();
 
   const required = [
-    'HOCH PODS LIFTOFF CONTROL PLANE V4',
-    'MISSION AUTHORITY',
-    'LEADING AGENTS',
-    'SWARM THEATER / AGENT LIFTOFF',
+    'HOCH PODS THEATER V5',
+    'STORYBOARD-DRIVEN AGENT SPIN-UP',
+    'HOCH PODS STORYBOARD THEATER',
+    'AGENT QUEUE',
     'LIVE PERT ANALYSIS',
     'LIVE GAP ANALYSIS / CLOSURES',
     'LIVE RUNNERS / APPROVAL QUEUE',
     'STALE / WATCHDOG',
-    'EVIDENCE CONSOLE',
-    'REVENUE / HASF'
+    'EVIDENCE CONSOLE'
   ];
 
   for (const text of required) {
@@ -34,8 +33,20 @@ try {
     throw new Error('MOONSHOT_UNDEFINED_TEXT');
   }
 
-  const glyphs = await page.locator('.agentGlyph').count();
-  if (glyphs < 6) throw new Error(`MOONSHOT_AGENT_GLYPHS_LOW: ${glyphs}`);
+  const theaters = await page.locator('#theater').count();
+  if (theaters !== 1) throw new Error(`MOONSHOT_THEATER_COUNT_INVALID: ${theaters}`);
+
+  const pods = await page.locator('.podNode').count();
+  if (pods < 7) throw new Error(`MOONSHOT_POD_COUNT_LOW: ${pods}`);
+
+  const scenes = await page.locator('.storyFrame').count();
+  if (scenes < 17) throw new Error(`MOONSHOT_STORYBOARD_COUNT_LOW: ${scenes}`);
+
+  const spirit = await page.locator('#agentSpirit').count();
+  if (spirit !== 1) throw new Error('MOONSHOT_AGENT_SPIRIT_MISSING');
+
+  const skill = await page.locator('#skillCard').count();
+  if (skill !== 1) throw new Error('MOONSHOT_SKILL_CARD_MISSING');
 
   const pertRows = await page.locator('#pertTruthRows tr').count();
   if (pertRows < 1) throw new Error('MOONSHOT_PERT_ROWS_MISSING');
@@ -45,10 +56,6 @@ try {
 
   const runnerRows = await page.locator('#runnerRows tr').count();
   if (runnerRows < 1) throw new Error('MOONSHOT_RUNNER_ROWS_MISSING');
-
-  await page.locator('.agentGlyph').first().hover();
-  const modalVisible = await page.locator('#agentModal.active').count();
-  if (modalVisible < 1) throw new Error('MOONSHOT_AGENT_MODAL_NOT_VISIBLE');
 
   console.log('UI_MOONSHOT_BROWSER: PASS');
 } finally {

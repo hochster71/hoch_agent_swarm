@@ -3,29 +3,30 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>HOCH PODS Liftoff Control Plane V4</title>
+<title>HOCH PODS Theater V5</title>
 <style>
 :root{
   --bg:#02030a;
-  --panel:rgba(7,17,31,.88);
-  --panel2:rgba(10,26,48,.82);
-  --line:rgba(73,231,255,.22);
+  --panel:rgba(7,17,31,.90);
+  --line:rgba(73,231,255,.23);
   --cyan:#49e7ff;
-  --cyan2:#9af6ff;
-  --blue:#2f7bff;
+  --cyan2:#a8f7ff;
   --green:#44ff9a;
   --amber:#ffcc66;
   --red:#ff5577;
+  --purple:#b06cff;
+  --gold:#ffc857;
+  --pink:#ff70d9;
   --text:#e8f4ff;
   --muted:#8aa3bd;
-  --shadow:0 0 38px rgba(73,231,255,.16);
+  --shadow:0 0 34px rgba(73,231,255,.18);
 }
 *{box-sizing:border-box}
 body{
   margin:0;
   background:
-    radial-gradient(circle at 50% -15%,rgba(73,231,255,.20),transparent 28%),
-    radial-gradient(circle at 85% 8%,rgba(47,123,255,.14),transparent 24%),
+    radial-gradient(circle at 50% -10%,rgba(73,231,255,.22),transparent 30%),
+    radial-gradient(circle at 90% 8%,rgba(176,108,255,.10),transparent 22%),
     linear-gradient(180deg,#02030a,#07101d 45%,#02030a);
   color:var(--text);
   font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
@@ -44,20 +45,20 @@ body:before{
 .header{
   position:sticky;
   top:0;
-  z-index:20;
+  z-index:30;
   display:grid;
   grid-template-columns:1fr auto;
   gap:14px;
   align-items:center;
   padding:14px 18px;
-  background:rgba(2,3,10,.88);
-  backdrop-filter:blur(18px);
+  background:rgba(2,3,10,.90);
   border-bottom:1px solid var(--line);
+  backdrop-filter:blur(18px);
 }
 .brand h1{
   margin:0;
   font-size:20px;
-  letter-spacing:.09em;
+  letter-spacing:.1em;
   text-transform:uppercase;
 }
 .brand .sub{
@@ -67,25 +68,25 @@ body:before{
 }
 .pills{
   display:flex;
-  gap:8px;
   flex-wrap:wrap;
+  gap:8px;
   justify-content:flex-end;
 }
 .pill{
-  padding:7px 10px;
-  border:1px solid rgba(73,231,255,.28);
+  border:1px solid rgba(73,231,255,.3);
   border-radius:999px;
+  padding:7px 10px;
   background:rgba(7,17,31,.78);
   box-shadow:var(--shadow);
   font-size:11px;
-  white-space:nowrap;
 }
-.good{color:var(--green);border-color:rgba(68,255,154,.5)}
-.warn{color:var(--amber);border-color:rgba(255,204,102,.5)}
-.bad{color:var(--red);border-color:rgba(255,85,119,.5)}
+.good{color:var(--green);border-color:rgba(68,255,154,.50)}
+.warn{color:var(--amber);border-color:rgba(255,204,102,.50)}
+.bad{color:var(--red);border-color:rgba(255,85,119,.50)}
+
 .shell{
   display:grid;
-  grid-template-columns:280px minmax(760px,1fr) 390px;
+  grid-template-columns:270px minmax(830px,1fr) 360px;
   gap:14px;
   padding:14px;
 }
@@ -93,19 +94,19 @@ body:before{
 .panel{
   position:relative;
   overflow:hidden;
+  background:linear-gradient(180deg,rgba(11,23,41,.90),rgba(7,17,31,.74));
   border:1px solid var(--line);
   border-radius:18px;
-  background:linear-gradient(180deg,rgba(11,23,41,.88),rgba(7,17,31,.74));
   box-shadow:var(--shadow);
 }
 .panel h2{
   margin:0;
   padding:12px 14px;
+  color:#dff9ff;
   font-size:12px;
   letter-spacing:.13em;
   text-transform:uppercase;
   border-bottom:1px solid rgba(73,231,255,.14);
-  color:#dff9ff;
 }
 .body{padding:13px}
 .metric{
@@ -118,160 +119,270 @@ body:before{
 }
 .metric span{color:var(--muted)}
 .metric strong{text-align:right}
-.hero{
-  min-height:310px;
-  display:grid;
-  place-items:center;
+
+.theater{
+  position:relative;
+  min-height:600px;
+  overflow:hidden;
+  border:1px solid rgba(73,231,255,.18);
+  border-radius:20px;
+  background:
+    linear-gradient(90deg,rgba(2,3,10,.90),rgba(2,3,10,.35),rgba(2,3,10,.90)),
+    url("/assets/hoch-pods-visual-authority") center center / cover no-repeat;
 }
-.approved-visual-layer{
+.theater:after{
+  content:"";
   position:absolute;
   inset:0;
   background:
-    linear-gradient(90deg,rgba(2,3,10,.86),rgba(2,3,10,.36),rgba(2,3,10,.88)),
-    url("/assets/hoch-pods-visual-authority") center center / cover no-repeat;
-  opacity:.34;
-  filter:saturate(1.18) contrast(1.08);
-  transform:scale(1.04);
+    radial-gradient(circle at 50% 52%,rgba(73,231,255,.12),transparent 28%),
+    linear-gradient(180deg,transparent,rgba(2,3,10,.78));
   pointer-events:none;
 }
-.visual-authority-ribbon{
+.stageHeader{
   position:absolute;
-  top:12px;
-  left:12px;
-  z-index:4;
-  padding:7px 10px;
+  left:16px;
+  top:14px;
+  z-index:8;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.stageChip{
+  border:1px solid rgba(73,231,255,.32);
   border-radius:999px;
-  border:1px solid rgba(73,231,255,.34);
+  padding:7px 10px;
   background:rgba(2,3,10,.64);
   color:var(--cyan2);
   font-size:10px;
   letter-spacing:.11em;
   text-transform:uppercase;
 }
-.orbit{
+.corePod{
   position:absolute;
-  border:1px solid rgba(73,231,255,.13);
-  border-radius:50%;
-  animation:spin 18s linear infinite;
+  left:50%;
+  top:50%;
+  width:132px;
+  height:188px;
+  transform:translate(-50%,-50%);
+  border-radius:78px 78px 24px 24px;
+  background:linear-gradient(180deg,#f7fbff,#6bdff2 46%,#123b67);
+  box-shadow:0 0 110px rgba(73,231,255,.66), inset 0 0 28px rgba(255,255,255,.22);
+  z-index:6;
+  animation:float 2.35s ease-in-out infinite;
 }
-.o1{width:560px;height:560px}
-.o2{width:410px;height:410px;animation-duration:12s;animation-direction:reverse}
-.o3{width:270px;height:270px;animation-duration:8s}
-.rocket{
-  width:86px;
-  height:146px;
-  border-radius:58px 58px 22px 22px;
-  background:linear-gradient(180deg,#f7fbff,#6bdff2 48%,#123b67);
-  box-shadow:0 0 86px rgba(73,231,255,.56);
-  position:relative;
-  animation:float 2.6s ease-in-out infinite;
-  z-index:3;
-}
-.rocket:before{
+.corePod:before{
   content:"";
   position:absolute;
-  left:27px;
-  top:22px;
-  width:32px;
-  height:32px;
+  left:46px;
+  top:30px;
+  width:40px;
+  height:40px;
   border-radius:50%;
   background:#02030a;
-  border:4px solid var(--cyan);
+  border:5px solid var(--cyan);
 }
-.rocket:after{
+.corePod:after{
   content:"";
   position:absolute;
-  left:25px;
-  bottom:-72px;
-  width:40px;
-  height:84px;
+  left:40px;
+  bottom:-105px;
+  width:56px;
+  height:128px;
   background:linear-gradient(180deg,var(--amber),var(--red),transparent);
-  filter:blur(3px);
+  filter:blur(4px);
   clip-path:polygon(50% 100%,0 0,100% 0);
   animation:flame .22s infinite alternate;
 }
-.launch-title{
+.ring{
   position:absolute;
-  bottom:20px;
-  text-align:center;
-  z-index:4;
+  left:50%;
+  top:50%;
+  border:1px solid rgba(73,231,255,.15);
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+  z-index:2;
+  animation:spin 18s linear infinite;
 }
-.launch-title h3{
-  margin:0;
-  font-size:28px;
-  letter-spacing:.15em;
-  text-transform:uppercase;
-}
-.launch-title p{
-  margin:8px 0 0;
-  color:var(--muted);
-  font-size:12px;
-}
-.center-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:14px;
-  margin-top:14px;
-}
-.full{grid-column:1/-1}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:12px;
-}
-.card{
-  min-height:128px;
-  padding:13px;
+.r1{width:760px;height:760px}
+.r2{width:560px;height:560px;animation-duration:13s;animation-direction:reverse}
+.r3{width:360px;height:360px;animation-duration:9s}
+
+.podNode{
+  position:absolute;
+  z-index:7;
+  width:120px;
+  min-height:72px;
+  padding:9px;
   border-radius:16px;
-  background:linear-gradient(180deg,rgba(9,32,58,.88),rgba(4,10,20,.86));
-  border:1px solid rgba(73,231,255,.18);
+  border:1px solid rgba(73,231,255,.26);
+  background:linear-gradient(180deg,rgba(7,17,31,.86),rgba(2,3,10,.76));
+  backdrop-filter:blur(8px);
+  box-shadow:0 0 26px rgba(73,231,255,.16);
 }
-.card h3{margin:0 0 8px;font-size:13px}
-.card p{margin:0;color:var(--muted);font-size:12px;line-height:1.4}
-.badge{
+.podNode.active{
+  border-color:var(--podColor);
+  box-shadow:0 0 42px var(--podGlow);
+}
+.podNode b{
+  display:block;
+  font-size:11px;
+  margin-bottom:4px;
+}
+.podNode span{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.25;
+}
+.podNode .podLive{
   display:inline-flex;
-  margin-top:9px;
-  padding:5px 8px;
+  margin-top:6px;
+  padding:4px 7px;
   border-radius:999px;
-  border:1px solid rgba(68,255,154,.35);
-  color:var(--green);
+  border:1px solid var(--podColor);
+  color:var(--podColor);
   font-size:10px;
 }
-.flow{display:grid;gap:8px}
-.step{
+.agentSpirit{
+  position:absolute;
+  z-index:10;
+  width:42px;
+  height:84px;
+  border-radius:24px 24px 18px 18px;
+  background:linear-gradient(180deg,var(--podColor),rgba(255,255,255,.12));
+  box-shadow:0 0 44px var(--podGlow);
+  opacity:0;
+  transform:translate(-50%,-50%) scale(.72);
+  pointer-events:none;
+}
+.agentSpirit.active{
+  animation:agentLaunch 6s ease-in-out forwards;
+}
+.agentSpirit:before{
+  content:"";
+  position:absolute;
+  left:11px;
+  top:-19px;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  border:2px solid var(--podColor);
+  background:rgba(2,3,10,.85);
+}
+.skillCard{
+  position:absolute;
+  z-index:11;
+  width:310px;
+  min-height:180px;
+  right:28px;
+  top:94px;
+  border:1px solid var(--podColor);
+  border-radius:18px;
+  background:linear-gradient(180deg,rgba(7,17,31,.96),rgba(2,3,10,.92));
+  box-shadow:0 0 46px var(--podGlow);
+  padding:14px;
+  opacity:0;
+  transform:translateY(16px) scale(.96);
+  pointer-events:none;
+}
+.skillCard.active{
+  animation:skillReveal 6s ease-in-out forwards;
+}
+.skillCard h3{
+  margin:0 0 8px;
+  font-size:16px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--podColor);
+}
+.skillGrid{
   display:grid;
-  grid-template-columns:20px 1fr auto;
+  grid-template-columns:1fr 1fr;
   gap:8px;
-  align-items:center;
-  padding:8px;
+}
+.skillCell{
+  border:1px solid rgba(73,231,255,.12);
   border-radius:12px;
   background:rgba(255,255,255,.035);
-  border:1px solid rgba(255,255,255,.06);
+  padding:8px;
 }
-.dot{
-  width:10px;
-  height:10px;
-  border-radius:50%;
-  background:var(--cyan);
-  box-shadow:0 0 18px var(--cyan);
+.skillCell b{
+  display:block;
+  color:var(--cyan2);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  margin-bottom:5px;
 }
-.step b{font-size:11px}
-.step span{font-size:10px;color:var(--muted);text-align:right}
-.bar{
-  height:10px;
-  border-radius:999px;
-  background:#07111f;
-  overflow:hidden;
+.skillCell span{
+  font-size:11px;
+  color:var(--text);
+}
+.storyRail{
+  display:grid;
+  grid-template-columns:repeat(17,minmax(86px,1fr));
+  gap:6px;
+  margin-top:10px;
+  overflow:auto;
+}
+.storyFrame{
+  min-height:62px;
   border:1px solid rgba(73,231,255,.14);
+  border-radius:12px;
+  background:rgba(0,0,0,.24);
+  padding:7px;
 }
-.bar div{
-  height:100%;
-  width:10%;
-  background:linear-gradient(90deg,var(--blue),var(--cyan),var(--green));
+.storyFrame.active{
+  border-color:var(--cyan);
+  box-shadow:0 0 24px rgba(73,231,255,.24);
+}
+.storyFrame b{
+  display:block;
+  font-size:10px;
+}
+.storyFrame span{
+  display:block;
+  margin-top:4px;
+  color:var(--muted);
+  font-size:9px;
+}
+.laneStack{
+  position:absolute;
+  left:22px;
+  bottom:22px;
+  z-index:8;
+  display:grid;
+  gap:7px;
+}
+.lane{
+  width:235px;
+  border:1px solid rgba(73,231,255,.18);
+  border-radius:999px;
+  background:rgba(2,3,10,.58);
+  padding:7px 10px;
+  font-size:10px;
+  color:var(--muted);
+}
+.lane.active{
+  color:var(--podColor);
+  border-color:var(--podColor);
+  box-shadow:0 0 18px var(--podGlow);
+}
+.flowLine{
+  position:absolute;
+  z-index:3;
+  height:2px;
+  background:linear-gradient(90deg,transparent,var(--podColor),transparent);
+  opacity:.0;
+  transform-origin:left center;
+}
+.flowLine.active{
+  animation:pulseLine 1.8s ease-in-out infinite;
 }
 .truthGrid{
   display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-columns:1fr 1fr;
   gap:12px;
 }
 .truthPanelScroll{
@@ -304,218 +415,11 @@ body:before{
 .truthTable .critical{color:var(--amber);font-weight:800}
 .truthTable .done{color:var(--green);font-weight:800}
 .truthTable .blocked{color:var(--red);font-weight:800}
-.actionChip{
-  display:inline-flex;
-  padding:4px 7px;
-  border-radius:999px;
-  border:1px solid rgba(73,231,255,.28);
-  color:var(--cyan2);
-  font-size:10px;
-}
-.console{
-  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
-  font-size:11px;
-  line-height:1.5;
-  color:#bdeeff;
-  max-height:270px;
-  overflow:auto;
-  background:rgba(0,0,0,.28);
-  border-radius:14px;
-  padding:12px;
-  border:1px solid rgba(73,231,255,.12);
-}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes float{50%{transform:translateY(-12px)}}
-@keyframes flame{to{transform:scaleY(1.18);opacity:.8}}
-@media(max-width:1280px){
-  .shell{grid-template-columns:1fr}
-  .center-grid{grid-template-columns:1fr}
-  .grid{grid-template-columns:repeat(2,1fr)}
-}
-@media(max-width:760px){
-  .grid,.truthGrid{grid-template-columns:1fr}
-  .header{grid-template-columns:1fr}
-  .pills{justify-content:flex-start}
-}
-
-/* MOONSHOT V4 AGENT LAUNCH THEATER */
-.launchTheater{
-  position:relative;
-  min-height:430px;
-  border:1px solid rgba(73,231,255,.14);
-  border-radius:18px;
-  overflow:hidden;
-  background:
-    radial-gradient(circle at 50% 50%,rgba(73,231,255,.13),transparent 34%),
-    linear-gradient(180deg,rgba(2,3,10,.18),rgba(2,3,10,.88));
-  margin-bottom:14px;
-}
-.launchTheater:before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:
-    linear-gradient(90deg,rgba(2,3,10,.84),rgba(2,3,10,.22),rgba(2,3,10,.84)),
-    url("/assets/hoch-pods-visual-authority") center center / cover no-repeat;
-  opacity:.28;
-  filter:saturate(1.25) contrast(1.10);
-}
-.launchCore{
-  position:absolute;
-  left:50%;
-  top:52%;
-  width:138px;
-  height:196px;
-  transform:translate(-50%,-50%);
-  border-radius:80px 80px 26px 26px;
-  background:linear-gradient(180deg,#f7fbff,#6bdff2 45%,#123b67);
-  box-shadow:0 0 100px rgba(73,231,255,.62), inset 0 0 28px rgba(255,255,255,.25);
-  z-index:3;
-  animation:float 2.4s ease-in-out infinite;
-}
-.launchCore:before{
-  content:"";
-  position:absolute;
-  left:48px;
-  top:32px;
-  width:42px;
-  height:42px;
-  border-radius:50%;
-  background:#02030a;
-  border:5px solid var(--cyan);
-}
-.launchCore:after{
-  content:"";
-  position:absolute;
-  left:43px;
-  bottom:-100px;
-  width:54px;
-  height:120px;
-  background:linear-gradient(180deg,var(--amber),var(--red),transparent);
-  filter:blur(4px);
-  clip-path:polygon(50% 100%,0 0,100% 0);
-  animation:flame .2s infinite alternate;
-}
-.launchHalo{
-  position:absolute;
-  left:50%;
-  top:52%;
-  border:1px solid rgba(73,231,255,.16);
-  border-radius:50%;
-  transform:translate(-50%,-50%);
-  animation:spin 18s linear infinite;
-  z-index:2;
-}
-.halo1{width:680px;height:680px}
-.halo2{width:510px;height:510px;animation-duration:13s;animation-direction:reverse}
-.halo3{width:330px;height:330px;animation-duration:9s}
-.agentGlyph{
-  position:absolute;
-  width:148px;
-  min-height:74px;
-  padding:10px;
-  border-radius:18px;
-  border:1px solid rgba(73,231,255,.24);
-  background:linear-gradient(180deg,rgba(7,17,31,.80),rgba(2,3,10,.66));
-  box-shadow:0 0 28px rgba(73,231,255,.16);
-  z-index:5;
-  cursor:pointer;
-  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
-  backdrop-filter:blur(8px);
-}
-.agentGlyph:hover{
-  transform:translateY(-4px) scale(1.02);
-  border-color:rgba(73,231,255,.72);
-  box-shadow:0 0 46px rgba(73,231,255,.30);
-}
-.agentGlyph b{
-  display:block;
-  font-size:11px;
-  color:var(--text);
-  margin-bottom:5px;
-}
-.agentGlyph span{
-  display:block;
-  font-size:10px;
-  color:var(--muted);
-  line-height:1.25;
-}
-.agentGlyph .score{
-  margin-top:7px;
-  display:inline-flex;
-  padding:4px 7px;
-  border-radius:999px;
-  border:1px solid rgba(68,255,154,.36);
-  color:var(--green);
-  font-size:10px;
-}
-.flowLine{
-  position:absolute;
-  height:2px;
-  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
-  opacity:.55;
-  transform-origin:left center;
-  animation:pulseLine 1.7s ease-in-out infinite;
-  z-index:1;
-}
-.agentModal{
-  position:fixed;
-  right:26px;
-  bottom:26px;
-  z-index:100;
-  width:min(460px,calc(100vw - 52px));
-  border:1px solid rgba(73,231,255,.34);
-  border-radius:20px;
-  background:linear-gradient(180deg,rgba(7,17,31,.96),rgba(2,3,10,.94));
-  box-shadow:0 0 60px rgba(73,231,255,.28);
-  padding:16px;
-  display:none;
-}
-.agentModal.active{display:block}
-.agentModal h3{
-  margin:0 0 8px;
-  font-size:15px;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-}
-.agentModal .modalGrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-.agentModal .modalCell{
-  border:1px solid rgba(73,231,255,.12);
-  border-radius:12px;
-  padding:10px;
-  background:rgba(255,255,255,.035);
-}
-.agentModal .modalCell b{
-  display:block;
-  font-size:10px;
-  color:var(--cyan2);
-  text-transform:uppercase;
-  letter-spacing:.08em;
-  margin-bottom:5px;
-}
-.agentModal .modalCell span{
-  font-size:11px;
-  color:var(--text);
-}
-.agentModal button{
-  margin-top:12px;
-  width:100%;
-  padding:9px 10px;
-  border-radius:12px;
-  border:1px solid rgba(73,231,255,.28);
-  background:rgba(73,231,255,.08);
-  color:var(--cyan2);
-  font-weight:800;
-}
 .statusRiver{
   display:grid;
   grid-template-columns:repeat(4,minmax(0,1fr));
   gap:10px;
-  margin-bottom:14px;
+  margin-bottom:12px;
 }
 .riverCard{
   border:1px solid rgba(73,231,255,.15);
@@ -536,18 +440,89 @@ body:before{
   font-size:16px;
   font-weight:900;
 }
-@keyframes pulseLine{
-  0%,100%{opacity:.25}
-  50%{opacity:.85}
+.console{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:11px;
+  line-height:1.5;
+  color:#bdeeff;
+  max-height:270px;
+  overflow:auto;
+  background:rgba(0,0,0,.28);
+  border-radius:14px;
+  padding:12px;
+  border:1px solid rgba(73,231,255,.12);
 }
-
+.step{
+  display:grid;
+  grid-template-columns:20px 1fr auto;
+  gap:8px;
+  align-items:center;
+  padding:8px;
+  border-radius:12px;
+  background:rgba(255,255,255,.035);
+  border:1px solid rgba(255,255,255,.06);
+}
+.dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:var(--cyan);
+  box-shadow:0 0 18px var(--cyan);
+}
+.step b{font-size:11px}
+.step span{font-size:10px;color:var(--muted);text-align:right}
+.flow{display:grid;gap:8px}
+.bar{
+  height:10px;
+  border-radius:999px;
+  background:#07111f;
+  overflow:hidden;
+  border:1px solid rgba(73,231,255,.14);
+}
+.bar div{
+  height:100%;
+  width:10%;
+  background:linear-gradient(90deg,var(--cyan),var(--green));
+}
+.actionChip{
+  display:inline-flex;
+  padding:4px 7px;
+  border-radius:999px;
+  border:1px solid rgba(73,231,255,.28);
+  color:var(--cyan2);
+  font-size:10px;
+}
+@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes float{50%{transform:translate(-50%,-54%)}}
+@keyframes flame{to{transform:scaleY(1.18);opacity:.8}}
+@keyframes pulseLine{0%,100%{opacity:.18}50%{opacity:.88}}
+@keyframes agentLaunch{
+  0%{opacity:0;left:50%;top:62%;transform:translate(-50%,-50%) scale(.55)}
+  15%{opacity:1;left:50%;top:52%;transform:translate(-50%,-50%) scale(.88)}
+  42%{opacity:1;left:var(--targetX);top:var(--targetY);transform:translate(-50%,-50%) scale(1)}
+  70%{opacity:1;left:var(--targetX);top:var(--targetY);transform:translate(-50%,-50%) scale(1)}
+  100%{opacity:.10;left:50%;top:62%;transform:translate(-50%,-50%) scale(.65)}
+}
+@keyframes skillReveal{
+  0%,18%{opacity:0;transform:translateY(16px) scale(.96)}
+  28%,74%{opacity:1;transform:translateY(0) scale(1)}
+  100%{opacity:0;transform:translateY(12px) scale(.97)}
+}
+@media(max-width:1280px){
+  .shell{grid-template-columns:1fr}
+  .truthGrid,.statusRiver{grid-template-columns:1fr 1fr}
+}
+@media(max-width:760px){
+  .truthGrid,.statusRiver{grid-template-columns:1fr}
+  .header{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 <header class="header">
   <div class="brand">
-    <h1>HOCH PODS Liftoff Control Plane V4</h1>
-    <div class="sub">HAS / HASF agent launch theater · live PERT · live gaps · live runners · Michael final approval</div>
+    <h1>HOCH PODS Theater V5</h1>
+    <div class="sub">storyboard-driven agent spin-up · pod return cycle · live PERT · live gaps · live runners</div>
   </div>
   <div class="pills">
     <div class="pill good" id="pill-goal">GOAL --</div>
@@ -572,114 +547,104 @@ body:before{
     </section>
 
     <section class="panel">
-      <h2>Leading Agents</h2>
-      <div class="body flow" id="agents"></div>
+      <h2>Agent Queue</h2>
+      <div class="body flow" id="agentQueue"></div>
     </section>
 
     <section class="panel">
       <h2>Execution Flow</h2>
       <div class="body flow">
-        <div class="step"><div class="dot"></div><b>Audit</b><span>state scan</span></div>
-        <div class="step"><div class="dot"></div><b>Plan</b><span>PERT path</span></div>
-        <div class="step"><div class="dot"></div><b>Build</b><span>safe local</span></div>
-        <div class="step"><div class="dot"></div><b>QA</b><span>gates</span></div>
+        <div class="step"><div class="dot"></div><b>Emerge</b><span>pod opens</span></div>
+        <div class="step"><div class="dot"></div><b>Reveal</b><span>skill card</span></div>
+        <div class="step"><div class="dot"></div><b>Assign</b><span>task + PERT</span></div>
+        <div class="step"><div class="dot"></div><b>Deploy</b><span>mission lane</span></div>
         <div class="step"><div class="dot"></div><b>Evidence</b><span>ledger</span></div>
-        <div class="step"><div class="dot"></div><b>Approve</b><span>Michael</span></div>
+        <div class="step"><div class="dot"></div><b>Return</b><span>home pod</span></div>
       </div>
     </section>
   </aside>
 
   <section>
-    <section class="panel hero">
-      <div class="approved-visual-layer"></div>
-      <div class="visual-authority-ribbon">Approved HOCH PODS Visual Authority</div>
-      <div class="orbit o1"></div>
-      <div class="orbit o2"></div>
-      <div class="orbit o3"></div>
-      <div class="rocket"></div>
-      <div class="launch-title">
-        <h3>Pods Liftoff</h3>
-        <p>Live agents converge into mission execution swarm</p>
+    <section class="panel">
+      <h2>HOCH PODS Storyboard Theater</h2>
+      <div class="body">
+        <div class="statusRiver">
+          <div class="riverCard"><b>Mission</b><span>HAS/HASF</span></div>
+          <div class="riverCard"><b>Live PERT</b><span id="riverPert">--</span></div>
+          <div class="riverCard"><b>Active Agents</b><span id="riverAgents">--</span></div>
+          <div class="riverCard"><b>Closures</b><span id="riverClosures">--</span></div>
+        </div>
+
+        <div class="theater" id="theater">
+          <div class="stageHeader">
+            <div class="stageChip">Approved HOCH PODS Storyboard Authority</div>
+            <div class="stageChip" id="currentScene">Scene --</div>
+            <div class="stageChip" id="currentAgent">Agent --</div>
+          </div>
+
+          <div class="ring r1"></div>
+          <div class="ring r2"></div>
+          <div class="ring r3"></div>
+          <div class="corePod"></div>
+
+          <div class="agentSpirit" id="agentSpirit"></div>
+
+          <div class="skillCard" id="skillCard">
+            <h3 id="skillName">Agent</h3>
+            <div class="skillGrid">
+              <div class="skillCell"><b>Pod</b><span id="skillPod">--</span></div>
+              <div class="skillCell"><b>Role</b><span id="skillRole">--</span></div>
+              <div class="skillCell"><b>Task</b><span id="skillTask">--</span></div>
+              <div class="skillCell"><b>Scorecard</b><span id="skillScore">--</span></div>
+              <div class="skillCell"><b>Evidence</b><span id="skillEvidence">--</span></div>
+              <div class="skillCell"><b>Return</b><span id="skillReturn">home pod after cycle</span></div>
+            </div>
+          </div>
+
+          <div class="laneStack" id="laneStack"></div>
+        </div>
+
+        <div class="storyRail" id="storyRail"></div>
       </div>
     </section>
 
-    <div class="center-grid">
-      <section class="panel full">
-        <h2>Swarm Theater / Agent Liftoff</h2>
-        <div class="body">
-          <div class="statusRiver">
-            <div class="riverCard"><b>Mission</b><span id="riverMission">HAS/HASF</span></div>
-            <div class="riverCard"><b>Live PERT</b><span id="riverPert">--</span></div>
-            <div class="riverCard"><b>Active Agents</b><span id="riverAgents">--</span></div>
-            <div class="riverCard"><b>Closures</b><span id="riverClosures">--</span></div>
-          </div>
-          <div class="launchTheater" id="agentLaunchTheater">
-            <div class="launchHalo halo1"></div>
-            <div class="launchHalo halo2"></div>
-            <div class="launchHalo halo3"></div>
-            <div class="launchCore"></div>
-          </div>
-          <div class="grid" id="podGrid"></div>
-        </div>
-      </section>
+    <section class="panel" style="margin-top:14px">
+      <h2>Live PERT Analysis</h2>
+      <div class="body truthPanelScroll">
+        <table class="truthTable">
+          <thead><tr><th>ID</th><th>Task</th><th>Status</th><th>Owner</th><th>TE</th><th>Slack</th><th>Critical</th></tr></thead>
+          <tbody id="pertTruthRows"><tr><td colspan="7" class="muted">loading live PERT analysis...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
 
-      <section class="panel full">
-        <h2>Live PERT Analysis</h2>
-        <div class="body truthPanelScroll">
+    <section class="panel" style="margin-top:14px">
+      <h2>Live Gap Analysis / Closures</h2>
+      <div class="body truthPanelScroll">
+        <table class="truthTable">
+          <thead><tr><th>Gap</th><th>Status</th><th>Reason</th><th>Closure</th></tr></thead>
+          <tbody id="gapClosureRows"><tr><td colspan="4" class="muted">loading live gap closures...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel" style="margin-top:14px">
+      <h2>Live Runners / Approval Queue</h2>
+      <div class="body truthGrid">
+        <div class="truthPanelScroll">
           <table class="truthTable">
-            <thead><tr><th>ID</th><th>Task</th><th>Status</th><th>Owner</th><th>TE</th><th>Slack</th><th>Critical</th></tr></thead>
-            <tbody id="pertTruthRows"><tr><td colspan="7" class="muted">loading live PERT analysis...</td></tr></tbody>
+            <thead><tr><th>Runner</th><th>Status</th><th>Evidence</th></tr></thead>
+            <tbody id="runnerRows"><tr><td colspan="3" class="muted">loading runner state...</td></tr></tbody>
           </table>
         </div>
-      </section>
-
-      <section class="panel full">
-        <h2>Live Gap Analysis / Closures</h2>
-        <div class="body truthPanelScroll">
+        <div class="truthPanelScroll">
           <table class="truthTable">
-            <thead><tr><th>Gap</th><th>Status</th><th>Reason</th><th>Closure</th></tr></thead>
-            <tbody id="gapClosureRows"><tr><td colspan="4" class="muted">loading live gap closures...</td></tr></tbody>
+            <thead><tr><th>Approval</th><th>Severity</th><th>Gate</th></tr></thead>
+            <tbody id="approvalRows"><tr><td colspan="3" class="muted">loading approval queue...</td></tr></tbody>
           </table>
         </div>
-      </section>
-
-      <section class="panel full">
-        <h2>Live Runners / Approval Queue</h2>
-        <div class="body truthGrid">
-          <div class="truthPanelScroll">
-            <table class="truthTable">
-              <thead><tr><th>Runner</th><th>Status</th><th>Evidence</th></tr></thead>
-              <tbody id="runnerRows"><tr><td colspan="3" class="muted">loading runner state...</td></tr></tbody>
-            </table>
-          </div>
-          <div class="truthPanelScroll">
-            <table class="truthTable">
-              <thead><tr><th>Approval</th><th>Severity</th><th>Gate</th></tr></thead>
-              <tbody id="approvalRows"><tr><td colspan="3" class="muted">loading approval queue...</td></tr></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <section class="panel">
-        <h2>Revenue / HASF</h2>
-        <div class="body">
-          <div class="metric"><span>Offer Packaging</span><strong>Needs gate</strong></div>
-          <div class="metric"><span>Stripe</span><strong>Approval required</strong></div>
-          <div class="metric"><span>Deploy</span><strong>Approval required</strong></div>
-          <div class="metric"><span>Public Route</span><strong>Blocked until approved</strong></div>
-        </div>
-      </section>
-
-      <section class="panel">
-        <h2>PERT Critical Path</h2>
-        <div class="body">
-          <div class="metric"><span>Critical Path</span><strong id="criticalPath">Runtime → UI → QA → Revenue</strong></div>
-          <div class="metric"><span>Remaining</span><strong id="expectedTime">--</strong></div>
-          <div class="metric"><span>Confidence</span><strong id="confidence">--</strong></div>
-        </div>
-      </section>
-    </div>
+      </div>
+    </section>
   </section>
 
   <aside class="stack">
@@ -690,6 +655,8 @@ body:before{
         <div class="bar"><div id="goalBar"></div></div>
         <div class="metric"><span>Blocked Tasks</span><strong id="blockedTasks">--</strong></div>
         <div class="metric"><span>Manual Actions</span><strong id="manualActions">--</strong></div>
+        <div class="metric"><span>Confidence</span><strong id="confidence">--</strong></div>
+        <div class="metric"><span>Expected</span><strong id="expectedTime">--</strong></div>
       </div>
     </section>
 
@@ -701,7 +668,7 @@ body:before{
     <section class="panel">
       <h2>Evidence Console</h2>
       <div class="body">
-        <pre class="console" id="console">booting HOCH PODS V4 agent launch theater...</pre>
+        <pre class="console" id="console">booting HOCH PODS Theater V5...</pre>
       </div>
     </section>
   </aside>
@@ -712,16 +679,116 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtAge = s => s == null ? "--" : `${Math.round(Number(s))}s`;
 
+const pods = [
+  {id:"HAS", name:"HAS Pod", agent:"Automation Engineer", color:"#44ff9a", glow:"rgba(68,255,154,.55)", x:10, y:18, tx:"24%", ty:"18%", lane:"Build Factory"},
+  {id:"HASF", name:"HASF Pod", agent:"QA Reviewer", color:"#49e7ff", glow:"rgba(73,231,255,.55)", x:40, y:10, tx:"42%", ty:"15%", lane:"QA Gate"},
+  {id:"BUSINESS", name:"Business Pod", agent:"Revenue Strategist", color:"#ffc857", glow:"rgba(255,200,87,.55)", x:72, y:16, tx:"74%", ty:"22%", lane:"Revenue Launch"},
+  {id:"CYBER", name:"Cyber Pod", agent:"DevSecOps Guardian", color:"#b06cff", glow:"rgba(176,108,255,.55)", x:84, y:46, tx:"82%", ty:"47%", lane:"Cyber Shield"},
+  {id:"OPS", name:"Ops Pod", agent:"Registry Keeper", color:"#49e7ff", glow:"rgba(73,231,255,.55)", x:64, y:72, tx:"66%", ty:"74%", lane:"Registry Core"},
+  {id:"FAMILY", name:"Family Pod", agent:"Family Coordinator", color:"#ff70d9", glow:"rgba(255,112,217,.55)", x:34, y:76, tx:"36%", ty:"78%", lane:"Personal Core"},
+  {id:"HOBBY", name:"Hobby Pod", agent:"Hobby Creator", color:"#ff9d42", glow:"rgba(255,157,66,.55)", x:12, y:54, tx:"20%", ty:"55%", lane:"Creator Lane"}
+];
+
+const storyboard = [
+  "System Boot","Core Ignition","Pod Ring Activation","Vault Gate Opening","Agent Energy Build",
+  "First Agent Spin Up","Agent Launch","Skill Card Pop Out","Joining Swarm","Multi-Agent Spin Ups",
+  "Routing to Destinations","Destination Lanes Active","Pod Status Overview","Data Flow Visualization",
+  "Evidence Archive","System Confirmation","Mission Ready"
+];
+
 function setConsole(lines){ $("console").textContent = lines.join("\n"); }
 
-function card(title, body, status="ACTIVE"){
-  return `<div class="card"><h3>${esc(title)}</h3><p>${esc(body)}</p><span class="badge">${esc(status)}</span></div>`;
+function renderStaticTheater(){
+  const theater = $("theater");
+
+  if (!theater.dataset.ready){
+    theater.dataset.ready = "1";
+
+    pods.forEach((p, i) => {
+      const node = document.createElement("div");
+      node.className = "podNode";
+      node.id = `pod-${p.id}`;
+      node.style.left = p.x + "%";
+      node.style.top = p.y + "%";
+      node.style.setProperty("--podColor", p.color);
+      node.style.setProperty("--podGlow", p.glow);
+      node.innerHTML = `<b>${esc(p.name)}</b><span>${esc(p.agent)}</span><span class="podLive">LIVE</span>`;
+      theater.appendChild(node);
+    });
+
+    pods.forEach((p, i) => {
+      const line = document.createElement("div");
+      line.className = "flowLine";
+      line.id = `flow-${p.id}`;
+      line.style.left = "50%";
+      line.style.top = "50%";
+      line.style.width = "240px";
+      line.style.transform = `rotate(${i * 48 - 170}deg)`;
+      line.style.setProperty("--podColor", p.color);
+      theater.appendChild(line);
+    });
+
+    $("storyRail").innerHTML = storyboard.map((s,i) => `<div class="storyFrame" id="scene-${i}"><b>${i+1}. ${esc(s)}</b><span>storyboard state</span></div>`).join("");
+
+    $("laneStack").innerHTML = ["Build Factory","QA Gate","Evidence Vault","Cyber Shield","Revenue Launch","Registry Core","Personal Core"].map(l => `<div class="lane" id="lane-${l.replaceAll(" ","-")}">${esc(l)}</div>`).join("");
+
+    $("agentQueue").innerHTML = pods.map(p => `<div class="step"><div class="dot"></div><b>${esc(p.agent)}</b><span>${esc(p.name)}</span></div>`).join("");
+  }
+}
+
+let cycleIndex = 0;
+function playCycle(metrics, stale){
+  renderStaticTheater();
+
+  const p = pods[cycleIndex % pods.length];
+  cycleIndex += 1;
+
+  document.querySelectorAll(".podNode").forEach(n => n.classList.remove("active"));
+  document.querySelectorAll(".storyFrame").forEach(n => n.classList.remove("active"));
+  document.querySelectorAll(".lane").forEach(n => n.classList.remove("active"));
+  document.querySelectorAll(".flowLine").forEach(n => n.classList.remove("active"));
+
+  const pod = $(`pod-${p.id}`);
+  const flow = $(`flow-${p.id}`);
+  const lane = $(`lane-${p.lane.replaceAll(" ","-")}`);
+  if (pod) pod.classList.add("active");
+  if (flow) flow.classList.add("active");
+  if (lane) lane.classList.add("active");
+
+  const sceneNum = cycleIndex % storyboard.length;
+  const scene = $(`scene-${sceneNum}`);
+  if (scene) scene.classList.add("active");
+
+  $("currentScene").textContent = `Scene ${sceneNum + 1}: ${storyboard[sceneNum]}`;
+  $("currentAgent").textContent = p.agent;
+
+  const spirit = $("agentSpirit");
+  spirit.classList.remove("active");
+  spirit.style.setProperty("--podColor", p.color);
+  spirit.style.setProperty("--podGlow", p.glow);
+  spirit.style.setProperty("--targetX", p.tx);
+  spirit.style.setProperty("--targetY", p.ty);
+  void spirit.offsetWidth;
+  spirit.classList.add("active");
+
+  const skill = $("skillCard");
+  skill.classList.remove("active");
+  skill.style.setProperty("--podColor", p.color);
+  skill.style.setProperty("--podGlow", p.glow);
+  $("skillName").textContent = p.agent;
+  $("skillPod").textContent = p.name;
+  $("skillRole").textContent = p.lane;
+  $("skillTask").textContent = `${p.agent} assigned to ${p.lane}`;
+  $("skillScore").textContent = `GOAL ${metrics.percent_goal_complete ?? "--"}% · stale ${stale.length} · blockers ${metrics.blocked_task_count ?? "--"}`;
+  $("skillEvidence").textContent = "PERT rows, gap closures, runner logs, guardrail evidence";
+  void skill.offsetWidth;
+  skill.classList.add("active");
 }
 
 async function load(){
   const lines = [];
   try{
-    const res = await fetch("/api/pert/data", { cache:"no-store" });
+    const res = await fetch("/api/pert/data", {cache:"no-store"});
     const data = await res.json();
 
     const metrics = data.metrics || {};
@@ -735,6 +802,8 @@ async function load(){
     $("expectedTime").textContent = readiness.window || `${metrics.critical_path_remaining_minutes ?? "--"} min`;
     $("blockedTasks").textContent = metrics.blocked_task_count ?? "--";
     $("manualActions").textContent = metrics.manual_interventions_required ?? "--";
+    $("riverPert").textContent = `${pct}%`;
+    $("riverAgents").textContent = pods.length;
 
     const src = data.freshness_authority?.reconciled_sources || {};
     const freshKeys = Object.keys(src);
@@ -745,75 +814,12 @@ async function load(){
     $("pill-stale").textContent = `STALE ${stale.length}`;
     $("pill-blockers").textContent = `BLOCKERS ${metrics.blocked_task_count ?? stale.length ?? 0}`;
     $("pill-updated").textContent = new Date().toLocaleTimeString();
+    $("riverClosures").textContent = `${stale.length} stale`;
 
     $("freshness").innerHTML = freshKeys.slice(0,12).map(k => {
       const s = src[k] || {};
       return `<div class="step"><div class="dot"></div><b>${esc(k)}</b><span>${esc(s.computed_state || "UNKNOWN")} age=${fmtAge(s.freshness_age_seconds)}</span></div>`;
     }).join("") || `<div class="step"><div class="dot"></div><b>No freshness authority</b><span>missing</span></div>`;
-
-    const agents = [
-      ["PERT Analysis Agent","Critical path, estimates, confidence, time-to-complete"],
-      ["Live Stale Agent","Detects stale telemetry and stale UI truth"],
-      ["QA Gate Agent","Smoke, browser, guardrails, anti-fake checks"],
-      ["Evidence Agent","Writes local audit/evidence bundles"],
-      ["Revenue Agent","Tracks HASF monetization readiness"],
-      ["Release Hygiene Agent","Tracks dirty tree, commits, blocked gates"],
-      ["Visual Authority Agent","Binds HOCH PODS approved theater theme"],
-      ["Operator Alert Agent","Surfaces Michael approval gates only"]
-    ];
-    $("agents").innerHTML = agents.map(a=>`<div class="step"><div class="dot"></div><b>${esc(a[0])}</b><span>${esc(a[1])}</span></div>`).join("");
-
-    const fallbackPods = [
-      ["Mission Commander","Coordinates GOAL, approvals, evidence"],
-      ["Runtime Truth Pod","Telemetry, freshness, stale state"],
-      ["UI Theater Pod","HOCH PODS liftoff visual control plane"],
-      ["QA Pod","Tests, guardrails, browser verification"],
-      ["Revenue Pod","HASF monetization package"],
-      ["Release Pod","Commit hygiene and promotion readiness"],
-      ["PERT Pod","Critical path and confidence math"],
-      ["Stale Pod","Ages and reconciles runtime sources"]
-    ];
-    $("podGrid").innerHTML = fallbackPods.map(p => card(p[0],p[1],"ACTIVE")).join("");
-
-    $("riverPert").textContent = `${pct}%`;
-    $("riverAgents").textContent = fallbackPods.length;
-    $("riverClosures").textContent = `${stale.length} stale`;
-
-    const theater = $("agentLaunchTheater");
-    if (theater && !theater.dataset.bound) {
-      theater.dataset.bound = "1";
-      const positions = [
-        [8,12],[28,6],[64,8],[82,20],
-        [9,58],[27,72],[63,74],[82,58]
-      ];
-      fallbackPods.forEach((p,i) => {
-        const glyph = document.createElement("div");
-        glyph.className = "agentGlyph";
-        glyph.style.left = positions[i % positions.length][0] + "%";
-        glyph.style.top = positions[i % positions.length][1] + "%";
-        glyph.innerHTML = `<b>${esc(p[0])}</b><span>${esc(p[1])}</span><div class="score">Scorecard LIVE</div>`;
-        glyph.addEventListener("mouseenter", () => {
-          $("modalAgentName").textContent = p[0];
-          $("modalMission").textContent = "HAS/HASF autonomous execution";
-          $("modalTask").textContent = p[1];
-          $("modalScore").textContent = `GOAL ${pct}% · stale ${stale.length} · blockers ${metrics.blocked_task_count ?? "--"}`;
-          $("modalEvidence").textContent = "Evidence console, PERT rows, guardrails, runner logs";
-          $("agentModal").classList.add("active");
-        });
-        theater.appendChild(glyph);
-      });
-
-      [[18,28,240,18],[34,22,190,4],[58,24,210,-9],[69,35,180,-23],[22,65,210,-12],[43,76,160,-28],[58,72,180,18],[70,62,180,26]].forEach(l => {
-        const line = document.createElement("div");
-        line.className = "flowLine";
-        line.style.left = l[0] + "%";
-        line.style.top = l[1] + "%";
-        line.style.width = l[2] + "px";
-        line.style.transform = `rotate(${l[3]}deg)`;
-        theater.appendChild(line);
-      });
-    }
-
 
     const pertTasks = data.pert_cpm?.tasks || [];
     $("pertTruthRows").innerHTML = pertTasks.length ? pertTasks.map(t => {
@@ -832,6 +838,7 @@ async function load(){
       </tr>`;
     }).join("") : `<tr><td colspan="7" class="muted">No PERT task list found in /api/pert/data</td></tr>`;
 
+    const approvalQueue = metrics.approval_queue || [];
     const gaps = [];
     const blockedCount = Number(metrics.blocked_task_count || 0);
     const manualCount = Number(metrics.manual_interventions_required || 0);
@@ -841,10 +848,8 @@ async function load(){
       const s = src[k] || {};
       gaps.push([k, "STALE", s.reason || `age=${fmtAge(s.freshness_age_seconds)}`, "Refresh telemetry or restart live runner/watchdog"]);
     });
-
-    const approvalQueue = metrics.approval_queue || [];
     approvalQueue.forEach(a => gaps.push([a.id || "approval", a.severity || "APPROVAL", a.action || "Approval gate", "Michael approval required before execution"]));
-    if (!gaps.length) gaps.push(["No active gaps from rendered API fields", "GREEN", "No stale/blocker/approval gap detected in current payload", "Continue live runner"]);
+    if (!gaps.length) gaps.push(["No active gaps", "GREEN", "No stale/blocker/approval gap detected", "Continue live runner"]);
 
     $("gapClosureRows").innerHTML = gaps.map(g => `<tr>
       <td>${esc(g[0])}</td>
@@ -854,11 +859,11 @@ async function load(){
     </tr>`).join("");
 
     const runnerRows = [
-      ["Michaels AI Model", "GOAL Orchestrator", "Safe-local E2E commander"],
-      ["Goal Runner Daemon", "Feeds progress loop", "logs/has_goal_runner_daemon.nohup.log"],
-      ["Telemetry Watchdog", stale.length ? "STALE SOURCES DETECTED" : "Freshness OK", "logs/has_telemetry_watchdog.nohup.log"],
-      ["UI Browser QA", "PASS when verifier passes", "scripts/verify_ui_moonshot_browser.mjs"],
-      ["Guardrails", "PASS when secure check passes", "scripts/secure_build_guardrail_check.sh"]
+      ["Michaels AI Model","GOAL Orchestrator","Safe-local E2E commander"],
+      ["Goal Runner Daemon","Feeds progress loop","logs/has_goal_runner_daemon.nohup.log"],
+      ["Telemetry Watchdog",stale.length ? "STALE SOURCES DETECTED" : "Freshness OK","logs/has_telemetry_watchdog.nohup.log"],
+      ["UI Browser QA","PASS when verifier passes","scripts/verify_ui_moonshot_browser.mjs"],
+      ["Guardrails","PASS when secure check passes","scripts/secure_build_guardrail_check.sh"]
     ];
     $("runnerRows").innerHTML = runnerRows.map(r => `<tr>
       <td>${esc(r[0])}</td>
@@ -872,32 +877,31 @@ async function load(){
       <td class="muted">${esc(a.action || "--")}</td>
     </tr>`).join("") : `<tr><td>NONE</td><td class="done">CLEAR</td><td class="muted">No approval queue in current metrics payload</td></tr>`;
 
-    lines.push("MOONSHOT_V4: ONLINE");
+    playCycle(metrics, stale);
+
+    lines.push("MOONSHOT_V5: ONLINE");
     lines.push(`GOAL: ${pct}%`);
     lines.push(`FRESHNESS_SOURCES: ${freshKeys.length}`);
     lines.push(`FRESH: ${fresh}`);
     lines.push(`STALE: ${stale.length}`);
     lines.push(`BLOCKED_TASKS: ${metrics.blocked_task_count ?? "--"}`);
-    lines.push("PANELS: PERT, GAP_CLOSURES, RUNNERS, APPROVAL_QUEUE");
+    lines.push("CYCLE: emerge -> reveal -> assign -> deploy -> evidence -> return");
   }catch(e){
-    setConsole(["MOONSHOT_V4: DEGRADED", String(e)]);
+    setConsole(["MOONSHOT_V5: DEGRADED", String(e)]);
   }
   if(lines.length) setConsole(lines);
 }
+
 load();
 setInterval(load, 10000);
+setInterval(() => {
+  fetch("/api/pert/data", {cache:"no-store"}).then(r=>r.json()).then(d => {
+    const metrics = d.metrics || {};
+    const src = d.freshness_authority?.reconciled_sources || {};
+    const stale = Object.keys(src).filter(k => src[k]?.computed_state !== "FRESH");
+    playCycle(metrics, stale);
+  }).catch(()=>{});
+}, 6200);
 </script>
-
-<div class="agentModal" id="agentModal">
-  <h3 id="modalAgentName">Agent Profile</h3>
-  <div class="modalGrid">
-    <div class="modalCell"><b>Mission</b><span id="modalMission">--</span></div>
-    <div class="modalCell"><b>Task</b><span id="modalTask">--</span></div>
-    <div class="modalCell"><b>Scorecard</b><span id="modalScore">--</span></div>
-    <div class="modalCell"><b>Evidence</b><span id="modalEvidence">--</span></div>
-  </div>
-  <button onclick="document.getElementById('agentModal').classList.remove('active')">Close Agent HUD</button>
-</div>
-
 </body>
 </html>
