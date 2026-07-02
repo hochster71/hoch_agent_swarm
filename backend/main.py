@@ -547,6 +547,45 @@ def get_agent_capability_audit(agent_id: str):
         "last_decisions": decisions
     }
 
+@app.get("/api/v1/helm/status")
+def get_helm_status():
+    return {
+        "agent_id": "helm",
+        "name": "HELM",
+        "status": "active_candidate",
+        "role": "intelligent_coding_verification_execution_agent",
+        "release_authority": False,
+        "routing_enabled": False,
+        "active_priority_stack": [
+            "Canonical Docker verification for Michael AI layer",
+            "HOCH-200 Runtime Truth ingestion and restart survival",
+            "Moonshot UI private remote route",
+            "Ace Knowledge Graph for HAS/HASF",
+            "Autonomy loop and local worker recovery",
+            "Apple telemetry visibility enhancements"
+        ],
+        "current_constraints": {
+            "final_verifier": "BLOCKED",
+            "readiness_score": 50,
+            "active_blocker": "NO_ACTIVE_RELEASE_GO"
+        },
+        "doctrine": [
+            "Steer, don't drift.",
+            "Evidence beats narrative.",
+            "Commit hash or it did not happen.",
+            "Runtime Truth is authority.",
+            "Final Verifier controls release.",
+            "Reduce Michael's cognitive load.",
+            "Inspect before editing.",
+            "Make the smallest additive change that advances the active mission.",
+            "Run gates before claiming success.",
+            "Write evidence.",
+            "Update Mission Ledger.",
+            "Commit."
+        ],
+        "next_recommended_lane": "Canonical Docker verification for Michael AI layer"
+    }
+
 @app.get("/api/v1/accountability/agents")
 def api_get_accountability_agents():
     try:
@@ -4816,6 +4855,20 @@ async def startup_event():
                     "skills": ["fastapi router", "sqlite wal", "websockets broker"],
                     "stats": {"intelligence": 94, "speed": 92, "reliability": 97, "energy": 75},
                     "tier": "LEGENDARY"
+                },
+                {
+                    "id": "helm",
+                    "displayName": "HELM",
+                    "title": "HELM Agent",
+                    "tag": "STEERING COMMAND",
+                    "systemRole": "Execution Specialist",
+                    "avatarVariant": "research",
+                    "status": "active_candidate",
+                    "description": "Michael Hoch's primary intelligent coding, verification, and execution agent.",
+                    "catchphrase": "Steer, don't drift.",
+                    "skills": ["codebase implementation", "verification gating", "evidence generation", "git commit discipline"],
+                    "stats": {"intelligence": 99, "speed": 98, "reliability": 99, "energy": 90},
+                    "tier": "MYTHIC"
                 }
             ]
             for a in default_agents:
@@ -4961,6 +5014,16 @@ async def startup_event():
                     "network_scopes": [],
                     "approval_threshold": "high",
                     "risk_class": "L3",
+                    "audit_sink": "sqlite://swarm_ledger.db"
+                },
+                {
+                    "agent_id": "helm",
+                    "allowed_tools": ["run_command", "view_file", "write_file", "git commit", "sqlite3"],
+                    "denied_tools": ["rm", "sudo"],
+                    "file_scopes": ["/"],
+                    "network_scopes": [],
+                    "approval_threshold": "high",
+                    "risk_class": "L2",
                     "audit_sink": "sqlite://swarm_ledger.db"
                 }
             ]

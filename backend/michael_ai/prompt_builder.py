@@ -6,6 +6,7 @@ def build_next_prompt() -> dict:
     # Constructing a dynamic ready-to-paste prompt for AG
     prompt_lines = [
         "**[AGENT SWARM OPERATOR DIRECTIVE]**",
+        "**TO**: HELM",
         f"Mission Lane: {state['current_lane']}",
         f"Active Priority: {state['active_priority']}",
         "",

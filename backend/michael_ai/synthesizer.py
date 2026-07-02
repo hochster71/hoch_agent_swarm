@@ -138,6 +138,8 @@ def synthesize_current_state() -> dict:
             "do_not_do": do_not_do,
             "evidence_refs": ev_refs,
             "commit_refs": cm_refs,
+            "current_execution_agent": "HELM",
+            "available_execution_personae": ["HELM"],
             "cognitive_load_reduction": "Michael's mental cognitive overhead has been reduced by introducing the structured operator twin memory.",
             "release_posture": {
                 "final_verifier": final_verdict,
