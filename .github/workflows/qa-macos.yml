@@ -1,0 +1,33 @@
+name: HAS macOS QA (self-hosted)
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+jobs:
+  qa:
+    runs-on: [self-hosted, has-qa-runner]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify Visual Authority Doctrine
+        run: python scripts/verify_visual_authority_doctrine.py
+
+      - name: Verify Workspace Visual Hygiene
+        run: python scripts/verify_workspace_visual_hygiene.py
+
+      - name: Run Playwright Tests (RC55, RC56, RC58)
+        run: npx playwright test tests/e2e/rc55-visual-authority-doctrine.spec.ts tests/e2e/rc56-voice-sidecar-local-tts-policy.spec.ts tests/e2e/rc57-autonomous-facilitation-loop.spec.ts tests/e2e/rc58-has-hasf-total-audit-pert-247.spec.ts
+
+      - name: Frontend Build
+        run: npm --prefix frontend run build
+
+      - name: RC29 Release Verify
+        run: bash scripts/rc29_release_verify.sh
+
+      - name: Baseline Scan
+        run: npm run baseline:scan-static
+
+      - name: Autonomous Facilitation Check
+        run: python scripts/autonomous_facilitation_check.py
