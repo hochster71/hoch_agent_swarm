@@ -107,7 +107,9 @@ def check_git_status():
             "rc52_1",
             "space_swarm_theater",
             "space-swarm-theater",
-            "audit_hoch_pods_theater_visual_compliance"
+            "audit_hoch_pods_theater_visual_compliance",
+            "docs/evidence/ui/",
+            "hoch_pods_theater_visual_compliance"
         ]
         
         dirty = []

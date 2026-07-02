@@ -63,6 +63,7 @@ bash scripts/rc49_5_refresh_truth_cascade.sh
 # 2. Run Playwright E2E test suite for all cascade targets
 echo "Running Playwright E2E cascade tests..."
 npx playwright test \
+    tests/e2e/rc52_1-hoch-pods-theater-visual-baseline.spec.ts \
     tests/e2e/rc52_1-hoch-pods-agent-liftoff-theater.spec.ts \
     tests/e2e/rc52_1-hoch-pods-space-swarm-theater.spec.ts \
     tests/e2e/rc52-governed-execution-runner.spec.ts \
