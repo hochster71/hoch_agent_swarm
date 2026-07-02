@@ -22,10 +22,11 @@ def validate_secure_boundary(target_pod: str, command: str, parameters: dict):
     path_param = parameters.get("path") or parameters.get("workspace")
     if path_param:
         abs_path = os.path.abspath(path_param)
+        home = os.path.expanduser("~")
         allowed_roots = [
-            "/Users/michaelhoch/hoch_agent_swarm",
-            "/Users/michaelhoch/hoch_agent_swarm_prompt_library",
-            "/Users/michaelhoch/.gemini/antigravity"
+            os.path.join(home, "hoch_agent_swarm"),
+            os.path.join(home, "hoch_agent_swarm_prompt_library"),
+            os.path.join(home, ".gemini/antigravity")
         ]
         if not any(abs_path.startswith(root) for root in allowed_roots):
             raise BoundaryViolation(f"Path '{path_param}' falls outside the secure worker boundary envelope.")

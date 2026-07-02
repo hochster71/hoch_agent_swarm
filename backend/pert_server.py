@@ -4428,7 +4428,7 @@ def get_dashboard():
                 <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px; margin-top: 15px;">
                     <!-- Left: Metadata and Status -->
                     <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; padding: 15px; font-size: 11px; display: flex; flex-direction: column; gap: 8px;">
-                        <div><strong>Source Path:</strong> <span style="color:#fff; font-family:monospace; word-break:break-all;">/Users/michaelhoch/Downloads/hoch_hasf_soccer</span></div>
+                        <div><strong>Source Path:</strong> <span style="color:#fff; font-family:monospace; word-break:break-all;">~/Downloads/hoch_hasf_soccer</span></div>
                         <div><strong>Current Stage:</strong> <span class="badge" style="background:var(--hoch-blue); color:#fff;" id="soccer-stage-badge">intake_audit</span></div>
                         <div><strong>Readiness Score:</strong> <span id="soccer-readiness-val" style="color:var(--hoch-cyan); font-weight:700; font-size:14px;">0%</span></div>
                         <div><strong>Audit Status:</strong> <span id="soccer-audit-status-badge" class="badge">UNKNOWN</span></div>

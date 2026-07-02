@@ -304,7 +304,8 @@ def update_agent_score(agent_id, score_dimensions=None, penalties_score=0, reaso
         return None
 
     # Load scoring policy
-    policy_path = Path("/Users/michaelhoch/hoch_agent_swarm/hoch_pods/accountability/policies/scoring_policy.json")
+    project_root = Path(__file__).resolve().parent.parent.parent
+    policy_path = project_root / "hoch_pods/accountability/policies/scoring_policy.json"
     if policy_path.exists():
         with open(policy_path, "r") as f:
             policy = json.load(f)
