@@ -1,15 +1,31 @@
 FROM python:3.10-slim
 
+LABEL org.opencontainers.image.title="hoch-agent-swarm-has-worker" \
+      org.opencontainers.image.description="Python Worker Node for Hoch Agent Swarm" \
+      org.opencontainers.image.version="0.1.0" \
+      org.opencontainers.image.source="https://github.com/crewAIInc/crewAI" \
+      org.opencontainers.image.created="2026-06-29T17:33:53Z" \
+      org.hoch.role="worker" \
+      org.hoch.service="has-worker"
+
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     sqlite3 \
     curl \
     bash \
     procps \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --gid 10001 appuser \
+    && useradd --uid 10001 --gid 10001 --create-home --shell /usr/sbin/nologin appuser
 
 # Set up working directory
-WORKDIR /tracker-data
+WORKDIR /app
 
-# Set default command
-CMD ["/bin/bash"]
+# Setup role marker file and correct permissions
+RUN touch /app/.has-role-worker \
+    && chown -R appuser:appuser /app /home/appuser
+
+USER appuser
+
+# Set default command to long sleep to remain active
+CMD ["python3", "-c", "import time; import sys; print('Worker active.', flush=True); time.sleep(999999)"]

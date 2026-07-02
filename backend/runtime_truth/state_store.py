@@ -44,6 +44,7 @@ def init_runtime_truth_tables():
                 freshness TEXT NOT NULL,
                 confidence REAL NOT NULL,
                 evidence_link TEXT,
+                evidence_ref TEXT,
                 git_sha TEXT,
                 source_hash TEXT
             )
