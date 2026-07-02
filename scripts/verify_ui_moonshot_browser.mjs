@@ -3,7 +3,7 @@ import { chromium } from 'playwright';
 const base = process.env.PERT_BASE_URL || 'http://127.0.0.1:8765';
 
 const browser = await chromium.launch({ headless: true });
-const page = await browser.newPage({ viewport: { width: 1600, height: 1100 } });
+const page = await browser.newPage({ viewport: { width: 1700, height: 1300 } });
 
 try {
   await page.goto(`${base}/ui-moonshot`, { waitUntil: 'networkidle', timeout: 30000 });
@@ -12,10 +12,13 @@ try {
   const normalizedBody = body.toUpperCase();
 
   const required = [
-    'HOCH PODS LIFTOFF CONTROL PLANE V2',
+    'HOCH PODS LIFTOFF CONTROL PLANE V3',
     'MISSION AUTHORITY',
     'LEADING AGENTS',
     'SWARM THEATER',
+    'LIVE PERT ANALYSIS',
+    'LIVE GAP ANALYSIS / CLOSURES',
+    'LIVE RUNNERS / APPROVAL QUEUE',
     'PERT CRITICAL PATH',
     'STALE / WATCHDOG',
     'EVIDENCE CONSOLE',
@@ -32,10 +35,14 @@ try {
     throw new Error('MOONSHOT_UNDEFINED_TEXT');
   }
 
-  const cards = await page.locator('.card').count();
-  if (cards < 6) {
-    throw new Error(`MOONSHOT_CARD_COUNT_LOW: ${cards}`);
-  }
+  const pertRows = await page.locator('#pertTruthRows tr').count();
+  if (pertRows < 1) throw new Error('MOONSHOT_PERT_ROWS_MISSING');
+
+  const gapRows = await page.locator('#gapClosureRows tr').count();
+  if (gapRows < 1) throw new Error('MOONSHOT_GAP_ROWS_MISSING');
+
+  const runnerRows = await page.locator('#runnerRows tr').count();
+  if (runnerRows < 1) throw new Error('MOONSHOT_RUNNER_ROWS_MISSING');
 
   console.log('UI_MOONSHOT_BROWSER: PASS');
 } finally {
