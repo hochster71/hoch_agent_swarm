@@ -39,6 +39,8 @@ def main():
     target_files = [
         {"path": f"docs/evidence/runtime_scenarios/{run_id}/00-baseline-discovery.md", "tool": "Phase 1 Baseline Discovery"},
         {"path": f"docs/evidence/runtime_scenarios/{run_id}/iteration-1.md", "tool": "Phase 3 Gate Verification"},
+        {"path": f"docs/evidence/runtime_scenarios/{run_id}/remote-verification.md", "tool": "Remote Operational Verification"},
+        {"path": f"docs/evidence/runtime_scenarios/{run_id}/remote-final-acceptance.md", "tool": "Remote Final Acceptance"},
         {"path": f"docs/evidence/runtime_scenarios/{run_id}/security-final.md", "tool": "Phase 6 Security Final Validation"},
         {"path": f"docs/evidence/runtime_scenarios/{run_id}/final-runtime-scenario-report.md", "tool": "Phase 8 Final Verification Summary"},
         {"path": "docs/evidence/helm/20260702-1634-helm-onboarding.md", "tool": "HELM Onboarding proof"},
