@@ -12,14 +12,13 @@ try {
   const normalizedBody = body.toUpperCase();
 
   const required = [
-    'HOCH PODS LIFTOFF CONTROL PLANE V3',
+    'HOCH PODS LIFTOFF CONTROL PLANE V4',
     'MISSION AUTHORITY',
     'LEADING AGENTS',
-    'SWARM THEATER',
+    'SWARM THEATER / AGENT LIFTOFF',
     'LIVE PERT ANALYSIS',
     'LIVE GAP ANALYSIS / CLOSURES',
     'LIVE RUNNERS / APPROVAL QUEUE',
-    'PERT CRITICAL PATH',
     'STALE / WATCHDOG',
     'EVIDENCE CONSOLE',
     'REVENUE / HASF'
@@ -35,6 +34,9 @@ try {
     throw new Error('MOONSHOT_UNDEFINED_TEXT');
   }
 
+  const glyphs = await page.locator('.agentGlyph').count();
+  if (glyphs < 6) throw new Error(`MOONSHOT_AGENT_GLYPHS_LOW: ${glyphs}`);
+
   const pertRows = await page.locator('#pertTruthRows tr').count();
   if (pertRows < 1) throw new Error('MOONSHOT_PERT_ROWS_MISSING');
 
@@ -43,6 +45,10 @@ try {
 
   const runnerRows = await page.locator('#runnerRows tr').count();
   if (runnerRows < 1) throw new Error('MOONSHOT_RUNNER_ROWS_MISSING');
+
+  await page.locator('.agentGlyph').first().hover();
+  const modalVisible = await page.locator('#agentModal.active').count();
+  if (modalVisible < 1) throw new Error('MOONSHOT_AGENT_MODAL_NOT_VISIBLE');
 
   console.log('UI_MOONSHOT_BROWSER: PASS');
 } finally {

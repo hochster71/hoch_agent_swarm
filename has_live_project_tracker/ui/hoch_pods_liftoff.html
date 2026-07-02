@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>HOCH PODS Liftoff Control Plane V3</title>
+<title>HOCH PODS Liftoff Control Plane V4</title>
 <style>
 :root{
   --bg:#02030a;
@@ -337,13 +337,217 @@ body:before{
   .header{grid-template-columns:1fr}
   .pills{justify-content:flex-start}
 }
+
+/* MOONSHOT V4 AGENT LAUNCH THEATER */
+.launchTheater{
+  position:relative;
+  min-height:430px;
+  border:1px solid rgba(73,231,255,.14);
+  border-radius:18px;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 50%,rgba(73,231,255,.13),transparent 34%),
+    linear-gradient(180deg,rgba(2,3,10,.18),rgba(2,3,10,.88));
+  margin-bottom:14px;
+}
+.launchTheater:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(90deg,rgba(2,3,10,.84),rgba(2,3,10,.22),rgba(2,3,10,.84)),
+    url("/assets/hoch-pods-visual-authority") center center / cover no-repeat;
+  opacity:.28;
+  filter:saturate(1.25) contrast(1.10);
+}
+.launchCore{
+  position:absolute;
+  left:50%;
+  top:52%;
+  width:138px;
+  height:196px;
+  transform:translate(-50%,-50%);
+  border-radius:80px 80px 26px 26px;
+  background:linear-gradient(180deg,#f7fbff,#6bdff2 45%,#123b67);
+  box-shadow:0 0 100px rgba(73,231,255,.62), inset 0 0 28px rgba(255,255,255,.25);
+  z-index:3;
+  animation:float 2.4s ease-in-out infinite;
+}
+.launchCore:before{
+  content:"";
+  position:absolute;
+  left:48px;
+  top:32px;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:#02030a;
+  border:5px solid var(--cyan);
+}
+.launchCore:after{
+  content:"";
+  position:absolute;
+  left:43px;
+  bottom:-100px;
+  width:54px;
+  height:120px;
+  background:linear-gradient(180deg,var(--amber),var(--red),transparent);
+  filter:blur(4px);
+  clip-path:polygon(50% 100%,0 0,100% 0);
+  animation:flame .2s infinite alternate;
+}
+.launchHalo{
+  position:absolute;
+  left:50%;
+  top:52%;
+  border:1px solid rgba(73,231,255,.16);
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+  animation:spin 18s linear infinite;
+  z-index:2;
+}
+.halo1{width:680px;height:680px}
+.halo2{width:510px;height:510px;animation-duration:13s;animation-direction:reverse}
+.halo3{width:330px;height:330px;animation-duration:9s}
+.agentGlyph{
+  position:absolute;
+  width:148px;
+  min-height:74px;
+  padding:10px;
+  border-radius:18px;
+  border:1px solid rgba(73,231,255,.24);
+  background:linear-gradient(180deg,rgba(7,17,31,.80),rgba(2,3,10,.66));
+  box-shadow:0 0 28px rgba(73,231,255,.16);
+  z-index:5;
+  cursor:pointer;
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+  backdrop-filter:blur(8px);
+}
+.agentGlyph:hover{
+  transform:translateY(-4px) scale(1.02);
+  border-color:rgba(73,231,255,.72);
+  box-shadow:0 0 46px rgba(73,231,255,.30);
+}
+.agentGlyph b{
+  display:block;
+  font-size:11px;
+  color:var(--text);
+  margin-bottom:5px;
+}
+.agentGlyph span{
+  display:block;
+  font-size:10px;
+  color:var(--muted);
+  line-height:1.25;
+}
+.agentGlyph .score{
+  margin-top:7px;
+  display:inline-flex;
+  padding:4px 7px;
+  border-radius:999px;
+  border:1px solid rgba(68,255,154,.36);
+  color:var(--green);
+  font-size:10px;
+}
+.flowLine{
+  position:absolute;
+  height:2px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  opacity:.55;
+  transform-origin:left center;
+  animation:pulseLine 1.7s ease-in-out infinite;
+  z-index:1;
+}
+.agentModal{
+  position:fixed;
+  right:26px;
+  bottom:26px;
+  z-index:100;
+  width:min(460px,calc(100vw - 52px));
+  border:1px solid rgba(73,231,255,.34);
+  border-radius:20px;
+  background:linear-gradient(180deg,rgba(7,17,31,.96),rgba(2,3,10,.94));
+  box-shadow:0 0 60px rgba(73,231,255,.28);
+  padding:16px;
+  display:none;
+}
+.agentModal.active{display:block}
+.agentModal h3{
+  margin:0 0 8px;
+  font-size:15px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.agentModal .modalGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.agentModal .modalCell{
+  border:1px solid rgba(73,231,255,.12);
+  border-radius:12px;
+  padding:10px;
+  background:rgba(255,255,255,.035);
+}
+.agentModal .modalCell b{
+  display:block;
+  font-size:10px;
+  color:var(--cyan2);
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  margin-bottom:5px;
+}
+.agentModal .modalCell span{
+  font-size:11px;
+  color:var(--text);
+}
+.agentModal button{
+  margin-top:12px;
+  width:100%;
+  padding:9px 10px;
+  border-radius:12px;
+  border:1px solid rgba(73,231,255,.28);
+  background:rgba(73,231,255,.08);
+  color:var(--cyan2);
+  font-weight:800;
+}
+.statusRiver{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+  margin-bottom:14px;
+}
+.riverCard{
+  border:1px solid rgba(73,231,255,.15);
+  border-radius:14px;
+  padding:10px;
+  background:rgba(0,0,0,.18);
+}
+.riverCard b{
+  display:block;
+  color:var(--cyan2);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.riverCard span{
+  display:block;
+  margin-top:5px;
+  font-size:16px;
+  font-weight:900;
+}
+@keyframes pulseLine{
+  0%,100%{opacity:.25}
+  50%{opacity:.85}
+}
+
 </style>
 </head>
 <body>
 <header class="header">
   <div class="brand">
-    <h1>HOCH PODS Liftoff Control Plane V3</h1>
-    <div class="sub">HAS / HASF mission truth control plane · live PERT · live gaps · live runners · Michael final approval</div>
+    <h1>HOCH PODS Liftoff Control Plane V4</h1>
+    <div class="sub">HAS / HASF agent launch theater · live PERT · live gaps · live runners · Michael final approval</div>
   </div>
   <div class="pills">
     <div class="pill good" id="pill-goal">GOAL --</div>
@@ -401,8 +605,22 @@ body:before{
 
     <div class="center-grid">
       <section class="panel full">
-        <h2>Swarm Theater</h2>
-        <div class="body grid" id="podGrid"></div>
+        <h2>Swarm Theater / Agent Liftoff</h2>
+        <div class="body">
+          <div class="statusRiver">
+            <div class="riverCard"><b>Mission</b><span id="riverMission">HAS/HASF</span></div>
+            <div class="riverCard"><b>Live PERT</b><span id="riverPert">--</span></div>
+            <div class="riverCard"><b>Active Agents</b><span id="riverAgents">--</span></div>
+            <div class="riverCard"><b>Closures</b><span id="riverClosures">--</span></div>
+          </div>
+          <div class="launchTheater" id="agentLaunchTheater">
+            <div class="launchHalo halo1"></div>
+            <div class="launchHalo halo2"></div>
+            <div class="launchHalo halo3"></div>
+            <div class="launchCore"></div>
+          </div>
+          <div class="grid" id="podGrid"></div>
+        </div>
       </section>
 
       <section class="panel full">
@@ -483,7 +701,7 @@ body:before{
     <section class="panel">
       <h2>Evidence Console</h2>
       <div class="body">
-        <pre class="console" id="console">booting HOCH PODS V3 mission truth panels...</pre>
+        <pre class="console" id="console">booting HOCH PODS V4 agent launch theater...</pre>
       </div>
     </section>
   </aside>
@@ -557,6 +775,46 @@ async function load(){
     ];
     $("podGrid").innerHTML = fallbackPods.map(p => card(p[0],p[1],"ACTIVE")).join("");
 
+    $("riverPert").textContent = `${pct}%`;
+    $("riverAgents").textContent = fallbackPods.length;
+    $("riverClosures").textContent = `${stale.length} stale`;
+
+    const theater = $("agentLaunchTheater");
+    if (theater && !theater.dataset.bound) {
+      theater.dataset.bound = "1";
+      const positions = [
+        [8,12],[28,6],[64,8],[82,20],
+        [9,58],[27,72],[63,74],[82,58]
+      ];
+      fallbackPods.forEach((p,i) => {
+        const glyph = document.createElement("div");
+        glyph.className = "agentGlyph";
+        glyph.style.left = positions[i % positions.length][0] + "%";
+        glyph.style.top = positions[i % positions.length][1] + "%";
+        glyph.innerHTML = `<b>${esc(p[0])}</b><span>${esc(p[1])}</span><div class="score">Scorecard LIVE</div>`;
+        glyph.addEventListener("mouseenter", () => {
+          $("modalAgentName").textContent = p[0];
+          $("modalMission").textContent = "HAS/HASF autonomous execution";
+          $("modalTask").textContent = p[1];
+          $("modalScore").textContent = `GOAL ${pct}% · stale ${stale.length} · blockers ${metrics.blocked_task_count ?? "--"}`;
+          $("modalEvidence").textContent = "Evidence console, PERT rows, guardrails, runner logs";
+          $("agentModal").classList.add("active");
+        });
+        theater.appendChild(glyph);
+      });
+
+      [[18,28,240,18],[34,22,190,4],[58,24,210,-9],[69,35,180,-23],[22,65,210,-12],[43,76,160,-28],[58,72,180,18],[70,62,180,26]].forEach(l => {
+        const line = document.createElement("div");
+        line.className = "flowLine";
+        line.style.left = l[0] + "%";
+        line.style.top = l[1] + "%";
+        line.style.width = l[2] + "px";
+        line.style.transform = `rotate(${l[3]}deg)`;
+        theater.appendChild(line);
+      });
+    }
+
+
     const pertTasks = data.pert_cpm?.tasks || [];
     $("pertTruthRows").innerHTML = pertTasks.length ? pertTasks.map(t => {
       const status = String(t.status || "unknown").toUpperCase();
@@ -614,7 +872,7 @@ async function load(){
       <td class="muted">${esc(a.action || "--")}</td>
     </tr>`).join("") : `<tr><td>NONE</td><td class="done">CLEAR</td><td class="muted">No approval queue in current metrics payload</td></tr>`;
 
-    lines.push("MOONSHOT_V3: ONLINE");
+    lines.push("MOONSHOT_V4: ONLINE");
     lines.push(`GOAL: ${pct}%`);
     lines.push(`FRESHNESS_SOURCES: ${freshKeys.length}`);
     lines.push(`FRESH: ${fresh}`);
@@ -622,12 +880,24 @@ async function load(){
     lines.push(`BLOCKED_TASKS: ${metrics.blocked_task_count ?? "--"}`);
     lines.push("PANELS: PERT, GAP_CLOSURES, RUNNERS, APPROVAL_QUEUE");
   }catch(e){
-    setConsole(["MOONSHOT_V3: DEGRADED", String(e)]);
+    setConsole(["MOONSHOT_V4: DEGRADED", String(e)]);
   }
   if(lines.length) setConsole(lines);
 }
 load();
 setInterval(load, 10000);
 </script>
+
+<div class="agentModal" id="agentModal">
+  <h3 id="modalAgentName">Agent Profile</h3>
+  <div class="modalGrid">
+    <div class="modalCell"><b>Mission</b><span id="modalMission">--</span></div>
+    <div class="modalCell"><b>Task</b><span id="modalTask">--</span></div>
+    <div class="modalCell"><b>Scorecard</b><span id="modalScore">--</span></div>
+    <div class="modalCell"><b>Evidence</b><span id="modalEvidence">--</span></div>
+  </div>
+  <button onclick="document.getElementById('agentModal').classList.remove('active')">Close Agent HUD</button>
+</div>
+
 </body>
 </html>
