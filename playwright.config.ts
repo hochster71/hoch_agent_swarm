@@ -56,6 +56,7 @@ export default defineConfig({
     "**/rc51-execution-approval-queue.spec.ts",
     "**/rc52-governed-execution-runner.spec.ts",
     "**/rc52_1-hoch-pods-space-swarm-theater.spec.ts",
+    "**/rc52_1-hoch-pods-theater-visual-baseline.spec.ts",
   ],
   timeout: 45_000,
   fullyParallel: false,

@@ -3291,39 +3291,40 @@ def get_dashboard():
         /* --- CINEMATIC HOCH PODS THEATER (RC52.1) --- */
         #hoch-pods-theater {
             position: relative;
-            background: #030508;
+            background: #020408;
             border: 2px solid var(--hoch-border);
             border-radius: 16px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 0 50px rgba(34, 246, 255, 0.05);
+            box-shadow: 0 0 50px rgba(34, 246, 255, 0.08);
             box-sizing: border-box;
             z-index: 3;
             margin-bottom: 20px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
         #hoch-pods-theater::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(circle, rgba(16,24,48,0.2) 0%, transparent 100%),
+            background: radial-gradient(circle, rgba(16,24,48,0.25) 0%, transparent 100%),
                         radial-gradient(1px 1px at 40px 60px, #fff, transparent),
                         radial-gradient(1.5px 1.5px at 180px 120px, rgba(255,255,255,0.7), transparent),
                         radial-gradient(1px 1px at 350px 450px, #fff, transparent),
                         radial-gradient(2px 2px at 600px 180px, rgba(255,255,255,0.8), transparent),
                         radial-gradient(1px 1px at 800px 320px, #fff, transparent);
             background-repeat: repeat;
-            opacity: 0.75;
+            opacity: 0.85;
             z-index: 0;
             pointer-events: none;
             animation: starTwinkle 8s infinite ease-in-out;
         }
-        #hoch-theater-control-bar {
+        #hoch-pods-theater-control-bar {
             z-index: 10;
             display: flex;
             gap: 8px;
             padding: 12px 15px;
-            background: rgba(4, 7, 13, 0.95);
+            background: rgba(3, 5, 10, 0.95);
             border-bottom: 1px solid var(--hoch-border);
             font-size: 11px;
             flex-wrap: wrap;
@@ -3332,11 +3333,11 @@ def get_dashboard():
         .theater-meta-row {
             display: flex;
             border-bottom: 1px solid var(--hoch-border);
-            background: rgba(2, 4, 8, 0.9);
+            background: rgba(2, 4, 8, 0.92);
             z-index: 5;
             flex-wrap: wrap;
         }
-        #hoch-theater-system-status {
+        #hoch-pods-status-overview {
             flex: 1;
             min-width: 300px;
             display: flex;
@@ -3346,7 +3347,7 @@ def get_dashboard():
             align-items: center;
             border-right: 1px solid var(--hoch-border);
         }
-        #hoch-destination-confirmed-strip {
+        #hoch-pods-destination-lanes {
             display: flex;
             gap: 12px;
             padding: 10px 15px;
@@ -3366,79 +3367,119 @@ def get_dashboard():
             font-size: 9px;
             font-weight: 800;
         }
-        #hoch-agent-liftoff-movie-board {
+        #hoch-pods-intro-movie-board {
             display: flex;
-            height: 520px;
+            min-height: 520px;
             z-index: 2;
             box-sizing: border-box;
+            background: rgba(4, 7, 13, 0.4);
         }
-        #hoch-agent-lifecycle-grid {
+        #hoch-pods-storyboard-grid {
             flex: 1;
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             grid-template-rows: repeat(3, 1fr);
-            gap: 10px;
+            gap: 12px;
             padding: 15px;
-            overflow-y: auto;
             box-sizing: border-box;
         }
+        .right-confirmation-panel {
+            width: 260px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 15px;
+            border-left: 1px solid var(--hoch-border);
+            background: rgba(2, 4, 8, 0.4);
+            box-sizing: border-box;
+        }
+        .confirmation-frame {
+            flex: 1;
+            background: rgba(8, 14, 26, 0.85);
+            border: 1px solid rgba(34, 246, 255, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            box-sizing: border-box;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+        }
+        .confirmation-frame:hover {
+            border-color: var(--hoch-cyan);
+            box-shadow: 0 0 15px rgba(34, 246, 255, 0.25);
+        }
         .lifecycle-clip {
-            background: rgba(8, 14, 26, 0.75);
+            background: rgba(8, 14, 26, 0.8);
             border: 1px solid rgba(34, 246, 255, 0.15);
             border-radius: 8px;
-            padding: 8px;
+            padding: 10px;
             position: relative;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
             box-sizing: border-box;
-            height: 145px;
+            height: 150px;
         }
         .lifecycle-clip::before, .lifecycle-clip::after {
             content: '';
             position: absolute;
             left: 0; right: 0;
             height: 4px;
-            background-image: linear-gradient(to right, rgba(255,255,255,0.1) 50%, transparent 50%);
+            background-image: linear-gradient(to right, rgba(255,255,255,0.08) 50%, transparent 50%);
             background-size: 10px 4px;
-            opacity: 0.3;
+            opacity: 0.4;
         }
         .lifecycle-clip::before { top: 2px; }
         .lifecycle-clip::after { bottom: 2px; }
 
         .lifecycle-clip:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(34, 246, 255, 0.15);
+            box-shadow: 0 8px 20px rgba(34, 246, 255, 0.2);
+            border-color: rgba(34, 246, 255, 0.4);
         }
         .lifecycle-clip.clip-active {
             border-color: var(--hoch-cyan) !important;
-            box-shadow: 0 0 15px rgba(34, 246, 255, 0.3);
-            background: rgba(12, 22, 42, 0.9);
+            box-shadow: 0 0 15px rgba(34, 246, 255, 0.35);
+            background: rgba(12, 22, 42, 0.95);
         }
         .lifecycle-clip.clip-complete {
             border-color: var(--hoch-green) !important;
-            box-shadow: 0 0 10px rgba(57, 255, 20, 0.1);
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.15);
         }
         .lifecycle-clip.clip-blocked {
             border-color: var(--hoch-amber) !important;
-            box-shadow: 0 0 15px rgba(255, 176, 32, 0.3);
+            box-shadow: 0 0 15px rgba(255, 176, 32, 0.35);
             animation: clipWarnBlink 1.5s infinite alternate;
         }
         .lifecycle-clip.clip-failed {
             border-color: var(--hoch-red) !important;
-            box-shadow: 0 0 20px rgba(255, 36, 0, 0.4);
+            box-shadow: 0 0 20px rgba(255, 36, 0, 0.45);
             animation: clipFailBlink 1s infinite alternate;
         }
         .lifecycle-clip.clip-stale {
-            border-color: #4b5563 !important;
-            opacity: 0.55;
-            cursor: not-allowed;
+            border-color: #374151 !important;
+            background: rgba(17, 24, 39, 0.6) !important;
+            opacity: 0.5;
+            cursor: not-allowed !important;
+            box-shadow: none !important;
+        }
+        .lifecycle-clip.clip-stale * {
+            animation: none !important;
+            color: #6b7280 !important;
+            border-color: #374151 !important;
+        }
+        .lifecycle-clip.clip-stale .scene-container {
+            background: rgba(255,0,0,0.03) !important;
+            border: 1px solid rgba(255,0,0,0.1) !important;
         }
         .lifecycle-clip.clip-stale::before, .lifecycle-clip.clip-stale::after {
-            opacity: 0.1;
+            opacity: 0.05;
         }
         @keyframes clipWarnBlink {
             0% { border-color: rgba(255, 176, 32, 0.3); }
@@ -3450,9 +3491,9 @@ def get_dashboard():
         }
 
         #hoch-agent-profile-snapshot {
-            width: 290px;
-            background: rgba(4, 8, 16, 0.95);
-            border-left: 2px solid var(--hoch-border);
+            width: 280px;
+            background: rgba(3, 5, 10, 0.96);
+            border-left: 1px solid var(--hoch-border);
             padding: 15px;
             display: flex;
             flex-direction: column;
@@ -3460,31 +3501,72 @@ def get_dashboard():
             overflow-y: auto;
             box-sizing: border-box;
         }
-        #hoch-agent-movie-detail-drawer {
+        #hoch-pods-movie-detail-drawer {
             position: absolute;
             bottom: -220px; left: 0; right: 0; height: 200px;
-            background: rgba(6, 10, 18, 0.98);
+            background: rgba(4, 7, 13, 0.98);
             border-top: 2px solid var(--hoch-border);
             transition: bottom 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 100;
             padding: 15px 20px;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.8);
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.85);
             box-sizing: border-box;
             color: #fff;
             display: flex;
             flex-direction: column;
             gap: 10px;
         }
-        #hoch-agent-movie-detail-drawer.active {
+        #hoch-pods-movie-detail-drawer.active {
             bottom: 0;
         }
+
+        .theater-bottom-flow {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            padding: 15px;
+            border-top: 1px solid var(--hoch-border);
+            background: rgba(2, 4, 8, 0.7);
+            box-sizing: border-box;
+        }
+        .theater-bottom-flow .bottom-panel {
+            background: rgba(8, 14, 26, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 10px;
+            box-sizing: border-box;
+            color: #a2a7b8;
+        }
+        .theater-bottom-flow .bottom-panel h3 {
+            margin: 0 0 8px 0;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--hoch-cyan);
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 4px;
+        }
+        .bottom-variation-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 4px;
+            padding: 4px 6px;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .bottom-variation-card.variant-gold { border-left: 2px solid #fbbf24; }
+        .bottom-variation-card.variant-purple { border-left: 2px solid #a78bfa; }
+        .bottom-variation-card.variant-red { border-left: 2px solid #f87171; }
         
         /* Scene visual representation helpers */
         .scene-container {
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 35px;
+            height: 38px;
             margin-top: 5px;
             border-radius: 4px;
             background: rgba(255,255,255,0.02);
@@ -3493,8 +3575,8 @@ def get_dashboard():
             overflow: hidden;
         }
         .scene-ring {
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             border: 1px solid var(--hoch-cyan);
             animation: ringSlowSpin 4s infinite linear;
@@ -3672,7 +3754,7 @@ def get_dashboard():
                         <!-- Cinematic Movie Board (RC52.1) -->
                         <div id="hoch-pods-theater">
                             <!-- HUD Controls Bar -->
-                            <div id="hoch-theater-control-bar">
+                            <div id="hoch-pods-theater-control-bar">
                                 <span style="color:#fff; font-weight:bold; margin-right:10px;">HUD Controls:</span>
                                 <button id="toggle-theater-mode" class="theater-btn active">Theater Mode</button>
                                 <button id="toggle-data-mode" class="theater-btn">Data Mode</button>
@@ -3685,19 +3767,29 @@ def get_dashboard():
 
                             <!-- System Status Block & Destination Confirmed Strip -->
                             <div class="theater-meta-row">
-                                <div id="hoch-theater-system-status">
+                                <div id="hoch-pods-status-overview">
                                     <!-- Dynamic theater system status populated via JS -->
                                 </div>
-                                <div id="hoch-destination-confirmed-strip">
+                                <div id="hoch-pods-destination-lanes">
                                     <!-- Dynamic pipeline destination nodes populated via JS -->
                                 </div>
                             </div>
 
                             <!-- Movie Board -->
-                            <div id="hoch-agent-liftoff-movie-board">
+                            <div id="hoch-pods-intro-movie-board">
                                 <!-- Lifecycle Grid -->
-                                <div id="hoch-agent-lifecycle-grid">
+                                <div id="hoch-pods-storyboard-grid">
                                     <!-- 15 Lifecycle Clips populated via JS -->
+                                </div>
+
+                                <!-- Right Side: System Confirmation & Mission Ready -->
+                                <div class="right-confirmation-panel">
+                                    <div id="hoch-pods-system-confirmation" class="confirmation-frame">
+                                        <!-- Frame 16 populated via JS -->
+                                    </div>
+                                    <div id="hoch-pods-mission-ready" class="confirmation-frame">
+                                        <!-- Frame 17 populated via JS -->
+                                    </div>
                                 </div>
 
                                 <!-- Profile Snapshot -->
@@ -3706,13 +3798,29 @@ def get_dashboard():
                                 </div>
                             </div>
 
+                            <!-- Bottom Panels Row -->
+                            <div class="theater-bottom-flow">
+                                <div id="hoch-pods-agent-spinup-variations" class="bottom-panel">
+                                    <!-- Variations populated via JS -->
+                                </div>
+                                <div id="hoch-pods-skill-card-animation-flow" class="bottom-panel">
+                                    <!-- Skill Card Flow populated via JS -->
+                                </div>
+                                <div id="hoch-pods-data-flow-visualization" class="bottom-panel">
+                                    <!-- Data Flow Visuals populated via JS -->
+                                </div>
+                                <div id="hoch-pods-evidence-archive" class="bottom-panel">
+                                    <!-- Evidence Archive status populated via JS -->
+                                </div>
+                            </div>
+
                             <!-- Movie Detail Drawer -->
-                            <div id="hoch-agent-movie-detail-drawer">
+                            <div id="hoch-pods-movie-detail-drawer">
                                 <!-- Dynamic detail view on clip click -->
                             </div>
 
                             <!-- Stale Quarantine Layer -->
-                            <div id="hoch-stale-quarantine-layer" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(255, 36, 0, 0.12); border:3px solid var(--hoch-red); pointer-events:none; z-index:90; box-sizing:border-box;">
+                            <div id="hoch-pods-stale-quarantine-layer" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(255, 36, 0, 0.12); border:3px solid var(--hoch-red); pointer-events:none; z-index:90; box-sizing:border-box;">
                                 <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:#1a0505; border:1px solid var(--hoch-red); padding:15px; border-radius:8px; pointer-events:auto; text-align:center; box-shadow:0 0 30px rgba(255,36,0,0.5);">
                                     <h3 style="margin:0 0 6px 0; color:var(--hoch-red); font-size:14px; font-weight:900;">⚠️ STALE TELEMETRY DETECTED</h3>
                                     <div style="font-size:11px; color:#fff;" id="quarantine-message">All Swarm orbit animations are frozen under safety quarantine.</div>
@@ -5395,7 +5503,7 @@ def get_dashboard():
                 const launchBay = document.getElementById("hoch-pod-launch-bay");
                 const orbitPodsLayer = document.getElementById("orbit-pods-container-layer");
                 const svgRails = document.getElementById("hoch-swarm-telemetry-rails");
-                const staleQuarantineLayer = document.getElementById("hoch-stale-quarantine-layer");
+                const staleQuarantineLayer = document.getElementById("hoch-pods-stale-quarantine-layer");
 
                 // Calculate average readiness
                 let avgReadiness = 0;
@@ -5451,41 +5559,43 @@ def get_dashboard():
                     window.selectedPodId = data.hoch_pods_registry[0].pod_id;
                 }
 
-                // Dynamic 15 Lifecycle Movie Board updates
+                // Dynamic 17 Lifecycle Movie Board updates
                 const lifecycleSteps = [
-                    { name: "Agent ready", desc: "Pre-flight checks and posture validation." },
-                    { name: "Pod doors open", desc: "Summoning runtime container platform." },
-                    { name: "Power up", desc: "Booting and initializing system layers." },
-                    { name: "Launch sequence", desc: "Executing pre-flight policy compliance." },
-                    { name: "Lift off", desc: "Binding neural model and AI endpoints." },
-                    { name: "Transit tunnel", desc: "Binding secure tool execution capability." },
-                    { name: "Route confirmed", desc: "Routing traffic via zero trust gateway." },
-                    { name: "Approaching destination", desc: "Establishing network handshake." },
-                    { name: "Docking", desc: "Finalizing handshake with host runtime." },
-                    { name: "Integration sync", desc: "Initiating live transaction pipeline." },
-                    { name: "Capability link", desc: "Linking API endpoints and capabilities." },
-                    { name: "RACI mapping", desc: "Verifying ownership and agent bounds." },
-                    { name: "Mission assignment", desc: "Sealing mission execution target." },
-                    { name: "Active in HAS", desc: "Registered active in Swarm network." },
-                    { name: "Flow integrated", desc: "Closing flow loop with evidence output." }
+                    { name: "SYSTEM BOOT", desc: "System boot initialization and POST checks." },
+                    { name: "CORE IGNITION", desc: "Core engine ignition and initialization." },
+                    { name: "POD RING ACTIVATION", desc: "Pod ring network fabric activation." },
+                    { name: "VAULT GATE OPENING", desc: "Vault gate secure boundary handshake." },
+                    { name: "AGENT ENERGY BUILD", desc: "Charging neural energy pipelines." },
+                    { name: "FIRST AGENT SPIN UP", desc: "Spinning up agent primary runtime." },
+                    { name: "AGENT LAUNCH", desc: "Launching agent into active swarm space." },
+                    { name: "SKILL CARD POP OUT", desc: "Deploying card-bound capabilities." },
+                    { name: "JOINING SWARM", desc: "Registering agent in orbital swarm." },
+                    { name: "MULTI AGENT SPIN UPS", desc: "Orchestrating concurrent agent runtimes." },
+                    { name: "ROUTING TO DESTINATIONS", desc: "Verifying secure routing destinations." },
+                    { name: "DESTINATION LANES ACTIVE", desc: "Lanes active for secure payload transfer." },
+                    { name: "POD STATUS OVERVIEW", desc: "Evaluating health matrix status." },
+                    { name: "DATA FLOW VISUALIZATION", desc: "Mapping active transaction streams." },
+                    { name: "EVIDENCE ARCHIVE", desc: "Sealing evidence ledger records." },
+                    { name: "SYSTEM CONFIRMATION", desc: "Final system policy confirmation." },
+                    { name: "MISSION READY", desc: "All systems active. Goal ready." }
                 ];
 
                 const stateToStepIndex = {
                     "DORMANT": 0,
-                    "SUMMONING": 1,
-                    "BOOTING": 2,
+                    "SUMMONING": 5,
+                    "BOOTING": 1,
                     "POLICY_CHECK": 3,
                     "MODEL_BOUND": 4,
-                    "TOOL_BOUND": 5,
-                    "EXECUTING": 8,
-                    "EVIDENCE_WRITING": 10,
-                    "COMPLETE": 14,
-                    "BLOCKED": 11,
+                    "TOOL_BOUND": 6,
+                    "EXECUTING": 9,
+                    "EVIDENCE_WRITING": 14,
+                    "COMPLETE": 16,
+                    "BLOCKED": 12,
                     "FAILED": 3
                 };
 
                 const updateMovieBoard = () => {
-                    const gridEl = document.getElementById("hoch-agent-lifecycle-grid");
+                    const gridEl = document.getElementById("hoch-pods-storyboard-grid");
                     if (!gridEl || !data.hoch_pods_registry) return;
 
                     const selectedPodReg = data.hoch_pods_registry.find(p => p.pod_id === window.selectedPodId) || data.hoch_pods_registry[0];
@@ -5494,7 +5604,7 @@ def get_dashboard():
                     const activeIndex = stateToStepIndex[stateStr] !== undefined ? stateToStepIndex[stateStr] : 0;
 
                     // Update System Status block
-                    const sysStatus = document.getElementById("hoch-theater-system-status");
+                    const sysStatus = document.getElementById("hoch-pods-status-overview");
                     if (sysStatus) {
                         const posture = isStale ? "DEGRADED (STALE)" : "SECURED";
                         const postureColor = isStale ? "var(--hoch-red)" : "var(--hoch-green)";
@@ -5508,7 +5618,7 @@ def get_dashboard():
                     }
 
                     // Update Destination confirmed strip
-                    const confirmedStrip = document.getElementById("hoch-destination-confirmed-strip");
+                    const confirmedStrip = document.getElementById("hoch-pods-destination-lanes");
                     if (confirmedStrip) {
                         confirmedStrip.innerHTML = `
                             <span style="color:var(--hoch-muted); margin-right:5px;">Destinations:</span>
@@ -5569,9 +5679,50 @@ def get_dashboard():
                         `;
                     }
 
-                    // Populate lifecycle grid with 15 clips
+                    const showDetailDrawer = (index) => {
+                        const step = lifecycleSteps[index];
+                        const clipNum = String(index + 1).padStart(2, "0");
+                        let clipStatusText = "PENDING";
+                        if (isStale) {
+                            clipStatusText = "STALE";
+                        } else if (index < activeIndex) {
+                            clipStatusText = "COMPLETE";
+                        } else if (index === activeIndex) {
+                            clipStatusText = "ACTIVE";
+                        }
+
+                        const drawer = document.getElementById("hoch-pods-movie-detail-drawer");
+                        if (drawer) {
+                            drawer.innerHTML = `
+                                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:6px;">
+                                    <h3 style="margin:0; font-size:14px; color:var(--hoch-cyan);">CLIP ${clipNum}: ${step.name}</h3>
+                                    <button onclick="document.getElementById('hoch-pods-movie-detail-drawer').classList.remove('active')" class="theater-btn" style="padding:2px 6px;">Close</button>
+                                </div>
+                                <div style="font-size:11px; display:flex; gap:20px; margin-top:6px;">
+                                    <div style="flex:1;">
+                                        <strong>Live Scene Description:</strong>
+                                        <p style="margin:4px 0; color:var(--text-secondary);">${step.desc}</p>
+                                        <p style="margin:4px 0; color:#fff;">Status: <span style="font-weight:bold; color:var(--hoch-cyan);">${clipStatusText}</span></p>
+                                        ${isStale ? `<p style="margin:4px 0; color:var(--hoch-red);"><strong>Quarantine Source:</strong> ${staleReason}</p>` : ''}
+                                    </div>
+                                    <div style="width:200px; border-left:1px solid rgba(255,255,255,0.05); padding-left:15px;">
+                                        <strong>Step Bindings:</strong>
+                                        <div style="margin-top:4px; font-size:10px; color:var(--hoch-muted);">
+                                            • Agent: ${selectedPodReg.name}<br>
+                                            • Domain: ${selectedPodReg.role}<br>
+                                            • State: ${selectedPodState.state || 'UNKNOWN'}
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                            drawer.classList.add("active");
+                        }
+                    };
+
+                    // Populate lifecycle grid with first 15 clips
                     gridEl.innerHTML = "";
-                    lifecycleSteps.forEach((step, i) => {
+                    const mainSteps = lifecycleSteps.slice(0, 15);
+                    mainSteps.forEach((step, i) => {
                         let clipClass = "";
                         let freshnessStatus = isStale ? "STALE" : "FRESH";
                         let badgeClass = isStale ? "badge-fail" : "badge-pass";
@@ -5650,35 +5801,120 @@ def get_dashboard():
                         const wrapper = document.createElement("div");
                         wrapper.innerHTML = clipHtml.trim();
                         const clipNode = wrapper.firstChild;
-                        clipNode.addEventListener("click", () => {
-                            const drawer = document.getElementById("hoch-agent-movie-detail-drawer");
-                            if (drawer) {
-                                drawer.innerHTML = `
-                                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:6px;">
-                                        <h3 style="margin:0; font-size:14px; color:var(--hoch-cyan);">CLIP ${clipNum}: ${step.name}</h3>
-                                        <button onclick="document.getElementById('hoch-agent-movie-detail-drawer').classList.remove('active')" class="theater-btn" style="padding:2px 6px;">Close</button>
-                                    </div>
-                                    <div style="font-size:11px; display:flex; gap:20px; margin-top:6px;">
-                                        <div style="flex:1;">
-                                            <strong>Live Scene Description:</strong>
-                                            <p style="margin:4px 0; color:var(--text-secondary);">${step.desc}</p>
-                                            <p style="margin:4px 0; color:#fff;">Status: <span style="font-weight:bold; color:var(--hoch-cyan);">${clipStatusText}</span></p>
-                                        </div>
-                                        <div style="width:200px; border-left:1px solid rgba(255,255,255,0.05); padding-left:15px;">
-                                            <strong>Step Bindings:</strong>
-                                            <div style="margin-top:4px; font-size:10px; color:var(--hoch-muted);">
-                                                • Agent: ${selectedPodReg.name}<br>
-                                                • Domain: ${selectedPodReg.role}<br>
-                                                • State: ${selectedPodState.state || 'UNKNOWN'}
-                                            </div>
-                                        </div>
-                                    </div>
-                                `;
-                                drawer.classList.add("active");
-                            }
-                        });
+                        clipNode.addEventListener("click", () => showDetailDrawer(i));
                         gridEl.appendChild(clipNode);
                     });
+
+                    // Populate Frame 16: SYSTEM CONFIRMATION
+                    const sysConfEl = document.getElementById("hoch-pods-system-confirmation");
+                    if (sysConfEl) {
+                        const step = lifecycleSteps[15];
+                        const clipClass = isStale ? "clip-stale" : (activeIndex >= 15 ? "clip-complete" : (activeIndex === 15 ? "clip-active" : ""));
+                        sysConfEl.innerHTML = `
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span style="font-family:monospace; font-size:9px; color:var(--hoch-cyan); font-weight:bold;">FRAME 16</span>
+                                <span class="badge ${isStale ? 'badge-fail' : 'badge-pass'}" style="font-size:7px; padding:1px 3px;">${isStale ? 'STALE' : 'FRESH'}</span>
+                            </div>
+                            <div style="font-weight:900; font-size:11px; color:#fff; margin-top:4px;">${step.name}</div>
+                            <div style="font-size:8px; color:var(--hoch-muted); line-height:1.2; height:20px; overflow:hidden; margin-top:2px;">${step.desc}</div>
+                            <div class="scene-container">
+                                <div style="font-size:9px; font-family:monospace; color:var(--hoch-green); font-weight:bold; letter-spacing:1px; animation: pulse 1s infinite alternate;">[SECURE INTEGRITY SEAL]</div>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; align-items:center; font-size:8px; margin-top:4px;">
+                                <span style="color:var(--text-secondary);">Audit System</span>
+                                <span style="color:${activeIndex === 15 ? 'var(--hoch-cyan)' : (activeIndex > 15 ? 'var(--hoch-green)' : 'var(--text-secondary)')}; font-weight:bold;">${activeIndex === 15 ? 'ACTIVE' : (activeIndex > 15 ? 'COMPLETE' : 'PENDING')}</span>
+                            </div>
+                        `;
+                        sysConfEl.className = `confirmation-frame ${clipClass}`;
+                        sysConfEl.onclick = () => showDetailDrawer(15);
+                    }
+
+                    // Populate Frame 17: MISSION READY
+                    const missionReadyEl = document.getElementById("hoch-pods-mission-ready");
+                    if (missionReadyEl) {
+                        const step = lifecycleSteps[16];
+                        const clipClass = isStale ? "clip-stale" : (activeIndex >= 16 ? "clip-complete" : (activeIndex === 16 ? "clip-active" : ""));
+                        missionReadyEl.innerHTML = `
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span style="font-family:monospace; font-size:9px; color:var(--hoch-cyan); font-weight:bold;">FRAME 17</span>
+                                <span class="badge ${isStale ? 'badge-fail' : 'badge-pass'}" style="font-size:7px; padding:1px 3px;">${isStale ? 'STALE' : 'FRESH'}</span>
+                            </div>
+                            <div style="font-weight:900; font-size:11px; color:#fff; margin-top:4px;">${step.name}</div>
+                            <div style="font-size:8px; color:var(--hoch-muted); line-height:1.2; height:20px; overflow:hidden; margin-top:2px;">${step.desc}</div>
+                            <div class="scene-container">
+                                <div style="font-size:11px; font-weight:bold; color:var(--hoch-green); text-shadow:0 0 8px var(--hoch-green); animation: pulse 0.8s infinite alternate;">MISSION READY</div>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; align-items:center; font-size:8px; margin-top:4px;">
+                                <span style="color:var(--text-secondary);">Swarm Director</span>
+                                <span style="color:${activeIndex === 16 ? 'var(--hoch-cyan)' : (activeIndex > 16 ? 'var(--hoch-green)' : 'var(--text-secondary)')}; font-weight:bold;">${activeIndex === 16 ? 'ACTIVE' : (activeIndex > 16 ? 'COMPLETE' : 'PENDING')}</span>
+                            </div>
+                        `;
+                        missionReadyEl.className = `confirmation-frame ${clipClass}`;
+                        missionReadyEl.onclick = () => showDetailDrawer(16);
+                    }
+
+                    // Populate Bottom Panels
+                    const variationsEl = document.getElementById("hoch-pods-agent-spinup-variations");
+                    if (variationsEl) {
+                        variationsEl.innerHTML = `
+                            <h3>Agent Spin Up Variations</h3>
+                            <div class="bottom-variation-card variant-gold">
+                                <span>Gold Core (Primary)</span>
+                                <strong style="color:#fbbf24;">99% Power</strong>
+                            </div>
+                            <div class="bottom-variation-card variant-purple">
+                                <span>Purple Core (Secondary)</span>
+                                <strong style="color:#a78bfa;">95% Power</strong>
+                            </div>
+                            <div class="bottom-variation-card variant-red">
+                                <span>Red Core (Isolated)</span>
+                                <strong style="color:#f87171;">Offline</strong>
+                            </div>
+                        `;
+                    }
+
+                    const skillFlowEl = document.getElementById("hoch-pods-skill-card-animation-flow");
+                    if (skillFlowEl) {
+                        skillFlowEl.innerHTML = `
+                            <h3>Skill Card Animation Flow</h3>
+                            <div style="display:flex; flex-direction:column; gap:4px;">
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <span>[cyber-remediate-tool]</span>
+                                    <span style="color:var(--hoch-green); font-weight:bold; font-size:9px;">LOADED</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <span>[stripe-checkout-verify]</span>
+                                    <span style="color:var(--hoch-amber); font-weight:bold; font-size:9px;">INJECTING</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    const dataFlowEl = document.getElementById("hoch-pods-data-flow-visualization");
+                    if (dataFlowEl) {
+                        dataFlowEl.innerHTML = `
+                            <h3>Data Flow Visualization</h3>
+                            <div style="font-family:monospace; font-size:9px; line-height:1.4;">
+                                SWARM_STREAM_SPD: <span style="color:var(--hoch-cyan);">1.84 MB/s</span><br>
+                                ACTIVE_TUNNELS: <span style="color:var(--hoch-cyan);">4 Channels</span>
+                            </div>
+                        `;
+                    }
+
+                    const evidenceArchEl = document.getElementById("hoch-pods-evidence-archive");
+                    if (evidenceArchEl) {
+                        const ledgerState = data.sqlite_ledger_status || "SEALED";
+                        evidenceArchEl.innerHTML = `
+                            <h3>Evidence Archive</h3>
+                            <div style="display:flex; justify-content:space-between; align-items:center; font-family:monospace; font-size:9px;">
+                                <span>Ledger State:</span>
+                                <strong style="color:var(--hoch-green);">${ledgerState}</strong>
+                            </div>
+                            <div style="font-family:monospace; font-size:8px; color:var(--hoch-muted); margin-top:4px; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">
+                                Hash: ${data.ledger_hash_short || "e6f882...71e"}
+                            </div>
+                        `;
+                    }
                 };
 
                 // Trigger movie board update
@@ -6534,7 +6770,7 @@ def get_dashboard():
             isTheaterMode = true;
             this.classList.add("active");
             document.getElementById("toggle-data-mode").classList.remove("active");
-            document.getElementById("hoch-agent-liftoff-movie-board").style.display = "flex";
+            document.getElementById("hoch-pods-intro-movie-board").style.display = "flex";
             const rawJsonEl = document.getElementById("raw-json-display");
             if (rawJsonEl) rawJsonEl.style.display = "none";
             loadData();
@@ -6544,7 +6780,7 @@ def get_dashboard():
             isTheaterMode = false;
             this.classList.add("active");
             document.getElementById("toggle-theater-mode").classList.remove("active");
-            document.getElementById("hoch-agent-liftoff-movie-board").style.display = "none";
+            document.getElementById("hoch-pods-intro-movie-board").style.display = "none";
             let rawJsonEl = document.getElementById("raw-json-display");
             if (!rawJsonEl) {
                 rawJsonEl = document.createElement("pre");
@@ -6571,7 +6807,7 @@ def get_dashboard():
 
         document.getElementById("toggle-show-stale").addEventListener("click", function() {
             isShowStale = !isShowStale;
-            const layer = document.getElementById("hoch-stale-quarantine-layer");
+            const layer = document.getElementById("hoch-pods-stale-quarantine-layer");
             if (layer) {
                 layer.style.opacity = isShowStale ? "1" : "0";
                 layer.style.pointerEvents = isShowStale ? "auto" : "none";

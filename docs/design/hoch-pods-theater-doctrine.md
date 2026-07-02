@@ -1,31 +1,37 @@
 # HOCH PODS Theater Design Doctrine
 
-This document establishes the binding design rules and constraints for the HOCH PODS cinematic user interface.
+The file docs/design/assets/hoch-pods-theater-intro-movie-agent-spinups-reference.jpeg is the binding UI authority for HOCH PODS Theater.
 
-## Binding Design Reference
-- **Visual Reference Image**: [hoch-pods-theater-agent-liftoff-reference.jpeg](file:///Users/michaelhoch/hoch_agent_swarm/docs/design/assets/hoch-pods-theater-agent-liftoff-reference.jpeg) is the binding design reference for all HOCH PODS UI work.
-- **Cinematic Presentation**: The first visible screen of the HOCH PODS panel must be the **15-step Agent Lift-Off & Integration Movie Board**, not a dashboard of cards.
-- **Legacy Components**: Legacy panels (scheduler, approval, execution, leadership, etc.) may remain, but they must be rendered below the theater.
+The first visible HOCH PODS experience must visually follow the 17-frame cinematic storyboard structure in the reference image.
 
-## Data-Driven Animations
-- **Truthful Telemetry**: Animations must be tied to live, fresh data from `/api/pert/data`. There must be no decorative, simulated, or stale active animations.
-- **Stale/Missing Freeze**: If the data source for a given pod or segment is stale or missing, the affected movie clips must visibly freeze, receive a quarantined gray/amber border overlay, and display the `STALE TELEMETRY` warning.
-- **State Transition Mapping**: Pod runtime states must map directly to specific lifecycle steps on the Movie Board.
+This is not a mood board.
+This is not optional inspiration.
+This is a release-blocking visual contract.
 
-## 15-Step Agent Lift-Off & Integration Clips
-The 15 clips representing the agent lifecycle are:
-1. **Agent ready**: The AI agent is initialized and waiting in registry.
-2. **Pod doors open**: Pod enclave allocation starts.
-3. **Power up**: Enclave node provisioning and bootstrap.
-4. **Launch sequence**: Pre-flight policy checks and guardrail runs.
-5. **Lift off**: Model assignment binding complete.
-6. **Transit tunnel**: Tool library mounting and verification.
-7. **Route confirmed**: Target directory boundaries and allowlist verification.
-8. **Approaching destination**: Connecting to the execute node.
-9. **Docking**: Enclave authentication and mounting.
-10. **Integration sync**: Telemetry pipeline handshakes.
-11. **Capability link**: Access to system resources and APIs established.
-12. **RACI mapping**: Validating accountability boundaries and approval status.
-13. **Mission assignment**: Loading the execution proposal and details.
-14. **Active in HAS**: Pod starts task execution.
-15. **Flow integrated**: Results compiled, evidence written, and flows updated.
+If the first visible HOCH PODS experience still looks like tables, cards, flat panels, SVG icon grids, or neon-bordered dashboard sections instead of the reference cinematic movie storyboard, the release is rejected.
+
+## 17-Frame Cinematic Storyboard Grid Structure
+The cinematic theater must display exactly 17 movie-frame panels representing the launch and integration lifecycle of the HOCH PODS agents:
+1. **SYSTEM BOOT**
+2. **CORE IGNITION**
+3. **POD RING ACTIVATION**
+4. **VAULT GATE OPENING**
+5. **AGENT ENERGY BUILD**
+6. **FIRST AGENT SPIN UP**
+7. **AGENT LAUNCH**
+8. **SKILL CARD POP OUT**
+9. **JOINING SWARM**
+10. **MULTI AGENT SPIN UPS**
+11. **ROUTING TO DESTINATIONS**
+12. **DESTINATION LANES ACTIVE**
+13. **POD STATUS OVERVIEW**
+14. **DATA FLOW VISUALIZATION**
+15. **EVIDENCE ARCHIVE**
+16. **SYSTEM CONFIRMATION**
+17. **MISSION READY**
+
+## Required Visual Sections
+- **Agent Spin Up Variations**: Located at the bottom of the theater to show dynamic styling variants.
+- **Skill Card Animation Flow**: Located at the bottom of the theater to track skill transitions.
+- **Destination Lanes**: Dynamic lanes mapping the routing paths.
+- **System Confirmation & Mission Ready**: Key frames rendering prominently on the right/center of the storyboard grid.
