@@ -3,22 +3,40 @@ import { execSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 
-test.describe('RC52.1 HOCH PODS Theater Visual Baseline Playwright Spec', () => {
+test.describe('Production Cockpit Theater Integrated Visual Spec', () => {
 
-    test('1. Verify 17-Frame Cinematic Storyboard and Capture Screenshot', async ({ page }) => {
-        // Set viewport size exactly as required
-        await page.setViewportSize({ width: 1536, height: 864 });
+    test('1. Verify Production Cockpit Theater and Capture Screenshot', async ({ page }) => {
+        // Set viewport size to 1536x1024 as specified
+        await page.setViewportSize({ width: 1536, height: 1024 });
 
         await page.goto('http://127.0.0.1:8765/');
 
-        // Assert theater container is visible and first
+        // Assert theater container is visible
         await expect(page.locator('#hoch-pods-theater')).toBeVisible();
-        await expect(page.locator('#hoch-pods-theater')).toContainText('SYSTEM BOOT', { timeout: 10000 });
+
+        console.log("=== DUPLICATE ID DEBUGGING ===");
+        const count = await page.locator('#drawer-title').count();
+        console.log("Count of #drawer-title:", count);
+        for (let i = 0; i < count; i++) {
+            const html = await page.locator('#drawer-title').nth(i).evaluate(el => el.outerHTML);
+            const hierarchy = await page.locator('#drawer-title').nth(i).evaluate(el => {
+                let path = [];
+                let current = el;
+                while (current) {
+                    path.push(`${current.tagName.toLowerCase()}#${current.id || ''}.${current.className.split(' ').join('.')}`);
+                    current = current.parentElement;
+                }
+                return path.reverse().join(' > ');
+            });
+            console.log(`Element ${i} HTML:`, html);
+            console.log(`Element ${i} Path:`, hierarchy);
+        }
+        console.log("==============================");
 
         // Capture screenshot of the first visible screen
         const screenshotDir = path.join(__dirname, '..', '..', 'docs', 'evidence', 'ui', 'screenshots');
         fs.mkdirSync(screenshotDir, { recursive: true });
-        const screenshotPath = path.join(screenshotDir, 'rc52_1-hoch-pods-theater-current.png');
+        const screenshotPath = path.join(screenshotDir, 'hoch-pods-theater-cockpit-current.png');
         await page.screenshot({ path: screenshotPath, fullPage: false });
         console.log(`Saved screenshot to: ${screenshotPath}`);
 
@@ -44,17 +62,17 @@ test.describe('RC52.1 HOCH PODS Theater Visual Baseline Playwright Spec', () => 
             await expect(page.locator(elementId)).not.toBeNull();
         }
 
-        // Verify layout order (theater is first, topology is after/below it)
+        // Verify layout order (theater is first, topology/container is after/below it)
         const theaterBox = await page.locator('#hoch-pods-theater').boundingBox();
-        const topologyBox = await page.locator('#hoch-pods-topology-panel').boundingBox();
+        const containerBox = await page.locator('#hoch-pods-container').boundingBox();
         
         expect(theaterBox).not.toBeNull();
-        expect(topologyBox).not.toBeNull();
-        if (theaterBox && topologyBox) {
-            expect(theaterBox.y).toBeLessThan(topologyBox.y);
+        expect(containerBox).not.toBeNull();
+        if (theaterBox && containerBox) {
+            expect(theaterBox.y).toBeLessThan(containerBox.y);
         }
 
-        // Execute visual compliance audit from python to ensure PASS status
+        // Run the visual compliance audit
         console.log('Running visual compliance python script...');
         try {
             const root = path.join(__dirname, '..', '..');

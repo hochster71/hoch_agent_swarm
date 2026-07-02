@@ -10,7 +10,7 @@ def get_project_root():
 def audit_compliance():
     root = get_project_root()
     pert_server_path = os.path.join(root, "backend", "pert_server.py")
-    ref_image_path = os.path.join(root, "docs", "design", "assets", "hoch-pods-theater-intro-movie-agent-spinups-reference.jpeg")
+    ref_image_path = os.path.join(root, "docs", "design", "assets", "hoch-pods-theater-reference.jpeg")
     doctrine_path = os.path.join(root, "docs", "design", "hoch-pods-theater-doctrine.md")
 
     if not os.path.exists(pert_server_path):
@@ -145,7 +145,7 @@ def audit_compliance():
         passed = False
 
     # 9. Assert reference image is not used as a static background
-    ref_image_name = "hoch-pods-theater-intro-movie-agent-spinups-reference.jpeg"
+    ref_image_name = "hoch-pods-theater-reference.jpeg"
     bg_pattern = rf'background(-image)?\s*:\s*url\([^)]*{ref_image_name}[^)]*\)'
     if re.search(bg_pattern, content):
         checks["STATIC_BACKGROUND_GATE"] = "FAIL (Reference image used as CSS background)"
