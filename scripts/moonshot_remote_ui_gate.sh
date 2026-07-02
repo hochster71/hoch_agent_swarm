@@ -62,8 +62,8 @@ echo "✅ Pass: Swarm Ledger signals are correctly aligned."
 
 # 6. Final Verifier Posture
 echo "Verifying Final Verifier remains BLOCKED..."
-VERDICT_RES=$(curl -s http://127.0.0.1:8000/api/v1/final-verifier/verdict || echo "{\"status\":\"BLOCKED\"}")
-STATUS=$(echo "${VERDICT_RES}" | grep -o '"status":"[^"]*' | grep -o '[^"]*$' || echo "BLOCKED")
+VERDICT_RES=$(curl -s http://127.0.0.1:8000/api/v1/final-verifier/verdict || echo '{"verdict":{"status":"BLOCKED"}}')
+STATUS=$(echo "${VERDICT_RES}" | jq -r '.verdict.status // .status' 2>/dev/null || echo "BLOCKED")
 if [ "${STATUS}" != "BLOCKED" ]; then
   echo "❌ FAIL: Final Verifier expected BLOCKED, got '${STATUS}'"
   exit 1
