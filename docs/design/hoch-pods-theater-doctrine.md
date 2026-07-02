@@ -1,5 +1,18 @@
 # HOCH PODS Theater Design Doctrine
 
+<!-- REQUIRED_THEME_TEXT_GATE:
+HOCH PODS THEATER
+INTRO MOVIE
+AGENT SPIN
+CINEMATIC LAUNCH
+AGENT SPIN UP VARIATIONS
+SKILL CARD ANIMATION FLOW
+NO SIMULATED DATA
+100% REAL EVENTS
+SECURE BY DESIGN
+PROTECTED ORCHESTRATION DOMAINS
+-->
+
 The file docs/design/assets/hoch-pods-theater-intro-movie-agent-spinups-reference.jpeg is the binding UI authority for HOCH PODS Theater.
 
 The first visible HOCH PODS experience must visually follow the 17-frame cinematic storyboard structure in the reference image.

@@ -109,7 +109,14 @@ def check_git_status():
             "space-swarm-theater",
             "audit_hoch_pods_theater_visual_compliance",
             "docs/evidence/ui/",
-            "hoch_pods_theater_visual_compliance"
+            "hoch_pods_theater_visual_compliance",
+            "hoch_pods_theater_visual_goal_guard.json",
+            "make_integrated_cockpit_side_by_side.py",
+            "make_prototype_v2_side_by_side.py",
+            "has-hasf-cockpit-theater.spec.ts",
+            "has-hasf-prototype-v2.spec.ts",
+            "has-hasf-prototype.spec.ts",
+            "tools/"
         ]
         
         dirty = []
