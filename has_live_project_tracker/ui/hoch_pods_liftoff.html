@@ -761,12 +761,65 @@ body:before{
     </section>
 
     <section class="panel" style="margin-top:14px">
-      <h2>Live PERT Analysis</h2>
-      <div class="body truthPanelScroll">
-        <table class="truthTable">
-          <thead><tr><th>ID</th><th>Task</th><th>Status</th><th>Owner</th><th>TE</th><th>Slack</th><th>Critical</th></tr></thead>
-          <tbody id="pertTruthRows"><tr><td colspan="7" class="muted">loading live PERT analysis...</td></tr></tbody>
-        </table>
+      <h2>DIGITAL PERT /GOAL TRACKER</h2>
+      <div class="body">
+        <!-- North Star card -->
+        <div style="background:rgba(20,24,35,0.8); border:1px solid #3b82f6; padding:12px; border-radius:6px; margin-bottom:12px">
+          <div style="font-size:11px; text-transform:uppercase; color:#3b82f6; font-weight:bold; margin-bottom:4px">North Star Goal</div>
+          <div id="pertNorthStar" style="color:#e2e8f0; font-size:14px; line-height:1.4">Complete HAS/HASF as an operational, verified, AI-assisted command system...</div>
+        </div>
+
+        <!-- Metric grid cards -->
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:10px; margin-bottom:12px">
+          <div style="background:rgba(20,24,35,0.8); border:1px solid #ef4444; padding:10px; border-radius:6px">
+            <div style="font-size:10px; text-transform:uppercase; color:#ef4444; font-weight:bold">Status / Release Posture</div>
+            <div id="pertStatus" style="font-size:18px; font-weight:bold; color:#ef4444; margin-top:4px">NO-GO</div>
+            <div id="pertBlockerPill" style="font-size:10px; color:#94a3b8; margin-top:2px">NO_ACTIVE_RELEASE_GO</div>
+          </div>
+          <div style="background:rgba(20,24,35,0.8); border:1px solid #10b981; padding:10px; border-radius:6px">
+            <div style="font-size:10px; text-transform:uppercase; color:#10b981; font-weight:bold">Expected Completion</div>
+            <div id="pertExpectedTime" style="font-size:18px; font-weight:bold; color:#10b981; margin-top:4px">600 min</div>
+            <div id="pertConfidence" style="font-size:10px; color:#94a3b8; margin-top:2px">Confidence: Medium-high</div>
+          </div>
+          <div style="background:rgba(20,24,35,0.8); border:1px solid #a855f7; padding:10px; border-radius:6px">
+            <div style="font-size:10px; text-transform:uppercase; color:#a855f7; font-weight:bold">Primary Execution Agent</div>
+            <div style="font-size:18px; font-weight:bold; color:#a855f7; margin-top:4px">HELM</div>
+            <div style="font-size:10px; color:#94a3b8; margin-top:2px">Status: active_candidate</div>
+          </div>
+          <div style="background:rgba(20,24,35,0.8); border:1px solid #eab308; padding:10px; border-radius:6px">
+            <div style="font-size:10px; text-transform:uppercase; color:#eab308; font-weight:bold">Next Safe Action</div>
+            <div id="pertNextSafeAction" style="font-size:11px; color:#e2e8f0; margin-top:4px; font-weight:500">Canonical Docker verification + HOCH-200 restart survival</div>
+          </div>
+        </div>
+
+        <!-- Critical Path Chain Visualization -->
+        <div style="background:rgba(20,24,35,0.8); border:1px solid #334155; padding:12px; border-radius:6px; margin-bottom:12px">
+          <div style="font-size:10px; text-transform:uppercase; color:#94a3b8; font-weight:bold; margin-bottom:6px">Critical Path Chain</div>
+          <div id="pertCriticalPathChain" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap">
+            <!-- Render A -> E -> B -> D -> G -> H -->
+          </div>
+        </div>
+
+        <!-- Lanes Table -->
+        <div class="truthPanelScroll">
+          <table class="truthTable">
+            <thead>
+              <tr>
+                <th>Lane</th>
+                <th>Task Description</th>
+                <th>Status</th>
+                <th>Owner</th>
+                <th>PERT (O/ML/P)</th>
+                <th>Expected</th>
+                <th>Critical</th>
+                <th>Evidence & Commit</th>
+              </tr>
+            </thead>
+            <tbody id="goalPertRows">
+              <tr><td colspan="8" class="muted">Loading goal pert data...</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
 
@@ -982,22 +1035,63 @@ async function load(){
       return `<div class="step"><div class="dot"></div><b>${esc(k)}</b><span>${esc(s.computed_state || "UNKNOWN")} age=${fmtAge(s.freshness_age_seconds)}</span></div>`;
     }).join("") || `<div class="step"><div class="dot"></div><b>No freshness authority</b><span>missing</span></div>`;
 
-    const pertTasks = data.pert_cpm?.tasks || [];
-    $("pertTruthRows").innerHTML = pertTasks.length ? pertTasks.map(t => {
-      const status = String(t.status || "unknown").toUpperCase();
-      const statusCls = status.includes("COMPLETE") ? "done" : status.includes("BLOCK") ? "blocked" : "";
-      const critical = t.is_critical ? "YES" : "NO";
-      const criticalCls = t.is_critical ? "critical" : "muted";
-      return `<tr>
-        <td>${esc(t.id || "--")}</td>
-        <td>${esc(t.title || t.description || "--")}</td>
-        <td class="${statusCls}">${esc(status)}</td>
-        <td class="muted">${esc(t.owner_agent || t.R || "--")}</td>
-        <td>${esc(t.te ?? "--")}</td>
-        <td>${esc(t.slack ?? "--")}</td>
-        <td class="${criticalCls}">${critical}</td>
-      </tr>`;
-    }).join("") : `<tr><td colspan="7" class="muted">No PERT task list found in /api/pert/data</td></tr>`;
+    // Load Goal PERT Analysis
+    try {
+      const pertRes = await fetch("/api/v1/goal/pert", {cache:"no-store"});
+      const pertData = await pertRes.json();
+      
+      $("pertNorthStar").textContent = pertData.north_star;
+      $("pertStatus").textContent = pertData.status;
+      $("pertStatus").className = pertData.status === "GO" ? "done" : "blocked";
+      $("pertBlockerPill").textContent = pertData.active_blocker;
+      $("pertExpectedTime").textContent = `${pertData.expected_completion_minutes} min`;
+      $("pertConfidence").textContent = `Confidence: ${pertData.confidence}`;
+      $("pertNextSafeAction").textContent = pertData.next_safe_action;
+      
+      // Render horizontal critical path chain
+      const chainHtml = pertData.critical_path.map(id => {
+        const lane = pertData.lanes.find(l => l.id === id) || {};
+        return `<div style="background:rgba(59,130,246,0.15); border:1px solid #3b82f6; padding:6px 10px; border-radius:4px; font-size:12px; font-weight:bold; display:flex; align-items:center; gap:6px">
+          <span style="color:#3b82f6">${esc(id)}</span>
+          <span style="color:#e2e8f0">${esc(lane.name || id)}</span>
+        </div>`;
+      }).join('<span style="color:#475569; font-weight:bold">→</span>');
+      $("pertCriticalPathChain").innerHTML = chainHtml;
+      
+      // Render goal pert rows
+      $("goalPertRows").innerHTML = pertData.lanes.map(l => {
+        const criticalStr = l.critical ? '<span class="critical">YES</span>' : '<span class="muted">NO</span>';
+        const criticalCls = l.critical ? "critical-row" : "";
+        const statusCls = l.blocked ? "blocked" : (l.status === "Completed" || l.status === "Accepted" ? "done" : "");
+        
+        const evidenceHtml = l.evidence_refs.map(ref => {
+          const base = ref.split('/').pop();
+          return `<a href="file:///${esc(ref)}" style="color:#3b82f6; text-decoration:underline; font-size:11px; display:block">${esc(base)}</a>`;
+        }).join("") || '<span class="muted">--</span>';
+        
+        const commitHtml = l.commit_refs.map(ref => {
+          return `<span style="font-family:monospace; background:rgba(255,255,255,0.05); padding:2px 4px; border-radius:3px; font-size:10px">${esc(ref)}</span>`;
+        }).join(" ") || '<span class="muted">--</span>';
+
+        return `<tr class="${criticalCls}">
+          <td><b style="color:#3b82f6">${esc(l.id)}</b> - ${esc(l.name)}</td>
+          <td class="muted" style="font-size:11px">${esc(l.description)}</td>
+          <td class="${statusCls}">${esc(l.status.toUpperCase())}</td>
+          <td class="muted">${esc(l.owner_agent)}</td>
+          <td style="font-size:11px">${l.optimistic_minutes}/${l.most_likely_minutes}/${l.pessimistic_minutes}</td>
+          <td><b>${l.expected_minutes}</b> <span class="muted" style="font-size:10px">var=${l.variance}</span></td>
+          <td>${criticalStr}</td>
+          <td>
+            <div style="display:flex; flex-direction:column; gap:2px">
+              ${evidenceHtml}
+              ${commitHtml}
+            </div>
+          </td>
+        </tr>`;
+      }).join("");
+    } catch(e) {
+      console.error("Failed to load goal pert", e);
+    }
 
     const approvalQueue = metrics.approval_queue || [];
     const gaps = [];

@@ -145,6 +145,9 @@ pert_mgr = PertManager()
 from backend.michael_ai import router as michael_ai_router
 app.include_router(michael_ai_router)
 
+from backend.goal_tracker.router import router as goal_router
+app.include_router(goal_router)
+
 @app.get("/api/v1/apple/telemetry")
 def get_apple_telemetry_endpoint():
     from backend.apple_telemetry.collector import collect_and_store_apple_telemetry

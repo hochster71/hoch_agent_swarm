@@ -14,6 +14,9 @@ from typing import List, Dict, Any
 app = FastAPI(title="HAS/HASF Autonomous PERT Command Center", version="0.1.7")
 app.mount("/docs", StaticFiles(directory=os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "docs"))), name="docs")
 
+from backend.goal_tracker.router import router as goal_router
+app.include_router(goal_router)
+
 # Database Path resolution
 def get_db_path():
     env = os.getenv("HOCHSTER_DB_PATH")
