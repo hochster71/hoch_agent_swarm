@@ -106,7 +106,8 @@ def check_git_status():
             "governed-execution",
             "rc52_1",
             "space_swarm_theater",
-            "space-swarm-theater"
+            "space-swarm-theater",
+            "audit_hoch_pods_theater_visual_compliance"
         ]
         
         dirty = []
