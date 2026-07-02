@@ -11367,12 +11367,65 @@ function renderDeviceSwarm(data) {
   }
 }
 
+function formatUptime(seconds) {
+  if (seconds < 60) return `${seconds}s`;
+  const mins = Math.floor(seconds / 60);
+  if (mins < 60) return `${mins}m`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h ${mins % 60}m`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ${hours % 24}h`;
+}
+
+function renderAppleTelemetry(devices) {
+  const grid = document.getElementById("apple-telemetry-grid");
+  if (!grid) return;
+
+  grid.innerHTML = (devices || []).map(d => {
+    const battColor = d.battery_percent > 50 ? "#10b981" : d.battery_percent > 20 ? "#f59e0b" : "#ef4444";
+    const chargeIcon = d.charging_state === "charging" ? "⚡ " : "";
+    const uptimeStr = formatUptime(d.uptime_seconds);
+
+    return `
+      <article class="device-swarm-card live" style="border: 1px solid rgba(22, 28, 45, 0.45); background: rgba(34, 246, 255, 0.02);">
+        <h4 style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+          <span> ${escapeHtml(d.device_name)}</span>
+          <span class="pill status" style="background: ${battColor}; color: #fff; font-size: 9px; padding: 2px 6px;">
+            ${chargeIcon}${d.battery_percent}%
+          </span>
+        </h4>
+        <dl style="font-size: 10px; line-height: 1.4;">
+          <div><dt>IP</dt><dd>${escapeHtml(d.local_ip || "unknown")}</dd></div>
+          <div><dt>Type</dt><dd>${escapeHtml(d.device_type)}</dd></div>
+          <div><dt>OS</dt><dd>${escapeHtml(d.os_version)}</dd></div>
+          <div><dt>CPU</dt><dd>${d.cpu_load_percent}%</dd></div>
+          <div><dt>RAM</dt><dd>${d.memory_usage_percent}%</dd></div>
+          <div><dt>Disk</dt><dd>${d.disk_usage_percent}%</dd></div>
+          <div><dt>Storage</dt><dd>${d.available_storage_gb} GB</dd></div>
+          <div><dt>Uptime</dt><dd>${uptimeStr}</dd></div>
+          <div><dt>Health</dt><dd style="color: #10b981;">● ${escapeHtml(d.health_status)}</dd></div>
+        </dl>
+      </article>
+    `;
+  }).join("");
+}
+
+async function loadAppleTelemetry() {
+  try {
+    const data = await fetchJsonSafe("/api/v1/apple/telemetry");
+    renderAppleTelemetry(data);
+  } catch (error) {
+    console.error("Failed to load Apple telemetry:", error);
+  }
+}
+
 async function loadDeviceSwarm() {
   const status = document.getElementById("device-swarm-status");
   if (status) status.textContent = "Loading...";
   try {
     const data = await fetchJsonSafe("/api/v1/swarm/devices?limit=10");
     renderDeviceSwarm(data);
+    await loadAppleTelemetry();
     if (status) status.textContent = "Live";
   } catch (error) {
     if (status) status.textContent = "Error";
@@ -11384,9 +11437,14 @@ async function loadDeviceSwarm() {
 async function rescanDeviceSwarm() {
   const status = document.getElementById("device-swarm-status");
   if (status) status.textContent = "Scanning...";
-  const data = await fetchJsonSafe("/api/v1/swarm/devices/rescan?limit=10", { method: "POST" });
-  renderDeviceSwarm(data);
-  if (status) status.textContent = "Scan Complete";
+  try {
+    const data = await fetchJsonSafe("/api/v1/swarm/devices/rescan?limit=10", { method: "POST" });
+    renderDeviceSwarm(data);
+    await loadAppleTelemetry();
+    if (status) status.textContent = "Scan Complete";
+  } catch (error) {
+    if (status) status.textContent = "Error";
+  }
 }
 
 async function sendDeviceSwarmPrompt() {

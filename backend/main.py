@@ -145,6 +145,11 @@ pert_mgr = PertManager()
 from backend.michael_ai import router as michael_ai_router
 app.include_router(michael_ai_router)
 
+@app.get("/api/v1/apple/telemetry")
+def get_apple_telemetry_endpoint():
+    from backend.apple_telemetry.collector import collect_and_store_apple_telemetry
+    return collect_and_store_apple_telemetry()
+
 HISTORY_FILE = os.path.abspath(os.path.join(os.path.dirname(__file__), "task_history.json"))
 
 def load_task_history():

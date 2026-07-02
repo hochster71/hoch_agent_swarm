@@ -4915,6 +4915,15 @@
   <div class="device-swarm-summary" id="device-swarm-summary"></div>
 
   <div class="device-swarm-layout">
+    <div class="live-card" id="apple-device-telemetry-panel" style="margin-bottom: 20px; grid-column: span 2;">
+      <h3> Michael's Apple Device Telemetry</h3>
+      <div class="card-meta">
+        <span>Source: /api/v1/apple/telemetry</span>
+        <span>Truth: local pmset/psutil/sysctl + paired device indicators</span>
+      </div>
+      <div id="apple-telemetry-grid" class="device-swarm-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-top: 15px; display: grid; gap: 15px;"></div>
+    </div>
+
     <div class="live-card">
       <h3>10-Device Mesh</h3>
       <div class="card-meta">
