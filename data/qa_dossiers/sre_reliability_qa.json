@@ -1,0 +1,15 @@
+{
+  "team_id": "sre_reliability_qa",
+  "team_name": "SRE & Watchdog QA",
+  "verification_status": "PASS",
+  "last_verified_at": "2026-07-02T22:27:42.355456Z",
+  "metrics": {
+    "watchdog_uptime_seconds": 129600,
+    "recovery_triggers_fired": 0
+  },
+  "evidence_list": [
+    "docs/runbooks/has-hasf-compute-utilization-runbook.md"
+  ],
+  "unresolved_defects": [],
+  "signoff_agent": "HELM"
+}

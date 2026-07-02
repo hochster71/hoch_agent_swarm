@@ -1,0 +1,15 @@
+{
+  "team_id": "revenue_qa",
+  "team_name": "Revenue QA",
+  "verification_status": "PASS",
+  "last_verified_at": "2026-07-02T22:27:42.354763Z",
+  "metrics": {
+    "stripe_sandbox_active": true,
+    "payout_bank_mapped": false
+  },
+  "evidence_list": [
+    "docs/hasf/HASF_STRIPE_SAFE_REVENUE_BOUNDARY.md"
+  ],
+  "unresolved_defects": [],
+  "signoff_agent": "HELM"
+}

@@ -1,0 +1,15 @@
+{
+  "team_id": "hasf_commercialization_qa",
+  "team_name": "Commercial Strategy",
+  "verification_status": "PASS",
+  "last_verified_at": "2026-07-02T22:27:42.355400Z",
+  "metrics": {
+    "pricing_tiers_count": 3,
+    "outbound_targets_count": 10
+  },
+  "evidence_list": [
+    "docs/hasf/HASF_PRICING_TIERS.md"
+  ],
+  "unresolved_defects": [],
+  "signoff_agent": "HELM"
+}

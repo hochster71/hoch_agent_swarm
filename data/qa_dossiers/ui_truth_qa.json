@@ -1,0 +1,15 @@
+{
+  "team_id": "ui_truth_qa",
+  "team_name": "UI Truth & Port closures",
+  "verification_status": "PASS",
+  "last_verified_at": "2026-07-02T22:27:42.355109Z",
+  "metrics": {
+    "unsafe_public_ports_open": 0,
+    "ui_api_match_percent": 100
+  },
+  "evidence_list": [
+    "docs/evidence/ui/20260702-1638-hoch-pods-theater-v6-visual-baseline.md"
+  ],
+  "unresolved_defects": [],
+  "signoff_agent": "HELM"
+}

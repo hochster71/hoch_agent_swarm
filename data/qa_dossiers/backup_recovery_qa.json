@@ -1,0 +1,15 @@
+{
+  "team_id": "backup_recovery_qa",
+  "team_name": "WAL & backup integrity",
+  "verification_status": "PASS",
+  "last_verified_at": "2026-07-02T22:27:42.355615Z",
+  "metrics": {
+    "backup_file_exists": true,
+    "restore_test_success": true
+  },
+  "evidence_list": [
+    "docs/runbooks/has-hasf-compute-utilization-runbook.md"
+  ],
+  "unresolved_defects": [],
+  "signoff_agent": "HELM"
+}

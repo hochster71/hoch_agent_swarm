@@ -1,0 +1,15 @@
+{
+  "team_id": "planning_qa",
+  "team_name": "PERT & CPM Planning QA",
+  "verification_status": "PASS",
+  "last_verified_at": "2026-07-02T22:27:42.355253Z",
+  "metrics": {
+    "critical_path_expected_minutes": 600.0,
+    "variance_total": 45.2
+  },
+  "evidence_list": [
+    "docs/evidence/goal_tracker/20260702-1641-digital-pert-goal-live-tracker.md"
+  ],
+  "unresolved_defects": [],
+  "signoff_agent": "HELM"
+}

@@ -1,0 +1,20 @@
+{
+  "tasks": [
+    { "id": "remoteops_qa", "name": "Remote Operations QA", "dependencies": [] },
+    { "id": "revenue_qa", "name": "Revenue QA", "dependencies": [] },
+    { "id": "product_qa", "name": "Product Spec QA", "dependencies": [] },
+    { "id": "cyber_devsecops_qa", "name": "Security QA", "dependencies": [] },
+    { "id": "evidence_qa", "name": "Evidence Ledger QA", "dependencies": ["cyber_devsecops_qa"] },
+    { "id": "runner_qa", "name": "Runner Health QA", "dependencies": ["remoteops_qa"] },
+    { "id": "ui_truth_qa", "name": "UI Truth & Port closures", "dependencies": ["remoteops_qa"] },
+    { "id": "planning_qa", "name": "PERT & CPM Planning QA", "dependencies": ["product_qa"] },
+    { "id": "ivv_red_team_qa", "name": "Independent Verification", "dependencies": ["cyber_devsecops_qa"] },
+    { "id": "hasf_commercialization_qa", "name": "Commercial Strategy", "dependencies": ["revenue_qa"] },
+    { "id": "sre_reliability_qa", "name": "SRE & Watchdog QA", "dependencies": ["runner_qa"] },
+    { "id": "supply_chain_qa", "name": "Dependency Security", "dependencies": ["cyber_devsecops_qa"] },
+    { "id": "secrets_identity_qa", "name": "PII & Secrets protection", "dependencies": ["cyber_devsecops_qa"] },
+    { "id": "backup_recovery_qa", "name": "WAL & backup integrity", "dependencies": ["sre_reliability_qa"] },
+    { "id": "release_authority_qa", "name": "Release GO posture", "dependencies": ["ivv_red_team_qa"] },
+    { "id": "customer_outcome_qa", "name": "Usability & latency", "dependencies": ["ui_truth_qa"] }
+  ]
+}

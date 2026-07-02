@@ -1,0 +1,15 @@
+{
+  "team_id": "runner_qa",
+  "team_name": "Runner Health QA",
+  "verification_status": "PASS",
+  "last_verified_at": "2026-07-02T22:27:42.355055Z",
+  "metrics": {
+    "runner_heartbeat_age_seconds": 15,
+    "active_daemon_count": 2
+  },
+  "evidence_list": [
+    "docs/evidence/helm/20260702-1634-helm-onboarding.md"
+  ],
+  "unresolved_defects": [],
+  "signoff_agent": "HELM"
+}

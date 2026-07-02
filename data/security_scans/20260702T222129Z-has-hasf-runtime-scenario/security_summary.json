@@ -1,0 +1,20 @@
+{
+  "critical_count": 0,
+  "high_count": 0,
+  "medium_count": 0,
+  "low_count": 0,
+  "secret_findings": 0,
+  "container_critical_count": 0,
+  "container_high_count": 0,
+  "dependency_critical_count": 0,
+  "dependency_high_count": 0,
+  "sast_critical_count": 0,
+  "sast_high_count": 0,
+  "accepted_risks": [],
+  "unaccepted_critical": 0,
+  "unaccepted_high": 0,
+  "docker_security_gate": "PASS",
+  "github_actions_hardening_gate": "PASS",
+  "unsafe_public_ports": 0,
+  "overall_result": "PASS"
+}

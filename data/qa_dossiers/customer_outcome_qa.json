@@ -1,0 +1,15 @@
+{
+  "team_id": "customer_outcome_qa",
+  "team_name": "Usability & latency",
+  "verification_status": "PASS",
+  "last_verified_at": "2026-07-02T22:27:42.355712Z",
+  "metrics": {
+    "ui_load_time_seconds": 1.2,
+    "dora_change_failure_rate": 0
+  },
+  "evidence_list": [
+    "docs/evidence/ui/20260702-1638-hoch-pods-theater-v6-visual-baseline.md"
+  ],
+  "unresolved_defects": [],
+  "signoff_agent": "HELM"
+}

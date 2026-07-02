@@ -1,0 +1,84 @@
+{
+  "collection_plans": [
+    {
+      "team_id": "remoteops_qa",
+      "target_evidence": ["docs/evidence/vps/20260702-1557-hoch200-vps-verification.md"],
+      "verification_method": "SSH_PORT_PROBE"
+    },
+    {
+      "team_id": "revenue_qa",
+      "target_evidence": ["docs/hasf/HASF_STRIPE_SAFE_REVENUE_BOUNDARY.md"],
+      "verification_method": "REVENUE_OPS_CHECK"
+    },
+    {
+      "team_id": "product_qa",
+      "target_evidence": ["docs/planning/pert-e2e-build-plan.md"],
+      "verification_method": "SPEC_MATCH"
+    },
+    {
+      "team_id": "cyber_devsecops_qa",
+      "target_evidence": ["docs/evidence/ci/20260702-1640-github-linux-runner-qa.md"],
+      "verification_method": "SAST_SCAN_PARSE"
+    },
+    {
+      "team_id": "evidence_qa",
+      "target_evidence": ["docs/evidence/helm/20260702-1634-helm-onboarding.md"],
+      "verification_method": "LEDGER_INTEGRITY_CHECK"
+    },
+    {
+      "team_id": "runner_qa",
+      "target_evidence": ["docs/evidence/helm/20260702-1634-helm-onboarding.md"],
+      "verification_method": "HEARTBEAT_PROBE"
+    },
+    {
+      "team_id": "ui_truth_qa",
+      "target_evidence": ["docs/evidence/ui/20260702-1638-hoch-pods-theater-v6-visual-baseline.md"],
+      "verification_method": "URL_PORT_SCAN"
+    },
+    {
+      "team_id": "planning_qa",
+      "target_evidence": ["docs/evidence/goal_tracker/20260702-1641-digital-pert-goal-live-tracker.md"],
+      "verification_method": "PERT_SUMMATION_CHECK"
+    },
+    {
+      "team_id": "ivv_red_team_qa",
+      "target_evidence": ["docs/evidence/ui/20260702-1638-hoch-pods-theater-v6-visual-baseline.md"],
+      "verification_method": "ANTI_FAKE_SCAN"
+    },
+    {
+      "team_id": "hasf_commercialization_qa",
+      "target_evidence": ["docs/hasf/HASF_PRICING_TIERS.md"],
+      "verification_method": "TIER_COUNT"
+    },
+    {
+      "team_id": "sre_reliability_qa",
+      "target_evidence": ["docs/runbooks/has-hasf-compute-utilization-runbook.md"],
+      "verification_method": "WATCHDOG_CHECK"
+    },
+    {
+      "team_id": "supply_chain_qa",
+      "target_evidence": ["docs/evidence/ci/20260702-1640-github-linux-runner-qa.md"],
+      "verification_method": "DEPENDENCY_PIN_CHECK"
+    },
+    {
+      "team_id": "secrets_identity_qa",
+      "target_evidence": ["docs/evidence/ci/20260702-1640-github-linux-runner-qa.md"],
+      "verification_method": "GITLEAKS_PARSE"
+    },
+    {
+      "team_id": "backup_recovery_qa",
+      "target_evidence": ["docs/runbooks/has-hasf-compute-utilization-runbook.md"],
+      "verification_method": "SQLITE_WAL_CHECK"
+    },
+    {
+      "team_id": "release_authority_qa",
+      "target_evidence": ["docs/evidence/helm/20260702-1634-helm-onboarding.md"],
+      "verification_method": "RELEASE_POSTURE_CHECK"
+    },
+    {
+      "team_id": "customer_outcome_qa",
+      "target_evidence": ["docs/evidence/ui/20260702-1638-hoch-pods-theater-v6-visual-baseline.md"],
+      "verification_method": "LATENCY_VERIFY"
+    }
+  ]
+}

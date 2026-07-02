@@ -148,6 +148,9 @@ app.include_router(michael_ai_router)
 from backend.goal_tracker.router import router as goal_router
 app.include_router(goal_router)
 
+from backend.qa_dossiers.router import router as qa_router
+app.include_router(qa_router)
+
 @app.get("/api/v1/apple/telemetry")
 def get_apple_telemetry_endpoint():
     from backend.apple_telemetry.collector import collect_and_store_apple_telemetry
@@ -11728,7 +11731,7 @@ def submit_claim(payload: SubmitClaimRequest):
     store = PromptHistoryStore()
     latest = store.get_latest_contract()
     if not latest:
-        raise HTTPException(status_code=400, detail="No active prompt contract found. Please evaluate a prompt first.")
+        raise HTTPException(status_code=403, detail="No active prompt contract found. Please evaluate a prompt first.")
         
     risk_detector = FakeCompletionRisk()
     risk_res = risk_detector.detect_risk(payload.claim)

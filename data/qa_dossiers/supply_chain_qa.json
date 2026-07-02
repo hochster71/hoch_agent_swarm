@@ -1,0 +1,15 @@
+{
+  "team_id": "supply_chain_qa",
+  "team_name": "Dependency Security",
+  "verification_status": "PASS",
+  "last_verified_at": "2026-07-02T22:27:42.355508Z",
+  "metrics": {
+    "unpinned_packages_count": 0,
+    "provenance_score": 100
+  },
+  "evidence_list": [
+    "docs/evidence/ci/20260702-1640-github-linux-runner-qa.md"
+  ],
+  "unresolved_defects": [],
+  "signoff_agent": "HELM"
+}

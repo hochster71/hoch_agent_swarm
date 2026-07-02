@@ -1,0 +1,16 @@
+{
+  "team_id": "cyber_devsecops_qa",
+  "team_name": "Security QA",
+  "verification_status": "PASS",
+  "last_verified_at": "2026-07-02T22:27:42.354939Z",
+  "metrics": {
+    "critical_vulns": 0,
+    "high_vulns": 0,
+    "secret_findings": 0
+  },
+  "evidence_list": [
+    "docs/evidence/ci/20260702-1640-github-linux-runner-qa.md"
+  ],
+  "unresolved_defects": [],
+  "signoff_agent": "HELM"
+}

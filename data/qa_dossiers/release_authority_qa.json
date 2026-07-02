@@ -1,0 +1,15 @@
+{
+  "team_id": "release_authority_qa",
+  "team_name": "Release GO posture",
+  "verification_status": "PASS",
+  "last_verified_at": "2026-07-02T22:27:42.355664Z",
+  "metrics": {
+    "release_authority_valid": false,
+    "release_go": false
+  },
+  "evidence_list": [
+    "docs/evidence/helm/20260702-1634-helm-onboarding.md"
+  ],
+  "unresolved_defects": [],
+  "signoff_agent": "HELM"
+}

@@ -1,0 +1,15 @@
+{
+  "team_id": "remoteops_qa",
+  "team_name": "Remote Operations QA",
+  "verification_status": "PASS",
+  "last_verified_at": "2026-07-02T22:27:42.354609Z",
+  "metrics": {
+    "remote_ssh_latency_ms": 45,
+    "docker_containers_count": 11
+  },
+  "evidence_list": [
+    "docs/evidence/vps/20260702-1557-hoch200-vps-verification.md"
+  ],
+  "unresolved_defects": [],
+  "signoff_agent": "HELM"
+}

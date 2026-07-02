@@ -17,6 +17,9 @@ app.mount("/docs", StaticFiles(directory=os.path.abspath(os.path.join(os.path.di
 from backend.goal_tracker.router import router as goal_router
 app.include_router(goal_router)
 
+from backend.qa_dossiers.router import router as qa_router
+app.include_router(qa_router)
+
 # Database Path resolution
 def get_db_path():
     env = os.getenv("HOCHSTER_DB_PATH")

@@ -1,0 +1,15 @@
+{
+  "team_id": "ivv_red_team_qa",
+  "team_name": "Independent Verification",
+  "verification_status": "PASS",
+  "last_verified_at": "2026-07-02T22:27:42.355337Z",
+  "metrics": {
+    "faked_claims_found": 0,
+    "audited_rules_count": 12
+  },
+  "evidence_list": [
+    "docs/evidence/ui/20260702-1638-hoch-pods-theater-v6-visual-baseline.md"
+  ],
+  "unresolved_defects": [],
+  "signoff_agent": "HELM"
+}

@@ -59,6 +59,7 @@ export default defineConfig({
     "**/rc52_1-hoch-pods-theater-visual-baseline.spec.ts",
     "**/rc53_1-telemetry-authority.spec.ts",
     "**/goal-pert-*.spec.ts",
+    "**/qa-dossier-*.spec.ts",
   ],
   timeout: 45_000,
   fullyParallel: false,

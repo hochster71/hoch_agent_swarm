@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "QATeamDossier",
+  "type": "OBJECT",
+  "properties": {
+    "team_id": { "type": "STRING" },
+    "team_name": { "type": "STRING" },
+    "verification_status": { "type": "STRING", "enum": ["PASS", "FAIL", "QA_PARTIAL", "UNKNOWN"] },
+    "last_verified_at": { "type": "STRING", "format": "date-time" },
+    "metrics": {
+      "type": "OBJECT",
+      "additionalProperties": { "type": ["number", "string", "boolean"] }
+    },
+    "evidence_list": {
+      "type": "ARRAY",
+      "items": { "type": "STRING" }
+    },
+    "unresolved_defects": {
+      "type": "ARRAY",
+      "items": { "type": "STRING" }
+    },
+    "signoff_agent": { "type": "STRING" }
+  },
+  "required": ["team_id", "team_name", "verification_status", "last_verified_at", "metrics", "evidence_list", "unresolved_defects", "signoff_agent"]
+}

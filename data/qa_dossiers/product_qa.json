@@ -1,0 +1,15 @@
+{
+  "team_id": "product_qa",
+  "team_name": "Product Spec QA",
+  "verification_status": "PASS",
+  "last_verified_at": "2026-07-02T22:27:42.354862Z",
+  "metrics": {
+    "kano_features_mapped": 14,
+    "spec_docs_coverage_percent": 100
+  },
+  "evidence_list": [
+    "docs/planning/pert-e2e-build-plan.md"
+  ],
+  "unresolved_defects": [],
+  "signoff_agent": "HELM"
+}
