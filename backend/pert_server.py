@@ -7426,3 +7426,13 @@ setInterval(boot, 30000);
     if HTMLResponse:
         return HTMLResponse(content=html)
     return html
+
+# HOCH PODS Moonshot Liftoff Control Plane
+@app.get("/ui-moonshot")
+def hoch_pods_moonshot_ui():
+    from fastapi.responses import HTMLResponse
+    from pathlib import Path
+    ui_path = Path("has_live_project_tracker/ui/hoch_pods_liftoff.html")
+    if not ui_path.exists():
+        return HTMLResponse("<h1>HOCH PODS Moonshot UI missing</h1>", status_code=404)
+    return HTMLResponse(ui_path.read_text())

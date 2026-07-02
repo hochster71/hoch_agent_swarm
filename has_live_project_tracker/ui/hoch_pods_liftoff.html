@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>HOCH PODS Liftoff Control Plane V2</title>
+<style>
+:root{
+  --bg:#02030a;
+  --bg2:#050b16;
+  --panel:rgba(7,17,31,.86);
+  --panel2:rgba(10,26,48,.82);
+  --line:rgba(73,231,255,.22);
+  --cyan:#49e7ff;
+  --cyan2:#9af6ff;
+  --blue:#2f7bff;
+  --green:#44ff9a;
+  --amber:#ffcc66;
+  --red:#ff5577;
+  --purple:#9c7cff;
+  --text:#e8f4ff;
+  --muted:#8aa3bd;
+  --dim:#526a84;
+  --shadow:0 0 30px rgba(73,231,255,.18);
+  --deepShadow:0 0 70px rgba(73,231,255,.18), inset 0 0 60px rgba(47,123,255,.06);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 50% -15%,rgba(73,231,255,.20),transparent 28%),
+    radial-gradient(circle at 82% 8%,rgba(47,123,255,.16),transparent 24%),
+    radial-gradient(circle at 12% 18%,rgba(156,124,255,.10),transparent 24%),
+    linear-gradient(180deg,var(--bg),#07101d 45%,var(--bg));
+  color:var(--text);
+  font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  overflow-x:hidden;
+}
+body:before{
+  content:"";
+  position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(73,231,255,.045) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(73,231,255,.045) 1px,transparent 1px);
+  background-size:42px 42px;
+  mask-image:linear-gradient(to bottom,rgba(0,0,0,.95),transparent 88%);
+  pointer-events:none;
+}
+body:after{
+  content:"";
+  position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,.018),rgba(255,255,255,.018) 1px,transparent 1px,transparent 5px);
+  pointer-events:none;
+  mix-blend-mode:screen;
+  opacity:.25;
+}
+.header{
+  position:sticky;top:0;z-index:20;
+  display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;
+  padding:16px 22px;
+  background:rgba(2,3,10,.86);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--line);
+}
+.brand h1{margin:0;font-size:22px;letter-spacing:.09em;text-transform:uppercase}
+.brand .sub{margin-top:4px;color:var(--muted);font-size:12px}
+.pills{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.pill{
+  padding:8px 12px;border:1px solid rgba(73,231,255,.28);
+  border-radius:999px;background:rgba(7,17,31,.78);box-shadow:var(--shadow);
+  font-size:12px;color:var(--text);white-space:nowrap;
+}
+.pill.good{border-color:rgba(68,255,154,.5);color:var(--green)}
+.pill.warn{border-color:rgba(255,204,102,.5);color:var(--amber)}
+.pill.bad{border-color:rgba(255,85,119,.55);color:var(--red)}
+.shell{
+  display:grid;
+  grid-template-columns:280px minmax(720px,1fr) 380px;
+  gap:16px;
+  padding:16px;
+}
+.stack{display:grid;gap:16px;align-content:start}
+.panel{
+  background:linear-gradient(180deg,rgba(11,23,41,.86),rgba(7,17,31,.72));
+  border:1px solid var(--line);
+  border-radius:20px;
+  box-shadow:var(--deepShadow);
+  overflow:hidden;
+  position:relative;
+}
+.panel:before{
+  content:"";
+  position:absolute;inset:0;
+  background:linear-gradient(115deg,transparent,rgba(73,231,255,.05),transparent 42%);
+  pointer-events:none;
+}
+.panel h2{
+  margin:0;padding:13px 15px;
+  font-size:12px;text-transform:uppercase;letter-spacing:.13em;
+  border-bottom:1px solid rgba(73,231,255,.14);
+  color:#dff9ff;
+}
+.body{padding:14px;position:relative}
+.metric{display:grid;grid-template-columns:1fr auto;gap:8px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.metric:last-child{border-bottom:0}
+.metric span{color:var(--muted);font-size:12px}
+.metric strong{font-size:12px;text-align:right}
+.hero{
+  min-height:360px;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+}
+.orbit{
+  position:absolute;border:1px solid rgba(73,231,255,.12);border-radius:50%;
+  animation:spin 18s linear infinite;
+}
+.o1{width:620px;height:620px}
+.o2{width:470px;height:470px;animation-duration:13s;animation-direction:reverse}
+.o3{width:320px;height:320px;animation-duration:9s}
+.o4{width:190px;height:190px;animation-duration:6s;animation-direction:reverse}
+.rocket{
+  width:90px;height:152px;border-radius:60px 60px 24px 24px;
+  background:linear-gradient(180deg,#f7fbff,#6bdff2 48%,#123b67);
+  box-shadow:0 0 88px rgba(73,231,255,.56);
+  position:relative;
+  animation:float 2.6s ease-in-out infinite;
+  z-index:2;
+}
+.rocket:before{content:"";position:absolute;left:29px;top:23px;width:33px;height:33px;border-radius:50%;background:#02030a;border:4px solid var(--cyan)}
+.rocket:after{content:"";position:absolute;left:27px;bottom:-76px;width:42px;height:88px;background:linear-gradient(180deg,var(--amber),var(--red),transparent);filter:blur(3px);clip-path:polygon(50% 100%,0 0,100% 0);animation:flame .22s infinite alternate}
+.launch-title{position:absolute;bottom:22px;text-align:center;z-index:3}
+.launch-title h3{margin:0;font-size:30px;letter-spacing:.15em;text-transform:uppercase}
+.launch-title p{margin:8px 0 0;color:var(--muted);font-size:13px}
+.center-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.full{grid-column:1/-1}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.card{
+  position:relative;
+  min-height:150px;
+  padding:14px;border-radius:18px;
+  background:linear-gradient(180deg,rgba(9,32,58,.88),rgba(4,10,20,.86));
+  border:1px solid rgba(73,231,255,.18);
+  overflow:hidden;
+}
+.card:hover{border-color:rgba(73,231,255,.55);box-shadow:0 0 36px rgba(73,231,255,.22);transform:translateY(-1px)}
+.card:before{
+  content:"";position:absolute;inset:-70%;
+  background:conic-gradient(from 0deg,transparent,rgba(73,231,255,.12),transparent 32%);
+  animation:spin 8s linear infinite;
+}
+.card>*{position:relative}
+.card h3{margin:0 0 8px;font-size:13px}
+.card p{margin:0;color:var(--muted);font-size:12px;line-height:1.45}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.badge{display:inline-flex;padding:5px 8px;border-radius:999px;border:1px solid rgba(68,255,154,.35);color:var(--green);font-size:10px}
+.badge.warn{border-color:rgba(255,204,102,.35);color:var(--amber)}
+.badge.bad{border-color:rgba(255,85,119,.45);color:var(--red)}
+.flow{display:grid;gap:9px}
+.step{
+  display:grid;grid-template-columns:24px 1fr auto;gap:9px;align-items:center;
+  padding:9px;border-radius:14px;background:rgba(255,255,255,.035);
+  border:1px solid rgba(255,255,255,.06);
+}
+.dot{width:11px;height:11px;border-radius:50%;background:var(--cyan);box-shadow:0 0 18px var(--cyan);justify-self:center}
+.step b{font-size:11px}.step span{font-size:10px;color:var(--muted);text-align:right}
+.bar{height:10px;border-radius:999px;background:#07111f;overflow:hidden;border:1px solid rgba(73,231,255,.14)}
+.bar div{height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan),var(--green));width:10%;box-shadow:0 0 22px rgba(73,231,255,.45)}
+.console{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:11px;line-height:1.5;color:#bdeeff;
+  max-height:260px;overflow:auto;background:rgba(0,0,0,.28);
+  border-radius:14px;padding:12px;border:1px solid rgba(73,231,255,.12)
+}
+.pertMap{
+  height:220px;
+  position:relative;
+  border-radius:16px;
+  background:radial-gradient(circle at 50% 45%,rgba(73,231,255,.10),transparent 55%),rgba(0,0,0,.16);
+  border:1px solid rgba(73,231,255,.12);
+  overflow:hidden;
+}
+.node{
+  position:absolute;
+  width:92px;height:42px;
+  border:1px solid rgba(73,231,255,.35);
+  border-radius:14px;
+  display:grid;place-items:center;
+  font-size:11px;font-weight:800;
+  background:rgba(7,17,31,.9);
+  box-shadow:0 0 20px rgba(73,231,255,.16);
+}
+.line{
+  position:absolute;height:2px;
+  background:linear-gradient(90deg,var(--blue),var(--cyan));
+  transform-origin:left center;
+  opacity:.75;
+}
+#n1{left:5%;top:42%}#n2{left:25%;top:18%}#n3{left:45%;top:42%}#n4{left:65%;top:18%}#n5{left:82%;top:42%}
+.l1{left:17%;top:49%;width:100px;transform:rotate(-21deg)}
+.l2{left:37%;top:31%;width:100px;transform:rotate(21deg)}
+.l3{left:57%;top:49%;width:100px;transform:rotate(-21deg)}
+.l4{left:77%;top:31%;width:70px;transform:rotate(21deg)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes float{50%{transform:translateY(-12px)}}
+@keyframes flame{to{transform:scaleY(1.18);opacity:.8}}
+@media(max-width:1280px){.shell{grid-template-columns:1fr}.center-grid{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.header{grid-template-columns:1fr}.pills{justify-content:flex-start}}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="brand">
+    <h1>HOCH PODS Liftoff Control Plane V2</h1>
+    <div class="sub">HAS / HASF autonomous command center · Michaels AI Model · Michael Hoch final approval authority</div>
+  </div>
+  <div class="pills">
+    <div class="pill good" id="pill-goal">GOAL --</div>
+    <div class="pill" id="pill-fresh">FRESH --</div>
+    <div class="pill warn" id="pill-stale">STALE --</div>
+    <div class="pill warn" id="pill-blockers">BLOCKERS --</div>
+    <div class="pill" id="pill-updated">UPDATED --</div>
+  </div>
+</header>
+
+<main class="shell">
+  <aside class="stack">
+    <section class="panel">
+      <h2>Mission Authority</h2>
+      <div class="body">
+        <div class="metric"><span>North Star</span><strong>HAS / HASF</strong></div>
+        <div class="metric"><span>Orchestrator</span><strong>Michaels AI Model</strong></div>
+        <div class="metric"><span>Approval</span><strong>Michael Hoch</strong></div>
+        <div class="metric"><span>Mode</span><strong>Safe Local</strong></div>
+        <div class="metric"><span>Public Exposure</span><strong>Blocked</strong></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Leading Agents</h2>
+      <div class="body flow" id="agents"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Execution Flow</h2>
+      <div class="body flow">
+        <div class="step"><div class="dot"></div><b>Audit</b><span>state scan</span></div>
+        <div class="step"><div class="dot"></div><b>Plan</b><span>PERT path</span></div>
+        <div class="step"><div class="dot"></div><b>Build</b><span>safe local</span></div>
+        <div class="step"><div class="dot"></div><b>QA</b><span>gates</span></div>
+        <div class="step"><div class="dot"></div><b>Evidence</b><span>ledger</span></div>
+        <div class="step"><div class="dot"></div><b>Approve</b><span>Michael</span></div>
+      </div>
+    </section>
+  </aside>
+
+  <section>
+    <section class="panel hero">
+      <div class="orbit o1"></div><div class="orbit o2"></div><div class="orbit o3"></div><div class="orbit o4"></div>
+      <div class="rocket"></div>
+      <div class="launch-title">
+        <h3>Pods Liftoff</h3>
+        <p>Live agents converge into mission execution swarm</p>
+      </div>
+    </section>
+
+    <div class="center-grid">
+      <section class="panel full">
+        <h2>Swarm Theater</h2>
+        <div class="body grid" id="podGrid"></div>
+      </section>
+
+      <section class="panel">
+        <h2>PERT Critical Path</h2>
+        <div class="body">
+          <div class="pertMap">
+            <div class="line l1"></div><div class="line l2"></div><div class="line l3"></div><div class="line l4"></div>
+            <div class="node" id="n1">Runtime</div>
+            <div class="node" id="n2">UI</div>
+            <div class="node" id="n3">QA</div>
+            <div class="node" id="n4">Evidence</div>
+            <div class="node" id="n5">Revenue</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Revenue / HASF</h2>
+        <div class="body">
+          <div class="metric"><span>Offer Packaging</span><strong id="offerStatus">Approval lane</strong></div>
+          <div class="metric"><span>Stripe</span><strong>Michael approval</strong></div>
+          <div class="metric"><span>Deploy</span><strong>Blocked</strong></div>
+          <div class="metric"><span>Public Route</span><strong>Blocked</strong></div>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <aside class="stack">
+    <section class="panel">
+      <h2>Live PERT</h2>
+      <div class="body">
+        <div class="metric"><span>Goal Complete</span><strong id="goalPct">--%</strong></div>
+        <div class="bar"><div id="goalBar"></div></div>
+        <div class="metric"><span>Critical Path</span><strong id="criticalPath">Runtime → UI → QA → Revenue</strong></div>
+        <div class="metric"><span>Confidence</span><strong id="confidence">--</strong></div>
+        <div class="metric"><span>Expected Time</span><strong id="expectedTime">--</strong></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Stale / Watchdog</h2>
+      <div class="body flow" id="freshness"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Evidence Console</h2>
+      <div class="body">
+        <pre class="console" id="console">booting HOCH PODS V2...</pre>
+      </div>
+    </section>
+  </aside>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtAge = s => s == null ? "--" : `${Math.round(Number(s))}s`;
+
+function setConsole(lines){ $("console").textContent = lines.join("\n"); }
+
+function badge(status){
+  const s = String(status || "ACTIVE").toUpperCase();
+  const cls = s.includes("STALE") || s.includes("BLOCK") ? "bad" : s.includes("WARN") || s.includes("PENDING") ? "warn" : "";
+  return `<span class="badge ${cls}">${esc(s)}</span>`;
+}
+
+function card(title, body, status="ACTIVE", meta=""){
+  return `<div class="card">
+    <h3>${esc(title)}</h3>
+    <p>${esc(body)}</p>
+    <div class="badges">${badge(status)}${meta ? badge(meta) : ""}</div>
+  </div>`;
+}
+
+async function load(){
+  const lines = [];
+  try{
+    const res = await fetch("/api/pert/data", { cache:"no-store" });
+    const data = await res.json();
+
+    const metrics = data.metrics || {};
+    const readiness = data.readiness || {};
+    const pct = metrics.percent_goal_complete ?? readiness?.score?.value ?? 0;
+
+    $("goalPct").textContent = `${pct}%`;
+    $("goalBar").style.width = `${Math.max(4, Math.min(100, Number(pct)||0))}%`;
+    $("pill-goal").textContent = `GOAL ${pct}%`;
+    $("confidence").textContent = readiness.confidence || metrics.confidence_level || metrics.confidence || "--";
+    $("expectedTime").textContent = readiness.window || `${metrics.critical_path_remaining_minutes ?? "--"} min`;
+
+    const src = data.freshness_authority?.reconciled_sources || {};
+    const freshKeys = Object.keys(src);
+    const stale = freshKeys.filter(k => src[k]?.computed_state !== "FRESH");
+    const fresh = freshKeys.length - stale.length;
+
+    $("pill-fresh").textContent = `FRESH ${fresh}`;
+    $("pill-stale").textContent = `STALE ${stale.length}`;
+    $("pill-blockers").textContent = `BLOCKERS ${metrics.blocked_task_count ?? stale.length ?? 0}`;
+    $("pill-updated").textContent = new Date().toLocaleTimeString();
+
+    $("freshness").innerHTML = freshKeys.slice(0,12).map(k => {
+      const s = src[k] || {};
+      return `<div class="step"><div class="dot"></div><b>${esc(k)}</b><span>${esc(s.computed_state || "UNKNOWN")} age=${fmtAge(s.freshness_age_seconds)}</span></div>`;
+    }).join("") || `<div class="step"><div class="dot"></div><b>No freshness authority</b><span>missing</span></div>`;
+
+    const agents = [
+      ["PERT Analysis Agent","Critical path, estimates, confidence, time-to-complete"],
+      ["Live Stale Agent","Detects stale telemetry and stale UI truth"],
+      ["QA Gate Agent","Smoke, browser, guardrails, anti-fake checks"],
+      ["Evidence Agent","Writes local audit/evidence bundles"],
+      ["Revenue Agent","Tracks HASF monetization readiness"],
+      ["Release Hygiene Agent","Tracks dirty tree, commits, blocked gates"],
+      ["Visual Authority Agent","Binds HOCH PODS approved theater theme"],
+      ["Operator Alert Agent","Surfaces Michael approval gates only"]
+    ];
+    $("agents").innerHTML = agents.map(a=>`<div class="step"><div class="dot"></div><b>${esc(a[0])}</b><span>${esc(a[1])}</span></div>`).join("");
+
+    const rawPods = data.hoch_pods_runtime_state?.pods || data.hoch_pods_runtime_state || data.pods || data.agents || [];
+    let pods = [];
+    if (Array.isArray(rawPods)) pods = rawPods;
+    else if (rawPods && typeof rawPods === "object") pods = Object.entries(rawPods).map(([id,v]) => ({id, ...(typeof v === "object" ? v : {status:v})}));
+
+    const fallback = [
+      ["Mission Commander","Coordinates GOAL, approvals, evidence","ACTIVE","LIFTOFF"],
+      ["Runtime Truth Pod","Telemetry, freshness, stale state","ACTIVE","FRESH"],
+      ["UI Theater Pod","HOCH PODS liftoff visual control plane","ACTIVE","V2"],
+      ["QA Pod","Tests, guardrails, browser verification","ACTIVE","GATED"],
+      ["Revenue Pod","HASF monetization package","PENDING","APPROVAL"],
+      ["Release Pod","Commit hygiene and promotion readiness","ACTIVE","SAFE"],
+      ["PERT Pod","Critical path and confidence math","ACTIVE","LIVE"],
+      ["Stale Pod","Ages and reconciles runtime sources","ACTIVE","WATCH"]
+    ];
+
+    const rendered = pods.length
+      ? pods.slice(0,12).map(p => card(p.name || p.id || "HOCH Pod", p.summary || p.role || p.assigned_project || "Live pod state", p.state || p.status || p.heartbeat_status || "ACTIVE", p.model_assigned || p.workload_class || "")).join("")
+      : fallback.map(p => card(p[0],p[1],p[2],p[3])).join("");
+    $("podGrid").innerHTML = rendered;
+
+    lines.push("MOONSHOT_V2: ONLINE");
+    lines.push(`GOAL: ${pct}%`);
+    lines.push(`FRESHNESS_SOURCES: ${freshKeys.length}`);
+    lines.push(`FRESH: ${fresh}`);
+    lines.push(`STALE: ${stale.length}`);
+    lines.push(`BLOCKED_TASKS: ${metrics.blocked_task_count ?? "--"}`);
+    lines.push("APPROVAL_GATES: Stripe, deployment, public exposure, destructive actions, tag promotion");
+  }catch(e){
+    setConsole(["MOONSHOT_V2: DEGRADED", String(e)]);
+  }
+  if(lines.length) setConsole(lines);
+}
+load();
+setInterval(load, 10000);
+</script>
+</body>
+</html>

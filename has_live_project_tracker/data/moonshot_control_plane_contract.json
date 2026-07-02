@@ -1,0 +1,39 @@
+{
+  "generated_at": "2026-07-02T19:17:37Z",
+  "north_star": {
+    "HAS": "Live autonomous command/control layer for agents, QA gates, runtime truth, approvals, telemetry, evidence, stale detection, PERT, and operator alerts.",
+    "HASF": "Revenue-producing Hoch Application Software Factory that converts projects into QA-gated, packaged, monetizable software products.",
+    "michael_role": "Founder / Final Approval Authority",
+    "orchestrator": "Michaels AI Model"
+  },
+  "ui_goal": {
+    "name": "HOCH PODS Liftoff Control Plane",
+    "route_target": "/ui-moonshot",
+    "theme": "dark xAI SpaceX HOCH PODS liftoff theater",
+    "requirements": [
+      "live PERT critical path",
+      "stale agent",
+      "goal runner status",
+      "pod runtime state",
+      "pod schedule",
+      "agent pulse matrix",
+      "revenue readiness",
+      "evidence ledger",
+      "guardrails",
+      "hoverable pod cards",
+      "launch/liftoff animation",
+      "dynamic flow lanes",
+      "operator approval queue"
+    ]
+  },
+  "safe_mode": {
+    "blocked_without_michael_approval": [
+      "STRIPE_LIVE_CONFIG",
+      "PRODUCTION_DEPLOYMENT",
+      "PUBLIC_EXPOSURE",
+      "DESTRUCTIVE_ACTIONS",
+      "RELEASE_TAG_PROMOTION",
+      "EXTERNAL_NETWORK_WRITES"
+    ]
+  }
+}

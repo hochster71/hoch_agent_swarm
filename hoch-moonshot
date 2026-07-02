@@ -1,0 +1,599 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd /Users/michaelhoch/hoch_agent_swarm
+
+MODE="${1:-all}"
+RUN_ID="$(date -u +%Y%m%dT%H%M%SZ)"
+EVIDENCE_DIR="docs/evidence/moonshot"
+UI_DIR="has_live_project_tracker/ui"
+LOG_DIR="logs/hoch_moonshot"
+
+mkdir -p "$EVIDENCE_DIR" "$UI_DIR" "$LOG_DIR"
+
+say() {
+  echo
+  echo "================================================================"
+  echo "$1"
+  echo "================================================================"
+}
+
+write_json_contract() {
+  say "WRITING MOONSHOT DATA CONTRACT"
+
+  cat > has_live_project_tracker/data/moonshot_control_plane_contract.json <<JSON
+{
+  "generated_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "north_star": {
+    "HAS": "Live autonomous command/control layer for agents, QA gates, runtime truth, approvals, telemetry, evidence, stale detection, PERT, and operator alerts.",
+    "HASF": "Revenue-producing Hoch Application Software Factory that converts projects into QA-gated, packaged, monetizable software products.",
+    "michael_role": "Founder / Final Approval Authority",
+    "orchestrator": "Michaels AI Model"
+  },
+  "ui_goal": {
+    "name": "HOCH PODS Liftoff Control Plane",
+    "route_target": "/ui-moonshot",
+    "theme": "dark xAI SpaceX HOCH PODS liftoff theater",
+    "requirements": [
+      "live PERT critical path",
+      "stale agent",
+      "goal runner status",
+      "pod runtime state",
+      "pod schedule",
+      "agent pulse matrix",
+      "revenue readiness",
+      "evidence ledger",
+      "guardrails",
+      "hoverable pod cards",
+      "launch/liftoff animation",
+      "dynamic flow lanes",
+      "operator approval queue"
+    ]
+  },
+  "safe_mode": {
+    "blocked_without_michael_approval": [
+      "STRIPE_LIVE_CONFIG",
+      "PRODUCTION_DEPLOYMENT",
+      "PUBLIC_EXPOSURE",
+      "DESTRUCTIVE_ACTIONS",
+      "RELEASE_TAG_PROMOTION",
+      "EXTERNAL_NETWORK_WRITES"
+    ]
+  }
+}
+JSON
+
+  echo "WROTE: has_live_project_tracker/data/moonshot_control_plane_contract.json"
+}
+
+freeze_writers() {
+  say "FREEZING VOLATILE WRITERS"
+
+  if [ -f logs/has_goal_runner_daemon.pid ]; then
+    kill "$(cat logs/has_goal_runner_daemon.pid)" 2>/dev/null || true
+  fi
+
+  if [ -f logs/has_telemetry_watchdog.pid ]; then
+    kill "$(cat logs/has_telemetry_watchdog.pid)" 2>/dev/null || true
+  fi
+
+  pkill -f "has_goal_runner_daemon.sh" 2>/dev/null || true
+  pkill -f "has_goal_e2e_runner.sh" 2>/dev/null || true
+  pkill -f "has_telemetry_watchdog.sh" 2>/dev/null || true
+
+  ps aux | grep -E "has_goal_runner_daemon|has_goal_e2e_runner|has_telemetry_watchdog" | grep -v grep || true
+}
+
+audit_state() {
+  say "AUDIT CURRENT STATE"
+
+  OUT="$EVIDENCE_DIR/moonshot_audit_${RUN_ID}.md"
+
+  {
+    echo "# HOCH PODS Moonshot Audit"
+    echo
+    echo "- Timestamp UTC: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    echo "- Branch: $(git branch --show-current)"
+    echo "- Commit: $(git rev-parse --short HEAD)"
+    echo
+    echo "## North Star"
+    echo
+    echo "HAS = live autonomous command/control layer for agents, QA gates, runtime truth, approvals, telemetry, evidence, stale detection, PERT, and operator alerts."
+    echo
+    echo "HASF = revenue-producing Hoch Application Software Factory."
+    echo
+    echo "## Recent Commits"
+    git log --oneline -8
+    echo
+    echo "## Git Status"
+    git status --short
+    echo
+    echo "## Current Blocker Triage"
+    if [ -x scripts/has_goal_blocker_triage.sh ]; then
+      bash scripts/has_goal_blocker_triage.sh || true
+    else
+      echo "MISSING: scripts/has_goal_blocker_triage.sh"
+    fi
+    echo
+    echo "## Live API Snapshot"
+    curl -sS http://127.0.0.1:8765/api/pert/data | python3 -m json.tool | head -240 || true
+  } | tee "$OUT"
+
+  echo
+  echo "WROTE: $OUT"
+}
+
+build_ui() {
+  say "BUILDING HOCH PODS LIFTOFF UI ARTIFACT"
+
+  cat > "$UI_DIR/hoch_pods_liftoff.html" <<'HTML'
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>HOCH PODS Liftoff Control Plane</title>
+<style>
+:root{
+  --bg:#02030a;
+  --panel:#07111f;
+  --panel2:#0b1729;
+  --line:#1e406a;
+  --cyan:#49e7ff;
+  --blue:#2f7bff;
+  --green:#44ff9a;
+  --amber:#ffcc66;
+  --red:#ff5577;
+  --text:#e8f4ff;
+  --muted:#8aa3bd;
+  --shadow:0 0 30px rgba(73,231,255,.18);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 50% -20%,rgba(73,231,255,.22),transparent 30%),
+    radial-gradient(circle at 80% 10%,rgba(47,123,255,.14),transparent 26%),
+    linear-gradient(180deg,#02030a,#050816 42%,#02030a);
+  color:var(--text);
+  font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  overflow-x:hidden;
+}
+body:before{
+  content:"";
+  position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(73,231,255,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(73,231,255,.05) 1px,transparent 1px);
+  background-size:44px 44px;
+  mask-image:linear-gradient(to bottom,rgba(0,0,0,.9),transparent 88%);
+  pointer-events:none;
+}
+.header{
+  position:sticky;top:0;z-index:10;
+  display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;
+  padding:18px 24px;
+  background:rgba(2,3,10,.84);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(73,231,255,.2);
+}
+.brand h1{margin:0;font-size:24px;letter-spacing:.08em;text-transform:uppercase}
+.brand .sub{margin-top:4px;color:var(--muted);font-size:13px}
+.pills{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.pill{
+  padding:8px 12px;border:1px solid rgba(73,231,255,.28);
+  border-radius:999px;background:rgba(7,17,31,.8);box-shadow:var(--shadow);
+  font-size:12px;color:var(--text);
+}
+.pill.good{border-color:rgba(68,255,154,.5);color:var(--green)}
+.pill.warn{border-color:rgba(255,204,102,.5);color:var(--amber)}
+.shell{
+  display:grid;
+  grid-template-columns:280px minmax(620px,1fr) 360px;
+  gap:18px;
+  padding:18px;
+}
+.panel{
+  background:linear-gradient(180deg,rgba(11,23,41,.9),rgba(7,17,31,.72));
+  border:1px solid rgba(73,231,255,.18);
+  border-radius:22px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.panel h2{
+  margin:0;padding:14px 16px;
+  font-size:13px;text-transform:uppercase;letter-spacing:.11em;
+  border-bottom:1px solid rgba(73,231,255,.14);
+  color:#dff9ff;
+}
+.panel .body{padding:14px}
+.metric{display:grid;grid-template-columns:1fr auto;gap:8px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.metric:last-child{border-bottom:0}
+.metric span{color:var(--muted);font-size:12px}
+.metric strong{font-size:13px}
+.hero{
+  position:relative;
+  min-height:370px;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+}
+.orbit{
+  position:absolute;border:1px solid rgba(73,231,255,.13);border-radius:50%;
+  animation:spin 18s linear infinite;
+}
+.o1{width:520px;height:520px}
+.o2{width:390px;height:390px;animation-duration:12s;animation-direction:reverse}
+.o3{width:260px;height:260px;animation-duration:8s}
+.rocket{
+  width:96px;height:158px;border-radius:60px 60px 22px 22px;
+  background:linear-gradient(180deg,#f7fbff,#6bdff2 50%,#123b67);
+  box-shadow:0 0 80px rgba(73,231,255,.55);
+  position:relative;
+  animation:float 2.6s ease-in-out infinite;
+}
+.rocket:before{content:"";position:absolute;left:31px;top:24px;width:34px;height:34px;border-radius:50%;background:#02030a;border:4px solid var(--cyan)}
+.rocket:after{content:"";position:absolute;left:28px;bottom:-72px;width:42px;height:82px;background:linear-gradient(180deg,var(--amber),var(--red),transparent);filter:blur(3px);clip-path:polygon(50% 100%,0 0,100% 0);animation:flame .22s infinite alternate}
+.launch-title{position:absolute;bottom:24px;text-align:center}
+.launch-title h3{margin:0;font-size:30px;letter-spacing:.13em;text-transform:uppercase}
+.launch-title p{margin:8px 0 0;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.card{
+  position:relative;
+  min-height:146px;
+  padding:14px;border-radius:18px;
+  background:linear-gradient(180deg,rgba(9,32,58,.9),rgba(4,10,20,.86));
+  border:1px solid rgba(73,231,255,.18);
+  overflow:hidden;
+}
+.card:before{
+  content:"";position:absolute;inset:-40%;
+  background:conic-gradient(from 0deg,transparent,rgba(73,231,255,.12),transparent 32%);
+  animation:spin 8s linear infinite;
+}
+.card>*{position:relative}
+.card h3{margin:0 0 8px;font-size:14px}
+.card p{margin:0;color:var(--muted);font-size:12px;line-height:1.45}
+.badge{display:inline-flex;margin-top:10px;padding:6px 8px;border-radius:999px;border:1px solid rgba(68,255,154,.35);color:var(--green);font-size:11px}
+.flow{
+  display:grid;gap:10px;
+}
+.step{
+  display:grid;grid-template-columns:26px 1fr auto;gap:10px;align-items:center;
+  padding:10px;border-radius:14px;background:rgba(255,255,255,.035);
+  border:1px solid rgba(255,255,255,.06);
+}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--cyan);box-shadow:0 0 18px var(--cyan);justify-self:center}
+.step b{font-size:12px}.step span{font-size:11px;color:var(--muted)}
+.timeline{display:grid;gap:8px}
+.bar{height:10px;border-radius:999px;background:#07111f;overflow:hidden;border:1px solid rgba(73,231,255,.14)}
+.bar div{height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan),var(--green));width:10%;box-shadow:0 0 22px rgba(73,231,255,.45)}
+.console{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:11px;line-height:1.5;color:#bdeeff;
+  max-height:280px;overflow:auto;background:rgba(0,0,0,.28);
+  border-radius:14px;padding:12px;border:1px solid rgba(73,231,255,.12)
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes float{50%{transform:translateY(-12px)}}
+@keyframes flame{to{transform:scaleY(1.16);opacity:.8}}
+@media(max-width:1200px){.shell{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:720px){.grid{grid-template-columns:1fr}.header{grid-template-columns:1fr}.pills{justify-content:flex-start}}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="brand">
+    <h1>HOCH PODS Liftoff Control Plane</h1>
+    <div class="sub">HAS / HASF autonomous command center · Michaels AI Model · Michael Hoch final approval authority</div>
+  </div>
+  <div class="pills">
+    <div class="pill good" id="pill-goal">GOAL --</div>
+    <div class="pill good" id="pill-telemetry">TELEMETRY --</div>
+    <div class="pill warn" id="pill-blockers">BLOCKERS --</div>
+    <div class="pill" id="pill-updated">UPDATED --</div>
+  </div>
+</header>
+
+<main class="shell">
+  <section class="panel">
+    <h2>Mission Authority</h2>
+    <div class="body">
+      <div class="metric"><span>North Star</span><strong>HAS / HASF</strong></div>
+      <div class="metric"><span>Orchestrator</span><strong>Michaels AI Model</strong></div>
+      <div class="metric"><span>Approval</span><strong>Michael Hoch</strong></div>
+      <div class="metric"><span>Mode</span><strong>Safe Local</strong></div>
+      <div class="metric"><span>Public Exposure</span><strong id="publicExposure">Blocked</strong></div>
+    </div>
+  </section>
+
+  <section class="panel hero">
+    <div class="orbit o1"></div>
+    <div class="orbit o2"></div>
+    <div class="orbit o3"></div>
+    <div class="rocket"></div>
+    <div class="launch-title">
+      <h3>Pods Liftoff</h3>
+      <p>Live agents converge into mission execution swarm</p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Live PERT</h2>
+    <div class="body">
+      <div class="metric"><span>Goal Complete</span><strong id="goalPct">--%</strong></div>
+      <div class="bar"><div id="goalBar"></div></div>
+      <div class="metric"><span>Critical Path</span><strong id="criticalPath">Runtime → UI → QA → Revenue</strong></div>
+      <div class="metric"><span>Confidence</span><strong id="confidence">--</strong></div>
+      <div class="metric"><span>Expected Time</span><strong id="expectedTime">--</strong></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Leading Agents</h2>
+    <div class="body flow" id="agents"></div>
+  </section>
+
+  <section class="panel">
+    <h2>Swarm Theater</h2>
+    <div class="body grid" id="podGrid"></div>
+  </section>
+
+  <section class="panel">
+    <h2>Stale / Watchdog</h2>
+    <div class="body">
+      <div class="timeline" id="freshness"></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Execution Flow</h2>
+    <div class="body flow">
+      <div class="step"><div class="dot"></div><b>Audit</b><span>state scan</span></div>
+      <div class="step"><div class="dot"></div><b>Plan</b><span>PERT / critical path</span></div>
+      <div class="step"><div class="dot"></div><b>Patch</b><span>safe local changes</span></div>
+      <div class="step"><div class="dot"></div><b>QA</b><span>browser + guardrails</span></div>
+      <div class="step"><div class="dot"></div><b>Evidence</b><span>commit-ready report</span></div>
+      <div class="step"><div class="dot"></div><b>Approval</b><span>Michael gate</span></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Revenue / HASF</h2>
+    <div class="body">
+      <div class="metric"><span>Offer Packaging</span><strong id="offerStatus">Needs gate</strong></div>
+      <div class="metric"><span>Stripe</span><strong>Approval required</strong></div>
+      <div class="metric"><span>Deploy</span><strong>Approval required</strong></div>
+      <div class="metric"><span>Public Route</span><strong>Blocked until approved</strong></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Evidence Console</h2>
+    <div class="body">
+      <pre class="console" id="console">booting HOCH PODS control plane...</pre>
+    </div>
+  </section>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const fmtAge = s => s == null ? "--" : `${Math.round(Number(s))}s`;
+
+function setConsole(lines){
+  $("console").textContent = lines.join("\n");
+}
+
+function card(title, body, status="ACTIVE"){
+  return `<div class="card"><h3>${title}</h3><p>${body}</p><span class="badge">${status}</span></div>`;
+}
+
+async function load(){
+  const lines = [];
+  try{
+    const res = await fetch("/api/pert/data", { cache:"no-store" });
+    const data = await res.json();
+    const metrics = data.metrics || {};
+    const pct = metrics.percent_goal_complete ?? metrics.goal_completion ?? 0;
+    $("goalPct").textContent = `${pct}%`;
+    $("goalBar").style.width = `${Math.max(4, Math.min(100, Number(pct)||0))}%`;
+    $("pill-goal").textContent = `GOAL ${pct}%`;
+    $("confidence").textContent = metrics.confidence_level || metrics.confidence || "--";
+    $("expectedTime").textContent = metrics.expected_time || metrics.projected_completion || "--";
+
+    const src = data.freshness_authority?.reconciled_sources || {};
+    const freshKeys = Object.keys(src);
+    const bad = freshKeys.filter(k => src[k]?.computed_state !== "FRESH");
+    $("pill-telemetry").textContent = bad.length ? `STALE ${bad.length}` : "TELEMETRY FRESH";
+    $("pill-blockers").textContent = bad.length ? `BLOCKERS ${bad.length}` : "BLOCKERS 0";
+    $("pill-updated").textContent = new Date().toLocaleTimeString();
+
+    $("freshness").innerHTML = freshKeys.slice(0,10).map(k => {
+      const s = src[k] || {};
+      const state = s.computed_state || "UNKNOWN";
+      return `<div class="step"><div class="dot"></div><b>${k}</b><span>${state} age=${fmtAge(s.freshness_age_seconds)}</span></div>`;
+    }).join("") || `<div class="step"><div class="dot"></div><b>No freshness authority</b><span>missing data</span></div>`;
+
+    const agents = [
+      ["PERT Analysis Agent","Critical path, estimates, confidence, time-to-complete"],
+      ["Live Stale Agent","Detects stale telemetry and stale UI truth"],
+      ["QA Gate Agent","Runs smoke, browser, guardrails, anti-fake checks"],
+      ["Evidence Agent","Writes local audit/evidence bundles"],
+      ["Revenue Agent","Tracks HASF monetization readiness"],
+      ["Release Hygiene Agent","Tracks dirty tree, commits, blocked gates"]
+    ];
+    $("agents").innerHTML = agents.map((a,i)=>`<div class="step"><div class="dot"></div><b>${a[0]}</b><span>${a[1]}</span></div>`).join("");
+
+    const pods = data.hoch_pods_runtime_state?.pods || data.pods || data.agents || [];
+    const fallback = [
+      ["Mission Commander","Coordinates GOAL, approvals, evidence"],
+      ["Runtime Truth Pod","Telemetry, freshness, stale state"],
+      ["UI Theater Pod","HOCH PODS liftoff visual control plane"],
+      ["QA Pod","Tests, guardrails, browser verification"],
+      ["Revenue Pod","HASF monetization package"],
+      ["Release Pod","Commit hygiene and promotion readiness"]
+    ];
+    const rendered = Array.isArray(pods) && pods.length
+      ? pods.slice(0,12).map(p => card(p.name || p.id || "HOCH Pod", p.summary || p.role || p.status || "Live pod state", p.state || p.status || "ACTIVE")).join("")
+      : fallback.map(p => card(p[0],p[1],"SPIN-UP")).join("");
+    $("podGrid").innerHTML = rendered;
+
+    lines.push("MOONSHOT_UI: ONLINE");
+    lines.push(`GOAL: ${pct}%`);
+    lines.push(`FRESHNESS_SOURCES: ${freshKeys.length}`);
+    lines.push(`STALE_OR_BAD: ${bad.length}`);
+    lines.push("APPROVAL_GATES: Stripe, deployment, public exposure, destructive actions, tag promotion");
+  }catch(e){
+    setConsole(["MOONSHOT_UI: DEGRADED", String(e)]);
+  }
+  if(lines.length) setConsole(lines);
+}
+load();
+setInterval(load, 10000);
+</script>
+</body>
+</html>
+HTML
+
+  echo "WROTE: $UI_DIR/hoch_pods_liftoff.html"
+}
+
+patch_route() {
+  say "PATCHING /ui-moonshot ROUTE IF SAFE"
+
+  PY="backend/pert_server.py"
+  if [ ! -f "$PY" ]; then
+    echo "SKIP: $PY missing"
+    return 0
+  fi
+
+  if grep -q '"/ui-moonshot"' "$PY"; then
+    echo "SKIP: /ui-moonshot already present"
+    return 0
+  fi
+
+  cp "$PY" "$PY.moonshot-backup-${RUN_ID}"
+
+  cat >> "$PY" <<'PYROUTE'
+
+# HOCH PODS Moonshot Liftoff Control Plane
+@app.get("/ui-moonshot")
+def hoch_pods_moonshot_ui():
+    from fastapi.responses import HTMLResponse
+    from pathlib import Path
+    ui_path = Path("has_live_project_tracker/ui/hoch_pods_liftoff.html")
+    if not ui_path.exists():
+        return HTMLResponse("<h1>HOCH PODS Moonshot UI missing</h1>", status_code=404)
+    return HTMLResponse(ui_path.read_text())
+PYROUTE
+
+  echo "PATCHED: $PY with /ui-moonshot route"
+}
+
+verify() {
+  say "VERIFY UI V2.1 RELEASE-HYGIENE MODE"
+  WATCHDOG_REQUIRED=0 bash scripts/verify_ui_v21.sh
+
+  say "VERIFY UI V2.1 BROWSER"
+  PERT_BASE_URL=http://127.0.0.1:8765 node scripts/verify_ui_v21_browser.mjs
+
+  say "VERIFY GUARDRAILS"
+  bash scripts/secure_build_guardrail_check.sh
+
+  say "VERIFY MOONSHOT ARTIFACT"
+  test -f "$UI_DIR/hoch_pods_liftoff.html"
+  grep -q "HOCH PODS Liftoff Control Plane" "$UI_DIR/hoch_pods_liftoff.html"
+  grep -q "/api/pert/data" "$UI_DIR/hoch_pods_liftoff.html"
+  echo "MOONSHOT_ARTIFACT: PASS"
+}
+
+evidence() {
+  say "WRITING MOONSHOT EVIDENCE"
+
+  OUT="$EVIDENCE_DIR/moonshot_readiness_${RUN_ID}.md"
+
+  {
+    echo "# HOCH PODS Moonshot Readiness"
+    echo
+    echo "- Timestamp UTC: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    echo "- Branch: $(git branch --show-current)"
+    echo "- Commit: $(git rev-parse --short HEAD)"
+    echo
+    echo "## Result"
+    echo
+    echo "Created HOCH PODS Liftoff Control Plane artifact and attempted safe /ui-moonshot route integration."
+    echo
+    echo "## Files"
+    echo
+    echo "- has_live_project_tracker/ui/hoch_pods_liftoff.html"
+    echo "- has_live_project_tracker/data/moonshot_control_plane_contract.json"
+    echo
+    echo "## Verification"
+    echo
+    echo "- UI V2.1 smoke/browser gate should pass."
+    echo "- Moonshot UI artifact fetches live /api/pert/data."
+    echo "- Public exposure remains blocked."
+    echo
+    echo "## Remaining Work"
+    echo
+    echo "1. Restart FastAPI server if /ui-moonshot route is not active yet."
+    echo "2. Add browser test for /ui-moonshot."
+    echo "3. Bind approved visual authority assets more tightly."
+    echo "4. Add dedicated PERT/stale/agent data endpoints if current /api/pert/data lacks fields."
+    echo "5. Commit as a separate UI moonshot slice after review."
+  } | tee "$OUT"
+
+  echo
+  echo "WROTE: $OUT"
+}
+
+run_once() {
+  say "RUNNING SAFE GOAL CYCLE"
+  RUN_LEGACY_RELEASE_GATES=0 RUN_FULL_LEGACY_PLAYWRIGHT=0 bash scripts/has_goal_e2e_runner.sh
+}
+
+start_daemon() {
+  say "STARTING GOAL DAEMON"
+  nohup scripts/has_goal_runner_daemon.sh > logs/has_goal_runner_daemon.nohup.log 2>&1 &
+  echo $! > logs/has_goal_runner_daemon.pid
+  ps -p "$(cat logs/has_goal_runner_daemon.pid)" -o pid,ppid,command
+}
+
+case "$MODE" in
+  audit)
+    audit_state
+    ;;
+  build-ui)
+    write_json_contract
+    build_ui
+    patch_route
+    ;;
+  verify)
+    verify
+    ;;
+  evidence)
+    evidence
+    ;;
+  run)
+    run_once
+    ;;
+  daemon)
+    start_daemon
+    ;;
+  freeze)
+    freeze_writers
+    ;;
+  all)
+    freeze_writers
+    write_json_contract
+    audit_state
+    build_ui
+    patch_route
+    verify
+    evidence
+    ;;
+  *)
+    echo "Usage: ./hoch-moonshot [audit|build-ui|verify|evidence|run|daemon|freeze|all]"
+    exit 2
+    ;;
+esac
