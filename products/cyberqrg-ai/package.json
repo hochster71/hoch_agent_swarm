@@ -1,0 +1,17 @@
+{
+  "name": "cyberqrg-ai",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Offline-first QR code security scanner and validator",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "jest": "^29.0.0",
+    "ts-jest": "^29.0.0",
+    "@types/jest": "^29.0.0"
+  }
+}

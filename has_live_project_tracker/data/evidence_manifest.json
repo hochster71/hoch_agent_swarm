@@ -12952,5 +12952,22 @@
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
     "entry_hash": "e8cf85d80a606eb943c3a434b60a581f154d075f59ddf8761b5680d456de7b98"
+  },
+  {
+    "entry_id": "entry-0763",
+    "timestamp": "2026-07-03T13:45:06.192596Z",
+    "run_id": "20260702T222129Z-24-7-autonomy-reset",
+    "task_id": "task-unspecified",
+    "agent_id": "has_system",
+    "model_backend": "none",
+    "adapter_id": "none",
+    "incident_class": "none",
+    "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/product-002-r2-sprint-2-local-scaffold-proof.md",
+    "evidence_sha256": "f33616c85fbe35e91e52e54f54896396b8ad192ff88364842451343ef5712708",
+    "previous_entry_hash": "e8cf85d80a606eb943c3a434b60a581f154d075f59ddf8761b5680d456de7b98",
+    "signature_status": "unsigned",
+    "founder_approval_required": false,
+    "created_by": "HELM_manifest_daemon",
+    "entry_hash": "9a16b21861ab2de5b1cf04a86c2f3fc914821840ac2deb8154cbaf25743f7961"
   }
 ]
