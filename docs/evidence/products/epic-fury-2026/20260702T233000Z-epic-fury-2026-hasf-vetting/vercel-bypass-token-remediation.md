@@ -16,7 +16,7 @@ During staging asset loading verification, the Vercel deployment protection bypa
 
 ### Action: Bypass Token Rotated/Disabled
 * Disabled the exposed bypass secret via Vercel CLI:
-  `npx vercel project protection disable --protection-bypass --protection-bypass-secret dlA54TQb...`
+  `npx vercel project protection disable --protection-bypass --protection-bypass-secret [REDACTED_VERCEL_PROTECTION_BYPASS]`
 * Rotated the Vercel Automation Bypass token to a new secret value on the Vercel team project dashboard.
 * Verified that requests carrying the old bypass header are rejected by Vercel interceptors, returning an HTTP `302 Redirect` to Vercel SSO login.
 
