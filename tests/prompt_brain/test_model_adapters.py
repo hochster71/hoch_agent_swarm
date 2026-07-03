@@ -41,3 +41,14 @@ def test_health_checks():
         res = a.health_check()
         assert isinstance(res, bool)
         assert a.last_health_check != ""
+
+def test_openai_adapter_real_call_fails_on_invalid_key(monkeypatch):
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-mock-invalid-key-for-testing")
+    adapter = OpenAIAdapter("gpt-4o-mini")
+    adapter.health_check()
+    assert adapter.is_available is True
+    
+    import pytest
+    with pytest.raises(RuntimeError) as excinfo:
+        adapter.execute("hello", {}, {})
+    assert "OpenAI call failed" in str(excinfo.value)

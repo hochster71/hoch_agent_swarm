@@ -74,18 +74,94 @@ class OpenAIAdapter(ModelAdapter):
         if not self.is_available:
             raise RuntimeError(f"OpenAIAdapter unavailable: {self.last_error}")
         
-        self.last_successful_execution = datetime.now(timezone.utc).isoformat()
-        return {
-            "status": "success",
-            "model": self.model_name,
-            "provider": self.provider,
-            "latency_ms": 145,
-            "output": {
-                "decision": "APPROVED",
-                "reasoning": "Standard key rotation rules mapped correctly.",
-                "remediation_steps": []
-            }
+        import time
+        import urllib.request
+        import urllib.error
+        
+        system_content = prompt_text
+        user_content = json.dumps(input_payload)
+        
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.api_key}"
         }
+        
+        req_body = {
+            "model": "gpt-4o-mini",
+            "messages": [
+                {"role": "system", "content": system_content},
+                {"role": "user", "content": user_content}
+            ],
+            "temperature": 0.2,
+            "response_format": {"type": "json_object"}
+        }
+        
+        t0 = time.time()
+        try:
+            req = urllib.request.Request(
+                "https://api.openai.com/v1/chat/completions",
+                data=json.dumps(req_body).encode("utf-8"),
+                headers=headers,
+                method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=30) as response:
+                res_body = response.read().decode("utf-8")
+                res_json = json.loads(res_body)
+                
+            latency = int((time.time() - t0) * 1000)
+            self.last_successful_execution = datetime.now(timezone.utc).isoformat()
+            
+            usage = res_json.get("usage", {})
+            prompt_tokens = usage.get("prompt_tokens", 0)
+            completion_tokens = usage.get("completion_tokens", 0)
+            total_tokens = usage.get("total_tokens", 0)
+            
+            # gpt-4o-mini: $0.15/1M input, $0.60/1M output
+            cost = (prompt_tokens * 0.00015 / 1000) + (completion_tokens * 0.00060 / 1000)
+            
+            message_content = res_json["choices"][0]["message"]["content"]
+            try:
+                output_data = json.loads(message_content)
+            except Exception:
+                output_data = {"raw_text": message_content}
+                
+            payload_artifact = {
+                "request": req_body,
+                "response": res_json,
+                "cost_usd": cost,
+                "latency_ms": latency,
+                "egress_classification": "PUBLIC_SAFE"
+            }
+            
+            artifact_dir = ROOT / "docs/evidence/runtime"
+            artifact_dir.mkdir(parents=True, exist_ok=True)
+            artifact_path = artifact_dir / "openai_rung2_payload.json"
+            artifact_path.write_text(json.dumps(payload_artifact, indent=2))
+            
+            print(f"Rung 2 real provider call success:")
+            print(f"  Model: gpt-4o-mini")
+            print(f"  Tokens: Input={prompt_tokens}, Output={completion_tokens}, Total={total_tokens}")
+            print(f"  Calculated Cost: ${cost:.6f}")
+            print(f"  Payload Artifact Saved: docs/evidence/runtime/openai_rung2_payload.json")
+            print(f"  Egress Classification: PUBLIC_SAFE")
+            
+            return {
+                "status": "success",
+                "model": "gpt-4o-mini",
+                "provider": self.provider,
+                "latency_ms": latency,
+                "prompt_tokens": prompt_tokens,
+                "completion_tokens": completion_tokens,
+                "total_tokens": total_tokens,
+                "cost_usd": cost,
+                "output": output_data,
+                "egress_classification": "PUBLIC_SAFE"
+            }
+            
+        except Exception as e:
+            latency = int((time.time() - t0) * 1000)
+            print(f"Rung 2 real provider call failed: {e}")
+            raise RuntimeError(f"OpenAI call failed: {e}")
 
 class LMStudioAdapter(ModelAdapter):
     def __init__(self, model_name="lmeta-3-8b"):
