@@ -5,9 +5,11 @@
       "evaluate_candidates",
       "generate_reports"
     ],
-    "model": "google/gemma-4-12b-qat",
-    "provider": "lmstudio",
+    "model": "qwen2.5:1.5b-instruct",
+    "provider": "ollama_native",
+    "fallback_model": "google/gemma-4-12b-qat",
+    "fallback_provider": "lmstudio",
     "status": "READY",
-    "last_heartbeat": "2026-07-03T05:48:46.113317Z"
+    "last_heartbeat": "2026-07-03T06:13:42.655912Z"
   }
 }

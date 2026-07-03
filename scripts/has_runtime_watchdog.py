@@ -12,11 +12,23 @@ HAS_STATE_FILE = DATA_DIR / "has_runtime_state.json"
 def get_current_utc():
     return datetime.utcnow().isoformat() + "Z"
 
-def check_model_endpoint():
+def check_lmstudio_endpoint():
     import http.client
     try:
         conn = http.client.HTTPConnection("localhost", 1234, timeout=2)
         conn.request("GET", "/v1/models")
+        res = conn.getresponse()
+        if res.status == 200:
+            return "ONLINE"
+    except:
+        pass
+    return "DEGRADED"
+
+def check_ollama_endpoint():
+    import http.client
+    try:
+        conn = http.client.HTTPConnection("localhost", 11434, timeout=2)
+        conn.request("GET", "/api/tags")
         res = conn.getresponse()
         if res.status == 200:
             return "ONLINE"
@@ -48,7 +60,8 @@ def main():
             }
             
             # Model endpoint truth check
-            model_status = check_model_endpoint()
+            lmstudio_status = check_lmstudio_endpoint()
+            ollama_status = check_ollama_endpoint()
             
             # Update adapter registry
             if adapter_file.exists():
@@ -57,11 +70,16 @@ def main():
                         adapters = json.load(f)
                     except:
                         adapters = {}
+                
                 if "lmstudio" in adapters:
-                    adapters["lmstudio"]["status"] = model_status
+                    adapters["lmstudio"]["status"] = lmstudio_status
                     adapters["lmstudio"]["last_checked"] = get_current_utc()
-                    with open(adapter_file, "w") as f:
-                        json.dump(adapters, f, indent=2)
+                if "ollama_native" in adapters:
+                    adapters["ollama_native"]["status"] = ollama_status
+                    adapters["ollama_native"]["last_checked"] = get_current_utc()
+                
+                with open(adapter_file, "w") as f:
+                    json.dump(adapters, f, indent=2)
             
             # Update helm runtime state
             helm_state = {}
@@ -71,7 +89,8 @@ def main():
                         helm_state = json.load(f)
                     except:
                         pass
-            helm_state["adapter_status"] = model_status
+            helm_state["adapter_status"] = lmstudio_status
+            helm_state["native_status"] = ollama_status
             helm_state["last_checked"] = get_current_utc()
             with open(helm_state_file, "w") as f:
                 json.dump(helm_state, f, indent=2)
@@ -87,7 +106,8 @@ def main():
                           "ip": "50.116.41.183",
                           "status": "ONLINE",
                           "services": services,
-                          "model_endpoint_status": model_status
+                          "model_endpoint_status": lmstudio_status,
+                          "native_ollama_status": ollama_status
                         }
                     }
                 }, f, indent=2)

@@ -19,11 +19,33 @@ def get_current_utc():
 def log_message(msg):
     print(f"[{get_current_utc()}] [HELM-RUNNER] {msg}")
 
-def query_llm(prompt, model="google/gemma-4-12b-qat"):
+def query_llm(prompt):
+    # Try Native Ollama first
     try:
-        conn = http.client.HTTPConnection("localhost", 1234)
+        log_message("Attempting native inference with qwen2.5:1.5b-instruct on HOCH-200...")
+        conn = http.client.HTTPConnection("localhost", 11434, timeout=90)
         payload = json.dumps({
-            "model": model,
+            "model": "qwen2.5:1.5b-instruct",
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": 0.2,
+            "stream": False
+        })
+        conn.request("POST", "/v1/chat/completions", payload, {
+            "Content-Type": "application/json"
+        })
+        res = conn.getresponse()
+        if res.status == 200:
+            data = json.loads(res.read().decode())
+            return data["choices"][0]["message"]["content"]
+    except Exception as e:
+        log_message(f"Native Ollama inference failed: {e}")
+        
+    # Fallback to LM Studio reverse tunnel
+    try:
+        log_message("Falling back to LM Studio reverse tunnel with google/gemma-4-12b-qat...")
+        conn = http.client.HTTPConnection("localhost", 1234, timeout=10)
+        payload = json.dumps({
+            "model": "google/gemma-4-12b-qat",
             "messages": [{"role": "user", "content": prompt}],
             "temperature": 0.2,
             "stream": False
@@ -35,7 +57,7 @@ def query_llm(prompt, model="google/gemma-4-12b-qat"):
         data = json.loads(res.read().decode())
         return data["choices"][0]["message"]["content"]
     except Exception as e:
-        log_message(f"LLM request failed: {e}")
+        log_message(f"LM Studio fallback also failed: {e}")
         return f"Error executing task: {e}"
 
 def execute_scoring_task(task_desc):
