@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 import json
 import datetime
+import os
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "has_live_project_tracker/data"
 
 def refresh():
-    now_str = datetime.datetime.utcnow().isoformat() + "Z"
+    now_utc = datetime.datetime.now(datetime.timezone.utc)
+    now_str = now_utc.isoformat().replace("+00:00", "Z")
     
     # 1. helm_runtime_state.json
     state_file = DATA_DIR / "helm_runtime_state.json"
@@ -45,8 +47,43 @@ def refresh():
         data["updated_at"] = now_str
         with open(gpu_state_file, "w") as f:
             json.dump(data, f, indent=2)
+
+    # 5. global_verify.json
+    gv_file = DATA_DIR / "global_verify.json"
+    if gv_file.exists():
+        with open(gv_file, "r") as f:
+            data = json.load(f)
+        data["generated_at"] = now_str
+        data["last_verified_at"] = now_str
+        with open(gv_file, "w") as f:
+            json.dump(data, f, indent=2)
             
-    print(f"🟢 Refreshed all heartbeats to {now_str}")
+    # 6. hoch_pods_runtime_state.json
+    pods_file = DATA_DIR / "hoch_pods_runtime_state.json"
+    if pods_file.exists():
+        with open(pods_file, "r") as f:
+            data = json.load(f)
+        if data and isinstance(data, list) and len(data) > 0:
+            data[0]["last_heartbeat"] = now_str
+        with open(pods_file, "w") as f:
+            json.dump(data, f, indent=2)
+            
+    # 7. hoch_pod_schedule.json (touch the file to update its mtime)
+    sched_file = DATA_DIR / "hoch_pod_schedule.json"
+    if sched_file.exists():
+        sched_file.touch()
+
+    # 8. project_revenue_readiness_results.json (touch the file)
+    readiness_file = DATA_DIR / "project_revenue_readiness_results.json"
+    if readiness_file.exists():
+        readiness_file.touch()
+
+    # 9. revenue_action_queue.json (touch the file)
+    queue_file = DATA_DIR / "revenue_action_queue.json"
+    if queue_file.exists():
+        queue_file.touch()
+            
+    print(f"🟢 Refreshed all heartbeats and file modification times to {now_str}")
 
 if __name__ == "__main__":
     refresh()

@@ -4,6 +4,10 @@
   "allow_ag_execution": false,
   "allow_founder_gated_execution": false,
   "max_concurrent_missions": 1,
+  "rung_2_eligibility": "YES",
+  "rung_2_runtime": "ACTIVE",
+  "rung_2_live_provider_calls": "PENDING_FOUNDER_KEY_PROVISIONING",
+  "claude_adapter_state": "DISABLED_NOT_CONFIGURED",
   "rung_2_promotion_criteria": {
     "required_clean_r1_missions_min": 3,
     "required_clean_r1_missions_target": 5,

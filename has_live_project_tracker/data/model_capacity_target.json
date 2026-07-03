@@ -1,0 +1,16 @@
+{
+  "source_of_truth": false,
+  "as_of": "2026-07-03T20:17:30Z",
+  "target": {
+    "minimum_heavy_tool_model": "14B class",
+    "ideal_heavy_tool_model": "32B class",
+    "basis": "sourced capacity target from uploaded strategy doc citing arXiv 2601.16280",
+    "decision_rule": "promotion requires local model_capacity_audit.json plus eval-gated performance, not vibes"
+  },
+  "routing_decision_space": [
+    "native local model",
+    "GPU pod",
+    "API adapter"
+  ],
+  "blocker_status": "NOT_A_BLOCKER_UNTIL_MEASURED"
+}
