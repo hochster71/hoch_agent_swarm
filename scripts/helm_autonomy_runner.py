@@ -74,6 +74,15 @@ Respond ONLY with clean markdown.
 """
     return query_llm(prompt)
 
+def execute_roadmap_task(task_desc):
+    log_message("Executing CyberQRG-AI roadmap generation task...")
+    prompt = """
+Generate a development roadmap for Product 002: CyberQRG-AI (AI security QR code vulnerability scanner).
+Detail key phases for a local mobile-first implementation (e.g. Phase 1: Camera capture & API setup, Phase 2: Redirect parsing, Phase 3: Local LLM evaluation integration).
+Respond ONLY with clean markdown.
+"""
+    return query_llm(prompt)
+
 def main():
     log_message("HELM Autonomy Runner Daemon started.")
     
@@ -122,8 +131,13 @@ def main():
                 
             # Execute
             result_text = ""
+            file_name = "autonomous-task-proof.md"
             if "scoring report" in task["description"].lower():
                 result_text = execute_scoring_task(task["description"])
+                file_name = "autonomous-task-proof.md"
+            elif "roadmap" in task["description"].lower():
+                result_text = execute_roadmap_task(task["description"])
+                file_name = "cyberqrg-roadmap-proof.md"
             else:
                 result_text = f"Unmapped task template: {task['description']}"
                 
@@ -131,19 +145,19 @@ def main():
             run_id = "20260702T222129Z-24-7-autonomy-reset"
             evidence_dir = ROOT / f"docs/evidence/runtime_scenarios/{run_id}"
             evidence_dir.mkdir(parents=True, exist_ok=True)
-            evidence_path = evidence_dir / "autonomous-task-proof.md"
+            evidence_path = evidence_dir / file_name
             
             evidence_content = f"""# Autonomous Task Proof
-
+ 
 * **Task ID**: {task_id}
-* **Executed By**: {task['assigned_agent']} (Model: google/gemma-4-12b-qat)
+* **Executed By**: {task['assigned_agent']} (Model: native qwen2.5:1.5b-instruct / fallback gemma-4-12b-qat)
 * **Timestamp**: {get_current_utc()}
 * **Status**: Complete
-
+ 
 ---
-
+ 
 ## Task Output
-
+ 
 {result_text}
 """
             with open(evidence_path, "w") as f:
