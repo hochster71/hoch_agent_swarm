@@ -1,0 +1,22 @@
+{
+  "current_level": "L2_ACCEPTED",
+  "target_level": "L3_QA_MATURITY",
+  "critical_path": ["C", "D", "E", "F", "K", "L", "Q"],
+  "task_estimates": {
+    "C": 6.0,
+    "D": 8.0,
+    "E": 10.0,
+    "F": 4.0,
+    "K": 3.0,
+    "L": 2.5,
+    "Q": 2.2,
+    "O": 12.0
+  },
+  "variance": {
+    "top_risks": ["O", "E", "D"],
+    "mitigation": "batch_golden_cases"
+  },
+  "current_phase": "Phase 2",
+  "product_002_r2_blocked": true,
+  "founder_review_batching_enabled": true
+}

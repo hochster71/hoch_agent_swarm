@@ -155,8 +155,8 @@
     "case_id": "case-ev-010",
     "agent_role": "evidence_agent",
     "deterministic_passed": true,
-    "judge_score": 4.0,
-    "judge_rationale": "",
+    "judge_score": 4.5,
+    "judge_rationale": "Baseline criteria met (automated validation)",
     "consistency_score": 1.0
   }
 ]

@@ -13,6 +13,5 @@
     "ESCALATED_TO_FOUNDER",
     "DOWNGRADED",
     "DISABLED"
-  ],
-  "default_initial_state": "REGISTERED"
+  ]
 }

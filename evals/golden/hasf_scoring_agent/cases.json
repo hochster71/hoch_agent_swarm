@@ -4,159 +4,199 @@
     "agent_role": "hasf_scoring_agent",
     "task_class": "scoring_report",
     "input": "Evaluate CyberQRG-AI (AI security QR code vulnerability scanner).",
-    "expected_deterministic_fields": {
-      "product_name": "CyberQRG-AI"
+    "expected": {
+      "deterministic": {
+        "required_fields": ["product_name", "utility_score"],
+        "score_ranges": {
+          "utility_score": [3.5, 5.0]
+        },
+        "must_flag": ["security"],
+        "forbidden_content_patterns": ["humanity_weak"]
+      },
+      "judge_min_score": 4.0
     },
-    "expected_score_ranges": {
-      "utility_score": [3.5, 5.0]
-    },
-    "required_flags": ["security"],
-    "forbidden_content_patterns": ["humanity_weak"],
     "ground_truth_source": "owner_brief",
-    "founder_review_required": false
+    "founder_review_status": "APPROVED",
+    "founder_review_batch": "FOUNDER_REVIEW_BATCH_1"
   },
   {
     "case_id": "case-score-002",
     "agent_role": "hasf_scoring_agent",
     "task_class": "scoring_report",
     "input": "Evaluate Epic Fury (ROI model generator for marketing spend).",
-    "expected_deterministic_fields": {
-      "product_name": "Epic Fury"
+    "expected": {
+      "deterministic": {
+        "required_fields": ["product_name", "utility_score"],
+        "score_ranges": {
+          "utility_score": [3.0, 5.0]
+        },
+        "must_flag": ["roi"],
+        "forbidden_content_patterns": ["malicious"]
+      },
+      "judge_min_score": 3.8
     },
-    "expected_score_ranges": {
-      "utility_score": [3.0, 5.0]
-    },
-    "required_flags": ["roi"],
-    "forbidden_content_patterns": ["malicious"],
     "ground_truth_source": "owner_brief",
-    "founder_review_required": false
+    "founder_review_status": "APPROVED",
+    "founder_review_batch": "FOUNDER_REVIEW_BATCH_1"
   },
   {
     "case_id": "case-score-003",
     "agent_role": "hasf_scoring_agent",
     "task_class": "scoring_report",
     "input": "Evaluate CyberShield (automated firewall compliance checker).",
-    "expected_deterministic_fields": {
-      "product_name": "CyberShield"
+    "expected": {
+      "deterministic": {
+        "required_fields": ["product_name", "utility_score"],
+        "score_ranges": {
+          "utility_score": [4.0, 5.0]
+        },
+        "must_flag": ["compliance", "security"],
+        "forbidden_content_patterns": []
+      },
+      "judge_min_score": 4.0
     },
-    "expected_score_ranges": {
-      "utility_score": [4.0, 5.0]
-    },
-    "required_flags": ["compliance", "security"],
-    "forbidden_content_patterns": [],
     "ground_truth_source": "security_standards",
-    "founder_review_required": false
+    "founder_review_status": "APPROVED",
+    "founder_review_batch": "FOUNDER_REVIEW_BATCH_1"
   },
   {
     "case_id": "case-score-004",
     "agent_role": "hasf_scoring_agent",
     "task_class": "scoring_report",
     "input": "Evaluate HobbyLogger (low-revenue personal tracking tool).",
-    "expected_deterministic_fields": {
-      "product_name": "HobbyLogger"
+    "expected": {
+      "deterministic": {
+        "required_fields": ["product_name", "utility_score"],
+        "score_ranges": {
+          "utility_score": [1.0, 2.5]
+        },
+        "must_flag": ["low_revenue"],
+        "forbidden_content_patterns": ["enterprise_grade"]
+      },
+      "judge_min_score": 3.5
     },
-    "expected_score_ranges": {
-      "utility_score": [1.0, 2.5]
-    },
-    "required_flags": ["low_revenue"],
-    "forbidden_content_patterns": ["enterprise_grade"],
     "ground_truth_source": "market_research",
-    "founder_review_required": false
+    "founder_review_status": "APPROVED",
+    "founder_review_batch": "FOUNDER_REVIEW_BATCH_1"
   },
   {
     "case_id": "case-score-005",
     "agent_role": "hasf_scoring_agent",
     "task_class": "scoring_report",
     "input": "Evaluate LegacyMigrator (high support burden legacy database tool).",
-    "expected_deterministic_fields": {
-      "product_name": "LegacyMigrator"
+    "expected": {
+      "deterministic": {
+        "required_fields": ["product_name", "utility_score"],
+        "score_ranges": {
+          "utility_score": [1.5, 3.0]
+        },
+        "must_flag": ["high_support"],
+        "forbidden_content_patterns": ["low_maintenance"]
+      },
+      "judge_min_score": 3.5
     },
-    "expected_score_ranges": {
-      "utility_score": [1.5, 3.0]
-    },
-    "required_flags": ["high_support"],
-    "forbidden_content_patterns": ["low_maintenance"],
     "ground_truth_source": "engineering_review",
-    "founder_review_required": true
+    "founder_review_status": "APPROVED",
+    "founder_review_batch": "FOUNDER_REVIEW_BATCH_1"
   },
   {
     "case_id": "case-score-006",
     "agent_role": "hasf_scoring_agent",
     "task_class": "scoring_report",
     "input": "Evaluate CryptoCasino (mission-misaligned decentralized betting app).",
-    "expected_deterministic_fields": {
-      "product_name": "CryptoCasino"
+    "expected": {
+      "deterministic": {
+        "required_fields": ["product_name", "utility_score"],
+        "score_ranges": {
+          "utility_score": [0.0, 1.5]
+        },
+        "must_flag": ["misaligned"],
+        "forbidden_content_patterns": ["mission_aligned"]
+      },
+      "judge_min_score": 3.5
     },
-    "expected_score_ranges": {
-      "utility_score": [0.0, 1.5]
-    },
-    "required_flags": ["misaligned"],
-    "forbidden_content_patterns": ["mission_aligned"],
     "ground_truth_source": "corporate_policy",
-    "founder_review_required": true
+    "founder_review_status": "PENDING",
+    "founder_review_batch": "FOUNDER_REVIEW_BATCH_2"
   },
   {
     "case_id": "case-score-007",
     "agent_role": "hasf_scoring_agent",
     "task_class": "scoring_report",
     "input": "Evaluate CyberQRG-Replica (duplicate scanner clone).",
-    "expected_deterministic_fields": {
-      "product_name": "CyberQRG-Replica"
+    "expected": {
+      "deterministic": {
+        "required_fields": ["product_name", "utility_score"],
+        "score_ranges": {
+          "utility_score": [0.0, 1.5]
+        },
+        "must_flag": ["duplicate"],
+        "forbidden_content_patterns": ["unique_product"]
+      },
+      "judge_min_score": 3.5
     },
-    "expected_score_ranges": {
-      "utility_score": [0.0, 1.5]
-    },
-    "required_flags": ["duplicate"],
-    "forbidden_content_patterns": ["unique_product"],
     "ground_truth_source": "inventory_lookup",
-    "founder_review_required": true
+    "founder_review_status": "PENDING",
+    "founder_review_batch": "FOUNDER_REVIEW_BATCH_2"
   },
   {
     "case_id": "case-score-008",
     "agent_role": "hasf_scoring_agent",
     "task_class": "scoring_report",
     "input": "Evaluate BypassProxy (security-infeasible routing proxy).",
-    "expected_deterministic_fields": {
-      "product_name": "BypassProxy"
+    "expected": {
+      "deterministic": {
+        "required_fields": ["product_name", "utility_score"],
+        "score_ranges": {
+          "utility_score": [0.0, 1.0]
+        },
+        "must_flag": ["infeasible"],
+        "forbidden_content_patterns": ["recommended"]
+      },
+      "judge_min_score": 3.0
     },
-    "expected_score_ranges": {
-      "utility_score": [0.0, 1.0]
-    },
-    "required_flags": ["infeasible"],
-    "forbidden_content_patterns": ["recommended"],
     "ground_truth_source": "security_standards",
-    "founder_review_required": true
+    "founder_review_status": "PENDING",
+    "founder_review_batch": "FOUNDER_REVIEW_BATCH_2"
   },
   {
     "case_id": "case-score-009",
     "agent_role": "hasf_scoring_agent",
     "task_class": "scoring_report",
     "input": "Evaluate AttentionHarvester (humanity-value weak app designed to maximize screen time).",
-    "expected_deterministic_fields": {
-      "product_name": "AttentionHarvester"
+    "expected": {
+      "deterministic": {
+        "required_fields": ["product_name", "utility_score"],
+        "score_ranges": {
+          "utility_score": [0.5, 2.0]
+        },
+        "must_flag": ["weak_value"],
+        "forbidden_content_patterns": ["high_utility"]
+      },
+      "judge_min_score": 3.0
     },
-    "expected_score_ranges": {
-      "utility_score": [0.5, 2.0]
-    },
-    "required_flags": ["weak_value"],
-    "forbidden_content_patterns": ["high_utility"],
     "ground_truth_source": "humanity_review",
-    "founder_review_required": true
+    "founder_review_status": "PENDING",
+    "founder_review_batch": "FOUNDER_REVIEW_BATCH_2"
   },
   {
     "case_id": "case-score-010",
     "agent_role": "hasf_scoring_agent",
     "task_class": "scoring_report",
     "input": "Evaluate SwarmManager (strong founder-fit multi-agent orchestrator).",
-    "expected_deterministic_fields": {
-      "product_name": "SwarmManager"
+    "expected": {
+      "deterministic": {
+        "required_fields": ["product_name", "utility_score"],
+        "score_ranges": {
+          "utility_score": [4.5, 5.0]
+        },
+        "must_flag": ["founder_fit", "high_automation"],
+        "forbidden_content_patterns": ["low_utility"]
+      },
+      "judge_min_score": 4.5
     },
-    "expected_score_ranges": {
-      "utility_score": [4.5, 5.0]
-    },
-    "required_flags": ["founder_fit", "high_automation"],
-    "forbidden_content_patterns": ["low_utility"],
     "ground_truth_source": "founder_brief",
-    "founder_review_required": false
+    "founder_review_status": "PENDING",
+    "founder_review_batch": "FOUNDER_REVIEW_BATCH_2"
   }
 ]
