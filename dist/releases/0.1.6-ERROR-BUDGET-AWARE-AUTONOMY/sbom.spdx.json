@@ -3,9 +3,9 @@
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
   "name": "hoch-agent-swarm",
-  "documentNamespace": "https://hoch-agent-swarm.local/sbom/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/1782700592350",
+  "documentNamespace": "https://hoch-agent-swarm.local/sbom/0.1.6-ERROR-BUDGET-AWARE-AUTONOMY/1783044661326",
   "creationInfo": {
-    "created": "2026-06-29T02:36:32.350Z",
+    "created": "2026-07-03T02:11:01.326Z",
     "creators": [
       "Tool: hoch-agent-swarm-generate-sbom"
     ]
@@ -14,7 +14,7 @@
     {
       "SPDXID": "SPDXRef-Package--playwright-test",
       "name": "@playwright/test",
-      "versionInfo": "^1.61.1",
+      "versionInfo": "^1.47.0",
       "downloadLocation": "NOASSERTION",
       "filesAnalyzed": false,
       "licenseConcluded": "NOASSERTION",
@@ -75,7 +75,7 @@
       "spdxDocument": "package-lock.json",
       "checksum": {
         "algorithm": "SHA256",
-        "checksumValue": "77ffce18797003f0457c42341c1b28c5ca95a03787abe4fd0fc7501e3853de22"
+        "checksumValue": "9a68341ae567d28f064c3d111cb3c98e62ffda6f2663b80c66dd12ec3bae018c"
       }
     }
   ]

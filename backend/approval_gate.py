@@ -31,21 +31,29 @@ class ApprovalGate:
         self.queue_file.write_text(json.dumps({"approvals": approvals}, indent=2), encoding="utf-8")
 
     def create_request(self, task_description: str, route_plan: Dict[str, Any]) -> Dict[str, Any]:
-        task_lower = task_description.lower()
-        risk_level = route_plan.get("risk_level", "LOW")
-        
-        approval_required = route_plan.get("human_approval_required", False)
-        
-        # Hard check for approval requirements
+        # H2: risk is derived from the CAPABILITIES a task requests, not from
+        # substrings in its description. Keyword matching is retained ONLY as a
+        # non-downgradable escalation signal inside the classifier. This closes
+        # the evasion where a rephrased task ("promote build to customer env")
+        # slips past a keyword blocklist. See risk_classifier for rationale.
+        from backend.mission_control.risk_classifier import classify, TIER_INDEX
+        requested_caps = route_plan.get("required_capabilities") \
+            or route_plan.get("capabilities") or []
+        assessment = classify(requested_caps, task_description)
+
+        # The capability-derived level is a FLOOR: an explicit higher risk_level
+        # in the route_plan can raise it, but nothing can lower it.
+        declared = route_plan.get("risk_level", "LOW")
+        _level_rank = {"LOW": 0, "MEDIUM": 1, "HIGH": 2, "CRITICAL": 3, "FAIL_CLOSED": 4}
+        risk_level = assessment.risk_level
+        if _level_rank.get(declared, 0) > _level_rank.get(risk_level, 0):
+            risk_level = declared
+
+        approval_required = assessment.human_approval_required \
+            or route_plan.get("human_approval_required", False)
         if risk_level in ["HIGH", "CRITICAL", "FAIL_CLOSED"]:
             approval_required = True
-        elif any(kw in task_lower for kw in [
-            "deploy", "publish", "delete", "spend", "app store", "app-store", "firewall", "router", 
-            "secrets", "credentials", "family/private data", "family", "private data", "production", 
-            "external", "network", "model deletion", "security posture", "bypass approval", "ignore security", 
-            "unresolved ambiguity"
-        ]):
-            approval_required = True
+        route_plan.setdefault("risk_assessment", assessment.to_dict())
 
         status = "PENDING"
         if risk_level == "FAIL_CLOSED" or any(f in route_plan.get("fail_closed_triggers", []) for f in ["BYPASS_APPROVAL_ATTEMPTED", "DESTRUCTIVE_UNAUTHORIZED_ACTION"]):

@@ -132,3 +132,14 @@ logs/
 *.pem
 *_signing_key
 *_signing_key.pub
+
+# --- H3: runtime state & build outputs (never track) ---
+dist/releases/*.tar.gz
+dist/releases/**/*.zip
+artifacts/releases/**/*.tar.gz
+artifacts/crew_runs/
+artifacts/release_candidates/
+logs/goal_runner/
+*.tar.gz
+*.db-shm
+*.db-wal
