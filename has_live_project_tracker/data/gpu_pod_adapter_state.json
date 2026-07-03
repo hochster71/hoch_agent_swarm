@@ -1,0 +1,25 @@
+{
+  "adapter_id": "ollama_gpu_pod",
+  "provider": "RunPod",
+  "gpu_type": "RTX 4090",
+  "vram_gb": 24,
+  "endpoint": "http://100.87.18.20:11434",
+  "status": "ONLINE",
+  "models_requested": [
+    "qwen2.5-coder:32b",
+    "qwen2.5:32b"
+  ],
+  "models_loaded": [
+    "qwen2.5-coder:32b",
+    "qwen2.5:32b"
+  ],
+  "benchmark_status": "PASSED",
+  "eval_status": "PASSED",
+  "promoted_to_tier_3": true,
+  "source_of_truth": false,
+  "ephemeral": true,
+  "product_002_r2_authorized": false,
+  "live_release_authorized": false,
+  "live_monetization_authorized": false,
+  "updated_at": "2026-07-03T13:23:00Z"
+}

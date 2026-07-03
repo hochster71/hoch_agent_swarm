@@ -12867,5 +12867,39 @@
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
     "entry_hash": "c914e26a3b5d3e41ec5ef5e69173eb5a839c7b00b1611030a970efc7343f3a76"
+  },
+  {
+    "entry_id": "entry-0758",
+    "timestamp": "2026-07-03T13:24:44.427684Z",
+    "run_id": "20260702T222129Z-24-7-autonomy-reset",
+    "task_id": "task-unspecified",
+    "agent_id": "has_system",
+    "model_backend": "none",
+    "adapter_id": "none",
+    "incident_class": "none",
+    "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/gpu-pod-model-capacity-eval-comparison.md",
+    "evidence_sha256": "009cc8b82729705434ce8ea3f06483c205e477898613f7b6d161b007dd40e6ca",
+    "previous_entry_hash": "c914e26a3b5d3e41ec5ef5e69173eb5a839c7b00b1611030a970efc7343f3a76",
+    "signature_status": "unsigned",
+    "founder_approval_required": false,
+    "created_by": "HELM_manifest_daemon",
+    "entry_hash": "2122f6efdbcce5020df3a6c897907336397184d568a5e324e306727b6d8f8b81"
+  },
+  {
+    "entry_id": "entry-0759",
+    "timestamp": "2026-07-03T13:24:44.427871Z",
+    "run_id": "20260702T222129Z-24-7-autonomy-reset",
+    "task_id": "task-unspecified",
+    "agent_id": "has_system",
+    "model_backend": "none",
+    "adapter_id": "none",
+    "incident_class": "none",
+    "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/gpu-pod-adapter-upgrade-proof.md",
+    "evidence_sha256": "0dc1a8024cc304612e5626e0c7a69755b83a86f4947c10c4a217884a30fbc2c3",
+    "previous_entry_hash": "2122f6efdbcce5020df3a6c897907336397184d568a5e324e306727b6d8f8b81",
+    "signature_status": "unsigned",
+    "founder_approval_required": false,
+    "created_by": "HELM_manifest_daemon",
+    "entry_hash": "0067acc056dfe274a408acb507201039a68115f68b9e9aa6aeac6fc0714b0772"
   }
 ]

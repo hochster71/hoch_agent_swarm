@@ -207,5 +207,28 @@
     "failure_modes": [
       "disk_full"
     ]
+  },
+  "ollama_gpu_pod": {
+    "identity_ref": "private-vpn-gpu-pod",
+    "risk_tier": "R2",
+    "allowed_actions": [
+      "query_heavy_model",
+      "health_check"
+    ],
+    "forbidden_actions": [
+      "approve_release",
+      "monetization_override",
+      "direct_db_write"
+    ],
+    "founder_approval_required": [],
+    "rate_limits": {
+      "requests_per_minute": 60
+    },
+    "required_verification": "none",
+    "secret_handling": "none",
+    "failure_modes": [
+      "timeout",
+      "socket_error"
+    ]
   }
 }
