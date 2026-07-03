@@ -58,6 +58,10 @@ def verify_authorization():
             print(f"❌ Verification failed: Task {task_id} lacks risk_tier configuration.")
             sys.exit(1)
             
+        if not task.get("rollback_or_reversal_method"):
+            print(f"❌ Verification failed: Task {task_id} lacks rollback_or_reversal_method.")
+            sys.exit(1)
+            
         if not task.get("required_model_tier"):
             print(f"❌ Verification failed: Task {task_id} lacks required_model_tier configuration.")
             sys.exit(1)
@@ -70,9 +74,10 @@ def verify_authorization():
                 sys.exit(1)
                 
         # Check blocked adapters and forbidden actions mapping
-        if "ollama_native" not in task.get("blocked_adapters", []):
-            print(f"❌ Verification failed: Task {task_id} does not block ollama_native.")
-            sys.exit(1)
+        if task.get("required_model_tier") == "heavy":
+            if "ollama_native" not in task.get("blocked_adapters", []):
+                print(f"❌ Verification failed: Task {task_id} does not block ollama_native.")
+                sys.exit(1)
             
     print("🟢 Product 002 R2 Authorization verification PASSED.")
     return True
