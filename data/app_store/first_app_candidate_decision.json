@@ -1,14 +1,15 @@
 {
   "first_app_candidate_decision": {
     "primary_candidate": {
-      "app_name": "RMF Evidence Review Companion",
-      "monetization": "Paid App ($9.99)",
+      "app_name": "CyberQRG-AI",
+      "monetization": "Paid App ($4.99) - SELECTED after pricing review (upfront pricing maintains offline-first posture)",
       "exposure_risk": "NONE",
-      "verdict": "SELECTED"
+      "verdict": "SELECTED",
+      "offline_first": "CONFIRMED"
     },
     "backup_candidate": {
-      "app_name": "Cybersecurity Quick Reference",
-      "monetization": "Freemium ($1.99/mo)",
+      "app_name": "RMF Evidence Review Companion",
+      "monetization": "Paid App ($9.99)",
       "exposure_risk": "NONE",
       "verdict": "BACKUP"
     }
