@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-02T21:02:19.536526",
-  "overall_status": "CONDITIONAL",
-  "gap_summary": "Local runner proof against localhost:8765 is the current priority. Linux/release runners and app-store readiness are not configured. Revenue and deployment readiness are CONDITIONAL.",
+  "generated_at": "2026-07-03T10:12:13.883601",
+  "overall_status": "PASS",
+  "gap_summary": "Local runner proof against localhost:8765 is PROVEN and active. Linux/release runners and app-store readiness are not configured.",
   "critical_path": [
     "Scope Lock Enforcement",
     "Local Runner Proof at 8765",
@@ -34,14 +34,12 @@
       "title": "Mac Runner Localhost 8765 Proof",
       "objective": "Prove GitHub workflow can check http://127.0.0.1:8765/ from has-qa-runner-mac.",
       "owner_agent": "has-qa-runner-mac",
-      "status": "IN_PROGRESS",
+      "status": "PASS",
       "O": 30,
       "M": 120,
       "P": 360,
       "expected_minutes": 145,
-      "blockers": [
-        "Workflow not yet triggered"
-      ],
+      "blockers": [],
       "evidence": "has_live_project_tracker/data/local_runtime_proof.json"
     }
   ],
@@ -52,9 +50,8 @@
     "Live revenue flow"
   ],
   "blockers": [
-    "Local runner workflow not yet triggered",
     "App-store projects not present"
   ],
-  "next_action": "Run GitHub workflow HAS Local Runtime Runner on has-qa-runner-mac to prove automation against http://127.0.0.1:8765/",
+  "next_action": "Deploy 24/7 Linux runner and prepare App-store release pipeline",
   "manual_michael_action_required": false
 }

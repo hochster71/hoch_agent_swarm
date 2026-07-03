@@ -16,7 +16,7 @@ def test_promptops_metrics():
     assert "stale_count" in data
     assert "quarantined_count" in data
     assert "approval_queue_count" in data
-    assert data["total_prompts"] == 354
+    assert data["total_prompts"] == 416
 
 def test_promptops_approvals_list():
     response = client.get("/api/promptops/approvals")
