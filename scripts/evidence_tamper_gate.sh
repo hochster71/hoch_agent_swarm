@@ -54,6 +54,27 @@ def verify():
         print(f"❌ FAIL: Detected {mismatches} evidence hash mismatches.")
         sys.exit(1)
         
+    # C3: hash equality alone is forgeable (rewrite artifact + rewrite manifest).
+    # If the manifest carries a MAC, require it to verify against the founder
+    # key AND appear in the external append-only anchor. When no MAC is present
+    # (legacy manifests), we stay backward-compatible but warn loudly.
+    if manifest.get("manifest_mac"):
+        try:
+            sys.path.insert(0, os.getcwd())
+            from backend.mission_control.evidence_integrity import verify_manifest
+            res = verify_manifest(manifest)
+            if not res["ok"]:
+                print(f"❌ FAIL: Evidence MAC/anchor check failed: {res['reason']} "
+                      f"(first_bad={res.get('first_bad')})")
+                sys.exit(1)
+            print("✅ Evidence MAC verified and present in external anchor.")
+        except FileNotFoundError as ex:
+            print(f"❌ FAIL: {ex}")
+            sys.exit(1)
+    else:
+        print("⚠️  WARN: manifest has no MAC (legacy). Hash-only integrity — "
+              "rebuild with evidence_integrity.build_manifest to make it tamper-evident.")
+
     print("✅ Evidence Integrity Gate Passed: All artifact hashes validated successfully.")
     sys.exit(0)
 

@@ -18,18 +18,38 @@ def validate_secure_boundary(target_pod: str, command: str, parameters: dict):
         if re.search(pattern, command):
             raise BoundaryViolation(f"Command contains unauthorized chaining or redirection operator: '{pattern}'")
 
-    # 3. Path Safety: Check that path parameters are within authorized workspaces
+    # 3. Path Safety: Check that path parameters are within authorized workspaces.
+    # CWE-23 (partial path traversal): a naive startswith() prefix check treats
+    # "/home/u/hoch_agent_swarm_evil" as inside "/home/u/hoch_agent_swarm".
+    # We normalize (resolving ".." and symlinks where possible) and compare on
+    # path components via os.path.commonpath, which cannot be fooled by a shared
+    # string prefix. Refs: CodeQL java/partial-path-traversal (sev 9.3); CWE-23.
     path_param = parameters.get("path") or parameters.get("workspace")
     if path_param:
-        abs_path = os.path.abspath(path_param)
+        # Reject NUL-byte truncation (CWE-626) before any path handling.
+        if "\x00" in str(path_param):
+            raise BoundaryViolation("Path contains a NUL byte and is rejected.")
         home = os.path.expanduser("~")
         allowed_roots = [
-            os.path.join(home, "hoch_agent_swarm"),
-            os.path.join(home, "hoch_agent_swarm_prompt_library"),
-            os.path.join(home, ".gemini/antigravity")
+            os.path.realpath(os.path.join(home, "hoch_agent_swarm")),
+            os.path.realpath(os.path.join(home, "hoch_agent_swarm_prompt_library")),
+            os.path.realpath(os.path.join(home, ".gemini/antigravity")),
         ]
-        if not any(abs_path.startswith(root) for root in allowed_roots):
-            raise BoundaryViolation(f"Path '{path_param}' falls outside the secure worker boundary envelope.")
+        # realpath resolves symlinks + ".."; for non-existent paths it still
+        # normalizes lexically, so a crafted "../.." cannot escape.
+        abs_path = os.path.realpath(os.path.abspath(str(path_param)))
+
+        def _within(candidate: str, root: str) -> bool:
+            try:
+                return os.path.commonpath([candidate, root]) == root
+            except ValueError:
+                # Different drives / mixed absolute-relative -> not within.
+                return False
+
+        if not any(_within(abs_path, root) for root in allowed_roots):
+            raise BoundaryViolation(
+                f"Path '{path_param}' falls outside the secure worker boundary envelope."
+            )
 
     # 4. Resource Allocation Quotas
     memory_limit_gb = parameters.get("memory_limit_gb", 2.0)
