@@ -97,13 +97,38 @@ print(json.dumps(gate.load_queue()))
     assert(queue.length > 0, "Queue lists the pending approval request");
     assert(queue[0].approval_id === appId, "Enqueued request matches the requested ID");
 
-    // C. Decision endpoint records APPROVED/DENIED/DEFERRED
+    // C. Decision endpoint records APPROVED/DENIED/DEFERRED with valid signature
     const approveCode = `
 import json
+import tempfile
+import subprocess
+from pathlib import Path
 from backend.approval_gate import get_approval_gate
-gate = get_approval_gate()
-res = gate.record_decision("${appId}", "APPROVED", "Approved for preview deployment")
-print(json.dumps(res))
+import backend.mission_control.founder_signer as signer
+
+with tempfile.TemporaryDirectory() as td:
+    key_path = Path(td) / "test_key"
+    subprocess.run(["ssh-keygen", "-t", "ed25519", "-N", "", "-q", "-C", "founder@hoch-has", "-f", str(key_path)], check=True)
+    pub = Path(td) / "test_key.pub"
+    parts = pub.read_text().split()
+    allowed_signers = Path(td) / "allowed_signers"
+    allowed_signers.write_text(f'founder@hoch-has namespaces="has-approval" {parts[0]} {parts[1]}\\n')
+    
+    signer.ALLOWED_SIGNERS = allowed_signers
+    
+    gate = get_approval_gate()
+    queue = gate.load_queue()
+    target = [app for app in queue if app["approval_id"] == "${appId}"][0]
+    
+    target_for_sig = target.copy()
+    target_for_sig["status"] = "APPROVED"
+    target_for_sig["decision_at"] = "2026-07-02T21:00:00+00:00"
+    target_for_sig["decision_note"] = "Approved for preview deployment"
+    
+    sig = signer.sign_approval(target_for_sig, key_path)
+    
+    res = gate.record_decision("${appId}", "APPROVED", "Approved for preview deployment", founder_signature=sig, founder_decision_at=target_for_sig["decision_at"])
+    print(json.dumps(res))
 `;
     const approvedObj = JSON.parse(runPythonCode(approveCode));
     assert(approvedObj.status === "APPROVED", "Decision recording sets status to APPROVED");
