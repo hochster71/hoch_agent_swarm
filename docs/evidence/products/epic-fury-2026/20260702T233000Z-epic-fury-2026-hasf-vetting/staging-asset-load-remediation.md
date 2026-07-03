@@ -37,7 +37,7 @@ server: Vercel
 ## 3. Vercel Protection Status
 * **SSO Protection**: `ENABLED` (Required to prevent public exposure of preview environment credentials and Supabase database schemas).
 * **Password Protection**: `DISABLED` (Unavailable due to Vercel team plan constraints: *"Advanced Deployment Protection is not enabled on your team"*).
-* **Automation Bypass**: `ENABLED` (Bypass token: `dlA54TQbDACNTPc8B9DUyyKqhtD3BCD9`).
+* **Automation Bypass**: `ENABLED` (Bypass token: `[REDACTED_VERCEL_PROTECTION_BYPASS]`).
 
 ---
 
@@ -60,8 +60,7 @@ To successfully view and review the Vercel staging build:
 3. Once authenticated, Vercel sets the secure session cookies. Refresh the page, and the dashboard layout and all static styling assets will render perfectly.
 
 ### Option B: Automation Bypass Path
-To view the site directly bypassing the SSO screen, append the bypass query parameter to your browser address bar:
-`https://epic-fury-2026-4hjkgwv9v-us-is-ir-war-2026.vercel.app/?_vercel_incoming_bypass=dlA54TQbDACNTPc8B9DUyyKqhtD3BCD9`
+Optional automation bypass is configured but stored only in Vercel/project secret storage. Never printed in logs, docs, chat, or evidence.
 
 ---
 

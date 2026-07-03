@@ -6,7 +6,19 @@
 set -euo pipefail
 
 STAGING_URL="https://epic-fury-2026-4hjkgwv9v-us-is-ir-war-2026.vercel.app"
-BYPASS_TOKEN="dlA54TQbDACNTPc8B9DUyyKqhtD3BCD9"
+# Get the bypass token dynamically from Vercel config
+BYPASS_TOKEN=${VERCEL_BYPASS_TOKEN:-}
+if [ -z "${BYPASS_TOKEN}" ]; then
+  echo "     Fetching bypass token dynamically from Vercel..."
+  BYPASS_TOKEN=$(npx vercel project protection epic-fury-2026 --scope us-is-ir-war-2026 --format json | jq -r '.protectionBypass | keys[0] // empty')
+fi
+
+if [ -z "${BYPASS_TOKEN}" ]; then
+  echo "❌ FAIL: Vercel Automation Bypass Token not found."
+  exit 1
+fi
+
+export VERCEL_BYPASS_TOKEN="${BYPASS_TOKEN}"
 
 echo "==> Running Epic Fury Staging Access Gate..."
 

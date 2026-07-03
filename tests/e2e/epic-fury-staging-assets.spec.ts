@@ -1,8 +1,10 @@
 import { test, expect } from '@playwright/test';
 
+const bypassToken = process.env.VERCEL_BYPASS_TOKEN || '[REDACTED_VERCEL_PROTECTION_BYPASS]';
+
 test.use({
   extraHTTPHeaders: {
-    'x-vercel-protection-bypass': 'dlA54TQbDACNTPc8B9DUyyKqhtD3BCD9'
+    'x-vercel-protection-bypass': bypassToken
   }
 });
 

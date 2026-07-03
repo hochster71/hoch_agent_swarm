@@ -1,11 +1,11 @@
 {
   "run_id": "20260702T222129Z-has-hasf-runtime-scenario",
-  "generated_at": "2026-07-03T01:44:09.825832Z",
+  "generated_at": "2026-07-03T02:14:21.269335Z",
   "artifacts": [
     {
       "path": "docs/evidence/runtime_scenarios/20260702T222129Z-has-hasf-runtime-scenario/00-baseline-discovery.md",
       "sha256": "095a1c254e69c4f4f9cb4945685372c441326c8bafc25a4d6d17cb05d8fd879d",
-      "generated_at": "2026-07-03T01:44:09.824137Z",
+      "generated_at": "2026-07-03T02:14:21.267231Z",
       "generated_by": "HELM",
       "source_host": "Michaels-MacBook-Pro.local",
       "git_commit": "68a4bf83abe61e17623f68b85764da5d7a238a53",
@@ -15,7 +15,7 @@
     {
       "path": "docs/evidence/runtime_scenarios/20260702T222129Z-has-hasf-runtime-scenario/iteration-1.md",
       "sha256": "6d642e18b85cfad90b2162c3f1e23e0420c49bd35640902e485eb9615a9b996a",
-      "generated_at": "2026-07-03T01:44:09.824512Z",
+      "generated_at": "2026-07-03T02:14:21.267604Z",
       "generated_by": "HELM",
       "source_host": "Michaels-MacBook-Pro.local",
       "git_commit": "68a4bf83abe61e17623f68b85764da5d7a238a53",
@@ -25,7 +25,7 @@
     {
       "path": "docs/evidence/runtime_scenarios/20260702T222129Z-has-hasf-runtime-scenario/remote-verification.md",
       "sha256": "c4909a824d8964642779c02ac5456855109d220242878b9e1e846ccb904c7b2b",
-      "generated_at": "2026-07-03T01:44:09.824793Z",
+      "generated_at": "2026-07-03T02:14:21.267834Z",
       "generated_by": "HELM",
       "source_host": "Michaels-MacBook-Pro.local",
       "git_commit": "68a4bf83abe61e17623f68b85764da5d7a238a53",
@@ -35,7 +35,7 @@
     {
       "path": "docs/evidence/runtime_scenarios/20260702T222129Z-has-hasf-runtime-scenario/remote-final-acceptance.md",
       "sha256": "c13c7f9131ac81c57356087c3b075687f15598a0884651e77e1825b78c1eb9e7",
-      "generated_at": "2026-07-03T01:44:09.824945Z",
+      "generated_at": "2026-07-03T02:14:21.268068Z",
       "generated_by": "HELM",
       "source_host": "Michaels-MacBook-Pro.local",
       "git_commit": "68a4bf83abe61e17623f68b85764da5d7a238a53",
@@ -45,7 +45,7 @@
     {
       "path": "docs/evidence/runtime_scenarios/20260702T222129Z-has-hasf-runtime-scenario/security-final.md",
       "sha256": "e95fead5e380bd782a8b1eaea44279e44f322fdcfed4fa3b9c48973dd11e5dea",
-      "generated_at": "2026-07-03T01:44:09.825047Z",
+      "generated_at": "2026-07-03T02:14:21.268180Z",
       "generated_by": "HELM",
       "source_host": "Michaels-MacBook-Pro.local",
       "git_commit": "68a4bf83abe61e17623f68b85764da5d7a238a53",
@@ -55,7 +55,7 @@
     {
       "path": "docs/evidence/runtime_scenarios/20260702T222129Z-has-hasf-runtime-scenario/final-runtime-scenario-report.md",
       "sha256": "ab38b2c724e80a734e135119c45e7e981df9ebfa98b9d75b865775631b96a86c",
-      "generated_at": "2026-07-03T01:44:09.825181Z",
+      "generated_at": "2026-07-03T02:14:21.268302Z",
       "generated_by": "HELM",
       "source_host": "Michaels-MacBook-Pro.local",
       "git_commit": "68a4bf83abe61e17623f68b85764da5d7a238a53",
@@ -65,7 +65,7 @@
     {
       "path": "docs/evidence/helm/20260702-1634-helm-onboarding.md",
       "sha256": "5727963c37cd7a7dd7c8cb3eda058c1d9b6cbc3c44314ec64b06878f24b3187c",
-      "generated_at": "2026-07-03T01:44:09.825321Z",
+      "generated_at": "2026-07-03T02:14:21.268606Z",
       "generated_by": "HELM",
       "source_host": "Michaels-MacBook-Pro.local",
       "git_commit": "68a4bf83abe61e17623f68b85764da5d7a238a53",
@@ -75,7 +75,7 @@
     {
       "path": "docs/evidence/ui/20260702-1638-hoch-pods-theater-v6-visual-baseline.md",
       "sha256": "32bc2f72480c5cafe582c4922c23c9d88f2fc62843d9bc547c6426b285a0297d",
-      "generated_at": "2026-07-03T01:44:09.825546Z",
+      "generated_at": "2026-07-03T02:14:21.268829Z",
       "generated_by": "HELM",
       "source_host": "Michaels-MacBook-Pro.local",
       "git_commit": "68a4bf83abe61e17623f68b85764da5d7a238a53",
@@ -85,7 +85,7 @@
     {
       "path": "docs/evidence/ci/20260702-1640-github-linux-runner-qa.md",
       "sha256": "5da1d19e157ab01d9ddc77bda96e35f50760193d4f18224984a751d2039fe2be",
-      "generated_at": "2026-07-03T01:44:09.825683Z",
+      "generated_at": "2026-07-03T02:14:21.269092Z",
       "generated_by": "HELM",
       "source_host": "Michaels-MacBook-Pro.local",
       "git_commit": "68a4bf83abe61e17623f68b85764da5d7a238a53",
@@ -95,7 +95,7 @@
     {
       "path": "docs/evidence/goal_tracker/20260702-1641-digital-pert-goal-live-tracker.md",
       "sha256": "b10bdd3ef540a76a8e076bfa6b6a4f747dac4ec9deb8d41275c04736588c707b",
-      "generated_at": "2026-07-03T01:44:09.825813Z",
+      "generated_at": "2026-07-03T02:14:21.269291Z",
       "generated_by": "HELM",
       "source_host": "Michaels-MacBook-Pro.local",
       "git_commit": "68a4bf83abe61e17623f68b85764da5d7a238a53",
