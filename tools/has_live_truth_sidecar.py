@@ -421,6 +421,14 @@ def live_payload() -> dict:
         "agents": load_agents(),
         "goal_maps_and_bridge_states": goal_maps,
         "control_plane_status": {
+            "schema_version": status_data.get("schema_version", "1.0") if status_data else "1.0",
+            "source_of_truth": status_data.get("source_of_truth", False) if status_data else False,
+            "system_of_record": status_data.get("system_of_record", "HOCH-200") if status_data else "HOCH-200",
+            "synced_from": status_data.get("synced_from", "HOCH-200") if status_data else "HOCH-200",
+            "contract_state": cstate,
+            "as_of": status_data.get("as_of", now_iso()) if status_data else now_iso(),
+            "expires_at": status_data.get("expires_at", now_iso()) if status_data else now_iso(),
+            "max_age_seconds": status_data.get("max_age_seconds", 60) if status_data else 60,
             "state": cstate,
             "data": status_data
         },

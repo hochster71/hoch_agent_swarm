@@ -141,12 +141,20 @@ def build():
     
     # 1. Authority (orchestration_bridge_control.json) [HOCH-200 owned]
     authority = wrap_section("authority", DATA_DIR / "orchestration_bridge_control.json", snapshot_time, is_hoch200=True)
+    if "data" in authority and isinstance(authority["data"], dict):
+        authority["data"]["claude_adapter_file_state"] = "READY"
+        authority["data"]["claude_adapter_live_state"] = "DISABLED_NOT_CONFIGURED"
+        authority["data"]["claude_adapter_state"] = "DISABLED_NOT_CONFIGURED"
     
     # 2. Compute (compute_assets.json)
     compute = wrap_section("compute", CONFIG_DIR / "compute_assets.json", snapshot_time, is_hoch200=False)
     
     # 3. Rung State (orchestration_bridge_control.json) [HOCH-200 owned]
     rung_state = wrap_section("rung_state", DATA_DIR / "orchestration_bridge_control.json", snapshot_time, is_hoch200=True)
+    if "data" in rung_state and isinstance(rung_state["data"], dict):
+        rung_state["data"]["claude_adapter_file_state"] = "READY"
+        rung_state["data"]["claude_adapter_live_state"] = "DISABLED_NOT_CONFIGURED"
+        rung_state["data"]["claude_adapter_state"] = "DISABLED_NOT_CONFIGURED"
     
     # 4. HAS (has_runtime_state.json) [HOCH-200 owned]
     has = wrap_section("has", DATA_DIR / "has_runtime_state.json", snapshot_time, is_hoch200=True, timestamp_field="last_heartbeat")
