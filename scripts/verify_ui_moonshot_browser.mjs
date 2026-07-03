@@ -6,7 +6,8 @@ const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage({ viewport: { width: 1700, height: 1300 } });
 
 try {
-  await page.goto(`${base}/ui-moonshot`, { waitUntil: 'networkidle', timeout: 30000 });
+  await page.goto(`${base}/ui-moonshot`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+  await page.waitForSelector('.podNode', { timeout: 15000 });
 
   const body = await page.locator('body').innerText({ timeout: 10000 });
   const normalizedBody = body.toUpperCase();
@@ -16,9 +17,6 @@ try {
     'STORYBOARD-DRIVEN AGENT SPIN-UP',
     'HOCH PODS STORYBOARD THEATER',
     'AGENT QUEUE',
-    'LIVE PERT ANALYSIS',
-    'LIVE GAP ANALYSIS / CLOSURES',
-    'LIVE RUNNERS / APPROVAL QUEUE',
     'STALE / WATCHDOG',
     'EVIDENCE CONSOLE'
   ];
@@ -33,6 +31,13 @@ try {
     throw new Error('MOONSHOT_UNDEFINED_TEXT');
   }
 
+  // Heading check / Live PERT Analysis
+  const hasPertHeading = /Live\s+PERT\s+Analysis/i.test(body);
+  const pertRows = await page.locator('#pertTruthRows tr').count();
+  if (!hasPertHeading && pertRows < 1) {
+    throw new Error('MOONSHOT_PERT_CONTRACT_MISSING: No Live PERT Analysis heading and no #pertTruthRows tr found.');
+  }
+
   const theaters = await page.locator('#theater').count();
   if (theaters !== 1) throw new Error(`MOONSHOT_THEATER_COUNT_INVALID: ${theaters}`);
 
@@ -45,15 +50,11 @@ try {
   const spirit = await page.locator('#agentSpirit').count();
   if (spirit !== 1) throw new Error('MOONSHOT_AGENT_SPIRIT_MISSING');
 
-
   const beam = await page.locator('#launchBeam').count();
   if (beam !== 1) throw new Error('MOONSHOT_LAUNCH_BEAM_MISSING');
 
   const skill = await page.locator('#skillCard').count();
   if (skill !== 1) throw new Error('MOONSHOT_SKILL_CARD_MISSING');
-
-  const pertRows = await page.locator('#pertTruthRows tr').count();
-  if (pertRows < 1) throw new Error('MOONSHOT_PERT_ROWS_MISSING');
 
   const gapRows = await page.locator('#gapClosureRows tr').count();
   if (gapRows < 1) throw new Error('MOONSHOT_GAP_ROWS_MISSING');

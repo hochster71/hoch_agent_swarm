@@ -6,7 +6,7 @@ const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
 
 try {
-  await page.goto(`${base}/ui-v2`, { waitUntil: 'networkidle', timeout: 30000 });
+  await page.goto(`${base}/ui-v2`, { waitUntil: 'domcontentloaded', timeout: 30000 });
 
   const title = await page.locator('h1').innerText({ timeout: 10000 });
   const normalizedTitle = title.toUpperCase();

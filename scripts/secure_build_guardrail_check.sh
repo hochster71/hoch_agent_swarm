@@ -14,13 +14,29 @@ PUBLIC_EXPOSURE=0
 FAKE_STATUS=0
 APPROVAL_REQUIRED=0
 
-# 1. No secrets, .env, or runtime DBs staged/committed
-echo "Checking for committed secrets or credentials..."
-if git diff --name-only master..HEAD 2>/dev/null | grep -E "\.env|secrets|key" >/dev/null; then
-    echo "  [FAIL] Found credentials/secrets files in diff."
+# 1. Run Python Guardrail Engine (Secrets, Compute Cost, Tag Policy, Tailscale Posture)
+echo "Running Python Guardrail Engine..."
+set +e
+python3 "$SCRIPT_DIR/secure_build_guardrail_check.py"
+PY_EXIT=$?
+set -e
+
+if [ $PY_EXIT -ne 0 ]; then
+    echo "  [FAIL] Python Guardrail Engine detected violations."
     VIOLATIONS=$((VIOLATIONS + 1))
 else
-    echo "  [PASS] No credentials/secrets found in diff."
+    echo "  [PASS] Python Guardrail Engine checks passed."
+fi
+
+# Fetch Tailscale Posture from python helper output/check
+set +e
+POSTURE=$(python3 -c "import sys; sys.path.append('$SCRIPT_DIR'); import secure_build_guardrail_check; print(secure_build_guardrail_check.verify_tailscale_posture())" 2>/dev/null)
+set -e
+if [ "$POSTURE" = "VERIFIED" ]; then
+    echo "  [PASS] Tailscale ACL posture is verified SECURE/LIVE."
+else
+    echo "  [FAIL] Tailscale ACL posture status: $POSTURE"
+    APPROVAL_REQUIRED=$((APPROVAL_REQUIRED + 1))
 fi
 
 # 2. No runtime DBs committed
@@ -33,17 +49,17 @@ fi
 
 # 3. No public 3012 exposure
 echo "Testing public port 3012 unreachable..."
-if python3 -c 'import socket; s=socket.socket(); s.settimeout(3.0); s.connect(("50.116.41.183", 3012))' 2>/dev/null; then
-    echo "  [FAIL] Public port 3012 is exposed!"
+HOCH_200_IP=$(python3 -c "import json, pathlib; r=pathlib.Path('$PROJECT_ROOT/config/compute_assets.json'); cfg=json.loads(r.read_text()); print([a for a in cfg['assets'] if a['id']=='hoch-200'][0]['public_ip'])" 2>/dev/null || echo "50.116.41.183")
+if python3 -c "import socket; s=socket.socket(); s.settimeout(3.0); s.connect((\"$HOCH_200_IP\", 3012))" 2>/dev/null; then
+    echo "  [FAIL] Public port 3012 is exposed on $HOCH_200_IP!"
     PUBLIC_EXPOSURE=$((PUBLIC_EXPOSURE + 1))
     VIOLATIONS=$((VIOLATIONS + 1))
 else
-    echo "  [PASS] Public port 3012 is closed/blocked."
+    echo "  [PASS] Public port 3012 on $HOCH_200_IP is closed/blocked."
 fi
 
 # 4. No fake status synthesis
 echo "Auditing fake status flags..."
-# Check status.json for any fake "PASS" value
 STATUS_JSON="$PROJECT_ROOT/has_live_project_tracker/data/status.json"
 if [ -f "$STATUS_JSON" ]; then
     if grep -q '"status": "PASS"' "$STATUS_JSON"; then
@@ -57,34 +73,8 @@ else
     echo "  [PASS] status.json not found."
 fi
 
-# 5. Tag integrity check
-echo "Checking tag integrity..."
-TAG_SHA=$(git rev-parse v0.1.8-cadence^{commit})
-if [ "$TAG_SHA" != "9f52d77dd3f68b0e50396536a505ac16cb73f66a" ]; then
-    echo "  [FAIL] Tag v0.1.8-cadence points to incorrect commit: $TAG_SHA"
-    VIOLATIONS=$((VIOLATIONS + 1))
-else
-    echo "  [PASS] Tag v0.1.8-cadence points to expected commit 9f52d77."
-fi
-
-# 6. Tailscale ACL Posture Check
-echo "Checking Tailscale ACL Posture..."
-POSTURE_FILE="$PROJECT_ROOT/config/tailscale_acl_posture.yaml"
-if [ -f "$POSTURE_FILE" ]; then
-    if grep -q "posture: SECURE" "$POSTURE_FILE"; then
-        echo "  [PASS] Tailscale ACL posture is verified SECURE."
-    else
-        echo "  [FAIL] Tailscale ACL posture is UNKNOWN or NOT SECURE."
-        APPROVAL_REQUIRED=$((APPROVAL_REQUIRED + 1))
-    fi
-else
-    echo "  [FAIL] Missing tailscale_acl_posture.yaml! Posture verification required."
-    APPROVAL_REQUIRED=$((APPROVAL_REQUIRED + 1))
-fi
-
-# 7. iPhone Monitor Only Check
+# 5. iPhone Monitor Only Check
 echo "Verifying mobile monitoring constraint..."
-# Audits that iphone-15-pro-max is only registered as monitor/approval role
 if grep -q "machine: \"iphone-15-pro-max\"" "$PROJECT_ROOT/config/usage_budget_policy.yaml"; then
     echo "  [PASS] iPhone configured as operator mobile monitor only."
 else
