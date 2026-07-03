@@ -44,6 +44,7 @@
       "name": "HOCH-200 Governance Plane",
       "type": "remote_governance_plane",
       "provider": "linode",
+      "billable": true,
       "monthly_cost_usd": 60,
       "tailscale_ip": "100.87.18.15",
       "candidate_public_ip": "50.116.41.183",
@@ -67,7 +68,9 @@
       "name": "Linode Remote 60",
       "type": "remote_governance_plane",
       "provider": "linode",
-      "monthly_cost_usd": 60,
+      "alias_of": "hoch-200",
+      "billable": false,
+      "monthly_cost_usd": 0,
       "tailscale_ip": "100.87.18.15",
       "candidate_public_ip": "50.116.41.183",
       "host": "100.87.18.15",
@@ -83,7 +86,7 @@
       "evidence_commit": "d2545a5",
       "status": "active",
       "identity_reconciliation": "SAME_AS_HOCH_200",
-      "usage_verdict": "ACTIVE / GOVERNANCE PLANE / NOT UNUSED"
+      "usage_verdict": "ALIAS OF ACTIVE GOVERNANCE PLANE"
     }
   ]
 }
