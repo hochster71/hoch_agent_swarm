@@ -12,6 +12,11 @@ dist/
 .env
 frontend/.env
 .secrets/
+vercel_login.log
+vercel_project.json
+.vercel
+auth.json
+*.log
 
 # DB and storage
 *.db

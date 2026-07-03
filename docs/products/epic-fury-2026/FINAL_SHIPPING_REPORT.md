@@ -1,7 +1,7 @@
 # Final Shipping Report - Epic Fury 2026
 
 * **Run ID**: 20260702T233000Z-epic-fury-2026-hasf-vetting
-* **Vetted Commit**: `07c782392c25223f385151024d9fefc95bf4ab98`
+* **Vetted Commit**: `3e94f322dc1373358935dd303c0269b36a0ee5ba`
 * **Hasf Release Posture**: READY_FOR_FOUNDER_REVIEW
 
 ---
