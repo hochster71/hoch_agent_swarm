@@ -3,18 +3,18 @@
     "base_url": "http://localhost:11434/v1",
     "api_style": "openai_compatible",
     "status": "ONLINE",
-    "last_checked": "2026-07-03T12:00:25.425138Z"
+    "last_checked": "2026-07-03T14:07:22.315661Z"
   },
   "lmstudio": {
     "base_url": "http://localhost:1234/v1",
     "api_style": "openai_compatible",
     "status": "ONLINE",
-    "last_checked": "2026-07-03T12:00:25.425124Z"
+    "last_checked": "2026-07-03T14:07:22.315661Z"
   },
   "ollama_gpu_pod": {
     "base_url": "http://100.87.18.20:11434/v1",
     "api_style": "openai_compatible",
     "status": "PENDING_BENCHMARK",
-    "last_checked": "2026-07-03T13:23:00Z"
+    "last_checked": "2026-07-03T14:07:22.315661Z"
   }
 }

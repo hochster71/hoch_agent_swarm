@@ -2,7 +2,7 @@
   "status": "IDLE",
   "last_run": "2026-07-03T12:00:26.616120Z",
   "active_task_id": null,
-  "last_checked": "2026-07-03T12:00:26.616120Z",
+  "last_checked": "2026-07-03T14:07:22.315661Z",
   "agent_metrics": {
     "hasf_scoring_agent": {
       "tasks_attempted": 2,

@@ -1,0 +1,6 @@
+{
+  "manual_relay_status": "ACTIVE",
+  "orchestration_bridge_status": "ACTIVE",
+  "copy_paste_required_computed": true,
+  "copy_paste_required_reason": "No missions processed through intake queue yet."
+}

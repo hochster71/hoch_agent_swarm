@@ -101,7 +101,10 @@ def check_freshness():
                 print(f"❌ Completed task {task['id']} lacks evidence reference")
                 sys.exit(1)
             # Verify evidence file exists
-            ev_path = Path(result.replace("file://", ""))
+            ev_str = result.replace("file://", "")
+            if sys.platform == "darwin":
+                ev_str = ev_str.replace("/root/hoch_agent_swarm/", "/Users/michaelhoch/hoch_agent_swarm/")
+            ev_path = Path(ev_str)
             if not ev_path.exists():
                 print(f"❌ Evidence file for {task['id']} does not exist at {ev_path}")
                 sys.exit(1)

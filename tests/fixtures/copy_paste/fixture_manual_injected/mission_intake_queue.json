@@ -1,0 +1,11 @@
+{
+  "queue_version": "1.0",
+  "missions": [
+    {
+      "mission_id": "mission-001",
+      "status": "COMPLETED",
+      "signature_status": "VALID",
+      "sanitization_status": "PASS"
+    }
+  ]
+}

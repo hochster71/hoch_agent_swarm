@@ -23,6 +23,12 @@ def verify_sync_posture():
             except Exception:
                 pass
 
+    # Verify secure_sync_hoch200.sh exists
+    sync_script = "scripts/secure_sync_hoch200.sh"
+    if not os.path.exists(sync_script):
+        print("❌ Verification failed: scripts/secure_sync_hoch200.sh is missing.")
+        sys.exit(1)
+
     print("🟢 Secure remote sync posture verification PASSED.")
     return True
 
