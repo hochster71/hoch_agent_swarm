@@ -1,0 +1,205 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.4",
+  "metadata": {
+    "component": {
+      "type": "application",
+      "name": "epic-fury-dashboard",
+      "version": "1.0.0"
+    }
+  },
+  "components": [
+    {
+      "type": "library",
+      "name": "@capacitor/cli",
+      "version": "8.3.0",
+      "purl": "pkg:npm/@capacitor/cli@8.3.0"
+    },
+    {
+      "type": "library",
+      "name": "@capacitor/core",
+      "version": "8.3.0",
+      "purl": "pkg:npm/@capacitor/core@8.3.0"
+    },
+    {
+      "type": "library",
+      "name": "@capacitor/ios",
+      "version": "8.3.0",
+      "purl": "pkg:npm/@capacitor/ios@8.3.0"
+    },
+    {
+      "type": "library",
+      "name": "@radix-ui/react-dialog",
+      "version": "1.1.2",
+      "purl": "pkg:npm/@radix-ui/react-dialog@1.1.2"
+    },
+    {
+      "type": "library",
+      "name": "@radix-ui/react-slot",
+      "version": "1.1.0",
+      "purl": "pkg:npm/@radix-ui/react-slot@1.1.0"
+    },
+    {
+      "type": "library",
+      "name": "@radix-ui/react-tabs",
+      "version": "1.1.1",
+      "purl": "pkg:npm/@radix-ui/react-tabs@1.1.1"
+    },
+    {
+      "type": "library",
+      "name": "@radix-ui/react-tooltip",
+      "version": "1.1.3",
+      "purl": "pkg:npm/@radix-ui/react-tooltip@1.1.3"
+    },
+    {
+      "type": "library",
+      "name": "@revenuecat/purchases-capacitor",
+      "version": "12.3.2",
+      "purl": "pkg:npm/@revenuecat/purchases-capacitor@12.3.2"
+    },
+    {
+      "type": "library",
+      "name": "@supabase/ssr",
+      "version": "0.5.1",
+      "purl": "pkg:npm/@supabase/ssr@0.5.1"
+    },
+    {
+      "type": "library",
+      "name": "@supabase/supabase-js",
+      "version": "2.46.0",
+      "purl": "pkg:npm/@supabase/supabase-js@2.46.0"
+    },
+    {
+      "type": "library",
+      "name": "class-variance-authority",
+      "version": "0.7.1",
+      "purl": "pkg:npm/class-variance-authority@0.7.1"
+    },
+    {
+      "type": "library",
+      "name": "clsx",
+      "version": "2.1.1",
+      "purl": "pkg:npm/clsx@2.1.1"
+    },
+    {
+      "type": "library",
+      "name": "jotai",
+      "version": "2.10.0",
+      "purl": "pkg:npm/jotai@2.10.0"
+    },
+    {
+      "type": "library",
+      "name": "lucide-react",
+      "version": "0.460.0",
+      "purl": "pkg:npm/lucide-react@0.460.0"
+    },
+    {
+      "type": "library",
+      "name": "next",
+      "version": "15.5.19",
+      "purl": "pkg:npm/next@15.5.19"
+    },
+    {
+      "type": "library",
+      "name": "openai",
+      "version": "4.104.0",
+      "purl": "pkg:npm/openai@4.104.0"
+    },
+    {
+      "type": "library",
+      "name": "react",
+      "version": "19.0.0",
+      "purl": "pkg:npm/react@19.0.0"
+    },
+    {
+      "type": "library",
+      "name": "react-dom",
+      "version": "19.0.0",
+      "purl": "pkg:npm/react-dom@19.0.0"
+    },
+    {
+      "type": "library",
+      "name": "stripe",
+      "version": "22.0.2",
+      "purl": "pkg:npm/stripe@22.0.2"
+    },
+    {
+      "type": "library",
+      "name": "tailwind-merge",
+      "version": "2.5.4",
+      "purl": "pkg:npm/tailwind-merge@2.5.4"
+    },
+    {
+      "type": "library",
+      "name": "tailwindcss-animate",
+      "version": "1.0.7",
+      "purl": "pkg:npm/tailwindcss-animate@1.0.7"
+    },
+    {
+      "type": "library",
+      "name": "@next/bundle-analyzer",
+      "version": "16.2.4",
+      "purl": "pkg:npm/@next/bundle-analyzer@16.2.4"
+    },
+    {
+      "type": "library",
+      "name": "@types/node",
+      "version": "22",
+      "purl": "pkg:npm/@types/node@22"
+    },
+    {
+      "type": "library",
+      "name": "@types/react",
+      "version": "19",
+      "purl": "pkg:npm/@types/react@19"
+    },
+    {
+      "type": "library",
+      "name": "@types/react-dom",
+      "version": "19",
+      "purl": "pkg:npm/@types/react-dom@19"
+    },
+    {
+      "type": "library",
+      "name": "autoprefixer",
+      "version": "10.4.27",
+      "purl": "pkg:npm/autoprefixer@10.4.27"
+    },
+    {
+      "type": "library",
+      "name": "eslint",
+      "version": "9",
+      "purl": "pkg:npm/eslint@9"
+    },
+    {
+      "type": "library",
+      "name": "eslint-config-next",
+      "version": "15.1.0",
+      "purl": "pkg:npm/eslint-config-next@15.1.0"
+    },
+    {
+      "type": "library",
+      "name": "postcss",
+      "version": "8.5.10",
+      "purl": "pkg:npm/postcss@8.5.10"
+    },
+    {
+      "type": "library",
+      "name": "puppeteer-core",
+      "version": "24.40.0",
+      "purl": "pkg:npm/puppeteer-core@24.40.0"
+    },
+    {
+      "type": "library",
+      "name": "tailwindcss",
+      "version": "3.4.1",
+      "purl": "pkg:npm/tailwindcss@3.4.1"
+    },
+    {
+      "type": "library",
+      "name": "typescript",
+      "version": "5",
+      "purl": "pkg:npm/typescript@5"
+    }
+  ]
+}

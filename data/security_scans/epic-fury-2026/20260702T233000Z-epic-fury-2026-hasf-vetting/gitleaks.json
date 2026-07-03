@@ -1,0 +1,60 @@
+{
+  "findings": [
+    {
+      "file": "docker-compose.dev.yml",
+      "line": 32,
+      "rule": "Supabase Service Role Key",
+      "match": "eyJhbGciOiJIUzI..."
+    },
+    {
+      "file": "setup-monetization.sh",
+      "line": 64,
+      "rule": "Generic Password Assignment",
+      "match": "secret=\"${3:-fa..."
+    },
+    {
+      "file": "setup-monetization.sh",
+      "line": 78,
+      "rule": "Generic Password Assignment",
+      "match": "secret=\"${3:-fa..."
+    },
+    {
+      "file": "docker-compose.yml",
+      "line": 131,
+      "rule": "Supabase Service Role Key",
+      "match": "eyJhbGciOiJIUzI..."
+    },
+    {
+      "file": "docker-compose.yml",
+      "line": 132,
+      "rule": "Supabase Service Role Key",
+      "match": "eyJhbGciOiJIUzI..."
+    },
+    {
+      "file": "docker-compose.yml",
+      "line": 164,
+      "rule": "Supabase Service Role Key",
+      "match": "eyJhbGciOiJIUzI..."
+    },
+    {
+      "file": "docker-compose.yml",
+      "line": 165,
+      "rule": "Supabase Service Role Key",
+      "match": "eyJhbGciOiJIUzI..."
+    },
+    {
+      "file": "docker-compose.yml",
+      "line": 178,
+      "rule": "Supabase Service Role Key",
+      "match": "eyJhbGciOiJIUzI..."
+    },
+    {
+      "file": "docker-compose.yml",
+      "line": 191,
+      "rule": "Supabase Service Role Key",
+      "match": "eyJhbGciOiJIUzI..."
+    }
+  ],
+  "tool_fallback_used": true,
+  "scanned_files_count": 100
+}
