@@ -1,0 +1,12 @@
+{
+  "first_app_toolchain_status": {
+    "macos_version": "14.5",
+    "xcode_installed": true,
+    "xcode_license_accepted": true,
+    "flutter_installed": true,
+    "flutter_doctor_result": "SUCCESS",
+    "ios_simulator_available": true,
+    "cocoapods_installed": true,
+    "verdict": "TOOLCHAIN_READY"
+  }
+}

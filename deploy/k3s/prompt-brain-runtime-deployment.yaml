@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prompt-brain-runtime
+  namespace: hoch-agent-swarm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prompt-brain-runtime
+  template:
+    metadata:
+      labels:
+        app: prompt-brain-runtime
+    spec:
+      containers:
+        - name: runtime
+          image: hoch/prompt-brain-runtime:latest
+          volumeMounts:
+            - name: evidence-storage
+              mountPath: /app/evidence
+      volumes:
+        - name: evidence-storage
+          persistentVolumeClaim:
+            claimName: pvc-evidence

@@ -1,0 +1,94 @@
+{
+  "AI Engineer": {
+    "soc_code": "15-1252",
+    "title": "Software Developers",
+    "naics_code": "541511",
+    "tasks": [
+      "Design and compile prompt templates for large language models.",
+      "Implement cognitive reasoning workflows and agentic routing."
+    ]
+  },
+  "Software Factory Automation Engineer": {
+    "soc_code": "15-1252",
+    "title": "Software Developers",
+    "naics_code": "541511",
+    "tasks": [
+      "Develop CI/CD pipelines and automate software build releases."
+    ]
+  },
+  "Agent Orchestration Specialist": {
+    "soc_code": "15-1252",
+    "title": "Software Developers",
+    "naics_code": "541511",
+    "tasks": [
+      "Configure task queues, lock systems, and multi-agent coordination protocols."
+    ]
+  },
+  "Cybersecurity Engineer": {
+    "soc_code": "15-1212",
+    "title": "Information Security Analysts",
+    "naics_code": "928110",
+    "tasks": [
+      "Establish zero-trust network boundaries and micro-segmentation guidelines.",
+      "Audit cryptographic key lifecycles and HSM interfaces."
+    ]
+  },
+  "RMF/ATO Compliance Officer": {
+    "soc_code": "15-1212",
+    "title": "Information Security Analysts",
+    "naics_code": "928110",
+    "tasks": [
+      "Audit system controls in eMASS and coordinate POA&M milestones.",
+      "Execute continuous monitoring schedules and verify Splunk ingestion."
+    ]
+  },
+  "DevSecOps Architect": {
+    "soc_code": "15-1212",
+    "title": "Information Security Analysts",
+    "naics_code": "928110",
+    "tasks": [
+      "Configure automated static code scanning and container gate checks.",
+      "Verify build artifact provenance and SBOM compliance."
+    ]
+  },
+  "QA Automation Lead": {
+    "soc_code": "15-1253",
+    "title": "Software Quality Assurance Analysts and Testers",
+    "naics_code": "541511",
+    "tasks": [
+      "Create automated test suites and verify API schema compliance."
+    ]
+  },
+  "SAST/DAST Triage Analyst": {
+    "soc_code": "15-1253",
+    "title": "Software Quality Assurance Analysts and Testers",
+    "naics_code": "541511",
+    "tasks": [
+      "Triage vulnerability scan reports and assign CVSS severity rankings."
+    ]
+  },
+  "Product Manager": {
+    "soc_code": "11-3021",
+    "title": "Computer and Information Systems Managers",
+    "naics_code": "541512",
+    "tasks": [
+      "Define software release roadmaps and translate feedback into tasks."
+    ]
+  },
+  "Revenue Operations Coordinator": {
+    "soc_code": "11-3021",
+    "title": "Computer and Information Systems Managers",
+    "naics_code": "541512",
+    "tasks": [
+      "Manage monetization packages, subscription tiers, and API billing metrics."
+    ]
+  },
+  "Executive Command Center Operator": {
+    "soc_code": "11-3021",
+    "title": "Computer and Information Systems Managers",
+    "naics_code": "541512",
+    "tasks": [
+      "Monitor enterprise system uptime, SLO compliance, and operational telemetry."
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "first_app_offline_data_status": {
+    "rmf_checklist_loads": true,
+    "control_families_loads": true,
+    "evidence_types_loads": true,
+    "poam_fields_loads": true,
+    "conmon_tasks_loads": true,
+    "disclaimers_loads": true
+  }
+}

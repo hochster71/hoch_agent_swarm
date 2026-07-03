@@ -1,0 +1,19 @@
+{
+  "master_launch_index": {
+    "version": "RC1",
+    "status": {
+      "internal_build": "GO",
+      "local_model_runtime": "GO",
+      "product_pack": "GO",
+      "pilot_launch_package": "GO",
+      "paid_pilot_package": "READY_TO_OFFER",
+      "external_revenue_validation": "PENDING"
+    },
+    "urls": {
+      "backend_url": "http://127.0.0.1:8000",
+      "command_center_url": "http://127.0.0.1:8000/prototype/prompt-brain",
+      "lm_studio_url": "http://127.0.0.1:1234/v1",
+      "ollama_url": "http://127.0.0.1:11434"
+    }
+  }
+}

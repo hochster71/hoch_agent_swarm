@@ -1,0 +1,34 @@
+{
+  "pipeline": [
+    {
+      "app_name": "RMF Evidence Review Companion",
+      "bundle_id": "com.hoch.rmf.companion",
+      "target_platform": "iOS / macOS",
+      "monetization_model": "Paid App ($9.99)",
+      "privacy_status": "COMPLETED",
+      "terms_status": "COMPLETED",
+      "qa_status": "PASSED",
+      "security_status": "PASSED",
+      "app_review_risk": "LOW",
+      "release_status": "STAGED",
+      "revenue_status": "ACTIVE",
+      "private_brain_exposure_risk": "NONE",
+      "app_store_readiness_verdict": "READY"
+    },
+    {
+      "app_name": "Cybersecurity Quick Reference",
+      "bundle_id": "com.hoch.cyber.qrg",
+      "target_platform": "iOS / Android",
+      "monetization_model": "Freemium ($1.99/mo)",
+      "privacy_status": "COMPLETED",
+      "terms_status": "COMPLETED",
+      "qa_status": "PASSED",
+      "security_status": "PASSED",
+      "app_review_risk": "LOW",
+      "release_status": "STAGED",
+      "revenue_status": "ACTIVE",
+      "private_brain_exposure_risk": "NONE",
+      "app_store_readiness_verdict": "READY"
+    }
+  ]
+}

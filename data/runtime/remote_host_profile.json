@@ -1,0 +1,19 @@
+{
+  "remote_host_profile": {
+    "profile_id": "vps_cpu_x1",
+    "provider": "DigitalOcean",
+    "region": "nyc3",
+    "vCPU": 4,
+    "RAM": "8GB",
+    "disk": "160GB SSD",
+    "OS": "Ubuntu 22.04 LTS",
+    "estimated_monthly_cost": 48.0,
+    "ssh_access_status": "READY",
+    "docker_status": "READY",
+    "compose_status": "READY",
+    "firewall_status": "RESTRICTED",
+    "domain_tunnel_status": "PENDING_OPERATOR_TUNNEL",
+    "deployment_status": "PENDING_OPERATOR_HOST",
+    "deployment_verdict": "CONDITIONAL_GO"
+  }
+}

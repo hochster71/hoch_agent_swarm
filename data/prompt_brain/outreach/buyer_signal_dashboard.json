@@ -1,0 +1,17 @@
+{
+  "outreach_queued": 12,
+  "outreach_approved": 5,
+  "outreach_sent": 5,
+  "replies_received": 3,
+  "demos_scheduled": 2,
+  "demos_completed": 1,
+  "reviewer_feedback_count": 3,
+  "positive_buyer_signals": 3,
+  "objections": [
+    "Price point validation",
+    "Local model container complexity"
+  ],
+  "pilot_interest_count": 3,
+  "paid_pilot_interest_count": 2,
+  "conversion_rate_percentage": 60.0
+}

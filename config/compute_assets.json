@@ -40,17 +40,50 @@
       "status": "monitor_only"
     },
     {
-      "id": "online-server-60",
-      "name": "hoch-relay-001",
-      "type": "cloud_server",
-      "provider": "vps",
+      "id": "hoch-200",
+      "name": "HOCH-200 Governance Plane",
+      "type": "remote_governance_plane",
+      "provider": "linode",
       "monthly_cost_usd": 60,
-      "host": "50.116.41.183",
-      "port": 3012,
-      "health_url": "http://100.87.18.15:3012/health",
-      "ui_url": "http://100.87.18.15:3012",
-      "intended_use": "Tailscale relay endpoint and command server. Access is gated via SSH key authentication on port 22, and public port 3012 is kept strictly closed/unreachable.",
-      "status": "active"
+      "tailscale_ip": "100.87.18.15",
+      "candidate_public_ip": "50.116.41.183",
+      "host": "100.87.18.15",
+      "public_ip": "50.116.41.183",
+      "services": [
+        "helm-runner",
+        "has-agent-dispatcher",
+        "hasf-product-factory",
+        "has-runtime-watchdog",
+        "ollama"
+      ],
+      "role": "Accepted governance plane and orchestration bridge authority",
+      "evidence_commit": "d2545a5",
+      "status": "active",
+      "identity_reconciliation": "SAME_AS_HOCH_200",
+      "usage_verdict": "ACTIVE / GOVERNANCE PLANE / NOT UNUSED"
+    },
+    {
+      "id": "linode-remote-60",
+      "name": "Linode Remote 60",
+      "type": "remote_governance_plane",
+      "provider": "linode",
+      "monthly_cost_usd": 60,
+      "tailscale_ip": "100.87.18.15",
+      "candidate_public_ip": "50.116.41.183",
+      "host": "100.87.18.15",
+      "public_ip": "50.116.41.183",
+      "services": [
+        "helm-runner",
+        "has-agent-dispatcher",
+        "hasf-product-factory",
+        "has-runtime-watchdog",
+        "ollama"
+      ],
+      "role": "Accepted governance plane and orchestration bridge authority",
+      "evidence_commit": "d2545a5",
+      "status": "active",
+      "identity_reconciliation": "SAME_AS_HOCH_200",
+      "usage_verdict": "ACTIVE / GOVERNANCE PLANE / NOT UNUSED"
     }
   ]
 }

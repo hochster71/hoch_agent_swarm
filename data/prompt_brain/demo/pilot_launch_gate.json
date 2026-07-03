@@ -1,0 +1,14 @@
+{
+  "pilot_launch_gate": {
+    "pilot_checklist_exists": true,
+    "external_reviewer_package_exists": true,
+    "feedback_template_exists": true,
+    "feedback_process_exists": true,
+    "outreach_pack_exists": true,
+    "demo_call_scripts_exist": true,
+    "command_center_pilot_status_exists": true,
+    "no_sensitive_data_statement_exists": true,
+    "human_in_the_loop_disclaimer_exists": true,
+    "verdict": "GO"
+  }
+}

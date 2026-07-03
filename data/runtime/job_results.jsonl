@@ -1,0 +1,1 @@
+{"job_id": "job_1700000000", "job_type": "run_health_audit", "status": "SUCCESS", "started_at": 1700000000.0, "completed_at": 1700000000.1, "duration_ms": 100, "output_path": "/data/runtime/outputs/run_health_audit.json", "error": null, "evidence_hash": "sha256-mocked"}

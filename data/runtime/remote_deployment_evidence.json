@@ -1,0 +1,7 @@
+{
+  "remote_deployment_evidence": {
+    "last_attempt_status": "PENDING_HOST",
+    "deployment_gate_verdict": "CONDITIONAL_GO",
+    "notes": "System is configured and deploy-ready; pending physical VPS host credentials."
+  }
+}

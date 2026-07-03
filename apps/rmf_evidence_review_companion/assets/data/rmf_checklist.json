@@ -1,0 +1,6 @@
+{
+  "rmf_checklist": [
+    {"control_id": "AC-1", "family": "Access Control", "description": "Access Control Policy and Procedures"},
+    {"control_id": "AC-2", "family": "Access Control", "description": "Account Management"}
+  ]
+}

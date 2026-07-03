@@ -13,7 +13,7 @@ def test_get_prompts():
     assert response.status_code == 200
     data = response.json()
     assert isinstance(data, list)
-    assert len(data) == 416
+    assert len(data) == 558
     # Check shape of first prompt
     p = data[0]
     assert "id" in p
@@ -37,7 +37,7 @@ def test_get_prompts_metrics():
     response = client.get("/api/prompts/metrics")
     assert response.status_code == 200
     metrics = response.json()
-    assert metrics["total_prompts"] == 416
+    assert metrics["total_prompts"] == 558
     assert "categories" in metrics
     assert "industries" in metrics
     assert "severities" in metrics

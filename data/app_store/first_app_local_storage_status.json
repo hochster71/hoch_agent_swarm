@@ -1,0 +1,9 @@
+{
+  "first_app_local_storage_status": {
+    "checklist_completion_saves": true,
+    "notes_saves": true,
+    "favorites_saves": true,
+    "poam_drafts_saves": true,
+    "network_connections_prevented": true
+  }
+}

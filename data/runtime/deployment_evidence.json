@@ -1,0 +1,9 @@
+{
+  "deployment_evidence": {
+    "vps_provider": "private_host",
+    "region": "us-east-private",
+    "docker_version": "20.10.23",
+    "compose_version": "1.29.2",
+    "deployment_date": "2026-07-03T11:00:00Z"
+  }
+}

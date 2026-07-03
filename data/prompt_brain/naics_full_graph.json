@@ -1,0 +1,78 @@
+{
+  "54": {
+    "title": "Professional, Scientific, and Technical Services",
+    "level": "Sector",
+    "subsectors": {
+      "5415": {
+        "title": "Computer Systems Design and Related Services",
+        "level": "Industry Group",
+        "industries": {
+          "541511": {
+            "title": "Custom Computer Programming Services",
+            "level": "National Industry"
+          },
+          "541512": {
+            "title": "Computer Systems Design Services",
+            "level": "National Industry"
+          },
+          "541513": {
+            "title": "Computer Facilities Management Services",
+            "level": "National Industry"
+          },
+          "541519": {
+            "title": "Other Computer Related Services",
+            "level": "National Industry"
+          }
+        }
+      }
+    }
+  },
+  "92": {
+    "title": "Public Administration",
+    "level": "Sector",
+    "subsectors": {
+      "9281": {
+        "title": "National Security and International Affairs",
+        "level": "Industry Group",
+        "industries": {
+          "928110": {
+            "title": "National Security",
+            "level": "National Industry"
+          }
+        }
+      }
+    }
+  },
+  "51": {
+    "title": "Information",
+    "level": "Sector",
+    "subsectors": {
+      "5132": {
+        "title": "Software Publishers",
+        "level": "Industry Group",
+        "industries": {
+          "513210": {
+            "title": "Software Publishers",
+            "level": "National Industry"
+          }
+        }
+      }
+    }
+  },
+  "33": {
+    "title": "Manufacturing",
+    "level": "Sector",
+    "subsectors": {
+      "3341": {
+        "title": "Computer and Peripheral Equipment Manufacturing",
+        "level": "Industry Group",
+        "industries": {
+          "334111": {
+            "title": "Electronic Computer Manufacturing",
+            "level": "National Industry"
+          }
+        }
+      }
+    }
+  }
+}

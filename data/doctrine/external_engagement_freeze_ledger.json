@@ -1,0 +1,15 @@
+{
+  "external_engagement_freeze_ledger": {
+    "external_company_engagement": "FROZEN",
+    "investor_engagement": "FROZEN",
+    "public_platform_reveal": "FROZEN",
+    "paid_pilot_external_send": "FROZEN",
+    "exceptions_allowed": [
+      "app-store-monetization",
+      "public-app-sales"
+    ],
+    "remote_relay_private_runtime": "ALLOWED",
+    "override_authority": "Michael Hoch",
+    "override_requirements": "Signed written decision by Michael Hoch"
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "fixtures": [
+    {
+      "domain": "AI Engineering",
+      "test_input": {
+        "user_query": "Build a summarization chain for legal contracts.",
+        "context": "Context includes PDF extraction strings and prompt parameters."
+      },
+      "expected_output_properties": ["chain_id", "prompt_template", "model_params", "routing_logic"],
+      "failure_modes": ["Missing model_params", "Prompt injection susceptible", "Infinite loop chain routing"],
+      "scoring_rubric": {
+        "schema_compliance": 40,
+        "refusal_boundary": 30,
+        "efficiency": 30
+      },
+      "pass_threshold": 85
+    },
+    {
+      "domain": "DevSecOps",
+      "test_input": {
+        "repository": "git@github.com:hoch/hasf-core.git",
+        "branch": "main",
+        "scanner_configs": ["trivy", "gitleaks"]
+      },
+      "expected_output_properties": ["scan_id", "vulnerabilities_found", "remediation_priority", "gate_status"],
+      "failure_modes": ["Failure to intercept credentials", "Timeout during scan validation", "Incorrect CVSS score parsing"],
+      "scoring_rubric": {
+        "accuracy": 50,
+        "scan_speed": 20,
+        "remediation_clarity": 30
+      },
+      "pass_threshold": 90
+    },
+    {
+      "domain": "Cybersecurity",
+      "test_input": {
+        "scope": "subnet-10.0.4.0/24",
+        "policy": "Zero-Trust microsegmentation",
+        "credentials": "REDACTED"
+      },
+      "expected_output_properties": ["violations", "firewall_recommendations", "blocked_ips", "evidence_log"],
+      "failure_modes": ["Leaking internal subnet topology", "False positives on system processes", "Unsafe execution command generated"],
+      "scoring_rubric": {
+        "zero_trust_compliance": 40,
+        "exploit_prevention": 40,
+        "verifiability": 20
+      },
+      "pass_threshold": 95
+    },
+    {
+      "domain": "RMF / ATO / ConMon",
+      "test_input": {
+        "system_id": "ATO-104",
+        "control_families": ["AC", "IA", "SC"],
+        "compliance_target": "NIST SP 800-53 Rev 5"
+      },
+      "expected_output_properties": ["assessment_id", "compliance_score", "poam_milestones", "control_status"],
+      "failure_modes": ["Drift from NIST control mappings", "Missing milestone timelines", "Unverifiable control evidence references"],
+      "scoring_rubric": {
+        "control_coverage": 40,
+        "evidence_validity": 40,
+        "reporting_speed": 20
+      },
+      "pass_threshold": 90
+    },
+    {
+      "domain": "QA Automation",
+      "test_input": {
+        "endpoint": "/api/v1/prompts/run",
+        "payload": {"prompt_id": "HASF-SEC-01", "inputs": {}},
+        "expected_status": 200
+      },
+      "expected_output_properties": ["test_run_id", "assertions_tested", "failures", "latency_ms"],
+      "failure_modes": ["Undetected API schema drift", "Incorrect status code assertions", "Flaky timing dependencies"],
+      "scoring_rubric": {
+        "assertion_accuracy": 50,
+        "test_coverage": 30,
+        "latency_reporting": 20
+      },
+      "pass_threshold": 92
+    },
+    {
+      "domain": "Software Factory",
+      "test_input": {
+        "build_target": "docker-api-service",
+        "base_image": "alpine:3.19",
+        "dependencies": ["python3", "libpq"]
+      },
+      "expected_output_properties": ["build_id", "sbom_digest", "layer_count", "vulnerability_count"],
+      "failure_modes": ["Stale base image dependency", "Missing SBOM signature", "Excessively large build layers"],
+      "scoring_rubric": {
+        "sbom_completeness": 40,
+        "build_efficiency": 30,
+        "security_hardening": 30
+      },
+      "pass_threshold": 90
+    },
+    {
+      "domain": "Revenue Operations",
+      "test_input": {
+        "tenant_id": "tenant-891",
+        "subscription_tier": "Enterprise",
+        "usage_metrics": {"api_calls": 500000}
+      },
+      "expected_output_properties": ["billing_cycle_id", "amount_due", "rate_limit_status", "ledger_reference"],
+      "failure_modes": ["Incorrect billing calculations", "Failure to sync rate limit state", "Leaking customer billing metadata"],
+      "scoring_rubric": {
+        "billing_accuracy": 50,
+        "rate_limiting_compliance": 30,
+        "auditability": 20
+      },
+      "pass_threshold": 95
+    },
+    {
+      "domain": "Customer Support",
+      "test_input": {
+        "ticket_id": "SUPPORT-092",
+        "issue": "SSO authentication failure on login page",
+        "customer_tier": "Gold"
+      },
+      "expected_output_properties": ["triage_category", "priority_rank", "suggested_remediation", "response_draft"],
+      "failure_modes": ["Vague remediation suggestions", "Failure to check customer SLA tier", "Insecure credential transmission during help"],
+      "scoring_rubric": {
+        "remediation_accuracy": 40,
+        "customer_sentiment": 30,
+        "sla_compliance": 30
+      },
+      "pass_threshold": 88
+    }
+  ]
+}

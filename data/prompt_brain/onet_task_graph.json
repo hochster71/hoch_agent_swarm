@@ -1,0 +1,83 @@
+{
+  "AI Engineer": {
+    "soc_code": "15-1252",
+    "title": "Software Developers",
+    "tasks": [
+      "Design and compile prompt templates for large language models.",
+      "Implement cognitive reasoning workflows and agentic routing."
+    ]
+  },
+  "Software Factory Automation Engineer": {
+    "soc_code": "15-1252",
+    "title": "Software Developers",
+    "tasks": [
+      "Develop CI/CD pipelines and automate software build releases."
+    ]
+  },
+  "Agent Orchestration Specialist": {
+    "soc_code": "15-1252",
+    "title": "Software Developers",
+    "tasks": [
+      "Configure task queues, lock systems, and multi-agent coordination protocols."
+    ]
+  },
+  "Cybersecurity Engineer": {
+    "soc_code": "15-1212",
+    "title": "Information Security Analysts",
+    "tasks": [
+      "Establish zero-trust network boundaries and micro-segmentation guidelines.",
+      "Audit cryptographic key lifecycles and HSM interfaces."
+    ]
+  },
+  "RMF/ATO Compliance Officer": {
+    "soc_code": "15-1212",
+    "title": "Information Security Analysts",
+    "tasks": [
+      "Audit system controls in eMASS and coordinate POA&M milestones.",
+      "Execute continuous monitoring schedules and verify Splunk ingestion."
+    ]
+  },
+  "DevSecOps Architect": {
+    "soc_code": "15-1212",
+    "title": "Information Security Analysts",
+    "tasks": [
+      "Configure automated static code scanning and container gate checks.",
+      "Verify build artifact provenance and SBOM compliance."
+    ]
+  },
+  "QA Automation Lead": {
+    "soc_code": "15-1253",
+    "title": "Software Quality Assurance Analysts and Testers",
+    "tasks": [
+      "Create automated test suites and verify API schema compliance."
+    ]
+  },
+  "SAST/DAST Triage Analyst": {
+    "soc_code": "15-1253",
+    "title": "Software Quality Assurance Analysts and Testers",
+    "tasks": [
+      "Triage vulnerability scan reports and assign CVSS severity rankings."
+    ]
+  },
+  "Product Manager": {
+    "soc_code": "11-3021",
+    "title": "Computer and Information Systems Managers",
+    "tasks": [
+      "Define software release roadmaps and translate feedback into tasks."
+    ]
+  },
+  "Revenue Operations Coordinator": {
+    "soc_code": "11-3021",
+    "title": "Computer and Information Systems Managers",
+    "tasks": [
+      "Manage monetization packages, subscription tiers, and API billing metrics."
+    ]
+  },
+  "Executive Command Center Operator": {
+    "soc_code": "11-3021",
+    "title": "Computer and Information Systems Managers",
+    "tasks": [
+      "Monitor enterprise system uptime, SLO compliance, and operational telemetry."
+    ]
+  }
+}

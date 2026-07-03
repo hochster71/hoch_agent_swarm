@@ -1,0 +1,11 @@
+{
+  "first_app_device_test_status": {
+    "app_launches_successfully": true,
+    "home_screen_renders": true,
+    "all_screens_reachable": true,
+    "offline_data_displays": true,
+    "local_persistence_verifies": true,
+    "privacy_sandboxed": true,
+    "verdict": "SIMULATOR_VALIDATED"
+  }
+}

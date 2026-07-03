@@ -1,0 +1,11 @@
+{
+  "michael_testflight_approval": {
+    "app_name": "RMF Evidence Review Companion",
+    "version": "1.0.0",
+    "approval_status": "PENDING",
+    "approved_by": null,
+    "approved_at": null,
+    "approval_scope": "TestFlight upload validation",
+    "notes": "Pending manual operator confirmation"
+  }
+}

@@ -1,0 +1,1 @@
+{"attempt_id": "deploy_001", "timestamp": "2026-07-03T11:56:00Z", "host_profile_id": "vps_cpu_x1", "command_summary": "deploy_remote.sh", "status": "PENDING_HOST", "services_started": [], "health_result": "FAILED", "errors": "No remote compute host connected", "evidence_paths": [], "verdict": "CONDITIONAL_GO"}

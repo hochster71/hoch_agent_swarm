@@ -1,0 +1,15 @@
+{
+  "first_app_testflight_upload_gate": {
+    "toolchain_ready": true,
+    "compile_successful": true,
+    "tests_pass": true,
+    "exposure_scan_passes": true,
+    "doctrine_verification_passes": true,
+    "screenshots_staged": true,
+    "icon_staged": true,
+    "privacy_declaration_drafted": true,
+    "app_store_connect_setup_exists": true,
+    "michael_approval_status": "PENDING",
+    "verdict": "READY_TO_UPLOAD_PENDING_MICHAEL_APPROVAL"
+  }
+}

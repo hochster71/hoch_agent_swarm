@@ -1,0 +1,32 @@
+{
+  "pipeline": [
+    {
+      "account": "Apex Federal Security",
+      "contact": "Robert Chen",
+      "segment": "GovCon cybersecurity",
+      "demo_status": "COMPLETED",
+      "pilot_interest": "HIGH",
+      "proposed_price_usd": 4999.0,
+      "objection": "Price point justification",
+      "risk": "Local container installation complexity",
+      "next_action": "Send price justification objection response email",
+      "conversion_status": "PROPOSED",
+      "expected_close_date": "2026-07-20",
+      "notes": "Targeting GovCon team pilot cohort"
+    },
+    {
+      "account": "Summit Compliance Partners",
+      "contact": "Sarah Miller",
+      "segment": "RMF consultants",
+      "demo_status": "SCHEDULED",
+      "pilot_interest": "MEDIUM",
+      "proposed_price_usd": 999.0,
+      "objection": "None",
+      "risk": "None",
+      "next_action": "Run walkthrough using 15-minute demo script",
+      "conversion_status": "LEAD",
+      "expected_close_date": "2026-07-25",
+      "notes": "Interested in starter pilot"
+    }
+  ]
+}

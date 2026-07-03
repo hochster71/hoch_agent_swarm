@@ -1,0 +1,37 @@
+{
+  "pack_name": "HOCH Software Factory Orchestration Pack",
+  "target_buyer": "Engineering Managers, DevOps Leads, and Product Managers.",
+  "pricing_hypothesis": "$799/month per enterprise team.",
+  "use_cases": [
+    "Develop CI/CD pipelines.",
+    "Configure task queues and lock systems."
+  ],
+  "included_prompt_families": [
+    "Role System Prompt",
+    "Task Execution Prompt",
+    "SOP Prompt"
+  ],
+  "approved_prompts": [
+    {
+      "prompt_id": "PB-SOFTWARE-FACTORY-AUTOMATION-ENGINEER-ROLE-SYSTEM-PROMPT-1",
+      "family": "Role System Prompt",
+      "qa_score": 92,
+      "red_team_score": 100
+    }
+  ],
+  "qa_score_summary": {
+    "average_score": 92.0,
+    "min_score": 92,
+    "max_score": 92
+  },
+  "red_team_summary": {
+    "vulnerabilities_found": 0,
+    "critical_findings": 0,
+    "remediation_status": "VERIFIED_SECURE"
+  },
+  "sample_workflows": [
+    "Dispatch deployment workflow -> Verify queue status -> Confirm production locks are active."
+  ],
+  "deployment_instructions": "Expose endpoints on internal server networks to permit multi-agent access.",
+  "risks_and_disclaimers": "Queue parameters should match available cluster memory bounds."
+}

@@ -1,0 +1,20 @@
+{
+  "review_id": "REV-TEMPLATE-001",
+  "evaluator_name": "John Doe, CISSP (SCA Evaluator)",
+  "evaluation_date": "2026-07-03",
+  "evaluated_output_hash": "811620a3f7e4c4ae655aa0a9f9108887",
+  "dimension_scores": {
+    "correctness": 9.5,
+    "evidence_traceability": 10.0,
+    "rmf_alignment": 9.0,
+    "risk_judgment": 9.0,
+    "actionability": 9.5,
+    "hallucination_avoidance": 10.0,
+    "boundary_awareness": 9.5,
+    "audit_usefulness": 9.0,
+    "executive_usefulness": 9.5,
+    "overall_trust": 9.5
+  },
+  "evaluator_comments": "Prompt Brain output successfully triaged all incomplete variables without hallucinating. The output is highly audit-ready.",
+  "status": "APPROVED_FOR_PILOT"
+}

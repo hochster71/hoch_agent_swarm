@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: has-backend
+  namespace: hoch-agent-swarm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: has-backend
+  template:
+    metadata:
+      labels:
+        app: has-backend
+    spec:
+      containers:
+        - name: backend
+          image: hoch/has-backend:latest
+          ports:
+            - containerPort: 8000

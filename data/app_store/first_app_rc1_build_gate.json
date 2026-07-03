@@ -1,0 +1,16 @@
+{
+  "first_app_rc1_build_gate": {
+    "flutter_scaffold_exists": true,
+    "core_screens_exist": true,
+    "offline_data_exists": true,
+    "no_network_dependencies": true,
+    "no_telemetry": true,
+    "disclaimer_exists": true,
+    "metadata_exists": true,
+    "scripts_exist": true,
+    "exposure_scan_passes": true,
+    "doctrine_verification_passes": true,
+    "tests_pass": true,
+    "verdict": "RC1_READY"
+  }
+}

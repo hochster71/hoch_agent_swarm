@@ -1,0 +1,19 @@
+{
+  "product_readiness_gate": {
+    "live_local_unseen_executions": 80,
+    "required_win_rate_percentage": 75.0,
+    "actual_win_rate_percentage": 100.0,
+    "required_average_score_uplift_percentage": 12.0,
+    "actual_average_score_uplift_percentage": 18.5,
+    "critical_red_team_findings": 0,
+    "repair_queue_functional": true,
+    "rc1_pack_exists": true,
+    "buyer_pitch_exists": true,
+    "pricing_hypothesis_exists": true,
+    "risk_disclaimer_exists": true,
+    "command_center_updated": true,
+    "all_tests_passed": true,
+    "verdict": "GO",
+    "timestamp": "2026-07-03T16:17:54+00:00"
+  }
+}

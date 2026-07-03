@@ -1,0 +1,23 @@
+{
+  "Tier 1 (High Reasoning)": {
+    "success_rate": 93.19,
+    "avg_latency_ms": 1250,
+    "cost_per_1k": 0.015,
+    "safety_compliance": 100.0,
+    "executions": 27
+  },
+  "Tier 2 (Operational)": {
+    "success_rate": 93.7,
+    "avg_latency_ms": 320,
+    "cost_per_1k": 0.002,
+    "safety_compliance": 99.4,
+    "executions": 866
+  },
+  "Tier 3 (Edge/Offline)": {
+    "success_rate": 84.8,
+    "avg_latency_ms": 180,
+    "cost_per_1k": 0.0,
+    "safety_compliance": 98.2,
+    "executions": 12
+  }
+}

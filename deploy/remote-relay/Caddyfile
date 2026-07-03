@@ -1,0 +1,15 @@
+{$PUBLIC_HOSTNAME} {
+    # Reverse proxy for public edges
+    reverse_proxy /relay/* relay-api:8010 {
+        header_up Host {host}
+        header_up X-Real-IP {remote}
+    }
+
+    reverse_proxy /prototype/* dashboard:80 {
+        header_up Host {host}
+    }
+
+    log {
+        output file /var/log/caddy/access.log
+    }
+}

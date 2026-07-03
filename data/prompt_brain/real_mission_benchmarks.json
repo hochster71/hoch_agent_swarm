@@ -1,0 +1,74 @@
+[
+  {
+    "domain": "DevSecOps pipeline hardening",
+    "description": "Hardening GitLab/GitHub Actions pipeline runner configs against dependency hijacking.",
+    "input_payload": {
+      "runner_os": "ubuntu-latest",
+      "dependencies": ["npm", "pip", "maven"]
+    },
+    "expected_outputs": ["secrets_masking", "sbom_generation", "lockfile_check"]
+  },
+  {
+    "domain": "RMF / ATO evidence review",
+    "description": "Auditing eMASS compliance packages against NIST SP 800-53 controls.",
+    "input_payload": {
+      "control_id": "AC-2",
+      "system_environment": "AWS IL5 Cloud"
+    },
+    "expected_outputs": ["access_control_verification", "mfa_enforcement", "log_audit_parameters"]
+  },
+  {
+    "domain": "Cybersecurity key lifecycle audit",
+    "description": "Verifying HSM key configuration parameters and certificate rotation cycles.",
+    "input_payload": {
+      "hsm_model": "Luna-T7",
+      "rotation_days": 90
+    },
+    "expected_outputs": ["rotation_cycle_audit", "hsm_firmware_check", "key_strength_verification"]
+  },
+  {
+    "domain": "SAST finding triage",
+    "description": "Triaging static analysis reports to flag high-severity injection exposures.",
+    "input_payload": {
+      "tool": "SonarQube",
+      "vulnerability": "SQL Injection"
+    },
+    "expected_outputs": ["triage_decision", "remediation_recommendation", "confidence_level"]
+  },
+  {
+    "domain": "DAST finding triage",
+    "description": "Analyzing runtime dynamic scan outputs for cross-site scripting vulnerabilities.",
+    "input_payload": {
+      "tool": "OWASP ZAP",
+      "finding": "Reflected XSS"
+    },
+    "expected_outputs": ["validation_passed", "payload_verification", "severity_override"]
+  },
+  {
+    "domain": "QA automation plan generation",
+    "description": "Drafting component assertion checkouts and mock boundaries.",
+    "input_payload": {
+      "component": "FastAPI Auth Router",
+      "coverage_goal": 95.0
+    },
+    "expected_outputs": ["test_suites_declared", "assertion_checkpoints", "mock_dependency_list"]
+  },
+  {
+    "domain": "Software factory backlog decomposition",
+    "description": "Dividing high-level epics into sprint-sized task checklists.",
+    "input_payload": {
+      "epic": "Distributed lock manager integration",
+      "sprint_length_days": 14
+    },
+    "expected_outputs": ["tasks", "priority_assignments", "redis_configuration_check"]
+  },
+  {
+    "domain": "Revenue packaging for prompt packs",
+    "description": "Generating customer monetizable pricing packages.",
+    "input_payload": {
+      "pack": "Cybersecurity Swarm Pack",
+      "target_users": 150
+    },
+    "expected_outputs": ["pricing_model", "buyer_segmentation", "monetization_channels"]
+  }
+]

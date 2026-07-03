@@ -1,0 +1,14 @@
+{
+  "feedback_id": "REV-FEEDBACK-TEMPLATE",
+  "reviewer_role": "ISSO / ISSM / SCA / AO",
+  "scenario_reviewed": "scenario_id",
+  "correctness_score": 10.0,
+  "usefulness_score": 10.0,
+  "trust_score": 10.0,
+  "missing_evidence_flags": [],
+  "hallucination_concerns": [],
+  "rmf_alignment_comments": "",
+  "buyer_interest_signal": "HIGH / MEDIUM / LOW",
+  "willingness_to_pilot_signal": true,
+  "follow_up_actions": []
+}

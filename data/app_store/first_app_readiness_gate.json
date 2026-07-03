@@ -1,0 +1,14 @@
+{
+  "first_app_readiness_gate": {
+    "candidate_selected": true,
+    "prd_exists": true,
+    "mvp_scope_exists": true,
+    "exposure_review_exists": true,
+    "exposure_verdict": "SAFE_TO_PACKAGE",
+    "release_checklist_exists": true,
+    "listing_draft_exists": true,
+    "monetization_model_exists": true,
+    "build_plan_exists": true,
+    "verdict": "READY_TO_BUILD"
+  }
+}

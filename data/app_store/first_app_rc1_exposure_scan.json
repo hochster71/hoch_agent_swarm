@@ -1,0 +1,7 @@
+{
+  "exposure_scan": {
+    "forbidden_terms_found": false,
+    "leak_details": [],
+    "verdict": "SAFE_TO_BUILD"
+  }
+}

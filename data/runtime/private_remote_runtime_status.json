@@ -1,0 +1,9 @@
+{
+  "private_remote_runtime_status": {
+    "remote_relay_active": true,
+    "runtime_24x7_enabled": true,
+    "local_ports_protected": true,
+    "auth_enforced": true,
+    "verdict": "SECURE_PRIVATE_CONTINUITY"
+  }
+}

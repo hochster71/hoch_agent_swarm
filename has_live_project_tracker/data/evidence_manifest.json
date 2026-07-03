@@ -13105,5 +13105,22 @@
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
     "entry_hash": "0015df416133b7ac687e6267a91217b07f96abd7fed6e3ce6fdbdf0524654594"
+  },
+  {
+    "entry_id": "entry-0772",
+    "timestamp": "2026-07-03T19:50:33.931805Z",
+    "run_id": "20260702T222129Z-24-7-autonomy-reset",
+    "task_id": "task-unspecified",
+    "agent_id": "has_system",
+    "model_backend": "none",
+    "adapter_id": "none",
+    "incident_class": "none",
+    "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/helm-rung-1-live-truth-audit-proof.md",
+    "evidence_sha256": "667d6e99867dbce64cf1057c65931870d2023fa9d5cf2d011ceeb9ba65c13365",
+    "previous_entry_hash": "0015df416133b7ac687e6267a91217b07f96abd7fed6e3ce6fdbdf0524654594",
+    "signature_status": "unsigned",
+    "founder_approval_required": false,
+    "created_by": "HELM_manifest_daemon",
+    "entry_hash": "a293742b056fc172d71a8eeb76abd47c6d001bb19de2471f549c73832e1eb0e5"
   }
 ]

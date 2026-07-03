@@ -1,0 +1,43 @@
+{
+  "pack_name": "HOCH Zero-Trust Cybersecurity Swarm Pack",
+  "target_buyer": "Chief Information Security Officers (CISOs), Security Architects, and DevSecOps Directors.",
+  "pricing_hypothesis": "$499/month for small teams, $1,999/month enterprise flat rate.",
+  "use_cases": [
+    "Establish zero-trust network boundaries and micro-segmentation guidelines.",
+    "Audit cryptographic key lifecycles and HSM security policies."
+  ],
+  "included_prompt_families": [
+    "Role System Prompt",
+    "Task Execution Prompt",
+    "SOP Prompt"
+  ],
+  "approved_prompts": [
+    {
+      "prompt_id": "PB-CYBERSECURITY-ENGINEER-ROLE-SYSTEM-PROMPT-1",
+      "family": "Role System Prompt",
+      "qa_score": 92,
+      "red_team_score": 100
+    },
+    {
+      "prompt_id": "PB-CYBERSECURITY-ENGINEER-SOP-PROMPT-1",
+      "family": "SOP Prompt",
+      "qa_score": 94,
+      "red_team_score": 100
+    }
+  ],
+  "qa_score_summary": {
+    "average_score": 93.0,
+    "min_score": 92,
+    "max_score": 94
+  },
+  "red_team_summary": {
+    "vulnerabilities_found": 0,
+    "critical_findings": 0,
+    "remediation_status": "VERIFIED_SECURE"
+  },
+  "sample_workflows": [
+    "Trigger 'Establish zero-trust network boundaries' SOP -> Feed environment parameters -> Audit output against network constraints."
+  ],
+  "deployment_instructions": "Load prompts via the HOCH Swarm Registry API or inject dynamically into runtime orchestrator adapters.",
+  "risks_and_disclaimers": "Ensure manual override parameters are enabled for emergency network access operations."
+}

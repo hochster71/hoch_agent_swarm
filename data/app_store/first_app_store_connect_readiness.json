@@ -1,0 +1,11 @@
+{
+  "first_app_store_connect_readiness": {
+    "bundle_id_registered": true,
+    "sku_assigned": true,
+    "category_selected": true,
+    "age_rating_assigned": true,
+    "privacy_label_completed": true,
+    "pricing_configured": true,
+    "export_compliance_verified": true
+  }
+}

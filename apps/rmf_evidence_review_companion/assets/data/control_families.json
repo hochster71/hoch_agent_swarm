@@ -1,0 +1,6 @@
+{
+  "control_families": [
+    {"family_code": "AC", "name": "Access Control"},
+    {"family_code": "IA", "name": "Identification and Authentication"}
+  ]
+}

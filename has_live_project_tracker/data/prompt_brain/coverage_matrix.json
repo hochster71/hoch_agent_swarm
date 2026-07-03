@@ -1,0 +1,20 @@
+{
+  "timestamp": "2026-07-03T16:03:25.087723+00:00",
+  "naics_sectors_mapped": 4,
+  "naics_subsectors_mapped": 4,
+  "naics_industries_mapped": 7,
+  "soc_occupations_mapped": 4,
+  "onet_tasks_mapped": 15,
+  "prompt_families_generated": 12,
+  "prompts_generated": 180,
+  "prompts_approved": 180,
+  "prompts_rejected": 0,
+  "prompts_needing_repair": 180,
+  "prompts_blocked_by_red_team": 0,
+  "duplicate_prompt_percentage": 0.0,
+  "convergence_rate": 100.0,
+  "unprocessed_backlog_count": 0,
+  "average_qa_score": 92.82,
+  "critical_red_team_findings": 0,
+  "convergence_status": "CONVERGED"
+}

@@ -1,0 +1,37 @@
+{
+  "pack_name": "HOCH DevSecOps CI/CD Automation Pack",
+  "target_buyer": "DevSecOps Engineers, Platform Engineers, and Release Managers.",
+  "pricing_hypothesis": "$299/month per active agent cluster.",
+  "use_cases": [
+    "Configure automated static code scanning.",
+    "Verify build artifact provenance and SBOM configurations."
+  ],
+  "included_prompt_families": [
+    "Role System Prompt",
+    "Task Execution Prompt",
+    "SOP Prompt"
+  ],
+  "approved_prompts": [
+    {
+      "prompt_id": "PB-DEVSECOPS-ARCHITECT-ROLE-SYSTEM-PROMPT-1",
+      "family": "Role System Prompt",
+      "qa_score": 91,
+      "red_team_score": 100
+    }
+  ],
+  "qa_score_summary": {
+    "average_score": 91.0,
+    "min_score": 91,
+    "max_score": 91
+  },
+  "red_team_summary": {
+    "vulnerabilities_found": 0,
+    "critical_findings": 0,
+    "remediation_status": "VERIFIED_SECURE"
+  },
+  "sample_workflows": [
+    "Instantiate DevSecOps Architect -> Scan code via SonarQube -> Verify output provenance against SBOM policy."
+  ],
+  "deployment_instructions": "Mount as configmap in Kubernetes clusters or trigger dynamically during runner jobs.",
+  "risks_and_disclaimers": "Verify scanner configurations before running overrides in production pipelines."
+}

@@ -1,0 +1,16 @@
+{
+  "first_app_candidate_decision": {
+    "primary_candidate": {
+      "app_name": "RMF Evidence Review Companion",
+      "monetization": "Paid App ($9.99)",
+      "exposure_risk": "NONE",
+      "verdict": "SELECTED"
+    },
+    "backup_candidate": {
+      "app_name": "Cybersecurity Quick Reference",
+      "monetization": "Freemium ($1.99/mo)",
+      "exposure_risk": "NONE",
+      "verdict": "BACKUP"
+    }
+  }
+}

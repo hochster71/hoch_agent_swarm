@@ -1,0 +1,1282 @@
+[
+  {
+    "task_id": "unseen_task_001",
+    "domain": "RMF / ATO evidence review",
+    "role": "RMF/ATO Compliance Officer",
+    "mission_input": "Reviewing system boundary authorization packages against NIST SP 800-37 R2.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "HIGH",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_002",
+    "domain": "RMF / ATO evidence review",
+    "role": "RMF/ATO Compliance Officer",
+    "mission_input": "Auditing FedRAMP System Security Plan (SSP) control descriptions.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "HIGH",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_003",
+    "domain": "RMF / ATO evidence review",
+    "role": "RMF/ATO Compliance Officer",
+    "mission_input": "Analyzing assessment agent recommendations for interim authority to operate.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "HIGH",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_004",
+    "domain": "RMF / ATO evidence review",
+    "role": "RMF/ATO Compliance Officer",
+    "mission_input": "Evaluating boundary protection evidence packages for hybrid cloud environments.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "HIGH",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_005",
+    "domain": "ConMon planning",
+    "role": "Cybersecurity Engineer",
+    "mission_input": "Developing continuous monitoring strategies for automated patch deployments.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_006",
+    "domain": "ConMon planning",
+    "role": "Cybersecurity Engineer",
+    "mission_input": "Defining asset discovery cadence schedules for dynamic container clusters.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_007",
+    "domain": "ConMon planning",
+    "role": "Cybersecurity Engineer",
+    "mission_input": "Structuring event log forwarding compliance metrics for SIEM ingestion.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_008",
+    "domain": "ConMon planning",
+    "role": "Cybersecurity Engineer",
+    "mission_input": "Drafting periodic vulnerability assessment schedules for air-gapped zones.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_009",
+    "domain": "POA&M triage",
+    "role": "RMF/ATO Compliance Officer",
+    "mission_input": "Triaging Plan of Action and Milestones entries for container runtime escapes.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "HIGH",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_010",
+    "domain": "POA&M triage",
+    "role": "RMF/ATO Compliance Officer",
+    "mission_input": "Assigning remediation milestones for legacy operating system vulnerabilities.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "HIGH",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_011",
+    "domain": "POA&M triage",
+    "role": "RMF/ATO Compliance Officer",
+    "mission_input": "Evaluating waiver justification requests for low-impact compliance findings.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "HIGH",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_012",
+    "domain": "POA&M triage",
+    "role": "RMF/ATO Compliance Officer",
+    "mission_input": "Prioritizing POA&M schedule adjustments based on compensating controls.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "HIGH",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_013",
+    "domain": "ACAS/Nessus finding review",
+    "role": "Cybersecurity Engineer",
+    "mission_input": "Reviewing ACAS scanner output logs for credentialed scan failures.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_014",
+    "domain": "ACAS/Nessus finding review",
+    "role": "Cybersecurity Engineer",
+    "mission_input": "Analyzing Nessus critical plugin triggers for remote code execution.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_015",
+    "domain": "ACAS/Nessus finding review",
+    "role": "Cybersecurity Engineer",
+    "mission_input": "Mapping ACAS vulnerability findings to corresponding CVE identifiers.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_016",
+    "domain": "ACAS/Nessus finding review",
+    "role": "Cybersecurity Engineer",
+    "mission_input": "Filtering false positive Nessus findings for database server clusters.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_017",
+    "domain": "DISA STIG checklist analysis",
+    "role": "Cybersecurity Engineer",
+    "mission_input": "Analyzing Windows Server 2022 STIG checklist compliance gaps.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_018",
+    "domain": "DISA STIG checklist analysis",
+    "role": "Cybersecurity Engineer",
+    "mission_input": "Auditing Red Hat Enterprise Linux 8 STIG configuration settings.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_019",
+    "domain": "DISA STIG checklist analysis",
+    "role": "Cybersecurity Engineer",
+    "mission_input": "Evaluating Cisco IOS router STIG checklist findings for SSH keys.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_020",
+    "domain": "DISA STIG checklist analysis",
+    "role": "Cybersecurity Engineer",
+    "mission_input": "Validating SQL Server STIG configuration checklist assertions.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_021",
+    "domain": "SAST finding triage",
+    "role": "Cybersecurity Engineer",
+    "mission_input": "Triaging SonarQube hardcoded credential findings in Java microservices.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_022",
+    "domain": "SAST finding triage",
+    "role": "Cybersecurity Engineer",
+    "mission_input": "Reviewing Semgrep SQL injection alerts in Python API controllers.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_023",
+    "domain": "SAST finding triage",
+    "role": "Cybersecurity Engineer",
+    "mission_input": "Evaluating false positive SAST warnings for buffer copy utilities.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_024",
+    "domain": "SAST finding triage",
+    "role": "Cybersecurity Engineer",
+    "mission_input": "Mapping SAST pipeline warnings to OWASP Top 10 vulnerabilities.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_025",
+    "domain": "DAST finding triage",
+    "role": "Cybersecurity Engineer",
+    "mission_input": "Triaging OWASP ZAP cross-site scripting findings on public forms.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_026",
+    "domain": "DAST finding triage",
+    "role": "Cybersecurity Engineer",
+    "mission_input": "Analyzing DAST session fixation alerts for stateful UI pages.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_027",
+    "domain": "DAST finding triage",
+    "role": "Cybersecurity Engineer",
+    "mission_input": "Reviewing DAST directory traversal warnings on static file paths.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_028",
+    "domain": "DAST finding triage",
+    "role": "Cybersecurity Engineer",
+    "mission_input": "Evaluating missing security header flags on load balancer outputs.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_029",
+    "domain": "DevSecOps control mapping",
+    "role": "DevSecOps Architect",
+    "mission_input": "Mapping GitLab pipeline stages to NIST SSDF compliance framework.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_030",
+    "domain": "DevSecOps control mapping",
+    "role": "DevSecOps Architect",
+    "mission_input": "Auditing GitHub Actions runner configurations for trust boundary checks.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_031",
+    "domain": "DevSecOps control mapping",
+    "role": "DevSecOps Architect",
+    "mission_input": "Configuring container image signing gates using Cosign keys.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_032",
+    "domain": "DevSecOps control mapping",
+    "role": "DevSecOps Architect",
+    "mission_input": "Verifying SBOM creation pipelines for open source dependencies.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_033",
+    "domain": "cryptographic key lifecycle audit",
+    "role": "Cybersecurity Engineer",
+    "mission_input": "Auditing HSM cryptographic key generation and rotation schedules.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_034",
+    "domain": "cryptographic key lifecycle audit",
+    "role": "Cybersecurity Engineer",
+    "mission_input": "Verifying certificate authority rotation compliance procedures.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_035",
+    "domain": "cryptographic key lifecycle audit",
+    "role": "Cybersecurity Engineer",
+    "mission_input": "Analyzing SSH key inventory logs for orphaned administrator credentials.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_036",
+    "domain": "cryptographic key lifecycle audit",
+    "role": "Cybersecurity Engineer",
+    "mission_input": "Evaluating API token secret storage vault policy compliance.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_037",
+    "domain": "security evidence package generation",
+    "role": "RMF/ATO Compliance Officer",
+    "mission_input": "Generating system component inventory evidence files for assessors.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_038",
+    "domain": "security evidence package generation",
+    "role": "RMF/ATO Compliance Officer",
+    "mission_input": "Compiling log aggregation audit trails for compliance assessors.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_039",
+    "domain": "security evidence package generation",
+    "role": "RMF/ATO Compliance Officer",
+    "mission_input": "Packaging SBOM dependency manifest evidence files for FedRAMP review.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  },
+  {
+    "task_id": "unseen_task_040",
+    "domain": "security evidence package generation",
+    "role": "RMF/ATO Compliance Officer",
+    "mission_input": "Drafting physical security control evidence narratives for SOC 2.",
+    "expected_output_properties": [
+      "verifiable",
+      "risk_assessed",
+      "remediation_focused"
+    ],
+    "risk_category": "MEDIUM",
+    "required_evidence_fields": [
+      "control_id",
+      "findings",
+      "remediation_steps"
+    ],
+    "scoring_rubric": {
+      "completeness_weight": 0.15,
+      "structure_weight": 0.15,
+      "specificity_weight": 0.15,
+      "risk_control_weight": 0.1,
+      "usefulness_weight": 0.1,
+      "actionability_weight": 0.1,
+      "verifiability_weight": 0.1,
+      "compliance_weight": 0.1,
+      "red_team_weight": 0.05
+    },
+    "red_team_checks": [
+      "injection_resilience",
+      "role_boundary_enforcement"
+    ]
+  }
+]

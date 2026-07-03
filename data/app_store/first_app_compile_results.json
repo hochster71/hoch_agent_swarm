@@ -1,0 +1,11 @@
+{
+  "first_app_compile_results": {
+    "flutter_pub_get_success": true,
+    "flutter_analyze_success": true,
+    "flutter_test_success": true,
+    "ios_debug_build_success": true,
+    "macos_debug_build_success": true,
+    "blockers_found": false,
+    "artifacts_created": ["build/ios/iphonesimulator/Runner.app"]
+  }
+}

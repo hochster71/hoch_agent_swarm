@@ -1,0 +1,16 @@
+SOC Code,Occupation Title,Role,Task Description
+15-1252,Software Developers,AI Engineer,Design and compile prompt templates for large language models.
+15-1252,Software Developers,AI Engineer,Implement cognitive reasoning workflows and agentic routing.
+15-1252,Software Developers,Software Factory Automation Engineer,Develop CI/CD pipelines and automate software build releases.
+15-1252,Software Developers,Agent Orchestration Specialist,"Configure task queues, lock systems, and multi-agent coordination protocols."
+15-1212,Information Security Analysts,Cybersecurity Engineer,Establish zero-trust network boundaries and micro-segmentation guidelines.
+15-1212,Information Security Analysts,Cybersecurity Engineer,Audit cryptographic key lifecycles and HSM interfaces.
+15-1212,Information Security Analysts,RMF/ATO Compliance Officer,Audit system controls in eMASS and coordinate POA&M milestones.
+15-1212,Information Security Analysts,RMF/ATO Compliance Officer,Execute continuous monitoring schedules and verify Splunk ingestion.
+15-1212,Information Security Analysts,DevSecOps Architect,Configure automated static code scanning and container gate checks.
+15-1212,Information Security Analysts,DevSecOps Architect,Verify build artifact provenance and SBOM compliance.
+15-1253,Software Quality Assurance Analysts and Testers,QA Automation Lead,Create automated test suites and verify API schema compliance.
+15-1253,Software Quality Assurance Analysts and Testers,SAST/DAST Triage Analyst,Triage vulnerability scan reports and assign CVSS severity rankings.
+11-3021,Computer and Information Systems Managers,Product Manager,Define software release roadmaps and translate feedback into tasks.
+11-3021,Computer and Information Systems Managers,Revenue Operations Coordinator,"Manage monetization packages, subscription tiers, and API billing metrics."
+11-3021,Computer and Information Systems Managers,Executive Command Center Operator,"Monitor enterprise system uptime, SLO compliance, and operational telemetry."

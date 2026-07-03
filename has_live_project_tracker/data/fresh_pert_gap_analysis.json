@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-03T10:12:13.883601",
+  "generated_at": "2026-07-03T10:48:17.917577",
   "overall_status": "PASS",
   "gap_summary": "Local runner proof against localhost:8765 is PROVEN and active. Linux/release runners and app-store readiness are not configured.",
   "critical_path": [

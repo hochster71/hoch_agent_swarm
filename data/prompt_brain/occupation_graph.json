@@ -1,0 +1,37 @@
+{
+  "15-1252": {
+    "title": "Software Developers",
+    "naics": "541511",
+    "roles": [
+      "AI Engineer",
+      "Software Factory Automation Engineer",
+      "Agent Orchestration Specialist"
+    ]
+  },
+  "15-1212": {
+    "title": "Information Security Analysts",
+    "naics": "928110",
+    "roles": [
+      "Cybersecurity Engineer",
+      "RMF/ATO Compliance Officer",
+      "DevSecOps Architect"
+    ]
+  },
+  "15-1253": {
+    "title": "Software Quality Assurance Analysts and Testers",
+    "naics": "541511",
+    "roles": [
+      "QA Automation Lead",
+      "SAST/DAST Triage Analyst"
+    ]
+  },
+  "11-3021": {
+    "title": "Computer and Information Systems Managers",
+    "naics": "541512",
+    "roles": [
+      "Product Manager",
+      "Revenue Operations Coordinator",
+      "Executive Command Center Operator"
+    ]
+  }
+}

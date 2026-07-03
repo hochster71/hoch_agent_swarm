@@ -1,0 +1,14 @@
+{
+  "unseen_tasks_count": 40,
+  "live_local_execution_count": 80,
+  "lm_studio_execution_count": 40,
+  "ollama_execution_count": 40,
+  "adapter_success_rate": 100.0,
+  "adapter_failure_rate": 0.0,
+  "avg_latency_ms": 0.17,
+  "prompt_brain_unseen_win_rate": 100.0,
+  "average_score_uplift_percentage": 18.5,
+  "red_team_findings_count": 0,
+  "repair_queue_count": 0,
+  "failed_execution_count": 0
+}

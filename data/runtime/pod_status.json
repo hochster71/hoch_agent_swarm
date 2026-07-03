@@ -1,0 +1,8 @@
+{
+  "pod_status": {
+    "active_workers": 1,
+    "idle_workers": 2,
+    "max_workers": 5,
+    "restarts": 0
+  }
+}

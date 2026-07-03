@@ -1,0 +1,10 @@
+<NessusClientData_v2>
+  <Report name="Sanitized Scan" xmlns:cm="http://www.nessus.org/cm">
+    <ReportHost name="host-12.internal.lan">
+      <ReportItem port="443" svc_name="www" severity="3" pluginID="12345" pluginName="SQL Injection Vulnerability">
+        <description>SQL injection vulnerabilities detected on search parameters.</description>
+        <solution>Apply security patches to web forms.</solution>
+      </ReportItem>
+    </ReportHost>
+  </Report>
+</NessusClientData_v2>

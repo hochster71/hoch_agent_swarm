@@ -1,0 +1,9 @@
+{
+  "paid_pilot_hold_status": {
+    "paid_pilot_package_exists": true,
+    "external_send_allowed": false,
+    "hold_reason": "PRIVATE_FIRST_DOCTRINE",
+    "override_authority": "Michael Hoch",
+    "final_verdict": "HELD_INTERNAL_ONLY"
+  }
+}

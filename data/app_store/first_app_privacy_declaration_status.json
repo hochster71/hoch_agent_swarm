@@ -1,0 +1,8 @@
+{
+  "first_app_privacy_declaration_status": {
+    "no_user_data_collected": true,
+    "no_telemetry_packages": true,
+    "pure_offline_sandboxed": true,
+    "verdict": "PRIVACY_VERIFIED"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "live_executions_count": 16,
+  "simulated_executions_count": 0,
+  "adapter_success_rate": 100.0,
+  "adapter_failure_rate": 0.0,
+  "avg_latency_ms": 1.12,
+  "prompt_brain_win_rate": 100.0,
+  "average_score_uplift_percentage": 21.45,
+  "red_team_findings_count": 0,
+  "repair_queue_count": 0,
+  "failed_execution_count": 0,
+  "live_only_benchmark_score": 83.45,
+  "simulated_only_benchmark_score": 0.0
+}

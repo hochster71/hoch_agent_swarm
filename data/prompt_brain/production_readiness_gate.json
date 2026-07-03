@@ -1,0 +1,17 @@
+{
+  "production_readiness_gate": {
+    "live_model_benchmark_executions": 16,
+    "required_win_rate_domains": 6,
+    "actual_win_rate_domains": 8,
+    "required_average_score_uplift_percentage": 15.0,
+    "actual_average_score_uplift_percentage": 21.45,
+    "critical_red_team_findings": 0,
+    "failed_outputs_routed_to_repair": true,
+    "adapter_health_visible_in_ui": true,
+    "simulation_fallback_separated": true,
+    "dynamic_scoring_traces_exist": true,
+    "all_tests_passed": true,
+    "verdict": "GO",
+    "timestamp": "2026-07-03T16:15:58+00:00"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "first_app_build_plan": {
+    "target_platform": "iOS / macOS",
+    "recommended_stack": "Flutter",
+    "sqlite_storage": true,
+    "build_command": "flutter build ipa --release",
+    "release_command": "xcrun altool --upload-app"
+  }
+}

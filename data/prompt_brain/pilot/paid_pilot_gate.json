@@ -1,0 +1,14 @@
+{
+  "paid_pilot_gate": {
+    "paid_pilot_offer_exists": true,
+    "scope_document_exists": true,
+    "pricing_model_exists": true,
+    "commercial_boundary_docs_exist": true,
+    "onboarding_checklist_exists": true,
+    "conversion_tracker_exists": true,
+    "risk_register_exists": true,
+    "followup_messages_exist": true,
+    "command_center_paid_pilot_view_exists": true,
+    "verdict": "READY_TO_OFFER"
+  }
+}

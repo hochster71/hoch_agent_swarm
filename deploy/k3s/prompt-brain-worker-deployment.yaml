@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prompt-brain-worker
+  namespace: hoch-agent-swarm
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: prompt-brain-worker
+  template:
+    metadata:
+      labels:
+        app: prompt-brain-worker
+    spec:
+      containers:
+        - name: worker
+          image: hoch/prompt-brain-worker:latest
+          volumeMounts:
+            - name: evidence-storage
+              mountPath: /app/evidence
+      volumes:
+        - name: evidence-storage
+          persistentVolumeClaim:
+            claimName: pvc-evidence

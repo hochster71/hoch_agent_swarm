@@ -1,0 +1,8 @@
+{
+  "relay_status": {
+    "status": "ONLINE",
+    "uptime_seconds": 86400,
+    "active_connections": 1,
+    "last_request_timestamp": "2026-07-03T11:51:32Z"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "first_app_asset_readiness": {
+    "app_icon_staged": true,
+    "splash_screen_staged": true,
+    "marketing_text_ready": true,
+    "iphone_screenshots_ready": true,
+    "ipad_screenshots_ready": false,
+    "macos_screenshots_ready": false
+  }
+}

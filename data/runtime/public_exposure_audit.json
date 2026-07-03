@@ -1,0 +1,11 @@
+{
+  "public_exposure_audit": {
+    "ollama_public": false,
+    "lm_studio_public": false,
+    "relay_protected": true,
+    "admin_routes_public": false,
+    "proxy_configured": true,
+    "secrets_leakage_detected": false,
+    "public_exposure_verdict": "SAFE_PRIVATE_RUNTIME"
+  }
+}

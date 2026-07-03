@@ -1,0 +1,8 @@
+{
+  "first_app_compile_status": {
+    "toolchain_status": "BLOCKED_BY_LOCAL_TOOLCHAIN",
+    "flutter_installed": false,
+    "xcode_installed": false,
+    "android_studio_installed": false
+  }
+}

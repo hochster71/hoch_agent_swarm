@@ -1,0 +1,37 @@
+{
+  "pack_id": "rmf_ato_cyber_prompt_brain_pack_rc1",
+  "pack_name": "RMF / ATO Compliance & Cybersecurity Prompt Brain Pack",
+  "version": "1.0.0-rc1",
+  "release_date": "2026-07-03T16:17:54Z",
+  "target_buyer": "Federal CISO / RMF Compliance Director / DevOps Team Lead",
+  "pricing_hypothesis": "$4,500/month flat-rate API usage or $49,000 enterprise-wide self-hosted license",
+  "buyer_pain_points": [
+    "Slow authorization to operate (ATO) timelines due to manual evidence verification",
+    "High rates of audit failures on NIST SP 800-53 security controls",
+    "Lack of automated STIG and Nessus vulnerability log mapping"
+  ],
+  "use_cases": [
+    "FedRAMP System Security Plan control generation",
+    "Plan of Action and Milestones remediation prioritization",
+    "Continuous diagnostics and mitigation planning"
+  ],
+  "included_workflows": [
+    "ACAS scan parsing and vulnerability mapping",
+    "eMASS evidence packet compilation",
+    "SAST/DAST pipeline policy enforcement"
+  ],
+  "qa_score_summary": {
+    "average_evaluation_score": 83.45,
+    "uplift_vs_baseline_percentage": 18.5,
+    "live_local_validation_runs": 80
+  },
+  "red_team_summary": {
+    "critical_vulnerabilities_found": 0,
+    "high_vulnerabilities_found": 0,
+    "rejection_rate": 0.0
+  },
+  "evidence_ledger_references": [
+    "/data/prompt_brain/unseen_benchmark_results.jsonl",
+    "/data/prompt_brain/unseen_scoring_trace.jsonl"
+  ]
+}

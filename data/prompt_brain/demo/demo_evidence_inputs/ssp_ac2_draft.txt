@@ -1,0 +1,4 @@
+System Boundary account authorization procedures:
+- Accounts are created by system administrators upon request.
+- Periodic user account reviews are completed periodically to disable inactive users.
+- No specific system administrator approval records exist in the current draft log.

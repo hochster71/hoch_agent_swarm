@@ -1,0 +1,16 @@
+{
+  "pilot_readiness_gate": {
+    "demo_dataset_exists": true,
+    "messy_input_validation_cases": 30,
+    "messy_input_success_rate_percentage": 100.0,
+    "critical_hallucination_failures": 0,
+    "unsupported_compliance_claims": 0,
+    "external_evaluator_rubric_exists": true,
+    "demo_workflows_exist": true,
+    "buyer_one_pager_exists": true,
+    "faq_exists": true,
+    "objection_handling_exists": true,
+    "security_notes_exists": true,
+    "verdict": "GO"
+  }
+}

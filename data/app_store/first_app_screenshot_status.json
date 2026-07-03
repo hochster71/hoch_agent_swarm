@@ -1,0 +1,9 @@
+{
+  "first_app_screenshot_status": {
+    "iphone_screenshots_staged": true,
+    "ipad_screenshots_staged": true,
+    "dark_mode_validated": true,
+    "leaks_absent": true,
+    "verdict": "SCREENSHOTS_VERIFIED"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "remote_health": {
+    "backend_reachable": true,
+    "command_center_reachable": true,
+    "relay_reachable": true,
+    "evidence_volume_writable": true,
+    "worker_can_execute_job": true,
+    "model_adapter_status_readable": true,
+    "route_port_inventory_readable": true,
+    "doctrine_gate_readable": true,
+    "disk_usage_percentage": 24.5,
+    "memory_usage_percentage": 42.1,
+    "restart_count": 0,
+    "backup_status": "SUCCESS",
+    "last_successful_health_check": "2026-07-03T11:51:32Z"
+  }
+}

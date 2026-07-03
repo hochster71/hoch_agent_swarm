@@ -1,0 +1,14 @@
+{
+  "app_metadata": {
+    "app_name": "RMF Evidence Review Companion",
+    "bundle_id_placeholder": "com.hoch.rmf.companion",
+    "version": "1.0.0",
+    "target_platforms": ["iOS", "macOS"],
+    "category": "Productivity",
+    "price_hypothesis": 9.99,
+    "privacy_mode": "Purely Offline",
+    "telemetry_status": "DISABLED",
+    "private_brain_exposure": "NONE",
+    "doctrine_verdict": "SAFE_PRIVATE_RUNTIME"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "reviewer_packet": {
+    "version": "1.0.0-rc1",
+    "scenarios_supported": 10,
+    "disclaimer_required": true,
+    "security_warning": "DO NOT UPLOAD SENSITIVE DATA",
+    "expected_duration_minutes": 30,
+    "human_in_the_loop_mandatory": true
+  }
+}

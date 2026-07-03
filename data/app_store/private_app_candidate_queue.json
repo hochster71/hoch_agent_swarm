@@ -1,0 +1,64 @@
+{
+  "candidates": [
+    {
+      "app_name": "RMF/ATO Evidence Review Companion",
+      "concept": "Offline compliance helper with local NIST database checklists",
+      "buyer_user": "ISSOs, ISSMs, RMF consultants",
+      "monetization_model": "Paid App ($9.99)",
+      "exposure_risk": "NONE",
+      "private_brain_dependency": "NONE (uses static offline models)",
+      "app_store_readiness": "HIGH",
+      "recommended_next_step": "Submit to App Store Connect",
+      "release_priority": "HIGH",
+      "revenue_hypothesis": "Initial B2B volume of 500 units monthly"
+    },
+    {
+      "app_name": "Cybersecurity Quick Reference / QRG",
+      "concept": "Searchable offline reference card for security control baselines",
+      "buyer_user": "Defense contractors, cybersecurity professionals",
+      "monetization_model": "Freemium ($1.99/mo)",
+      "exposure_risk": "NONE",
+      "private_brain_dependency": "NONE (uses public reference schemas)",
+      "app_store_readiness": "HIGH",
+      "recommended_next_step": "Submit to Google Play Console",
+      "release_priority": "HIGH",
+      "revenue_hypothesis": "Targeting 2,500 recurring subscriptions"
+    },
+    {
+      "app_name": "Family-safe AI assistant app",
+      "concept": "Kid-friendly safe chatbot wrapper using local API boundaries",
+      "buyer_user": "Families, educators",
+      "monetization_model": "Ad-supported / Premium",
+      "exposure_risk": "NONE",
+      "private_brain_dependency": "NONE",
+      "app_store_readiness": "MEDIUM",
+      "recommended_next_step": "Draft parental control boundaries",
+      "release_priority": "MEDIUM",
+      "revenue_hypothesis": "Niche ad revenue and premium tier conversions"
+    },
+    {
+      "app_name": "HASF-generated micro-SaaS candidates",
+      "concept": "AI-synthesized custom tools for compliance documentation",
+      "buyer_user": "B2B small business users",
+      "monetization_model": "SaaS Subscription ($49/mo)",
+      "exposure_risk": "LOW (uses isolated code pipelines)",
+      "private_brain_dependency": "NONE",
+      "app_store_readiness": "MEDIUM",
+      "recommended_next_step": "Deploy demo interface on static webhost",
+      "release_priority": "MEDIUM",
+      "revenue_hypothesis": "Low churn B2B conversions"
+    },
+    {
+      "app_name": "Hoch Agent Swarm companion dashboard",
+      "concept": "Standalone local UI to view swarm process metrics locally",
+      "buyer_user": "System operators",
+      "monetization_model": "Free / Open Utility",
+      "exposure_risk": "LOW (shows logs only)",
+      "private_brain_dependency": "NONE",
+      "app_store_readiness": "MEDIUM",
+      "recommended_next_step": "Build package bundle with Caddy",
+      "release_priority": "LOW",
+      "revenue_hypothesis": "Community adoption and developer trust builder"
+    }
+  ]
+}

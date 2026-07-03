@@ -1,0 +1,6 @@
+{
+  "conmon_tasks": [
+    {"task_id": "CM-1", "frequency": "Monthly", "description": "Review system account modifications log"},
+    {"task_id": "CM-2", "frequency": "Quarterly", "description": "Execute automated vulnerability scan"}
+  ]
+}

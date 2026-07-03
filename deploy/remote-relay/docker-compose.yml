@@ -1,0 +1,99 @@
+version: '3.8'
+
+services:
+  has-backend:
+    image: hoch/has-backend:latest
+    container_name: has-backend
+    restart: always
+    networks:
+      - internal-runtime
+    environment:
+      - PORT=8000
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+
+  prompt-brain-runtime:
+    image: hoch/prompt-brain-runtime:latest
+    container_name: prompt-brain-runtime
+    restart: always
+    networks:
+      - internal-runtime
+    volumes:
+      - prompt_brain_data:/app/data
+      - runtime_evidence:/app/evidence
+
+  prompt-brain-worker:
+    image: hoch/prompt-brain-worker:latest
+    container_name: prompt-brain-worker
+    restart: always
+    networks:
+      - internal-runtime
+    volumes:
+      - runtime_evidence:/app/evidence
+
+  relay-api:
+    image: hoch/relay-api:latest
+    container_name: relay-api
+    restart: always
+    networks:
+      - internal-runtime
+      - public-edge
+    environment:
+      - PORT=8010
+      - AUTH_TOKEN=${RELAY_AUTH_TOKEN}
+    volumes:
+      - runtime_evidence:/app/evidence
+
+  dashboard:
+    image: hoch/has-dashboard:latest
+    container_name: has-dashboard
+    restart: always
+    networks:
+      - internal-runtime
+      - public-edge
+
+  watchdog:
+    image: hoch/watchdog:latest
+    container_name: watchdog
+    restart: always
+    networks:
+      - internal-runtime
+    volumes:
+      - runtime_evidence:/app/evidence
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  caddy:
+    image: caddy:latest
+    container_name: proxy-caddy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - public-edge
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared-tunnel
+    restart: always
+    command: tunnel --no-autoupdate run
+    networks:
+      - public-edge
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+
+volumes:
+  prompt_brain_data:
+  runtime_evidence:
+  caddy_data:
+  caddy_config:
+
+networks:
+  public-edge:
+    driver: bridge
+  internal-runtime:
+    driver: bridge
+    internal: true

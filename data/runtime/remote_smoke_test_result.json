@@ -1,0 +1,15 @@
+{
+  "remote_smoke_test_result": {
+    "backend_health_ok": true,
+    "command_center_route_ok": true,
+    "relay_health_ok": true,
+    "protected_endpoint_rejects_missing_token": true,
+    "protected_endpoint_accepts_valid_token": true,
+    "worker_job_queuing_ok": true,
+    "worker_job_result_reading_ok": true,
+    "evidence_volume_writable": true,
+    "backup_script_executable": true,
+    "doctrine_verifier_passes": true,
+    "overall_smoke_test_verdict": "SUCCESS"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "remote_burn_in_summary": {
+    "burn_in_status": "PENDING_REMOTE_HOST",
+    "uptime_percentage": 0.0,
+    "total_burn_in_ticks": 0,
+    "successful_ticks": 0,
+    "last_check_timestamp": "2026-07-03T11:56:00Z",
+    "verdict": "CONDITIONAL_GO"
+  }
+}

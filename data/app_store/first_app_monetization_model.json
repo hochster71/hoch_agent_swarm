@@ -1,0 +1,9 @@
+{
+  "first_app_monetization_model": {
+    "model_type": "PAID_UPFRONT",
+    "tier_price": 9.99,
+    "currency": "USD",
+    "subscription_options": [],
+    "in_app_purchases": []
+  }
+}

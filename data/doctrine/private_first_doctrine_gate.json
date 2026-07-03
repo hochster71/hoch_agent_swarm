@@ -1,0 +1,19 @@
+{
+  "private_first_doctrine_gate": {
+    "private_brain_required": true,
+    "external_company_engagement_allowed": false,
+    "investor_engagement_allowed": false,
+    "app_store_exception_allowed": true,
+    "prompt_registry_private": true,
+    "evidence_ledgers_private": true,
+    "swarm_architecture_private": true,
+    "hasf_factory_private": true,
+    "remote_relay_private_runtime_allowed": true,
+    "paid_pilot_external_send_allowed": false,
+    "paid_pilot_internal_package_allowed": true,
+    "app_outputs_public_allowed": true,
+    "public_claims_require_evidence": true,
+    "michael_approval_required_for_external_disclosure": true,
+    "final_verdict": "PRIVATE_FIRST_GO"
+  }
+}

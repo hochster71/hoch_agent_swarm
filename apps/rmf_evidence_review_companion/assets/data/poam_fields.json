@@ -1,0 +1,6 @@
+{
+  "poam_fields": [
+    {"field_name": "Weakness Description", "required": true},
+    {"field_name": "Milestones and Completion Dates", "required": true}
+  ]
+}

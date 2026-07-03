@@ -1,0 +1,23 @@
+{
+  "total_naics_sectors_available": 20,
+  "total_naics_sectors_ingested": 4,
+  "total_soc_occupations_available": 867,
+  "total_soc_occupations_ingested": 4,
+  "total_onet_tasks_available": 19600,
+  "total_onet_tasks_ingested": 15,
+  "total_bls_oews_records_available": 32000,
+  "total_bls_oews_records_ingested": 7,
+  "coverage_percentage": 0.08,
+  "missing_sectors": [
+    "62 — Healthcare and Social Assistance",
+    "52 — Finance and Insurance",
+    "23 — Construction",
+    "44-45 — Retail Trade"
+  ],
+  "missing_occupations": [
+    "23-1011 — Lawyers",
+    "29-1141 — Registered Nurses",
+    "41-3031 — Securities, Commodities, and Financial Services Sales Agents"
+  ],
+  "ingestion_errors": []
+}

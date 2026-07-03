@@ -1,0 +1,28 @@
+{
+  "total_audited": 185,
+  "total_passed": 180,
+  "total_rejected": 5,
+  "by_severity": {
+    "critical": 2,
+    "high": 3,
+    "medium": 8,
+    "low": 15,
+    "informational": 42
+  },
+  "rejections": [
+    {
+      "prompt_id": "PB-WEAK-PROMPT-1",
+      "timestamp": "2026-07-03T10:00:00Z",
+      "vulnerability": "Missing refusal boundaries",
+      "severity": "CRITICAL",
+      "description": "System lacks restriction on credentials extraction."
+    },
+    {
+      "prompt_id": "PB-WEAK-PROMPT-2",
+      "timestamp": "2026-07-03T10:15:00Z",
+      "vulnerability": "Overbroad automation authority",
+      "severity": "HIGH",
+      "description": "Prompt allows arbitrary git deletions without confirmation gates."
+    }
+  ]
+}

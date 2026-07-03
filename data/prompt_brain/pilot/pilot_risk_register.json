@@ -1,0 +1,20 @@
+{
+  "risk_register": [
+    {
+      "risk_id": "RISK-001",
+      "category": "Deployment",
+      "description": "Local workstation container installation complexity",
+      "impact": "MEDIUM",
+      "probability": "HIGH",
+      "mitigation_plan": "Supply complete setup shell script and priority Slack support."
+    },
+    {
+      "risk_id": "RISK-002",
+      "category": "Compliance",
+      "description": "Risk of operator pasting proprietary program data in demo environment",
+      "impact": "HIGH",
+      "probability": "LOW",
+      "mitigation_plan": "Enforce explicit disclaimer popups and sanitized dataset validation check."
+    }
+  ]
+}

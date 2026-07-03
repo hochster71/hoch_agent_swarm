@@ -1,0 +1,12 @@
+{
+  "onboarding_checklist": {
+    "buyer_use_case_selection": "PASSED",
+    "workflow_selection": "PASSED",
+    "data_boundary_confirmation": "PASSED",
+    "reviewer_roles_configured": "PASSED",
+    "success_metrics_aligned": "PASSED",
+    "demo_environment_ready": "PASSED",
+    "feedback_cadence_established": "PASSED",
+    "closeout_decision_planned": "PASSED"
+  }
+}

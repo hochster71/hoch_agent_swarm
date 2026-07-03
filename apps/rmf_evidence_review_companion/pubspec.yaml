@@ -1,0 +1,21 @@
+name: rmf_evidence_review_companion
+description: Stands standalone offline NIST SP 800-53 rev 5 compliance checklists.
+version: 1.0.0+1
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/data/rmf_checklist.json
+    - assets/data/control_families.json
+    - assets/data/evidence_types.json
+    - assets/data/poam_fields.json
+    - assets/data/conmon_tasks.json
+    - assets/data/disclaimers.json

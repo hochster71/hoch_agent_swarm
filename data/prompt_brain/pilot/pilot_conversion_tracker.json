@@ -1,0 +1,12 @@
+{
+  "conversion_tracker": {
+    "total_leads": 5,
+    "demos_scheduled": 2,
+    "demos_completed": 1,
+    "pilot_proposals_sent": 1,
+    "active_paid_pilots": 0,
+    "converted_paid_contracts": 0,
+    "conversion_rate_percentage": 0.0,
+    "expected_pipeline_value_usd": 5998.0
+  }
+}

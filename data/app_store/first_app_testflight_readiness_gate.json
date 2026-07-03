@@ -1,0 +1,18 @@
+{
+  "first_app_testflight_readiness_gate": {
+    "compile_status_recorded": true,
+    "flutter_analyze_status_recorded": true,
+    "flutter_test_status_recorded": true,
+    "ui_polish_completed": true,
+    "offline_data_loads": true,
+    "local_storage_works": true,
+    "screenshot_plan_exists": true,
+    "app_store_connect_setup_doc_exists": true,
+    "exposure_scan_passes": true,
+    "doctrine_verification_passes": true,
+    "no_telemetry": true,
+    "no_network_dependency": true,
+    "michael_approval_pending": true,
+    "verdict": "TESTFLIGHT_READY_PENDING_MICHAEL_APPROVAL"
+  }
+}

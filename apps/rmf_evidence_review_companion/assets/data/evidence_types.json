@@ -1,0 +1,6 @@
+{
+  "evidence_types": [
+    {"type": "Policy Document", "recommended_formats": ["PDF", "DOCX"]},
+    {"type": "Configuration Screenshot", "recommended_formats": ["PNG", "JPG"]}
+  ]
+}

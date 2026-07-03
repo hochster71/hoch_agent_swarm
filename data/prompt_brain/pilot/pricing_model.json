@@ -1,0 +1,28 @@
+{
+  "pricing_model": {
+    "free_external_review": {
+      "price_usd": 0.0,
+      "duration_days": 1,
+      "workflows": 6,
+      "support": "Self-service"
+    },
+    "starter_pilot": {
+      "price_usd": 999.0,
+      "duration_days": 30,
+      "workflows": 3,
+      "support": "Email"
+    },
+    "govcon_team_pilot": {
+      "price_usd": 4999.0,
+      "duration_days": 30,
+      "workflows": 5,
+      "support": "Slack priority"
+    },
+    "private_deployment": {
+      "price_usd": -1.0,
+      "duration_days": 365,
+      "workflows": -1,
+      "support": "Dedicated engineer"
+    }
+  }
+}

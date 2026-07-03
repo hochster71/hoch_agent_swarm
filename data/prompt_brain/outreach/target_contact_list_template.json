@@ -1,0 +1,17 @@
+{
+  "contact_template": {
+    "organization": "Target Corp / GovCon Inc",
+    "contact_name": "Jane Doe",
+    "role": "ISSO / ISSM / Compliance Manager / DevSecOps Lead",
+    "contact_info": {
+      "email": "jane.doe@example.com",
+      "linkedin_url": "https://www.linkedin.com/in/janedoe"
+    },
+    "target_segment": "GovCon cybersecurity / ISSO support / small defense contractor",
+    "relationship_context": "Warm referral / cold sequence cohort 1 / past colleague",
+    "outreach_status": "QUEUED / APPROVED / SENT / REPLY_RECEIVED / DEMO_COMPLETED",
+    "last_touch_date": "2026-07-03",
+    "next_action": "Follow up via short variant email on Monday",
+    "notes": "Interested in air-gapped DISA STIG pre-screening capabilities"
+  }
+}

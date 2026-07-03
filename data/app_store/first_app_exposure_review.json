@@ -1,0 +1,10 @@
+{
+  "first_app_exposure_review": {
+    "app_name": "RMF Evidence Review Companion",
+    "prompt_registry_exposed": false,
+    "evidence_ledger_exposed": false,
+    "has_architecture_exposed": false,
+    "agent_orchestration_exposed": false,
+    "verdict": "SAFE_TO_PACKAGE"
+  }
+}

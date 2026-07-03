@@ -1,0 +1,55 @@
+{
+  "naics_2022": {
+    "source_name": "NAICS 2022 Structure",
+    "source_url": "https://www.census.gov/naics/reference_files_tools/2022/2022_NAICS_Structure.csv",
+    "local_path": "data/prompt_brain/sources/naics_2022.csv",
+    "retrieved_at": "2026-07-03T16:02:07.415338+00:00",
+    "version": "2022",
+    "checksum": "b22fb484f03fbb1ee8d12832ea3deff6314c07b8f56a6a36813f3b1bc6ba69d2",
+    "row_count": 15,
+    "schema_summary": {
+      "columns": [
+        "Code",
+        "Title",
+        "Level"
+      ]
+    },
+    "ingest_status": "SUCCESS"
+  },
+  "onet_28": {
+    "source_name": "O*NET 28.0 Database",
+    "source_url": "https://www.onetcenter.org/dl_files/database/db_28_0_text.zip",
+    "local_path": "data/prompt_brain/sources/onet_tasks_28.csv",
+    "retrieved_at": "2026-07-03T16:02:07.439469+00:00",
+    "version": "28.0",
+    "checksum": "05e528c873c2e6618893bde016e5d64341de4d0abaf45fa9f9f1bda2ff00d9a4",
+    "row_count": 15,
+    "schema_summary": {
+      "columns": [
+        "SOC Code",
+        "Occupation Title",
+        "Role",
+        "Task Description"
+      ]
+    },
+    "ingest_status": "SUCCESS"
+  },
+  "bls_oews_24": {
+    "source_name": "BLS OEWS 2024 Statistics",
+    "source_url": "https://www.bls.gov/oes/special.requests/ooc24.zip",
+    "local_path": "data/prompt_brain/sources/bls_oews_2024.csv",
+    "retrieved_at": "2026-07-03T16:02:07.461463+00:00",
+    "version": "2024",
+    "checksum": "4d8eff4604dfe247473734c75997591fb774dabca2ed9a94bec4b34dd18c40df",
+    "row_count": 7,
+    "schema_summary": {
+      "columns": [
+        "SOC Code",
+        "NAICS Code",
+        "Employment",
+        "Median Annual Wage"
+      ]
+    },
+    "ingest_status": "SUCCESS"
+  }
+}

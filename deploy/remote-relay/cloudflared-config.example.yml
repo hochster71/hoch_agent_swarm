@@ -1,0 +1,7 @@
+tunnel: my-hoch-agent-swarm-tunnel
+credentials-file: /etc/cloudflared/tunnel-credentials.json
+
+ingress:
+  - hostname: example.yourdomain.com
+    service: http://proxy-caddy:80
+  - service: http_status:404

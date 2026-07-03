@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: relay-api
+  namespace: hoch-agent-swarm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: relay-api
+  template:
+    metadata:
+      labels:
+        app: relay-api
+    spec:
+      containers:
+        - name: relay
+          image: hoch/relay-api:latest
+          ports:
+            - containerPort: 8010
+          env:
+            - name: RELAY_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: swarm-secrets
+                  key: relay-token

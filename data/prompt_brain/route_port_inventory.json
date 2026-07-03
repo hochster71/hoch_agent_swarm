@@ -1,0 +1,23 @@
+{
+  "inventory": {
+    "backend_server": {
+      "url": "http://127.0.0.1:8000",
+      "purpose": "HAS FastAPI Backend",
+      "health_check": "http://127.0.0.1:8000/api/prompt-brain/adapters/health"
+    },
+    "command_center": {
+      "url": "http://127.0.0.1:8000/prototype/prompt-brain",
+      "purpose": "Prompt Brain Dashboard Interface"
+    },
+    "lm_studio": {
+      "base_url": "http://127.0.0.1:1234/v1",
+      "models_url": "http://127.0.0.1:1234/v1/models",
+      "purpose": "Local Workstation LLM Engine"
+    },
+    "ollama": {
+      "base_url": "http://127.0.0.1:11434",
+      "models_url": "http://127.0.0.1:11434/api/tags",
+      "purpose": "Local Containerized LLM Engine"
+    }
+  }
+}

@@ -1,0 +1,51 @@
+[
+  {
+    "soc_code": "15-1252",
+    "naics_code": "541511",
+    "employment": 420000,
+    "median_annual_wage": 127000,
+    "priority_index": 53.34
+  },
+  {
+    "soc_code": "15-1252",
+    "naics_code": "513210",
+    "employment": 185000,
+    "median_annual_wage": 132000,
+    "priority_index": 24.42
+  },
+  {
+    "soc_code": "15-1252",
+    "naics_code": "334111",
+    "employment": 45000,
+    "median_annual_wage": 119000,
+    "priority_index": 5.355
+  },
+  {
+    "soc_code": "15-1212",
+    "naics_code": "928110",
+    "employment": 65000,
+    "median_annual_wage": 112000,
+    "priority_index": 7.28
+  },
+  {
+    "soc_code": "15-1212",
+    "naics_code": "541512",
+    "employment": 80000,
+    "median_annual_wage": 115000,
+    "priority_index": 9.2
+  },
+  {
+    "soc_code": "15-1253",
+    "naics_code": "541511",
+    "employment": 95000,
+    "median_annual_wage": 98000,
+    "priority_index": 9.31
+  },
+  {
+    "soc_code": "11-3021",
+    "naics_code": "541512",
+    "employment": 120000,
+    "median_annual_wage": 162000,
+    "priority_index": 19.44
+  }
+]
