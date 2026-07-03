@@ -2,20 +2,31 @@
   "ollama_native": {
     "identity_ref": "vps-local-docker-ollama",
     "risk_tier": "R0",
-    "allowed_actions": ["query_light_model", "health_check"],
-    "forbidden_actions": ["heavy_code_generation"],
+    "allowed_actions": [
+      "query_light_model",
+      "health_check"
+    ],
+    "forbidden_actions": [
+      "heavy_code_generation"
+    ],
     "founder_approval_required": [],
     "rate_limits": {
       "requests_per_minute": 30
     },
     "required_verification": "none",
     "secret_handling": "none",
-    "failure_modes": ["timeout", "socket_error"]
+    "failure_modes": [
+      "timeout",
+      "socket_error"
+    ]
   },
   "lmstudio": {
     "identity_ref": "mac-reverse-ssh-tunnel",
     "risk_tier": "R1",
-    "allowed_actions": ["query_heavy_model", "health_check"],
+    "allowed_actions": [
+      "query_heavy_model",
+      "health_check"
+    ],
     "forbidden_actions": [],
     "founder_approval_required": [],
     "rate_limits": {
@@ -23,77 +34,129 @@
     },
     "required_verification": "none",
     "secret_handling": "none",
-    "failure_modes": ["tunnel_dropped", "socket_error"]
+    "failure_modes": [
+      "tunnel_dropped",
+      "socket_error"
+    ]
   },
   "google_antigravity": {
     "identity_ref": "ag-sdk-orchestrator",
     "risk_tier": "R2",
-    "allowed_actions": ["spawn_agent", "delegate_task"],
-    "forbidden_actions": ["unsupervised_agent_creation"],
-    "founder_approval_required": ["override_agent_limits"],
+    "allowed_actions": [
+      "spawn_agent",
+      "delegate_task"
+    ],
+    "forbidden_actions": [
+      "unsupervised_agent_creation"
+    ],
+    "founder_approval_required": [
+      "override_agent_limits"
+    ],
     "rate_limits": {
       "requests_per_minute": 60
     },
     "required_verification": "g_eval_gate",
     "secret_handling": "redact_secrets",
-    "failure_modes": ["spawn_failed"]
+    "failure_modes": [
+      "spawn_failed"
+    ]
   },
   "github": {
     "identity_ref": "git-deploy-key",
     "risk_tier": "R3",
-    "allowed_actions": ["git_pull", "git_commit", "git_push"],
-    "forbidden_actions": ["git_push_force_main", "delete_repository"],
-    "founder_approval_required": ["git_push"],
+    "allowed_actions": [
+      "git_pull",
+      "git_commit",
+      "git_push"
+    ],
+    "forbidden_actions": [
+      "git_push_force_main",
+      "delete_repository"
+    ],
+    "founder_approval_required": [
+      "git_push"
+    ],
     "rate_limits": {
       "requests_per_minute": 5
     },
     "required_verification": "sast_scan",
     "secret_handling": "prevent_leaks",
-    "failure_modes": ["auth_failed", "merge_conflict"]
+    "failure_modes": [
+      "auth_failed",
+      "merge_conflict"
+    ]
   },
   "vercel": {
     "identity_ref": "vercel-cli-token",
     "risk_tier": "R3",
-    "allowed_actions": ["stage_deployment"],
-    "forbidden_actions": ["production_release", "delete_project"],
-    "founder_approval_required": ["production_release"],
+    "allowed_actions": [
+      "stage_deployment"
+    ],
+    "forbidden_actions": [
+      "production_release",
+      "delete_project"
+    ],
+    "founder_approval_required": [
+      "production_release"
+    ],
     "rate_limits": {
       "requests_per_minute": 2
     },
     "required_verification": "post_deploy_ping",
     "secret_handling": "redact_bypass_tokens",
-    "failure_modes": ["deploy_failed"]
+    "failure_modes": [
+      "deploy_failed"
+    ]
   },
   "docker": {
     "identity_ref": "docker-daemon-socket",
     "risk_tier": "R2",
-    "allowed_actions": ["docker_start", "docker_stop"],
-    "forbidden_actions": ["host_mount_root"],
+    "allowed_actions": [
+      "docker_start",
+      "docker_stop"
+    ],
+    "forbidden_actions": [
+      "host_mount_root"
+    ],
     "founder_approval_required": [],
     "rate_limits": {
       "requests_per_minute": 10
     },
     "required_verification": "container_health_check",
     "secret_handling": "none",
-    "failure_modes": ["daemon_offline"]
+    "failure_modes": [
+      "daemon_offline"
+    ]
   },
   "shell": {
     "identity_ref": "local-bash-interpreter",
     "risk_tier": "R4",
-    "allowed_actions": ["read_files", "restart_services"],
-    "forbidden_actions": ["rm_rf_root", "edit_sudoers"],
-    "founder_approval_required": ["run_arbitrary_script"],
+    "allowed_actions": [
+      "read_files",
+      "restart_services"
+    ],
+    "forbidden_actions": [
+      "rm_rf_root",
+      "edit_sudoers"
+    ],
+    "founder_approval_required": [
+      "run_arbitrary_script"
+    ],
     "rate_limits": {
       "requests_per_minute": 100
     },
     "required_verification": "command_whitelisting",
     "secret_handling": "redact_env",
-    "failure_modes": ["command_error"]
+    "failure_modes": [
+      "command_error"
+    ]
   },
   "security_scanner": {
     "identity_ref": "mobsf-sonar-scanners",
     "risk_tier": "R1",
-    "allowed_actions": ["run_scan"],
+    "allowed_actions": [
+      "run_scan"
+    ],
     "forbidden_actions": [],
     "founder_approval_required": [],
     "rate_limits": {
@@ -101,32 +164,48 @@
     },
     "required_verification": "none",
     "secret_handling": "none",
-    "failure_modes": ["scanner_offline"]
+    "failure_modes": [
+      "scanner_offline"
+    ]
   },
   "playwright": {
     "identity_ref": "headless-chromium-node",
     "risk_tier": "R2",
-    "allowed_actions": ["run_e2e_tests", "page_screenshot"],
-    "forbidden_actions": ["scrape_restricted_domains"],
+    "allowed_actions": [
+      "run_e2e_tests",
+      "page_screenshot"
+    ],
+    "forbidden_actions": [
+      "scrape_restricted_domains"
+    ],
     "founder_approval_required": [],
     "rate_limits": {
       "requests_per_minute": 20
     },
     "required_verification": "none",
     "secret_handling": "none",
-    "failure_modes": ["browser_crash"]
+    "failure_modes": [
+      "browser_crash"
+    ]
   },
   "evidence_writer": {
     "identity_ref": "helm-output-formatter",
     "risk_tier": "R0",
-    "allowed_actions": ["write_markdown_evidence", "log_json_state"],
-    "forbidden_actions": ["overwrite_system_config"],
+    "allowed_actions": [
+      "write_markdown_evidence",
+      "log_json_state"
+    ],
+    "forbidden_actions": [
+      "overwrite_system_config"
+    ],
     "founder_approval_required": [],
     "rate_limits": {
       "requests_per_minute": 200
     },
     "required_verification": "no_secret_leakage_check",
     "secret_handling": "redact_all",
-    "failure_modes": ["disk_full"]
+    "failure_modes": [
+      "disk_full"
+    ]
   }
 }
