@@ -16,6 +16,8 @@
         <key>TRACKER_PORT</key>
         <string>3001</string>
     </dict>
+    <key>UserName</key>
+    <string>hoch_agent</string>
     <key>KeepAlive</key>
     <true/>
     <key>RunAtLoad</key>

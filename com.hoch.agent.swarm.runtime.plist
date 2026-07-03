@@ -17,6 +17,8 @@
     <string>/Users/michaelhoch/hoch_agent_swarm/data/backups/supervisor.log</string>
     <key>RunAtLoad</key>
     <true/>
+    <key>UserName</key>
+    <string>hoch_agent</string>
     <key>KeepAlive</key>
     <true/>
 </dict>
