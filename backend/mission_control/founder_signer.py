@@ -41,10 +41,12 @@ def sign_approval(approval: dict, key_path: Path) -> str:
 
 
 def verify_approval(approval: dict, signature: str,
-                    allowed_signers: Path = ALLOWED_SIGNERS) -> bool:
+                    allowed_signers: Path = None) -> bool:
     """Fail-closed verification. True only if the signature is valid for the
     canonical payload under the committed founder public key."""
     try:
+        if allowed_signers is None:
+            allowed_signers = ALLOWED_SIGNERS
         if not allowed_signers.exists():
             return False
         with tempfile.TemporaryDirectory() as td:
@@ -68,3 +70,44 @@ def approval_is_authorized(approval: dict) -> bool:
         and isinstance(approval.get("founder_signature"), str)
         and verify_approval(approval, approval["founder_signature"])
     )
+
+
+# --- Release authority (C2: unauthenticated token minting remediation) ------
+RELEASE_FRESHNESS_SECONDS = 600  # signed grants are valid for 10 minutes
+
+
+def release_authority_payload(candidate_packet_id: str, decision_at: str) -> dict:
+    """Canonical approval-shaped payload for a release-authority grant."""
+    return {
+        "approval_id": f"release:{candidate_packet_id}",
+        "task_description": "grant formal release authority",
+        "risk_level": "CRITICAL",
+        "status": "APPROVED",
+        "decision_at": decision_at,
+    }
+
+
+def verify_release_authority(candidate_packet_id: str, decision_at: str,
+                             signature: str,
+                             allowed_signers: Path = None) -> tuple[bool, str]:
+    """Fail-closed check for minting release-authority tokens.
+
+    Valid only if (a) the founder signature verifies over the canonical
+    release payload and (b) the signed decision_at is fresh (anti-replay
+    window of RELEASE_FRESHNESS_SECONDS).
+    Returns (ok, reason).
+    """
+    from datetime import datetime, timezone
+    try:
+        signed = datetime.fromisoformat(str(decision_at).replace("Z", "+00:00"))
+        age = (datetime.now(timezone.utc) - signed).total_seconds()
+    except Exception:
+        return False, "invalid decision_at timestamp"
+    if age < -60:
+        return False, "decision_at is in the future"
+    if age > RELEASE_FRESHNESS_SECONDS:
+        return False, f"signed grant expired ({int(age)}s old > {RELEASE_FRESHNESS_SECONDS}s window)"
+    payload = release_authority_payload(candidate_packet_id, decision_at)
+    if not verify_approval(payload, signature, allowed_signers=allowed_signers):
+        return False, "founder signature invalid for this packet/timestamp"
+    return True, "verified"

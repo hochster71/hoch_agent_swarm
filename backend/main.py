@@ -1640,6 +1640,8 @@ class AuthorityRequest(BaseModel):
     candidate_packet_id: str
     operator: str
     is_test: bool = False
+    founder_signature: str = None
+    decision_at: str = None
 
 @app.post("/api/v1/release/authority/request")
 def request_authority_token(req: AuthorityRequest):
@@ -1656,7 +1658,36 @@ def request_authority_token(req: AuthorityRequest):
     db_packet = get_candidate_release_packet(req.candidate_packet_id)
     if not db_packet:
         raise HTTPException(status_code=404, detail="Candidate packet not found")
-        
+
+    # FAIL-CLOSED (C2): release authority is minted only against a fresh,
+    # founder-signed grant. TEST_MODE test requests keep the existing bypass
+    # convention (main.py L1205) but are logged as UNSIGNED_TEST_GRANT.
+    if req.is_test and TEST_MODE:
+        persist_authority_log(
+            log_id=f"auth-log-{uuid.uuid4().hex[:6]}",
+            action="request_token",
+            candidate_packet_id=req.candidate_packet_id,
+            operator=req.operator,
+            token_value="",
+            status="UNSIGNED_TEST_GRANT",
+            details="TEST_MODE bypass used for authority token request."
+        )
+    else:
+        from backend.mission_control.founder_signer import verify_release_authority
+        ok, reason = verify_release_authority(
+            req.candidate_packet_id, req.decision_at or "", req.founder_signature or "")
+        if not ok:
+            persist_authority_log(
+                log_id=f"auth-log-{uuid.uuid4().hex[:6]}",
+                action="request_token",
+                candidate_packet_id=req.candidate_packet_id,
+                operator=req.operator,
+                token_value="",
+                status="DENIED_UNSIGNED",
+                details=f"Founder signature check failed: {reason}"
+            )
+            raise HTTPException(status_code=403, detail=f"Release authority denied: {reason}")
+
     token_id = f"tok-id-{uuid.uuid4().hex[:6]}"
     token_value = f"auth-tok-{secrets.token_hex(16)}"
     expires_dt = datetime.now(timezone.utc) + timedelta(minutes=5)
@@ -9611,6 +9642,8 @@ class ApprovalRequestModel(BaseModel):
 class ApprovalDecisionModel(BaseModel):
     status: str
     note: str = None
+    founder_signature: str = None
+    founder_decision_at: str = None
 
 @app.get("/api/v1/approvals/queue")
 def get_approvals_queue_endpoint():
@@ -9630,7 +9663,9 @@ def post_approval_decision_endpoint(approval_id: str, req: ApprovalDecisionModel
     from backend.approval_gate import get_approval_gate
     gate = get_approval_gate()
     try:
-        return gate.record_decision(approval_id, req.status, req.note)
+        return gate.record_decision(approval_id, req.status, req.note,
+                                    founder_signature=req.founder_signature,
+                                    founder_decision_at=req.founder_decision_at)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 

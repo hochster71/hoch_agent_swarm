@@ -88,7 +88,9 @@ class ApprovalGate:
         self.write_report(approval_object)
         return approval_object
 
-    def record_decision(self, approval_id: str, status: str, note: Optional[str] = None) -> Dict[str, Any]:
+    def record_decision(self, approval_id: str, status: str, note: Optional[str] = None,
+                        founder_signature: Optional[str] = None,
+                        founder_decision_at: Optional[str] = None) -> Dict[str, Any]:
         queue = self.load_queue()
         target_approval = None
         for app in queue:
@@ -104,9 +106,21 @@ class ApprovalGate:
             raise ValueError("FAIL_CLOSED approvals cannot be approved into execution.")
 
         target_approval["status"] = status
-        target_approval["decision_at"] = datetime.now(timezone.utc).isoformat()
+        target_approval["decision_at"] = founder_decision_at or datetime.now(timezone.utc).isoformat()
         target_approval["decision_note"] = note
         target_approval["execution_allowed_after_approval"] = False
+
+        # FAIL-CLOSED (C2): an APPROVED decision is only recorded with a valid
+        # founder signature over the canonical payload. Anything else is rejected.
+        if status == "APPROVED":
+            from backend.mission_control.founder_signer import verify_approval
+            if not founder_signature or not verify_approval(target_approval, founder_signature):
+                raise ValueError(
+                    "APPROVED decisions require a valid founder signature "
+                    "(sign with scripts/founder_approve.py). Recording refused; fail-closed."
+                )
+            target_approval["founder_signature"] = founder_signature
+            target_approval["founder_verified"] = True
 
         self.save_queue(queue)
 
