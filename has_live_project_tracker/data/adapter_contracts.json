@@ -7,7 +7,9 @@
       "health_check"
     ],
     "forbidden_actions": [
-      "heavy_code_generation"
+      "heavy_code_generation",
+      "gate_package_generation",
+      "execute_tier_3_tasks"
     ],
     "founder_approval_required": [],
     "rate_limits": {
@@ -27,7 +29,10 @@
       "query_heavy_model",
       "health_check"
     ],
-    "forbidden_actions": [],
+    "forbidden_actions": [
+      "approve_release",
+      "execute_gated_r4_actions"
+    ],
     "founder_approval_required": [],
     "rate_limits": {
       "requests_per_minute": 15
@@ -218,7 +223,8 @@
     "forbidden_actions": [
       "approve_release",
       "monetization_override",
-      "direct_db_write"
+      "direct_db_write",
+      "execute_gated_r4_actions"
     ],
     "founder_approval_required": [],
     "rate_limits": {

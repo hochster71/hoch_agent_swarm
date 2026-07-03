@@ -24,7 +24,9 @@ def main():
         "verify_no_secret_leakage.py",
         "verify_agent_output_quality.py",
         "verify_evidence_integrity.py",
-        "verify_evidence_manifest_signature.py"
+        "verify_evidence_manifest_signature.py",
+        "verify_gpu_budget_guard.py",
+        "verify_tier3_routing_policy.py"
     ]
     
     for gate in gates:

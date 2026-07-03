@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-03T13:23:00Z",
+  "generated_at": "2026-07-03T13:28:00Z",
   "routing": [
     {
       "route_id": "scoring_report",
@@ -24,8 +24,11 @@
       "task_type": "gate_package_generation",
       "tier": "heavy",
       "default_model_class": "ollama_gpu_pod",
-      "allowed_models": ["qwen2.5-coder:32b", "qwen2.5:32b", "google/gemma-4-12b-qat", "qwen2.5:1.5b-instruct"],
-      "cost_tier": "LOCAL_FREE",
+      "allowed_models": ["qwen2.5-coder:32b", "qwen2.5:32b"],
+      "fallback_order": ["ollama_gpu_pod", "lmstudio"],
+      "fallback_block_to_light_model": true,
+      "advisory_mode": false,
+      "cost_tier": "BURST_GPU",
       "approval_required": false
     }
   ]

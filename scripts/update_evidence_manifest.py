@@ -17,11 +17,14 @@ def get_sha256(file_path):
     return h.hexdigest()
 
 def compute_entry_hash(entry):
-    # Canonical JSON serialization
-    serialized = json.dumps(entry, sort_keys=True, separators=(',', ':'))
+    # Strip hash key to recalculate
+    e_copy = entry.copy()
+    if "entry_hash" in e_copy:
+        del e_copy["entry_hash"]
+    serialized = json.dumps(e_copy, sort_keys=True, separators=(',', ':'))
     return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
 
-def update_manifest():
+def update_manifest(repair_mode=False):
     print("Updating Evidence Manifest...")
     
     manifest = []
@@ -54,7 +57,13 @@ def update_manifest():
             # Check if hash changed
             existing_entry = existing_paths[rel_path]
             if existing_entry["evidence_sha256"] != sha256:
-                print(f"⚠️ Warning: Hash mismatch for existing file: {rel_path}. Run in repair mode to update.")
+                if repair_mode:
+                    existing_entry["evidence_sha256"] = sha256
+                    existing_entry["entry_hash"] = compute_entry_hash(existing_entry)
+                    updated = True
+                    print(f"Repaired manifest entry for {rel_path}")
+                else:
+                    print(f"⚠️ Warning: Hash mismatch for existing file: {rel_path}. Run with --repair to update.")
             continue
             
         # Create new entry
@@ -97,4 +106,8 @@ def update_manifest():
         print("🟢 Evidence manifest is already up to date.")
 
 if __name__ == "__main__":
-    update_manifest()
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--repair", action="store_true", help="Repair hash mismatches for existing files")
+    args = parser.parse_args()
+    update_manifest(repair_mode=args.repair)

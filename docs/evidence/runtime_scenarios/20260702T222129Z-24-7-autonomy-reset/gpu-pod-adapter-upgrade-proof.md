@@ -1,6 +1,6 @@
 # GPU Pod Adapter Upgrade Proof
 
-This document provides evidence of the integration of the burst GPU pod (`ollama_gpu_pod`) into the HAS/HASF/HELM runtime environment.
+This document provides evidence of the integration and hardening of the burst GPU pod (`ollama_gpu_pod`) into the HAS/HASF/HELM runtime environment.
 
 ---
 
@@ -26,11 +26,13 @@ This document provides evidence of the integration of the burst GPU pod (`ollama
 
 ---
 
-## 4. Governance & Gated Posture
+## 4. Hardened Routing & Cost Guard Status
+* **Budget Policy Guard**: **🟢 ACTIVE** (Session costs mapped under limits in [gpu_budget_policy.json](file:///Users/michaelhoch/hoch_agent_swarm/has_live_project_tracker/data/gpu_budget_policy.json)).
+* **Downgrade Block**: **🟢 ACTIVE** (Tier 3 tasks block execution if only 1.5B local model is available; no silent downgrading is allowed without explicit `advisory_mode=true`).
 * **Source of Truth**: Retained entirely on HOCH-200.
 * **Product 002 Vetting Gated State Lock**: Reaffirmed as blocked for any R2+ build tasks.
 * **Fallback Order**:
   1. `ollama_gpu_pod`
-  2. `ollama_native` (1.5B)
-  3. `lmstudio` (Mac Studio fallback)
+  2. `lmstudio` (Mac Studio fallback)
+  - `ollama_native` (1.5B) is **BLOCKED** from fallback without override.
 * **Teardown Action**: Programmatic registry removal active on teardown.

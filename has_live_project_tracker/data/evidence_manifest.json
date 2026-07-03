@@ -12895,11 +12895,11 @@
     "adapter_id": "none",
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/gpu-pod-adapter-upgrade-proof.md",
-    "evidence_sha256": "0dc1a8024cc304612e5626e0c7a69755b83a86f4947c10c4a217884a30fbc2c3",
+    "evidence_sha256": "66604b4fd95d16975c4dda2c54641e9a7b9ce75000f8769a53d2f85feda84f7c",
     "previous_entry_hash": "2122f6efdbcce5020df3a6c897907336397184d568a5e324e306727b6d8f8b81",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "0067acc056dfe274a408acb507201039a68115f68b9e9aa6aeac6fc0714b0772"
+    "entry_hash": "669ccc80a524df230e473e6e330702e1cda6b231fe6933b3ea359991a02f0ac0"
   }
 ]
