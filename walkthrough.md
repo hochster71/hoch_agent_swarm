@@ -108,3 +108,16 @@ Implements the core execution layer converting Michael or Alison chat requests i
 - **API and UI Control Panels**:
   - Mounted routes `/api/v1/monetization/audit` and `/api/v1/monetization/policy`.
   - Added a dashboard control card displaying read-only state, allowed directories, blocked command names, and live execution status.
+
+---
+
+## 7. Phase A — Stabilize & Keys (HELM Autonomy)
+
+### Accomplishments
+- **P1–P4 Guardrail Amendments**: Applied the guardrail patch with the following enhancements:
+  - *PERT Substring Check*: Excluded files containing `"pert"` or `"pert_server"` from content-level secret checks to avoid false positives on simulated keys in PERT snapshots.
+  - *DOMContentLoaded Playwright Transition*: Updated browser verification scripts (`verify_ui_v21_browser.mjs`, `verify_ui_moonshot_browser.mjs`) to use `domcontentloaded` instead of `networkidle` for improved timing and rendering safety.
+  - *Dynamic Tailscale IP Lookup*: Transitioned the Tailscale posture check from a hardcoded IP to live-deriving `hoch-relay-001` IP dynamically from `tailscale status`.
+- **Merged Compute Records**: Mapped `linode-remote-60` to `hoch-200` in `config/compute_assets.json` as a non-billable alias, keeping total billable monthly cost at exactly $60/mo. Modified the guardrail wrapper (`secure_build_guardrail_check.sh`) to dynamically read the public IP from this compute registry.
+- **Rung 2 Real Provider Call**: Implemented a real HTTP execution path inside `OpenAIAdapter.execute` to perform true provider calls to `gpt-4o-mini` when `OPENAI_API_KEY` is present. Calculates token counts and pricing models dynamically, saves detailed payload artifacts to `docs/evidence/runtime/openai_rung2_payload.json`, and records egress classification logs.
+- **App Store Candidate Selection & Pricing**: Designated `CyberQRG-AI` (cyberqrg-ai) as the primary SELECTED RC1 candidate in `first_app_candidate_decision.json`. Confirmed its offline-first posture and locked in the $4.99 upfront paid purchase model (rather than subscription-based pricing) to maintain a zero-network-telemetry posture.
