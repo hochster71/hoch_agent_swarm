@@ -1,0 +1,7 @@
+{
+  "lmstudio": {
+    "base_url": "http://localhost:1234/v1",
+    "api_style": "openai_compatible",
+    "status": "ONLINE"
+  }
+}

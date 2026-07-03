@@ -1,0 +1,11 @@
+{
+  "status": "ACTIVE",
+  "last_run": "2026-07-03T05:48:41.154315Z",
+  "current_product": "cyberqrg-ai",
+  "pipeline_stage": "BACKLOG_MAPPING",
+  "metrics": {
+    "completed_products": 1,
+    "pending_candidates": 3,
+    "active_backlog_items": 2
+  }
+}

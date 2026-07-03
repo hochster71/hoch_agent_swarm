@@ -1,0 +1,16 @@
+[Unit]
+Description=HAS Runtime Watchdog Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/hoch_agent_swarm
+ExecStart=/usr/bin/python3 -u /root/hoch_agent_swarm/scripts/has_runtime_watchdog.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

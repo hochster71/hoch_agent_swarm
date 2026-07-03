@@ -1,0 +1,16 @@
+[Unit]
+Description=HASF Product Factory Runner Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/hoch_agent_swarm
+ExecStart=/usr/bin/python3 -u /root/hoch_agent_swarm/scripts/hasf_product_factory_runner.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

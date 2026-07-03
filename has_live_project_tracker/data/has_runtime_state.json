@@ -1,0 +1,21 @@
+{
+  "status": "ONLINE",
+  "uptime_seconds": 1783057726,
+  "last_heartbeat": "2026-07-03T05:48:46.321232Z",
+  "active_services": [
+    "helm-runner",
+    "has-agent-dispatcher",
+    "hasf-product-factory"
+  ],
+  "monitored_nodes": {
+    "HOCH-200": {
+      "ip": "50.116.41.183",
+      "status": "ONLINE",
+      "services": {
+        "helm-runner": "ONLINE",
+        "has-agent-dispatcher": "ONLINE",
+        "hasf-product-factory": "ONLINE"
+      }
+    }
+  }
+}

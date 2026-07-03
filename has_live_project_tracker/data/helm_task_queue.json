@@ -1,0 +1,13 @@
+[
+  {
+    "id": "task-001",
+    "description": "Create a Product 002 candidate scoring report using HASF mission filters.",
+    "status": "completed",
+    "assigned_agent": "hasf_scoring_agent",
+    "created_at": "2026-07-03T05:40:00Z",
+    "completed_at": "2026-07-03T05:48:29.769310Z",
+    "result": "file:///root/hoch_agent_swarm/docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/autonomous-task-proof.md",
+    "attempts": 0,
+    "max_attempts": 3
+  }
+]

@@ -1,0 +1,16 @@
+[Unit]
+Description=HAS Agent Dispatcher Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/hoch_agent_swarm
+ExecStart=/usr/bin/python3 -u /root/hoch_agent_swarm/scripts/has_agent_dispatcher.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,13 @@
+{
+  "hasf_scoring_agent": {
+    "role": "HASF Product Candidate Scorer",
+    "capabilities": [
+      "evaluate_candidates",
+      "generate_reports"
+    ],
+    "model": "google/gemma-4-12b-qat",
+    "provider": "lmstudio",
+    "status": "READY",
+    "last_heartbeat": "2026-07-03T05:48:46.113317Z"
+  }
+}
