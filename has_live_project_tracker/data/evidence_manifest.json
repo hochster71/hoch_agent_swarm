@@ -12283,12 +12283,12 @@
     "adapter_id": "none",
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime/global_verify_latest.md",
-    "evidence_sha256": "686d11e9538b08e5cdec4ce8a85de0647495e0aeea3843408763d504dda1245b",
+    "evidence_sha256": "9fe57b81b2f562e2aed4fcb5a6d41ab728a96d28409b086a0b5a778f9375d578",
     "previous_entry_hash": "1351a0d5cb4d61d2e583df9d0e1e10f779b4e7f24720cd2689ea4c0d3aaffa33",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "6f29686eec72812945b24c2b2c3d545875c3c1e89dc7dff0c3dca52be91a90db"
+    "entry_hash": "49c6b0cf5eb0ce43019f276a5a18ea7226a88237f4890d3da047e0e69a558b45"
   },
   {
     "entry_id": "entry-0724",
@@ -12300,12 +12300,12 @@
     "adapter_id": "none",
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime/hoch-pods-runtime-evidence.md",
-    "evidence_sha256": "5f521a83e796e494c7364eaa4f82a9ec7c4120d581b1b001a1e596f14827ca2a",
-    "previous_entry_hash": "6f29686eec72812945b24c2b2c3d545875c3c1e89dc7dff0c3dca52be91a90db",
+    "evidence_sha256": "46045a97165c22d183401a45e45ec25f53b3115f6cb727ee26d95dea42472501",
+    "previous_entry_hash": "49c6b0cf5eb0ce43019f276a5a18ea7226a88237f4890d3da047e0e69a558b45",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "c0536cec81b099d7a64b1a00cdc0340ff6670576fb84ed26d2923e4b6b781054"
+    "entry_hash": "632c07d9034f00028b172d0886428f098c66d668c09ded5f60a75d60eef7584f"
   },
   {
     "entry_id": "entry-0725",
@@ -12318,11 +12318,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/ui/visual-authority-doctrine-lock.md",
     "evidence_sha256": "8e0a04e714ee90918a2a7251c7819b235ba585814cde7e772a60ebf962f2f10c",
-    "previous_entry_hash": "c0536cec81b099d7a64b1a00cdc0340ff6670576fb84ed26d2923e4b6b781054",
+    "previous_entry_hash": "632c07d9034f00028b172d0886428f098c66d668c09ded5f60a75d60eef7584f",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "bf8d6686df3a5aa8d8c2ff13c9f0350f237334a9e2a6fa743b2c7b29f62e6678"
+    "entry_hash": "72fb6d14e5b2a631308f8918c448cabff7f14328f3a739965b4c47d41c577678"
   },
   {
     "entry_id": "entry-0726",
@@ -12335,11 +12335,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/goal_runner/goal_runner_20260703T045703Z.md",
     "evidence_sha256": "99496f2faa1dbe75068d409f363407676428871186b267dcb8a7c8d5d2aae76b",
-    "previous_entry_hash": "bf8d6686df3a5aa8d8c2ff13c9f0350f237334a9e2a6fa743b2c7b29f62e6678",
+    "previous_entry_hash": "72fb6d14e5b2a631308f8918c448cabff7f14328f3a739965b4c47d41c577678",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "fd1c27ae19e5714de82e344c810ba407f13aae65b746edb686f39b5017101a45"
+    "entry_hash": "7c81e07fd06424691b4aa43296f86e3fd1622f660c9a17c25c480a9285144f69"
   },
   {
     "entry_id": "entry-0727",
@@ -12352,11 +12352,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/goal_runner/goal_runner_20260703T050708Z.md",
     "evidence_sha256": "a76267c7c67cc6f688fff1b30b4ffa8ff3c801998d767f0bf90277b22b4bb151",
-    "previous_entry_hash": "fd1c27ae19e5714de82e344c810ba407f13aae65b746edb686f39b5017101a45",
+    "previous_entry_hash": "7c81e07fd06424691b4aa43296f86e3fd1622f660c9a17c25c480a9285144f69",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "878555f6411c6c71c03ba046856a3fdfe8b2cf023d20cecf2a0a760da1bb5932"
+    "entry_hash": "699256ee58e83ef4ca25c1a6faaa376876cdb64dbf223896cf57b3fa8fdefc1e"
   },
   {
     "entry_id": "entry-0728",
@@ -12369,11 +12369,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/products/epic-fury-2026/20260702T233000Z-epic-fury-2026-hasf-vetting/production-deployment.md",
     "evidence_sha256": "5ec6a5aa69f564a48ff6061e170911df2249d3b1e25d1e0efd672562ffa11ccd",
-    "previous_entry_hash": "878555f6411c6c71c03ba046856a3fdfe8b2cf023d20cecf2a0a760da1bb5932",
+    "previous_entry_hash": "699256ee58e83ef4ca25c1a6faaa376876cdb64dbf223896cf57b3fa8fdefc1e",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "08a2004d732ce406a4ac673a2c506a3e18a5b86e625cfb68ec045704339dfae5"
+    "entry_hash": "a4a7195f0f776551578e6bafca9c7d76ad23b9b262547d36d73b418f65937fb1"
   },
   {
     "entry_id": "entry-0729",
@@ -12386,11 +12386,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/goal_runner/goal_runner_20260703T051714Z.md",
     "evidence_sha256": "80b11c2b4e7150de479f994b82d3c3a455abf8cd87bf57e7e049eb8208f2c91a",
-    "previous_entry_hash": "08a2004d732ce406a4ac673a2c506a3e18a5b86e625cfb68ec045704339dfae5",
+    "previous_entry_hash": "a4a7195f0f776551578e6bafca9c7d76ad23b9b262547d36d73b418f65937fb1",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "ccc8a2e3c50d0e59c43134528211000e325af8e3538ec0d7c05056b9513ba66c"
+    "entry_hash": "ebe862ad06fddb0b58240b2a2143b9f47c225e2bd0a9accff56e961140d5c94d"
   },
   {
     "entry_id": "entry-0730",
@@ -12403,11 +12403,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/products/epic-fury-2026/20260702T233000Z-epic-fury-2026-hasf-vetting/post-release-monitoring.md",
     "evidence_sha256": "12e200954c5395424668d15c5a626b1a205d32c6ae702ed1e1a4eb2d158e811b",
-    "previous_entry_hash": "ccc8a2e3c50d0e59c43134528211000e325af8e3538ec0d7c05056b9513ba66c",
+    "previous_entry_hash": "ebe862ad06fddb0b58240b2a2143b9f47c225e2bd0a9accff56e961140d5c94d",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "7bd2ea3ae2eedcbb96318b2c25b620b7510984080f04379bee589b3846d3e69f"
+    "entry_hash": "72d169b6dee5b1754f3cb5e348449538c3801d6e86a35b0ff7ff2448669c14e4"
   },
   {
     "entry_id": "entry-0731",
@@ -12420,11 +12420,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-has-hasf-runtime-scenario/evidence_manifest.json",
     "evidence_sha256": "a3bda3908fad52830a26dbfc0e0c612dc4cf3102c8953867fbfa54ea6382c661",
-    "previous_entry_hash": "7bd2ea3ae2eedcbb96318b2c25b620b7510984080f04379bee589b3846d3e69f",
+    "previous_entry_hash": "72d169b6dee5b1754f3cb5e348449538c3801d6e86a35b0ff7ff2448669c14e4",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "4dfe410a10e54f6e59304c4c8ac13cf7193cc069f5fdd5008d6d8aca031aacac"
+    "entry_hash": "a93082fde95b9daa83e102385910d5b8884a90739bfa30a2e444a32c26f72373"
   },
   {
     "entry_id": "entry-0732",
@@ -12437,11 +12437,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/goal_runner/goal_runner_20260703T052719Z.md",
     "evidence_sha256": "8d310a019ef9178646ff3aebaf7e7a5b7183e936f8a3fdce217da0f2b66095ce",
-    "previous_entry_hash": "4dfe410a10e54f6e59304c4c8ac13cf7193cc069f5fdd5008d6d8aca031aacac",
+    "previous_entry_hash": "a93082fde95b9daa83e102385910d5b8884a90739bfa30a2e444a32c26f72373",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "4e6f56215b440597e2d7a253df48120a5327a2181a846762aa7e9677791c2713"
+    "entry_hash": "a9dbf455c2c430353d89040ac759e03e8262e3391a8b3ce4e2def267951e9f1b"
   },
   {
     "entry_id": "entry-0733",
@@ -12454,11 +12454,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/goal_runner/goal_runner_20260703T053725Z.md",
     "evidence_sha256": "131684f0b8be5951964e4deefc4d9cb2440c84654097488ba4c9b9b83fda7fcb",
-    "previous_entry_hash": "4e6f56215b440597e2d7a253df48120a5327a2181a846762aa7e9677791c2713",
+    "previous_entry_hash": "a9dbf455c2c430353d89040ac759e03e8262e3391a8b3ce4e2def267951e9f1b",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "72107efe8e8d009f86a0d8f5eb1c803cd01356319af42f6b7871fed492160c49"
+    "entry_hash": "88eb14d43cf78e14b9166bd35d71972b68937df9fc2e87f33b6fa8326959bfb5"
   },
   {
     "entry_id": "entry-0734",
@@ -12471,11 +12471,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/current-state-audit.md",
     "evidence_sha256": "d27bcbaec9b721f8cc4bcb2a3ba574719cde39c87c6a69c1373fd85428f398c0",
-    "previous_entry_hash": "72107efe8e8d009f86a0d8f5eb1c803cd01356319af42f6b7871fed492160c49",
+    "previous_entry_hash": "88eb14d43cf78e14b9166bd35d71972b68937df9fc2e87f33b6fa8326959bfb5",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "d34d57aac89333df3072b8fd93cd08b426078b95016aa33341370c4b52db8ede"
+    "entry_hash": "ebb02f1afdcef9f058b1cb7a9e1562decd7d004d5cb77514a2805ab33c14baeb"
   },
   {
     "entry_id": "entry-0735",
@@ -12488,11 +12488,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/model-adapter-dependency.md",
     "evidence_sha256": "b5c0ea6affae0059039d75a4d4da1d18cc247b7ec6edd242fef34adc513d508d",
-    "previous_entry_hash": "d34d57aac89333df3072b8fd93cd08b426078b95016aa33341370c4b52db8ede",
+    "previous_entry_hash": "ebb02f1afdcef9f058b1cb7a9e1562decd7d004d5cb77514a2805ab33c14baeb",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "878c182214ad7fe29aae50cf61d515ac78f46217c58a246933568cb69b1bb6c3"
+    "entry_hash": "0304eac4c7dc2f65864a21011a4a83be62f8d7313721fcbde0ba214aaebdc735"
   },
   {
     "entry_id": "entry-0736",
@@ -12505,11 +12505,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/autonomous-task-proof.md",
     "evidence_sha256": "4b313f91e4c550bb13a7009d5ae8bb15745e798d12d7b38ccd229dc58065c10f",
-    "previous_entry_hash": "878c182214ad7fe29aae50cf61d515ac78f46217c58a246933568cb69b1bb6c3",
+    "previous_entry_hash": "0304eac4c7dc2f65864a21011a4a83be62f8d7313721fcbde0ba214aaebdc735",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "20c9c739e32c6aa90ca65359d0c950744b950372248cb3780a9f218a29dbf587"
+    "entry_hash": "3f5e5da25c9fd78834223300a8f55bdbf4b3472287612cd05c07b56322f3ce96"
   },
   {
     "entry_id": "entry-0737",
@@ -12522,11 +12522,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/cyberqrg-roadmap-proof.md",
     "evidence_sha256": "d152df0e202447eee3e4dc8abe52f7d2883a634654d6e41b2c7c2b575f4603ec",
-    "previous_entry_hash": "20c9c739e32c6aa90ca65359d0c950744b950372248cb3780a9f218a29dbf587",
+    "previous_entry_hash": "3f5e5da25c9fd78834223300a8f55bdbf4b3472287612cd05c07b56322f3ce96",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "7377421e01b25b7495ea50495fe2020bc0d9dcfbede0129cd44cd8679c33d6b0"
+    "entry_hash": "cc8560c0e4a169cdacc99b0a7708bd4286b5ca8d564bbdf0df264453984fcd7d"
   },
   {
     "entry_id": "entry-0738",
@@ -12539,11 +12539,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/soak-health-checks.md",
     "evidence_sha256": "1e531dea91ec342bf16146f9d43c6dd540f2f25abd0ac39a0a24aeb7dc95d94d",
-    "previous_entry_hash": "7377421e01b25b7495ea50495fe2020bc0d9dcfbede0129cd44cd8679c33d6b0",
+    "previous_entry_hash": "cc8560c0e4a169cdacc99b0a7708bd4286b5ca8d564bbdf0df264453984fcd7d",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "85454fcac81f4486bc79d2e21a4c715e5f406f76114883ee062ed52ef23ff70e"
+    "entry_hash": "58060b3cdce0b581abd8ee28b38bc2724a8c17981251b84528bc957ff035a034"
   },
   {
     "entry_id": "entry-0739",
@@ -12556,11 +12556,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/cyberqrg-gate-package.md",
     "evidence_sha256": "be171e43ac5bbcfe17e4200f0070c46998446234fd911829110748ab5b321810",
-    "previous_entry_hash": "85454fcac81f4486bc79d2e21a4c715e5f406f76114883ee062ed52ef23ff70e",
+    "previous_entry_hash": "58060b3cdce0b581abd8ee28b38bc2724a8c17981251b84528bc957ff035a034",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "dab892ff70a400984d9ec38c6d13f38cdcd14802873bab66103c30403d0c4b95"
+    "entry_hash": "8a4001179047f358168c3d6b07bee46ad0afd0d0530ee11be7b3db1befda4781"
   },
   {
     "entry_id": "entry-0740",
@@ -12573,11 +12573,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/phase1-gate-failure-proofs.md",
     "evidence_sha256": "48ea2cd81d3285b0b06274bf31f207c0bd447fe6182a49369c1184806a4e91a4",
-    "previous_entry_hash": "dab892ff70a400984d9ec38c6d13f38cdcd14802873bab66103c30403d0c4b95",
+    "previous_entry_hash": "8a4001179047f358168c3d6b07bee46ad0afd0d0530ee11be7b3db1befda4781",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "21159bdff40325c96b7c6d29f722eb1338030ce7ceec7b350a90df5e6fd24a17"
+    "entry_hash": "7a047c611c50914423973e6d7afd9ff4a99eec26a06bbfca269d3d567afc11fc"
   },
   {
     "entry_id": "entry-0741",
@@ -12590,11 +12590,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/policy-enforcement-proof.md",
     "evidence_sha256": "982e70c79eab572154e4aa5662a969a382966044ccba435e8b8976c45eba4115",
-    "previous_entry_hash": "21159bdff40325c96b7c6d29f722eb1338030ce7ceec7b350a90df5e6fd24a17",
+    "previous_entry_hash": "7a047c611c50914423973e6d7afd9ff4a99eec26a06bbfca269d3d567afc11fc",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "55f63c56f8d3e3d6c45028e31fdab2bac1d8136e210b541a27f2496fd3e33572"
+    "entry_hash": "ea1e70c3b8bca51bda9291fbf5cf574956e50a58defa953c78de7d8ca4962d56"
   },
   {
     "entry_id": "entry-0742",
@@ -12607,11 +12607,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/chaos-01-model-endpoint-unavailable.md",
     "evidence_sha256": "1ad42a3da67c1a0a244c0300136dbb8330858a5b0544b785925a3934f3449539",
-    "previous_entry_hash": "55f63c56f8d3e3d6c45028e31fdab2bac1d8136e210b541a27f2496fd3e33572",
+    "previous_entry_hash": "ea1e70c3b8bca51bda9291fbf5cf574956e50a58defa953c78de7d8ca4962d56",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "43d9da9a997298113adeaa07cf8aff887f7a70cd5cf6541579a713bf23a6de56"
+    "entry_hash": "bff5858e6e702857764ed0d3798feb5c57567178bd57dca9d78cbe13c110ef51"
   },
   {
     "entry_id": "entry-0743",
@@ -12624,11 +12624,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/chaos-02-ollama-container-killed.md",
     "evidence_sha256": "cd4fd1b90e028da492abd56ac7ddfc79cb166e58016c2c5e4e9a28eaacb181d2",
-    "previous_entry_hash": "43d9da9a997298113adeaa07cf8aff887f7a70cd5cf6541579a713bf23a6de56",
+    "previous_entry_hash": "bff5858e6e702857764ed0d3798feb5c57567178bd57dca9d78cbe13c110ef51",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "37f8c912de1d76b8d89373c0524e803451f9288d57d23e7a75262b30bb1c4363"
+    "entry_hash": "a08897efa6efa4e01ec4b1bc6808f4f983776924cba052f97d55c96c5ebcb2e4"
   },
   {
     "entry_id": "entry-0744",
@@ -12641,11 +12641,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/chaos-03-lmstudio-tunnel-dropped.md",
     "evidence_sha256": "4ede3092971459a3bd6e6eb7d77b348d594fe3fb9601ebbd4f2cfde4da0d9eef",
-    "previous_entry_hash": "37f8c912de1d76b8d89373c0524e803451f9288d57d23e7a75262b30bb1c4363",
+    "previous_entry_hash": "a08897efa6efa4e01ec4b1bc6808f4f983776924cba052f97d55c96c5ebcb2e4",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "51d1082286c9486735886408b992035aa071926fd094c3aef1fb7fb1f89013a7"
+    "entry_hash": "0232cca309592c99ff5a928e51df73eb6465ca422851c2412cbac3e76d866745"
   },
   {
     "entry_id": "entry-0745",
@@ -12658,11 +12658,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/chaos-04-malformed-model-output.md",
     "evidence_sha256": "9302de87649dbf562ffabb51d0420cbd31c64122f111cdbd90e9585c5714b9bb",
-    "previous_entry_hash": "51d1082286c9486735886408b992035aa071926fd094c3aef1fb7fb1f89013a7",
+    "previous_entry_hash": "0232cca309592c99ff5a928e51df73eb6465ca422851c2412cbac3e76d866745",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "237fd001825f0d9ea580cd379774a61facbdf280da0ed2a9e2d4370b3d6486b2"
+    "entry_hash": "126695078b7e263f4ccd7b78af8951fecc1ce7f204a1ca90283be34c3809e61c"
   },
   {
     "entry_id": "entry-0746",
@@ -12675,11 +12675,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/chaos-05-corrupted-task-queue.md",
     "evidence_sha256": "90e5a6f88e3d21e7f6c3308e0d085d3ac1cb60e0df523d7fe4a363989b25bacd",
-    "previous_entry_hash": "237fd001825f0d9ea580cd379774a61facbdf280da0ed2a9e2d4370b3d6486b2",
+    "previous_entry_hash": "126695078b7e263f4ccd7b78af8951fecc1ce7f204a1ca90283be34c3809e61c",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "ea33cc723e9badff29fbc6822db58f5ae09dbb64ac1765b39553eddcc833568f"
+    "entry_hash": "cdab0d47a706c5c5244f7f6a3a0ec55515e3eecb70d873bb12fa6e5be4114e22"
   },
   {
     "entry_id": "entry-0747",
@@ -12692,11 +12692,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/products/cyberqrg-ai/HASF_PRODUCT_002_FOUNDER_REVIEW.md",
     "evidence_sha256": "08850e5ce51de26137a0172f93a8177fe01e6521dc19f5a150f4c8d0aee64a3b",
-    "previous_entry_hash": "ea33cc723e9badff29fbc6822db58f5ae09dbb64ac1765b39553eddcc833568f",
+    "previous_entry_hash": "cdab0d47a706c5c5244f7f6a3a0ec55515e3eecb70d873bb12fa6e5be4114e22",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "d089c0fddab1f1ab5290c2b394c247b80b634b74e810d9e56d581695497dabda"
+    "entry_hash": "3da450f93fb49db672e6b85dac31b0847092a53e8044c22e2b888f02606eb90b"
   },
   {
     "entry_id": "entry-0748",
@@ -12709,11 +12709,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/l3-qa-maturity-acceptance-audit.md",
     "evidence_sha256": "dd5738ee9c0bb63f44e28aa0987e5510c6cb27affab045ff916afe732f298fa8",
-    "previous_entry_hash": "d089c0fddab1f1ab5290c2b394c247b80b634b74e810d9e56d581695497dabda",
+    "previous_entry_hash": "3da450f93fb49db672e6b85dac31b0847092a53e8044c22e2b888f02606eb90b",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "b81c4e1ed1e751cb31f8088d3b77f08b966a7c35d053b3f434e6683d1105c23f"
+    "entry_hash": "f88d2f417cc4422583a1faca590edae07b69fd42e7a7d0114d7c2dcc32cfea6f"
   },
   {
     "entry_id": "entry-0749",
@@ -12726,11 +12726,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/model-capacity-eval-comparison.md",
     "evidence_sha256": "47a347da353788e248f8aa68f144883556c1806576f430cef6cb28ef029e09a0",
-    "previous_entry_hash": "b81c4e1ed1e751cb31f8088d3b77f08b966a7c35d053b3f434e6683d1105c23f",
+    "previous_entry_hash": "f88d2f417cc4422583a1faca590edae07b69fd42e7a7d0114d7c2dcc32cfea6f",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "b6c283004d97e621a9a0d4e71e819660c1040381714d9bf4b7c455e57c321428"
+    "entry_hash": "4cd781fd53a6193bc17641e2394c8b89d86de65ad2198d490a6eaa6eb865871c"
   },
   {
     "entry_id": "entry-0750",
@@ -12743,11 +12743,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/l3-gate-battery-proof.md",
     "evidence_sha256": "9dfe1cd3a1e6cfe4cb2fb3b0a5d3fd6c261b7d3223313caea95a01b243df0843",
-    "previous_entry_hash": "b6c283004d97e621a9a0d4e71e819660c1040381714d9bf4b7c455e57c321428",
+    "previous_entry_hash": "4cd781fd53a6193bc17641e2394c8b89d86de65ad2198d490a6eaa6eb865871c",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "20a1191df512a2d09d4ed1c166a74e45113704a5d1f45a8f3e1ad7a22d97849e"
+    "entry_hash": "1b7fa187507644f9fac1e638b1ea13fbcf72887136390f9ab7dfbd2cd34e9d48"
   },
   {
     "entry_id": "entry-0751",
@@ -12760,11 +12760,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/l4-evidence-tamper-detection-proof.md",
     "evidence_sha256": "3ff7b782a86526e0f81ea1889bda15a1db21eaf748ae470da33c645e02c16c5f",
-    "previous_entry_hash": "20a1191df512a2d09d4ed1c166a74e45113704a5d1f45a8f3e1ad7a22d97849e",
+    "previous_entry_hash": "1b7fa187507644f9fac1e638b1ea13fbcf72887136390f9ab7dfbd2cd34e9d48",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "89740fdd14df01adf638f14b0db4f1527f38ea5765cdb89d93299456730485c5"
+    "entry_hash": "b1ab6f1b2a5340b0e277c551d0686a44a8eb9a20ab340908814b64fecd4f5209"
   },
   {
     "entry_id": "entry-0752",
@@ -12777,11 +12777,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/chaos-06-stale-runtime-json.md",
     "evidence_sha256": "2c6d40d912bb2fb241cc1fa51b140bf8a81f2a46fa023d8d8f3a19fbbdb312b3",
-    "previous_entry_hash": "89740fdd14df01adf638f14b0db4f1527f38ea5765cdb89d93299456730485c5",
+    "previous_entry_hash": "b1ab6f1b2a5340b0e277c551d0686a44a8eb9a20ab340908814b64fecd4f5209",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "114f02ca715412a05c62100512a1ab962edaee21aa274b086e3809ffd0fd5153"
+    "entry_hash": "375d2ce72e0a5c1db6062a267a2f50ab62d5d0bed936d925558718244e4ff558"
   },
   {
     "entry_id": "entry-0753",
@@ -12794,11 +12794,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/chaos-07-evidence-write-failure.md",
     "evidence_sha256": "6e0ed39cd1493da577ef46c8f82ff7598ecd060ccf7e39d5fb7a2fe8a8135ddd",
-    "previous_entry_hash": "114f02ca715412a05c62100512a1ab962edaee21aa274b086e3809ffd0fd5153",
+    "previous_entry_hash": "375d2ce72e0a5c1db6062a267a2f50ab62d5d0bed936d925558718244e4ff558",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "8290513f9991f586e4c0c3937f626fcd6f289f28372b41a5fac872c63f648b03"
+    "entry_hash": "7eeb215317ef5361c9c3b9453f0693a04b8181ee378d177daafbc76512921178"
   },
   {
     "entry_id": "entry-0754",
@@ -12811,11 +12811,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/chaos-08-forbidden-adapter-action.md",
     "evidence_sha256": "1a8b9d9ecd7021bf80e200a281cb444f7004914679f8d3a6d6b18e734479a256",
-    "previous_entry_hash": "8290513f9991f586e4c0c3937f626fcd6f289f28372b41a5fac872c63f648b03",
+    "previous_entry_hash": "7eeb215317ef5361c9c3b9453f0693a04b8181ee378d177daafbc76512921178",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "6d0485a559117e0632373f3798bb8269d8440664cc13fec4b85d5cb676ad4e9e"
+    "entry_hash": "ea7c4b547471d36f38fdbdbe0acfbef7cfc524660ce3b1b94d8498e6721d5b95"
   },
   {
     "entry_id": "entry-0755",
@@ -12828,11 +12828,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/chaos-09-prompt-injection-attempt.md",
     "evidence_sha256": "8f461c84bf6ce7e6fbed8b4d6c2fa132a53f387efad2144514e0a5ee764dd0b4",
-    "previous_entry_hash": "6d0485a559117e0632373f3798bb8269d8440664cc13fec4b85d5cb676ad4e9e",
+    "previous_entry_hash": "ea7c4b547471d36f38fdbdbe0acfbef7cfc524660ce3b1b94d8498e6721d5b95",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "8651cc46792ccad17174488ee404a1ab9b61ee5c80dd6ee43bc00ef93a78600c"
+    "entry_hash": "b02af4fcf8af4c693291f5632a0ef40d2cbccc49a3270c52177c670ba7422677"
   },
   {
     "entry_id": "entry-0756",
@@ -12845,11 +12845,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/chaos-10-github-vercel-adapter-failure.md",
     "evidence_sha256": "85eac867341e252190b8b116b7a6b590ce61ee834c4a01c93e0016ee7a530722",
-    "previous_entry_hash": "8651cc46792ccad17174488ee404a1ab9b61ee5c80dd6ee43bc00ef93a78600c",
+    "previous_entry_hash": "b02af4fcf8af4c693291f5632a0ef40d2cbccc49a3270c52177c670ba7422677",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "56be697ede3c97d4a366819e4ef0e473598d46c6858bc136d1ed20bbbc77bad4"
+    "entry_hash": "08eeaa753d3f63490c920c13d5cff9232d423ff847b781316c297a8c29789298"
   },
   {
     "entry_id": "entry-0757",
@@ -12862,11 +12862,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/l4-governed-resilient-ops-acceptance-audit.md",
     "evidence_sha256": "f9ab658bd8710215e67ed0d83cccfabf758eb0feed145eb6c000c6683160ae48",
-    "previous_entry_hash": "56be697ede3c97d4a366819e4ef0e473598d46c6858bc136d1ed20bbbc77bad4",
+    "previous_entry_hash": "08eeaa753d3f63490c920c13d5cff9232d423ff847b781316c297a8c29789298",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "c914e26a3b5d3e41ec5ef5e69173eb5a839c7b00b1611030a970efc7343f3a76"
+    "entry_hash": "dedf8f4b8edba8a8306d8bb1b73c7afe58123b0a397dda0459728bf400c032ac"
   },
   {
     "entry_id": "entry-0758",
@@ -12879,11 +12879,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/gpu-pod-model-capacity-eval-comparison.md",
     "evidence_sha256": "009cc8b82729705434ce8ea3f06483c205e477898613f7b6d161b007dd40e6ca",
-    "previous_entry_hash": "c914e26a3b5d3e41ec5ef5e69173eb5a839c7b00b1611030a970efc7343f3a76",
+    "previous_entry_hash": "dedf8f4b8edba8a8306d8bb1b73c7afe58123b0a397dda0459728bf400c032ac",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "2122f6efdbcce5020df3a6c897907336397184d568a5e324e306727b6d8f8b81"
+    "entry_hash": "278ab476950f47362ea52c3fd20a01dc2d4ba23d7ffbbcd17c6a0e60049ef9e8"
   },
   {
     "entry_id": "entry-0759",
@@ -12896,11 +12896,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/gpu-pod-adapter-upgrade-proof.md",
     "evidence_sha256": "66604b4fd95d16975c4dda2c54641e9a7b9ce75000f8769a53d2f85feda84f7c",
-    "previous_entry_hash": "2122f6efdbcce5020df3a6c897907336397184d568a5e324e306727b6d8f8b81",
+    "previous_entry_hash": "278ab476950f47362ea52c3fd20a01dc2d4ba23d7ffbbcd17c6a0e60049ef9e8",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "669ccc80a524df230e473e6e330702e1cda6b231fe6933b3ea359991a02f0ac0"
+    "entry_hash": "85cf66c073383bf8c0c2e2f4603d07bc1aaf4b0c82eae02d8da0ea43716e1213"
   },
   {
     "entry_id": "entry-0760",
@@ -12913,11 +12913,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/product-002-r2-authorization-dry-run-proof.md",
     "evidence_sha256": "df82b6e9dee36505be97b5b10b7b853ad5a904e7b031b29e3402a531593b91e6",
-    "previous_entry_hash": "669ccc80a524df230e473e6e330702e1cda6b231fe6933b3ea359991a02f0ac0",
+    "previous_entry_hash": "85cf66c073383bf8c0c2e2f4603d07bc1aaf4b0c82eae02d8da0ea43716e1213",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "42c4922d9a0024bbfe57fad780fa139844597b4beffff879843735e79403d226"
+    "entry_hash": "2c0527cfac196a5d1970ea723716fcf492a053f571f26f798a5d48bf719d0968"
   },
   {
     "entry_id": "entry-0761",
@@ -12930,11 +12930,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/product-002-r2-readiness-check.md",
     "evidence_sha256": "c801b838f01b949dd4da9391d17ccb9ec5eee0b28e6f640c1f266b794d09c6cf",
-    "previous_entry_hash": "42c4922d9a0024bbfe57fad780fa139844597b4beffff879843735e79403d226",
+    "previous_entry_hash": "2c0527cfac196a5d1970ea723716fcf492a053f571f26f798a5d48bf719d0968",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "7ec27805129465aec3783baa96f849326316f8520f43d545f9f04edb7887997b"
+    "entry_hash": "dd4356b3aaf23c492aa24340570978d260d5d93a926975f1410781962cd7e505"
   },
   {
     "entry_id": "entry-0762",
@@ -12947,11 +12947,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/product-002-r2-sprint-1-execution-proof.md",
     "evidence_sha256": "dadbcbeb722cffdadbaaa08a1bec3ba971d0bb8d47d2f552a5be5ddc608a4a09",
-    "previous_entry_hash": "7ec27805129465aec3783baa96f849326316f8520f43d545f9f04edb7887997b",
+    "previous_entry_hash": "dd4356b3aaf23c492aa24340570978d260d5d93a926975f1410781962cd7e505",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "e8cf85d80a606eb943c3a434b60a581f154d075f59ddf8761b5680d456de7b98"
+    "entry_hash": "e7914014b9e37046c8986199a65e567c3fab97d39209d52e1135caf65bd775e6"
   },
   {
     "entry_id": "entry-0763",
@@ -12964,11 +12964,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/product-002-r2-sprint-2-local-scaffold-proof.md",
     "evidence_sha256": "f33616c85fbe35e91e52e54f54896396b8ad192ff88364842451343ef5712708",
-    "previous_entry_hash": "e8cf85d80a606eb943c3a434b60a581f154d075f59ddf8761b5680d456de7b98",
+    "previous_entry_hash": "e7914014b9e37046c8986199a65e567c3fab97d39209d52e1135caf65bd775e6",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "9a16b21861ab2de5b1cf04a86c2f3fc914821840ac2deb8154cbaf25743f7961"
+    "entry_hash": "1fc23bf0322309efcd8dc0f3586a5c9afb872c85936aabce2e94e59893adf3df"
   },
   {
     "entry_id": "entry-0764",
@@ -12981,11 +12981,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/mission-intake-security-proof.md",
     "evidence_sha256": "f07523eb29fb7658f45e2ee46e255bd314103389279a2efb0cf6ac9dcecb9eaf",
-    "previous_entry_hash": "9a16b21861ab2de5b1cf04a86c2f3fc914821840ac2deb8154cbaf25743f7961",
+    "previous_entry_hash": "1fc23bf0322309efcd8dc0f3586a5c9afb872c85936aabce2e94e59893adf3df",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "fa189982d422b44581ec132caef85b67f066a0616ee4aba40e65d82c247a95a6"
+    "entry_hash": "7760fa7a4eebecd7eb29c941a05a18b01df10a88139ec29de839654a0ad11ab1"
   },
   {
     "entry_id": "entry-0765",
@@ -12998,11 +12998,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/helm-full-time-orchestration-bridge-proof.md",
     "evidence_sha256": "dd2e471051c432b57d1786cb51803243ff9104d2b059441af895356c6e5a85a6",
-    "previous_entry_hash": "fa189982d422b44581ec132caef85b67f066a0616ee4aba40e65d82c247a95a6",
+    "previous_entry_hash": "7760fa7a4eebecd7eb29c941a05a18b01df10a88139ec29de839654a0ad11ab1",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "b608353af2977d223f72866d02ad0ddf9f0c19de3392933f14c236b45442dec7"
+    "entry_hash": "af42f4294e0a46ffb7384af5aee90095d0ad2d1020e43aabc9c9fb0b48832840"
   },
   {
     "entry_id": "entry-0766",
@@ -13015,11 +13015,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/copy-paste-removal-derivation-proof.md",
     "evidence_sha256": "693fac1f512b227f3468e5976e77a993a727d337c3988b78168d05c064434fad",
-    "previous_entry_hash": "b608353af2977d223f72866d02ad0ddf9f0c19de3392933f14c236b45442dec7",
+    "previous_entry_hash": "af42f4294e0a46ffb7384af5aee90095d0ad2d1020e43aabc9c9fb0b48832840",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "3ae143535a5d08382a52184939d4343ddf977b69ace7cc6659d5dd37ae72f695"
+    "entry_hash": "188526f5ece91ffe46eb4a1b522edea10863ce020726d6331815ae422286acbd"
   },
   {
     "entry_id": "entry-0767",
@@ -13032,11 +13032,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/orchestration-bridge-kill-switch-proof.md",
     "evidence_sha256": "37c5efbd9dd0b9fe204f17c8f7e9aeb7ab59385e1dd2df6513716e4129d984e4",
-    "previous_entry_hash": "3ae143535a5d08382a52184939d4343ddf977b69ace7cc6659d5dd37ae72f695",
+    "previous_entry_hash": "188526f5ece91ffe46eb4a1b522edea10863ce020726d6331815ae422286acbd",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "68d47979762daa69b7113c08d6e6621e37c1c4611ddccd242c07caec5678fc9c"
+    "entry_hash": "21cfc70c9bb524d4f5815c7bcc10ecd67b9c6a492e41ddd0d33fb9638ed2db16"
   },
   {
     "entry_id": "entry-0768",
@@ -13049,11 +13049,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/secure-sync-posture-proof.md",
     "evidence_sha256": "65a8e3e57ba01be19a491caf66d2545865b9c147db4a16aaf3ae67ed390369c4",
-    "previous_entry_hash": "68d47979762daa69b7113c08d6e6621e37c1c4611ddccd242c07caec5678fc9c",
+    "previous_entry_hash": "21cfc70c9bb524d4f5815c7bcc10ecd67b9c6a492e41ddd0d33fb9638ed2db16",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "4980d13b455bc2581b0d1bfbdb12cf71b893dd37422a19eaf8cb8c76ce9ad920"
+    "entry_hash": "d8db26580b5e9dc4fb5ef9081942061a2ef75ec728bfd8a4c9d07275eb0bac13"
   },
   {
     "entry_id": "entry-0769",
@@ -13066,11 +13066,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/helm-orchestration-bridge-acceptance-audit.md",
     "evidence_sha256": "2465b62abc027f0381a03611bbfbc231f337ee4bcc13db50607ceaebe2cbef34",
-    "previous_entry_hash": "4980d13b455bc2581b0d1bfbdb12cf71b893dd37422a19eaf8cb8c76ce9ad920",
+    "previous_entry_hash": "d8db26580b5e9dc4fb5ef9081942061a2ef75ec728bfd8a4c9d07275eb0bac13",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "cea3a1ded237dfac72f26b3b839dfcbced2aecb0bd7ba48171ee50dde78b0083"
+    "entry_hash": "cb7999d5b61f1d8acde97f4ea7265f2b0f05c86c934a0f0423bd170d55d58d89"
   },
   {
     "entry_id": "entry-0770",
@@ -13083,11 +13083,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/helm-rung-1-decompose-only-onboarding-proof.md",
     "evidence_sha256": "7064a6bf6b2ed3241423547c4c5a07ae6c16fee86c4a1c28e683d99998dec3bd",
-    "previous_entry_hash": "cea3a1ded237dfac72f26b3b839dfcbced2aecb0bd7ba48171ee50dde78b0083",
+    "previous_entry_hash": "cb7999d5b61f1d8acde97f4ea7265f2b0f05c86c934a0f0423bd170d55d58d89",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "41f998e83ae4a1ba34acaaa19ceb4a9673c2980aacd201418e65a57c9478951f"
+    "entry_hash": "00277c859f1f5b7a0830a193dbc00c08399aec3cd342f6b3a667ec125c55c492"
   },
   {
     "entry_id": "entry-0771",
@@ -13100,11 +13100,11 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/helm-rung-1-promotion-evidence.md",
     "evidence_sha256": "ca0415053f9065110f8144c60b202d6bdddfbf439b24dd0651ad138fb66a2e02",
-    "previous_entry_hash": "41f998e83ae4a1ba34acaaa19ceb4a9673c2980aacd201418e65a57c9478951f",
+    "previous_entry_hash": "00277c859f1f5b7a0830a193dbc00c08399aec3cd342f6b3a667ec125c55c492",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "0015df416133b7ac687e6267a91217b07f96abd7fed6e3ce6fdbdf0524654594"
+    "entry_hash": "02b00e358d79f4cd803ea02e264f80d131e736458c856cd2a45f69e067bb042e"
   },
   {
     "entry_id": "entry-0772",
@@ -13117,10 +13117,146 @@
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/helm-rung-1-live-truth-audit-proof.md",
     "evidence_sha256": "667d6e99867dbce64cf1057c65931870d2023fa9d5cf2d011ceeb9ba65c13365",
-    "previous_entry_hash": "0015df416133b7ac687e6267a91217b07f96abd7fed6e3ce6fdbdf0524654594",
+    "previous_entry_hash": "02b00e358d79f4cd803ea02e264f80d131e736458c856cd2a45f69e067bb042e",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "a293742b056fc172d71a8eeb76abd47c6d001bb19de2471f549c73832e1eb0e5"
+    "entry_hash": "3ffd47f398d371a54cce8c0b3f3df5b8be243df77bef4e064901580b10396e7a"
+  },
+  {
+    "entry_id": "entry-0773",
+    "timestamp": "2026-07-03T21:42:14.922720Z",
+    "run_id": "20260702T222129Z-24-7-autonomy-reset",
+    "task_id": "task-unspecified",
+    "agent_id": "has_system",
+    "model_backend": "none",
+    "adapter_id": "none",
+    "incident_class": "none",
+    "evidence_path": "docs/evidence/brain/20260703-201714-brain-session-254e3dd8.md",
+    "evidence_sha256": "383982b4dda9b349e7e64763f96cea527eb8c96a439005fcb251cb652c7307b0",
+    "previous_entry_hash": "3ffd47f398d371a54cce8c0b3f3df5b8be243df77bef4e064901580b10396e7a",
+    "signature_status": "unsigned",
+    "founder_approval_required": false,
+    "created_by": "HELM_manifest_daemon",
+    "entry_hash": "7f78eac21501f5f395da4099a02d798500ebfad935723a6cf52c792c2d715d98"
+  },
+  {
+    "entry_id": "entry-0774",
+    "timestamp": "2026-07-03T21:42:14.922923Z",
+    "run_id": "20260702T222129Z-24-7-autonomy-reset",
+    "task_id": "task-unspecified",
+    "agent_id": "has_system",
+    "model_backend": "none",
+    "adapter_id": "none",
+    "incident_class": "none",
+    "evidence_path": "docs/evidence/live_truth_audit/amended_verifier_guardrail_proof_20260703T201730Z.md",
+    "evidence_sha256": "85f303b764a71be1cfe2caf51f886bccd073bbd6768a3b9dcaea4702d962d5ef",
+    "previous_entry_hash": "7f78eac21501f5f395da4099a02d798500ebfad935723a6cf52c792c2d715d98",
+    "signature_status": "unsigned",
+    "founder_approval_required": false,
+    "created_by": "HELM_manifest_daemon",
+    "entry_hash": "cd58707eab1e0696bcd6ba96014874dbb6843e4175fc5a3b9c5f8416379a54f9"
+  },
+  {
+    "entry_id": "entry-0775",
+    "timestamp": "2026-07-03T21:42:14.923237Z",
+    "run_id": "20260702T222129Z-24-7-autonomy-reset",
+    "task_id": "task-unspecified",
+    "agent_id": "has_system",
+    "model_backend": "none",
+    "adapter_id": "none",
+    "incident_class": "none",
+    "evidence_path": "docs/evidence/meta-orchestrator/20260703-2017-domain-coverage-matrix.md",
+    "evidence_sha256": "c5e4028ff6b0c2159cf7bccc10242f697d57e7e0e6c7994511c94701aa8c1250",
+    "previous_entry_hash": "cd58707eab1e0696bcd6ba96014874dbb6843e4175fc5a3b9c5f8416379a54f9",
+    "signature_status": "unsigned",
+    "founder_approval_required": false,
+    "created_by": "HELM_manifest_daemon",
+    "entry_hash": "fde7929f3140b199abccea1b79b374a04a21dbcfbc35fc31546ee2e57b3e1483"
+  },
+  {
+    "entry_id": "entry-0776",
+    "timestamp": "2026-07-03T21:42:14.923373Z",
+    "run_id": "20260702T222129Z-24-7-autonomy-reset",
+    "task_id": "task-unspecified",
+    "agent_id": "has_system",
+    "model_backend": "none",
+    "adapter_id": "none",
+    "incident_class": "none",
+    "evidence_path": "docs/evidence/meta-orchestrator/20260703-2017-gap-scan.md",
+    "evidence_sha256": "71b5e40ebc3c9cf4a5fcc46fab1eeba85e6464aa41b0dba7d0f0084c30309c0f",
+    "previous_entry_hash": "fde7929f3140b199abccea1b79b374a04a21dbcfbc35fc31546ee2e57b3e1483",
+    "signature_status": "unsigned",
+    "founder_approval_required": false,
+    "created_by": "HELM_manifest_daemon",
+    "entry_hash": "a452d9340814bf599f333140042ac60975fb0f0bd4ab34d4dcd9618555ad3d08"
+  },
+  {
+    "entry_id": "entry-0777",
+    "timestamp": "2026-07-03T21:42:14.923505Z",
+    "run_id": "20260702T222129Z-24-7-autonomy-reset",
+    "task_id": "task-unspecified",
+    "agent_id": "has_system",
+    "model_backend": "none",
+    "adapter_id": "none",
+    "incident_class": "none",
+    "evidence_path": "docs/evidence/meta-orchestrator/20260703-2017-daily-autonomy-brief.md",
+    "evidence_sha256": "56847f43a0ac04e1c11278edfec249d8195036c6f92c67bfe1d599d1c7bf5f82",
+    "previous_entry_hash": "a452d9340814bf599f333140042ac60975fb0f0bd4ab34d4dcd9618555ad3d08",
+    "signature_status": "unsigned",
+    "founder_approval_required": false,
+    "created_by": "HELM_manifest_daemon",
+    "entry_hash": "7d7008c71a58b86a014576a439a28d8659f96a27d3e80086e73248d92e427a2d"
+  },
+  {
+    "entry_id": "entry-0778",
+    "timestamp": "2026-07-03T21:42:14.923718Z",
+    "run_id": "20260702T222129Z-24-7-autonomy-reset",
+    "task_id": "task-unspecified",
+    "agent_id": "has_system",
+    "model_backend": "none",
+    "adapter_id": "none",
+    "incident_class": "none",
+    "evidence_path": "docs/evidence/monetization/20260703-1518-inventory-audit.md",
+    "evidence_sha256": "4b47e5cce21e5dd667c09c51263ba9d6a1f96c6026d0e93a88485ef6d66cd917",
+    "previous_entry_hash": "7d7008c71a58b86a014576a439a28d8659f96a27d3e80086e73248d92e427a2d",
+    "signature_status": "unsigned",
+    "founder_approval_required": false,
+    "created_by": "HELM_manifest_daemon",
+    "entry_hash": "6959f112c18cbf0069ecea293abbb154e7815f4b9748a29a9ae5b2b484a24a83"
+  },
+  {
+    "entry_id": "entry-0779",
+    "timestamp": "2026-07-03T21:42:14.923768Z",
+    "run_id": "20260702T222129Z-24-7-autonomy-reset",
+    "task_id": "task-unspecified",
+    "agent_id": "has_system",
+    "model_backend": "none",
+    "adapter_id": "none",
+    "incident_class": "none",
+    "evidence_path": "docs/evidence/live_truth_audit/control_plane_status_aggregator_20260703T212647Z.md",
+    "evidence_sha256": "5a82d70c513013d804cd503cb051637da05442af0947ada60412d3b0314fcd68",
+    "previous_entry_hash": "6959f112c18cbf0069ecea293abbb154e7815f4b9748a29a9ae5b2b484a24a83",
+    "signature_status": "unsigned",
+    "founder_approval_required": false,
+    "created_by": "HELM_manifest_daemon",
+    "entry_hash": "a9a4dade14d364760fbed79303d417329783b15e316e53f72c193bb739d71140"
+  },
+  {
+    "entry_id": "entry-0780",
+    "timestamp": "2026-07-03T21:42:14.923886Z",
+    "run_id": "20260702T222129Z-24-7-autonomy-reset",
+    "task_id": "task-unspecified",
+    "agent_id": "has_system",
+    "model_backend": "none",
+    "adapter_id": "none",
+    "incident_class": "none",
+    "evidence_path": "docs/evidence/live_truth_audit/sidecar_control_plane_shape_fix_20260703T213443Z.md",
+    "evidence_sha256": "ed0831e8241587a32d6db06dc7b04ea15e5430047f9102e698afadb7b3bfc046",
+    "previous_entry_hash": "a9a4dade14d364760fbed79303d417329783b15e316e53f72c193bb739d71140",
+    "signature_status": "unsigned",
+    "founder_approval_required": false,
+    "created_by": "HELM_manifest_daemon",
+    "entry_hash": "565ef065a6a3a9ebd14c925f1daf1f3aac340fd534933fc79efa745bd3afb347"
   }
 ]

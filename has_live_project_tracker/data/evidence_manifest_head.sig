@@ -1,8 +1,8 @@
 {
   "status": "SIGNING_PARTIAL_PENDING_FOUNDER_KEY",
-  "head_entry_id": "entry-0772",
-  "head_entry_hash": "a293742b056fc172d71a8eeb76abd47c6d001bb19de2471f549c73832e1eb0e5",
-  "signature": "7f3750c5d393a42a06f5dcbaae0aa5367b72ac886b6bc23eb1a12611513c946f",
+  "head_entry_id": "entry-0780",
+  "head_entry_hash": "565ef065a6a3a9ebd14c925f1daf1f3aac340fd534933fc79efa745bd3afb347",
+  "signature": "ad65be68f7b4953cb9eee9d5eea7cb2fadb7b9097306eb3faceabc443900e378",
   "signed_at": "2026-07-03T12:58:00Z",
   "signer": "Michael/Founder"
 }
