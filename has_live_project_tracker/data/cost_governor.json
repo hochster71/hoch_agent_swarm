@@ -1,0 +1,29 @@
+{
+  "generated_at": "2026-07-02T11:30:00Z",
+  "monthly_incremental_budget_usd": 200,
+  "grok": {
+    "credits_remaining_usd": 75.30,
+    "credits_used_usd": 13.59,
+    "tokens_used": 43112382,
+    "requests": 1406,
+    "effective_cost_per_1m_tokens": 0.315,
+    "avg_tokens_per_request": 30663,
+    "avg_cost_per_request": 0.0097,
+    "estimated_remaining_tokens": 239000000
+  },
+  "plans_already_paid": [
+    "Google AI Ultra / Max-tier Google AI plan",
+    "Microsoft Family AI plan",
+    "ChatGPT plan",
+    "Grok credits/plan",
+    "Claude plan"
+  ],
+  "policy": {
+    "local_first": true,
+    "frontier_escalation_only": true,
+    "full_repo_frontier_scan_requires_approval": true,
+    "paid_api_enablement_requires_approval": true,
+    "monthly_budget_guardrail_usd": 200
+  },
+  "model_routing": []
+}

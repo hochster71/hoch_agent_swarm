@@ -12,7 +12,7 @@
 - **Canonical Filename**: `hoch-pods-has-hasf-approved-authority.jpeg`
 - **Path**: `docs/design/approved-visual-authority/hoch-pods-has-hasf-approved-authority.jpeg`
 - **Dimensions**: 1536x1024
-- **SHA256**: `12de18ba8d3e6da8304f692455ab4ed27a97e6f175120b780f329927dc134310` (verified match)
+- **SHA256**: `21bd9aef213e45824295a9a3e85b4f8817f841962a9ad24e817a12bdc3b1f442` (verified match)
 - **Review**: [approved-single-visual-authority-review.md](approved-single-visual-authority-review.md) | [HTML version](approved-single-visual-authority-review.html)
 
 **Allowed Use**: HAS/HASF Hoch Pods Theater, agent ready/pod doors/power up/launch/lift off/transit/route/docking/integration/RACI/mission/active-in-HAS/flow/agent-profile/destination/system-status/landing-and-securing-agents.

@@ -1,0 +1,38 @@
+{
+  "generated_at": "2026-07-02T11:30:00Z",
+  "web_api": {
+    "status": "GO",
+    "backend_deploy_readiness": "PASS",
+    "frontend_deploy_readiness": "PASS",
+    "environment_config": "PASS",
+    "secrets_status": "PASS",
+    "health_endpoint": "PASS",
+    "release_artifact": "PASS",
+    "rollback_plan": "PASS",
+    "production_url_readiness": "PASS"
+  },
+  "apple_app_store": {
+    "status": "NO_GO",
+    "app_exists": "NO",
+    "bundle_id": "NOT_PRESENT",
+    "signing": "NOT_PRESENT",
+    "testflight": "NOT_PRESENT",
+    "privacy_manifest": "NOT_PRESENT",
+    "app_privacy_labels": "NOT_PRESENT",
+    "screenshots": "NOT_PRESENT",
+    "review_notes": "NOT_PRESENT",
+    "storekit_payment_status": "NOT_PRESENT",
+    "blocker_list": ["No iOS project in repo"]
+  },
+  "google_play": {
+    "status": "NO_GO",
+    "package_id": "NOT_PRESENT",
+    "signing": "NOT_PRESENT",
+    "internal_testing": "NOT_PRESENT",
+    "play_console_readiness": "NOT_PRESENT",
+    "privacy_data_safety": "NOT_PRESENT",
+    "screenshots": "NOT_PRESENT",
+    "billing_status": "NOT_PRESENT",
+    "blocker_list": ["No Android project in repo"]
+  }
+}

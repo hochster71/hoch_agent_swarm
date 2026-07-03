@@ -1,0 +1,162 @@
+[
+  {
+    "case_id": "case-score-001",
+    "agent_role": "hasf_scoring_agent",
+    "deterministic_passed": true,
+    "judge_score": 4.0,
+    "judge_rationale": "",
+    "consistency_score": 1.0
+  },
+  {
+    "case_id": "case-score-002",
+    "agent_role": "hasf_scoring_agent",
+    "deterministic_passed": true,
+    "judge_score": 4.0,
+    "judge_rationale": "",
+    "consistency_score": 1.0
+  },
+  {
+    "case_id": "case-score-003",
+    "agent_role": "hasf_scoring_agent",
+    "deterministic_passed": true,
+    "judge_score": 4.0,
+    "judge_rationale": "",
+    "consistency_score": 1.0
+  },
+  {
+    "case_id": "case-score-004",
+    "agent_role": "hasf_scoring_agent",
+    "deterministic_passed": true,
+    "judge_score": 4.0,
+    "judge_rationale": "",
+    "consistency_score": 1.0
+  },
+  {
+    "case_id": "case-score-005",
+    "agent_role": "hasf_scoring_agent",
+    "deterministic_passed": true,
+    "judge_score": 4.0,
+    "judge_rationale": "",
+    "consistency_score": 1.0
+  },
+  {
+    "case_id": "case-score-006",
+    "agent_role": "hasf_scoring_agent",
+    "deterministic_passed": true,
+    "judge_score": 4.0,
+    "judge_rationale": "",
+    "consistency_score": 1.0
+  },
+  {
+    "case_id": "case-score-007",
+    "agent_role": "hasf_scoring_agent",
+    "deterministic_passed": true,
+    "judge_score": 4.0,
+    "judge_rationale": "",
+    "consistency_score": 1.0
+  },
+  {
+    "case_id": "case-score-008",
+    "agent_role": "hasf_scoring_agent",
+    "deterministic_passed": true,
+    "judge_score": 4.0,
+    "judge_rationale": "",
+    "consistency_score": 1.0
+  },
+  {
+    "case_id": "case-score-009",
+    "agent_role": "hasf_scoring_agent",
+    "deterministic_passed": true,
+    "judge_score": 4.0,
+    "judge_rationale": "",
+    "consistency_score": 1.0
+  },
+  {
+    "case_id": "case-score-010",
+    "agent_role": "hasf_scoring_agent",
+    "deterministic_passed": true,
+    "judge_score": 4.0,
+    "judge_rationale": "",
+    "consistency_score": 1.0
+  },
+  {
+    "case_id": "case-ev-001",
+    "agent_role": "evidence_agent",
+    "deterministic_passed": true,
+    "judge_score": 4.0,
+    "judge_rationale": "",
+    "consistency_score": 1.0
+  },
+  {
+    "case_id": "case-ev-002",
+    "agent_role": "evidence_agent",
+    "deterministic_passed": true,
+    "judge_score": 4.0,
+    "judge_rationale": "",
+    "consistency_score": 1.0
+  },
+  {
+    "case_id": "case-ev-003",
+    "agent_role": "evidence_agent",
+    "deterministic_passed": true,
+    "judge_score": 4.0,
+    "judge_rationale": "",
+    "consistency_score": 1.0
+  },
+  {
+    "case_id": "case-ev-004",
+    "agent_role": "evidence_agent",
+    "deterministic_passed": true,
+    "judge_score": 4.0,
+    "judge_rationale": "",
+    "consistency_score": 1.0
+  },
+  {
+    "case_id": "case-ev-005",
+    "agent_role": "evidence_agent",
+    "deterministic_passed": true,
+    "judge_score": 4.0,
+    "judge_rationale": "",
+    "consistency_score": 1.0
+  },
+  {
+    "case_id": "case-ev-006",
+    "agent_role": "evidence_agent",
+    "deterministic_passed": true,
+    "judge_score": 4.0,
+    "judge_rationale": "",
+    "consistency_score": 1.0
+  },
+  {
+    "case_id": "case-ev-007",
+    "agent_role": "evidence_agent",
+    "deterministic_passed": true,
+    "judge_score": 4.0,
+    "judge_rationale": "",
+    "consistency_score": 1.0
+  },
+  {
+    "case_id": "case-ev-008",
+    "agent_role": "evidence_agent",
+    "deterministic_passed": true,
+    "judge_score": 4.0,
+    "judge_rationale": "",
+    "consistency_score": 1.0
+  },
+  {
+    "case_id": "case-ev-009",
+    "agent_role": "evidence_agent",
+    "deterministic_passed": true,
+    "judge_score": 4.0,
+    "judge_rationale": "",
+    "consistency_score": 1.0
+  },
+  {
+    "case_id": "case-ev-010",
+    "agent_role": "evidence_agent",
+    "deterministic_passed": true,
+    "judge_score": 4.0,
+    "judge_rationale": "",
+    "consistency_score": 1.0
+  }
+]

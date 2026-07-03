@@ -1,7 +1,7 @@
 {
   "checksum_register": {
     "package.json": {
-      "sha256": "cacdf947d874cc36b965c22a75ee5fabd2feee4db55e9f4aa6c319476fb57fc4",
+      "sha256": "7678992b274e912252f64298ee4ebe7930415a265ccc7a8037b2f43f38ba269c",
       "category": "configuration",
       "locked": true
     },

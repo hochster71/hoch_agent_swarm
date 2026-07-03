@@ -1,7 +1,8 @@
 {
   "status": "ONLINE",
-  "last_tick": "2026-07-03T05:48:46.113588Z",
+  "last_tick": "2026-07-03T12:00:24.711587Z",
   "registered_agents": [
-    "hasf_scoring_agent"
+    "hasf_scoring_agent",
+    "hasf_builder_agent"
   ]
 }

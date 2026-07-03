@@ -6,7 +6,7 @@
   "tailscale_ip": "100.87.18.15",
   "relay_port": 3012,
   "gate": "CONDITIONAL_GO",
-  "verified_at": "2026-07-02T20:54:38Z",
+  "verified_at": "2026-07-02T22:21:35Z",
   "checks": [{"check":"ssh-connectivity","status":"PASS","detail":"50.116.41.183 reachable"},{"check":"hostname","status":"PASS","detail":"hoch-relay-001"},{"check":"os","status":"PASS","detail":"Ubuntu 24.04.4 LTS"},{"check":"kernel","status":"PASS","detail":"6.8.0-124-generic"},{"check":"docker-version","status":"PASS","detail":"29.6.1"},{"check":"docker-compose-version","status":"PASS","detail":"5.2.0"},{"check":"ufw-active","status":"PASS","detail":"UFW is active"},{"check":"ufw-port-3012-blocked","status":"PASS","detail":"No public ALLOW rule for 3012 (rules: none)"},{"check":"fail2ban-active","status":"PASS","detail":"fail2ban running"},{"check":"container-running","status":"PASS","detail":"hoch-relay-api: running"},{"check":"container-healthy","status":"PASS","detail":"hoch-relay-api health: healthy"},{"check":"port-binding-tailscale-only","status":"PASS","detail":"Bound to 100.87.18.15:3012"},{"check":"relay-health-endpoint","status":"PASS","detail":"http://100.87.18.15:3012/health → OK"},{"check":"port-3012-not-public","status":"PASS","detail":"Public IP 50.116.41.183:3012 unreachable — constraint satisfied"},{"check":"evidence-file","status":"PASS","detail":"/root/hoch200_node_status.txt exists"},{"check":"worker-registry-HAS-WORKER-RELAY-001","status":"PASS","detail":"Worker ID confirmed in /health"}],
   "failures": [""]
 }

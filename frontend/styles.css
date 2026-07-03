@@ -28,8 +28,9 @@ body {
     background-color: var(--bg-base);
     color: var(--text-primary);
     font-family: var(--font-body);
-    overflow-x: hidden;
+    overflow: hidden;
     height: 100vh;
+    width: 100vw;
 }
 
 /* App Container Layout */
@@ -37,6 +38,7 @@ body {
     display: flex;
     height: 100vh;
     width: 100vw;
+    overflow: hidden;
 }
 
 /* Sidebar Styling */
@@ -49,6 +51,7 @@ body {
     justify-content: space-between;
     padding: 24px;
     z-index: 10;
+    overflow-y: auto;
 }
 
 .logo-area {
@@ -3154,10 +3157,14 @@ body.theme-mono {
 
 /* ── Live Runtime Koi Pond View styling ──────────────────────────────────── */
 .koi-pond-layer, #koi-pond-layer {
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 200px;
   overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .koi-fish {

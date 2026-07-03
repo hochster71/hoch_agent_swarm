@@ -7,18 +7,26 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "has_live_project_tracker/data"
 
+import os
+
 def check_remote_lmstudio_probe():
-    res = subprocess.run(
-        "ssh root@50.116.41.183 'curl -s -o /dev/null -w \"%{http_code}\" http://localhost:1234/v1/models'",
-        shell=True, capture_output=True, text=True
-    )
+    if os.path.exists("/etc/systemd/system"):
+        res = subprocess.run("curl -s -o /dev/null -w '%{http_code}' http://localhost:1234/v1/models", shell=True, capture_output=True, text=True)
+        return res.stdout.strip() == "200"
+    res = subprocess.run("ssh -o StrictHostKeyChecking=no root@100.87.18.15 'curl -s -o /dev/null -w \"%{http_code}\" http://localhost:1234/v1/models'", shell=True, capture_output=True, text=True)
+    if res.stdout.strip() == "200":
+        return True
+    res = subprocess.run("ssh -o StrictHostKeyChecking=no root@50.116.41.183 'curl -s -o /dev/null -w \"%{http_code}\" http://localhost:1234/v1/models'", shell=True, capture_output=True, text=True)
     return res.stdout.strip() == "200"
 
 def check_remote_ollama_probe():
-    res = subprocess.run(
-        "ssh root@50.116.41.183 'curl -s -o /dev/null -w \"%{http_code}\" http://localhost:11434/api/tags'",
-        shell=True, capture_output=True, text=True
-    )
+    if os.path.exists("/etc/systemd/system"):
+        res = subprocess.run("curl -s -o /dev/null -w '%{http_code}' http://localhost:11434/api/tags", shell=True, capture_output=True, text=True)
+        return res.stdout.strip() == "200"
+    res = subprocess.run("ssh -o StrictHostKeyChecking=no root@100.87.18.15 'curl -s -o /dev/null -w \"%{http_code}\" http://localhost:11434/api/tags'", shell=True, capture_output=True, text=True)
+    if res.stdout.strip() == "200":
+        return True
+    res = subprocess.run("ssh -o StrictHostKeyChecking=no root@50.116.41.183 'curl -s -o /dev/null -w \"%{http_code}\" http://localhost:11434/api/tags'", shell=True, capture_output=True, text=True)
     return res.stdout.strip() == "200"
 
 def main():

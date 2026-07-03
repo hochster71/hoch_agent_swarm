@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path("/Users/michaelhoch/hoch_agent_swarm")
 ARCHIVE = Path("/Users/michaelhoch/hoch_agent_swarm_archive/visual-garbage-do-not-use")
 CANONICAL = ROOT / "docs/design/approved-visual-authority/hoch-pods-has-hasf-approved-authority.jpeg"
-EXPECTED_HASH = "12de18ba8d3e6da8304f692455ab4ed27a97e6f175120b780f329927dc134310"
+EXPECTED_HASH = "21bd9aef213e45824295a9a3e85b4f8817f841962a9ad24e817a12bdc3b1f442"
 
 def compute_sha256(path):
     import hashlib

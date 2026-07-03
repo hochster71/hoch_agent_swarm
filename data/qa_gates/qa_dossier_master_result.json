@@ -1,6 +1,6 @@
 {
-  "qa_master_result": "PASS",
-  "failing_gates": [],
+  "qa_master_result": "QA_PARTIAL",
+  "failing_gates": ["qa_runtime_truth" || ""],
   "gate_quality_score": 100,
-  "timestamp": "2026-07-02T22:27:42Z"
+  "timestamp": "2026-07-02T22:54:24Z"
 }

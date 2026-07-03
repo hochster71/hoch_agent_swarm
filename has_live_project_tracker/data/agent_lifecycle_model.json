@@ -1,0 +1,18 @@
+{
+  "states": [
+    "REGISTERED",
+    "READY",
+    "ASSIGNED",
+    "RUNNING",
+    "WAITING_ON_MODEL",
+    "VERIFYING",
+    "COMPLETED",
+    "FAILED",
+    "RETRYING",
+    "BLOCKED",
+    "ESCALATED_TO_FOUNDER",
+    "DOWNGRADED",
+    "DISABLED"
+  ],
+  "default_initial_state": "REGISTERED"
+}

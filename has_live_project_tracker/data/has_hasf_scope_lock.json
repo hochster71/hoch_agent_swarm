@@ -1,0 +1,46 @@
+{
+  "doctrine_id": "HAS_HASF_EXECUTIVE_AUTOMATION_SCOPE_LOCK_v1",
+  "has_goal": "Live autonomous command/control layer for agents, QA gates, runtime truth, approvals, telemetry, evidence, stale detection, and operator alerts.",
+  "hasf_goal": "Revenue-directed software factory that turns agent work into deployable products, APIs, apps, evidence packs, and monetizable releases.",
+  "north_star": "Michael becomes executive approver, not manual operator. HAS/HASF continuously audits itself, runs safe automation, blocks risky actions, updates the live UI at http://127.0.0.1:8765/, and moves products toward revenue.",
+  "michael_role": "EXECUTIVE_APPROVER_ONLY",
+  "runner_goal": "Automate QA, tests, hygiene, evidence, live UI updates, and safe actions against localhost:8765 using the current has-qa-runner-mac only. Linux and release runners are FUTURE_NOT_CONFIGURED.",
+  "allowed_autonomous_actions": [
+    "Run QA gates, hygiene checks, doctrine guards, Playwright tests, frontend build, rc29 verify, baseline scans",
+    "Detect stale agents, update live UI with runtime truth",
+    "Produce exactly one next action in operator queue",
+    "Write evidence to docs/evidence/runtime/",
+    "Update machine-readable audit JSON files",
+    "Run local runner health checks"
+  ],
+  "approval_required_actions": [
+    "Deployment",
+    "Stripe/live monetization",
+    "Apple/Google Play submission",
+    "Paid provider enablement",
+    "Visual authority changes",
+    "Destructive changes",
+    "New voice providers (xAI realtime, etc.)",
+    "Any change that increases Michael manual burden"
+  ],
+  "forbidden_without_approval": [
+    "Deployment",
+    "Stripe/live monetization",
+    "Apple/Google Play submission",
+    "Paid provider enablement",
+    "Visual authority changes",
+    "Destructive changes",
+    "New voice providers (xAI realtime, etc.)",
+    "Any change that increases Michael manual burden"
+  ],
+  "success_metrics": [
+    "Michael manual facilitation reduced to approval only",
+    "Live UI shows runtime truth, stale agents, QA gates, PERT, revenue blockers",
+    "Exactly one next action at all times",
+    "No fake-green status",
+    "Scope lock guard always PASS"
+  ],
+  "current_priority": "Prove local runner automation against http://127.0.0.1:8765/ and enforce scope lock",
+  "single_next_action_policy": "Always exactly one next safe action. Risky actions go to human_approval_queue.json",
+  "drift_guard_enabled": true
+}

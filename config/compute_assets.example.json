@@ -1,0 +1,27 @@
+{
+  "assets": [
+    {
+      "id": "online-server-60",
+      "name": "New $60 Online Server",
+      "type": "cloud_server",
+      "provider": "UNKNOWN_PROVIDER",
+      "monthly_cost_usd": 60,
+      "host": "",
+      "ssh_user": "",
+      "health_url": "",
+      "intended_use": "HAS/HASF always-on runner, QA worker, live audit node, or build executor",
+      "status": "needs_registration"
+    },
+    {
+      "id": "local-macbook",
+      "name": "Michael MacBook Pro",
+      "type": "local_workstation",
+      "provider": "local",
+      "monthly_cost_usd": 0,
+      "host": "127.0.0.1",
+      "health_url": "http://127.0.0.1:8765/api/pert/data",
+      "intended_use": "Primary HAS/HASF local runtime",
+      "status": "active"
+    }
+  ]
+}

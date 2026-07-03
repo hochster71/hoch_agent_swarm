@@ -1,0 +1,16 @@
+{
+  "run_id": "20260702T222129Z-has-hasf-runtime-scenario",
+  "started_at": "2026-07-02T22:21:29Z",
+  "repo_path": "/Users/michaelhoch/hoch_agent_swarm",
+  "remote_target": "50.116.41.183",
+  "max_iterations": 5,
+  "current_iteration": 0,
+  "status": "INITIALIZED",
+  "last_blocker": null,
+  "repeated_blocker_count": 0,
+  "security_status": "PENDING",
+  "qa_status": "PENDING",
+  "remote_status": "PENDING",
+  "hasf_revenue_status": "PENDING",
+  "final_verifier_status": "PENDING"
+}

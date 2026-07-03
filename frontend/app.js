@@ -238,7 +238,7 @@ import './src/main.tsx';
         { id: "swarm-control", viewId: "swarm-control", label: "SWARM CONTROL" },
         { id: "mission-intel", viewId: "mission", label: "MISSION INTEL" },
         { id: "timeline-replay", viewId: "replay", label: "TIMELINE REPLAY" },
-        { id: "cybersecurity-factory", viewId: "cybersecurity-factory", label: "CYBERSECURITY FACTORY" },
+        { id: "cybersecurity-factory", viewId: "cybersecurity-factory-view", label: "CYBERSECURITY FACTORY" },
         { id: "governance", viewId: "governance", label: "OPERATOR GOVERNANCE" },
         { id: "device-swarm", label: "DEVICE SWARM" },
         { id: "mesh-sentinel", label: "MESH SENTINEL" },
@@ -269,7 +269,7 @@ import './src/main.tsx';
             const btn = el(`nav-${v.id}`);
             if (btn) btn.classList.remove("active");
             const vId = v.viewId || v.id;
-            const viewDiv = el(`view-${vId}`);
+            const viewDiv = el(vId.endsWith('-view') ? vId : `view-${vId}`);
             if (viewDiv) {
                 viewDiv.classList.add("hidden");
                 viewDiv.setAttribute("hidden", "");
@@ -281,7 +281,7 @@ import './src/main.tsx';
 
         const tgtView = views.find(v => v.id === viewId);
         const resolvedViewId = tgtView ? (tgtView.viewId || tgtView.id) : viewId;
-        const activeDiv = el(`view-${resolvedViewId}`);
+        const activeDiv = el(resolvedViewId.endsWith('-view') ? resolvedViewId : `view-${resolvedViewId}`);
         if (activeDiv) {
             activeDiv.classList.remove("hidden");
             activeDiv.removeAttribute("hidden");
@@ -11175,8 +11175,8 @@ const escapeHtml = window.escapeHtml;
 
 let meshSentinelFilter = "all";
 
-async function fetchJsonSafe(url) {
-  const response = await fetch(url, { headers: { "Accept": "application/json" } });
+async function fetchJsonSafe(url, init = {}) {
+  const response = await fetch(url, { ...init, headers: { "Accept": "application/json", ...(init.headers || {}) } });
   if (!response.ok) {
     throw new Error(`${url} returned ${response.status}`);
   }

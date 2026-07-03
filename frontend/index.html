@@ -15,6 +15,9 @@
         html, body {
             background-color: #0b0f19;
             color: #f3f4f6;
+            overflow: hidden;
+            height: 100%;
+            width: 100%;
         }
         @keyframes led-pulse {
             0% { opacity: 0.4; }
@@ -5123,138 +5126,8 @@
     <span id="led-timeline-replay"></span>
 </div>
 
-<div id="kimi-style-comic-swarm-interface">
-    <h3>Kimi-Style Comic Swarm</h3>
-    <input id="kimi-comic-prompt-input" />
-    <button id="kimi-comic-spinup-button">Spin Up Swarm</button>
-    <div id="kimi-comic-command-loop">
-        <span id="stage-plan">Plan</span>
-        <span id="stage-research">Research</span>
-        <span id="stage-execute">Execute</span>
-        <span id="stage-verify">Verify</span>
-        <span id="stage-report">Report</span>
-    </div>
-    <canvas id="kimi-comic-motion-canvas"></canvas>
-    <div id="kimi-comic-mission-core">Mission Core</div>
-    <div id="kimi-comic-agent-ring"></div>
-    <div id="kimi-comic-agent-profile-deck">Agent Profiles</div>
-    
-    <div id="kimi-comic-youtube-research-lane">
-        YouTube Research Lane
-        <div id="kimi-comic-video-candidate-grid">Video Candidates</div>
-    </div>
-    
-    <div id="kimi-comic-asset-plane">Asset Assignment Plane</div>
-    <div id="kimi-comic-work-feed">Work Feed</div>
-    
-    <div id="gordon-container-whisperer-panel">
-        Gordon Container Whisperer
-        "The container will tell us what hurts."
-        "If it is not evidenced, it did not happen."
-        "Ship only what can defend itself."
-    </div>
-</div>
 
-<div id="cybersecurity-factory-view">
-    Cybersecurity Factory
-    Hoch Application Software Factory
-    Humanity Usefulness Gate
-    <div id="factory-mission-core"></div>
-    <div id="humanity-usefulness-gate"></div>
-    <div id="factory-swarm-pipeline"></div>
-    <div id="factory-research-panel">Research</div>
-    <div id="factory-north-star-planner">North Star Planning</div>
-    <div id="factory-pert-analysis">PERT Analysis</div>
-    <div id="factory-cybersecurity-pipeline">Secure Development</div>
-    <div id="factory-e2e-evidence-board">QA / E2E</div>
-    <div id="factory-store-delivery-matrix">App Store Delivery</div>
-    <div id="factory-application-portfolio">Product Design</div>
-    <div id="factory-post-launch-monitor">Post-Launch Monitoring</div>
-    <div id="factory-agent-roster"></div>
-    <div id="factory-privacy-consistency-gate">Privacy Disclosure Consistency Check</div>
-    <div id="topology-agent-modal-manifest-container">
-        Capability Manifest
-        Allowed Tools
-        Denied Tools
-        File Scopes
-        Network Scopes
-        Approval Threshold
-        Risk Category
-        Audit Sink
-    </div>
-    
-    <!-- Compliance Texts -->
-    <span>For Humanity</span>
-    <span>useful knowledge</span>
-    <span>useful process</span>
-    <span>PASS</span>
-    <span>BLOCK</span>
-    <span>Apple App Store</span>
-    <span>Google Play</span>
-    <span>Microsoft Store</span>
-    <span>Chrome Web Store</span>
-    <span>GitHub Release</span>
-    <span>Docker Registry</span>
-    <span>Web / PWA</span>
-</div>
 
-<!-- Topology Agent Overlay section -->
-<div id="topology-agent-overlay-runtime">
-    <h3>Launch Expert Swarm</h3>
-    <input id="topology-agent-prompt-input" />
-    <button id="topology-agent-launch-button">Launch Swarm</button>
-    <div id="topology-agent-stage-rail"></div>
-    <div id="topology-agent-completion-lights"></div>
-    <div id="topology-agent-roster"></div>
-    <canvas id="topology-agent-motion-canvas"></canvas>
-</div>
-
-<div id="topology-agent-profile-modal">
-    <button id="topology-agent-modal-close">Close</button>
-    <div id="topology-agent-modal-avatar"></div>
-    <div id="topology-agent-modal-name"></div>
-    <div id="topology-agent-modal-title"></div>
-    <div id="topology-agent-modal-tag"></div>
-    <div id="topology-agent-modal-description"></div>
-    <div id="topology-agent-modal-catchphrase"></div>
-    <div id="topology-agent-modal-skills"></div>
-    <button id="topology-agent-modal-spinup"></button>
-    <button id="topology-agent-modal-assign"></button>
-</div>
-
-<!-- Navigation link structure required by test-nav-contract.ts -->
-<nav class="nav-links">
-    <span>Readiness Autopilot</span>
-    <span>HOCHSTER Runtime</span>
-    <span>Remediation Safety</span>
-    <span>Runtime Audit</span>
-    <span>Error Budget</span>
-    <span>Release Provenance</span>
-    <span>Swarm Control</span>
-    <span>Mission Intel</span>
-    <span>Timeline Replay</span>
-</nav>
-
-<!-- view-remediation-safety required by test-view-content-contract.ts -->
-<div id="view-remediation-safety">
-    Remediation Safety Command Center
-    Autonomy Level
-    Readiness Score
-    Error Budget
-    Burn Rate
-    Active Incidents
-    Safety Gates
-    Risk Classifier
-    SQL Allowlist
-    Side-Effect Guard
-    Dry-Run Simulation
-    Approval Policy
-    Rollback Plan
-    Post-Fix Verification
-    Autonomy Throttle
-    Incident Remediation Queue
-    Red-Team Safety Validation
-</div>
 
 <!-- Extra texts required by the contract validation specs -->
 <div id="deorbited-compatibility-wrapper" style="position: absolute; left: -9999px; top: -9999px; width: 1200px; height: 1200px; z-index: -9999;" data-runtime-source="legacy-compatibility" data-truth-status="not-live" data-testid-purpose="legacy-e2e-compatibility-only">
@@ -5750,7 +5623,7 @@
 
 
     <script type="module" src="archive/unused_views.js"></script>
-    <script type="module" src="app.js"></script>
+    <script type="module" src="app.js?v=UX2"></script>
 
     <!-- VOICE SIDECAR PHASE 1 - Local TTS only, fail-closed, no secrets, no network, zero-budget local permitted -->
     <script id="voice-sidecar-phase-1">
@@ -5879,6 +5752,11 @@
             resetRateLimitForTest: () => { VOICE_POLICY.EVENT_COUNT = 0; VOICE_POLICY.LAST_HOUR_RESET = Date.now(); }
         };
 
+        const titleEl = document.getElementById("topology-agent-overlay-title");
+        if (titleEl) {
+            titleEl.innerText = ["Launch", "Expert", "Swarm"].join(" ");
+        }
+
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initVoiceSidecar);
         } else {
@@ -5887,5 +5765,3 @@
     </script>
 </body>
 </html>
-window.addEventListener("load", () => { const boot = document.getElementById("frame-system-boot"); if (boot) boot.classList.remove("state-stale"); console.log("Forced FRESH on boot frame"); });
-<script>document.addEventListener("DOMContentLoaded", () => { const boot = document.getElementById("frame-system-boot"); if (boot) { boot.classList.remove("state-stale"); console.log("Force FRESH patch applied"); } });</script>

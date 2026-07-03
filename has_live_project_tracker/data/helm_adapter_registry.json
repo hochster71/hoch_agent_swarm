@@ -3,12 +3,12 @@
     "base_url": "http://localhost:11434/v1",
     "api_style": "openai_compatible",
     "status": "ONLINE",
-    "last_checked": "2026-07-03T06:13:44.237387Z"
+    "last_checked": "2026-07-03T12:00:25.425138Z"
   },
   "lmstudio": {
     "base_url": "http://localhost:1234/v1",
     "api_style": "openai_compatible",
     "status": "ONLINE",
-    "last_checked": "2026-07-03T06:13:44.237334Z"
+    "last_checked": "2026-07-03T12:00:25.425124Z"
   }
 }

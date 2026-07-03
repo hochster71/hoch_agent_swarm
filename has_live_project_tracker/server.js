@@ -1977,6 +1977,22 @@ const server = http.createServer((req, res) => {
 
   if (url.pathname === "/" || url.pathname === "/index.html") return sendHtml(res);
 
+  if (url.pathname === "/assets/hoch-pods-visual-authority") {
+    const imagePath = path.join(ROOT, "..", "docs", "design", "approved-visual-authority", "hoch-pods-has-hasf-approved-authority.jpeg");
+    if (fs.existsSync(imagePath)) {
+      res.writeHead(200, { "Content-Type": "image/jpeg", "Cache-Control": "no-store" });
+      return res.end(fs.readFileSync(imagePath));
+    } else {
+      const altPath = path.join(ROOT, "..", "docs", "design", "approved-visual-authority", "hoch-pods-theater-authority.jpeg");
+      if (fs.existsSync(altPath)) {
+        res.writeHead(200, { "Content-Type": "image/jpeg", "Cache-Control": "no-store" });
+        return res.end(fs.readFileSync(altPath));
+      }
+    }
+    res.writeHead(404, { "Content-Type": "text/plain" });
+    return res.end("Not found");
+  }
+
   if (url.pathname === "/archive/unused_views.html") {
     const filePath = path.join(ROOT, "archive", "unused_views.html");
     if (fs.existsSync(filePath)) {

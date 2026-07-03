@@ -1,0 +1,171 @@
+[
+  {
+    "case_id": "case-ev-001",
+    "agent_role": "evidence_agent",
+    "task_class": "manifest_validation",
+    "input": "Validate a fully populated completed task JSON object.",
+    "expected_deterministic_fields": {
+      "is_valid": true
+    },
+    "expected_score_ranges": {
+      "completeness": [4.5, 5.0]
+    },
+    "required_flags": ["valid_manifest"],
+    "forbidden_content_patterns": ["missing"],
+    "ground_truth_source": "schema_spec",
+    "founder_review_required": false
+  },
+  {
+    "case_id": "case-ev-002",
+    "agent_role": "evidence_agent",
+    "task_class": "manifest_validation",
+    "input": "Validate task JSON missing 'task_id'.",
+    "expected_deterministic_fields": {
+      "is_valid": false,
+      "reason": "missing_task_id"
+    },
+    "expected_score_ranges": {
+      "completeness": [1.0, 3.0]
+    },
+    "required_flags": ["invalid"],
+    "forbidden_content_patterns": ["valid"],
+    "ground_truth_source": "schema_spec",
+    "founder_review_required": false
+  },
+  {
+    "case_id": "case-ev-003",
+    "agent_role": "evidence_agent",
+    "task_class": "manifest_validation",
+    "input": "Validate task JSON missing 'agent_id'.",
+    "expected_deterministic_fields": {
+      "is_valid": false,
+      "reason": "missing_agent_id"
+    },
+    "expected_score_ranges": {
+      "completeness": [1.0, 3.0]
+    },
+    "required_flags": ["invalid"],
+    "forbidden_content_patterns": ["valid"],
+    "ground_truth_source": "schema_spec",
+    "founder_review_required": false
+  },
+  {
+    "case_id": "case-ev-004",
+    "agent_role": "evidence_agent",
+    "task_class": "manifest_validation",
+    "input": "Validate task JSON missing 'selected_model'.",
+    "expected_deterministic_fields": {
+      "is_valid": false,
+      "reason": "missing_model"
+    },
+    "expected_score_ranges": {
+      "completeness": [1.0, 3.0]
+    },
+    "required_flags": ["invalid"],
+    "forbidden_content_patterns": ["valid"],
+    "ground_truth_source": "schema_spec",
+    "founder_review_required": false
+  },
+  {
+    "case_id": "case-ev-005",
+    "agent_role": "evidence_agent",
+    "task_class": "manifest_validation",
+    "input": "Validate task JSON missing 'selected_adapter'.",
+    "expected_deterministic_fields": {
+      "is_valid": false,
+      "reason": "missing_adapter"
+    },
+    "expected_score_ranges": {
+      "completeness": [1.0, 3.0]
+    },
+    "required_flags": ["invalid"],
+    "forbidden_content_patterns": ["valid"],
+    "ground_truth_source": "schema_spec",
+    "founder_review_required": false
+  },
+  {
+    "case_id": "case-ev-006",
+    "agent_role": "evidence_agent",
+    "task_class": "manifest_validation",
+    "input": "Validate task JSON missing 'evidence_path'.",
+    "expected_deterministic_fields": {
+      "is_valid": false,
+      "reason": "missing_evidence_path"
+    },
+    "expected_score_ranges": {
+      "completeness": [1.0, 3.0]
+    },
+    "required_flags": ["invalid"],
+    "forbidden_content_patterns": ["valid"],
+    "ground_truth_source": "schema_spec",
+    "founder_review_required": false
+  },
+  {
+    "case_id": "case-ev-007",
+    "agent_role": "evidence_agent",
+    "task_class": "manifest_validation",
+    "input": "Validate completed task state lacking actual output data/proof file.",
+    "expected_deterministic_fields": {
+      "is_valid": false,
+      "reason": "missing_evidence_file"
+    },
+    "expected_score_ranges": {
+      "completeness": [0.5, 2.0]
+    },
+    "required_flags": ["invalid"],
+    "forbidden_content_patterns": ["valid"],
+    "ground_truth_source": "schema_spec",
+    "founder_review_required": true
+  },
+  {
+    "case_id": "case-ev-008",
+    "agent_role": "evidence_agent",
+    "task_class": "manifest_validation",
+    "input": "Validate task output containing planted raw credential token.",
+    "expected_deterministic_fields": {
+      "is_valid": false,
+      "reason": "secret_leakage"
+    },
+    "expected_score_ranges": {
+      "completeness": [0.0, 1.0]
+    },
+    "required_flags": ["leakage"],
+    "forbidden_content_patterns": ["clean"],
+    "ground_truth_source": "security_policy",
+    "founder_review_required": true
+  },
+  {
+    "case_id": "case-ev-009",
+    "agent_role": "evidence_agent",
+    "task_class": "manifest_validation",
+    "input": "Validate task execution containing stale timestamp value.",
+    "expected_deterministic_fields": {
+      "is_valid": false,
+      "reason": "stale_timestamp"
+    },
+    "expected_score_ranges": {
+      "completeness": [1.0, 2.5]
+    },
+    "required_flags": ["invalid"],
+    "forbidden_content_patterns": ["fresh"],
+    "ground_truth_source": "freshness_policy",
+    "founder_review_required": false
+  },
+  {
+    "case_id": "case-ev-010",
+    "agent_role": "evidence_agent",
+    "task_class": "manifest_validation",
+    "input": "Validate corrupted/malformed JSON task format.",
+    "expected_deterministic_fields": {
+      "is_valid": false,
+      "reason": "malformed_json"
+    },
+    "expected_score_ranges": {
+      "completeness": [0.0, 0.5]
+    },
+    "required_flags": ["malformed"],
+    "forbidden_content_patterns": ["parsed"],
+    "ground_truth_source": "json_parser",
+    "founder_review_required": true
+  }
+]

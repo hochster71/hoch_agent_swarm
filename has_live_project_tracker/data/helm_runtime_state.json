@@ -1,5 +1,34 @@
 {
   "status": "IDLE",
   "last_run": "2026-07-03T12:00:26.616120Z",
-  "active_task_id": null
+  "active_task_id": null,
+  "last_checked": "2026-07-03T12:00:26.616120Z",
+  "agent_metrics": {
+    "hasf_scoring_agent": {
+      "tasks_attempted": 2,
+      "tasks_succeeded": 2,
+      "tasks_failed": 0,
+      "retries": 0,
+      "escalations": 0,
+      "eval_score_trailing_10": 4.2,
+      "consistency_score_trailing_10": 0.95,
+      "tokens_consumed": 12050,
+      "action_budget_remaining": 100,
+      "lifecycle_state": "READY",
+      "last_eval_at": "2026-07-03T12:30:00Z"
+    },
+    "hasf_builder_agent": {
+      "tasks_attempted": 1,
+      "tasks_succeeded": 1,
+      "tasks_failed": 0,
+      "retries": 0,
+      "escalations": 0,
+      "eval_score_trailing_10": 4.5,
+      "consistency_score_trailing_10": 1.0,
+      "tokens_consumed": 8420,
+      "action_budget_remaining": 50,
+      "lifecycle_state": "READY",
+      "last_eval_at": "2026-07-03T12:30:00Z"
+    }
+  }
 }

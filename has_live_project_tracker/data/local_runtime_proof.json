@@ -1,0 +1,8 @@
+{
+  "generated_at": "2026-07-02T21:02:19.444830",
+  "runtime_url": "http://127.0.0.1:8765/",
+  "runtime_status": "PROVEN",
+  "runner": "has-qa-runner-mac",
+  "message": "Local runtime proof from GitHub self-hosted runner. Scope lock enforced.",
+  "next_action": "Enforce scope lock and prove local runner automation against http://127.0.0.1:8765/"
+}

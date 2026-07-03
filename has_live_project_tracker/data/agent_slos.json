@@ -1,0 +1,77 @@
+{
+  "helm_loop": {
+    "target_success_rate": 0.99,
+    "target_retry_rate": 0.05,
+    "target_escalation_rate": 0.01,
+    "latency_ceiling_seconds": 60,
+    "auto_disable_conditions": {
+      "consecutive_failures": 3,
+      "unresolved_escalations": 5
+    }
+  },
+  "hasf_scoring_agent": {
+    "target_success_rate": 0.95,
+    "target_retry_rate": 0.10,
+    "target_escalation_rate": 0.05,
+    "target_output_quality_score": 3.8,
+    "target_evidence_completeness": 1.0,
+    "latency_ceiling_seconds": 90,
+    "token_cost_ceiling_usd": 0.05,
+    "action_risk_budget": "R0-R1",
+    "auto_disable_conditions": {
+      "consecutive_failures": 2,
+      "mean_judge_score_below": 3.5
+    }
+  },
+  "evidence_agent": {
+    "target_success_rate": 0.99,
+    "target_retry_rate": 0.02,
+    "target_escalation_rate": 0.01,
+    "target_output_quality_score": 4.5,
+    "target_evidence_completeness": 1.0,
+    "latency_ceiling_seconds": 30,
+    "token_cost_ceiling_usd": 0.01,
+    "action_risk_budget": "R0",
+    "auto_disable_conditions": {
+      "consecutive_failures": 2,
+      "mean_judge_score_below": 4.0
+    }
+  },
+  "product_strategy_agent": {
+    "target_success_rate": 0.90,
+    "target_retry_rate": 0.15,
+    "target_escalation_rate": 0.10,
+    "target_output_quality_score": 3.5,
+    "target_evidence_completeness": 1.0,
+    "latency_ceiling_seconds": 120,
+    "token_cost_ceiling_usd": 0.10,
+    "action_risk_budget": "R0-R2",
+    "auto_disable_conditions": {
+      "consecutive_failures": 2,
+      "mean_judge_score_below": 3.2
+    }
+  },
+  "security_agent": {
+    "target_success_rate": 0.98,
+    "target_retry_rate": 0.05,
+    "target_escalation_rate": 0.02,
+    "target_output_quality_score": 4.0,
+    "target_evidence_completeness": 1.0,
+    "latency_ceiling_seconds": 90,
+    "token_cost_ceiling_usd": 0.08,
+    "action_risk_budget": "R0-R3",
+    "auto_disable_conditions": {
+      "consecutive_failures": 2,
+      "mean_judge_score_below": 3.8
+    }
+  },
+  "adapter_model_router": {
+    "target_success_rate": 0.99,
+    "target_retry_rate": 0.01,
+    "target_escalation_rate": 0.01,
+    "latency_ceiling_seconds": 5,
+    "auto_disable_conditions": {
+      "consecutive_failures": 5
+    }
+  }
+}

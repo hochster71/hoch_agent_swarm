@@ -7,7 +7,7 @@
 ## Canonical Approved Authority (ONLY)
 
 **Path**: `docs/design/approved-visual-authority/hoch-pods-has-hasf-approved-authority.jpeg`  
-**SHA256**: `12de18ba8d3e6da8304f692455ab4ed27a97e6f175120b780f329927dc134310`  
+**SHA256**: `21bd9aef213e45824295a9a3e85b4f8817f841962a9ad24e817a12bdc3b1f442`  
 **Dimensions**: 1536x1024
 
 **Allowed Use**: HAS/HASF Hoch Pods Theater, agent ready, pod doors open, power up, launch sequence, lift off, transit tunnel, route confirmed, approaching destination, docking, integration sync, capability link, RACI mapping, mission assignment, active in HAS, flow integrated, agent profile snapshot, destination confirmed, system status, landing and securing agents into Hoch Pods.

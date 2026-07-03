@@ -1,7 +1,7 @@
 {
   "status": "ONLINE",
-  "uptime_seconds": 1783057726,
-  "last_heartbeat": "2026-07-03T05:48:46.321232Z",
+  "uptime_seconds": 1783080025,
+  "last_heartbeat": "2026-07-03T12:00:25.425785Z",
   "active_services": [
     "helm-runner",
     "has-agent-dispatcher",
@@ -15,7 +15,9 @@
         "helm-runner": "ONLINE",
         "has-agent-dispatcher": "ONLINE",
         "hasf-product-factory": "ONLINE"
-      }
+      },
+      "model_endpoint_status": "ONLINE",
+      "native_ollama_status": "ONLINE"
     }
   }
 }

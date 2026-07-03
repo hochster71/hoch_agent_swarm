@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-02T20:58:12.891540+00:00",
+  "generated_at": "2026-07-03T02:02:20.771725+00:00",
   "status": "PASS",
   "required_telemetry": [
     {
@@ -10,9 +10,9 @@
       "fresh": true,
       "stale_state": "FRESH",
       "errors": [],
-      "generated_at": "2026-07-02T20:58:10.291134+00:00",
+      "generated_at": "2026-07-03T02:02:17.957022+00:00",
       "freshness_sla_minutes": 30,
-      "age_minutes": 0.04
+      "age_minutes": 0.05
     },
     {
       "telemetry_id": "hoch_pods_runtime_state",
@@ -23,7 +23,7 @@
       "stale_state": "FRESH",
       "errors": [],
       "record_count": 7,
-      "generated_at": "2026-07-02T20:58:12.833177+00:00",
+      "generated_at": "2026-07-03T02:02:20.697451+00:00",
       "freshness_sla_minutes": 30,
       "age_minutes": 0.0
     },
@@ -35,7 +35,7 @@
       "fresh": true,
       "stale_state": "FRESH",
       "errors": [],
-      "generated_at": "2026-07-02T20:58:12.850615+00:00",
+      "generated_at": "2026-07-03T02:02:20.720940+00:00",
       "freshness_sla_minutes": 45,
       "age_minutes": 0.0
     }

@@ -1,0 +1,12 @@
+{
+  "generated_at": "2026-07-02T11:25:07.893997",
+  "ollama": "ollama version is 0.30.11",
+  "ollama_models": "NAME                       ID              SIZE      MODIFIED    \nqwen3:14b                  bdbd181c33f2    9.3 GB    12 days ago    \nnomic-embed-text:latest    0a109f422b47    274 MB    12 days ago    \ndeepseek-coder-v2:16b      63fb193b3a9b    8.9 GB    12 days ago    \ndevstral-small-2:24b       24277f07f62d    15 GB     12 days ago    \nqwen3-coder:30b            06c1097efce0    18 GB     12 days ago    \ngpt-oss:120b               a951a23b46a1    65 GB     3 weeks ago    \ngpt-oss:20b                17052f91a42e    13 GB     3 weeks ago    \nllama3.3:70b               a6eb4748fd29    42 GB     3 weeks ago    \nqwen2.5-coder:1.5b         d7372fd82851    986 MB    3 weeks ago",
+  "lmstudio": "200",
+  "local_python": "AVAILABLE",
+  "local_embedding": "NOT_AVAILABLE",
+  "disk_summary": "/dev/disk3s1s1   926Gi    12Gi   274Gi     5%    459k  2.9G    0%   /",
+  "runner_status": "has-qa-runner-mac",
+  "runtime_url": "http://127.0.0.1:8765/",
+  "status": "LOCAL_AVAILABLE"
+}

@@ -1,0 +1,13 @@
+{
+  "generated_at": "2026-07-02T11:30:00Z",
+  "current_runner_count": 1,
+  "active_runner": "has-qa-runner-mac",
+  "active_runner_labels": ["self-hosted", "macOS", "ARM64", "has-qa-runner"],
+  "linux_runner": "FUTURE_NOT_CONFIGURED",
+  "release_runner": "FUTURE_NOT_CONFIGURED",
+  "runtime_url": "http://127.0.0.1:8765/",
+  "workflow_target": "macOS self-hosted runner only",
+  "status": "PROVEN",
+  "message": "has-qa-runner-mac is the current live runner. Linux and release runners are FUTURE_NOT_CONFIGURED. Local runtime at 8765 is PROVEN."
+}
+

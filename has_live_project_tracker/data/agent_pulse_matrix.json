@@ -1,0 +1,46 @@
+{
+  "generated_at": "2026-07-02T11:30:00Z",
+  "agents": [
+    {
+      "id": "has-command",
+      "role": "Live Command Layer",
+      "assigned_tasks": "Agent orchestration, QA gate enforcement, runtime truth",
+      "status": "LIVE",
+      "last_pulse": "2026-07-02T11:28:00Z",
+      "pulse_source": "has_live_project_tracker/data/hoch_pods_runtime_state.json",
+      "stale_threshold_minutes": 5,
+      "stale_state": "FRESH",
+      "current_blocker": "None",
+      "safe_auto_actions": ["Run QA gates", "Update live UI"],
+      "approval_required_actions": ["Deployment", "Monetization enablement"],
+      "qa_gates_owned": ["visual doctrine", "workspace hygiene"],
+      "cost_tier": "LOCAL_FREE",
+      "revenue_relevance": "Medium",
+      "ui_lane": "Command"
+    },
+    {
+      "id": "hasf-factory",
+      "role": "Software Factory",
+      "assigned_tasks": "Build, QA, release packaging, evidence generation",
+      "status": "LIVE",
+      "last_pulse": "2026-07-02T11:29:00Z",
+      "pulse_source": "has_live_project_tracker/data/hoch_pods_runtime_state.json",
+      "stale_threshold_minutes": 5,
+      "stale_state": "FRESH",
+      "current_blocker": "None",
+      "safe_auto_actions": ["Run Playwright", "Update PERT"],
+      "approval_required_actions": ["Deployment", "App-store submission"],
+      "qa_gates_owned": ["full Playwright", "frontend build", "rc29"],
+      "cost_tier": "LOCAL_FREE",
+      "revenue_relevance": "High",
+      "ui_lane": "Factory"
+    }
+  ],
+  "summary": {
+    "total_agents": 2,
+    "stale": 0,
+    "not_proven": 0,
+    "active": 2,
+    "source_of_truth": "has_live_project_tracker/data/hoch_pods_runtime_state.json + local runtime proof"
+  }
+}

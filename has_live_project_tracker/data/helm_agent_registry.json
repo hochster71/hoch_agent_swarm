@@ -11,7 +11,7 @@
     "fallback_model": "google/gemma-4-12b-qat",
     "fallback_provider": "lmstudio",
     "status": "READY",
-    "last_heartbeat": "2026-07-03T06:26:32.732460Z"
+    "last_heartbeat": "2026-07-03T12:00:24.711202Z"
   },
   "hasf_builder_agent": {
     "role": "HASF Software Builder Agent",
@@ -26,6 +26,6 @@
     "fallback_model": "qwen2.5:1.5b-instruct",
     "fallback_provider": "ollama_native",
     "status": "READY",
-    "last_heartbeat": "2026-07-03T06:26:32.732479Z"
+    "last_heartbeat": "2026-07-03T12:00:24.711218Z"
   }
 }

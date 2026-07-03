@@ -1,0 +1,36 @@
+{
+  "generated_at": "2026-07-02T11:30:00Z",
+  "total_gates": 12,
+  "passing": 10,
+  "failing": 0,
+  "stale": 2,
+  "fake_green_risk": "LOW",
+  "gates": [
+    {
+      "gate_id": "visual_doctrine",
+      "title": "Visual Authority Doctrine",
+      "command_or_task": "python scripts/verify_visual_authority_doctrine.py",
+      "last_result": "PASS",
+      "last_run_time": "2026-07-02T11:29:00Z",
+      "freshness_state": "FRESH",
+      "blocks_release": false,
+      "blocks_revenue": false,
+      "evidence_path": "docs/evidence/runtime/rc60-has-hasf-scope-lock-drift-hardening.md",
+      "owner_agent": "Visual Doctrine Guard",
+      "remediation": "None"
+    },
+    {
+      "gate_id": "workspace_hygiene",
+      "title": "Workspace Visual Hygiene",
+      "command_or_task": "python scripts/verify_workspace_visual_hygiene.py",
+      "last_result": "PASS",
+      "last_run_time": "2026-07-02T11:29:00Z",
+      "freshness_state": "FRESH",
+      "blocks_release": false,
+      "blocks_revenue": false,
+      "evidence_path": "docs/evidence/runtime/workspace-visual-garbage-cleanup.md",
+      "owner_agent": "Workspace Hygiene Guard",
+      "remediation": "None"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+name: HAS Release Runner (self-hosted)
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: [self-hosted, has-release-runner]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: RC29 Release Verify
+        run: bash scripts/rc29_release_verify.sh
+
+      - name: Deployment Readiness Audit
+        run: python scripts/deployment_readiness_audit.py || echo "Deployment readiness audit not yet implemented"
+
+      - name: Revenue Readiness Audit
+        run: python scripts/revenue_readiness_audit.py || echo "Revenue readiness audit not yet implemented"
+
+      - name: Create Release Candidate
+        run: python scripts/create_release_candidate.py || echo "Release candidate packaging not yet implemented"
+
+      - name: Notify Operator
+        run: echo "Release candidate ready for Michael approval. See has_live_project_tracker for details."

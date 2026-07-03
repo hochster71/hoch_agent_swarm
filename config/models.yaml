@@ -1,5 +1,5 @@
 default_model: google/gemma-4-12b-qat
-default_provider: lmstudio
+default_provider: ollama
 local_first: true
 paid_models_enabled: false
 providers:
