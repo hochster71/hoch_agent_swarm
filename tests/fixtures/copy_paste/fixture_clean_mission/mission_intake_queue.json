@@ -28,6 +28,20 @@
       "mission_signature": "SIGNING_PARTIAL_PENDING_FOUNDER_KEY",
       "signature_status": "VALID",
       "sanitization_status": "PASS"
+    },
+    {
+      "mission_id": "mission-cbcaaa78",
+      "title": "Clean mission 2",
+      "status": "COMPLETED",
+      "signature_status": "VALID",
+      "sanitization_status": "PASS"
+    },
+    {
+      "mission_id": "mission-cbcaaa79",
+      "title": "Clean mission 3",
+      "status": "COMPLETED",
+      "signature_status": "VALID",
+      "sanitization_status": "PASS"
     }
   ]
 }

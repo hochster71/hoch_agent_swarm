@@ -16,7 +16,41 @@ def run_bridge():
             print("Bridge disabled via kill switch control file.")
             sys.exit(0)
     except Exception:
-        pass
+        control = {}
+
+    # Rung 3 auto-promotion check
+    try:
+        with open(queue_path, "r") as f:
+            q_data = json.load(f)
+        missions_list = q_data.get("missions", [])
+        
+        log_path = "has_live_project_tracker/data/helm_execution_log.json"
+        try:
+            with open(log_path, "r") as f:
+                logs = json.load(f)
+        except Exception:
+            logs = []
+            
+        manual_intervention = any(
+            e.get("event") in ["manual_prompt_injected", "manual_review_intervention"] for e in logs
+        )
+        
+        clean_completed = [
+            m for m in missions_list 
+            if m.get("status") == "COMPLETED" 
+            and m.get("signature_status") in ["VALID", "NOT_REQUIRED_DRY_RUN"] 
+            and m.get("sanitization_status") == "PASS"
+        ]
+        
+        # If we have at least 3 clean missions and no interventions, promote to Rung 3!
+        if len(clean_completed) >= 3 and not manual_intervention:
+            if not control.get("allow_ag_execution"):
+                control["allow_ag_execution"] = True
+                with open(control_path, "w") as f:
+                    json.dump(control, f, indent=2)
+                print("🟢 Mechanical gate check: Rung 3 promotion requirements met. allow_ag_execution flipped to True.")
+    except Exception as e:
+        print(f"Drift check or Rung 3 validation error: {e}")
 
     try:
         with open(queue_path, "r") as f:
