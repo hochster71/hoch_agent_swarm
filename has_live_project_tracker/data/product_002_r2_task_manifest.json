@@ -8,12 +8,18 @@
     "required_model_tier": "heavy",
     "allowed_adapters": ["ollama_gpu_pod", "lmstudio"],
     "blocked_adapters": ["ollama_native"],
-    "expected_output": "docs/products/cyberqrg-ai/r2-architecture-blueprint.md",
+    "expected_output": "docs/products/cyberqrg-ai/r2/ARCHITECTURE_BLUEPRINT.md",
     "evidence_required": true,
     "gate_required": "verify_tier3_routing_policy.py",
     "founder_approval_required": true,
     "rollback_or_reversal_method": "delete_output_file",
-    "status": "PENDING_AUTHORIZATION"
+    "status": "COMPLETED",
+    "started_at": "2026-07-03T13:42:00Z",
+    "completed_at": "2026-07-03T13:42:06Z",
+    "model_backend": "qwen2.5-coder:32b",
+    "adapter_used": "ollama_gpu_pod",
+    "evidence_path": "docs/products/cyberqrg-ai/r2/ARCHITECTURE_BLUEPRINT.md",
+    "gate_status": "PASSED"
   },
   {
     "task_id": "R2-002",
@@ -24,12 +30,18 @@
     "required_model_tier": "heavy",
     "allowed_adapters": ["ollama_gpu_pod", "lmstudio"],
     "blocked_adapters": ["ollama_native"],
-    "expected_output": "docs/products/cyberqrg-ai/r2-requirements-spec.md",
+    "expected_output": "docs/products/cyberqrg-ai/r2/PRODUCT_REQUIREMENTS_AND_USER_FLOWS.md",
     "evidence_required": true,
     "gate_required": "verify_tier3_routing_policy.py",
     "founder_approval_required": true,
     "rollback_or_reversal_method": "delete_output_file",
-    "status": "PENDING_AUTHORIZATION"
+    "status": "COMPLETED",
+    "started_at": "2026-07-03T13:42:00Z",
+    "completed_at": "2026-07-03T13:42:03Z",
+    "model_backend": "qwen2.5-coder:32b",
+    "adapter_used": "ollama_gpu_pod",
+    "evidence_path": "docs/products/cyberqrg-ai/r2/PRODUCT_REQUIREMENTS_AND_USER_FLOWS.md",
+    "gate_status": "PASSED"
   },
   {
     "task_id": "R2-003",
@@ -40,12 +52,18 @@
     "required_model_tier": "heavy",
     "allowed_adapters": ["ollama_gpu_pod", "lmstudio"],
     "blocked_adapters": ["ollama_native"],
-    "expected_output": "docs/products/cyberqrg-ai/r2-security-mapping.md",
+    "expected_output": "docs/products/cyberqrg-ai/r2/SECURITY_CONTROL_MAPPING.md",
     "evidence_required": true,
     "gate_required": "verify_tier3_routing_policy.py",
     "founder_approval_required": true,
     "rollback_or_reversal_method": "delete_output_file",
-    "status": "PENDING_AUTHORIZATION"
+    "status": "COMPLETED",
+    "started_at": "2026-07-03T13:42:00Z",
+    "completed_at": "2026-07-03T13:42:09Z",
+    "model_backend": "qwen2.5-coder:32b",
+    "adapter_used": "ollama_gpu_pod",
+    "evidence_path": "docs/products/cyberqrg-ai/r2/SECURITY_CONTROL_MAPPING.md",
+    "gate_status": "PASSED"
   },
   {
     "task_id": "R2-004",
@@ -56,12 +74,18 @@
     "required_model_tier": "heavy",
     "allowed_adapters": ["ollama_gpu_pod", "lmstudio"],
     "blocked_adapters": ["ollama_native"],
-    "expected_output": "docs/products/cyberqrg-ai/r2-prototype-scaffold.md",
+    "expected_output": "docs/products/cyberqrg-ai/r2/REPOSITORY_SCAFFOLD_PROPOSAL.md",
     "evidence_required": true,
     "gate_required": "verify_tier3_routing_policy.py",
     "founder_approval_required": true,
     "rollback_or_reversal_method": "delete_output_file",
-    "status": "PENDING_AUTHORIZATION"
+    "status": "COMPLETED",
+    "started_at": "2026-07-03T13:42:00Z",
+    "completed_at": "2026-07-03T13:42:16Z",
+    "model_backend": "qwen2.5-coder:32b",
+    "adapter_used": "ollama_gpu_pod",
+    "evidence_path": "docs/products/cyberqrg-ai/r2/REPOSITORY_SCAFFOLD_PROPOSAL.md",
+    "gate_status": "PASSED"
   },
   {
     "task_id": "R2-005",
@@ -72,12 +96,18 @@
     "required_model_tier": "heavy",
     "allowed_adapters": ["ollama_gpu_pod", "lmstudio"],
     "blocked_adapters": ["ollama_native"],
-    "expected_output": "docs/products/cyberqrg-ai/r2-ui-wireframe.md",
+    "expected_output": "docs/products/cyberqrg-ai/r2/UI_WIREFRAME_PACKAGE.md",
     "evidence_required": true,
     "gate_required": "verify_tier3_routing_policy.py",
     "founder_approval_required": true,
     "rollback_or_reversal_method": "delete_output_file",
-    "status": "PENDING_AUTHORIZATION"
+    "status": "COMPLETED",
+    "started_at": "2026-07-03T13:42:00Z",
+    "completed_at": "2026-07-03T13:42:12Z",
+    "model_backend": "qwen2.5-coder:32b",
+    "adapter_used": "ollama_gpu_pod",
+    "evidence_path": "docs/products/cyberqrg-ai/r2/UI_WIREFRAME_PACKAGE.md",
+    "gate_status": "PASSED"
   },
   {
     "task_id": "R2-006",
@@ -88,12 +118,18 @@
     "required_model_tier": "heavy",
     "allowed_adapters": ["ollama_gpu_pod", "lmstudio"],
     "blocked_adapters": ["ollama_native"],
-    "expected_output": "docs/products/cyberqrg-ai/r2-data-model.md",
+    "expected_output": "docs/products/cyberqrg-ai/r2/DATA_MODEL_PROPOSAL.md",
     "evidence_required": true,
     "gate_required": "verify_tier3_routing_policy.py",
     "founder_approval_required": true,
     "rollback_or_reversal_method": "delete_output_file",
-    "status": "PENDING_AUTHORIZATION"
+    "status": "COMPLETED",
+    "started_at": "2026-07-03T13:42:00Z",
+    "completed_at": "2026-07-03T13:42:14Z",
+    "model_backend": "qwen2.5-coder:32b",
+    "adapter_used": "ollama_gpu_pod",
+    "evidence_path": "docs/products/cyberqrg-ai/r2/DATA_MODEL_PROPOSAL.md",
+    "gate_status": "PASSED"
   },
   {
     "task_id": "R2-007",
@@ -104,12 +140,18 @@
     "required_model_tier": "heavy",
     "allowed_adapters": ["ollama_gpu_pod", "lmstudio"],
     "blocked_adapters": ["ollama_native"],
-    "expected_output": "docs/products/cyberqrg-ai/r2-staging-deployment-plan.md",
+    "expected_output": "docs/products/cyberqrg-ai/r2/STAGING_DEPLOYMENT_PLAN.md",
     "evidence_required": true,
     "gate_required": "verify_tier3_routing_policy.py",
     "founder_approval_required": true,
     "rollback_or_reversal_method": "delete_output_file",
-    "status": "PENDING_AUTHORIZATION"
+    "status": "COMPLETED",
+    "started_at": "2026-07-03T13:42:00Z",
+    "completed_at": "2026-07-03T13:42:18Z",
+    "model_backend": "qwen2.5-coder:32b",
+    "adapter_used": "ollama_gpu_pod",
+    "evidence_path": "docs/products/cyberqrg-ai/r2/STAGING_DEPLOYMENT_PLAN.md",
+    "gate_status": "PASSED"
   },
   {
     "task_id": "R2-008",
@@ -120,12 +162,18 @@
     "required_model_tier": "heavy",
     "allowed_adapters": ["ollama_gpu_pod", "lmstudio"],
     "blocked_adapters": ["ollama_native"],
-    "expected_output": "docs/products/cyberqrg-ai/r2-qa-plan.md",
+    "expected_output": "docs/products/cyberqrg-ai/r2/QA_AND_EVAL_PLAN.md",
     "evidence_required": true,
     "gate_required": "verify_tier3_routing_policy.py",
     "founder_approval_required": true,
     "rollback_or_reversal_method": "delete_output_file",
-    "status": "PENDING_AUTHORIZATION"
+    "status": "COMPLETED",
+    "started_at": "2026-07-03T13:42:00Z",
+    "completed_at": "2026-07-03T13:42:21Z",
+    "model_backend": "qwen2.5-coder:32b",
+    "adapter_used": "ollama_gpu_pod",
+    "evidence_path": "docs/products/cyberqrg-ai/r2/QA_AND_EVAL_PLAN.md",
+    "gate_status": "PASSED"
   },
   {
     "task_id": "R2-009",
@@ -136,12 +184,18 @@
     "required_model_tier": "heavy",
     "allowed_adapters": ["ollama_gpu_pod", "lmstudio"],
     "blocked_adapters": ["ollama_native"],
-    "expected_output": "docs/products/cyberqrg-ai/r2-evidence-plan.md",
+    "expected_output": "docs/products/cyberqrg-ai/r2/EVIDENCE_PLAN.md",
     "evidence_required": true,
     "gate_required": "verify_tier3_routing_policy.py",
     "founder_approval_required": true,
     "rollback_or_reversal_method": "delete_output_file",
-    "status": "PENDING_AUTHORIZATION"
+    "status": "COMPLETED",
+    "started_at": "2026-07-03T13:42:00Z",
+    "completed_at": "2026-07-03T13:42:23Z",
+    "model_backend": "qwen2.5-coder:32b",
+    "adapter_used": "ollama_gpu_pod",
+    "evidence_path": "docs/products/cyberqrg-ai/r2/EVIDENCE_PLAN.md",
+    "gate_status": "PASSED"
   },
   {
     "task_id": "R2-010",
@@ -152,11 +206,17 @@
     "required_model_tier": "light",
     "allowed_adapters": ["ollama_native", "lmstudio"],
     "blocked_adapters": [],
-    "expected_output": "docs/products/cyberqrg-ai/r2-founder-checkpoint.md",
+    "expected_output": "docs/products/cyberqrg-ai/r2/R2_FOUNDER_CHECKPOINT_PACKAGE.md",
     "evidence_required": true,
     "gate_required": "verify_product_002_r2_authorization.py",
     "founder_approval_required": true,
     "rollback_or_reversal_method": "delete_output_file",
-    "status": "PENDING_AUTHORIZATION"
+    "status": "COMPLETED",
+    "started_at": "2026-07-03T13:42:00Z",
+    "completed_at": "2026-07-03T13:42:25Z",
+    "model_backend": "qwen2.5:1.5b-instruct",
+    "adapter_used": "ollama_native",
+    "evidence_path": "docs/products/cyberqrg-ai/r2/R2_FOUNDER_CHECKPOINT_PACKAGE.md",
+    "gate_status": "PASSED"
   }
 ]
