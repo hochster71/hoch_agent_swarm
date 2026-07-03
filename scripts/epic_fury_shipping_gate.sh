@@ -14,6 +14,7 @@ echo "==> Running Master Epic Fury Shipping Gate..."
 ./scripts/epic_fury_ui_ux_gate.sh
 ./scripts/epic_fury_security_gate.sh
 ./scripts/epic_fury_gap_gate.sh
+./scripts/epic_fury_staging_access_gate.sh
 
 # Verify presence of all release files
 SHIPPING_FILES=(
