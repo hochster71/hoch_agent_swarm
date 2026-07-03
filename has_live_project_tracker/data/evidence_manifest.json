@@ -13099,11 +13099,11 @@
     "adapter_id": "none",
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/helm-rung-1-promotion-evidence.md",
-    "evidence_sha256": "5c72aef3f9613276f95b7cfbcedce000b4acaa01d3ce3b5f23d7656f9ecb929c",
+    "evidence_sha256": "ca0415053f9065110f8144c60b202d6bdddfbf439b24dd0651ad138fb66a2e02",
     "previous_entry_hash": "41f998e83ae4a1ba34acaaa19ceb4a9673c2980aacd201418e65a57c9478951f",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "2e1f51b3d97b7ec2ffc918218193f0e55bfc6278f061b818fb84a1d55c24ebc1"
+    "entry_hash": "0015df416133b7ac687e6267a91217b07f96abd7fed6e3ce6fdbdf0524654594"
   }
 ]

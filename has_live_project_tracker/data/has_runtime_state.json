@@ -1,7 +1,7 @@
 {
   "status": "ONLINE",
   "uptime_seconds": 1783080025,
-  "last_heartbeat": "2026-07-03T14:26:33.791732Z",
+  "last_heartbeat": "2026-07-03T14:28:45.002148Z",
   "active_services": [
     "helm-runner",
     "has-agent-dispatcher",
