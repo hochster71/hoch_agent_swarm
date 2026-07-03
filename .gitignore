@@ -100,6 +100,7 @@ has_live_project_tracker/data/worker_heartbeats.json
 has_live_project_tracker/data/epic_fury_audit_results.json
 has_live_project_tracker/data/project_revenue_readiness_results.json
 has_live_project_tracker/data/revenue_action_queue.json
+has_live_project_tracker/data/control_plane_status.json
 
 
 

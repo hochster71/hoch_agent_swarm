@@ -350,6 +350,7 @@ def load_goal_maps_and_bridge_states() -> dict:
     return out
 
 def live_payload() -> dict:
+    import sys
     repo = walk_repo()
     routes = route_health()
     freshness = data_freshness()
@@ -365,6 +366,45 @@ def live_payload() -> dict:
     rung_state_status = goal_maps["rung_1_promotion_evidence"].get("status", "STALE")
     bridge_state_status = goal_maps["bridge_accepted_state"].get("status", "STALE")
     
+    # Cache TTL & Regeneration for control_plane_status.json
+    status_file = ROOT / "has_live_project_tracker" / "data" / "control_plane_status.json"
+    need_build = True
+    status_data = {}
+    
+    if status_file.exists():
+        try:
+            with open(status_file, "r") as f:
+                status_data = json.load(f)
+            as_of_str = status_data.get("as_of")
+            if as_of_str:
+                as_of_dt = dt.datetime.fromisoformat(as_of_str.rstrip("Z").split("+")[0]).replace(tzinfo=dt.timezone.utc)
+                age = (dt.datetime.now(dt.timezone.utc) - as_of_dt).total_seconds()
+                if age < 30: # 30-second cache TTL
+                    need_build = False
+        except Exception:
+            pass
+            
+    if need_build:
+        try:
+            subprocess.run([sys.executable, str(ROOT / "scripts/build_control_plane_status.py")], cwd=str(ROOT))
+            if status_file.exists():
+                with open(status_file, "r") as f:
+                    status_data = json.load(f)
+        except Exception:
+            pass
+            
+    cstate = "MISSING"
+    if status_data:
+        expires_at_str = status_data.get("expires_at")
+        if expires_at_str:
+            expires_dt = dt.datetime.fromisoformat(expires_at_str.rstrip("Z").split("+")[0]).replace(tzinfo=dt.timezone.utc)
+            if dt.datetime.now(dt.timezone.utc) > expires_dt:
+                cstate = "EXPIRED"
+            else:
+                cstate = "FRESH"
+        else:
+            cstate = "STALE"
+            
     return {
         "source_of_truth": False,
         "synced_from": "HOCH-200 or local-only if HOCH-200 unavailable",
@@ -380,6 +420,10 @@ def live_payload() -> dict:
         "goals": goal_progress(freshness, repo, routes),
         "agents": load_agents(),
         "goal_maps_and_bridge_states": goal_maps,
+        "control_plane_status": {
+            "state": cstate,
+            "data": status_data
+        },
         "zero_tolerance": {
             "server_online": routes["api_pert"].get("ok") and routes["ui_moonshot"].get("ok"),
             "dirty_tree_count": git_state()["dirty_count"],
@@ -491,6 +535,14 @@ class Handler(BaseHTTPRequestHandler):
         return self.send(404, b"not found", "text/plain")
 
 def main():
+    pid_dir = ROOT / "logs"
+    pid_dir.mkdir(exist_ok=True)
+    pid_file = pid_dir / "has_live_truth_sidecar.pid"
+    try:
+        pid_file.write_text(str(os.getpid()))
+    except Exception:
+        pass
+        
     port = int(os.environ.get("HAS_TRUTH_PORT", "8777"))
     server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
     print(f"HAS/HASF Live Truth Sidecar running on http://127.0.0.1:{port}")

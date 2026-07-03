@@ -1,0 +1,668 @@
+{
+  "schema_version": "1.0",
+  "source_of_truth": false,
+  "system_of_record": "HOCH-200",
+  "synced_from": "HOCH-200",
+  "as_of": "2026-07-03T21:26:39.659055Z",
+  "max_age_seconds": 60,
+  "expires_at": "2026-07-03T21:27:39.659055Z",
+  "contract_state": "FRESH",
+  "authority": {
+    "state": "SYNC_STALE",
+    "source_file": "has_live_project_tracker/data/orchestration_bridge_control.json",
+    "data_as_of": "2026-07-03T20:16:11.274966Z",
+    "snapshot_as_of": "2026-07-03T21:26:39.659055Z",
+    "age_seconds": 4228,
+    "max_age_seconds": 600,
+    "hoch200_owned": true,
+    "hoch200_sync_age_seconds": 4228,
+    "checked_at": "2026-07-03T21:26:39.659055Z",
+    "closure_action": "run bash scripts/secure_sync_hoch200.sh then rebuild control_plane_status.json",
+    "data": {
+      "orchestration_bridge_enabled": true,
+      "allow_provider_api_calls": false,
+      "allow_ag_execution": false,
+      "allow_founder_gated_execution": false,
+      "max_concurrent_missions": 1,
+      "rung_2_eligibility": "YES",
+      "rung_2_runtime": "ACTIVE",
+      "rung_2_live_provider_calls": "PENDING_FOUNDER_KEY_PROVISIONING",
+      "claude_adapter_state": "DISABLED_NOT_CONFIGURED",
+      "rung_2_promotion_criteria": {
+        "required_clean_r1_missions_min": 3,
+        "required_clean_r1_missions_target": 5,
+        "manual_prompt_injected_allowed": false,
+        "unauthorized_tasks_allowed": false,
+        "provider_api_calls_allowed_during_rung_1": false,
+        "ag_execution_allowed_during_rung_1": false,
+        "founder_gated_actions_must_be_blocked": true,
+        "decomposition_eval_judge_mean_min": 3.5,
+        "decomposition_eval_consistency_min": 0.8,
+        "copy_paste_required_must_flip_by_derivation": true,
+        "escalated_to_founder_counter_behavior": "does_not_increment_or_reset_clean_counter",
+        "identical_repeated_missions_allowed_for_promotion": false,
+        "promotion_evidence_required": true,
+        "promotion_evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/helm-rung-1-promotion-evidence.md"
+      }
+    }
+  },
+  "compute": {
+    "state": "FRESH",
+    "source_file": "config/compute_assets.json",
+    "data_as_of": "2026-07-03T21:19:56.237911Z",
+    "snapshot_as_of": "2026-07-03T21:26:39.659055Z",
+    "age_seconds": 403,
+    "max_age_seconds": 600,
+    "hoch200_owned": false,
+    "hoch200_sync_age_seconds": 0,
+    "checked_at": "2026-07-03T21:26:39.659055Z",
+    "closure_action": "None",
+    "data": {
+      "assets": [
+        {
+          "id": "has-local-loopback-8765",
+          "name": "HAS Local Runtime - Loopback",
+          "type": "local_runtime",
+          "provider": "local",
+          "monthly_cost_usd": 0,
+          "host": "127.0.0.1",
+          "port": 8765,
+          "health_url": "http://127.0.0.1:8765/api/pert/data",
+          "ui_url": "http://127.0.0.1:8765/ui-moonshot",
+          "intended_use": "Primary live HAS/HASF local control plane, PERT API, Moonshot UI, telemetry refresh, browser QA verification.",
+          "status": "active"
+        },
+        {
+          "id": "has-local-lan-8765",
+          "name": "HAS Local Runtime - LAN",
+          "type": "local_lan_runtime",
+          "provider": "local",
+          "monthly_cost_usd": 0,
+          "host": "10.0.0.10",
+          "port": 8765,
+          "health_url": "http://10.0.0.10:8765/api/pert/data",
+          "ui_url": "http://10.0.0.10:8765/ui-moonshot",
+          "intended_use": "LAN-visible HAS/HASF runtime if Uvicorn is bound to 0.0.0.0. Currently expected to fail if server is bound only to 127.0.0.1.",
+          "status": "verify_lan_binding"
+        },
+        {
+          "id": "operator-iphone",
+          "name": "Michael iPhone Operator Monitor",
+          "type": "mobile_monitor",
+          "provider": "local_network",
+          "monthly_cost_usd": 0,
+          "host": "10.0.0.74",
+          "port": null,
+          "health_url": "",
+          "ui_url": "",
+          "intended_use": "Operator monitor only. Not a HAS compute node.",
+          "status": "monitor_only"
+        },
+        {
+          "id": "hoch-200",
+          "name": "HOCH-200 Governance Plane",
+          "type": "remote_governance_plane",
+          "provider": "linode",
+          "billable": true,
+          "monthly_cost_usd": 60,
+          "tailscale_ip": "100.87.18.15",
+          "candidate_public_ip": "50.116.41.183",
+          "host": "100.87.18.15",
+          "public_ip": "50.116.41.183",
+          "services": [
+            "helm-runner",
+            "has-agent-dispatcher",
+            "hasf-product-factory",
+            "has-runtime-watchdog",
+            "ollama"
+          ],
+          "role": "Accepted governance plane and orchestration bridge authority",
+          "evidence_commit": "d2545a5",
+          "status": "active",
+          "identity_reconciliation": "SAME_AS_HOCH_200",
+          "usage_verdict": "ACTIVE / GOVERNANCE PLANE / NOT UNUSED"
+        },
+        {
+          "id": "linode-remote-60",
+          "name": "Linode Remote 60",
+          "type": "remote_governance_plane",
+          "provider": "linode",
+          "alias_of": "hoch-200",
+          "billable": false,
+          "monthly_cost_usd": 0,
+          "tailscale_ip": "100.87.18.15",
+          "candidate_public_ip": "50.116.41.183",
+          "host": "100.87.18.15",
+          "public_ip": "50.116.41.183",
+          "services": [
+            "helm-runner",
+            "has-agent-dispatcher",
+            "hasf-product-factory",
+            "has-runtime-watchdog",
+            "ollama"
+          ],
+          "role": "Accepted governance plane and orchestration bridge authority",
+          "evidence_commit": "d2545a5",
+          "status": "active",
+          "identity_reconciliation": "SAME_AS_HOCH_200",
+          "usage_verdict": "ALIAS OF ACTIVE GOVERNANCE PLANE"
+        }
+      ]
+    }
+  },
+  "rung_state": {
+    "state": "SYNC_STALE",
+    "source_file": "has_live_project_tracker/data/orchestration_bridge_control.json",
+    "data_as_of": "2026-07-03T20:16:11.274966Z",
+    "snapshot_as_of": "2026-07-03T21:26:39.659055Z",
+    "age_seconds": 4228,
+    "max_age_seconds": 600,
+    "hoch200_owned": true,
+    "hoch200_sync_age_seconds": 4228,
+    "checked_at": "2026-07-03T21:26:39.659055Z",
+    "closure_action": "run bash scripts/secure_sync_hoch200.sh then rebuild control_plane_status.json",
+    "data": {
+      "orchestration_bridge_enabled": true,
+      "allow_provider_api_calls": false,
+      "allow_ag_execution": false,
+      "allow_founder_gated_execution": false,
+      "max_concurrent_missions": 1,
+      "rung_2_eligibility": "YES",
+      "rung_2_runtime": "ACTIVE",
+      "rung_2_live_provider_calls": "PENDING_FOUNDER_KEY_PROVISIONING",
+      "claude_adapter_state": "DISABLED_NOT_CONFIGURED",
+      "rung_2_promotion_criteria": {
+        "required_clean_r1_missions_min": 3,
+        "required_clean_r1_missions_target": 5,
+        "manual_prompt_injected_allowed": false,
+        "unauthorized_tasks_allowed": false,
+        "provider_api_calls_allowed_during_rung_1": false,
+        "ag_execution_allowed_during_rung_1": false,
+        "founder_gated_actions_must_be_blocked": true,
+        "decomposition_eval_judge_mean_min": 3.5,
+        "decomposition_eval_consistency_min": 0.8,
+        "copy_paste_required_must_flip_by_derivation": true,
+        "escalated_to_founder_counter_behavior": "does_not_increment_or_reset_clean_counter",
+        "identical_repeated_missions_allowed_for_promotion": false,
+        "promotion_evidence_required": true,
+        "promotion_evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/helm-rung-1-promotion-evidence.md"
+      }
+    }
+  },
+  "has": {
+    "state": "FRESH",
+    "source_file": "has_live_project_tracker/data/has_runtime_state.json",
+    "data_as_of": "2026-07-03T21:19:46.807246Z",
+    "snapshot_as_of": "2026-07-03T21:26:39.659055Z",
+    "age_seconds": 412,
+    "max_age_seconds": 600,
+    "hoch200_owned": true,
+    "hoch200_sync_age_seconds": 412,
+    "checked_at": "2026-07-03T21:26:39.659055Z",
+    "closure_action": "None",
+    "data": {
+      "status": "ONLINE",
+      "uptime_seconds": 1783080025,
+      "last_heartbeat": "2026-07-03T21:19:46.807246Z",
+      "active_services": [
+        "helm-runner",
+        "has-agent-dispatcher",
+        "hasf-product-factory"
+      ],
+      "monitored_nodes": {
+        "HOCH-200": {
+          "ip": "50.116.41.183",
+          "status": "ONLINE",
+          "services": {
+            "helm-runner": "ONLINE",
+            "has-agent-dispatcher": "ONLINE",
+            "hasf-product-factory": "ONLINE"
+          },
+          "model_endpoint_status": "ONLINE",
+          "native_ollama_status": "ONLINE"
+        }
+      },
+      "manual_relay_status": "REMOVED",
+      "orchestration_bridge_status": "ACTIVE",
+      "copy_paste_required_computed": false,
+      "copy_paste_required_reason": "Mission processed end-to-end without manual copy-paste triggers."
+    }
+  },
+  "hasf": {
+    "state": "STALE",
+    "source_file": "has_live_project_tracker/data/hasf_runtime_state.json",
+    "data_as_of": "2026-07-03T12:00:18Z",
+    "snapshot_as_of": "2026-07-03T21:26:39.659055Z",
+    "age_seconds": 33981,
+    "max_age_seconds": 600,
+    "hoch200_owned": false,
+    "hoch200_sync_age_seconds": 0,
+    "checked_at": "2026-07-03T21:26:39.659055Z",
+    "closure_action": "Update data source has_live_project_tracker/data/hasf_runtime_state.json",
+    "data": {
+      "status": "ACTIVE",
+      "last_run": "2026-07-03T12:00:18.504785Z",
+      "current_product": "cyberqrg-ai",
+      "pipeline_stage": "BACKLOG_MAPPING",
+      "metrics": {
+        "completed_products": 1,
+        "pending_candidates": 3,
+        "active_backlog_items": 2
+      }
+    }
+  },
+  "agents": {
+    "state": "STALE",
+    "source_file": "has_live_project_tracker/data/helm_agent_registry.json",
+    "data_as_of": "2026-07-03T19:49:57.198176Z",
+    "snapshot_as_of": "2026-07-03T21:26:39.659055Z",
+    "age_seconds": 5802,
+    "max_age_seconds": 600,
+    "hoch200_owned": false,
+    "hoch200_sync_age_seconds": 0,
+    "checked_at": "2026-07-03T21:26:39.659055Z",
+    "closure_action": "Update data source has_live_project_tracker/data/helm_agent_registry.json",
+    "data": {
+      "michaels_ai_model": {
+        "agent_id": "michaels_ai_model",
+        "display_name": "Michaels AI Model",
+        "pod": "HAS",
+        "role": "GOAL Orchestrator",
+        "model_backend": "google/gemma-4-12b-qat",
+        "adapter": "lmstudio",
+        "heartbeat": "2026-07-03T14:49:10Z",
+        "current_assignment": "Drive safe-local execution loop and coordinate all agents.",
+        "input_data": "has_live_project_tracker/data/mission_intake_queue.json",
+        "output_data": "has_live_project_tracker/data/helm_task_queue.json",
+        "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/helm-rung-1-promotion-evidence.md",
+        "status": "ACTIVE",
+        "source_registry": "has_live_project_tracker/data/helm_agent_registry.json"
+      },
+      "pert_analysis_agent": {
+        "agent_id": "pert_analysis_agent",
+        "display_name": "PERT Analysis Agent",
+        "pod": "HAS",
+        "role": "Planning",
+        "model_backend": "qwen2.5:1.5b-instruct",
+        "adapter": "ollama_native",
+        "heartbeat": "2026-07-03T14:49:10Z",
+        "current_assignment": "Maintain critical path, expected time, blockers, and task flow.",
+        "input_data": "has_live_project_tracker/data/goal_blocker_triage.json",
+        "output_data": "has_live_project_tracker/data/fresh_pert_gap_analysis.json",
+        "evidence_path": "docs/evidence/goal_runner/goal_readiness_summary_20260702T184021Z.md",
+        "status": "READY",
+        "source_registry": "has_live_project_tracker/data/helm_agent_registry.json"
+      },
+      "gap_closure_agent": {
+        "agent_id": "gap_closure_agent",
+        "display_name": "Gap Closure Agent",
+        "pod": "HAS",
+        "role": "Closure",
+        "model_backend": "qwen2.5:1.5b-instruct",
+        "adapter": "ollama_native",
+        "heartbeat": "2026-07-03T14:49:10Z",
+        "current_assignment": "Convert stale/blocker findings into closure actions.",
+        "input_data": "has_live_project_tracker/data/fresh_pert_gap_analysis.json",
+        "output_data": "has_live_project_tracker/data/operator_next_actions.json",
+        "evidence_path": "docs/evidence/runtime/rc61-local-first-cost-governor-fresh-pert-live-ui.md",
+        "status": "READY",
+        "source_registry": "has_live_project_tracker/data/helm_agent_registry.json"
+      },
+      "compute_auditor": {
+        "agent_id": "compute_auditor",
+        "display_name": "Compute Auditor",
+        "pod": "OPS",
+        "role": "Infrastructure",
+        "model_backend": "qwen2.5:1.5b-instruct",
+        "adapter": "ollama_native",
+        "heartbeat": "2026-07-03T14:49:10Z",
+        "current_assignment": "Track local and online compute, cost, utilization, and unused assets.",
+        "input_data": "config/compute_assets.json",
+        "output_data": "has_live_project_tracker/data/hoch_compute_node_health.json",
+        "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/secure-sync-posture-proof.md",
+        "status": "READY",
+        "source_registry": "has_live_project_tracker/data/helm_agent_registry.json"
+      },
+      "repo_auditor": {
+        "agent_id": "repo_auditor",
+        "display_name": "Repo Auditor",
+        "pod": "OPS",
+        "role": "Code Inventory",
+        "model_backend": "qwen2.5:1.5b-instruct",
+        "adapter": "ollama_native",
+        "heartbeat": "2026-07-03T14:49:10Z",
+        "current_assignment": "Audit folders, files, prompts, agents, scripts, tests, data, docs.",
+        "input_data": "has_live_project_tracker/data/classified_assets.json",
+        "output_data": "has_live_project_tracker/data/duplicate_groups.json",
+        "evidence_path": "docs/evidence/release_hygiene/git_dirty_review_20260702T184407Z.md",
+        "status": "READY",
+        "source_registry": "has_live_project_tracker/data/helm_agent_registry.json"
+      },
+      "qa_gate_agent": {
+        "agent_id": "qa_gate_agent",
+        "display_name": "QA Gate Agent",
+        "pod": "HASF",
+        "role": "Quality",
+        "model_backend": "google/gemma-4-12b-qat",
+        "adapter": "lmstudio",
+        "heartbeat": "2026-07-03T14:49:10Z",
+        "current_assignment": "Run UI, API, browser, and guardrail checks.",
+        "input_data": "has_live_project_tracker/data/qa_gate_matrix.json",
+        "output_data": "has_live_project_tracker/data/eval_report.json",
+        "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/helm-full-time-orchestration-bridge-proof.md",
+        "status": "READY",
+        "source_registry": "has_live_project_tracker/data/helm_agent_registry.json"
+      },
+      "devsecops_guardian": {
+        "agent_id": "devsecops_guardian",
+        "display_name": "DevSecOps Guardian",
+        "pod": "CYBER",
+        "role": "Security",
+        "model_backend": "google/gemma-4-12b-qat",
+        "adapter": "lmstudio",
+        "heartbeat": "2026-07-03T14:49:10Z",
+        "current_assignment": "Secrets, exposure, public ports, fake-pass checks, security gates.",
+        "input_data": "has_live_project_tracker/data/provider_data_egress_policy.json",
+        "output_data": "has_live_project_tracker/data/evidence_manifest.json",
+        "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/orchestration-bridge-kill-switch-proof.md",
+        "status": "READY",
+        "source_registry": "has_live_project_tracker/data/helm_agent_registry.json"
+      },
+      "prompt_librarian": {
+        "agent_id": "prompt_librarian",
+        "display_name": "Prompt Librarian",
+        "pod": "HASF",
+        "role": "Knowledge Reuse",
+        "model_backend": "qwen2.5:1.5b-instruct",
+        "adapter": "ollama_native",
+        "heartbeat": "2026-07-03T14:49:10Z",
+        "current_assignment": "Find and organize prompt/agent libraries for reuse.",
+        "input_data": "has_live_project_tracker/data/registry_candidates.json",
+        "output_data": "has_live_project_tracker/data/registry_summary.json",
+        "evidence_path": "docs/evidence/moonshot/moonshot_audit_20260702T191737Z.md",
+        "status": "READY",
+        "source_registry": "has_live_project_tracker/data/helm_agent_registry.json"
+      },
+      "revenue_strategist": {
+        "agent_id": "revenue_strategist",
+        "display_name": "Revenue Strategist",
+        "pod": "BUSINESS",
+        "role": "Monetization",
+        "model_backend": "google/gemma-4-12b-qat",
+        "adapter": "lmstudio",
+        "heartbeat": "2026-07-03T14:49:10Z",
+        "current_assignment": "Package HAS/HASF offers and approval-gated revenue actions.",
+        "input_data": "has_live_project_tracker/data/monetization_candidates.json",
+        "output_data": "has_live_project_tracker/data/revenue_action_queue.json",
+        "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/helm-orchestration-bridge-acceptance-audit.md",
+        "status": "READY",
+        "source_registry": "has_live_project_tracker/data/helm_agent_registry.json"
+      },
+      "evidence_archivist": {
+        "agent_id": "evidence_archivist",
+        "display_name": "Evidence Archivist",
+        "pod": "OPS",
+        "role": "Evidence",
+        "model_backend": "qwen2.5:1.5b-instruct",
+        "adapter": "ollama_native",
+        "heartbeat": "2026-07-03T14:49:10Z",
+        "current_assignment": "Track evidence files, run logs, screenshots, and release artifacts.",
+        "input_data": "has_live_project_tracker/data/events.ndjson",
+        "output_data": "has_live_project_tracker/data/evidence_manifest.json",
+        "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/helm-rung-1-decompose-only-onboarding-proof.md",
+        "status": "READY",
+        "source_registry": "has_live_project_tracker/data/helm_agent_registry.json"
+      },
+      "personal_systems_agent": {
+        "agent_id": "personal_systems_agent",
+        "display_name": "Personal Systems Agent",
+        "pod": "FAMILY",
+        "role": "Personal",
+        "model_backend": "qwen2.5:1.5b-instruct",
+        "adapter": "ollama_native",
+        "heartbeat": "2026-07-03T14:49:10Z",
+        "current_assignment": "Track personal/home/family workflows that belong in HAS/HASF.",
+        "input_data": "has_live_project_tracker/data/hoch_pod_schedule.json",
+        "output_data": "has_live_project_tracker/data/hoch_pods_runtime_state.json",
+        "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-has-hasf-runtime-scenario/00-baseline-discovery.md",
+        "status": "READY",
+        "source_registry": "has_live_project_tracker/data/helm_agent_registry.json"
+      },
+      "hobby_factory_agent": {
+        "agent_id": "hobby_factory_agent",
+        "display_name": "Hobby Factory Agent",
+        "pod": "HOBBY",
+        "role": "Hobby",
+        "model_backend": "qwen2.5:1.5b-instruct",
+        "adapter": "ollama_native",
+        "heartbeat": "2026-07-03T14:49:10Z",
+        "current_assignment": "Track hobby and experimental projects into the factory backlog.",
+        "input_data": "has_live_project_tracker/data/project_inventory.json",
+        "output_data": "has_live_project_tracker/data/inventory_summary.json",
+        "evidence_path": "docs/evidence/release_hygiene/dirty_tree_classification_20260702T184556Z.md",
+        "status": "READY",
+        "source_registry": "has_live_project_tracker/data/helm_agent_registry.json"
+      },
+      "hasf_scoring_agent": {
+        "agent_id": "hasf_scoring_agent",
+        "display_name": "HASF Product Candidate Scorer",
+        "pod": "HASF",
+        "role": "HASF Product Candidate Scorer",
+        "model_backend": "qwen2.5:1.5b-instruct",
+        "adapter": "ollama_native",
+        "heartbeat": "2026-07-03T12:00:24.711202Z",
+        "current_assignment": "Scoring backlog products",
+        "input_data": "has_live_project_tracker/data/hoch_hasf_soccer_product_model.json",
+        "output_data": "has_live_project_tracker/data/hoch_hasf_soccer_audit_results.json",
+        "evidence_path": "docs/evidence/release_hygiene/dirty_tree_classification_20260702T184556Z.md",
+        "status": "READY",
+        "source_registry": "has_live_project_tracker/data/helm_agent_registry.json"
+      },
+      "hasf_builder_agent": {
+        "agent_id": "hasf_builder_agent",
+        "display_name": "HASF Software Builder Agent",
+        "pod": "HASF",
+        "role": "HASF Software Builder Agent",
+        "model_backend": "google/gemma-4-12b-qat",
+        "adapter": "lmstudio",
+        "heartbeat": "2026-07-03T12:00:24.711218Z",
+        "current_assignment": "Building scaffolds",
+        "input_data": "has_live_project_tracker/data/build_inventory.json",
+        "output_data": "has_live_project_tracker/data/job_queue.json",
+        "evidence_path": "docs/evidence/release_hygiene/dirty_tree_classification_20260702T184556Z.md",
+        "status": "READY",
+        "source_registry": "has_live_project_tracker/data/helm_agent_registry.json"
+      }
+    }
+  },
+  "adapters": {
+    "state": "FRESH",
+    "source_file": "has_live_project_tracker/data/helm_adapter_registry.json",
+    "data_as_of": "2026-07-03T21:19:46.807822Z",
+    "snapshot_as_of": "2026-07-03T21:26:39.659055Z",
+    "age_seconds": 412,
+    "max_age_seconds": 600,
+    "hoch200_owned": true,
+    "hoch200_sync_age_seconds": 412,
+    "checked_at": "2026-07-03T21:26:39.659055Z",
+    "closure_action": "None",
+    "data": {
+      "ollama_native": {
+        "base_url": "http://localhost:11434/v1",
+        "api_style": "openai_compatible",
+        "status": "ONLINE",
+        "last_checked": "2026-07-03T21:19:46.807246Z"
+      },
+      "lmstudio": {
+        "base_url": "http://localhost:1234/v1",
+        "api_style": "openai_compatible",
+        "status": "ONLINE",
+        "last_checked": "2026-07-03T21:19:46.807246Z"
+      },
+      "ollama_gpu_pod": {
+        "base_url": "http://100.87.18.20:11434/v1",
+        "api_style": "openai_compatible",
+        "status": "PENDING_BENCHMARK",
+        "last_checked": "2026-07-03T21:19:46.807246Z"
+      }
+    }
+  },
+  "models": {
+    "state": "STALE",
+    "source_file": "has_live_project_tracker/data/model_capacity_target.json",
+    "data_as_of": "2026-07-03T20:17:30Z",
+    "snapshot_as_of": "2026-07-03T21:26:39.659055Z",
+    "age_seconds": 4149,
+    "max_age_seconds": 600,
+    "hoch200_owned": false,
+    "hoch200_sync_age_seconds": 0,
+    "checked_at": "2026-07-03T21:26:39.659055Z",
+    "closure_action": "Update data source has_live_project_tracker/data/model_capacity_target.json",
+    "data": {
+      "source_of_truth": false,
+      "as_of": "2026-07-03T20:17:30Z",
+      "target": {
+        "minimum_heavy_tool_model": "14B class",
+        "ideal_heavy_tool_model": "32B class",
+        "basis": "sourced capacity target from uploaded strategy doc citing arXiv 2601.16280",
+        "decision_rule": "promotion requires local model_capacity_audit.json plus eval-gated performance, not vibes"
+      },
+      "routing_decision_space": [
+        "native local model",
+        "GPU pod",
+        "API adapter"
+      ],
+      "blocker_status": "NOT_A_BLOCKER_UNTIL_MEASURED"
+    }
+  },
+  "freshness": {
+    "state": "FRESH",
+    "source_file": "has_live_project_tracker/data/live_telemetry_freshness.json",
+    "data_as_of": "2026-07-03T21:19:46.826343Z",
+    "snapshot_as_of": "2026-07-03T21:26:39.659055Z",
+    "age_seconds": 412,
+    "max_age_seconds": 600,
+    "hoch200_owned": false,
+    "hoch200_sync_age_seconds": 0,
+    "checked_at": "2026-07-03T21:26:39.659055Z",
+    "closure_action": "None",
+    "data": {
+      "generated_at": "2026-07-03T21:19:46.826343+00:00",
+      "status": "PASS",
+      "required_telemetry": [
+        {
+          "telemetry_id": "global_verify",
+          "path": "has_live_project_tracker/data/global_verify.json",
+          "exists": true,
+          "valid_json": true,
+          "fresh": true,
+          "stale_state": "FRESH",
+          "errors": [],
+          "generated_at": "2026-07-03T21:19:46.807246Z",
+          "freshness_sla_minutes": 30,
+          "age_minutes": 0.0
+        },
+        {
+          "telemetry_id": "hoch_pods_runtime_state",
+          "path": "has_live_project_tracker/data/hoch_pods_runtime_state.json",
+          "exists": true,
+          "valid_json": true,
+          "fresh": true,
+          "stale_state": "FRESH",
+          "errors": [],
+          "record_count": 7,
+          "generated_at": "2026-07-03T21:19:46.750876+00:00",
+          "freshness_sla_minutes": 30,
+          "age_minutes": 0.0
+        },
+        {
+          "telemetry_id": "hoch_pod_schedule",
+          "path": "has_live_project_tracker/data/hoch_pod_schedule.json",
+          "exists": true,
+          "valid_json": true,
+          "fresh": true,
+          "stale_state": "FRESH",
+          "errors": [],
+          "generated_at": "2026-07-03T21:19:46.768402+00:00",
+          "freshness_sla_minutes": 45,
+          "age_minutes": 0.0
+        }
+      ],
+      "quarantine_active": false,
+      "unfreeze_allowed": true,
+      "single_next_action": "Continue scheduled live telemetry refresh."
+    }
+  },
+  "zero_tolerance": [
+    {
+      "name": "secret_scanning",
+      "state": "PASS",
+      "source": "has_live_project_tracker/data/guardrail_metrics.json",
+      "checked_at": "2026-07-03T21:26:39.659055Z",
+      "source_age_seconds": 382,
+      "evidence_path": "has_live_project_tracker/data/guardrail_metrics.json",
+      "closure_action": "Fix secrets in committed files then run scripts/secure_build_guardrail_check.sh"
+    },
+    {
+      "name": "public_exposure",
+      "state": "PASS",
+      "source": "has_live_project_tracker/data/guardrail_metrics.json",
+      "checked_at": "2026-07-03T21:26:39.659055Z",
+      "source_age_seconds": 382,
+      "evidence_path": "has_live_project_tracker/data/guardrail_metrics.json",
+      "closure_action": "Close open public ports"
+    },
+    {
+      "name": "fake_status_flags",
+      "state": "PASS",
+      "source": "has_live_project_tracker/data/guardrail_metrics.json",
+      "checked_at": "2026-07-03T21:26:39.659055Z",
+      "source_age_seconds": 382,
+      "evidence_path": "has_live_project_tracker/data/guardrail_metrics.json",
+      "closure_action": "Remove fake status flags from status.json"
+    },
+    {
+      "name": "verification_signature",
+      "state": "STALE",
+      "source": "has_live_project_tracker/data/evidence_manifest_head.sig",
+      "checked_at": "2026-07-03T21:26:39.659055Z",
+      "source_age_seconds": 4236,
+      "evidence_path": "has_live_project_tracker/data/evidence_manifest_head.sig",
+      "closure_action": "Run scripts/sign_evidence_manifest_head.py"
+    },
+    {
+      "name": "compute_billing",
+      "state": "PASS",
+      "source": "config/compute_assets.json",
+      "checked_at": "2026-07-03T21:26:39.659055Z",
+      "source_age_seconds": 403,
+      "evidence_path": "config/compute_assets.json",
+      "closure_action": "Fix compute cost in config/compute_assets.json"
+    },
+    {
+      "name": "tag_integrity",
+      "state": "PASS",
+      "source": "config/release_tag_policy.json",
+      "checked_at": "2026-07-03T21:26:39.659055Z",
+      "source_age_seconds": 397,
+      "evidence_path": "config/release_tag_policy.json",
+      "closure_action": "Fix release tag policy configurations"
+    }
+  ],
+  "stale_or_missing": {
+    "missing_count": 0,
+    "stale_count": 3,
+    "sync_stale_count": 2,
+    "details": [
+      "has_live_project_tracker/data/orchestration_bridge_control.json is SYNC_STALE (age=4228s)",
+      "has_live_project_tracker/data/orchestration_bridge_control.json is SYNC_STALE (age=4228s)",
+      "has_live_project_tracker/data/hasf_runtime_state.json is STALE (age=33981s)",
+      "has_live_project_tracker/data/helm_agent_registry.json is STALE (age=5802s)",
+      "has_live_project_tracker/data/model_capacity_target.json is STALE (age=4149s)"
+    ]
+  },
+  "closure_actions": [
+    "run bash scripts/secure_sync_hoch200.sh then rebuild control_plane_status.json",
+    "python3 scripts/refresh_heartbeats.py"
+  ]
+}
