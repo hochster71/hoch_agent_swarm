@@ -123,3 +123,12 @@ backend/*.db.bak
 # VS Code local workspace settings
 .vscode/
 logs/
+
+# --- secrets: never track (added by security remediation 2026-07-02) ---
+.env
+.env.*
+!.env.example
+.secrets/
+*.pem
+*_signing_key
+*_signing_key.pub
