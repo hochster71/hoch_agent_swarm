@@ -1,0 +1,11 @@
+{
+  "adapter_id": "ag_execution_adapter",
+  "status": "IDLE",
+  "current_task": null,
+  "allowed_actions": ["read_file", "write_file", "run_local_command"],
+  "blocked_actions": ["release", "monetization", "customer_data", "public_dns", "credentials", "public_claims"],
+  "last_execution_at": null,
+  "evidence_path": null,
+  "founder_gate_respected": true,
+  "source_of_truth": false
+}

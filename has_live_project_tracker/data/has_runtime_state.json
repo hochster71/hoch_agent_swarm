@@ -19,5 +19,9 @@
       "model_endpoint_status": "ONLINE",
       "native_ollama_status": "ONLINE"
     }
-  }
+  },
+  "manual_relay_status": "REMOVED",
+  "orchestration_bridge_status": "ACTIVE",
+  "copy_paste_required_computed": false,
+  "copy_paste_required_reason": "Mission rejected by prompt injection safety gates."
 }

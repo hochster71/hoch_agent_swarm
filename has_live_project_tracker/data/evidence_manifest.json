@@ -12969,5 +12969,39 @@
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
     "entry_hash": "9a16b21861ab2de5b1cf04a86c2f3fc914821840ac2deb8154cbaf25743f7961"
+  },
+  {
+    "entry_id": "entry-0764",
+    "timestamp": "2026-07-03T13:53:58.466411Z",
+    "run_id": "20260702T222129Z-24-7-autonomy-reset",
+    "task_id": "task-unspecified",
+    "agent_id": "has_system",
+    "model_backend": "none",
+    "adapter_id": "none",
+    "incident_class": "none",
+    "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/mission-intake-security-proof.md",
+    "evidence_sha256": "f07523eb29fb7658f45e2ee46e255bd314103389279a2efb0cf6ac9dcecb9eaf",
+    "previous_entry_hash": "9a16b21861ab2de5b1cf04a86c2f3fc914821840ac2deb8154cbaf25743f7961",
+    "signature_status": "unsigned",
+    "founder_approval_required": false,
+    "created_by": "HELM_manifest_daemon",
+    "entry_hash": "fa189982d422b44581ec132caef85b67f066a0616ee4aba40e65d82c247a95a6"
+  },
+  {
+    "entry_id": "entry-0765",
+    "timestamp": "2026-07-03T13:53:58.466842Z",
+    "run_id": "20260702T222129Z-24-7-autonomy-reset",
+    "task_id": "task-unspecified",
+    "agent_id": "has_system",
+    "model_backend": "none",
+    "adapter_id": "none",
+    "incident_class": "none",
+    "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/helm-full-time-orchestration-bridge-proof.md",
+    "evidence_sha256": "99aa1c804ec207a59934dc85ea70b703123255780f8592556798ffe4d4216222",
+    "previous_entry_hash": "fa189982d422b44581ec132caef85b67f066a0616ee4aba40e65d82c247a95a6",
+    "signature_status": "unsigned",
+    "founder_approval_required": false,
+    "created_by": "HELM_manifest_daemon",
+    "entry_hash": "1e2478c179b328cfe204e3d4f0cca5ff16d3255f698fb23140a3ff85926efcdc"
   }
 ]

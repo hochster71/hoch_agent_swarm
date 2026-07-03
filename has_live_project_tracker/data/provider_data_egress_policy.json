@@ -1,0 +1,37 @@
+{
+  "policy_version": "1.0",
+  "content_classes": {
+    "PUBLIC_SAFE": {
+      "allowed_destinations": ["*"],
+      "requires_redaction": false
+    },
+    "INTERNAL_PRODUCT": {
+      "allowed_destinations": ["openai_reasoning_adapter", "claude_critic_adapter", "ollama_gpu_pod", "lmstudio"],
+      "requires_redaction": false
+    },
+    "PROPRIETARY_CODE": {
+      "allowed_destinations": ["openai_reasoning_adapter", "claude_critic_adapter", "ollama_gpu_pod", "lmstudio"],
+      "requires_redaction": true
+    },
+    "SECURITY_SENSITIVE": {
+      "allowed_destinations": ["ollama_gpu_pod", "lmstudio"],
+      "requires_redaction": true
+    },
+    "SECRET_OR_CREDENTIAL": {
+      "allowed_destinations": [],
+      "requires_redaction": true
+    },
+    "CUSTOMER_DATA": {
+      "allowed_destinations": [],
+      "requires_redaction": true
+    },
+    "FOUNDER_PRIVATE": {
+      "allowed_destinations": [],
+      "requires_redaction": true
+    },
+    "EVIDENCE_PROTECTED": {
+      "allowed_destinations": ["ollama_gpu_pod", "lmstudio"],
+      "requires_redaction": true
+    }
+  }
+}

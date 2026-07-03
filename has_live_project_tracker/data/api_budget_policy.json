@@ -1,0 +1,26 @@
+{
+  "providers": {
+    "openai_reasoning_adapter": {
+      "daily_budget_usd": 10.0,
+      "weekly_budget_usd": 50.0,
+      "monthly_budget_usd": 200.0,
+      "token_budget_daily": 1000000,
+      "current_estimated_daily_cost": 0.0,
+      "current_estimated_weekly_cost": 0.0,
+      "budget_status": "WITHIN_LIMITS",
+      "founder_approval_required_if_exceeded": true,
+      "max_retries": 3
+    },
+    "claude_critic_adapter": {
+      "daily_budget_usd": 10.0,
+      "weekly_budget_usd": 50.0,
+      "monthly_budget_usd": 200.0,
+      "token_budget_daily": 1000000,
+      "current_estimated_daily_cost": 0.0,
+      "current_estimated_weekly_cost": 0.0,
+      "budget_status": "WITHIN_LIMITS",
+      "founder_approval_required_if_exceeded": true,
+      "max_retries": 3
+    }
+  }
+}
