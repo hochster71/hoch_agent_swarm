@@ -1,9 +1,7 @@
 {
-  "orchestration_bridge_enabled": false,
-  "max_concurrent_missions": 1,
+  "orchestration_bridge_enabled": true,
   "allow_provider_api_calls": false,
   "allow_ag_execution": false,
   "allow_founder_gated_execution": false,
-  "kill_switch_reason": "active",
-  "updated_at": "2026-07-03T13:52:00Z"
+  "max_concurrent_missions": 1
 }

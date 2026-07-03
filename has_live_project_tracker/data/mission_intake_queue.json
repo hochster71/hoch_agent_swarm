@@ -56,6 +56,62 @@
       "mission_signature": "SIGNING_PARTIAL_PENDING_FOUNDER_KEY",
       "signature_status": "VALID",
       "sanitization_status": "FAIL"
+    },
+    {
+      "mission_id": "mission-1a033caf",
+      "title": "Product 002 R2 Sprint 2 decompose-only plan",
+      "intent": "Data envelope: Create a bounded task decomposition for CyberQRG-AI R2 Sprint 2 local offline scaffold. Do not execute build. Do not deploy. Do not enable provider API calls. Do not enable AG execution. Do not authorize release, monetization, public claims, DNS changes, live credentials, customer data handling, or destructive repo actions.",
+      "requested_by": "Michael Hoch",
+      "risk_tier": "R1",
+      "product_id": "cyberqrg-ai",
+      "allowed_scope": [
+        "planning",
+        "scaffold"
+      ],
+      "blocked_scope": [
+        "production_release",
+        "monetization",
+        "public_claims",
+        "customer_data",
+        "live_credentials",
+        "destructive_actions"
+      ],
+      "founder_approval_required": false,
+      "status": "DECOMPOSED",
+      "created_at": "2026-07-03T14:18:02.824859Z",
+      "updated_at": "2026-07-03T14:18:04.363884Z",
+      "evidence_path": "",
+      "mission_signature": "SIGNING_PARTIAL_PENDING_FOUNDER_KEY",
+      "signature_status": "VALID",
+      "sanitization_status": "PASS"
+    },
+    {
+      "mission_id": "mission-0b9c280f",
+      "title": "Product 002 R2 Sprint 2 decompose-only plan",
+      "intent": "Data envelope: Create a bounded task decomposition for CyberQRG-AI R2 Sprint 2 local offline scaffold. Do not execute build. Do not deploy. Do not enable provider API calls. Do not enable AG execution. Do not authorize release, monetization, public claims, DNS changes, live credentials, customer data handling, or destructive repo actions.",
+      "requested_by": "Michael Hoch",
+      "risk_tier": "R1",
+      "product_id": "cyberqrg-ai",
+      "allowed_scope": [
+        "planning",
+        "scaffold"
+      ],
+      "blocked_scope": [
+        "production_release",
+        "monetization",
+        "public_claims",
+        "customer_data",
+        "live_credentials",
+        "destructive_actions"
+      ],
+      "founder_approval_required": false,
+      "status": "DECOMPOSED",
+      "created_at": "2026-07-03T14:19:07.633448Z",
+      "updated_at": "2026-07-03T14:19:13.534986Z",
+      "evidence_path": "",
+      "mission_signature": "SIGNING_PARTIAL_PENDING_FOUNDER_KEY",
+      "signature_status": "VALID",
+      "sanitization_status": "PASS"
     }
   ]
 }

@@ -89,16 +89,14 @@ Signing Evidence Manifest Head...
 ---
 
 ## 8. Founder Spot-Check
-* **Status**: `FOUNDER_SPOT_CHECK_PENDING`
-* **Commands to Run**:
-  Run the following commands on HOCH-200:
-  ```bash
-  python3 scripts/compute_copy_paste_required.py
-  python3 scripts/verify_helm_orchestration_bridge.py
-  ```
-* **Expected Stable Markers**:
-  - `Computed copy_paste_required: True (insufficient autonomous mission history)`
-  - `🟢 HELM Orchestration Bridge verification PASSED.`
+* **Status**: `FOUNDER_SPOT_CHECK_PASS`
+* **Run Details**:
+  - HOCH-200 spot-check PASS.
+  - `compute_copy_paste_required.py` returned `True` with reason `insufficient autonomous mission history`.
+  - `verify_helm_orchestration_bridge.py` returned `PASS`.
+  - `EXIT_CODE=0`.
+  - Remote git commit check was not applicable because `.git` is intentionally excluded from secure sync.
+  - Local source commit verified by Michael: a042f9a.
 
 ---
 

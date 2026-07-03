@@ -51,5 +51,45 @@
     "provider_allowed": "openai_reasoning_adapter",
     "cost_policy_ref": "api_budget_policy.json",
     "status": "PENDING"
+  },
+  {
+    "task_id": "task-mission-1a033caf-001",
+    "mission_id": "mission-1a033caf",
+    "task_name": "Decomposed from Product 002 R2 Sprint 2 decompose-only plan",
+    "task_class": "planning",
+    "risk_tier": "R1",
+    "allowed_agent": "hasf_scoring_agent",
+    "required_model_tier": "heavy",
+    "adapter": "ollama_gpu_pod",
+    "expected_output": "docs/evidence/bridge_task_output.md",
+    "evidence_required": true,
+    "gates_required": [
+      "verify_tier3_routing_policy.py"
+    ],
+    "founder_approval_required": false,
+    "data_egress_class": "PUBLIC_SAFE",
+    "provider_allowed": "openai_reasoning_adapter",
+    "cost_policy_ref": "api_budget_policy.json",
+    "status": "PENDING"
+  },
+  {
+    "task_id": "task-mission-0b9c280f-001",
+    "mission_id": "mission-0b9c280f",
+    "task_name": "Decomposed from Product 002 R2 Sprint 2 decompose-only plan",
+    "task_class": "planning",
+    "risk_tier": "R1",
+    "allowed_agent": "hasf_scoring_agent",
+    "required_model_tier": "heavy",
+    "adapter": "ollama_gpu_pod",
+    "expected_output": "docs/evidence/bridge_task_output.md",
+    "evidence_required": true,
+    "gates_required": [
+      "verify_tier3_routing_policy.py"
+    ],
+    "founder_approval_required": false,
+    "data_egress_class": "PUBLIC_SAFE",
+    "provider_allowed": "openai_reasoning_adapter",
+    "cost_policy_ref": "api_budget_policy.json",
+    "status": "PENDING"
   }
 ]

@@ -13065,11 +13065,28 @@
     "adapter_id": "none",
     "incident_class": "none",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/helm-orchestration-bridge-acceptance-audit.md",
-    "evidence_sha256": "6e199d879b856367ef3bc5193c3440ddecc17f0d7639b0d8774238f6c75aba1b",
+    "evidence_sha256": "2465b62abc027f0381a03611bbfbc231f337ee4bcc13db50607ceaebe2cbef34",
     "previous_entry_hash": "4980d13b455bc2581b0d1bfbdb12cf71b893dd37422a19eaf8cb8c76ce9ad920",
     "signature_status": "unsigned",
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
-    "entry_hash": "e3a92b372442bbe67d64ff7165e8f5e5d9896de835654c32d924e52b9fdbb3ed"
+    "entry_hash": "cea3a1ded237dfac72f26b3b839dfcbced2aecb0bd7ba48171ee50dde78b0083"
+  },
+  {
+    "entry_id": "entry-0770",
+    "timestamp": "2026-07-03T14:19:19.927743Z",
+    "run_id": "20260702T222129Z-24-7-autonomy-reset",
+    "task_id": "task-unspecified",
+    "agent_id": "has_system",
+    "model_backend": "none",
+    "adapter_id": "none",
+    "incident_class": "none",
+    "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/helm-rung-1-decompose-only-onboarding-proof.md",
+    "evidence_sha256": "a4ad112bd2a20b12a2c50c980e8628ec27025d3f77ea57890c10238700778333",
+    "previous_entry_hash": "cea3a1ded237dfac72f26b3b839dfcbced2aecb0bd7ba48171ee50dde78b0083",
+    "signature_status": "unsigned",
+    "founder_approval_required": false,
+    "created_by": "HELM_manifest_daemon",
+    "entry_hash": "9467607d00c73a3a77bb0b5e63ad8e9c1ca36b8d40195a970830017c6708f602"
   }
 ]
