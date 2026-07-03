@@ -7,7 +7,7 @@
   "rung_2_eligibility": "YES",
   "rung_2_runtime": "ACTIVE",
   "rung_2_live_provider_calls": "PENDING_FOUNDER_KEY_PROVISIONING",
-  "claude_adapter_state": "DISABLED_NOT_CONFIGURED",
+  "claude_adapter_state": "READY",
   "rung_2_promotion_criteria": {
     "required_clean_r1_missions_min": 3,
     "required_clean_r1_missions_target": 5,
@@ -19,9 +19,18 @@
     "decomposition_eval_judge_mean_min": 3.5,
     "decomposition_eval_consistency_min": 0.80,
     "copy_paste_required_must_flip_by_derivation": true,
-    "escalated_to_founder_counter_behavior": "does_not_increment_or_reset_clean_counter",
     "identical_repeated_missions_allowed_for_promotion": false,
     "promotion_evidence_required": true,
     "promotion_evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/helm-rung-1-promotion-evidence.md"
+  },
+  "rung_3_promotion_criteria": {
+    "required_clean_r2_missions_min": 3,
+    "required_clean_r2_missions_target": 5,
+    "manual_prompt_injected_allowed": false,
+    "unauthorized_tasks_allowed": false,
+    "required_critic_reviews_min": 3,
+    "copy_paste_required_must_flip_by_derivation": true,
+    "promotion_evidence_required": true,
+    "promotion_evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/helm-rung-2-promotion-evidence.md"
   }
 }

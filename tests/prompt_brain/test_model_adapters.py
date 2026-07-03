@@ -5,14 +5,16 @@ from scripts.prompt_brain.model_adapters import (
     get_all_adapters,
     OpenAIAdapter,
     GeminiAdapter,
+    ClaudeAdapter,
     SimulationFallbackAdapter
 )
 
 def test_get_all_adapters():
     adapters = get_all_adapters()
-    assert len(adapters) == 5
+    assert len(adapters) == 6
     providers = [a.provider for a in adapters]
     assert "OpenAI" in providers
+    assert "Anthropic" in providers
     assert "Google Gemini" in providers
     assert "HOCH Simulation" in providers
 
@@ -52,3 +54,14 @@ def test_openai_adapter_real_call_fails_on_invalid_key(monkeypatch):
     with pytest.raises(RuntimeError) as excinfo:
         adapter.execute("hello", {}, {})
     assert "OpenAI call failed" in str(excinfo.value)
+
+def test_claude_adapter_real_call_fails_on_invalid_key(monkeypatch):
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-mock-invalid-key-for-testing")
+    adapter = ClaudeAdapter("claude-3-5-sonnet-20241022")
+    adapter.health_check()
+    assert adapter.is_available is True
+    
+    import pytest
+    with pytest.raises(RuntimeError) as excinfo:
+        adapter.execute("hello", {}, {})
+    assert "Claude call failed" in str(excinfo.value)

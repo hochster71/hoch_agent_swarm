@@ -289,6 +289,123 @@ class GeminiAdapter(ModelAdapter):
             }
         }
 
+class ClaudeAdapter(ModelAdapter):
+    def __init__(self, model_name="claude-3-5-sonnet-20241022"):
+        super().__init__(model_name, "Anthropic", "https://api.anthropic.com/v1")
+        self.api_key = os.getenv("ANTHROPIC_API_KEY", "")
+
+    def health_check(self):
+        self.last_health_check = datetime.now(timezone.utc).isoformat()
+        if not self.api_key:
+            self.is_available = False
+            self.health_reason_code = "MISSING_API_KEY"
+            self.last_error = "Missing ANTHROPIC_API_KEY environment variable."
+            self.local_remediation_hint = "Run: export ANTHROPIC_API_KEY='your-key-here'"
+            return False
+        
+        self.is_available = True
+        self.health_reason_code = "API_KEY_PRESENT"
+        self.available_models = ["claude-3-5-sonnet-20241022"]
+        self.last_error = ""
+        self.latency_ms = 120
+        return True
+
+    def execute(self, prompt_text, input_payload, output_contract):
+        if not self.is_available:
+            raise RuntimeError(f"ClaudeAdapter unavailable: {self.last_error}")
+        
+        import time
+        import urllib.request
+        import urllib.error
+        
+        system_content = prompt_text
+        user_content = json.dumps(input_payload)
+        
+        headers = {
+            "Content-Type": "application/json",
+            "X-API-Key": self.api_key,
+            "Anthropic-Version": "2023-06-01"
+        }
+        
+        req_body = {
+            "model": self.model_name,
+            "max_tokens": 4096,
+            "system": system_content,
+            "messages": [
+                {"role": "user", "content": user_content}
+            ],
+            "temperature": 0.2
+        }
+        
+        t0 = time.time()
+        try:
+            req = urllib.request.Request(
+                "https://api.anthropic.com/v1/messages",
+                data=json.dumps(req_body).encode("utf-8"),
+                headers=headers,
+                method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=30) as response:
+                res_body = response.read().decode("utf-8")
+                res_json = json.loads(res_body)
+                
+            latency = int((time.time() - t0) * 1000)
+            self.last_successful_execution = datetime.now(timezone.utc).isoformat()
+            
+            usage = res_json.get("usage", {})
+            prompt_tokens = usage.get("input_tokens", 0)
+            completion_tokens = usage.get("output_tokens", 0)
+            total_tokens = prompt_tokens + completion_tokens
+            
+            # claude-3-5-sonnet: $3.00/1M input, $15.00/1M output
+            cost = (prompt_tokens * 0.003 / 1000) + (completion_tokens * 0.015 / 1000)
+            
+            message_content = res_json["content"][0]["text"]
+            try:
+                output_data = json.loads(message_content)
+            except Exception:
+                output_data = {"raw_text": message_content}
+                
+            payload_artifact = {
+                "request": req_body,
+                "response": res_json,
+                "cost_usd": cost,
+                "latency_ms": latency,
+                "egress_classification": "EVIDENCE_PROTECTED"
+            }
+            
+            # Use base directory reference correctly (ROOT is not in local scope here, use Path(__file__).parent.parent.parent)
+            base_dir = Path(__file__).resolve().parent.parent.parent
+            artifact_dir = base_dir / "docs/evidence/runtime"
+            artifact_dir.mkdir(parents=True, exist_ok=True)
+            artifact_path = artifact_dir / "claude_rung2_payload.json"
+            artifact_path.write_text(json.dumps(payload_artifact, indent=2))
+            
+            print(f"Rung 2 real Claude call success:")
+            print(f"  Model: {self.model_name}")
+            print(f"  Tokens: Input={prompt_tokens}, Output={completion_tokens}, Total={total_tokens}")
+            print(f"  Calculated Cost: ${cost:.6f}")
+            print(f"  Payload Artifact Saved: docs/evidence/runtime/claude_rung2_payload.json")
+            print(f"  Egress Classification: EVIDENCE_PROTECTED")
+            
+            return {
+                "status": "success",
+                "model": self.model_name,
+                "provider": self.provider,
+                "latency_ms": latency,
+                "prompt_tokens": prompt_tokens,
+                "completion_tokens": completion_tokens,
+                "total_tokens": total_tokens,
+                "cost_usd": cost,
+                "output": output_data,
+                "egress_classification": "EVIDENCE_PROTECTED"
+            }
+            
+        except Exception as e:
+            latency = int((time.time() - t0) * 1000)
+            print(f"Rung 2 real Claude call failed: {e}")
+            raise RuntimeError(f"Claude call failed: {e}")
+
 class SimulationFallbackAdapter(ModelAdapter):
     def __init__(self, model_name="hoch-sim-v4"):
         super().__init__(model_name, "HOCH Simulation", "internal://simulation")
@@ -325,6 +442,7 @@ def get_all_adapters():
     return [
         OpenAIAdapter(),
         GeminiAdapter(),
+        ClaudeAdapter(),
         LMStudioAdapter(),
         OllamaAdapter(),
         SimulationFallbackAdapter()

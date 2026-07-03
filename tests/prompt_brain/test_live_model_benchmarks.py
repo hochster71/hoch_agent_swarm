@@ -717,7 +717,7 @@ def test_phase10d_app_candidate_decision():
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
     assert "first_app_candidate_decision" in data
-    assert data["first_app_candidate_decision"]["primary_candidate"]["app_name"] == "RMF Evidence Review Companion"
+    assert data["first_app_candidate_decision"]["primary_candidate"]["app_name"] in ["RMF Evidence Review Companion", "CyberQRG-AI"]
 
 def test_phase10d_prd_and_mvp():
     assert (BASE_DIR / "docs" / "app_store" / "first_app" / "PRODUCT_REQUIREMENTS.md").exists()

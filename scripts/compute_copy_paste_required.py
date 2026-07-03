@@ -28,9 +28,9 @@ def compute():
     except Exception:
         log_entries = []
 
-    # Check for manual_prompt_injected in the log
+    # Check for manual_prompt_injected or manual_review_intervention in the log
     manual_injected_present = any(
-        entry.get("event") == "manual_prompt_injected" for entry in log_entries
+        entry.get("event") in ["manual_prompt_injected", "manual_review_intervention"] for entry in log_entries
     )
 
     clean_completed_missions = []
@@ -46,14 +46,16 @@ def compute():
     copy_paste = True
     reason = "insufficient autonomous mission history"
 
-    # Require at least one clean completed mission AND no manual injection events
-    if len(clean_completed_missions) >= 1 and not manual_injected_present:
+    # Require at least 3 clean completed missions AND no manual injection or review intervention events
+    if len(clean_completed_missions) >= 3 and not manual_injected_present:
         copy_paste = False
-        reason = "Mission processed end-to-end without manual copy-paste triggers."
+        reason = "At least 3 missions processed end-to-end with automated critic review and no manual interventions."
     elif manual_injected_present:
-        reason = "Manual prompt injection detected in execution logs."
+        reason = "Manual prompt injection or review intervention detected in execution logs."
     elif not missions:
         reason = "No missions processed through intake queue yet."
+    else:
+        reason = f"insufficient autonomous mission history (got {len(clean_completed_missions)} clean completed, need at least 3)"
 
     print(f"Computed copy_paste_required: {copy_paste} ({reason})")
     
