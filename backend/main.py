@@ -151,6 +151,9 @@ app.include_router(goal_router)
 from backend.qa_dossiers.router import router as qa_router
 app.include_router(qa_router)
 
+from backend.routers.stripe_webhook import router as stripe_router
+app.include_router(stripe_router)
+
 @app.get("/api/v1/apple/telemetry")
 def get_apple_telemetry_endpoint():
     from backend.apple_telemetry.collector import collect_and_store_apple_telemetry
