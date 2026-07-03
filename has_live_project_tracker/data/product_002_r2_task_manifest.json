@@ -1,0 +1,32 @@
+[
+  {
+    "task_id": "task-002-r2-001",
+    "task_name": "Generate architecture blueprint",
+    "task_class": "architecture_blueprint",
+    "risk_tier": "R1",
+    "allowed_agent": "hasf_scoring_agent",
+    "required_model_tier": "heavy",
+    "allowed_adapters": ["ollama_gpu_pod", "lmstudio"],
+    "blocked_adapters": ["ollama_native"],
+    "expected_output": "docs/products/cyberqrg-ai/r2-architecture-blueprint.md",
+    "evidence_required": true,
+    "gate_required": "verify_tier3_routing_policy.py",
+    "founder_approval_required": true,
+    "status": "PENDING_AUTHORIZATION"
+  },
+  {
+    "task_id": "task-002-r2-002",
+    "task_name": "Repo scaffold proposal",
+    "task_class": "repo_scaffold_proposal",
+    "risk_tier": "R1",
+    "allowed_agent": "hasf_scoring_agent",
+    "required_model_tier": "heavy",
+    "allowed_adapters": ["ollama_gpu_pod", "lmstudio"],
+    "blocked_adapters": ["ollama_native"],
+    "expected_output": "docs/products/cyberqrg-ai/r2-repo-scaffold-proposal.md",
+    "evidence_required": true,
+    "gate_required": "verify_tier3_routing_policy.py",
+    "founder_approval_required": true,
+    "status": "PENDING_AUTHORIZATION"
+  }
+]

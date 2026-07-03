@@ -1,0 +1,19 @@
+{
+  "product_id": "cyberqrg-ai",
+  "current_phase": "R1_PLANNING",
+  "requested_phase": "R2_STAGING_BUILD",
+  "r2_authorized": false,
+  "authorized_by": null,
+  "authorized_at": null,
+  "production_release_authorized": false,
+  "monetization_authorized": false,
+  "public_claims_authorized": false,
+  "customer_data_authorized": false,
+  "required_gates": [
+    "verify_product_002_r2_authorization.py",
+    "verify_gpu_budget_guard.py",
+    "verify_tier3_routing_policy.py"
+  ],
+  "latest_gate_status": "PENDING",
+  "founder_decision_required": true
+}

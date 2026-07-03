@@ -12901,5 +12901,22 @@
     "founder_approval_required": false,
     "created_by": "HELM_manifest_daemon",
     "entry_hash": "669ccc80a524df230e473e6e330702e1cda6b231fe6933b3ea359991a02f0ac0"
+  },
+  {
+    "entry_id": "entry-0760",
+    "timestamp": "2026-07-03T13:34:30.607720Z",
+    "run_id": "20260702T222129Z-24-7-autonomy-reset",
+    "task_id": "task-unspecified",
+    "agent_id": "has_system",
+    "model_backend": "none",
+    "adapter_id": "none",
+    "incident_class": "none",
+    "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/product-002-r2-authorization-dry-run-proof.md",
+    "evidence_sha256": "df82b6e9dee36505be97b5b10b7b853ad5a904e7b031b29e3402a531593b91e6",
+    "previous_entry_hash": "669ccc80a524df230e473e6e330702e1cda6b231fe6933b3ea359991a02f0ac0",
+    "signature_status": "unsigned",
+    "founder_approval_required": false,
+    "created_by": "HELM_manifest_daemon",
+    "entry_hash": "42c4922d9a0024bbfe57fad780fa139844597b4beffff879843735e79403d226"
   }
 ]

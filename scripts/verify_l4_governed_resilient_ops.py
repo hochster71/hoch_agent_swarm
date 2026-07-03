@@ -26,7 +26,8 @@ def main():
         "verify_evidence_integrity.py",
         "verify_evidence_manifest_signature.py",
         "verify_gpu_budget_guard.py",
-        "verify_tier3_routing_policy.py"
+        "verify_tier3_routing_policy.py",
+        "verify_product_002_r2_authorization.py"
     ]
     
     for gate in gates:
