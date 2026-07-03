@@ -91,5 +91,85 @@
     "provider_allowed": "openai_reasoning_adapter",
     "cost_policy_ref": "api_budget_policy.json",
     "status": "PENDING"
+  },
+  {
+    "task_id": "task-mission-e05812ef-001",
+    "mission_id": "mission-e05812ef",
+    "task_name": "Decomposed from Rung 1 evidence hygiene decomposition",
+    "task_class": "planning",
+    "risk_tier": "R1",
+    "allowed_agent": "hasf_scoring_agent",
+    "required_model_tier": "heavy",
+    "adapter": "ollama_gpu_pod",
+    "expected_output": "docs/evidence/bridge_task_output.md",
+    "evidence_required": true,
+    "gates_required": [
+      "verify_tier3_routing_policy.py"
+    ],
+    "founder_approval_required": false,
+    "data_egress_class": "PUBLIC_SAFE",
+    "provider_allowed": "openai_reasoning_adapter",
+    "cost_policy_ref": "api_budget_policy.json",
+    "status": "PENDING"
+  },
+  {
+    "task_id": "task-mission-bec9c5cd-001",
+    "mission_id": "mission-bec9c5cd",
+    "task_name": "Decomposed from HASF backlog grooming decompose-only plan",
+    "task_class": "planning",
+    "risk_tier": "R1",
+    "allowed_agent": "hasf_scoring_agent",
+    "required_model_tier": "heavy",
+    "adapter": "ollama_gpu_pod",
+    "expected_output": "docs/evidence/bridge_task_output.md",
+    "evidence_required": true,
+    "gates_required": [
+      "verify_tier3_routing_policy.py"
+    ],
+    "founder_approval_required": false,
+    "data_egress_class": "PUBLIC_SAFE",
+    "provider_allowed": "openai_reasoning_adapter",
+    "cost_policy_ref": "api_budget_policy.json",
+    "status": "PENDING"
+  },
+  {
+    "task_id": "task-mission-c7cf927a-001",
+    "mission_id": "mission-c7cf927a",
+    "task_name": "Decomposed from Ambiguous deployment planning request",
+    "task_class": "planning",
+    "risk_tier": "R1",
+    "allowed_agent": "hasf_scoring_agent",
+    "required_model_tier": "heavy",
+    "adapter": "ollama_gpu_pod",
+    "expected_output": "docs/evidence/bridge_task_output.md",
+    "evidence_required": true,
+    "gates_required": [
+      "verify_tier3_routing_policy.py"
+    ],
+    "founder_approval_required": false,
+    "data_egress_class": "PUBLIC_SAFE",
+    "provider_allowed": "openai_reasoning_adapter",
+    "cost_policy_ref": "api_budget_policy.json",
+    "status": "PENDING"
+  },
+  {
+    "task_id": "task-mission-5f91ad9f-001",
+    "mission_id": "mission-5f91ad9f",
+    "task_name": "Decomposed from CyberQRG-AI R2 local scaffold task decomposition variant",
+    "task_class": "planning",
+    "risk_tier": "R1",
+    "allowed_agent": "hasf_scoring_agent",
+    "required_model_tier": "heavy",
+    "adapter": "ollama_gpu_pod",
+    "expected_output": "docs/evidence/bridge_task_output.md",
+    "evidence_required": true,
+    "gates_required": [
+      "verify_tier3_routing_policy.py"
+    ],
+    "founder_approval_required": false,
+    "data_egress_class": "PUBLIC_SAFE",
+    "provider_allowed": "openai_reasoning_adapter",
+    "cost_policy_ref": "api_budget_policy.json",
+    "status": "PENDING"
   }
 ]

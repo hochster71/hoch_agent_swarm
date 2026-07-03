@@ -32,5 +32,13 @@
 ---
 
 ## 3. Promotion & Rollback Criteria
-* **Promotion to Rung 2**: Requires at least one clean completed live mission.
+* **Promotion to Rung 2**: Requires:
+  1. 3 to 5 clean R1 decompose-only missions.
+  2. zero manual_prompt_injected events.
+  3. zero unauthorized tasks.
+  4. zero provider API calls.
+  5. zero AG execution.
+  6. founder-gated actions blocked.
+  7. decomposition eval remains >= 3.5 mean and >= 80% consistency on live samples.
+  8. copy_paste_required flips to false by derivation, not assertion.
 * **Rollback Trigger**: Any manual prompt injection or policy gate failure reverts `orchestration_bridge_enabled` to `false`.

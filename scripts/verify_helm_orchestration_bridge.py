@@ -67,6 +67,45 @@ def verify_bridge():
         print("❌ Verification failed: Clean mission fixture did not return copy_paste_required=false.")
         sys.exit(1)
 
+    # Enforce Rung 2 promotion checks if allow_provider_api_calls is True
+    control_path = "has_live_project_tracker/data/orchestration_bridge_control.json"
+    with open(control_path, "r") as f:
+        control = json.load(f)
+    
+    if control.get("allow_provider_api_calls", False):
+        evidence_path = "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/helm-rung-1-promotion-evidence.md"
+        if not os.path.exists(evidence_path):
+            print("❌ Verification failed: Rung 2 promotion evidence file is missing.")
+            sys.exit(1)
+        with open(evidence_path, "r") as f:
+            evidence_content = f.read()
+        
+        import re
+        clean_match = re.search(r"Clean-Mission Counter:\s*(\d+)", evidence_content)
+        if not clean_match or int(clean_match.group(1)) < 3:
+            print("❌ Verification failed: Fewer than 3 clean R1 missions exist in promotion evidence.")
+            sys.exit(1)
+            
+        if "manual_prompt_injected count: 0" not in evidence_content.lower():
+            print("❌ Verification failed: Manual prompt injections are not zero in evidence.")
+            sys.exit(1)
+                
+        if "unauthorized task count: 0" not in evidence_content.lower():
+            print("❌ Verification failed: Unauthorized tasks detected or not marked as 0.")
+            sys.exit(1)
+
+        if "provider api call count: 0" not in evidence_content.lower():
+            print("❌ Verification failed: Provider API calls detected during Rung 1.")
+            sys.exit(1)
+            
+        if "ag execution count: 0" not in evidence_content.lower():
+            print("❌ Verification failed: AG execution detected during Rung 1.")
+            sys.exit(1)
+            
+        if "copy_paste_required: false" not in evidence_content.lower():
+            print("❌ Verification failed: copy_paste_required has not flipped to false by derivation.")
+            sys.exit(1)
+
     print("🟢 HELM Orchestration Bridge verification PASSED.")
     return True
 

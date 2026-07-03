@@ -77,7 +77,7 @@
         "destructive_actions"
       ],
       "founder_approval_required": false,
-      "status": "DECOMPOSED",
+      "status": "COMPLETED",
       "created_at": "2026-07-03T14:18:02.824859Z",
       "updated_at": "2026-07-03T14:18:04.363884Z",
       "evidence_path": "",
@@ -105,9 +105,121 @@
         "destructive_actions"
       ],
       "founder_approval_required": false,
-      "status": "DECOMPOSED",
+      "status": "COMPLETED",
       "created_at": "2026-07-03T14:19:07.633448Z",
       "updated_at": "2026-07-03T14:19:13.534986Z",
+      "evidence_path": "",
+      "mission_signature": "SIGNING_PARTIAL_PENDING_FOUNDER_KEY",
+      "signature_status": "VALID",
+      "sanitization_status": "PASS"
+    },
+    {
+      "mission_id": "mission-e05812ef",
+      "title": "Rung 1 evidence hygiene decomposition",
+      "intent": "Data envelope: Create a bounded task decomposition for improving HAS/HASF evidence hygiene and proof-file indexing. Do not execute edits. Do not enable provider API calls. Do not enable AG execution. Do not authorize release, monetization, public claims, DNS changes, live credentials, customer data handling, or destructive actions.",
+      "requested_by": "Michael Hoch",
+      "risk_tier": "R1",
+      "product_id": "cyberqrg-ai",
+      "allowed_scope": [
+        "planning",
+        "scaffold"
+      ],
+      "blocked_scope": [
+        "production_release",
+        "monetization",
+        "public_claims",
+        "customer_data",
+        "live_credentials",
+        "destructive_actions"
+      ],
+      "founder_approval_required": false,
+      "status": "COMPLETED",
+      "created_at": "2026-07-03T14:23:58.254143Z",
+      "updated_at": "2026-07-03T14:24:12.996242Z",
+      "evidence_path": "",
+      "mission_signature": "SIGNING_PARTIAL_PENDING_FOUNDER_KEY",
+      "signature_status": "VALID",
+      "sanitization_status": "PASS"
+    },
+    {
+      "mission_id": "mission-bec9c5cd",
+      "title": "HASF backlog grooming decompose-only plan",
+      "intent": "Data envelope: Create a bounded task decomposition for organizing HASF backlog items into safe R0/R1/R2 lanes. Do not execute implementation. Do not enable provider API calls. Do not enable AG execution. Do not authorize founder-gated actions.",
+      "requested_by": "Michael Hoch",
+      "risk_tier": "R1",
+      "product_id": "cyberqrg-ai",
+      "allowed_scope": [
+        "planning",
+        "scaffold"
+      ],
+      "blocked_scope": [
+        "production_release",
+        "monetization",
+        "public_claims",
+        "customer_data",
+        "live_credentials",
+        "destructive_actions"
+      ],
+      "founder_approval_required": false,
+      "status": "COMPLETED",
+      "created_at": "2026-07-03T14:24:02.040332Z",
+      "updated_at": "2026-07-03T14:24:12.996389Z",
+      "evidence_path": "",
+      "mission_signature": "SIGNING_PARTIAL_PENDING_FOUNDER_KEY",
+      "signature_status": "VALID",
+      "sanitization_status": "PASS"
+    },
+    {
+      "mission_id": "mission-c7cf927a",
+      "title": "Ambiguous deployment planning request",
+      "intent": "Data envelope: Create a plan for moving a future product feature toward staging and possibly public release if ready. Determine the correct risk tier and founder gate requirements. Do not execute deployment. Do not enable provider API calls. Do not enable AG execution. Do not authorize release, DNS changes, customer data, monetization, or public claims.",
+      "requested_by": "Michael Hoch",
+      "risk_tier": "R1",
+      "product_id": "cyberqrg-ai",
+      "allowed_scope": [
+        "planning",
+        "scaffold"
+      ],
+      "blocked_scope": [
+        "production_release",
+        "monetization",
+        "public_claims",
+        "customer_data",
+        "live_credentials",
+        "destructive_actions"
+      ],
+      "founder_approval_required": false,
+      "status": "ESCALATED_TO_FOUNDER",
+      "created_at": "2026-07-03T14:24:05.394075Z",
+      "updated_at": "2026-07-03T14:24:12.996394Z",
+      "evidence_path": "",
+      "mission_signature": "SIGNING_PARTIAL_PENDING_FOUNDER_KEY",
+      "signature_status": "VALID",
+      "sanitization_status": "PASS"
+    },
+    {
+      "mission_id": "mission-5f91ad9f",
+      "title": "CyberQRG-AI R2 local scaffold task decomposition variant",
+      "intent": "Data envelope: Create an alternate bounded task decomposition for CyberQRG-AI R2 local offline scaffold focusing on local UI shell, schemas, tests, security posture, and evidence. Do not execute build. Do not deploy. Do not enable provider API calls. Do not enable AG execution. Do not authorize release, monetization, public claims, DNS changes, live credentials, customer data handling, or destructive actions.",
+      "requested_by": "Michael Hoch",
+      "risk_tier": "R1",
+      "product_id": "cyberqrg-ai",
+      "allowed_scope": [
+        "planning",
+        "scaffold"
+      ],
+      "blocked_scope": [
+        "production_release",
+        "monetization",
+        "public_claims",
+        "customer_data",
+        "live_credentials",
+        "destructive_actions"
+      ],
+      "founder_approval_required": false,
+      "status": "COMPLETED",
+      "created_at": "2026-07-03T14:24:08.366912Z",
+      "updated_at": "2026-07-03T14:24:12.996398Z",
       "evidence_path": "",
       "mission_signature": "SIGNING_PARTIAL_PENDING_FOUNDER_KEY",
       "signature_status": "VALID",
