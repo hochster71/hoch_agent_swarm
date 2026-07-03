@@ -1,0 +1,32 @@
+{
+  "generated_at": "2026-07-03T06:24:00Z",
+  "routing": [
+    {
+      "route_id": "scoring_report",
+      "task_type": "scoring_report",
+      "tier": "light",
+      "default_model_class": "local",
+      "allowed_models": ["qwen2.5:1.5b-instruct", "google/gemma-4-12b-qat"],
+      "cost_tier": "LOCAL_FREE",
+      "approval_required": false
+    },
+    {
+      "route_id": "roadmap_generation",
+      "task_type": "roadmap_generation",
+      "tier": "light",
+      "default_model_class": "local",
+      "allowed_models": ["qwen2.5:1.5b-instruct", "google/gemma-4-12b-qat"],
+      "cost_tier": "LOCAL_FREE",
+      "approval_required": false
+    },
+    {
+      "route_id": "gate_package_generation",
+      "task_type": "gate_package_generation",
+      "tier": "heavy",
+      "default_model_class": "tunnel",
+      "allowed_models": ["google/gemma-4-12b-qat", "qwen2.5:1.5b-instruct"],
+      "cost_tier": "LOCAL_FREE",
+      "approval_required": false
+    }
+  ]
+}

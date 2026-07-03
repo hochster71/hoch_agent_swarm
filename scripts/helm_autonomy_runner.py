@@ -19,48 +19,54 @@ def get_current_utc():
 def log_message(msg):
     print(f"[{get_current_utc()}] [HELM-RUNNER] {msg}")
 
-def query_llm(prompt):
-    # Try Native Ollama first
-    try:
-        log_message("Attempting native inference with qwen2.5:1.5b-instruct on HOCH-200...")
-        conn = http.client.HTTPConnection("localhost", 11434, timeout=90)
-        payload = json.dumps({
-            "model": "qwen2.5:1.5b-instruct",
-            "messages": [{"role": "user", "content": prompt}],
-            "temperature": 0.2,
-            "stream": False
-        })
-        conn.request("POST", "/v1/chat/completions", payload, {
-            "Content-Type": "application/json"
-        })
-        res = conn.getresponse()
-        if res.status == 200:
-            data = json.loads(res.read().decode())
-            return data["choices"][0]["message"]["content"]
-    except Exception as e:
-        log_message(f"Native Ollama inference failed: {e}")
-        
-    # Fallback to LM Studio reverse tunnel
-    try:
-        log_message("Falling back to LM Studio reverse tunnel with google/gemma-4-12b-qat...")
-        conn = http.client.HTTPConnection("localhost", 1234, timeout=10)
-        payload = json.dumps({
-            "model": "google/gemma-4-12b-qat",
-            "messages": [{"role": "user", "content": prompt}],
-            "temperature": 0.2,
-            "stream": False
-        })
-        conn.request("POST", "/v1/chat/completions", payload, {
-            "Content-Type": "application/json"
-        })
-        res = conn.getresponse()
-        data = json.loads(res.read().decode())
-        return data["choices"][0]["message"]["content"]
-    except Exception as e:
-        log_message(f"LM Studio fallback also failed: {e}")
-        return f"Error executing task: {e}"
+def query_llm(prompt, tier="light"):
+    # Target configurations
+    native_cfg = {
+        "host": "localhost",
+        "port": 11434,
+        "model": "qwen2.5:1.5b-instruct",
+        "timeout": 90,
+        "label": "Native Ollama qwen2.5:1.5b-instruct"
+    }
+    tunnel_cfg = {
+        "host": "localhost",
+        "port": 1234,
+        "model": "google/gemma-4-12b-qat",
+        "timeout": 90,
+        "label": "LM Studio tunnel google/gemma-4-12b-qat"
+    }
 
-def execute_scoring_task(task_desc):
+    # Route order based on tier
+    if tier == "heavy":
+        steps = [tunnel_cfg, native_cfg]
+    else:
+        steps = [native_cfg, tunnel_cfg]
+
+    for step in steps:
+        try:
+            log_message(f"Attempting inference via {step['label']} on port {step['port']}...")
+            conn = http.client.HTTPConnection(step["host"], step["port"], timeout=step["timeout"])
+            payload = json.dumps({
+                "model": step["model"],
+                "messages": [{"role": "user", "content": prompt}],
+                "temperature": 0.2,
+                "stream": False
+            })
+            conn.request("POST", "/v1/chat/completions", payload, {
+                "Content-Type": "application/json"
+            })
+            res = conn.getresponse()
+            if res.status == 200:
+                data = json.loads(res.read().decode())
+                return data["choices"][0]["message"]["content"]
+            else:
+                log_message(f"Adapter port {step['port']} returned HTTP {res.status}")
+        except Exception as e:
+            log_message(f"Inference on port {step['port']} failed: {e}")
+
+    return "Error: All routed model backends failed."
+
+def execute_scoring_task(task_desc, tier="light"):
     log_message("Executing product candidate scoring task...")
     prompt = f"""
 Analyze the following Product 002 candidates against these HASF mission filters:
@@ -72,16 +78,28 @@ Analyze the following Product 002 candidates against these HASF mission filters:
 Provide a markdown report ranking them 1-4 with a brief utility score and rationale based on actual human utility, automation capability, and security impact.
 Respond ONLY with clean markdown.
 """
-    return query_llm(prompt)
+    return query_llm(prompt, tier=tier)
 
-def execute_roadmap_task(task_desc):
+def execute_roadmap_task(task_desc, tier="light"):
     log_message("Executing CyberQRG-AI roadmap generation task...")
     prompt = """
 Generate a development roadmap for Product 002: CyberQRG-AI (AI security QR code vulnerability scanner).
 Detail key phases for a local mobile-first implementation (e.g. Phase 1: Camera capture & API setup, Phase 2: Redirect parsing, Phase 3: Local LLM evaluation integration).
 Respond ONLY with clean markdown.
 """
-    return query_llm(prompt)
+    return query_llm(prompt, tier=tier)
+
+def execute_gate_package_task(task_desc, tier="heavy"):
+    log_message("Executing Product 002 candidate gate package task...")
+    prompt = """
+Generate a comprehensive Product 002 gate review package for CyberQRG-AI.
+Detail:
+1. Candidate Security Profile (OWASP Top 10 mobile concerns for QR scanner).
+2. Automation workflow evaluation.
+3. Live validation path (e.g. founder approval gated link).
+Respond ONLY with clean markdown.
+"""
+    return query_llm(prompt, tier=tier)
 
 def main():
     log_message("HELM Autonomy Runner Daemon started.")
@@ -116,6 +134,20 @@ def main():
             
             log_message(f"Found queued task: {task_id} - '{task['description']}'")
             
+            # Resolve capacity tier
+            tier = "light"
+            try:
+                if REGISTRY_FILE.exists():
+                    with open(REGISTRY_FILE, "r") as rf:
+                        reg = json.load(rf)
+                    agent_name = task.get("assigned_agent")
+                    if agent_name in reg:
+                        tier = reg[agent_name].get("capacity_tier", "light")
+            except Exception as e:
+                log_message(f"Error loading agent registry for tiering: {e}")
+                
+            log_message(f"Resolved capacity tier: {tier} for agent: {task.get('assigned_agent')}")
+            
             # Update state to RUNNING
             with open(STATE_FILE, "w") as f:
                 json.dump({
@@ -133,11 +165,14 @@ def main():
             result_text = ""
             file_name = "autonomous-task-proof.md"
             if "scoring report" in task["description"].lower():
-                result_text = execute_scoring_task(task["description"])
+                result_text = execute_scoring_task(task["description"], tier=tier)
                 file_name = "autonomous-task-proof.md"
             elif "roadmap" in task["description"].lower():
-                result_text = execute_roadmap_task(task["description"])
+                result_text = execute_roadmap_task(task["description"], tier=tier)
                 file_name = "cyberqrg-roadmap-proof.md"
+            elif "gate" in task["description"].lower() or "package" in task["description"].lower():
+                result_text = execute_gate_package_task(task["description"], tier=tier)
+                file_name = "cyberqrg-gate-package.md"
             else:
                 result_text = f"Unmapped task template: {task['description']}"
                 

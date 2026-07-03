@@ -5,11 +5,27 @@
       "evaluate_candidates",
       "generate_reports"
     ],
+    "capacity_tier": "light",
     "model": "qwen2.5:1.5b-instruct",
     "provider": "ollama_native",
     "fallback_model": "google/gemma-4-12b-qat",
     "fallback_provider": "lmstudio",
     "status": "READY",
-    "last_heartbeat": "2026-07-03T06:13:42.655912Z"
+    "last_heartbeat": "2026-07-03T06:26:32.732460Z"
+  },
+  "hasf_builder_agent": {
+    "role": "HASF Software Builder Agent",
+    "capabilities": [
+      "code_generation",
+      "remediation",
+      "architecture"
+    ],
+    "capacity_tier": "heavy",
+    "model": "google/gemma-4-12b-qat",
+    "provider": "lmstudio",
+    "fallback_model": "qwen2.5:1.5b-instruct",
+    "fallback_provider": "ollama_native",
+    "status": "READY",
+    "last_heartbeat": "2026-07-03T06:26:32.732479Z"
   }
 }
