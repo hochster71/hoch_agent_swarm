@@ -70,6 +70,11 @@ class PromptRegistry:
         else:
             self.status = "FAIL_CLOSED"
 
+        # Hard fail-closed check on manifest validation
+        manifest_health = self.get_manifest_health()
+        if manifest_health.get("validation_status") != "PASS":
+            self.status = "FAIL_CLOSED"
+
         self.load_promptops_store()
 
         security_critical_categories = {
@@ -211,6 +216,60 @@ class PromptRegistry:
                 ledger_path.write_text(json.dumps(data, indent=2), encoding="utf-8")
             except Exception:
                 pass
+
+    def get_manifest_health(self) -> Dict[str, Any]:
+        manifest_path = self.base_dir / "data" / "prompt_registry" / "agents.manifest.json"
+        
+        def _fail_closed(reason: str) -> Dict[str, Any]:
+            # Security-preserving: still FAIL_CLOSED (never run an unvalidated registry),
+            # but carry a specific, loud reason so a sync gap on a host is diagnosable
+            # instead of looking like a mystery outage. Distinguishes "manifest not on
+            # this host" from "manifest present but failed validation".
+            print(f"[prompt_registry] FAIL_CLOSED: {reason} (manifest_path={manifest_path})")
+            return {
+                "name": "HOCH Agent Capability Registry",
+                "version": "4.0.0",
+                "created_for": "HOCH Agent Swarm",
+                "total_agents": 0,
+                "active_agents": 0,
+                "deprecated_agents": 0,
+                "duplicate_count": 0,
+                "broken_link_count": 0,
+                "last_validation_timestamp": "",
+                "validation_status": "FAIL_CLOSED",
+                "fail_closed_reason": reason,
+            }
+
+        if not manifest_path.exists():
+            return _fail_closed("MANIFEST_MISSING_ON_HOST")
+
+        try:
+            data = json.loads(manifest_path.read_text(encoding="utf-8"))
+            required_keys = [
+                "total_agents", "active_agents", "deprecated_agents",
+                "duplicate_count", "broken_link_count",
+                "last_validation_timestamp", "validation_status"
+            ]
+            if not all(key in data for key in required_keys):
+                return _fail_closed("MANIFEST_SCHEMA_INCOMPLETE")
+
+            if data.get("validation_status") != "PASS":
+                return _fail_closed("VALIDATION_FAILED")
+                
+            return {
+                "name": data.get("name", "HOCH Agent Capability Registry"),
+                "version": data.get("version", "4.0.0"),
+                "created_for": data.get("created_for", "HOCH Agent Swarm"),
+                "total_agents": data["total_agents"],
+                "active_agents": data["active_agents"],
+                "deprecated_agents": data["deprecated_agents"],
+                "duplicate_count": data["duplicate_count"],
+                "broken_link_count": data["broken_link_count"],
+                "last_validation_timestamp": data["last_validation_timestamp"],
+                "validation_status": data["validation_status"]
+            }
+        except Exception:
+            return fail_closed_data
 
     def write_report(self, source_used: Optional[str]):
         report_dir = self.base_dir / "artifacts" / "qa" / "prompt_registry"
