@@ -17,3 +17,5 @@ $PY -c "from backend.brain_convergence.local_model_bridge import status; import 
 $PY -m backend.brain_convergence.improve_run 3 2>/dev/null || echo "  improve_run: skipped"
 # 2. SELECT/PROMOTE + converge (mechanical, always runs)
 $PY -m backend.brain_convergence.run_m0 2>/dev/null | tail -1
+# 3. publish the live feed for the moonshot console
+$PY scripts/write_brain_live.py 2>/dev/null || true

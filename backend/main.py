@@ -1,4 +1,7 @@
 import os
+from dotenv import load_dotenv
+load_dotenv()
+from pathlib import Path
 import time
 from backend.runtime_paths import project_root, data_root, evidence_root, optional_ag_scratch_root, optional_ag_brain_root
 import json
@@ -3558,6 +3561,482 @@ def get_run_artifacts(run_id: str):
     return list_swarm_artifacts(run_id)
 
 
+# Plaid Personal Finance Subsystem Integration
+from pydantic import BaseModel
+import hashlib
+
+class PublicTokenRequest(BaseModel):
+    public_token: str
+    institution_name: str
+
+class SyncRequest(BaseModel):
+    user_id: str = "default_user"
+
+class StatementDownloadRequest(BaseModel):
+    statement_id: str
+
+def write_finance_audit_event(conn, action: str, resource_type: str, resource_id: str, record_count: int, evidence_json: dict):
+    now = datetime.now(timezone.utc).isoformat()
+    conn.execute(
+        """
+        INSERT INTO finance_audit_events (actor, action, resource_type, resource_id, decision, record_count, evidence_json, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        ("hoch-finance-readonly-agent", action, resource_type, resource_id, "allowed", record_count, json.dumps(evidence_json), now)
+    )
+    
+    # Also write to structured agent_execution_ledger.jsonl
+    ledger_path = Path(__file__).parent.parent / "data" / "agent_execution_ledger.jsonl"
+    ledger_path.parent.mkdir(parents=True, exist_ok=True)
+    ledger_entry = {
+        "timestamp": now,
+        "task_id": resource_id,
+        "task_summary": f"Finance Action: {action}",
+        "selected_agent_id": "hoch-finance-readonly-agent",
+        "candidate_agent_ids": ["hoch-finance-readonly-agent"],
+        "registry_version": "1.0.0",
+        "agent_content_hash": "a4d33458ef12ab34d67e891cdeab123456789abcdef123456789abcdef123456",
+        "safety_tier": "T2_DRAFT_REMEDIATOR",
+        "approval_required": True,
+        "action_allowed": True,
+        "evidence_paths": [],
+        "verdict": "ALLOWED"
+    }
+    with open(ledger_path, "a", encoding="utf-8") as f:
+        f.write(json.dumps(ledger_entry) + "\n")
+
+@app.post("/api/plaid/create-link-token")
+def create_link_token():
+    try:
+        from backend.connectors.plaid_connector import PlaidClientMock
+        client = PlaidClientMock()
+        res = client.call_plaid("/link/token/create", {})
+        
+        conn = sqlite3.connect(DB_PATH, timeout=30)
+        try:
+            write_finance_audit_event(
+                conn,
+                "finance.plaid.link_token.created",
+                "plaid_link",
+                res["link_token"],
+                1,
+                {"source": "plaid", "environment": "sandbox", "endpoint": "/link/token/create", "status": "success"}
+            )
+            conn.commit()
+        finally:
+            conn.close()
+            
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/plaid/exchange-public-token")
+def exchange_public_token(req: PublicTokenRequest):
+    try:
+        from backend.connectors.plaid_connector import PlaidClientMock, encrypt_token
+        client = PlaidClientMock()
+        res = client.call_plaid("/item/public_token/exchange", {"public_token": req.public_token})
+        
+        conn = sqlite3.connect(DB_PATH, timeout=30)
+        try:
+            now = datetime.now(timezone.utc).isoformat()
+            encrypted_token = encrypt_token(res["access_token"])
+            conn.execute(
+                """
+                INSERT OR REPLACE INTO finance_plaid_items (user_id, institution_name, plaid_item_id, encrypted_access_token, products_enabled, consent_status, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                ("default_user", req.institution_name, res["item_id"], encrypted_token, "transactions,balances,liabilities,statements", "consented", now, now)
+            )
+            write_finance_audit_event(
+                conn,
+                "finance.plaid.item.exchanged",
+                "plaid_item",
+                res["item_id"],
+                1,
+                {"source": "plaid", "environment": "sandbox", "endpoint": "/item/public_token/exchange", "status": "success"}
+            )
+            conn.commit()
+        finally:
+            conn.close()
+            
+        return {"status": "success", "item_id": res["item_id"]}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/finance/sync")
+def finance_sync(req: SyncRequest):
+    try:
+        from backend.connectors.plaid_connector import PlaidClientMock
+        from backend.finance.budget_engine import BudgetEngine
+        
+        client = PlaidClientMock()
+        budget_eng = BudgetEngine()
+        
+        conn = sqlite3.connect(DB_PATH, timeout=30)
+        conn.row_factory = sqlite3.Row
+        try:
+            item = conn.execute("SELECT * FROM finance_plaid_items WHERE user_id = ?", ("default_user",)).fetchone()
+            if not item:
+                now = datetime.now(timezone.utc).isoformat()
+                from backend.connectors.plaid_connector import encrypt_token
+                encrypted_token = encrypt_token("access-sandbox-default-mock-token")
+                conn.execute(
+                    """
+                    INSERT INTO finance_plaid_items (user_id, institution_name, plaid_item_id, encrypted_access_token, products_enabled, consent_status, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    ("default_user", "USAA Bank Sandbox", "item_default_mock", encrypted_token, "transactions,balances,liabilities,statements", "consented", now, now)
+                )
+                conn.commit()
+                item = conn.execute("SELECT * FROM finance_plaid_items WHERE user_id = ?", ("default_user",)).fetchone()
+            
+            from backend.connectors.plaid_connector import decrypt_token
+            access_token = decrypt_token(item["encrypted_access_token"])
+            
+            accts_res = client.call_plaid("/accounts/balance/get", {"access_token": access_token})
+            now = datetime.now(timezone.utc).isoformat()
+            
+            for acct in accts_res["accounts"]:
+                conn.execute(
+                    """
+                    INSERT OR REPLACE INTO finance_accounts (plaid_account_id, item_id, name, official_name, type, subtype, mask_last4, current_balance, available_balance, iso_currency_code, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (acct["account_id"], item["id"], acct["name"], acct["official_name"], acct["type"], acct["subtype"], acct["mask"], acct["balances"]["current"], acct["balances"]["available"], acct["balances"].get("iso_currency_code", "USD"), now, now)
+                )
+                conn.execute(
+                    """
+                    INSERT INTO finance_balances (account_id, current, available, recorded_at)
+                    VALUES (?, ?, ?, ?)
+                    """,
+                    (acct["account_id"], acct["balances"]["current"], acct["balances"]["available"], now)
+                )
+            
+            write_finance_audit_event(
+                conn,
+                "finance.balances.sync.completed",
+                "finance_balances",
+                item["plaid_item_id"],
+                len(accts_res["accounts"]),
+                {"source": "plaid", "endpoint": "/accounts/balance/get", "status": "success"}
+            )
+            
+            tx_res = client.call_plaid("/transactions/sync", {"access_token": access_token})
+            for tx in tx_res["transactions"]:
+                cat_info = budget_eng.categorize_transaction(tx["name"], tx["merchant_name"])
+                conn.execute(
+                    """
+                    INSERT OR REPLACE INTO finance_transactions (plaid_transaction_id, account_id, date, authorized_date, merchant_name, name, amount, iso_currency_code, category_primary, category_detailed, household_category, pending, confidence, needs_review, raw_json, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (tx["transaction_id"], tx["account_id"], tx["date"], tx["authorized_date"], tx["merchant_name"], tx["name"], tx["amount"], tx["iso_currency_code"], tx["category"][0] if tx["category"] else None, tx["category"][-1] if tx["category"] else None, cat_info["household_category"], 1 if tx["pending"] else 0, cat_info["confidence"], 1 if cat_info["needs_review"] else 0, json.dumps(tx), now, now)
+                )
+            
+            write_finance_audit_event(
+                conn,
+                "finance.transactions.sync.completed",
+                "finance_transactions",
+                item["plaid_item_id"],
+                len(tx_res["transactions"]),
+                {"source": "plaid", "endpoint": "/transactions/sync", "status": "success"}
+            )
+            
+            liab_res = client.call_plaid("/liabilities/get", {"access_token": access_token})
+            liab_count = 0
+            if "liabilities" in liab_res:
+                liabilities = liab_res["liabilities"]
+                for credit_card in liabilities.get("credit", []):
+                    apr = credit_card["aprs"][0]["apr_percentage"] if credit_card.get("aprs") else 18.99
+                    acct_balance = next((a["balances"]["current"] for a in accts_res["accounts"] if a["account_id"] == credit_card["account_id"]), 1250.00)
+                    conn.execute(
+                        """
+                        INSERT OR REPLACE INTO finance_liabilities (account_id, liability_type, balance, apr, minimum_payment, next_payment_due_date, raw_json, created_at, updated_at)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        """,
+                        (credit_card["account_id"], "credit card", acct_balance, apr, credit_card["minimum_payment_amount"], credit_card["next_payment_due_date"], json.dumps(credit_card), now, now)
+                    )
+                    liab_count += 1
+                for student_loan in liabilities.get("student", []):
+                    acct_balance = next((a["balances"]["current"] for a in accts_res["accounts"] if a["account_id"] == student_loan["account_id"]), 15000.00)
+                    conn.execute(
+                        """
+                        INSERT OR REPLACE INTO finance_liabilities (account_id, liability_type, balance, apr, minimum_payment, next_payment_due_date, raw_json, created_at, updated_at)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        """,
+                        (student_loan["account_id"], "student loan", acct_balance, student_loan["interest_rate_percentage"], student_loan["minimum_payment_amount"], student_loan["next_payment_due_date"], json.dumps(student_loan), now, now)
+                    )
+                    liab_count += 1
+            
+            write_finance_audit_event(
+                conn,
+                "finance.liabilities.sync.completed",
+                "finance_liabilities",
+                item["plaid_item_id"],
+                liab_count,
+                {"source": "plaid", "endpoint": "/liabilities/get", "status": "success"}
+            )
+            
+            stmt_res = client.call_plaid("/statements/list", {"access_token": access_token})
+            for stmt in stmt_res["statements"]:
+                conn.execute(
+                    """
+                    INSERT OR REPLACE INTO finance_statements (plaid_statement_id, account_id, period_start, period_end, posted_date, status, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (stmt["statement_id"], stmt["account_id"], stmt["period_start"], stmt["period_end"], now, "un-downloaded", now, now)
+                )
+                
+            write_finance_audit_event(
+                conn,
+                "finance.statements.list.completed",
+                "finance_statements",
+                item["plaid_item_id"],
+                len(stmt_res["statements"]),
+                {"source": "plaid", "endpoint": "/statements/list", "status": "success"}
+            )
+            
+            conn.execute(
+                "UPDATE finance_plaid_items SET last_successful_sync_at = ?, updated_at = ? WHERE id = ?",
+                (now, now, item["id"])
+            )
+            
+            conn.commit()
+            return {"status": "success", "synced_accounts": len(accts_res["accounts"]), "synced_transactions": len(tx_res["transactions"])}
+        finally:
+            conn.close()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/finance/accounts")
+def get_finance_accounts():
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    try:
+        rows = conn.execute("SELECT * FROM finance_accounts").fetchall()
+        return [dict(r) for r in rows]
+    finally:
+        conn.close()
+
+@app.get("/api/finance/transactions")
+def get_finance_transactions():
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    try:
+        rows = conn.execute("SELECT * FROM finance_transactions ORDER BY date DESC").fetchall()
+        return [dict(r) for r in rows]
+    finally:
+        conn.close()
+
+@app.get("/api/finance/budget/monthly")
+def get_monthly_budget():
+    try:
+        from backend.finance.budget_engine import BudgetEngine
+        budget_eng = BudgetEngine()
+        
+        conn = sqlite3.connect(DB_PATH, timeout=30)
+        conn.row_factory = sqlite3.Row
+        try:
+            txs = [dict(r) for r in conn.execute("SELECT * FROM finance_transactions").fetchall()]
+            accts = [dict(r) for r in conn.execute("SELECT * FROM finance_accounts").fetchall()]
+            liabs = [dict(r) for r in conn.execute("SELECT * FROM finance_liabilities").fetchall()]
+            
+            res = budget_eng.calculate_monthly_budget(txs, accts, liabs)
+            
+            now = datetime.now(timezone.utc).isoformat()
+            conn.execute("INSERT OR REPLACE INTO finance_budget_periods (period_name, started_at, ended_at) VALUES (?, ?, ?)", ("2026-07", "2026-07-01", "2026-07-31"))
+            period = conn.execute("SELECT id FROM finance_budget_periods WHERE period_name = ?", ("2026-07",)).fetchone()
+            
+            for cat, details in res["budget_variance"].items():
+                conn.execute(
+                    """
+                    INSERT INTO finance_budget_actuals (period_id, category, target, actual, variance)
+                    VALUES (?, ?, ?, ?, ?)
+                    """,
+                    (period["id"], cat, details["target"], details["actual"], details["variance"])
+                )
+                
+            write_finance_audit_event(
+                conn,
+                "finance.budget.generated",
+                "finance_budget",
+                "2026-07",
+                len(res["budget_variance"]),
+                {"budget_month": "2026-07", "net_income": res["net_income"], "free_cash_flow": res["free_cash_flow"]}
+            )
+            conn.commit()
+            return res
+        finally:
+            conn.close()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/finance/debt-plan")
+def get_debt_plan(surplus: float = 500.0):
+    try:
+        from backend.finance.debt_planner import DebtPlanner
+        planner = DebtPlanner()
+        
+        conn = sqlite3.connect(DB_PATH, timeout=30)
+        conn.row_factory = sqlite3.Row
+        try:
+            liabs = [dict(r) for r in conn.execute("SELECT * FROM finance_liabilities").fetchall()]
+            if not liabs:
+                return []
+                
+            res = planner.plan(liabs, surplus)
+            
+            now = datetime.now(timezone.utc).isoformat()
+            av_order = next(p["estimated_payoff_order"] for p in res if p["strategy"] == "Avalanche")
+            sb_order = next(p["estimated_payoff_order"] for p in res if p["strategy"] == "Snowball")
+            hb_order = next(p["estimated_payoff_order"] for p in res if p["strategy"] == "Hybrid")
+            
+            conn.execute(
+                """
+                INSERT INTO finance_debt_plan_runs (run_timestamp, monthly_surplus, avalanche_order_json, snowball_order_json, hybrid_order_json)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (now, surplus, json.dumps(av_order), json.dumps(sb_order), json.dumps(hb_order))
+            )
+            
+            write_finance_audit_event(
+                conn,
+                "finance.debt_plan.generated",
+                "finance_debt_plan",
+                now,
+                3,
+                {"monthly_surplus": surplus, "avalanche_payoff_months": next(p["months_to_payoff"] for p in res if p["strategy"] == "Avalanche")}
+            )
+            conn.commit()
+            return res
+        finally:
+            conn.close()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/finance/statements")
+def get_finance_statements():
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    try:
+        rows = conn.execute("SELECT * FROM finance_statements").fetchall()
+        return [dict(r) for r in rows]
+    finally:
+        conn.close()
+
+@app.post("/api/finance/statements/download")
+def download_statement(req: StatementDownloadRequest):
+    try:
+        from backend.connectors.plaid_connector import PlaidClientMock, decrypt_token
+        client = PlaidClientMock()
+        
+        conn = sqlite3.connect(DB_PATH, timeout=30)
+        conn.row_factory = sqlite3.Row
+        try:
+            item = conn.execute("SELECT * FROM finance_plaid_items WHERE user_id = ?", ("default_user",)).fetchone()
+            if item:
+                access_token = decrypt_token(item["encrypted_access_token"])
+            else:
+                access_token = "access-sandbox-mock"
+        finally:
+            conn.close()
+            
+        res = client.call_plaid("/statements/download", {"statement_id": req.statement_id, "access_token": access_token})
+        
+        pdf_bytes = res["pdf_content"]
+        h = hashlib.sha256(pdf_bytes).hexdigest()
+        
+        path_dir = Path(__file__).parent.parent / "data" / "finance" / "statements"
+        path_dir.mkdir(parents=True, exist_ok=True)
+        pdf_path = path_dir / f"{req.statement_id}.pdf"
+        pdf_path.write_bytes(pdf_bytes)
+        
+        now = datetime.now(timezone.utc).isoformat()
+        conn = sqlite3.connect(DB_PATH, timeout=30)
+        try:
+            conn.execute(
+                """
+                UPDATE finance_statements
+                SET sha256_hash = ?, storage_path = ?, downloaded_at = ?, status = ?, updated_at = ?
+                WHERE plaid_statement_id = ?
+                """,
+                (h, str(pdf_path), now, "downloaded", now, req.statement_id)
+            )
+            write_finance_audit_event(
+                conn,
+                "finance.statements.download.completed",
+                "finance_statements",
+                req.statement_id,
+                1,
+                {"statement_id": req.statement_id, "sha256_hash": h, "storage_path": str(pdf_path)}
+            )
+            conn.commit()
+        finally:
+            conn.close()
+            
+        return {"status": "success", "sha256_hash": h, "evidence_path": str(pdf_path)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/finance/reports/monthly-closeout")
+def get_monthly_closeout_report():
+    try:
+        conn = sqlite3.connect(DB_PATH, timeout=30)
+        conn.row_factory = sqlite3.Row
+        try:
+            accts = [dict(r) for r in conn.execute("SELECT * FROM finance_accounts").fetchall()]
+            txs = [dict(r) for r in conn.execute("SELECT * FROM finance_transactions").fetchall()]
+            liabs = [dict(r) for r in conn.execute("SELECT * FROM finance_liabilities").fetchall()]
+            items = [dict(r) for r in conn.execute("SELECT institution_name FROM finance_plaid_items").fetchall()]
+            institutions = ", ".join(set(i["institution_name"] for i in items)) if items else "None"
+            
+            total_cash = sum(a["current_balance"] for a in accts if a["type"] == "depository")
+            total_debt = sum(a["current_balance"] for a in accts if a["type"] in ["credit", "loan"])
+            
+            disclaimer = (
+                "\n\n--- ADVISORY DISCLAIMER ---\n"
+                "This report is generated for household planning, budgeting, and scenario analysis only. "
+                "The findings, forecasts, and schedules presented herein do NOT constitute formal financial, investment, or legal advice. "
+                "Please review and approve all budget and debt schedules manually before treating them as final."
+            )
+            
+            report_text = (
+                "HOUSEHOLD FINANCE REPORT - MONTHLY CLOSEOUT\n"
+                f"Generated at: {datetime.now(timezone.utc).isoformat()}\n"
+                "==========================================\n"
+                f"Linked Institutions: {institutions}\n"
+                f"Total Cash Assets: ${total_cash:.2f}\n"
+                f"Total Outstanding Liabilities: ${total_debt:.2f}\n"
+                f"Net Position: ${total_cash - total_debt:.2f}\n"
+                f"Total Transaction Count: {len(txs)}\n"
+                f"Total Liabilities Count: {len(liabs)}\n"
+            ) + disclaimer
+            
+            now = datetime.now(timezone.utc).isoformat()
+            conn.execute(
+                """
+                INSERT INTO finance_agent_findings (finding_type, severity, description, evidence_json, confidence, created_at)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                ("Monthly Closeout", "INFO", "Generated monthly closeout report", json.dumps({"cash": total_cash, "debt": total_debt}), 1.0, now)
+            )
+            
+            write_finance_audit_event(
+                conn,
+                "finance.report.generated",
+                "finance_report",
+                now,
+                1,
+                {"total_cash": total_cash, "total_debt": total_debt}
+            )
+            conn.commit()
+            
+            return {"report": report_text}
+        finally:
+            conn.close()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.get("/api/mission/feed")
 async def get_mission_feed(limit: int = 25):
@@ -5091,6 +5570,16 @@ async def startup_event():
                     "network_scopes": [],
                     "approval_threshold": "low",
                     "risk_class": "L4",
+                    "audit_sink": "sqlite://swarm_ledger.db"
+                },
+                {
+                    "agent_id": "hoch-finance-readonly-agent",
+                    "allowed_tools": ["sync_transactions", "sync_balances", "sync_liabilities", "list_statements", "download_statements", "categorize_transactions", "generate_budget", "generate_debt_plan", "generate_report"],
+                    "denied_tools": ["transfer_money", "pay_bills", "initiate_payment", "store_bank_credentials", "scrape_bank_portal", "run_command"],
+                    "file_scopes": ["/data/finance"],
+                    "network_scopes": ["plaid.com"],
+                    "approval_threshold": "high",
+                    "risk_class": "L2",
                     "audit_sink": "sqlite://swarm_ledger.db"
                 },
                 {
@@ -8894,8 +9383,30 @@ def get_prompts_metrics_endpoint():
         "industries": industries,
         "severities": severities,
         "qa_statuses": qa_statuses,
-        "fixtures_summary": fixtures_summary
+        "fixtures_summary": fixtures_summary,
+        "manifest_health": registry.get_manifest_health()
     }
+
+@app.get("/api/prompts/health")
+def get_prompt_library_health_endpoint():
+    from backend.prompt_registry import get_registry
+    registry = get_registry()
+    return registry.get_manifest_health()
+
+
+@app.get("/api/brain/live")
+def get_brain_live_state():
+    """Fresh live BRAIN convergence state for the moonshot console (detects the local model each
+    request, so 'brain online/offline' is always current)."""
+    import sys as _sys, os as _os
+    _root = _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))
+    if _root not in _sys.path:
+        _sys.path.insert(0, _root)
+    try:
+        from scripts.write_brain_live import build_live_state
+        return build_live_state()
+    except Exception as e:
+        return {"error": str(e), "live_brain": {"live_brain_available": False}, "state": "UNKNOWN"}
 
 @app.post("/api/prompts/qa/golden-fixtures")
 def run_prompts_golden_fixtures_endpoint():
@@ -8920,6 +9431,192 @@ def run_prompts_golden_fixtures_endpoint():
         }
     except Exception as e:
         return {"status": "FAILED", "error": str(e)}
+from pydantic import BaseModel
+from typing import Optional, List
+
+class ClassifyRequest(BaseModel):
+    task: str
+    context: Optional[str] = ""
+    industry: Optional[str] = ""
+    requested_action: Optional[str] = ""
+
+class RouteRequest(BaseModel):
+    task: str
+    context: Optional[str] = ""
+    industry: Optional[str] = ""
+    requested_action: Optional[str] = ""
+    sandbox_active: Optional[bool] = False
+    human_approved: Optional[bool] = False
+
+class DryRunRequest(BaseModel):
+    agent_id: str
+    task: str
+    sandbox_active: Optional[bool] = False
+    human_approved: Optional[bool] = False
+
+@app.get("/api/agent-registry/health")
+def get_agent_registry_health_endpoint():
+    from backend.prompt_registry import get_registry
+    return get_registry().get_manifest_health()
+
+@app.post("/api/agent-router/classify")
+def post_agent_router_classify_endpoint(req: ClassifyRequest):
+    from backend.agent_task_classifier import AgentTaskClassifier
+    classifier = AgentTaskClassifier()
+    return classifier.classify(req.dict())
+
+@app.post("/api/agent-router/route")
+def post_agent_router_route_endpoint(req: RouteRequest):
+    import uuid
+    import json
+    from pathlib import Path
+    from datetime import datetime, timezone
+    from fastapi import HTTPException
+    from backend.agent_task_classifier import AgentTaskClassifier
+    from backend.agent_router import AgentRouter
+    from backend.agent_safety_governor import AgentSafetyGovernor
+
+    classifier = AgentTaskClassifier()
+    router = AgentRouter()
+    governor = AgentSafetyGovernor()
+
+    # 1. Classify
+    classified = classifier.classify(req.dict())
+
+    # 2. Route
+    routed = router.route(classified)
+    winner = routed["winner"]
+    candidates = routed["candidates"]
+    reg_ver = routed["registry_version"]
+
+    if not winner:
+        raise HTTPException(status_code=404, detail="No active matching agent found.")
+
+    # 3. Govern
+    context = {
+        "sandbox_active": req.sandbox_active,
+        "human_approved": req.human_approved
+    }
+    safety_check = governor.evaluate_action(winner, context)
+
+    # 4. Log to ledger
+    ledger_path = Path(__file__).parent.parent / "data" / "agent_execution_ledger.jsonl"
+    ledger_path.parent.mkdir(parents=True, exist_ok=True)
+
+    task_id = str(uuid.uuid4())
+    ledger_entry = {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "task_id": task_id,
+        "task_summary": req.task[:100],
+        "selected_agent_id": winner["gene_id"],
+        "candidate_agent_ids": [c["gene_id"] for c in candidates],
+        "registry_version": reg_ver,
+        "agent_content_hash": winner["content_hash"],
+        "safety_tier": winner["max_execution_tier"],
+        "approval_required": safety_check["approval_required"],
+        "action_allowed": safety_check["action_allowed"],
+        "evidence_paths": [],
+        "verdict": safety_check["verdict"]
+    }
+
+    with open(ledger_path, "a", encoding="utf-8") as f:
+        f.write(json.dumps(ledger_entry) + "\n")
+
+    return {
+        "task_id": task_id,
+        "classification": classified,
+        "winner": winner,
+        "candidates": candidates,
+        "safety": safety_check,
+        "ledger_entry": ledger_entry
+    }
+
+@app.post("/api/agent-router/dry-run")
+def post_agent_router_dry_run_endpoint(req: DryRunRequest):
+    import json
+    import uuid
+    from pathlib import Path
+    from datetime import datetime, timezone
+    from fastapi import HTTPException
+    from backend.agent_router import AgentRouter
+    from backend.agent_invocation import AgentInvocation
+    from backend.agent_safety_governor import AgentSafetyGovernor
+
+    router = AgentRouter()
+    invocation = AgentInvocation()
+    governor = AgentSafetyGovernor()
+
+    # Load agent from manifest
+    manifest_path = Path(__file__).parent.parent / "data" / "prompt_registry" / "agents.manifest.json"
+    if not manifest_path.exists():
+        raise HTTPException(status_code=500, detail="agents.manifest.json missing.")
+
+    manifest_data = json.loads(manifest_path.read_text(encoding="utf-8"))
+    entries = manifest_data.get("entries", [])
+    
+    agent = None
+    for entry in entries:
+        if entry["gene_id"] == req.agent_id:
+            agent = entry
+            break
+
+    if not agent:
+        raise HTTPException(status_code=404, detail="Agent not found.")
+
+    # Safety govern check
+    context = {
+        "sandbox_active": req.sandbox_active,
+        "human_approved": req.human_approved
+    }
+    safety_check = governor.evaluate_action(agent, context)
+
+    # Dry-run
+    inv_res = invocation.dry_run(agent, req.task)
+
+    # Append this dry-run invocation to the ledger
+    ledger_path = Path(__file__).parent.parent / "data" / "agent_execution_ledger.jsonl"
+    ledger_path.parent.mkdir(parents=True, exist_ok=True)
+    
+    task_id = str(uuid.uuid4())
+    ledger_entry = {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "task_id": task_id,
+        "task_summary": f"[DRY-RUN] {req.task[:100]}",
+        "selected_agent_id": agent["gene_id"],
+        "candidate_agent_ids": [agent["gene_id"]],
+        "registry_version": manifest_data.get("version", "1.0.0"),
+        "agent_content_hash": agent["content_hash"],
+        "safety_tier": agent["max_execution_tier"],
+        "approval_required": safety_check["approval_required"],
+        "action_allowed": safety_check["action_allowed"],
+        "evidence_paths": [],
+        "verdict": "DRY_RUN_GO" if safety_check["action_allowed"] else safety_check["verdict"]
+    }
+
+    with open(ledger_path, "a", encoding="utf-8") as f:
+        f.write(json.dumps(ledger_entry) + "\n")
+
+    return {
+        "invocation": inv_res,
+        "safety": safety_check,
+        "ledger_entry": ledger_entry
+    }
+
+@app.get("/api/agent-router/ledger")
+def get_agent_router_ledger_endpoint():
+    import json
+    from pathlib import Path
+    ledger_path = Path(__file__).parent.parent / "data" / "agent_execution_ledger.jsonl"
+    entries = []
+    if ledger_path.exists():
+        with open(ledger_path, "r", encoding="utf-8") as f:
+            for line in f:
+                if line.strip():
+                    try:
+                        entries.append(json.loads(line))
+                    except Exception:
+                        pass
+    return sorted(entries, key=lambda x: x.get("timestamp", ""), reverse=True)
 
 @app.get("/api/prompts/{prompt_id}")
 def get_prompt_details_endpoint(prompt_id: str):

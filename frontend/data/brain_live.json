@@ -1,0 +1,119 @@
+{
+  "ts": "2026-07-05T23:27:56.595052Z",
+  "live_brain": {
+    "live_brain_available": false,
+    "backend": null,
+    "note": "no local model up \u2014 mechanical-only (start Ollama for live brain)"
+  },
+  "generation": 9,
+  "genes": 427,
+  "champions": 26,
+  "mean_score": 56.442,
+  "last_gain": 5.673,
+  "state": "IMPROVING",
+  "history": [
+    {
+      "g": 1,
+      "m": 50.769,
+      "gain": null
+    },
+    {
+      "g": 2,
+      "m": 50.769,
+      "gain": 0.0
+    },
+    {
+      "g": 3,
+      "m": 50.769,
+      "gain": 0.0
+    },
+    {
+      "g": 4,
+      "m": 50.769,
+      "gain": 0.0
+    },
+    {
+      "g": 5,
+      "m": 50.769,
+      "gain": 0.0
+    },
+    {
+      "g": 6,
+      "m": 50.769,
+      "gain": 0.0
+    },
+    {
+      "g": 7,
+      "m": 50.769,
+      "gain": 0.0
+    },
+    {
+      "g": 8,
+      "m": 50.769,
+      "gain": 0.0
+    },
+    {
+      "g": 9,
+      "m": 56.442,
+      "gain": 5.673
+    }
+  ],
+  "recent_improvements": [
+    {
+      "task_class": "Vulnerability Management",
+      "beats_mech": 37.5,
+      "score": 60.0,
+      "at": "2026-07-05T23:22:24.452401Z"
+    },
+    {
+      "task_class": "SAST",
+      "beats_mech": 47.5,
+      "score": 67.5,
+      "at": "2026-07-05T23:22:24.452401Z"
+    },
+    {
+      "task_class": "Audit",
+      "beats_mech": 62.5,
+      "score": 75.0,
+      "at": "2026-07-05T23:22:24.452401Z"
+    }
+  ],
+  "top_champions": [
+    {
+      "cls": "Self-Healing",
+      "title": "Rollback and Loop Mitigation Coordinator",
+      "score": 77.5,
+      "state": "VERIFIED_ON_HELDOUT"
+    },
+    {
+      "cls": "Audit",
+      "title": "Student Data Privacy Agent (brain-improv",
+      "score": 75.0,
+      "state": "GENERATED_AND_JUDGED"
+    },
+    {
+      "cls": "QA",
+      "title": "Test Automation Architect Agent",
+      "score": 72.5,
+      "state": "VERIFIED_ON_HELDOUT"
+    },
+    {
+      "cls": "Cybersecurity",
+      "title": "Incident Response Commander Agent (HASF-",
+      "score": 72.5,
+      "state": "VERIFIED_ON_HELDOUT"
+    },
+    {
+      "cls": "AGI & Safety",
+      "title": "AGI Alignment Telemetry Validator (Initi",
+      "score": 72.5,
+      "state": "VERIFIED_ON_HELDOUT"
+    },
+    {
+      "cls": "SAST",
+      "title": "AI App Code Security Agent (brain-improv",
+      "score": 67.5,
+      "state": "GENERATED_AND_JUDGED"
+    }
+  ]
+}
