@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>HAS × HASF — BRAIN Console</title>
+<style>
+:root{--bg:#0b1220;--pan:#0f172a;--ln:#1e293b;--mut:#64748b;--txt:#e2e8f0;--teal:#2dd4bf;--vio:#a78bfa;--amber:#fbbf24;--red:#f87171}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:-apple-system,Segoe UI,Roboto,sans-serif;padding:20px}
+.wrap{max-width:1040px;margin:0 auto}
+.h{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px}
+.h h1{font-size:22px;margin:0;font-weight:800}
+.h .sub{color:var(--mut);font-size:13px}
+.chip{font-size:11px;color:var(--teal);border:1px solid var(--teal);border-radius:20px;padding:3px 10px}
+.banner{display:none;margin:10px 0;padding:8px 12px;border-radius:8px;background:rgba(251,191,36,.1);border:1px solid var(--amber);color:var(--amber);font-size:12px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+.card{background:var(--pan);border:1px solid var(--ln);border-radius:12px;padding:11px 13px}
+.card .n{font-size:22px;font-weight:800}
+.card .t{font-size:10.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.4px}
+.badge{font-size:9.5px;font-weight:700;border-radius:5px;padding:1px 6px;margin-left:6px;vertical-align:middle}
+.b-ver{background:rgba(45,212,191,.15);color:var(--teal)}
+.b-blk{background:rgba(248,113,113,.15);color:var(--red)}
+.b-obs{background:rgba(251,191,36,.15);color:var(--amber)}
+.b-unk{background:rgba(100,116,139,.2);color:var(--mut)}
+.main{display:grid;grid-template-columns:1fr 250px;gap:14px}
+.svgwrap{background:var(--pan);border:1px solid var(--ln);border-radius:14px;padding:6px}
+.side{display:flex;flex-direction:column;gap:10px}
+.box{background:var(--pan);border:1px solid var(--ln);border-radius:12px;padding:12px}
+.box h3{margin:0 0 8px;font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px}
+.rung{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:8px;margin-bottom:6px;border:1px solid transparent;font-size:12.5px}
+.rung.on{background:rgba(45,212,191,.08);border-color:var(--teal)}
+.rung .dot{width:9px;height:9px;border-radius:50%}
+.rung small{color:var(--mut);font-size:10.5px;display:block}
+.foot{color:var(--mut);font-size:11px;margin-top:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px}
+.spin{transform-origin:520px 300px;animation:rot 26s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+.pulse{animation:p 3.4s ease-in-out infinite}
+@keyframes p{0%,100%{opacity:.55}50%{opacity:1}}
+@media(max-width:720px){.main{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="h">
+ <div><h1>HAS × HASF — living around the BRAIN</h1>
+ <div class="sub">Live console · binds to backend on this origin · <span id="ts">—</span></div></div>
+ <div class="chip">● evidence-disciplined</div>
+</div>
+<div id="banner" class="banner"></div>
+
+<div class="stats">
+ <div class="card"><div class="n" id="s-genes">—<span class="badge b-unk" id="s-genes-b">UNKNOWN</span></div><div class="t">BRAIN genes · registry</div></div>
+ <div class="card"><div class="n" id="s-daemon">—<span class="badge b-unk" id="s-daemon-b">UNKNOWN</span></div><div class="t">relay daemon</div></div>
+ <div class="card"><div class="n" id="s-ready">—<span class="badge b-unk" id="s-ready-b">UNKNOWN</span></div><div class="t">readiness</div></div>
+ <div class="card"><div class="n">539→427<span class="badge b-obs">DEDUPED</span></div><div class="t">library → gene pool</div></div>
+</div>
+
+<div class="main">
+ <div class="svgwrap">
+ <svg viewBox="0 0 1040 620" width="100%" xmlns="http://www.w3.org/2000/svg" role="img">
+ <title>HAS governs, HASF is powered by, a central BRAIN convergence loop sealed by evidence discipline</title>
+ <defs>
+ <radialGradient id="glow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#5eead4" stop-opacity="0.5"/><stop offset="50%" stop-color="#22d3ee" stop-opacity="0.12"/><stop offset="100%" stop-color="#22d3ee" stop-opacity="0"/></radialGradient>
+ <radialGradient id="core" cx="50%" cy="40%" r="65%"><stop offset="0%" stop-color="#a7f3d0"/><stop offset="55%" stop-color="#2dd4bf"/><stop offset="100%" stop-color="#0e7490"/></radialGradient>
+ <linearGradient id="ghas" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1e293b"/><stop offset="100%" stop-color="#0f172a"/></linearGradient>
+ <linearGradient id="ghasf" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1e1b4b"/><stop offset="100%" stop-color="#0f0a2e"/></linearGradient>
+ <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="6"/></filter>
+ <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10z" fill="#64748b"/></marker>
+ <marker id="c" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10z" fill="#2dd4bf"/></marker>
+ </defs>
+ <rect x="430" y="14" width="180" height="46" rx="11" fill="#111827" stroke="#f59e0b" stroke-width="1.5"/>
+ <text x="520" y="34" text-anchor="middle" fill="#fbbf24" font-size="14" font-weight="700">◆ Founder Gate</text>
+ <text x="520" y="50" text-anchor="middle" fill="#94a3b8" font-size="10">T3 · GO · keys</text>
+ <line x1="520" y1="60" x2="520" y2="120" stroke="#64748b" stroke-width="2" stroke-dasharray="4 4" marker-end="url(#a)"/>
+ <rect x="34" y="190" width="196" height="210" rx="15" fill="url(#ghas)" stroke="#334155" stroke-width="1.5"/>
+ <text x="132" y="222" text-anchor="middle" fill="#7dd3fc" font-size="17" font-weight="700">HAS</text>
+ <text x="132" y="240" text-anchor="middle" fill="#94a3b8" font-size="10">Command &amp; Control · 24/7</text>
+ <text x="52" y="270" fill="#cbd5e1" font-size="11">▸ Runtime-truth · heartbeats</text>
+ <text x="52" y="294" fill="#cbd5e1" font-size="11">▸ Approval · TTL holds</text>
+ <text x="52" y="318" fill="#cbd5e1" font-size="11">▸ Fail-closed registry</text>
+ <text x="52" y="342" fill="#cbd5e1" font-size="11">▸ Go/No-Go readiness</text>
+ <text x="52" y="370" fill="#5eead4" font-size="11" font-weight="600">▸ No fake-green. Ever.</text>
+ <line x1="230" y1="300" x2="336" y2="300" stroke="#64748b" stroke-width="2" marker-end="url(#a)"/><text x="283" y="291" text-anchor="middle" fill="#64748b" font-size="10">governs</text>
+ <rect x="810" y="190" width="196" height="210" rx="15" fill="url(#ghasf)" stroke="#3730a3" stroke-width="1.5"/>
+ <text x="908" y="222" text-anchor="middle" fill="#c4b5fd" font-size="17" font-weight="700">HASF</text>
+ <text x="908" y="240" text-anchor="middle" fill="#a5b4fc" font-size="10">Product Factory · 24/7</text>
+ <text x="828" y="270" fill="#ddd6fe" font-size="11">▸ HELM autonomy runner</text>
+ <text x="828" y="294" fill="#ddd6fe" font-size="11">▸ AG execution adapters</text>
+ <text x="828" y="318" fill="#ddd6fe" font-size="11">▸ Mission · product pipeline</text>
+ <text x="828" y="342" fill="#ddd6fe" font-size="11">▸ Monetizable apps</text>
+ <text x="828" y="370" fill="#fca5a5" font-size="11" font-weight="600">▸ Ships only VERIFIED</text>
+ <line x1="704" y1="300" x2="810" y2="300" stroke="#2dd4bf" stroke-width="2" marker-end="url(#c)"/><text x="757" y="291" text-anchor="middle" fill="#5eead4" font-size="10">powers</text>
+ <circle cx="520" cy="300" r="170" fill="url(#glow)" class="pulse"/>
+ <g class="spin"><circle cx="520" cy="300" r="150" fill="none" stroke="#22d3ee" stroke-width="1.5" stroke-opacity="0.4" stroke-dasharray="3 10"/></g>
+ <text x="520" y="140" text-anchor="middle" fill="#22d3ee" font-size="10.5" letter-spacing="2" font-weight="600">EVIDENCE DISCIPLINE · FAIL-CLOSED</text>
+ <circle cx="520" cy="300" r="70" fill="url(#core)" filter="url(#soft)" class="pulse"/>
+ <circle id="coreRing" cx="520" cy="300" r="62" fill="#0b1220" stroke="#2dd4bf" stroke-width="2"/>
+ <text x="520" y="292" text-anchor="middle" fill="#5eead4" font-size="19" font-weight="800">BRAIN</text>
+ <text id="coreGenes" x="520" y="312" text-anchor="middle" fill="#e2e8f0" font-size="11">— genes</text>
+ <text x="520" y="328" text-anchor="middle" fill="#64748b" font-size="9.5">best-per-task</text>
+ <g font-size="11" font-weight="600" fill="#e2e8f0" text-anchor="middle">
+ <g><circle cx="520" cy="150" r="7" fill="#0b1220" stroke="#2dd4bf" stroke-width="2"/><text x="520" y="134">1 Harvest</text></g>
+ <g><circle cx="637" cy="206" r="7" fill="#0b1220" stroke="#2dd4bf" stroke-width="2"/><text x="683" y="194">2 Generate</text></g>
+ <g><circle cx="666" cy="333" r="7" fill="#0b1220" stroke="#2dd4bf" stroke-width="2"/><text x="702" y="337">3 Adversary</text></g>
+ <g><circle cx="585" cy="435" r="7" fill="#0b1220" stroke="#2dd4bf" stroke-width="2"/><text x="600" y="457">4 Judge</text></g>
+ <g><circle cx="455" cy="435" r="7" fill="#0b1220" stroke="#2dd4bf" stroke-width="2"/><text x="438" y="457">5 Promote</text></g>
+ <g><circle cx="374" cy="333" r="7" fill="#0b1220" stroke="#2dd4bf" stroke-width="2"/><text x="336" y="337">6 Learn</text></g>
+ <g><circle cx="403" cy="206" r="7" fill="#0b1220" stroke="#2dd4bf" stroke-width="2"/><text x="354" y="194">7 Converge</text></g>
+ </g>
+ <g fill="none" stroke="#2dd4bf" stroke-width="2" opacity="0.75" marker-end="url(#c)">
+ <path d="M528,151 A150,150 0 0 1 632,201"/><path d="M641,213 A150,150 0 0 1 667,325"/><path d="M664,341 A150,150 0 0 1 592,431"/>
+ <path d="M577,437 A150,150 0 0 1 463,437"/><path d="M448,431 A150,150 0 0 1 376,341"/><path d="M373,325 A150,150 0 0 1 399,213"/><path d="M408,199 A150,150 0 0 1 512,151"/>
+ </g>
+ <rect x="250" y="540" width="540" height="62" rx="13" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+ <text x="520" y="567" text-anchor="middle" fill="#94a3b8" font-size="12.5" font-weight="700">EVIDENCE LEDGER · RELAY MESH</text>
+ <text x="520" y="586" text-anchor="middle" fill="#64748b" font-size="10.5">hoch-relay-001 · Tailscale-private · hash + timestamp every claim</text>
+ <path d="M908,400 C908,500 770,540 620,552" fill="none" stroke="#64748b" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#a)"/>
+ <path d="M300,552 C170,540 132,480 132,402" fill="none" stroke="#64748b" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#a)"/>
+ <line x1="520" y1="540" x2="520" y2="468" stroke="#2dd4bf" stroke-width="2" stroke-dasharray="4 4" marker-end="url(#c)"/>
+ </svg>
+ </div>
+ <div class="side">
+ <div class="box">
+ <h3>Rung ladder → Opus autonomy</h3>
+ <div class="rung on"><span class="dot" style="background:var(--teal)"></span><div><b>Rung 1 — mechanical</b><small>daemon cycling · here now</small></div></div>
+ <div class="rung"><span class="dot" style="background:var(--amber)"></span><div>Rung 2 — Opus drives<small>needs key + proving run</small></div></div>
+ <div class="rung"><span class="dot" style="background:var(--vio)"></span><div>Rung 3 — self-improves<small>brain upgrades harness</small></div></div>
+ </div>
+ <div class="box">
+ <h3>HASF output lane</h3>
+ <div style="font-size:11.5px;color:#cbd5e1">missions → <b style="color:var(--vio)">products</b> → <b style="color:var(--vio)">$</b></div>
+ <div style="color:var(--mut);font-size:10.5px;margin-top:6px">Monetization is founder-gated. HASF ships only VERIFIED work.</div>
+ </div>
+ </div>
+</div>
+<div class="foot">
+ <span>● teal = convergence / VERIFIED · dashed grey = governance / evidence</span>
+ <span id="pollnote">binding to live backend…</span>
+</div>
+</div>
+
+<script>
+// Evidence-disciplined binding: a tile turns green ONLY when live data confirms it.
+// On any fetch failure or stale/missing signal, it shows UNKNOWN/STALE — never fake-green.
+const $=id=>document.getElementById(id);
+function setBadge(el,text,cls){el.textContent=text;el.className="badge "+cls;}
+async function j(url){const r=await fetch(url,{cache:"no-store"});if(!r.ok)throw new Error(r.status);return r.json();}
+
+async function refresh(){
+  let anyFail=false;
+  // BRAIN genes + registry health
+  try{
+    const h=await j("/api/prompts/health");
+    const n=h.active_agents ?? h.total_agents ?? "—";
+    $("s-genes").firstChild.nodeValue=String(n);
+    $("coreGenes").textContent=n+" genes";
+    if(h.validation_status==="PASS"){setBadge($("s-genes-b"),"VERIFIED","b-ver");$("coreRing").setAttribute("stroke","#2dd4bf");}
+    else{setBadge($("s-genes-b"),h.fail_closed_reason||"FAIL_CLOSED","b-blk");$("coreRing").setAttribute("stroke","#f87171");}
+  }catch(e){anyFail=true;setBadge($("s-genes-b"),"UNKNOWN","b-unk");}
+  // Daemon heartbeat
+  try{
+    const d=await j("/api/autonomy/daemon/heartbeat");
+    const v=(d.verdict||d.status||"").toString().toUpperCase();
+    const fresh=v.includes("FRESH")||v==="RUNNING"||d.daemon_status==="RUNNING";
+    const missing=v.includes("MISSING")||v.includes("STALE")||v.includes("FAIL");
+    $("s-daemon").firstChild.nodeValue=fresh&&!missing?"LIVE":(missing?"DOWN":"?");
+    if(fresh&&!missing)setBadge($("s-daemon-b"),"CYCLING","b-ver");
+    else setBadge($("s-daemon-b"),missing?"STALE":"UNKNOWN",missing?"b-blk":"b-unk");
+  }catch(e){anyFail=true;setBadge($("s-daemon-b"),"UNKNOWN","b-unk");}
+  // Readiness
+  try{
+    const rr=await j("/api/v1/brain/readiness");
+    const r=rr.readiness??{};
+    const score=(typeof r==="number")?r:(r.score??r.readiness_score??r.value);
+    if(score!=null){
+      $("s-ready").firstChild.nodeValue=String(Math.round(score));
+      if(score>=90)setBadge($("s-ready-b"),"VERIFIED","b-ver");
+      else if(score<=50)setBadge($("s-ready-b"),"BLOCKED","b-blk");
+      else setBadge($("s-ready-b"),"PARTIAL","b-obs");
+    }else{setBadge($("s-ready-b"),"UNKNOWN","b-unk");}
+  }catch(e){anyFail=true;setBadge($("s-ready-b"),"UNKNOWN","b-unk");}
+
+  $("ts").textContent="refreshed "+new Date().toLocaleTimeString();
+  $("pollnote").textContent=anyFail?"live backend partially unreachable — unknowns shown honestly":"bound to live backend ✓";
+  const b=$("banner");
+  if(anyFail){b.style.display="block";b.textContent="⚠ Some live signals are unavailable. Tiles show UNKNOWN rather than assuming green (no fake-green).";}
+  else{b.style.display="none";}
+}
+refresh(); setInterval(refresh, 15000);
+</script>
+</body>
+</html>
