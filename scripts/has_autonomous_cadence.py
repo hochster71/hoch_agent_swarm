@@ -28,8 +28,11 @@ def load_goal_contract():
     return {}
 
 def check_high_risk_changes(contract):
-    # Check staged or modified files for high risk patterns
-    stdout, _, _ = run_cmd("git status --porcelain")
+    # Check staged or modified files for high risk patterns.
+    # --no-optional-locks: this is a background/automated read on a timer; without it,
+    # `git status` grabs .git/index.lock and collides with the operator's manual
+    # commits, leaving stale locks. Read-only status must never take the index lock.
+    stdout, _, _ = run_cmd("git --no-optional-locks status --porcelain")
     if not stdout:
         return []
     
@@ -44,8 +47,8 @@ def check_high_risk_changes(contract):
                 blocked.append(f"File path: '{file_path}' triggers policy security constraint for '{trigger}'")
                 
     # Check diff content for high-risk words in actual codebase files (excluding scripts, tests, docs, json)
-    diff_staged, _, _ = run_cmd("git diff --cached -- . ':!scripts/*' ':!tests/*' ':!docs/*' ':!*.json' ':!*.md'")
-    diff_unstaged, _, _ = run_cmd("git diff -- . ':!scripts/*' ':!tests/*' ':!docs/*' ':!*.json' ':!*.md'")
+    diff_staged, _, _ = run_cmd("git --no-optional-locks diff --cached -- . ':!scripts/*' ':!tests/*' ':!docs/*' ':!*.json' ':!*.md'")
+    diff_unstaged, _, _ = run_cmd("git --no-optional-locks diff -- . ':!scripts/*' ':!tests/*' ':!docs/*' ':!*.json' ':!*.md'")
     full_diff = (diff_staged + "\n" + diff_unstaged).lower()
     
     risk_terms = {
@@ -129,7 +132,7 @@ def run_cadence():
     sustain_ok = (sustain_code == 0)
     
     # 5. Run parallel mirror verify
-    mirror_stdout, mirror_stderr, mirror_code = run_cmd("bash scripts/has_parallel_mirror_verify.sh", check=False)
+    mirror_stdout, mirror_stderr, mirror_code = run_cmd("CADENCE_VERIFY_RUN=true bash scripts/has_parallel_mirror_verify.sh", check=False)
     mirror_ok = (mirror_code == 0)
     if not mirror_ok:
         print("[CADENCE WARNING] Mirror verification failed:")
