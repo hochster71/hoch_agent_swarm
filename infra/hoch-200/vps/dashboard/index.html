@@ -14,19 +14,19 @@
 
     :root {
       --bg:           #0a0d14;
-      --surface:      rgba(255,255,255,0.05);
-      --surface-hi:   rgba(255,255,255,0.08);
-      --border:       rgba(255,255,255,0.10);
-      --border-hi:    rgba(255,255,255,0.18);
+      --surface:      rgba(255,255,255,0.04);
+      --surface-hi:   rgba(255,255,255,0.07);
+      --border:       rgba(255,255,255,0.09);
+      --border-hi:    rgba(255,255,255,0.16);
       --accent:       #22d3ee;
-      --accent-dim:   rgba(34,211,238,0.15);
-      --accent-glow:  rgba(34,211,238,0.35);
+      --accent-dim:   rgba(34,211,238,0.12);
+      --accent-glow:  rgba(34,211,238,0.25);
       --green:        #4ade80;
-      --green-dim:    rgba(74,222,128,0.15);
+      --green-dim:    rgba(74,222,128,0.12);
       --amber:        #fbbf24;
-      --amber-dim:    rgba(251,191,36,0.15);
+      --amber-dim:    rgba(251,191,36,0.12);
       --red:          #f87171;
-      --red-dim:      rgba(248,113,113,0.15);
+      --red-dim:      rgba(248,113,113,0.12);
       --text-1:       #f1f5f9;
       --text-2:       #94a3b8;
       --text-3:       #64748b;
@@ -54,8 +54,8 @@
       position: fixed;
       inset: 0;
       background-image:
-        linear-gradient(rgba(34,211,238,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(34,211,238,0.03) 1px, transparent 1px);
+        linear-gradient(rgba(34,211,238,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34,211,238,0.02) 1px, transparent 1px);
       background-size: 40px 40px;
       pointer-events: none;
       z-index: 0;
@@ -65,7 +65,7 @@
     header {
       position: relative;
       z-index: 10;
-      padding: 20px 32px;
+      padding: 14px 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -76,15 +76,15 @@
 
     .logo-group { display: flex; align-items: center; gap: 12px; }
     .logo-badge {
-      width: 36px; height: 36px;
+      width: 32px; height: 32px;
       background: linear-gradient(135deg, var(--accent), #6366f1);
       border-radius: var(--radius-sm);
       display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: 14px; color: #fff;
+      font-weight: 700; font-size: 13px; color: #fff;
       box-shadow: 0 0 16px var(--accent-glow);
     }
-    .logo-text { font-size: 15px; font-weight: 600; letter-spacing: -0.02em; }
-    .logo-sub { font-size: 11px; color: var(--text-3); font-family: var(--font-mono); margin-top: 1px; }
+    .logo-text { font-size: 14px; font-weight: 600; letter-spacing: -0.02em; }
+    .logo-sub { font-size: 10px; color: var(--text-3); font-family: var(--font-mono); margin-top: 1px; }
 
     .header-right { display: flex; align-items: center; gap: 12px; }
     .ts-badge {
@@ -93,7 +93,7 @@
       border: 1px solid rgba(34,211,238,0.25);
       border-radius: 999px;
       padding: 4px 12px;
-      font-size: 11px; font-family: var(--font-mono); color: var(--accent);
+      font-size: 10px; font-family: var(--font-mono); color: var(--accent);
     }
     .ts-dot {
       width: 6px; height: 6px; border-radius: 50%;
@@ -106,62 +106,97 @@
     main {
       position: relative; z-index: 10;
       flex: 1;
-      padding: 32px;
-      max-width: 1200px;
-      margin: 0 auto;
+      padding: 20px 24px;
+      max-width: 100%;
       width: 100%;
     }
 
+    .header-flex {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 18px;
+    }
+
     .page-title {
-      font-size: 28px; font-weight: 700;
+      font-size: 22px; font-weight: 700;
       letter-spacing: -0.03em;
       background: linear-gradient(135deg, var(--text-1), var(--accent));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      margin-bottom: 6px;
     }
-    .page-sub { font-size: 13px; color: var(--text-3); margin-bottom: 32px; }
+    .page-sub { font-size: 11px; color: var(--text-3); margin-top: 2px; }
 
     /* ---- Status banner ---- */
     #gate-banner {
-      display: flex; align-items: center; gap: 14px;
+      display: flex; align-items: center; gap: 12px;
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px 20px;
-      margin-bottom: 28px;
+      border-radius: var(--radius-sm);
+      padding: 8px 14px;
       backdrop-filter: blur(8px);
     }
-    #gate-banner.pass   { border-color: rgba(74,222,128,0.3); background: var(--green-dim); }
-    #gate-banner.warn   { border-color: rgba(251,191,36,0.3); background: var(--amber-dim); }
-    #gate-banner.fail   { border-color: rgba(248,113,113,0.3); background: var(--red-dim); }
+    #gate-banner.pass   { border-color: rgba(74,222,128,0.25); background: var(--green-dim); }
+    #gate-banner.warn   { border-color: rgba(251,191,36,0.25); background: var(--amber-dim); }
+    #gate-banner.fail   { border-color: rgba(248,113,113,0.25); background: var(--red-dim); }
 
-    .gate-icon { font-size: 24px; }
-    .gate-label { font-weight: 600; font-size: 15px; }
-    .gate-sub   { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+    .gate-icon { font-size: 18px; }
+    .gate-label { font-weight: 600; font-size: 13px; }
+    .gate-sub   { font-size: 10px; color: var(--text-2); margin-top: 1px; }
     .gate-status {
       margin-left: auto;
-      font-family: var(--font-mono); font-size: 12px; font-weight: 600;
-      padding: 4px 12px; border-radius: 999px;
+      font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+      padding: 2px 8px; border-radius: 999px;
       background: var(--surface-hi);
     }
     #gate-banner.pass .gate-status { color: var(--green); }
     #gate-banner.warn .gate-status { color: var(--amber); }
     #gate-banner.fail .gate-status { color: var(--red); }
 
-    /* ---- Grid ---- */
-    .grid-3 {
+    /* ---- Dashboard 3-Column Grid ---- */
+    .dashboard-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: 1fr;
       gap: 16px;
-      margin-bottom: 24px;
+      align-items: stretch;
     }
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
+
+    @media (min-width: 1024px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr 1fr 1fr;
+        height: calc(100vh - 140px);
+        min-height: 600px;
+      }
+      .column {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        gap: 16px;
+      }
+      .column > .card {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .card-body-scroll {
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 4px;
+      }
+    }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      border-bottom: 1px solid rgba(34, 211, 238, 0.2);
+      padding-bottom: 4px;
+      flex-shrink: 0;
     }
 
     /* ---- Card ---- */
@@ -169,64 +204,90 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 20px;
+      padding: 16px;
       backdrop-filter: blur(8px);
       transition: border-color var(--transition), box-shadow var(--transition);
     }
     .card:hover {
       border-color: var(--border-hi);
-      box-shadow: 0 0 24px rgba(34,211,238,0.06);
+      box-shadow: 0 0 20px rgba(34,211,238,0.04);
     }
     .card-header {
       display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
+      flex-shrink: 0;
     }
     .card-title {
-      font-size: 11px; font-weight: 600;
+      font-size: 10px; font-weight: 600;
       text-transform: uppercase; letter-spacing: 0.08em;
       color: var(--text-3);
     }
-    .card-icon { font-size: 18px; }
+    .card-icon { font-size: 15px; }
 
-    /* ---- Stat ---- */
-    .stat-value {
-      font-size: 32px; font-weight: 700;
-      letter-spacing: -0.03em;
-      font-family: var(--font-mono);
+    /* ---- Compact Stats Row ---- */
+    .compact-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      flex-shrink: 0;
     }
-    .stat-label { font-size: 12px; color: var(--text-2); margin-top: 4px; }
+    .stat-card {
+      background: var(--surface-hi);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      min-height: 60px;
+    }
+    .stat-title {
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-3);
+      margin-bottom: 2px;
+    }
+    .stat-val-sm {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+      word-break: break-all;
+    }
     .stat-green { color: var(--green); }
     .stat-amber { color: var(--amber); }
     .stat-red   { color: var(--red); }
     .stat-accent { color: var(--accent); }
 
-    /* ---- Worker card ---- */
+    /* ---- Worker row ---- */
     .worker-row {
-      display: flex; align-items: center; gap: 12px;
-      padding: 12px;
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px;
       background: var(--surface-hi);
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      margin-bottom: 10px;
       transition: border-color var(--transition);
     }
     .worker-row:hover { border-color: rgba(74,222,128,0.3); }
 
     .worker-led {
-      width: 10px; height: 10px; border-radius: 50%;
+      width: 8px; height: 8px; border-radius: 50%;
       flex-shrink: 0;
     }
     .worker-led.online  { background: var(--green); box-shadow: 0 0 8px var(--green); animation: pulse 2s infinite; }
     .worker-led.offline { background: var(--red); }
     .worker-led.unknown { background: var(--text-3); }
 
-    .worker-info { flex: 1; }
-    .worker-id   { font-family: var(--font-mono); font-size: 13px; font-weight: 500; }
-    .worker-meta { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+    .worker-info { flex: 1; min-width: 0; }
+    .worker-id   { font-family: var(--font-mono); font-size: 12px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .worker-meta { font-size: 10px; color: var(--text-3); margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
     .worker-badge {
-      font-family: var(--font-mono); font-size: 10px; font-weight: 600;
-      padding: 3px 8px; border-radius: 999px;
+      font-family: var(--font-mono); font-size: 9px; font-weight: 600;
+      padding: 2px 6px; border-radius: 999px;
     }
     .worker-badge.online  { background: var(--green-dim); color: var(--green); border: 1px solid rgba(74,222,128,0.3); }
     .worker-badge.offline { background: var(--red-dim);   color: var(--red);   border: 1px solid rgba(248,113,113,0.3); }
@@ -235,52 +296,54 @@
     /* ---- Check list ---- */
     .check-list { list-style: none; }
     .check-item {
-      display: flex; align-items: flex-start; gap: 10px;
-      padding: 10px 0;
+      display: flex; align-items: flex-start; gap: 8px;
+      padding: 8px 0;
       border-bottom: 1px solid var(--border);
-      font-size: 13px;
+      font-size: 12px;
     }
     .check-item:last-child { border-bottom: none; }
-    .check-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
-    .check-text { flex: 1; }
+    .check-icon { font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+    .check-text { flex: 1; min-width: 0; }
     .check-label { font-weight: 500; }
-    .check-detail { font-size: 11px; color: var(--text-3); margin-top: 2px; font-family: var(--font-mono); }
+    .check-detail { font-size: 10px; color: var(--text-3); margin-top: 1px; font-family: var(--font-mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
     /* ---- Info table ---- */
     .info-table { width: 100%; border-collapse: collapse; }
     .info-table tr td {
-      padding: 9px 4px;
-      font-size: 13px;
+      padding: 6px 2px;
+      font-size: 12px;
       border-bottom: 1px solid var(--border);
       vertical-align: top;
     }
     .info-table tr:last-child td { border-bottom: none; }
-    .info-table .key { color: var(--text-3); width: 38%; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
-    .info-table .val { font-family: var(--font-mono); font-size: 12px; color: var(--text-1); }
+    .info-table .key { color: var(--text-3); width: 42%; font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+    .info-table .val { font-family: var(--font-mono); font-size: 11px; color: var(--text-1); overflow-wrap: anywhere; word-break: break-all; }
     .info-table .val.green { color: var(--green); }
     .info-table .val.red   { color: var(--red); }
     .info-table .val.accent { color: var(--accent); }
 
     /* ---- Heartbeat log ---- */
     #heartbeat-log {
-      height: 120px; overflow-y: auto;
       background: rgba(0,0,0,0.3);
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      padding: 10px;
-      font-family: var(--font-mono); font-size: 11px; color: var(--text-2);
+      padding: 8px;
+      font-family: var(--font-mono); font-size: 10px; color: var(--text-2);
+      overflow-y: auto;
     }
-    .hb-entry { margin-bottom: 4px; }
+    .hb-entry { margin-bottom: 3px; }
     .hb-ts    { color: var(--accent); }
 
     /* ---- Footer ---- */
     footer {
       position: relative; z-index: 10;
       text-align: center;
-      padding: 16px;
-      font-size: 11px;
+      padding: 10px;
+      font-size: 10px;
       color: var(--text-3);
       border-top: 1px solid var(--border);
+      background: rgba(10,13,20,0.8);
+      margin-top: auto;
     }
 
     /* ---- Animations ---- */
@@ -289,24 +352,25 @@
       50% { opacity: 0.45; }
     }
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
+      from { opacity: 0; transform: translateY(6px); }
       to   { opacity: 1; transform: translateY(0); }
     }
-    .card { animation: fadeIn 0.4s ease both; }
-    .card:nth-child(2) { animation-delay: 0.05s; }
-    .card:nth-child(3) { animation-delay: 0.10s; }
+    .card { animation: fadeIn 0.3s ease both; }
 
-    /* ---- Loading shimmer ---- */
-    .shimmer {
-      background: linear-gradient(90deg, var(--surface) 25%, var(--surface-hi) 50%, var(--surface) 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
-      border-radius: 4px;
-      color: transparent;
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
     }
-    @keyframes shimmer {
-      0%   { background-position: -200% 0; }
-      100% { background-position:  200% 0; }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.2);
     }
   </style>
 </head>
@@ -330,154 +394,210 @@
   </header>
 
   <main>
-    <h1 class="page-title">Relay Control Dashboard</h1>
-    <p class="page-sub" id="last-refresh">Loading…</p>
-
-    <!-- Gate Banner -->
-    <div id="gate-banner" class="warn">
-      <div class="gate-icon">⚡</div>
+    <div class="header-flex">
       <div>
-        <div class="gate-label" id="gate-label">Checking relay status…</div>
-        <div class="gate-sub"  id="gate-sub">Polling /health endpoint</div>
+        <h1 class="page-title">Relay Control Dashboard</h1>
+        <p class="page-sub" id="last-refresh">Loading…</p>
       </div>
-      <div class="gate-status" id="gate-status-pill">…</div>
-    </div>
-
-    <!-- Stat row -->
-    <div class="grid-3">
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">Worker Status</span>
-          <span class="card-icon">🖥️</span>
+      <!-- Compact Gate Banner -->
+      <div id="gate-banner" class="warn">
+        <div class="gate-icon">⚡</div>
+        <div>
+          <div class="gate-label" id="gate-label">Checking relay status…</div>
+          <div class="gate-sub" id="gate-sub">Polling /health endpoint</div>
         </div>
-        <div class="stat-value stat-green" id="stat-worker-status">—</div>
-        <div class="stat-label">HAS-WORKER-RELAY-001</div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">API Health</span>
-          <span class="card-icon">💚</span>
-        </div>
-        <div class="stat-value stat-green" id="stat-api-health">—</div>
-        <div class="stat-label">Relay API /health</div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">Port Exposure</span>
-          <span class="card-icon">🔒</span>
-        </div>
-        <div class="stat-value stat-green" id="stat-port-exposure">PRIVATE</div>
-        <div class="stat-label">Port 3012 — Tailscale only</div>
+        <div class="gate-status" id="gate-status-pill">…</div>
       </div>
     </div>
 
-    <!-- Worker registry + Node info -->
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">Worker Registry</span>
-          <span class="card-icon">📋</span>
+    <div class="dashboard-grid">
+      <!-- Column 1: RELAY CONTROL & NODE INFO -->
+      <div class="column">
+        <div class="section-title">Relay Node & Workers</div>
+        
+        <div class="compact-stats">
+          <div class="stat-card">
+            <span class="stat-title">Worker</span>
+            <span class="stat-val-sm stat-green" id="stat-worker-status">—</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-title">API Health</span>
+            <span class="stat-val-sm stat-green" id="stat-api-health">—</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-title">Exposure</span>
+            <span class="stat-val-sm stat-green" id="stat-port-exposure">PRIVATE</span>
+          </div>
         </div>
-        <div id="worker-list">
-          <div class="worker-row">
-            <div class="worker-led online"></div>
-            <div class="worker-info">
-              <div class="worker-id">HAS-WORKER-RELAY-001</div>
-              <div class="worker-meta" id="worker-meta">Loading…</div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Worker Registry</span>
+            <span class="card-icon">📋</span>
+          </div>
+          <div class="card-body-scroll">
+            <div id="worker-list">
+              <div class="worker-row">
+                <div class="worker-led online"></div>
+                <div class="worker-info">
+                  <div class="worker-id">HAS-WORKER-RELAY-001</div>
+                  <div class="worker-meta" id="worker-meta">Loading…</div>
+                </div>
+                <div class="worker-badge online" id="worker-badge">ONLINE</div>
+              </div>
             </div>
-            <div class="worker-badge online" id="worker-badge">ONLINE</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Node Info</span>
+            <span class="card-icon">🔵</span>
+          </div>
+          <div class="card-body-scroll">
+            <table class="info-table">
+              <tbody id="node-info-table">
+                <tr><td class="key">Hostname</td><td class="val" id="ni-hostname">hoch-relay-001</td></tr>
+                <tr><td class="key">Public IPv4</td><td class="val">50.116.41.183</td></tr>
+                <tr><td class="key">Tailscale IP</td><td class="val accent">100.87.18.15</td></tr>
+                <tr><td class="key">OS</td><td class="val">Ubuntu 24.04.4 LTS</td></tr>
+                <tr><td class="key">Docker</td><td class="val">29.6.1</td></tr>
+                <tr><td class="key">Port 3012 Public</td><td class="val red">NO — UFW BLOCKED</td></tr>
+                <tr><td class="key">Epic</td><td class="val accent">HOCH-200</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">Node Info</span>
-          <span class="card-icon">🔵</span>
-        </div>
-        <table class="info-table">
-          <tbody id="node-info-table">
-            <tr><td class="key">Hostname</td><td class="val" id="ni-hostname">hoch-relay-001</td></tr>
-            <tr><td class="key">Public IPv4</td><td class="val">50.116.41.183</td></tr>
-            <tr><td class="key">Tailscale IP</td><td class="val accent">100.87.18.15</td></tr>
-            <tr><td class="key">OS</td><td class="val">Ubuntu 24.04.4 LTS</td></tr>
-            <tr><td class="key">Docker</td><td class="val">29.6.1</td></tr>
-            <tr><td class="key">Port 3012 Public</td><td class="val red">NO — UFW BLOCKED</td></tr>
-            <tr><td class="key">Epic</td><td class="val accent">HOCH-200</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+      <!-- Column 2: AUTONOMY & BURN-IN -->
+      <div class="column">
+        <div class="section-title">Autonomy & Burn-In Loop</div>
 
-    <!-- Checks + Heartbeat log -->
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">Verification Checks</span>
-          <span class="card-icon">✅</span>
+        <div class="compact-stats">
+          <div class="stat-card">
+            <span class="stat-title">Status</span>
+            <span class="stat-val-sm stat-green" id="stat-autonomy-status" style="font-size: 10px; font-weight: 700; white-space: normal;">—</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-title">Cycles</span>
+            <span class="stat-val-sm stat-accent" id="stat-completed-cycles">—</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-title">Elapsed</span>
+            <span class="stat-val-sm stat-accent" id="stat-elapsed-hours">—</span>
+          </div>
         </div>
-        <ul class="check-list" id="check-list">
-          <li class="check-item">
-            <span class="check-icon">✅</span>
-            <div class="check-text">
-              <div class="check-label">UFW active, port 3012 not public</div>
-              <div class="check-detail">ufw status: active · eth0:3012 = no rule</div>
-            </div>
-          </li>
-          <li class="check-item">
-            <span class="check-icon">✅</span>
-            <div class="check-text">
-              <div class="check-label">Docker containers running</div>
-              <div class="check-detail">hoch-relay-api · Up · healthy</div>
-            </div>
-          </li>
-          <li class="check-item">
-            <span class="check-icon">✅</span>
-            <div class="check-text">
-              <div class="check-label">Tailscale reachable</div>
-              <div class="check-detail">http://100.87.18.15:3012/health → 200 OK</div>
-            </div>
-          </li>
-          <li class="check-item">
-            <span class="check-icon">✅</span>
-            <div class="check-text">
-              <div class="check-label">fail2ban active</div>
-              <div class="check-detail">Service status: active (running)</div>
-            </div>
-          </li>
-          <li class="check-item">
-            <span class="check-icon" id="check-browser-icon">⏳</span>
-            <div class="check-text">
-              <div class="check-label">Browser access via Tailscale</div>
-              <div class="check-detail" id="check-browser-detail">Polling…</div>
-            </div>
-          </li>
-        </ul>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Daemon State & Policy</span>
+            <span class="card-icon">⚖️</span>
+          </div>
+          <div class="card-body-scroll">
+            <table class="info-table">
+              <tbody>
+                <tr><td class="key">Daemon Heartbeat</td><td class="val" id="ab-heartbeat">—</td></tr>
+                <tr><td class="key">Last Cycle Status</td><td class="val" id="ab-cycle-status">—</td></tr>
+                <tr><td class="key">Last Task ID</td><td class="val" id="ab-task-id">—</td></tr>
+                <tr><td class="key">Operator Hold</td><td class="val" id="ab-operator-hold">—</td></tr>
+                <tr><td class="key">Private Doctrine</td><td class="val green" id="ab-doctrine">—</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Autonomy Validation Checks</span>
+            <span class="card-icon">🛡️</span>
+          </div>
+          <div class="card-body-scroll">
+            <table class="info-table">
+              <tbody>
+                <tr><td class="key">Queue Health</td><td class="val" id="val-queue-health">—</td></tr>
+                <tr><td class="key">Proof Integrity</td><td class="val" id="val-proof-integrity">—</td></tr>
+                <tr><td class="key">Lease Fencing</td><td class="val" id="val-lease-fencing">—</td></tr>
+                <tr><td class="key">Failed Real Rate</td><td class="val" id="val-failed-rate">—</td></tr>
+                <tr><td class="key">Queue Pending Tasks</td><td class="val accent" id="val-queue-pending">—</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">Live Status Feed</span>
-          <span class="card-icon">📡</span>
+      <!-- Column 3: INTEGRITY & TELEMETRY LOGS -->
+      <div class="column">
+        <div class="section-title">Integrity & Logs</div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Verification Checks</span>
+            <span class="card-icon">✅</span>
+          </div>
+          <div class="card-body-scroll">
+            <ul class="check-list" id="check-list">
+              <li class="check-item">
+                <span class="check-icon">✅</span>
+                <div class="check-text">
+                  <div class="check-label">UFW active, port 3012 not public</div>
+                  <div class="check-detail">ufw status: active · eth0:3012 = no rule</div>
+                </div>
+              </li>
+              <li class="check-item">
+                <span class="check-icon">✅</span>
+                <div class="check-text">
+                  <div class="check-label">Docker containers running</div>
+                  <div class="check-detail">hoch-relay-api · Up · healthy</div>
+                </div>
+              </li>
+              <li class="check-item">
+                <span class="check-icon">✅</span>
+                <div class="check-text">
+                  <div class="check-label">Tailscale reachable</div>
+                  <div class="check-detail">http://100.87.18.15:3012/health → 200 OK</div>
+                </div>
+              </li>
+              <li class="check-item">
+                <span class="check-icon">✅</span>
+                <div class="check-text">
+                  <div class="check-label">fail2ban active</div>
+                  <div class="check-detail">Service status: active (running)</div>
+                </div>
+              </li>
+              <li class="check-item">
+                <span class="check-icon" id="check-browser-icon">⏳</span>
+                <div class="check-text">
+                  <div class="check-label">Browser access via Tailscale</div>
+                  <div class="check-detail" id="check-browser-detail">Polling…</div>
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
-        <div id="heartbeat-log">
-          <div class="hb-entry"><span class="hb-ts">—</span> Initializing…</div>
-        </div>
-        <div style="margin-top: 12px; display: flex; gap: 8px;">
-          <button id="btn-refresh" onclick="fetchAll()" style="
-            background: var(--accent-dim); border: 1px solid rgba(34,211,238,0.3);
-            color: var(--accent); border-radius: var(--radius-sm);
-            padding: 6px 14px; font-size: 12px; font-family: var(--font-sans);
-            cursor: pointer; font-weight: 500; transition: background 0.2s;
-          ">↻ Refresh</button>
-          <button id="btn-heartbeat" onclick="sendHeartbeat()" style="
-            background: var(--green-dim); border: 1px solid rgba(74,222,128,0.3);
-            color: var(--green); border-radius: var(--radius-sm);
-            padding: 6px 14px; font-size: 12px; font-family: var(--font-sans);
-            cursor: pointer; font-weight: 500; transition: background 0.2s;
-          ">♥ Ping Heartbeat</button>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Live Status Feed</span>
+            <span class="card-icon">📡</span>
+          </div>
+          <div id="heartbeat-log" style="flex: 1; height: 100%; min-height: 100px;">
+            <div class="hb-entry"><span class="hb-ts">—</span> Initializing…</div>
+          </div>
+          <div style="margin-top: 10px; display: flex; gap: 8px; flex-shrink: 0;">
+            <button id="btn-refresh" onclick="fetchAll()" style="
+              background: var(--accent-dim); border: 1px solid rgba(34,211,238,0.25);
+              color: var(--accent); border-radius: var(--radius-sm);
+              padding: 5px 12px; font-size: 11px; font-family: var(--font-sans);
+              cursor: pointer; font-weight: 500; transition: background 0.2s;
+            ">↻ Refresh</button>
+            <button id="btn-heartbeat" onclick="sendHeartbeat()" style="
+              background: var(--green-dim); border: 1px solid rgba(74,222,128,0.25);
+              color: var(--green); border-radius: var(--radius-sm);
+              padding: 5px 12px; font-size: 11px; font-family: var(--font-sans);
+              cursor: pointer; font-weight: 500; transition: background 0.2s;
+            ">♥ Ping</button>
+          </div>
         </div>
       </div>
     </div>
@@ -503,13 +623,12 @@
       entry.className = 'hb-entry';
       entry.innerHTML = `<span class="hb-ts" style="color:${color}">[${nowISO()}]</span> ${msg}`;
       el.prepend(entry);
-      // Keep max 40 entries
       while (el.children.length > 40) el.removeChild(el.lastChild);
     }
 
     function setGate(status, label, sub) {
       const banner = document.getElementById('gate-banner');
-      banner.className = status; // pass / warn / fail
+      banner.className = status;
       document.getElementById('gate-label').textContent = label;
       document.getElementById('gate-sub').textContent = sub;
       const pill = document.getElementById('gate-status-pill');
@@ -547,14 +666,86 @@
         const r = await fetch(`${BASE}/api/status`, { cache: 'no-store' });
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         const d = await r.json();
-        // Port exposure indicator
         const exposed = d.port_public_exposed;
         document.getElementById('stat-port-exposure').textContent = exposed ? '⚠ PUBLIC' : 'PRIVATE';
         document.getElementById('stat-port-exposure').className =
-          'stat-value ' + (exposed ? 'stat-red' : 'stat-green');
+          'stat-val-sm ' + (exposed ? 'stat-red' : 'stat-green');
         log(`/api/status → epic=${d.epic} · port_public=${d.port_public_exposed}`, 'ok');
       } catch (e) {
         log(`/api/status error: ${e.message}`, 'err');
+      }
+    }
+
+    async function fetchBurnIn() {
+      try {
+        const r = await fetch(`${BASE}/api/burn-in/status`, { cache: 'no-store' });
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        const d = await r.json();
+
+        // Null-safe DOM writers: a single missing element must NEVER abort the whole
+        // render and blank the daemon/hold/queue panels (that hid a dead daemon behind
+        // "—" and a green banner). Missing IDs are reported, not thrown.
+        const _miss = [];
+        const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; else _miss.push(id); };
+        const setColor = (id, c) => { const el = document.getElementById(id); if (el) el.style.color = c; };
+        const setCls = (id, c) => { const el = document.getElementById(id); if (el) el.className = c; };
+
+        const cleanIndicator = (d.state_indicator || '').replace(/_/g, ' ');
+        setTxt('stat-autonomy-status', cleanIndicator || 'UNKNOWN');
+        if (d.state_indicator === 'PRIMARY_SYSTEMD_BURN_IN_ACTIVE') {
+          setColor('stat-autonomy-status', 'var(--green)');
+        } else if (d.state_indicator === 'SYSTEMD_DOWN' || d.state_indicator === 'HEARTBEAT_STALE') {
+          setColor('stat-autonomy-status', 'var(--red)');
+        } else {
+          setColor('stat-autonomy-status', 'var(--amber)');
+        }
+
+        const bis = d.burn_in_summary || {};
+        const realC = bis.real_cycles ?? 0;
+        const simC = bis.simulated_cycles ?? 0;
+        setTxt('stat-completed-cycles', realC + simC);
+        setTxt('lbl-real-cycles', realC);
+        setTxt('lbl-sim-cycles', simC);
+
+        const elapsed = bis.elapsed_hours ?? 0.0;
+        setTxt('stat-elapsed-hours', elapsed.toFixed(4) + 'h');
+        const clean24h = (d["24h_go_status"] || '').replace(/_/g, ' ');
+        setTxt('lbl-24h-status', clean24h || 'PENDING');
+        setColor('lbl-24h-status', d["24h_go_status"] === 'BURN_IN_GO' ? 'var(--green)' : 'var(--amber)');
+
+        const ds = d.daemon_state || {};
+        setTxt('ab-heartbeat', (d.heartbeat_status || '').replace(/_/g, ' '));
+        setCls('ab-heartbeat', 'val ' + (d.heartbeat_status === 'HEARTBEAT_FRESH' ? 'green' : 'red'));
+        setTxt('ab-cycle-status', (ds.last_cycle_status || 'IDLE').replace(/_/g, ' '));
+        setTxt('ab-task-id', ds.last_task_id || 'None');
+        setTxt('ab-operator-hold', (ds.operator_hold_status || 'INACTIVE').replace(/_/g, ' '));
+        setCls('ab-operator-hold', 'val ' + (ds.operator_hold_status === 'INACTIVE' ? 'green' : 'red'));
+        setTxt('ab-doctrine', ds.doctrine_status || 'GO');
+
+        const qh = d.queue_health || {};
+        setTxt('val-queue-health', qh.status || 'PASS');
+        setCls('val-queue-health', 'val ' + (qh.status === 'PASS' || !qh.status ? 'green' : 'red'));
+
+        const pi = d.proof_index || {};
+        const proofOk = pi.verdict === 'PASS' || !pi.verdict;
+        setTxt('val-proof-integrity', proofOk ? 'PASS' : 'FAIL');
+        setCls('val-proof-integrity', 'val ' + (proofOk ? 'green' : 'red'));
+
+        const fs = d.fencing_status || {};
+        const fenceOk = fs.verdict === 'PASS' || !fs.verdict;
+        setTxt('val-lease-fencing', fenceOk ? 'PASS' : 'FAIL');
+        setCls('val-lease-fencing', 'val ' + (fenceOk ? 'green' : 'red'));
+
+        const failedRate = bis.failed_cycle_rate ?? 0.0;
+        setTxt('val-failed-rate', (failedRate * 100).toFixed(2) + '%');
+        setCls('val-failed-rate', 'val ' + (failedRate === 0.0 ? 'green' : 'red'));
+
+        setTxt('val-queue-pending', d.pending_task_count);
+
+        const missNote = _miss.length ? ` · missing labels: ${_miss.join(',')}` : '';
+        log(`/api/burn-in/status → indicator=${d.state_indicator} · real_cycles=${realC}${missNote}`, 'ok');
+      } catch (e) {
+        log(`/api/burn-in/status error: ${e.message}`, 'err');
       }
     }
 
@@ -565,8 +756,8 @@
 
       const healthOk = await fetchHealth();
       await fetchStatus();
+      await fetchBurnIn();
 
-      // Update browser-access check
       if (healthOk) {
         document.getElementById('check-browser-icon').textContent = '✅';
         document.getElementById('check-browser-detail').textContent =
@@ -593,7 +784,6 @@
       }
     }
 
-    // Initial load + auto-refresh every 30s
     fetchAll();
     pollInterval = setInterval(fetchAll, 30_000);
   </script>
