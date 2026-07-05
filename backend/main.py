@@ -137,6 +137,52 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# HAS v2 Roadmap Middleware for Quarantine and Redirection
+from fastapi import Request
+from fastapi.responses import RedirectResponse, JSONResponse
+@app.middleware("http")
+async def has_quarantine_middleware(request: Request, call_next):
+    path = request.url.path
+    
+    # 1. Mock LLM endpoints safety assertion (P1c)
+    has_mode = os.environ.get("HAS_MODE", "development").lower()
+    if has_mode == "production" and path.startswith("/api/v1/mock/llm/"):
+        return JSONResponse(
+            status_code=403,
+            content={"detail": "Mock LLM endpoints are disabled in production mode."}
+        )
+
+    # 2. Feature-Flag Quarantine (P1b)
+    has_quarantine_mode = os.environ.get("HAS_QUARANTINE_MODE", "true").lower() == "true"
+    if has_quarantine_mode:
+        quarantine_prefixes = [
+            "/api/tv/", "/api/v1/tv/",
+            "/api/hls/", "/api/v1/hls/",
+            "/api/app-store/", "/api/v1/app-store/",
+            "/api/monetization/", "/api/v1/monetization/",
+            "/api/stripe/", "/api/v1/stripe/",
+            "/api/cybergov/", "/api/v1/cybergov/"
+        ]
+        if any(path.startswith(prefix) for prefix in quarantine_prefixes):
+            return JSONResponse(
+                status_code=403,
+                content={"detail": "Route is quarantined in HAS-only mode."}
+            )
+
+    # 3. Prefix Redirection/Deprecation (P1a)
+    if path.startswith("/api/") and not path.startswith("/api/v1/"):
+        v1_path = "/api/v1" + path[4:]
+        # Check if route is registered
+        for route in request.app.routes:
+            if type(route).__name__ == "APIRoute":
+                route_path = getattr(route, "path", None)
+                if route_path == v1_path or (hasattr(route, "path_regex") and route.path_regex.match(v1_path)):
+                    return RedirectResponse(url=v1_path, status_code=307)
+                
+    response = await call_next(request)
+    return response
+
+
 cluster_mgr = ClusterManager()
 agent_runner = AgentRunner()
 security_auditor = SecurityAuditor()
@@ -646,14 +692,26 @@ def api_relay_health():
     try:
         result = fetch_relay_health()
         if result is None:
-            return {"worker_status": "UNKNOWN", "reachable": False, "worker": "HAS-WORKER-RELAY-001"}
-        # Normalise: only pass through ONLINE literally
-        raw_status = result.get("worker_status", "UNKNOWN")
-        result["worker_status"] = "ONLINE" if raw_status == "ONLINE" else "UNKNOWN"
-        result["reachable"] = True
-        return result
+            data = {"worker_status": "UNKNOWN", "reachable": False, "worker": "HAS-WORKER-RELAY-001"}
+        else:
+            raw_status = result.get("worker_status", "UNKNOWN")
+            result["worker_status"] = "ONLINE" if raw_status == "ONLINE" else "UNKNOWN"
+            result["reachable"] = True
+            data = result
     except Exception as e:
-        return {"worker_status": "UNKNOWN", "reachable": False, "error": str(e)}
+        data = {"worker_status": "UNKNOWN", "reachable": False, "error": str(e)}
+        
+    return {
+        "data": data,
+        "source": "live",
+        "source_id": "relay.health",
+        "observed_at": now_iso(),
+        "received_at": now_iso(),
+        "ttl_ms": 10000,
+        "freshness": "live",
+        "correlation_id": "corr_relay_health",
+        "evidence_refs": ["relay.ping"]
+    }
 
 @app.get("/api/v1/relay/registry")
 def api_relay_registry():
@@ -4694,6 +4752,25 @@ async def startup_event():
     if os.getenv("DISABLE_LOCAL_RUNTIME_SUPERVISOR", "false").lower() != "true":
         from backend.local_runtime_supervisor import SUPERVISOR
         SUPERVISOR.start()
+
+    # Runtime-truth heartbeat loop: the live server must emit its OWN heartbeat on
+    # an interval, otherwise HTTP can be 200 while backend_core goes stale in 10s
+    # (TTL) and readiness is wrongly capped. This closes that HTTP-up-but-stale gap
+    # with real liveness — the running process reporting itself, not a synthetic beat.
+    if os.getenv("DISABLE_RUNTIME_TRUTH_HEARTBEAT", "false").lower() != "true":
+        async def _runtime_truth_heartbeat_loop():
+            from backend.runtime_truth.collector import collect_and_store_all
+            try:
+                interval = float(os.getenv("RUNTIME_TRUTH_HEARTBEAT_INTERVAL_S", "5"))
+            except ValueError:
+                interval = 5.0
+            while True:
+                try:
+                    await asyncio.to_thread(collect_and_store_all)
+                except Exception as e:
+                    print(f"[runtime-truth-heartbeat] collect error: {e}")
+                await asyncio.sleep(interval)
+        asyncio.create_task(_runtime_truth_heartbeat_loop())
 
     # Seed 14 specialized agents if empty
     try:
@@ -9801,6 +9878,228 @@ def post_autonomy_operator_hold(req: OperatorHoldRequestModel):
         json.dump(payload, f, indent=2)
     return {"status": "success", "payload": payload}
 
+# --- Autonomy Daemon API Endpoints ---
+
+@app.get("/api/autonomy/daemon/state")
+def get_autonomy_daemon_state():
+    from pathlib import Path
+    import json
+    path = Path("has_live_project_tracker/data/ag_execution_daemon_state.json")
+    if not path.exists():
+        return {"daemon_status": "IDLE"}
+    with open(path, "r", encoding="utf-8") as f:
+        try:
+            return json.load(f)
+        except Exception:
+            return {"daemon_status": "IDLE"}
+
+@app.get("/api/autonomy/daemon/burn-in")
+def get_autonomy_daemon_burn_in():
+    from pathlib import Path
+    import json
+    path = Path("has_live_project_tracker/data/ag_execution_burn_in_ledger.jsonl")
+    if not path.exists():
+        return []
+    lines = []
+    with open(path, "r", encoding="utf-8") as f:
+        for line in f:
+            if line.strip():
+                try:
+                    lines.append(json.loads(line))
+                except Exception:
+                    pass
+    return lines
+
+@app.get("/api/autonomy/daemon/summary")
+def get_autonomy_daemon_summary():
+    from pathlib import Path
+    import json
+    path = Path("has_live_project_tracker/data/ag_execution_burn_in_summary.json")
+    if not path.exists():
+        return {"total_cycles": 0, "final_verdict": "BURN_IN_INCOMPLETE"}
+    with open(path, "r", encoding="utf-8") as f:
+        try:
+            return json.load(f)
+        except Exception:
+            return {"total_cycles": 0, "final_verdict": "BURN_IN_INCOMPLETE"}
+
+@app.get("/api/autonomy/daemon/heartbeat")
+def get_autonomy_daemon_heartbeat():
+    from pathlib import Path
+    import json
+    path = Path("has_live_project_tracker/data/ag_daemon_heartbeat_status.json")
+    if not path.exists():
+        return {"verdict": "HEARTBEAT_MISSING"}
+    with open(path, "r", encoding="utf-8") as f:
+        try:
+            return json.load(f)
+        except Exception:
+            return {"verdict": "HEARTBEAT_MISSING"}
+
+@app.get("/api/autonomy/daemon/oracle")
+def get_autonomy_daemon_oracle():
+    from pathlib import Path
+    import json
+    path = Path("has_live_project_tracker/data/ag_execution_burn_in_oracle.json")
+    if not path.exists():
+        return {"verdict": "ORACLE_INCOMPLETE"}
+    with open(path, "r", encoding="utf-8") as f:
+        try:
+            return json.load(f)
+        except Exception:
+            return {"verdict": "ORACLE_INCOMPLETE"}
+
+@app.get("/api/autonomy/daemon/fencing")
+def get_autonomy_daemon_fencing():
+    from pathlib import Path
+    import json
+    path = Path("has_live_project_tracker/data/ag_execution_fencing_status.json")
+    if not path.exists():
+        return {"verdict": "FAIL"}
+    with open(path, "r", encoding="utf-8") as f:
+        try:
+            return json.load(f)
+        except Exception:
+            return {"verdict": "FAIL"}
+
+@app.get("/api/autonomy/daemon/injections")
+def get_autonomy_daemon_injections():
+    from pathlib import Path
+    import json
+    path = Path("has_live_project_tracker/data/ag_execution_injection_results.jsonl")
+    if not path.exists():
+        return []
+    lines = []
+    with open(path, "r", encoding="utf-8") as f:
+        for line in f:
+            if line.strip():
+                try:
+                    lines.append(json.loads(line))
+                except Exception:
+                    pass
+    return lines
+
+@app.get("/api/autonomy/daemon/supervision")
+def get_autonomy_daemon_supervision():
+    from pathlib import Path
+    import json
+    path = Path("has_live_project_tracker/data/ag_execution_supervision_test.json")
+    if not path.exists():
+        return {"supervision_status": "SUPERVISION_PENDING_HOST"}
+    with open(path, "r", encoding="utf-8") as f:
+        try:
+            return json.load(f)
+        except Exception:
+            return {"supervision_status": "SUPERVISION_PENDING_HOST"}
+
+@app.get("/api/autonomy/daemon/pert-mapping")
+def get_autonomy_daemon_pert_mapping():
+    from pathlib import Path
+    import json
+    path = Path("has_live_project_tracker/data/fresh_pert_gap_analysis.json")
+    if not path.exists():
+        return {}
+    with open(path, "r", encoding="utf-8") as f:
+        try:
+            return json.load(f)
+        except Exception:
+            return {}
+
+@app.get("/api/autonomy/daemon/rmf-preflight")
+def get_autonomy_daemon_rmf_preflight():
+    from pathlib import Path
+    import json
+    path = Path("has_live_project_tracker/data/appstore_preflight_status.json")
+    if not path.exists():
+        return {"verdict": "APPSTORE_PREFLIGHT_NO_GO", "failures": ["Preflight status file not found."]}
+    with open(path, "r", encoding="utf-8") as f:
+        try:
+            return json.load(f)
+        except Exception:
+            return {"verdict": "APPSTORE_PREFLIGHT_NO_GO", "failures": ["Failed to load status file."]}
+
+@app.get("/api/autonomy/daemon/k-track")
+def get_autonomy_daemon_k_track():
+    from pathlib import Path
+    import json
+    path = Path("has_live_project_tracker/data/k_track_ledger.json")
+    if not path.exists():
+        return []
+    with open(path, "r", encoding="utf-8") as f:
+        try:
+            return json.load(f)
+        except Exception:
+            return []
+
+@app.post("/api/autonomy/daemon/run-once")
+def post_autonomy_daemon_run_once():
+    import subprocess
+    from fastapi import HTTPException
+    try:
+        res = subprocess.run(["python3", "scripts/ag_execution_runner.py"], capture_output=True, text=True, timeout=10)
+        return {"status": "success", "stdout": res.stdout}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/autonomy/daemon/operator-stop")
+def post_autonomy_daemon_operator_stop():
+    from pathlib import Path
+    import json
+    import datetime
+    path = Path("has_live_project_tracker/data/ag_operator_hold.json")
+    ts = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")
+    payload = {
+        "operator_hold_active": True,
+        "reason": "Operator stop requested from Command Center",
+        "operator": "Michael Hoch",
+        "timestamp": ts,
+        "affected_categories": []
+    }
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=2)
+    return {"status": "success", "payload": payload}
+
+@app.post("/api/autonomy/daemon/operator-start")
+def post_autonomy_daemon_operator_start():
+    from pathlib import Path
+    import json
+    import datetime
+    from fastapi import HTTPException
+    
+    hold_path = Path("has_live_project_tracker/data/ag_operator_hold.json")
+    if hold_path.exists():
+        with open(hold_path, "r") as f:
+            hold_data = json.load(f)
+        if hold_data.get("operator_hold_active"):
+            raise HTTPException(status_code=400, detail="Cannot start: Operator Hold is active. Release hold first.")
+            
+    ts = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")
+    payload = {
+        "operator_hold_active": False,
+        "reason": "Operator start requested from Command Center",
+        "operator": "Michael Hoch",
+        "timestamp": ts,
+        "affected_categories": []
+    }
+    with open(hold_path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=2)
+        
+    return {"status": "success", "payload": payload}
+
+@app.post("/api/autonomy/daemon/validate-burn-in")
+def post_autonomy_daemon_validate_burn_in():
+    import subprocess
+    from fastapi import HTTPException
+    try:
+        res = subprocess.run(["python3", "scripts/verify_ag_execution_burn_in.py"], capture_output=True, text=True, timeout=10)
+        return {
+            "status": "success",
+            "stdout": res.stdout,
+            "exit_code": res.returncode
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 from typing import Optional as OptType, List as ListType
 
 class EvidenceMissionRequestModel(BaseModel):
@@ -10217,7 +10516,16 @@ def production_readiness():
         except Exception:
             pass
 
-    if high_open:
+    # Query governed readiness score via FinalVerdict
+    system_ready = False
+    try:
+        from backend.final_verifier.final_verdict import FinalVerdict
+        verdict = FinalVerdict().get_final_verdict()
+        system_ready = (verdict.get("status") == "VERIFIED" and verdict.get("readiness_score") == 100.0 and len(verdict.get("readiness_caps", [])) == 0)
+    except Exception:
+        pass
+
+    if high_open or not system_ready:
         go_no_go = "NO-GO"
     elif operator_authorized:
         go_no_go = "GO"
@@ -15431,7 +15739,7 @@ def get_prototype_prompt_brain():
                     <div class="panel-header" style="background: linear-gradient(135deg, rgba(168,85,247,0.1), rgba(236,72,153,0.1)); border-bottom: 1px solid rgba(168,85,247,0.2);">
                         <h2><i data-lucide="shield-check" style="color:var(--accent-violet);"></i> Command Center Autonomy Panel</h2>
                     </div>
-                    <div style="padding:20px; display:grid; grid-template-columns: 1fr 1fr 1fr; gap:20px;">
+                    <div style="padding:20px; display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:20px;">
                         <div>
                             <h3 style="margin-bottom:12px; font-size:0.95rem; color:var(--text-secondary);">Runner & Lease Status</h3>
                             <div style="display:flex; flex-direction:column; gap:10px; font-size:0.85rem;">
@@ -15494,6 +15802,50 @@ def get_prototype_prompt_brain():
                                 <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
                                     <button onclick="triggerRunOnce()" class="action-btn cyan" style="border:none; padding:6px 12px; border-radius:var(--radius-sm); font-size:0.8rem; font-weight:700; cursor:pointer;">Run Once</button>
                                     <button onclick="releaseStaleLease()" class="action-btn yellow" style="border:none; padding:6px 12px; border-radius:var(--radius-sm); font-size:0.8rem; font-weight:700; cursor:pointer;">Free Lease</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 style="margin-bottom:12px; font-size:0.95rem; color:var(--text-secondary);">Daemon Burn-In (Lane 1)</h3>
+                            <div style="display:flex; flex-direction:column; gap:10px; font-size:0.85rem;">
+                                <div style="display:flex; justify-content:space-between;">
+                                    <span>Daemon Status:</span>
+                                    <span id="daemon-status" class="badge">UNKNOWN</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between;">
+                                    <span>Heartbeat:</span>
+                                    <span id="daemon-heartbeat-status" class="badge">UNKNOWN</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between;">
+                                    <span>Fencing:</span>
+                                    <span id="daemon-fencing-status" class="badge">UNKNOWN</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between;">
+                                    <span>Verdict:</span>
+                                    <span id="daemon-burn-in-verdict" class="badge">UNKNOWN</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+                                    <button onclick="toggleDaemonHold()" id="btn-daemon-hold" class="action-btn red" style="border:none; padding:6px 12px; border-radius:var(--radius-sm); font-size:0.8rem; font-weight:700; cursor:pointer;">Stop Daemon</button>
+                                    <button onclick="validateBurnIn()" class="action-btn green" style="border:none; padding:6px 12px; border-radius:var(--radius-sm); font-size:0.8rem; font-weight:700; cursor:pointer;">Validate</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 style="margin-bottom:12px; font-size:0.95rem; color:var(--text-secondary);">Coordinated Lanes (2 & 3)</h3>
+                            <div style="display:flex; flex-direction:column; gap:10px; font-size:0.85rem;">
+                                <div style="display:flex; justify-content:space-between;">
+                                    <span>App Store Preflight:</span>
+                                    <span id="preflight-status" class="badge">UNKNOWN</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between;">
+                                    <span>K-Track Blocker:</span>
+                                    <span id="ktrack-status" class="badge">UNKNOWN</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between;">
+                                    <span>Critical Path Head:</span>
+                                    <span id="critical-path-head" style="font-weight:700; color:var(--accent-red);">K1</span>
                                 </div>
                             </div>
                         </div>
@@ -16149,6 +16501,76 @@ def get_prototype_prompt_brain():
                 const holdEl = document.getElementById('autonomy-operator-hold');
                 holdEl.textContent = hasHold ? 'HOLDING' : 'INACTIVE';
                 holdEl.className = 'badge ' + (hasHold ? 'red' : 'green');
+
+                // Daemon Status Fetch
+                try {
+                    const daemonRes = await fetch('/api/autonomy/daemon/state');
+                    const daemonData = await daemonRes.json();
+                    const dStatus = daemonData.daemon_status || 'IDLE';
+                    const elDStatus = document.getElementById('daemon-status');
+                    if (elDStatus) {
+                        elDStatus.textContent = dStatus;
+                        elDStatus.className = 'badge ' + (dStatus === 'RUNNING' ? 'green' : 'blue');
+                    }
+                    const isHold = daemonData.operator_hold_status === 'ACTIVE';
+                    const elBtnHold = document.getElementById('btn-daemon-hold');
+                    if (elBtnHold) {
+                        elBtnHold.textContent = isHold ? 'Release Hold' : 'Stop Daemon';
+                        elBtnHold.className = 'action-btn ' + (isHold ? 'green' : 'red');
+                    }
+                } catch (e) { console.error(e); }
+
+                try {
+                    const hbRes = await fetch('/api/autonomy/daemon/heartbeat');
+                    const hbData = await hbRes.json();
+                    const elHb = document.getElementById('daemon-heartbeat-status');
+                    if (elHb) {
+                        elHb.textContent = hbData.verdict || 'HEARTBEAT_MISSING';
+                        elHb.className = 'badge ' + (hbData.verdict === 'HEARTBEAT_FRESH' ? 'green' : 'red');
+                    }
+                } catch (e) { console.error(e); }
+
+                try {
+                    const fenceRes = await fetch('/api/autonomy/daemon/fencing');
+                    const fenceData = await fenceRes.json();
+                    const elFence = document.getElementById('daemon-fencing-status');
+                    if (elFence) {
+                        elFence.textContent = fenceData.verdict || 'FAIL';
+                        elFence.className = 'badge ' + (fenceData.verdict === 'PASS' ? 'green' : 'red');
+                    }
+                } catch (e) { console.error(e); }
+
+                try {
+                    const sumRes = await fetch('/api/autonomy/daemon/summary');
+                    const sumData = await sumRes.json();
+                    const elVer = document.getElementById('daemon-burn-in-verdict');
+                    if (elVer) {
+                        elVer.textContent = sumData.final_verdict || 'BURN_IN_INCOMPLETE';
+                        elVer.className = 'badge ' + (sumData.final_verdict === 'BURN_IN_GO' || sumData.final_verdict === 'BURN_IN_CONDITIONAL_GO' || sumData.final_verdict === 'PHASE_E_TEST_MODE_GO' ? 'green' : 'yellow');
+                    }
+                } catch (e) { console.error(e); }
+
+                try {
+                    const prefRes = await fetch('/api/autonomy/daemon/rmf-preflight');
+                    const prefData = await prefRes.json();
+                    const elPref = document.getElementById('preflight-status');
+                    if (elPref) {
+                        elPref.textContent = prefData.verdict || 'UNKNOWN';
+                        elPref.className = 'badge ' + (prefData.verdict === 'APPSTORE_PREFLIGHT_GO' ? 'green' : 'red');
+                    }
+                } catch (e) { console.error(e); }
+
+                try {
+                    const ktrackRes = await fetch('/api/autonomy/daemon/k-track');
+                    const ktrackData = await ktrackRes.json();
+                    const elK = document.getElementById('ktrack-status');
+                    if (elK) {
+                        const isBlocked = ktrackData.some(item => item.status === 'BLOCKED_FOUNDER_ACTION');
+                        elK.textContent = isBlocked ? 'FOUNDER ACTION REQUIRED' : 'GO';
+                        elK.className = 'badge ' + (isBlocked ? 'red' : 'green');
+                    }
+                } catch (e) { console.error(e); }
+
             } catch (err) {
                 console.error("Error fetching autonomy data:", err);
             }
@@ -16171,6 +16593,31 @@ def get_prototype_prompt_brain():
                 fetchAutonomyData();
             } catch (err) {
                 console.error("Error releasing stale lease:", err);
+            }
+        }
+
+        async function toggleDaemonHold() {
+            try {
+                const daemonRes = await fetch('/api/autonomy/daemon/state');
+                const daemonData = await daemonRes.json();
+                const isHold = daemonData.operator_hold_status === 'ACTIVE';
+                const endpoint = isHold ? '/api/autonomy/daemon/operator-start' : '/api/autonomy/daemon/operator-stop';
+                const res = await fetch(endpoint, { method: 'POST' });
+                alert(isHold ? 'Operator Hold Released!' : 'Operator Emergency Stop Initiated!');
+                fetchAutonomyData();
+            } catch (err) {
+                console.error("Error toggling daemon hold:", err);
+            }
+        }
+
+        async function validateBurnIn() {
+            try {
+                const res = await fetch('/api/autonomy/daemon/validate-burn-in', { method: 'POST' });
+                const data = await res.json();
+                alert(`Burn-In verification check response:\n${data.stdout}`);
+                fetchAutonomyData();
+            } catch (err) {
+                console.error("Error validating burn-in:", err);
             }
         }
 
