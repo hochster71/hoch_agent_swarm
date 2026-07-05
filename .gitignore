@@ -144,3 +144,5 @@ logs/goal_runner/
 *.tar.gz
 *.db-shm
 *.db-wal
+
+.fuse_hidden*

@@ -9418,6 +9418,25 @@ def get_brain_live_state():
             headers=_cors,
         )
 
+
+@app.get("/has_brain_moonshot.html")
+def serve_brain_moonshot_console():
+    """Serve the moonshot console from frontend/ explicitly.
+
+    The catch-all StaticFiles mount only serves frontend/dist (build output), so hand-authored
+    pages in frontend/ are not reachable through it. This explicit route makes the console
+    available over HTTP (and thus over the Tailscale-served tailnet) without depending on a build
+    step. Survives frontend rebuilds because it reads the source file directly.
+    """
+    from fastapi.responses import FileResponse as _FileResponse, PlainTextResponse as _PlainText
+    import os as _os
+    _p = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))),
+                       "frontend", "has_brain_moonshot.html")
+    if _os.path.exists(_p):
+        return _FileResponse(_p, media_type="text/html",
+                             headers={"Cache-Control": "no-store, no-cache, must-revalidate, max-age=0"})
+    return _PlainText("moonshot console file not found", status_code=404)
+
 @app.post("/api/prompts/qa/golden-fixtures")
 def run_prompts_golden_fixtures_endpoint():
     import subprocess
