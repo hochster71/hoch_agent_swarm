@@ -9,7 +9,6 @@ Honesty: this proxy measures whether a prompt *contains the disciplines the rubr
 (scope, evidence, anti-fake-green, rollback, ...). It does not judge semantic quality — that is
 what the Rung-2 judges add. Kept deterministic so the loop is reproducible and auditable.
 """
-import re
 from pathlib import Path
 from typing import Dict, Any, Optional
 

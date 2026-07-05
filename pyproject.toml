@@ -49,7 +49,16 @@ mcp = { path = "./dummy_mcp" }
 [dependency-groups]
 dev = [
     "pytest>=9.1.1",
+    # --- free audit stack (scripts/audit_stack.sh) ---
+    "ruff>=0.6",          # fast correctness/lint
+    "mypy>=1.11",         # static type checking (report-only)
+    "bandit>=1.7",        # python security SAST
+    "pip-audit>=2.7",     # dependency CVE audit
+    "hypothesis>=6.100",  # property/fuzz testing
+    "mutmut>=2.5",        # mutation testing — proves the tests actually bite
+    "pytest-cov>=5.0",    # coverage
 ]
+# trivy (container/IaC scan) is a standalone binary: `brew install trivy` or apt. Not a pip dep.
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

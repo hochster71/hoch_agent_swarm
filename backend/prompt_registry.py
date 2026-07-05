@@ -1,7 +1,10 @@
 import json
 import os
+import hashlib
+import threading
 from pathlib import Path
 from typing import Dict, Any, List, Optional
+from datetime import datetime, timezone
 
 class PromptRegistry:
     def __init__(self, base_dir: Optional[Path] = None):
@@ -14,66 +17,57 @@ class PromptRegistry:
 
     def get_source_paths(self) -> List[Path]:
         return [
-            self.base_dir / "data" / "prompt_registry" / "hoch_agent_swarm_prompt_library_v3_enhanced.json",
-            self.base_dir / "backend" / "prompt_library.json",
-            Path(os.getenv("HAS_PROMPT_LIBRARY_DIR", "/app/prompt_library")) / "hoch_agent_swarm_prompt_library.json",
-            self.base_dir / "hoch_agent_swarm_prompt_library.json"
+            self.base_dir / "data" / "prompt_registry" / "agents.manifest.json"
         ]
 
     def load_registry(self):
-        loaded_data = None
-        source_used = None
+        manifest_path = self.base_dir / "data" / "prompt_registry" / "agents.manifest.json"
+        report_path = self.base_dir / "data" / "prompt_registry" / "validation-report.json"
         
-        for path in self.get_source_paths():
-            if path.exists():
-                try:
-                    loaded_data = json.loads(path.read_text(encoding="utf-8"))
-                    source_used = str(path)
-                    break
-                except Exception:
-                    continue
-
-        if not loaded_data:
+        self.prompts = []
+        
+        if not manifest_path.exists():
             self.status = "FAIL_CLOSED"
-            self.prompts = []
-            self.write_report(None)
+            print(f"[prompt_registry] FAIL_CLOSED: Missing manifest.")
             return
 
-        # Extract prompts list if wrapped in a dict
-        prompts_list = []
-        if isinstance(loaded_data, dict) and "prompts" in loaded_data:
-            prompts_list = loaded_data["prompts"]
-        elif isinstance(loaded_data, list):
-            prompts_list = loaded_data
-        else:
-            self.status = "FAIL_CLOSED"
-            self.prompts = []
-            self.write_report(source_used)
-            return
-
-        valid_prompts = []
-        required_fields = ["id", "category", "industry", "title", "mission", "outputs"]
-        
-        for p in prompts_list:
-            if "prompt_text" in p and "prompt" not in p:
-                p["prompt"] = p["prompt_text"]
-            if all(p.get(field) for field in required_fields) and p.get("prompt"):
-                valid_prompts.append(p)
-
-        self.prompts = valid_prompts
-        count = len(self.prompts)
-        
-        if count >= 100:
+        try:
+            val_status = "PASS"
+            if report_path.exists():
+                report_data = json.loads(report_path.read_text(encoding="utf-8"))
+                val_status = report_data.get("validation_status")
+                if val_status != "GO":
+                    self.status = "FAIL_CLOSED"
+                    print(f"[prompt_registry] FAIL_CLOSED: Validation status is not GO (was {val_status}).")
+                    return
+            else:
+                manifest_data = json.loads(manifest_path.read_text(encoding="utf-8"))
+                val_status = manifest_data.get("validation_status")
+                if val_status not in ["PASS", "GO"]:
+                    self.status = "FAIL_CLOSED"
+                    print(f"[prompt_registry] FAIL_CLOSED: Manifest validation status is {val_status}.")
+                    return
+                
+            manifest_data = json.loads(manifest_path.read_text(encoding="utf-8"))
+            entries = manifest_data.get("entries", [])
+            
+            # Map new schema to the legacy schema expected by the rest of the application:
+            # - `id` -> `gene_id` (or fallback to `id`)
+            # - `category` -> `task_class` (or fallback to `category`)
+            mapped_prompts = []
+            for entry in entries:
+                p_copy = entry.copy()
+                p_copy["id"] = entry.get("gene_id") or entry.get("id")
+                p_copy["category"] = entry.get("task_class") or entry.get("category")
+                mapped_prompts.append(p_copy)
+                
+            self.prompts = mapped_prompts
             self.status = "LIVE"
-        elif count > 0:
-            self.status = "DEGRADED"
-        else:
+            print(f"[prompt_registry] Loaded {len(self.prompts)} active agents successfully. Registry status: {self.status}")
+        except Exception as e:
             self.status = "FAIL_CLOSED"
-
-        # Hard fail-closed check on manifest validation
-        manifest_health = self.get_manifest_health()
-        if manifest_health.get("validation_status") != "PASS":
-            self.status = "FAIL_CLOSED"
+            print(f"[prompt_registry] FAIL_CLOSED: Exception during registry load: {str(e)}")
+            return
 
         self.load_promptops_store()
 
@@ -85,7 +79,7 @@ class PromptRegistry:
 
         # Overlay promptops state and calculate severity onto prompts
         for p in self.prompts:
-            pid = p["id"]
+            pid = p.get("id")
             cat = p.get("category", "Unknown")
             prompt_text = p.get("prompt", "").lower()
             
@@ -113,10 +107,9 @@ class PromptRegistry:
                 p["last_run_timestamp"] = None
                 p["approval_metadata"] = None
 
-        self.write_report(source_used)
+        self.write_report(str(manifest_path))
 
     def load_promptops_store(self):
-        import hashlib
         store_path = self.base_dir / "data" / "prompt_registry" / "promptops_store.json"
         store_path.parent.mkdir(parents=True, exist_ok=True)
         
@@ -124,12 +117,12 @@ class PromptRegistry:
         if store_path.exists():
             try:
                 self.promptops_data = json.loads(store_path.read_text(encoding="utf-8"))
-            except Exception:
-                pass
+            except Exception as e:
+                print(f"[prompt_registry] WARN: could not read promptops_store ({e}); continuing with empty store")
                 
         updated = False
         for p in self.prompts:
-            pid = p["id"]
+            pid = p.get("id")
             p_text = p.get("prompt", "")
             current_hash = hashlib.sha256(p_text.encode("utf-8")).hexdigest()
             original_hash = p.get("hash") or current_hash
@@ -164,7 +157,6 @@ class PromptRegistry:
 
     def increment_usage(self, prompt_id: str, success: bool):
         if hasattr(self, "promptops_data") and prompt_id in self.promptops_data:
-            from datetime import datetime, timezone
             entry = self.promptops_data[prompt_id]
             entry["usage_count"] = entry.get("usage_count", 0) + 1
             if not success:
@@ -195,8 +187,6 @@ class PromptRegistry:
                         p["approval_metadata"] = approval_metadata
 
     def log_run_to_ledger(self, run_data: dict):
-        import json
-        import threading
         ledger_path = self.base_dir / "data" / "prompt_registry" / "evidenceops_ledger.json"
         ledger_path.parent.mkdir(parents=True, exist_ok=True)
         
@@ -214,62 +204,73 @@ class PromptRegistry:
             
             try:
                 ledger_path.write_text(json.dumps(data, indent=2), encoding="utf-8")
-            except Exception:
-                pass
+            except Exception as e:
+                print(f"[prompt_registry] WARN: could not write usage ledger ({e})")
 
     def get_manifest_health(self) -> Dict[str, Any]:
         manifest_path = self.base_dir / "data" / "prompt_registry" / "agents.manifest.json"
+        report_path = self.base_dir / "data" / "prompt_registry" / "validation-report.json"
         
         def _fail_closed(reason: str) -> Dict[str, Any]:
-            # Security-preserving: still FAIL_CLOSED (never run an unvalidated registry),
-            # but carry a specific, loud reason so a sync gap on a host is diagnosable
-            # instead of looking like a mystery outage. Distinguishes "manifest not on
-            # this host" from "manifest present but failed validation".
-            print(f"[prompt_registry] FAIL_CLOSED: {reason} (manifest_path={manifest_path})")
+            print(f"[prompt_registry] get_manifest_health FAIL_CLOSED: {reason}")
             return {
-                "name": "HOCH Agent Capability Registry",
-                "version": "4.0.0",
-                "created_for": "HOCH Agent Swarm",
+                "schema": "hasf-agent-capability-registry",
                 "total_agents": 0,
                 "active_agents": 0,
                 "deprecated_agents": 0,
-                "duplicate_count": 0,
-                "broken_link_count": 0,
-                "last_validation_timestamp": "",
+                "invalid_agents": 0,
+                "gapfill_ids_remaining": 0,
+                "duplicate_gene_ids": 0,
+                "duplicate_content_hashes": 0,
+                "missing_model_targets": 0,
                 "validation_status": "FAIL_CLOSED",
                 "fail_closed_reason": reason,
+                "last_validation_timestamp": "",
+                "manifest_path": str(manifest_path)
             }
 
         if not manifest_path.exists():
-            return _fail_closed("MANIFEST_MISSING_ON_HOST")
+            return _fail_closed("MANIFEST_MISSING")
 
         try:
-            data = json.loads(manifest_path.read_text(encoding="utf-8"))
-            required_keys = [
-                "total_agents", "active_agents", "deprecated_agents",
-                "duplicate_count", "broken_link_count",
-                "last_validation_timestamp", "validation_status"
-            ]
-            if not all(key in data for key in required_keys):
-                return _fail_closed("MANIFEST_SCHEMA_INCOMPLETE")
+            report_data = {}
+            if report_path.exists():
+                report_data = json.loads(report_path.read_text(encoding="utf-8"))
+            
+            manifest_data = json.loads(manifest_path.read_text(encoding="utf-8"))
+            val_status = report_data.get("validation_status") or manifest_data.get("validation_status")
+            
+            if val_status not in ["GO", "PASS"]:
+                return _fail_closed(f"VALIDATION_STATUS_IS_{val_status}")
 
-            if data.get("validation_status") != "PASS":
-                return _fail_closed("VALIDATION_FAILED")
-                
+            total_agents = manifest_data.get("total_agents") or manifest_data.get("total_genes", 0)
+            active_agents = manifest_data.get("active_agents", 0)
+            deprecated_agents = manifest_data.get("deprecated_agents", 0)
+            duplicate_count = manifest_data.get("duplicate_count") or manifest_data.get("duplicate_gene_ids", 0)
+            broken_link_count = manifest_data.get("broken_link_count", 0)
+
             return {
-                "name": data.get("name", "HOCH Agent Capability Registry"),
-                "version": data.get("version", "4.0.0"),
-                "created_for": data.get("created_for", "HOCH Agent Swarm"),
-                "total_agents": data["total_agents"],
-                "active_agents": data["active_agents"],
-                "deprecated_agents": data["deprecated_agents"],
-                "duplicate_count": data["duplicate_count"],
-                "broken_link_count": data["broken_link_count"],
-                "last_validation_timestamp": data["last_validation_timestamp"],
-                "validation_status": data["validation_status"]
+                "schema": manifest_data.get("schema", "hasf-agent-capability-registry"),
+                "name": manifest_data.get("name", "HOCH Agent Capability Registry"),
+                "version": manifest_data.get("version", "4.0.0"),
+                "created_for": manifest_data.get("created_for", "HOCH Agent Swarm"),
+                "total_agents": total_agents,
+                "active_agents": active_agents,
+                "deprecated_agents": deprecated_agents,
+                "duplicate_count": duplicate_count,
+                "broken_link_count": broken_link_count,
+                "total_genes": total_agents,
+                "invalid_agents": manifest_data.get("invalid_agents", 0),
+                "gapfill_ids_remaining": manifest_data.get("gapfill_ids_remaining", 0),
+                "duplicate_gene_ids": duplicate_count,
+                "duplicate_content_hashes": manifest_data.get("duplicate_content_hashes", 0),
+                "missing_model_targets": manifest_data.get("missing_model_targets", 0),
+                "validation_status": val_status,
+                "last_validation_timestamp": report_data.get("timestamp") or manifest_data.get("last_validation_timestamp", ""),
+                "manifest_path": str(manifest_path)
             }
-        except Exception:
-            return fail_closed_data
+        except Exception as e:
+            return _fail_closed(f"LOAD_ERROR: {str(e)}")
 
     def write_report(self, source_used: Optional[str]):
         report_dir = self.base_dir / "artifacts" / "qa" / "prompt_registry"
@@ -278,30 +279,21 @@ class PromptRegistry:
 
         categories = {}
         industries = {}
-        security_critical_categories = {
-            "SAST", "DAST", "DevSecOps", "Audit", "Governance", "Security Architecture",
-            "Vulnerability Management", "Detection Engineering", "Supply Chain", "Privacy",
-            "Data Security", "AI / ML Systems"
-        }
         
         security_critical_count = 0
         approval_gated_count = 0
 
         for p in self.prompts:
-            cat = p["category"]
+            cat = p.get("category", "Unknown")
             categories[cat] = categories.get(cat, 0) + 1
             
-            ind = p["industry"]
+            ind = p.get("industry", "Unknown")
             industries[ind] = industries.get(ind, 0) + 1
             
-            if cat in security_critical_categories:
+            if p.get("severity") == "HIGH":
                 security_critical_count += 1
 
-            # Determine if prompt is approval gated based on category or content
-            prompt_text = p["prompt"].lower()
-            if cat in ["Governance", "DevSecOps", "Operations", "Incident Response"] or any(
-                kw in prompt_text for kw in ["delete", "deploy", "publish", "credentials", "firewall", "quarantine", "waiver", "override"]
-            ):
+            if p.get("requires_human_approval"):
                 approval_gated_count += 1
 
         report = {

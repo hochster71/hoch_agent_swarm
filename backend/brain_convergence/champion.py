@@ -9,7 +9,7 @@ traceable to the exact evaluation that crowned it.
 import json
 import datetime
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 
 
 def _now() -> str:
