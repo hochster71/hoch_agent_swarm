@@ -47,10 +47,13 @@ def assemble():
         _exists("backend/main.py") and "runtime_truth_heartbeat_loop" in (ROOT / "backend/main.py").read_text(),
         "backend/main.py: interval heartbeat loop", note="fresh heartbeat proven live earlier")
 
-    # 2. Dashboard shows current truth — live console bound to real endpoints
+    # 2. Dashboard shows current truth — live console built AND mounted in the cockpit nav
+    console_built = _exists("frontend/has_brain_console.html")
+    console_mounted = _exists("frontend/index.html") and "has_brain_console.html" in (ROOT / "frontend/index.html").read_text()
     C["dashboard_truth"] = _probe(
-        False, "frontend/has_brain_console.html (built, not yet mounted in cockpit index.html)",
-        partial=_exists("frontend/has_brain_console.html"))
+        console_built and console_mounted,
+        f"has_brain_console.html built={console_built}, mounted-in-cockpit={console_mounted}",
+        partial=console_built and not console_mounted)
 
     # 3. Agents have owners / RACI — capability registry present + PASS
     reg = ROOT / "data/prompt_registry/agents.manifest.json"
