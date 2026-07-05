@@ -1,0 +1,52 @@
+{
+  "contract_id": "HAS-RUNTIME-TRUTH-CONTRACT",
+  "version": "1.0.0",
+  "status": "MANDATORY",
+  "governs": "docs/doctrine/HAS_EVIDENCE_DISCIPLINE_BASELINE.md",
+  "description": "Machine-readable source-of-truth hierarchy, label-state machine, and freshness budgets that make 'runtime truth != UI state' enforceable by non-model code.",
+  "source_of_truth_hierarchy": [
+    { "rank": 1, "source": "runtime_telemetry", "authoritative": true, "note": "Live signal within freshness budget wins all conflicts." },
+    { "rank": 2, "source": "test_output", "authoritative": true, "note": "Must come from an adversarial/negative-inclusive suite." },
+    { "rank": 3, "source": "operator_assertion", "authoritative": true, "note": "Human-approved context." },
+    { "rank": 4, "source": "agent_inference", "authoritative": false, "note": "Never sufficient alone for T1 or higher." }
+  ],
+  "ui_is_source_of_truth": false,
+  "ui_note": "Dashboard/UI state is a rendering of ranked sources, never itself a source.",
+  "label_states": {
+    "CLAIMED": { "green": false, "requires": ["source:agent_inference"] },
+    "OBSERVED": { "green": false, "requires": ["telemetry_or_test_reference"] },
+    "VERIFIED": { "green": true, "requires": ["evidence_paths", "timestamps", "test_names", "within_freshness_budget", "adversarial_verification"] },
+    "STALE": { "green": false, "requires": ["prior_evidence", "expiry_reason"] },
+    "UNKNOWN": { "green": false, "requires": [] },
+    "BLOCKED": { "green": false, "requires": ["blocking_gate", "missing_evidence"] }
+  },
+  "only_verified_renders_green": true,
+  "freshness_budgets_seconds": {
+    "runtime_telemetry": 300,
+    "healthcheck": 120,
+    "e2e_test_output": 86400,
+    "unit_test_output": 86400,
+    "security_scan": 604800
+  },
+  "proportionality_tiers": {
+    "T0_read_only": { "blocking": false, "min_evidence": ["source_cited_or_telemetry_labeled"] },
+    "T1_reversible_local": { "blocking": true, "min_evidence": ["file_diff", "unit_test", "clean_git_status"] },
+    "T2_stateful_integration": { "blocking": true, "min_evidence": ["file_diff", "unit_test", "e2e_test", "seeded_fault_pass", "rollback_path"] },
+    "T3_irreversible_external": { "blocking": true, "min_evidence": ["e2e_test", "seeded_fault_pass", "rollback_path", "security_scan", "operator_approval"] }
+  },
+  "anti_gaming": {
+    "adversarial_verification_required": true,
+    "negative_test_required_for_gate_pass": true,
+    "seeded_fault_suite_audit_cadence_days": 7,
+    "stale_passing_harness_is_blocker": true,
+    "citations_must_resolve": true
+  },
+  "release_blockers": [
+    "fake_green",
+    "stale_telemetry_rendered_as_verified",
+    "uncited_claim",
+    "untested_success_state",
+    "seeded_fault_not_caught",
+    "citation_unresolved_or_mismatched"
+  ]
+}
