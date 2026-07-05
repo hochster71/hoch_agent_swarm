@@ -1,0 +1,267 @@
+{
+  "schema": "brain-convergence-champions-m0",
+  "generation": 3,
+  "champions": {
+    "QA": {
+      "gene_id": "HASF-QA-AUTO-038",
+      "title": "Test Automation Architect Agent",
+      "score": 72.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "generation": 1,
+      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
+      "promoted_at": "2026-07-05T22:07:07.842794Z",
+      "beat_score": null
+    },
+    "Audit": {
+      "gene_id": "EDU-001",
+      "title": "Student Data Privacy Agent",
+      "score": 12.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "generation": 1,
+      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
+      "promoted_at": "2026-07-05T22:07:07.845391Z",
+      "beat_score": null
+    },
+    "SAST": {
+      "gene_id": "AI-002",
+      "title": "AI App Code Security Agent",
+      "score": 20.0,
+      "state": "VERIFIED_ON_HELDOUT",
+      "generation": 1,
+      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
+      "promoted_at": "2026-07-05T22:07:07.845405Z",
+      "beat_score": null
+    },
+    "DevSecOps": {
+      "gene_id": "HASF-SEC-STATE-AND-LOCA-CI-CD-GATE-015",
+      "title": "State and Local Government CI/CD Gate Agent",
+      "score": 62.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "generation": 1,
+      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
+      "promoted_at": "2026-07-05T22:07:07.845474Z",
+      "beat_score": null
+    },
+    "Coding": {
+      "gene_id": "CODE-005",
+      "title": "Test Automation Engineer",
+      "score": 45.0,
+      "state": "VERIFIED_ON_HELDOUT",
+      "generation": 1,
+      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
+      "promoted_at": "2026-07-05T22:07:07.845477Z",
+      "beat_score": null
+    },
+    "Operations": {
+      "gene_id": "HASF-OPS-EXEC-041",
+      "title": "Executive Risk Narrative Agent",
+      "score": 62.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "generation": 1,
+      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
+      "promoted_at": "2026-07-05T22:07:07.845504Z",
+      "beat_score": null
+    },
+    "AI / ML Systems": {
+      "gene_id": "AI-001",
+      "title": "AI Model Risk QA Agent",
+      "score": 40.0,
+      "state": "VERIFIED_ON_HELDOUT",
+      "generation": 1,
+      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
+      "promoted_at": "2026-07-05T22:07:07.845509Z",
+      "beat_score": null
+    },
+    "Security Architecture": {
+      "gene_id": "HASF-SEC-CHEMICAL-MFG-THREAT-MOD-216",
+      "title": "Chemical Manufacturing Threat Modeling Agent",
+      "score": 45.0,
+      "state": "VERIFIED_ON_HELDOUT",
+      "generation": 1,
+      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
+      "promoted_at": "2026-07-05T22:07:07.845514Z",
+      "beat_score": null
+    },
+    "Privacy": {
+      "gene_id": "gapfill-67e9e4409d",
+      "title": "Privacy-by-Design DPIA Agent",
+      "score": 47.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "generation": 1,
+      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
+      "promoted_at": "2026-07-05T22:07:07.845516Z",
+      "beat_score": null
+    },
+    "Data Security": {
+      "gene_id": "DBSEC-010",
+      "title": "Database Security Agent",
+      "score": 37.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "generation": 1,
+      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
+      "promoted_at": "2026-07-05T22:07:07.845518Z",
+      "beat_score": null
+    },
+    "Detection Engineering": {
+      "gene_id": "gapfill-beed726713",
+      "title": "Detection Coverage Gap Mapper",
+      "score": 32.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "generation": 1,
+      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
+      "promoted_at": "2026-07-05T22:07:07.845523Z",
+      "beat_score": null
+    },
+    "Governance": {
+      "gene_id": "EXCEPT-022",
+      "title": "Exception Risk Board Agent",
+      "score": 37.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "generation": 1,
+      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
+      "promoted_at": "2026-07-05T22:07:07.845529Z",
+      "beat_score": null
+    },
+    "Industry Specialized": {
+      "gene_id": "IND-010",
+      "title": "Telemetry Integrity Agent",
+      "score": 50.0,
+      "state": "VERIFIED_ON_HELDOUT",
+      "generation": 1,
+      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
+      "promoted_at": "2026-07-05T22:07:07.845531Z",
+      "beat_score": null
+    },
+    "Software Engineering": {
+      "gene_id": "HASF-ENG-ADR-002",
+      "title": "Architecture Decision Record Agent",
+      "score": 62.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "generation": 1,
+      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
+      "promoted_at": "2026-07-05T22:07:07.845533Z",
+      "beat_score": null
+    },
+    "AI / ML": {
+      "gene_id": "HASF-SEC-DEFENSE-DOD-NA-AI-RISK-EV-004",
+      "title": "Defense / DoD / National Security AI Risk Evaluator Agent",
+      "score": 62.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "generation": 1,
+      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
+      "promoted_at": "2026-07-05T22:07:07.845538Z",
+      "beat_score": null
+    },
+    "Governance / Compliance": {
+      "gene_id": "HASF-SEC-HEALTHCARE-COMPLIANCE-020",
+      "title": "Healthcare Compliance Mapper Agent",
+      "score": 62.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "generation": 1,
+      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
+      "promoted_at": "2026-07-05T22:07:07.845540Z",
+      "beat_score": null
+    },
+    "Cybersecurity": {
+      "gene_id": "HASF-CYB-IR-020",
+      "title": "Incident Response Commander Agent (HASF-CYB-IR-020)",
+      "score": 72.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "generation": 1,
+      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
+      "promoted_at": "2026-07-05T22:07:07.845542Z",
+      "beat_score": null
+    },
+    "AGI & Safety": {
+      "gene_id": "HASF-EXP-AGI-407",
+      "title": "AGI Alignment Telemetry Validator (Initial Design)",
+      "score": 72.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "generation": 1,
+      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
+      "promoted_at": "2026-07-05T22:07:07.845544Z",
+      "beat_score": null
+    },
+    "Self-Healing": {
+      "gene_id": "HASF-EXP-HEAL-417",
+      "title": "Rollback and Loop Mitigation Coordinator (Pre-Release Verification)",
+      "score": 77.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "generation": 1,
+      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
+      "promoted_at": "2026-07-05T22:07:07.846057Z",
+      "beat_score": null
+    },
+    "Infrastructure & Hardware": {
+      "gene_id": "HASF-EXP-NETHW-435",
+      "title": "BGP Route Hijack Mitigation Architect (Continuous Monitoring)",
+      "score": 62.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "generation": 1,
+      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
+      "promoted_at": "2026-07-05T22:07:07.846100Z",
+      "beat_score": null
+    },
+    "SDLC Governance": {
+      "gene_id": "HASF-EXP-NOS-524",
+      "title": "NorthStar Security & Compliance Agent (SH-04)",
+      "score": 40.0,
+      "state": "VERIFIED_ON_HELDOUT",
+      "generation": 1,
+      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
+      "promoted_at": "2026-07-05T22:07:07.846113Z",
+      "beat_score": null
+    },
+    "Research & Delivery": {
+      "gene_id": "HASF-EXP-RESDEL-472",
+      "title": "Third-Party Vendor Risk Officer (Compliance Alignment)",
+      "score": 62.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "generation": 1,
+      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
+      "promoted_at": "2026-07-05T22:07:07.846119Z",
+      "beat_score": null
+    },
+    "Incident Response": {
+      "gene_id": "gapfill-caa718343c",
+      "title": "Incident Triage & Severity Commander",
+      "score": 55.0,
+      "state": "VERIFIED_ON_HELDOUT",
+      "generation": 1,
+      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
+      "promoted_at": "2026-07-05T22:07:07.846122Z",
+      "beat_score": null
+    },
+    "Cloud Security": {
+      "gene_id": "gapfill-4636e9ea33",
+      "title": "Cloud Posture (CSPM) Auditor",
+      "score": 57.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "generation": 1,
+      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
+      "promoted_at": "2026-07-05T22:07:07.846429Z",
+      "beat_score": null
+    },
+    "Supply Chain": {
+      "gene_id": "gapfill-05fe20bdbb",
+      "title": "Third-Party / Vendor Risk Assessor",
+      "score": 45.0,
+      "state": "VERIFIED_ON_HELDOUT",
+      "generation": 1,
+      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
+      "promoted_at": "2026-07-05T22:07:07.846436Z",
+      "beat_score": null
+    },
+    "Vulnerability Management": {
+      "gene_id": "gapfill-4111c6b754",
+      "title": "Vulnerability Triage & Prioritization Agent",
+      "score": 22.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "generation": 1,
+      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
+      "promoted_at": "2026-07-05T22:07:07.846438Z",
+      "beat_score": null
+    }
+  },
+  "last_updated": "2026-07-05T22:07:08.578357Z"
+}

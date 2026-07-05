@@ -1,13 +1,30 @@
 {
-  "timestamp": "2026-07-03T15:59:12.337737+00:00",
-  "total_industries": 2,
-  "total_occupations": 4,
-  "total_tasks": 15,
-  "prompts_generated": 180,
-  "prompts_approved": 180,
-  "prompts_rejected": 0,
-  "prompts_repaired": 180,
-  "average_qa_score": 90.82,
-  "critical_red_team_findings": 0,
-  "convergence_status": "CONVERGED"
+  "schema": "brain-convergence-status-m0",
+  "generation": 3,
+  "mean_score": 50.769,
+  "last_gain": 0.0,
+  "epsilon": 0.5,
+  "patience": 3,
+  "converged": false,
+  "state": "PLATEAUING",
+  "history": [
+    {
+      "generation": 1,
+      "mean_score": 50.769,
+      "gain": null,
+      "at": "2026-07-05T22:07:07.859634Z"
+    },
+    {
+      "generation": 2,
+      "mean_score": 50.769,
+      "gain": 0.0,
+      "at": "2026-07-05T22:07:08.253358Z"
+    },
+    {
+      "generation": 3,
+      "mean_score": 50.769,
+      "gain": 0.0,
+      "at": "2026-07-05T22:07:08.583534Z"
+    }
+  ]
 }
