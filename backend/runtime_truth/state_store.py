@@ -60,9 +60,14 @@ def init_runtime_truth_tables():
             CREATE TABLE IF NOT EXISTS runtime_heartbeats (
                 component TEXT PRIMARY KEY,
                 last_seen TEXT NOT NULL,
-                status TEXT NOT NULL
+                status TEXT NOT NULL,
+                ttl_ms INTEGER DEFAULT 10000
             )
         """)
+        try:
+            conn.execute("ALTER TABLE runtime_heartbeats ADD COLUMN ttl_ms INTEGER DEFAULT 10000")
+        except Exception:
+            pass
         conn.execute("""
             CREATE TABLE IF NOT EXISTS runtime_contradictions (
                 id TEXT PRIMARY KEY,
@@ -262,6 +267,164 @@ def init_runtime_truth_tables():
                 approval_required INTEGER NOT NULL DEFAULT 1,
                 models_observed TEXT,
                 last_seen TEXT NOT NULL
+            )
+        """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS finance_plaid_items (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id TEXT,
+                institution_name TEXT NOT NULL,
+                plaid_item_id TEXT UNIQUE NOT NULL,
+                encrypted_access_token TEXT NOT NULL,
+                products_enabled TEXT,
+                consent_status TEXT NOT NULL,
+                last_successful_sync_at TEXT,
+                last_error_code TEXT,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            )
+        """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS finance_accounts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                plaid_account_id TEXT UNIQUE NOT NULL,
+                item_id INTEGER NOT NULL,
+                name TEXT NOT NULL,
+                official_name TEXT,
+                type TEXT NOT NULL,
+                subtype TEXT,
+                mask_last4 TEXT,
+                current_balance REAL NOT NULL,
+                available_balance REAL,
+                iso_currency_code TEXT,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                FOREIGN KEY (item_id) REFERENCES finance_plaid_items(id)
+            )
+        """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS finance_transactions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                plaid_transaction_id TEXT UNIQUE NOT NULL,
+                account_id TEXT NOT NULL,
+                date TEXT NOT NULL,
+                authorized_date TEXT,
+                merchant_name TEXT,
+                name TEXT NOT NULL,
+                amount REAL NOT NULL,
+                iso_currency_code TEXT,
+                category_primary TEXT,
+                category_detailed TEXT,
+                household_category TEXT,
+                pending INTEGER NOT NULL DEFAULT 0,
+                confidence REAL,
+                needs_review INTEGER NOT NULL DEFAULT 0,
+                raw_json TEXT,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                FOREIGN KEY (account_id) REFERENCES finance_accounts(plaid_account_id)
+            )
+        """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS finance_liabilities (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                account_id TEXT UNIQUE NOT NULL,
+                liability_type TEXT NOT NULL,
+                balance REAL NOT NULL,
+                apr REAL NOT NULL,
+                minimum_payment REAL NOT NULL,
+                next_payment_due_date TEXT,
+                raw_json TEXT,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                FOREIGN KEY (account_id) REFERENCES finance_accounts(plaid_account_id)
+            )
+        """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS finance_statements (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                plaid_statement_id TEXT UNIQUE NOT NULL,
+                account_id TEXT NOT NULL,
+                period_start TEXT NOT NULL,
+                period_end TEXT NOT NULL,
+                posted_date TEXT,
+                sha256_hash TEXT,
+                storage_path TEXT,
+                downloaded_at TEXT,
+                status TEXT NOT NULL,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                FOREIGN KEY (account_id) REFERENCES finance_accounts(plaid_account_id)
+            )
+        """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS finance_audit_events (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                actor TEXT NOT NULL,
+                action TEXT NOT NULL,
+                resource_type TEXT NOT NULL,
+                resource_id TEXT,
+                decision TEXT NOT NULL,
+                record_count INTEGER NOT NULL,
+                evidence_json TEXT,
+                created_at TEXT NOT NULL
+            )
+        """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS finance_transaction_categories (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                category_name TEXT UNIQUE NOT NULL,
+                target_budget REAL NOT NULL
+            )
+        """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS finance_balances (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                account_id TEXT NOT NULL,
+                current REAL NOT NULL,
+                available REAL,
+                recorded_at TEXT NOT NULL,
+                FOREIGN KEY (account_id) REFERENCES finance_accounts(plaid_account_id)
+            )
+        """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS finance_budget_periods (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                period_name TEXT UNIQUE NOT NULL,
+                started_at TEXT NOT NULL,
+                ended_at TEXT NOT NULL
+            )
+        """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS finance_budget_actuals (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                period_id INTEGER NOT NULL,
+                category TEXT NOT NULL,
+                target REAL NOT NULL,
+                actual REAL NOT NULL,
+                variance REAL NOT NULL,
+                FOREIGN KEY (period_id) REFERENCES finance_budget_periods(id)
+            )
+        """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS finance_debt_plan_runs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                run_timestamp TEXT NOT NULL,
+                monthly_surplus REAL NOT NULL,
+                avalanche_order_json TEXT,
+                snowball_order_json TEXT,
+                hybrid_order_json TEXT
+            )
+        """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS finance_agent_findings (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                finding_type TEXT NOT NULL,
+                severity TEXT NOT NULL,
+                description TEXT NOT NULL,
+                evidence_json TEXT,
+                confidence REAL NOT NULL,
+                created_at TEXT NOT NULL
             )
         """)
         conn.commit()

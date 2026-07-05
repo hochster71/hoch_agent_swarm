@@ -1,0 +1,15 @@
+{
+  "generated_at": "2026-07-05T00:43:28Z",
+  "service_file_exists": true,
+  "service_file_path": "deploy/local-autonomy/hoch-ag-execution-daemon.service",
+  "checks": {
+    "working_directory_correct": true,
+    "uses_private_local_env": true,
+    "uses_restart_on_failure": true,
+    "restart_delay_sane": true,
+    "daemon_command_correct": true,
+    "logs_captured": true,
+    "operator_stop_path_exists": true
+  },
+  "verdict": "SYSTEMD_READY"
+}

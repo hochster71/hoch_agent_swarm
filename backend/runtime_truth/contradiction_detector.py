@@ -24,11 +24,21 @@ def detect_contradictions() -> list[dict]:
             hb = heartbeats["backend_core"]
             from datetime import datetime, timezone
             now = datetime.now(timezone.utc)
-            hb_time = datetime.fromisoformat(hb["last_seen"])
+            cleaned_str = hb["last_seen"].replace("Z", "+00:00")
+            hb_time = datetime.fromisoformat(cleaned_str)
             hb_age = (now - hb_time).total_seconds()
             
-            # If heartbeat is dead (> 120s) but signal says it's healthy
-            if hb_age > 120.0:
+            # Determine threshold based on ttl_ms (fallback to 120.0s)
+            ttl_ms = 120000
+            try:
+                if "ttl_ms" in hb.keys() and hb["ttl_ms"] is not None:
+                    ttl_ms = int(hb["ttl_ms"])
+            except Exception:
+                pass
+            threshold = max(ttl_ms / 1000.0, 120.0)
+            
+            # If heartbeat is dead but signal says it's healthy
+            if hb_age > threshold:
                 contradictions.append({
                     "id": f"contradiction-{uuid.uuid4().hex[:8]}",
                     "claims": json.dumps({

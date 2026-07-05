@@ -1,12 +1,12 @@
 [
   {
-    "execution_id": "exec-1782949748",
+    "execution_id": "exec-1783271234",
     "proposal_id": "prop-cyber-gitleaks",
     "action_type": "READ_ONLY",
     "execution_mode": "DRY_RUN",
     "status": "SUCCESS",
-    "started_at": "2026-07-01T23:49:08.746686Z",
-    "completed_at": "2026-07-01T23:49:08.746686Z",
+    "started_at": "2026-07-05T17:07:14.735697Z",
+    "completed_at": "2026-07-05T17:07:14.735697Z",
     "executed_by": "Swarm Operator (Dry Run)",
     "affected_paths": [
       "/"
@@ -25,13 +25,13 @@
     "blocked_reason": ""
   },
   {
-    "execution_id": "exec-1782949748",
+    "execution_id": "exec-1783271234",
     "proposal_id": "prop-builder-compile",
     "action_type": "LOCAL_SAFE_WRITE",
     "execution_mode": "STAGED_EXECUTION",
     "status": "BLOCKED",
-    "started_at": "2026-07-01T23:49:08.784930Z",
-    "completed_at": "2026-07-01T23:49:08.784930Z",
+    "started_at": "2026-07-05T17:07:14.771820Z",
+    "completed_at": "2026-07-05T17:07:14.771820Z",
     "executed_by": "Swarm Governed Runner",
     "affected_paths": [],
     "commands_or_dispatcher_actions": [],
@@ -46,13 +46,13 @@
     "blocked_reason": "Local safe write action requires APPROVED status. Current status: PENDING"
   },
   {
-    "execution_id": "exec-1782949748",
+    "execution_id": "exec-1783271234",
     "proposal_id": "prop-builder-compile",
     "action_type": "LOCAL_SAFE_WRITE",
     "execution_mode": "STAGED_EXECUTION",
     "status": "SUCCESS",
-    "started_at": "2026-07-01T23:49:08.862234Z",
-    "completed_at": "2026-07-01T23:49:08.864292Z",
+    "started_at": "2026-07-05T17:07:14.844580Z",
+    "completed_at": "2026-07-05T17:07:14.846928Z",
     "executed_by": "Swarm Governed Runner",
     "affected_paths": [
       "/Users/michaelhoch/hoch_agent_swarm/docs/evidence/runtime/governed-execution-brief.md"
@@ -71,13 +71,13 @@
     "blocked_reason": ""
   },
   {
-    "execution_id": "exec-1782949748",
+    "execution_id": "exec-1783271234",
     "proposal_id": "prop-deploy-vercel",
     "action_type": "DEPLOYMENT",
     "execution_mode": "STAGED_EXECUTION",
     "status": "BLOCKED",
-    "started_at": "2026-07-01T23:49:08.902943Z",
-    "completed_at": "2026-07-01T23:49:08.902943Z",
+    "started_at": "2026-07-05T17:07:14.882514Z",
+    "completed_at": "2026-07-05T17:07:14.882514Z",
     "executed_by": "Swarm Governed Runner",
     "affected_paths": [],
     "commands_or_dispatcher_actions": [],
@@ -92,13 +92,13 @@
     "blocked_reason": "Execution of unsafe action type 'DEPLOYMENT' is prohibited under the safe-write model."
   },
   {
-    "execution_id": "exec-1782949748",
+    "execution_id": "exec-1783271234",
     "proposal_id": "prop-research-scrape",
     "action_type": "NETWORK_WRITE",
     "execution_mode": "STAGED_EXECUTION",
     "status": "BLOCKED",
-    "started_at": "2026-07-01T23:49:08.941625Z",
-    "completed_at": "2026-07-01T23:49:08.941625Z",
+    "started_at": "2026-07-05T17:07:14.918899Z",
+    "completed_at": "2026-07-05T17:07:14.918899Z",
     "executed_by": "Swarm Governed Runner",
     "affected_paths": [],
     "commands_or_dispatcher_actions": [],
@@ -113,13 +113,13 @@
     "blocked_reason": "Execution of unsafe action type 'NETWORK_WRITE' is prohibited under the safe-write model."
   },
   {
-    "execution_id": "exec-1782949748",
+    "execution_id": "exec-1783271234",
     "proposal_id": "prop-audit-purge",
     "action_type": "DESTRUCTIVE",
     "execution_mode": "STAGED_EXECUTION",
     "status": "BLOCKED",
-    "started_at": "2026-07-01T23:49:08.979643Z",
-    "completed_at": "2026-07-01T23:49:08.979643Z",
+    "started_at": "2026-07-05T17:07:14.955706Z",
+    "completed_at": "2026-07-05T17:07:14.955706Z",
     "executed_by": "Swarm Governed Runner",
     "affected_paths": [],
     "commands_or_dispatcher_actions": [],

@@ -6,9 +6,12 @@
     "context_window": 8192,
     "modality": "text",
     "best_for": "general",
-    "risk_allowed": ["MEDIUM", "LOW"],
+    "risk_allowed": [
+      "MEDIUM",
+      "LOW"
+    ],
     "status": "active",
-    "last_health_check": "2026-06-29T08:00:00Z",
+    "last_health_check": "2026-07-05T15:09:44.679890+00:00",
     "eval_score": 0.82
   },
   {
@@ -18,9 +21,12 @@
     "context_window": 16384,
     "modality": "text",
     "best_for": "general",
-    "risk_allowed": ["MEDIUM", "LOW"],
+    "risk_allowed": [
+      "MEDIUM",
+      "LOW"
+    ],
     "status": "active",
-    "last_health_check": "2026-06-29T08:00:00Z",
+    "last_health_check": "2026-07-05T15:09:44.679986+00:00",
     "eval_score": 0.85
   },
   {
@@ -30,9 +36,12 @@
     "context_window": 8192,
     "modality": "text",
     "best_for": "coding",
-    "risk_allowed": ["MEDIUM", "LOW"],
+    "risk_allowed": [
+      "MEDIUM",
+      "LOW"
+    ],
     "status": "active",
-    "last_health_check": "2026-06-29T08:00:00Z",
+    "last_health_check": "2026-07-05T15:09:44.679990+00:00",
     "eval_score": 0.78
   },
   {
@@ -42,9 +51,12 @@
     "context_window": 16384,
     "modality": "text",
     "best_for": "coding",
-    "risk_allowed": ["MEDIUM", "LOW"],
+    "risk_allowed": [
+      "MEDIUM",
+      "LOW"
+    ],
     "status": "active",
-    "last_health_check": "2026-06-29T08:00:00Z",
+    "last_health_check": "2026-07-05T15:09:44.679991+00:00",
     "eval_score": 0.88
   },
   {
@@ -54,9 +66,13 @@
     "context_window": 32768,
     "modality": "text",
     "best_for": "reasoning",
-    "risk_allowed": ["HIGH", "MEDIUM", "LOW"],
+    "risk_allowed": [
+      "HIGH",
+      "MEDIUM",
+      "LOW"
+    ],
     "status": "active",
-    "last_health_check": "2026-06-29T08:00:00Z",
+    "last_health_check": "2026-07-05T15:09:44.679993+00:00",
     "eval_score": 0.92
   },
   {
@@ -66,9 +82,13 @@
     "context_window": 4096,
     "modality": "text",
     "best_for": "security-review",
-    "risk_allowed": ["HIGH", "MEDIUM", "LOW"],
+    "risk_allowed": [
+      "HIGH",
+      "MEDIUM",
+      "LOW"
+    ],
     "status": "active",
-    "last_health_check": "2026-06-29T08:00:00Z",
+    "last_health_check": "2026-07-05T15:09:44.679994+00:00",
     "eval_score": 0.86
   },
   {
@@ -78,9 +98,11 @@
     "context_window": 2048,
     "modality": "embeddings",
     "best_for": "embeddings",
-    "risk_allowed": ["LOW"],
+    "risk_allowed": [
+      "LOW"
+    ],
     "status": "active",
-    "last_health_check": "2026-06-29T08:00:00Z",
-    "eval_score": 0.80
+    "last_health_check": "2026-07-05T15:09:44.679995+00:00",
+    "eval_score": 0.8
   }
 ]

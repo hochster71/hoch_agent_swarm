@@ -1,6 +1,6 @@
 {
-  "source_of_truth": false,
-  "as_of": "2026-07-03T20:17:30Z",
+  "source_of_truth": true,
+  "as_of": "2026-07-03T21:45:21.082634Z",
   "target": {
     "minimum_heavy_tool_model": "14B class",
     "ideal_heavy_tool_model": "32B class",

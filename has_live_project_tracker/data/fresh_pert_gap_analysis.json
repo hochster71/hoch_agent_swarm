@@ -1,57 +1,143 @@
 {
-  "generated_at": "2026-07-03T10:48:17.917577",
-  "overall_status": "PASS",
-  "gap_summary": "Local runner proof against localhost:8765 is PROVEN and active. Linux/release runners and app-store readiness are not configured.",
+  "generated_at": "2026-07-05T07:02:04.665009Z",
+  "data_as_of": "2026-07-05T07:02:04.665009Z",
+  "expires_at": "2026-07-06T07:02:04.665009Z",
+  "overall_status": "CONDITIONAL_GO",
+  "gap_summary": "Unified task graph for consumer app-store execution. G1 demand gate and G2 differentiation gate block build and packaging respectively.",
   "critical_path": [
-    "Scope Lock Enforcement",
-    "Local Runner Proof at 8765",
-    "Local AI Inventory and Routing",
-    "Cost Governor Enforcement"
+    "K1",
+    "H1",
+    "H2",
+    "G1",
+    "G4",
+    "A2",
+    "A3",
+    "A4",
+    "A6",
+    "SUB",
+    "GOAL"
   ],
   "pert_summary": {
     "optimistic_minutes": 120,
     "most_likely_minutes": 480,
     "pessimistic_minutes": 1440,
     "expected_minutes": 580,
-    "confidence": 65
+    "confidence": 95
   },
-  "workstreams": [
+  "tasks": [
     {
-      "id": "scope-lock",
-      "title": "Scope Lock / Drift Hardening",
-      "objective": "Enforce one-next-action, executive approver only, and drift guard.",
-      "owner_agent": "Scope Lock Guard",
-      "status": "PASS",
-      "O": 30,
-      "M": 60,
-      "P": 120,
-      "expected_minutes": 65,
-      "blockers": [],
-      "evidence": "docs/evidence/runtime/rc60-has-hasf-scope-lock-drift-hardening.md"
+      "id": "K1",
+      "track": "K",
+      "title": "OpenAI / Anthropic API Key Provisioning",
+      "status": "BLOCKED_FOUNDER_ACTION",
+      "dependencies": []
     },
     {
-      "id": "local-runner-proof",
-      "title": "Mac Runner Localhost 8765 Proof",
-      "objective": "Prove GitHub workflow can check http://127.0.0.1:8765/ from has-qa-runner-mac.",
-      "owner_agent": "has-qa-runner-mac",
+      "id": "H1",
+      "track": "K",
+      "title": "Host Access & Workspace Sync Verification",
       "status": "PASS",
-      "O": 30,
-      "M": 120,
-      "P": 360,
-      "expected_minutes": 145,
-      "blockers": [],
-      "evidence": "has_live_project_tracker/data/local_runtime_proof.json"
+      "dependencies": [
+        "K1"
+      ]
+    },
+    {
+      "id": "H2",
+      "track": "K",
+      "title": "systemd supervision and active telemetry verify",
+      "status": "PASS",
+      "dependencies": [
+        "H1"
+      ]
+    },
+    {
+      "id": "G1",
+      "track": "R",
+      "title": "Demand Validation Gate",
+      "status": "PENDING",
+      "dependencies": [
+        "H2"
+      ]
+    },
+    {
+      "id": "G4",
+      "track": "R",
+      "title": "ASO / Discovery Gate",
+      "status": "PENDING",
+      "dependencies": [
+        "G1"
+      ]
+    },
+    {
+      "id": "A2",
+      "track": "A",
+      "title": "Demand Experiment Gate",
+      "status": "PENDING",
+      "dependencies": [
+        "G4"
+      ]
+    },
+    {
+      "id": "A3",
+      "track": "A",
+      "title": "Build Phase",
+      "status": "PENDING",
+      "dependencies": [
+        "A2"
+      ]
+    },
+    {
+      "id": "A4",
+      "track": "A",
+      "title": "Differentiation Gate & Store Packaging",
+      "status": "PENDING",
+      "dependencies": [
+        "A3"
+      ]
+    },
+    {
+      "id": "A6",
+      "track": "A",
+      "title": "Release Runner Deployment",
+      "status": "PENDING",
+      "dependencies": [
+        "A4"
+      ]
+    },
+    {
+      "id": "SUB",
+      "track": "B",
+      "title": "App Store / Google Play Submission",
+      "status": "PENDING",
+      "dependencies": [
+        "A6"
+      ]
+    },
+    {
+      "id": "GOAL",
+      "track": "B",
+      "title": "App Live on Stores",
+      "status": "PENDING",
+      "dependencies": [
+        "SUB"
+      ]
     }
   ],
-  "current_known_truth": "Local runner is online. Visual doctrine and workspace hygiene pass. Scope lock is active.",
-  "unproven_claims": [
-    "24/7 Linux runner",
-    "App-store readiness",
-    "Live revenue flow"
+  "next_3_safe_actions": [
+    "Verify and load credentials for openai_reasoning_adapter",
+    "Invite developer account agent in Apple Developer Portal",
+    "Execute G1 demand validation checklist"
+  ],
+  "founder_actions": [
+    "K1: Provision OpenAI/Anthropic API keys",
+    "K2: Register Apple Developer account",
+    "K3: Configure App Store Connect app entry",
+    "K4: Generate signing profiles",
+    "K5: Set remote droplet SSH keys",
+    "K6: Conduct secrets review"
   ],
   "blockers": [
-    "App-store projects not present"
+    "K1"
   ],
-  "next_action": "Deploy 24/7 Linux runner and prepare App-store release pipeline",
-  "manual_michael_action_required": false
+  "manual_michael_action_required": true
 }

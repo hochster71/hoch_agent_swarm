@@ -1,0 +1,36 @@
+{
+  "generated_at": "2026-07-05T01:22:30Z",
+  "primary_host_identity": {
+    "host_name": "hoch-relay-001 (HOCH-200)",
+    "k5_access_status": "K5_ACCESS_VERIFIED",
+    "workspace_sync_status": "WORKSPACE_SYNC_GO",
+    "systemd_on_host_status": "SYSTEMD_READY_ON_HOST",
+    "verdict": "PRIMARY_HOST_VERIFIED"
+  },
+  "control_node": {
+    "hostname": "Michaels-MacBook-Pro.local",
+    "lan_ip": "10.0.0.10"
+  },
+  "secondary_run_archive_status": "SECONDARY_RUN_STOPPED_PRESERVED",
+  "systemd_deployment_check": {
+    "verdict": "SYSTEMD_READY"
+  },
+  "start_packet_status": "READY",
+  "founder_approval_status": "APPROVED",
+  "service_active_status": true,
+  "heartbeat_status": "HEARTBEAT_FRESH",
+  "real_cycle_count": 36,
+  "simulated_cycle_count": 57,
+  "current_elapsed_hours": 1.0843,
+  "current_validator_verdict": "RUNTIME_PROOF_CONDITIONAL_GO",
+  "remaining_blockers_to_phase_e_24h_go": [
+    "Run 24h wall-clock execution under systemd"
+  ],
+  "evidence_paths": [
+    "has_live_project_tracker/data/secondary_burn_in_run_archive.json",
+    "has_live_project_tracker/data/primary_systemd_deployment_check.json",
+    "has_live_project_tracker/data/primary_24h_burn_in_start_packet.json",
+    "has_live_project_tracker/data/k5_hoch200_access_status.json"
+  ],
+  "verdict": "READY_TO_START_PRIMARY_SYSTEMD_BURN_IN"
+}

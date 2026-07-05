@@ -1,0 +1,18 @@
+{
+  "generated_at": "2026-07-05T00:49:26Z",
+  "verification_commands": {
+    "hostname": "hostname",
+    "kernel": "uname -a",
+    "os_release": "cat /etc/os-release",
+    "working_directory": "pwd",
+    "repo_path_exists": "[ -d \"/Users/michaelhoch/hoch_agent_swarm\" ] && echo \"EXISTS\" || echo \"MISSING\"",
+    "python_available": "python3 --version",
+    "uv_available": "uv --version",
+    "systemd_available": "systemctl --version",
+    "service_installed": "[ -f \"/etc/systemd/system/hoch-ag-execution-daemon.service\" ] && echo \"INSTALLED\" || echo \"PENDING_INSTALL\"",
+    "daemon_exists": "[ -f \"scripts/ag_execution_daemon.py\" ] && echo \"EXISTS\" || echo \"MISSING\"",
+    "validators_exist": "[ -f \"scripts/verify_ag_execution_burn_in.py\" ] && echo \"EXISTS\" || echo \"MISSING\"",
+    "private_bindings": "ss -tulpn | grep 127.0.0.1",
+    "no_public_listener": "ss -tulpn | grep -E '0.0.0.0|\\*'"
+  }
+}

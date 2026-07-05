@@ -1,0 +1,27 @@
+{
+  "host_name": "hoch-relay-001 (HOCH-200)",
+  "host_ip_or_alias": "50.116.41.183 / tailscale 100.87.18.15",
+  "control_node_identity": {
+    "hostname": "Michaels-MacBook-Pro.local",
+    "computer_name": "Michael’s MacBook Pro",
+    "local_host_name": "Michaels-MacBook-Pro",
+    "lan_ip": "10.0.0.10"
+  },
+  "health_endpoint": "http://100.87.18.15:3012/health",
+  "dashboard_url": "http://100.87.18.15:3012/",
+  "health_status": "HTTP 200 OK",
+  "access_method": "SSH root@50.116.41.183",
+  "ssh_config_present": true,
+  "key_present_locally": true,
+  "connection_test_result": "SUCCESS",
+  "hostname_resolved": "hoch-relay-001",
+  "os_details": "Ubuntu Linux 6.8.0-134-generic x86_64",
+  "worker_status": "HAS-WORKER-RELAY-001 ONLINE",
+  "workspace_path_exists": true,
+  "repo_sync_status": "SUCCESS",
+  "private_network_status": "Private-Only Binding",
+  "firewall_public_exposure_status": "Passed (UFW active)",
+  "founder_action_required": "None (Primary daemon started)",
+  "evidence_path": "has_live_project_tracker/data/k5_hoch200_access_status.json",
+  "verdict": "K5_ACCESS_VERIFIED"
+}

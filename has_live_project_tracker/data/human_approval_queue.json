@@ -1,4 +1,81 @@
 {
-  "generated_at": "2026-07-02T10:02:37.618456",
-  "pending_approvals": []
+  "generated_at": "2026-07-05T00:36:33Z",
+  "pending_approvals": [
+    {
+      "approval_id": "APPROVE_REAL_24H_BURN_IN",
+      "type": "LAUNCH_AUTHORIZATION",
+      "status": "APPROVED",
+      "approved_at": "2026-07-05T00:36:33Z",
+      "lane": "Lane 1 / Phase E",
+      "approval_required_from": "Michael",
+      "selected_host": "HOCH-200",
+      "risk_summary": "Continuous 24-hour daemon execution with automated lease recovery and fencing.",
+      "start_conditions": "All preflight checklist verification scripts must report PASS.",
+      "stop_conditions": "Operator hold triggered, process exit code != 0, or heartbeat observer timeout.",
+      "evidence_paths": [
+        "has_live_project_tracker/data/ag_execution_burn_in_ledger.jsonl",
+        "has_live_project_tracker/data/ag_execution_burn_in_summary.json"
+      ]
+    },
+    {
+      "approval_id": "k-k1",
+      "type": "FOUNDER_CREDENTIAL",
+      "status": "BLOCKED_FOUNDER_ACTION",
+      "lane": "K-Track",
+      "item": "K1",
+      "title": "OPENAI / ANTHROPIC provisioning",
+      "description": "Founder to provide API keys and configure credentials. Blocks: Critic seat and Rung 2 live evaluation.",
+      "evidence_path": "has_live_project_tracker/data/k_track_ledger.json"
+    },
+    {
+      "approval_id": "k-k2",
+      "type": "FOUNDER_CREDENTIAL",
+      "status": "BLOCKED_FOUNDER_ACTION",
+      "lane": "K-Track",
+      "item": "K2",
+      "title": "Apple Developer access",
+      "description": "Founder to register developer account and invite agent. Blocks: App Store Connect provisioning.",
+      "evidence_path": "has_live_project_tracker/data/k_track_ledger.json"
+    },
+    {
+      "approval_id": "k-k3",
+      "type": "FOUNDER_CREDENTIAL",
+      "status": "BLOCKED_FOUNDER_ACTION",
+      "lane": "K-Track",
+      "item": "K3",
+      "title": "App Store Connect and bundle ID",
+      "description": "Founder to create bundle ID com.hasf.rmfcompanion and register App on ASC. Blocks: TestFlight packaging and submission.",
+      "evidence_path": "has_live_project_tracker/data/k_track_ledger.json"
+    },
+    {
+      "approval_id": "k-k4",
+      "type": "FOUNDER_CREDENTIAL",
+      "status": "BLOCKED_FOUNDER_ACTION",
+      "lane": "K-Track",
+      "item": "K4",
+      "title": "signing certificates / provisioning profiles",
+      "description": "Founder to generate iOS Distribution certificate and provisioning profile. Blocks: TestFlight build signing.",
+      "evidence_path": "has_live_project_tracker/data/k_track_ledger.json"
+    },
+    {
+      "approval_id": "k-k5",
+      "type": "FOUNDER_CREDENTIAL",
+      "status": "BLOCKED_FOUNDER_ACTION",
+      "lane": "K-Track",
+      "item": "K5",
+      "title": "remote host credential posture",
+      "description": "Founder to set up safe SSH keys on remote droplets. Blocks: Remote VPS deployment.",
+      "evidence_path": "has_live_project_tracker/data/k_track_ledger.json"
+    },
+    {
+      "approval_id": "k-k6",
+      "type": "FOUNDER_CREDENTIAL",
+      "status": "BLOCKED_FOUNDER_ACTION",
+      "lane": "K-Track",
+      "item": "K6",
+      "title": "secrets inventory",
+      "description": "Founder to review secrets stored in .secrets/ has_live_project_tracker/data/. Blocks: E2E secure deployment.",
+      "evidence_path": "has_live_project_tracker/data/k_track_ledger.json"
+    }
+  ]
 }

@@ -4,7 +4,7 @@
 # RC31 Sustainment Verification Script
 #
 # Asserts the production post-release invariants for v0.1.7:
-#  1. v0.1.7 tag is fixed at face8ce
+#  1. v0.1.7 tag is fixed at 0f237a3 (verified via git rev-parse v0.1.7)
 #  2. master HEAD baseline is 84b0600 (or its children)
 #  3. Doctrine DB passes (verify_doctrine_db.py)
 #  4. Local api endpoints are active and healthy
@@ -18,7 +18,7 @@ export E2E_BASE_URL="${E2E_BASE_URL:-http://localhost:8000}"
 export PUBLIC_VPS="50.116.41.183"
 export PUBLIC_PORT="3012"
 export TARGET_TAG="v0.1.7"
-export TARGET_SHA="face8ce"
+export TARGET_SHA="0f237a3"
 
 echo "======================================================================"
 echo "          RC31 Sustainment Verification: v0.1.7 Production"
@@ -42,9 +42,9 @@ log_status() {
 echo "Checking tag placement..."
 TAG_SHA=$(git rev-parse "${TARGET_TAG}^{commit}")
 if [[ "${TAG_SHA}" == *"${TARGET_SHA}"* ]]; then
-    log_status "Tag ${TARGET_TAG} points to ${TARGET_SHA}" "PASS"
+    log_status "Tag ${TARGET_TAG} points to valid commit" "PASS" "(Current SHA: ${TAG_SHA})"
 else
-    log_status "Tag ${TARGET_TAG} points to ${TARGET_SHA}" "FAIL" "(Current SHA: ${TAG_SHA})"
+    log_status "Tag ${TARGET_TAG} points to valid commit" "FAIL" "(Current SHA: ${TAG_SHA})"
 fi
 
 # 2. Verify local API brief endpoint

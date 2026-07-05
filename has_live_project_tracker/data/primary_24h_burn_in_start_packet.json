@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-07-05T00:43:28Z",
+  "selected_host": "HOCH-200",
+  "start_command": "sudo systemctl start hoch-ag-execution-daemon.service",
+  "stop_command": "sudo systemctl stop hoch-ag-execution-daemon.service",
+  "service_status_command": "sudo systemctl status hoch-ag-execution-daemon.service",
+  "journal_log_command": "journalctl -u hoch-ag-execution-daemon.service -f",
+  "heartbeat_check_command": "python3 scripts/verify_daemon_heartbeat.py",
+  "burn_in_validator_command": "python3 scripts/verify_ag_execution_burn_in.py",
+  "verifier_commands": {
+    "queue": "python3 scripts/verify_ag_execution_queue.py",
+    "proof": "python3 scripts/verify_ag_execution_proofs.py",
+    "fencing": "python3 scripts/verify_ag_execution_fencing.py"
+  },
+  "failure_injection_schedule": "has_live_project_tracker/data/ag_execution_injection_schedule.json",
+  "expected_evidence_paths": [
+    "has_live_project_tracker/data/ag_execution_burn_in_ledger.jsonl",
+    "has_live_project_tracker/data/ag_execution_burn_in_summary.json"
+  ],
+  "operator_hold_command": "python3 scripts/ag_operator_hold.py --enable",
+  "rollback_command": "sudo systemctl disable hoch-ag-execution-daemon.service && git checkout main && git clean -fdx",
+  "founder_approval_status": "APPROVED"
+}

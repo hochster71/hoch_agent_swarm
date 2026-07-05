@@ -405,6 +405,16 @@ def live_payload() -> dict:
         else:
             cstate = "STALE"
             
+    def fetch_backend_json(path: str) -> dict:
+        import urllib.request
+        try:
+            url = f"http://127.0.0.1:8765{path}"
+            req = urllib.request.Request(url, headers={"Cache-Control": "no-store"})
+            with urllib.request.urlopen(req, timeout=2) as r:
+                return json.loads(r.read().decode())
+        except Exception as e:
+            return {"error": str(e)}
+
     return {
         "source_of_truth": False,
         "synced_from": "HOCH-200 or local-only if HOCH-200 unavailable",
@@ -446,6 +456,13 @@ def live_payload() -> dict:
             "hoch_200_system_of_record_status_respected": True,
             "rung_state_ingested_or_stale": rung_state_status,
             "bridge_state_ingested_or_stale": bridge_state_status
+        },
+        "backend": {
+            "pert_data": fetch_backend_json("/api/pert/data"),
+            "goal_pert": fetch_backend_json("/api/v1/goal/pert"),
+            "qa_dossiers": fetch_backend_json("/api/v1/qa/dossiers"),
+            "qa_summary": fetch_backend_json("/api/v1/qa/dossiers/summary"),
+            "revenue_readiness": fetch_backend_json("/api/v1/hasf/revenue-readiness")
         }
     }
 
@@ -532,6 +549,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_response(code)
         self.send_header("Content-Type", ctype)
         self.send_header("Cache-Control", "no-store")
+        self.send_header("Access-Control-Allow-Origin", "*")
         self.end_headers()
         self.wfile.write(body)
 

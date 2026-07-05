@@ -1,0 +1,27 @@
+{
+  "generated_at": "2026-07-05T00:43:28Z",
+  "status": "SECONDARY_RUN_STOPPED_PRESERVED",
+  "archive_details": {
+    "host_name": "Michaels-MacBook-Pro.local",
+    "host_os": "macOS",
+    "last_daemon_state_verdict": "SECONDARY_RUN_STOPPED_PRESERVED",
+    "real_cycles_completed": 5,
+    "simulated_cycles_completed": 57,
+    "completed_tasks": [
+      {
+        "task_id": "task-local-verify-01",
+        "task_name": "verify_local_system_hygiene",
+        "proof_path": "docs/evidence/runtime/ag_execution_proof_task-local-verify-01.md"
+      },
+      {
+        "task_id": "task-autonomy-hardening-demo-01",
+        "task_name": "read_and_format_autonomy_stats",
+        "proof_path": "docs/evidence/runtime/ag_execution_proof_task-autonomy-hardening-demo-01.md"
+      }
+    ],
+    "evidence_paths_preserved": [
+      "has_live_project_tracker/data/ag_execution_burn_in_ledger.jsonl",
+      "has_live_project_tracker/data/ag_execution_burn_in_summary.json"
+    ]
+  }
+}

@@ -2,5 +2,5 @@
   "manual_relay_status": "ACTIVE",
   "orchestration_bridge_status": "ACTIVE",
   "copy_paste_required_computed": true,
-  "copy_paste_required_reason": "Manual prompt injection detected in execution logs."
+  "copy_paste_required_reason": "Manual prompt injection or review intervention detected in execution logs."
 }

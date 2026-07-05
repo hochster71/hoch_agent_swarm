@@ -1,0 +1,19 @@
+{
+  "generated_at": "2026-07-05T00:40:14Z",
+  "selected_host": "HOCH-200",
+  "overall_preflight_status": "PASS",
+  "founder_approval": "APPROVED",
+  "final_verdict": "READY_TO_START_24H_BURN_IN",
+  "venue_classification": {
+    "host_name": "Developer MacBook",
+    "host_os": "macOS",
+    "launch_command": "DAEMON_TEST_MODE=false caffeinate -i -s -d python3 scripts/ag_execution_daemon.py",
+    "supervisor_type": "caffeinate",
+    "systemd_active": false,
+    "caffeinate_active": true,
+    "primary_burn_in_eligible": false,
+    "reason_if_not_primary_eligible": "Run is executing on a temporary developer MacBook under caffeinate, not on the approved always-on HOCH-200 node under systemd.",
+    "evidence_path": "has_live_project_tracker/data/real_24h_burn_in_preflight_status.json",
+    "verdict": "SECONDARY_CAFFEINATE_RUN_ACTIVE"
+  }
+}

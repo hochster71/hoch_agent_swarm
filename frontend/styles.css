@@ -43,13 +43,13 @@ body {
 
 /* Sidebar Styling */
 .sidebar {
-    width: 260px;
+    width: 240px;
     background: var(--bg-sidebar, rgba(15, 23, 42, 0.95));
     border-right: 1px solid var(--border-glass);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 24px;
+    padding: 16px;
     z-index: 10;
     overflow-y: auto;
 }
@@ -57,8 +57,8 @@ body {
 .logo-area {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 32px;
+    gap: 10px;
+    margin-bottom: 16px;
 }
 
 .logo-icon {
@@ -80,18 +80,18 @@ body {
 .nav-links {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
     flex-grow: 1;
 }
 
 .nav-item {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 12px 16px;
+    gap: 10px;
+    padding: 8px 12px;
     color: var(--text-secondary);
     text-decoration: none;
-    border-radius: 8px;
+    border-radius: 6px;
     font-weight: 500;
     transition: all 0.2s ease-in-out;
 }
@@ -148,7 +148,7 @@ body {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    padding: 24px;
+    padding: 16px;
     overflow-y: auto;
     background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.08), transparent 45%);
 }
@@ -158,9 +158,9 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
+    margin-bottom: 12px;
     border-bottom: 1px solid var(--border-glass);
-    padding-bottom: 16px;
+    padding-bottom: 8px;
 }
 
 .header-title {
@@ -330,7 +330,7 @@ body {
 .dashboard-grid {
     display: grid;
     grid-template-columns: 1.6fr 1fr;
-    gap: 24px;
+    gap: 12px;
 }
 
 /* Glassmorphic Cards */
@@ -339,8 +339,8 @@ body {
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid var(--border-glass);
-    border-radius: 16px;
-    padding: 20px;
+    border-radius: 10px;
+    padding: 12px;
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
     transition: transform 0.2s, box-shadow 0.2s;
 }
@@ -353,7 +353,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
+    margin-bottom: 10px;
 }
 
 .card-title {
@@ -4419,3 +4419,93 @@ details.nav-group .nav-group-content .nav-item {
     flex-shrink: 0;
     margin-top: 2px;
 }
+
+/* ==============================================================================
+   Compact Mode Overrides (Eliminates excessive blank space and vertical scrolling)
+   ============================================================================== */
+
+/* Reduce main content and cockpit outer spacing */
+.main-content {
+    padding: 12px 16px !important;
+}
+
+#container-operator-cockpit {
+    padding: 0 12px 12px 12px !important;
+    gap: 10px !important;
+}
+
+#container-operator-cockpit > div {
+    gap: 12px !important;
+}
+
+/* Compact headers and navigation bars */
+.header {
+    margin-bottom: 8px !important;
+    padding-bottom: 6px !important;
+}
+
+.header-title {
+    font-size: 20px !important;
+}
+
+#final-verifier-subheader {
+    padding: 4px 12px !important;
+}
+
+.cockpit-header {
+    padding: 6px 12px !important;
+    margin-bottom: 6px !important;
+}
+
+.cockpit-tabs-container {
+    padding: 4px 12px !important;
+    margin-bottom: 10px !important;
+}
+
+.cockpit-tab-btn {
+    padding: 6px 12px !important;
+    font-size: 10px !important;
+}
+
+/* Compact Glass Panel and Cards */
+.glass-panel {
+    padding: 12px !important;
+    gap: 10px !important;
+    border-radius: 8px !important;
+}
+
+.glass-panel h3 {
+    font-size: 12px !important;
+    margin: 0 !important;
+}
+
+.glass-panel p {
+    font-size: 11px !important;
+    line-height: 1.3 !important;
+}
+
+/* Compact layout grids */
+.cockpit-layout-grid {
+    gap: 10px !important;
+}
+
+.cockpit-left-rail {
+    gap: 10px !important;
+}
+
+/* Readiness score container height & spacing */
+#op-readiness-val {
+    font-size: 28px !important;
+}
+
+/* Tighten spacing for list items and cards info */
+.info-table tr td {
+    padding: 4px 2px !important;
+    font-size: 11px !important;
+}
+
+.deployments-table th, .deployments-table td {
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+}
+

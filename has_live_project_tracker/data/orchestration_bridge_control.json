@@ -1,7 +1,7 @@
 {
   "orchestration_bridge_enabled": true,
   "allow_provider_api_calls": false,
-  "allow_ag_execution": false,
+  "allow_ag_execution": true,
   "allow_founder_gated_execution": false,
   "max_concurrent_missions": 1,
   "rung_2_eligibility": "YES",
@@ -17,7 +17,7 @@
     "ag_execution_allowed_during_rung_1": false,
     "founder_gated_actions_must_be_blocked": true,
     "decomposition_eval_judge_mean_min": 3.5,
-    "decomposition_eval_consistency_min": 0.80,
+    "decomposition_eval_consistency_min": 0.8,
     "copy_paste_required_must_flip_by_derivation": true,
     "identical_repeated_missions_allowed_for_promotion": false,
     "promotion_evidence_required": true,

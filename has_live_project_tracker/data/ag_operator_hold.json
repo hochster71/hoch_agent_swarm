@@ -1,9 +1,7 @@
 {
-  "operator_hold_active": true,
-  "reason": "Test manual override",
-  "operator": "Developer Unit Test",
-  "timestamp": "2026-07-05T05:04:57.544877Z",
-  "affected_categories": [
-    "release"
-  ]
+  "operator_hold_active": false,
+  "reason": "Test emergency stop",
+  "operator": "Pytest",
+  "timestamp": "2026-07-05T00:00:00Z",
+  "affected_categories": []
 }

@@ -3,6 +3,7 @@ import tempfile
 # Use a temporary database file for all tests to prevent locking/Bus Errors in Docker bind mounts
 db_path = os.path.join(tempfile.gettempdir(), "test_swarm_ledger.db")
 os.environ["HOCHSTER_DB_PATH"] = db_path
+os.environ["HAS_QUARANTINE_MODE"] = "false"
 
 # Pre-create all required registry and findings tables in the temp DB
 from backend.coding_control_plane.defect_registry import DefectRegistry

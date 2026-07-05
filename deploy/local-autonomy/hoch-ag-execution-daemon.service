@@ -1,0 +1,17 @@
+[Unit]
+Description=HOCH Agent Swarm Autonomy Execution Daemon
+After=network.target
+
+[Service]
+Type=simple
+User=michaelhoch
+WorkingDirectory=/Users/michaelhoch/hoch_agent_swarm
+ExecStart=/Users/michaelhoch/hoch_agent_swarm/.venv/bin/python3 scripts/ag_execution_daemon.py
+Restart=on-failure
+RestartSec=15s
+Environment=DAEMON_TEST_MODE=false DAEMON_INTERVAL_SECONDS=60
+StandardOutput=append:/Users/michaelhoch/hoch_agent_swarm/has_live_project_tracker/data/ag_daemon.log
+StandardError=append:/Users/michaelhoch/hoch_agent_swarm/has_live_project_tracker/data/ag_daemon.err
+
+[Install]
+WantedBy=multi-user.target

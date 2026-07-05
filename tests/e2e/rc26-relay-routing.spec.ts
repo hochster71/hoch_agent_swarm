@@ -47,7 +47,7 @@ test.describe("RC26 /api/v1/relay/health", () => {
     const ctx = await request.newContext({ baseURL: BACKEND_BASE });
     const resp = await ctx.get("/api/v1/relay/health");
     const body = await resp.json();
-    expect(body).toHaveProperty("worker_status");
+    expect(body.data).toHaveProperty("worker_status");
     await ctx.dispose();
   });
 
@@ -55,7 +55,7 @@ test.describe("RC26 /api/v1/relay/health", () => {
     const ctx = await request.newContext({ baseURL: BACKEND_BASE });
     const resp = await ctx.get("/api/v1/relay/health");
     const body = await resp.json();
-    const status: string = body.worker_status;
+    const status: string = body.data.worker_status;
     // Hard gate: only these two values are permitted
     expect(["ONLINE", "UNKNOWN"]).toContain(status);
     // Hard negative: PASS, ok, TRUE, 1 must never appear
@@ -70,7 +70,7 @@ test.describe("RC26 /api/v1/relay/health", () => {
     const ctx = await request.newContext({ baseURL: BACKEND_BASE });
     const resp = await ctx.get("/api/v1/relay/health");
     const body = await resp.json();
-    expect(typeof body.reachable).toBe("boolean");
+    expect(typeof body.data.reachable).toBe("boolean");
     await ctx.dispose();
   });
 

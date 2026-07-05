@@ -1,0 +1,75 @@
+{
+  "generated_at": "2026-07-05T00:25:20Z",
+  "lanes": {
+    "lane_1": {
+      "name": "Lane 1: Runtime Proof / Phase E",
+      "required_artifacts": [
+        "docs/autonomy/AG_EXECUTION_BURN_IN_ORACLE.md",
+        "has_live_project_tracker/data/ag_execution_burn_in_oracle.json",
+        "scripts/ag_execution_daemon.py",
+        "docs/autonomy/AG_EXECUTION_DAEMON.md",
+        "has_live_project_tracker/data/ag_execution_daemon_state.json",
+        "scripts/verify_daemon_heartbeat.py",
+        "has_live_project_tracker/data/ag_daemon_heartbeat_status.json",
+        "has_live_project_tracker/data/ag_execution_burn_in_ledger.jsonl",
+        "has_live_project_tracker/data/ag_execution_burn_in_summary.json",
+        "docs/autonomy/AG_EXECUTION_LEASE_FENCING.md",
+        "scripts/verify_ag_execution_fencing.py",
+        "has_live_project_tracker/data/ag_execution_fencing_status.json",
+        "scripts/ag_execution_failure_injector.py",
+        "docs/autonomy/AG_EXECUTION_FAILURE_INJECTION.md",
+        "has_live_project_tracker/data/ag_execution_injection_schedule.json",
+        "has_live_project_tracker/data/ag_execution_injection_results.jsonl",
+        "scripts/ag_execution_supervision_test.py",
+        "has_live_project_tracker/data/ag_execution_supervision_test.json",
+        "docs/autonomy/AG_EXECUTION_SUPERVISION_PROOF.md",
+        "scripts/verify_ag_execution_burn_in.py",
+        "docs/autonomy/PHASE_E_AUTONOMY_DAEMON_BURN_IN_REPORT.md"
+      ],
+      "exists": true,
+      "evidence_path": "has_live_project_tracker/data/ag_execution_burn_in_summary.json",
+      "data_as_of": "2026-07-05T00:25:20Z",
+      "expires_at": "2026-07-06T00:25:20Z",
+      "validator_script": "scripts/verify_ag_execution_burn_in.py",
+      "latest_validator_result": "PASS",
+      "verdict": "RUNTIME_PROOF_CONDITIONAL_GO",
+      "gap": "Real 24h/72h wall-clock burn-in run is pending; HOCH-200/systemd production run is pending."
+    },
+    "lane_2": {
+      "name": "Lane 2: Monetization Preflight / Phase 10D.3",
+      "required_artifacts": [
+        "has_live_project_tracker/data/hasf_product_registry.json",
+        "has_live_project_tracker/data/hasf_product_scoring.json",
+        "docs/app_store/HASF_PRODUCT_GATE_PACKAGE.md",
+        "scripts/verify_appstore_preflight.py",
+        "has_live_project_tracker/data/appstore_preflight_status.json",
+        "docs/app_store/APPLE_COMPLIANCE_PREFLIGHT.md",
+        "apps/rmf_evidence_review_companion/ios/Runner/PrivacyInfo.xcprivacy"
+      ],
+      "exists": true,
+      "evidence_path": "has_live_project_tracker/data/appstore_preflight_status.json",
+      "data_as_of": "2026-07-05T00:25:20Z",
+      "expires_at": "2026-07-06T00:25:20Z",
+      "validator_script": "scripts/verify_appstore_preflight.py",
+      "latest_validator_result": "PASS",
+      "verdict": "APPSTORE_PREFLIGHT_GO",
+      "gap": "Seeded preflight failure logs must be finalized."
+    },
+    "lane_3": {
+      "name": "Lane 3: K-track Founder Ledger",
+      "required_artifacts": [
+        "has_live_project_tracker/data/k_track_ledger.json",
+        "docs/pert/K_TRACK_CRITICAL_PATH_LEDGER.md",
+        "scripts/verify_k_track_ledger.py"
+      ],
+      "exists": true,
+      "evidence_path": "has_live_project_tracker/data/k_track_ledger.json",
+      "data_as_of": "2026-07-05T00:25:20Z",
+      "expires_at": "2026-07-06T00:25:20Z",
+      "validator_script": "scripts/verify_k_track_ledger.py",
+      "latest_validator_result": "PASS",
+      "verdict": "K_TRACK_BLOCKED",
+      "gap": "API provisioning (K1) and developer portal gates (K2-K6) require founder manual action."
+    }
+  }
+}

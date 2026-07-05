@@ -29,7 +29,9 @@ def test_router_fail_closed():
 
 def test_router_success_routing():
     # Test successful local model routing mock
-    with patch("backend.model_router.router.try_local_provider") as mock_local:
+    with patch("backend.model_router.router.try_local_provider") as mock_local, \
+         patch("backend.model_router.model_registry.get_default_provider", return_value="lmstudio"), \
+         patch("backend.model_router.model_registry.get_default_model", return_value="google/gemma-4-12b-qat"):
         mock_local.return_value = "LOCAL ROUTER OK"
         
         res = router.route_and_run("Say hello")
@@ -48,9 +50,37 @@ def test_router_fallback_failover():
             return "FALLBACK LOCAL OLLAMA OK"
         raise router.RouterException("Unknown provider")
 
-    with patch("backend.model_router.router.try_local_provider", side_effect=mock_try):
+    with patch("backend.model_router.router.try_local_provider", side_effect=mock_try), \
+         patch("backend.model_router.model_registry.get_default_provider", return_value="lmstudio"), \
+         patch("backend.model_router.model_registry.get_default_model", return_value="google/gemma-4-12b-qat"), \
+         patch("backend.model_router.model_registry.get_providers", return_value={
+             "lmstudio": {"enabled": True, "type": "local", "models": ["google/gemma-4-12b-qat"]},
+             "ollama": {"enabled": True, "type": "local", "models": ["qwen2.5-coder:7b"]}
+         }):
         res = router.route_and_run("Say hello")
         assert res["provider"] == "ollama"
         assert res["model"] == "qwen2.5-coder:7b"
         assert res["output"] == "FALLBACK LOCAL OLLAMA OK"
         assert res["paid_escalation_used"] is False
+
+def test_router_data_egress_block():
+    # If the provider is a paid/cloud provider (like openai) and the prompt contains secrets/credentials
+    # It must block the request and raise a RouterException
+    with patch("backend.model_router.model_registry.get_default_provider", return_value="openai"):
+        with pytest.raises(router.RouterException) as exc_info:
+            router.route_and_run("My secret password is 12345")
+        assert "Data egress block" in str(exc_info.value)
+
+def test_router_data_egress_block_escalation():
+    # If local models fail and we try to escalate a sensitive prompt, the escalation block must catch it
+    def mock_try(provider, model, prompt):
+        raise router.RouterException("Local server offline")
+
+    with patch("backend.model_router.router.try_local_provider", side_effect=mock_try), \
+         patch("backend.model_router.model_registry.are_paid_models_enabled", return_value=True), \
+         patch("backend.model_router.escalation_policy.check_escalation_policy", return_value={"allowed": True}):
+        
+        with pytest.raises(router.RouterException) as exc_info:
+            router.route_and_run("Please store this customer personal_info: John Doe")
+        assert "Data egress block" in str(exc_info.value)
+

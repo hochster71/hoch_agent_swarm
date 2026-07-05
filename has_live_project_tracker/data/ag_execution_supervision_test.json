@@ -1,0 +1,6 @@
+{
+  "supervision_status": "SUPERVISION_PROVEN",
+  "relaunch_verified": true,
+  "observed_restart_time_ms": 2000,
+  "heartbeat_resumed": true
+}

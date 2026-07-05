@@ -56,6 +56,15 @@ class LeaseManager:
                 print(f"[!] Active lease for task {lock['task_id']} expired. Clearing it.")
                 self.release_lease(lock["lease_id"], status="EXPIRED")
 
+        # Determine next fencing token
+        leases = load_json(LEASES_FILE, [])
+        max_token = 0
+        for l in leases:
+            token = l.get("fencing_token", 0)
+            if token > max_token:
+                max_token = token
+        fencing_token = max_token + 1
+
         # Create new lease
         lease_id = f"lease-{uuid.uuid4().hex[:8]}"
         expires_at = now + datetime.timedelta(seconds=duration_seconds)
@@ -66,12 +75,11 @@ class LeaseManager:
             "acquired_at": to_utc_str(now),
             "expires_at": to_utc_str(expires_at),
             "holder": holder,
-            "status": "ACTIVE"
+            "status": "ACTIVE",
+            "fencing_token": fencing_token
         }
         
         save_json(LOCK_FILE, lease)
-        
-        leases = load_json(LEASES_FILE, [])
         leases.append(lease)
         save_json(LEASES_FILE, leases)
         

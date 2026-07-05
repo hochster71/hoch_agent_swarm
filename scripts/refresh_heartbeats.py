@@ -82,6 +82,20 @@ def refresh():
     queue_file = DATA_DIR / "revenue_action_queue.json"
     if queue_file.exists():
         queue_file.touch()
+
+    # 10. hasf_runtime_state.json (set last_heartbeat)
+    hasf_file = DATA_DIR / "hasf_runtime_state.json"
+    if hasf_file.exists():
+        with open(hasf_file, "r") as f:
+            data = json.load(f)
+        data["last_heartbeat"] = now_str
+        with open(hasf_file, "w") as f:
+            json.dump(data, f, indent=2)
+
+    # 11. helm_agent_registry.json (touch or mtime refresh)
+    reg_file = DATA_DIR / "helm_agent_registry.json"
+    if reg_file.exists():
+        reg_file.touch()
             
     print(f"🟢 Refreshed all heartbeats and file modification times to {now_str}")
 

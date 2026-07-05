@@ -8,6 +8,16 @@
       "timestamp": "2026-07-05T05:04:37.524010Z",
       "status": "SUCCESS",
       "evidence_path": "docs/evidence/runtime/ag_execution_proof_task-autonomy-hardening-demo-01.md"
+    },
+    {
+      "task_id": "task-local-verify-01",
+      "lease_id": "lease-b1848296",
+      "fencing_token": 16,
+      "input_hash": "7119ba26e13ea29ae43c69efa77eaca131e80a5e2ec4e55c8d307dc7b79ee8cc",
+      "output_hash": "0e364dcc4bfc0c621228b5b2a9c628d9eba94468cf29612c0c6af228a7c6b4cc",
+      "timestamp": "2026-07-05T05:40:50.668602Z",
+      "status": "SUCCESS",
+      "evidence_path": "docs/evidence/runtime/ag_execution_proof_task-local-verify-01.md"
     }
   ]
 }

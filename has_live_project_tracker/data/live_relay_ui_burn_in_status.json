@@ -1,0 +1,26 @@
+{
+  "status": "LIVE_UI_BURN_IN_WIRED",
+  "endpoint": "http://100.87.18.15:3012/",
+  "private_only": true,
+  "tailscale_ip": "100.87.18.15",
+  "port": 3012,
+  "public_port_exposed": false,
+  "last_verification_ts": "2026-07-05T06:53:38Z",
+  "metrics": {
+    "state_indicator": "PRIMARY_SYSTEMD_BURN_IN_ACTIVE",
+    "heartbeat_status": "HEARTBEAT_FRESH",
+    "real_cycle_count": 33,
+    "simulated_cycle_count": 0,
+    "elapsed_hours": 0.54,
+    "pending_task_count": 7,
+    "24h_go_status": "NOT_YET",
+    "doctrine_status": "GO"
+  },
+  "cycle_count_source": "/root/hoch_agent_swarm/has_live_project_tracker/data/ag_execution_daemon_state.json",
+  "cycle_count_timestamp": "2026-07-05T06:53:02.008876Z",
+  "daemon_started_at": "2026-07-05T06:21:00.338037Z",
+  "api_generated_at": "2026-07-05T06:53:38Z",
+  "elapsed_hours": 0.5438587388888889,
+  "telemetry_host_path": "/root/hoch_agent_swarm/has_live_project_tracker/data",
+  "container_mount_mode": "read_only"
+}

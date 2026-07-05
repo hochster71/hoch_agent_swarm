@@ -1,7 +1,7 @@
 {
   "adapter_id": "ag_execution_adapter",
-  "status": "COMPLETED",
-  "current_task": "task-autonomy-hardening-demo-01",
+  "status": "BLOCKED_BY_POLICY",
+  "current_task": "task-zombie-test",
   "allowed_actions": [
     "read_file",
     "write_file",
@@ -15,7 +15,7 @@
     "credentials",
     "public_claims"
   ],
-  "last_execution_at": "2026-07-05T05:04:37.524381Z",
+  "last_execution_at": "2026-07-05T21:40:29.428567Z",
   "evidence_path": null,
   "founder_gate_respected": true,
   "source_of_truth": false,
@@ -51,6 +51,622 @@
       "next_state": "COMPLETED",
       "reason": "Execution success",
       "evidence_path": "/Users/michaelhoch/hoch_agent_swarm/docs/evidence/runtime/ag_execution_proof_task-autonomy-hardening-demo-01.md"
+    },
+    {
+      "timestamp": "2026-07-05T05:18:11.652217Z",
+      "task_id": null,
+      "previous_state": "COMPLETED",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:18:12.693730Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:18:13.734924Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:18:14.772974Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:18:15.813676Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:18:16.855459Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:18:17.899800Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:18:18.941241Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:18:19.982864Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:18:21.020734Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:18:22.084653Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:18:23.124130Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:18:30.381282Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:18:34.414906Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:40:50.667830Z",
+      "task_id": "task-local-verify-01",
+      "previous_state": "IDLE",
+      "next_state": "LEASE_ACQUIRED",
+      "reason": "Acquired lock",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:40:50.668168Z",
+      "task_id": "task-local-verify-01",
+      "previous_state": "LEASE_ACQUIRED",
+      "next_state": "EXECUTING",
+      "reason": "Execution started",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:40:50.669117Z",
+      "task_id": "task-local-verify-01",
+      "previous_state": "EXECUTING",
+      "next_state": "COMPLETED",
+      "reason": "Execution success",
+      "evidence_path": "/Users/michaelhoch/hoch_agent_swarm/docs/evidence/runtime/ag_execution_proof_task-local-verify-01.md"
+    },
+    {
+      "timestamp": "2026-07-05T05:40:55.707932Z",
+      "task_id": null,
+      "previous_state": "COMPLETED",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:41:00.749029Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:41:05.787161Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:41:10.825991Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:41:15.870353Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:41:29.238899Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:41:34.286257Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:41:39.334739Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:41:44.376870Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:41:49.417463Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:41:54.460407Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:41:59.505723Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:42:04.561263Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:42:09.601757Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:42:14.655343Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:42:19.713085Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:42:24.759420Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:42:29.801680Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:42:34.845395Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:42:39.888776Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:42:44.933798Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:42:49.992105Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:42:55.034819Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:43:00.077547Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:43:05.126968Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:43:10.166006Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:43:15.210441Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:43:20.256738Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:43:25.298260Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:43:30.338578Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:43:35.379976Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:43:40.420974Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T15:21:45.249004Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "IDLE",
+      "next_state": "LEASE_ACQUIRED",
+      "reason": "Acquired lock",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T15:21:45.249491Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "LEASE_ACQUIRED",
+      "next_state": "BLOCKED_BY_POLICY",
+      "reason": "Fencing token is stale",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T15:21:51.936751Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "BLOCKED_BY_POLICY",
+      "next_state": "LEASE_ACQUIRED",
+      "reason": "Acquired lock",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T15:21:51.937189Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "LEASE_ACQUIRED",
+      "next_state": "BLOCKED_BY_POLICY",
+      "reason": "Fencing token is stale",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T15:23:06.762648Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "BLOCKED_BY_POLICY",
+      "next_state": "LEASE_ACQUIRED",
+      "reason": "Acquired lock",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T15:23:06.763081Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "LEASE_ACQUIRED",
+      "next_state": "BLOCKED_BY_POLICY",
+      "reason": "Fencing token is stale",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T15:24:43.762142Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "BLOCKED_BY_POLICY",
+      "next_state": "LEASE_ACQUIRED",
+      "reason": "Acquired lock",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T15:24:43.762589Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "LEASE_ACQUIRED",
+      "next_state": "BLOCKED_BY_POLICY",
+      "reason": "Fencing token is stale",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T15:31:43.818908Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "BLOCKED_BY_POLICY",
+      "next_state": "LEASE_ACQUIRED",
+      "reason": "Acquired lock",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T15:31:43.819510Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "LEASE_ACQUIRED",
+      "next_state": "BLOCKED_BY_POLICY",
+      "reason": "Fencing token is stale",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T15:40:09.850316Z",
+      "task_id": null,
+      "previous_state": "BLOCKED_BY_POLICY",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T17:05:28.113164Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "IDLE",
+      "next_state": "LEASE_ACQUIRED",
+      "reason": "Acquired lock",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T17:05:28.113773Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "LEASE_ACQUIRED",
+      "next_state": "BLOCKED_BY_POLICY",
+      "reason": "Fencing token is stale",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T17:05:41.624055Z",
+      "task_id": null,
+      "previous_state": "BLOCKED_BY_POLICY",
+      "next_state": "IDLE",
+      "reason": "",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T17:06:50.954531Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "IDLE",
+      "next_state": "LEASE_ACQUIRED",
+      "reason": "Acquired lock",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T17:06:50.955014Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "LEASE_ACQUIRED",
+      "next_state": "BLOCKED_BY_POLICY",
+      "reason": "Fencing token is stale",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T17:23:39.957721Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "BLOCKED_BY_POLICY",
+      "next_state": "LEASE_ACQUIRED",
+      "reason": "Acquired lock",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T17:23:39.958451Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "LEASE_ACQUIRED",
+      "next_state": "BLOCKED_BY_POLICY",
+      "reason": "Fencing token is stale",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T17:24:18.490236Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "BLOCKED_BY_POLICY",
+      "next_state": "LEASE_ACQUIRED",
+      "reason": "Acquired lock",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T17:24:18.490764Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "LEASE_ACQUIRED",
+      "next_state": "BLOCKED_BY_POLICY",
+      "reason": "Fencing token is stale",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T19:26:07.325261Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "BLOCKED_BY_POLICY",
+      "next_state": "LEASE_ACQUIRED",
+      "reason": "Acquired lock",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T19:26:07.326362Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "LEASE_ACQUIRED",
+      "next_state": "BLOCKED_BY_POLICY",
+      "reason": "Fencing token is stale",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T21:34:06.819337Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "BLOCKED_BY_POLICY",
+      "next_state": "LEASE_ACQUIRED",
+      "reason": "Acquired lock",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T21:34:06.820096Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "LEASE_ACQUIRED",
+      "next_state": "BLOCKED_BY_POLICY",
+      "reason": "Fencing token is stale",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T21:35:49.568649Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "BLOCKED_BY_POLICY",
+      "next_state": "LEASE_ACQUIRED",
+      "reason": "Acquired lock",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T21:35:49.570366Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "LEASE_ACQUIRED",
+      "next_state": "BLOCKED_BY_POLICY",
+      "reason": "Fencing token is stale",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T21:40:29.383680Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "BLOCKED_BY_POLICY",
+      "next_state": "LEASE_ACQUIRED",
+      "reason": "Acquired lock",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T21:40:29.428561Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "LEASE_ACQUIRED",
+      "next_state": "BLOCKED_BY_POLICY",
+      "reason": "Fencing token is stale",
+      "evidence_path": ""
     }
   ]
 }

@@ -182,7 +182,36 @@
     "attempts": 1,
     "created_at": "2026-07-05T00:00:00Z",
     "completed_at": "2026-07-05T05:04:37.524063Z",
-    "result": "file:///Users/michaelhoch/hoch_agent_swarm/docs/evidence/runtime/ag_execution_proof_task-autonomy-hardening-demo-01.md",
-    "policy_category": "allowed_internal_task"
+    "result": "file:///Users/michaelhoch/hoch_agent_swarm/docs/evidence/runtime/ag_execution_proof_task-autonomy-hardening-demo-01.md"
+  },
+  {
+    "task_id": "task-local-verify-01",
+    "task_name": "verify_local_system_hygiene",
+    "task_class": "allowed_test_task",
+    "status": "completed",
+    "allowed_agent": "hasf_builder_agent",
+    "adapter": "ag_execution_adapter",
+    "attempts": 1,
+    "created_at": "2026-07-05T00:40:00Z",
+    "completed_at": "2026-07-05T05:40:50.668665Z",
+    "result": "file:///Users/michaelhoch/hoch_agent_swarm/docs/evidence/runtime/ag_execution_proof_task-local-verify-01.md",
+    "policy_category": "allowed_test_task",
+    "fencing_token": 16
+  },
+  {
+    "task_id": "task-dup-01",
+    "task_name": "read_dup_data",
+    "task_class": "allowed_internal_task",
+    "status": "PENDING",
+    "allowed_agent": "hasf_builder_agent",
+    "attempts": 0
+  },
+  {
+    "task_id": "task-dup-01",
+    "task_name": "read_dup_data",
+    "task_class": "allowed_internal_task",
+    "status": "PENDING",
+    "allowed_agent": "hasf_builder_agent",
+    "attempts": 0
   }
 ]

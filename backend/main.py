@@ -9397,16 +9397,26 @@ def get_prompt_library_health_endpoint():
 @app.get("/api/brain/live")
 def get_brain_live_state():
     """Fresh live BRAIN convergence state for the moonshot console (detects the local model each
-    request, so 'brain online/offline' is always current)."""
+    request, so 'brain online/offline' is always current).
+
+    Emits an explicit CORS header so the console works even when opened straight from Finder
+    (a file:// page has a 'null' origin). Scoped to THIS read-only, non-secret endpoint only —
+    no global CORS middleware, so the rest of the API's origin posture is unchanged.
+    """
+    from fastapi.responses import JSONResponse as _JSONResponse
     import sys as _sys, os as _os
     _root = _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))
     if _root not in _sys.path:
         _sys.path.insert(0, _root)
+    _cors = {"Access-Control-Allow-Origin": "*", "Cache-Control": "no-store"}
     try:
         from scripts.write_brain_live import build_live_state
-        return build_live_state()
+        return _JSONResponse(build_live_state(), headers=_cors)
     except Exception as e:
-        return {"error": str(e), "live_brain": {"live_brain_available": False}, "state": "UNKNOWN"}
+        return _JSONResponse(
+            {"error": str(e), "live_brain": {"live_brain_available": False}, "state": "UNKNOWN"},
+            headers=_cors,
+        )
 
 @app.post("/api/prompts/qa/golden-fixtures")
 def run_prompts_golden_fixtures_endpoint():

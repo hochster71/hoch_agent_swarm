@@ -1,6 +1,6 @@
 # HOCH PODS Theater Visual Compliance Audit Report
 
-**Status:** 🟢 PASS
+**Status:** 🔴 FAIL
 
 ## Compliance Assertions
 
@@ -8,7 +8,7 @@
 | --- | --- |
 | `REF_IMAGE_EXISTS` | 🟢 PASS |
 | `DOCTRINE_EXISTS` | 🟢 PASS |
-| `ID_HOCH-PODS-THEATER` | 🟢 PASS |
+| `ID_HOCH-PODS-THEATER` | 🔴 FAIL |
 | `ID_HOCH-PODS-INTRO-MOVIE-BOARD` | 🟢 PASS |
 | `ID_HOCH-PODS-STORYBOARD-GRID` | 🟢 PASS |
 | `ID_HOCH-PODS-AGENT-SPINUP-VARIATIONS` | 🟢 PASS |
@@ -53,4 +53,4 @@
 
 ## Visual Theme Audit Status
 
-**THEME_COMPLIANCE:** `PASS`
+**THEME_COMPLIANCE:** `FAIL`

@@ -110,6 +110,29 @@ This Master Launch Index connects all Phase 1–10 deliverables, local model eng
 * **Local live model runtime**: `GO`
 * **RC1 product pack**: `GO`
 * **Pilot launch package**: `GO`
-* **Paid pilot package**: `READY_TO_OFFER`
-* **External revenue validation**: `PENDING`
-* **Next action**: Execute first approved paid pilot offer cohort.
+* **Paid pilot package**: `READY_TO_OFFER` (Held internally per Private-First doctrine)
+* **Private Remote Relay Runtime**: `GO`
+* **First App Store Candidate**: `READY_TO_UPLOAD_PENDING_MICHAEL_APPROVAL`
+* **Private-First Doctrine Gate**: `PRIVATE_FIRST_GO` (External company & investor engagements FROZEN)
+
+---
+
+## 11. Private Remote Relay & VPS Deployment Index
+* **Docker Compose Deployment**: [docker-compose.yml](file:///Users/michaelhoch/hoch_agent_swarm/deploy/remote-relay/docker-compose.yml)
+* **Relay Security Configurations**: [cloudflared-config.example.yml](file:///Users/michaelhoch/hoch_agent_swarm/deploy/remote-relay/cloudflared-config.example.yml)
+* **Relay Health & Checklists**: [healthcheck.sh](file:///Users/michaelhoch/hoch_agent_swarm/deploy/remote-relay/healthcheck.sh)
+* **Remote Host Profile**: [REMOTE_HOST_PROFILE.md](file:///Users/michaelhoch/hoch_agent_swarm/docs/remote_runtime/REMOTE_HOST_PROFILE.md)
+* **Deployment Runbook**: [REMOTE_VPS_DEPLOYMENT_RUNBOOK.md](file:///Users/michaelhoch/hoch_agent_swarm/docs/remote_runtime/REMOTE_VPS_DEPLOYMENT_RUNBOOK.md)
+
+---
+
+## 12. App Store Monetization Index (RMF Evidence Review Companion)
+* **Standalone Flutter App Codebase**: [first_app/](file:///Users/michaelhoch/hoch_agent_swarm/apps/first_app/)
+* **Offline Dataset Assets**: `/apps/first_app/assets/data/` (JSON formats containing NIST SP 800-53 crosswalk schemas)
+* **App Release Checklist**: [APP_RELEASE_CHECKLIST.md](file:///Users/michaelhoch/hoch_agent_swarm/docs/app_store/APP_RELEASE_CHECKLIST.md)
+* **Local Toolchain Setup**: [LOCAL_TOOLCHAIN_SETUP.md](file:///Users/michaelhoch/hoch_agent_swarm/docs/app_store/first_app/LOCAL_TOOLCHAIN_SETUP.md)
+* **Screenshot Package Checklist**: [SCREENSHOT_CAPTURE_RESULTS.md](file:///Users/michaelhoch/hoch_agent_swarm/docs/app_store/first_app/SCREENSHOT_CAPTURE_RESULTS.md)
+* **Privacy & Export Compliance Declaration**: [APP_PRIVACY_DECLARATION_DRAFT.md](file:///Users/michaelhoch/hoch_agent_swarm/docs/app_store/first_app/APP_PRIVACY_DECLARATION_DRAFT.md)
+* **TestFlight Upload Gate**: [first_app_testflight_upload_gate.json](file:///Users/michaelhoch/hoch_agent_swarm/data/app_store/first_app_testflight_upload_gate.json)
+* **Operator Approval Ledger**: [michael_testflight_approval.json](file:///Users/michaelhoch/hoch_agent_swarm/data/app_store/michael_testflight_approval.json)
+

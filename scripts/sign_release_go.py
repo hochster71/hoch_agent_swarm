@@ -107,9 +107,11 @@ def main():
             if v == "GO":
                 print(f"   [{stamp}] renewed GO — active={active}")
             else:
-                print(f"   [{stamp}] ⛔ verdict regressed to {v} (blockers: {', '.join(blockers)}). "
-                      f"NOT renewing — GO will expire in <5 min. Watch stopping.")
-                return 3
+                # Regressed: do NOT renew (GO lapses in <5 min — correct). Keep watching and
+                # auto-resume signing when the system returns to GO. This makes it a persistent,
+                # honest GO manager: green only while earned, self-healing when re-earned.
+                print(f"   [{stamp}] ⛔ verdict {v} (blockers: {', '.join(blockers)}). "
+                      f"NOT renewing — GO lapses in <5 min. Watching for return to GO...")
             time.sleep(args.interval)
     except KeyboardInterrupt:
         print("\n   watch stopped by operator — existing GO expires within 5 min.")

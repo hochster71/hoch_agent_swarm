@@ -3,7 +3,7 @@
   "simulated_executions_count": 0,
   "adapter_success_rate": 100.0,
   "adapter_failure_rate": 0.0,
-  "avg_latency_ms": 1.12,
+  "avg_latency_ms": 0.69,
   "prompt_brain_win_rate": 100.0,
   "average_score_uplift_percentage": 21.45,
   "red_team_findings_count": 0,

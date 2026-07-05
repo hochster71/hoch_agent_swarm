@@ -241,6 +241,22 @@ def build():
         tag_age = int((snapshot_time - datetime.datetime.fromtimestamp(os.path.getmtime(tag_path), datetime.timezone.utc)).total_seconds())
     add_zt("tag_integrity", tag_path, tag_ok, tag_reason, tag_age, "config/release_tag_policy.json", "Fix release tag policy configurations")
 
+    # Daemon Heartbeat
+    hb_path = DATA_DIR / "ag_daemon_heartbeat_status.json"
+    hb_ok = False
+    hb_reason = "Heartbeat missing"
+    hb_age = 999999
+    if hb_path.exists():
+        try:
+            with open(hb_path, "r") as f:
+                hb_data = json.load(f)
+            hb_ok = hb_data.get("verdict") == "HEARTBEAT_FRESH"
+            hb_reason = f"Daemon heartbeat status: {hb_data.get('verdict')}"
+            hb_age = int((snapshot_time - datetime.datetime.fromtimestamp(os.path.getmtime(hb_path), datetime.timezone.utc)).total_seconds())
+        except Exception as e:
+            hb_reason = f"Error reading heartbeat: {e}"
+    add_zt("daemon_heartbeat", hb_path, hb_ok, hb_reason, hb_age, "has_live_project_tracker/data/ag_daemon_heartbeat_status.json", "Run scripts/verify_daemon_heartbeat.py and verify daemon is running")
+
     # Stale or Missing count
     stale_or_missing = {
         "missing_count": 0,
@@ -273,6 +289,67 @@ def build():
     # Contract state
     contract_state = "FRESH" # Initially generated fresh
 
+    # Load Burn-In State
+    burn_in_summary_path = DATA_DIR / "ag_execution_burn_in_summary.json"
+    burn_in_verdict = "RUNTIME_PROOF_CONDITIONAL_GO"
+    if burn_in_summary_path.exists():
+        try:
+            with open(burn_in_summary_path, "r") as f:
+                bs = json.load(f)
+            burn_in_verdict = bs.get("lane_1_verdict") or bs.get("final_verdict") or "RUNTIME_PROOF_CONDITIONAL_GO"
+        except Exception:
+            pass
+            
+    burn_in_state = {
+        "verdict": burn_in_verdict,
+        "data_as_of": to_utc_str(snapshot_time),
+        "expires_at": to_utc_str(expires_at),
+        "evidence_path": "has_live_project_tracker/data/ag_execution_burn_in_summary.json",
+        "stale_if_expired": True,
+        "reducer_source": "scripts/verify_ag_execution_burn_in.py"
+    }
+
+    # Load App Store Preflight State
+    preflight_status_path = DATA_DIR / "appstore_preflight_status.json"
+    preflight_verdict = "APPSTORE_PREFLIGHT_GO"
+    if preflight_status_path.exists():
+        try:
+            with open(preflight_status_path, "r") as f:
+                ps = json.load(f)
+            preflight_verdict = ps.get("verdict") or "APPSTORE_PREFLIGHT_GO"
+        except Exception:
+            pass
+            
+    appstore_preflight_state = {
+        "verdict": preflight_verdict,
+        "data_as_of": to_utc_str(snapshot_time),
+        "expires_at": to_utc_str(expires_at),
+        "evidence_path": "has_live_project_tracker/data/appstore_preflight_status.json",
+        "stale_if_expired": True,
+        "reducer_source": "scripts/verify_appstore_preflight.py"
+    }
+
+    # Load K-Track Summary
+    k_track_ledger_path = DATA_DIR / "k_track_ledger.json"
+    k_track_verdict = "K_TRACK_BLOCKED"
+    if k_track_ledger_path.exists():
+        try:
+            with open(k_track_ledger_path, "r") as f:
+                kl = json.load(f)
+            is_blocked = any(item.get("status") == "BLOCKED_FOUNDER_ACTION" for item in kl)
+            k_track_verdict = "K_TRACK_BLOCKED" if is_blocked else "K_TRACK_READY"
+        except Exception:
+            pass
+            
+    k_track_summary = {
+        "verdict": k_track_verdict,
+        "data_as_of": to_utc_str(snapshot_time),
+        "expires_at": to_utc_str(expires_at),
+        "evidence_path": "has_live_project_tracker/data/k_track_ledger.json",
+        "stale_if_expired": True,
+        "reducer_source": "scripts/verify_k_track_ledger.py"
+    }
+
     # Build final dict
     status_payload = {
         "schema_version": "1.0",
@@ -294,14 +371,18 @@ def build():
         "freshness": freshness,
         "zero_tolerance": zero_tolerance,
         "stale_or_missing": stale_or_missing,
-        "closure_actions": closure_actions
+        "closure_actions": closure_actions,
+        "burn_in_state": burn_in_state,
+        "appstore_preflight_state": appstore_preflight_state,
+        "k_track_summary": k_track_summary
     }
 
     # Minimum schema validator verification inline
     required_keys = [
         "schema_version", "source_of_truth", "system_of_record", "as_of", "expires_at", "max_age_seconds",
         "authority", "compute", "rung_state", "has", "hasf", "agents", "adapters", "models",
-        "freshness", "zero_tolerance", "stale_or_missing", "closure_actions"
+        "freshness", "zero_tolerance", "stale_or_missing", "closure_actions",
+        "burn_in_state", "appstore_preflight_state", "k_track_summary"
     ]
     missing = [k for k in required_keys if k not in status_payload]
     if missing:

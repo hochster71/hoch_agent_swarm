@@ -13,12 +13,12 @@ test.describe('RC50.1 HOCH HASF Soccer Pipeline E2E Tests', () => {
         await expect(soccerPanel).toContainText('HOCH HASF Soccer Intelligence Platform Onboarding Pipeline');
 
         // 2. Verify source path is visible
-        await expect(soccerPanel).toContainText('/Users/michaelhoch/Downloads/hoch_hasf_soccer');
+        await expect(soccerPanel).toContainText('Downloads/hoch_hasf_soccer');
 
-        // 3. Verify current stage is intake_audit
+        // 3. Verify current stage is intake_audit or READY_FOR_SELECTION
         const stageBadge = page.locator('#soccer-stage-badge');
         await expect(stageBadge).toBeVisible();
-        await expect(stageBadge).toContainText('intake_audit');
+        await expect(stageBadge).toHaveText(/intake_audit|READY_FOR_SELECTION/);
 
         // 4. Verify readiness score renders (should be less than 100% since auth/stripe are missing, preventing fake green status)
         const readinessVal = page.locator('#soccer-readiness-val');

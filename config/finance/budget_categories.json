@@ -1,0 +1,60 @@
+{
+  "categories": [
+    {
+      "household_category": "Mortgage / Rent",
+      "keywords": ["mortgage", "rent", "apartment", "housing", "landlord"]
+    },
+    {
+      "household_category": "Utilities",
+      "keywords": ["electric", "water", "gas", "sewer", "trash", "power", "utility", "internet", "comcast", "verizon", "wifi", "at&t"]
+    },
+    {
+      "household_category": "Groceries",
+      "keywords": ["grocery", "groceries", "supermarket", "walmart", "target", "kroger", "safeway", "h-mart", "costco", "aldi", "trader joe"]
+    },
+    {
+      "household_category": "Dining",
+      "keywords": ["dining", "restaurant", "cafe", "mcdonald", "starbucks", "subway", "pizza", "burger", "uber eats", "doordash", "grubhub"]
+    },
+    {
+      "household_category": "Fuel / Transportation",
+      "keywords": ["fuel", "gas station", "shell", "exxon", "chevron", "bp", "subway", "transit", "uber", "lyft", "taxi", "toll", "parking"]
+    },
+    {
+      "household_category": "Insurance",
+      "keywords": ["insurance", "geico", "progressive", "allstate", "state farm", "health insurance", "premium"]
+    },
+    {
+      "household_category": "Subscriptions",
+      "keywords": ["netflix", "spotify", "hulu", "amazon prime", "disney+", "hbo", "youtube premium", "icloud", "chatgpt", "subscription", "patreon"]
+    },
+    {
+      "household_category": "Debt Payments",
+      "keywords": ["payment", "credit card", "loan", "interest", "finance charge", "usaa card", "chase card", "visa", "mastercard"]
+    },
+    {
+      "household_category": "Kids / School",
+      "keywords": ["school", "tuition", "daycare", "nanny", "child", "toys", "lego", "disney", "playmobil", "barbie"]
+    },
+    {
+      "household_category": "Medical",
+      "keywords": ["medical", "health", "hospital", "clinic", "doctor", "pharmacy", "cvs", "walgreens", "dentist", "copay"]
+    },
+    {
+      "household_category": "Home Maintenance",
+      "keywords": ["home depot", "lowes", "plumbing", "hardware", "appliance", "furniture", "vacuum", "kitchen"]
+    },
+    {
+      "household_category": "Pets",
+      "keywords": ["pet", "vet", "veterinary", "dog", "cat", "chewy", "hamster", "rat", "chew"]
+    },
+    {
+      "household_category": "Savings / Investing",
+      "keywords": ["savings", "investment", "brokerage", "fidelity", "schwab", "vanguard", "401k", "ira", "transfer to savings"]
+    },
+    {
+      "household_category": "Income",
+      "keywords": ["direct deposit", "paycheck", "payroll", "salary", "refund", "reimbursement", "deposit", "stripe transfer"]
+    }
+  ]
+}

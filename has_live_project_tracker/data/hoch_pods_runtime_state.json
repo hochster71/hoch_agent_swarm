@@ -14,33 +14,11 @@
     "policy_status": "PASS",
     "telemetry_status": "ONLINE",
     "freshness_status": "FRESH",
-    "last_heartbeat": "2026-07-03T02:02:20.675819Z",
+    "last_heartbeat": "2026-07-05T20:02:34.835086Z",
     "evidence_links": [
       "docs/evidence/business/project-revenue-readiness-audit.md"
     ],
-    "blockers": [],
-    "pod_name": "pod_1",
-    "agent_id": "pod-cyber",
-    "agent_name": "pod_1",
-    "owner_agent": "pod_1 Owner",
-    "generated_at": "2026-07-03T02:02:20.697451+00:00",
-    "last_verified_at": "2026-07-03T02:02:20.697451+00:00",
-    "last_pulse": "2026-07-03T02:02:20.697451+00:00",
-    "pulse_timestamp": "2026-07-03T02:02:20.697451+00:00",
-    "source_producer": "scripts/generate_hoch_pods_runtime_state.py + scripts/normalize_hoch_pods_runtime_state.py",
-    "freshness_sla_minutes": 30,
-    "stale_threshold_minutes": 30,
-    "stale_state": "FRESH",
-    "status": "EXECUTING",
-    "cost_to_refresh_estimate_usd": 0.0,
-    "approval_required": false,
-    "next_action": "Continue scheduled pod runtime telemetry refresh.",
-    "assigned_tasks": [
-      "runtime telemetry pulse"
-    ],
-    "evidence_path": "docs/evidence/runtime/hoch-pods-runtime-evidence.md",
-    "ui_visible": true,
-    "cost_tier": "LOCAL_FREE"
+    "blockers": []
   },
   {
     "pod_id": "pod-qa",
@@ -55,33 +33,11 @@
     "policy_status": "PASS",
     "telemetry_status": "ONLINE",
     "freshness_status": "FRESH",
-    "last_heartbeat": "2026-07-03T02:02:20.675819Z",
+    "last_heartbeat": "2026-07-05T20:02:34.835086Z",
     "evidence_links": [
       "docs/evidence/business/project-revenue-readiness-audit.md"
     ],
-    "blockers": [],
-    "pod_name": "pod_2",
-    "agent_id": "pod-qa",
-    "agent_name": "pod_2",
-    "owner_agent": "pod_2 Owner",
-    "generated_at": "2026-07-03T02:02:20.697451+00:00",
-    "last_verified_at": "2026-07-03T02:02:20.697451+00:00",
-    "last_pulse": "2026-07-03T02:02:20.697451+00:00",
-    "pulse_timestamp": "2026-07-03T02:02:20.697451+00:00",
-    "source_producer": "scripts/generate_hoch_pods_runtime_state.py + scripts/normalize_hoch_pods_runtime_state.py",
-    "freshness_sla_minutes": 30,
-    "stale_threshold_minutes": 30,
-    "stale_state": "FRESH",
-    "status": "POLICY_CHECK",
-    "cost_to_refresh_estimate_usd": 0.0,
-    "approval_required": false,
-    "next_action": "Continue scheduled pod runtime telemetry refresh.",
-    "assigned_tasks": [
-      "runtime telemetry pulse"
-    ],
-    "evidence_path": "docs/evidence/runtime/hoch-pods-runtime-evidence.md",
-    "ui_visible": true,
-    "cost_tier": "LOCAL_FREE"
+    "blockers": []
   },
   {
     "pod_id": "pod-builder",
@@ -96,31 +52,9 @@
     "policy_status": "PASS",
     "telemetry_status": "ONLINE",
     "freshness_status": "FRESH",
-    "last_heartbeat": "2026-07-03T02:02:20.675819Z",
+    "last_heartbeat": "2026-07-05T20:02:34.835086Z",
     "evidence_links": [],
-    "blockers": [],
-    "pod_name": "pod_3",
-    "agent_id": "pod-builder",
-    "agent_name": "pod_3",
-    "owner_agent": "pod_3 Owner",
-    "generated_at": "2026-07-03T02:02:20.697451+00:00",
-    "last_verified_at": "2026-07-03T02:02:20.697451+00:00",
-    "last_pulse": "2026-07-03T02:02:20.697451+00:00",
-    "pulse_timestamp": "2026-07-03T02:02:20.697451+00:00",
-    "source_producer": "scripts/generate_hoch_pods_runtime_state.py + scripts/normalize_hoch_pods_runtime_state.py",
-    "freshness_sla_minutes": 30,
-    "stale_threshold_minutes": 30,
-    "stale_state": "FRESH",
-    "status": "TOOL_BOUND",
-    "cost_to_refresh_estimate_usd": 0.0,
-    "approval_required": false,
-    "next_action": "Continue scheduled pod runtime telemetry refresh.",
-    "assigned_tasks": [
-      "runtime telemetry pulse"
-    ],
-    "evidence_path": "docs/evidence/runtime/hoch-pods-runtime-evidence.md",
-    "ui_visible": true,
-    "cost_tier": "LOCAL_FREE"
+    "blockers": []
   },
   {
     "pod_id": "pod-revenue",
@@ -135,35 +69,13 @@
     "policy_status": "BLOCKED",
     "telemetry_status": "ONLINE",
     "freshness_status": "FRESH",
-    "last_heartbeat": "2026-07-03T02:02:20.675819Z",
+    "last_heartbeat": "2026-07-05T20:02:34.835086Z",
     "evidence_links": [
       "docs/evidence/business/project-revenue-readiness-audit.md"
     ],
     "blockers": [
       "Stripe integration code is missing or unverified"
-    ],
-    "pod_name": "pod_4",
-    "agent_id": "pod-revenue",
-    "agent_name": "pod_4",
-    "owner_agent": "pod_4 Owner",
-    "generated_at": "2026-07-03T02:02:20.697451+00:00",
-    "last_verified_at": "2026-07-03T02:02:20.697451+00:00",
-    "last_pulse": "2026-07-03T02:02:20.697451+00:00",
-    "pulse_timestamp": "2026-07-03T02:02:20.697451+00:00",
-    "source_producer": "scripts/generate_hoch_pods_runtime_state.py + scripts/normalize_hoch_pods_runtime_state.py",
-    "freshness_sla_minutes": 30,
-    "stale_threshold_minutes": 30,
-    "stale_state": "FRESH",
-    "status": "EVIDENCE_WRITING",
-    "cost_to_refresh_estimate_usd": 0.0,
-    "approval_required": false,
-    "next_action": "Continue scheduled pod runtime telemetry refresh.",
-    "assigned_tasks": [
-      "runtime telemetry pulse"
-    ],
-    "evidence_path": "docs/evidence/runtime/hoch-pods-runtime-evidence.md",
-    "ui_visible": true,
-    "cost_tier": "LOCAL_FREE"
+    ]
   },
   {
     "pod_id": "pod-audit",
@@ -178,31 +90,9 @@
     "policy_status": "PASS",
     "telemetry_status": "ONLINE",
     "freshness_status": "FRESH",
-    "last_heartbeat": "2026-07-03T02:02:20.675819Z",
+    "last_heartbeat": "2026-07-05T20:02:34.835086Z",
     "evidence_links": [],
-    "blockers": [],
-    "pod_name": "pod_5",
-    "agent_id": "pod-audit",
-    "agent_name": "pod_5",
-    "owner_agent": "pod_5 Owner",
-    "generated_at": "2026-07-03T02:02:20.697451+00:00",
-    "last_verified_at": "2026-07-03T02:02:20.697451+00:00",
-    "last_pulse": "2026-07-03T02:02:20.697451+00:00",
-    "pulse_timestamp": "2026-07-03T02:02:20.697451+00:00",
-    "source_producer": "scripts/generate_hoch_pods_runtime_state.py + scripts/normalize_hoch_pods_runtime_state.py",
-    "freshness_sla_minutes": 30,
-    "stale_threshold_minutes": 30,
-    "stale_state": "FRESH",
-    "status": "SUMMONING",
-    "cost_to_refresh_estimate_usd": 0.0,
-    "approval_required": false,
-    "next_action": "Continue scheduled pod runtime telemetry refresh.",
-    "assigned_tasks": [
-      "runtime telemetry pulse"
-    ],
-    "evidence_path": "docs/evidence/runtime/hoch-pods-runtime-evidence.md",
-    "ui_visible": true,
-    "cost_tier": "LOCAL_FREE"
+    "blockers": []
   },
   {
     "pod_id": "pod-research",
@@ -217,33 +107,11 @@
     "policy_status": "FAIL",
     "telemetry_status": "ONLINE",
     "freshness_status": "DEGRADED",
-    "last_heartbeat": "2026-07-03T02:02:20.675819Z",
+    "last_heartbeat": "2026-07-05T20:02:34.835086Z",
     "evidence_links": [],
     "blockers": [
       "Project repository path does not exist on disk"
-    ],
-    "pod_name": "pod_6",
-    "agent_id": "pod-research",
-    "agent_name": "pod_6",
-    "owner_agent": "pod_6 Owner",
-    "generated_at": "2026-07-03T02:02:20.697451+00:00",
-    "last_verified_at": "2026-07-03T02:02:20.697451+00:00",
-    "last_pulse": "2026-07-03T02:02:20.697451+00:00",
-    "pulse_timestamp": "2026-07-03T02:02:20.697451+00:00",
-    "source_producer": "scripts/generate_hoch_pods_runtime_state.py + scripts/normalize_hoch_pods_runtime_state.py",
-    "freshness_sla_minutes": 30,
-    "stale_threshold_minutes": 30,
-    "stale_state": "FRESH",
-    "status": "DORMANT",
-    "cost_to_refresh_estimate_usd": 0.0,
-    "approval_required": false,
-    "next_action": "Continue scheduled pod runtime telemetry refresh.",
-    "assigned_tasks": [
-      "runtime telemetry pulse"
-    ],
-    "evidence_path": "docs/evidence/runtime/hoch-pods-runtime-evidence.md",
-    "ui_visible": true,
-    "cost_tier": "LOCAL_FREE"
+    ]
   },
   {
     "pod_id": "pod-deploy",
@@ -258,32 +126,10 @@
     "policy_status": "BLOCKED",
     "telemetry_status": "ONLINE",
     "freshness_status": "FRESH",
-    "last_heartbeat": "2026-07-03T02:02:20.675819Z",
+    "last_heartbeat": "2026-07-05T20:02:34.835086Z",
     "evidence_links": [],
     "blockers": [
       "Deployment descriptor (vercel.json) is missing"
-    ],
-    "pod_name": "pod_7",
-    "agent_id": "pod-deploy",
-    "agent_name": "pod_7",
-    "owner_agent": "pod_7 Owner",
-    "generated_at": "2026-07-03T02:02:20.697451+00:00",
-    "last_verified_at": "2026-07-03T02:02:20.697451+00:00",
-    "last_pulse": "2026-07-03T02:02:20.697451+00:00",
-    "pulse_timestamp": "2026-07-03T02:02:20.697451+00:00",
-    "source_producer": "scripts/generate_hoch_pods_runtime_state.py + scripts/normalize_hoch_pods_runtime_state.py",
-    "freshness_sla_minutes": 30,
-    "stale_threshold_minutes": 30,
-    "stale_state": "FRESH",
-    "status": "BLOCKED",
-    "cost_to_refresh_estimate_usd": 0.0,
-    "approval_required": false,
-    "next_action": "Continue scheduled pod runtime telemetry refresh.",
-    "assigned_tasks": [
-      "runtime telemetry pulse"
-    ],
-    "evidence_path": "docs/evidence/runtime/hoch-pods-runtime-evidence.md",
-    "ui_visible": true,
-    "cost_tier": "LOCAL_FREE"
+    ]
   }
 ]

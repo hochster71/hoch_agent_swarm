@@ -697,6 +697,17 @@ body:before{
       </div>
     </section>
 
+    <section class="panel" style="border: 1px solid rgba(73,231,255,.24)">
+      <h2>Control Plane Status</h2>
+      <div class="body">
+        <div class="metric"><span>State</span><strong id="cp-state">--</strong></div>
+        <div class="metric"><span>As Of</span><strong id="cp-asof" style="font-size: 11px">--</strong></div>
+        <div class="metric"><span>Expires At</span><strong id="cp-expires" style="font-size: 11px">--</strong></div>
+        <div class="metric"><span>Computed Age</span><strong id="cp-age">--</strong></div>
+        <div class="metric"><span>Authority Sync</span><strong id="cp-auth-sync" style="font-size: 11px">--</strong></div>
+      </div>
+    </section>
+
     <section class="panel">
       <h2>Agent Queue</h2>
       <div class="body flow" id="agentQueue"></div>
@@ -1045,8 +1056,18 @@ function playCycle(metrics, stale){
 async function load(){
   const lines = [];
   try{
-    const res = await fetch("/api/pert/data", {cache:"no-store"});
-    const data = await res.json();
+    const res = await fetch("http://127.0.0.1:8777/api/live", {cache:"no-store"});
+    const sidecar = await res.json();
+
+    const cpStatus = sidecar.control_plane_status || {};
+    const cpData = cpStatus.data || {};
+    const backend = sidecar.backend || {};
+
+    const data = backend.pert_data || {};
+    const pertData = backend.goal_pert || {};
+    const summaryData = backend.qa_summary || {};
+    const revData = backend.revenue_readiness || {};
+    const dossiersList = backend.qa_dossiers || [];
 
     const metrics = data.metrics || {};
     const readiness = data.readiness || {};
@@ -1062,6 +1083,32 @@ async function load(){
     $("riverPert").textContent = `${pct}%`;
     $("riverAgents").textContent = pods.length;
 
+    // Render Control Plane Status freshness metadata
+    const cpState = cpStatus.state || cpStatus.contract_state || "UNKNOWN";
+    const cpStateEl = $("cp-state");
+    cpStateEl.textContent = cpState;
+    if (cpState === "FRESH" || cpState === "PASS") {
+      cpStateEl.style.color = "#10b981";
+    } else if (cpState === "STALE" || cpState === "SYNC_STALE") {
+      cpStateEl.style.color = "#fbbf24";
+    } else if (cpState === "EXPIRED" || cpState === "FAIL" || cpState === "MISSING") {
+      cpStateEl.style.color = "#ef4444";
+    } else {
+      cpStateEl.style.color = "#94a3b8";
+    }
+    $("cp-asof").textContent = cpStatus.as_of ? new Date(cpStatus.as_of).toLocaleString() : "UNKNOWN";
+    $("cp-expires").textContent = cpStatus.expires_at ? new Date(cpStatus.expires_at).toLocaleString() : "UNKNOWN";
+    if (cpStatus.as_of) {
+      const ageSecs = Math.max(0, Math.floor((new Date() - new Date(cpStatus.as_of)) / 1000));
+      $("cp-age").textContent = `${ageSecs}s`;
+    } else {
+      $("cp-age").textContent = "UNKNOWN";
+    }
+    const authoritySection = cpData.authority || {};
+    const authAsOf = authoritySection.data_as_of || "UNKNOWN";
+    const authAge = authoritySection.age_seconds !== undefined ? `${authoritySection.age_seconds}s` : "UNKNOWN";
+    $("cp-auth-sync").textContent = authAsOf !== "UNKNOWN" ? `${new Date(authAsOf).toLocaleTimeString()} (${authAge} ago)` : "UNKNOWN";
+
     const src = data.freshness_authority?.reconciled_sources || {};
     const freshKeys = Object.keys(src);
     const stale = freshKeys.filter(k => src[k]?.computed_state !== "FRESH");
@@ -1073,16 +1120,33 @@ async function load(){
     $("pill-updated").textContent = new Date().toLocaleTimeString();
     $("riverClosures").textContent = `${stale.length} stale`;
 
-    $("freshness").innerHTML = freshKeys.slice(0,12).map(k => {
-      const s = src[k] || {};
-      return `<div class="step"><div class="dot"></div><b>${esc(k)}</b><span>${esc(s.computed_state || "UNKNOWN")} age=${fmtAge(s.freshness_age_seconds)}</span></div>`;
-    }).join("") || `<div class="step"><div class="dot"></div><b>No freshness authority</b><span>missing</span></div>`;
+    // Render Control Plane sections in freshness element
+    const sections = ["authority", "compute", "rung_state", "has", "hasf", "agents", "adapters", "models", "freshness"];
+    $("freshness").innerHTML = sections.map(k => {
+      const s = cpData[k] || {};
+      const sState = s.state || "UNKNOWN";
+      let stateColor = "#94a3b8";
+      if (sState === "FRESH") {
+        stateColor = "#10b981";
+      } else if (sState === "STALE" || sState === "SYNC_STALE") {
+        stateColor = "#fbbf24";
+      } else if (sState === "FAIL" || sState === "EXPIRED" || sState === "MISSING") {
+        stateColor = "#ef4444";
+      }
+      let asOfStr = "UNKNOWN";
+      if (s.data_as_of && s.data_as_of !== "UNKNOWN") {
+        asOfStr = new Date(s.data_as_of).toLocaleTimeString();
+      }
+      const ageStr = s.age_seconds !== undefined ? `${s.age_seconds}s` : "unknown";
+      return `<div class="step">
+        <div class="dot" style="background:${stateColor}; box-shadow: 0 0 8px ${stateColor}"></div>
+        <b>${esc(k)}</b>
+        <span style="color:${stateColor}">${esc(sState)}</span>
+        <span class="muted" style="font-size:10px; margin-left:auto">as_of=${asOfStr} (age=${ageStr})</span>
+      </div>`;
+    }).join("");
 
-    // Load Goal PERT Analysis
-    try {
-      const pertRes = await fetch("/api/v1/goal/pert", {cache:"no-store"});
-      const pertData = await pertRes.json();
-      
+    if (pertData.north_star) {
       $("pertNorthStar").textContent = pertData.north_star;
       $("pertStatus").textContent = pertData.status;
       $("pertStatus").className = pertData.status === "GO" ? "done" : "blocked";
@@ -1091,7 +1155,6 @@ async function load(){
       $("pertConfidence").textContent = `Confidence: ${pertData.confidence}`;
       $("pertNextSafeAction").textContent = pertData.next_safe_action;
       
-      // Render horizontal critical path chain
       const chainHtml = pertData.critical_path.map(id => {
         const lane = pertData.lanes.find(l => l.id === id) || {};
         return `<div style="background:rgba(59,130,246,0.15); border:1px solid #3b82f6; padding:6px 10px; border-radius:4px; font-size:12px; font-weight:bold; display:flex; align-items:center; gap:6px">
@@ -1101,7 +1164,6 @@ async function load(){
       }).join('<span style="color:#475569; font-weight:bold">→</span>');
       $("pertCriticalPathChain").innerHTML = chainHtml;
       
-      // Render goal pert rows
       $("goalPertRows").innerHTML = pertData.lanes.map(l => {
         const criticalStr = l.critical ? '<span class="critical">YES</span>' : '<span class="muted">NO</span>';
         const criticalCls = l.critical ? "critical-row" : "";
@@ -1132,26 +1194,15 @@ async function load(){
           </td>
         </tr>`;
       }).join("");
-    } catch(e) {
-      console.error("Failed to load goal pert", e);
     }
 
-    // Load QA Dossiers summary and list
-    try {
-      const summaryRes = await fetch("/api/v1/qa/dossiers/summary", {cache:"no-store"});
-      const summaryData = await summaryRes.json();
-      
+    if (summaryData.passing_teams !== undefined) {
       $("qaPassingTeams").textContent = summaryData.passing_teams;
       $("qaPartialTeams").textContent = summaryData.partial_teams;
       $("qaFailingTeams").textContent = summaryData.failing_teams;
       
-      const revRes = await fetch("/api/v1/hasf/revenue-readiness", {cache:"no-store"});
-      const revData = await revRes.json();
       $("qaRevenueReady").textContent = revData.hasf_revenue_ready ? "READY" : "NOT READY";
       $("qaRevenueReady").style.color = revData.hasf_revenue_ready ? "#10b981" : "#ef4444";
-      
-      const listRes = await fetch("/api/v1/qa/dossiers", {cache:"no-store"});
-      const dossiersList = await listRes.json();
       
       $("qaDossierRows").innerHTML = dossiersList.map(d => {
         const statusCls = d.verification_status === "PASS" ? "done" : (d.verification_status === "QA_PARTIAL" ? "warn" : "blocked");
@@ -1177,8 +1228,6 @@ async function load(){
           <td class="muted">${esc(d.signoff_agent)}</td>
         </tr>`;
       }).join("");
-    } catch(e) {
-      console.error("Failed to load QA dossiers summary", e);
     }
 
     const approvalQueue = metrics.approval_queue || [];
@@ -1238,7 +1287,9 @@ async function load(){
 load();
 setInterval(load, 10000);
 setInterval(() => {
-  fetch("/api/pert/data", {cache:"no-store"}).then(r=>r.json()).then(d => {
+  fetch("http://127.0.0.1:8777/api/live", {cache:"no-store"}).then(r=>r.json()).then(sidecar => {
+    const backend = sidecar.backend || {};
+    const d = backend.pert_data || {};
     const metrics = d.metrics || {};
     const src = d.freshness_authority?.reconciled_sources || {};
     const stale = Object.keys(src).filter(k => src[k]?.computed_state !== "FRESH");

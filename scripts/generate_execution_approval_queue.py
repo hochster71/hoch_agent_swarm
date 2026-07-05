@@ -232,11 +232,12 @@ def main():
     proposals = []
     timestamp = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")
 
+    schedule_list = schedule.get("schedule", []) if isinstance(schedule, dict) else schedule
     for temp in proposals_template:
         # Find scheduled node from pod schedule
         node_name = "None"
-        for pod in schedule:
-            if pod.get("pod_id") == temp["pod_id"]:
+        for pod in schedule_list:
+            if isinstance(pod, dict) and pod.get("pod_id") == temp["pod_id"]:
                 node_name = pod.get("assigned_node_name", "None")
 
         # Set approval status

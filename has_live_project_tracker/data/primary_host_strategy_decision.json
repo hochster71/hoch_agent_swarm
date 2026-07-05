@@ -1,0 +1,75 @@
+{
+  "options": [
+    {
+      "host_label": "HOCH-200 (Dedicated always-on bare metal)",
+      "host_type": "Bare Metal Server",
+      "expected_os": "Ubuntu Linux 22.04 LTS",
+      "always_on_capable": true,
+      "supports_systemd": true,
+      "sleep_risk": "None",
+      "credential_status": "PENDING_SSH_KEYS",
+      "private_network_status": "Private-Only LAN binding",
+      "setup_effort": "Low (once IP is mapped)",
+      "risk": "Minimal",
+      "founder_action_required": "Provide target IP and keys mapping",
+      "verdict": "HOST_STRATEGY_PENDING_FOUNDER_DECISION"
+    },
+    {
+      "host_label": "Existing LAN Host (Non-MacBook Pro)",
+      "host_type": "LAN Server Candidate",
+      "expected_os": "Linux / BSD / macOS",
+      "always_on_capable": true,
+      "supports_systemd": true,
+      "sleep_risk": "Medium (needs sleep settings override)",
+      "credential_status": "UNKNOWN",
+      "private_network_status": "Private LAN binding",
+      "setup_effort": "Medium (needs candidate scan/keys pairing)",
+      "risk": "Low",
+      "founder_action_required": "Identify, scan, and approve candidate from LAN inventory",
+      "verdict": "HOST_STRATEGY_PENDING_FOUNDER_DECISION"
+    },
+    {
+      "host_label": "New VPS / DigitalOcean Droplet",
+      "host_type": "Cloud VPS",
+      "expected_os": "Ubuntu Linux 22.04 LTS",
+      "always_on_capable": true,
+      "supports_systemd": true,
+      "sleep_risk": "None",
+      "credential_status": "PENDING_API_KEYS",
+      "private_network_status": "Loopback-Only binding with Cloudflare Tunnel",
+      "setup_effort": "Medium (requires droplet creation and API token mapping)",
+      "risk": "Low",
+      "founder_action_required": "Approve VPS deployment budget and supply DO token",
+      "verdict": "HOST_STRATEGY_PENDING_FOUNDER_DECISION"
+    },
+    {
+      "host_label": "Temporary MacBook Pro secondary proof",
+      "host_type": "Local Developer Machine",
+      "expected_os": "macOS / Darwin",
+      "always_on_capable": false,
+      "supports_systemd": false,
+      "sleep_risk": "High (sleeps on lid close, battery depend)",
+      "credential_status": "READY",
+      "private_network_status": "Local loopback",
+      "setup_effort": "None (secondary run validated)",
+      "risk": "High (does not prove 24h continuous server governance)",
+      "founder_action_required": "Provide explicit approval for temporary Mac-only proof",
+      "verdict": "HOST_STRATEGY_PENDING_FOUNDER_DECISION"
+    },
+    {
+      "host_label": "Defer primary burn-in",
+      "host_type": "None",
+      "expected_os": "N/A",
+      "always_on_capable": false,
+      "supports_systemd": false,
+      "sleep_risk": "N/A",
+      "credential_status": "N/A",
+      "private_network_status": "N/A",
+      "setup_effort": "None",
+      "risk": "None",
+      "founder_action_required": "Formally record deferral decision",
+      "verdict": "HOST_STRATEGY_PENDING_FOUNDER_DECISION"
+    }
+  ],
+  "verdict": "PRIMARY_HOST_STRATEGY_PENDING_FOUNDER_DECISION"
+}

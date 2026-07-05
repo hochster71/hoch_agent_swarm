@@ -1,0 +1,21 @@
+{
+  "host_name": "hoch-relay-001 (HOCH-200)",
+  "host_os": "Ubuntu Linux 6.8.0-134-generic x86_64",
+  "supports_systemd": true,
+  "always_on_capable": true,
+  "private_bound": true,
+  "ssh_access_exists": true,
+  "daemon_workspace_path_exists": true,
+  "python_dependencies_exist": true,
+  "sleep_risk": false,
+  "approved_for_primary_burn_in": true,
+  "founder_action_required": "None",
+  "control_node": {
+    "hostname": "Michaels-MacBook-Pro.local",
+    "lan_ip": "10.0.0.10"
+  },
+  "k5_access_status": "K5_ACCESS_VERIFIED",
+  "workspace_sync_status": "WORKSPACE_SYNC_GO",
+  "systemd_on_host_status": "SYSTEMD_READY_ON_HOST",
+  "verdict": "PRIMARY_HOST_VERIFIED"
+}

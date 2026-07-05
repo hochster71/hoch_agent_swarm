@@ -20,7 +20,7 @@ services:
       # CRITICAL: Bound to Tailscale IP only — NOT 0.0.0.0
       - "100.87.18.15:3012:3012"
     volumes:
-      - relay-data:/data
+      - /root/hoch_agent_swarm/has_live_project_tracker/data:/data:ro
       - ./dashboard:/app/static:ro
     healthcheck:
       test: ["CMD-SHELL", "curl -sf http://127.0.0.1:3012/health || exit 1"]

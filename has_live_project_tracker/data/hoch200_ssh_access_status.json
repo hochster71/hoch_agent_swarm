@@ -1,0 +1,13 @@
+{
+  "ssh_config_present": true,
+  "key_file_exists_locally": true,
+  "ssh_connection_success": true,
+  "remote_hostname": "hoch-relay-001",
+  "remote_user": "root",
+  "remote_os": "Ubuntu Linux 6.8.0-134-generic x86_64",
+  "remote_uptime": "up 12 days (tailscale active)",
+  "private_network_status": "Private-Only Binding",
+  "public_exposure_status": "Passed (UFW active)",
+  "evidence_path": "has_live_project_tracker/data/hoch200_ssh_access_status.json",
+  "verdict": "HOCH200_SSH_ACCESS_GO"
+}

@@ -1,0 +1,14 @@
+{
+  "systemd_exists": true,
+  "service_file_staged_or_installed": true,
+  "working_directory_correct": true,
+  "daemon_command_correct": true,
+  "restart_policy_correct": true,
+  "logs_path_configured": true,
+  "service_user_correct": true,
+  "private_env_preserved": true,
+  "service_status": "ACTIVE_RUNNING",
+  "boot_persistence_enabled": true,
+  "evidence_path": "has_live_project_tracker/data/hoch200_systemd_on_host_check.json",
+  "verdict": "SYSTEMD_READY_ON_HOST"
+}

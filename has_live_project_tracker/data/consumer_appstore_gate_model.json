@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-07-05T07:01:30Z",
+  "verdict": "CONSUMER_APPSTORE_GATES_WIRED",
+  "enforcement_policy": "STRICT_BLOCK_BUILD_PRE_DEMAND",
+  "gates": {
+    "G1": {
+      "name": "Demand Validation Gate",
+      "description": "Must block build until target user, painful problem, existing alternatives, test method, and success threshold are defined.",
+      "allowed_verdicts": ["DEMAND_GATE_PASS", "DEMAND_GATE_PENDING", "DEMAND_GATE_NO_GO"],
+      "current_verdict": "DEMAND_GATE_PENDING",
+      "checks": {
+        "target_user_defined": false,
+        "painful_problem_defined": false,
+        "existing_alternatives_defined": false,
+        "test_method_defined": false,
+        "success_threshold_defined": false
+      }
+    },
+    "G2": {
+      "name": "Differentiation Gate",
+      "description": "Must block clone/cosmetic/template apps. Checks Apple 4.3 and Google repetitive-content risk.",
+      "allowed_verdicts": ["DIFFERENTIATION_PASS", "DIFFERENTIATION_PENDING", "DIFFERENTIATION_NO_GO"],
+      "current_verdict": "DIFFERENTIATION_PENDING",
+      "checks": {
+        "unique_user_value": false,
+        "differentiated_workflow": false,
+        "differentiated_ui": false,
+        "original_branding": false,
+        "non_duplicate_store_listing": false
+      }
+    },
+    "G3": {
+      "name": "Retention Instrumentation Gate",
+      "description": "Must define activation event, retention event, day-1/day-7/day-30 metrics, churn signal, and feedback capture before launch.",
+      "allowed_verdicts": ["RETENTION_READY", "RETENTION_PENDING", "RETENTION_NO_GO"],
+      "current_verdict": "RETENTION_PENDING",
+      "checks": {
+        "activation_event_defined": false,
+        "retention_event_defined": false,
+        "day_1_7_30_metrics_defined": false,
+        "churn_signal_defined": false,
+        "feedback_capture_defined": false
+      }
+    },
+    "G4": {
+      "name": "ASO / Discovery Gate",
+      "description": "Must define keyword set, competitor set, title/subtitle hypothesis, screenshots/message test, and discovery channel.",
+      "allowed_verdicts": ["DISCOVERY_READY", "DISCOVERY_PENDING", "DISCOVERY_NO_GO"],
+      "current_verdict": "DISCOVERY_PENDING",
+      "checks": {
+        "keyword_set_defined": false,
+        "competitor_set_defined": false,
+        "title_subtitle_hypothesis": false,
+        "screenshots_message_test": false,
+        "discovery_channel_defined": false
+      }
+    },
+    "A2": {
+      "name": "Demand Experiment Gate",
+      "description": "Must run before A3 build. Cheap landing page, concierge test, waitlist, survey, or direct user interviews are acceptable.",
+      "allowed_verdicts": ["DEMAND_SIGNAL_GREEN", "DEMAND_SIGNAL_AMBER", "DEMAND_SIGNAL_RED"],
+      "current_verdict": "DEMAND_SIGNAL_AMBER",
+      "checks": {
+        "experiment_executed": false,
+        "evidence_produced": false,
+        "success_threshold_met": false
+      }
+    }
+  }
+}

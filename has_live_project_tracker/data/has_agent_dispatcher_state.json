@@ -1,7 +1,19 @@
 {
   "status": "ONLINE",
-  "last_tick": "2026-07-03T12:00:24.711587Z",
+  "last_tick": "2026-07-05T17:23:27.557336Z",
   "registered_agents": [
+    "michaels_ai_model",
+    "pert_analysis_agent",
+    "gap_closure_agent",
+    "compute_auditor",
+    "repo_auditor",
+    "qa_gate_agent",
+    "devsecops_guardian",
+    "prompt_librarian",
+    "revenue_strategist",
+    "evidence_archivist",
+    "personal_systems_agent",
+    "hobby_factory_agent",
     "hasf_scoring_agent",
     "hasf_builder_agent"
   ]

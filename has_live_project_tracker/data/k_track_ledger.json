@@ -1,0 +1,68 @@
+[
+  {
+    "id": "K1",
+    "title": "OPENAI / ANTHROPIC provisioning",
+    "status": "BLOCKED_FOUNDER_ACTION",
+    "blocking_what": "Critic seat and Rung 2 live evaluation",
+    "required_founder_action": "Founder to provide API keys and configure credentials",
+    "evidence_path": "has_live_project_tracker/data/k_track_ledger.json",
+    "data_as_of": "2026-07-05T00:23:12Z",
+    "expires_at": "2026-07-06T00:23:12Z",
+    "verdict": "FAIL"
+  },
+  {
+    "id": "K2",
+    "title": "Apple Developer access",
+    "status": "BLOCKED_FOUNDER_ACTION",
+    "blocking_what": "App Store Connect provisioning",
+    "required_founder_action": "Founder to register developer account and invite agent",
+    "evidence_path": "has_live_project_tracker/data/k_track_ledger.json",
+    "data_as_of": "2026-07-05T00:23:12Z",
+    "expires_at": "2026-07-06T00:23:12Z",
+    "verdict": "FAIL"
+  },
+  {
+    "id": "K3",
+    "title": "App Store Connect and bundle ID",
+    "status": "BLOCKED_FOUNDER_ACTION",
+    "blocking_what": "TestFlight packaging and submission",
+    "required_founder_action": "Founder to create bundle ID com.hasf.rmfcompanion and register App on ASC",
+    "evidence_path": "has_live_project_tracker/data/k_track_ledger.json",
+    "data_as_of": "2026-07-05T00:23:12Z",
+    "expires_at": "2026-07-06T00:23:12Z",
+    "verdict": "FAIL"
+  },
+  {
+    "id": "K4",
+    "title": "signing certificates / provisioning profiles",
+    "status": "BLOCKED_FOUNDER_ACTION",
+    "blocking_what": "TestFlight build signing",
+    "required_founder_action": "Founder to generate iOS Distribution certificate and provisioning profile",
+    "evidence_path": "has_live_project_tracker/data/k_track_ledger.json",
+    "data_as_of": "2026-07-05T00:23:12Z",
+    "expires_at": "2026-07-06T00:23:12Z",
+    "verdict": "FAIL"
+  },
+  {
+    "id": "K5",
+    "title": "remote host credential posture",
+    "status": "BLOCKED_FOUNDER_ACTION",
+    "blocking_what": "Remote VPS deployment",
+    "required_founder_action": "Founder to set up safe SSH keys on remote droplets",
+    "evidence_path": "has_live_project_tracker/data/k_track_ledger.json",
+    "data_as_of": "2026-07-05T00:23:12Z",
+    "expires_at": "2026-07-06T00:23:12Z",
+    "verdict": "FAIL"
+  },
+  {
+    "id": "K6",
+    "title": "secrets inventory",
+    "status": "BLOCKED_FOUNDER_ACTION",
+    "blocking_what": "E2E secure deployment",
+    "required_founder_action": "Founder to review secrets stored in .secrets/ has_live_project_tracker/data/",
+    "evidence_path": "has_live_project_tracker/data/k_track_ledger.json",
+    "data_as_of": "2026-07-05T00:23:12Z",
+    "expires_at": "2026-07-06T00:23:12Z",
+    "verdict": "FAIL"
+  }
+]

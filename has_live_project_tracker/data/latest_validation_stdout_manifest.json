@@ -1,0 +1,53 @@
+{
+  "generated_at": "2026-07-05T00:30:59Z",
+  "commands": {
+    "verify_private_first_doctrine": {
+      "command": "python3 scripts/verify_private_first_doctrine.py",
+      "exit_code": 0,
+      "verdict": "GO",
+      "stdout": "PRIVATE_FIRST_DOCTRINE: GO\n"
+    },
+    "verify_ag_execution_burn_in": {
+      "command": "python3 scripts/verify_ag_execution_burn_in.py",
+      "exit_code": 0,
+      "verdict": "RUNTIME_PROOF_CONDITIONAL_GO",
+      "stdout": "Executing master AG Execution Burn-In Validator...\nVerdict derived: RUNTIME_PROOF_CONDITIONAL_GO\nPhase E Verdict: PHASE_E_TEST_MODE_GO\n  Real Cycles: 0\n  Simulated Cycles: 26\n  Duplicates: 0\n  Missing Proofs: 0\n  Failed Real Rate: 0.00\n  Elapsed Hours: 0.0104\n🟢 AG Burn-In verification succeeded.\n✅ AG Burn-In verification PASSED with verdict: RUNTIME_PROOF_CONDITIONAL_GO\n"
+    },
+    "verify_appstore_preflight": {
+      "command": "python3 scripts/verify_appstore_preflight.py",
+      "exit_code": 0,
+      "verdict": "APPSTORE_PREFLIGHT_GO",
+      "stdout": "Executing Apple Compliance Preflight Gate...\n🟢 Apple Compliance Preflight verification succeeded.\n✅ Apple Compliance Preflight verification PASSED with verdict: APPSTORE_PREFLIGHT_GO\n"
+    },
+    "verify_k_track_ledger": {
+      "command": "python3 scripts/verify_k_track_ledger.py",
+      "exit_code": 0,
+      "verdict": "K_TRACK_BLOCKED",
+      "stdout": "Executing K-Track Ledger Verification...\nVerdict derived: K_TRACK_BLOCKED\n🟢 K-Track Ledger verified and synced cleanly.\n✅ K-Track Ledger verification PASSED with verdict: K_TRACK_BLOCKED\n"
+    },
+    "verify_three_lane_pert_reconciliation": {
+      "command": "python3 scripts/verify_three_lane_pert_reconciliation.py",
+      "exit_code": 0,
+      "verdict": "CONDITIONAL_GO",
+      "stdout": "Executing Three-Lane PERT Reconciliation Validator...\nVerdict derived: CONDITIONAL_GO\n🟢 PERT task graph is fully reconciled and verified.\n✅ Three-lane PERT verification PASSED.\n"
+    },
+    "verify_burn_in_launch_readiness": {
+      "command": "python3 scripts/verify_burn_in_launch_readiness.py",
+      "exit_code": 0,
+      "verdict": "CONDITIONAL_READY_HOST_PENDING",
+      "stdout": "Executing Burn-In Launch Readiness Verification...\nVerdict derived: CONDITIONAL_READY_HOST_PENDING\n🟢 Burn-In Launch Readiness verified successfully.\n✅ Burn-in launch readiness verification PASSED with verdict: CONDITIONAL_READY_HOST_PENDING\n"
+    },
+    "pytest_prompt_brain": {
+      "command": "uv run pytest tests/prompt_brain -vv",
+      "exit_code": 0,
+      "verdict": "PASS",
+      "summary": "143 passed, 77 warnings in 1.49s"
+    },
+    "npm_ci_validate": {
+      "command": "npm run ci:validate",
+      "exit_code": 0,
+      "verdict": "PASS",
+      "summary": "FULL INTEGRATION PIPELINE COMPLETED SUCCESSFULLY"
+    }
+  }
+}

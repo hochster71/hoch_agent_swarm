@@ -11,8 +11,9 @@
     "input_data": "has_live_project_tracker/data/mission_intake_queue.json",
     "output_data": "has_live_project_tracker/data/helm_task_queue.json",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/helm-rung-1-promotion-evidence.md",
-    "status": "ACTIVE",
-    "source_registry": "has_live_project_tracker/data/helm_agent_registry.json"
+    "status": "READY",
+    "source_registry": "has_live_project_tracker/data/helm_agent_registry.json",
+    "last_heartbeat": "2026-07-05T17:23:27.556758Z"
   },
   "pert_analysis_agent": {
     "agent_id": "pert_analysis_agent",
@@ -27,7 +28,8 @@
     "output_data": "has_live_project_tracker/data/fresh_pert_gap_analysis.json",
     "evidence_path": "docs/evidence/goal_runner/goal_readiness_summary_20260702T184021Z.md",
     "status": "READY",
-    "source_registry": "has_live_project_tracker/data/helm_agent_registry.json"
+    "source_registry": "has_live_project_tracker/data/helm_agent_registry.json",
+    "last_heartbeat": "2026-07-05T17:23:27.556771Z"
   },
   "gap_closure_agent": {
     "agent_id": "gap_closure_agent",
@@ -42,7 +44,8 @@
     "output_data": "has_live_project_tracker/data/operator_next_actions.json",
     "evidence_path": "docs/evidence/runtime/rc61-local-first-cost-governor-fresh-pert-live-ui.md",
     "status": "READY",
-    "source_registry": "has_live_project_tracker/data/helm_agent_registry.json"
+    "source_registry": "has_live_project_tracker/data/helm_agent_registry.json",
+    "last_heartbeat": "2026-07-05T17:23:27.556775Z"
   },
   "compute_auditor": {
     "agent_id": "compute_auditor",
@@ -57,7 +60,8 @@
     "output_data": "has_live_project_tracker/data/hoch_compute_node_health.json",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/secure-sync-posture-proof.md",
     "status": "READY",
-    "source_registry": "has_live_project_tracker/data/helm_agent_registry.json"
+    "source_registry": "has_live_project_tracker/data/helm_agent_registry.json",
+    "last_heartbeat": "2026-07-05T17:23:27.556777Z"
   },
   "repo_auditor": {
     "agent_id": "repo_auditor",
@@ -72,7 +76,8 @@
     "output_data": "has_live_project_tracker/data/duplicate_groups.json",
     "evidence_path": "docs/evidence/release_hygiene/git_dirty_review_20260702T184407Z.md",
     "status": "READY",
-    "source_registry": "has_live_project_tracker/data/helm_agent_registry.json"
+    "source_registry": "has_live_project_tracker/data/helm_agent_registry.json",
+    "last_heartbeat": "2026-07-05T17:23:27.556780Z"
   },
   "qa_gate_agent": {
     "agent_id": "qa_gate_agent",
@@ -87,7 +92,8 @@
     "output_data": "has_live_project_tracker/data/eval_report.json",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/helm-full-time-orchestration-bridge-proof.md",
     "status": "READY",
-    "source_registry": "has_live_project_tracker/data/helm_agent_registry.json"
+    "source_registry": "has_live_project_tracker/data/helm_agent_registry.json",
+    "last_heartbeat": "2026-07-05T17:23:27.556784Z"
   },
   "devsecops_guardian": {
     "agent_id": "devsecops_guardian",
@@ -102,7 +108,8 @@
     "output_data": "has_live_project_tracker/data/evidence_manifest.json",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/orchestration-bridge-kill-switch-proof.md",
     "status": "READY",
-    "source_registry": "has_live_project_tracker/data/helm_agent_registry.json"
+    "source_registry": "has_live_project_tracker/data/helm_agent_registry.json",
+    "last_heartbeat": "2026-07-05T17:23:27.556786Z"
   },
   "prompt_librarian": {
     "agent_id": "prompt_librarian",
@@ -117,7 +124,8 @@
     "output_data": "has_live_project_tracker/data/registry_summary.json",
     "evidence_path": "docs/evidence/moonshot/moonshot_audit_20260702T191737Z.md",
     "status": "READY",
-    "source_registry": "has_live_project_tracker/data/helm_agent_registry.json"
+    "source_registry": "has_live_project_tracker/data/helm_agent_registry.json",
+    "last_heartbeat": "2026-07-05T17:23:27.556788Z"
   },
   "revenue_strategist": {
     "agent_id": "revenue_strategist",
@@ -132,7 +140,8 @@
     "output_data": "has_live_project_tracker/data/revenue_action_queue.json",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/helm-orchestration-bridge-acceptance-audit.md",
     "status": "READY",
-    "source_registry": "has_live_project_tracker/data/helm_agent_registry.json"
+    "source_registry": "has_live_project_tracker/data/helm_agent_registry.json",
+    "last_heartbeat": "2026-07-05T17:23:27.556790Z"
   },
   "evidence_archivist": {
     "agent_id": "evidence_archivist",
@@ -147,7 +156,8 @@
     "output_data": "has_live_project_tracker/data/evidence_manifest.json",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/helm-rung-1-decompose-only-onboarding-proof.md",
     "status": "READY",
-    "source_registry": "has_live_project_tracker/data/helm_agent_registry.json"
+    "source_registry": "has_live_project_tracker/data/helm_agent_registry.json",
+    "last_heartbeat": "2026-07-05T17:23:27.556792Z"
   },
   "personal_systems_agent": {
     "agent_id": "personal_systems_agent",
@@ -162,7 +172,8 @@
     "output_data": "has_live_project_tracker/data/hoch_pods_runtime_state.json",
     "evidence_path": "docs/evidence/runtime_scenarios/20260702T222129Z-has-hasf-runtime-scenario/00-baseline-discovery.md",
     "status": "READY",
-    "source_registry": "has_live_project_tracker/data/helm_agent_registry.json"
+    "source_registry": "has_live_project_tracker/data/helm_agent_registry.json",
+    "last_heartbeat": "2026-07-05T17:23:27.556794Z"
   },
   "hobby_factory_agent": {
     "agent_id": "hobby_factory_agent",
@@ -177,7 +188,8 @@
     "output_data": "has_live_project_tracker/data/inventory_summary.json",
     "evidence_path": "docs/evidence/release_hygiene/dirty_tree_classification_20260702T184556Z.md",
     "status": "READY",
-    "source_registry": "has_live_project_tracker/data/helm_agent_registry.json"
+    "source_registry": "has_live_project_tracker/data/helm_agent_registry.json",
+    "last_heartbeat": "2026-07-05T17:23:27.556796Z"
   },
   "hasf_scoring_agent": {
     "agent_id": "hasf_scoring_agent",
@@ -192,7 +204,8 @@
     "output_data": "has_live_project_tracker/data/hoch_hasf_soccer_audit_results.json",
     "evidence_path": "docs/evidence/release_hygiene/dirty_tree_classification_20260702T184556Z.md",
     "status": "READY",
-    "source_registry": "has_live_project_tracker/data/helm_agent_registry.json"
+    "source_registry": "has_live_project_tracker/data/helm_agent_registry.json",
+    "last_heartbeat": "2026-07-05T17:23:27.556798Z"
   },
   "hasf_builder_agent": {
     "agent_id": "hasf_builder_agent",
@@ -207,6 +220,7 @@
     "output_data": "has_live_project_tracker/data/job_queue.json",
     "evidence_path": "docs/evidence/release_hygiene/dirty_tree_classification_20260702T184556Z.md",
     "status": "READY",
-    "source_registry": "has_live_project_tracker/data/helm_agent_registry.json"
+    "source_registry": "has_live_project_tracker/data/helm_agent_registry.json",
+    "last_heartbeat": "2026-07-05T17:23:27.556800Z"
   }
 }

@@ -11,7 +11,9 @@ archive_path="$BACKUP_DIR/$archive_name"
 
 echo "[info] Packaging data registers..."
 
-tar -czf "$archive_path" \
+tar --ignore-failed-read -czf "$archive_path" \
+  backend/swarm_ledger.db \
+  has_live_project_tracker/data \
   data/prompt_brain \
   data/doctrine \
   data/app_store \

@@ -1,0 +1,11 @@
+{
+  "flutter_sdk_present": true,
+  "xcode_present": true,
+  "ios_simulator_available": true,
+  "app_compiles": true,
+  "app_launches": true,
+  "core_path_works": true,
+  "no_private_exposure": true,
+  "build_artifact_recorded": "apps/rmf_evidence_review_companion/build/ios/iphonesimulator/Runner.app",
+  "verdict": "PASS"
+}

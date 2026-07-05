@@ -118,6 +118,23 @@ def run_executor():
         lease_id = lease["lease_id"]
         update_runner_state("LEASE_ACQUIRED", task_id=task_id, reason="Acquired lock")
         
+        # Fencing Token check
+        fencing_token = lease.get("fencing_token", 0)
+        proof_index = load_json(PROOF_INDEX_FILE, {"proofs": []})
+        max_existing_token = 0
+        for entry in proof_index.get("proofs", []):
+            t_token = entry.get("fencing_token", 0)
+            if t_token > max_existing_token:
+                max_existing_token = t_token
+                
+        if fencing_token <= max_existing_token:
+            log_message(f"❌ Fencing token violation: lease token {fencing_token} is stale (max existing: {max_existing_token}). Rejecting write.")
+            task["status"] = "BLOCKED"
+            save_json(QUEUE_FILE, queue)
+            lm.release_lease(lease_id, status="FAILED")
+            update_runner_state("BLOCKED_BY_POLICY", task_id=task_id, reason="Fencing token is stale")
+            continue
+        
         # Determine policy category and check safety bounds
         policy_category = "requires_michael_approval"
         is_allowed = False
@@ -165,6 +182,7 @@ def run_executor():
             
 * **Task ID**: {task_id}
 * **Lease ID**: {lease_id}
+* **Fencing Token**: {fencing_token}
 * **Input Hash**: {input_hash}
 * **Timestamp**: {get_utc_now()}
 * **Policy Verdict**: {policy_category}
@@ -187,6 +205,7 @@ def run_executor():
             
 * **Task ID**: {task_id}
 * **Lease ID**: {lease_id}
+* **Fencing Token**: {fencing_token}
 * **Input Hash**: {input_hash}
 * **Output Hash**: {output_hash}
 * **Timestamp**: {get_utc_now()}
@@ -222,6 +241,7 @@ def run_executor():
             proof_entry = {
                 "task_id": task_id,
                 "lease_id": lease_id,
+                "fencing_token": fencing_token,
                 "input_hash": input_hash,
                 "output_hash": output_hash,
                 "timestamp": get_utc_now(),
@@ -235,6 +255,7 @@ def run_executor():
             task["completed_at"] = get_utc_now()
             task["result"] = f"file://{proof_file}"
             task["policy_category"] = policy_category
+            task["fencing_token"] = fencing_token
             save_json(QUEUE_FILE, queue)
             
             lm.release_lease(lease_id, status="RELEASED")

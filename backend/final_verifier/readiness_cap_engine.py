@@ -82,6 +82,65 @@ class ReadinessCapEngine:
                 except Exception:
                     pass
 
+                # Rule 4c: Heartbeat stale check and idle-with-pending check
+                import json
+                from datetime import datetime, timezone
+                
+                # Check all database heartbeats for staleness
+                cursor.execute("SELECT * FROM runtime_heartbeats")
+                for row in cursor.fetchall():
+                    comp = row["component"]
+                    last_seen_str = row["last_seen"]
+                    hb_status = row["status"]
+                    
+                    if hb_status == "RUNNING" or comp == "backend_core":
+                        try:
+                            cleaned_str = last_seen_str.replace("Z", "+00:00")
+                            last_seen_dt = datetime.fromisoformat(cleaned_str)
+                            age = (datetime.now(timezone.utc) - last_seen_dt).total_seconds()
+                            
+                            # Determine TTL
+                            ttl_ms = 10000
+                            try:
+                                if "ttl_ms" in row.keys() and row["ttl_ms"] is not None:
+                                    ttl_ms = int(row["ttl_ms"])
+                            except Exception:
+                                pass
+                                
+                            if age > (ttl_ms / 1000.0):
+                                score = min(score, not_ready_cap)
+                                caps.append((f"stale component heartbeat: {comp}", not_ready_cap))
+                        except Exception:
+                            score = min(score, not_ready_cap)
+                            caps.append((f"invalid heartbeat timestamp for {comp}", not_ready_cap))
+                            
+                # Check for idle-with-pending tasks
+                queue_path = os.path.join(project_root, "has_live_project_tracker/data/helm_task_queue.json")
+                pending_count = 0
+                if os.path.exists(queue_path):
+                    try:
+                        with open(queue_path, "r") as f:
+                            q = json.load(f)
+                            pending_count = sum(1 for t in q if t.get("status") in ["PENDING", "RETRY_PENDING"])
+                    except Exception:
+                        pass
+
+                if pending_count > 0:
+                    daemon_state_path = os.path.join(project_root, "has_live_project_tracker/data/ag_execution_daemon_state.json")
+                    daemon_idle = False
+                    if os.path.exists(daemon_state_path):
+                        try:
+                            with open(daemon_state_path, "r") as f:
+                                dst = json.load(f)
+                                if dst.get("last_cycle_status") == "IDLE" or dst.get("daemon_status") == "IDLE":
+                                    daemon_idle = True
+                        except Exception:
+                            pass
+                    
+                    if daemon_idle:
+                        score = min(score, not_ready_cap)
+                        caps.append(("stuck daemon: idle with pending tasks", not_ready_cap))
+
                 # Rule 5: Open defects or vulnerabilities
                 open_defects = int(signals.get("open_defect_count", 0))
                 if open_defects > 0:

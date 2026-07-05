@@ -1,0 +1,15 @@
+{
+  "repo_exists": false,
+  "path_to_repo": "/root/hoch_agent_swarm",
+  "branch": "main",
+  "commit_hash": null,
+  "expected_local_commit_hash": "c0ffee1234567890abcdef1234567890abcdef",
+  "required_scripts_exist": false,
+  "required_data_dirs_exist": false,
+  "python_available": true,
+  "uv_available": true,
+  "permissions_correct": false,
+  "sync_command": "rsync -avz --exclude '.venv' --exclude '.git' /Users/michaelhoch/hoch_agent_swarm/ root@50.116.41.183:/root/hoch_agent_swarm/",
+  "evidence_path": "has_live_project_tracker/data/hoch200_workspace_sync_status.json",
+  "verdict": "WORKSPACE_SYNC_PENDING"
+}

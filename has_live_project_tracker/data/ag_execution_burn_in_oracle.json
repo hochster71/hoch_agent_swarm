@@ -1,0 +1,12 @@
+{
+  "min_wall_clock_hours": 24.0,
+  "target_wall_clock_hours": 72.0,
+  "configured_cycle_interval_seconds": 60,
+  "min_real_cycles": 10,
+  "max_duplicate_executions": 0,
+  "max_unrecovered_stale_leases": 0,
+  "max_missing_proofs": 0,
+  "max_unsafe_actions": 0,
+  "max_failed_cycle_rate": 0.01,
+  "verdict": "ORACLE_READY"
+}

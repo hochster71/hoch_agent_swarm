@@ -36,8 +36,8 @@ app = FastAPI(
 )
 
 STATIC_DIR = Path(__file__).parent / "static"
-REGISTRY_PATH = Path("/data/worker_registry.json")
-HEARTBEAT_PATH = Path("/data/heartbeats.jsonl")
+REGISTRY_PATH = Path("/tmp/worker_registry.json")
+HEARTBEAT_PATH = Path("/tmp/heartbeats.jsonl")
 
 # Mount static dashboard if the directory exists
 if STATIC_DIR.exists():
@@ -136,6 +136,130 @@ async def api_status() -> JSONResponse:
             "ts": _now_iso(),
         }
     )
+
+
+@app.get("/api/burn-in/status")
+async def get_burn_in_status() -> JSONResponse:
+    daemon_state = {}
+    daemon_state_path = Path("/data/ag_execution_daemon_state.json")
+    if daemon_state_path.exists():
+        try:
+            daemon_state = json.loads(daemon_state_path.read_text())
+        except Exception:
+            pass
+
+    burn_in_summary = {}
+    burn_in_summary_path = Path("/data/ag_execution_burn_in_summary.json")
+    if burn_in_summary_path.exists():
+        try:
+            burn_in_summary = json.loads(burn_in_summary_path.read_text())
+        except Exception:
+            pass
+
+    queue_health = {}
+    queue_health_path = Path("/data/ag_execution_queue_health.json")
+    if queue_health_path.exists():
+        try:
+            queue_health = json.loads(queue_health_path.read_text())
+        except Exception:
+            pass
+
+    proof_index = {}
+    proof_index_path = Path("/data/ag_execution_proof_index.json")
+    if proof_index_path.exists():
+        try:
+            proof_index = json.loads(proof_index_path.read_text())
+        except Exception:
+            pass
+
+    fencing_status = {}
+    fencing_status_path = Path("/data/ag_execution_fencing_status.json")
+    if fencing_status_path.exists():
+        try:
+            fencing_status = json.loads(fencing_status_path.read_text())
+        except Exception:
+            pass
+
+    task_queue = []
+    task_queue_path = Path("/data/helm_task_queue.json")
+    if task_queue_path.exists():
+        try:
+            task_queue = json.loads(task_queue_path.read_text())
+        except Exception:
+            pass
+
+    pending_task_count = 0
+    for task in task_queue:
+        if task.get("status") in ("PENDING", "pending"):
+            pending_task_count += 1
+
+    is_stale = False
+    heartbeat_fresh = "HEARTBEAT_FRESH"
+    
+    last_hb_str = daemon_state.get("last_heartbeat")
+    expires_str = daemon_state.get("heartbeat_expires_at")
+    
+    now = datetime.now(timezone.utc)
+    if expires_str:
+        try:
+            expires_dt = datetime.fromisoformat(expires_str.replace("Z", "+00:00"))
+            if now > expires_dt:
+                is_stale = True
+                heartbeat_fresh = "HEARTBEAT_STALE"
+        except Exception:
+            pass
+
+    systemd_active = daemon_state.get("venue_classification", {}).get("systemd_active", False)
+    daemon_running = daemon_state.get("daemon_status") == "RUNNING"
+    
+    state_indicator = "PRIMARY_SYSTEMD_BURN_IN_ACTIVE"
+    if not systemd_active or not daemon_running:
+        state_indicator = "SYSTEMD_DOWN"
+    elif is_stale:
+        state_indicator = "HEARTBEAT_STALE"
+    else:
+        last_cycle_status = daemon_state.get("last_cycle_status", "IDLE")
+        if pending_task_count > 0 and last_cycle_status == "IDLE":
+            if last_hb_str:
+                try:
+                    last_hb_dt = datetime.fromisoformat(last_hb_str.replace("Z", "+00:00"))
+                    if (now - last_hb_dt).total_seconds() > 120:
+                        state_indicator = "IDLE_WITH_PENDING_TASKS"
+                except Exception:
+                    pass
+
+    elapsed_hours = 0.0
+    started_at_str = daemon_state.get("started_at")
+    if started_at_str:
+        try:
+            started_dt = datetime.fromisoformat(started_at_str.replace("Z", "+00:00"))
+            elapsed_hours = (now - started_dt).total_seconds() / 3600.0
+        except Exception:
+            pass
+
+    # Merge elapsed_hours into burn_in_summary
+    burn_in_summary_merged = {**burn_in_summary}
+    burn_in_summary_merged["elapsed_hours"] = elapsed_hours
+
+    return JSONResponse({
+        "state_indicator": state_indicator,
+        "heartbeat_status": heartbeat_fresh,
+        "daemon_state": daemon_state,
+        "burn_in_summary": burn_in_summary_merged,
+        "queue_health": queue_health,
+        "proof_index": proof_index,
+        "fencing_status": fencing_status,
+        "pending_task_count": pending_task_count,
+        "24h_go_status": "NOT_YET",
+        "ts": _now_iso(),
+        "cycle_count_source": "/root/hoch_agent_swarm/has_live_project_tracker/data/ag_execution_daemon_state.json",
+        "cycle_count_timestamp": daemon_state.get("last_heartbeat", _now_iso()),
+        "daemon_started_at": daemon_state.get("started_at"),
+        "api_generated_at": _now_iso(),
+        "elapsed_hours": elapsed_hours,
+        "telemetry_host_path": "/root/hoch_agent_swarm/has_live_project_tracker/data",
+        "container_mount_mode": "read_only"
+    })
 
 
 @app.get("/api/registry")

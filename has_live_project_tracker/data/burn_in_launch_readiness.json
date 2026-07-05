@@ -1,0 +1,21 @@
+{
+  "generated_at": "2026-07-05T00:30:59Z",
+  "checks": {
+    "burn_in_oracle_exists": { "status": "PASS", "path": "has_live_project_tracker/data/ag_execution_burn_in_oracle.json" },
+    "daemon_script_exists": { "status": "PASS", "path": "scripts/ag_execution_daemon.py" },
+    "systemd_unit_exists": { "status": "PASS", "path": "deploy/local-autonomy/hoch-ag-execution-daemon.service" },
+    "launchd_plist_exists": { "status": "PASS", "path": "com.hoch.agent.swarm.runtime.plist" },
+    "heartbeat_observer_exists": { "status": "PASS", "path": "scripts/verify_daemon_heartbeat.py" },
+    "fencing_verifier_exists": { "status": "PASS", "path": "scripts/verify_ag_execution_fencing.py" },
+    "proof_verifier_exists": { "status": "PASS", "path": "scripts/verify_ag_execution_proofs.py" },
+    "queue_verifier_exists": { "status": "PASS", "path": "scripts/verify_ag_execution_queue.py" },
+    "burn_in_validator_exists": { "status": "PASS", "path": "scripts/verify_ag_execution_burn_in.py" },
+    "injection_schedule_exists": { "status": "PASS", "path": "has_live_project_tracker/data/ag_execution_injection_schedule.json" },
+    "supervision_test_exists": { "status": "PASS", "path": "scripts/ag_execution_supervision_test.py" },
+    "operator_hold_verified": { "status": "PASS", "details": "Operator hold appends to log and locks override starts." },
+    "control_plane_exposed": { "status": "PASS", "details": "control_plane_status.json includes burn_in_state, appstore_preflight_state, and k_track_summary." },
+    "command_center_exposed": { "status": "PASS", "details": "FastAPI dashboard and api routes expose burn-in, preflight, and K-track details." },
+    "primary_host_status": { "status": "PENDING_FOUNDER_HOST_SELECTION", "details": "Host selection must be finalized by Michael." }
+  },
+  "verdict": "CONDITIONAL_READY_HOST_PENDING"
+}

@@ -140,8 +140,10 @@ function drawSpark(hist){
 async function refresh(){
   try{
     let d;
-    try{ d=await (await fetch('/api/brain/live',{cache:'no-store'})).json(); }
-    catch(_){ d=await (await fetch('/data/brain_live.json?_='+Date.now(),{cache:'no-store'})).json(); }
+    // Works whether opened over HTTP (relative) or straight from Finder (file:// -> absolute backend).
+    const API = (location.protocol==='file:'||location.origin==='null')?'http://127.0.0.1:8000':'';
+    try{ d=await (await fetch(API+'/api/brain/live',{cache:'no-store'})).json(); }
+    catch(_){ d=await (await fetch(API+'/data/brain_live.json?_='+Date.now(),{cache:'no-store'})).json(); }
     const lb=d.live_brain||{};
     $('brainchip').className='chip '+(lb.live_brain_available?'live':'off');
     $('brainchip').textContent=lb.live_brain_available?('● live brain · '+(lb.backend&&lb.backend.model||'local')):'◦ brain offline (start Ollama)';

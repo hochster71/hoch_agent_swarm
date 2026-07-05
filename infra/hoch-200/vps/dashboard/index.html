@@ -372,6 +372,21 @@
     ::-webkit-scrollbar-thumb:hover {
       background: rgba(255, 255, 255, 0.2);
     }
+
+    /* ---- Compact Mode Overrides ---- */
+    header { padding: 8px 16px; }
+    main { padding: 10px 16px; }
+    .header-flex { margin-bottom: 8px; }
+    .dashboard-grid { gap: 10px; }
+    .column { gap: 10px; }
+    .card { padding: 10px; }
+    .card-header { margin-bottom: 8px; }
+    .compact-stats { gap: 6px; }
+    .stat-card { min-height: 44px; padding: 4px; }
+    .worker-row { padding: 6px; gap: 6px; }
+    .check-item { padding: 4px 0; }
+    .info-table tr td { padding: 3px 2px; }
+    #heartbeat-log { padding: 4px; }
   </style>
 </head>
 <body>
@@ -502,6 +517,9 @@
                 <tr><td class="key">Last Task ID</td><td class="val" id="ab-task-id">—</td></tr>
                 <tr><td class="key">Operator Hold</td><td class="val" id="ab-operator-hold">—</td></tr>
                 <tr><td class="key">Private Doctrine</td><td class="val green" id="ab-doctrine">—</td></tr>
+                <tr><td class="key">24h Go Status</td><td class="val" id="lbl-24h-status">—</td></tr>
+                <tr><td class="key">Real Cycles</td><td class="val" id="lbl-real-cycles">—</td></tr>
+                <tr><td class="key">Simulated Cycles</td><td class="val" id="lbl-sim-cycles">—</td></tr>
               </tbody>
             </table>
           </div>
@@ -520,6 +538,25 @@
                 <tr><td class="key">Lease Fencing</td><td class="val" id="val-lease-fencing">—</td></tr>
                 <tr><td class="key">Failed Real Rate</td><td class="val" id="val-failed-rate">—</td></tr>
                 <tr><td class="key">Queue Pending Tasks</td><td class="val accent" id="val-queue-pending">—</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Telemetry Metadata</span>
+            <span class="card-icon">📊</span>
+          </div>
+          <div class="card-body-scroll">
+            <table class="info-table">
+              <tbody>
+                <tr><td class="key">Cycle Count Source</td><td class="val" id="lbl-cycle-count-source">—</td></tr>
+                <tr><td class="key">Cycle Count Timestamp</td><td class="val accent" id="lbl-cycle-count-timestamp">—</td></tr>
+                <tr><td class="key">Daemon Started At</td><td class="val" id="lbl-daemon-started-at">—</td></tr>
+                <tr><td class="key">API Generated At</td><td class="val" id="lbl-api-generated-at">—</td></tr>
+                <tr><td class="key">Telemetry Host Path</td><td class="val" id="lbl-telemetry-host-path">—</td></tr>
+                <tr><td class="key">Container Mount Mode</td><td class="val green" id="lbl-container-mount-mode">—</td></tr>
               </tbody>
             </table>
           </div>
@@ -741,6 +778,14 @@
         setCls('val-failed-rate', 'val ' + (failedRate === 0.0 ? 'green' : 'red'));
 
         setTxt('val-queue-pending', d.pending_task_count);
+
+        // Populate telemetry metadata
+        setTxt('lbl-cycle-count-source', d.cycle_count_source || '—');
+        setTxt('lbl-cycle-count-timestamp', d.cycle_count_timestamp || '—');
+        setTxt('lbl-daemon-started-at', d.daemon_started_at || '—');
+        setTxt('lbl-api-generated-at', d.api_generated_at || '—');
+        setTxt('lbl-telemetry-host-path', d.telemetry_host_path || '—');
+        setTxt('lbl-container-mount-mode', d.container_mount_mode || '—');
 
         const missNote = _miss.length ? ` · missing labels: ${_miss.join(',')}` : '';
         log(`/api/burn-in/status → indicator=${d.state_indicator} · real_cycles=${realC}${missNote}`, 'ok');

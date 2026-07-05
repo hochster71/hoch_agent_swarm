@@ -22,5 +22,21 @@
     "completed_at": "2026-07-03T06:26:14.811390Z",
     "agent": "hasf_builder_agent",
     "status": "SUCCESS"
+  },
+  {
+    "event": "ag_task_executed",
+    "task_id": "task-autonomy-hardening-demo-01",
+    "task_name": "read_and_format_autonomy_stats",
+    "timestamp": "2026-07-05T05:04:37.523635Z",
+    "status": "SUCCESS",
+    "evidence_hash": "02986046397ee43a74b6f4e9295bace6c3aa01ecdc8bfb3e9cdce7278c194780"
+  },
+  {
+    "event": "ag_task_executed",
+    "task_id": "task-local-verify-01",
+    "task_name": "verify_local_system_hygiene",
+    "timestamp": "2026-07-05T05:40:50.668507Z",
+    "status": "SUCCESS",
+    "evidence_hash": "0e364dcc4bfc0c621228b5b2a9c628d9eba94468cf29612c0c6af228a7c6b4cc"
   }
 ]

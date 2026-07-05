@@ -1,7 +1,7 @@
 {
   "telemetry_id": "global_verify",
-  "generated_at": "2026-07-03T02:02:17.957022+00:00",
-  "last_verified_at": "2026-07-03T02:02:17.957022+00:00",
+  "generated_at": "2026-07-03T21:46:25.353364Z",
+  "last_verified_at": "2026-07-03T21:46:25.353364Z",
   "owner_agent": "Global Verify Agent",
   "source_producer": "scripts/generate_global_verify.py",
   "freshness_sla_minutes": 30,
@@ -17,7 +17,7 @@
       "command": "python3 scripts/verify_has_hasf_scope_lock.py",
       "ok": true,
       "returncode": 0,
-      "stdout_tail": "HAS/HASF SCOPE LOCK DRIFT GUARD\n============================================================\nGenerated at: 2026-07-02T21:02:17.976709\nHAS_HASF_SCOPE_LOCK: PASS\nDrift guard active. Michael is executive approver only.\nCurrent priority: Prove local runner automation against http://127.0.0.1:8765/ and enforce scope lock\nSingle next action: 1 (enforced)\n",
+      "stdout_tail": "HAS/HASF SCOPE LOCK DRIFT GUARD\n============================================================\nGenerated at: 2026-07-03T16:41:49.177928\nHAS_HASF_SCOPE_LOCK: PASS\nDrift guard active. Michael is executive approver only.\nCurrent priority: Prove local runner automation against http://127.0.0.1:8765/ and enforce scope lock\nSingle next action: 1 (enforced)\n",
       "stderr_tail": ""
     },
     {
@@ -33,7 +33,7 @@
       "command": "python3 scripts/frontier_escalation_gate.py",
       "ok": true,
       "returncode": 0,
-      "stdout_tail": "FRONTIER ESCALATION GATE\n==================================================\nGenerated at: 2026-07-02T21:02:19.509932\n{\n  \"status\": \"LOCAL_FIRST\",\n  \"recommended\": \"NONE\",\n  \"message\": \"All routine work routed to local AI. Frontier escalation only for scoped complex patches with approval.\"\n}\nFRONTIER_ESCALATION_GATE: PASS\n",
+      "stdout_tail": "FRONTIER ESCALATION GATE\n==================================================\nGenerated at: 2026-07-03T16:41:50.549386\n{\n  \"status\": \"LOCAL_FIRST\",\n  \"recommended\": \"NONE\",\n  \"message\": \"All routine work routed to local AI. Frontier escalation only for scoped complex patches with approval.\"\n}\nFRONTIER_ESCALATION_GATE: PASS\n",
       "stderr_tail": ""
     },
     {
@@ -41,7 +41,7 @@
       "command": "python3 scripts/fresh_has_hasf_gap_pert_audit.py",
       "ok": true,
       "returncode": 0,
-      "stdout_tail": "FRESH HAS/HASF GAP PERT AUDIT\n==================================================\nGenerated at: 2026-07-02T21:02:19.536517\nFresh PERT gap analysis written to has_live_project_tracker/data/fresh_pert_gap_analysis.json\nOVERALL STATUS: CONDITIONAL\n",
+      "stdout_tail": "FRESH HAS/HASF GAP PERT AUDIT\n==================================================\nGenerated at: 2026-07-03T16:41:50.570272\nFresh PERT gap analysis written to has_live_project_tracker/data/fresh_pert_gap_analysis.json\nOVERALL STATUS: PASS\n",
       "stderr_tail": ""
     },
     {

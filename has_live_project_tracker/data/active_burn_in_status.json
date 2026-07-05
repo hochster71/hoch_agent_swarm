@@ -1,0 +1,22 @@
+{
+  "generated_at": "2026-07-05T00:40:14Z",
+  "daemon_active": true,
+  "heartbeat_status": "HEARTBEAT_FRESH",
+  "host_classification": "MacBook Developer Node",
+  "supervisor_classification": "caffeinate",
+  "real_cycle_count": 2,
+  "simulated_cycle_count": 0,
+  "primary_burn_in_eligible": false,
+  "current_validator_verdict": "RUNTIME_PROOF_CONDITIONAL_GO",
+  "remaining_blockers_to_phase_e_24h_go": [
+    "Awaiting 24h wall-clock execution duration on an always-on host",
+    "Droplet ssh key provisioning (K5) and credentials sync (K1-K6)"
+  ],
+  "evidence_paths": [
+    "has_live_project_tracker/data/ag_execution_burn_in_ledger.jsonl",
+    "has_live_project_tracker/data/ag_execution_burn_in_summary.json",
+    "has_live_project_tracker/data/ag_execution_daemon_state.json",
+    "docs/evidence/runtime/ag_execution_proof_task-local-verify-01.md"
+  ],
+  "verdict": "SECONDARY_CAFFEINATE_RUN_ACTIVE"
+}

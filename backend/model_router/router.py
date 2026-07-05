@@ -9,6 +9,45 @@ runtime_bus = RuntimeProcessBus()
 class RouterException(Exception):
     pass
 
+def check_data_egress_policy(prompt: str, destination_provider: str) -> bool:
+    """
+    Checks if the prompt contains content that violates the data egress policy for the destination provider.
+    Returns True if allowed, False if blocked.
+    """
+    import os
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    policy_path = os.path.join(project_root, "has_live_project_tracker/data/provider_data_egress_policy.json")
+    if not os.path.exists(policy_path):
+        return True
+        
+    try:
+        with open(policy_path, "r") as f:
+            policy = json.load(f)
+            
+        classes = policy.get("content_classes", {})
+        
+        # Classify prompt content
+        detected_classes = []
+        prompt_lower = prompt.lower()
+        
+        if any(kw in prompt_lower for kw in ["secret", "password", "key", "token", "credential"]):
+            detected_classes.append("SECRET_OR_CREDENTIAL")
+        if any(kw in prompt_lower for kw in ["customer", "client", "user_data", "personal_info"]):
+            detected_classes.append("CUSTOMER_DATA")
+        if any(kw in prompt_lower for kw in ["private", "personal", "founder", "hoch_private"]):
+            detected_classes.append("FOUNDER_PRIVATE")
+            
+        # Check destinations
+        for cls_name in detected_classes:
+            allowed = classes.get(cls_name, {}).get("allowed_destinations", [])
+            # Local providers are always safe
+            if destination_provider not in allowed and destination_provider not in ["lmstudio", "ollama_gpu_pod", "ollama_native", "ollama"]:
+                return False
+                
+        return True
+    except Exception:
+        return True
+
 def try_local_provider(provider_name: str, model_name: str, prompt: str) -> str:
     """
     Attempts to call local provider (LM Studio or Ollama).
@@ -94,6 +133,13 @@ def route_and_run(
                 found = True
                 break
     
+    # 0. Data Egress Policy Check
+    if provider not in ["lmstudio", "ollama_gpu_pod", "ollama_native", "ollama"]:
+        if not check_data_egress_policy(prompt, provider):
+            raise RouterException(
+                f"Data egress block: sensitive content cannot be sent to provider '{provider}'"
+            )
+
     # 1. Determine escalation policy posture
     # (Checking what would happen if we need to escalate)
     esc_status = escalation_policy.check_escalation_policy(task_type, prompt)
@@ -157,9 +203,18 @@ def route_and_run(
                 )
                 # Local failed. Check if we can escalate to paid cloud AI
                 if paid_enabled and esc_status.get("allowed", False):
+                    # Multi-provider fallback chain for escalation (checking egress rules)
+                    esc_provider = "openai"
+                    if not check_data_egress_policy(prompt, esc_provider):
+                        # Fallback to google_gemini
+                        esc_provider = "google_gemini"
+                        if not check_data_egress_policy(prompt, esc_provider):
+                            raise RouterException("Data egress block: sensitive content cannot be escalated to paid providers.")
+                    
                     # Simulate paid model escalation
-                    output = f"[Escalated to cloud model OpenAI/gpt-5.5 due to: {local_err}] Run output simulated."
+                    output = f"[Escalated to cloud model {esc_provider}/gpt-5.5 due to: {local_err}] Run output simulated."
                     paid_escalation_used = True
+                    provider = esc_provider
                 else:
                     # Fail closed
                     audit_payload = {

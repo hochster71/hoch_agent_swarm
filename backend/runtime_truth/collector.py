@@ -62,8 +62,8 @@ def collect_and_store_all():
     # 1. Collect Uptime / Heartbeats
     heartbeat_time = now_iso()
     conn.execute(
-        "INSERT OR REPLACE INTO runtime_heartbeats (component, last_seen, status) VALUES (?, ?, ?)",
-        ("backend_core", heartbeat_time, "RUNNING")
+        "INSERT OR REPLACE INTO runtime_heartbeats (component, last_seen, status, ttl_ms) VALUES (?, ?, ?, ?)",
+        ("backend_core", heartbeat_time, "RUNNING", 10000)
     )
     
     # 2. Collect Disk Space
@@ -219,6 +219,88 @@ def collect_and_store_all():
         "",
         ""
     ))
+
+    # 7. Collect Plaid Personal Finance Subsystem Truth Signals
+    # Plaid Configured
+    plaid_client_id = os.getenv("PLAID_CLIENT_ID")
+    plaid_secret = os.getenv("PLAID_SECRET")
+    plaid_configured = "YES" if (plaid_client_id and plaid_secret) else "SANDBOX_MOCK"
+    conn.execute("""
+        INSERT OR REPLACE INTO runtime_truth_signals 
+        (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, ("plaid_configured", "Plaid Finance Configuration", plaid_configured, "environment", "env_check", heartbeat_time, 3600, "fresh", 1.0, "", "", ""))
+
+    # Plaid Connected
+    plaid_item = conn.execute("SELECT consent_status, last_successful_sync_at FROM finance_plaid_items LIMIT 1").fetchone()
+    plaid_connected = "CONNECTED" if (plaid_item and plaid_item[0] == "consented") else "DISCONNECTED"
+    conn.execute("""
+        INSERT OR REPLACE INTO runtime_truth_signals 
+        (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, ("plaid_connected", "Plaid Connection State", plaid_connected, "finance_plaid_items", "db_query", heartbeat_time, 300, "fresh", 1.0, "", "", ""))
+
+    # Last Transaction Sync
+    last_tx_sync = plaid_item[1] if (plaid_item and plaid_item[1]) else "NEVER"
+    conn.execute("""
+        INSERT OR REPLACE INTO runtime_truth_signals 
+        (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, ("last_transaction_sync", "Last Transaction Sync Time", last_tx_sync, "finance_plaid_items", "db_query", heartbeat_time, 300, "fresh", 1.0, "", "", ""))
+
+    # Last Balance Sync
+    last_bal = conn.execute("SELECT recorded_at FROM finance_balances ORDER BY recorded_at DESC LIMIT 1").fetchone()
+    last_bal_sync = last_bal[0] if last_bal else "NEVER"
+    conn.execute("""
+        INSERT OR REPLACE INTO runtime_truth_signals 
+        (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, ("last_balance_sync", "Last Balance Sync Time", last_bal_sync, "finance_balances", "db_query", heartbeat_time, 300, "fresh", 1.0, "", "", ""))
+
+    # Last Liability Sync
+    last_liab = conn.execute("SELECT updated_at FROM finance_liabilities ORDER BY updated_at DESC LIMIT 1").fetchone()
+    last_liab_sync = last_liab[0] if last_liab else "NEVER"
+    conn.execute("""
+        INSERT OR REPLACE INTO runtime_truth_signals 
+        (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, ("last_liability_sync", "Last Liability Sync Time", last_liab_sync, "finance_liabilities", "db_query", heartbeat_time, 300, "fresh", 1.0, "", "", ""))
+
+    # Statement Support Status
+    statement_status = "SUPPORTED" if plaid_configured != "DISCONNECTED" else "UNSUPPORTED"
+    conn.execute("""
+        INSERT OR REPLACE INTO runtime_truth_signals 
+        (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, ("statement_support_status", "Statement Support Status", statement_status, "plaid_connector", "spec_check", heartbeat_time, 3600, "fresh", 1.0, "", "", ""))
+
+    # Blocked Endpoint Test Status
+    blocked_test_status = "PASS"
+    try:
+        from backend.connectors.plaid_connector import assertReadOnlyPlaidEndpoint
+        assertReadOnlyPlaidEndpoint("/accounts/get")
+        try:
+            assertReadOnlyPlaidEndpoint("/transfer/initiate")
+            blocked_test_status = "FAIL"
+        except ValueError:
+            pass
+    except Exception:
+        blocked_test_status = "FAIL"
+    conn.execute("""
+        INSERT OR REPLACE INTO runtime_truth_signals 
+        (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, ("blocked_endpoint_test_status", "Plaid Blocked Endpoint Test", blocked_test_status, "assertReadOnlyPlaidEndpoint", "unit_assertion", heartbeat_time, 3600, "fresh", 1.0, "", "", ""))
+
+    # Evidence Ledger Status
+    ledger_path = PROJECT_ROOT / "data" / "agent_execution_ledger.jsonl"
+    ledger_exists = "ACTIVE" if (ledger_path.exists() and ledger_path.stat().st_size > 0) else "INACTIVE"
+    conn.execute("""
+        INSERT OR REPLACE INTO runtime_truth_signals 
+        (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, ("evidence_ledger_status", "Finance Evidence Ledger", ledger_exists, "agent_execution_ledger.jsonl", "file_check", heartbeat_time, 300, "fresh", 1.0, "", "", ""))
+
 
     contradictions = conn.execute("SELECT count(*) FROM runtime_contradictions").fetchone()[0]
     anti_fake_status = "PASS" if contradictions == 0 else "FAIL"

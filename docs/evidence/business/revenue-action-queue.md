@@ -2,7 +2,7 @@
 
 **Date**: 2026-07-01  
 **Auditor**: Antigravity Autopilot Queue Engine  
-**Timestamp**: 2026-07-02T13:06:08.431213+00:00Z  
+**Timestamp**: 2026-07-05T20:02:34.814378+00:00Z  
 
 ## 1. Executive Summary
 This queue prioritizes launch blockers and readiness gaps into a ranked, executable workflow. Critical path priority status resolves dynamic blockages recursively based on dependency order.
@@ -22,11 +22,12 @@ This queue prioritizes launch blockers and readiness gaps into a ranked, executa
 | #10 | HOCH HASF Soccer Intelligence Platform | Verify Authentication Model | AI Security & Compliance Officer | 10% | 40% | 10% | **READY** | FRESH |
 | #11 | AquaForge | Link Project Path to Local Disk | Lead Swarm Orchestrator | 10% | 0% | 40% | **READY** | DEGRADED |
 | #12 | OmniSeek / OmniSeek Sentinel | Link Project Path to Local Disk | Lead Swarm Orchestrator | 10% | 0% | 40% | **READY** | DEGRADED |
-| #13 | HOCH HASF Soccer Intelligence Platform | Establish Deployment Target | AI Technical Director | 0% | 10% | 40% | **READY** | FRESH |
-| #14 | CyberQRG-AI | Create Deployment Configuration Files | Platform Engineer | 0% | 10% | 30% | **BLOCKED** | FRESH |
-| #15 | AquaForge | Establish Project Git Repository | Lead Swarm Orchestrator | 0% | 0% | 30% | **READY** | DEGRADED |
-| #16 | OmniSeek / OmniSeek Sentinel | Restore Repository Source Code | Lead Swarm Orchestrator | 0% | 0% | 25% | **READY** | DEGRADED |
-| #17 | HOCH HASF Soccer Intelligence Platform | Configure Automated Testing | Platform Engineer | 0% | 0% | 20% | **READY** | FRESH |
+| #13 | Hoch Agent Swarm / HASF | Remediate Unmasked Secret Keys | Security Specialist | 0% | 50% | 0% | **READY** | FRESH |
+| #14 | HOCH HASF Soccer Intelligence Platform | Establish Deployment Target | AI Technical Director | 0% | 10% | 40% | **READY** | FRESH |
+| #15 | CyberQRG-AI | Create Deployment Configuration Files | Platform Engineer | 0% | 10% | 30% | **BLOCKED** | FRESH |
+| #16 | AquaForge | Establish Project Git Repository | Lead Swarm Orchestrator | 0% | 0% | 30% | **READY** | DEGRADED |
+| #17 | OmniSeek / OmniSeek Sentinel | Restore Repository Source Code | Lead Swarm Orchestrator | 0% | 0% | 25% | **READY** | DEGRADED |
+| #18 | HOCH HASF Soccer Intelligence Platform | Configure Automated Testing | Platform Engineer | 0% | 0% | 20% | **READY** | FRESH |
 
 ## 3. Detailed Action Items
 ### Rank 1: Resolve Missing Primary Repository Directory (CyberQRG-AI)
@@ -157,7 +158,18 @@ This queue prioritizes launch blockers and readiness gaps into a ranked, executa
 - **Evidence / References**:
   - [project-revenue-readiness-audit.md](file:///Users/michaelhoch/hoch_agent_swarm/docs/evidence/business/project-revenue-readiness-audit.md)
 
-### Rank 13: Establish Deployment Target (HOCH HASF Soccer Intelligence Platform)
+### Rank 13: Remediate Unmasked Secret Keys (Hoch Agent Swarm / HASF)
+- **ID**: `act-hoch-agent-swarm-remediate-unmasked-secret-keys`
+- **Description**: Audit code files to remove hardcoded API credentials and replace them with dynamic environment variables.
+- **Blocker Source**: `Active unmasked secret key exposure risk detected`
+- **Impact metrics**: Revenue: `0%` | Security: `50%` | Deployment: `0%` (Urgency: `HIGH`)
+- **Dependency Order**: `1` | Status: **`READY`**
+- **Recommended Agent**: `Security Specialist`
+- **Evidence / References**:
+  - [rc38-goal-completion-monetization-readiness.md](file:///Users/michaelhoch/hoch_agent_swarm/docs/evidence/business/rc38-goal-completion-monetization-readiness.md)
+  - [rc43-telemetry-freshness-authority.md](file:///Users/michaelhoch/hoch_agent_swarm/docs/evidence/automation/rc43-telemetry-freshness-authority.md)
+
+### Rank 14: Establish Deployment Target (HOCH HASF Soccer Intelligence Platform)
 - **ID**: `act-hoch-hasf-soccer-establish-deployment-target`
 - **Description**: Define and verify hosting architecture, Docker environment setup, and deployment target.
 - **Blocker Source**: `Deployment model not verified`
@@ -169,7 +181,7 @@ This queue prioritizes launch blockers and readiness gaps into a ranked, executa
   - [hoch-hasf-soccer-gap-analysis.md](file:///Users/michaelhoch/hoch_agent_swarm/docs/evidence/business/hoch-hasf-soccer-gap-analysis.md)
   - [hoch-hasf-soccer-pert-model.md](file:///Users/michaelhoch/hoch_agent_swarm/docs/evidence/business/hoch-hasf-soccer-pert-model.md)
 
-### Rank 14: Create Deployment Configuration Files (CyberQRG-AI)
+### Rank 15: Create Deployment Configuration Files (CyberQRG-AI)
 - **ID**: `act-cyberqrg-ai-create-deployment-configuration-files`
 - **Description**: Write standard deployment descriptors like Dockerfile, vercel.json, or docker-compose.yml.
 - **Blocker Source**: `Deployment descriptor (vercel.json, Dockerfile) is missing`
@@ -179,7 +191,7 @@ This queue prioritizes launch blockers and readiness gaps into a ranked, executa
 - **Evidence / References**:
   - [project-revenue-readiness-audit.md](file:///Users/michaelhoch/hoch_agent_swarm/docs/evidence/business/project-revenue-readiness-audit.md)
 
-### Rank 15: Establish Project Git Repository (AquaForge)
+### Rank 16: Establish Project Git Repository (AquaForge)
 - **ID**: `act-aquaforge-establish-project-git-repository`
 - **Description**: Initialize a fresh git repository and push basic project structure to tracking origin.
 - **Blocker Source**: `Missing code repository`
@@ -189,7 +201,7 @@ This queue prioritizes launch blockers and readiness gaps into a ranked, executa
 - **Evidence / References**:
   - [project-revenue-readiness-audit.md](file:///Users/michaelhoch/hoch_agent_swarm/docs/evidence/business/project-revenue-readiness-audit.md)
 
-### Rank 16: Restore Repository Source Code (OmniSeek / OmniSeek Sentinel)
+### Rank 17: Restore Repository Source Code (OmniSeek / OmniSeek Sentinel)
 - **ID**: `act-omniseek-sentinel-restore-repository-source-code`
 - **Description**: Populate missing source files, modules, and directories for project codebase.
 - **Blocker Source**: `Missing repository assets`
@@ -199,7 +211,7 @@ This queue prioritizes launch blockers and readiness gaps into a ranked, executa
 - **Evidence / References**:
   - [project-revenue-readiness-audit.md](file:///Users/michaelhoch/hoch_agent_swarm/docs/evidence/business/project-revenue-readiness-audit.md)
 
-### Rank 17: Configure Automated Testing (HOCH HASF Soccer Intelligence Platform)
+### Rank 18: Configure Automated Testing (HOCH HASF Soccer Intelligence Platform)
 - **ID**: `act-hoch-hasf-soccer-configure-automated-testing`
 - **Description**: Set up unit testing frameworks and write initial suite verifying system invariants.
 - **Blocker Source**: `No automated test suite discovered`

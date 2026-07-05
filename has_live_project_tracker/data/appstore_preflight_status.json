@@ -1,0 +1,8 @@
+{
+  "verdict": "APPSTORE_PREFLIGHT_GO",
+  "privacy_manifest_present": true,
+  "egress_checks_passed": true,
+  "autonomy_claims_valid": true,
+  "differentiation_checks_passed": true,
+  "failures": []
+}

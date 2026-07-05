@@ -1,0 +1,20 @@
+{
+  "generated_at": "2026-07-05T01:22:30Z",
+  "hosts": {
+    "hoch_200": {
+      "name": "hoch-relay-001 (HOCH-200)",
+      "always_on_capable": true,
+      "sleep_risk": "None",
+      "supervisor": "systemd",
+      "restart_policy": "restart-always",
+      "network_binding": "127.0.0.1 loopback",
+      "private_only_status": "Passed",
+      "credential_status": "K5_ACCESS_VERIFIED",
+      "estimated_readiness": "Ready (Systemd active)",
+      "founder_action_required": "None",
+      "verdict": "HOST_SELECTED"
+    }
+  },
+  "primary_host": "hoch-relay-001 (HOCH-200)",
+  "verdict": "HOST_SELECTED"
+}

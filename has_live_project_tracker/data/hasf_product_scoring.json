@@ -1,0 +1,22 @@
+{
+  "product_id": "rmf-evidence-review-companion",
+  "generated_at": "2026-07-05T07:01:30Z",
+  "verdict": "PENDING",
+  "filters": {
+    "brain_privacy": { "score": 1.0, "status": "GO", "description": "No internal prompt templates or agent system prompts embedded." },
+    "egress_compliance": { "score": 1.0, "status": "GO", "description": "Zero network egress allowed outside of loopbacks and secure APIs." },
+    "zero_autonomy_claims": { "score": 1.0, "status": "GO", "description": "Autonomy claims match actual Phase E burn-in evidence." },
+    "ui_differentiation": { "score": 0.0, "status": "PENDING", "description": "G2 differentiation check pending store listing verification." },
+    "functionality_differentiation": { "score": 0.0, "status": "PENDING", "description": "G2 workflow verification pending." },
+    "app_review_compliance": { "score": 0.0, "status": "PENDING", "description": "G2 Repetitive Content / Apple 4.3 compliance check pending." },
+    "codebase_cleanliness": { "score": 1.0, "status": "GO", "description": "No dead references, secrets, or credential leftovers." },
+    "founder_precedence": { "score": 1.0, "status": "GO", "description": "Founder controls and overrides verified in place." },
+    "dependency_security": { "score": 1.0, "status": "GO", "description": "All packages verified against known vulnerability scans." },
+    "e2e_compile_state": { "score": 1.0, "status": "GO", "description": "Clean simulator builds and device-profile runs." },
+    "local_storage_sandboxing": { "score": 1.0, "status": "GO", "description": "Safe database reads/writes sandboxed within Apple target namespaces." },
+    "G1_demand_validation": { "score": 0.0, "status": "PENDING", "description": "G1 demand definition checklist incomplete." },
+    "G3_retention_instrumentation": { "score": 0.0, "status": "PENDING", "description": "G3 retention instrumentation mapping pending." },
+    "G4_aso_discovery": { "score": 0.0, "status": "PENDING", "description": "G4 search keyword set definition pending." },
+    "A2_demand_experiment": { "score": 0.0, "status": "PENDING", "description": "A2 demand experiment execution pending." }
+  }
+}

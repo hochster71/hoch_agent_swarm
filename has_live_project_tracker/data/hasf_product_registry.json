@@ -1,0 +1,13 @@
+[
+  {
+    "product_id": "rmf-evidence-review-companion",
+    "product_name": "RMF Evidence Review Companion",
+    "track": "A",
+    "scoring_record_path": "has_live_project_tracker/data/hasf_product_scoring.json",
+    "gate_package_path": "docs/app_store/HASF_PRODUCT_GATE_PACKAGE.md",
+    "founder_review_id": "founder-rev-rmf-companion",
+    "privacy_egress_review_path": "docs/app_store/first_app/PRIVATE_BRAIN_EXPOSURE_REVIEW.md",
+    "evidence_path": "docs/app_store/PHASE_10D3_TOOLCHAIN_VERIFICATION.md",
+    "current_verdict": "APPSTORE_PREFLIGHT_CONDITIONAL_GO"
+  }
+]

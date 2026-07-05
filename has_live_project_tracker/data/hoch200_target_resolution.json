@@ -1,0 +1,11 @@
+{
+  "selected_host_label": "hoch-relay-001 (HOCH-200)",
+  "host_ip_or_alias": "50.116.41.183 / tailscale 100.87.18.15",
+  "host_os_expected": "Ubuntu Linux 6.8.0-134-generic x86_64",
+  "access_method": "SSH root@50.116.41.183",
+  "control_node_ip": "10.0.0.10",
+  "is_neo_reference_removed": true,
+  "founder_action_required": "None",
+  "evidence_path": "has_live_project_tracker/data/hoch200_target_resolution.json",
+  "verdict": "HOCH200_TARGET_RESOLVED"
+}

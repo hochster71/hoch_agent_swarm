@@ -96,6 +96,11 @@ def call_google_frontier(
     if est_cost > max_single_call:
         raise GoogleFrontierException("Estimated cost exceeds max single call budget.")
 
+    # 6.5. Data Egress Policy Check
+    from backend.model_router.router import check_data_egress_policy
+    if not check_data_egress_policy(prompt, "google_gemini"):
+        raise GoogleFrontierException("Data egress block: sensitive content cannot be sent to google_gemini.")
+
     # 7. Check payload safety: look for blocked payload classes or high risk keywords
     blocked_classes = gf_cfg.get("blocked_payload_classes", [])
     high_risk_keywords = policy.get("high_risk_keywords", [])

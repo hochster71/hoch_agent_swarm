@@ -121,3 +121,40 @@ Implements the core execution layer converting Michael or Alison chat requests i
 - **Merged Compute Records**: Mapped `linode-remote-60` to `hoch-200` in `config/compute_assets.json` as a non-billable alias, keeping total billable monthly cost at exactly $60/mo. Modified the guardrail wrapper (`secure_build_guardrail_check.sh`) to dynamically read the public IP from this compute registry.
 - **Rung 2 Real Provider Call**: Implemented a real HTTP execution path inside `OpenAIAdapter.execute` to perform true provider calls to `gpt-4o-mini` when `OPENAI_API_KEY` is present. Calculates token counts and pricing models dynamically, saves detailed payload artifacts to `docs/evidence/runtime/openai_rung2_payload.json`, and records egress classification logs.
 - **App Store Candidate Selection & Pricing**: Designated `CyberQRG-AI` (cyberqrg-ai) as the primary SELECTED RC1 candidate in `first_app_candidate_decision.json`. Confirmed its offline-first posture and locked in the $4.99 upfront paid purchase model (rather than subscription-based pricing) to maintain a zero-network-telemetry posture.
+
+---
+
+## 8. Phase E Lease Fencing Debug & QA Remediation (RC30/RC31)
+
+### Purpose
+Remediates failures in the Lease Fencing verification daemon and the static QA checks for device service leases.
+
+### Accomplishments & Fixes
+- **Restored Deleted QA Artifacts**: Checked out and restored `frontend/archive/unused_views.js` and `frontend/archive/unused_views.html` from commit `16cc1bc`, resolving static file contract failures across `npm run qa:device-service-lease` and other QA contract tests.
+- **Fixed Fencing Verification Logic Bug**: Resolved a bug in `scripts/verify_ag_execution_fencing.py` where a fencing token queue/proof mismatch incorrectly set `queue_mismatch = False`. The variable is now correctly set to `True`, ensuring that mismatch events fail the verification gate as intended.
+- **Resolved Test Status Pollution**: Added backup and restore logic for `ag_execution_fencing_status.json` in `tests/test_seeded_faults.py::test_lease_fencing_mutation`. This prevents fault injection tests from leaving the static status file in a failed state upon test completion.
+
+### Verification Results
+- `npm run qa:device-service-lease` -> **PASS**
+- `npm run qa:capability-routing-contract` -> **PASS**
+- `python3 scripts/verify_ag_execution_fencing.py` -> **PASS** (status file correctly reflects `PASS` and is preserved after test suite runs)
+- `.venv/bin/pytest tests/prompt_brain/test_ag_autonomy_daemon.py tests/test_seeded_faults.py` -> **PASS** (8 tests passed)
+
+---
+
+## 9. Compact UI Layout Overrides
+
+### Purpose
+Reduces excessive padding, margins, and gaps across the dashboards to eliminate vertical scrolling and fit the entire UI within the viewport boundaries.
+
+### Accomplishments & Fixes
+- **Global Compact CSS Rules**: Appended a series of `!important` CSS overrides at the end of `frontend/styles.css` to systematically reduce padding, margins, and grid gaps across all cockpit and main dashboard views.
+- **Tightened Sidebar & Main Content**: Scaled down sidebar paddings (from `24px` to `16px`), logo-area margins, nav-link gaps, main-content margins, and tab buttons.
+- **Eliminated Inline Spacing Waste**: Overrode inline styles on `.glass-panel` and container grids (scaling padding from `20px` to `12px` and gaps from `20px`/`16px` to `12px`/`10px`).
+- **Synchronized Remote Relay Dashboard**: Applied equivalent compact overrides to `infra/hoch-200/vps/dashboard/index.html` and synchronized the changes to the remote tailscale node `100.87.18.15` via `./scripts/secure_sync_hoch200.sh`.
+
+### Verification Results
+- Opened `http://localhost:8000/` and verified that vertical scrolling has been completely eliminated and all key metrics/status panels fit neatly within a standard laptop viewport layout without scrolling.
+- Re-synchronized the repository and verified that the Tailscale relay control dashboard layout is also updated.
+
+

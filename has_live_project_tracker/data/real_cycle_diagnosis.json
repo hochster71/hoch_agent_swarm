@@ -1,0 +1,15 @@
+{
+  "generated_at": "2026-07-05T00:40:14Z",
+  "reason_for_simulated_cycles": "DAEMON_TEST_MODE environment variable defaults to true or was not set to false.",
+  "requirements_for_real_cycles": [
+    "Set DAEMON_TEST_MODE=false in the environment",
+    "Disable operator hold status",
+    "Queue tasks with allowed_agent=hasf_builder_agent or adapter=ag_execution_adapter"
+  ],
+  "safety_assessment": {
+    "safe_without_credentials": true,
+    "local_execution_possible": true,
+    "recommended_task_class": "allowed_test_task",
+    "recommended_prefixes": ["verify_", "lint_", "run_test"]
+  }
+}

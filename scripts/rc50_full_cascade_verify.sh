@@ -18,16 +18,35 @@ fi
 
 cd "$PROJECT_ROOT"
 
+EPIC_PID=""
 SERVER_PID=""
 
 # Cleanup handler
 cleanup() {
+    if [ -n "$EPIC_PID" ]; then
+        echo "Stopping the background Epic Fury server..."
+        kill -9 "$EPIC_PID" || true
+    fi
     if [ -n "$SERVER_PID" ]; then
         echo "Stopping the background PERT cockpit server..."
         kill -9 "$SERVER_PID" || true
     fi
 }
 trap cleanup EXIT
+
+# 1. Start Epic Fury app in background on port 3003
+echo "Starting Epic Fury Next.js app in background..."
+cd "/Users/michaelhoch/epic-fury-build/epic-fury-2026"
+EPIC_FURY_INTERNAL_PREVIEW_ENABLED=true \
+EPIC_FURY_ADMIN_EMAILS=michael.b.hoch@gmail.com \
+EPIC_FURY_QA_EMAILS=qa@example.com \
+EPIC_FURY_STRIPE_TEST_MODE=true \
+NEXT_PUBLIC_EPIC_FURY_INTERNAL_PREVIEW_ENABLED=true \
+NEXT_PUBLIC_EPIC_FURY_STRIPE_TEST_MODE=true \
+npm run dev > /tmp/epic_fury_dev_cascade.log 2>&1 &
+EPIC_PID=$!
+sleep 5
+cd "$PROJECT_ROOT"
 
 # 1. Start uvicorn server
 echo "Killing any process listening on port 8765..."

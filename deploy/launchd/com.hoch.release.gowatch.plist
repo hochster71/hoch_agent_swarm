@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.hoch.release.gowatch</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/michaelhoch/hoch_agent_swarm/.venv/bin/python</string>
+        <string>scripts/sign_release_go.py</string>
+        <string>--operator</string>
+        <string>Michael Hoch</string>
+        <string>--confirm</string>
+        <string>--watch</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/michaelhoch/hoch_agent_swarm</string>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>ThrottleInterval</key>
+    <integer>60</integer>
+    <key>StandardOutPath</key>
+    <string>/Users/michaelhoch/hoch_agent_swarm/data/backups/go_watch.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/michaelhoch/hoch_agent_swarm/data/backups/go_watch.log</string>
+</dict>
+</plist>

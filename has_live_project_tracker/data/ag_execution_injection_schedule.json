@@ -1,0 +1,26 @@
+[
+  {
+    "injection_id": "inj-001",
+    "scheduled_at": "2026-07-05T01:00:00Z",
+    "injection_type": "forced_lease_expiry",
+    "expected_recovery": "Lease manager detects stale lease and expires it; task recovers."
+  },
+  {
+    "injection_id": "inj-002",
+    "scheduled_at": "2026-07-05T02:00:00Z",
+    "injection_type": "duplicate_task_insert",
+    "expected_recovery": "Lease lock or fencing tokens reject the duplicate task run."
+  },
+  {
+    "injection_id": "inj-003",
+    "scheduled_at": "2026-07-05T03:00:00Z",
+    "injection_type": "operator_hold_flip",
+    "expected_recovery": "Daemon halts executions and state transitions to BLOCKED_BY_POLICY."
+  },
+  {
+    "injection_id": "inj-004",
+    "scheduled_at": "2026-07-05T04:00:00Z",
+    "injection_type": "blocked_policy_task_insert",
+    "expected_recovery": "Runner classifications catch restricted terms and marks task BLOCKED."
+  }
+]

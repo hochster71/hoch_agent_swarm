@@ -1,0 +1,68 @@
+[
+  {
+    "id": "K1",
+    "title": "OPENAI / ANTHROPIC provisioning",
+    "required_action": "Provide API keys for openai_reasoning_adapter and claude_critic_adapter.",
+    "why_matters": "Enables critic evaluation and active reasoning lanes.",
+    "blocking_what": "Rung 2 live reasoning evaluations.",
+    "safe_steps": "1. Retrieve keys from OpenAI and Anthropic developer consoles.\n2. Store them locally in the specified config files.",
+    "storage_path": ".secrets/provider_keys.json",
+    "risk_if_deferred": "Swarm is restricted to local/fallback simulation modes only.",
+    "status": "BLOCKED_FOUNDER_ACTION"
+  },
+  {
+    "id": "K2",
+    "title": "Apple Developer access",
+    "required_action": "Register Apple Developer Account and generate team invitation.",
+    "why_matters": "Awaiting App Store Connect integration credentials.",
+    "blocking_what": "App Store listing and binary signing registration.",
+    "safe_steps": "1. Go to developer.apple.com and complete registration.\n2. Invite agent email under App Store Connect Users list.",
+    "storage_path": "Not applicable (stored in developer portal)",
+    "risk_if_deferred": "Preflight binaries cannot be deployed to TestFlight.",
+    "status": "BLOCKED_FOUNDER_ACTION"
+  },
+  {
+    "id": "K3",
+    "title": "App Store Connect and bundle ID",
+    "required_action": "Create App ID and configure bundle name com.hasf.rmfcompanion.",
+    "why_matters": "Identifies the product namespace.",
+    "blocking_what": "TestFlight upload and Xcode build profile matching.",
+    "safe_steps": "1. Create identifier com.hasf.rmfcompanion under Apple Developer Certificates list.\n2. Create App entry in App Store Connect portal.",
+    "storage_path": "apps/rmf_evidence_review_companion/pubspec.yaml",
+    "risk_if_deferred": "Xcode builds will reject packaging code due to bundle mismatch.",
+    "status": "BLOCKED_FOUNDER_ACTION"
+  },
+  {
+    "id": "K4",
+    "title": "signing certificates / provisioning profiles",
+    "required_action": "Generate iOS Distribution Certificates and App Store Provisioning Profiles.",
+    "why_matters": "Authenticates the binary for Apple review.",
+    "blocking_what": "Signing of Flutter archive packages.",
+    "safe_steps": "1. Generate CSR from Keychain and upload to Apple portal.\n2. Download iOS Distribution Certificate and Provisioning Profile.\n3. Install in developer Keychain.",
+    "storage_path": "Keychain Access / Xcode Account Settings",
+    "risk_if_deferred": "App cannot be installed on iOS devices or submitted for review.",
+    "status": "BLOCKED_FOUNDER_ACTION"
+  },
+  {
+    "id": "K5",
+    "title": "remote host credential posture",
+    "required_action": "Provision SSH public keys and droplet connection parameters.",
+    "why_matters": "Secures connection to the always-on server.",
+    "blocking_what": "Production deployment of the autonomy daemon to HOCH-200.",
+    "safe_steps": "1. Create SSH key pair.\n2. Install public key on HOCH-200 authorized_keys.\n3. Save access config locally.",
+    "storage_path": ".secrets/ssh_config",
+    "risk_if_deferred": "Daemon cannot run on bare metal, forcing local session dependency.",
+    "status": "BLOCKED_FOUNDER_ACTION"
+  },
+  {
+    "id": "K6",
+    "title": "secrets inventory",
+    "required_action": "Review and approve the repository secrets list.",
+    "why_matters": "Prevents credential leaks in git history.",
+    "blocking_what": "Clean tree tagging for release candidates.",
+    "safe_steps": "1. Run scan scripts on local .env and config folders.\n2. Approve gitignore list.",
+    "storage_path": ".gitignore",
+    "risk_if_deferred": "High risk of accidental exposure of API keys.",
+    "status": "BLOCKED_FOUNDER_ACTION"
+  }
+]

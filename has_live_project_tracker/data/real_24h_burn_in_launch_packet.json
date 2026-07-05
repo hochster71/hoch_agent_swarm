@@ -1,0 +1,25 @@
+{
+  "generated_at": "2026-07-05T00:36:33Z",
+  "selected_host": "HOCH-200",
+  "preflight_commands": [
+    "python3 scripts/verify_burn_in_launch_readiness.py",
+    "python3 scripts/verify_private_first_doctrine.py"
+  ],
+  "daemon_start_command": "caffeinate -i -s -d python3 scripts/ag_execution_daemon.py",
+  "daemon_stop_command": "python3 -c \"import json; p='has_live_project_tracker/data/ag_execution_daemon_state.json'; d=json.load(open(p)) if open(p) else {}; d['operator_hold_status']='ACTIVE'; json.dump(d, open(p,'w'), indent=2)\"",
+  "heartbeat_check_command": "python3 scripts/verify_daemon_heartbeat.py",
+  "queue_check_command": "python3 scripts/verify_ag_execution_queue.py",
+  "proof_check_command": "python3 scripts/verify_ag_execution_proofs.py",
+  "fencing_check_command": "python3 scripts/verify_ag_execution_fencing.py",
+  "burn_in_validator_command": "python3 scripts/verify_ag_execution_burn_in.py",
+  "rollback_command": "git checkout main && git clean -fdx",
+  "operator_hold_command": "python3 scripts/ag_operator_hold.py --hold",
+  "expected_evidence_paths": [
+    "has_live_project_tracker/data/ag_execution_burn_in_ledger.jsonl",
+    "has_live_project_tracker/data/ag_execution_burn_in_summary.json",
+    "has_live_project_tracker/data/ag_daemon_heartbeat_status.json",
+    "has_live_project_tracker/data/ag_execution_fencing_status.json"
+  ],
+  "start_approval_status": "APPROVED",
+  "founder_approval": true
+}
