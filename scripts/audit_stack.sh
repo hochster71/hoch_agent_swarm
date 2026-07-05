@@ -49,11 +49,15 @@ if have pip-audit; then
     { echo "## pip-audit"; echo '```'; tail -40 /tmp/pipaudit.txt; echo '```'; } >> "$MD"; fi
 else row "pip-audit" "SKIP" "not installed (pip install pip-audit)"; fi
 
-echo "== npm audit (frontend deps) =="
+echo "== npm audit (frontend deps, with accepted-risk allowlist) =="
 if have npm && [ -f frontend/package.json ]; then
-  ( cd frontend && npm audit --audit-level=high >/tmp/npmaudit.txt 2>&1 ) \
-    && row "npm-audit" "PASS" "no high+ CVEs" \
-    || { row "npm-audit" "FAIL" "high+ CVEs in frontend"; block; }
+  ( cd frontend && npm audit --json >/tmp/npmaudit.json 2>/dev/null ) || true
+  if python3 scripts/npm_audit_gate.py /tmp/npmaudit.json config/security_accepted_risks.json >/tmp/npmgate.txt 2>&1; then
+    row "npm-audit" "PASS" "$(cat /tmp/npmgate.txt)"
+  else
+    row "npm-audit" "FAIL" "$(cat /tmp/npmgate.txt)"; block
+    { echo "## npm-audit"; echo '```'; cat /tmp/npmgate.txt; echo '```'; } >> "$MD"
+  fi
 else row "npm-audit" "SKIP" "npm or frontend/package.json missing"; fi
 
 echo "== trivy (container / fs / IaC) =="

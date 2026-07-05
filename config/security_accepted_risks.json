@@ -1,0 +1,21 @@
+{
+  "_meta": {
+    "purpose": "Documented, time-boxed, justified security-risk acceptances honored by scripts/audit_stack.sh.",
+    "policy": "Only advisories listed AND unexpired are non-blocking. Any new/undocumented high+ CVE still FAILS the gate. This is evidence-based risk acceptance, not fake-green: each entry carries a justification, an owner, and an expiry.",
+    "schema": "has-accepted-risks-v1"
+  },
+  "accepted": [
+    {
+      "advisory": "GHSA-67mh-4wv8-2f99",
+      "package": "esbuild",
+      "affects": "vite (dev dependency)",
+      "severity": "moderate-high",
+      "scope": "DEV-SERVER-ONLY",
+      "justification": "esbuild advisory permits cross-origin reads from the LOCAL Vite dev server only. Not present in the production build and not exploitable at runtime. The dev server is never publicly exposed (Tailscale-private, local-first per NS-01), so real-world exploitability is ~nil. The only fix is a breaking Vite 6->8 upgrade, deferred to avoid destabilizing the build for a non-exploitable dev-time issue.",
+      "accepted_by": "Michael Hoch",
+      "accepted_at": "2026-07-05",
+      "expires": "2026-10-05",
+      "revisit": "next major frontend/Vite upgrade"
+    }
+  ]
+}
