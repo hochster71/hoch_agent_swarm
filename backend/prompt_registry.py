@@ -36,9 +36,12 @@ class PromptRegistry:
             if report_path.exists():
                 report_data = json.loads(report_path.read_text(encoding="utf-8"))
                 val_status = report_data.get("validation_status")
-                if val_status != "GO":
+                # Accept both green vocabularies: validate_prompt_library.py writes "PASS",
+                # validate_gene_pool.py writes "GO". Rejecting one would lock routing depending
+                # on which validator ran last. Still fail-closed on any non-green status.
+                if val_status not in ["PASS", "GO"]:
                     self.status = "FAIL_CLOSED"
-                    print(f"[prompt_registry] FAIL_CLOSED: Validation status is not GO (was {val_status}).")
+                    print(f"[prompt_registry] FAIL_CLOSED: report validation_status not PASS/GO (was {val_status}).")
                     return
             else:
                 manifest_data = json.loads(manifest_path.read_text(encoding="utf-8"))
