@@ -1,11 +1,56 @@
 {
   "adapter_id": "ag_execution_adapter",
-  "status": "IDLE",
-  "current_task": null,
-  "allowed_actions": ["read_file", "write_file", "run_local_command"],
-  "blocked_actions": ["release", "monetization", "customer_data", "public_dns", "credentials", "public_claims"],
-  "last_execution_at": null,
+  "status": "COMPLETED",
+  "current_task": "task-autonomy-hardening-demo-01",
+  "allowed_actions": [
+    "read_file",
+    "write_file",
+    "run_local_command"
+  ],
+  "blocked_actions": [
+    "release",
+    "monetization",
+    "customer_data",
+    "public_dns",
+    "credentials",
+    "public_claims"
+  ],
+  "last_execution_at": "2026-07-05T05:04:37.524381Z",
   "evidence_path": null,
   "founder_gate_respected": true,
-  "source_of_truth": false
+  "source_of_truth": false,
+  "transitions": [
+    {
+      "timestamp": "2026-07-05T05:04:34.200426Z",
+      "task_id": null,
+      "previous_state": "IDLE",
+      "next_state": "BLOCKED_BY_POLICY",
+      "reason": "Operator Hold is active",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:04:37.523232Z",
+      "task_id": "task-autonomy-hardening-demo-01",
+      "previous_state": "BLOCKED_BY_POLICY",
+      "next_state": "LEASE_ACQUIRED",
+      "reason": "Acquired lock",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:04:37.523336Z",
+      "task_id": "task-autonomy-hardening-demo-01",
+      "previous_state": "LEASE_ACQUIRED",
+      "next_state": "EXECUTING",
+      "reason": "Execution started",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-05T05:04:37.524379Z",
+      "task_id": "task-autonomy-hardening-demo-01",
+      "previous_state": "EXECUTING",
+      "next_state": "COMPLETED",
+      "reason": "Execution success",
+      "evidence_path": "/Users/michaelhoch/hoch_agent_swarm/docs/evidence/runtime/ag_execution_proof_task-autonomy-hardening-demo-01.md"
+    }
+  ]
 }

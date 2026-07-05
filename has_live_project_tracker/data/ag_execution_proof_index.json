@@ -1,0 +1,13 @@
+{
+  "proofs": [
+    {
+      "task_id": "task-autonomy-hardening-demo-01",
+      "lease_id": "lease-afb3dc9d",
+      "input_hash": "ed465acd58599dfc4cd206f55d3414ade71437133094b77aaa20a51e6147d49a",
+      "output_hash": "02986046397ee43a74b6f4e9295bace6c3aa01ecdc8bfb3e9cdce7278c194780",
+      "timestamp": "2026-07-05T05:04:37.524010Z",
+      "status": "SUCCESS",
+      "evidence_path": "docs/evidence/runtime/ag_execution_proof_task-autonomy-hardening-demo-01.md"
+    }
+  ]
+}

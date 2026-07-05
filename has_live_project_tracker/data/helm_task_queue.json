@@ -171,5 +171,18 @@
     "provider_allowed": "openai_reasoning_adapter",
     "cost_policy_ref": "api_budget_policy.json",
     "status": "PENDING"
+  },
+  {
+    "task_id": "task-autonomy-hardening-demo-01",
+    "task_name": "read_and_format_autonomy_stats",
+    "task_class": "allowed_internal_task",
+    "status": "completed",
+    "allowed_agent": "hasf_builder_agent",
+    "adapter": "ag_execution_adapter",
+    "attempts": 1,
+    "created_at": "2026-07-05T00:00:00Z",
+    "completed_at": "2026-07-05T05:04:37.524063Z",
+    "result": "file:///Users/michaelhoch/hoch_agent_swarm/docs/evidence/runtime/ag_execution_proof_task-autonomy-hardening-demo-01.md",
+    "policy_category": "allowed_internal_task"
   }
 ]

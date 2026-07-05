@@ -9672,6 +9672,135 @@ def post_approval_decision_endpoint(approval_id: str, req: ApprovalDecisionModel
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+# --- Autonomy Hardening Endpoints ---
+
+class OperatorHoldRequestModel(BaseModel):
+    enable: bool
+    reason: str = "Manual operator intervention"
+    operator: str = "Michael Hoch"
+    categories: list = []
+
+@app.get("/api/autonomy/execution/state")
+def get_autonomy_execution_state():
+    from pathlib import Path
+    import json
+    path = Path("has_live_project_tracker/data/ag_execution_adapter_state.json")
+    if not path.exists():
+        return {"status": "IDLE", "transitions": []}
+    with open(path, "r", encoding="utf-8") as f:
+        try:
+            return json.load(f)
+        except Exception:
+            return {"status": "IDLE", "transitions": []}
+
+@app.get("/api/autonomy/execution/leases")
+def get_autonomy_execution_leases():
+    from pathlib import Path
+    import json
+    path = Path("has_live_project_tracker/data/ag_execution_leases.json")
+    if not path.exists():
+        return []
+    with open(path, "r", encoding="utf-8") as f:
+        try:
+            return json.load(f)
+        except Exception:
+            return []
+
+@app.get("/api/autonomy/execution/policy")
+def get_autonomy_execution_policy():
+    from pathlib import Path
+    import json
+    path = Path("has_live_project_tracker/data/ag_execution_policy.json")
+    if not path.exists():
+        return {"policy_categories": {}}
+    with open(path, "r", encoding="utf-8") as f:
+        try:
+            return json.load(f)
+        except Exception:
+            return {"policy_categories": {}}
+
+@app.get("/api/autonomy/execution/proofs")
+def get_autonomy_execution_proofs():
+    from pathlib import Path
+    import json
+    path = Path("has_live_project_tracker/data/ag_execution_proof_index.json")
+    if not path.exists():
+        return {"proofs": []}
+    with open(path, "r", encoding="utf-8") as f:
+        try:
+            return json.load(f)
+        except Exception:
+            return {"proofs": []}
+
+@app.get("/api/autonomy/execution/queue-health")
+def get_autonomy_execution_queue_health():
+    from pathlib import Path
+    import json
+    path = Path("has_live_project_tracker/data/ag_execution_queue_health.json")
+    if not path.exists():
+        return {
+            "pending_count": 0,
+            "completed_count": 0,
+            "blocked_count": 0,
+            "failed_count": 0,
+            "duplicate_ids": [],
+            "stale_pending_tasks": [],
+            "health_status": "PASS"
+        }
+    with open(path, "r", encoding="utf-8") as f:
+        try:
+            return json.load(f)
+        except Exception:
+            return {
+                "pending_count": 0,
+                "completed_count": 0,
+                "blocked_count": 0,
+                "failed_count": 0,
+                "duplicate_ids": [],
+                "stale_pending_tasks": [],
+                "health_status": "PASS"
+            }
+
+@app.post("/api/autonomy/execution/run-once")
+def post_autonomy_run_once():
+    import subprocess
+    from fastapi import HTTPException
+    try:
+        res = subprocess.run(["python3", "scripts/ag_execution_runner.py"], capture_output=True, text=True, timeout=10)
+        return {
+            "status": "success",
+            "stdout": res.stdout,
+            "stderr": res.stderr,
+            "exit_code": res.returncode
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/autonomy/execution/release-stale-lease")
+def post_autonomy_release_stale_lease():
+    from scripts.ag_execution_lease_manager import LeaseManager
+    lm = LeaseManager()
+    released = lm.check_stale_leases()
+    return {"status": "success", "released_leases": released}
+
+@app.post("/api/autonomy/execution/operator-hold")
+def post_autonomy_operator_hold(req: OperatorHoldRequestModel):
+    from pathlib import Path
+    import json
+    import datetime
+    path = Path("has_live_project_tracker/data/ag_operator_hold.json")
+    ts = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")
+    payload = {
+        "operator_hold_active": req.enable,
+        "reason": req.reason,
+        "operator": req.operator,
+        "timestamp": ts,
+        "affected_categories": req.categories
+    }
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=2)
+    return {"status": "success", "payload": payload}
+
 from typing import Optional as OptType, List as ListType
 
 class EvidenceMissionRequestModel(BaseModel):
@@ -15296,6 +15425,80 @@ def get_prototype_prompt_brain():
                         </div>
                     </div>
                 </div>
+
+                <!-- AUTONOMY CONTROL PANEL -->
+                <div class="panel-card" style="margin-top:20px;">
+                    <div class="panel-header" style="background: linear-gradient(135deg, rgba(168,85,247,0.1), rgba(236,72,153,0.1)); border-bottom: 1px solid rgba(168,85,247,0.2);">
+                        <h2><i data-lucide="shield-check" style="color:var(--accent-violet);"></i> Command Center Autonomy Panel</h2>
+                    </div>
+                    <div style="padding:20px; display:grid; grid-template-columns: 1fr 1fr 1fr; gap:20px;">
+                        <div>
+                            <h3 style="margin-bottom:12px; font-size:0.95rem; color:var(--text-secondary);">Runner & Lease Status</h3>
+                            <div style="display:flex; flex-direction:column; gap:10px; font-size:0.85rem;">
+                                <div style="display:flex; justify-content:space-between;">
+                                    <span>Allow AG Execution:</span>
+                                    <span id="autonomy-allow-ag" class="badge">UNKNOWN</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between;">
+                                    <span>Current State:</span>
+                                    <span id="autonomy-runner-state" class="badge">UNKNOWN</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between;">
+                                    <span>Active Lease Task:</span>
+                                    <span id="autonomy-active-lease" style="font-weight:700;">None</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between;">
+                                    <span>Operator Hold Switch:</span>
+                                    <span id="autonomy-operator-hold" class="badge">UNKNOWN</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 style="margin-bottom:12px; font-size:0.95rem; color:var(--text-secondary);">Queue Metrics & Health</h3>
+                            <div style="display:flex; flex-direction:column; gap:10px; font-size:0.85rem;">
+                                <div style="display:flex; justify-content:space-between;">
+                                    <span>Pending Tasks:</span>
+                                    <span id="autonomy-pending-count" style="font-weight:700;">0</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between;">
+                                    <span>Completed Tasks:</span>
+                                    <span id="autonomy-completed-count" style="font-weight:700;">0</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between;">
+                                    <span>Blocked Tasks:</span>
+                                    <span id="autonomy-blocked-count" style="font-weight:700;">0</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between;">
+                                    <span>Failed Tasks:</span>
+                                    <span id="autonomy-failed-count" style="font-weight:700;">0</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between;">
+                                    <span>Queue Health Verdict:</span>
+                                    <span id="autonomy-queue-health" class="badge">UNKNOWN</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 style="margin-bottom:12px; font-size:0.95rem; color:var(--text-secondary);">Policy & Doctrine</h3>
+                            <div style="display:flex; flex-direction:column; gap:10px; font-size:0.85rem;">
+                                <div style="display:flex; justify-content:space-between;">
+                                    <span>Private-First Doctrine:</span>
+                                    <span class="badge green">GO</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between;">
+                                    <span>Blocked Categories:</span>
+                                    <span style="font-weight:700; color:var(--accent-red); text-align:right;">Monetization, Release, Outreach</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+                                    <button onclick="triggerRunOnce()" class="action-btn cyan" style="border:none; padding:6px 12px; border-radius:var(--radius-sm); font-size:0.8rem; font-weight:700; cursor:pointer;">Run Once</button>
+                                    <button onclick="releaseStaleLease()" class="action-btn yellow" style="border:none; padding:6px 12px; border-radius:var(--radius-sm); font-size:0.8rem; font-weight:700; cursor:pointer;">Free Lease</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -15916,6 +16119,61 @@ def get_prototype_prompt_brain():
             }
         }
 
+        async function fetchAutonomyData() {
+            try {
+                const stateRes = await fetch('/api/autonomy/execution/state');
+                const stateData = await stateRes.json();
+                document.getElementById('autonomy-runner-state').textContent = stateData.status || 'IDLE';
+                document.getElementById('autonomy-runner-state').className = 'badge ' + (stateData.status === 'RUNNING' || stateData.status === 'EXECUTING' ? 'cyan' : 'blue');
+
+                const leaseRes = await fetch('/api/autonomy/execution/leases');
+                const leaseData = await leaseRes.json();
+                const activeLease = leaseData.find ? leaseData.find(l => l.status === 'ACTIVE') : null;
+                document.getElementById('autonomy-active-lease').textContent = activeLease ? activeLease.task_id : 'None';
+
+                const healthRes = await fetch('/api/autonomy/execution/queue-health');
+                const healthData = await healthRes.json();
+                document.getElementById('autonomy-pending-count').textContent = healthData.pending_count || 0;
+                document.getElementById('autonomy-completed-count').textContent = healthData.completed_count || 0;
+                document.getElementById('autonomy-blocked-count').textContent = healthData.blocked_count || 0;
+                document.getElementById('autonomy-failed-count').textContent = healthData.failed_count || 0;
+
+                const healthEl = document.getElementById('autonomy-queue-health');
+                healthEl.textContent = healthData.health_status || 'PASS';
+                healthEl.className = 'badge ' + (healthData.health_status === 'PASS' ? 'green' : 'red');
+
+                document.getElementById('autonomy-allow-ag').textContent = 'ALLOWED';
+                document.getElementById('autonomy-allow-ag').className = 'badge green';
+
+                const hasHold = stateData.transitions && stateData.transitions.some(t => t.reason.includes('Operator Hold'));
+                const holdEl = document.getElementById('autonomy-operator-hold');
+                holdEl.textContent = hasHold ? 'HOLDING' : 'INACTIVE';
+                holdEl.className = 'badge ' + (hasHold ? 'red' : 'green');
+            } catch (err) {
+                console.error("Error fetching autonomy data:", err);
+            }
+        }
+
+        async function triggerRunOnce() {
+            try {
+                const res = await fetch('/api/autonomy/execution/run-once', { method: 'POST' });
+                alert('Run Once triggered successfully!');
+                fetchAutonomyData();
+            } catch (err) {
+                console.error("Error triggering run-once:", err);
+            }
+        }
+
+        async function releaseStaleLease() {
+            try {
+                const res = await fetch('/api/autonomy/execution/release-stale-lease', { method: 'POST' });
+                alert('Checked/released stale leases!');
+                fetchAutonomyData();
+            } catch (err) {
+                console.error("Error releasing stale lease:", err);
+            }
+        }
+
         window.onload = () => {
             fetchRuntimeStats();
             fetchExecutions();
@@ -15932,6 +16190,7 @@ def get_prototype_prompt_brain():
             fetchScoringTraces();
             fetchProductionGate();
             fetchPilotFeedback();
+            fetchAutonomyData();
         };
     </script>
 </body>

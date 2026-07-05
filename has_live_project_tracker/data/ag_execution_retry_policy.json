@@ -1,0 +1,12 @@
+{
+  "max_retries": 3,
+  "initial_backoff_seconds": 5,
+  "backoff_multiplier": 2,
+  "non_retryable_categories": [
+    "monetization",
+    "release",
+    "external_outreach",
+    "investor_engagement"
+  ],
+  "crash_recovery_action": "FAIL_CLOSED"
+}

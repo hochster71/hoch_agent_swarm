@@ -1,0 +1,119 @@
+[
+  {
+    "lease_id": "lease-b1b7a0e9",
+    "task_id": "task-allowed",
+    "acquired_at": "2026-07-05T05:04:18.013028Z",
+    "expires_at": "2026-07-05T05:14:18.013028Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "released_at": "2026-07-05T05:04:18.014332Z"
+  },
+  {
+    "lease_id": "lease-c837e9e6",
+    "task_id": "task-blocked",
+    "acquired_at": "2026-07-05T05:04:18.014641Z",
+    "expires_at": "2026-07-05T05:14:18.014641Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "released_at": "2026-07-05T05:04:18.015108Z"
+  },
+  {
+    "lease_id": "lease-afb3dc9d",
+    "task_id": "task-autonomy-hardening-demo-01",
+    "acquired_at": "2026-07-05T05:04:37.522871Z",
+    "expires_at": "2026-07-05T05:14:37.522871Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "released_at": "2026-07-05T05:04:37.524253Z"
+  },
+  {
+    "lease_id": "lease-043a1bf2",
+    "task_id": "task-allowed",
+    "acquired_at": "2026-07-05T05:04:41.725971Z",
+    "expires_at": "2026-07-05T05:14:41.725971Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "released_at": "2026-07-05T05:04:41.726818Z"
+  },
+  {
+    "lease_id": "lease-41a9e193",
+    "task_id": "task-blocked",
+    "acquired_at": "2026-07-05T05:04:41.727071Z",
+    "expires_at": "2026-07-05T05:14:41.727071Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "released_at": "2026-07-05T05:04:41.727356Z"
+  },
+  {
+    "lease_id": "lease-87ae9337",
+    "task_id": "task-allowed",
+    "acquired_at": "2026-07-05T05:04:51.136609Z",
+    "expires_at": "2026-07-05T05:14:51.136609Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "released_at": "2026-07-05T05:04:51.137401Z"
+  },
+  {
+    "lease_id": "lease-998a4bbd",
+    "task_id": "task-blocked",
+    "acquired_at": "2026-07-05T05:04:51.137662Z",
+    "expires_at": "2026-07-05T05:14:51.137662Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "released_at": "2026-07-05T05:04:51.137942Z"
+  },
+  {
+    "lease_id": "lease-61f6abd7",
+    "task_id": "task-test-001",
+    "acquired_at": "2026-07-05T05:04:51.149162Z",
+    "expires_at": "2026-07-05T05:14:51.149162Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "released_at": "2026-07-05T05:04:51.149892Z"
+  },
+  {
+    "lease_id": "lease-5e83c2c7",
+    "task_id": "task-test-002",
+    "acquired_at": "2026-07-05T05:04:51.150151Z",
+    "expires_at": "2026-07-05T05:14:51.150151Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "released_at": "2026-07-05T05:04:51.150618Z"
+  },
+  {
+    "lease_id": "lease-9e58196a",
+    "task_id": "task-allowed",
+    "acquired_at": "2026-07-05T05:04:57.534380Z",
+    "expires_at": "2026-07-05T05:14:57.534380Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "released_at": "2026-07-05T05:04:57.535291Z"
+  },
+  {
+    "lease_id": "lease-52f3fec5",
+    "task_id": "task-blocked",
+    "acquired_at": "2026-07-05T05:04:57.535554Z",
+    "expires_at": "2026-07-05T05:14:57.535554Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "released_at": "2026-07-05T05:04:57.535852Z"
+  },
+  {
+    "lease_id": "lease-9445d9a3",
+    "task_id": "task-test-001",
+    "acquired_at": "2026-07-05T05:04:57.546573Z",
+    "expires_at": "2026-07-05T05:14:57.546573Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "released_at": "2026-07-05T05:04:57.547313Z"
+  },
+  {
+    "lease_id": "lease-5a9942c0",
+    "task_id": "task-test-002",
+    "acquired_at": "2026-07-05T05:04:57.547565Z",
+    "expires_at": "2026-07-05T05:14:57.547565Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "released_at": "2026-07-05T05:04:57.547862Z"
+  }
+]

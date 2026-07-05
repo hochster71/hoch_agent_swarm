@@ -1,0 +1,44 @@
+{
+  "policy_categories": {
+    "allowed_internal_task": {
+      "action_prefixes": ["read_", "analyze_", "format_", "parse_"],
+      "risk_tier_max": "R2"
+    },
+    "allowed_documentation_task": {
+      "action_prefixes": ["write_doc", "generate_brief", "log_"],
+      "risk_tier_max": "R2"
+    },
+    "allowed_test_task": {
+      "action_prefixes": ["run_test", "lint_", "verify_"],
+      "risk_tier_max": "R2"
+    },
+    "blocked_release": {
+      "keywords": ["release", "publish", "package_build", "deploy_prod"],
+      "risk_tier_max": "R4"
+    },
+    "blocked_monetization": {
+      "keywords": ["stripe", "billing", "pricing", "monetize"],
+      "risk_tier_max": "R4"
+    },
+    "blocked_external_outreach": {
+      "keywords": ["email", "outreach", "feedback_request", "send_survey"],
+      "risk_tier_max": "R3"
+    },
+    "blocked_investor_engagement": {
+      "keywords": ["investor", "pitch", "capital", "funding"],
+      "risk_tier_max": "R3"
+    },
+    "blocked_secret_handling": {
+      "keywords": ["credential", "api_key", "password", "token"],
+      "risk_tier_max": "R3"
+    },
+    "blocked_destructive_action": {
+      "keywords": ["delete", "drop", "truncate", "rm -rf"],
+      "risk_tier_max": "R4"
+    },
+    "requires_michael_approval": {
+      "keywords": ["promotion", "override", "change_policy"],
+      "risk_tier_max": "R3"
+    }
+  }
+}
