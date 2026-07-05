@@ -39,24 +39,12 @@ def _git_sha():
         return ""
 
 
-def main():
-    ap = argparse.ArgumentParser(description="Sign the production release GO (evidence-gated)")
-    ap.add_argument("--operator", required=True, help="Your name — recorded as the signer")
-    ap.add_argument("--confirm", action="store_true", help="Required: explicit sign confirmation")
-    args = ap.parse_args()
-
-    # 1. Evidence gate — re-verify GO. Refuse to sign a NO-GO.
-    from scripts.release_go_no_go import assemble  # local import
+def sign_once(operator, write_attestation=True):
+    """Evidence-gated single sign. Returns (verdict, active_status). Signs ONLY if GO."""
+    from scripts.release_go_no_go import assemble
     r = assemble()
-    print(f"Go/No-Go re-check: {r['verdict']} ({r['verified']}/{r['total']} VERIFIED)")
     if r["verdict"] != "GO":
-        print(f"⛔ REFUSING TO SIGN — verdict is NO-GO. Blockers: {', '.join(r['blockers'])}")
-        return 2
-    if not args.confirm:
-        print("Verdict is GO. Re-run with --confirm to actually sign.")
-        return 1
-
-    # 2. Write the operator-attributed, evidence-linked GO signal.
+        return r["verdict"], None, r["blockers"]
     evid = sorted((ROOT / "docs/evidence/release").glob("GO_NO_GO_*.md"))
     evid_link = str(evid[-1].relative_to(ROOT)) if evid else ""
     ts = _now_iso()
@@ -65,34 +53,67 @@ def main():
         INSERT OR REPLACE INTO runtime_truth_signals
         (signal_id, name, value, source, source_type, last_updated, ttl_seconds, freshness, confidence, evidence_link, git_sha, source_hash)
         VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
-    """, ("production_go_status", "Production Release GO", "GO", args.operator, "operator",
+    """, ("production_go_status", "Production Release GO", "GO", operator, "operator",
           ts, 300, "fresh", 1.0, evid_link, _git_sha(), ""))
     conn.commit(); conn.close()
-
-    # 3. Recompute release status.
     try:
         from backend.runtime_truth.go_nogo_manager import GoNoGoManager
         summary = GoNoGoManager(db_path=str(DB_PATH)).process_and_update()
         active = summary.get("release_go_status") or summary.get("active_release_go_status")
     except Exception as e:
         active = f"(recompute error: {e})"
+    if write_attestation:
+        att = ROOT / "docs/evidence/release" / f"GO_SIGNED_{ts.replace(':','').replace('-','')}.md"
+        att.parent.mkdir(parents=True, exist_ok=True)
+        att.write_text(
+            f"# Production Release GO — SIGNED\n\n* Signed by: **{operator}**\n* At (UTC): {ts}\n"
+            f"* Git: `{_git_sha()}`\n* Go/No-Go: GO ({r['verified']}/{r['total']} VERIFIED)\n"
+            f"* Evidence packet: `{evid_link}`\n* Active release status: **{active}**\n", encoding="utf-8")
+    return "GO", active, []
 
-    # 4. Attestation.
-    att = ROOT / "docs/evidence/release" / f"GO_SIGNED_{ts.replace(':','').replace('-','')}.md"
-    att.parent.mkdir(parents=True, exist_ok=True)
-    att.write_text(
-        f"# Production Release GO — SIGNED\n\n"
-        f"* Signed by: **{args.operator}**\n* At (UTC): {ts}\n* Git: `{_git_sha()}`\n"
-        f"* Go/No-Go: {r['verdict']} ({r['verified']}/{r['total']} VERIFIED)\n"
-        f"* Evidence packet: `{evid_link}`\n* Active release status: **{active}**\n\n"
-        f"Signal `production_go_status=GO` written (ttl 300s — renew to keep the window open).\n",
-        encoding="utf-8")
 
-    print(f"\n✅ GO SIGNED by {args.operator} at {ts}")
-    print(f"   active_release_go_status = {active}")
-    print(f"   attestation = {att}")
-    print("   (GO is live for ~5 min; readiness will reflect it while fresh. Re-run to renew.)")
-    return 0
+def main():
+    ap = argparse.ArgumentParser(description="Sign the production release GO (evidence-gated)")
+    ap.add_argument("--operator", required=True, help="Your name — recorded as the signer")
+    ap.add_argument("--confirm", action="store_true", help="Required: explicit sign confirmation")
+    ap.add_argument("--watch", action="store_true", help="Keep the GO alive by re-verifying+renewing on a loop")
+    ap.add_argument("--interval", type=int, default=240, help="Renew interval seconds (< 300 TTL)")
+    args = ap.parse_args()
+
+    # Dry-run check
+    from scripts.release_go_no_go import assemble
+    r0 = assemble()
+    print(f"Go/No-Go re-check: {r0['verdict']} ({r0['verified']}/{r0['total']} VERIFIED)")
+    if r0["verdict"] != "GO":
+        print(f"⛔ REFUSING TO SIGN — verdict is NO-GO. Blockers: {', '.join(r0['blockers'])}")
+        return 2
+    if not args.confirm:
+        print("Verdict is GO. Re-run with --confirm to actually sign.")
+        return 1
+
+    if not args.watch:
+        v, active, _ = sign_once(args.operator)
+        print(f"\n✅ GO SIGNED by {args.operator} — active_release_go_status = {active}")
+        print("   (GO is live for ~5 min. Add --watch to keep it renewed while it stays 10/10.)")
+        return 0
+
+    # --watch: renew ONLY while it stays GO. If it ever regresses, STOP renewing and let it expire.
+    import time
+    print(f"👁  GO watch active — renewing every {args.interval}s while verdict stays GO. Ctrl-C to stop.")
+    try:
+        while True:
+            v, active, blockers = sign_once(args.operator, write_attestation=False)
+            stamp = _now_iso()
+            if v == "GO":
+                print(f"   [{stamp}] renewed GO — active={active}")
+            else:
+                print(f"   [{stamp}] ⛔ verdict regressed to {v} (blockers: {', '.join(blockers)}). "
+                      f"NOT renewing — GO will expire in <5 min. Watch stopping.")
+                return 3
+            time.sleep(args.interval)
+    except KeyboardInterrupt:
+        print("\n   watch stopped by operator — existing GO expires within 5 min.")
+        return 0
 
 
 if __name__ == "__main__":
