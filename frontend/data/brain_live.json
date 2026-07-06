@@ -1,5 +1,5 @@
 {
-  "ts": "2026-07-06T02:15:58.559655Z",
+  "ts": "2026-07-06T02:27:07.065108Z",
   "live_brain": {
     "live_brain_available": true,
     "backend": {
@@ -9,12 +9,12 @@
     },
     "note": "brain can GENERATE at $0"
   },
-  "generation": 23,
+  "generation": 25,
   "genes": 479,
   "champions": 26,
   "mean_score": 72.5,
-  "last_gain": 0.673,
-  "state": "IMPROVING",
+  "last_gain": 0.0,
+  "state": "PLATEAUING",
   "meta_lever": "SELECT",
   "meta_reason": "4 classes have genes but no champion \u2014 crown them.",
   "global_converged": false,
@@ -38,17 +38,9 @@
       "genes": 479,
       "champions": 26,
       "mean_score": 72.5,
-      "state": "IMPROVING",
+      "state": "PLATEAUING",
       "gates": 4,
       "history": [
-        {
-          "g": 8,
-          "m": 50.769
-        },
-        {
-          "g": 9,
-          "m": 56.442
-        },
         {
           "g": 10,
           "m": 60.769
@@ -104,6 +96,14 @@
         {
           "g": 23,
           "m": 72.5
+        },
+        {
+          "g": 24,
+          "m": 72.5
+        },
+        {
+          "g": 25,
+          "m": 72.5
         }
       ]
     },
@@ -111,10 +111,10 @@
       "code": "HMF",
       "domain": "music",
       "title": "Hoch Music Factory",
-      "genes": 19,
+      "genes": 23,
       "champions": 8,
-      "mean_score": 96.188,
-      "state": "IMPROVING",
+      "mean_score": 96.938,
+      "state": "PLATEAUING",
       "gates": 4,
       "history": [
         {
@@ -136,6 +136,14 @@
         {
           "g": 6,
           "m": 96.188
+        },
+        {
+          "g": 7,
+          "m": 96.938
+        },
+        {
+          "g": 8,
+          "m": 96.938
         }
       ]
     },
@@ -168,20 +176,24 @@
         {
           "g": 6,
           "m": 96.0
+        },
+        {
+          "g": 7,
+          "m": 96.0
         }
       ]
     }
   ],
   "swarm": {
     "verdict": "NOT_SECURE",
-    "coverage": 100.0,
-    "real_high": 2,
-    "target": "epic-fury-2026",
-    "why": "coverage=100.0% (missed none); real HIGH findings=2"
+    "coverage": 57.1,
+    "real_high": 0,
+    "target": "backend",
+    "why": "coverage=57.1% (missed ['RED-EVAL', 'RED-SHELL', 'RED-MD5']); real HIGH findings=0"
   },
   "agent_audit": {
-    "active": 5,
-    "idle": 1,
+    "active": 2,
+    "idle": 4,
     "dormant": 0,
     "components": 6
   },
@@ -366,7 +378,7 @@
       {
         "code": "HMF",
         "action": "EXPAND",
-        "detail": "grow 4 thin classes (+5 genes) via the $0 local model"
+        "detail": "grow 1 thin classes (+1 genes) via the $0 local model"
       }
     ],
     "needs_operator": [
@@ -380,11 +392,6 @@
     "summary": "AI Michael: 2 action(s) I can take now at $0; 1 need your founder call (T3/cost)."
   },
   "history": [
-    {
-      "g": 1,
-      "m": 50.769,
-      "gain": null
-    },
     {
       "g": 2,
       "m": 50.769,
@@ -494,6 +501,16 @@
       "g": 23,
       "m": 72.5,
       "gain": 0.673
+    },
+    {
+      "g": 24,
+      "m": 72.5,
+      "gain": 0.0
+    },
+    {
+      "g": 25,
+      "m": 72.5,
+      "gain": 0.0
     }
   ],
   "recent_improvements": [

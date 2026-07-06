@@ -1,16 +1,16 @@
 {
   "schema": "brain-convergence-gene-pool-m0",
   "domain": "music",
-  "count": 23,
+  "count": 24,
   "class_sizes": {
     "Lo-Fi Hip-Hop": 3,
     "Deep House": 3,
     "Melodic Techno": 3,
+    "Ambient": 3,
     "Drum & Bass": 3,
     "Synthwave": 3,
     "Cinematic Score": 3,
-    "Afrobeats": 3,
-    "Ambient": 2
+    "Afrobeats": 3
   },
   "task_classes": 8,
   "genes": {
@@ -253,6 +253,17 @@
       "prompt": "Here is the improved prompt:\n\n**Task:** Generate an Afrobeats track with the following specifications.\n\n**Scope:**\n\n* Genre: Afrobeats/Afropop\n* Structure:\n\t+ Intro (8-16 bars): Establishing rhythmic foundation, incorporating log drum and shakers\n\t+ Verse (2-3 times): Original lyrics with call-and-response topline, plucked guitar and marimba accompaniment\n\t+ Chorus (2-3 times): Hook with repetitive melodic phrase, incorporating sub bass and bright top\n\t+ Outro (8-16 bars): Gradual wind-down with repetition of intro elements\n* Originality:\n\t+ Clear percussion one-shots used throughout\n\t+ No imitation of named artists or copyrighted material\n\n**Evidence/Verification:**\n\n1. Verify the tempo/key: 105 BPM, A major, 4/4.\n2. Confirm the mix/master specifications: punchy -8 LUFS, mono bass, bright top.\n\n**Anti-Fake-Green Checks:**\n\n1. No imitations of named artists or copyrighted material.\n2. Original lyrics and melody that do not infringe on existing intellectual property.\n3. Check for any recognizable melodies or lyrical patterns from popular Afrobeats tracks.\n\n**Rollback Conditions:**\n\n1. If any part of the generated track is deemed to be an imitation of a named artist or copyrighted material, rollback and restart generation.\n2. If the tempo/key or mix/master specifications are not met, rollback and restart generation.\n3. If the output audio file does not meet quality standards (e.g., distortion, low volume), rollback and restart generation.\n\n**Structured Output:**\n\n* Track title (max 12 characters): e.g., \"Vibez\"\n* Mood description (sunny/danceable): e.g., \"Upbeat\"\n* Duration estimate (~3:10 minutes)\n* Audio file in WAV format\n* A/B reference comparison to ensure quality control:\n\t+ Reference 1: Original Afrobeats track with similar genre and structure\n\t+ Reference 2: Another generated track for comparison\n\nThis improved prompt adds explicit scope, required evidence/verification, anti-fake-green checks, rollback conditions, and a structured output. It also includes specific requirements for the audio file format and quality control measures to ensure the generated track meets the desired standards.",
       "content_hash": "01637c08fd08fb664bf7b7267c774388391827a73e276ab8f46f3b58f8179a6b",
       "mech_score": 93.0,
+      "source": "LOCAL:ollama:llama3:latest",
+      "judge": "LOCAL_LLM_JUDGE",
+      "state": "SYNTHETIC_ADMITTED"
+    },
+    "syn-Ambien-c17ce5b8dd01": {
+      "gene_id": "syn-Ambien-c17ce5b8dd01",
+      "task_class": "Ambient",
+      "title": "Ambient synthetic gene",
+      "prompt": "Here is the rewritten prompt with added discipline:\n\n**Ambient Agent Prompt**\n\n**Scope:** Generate an original ambient track in the style of cinematic drone music.\n\n**Required Evidence/Verification:**\n\n* The track must be a single movement with an intro swell, dense middle section, and sparse outro.\n* The track must not contain a beat.\n* The recurring bell motif should surface throughout the piece.\n* The instrumentation should consist only of granular pads, soft bells, sub drone, and processed field recordings.\n\n**Anti-Fake-Green Checks:**\n\n* Verify that the track is rubato (no strict meter) in tempo/key C major.\n* Confirm that the mix/master settings are spacious, with a loudness level of -16 LUFS, wide stereo, and gentle high shelf.\n* Ensure that the arc of the track follows a slow swell and decay.\n\n**Rollback Conditions:**\n\n* If the track contains any recognizable beats or time signatures, roll back to an earlier version.\n* If the bell motif is not prominent throughout the piece, revert to a previous iteration.\n\n**Structured Output:**\n\n* The final output should be a 5-minute track with the following metadata:\n\t+ Title\n\t+ Mood: Serene\n\t+ Duration: approximately 5:00 minutes\n\nNote: Any creative liberties taken by the AI should be reflected in the title and/or description of the track.",
+      "content_hash": "c17ce5b8dd017f4ef4f2d6aa16a9ba10155157c41bf64999da1f11d0d70da455",
+      "mech_score": 95.0,
       "source": "LOCAL:ollama:llama3:latest",
       "judge": "LOCAL_LLM_JUDGE",
       "state": "SYNTHETIC_ADMITTED"

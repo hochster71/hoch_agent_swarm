@@ -1,9 +1,9 @@
 {
   "schema": "hoch-agent-audit-v1",
-  "at": "2026-07-06T02:14:39.675520Z",
+  "at": "2026-07-06T02:25:44.889224Z",
   "totals": {
-    "active": 5,
-    "idle": 1,
+    "active": 2,
+    "idle": 4,
     "dormant": 0,
     "components": 6
   },
@@ -16,19 +16,19 @@
   "agents": [
     {
       "agent": "HASF factory (software)",
-      "status": "ACTIVE",
-      "state": "IMPROVING",
-      "last_activity_s": 478,
+      "status": "IDLE",
+      "state": "PLATEAUING",
+      "last_activity_s": 232,
       "goal_aligned": true,
-      "work_left": "improving"
+      "work_left": "run cycles"
     },
     {
       "agent": "HMF factory (music)",
-      "status": "ACTIVE",
-      "state": "IMPROVING",
-      "last_activity_s": 212,
+      "status": "IDLE",
+      "state": "PLATEAUING",
+      "last_activity_s": 217,
       "goal_aligned": true,
-      "work_left": "improving"
+      "work_left": "run cycles"
     },
     {
       "agent": "HRF factory (research)",
@@ -48,9 +48,9 @@
     },
     {
       "agent": "cadence loop",
-      "status": "ACTIVE",
+      "status": "IDLE",
       "state": "10-min launchd interval (NOT continuous)",
-      "last_activity_s": 852,
+      "last_activity_s": 1518,
       "goal_aligned": true,
       "work_left": "convert to a continuous KeepAlive daemon so cycles run back-to-back"
     },

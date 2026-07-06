@@ -1,6 +1,6 @@
 {
   "schema": "brain-convergence-champions-m0",
-  "generation": 23,
+  "generation": 25,
   "champions": {
     "QA": {
       "gene_id": "gen-HASF-QA-AUTO-038-20260706T002340",
@@ -311,5 +311,5 @@
       "at": "2026-07-05T23:22:24.452401Z"
     }
   },
-  "last_updated": "2026-07-06T02:15:58.472578Z"
+  "last_updated": "2026-07-06T02:27:06.968162Z"
 }

@@ -1,6 +1,6 @@
 {
   "schema": "brain-research-meta-v1",
-  "at": "2026-07-06T02:14:50.294583Z",
+  "at": "2026-07-06T02:25:55.148530Z",
   "improver_online": true,
   "model": "llama3:latest",
   "chosen_lever": "SELECT",
@@ -13,17 +13,17 @@
   ],
   "gaps": {
     "by_constraint": {
-      "SATURATED": 13,
-      "LOW_CEILING": 13,
+      "SATURATED": 14,
+      "LOW_CEILING": 12,
       "NO_CHAMPION": 4
     },
     "thin": 0,
-    "low_ceiling": 13,
+    "low_ceiling": 12,
     "no_champion": 4,
     "drift": 3,
     "expansion_needed_genes": 0,
-    "mean_champion_score": 71.827,
-    "generation": 22
+    "mean_champion_score": 72.5,
+    "generation": 24
   },
   "global_converged": false
 }
