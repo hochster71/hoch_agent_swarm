@@ -10,10 +10,13 @@
   Heuristic labeled as such; off-Mac exits honestly (no fabricated fleet). 7/7 tests.
 - **Deck panel**: `FLEET RECONCILE` card in `frontend/has_brain_moonshot.html` (live-embed → static mirror
   → NOT-YET-RUN). Reconciler mirrors JSON to `frontend/data/fleet_reconcile.json`. JS syntax-checked.
-- **Epic-Fury (thread #2)**: `docs/runbooks/epic-fury-secret-rotation.md` — operator T3 rotation checklist
-  (self-hosted regen + history purge + forward path), cited. Recurrence guard closed: pre-commit hook now
-  version-controlled (`scripts/git-hooks/pre-commit` + `scripts/install_git_hooks.sh`) with a signed-JWT
-  pattern catching Supabase anon/service_role keys. 5/5 hook tests. **Operator must still rotate the keys.**
+- **Epic-Fury (thread #2) — RE-GRADED with evidence.** Read the real `~/epic-fury-build` compose files:
+  the "2 HIGH Supabase JWTs" are the PUBLIC demo keys (iss=supabase-demo) as env-overridable defaults +
+  one public-by-design anon key in a push-*.sh. **No real service_role/privileged credential is leaked.**
+  Fixed the root cause: `scan_secrets` now decodes JWT claims (demo/anon→LOW, real service_role→HIGH);
+  real-file scan of both build dirs = **0 HIGH, all LOW**. Recurrence guard (version-controlled pre-commit
+  hook + installer) still in place. Runbook re-graded to a production *deploy gate* (supply real secrets
+  via env before prod — compose already supports it), not an urgent rotation. **No urgent action.**
 - Verified in-sandbox only (no launchctl / no browser here). **Pending on the Mac**: run
   `python3 scripts/hoch_fleet_reconcile.py` for the real reconcile plan; render the deck panel live.
 
@@ -58,10 +61,11 @@
    `data/prompt_brain/fleet_reconcile.json`, review the per-class canonical-owner recommendations, then
    **operator-approve each T3 `launchctl bootout`** one at a time (nothing is stopped automatically).
    After that, wire the reconcile output into the live BRAIN feed so the deck panel shows it in real time.
-2. **Epic-fury (first monetized app) — REAL blocker:** 2 HIGH hardcoded Supabase JWT tokens in
-   `~/epic-fury-build/epic-fury-2026/docker-compose.yml` + `docker-compose.dev.yml`. Runbook +
-   recurrence guard now exist (session 2); **operator must still rotate the keys** per
-   `docs/runbooks/epic-fury-secret-rotation.md` before ship. Self-heal correctly can't un-leak them.
+2. **Epic-fury (first monetized app) — DOWNGRADED from blocker (session 2, evidence-based).** The
+   flagged JWTs are public Supabase demo defaults + a public anon key; **0 real HIGH** after decoding
+   (verified against the real files with the fixed scanner). No urgent action. Remaining item is a
+   pre-production *deploy gate*: inject real Supabase secrets via env before a prod deploy (compose
+   already reads `${VAR:-demo-default}`), per `docs/runbooks/epic-fury-secret-rotation.md`. T3, operator.
 3. **HMF/HRF real gains** need frontier judges (audio-quality, research-novelty) = cost/Rung-2 —
    deferred. Their mechanical proxy is near ceiling (93/96); graphs may sit flat honestly.
 4. **HFP** (Hoch Family/Personal Factory) — note: `com.hoch.family.*` already runs as a live fleet.
