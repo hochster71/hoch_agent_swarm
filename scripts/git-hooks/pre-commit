@@ -1,0 +1,63 @@
+#!/bin/bash
+# Pre-commit hook: block secret patterns from entering git history.
+# CANONICAL SOURCE (version-controlled). Install into .git/hooks with:
+#   bash scripts/install_git_hooks.sh
+#
+# Design rationale: the audit (C1) found live Stripe keys were committed and
+# pushed; the Epic-Fury blocker found hardcoded Supabase JWTs in docker-compose.
+# This hook is the "prevent repeats" step GitHub recommends after a history purge
+# [GitHub Docs: Removing sensitive data from a repository]. It mirrors the BRAIN's
+# runtime scanner (backend/swarm/cyber_swarm.py) as a fast local pre-commit gate.
+set -euo pipefail
+
+STAGED=$(git diff --cached --name-only --diff-filter=ACM 2>/dev/null)
+[ -z "$STAGED" ] && exit 0
+
+FAIL=0
+while IFS= read -r file; do
+    [[ "$file" == *.py || "$file" == *.sh || "$file" == *.json \
+       || "$file" == *.yaml || "$file" == *.yml || "$file" == *.env* \
+       || "$file" == *.txt || "$file" == *.md ]] || continue
+    [[ -f "$file" ]] || continue
+
+    # Skip test files — they contain fake/fixture secrets deliberately
+    if [[ "$file" == tests/* || "$file" == *test_*.py || "$file" == *_test.py ]]; then
+        continue
+    fi
+
+    # Pattern set: Stripe live/test keys, Stripe webhook secrets, Stripe
+    # restricted keys; also catches generic high-entropy API key assignments.
+    if grep -qEn '(sk_live_[A-Za-z0-9]{20,}|sk_test_[A-Za-z0-9]{20,}|whsec_[A-Za-z0-9]{20,}|rk_live_[A-Za-z0-9]{20,})' "$file" 2>/dev/null; then
+        echo "❌ SECRET DETECTED: $file contains a Stripe key or webhook secret."
+        FAIL=1
+    fi
+
+    # Supabase / signed JWT (anon + service_role are signed JWTs starting eyJ).
+    # A committed 3-part signed JWT in source is a leak — the Epic-Fury class.
+    if grep -qEn 'eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}' "$file" 2>/dev/null; then
+        echo "❌ SECRET DETECTED: $file contains a signed JWT (Supabase anon/service_role or similar)."
+        FAIL=1
+    fi
+
+    # Block .env files being re-tracked (C1 class)
+    if [[ "$file" == ".env" || "$file" == ".env."* ]]; then
+        echo "❌ BLOCKED: $file should not be tracked. Check .gitignore."
+        FAIL=1
+    fi
+
+    # Block private keys
+    if grep -q "PRIVATE KEY" "$file" 2>/dev/null; then
+        echo "❌ PRIVATE KEY content detected in $file."
+        FAIL=1
+    fi
+done <<< "$STAGED"
+
+if [ "$FAIL" -eq 1 ]; then
+    echo ""
+    echo "Commit blocked. Rotate the exposed secret immediately, then remove"
+    echo "it from the staged file before committing."
+    echo "See: scripts/purge_env_history.sh for history cleanup, and"
+    echo "     docs/runbooks/epic-fury-secret-rotation.md for JWT rotation."
+    exit 1
+fi
+exit 0
