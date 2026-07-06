@@ -125,8 +125,12 @@
       "evidence_path": "has_live_project_tracker/data/human_approval_queue.json",
       "estimated_wall_clock": "minutes",
       "agent_safe": false,
-      "resolution": "4 flags were FALSE POSITIVES \u2014 substring matches in BRAIN-generated .jsonl prompt text (e.g. 'card' in 'scorecard', 'secret' in 'secrets.json'). Root cause fixed: has_autonomous_cadence.py now excludes generated data (*.jsonl, data/). T3 policy stays active for real code changes.",
-      "closed_on_evidence": "2026-07-06 \u00b7 traced all 4, 0 real high-risk matches"
+      "resolution": "Original 4 flags were FALSE POSITIVES (substring hits in BRAIN-generated .jsonl, e.g. 'card' in 'scorecard'); root cause fixed in has_autonomous_cadence.py (excludes *.jsonl/*.ndjson/data/). 2 residual flags surfaced and were VERIFIED BENIGN, NOT auto-cleared (founder's call): (1) 'stripe' = Stripe SDK dependency added to pyproject.toml/uv.lock (monetization scaffolding, not a live charge); (2) scripts/configure_ai_keys.py = local key-config helper, UNTRACKED (won't enter git), contains ZERO hardcoded secrets (all regex hits are prompt/validation strings). Neither is on the critical path.",
+      "closed_on_evidence": "2026-07-06 \u00b7 scanner root-caused; 2 residuals inspected & benign",
+      "residual_founder_items": [
+        "stripe SDK dep (pyproject/uv.lock) \u2014 approve/defer",
+        "configure_ai_keys.py untracked helper \u2014 no action needed"
+      ]
     }
   ]
 }
