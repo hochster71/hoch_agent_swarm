@@ -303,6 +303,37 @@ def control_plane_status():
     }
 
 
+@app.get("/api/v1/control-plane/pert")
+def control_plane_pert():
+    """
+    Shell-facing PERT/CPM task graph (S3), served on :8000 so the React shell reaches
+    it via the /api proxy. Pass-through of the authoritative :8765 /api/pert/data
+    pert_cpm (tasks with te/slack/critical-path). Fail-visible if :8765 is down.
+    """
+    import urllib.request
+    from datetime import datetime, timezone
+
+    pert = {}
+    ok = False
+    try:
+        req = urllib.request.Request("http://127.0.0.1:8765/api/pert/data", method="GET")
+        with urllib.request.urlopen(req, timeout=4) as r:
+            d = json.loads(r.read().decode("utf-8"))
+        pert = d.get("pert_cpm") or {}
+        ok = True
+    except Exception:
+        pert = {}
+
+    return {
+        "schema": "control-plane-pert-v1",
+        "generated_at": datetime.now(timezone.utc).isoformat() + "Z",
+        "pert_source_available": ok,
+        "critical_path": pert.get("critical_path"),
+        "expected_duration_minutes": pert.get("expected_duration"),
+        "tasks": pert.get("tasks", []),
+    }
+
+
 @app.get("/api/v1/apple/telemetry")
 def get_apple_telemetry_endpoint():
     from backend.apple_telemetry.collector import collect_and_store_apple_telemetry
@@ -10252,22 +10283,21 @@ def approve_prompt_endpoint(prompt_id: str, req: ApprovalRequest):
     is_high_risk = prompt.get("severity") == "HIGH"
     if is_high_risk:
         gate = prompt.get("approval_gate")
-        if gate:
-            if isinstance(gate, dict):
-                expected_owner = gate.get("owner")
-                expected_role = gate.get("role")
-            else:
-                expected_owner = "Michael Hoch"
-                expected_role = "Owner"
+        if gate and isinstance(gate, dict):
+            expected_owner = gate.get("owner")
+            expected_role = gate.get("role")
+        else:
+            expected_owner = "Michael Hoch"
+            expected_role = "Owner"
             
-            owner_matches = not expected_owner or req.user.lower() == expected_owner.lower() or "michael" in req.user.lower()
-            role_matches = not expected_role or req.role.lower() == expected_role.lower()
-            
-            if not (owner_matches or role_matches):
-                raise HTTPException(
-                    status_code=403,
-                    detail=f"Approval denied: High-risk prompt {prompt_id} requires authorization by {expected_owner or 'Authorized Owner'} ({expected_role or 'Authorized Role'})."
-                )
+        owner_matches = not expected_owner or req.user.lower() == expected_owner.lower() or "michael" in req.user.lower()
+        role_matches = not expected_role or req.role.lower() == expected_role.lower()
+        
+        if not (owner_matches or role_matches):
+            raise HTTPException(
+                status_code=403,
+                detail=f"Approval denied: High-risk prompt {prompt_id} requires authorization by {expected_owner or 'Authorized Owner'} ({expected_role or 'Authorized Role'})."
+            )
                 
     p_text = prompt.get("prompt", "")
     approved_hash = hashlib.sha256(p_text.encode("utf-8")).hexdigest()

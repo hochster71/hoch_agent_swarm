@@ -120,6 +120,10 @@
                             <i data-lucide="layout-dashboard"></i>
                             <span>Control Plane</span>
                         </button>
+                        <button class="nav-item" id="nav-pert" data-view="pert" type="button" style="background: none; border: none; font-family: inherit; font-size: inherit; text-align: left; cursor: pointer; width: 100%; color: var(--text-secondary); font-weight: 500;">
+                            <i data-lucide="git-branch"></i>
+                            <span>PERT / Critical Path</span>
+                        </button>
                         <button class="nav-item" id="nav-device-swarm" data-view="device-swarm" type="button" style="background: none; border: none; font-family: inherit; font-size: inherit; text-align: left; cursor: pointer; width: 100%; color: var(--text-secondary); font-weight: 500;">
                             <i data-lucide="smartphone"></i>
                             <span>Device Swarm</span>
@@ -5065,6 +5069,16 @@
     </div>
   </header>
   <div id="react-overview-root"></div>
+</section>
+
+<section class="view live-view" id="view-pert" data-view="pert" hidden>
+  <header class="section-header">
+    <div>
+      <p class="eyebrow">CANONICAL CONTROL PLANE</p>
+      <h2>PERT / Critical Path</h2>
+    </div>
+  </header>
+  <div id="react-pert-root"></div>
 </section>
 
 <section class="view live-view" id="view-mesh-sentinel" data-view="mesh-sentinel" hidden>

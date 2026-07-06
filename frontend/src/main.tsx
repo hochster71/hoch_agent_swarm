@@ -130,6 +130,7 @@ import { CustomerSuccessDashboard } from "./components/customer-success/Customer
 import { RevenueOpsDashboard } from "./components/revenue-ops/RevenueOpsDashboard";
 import { HochsterDashboard } from "./components/hochster/HochsterDashboard";
 import { OverviewControlPlane } from "./components/overview/OverviewControlPlane";
+import { PertCriticalPathTab } from "./components/overview/PertCriticalPathTab";
 
 // Mount Timeline Replay Dashboard
 const replayRoot = document.getElementById("react-replay-root");
@@ -268,6 +269,16 @@ if (overviewRoot) {
   ReactDOM.createRoot(overviewRoot).render(
     <React.StrictMode>
       <OverviewControlPlane />
+    </React.StrictMode>
+  );
+}
+
+// Mount PERT / Critical-Path tab (S3). Guarded: inert until #react-pert-root exists.
+const pertRoot = document.getElementById("react-pert-root");
+if (pertRoot) {
+  ReactDOM.createRoot(pertRoot).render(
+    <React.StrictMode>
+      <PertCriticalPathTab />
     </React.StrictMode>
   );
 }
