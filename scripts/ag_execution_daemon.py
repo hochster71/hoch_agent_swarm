@@ -13,6 +13,11 @@ sys.path.append(str(Path(__file__).resolve().parent))
 from ag_execution_lease_manager import LeaseManager
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+try:
+    from backend.runtime_truth import relay_checks as _rc  # computed evidence (no hardcoded PASS/GO)
+except Exception:  # pragma: no cover — daemon must still run; checks fail closed to UNVERIFIED
+    _rc = None
 DATA_DIR = ROOT / "has_live_project_tracker/data"
 DAEMON_STATE_FILE = DATA_DIR / "ag_execution_daemon_state.json"
 HOLD_FILE = DATA_DIR / "ag_operator_hold.json"
@@ -70,8 +75,8 @@ def main():
         "last_task_id": None,
         "last_error": None,
         "operator_hold_status": "INACTIVE",
-        "doctrine_status": "GO",
-        "verdict": "HEARTBEAT_FRESH",
+        "doctrine_status": "UNVERIFIED",   # computed per-cycle below; never a static GO
+        "verdict": "UNVERIFIED",           # heartbeat freshness is evaluated, not asserted
         "venue_classification": {
             "host_name": host_name,
             "host_os": host_os,
@@ -192,7 +197,32 @@ def main():
         completed = len([t for t in queue if t.get("status") == "completed"])
         blocked = len([t for t in queue if t.get("status") == "BLOCKED"])
         failed = len([t for t in queue if t.get("status") == "FAILED"])
-        
+
+        # --- COMPUTED checks (no more hardcoded PASS/GO — fail closed to UNVERIFIED/UNKNOWN) ---
+        if _rc is not None:
+            try:
+                hb = _rc.evaluate_heartbeat(state, get_utc_now())
+                heartbeat_status = hb["status"]
+                queue_eval = _rc.evaluate_queue(queue)
+                queue_check = queue_eval["verdict"]           # PASS / FOREIGN_BACKLOG / FAIL
+                port_public = _rc.probe_port_public(3012)      # True/False/None(unknown), fail-closed
+                doctrine_eval = _rc.evaluate_doctrine(allow_ag, hold_active, port_public)
+                doctrine_check = "PASS" if doctrine_eval["status"] == "GO" else doctrine_eval["status"]
+                state["doctrine_status"] = doctrine_eval["status"]
+                state["verdict"] = heartbeat_status
+                state["port_public"] = port_public
+                state["queue_health"] = queue_eval
+                save_json(DAEMON_STATE_FILE, state)
+            except Exception as _e:                            # any failure => conservative, never green
+                heartbeat_status = queue_check = doctrine_check = "UNVERIFIED"
+                print(f"[Cycle {cycle}] relay_checks evaluation failed ({_e}); reporting UNVERIFIED.")
+        else:
+            heartbeat_status = queue_check = doctrine_check = "UNVERIFIED"
+            state["doctrine_status"] = "UNVERIFIED"
+            state["verdict"] = "UNVERIFIED"
+        # proof integrity: honest per outcome, never a blanket PASS
+        proof_check = {"COMPLETED": "PASS", "IDLE": "N/A", "FAILED": "FAIL"}.get(cycle_status, "UNVERIFIED")
+
         ledger_entry = {
             "cycle_id": f"cycle-{cycle:05d}",
             "timestamp": to_utc_str(get_utc_now()),
@@ -205,10 +235,10 @@ def main():
             "completed_count": completed,
             "blocked_count": blocked,
             "failed_count": failed,
-            "proof_check": "PASS",
-            "queue_check": "PASS",
-            "doctrine_check": "PASS",
-            "heartbeat_status": "HEARTBEAT_FRESH",
+            "proof_check": proof_check,
+            "queue_check": queue_check,
+            "doctrine_check": doctrine_check,
+            "heartbeat_status": heartbeat_status,
             "simulated": simulated,
             "injection_type": "none",
             "incident_class": "none" if cycle_status != "FAILED" else "runner_error",
@@ -219,26 +249,37 @@ def main():
         with open(BURN_IN_LEDGER, "a", encoding="utf-8") as lf:
             lf.write(json.dumps(ledger_entry) + "\n")
             
-        # Update burn-in summary
-        total_runs = real_cycle_count
-        failed_runs = 1 if cycle_status == "FAILED" and not simulated else 0
-        
+        # Update burn-in summary — failed count/rate are CUMULATIVE from the ledger (the old code
+        # counted only THIS cycle, so "0.00% failed" hid every earlier failure).
+        cum_failed, cum_total = 0, real_cycle_count
+        if _rc is not None:
+            try:
+                cum_failed, cum_total = _rc.cumulative_failed_from_ledger(
+                    BURN_IN_LEDGER.read_text(encoding="utf-8").splitlines() if BURN_IN_LEDGER.exists() else [])
+            except Exception:
+                cum_failed, cum_total = 0, real_cycle_count
+        cum_total = max(cum_total, 1)
+
         summary = {
             "total_cycles": cycle,
             "real_cycles": real_cycle_count,
             "simulated_cycles": simulated_cycle_count,
             "injection_cycles": 0,
-            "successful_real_cycles": real_cycle_count - failed_runs,
-            "failed_real_cycles": failed_runs,
+            "successful_real_cycles": cum_total - cum_failed,
+            "failed_real_cycles": cum_failed,                       # cumulative, from ledger
             "blocked_cycles": 0,
-            "duplicate_execution_detected": 0,
-            "stale_lease_detected": 0,
-            "unrecovered_stale_lease_detected": 0,
-            "missing_proof_detected": 0,
-            "unsafe_action_detected": 0,
-            "heartbeat_stale_detected": 0,
-            "failed_cycle_rate": float(failed_runs) / max(1, real_cycle_count),
-            "final_verdict": "BURN_IN_GO" if real_cycle_count >= 10 and failed_runs == 0 else "BURN_IN_INCOMPLETE",
+            "failed_cycle_rate": float(cum_failed) / cum_total,     # cumulative rate
+            # Detectors that are NOT actually measured here are null (was hardcoded 0 = fake "none
+            # detected"). null + measured=false tells consumers these are unverified, not clean.
+            "duplicate_execution_detected": None,
+            "stale_lease_detected": None,
+            "unrecovered_stale_lease_detected": None,
+            "missing_proof_detected": None,
+            "unsafe_action_detected": None,
+            "heartbeat_stale_detected": None,
+            "detectors_measured": False,
+            # final verdict now requires a CLEAN history (no cumulative failures), not just this cycle
+            "final_verdict": "BURN_IN_GO" if real_cycle_count >= 10 and cum_failed == 0 else "BURN_IN_INCOMPLETE",
             "venue_classification": state["venue_classification"]
         }
         save_json(BURN_IN_SUMMARY, summary)

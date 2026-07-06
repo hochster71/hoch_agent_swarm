@@ -24,39 +24,61 @@ def get_git_sha():
         pass
     return ""
 
+def _burn_in_hours():
+    """Hours since the daemon started, from its state file. None if unavailable (fail closed)."""
+    import json
+    from pathlib import Path
+    try:
+        st = json.loads(Path("has_live_project_tracker/data/ag_execution_daemon_state.json").read_text())
+        started = datetime.fromisoformat(st["started_at"].replace("Z", "+00:00"))
+        return (datetime.now(timezone.utc) - started).total_seconds() / 3600.0
+    except Exception:
+        return None
+
+
+def compute_signals():
+    """Measure the 5 HOCH-200 signals from real state instead of hardcoding them. Every value is
+    computed or 'unknown' (fail closed) — nothing reads green unless the evidence says so."""
+    from backend.runtime_truth import relay_checks as rc
+
+    port_public = rc.probe_port_public(3012)                 # True/False/None
+    health = rc.probe_health("http://100.87.18.15:3012/health")  # healthy/unhealthy/unknown
+    hb_hours = _burn_in_hours()
+    verdict = rc.evaluate_relay_verdict(
+        {"port_public": port_public, "health": health,
+         "heartbeat_fresh": True if hb_hours is not None else None,
+         "doctrine": "GO" if port_public is False else ("NO_GO" if port_public else "UNKNOWN")},
+        burn_in_hours=hb_hours)["verdict"]
+
+    measured = lambda known: (1.0, "fresh") if known else (0.0, "unknown")
+    port_val = "blocked" if port_public is False else ("public" if port_public else "unknown")
+    scope_val = "relay_only" if port_public is False else ("public_exposed" if port_public else "unknown")
+
+    c_relay, f_relay = measured(verdict not in ("UNKNOWN",))
+    c_port, f_port = measured(port_public is not None)
+    c_health, f_health = measured(health != "unknown")
+    return [
+        {"signal_id": "hoch200_relay", "name": "HOCH-200 Relay Status", "value": verdict,
+         "confidence": c_relay, "freshness": f_relay},
+        {"signal_id": "public_3012", "name": "HOCH-200 Public Port 3012", "value": port_val,
+         "confidence": c_port, "freshness": f_port},
+        {"signal_id": "tailscale_3012", "name": "HOCH-200 Tailscale Port 3012", "value": health,
+         "confidence": c_health, "freshness": f_health},
+        {"signal_id": "routing_scope", "name": "HOCH-200 Routing Scope", "value": scope_val,
+         "confidence": c_port, "freshness": f_port},
+        {"signal_id": "unrestricted_execution", "name": "HOCH-200 Unrestricted Execution",
+         "value": "false" if port_public is False else "unknown",
+         "confidence": c_port, "freshness": f_port},
+    ]
+
+
 def ingest_signals():
     evidence_path = get_latest_evidence_file()
     git_sha = get_git_sha()
     last_updated = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
-    
-    signals = [
-        {
-            "signal_id": "hoch200_relay",
-            "name": "HOCH-200 Relay Status",
-            "value": "CONDITIONAL_GO"
-        },
-        {
-            "signal_id": "public_3012",
-            "name": "HOCH-200 Public Port 3012",
-            "value": "blocked"
-        },
-        {
-            "signal_id": "tailscale_3012",
-            "name": "HOCH-200 Tailscale Port 3012",
-            "value": "healthy"
-        },
-        {
-            "signal_id": "routing_scope",
-            "name": "HOCH-200 Routing Scope",
-            "value": "relay_only"
-        },
-        {
-            "signal_id": "unrestricted_execution",
-            "name": "HOCH-200 Unrestricted Execution",
-            "value": "false"
-        }
-    ]
-    
+
+    signals = compute_signals()
+
     conn = sqlite3.connect(DB_PATH, timeout=30)
     apply_pragmas(conn)
     
@@ -71,12 +93,12 @@ def ingest_signals():
                 sig["signal_id"],
                 sig["name"],
                 sig["value"],
-                "hoch200_verify_vps.sh / hoch200_gate.sh",
+                "hoch200_runtime_truth_ingest.py (computed probes)",
                 "script",
                 last_updated,
                 600,
-                "fresh",
-                1.0,
+                sig["freshness"],
+                sig["confidence"],
                 evidence_path,
                 evidence_path,
                 git_sha,
