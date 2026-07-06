@@ -20,11 +20,26 @@ import json
 import os
 import sys
 import urllib.request
+import urllib.error
 from datetime import datetime, timezone
 
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-OLLAMA = "http://127.0.0.1:11434/api/tags"
-LMSTUDIO = "http://127.0.0.1:1234/v1/models"
+
+
+def _resolve(host, default):
+    """Mirror local_model_bridge: honor env host; normalize to a scheme'd base URL."""
+    h = (host or default).strip()
+    if "://" not in h:
+        h = "http://" + h
+    return h.rstrip("/")
+
+
+# Same env the brain bridge reads, so this probes exactly what the daemon would reach
+# (on the VPS: OLLAMA_HOST=http://100.103.155.4:11434 -> we verify the Mac's Ollama over Tailscale).
+OLLAMA_BASE = _resolve(os.environ.get("OLLAMA_HOST") or os.environ.get("OLLAMA_URL"), "http://127.0.0.1:11434")
+LMSTUDIO_BASE = _resolve(os.environ.get("LMSTUDIO_URL"), "http://127.0.0.1:1234")
+OLLAMA = OLLAMA_BASE + "/api/tags"
+LMSTUDIO = LMSTUDIO_BASE + "/v1/models"
 
 
 def _probe(url, timeout=1.5):
@@ -49,6 +64,30 @@ def _models(body):
     return []
 
 
+def _gen_probe(kind, base, model, timeout=25.0):
+    """Actually ask the model to generate one token — catches dangling manifests
+    (tags lists a model whose blob is missing → /api/generate 400). Returns (ok, detail)."""
+    try:
+        if kind == "ollama":
+            body = json.dumps({"model": model, "prompt": "ok", "stream": False,
+                               "options": {"num_predict": 1}}).encode()
+            url = base + "/api/generate"
+        else:
+            body = json.dumps({"model": model, "messages": [{"role": "user", "content": "ok"}],
+                               "max_tokens": 1}).encode()
+            url = base + "/v1/chat/completions"
+        req = urllib.request.Request(url, data=body, headers={"Content-Type": "application/json"}, method="POST")
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            d = json.loads(r.read().decode("utf-8", "ignore"))
+        txt = d.get("response") or (d.get("choices", [{}])[0].get("message", {}).get("content") if d.get("choices") else "")
+        return (bool(txt) or "response" in d or "choices" in d), "generated ok"
+    except urllib.error.HTTPError as e:  # noqa
+        detail = e.read().decode("utf-8", "ignore")[:160] if hasattr(e, "read") else str(e)
+        return False, f"HTTP {e.code}: {detail}"
+    except Exception as e:  # noqa
+        return False, f"{type(e).__name__}: {e}"
+
+
 def _conv():
     try:
         with open(os.path.join(REPO, "data/prompt_brain/convergence_status.json")) as f:
@@ -61,22 +100,33 @@ def _conv():
 def main():
     ollama_ok, ollama_body = _probe(OLLAMA)
     lm_ok, lm_body = _probe(LMSTUDIO)
-    backend = None
+    kind = base = None
     models = []
     if ollama_ok:
-        backend, models = "ollama:11434", _models(ollama_body)
+        kind, base, models = "ollama", OLLAMA_BASE, _models(ollama_body)
     elif lm_ok:
-        backend, models = "lmstudio:1234", _models(lm_body)
+        kind, base, models = "lmstudio", LMSTUDIO_BASE, _models(lm_body)
+    backend = f"{kind}:{base}" if kind else None
 
-    backend_up = backend is not None
+    backend_up = kind is not None
     has_model = bool(models)
+    pref = os.environ.get("BRAIN_M1_MODEL", "").strip()
+    chosen_model = pref if pref in models else (models[0] if models else None)
+
+    # Actually generate — tags listing a model whose blob is missing still 400s on /api/generate.
+    gen_ok, gen_detail = (False, "not attempted (no model)")
     if backend_up and has_model:
+        gen_ok, gen_detail = _gen_probe(kind, base, chosen_model)
+
+    if backend_up and has_model and gen_ok:
         verdict = "M1_READY"
+    elif backend_up and has_model:
+        verdict = "M1_MODEL_LOAD_FAILS"     # listed but generation fails (dangling manifest / missing blob)
     elif backend_up:
         verdict = "M1_BACKEND_UP_NO_MODEL"  # reachable but nothing to generate with
     else:
         verdict = "M1_PENDING_LOCAL_MODEL"
-    ready = backend_up and has_model  # generation-ready only with a model present
+    ready = backend_up and has_model and gen_ok  # truly ready only if generation works
 
     # Cloud/K1 truth: are OPENAI/ANTHROPIC keys set in the environment?
     openai_set = bool(os.environ.get("OPENAI_API_KEY"))
@@ -88,8 +138,10 @@ def main():
         "verdict": verdict,
         "live_brain_available": ready,
         "local_backend": backend,
+        "chosen_model": chosen_model,
+        "generation_probe": {"ok": gen_ok, "detail": gen_detail},
         "local_models_detected": models,
-        "probes": {"ollama_11434": ollama_ok, "lmstudio_1234": lm_ok},
+        "probes": {"ollama": ollama_ok, "lmstudio": lm_ok, "ollama_url": OLLAMA_BASE, "lmstudio_url": LMSTUDIO_BASE},
         "current_convergence": _conv(),
         "cloud_k1": {
             "openai_api_key_set": openai_set,
@@ -100,13 +152,15 @@ def main():
             ),
         },
         "to_flip_m0_to_m1": (
-            "A local backend is reachable WITH a model — the improver can generate live candidates now."
+            f"Live: {chosen_model} on {backend} generated successfully — the improver can produce candidates now."
             if ready
-            else (f"Ollama/LM Studio is up ({backend}) but has NO model loaded — run `ollama pull <model>` "
-                  "(e.g. llama3.1) or load a model in LM Studio, then re-run. No API key required."
-                  if backend_up
-                  else "Start Ollama (`ollama serve` + `ollama pull <model>`) or LM Studio (load a model on :1234), "
-                       "then re-run. No API key required.")
+            else (f"Model '{chosen_model}' is LISTED but generation FAILED ({gen_detail}). Likely a dangling "
+                  "manifest / missing blob or the served OLLAMA_MODELS store is incomplete. Re-pull into the served "
+                  "store (`OLLAMA_MODELS=<served path> ollama pull <model>`) or point OLLAMA_MODELS at a complete store."
+                  if verdict == "M1_MODEL_LOAD_FAILS"
+                  else (f"Backend up ({backend}) but no models — pull one into the served store, then re-run."
+                        if backend_up
+                        else "Start Ollama (`ollama serve` + `ollama pull <model>`) or LM Studio on :1234, then re-run. No API key required."))
         ),
     }
     print(json.dumps(result, indent=2))
