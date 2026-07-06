@@ -2,13 +2,14 @@
   {
     "id": "K1",
     "title": "OPENAI / ANTHROPIC provisioning",
-    "status": "BLOCKED_FOUNDER_ACTION",
+    "status": "READY",
     "blocking_what": "Critic seat and Rung 2 live evaluation",
     "required_founder_action": "Founder to provide API keys and configure credentials",
     "evidence_path": "has_live_project_tracker/data/k_track_ledger.json",
-    "data_as_of": "2026-07-05T00:23:12Z",
+    "data_as_of": "2026-07-06T21:09:07.694700Z",
     "expires_at": "2026-07-06T00:23:12Z",
-    "verdict": "FAIL"
+    "verdict": "PASS",
+    "resolved_at": "2026-07-06T21:09:07.694700Z"
   },
   {
     "id": "K2",
@@ -66,5 +67,14 @@
     "data_as_of": "2026-07-05T00:23:12Z",
     "expires_at": "2026-07-06T00:23:12Z",
     "verdict": "FAIL"
+  },
+  {
+    "id": "K2b",
+    "title": "Google Play Developer account",
+    "status": "IN_PROGRESS_FOUNDER_VERIFICATION",
+    "blocking_what": "Google Play publishing",
+    "required_founder_action": "Upload official ID for identity verification (~few days)",
+    "updated_at": "2026-07-06T21:33:51.835065Z",
+    "note": "Google Play account STARTED (hochster \u00b7 ID 6925662977814898781). PENDING founder identity verification (upload official ID, ~few days) + Android device + phone verification. Cannot publish until verified."
   }
 ]

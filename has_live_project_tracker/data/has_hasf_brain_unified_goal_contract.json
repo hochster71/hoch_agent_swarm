@@ -108,6 +108,7 @@
   ],
   "founder_gate_status": {
     "K2": "CLEARED 2026-07-06 \u00b7 Apple Developer active (renews 2027-07-06)",
-    "K1": "CLEARED 2026-07-06 \u00b7 OpenAI/Anthropic keys provisioned to .env (600, gitignored, untracked)"
+    "K1": "CLEARED 2026-07-06 \u00b7 OpenAI/Anthropic keys provisioned to .env (600, gitignored, untracked)",
+    "GOOGLE_PLAY": "STARTED 2026-07-06 \u00b7 identity verification PENDING (founder, ~days)"
   }
 }
