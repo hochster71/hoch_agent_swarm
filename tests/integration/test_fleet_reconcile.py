@@ -120,6 +120,20 @@ def test_all_actions_are_inert_T3():
         assert a["tier"] == "T3"
 
 
+def test_evidence_tags_write_vs_read():
+    scripts = {
+        "scripts/writer.sh": "python3 -m backend.writer\n",
+        "backend/writer.py": "Path('tasks/phase50_tasks.json').write_text(x)\n",
+        "scripts/reader.sh": "python3 -m backend.reader\n",
+        "backend/reader.py": "data = json.load(open('tasks/phase50_tasks.json'))\n",
+    }
+    rd = lambda f: scripts.get(f)
+    w = R.evidence_for_path(["/bin/bash", "scripts/writer.sh"], rd, "tasks/phase50_tasks.json")
+    r = R.evidence_for_path(["/bin/bash", "scripts/reader.sh"], rd, "tasks/phase50_tasks.json")
+    assert any(h["kind"] == "WRITE" for h in w)          # writer flagged WRITE
+    assert all(h["kind"] == "read/ref" for h in r)        # reader never flagged WRITE (open(...) w/o mode)
+
+
 def test_live_feed_carries_fleet_reconcile_key():
     """The deck's live path reads last.fleet_reconcile — the builder must always emit the key
     (None until the reconciler has run, so the panel falls back to the static mirror, never STALE-lies)."""

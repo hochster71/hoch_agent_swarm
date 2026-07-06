@@ -173,6 +173,35 @@ def collect_writes_for_job(program_arguments: list[str], read_text) -> set[str]:
     return writes
 
 
+_WRITE_LINE = re.compile(r"write_text|json\.dump|\.dump\(|open\([^)]*['\"][wa]|>>|(?<![0-9])>\s|save\(|to_json")
+
+
+def evidence_for_path(program_arguments: list[str], read_text, target: str) -> list[dict]:
+    """For a contested path, return every line in a job's reachable scripts that mentions it, tagged
+    WRITE vs read/ref. Turns the conservative co-write flag into inspectable evidence so the operator
+    can tell a real race from a read-one/write-other pair before approving a T3 stop."""
+    base = target.rstrip("/").split("/")[-1]
+    seen: set[str] = set()
+    queue = list(entry_scripts(program_arguments))
+    hits: list[dict] = []
+    while queue:
+        f = queue.pop()
+        if f in seen:
+            continue
+        seen.add(f)
+        txt = read_text(f)
+        if not txt:
+            continue
+        for i, line in enumerate(txt.splitlines(), 1):
+            if base in line:
+                kind = "WRITE" if _WRITE_LINE.search(line) else "read/ref"
+                hits.append({"file": f, "line": i, "kind": kind, "text": line.strip()[:140]})
+        for r in referenced_files(txt):
+            if r not in seen:
+                queue.append(r)
+    return hits
+
+
 def detect_contention(job_writes: dict[str, set[str]]) -> dict[str, list[str]]:
     """Invert job->files into file->jobs, keeping only files written by 2+ distinct jobs."""
     by_file: dict[str, set[str]] = {}
@@ -338,8 +367,46 @@ def reconcile(source_jobs: list[dict] | None = None, source_note: str = "live la
     return out
 
 
+def explain(target: str) -> int:
+    """Show, per writer of a contested file, the exact file+line evidence (WRITE vs read/ref) so the
+    operator can judge a real race before approving a T3 stop. Reads the prior reconcile output for the
+    writer list, then re-resolves each writer's scripts on disk."""
+    if not OUT.exists():
+        print(f"no {OUT.relative_to(ROOT)} — run the reconciler first.")
+        return 1
+    prior = json.loads(OUT.read_text())
+    writers = prior.get("contested_files", {}).get(target)
+    if not writers:
+        print(f"'{target}' is not in the current contested set. Contested files: "
+              f"{', '.join(prior.get('contested_files', {})) or '(none)'}")
+        return 1
+    print(f"EVIDENCE for {target} (WRITE = matched a write-call on the same line):")
+    for lb in writers:
+        plist = _find_plist(lb)
+        if not plist:
+            print(f"\n  {lb}: plist unresolved"); continue
+        try:
+            pa = plistlib.loads(plist.read_bytes()).get("ProgramArguments", [])
+        except Exception:
+            print(f"\n  {lb}: plist unreadable"); continue
+        ev = evidence_for_path(pa, _repo_read_text, target)
+        writes = [h for h in ev if h["kind"] == "WRITE"]
+        print(f"\n  {lb}  — {len(writes)} WRITE line(s), {len(ev)-len(writes)} read/ref")
+        for h in ev[:8]:
+            print(f"    [{h['kind']:8}] {h['file']}:{h['line']}  {h['text']}")
+    print("\n  If exactly one writer shows WRITE lines, the other only reads — likely NOT a race; keep\n"
+          "  the writer. If both WRITE, it's a real last-writer-wins race — keep one, stop the other (T3).")
+    return 0
+
+
 def main() -> int:
     import sys
+    if "--explain" in sys.argv:
+        i = sys.argv.index("--explain")
+        tgt = sys.argv[i + 1] if i + 1 < len(sys.argv) else ""
+        if not tgt:
+            print("usage: --explain <contested/file/path.json>"); return 1
+        return explain(tgt)
     if "--from-audit" in sys.argv:
         ap = ROOT / "data" / "prompt_brain" / "fleet_audit.json"
         if not ap.exists():
