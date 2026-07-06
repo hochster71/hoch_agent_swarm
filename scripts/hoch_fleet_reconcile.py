@@ -182,42 +182,46 @@ def detect_contention(job_writes: dict[str, set[str]]) -> dict[str, list[str]]:
     return {f: sorted(js) for f, js in by_file.items() if len(js) > 1}
 
 
-def _pick_owner(labels: list[str], cls: str) -> str:
-    for pref in CANONICAL_PREF.get(cls, []):
-        for lb in labels:
-            if lb == pref or lb.startswith(pref):
-                return lb
-    return sorted(labels)[0]  # deterministic fallback; operator can override
+def _pick_owner(labels: list[str], job_class: dict[str, str]) -> str:
+    """Choose the one writer allowed to keep writing a contested file. Prefers a class-canonical
+    runtime (CANONICAL_PREF) among the writers — checked across EACH writer's own class, so it works
+    even when the competing writers span different classes. Deterministic fallback: sorted-first."""
+    best, best_rank = None, 1 << 30
+    for lb in sorted(labels):
+        prefs = CANONICAL_PREF.get(job_class.get(lb, "OTHER"), [])
+        rank = next((i for i, p in enumerate(prefs) if lb == p or lb.startswith(p)), 1 << 29)
+        if rank < best_rank:
+            best, best_rank = lb, rank
+    return best if best is not None else sorted(labels)[0]
 
 
 def recommend(job_class: dict[str, str], contention: dict[str, list[str]]) -> dict:
-    """Per class with contention, choose one owner and mark peers as T3 bootout candidates (inert)."""
-    class_writers: dict[str, set[str]] = {}
-    for _f, labels in contention.items():
-        for lb in labels:
-            class_writers.setdefault(job_class.get(lb, "OTHER"), set()).add(lb)
-
+    """Recommend ONE canonical owner PER CONTESTED FILE (not per class) and mark the other writers as
+    T3 bootout candidates (inert). Per-file is the correct unit: two runtimes racing on the same state
+    file are a competing loop even when they belong to different functional classes — the earlier
+    per-class grouping silently missed exactly that (e.g. an OPS/HEALTH job and a PHASE job both
+    writing tasks/phase50_tasks.json)."""
     recs, actions = [], []
-    for cls, labels in sorted(class_writers.items()):
-        labs = sorted(labels)
-        if len(labs) < 2:
-            continue
-        owner = _pick_owner(labs, cls)
-        losers = [lb for lb in labs if lb != owner]
-        contested = sorted(f for f, w in contention.items() if set(w) & set(labs))
+    for f, writers in sorted(contention.items()):
+        w = sorted(writers)
+        owner = _pick_owner(w, job_class)
+        losers = [lb for lb in w if lb != owner]
         recs.append({
-            "class": cls,
+            "contested_file": f,
+            "contested_files": [f],                       # array kept for the deck panel's renderer
+            "writers": w,
+            "writer_classes": {lb: job_class.get(lb, "OTHER") for lb in w},
+            "class": job_class.get(owner, "OTHER"),
             "canonical_owner": owner,
             "bootout_candidates": losers,
-            "contested_files": contested,
-            "reason": "Multiple runtimes in this class write the same state file(s) — "
-                      "keep one writer to end last-writer-wins races.",
+            "reason": f"{len(w)} runtimes write {f} — keep one writer to end last-writer-wins races.",
         })
         for lb in losers:
             actions.append({
                 "op": "launchctl bootout  # DO NOT RUN AUTOMATICALLY",
                 "target_label": lb,
                 "keeps": owner,
+                "contested_file": f,
                 "tier": "T3",
                 "status": "PENDING_OPERATOR_APPROVAL_T3",
                 "executed": False,
@@ -355,10 +359,12 @@ def main() -> int:
     if not r["recommendations"]:
         print("  no same-file contention detected by the heuristic — nothing to reconcile.")
     for rec in r["recommendations"]:
-        print(f"\n  [{rec['class']}] keep -> {rec['canonical_owner']}")
-        print(f"    bootout candidates (T3, NOT run): {', '.join(rec['bootout_candidates'])}")
-        for f in rec["contested_files"]:
-            print(f"    contested: {f}")
+        print("\n  contested: " + rec["contested_file"])
+        wc = rec.get("writer_classes", {})
+        writers = ", ".join("{} [{}]".format(w, wc.get(w, "?")) for w in rec["writers"])
+        print("    writers: " + writers)
+        print("    keep -> " + rec["canonical_owner"])
+        print("    bootout candidates (T3, NOT run): " + ", ".join(rec["bootout_candidates"]))
     print(f"\n  {len(r['actions'])} stop action(s) staged as PENDING_OPERATOR_APPROVAL_T3 "
           f"(executed=false). Nothing was stopped.")
     print(f"  wrote {OUT.relative_to(ROOT)}")

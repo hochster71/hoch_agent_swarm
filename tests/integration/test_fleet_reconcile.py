@@ -94,6 +94,21 @@ def test_recommendation_prefers_canonical_owner():
     assert rec["bootout_candidates"] == ["com.hoch.brain.cadence"]
 
 
+def test_recommendation_handles_cross_class_contention():
+    # regression: the real Mac run found tasks/phase50_tasks.json written by an OPS/HEALTH job AND a
+    # PHASE job — different classes. Per-class grouping missed it; per-file must catch it.
+    job_class = {"com.hoch.phase60.neo.reconciler": "OPS/HEALTH",
+                 "com.hoch.phase63.research.traces": "PHASE (build)"}
+    contention = {"tasks/phase50_tasks.json": ["com.hoch.phase60.neo.reconciler", "com.hoch.phase63.research.traces"]}
+    plan = R.recommend(job_class, contention)
+    assert len(plan["recommendations"]) == 1
+    rec = plan["recommendations"][0]
+    assert rec["contested_file"] == "tasks/phase50_tasks.json"
+    assert set(rec["writers"]) == set(contention["tasks/phase50_tasks.json"])
+    assert len(plan["actions"]) == 1  # one loser -> one staged T3 stop
+    assert plan["actions"][0]["executed"] is False
+
+
 def test_all_actions_are_inert_T3():
     job_class = {"com.hoch.daemon": "EXECUTOR/CADENCE", "com.hoch.brain.cadence": "EXECUTOR/CADENCE"}
     contention = {"data/prompt_brain/champion_registry.json": ["com.hoch.brain.cadence", "com.hoch.daemon"]}

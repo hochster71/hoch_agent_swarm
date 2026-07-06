@@ -154,9 +154,9 @@ function renderFleet(){
     <div class="kv" style="color:var(--dim)">not yet run — <code>python3 scripts/hoch_fleet_reconcile.py</code> on the Mac (needs launchctl; no fleet fabricated)</div></div>`; }
   const recs=f.recommendations||[], contested=Object.keys(f.contested_files||{}), acts=f.actions||[];
   const rows = recs.length ? recs.map(r=>`<div class="kv">
-      <span style="color:var(--indigo)">[${esc(r.class)}]</span>
+      <span style="color:var(--indigo)">${esc(r.contested_file||(r.contested_files||[])[0]||'')}</span>
       <span>keep <b style="color:var(--green)">${esc(r.canonical_owner)}</b></span></div>
-      <div class="tl" style="color:var(--dim);margin:2px 0 8px">stop (T3, not run): ${(r.bootout_candidates||[]).map(esc).join(', ')||'—'} · contested: ${(r.contested_files||[]).map(esc).join(', ')||'—'}</div>`).join('')
+      <div class="tl" style="color:var(--dim);margin:2px 0 8px">writers: ${(r.writers||[]).map(esc).join(', ')} · stop (T3, not run): ${(r.bootout_candidates||[]).map(esc).join(', ')||'—'}</div>`).join('')
     : `<div class="kv" style="color:var(--dim)">no same-file contention detected by the heuristic</div>`;
   const inert = f.safety && f.safety.all_actions_pending_operator_T3;
   const unres = f.unresolved||0;
