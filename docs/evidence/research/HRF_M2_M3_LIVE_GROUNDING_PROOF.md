@@ -41,9 +41,10 @@ render+judge poles, HRF's grounding+verification is free and working today.
 
 ## Honest scope
 
-- Verification covers **DOIs (Crossref)** and **PMIDs (NCBI)** — excellent for biomedical/life-science
-  domains (Longevity, Neurotech, SynBio). Physics/AI/space agendas (Fusion, AI Safety, Space) live on
-  arXiv and need an arXiv/DOI resolver next — a known gap, not a silent one.
+- Verification covers **DOIs (Crossref)**, **PMIDs (NCBI)**, and **arXiv IDs (arXiv API)** — biomedical
+  domains (Longevity, Neurotech, SynBio) AND physics/AI/space domains (Fusion, AI Safety, Space).
+  Live-proven: arXiv `1706.03762` ("Attention Is All You Need") VERIFIED, fake `2999.99999` NOT_FOUND,
+  mixed DOI+PMID+arXiv batch with one fake → BLOCK. The earlier arXiv gap is now CLOSED.
 - This proves **agendas can be grounded and citations verified**. It does NOT execute studies or
   establish that any finding is true — that is M4 (execution) and M5 (novelty/reproducibility judge).
 

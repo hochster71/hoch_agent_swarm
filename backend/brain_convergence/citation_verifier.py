@@ -65,11 +65,35 @@ def verify_pmid(pmid: str) -> Dict[str, Any]:
         return {"status": "UNCHECKABLE", "reason": str(e), "id": pmid}
 
 
+def verify_arxiv(arxiv_id: str) -> Dict[str, Any]:
+    """Resolve an arXiv ID against the arXiv API (free, keyless). Covers AI/physics/space agendas
+    that live on arXiv rather than in Crossref/PubMed."""
+    aid = re.sub(r"^arxiv:", "", arxiv_id.strip(), flags=re.I)
+    if not _ARXIV_RE.match(arxiv_id.strip()):
+        return {"status": "NOT_FOUND", "reason": "malformed arXiv id", "id": aid}
+    try:
+        req = urllib.request.Request(
+            f"http://export.arxiv.org/api/query?id_list={urllib.parse.quote(aid)}&max_results=1",
+            headers=_UA)
+        with urllib.request.urlopen(req, timeout=8.0) as r:
+            body = r.read().decode()
+        # A hit has an <entry> with a real <title>; arXiv returns an <entry> titled "Error" for bad ids.
+        m = re.search(r"<entry>.*?<title>(.*?)</title>", body, re.S)
+        title = (m.group(1).strip() if m else "")
+        if title and title.lower() != "error":
+            return {"status": "VERIFIED", "id": aid, "title": re.sub(r"\s+", " ", title)}
+        return {"status": "NOT_FOUND", "reason": "arXiv id not found", "id": aid}
+    except Exception as e:
+        return {"status": "UNCHECKABLE", "reason": str(e), "id": aid}
+
+
 def verify_citation(cit: str) -> Dict[str, Any]:
-    """Verify one citation token (DOI or PMID). Anything not VERIFIED is to be treated as BLOCKED."""
+    """Verify one citation token (DOI, PMID, or arXiv id). Anything not VERIFIED => treat as BLOCKED."""
     c = cit.strip()
     if _DOI_RE.match(c.replace("https://doi.org/", "").replace("doi:", "").strip()):
         return {**verify_doi(c), "kind": "doi"}
+    if _ARXIV_RE.match(c):
+        return {**verify_arxiv(c), "kind": "arxiv"}
     if _PMID_RE.match(c):
         return {**verify_pmid(c), "kind": "pmid"}
     return {"status": "NOT_FOUND", "reason": "unrecognized citation format", "id": c}

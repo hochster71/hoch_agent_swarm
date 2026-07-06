@@ -65,6 +65,18 @@ def test_citation_verifier_malformed_is_not_found_offline():
     from backend.brain_convergence import citation_verifier as CV
     assert CV.verify_citation("not-a-real-id")["status"] == "NOT_FOUND"
     assert CV.verify_citation("10.bad")["status"] == "NOT_FOUND"
+    assert CV.verify_arxiv("not-an-arxiv-id")["status"] == "NOT_FOUND"
+
+
+def test_citation_verifier_routes_by_id_type(monkeypatch):
+    # a dotted arXiv id routes to the arXiv resolver; a bare number to PMID; a 10.x to DOI
+    from backend.brain_convergence import citation_verifier as CV
+    monkeypatch.setattr(CV, "verify_arxiv", lambda x: {"status": "VERIFIED", "id": x})
+    monkeypatch.setattr(CV, "verify_pmid", lambda x: {"status": "VERIFIED", "id": x})
+    monkeypatch.setattr(CV, "verify_doi", lambda x: {"status": "VERIFIED", "id": x})
+    assert CV.verify_citation("2312.00752")["kind"] == "arxiv"
+    assert CV.verify_citation("31542391")["kind"] == "pmid"
+    assert CV.verify_citation("10.1016/j.ebiom.2019.08.069")["kind"] == "doi"
 
 
 def test_citation_gate_fail_closed(monkeypatch):
