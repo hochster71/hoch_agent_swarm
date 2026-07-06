@@ -69,6 +69,33 @@ def retrieve(question: str, k: int = 6) -> List[Dict[str, Any]]:
             for s, g in scored[:k]]
 
 
+_META = ("next", "weakest", "strongest", "gap", "improve", "priority", "prioritize", "work on",
+         "converge", "converged", "should", "status", "state", "champion", "thin", "lever", "plan",
+         "recommend", "advance", "goal", "ship", "revenue")
+_FAC_ALIASES = {"hasf": "software", "software": "software", "app": "software",
+                "hmf": "music", "music": "music",
+                "hrf": "research", "research": "research"}
+
+
+def _factory_in(question: str):
+    ql = (question or "").lower()
+    for alias, dom in _FAC_ALIASES.items():
+        if re.search(rf"\b{alias}\b", ql):
+            return dom
+    return None
+
+
+def _orch_portfolio() -> Dict[str, Any]:
+    b = _load(DATA / "orchestrator_brief.json", {})
+    by = {}
+    for a in b.get("portfolio", []):
+        by[a.get("domain")] = {"code": a.get("code"), "action": a.get("action"),
+                               "detail": a.get("detail"), "tier": a.get("tier"),
+                               "state": a.get("state"), "thin": a.get("thin"),
+                               "mean": a.get("mean"), "goal": a.get("goal")}
+    return {"summary": b.get("summary"), "next_move": b.get("next_move"), "by_domain": by}
+
+
 def _state_context() -> Dict[str, Any]:
     facs = []
     for f in list_factories():
@@ -78,17 +105,43 @@ def _state_context() -> Dict[str, Any]:
                      "mean": conv.get("mean_score"), "champions": len(reg.get("champions", {}))})
     return {"factories": facs,
             "gaps": _load(DATA / "gap_analysis.json", {}).get("by_constraint", {}),
-            "orchestrator": _load(DATA / "orchestrator_brief.json", {}).get("summary")}
+            "orchestrator": _orch_portfolio()}
 
 
 def ask(question: str, k: int = 6) -> Dict[str, Any]:
+    ql = (question or "").lower()
+    is_meta = any(w in ql for w in _META) or _factory_in(question) is not None
+    dom = _factory_in(question)
     hits = retrieve(question, k)
+    # For factory-scoped questions, prefer that factory's own genes.
+    if dom:
+        scoped = [h for h in hits if _FAC_ALIASES.get((h["code"] or "").lower()) == dom]
+        hits = (scoped + [h for h in hits if h not in scoped])[:k]
     state = _state_context()
     sources = [h["gene_id"] for h in hits]
 
-    # Build grounded context.
+    # For meta/orchestration questions ("what should X do next", "which is weakest", "the gap"),
+    # the ANSWER lives in the orchestrator plan + gaps, not gene text — lead the context with it.
+    lead = ""
+    orch = state["orchestrator"]
+    if is_meta:
+        if dom and dom in orch["by_domain"]:
+            a = orch["by_domain"][dom]
+            lead = (f"AI MICHAEL PLAN for {a['code']} ({dom}): next action = {a['action']} — "
+                    f"{a['detail']} (tier {a['tier']}). state={a['state']}, thin_classes={a['thin']}, "
+                    f"mean={a['mean']}, GOAL={a['goal']}.\n")
+        elif orch.get("next_move"):
+            nm = orch["next_move"]
+            lead = (f"AI MICHAEL next move across the portfolio: [{nm.get('code')}] "
+                    f"{nm.get('action')} — {nm.get('detail')}. {orch.get('summary','')}\n")
+
     ctx_lines = [f"[{h['code']}·{h['task_class']}] {h['title']}: {h['snippet']}" for h in hits]
-    ctx = "FACTORY STATE: " + json.dumps(state) + "\n\nRELEVANT GENES:\n" + "\n".join(ctx_lines)
+    caveat = ("IMPORTANT: each factory's mean score uses its OWN rubric (software=discipline, "
+              "music=recipe-readiness, research=agenda-rigor) — mean scores are NOT comparable "
+              "across factories. Judge 'weakest'/'strongest' by state and thin-class gaps and "
+              "champions, and by AI Michael's plan — never by comparing raw means across factories.")
+    ctx = (lead + "\n" + caveat + "\n\nFACTORY STATE: " + json.dumps(state) +
+           "\n\nRELEVANT GENES:\n" + "\n".join(ctx_lines))
 
     try:
         from backend.brain_convergence.local_model_bridge import (
@@ -104,9 +157,13 @@ def ask(question: str, k: int = 6) -> Dict[str, Any]:
                         "(cannot hallucinate). Start Ollama for a written answer."}
 
     prompt = (
-        "You are the HOCH BRAIN answering a question about YOURSELF. Answer ONLY from the context "
-        "below. Cite the factory codes / gene titles you used. If the context does not contain the "
-        "answer, reply exactly: 'Insufficient evidence in the BRAIN.' Be concise and concrete.\n\n"
+        "You are the HOCH BRAIN answering a question about YOURSELF, using ONLY the context below. "
+        "Rules: (1) If the context — including the AI MICHAEL PLAN and FACTORY STATE — contains the "
+        "answer, give it directly and concisely; do NOT say 'insufficient evidence' when the plan or "
+        "state answers the question. (2) Only if nothing relevant is present, reply exactly: "
+        "'Insufficient evidence in the BRAIN.' (3) NEVER compare mean scores across factories — they "
+        "use different rubrics; rank by state, thin-class gaps, and the AI Michael plan instead. "
+        "(4) Cite the factory codes / gene titles you used. Answer in 2-4 sentences.\n\n"
         f"CONTEXT:\n{ctx}\n\nQUESTION: {question}\n\nANSWER:"
     )
     try:
