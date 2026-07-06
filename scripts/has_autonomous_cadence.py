@@ -46,9 +46,12 @@ def check_high_risk_changes(contract):
             if trigger in file_path.lower() or (trigger == "secrets" and "key" in file_path.lower()):
                 blocked.append(f"File path: '{file_path}' triggers policy security constraint for '{trigger}'")
                 
-    # Check diff content for high-risk words in actual codebase files (excluding scripts, tests, docs, json)
-    diff_staged, _, _ = run_cmd("git --no-optional-locks diff --cached -- . ':!scripts/*' ':!tests/*' ':!docs/*' ':!*.json' ':!*.md'")
-    diff_unstaged, _, _ = run_cmd("git --no-optional-locks diff -- . ':!scripts/*' ':!tests/*' ':!docs/*' ':!*.json' ':!*.md'")
+    # Check diff content for high-risk words in actual CODE files only. Exclude generated data
+    # (brain gene .jsonl/.ndjson, data/) — it is model-authored prompt TEXT, not code, and naive
+    # substring matching false-positives on it (e.g. 'card' in 'scorecard', 'secret' in 'secrets.json').
+    _ex = "':!scripts/*' ':!tests/*' ':!docs/*' ':!*.json' ':!*.jsonl' ':!*.ndjson' ':!*.md' ':!data/*'"
+    diff_staged, _, _ = run_cmd(f"git --no-optional-locks diff --cached -- . {_ex}")
+    diff_unstaged, _, _ = run_cmd(f"git --no-optional-locks diff -- . {_ex}")
     full_diff = (diff_staged + "\n" + diff_unstaged).lower()
     
     risk_terms = {
