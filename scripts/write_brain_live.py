@@ -104,6 +104,12 @@ def build_live_state():
         "global_converged": meta.get("global_converged", False),
         "gaps": gap_summary,
         "factories": _factories_summary(),
+        "orchestrator": (lambda b: {
+            "next_move": b.get("next_move"),
+            "autonomous_now": b.get("autonomous_now", []),
+            "needs_operator": b.get("needs_operator", []),
+            "summary": b.get("summary"),
+        } if b else {})(_load(DATA / "orchestrator_brief.json", {})),
         "history": [{"g": h.get("generation"), "m": h.get("mean_score"), "gain": h.get("gain")} for h in hist],
         "recent_improvements": list(reversed(improvements))[:8],
         "top_champions": sorted(

@@ -1,0 +1,100 @@
+{
+  "schema": "hoch-founder-orchestrator-v1",
+  "persona": "AI Michael \u2014 all-in-one CEO / founder / builder / SME",
+  "at": "2026-07-06T01:22:13.535527Z",
+  "doctrine": [
+    "no fake-green \u2014 a factory reads only what it earned",
+    "evidence before any GO; fail-closed on the unproven",
+    "$0-first \u2014 free local/mechanical lever before any spend",
+    "highest-leverage next \u2014 unblock the binding constraint",
+    "moonshot ambition \u2014 always push toward the GOAL",
+    "T3 (money/publish/deploy/secrets) needs the operator"
+  ],
+  "portfolio": [
+    {
+      "code": "HASF",
+      "domain": "software",
+      "goal": "ship a revenue product while the brain keeps improving",
+      "state": "PLATEAUING",
+      "genes": 479,
+      "champions": 26,
+      "thin": 0,
+      "mean": 68.846,
+      "action": "SHIP",
+      "detail": "point HASF at its first real revenue product",
+      "cost": "strategic",
+      "tier": "ESCALATE",
+      "answers": "GO on the next milestone?",
+      "leverage": 5
+    },
+    {
+      "code": "HMF",
+      "domain": "music",
+      "goal": "original, judged, publishable music across every genre",
+      "state": "SELECTED",
+      "genes": 10,
+      "champions": 8,
+      "thin": 8,
+      "mean": 93.0,
+      "action": "EXPAND",
+      "detail": "grow 8 thin classes (+14 genes) via the $0 local model",
+      "cost": "$0",
+      "tier": "AUTONOMOUS",
+      "answers": "What's the gap?",
+      "leverage": 14
+    },
+    {
+      "code": "HRF",
+      "domain": "research",
+      "goal": "novel, citation-verified, reproducible research across grand challenges",
+      "state": "SELECTED",
+      "genes": 8,
+      "champions": 7,
+      "thin": 7,
+      "mean": 96.0,
+      "action": "EXPAND",
+      "detail": "grow 7 thin classes (+13 genes) via the $0 local model",
+      "cost": "$0",
+      "tier": "AUTONOMOUS",
+      "answers": "What's the gap?",
+      "leverage": 14
+    }
+  ],
+  "next_move": {
+    "code": "HMF",
+    "domain": "music",
+    "goal": "original, judged, publishable music across every genre",
+    "state": "SELECTED",
+    "genes": 10,
+    "champions": 8,
+    "thin": 8,
+    "mean": 93.0,
+    "action": "EXPAND",
+    "detail": "grow 8 thin classes (+14 genes) via the $0 local model",
+    "cost": "$0",
+    "tier": "AUTONOMOUS",
+    "answers": "What's the gap?",
+    "leverage": 14
+  },
+  "autonomous_now": [
+    {
+      "code": "HMF",
+      "action": "EXPAND",
+      "detail": "grow 8 thin classes (+14 genes) via the $0 local model"
+    },
+    {
+      "code": "HRF",
+      "action": "EXPAND",
+      "detail": "grow 7 thin classes (+13 genes) via the $0 local model"
+    }
+  ],
+  "needs_operator": [
+    {
+      "code": "HASF",
+      "action": "SHIP",
+      "detail": "point HASF at its first real revenue product",
+      "why": "strategic \u00b7 GO on the next milestone?"
+    }
+  ],
+  "summary": "AI Michael: 2 action(s) I can take now at $0; 1 need your founder call (T3/cost)."
+}

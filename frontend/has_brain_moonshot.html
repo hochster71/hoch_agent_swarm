@@ -245,6 +245,17 @@ function render(){
       <span>${new Date().toLocaleTimeString()}</span></div>
   </div>
 
+  ${(()=>{const o=d.orchestrator||{},nm=o.next_move,need=o.needs_operator||[];
+    if(!o.summary&&!nm) return '';
+    return `<div style="margin-top:16px;border:1px solid #2b2550;border-radius:14px;background:linear-gradient(90deg,#12122e,#0d0d1c);padding:14px 18px;display:flex;gap:18px;align-items:center;flex-wrap:wrap">
+      <div style="font-weight:800;letter-spacing:.1em;color:#a99bff;white-space:nowrap">◆ AI MICHAEL</div>
+      <div style="flex:1;min-width:240px;font-size:12px;color:var(--mut);line-height:1.7">
+        <div>${esc(o.summary||'orchestrating the portfolio…')}</div>
+        ${nm?`<div style="color:#ececf6;margin-top:3px">NEXT <span style="color:var(--green)">($0, autonomous)</span> → <b>[${esc(nm.code)}] ${esc(nm.action)}</b> — ${esc(nm.detail)}</div>`:''}
+        ${need.length?`<div style="color:var(--amber);margin-top:3px">NEEDS YOU → ${need.map(n=>`<b>[${esc(n.code)}] ${esc(n.action)}</b> <span style="color:var(--dim)">(${esc(n.why||'')})</span>`).join(' · ')}</div>`:''}
+      </div>
+    </div>`;})()}
+
   <div class="deck">
     <!-- LEFT: governor + gaps -->
     <div class="col">

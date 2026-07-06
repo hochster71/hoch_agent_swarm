@@ -11,8 +11,8 @@
     "total_genes": 479,
     "top5_share": 0.603,
     "mean_champion_score": 68.846,
-    "generation": 15,
-    "state": "IMPROVING"
+    "generation": 16,
+    "state": "PLATEAUING"
   },
   "by_constraint": {
     "SATURATED": 10,

@@ -7,7 +7,7 @@
     <key>ProgramArguments</key>
     <array>
         <string>/bin/bash</string>
-        <string>/Users/michaelhoch/hoch_agent_swarm/scripts/brain_cadence.sh</string>
+        <string>/Users/michaelhoch/hoch_agent_swarm/scripts/hoch_cadence.sh</string>
     </array>
     <key>WorkingDirectory</key>
     <string>/Users/michaelhoch/hoch_agent_swarm</string>

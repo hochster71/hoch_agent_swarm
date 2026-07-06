@@ -1,6 +1,6 @@
 # BRAIN Gap Analysis
 
-- generation: **15**  |  mean champion score: **68.846**  |  state: **IMPROVING**
+- generation: **16**  |  mean champion score: **68.846**  |  state: **PLATEAUING**
 - gene classes: **30**  |  champion classes: **26**  |  total genes: **479**
 - concentration (top-5 share of gene pool): **60.3%**
 - policy: min_pool=6, target_score=70.0
