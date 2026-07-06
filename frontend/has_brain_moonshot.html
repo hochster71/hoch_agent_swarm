@@ -32,8 +32,9 @@
   @media(max-width:1100px){.deck{grid-template-columns:1fr}}
   .col{display:flex;flex-direction:column;gap:14px;min-width:0}
 
-  .card{background:linear-gradient(180deg,#101024,#0c0c18);border:1px solid var(--line);border-radius:14px;padding:16px;position:relative;overflow:hidden}
-  .card h3{margin:0 0 4px;font-size:11px;letter-spacing:.18em;color:var(--mut);text-transform:uppercase;font-weight:600}
+  .card,.panel{background:linear-gradient(180deg,#101024,#0c0c18);border:1px solid var(--line);border-radius:14px;padding:16px;position:relative;overflow:hidden}
+  .panel{margin-top:16px}
+  .card h3,.panel h3{margin:0 0 4px;font-size:11px;letter-spacing:.18em;color:var(--mut);text-transform:uppercase;font-weight:600}
 
   /* HAS governor */
   .gov{border-color:#2b2550}
@@ -114,18 +115,18 @@
 </div>
 <script>
 const API_BASE = (location.protocol==='file:'||location.origin==='null') ? 'http://127.0.0.1:8000' : '';
-const URL = API_BASE + '/api/brain/live';
+const LIVE_URL = API_BASE + '/api/brain/live';
 const POLL = 15000;
 let last=null, ok=null, tPrev=0;
 
-const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const num=(v,d=1)=> (v==null||isNaN(v))?'—':(+v).toFixed(d);
 const stCls=s=>{s=(s||'').toUpperCase();return (s==='IMPROVING'||s==='CONVERGED')?'pi':(s==='SELECTED')?'pc':(s==='SEEDED')?'pd':'ps';};
 const stCol=s=>{s=(s||'').toUpperCase();return (s==='IMPROVING'||s==='CONVERGED')?'#34d399':(s==='SELECTED')?'#e0b341':(s==='SEEDED')?'#8b8ba7':'#7c6cff';};
 
 async function load(){
   // Primary: live endpoint. Fallback: static file the cadence writes each tick. STALE only if BOTH fail.
-  try{ const r=await fetch(URL,{cache:'no-store'}); if(!r.ok) throw new Error('HTTP '+r.status);
+  try{ const r=await fetch(LIVE_URL,{cache:'no-store'}); if(!r.ok) throw new Error('HTTP '+r.status);
        last=await r.json(); ok=true; }
   catch(e){
     try{ const r2=await fetch(API_BASE+'/data/brain_live.json?_='+Date.now(),{cache:'no-store'});
@@ -267,7 +268,7 @@ function facCard(f, history){
       onmousemove="facTip(event,'${esc(f.code)}')" onmouseleave="hideTip()"
       onclick="sendPrompt&&sendPrompt('Show ${esc(f.code)} champions and gaps')">
     <div class="fc-top"><span class="code">${esc(f.code)}</span><span class="dom">${esc(f.title.replace('Hoch ','').replace(' Factory',''))}</span></div>
-    <div class="nums"><b>${f.genes}</b> genes · <b>${f.champions}</b> champ · ${mean}</div>
+    <div class="nums"><b>${esc(f.genes)}</b> genes · <b>${esc(f.champions)}</b> champ · ${mean}</div>
     ${spk}
     <span class="pill ${cls}"><i></i>${esc((f.state||'—').toUpperCase())}</span>
   </div>`;
@@ -335,8 +336,8 @@ function brainTip(e){
   if(!fams.length){ showTip('<div class="tt">BRAIN</div><div class="tl"><span>NIST map</span><b>computing…</b></div>', e.clientX,e.clientY); return; }
   const covered=fams.filter(f=>f.c), unc=fams.filter(f=>!f.c).map(f=>f.f);
   const top=covered.slice(0,8).map(f=>{
-    const sw=(f.sw!=null)?` <span style="color:#34d399">·${f.sw}%</span>`:'';
-    return `<div class="tl"><span>${f.f} ${esc(f.n).slice(0,26)}</span><b>${f.g}${sw}</b></div>`;
+    const sw=(f.sw!=null)?` <span style="color:#34d399">·${esc(f.sw)}%</span>`:'';
+    return `<div class="tl"><span>${esc(f.f)} ${esc(f.n).slice(0,26)}</span><b>${esc(f.g)}${sw}</b></div>`;
   }).join('');
   showTip(`<div class="tt">BRAIN · arteries = NIST 800-53 Rev 5</div>
     <div class="tl"><span>control families covered</span><b>${n.covered}/${n.total} (${n.coverage_pct}%)</b></div>
@@ -371,11 +372,11 @@ function render(){
   <div class="top">
     <div>
       <h1>HOCH<span class="x">·</span>BRAIN Command Deck</h1>
-      <div class="sub">command &amp; control ↔ self-improving core ↔ ${facs.length} product factories · gen ${d.generation||0} · ${esc(d.state||'')}</div>
+      <div class="sub">command &amp; control ↔ self-improving core ↔ ${facs.length} product factories · gen ${esc(d.generation||0)} · ${esc(d.state||'')}</div>
     </div>
     <div class="status ${conn}"><span><span class="dot"></span>${connTxt}</span>
       <span>lever <b class="lever" style="color:${lever==='IMPROVER_OFFLINE'?'var(--amber)':'var(--green)'}">${lever||'—'}</b></span>
-      <span>${new Date().toLocaleTimeString()}</span></div>
+      <span id="clock">${new Date().toLocaleTimeString()}</span></div>
   </div>
 
   ${(()=>{const o=d.orchestrator||{},nm=o.next_move,need=o.needs_operator||[];
@@ -429,7 +430,7 @@ function render(){
   ${renderFleet()}
 
   <div class="ledger">EVIDENCE LEDGER · RELAY MESH — <a href="http://100.87.18.15:3012" target="_blank" rel="noopener" style="color:var(--indigo)">hoch-relay-001</a> · hash + timestamp every claim · no green without proof</div>
-  <div class="foot">freshness computed live from data ts (not a static claim) · poll ${POLL/1000}s · source <a href="${URL}">${URL}</a> ·
+  <div class="foot">freshness computed live from data ts (not a static claim) · poll ${POLL/1000}s · source <a href="${LIVE_URL}">${LIVE_URL}</a> ·
     factories pulse ONLY at their real state — IMPROVING breathes green, SELECTED amber, SEEDED dim · upgrade path: SSE push on generation events</div>`;
 }
 
@@ -452,7 +453,9 @@ async function askBrain(){
 document.getElementById('chatgo').addEventListener('click', askBrain);
 document.getElementById('chatq').addEventListener('keydown', e=>{ if(e.key==='Enter') askBrain(); });
 
-load(); loadFleet(); setInterval(load, POLL); setInterval(loadFleet, POLL); setInterval(()=>{ if(last) render(); }, 1000);
+load(); loadFleet(); setInterval(load, POLL); setInterval(loadFleet, POLL);
+// Tick the clock only — never rebuild the whole deck (that would restart every SVG/SMIL animation each second).
+setInterval(()=>{ const c=document.getElementById('clock'); if(c) c.textContent=new Date().toLocaleTimeString(); }, 1000);
 </script>
 </body>
 </html>

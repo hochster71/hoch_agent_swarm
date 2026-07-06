@@ -146,3 +146,14 @@ logs/goal_runner/
 *.db-wal
 
 .fuse_hidden*
+
+# --- Live BRAIN daemon churn (never track; regenerated every ~2 min) ---
+# Per-generation M0 evidence snapshots — hundreds/day, not authoritative
+docs/evidence/moonshot/M0_GEN_*.md
+# Pre-edit HTML backups (local safety copies, not history)
+frontend/has_brain_moonshot.backup_*.html
+# Fleet reconciler runtime output (untracked mirrors)
+data/prompt_brain/fleet_*.json
+frontend/data/fleet_reconcile.json
+# Session e2e machine result (regenerated on every run)
+has_live_project_tracker/data/session_e2e_result.json
