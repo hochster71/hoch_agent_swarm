@@ -35,14 +35,19 @@ def expand_class(task_class: str,
                  rubric_path: Optional[str] = None,
                  existing_hashes: Optional[set] = None,
                  generate_fn: Callable = generate_candidates,
-                 judge_fn: Callable = llm_judge) -> List[Dict[str, Any]]:
+                 judge_fn: Callable = llm_judge,
+                 score_fn: Optional[Callable] = None) -> List[Dict[str, Any]]:
     """Synthesize up to n_target admitted genes for task_class. Returns list of gene dicts
-    (state=SYNTHETIC_ADMITTED). Injected generate_fn/judge_fn make the gate unit-testable."""
+    (state=SYNTHETIC_ADMITTED). Injected generate_fn/judge_fn make the gate unit-testable.
+
+    score_fn lets any Factory drive the gate with ITS OWN domain scorer (software/music/research);
+    defaults to the software discipline scorer for backward compatibility."""
+    sf = score_fn or score_prompt
     backend = backend if backend is not None else detect_local_backend()
     if not backend or not class_genes or n_target <= 0:
         return []
 
-    scored = [(score_prompt(g.get("prompt", ""), rubric_path)["overall"], g) for g in class_genes]
+    scored = [(sf(g.get("prompt", ""), rubric_path)["overall"], g) for g in class_genes]
     scored.sort(key=lambda x: x[0])
     weakest_text = scored[0][1].get("prompt", "")
     strongest_text = scored[-1][1].get("prompt", "")
@@ -65,7 +70,7 @@ def expand_class(task_class: str,
         h = _hash(text)
         if h in seen:                                   # gate (a): dedup
             continue
-        mech = score_prompt(text, rubric_path)["overall"]
+        mech = sf(text, rubric_path)["overall"]
         if mech < median:                               # gate (b): >= class median
             continue
         judged = judge_fn(backend, weakest_text, text, task_class)  # gate (c): beats weakest

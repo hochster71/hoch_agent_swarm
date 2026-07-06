@@ -60,6 +60,44 @@ def test_research_scorer_rewards_rigor_and_labels_proxy():
     assert score_prompt(vague, rubric)["overall"] == 0.0
 
 
+def test_citation_verifier_malformed_is_not_found_offline():
+    # malformed IDs are rejected WITHOUT any network call (fail-closed on garbage)
+    from backend.brain_convergence import citation_verifier as CV
+    assert CV.verify_citation("not-a-real-id")["status"] == "NOT_FOUND"
+    assert CV.verify_citation("10.bad")["status"] == "NOT_FOUND"
+
+
+def test_citation_gate_fail_closed(monkeypatch):
+    # gate PASSES only if EVERY citation VERIFIED; one NOT_FOUND blocks the batch
+    from backend.brain_convergence import citation_verifier as CV
+
+    def fake_verify(c):
+        return {"status": "VERIFIED" if c.startswith("10.1016") else "NOT_FOUND", "id": c}
+    monkeypatch.setattr(CV, "verify_citation", fake_verify)
+    assert CV.gate(["10.1016/real", "10.1016/also-real"])["decision"] == "PASS"
+    assert CV.gate(["10.1016/real", "10.9999/hallucinated"])["decision"] == "BLOCK"
+    assert CV.gate([])["decision"] == "BLOCK"          # no citations => cannot pass
+
+
+def test_gene_expansion_accepts_domain_scorer():
+    # the gate can be driven by a Factory's OWN scorer (research), not just the software one
+    from backend.brain_convergence.gene_expansion import expand_class
+    from backend.brain_convergence.research_scorer import score_prompt as research_score
+    genes = [{"prompt": "Hypothesis: X. Evidence standard: endpoint. Method: controls. Cite DOIs."},
+             {"prompt": "study stuff"}]
+
+    def gen(seed, cls, n=2, backend=None):
+        return [{"text": "Testable hypothesis: Y reduces Z vs control. Evidence standard: "
+                         "preregistered endpoint, effect size, confidence. Method: randomized "
+                         "controls, reproducible open data. Cite PubMed DOIs, verifiable. Kill "
+                         "criteria: reject if null. Ethics IRB. Impact: patients.", "source": "L"}]
+
+    out = expand_class("Longevity", genes, n_target=1, backend={"kind": "fake"},
+                       generate_fn=gen, judge_fn=lambda b, a, x, c: {"winner": "B"},
+                       score_fn=research_score)
+    assert len(out) == 1 and out[0]["state"] == "SYNTHETIC_ADMITTED"
+
+
 def test_engine_runs_on_music_domain(tmp_path):
     # the SAME gap_analysis used for software must work on music paths unchanged
     import json

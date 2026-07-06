@@ -21,7 +21,24 @@
       "content_hash": "de9ffeaa1e3787f564e721c854c9cd9e80084e35675448d6aa1b991661c3e44a",
       "state": "SEED",
       "source": "HUMAN_SEED",
-      "domain": "research"
+      "domain": "research",
+      "citations": {
+        "10.1016/j.ebiom.2019.08.069": {
+          "pmid": "31542391",
+          "title": "Senolytics decrease senescent cells in humans (D+Q, diabetic kidney disease)",
+          "status": "VERIFIED"
+        },
+        "10.1016/j.ebiom.2018.12.052": {
+          "pmid": "30616998",
+          "title": "Senolytics in idiopathic pulmonary fibrosis: first-in-human pilot",
+          "status": "VERIFIED"
+        }
+      },
+      "grounding": {
+        "source": "PubMed via HRF live grounding",
+        "verified_by": "citation_verifier (Crossref+NCBI)",
+        "at_domain": "Longevity"
+      }
     },
     "seed-long-dc83a63976": {
       "gene_id": "seed-long-dc83a63976",
