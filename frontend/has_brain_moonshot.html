@@ -140,12 +140,15 @@ async function load(){
 let fleet=null;
 async function loadFleet(){
   // The live feed is authoritative and always carries fleet_reconcile (null until the reconciler runs),
-  // so when it's up we never touch the static mirror — that avoids a 404 before the reconciler has run.
+  // so when it's up we never touch the static mirror.
   if(last){ fleet = last.fleet_reconcile || null; render(); return; }
-  // Only when the live feed is unreachable do we try the static mirror (204 => not run yet, stays null).
-  try{ const r=await fetch(API_BASE+'/data/fleet_reconcile.json?_='+Date.now(),{cache:'no-store'});
-       if(r.ok && r.status!==204) fleet=await r.json(); }
-  catch(e){ /* NOT-YET-RUN panel; never fabricate a fleet */ }
+  // Only fall back to the static mirror when the brain feed is CONFIRMED down (ok===false) — not on the
+  // first tick before load() has resolved (ok===null). Avoids a spurious 404 on initial page load.
+  if(ok===false){
+    try{ const r=await fetch(API_BASE+'/data/fleet_reconcile.json?_='+Date.now(),{cache:'no-store'});
+         if(r.ok && r.status!==204) fleet=await r.json(); }
+    catch(e){ /* NOT-YET-RUN panel; never fabricate a fleet */ }
+  }
   render();
 }
 function renderFleet(){
