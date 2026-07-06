@@ -57,6 +57,31 @@ def test_extract_catches_pathlib_chains():
     assert "frontend/data/brain_live.json" in got
 
 
+def test_write_binding_excludes_read_only_paths():
+    # the real phase50 false positive: path assigned to a var that is only READ must NOT count as written
+    reader = 'TASKS = BASE / "tasks" / "phase50_tasks.json"\ndata = json.load(open(TASKS))\n'
+    assert R.extract_output_paths(reader) == set()
+    # but a var that IS written (incl. Path(VAR).write_text) must be caught
+    writer = 'OUT = ROOT / "data" / "prompt_brain" / "x.json"\nPath(OUT).write_text(payload)\n'
+    assert "data/prompt_brain/x.json" in R.extract_output_paths(writer)
+
+
+def test_read_read_pair_is_not_contention():
+    # two jobs that each only READ the same file are NOT a race (the exact phase50_tasks.json situation)
+    scripts = {
+        "scripts/a.sh": "python3 -m backend.a\n",
+        "backend/a.py": 'TASK = BASE / "tasks" / "phase50_tasks.json"\nx = json.load(open(TASK))\n',
+        "scripts/b.sh": "python3 -m backend.b\n",
+        "backend/b.py": 'TASKS = BASE / "tasks" / "phase50_tasks.json"\ny = open(TASKS).read()\n',
+    }
+    rd = lambda f: scripts.get(f)
+    jobs = {
+        "com.hoch.a": R.collect_writes_for_job(["/bin/bash", "scripts/a.sh"], rd),
+        "com.hoch.b": R.collect_writes_for_job(["/bin/bash", "scripts/b.sh"], rd),
+    }
+    assert R.detect_contention(jobs) == {}   # no write on either side -> no contention
+
+
 def test_anchor_normalizes_root_prefixes():
     # same file reached via different var prefixes must normalize to one key (else contention is missed)
     assert R._anchor("/Users/x/repo/data/prompt_brain/champion_registry.json") == "data/prompt_brain/champion_registry.json"

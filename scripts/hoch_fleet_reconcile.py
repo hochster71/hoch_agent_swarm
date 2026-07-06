@@ -101,28 +101,57 @@ def _anchor(path: str) -> str:
     return path
 
 
-def extract_output_paths(text: str) -> set[str]:
-    """Statically pull repo-relative state-file paths a script/module appears to WRITE.
+# A write ON a line: write_text/json.dump/open(...,'w')/to_json/.open('w'). No bare '>' (too noisy).
+_WRITE_SAME = re.compile(r"write_text|json\.dump|\.dump\(|open\([^)]*['\"][wa]|to_json\(|\.open\(['\"][wa]")
+_ASSIGN = re.compile(r"^\s*([A-Za-z_]\w*)\s*=")
 
-    Heuristic: a path matches a state-file hint AND the file mentions a write call somewhere. Catches
-    BOTH literal slash-paths ("data/prompt_brain/x.json") AND pathlib chains
-    (ROOT / "data" / "prompt_brain" / "x.json"), since HOCH code overwhelmingly uses the latter — a
-    literal-only matcher would miss the real competing writers. We do not bind a path to a specific
-    write(); co-occurrence of a state path + a write call is a sound, conservative 'this job touches
-    this file' signal.
-    """
-    if not any(re.search(w, text) for w in _WRITE_CALLS):
-        return set()
-    paths: set[str] = set()
-    for hint in _STATE_HINTS:                       # literal slash-paths
-        for m in re.findall(hint, text):
-            paths.add(_anchor(m.strip().strip("\"'")))
-    for parts in re.finditer(_PATHLIB_CHAIN, text):  # pathlib joins
+
+def _paths_in_line(s: str) -> set[str]:
+    """State-file paths mentioned in a single line — literal slash-paths + pathlib chains (un-anchored)."""
+    out: set[str] = set()
+    for hint in _STATE_HINTS:
+        for m in re.findall(hint, s):
+            out.add(m.strip().strip("\"'"))
+    for parts in re.finditer(_PATHLIB_CHAIN, s):
         segs = re.findall(r'["\']([\w.\-]+)["\']', parts.group(0))
-        joined = _anchor("/".join(segs))
-        if any(a in joined for a in _PATH_ANCHORS) or joined.endswith((".json", ".jsonl")):
-            paths.add(joined)
-    return paths
+        j = "/".join(segs)
+        if any(a in _anchor(j) for a in _PATH_ANCHORS) or j.endswith((".json", ".jsonl")):
+            out.add(j)
+    return out
+
+
+def extract_output_paths(text: str) -> set[str]:
+    """State-file paths a script actually WRITES — bound to the write, not merely co-present in the file.
+
+    A path counts as written only if (a) a write-call is on the SAME line as the path, or (b) the path
+    is assigned to a variable that is written elsewhere (the ubiquitous `OUT = ROOT/.../x.json` then
+    `OUT.write_text(...)` pattern). This fixes the file-level false positive where a script that WRITES
+    file A and merely READS file B was flagged as writing B too (the real phase50_tasks.json case: two
+    jobs each only had `TASK_FILE = BASE / 'tasks' / 'phase50_tasks.json'` — a read/ref, no write)."""
+    lines = text.splitlines()
+    written: set[str] = set()
+    var_paths: dict[str, set[str]] = {}   # var -> paths it was assigned
+    occurrences: list[tuple[str, int, str | None]] = []  # (path, line_idx, assigned_var|None)
+
+    for idx, line in enumerate(lines):
+        paths_here = _paths_in_line(line)
+        if not paths_here:
+            continue
+        am = _ASSIGN.match(line)
+        var = am.group(1) if am else None
+        for p in paths_here:
+            occurrences.append((p, idx, var))
+            if var:
+                var_paths.setdefault(var, set()).add(p)
+
+    for p, idx, var in occurrences:
+        if _WRITE_SAME.search(lines[idx]):            # (a) write on the same line as the path
+            written.add(_anchor(p)); continue
+        if var:                                        # (b) the path's variable co-occurs with a write
+            vre = re.compile(rf"\b{re.escape(var)}\b")  # (covers OUT.write_text, Path(OUT).write_text,
+            if any(vre.search(l) and _WRITE_SAME.search(l) for l in lines):  # open(OUT,'w'), json.dump(x,OUT)…)
+                written.add(_anchor(p))
+    return written
 
 
 def entry_scripts(program_arguments: list[str]) -> list[str]:
@@ -173,7 +202,7 @@ def collect_writes_for_job(program_arguments: list[str], read_text) -> set[str]:
     return writes
 
 
-_WRITE_LINE = re.compile(r"write_text|json\.dump|\.dump\(|open\([^)]*['\"][wa]|>>|(?<![0-9])>\s|save\(|to_json")
+_WRITE_LINE = _WRITE_SAME  # keep --explain's WRITE tagging consistent with the detector
 
 
 def evidence_for_path(program_arguments: list[str], read_text, target: str) -> list[dict]:
