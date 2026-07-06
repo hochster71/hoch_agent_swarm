@@ -1,19 +1,37 @@
 # Epic-Fury — Supabase Secret Rotation Runbook (T3, operator-only)
 
-**Status:** OPEN BLOCKER for first monetized-app ship (handoff open-thread #2).
-**Owner action required:** Self-heal correctly *cannot* un-leak a committed secret — only rotation
-(invalidating the old value) closes the exposure. This is a **T3** action; HOCH will not perform it.
+**Status:** RE-GRADED after reading the actual files (2026-07-06). The original "2 HIGH leaked
+Supabase JWTs — rotate before ship" was an **over-statement** from a pattern-match on `eyJ...` that
+never decoded the tokens. No real privileged credential is leaked. What remains is a real *production
+deploy gate* (demo keys must be replaced) plus minor hygiene. Evidence below.
 
-## The exposure
+## Evidence (decoded claims, 2026-07-06)
 
-Two HIGH findings: hardcoded Supabase JWT tokens committed in
+Scanned both build dirs (`epic-fury-2026`, `epic-fury-2026-1`), git-tracked files only:
 
-- `~/epic-fury-build/epic-fury-2026/docker-compose.yml`
-- `~/epic-fury-build/epic-fury-2026/docker-compose.dev.yml`
+- **`docker-compose.yml` / `docker-compose.dev.yml`** embed the **Supabase demo keys** as
+  env-overridable defaults: `${ANON_KEY:-eyJ…}` / `${SERVICE_ROLE_KEY:-eyJ…}`. Decoded payloads carry
+  `"iss":"supabase-demo"` and the JWT secret default is the public `super-secret-jwt-token-change-in-prod`.
+  These are the **universal Supabase self-hosting demo values** — public, in every example repo. They are
+  NOT a unique leaked secret. **But you must not deploy to production with them:** anyone can forge a
+  valid `service_role` JWT against the known demo secret. → **Deploy gate, not a leak.**
+- **`epic-fury-2026-1/push-stripe-env.sh` / `push-supabase-env.sh`** contain a **real hosted-project
+  `anon` key** (`"iss":"supabase","ref":"hnjvzbguxaherxtbcmtj","role":"anon"`). The anon key is
+  **public by design** (it ships in client bundles, gated by Row Level Security), so this is **LOW** —
+  it only exposes the project ref. Optional: move to env; rotation is not required.
+- **No `service_role` (or other privileged) JWT from a real issuer is committed anywhere.** The only
+  `service_role` token present is the demo one. → **no admin-credential leak.**
+- `.env.local` is git-ignored and holds only fake `test-*` placeholders (self-labeled). `.env`/`.env.*`
+  are correctly git-ignored. No `sk_live_` Stripe key is tracked.
 
-These are **long-lived JWTs** (the `anon` and/or `service_role` keys). The `service_role` key bypasses
-Row Level Security — anyone holding it has full read/write to the database. Because they are in git,
-treat them as compromised even if the repo is private.
+**Net:** nothing to urgently "un-leak." The BRAIN secret scanner was mis-grading demo/anon JWTs as HIGH;
+that is fixed (`backend/swarm/cyber_swarm.py` now decodes JWT claims — demo & anon → LOW, real
+`service_role` → HIGH; tests in `tests/integration/test_jwt_severity_grading.py`).
+
+## What's actually required before a production ship (deploy gate)
+
+The compose already reads every secret from env (`${VAR:-demo-default}`), so no code change is needed —
+just supply **real** values at deploy time and never commit them:
 
 > Epic-Fury runs Supabase via `docker-compose` → this is a **self-hosted** deployment. The legacy
 > self-hosted keys are *derived from a JWT secret you control*, so rotation here means **generate a new

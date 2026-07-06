@@ -13,6 +13,7 @@ less is reported honestly with the exact gaps — no fake-green 'secure'.
 
 Deterministic, offline except optional `npm audit`. Runs against HAS itself and HASF products.
 """
+import base64
 import json
 import os
 import re
@@ -85,6 +86,36 @@ def _iter_files(root: Path):
                     pass
 
 
+# Public/known JWTs that are NOT a credential leak, so the scanner must not read them as HIGH:
+#  - Supabase demo keys (iss ends in "-demo") ship in every self-hosting example; universally known.
+#  - anon keys are public BY DESIGN (they ride in client bundles, gated by Row Level Security).
+# Only a service_role (or other privileged) JWT from a REAL issuer is a true HIGH credential leak.
+_DEMO_ISS_SUFFIX = "-demo"
+
+
+def _classify_jwt(token: str) -> Dict[str, Any]:
+    """Decode a JWT's (unverified) payload claims to grade a match. Returns severity + why.
+
+    Evidence over pattern-match: a bare `eyJ...` says nothing about risk — the ROLE and ISSUER do.
+    Undecodable/opaque tokens stay HIGH (conservative). No signature check — claims are only read to
+    grade severity, never trusted."""
+    try:
+        payload = token.split(".")[1]
+        payload += "=" * (-len(payload) % 4)  # pad base64url
+        claims = json.loads(base64.urlsafe_b64decode(payload))
+    except Exception:
+        return {"severity": "HIGH", "why": "opaque JWT (claims unreadable) — treated as leak"}
+    role = str(claims.get("role", "")).lower()
+    iss = str(claims.get("iss", "")).lower()
+    if iss.endswith(_DEMO_ISS_SUFFIX):
+        return {"severity": "LOW", "why": f"known Supabase demo key (iss={iss}, role={role}) — public default, not a real secret"}
+    if role == "anon":
+        return {"severity": "LOW", "why": f"anon key (iss={iss}) — public by design, gated by RLS"}
+    if role in ("service_role", "admin", "supabase_admin"):
+        return {"severity": "HIGH", "why": f"privileged JWT (role={role}, iss={iss}) — real credential leak"}
+    return {"severity": "MEDIUM", "why": f"JWT with role={role or 'unknown'}, iss={iss or 'unknown'}"}
+
+
 def scan_secrets(root: Path) -> List[Dict[str, Any]]:
     out = []
     for p in _iter_files(root):
@@ -93,9 +124,19 @@ def scan_secrets(root: Path) -> List[Dict[str, Any]]:
         except Exception:
             continue
         for cat, rx, sev in _SECRETS:
-            if rx.search(txt):
-                out.append({"tool": "secret-detector", "category": cat, "severity": sev,
-                            "file": str(p.relative_to(root))})
+            m = rx.search(txt)
+            if not m:
+                continue
+            rec = {"tool": "secret-detector", "category": cat, "severity": sev,
+                   "file": str(p.relative_to(root))}
+            if cat == "JWT_OR_SUPABASE":
+                # Grade by the WORST JWT in the file (decoded claims), not a blanket HIGH.
+                grades = [_classify_jwt(t.group(0)) for t in rx.finditer(txt)]
+                order = {"LOW": 0, "MEDIUM": 1, "HIGH": 2}
+                worst = max(grades, key=lambda g: order[g["severity"]])
+                rec["severity"] = worst["severity"]
+                rec["why"] = worst["why"]
+            out.append(rec)
     return out
 
 
