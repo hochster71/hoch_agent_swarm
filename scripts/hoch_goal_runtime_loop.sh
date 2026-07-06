@@ -28,6 +28,8 @@ while true; do
   ok=$(printf '%s' "$out" | grep -c '"outcome": "SUCCESS"')
   appr=$(printf '%s' "$out" | grep -c 'ROUTED_TO_APPROVAL')
   blk=$(printf '%s' "$out" | grep -c '"outcome": "BLOCKED"')
+  # 2b) G1 demand gate — auto-flips G-4 to PASS ONLY when real logged evidence meets thresholds
+  $PY scripts/verify_demand_validation.py --update-register >/dev/null 2>&1
   # 3) keep the live control-plane feed / widget warm
   curl -s http://127.0.0.1:8000/api/v1/control-plane/status >/dev/null 2>&1 \
     || curl -s http://127.0.0.1:8765/api/v1/control-plane/status >/dev/null 2>&1
