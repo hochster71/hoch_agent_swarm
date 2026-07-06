@@ -1,319 +1,291 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>HOCH — BRAIN Moonshot (HAS × BRAIN × Factories)</title>
+<title>HOCH — BRAIN Command Deck</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
-:root{
-  --void:#0B0A14; --deep:#12101F; --panel:#181529; --panel2:#1E1A33;
-  --hair:#2A2545; --hair2:#3A3260;
-  --genome:#7C6FFF; --genome-dim:#453B8C;
-  --spark:#00E5C0; --spark-dim:#0A6B5C;
-  --amber:#FFB454; --rose:#FF6B8B; --gold:#F5D547;
-  --ink:#E9E6F7; --muted:#9089B8; --muted2:#5F5788;
-  --font:'Space Grotesk',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--void);color:var(--ink);font-family:var(--font);font-size:14px;
-  background-image:radial-gradient(900px 500px at 85% -8%,rgba(124,111,255,.10),transparent),
-                    radial-gradient(700px 450px at 5% 105%,rgba(0,229,192,.07),transparent);}
-.mono{font-family:var(--mono)}
-.wrap{max-width:1400px;margin:0 auto;padding:22px 26px 60px}
-.head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:20px;flex-wrap:wrap}
-.head h1{font-size:24px;margin:0;font-weight:700;letter-spacing:-.01em}
-.head .sub{color:var(--muted);font-size:12.5px;margin-top:4px;font-family:var(--mono)}
-.fresh{display:flex;align-items:center;gap:10px;border:1px solid var(--hair2);background:var(--panel);
-  padding:9px 16px;border-radius:11px}
-.fresh .dot{width:9px;height:9px;border-radius:50%}
-.fresh.live .dot{background:var(--spark);box-shadow:0 0 0 0 rgba(0,229,192,.6);animation:pulse 2.4s infinite}
-.fresh.aging .dot{background:var(--amber)}
-.fresh.stale .dot{background:var(--rose)}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(0,229,192,.55)}70%{box-shadow:0 0 0 9px rgba(0,229,192,0)}100%{box-shadow:0 0 0 0 rgba(0,229,192,0)}}
-@media (prefers-reduced-motion:reduce){.fresh.live .dot{animation:none}}
-.fresh .lbl{font-family:var(--mono);font-size:12px;font-weight:600}
-.fresh .age{font-family:var(--mono);font-size:11px;color:var(--muted)}
-.grid{display:grid;gap:16px}
-.g2{grid-template-columns:1.1fr 1fr}
-.g3{grid-template-columns:repeat(3,1fr)}
-.g4{grid-template-columns:repeat(4,1fr)}
-@media(max-width:1050px){.g2,.g3,.g4{grid-template-columns:1fr}}
-.panel{background:linear-gradient(165deg,var(--panel),var(--deep));border:1px solid var(--hair);
-  border-radius:14px;padding:18px 20px}
-.panel h3{margin:0 0 3px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
-.panel .cap{color:var(--muted);font-size:11.5px;margin:0 0 14px;font-family:var(--mono)}
-.metric{font-family:var(--mono);font-weight:700;font-size:34px;letter-spacing:-.02em;line-height:1}
-.metric.sm{font-size:22px}
-.metric .u{font-size:13px;color:var(--muted);font-weight:400;margin-left:4px}
-.tag{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:10.5px;font-weight:600;
-  padding:3px 9px;border-radius:20px;border:1px solid transparent}
-.tag::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
-.t-spark{color:var(--spark);background:rgba(0,229,192,.1);border-color:var(--spark-dim)}
-.t-amber{color:var(--amber);background:rgba(255,180,84,.1);border-color:#8a5c1f}
-.t-rose{color:var(--rose);background:rgba(255,107,139,.1);border-color:#8a2a44}
-.t-genome{color:var(--genome);background:rgba(124,111,255,.12);border-color:var(--genome-dim)}
-.t-muted{color:var(--muted);background:rgba(144,137,184,.08);border-color:var(--hair2)}
-.stat3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
-.stat3 .cell{text-align:center;border:1px solid var(--hair);border-radius:10px;padding:10px 6px;background:var(--void)}
-.stat3 .cell b{display:block;font-family:var(--mono);font-size:19px}
-.stat3 .cell span{font-family:var(--mono);font-size:9.5px;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em}
-.chart-wrap{margin-top:6px}
-.chart-wrap svg{width:100%;height:150px;overflow:visible}
-.chart-pt{fill:var(--genome)}
-.chart-pt.stag{fill:var(--muted2)}
-.chart-line{fill:none;stroke:var(--genome);stroke-width:2.2}
-.chart-area{fill:url(#gradFit);opacity:.5}
-.chart-axis{stroke:var(--hair);stroke-width:1}
-.chart-lbl{font-family:var(--mono);font-size:9px;fill:var(--muted2)}
-.row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--hair)}
-.row:last-child{border-bottom:none}
-.row .name{font-size:13px}
-.row .delta{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--spark)}
-.bar-track{height:6px;border-radius:4px;background:var(--void);border:1px solid var(--hair);overflow:hidden}
-.bar-fill{height:100%;background:linear-gradient(90deg,var(--genome-dim),var(--genome))}
-.champ{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--hair)}
-.champ:last-child{border-bottom:none}
-.champ .rank{font-family:var(--mono);font-size:11px;color:var(--muted2);width:16px}
-.champ .info{flex:1;min-width:0}
-.champ .title{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.champ .cls{font-family:var(--mono);font-size:10px;color:var(--muted)}
-.champ .score{font-family:var(--mono);font-weight:700;font-size:16px;color:var(--genome)}
-.gap-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
-.gap-cell{border:1px solid var(--hair);border-radius:9px;padding:10px 8px;text-align:center;background:var(--void)}
-.gap-cell b{display:block;font-family:var(--mono);font-size:20px}
-.gap-cell span{font-family:var(--mono);font-size:9px;color:var(--muted2);letter-spacing:.05em}
-.lever{border-left:2px solid var(--gold);background:rgba(245,213,71,.06);padding:10px 13px;border-radius:0 9px 9px 0;font-size:12px;color:var(--muted)}
-.lever b{color:var(--gold)}
-.flow{display:flex;align-items:center;gap:0;margin-top:8px}
-.node{border:1px solid var(--hair2);border-radius:12px;padding:16px 20px;text-align:center;min-width:150px}
-.node.has{background:rgba(124,111,255,.08)}
-.node.hasf{background:rgba(0,229,192,.08)}
-.node .t{font-weight:700;font-size:14px}
-.node .s{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:2px}
-.wire{flex:1;height:2px;background:linear-gradient(90deg,var(--genome-dim),var(--spark-dim));position:relative;min-width:40px}
-.brain-core{width:110px;height:110px;border-radius:50%;border:2px solid var(--genome);
-  background:radial-gradient(circle,rgba(124,111,255,.18),transparent 70%);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 -6px;flex-shrink:0;position:relative;z-index:2}
-.brain-core b{font-family:var(--mono);font-size:13px;letter-spacing:.05em}
-.brain-core span{font-family:var(--mono);font-size:9px;color:var(--muted)}
-.ops-strip{display:flex;justify-content:center;gap:8px;margin-top:14px;flex-wrap:wrap}
-.op-chip{font-family:var(--mono);font-size:9.5px;border:1px solid var(--hair2);border-radius:20px;
-  padding:4px 11px;color:var(--muted)}
-.evidence-strip{margin-top:14px;text-align:center;border:1px dashed var(--hair2);border-radius:10px;
-  padding:9px;font-family:var(--mono);font-size:10.5px;color:var(--muted2)}
-.verif{font-family:var(--mono);font-size:8.5px;padding:1px 6px;border-radius:8px;margin-left:6px;white-space:nowrap}
-.verif.strong{color:var(--spark);background:rgba(0,229,192,.12)}
-.verif.basic{color:var(--amber);background:rgba(255,180,84,.12)}
-.footer-note{margin-top:20px;font-family:var(--mono);font-size:10.5px;color:var(--muted2);text-align:center}
-.footer-note a{color:var(--genome)}
+  :root{
+    --bg:#07070f; --panel:#0e0e1c; --panel2:#12122400; --line:#20203a;
+    --ink:#ececf6; --mut:#8b8ba7; --dim:#5a5a78;
+    --indigo:#7c6cff; --indigo2:#4b3fd6; --green:#34d399; --amber:#e0b341; --red:#f0616d;
+    --mono:'SF Mono',ui-monospace,'JetBrains Mono',Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:radial-gradient(1200px 700px at 50% -10%,#12122b 0%,var(--bg) 60%);color:var(--ink);font-family:var(--mono);-webkit-font-smoothing:antialiased}
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+  a{color:var(--indigo)}
+  #root{max-width:1560px;margin:0 auto;padding:22px 26px 40px}
+  .top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:14px}
+  h1{font-size:22px;margin:0;letter-spacing:.06em}
+  h1 .x{color:var(--dim);font-weight:400;margin:0 6px}
+  .sub{color:var(--mut);font-size:12px;margin-top:5px;letter-spacing:.04em}
+  .status{display:flex;gap:16px;align-items:center;font-size:12px;color:var(--mut)}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle}
+  .live .dot{background:var(--green);box-shadow:0 0 10px var(--green);animation:bpulse 1.8s infinite}
+  .stale .dot{background:var(--amber);box-shadow:0 0 10px var(--amber)}
+  .off .dot{background:var(--red)}
+  @keyframes bpulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+  /* ---- deck grid ---- */
+  .deck{display:grid;grid-template-columns:230px 1fr 300px;gap:18px;margin-top:20px;align-items:stretch}
+  @media(max-width:1100px){.deck{grid-template-columns:1fr}}
+  .col{display:flex;flex-direction:column;gap:14px;min-width:0}
+
+  .card{background:linear-gradient(180deg,#101024,#0c0c18);border:1px solid var(--line);border-radius:14px;padding:16px;position:relative;overflow:hidden}
+  .card h3{margin:0 0 4px;font-size:11px;letter-spacing:.18em;color:var(--mut);text-transform:uppercase;font-weight:600}
+
+  /* HAS governor */
+  .gov{border-color:#2b2550}
+  .gov .big{font-size:20px;font-weight:700;letter-spacing:.05em}
+  .gov .role{color:var(--mut);font-size:12px;margin-top:2px}
+  .badge{display:inline-block;font-size:10px;letter-spacing:.12em;padding:3px 8px;border-radius:999px;border:1px solid var(--line);color:var(--mut);margin-top:12px}
+
+  /* center stage */
+  .stage{position:relative;background:linear-gradient(180deg,#0c0c1a,#08080f);border:1px solid var(--line);border-radius:16px;min-height:520px;display:flex;flex-direction:column}
+  .stagehd{display:flex;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line);font-size:11px;letter-spacing:.16em;color:var(--mut);text-transform:uppercase}
+  .lever{color:var(--green);font-weight:700;letter-spacing:.1em}
+  svg.brainwrap{width:100%;flex:1;display:block}
+
+  /* factory cockpit cards */
+  .fac{cursor:pointer;transition:transform .18s,border-color .18s,box-shadow .18s}
+  .fac:hover{transform:translateY(-2px);border-color:var(--indigo);box-shadow:0 8px 30px -12px var(--indigo)}
+  .fac .fc-top{display:flex;justify-content:space-between;align-items:baseline}
+  .fac .code{font-size:18px;font-weight:800;letter-spacing:.04em}
+  .fac .dom{font-size:11px;color:var(--mut)}
+  .fac .nums{font-size:12px;color:var(--ink);margin-top:8px}
+  .fac .nums b{color:#fff}
+  .spark{width:100%;height:34px;margin-top:8px;display:block}
+  .pill{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:.1em;padding:3px 9px;border-radius:999px;margin-top:9px}
+  .pill i{width:7px;height:7px;border-radius:50%;display:inline-block}
+  .pi{color:var(--green);background:rgba(52,211,153,.1)} .pi i{background:var(--green);box-shadow:0 0 8px var(--green);animation:bpulse 1.6s infinite}
+  .ps{color:var(--indigo);background:rgba(124,108,255,.12)} .ps i{background:var(--indigo)}
+  .pd{color:var(--mut);background:rgba(139,139,167,.08)} .pd i{background:var(--mut)}
+  .pc{color:var(--amber);background:rgba(224,179,65,.1)} .pc i{background:var(--amber)}
+
+  /* gaps + ledger */
+  .gaprow{display:flex;gap:6px;margin-top:6px}
+  .gapseg{height:8px;border-radius:3px}
+  .kv{display:flex;justify-content:space-between;font-size:11px;color:var(--mut);padding:3px 0}
+  .kv b{color:var(--ink)}
+  .ledger{margin-top:16px;border:1px dashed var(--line);border-radius:12px;padding:11px 14px;color:var(--dim);font-size:11px;text-align:center;letter-spacing:.05em}
+  .foot{margin-top:16px;color:var(--dim);font-size:11px;letter-spacing:.03em;line-height:1.7}
+
+  /* tooltip */
+  #tip{position:fixed;pointer-events:none;z-index:50;background:#14142a;border:1px solid var(--indigo);border-radius:10px;padding:10px 12px;font-size:11px;max-width:280px;opacity:0;transition:opacity .12s;box-shadow:0 12px 40px -12px #000}
+  #tip .tt{font-weight:700;color:#fff;margin-bottom:5px;letter-spacing:.04em}
+  #tip .tl{color:var(--mut);display:flex;justify-content:space-between;gap:14px;padding:1px 0}
+  #tip .tl b{color:var(--ink)}
 </style>
 </head>
 <body>
-<div id="root">Loading BRAIN console…</div>
+<h2 class="sr-only">HOCH BRAIN Command Deck — live status of the HAS governor, the self-improving BRAIN, and the HASF, HMF and HRF factories.</h2>
+<div id="root"><div style="padding:60px;text-align:center;color:var(--mut)">Connecting to BRAIN…</div></div>
+<div id="tip"></div>
 <script>
-// Bind to the live API endpoint (explicit FastAPI route, always 200) rather than the static
-// data/brain_live.json (which the dist-only static mount does not serve). Origin-aware so it works
-// over the Tailscale HTTPS host, over plain HTTP, and when opened straight from Finder (file://).
-const API_BASE = (location.protocol === 'file:' || location.origin === 'null') ? 'http://127.0.0.1:8000' : '';
-const DATA_URL = API_BASE + '/api/brain/live';
-const POLL_MS = 60000; // matches observed ~10-15min update cadence w/ generous headroom; see footer note
-let lastGoodData = null, lastFetchOk = null;
+const API_BASE = (location.protocol==='file:'||location.origin==='null') ? 'http://127.0.0.1:8000' : '';
+const URL = API_BASE + '/api/brain/live';
+const POLL = 15000;
+let last=null, ok=null, tPrev=0;
 
-function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
-function tag(cls,label){return `<span class="tag ${cls}">${esc(label)}</span>`;}
-
-// Freshness is COMPUTED from the data's own timestamp, never asserted by a static label.
-function freshness(tsIso){
-  const ageMs = Date.now() - new Date(tsIso).getTime();
-  const ageMin = ageMs/60000;
-  if (ageMin < 15) return {cls:'live', label:'LIVE', ageMin};
-  if (ageMin < 40) return {cls:'aging', label:'AGING', ageMin};
-  return {cls:'stale', label:'STALE', ageMin};
-}
-function fmtAge(min){
-  if (min < 1) return '<1 min ago';
-  if (min < 60) return `${Math.round(min)} min ago`;
-  return `${(min/60).toFixed(1)}h ago`;
-}
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=(v,d=1)=> (v==null||isNaN(v))?'—':(+v).toFixed(d);
+const stCls=s=>{s=(s||'').toUpperCase();return (s==='IMPROVING'||s==='CONVERGED')?'pi':(s==='SELECTED')?'pc':(s==='SEEDED')?'pd':'ps';};
+const stCol=s=>{s=(s||'').toUpperCase();return (s==='IMPROVING'||s==='CONVERGED')?'#34d399':(s==='SELECTED')?'#e0b341':(s==='SEEDED')?'#8b8ba7':'#7c6cff';};
 
 async function load(){
-  try{
-    const res = await fetch(DATA_URL, {cache:'no-store'});
-    if (!res.ok) throw new Error('HTTP '+res.status);
-    const d = await res.json();
-    lastGoodData = d; lastFetchOk = true;
-  }catch(e){
-    lastFetchOk = false;
-    console.warn('brain_live.json fetch failed, showing last-known + stale flag:', e);
-  }
+  try{ const r=await fetch(URL,{cache:'no-store'}); if(!r.ok) throw new Error('HTTP '+r.status);
+       last=await r.json(); ok=true; }
+  catch(e){ ok=false; console.warn('feed failed, showing last-known + STALE:',e); }
   render();
 }
 
-function buildFitnessChart(history){
-  const W=680,H=140,pad=28;
-  const scores = history.map(h=>h.m);
-  const min = Math.min(...scores)-2, max = Math.max(...scores)+2;
-  const xw = (W-pad*2)/(history.length-1);
-  const yFor = m => H-pad - ((m-min)/(max-min))*(H-pad*1.6);
-  const pts = history.map((h,i)=>[pad+i*xw, yFor(h.m)]);
-  const linePath = pts.map((p,i)=>(i===0?'M':'L')+p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
-  const areaPath = linePath + ` L${pts[pts.length-1][0]},${H-pad} L${pts[0][0]},${H-pad} Z`;
-  const dots = history.map((h,i)=>{
-    const stag = h.gain===0 || h.gain===null;
-    return `<circle class="chart-pt ${stag?'stag':''}" cx="${pts[i][0].toFixed(1)}" cy="${pts[i][1].toFixed(1)}" r="${i===history.length-1?5:3}">
-      <title>Gen ${h.g}: ${h.m.toFixed(1)} (${h.gain===null?'baseline':h.gain===0?'stagnant':'+'+h.gain}) </title></circle>`;
-  }).join('');
-  const labels = history.map((h,i)=> i%2===0||i===history.length-1 ?
-    `<text class="chart-lbl" x="${pts[i][0].toFixed(1)}" y="${H-6}" text-anchor="middle">g${h.g}</text>` : '').join('');
-  return `<svg viewBox="0 0 ${W} ${H}">
-    <defs><linearGradient id="gradFit" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#7C6FFF"/><stop offset="100%" stop-color="#7C6FFF" stop-opacity="0"/>
-    </linearGradient></defs>
-    <line class="chart-axis" x1="${pad}" y1="${H-pad}" x2="${W-pad}" y2="${H-pad}"/>
-    <path class="chart-area" d="${areaPath}"/>
-    <path class="chart-line" d="${linePath}"/>
-    ${dots}${labels}
+/* ---------- sparkline ---------- */
+function spark(history, col){
+  if(!history||history.length<2) return `<svg class="spark" viewBox="0 0 200 34" preserveAspectRatio="none"></svg>`;
+  const ms=history.map(h=>h.m), mn=Math.min(...ms), mx=Math.max(...ms), rng=(mx-mn)||1;
+  const pts=history.map((h,i)=>[8+i*(184/(history.length-1)), 30-((h.m-mn)/rng)*26]);
+  const d=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+  const area=d+` L${pts[pts.length-1][0].toFixed(1)} 34 L8 34 Z`;
+  const last=pts[pts.length-1];
+  return `<svg class="spark" viewBox="0 0 200 34" preserveAspectRatio="none">
+    <defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="${col}" stop-opacity=".28"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient></defs>
+    <path d="${area}" fill="url(#sg)"/><path d="${d}" fill="none" stroke="${col}" stroke-width="1.6"/>
+    <circle cx="${last[0].toFixed(1)}" cy="${last[1].toFixed(1)}" r="2.6" fill="${col}"><animate attributeName="r" values="2.6;4.2;2.6" dur="1.8s" repeatCount="indefinite"/></circle></svg>`;
+}
+
+/* ---------- central living brain (SVG) ---------- */
+function brainSVG(d){
+  const facs=d.factories||[];
+  const cx=430, cy=250, R=64;
+  // synapse spokes
+  let spokes='';
+  for(let i=0;i<18;i++){const a=i*Math.PI*2/18, r1=R+6, r2=R+16+((i%3)*8);
+    const x1=cx+Math.cos(a)*r1,y1=cy+Math.sin(a)*r1,x2=cx+Math.cos(a)*r2,y2=cy+Math.sin(a)*r2;
+    spokes+=`<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="#7c6cff" stroke-width="1.4" stroke-linecap="round" opacity="${(0.15+((i%4)*0.15)).toFixed(2)}"><animate attributeName="opacity" values="0.1;0.7;0.1" dur="${(2+i%5*0.4).toFixed(1)}s" repeatCount="indefinite" begin="${(i*0.12).toFixed(2)}s"/></line>`;
+  }
+  // HAS node + axon (left)
+  const hasX=70;
+  const haWire=`<path id="axHAS" d="M ${hasX+40} ${cy} C 200 ${cy}, 280 ${cy}, ${cx-R} ${cy}" fill="none" stroke="url(#wireg)" stroke-width="1.6"/>`;
+  // factory axons (right) — vertical fan
+  const fx=800, ys=facs.length? facs.map((_,i)=> 120 + i*(260/Math.max(1,facs.length-1||1))) : [250];
+  let facWires='', facParticles='', facNodes='';
+  facs.forEach((f,i)=>{
+    const y=ys[i], col=stCol(f.state), live=(f.state||'').toUpperCase()==='IMPROVING';
+    const id='ax'+i;
+    facWires+=`<path id="${id}" d="M ${cx+R} ${cy} C ${cx+150} ${cy}, ${fx-120} ${y}, ${fx-8} ${y}" fill="none" stroke="${col}" stroke-opacity=".5" stroke-width="1.4"/>`;
+    // particle flows only when the factory is genuinely live (no fake motion for SEEDED/SELECTED)
+    const pcount = live?3:(f.champions>0?1:0);
+    for(let p=0;p<pcount;p++){
+      facParticles+=`<circle r="2.4" fill="${col}"><animateMotion dur="${(2.6+p*0.5).toFixed(1)}s" repeatCount="indefinite" begin="${(p*0.8).toFixed(1)}s"><mpath href="#${id}"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" dur="${(2.6+p*0.5).toFixed(1)}s" repeatCount="indefinite" begin="${(p*0.8).toFixed(1)}s"/></circle>`;
+    }
+  });
+  // brain-side particles HAS->BRAIN (governance flow, always gentle)
+  let govP='';
+  for(let p=0;p<2;p++) govP+=`<circle r="2.2" fill="#7c6cff"><animateMotion dur="3s" repeatCount="indefinite" begin="${p*1.5}s"><mpath href="#axHAS"/></animateMotion><animate attributeName="opacity" values="0;1;1;0" dur="3s" repeatCount="indefinite" begin="${p*1.5}s"/></circle>`;
+
+  const brainLive=(d.live_brain&&d.live_brain.live_brain_available);
+  const coreCol = brainLive? '#7c6cff':'#4b4b66';
+
+  return `<svg class="brainwrap" viewBox="0 0 870 500" role="img" aria-label="Living BRAIN core feeding factories">
+    <defs>
+      <radialGradient id="core" cx="50%" cy="50%" r="50%">
+        <stop offset="0" stop-color="${coreCol}" stop-opacity=".95"/><stop offset="55%" stop-color="#2a2470" stop-opacity=".9"/><stop offset="100%" stop-color="#0c0c1a" stop-opacity=".2"/></radialGradient>
+      <linearGradient id="wireg" x1="0" x2="1"><stop offset="0" stop-color="#7c6cff" stop-opacity=".2"/><stop offset="1" stop-color="#7c6cff" stop-opacity=".7"/></linearGradient>
+      <filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+
+    ${haWire}${govP}
+    ${facWires}${facParticles}
+
+    <!-- HAS node -->
+    <g transform="translate(${hasX-38},${cy-34})">
+      <rect width="80" height="68" rx="12" fill="#101024" stroke="#2b2550"/>
+      <text x="40" y="30" text-anchor="middle" fill="#ececf6" font-size="13" font-weight="700" font-family="var(--mono)">HAS</text>
+      <text x="40" y="46" text-anchor="middle" fill="#8b8ba7" font-size="8">GOVERNOR</text>
+    </g>
+
+    <!-- pulsing halo rings -->
+    <circle cx="${cx}" cy="${cy}" r="${R+22}" fill="none" stroke="${coreCol}" stroke-opacity=".18">
+      <animate attributeName="r" values="${R+18};${R+34};${R+18}" dur="4s" repeatCount="indefinite"/>
+      <animate attributeName="stroke-opacity" values=".25;0;.25" dur="4s" repeatCount="indefinite"/></circle>
+    ${spokes}
+    <circle cx="${cx}" cy="${cy}" r="${R}" fill="url(#core)" filter="url(#glow)">
+      <animate attributeName="r" values="${R};${R+5};${R}" dur="${brainLive?'2.6s':'5s'}" repeatCount="indefinite"/></circle>
+    <text x="${cx}" y="${cy-6}" text-anchor="middle" fill="#fff" font-size="15" font-weight="800" letter-spacing="1" font-family="var(--mono)">BRAIN</text>
+    <text x="${cx}" y="${cy+12}" text-anchor="middle" fill="#c9c9ec" font-size="11" font-family="var(--mono)">${d.genes||0} genes</text>
+    <text x="${cx}" y="${cy+27}" text-anchor="middle" fill="${brainLive?'#34d399':'#8b8ba7'}" font-size="8" letter-spacing="1" font-family="var(--mono)">${brainLive?'● LIVE '+esc((d.live_brain.backend&&d.live_brain.backend.model)||''):'○ MODEL OFFLINE'}</text>
+
+    <!-- factory anchor dots -->
+    ${facs.map((f,i)=>`<circle cx="${fx-4}" cy="${ys[i]}" r="4" fill="${stCol(f.state)}"/>`).join('')}
   </svg>`;
 }
 
-function verifBadge(state){
-  // Honest evidence framing: VERIFIED_ON_HELDOUT is stronger proof than GENERATED_AND_JUDGED alone.
-  if (state === 'VERIFIED_ON_HELDOUT') return '<span class="verif strong">✓ held-out verified</span>';
-  if (state === 'GENERATED_AND_JUDGED') return '<span class="verif basic">judged only</span>';
-  return `<span class="verif basic">${esc(state||'unverified')}</span>`;
+/* ---------- factory cockpit card ---------- */
+function facCard(f, history){
+  const col=stCol(f.state), cls=stCls(f.state);
+  const spk = f.code==='HASF' ? spark(history,col) : `<svg class="spark" viewBox="0 0 200 34"></svg>`;
+  const mean = f.mean_score!=null ? `<b>${num(f.mean_score,1)}</b> mean` : '<span style="color:var(--dim)">no score yet</span>';
+  return `<div class="card fac" data-fac="${esc(f.code)}"
+      onmousemove="facTip(event,'${esc(f.code)}')" onmouseleave="hideTip()"
+      onclick="sendPrompt&&sendPrompt('Show ${esc(f.code)} champions and gaps')">
+    <div class="fc-top"><span class="code">${esc(f.code)}</span><span class="dom">${esc(f.title.replace('Hoch ','').replace(' Factory',''))}</span></div>
+    <div class="nums"><b>${f.genes}</b> genes · <b>${f.champions}</b> champ · ${mean}</div>
+    ${spk}
+    <span class="pill ${cls}"><i></i>${esc((f.state||'—').toUpperCase())}</span>
+  </div>`;
+}
+
+/* ---------- tooltip ---------- */
+const tip=document.getElementById('tip');
+function showTip(html,x,y){tip.innerHTML=html;tip.style.opacity=1;const w=tip.offsetWidth,h=tip.offsetHeight;
+  tip.style.left=Math.min(x+16,innerWidth-w-10)+'px';tip.style.top=Math.max(10,y-h-12)+'px';}
+function hideTip(){tip.style.opacity=0;}
+function facTip(e,code){
+  const d=last||{}; const f=(d.factories||[]).find(x=>x.code===code); if(!f)return;
+  const champs=(d.top_champions||[]).slice(0,4);
+  const rows = code==='HASF'
+    ? champs.map(c=>`<div class="tl"><span>${esc(c.title||c.cls)}</span><b>${num(c.score,0)}</b></div>`).join('')
+    : `<div class="tl"><span>champions</span><b>${f.champions}</b></div><div class="tl"><span>mean (recipe/agenda readiness)</span><b>${num(f.mean_score,0)}</b></div>`;
+  showTip(`<div class="tt">${esc(f.title)}</div>
+    <div class="tl"><span>state</span><b style="color:${stCol(f.state)}">${esc((f.state||'').toUpperCase())}</b></div>
+    <div class="tl"><span>genes · gates</span><b>${f.genes} · ${f.gates}</b></div>${rows}
+    <div class="tl" style="margin-top:6px;color:var(--dim)">click → drill into ${esc(code)}</div>`, e.clientX,e.clientY);
+}
+
+/* ---------- 7-stage reactor + lever ---------- */
+function reactor(d){
+  const ops=['Harvest','Splits','Score','Judge','Promote','Converge','Meta'];
+  const lever=(d.meta_lever||'').toUpperCase();
+  const chips=ops.map((o,i)=>`<span style="display:inline-block;font-size:11px;color:var(--mut);border:1px solid var(--line);border-radius:999px;padding:5px 12px;margin:0 4px 4px 0;position:relative">
+      <span style="position:absolute;left:9px;top:50%;width:5px;height:5px;border-radius:50%;background:var(--indigo);transform:translateY(-50%);opacity:.5"><animate attributeName="opacity" values="0;1;0" dur="3.5s" begin="${(i*0.5).toFixed(1)}s" repeatCount="indefinite"/></span>
+      <span style="margin-left:10px">${o}</span></span>`).join('');
+  return `<div style="text-align:center;padding:10px 14px 6px">${chips}</div>`;
 }
 
 function render(){
-  const root = document.getElementById('root');
-  if (!lastGoodData){ root.innerHTML = '<div class="wrap">Waiting for brain_live.json…</div>'; return; }
-  const d = lastGoodData;
-  const fr = freshness(d.ts);
-  const connState = lastFetchOk===false ? {cls:'stale', label:'DISCONNECTED', ageMin:fr.ageMin} : fr;
+  const d=last; if(!d){return;}
+  const facs=d.factories||[];
+  const conn = ok===false ? 'stale' : (d.live_brain&&d.live_brain.live_brain_available?'live':'stale');
+  const connTxt = ok===false ? 'STALE — showing last-known' : (conn==='live'?'LIVE':'IDLE');
+  const lever=(d.meta_lever||'').toUpperCase();
+  const g=d.gaps||{};
+  const seg=(n,col)=>`<div class="gapseg" style="flex:${Math.max(n,0.15)};background:${col}"></div>`;
+  const bc=g.by_constraint||{};
 
-  root.innerHTML = `<div class="wrap">
-    <div class="head">
-      <div>
-        <h1>HOCH — BRAIN Moonshot</h1>
-        <div class="sub">self-improving convergence core · generation ${d.generation} · ${esc(d.state)}</div>
+  document.getElementById('root').innerHTML=`
+  <div class="top">
+    <div>
+      <h1>HOCH<span class="x">·</span>BRAIN Command Deck</h1>
+      <div class="sub">command &amp; control ↔ self-improving core ↔ ${facs.length} product factories · gen ${d.generation||0} · ${esc(d.state||'')}</div>
+    </div>
+    <div class="status ${conn}"><span><span class="dot"></span>${connTxt}</span>
+      <span>lever <b class="lever" style="color:${lever==='IMPROVER_OFFLINE'?'var(--amber)':'var(--green)'}">${lever||'—'}</b></span>
+      <span>${new Date().toLocaleTimeString()}</span></div>
+  </div>
+
+  <div class="deck">
+    <!-- LEFT: governor + gaps -->
+    <div class="col">
+      <div class="card gov">
+        <h3>Governor</h3><div class="big">HAS</div><div class="role">Command &amp; Control</div>
+        <div class="badge">evidence discipline · fail-closed</div>
       </div>
-      <div class="fresh ${connState.cls}">
-        <span class="dot"></span>
-        <span class="lbl">${connState.label} · ${d.live_brain.backend.model}</span>
-        <span class="age">data ${fmtAge(fr.ageMin)}</span>
+      <div class="card">
+        <h3>BRAIN gaps</h3>
+        <div class="kv"><span>thin classes</span><b>${g.thin==null?'—':g.thin}</b></div>
+        <div class="kv"><span>low-ceiling</span><b>${g.low_ceiling==null?'—':g.low_ceiling}</b></div>
+        <div class="kv"><span>genes to fill</span><b>${g.expansion_needed_genes==null?'—':g.expansion_needed_genes}</b></div>
+        <div class="kv"><span>concentration</span><b>${g.top5_share==null?'—':Math.round(g.top5_share*100)+'%'}</b></div>
+        <div class="gaprow">${seg(bc.THIN_POOL||0,'#e0b341')}${seg(bc.LOW_CEILING||0,'#7c6cff')}${seg(bc.SATURATED||0,'#34d399')}</div>
+        <div class="kv" style="margin-top:6px;color:var(--dim)"><span>thin</span><span>low</span><span>ok</span></div>
+      </div>
+      <div class="card">
+        <h3>Recent wins</h3>
+        ${(d.recent_improvements||[]).slice(0,4).map(r=>`<div class="kv"><span>${esc(r.task_class||'')}</span><b style="color:var(--green)">+${num(r.beats_mech,1)}</b></div>`).join('')||'<div class="kv" style="color:var(--dim)">awaiting live cycle</div>'}
       </div>
     </div>
-    ${renderHero(d)}
-    ${renderGaps(d)}
-    ${renderMidGrid(d)}
-    ${renderFlow(d)}
-    <div class="footer-note">freshness computed live from data ts (not a static claim) · poll every 60s ·
-      source: <a href="/api/brain/live">/api/brain/live</a> (live endpoint) ·
-      upgrade path: SSE push endpoint recommended once brain writer emits on-generation events, not just cadence</div>
-  </div>`;
+
+    <!-- CENTER: living brain -->
+    <div class="stage">
+      <div class="stagehd"><span>SELF-IMPROVING CORE · LIVE RUNTIME</span><span>mean <b style="color:#fff">${num(d.mean_score,1)}</b> · Δ ${d.last_gain==null?'—':(d.last_gain>0?'+':'')+num(d.last_gain,2)}</span></div>
+      ${brainSVG(d)}
+      ${reactor(d)}
+    </div>
+
+    <!-- RIGHT: factory cockpit -->
+    <div class="col">
+      ${facs.map(f=>facCard(f, d.history)).join('')}
+    </div>
+  </div>
+
+  <div class="ledger">EVIDENCE LEDGER · RELAY MESH — hoch-relay-001 · hash + timestamp every claim · no green without proof</div>
+  <div class="foot">freshness computed live from data ts (not a static claim) · poll ${POLL/1000}s · source <a href="${URL}">${URL}</a> ·
+    factories pulse ONLY at their real state — IMPROVING breathes green, SELECTED amber, SEEDED dim · upgrade path: SSE push on generation events</div>`;
 }
 
-function renderHero(d){
-  return `<div class="grid g2" style="margin-bottom:16px">
-    <div class="panel">
-      <h3>Mean Champion Score</h3>
-      <p class="cap">across ${d.champions} champions · ${d.genes} genes in the pool</p>
-      <div class="metric">${d.mean_score.toFixed(1)} ${tag('t-spark','+' + d.last_gain.toFixed(2) + ' last gain')}</div>
-      <div class="stat3">
-        <div class="cell"><b>${d.generation}</b><span>generation</span></div>
-        <div class="cell"><b>${d.genes}</b><span>genes</span></div>
-        <div class="cell"><b>${d.champions}</b><span>champions</span></div>
-      </div>
-    </div>
-    <div class="panel">
-      <h3>Evolutionary Trajectory</h3>
-      <p class="cap">mean score per generation · flat segments = real stagnation, not missing data</p>
-      <div class="chart-wrap">${buildFitnessChart(d.history)}</div>
-    </div>
-  </div>`;
-}
-
-function renderGaps(d){
-  const g = d.gaps, bc = g.by_constraint;
-  return `<div class="panel" style="margin-bottom:16px">
-    <h3>Convergence Constraints <span class="tag t-genome">${esc(d.global_converged?'CONVERGED':'NOT CONVERGED')}</span></h3>
-    <p class="cap">what's actually limiting the next generation right now</p>
-    <div class="gap-grid">
-      <div class="gap-cell"><b style="color:var(--rose)">${bc.SATURATED||0}</b><span>SATURATED</span></div>
-      <div class="gap-cell"><b style="color:var(--amber)">${bc.LOW_CEILING||0}</b><span>LOW CEILING</span></div>
-      <div class="gap-cell"><b style="color:var(--amber)">${bc.THIN_POOL||0}</b><span>THIN POOL</span></div>
-      <div class="gap-cell"><b style="color:var(--rose)">${bc.NO_CHAMPION||0}</b><span>NO CHAMPION</span></div>
-    </div>
-    <div class="lever"><b>Meta-lever: ${esc(d.meta_lever)}</b> — ${esc(d.meta_reason)}
-      <br><span class="mono" style="font-size:10.5px">top-5 champion share: ${(g.top5_share*100).toFixed(1)}% ·
-      expansion needed: ${g.expansion_needed_genes} genes · drift flags: ${g.drift}</span></div>
-  </div>`;
-}
-
-function renderMidGrid(d){
-  const maxDelta = Math.max(...d.recent_improvements.map(r=>r.beats_mech), 1);
-  const improvementsHtml = d.recent_improvements.map(r=>`
-    <div class="row">
-      <div class="name">${esc(r.task_class)}<div class="bar-track" style="width:120px;margin-top:4px">
-        <div class="bar-fill" style="width:${(r.beats_mech/maxDelta*100).toFixed(0)}%"></div></div></div>
-      <div class="delta">+${r.beats_mech.toFixed(1)} <span style="color:var(--muted);font-weight:400">→ ${r.score.toFixed(1)}</span></div>
-    </div>`).join('');
-  const champsHtml = d.top_champions.map((c,i)=>`
-    <div class="champ">
-      <div class="rank">${i+1}</div>
-      <div class="info"><div class="title">${esc(c.title)}${verifBadge(c.state)}</div>
-        <div class="cls">${esc(c.cls)}</div></div>
-      <div class="score">${c.score.toFixed(1)}</div>
-    </div>`).join('');
-  return `<div class="grid g2" style="margin-bottom:16px">
-    <div class="panel">
-      <h3>Recent Brain Improvements</h3>
-      <p class="cap">gain vs. mechanical baseline, by task class · beats_mech field</p>
-      ${improvementsHtml}
-    </div>
-    <div class="panel">
-      <h3>Top Champions</h3>
-      <p class="cap">held-out verification shown honestly — not every champion is equally proven</p>
-      ${champsHtml}
-    </div>
-  </div>`;
-}
-
-function renderFlow(d){
-  const ops = ['Harvest','Converge','Generate','Learn','Adversary','Promote','Judge'];
-  const facs = (d.factories || []);
-  const facNode = f => {
-    const st = (f.state || '').toUpperCase();
-    const col = (st === 'IMPROVING' || st === 'CONVERGED') ? '#34d399'
-              : (st === 'SEEDED') ? '#8b8ba7' : '#e0b341';
-    const score = (f.mean_score != null) ? ` · ${(+f.mean_score).toFixed(0)}` : '';
-    return `<div class="node hasf" style="min-width:150px">
-      <div class="t">${f.code}</div>
-      <div class="s">${(f.title||'').replace('Hoch ','').replace(' Factory','')}</div>
-      <div style="font-size:11px;color:#8b8ba7;margin-top:6px">${f.genes} genes · ${f.champions} champ${score}</div>
-      <div style="font-size:11px;font-weight:700;color:${col};margin-top:2px">● ${st||'—'}</div>
-    </div>`;
-  };
-  const facCol = facs.length
-    ? `<div style="display:flex;flex-direction:column;gap:10px">${facs.map(facNode).join('')}</div>`
-    : `<div class="node hasf"><div class="t">HASF</div><div class="s">Product Factory</div></div>`;
-  return `<div class="panel">
-    <h3>HOCH · HAS × BRAIN × Factories</h3>
-    <p class="cap">command &amp; control ↔ self-improving core ↔ ${facs.length || 1} product ${facs.length===1?'factory':'factories'}</p>
-    <div class="flow">
-      <div class="node has"><div class="t">HAS</div><div class="s">Command &amp; Control</div></div>
-      <div class="wire"></div>
-      <div class="brain-core"><b>BRAIN</b><span>${d.genes} genes</span></div>
-      <div class="wire"></div>
-      ${facCol}
-    </div>
-    <div class="ops-strip">${ops.map(o=>`<span class="op-chip">${o}</span>`).join('')}</div>
-    <div class="evidence-strip">EVIDENCE LEDGER · RELAY MESH — hoch-relay-001 · hash + timestamp every claim</div>
-  </div>`;
-}
-
-load();
-setInterval(load, POLL_MS);
+load(); setInterval(load, POLL); setInterval(()=>{ if(last) render(); }, 1000);
 </script>
 </body>
 </html>

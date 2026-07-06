@@ -1,27 +1,29 @@
 {
   "schema": "brain-research-meta-v1",
-  "at": "2026-07-06T01:02:48.739216Z",
+  "at": "2026-07-06T01:14:22.203916Z",
   "improver_online": true,
   "model": "llama3:latest",
-  "chosen_lever": "EXPAND",
-  "reason": "1 thin pools cap champion quality; need 1 synthetic genes.",
+  "chosen_lever": "SELECT",
+  "reason": "4 classes have genes but no champion \u2014 crown them.",
   "targets": [
-    "Software Engineering"
+    "DAST",
+    "Family & Personal",
+    "Legal / Compliance",
+    "UX Security"
   ],
   "gaps": {
     "by_constraint": {
       "SATURATED": 10,
-      "LOW_CEILING": 15,
-      "NO_CHAMPION": 4,
-      "THIN_POOL": 1
+      "LOW_CEILING": 16,
+      "NO_CHAMPION": 4
     },
-    "thin": 1,
-    "low_ceiling": 15,
+    "thin": 0,
+    "low_ceiling": 16,
     "no_champion": 4,
     "drift": 3,
-    "expansion_needed_genes": 1,
-    "mean_champion_score": 68.077,
-    "generation": 14
+    "expansion_needed_genes": 0,
+    "mean_champion_score": 68.846,
+    "generation": 15
   },
   "global_converged": false
 }

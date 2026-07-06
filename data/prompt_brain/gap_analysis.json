@@ -8,45 +8,25 @@
   "totals": {
     "gene_classes": 30,
     "champion_classes": 26,
-    "total_genes": 478,
-    "top5_share": 0.605,
-    "mean_champion_score": 68.077,
-    "generation": 14,
+    "total_genes": 479,
+    "top5_share": 0.603,
+    "mean_champion_score": 68.846,
+    "generation": 15,
     "state": "IMPROVING"
   },
   "by_constraint": {
     "SATURATED": 10,
-    "LOW_CEILING": 15,
-    "NO_CHAMPION": 4,
-    "THIN_POOL": 1
+    "LOW_CEILING": 16,
+    "NO_CHAMPION": 4
   },
-  "expansion_needed_genes": 1,
-  "thin_classes": [
-    {
-      "class": "Software Engineering",
-      "genes": 5,
-      "has_champion": true,
-      "score": 62.5,
-      "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "THIN_POOL",
-      "pool_deficit": 1
-    }
-  ],
+  "expansion_needed_genes": 0,
+  "thin_classes": [],
   "low_ceiling_classes": [
     {
       "class": "Industry Specialized",
       "genes": 15,
       "has_champion": true,
       "score": 50.0,
-      "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
-      "class": "Cloud Security",
-      "genes": 6,
-      "has_champion": true,
-      "score": 57.5,
       "state": "VERIFIED_ON_HELDOUT",
       "constraint": "LOW_CEILING",
       "pool_deficit": 0
@@ -106,7 +86,25 @@
       "pool_deficit": 0
     },
     {
+      "class": "Software Engineering",
+      "genes": 6,
+      "has_champion": true,
+      "score": 62.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
       "class": "AI / ML Systems",
+      "genes": 6,
+      "has_champion": true,
+      "score": 67.5,
+      "state": "GENERATED_AND_JUDGED",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Cloud Security",
       "genes": 6,
       "has_champion": true,
       "score": 67.5,
@@ -233,15 +231,6 @@
       "pool_deficit": 0
     },
     {
-      "class": "Cloud Security",
-      "genes": 6,
-      "has_champion": true,
-      "score": 57.5,
-      "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
       "class": "Supply Chain",
       "genes": 6,
       "has_champion": true,
@@ -297,15 +286,24 @@
     },
     {
       "class": "Software Engineering",
-      "genes": 5,
+      "genes": 6,
       "has_champion": true,
       "score": 62.5,
       "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "THIN_POOL",
-      "pool_deficit": 1
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
     },
     {
       "class": "AI / ML Systems",
+      "genes": 6,
+      "has_champion": true,
+      "score": 67.5,
+      "state": "GENERATED_AND_JUDGED",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Cloud Security",
       "genes": 6,
       "has_champion": true,
       "score": 67.5,
@@ -377,24 +375,6 @@
       "pool_deficit": 0
     },
     {
-      "class": "AGI & Safety",
-      "genes": 10,
-      "has_champion": true,
-      "score": 72.5,
-      "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "SATURATED",
-      "pool_deficit": 0
-    },
-    {
-      "class": "Cybersecurity",
-      "genes": 89,
-      "has_champion": true,
-      "score": 72.5,
-      "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "SATURATED",
-      "pool_deficit": 0
-    },
-    {
       "class": "Data Security",
       "genes": 6,
       "has_champion": true,
@@ -422,6 +402,15 @@
       "pool_deficit": 0
     },
     {
+      "class": "Cybersecurity",
+      "genes": 89,
+      "has_champion": true,
+      "score": 75.0,
+      "state": "GENERATED_AND_JUDGED",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
       "class": "DevSecOps",
       "genes": 58,
       "has_champion": true,
@@ -436,6 +425,15 @@
       "has_champion": true,
       "score": 77.5,
       "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
+      "class": "AGI & Safety",
+      "genes": 10,
+      "has_champion": true,
+      "score": 80.0,
+      "state": "GENERATED_AND_JUDGED",
       "constraint": "SATURATED",
       "pool_deficit": 0
     },

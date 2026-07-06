@@ -1,0 +1,72 @@
+{
+  "schema": "brain-champion-registry",
+  "domain": "music",
+  "generation": 1,
+  "champions": {
+    "Lo-Fi Hip-Hop": {
+      "gene_id": "seed-lo-f-1113d93381",
+      "title": "Rainy Study Loop",
+      "score": 100.0,
+      "state": "SELECTED_FROM_SEED",
+      "domain": "music",
+      "pool_size": 2
+    },
+    "Deep House": {
+      "gene_id": "seed-deep-727ae6adea",
+      "title": "Sunset Terrace",
+      "score": 92.5,
+      "state": "SELECTED_FROM_SEED",
+      "domain": "music",
+      "pool_size": 1
+    },
+    "Melodic Techno": {
+      "gene_id": "seed-melo-60ec91efd3",
+      "title": "Aurora Drive",
+      "score": 92.5,
+      "state": "SELECTED_FROM_SEED",
+      "domain": "music",
+      "pool_size": 1
+    },
+    "Ambient": {
+      "gene_id": "seed-ambi-db7bb85622",
+      "title": "Glacier Fields",
+      "score": 95.0,
+      "state": "SELECTED_FROM_SEED",
+      "domain": "music",
+      "pool_size": 2
+    },
+    "Drum & Bass": {
+      "gene_id": "seed-drum-215370dd4a",
+      "title": "Neon Current",
+      "score": 92.5,
+      "state": "SELECTED_FROM_SEED",
+      "domain": "music",
+      "pool_size": 1
+    },
+    "Synthwave": {
+      "gene_id": "seed-synt-7c9b3cb7c7",
+      "title": "Midnight Highway",
+      "score": 92.5,
+      "state": "SELECTED_FROM_SEED",
+      "domain": "music",
+      "pool_size": 1
+    },
+    "Cinematic Score": {
+      "gene_id": "seed-cine-1e5a676f00",
+      "title": "Rising Tide",
+      "score": 86.5,
+      "state": "SELECTED_FROM_SEED",
+      "domain": "music",
+      "pool_size": 1
+    },
+    "Afrobeats": {
+      "gene_id": "seed-afro-0832fb8956",
+      "title": "Lagos Morning",
+      "score": 92.5,
+      "state": "SELECTED_FROM_SEED",
+      "domain": "music",
+      "pool_size": 1
+    }
+  },
+  "at": "2026-07-06T01:08:22.916240Z"
+}

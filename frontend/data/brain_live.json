@@ -1,5 +1,5 @@
 {
-  "ts": "2026-07-06T00:52:48.617215Z",
+  "ts": "2026-07-06T01:04:22.094185Z",
   "live_brain": {
     "live_brain_available": true,
     "backend": {
@@ -9,28 +9,59 @@
     },
     "note": "brain can GENERATE at $0"
   },
-  "generation": 14,
-  "genes": 478,
+  "generation": 15,
+  "genes": 479,
   "champions": 26,
-  "mean_score": 68.077,
-  "last_gain": 1.058,
+  "mean_score": 68.846,
+  "last_gain": 0.769,
   "state": "IMPROVING",
   "meta_lever": "EXPAND",
-  "meta_reason": "7 thin pools cap champion quality; need 18 synthetic genes.",
+  "meta_reason": "1 thin pools cap champion quality; need 1 synthetic genes.",
   "global_converged": false,
   "gaps": {
     "by_constraint": {
       "SATURATED": 10,
-      "LOW_CEILING": 15,
-      "NO_CHAMPION": 4,
-      "THIN_POOL": 1
+      "LOW_CEILING": 16,
+      "NO_CHAMPION": 4
     },
-    "thin": 1,
-    "low_ceiling": 15,
+    "thin": 0,
+    "low_ceiling": 16,
     "drift": 3,
-    "expansion_needed_genes": 1,
-    "top5_share": 0.605
+    "expansion_needed_genes": 0,
+    "top5_share": 0.603
   },
+  "factories": [
+    {
+      "code": "HASF",
+      "domain": "software",
+      "title": "Hoch Application Software Factory",
+      "genes": 479,
+      "champions": 26,
+      "mean_score": 68.846,
+      "state": "IMPROVING",
+      "gates": 4
+    },
+    {
+      "code": "HMF",
+      "domain": "music",
+      "title": "Hoch Music Factory",
+      "genes": 10,
+      "champions": 0,
+      "mean_score": null,
+      "state": "SEEDED",
+      "gates": 4
+    },
+    {
+      "code": "HRF",
+      "domain": "research",
+      "title": "Hoch AI Research Factory",
+      "genes": 8,
+      "champions": 0,
+      "mean_score": null,
+      "state": "SEEDED",
+      "gates": 5
+    }
+  ],
   "history": [
     {
       "g": 1,
@@ -101,9 +132,32 @@
       "g": 14,
       "m": 68.077,
       "gain": 1.058
+    },
+    {
+      "g": 15,
+      "m": 68.846,
+      "gain": 0.769
     }
   ],
   "recent_improvements": [
+    {
+      "task_class": "AGI & Safety",
+      "beats_mech": 7.5,
+      "score": 80.0,
+      "at": "2026-07-06T01:03:15.756552Z"
+    },
+    {
+      "task_class": "Cybersecurity",
+      "beats_mech": 2.5,
+      "score": 75.0,
+      "at": "2026-07-06T01:03:15.756552Z"
+    },
+    {
+      "task_class": "Cloud Security",
+      "beats_mech": 10.0,
+      "score": 67.5,
+      "at": "2026-07-06T01:03:15.756552Z"
+    },
     {
       "task_class": "Incident Response",
       "beats_mech": 15.0,
@@ -133,24 +187,6 @@
       "beats_mech": 20.0,
       "score": 67.5,
       "at": "2026-07-06T00:34:33.852557Z"
-    },
-    {
-      "task_class": "Security Architecture",
-      "beats_mech": 22.5,
-      "score": 67.5,
-      "at": "2026-07-06T00:34:33.852557Z"
-    },
-    {
-      "task_class": "QA",
-      "beats_mech": 15.0,
-      "score": 87.5,
-      "at": "2026-07-06T00:23:40.806007Z"
-    },
-    {
-      "task_class": "Coding",
-      "beats_mech": 30.0,
-      "score": 75.0,
-      "at": "2026-07-06T00:23:40.806007Z"
     }
   ],
   "top_champions": [
@@ -163,6 +199,12 @@
     {
       "cls": "Detection Engineering",
       "title": "Detection Coverage Gap Mapper (brain-imp",
+      "score": 80.0,
+      "state": "GENERATED_AND_JUDGED"
+    },
+    {
+      "cls": "AGI & Safety",
+      "title": "AGI Alignment Telemetry Validator (Initi",
       "score": 80.0,
       "state": "GENERATED_AND_JUDGED"
     },
@@ -181,12 +223,6 @@
     {
       "cls": "Audit",
       "title": "Student Data Privacy Agent (brain-improv",
-      "score": 75.0,
-      "state": "GENERATED_AND_JUDGED"
-    },
-    {
-      "cls": "Coding",
-      "title": "Test Automation Engineer (brain-improved",
       "score": 75.0,
       "state": "GENERATED_AND_JUDGED"
     }
