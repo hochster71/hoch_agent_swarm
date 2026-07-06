@@ -22,6 +22,33 @@ def _load(p, default):
         return default
 
 
+def _factories_summary():
+    """Per-factory live summary across ALL registered Factories (HASF/HMF/HRF/...).
+    Each field comes from that domain's real state files; a domain that hasn't run yet shows its
+    seeded gene count with state SEEDED — honest, never fabricated."""
+    out = []
+    try:
+        import sys as _sys
+        _sys.path.insert(0, str(ROOT))
+        from backend.factory.registry import list_factories
+        for f in list_factories():
+            gp = _load(f.gene_pool, {})
+            genes = gp.get("count") or (len(gp.get("genes", {})) if isinstance(gp.get("genes"), dict) else 0)
+            reg = _load(f.champion_registry, {})
+            champs = len(reg.get("champions", {}))
+            conv = _load(f.convergence_status, {})
+            state = conv.get("state") or ("SEEDED" if genes else "EMPTY")
+            out.append({
+                "code": f.code, "domain": f.domain, "title": f.title,
+                "genes": genes, "champions": champs,
+                "mean_score": conv.get("mean_score"), "state": state,
+                "gates": len(f.gates),
+            })
+    except Exception:
+        pass
+    return out
+
+
 def build_live_state():
     """Assemble the live BRAIN state dict from real state files + live model detection.
     Reusable by both the static writer (main) and the /api/brain/live endpoint."""
@@ -76,6 +103,7 @@ def build_live_state():
         "meta_reason": meta.get("reason"),
         "global_converged": meta.get("global_converged", False),
         "gaps": gap_summary,
+        "factories": _factories_summary(),
         "history": [{"g": h.get("generation"), "m": h.get("mean_score"), "gain": h.get("gain")} for h in hist],
         "recent_improvements": list(reversed(improvements))[:8],
         "top_champions": sorted(

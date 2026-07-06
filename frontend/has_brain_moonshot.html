@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>HAS × HASF — BRAIN Moonshot</title>
+<title>HOCH — BRAIN Moonshot (HAS × BRAIN × Factories)</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 :root{
@@ -194,7 +194,7 @@ function render(){
   root.innerHTML = `<div class="wrap">
     <div class="head">
       <div>
-        <h1>HAS × HASF — BRAIN Moonshot</h1>
+        <h1>HOCH — BRAIN Moonshot</h1>
         <div class="sub">self-improving convergence core · generation ${d.generation} · ${esc(d.state)}</div>
       </div>
       <div class="fresh ${connState.cls}">
@@ -208,7 +208,7 @@ function render(){
     ${renderMidGrid(d)}
     ${renderFlow(d)}
     <div class="footer-note">freshness computed live from data ts (not a static claim) · poll every 60s ·
-      source: <a href="data/brain_live.json">frontend/data/brain_live.json</a> ·
+      source: <a href="/api/brain/live">/api/brain/live</a> (live endpoint) ·
       upgrade path: SSE push endpoint recommended once brain writer emits on-generation events, not just cadence</div>
   </div>`;
 }
@@ -281,15 +281,31 @@ function renderMidGrid(d){
 
 function renderFlow(d){
   const ops = ['Harvest','Converge','Generate','Learn','Adversary','Promote','Judge'];
+  const facs = (d.factories || []);
+  const facNode = f => {
+    const st = (f.state || '').toUpperCase();
+    const col = (st === 'IMPROVING' || st === 'CONVERGED') ? '#34d399'
+              : (st === 'SEEDED') ? '#8b8ba7' : '#e0b341';
+    const score = (f.mean_score != null) ? ` · ${(+f.mean_score).toFixed(0)}` : '';
+    return `<div class="node hasf" style="min-width:150px">
+      <div class="t">${f.code}</div>
+      <div class="s">${(f.title||'').replace('Hoch ','').replace(' Factory','')}</div>
+      <div style="font-size:11px;color:#8b8ba7;margin-top:6px">${f.genes} genes · ${f.champions} champ${score}</div>
+      <div style="font-size:11px;font-weight:700;color:${col};margin-top:2px">● ${st||'—'}</div>
+    </div>`;
+  };
+  const facCol = facs.length
+    ? `<div style="display:flex;flex-direction:column;gap:10px">${facs.map(facNode).join('')}</div>`
+    : `<div class="node hasf"><div class="t">HASF</div><div class="s">Product Factory</div></div>`;
   return `<div class="panel">
-    <h3>HAS × BRAIN × HASF</h3>
-    <p class="cap">command &amp; control ↔ self-improving core ↔ product factory</p>
+    <h3>HOCH · HAS × BRAIN × Factories</h3>
+    <p class="cap">command &amp; control ↔ self-improving core ↔ ${facs.length || 1} product ${facs.length===1?'factory':'factories'}</p>
     <div class="flow">
       <div class="node has"><div class="t">HAS</div><div class="s">Command &amp; Control</div></div>
       <div class="wire"></div>
       <div class="brain-core"><b>BRAIN</b><span>${d.genes} genes</span></div>
       <div class="wire"></div>
-      <div class="node hasf"><div class="t">HASF</div><div class="s">Product Factory</div></div>
+      ${facCol}
     </div>
     <div class="ops-strip">${ops.map(o=>`<span class="op-chip">${o}</span>`).join('')}</div>
     <div class="evidence-strip">EVIDENCE LEDGER · RELAY MESH — hoch-relay-001 · hash + timestamp every claim</div>

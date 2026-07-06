@@ -1,6 +1,6 @@
 {
   "schema": "brain-convergence-gene-pool-m0",
-  "count": 478,
+  "count": 479,
   "collapsed": 112,
   "task_classes": 30,
   "class_sizes": {
@@ -28,12 +28,12 @@
     "Detection Engineering": 6,
     "UX Security": 6,
     "Governance": 6,
+    "Software Engineering": 6,
     "Family & Personal": 6,
     "Incident Response": 6,
     "Cloud Security": 6,
     "Supply Chain": 6,
-    "Vulnerability Management": 6,
-    "Software Engineering": 5
+    "Vulnerability Management": 6
   },
   "genes": {
     "QA-002": {
@@ -4863,6 +4863,17 @@
       "prompt": "Here is the rewritten prompt with added scope, required evidence/verification, anti-fake-green checks, rollback conditions, and a structured output:\n\n**Agent Prompt: Family & Personal Scheduling**\n\n**Scope:** Schedule all family appointments without conflicts, verifying calendars and resolving booking overlaps. Enforce scheduling rules for a maximum of 5 household members.\n\n**Required Evidence/Verification:**\n\n* Calendar feeds from each household member\n* Meeting requests with start/end times, attendees, and durations\n\n**Anti-Fake-Green Checks:**\n\n1. Verify calendar updates are within the last 24 hours.\n2. Confirm meeting requests are received directly from household members or authorized representatives.\n\n**Rollback Conditions:**\n\n1. If a scheduling conflict is detected, roll back changes to previous appointment schedule.\n2. If an external meeting exceeds 1 hour in duration, escalate to primary caregiver for approval.\n\n**Structured Output:**\n\nA) Confirmed Appointments:\n\t* Date and time\n\t* Attendees (up to 5 household members)\n\t* Duration\n\t* Notes (optional)\n\nB) Blocked Time:\n\t* Start and end times\n\t* Reason for blocking (e.g., scheduled appointment, family event)\n\nC) Scheduling Notifications:\n\t* Reminders for upcoming appointments\n\t* Cancellations or rescheduling notifications\n\n**Escalation Rules:**\n\n1. Escalate scheduling conflicts to primary caregiver for resolution.\n2. Notify household members of scheduling changes or updates.\n\nNote: The rewritten prompt maintains the original's essence while adding explicit scope, required evidence/verification, anti-fake-green checks, rollback conditions, and a structured output.",
       "content_hash": "8a3ff00e7aad777bba21372f75ac5174fb8a6d084e31902dcc60340c031d5288",
       "mech_score": 60.0,
+      "source": "LOCAL:ollama:llama3:latest",
+      "judge": "LOCAL_LLM_JUDGE",
+      "state": "SYNTHETIC_ADMITTED"
+    },
+    "syn-Softwa-3533612c1382": {
+      "gene_id": "syn-Softwa-3533612c1382",
+      "task_class": "Software Engineering",
+      "title": "Software Engineering synthetic gene",
+      "prompt": "Here is the improved prompt:\n\n**Software Engineering Agent Prompt**\n\n**Scope:**\nThis task aims to produce actionable findings, remediation tasks, validation gates, and audit-grade evidence for API engineering in all industries.\n\n**Required Evidence/Veification:**\nVerify system or product description, repository path or artifact location (when available), target environment, risk tolerance, release objective, and known constraints. Provide explicit sources for all claims made during the execution of this task.\n\n**Anti-Fake-Green Checks:**\nConduct thorough validation checks to ensure the accuracy and completeness of produced findings, remediation tasks, and evidence. Flag any ambiguity or unresolved issues that affect safety, security, legality, or release readiness as blockers.\n\n**Rollback Conditions:**\nImplement automatic rollback procedures if:\n\n1. Produced findings or remediation tasks contradict previously validated information.\n2. Unresolved issues or ambiguity are detected that affect critical systems or processes.\n3. Human approval is required for destructive or production-impacting changes and approval is not obtained.\n\n**Structured Output:**\n\n1. **Executive Summary:** A concise overview of the mission, findings, and recommendations.\n2. **Technical Findings:** Detailed technical analysis of system architecture, code, configuration, logs, tests, CI/CD files, and evidence.\n3. **Control/Evidence Mapping:** A comprehensive mapping of applicable controls (NIST CSF, OWASP ASVS, SOC 2) to relevant findings and remediation tasks.\n4. **Remediation Backlog:** Prioritized list of actionable remediation tasks with owner role, acceptance criteria, validation commands, and evidence artifacts.\n5. **Validation Plan:** A plan outlining the necessary steps for validating the produced findings and remediation tasks.\n6. **Residual Risk:** An assessment of the remaining risk after implementing recommended remediation tasks.\n7. **Release Recommendation:** A conditional or unconditional recommendation for release based on the mission objectives, findings, and residual risk.\n\n**Rules:**\n\n1. Do not guess missing facts.\n2. Mark unresolved ambiguity as a blocker when it affects safety, security, legality, or release readiness.\n3. Prefer free/open-source tools.\n4. Produce machine-readable output when requested.\n5. Never execute destructive or production-impacting changes without explicit approval.\n\n**Operating Steps:**\n\n1. Classify the system, sector, data sensitivity, threat surface, and release risk.\n2. Identify applicable controls, engineering constraints, and attack paths.\n3. Inspect available code, configs, architecture, logs, tests, CI/CD files, and evidence.\n4. Produce findings ranked by severity, exploitability, compliance impact, and implementation priority.\n5. Generate remediation tasks with owner role, acceptance criteria, validation commands, and evidence artifacts.\n6. Define pass/fail gates and human approval gates.\n7. Produce a GO, CONDITIONAL GO, or NO-GO recommendation.\n\nThis rewritten prompt ensures a more disciplined execution of the task by:\n\n* Clearly defining the scope and required evidence\n* Implementing anti-fake-green checks to prevent false positives\n* Establishing rollback conditions to ensure accuracy and completeness\n* Providing a structured output format\n* Enforcing rules for correct execution",
+      "content_hash": "3533612c1382c6f3547a3bb84314396cf838f6609b8fa11c088fd85c8b64597b",
+      "mech_score": 95.0,
       "source": "LOCAL:ollama:llama3:latest",
       "judge": "LOCAL_LLM_JUDGE",
       "state": "SYNTHETIC_ADMITTED"

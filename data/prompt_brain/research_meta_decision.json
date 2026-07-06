@@ -1,33 +1,27 @@
 {
   "schema": "brain-research-meta-v1",
-  "at": "2026-07-06T00:45:22.153636Z",
+  "at": "2026-07-06T01:02:48.739216Z",
   "improver_online": true,
   "model": "llama3:latest",
   "chosen_lever": "EXPAND",
-  "reason": "7 thin pools cap champion quality; need 18 synthetic genes.",
+  "reason": "1 thin pools cap champion quality; need 1 synthetic genes.",
   "targets": [
-    "Vulnerability Management",
-    "Coding",
-    "Detection Engineering",
-    "Incident Response",
-    "Software Engineering",
-    "DAST",
-    "Family & Personal"
+    "Software Engineering"
   ],
   "gaps": {
     "by_constraint": {
-      "SATURATED": 7,
-      "LOW_CEILING": 14,
-      "THIN_POOL": 7,
-      "NO_CHAMPION": 2
+      "SATURATED": 10,
+      "LOW_CEILING": 15,
+      "NO_CHAMPION": 4,
+      "THIN_POOL": 1
     },
-    "thin": 7,
-    "low_ceiling": 14,
-    "no_champion": 2,
+    "thin": 1,
+    "low_ceiling": 15,
+    "no_champion": 4,
     "drift": 3,
-    "expansion_needed_genes": 18,
-    "mean_champion_score": 67.019,
-    "generation": 13
+    "expansion_needed_genes": 1,
+    "mean_champion_score": 68.077,
+    "generation": 14
   },
   "global_converged": false
 }
