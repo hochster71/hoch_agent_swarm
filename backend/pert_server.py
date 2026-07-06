@@ -73,7 +73,7 @@ def get_tailscale_status():
                         if w_name in name or w_info["ip"] == ip:
                             if "offline" in line.lower():
                                 w_info["status"] = "OFFLINE"
-                            elif "active" in line.lower() or "direct" in line.lower() or name == "michaels-macbook-pro":
+                            else:
                                 w_info["status"] = "ONLINE"
     except Exception:
         pass
@@ -1866,6 +1866,98 @@ def get_pert_data():
         "governed_execution_status": gov_exec_status,
         "governed_execution_freshness": panels_freshness.get("hoch_governed_execution", {})
     }
+
+
+@app.get("/api/v1/control-plane/status")
+def get_control_plane_status():
+    """
+    S1 — single reconciled status feed (canonical control-plane consolidation).
+
+    THE one source of truth for goal %, readiness, blockers, critical path, tests,
+    approvals, and per-factory state — PROJECTED from get_pert_data() (the :8765
+    authoritative computation) plus each factory's real convergence/readiness file.
+    No independent recomputation, so every UI (the React shell and any legacy page)
+    reports identical numbers. Resolves the 80%-vs-95% divergence by declaring the
+    live PERT computation authoritative over the static contract snapshot.
+    """
+    def _unwrap(v):
+        return v.get("value") if isinstance(v, dict) and "value" in v else v
+
+    d = get_pert_data()
+    metrics = d.get("metrics", {}) or {}
+    pert = d.get("pert_cpm", {}) or {}
+    monetization = d.get("monetization", {}) or {}
+    guardrails = d.get("guardrails", {}) or {}
+
+    goal_percent = _unwrap((d.get("readiness") or {}).get("score"))
+    legacy_contract_percent = ((d.get("contract") or {}).get("metrics") or {}).get(
+        "percent_goal_complete"
+    )
+
+    root = get_project_root()
+
+    def _conv(rel):
+        try:
+            with open(os.path.join(root, rel), "r") as f:
+                c = json.load(f)
+            return {
+                "state": c.get("state"),
+                "generation": c.get("generation"),
+                "mean_score": c.get("mean_score"),
+                "converged": c.get("converged"),
+                "source": rel,
+            }
+        except Exception:
+            return {"state": "UNKNOWN", "source": rel, "note": "file missing/unreadable"}
+
+    per_factory = {
+        "HAS": _conv("data/prompt_brain/convergence_status.json"),
+        "HMF": _conv("data/prompt_brain/music/convergence_status.json"),
+        "HRF": _conv("data/prompt_brain/research/convergence_status.json"),
+        "HASF": {
+            "monetization_readiness_percent": _unwrap(
+                monetization.get("monetization_readiness_percent")
+            ),
+            "stripe_sandbox_readiness": _unwrap(monetization.get("stripe_sandbox_readiness")),
+            "source": "get_pert_data().monetization",
+        },
+    }
+
+    return {
+        "schema": "control-plane-status-v1",
+        "generated_at": datetime.now(timezone.utc).isoformat() + "Z",
+        "provenance": (
+            "projection of get_pert_data() (:8765 authoritative) + per-factory "
+            "convergence files; no independent recomputation"
+        ),
+        "goal_percent": goal_percent,
+        "goal_percent_detail": (d.get("readiness") or {}).get("score"),
+        "reconciliation": {
+            "authoritative": goal_percent,
+            "authoritative_source": "get_pert_data().readiness.score (live PERT computation)",
+            "legacy_static_contract_percent": legacy_contract_percent,
+            "note": "Live PERT computation is authoritative; the static contract snapshot may lag.",
+        },
+        "critical_path": pert.get("critical_path"),
+        "critical_path_remaining_minutes": pert.get("expected_duration"),
+        "blockers": {
+            "blocked_task_count": metrics.get("blocked_task_count"),
+            "next_actions": d.get("next_actions", []),
+        },
+        "tests": {
+            "passing": _unwrap(d.get("tests_passing_count")),
+            "failing": _unwrap(d.get("tests_failing_count")),
+        },
+        "evidence_coverage_percent": _unwrap(d.get("evidence_coverage_percent")),
+        "approvals": _unwrap(d.get("high_risk_approval_queue")),
+        "guardrail_violations": {
+            "fake_status": _unwrap(guardrails.get("fake_status_violations")),
+            "public_exposure": _unwrap(guardrails.get("public_exposure_violations")),
+            "security": _unwrap(guardrails.get("security_guardrail_violations")),
+        },
+        "per_factory": per_factory,
+    }
+
 
 @app.get("/view-doc", response_class=HTMLResponse)
 def view_doc(path: str):
