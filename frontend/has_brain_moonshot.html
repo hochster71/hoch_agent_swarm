@@ -136,6 +136,34 @@ async function load(){
   render();
 }
 
+/* ---------- fleet reconcile (dry-run, T3-inert) ---------- */
+let fleet=null;
+async function loadFleet(){
+  // Independent of the brain feed: prefer live feed embed, else the static mirror the reconciler writes.
+  if(last && last.fleet_reconcile){ fleet=last.fleet_reconcile; render(); return; }
+  try{ const r=await fetch(API_BASE+'/data/fleet_reconcile.json?_='+Date.now(),{cache:'no-store'});
+       if(!r.ok) throw new Error('HTTP '+r.status);
+       fleet=await r.json(); }
+  catch(e){ /* leave fleet as-is; panel shows NOT-YET-RUN rather than a fabricated fleet */ }
+  render();
+}
+function renderFleet(){
+  const f=fleet;
+  if(!f){ return `<div class="panel"><h3>FLEET RECONCILE · dry-run · competing-loop detector</h3>
+    <div class="kv" style="color:var(--dim)">not yet run — <code>python3 scripts/hoch_fleet_reconcile.py</code> on the Mac (needs launchctl; no fleet fabricated)</div></div>`; }
+  const recs=f.recommendations||[], contested=Object.keys(f.contested_files||{}), acts=f.actions||[];
+  const rows = recs.length ? recs.map(r=>`<div class="kv">
+      <span style="color:var(--indigo)">[${esc(r.class)}]</span>
+      <span>keep <b style="color:var(--green)">${esc(r.canonical_owner)}</b></span></div>
+      <div class="tl" style="color:var(--dim);margin:2px 0 8px">stop (T3, not run): ${(r.bootout_candidates||[]).map(esc).join(', ')||'—'} · contested: ${(r.contested_files||[]).map(esc).join(', ')||'—'}</div>`).join('')
+    : `<div class="kv" style="color:var(--dim)">no same-file contention detected by the heuristic</div>`;
+  const inert = f.safety && f.safety.all_actions_pending_operator_T3;
+  return `<div class="panel"><h3>FLEET RECONCILE · dry-run · ${esc(f.jobs_examined||0)} jobs · ${contested.length} contested file(s)</h3>
+    ${rows}
+    <div class="tl" style="margin-top:6px;color:${inert?'#34d399':'#e0b341'}">
+      ${acts.length} stop action(s) staged · ${inert?'ALL PENDING_OPERATOR_APPROVAL_T3 (executed=false) — nothing stopped':'⚠ verify T3 inert'} · ${esc(f.method||'')}</div></div>`;
+}
+
 /* ---------- sparkline ---------- */
 function spark(history, col){
   if(!history||history.length<2) return `<svg class="spark" viewBox="0 0 200 34" preserveAspectRatio="none"></svg>`;
@@ -391,6 +419,8 @@ function render(){
 
   ${renderSwarms(d)}
 
+  ${renderFleet()}
+
   <div class="ledger">EVIDENCE LEDGER · RELAY MESH — <a href="http://100.87.18.15:3012" target="_blank" rel="noopener" style="color:var(--indigo)">hoch-relay-001</a> · hash + timestamp every claim · no green without proof</div>
   <div class="foot">freshness computed live from data ts (not a static claim) · poll ${POLL/1000}s · source <a href="${URL}">${URL}</a> ·
     factories pulse ONLY at their real state — IMPROVING breathes green, SELECTED amber, SEEDED dim · upgrade path: SSE push on generation events</div>`;
@@ -415,7 +445,7 @@ async function askBrain(){
 document.getElementById('chatgo').addEventListener('click', askBrain);
 document.getElementById('chatq').addEventListener('keydown', e=>{ if(e.key==='Enter') askBrain(); });
 
-load(); setInterval(load, POLL); setInterval(()=>{ if(last) render(); }, 1000);
+load(); loadFleet(); setInterval(load, POLL); setInterval(loadFleet, POLL); setInterval(()=>{ if(last) render(); }, 1000);
 </script>
 </body>
 </html>

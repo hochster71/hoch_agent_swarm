@@ -30,6 +30,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "data" / "prompt_brain" / "fleet_reconcile.json"
+# Deck-readable mirror (the command deck's static fallback path serves frontend/data/*.json).
+DECK_OUT = ROOT / "frontend" / "data" / "fleet_reconcile.json"
 
 # Hard invariant: this module must never stop a runtime. These tokens are forbidden as executed ops.
 NEVER_EXECUTE = True
@@ -284,7 +286,13 @@ def reconcile() -> dict:
         },
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(out, indent=2), encoding="utf-8")
+    payload = json.dumps(out, indent=2)
+    OUT.write_text(payload, encoding="utf-8")
+    try:
+        DECK_OUT.parent.mkdir(parents=True, exist_ok=True)
+        DECK_OUT.write_text(payload, encoding="utf-8")  # deck reads this via /data/ static fallback
+    except Exception:
+        pass  # deck mirror is best-effort; the canonical write above already succeeded
     return out
 
 
