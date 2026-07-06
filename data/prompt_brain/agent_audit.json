@@ -1,0 +1,66 @@
+{
+  "schema": "hoch-agent-audit-v1",
+  "at": "2026-07-06T02:14:39.675520Z",
+  "totals": {
+    "active": 5,
+    "idle": 1,
+    "dormant": 0,
+    "components": 6
+  },
+  "missing_for_full_autonomy": [
+    "continuous daemon (not 10-min interval)",
+    "AI Michael auto-executes autonomous $0 actions (stop asking)",
+    "Cyber Swarm running continuously (Red/Blue/Purple)",
+    "frontier judges for HMF/HRF real gains (cost decision)"
+  ],
+  "agents": [
+    {
+      "agent": "HASF factory (software)",
+      "status": "ACTIVE",
+      "state": "IMPROVING",
+      "last_activity_s": 478,
+      "goal_aligned": true,
+      "work_left": "improving"
+    },
+    {
+      "agent": "HMF factory (music)",
+      "status": "ACTIVE",
+      "state": "IMPROVING",
+      "last_activity_s": 212,
+      "goal_aligned": true,
+      "work_left": "improving"
+    },
+    {
+      "agent": "HRF factory (research)",
+      "status": "IDLE",
+      "state": "PLATEAUING",
+      "last_activity_s": 1,
+      "goal_aligned": true,
+      "work_left": "run cycles"
+    },
+    {
+      "agent": "AI Michael (founder orchestrator)",
+      "status": "ACTIVE",
+      "state": "EXPAND",
+      "last_activity_s": 0,
+      "goal_aligned": true,
+      "work_left": "RECOMMENDS but does not yet EXECUTE \u2014 auto-execute is the autonomy gap"
+    },
+    {
+      "agent": "cadence loop",
+      "status": "ACTIVE",
+      "state": "10-min launchd interval (NOT continuous)",
+      "last_activity_s": 852,
+      "goal_aligned": true,
+      "work_left": "convert to a continuous KeepAlive daemon so cycles run back-to-back"
+    },
+    {
+      "agent": "Cyber Swarm (Red/Blue/Purple)",
+      "status": "ACTIVE",
+      "state": "NOT_SECURE",
+      "last_activity_s": 0,
+      "goal_aligned": true,
+      "work_left": "continuous adversarial hardening of HAS + products (real scanners + seeded faults)"
+    }
+  ]
+}

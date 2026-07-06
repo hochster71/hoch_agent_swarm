@@ -1,16 +1,16 @@
 {
   "schema": "brain-convergence-gene-pool-m0",
   "domain": "music",
-  "count": 10,
+  "count": 23,
   "class_sizes": {
-    "Lo-Fi Hip-Hop": 2,
-    "Ambient": 2,
-    "Deep House": 1,
-    "Melodic Techno": 1,
-    "Drum & Bass": 1,
-    "Synthwave": 1,
-    "Cinematic Score": 1,
-    "Afrobeats": 1
+    "Lo-Fi Hip-Hop": 3,
+    "Deep House": 3,
+    "Melodic Techno": 3,
+    "Drum & Bass": 3,
+    "Synthwave": 3,
+    "Cinematic Score": 3,
+    "Afrobeats": 3,
+    "Ambient": 2
   },
   "task_classes": 8,
   "genes": {
@@ -113,6 +113,149 @@
       "state": "SEED",
       "source": "HUMAN_SEED",
       "domain": "music"
+    },
+    "syn-DeepH-1db8a400fa75": {
+      "gene_id": "syn-DeepH-1db8a400fa75",
+      "task_class": "Deep House",
+      "title": "Deep House synthetic gene",
+      "prompt": "Here is the rewritten prompt with added discipline:\n\n**Task:** Create an original Deep House track with organic/melodic elements.\n\n**Scope:**\n\n* Genre: Deep House\n* Structure:\n\t+ Intro (15-30 seconds): Atmospheric pads and subtle percussion to set the mood\n\t+ Build (45-60 seconds): Gradual increase in tension through adding melodic elements, filters, and effects\n\t+ Drop A (Chorus) (1-2 minutes): Main hook featuring plucked synth topline riff, deep sub bass, and analog pads\n\t+ Breakdown (Bridge) (30-45 seconds): Minimalist arrangement with filtered vocal chops and congas to create a sense of release\n\t+ Drop B (1-2 minutes): Reprise of Drop A with added elements and increased energy\n\t+ Outro (15-30 seconds): Gradual fade-out with reverb and delay effects\n* Hook: Plucked synth topline riff that becomes the main melodic element\n\n**Required Evidence/Veification:**\n\n* Original composition: No clones of named artists or sampling without clearance\n* Instrumentation:\n\t+ Deep sub bass\n\t+ Analog pads\n\t+ Plucked synth\n\t+ Shaker\n\t+ Congas\n\t+ Filtered vocal chops\n\n**Anti-Fake-Green Checks:**\n\n* No obvious loops or samples from existing tracks\n* Unique melodic elements and harmonies throughout the track\n* Balance of light and dark, with no over-reliance on a single element\n\n**Rollback Conditions:**\n\n* If the track does not meet the 122 BPM tempo requirement, roll back to rework the drum pattern and overall energy\n* If the track lacks tension and release in the build-up phase, rework the arrangement to create a more dramatic arc\n\n**Structured Output:**\n\n* A 3:30 minute Deep House track with the specified structure and instrumentation\n* Club-ready mix/mastering with:\n\t+ -8 LUFS loudness target\n\t+ Wide stereo pads for ambiance\n\t+ Mono bass for clarity\n\t+ Sidechain compression to control dynamics\n* Metadata:\n\t+ Title: [Insert title]\n\t+ Tags: warm, groovy\n\n**Quality Control (QC):**\n\n* Reference A/B testing against a deep-house loudness target to ensure the track meets the desired level and balance",
+      "content_hash": "1db8a400fa75f9afa1d9636ce730db7f2daaacf3e7f2dba6ae92c1a3dc36f3f2",
+      "mech_score": 100.0,
+      "source": "LOCAL:ollama:llama3:latest",
+      "judge": "LOCAL_LLM_JUDGE",
+      "state": "SYNTHETIC_ADMITTED"
+    },
+    "syn-DeepH-40095653f98c": {
+      "gene_id": "syn-DeepH-40095653f98c",
+      "task_class": "Deep House",
+      "title": "Deep House synthetic gene",
+      "prompt": "Here is the improved prompt:\n\n**Task:** Generate an original Deep House track with organic/melodic elements and a structured composition.\n\n**Scope:**\n\n* Genre: Deep House\n* Style: Organic/Melodic\n* Structure:\n\t+ Intro (30 seconds): atmospheric pads, subtle percussion\n\t+ Build (1 minute 15 seconds): gradual tension buildup with filtered vocals, shaker, congas, and analog pads\n\t+ Drop A (Chorus) (45 seconds): hook with plucked synth topline riff, deep sub bass, and sidechain compression\n\t+ Breakdown (Bridge) (30 seconds): minimal elements, atmospheric pads, and filtered vocal chops\n\t+ Drop B (1 minute 15 seconds): intensified build-up and release on drop\n\t+ Outro (30 seconds): gradual fade-out with reprise of intro elements\n\n**Evidence/Verification:**\n\n* Verify that the generated track does not resemble any named artist or clone a known Deep House track.\n* Confirm that the track features a plucked synth topline riff as the hook.\n\n**Anti-Fake-Green Checks:**\n\n* Ensure that the generated track is an original composition and does not contain any copyrighted materials (e.g., samples, loops).\n* Verify that the track meets the required loudness target (-8 LUFS) and has a balanced mix with distinct instrumentation (deep sub bass, analog pads, plucked synth, shaker, congas, filtered vocal chops).\n\n**Rollback Conditions:**\n\n* If the generated track does not meet the required scope, evidence/verification, or anti-fake-green checks, roll back to an earlier iteration and re-generate.\n\n**Structured Output:**\n\n* Generate a Deep House track with the specified structure, instrumentation, tempo (122 BPM), key (A minor), and time signature (4/4).\n* Deliver the following metadata:\n\t+ Title\n\t+ Tags (warm, groovy)\n\t+ Duration (~3:30)\n* Provide a reference A/B comparison against a deep-house loudness target for quality control.",
+      "content_hash": "40095653f98ca559e3e1ef6d17ba12345cba8dca38b24d81bf30244520bb3320",
+      "mech_score": 100.0,
+      "source": "LOCAL:ollama:llama3:latest",
+      "judge": "LOCAL_LLM_JUDGE",
+      "state": "SYNTHETIC_ADMITTED"
+    },
+    "syn-Melodi-587eca420c78": {
+      "gene_id": "syn-Melodi-587eca420c78",
+      "task_class": "Melodic Techno",
+      "title": "Melodic Techno synthetic gene",
+      "prompt": "Here is the improved prompt:\n\n**Task:** Generate a Melodic Techno track with the following specifications:\n\n**Scope:**\n\n* Genre: Melodic Techno\n* Structure:\n\t+ Intro (0:00-0:30): ambient pads, atmospheric risers\n\t+ Rolling Groove (0:30-1:45): driving bass, arpeggiated lead motif, analog arps\n\t+ Breakdown Build (1:45-2:15): gradual build-up of tension through filtered sounds and noise risers\n\t+ Drop (2:15-3:00): energy peak with increased rhythm, filtered leads, and prominent bassline\n\t+ Outro (3:00-4:00): slow fade-out with atmospheric pads and residual energy\n* Hook: arpeggiated lead motif\n\n**Required Evidence/Verification:**\n\n1. Originality: The generated track must be 100% original, copyright-safe, and not imitate any named artist or existing song.\n2. Instrumentation:\n\t+ Driving bass ( prominent throughout the track)\n\t+ Analog arps\n\t+ Atmospheric pads\n\t+ Rimshot\n\t+ Noise riser\n3. Tempo/Key: 124 BPM, F# minor, 4/4\n4. Mix/Master:\n\t+ LUFS: -8 dB\n\t+ Controlled low end (not too boomy or muddy)\n\t+ Wide reverb tails\n\n**Anti-Fake-Green Checks:**\n\n1. Check for audible artifacts (distortion, aliasing, etc.)\n2. Verify the track's dynamics are balanced and not excessively loud/soft\n3. Ensure the track has a clear structure and progression\n\n**Rollback Conditions:**\n\n1. If the generated track lacks energy or tension during the breakdown build-up phase, rollback to previous iteration.\n2. If the drop section is too abrupt or lacks sufficient buildup, rollback to previous iteration.\n\n**Structured Output:**\n\nThe generated Melodic Techno track should include:\n\n1. Track title\n2. Mood (driving, cosmic)\n3. Duration (~4:00 minutes)\n4. A mix check report before rendering the final version\n\nPlease generate a track that meets these specifications and provides a high-quality, engaging listening experience.",
+      "content_hash": "587eca420c78748463b5983cc3336fa21f36e7422d7bc513300774f6b19078ce",
+      "mech_score": 100.0,
+      "source": "LOCAL:ollama:llama3:latest",
+      "judge": "LOCAL_LLM_JUDGE",
+      "state": "SYNTHETIC_ADMITTED"
+    },
+    "syn-Melodi-8a0a4f405a81": {
+      "gene_id": "syn-Melodi-8a0a4f405a81",
+      "task_class": "Melodic Techno",
+      "title": "Melodic Techno synthetic gene",
+      "prompt": "Here is the improved prompt:\n\n**Task:** Generate a melodic techno track with a hypnotic atmosphere, following a structured structure and adhering to specific guidelines.\n\n**Scope:** Create an original, copyright-safe melodic techno track that meets the following criteria:\n\n* **Structure:**\n\t+ Intro (0:00-0:30): Introduce a memorable arpeggiated lead motif, building tension with atmospheric pads.\n\t+ Rolling Groove (0:30-1:30): Develop a driving bassline and analog arps, maintaining energy and momentum.\n\t+ Breakdown Build (1:30-2:15): Gradually introduce rimshot and noise riser elements to create an air of anticipation.\n\t+ Drop (2:15-3:00): Release the tension with a peak in energy, featuring the arpeggiated lead motif prominently.\n\t+ Outro (3:00-4:00): Conclude the track with a reprise of the intro's atmospheric pads and a final nod to the driving bassline.\n* **Requirements:** Ensure the following elements are present:\n\t+ Originality: No named-artist imitation; creative reinterpretation of melodic techno tropes.\n\t+ Tempo/Key: 124 BPM, F# minor, 4/4 time signature.\n\t+ Instrumentation: driving bass, analog arps, atmospheric pads, rimshot, and noise riser.\n\t+ Mix/Master: -8 LUFS, controlled low end, wide reverb tails.\n* **Verification:** Perform the following checks to ensure compliance:\n\t+ Originality check: Verify that no recognizable melodic techno patterns or phrases are borrowed from existing tracks.\n\t+ Tempo/key check: Confirm that the track's tempo and key match the specified values (124 BPM, F# minor).\n\t+ Instrumentation check: Ensure that all required instruments are present and their levels are balanced as intended.\n* **Rollback Conditions:** If any of the following conditions are met, roll back to a previous version:\n\t+ Originality check fails or is inconclusive.\n\t+ Tempo/key check fails or is inconclusive.\n\t+ Instrumentation check fails or is inconclusive.\n* **Structured Output:**\n\t1. Provide the generated melodic techno track as a lossless audio file (WAV, FLAC, etc.).\n\t2. Include metadata:\n\t\t- Title\n\t\t- Mood (driving, cosmic)\n\t\t- Length (~4:00 minutes)\n\n**Additional Requirements:** Perform a mix check before rendering the final track to ensure it meets the specified mixing and mastering guidelines (-8 LUFS, controlled low end, wide reverb tails).",
+      "content_hash": "8a0a4f405a815708befa2ae9a450ca5656744bcf52ca47f8f977f465faf09915",
+      "mech_score": 92.5,
+      "source": "LOCAL:ollama:llama3:latest",
+      "judge": "LOCAL_LLM_JUDGE",
+      "state": "SYNTHETIC_ADMITTED"
+    },
+    "syn-Drum&-472a2bd4ee90": {
+      "gene_id": "syn-Drum&-472a2bd4ee90",
+      "task_class": "Drum & Bass",
+      "title": "Drum & Bass synthetic gene",
+      "prompt": "Here is the rewritten prompt with added discipline:\n\n**Task:** Create a high-quality liquid drum & bass track within the scope of the following requirements.\n\n**Scope:**\n\n* Genre: Liquid Drum & Bass\n* Structure:\n\t+ Intro (15-30 seconds): Atmospheric pads and subtle percussion setting the tone for the track\n\t+ Drop A (Chorus) (45-60 seconds): Vocal-chop topline with a hook, accompanied by energetic drum patterns and reese bass\n\t+ Breakdown (30-45 seconds): Intensive build-up, gradually adding tension and texture before resolving into the final drop\n\t+ Drop B (Outro) (1:15-1:20 minutes): Conclusive section featuring a repetition of the hook, accompanied by a gradual fade-out\n\n**Required Evidence/Veification:**\n\n* Provide clear, unambiguous audio samples for each section (intro, drops A and B, breakdown)\n* Ensure that all sound design elements are original or cleared sources, with no named-artist clones\n* Verify the tempo/key: 174 BPM, G minor, 4/4\n\n**Anti-Fake-Green Checks:**\n\n* Conduct thorough quality control checks on all audio processing stages (recording, editing, mixing, mastering)\n* Implement reference A/B comparison before rendering to ensure consistency and accuracy\n* Review the track's metadata: title, mood (uplifting), duration (~3:40)\n\n**Rollback Conditions:**\n\n* If any of the required evidence/verification checks fail, roll back the task and request revisions until all requirements are met\n\n**Structured Output:**\n\n1. A high-quality liquid drum & bass track that meets the scope, structure, and tempo/key requirements\n2. Clear, unambiguous audio samples for each section (intro, drops A and B, breakdown)\n3. Metadata: title, mood (uplifting), duration (~3:40)\n\nNote: This rewritten prompt provides a clear scope, specific requirements, and verification checks to ensure the task is completed accurately and efficiently.",
+      "content_hash": "472a2bd4ee9025f3f9b6d7bb72825aaf3b43f6b2bad3e927fc43e8185b8c791a",
+      "mech_score": 92.5,
+      "source": "LOCAL:ollama:llama3:latest",
+      "judge": "LOCAL_LLM_JUDGE",
+      "state": "SYNTHETIC_ADMITTED"
+    },
+    "syn-Drum&-4f4f72731462": {
+      "gene_id": "syn-Drum&-4f4f72731462",
+      "task_class": "Drum & Bass",
+      "title": "Drum & Bass synthetic gene",
+      "prompt": "Here is the rewritten prompt with added discipline:\n\n**Task:** Create a liquid drum & bass track in the style of genre-defining artists.\n\n**Scope:**\n\n* Genre: Liquid Drum & Bass\n* Structure:\n\t+ Intro (15-30 seconds): atmospheric pads, subtle percussion\n\t+ Drop A (Chorus) (1 minute 15-30 seconds): prominent Reese bass, chopped breaks, and vocal-chop topline with a catchy hook\n\t+ Breakdown (30-60 seconds): lush pads, piano stabs, and reduced drum pattern\n\t+ Drop B (Final Chorus) (1:45-3:00 minutes): building energy, increased percussion, and further developed melodic elements\n\t+ Outro (30-60 seconds): gradual fade-out with reprise of intro elements\n* Tempo/Key: 174 BPM, G minor, 4/4 time signature\n\n**Required Evidence/Veification:**\n\n1. Original composition: no named-artist clones or uncredited samples.\n2. Clearances: all used sources (vocal chops, sound design) must be cleared for commercial use.\n\n**Anti-Fake-Green Checks:**\n\n1. Check the track's frequency response to ensure a balanced EQ (-8 LUFS).\n2. Verify the low-end is tight and controlled.\n3. Confirm wide reverb is applied consistently throughout the mix.\n\n**Rollback Conditions:**\n\n1. If the track fails to meet the energy and rolling dynamics requirements, revisit the breakdown section and rework it for a more impactful drop.\n2. If the track lacks a clear hook or vocal-chop melody, rewrite the chorus and/or introduce additional melodic elements.\n\n**Structured Output:**\n\n1. Title: A descriptive title that reflects the track's mood and energy.\n2. Mood: Uplifting\n3. Length: ~3:40 minutes\n4. Metadata: Include relevant metadata tags for ease of identification and categorization.\n\nBy following this revised prompt, I expect a high-quality, original liquid drum & bass track that meets the specified requirements and showcases your creative skills.",
+      "content_hash": "4f4f72731462fac8b59517d5099acfb18501d25d0d38a53ac1a79e3b8c4cf75e",
+      "mech_score": 95.0,
+      "source": "LOCAL:ollama:llama3:latest",
+      "judge": "LOCAL_LLM_JUDGE",
+      "state": "SYNTHETIC_ADMITTED"
+    },
+    "syn-Synthw-6d5aa90caabd": {
+      "gene_id": "syn-Synthw-6d5aa90caabd",
+      "task_class": "Synthwave",
+      "title": "Synthwave synthetic gene",
+      "prompt": "Here is the rewritten prompt:\n\n**Task:** Synthesize a synthwave/retrowave track with the following structure and requirements:\n**Structure:** \n\t* Intro (10-15 seconds): Establish the atmosphere with a gentle fade-in of analog lead melody and lush pads, setting the nostalgic tone.\n\t* Verse (30-40 seconds): Introduce gated drums and analog bass, building tension through arpeggios and chord progressions. Maintain E minor key.\n\t* Chorus (20-30 seconds): Big, anthemic moment with a catchy hook and harmonies, showcasing the analog lead melody.\n\t* Bridge (15-25 seconds): Break away from the verse structure, exploring new textures and sounds while maintaining the nostalgic feel.\n\t* Chorus (20-30 seconds): Repeat the chorus, emphasizing the iconic synth hooks.\n\t* Outro (10-15 seconds): Gradually fade out with a reprise of the intro atmosphere.\n\n**Requirements:**\n\n1. **Originality:** Ensure that the track is an original composition, not a clone of named artists or cleared samples.\n2. **Instrumentation:**\n\t* Gated drums\n\t* Analog bass\n\t* Saw leads\n\t* Lush pads and arpeggios\n3. **Tempo/Key:** 100 BPM, E minor, 4/4 time signature\n4. **Mix/Master:**\n\t* -10 LUFS loudness\n\t* Wide chorus with a retro reverb effect\n5. **Arc:** Build the track from a nostalgic intro to a big, anthemic chorus.\n\n**Verification and Quality Control (QC):**\n\n1. **Metadata:** Include title and mood (retro, driving) information.\n2. **Mix Check:** Perform a quality control check to ensure the mix meets the required specifications.\n\n**Output:**\nA well-structured synthwave/retrowave track with the specified structure, instrumentation, tempo/key, and mix/master requirements, meeting the nostalgic build-to-big-chorus arc and originality standards.",
+      "content_hash": "6d5aa90caabdc5158b0f0ce55166637ed820d72196cbd03b22fd8c9e7bb539e9",
+      "mech_score": 92.5,
+      "source": "LOCAL:ollama:llama3:latest",
+      "judge": "LOCAL_LLM_JUDGE",
+      "state": "SYNTHETIC_ADMITTED"
+    },
+    "syn-Synthw-0350eb50283f": {
+      "gene_id": "syn-Synthw-0350eb50283f",
+      "task_class": "Synthwave",
+      "title": "Synthwave synthetic gene",
+      "prompt": "Here is the rewritten prompt:\n\n**Task:** Synthesize a high-quality synthwave track with the following requirements:\n\n**Scope:**\n\n* Genre: Synthwave/Retrowave\n* Structure: Intro \u2192 Verse \u2192 Chorus \u2192 Bridge \u2192 Chorus \u2192 Outro\n* Hook: Original analog lead melody (no sampled or referenced melodies)\n* Instrumentation:\n\t+ Gated drums\n\t+ Analog bass\n\t+ Saw leads\n\t+ Lush pads\n\t+ Arpeggios (ARPs)\n* Tempo/Key: 100 BPM, E minor, 4/4 time signature\n\n**Verification/Evidence:**\n\n* Upon completion, the generated track must be checked for:\n\t+ Proper structure and arrangement\n\t+ Originality of melody and harmony\n\t+ Effective use of instrumentation and sound design\n\t+ Clear and balanced mix with no distortion or clipping\n\t+ Compliance with LUFS (-10 dB) and reverb levels (retro)\n\n**Anti-Fake-Green Checks:**\n\n* The generated track must not contain:\n\t+ Cloned samples or melodies from named artists\n\t+ Unoriginal or uncreative compositions\n\n**Rollback Conditions:**\n\n* If the generated track does not meet the above criteria, it will be considered failed and rolled back for re-generation.\n\n**Structured Output:**\n\n* Deliverable format: WAV or MP3 audio file (3:20 duration)\n* File metadata:\n\t+ Title\n\t+ Mood: Retro/Driving\n* Additional metadata:\n\t+ Songwriting credits (original composition by AI)\n\t+ Production notes (including instrumentation, mixing, and mastering decisions)\n\n**Quality Control (QC):**\n\n* Final mix check for:\n\t+ Balance and clarity of the mix\n\t+ Effective use of dynamics and compression\n\t+ Presence and energy of the track\n\nThis rewritten prompt provides a clear scope, verification criteria, anti-fake-green checks, rollback conditions, and a structured output.",
+      "content_hash": "0350eb50283f49f157b49d1ab794b09943fa8468656f525fd99053715608b0ff",
+      "mech_score": 100.0,
+      "source": "LOCAL:ollama:llama3:latest",
+      "judge": "LOCAL_LLM_JUDGE",
+      "state": "SYNTHETIC_ADMITTED"
+    },
+    "syn-Afrobe-9fb3390bfc45": {
+      "gene_id": "syn-Afrobe-9fb3390bfc45",
+      "task_class": "Afrobeats",
+      "title": "Afrobeats synthetic gene",
+      "prompt": "Here is the rewritten prompt with explicit scope, required evidence/verification, anti-fake-green checks, rollback conditions, and a structured output:\n\n**Task:** Generate an Afrobeats track with the following specifications.\n\n**Scope:**\n\n* Genre: Afrobeats/Afropop\n* Structure:\n\t+ Intro (8-16 bars): Establishing rhythmic foundation, incorporating log drum and shakers\n\t+ Verse (2-3 times): Original lyrics with call-and-response topline, plucked guitar and marimba accompaniment\n\t+ Chorus (2-3 times): Hook with repetitive melodic phrase, incorporating sub bass and bright top\n\t+ Outro (8-16 bars): Gradual wind-down with repetition of intro elements\n* Originality:\n\t+ Clear percussion one-shots used throughout\n\t+ No imitation of named artists or copyrighted material\n\n**Evidence/Verification:**\n\n1. Verify the tempo/key: 105 BPM, A major, 4/4.\n2. Confirm the mix/master specifications: punchy -8 LUFS, mono bass, bright top.\n\n**Anti-Fake-Green Checks:**\n\n1. No imitations of named artists or copyrighted material.\n2. Original lyrics and melody that do not infringe on existing intellectual property.\n\n**Rollback Conditions:**\n\n1. If any part of the generated track is deemed to be an imitation of a named artist or copyrighted material, rollback and restart generation.\n2. If the tempo/key or mix/master specifications are not met, rollback and restart generation.\n\n**Structured Output:**\n\n* Track title (max 12 characters)\n* Mood description (sunny/danceable)\n* Duration estimate (~3:10 minutes)\n* Audio file in WAV format\n* A/B reference comparison to ensure quality control",
+      "content_hash": "9fb3390bfc45994a2fddc5e9af5bf71ab483463ad735fb3eaac6420bd133b83c",
+      "mech_score": 93.0,
+      "source": "LOCAL:ollama:llama3:latest",
+      "judge": "LOCAL_LLM_JUDGE",
+      "state": "SYNTHETIC_ADMITTED"
+    },
+    "syn-Lo-Fi-9770ae9374ec": {
+      "gene_id": "syn-Lo-Fi-9770ae9374ec",
+      "task_class": "Lo-Fi Hip-Hop",
+      "title": "Lo-Fi Hip-Hop synthetic gene",
+      "prompt": "Here is the rewritten prompt with explicit scope, required evidence/verification, anti-fake-green checks, rollback conditions, and a structured output:\n\n**Task:** Create an original Lo-Fi Hip-Hop track with a jazzy late-night feel.\n\n**Scope:**\n\n* Genre: Lo-Fi Hip-Hop\n* Structure:\n\t+ Intro: 0:00-0:10 (establish mood and tempo)\n\t+ Loop A: 0:10-1:00 (main theme development)\n\t+ Loop B (Chorus Lift): 1:00-1:20 (hook and harmonic progression)\n\t+ Outro: 1:20-2:10 (build-up and conclusion)\n* Hook: Muted trumpet topline motif, with a clear, recognizable melody\n* Instrumentation:\n\t+ Muted Trumpet: prominent throughout the track\n\t+ Rhodes Piano: subtle accompaniment and harmony\n\t+ Sub Bass: deep foundation\n\t+ Lo-Fi Drums: gentle, jazzy rhythm\n\t+ Rain Foley: ambient atmosphere\n* Tempo/Key: 75 BPM, Key of D minor, 4/4 time signature\n* Mix/Master:\n\t+ LUFS: -14 dB (loudness units)\n\t+ EQ: warm and balanced\n\t+ Tape Saturation: subtle, nostalgic character\n* Arc: steady, gentle swell throughout the track\n\n**Verification Requirements:**\n\n1. **Originality:** Ensure all samples and sounds are cleared for use and not sourced from commercial releases or online repositories.\n2. **Mood Consistency:** Verify that the overall mood of the track remains mellow and jazzy throughout the entire composition.\n\n**Rollback Conditions:**\n\n1. **Mix Check Failure:** If the mix is deemed unbalanced, distorted, or lacks clarity, revert to an earlier version for further adjustments.\n2. **Structure Disruption:** If the structure (intro, loop A, loop B, outro) becomes disorganized or confusing, revert to an earlier version and re-establish a clear narrative.\n\n**Structured Output:**\n\n1. **Track Title:** Provide a unique title that reflects the mood and style of the Lo-Fi Hip-Hop track.\n2. **Mood Description:** Offer a concise description (approx. 50 words) that captures the essence of the track's mood and atmosphere.\n3. **Duration:** Report the final track duration, which should be approximately 2:10 minutes.\n\n**Quality Control (QC):**\n\n1. **Mix Check:** Conduct a thorough mix check before rendering the final output to ensure clarity, balance, and overall quality.\n\nBy following this revised prompt, you can rest assured that your Lo-Fi Hip-Hop creation meets the required standards of originality, consistency, and overall quality.",
+      "content_hash": "9770ae9374ec4e0b6fdec10503d22abad9365e36b4bdff783e2f04d0c1e1592a",
+      "mech_score": 100.0,
+      "source": "LOCAL:ollama:llama3:latest",
+      "judge": "LOCAL_LLM_JUDGE",
+      "state": "SYNTHETIC_ADMITTED"
+    },
+    "syn-Cinema-ed62e0ad16d0": {
+      "gene_id": "syn-Cinema-ed62e0ad16d0",
+      "task_class": "Cinematic Score",
+      "title": "Cinematic Score synthetic gene",
+      "prompt": "Here is the rewritten prompt:\n\n**Task:** Create a Cinematic Score for a [~2:45] film scene with the following specifications:\n\n**Scope:**\n\n* Genre: Cinematic Orchestral Hybrid\n* Structure: Intro (0-10 seconds) \u2192 Theme Statement (10-30 seconds) \u2192 Development (30-60 seconds) \u2192 Climax (60-90 seconds) \u2192 Resolution (90-120 seconds)\n* Hook: A string/brass main theme motif that sets the tone for the entire piece\n\n**Requirements:**\n\n* Original composition, no borrowed themes or copyrighted materials\n* Cleared libraries and proper attribution for any sampled or sourced materials\n* Instrumentation:\n\t+ Strings: violins, violas, cellos, double basses\n\t+ Brass: trumpets, trombones, French horns\n\t+ Hybrid Percussion: a combination of acoustic and electronic elements\n\t+ Piano: grand piano or digital equivalent\n\t+ Sub Boom: deep bass frequencies for added depth\n\n**Technical Specifications:**\n\n* Tempo/Key: 90 BPM, D minor, 4/4 time signature\n* Mix/Master:\n\t+ Wide orchestral image with a balanced frequency response\n\t+ Loudness Unit (LUFS) target: -16 LUFS\n\t+ Dynamic range preserved to maintain contrast and impact\n\n**Creative Directions:**\n\n* Arc: Slow build-up to a climactic peak, then resolve with a sense of closure or new beginnings\n* Mood: Epic/Hopeful, conveying a sense of grandeur, excitement, or inspiration\n\n**Verification and Quality Control:**\n\n* Reference A/B comparison for dynamics before rendering the final mix\n* Metadata:\n\t+ Title (provided)\n\t+ Duration (~2:45)\n\n**Output Structure:**\n\n1. A detailed description of your creative approach and decisions (approx. 150-200 words)\n2. The Cinematic Score composition in a standard audio format (WAV, AIFF, etc.)\n3. A reference mix with clear labeling of tracks and stems\n4. A metadata file containing the title, duration, mood, and other relevant information",
+      "content_hash": "ed62e0ad16d05607b50ab463ad20d71246e379b808972178d9cfa62851711eb6",
+      "mech_score": 86.5,
+      "source": "LOCAL:ollama:llama3:latest",
+      "judge": "LOCAL_LLM_JUDGE",
+      "state": "SYNTHETIC_ADMITTED"
+    },
+    "syn-Cinema-acbe85da6681": {
+      "gene_id": "syn-Cinema-acbe85da6681",
+      "task_class": "Cinematic Score",
+      "title": "Cinematic Score synthetic gene",
+      "prompt": "Here is the rewritten prompt:\n\n**Cinematic Score Task**\n\n**Scope:** Create an original cinematic score for a film-like experience, adhering to the following guidelines.\n\n**Requirements:**\n\n1. **Genre:** Cinematic orchestral hybrid with a focus on strings and brass instruments.\n2. **Structure:** Compose a piece consisting of five sections:\n\t* **Intro**: A short introduction setting the tone (15-30 seconds).\n\t* **Theme Statement**: Present the main theme motif, featuring a hook that grabs attention (30-60 seconds).\n\t* **Development**: Expand on the theme, exploring different textures and moods (1:00-2:15 minutes).\n\t* **Climax**: Build to a climactic peak, showcasing dynamic contrasts and intensity (0:45-1:10 minutes).\n\t* **Resolution**: Conclude with a satisfying resolution, wrapping up the emotional arc (30-60 seconds).\n3. **Originality:** Ensure that all themes are original compositions, not borrowed or modified from existing works. Clear all necessary libraries and permissions.\n4. **Instrumentation:** Use a combination of:\n\t+ Strings: orchestral strings, solo violin, etc.\n\t+ Brass: orchestral brass, solo trumpet, etc.\n\t+ Hybrid Percussion: creative uses of drums, percussion, and electronic elements.\n\t+ Piano: added for nuance and color.\n\t+ Sub Boom: low-end foundation for bass and rhythm.\n5. **Tempo/Key:** 90 BPM in D minor, with a 4/4 time signature.\n6. **Mix/Master:** Create a wide orchestral image with:\n\t+ A dynamic range preserved throughout the piece.\n\t+ -16 LUFS loudness level.\n7. **Arc:** The score should follow an arc of slow build to climactic peak and subsequent resolution.\n\n**Verification:**\n\n* Submit two separate versions (A/B) for dynamics verification before rendering the final mix.\n* Provide metadata, including:\n\t+ Title\n\t+ Mood (epic, hopeful)\n\t+ Estimated duration (~2:45)\n\n**Rollback Conditions:**\n\n* If any of the above requirements are not met, the score will be rejected and returned to the creator for revisions.\n\n**Structured Output:**\n\nPlease provide a single audio file in WAV or AIFF format, with the following naming convention: `<Title> - Cinematic Score (Original Mix).wav/aiff`.",
+      "content_hash": "acbe85da6681a63a5488e87ee5d70e2cad98dc1a9cb019132a881a3c200dc8c1",
+      "mech_score": 92.5,
+      "source": "LOCAL:ollama:llama3:latest",
+      "judge": "LOCAL_LLM_JUDGE",
+      "state": "SYNTHETIC_ADMITTED"
+    },
+    "syn-Afrobe-01637c08fd08": {
+      "gene_id": "syn-Afrobe-01637c08fd08",
+      "task_class": "Afrobeats",
+      "title": "Afrobeats synthetic gene",
+      "prompt": "Here is the improved prompt:\n\n**Task:** Generate an Afrobeats track with the following specifications.\n\n**Scope:**\n\n* Genre: Afrobeats/Afropop\n* Structure:\n\t+ Intro (8-16 bars): Establishing rhythmic foundation, incorporating log drum and shakers\n\t+ Verse (2-3 times): Original lyrics with call-and-response topline, plucked guitar and marimba accompaniment\n\t+ Chorus (2-3 times): Hook with repetitive melodic phrase, incorporating sub bass and bright top\n\t+ Outro (8-16 bars): Gradual wind-down with repetition of intro elements\n* Originality:\n\t+ Clear percussion one-shots used throughout\n\t+ No imitation of named artists or copyrighted material\n\n**Evidence/Verification:**\n\n1. Verify the tempo/key: 105 BPM, A major, 4/4.\n2. Confirm the mix/master specifications: punchy -8 LUFS, mono bass, bright top.\n\n**Anti-Fake-Green Checks:**\n\n1. No imitations of named artists or copyrighted material.\n2. Original lyrics and melody that do not infringe on existing intellectual property.\n3. Check for any recognizable melodies or lyrical patterns from popular Afrobeats tracks.\n\n**Rollback Conditions:**\n\n1. If any part of the generated track is deemed to be an imitation of a named artist or copyrighted material, rollback and restart generation.\n2. If the tempo/key or mix/master specifications are not met, rollback and restart generation.\n3. If the output audio file does not meet quality standards (e.g., distortion, low volume), rollback and restart generation.\n\n**Structured Output:**\n\n* Track title (max 12 characters): e.g., \"Vibez\"\n* Mood description (sunny/danceable): e.g., \"Upbeat\"\n* Duration estimate (~3:10 minutes)\n* Audio file in WAV format\n* A/B reference comparison to ensure quality control:\n\t+ Reference 1: Original Afrobeats track with similar genre and structure\n\t+ Reference 2: Another generated track for comparison\n\nThis improved prompt adds explicit scope, required evidence/verification, anti-fake-green checks, rollback conditions, and a structured output. It also includes specific requirements for the audio file format and quality control measures to ensure the generated track meets the desired standards.",
+      "content_hash": "01637c08fd08fb664bf7b7267c774388391827a73e276ab8f46f3b58f8179a6b",
+      "mech_score": 93.0,
+      "source": "LOCAL:ollama:llama3:latest",
+      "judge": "LOCAL_LLM_JUDGE",
+      "state": "SYNTHETIC_ADMITTED"
     }
   }
 }

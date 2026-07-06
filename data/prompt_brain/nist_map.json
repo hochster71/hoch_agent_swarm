@@ -1,0 +1,225 @@
+{
+  "schema": "nist-800-53-r5-arterial-map",
+  "standard": "NIST SP 800-53 Rev 5 (20 control families; DoD RMF aligned)",
+  "families_total": 20,
+  "families_covered": 18,
+  "coverage_pct": 90.0,
+  "mapped_gene_paths": 917,
+  "families": [
+    {
+      "family": "SI",
+      "name": "System & Information Integrity",
+      "genes": 179,
+      "covered": true,
+      "domains": [
+        "AI / ML",
+        "Cybersecurity",
+        "DAST",
+        "Detection Engineering",
+        "SAST",
+        "Self-Healing",
+        "UX Security",
+        "Vulnerability Management"
+      ],
+      "swarm_coverage": 57.1,
+      "swarm_verdict": "NOT_SECURE"
+    },
+    {
+      "family": "SA",
+      "name": "System & Services Acquisition",
+      "genes": 141,
+      "covered": true,
+      "domains": [
+        "AI / ML",
+        "Coding",
+        "DevSecOps",
+        "QA",
+        "SAST",
+        "SDLC Governance",
+        "Software Engineering"
+      ]
+    },
+    {
+      "family": "SC",
+      "name": "System & Communications Protection",
+      "genes": 113,
+      "covered": true,
+      "domains": [
+        "Cloud Security",
+        "Cybersecurity",
+        "Security Architecture"
+      ]
+    },
+    {
+      "family": "PM",
+      "name": "Program Management",
+      "genes": 87,
+      "covered": true,
+      "domains": [
+        "AGI & Safety",
+        "Governance",
+        "Governance / Compliance",
+        "Industry Specialized",
+        "Legal / Compliance"
+      ]
+    },
+    {
+      "family": "CA",
+      "name": "Assessment, Authorization & Monitoring",
+      "genes": 81,
+      "covered": true,
+      "domains": [
+        "Audit",
+        "Governance",
+        "Governance / Compliance",
+        "Legal / Compliance",
+        "QA"
+      ]
+    },
+    {
+      "family": "CM",
+      "name": "Configuration Management",
+      "genes": 72,
+      "covered": true,
+      "domains": [
+        "Cloud Security",
+        "DevSecOps",
+        "SDLC Governance"
+      ]
+    },
+    {
+      "family": "CP",
+      "name": "Contingency Planning",
+      "genes": 50,
+      "covered": true,
+      "domains": [
+        "Operations",
+        "Self-Healing"
+      ]
+    },
+    {
+      "family": "MA",
+      "name": "Maintenance",
+      "genes": 48,
+      "covered": true,
+      "domains": [
+        "Infrastructure & Hardware",
+        "Operations"
+      ]
+    },
+    {
+      "family": "RA",
+      "name": "Risk Assessment",
+      "genes": 28,
+      "covered": true,
+      "domains": [
+        "AGI & Safety",
+        "DAST",
+        "SAST",
+        "Vulnerability Management"
+      ],
+      "swarm_coverage": 57.1,
+      "swarm_verdict": "NOT_SECURE"
+    },
+    {
+      "family": "AC",
+      "name": "Access Control",
+      "genes": 24,
+      "covered": true,
+      "domains": [
+        "Security Architecture",
+        "UX Security"
+      ]
+    },
+    {
+      "family": "IA",
+      "name": "Identification & Authentication",
+      "genes": 24,
+      "covered": true,
+      "domains": [
+        "Data Security",
+        "Security Architecture"
+      ]
+    },
+    {
+      "family": "PL",
+      "name": "Planning",
+      "genes": 14,
+      "covered": true,
+      "domains": [
+        "Governance",
+        "SDLC Governance"
+      ]
+    },
+    {
+      "family": "AU",
+      "name": "Audit & Accountability",
+      "genes": 13,
+      "covered": true,
+      "domains": [
+        "Audit"
+      ]
+    },
+    {
+      "family": "IR",
+      "name": "Incident Response",
+      "genes": 12,
+      "covered": true,
+      "domains": [
+        "Detection Engineering",
+        "Incident Response"
+      ]
+    },
+    {
+      "family": "PT",
+      "name": "PII Processing & Transparency",
+      "genes": 12,
+      "covered": true,
+      "domains": [
+        "Data Security",
+        "Privacy"
+      ]
+    },
+    {
+      "family": "PE",
+      "name": "Physical & Environmental Protection",
+      "genes": 7,
+      "covered": true,
+      "domains": [
+        "Infrastructure & Hardware"
+      ]
+    },
+    {
+      "family": "MP",
+      "name": "Media Protection",
+      "genes": 6,
+      "covered": true,
+      "domains": [
+        "Data Security"
+      ]
+    },
+    {
+      "family": "SR",
+      "name": "Supply Chain Risk Management",
+      "genes": 6,
+      "covered": true,
+      "domains": [
+        "Supply Chain"
+      ]
+    },
+    {
+      "family": "AT",
+      "name": "Awareness & Training",
+      "genes": 0,
+      "covered": false,
+      "domains": []
+    },
+    {
+      "family": "PS",
+      "name": "Personnel Security",
+      "genes": 0,
+      "covered": false,
+      "domains": []
+    }
+  ]
+}

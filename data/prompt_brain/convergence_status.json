@@ -1,13 +1,13 @@
 {
   "schema": "brain-convergence-status-m0",
-  "generation": 17,
-  "mean_score": 68.846,
-  "last_gain": 0.0,
+  "generation": 23,
+  "mean_score": 72.5,
+  "last_gain": 0.673,
   "epsilon": 0.5,
   "patience": 3,
   "improver_online": true,
   "converged": false,
-  "state": "PLATEAUING",
+  "state": "IMPROVING",
   "history": [
     {
       "generation": 1,
@@ -117,6 +117,48 @@
       "gain": 0.0,
       "improver_online": true,
       "at": "2026-07-06T01:26:50.417693Z"
+    },
+    {
+      "generation": 18,
+      "mean_score": 70.0,
+      "gain": 1.154,
+      "improver_online": true,
+      "at": "2026-07-06T01:38:00.017246Z"
+    },
+    {
+      "generation": 19,
+      "mean_score": 70.0,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-06T01:49:06.321650Z"
+    },
+    {
+      "generation": 20,
+      "mean_score": 70.0,
+      "gain": 0.0,
+      "improver_online": false,
+      "at": "2026-07-06T01:58:41.443455Z"
+    },
+    {
+      "generation": 21,
+      "mean_score": 70.481,
+      "gain": 0.481,
+      "improver_online": true,
+      "at": "2026-07-06T02:00:27.284384Z"
+    },
+    {
+      "generation": 22,
+      "mean_score": 71.827,
+      "gain": 1.346,
+      "improver_online": true,
+      "at": "2026-07-06T02:06:41.365149Z"
+    },
+    {
+      "generation": 23,
+      "mean_score": 72.5,
+      "gain": 0.673,
+      "improver_online": true,
+      "at": "2026-07-06T02:15:58.494690Z"
     }
   ]
 }

@@ -38,11 +38,13 @@ def _factories_summary():
             champs = len(reg.get("champions", {}))
             conv = _load(f.convergence_status, {})
             state = conv.get("state") or ("SEEDED" if genes else "EMPTY")
+            hist = conv.get("history", [])[-16:]
             out.append({
                 "code": f.code, "domain": f.domain, "title": f.title,
                 "genes": genes, "champions": champs,
                 "mean_score": conv.get("mean_score"), "state": state,
                 "gates": len(f.gates),
+                "history": [{"g": h.get("generation"), "m": h.get("mean_score")} for h in hist],
             })
     except Exception:
         pass
@@ -104,6 +106,22 @@ def build_live_state():
         "global_converged": meta.get("global_converged", False),
         "gaps": gap_summary,
         "factories": _factories_summary(),
+        "swarm": (lambda s: {
+            "verdict": s.get("verdict"), "coverage": s.get("detection_coverage_pct"),
+            "real_high": s.get("real_high"), "target": (s.get("target") or "").split("/")[-1],
+            "why": s.get("why"),
+        } if s else {})(_load(DATA / "cyber_swarm_state.json", {})),
+        "agent_audit": (_load(DATA / "agent_audit.json", {}) or {}).get("totals", {}),
+        "self_heal": (lambda s: {"verdict": s.get("verdict"), "immunized": s.get("immunized"),
+                                 "real_open": s.get("real_secrets_open"), "findings": s.get("findings")}
+                      if s else {})(_load(DATA / "self_heal_state.json", {})),
+        "nist": (lambda m: {
+            "standard": m.get("standard"), "covered": m.get("families_covered"),
+            "total": m.get("families_total"), "coverage_pct": m.get("coverage_pct"),
+            "paths": m.get("mapped_gene_paths"),
+            "families": [{"f": x["family"], "n": x["name"], "g": x["genes"], "c": x["covered"],
+                          "sw": x.get("swarm_coverage")} for x in m.get("families", [])],
+        } if m else {})(_load(DATA / "nist_map.json", {})),
         "orchestrator": (lambda b: {
             "next_move": b.get("next_move"),
             "autonomous_now": b.get("autonomous_now", []),

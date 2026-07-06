@@ -1,0 +1,30 @@
+{
+  "schema": "hasf-product-gate-verify-v1",
+  "at": "2026-07-06T01:40:35.206083Z",
+  "verdict": "NO-GO",
+  "high_findings": 18,
+  "open_high": 18,
+  "rules": [
+    {
+      "rule": "R1_REAL_TOOLS",
+      "verdict": "FAIL",
+      "detail": "security scan used FALLBACK tools, not real scanners: ['Secret Detection (Gitleaks)', 'Vulnerability Scanner (Trivy)', 'SBOM Generator (Syft)']. A fallback PASS is UNVERIFIED \u2014 real gitleaks/trivy/syft must run."
+    },
+    {
+      "rule": "R2_RECONCILED_SCAN",
+      "verdict": "FAIL",
+      "detail": "machine scan artifact records 18 HIGH findings while the narrative claims 0 HIGH \u2014 the dirty scan was never regenerated post-remediation. Require a single reconciled final scan."
+    },
+    {
+      "rule": "R3_NO_OPEN_HIGH",
+      "verdict": "FAIL",
+      "detail": "18 HIGH findings not covered by a signed, unexpired accepted-risk allowlist (prose 'false positive' does not count)."
+    },
+    {
+      "rule": "R5_POSTURE",
+      "verdict": "FAIL",
+      "detail": "shipping posture is APPROVED_FOR_PRODUCTION_RELEASE while the gate doc still lists gates as PENDING \u2014 posture and gate status disagree."
+    }
+  ],
+  "note": "fail-closed: any FAIL => NO-GO. UNKNOWN never counts as PASS."
+}

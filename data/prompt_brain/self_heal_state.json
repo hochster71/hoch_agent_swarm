@@ -1,0 +1,11 @@
+{
+  "schema": "hoch-self-heal-v1",
+  "at": "2026-07-06T02:15:43.328584Z",
+  "verdict": "HEALED",
+  "immunized": true,
+  "findings": 0,
+  "fixtures": 0,
+  "real_secrets_open": 0,
+  "actions": [],
+  "note": "self-heal: fixtures immunized by guard; real secrets quarantined + escalated (rotation is human)."
+}

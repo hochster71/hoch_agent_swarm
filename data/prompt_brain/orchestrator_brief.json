@@ -1,7 +1,7 @@
 {
   "schema": "hoch-founder-orchestrator-v1",
   "persona": "AI Michael \u2014 all-in-one CEO / founder / builder / SME",
-  "at": "2026-07-06T01:31:53.517515Z",
+  "at": "2026-07-06T02:14:39.525197Z",
   "doctrine": [
     "no fake-green \u2014 a factory reads only what it earned",
     "evidence before any GO; fail-closed on the unproven",
@@ -15,39 +15,39 @@
       "code": "HASF",
       "domain": "software",
       "goal": "ship a revenue product while the brain keeps improving",
-      "state": "PLATEAUING",
+      "state": "IMPROVING",
       "genes": 479,
       "champions": 26,
       "thin": 0,
-      "mean": 68.846,
+      "mean": 71.827,
       "action": "SHIP",
       "detail": "point HASF at its first real revenue product",
       "cost": "strategic",
       "tier": "ESCALATE",
       "answers": "GO on the next milestone?",
-      "leverage": 5
+      "leverage": 6
     },
     {
       "code": "HMF",
       "domain": "music",
       "goal": "original, judged, publishable music across every genre",
-      "state": "SELECTED",
-      "genes": 10,
+      "state": "IMPROVING",
+      "genes": 19,
       "champions": 8,
-      "thin": 8,
-      "mean": 93.0,
+      "thin": 4,
+      "mean": 96.188,
       "action": "EXPAND",
-      "detail": "grow 8 thin classes (+14 genes) via the $0 local model",
+      "detail": "grow 4 thin classes (+5 genes) via the $0 local model",
       "cost": "$0",
       "tier": "AUTONOMOUS",
       "answers": "What's the gap?",
-      "leverage": 14
+      "leverage": 12
     },
     {
       "code": "HRF",
       "domain": "research",
       "goal": "novel, citation-verified, reproducible research across grand challenges",
-      "state": "SELECTED",
+      "state": "PLATEAUING",
       "genes": 8,
       "champions": 7,
       "thin": 7,
@@ -61,16 +61,16 @@
     }
   ],
   "next_move": {
-    "code": "HMF",
-    "domain": "music",
-    "goal": "original, judged, publishable music across every genre",
-    "state": "SELECTED",
-    "genes": 10,
-    "champions": 8,
-    "thin": 8,
-    "mean": 93.0,
+    "code": "HRF",
+    "domain": "research",
+    "goal": "novel, citation-verified, reproducible research across grand challenges",
+    "state": "PLATEAUING",
+    "genes": 8,
+    "champions": 7,
+    "thin": 7,
+    "mean": 96.0,
     "action": "EXPAND",
-    "detail": "grow 8 thin classes (+14 genes) via the $0 local model",
+    "detail": "grow 7 thin classes (+13 genes) via the $0 local model",
     "cost": "$0",
     "tier": "AUTONOMOUS",
     "answers": "What's the gap?",
@@ -78,14 +78,14 @@
   },
   "autonomous_now": [
     {
-      "code": "HMF",
-      "action": "EXPAND",
-      "detail": "grow 8 thin classes (+14 genes) via the $0 local model"
-    },
-    {
       "code": "HRF",
       "action": "EXPAND",
       "detail": "grow 7 thin classes (+13 genes) via the $0 local model"
+    },
+    {
+      "code": "HMF",
+      "action": "EXPAND",
+      "detail": "grow 4 thin classes (+5 genes) via the $0 local model"
     }
   ],
   "needs_operator": [

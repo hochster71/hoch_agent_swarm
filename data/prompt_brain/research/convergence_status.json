@@ -1,9 +1,48 @@
 {
   "schema": "brain-convergence-status-m0",
-  "domain": "research",
-  "generation": 1,
+  "generation": 6,
   "mean_score": 96.0,
-  "state": "SELECTED",
-  "champions": 7,
-  "at": "2026-07-06T01:08:22.931458Z"
+  "last_gain": 0.0,
+  "epsilon": 0.5,
+  "patience": 3,
+  "improver_online": true,
+  "converged": false,
+  "state": "PLATEAUING",
+  "history": [
+    {
+      "generation": 2,
+      "mean_score": 96.0,
+      "gain": null,
+      "improver_online": false,
+      "at": "2026-07-06T01:44:30.964920Z"
+    },
+    {
+      "generation": 3,
+      "mean_score": 96.0,
+      "gain": 0.0,
+      "improver_online": false,
+      "at": "2026-07-06T01:44:31.134787Z"
+    },
+    {
+      "generation": 4,
+      "mean_score": 96.0,
+      "gain": 0.0,
+      "improver_online": false,
+      "at": "2026-07-06T01:44:31.206084Z"
+    },
+    {
+      "generation": 5,
+      "mean_score": 96.0,
+      "gain": 0.0,
+      "improver_online": false,
+      "at": "2026-07-06T01:58:41.629326Z"
+    },
+    {
+      "generation": 6,
+      "mean_score": 96.0,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-06T02:14:39.007707Z"
+    }
+  ]
 }

@@ -1,0 +1,26 @@
+{
+  "schema": "hoch-cyber-swarm-v1",
+  "at": "2026-07-06T02:16:16.682246Z",
+  "target": "/sessions/cool-lucid-euler/mnt/epic-fury-2026",
+  "detection_coverage_pct": 100.0,
+  "red_detected": [
+    "RED-AWS",
+    "RED-STRIPE",
+    "RED-JWT",
+    "RED-PKEY",
+    "RED-EVAL",
+    "RED-SHELL",
+    "RED-MD5"
+  ],
+  "red_missed": [],
+  "real_findings_by_severity": {
+    "HIGH": 2
+  },
+  "real_high": 2,
+  "blue_tools": {
+    "secret-detector": "RAN",
+    "bandit": "RAN"
+  },
+  "verdict": "NOT_SECURE",
+  "why": "coverage=100.0% (missed none); real HIGH findings=2"
+}

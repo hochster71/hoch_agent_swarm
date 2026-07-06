@@ -88,6 +88,17 @@
   #chatq::placeholder{color:var(--dim)}
   #chatgo{background:var(--indigo);color:#fff;border:0;border-radius:8px;padding:7px 16px;font-family:var(--mono);font-weight:700;cursor:pointer;letter-spacing:.05em}
   #chatgo:hover{background:var(--indigo2)}
+
+  /* security swarms */
+  .swarmrow{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px}
+  .swarmagent{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;min-width:96px;padding:8px;border-radius:12px;transition:background .15s}
+  .swarmagent:hover{background:#14142a}
+  .swarmring{width:52px;height:52px;position:relative}
+  .swarmring svg{width:52px;height:52px}
+  .swarmring .spin{transform-origin:26px 26px;animation:swspin 2.4s linear infinite}
+  @keyframes swspin{to{transform:rotate(360deg)}}
+  .swarmagent .nm{font-size:12px;font-weight:700;letter-spacing:.02em}
+  .swarmagent .rl{font-size:10px;color:var(--mut)}
 </style>
 </head>
 <body>
@@ -113,9 +124,15 @@ const stCls=s=>{s=(s||'').toUpperCase();return (s==='IMPROVING'||s==='CONVERGED'
 const stCol=s=>{s=(s||'').toUpperCase();return (s==='IMPROVING'||s==='CONVERGED')?'#34d399':(s==='SELECTED')?'#e0b341':(s==='SEEDED')?'#8b8ba7':'#7c6cff';};
 
 async function load(){
+  // Primary: live endpoint. Fallback: static file the cadence writes each tick. STALE only if BOTH fail.
   try{ const r=await fetch(URL,{cache:'no-store'}); if(!r.ok) throw new Error('HTTP '+r.status);
        last=await r.json(); ok=true; }
-  catch(e){ ok=false; console.warn('feed failed, showing last-known + STALE:',e); }
+  catch(e){
+    try{ const r2=await fetch(API_BASE+'/data/brain_live.json?_='+Date.now(),{cache:'no-store'});
+         if(!r2.ok) throw new Error('HTTP '+r2.status);
+         last=await r2.json(); ok=true; }
+    catch(e2){ ok=false; console.warn('both feeds failed, showing last-known + STALE:',e,e2); }
+  }
   render();
 }
 
@@ -198,13 +215,18 @@ function brainSVG(d){
 
     <!-- factory anchor dots -->
     ${facs.map((f,i)=>`<circle cx="${fx-4}" cy="${ys[i]}" r="4" fill="${stCol(f.state)}"/>`).join('')}
+    <!-- brain hover hitbox: reveal the NIST 800-53 Rev 5 arterial map -->
+    <circle cx="${cx}" cy="${cy}" r="${R+22}" fill="transparent" style="cursor:pointer"
+       onmousemove="brainTip(evt)" onmouseleave="hideTip()"/>
   </svg>`;
 }
 
 /* ---------- factory cockpit card ---------- */
 function facCard(f, history){
   const col=stCol(f.state), cls=stCls(f.state);
-  const spk = f.code==='HASF' ? spark(history,col) : `<svg class="spark" viewBox="0 0 200 34"></svg>`;
+  // every factory draws its OWN improvement graph from its own convergence history
+  const fh = (f.history && f.history.length>1) ? f.history : (f.code==='HASF' ? history : null);
+  const spk = fh ? spark(fh,col) : `<svg class="spark" viewBox="0 0 200 34"><text x="8" y="22" fill="#5a5a78" font-size="9" font-family="var(--mono)">awaiting generations…</text></svg>`;
   const mean = f.mean_score!=null ? `<b>${num(f.mean_score,1)}</b> mean` : '<span style="color:var(--dim)">no score yet</span>';
   return `<div class="card fac" data-fac="${esc(f.code)}"
       onmousemove="facTip(event,'${esc(f.code)}')" onmouseleave="hideTip()"
@@ -231,6 +253,63 @@ function facTip(e,code){
     <div class="tl"><span>state</span><b style="color:${stCol(f.state)}">${esc((f.state||'').toUpperCase())}</b></div>
     <div class="tl"><span>genes · gates</span><b>${f.genes} · ${f.gates}</b></div>${rows}
     <div class="tl" style="margin-top:6px;color:var(--dim)">click → drill into ${esc(code)}</div>`, e.clientX,e.clientY);
+}
+
+/* ---------- security swarms: live agents with profiles + scorecards ---------- */
+let SW_AGENTS={};
+function renderSwarms(d){
+  const sw=d.swarm||{}, sh=d.self_heal||{};
+  const swActive=(sw.verdict!=null), shActive=(sh.verdict!=null);
+  const cov=(sw.coverage!=null)?sw.coverage+'%':'—';
+  SW_AGENTS={
+    RED:{name:'Red Team',role:'Adversary',col:'#f0616d',spin:swActive,
+      profile:'Plants seeded faults — hardcoded secrets, eval injection, shell=True, weak crypto — to PROVE Blue actually detects them.',
+      score:[['seeded faults','7'],['Blue detection coverage',cov]]},
+    BLUE:{name:'Blue Team',role:'Defender',col:'#4db6ff',spin:swActive,
+      profile:'Real free scanners (bandit SAST + secret-detector) continuously hunt HAS itself and HASF products. No fallback counts as clean.',
+      score:[['real HIGH findings',sw.real_high!=null?sw.real_high:'—'],['current target',sw.target||'—']]},
+    PURPLE:{name:'Purple',role:'Convergence',col:'#a99bff',spin:swActive,
+      profile:'Verdict = SECURE only if Blue catches 100% of Red seeded faults AND the real scan has 0 HIGH. Fail-closed — no fake-green.',
+      score:[['verdict',sw.verdict||'—'],['detection coverage',cov]]},
+    HEAL:{name:'Self-Heal',role:'Immunizer',col:'#34d399',spin:shActive,
+      profile:'Scans HOCH’s own source for literal secrets, quarantines + escalates real ones, and installs a recurrence guard so the failure class cannot return.',
+      score:[['verdict',sh.verdict||'—'],['immunized',sh.immunized?'yes':'no'],['real secrets open',sh.real_open!=null?sh.real_open:'—']]},
+  };
+  const agent=(id,a)=>`<div class="swarmagent" onmousemove="swarmTip(event,'${id}')" onmouseleave="hideTip()">
+    <div class="swarmring"><svg viewBox="0 0 52 52">
+      <circle cx="26" cy="26" r="20" fill="none" stroke="#20203a" stroke-width="3"/>
+      <circle class="${a.spin?'spin':''}" cx="26" cy="26" r="20" fill="none" stroke="${a.col}" stroke-width="3"
+        stroke-linecap="round" stroke-dasharray="34 126" opacity="${a.spin?1:.35}"/>
+      <circle cx="26" cy="26" r="7" fill="${a.col}" opacity="${a.spin?.9:.4}">${a.spin?'<animate attributeName="opacity" values="0.4;1;0.4" dur="1.8s" repeatCount="indefinite"/>':''}</circle>
+    </svg></div>
+    <div class="nm" style="color:${a.col}">${id}</div><div class="rl">${a.role}</div></div>`;
+  return `<div class="panel"><h3>SECURITY SWARMS · live adversarial hardening</h3>
+    <div class="swarmrow">${Object.entries(SW_AGENTS).map(([id,a])=>agent(id,a)).join('')}</div></div>`;
+}
+function swarmTip(e,id){
+  const a=SW_AGENTS[id]; if(!a) return;
+  const rows=a.score.map(s=>`<div class="tl"><span>${esc(s[0])}</span><b>${esc(s[1])}</b></div>`).join('');
+  showTip(`<div class="tt">${esc(a.name)} · ${esc(a.role)}</div>
+    <div style="color:var(--mut);margin-bottom:6px;line-height:1.5">${esc(a.profile)}</div>
+    <div style="font-size:10px;letter-spacing:.1em;color:${a.col};margin-bottom:2px">SCORECARD</div>${rows}`, e.clientX,e.clientY);
+}
+
+/* ---------- brain hover: NIST 800-53 Rev 5 arterial map ---------- */
+function brainTip(e){
+  const d=last||{}, n=d.nist||{}; const fams=(n.families||[]);
+  if(!fams.length){ showTip('<div class="tt">BRAIN</div><div class="tl"><span>NIST map</span><b>computing…</b></div>', e.clientX,e.clientY); return; }
+  const covered=fams.filter(f=>f.c), unc=fams.filter(f=>!f.c).map(f=>f.f);
+  const top=covered.slice(0,8).map(f=>{
+    const sw=(f.sw!=null)?` <span style="color:#34d399">·${f.sw}%</span>`:'';
+    return `<div class="tl"><span>${f.f} ${esc(f.n).slice(0,26)}</span><b>${f.g}${sw}</b></div>`;
+  }).join('');
+  showTip(`<div class="tt">BRAIN · arteries = NIST 800-53 Rev 5</div>
+    <div class="tl"><span>control families covered</span><b>${n.covered}/${n.total} (${n.coverage_pct}%)</b></div>
+    <div class="tl"><span>gene→control paths</span><b>${n.paths}</b></div>
+    <div style="margin:6px 0 3px;color:var(--indigo);font-size:10px;letter-spacing:.1em">STRONGEST ARTERIES (genes · swarm)</div>
+    ${top}
+    <div class="tl" style="margin-top:6px;color:var(--amber)"><span>uncovered</span><b>${unc.join(', ')||'none'}</b></div>
+    <div class="tl" style="color:var(--dim)">DoD RMF-aligned · SI carries live swarm posture</div>`, e.clientX,e.clientY);
 }
 
 /* ---------- 7-stage reactor + lever ---------- */
@@ -309,6 +388,8 @@ function render(){
       ${facs.map(f=>facCard(f, d.history)).join('')}
     </div>
   </div>
+
+  ${renderSwarms(d)}
 
   <div class="ledger">EVIDENCE LEDGER · RELAY MESH — <a href="http://100.87.18.15:3012" target="_blank" rel="noopener" style="color:var(--indigo)">hoch-relay-001</a> · hash + timestamp every claim · no green without proof</div>
   <div class="foot">freshness computed live from data ts (not a static claim) · poll ${POLL/1000}s · source <a href="${URL}">${URL}</a> ·

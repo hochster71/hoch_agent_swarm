@@ -19,13 +19,25 @@ echo "[$STAMP] HOCH cadence tick — portfolio"
 # 1. Software brain (its own single-flight lock guards overlap).
 bash scripts/brain_cadence.sh 2>/dev/null | sed 's/^/  /' || echo "  brain_cadence: skipped"
 
-# 2. Crown/refresh every non-software factory from its seeds (mechanical, $0).
+# 2. Run the full improvement cycle for every non-software factory (expand thin classes with the
+#    $0 local model -> re-select -> converge with history). Same loop as the software brain, so
+#    HMF/HRF earn a real improvement graph. Degrades to re-select when no model is up.
 for dom in music research; do
-  $PY -m backend.brain_convergence.domain_select "$dom" 2>/dev/null | sed 's/^/  /' || true
+  $PY -m backend.brain_convergence.domain_cycle "$dom" 2>/dev/null | sed 's/^/  /' || true
 done
 
-# 3. AI Michael — founder orchestration across the whole portfolio.
+# 3. Cyber Swarm — continuous adversarial hardening (Red proves Blue; Blue scans HAS itself).
+$PY -m backend.swarm.cyber_swarm backend 2>/dev/null | sed 's/^/  /' || echo "  swarm: skipped"
+
+# 3b. Self-heal — detect literal secrets in HOCH's own source, quarantine/escalate, immunize.
+$PY -m backend.swarm.self_heal 2>/dev/null | head -1 | sed 's/^/  /' || echo "  self-heal: skipped"
+
+# 4. AI Michael — founder orchestration across the whole portfolio.
 $PY -m backend.orchestrator.founder_orchestrator 2>/dev/null | sed 's/^/  /' || echo "  orchestrator: skipped"
+
+# 5. Agent-activity audit + NIST 800-53 Rev 5 arterial map.
+$PY -m backend.orchestrator.agent_audit 2>/dev/null | head -1 | sed 's/^/  /' || true
+$PY -m backend.swarm.nist_map 2>/dev/null | head -1 | sed 's/^/  /' || true
 
 # 4. Publish the live feed (factories + orchestrator brief) for the command deck.
 $PY scripts/write_brain_live.py 2>/dev/null | sed 's/^/  /' || true

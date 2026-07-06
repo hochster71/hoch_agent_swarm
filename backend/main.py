@@ -9456,6 +9456,21 @@ def serve_brain_moonshot_console():
                              headers={"Cache-Control": "no-store, no-cache, must-revalidate, max-age=0"})
     return _PlainText("moonshot console file not found", status_code=404)
 
+
+@app.get("/data/brain_live.json")
+def serve_brain_live_static():
+    """Static fallback for the deck — the cadence writes frontend/data/brain_live.json every tick.
+    Serving it explicitly (the catch-all mount is dist-only) gives the console a second source so a
+    hiccup on /api/brain/live never shows STALE while fresh data exists on disk."""
+    from fastapi.responses import FileResponse as _FileResponse, JSONResponse as _JSONResponse
+    import os as _os
+    _p = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))),
+                       "frontend", "data", "brain_live.json")
+    _cors = {"Access-Control-Allow-Origin": "*", "Cache-Control": "no-store"}
+    if _os.path.exists(_p):
+        return _FileResponse(_p, media_type="application/json", headers=_cors)
+    return _JSONResponse({"error": "no static feed yet"}, status_code=404, headers=_cors)
+
 @app.post("/api/prompts/qa/golden-fixtures")
 def run_prompts_golden_fixtures_endpoint():
     import subprocess

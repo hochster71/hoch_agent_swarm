@@ -1,5 +1,5 @@
 {
-  "ts": "2026-07-06T01:26:50.491319Z",
+  "ts": "2026-07-06T02:15:58.559655Z",
   "live_brain": {
     "live_brain_available": true,
     "backend": {
@@ -9,23 +9,23 @@
     },
     "note": "brain can GENERATE at $0"
   },
-  "generation": 17,
+  "generation": 23,
   "genes": 479,
   "champions": 26,
-  "mean_score": 68.846,
-  "last_gain": 0.0,
-  "state": "PLATEAUING",
+  "mean_score": 72.5,
+  "last_gain": 0.673,
+  "state": "IMPROVING",
   "meta_lever": "SELECT",
   "meta_reason": "4 classes have genes but no champion \u2014 crown them.",
   "global_converged": false,
   "gaps": {
     "by_constraint": {
-      "SATURATED": 10,
-      "LOW_CEILING": 16,
+      "SATURATED": 14,
+      "LOW_CEILING": 12,
       "NO_CHAMPION": 4
     },
     "thin": 0,
-    "low_ceiling": 16,
+    "low_ceiling": 12,
     "drift": 3,
     "expansion_needed_genes": 0,
     "top5_share": 0.603
@@ -37,19 +37,107 @@
       "title": "Hoch Application Software Factory",
       "genes": 479,
       "champions": 26,
-      "mean_score": 68.846,
-      "state": "PLATEAUING",
-      "gates": 4
+      "mean_score": 72.5,
+      "state": "IMPROVING",
+      "gates": 4,
+      "history": [
+        {
+          "g": 8,
+          "m": 50.769
+        },
+        {
+          "g": 9,
+          "m": 56.442
+        },
+        {
+          "g": 10,
+          "m": 60.769
+        },
+        {
+          "g": 11,
+          "m": 60.769
+        },
+        {
+          "g": 12,
+          "m": 64.615
+        },
+        {
+          "g": 13,
+          "m": 67.019
+        },
+        {
+          "g": 14,
+          "m": 68.077
+        },
+        {
+          "g": 15,
+          "m": 68.846
+        },
+        {
+          "g": 16,
+          "m": 68.846
+        },
+        {
+          "g": 17,
+          "m": 68.846
+        },
+        {
+          "g": 18,
+          "m": 70.0
+        },
+        {
+          "g": 19,
+          "m": 70.0
+        },
+        {
+          "g": 20,
+          "m": 70.0
+        },
+        {
+          "g": 21,
+          "m": 70.481
+        },
+        {
+          "g": 22,
+          "m": 71.827
+        },
+        {
+          "g": 23,
+          "m": 72.5
+        }
+      ]
     },
     {
       "code": "HMF",
       "domain": "music",
       "title": "Hoch Music Factory",
-      "genes": 10,
+      "genes": 19,
       "champions": 8,
-      "mean_score": 93.0,
-      "state": "SELECTED",
-      "gates": 4
+      "mean_score": 96.188,
+      "state": "IMPROVING",
+      "gates": 4,
+      "history": [
+        {
+          "g": 2,
+          "m": 93.0
+        },
+        {
+          "g": 3,
+          "m": 93.0
+        },
+        {
+          "g": 4,
+          "m": 93.0
+        },
+        {
+          "g": 5,
+          "m": 93.0
+        },
+        {
+          "g": 6,
+          "m": 96.188
+        }
+      ]
     },
     {
       "code": "HRF",
@@ -58,22 +146,212 @@
       "genes": 8,
       "champions": 7,
       "mean_score": 96.0,
-      "state": "SELECTED",
-      "gates": 5
+      "state": "PLATEAUING",
+      "gates": 5,
+      "history": [
+        {
+          "g": 2,
+          "m": 96.0
+        },
+        {
+          "g": 3,
+          "m": 96.0
+        },
+        {
+          "g": 4,
+          "m": 96.0
+        },
+        {
+          "g": 5,
+          "m": 96.0
+        },
+        {
+          "g": 6,
+          "m": 96.0
+        }
+      ]
     }
   ],
+  "swarm": {
+    "verdict": "NOT_SECURE",
+    "coverage": 100.0,
+    "real_high": 2,
+    "target": "epic-fury-2026",
+    "why": "coverage=100.0% (missed none); real HIGH findings=2"
+  },
+  "agent_audit": {
+    "active": 5,
+    "idle": 1,
+    "dormant": 0,
+    "components": 6
+  },
+  "self_heal": {
+    "verdict": "HEALED",
+    "immunized": true,
+    "real_open": 0,
+    "findings": 0
+  },
+  "nist": {
+    "standard": "NIST SP 800-53 Rev 5 (20 control families; DoD RMF aligned)",
+    "covered": 18,
+    "total": 20,
+    "coverage_pct": 90.0,
+    "paths": 917,
+    "families": [
+      {
+        "f": "SI",
+        "n": "System & Information Integrity",
+        "g": 179,
+        "c": true,
+        "sw": 57.1
+      },
+      {
+        "f": "SA",
+        "n": "System & Services Acquisition",
+        "g": 141,
+        "c": true,
+        "sw": null
+      },
+      {
+        "f": "SC",
+        "n": "System & Communications Protection",
+        "g": 113,
+        "c": true,
+        "sw": null
+      },
+      {
+        "f": "PM",
+        "n": "Program Management",
+        "g": 87,
+        "c": true,
+        "sw": null
+      },
+      {
+        "f": "CA",
+        "n": "Assessment, Authorization & Monitoring",
+        "g": 81,
+        "c": true,
+        "sw": null
+      },
+      {
+        "f": "CM",
+        "n": "Configuration Management",
+        "g": 72,
+        "c": true,
+        "sw": null
+      },
+      {
+        "f": "CP",
+        "n": "Contingency Planning",
+        "g": 50,
+        "c": true,
+        "sw": null
+      },
+      {
+        "f": "MA",
+        "n": "Maintenance",
+        "g": 48,
+        "c": true,
+        "sw": null
+      },
+      {
+        "f": "RA",
+        "n": "Risk Assessment",
+        "g": 28,
+        "c": true,
+        "sw": 57.1
+      },
+      {
+        "f": "AC",
+        "n": "Access Control",
+        "g": 24,
+        "c": true,
+        "sw": null
+      },
+      {
+        "f": "IA",
+        "n": "Identification & Authentication",
+        "g": 24,
+        "c": true,
+        "sw": null
+      },
+      {
+        "f": "PL",
+        "n": "Planning",
+        "g": 14,
+        "c": true,
+        "sw": null
+      },
+      {
+        "f": "AU",
+        "n": "Audit & Accountability",
+        "g": 13,
+        "c": true,
+        "sw": null
+      },
+      {
+        "f": "IR",
+        "n": "Incident Response",
+        "g": 12,
+        "c": true,
+        "sw": null
+      },
+      {
+        "f": "PT",
+        "n": "PII Processing & Transparency",
+        "g": 12,
+        "c": true,
+        "sw": null
+      },
+      {
+        "f": "PE",
+        "n": "Physical & Environmental Protection",
+        "g": 7,
+        "c": true,
+        "sw": null
+      },
+      {
+        "f": "MP",
+        "n": "Media Protection",
+        "g": 6,
+        "c": true,
+        "sw": null
+      },
+      {
+        "f": "SR",
+        "n": "Supply Chain Risk Management",
+        "g": 6,
+        "c": true,
+        "sw": null
+      },
+      {
+        "f": "AT",
+        "n": "Awareness & Training",
+        "g": 0,
+        "c": false,
+        "sw": null
+      },
+      {
+        "f": "PS",
+        "n": "Personnel Security",
+        "g": 0,
+        "c": false,
+        "sw": null
+      }
+    ]
+  },
   "orchestrator": {
     "next_move": {
-      "code": "HMF",
-      "domain": "music",
-      "goal": "original, judged, publishable music across every genre",
-      "state": "SELECTED",
-      "genes": 10,
-      "champions": 8,
-      "thin": 8,
-      "mean": 93.0,
+      "code": "HRF",
+      "domain": "research",
+      "goal": "novel, citation-verified, reproducible research across grand challenges",
+      "state": "PLATEAUING",
+      "genes": 8,
+      "champions": 7,
+      "thin": 7,
+      "mean": 96.0,
       "action": "EXPAND",
-      "detail": "grow 8 thin classes (+14 genes) via the $0 local model",
+      "detail": "grow 7 thin classes (+13 genes) via the $0 local model",
       "cost": "$0",
       "tier": "AUTONOMOUS",
       "answers": "What's the gap?",
@@ -81,14 +359,14 @@
     },
     "autonomous_now": [
       {
-        "code": "HMF",
-        "action": "EXPAND",
-        "detail": "grow 8 thin classes (+14 genes) via the $0 local model"
-      },
-      {
         "code": "HRF",
         "action": "EXPAND",
         "detail": "grow 7 thin classes (+13 genes) via the $0 local model"
+      },
+      {
+        "code": "HMF",
+        "action": "EXPAND",
+        "detail": "grow 4 thin classes (+5 genes) via the $0 local model"
       }
     ],
     "needs_operator": [
@@ -186,9 +464,69 @@
       "g": 17,
       "m": 68.846,
       "gain": 0.0
+    },
+    {
+      "g": 18,
+      "m": 70.0,
+      "gain": 1.154
+    },
+    {
+      "g": 19,
+      "m": 70.0,
+      "gain": 0.0
+    },
+    {
+      "g": 20,
+      "m": 70.0,
+      "gain": 0.0
+    },
+    {
+      "g": 21,
+      "m": 70.481,
+      "gain": 0.481
+    },
+    {
+      "g": 22,
+      "m": 71.827,
+      "gain": 1.346
+    },
+    {
+      "g": 23,
+      "m": 72.5,
+      "gain": 0.673
     }
   ],
   "recent_improvements": [
+    {
+      "task_class": "Infrastructure & Hardware",
+      "beats_mech": 17.5,
+      "score": 80.0,
+      "at": "2026-07-06T02:14:50.359870Z"
+    },
+    {
+      "task_class": "Self-Healing",
+      "beats_mech": 12.5,
+      "score": 90.0,
+      "at": "2026-07-06T02:05:30.320525Z"
+    },
+    {
+      "task_class": "AI / ML",
+      "beats_mech": 22.5,
+      "score": 85.0,
+      "at": "2026-07-06T02:05:30.320525Z"
+    },
+    {
+      "task_class": "Software Engineering",
+      "beats_mech": 12.5,
+      "score": 75.0,
+      "at": "2026-07-06T01:59:06.600835Z"
+    },
+    {
+      "task_class": "Industry Specialized",
+      "beats_mech": 30.0,
+      "score": 80.0,
+      "at": "2026-07-06T01:36:52.214337Z"
+    },
     {
       "task_class": "AGI & Safety",
       "beats_mech": 7.5,
@@ -206,43 +544,25 @@
       "beats_mech": 10.0,
       "score": 67.5,
       "at": "2026-07-06T01:03:15.756552Z"
-    },
-    {
-      "task_class": "Incident Response",
-      "beats_mech": 15.0,
-      "score": 70.0,
-      "at": "2026-07-06T00:51:31.725687Z"
-    },
-    {
-      "task_class": "Supply Chain",
-      "beats_mech": 12.5,
-      "score": 57.5,
-      "at": "2026-07-06T00:51:31.725687Z"
-    },
-    {
-      "task_class": "Operations",
-      "beats_mech": 5.0,
-      "score": 67.5,
-      "at": "2026-07-06T00:34:33.852557Z"
-    },
-    {
-      "task_class": "DevSecOps",
-      "beats_mech": 15.0,
-      "score": 77.5,
-      "at": "2026-07-06T00:34:33.852557Z"
-    },
-    {
-      "task_class": "Privacy",
-      "beats_mech": 20.0,
-      "score": 67.5,
-      "at": "2026-07-06T00:34:33.852557Z"
     }
   ],
   "top_champions": [
     {
+      "cls": "Self-Healing",
+      "title": "Rollback and Loop Mitigation Coordinator",
+      "score": 90.0,
+      "state": "GENERATED_AND_JUDGED"
+    },
+    {
       "cls": "QA",
       "title": "Test Automation Architect Agent (brain-i",
       "score": 87.5,
+      "state": "GENERATED_AND_JUDGED"
+    },
+    {
+      "cls": "AI / ML",
+      "title": "Defense / DoD / National Security AI Ris",
+      "score": 85.0,
       "state": "GENERATED_AND_JUDGED"
     },
     {
@@ -252,27 +572,15 @@
       "state": "GENERATED_AND_JUDGED"
     },
     {
-      "cls": "AGI & Safety",
-      "title": "AGI Alignment Telemetry Validator (Initi",
+      "cls": "Industry Specialized",
+      "title": "Telemetry Integrity Agent (brain-improve",
       "score": 80.0,
       "state": "GENERATED_AND_JUDGED"
     },
     {
-      "cls": "DevSecOps",
-      "title": "State and Local Government CI/CD Gate Ag",
-      "score": 77.5,
-      "state": "GENERATED_AND_JUDGED"
-    },
-    {
-      "cls": "Self-Healing",
-      "title": "Rollback and Loop Mitigation Coordinator",
-      "score": 77.5,
-      "state": "VERIFIED_ON_HELDOUT"
-    },
-    {
-      "cls": "Audit",
-      "title": "Student Data Privacy Agent (brain-improv",
-      "score": 75.0,
+      "cls": "AGI & Safety",
+      "title": "AGI Alignment Telemetry Validator (Initi",
+      "score": 80.0,
       "state": "GENERATED_AND_JUDGED"
     }
   ]

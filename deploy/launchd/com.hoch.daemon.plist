@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.hoch.daemon</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>/Users/michaelhoch/hoch_agent_swarm/scripts/hoch_daemon.sh</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/michaelhoch/hoch_agent_swarm</string>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>HOCH_DAEMON_INTERVAL</key>
+        <string>10</string>
+    </dict>
+    <key>KeepAlive</key>
+    <true/>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>/Users/michaelhoch/hoch_agent_swarm/data/backups/hoch_daemon.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/michaelhoch/hoch_agent_swarm/data/backups/hoch_daemon.log</string>
+</dict>
+</plist>
