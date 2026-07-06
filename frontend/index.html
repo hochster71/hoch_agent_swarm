@@ -116,6 +116,10 @@
                             <i data-lucide="arrow-up-right"></i> <span>Escalations</span>
                             <span class="nav-status-indicator swarm-led-idle" id="led-escalations" style="margin-left: auto; font-size: 14px; font-weight: bold;">●</span>
                         </a>
+                        <button class="nav-item" id="nav-overview" data-view="overview" type="button" style="background: none; border: none; font-family: inherit; font-size: inherit; text-align: left; cursor: pointer; width: 100%; color: var(--text-secondary); font-weight: 500;">
+                            <i data-lucide="layout-dashboard"></i>
+                            <span>Control Plane</span>
+                        </button>
                         <button class="nav-item" id="nav-device-swarm" data-view="device-swarm" type="button" style="background: none; border: none; font-family: inherit; font-size: inherit; text-align: left; cursor: pointer; width: 100%; color: var(--text-secondary); font-weight: 500;">
                             <i data-lucide="smartphone"></i>
                             <span>Device Swarm</span>
@@ -5052,6 +5056,16 @@
                     </div>
                 </div>
             </div>
+
+<section class="view live-view" id="view-overview" data-view="overview" hidden>
+  <header class="section-header">
+    <div>
+      <p class="eyebrow">CANONICAL CONTROL PLANE</p>
+      <h2>Overview — HAS · HASF · HMF · HRF</h2>
+    </div>
+  </header>
+  <div id="react-overview-root"></div>
+</section>
 
 <section class="view live-view" id="view-mesh-sentinel" data-view="mesh-sentinel" hidden>
   <header class="section-header">

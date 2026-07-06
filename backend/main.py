@@ -203,6 +203,106 @@ app.include_router(qa_router)
 from backend.routers.stripe_webhook import router as stripe_router
 app.include_router(stripe_router)
 
+
+@app.get("/api/v1/control-plane/status")
+def control_plane_status():
+    """
+    Canonical reconciled control-plane status, served on the :8000 API so the React
+    shell reaches it via its existing /api proxy. Server-side-projects from the
+    authoritative :8765 PERT computation (/api/pert/data) so the shell reports the
+    SAME numbers as the command center; adds per-factory convergence (HAS/HMF/HRF)
+    and HASF revenue readiness. Fail-visible: if :8765 is unreachable, values are
+    null and pert_source_available=false — never fabricated.
+    """
+    import urllib.request
+    from datetime import datetime, timezone
+
+    def _unwrap(v):
+        return v.get("value") if isinstance(v, dict) and "value" in v else v
+
+    repo = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    d = {}
+    pert_ok = False
+    try:
+        req = urllib.request.Request("http://127.0.0.1:8765/api/pert/data", method="GET")
+        with urllib.request.urlopen(req, timeout=4) as r:
+            d = json.loads(r.read().decode("utf-8"))
+        pert_ok = True
+    except Exception:
+        d = {}
+
+    metrics = d.get("metrics") or {}
+    pert = d.get("pert_cpm") or {}
+    monetization = d.get("monetization") or {}
+    guardrails = d.get("guardrails") or {}
+    goal_percent = _unwrap((d.get("readiness") or {}).get("score"))
+
+    def _conv(rel):
+        try:
+            with open(os.path.join(repo, rel), "r") as f:
+                c = json.load(f)
+            return {
+                "state": c.get("state"),
+                "generation": c.get("generation"),
+                "mean_score": c.get("mean_score"),
+                "converged": c.get("converged"),
+                "source": rel,
+            }
+        except Exception:
+            return {"state": "UNKNOWN", "source": rel, "note": "file missing/unreadable"}
+
+    per_factory = {
+        "HAS": _conv("data/prompt_brain/convergence_status.json"),
+        "HMF": _conv("data/prompt_brain/music/convergence_status.json"),
+        "HRF": _conv("data/prompt_brain/research/convergence_status.json"),
+        "HASF": {
+            "monetization_readiness_percent": _unwrap(monetization.get("monetization_readiness_percent")),
+            "stripe_sandbox_readiness": _unwrap(monetization.get("stripe_sandbox_readiness")),
+            "source": ":8765 /api/pert/data .monetization",
+        },
+    }
+
+    return {
+        "schema": "control-plane-status-v1",
+        "generated_at": datetime.now(timezone.utc).isoformat() + "Z",
+        "served_by": "backend/main.py :8000",
+        "pert_source_available": pert_ok,
+        "provenance": (
+            "projection of :8765 /api/pert/data (authoritative) + per-factory "
+            "convergence files; no independent recomputation"
+        ),
+        "goal_percent": goal_percent,
+        "goal_percent_detail": (d.get("readiness") or {}).get("score"),
+        "reconciliation": {
+            "authoritative": goal_percent,
+            "authoritative_source": ":8765 /api/pert/data readiness.score",
+            "note": (
+                "Live PERT computation is authoritative; :8000 mirrors it for the shell."
+                if pert_ok
+                else "PERT source (:8765) unreachable — values null until it is up."
+            ),
+        },
+        "critical_path": pert.get("critical_path"),
+        "critical_path_remaining_minutes": pert.get("expected_duration"),
+        "blockers": {
+            "blocked_task_count": metrics.get("blocked_task_count"),
+            "next_actions": d.get("next_actions", []),
+        },
+        "tests": {
+            "passing": _unwrap(d.get("tests_passing_count")),
+            "failing": _unwrap(d.get("tests_failing_count")),
+        },
+        "evidence_coverage_percent": _unwrap(d.get("evidence_coverage_percent")),
+        "approvals": _unwrap(d.get("high_risk_approval_queue")) or [],
+        "guardrail_violations": {
+            "fake_status": _unwrap(guardrails.get("fake_status_violations")),
+            "public_exposure": _unwrap(guardrails.get("public_exposure_violations")),
+            "security": _unwrap(guardrails.get("security_guardrail_violations")),
+        },
+        "per_factory": per_factory,
+    }
+
+
 @app.get("/api/v1/apple/telemetry")
 def get_apple_telemetry_endpoint():
     from backend.apple_telemetry.collector import collect_and_store_apple_telemetry

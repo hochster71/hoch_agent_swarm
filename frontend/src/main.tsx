@@ -129,6 +129,7 @@ import { ComplianceDashboard } from "./components/compliance/ComplianceDashboard
 import { CustomerSuccessDashboard } from "./components/customer-success/CustomerSuccessDashboard";
 import { RevenueOpsDashboard } from "./components/revenue-ops/RevenueOpsDashboard";
 import { HochsterDashboard } from "./components/hochster/HochsterDashboard";
+import { OverviewControlPlane } from "./components/overview/OverviewControlPlane";
 
 // Mount Timeline Replay Dashboard
 const replayRoot = document.getElementById("react-replay-root");
@@ -256,6 +257,17 @@ if (hochsterRoot) {
   ReactDOM.createRoot(hochsterRoot).render(
     <React.StrictMode>
       <HochsterDashboard />
+    </React.StrictMode>
+  );
+}
+
+// Mount canonical control-plane Overview (S2) — reads the single S1 status feed.
+// Guarded: inert until index.html provides #react-overview-root.
+const overviewRoot = document.getElementById("react-overview-root");
+if (overviewRoot) {
+  ReactDOM.createRoot(overviewRoot).render(
+    <React.StrictMode>
+      <OverviewControlPlane />
     </React.StrictMode>
   );
 }
