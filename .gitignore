@@ -160,3 +160,4 @@ has_live_project_tracker/data/session_e2e_result.json
 # AI-Michael safe-executor + Phase 11 runtime outputs (never track)
 has_live_project_tracker/data/agent_action_queue.json
 data/prompt_brain/discovered_tasks.json
+has_live_project_tracker/data/goal_runtime_loop_status.json

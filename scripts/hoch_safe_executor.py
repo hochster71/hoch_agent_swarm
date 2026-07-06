@@ -120,14 +120,27 @@ def _h_run_script(a):
 HANDLERS = {"pytest": _h_pytest, "frontend_build": _h_frontend_build, "run_script": _h_run_script}
 
 
-def _append_json_list(path, root_key, item):
+def _route_approval(action, why):
+    """Append a pending approval for the governor — DEDUPED by source action id so a
+    perpetual loop never floods the queue with the same item. Returns True if newly added."""
     try:
-        doc = json.loads(path.read_text()) if path.exists() else {root_key: []}
+        doc = json.loads(APPROVALS.read_text()) if APPROVALS.exists() else {"pending_approvals": []}
     except Exception:
-        doc = {root_key: []}
-    doc.setdefault(root_key, []).append(item)
+        doc = {"pending_approvals": []}
+    pend = doc.setdefault("pending_approvals", [])
+    sid = action.get("id")
+    for item in pend:
+        if item.get("source_action_id") == sid and item.get("status") == "PENDING":
+            return False  # already awaiting the governor
+    pend.append({
+        "approval_id": f"AUTO-{sid}-{_now()}", "source_action_id": sid,
+        "type": "SAFE_EXECUTOR_ROUTED", "status": "PENDING",
+        "approval_required_from": "Michael", "title": action.get("title"),
+        "reason": why, "requested_at": _now(),
+    })
     doc["generated_at"] = _now()
-    path.write_text(json.dumps(doc, indent=2))
+    APPROVALS.write_text(json.dumps(doc, indent=2))
+    return True
 
 
 def run(dry):
@@ -150,15 +163,10 @@ def run(dry):
                 ok, detail, ev = HANDLERS[a["exec"]["type"]](a)
                 outcome = "SUCCESS" if ok else "FAILED"
         elif verdict == "APPROVAL" and not dry:
-            _append_json_list(APPROVALS, "pending_approvals", {
-                "approval_id": f"AUTO-{a.get('id', '?')}-{_now()}",
-                "type": "SAFE_EXECUTOR_ROUTED", "status": "PENDING",
-                "approval_required_from": "Michael", "title": a.get("title"),
-                "reason": why, "requested_at": _now(),
-            })
-            outcome = "ROUTED_TO_APPROVAL"
+            outcome = "ROUTED_TO_APPROVAL" if _route_approval(a, why) else "ALREADY_PENDING"
 
-        if not dry:
+        # Ledger only actionable outcomes — never idle "already pending" heartbeats (avoids bloat).
+        if not dry and outcome not in ("ALREADY_PENDING",):
             _ledger({
                 "timestamp": _now(), "task_id": a.get("id"), "task_summary": a.get("title"),
                 "safety_tier": "SAFE_EXECUTOR", "approval_required": verdict == "APPROVAL",
