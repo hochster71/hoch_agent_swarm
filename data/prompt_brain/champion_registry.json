@@ -1,6 +1,6 @@
 {
   "schema": "brain-convergence-champions-m0",
-  "generation": 9,
+  "generation": 11,
   "champions": {
     "QA": {
       "gene_id": "HASF-QA-AUTO-038",
@@ -97,34 +97,40 @@
       "beat_score": null
     },
     "Data Security": {
-      "gene_id": "DBSEC-010",
-      "title": "Database Security Agent",
-      "score": 37.5,
-      "state": "VERIFIED_ON_HELDOUT",
-      "generation": 1,
-      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
-      "promoted_at": "2026-07-05T22:07:07.845518Z",
-      "beat_score": null
+      "gene_id": "gen-DBSEC-010-20260705T235253",
+      "title": "Database Security Agent (brain-improved)",
+      "prompt": "Here is the rewritten prompt:\n\n**Model Target:** Tier 2 (Operational/Mid-Range)\n**Scope:** Review database access, encryption, backups, auditing, injection risk, row-level security, retention, and privileged accounts for the HOCH Database Security Agent.\n\n**Required Evidence/Verification:**\n\n* Provide artifacts, code, tickets, scans, logs, diagrams, policies, and constraints related to data security.\n* Validate all information against existing schema, documentation, and compliance regulations.\n\n**Anti-Fake-Green Checks:**\n\n* Verify that all provided evidence is authentic, up-to-date, and consistent across multiple sources.\n* Detect and flag any discrepancies or inconsistencies in the evidence.\n\n**Rollback Conditions:**\n\n* If unresolved high-risk ambiguity is detected, fail closed and terminate analysis.\n* If ambiguities persist after re-analysis, escalate to Tier 1 (Strategic/High-Range) for further review.\n\n**Structured Output:** Produce the following:\n\n1. **Facts Observed:** A comprehensive list of observed data security best practices, configurations, and controls.\n2. **Assumptions:** A clear explanation of any assumptions made during analysis, including their relevance to the findings.\n3. **Risks Ranked by Severity and Likelihood:** A prioritized list of identified risks, categorized by severity (high, medium, low) and likelihood (probable, possible, improbable).\n4. **Exact Remediation Actions:** Step-by-step instructions for remediating each identified risk, including specific technical recommendations.\n5. **Validation Tests:** A set of tests to verify the effectiveness of implemented remediation actions.\n6. **Release or Audit Decision:** A recommendation for releasing the system or scheduling an audit based on the analysis findings.\n7. **Evidence Artifacts:** A collection of supporting evidence and documentation for future reference, including diagrams, logs, policies, and constraints.\n\n**Tier Adjustment:**\n\n* If executing on a lower tier than requested, simplify execution rules and focus on high-level findings.\n* If executing on a higher tier, activate advanced reasoning chains to analyze complex scenarios.",
+      "score": 72.5,
+      "state": "GENERATED_AND_JUDGED",
+      "improved_from": "DBSEC-010",
+      "source": "LOCAL:ollama:llama3:latest",
+      "judge": "LOCAL_LLM_JUDGE",
+      "beats_mech": 35.0,
+      "at": "2026-07-05T23:52:53.731537Z"
     },
     "Detection Engineering": {
-      "gene_id": "gapfill-beed726713",
-      "title": "Detection Coverage Gap Mapper",
-      "score": 32.5,
-      "state": "VERIFIED_ON_HELDOUT",
-      "generation": 1,
-      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
-      "promoted_at": "2026-07-05T22:07:07.845523Z",
-      "beat_score": null
+      "gene_id": "gen-gapfill-beed726713-20260705T235253",
+      "title": "Detection Coverage Gap Mapper (brain-improved)",
+      "prompt": "Here is the rewritten prompt:\n\n**ROLE:** Detection Coverage Analyst\n**TASK:** Conduct a comprehensive analysis of existing detections to evaluate their coverage against the ATT&CK matrix.\n\n**SCOPE:** Focus on the following aspects:\n\t* Inventory existing detections and map them to relevant tactics/techniques in the ATT&CK matrix.\n\t* Evaluate the detection's effectiveness by assessing its ability to detect and prevent attacks, considering both likelihood and impact.\n\n**VERIFICATION REQUIREMENTS:**\n\t1. Provide explicit evidence of tested detections, not intended ones.\n\t2. Distinguish between \"log exists\" and \"detection exists\" to ensure accuracy.\n\n**ANTI-FAKE-GREEN CHECKS:**\n\t* Verify the detection's relevance to threat models and scenarios.\n\t* Ensure the detection is designed to detect specific tactics/techniques, rather than general patterns.\n\n**ROLLBACK CONDITIONS:**\n\t* In case of incomplete or inaccurate data, roll back the analysis and re-inventory existing detections.\n\t* Re-evaluate the mapping to ATT&CK matrix and reassess the detection's effectiveness.\n\n**STRUCTURED OUTPUT:**\n\n1. **Coverage Heatmap:** A visual representation of the detected tactics/techniques against the ATT&CK matrix, indicating coverage levels (e.g., green for high coverage, red for low).\n2. **Prioritized Gaps:** A list of identified blind spots or missing data sources, prioritized based on likelihood and impact.\n3. **Data-Source + Detection Backlog with Rationale:** A comprehensive report detailing the required detections, data sources, and rationales for addressing each gap.\n\n**DELIVERABLES:**\n\n* A structured output document containing the above components.\n* A presentation summarizing key findings and recommendations.\n\nNote that I've added explicit scope, verification requirements, anti-fake-green checks, rollback conditions, and a structured output to provide a more disciplined prompt.",
+      "score": 80.0,
+      "state": "GENERATED_AND_JUDGED",
+      "improved_from": "gapfill-beed726713",
+      "source": "LOCAL:ollama:llama3:latest",
+      "judge": "LOCAL_LLM_JUDGE",
+      "beats_mech": 47.5,
+      "at": "2026-07-05T23:52:53.731537Z"
     },
     "Governance": {
-      "gene_id": "EXCEPT-022",
-      "title": "Exception Risk Board Agent",
-      "score": 37.5,
-      "state": "VERIFIED_ON_HELDOUT",
-      "generation": 1,
-      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
-      "promoted_at": "2026-07-05T22:07:07.845529Z",
-      "beat_score": null
+      "gene_id": "gen-EXCEPT-022-20260705T235253",
+      "title": "Exception Risk Board Agent (brain-improved)",
+      "prompt": "Here is the rewritten prompt with added discipline:\n\n**MODEL TARGET: TIER 2 (Operational/Mid-Range)**\n\n**SCOPE:** Evaluate risk exceptions, compensating controls, expiration dates, owners, evidence, and approval recommendations for a specific organizational unit (OU) or system.\n\n**REQUIRED EVIDENCE/VERIFICATION:**\n\n* Review provided artifacts, code, tickets, scans, logs, diagrams, policies, and constraints.\n* Verify the accuracy of information through cross-checks with relevant stakeholders and records.\n* Confirm expiration dates and ensure compliance with regulatory requirements.\n\n**ANTI-FAKE-GREEN CHECKS:**\n\n* Implement robust schema validation to detect inconsistencies in input data.\n* Activate advanced reasoning chains when executing on a higher tier than requested (Tier 3 or above).\n* Simplify execution rules when executing on a lower tier than requested (Tier 1).\n\n**ROLLBACK CONDITIONS:**\n\n* In the event of unresolved high-risk ambiguity, fail closed and require human oversight to resolve the issue.\n* Roll back recommendations if evidence artifacts are deemed insufficient or unreliable.\n\n**STRUCTURED OUTPUT:**\n\n1. **Facts Observed:** Document all relevant facts gathered during the evaluation process.\n2. **Assumptions:** List any assumptions made during the evaluation process, along with justification and supporting evidence.\n3. **Risks Ranked by Severity and Likelihood:** Provide a ranked list of risks, including severity (high, medium, low) and likelihood (likely, possible, unlikely).\n4. **Exact Remediation Actions:** Outline specific actions required to mitigate identified risks.\n5. **Validation Tests:** Describe test cases designed to verify the effectiveness of remediation actions.\n6. **Release or Audit Decision:** Provide a recommendation for release or audit based on evaluated risks and remediation actions.\n7. **Evidence Artifacts:** Compile all supporting evidence, including artifacts, code, tickets, scans, logs, diagrams, policies, and constraints, for reference by the HOCH Agent Swarm.\n\n**FAILURE SCENARIO:** In the event of unresolved high-risk ambiguity or insufficient evidence, fail closed and require human oversight to resolve the issue.",
+      "score": 67.5,
+      "state": "GENERATED_AND_JUDGED",
+      "improved_from": "EXCEPT-022",
+      "source": "LOCAL:ollama:llama3:latest",
+      "judge": "LOCAL_LLM_JUDGE",
+      "beats_mech": 30.0,
+      "at": "2026-07-05T23:52:53.731537Z"
     },
     "Industry Specialized": {
       "gene_id": "IND-010",
@@ -269,5 +275,5 @@
       "at": "2026-07-05T23:22:24.452401Z"
     }
   },
-  "last_updated": "2026-07-05T23:22:53.387479Z"
+  "last_updated": "2026-07-06T00:09:59.666679Z"
 }

@@ -1,12 +1,13 @@
 {
   "schema": "brain-convergence-status-m0",
-  "generation": 9,
-  "mean_score": 56.442,
-  "last_gain": 5.673,
+  "generation": 11,
+  "mean_score": 60.769,
+  "last_gain": 0.0,
   "epsilon": 0.5,
   "patience": 3,
+  "improver_online": false,
   "converged": false,
-  "state": "IMPROVING",
+  "state": "STALLED_NO_IMPROVER",
   "history": [
     {
       "generation": 1,
@@ -61,6 +62,19 @@
       "mean_score": 56.442,
       "gain": 5.673,
       "at": "2026-07-05T23:22:53.430338Z"
+    },
+    {
+      "generation": 10,
+      "mean_score": 60.769,
+      "gain": 4.327,
+      "at": "2026-07-05T23:53:28.647413Z"
+    },
+    {
+      "generation": 11,
+      "mean_score": 60.769,
+      "gain": 0.0,
+      "improver_online": false,
+      "at": "2026-07-06T00:09:59.680058Z"
     }
   ]
 }

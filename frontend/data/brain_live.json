@@ -1,16 +1,31 @@
 {
-  "ts": "2026-07-05T23:27:56.595052Z",
+  "ts": "2026-07-06T00:09:59.744054Z",
   "live_brain": {
     "live_brain_available": false,
     "backend": null,
     "note": "no local model up \u2014 mechanical-only (start Ollama for live brain)"
   },
-  "generation": 9,
+  "generation": 11,
   "genes": 427,
   "champions": 26,
-  "mean_score": 56.442,
-  "last_gain": 5.673,
-  "state": "IMPROVING",
+  "mean_score": 60.769,
+  "last_gain": 0.0,
+  "state": "STALLED_NO_IMPROVER",
+  "meta_lever": "IMPROVER_OFFLINE",
+  "meta_reason": "No local model reachable \u2014 only mechanical SELECT can run. Start Ollama to enable EXPAND/IMPROVE (the $0 generate path).",
+  "global_converged": false,
+  "gaps": {
+    "by_constraint": {
+      "SATURATED": 5,
+      "LOW_CEILING": 10,
+      "THIN_POOL": 15
+    },
+    "thin": 15,
+    "low_ceiling": 10,
+    "drift": 3,
+    "expansion_needed_genes": 52,
+    "top5_share": 0.677
+  },
   "history": [
     {
       "g": 1,
@@ -56,9 +71,37 @@
       "g": 9,
       "m": 56.442,
       "gain": 5.673
+    },
+    {
+      "g": 10,
+      "m": 60.769,
+      "gain": 4.327
+    },
+    {
+      "g": 11,
+      "m": 60.769,
+      "gain": 0.0
     }
   ],
   "recent_improvements": [
+    {
+      "task_class": "Governance",
+      "beats_mech": 30.0,
+      "score": 67.5,
+      "at": "2026-07-05T23:52:53.731537Z"
+    },
+    {
+      "task_class": "Data Security",
+      "beats_mech": 35.0,
+      "score": 72.5,
+      "at": "2026-07-05T23:52:53.731537Z"
+    },
+    {
+      "task_class": "Detection Engineering",
+      "beats_mech": 47.5,
+      "score": 80.0,
+      "at": "2026-07-05T23:52:53.731537Z"
+    },
     {
       "task_class": "Vulnerability Management",
       "beats_mech": 37.5,
@@ -80,6 +123,12 @@
   ],
   "top_champions": [
     {
+      "cls": "Detection Engineering",
+      "title": "Detection Coverage Gap Mapper (brain-imp",
+      "score": 80.0,
+      "state": "GENERATED_AND_JUDGED"
+    },
+    {
       "cls": "Self-Healing",
       "title": "Rollback and Loop Mitigation Coordinator",
       "score": 77.5,
@@ -98,22 +147,16 @@
       "state": "VERIFIED_ON_HELDOUT"
     },
     {
+      "cls": "Data Security",
+      "title": "Database Security Agent (brain-improved)",
+      "score": 72.5,
+      "state": "GENERATED_AND_JUDGED"
+    },
+    {
       "cls": "Cybersecurity",
       "title": "Incident Response Commander Agent (HASF-",
       "score": 72.5,
       "state": "VERIFIED_ON_HELDOUT"
-    },
-    {
-      "cls": "AGI & Safety",
-      "title": "AGI Alignment Telemetry Validator (Initi",
-      "score": 72.5,
-      "state": "VERIFIED_ON_HELDOUT"
-    },
-    {
-      "cls": "SAST",
-      "title": "AI App Code Security Agent (brain-improv",
-      "score": 67.5,
-      "state": "GENERATED_AND_JUDGED"
     }
   ]
 }

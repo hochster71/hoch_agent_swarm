@@ -58,6 +58,10 @@ def improve_champion(champion: Dict[str, Any], task_class: str, n: int = 2,
     champ_mech = score_prompt(champ_prompt, rubric_path)["overall"]
 
     cands = generate_candidates(champ_prompt, task_class, n=n, backend=backend)
+    # Best-of-N: evaluate ALL candidates through the dual gate, keep the strongest judge-approved
+    # one (highest mechanical score among those that beat the champion AND win the judge). More
+    # shots on goal per class per cycle at the same $0 — no early-return bias toward candidate #1.
+    winners = []
     for c in cands:
         cand_text = c["text"]
         cand_mech = score_prompt(cand_text, rubric_path)["overall"]
@@ -65,7 +69,7 @@ def improve_champion(champion: Dict[str, Any], task_class: str, n: int = 2,
             continue
         judged = llm_judge(backend, champ_prompt, cand_text, task_class)
         if judged["winner"] == "B":            # gate (a): judge prefers candidate
-            return {
+            winners.append({
                 "prompt": cand_text,
                 "source": c["source"],
                 "judge": "LOCAL_LLM_JUDGE",
@@ -73,5 +77,7 @@ def improve_champion(champion: Dict[str, Any], task_class: str, n: int = 2,
                 "mech_score": cand_mech,
                 "beats_mech": round(cand_mech - champ_mech, 2),
                 "state": "GENERATED_AND_JUDGED",  # not VERIFIED_ON_HELDOUT — a live-model win, Rung 1
-            }
-    return None
+            })
+    if not winners:
+        return None
+    return max(winners, key=lambda w: w["mech_score"])

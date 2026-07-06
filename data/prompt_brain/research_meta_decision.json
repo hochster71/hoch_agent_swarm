@@ -1,0 +1,24 @@
+{
+  "schema": "brain-research-meta-v1",
+  "at": "2026-07-06T00:09:59.523169Z",
+  "improver_online": false,
+  "model": null,
+  "chosen_lever": "IMPROVER_OFFLINE",
+  "reason": "No local model reachable \u2014 only mechanical SELECT can run. Start Ollama to enable EXPAND/IMPROVE (the $0 generate path).",
+  "targets": [],
+  "gaps": {
+    "by_constraint": {
+      "SATURATED": 5,
+      "LOW_CEILING": 10,
+      "THIN_POOL": 15
+    },
+    "thin": 15,
+    "low_ceiling": 10,
+    "no_champion": 0,
+    "drift": 3,
+    "expansion_needed_genes": 52,
+    "mean_champion_score": 60.769,
+    "generation": 10
+  },
+  "global_converged": false
+}

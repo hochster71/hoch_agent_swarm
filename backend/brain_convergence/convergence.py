@@ -16,7 +16,16 @@ def _now() -> str:
 
 
 def update(status_path: str, generation: int, mean_score: float,
-           epsilon: float = 0.5, patience: int = 3) -> Dict[str, Any]:
+           epsilon: float = 0.5, patience: int = 3,
+           improver_online: bool = True) -> Dict[str, Any]:
+    """Record a generation and decide convergence — HONESTLY.
+
+    A no-gain generation only counts toward the convergence streak if the improver was actually
+    ONLINE (a live local model able to GENERATE). Flat-because-the-model-was-offline is NOT
+    evidence the brain can't get smarter — counting it would be fake-green convergence. Such
+    generations are recorded with improver_online=False and state=STALLED_NO_IMPROVER, and are
+    excluded from the patience streak so the loop can never declare CONVERGED while blind.
+    """
     p = Path(status_path)
     # Defensive: a pre-existing/legacy status file may lack our "history" key.
     hist = []
@@ -27,11 +36,20 @@ def update(status_path: str, generation: int, mean_score: float,
             hist = []
     prev = hist[-1]["mean_score"] if hist else None
     gain = None if prev is None else round(mean_score - prev, 3)
-    hist.append({"generation": generation, "mean_score": mean_score, "gain": gain, "at": _now()})
+    hist.append({"generation": generation, "mean_score": mean_score, "gain": gain,
+                 "improver_online": bool(improver_online), "at": _now()})
 
-    # plateau: last `patience` gains all below epsilon (in absolute value)
-    recent_gains = [h["gain"] for h in hist[-patience:] if h["gain"] is not None]
-    converged = len(recent_gains) >= patience and all(abs(g) < epsilon for g in recent_gains)
+    if not improver_online:
+        # Blind generation: cannot support a convergence claim. Never converged here.
+        converged, state = False, "STALLED_NO_IMPROVER"
+    else:
+        # plateau streak counts ONLY generations where the improver was online.
+        online_gains = [h["gain"] for h in hist[-patience:]
+                        if h["gain"] is not None and h.get("improver_online", True)]
+        converged = len(online_gains) >= patience and all(abs(g) < epsilon for g in online_gains)
+        state = ("CONVERGED" if converged
+                 else "IMPROVING" if (gain is None or gain > 0)
+                 else "PLATEAUING")
 
     status = {
         "schema": "brain-convergence-status-m0",
@@ -40,8 +58,9 @@ def update(status_path: str, generation: int, mean_score: float,
         "last_gain": gain,
         "epsilon": epsilon,
         "patience": patience,
+        "improver_online": bool(improver_online),
         "converged": converged,
-        "state": "CONVERGED" if converged else "IMPROVING" if (gain is None or gain > 0) else "PLATEAUING",
+        "state": state,
         "history": hist,
     }
     p.parent.mkdir(parents=True, exist_ok=True)

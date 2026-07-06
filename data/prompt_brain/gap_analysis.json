@@ -1,0 +1,541 @@
+{
+  "schema": "brain-gap-analysis-v1",
+  "policy": {
+    "min_pool": 6,
+    "target_score": 70.0,
+    "drift_ratio": 0.72
+  },
+  "totals": {
+    "gene_classes": 30,
+    "champion_classes": 26,
+    "total_genes": 427,
+    "top5_share": 0.677,
+    "mean_champion_score": 60.769,
+    "generation": 11,
+    "state": "STALLED_NO_IMPROVER"
+  },
+  "by_constraint": {
+    "SATURATED": 5,
+    "LOW_CEILING": 10,
+    "THIN_POOL": 15
+  },
+  "expansion_needed_genes": 52,
+  "thin_classes": [
+    {
+      "class": "Legal / Compliance",
+      "genes": 1,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "THIN_POOL",
+      "pool_deficit": 5
+    },
+    {
+      "class": "UX Security",
+      "genes": 1,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "THIN_POOL",
+      "pool_deficit": 5
+    },
+    {
+      "class": "AI / ML Systems",
+      "genes": 2,
+      "has_champion": true,
+      "score": 40.0,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "THIN_POOL",
+      "pool_deficit": 4
+    },
+    {
+      "class": "Cloud Security",
+      "genes": 2,
+      "has_champion": true,
+      "score": 57.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "THIN_POOL",
+      "pool_deficit": 4
+    },
+    {
+      "class": "Data Security",
+      "genes": 2,
+      "has_champion": true,
+      "score": 72.5,
+      "state": "GENERATED_AND_JUDGED",
+      "constraint": "THIN_POOL",
+      "pool_deficit": 4
+    },
+    {
+      "class": "Governance",
+      "genes": 2,
+      "has_champion": true,
+      "score": 67.5,
+      "state": "GENERATED_AND_JUDGED",
+      "constraint": "THIN_POOL",
+      "pool_deficit": 4
+    },
+    {
+      "class": "Privacy",
+      "genes": 2,
+      "has_champion": true,
+      "score": 47.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "THIN_POOL",
+      "pool_deficit": 4
+    },
+    {
+      "class": "Supply Chain",
+      "genes": 2,
+      "has_champion": true,
+      "score": 45.0,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "THIN_POOL",
+      "pool_deficit": 4
+    },
+    {
+      "class": "Vulnerability Management",
+      "genes": 2,
+      "has_champion": true,
+      "score": 60.0,
+      "state": "GENERATED_AND_JUDGED",
+      "constraint": "THIN_POOL",
+      "pool_deficit": 4
+    },
+    {
+      "class": "Coding",
+      "genes": 3,
+      "has_champion": true,
+      "score": 45.0,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "THIN_POOL",
+      "pool_deficit": 3
+    },
+    {
+      "class": "Detection Engineering",
+      "genes": 3,
+      "has_champion": true,
+      "score": 80.0,
+      "state": "GENERATED_AND_JUDGED",
+      "constraint": "THIN_POOL",
+      "pool_deficit": 3
+    },
+    {
+      "class": "Incident Response",
+      "genes": 3,
+      "has_champion": true,
+      "score": 55.0,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "THIN_POOL",
+      "pool_deficit": 3
+    },
+    {
+      "class": "Software Engineering",
+      "genes": 3,
+      "has_champion": true,
+      "score": 62.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "THIN_POOL",
+      "pool_deficit": 3
+    },
+    {
+      "class": "DAST",
+      "genes": 5,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "THIN_POOL",
+      "pool_deficit": 1
+    },
+    {
+      "class": "Family & Personal",
+      "genes": 5,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "THIN_POOL",
+      "pool_deficit": 1
+    }
+  ],
+  "low_ceiling_classes": [
+    {
+      "class": "SDLC Governance",
+      "genes": 8,
+      "has_champion": true,
+      "score": 40.0,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Security Architecture",
+      "genes": 18,
+      "has_champion": true,
+      "score": 45.0,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Industry Specialized",
+      "genes": 15,
+      "has_champion": true,
+      "score": 50.0,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "AI / ML",
+      "genes": 51,
+      "has_champion": true,
+      "score": 62.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "DevSecOps",
+      "genes": 58,
+      "has_champion": true,
+      "score": 62.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Governance / Compliance",
+      "genes": 50,
+      "has_champion": true,
+      "score": 62.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Infrastructure & Hardware",
+      "genes": 7,
+      "has_champion": true,
+      "score": 62.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Operations",
+      "genes": 41,
+      "has_champion": true,
+      "score": 62.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Research & Delivery",
+      "genes": 8,
+      "has_champion": true,
+      "score": 62.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "SAST",
+      "genes": 6,
+      "has_champion": true,
+      "score": 67.5,
+      "state": "GENERATED_AND_JUDGED",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    }
+  ],
+  "taxonomy_drift": [
+    {
+      "a": "AI / ML",
+      "b": "AI / ML Systems",
+      "similarity": 1.0
+    },
+    {
+      "a": "Governance / Compliance",
+      "b": "Governance",
+      "similarity": 1.0
+    },
+    {
+      "a": "SDLC Governance",
+      "b": "Governance",
+      "similarity": 1.0
+    }
+  ],
+  "per_class": [
+    {
+      "class": "DAST",
+      "genes": 5,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "THIN_POOL",
+      "pool_deficit": 1
+    },
+    {
+      "class": "Family & Personal",
+      "genes": 5,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "THIN_POOL",
+      "pool_deficit": 1
+    },
+    {
+      "class": "Legal / Compliance",
+      "genes": 1,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "THIN_POOL",
+      "pool_deficit": 5
+    },
+    {
+      "class": "UX Security",
+      "genes": 1,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "THIN_POOL",
+      "pool_deficit": 5
+    },
+    {
+      "class": "AI / ML Systems",
+      "genes": 2,
+      "has_champion": true,
+      "score": 40.0,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "THIN_POOL",
+      "pool_deficit": 4
+    },
+    {
+      "class": "SDLC Governance",
+      "genes": 8,
+      "has_champion": true,
+      "score": 40.0,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Coding",
+      "genes": 3,
+      "has_champion": true,
+      "score": 45.0,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "THIN_POOL",
+      "pool_deficit": 3
+    },
+    {
+      "class": "Security Architecture",
+      "genes": 18,
+      "has_champion": true,
+      "score": 45.0,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Supply Chain",
+      "genes": 2,
+      "has_champion": true,
+      "score": 45.0,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "THIN_POOL",
+      "pool_deficit": 4
+    },
+    {
+      "class": "Privacy",
+      "genes": 2,
+      "has_champion": true,
+      "score": 47.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "THIN_POOL",
+      "pool_deficit": 4
+    },
+    {
+      "class": "Industry Specialized",
+      "genes": 15,
+      "has_champion": true,
+      "score": 50.0,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Incident Response",
+      "genes": 3,
+      "has_champion": true,
+      "score": 55.0,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "THIN_POOL",
+      "pool_deficit": 3
+    },
+    {
+      "class": "Cloud Security",
+      "genes": 2,
+      "has_champion": true,
+      "score": 57.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "THIN_POOL",
+      "pool_deficit": 4
+    },
+    {
+      "class": "Vulnerability Management",
+      "genes": 2,
+      "has_champion": true,
+      "score": 60.0,
+      "state": "GENERATED_AND_JUDGED",
+      "constraint": "THIN_POOL",
+      "pool_deficit": 4
+    },
+    {
+      "class": "AI / ML",
+      "genes": 51,
+      "has_champion": true,
+      "score": 62.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "DevSecOps",
+      "genes": 58,
+      "has_champion": true,
+      "score": 62.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Governance / Compliance",
+      "genes": 50,
+      "has_champion": true,
+      "score": 62.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Infrastructure & Hardware",
+      "genes": 7,
+      "has_champion": true,
+      "score": 62.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Operations",
+      "genes": 41,
+      "has_champion": true,
+      "score": 62.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Research & Delivery",
+      "genes": 8,
+      "has_champion": true,
+      "score": 62.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Software Engineering",
+      "genes": 3,
+      "has_champion": true,
+      "score": 62.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "THIN_POOL",
+      "pool_deficit": 3
+    },
+    {
+      "class": "Governance",
+      "genes": 2,
+      "has_champion": true,
+      "score": 67.5,
+      "state": "GENERATED_AND_JUDGED",
+      "constraint": "THIN_POOL",
+      "pool_deficit": 4
+    },
+    {
+      "class": "SAST",
+      "genes": 6,
+      "has_champion": true,
+      "score": 67.5,
+      "state": "GENERATED_AND_JUDGED",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "AGI & Safety",
+      "genes": 10,
+      "has_champion": true,
+      "score": 72.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Cybersecurity",
+      "genes": 89,
+      "has_champion": true,
+      "score": 72.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Data Security",
+      "genes": 2,
+      "has_champion": true,
+      "score": 72.5,
+      "state": "GENERATED_AND_JUDGED",
+      "constraint": "THIN_POOL",
+      "pool_deficit": 4
+    },
+    {
+      "class": "QA",
+      "genes": 6,
+      "has_champion": true,
+      "score": 72.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Audit",
+      "genes": 13,
+      "has_champion": true,
+      "score": 75.0,
+      "state": "GENERATED_AND_JUDGED",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Self-Healing",
+      "genes": 9,
+      "has_champion": true,
+      "score": 77.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Detection Engineering",
+      "genes": 3,
+      "has_champion": true,
+      "score": 80.0,
+      "state": "GENERATED_AND_JUDGED",
+      "constraint": "THIN_POOL",
+      "pool_deficit": 3
+    }
+  ]
+}

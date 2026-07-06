@@ -51,6 +51,18 @@ def build_live_state():
     genes = _load(DATA / "gene_pool_m0.json", {}).get("count", 0)
     hist = conv.get("history", [])[-24:]
 
+    # Meta lever + gap summary — so the console shows what the brain is doing and why.
+    meta = _load(DATA / "research_meta_decision.json", {})
+    gaps = _load(DATA / "gap_analysis.json", {})
+    gap_summary = {
+        "by_constraint": gaps.get("by_constraint", {}),
+        "thin": len(gaps.get("thin_classes", [])),
+        "low_ceiling": len(gaps.get("low_ceiling_classes", [])),
+        "drift": len(gaps.get("taxonomy_drift", [])),
+        "expansion_needed_genes": gaps.get("expansion_needed_genes"),
+        "top5_share": (gaps.get("totals") or {}).get("top5_share"),
+    } if gaps else {}
+
     out = {
         "ts": datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z"),
         "live_brain": live,
@@ -60,6 +72,10 @@ def build_live_state():
         "mean_score": conv.get("mean_score", 0.0),
         "last_gain": conv.get("last_gain"),
         "state": conv.get("state", "UNKNOWN"),
+        "meta_lever": meta.get("chosen_lever"),
+        "meta_reason": meta.get("reason"),
+        "global_converged": meta.get("global_converged", False),
+        "gaps": gap_summary,
         "history": [{"g": h.get("generation"), "m": h.get("mean_score"), "gain": h.get("gain")} for h in hist],
         "recent_improvements": list(reversed(improvements))[:8],
         "top_champions": sorted(

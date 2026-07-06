@@ -58,7 +58,14 @@ def run(library_path: str, aliases_path: Optional[str] = None) -> Dict[str, Any]
     res = promote(reg, candidates, s["provenance_hash"])
     save_registry(res["registry"], str(DATA / "champion_registry.json"))
     mean = mean_champion_score(res["registry"])
-    conv = conv_update(str(DATA / "convergence_status.json"), res["registry"]["generation"], mean)
+    # Pass the REAL improver status so convergence can't fake-green while the model is offline.
+    try:
+        from backend.brain_convergence.local_model_bridge import detect_local_backend
+        improver_online = bool(detect_local_backend())
+    except Exception:
+        improver_online = False
+    conv = conv_update(str(DATA / "convergence_status.json"), res["registry"]["generation"], mean,
+                       improver_online=improver_online)
 
     EVID.mkdir(parents=True, exist_ok=True)
     stamp = ts.replace(":", "").replace("-", "")

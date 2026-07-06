@@ -24,6 +24,42 @@ LIB = str(ROOT.parent / "hoch_agent_swarm_prompt_library" / "organized" / "promo
 ALIASES = str(ROOT.parent / "hoch_agent_swarm_prompt_library" / "organized" / "candidates" / "capability_dedup_aliases.json")
 
 
+def _select_classes(champs: dict, max_classes: int):
+    """Weakest-priority + rotating coverage. Returns list of (class, champ) pairs.
+
+    Half the budget = the lowest-scoring champions (biggest gains). The other half advances a
+    persisted round-robin cursor over the full class list, so classes in the middle of the pack
+    are eventually revisited instead of never being touched. Deterministic given the cursor file.
+    """
+    from pathlib import Path as _P
+    items = sorted(champs.items(), key=lambda kv: kv[1].get("score", 0.0))
+    if max_classes >= len(items):
+        return items
+    n_weak = max(1, max_classes // 2)
+    weak = items[:n_weak]
+    weak_keys = {k for k, _ in weak}
+
+    rotating = [it for it in items if it[0] not in weak_keys]
+    cur_path = _P(__file__).resolve().parent.parent.parent / "data" / "prompt_brain" / "improve_cursor.json"
+    cursor = 0
+    try:
+        cursor = json.loads(cur_path.read_text()).get("cursor", 0)
+    except Exception:
+        cursor = 0
+    n_rot = max_classes - len(weak)
+    picked = []
+    if rotating and n_rot > 0:
+        for i in range(n_rot):
+            picked.append(rotating[(cursor + i) % len(rotating)])
+        cursor = (cursor + n_rot) % len(rotating)
+        try:
+            cur_path.parent.mkdir(parents=True, exist_ok=True)
+            cur_path.write_text(json.dumps({"cursor": cursor}))
+        except Exception:
+            pass
+    return weak + picked
+
+
 def run(max_classes: int = 3):
     backend = detect_local_backend()
     if not backend:
@@ -33,8 +69,10 @@ def run(max_classes: int = 3):
     genes = harvest(LIB, aliases_path=ALIASES if Path(ALIASES).exists() else None)["genes"]
     reg = load_registry(str(DATA / "champion_registry.json"))
     champs = reg.get("champions", {})
-    # target the lowest-scoring champions — most room to improve
-    ranked = sorted(champs.items(), key=lambda kv: kv[1].get("score", 0.0))[:max_classes]
+    # Coverage-aware selection: half the budget goes to the WEAKEST champions (most room to
+    # improve), the other half rotates through ALL classes via a persisted cursor so every class
+    # gets worked over successive cycles — 'all areas', not just the perpetual bottom-3.
+    ranked = _select_classes(champs, max_classes)
 
     ts = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")
     wins = []
