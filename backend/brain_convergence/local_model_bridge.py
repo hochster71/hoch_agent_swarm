@@ -12,31 +12,45 @@ Design contract (honest + safe):
 - Runs on the operator's machine (where Ollama lives); it only calls localhost, never the web.
 """
 import json
+import os
 import urllib.request
 from typing import List, Dict, Any, Optional
 
-OLLAMA_URL = "http://localhost:11434"
-LMSTUDIO_URL = "http://localhost:1234"
+# Host is env-configurable so an always-on daemon (e.g. HOCH-200) can point at the operator's
+# Ollama over Tailscale instead of its own empty localhost. Defaults unchanged (localhost).
+#   OLLAMA_HOST / OLLAMA_URL  e.g. http://100.x.y.z:11434   (Mac's tailscale IP)
+#   LMSTUDIO_URL              e.g. http://100.x.y.z:1234
+#   BRAIN_M1_MODEL            preferred model (e.g. qwen3:14b); falls back to first available
+OLLAMA_URL = os.environ.get("OLLAMA_HOST") or os.environ.get("OLLAMA_URL") or "http://127.0.0.1:11434"
+LMSTUDIO_URL = os.environ.get("LMSTUDIO_URL", "http://127.0.0.1:1234")
+_PREFERRED_MODEL = os.environ.get("BRAIN_M1_MODEL", "").strip()
+
+_opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+
+def _urlopen(url_or_req, timeout: float):
+    return _opener.open(url_or_req, timeout=timeout)
 
 
 def detect_local_backend(timeout: float = 1.5) -> Optional[Dict[str, str]]:
     """Return {'kind','base','model'} for the first reachable local backend, else None."""
     # Ollama
     try:
-        with urllib.request.urlopen(f"{OLLAMA_URL}/api/tags", timeout=timeout) as r:
+        with _urlopen(f"{OLLAMA_URL}/api/tags", timeout=timeout) as r:
             tags = json.loads(r.read().decode())
             models = [m.get("name") for m in tags.get("models", []) if m.get("name")]
             if models:
-                return {"kind": "ollama", "base": OLLAMA_URL, "model": models[0]}
+                chosen = _PREFERRED_MODEL if _PREFERRED_MODEL in models else models[0]
+                return {"kind": "ollama", "base": OLLAMA_URL, "model": chosen}
     except Exception:
         pass
     # LM Studio (OpenAI-compatible)
     try:
-        with urllib.request.urlopen(f"{LMSTUDIO_URL}/v1/models", timeout=timeout) as r:
+        with _urlopen(f"{LMSTUDIO_URL}/v1/models", timeout=timeout) as r:
             data = json.loads(r.read().decode())
             ms = [m.get("id") for m in data.get("data", []) if m.get("id")]
             if ms:
-                return {"kind": "lmstudio", "base": LMSTUDIO_URL, "model": ms[0]}
+                chosen = _PREFERRED_MODEL if _PREFERRED_MODEL in ms else ms[0]
+                return {"kind": "lmstudio", "base": LMSTUDIO_URL, "model": chosen}
     except Exception:
         pass
     return None
@@ -46,7 +60,7 @@ def _ollama_generate(base: str, model: str, prompt: str, timeout: float) -> str:
     body = json.dumps({"model": model, "prompt": prompt, "stream": False}).encode()
     req = urllib.request.Request(f"{base}/api/generate", data=body,
                                  headers={"Content-Type": "application/json"})
-    with urllib.request.urlopen(req, timeout=timeout) as r:
+    with _urlopen(req, timeout=timeout) as r:
         return json.loads(r.read().decode()).get("response", "").strip()
 
 
@@ -55,7 +69,7 @@ def _lmstudio_generate(base: str, model: str, prompt: str, timeout: float) -> st
                        "temperature": 0.7}).encode()
     req = urllib.request.Request(f"{base}/v1/chat/completions", data=body,
                                  headers={"Content-Type": "application/json"})
-    with urllib.request.urlopen(req, timeout=timeout) as r:
+    with _urlopen(req, timeout=timeout) as r:
         d = json.loads(r.read().decode())
         return d["choices"][0]["message"]["content"].strip()
 

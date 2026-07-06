@@ -124,6 +124,10 @@
                             <i data-lucide="git-branch"></i>
                             <span>PERT / Critical Path</span>
                         </button>
+                        <button class="nav-item" id="nav-pods" data-view="pods" type="button" style="background: none; border: none; font-family: inherit; font-size: inherit; text-align: left; cursor: pointer; width: 100%; color: var(--text-secondary); font-weight: 500;">
+                            <i data-lucide="rocket"></i>
+                            <span>PODS Theater</span>
+                        </button>
                         <button class="nav-item" id="nav-device-swarm" data-view="device-swarm" type="button" style="background: none; border: none; font-family: inherit; font-size: inherit; text-align: left; cursor: pointer; width: 100%; color: var(--text-secondary); font-weight: 500;">
                             <i data-lucide="smartphone"></i>
                             <span>Device Swarm</span>
@@ -5079,6 +5083,17 @@
     </div>
   </header>
   <div id="react-pert-root"></div>
+</section>
+
+<section class="view live-view" id="view-pods" data-view="pods" hidden>
+  <header class="section-header">
+    <div>
+      <p class="eyebrow">CANONICAL CONTROL PLANE</p>
+      <h2>HOCH PODS Theater</h2>
+    </div>
+  </header>
+  <iframe src="http://127.0.0.1:8765/ui-moonshot" title="HOCH PODS Theater"
+          style="width:100%;height:82vh;border:0;border-radius:12px;background:#05070d"></iframe>
 </section>
 
 <section class="view live-view" id="view-mesh-sentinel" data-view="mesh-sentinel" hidden>
