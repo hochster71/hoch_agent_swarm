@@ -32,7 +32,7 @@ def _probe(url, timeout=1.5):
         req = urllib.request.Request(url, method="GET")
         with urllib.request.urlopen(req, timeout=timeout) as r:
             body = r.read().decode("utf-8", "ignore")
-        return True, body[:400]
+        return True, body  # full body — do NOT truncate; _models() must parse valid JSON
     except Exception as e:  # noqa
         return False, str(e)
 
