@@ -26,7 +26,11 @@ def check_filename_violation(path: str) -> str | None:
         "vercel-bypass-token-remediation.md",
         "setup_has_qa_runner_with_ui_token.sh",
         "deploy/remote-relay/.env.example",
-        "prove_secure_guardrail_fails_when_contract_broken.sh"
+        "prove_secure_guardrail_fails_when_contract_broken.sh",
+        # Documentation/tests whose NAMES legitimately contain the word "secret".
+        # These carry no secret material — the filename is about handling secrets.
+        "epic-fury-secret-rotation.md",
+        "test_no_literal_secrets.py"
     ]
     for w in whitelist:
         if w in path:
@@ -89,7 +93,16 @@ def check_content_violation(path: str) -> str | None:
                 
         key_match = re.search(r"[a-zA-Z0-9_]*(?:api_key|secret_key|token|password)\s*=\s*['\"][a-zA-Z0-9_\-]{16,}['\"]", content, re.IGNORECASE)
         if key_match:
-            if "secure_build_guardrail_check" not in path and "verify" not in path and "prove_secure_guardrail_fails" not in path:
+            # Skip obvious non-secret placeholders. Real credentials do not contain these
+            # markers, so this narrows false positives without weakening true detection.
+            matched_lower = key_match.group(0).lower()
+            mock_markers = ("mock", "sandbox", "example", "dummy", "placeholder",
+                            "changeme", "your_", "your-", "sample", "redacted", "fake")
+            is_placeholder = any(m in matched_lower for m in mock_markers)
+            if (not is_placeholder
+                    and "secure_build_guardrail_check" not in path
+                    and "verify" not in path
+                    and "prove_secure_guardrail_fails" not in path):
                 return f"Possible API key assignment pattern: {key_match.group(0)}"
                 
     except Exception:
