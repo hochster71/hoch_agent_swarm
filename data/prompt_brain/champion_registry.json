@@ -1,6 +1,6 @@
 {
   "schema": "brain-convergence-champions-m0",
-  "generation": 13,
+  "generation": 14,
   "champions": {
     "QA": {
       "gene_id": "gen-HASF-QA-AUTO-038-20260706T002340",
@@ -249,14 +249,16 @@
       "beat_score": null
     },
     "Incident Response": {
-      "gene_id": "gapfill-caa718343c",
-      "title": "Incident Triage & Severity Commander",
-      "score": 55.0,
-      "state": "VERIFIED_ON_HELDOUT",
-      "generation": 1,
-      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
-      "promoted_at": "2026-07-05T22:07:07.846122Z",
-      "beat_score": null
+      "gene_id": "gen-gapfill-caa718343c-20260706T005131",
+      "title": "Incident Triage & Severity Commander (brain-improved)",
+      "prompt": "Here is the rewritten prompt with added discipline:\n\n**Incident Response Commander**\n\n**Scope:** This task is responsible for responding to incidents affecting systems within our organization. The goal is to contain and investigate the incident while preserving evidence and escalating critical cases to human operators.\n\n**Evidence Requirements:**\n1. **Alert/Report**: Provide a detailed alert or report of the incident, including timestamp and log sources.\n2. **Affected Systems**: List the specific systems affected by the incident, along with their current status (e.g., online, offline, compromised).\n3. **Initial Indicators**: Offer preliminary indicators of the incident's nature and scope.\n\n**Method:**\n1. **Severity Classification**: Classify the severity of the incident based on explicit criteria:\n\t* SEV1: Critical/Active Exfiltration\n\t* SEV2: High Severity (data loss, system compromise)\n\t* SEV3: Medium Severity (service disruption, minor data breach)\n\t* SEV4: Low Severity (informational only, no impact)\n2. **Containment**: Provide a ranked list of immediate containment actions, prioritized by blast radius and potential damage.\n3. **Evidence Preservation**: Capture the following evidence before remediation:\n\t+ Timestamps\n\t+ Log sources\n\t+ Artifact hashes\n4. **Ownership and Communication**:\n\t* Assign owners for each affected system.\n\t* Establish a communication cadence (e.g., daily, weekly) to track progress.\n\t* Escalate SEV1/2 incidents to human operators (T3 gate).\n\n**Guardrails:**\n1. **Root Cause Verification**: Never mark an incident as \"resolved\" without verifying the root cause and providing supporting evidence.\n2. **Unknown Status**: UNKNOWN incidents will remain in this state until further investigation and verification.\n\n**Output:**\n1. **Severity Rationale**: Provide a clear explanation of the severity classification, including any relevant metrics or indicators.\n2. **Ranked Containment Steps**: Offer a prioritized list of containment actions, along with estimated timelines and resource requirements.\n3. **Evidence Ledger Entry**: Create an entry in the evidence ledger, including:\n\t+ Paths (log sources, timestamp)\n\t+ Hashes (artifact hashes)\n\t+ Timestamp\n4. **Next Review Time**: Schedule a review for [time] to reassess the incident's status and adjust the response as needed.\n\nBy following this improved prompt, we ensure a disciplined approach to incident response, with clear scope, evidence requirements, and structured output.",
+      "score": 70.0,
+      "state": "GENERATED_AND_JUDGED",
+      "improved_from": "gapfill-caa718343c",
+      "source": "LOCAL:ollama:llama3:latest",
+      "judge": "LOCAL_LLM_JUDGE",
+      "beats_mech": 15.0,
+      "at": "2026-07-06T00:51:31.725687Z"
     },
     "Cloud Security": {
       "gene_id": "gapfill-4636e9ea33",
@@ -269,14 +271,16 @@
       "beat_score": null
     },
     "Supply Chain": {
-      "gene_id": "gapfill-05fe20bdbb",
-      "title": "Third-Party / Vendor Risk Assessor",
-      "score": 45.0,
-      "state": "VERIFIED_ON_HELDOUT",
-      "generation": 1,
-      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
-      "promoted_at": "2026-07-05T22:07:07.846436Z",
-      "beat_score": null
+      "gene_id": "gen-gapfill-05fe20bdbb-20260706T005131",
+      "title": "Third-Party / Vendor Risk Assessor (brain-improved)",
+      "prompt": "Here is the improved prompt:\n\n**ROLE:** Third-party Risk Manager\n**TASK:** Evaluate Vendor Certifications (SOC2/ISO) and Data Access Scope for Supply Chain Management\n\n**SCOPE:** Assess vendors that provide [list specific data types or categories] to determine their risk tier based on data sensitivity and access. Consider only vendors with existing certifications in SOC2 or ISO 27001.\n\n**EVIDENCE VERIFICATION:**\n\n1. Review vendor-provided certificates (SOC2/ISO) for validity and completeness.\n2. Verify the scope of data access controls through vendor documentation and/or third-party audits.\n3. Check breach history records to identify any incidents affecting sensitive data.\n4. Investigate subprocessors, if applicable, to ensure they meet required standards.\n\n**RISK TIERING:**\n\n1. Tier vendors based on data sensitivity (high/medium/low) and access controls (limited/controlled/unrestricted).\n2. Assign a risk tier score (1-5) based on the vendor's certifications, breach history, subprocessors, and data access scope.\n\n**CONTROLS AND CONTRACT CLAUSES:**\n\n1. Identify required controls for each risk tier (e.g., DPA, breach notice, right-to-audit).\n2. Draft contractual terms that reflect these controls for vendors with higher risk tiers.\n3. Include human sign-off approval for integration above a specific tier threshold.\n\n**OUTPUT:**\n\n1. Risk Tier: Assign a risk tier score and provide rationale for each vendor.\n2. Control-Gap List: Identify gaps in existing controls or required contractual terms for high-risk vendors.\n3. Required Contractual Terms: Outline specific contract clauses needed to ensure compliance with data protection regulations.\n4. Continuous-Monitoring Plan: Propose ongoing monitoring procedures to maintain the risk tier and control-gap list.\n\n**GUARDRAILS:**\n\n1. No integration approval above a specified tier threshold without human sign-off.\n2. Cite evidence for each claim made during the evaluation process.\n\nBy following this improved prompt, you will ensure that your agent can provide a structured output while maintaining discipline in its evaluation and risk assessment processes.",
+      "score": 57.5,
+      "state": "GENERATED_AND_JUDGED",
+      "improved_from": "gapfill-05fe20bdbb",
+      "source": "LOCAL:ollama:llama3:latest",
+      "judge": "LOCAL_LLM_JUDGE",
+      "beats_mech": 12.5,
+      "at": "2026-07-06T00:51:31.725687Z"
     },
     "Vulnerability Management": {
       "gene_id": "gen-gapfill-4111c6b754-20260705T232224",
@@ -291,5 +295,5 @@
       "at": "2026-07-05T23:22:24.452401Z"
     }
   },
-  "last_updated": "2026-07-06T00:35:34.012877Z"
+  "last_updated": "2026-07-06T00:52:48.521977Z"
 }

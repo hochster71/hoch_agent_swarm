@@ -1,0 +1,5 @@
+{
+  "guard_armed_at_utc": "2026-07-06T00:49:48Z",
+  "run_started_at_utc": "2026-07-05T18:59:57Z",
+  "warning": "DO NOT restart hoch-ag-execution-daemon.service. This is reset #5 today. Every restart discards progress toward the 24h floor. Elapsed at guard time: ~5.8h of 24h required."
+}

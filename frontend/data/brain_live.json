@@ -1,5 +1,5 @@
 {
-  "ts": "2026-07-06T00:35:34.098699Z",
+  "ts": "2026-07-06T00:52:48.617215Z",
   "live_brain": {
     "live_brain_available": true,
     "backend": {
@@ -9,27 +9,27 @@
     },
     "note": "brain can GENERATE at $0"
   },
-  "generation": 13,
-  "genes": 461,
+  "generation": 14,
+  "genes": 478,
   "champions": 26,
-  "mean_score": 67.019,
-  "last_gain": 2.404,
+  "mean_score": 68.077,
+  "last_gain": 1.058,
   "state": "IMPROVING",
   "meta_lever": "EXPAND",
-  "meta_reason": "15 thin pools cap champion quality; need 52 synthetic genes.",
+  "meta_reason": "7 thin pools cap champion quality; need 18 synthetic genes.",
   "global_converged": false,
   "gaps": {
     "by_constraint": {
-      "SATURATED": 7,
-      "LOW_CEILING": 14,
-      "THIN_POOL": 7,
-      "NO_CHAMPION": 2
+      "SATURATED": 10,
+      "LOW_CEILING": 15,
+      "NO_CHAMPION": 4,
+      "THIN_POOL": 1
     },
-    "thin": 7,
-    "low_ceiling": 14,
+    "thin": 1,
+    "low_ceiling": 15,
     "drift": 3,
-    "expansion_needed_genes": 18,
-    "top5_share": 0.627
+    "expansion_needed_genes": 1,
+    "top5_share": 0.605
   },
   "history": [
     {
@@ -96,9 +96,26 @@
       "g": 13,
       "m": 67.019,
       "gain": 2.404
+    },
+    {
+      "g": 14,
+      "m": 68.077,
+      "gain": 1.058
     }
   ],
   "recent_improvements": [
+    {
+      "task_class": "Incident Response",
+      "beats_mech": 15.0,
+      "score": 70.0,
+      "at": "2026-07-06T00:51:31.725687Z"
+    },
+    {
+      "task_class": "Supply Chain",
+      "beats_mech": 12.5,
+      "score": 57.5,
+      "at": "2026-07-06T00:51:31.725687Z"
+    },
     {
       "task_class": "Operations",
       "beats_mech": 5.0,
@@ -133,18 +150,6 @@
       "task_class": "Coding",
       "beats_mech": 30.0,
       "score": 75.0,
-      "at": "2026-07-06T00:23:40.806007Z"
-    },
-    {
-      "task_class": "SDLC Governance",
-      "beats_mech": 27.5,
-      "score": 67.5,
-      "at": "2026-07-06T00:23:40.806007Z"
-    },
-    {
-      "task_class": "AI / ML Systems",
-      "beats_mech": 27.5,
-      "score": 67.5,
       "at": "2026-07-06T00:23:40.806007Z"
     }
   ],

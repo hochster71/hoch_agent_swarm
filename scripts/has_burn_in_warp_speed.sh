@@ -6,50 +6,39 @@
 # WHAT THIS SCRIPT DOES:
 #   1. AI-driven pre-flight (shift-left) — catches defects BEFORE the clock
 #      starts, so the run you commit to has the highest possible chance of
-#      completing clean on the first try. This is where real time is saved:
-#      avoiding a restart at hour 14 is worth more than any clock trick.
+#      completing clean on the first try.
 #   2. Hard restart-guard — makes it structurally difficult to accidentally
-#      reset the clock (the actual #1 time-waster observed this session:
-#      4 unplanned restarts today).
-#   3. Real-time AI-style anomaly watch — polls every 10s (not the usual
-#      slow interval), scores deviation from healthy baseline, and pages
-#      IMMEDIATELY on drift — reducing MTTD from "hours until someone checks"
-#      to seconds, per 2026 SRE practice (MTTD 52min -> 7min case pattern).
-#   4. Front-loaded + combinatorial fault injection — fires early in the
-#      window, and can combine 2 faults at once, so recovery gaps surface
-#      in minutes, not near the finish line.
-#   5. Derive-only verdict at the end — reads the REAL ledger, REAL systemd
-#      timestamps, REAL injection results. Cannot report GO early.
+#      reset the clock (5 unplanned resets observed today).
+#   3. Real-time AI-style anomaly watch — polls every 10s, flags drift
+#      immediately (MTTD in seconds, not hours).
+#   4. Front-loaded + combinatorial fault injection — fires early, combines
+#      2 faults at once, so recovery gaps surface in minutes.
+#   5. Derive-only verdict — reads REAL ledger/systemd/injection data.
+#      Cannot report GO early.
 #
 # WHAT THIS SCRIPT DOES NOT DO, EVER:
-#   - It does NOT shorten the pre-registered 24h minimum wall-clock floor.
-#   - It does NOT accept simulated cycles as real cycles.
-#   - It does NOT let you "finish early" — GO is only ever derived from
-#     (now - ActiveEnterTimestamp) >= ORACLE.min_wall_clock_hours, measured
-#     against the actual systemd unit on the actual host, every time.
+#   - Does NOT shorten the pre-registered 24h minimum wall-clock floor.
+#   - Does NOT accept simulated cycles as real cycles.
+#   - Does NOT let you "finish early" — GO is only ever derived from
+#     (now - ActiveEnterTimestamp) >= ORACLE.min_wall_clock_hours.
 #
-# If you want the 24h FLOOR ITSELF changed (not just used more efficiently),
-# that is a Configuration Change Request through your CCB with a Security
-# Impact Analysis citing historical burn-in data — see the cm-path command.
+# To change the 24h FLOOR itself, use a CM Change Request through the CCB —
+# see the cm-path command at the bottom. This script will not do it for you.
 # ============================================================================
 
 set -euo pipefail
 
-# ---- CONFIG ----------------------------------------------------------------
 REMOTE_HOST="root@100.87.18.15"
 UNIT="hoch-ag-execution-daemon.service"
 REPO="/root/hoch_agent_swarm"
-ORACLE_PATH="$REPO/has_live_project_tracker/data/ag_execution_burn_in_oracle.json"
 GUARD_LOCK="$REPO/has_live_project_tracker/data/.burn_in_guard.lock"
-POLL_SECONDS=10          # AI-style tight poll, not the usual 60-300s
+POLL_SECONDS=10
 LOCAL_LOG="/tmp/has_burn_in_watch_$(date +%Y%m%d_%H%M%S).log"
 
 log() { echo "[$(date -u +%H:%M:%S)] $*" | tee -a "$LOCAL_LOG"; }
 
 # ============================================================================
 # S1. AI PRE-FLIGHT (shift-left) - run BEFORE touching the daemon.
-#     Goal: maximize probability this run completes clean, so you never pay
-#     the cost of a restart. This is the single biggest real time-saver.
 # ============================================================================
 preflight() {
   log "=== S1 PRE-FLIGHT: shift-left defect scan (before clock starts) ==="
@@ -62,3 +51,130 @@ preflight() {
       log "FAIL: syntax/compile error found. DO NOT START THE CLOCK. Fix first."
       exit 1
     }
+
+  log "-- config sanity: does the oracle exist and parse? --"
+  python3 - <<'PY' 2>&1 | tee -a "$LOCAL_LOG"
+import json, sys
+try:
+    d = json.load(open("has_live_project_tracker/data/ag_execution_burn_in_oracle.json"))
+    req = ["min_wall_clock_hours","min_real_cycles","max_duplicate_executions",
+           "max_unrecovered_stale_leases","max_missing_proofs","max_unsafe_actions"]
+    missing = [k for k in req if k not in d]
+    if missing:
+        print(f"FAIL: oracle missing keys: {missing}"); sys.exit(1)
+    print(f"OK: oracle valid. min_wall_clock_hours={d['min_wall_clock_hours']} (THIS IS THE FLOOR)")
+except Exception as e:
+    print(f"FAIL: oracle unreadable: {e}"); sys.exit(1)
+PY
+
+  log "-- disk / memory headroom on remote host --"
+  ssh -o ConnectTimeout=8 "$REMOTE_HOST" "df -h / | tail -1; free -h | head -2"
+
+  log "-- is anything ELSE currently holding the unit in a bad state? --"
+  ssh -o ConnectTimeout=8 "$REMOTE_HOST" "systemctl is-failed $UNIT 2>&1 || true"
+
+  log "S1 PRE-FLIGHT PASSED - safe to proceed."
+}
+
+# ============================================================================
+# S2. RESTART GUARD
+# ============================================================================
+arm_guard() {
+  log "=== S2 ARMING RESTART GUARD ==="
+  START_TS=$(ssh "$REMOTE_HOST" "systemctl show $UNIT --property=ActiveEnterTimestamp --value")
+  ssh "$REMOTE_HOST" "cat > $GUARD_LOCK" <<EOF
+{
+  "guard_armed_at_utc": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "run_started_at": "$START_TS",
+  "warning": "DO NOT restart $UNIT. Every restart resets the 24h clock to zero."
+}
+EOF
+  log "Guard armed. Run start: $START_TS"
+}
+
+# ============================================================================
+# S3. REAL-TIME ANOMALY WATCH
+# ============================================================================
+watch_loop() {
+  log "=== S3 ANOMALY WATCH — polling every ${POLL_SECONDS}s ==="
+  local baseline_pid=""
+  while true; do
+    STATUS_JSON=$(ssh -o ConnectTimeout=5 "$REMOTE_HOST" "
+      systemctl show $UNIT --property=ActiveState,SubState,ExecMainPID,NRestarts,ActiveEnterTimestamp
+    " 2>/dev/null || echo "SSH_UNREACHABLE")
+
+    if [[ "$STATUS_JSON" == "SSH_UNREACHABLE" ]]; then
+      log "ANOMALY: host unreachable. Investigate NOW."
+      continue
+    fi
+
+    ACTIVE=$(echo "$STATUS_JSON" | grep ActiveState= | cut -d= -f2)
+    RESTARTS=$(echo "$STATUS_JSON" | grep NRestarts= | cut -d= -f2)
+    PID=$(echo "$STATUS_JSON" | grep ExecMainPID= | cut -d= -f2)
+    ENTER_TS=$(echo "$STATUS_JSON" | grep ActiveEnterTimestamp= | cut -d= -f2-)
+
+    if [[ -z "$baseline_pid" ]]; then
+      baseline_pid="$PID"
+      log "Baseline PID: $baseline_pid | started: $ENTER_TS"
+    fi
+
+    if [[ "$ACTIVE" != "active" ]]; then
+      log "ANOMALY: ActiveState=$ACTIVE (expected active). Daemon down. Investigate NOW."
+    elif [[ "$PID" != "$baseline_pid" ]]; then
+      log "ANOMALY: PID changed $baseline_pid -> $PID. Unit restarted — clock RESET."
+      baseline_pid="$PID"
+    elif [[ "${RESTARTS:-0}" != "0" ]]; then
+      log "ANOMALY: NRestarts=$RESTARTS (expected 0)."
+    else
+      log "healthy | pid=$PID | restarts=$RESTARTS | started=$ENTER_TS"
+    fi
+    sleep "$POLL_SECONDS"
+  done
+}
+
+# ============================================================================
+# S4. FRONT-LOADED + COMBINATORIAL FAULT INJECTION
+# ============================================================================
+run_injections() {
+  log "=== S4 FRONT-LOADED FAULT INJECTION (fires now) ==="
+  ssh "$REMOTE_HOST" "cd $REPO && python3 scripts/ag_execution_failure_injector.py \
+      --type forced_lease_expiry --combine duplicate_task_insert" 2>&1 | tee -a "$LOCAL_LOG"
+  sleep 5
+  ssh "$REMOTE_HOST" "cd $REPO && python3 scripts/ag_execution_failure_injector.py \
+      --type operator_hold_flip" 2>&1 | tee -a "$LOCAL_LOG"
+  log "Injections fired against LIVE ledger. Recovery must show in burn_in_ledger.jsonl."
+}
+
+# ============================================================================
+# S5. DERIVE-ONLY VERDICT
+# ============================================================================
+derive_verdict() {
+  log "=== S5 DERIVING VERDICT (never asserted, always computed) ==="
+  ssh "$REMOTE_HOST" "cd $REPO && python3 - " <<'PY' 2>&1 | tee -a "$LOCAL_LOG"
+import json, subprocess, datetime
+
+oracle = json.load(open("has_live_project_tracker/data/ag_execution_burn_in_oracle.json"))
+floor_h = oracle["min_wall_clock_hours"]
+
+ts_raw = subprocess.check_output(
+    ["systemctl","show","hoch-ag-execution-daemon.service","--property=ActiveEnterTimestamp","--value"]
+).decode().strip()
+restarts = subprocess.check_output(
+    ["systemctl","show","hoch-ag-execution-daemon.service","--property=NRestarts","--value"]
+).decode().strip()
+
+start = datetime.datetime.strptime(ts_raw, "%a %Y-%m-%d %H:%M:%S %Z")
+now = datetime.datetime.utcnow()
+elapsed_h = (now - start).total_seconds() / 3600.0
+
+print(f"Run start (real, from systemd): {ts_raw}")
+print(f"Elapsed (real, computed now): {elapsed_h:.2f}h")
+print(f"Required floor (pre-registered): {floor_h}h")
+print(f"Restarts since this start: {restarts}")
+
+if elapsed_h < floor_h:
+    print(f"VERDICT: PENDING — {floor_h - elapsed_h:.2f}h still required.")
+else:
+    print(f"VERDICT: WALL-CLOCK FLOOR MET. (Injection-recovery + ledger checks still required for full GO.)")
+PY
+}

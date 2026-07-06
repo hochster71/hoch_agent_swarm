@@ -1,8 +1,8 @@
 {
   "schema": "brain-convergence-status-m0",
-  "generation": 13,
-  "mean_score": 67.019,
-  "last_gain": 2.404,
+  "generation": 14,
+  "mean_score": 68.077,
+  "last_gain": 1.058,
   "epsilon": 0.5,
   "patience": 3,
   "improver_online": true,
@@ -89,6 +89,13 @@
       "gain": 2.404,
       "improver_online": true,
       "at": "2026-07-06T00:35:34.032822Z"
+    },
+    {
+      "generation": 14,
+      "mean_score": 68.077,
+      "gain": 1.058,
+      "improver_online": true,
+      "at": "2026-07-06T00:52:48.547603Z"
     }
   ]
 }

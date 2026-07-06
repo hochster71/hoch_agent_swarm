@@ -1,40 +1,35 @@
 # BRAIN Gap Analysis
 
-- generation: **13**  |  mean champion score: **67.019**  |  state: **IMPROVING**
-- gene classes: **30**  |  champion classes: **26**  |  total genes: **461**
-- concentration (top-5 share of gene pool): **62.7%**
+- generation: **14**  |  mean champion score: **68.077**  |  state: **IMPROVING**
+- gene classes: **30**  |  champion classes: **26**  |  total genes: **478**
+- concentration (top-5 share of gene pool): **60.5%**
 - policy: min_pool=6, target_score=70.0
 
 ## Binding constraint by class
 
 | constraint | classes |
 |---|---|
-| LOW_CEILING | 14 |
-| SATURATED | 7 |
-| THIN_POOL | 7 |
-| NO_CHAMPION | 2 |
+| LOW_CEILING | 15 |
+| SATURATED | 10 |
+| NO_CHAMPION | 4 |
+| THIN_POOL | 1 |
 
-**Synthetic genes needed to lift every thin class to min_pool: 18**
+**Synthetic genes needed to lift every thin class to min_pool: 1**
 
 ## Thin classes (quantity-capped — expansion lever)
 
 | class | genes | need | score |
 |---|---|---|---|
-| Vulnerability Management | 2 | +4 | 60.0 |
-| Coding | 3 | +3 | 75.0 |
-| Detection Engineering | 3 | +3 | 80.0 |
-| Incident Response | 3 | +3 | 55.0 |
-| Software Engineering | 3 | +3 | 62.5 |
-| DAST | 5 | +1 | None |
-| Family & Personal | 5 | +1 | None |
+| Software Engineering | 5 | +1 | 62.5 |
 
 ## Low-ceiling classes (adequate pool, quality lever)
 
 | class | genes | score |
 |---|---|---|
-| Supply Chain | 6 | 45.0 |
 | Industry Specialized | 15 | 50.0 |
 | Cloud Security | 6 | 57.5 |
+| Supply Chain | 6 | 57.5 |
+| Vulnerability Management | 6 | 60.0 |
 | AI / ML | 51 | 62.5 |
 | Governance / Compliance | 50 | 62.5 |
 | Infrastructure & Hardware | 7 | 62.5 |

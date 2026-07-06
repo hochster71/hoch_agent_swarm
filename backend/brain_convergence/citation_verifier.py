@@ -22,6 +22,8 @@ from typing import Dict, Any, List
 _UA = {"User-Agent": "HOCH-HRF-citation-verifier/1.0 (mailto:michael.b.hoch@gmail.com)"}
 _DOI_RE = re.compile(r"^10\.\d{4,9}/\S+$", re.I)
 _PMID_RE = re.compile(r"^\d{4,9}$")
+# arXiv: modern (2312.00752 / 2312.00752v3) or legacy (hep-th/9901001). Prefixed forms handled too.
+_ARXIV_RE = re.compile(r"^(?:arxiv:)?(\d{4}\.\d{4,5}(?:v\d+)?|[a-z-]+(?:\.[A-Z]{2})?/\d{7})$", re.I)
 
 
 def _get(url: str, timeout: float = 8.0) -> Dict[str, Any]:
