@@ -128,6 +128,15 @@ def build_live_state():
             "needs_operator": b.get("needs_operator", []),
             "summary": b.get("summary"),
         } if b else {})(_load(DATA / "orchestrator_brief.json", {})),
+        "fleet_reconcile": (lambda f: {
+            "jobs_examined": f.get("jobs_examined"),
+            "method": f.get("method"),
+            "contested_files": f.get("contested_files", {}),
+            "recommendations": f.get("recommendations", []),
+            "actions": f.get("actions", []),
+            "safety": f.get("safety", {}),
+            "at": f.get("at"),
+        } if f else None)(_load(DATA / "fleet_reconcile.json", {})),
         "history": [{"g": h.get("generation"), "m": h.get("mean_score"), "gain": h.get("gain")} for h in hist],
         "recent_improvements": list(reversed(improvements))[:8],
         "top_champions": sorted(

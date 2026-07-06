@@ -85,6 +85,15 @@ def test_all_actions_are_inert_T3():
         assert a["tier"] == "T3"
 
 
+def test_live_feed_carries_fleet_reconcile_key():
+    """The deck's live path reads last.fleet_reconcile — the builder must always emit the key
+    (None until the reconciler has run, so the panel falls back to the static mirror, never STALE-lies)."""
+    sys.path.insert(0, str(ROOT))
+    from scripts.write_brain_live import build_live_state
+    st = build_live_state()
+    assert "fleet_reconcile" in st  # present even when no reconcile has run yet
+
+
 def test_module_never_executes_a_stop():
     """T3 guard: no forbidden runtime-stop op is ever handed to subprocess/os.system."""
     src = (ROOT / "scripts" / "hoch_fleet_reconcile.py").read_text()
