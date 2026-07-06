@@ -11,10 +11,21 @@ export PATH="$HOME/.local/bin:$PATH"
 PY="$([ -x .venv/bin/python ] && echo .venv/bin/python || echo python3)"
 STAMP="$(date -u +%FT%TZ)"
 
-# Single-flight: if a prior tick is still running (model generation can exceed the interval), skip.
+# Single-flight lock — PID-aware and SELF-HEALING. A bare mkdir lock never releases if the owner
+# is killed (SIGKILL, launchd stop, crash), which would silently freeze the cadence forever — a
+# fail-open trap. So we record the owner PID and reclaim the lock if that PID is no longer alive.
 LOCK="/tmp/hoch_brain_cadence.lock"
-if ! mkdir "$LOCK" 2>/dev/null; then echo "[$STAMP] previous tick still running — skip"; exit 0; fi
-trap 'rmdir "$LOCK" 2>/dev/null' EXIT
+PIDFILE="$LOCK/pid"
+_acquire() { mkdir "$LOCK" 2>/dev/null && { echo $$ > "$PIDFILE"; trap 'rm -f "$PIDFILE"; rmdir "$LOCK" 2>/dev/null' EXIT; return 0; }; return 1; }
+if ! _acquire; then
+    OWNER="$(cat "$PIDFILE" 2>/dev/null || echo "")"
+    if [ -n "$OWNER" ] && kill -0 "$OWNER" 2>/dev/null; then
+        echo "[$STAMP] previous tick still running (pid $OWNER) — skip"; exit 0
+    fi
+    echo "[$STAMP] stale lock (owner ${OWNER:-unknown} not alive) — reclaiming"
+    rm -f "$PIDFILE"; rmdir "$LOCK" 2>/dev/null
+    _acquire || { echo "[$STAMP] lock race — skip"; exit 0; }
+fi
 
 echo "[$STAMP] brain cadence tick (meta-directed)"
 
