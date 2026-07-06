@@ -1,0 +1,34 @@
+{
+  "_comment": "Structured action queue for scripts/hoch_safe_executor.py. Copy to agent_action_queue.json to use. Each action needs a typed 'exec' block; free-text/prose tasks are NOT auto-executable and should carry requires_michael_approval or a non-safe type so they route to approval.",
+  "generated_at": "2026-07-06T00:00:00Z",
+  "actions": [
+    {
+      "id": "verify-agent-tests",
+      "title": "Run agent unit tests",
+      "category": "verification",
+      "requires_michael_approval": false,
+      "exec": {"type": "pytest", "path": "tests/prompt_brain/test_swarm_dispatcher.py"}
+    },
+    {
+      "id": "m1-readiness",
+      "title": "Check BRAIN M1 readiness",
+      "category": "verification",
+      "requires_michael_approval": false,
+      "exec": {"type": "run_script", "script": "scripts/verify_brain_m1_readiness.py"}
+    },
+    {
+      "id": "build-shell",
+      "title": "Rebuild the React control-plane shell",
+      "category": "build",
+      "requires_michael_approval": false,
+      "exec": {"type": "frontend_build"}
+    },
+    {
+      "id": "deploy-prod",
+      "title": "Deploy to production and push tag v0.1.9",
+      "category": "release",
+      "requires_michael_approval": true,
+      "exec": {"type": "shell", "cmd": "git push && deploy"}
+    }
+  ]
+}
