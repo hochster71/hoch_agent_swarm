@@ -9419,6 +9419,25 @@ def get_brain_live_state():
         )
 
 
+@app.get("/api/brain/ask")
+def ask_the_brain(q: str = ""):
+    """Chat with the BRAIN — grounded, cited, $0. Retrieval over all factory genes/champions/state,
+    synthesized by the local model when up (else honest retrieval-only). Never fabricates."""
+    from fastapi.responses import JSONResponse as _JSONResponse
+    import sys as _sys, os as _os
+    _root = _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))
+    if _root not in _sys.path:
+        _sys.path.insert(0, _root)
+    _cors = {"Access-Control-Allow-Origin": "*", "Cache-Control": "no-store"}
+    if not (q or "").strip():
+        return _JSONResponse({"error": "empty question", "mode": "none"}, headers=_cors)
+    try:
+        from backend.orchestrator.brain_query import ask
+        return _JSONResponse(ask(q), headers=_cors)
+    except Exception as e:
+        return _JSONResponse({"error": str(e), "mode": "error"}, headers=_cors)
+
+
 @app.get("/has_brain_moonshot.html")
 def serve_brain_moonshot_console():
     """Serve the moonshot console from frontend/ explicitly.

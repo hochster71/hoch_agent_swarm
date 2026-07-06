@@ -1,5 +1,5 @@
 {
-  "ts": "2026-07-06T01:15:35.658143Z",
+  "ts": "2026-07-06T01:26:50.491319Z",
   "live_brain": {
     "live_brain_available": true,
     "backend": {
@@ -9,7 +9,7 @@
     },
     "note": "brain can GENERATE at $0"
   },
-  "generation": 16,
+  "generation": 17,
   "genes": 479,
   "champions": 26,
   "mean_score": 68.846,
@@ -62,6 +62,45 @@
       "gates": 5
     }
   ],
+  "orchestrator": {
+    "next_move": {
+      "code": "HMF",
+      "domain": "music",
+      "goal": "original, judged, publishable music across every genre",
+      "state": "SELECTED",
+      "genes": 10,
+      "champions": 8,
+      "thin": 8,
+      "mean": 93.0,
+      "action": "EXPAND",
+      "detail": "grow 8 thin classes (+14 genes) via the $0 local model",
+      "cost": "$0",
+      "tier": "AUTONOMOUS",
+      "answers": "What's the gap?",
+      "leverage": 14
+    },
+    "autonomous_now": [
+      {
+        "code": "HMF",
+        "action": "EXPAND",
+        "detail": "grow 8 thin classes (+14 genes) via the $0 local model"
+      },
+      {
+        "code": "HRF",
+        "action": "EXPAND",
+        "detail": "grow 7 thin classes (+13 genes) via the $0 local model"
+      }
+    ],
+    "needs_operator": [
+      {
+        "code": "HASF",
+        "action": "SHIP",
+        "detail": "point HASF at its first real revenue product",
+        "why": "strategic \u00b7 GO on the next milestone?"
+      }
+    ],
+    "summary": "AI Michael: 2 action(s) I can take now at $0; 1 need your founder call (T3/cost)."
+  },
   "history": [
     {
       "g": 1,
@@ -140,6 +179,11 @@
     },
     {
       "g": 16,
+      "m": 68.846,
+      "gain": 0.0
+    },
+    {
+      "g": 17,
       "m": 68.846,
       "gain": 0.0
     }

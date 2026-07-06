@@ -11,7 +11,7 @@
     "total_genes": 479,
     "top5_share": 0.603,
     "mean_champion_score": 68.846,
-    "generation": 16,
+    "generation": 17,
     "state": "PLATEAUING"
   },
   "by_constraint": {

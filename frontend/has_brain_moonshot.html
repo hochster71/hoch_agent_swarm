@@ -76,12 +76,31 @@
   #tip .tt{font-weight:700;color:#fff;margin-bottom:5px;letter-spacing:.04em}
   #tip .tl{color:var(--mut);display:flex;justify-content:space-between;gap:14px;padding:1px 0}
   #tip .tl b{color:var(--ink)}
+
+  /* chat dock */
+  #chatdock{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);width:min(760px,92vw);z-index:40}
+  #chatans{display:none;background:#0e0e20;border:1px solid var(--indigo);border-radius:12px;padding:12px 14px;margin-bottom:8px;font-size:12.5px;line-height:1.6;max-height:38vh;overflow:auto;box-shadow:0 20px 60px -20px #000}
+  #chatans .mode{font-size:10px;letter-spacing:.14em;color:var(--indigo);text-transform:uppercase;margin-bottom:6px}
+  #chatans .src{margin-top:8px;font-size:11px;color:var(--dim);border-top:1px solid var(--line);padding-top:6px}
+  #chatans .dim{color:var(--mut)}
+  .chatbar{display:flex;gap:8px;background:#12122a;border:1px solid var(--line);border-radius:12px;padding:8px;box-shadow:0 12px 40px -16px #000}
+  #chatq{flex:1;background:transparent;border:0;outline:0;color:var(--ink);font-family:var(--mono);font-size:13px;padding:6px 8px}
+  #chatq::placeholder{color:var(--dim)}
+  #chatgo{background:var(--indigo);color:#fff;border:0;border-radius:8px;padding:7px 16px;font-family:var(--mono);font-weight:700;cursor:pointer;letter-spacing:.05em}
+  #chatgo:hover{background:var(--indigo2)}
 </style>
 </head>
 <body>
 <h2 class="sr-only">HOCH BRAIN Command Deck — live status of the HAS governor, the self-improving BRAIN, and the HASF, HMF and HRF factories.</h2>
 <div id="root"><div style="padding:60px;text-align:center;color:var(--mut)">Connecting to BRAIN…</div></div>
 <div id="tip"></div>
+<div id="chatdock">
+  <div id="chatans"></div>
+  <div class="chatbar">
+    <input id="chatq" placeholder="Ask the BRAIN…  e.g. which factory is weakest and what should it work on next?" autocomplete="off"/>
+    <button id="chatgo">Ask</button>
+  </div>
+</div>
 <script>
 const API_BASE = (location.protocol==='file:'||location.origin==='null') ? 'http://127.0.0.1:8000' : '';
 const URL = API_BASE + '/api/brain/live';
@@ -291,10 +310,29 @@ function render(){
     </div>
   </div>
 
-  <div class="ledger">EVIDENCE LEDGER · RELAY MESH — hoch-relay-001 · hash + timestamp every claim · no green without proof</div>
+  <div class="ledger">EVIDENCE LEDGER · RELAY MESH — <a href="http://100.87.18.15:3012" target="_blank" rel="noopener" style="color:var(--indigo)">hoch-relay-001</a> · hash + timestamp every claim · no green without proof</div>
   <div class="foot">freshness computed live from data ts (not a static claim) · poll ${POLL/1000}s · source <a href="${URL}">${URL}</a> ·
     factories pulse ONLY at their real state — IMPROVING breathes green, SELECTED amber, SEEDED dim · upgrade path: SSE push on generation events</div>`;
 }
+
+/* ---------- chat with the BRAIN (grounded, cited) ---------- */
+async function askBrain(){
+  const inp=document.getElementById('chatq'), ans=document.getElementById('chatans');
+  const q=(inp.value||'').trim(); if(!q) return;
+  ans.style.display='block'; ans.innerHTML='<span class="dim">◆ querying the BRAIN…</span>';
+  try{
+    const r=await fetch(API_BASE+'/api/brain/ask?q='+encodeURIComponent(q),{cache:'no-store'});
+    const d=await r.json();
+    let body='';
+    if(d.answer){ body=`<div>${esc(d.answer)}</div>`; }
+    else { body=`<div class="dim">${esc(d.note||'')}</div>`
+      + (d.hits||[]).map(h=>`<div>· <b>[${esc(h.code)}]</b> ${esc(h.title)} <span class="dim">(${esc(h.task_class)})</span></div>`).join(''); }
+    const src=(d.sources&&d.sources.length)?`<div class="src">sources: ${d.sources.map(esc).join(' · ')}</div>`:'';
+    ans.innerHTML=`<div class="mode">${esc(d.mode||'')} · grounded</div>${body}${src}`;
+  }catch(e){ ans.innerHTML='<span class="dim">BRAIN unreachable — is the backend up?</span>'; }
+}
+document.getElementById('chatgo').addEventListener('click', askBrain);
+document.getElementById('chatq').addEventListener('keydown', e=>{ if(e.key==='Enter') askBrain(); });
 
 load(); setInterval(load, POLL); setInterval(()=>{ if(last) render(); }, 1000);
 </script>
