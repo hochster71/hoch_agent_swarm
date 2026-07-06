@@ -54,10 +54,37 @@ def compute_signals():
     port_val = "blocked" if port_public is False else ("public" if port_public else "unknown")
     scope_val = "relay_only" if port_public is False else ("public_exposed" if port_public else "unknown")
 
+    # Foreign-backlog liveness: are the pending tasks' workers actually alive?
+    backlog_verdict, backlog_conf = "unknown", 0.0
+    try:
+        import json as _json, datetime as _dt
+        from pathlib import Path as _P
+        now = _dt.datetime.now(_dt.timezone.utc)
+        queue = _json.loads(_P("has_live_project_tracker/data/helm_task_queue.json").read_text())
+        pend = [t for t in queue if t.get("status") in ("PENDING", "RETRY_PENDING")
+                and not (t.get("allowed_agent") in rc.EXECUTOR_AGENTS or t.get("adapter") in rc.EXECUTOR_ADAPTERS)]
+        foreign_by_agent = {}
+        for t in pend:
+            k = t.get("allowed_agent") or t.get("adapter") or "unknown"
+            foreign_by_agent[k] = foreign_by_agent.get(k, 0) + 1
+        hb = rc.heartbeats_from_ledger("backend/swarm_ledger.db", now)
+        gpu = rc.gpu_pod_alive("has_live_project_tracker/data/gpu_pod_adapter_state.json", now)
+        worker_alive = {}
+        for agent in foreign_by_agent:
+            worker_alive[agent] = gpu if agent in ("ollama_gpu_pod", "hasf_scoring_agent") else hb.get(agent)
+        assessed = rc.assess_foreign_backlog(foreign_by_agent, worker_alive)
+        backlog_verdict = assessed["verdict"]
+        backlog_conf = 0.0 if backlog_verdict == "UNVERIFIED" else 1.0
+    except Exception:
+        backlog_verdict, backlog_conf = "unknown", 0.0
+
     c_relay, f_relay = measured(verdict not in ("UNKNOWN",))
     c_port, f_port = measured(port_public is not None)
     c_health, f_health = measured(health != "unknown")
+    c_backlog, f_backlog = measured(backlog_conf == 1.0)
     return [
+        {"signal_id": "hoch200_scoring_backlog", "name": "HOCH-200 Foreign Backlog Liveness",
+         "value": backlog_verdict, "confidence": c_backlog, "freshness": f_backlog},
         {"signal_id": "hoch200_relay", "name": "HOCH-200 Relay Status", "value": verdict,
          "confidence": c_relay, "freshness": f_relay},
         {"signal_id": "public_3012", "name": "HOCH-200 Public Port 3012", "value": port_val,

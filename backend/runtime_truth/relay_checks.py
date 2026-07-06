@@ -137,6 +137,64 @@ def probe_health(url: str, timeout: float = 5.0) -> str:
         return "unknown"
 
 
+def assess_foreign_backlog(pending_by_agent: dict, worker_alive: dict) -> dict:
+    """Judge a foreign backlog by whether its worker is alive. Makes the 7-pending-scoring-tasks case
+    actionable instead of merely counted.
+
+    worker_alive: {agent_or_adapter: True(alive) | False(down) | None(unverified)}.
+    Verdict:
+      NONE       — no foreign backlog.
+      DRAINING   — backlog exists and every responsible worker is confirmed alive.
+      STALLED    — backlog exists and a responsible worker is confirmed DOWN (real problem).
+      UNVERIFIED — backlog exists but a worker's liveness can't be confirmed (fail closed: not 'fine')."""
+    if not pending_by_agent:
+        return {"verdict": "NONE", "per_worker": {}}
+    per = {}
+    any_down = any_unknown = False
+    for agent, n in pending_by_agent.items():
+        alive = worker_alive.get(agent)
+        per[agent] = {"pending": n, "worker_alive": alive}
+        if alive is False:
+            any_down = True
+        elif alive is None:
+            any_unknown = True
+    verdict = "STALLED" if any_down else ("UNVERIFIED" if any_unknown else "DRAINING")
+    return {"verdict": verdict, "per_worker": per}
+
+
+def heartbeats_from_ledger(db_path, now: datetime.datetime, ) -> dict:
+    """Read component -> alive(bool)/None from the runtime_heartbeats table. Fresh iff
+    now - last_seen <= ttl. Missing/unreadable => {} (callers then see None per component = unverified)."""
+    out: dict = {}
+    try:
+        import sqlite3
+        c = sqlite3.connect(str(db_path), timeout=10)
+        for comp, last_seen, ttl_ms in c.execute(
+                "SELECT component, last_seen, ttl_ms FROM runtime_heartbeats").fetchall():
+            ls = _parse_iso(last_seen)
+            if ls is None:
+                out[comp] = None
+                continue
+            out[comp] = (now - ls).total_seconds() <= (float(ttl_ms or 0) / 1000.0)
+        c.close()
+    except Exception:
+        return {}
+    return out
+
+
+def gpu_pod_alive(state_path, now: datetime.datetime, max_age_s: float = 300.0) -> bool | None:
+    """The GPU scoring pod is ephemeral; treat a FRESH adapter-state file as 'up'. Missing file => False
+    (not up). Unreadable/unparseable mtime => None (unverified). Never assumes alive."""
+    try:
+        import os
+        if not os.path.exists(state_path):
+            return False
+        age = now.timestamp() - os.path.getmtime(state_path)
+        return age <= max_age_s
+    except Exception:
+        return None
+
+
 def cumulative_failed_from_ledger(ledger_lines: list[str]) -> tuple[int, int]:
     """(failed_real, total_real) counted across the WHOLE burn-in ledger — not just the last cycle,
     which is what made the dashboard's '0.00% failed rate' misleading."""

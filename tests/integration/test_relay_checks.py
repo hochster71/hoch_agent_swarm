@@ -60,6 +60,19 @@ def test_probes_fail_closed(monkeypatch=None):
     assert RC.probe_health("http://127.0.0.1:9/definitely-down", timeout=0.2) == "unknown"
 
 
+def test_foreign_backlog_liveness_verdicts():
+    pend = {"ollama_gpu_pod": 7}
+    assert RC.assess_foreign_backlog({}, {})["verdict"] == "NONE"
+    assert RC.assess_foreign_backlog(pend, {"ollama_gpu_pod": True})["verdict"] == "DRAINING"
+    assert RC.assess_foreign_backlog(pend, {"ollama_gpu_pod": False})["verdict"] == "STALLED"
+    assert RC.assess_foreign_backlog(pend, {"ollama_gpu_pod": None})["verdict"] == "UNVERIFIED"
+    assert RC.assess_foreign_backlog(pend, {})["verdict"] == "UNVERIFIED"   # unknown worker -> not 'fine'
+
+
+def test_gpu_pod_alive_missing_is_down_not_unknown():
+    assert RC.gpu_pod_alive("/no/such/gpu_state.json", NOW) is False
+
+
 def test_cumulative_failed_rate_counts_history():
     import json
     lines = [json.dumps({"verdict": "PASS", "simulated": False}),
