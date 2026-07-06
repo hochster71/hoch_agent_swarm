@@ -1,7 +1,7 @@
 {
   "schema": "has-hasf-brain-unified-goal-contract-v1",
   "generated_at": "2026-07-06T13:45:31Z",
-  "supersedes_note": "Reconciles the three prior goal definitions (moonshot_control_plane_contract.json north_star, fresh_pert_gap_analysis.json terminal node, HAS_BRAIN_CONVERGENCE_MOONSHOT.md north star) into one authoritative contract. Resolves gap G-0. Additive — does not delete or override the source files.",
+  "supersedes_note": "Reconciles the three prior goal definitions (moonshot_control_plane_contract.json north_star, fresh_pert_gap_analysis.json terminal node, HAS_BRAIN_CONVERGENCE_MOONSHOT.md north star) into one authoritative contract. Resolves gap G-0. Additive \u2014 does not delete or override the source files.",
   "terminal_goal": "Ship a monetizable HAS/HASF product to app stores or equivalent production distribution, with verified autonomous execution, evidence ledger, operator approval gates, live command center, and outcome-bound BRAIN optimization.",
   "terminal_node": "App Live on Stores",
   "current_status": "CONDITIONAL_GO",
@@ -24,7 +24,7 @@
   ],
   "supporting_capabilities": {
     "brain": "BRAIN M2 outcome binding must support monetization/quality optimization. BRAIN convergence alone is NOT terminal goal completion. M0 proxy-convergence (current) does not count.",
-    "control_plane": "Live command/control, evidence ledger, approval gates, stale detection, PERT — near-complete; harden only, do not churn."
+    "control_plane": "Live command/control, evidence ledger, approval gates, stale detection, PERT \u2014 near-complete; harden only, do not churn."
   },
   "non_goals": [
     "Adding more agents this cycle",
@@ -33,14 +33,67 @@
     "Auto-clearing high-risk (T3) approval items",
     "Public exposure of port 3012 or any external write without approval"
   ],
-  "critical_path": ["K1", "H1", "H2", "G1", "G4", "A2", "A3", "A4", "A6", "SUB", "GOAL"],
+  "critical_path": [
+    "K1",
+    "H1",
+    "H2",
+    "G1",
+    "G4",
+    "A2",
+    "A3",
+    "A4",
+    "A6",
+    "SUB",
+    "GOAL"
+  ],
   "pert_to_goal": {
-    "agent_compute_view": {"O_min": 120, "ML_min": 480, "P_min": 1440, "TE_min": 580, "sigma_min": 220, "band95_min": [150, 1010], "source": "fresh_pert_gap_analysis.json (TE independently recomputed = 580.0)"},
-    "wall_clock_view": {"expected": "1.5-3 weeks", "dominant_gates": ["Apple Developer enrollment", "App Store review", "G1 demand validation", "founder secrets/approval"], "source": "Claude estimate — external latency the compute-minute model omits"}
+    "agent_compute_view": {
+      "O_min": 120,
+      "ML_min": 480,
+      "P_min": 1440,
+      "TE_min": 580,
+      "sigma_min": 220,
+      "band95_min": [
+        150,
+        1010
+      ],
+      "source": "fresh_pert_gap_analysis.json (TE independently recomputed = 580.0)"
+    },
+    "wall_clock_view": {
+      "expected": "1.5-3 weeks",
+      "dominant_gates": [
+        "Apple Developer enrollment",
+        "App Store review",
+        "G1 demand validation",
+        "founder secrets/approval"
+      ],
+      "source": "Claude estimate \u2014 external latency the compute-minute model omits"
+    }
   },
-  "founder_gates": ["K1", "K2", "K3", "K4", "K5", "K6", "G-9"],
-  "agent_safe_actions": ["G-0 (this contract)", "G-8 git evidence bundle (show-before-commit)", "BRAIN M1 scaffolding (pre-key)", "store-readiness checklist", "goal_blocker_register.json"],
-  "approval_gated_actions": ["stripe/money", "secrets/credentials", "public_exposure", "production_deploy", "release_tag_promotion", "external_network_writes"],
+  "founder_gates": [
+    "K1",
+    "K2",
+    "K3",
+    "K4",
+    "K5",
+    "K6",
+    "G-9"
+  ],
+  "agent_safe_actions": [
+    "G-0 (this contract)",
+    "G-8 git evidence bundle (show-before-commit)",
+    "BRAIN M1 scaffolding (pre-key)",
+    "store-readiness checklist",
+    "goal_blocker_register.json"
+  ],
+  "approval_gated_actions": [
+    "stripe/money",
+    "secrets/credentials",
+    "public_exposure",
+    "production_deploy",
+    "release_tag_promotion",
+    "external_network_writes"
+  ],
   "verdict_rules": {
     "FINAL_GO": "Only if terminal app/store/live monetization criteria are actually met.",
     "CONDITIONAL_GO": "Control plane green but founder/external gates remain (current).",
@@ -52,5 +105,8 @@
     "docs/moonshot/HAS_BRAIN_CONVERGENCE_MOONSHOT.md",
     "data/prompt_brain/convergence_status.json",
     "docs/evidence/moonshot/gap_pert_to_goal_20260706T133912Z.md"
-  ]
+  ],
+  "founder_gate_status": {
+    "K2": "CLEARED 2026-07-06 \u00b7 Apple Developer active (renews 2027-07-06)"
+  }
 }

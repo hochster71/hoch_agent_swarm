@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.hoch.goal.runtime.loop</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/michaelhoch/hoch_agent_swarm/scripts/hoch_goal_runtime_loop.sh</string>
+  </array>
+  <key>WorkingDirectory</key><string>/Users/michaelhoch/hoch_agent_swarm</string>
+  <key>EnvironmentVariables</key>
+  <dict><key>GOAL_LOOP_INTERVAL</key><string>60</string></dict>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+  <key>StandardOutPath</key><string>/Users/michaelhoch/hoch_agent_swarm/data/backups/goal_runtime_loop.out</string>
+  <key>StandardErrorPath</key><string>/Users/michaelhoch/hoch_agent_swarm/data/backups/goal_runtime_loop.err</string>
+</dict>
+</plist>

@@ -98,6 +98,7 @@
       <div><span id="conn" class="conn off"><i></i>CONNECTING</span></div>
       <div class="big" id="wallclock">—</div>
       <div>effort runtime <b id="runtime" style="color:var(--cyan)">00:00:00</b></div>
+      <div>governed loop <b id="loopstat" style="color:var(--green)">—</b></div>
     </div>
   </div>
 
@@ -168,7 +169,7 @@ const TASKS=[
 ];
 const FOUNDER=[
  {id:'K1',t:'Provision OpenAI / Anthropic keys (Stripe/monetization)'},
- {id:'K2',t:'Apple Developer enrollment (longest external clock)'},
+ {id:'K2',t:'Apple Developer — ACTIVE (renews 2027-07-06)',done:true},
  {id:'G-9',t:'Review 4 T3 approvals (stripe / secret / port / deploy)'},
  {id:'G1',t:'Demand validation — real willingness-to-pay signal'},
 ];
@@ -191,7 +192,8 @@ function renderStatic(){
       <td>${pill(x.s)}</td>
     </tr>`).join('');
   document.getElementById('founder').innerHTML = FOUNDER.map(f=>`
-    <div class="fg"><span><b>${esc(f.id)}</b> · ${esc(f.t)}</span><span class="pill st-blocked">FOUNDER</span></div>`).join('');
+    <div class="fg" style="${f.done?'opacity:.55':''}"><span><b>${esc(f.id)}</b> · ${esc(f.t)}</span>
+      <span class="pill ${f.done?'st-completed':'st-blocked'}">${f.done?'✓ DONE':'FOUNDER'}</span></div>`).join('');
   document.getElementById('support').innerHTML = SUPPORT.map(s=>`<span class="chip"><i></i>${esc(s)}</span>`).join('');
   drawFlow();
 }
@@ -256,9 +258,21 @@ function tick(){
   document.getElementById('runtime').textContent = `${hh}:${mm}:${ss}`;
 }
 
-renderStatic(); tick(); poll();
+async function pollLoop(){
+  const el=document.getElementById('loopstat');
+  try{
+    const r=await fetch('data/goal_runtime_loop_status.json?_='+Date.now(),{cache:'no-store'});
+    if(!r.ok) throw 0;
+    const d=await r.json();
+    const age=Math.max(0,Math.round((Date.now()-new Date(d.updated_at).getTime())/1000));
+    el.textContent=`cycle ${d.cycle} · ${age}s ago · gov ${esc(d.governor||'—')}`;
+    el.style.color = age<120 ? 'var(--green)' : 'var(--amber)';
+  }catch(e){ el.textContent='offline'; el.style.color='var(--dim)'; }
+}
+renderStatic(); tick(); poll(); pollLoop();
 setInterval(tick,1000);
 setInterval(poll,10000);
+setInterval(pollLoop,10000);
 </script>
 </body>
 </html>

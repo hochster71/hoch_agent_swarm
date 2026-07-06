@@ -130,7 +130,7 @@
   ],
   "founder_actions": [
     "K1: Provision OpenAI/Anthropic API keys",
-    "K2: Register Apple Developer account",
+    "K2: Apple Developer account \u2014 DONE (renews 2027-07-06)",
     "K3: Configure App Store Connect app entry",
     "K4: Generate signing profiles",
     "K5: Set remote droplet SSH keys",
@@ -139,5 +139,6 @@
   "blockers": [
     "K1"
   ],
-  "manual_michael_action_required": true
+  "manual_michael_action_required": true,
+  "k2_apple_developer": "CLEARED_2026-07-06"
 }

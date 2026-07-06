@@ -14,9 +14,9 @@ set -u
 cd "$(cd "$(dirname "$0")/.." && pwd)"
 PY=python3
 LOG="data/backups/goal_runtime_loop.log"
-STATUS="has_live_project_tracker/data/goal_runtime_loop_status.json"
+STATUS="frontend/data/goal_runtime_loop_status.json"
 INTERVAL="${GOAL_LOOP_INTERVAL:-60}"
-mkdir -p data/backups
+mkdir -p data/backups frontend/data
 cyc=0
 echo "[$(date -u +%FT%TZ)] GOAL runtime loop START (governor=Michael, interval=${INTERVAL}s, pid=$$)" >> "$LOG"
 while true; do
