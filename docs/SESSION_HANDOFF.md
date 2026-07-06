@@ -1,6 +1,21 @@
 # HOCH — Session Handoff (resume point)
 
-*Written 2026-07-06. Read this first in a new session, then `git log --oneline -20` + the docs below.*
+*Updated 2026-07-06 (session 2). Read this first in a new session, then `git log --oneline -20` + the docs below.*
+
+## Session 2 progress (commits `d908ac4`..`fbebff7`, on branch goal-ui-v21-runner-release-hygiene-*)
+- **Fleet reconciler built** (thread #1): `scripts/hoch_fleet_reconcile.py` — DRY-RUN, resolves each hoch
+  launchd plist, follows the entry script one level, statically extracts state-file write-sets, flags
+  files written by 2+ jobs as real competing loops, recommends ONE canonical owner per contested class.
+  Stops staged as `PENDING_OPERATOR_APPROVAL_T3` (executed=false); no bootout/unload/kill code path.
+  Heuristic labeled as such; off-Mac exits honestly (no fabricated fleet). 7/7 tests.
+- **Deck panel**: `FLEET RECONCILE` card in `frontend/has_brain_moonshot.html` (live-embed → static mirror
+  → NOT-YET-RUN). Reconciler mirrors JSON to `frontend/data/fleet_reconcile.json`. JS syntax-checked.
+- **Epic-Fury (thread #2)**: `docs/runbooks/epic-fury-secret-rotation.md` — operator T3 rotation checklist
+  (self-hosted regen + history purge + forward path), cited. Recurrence guard closed: pre-commit hook now
+  version-controlled (`scripts/git-hooks/pre-commit` + `scripts/install_git_hooks.sh`) with a signed-JWT
+  pattern catching Supabase anon/service_role keys. 5/5 hook tests. **Operator must still rotate the keys.**
+- Verified in-sandbox only (no launchctl / no browser here). **Pending on the Mac**: run
+  `python3 scripts/hoch_fleet_reconcile.py` for the real reconcile plan; render the deck panel live.
 
 ## What HOCH is (one Governor, one Mind, many Makers)
 - **HOCH** = umbrella. **HAS** = Governor (command & control, evidence discipline). **BRAIN** =
@@ -38,14 +53,15 @@
 - **Fleet = ~45 hoch runtimes** (21 running). See "open threads" — there are competing loops.
 
 ## OPEN THREADS / next moves
-1. **Fleet reconciliation (highest leverage).** 3 classes have competing loops: SWARM
-   (`live-swarm`, `phase72a.cyber.rag`, new `cyber_swarm`), EXECUTOR/CADENCE (`autonomous.executor`,
-   `phase73b.factory.tick`, new `daemon`), AUDIT (`hochmesh.autonomous-audit`, new `agent_audit`).
-   Next build = **dry-run reconciler** (detect same-file writers, recommend one canonical owner per
-   class, change nothing until operator approves each stop). Stopping a runtime is T3.
+1. **Fleet reconciliation (highest leverage).** Dry-run reconciler is now BUILT (session 2). NEXT:
+   run `python3 scripts/hoch_fleet_reconcile.py` on the Mac to produce the real
+   `data/prompt_brain/fleet_reconcile.json`, review the per-class canonical-owner recommendations, then
+   **operator-approve each T3 `launchctl bootout`** one at a time (nothing is stopped automatically).
+   After that, wire the reconcile output into the live BRAIN feed so the deck panel shows it in real time.
 2. **Epic-fury (first monetized app) — REAL blocker:** 2 HIGH hardcoded Supabase JWT tokens in
-   `~/epic-fury-build/epic-fury-2026/docker-compose.yml` + `docker-compose.dev.yml`. Self-heal
-   correctly can't un-leak them — **operator must rotate** before ship.
+   `~/epic-fury-build/epic-fury-2026/docker-compose.yml` + `docker-compose.dev.yml`. Runbook +
+   recurrence guard now exist (session 2); **operator must still rotate the keys** per
+   `docs/runbooks/epic-fury-secret-rotation.md` before ship. Self-heal correctly can't un-leak them.
 3. **HMF/HRF real gains** need frontier judges (audio-quality, research-novelty) = cost/Rung-2 —
    deferred. Their mechanical proxy is near ceiling (93/96); graphs may sit flat honestly.
 4. **HFP** (Hoch Family/Personal Factory) — note: `com.hoch.family.*` already runs as a live fleet.
