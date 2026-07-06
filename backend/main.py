@@ -202,6 +202,8 @@ app.include_router(qa_router)
 
 from backend.routers.stripe_webhook import router as stripe_router
 app.include_router(stripe_router)
+from backend.routers.stripe_billing import router as stripe_billing_router
+app.include_router(stripe_billing_router)
 
 
 @app.get("/api/v1/control-plane/status")

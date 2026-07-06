@@ -162,3 +162,4 @@ has_live_project_tracker/data/agent_action_queue.json
 data/prompt_brain/discovered_tasks.json
 has_live_project_tracker/data/goal_runtime_loop_status.json
 frontend/data/goal_runtime_loop_status.json
+data/billing/

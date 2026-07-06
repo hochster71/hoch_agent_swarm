@@ -34,6 +34,8 @@ from typing import Any, Set
 import stripe
 from fastapi import APIRouter, HTTPException, Request, Response
 
+from backend.billing import entitlements
+
 logger = logging.getLogger("stripe_webhook")
 router = APIRouter(prefix="/api/stripe", tags=["stripe"])
 _seen_event_ids: Set[str] = set()
@@ -120,12 +122,20 @@ def _on_checkout_completed(obj: Any, event_id: str) -> None:
     """Initial payment done — provision access.
     https://docs.stripe.com/payments/checkout/build-subscriptions
     """
+    customer = _f(obj, "customer")
+    checkout_mode = _f(obj, "mode")  # 'subscription' | 'payment'
+    meta = _f(obj, "metadata", {}) or {}
+    tier = _f(meta, "tier", "pro")
     logger.info(
-        "checkout.session.completed customer=%s sub=%s mode=%s event=%s",
-        _f(obj, "customer"), _f(obj, "subscription"), _f(obj, "mode"), event_id,
+        "checkout.session.completed customer=%s sub=%s mode=%s tier=%s event=%s",
+        customer, _f(obj, "subscription"), checkout_mode, tier, event_id,
     )
-    # TODO Epic Fury: create customer + subscription record in DB,
-    # send welcome email, unlock product entitlements.
+    # Provision access. One-time (payment mode) -> lifetime grant; subscription
+    # -> active until first invoice.paid sets the period window.
+    entitlements.grant(
+        customer, tier, status="active", source_event=event_id,
+        lifetime=(checkout_mode == "payment"),
+    )
 
 
 def _on_invoice_paid(obj: Any, event_id: str) -> None:
@@ -135,22 +145,25 @@ def _on_invoice_paid(obj: Any, event_id: str) -> None:
     """
     lines_data = _f(_f(obj, "lines", {}), "data", [])
     period_end = _f(_f(lines_data[0] if lines_data else {}, "period", {}), "end")
+    customer = _f(obj, "customer")
     logger.info(
         "invoice.paid customer=%s sub=%s period_end=%s event=%s",
-        _f(obj, "customer"), _f(obj, "subscription"), period_end, event_id,
+        customer, _f(obj, "subscription"), period_end, event_id,
     )
-    # TODO: extend access_until in DB to period_end.
+    entitlements.extend(customer, str(period_end) if period_end else None, source_event=event_id)
 
 
 def _on_invoice_payment_failed(obj: Any, event_id: str) -> None:
     """Payment failed — email customer, soft-suspend after threshold.
     https://docs.stripe.com/billing/subscriptions/webhooks#payment-failures
     """
+    customer = _f(obj, "customer")
     logger.warning(
         "invoice.payment_failed customer=%s attempts=%s next_attempt=%s event=%s",
-        _f(obj, "customer"), _f(obj, "attempt_count", 0),
+        customer, _f(obj, "attempt_count", 0),
         _f(obj, "next_payment_attempt"), event_id,
     )
+    entitlements.mark_status(customer, "past_due", source_event=event_id)
     # TODO: send payment-failure email with customer portal link.
 
 
@@ -158,12 +171,14 @@ def _on_subscription_updated(obj: Any, event_id: str) -> None:
     """Plan/status changed — update entitlements.
     https://docs.stripe.com/billing/subscriptions/webhooks
     """
+    customer = _f(obj, "customer")
+    status = _f(obj, "status")  # active | past_due | canceled | ...
     logger.info(
         "customer.subscription.updated customer=%s status=%s cancel_at_end=%s event=%s",
-        _f(obj, "customer"), _f(obj, "status"),
-        _f(obj, "cancel_at_period_end"), event_id,
+        customer, status, _f(obj, "cancel_at_period_end"), event_id,
     )
-    # TODO: update subscription tier / status in DB.
+    if status:
+        entitlements.mark_status(customer, str(status), source_event=event_id)
 
 
 def _on_subscription_deleted(obj: Any, event_id: str) -> None:
@@ -171,8 +186,9 @@ def _on_subscription_deleted(obj: Any, event_id: str) -> None:
     Fires immediately, or at period end if cancel_at_period_end=True.
     https://docs.stripe.com/billing/subscriptions/webhooks#cancellations
     """
+    customer = _f(obj, "customer")
     logger.info(
         "customer.subscription.deleted customer=%s ended_at=%s event=%s",
-        _f(obj, "customer"), _f(obj, "ended_at"), event_id,
+        customer, _f(obj, "ended_at"), event_id,
     )
-    # TODO: set subscription cancelled in DB; revoke product access.
+    entitlements.revoke(customer, source_event=event_id)

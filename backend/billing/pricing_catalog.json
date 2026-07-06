@@ -1,0 +1,84 @@
+{
+  "schema": "hasf-pricing-catalog-v1",
+  "currency": "usd",
+  "note": "test_price_id values are placeholders until the products/prices are created in Stripe TEST mode (see docs/billing/GO_LIVE_CHECKLIST.md, step 2). live_price_id is intentionally null — the founder fills these at go-live. Prices below are the public list price in whole USD; Stripe stores the authoritative amount on the Price object.",
+  "tiers": [
+    {
+      "id": "free",
+      "name": "Free",
+      "kind": "freemium",
+      "price_usd": 0,
+      "billing": "none",
+      "checkout_mode": null,
+      "features": [
+        "Core HAS access",
+        "Up to 50 agent-runs / month",
+        "Community support"
+      ],
+      "entitlement": { "tier": "free", "agent_runs_month": 50, "seats": 1 },
+      "stripe": { "test_price_id": null, "live_price_id": null }
+    },
+    {
+      "id": "pro_monthly",
+      "name": "Pro (Monthly)",
+      "kind": "subscription",
+      "price_usd": 29,
+      "billing": "recurring_month",
+      "checkout_mode": "subscription",
+      "features": [
+        "Everything in Free",
+        "Unlimited agent-runs",
+        "BRAIN M1 live generation",
+        "Priority support"
+      ],
+      "entitlement": { "tier": "pro", "agent_runs_month": null, "seats": 1 },
+      "stripe": { "test_price_id": "REPLACE_pro_monthly_test", "live_price_id": null }
+    },
+    {
+      "id": "pro_annual",
+      "name": "Pro (Annual)",
+      "kind": "subscription",
+      "price_usd": 290,
+      "billing": "recurring_year",
+      "checkout_mode": "subscription",
+      "features": [
+        "Everything in Pro Monthly",
+        "2 months free vs monthly",
+        "Annual billing"
+      ],
+      "entitlement": { "tier": "pro", "agent_runs_month": null, "seats": 1 },
+      "stripe": { "test_price_id": "REPLACE_pro_annual_test", "live_price_id": null }
+    },
+    {
+      "id": "team_monthly",
+      "name": "Team (Monthly)",
+      "kind": "subscription",
+      "price_usd": 99,
+      "billing": "recurring_month",
+      "checkout_mode": "subscription",
+      "features": [
+        "Everything in Pro",
+        "Up to 10 seats",
+        "Shared swarm workspace",
+        "SSO-ready"
+      ],
+      "entitlement": { "tier": "team", "agent_runs_month": null, "seats": 10 },
+      "stripe": { "test_price_id": "REPLACE_team_monthly_test", "live_price_id": null }
+    },
+    {
+      "id": "lifetime",
+      "name": "Lifetime",
+      "kind": "one_time",
+      "price_usd": 499,
+      "billing": "one_time",
+      "checkout_mode": "payment",
+      "features": [
+        "Everything in Pro, forever",
+        "One payment, no renewal",
+        "Founder's-circle badge"
+      ],
+      "entitlement": { "tier": "pro", "agent_runs_month": null, "seats": 1, "lifetime": true },
+      "stripe": { "test_price_id": "REPLACE_lifetime_test", "live_price_id": null }
+    }
+  ]
+}
