@@ -130,6 +130,8 @@ def build_live_state():
         } if b else {})(_load(DATA / "orchestrator_brief.json", {})),
         "fleet_reconcile": (lambda f: {
             "jobs_examined": f.get("jobs_examined"),
+            "unresolved": len(f.get("unresolved_plists", [])),
+            "job_source": f.get("job_source"),
             "method": f.get("method"),
             "contested_files": f.get("contested_files", {}),
             "recommendations": f.get("recommendations", []),

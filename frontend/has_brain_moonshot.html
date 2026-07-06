@@ -159,9 +159,12 @@ function renderFleet(){
       <div class="tl" style="color:var(--dim);margin:2px 0 8px">stop (T3, not run): ${(r.bootout_candidates||[]).map(esc).join(', ')||'—'} · contested: ${(r.contested_files||[]).map(esc).join(', ')||'—'}</div>`).join('')
     : `<div class="kv" style="color:var(--dim)">no same-file contention detected by the heuristic</div>`;
   const inert = f.safety && f.safety.all_actions_pending_operator_T3;
+  const unres = f.unresolved||0;
+  const unresNote = unres ? ` · <span style="color:#e0b341">${unres} plist(s) unresolved — run on the Mac for full resolution</span>` : '';
   return `<div class="panel"><h3>FLEET RECONCILE · dry-run · ${esc(f.jobs_examined||0)} jobs · ${contested.length} contested file(s)</h3>
     ${rows}
-    <div class="tl" style="margin-top:6px;color:${inert?'#34d399':'#e0b341'}">
+    <div class="tl" style="color:var(--dim);margin-top:4px">source: ${esc(f.job_source||'live launchctl')}${unresNote}</div>
+    <div class="tl" style="margin-top:4px;color:${inert?'#34d399':'#e0b341'}">
       ${acts.length} stop action(s) staged · ${inert?'ALL PENDING_OPERATOR_APPROVAL_T3 (executed=false) — nothing stopped':'⚠ verify T3 inert'} · ${esc(f.method||'')}</div></div>`;
 }
 

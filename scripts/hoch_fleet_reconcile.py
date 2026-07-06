@@ -84,19 +84,44 @@ def _classify(label: str) -> str:
     return "OTHER"
 
 
+# Anchors: keep only the state-bearing tail of a reconstructed path (drop ROOT/var prefixes).
+_PATH_ANCHORS = ("data/prompt_brain", "frontend/data", "data/backups", "data/")
+# A pathlib chain like  ROOT / "data" / "prompt_brain" / "champion_registry.json"  or
+# "frontend" / "data" / f"{name}.json"  — quoted segments joined by '/', ending in a json file.
+_PATHLIB_CHAIN = re.compile(r'(?:["\']([\w.\-]+)["\']\s*/\s*){1,6}["\']([\w.\-]+\.jsonl?)["\']')
+
+
+def _anchor(path: str) -> str:
+    """Trim a reconstructed path to start at a known state anchor, so ROOT/var prefixes don't split
+    the same file into two different keys across jobs."""
+    for a in _PATH_ANCHORS:
+        i = path.find(a)
+        if i != -1:
+            return path[i:]
+    return path
+
+
 def extract_output_paths(text: str) -> set[str]:
     """Statically pull repo-relative state-file paths a script/module appears to WRITE.
 
-    Heuristic: a path matches a state-file hint AND the file mentions a write call somewhere. We do
-    not try to bind a specific path to a specific write() — the goal is 'which jobs touch this file',
-    for which co-occurrence is a sound, conservative signal.
+    Heuristic: a path matches a state-file hint AND the file mentions a write call somewhere. Catches
+    BOTH literal slash-paths ("data/prompt_brain/x.json") AND pathlib chains
+    (ROOT / "data" / "prompt_brain" / "x.json"), since HOCH code overwhelmingly uses the latter — a
+    literal-only matcher would miss the real competing writers. We do not bind a path to a specific
+    write(); co-occurrence of a state path + a write call is a sound, conservative 'this job touches
+    this file' signal.
     """
     if not any(re.search(w, text) for w in _WRITE_CALLS):
         return set()
     paths: set[str] = set()
-    for hint in _STATE_HINTS:
+    for hint in _STATE_HINTS:                       # literal slash-paths
         for m in re.findall(hint, text):
-            paths.add(m.strip().strip("\"'"))
+            paths.add(_anchor(m.strip().strip("\"'")))
+    for parts in re.finditer(_PATHLIB_CHAIN, text):  # pathlib joins
+        segs = re.findall(r'["\']([\w.\-]+)["\']', parts.group(0))
+        joined = _anchor("/".join(segs))
+        if any(a in joined for a in _PATH_ANCHORS) or joined.endswith((".json", ".jsonl")):
+            paths.add(joined)
     return paths
 
 
@@ -245,11 +270,23 @@ def _repo_read_text(rel_or_abs: str) -> str | None:
     return None
 
 
-def reconcile() -> dict:
-    try:
-        jobs = _live_hoch_jobs()
-    except Exception as e:
-        return {"error": f"launchctl unavailable ({e}) — run this on the Mac (no fleet fabricated)."}
+def _jobs_from_audit(audit_path: Path) -> tuple[list[dict], str]:
+    """Use the launchctl snapshot the audit already captured live on the Mac as the job list.
+    Lets the reconciler run off-Mac against REAL fleet data (labels are real; only plists that live in
+    the repo resolve to write-sets — the rest are reported honestly as unresolved)."""
+    a = json.loads(audit_path.read_text())
+    jobs = [{"label": r["label"]} for r in (a.get("running", []) + a.get("loaded", []))]
+    return jobs, f"fleet_audit.json snapshot captured live on Mac at {a.get('at', '?')}"
+
+
+def reconcile(source_jobs: list[dict] | None = None, source_note: str = "live launchctl") -> dict:
+    if source_jobs is not None:
+        jobs = source_jobs
+    else:
+        try:
+            jobs = _live_hoch_jobs()
+        except Exception as e:
+            return {"error": f"launchctl unavailable ({e}) — run this on the Mac (no fleet fabricated)."}
 
     job_class, job_writes, unresolved = {}, {}, []
     for j in jobs:
@@ -272,7 +309,8 @@ def reconcile() -> dict:
         "schema": "hoch-fleet-reconcile-v1",
         "at": datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z"),
         "mode": "DRY-RUN — recommend only, nothing stopped",
-        "method": "heuristic static write-set extraction (regex, 1-level fan-out)",
+        "job_source": source_note,
+        "method": "heuristic static write-set extraction (regex, transitive fan-out; literal + pathlib paths)",
         "jobs_examined": len(jobs),
         "jobs_with_write_set": sum(1 for v in job_writes.values() if v),
         "unresolved_plists": sorted(unresolved),
@@ -297,7 +335,16 @@ def reconcile() -> dict:
 
 
 def main() -> int:
-    r = reconcile()
+    import sys
+    if "--from-audit" in sys.argv:
+        ap = ROOT / "data" / "prompt_brain" / "fleet_audit.json"
+        if not ap.exists():
+            print(f"no {ap.relative_to(ROOT)} — run scripts/hoch_fleet_audit.py on the Mac first.")
+            return 1
+        jobs, note = _jobs_from_audit(ap)
+        r = reconcile(source_jobs=jobs, source_note=note)
+    else:
+        r = reconcile()
     if "error" in r:
         print(r["error"])
         return 1

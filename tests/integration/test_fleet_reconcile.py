@@ -50,6 +50,26 @@ def test_write_set_follows_one_level_fanout():
     assert "data/prompt_brain/champion_registry.json" in writes
 
 
+def test_extract_catches_pathlib_chains():
+    # HOCH code builds paths via pathlib, not literal slash-strings — the extractor must catch both.
+    txt = 'OUT = ROOT / "frontend" / "data" / "brain_live.json"\nOUT.write_text(x)\n'
+    got = R.extract_output_paths(txt)
+    assert "frontend/data/brain_live.json" in got
+
+
+def test_anchor_normalizes_root_prefixes():
+    # same file reached via different var prefixes must normalize to one key (else contention is missed)
+    assert R._anchor("/Users/x/repo/data/prompt_brain/champion_registry.json") == "data/prompt_brain/champion_registry.json"
+
+
+def test_reconcile_from_synthetic_job_list_is_honest_about_unresolved():
+    # jobs whose plists don't resolve are reported, not silently dropped or fabricated
+    r = R.reconcile(source_jobs=[{"label": "com.hoch.nonexistent.job"}], source_note="synthetic")
+    assert r["job_source"] == "synthetic"
+    assert "com.hoch.nonexistent.job" in r["unresolved_plists"]
+    assert r["safety"]["never_executes"] is True
+
+
 def test_contention_detects_same_file_writers():
     jobs = {
         "com.hoch.daemon": R.collect_writes_for_job(["/bin/bash", "scripts/hoch_daemon.sh"], fake_read),
