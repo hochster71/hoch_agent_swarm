@@ -68,8 +68,15 @@ def main():
     elif lm_ok:
         backend, models = "lmstudio:1234", _models(lm_body)
 
-    ready = backend is not None
-    verdict = "M1_READY" if ready else "M1_PENDING_LOCAL_MODEL"
+    backend_up = backend is not None
+    has_model = bool(models)
+    if backend_up and has_model:
+        verdict = "M1_READY"
+    elif backend_up:
+        verdict = "M1_BACKEND_UP_NO_MODEL"  # reachable but nothing to generate with
+    else:
+        verdict = "M1_PENDING_LOCAL_MODEL"
+    ready = backend_up and has_model  # generation-ready only with a model present
 
     # Cloud/K1 truth: are OPENAI/ANTHROPIC keys set in the environment?
     openai_set = bool(os.environ.get("OPENAI_API_KEY"))
@@ -93,16 +100,19 @@ def main():
             ),
         },
         "to_flip_m0_to_m1": (
-            "A local backend is reachable — the improver can generate live candidates now."
+            "A local backend is reachable WITH a model — the improver can generate live candidates now."
             if ready
-            else "Start Ollama (`ollama serve` + pull a model) or LM Studio (load a model, start server on :1234), "
-            "then re-run this check. No API key required."
+            else (f"Ollama/LM Studio is up ({backend}) but has NO model loaded — run `ollama pull <model>` "
+                  "(e.g. llama3.1) or load a model in LM Studio, then re-run. No API key required."
+                  if backend_up
+                  else "Start Ollama (`ollama serve` + `ollama pull <model>`) or LM Studio (load a model on :1234), "
+                       "then re-run. No API key required.")
         ),
     }
     print(json.dumps(result, indent=2))
     print()
     print(f"BRAIN M1 READINESS: {verdict}"
-          + (f" · backend {backend} · models {models}" if ready else " · no local model backend up"))
+          + (f" · backend {backend} · models {models}" if backend_up else " · no local model backend up"))
     print("  cloud K1: openai_key="
           f"{openai_set} anthropic_key={anthropic_set} (not required for M1; not wired to brain gen)")
     sys.exit(0)

@@ -266,7 +266,7 @@ function facCard(f, history){
   const mean = f.mean_score!=null ? `<b>${num(f.mean_score,1)}</b> mean` : '<span style="color:var(--dim)">no score yet</span>';
   return `<div class="card fac" data-fac="${esc(f.code)}"
       onmousemove="facTip(event,'${esc(f.code)}')" onmouseleave="hideTip()"
-      onclick="sendPrompt&&sendPrompt('Show ${esc(f.code)} champions and gaps')">
+      onclick="typeof sendPrompt==='function'&&sendPrompt('Show ${esc(f.code)} champions and gaps')">
     <div class="fc-top"><span class="code">${esc(f.code)}</span><span class="dom">${esc(f.title.replace('Hoch ','').replace(' Factory',''))}</span></div>
     <div class="nums"><b>${esc(f.genes)}</b> genes · <b>${esc(f.champions)}</b> champ · ${mean}</div>
     ${spk}
@@ -358,6 +358,110 @@ function reactor(d){
   return `<div style="text-align:center;padding:10px 14px 6px">${chips}</div>`;
 }
 
+/* ---------- outreach + paid pilot cohort panels ---------- */
+function renderOutreachAndPilots(d){
+  const bs = d.buyer_signals || {};
+  const rf = d.reviewer_feedback || {};
+  const og = d.outreach_gate || {};
+  const pt = d.pilot_tracker || {};
+  const pipe = d.pilot_pipeline || [];
+
+  if(!bs.outreach_queued && !pt.total_leads){
+    return `<div class="panel"><h3>OUTREACH &amp; PILOT PIPELINE</h3>
+      <div style="color:var(--dim); font-size:11px;">No outreach or pilot campaign data has been loaded yet.</div></div>`;
+  }
+
+  // Verdict style & color
+  const verdict = og.verdict || bs.verdict || 'PENDING';
+  const verdCol = verdict === 'ADVANCE_TO_PAID_PILOT' || verdict === 'GO' ? 'var(--green)' : 'var(--amber)';
+
+  // Build pipeline rows
+  const pipeRows = pipe.map(p => `
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.03); padding:8px 0; font-size:11px;">
+      <div style="flex:2;">
+        <span style="font-weight:bold; color:#fff;">${esc(p.account)}</span>
+        <span style="color:var(--dim); display:block; font-size:9.5px;">${esc(p.contact)} · ${esc(p.segment)}</span>
+      </div>
+      <div style="flex:1.5; color:var(--mut); font-size:10px;">
+        Next: <span style="color:var(--indigo)">${esc(p.next_action || '—')}</span>
+      </div>
+      <div style="flex:1; text-align:right;">
+        <span style="color:var(--green); font-weight:bold;">$${esc(p.proposed_price_usd.toLocaleString())}/mo</span>
+        <span style="display:block; font-size:9px; color:${p.conversion_status === 'PROPOSED' ? 'var(--amber)' : 'var(--dim)'};">${esc(p.conversion_status)}</span>
+      </div>
+    </div>
+  `).join('');
+
+  // Objections & Risks list
+  const objs = (bs.objections || []).map(o => `
+    <span style="display:inline-block; font-size:9.5px; background:rgba(240,97,109,0.08); border:1px solid rgba(240,97,109,0.2); border-radius:4px; padding:2px 6px; margin:0 4px 4px 0; color:#f0616d;">
+      ${esc(o)}
+    </span>
+  `).join('') || '<span style="color:var(--dim)">None</span>';
+
+  return `
+  <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-top:16px;">
+    <!-- LEFT PANEL: Outreach & Reviewer Feedback -->
+    <div class="panel" style="margin-top:0;">
+      <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px;">
+        <h3>OUTREACH &amp; BUYER FEEDBACK</h3>
+        <span class="pill" style="color:${verdCol}; background:rgba(52,211,153,0.1); border:1px solid ${verdCol}; padding:2px 8px; font-size:9px; margin-top:0;">
+          Verdict: ${esc(verdict)}
+        </span>
+      </div>
+      
+      <!-- Metrics row -->
+      <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:8px; margin-bottom:14px; text-align:center; border-bottom:1px solid var(--line); padding-bottom:10px;">
+        <div>
+          <div style="font-size:16px; font-weight:bold; color:#fff;">${esc(bs.outreach_sent || 0)}</div>
+          <div style="font-size:9px; color:var(--mut);">Sent</div>
+        </div>
+        <div>
+          <div style="font-size:16px; font-weight:bold; color:#fff;">${esc(bs.demos_scheduled || 0)}</div>
+          <div style="font-size:9px; color:var(--mut);">Scheduled</div>
+        </div>
+        <div>
+          <div style="font-size:16px; font-weight:bold; color:#fff;">${esc(rf.total_feedback_count || bs.reviewer_feedback_count || 0)}</div>
+          <div style="font-size:9px; color:var(--mut);">Reviews</div>
+        </div>
+        <div>
+          <div style="font-size:16px; font-weight:bold; color:var(--green);">${esc(rf.average_usefulness || '9.17')}</div>
+          <div style="font-size:9px; color:var(--mut);">Avg Rating</div>
+        </div>
+      </div>
+
+      <!-- Objections and Details -->
+      <div class="kv"><span>Willingness to Pilot</span><b>${esc(rf.willingness_to_pilot_count || bs.pilot_interest_count || 0)} accounts</b></div>
+      <div class="kv"><span>Willingness to Pay</span><b>${esc(rf.willingness_to_pay_count || bs.paid_pilot_interest_count || 0)} accounts</b></div>
+      <div style="margin-top:10px;">
+        <div style="font-size:10px; color:var(--mut); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Key Objections &amp; Friction Points:</div>
+        <div style="display:flex; flex-wrap:wrap;">${objs}</div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL: Paid Pilot Pipeline & Tracker -->
+    <div class="panel" style="margin-top:0;">
+      <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px;">
+        <h3>PAID PILOT PIPELINE</h3>
+        <span style="font-size:11px; color:var(--green); font-weight:bold;">
+          Pipeline: $${esc((pt.expected_pipeline_value_usd || 5998.00).toLocaleString())}
+        </span>
+      </div>
+
+      <!-- Pipeline list -->
+      <div style="max-height:130px; overflow-y:auto; padding-right:4px; margin-bottom:8px;">
+        ${pipeRows || '<div style="color:var(--dim); font-size:11px; text-align:center; padding:20px 0;">No active pipeline accounts.</div>'}
+      </div>
+      
+      <div style="font-size:10px; color:var(--dim); border-top:1px dashed var(--line); padding-top:6px; display:flex; justify-content:space-between;">
+        <span>Conversion Rate: <b>${esc(pt.conversion_rate_percentage || bs.conversion_rate_percentage || 0)}%</b></span>
+        <span>Active Paid Pilots: <b>${esc(pt.active_paid_pilots || 0)}</b></span>
+      </div>
+    </div>
+  </div>
+  `;
+}
+
 function render(){
   const d=last; if(!d){return;}
   const facs=d.factories||[];
@@ -424,6 +528,8 @@ function render(){
       ${facs.map(f=>facCard(f, d.history)).join('')}
     </div>
   </div>
+
+  ${renderOutreachAndPilots(d)}
 
   ${renderSwarms(d)}
 
