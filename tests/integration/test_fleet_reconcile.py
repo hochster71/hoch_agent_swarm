@@ -143,6 +143,16 @@ def test_live_feed_carries_fleet_reconcile_key():
     assert "fleet_reconcile" in st  # present even when no reconcile has run yet
 
 
+def test_diagnostic_run_does_not_clobber_canonical_output(tmp_path):
+    # a diagnostic run (out_path set, deck_mirror off) must NOT touch the authoritative fleet_reconcile.json
+    diag = tmp_path / "fleet_reconcile.from_audit.json"
+    canonical_before = R.OUT.stat().st_mtime if R.OUT.exists() else None
+    R.reconcile(source_jobs=[{"label": "com.hoch.x"}], source_note="diag", out_path=diag, deck_mirror=False)
+    assert diag.exists()
+    canonical_after = R.OUT.stat().st_mtime if R.OUT.exists() else None
+    assert canonical_before == canonical_after  # canonical untouched
+
+
 def test_module_never_executes_a_stop():
     """T3 guard: no forbidden runtime-stop op is ever handed to subprocess/os.system."""
     src = (ROOT / "scripts" / "hoch_fleet_reconcile.py").read_text()

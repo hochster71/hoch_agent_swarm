@@ -312,7 +312,8 @@ def _jobs_from_audit(audit_path: Path) -> tuple[list[dict], str]:
     return jobs, f"fleet_audit.json snapshot captured live on Mac at {a.get('at', '?')}"
 
 
-def reconcile(source_jobs: list[dict] | None = None, source_note: str = "live launchctl") -> dict:
+def reconcile(source_jobs: list[dict] | None = None, source_note: str = "live launchctl",
+              out_path: Path | None = None, deck_mirror: bool = True) -> dict:
     if source_jobs is not None:
         jobs = source_jobs
     else:
@@ -356,14 +357,16 @@ def reconcile(source_jobs: list[dict] | None = None, source_note: str = "live la
             ),
         },
     }
-    OUT.parent.mkdir(parents=True, exist_ok=True)
+    target = out_path or OUT
+    target.parent.mkdir(parents=True, exist_ok=True)
     payload = json.dumps(out, indent=2)
-    OUT.write_text(payload, encoding="utf-8")
-    try:
-        DECK_OUT.parent.mkdir(parents=True, exist_ok=True)
-        DECK_OUT.write_text(payload, encoding="utf-8")  # deck reads this via /data/ static fallback
-    except Exception:
-        pass  # deck mirror is best-effort; the canonical write above already succeeded
+    target.write_text(payload, encoding="utf-8")
+    if deck_mirror:  # only the authoritative (live) run publishes to the deck — diagnostic runs never do
+        try:
+            DECK_OUT.parent.mkdir(parents=True, exist_ok=True)
+            DECK_OUT.write_text(payload, encoding="utf-8")  # deck reads this via /data/ static fallback
+        except Exception:
+            pass  # deck mirror is best-effort; the canonical write above already succeeded
     return out
 
 
@@ -413,7 +416,11 @@ def main() -> int:
             print(f"no {ap.relative_to(ROOT)} — run scripts/hoch_fleet_audit.py on the Mac first.")
             return 1
         jobs, note = _jobs_from_audit(ap)
-        r = reconcile(source_jobs=jobs, source_note=note)
+        # Diagnostic run: writes a SEPARATE file and never publishes to the deck, so an offline
+        # (plist-under-resolving) run can't overwrite the authoritative live fleet_reconcile.json.
+        diag = ROOT / "data" / "prompt_brain" / "fleet_reconcile.from_audit.json"
+        r = reconcile(source_jobs=jobs, source_note=note, out_path=diag, deck_mirror=False)
+        print(f"(diagnostic --from-audit; wrote {diag.relative_to(ROOT)} — live fleet_reconcile.json untouched)")
     else:
         r = reconcile()
     if "error" in r:
@@ -434,7 +441,8 @@ def main() -> int:
         print("    bootout candidates (T3, NOT run): " + ", ".join(rec["bootout_candidates"]))
     print(f"\n  {len(r['actions'])} stop action(s) staged as PENDING_OPERATOR_APPROVAL_T3 "
           f"(executed=false). Nothing was stopped.")
-    print(f"  wrote {OUT.relative_to(ROOT)}")
+    if "--from-audit" not in sys.argv:
+        print(f"  wrote {OUT.relative_to(ROOT)}")
     return 0
 
 
