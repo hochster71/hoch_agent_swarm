@@ -9471,6 +9471,22 @@ def serve_brain_live_static():
         return _FileResponse(_p, media_type="application/json", headers=_cors)
     return _JSONResponse({"error": "no static feed yet"}, status_code=404, headers=_cors)
 
+
+@app.get("/data/fleet_reconcile.json")
+def serve_fleet_reconcile_static():
+    """Static mirror of the dry-run fleet reconciler output (scripts/hoch_fleet_reconcile.py).
+    Returns 204 (not 404) when the reconciler hasn't run yet, so the deck's fleet panel shows a clean
+    NOT-YET-RUN state without a console error. The live /api/brain/live feed is the primary source."""
+    from fastapi.responses import FileResponse as _FileResponse, Response as _Response
+    import os as _os
+    _p = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))),
+                       "frontend", "data", "fleet_reconcile.json")
+    _cors = {"Access-Control-Allow-Origin": "*", "Cache-Control": "no-store"}
+    if _os.path.exists(_p):
+        return _FileResponse(_p, media_type="application/json", headers=_cors)
+    return _Response(status_code=204, headers=_cors)  # not yet run — no fabricated fleet
+
+
 @app.post("/api/prompts/qa/golden-fixtures")
 def run_prompts_golden_fixtures_endpoint():
     import subprocess

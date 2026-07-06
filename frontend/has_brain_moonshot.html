@@ -139,12 +139,13 @@ async function load(){
 /* ---------- fleet reconcile (dry-run, T3-inert) ---------- */
 let fleet=null;
 async function loadFleet(){
-  // Independent of the brain feed: prefer live feed embed, else the static mirror the reconciler writes.
-  if(last && last.fleet_reconcile){ fleet=last.fleet_reconcile; render(); return; }
+  // The live feed is authoritative and always carries fleet_reconcile (null until the reconciler runs),
+  // so when it's up we never touch the static mirror — that avoids a 404 before the reconciler has run.
+  if(last){ fleet = last.fleet_reconcile || null; render(); return; }
+  // Only when the live feed is unreachable do we try the static mirror (204 => not run yet, stays null).
   try{ const r=await fetch(API_BASE+'/data/fleet_reconcile.json?_='+Date.now(),{cache:'no-store'});
-       if(!r.ok) throw new Error('HTTP '+r.status);
-       fleet=await r.json(); }
-  catch(e){ /* leave fleet as-is; panel shows NOT-YET-RUN rather than a fabricated fleet */ }
+       if(r.ok && r.status!==204) fleet=await r.json(); }
+  catch(e){ /* NOT-YET-RUN panel; never fabricate a fleet */ }
   render();
 }
 function renderFleet(){
