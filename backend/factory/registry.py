@@ -59,6 +59,18 @@ _FACTORIES = {
         gates=["originality_check", "licensing_clearance", "audio_quality_judge",
                "T3_publish_operator_approval"],
     ),
+    "research": Factory(
+        domain="research", code="HRF", title="Hoch AI Research Factory",
+        gene_pool=BRAIN / "research" / "gene_pool.json",
+        champion_registry=BRAIN / "research" / "champion_registry.json",
+        convergence_status=BRAIN / "research" / "convergence_status.json",
+        rubric=CONFIG / "research_score_rubric.yaml",
+        scorer_module="backend.brain_convergence.research_scorer",
+        # citation_verification is the anti-hallucination gate: every claim must resolve to a real
+        # source (PubMed/bioRxiv/ClinicalTrials/ChEMBL) before a finding is accepted or published.
+        gates=["citation_verification", "no_fabricated_results", "reproducibility_check",
+               "ethics_dual_use_review", "T3_publish_operator_approval"],
+    ),
 }
 
 

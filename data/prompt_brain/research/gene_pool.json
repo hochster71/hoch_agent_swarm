@@ -1,0 +1,97 @@
+{
+  "schema": "brain-convergence-gene-pool-m0",
+  "domain": "research",
+  "count": 8,
+  "task_classes": 7,
+  "class_sizes": {
+    "Longevity": 2,
+    "AI Safety": 1,
+    "Fusion Energy": 1,
+    "Space": 1,
+    "Neurotech": 1,
+    "Climate": 1,
+    "Synthetic Biology": 1
+  },
+  "genes": {
+    "seed-long-de9ffeaa1e": {
+      "gene_id": "seed-long-de9ffeaa1e",
+      "task_class": "Longevity",
+      "title": "Senolytic Combination vs Frailty",
+      "prompt": "Moonshot: extend healthy human lifespan (grand challenge). Testable hypothesis: a defined senolytic combination reduces a validated frailty index in aged cohorts vs placebo. Evidence standard: pre-registered endpoint (frailty index delta at 6 months), effect size + confidence interval; confirm/refute thresholds stated. Method: randomized controlled design, controls, sample size powered, protocol reproducible with open data. Literature grounding: cite prior senolytic trials via PubMed/bioRxiv DOIs \u2014 claims must cite verifiable primary sources, no assertions. Kill criteria: reject if no dose-response or safety signal. Ethics: IRB, informed consent, dual-use reviewed. Impact: healthspan for aging populations.",
+      "content_hash": "de9ffeaa1e3787f564e721c854c9cd9e80084e35675448d6aa1b991661c3e44a",
+      "state": "SEED",
+      "source": "HUMAN_SEED",
+      "domain": "research"
+    },
+    "seed-long-dc83a63976": {
+      "gene_id": "seed-long-dc83a63976",
+      "task_class": "Longevity",
+      "title": "Epigenetic Clock Reversal Readout",
+      "prompt": "Moonshot: reverse biological age markers. Hypothesis: a partial-reprogramming protocol lowers a validated epigenetic clock without dedifferentiation. Evidence standard: clock delta with confidence interval, tumor-safety endpoint. Method: controlled in-vitro design, reproducible, open code. Literature: cite reprogramming papers (PubMed DOIs), verifiable only. Kill criteria: abort on oncogenic signal. Ethics/biosafety named. Impact: age-reversal therapeutics.",
+      "content_hash": "dc83a63976be05747d91481a818da05c6a27aad3b2ba63aaf5f6e109004fe166",
+      "state": "SEED",
+      "source": "HUMAN_SEED",
+      "domain": "research"
+    },
+    "seed-ais-e4d23524b4": {
+      "gene_id": "seed-ais-e4d23524b4",
+      "task_class": "AI Safety",
+      "title": "Scalable Oversight of Superhuman Judges",
+      "prompt": "Moonshot: trustworthy oversight of models stronger than their evaluators (grand challenge). Testable hypothesis: debate-based scalable oversight raises judge accuracy on tasks the judge cannot directly verify vs baseline. Evidence standard: held-out accuracy delta, adversarial seeded-deception catch rate; confirm/refute stated. Method: controlled protocol, ablations, reproducible with open code. Literature grounding: cite alignment papers (arXiv/DOIs) \u2014 verifiable citations only, no fabricated references. Kill criteria: reject if judges are gamed by keyword stuffing. Ethics: dual-use, release review. Impact: safe advanced AI.",
+      "content_hash": "e4d23524b4838320ab5d79379ac9b4901dfb5636501efbc535f91c7d8a9ac20b",
+      "state": "SEED",
+      "source": "HUMAN_SEED",
+      "domain": "research"
+    },
+    "seed-fusi-312e465d6f": {
+      "gene_id": "seed-fusi-312e465d6f",
+      "task_class": "Fusion Energy",
+      "title": "High-Field Confinement Scaling Test",
+      "prompt": "Moonshot: net-energy fusion (abundance/energy grand challenge). Hypothesis: energy confinement time scales with field strength above a predicted threshold in a high-field configuration. Evidence standard: measured confinement vs predicted, error bars, success threshold. Method: instrumented experimental campaign, controls, reproducible data release. Literature: cite prior tokamak/stellarator results (verifiable DOIs). Kill criteria: stop if disruptions exceed limit. Safety: radiological review. Impact: clean baseload energy.",
+      "content_hash": "312e465d6ff32b25efcc5230973cba4530050a2246934e8704fc67d64440f16e",
+      "state": "SEED",
+      "source": "HUMAN_SEED",
+      "domain": "research"
+    },
+    "seed-spac-e68ef4a134": {
+      "gene_id": "seed-spac-e68ef4a134",
+      "task_class": "Space",
+      "title": "In-Situ Regolith Oxygen Yield",
+      "prompt": "Moonshot: off-world resource abundance. Hypothesis: a molten-regolith electrolysis process yields oxygen above a target rate from a lunar-simulant feedstock. Evidence standard: measured O2 yield vs target, energy-per-kg endpoint. Method: controlled bench protocol, reproducible, materials specified. Literature: cite ISRU studies (verifiable references). Kill criteria: reject below energy-efficiency floor. Safety named. Impact: sustainable off-world presence.",
+      "content_hash": "e68ef4a1343128b8b73e74e2cb03c047043b3feb1812603cfea3ac5b211f7d5f",
+      "state": "SEED",
+      "source": "HUMAN_SEED",
+      "domain": "research"
+    },
+    "seed-neur-418e1acded": {
+      "gene_id": "seed-neur-418e1acded",
+      "task_class": "Neurotech",
+      "title": "Noninvasive BCI Decoding Fidelity",
+      "prompt": "Moonshot: high-bandwidth brain-computer interface. Hypothesis: a decoding model raises noninvasive imagined-speech accuracy above a stated baseline. Evidence standard: held-out decoding accuracy + confidence, chance-corrected. Method: preregistered protocol, cross-subject controls, open code. Literature: cite BCI papers (PubMed DOIs), verifiable only. Kill criteria: reject if not above chance cross-subject. Ethics: consent, neural-data privacy. Impact: communication for locked-in patients.",
+      "content_hash": "418e1acded39fecb15a5ea3a76f6b161db6ab80d3061b03a6837a7c2ee758cb3",
+      "state": "SEED",
+      "source": "HUMAN_SEED",
+      "domain": "research"
+    },
+    "seed-clim-7c28db5041": {
+      "gene_id": "seed-clim-7c28db5041",
+      "task_class": "Climate",
+      "title": "Enhanced Weathering CO2 Drawdown",
+      "prompt": "Moonshot: gigaton carbon removal (grand challenge). Hypothesis: basalt enhanced weathering removes CO2 above a measured rate per hectare vs control plots. Evidence standard: net CDR with uncertainty, MRV endpoint. Method: field controls, reproducible, open data. Literature: cite weathering studies (DOIs). Kill criteria: reject if net-negative after energy accounting. Ethics/eco-safety. Impact: durable carbon removal.",
+      "content_hash": "7c28db5041692179f3a8d84903e4ef50da44675ad1251ed08024683b0ea31808",
+      "state": "SEED",
+      "source": "HUMAN_SEED",
+      "domain": "research"
+    },
+    "seed-synt-4cf66e1557": {
+      "gene_id": "seed-synt-4cf66e1557",
+      "task_class": "Synthetic Biology",
+      "title": "Nitrogen-Fixing Cereal Symbiosis",
+      "prompt": "Moonshot: end synthetic-fertilizer dependence. Hypothesis: an engineered associative symbiosis raises fixed-nitrogen uptake in a cereal above baseline. Evidence standard: N-uptake delta, yield endpoint, containment metric. Method: controlled greenhouse protocol, reproducible. Literature: cite diazotroph work (verifiable DOIs). Kill criteria: reject on horizontal-gene escape. Biosafety/dual-use reviewed. Impact: food abundance, emissions cut.",
+      "content_hash": "4cf66e15573957fc222752ea567f3071c002fda205365159c0842678a0aba78f",
+      "state": "SEED",
+      "source": "HUMAN_SEED",
+      "domain": "research"
+    }
+  }
+}

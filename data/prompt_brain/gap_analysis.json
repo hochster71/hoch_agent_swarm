@@ -10,13 +10,13 @@
     "champion_classes": 26,
     "total_genes": 461,
     "top5_share": 0.627,
-    "mean_champion_score": 64.615,
-    "generation": 12,
+    "mean_champion_score": 67.019,
+    "generation": 13,
     "state": "IMPROVING"
   },
   "by_constraint": {
-    "SATURATED": 6,
-    "LOW_CEILING": 15,
+    "SATURATED": 7,
+    "LOW_CEILING": 14,
     "THIN_POOL": 7,
     "NO_CHAMPION": 2
   },
@@ -88,28 +88,10 @@
   ],
   "low_ceiling_classes": [
     {
-      "class": "Security Architecture",
-      "genes": 18,
-      "has_champion": true,
-      "score": 45.0,
-      "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
       "class": "Supply Chain",
       "genes": 6,
       "has_champion": true,
       "score": 45.0,
-      "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
-      "class": "Privacy",
-      "genes": 6,
-      "has_champion": true,
-      "score": 47.5,
       "state": "VERIFIED_ON_HELDOUT",
       "constraint": "LOW_CEILING",
       "pool_deficit": 0
@@ -142,15 +124,6 @@
       "pool_deficit": 0
     },
     {
-      "class": "DevSecOps",
-      "genes": 58,
-      "has_champion": true,
-      "score": 62.5,
-      "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
       "class": "Governance / Compliance",
       "genes": 50,
       "has_champion": true,
@@ -162,15 +135,6 @@
     {
       "class": "Infrastructure & Hardware",
       "genes": 7,
-      "has_champion": true,
-      "score": 62.5,
-      "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
-      "class": "Operations",
-      "genes": 41,
       "has_champion": true,
       "score": 62.5,
       "state": "VERIFIED_ON_HELDOUT",
@@ -205,6 +169,24 @@
       "pool_deficit": 0
     },
     {
+      "class": "Operations",
+      "genes": 41,
+      "has_champion": true,
+      "score": 67.5,
+      "state": "GENERATED_AND_JUDGED",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Privacy",
+      "genes": 6,
+      "has_champion": true,
+      "score": 67.5,
+      "state": "GENERATED_AND_JUDGED",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
       "class": "SAST",
       "genes": 6,
       "has_champion": true,
@@ -216,6 +198,15 @@
     {
       "class": "SDLC Governance",
       "genes": 8,
+      "has_champion": true,
+      "score": 67.5,
+      "state": "GENERATED_AND_JUDGED",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Security Architecture",
+      "genes": 18,
       "has_champion": true,
       "score": 67.5,
       "state": "GENERATED_AND_JUDGED",
@@ -278,28 +269,10 @@
       "pool_deficit": 0
     },
     {
-      "class": "Security Architecture",
-      "genes": 18,
-      "has_champion": true,
-      "score": 45.0,
-      "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
       "class": "Supply Chain",
       "genes": 6,
       "has_champion": true,
       "score": 45.0,
-      "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
-      "class": "Privacy",
-      "genes": 6,
-      "has_champion": true,
-      "score": 47.5,
       "state": "VERIFIED_ON_HELDOUT",
       "constraint": "LOW_CEILING",
       "pool_deficit": 0
@@ -350,15 +323,6 @@
       "pool_deficit": 0
     },
     {
-      "class": "DevSecOps",
-      "genes": 58,
-      "has_champion": true,
-      "score": 62.5,
-      "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
       "class": "Governance / Compliance",
       "genes": 50,
       "has_champion": true,
@@ -370,15 +334,6 @@
     {
       "class": "Infrastructure & Hardware",
       "genes": 7,
-      "has_champion": true,
-      "score": 62.5,
-      "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
-      "class": "Operations",
-      "genes": 41,
       "has_champion": true,
       "score": 62.5,
       "state": "VERIFIED_ON_HELDOUT",
@@ -422,6 +377,24 @@
       "pool_deficit": 0
     },
     {
+      "class": "Operations",
+      "genes": 41,
+      "has_champion": true,
+      "score": 67.5,
+      "state": "GENERATED_AND_JUDGED",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Privacy",
+      "genes": 6,
+      "has_champion": true,
+      "score": 67.5,
+      "state": "GENERATED_AND_JUDGED",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
       "class": "SAST",
       "genes": 6,
       "has_champion": true,
@@ -433,6 +406,15 @@
     {
       "class": "SDLC Governance",
       "genes": 8,
+      "has_champion": true,
+      "score": 67.5,
+      "state": "GENERATED_AND_JUDGED",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Security Architecture",
+      "genes": 18,
       "has_champion": true,
       "score": 67.5,
       "state": "GENERATED_AND_JUDGED",
@@ -483,6 +465,15 @@
       "state": "GENERATED_AND_JUDGED",
       "constraint": "THIN_POOL",
       "pool_deficit": 3
+    },
+    {
+      "class": "DevSecOps",
+      "genes": 58,
+      "has_champion": true,
+      "score": 77.5,
+      "state": "GENERATED_AND_JUDGED",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
     },
     {
       "class": "Self-Healing",

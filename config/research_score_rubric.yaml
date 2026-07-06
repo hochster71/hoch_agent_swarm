@@ -1,0 +1,36 @@
+# HRF research rubric — dimensions a MECHANICAL PROXY can detect in a research *agenda/protocol*.
+# Measures whether a research gene is RIGOROUS and moonshot-ambitious, NOT whether a finding is
+# true — truth needs execution + citation verification against real sources (PubMed/bioRxiv/trials).
+# citation_verifiability is weighted high because it is HRF's anti-hallucination governance gate:
+# in research, fabricated citations and invented results are the deadly failure mode.
+dimensions:
+  testable_hypothesis:
+    weight: 0.15
+    description: "Is there a clear, specific, falsifiable hypothesis (not a vague topic)?"
+  evidence_standard:
+    weight: 0.13
+    description: "Are the measurable endpoints / what would confirm or refute stated up front?"
+  citation_verifiability:
+    weight: 0.12
+    description: "Does it require claims to cite VERIFIABLE sources (real papers/trials), not assertions?"
+  method_rigor:
+    weight: 0.12
+    description: "Is the methodology / experimental design specified (controls, sample, procedure)?"
+  literature_grounding:
+    weight: 0.12
+    description: "Is it grounded in prior work / a literature review / known baselines?"
+  moonshot_ambition:
+    weight: 0.12
+    description: "Is it 10x / grand-challenge framed (abundance, longevity, energy, space, AI), not incremental?"
+  reproducibility:
+    weight: 0.08
+    description: "Is the protocol reproducible — data/code/materials availability named?"
+  falsifiability_kill_criteria:
+    weight: 0.06
+    description: "Are explicit failure / kill criteria defined (when to stop or reject)?"
+  ethics_safety:
+    weight: 0.05
+    description: "Are ethics, safety, dual-use, or IRB considerations named where relevant?"
+  impact_alignment:
+    weight: 0.05
+    description: "Is the outcome tied to a concrete grand-challenge impact / who benefits?"
