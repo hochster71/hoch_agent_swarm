@@ -1,0 +1,118 @@
+{
+  "schema": "brain-convergence-gene-pool-m0",
+  "domain": "music",
+  "count": 10,
+  "class_sizes": {
+    "Lo-Fi Hip-Hop": 2,
+    "Ambient": 2,
+    "Deep House": 1,
+    "Melodic Techno": 1,
+    "Drum & Bass": 1,
+    "Synthwave": 1,
+    "Cinematic Score": 1,
+    "Afrobeats": 1
+  },
+  "task_classes": 8,
+  "genes": {
+    "seed-lo-f-1113d93381": {
+      "gene_id": "seed-lo-f-1113d93381",
+      "task_class": "Lo-Fi Hip-Hop",
+      "title": "Rainy Study Loop",
+      "prompt": "Genre: lo-fi hip-hop, dusty boom-bap feel (style of the genre, not any named artist). Structure: intro (4 bars) \u2192 main loop A (verse) \u2192 variation B (chorus) \u2192 bridge with filter sweep \u2192 outro tape-stop. Hook: a 4-note Rhodes motif is the memorable center. Originality: original composition, royalty-free/cleared samples only, no sampling of any named recording. Instrumentation: Rhodes piano, upright bass, vinyl-crackle drums, soft 808, brush snare, pads. Tempo/key: 82 BPM, key of F minor, 4/4 swing groove. Mix/master: warm, target -14 LUFS, gentle sidechain, mono-safe bass, stereo pads. Arc: low energy build, small lift into B, resolve. Metadata: title, mood tags (calm, nostalgic), duration ~2:30. QC: A/B reference-check mix before render is accepted.",
+      "content_hash": "1113d93381927f5620cdf0ac803244aab24d0769bf29555b8a73b656a65378fb",
+      "state": "SEED",
+      "source": "HUMAN_SEED",
+      "domain": "music"
+    },
+    "seed-lo-f-3218f5612d": {
+      "gene_id": "seed-lo-f-3218f5612d",
+      "task_class": "Lo-Fi Hip-Hop",
+      "title": "Late Night Walk",
+      "prompt": "Genre: lo-fi hip-hop, jazzy late-night feel. Structure: intro \u2192 loop A \u2192 loop B (chorus lift) \u2192 outro. Hook: muted trumpet topline motif. Originality: original, cleared sources only. Instrumentation: muted trumpet, Rhodes, sub bass, lo-fi drums, rain foley. Tempo/key: 75 BPM, key of D minor, 4/4. Mix/master: -14 LUFS, warm EQ, tape saturation. Arc: steady, gentle swell. Metadata: title, mood (mellow), ~2:10. QC: mix check before render.",
+      "content_hash": "3218f5612d770afb33b50783043746d21278b94a9e310448a02506c98bec1f6e",
+      "state": "SEED",
+      "source": "HUMAN_SEED",
+      "domain": "music"
+    },
+    "seed-deep-727ae6adea": {
+      "gene_id": "seed-deep-727ae6adea",
+      "task_class": "Deep House",
+      "title": "Sunset Terrace",
+      "prompt": "Genre: deep house, organic/melodic (genre style only). Structure: intro \u2192 build \u2192 drop A (chorus) \u2192 breakdown (bridge) \u2192 drop B \u2192 outro. Hook: plucked synth topline riff. Originality: original composition, no clone of any named artist, cleared one-shots. Instrumentation: deep sub bass, analog pads, plucked synth, shaker, congas, filtered vocal chops. Tempo/key: 122 BPM, A minor, 4/4 four-on-the-floor. Mix/master: club-ready -8 LUFS, wide stereo pads, mono bass, sidechain compression. Arc: build tension \u2192 release on drop. Metadata: title, tags (warm, groovy), ~3:30. QC: reference A/B against a deep-house loudness target.",
+      "content_hash": "727ae6adeac7e4436a5c8649d3757eabdf1808bb4651a98fafa0244744e8c8c5",
+      "state": "SEED",
+      "source": "HUMAN_SEED",
+      "domain": "music"
+    },
+    "seed-melo-60ec91efd3": {
+      "gene_id": "seed-melo-60ec91efd3",
+      "task_class": "Melodic Techno",
+      "title": "Aurora Drive",
+      "prompt": "Genre: melodic techno, hypnotic. Structure: intro \u2192 rolling groove \u2192 breakdown build \u2192 drop \u2192 outro. Hook: arpeggiated lead motif. Originality: original, copyright-safe, no named-artist imitation. Instrumentation: driving bass, analog arps, atmospheric pads, rimshot, noise riser. Tempo/key: 124 BPM, F# minor, 4/4. Mix/master: -8 LUFS, controlled low end, wide reverb tails. Arc: slow hypnotic build, energy peak at drop. Metadata: title, mood (driving, cosmic), ~4:00. QC: mix check before render.",
+      "content_hash": "60ec91efd3947563735ab9bdcebfdfaf4d0d8cf6a992d9220e24eab0f0e01a91",
+      "state": "SEED",
+      "source": "HUMAN_SEED",
+      "domain": "music"
+    },
+    "seed-ambi-db7bb85622": {
+      "gene_id": "seed-ambi-db7bb85622",
+      "task_class": "Ambient",
+      "title": "Glacier Fields",
+      "prompt": "Genre: ambient, cinematic drone (style of the genre). Structure: evolving single movement with intro swell \u2192 dense mid \u2192 sparse outro (no beat). Hook: a recurring bell motif surfaces. Originality: original, cleared field recordings only. Instrumentation: granular pads, soft bells, sub drone, processed field recordings. Tempo/key: rubato, key of C major, no strict meter. Mix/master: spacious, -16 LUFS, wide stereo, gentle high shelf. Arc: slow swell and decay. Metadata: title, mood (serene), ~5:00. QC: reference listen for masking before render.",
+      "content_hash": "db7bb85622c9522c26fea4c6c61fa330aeb83911fff3e75da07fa9536daf5f5d",
+      "state": "SEED",
+      "source": "HUMAN_SEED",
+      "domain": "music"
+    },
+    "seed-ambi-3fc48abab9": {
+      "gene_id": "seed-ambi-3fc48abab9",
+      "task_class": "Ambient",
+      "title": "Signal Rain",
+      "prompt": "Genre: ambient textural. Structure: drone bed \u2192 texture layer \u2192 resolve. Hook: filtered pad motif. Originality: original, no sampling of named works. Instrumentation: pads, tape noise, sub. Tempo/key: free, D major. Mix/master: -16 LUFS, wide. Arc: gradual. Metadata: title, mood (hazy), ~4:20. QC: A/B check.",
+      "content_hash": "3fc48abab91a0f494c2c587ddf55f19fbad6cadce18b9ad90f4a9b8921bcc828",
+      "state": "SEED",
+      "source": "HUMAN_SEED",
+      "domain": "music"
+    },
+    "seed-drum-215370dd4a": {
+      "gene_id": "seed-drum-215370dd4a",
+      "task_class": "Drum & Bass",
+      "title": "Neon Current",
+      "prompt": "Genre: liquid drum & bass. Structure: intro \u2192 drop A (chorus) \u2192 breakdown \u2192 drop B \u2192 outro. Hook: vocal-chop topline. Originality: original, cleared sources, no named-artist clone. Instrumentation: reese bass, chopped breaks, lush pads, piano stabs. Tempo/key: 174 BPM, G minor, 4/4. Mix/master: -8 LUFS, tight low end, wide reverb. Arc: energetic, rolling. Metadata: title, mood (uplifting), ~3:40. QC: reference A/B before render.",
+      "content_hash": "215370dd4a728fa0511219143dbe848f198a63ab04386b07f7d4a42a6c94c0c8",
+      "state": "SEED",
+      "source": "HUMAN_SEED",
+      "domain": "music"
+    },
+    "seed-synt-7c9b3cb7c7": {
+      "gene_id": "seed-synt-7c9b3cb7c7",
+      "task_class": "Synthwave",
+      "title": "Midnight Highway",
+      "prompt": "Genre: synthwave / retrowave. Structure: intro \u2192 verse \u2192 chorus \u2192 bridge \u2192 chorus \u2192 outro. Hook: analog lead melody. Originality: original, no clone of named artists, cleared samples. Instrumentation: gated drums, analog bass, saw leads, lush pads, arps. Tempo/key: 100 BPM, E minor, 4/4. Mix/master: -10 LUFS, wide chorus, retro reverb. Arc: nostalgic build to big chorus. Metadata: title, mood (retro, driving), ~3:20. QC: mix check.",
+      "content_hash": "7c9b3cb7c78ea514fca9fddfc4668fc0776083a130a74b90cdce0c7982297545",
+      "state": "SEED",
+      "source": "HUMAN_SEED",
+      "domain": "music"
+    },
+    "seed-cine-1e5a676f00": {
+      "gene_id": "seed-cine-1e5a676f00",
+      "task_class": "Cinematic Score",
+      "title": "Rising Tide",
+      "prompt": "Genre: cinematic orchestral hybrid. Structure: intro \u2192 theme statement \u2192 development \u2192 climax \u2192 resolution. Hook: a string/brass main theme motif. Originality: original composition, no borrowed themes, cleared libraries. Instrumentation: strings, brass, hybrid percussion, piano, sub boom. Tempo/key: 90 BPM, D minor, 4/4. Mix/master: wide orchestral image, -16 LUFS, dynamic range preserved. Arc: slow build to a climactic peak, then resolve. Metadata: title, mood (epic, hopeful), ~2:45. QC: reference A/B for dynamics before render.",
+      "content_hash": "1e5a676f002f327f8b4be0668cf31658dc1d1fd6f4c8f3c11ab1bb29002707f2",
+      "state": "SEED",
+      "source": "HUMAN_SEED",
+      "domain": "music"
+    },
+    "seed-afro-0832fb8956": {
+      "gene_id": "seed-afro-0832fb8956",
+      "task_class": "Afrobeats",
+      "title": "Lagos Morning",
+      "prompt": "Genre: afrobeats/afropop. Structure: intro \u2192 verse \u2192 chorus (hook) \u2192 verse \u2192 chorus \u2192 outro. Hook: call-and-response topline. Originality: original, cleared percussion one-shots, no named-artist imitation. Instrumentation: log drum, shakers, plucked guitar, marimba, sub bass. Tempo/key: 105 BPM, A major, 4/4. Mix/master: punchy -8 LUFS, mono bass, bright top. Arc: groovy, steady lift into chorus. Metadata: title, mood (sunny, danceable), ~3:10. QC: A/B reference before render.",
+      "content_hash": "0832fb8956bb46fc9a3a7f1871cfefcb27a88b28d9e478a0ea79717ff5965b4b",
+      "state": "SEED",
+      "source": "HUMAN_SEED",
+      "domain": "music"
+    }
+  }
+}

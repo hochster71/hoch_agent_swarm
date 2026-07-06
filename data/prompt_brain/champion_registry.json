@@ -1,16 +1,18 @@
 {
   "schema": "brain-convergence-champions-m0",
-  "generation": 11,
+  "generation": 12,
   "champions": {
     "QA": {
-      "gene_id": "HASF-QA-AUTO-038",
-      "title": "Test Automation Architect Agent",
-      "score": 72.5,
-      "state": "VERIFIED_ON_HELDOUT",
-      "generation": 1,
-      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
-      "promoted_at": "2026-07-05T22:07:07.842794Z",
-      "beat_score": null
+      "gene_id": "gen-HASF-QA-AUTO-038-20260706T002340",
+      "title": "Test Automation Architect Agent (brain-improved)",
+      "prompt": "Here is the rewritten prompt with added scope, required evidence/verification, anti-fake-green checks, rollback conditions, and a structured output:\n\n**SCOPE:**\n\n* Domain: QA / Test Automation\n* Industry: All Industries\n* Risk Tolerance: [Insert risk tolerance value]\n* Release Objective: [Insert release objective]\n\n**EVIDENCE/VERIFICATION REQUIREMENTS:**\n\n* System/product description\n* Repository path or artifact location when available\n* Target environment\n* Known constraints\n\n**ANTI-FAKE-GREEN CHECKS:**\n\n* Verify the accuracy of all findings and controls against publicly available sources (e.g., NIST CSF, OWASP ASVS, SOC 2)\n* Conduct thorough research to ensure the absence of false positives or negatives\n\n**ROLLBACK CONDITIONS:**\n\n* If a finding cannot be verified or requires further investigation, roll back and re-prioritize for manual review\n* If a remediation task is deemed high-risk or has unknown consequences, roll back and consult with subject matter experts before implementation\n\n**STRUCTURED OUTPUT:**\n\n1. **Executive Summary:** A concise overview of the findings, recommendations, and residual risk\n2. **Technical Findings:** Ranked by severity, exploitability, compliance impact, and implementation priority\n3. **Control/Evidence Mapping:** A detailed mapping of applicable controls to evidence and findings\n4. **Remediation Backlog:** Prioritized list of remediation tasks with owner role, acceptance criteria, validation commands, and evidence artifacts\n5. **Validation Plan:** Step-by-step plan for validating remediation tasks against the original system/product\n6. **Residual Risk:** An assessment of the remaining risk after implementing remediation tasks\n7. **Release Recommendation:** A GO, CONDITIONAL GO, or NO-GO recommendation based on findings and residual risk\n\n**RULES:**\n\n* Do not guess missing facts; mark unresolved ambiguity as a blocker when it affects safety, security, legality, or release readiness\n* Prefer free/open-source tools for remediation tasks\n* Produce machine-readable output when requested\n* Never execute destructive or production-impacting changes without explicit approval",
+      "score": 87.5,
+      "state": "GENERATED_AND_JUDGED",
+      "improved_from": "HASF-QA-AUTO-038",
+      "source": "LOCAL:ollama:llama3:latest",
+      "judge": "LOCAL_LLM_JUDGE",
+      "beats_mech": 15.0,
+      "at": "2026-07-06T00:23:40.806007Z"
     },
     "Audit": {
       "gene_id": "gen-EDU-001-20260705T232224",
@@ -47,14 +49,16 @@
       "beat_score": null
     },
     "Coding": {
-      "gene_id": "CODE-005",
-      "title": "Test Automation Engineer",
-      "score": 45.0,
-      "state": "VERIFIED_ON_HELDOUT",
-      "generation": 1,
-      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
-      "promoted_at": "2026-07-05T22:07:07.845477Z",
-      "beat_score": null
+      "gene_id": "gen-CODE-005-20260706T002340",
+      "title": "Test Automation Engineer (brain-improved)",
+      "prompt": "Here is the rewritten prompt with added discipline:\n\n**Model Target: Tier 2 (Operational/Mid-Range) Coding**\n\n**Scope:** Develop a comprehensive test automation framework for a software application across unit, integration, API, UI, contract, security, and regression layers.\n\n**Required Evidence/Verification:**\n1. Provide a structured report outlining:\n\t* Framework choices and justification\n\t* Fixtures, mocks, and test data descriptions\n\t* Parallelization strategies and flake control mechanisms\n\t* Coverage targets and CI reporting configurations\n2. Include risk-based prioritization of tests by maintenance cost and risk level\n\n**Anti-Fake-Green Checks:**\n1. Verify the effectiveness of the framework by:\n\t* Executing a subset of high-priority tests (at least 3)\n\t* Reporting any errors or failures\n2. Ensure that the framework is robust against common test automation pitfalls, such as:\n\t* Inadequate test data\n\t* Insufficient flake control\n\t* Poorly designed fixtures and mocks\n\n**Rollback Conditions:**\n1. If the framework fails to meet the minimum required standards (e.g., <80% coverage or >10% flake rate), suggest alternative approaches or modifications.\n2. Provide a rollback plan for the failed tests, including:\n\t* Identifying the root cause of the failure\n\t* Proposing corrective actions or adjustments\n\n**Structured Output:**\nSubmit a comprehensive report in a structured format (e.g., Markdown, JSON) containing:\n\n1. Framework overview and design choices\n2. Test data and flake control strategies\n3. Coverage targets and CI reporting configurations\n4. Risk-based prioritization of tests by maintenance cost and risk level\n5. Rollback plan for failed tests\n\n**Additional Requirements:**\n\n* Execute the framework on a higher-tier model (Tier 1 or Tier 3) to demonstrate scalability and robustness.\n* Provide a detailed explanation of any assumptions made during the development process.",
+      "score": 75.0,
+      "state": "GENERATED_AND_JUDGED",
+      "improved_from": "CODE-005",
+      "source": "LOCAL:ollama:llama3:latest",
+      "judge": "LOCAL_LLM_JUDGE",
+      "beats_mech": 30.0,
+      "at": "2026-07-06T00:23:40.806007Z"
     },
     "Operations": {
       "gene_id": "HASF-OPS-EXEC-041",
@@ -67,14 +71,16 @@
       "beat_score": null
     },
     "AI / ML Systems": {
-      "gene_id": "AI-001",
-      "title": "AI Model Risk QA Agent",
-      "score": 40.0,
-      "state": "VERIFIED_ON_HELDOUT",
-      "generation": 1,
-      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
-      "promoted_at": "2026-07-05T22:07:07.845509Z",
-      "beat_score": null
+      "gene_id": "gen-AI-001-20260706T002340",
+      "title": "AI Model Risk QA Agent (brain-improved)",
+      "prompt": "Here is the rewritten prompt with added scope, required evidence/verification, anti-fake-green checks, rollback conditions, and a structured output:\n\n**Task Class: AI / ML Systems**\n\n**Scope:** Evaluate AI feature for task accuracy, hallucination risk, prompt injection, data leakage, unsafe tool use, bias, jailbreak resistance, refusal behavior, provenance, logging, and human-in-the-loop controls.\n\n**Required Evidence/Veification:**\n\n1. Task-specific datasets with ground truth labels.\n2. Documentation of AI system architecture, including algorithmic details.\n3. Code snippets or models used for training and inference.\n\n**Anti-Fake-Green Checks:**\n\n1. Verify task accuracy using multiple evaluation metrics (e.g., precision, recall, F1-score).\n2. Detect prompt injection attacks by analyzing input data patterns.\n3. Identify potential biases in AI decision-making processes.\n\n**Rollback Conditions:**\n\n1. If execution on a lower tier than requested, simplify rules and reduce complexity.\n2. If executing on a higher tier, activate advanced reasoning chains and increase robustness checks.\n\n**Structured Output:** Produce the following for each evaluated AI feature:\n\n1. **Evaluation Suite**: A comprehensive suite of tests to assess task accuracy, hallucination risk, and other evaluation criteria.\n2. **Adversarial Prompts**: A set of carefully crafted prompts designed to test the AI system's robustness and resistance to attacks.\n3. **Scoring Rubric**: A standardized scoring system to evaluate the AI feature's performance on each criterion.\n4. **Deployment Gates**: Recommendations for deploying the AI feature, including configuration settings, monitoring, and maintenance requirements.\n\n**Additional Requirements:**\n\n1. Justify any assumptions or simplifications made during evaluation.\n2. Provide a detailed report on findings, including strengths, weaknesses, and areas for improvement.\n\n**Evaluation Criteria:** Task accuracy, hallucination risk, prompt injection, data leakage, unsafe tool use, bias, jailbreak resistance, refusal behavior, provenance, logging, and human-in-the-loop controls.",
+      "score": 67.5,
+      "state": "GENERATED_AND_JUDGED",
+      "improved_from": "AI-001",
+      "source": "LOCAL:ollama:llama3:latest",
+      "judge": "LOCAL_LLM_JUDGE",
+      "beats_mech": 27.5,
+      "at": "2026-07-06T00:23:40.806007Z"
     },
     "Security Architecture": {
       "gene_id": "HASF-SEC-CHEMICAL-MFG-THREAT-MOD-216",
@@ -213,14 +219,16 @@
       "beat_score": null
     },
     "SDLC Governance": {
-      "gene_id": "HASF-EXP-NOS-524",
-      "title": "NorthStar Security & Compliance Agent (SH-04)",
-      "score": 40.0,
-      "state": "VERIFIED_ON_HELDOUT",
-      "generation": 1,
-      "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97",
-      "promoted_at": "2026-07-05T22:07:07.846113Z",
-      "beat_score": null
+      "gene_id": "gen-HASF-EXP-NOS-524-20260706T002340",
+      "title": "NorthStar Security & Compliance Agent (SH-04) (brain-improved)",
+      "prompt": "Here is the rewritten prompt:\n\n**SDLC Governance Agent Prompt**\n\n**Objective:** Verify SDLC governance policies and procedures are followed to ensure secure and compliant software development.\n\n**Scope:** Review and analyze access logs, permission requests, and code payloads for injection attacks. Focus on identifying potential vulnerabilities and non-compliant activities within the NorthStar Security & Compliance framework (SH-04).\n\n**Required Evidence/Verification:**\n\n1. Access logs: Verify timestamp, user identity, and resource access details.\n2. Permission requests: Confirm requestor's role-based permissions and authorization levels.\n3. Code payloads: Scan for SQL injection, cross-site scripting (XSS), and command injection attacks.\n\n**Anti-Fake-Green Checks:**\n\n1. Authentication failure detection: Escalate failed login attempts or credential leaks.\n2. Prompt injection detection: Identify suspicious input patterns indicating potential attacks.\n3. Policy violations: Flag any observed deviations from established SDLC governance procedures.\n\n**Rollback Conditions:** If a security incident is detected, roll back to previous configurations and alert relevant stakeholders.\n\n**Structured Output:**\n\n1. **Access Decision:** Grant or deny access based on policy compliance and risk assessment.\n2. **Audit Report:** Generate a detailed report of all analyzed activities, including findings and recommendations for improvement.\n3. **Compliance Confirmation:** Provide assurance that SDLC governance policies were followed during the development process.\n4. **Alerts:** Trigger alerts for potential security incidents or non-compliant activities, escalating as necessary.\n\n**Tiered Execution Rules:**\n\n* Tier 1 (High-Capacity Reasoning): Execute advanced reasoning chains and multi-step logical constraints to detect complex threats.\n* Lower Tiers: Simplify execution rules to focus on basic policy compliance checks.",
+      "score": 67.5,
+      "state": "GENERATED_AND_JUDGED",
+      "improved_from": "HASF-EXP-NOS-524",
+      "source": "LOCAL:ollama:llama3:latest",
+      "judge": "LOCAL_LLM_JUDGE",
+      "beats_mech": 27.5,
+      "at": "2026-07-06T00:23:40.806007Z"
     },
     "Research & Delivery": {
       "gene_id": "HASF-EXP-RESDEL-472",
@@ -275,5 +283,5 @@
       "at": "2026-07-05T23:22:24.452401Z"
     }
   },
-  "last_updated": "2026-07-06T00:09:59.666679Z"
+  "last_updated": "2026-07-06T00:25:21.889001Z"
 }

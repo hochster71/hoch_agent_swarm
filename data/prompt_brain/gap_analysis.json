@@ -8,91 +8,20 @@
   "totals": {
     "gene_classes": 30,
     "champion_classes": 26,
-    "total_genes": 427,
-    "top5_share": 0.677,
-    "mean_champion_score": 60.769,
-    "generation": 11,
-    "state": "STALLED_NO_IMPROVER"
+    "total_genes": 461,
+    "top5_share": 0.627,
+    "mean_champion_score": 64.615,
+    "generation": 12,
+    "state": "IMPROVING"
   },
   "by_constraint": {
-    "SATURATED": 5,
-    "LOW_CEILING": 10,
-    "THIN_POOL": 15
+    "SATURATED": 6,
+    "LOW_CEILING": 15,
+    "THIN_POOL": 7,
+    "NO_CHAMPION": 2
   },
-  "expansion_needed_genes": 52,
+  "expansion_needed_genes": 18,
   "thin_classes": [
-    {
-      "class": "Legal / Compliance",
-      "genes": 1,
-      "has_champion": false,
-      "score": null,
-      "state": null,
-      "constraint": "THIN_POOL",
-      "pool_deficit": 5
-    },
-    {
-      "class": "UX Security",
-      "genes": 1,
-      "has_champion": false,
-      "score": null,
-      "state": null,
-      "constraint": "THIN_POOL",
-      "pool_deficit": 5
-    },
-    {
-      "class": "AI / ML Systems",
-      "genes": 2,
-      "has_champion": true,
-      "score": 40.0,
-      "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "THIN_POOL",
-      "pool_deficit": 4
-    },
-    {
-      "class": "Cloud Security",
-      "genes": 2,
-      "has_champion": true,
-      "score": 57.5,
-      "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "THIN_POOL",
-      "pool_deficit": 4
-    },
-    {
-      "class": "Data Security",
-      "genes": 2,
-      "has_champion": true,
-      "score": 72.5,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "THIN_POOL",
-      "pool_deficit": 4
-    },
-    {
-      "class": "Governance",
-      "genes": 2,
-      "has_champion": true,
-      "score": 67.5,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "THIN_POOL",
-      "pool_deficit": 4
-    },
-    {
-      "class": "Privacy",
-      "genes": 2,
-      "has_champion": true,
-      "score": 47.5,
-      "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "THIN_POOL",
-      "pool_deficit": 4
-    },
-    {
-      "class": "Supply Chain",
-      "genes": 2,
-      "has_champion": true,
-      "score": 45.0,
-      "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "THIN_POOL",
-      "pool_deficit": 4
-    },
     {
       "class": "Vulnerability Management",
       "genes": 2,
@@ -106,8 +35,8 @@
       "class": "Coding",
       "genes": 3,
       "has_champion": true,
-      "score": 45.0,
-      "state": "VERIFIED_ON_HELDOUT",
+      "score": 75.0,
+      "state": "GENERATED_AND_JUDGED",
       "constraint": "THIN_POOL",
       "pool_deficit": 3
     },
@@ -159,15 +88,6 @@
   ],
   "low_ceiling_classes": [
     {
-      "class": "SDLC Governance",
-      "genes": 8,
-      "has_champion": true,
-      "score": 40.0,
-      "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
       "class": "Security Architecture",
       "genes": 18,
       "has_champion": true,
@@ -177,10 +97,37 @@
       "pool_deficit": 0
     },
     {
+      "class": "Supply Chain",
+      "genes": 6,
+      "has_champion": true,
+      "score": 45.0,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Privacy",
+      "genes": 6,
+      "has_champion": true,
+      "score": 47.5,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
       "class": "Industry Specialized",
       "genes": 15,
       "has_champion": true,
       "score": 50.0,
+      "state": "VERIFIED_ON_HELDOUT",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Cloud Security",
+      "genes": 6,
+      "has_champion": true,
+      "score": 57.5,
       "state": "VERIFIED_ON_HELDOUT",
       "constraint": "LOW_CEILING",
       "pool_deficit": 0
@@ -240,8 +187,35 @@
       "pool_deficit": 0
     },
     {
+      "class": "AI / ML Systems",
+      "genes": 6,
+      "has_champion": true,
+      "score": 67.5,
+      "state": "GENERATED_AND_JUDGED",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Governance",
+      "genes": 6,
+      "has_champion": true,
+      "score": 67.5,
+      "state": "GENERATED_AND_JUDGED",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
       "class": "SAST",
       "genes": 6,
+      "has_champion": true,
+      "score": 67.5,
+      "state": "GENERATED_AND_JUDGED",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "SDLC Governance",
+      "genes": 8,
       "has_champion": true,
       "score": 67.5,
       "state": "GENERATED_AND_JUDGED",
@@ -287,48 +261,21 @@
     },
     {
       "class": "Legal / Compliance",
-      "genes": 1,
+      "genes": 6,
       "has_champion": false,
       "score": null,
       "state": null,
-      "constraint": "THIN_POOL",
-      "pool_deficit": 5
-    },
-    {
-      "class": "UX Security",
-      "genes": 1,
-      "has_champion": false,
-      "score": null,
-      "state": null,
-      "constraint": "THIN_POOL",
-      "pool_deficit": 5
-    },
-    {
-      "class": "AI / ML Systems",
-      "genes": 2,
-      "has_champion": true,
-      "score": 40.0,
-      "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "THIN_POOL",
-      "pool_deficit": 4
-    },
-    {
-      "class": "SDLC Governance",
-      "genes": 8,
-      "has_champion": true,
-      "score": 40.0,
-      "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "LOW_CEILING",
+      "constraint": "NO_CHAMPION",
       "pool_deficit": 0
     },
     {
-      "class": "Coding",
-      "genes": 3,
-      "has_champion": true,
-      "score": 45.0,
-      "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "THIN_POOL",
-      "pool_deficit": 3
+      "class": "UX Security",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
     },
     {
       "class": "Security Architecture",
@@ -341,21 +288,21 @@
     },
     {
       "class": "Supply Chain",
-      "genes": 2,
+      "genes": 6,
       "has_champion": true,
       "score": 45.0,
       "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "THIN_POOL",
-      "pool_deficit": 4
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
     },
     {
       "class": "Privacy",
-      "genes": 2,
+      "genes": 6,
       "has_champion": true,
       "score": 47.5,
       "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "THIN_POOL",
-      "pool_deficit": 4
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
     },
     {
       "class": "Industry Specialized",
@@ -377,12 +324,12 @@
     },
     {
       "class": "Cloud Security",
-      "genes": 2,
+      "genes": 6,
       "has_champion": true,
       "score": 57.5,
       "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "THIN_POOL",
-      "pool_deficit": 4
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
     },
     {
       "class": "Vulnerability Management",
@@ -457,17 +404,35 @@
       "pool_deficit": 3
     },
     {
-      "class": "Governance",
-      "genes": 2,
+      "class": "AI / ML Systems",
+      "genes": 6,
       "has_champion": true,
       "score": 67.5,
       "state": "GENERATED_AND_JUDGED",
-      "constraint": "THIN_POOL",
-      "pool_deficit": 4
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Governance",
+      "genes": 6,
+      "has_champion": true,
+      "score": 67.5,
+      "state": "GENERATED_AND_JUDGED",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
     },
     {
       "class": "SAST",
       "genes": 6,
+      "has_champion": true,
+      "score": 67.5,
+      "state": "GENERATED_AND_JUDGED",
+      "constraint": "LOW_CEILING",
+      "pool_deficit": 0
+    },
+    {
+      "class": "SDLC Governance",
+      "genes": 8,
       "has_champion": true,
       "score": 67.5,
       "state": "GENERATED_AND_JUDGED",
@@ -494,19 +459,10 @@
     },
     {
       "class": "Data Security",
-      "genes": 2,
-      "has_champion": true,
-      "score": 72.5,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "THIN_POOL",
-      "pool_deficit": 4
-    },
-    {
-      "class": "QA",
       "genes": 6,
       "has_champion": true,
       "score": 72.5,
-      "state": "VERIFIED_ON_HELDOUT",
+      "state": "GENERATED_AND_JUDGED",
       "constraint": "SATURATED",
       "pool_deficit": 0
     },
@@ -518,6 +474,15 @@
       "state": "GENERATED_AND_JUDGED",
       "constraint": "SATURATED",
       "pool_deficit": 0
+    },
+    {
+      "class": "Coding",
+      "genes": 3,
+      "has_champion": true,
+      "score": 75.0,
+      "state": "GENERATED_AND_JUDGED",
+      "constraint": "THIN_POOL",
+      "pool_deficit": 3
     },
     {
       "class": "Self-Healing",
@@ -536,6 +501,15 @@
       "state": "GENERATED_AND_JUDGED",
       "constraint": "THIN_POOL",
       "pool_deficit": 3
+    },
+    {
+      "class": "QA",
+      "genes": 6,
+      "has_champion": true,
+      "score": 87.5,
+      "state": "GENERATED_AND_JUDGED",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
     }
   ]
 }

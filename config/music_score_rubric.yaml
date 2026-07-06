@@ -1,0 +1,35 @@
+# HMF music rubric — dimensions a MECHANICAL PROXY can detect in a track *recipe/spec*.
+# This measures whether a music gene is production-READY and disciplined, NOT whether the finished
+# audio sounds good — that verdict needs an audio judge or a human A/B listen (see music_scorer.py).
+# Originality is weighted high because it is a HAS governance gate (never clone a named artist).
+dimensions:
+  genre_fidelity:
+    weight: 0.15
+    description: "Is a clear genre/subgenre and stylistic reference (feel, not a named artist) specified?"
+  song_structure:
+    weight: 0.12
+    description: "Are sections defined (intro/verse/chorus/bridge/drop/outro) and an arrangement given?"
+  hook_strength:
+    weight: 0.12
+    description: "Is a hook/topline/motif/riff called out as the memorable center?"
+  originality_declared:
+    weight: 0.12
+    description: "Is originality explicit — no cloning a named artist, cleared/royalty-free sources?"
+  instrumentation:
+    weight: 0.10
+    description: "Is the sound palette/instrumentation specified (synths, drums, bass, etc.)?"
+  rhythm_tempo_key:
+    weight: 0.10
+    description: "Are tempo (BPM), key, and time signature/groove specified?"
+  mix_master_spec:
+    weight: 0.10
+    description: "Is mix/master guidance given (target loudness/LUFS, stereo, EQ, compression, reference)?"
+  emotional_arc:
+    weight: 0.07
+    description: "Is an energy/dynamics arc across the track described (build, tension, release)?"
+  metadata_complete:
+    weight: 0.07
+    description: "Are title, mood tags, and duration target present for distribution?"
+  production_qc:
+    weight: 0.05
+    description: "Is a reference/QA listen-check required before the render is accepted?"

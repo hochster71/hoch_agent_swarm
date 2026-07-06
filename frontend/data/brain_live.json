@@ -1,30 +1,35 @@
 {
-  "ts": "2026-07-06T00:09:59.744054Z",
+  "ts": "2026-07-06T00:25:21.982244Z",
   "live_brain": {
-    "live_brain_available": false,
-    "backend": null,
-    "note": "no local model up \u2014 mechanical-only (start Ollama for live brain)"
+    "live_brain_available": true,
+    "backend": {
+      "kind": "ollama",
+      "base": "http://localhost:11434",
+      "model": "llama3:latest"
+    },
+    "note": "brain can GENERATE at $0"
   },
-  "generation": 11,
-  "genes": 427,
+  "generation": 12,
+  "genes": 461,
   "champions": 26,
-  "mean_score": 60.769,
-  "last_gain": 0.0,
-  "state": "STALLED_NO_IMPROVER",
-  "meta_lever": "IMPROVER_OFFLINE",
-  "meta_reason": "No local model reachable \u2014 only mechanical SELECT can run. Start Ollama to enable EXPAND/IMPROVE (the $0 generate path).",
+  "mean_score": 64.615,
+  "last_gain": 3.846,
+  "state": "IMPROVING",
+  "meta_lever": "EXPAND",
+  "meta_reason": "15 thin pools cap champion quality; need 52 synthetic genes.",
   "global_converged": false,
   "gaps": {
     "by_constraint": {
-      "SATURATED": 5,
-      "LOW_CEILING": 10,
-      "THIN_POOL": 15
+      "SATURATED": 6,
+      "LOW_CEILING": 15,
+      "THIN_POOL": 7,
+      "NO_CHAMPION": 2
     },
-    "thin": 15,
-    "low_ceiling": 10,
+    "thin": 7,
+    "low_ceiling": 15,
     "drift": 3,
-    "expansion_needed_genes": 52,
-    "top5_share": 0.677
+    "expansion_needed_genes": 18,
+    "top5_share": 0.627
   },
   "history": [
     {
@@ -81,9 +86,38 @@
       "g": 11,
       "m": 60.769,
       "gain": 0.0
+    },
+    {
+      "g": 12,
+      "m": 64.615,
+      "gain": 3.846
     }
   ],
   "recent_improvements": [
+    {
+      "task_class": "QA",
+      "beats_mech": 15.0,
+      "score": 87.5,
+      "at": "2026-07-06T00:23:40.806007Z"
+    },
+    {
+      "task_class": "Coding",
+      "beats_mech": 30.0,
+      "score": 75.0,
+      "at": "2026-07-06T00:23:40.806007Z"
+    },
+    {
+      "task_class": "SDLC Governance",
+      "beats_mech": 27.5,
+      "score": 67.5,
+      "at": "2026-07-06T00:23:40.806007Z"
+    },
+    {
+      "task_class": "AI / ML Systems",
+      "beats_mech": 27.5,
+      "score": 67.5,
+      "at": "2026-07-06T00:23:40.806007Z"
+    },
     {
       "task_class": "Governance",
       "beats_mech": 30.0,
@@ -107,21 +141,15 @@
       "beats_mech": 37.5,
       "score": 60.0,
       "at": "2026-07-05T23:22:24.452401Z"
-    },
-    {
-      "task_class": "SAST",
-      "beats_mech": 47.5,
-      "score": 67.5,
-      "at": "2026-07-05T23:22:24.452401Z"
-    },
-    {
-      "task_class": "Audit",
-      "beats_mech": 62.5,
-      "score": 75.0,
-      "at": "2026-07-05T23:22:24.452401Z"
     }
   ],
   "top_champions": [
+    {
+      "cls": "QA",
+      "title": "Test Automation Architect Agent (brain-i",
+      "score": 87.5,
+      "state": "GENERATED_AND_JUDGED"
+    },
     {
       "cls": "Detection Engineering",
       "title": "Detection Coverage Gap Mapper (brain-imp",
@@ -141,22 +169,16 @@
       "state": "GENERATED_AND_JUDGED"
     },
     {
-      "cls": "QA",
-      "title": "Test Automation Architect Agent",
-      "score": 72.5,
-      "state": "VERIFIED_ON_HELDOUT"
+      "cls": "Coding",
+      "title": "Test Automation Engineer (brain-improved",
+      "score": 75.0,
+      "state": "GENERATED_AND_JUDGED"
     },
     {
       "cls": "Data Security",
       "title": "Database Security Agent (brain-improved)",
       "score": 72.5,
       "state": "GENERATED_AND_JUDGED"
-    },
-    {
-      "cls": "Cybersecurity",
-      "title": "Incident Response Commander Agent (HASF-",
-      "score": 72.5,
-      "state": "VERIFIED_ON_HELDOUT"
     }
   ]
 }
