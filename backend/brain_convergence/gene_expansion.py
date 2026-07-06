@@ -28,6 +28,15 @@ def _hash(text: str) -> str:
     return hashlib.sha256(str(text).strip().encode("utf-8")).hexdigest()
 
 
+def _token_jaccard_similarity(text1: str, text2: str) -> float:
+    import re
+    tokens1 = set(re.findall(r'\w+', text1.lower()))
+    tokens2 = set(re.findall(r'\w+', text2.lower()))
+    if not tokens1 and not tokens2:
+        return 0.0
+    return len(tokens1 & tokens2) / len(tokens1 | tokens2)
+
+
 def expand_class(task_class: str,
                  class_genes: List[Dict[str, Any]],
                  n_target: int,
@@ -36,16 +45,19 @@ def expand_class(task_class: str,
                  existing_hashes: Optional[set] = None,
                  generate_fn: Callable = generate_candidates,
                  judge_fn: Callable = llm_judge,
-                 score_fn: Optional[Callable] = None) -> List[Dict[str, Any]]:
+                 score_fn: Optional[Callable] = None,
+                 max_pool: Optional[int] = None,
+                 return_replaced: bool = False) -> Any:
     """Synthesize up to n_target admitted genes for task_class. Returns list of gene dicts
-    (state=SYNTHETIC_ADMITTED). Injected generate_fn/judge_fn make the gate unit-testable.
+    (state=SYNTHETIC_ADMITTED), or if return_replaced is True, returns tuple of (admitted, replaced_ids).
+    Injected generate_fn/judge_fn make the gate unit-testable.
 
     score_fn lets any Factory drive the gate with ITS OWN domain scorer (software/music/research);
     defaults to the software discipline scorer for backward compatibility."""
     sf = score_fn or score_prompt
     backend = backend if backend is not None else detect_local_backend()
     if not backend or not class_genes or n_target <= 0:
-        return []
+        return ([], []) if return_replaced else []
 
     scored = [(sf(g.get("prompt", ""), rubric_path)["overall"], g) for g in class_genes]
     scored.sort(key=lambda x: x[0])
@@ -59,6 +71,8 @@ def expand_class(task_class: str,
         seen.add(_hash(g.get("prompt", "")))
 
     admitted: List[Dict[str, Any]] = []
+    replaced_ids: List[str] = []
+
     # Over-generate (2x) so the gate can reject and still hope to hit n_target.
     cands = generate_fn(strongest_text, task_class, n=max(2, n_target * 2), backend=backend)
     for c in cands:
@@ -76,8 +90,8 @@ def expand_class(task_class: str,
         judged = judge_fn(backend, weakest_text, text, task_class)  # gate (c): beats weakest
         if judged.get("winner") != "B":
             continue
-        seen.add(h)
-        admitted.append({
+
+        new_gene = {
             "gene_id": f"syn-{task_class[:6].strip().replace(' ', '')}-{h[:12]}",
             "task_class": task_class,
             "title": f"{task_class} synthetic gene",
@@ -87,5 +101,43 @@ def expand_class(task_class: str,
             "source": c.get("source", f"LOCAL:{backend.get('kind')}:{backend.get('model')}"),
             "judge": "LOCAL_LLM_JUDGE",
             "state": "SYNTHETIC_ADMITTED",              # honest label: admitted, not verified
-        })
+        }
+
+        if max_pool is not None and (len(class_genes) + len(admitted) - len(replaced_ids)) >= max_pool:
+            # Run Restricted Tournament Selection (niching)
+            import random
+            current_genes = [g for g in class_genes if g.get("gene_id") not in replaced_ids]
+            current_genes.extend(admitted)
+            if current_genes:
+                window_size = min(4, len(current_genes))
+                subset = random.sample(current_genes, window_size)
+                
+                # Find most similar gene P in the subset to C
+                best_sim = -1.0
+                most_similar_p = None
+                for p in subset:
+                    sim = _token_jaccard_similarity(text, p.get("prompt", ""))
+                    if sim > best_sim:
+                        best_sim = sim
+                        most_similar_p = p
+                
+                if most_similar_p is not None:
+                    # Compare quality
+                    score_c = mech
+                    score_p = sf(most_similar_p.get("prompt", ""), rubric_path)["overall"]
+                    if score_c > score_p:
+                        # Replace P with C
+                        replaced_ids.append(most_similar_p["gene_id"])
+                        seen.add(h)
+                        if most_similar_p.get("content_hash") in seen:
+                            seen.remove(most_similar_p["content_hash"])
+                        admitted.append(new_gene)
+        else:
+            # Normal admission (pool not full)
+            seen.add(h)
+            admitted.append(new_gene)
+
+    if return_replaced:
+        return admitted, replaced_ids
     return admitted
+

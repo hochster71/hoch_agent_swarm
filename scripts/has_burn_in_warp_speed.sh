@@ -136,13 +136,13 @@ watch_loop() {
 # S4. FRONT-LOADED + COMBINATORIAL FAULT INJECTION
 # ============================================================================
 run_injections() {
-  log "=== S4 FRONT-LOADED FAULT INJECTION (fires now) ==="
-  ssh "$REMOTE_HOST" "cd $REPO && python3 scripts/ag_execution_failure_injector.py \
-      --type forced_lease_expiry --combine duplicate_task_insert" 2>&1 | tee -a "$LOCAL_LOG"
-  sleep 5
-  ssh "$REMOTE_HOST" "cd $REPO && python3 scripts/ag_execution_failure_injector.py \
-      --type operator_hold_flip" 2>&1 | tee -a "$LOCAL_LOG"
-  log "Injections fired against LIVE ledger. Recovery must show in burn_in_ledger.jsonl."
+  log "=== S4 FRONT-LOADED FAULT INJECTION (fires now, all 4 real types, sequential) ==="
+  for t in forced_lease_expiry duplicate_task_insert operator_hold_flip blocked_policy_task_insert; do
+    log "-- firing: $t --"
+    ssh "$REMOTE_HOST" "cd $REPO && python3 scripts/ag_execution_failure_injector.py --type $t" 2>&1 | tee -a "$LOCAL_LOG"
+    sleep 8
+  done
+  log "All 4 injection types fired against LIVE ledger. Recovery must show in burn_in_ledger.jsonl for THIS run window."
 }
 
 # ============================================================================
@@ -178,3 +178,34 @@ else:
     print(f"VERDICT: WALL-CLOCK FLOOR MET. (Injection-recovery + ledger checks still required for full GO.)")
 PY
 }
+
+# ============================================================================
+# S6. THE ONLY LEGITIMATE PATH TO ACTUALLY CHANGE THE FLOOR
+# ============================================================================
+show_cm_path() {
+  cat <<'EOF'
+
+To reduce the 24h MINIMUM for FUTURE runs (not this one):
+  1. Raise a Configuration Change Request against ag_execution_burn_in_oracle.json
+  2. Attach a Security Impact Analysis citing N prior clean runs with zero
+     time-dependent failures observed after hour X
+  3. Get CCB (you, as AO) sign-off through the RMF/cATO console's CM module
+  4. Only THEN does min_wall_clock_hours change — for the NEXT run's oracle,
+     never retroactively for a run already in progress.
+This script will not do this automatically. That is intentional.
+EOF
+}
+
+case "${1:-}" in
+  preflight)  preflight ;;
+  arm)        arm_guard ;;
+  watch)      watch_loop ;;
+  inject)     run_injections ;;
+  verdict)    derive_verdict ;;
+  cm-path)    show_cm_path ;;
+  full-cycle) preflight; arm_guard; run_injections; log "Now run '$0 watch' separately, and '$0 verdict' periodically." ;;
+  *)
+    echo "Usage: $0 {preflight|arm|watch|inject|verdict|cm-path|full-cycle}"
+    echo "This script NEVER reports GO before real elapsed time meets the oracle floor."
+    ;;
+esac

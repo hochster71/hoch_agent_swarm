@@ -51,6 +51,7 @@ def run(max_classes: int = 8, per_class_cap: int = 6) -> dict:
 
     ts = _now()
     total_admitted = 0
+    replaced_total = []
     report = []
     for row in thin:
         cls = row["class"]
@@ -58,8 +59,13 @@ def run(max_classes: int = 8, per_class_cap: int = 6) -> dict:
         cls_genes = by_class.get(cls, [])
         if not cls_genes:
             continue
-        admitted = expand_class(cls, cls_genes, n_target=deficit, backend=backend,
-                                rubric_path=RUBRIC, existing_hashes=existing_hashes)
+        admitted, replaced = expand_class(cls, cls_genes, n_target=deficit, backend=backend,
+                                          rubric_path=RUBRIC, existing_hashes=existing_hashes,
+                                          max_pool=10, return_replaced=True)
+        for rid in replaced:
+            if rid in genes:
+                del genes[rid]
+                replaced_total.append(rid)
         for a in admitted:
             genes[a["gene_id"]] = a
             existing_hashes.add(a["content_hash"])
@@ -68,7 +74,7 @@ def run(max_classes: int = 8, per_class_cap: int = 6) -> dict:
         total_admitted += len(admitted)
         report.append((cls, len(admitted), deficit))
 
-    if total_admitted:
+    if total_admitted or replaced_total:
         # recompute class_sizes + count, persist
         sizes = {}
         for g in genes.values():
@@ -79,7 +85,7 @@ def run(max_classes: int = 8, per_class_cap: int = 6) -> dict:
         pool["class_sizes"] = dict(sorted(sizes.items(), key=lambda x: -x[1]))
         GENE_POOL.write_text(json.dumps(pool, indent=2), encoding="utf-8")
 
-    print(f"expand_run: {total_admitted} synthetic genes admitted across {len(report)} thin classes "
+    print(f"expand_run: {total_admitted} synthetic genes admitted ({len(replaced_total)} replaced) across {len(report)} thin classes "
           f"via {backend['model']} | pool now {len(genes)} genes")
     for cls, got, want in report:
         print(f"   {cls}: +{got}/{want}")

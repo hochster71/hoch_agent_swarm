@@ -139,6 +139,11 @@ def build_live_state():
             "safety": f.get("safety", {}),
             "at": f.get("at"),
         } if f else None)(_load(DATA / "fleet_reconcile.json", {})),
+        "buyer_signals": _load(DATA / "outreach" / "buyer_signal_dashboard.json", {}),
+        "reviewer_feedback": _load(DATA / "outreach" / "reviewer_feedback_summary.json", {}),
+        "outreach_gate": _load(DATA / "outreach" / "phase_9_decision_gate.json", {}).get("phase_9_decision_gate", {}),
+        "pilot_tracker": _load(DATA / "pilot" / "pilot_conversion_tracker.json", {}).get("conversion_tracker", {}),
+        "pilot_pipeline": _load(DATA / "pilot" / "paid_pilot_pipeline.json", {}).get("pipeline", []),
         "history": [{"g": h.get("generation"), "m": h.get("mean_score"), "gain": h.get("gain")} for h in hist],
         "recent_improvements": list(reversed(improvements))[:8],
         "top_champions": sorted(

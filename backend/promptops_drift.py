@@ -26,6 +26,8 @@ def analyze_drift(base_dir: Path) -> List[Dict[str, Any]]:
     for p in registry.prompts:
         pid = p["id"]
         required_ev = p.get("evidence_required", [])
+        if not isinstance(required_ev, list):
+            required_ev = []
         
         runs = evidence_by_prompt.get(pid, [])
         runs.sort(key=lambda x: x[0].get("executed_at", ""), reverse=True)

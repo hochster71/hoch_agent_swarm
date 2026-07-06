@@ -25,8 +25,23 @@ def make_splits(by_class: Dict[str, List[str]], ratios: Tuple[float, float, floa
     for cls, gids in by_class.items():
         ordered = sorted(gids, key=lambda g: _rank(g, seed))
         n = len(ordered)
-        n_tr = int(round(n * ratios[0]))
-        n_dev = int(round(n * ratios[1]))
+        if n == 0:
+            n_tr = n_dev = n_ho = 0
+        else:
+            n_ho = max(1, int(round(n * ratios[2])))
+            rem = n - n_ho
+            if rem <= 0:
+                n_tr = 0
+                n_dev = 0
+            elif rem == 1:
+                n_tr = 1
+                n_dev = 0
+            elif rem == 2:
+                n_tr = 1
+                n_dev = 1
+            else:
+                n_dev = max(1, int(round(n * ratios[1])))
+                n_tr = rem - n_dev
         c_tr = ordered[:n_tr]
         c_dev = ordered[n_tr:n_tr + n_dev]
         c_ho = ordered[n_tr + n_dev:]

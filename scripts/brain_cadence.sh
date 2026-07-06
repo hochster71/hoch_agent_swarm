@@ -29,6 +29,9 @@ fi
 
 echo "[$STAMP] brain cadence tick (meta-directed)"
 
+# 0. DISPATCH — autonomously discover and seed new task classes.
+$PY -m backend.brain_convergence.swarm_dispatcher 2>/dev/null | sed 's/^/  /'
+
 # 1. META — decide the highest-leverage lever from the real gap analysis.
 $PY -m backend.brain_convergence.research_meta 2>/dev/null | sed 's/^/  /'
 CHOSEN="$($PY -c "import json;print(json.load(open('data/prompt_brain/research_meta_decision.json'))['chosen_lever'])" 2>/dev/null || echo UNKNOWN)"
@@ -38,10 +41,10 @@ case "$CHOSEN" in
   EXPAND)
     echo "  lever=EXPAND — growing thin pools, then improving"
     $PY -m backend.brain_convergence.expand_run 8 6 2>/dev/null | sed 's/^/    /' || true
-    $PY -m backend.brain_convergence.improve_run 6 2>/dev/null | sed 's/^/    /' || true ;;
+    $PY -m backend.brain_convergence.recursive_optimizer 6 2>/dev/null | sed 's/^/    /' || true ;;
   IMPROVE|SELECT)
-    echo "  lever=$CHOSEN — best-of-N improvement sweep"
-    $PY -m backend.brain_convergence.improve_run 6 2>/dev/null | sed 's/^/    /' || true ;;
+    echo "  lever=$CHOSEN — recursive multi-turn improvement sweep"
+    $PY -m backend.brain_convergence.recursive_optimizer 6 2>/dev/null | sed 's/^/    /' || true ;;
   RECONCILE)
     echo "  lever=RECONCILE — taxonomy merges recommended (operator-confirmed; see decision file)" ;;
   CONVERGED)
