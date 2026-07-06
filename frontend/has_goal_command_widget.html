@@ -142,6 +142,8 @@
     <div class="card founder">
       <h3>⚑ Founder Gates — only Michael clears these</h3>
       <div id="founder"></div>
+      <h3 style="margin-top:14px">Store readiness</h3>
+      <div id="stores" style="font-size:12.5px;color:var(--mut)">—</div>
     </div>
     <div class="card support">
       <h3>◆ Built &amp; verified this campaign</h3>
@@ -248,6 +250,14 @@ function applyLive(d){
   const fgs=d.founder_gate_status||{};
   FOUNDER.forEach(f=>{ if(fgs[f.id]) f.done=true; });
   const kt=TASKS.find(x=>x.wid==='K1'); if(fgs.K1&&kt) kt.s='completed';
+  // live store readiness
+  const st=document.getElementById('stores');
+  if(st){
+    const chip=(label,val)=>{const ok=/CLEARED|ACTIVE|DONE|VERIFIED/i.test(val||'');const sub=/SUBMITTED|STARTED|PENDING/i.test(val||'');
+      const col=ok?'var(--green)':sub?'var(--amber)':'var(--dim)';const mark=ok?'✓':sub?'⏳':'◻';
+      return `<div class="fg"><span>${esc(label)}</span><span style="color:${col};font-weight:700">${mark} ${esc((val||'—').split(' · ')[0])}</span></div>`;};
+    st.innerHTML = chip('Apple App Store', fgs.K2) + chip('Google Play', fgs.GOOGLE_PLAY) + chip('LLM API keys', fgs.K1);
+  }
   window.__fresh=Date.now(); renderStatic();
 }
 

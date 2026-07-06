@@ -1,0 +1,17 @@
+{
+  "schema": "demand-validation-v1",
+  "product": "TBD — name the offer being validated",
+  "updated_at": "",
+  "note": "G1 gate closes on EVIDENCE, not vibes. Log real entries below; run scripts/verify_demand_validation.py.",
+  "thresholds": {"prospects": 10, "discovery_calls": 3, "wtp_signals": 1, "named_buyers": 1},
+  "prospects": [],
+  "discovery_calls": [],
+  "wtp_signals": [],
+  "named_buyers": [],
+  "_entry_shapes": {
+    "prospects": {"name": "", "contact": "", "source": "", "date": ""},
+    "discovery_calls": {"prospect": "", "date": "", "pain": "", "outcome": ""},
+    "wtp_signals": {"prospect": "", "signal": "verbal|LOI|prepay|waitlist-paid", "amount_usd": 0, "date": ""},
+    "named_buyers": {"name": "", "use_case": "", "date": ""}
+  }
+}
