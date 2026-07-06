@@ -262,10 +262,21 @@ def control_plane_status():
         },
     }
 
+    def _safe_load(rel):
+        try:
+            fp = os.path.join(repo, rel)
+            return json.load(open(fp)) if os.path.exists(fp) else None
+        except Exception:
+            return None
+    _goal_loop = _safe_load("frontend/data/goal_runtime_loop_status.json")
+    _fgs = (_safe_load("has_live_project_tracker/data/has_hasf_brain_unified_goal_contract.json") or {}).get("founder_gate_status", {})
+
     return {
         "schema": "control-plane-status-v1",
         "generated_at": datetime.now(timezone.utc).isoformat() + "Z",
         "served_by": "backend/main.py :8000",
+        "goal_loop": _goal_loop,
+        "founder_gate_status": _fgs,
         "pert_source_available": pert_ok,
         "provenance": (
             "projection of :8765 /api/pert/data (authoritative) + per-factory "

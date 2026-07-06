@@ -220,7 +220,9 @@ function drawFlow(){
   svg.innerHTML=s;
 }
 
+let __connLive=false;
 function setConn(live,note){
+  __connLive=live;
   const c=document.getElementById('conn');
   c.className='conn '+(live?'live':'off');
   c.innerHTML=`<i></i>${live?'LIVE':'OFFLINE'}`;
@@ -237,6 +239,16 @@ function applyLive(d){
   document.getElementById('k-block').textContent = (d.blockers&&d.blockers.blocked_task_count!=null)?d.blockers.blocked_task_count:'—';
   const t=d.tests||{}; document.getElementById('k-tests').textContent = (t.passing??'—')+'/'+(t.failing??'—');
   document.getElementById('k-appr').textContent = Array.isArray(d.approvals)?d.approvals.length:'—';
+  // governed loop heartbeat — served via the API (absolute URL, no relative-path fragility)
+  const gl=d.goal_loop, els=document.getElementById('loopstat');
+  if(gl&&gl.updated_at){const age=Math.max(0,Math.round((Date.now()-new Date(gl.updated_at).getTime())/1000));
+    els.textContent=`cycle ${gl.cycle} · ${age}s ago`; els.style.color=age<180?'var(--green)':(age<600?'var(--amber)':'var(--red)');}
+  else{els.textContent='idle'; els.style.color='var(--dim)';}
+  // founder gates cleared -> reflect LIVE in the table + gate list (no more static staleness)
+  const fgs=d.founder_gate_status||{};
+  FOUNDER.forEach(f=>{ if(fgs[f.id]) f.done=true; });
+  const kt=TASKS.find(x=>x.wid==='K1'); if(fgs.K1&&kt) kt.s='completed';
+  window.__fresh=Date.now(); renderStatic();
 }
 
 async function poll(){
@@ -256,6 +268,13 @@ function tick(){
   const el=Math.floor((Date.now()-start)/1000);
   const hh=String(Math.floor(el/3600)).padStart(2,'0'), mm=String(Math.floor(el%3600/60)).padStart(2,'0'), ss=String(el%60).padStart(2,'0');
   document.getElementById('runtime').textContent = `${hh}:${mm}:${ss}`;
+  // ANTI-STALE: always show live-data age; go visibly stale if the feed lags.
+  if(__connLive && window.__fresh){
+    const age=Math.round((Date.now()-window.__fresh)/1000);
+    const c=document.getElementById('conn');
+    if(age>25){ c.className='conn off'; c.innerHTML=`<i></i>STALE · ${age}s`; }
+    else { c.className='conn live'; c.innerHTML=`<i></i>LIVE · ${age}s`; }
+  }
 }
 
 async function pollLoop(){
@@ -269,10 +288,9 @@ async function pollLoop(){
     el.style.color = age<120 ? 'var(--green)' : 'var(--amber)';
   }catch(e){ el.textContent='offline'; el.style.color='var(--dim)'; }
 }
-renderStatic(); tick(); poll(); pollLoop();
+renderStatic(); tick(); poll();
 setInterval(tick,1000);
 setInterval(poll,10000);
-setInterval(pollLoop,10000);
 </script>
 </body>
 </html>
