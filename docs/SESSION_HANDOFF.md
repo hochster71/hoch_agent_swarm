@@ -56,11 +56,13 @@
 - **Fleet = ~45 hoch runtimes** (21 running). See "open threads" — there are competing loops.
 
 ## OPEN THREADS / next moves
-1. **Fleet reconciliation (highest leverage).** Dry-run reconciler is now BUILT (session 2). NEXT:
-   run `python3 scripts/hoch_fleet_reconcile.py` on the Mac to produce the real
-   `data/prompt_brain/fleet_reconcile.json`, review the per-class canonical-owner recommendations, then
-   **operator-approve each T3 `launchctl bootout`** one at a time (nothing is stopped automatically).
-   After that, wire the reconcile output into the live BRAIN feed so the deck panel shows it in real time.
+1. **Fleet reconciliation — RESOLVED (session 2, evidence-backed).** Dry-run reconciler built,
+   deck-wired, live-fed. Ran live on the Mac: **0 real same-file write contention** across all 45
+   runtimes. The one initial flag (`tasks/phase50_tasks.json`) was a detector false positive — both
+   jobs only READ the file; fixed by binding write-detection to the line/variable (was file-level).
+   `--explain <file>` shows per-writer WRITE-vs-read evidence; `--from-audit` is an offline diagnostic
+   that writes a SEPARATE file (never clobbers the live one). Nothing was stopped; no T3 needed. If real
+   contention appears later, the tool now reports it trustworthily and stages inert T3 bootout candidates.
 2. **Epic-fury (first monetized app) — DOWNGRADED from blocker (session 2, evidence-based).** The
    flagged JWTs are public Supabase demo defaults + a public anon key; **0 real HIGH** after decoding
    (verified against the real files with the fixed scanner). No urgent action. Remaining item is a
