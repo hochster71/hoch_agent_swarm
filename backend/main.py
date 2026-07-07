@@ -9563,6 +9563,18 @@ def get_brain_live_state():
         )
 
 
+@app.get("/api/gateway/status")
+def get_gateway_status():
+    """Live status of all model backends — generation-proven, never tags-listing only."""
+    from fastapi.responses import JSONResponse as _J
+    _cors = {"Access-Control-Allow-Origin": "*", "Cache-Control": "no-store"}
+    try:
+        from backend.model_gateway import get_gateway
+        return _J(get_gateway().status(), headers=_cors)
+    except Exception as e:
+        return _J({"error": str(e), "alive_count": 0}, headers=_cors, status_code=500)
+
+
 @app.get("/api/brain/ask")
 def ask_the_brain(q: str = ""):
     """Chat with the BRAIN — grounded, cited, $0. Retrieval over all factory genes/champions/state,
