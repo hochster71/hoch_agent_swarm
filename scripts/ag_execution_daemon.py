@@ -63,9 +63,17 @@ def main():
     host_name = platform.node()
     is_mac = host_os == "Darwin"
     
+    # run_id uniquely identifies THIS daemon process/run. The append-only burn-in ledger
+    # spans many runs (a daemon restart resets the per-run cycle counter to 1), so cycle_ids
+    # alone repeat across runs. Prefixing with run_id keeps every ledger line globally unique
+    # and makes it unambiguous which continuous run a cycle belongs to.
+    _started_dt = get_utc_now()
+    run_id = "run-" + _started_dt.strftime("%Y%m%dT%H%M%SZ")
+
     state = {
         "daemon_status": "RUNNING",
-        "started_at": to_utc_str(get_utc_now()),
+        "run_id": run_id,
+        "started_at": to_utc_str(_started_dt),
         "last_heartbeat": to_utc_str(get_utc_now()),
         "heartbeat_expires_at": to_utc_str(get_utc_now() + datetime.timedelta(seconds=interval * 2.5)),
         "cycle_count": 0,
@@ -224,7 +232,9 @@ def main():
         proof_check = {"COMPLETED": "PASS", "IDLE": "N/A", "FAILED": "FAIL"}.get(cycle_status, "UNVERIFIED")
 
         ledger_entry = {
-            "cycle_id": f"cycle-{cycle:05d}",
+            "run_id": run_id,
+            "cycle_id": f"{run_id}-cycle-{cycle:05d}",
+            "run_cycle": cycle,
             "timestamp": to_utc_str(get_utc_now()),
             "daemon_status": state["daemon_status"],
             "allow_ag_execution": allow_ag,
