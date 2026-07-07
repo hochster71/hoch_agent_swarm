@@ -738,9 +738,15 @@ def get_pert_data():
         except Exception:
             pass
 
+    # percent_goal_complete DERIVED from the task graph (was a hardcoded 80). Counts completed
+    # tasks across the FULL graph including the revenue path (R1-R5), so it measures distance to
+    # MONETIZE, not just internal buildout. No more magic number.
+    _done = sum(1 for t in WORKSTREAMS if t.get("status") == "completed")
+    _pct_goal = round(100.0 * _done / max(1, len(WORKSTREAMS)), 1)
+
     # Load cadence metrics
     metrics = {
-        "percent_goal_complete": 80,
+        "percent_goal_complete": _pct_goal,
         "critical_path_remaining_minutes": pert_cpm["expected_duration"],
         "blocked_task_count": 0,
         "unassigned_task_count": 0,

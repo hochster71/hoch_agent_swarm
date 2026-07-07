@@ -90,6 +90,29 @@ def runtime_invariants() -> dict:
     if shutil.which("pgrep"):
         procs = [l for l in sh("pgrep", "-f", "ollama serve").splitlines() if l.strip()]
         checks["single ollama serve (no duplicate model server)"] = (len(procs) <= 1)
+
+    # STALE-CODE / ORPHAN detection — the root cause of "it never stays". A service whose
+    # listener process STARTED BEFORE the last commit to the file it serves is running old
+    # code (an orphan that survived restarts). Catch it: process_start_epoch < file_commit_epoch.
+    import datetime
+    SERVICE_PORTS = {8000: "backend/main.py", 8765: "backend/pert_server.py"}
+    if shutil.which("lsof") and shutil.which("ps"):
+        for port, served_file in SERVICE_PORTS.items():
+            pids = [p for p in sh("lsof", f"-tiTCP:{port}", "-sTCP:LISTEN").split() if p.strip()]
+            if not pids:
+                continue  # service not running on this host — skip (fail-soft)
+            if len(pids) > 1:
+                checks[f":{port} single listener (no orphan)"] = False
+                continue
+            checks[f":{port} single listener (no orphan)"] = True
+            lstart = sh("ps", "-o", "lstart=", "-p", pids[0]).strip()
+            ct = sh("git", "log", "-1", "--format=%ct", "--", served_file).strip()
+            try:
+                started = datetime.datetime.strptime(lstart, "%a %b %d %H:%M:%S %Y").timestamp()
+                committed = int(ct)
+                checks[f":{port} serving current code (not stale/orphan)"] = started >= committed
+            except Exception:
+                pass  # can't determine — don't false-FAIL
     return checks
 
 
