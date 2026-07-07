@@ -35,7 +35,10 @@ BACKENDS_CONFIG = [
     # LM Studio (gemma-4-12b) discovered live 2026-07-07 — highest local capability.
     {"name": "lmstudio",      "base": "http://127.0.0.1:1234",       "preferred_model": "google/gemma-4-12b-qat", "priority": 1, "api": "openai"},
     {"name": "mac-local",     "base": "http://127.0.0.1:11434",      "preferred_model": "llama3.1:8b",            "priority": 2, "api": "ollama"},
-    {"name": "mac-tailscale", "base": "http://100.103.155.4:11434",   "preferred_model": "llama3.1:8b",            "priority": 3, "api": "ollama"},
+    # mac-tailscale REMOVED 2026-07-07: 100.103.155.4 is THIS same MacBook — a duplicate
+    # of mac-local that ran a 2nd Ollama server + 2nd resident model copy, pushing free RAM
+    # to ~6% and triggering macOS jetsam kills of Chrome. mac-local (127.0.0.1) already
+    # serves the identical model store, so this cost RAM for zero added capability.
     {"name": "relay-001",     "base": "http://100.87.18.15:11434",    "preferred_model": "qwen3:1.7b",  "priority": 4, "api": "ollama"},
 ]
 PROBE_TIMEOUT   = 20   # seconds for generation probe
