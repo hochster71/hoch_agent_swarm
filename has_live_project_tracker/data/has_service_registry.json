@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "updated": "2026-07-07T20:04:52+00:00",
+  "services": [
+    {
+      "id": "apple_calendar_adapter",
+      "name": "Apple Calendar Adapter",
+      "owner": "Michael Hoch",
+      "account": "hochster_71@mac.com",
+      "base_url": "http://127.0.0.1:8011",
+      "bind_policy": "localhost_only",
+      "secret_policy": "macos_keychain_preferred_env_fallback",
+      "default_mode": "read_only",
+      "status": "PHASE1_READ_ONLY_GO",
+      "verified_utc": "2026-07-07T20:04:52+00:00",
+      "capabilities": [
+        "calendar.discovery",
+        "calendar.read",
+        "agenda.summarize",
+        "schedule.conflict_check",
+        "calendar.create.dry_run",
+        "calendar.create.approved"
+      ],
+      "approval_required": [
+        "calendar.create",
+        "calendar.update",
+        "calendar.delete"
+      ],
+      "forbidden": [
+        "secret_exfiltration",
+        "credential_logging",
+        "unapproved_event_write",
+        "unapproved_event_delete",
+        "raw_private_calendar_memory_persistence"
+      ]
+    }
+  ]
+}
