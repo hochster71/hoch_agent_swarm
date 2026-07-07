@@ -164,6 +164,13 @@ def _gateway_generate(prompt: str, system: str) -> str:
     _load_env()
     ak = os.environ.get("ANTHROPIC_API_KEY")
     ok = os.environ.get("OPENAI_API_KEY")
+    # AGENT_BRAIN forces a provider (e.g. "openai" while the Anthropic account is unfunded),
+    # avoiding a wasted failing call to a keyed-but-unfunded provider on every step.
+    _brain = os.environ.get("AGENT_BRAIN", "").lower()
+    if _brain == "openai":
+        ak = None
+    elif _brain == "anthropic":
+        ok = None
     # 1) Claude — preferred for agentic work
     if ak:
         try:
