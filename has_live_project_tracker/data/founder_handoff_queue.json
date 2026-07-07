@@ -23,7 +23,8 @@
       "why_founder": "Apple identity + submission are irreducible founder gates (account, 2FA, legal attestation).",
       "action": "Archive+upload the signed build via Xcode/Fastlane to App Store Connect under Team K34GR8P326.",
       "blocking_evidence": "docs/generated/r2/testflight_checklist.md",
-      "staged_at": "2026-07-07T15:40:04+00:00"
+      "staged_at": "2026-07-07T15:40:04+00:00",
+      "status": "READY_FOR_FOUNDER"
     }
   ]
 }

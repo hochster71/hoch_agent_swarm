@@ -142,6 +142,7 @@
     <div class="g"><div class="gl">Month spend / cap</div><div class="gv" style="color:var(--gr)">$<span id="v-sp">0.00</span></div><div class="bar"><div class="bf" id="b-sp" style="background:var(--gr)"></div></div></div>
   </div>
   <div class="tick">▸ <span id="tk">connecting to relay…</span></div>
+  <div id="door" style="margin-top:10px"></div>
   <div class="foot">source: <span id="src">http://100.87.18.15:3012/api/live</span> · refresh 3s · open on a device on the HOCH tailnet for live data</div>
 </div>
 
@@ -201,6 +202,22 @@
     $("v-cyc").textContent = (cy.cycle_id?done+" / "+pend:"—");
     bar("b-cyc", tot? (done/tot*100):0);
     $("cyclelbl").textContent = cy.cycle_id ? (cy.cycle_id+" · "+(cy.verdict||"")+" · "+(cy.daemon_status||"")) : "EXECUTION CYCLE";
+    // at-the-door founder gates
+    var dp=$("door");
+    if(dp){
+      var items=d.handoff_items||[];
+      if(items.length){
+        var rows=items.map(function(it){
+          var done=/SIGNED|COMPLETED|DONE/.test(it.status||"");
+          var col=done?"#34d399":"#fbbf24"; var icon=done?"✓":"◔";
+          return '<div style="display:flex;gap:10px;align-items:center;padding:7px 12px;border:1px solid var(--bd);border-radius:10px;background:var(--card);margin-top:6px">'
+            +'<span style="color:'+col+';font-weight:800">'+icon+'</span>'
+            +'<span style="font-weight:700">'+(it.title||it.id||"")+'</span>'
+            +'<span class="pill" style="margin-left:auto;background:rgba(251,191,36,.12);color:'+col+';border:1px solid '+col+'">'+(it.status||"")+'</span></div>';
+        }).join("");
+        dp.innerHTML='<div style="font-size:10px;letter-spacing:.6px;color:var(--mut);text-transform:uppercase">At the door · founder gates</div>'+rows;
+      } else { dp.innerHTML=""; }
+    }
     // cost
     var cap=(d.cost&&d.cost.cap_usd!=null)?d.cost.cap_usd:100;
     var sp=(d.cost&&d.cost.spend_usd!=null)?d.cost.spend_usd:0;

@@ -660,6 +660,21 @@ async def api_live() -> JSONResponse:
     worker = _relay_worker()
     posture, door, exit_cond, staged_count = _doorstep_status()
 
+    # ── the actual items parked at the door (what the founder must act on next) ──
+    handoff_items = []
+    try:
+        hq = json.loads(Path("/data/founder_handoff_queue.json").read_text())
+        for s in hq.get("staged", []):
+            handoff_items.append({
+                "id": s.get("id"), "title": s.get("title"),
+                "status": s.get("status", "STAGED"), "action": s.get("action"),
+            })
+        # honest count = items still awaiting the founder (signed/completed no longer count)
+        staged_count = len([s for s in hq.get("staged", [])
+                            if s.get("status") not in ("SIGNED", "COMPLETED", "DONE")])
+    except Exception:
+        pass
+
     # measured relay telemetry (same source + staleness guard as /api/fleet/node)
     tel = {"telemetry_authority": "DECLARED_ROSTER_NOT_MEASURED", "status": "Reachable",
            "cpu_pct": None, "ram_pct": None, "disk_pct": None, "load1": None,
@@ -752,6 +767,7 @@ async def api_live() -> JSONResponse:
         "doorstep_door": door,
         "doorstep_exit_condition": exit_cond,
         "founder_handoff_count": staged_count,
+        "handoff_items": handoff_items,
         "worker_status": worker.get("status", "UNKNOWN"),
         "relay": {"node": "hoch-relay-001", "tailscale_ip": "100.87.18.15",
                   "live": bool(live), **tel},
