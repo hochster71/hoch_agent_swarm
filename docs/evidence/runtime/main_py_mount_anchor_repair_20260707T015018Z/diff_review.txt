@@ -1,0 +1,21 @@
+## Diff stat
+ backend/main.py | 69 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
+
+## Route and mount positions
+9541:@app.get("/api/brain/live")
+9566:@app.get("/api/brain/ask")
+17567:frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../frontend/dist"))
+17574:@app.get("/api/pert/data")
+17596:@app.get("/api/brain/runtime-truth")
+17603:@app.get("/api/brain/factory-runtime-truth")
+17610:@app.get("/api/brain/reasoning-graph")
+17617:@app.get("/api/brain/source-authority")
+17624:@app.get("/api/brain/champion-runtime-usage")
+17631:@app.get("/api/brain/champion-outcome-feedback")
+17637:if os.path.exists(frontend_path):
+17638:    app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
+
+## File size
+   17640 backend/main.py
+   17571

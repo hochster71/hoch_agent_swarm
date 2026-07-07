@@ -1,0 +1,84 @@
+{
+  "status": "CONDITIONAL",
+  "last_updated": "2026-07-07T01:54:58.368592Z",
+  "nodes": [
+    {
+      "id": "source-naics",
+      "type": "source",
+      "label": "NAICS 2022",
+      "status": "STALE",
+      "source_authority_ref": "naics_2022"
+    },
+    {
+      "id": "source-onet",
+      "type": "source",
+      "label": "O*NET 28.0",
+      "status": "STALE",
+      "source_authority_ref": "onet_28"
+    },
+    {
+      "id": "source-bls",
+      "type": "source",
+      "label": "BLS OEWS 2024",
+      "status": "STALE",
+      "source_authority_ref": "bls_oews_24"
+    },
+    {
+      "id": "factory-software",
+      "type": "factory",
+      "label": "HASF (Software)",
+      "status": "GO"
+    },
+    {
+      "id": "factory-music",
+      "type": "factory",
+      "label": "HMF (Music)",
+      "status": "GO"
+    },
+    {
+      "id": "factory-research",
+      "type": "factory",
+      "label": "HRF (Research)",
+      "status": "GO"
+    },
+    {
+      "id": "ledger-usage",
+      "type": "ledger",
+      "label": "Runtime Usage Ledger",
+      "status": "GO"
+    },
+    {
+      "id": "ledger-outcome",
+      "type": "ledger",
+      "label": "Outcome Feedback Ledger",
+      "status": "GO"
+    }
+  ],
+  "edges": [
+    {
+      "source": "source-naics",
+      "target": "factory-software",
+      "label": "provides industry codes"
+    },
+    {
+      "source": "source-onet",
+      "target": "factory-software",
+      "label": "provides tasks"
+    },
+    {
+      "source": "source-bls",
+      "target": "factory-software",
+      "label": "provides employment stats"
+    },
+    {
+      "source": "factory-software",
+      "target": "ledger-usage",
+      "label": "logs prompt execution"
+    },
+    {
+      "source": "ledger-usage",
+      "target": "ledger-outcome",
+      "label": "links execution to outcome"
+    }
+  ]
+}

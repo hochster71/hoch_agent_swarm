@@ -1,0 +1,17 @@
+backend/main.py
+backend/brain/live_runtime_aggregator.py
+backend/brain/runtime_truth_validator.py
+tests/test_live_runtime_truth_validator.py
+tests/test_brain_truth_endpoints.py
+tests/test_factory_runtime_truth.py
+tests/test_reasoning_graph.py
+tests/test_no_fake_green_truth_endpoints.py
+docs/evidence/runtime/post_containment_truth_endpoint_wiring.md
+docs/evidence/runtime/launchd_bootout_containment_20260707T013449Z
+docs/evidence/runtime/source_authority_reasoning_graph_cleanup.md
+docs/evidence/runtime/source_graph_independent_verify_20260707T013849Z
+docs/evidence/runtime/main_py_mount_anchor_repair_20260707T015018Z
+has_live_project_tracker/data/brain_runtime_truth.json
+has_live_project_tracker/data/factory_runtime_truth.json
+has_live_project_tracker/data/reasoning_graph.json
+has_live_project_tracker/data/source_authority_manifest.json

@@ -1,0 +1,2 @@
+PGIDS=
+kill phase56_burnin.py if still alive

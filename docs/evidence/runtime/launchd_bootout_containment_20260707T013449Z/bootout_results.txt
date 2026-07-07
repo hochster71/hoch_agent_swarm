@@ -1,0 +1,17 @@
+
+### com.hoch.daemon
+disable gui/501/com.hoch.daemon
+stop com.hoch.daemon
+bootout gui/501 /Users/michaelhoch/Library/LaunchAgents/com.hoch.daemon.plist
+
+### com.hoch.brain.cadence
+disable gui/501/com.hoch.brain.cadence
+stop com.hoch.brain.cadence
+bootout gui/501 /Users/michaelhoch/Library/LaunchAgents/com.hoch.brain.cadence.plist
+Boot-out failed: 5: Input/output error
+Try re-running the command as root for richer errors.
+
+### com.hoch.phase56.burnin
+disable gui/501/com.hoch.phase56.burnin
+stop com.hoch.phase56.burnin
+bootout gui/501 /Users/michaelhoch/Library/LaunchAgents/com.hoch.phase56.burnin.plist

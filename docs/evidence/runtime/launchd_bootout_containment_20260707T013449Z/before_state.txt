@@ -1,0 +1,16 @@
+## Exact labels
+-	1	com.hoch.has.pert-server
+-	0	com.hoch.phase56.burnin
+97208	-15	com.hoch.daemon
+13879	0	com.hoch.ollama.tailscale
+
+## Exact writer processes
+97208     1 97208 S    Mon Jul  6 20:33:38 2026     /bin/bash /Users/michaelhoch/hoch_agent_swarm/scripts/hoch_daemon.sh
+97212 97208 97208 S    Mon Jul  6 20:33:39 2026     bash scripts/hoch_cadence.sh
+97216 97212 97208 S    Mon Jul  6 20:33:39 2026     bash scripts/brain_cadence.sh
+97265 97216 97208 S    Mon Jul  6 20:33:41 2026     .venv/bin/python -m backend.brain_convergence.recursive_optimizer 6
+
+## Plist targets
+-rw-r--r--@ 1 michaelhoch  staff  853 Jul  5 19:25 /Users/michaelhoch/Library/LaunchAgents/com.hoch.brain.cadence.plist
+-rw-r--r--@ 1 michaelhoch  staff  948 Jul  5 21:11 /Users/michaelhoch/Library/LaunchAgents/com.hoch.daemon.plist
+-rw-r--r--  1 michaelhoch  staff  735 Jun 21 00:36 /Users/michaelhoch/Library/LaunchAgents/com.hoch.phase56.burnin.plist

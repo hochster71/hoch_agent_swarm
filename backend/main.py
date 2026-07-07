@@ -17565,6 +17565,75 @@ def get_prototype_prompt_brain():
 
 # Mount frontend files at root (if frontend directory exists)
 frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../frontend/dist"))
+# ---------------------------------------------------------------------------
+# HAS/HASF/BRAIN live truth endpoints
+# Added as a minimal post-containment route block.
+# Do not start cadence, daemon, recursive optimizer, burn-in, or autonomous writers here.
+# ---------------------------------------------------------------------------
+
+@app.get("/api/pert/data")
+def get_pert_data_proxy():
+    """Proxy authoritative PERT data from the canonical UI/calculation server."""
+    import json
+    import urllib.request
+    from fastapi import HTTPException
+
+    try:
+        with urllib.request.urlopen("http://127.0.0.1:8765/api/pert/data", timeout=5) as response:
+            return json.loads(response.read().decode("utf-8"))
+    except Exception as exc:
+        raise HTTPException(
+            status_code=503,
+            detail={
+                "status": "UNAVAILABLE",
+                "reason": "PERT calculation server unavailable",
+                "source": "http://127.0.0.1:8765/api/pert/data",
+                "error": str(exc),
+            },
+        )
+
+
+@app.get("/api/brain/runtime-truth")
+def get_brain_runtime_truth_route():
+    """Return grounded BRAIN runtime truth. No fake-green fallback."""
+    from backend.brain.live_runtime_aggregator import aggregate_brain_runtime_truth
+    return aggregate_brain_runtime_truth()
+
+
+@app.get("/api/brain/factory-runtime-truth")
+def get_factory_runtime_truth_route():
+    """Return HASF/HMF/HRF runtime truth aggregation."""
+    from backend.brain.live_runtime_aggregator import aggregate_factory_runtime_truth
+    return aggregate_factory_runtime_truth()
+
+
+@app.get("/api/brain/reasoning-graph")
+def get_reasoning_graph_route():
+    """Return the evidence-backed reasoning graph / truth map."""
+    from backend.brain.live_runtime_aggregator import aggregate_reasoning_graph
+    return aggregate_reasoning_graph()
+
+
+@app.get("/api/brain/source-authority")
+def get_source_authority_route():
+    """Return source authority state for live UI use."""
+    from backend.brain.live_runtime_aggregator import aggregate_source_authority
+    return aggregate_source_authority()
+
+
+@app.get("/api/brain/champion-runtime-usage")
+def get_champion_runtime_usage_route():
+    """Return champion prompt runtime usage ledger records."""
+    from backend.brain.live_runtime_aggregator import read_champion_runtime_usage
+    return read_champion_runtime_usage()
+
+
+@app.get("/api/brain/champion-outcome-feedback")
+def get_champion_outcome_feedback_route():
+    """Return champion outcome feedback ledger records."""
+    from backend.brain.live_runtime_aggregator import read_champion_outcome_feedback
+    return read_champion_outcome_feedback()
+
 if os.path.exists(frontend_path):
     app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
 

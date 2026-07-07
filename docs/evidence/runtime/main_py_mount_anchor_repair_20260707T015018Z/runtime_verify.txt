@@ -1,0 +1,30 @@
+## Containment
+Containment CLEAN
+
+## Endpoints
+/health 200
+/api/mission/brief 200
+/api/v1/relay/health 200
+/api/v1/relay/status 200
+/api/v1/relay/registry 200
+/api/agent-router/ledger 200
+/api/pert/data 200
+/api/brain/runtime-truth 200
+/api/brain/factory-runtime-truth 200
+/api/brain/reasoning-graph 200
+/api/brain/source-authority 200
+/api/brain/champion-runtime-usage 200
+/api/brain/champion-outcome-feedback 200
+
+## Source authority
+{
+  "status": "STALE",
+  "source_count": 3
+}
+
+## Reasoning graph
+{
+  "status": "CONDITIONAL",
+  "node_count": 8,
+  "edge_count": 5
+}

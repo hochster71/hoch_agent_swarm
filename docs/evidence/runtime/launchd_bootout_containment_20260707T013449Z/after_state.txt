@@ -1,0 +1,10 @@
+## Exact labels after bootout
+-	1	com.hoch.has.pert-server
+13879	0	com.hoch.ollama.tailscale
+
+## Disabled state
+		"com.hoch.phase56.burnin" => disabled
+		"com.hoch.daemon" => disabled
+		"com.hoch.brain.cadence" => disabled
+
+## Remaining writer processes

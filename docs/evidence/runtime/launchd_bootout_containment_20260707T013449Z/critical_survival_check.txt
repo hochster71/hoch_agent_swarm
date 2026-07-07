@@ -1,0 +1,35 @@
+## Ports
+
+### PORT 8000
+COMMAND     PID        USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
+python3.1 72194 michaelhoch   19u  IPv4 0x4540f187dd09f426      0t0  TCP 127.0.0.1:8000 (LISTEN)
+
+### PORT 8765
+COMMAND     PID        USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
+python3.1 36467 michaelhoch   11u  IPv4 0xbc3181826a133928      0t0  TCP 127.0.0.1:8765 (LISTEN)
+
+### PORT 1234
+COMMAND    PID        USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
+LM\x20Stu 1854 michaelhoch   53u  IPv4 0x55bd0dbf5da377a1      0t0  TCP 127.0.0.1:1234 (LISTEN)
+
+### PORT 11434
+COMMAND   PID        USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
+ollama   2711 michaelhoch    3u  IPv4 0xca31e19a434a771f      0t0  TCP 127.0.0.1:11434 (LISTEN)
+ollama  13879 michaelhoch    3u  IPv4 0x144fd7592338f43c      0t0  TCP 100.103.155.4:11434 (LISTEN)
+
+### PORT 3012
+
+## Endpoints
+/health 200
+/api/mission/brief 200
+/api/v1/relay/health 200
+/api/v1/relay/status 200
+/api/v1/relay/registry 200
+/api/agent-router/ledger 200
+/api/pert/data 200
+/api/brain/runtime-truth 200
+/api/brain/factory-runtime-truth 200
+/api/brain/reasoning-graph 200
+/api/brain/source-authority 200
+/api/brain/champion-runtime-usage 200
+/api/brain/champion-outcome-feedback 200
