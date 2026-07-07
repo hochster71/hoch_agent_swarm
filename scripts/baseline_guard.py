@@ -69,6 +69,22 @@ def invariants() -> dict:
     return checks
 
 
+def runtime_invariants() -> dict:
+    """Live control-plane invariants. Fail-soft: a check that can't run here (tool missing,
+    or not on the control-plane host) is simply omitted, never a false FAIL. These catch the
+    exact drift class we hit: an orphaned process shadowing a managed one, duplicate servers."""
+    import shutil
+    checks: dict[str, bool] = {}
+    if shutil.which("lsof"):
+        pids = [p for p in sh("lsof", "-tiTCP:8000", "-sTCP:LISTEN").split() if p.strip()]
+        if pids:  # only assert if something is serving :8000
+            checks[":8000 has a single listener (no orphan shadowing launchd)"] = (len(pids) == 1)
+    if shutil.which("pgrep"):
+        procs = [l for l in sh("pgrep", "-f", "ollama serve").splitlines() if l.strip()]
+        checks["single ollama serve (no duplicate model server)"] = (len(procs) <= 1)
+    return checks
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--tag", default=None, help="baseline git tag (default: pinned in baseline_tag.txt)")
@@ -102,14 +118,19 @@ def main() -> None:
 
     drift = code_drift(tag)
     inv = invariants()
-    inv_fail = [k for k, v in inv.items() if not v]
+    rt = runtime_invariants()
+    all_inv = {**inv, **rt}
+    inv_fail = [k for k, v in all_inv.items() if not v]
     verdict = "PASS" if (not drift and not inv_fail) else "DRIFT"
 
     print(f"=== BASELINE GUARD vs {tag}: {verdict} ===")
     print("-- guarded code drift --")
     print("  " + (drift.replace("\n", "\n  ") if drift else "(none — matches baseline)"))
-    print("-- invariants --")
+    print("-- config invariants --")
     for k, v in inv.items():
+        print(f"  {'OK  ' if v else 'FAIL'} {k}")
+    print("-- runtime invariants --")
+    for k, v in rt.items():
         print(f"  {'OK  ' if v else 'FAIL'} {k}")
 
     if args.revert and drift:
