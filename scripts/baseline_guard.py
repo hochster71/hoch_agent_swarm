@@ -1,0 +1,109 @@
+#!/usr/bin/env python3
+"""HOCH BASELINE GUARD — the ONE authority for "known good".
+
+Why this exists: the repo accumulated ~71 drift/baseline/checksum/seal artifacts that
+OBSERVE drift but never ENFORCE it, so the system kept cycling back. This replaces all of
+them with a single git-anchored, fail-closed guard.
+
+Principles:
+  - git IS the checksum register. The baseline is a git tag; blob SHAs are immutable hashes.
+  - Guard CODE + a few config INVARIANTS. Do NOT baseline churning runtime state (that is
+    noise by design — gitignore it instead).
+  - Fail closed. On drift: report exact deltas and exit non-zero. NEVER auto-launder.
+  - Enforcement is opt-in and explicit: --revert snaps guarded CODE back to the baseline tag.
+  - ONE guard, one cadence, last word. Not 71 observers.
+
+Usage:
+  python3 scripts/baseline_guard.py                 # check drift vs pinned baseline tag
+  python3 scripts/baseline_guard.py --tag <gittag>  # check vs a specific tag
+  python3 scripts/baseline_guard.py --revert        # snap guarded CODE back to baseline
+  # pin the baseline:  git tag hoch-baseline-YYYYMMDD && echo it into baseline_tag.txt
+"""
+from __future__ import annotations
+import argparse
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+BASELINE_TAG_FILE = ROOT / "has_live_project_tracker/data/baseline_tag.txt"
+
+# Small, meaningful set of CODE/config files whose drift actually matters. Extend deliberately
+# — the value is a SHORT list everyone trusts, not an exhaustive one nobody reads.
+GUARDED_PATHS = [
+    "backend/model_gateway.py",
+    "backend/cluster_manager.py",
+    "scripts/ag_execution_runner.py",
+    "scripts/ag_execution_daemon.py",
+    "infra/hoch-200/vps/relay-api/app.py",
+    "has_live_project_tracker/data/orchestration_bridge_control.json",
+]
+
+
+def sh(*args: str) -> str:
+    return subprocess.run(args, capture_output=True, text=True, cwd=ROOT).stdout.strip()
+
+
+def code_drift(tag: str) -> str:
+    """Working-tree drift of guarded files vs the baseline tag (includes uncommitted)."""
+    return sh("git", "diff", "--stat", tag, "--", *GUARDED_PATHS)
+
+
+def invariants() -> dict:
+    """A few runtime invariants that must hold regardless of who edited what.
+    These are the things that kept silently regressing."""
+    checks: dict[str, bool] = {}
+    try:
+        c = json.loads((ROOT / "has_live_project_tracker/data/orchestration_bridge_control.json").read_text())
+        checks["execution_posture == DOORSTEP"] = c.get("execution_posture") == "DOORSTEP"
+        checks["provider_api_calls OFF (pre-revenue)"] = c.get("allow_provider_api_calls") is False
+        checks["founder_gated_execution OFF"] = c.get("allow_founder_gated_execution") is False
+    except Exception:
+        checks["control_plane readable"] = False
+    try:
+        cm = (ROOT / "backend/cluster_manager.py").read_text()
+        checks["no fabricated ACTIVITY_POOLS (fleet theater)"] = "ACTIVITY_POOLS = {" not in cm
+    except Exception:
+        checks["cluster_manager readable"] = False
+    return checks
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--tag", default=None, help="baseline git tag (default: pinned in baseline_tag.txt)")
+    ap.add_argument("--revert", action="store_true", help="snap guarded CODE back to the baseline tag")
+    args = ap.parse_args()
+
+    tag = args.tag or (BASELINE_TAG_FILE.read_text().strip() if BASELINE_TAG_FILE.exists() else "")
+    if not tag:
+        print("NO BASELINE PINNED. Set one:\n"
+              "  git tag hoch-baseline-$(date -u +%Y%m%d)\n"
+              f"  echo hoch-baseline-$(date -u +%Y%m%d) > {BASELINE_TAG_FILE}")
+        sys.exit(2)
+    if sh("git", "rev-parse", "-q", "--verify", f"refs/tags/{tag}") == "":
+        print(f"BASELINE TAG '{tag}' does not exist. Create it: git tag {tag}")
+        sys.exit(2)
+
+    drift = code_drift(tag)
+    inv = invariants()
+    inv_fail = [k for k, v in inv.items() if not v]
+    verdict = "PASS" if (not drift and not inv_fail) else "DRIFT"
+
+    print(f"=== BASELINE GUARD vs {tag}: {verdict} ===")
+    print("-- guarded code drift --")
+    print("  " + (drift.replace("\n", "\n  ") if drift else "(none — matches baseline)"))
+    print("-- invariants --")
+    for k, v in inv.items():
+        print(f"  {'OK  ' if v else 'FAIL'} {k}")
+
+    if args.revert and drift:
+        for p in GUARDED_PATHS:
+            sh("git", "checkout", tag, "--", p)
+        print("-- reverted guarded CODE to baseline (runtime state left untouched) --")
+
+    sys.exit(0 if verdict == "PASS" else 1)
+
+
+if __name__ == "__main__":
+    main()

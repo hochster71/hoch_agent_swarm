@@ -301,6 +301,23 @@ NODES_CONFIG = {
                 "description": "Edge interface active on legacy iPad mini 3."
             }
         ]
+    },
+    "RELAY": {
+        "id": "RELAY",
+        "fleet_group": "always_on_backstop",
+        "name": "hoch-relay-001 (HOCH-200)",
+        "ip": "100.87.18.15",
+        "role": "relay / always-on 24-7 backstop",
+        "specs": "VPS (Linode)",
+        "status": "Active",
+        "activity": "Relay API + burn-in daemon + local inference (measured on host)",
+        "total_agents": 0,
+        "os": "Ubuntu 24.04",
+        "cpu_usage": 0,
+        "ram_usage": 0,
+        "latency_ms": 0.0,
+        "telemetry_authority": "MEASURED_REMOTE",
+        "agents": []
     }
 }
 
