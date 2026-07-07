@@ -143,21 +143,56 @@ def _system() -> str:
     return s
 
 
+def _load_env() -> None:
+    """Load provider keys from .env into the process env (the loop/runner run as their own
+    processes and don't inherit the shell's .env)."""
+    envf = ROOT / ".env"
+    if not envf.exists():
+        return
+    for line in envf.read_text(encoding="utf-8", errors="ignore").splitlines():
+        if "=" in line and not line.strip().startswith("#"):
+            k, v = line.split("=", 1)
+            k = k.strip()
+            v = v.strip().strip('"').strip("'")
+            if k in ("ANTHROPIC_API_KEY", "OPENAI_API_KEY") and not os.environ.get(k):
+                os.environ[k] = v
+
+
 def _gateway_generate(prompt: str, system: str) -> str:
-    """Route through the hardened gateway (portable across Mac/relay). Falls back to a
-    direct local OpenAI-compatible call if the gateway import fails."""
+    """Pick the best available brain: Claude (capable/agentic) > OpenAI GPT > local gateway
+    ($0 fallback). The moment provider keys are provisioned, the same loop runs on a real model."""
+    _load_env()
+    ak = os.environ.get("ANTHROPIC_API_KEY")
+    ok = os.environ.get("OPENAI_API_KEY")
+    # 1) Claude — preferred for agentic work
+    if ak:
+        try:
+            import anthropic
+            c = anthropic.Anthropic(api_key=ak)
+            model = os.environ.get("AGENT_ANTHROPIC_MODEL", "claude-haiku-4-5-20251001")
+            r = c.messages.create(model=model, max_tokens=1500, system=system,
+                                  messages=[{"role": "user", "content": prompt}])
+            return "".join(b.text for b in r.content if getattr(b, "type", None) == "text")
+        except Exception as e:
+            print(f"[agent_executor] anthropic failed ({e}); trying next brain", flush=True)
+    # 2) OpenAI GPT
+    if ok:
+        try:
+            from openai import OpenAI
+            c = OpenAI(api_key=ok)
+            model = os.environ.get("AGENT_OPENAI_MODEL", "gpt-4o-mini")
+            r = c.chat.completions.create(
+                model=model, temperature=0.1, max_tokens=1500,
+                messages=[{"role": "system", "content": system}, {"role": "user", "content": prompt}])
+            return r.choices[0].message.content or ""
+        except Exception as e:
+            print(f"[agent_executor] openai failed ({e}); trying next brain", flush=True)
+    # 3) Local gateway — $0, no key (weaker; the pre-key fallback)
     try:
         from backend.model_gateway import get_gateway
         return get_gateway().generate(prompt, system=system, timeout=120)
     except Exception:
-        from openai import OpenAI
-        client = OpenAI(base_url=os.environ.get("AGENT_MODEL_BASE", "http://127.0.0.1:1234/v1"),
-                        api_key=os.environ.get("AGENT_MODEL_KEY", "not-needed"))
-        r = client.chat.completions.create(
-            model=os.environ.get("AGENT_MODEL", "google/gemma-4-12b-qat"),
-            messages=[{"role": "system", "content": system}, {"role": "user", "content": prompt}],
-            temperature=0.1, max_tokens=1500)
-        return r.choices[0].message.content or ""
+        return ""
 
 
 def execute_task(task: dict) -> dict:
