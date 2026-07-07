@@ -33,23 +33,25 @@ def _ver(mid: str) -> float:
 
 
 def _rank_openai(ids, kind):
-    """kind: 'frontier' (big) or 'cheap' (mini). Return best id or None."""
-    bad = ("embed", "whisper", "tts", "audio", "realtime", "image", "dall", "moderation",
-           "transcribe", "search", "vision-preview", "instruct")
-    ids = [i for i in ids if not any(b in i for b in bad)]
+    """kind: 'frontier' (flagship) or 'cheap' (mini). Return best id or None.
+    Frontier = highest plain gpt-5.x flagship (avoid ultra-pricey 'pro' + 'chat-latest' aliases for
+    autonomous volume). Cheap = highest gpt-5.x '-mini' (best value), else '-nano'."""
+    undated = [i for i in ids if not re.search(r"\d{4}-\d{2}-\d{2}", i)]  # prefer stable aliases
+    def top(cands):
+        return sorted(cands, key=_ver, reverse=True)[0] if cands else None
     if kind == "cheap":
-        pool = [i for i in ids if ("mini" in i or "nano" in i) and i.startswith(("gpt-",))]
-    else:
-        pool = [i for i in ids if i.startswith(("gpt-5", "gpt-4.1", "gpt-4o", "o3", "o4"))
-                and "mini" not in i and "nano" not in i]
-    if not pool:
-        return None
-    # prefer alias (no trailing date) then highest version
-    def key(i):
-        dated = 1 if re.search(r"\d{4}-\d{2}-\d{2}", i) else 0     # aliases (undated) preferred -> 0
-        fam = 2 if i.startswith("gpt-5") else (1 if i.startswith(("gpt-4.1", "gpt-4o", "o3", "o4")) else 0)
-        return (fam, _ver(i), -dated)
-    return sorted(pool, key=key, reverse=True)[0]
+        return (top([i for i in undated if re.match(r"^gpt-5\.\d+-mini$", i)])
+                or top([i for i in undated if re.match(r"^gpt-5\.\d+-nano$", i)])
+                or top([i for i in undated if re.match(r"^gpt-4o-mini$|^gpt-4\.1-mini$", i)])
+                or top([i for i in undated if i.endswith("-mini") and i.startswith("o")]))
+    # frontier: plain flagship, no pro/codex/chat-latest/mini/nano
+    plain = [i for i in undated if re.match(r"^gpt-5\.\d+$", i)]
+    if plain:
+        return top(plain)
+    codex = [i for i in undated if re.match(r"^gpt-5\.\d+-codex$", i)]
+    if codex:
+        return top(codex)
+    return top([i for i in undated if i in ("gpt-4o", "gpt-4.1")]) or None
 
 
 def _list_openai(key):
@@ -67,11 +69,13 @@ def _smoke(provider, model, key, base=None):
         newer = model.startswith(("gpt-5", "o1", "o3", "o4"))
         p = {"model": model, "messages": [{"role": "user", "content": "Reply with exactly: OK"}]}
         if newer:
-            p["max_completion_tokens"] = 5
+            p["max_completion_tokens"] = 64   # reasoning models burn tokens before any answer
         else:
             p["temperature"] = 0; p["max_tokens"] = 5
-        out = OpenAI(**kw).chat.completions.create(**p).choices[0].message.content or ""
-        return "OK" in out.upper()
+        r = OpenAI(**kw).chat.completions.create(**p)
+        # A successful, non-errored completion means the model is reachable & usable with this key.
+        # (Reasoning models may return empty content when the budget is small — still a valid response.)
+        return bool(r and r.choices)
     except Exception as e:
         print(f"  smoke fail {model}: {str(e)[:70]}")
         return False

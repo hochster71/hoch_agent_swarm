@@ -1,18 +1,24 @@
 {
-  "resolved_at": "2026-07-07T19:32:19+00:00",
+  "resolved_at": "2026-07-07T19:38:08+00:00",
   "tiers": {
     "cheap": {
       "provider": "openai",
-      "model": "gpt-5.4-nano",
+      "model": "gpt-5.4-mini",
       "verified": true,
-      "at": "2026-07-07T19:32:24+00:00"
+      "at": "2026-07-07T19:38:11+00:00"
     },
     "gemini": {
       "provider": "gemini",
       "model": "gemini-2.5-flash",
       "verified": false,
-      "at": "2026-07-07T19:32:26+00:00",
+      "at": "2026-07-07T19:38:13+00:00",
       "note": "smoke failed (free-tier 429 or no billing) \u2014 bonus only"
+    },
+    "frontier": {
+      "provider": "openai",
+      "model": "gpt-5.5",
+      "verified": true,
+      "at": "2026-07-07T19:38:10+00:00"
     }
   }
 }

@@ -1,1 +1,3 @@
 {"ts": "2026-07-07T19:32:26+00:00", "tier": "cheap", "from": null, "to": "gpt-5.4-nano"}
+{"ts": "2026-07-07T19:37:20+00:00", "tier": "cheap", "from": "gpt-5.4-nano", "to": "gpt-5.4-mini"}
+{"ts": "2026-07-07T19:38:13+00:00", "tier": "frontier", "from": null, "to": "gpt-5.5"}
