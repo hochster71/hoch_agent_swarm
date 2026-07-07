@@ -26,15 +26,15 @@ PHASES = ["RESEARCH", "DESIGN", "DEVELOP", "VERIFY", "PACKAGE", "LAUNCH"]
 # per-phase task skeleton: (suffix, task_class, difficulty, founder_gated, builds_doc, template)
 PHASE_TASKS = {
     "RESEARCH": [
-        ("market", "research", "local", False, True,
+        ("market", "research", "medium", False, True,
          "Research the market, users, and competitors for: {g}. Write findings + top opportunities."),
-        ("requirements", "research", "local", False, True,
+        ("requirements", "research", "medium", False, True,
          "Define the requirements and success criteria for: {g}. List must-haves, nice-to-haves, risks."),
     ],
     "DESIGN": [
-        ("architecture", "design", "local", False, True,
+        ("architecture", "design", "medium", False, True,
          "Design the architecture/approach for: {g}. Components, data flow, tradeoffs, chosen stack."),
-        ("plan", "design", "local", False, True,
+        ("plan", "design", "medium", False, True,
          "Write the build plan for: {g}. Milestones, task breakdown, acceptance criteria per milestone."),
     ],
     "DEVELOP": [
@@ -48,7 +48,7 @@ PHASE_TASKS = {
          "Verify the build for: {g}. Run available checks/tests, record real pass/fail evidence."),
     ],
     "PACKAGE": [
-        ("package", "analysis", "local", False, True,
+        ("package", "analysis", "medium", False, True,
          "Package the deliverable for: {g}. Write release notes, README, and a launch checklist."),
     ],
     "LAUNCH": [

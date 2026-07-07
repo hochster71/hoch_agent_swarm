@@ -292,10 +292,17 @@ def _gateway_generate(prompt: str, system: str, tier: int = TIER_LOCAL) -> tuple
         kw = {"api_key": key}
         if base_url:
             kw["base_url"] = base_url
-        return (OpenAI(**kw).chat.completions.create(
-            model=model, temperature=0.1, max_tokens=1500,
-            messages=[{"role": "system", "content": system}, {"role": "user", "content": prompt}]
-        ).choices[0].message.content or "")
+        msgs = [{"role": "system", "content": system}, {"role": "user", "content": prompt}]
+        # Newer OpenAI models (gpt-5.x, o-series) renamed max_tokens->max_completion_tokens and
+        # only accept the default temperature. Older models + gemini/deepseek use the classic params.
+        newer = model.startswith("gpt-5") or model.startswith("o1") or model.startswith("o3") or model.startswith("o4")
+        params = {"model": model, "messages": msgs}
+        if newer:
+            params["max_completion_tokens"] = 1500
+        else:
+            params["temperature"] = 0.1
+            params["max_tokens"] = 1500
+        return (OpenAI(**kw).chat.completions.create(**params).choices[0].message.content or "")
 
     def _call(name):
         m = models[name]

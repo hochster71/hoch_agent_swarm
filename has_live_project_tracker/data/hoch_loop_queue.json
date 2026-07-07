@@ -39,19 +39,17 @@
     "task_id": "ns-launch-hsf-story-studio-as-a-research-market",
     "task_name": "[RESEARCH] market \u2014 Launch HSF Story Studio as a paid product",
     "task_class": "research",
-    "difficulty": "local",
+    "difficulty": "medium",
     "description": "Research the market, users, and competitors for: Launch HSF Story Studio as a paid product. Write findings + top opportunities. Write the result to docs/generated/northstar/launch-hsf-story-studio-as-a/research_market.md.",
-    "status": "completed",
+    "status": "RUNNING",
     "northstar": "launch-hsf-story-studio-as-a",
-    "phase": "RESEARCH",
-    "result": "Market research report on launching HSF Story Studio as a paid product, highlighting growing demand for creative writing tools and AI-powered features.",
-    "evidence": "docs/evidence/runtime/agent_exec_ns-launch-hsf-story-studio-as-a-research-market.json"
+    "phase": "RESEARCH"
   },
   {
     "task_id": "ns-launch-hsf-story-studio-as-a-research-requirements",
     "task_name": "[RESEARCH] requirements \u2014 Launch HSF Story Studio as a paid product",
     "task_class": "research",
-    "difficulty": "local",
+    "difficulty": "medium",
     "description": "Define the requirements and success criteria for: Launch HSF Story Studio as a paid product. List must-haves, nice-to-haves, risks. Write the result to docs/generated/northstar/launch-hsf-story-studio-as-a/research_requirements.md.",
     "status": "PENDING",
     "northstar": "launch-hsf-story-studio-as-a",
