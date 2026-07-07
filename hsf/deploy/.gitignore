@@ -1,0 +1,7 @@
+# Secrets — never commit real environment values.
+.env
+.env.local
+.env.*.local
+
+# Node
+node_modules

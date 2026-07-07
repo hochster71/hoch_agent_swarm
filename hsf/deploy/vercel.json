@@ -1,0 +1,23 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "version": 2,
+  "comment": "Hoch Storybook Factory (HSF) deploy config. Static site + Node serverless functions. Inert until the founder adds Stripe keys as Vercel env vars — see README.md.",
+  "functions": {
+    "api/*.js": {
+      "runtime": "nodejs20.x",
+      "maxDuration": 15
+    }
+  },
+  "rewrites": [
+    { "source": "/api/create-checkout-session", "destination": "/api/create-checkout-session" },
+    { "source": "/api/webhook", "destination": "/api/webhook" }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store" }
+      ]
+    }
+  ]
+}

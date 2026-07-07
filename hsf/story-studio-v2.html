@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>HSF Story Studio v2 — Build your storybook</title>
+<style>
+  :root{
+    --bg:#05070e;--ink:#e6edf6;--mut:#8b98ad;
+    --cy:#22d3ee;--gd:#fbbf24;--gr:#34d399;--vi:#a78bfa;
+    --card:rgba(255,255,255,.04);--bd:rgba(255,255,255,.12);
+    --acc:#22d3ee; /* live accent, set per scene by JS */
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:radial-gradient(1100px 640px at 18% -4%,#111a2e,#05070e 62%);color:var(--ink);
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh}
+  .wrap{max-width:1140px;margin:0 auto;padding:26px 20px 70px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.5px}
+  .dot{width:11px;height:11px;border-radius:50%;background:var(--gd);box-shadow:0 0 12px var(--gd)}
+  .tag{margin-left:auto;font-size:11px;color:var(--mut);letter-spacing:1px}
+  h1{font-size:clamp(26px,5vw,46px);font-weight:800;margin:20px 0 4px;letter-spacing:.5px}
+  .sub{color:#c3ccdb;max-width:660px;line-height:1.6}
+
+  .cols{display:grid;grid-template-columns:380px 1fr;gap:24px;margin-top:26px}
+  @media(max-width:920px){.cols{grid-template-columns:1fr}}
+
+  .panel{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:20px}
+  label{display:block;font-size:12px;letter-spacing:.5px;color:var(--mut);text-transform:uppercase;margin:14px 0 6px}
+  input,textarea,select{width:100%;background:rgba(0,0,0,.28);border:1px solid var(--bd);border-radius:10px;
+    color:var(--ink);padding:10px 12px;font-size:14px;font-family:inherit}
+  input::placeholder,textarea::placeholder{color:#5c6a80}
+  textarea{min-height:70px;resize:vertical;line-height:1.5}
+  select{cursor:pointer}
+  .btn{margin-top:18px;width:100%;padding:13px;border:none;border-radius:12px;font-weight:800;font-size:15px;cursor:pointer;
+    background:linear-gradient(90deg,var(--vi),var(--cy));color:#04121a}
+  .btn:active{transform:translateY(1px)}
+  .muted{color:var(--mut);font-size:12px}
+
+  /* ---- STAGE ---- */
+  #stage{position:relative;min-height:460px;border-radius:18px;border:1px solid var(--bd);overflow:hidden;
+    background:radial-gradient(760px 440px at 32% 8%,#111a2e,#06080f 62%)}
+  #stage::after{content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(600px 320px at 80% 110%,color-mix(in srgb,var(--acc) 16%,transparent),transparent 70%);
+    transition:background .9s ease}
+  .scene{position:absolute;inset:0;padding:40px 44px;display:flex;flex-direction:column;
+    opacity:0;transform:translateY(24px) scale(.995);
+    transition:opacity .85s cubic-bezier(.2,.7,.2,1),transform .85s cubic-bezier(.2,.7,.2,1);
+    pointer-events:none}
+  .scene.show{opacity:1;transform:none;pointer-events:auto}
+  @media(max-width:520px){.scene{padding:28px 24px}}
+
+  .kick{font-size:11px;letter-spacing:2.5px;color:var(--acc);text-transform:uppercase;font-weight:700;
+    display:inline-flex;align-items:center;gap:8px}
+  .kick::before{content:"";width:22px;height:2px;background:var(--acc);border-radius:2px;box-shadow:0 0 10px var(--acc)}
+  .scene h2{font-size:clamp(22px,3.6vw,34px);margin:12px 0 10px;line-height:1.12;letter-spacing:.3px}
+  .scene p{color:#c7d0de;line-height:1.6;max-width:620px;font-size:clamp(14px,1.7vw,17px)}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+  .chip{padding:7px 12px;border:1px solid var(--bd);border-radius:10px;background:var(--card);font-size:12.5px;
+    color:#d7deea}
+
+  /* per-layout tweaks */
+  .scene.lay-center{justify-content:center;align-items:center;text-align:center}
+  .scene.lay-center .chips{justify-content:center}
+  .scene.lay-center p{margin-left:auto;margin-right:auto}
+
+  .scene.lay-split{justify-content:center}
+  .scene.lay-split{border-left:none}
+  .scene.lay-split::before{content:"";position:absolute;left:0;top:14%;bottom:14%;width:3px;border-radius:3px;
+    background:linear-gradient(var(--acc),transparent);box-shadow:0 0 16px var(--acc);opacity:.8}
+
+  .scene.lay-grid{justify-content:center}
+  .scene.lay-grid .chips{margin-top:20px}
+  .scene.lay-grid .chip{flex:1;min-width:120px;text-align:center;padding:14px 12px;font-weight:600}
+
+  .scene.lay-quote{justify-content:center;align-items:center;text-align:center}
+  .scene.lay-quote p{font-size:clamp(20px,3vw,30px);font-weight:600;color:var(--ink);max-width:760px;line-height:1.35}
+  .scene.lay-quote .chips{justify-content:center;margin-top:20px}
+
+  .scene.lay-patch{justify-content:center;align-items:center;text-align:center}
+  .scene.lay-patch .patch-badge{width:130px;height:130px;border-radius:50%;margin-bottom:18px;
+    display:flex;align-items:center;justify-content:center;position:relative;
+    border:2px solid var(--acc);
+    background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--acc) 26%,transparent),transparent 70%);
+    box-shadow:0 0 30px color-mix(in srgb,var(--acc) 40%,transparent)}
+  .scene.lay-patch .patch-badge::before{content:"";position:absolute;inset:14px;border-radius:50%;
+    border:1px dashed color-mix(in srgb,var(--acc) 55%,transparent)}
+  .scene.lay-patch .patch-star{font-size:34px}
+  .scene.lay-patch .chips{justify-content:center}
+
+  /* dots + controls */
+  .controls{display:flex;align-items:center;gap:12px;margin-top:14px}
+  .dots{display:flex;gap:7px;flex:1;justify-content:center;flex-wrap:wrap}
+  .dots i{width:8px;height:8px;border-radius:50%;background:#39435c;transition:.3s;cursor:pointer}
+  .dots i.on{background:var(--acc);box-shadow:0 0 9px var(--acc);transform:scale(1.25)}
+  .navbtn{background:var(--card);border:1px solid var(--bd);color:var(--ink);border-radius:9px;
+    padding:7px 12px;font-size:13px;cursor:pointer;font-weight:700}
+  .navbtn:active{transform:translateY(1px)}
+  .playbtn{min-width:96px}
+
+  /* paywall */
+  .paywall{margin-top:20px;border:1px solid var(--gd);background:rgba(251,191,36,.08);border-radius:16px;padding:18px 20px}
+  .paywall h3{margin:0 0 4px;color:var(--gd);font-size:18px}
+  .paywall p{margin:0;color:#c7d0de;font-size:13.5px;line-height:1.55}
+  .price{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+  .tier{flex:1;min-width:170px;border:1px solid var(--bd);border-radius:12px;padding:14px;background:var(--card)}
+  .tier b{font-size:22px} .tier small{color:var(--mut)}
+  .unlock{margin-top:14px;width:100%;padding:12px;border:none;border-radius:11px;font-weight:800;cursor:pointer;
+    background:var(--gd);color:#1a1204;font-size:15px}
+  .unlock:active{transform:translateY(1px)}
+  .badge{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.5px;color:#04121a;background:var(--gr);
+    border-radius:6px;padding:2px 6px;margin-left:6px}
+  .freeflag{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.5px;color:#04121a;background:var(--cy);
+    border-radius:6px;padding:2px 7px;margin-left:8px;vertical-align:middle}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><span class="dot"></span> Hoch Storybook Factory
+    <span class="tag">STORY STUDIO · v2</span></div>
+  <h1>Build your storybook.</h1>
+  <p class="sub">Answer a few prompts. The story engine turns them into a full cinematic, animated chronicle —
+    8 to 10 scenes, each with its own layout and motion. Runs entirely in your browser.</p>
+
+  <div class="cols">
+    <!-- ===================== INTAKE ===================== -->
+    <div class="panel">
+      <label>Whose story is this?</label>
+      <input id="who" placeholder="e.g., Michael Hoch — or your company, project, loved one"/>
+
+      <label>One line about them</label>
+      <input id="one" placeholder="e.g., Navy leader turned AI founder"/>
+
+      <label>The journey — what did they build or overcome?</label>
+      <textarea id="journey" placeholder="e.g., 18 months building an AI factory system from scratch, through failure and doubt."></textarea>
+
+      <label>Key moments (one per line — use "Title — detail")</label>
+      <textarea id="moments" placeholder="The call to build — quit the safe path&#10;The runtime-truth crisis — everything broke at once&#10;First product reached Apple review"></textarea>
+
+      <label>Where it stands now (the ending)</label>
+      <input id="ending" placeholder="e.g., The moonshot left the pad."/>
+
+      <label>Anything else? (optional)</label>
+      <input id="extras" placeholder="e.g., dedicated to the people who believed early"/>
+
+      <label>Tone</label>
+      <select id="tone">
+        <option>Cinematic</option><option>Warm</option><option>Epic</option><option>Minimal</option>
+      </select>
+
+      <button class="btn" onclick="generate()">Generate my storybook →</button>
+      <p class="muted" style="margin-top:10px">Preview is free. Full animated export + hosted share link is the paid product.</p>
+    </div>
+
+    <!-- ===================== PREVIEW + PAYWALL ===================== -->
+    <div>
+      <div id="stage">
+        <div class="scene lay-center show" id="placeholder">
+          <div class="kick">Live preview</div>
+          <h2>Your chronicle appears here.</h2>
+          <p>Fill the form and hit <b>Generate</b> — the engine writes 8–10 scenes and plays them back,
+            animated, in your chosen tone.</p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="navbtn" id="prev" onclick="go(-1)" style="display:none">‹ Prev</button>
+        <div class="dots" id="dots"></div>
+        <button class="navbtn playbtn" id="play" onclick="togglePlay()" style="display:none">⏸ Pause</button>
+        <button class="navbtn" id="next" onclick="go(1)" style="display:none">Next ›</button>
+      </div>
+
+      <div class="paywall" id="paywall" style="display:none">
+        <h3>Unlock the full chronicle</h3>
+        <p>Your free preview plays every scene right here. The paid product adds a hosted share link,
+          music-timed motion, custom themes, a hero mission patch, and a downloadable export you own forever.</p>
+        <div class="price">
+          <div class="tier"><b>$19</b> <small>/ one story</small><br>
+            <span class="muted">keepsake · full export + share link</span></div>
+          <div class="tier"><b>$12</b><small>/mo</small> <span class="badge">CREATORS</span><br>
+            <span class="muted">unlimited chronicles · hosting · themes</span></div>
+        </div>
+        <button class="unlock" onclick="unlock()">Unlock full storybook</button>
+        <p class="muted" style="margin-top:8px">Free preview → paid export. The same model that put products in the App Store.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- the story generation engine -->
+<script src="story-engine.js"></script>
+<script>
+(function(){
+  var scenes=[], idx=0, timer=null, playing=false;
+  var AUTO_MS=4200;
+
+  function el(id){return document.getElementById(id);}
+  function esc(s){return (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+  function readSpec(){
+    return {
+      who:      el('who').value,
+      oneLiner: el('one').value,
+      journey:  el('journey').value,
+      moments:  el('moments').value,          // engine splits on newlines
+      ending:   el('ending').value,
+      extras:   el('extras').value,
+      tone:     el('tone').value
+    };
+  }
+
+  function sceneHTML(s){
+    var chips = (s.chips && s.chips.length)
+      ? '<div class="chips">'+s.chips.map(function(c){return '<span class="chip">'+esc(c)+'</span>';}).join('')+'</div>'
+      : '';
+    var head = s.heading ? '<h2>'+esc(s.heading)+'</h2>' : '';
+    var body = s.body ? '<p>'+esc(s.body)+'</p>' : '';
+    var patch = '';
+    if(s.layout==='patch'){
+      patch = '<div class="patch-badge"><span class="patch-star">★</span></div>';
+    }
+    return '<div class="kick">'+esc(s.kicker)+'</div>'+patch+head+body+chips;
+  }
+
+  window.generate=function(){
+    var spec=readSpec();
+    scenes = window.buildStory(spec);
+    var stage=el('stage'); stage.innerHTML='';
+    scenes.forEach(function(s,i){
+      var d=document.createElement('div');
+      d.className='scene lay-'+(s.layout||'center');
+      d.id='sc'+i;
+      d.setAttribute('data-accent', s.accent||'#22d3ee');
+      d.innerHTML=sceneHTML(s);
+      stage.appendChild(d);
+    });
+    // dots
+    var dots=el('dots'); dots.innerHTML='';
+    scenes.forEach(function(_,i){
+      var b=document.createElement('i');
+      b.onclick=function(){ show(i); pause(); };
+      dots.appendChild(b);
+    });
+    // reveal controls + paywall
+    el('prev').style.display='';
+    el('next').style.display='';
+    el('play').style.display='';
+    el('paywall').style.display='block';
+
+    idx=0; show(0); play();
+  };
+
+  function applyAccent(s){
+    document.documentElement.style.setProperty('--acc', s.accent||'#22d3ee');
+  }
+
+  function show(i){
+    if(!scenes.length) return;
+    idx=((i%scenes.length)+scenes.length)%scenes.length;
+    for(var k=0;k<scenes.length;k++){
+      var node=el('sc'+k);
+      if(node) node.classList.toggle('show', k===idx);
+    }
+    var dots=el('dots').children;
+    for(var d=0;d<dots.length;d++) dots[d].classList.toggle('on', d===idx);
+    applyAccent(scenes[idx]);
+  }
+
+  window.go=function(dir){ show(idx+dir); pause(); };
+
+  function play(){
+    playing=true; el('play').textContent='⏸ Pause';
+    if(timer) clearInterval(timer);
+    timer=setInterval(function(){ show(idx+1); }, AUTO_MS);
+  }
+  function pause(){
+    playing=false; el('play').textContent='▶ Play';
+    if(timer){ clearInterval(timer); timer=null; }
+  }
+  window.togglePlay=function(){ playing ? pause() : play(); };
+
+  window.unlock=function(){
+    alert('Prototype: this is where Stripe checkout opens.\n\n'
+      + '• $19 — one story (full export + hosted share link)\n'
+      + '• $12/mo — Creators (unlimited chronicles, hosting, themes)\n\n'
+      + 'Payment + hosting are founder-gated until launch. No charge will be made in this preview.');
+  };
+})();
+</script>
+</body>
+</html>

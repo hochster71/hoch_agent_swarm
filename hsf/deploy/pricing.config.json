@@ -1,0 +1,33 @@
+{
+  "$comment": "Hoch Storybook Factory (HSF) pricing tiers. The client and README reference this. 'stripe_price_env' is the env var name that holds the real Stripe Price ID — no price IDs or secrets live in this file.",
+  "currency": "usd",
+  "tiers": [
+    {
+      "id": "onestory",
+      "label": "One-Story Export",
+      "price": 19,
+      "interval": "one_time",
+      "stripe_price_env": "STRIPE_PRICE_ONESTORY",
+      "features": [
+        "Export one finished animated storybook",
+        "Watermark-free, high-resolution output",
+        "Permanent shareable hosting link",
+        "Keep the free preview forever"
+      ]
+    },
+    {
+      "id": "creators",
+      "label": "Creators Subscription",
+      "price": 12,
+      "interval": "month",
+      "stripe_price_env": "STRIPE_PRICE_CREATORS",
+      "features": [
+        "Unlimited story exports while subscribed",
+        "All stories unlocked automatically",
+        "Watermark-free, high-resolution output",
+        "Priority rendering queue",
+        "Cancel anytime"
+      ]
+    }
+  ]
+}
