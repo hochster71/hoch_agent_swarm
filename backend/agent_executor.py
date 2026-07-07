@@ -348,28 +348,96 @@ def _gateway_generate(prompt: str, system: str, tier: int = TIER_LOCAL) -> tuple
     return "", {"model": "none", "cost_usd": 0.0, "in_tok": in_tok, "out_tok": 0}
 
 
-def execute_task(task: dict) -> dict:
-    """Actually perform the task. Returns real evidence — never a fabricated proof."""
+MAX_RETRIES = int(os.environ.get("AGENT_MAX_RETRIES", "2"))
+_TIER_NAME = {TIER_LOCAL: "local", TIER_CHEAP: "cheap", TIER_FRONTIER: "frontier"}
+
+
+def _verify_compile(path: str) -> tuple[bool, str]:
+    import subprocess
+    p = _safe(path)
+    if not p.exists():
+        return False, f"compile target missing: {path}"
+    if p.suffix != ".py":
+        return True, f"{path} (non-python, skipped)"
+    r = subprocess.run([sys.executable, "-m", "py_compile", str(p)],
+                       capture_output=True, text=True, timeout=CMD_TIMEOUT)
+    return (r.returncode == 0), (f"py_compile {path}: " + ("ok" if r.returncode == 0 else r.stderr[:300]))
+
+
+def _verify_pytest(target: str) -> tuple[bool, str]:
+    import subprocess
+    r = subprocess.run([sys.executable, "-m", "pytest", target, "-q"],
+                       cwd=str(ROOT), capture_output=True, text=True, timeout=max(CMD_TIMEOUT, 300))
+    tail = (r.stdout + "\n" + r.stderr).strip()[-400:]
+    return (r.returncode == 0), f"pytest {target}: " + ("PASS" if r.returncode == 0 else f"FAIL\n{tail}")
+
+
+def _check_acceptance(task: dict, artifacts: list[str], summary: str) -> tuple[bool, list[str]]:
+    """Machine-verify the result. Real, independent checks — this is what stops a model from
+    claiming success it didn't achieve. A task can declare its own `acceptance` spec; otherwise
+    a default gate requires a real, on-disk artifact + a non-empty summary."""
+    spec = task.get("acceptance") or {}
+    report: list[str] = []
+    passed = True
+
+    if not spec:  # DEFAULT GATE — no fabricated 'done'
+        real = [a for a in artifacts if (_safe(a).exists() if a else False)]
+        if not real:
+            passed = False
+            report.append("default gate: no artifact actually exists on disk (claimed done, produced nothing)")
+        elif not (summary or "").strip():
+            passed = False
+            report.append("default gate: empty summary")
+        else:
+            report.append(f"default gate: {len(real)} real artifact(s) on disk + summary present")
+        return passed, report
+
+    for path in spec.get("artifact_exists", []):
+        ok_ = bool(path) and _safe(path).exists()
+        passed &= ok_
+        report.append(f"exists {path}: {'ok' if ok_ else 'MISSING'}")
+    for path in spec.get("compiles", []):
+        ok_, msg = _verify_compile(path)
+        passed &= ok_
+        report.append(msg)
+    for item in spec.get("contains", []) if isinstance(spec.get("contains"), list) else ([spec["contains"]] if spec.get("contains") else []):
+        path, text = item.get("path"), item.get("text", "")
+        ok_ = bool(path) and _safe(path).exists() and text in _safe(path).read_text(encoding="utf-8", errors="ignore")
+        passed &= ok_
+        report.append(f"contains '{text[:30]}' in {path}: {'ok' if ok_ else 'NO'}")
+    pt = spec.get("pytest")
+    if pt:
+        if not ALLOW_CODE:
+            report.append(f"pytest {pt}: SKIPPED (safe mode)")
+        else:
+            ok_, msg = _verify_pytest(pt)
+            passed &= ok_
+            report.append(msg)
+    return passed, report
+
+
+def _run_attempt(task: dict, tier: int, system: str, prior_fail: str = "") -> dict:
+    """One ReAct pass at a given tier. Returns raw outcome (not yet acceptance-checked)."""
     tname = task.get("task_name", "")
     tclass = task.get("task_class", "")
     desc = task.get("description", "") or tname
-    tid = task.get("task_id", "task")
-
-    convo = f"TASK: {tname}\nCLASS: {tclass}\nDETAIL: {desc}\nComplete it now. First action:"
+    convo = f"TASK: {tname}\nCLASS: {tclass}\nDETAIL: {desc}\n"
+    if task.get("acceptance"):
+        convo += (f"ACCEPTANCE (your work is machine-checked against this — it must pass):\n"
+                  f"{json.dumps(task['acceptance'])}\n")
+    if prior_fail:
+        convo += (f"\nA PREVIOUS ATTEMPT FAILED VERIFICATION:\n{prior_fail}\n"
+                  "Fix the specific failure above. Do not repeat the same mistake.\n")
+    convo += "Complete it now. First action:"
     transcript: list[dict] = []
     artifacts: list[str] = []
-    summary = ""
-    ok = False
-    _system_prompt = _system()
-    tier = _tier_for(task)
-    os.environ["_AGENT_TID"] = str(tid)
-    task_cost = 0.0
+    summary, ok, cost = "", False, 0.0
     models_used: list[str] = []
 
     for step in range(1, MAX_STEPS + 1):
-        raw, meta = _gateway_generate(convo, _system_prompt, tier)
+        raw, meta = _gateway_generate(convo, system, tier)
         raw = raw or ""
-        task_cost += meta.get("cost_usd", 0.0)
+        cost += meta.get("cost_usd", 0.0)
         if meta.get("model"):
             models_used.append(meta["model"])
         transcript.append({"step": step, "model": meta.get("model"),
@@ -406,28 +474,77 @@ def execute_task(task: dict) -> dict:
         transcript.append({"step": step, "tool": tool, "observation": obs[:MAX_OBS]})
         convo += f"\nACTION: {json.dumps(action)[:400]}\nOBSERVATION: {obs[:MAX_OBS]}\nNext action:"
 
+    return {"finished": ok, "summary": summary, "artifacts": artifacts,
+            "transcript": transcript, "cost": cost, "models_used": models_used}
+
+
+def execute_task(task: dict) -> dict:
+    """Perform the task with a VERIFY-AND-RETRY gate: run → check acceptance → on failure
+    escalate to the next tier and retry (bounded). Returns real evidence, never a fabricated proof.
+    This is the harness that makes a cheap model reliable: only genuine failures pay for a stronger one."""
+    tname = task.get("task_name", "")
+    tclass = task.get("task_class", "")
+    desc = task.get("description", "") or tname
+    tid = task.get("task_id", "task")
+    os.environ["_AGENT_TID"] = str(tid)
+    system = _system()
+
+    base_tier = _tier_for(task)
+    total_cost = 0.0
+    all_models: list[str] = []
+    attempts: list[dict] = []
+    final = None
+    accepted = False
+    accept_report: list[str] = []
+    prior_fail = ""
+
+    for attempt_i in range(1, MAX_RETRIES + 2):  # 1 attempt + MAX_RETRIES retries
+        tier = min(TIER_FRONTIER, base_tier + (attempt_i - 1))  # escalate one tier per retry
+        res = _run_attempt(task, tier, system, prior_fail)
+        total_cost += res["cost"]
+        all_models += res["models_used"]
+        accepted, accept_report = _check_acceptance(task, res["artifacts"], res["summary"]) \
+            if res["finished"] else (False, ["attempt did not finish (no finish action)"])
+        attempts.append({
+            "attempt": attempt_i, "tier": _TIER_NAME[tier], "finished": res["finished"],
+            "accepted": accepted, "acceptance_report": accept_report,
+            "cost_usd": round(res["cost"], 6), "steps": len(res["transcript"]),
+            "transcript": res["transcript"],
+        })
+        final = res
+        if accepted:
+            break
+        prior_fail = "; ".join(accept_report)[:800]
+        if tier >= TIER_FRONTIER:  # already at top tier — no higher to escalate to
+            break
+
     ev_dir = ROOT / "docs/evidence/runtime"
     ev_dir.mkdir(parents=True, exist_ok=True)
     ev_path = ev_dir / f"agent_exec_{tid}.json"
-    tier_name = {TIER_LOCAL: "local", TIER_CHEAP: "cheap", TIER_FRONTIER: "frontier"}[tier]
+    final_tier = _TIER_NAME[min(TIER_FRONTIER, base_tier + len(attempts) - 1)]
     payload = {
         "task_id": tid, "task_name": tname, "task_class": tclass,
-        "executed_at": _now(), "engine": "agent_executor.v2",
-        "status": "SUCCESS" if ok else "INCOMPLETE",
-        "tier": tier_name, "models_used": sorted(set(models_used)),
-        "task_cost_usd": round(task_cost, 6), "month_spend_usd": round(_month_spend(), 4),
+        "executed_at": _now(), "engine": "agent_executor.v3",
+        "status": "SUCCESS" if accepted else "INCOMPLETE",
+        "verified": accepted, "acceptance_report": accept_report,
+        "attempts": len(attempts), "final_tier": final_tier,
+        "models_used": sorted(set(all_models)),
+        "task_cost_usd": round(total_cost, 6), "month_spend_usd": round(_month_spend(), 4),
         "month_cap_usd": _cap(),
-        "summary": summary, "artifacts": sorted(set(a for a in artifacts if a)),
-        "steps": len(transcript), "transcript": transcript,
+        "summary": final["summary"] if final else "",
+        "artifacts": sorted(set(a for a in (final["artifacts"] if final else []) if a)),
+        "attempt_log": attempts,
     }
     ev_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
     return {
         "status": payload["status"],
-        "summary": summary or "(no summary produced)",
+        "verified": accepted,
+        "summary": payload["summary"] or "(no summary produced)",
         "artifacts": payload["artifacts"],
         "evidence_path": str(ev_path.relative_to(ROOT)),
-        "tier": tier_name, "task_cost_usd": round(task_cost, 6),
+        "tier": final_tier, "attempts": len(attempts),
+        "task_cost_usd": round(total_cost, 6),
         "month_spend_usd": round(_month_spend(), 4), "month_cap_usd": _cap(),
         "input_hash": _sha(f"{tname}:{tclass}:{desc}"),
         "output_hash": _sha(json.dumps(payload, sort_keys=True)),

@@ -51,6 +51,7 @@ def _record_experience(task: dict, result: dict) -> None:
         "ts": _now(), "kind": "combat_record", "engine": "agent_executor.v2",
         "task_id": task.get("task_id"), "task_class": task.get("task_class"),
         "task_name": task.get("task_name"), "status": result["status"],
+        "verified": result.get("verified"), "attempts": result.get("attempts"),
         "tier": result.get("tier"), "task_cost_usd": result.get("task_cost_usd", 0.0),
         "month_spend_usd": result.get("month_spend_usd", 0.0),
         "month_cap_usd": result.get("month_cap_usd"),
@@ -94,10 +95,12 @@ def main() -> None:
             task["result"] = res["summary"][:200]
             task["evidence"] = res["evidence_path"]
             _record_experience(task, res)
-            print(f"[{_now()}]   -> {res['status']} [{res.get('tier')}] "
+            print(f"[{_now()}]   -> {res['status']} "
+                  f"{'✓verified' if res.get('verified') else '✗unverified'} "
+                  f"[{res.get('tier')} x{res.get('attempts')}] "
                   f"task=${res.get('task_cost_usd', 0):.4f} "
                   f"month=${res.get('month_spend_usd', 0):.2f}/${res.get('month_cap_usd', 0):.0f}: "
-                  f"{res['summary'][:56]}")
+                  f"{res['summary'][:48]}")
             if res["status"] == "SUCCESS":
                 done += 1
         except Exception as e:
