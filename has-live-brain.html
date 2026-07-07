@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>HAS — Live Swarm Brain</title>
+<style>
+  :root{--bg:#06080f;--card:rgba(255,255,255,.03);--bd:rgba(255,255,255,.08);
+    --tx:#e6edf6;--mut:#8b98ad;--cy:#22d3ee;--gr:#34d399;--am:#fbbf24;--vi:#a78bfa;}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;color:var(--tx);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    background:radial-gradient(1200px 700px at 30% 12%,#111a2e 0%,#0a0e17 55%,#06080f 100%);}
+  .wrap{max-width:1280px;margin:0 auto;padding:16px}
+  .hd{display:flex;align-items:center;gap:12px;padding:8px 6px 12px}
+  .dot{width:11px;height:11px;border-radius:50%;background:var(--gr);box-shadow:0 0 12px var(--gr);animation:blink 1.4s infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+  .title{font-size:20px;font-weight:800;letter-spacing:.3px}
+  .badge{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12px;font-variant-numeric:tabular-nums;color:var(--mut)}
+  .pill{padding:3px 10px;border-radius:999px;font-weight:800;font-size:11px;letter-spacing:.5px}
+  .pill.live{background:rgba(52,211,153,.15);color:var(--gr);border:1px solid var(--gr)}
+  .pill.sample{background:rgba(251,191,36,.14);color:var(--am);border:1px solid var(--am)}
+  .pill.off{background:rgba(239,68,68,.14);color:#f87171;border:1px solid #f87171}
+  .stage{display:block;width:100%;height:auto;border-radius:16px;background:rgba(255,255,255,.015);border:1px solid var(--bd)}
+  .hud{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:12px}
+  @media(max-width:760px){.hud{grid-template-columns:repeat(2,1fr)}}
+  .g{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 12px}
+  .gl{font-size:9.5px;letter-spacing:.6px;color:var(--mut);text-transform:uppercase}
+  .gv{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums;margin-top:3px}
+  .bar{height:4px;border-radius:2px;background:rgba(255,255,255,.08);margin-top:7px;overflow:hidden}
+  .bf{height:100%;width:0;border-radius:2px;transition:width 1s cubic-bezier(.4,0,.2,1)}
+  .tick{margin-top:12px;padding:10px 14px;background:var(--card);border:1px solid var(--bd);border-radius:12px;font-size:12.5px;color:#a9b6c9;font-variant-numeric:tabular-nums}
+  .tick b{color:var(--gr)}
+  .foot{margin-top:10px;font-size:11px;color:#6f7d92;text-align:center}
+  .flt{filter:drop-shadow(0 0 6px currentColor)}
+  @keyframes corePulse{0%,100%{r:34;opacity:.95}50%{r:40;opacity:1}}
+  @keyframes ringspin{to{transform:rotate(360deg)}}
+  @keyframes syn{0%,100%{opacity:.15}50%{opacity:.9}}
+  @keyframes glowp{0%,100%{opacity:.5}50%{opacity:1}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hd">
+    <span class="dot" id="dot"></span>
+    <span class="title">HAS — Live Swarm Brain</span>
+    <span class="badge"><span class="pill sample" id="conn">CONNECTING</span><span id="stamp">—</span></span>
+  </div>
+
+  <svg class="stage" viewBox="0 0 1240 560" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="core" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#7dd3fc"/><stop offset="55%" stop-color="#22d3ee"/><stop offset="100%" stop-color="#0e7490"/>
+    </radialGradient>
+    <filter id="soft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="wire" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#22d3ee"/><stop offset="100%" stop-color="#a78bfa"/>
+    </linearGradient>
+  </defs>
+
+  <!-- BRAIN -->
+  <g transform="translate(215,300)" color="#22d3ee">
+    <g stroke="url(#wire)" stroke-width="1.6" fill="none">
+      <path d="M0,0 L-95,-95" style="animation:syn 2.1s infinite"/><path d="M0,0 L-120,-10" style="animation:syn 2.7s infinite .3s"/>
+      <path d="M0,0 L-90,85" style="animation:syn 2.3s infinite .6s"/><path d="M0,0 L-20,120" style="animation:syn 3.1s infinite .2s"/>
+      <path d="M0,0 L80,-110" style="animation:syn 2.5s infinite .5s"/><path d="M0,0 L120,-30" style="animation:syn 2.9s infinite .1s"/>
+      <path d="M0,0 L100,80" style="animation:syn 2.2s infinite .7s"/><path d="M0,0 L30,-125" style="animation:syn 3.3s infinite .4s"/>
+      <path d="M-95,-95 L-120,-10" style="animation:syn 3s infinite"/><path d="M80,-110 L120,-30" style="animation:syn 2.6s infinite .3s"/>
+    </g>
+    <g fill="#7dd3fc" class="flt">
+      <circle cx="-95" cy="-95" r="5" style="animation:glowp 2.1s infinite"/><circle cx="-120" cy="-10" r="4" style="animation:glowp 2.7s infinite .3s"/>
+      <circle cx="-90" cy="85" r="5" style="animation:glowp 2.3s infinite .6s"/><circle cx="-20" cy="120" r="4" style="animation:glowp 3.1s infinite .2s"/>
+      <circle cx="80" cy="-110" r="5" style="animation:glowp 2.5s infinite .5s"/><circle cx="120" cy="-30" r="4" style="animation:glowp 2.9s infinite .1s"/>
+      <circle cx="100" cy="80" r="5" style="animation:glowp 2.2s infinite .7s"/><circle cx="30" cy="-125" r="4" style="animation:glowp 3.3s infinite .4s"/>
+    </g>
+    <circle cx="0" cy="0" r="36" fill="url(#core)" filter="url(#soft)" style="animation:corePulse 2.4s infinite"/>
+    <text x="0" y="-2" text-anchor="middle" font-size="15" font-weight="800" fill="#04121a">HAS</text>
+    <text x="0" y="14" text-anchor="middle" font-size="8.5" fill="#04121a">orchestrator</text>
+  </g>
+
+  <!-- HARNESS -->
+  <text x="470" y="70" font-size="11.5" font-weight="700" fill="#8b98ad" letter-spacing=".5">THE HARNESS — route › run › verify › escalate › cap</text>
+  <g font-size="12.5" font-weight="700" text-anchor="middle" font-family="ui-sans-serif,system-ui">
+    <g><rect x="418" y="150" width="104" height="52" rx="10" fill="rgba(34,211,238,.09)" stroke="#22d3ee"/><text x="470" y="176" fill="#e6edf6">Route</text><text x="470" y="192" font-size="9" font-weight="500" fill="#8b98ad">by difficulty</text></g>
+    <g><rect x="540" y="150" width="104" height="52" rx="10" fill="rgba(34,211,238,.09)" stroke="#22d3ee"/><text x="592" y="176" fill="#e6edf6">Run</text><text x="592" y="192" font-size="9" font-weight="500" fill="#8b98ad">sandboxed</text></g>
+    <g><rect x="662" y="150" width="104" height="52" rx="10" fill="rgba(52,211,153,.12)" stroke="#34d399" class="flt" color="#34d399"/><text x="714" y="176" fill="#eafff5">Verify ✓</text><text x="714" y="192" font-size="9" font-weight="500" fill="#8fe6c0">acceptance</text></g>
+    <g><rect x="784" y="150" width="104" height="52" rx="10" fill="rgba(167,139,250,.10)" stroke="#a78bfa"/><text x="836" y="176" fill="#e6edf6">Escalate</text><text x="836" y="192" font-size="9" font-weight="500" fill="#8b98ad">on real fail</text></g>
+    <g><rect x="906" y="150" width="104" height="52" rx="10" fill="rgba(251,191,36,.10)" stroke="#fbbf24"/><text x="958" y="176" fill="#e6edf6">Cost Cap</text><text x="958" y="192" font-size="9" font-weight="500" fill="#d9ad63">fail-closed</text></g>
+  </g>
+  <path d="M251,300 C360,250 380,200 418,176 L540,176 L662,176 L784,176 L906,176 L1010,176" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="2"/>
+  <g fill="#22d3ee" class="flt" color="#22d3ee">
+    <circle r="4"><animateMotion dur="4s" repeatCount="indefinite" path="M251,300 C360,250 380,200 418,176 L540,176 L662,176 L784,176 L906,176 L1010,176"/></circle>
+    <circle r="4"><animateMotion dur="4s" begin="1.3s" repeatCount="indefinite" path="M251,300 C360,250 380,200 418,176 L540,176 L662,176 L784,176 L906,176 L1010,176"/></circle>
+    <circle r="4"><animateMotion dur="4s" begin="2.6s" repeatCount="indefinite" path="M251,300 C360,250 380,200 418,176 L540,176 L662,176 L784,176 L906,176 L1010,176"/></circle>
+  </g>
+
+  <!-- FACTORIES -->
+  <text x="470" y="330" font-size="11.5" font-weight="700" fill="#8b98ad" letter-spacing=".5">FACTORIES — one harness serves all three</text>
+  <g transform="translate(720,415)">
+    <ellipse rx="290" ry="88" fill="none" stroke="#fbbf24" stroke-width="1.4" stroke-dasharray="7 8" opacity=".55" style="transform-origin:center;animation:ringspin 40s linear infinite"/>
+    <text x="0" y="-96" text-anchor="middle" font-size="10" font-weight="700" fill="#d9ad63" letter-spacing="1">DOORSTEP · PRE-PURCHASE DOOR</text>
+  </g>
+  <g text-anchor="middle" font-family="ui-sans-serif,system-ui">
+    <g class="flt" color="#34d399"><circle cx="560" cy="415" r="40" fill="rgba(52,211,153,.14)" stroke="#34d399" stroke-width="1.6" style="animation:glowp 3s infinite"/></g>
+    <text x="560" y="410" font-size="14" font-weight="800" fill="#eafff5">HASF</text><text x="560" y="426" font-size="8.5" fill="#8fe6c0">Epic Fury · iOS</text>
+    <text x="560" y="470" font-size="9.5" font-weight="700" fill="#34d399" id="f-hasf">✓ SEC GATE SIGNED</text>
+    <g color="#a78bfa"><circle cx="720" cy="430" r="36" fill="rgba(167,139,250,.10)" stroke="#a78bfa" stroke-width="1.4" style="animation:glowp 3.4s infinite .5s"/></g>
+    <text x="720" y="426" font-size="13" font-weight="800" fill="#e6edf6">HMF</text><text x="720" y="441" font-size="8.5" fill="#9aa7bd">music</text>
+    <text x="720" y="480" font-size="9" font-weight="700" fill="#d9ad63" id="f-hmf">◔ at doorstep</text>
+    <g color="#a78bfa"><circle cx="880" cy="415" r="36" fill="rgba(167,139,250,.10)" stroke="#a78bfa" stroke-width="1.4" style="animation:glowp 3.1s infinite .8s"/></g>
+    <text x="880" y="411" font-size="13" font-weight="800" fill="#e6edf6">HRF</text><text x="880" y="426" font-size="8.5" fill="#9aa7bd">research</text>
+    <text x="880" y="466" font-size="9" font-weight="700" fill="#d9ad63" id="f-hrf">◔ at doorstep</text>
+  </g>
+  <g fill="#34d399" class="flt" color="#34d399"><circle r="3.5"><animateMotion dur="2.2s" repeatCount="indefinite" path="M1010,176 C900,300 720,330 560,378"/></circle></g>
+  <g fill="#a78bfa" class="flt" color="#a78bfa">
+    <circle r="3.5"><animateMotion dur="2.4s" begin=".6s" repeatCount="indefinite" path="M1010,176 C1000,320 840,360 720,396"/></circle>
+    <circle r="3.5"><animateMotion dur="2.6s" begin="1.2s" repeatCount="indefinite" path="M1010,176 C1030,300 950,360 880,381"/></circle>
+  </g>
+  <rect x="418" y="40" width="592" height="2" fill="url(#wire)" opacity=".5"/>
+  <text x="1010" y="52" text-anchor="end" font-size="9.5" fill="#6f7d92">▲ Change-Control Board · baseline + pre-commit gate</text>
+  <text x="215" y="470" text-anchor="middle" font-size="10.5" font-weight="700" fill="#8b98ad">COMPUTE FLOOR · $0</text>
+  <text x="215" y="486" text-anchor="middle" font-size="9" fill="#6f7d92">local fleet: qwen3-coder:30b · gpt-oss:120b</text>
+  <text x="215" y="500" text-anchor="middle" font-size="9" fill="#6f7d92" id="relayline">relay-001 always-on · MEASURED</text>
+  </svg>
+
+  <div class="hud">
+    <div class="g"><div class="gl">Posture</div><div class="gv" style="color:var(--am)" id="v-post">—</div><div class="bar"><div class="bf" style="width:100%;background:var(--am)"></div></div></div>
+    <div class="g"><div class="gl">Worker</div><div class="gv" style="color:var(--gr)" id="v-work">—</div><div class="bar"><div class="bf" id="b-work" style="background:var(--gr)"></div></div></div>
+    <div class="g"><div class="gl">Agents · measured</div><div class="gv" id="v-ag">—</div><div class="bar"><div class="bf" style="width:100%;background:var(--cy)"></div></div></div>
+    <div class="g"><div class="gl">RAM</div><div class="gv"><span id="v-ram">—</span>%</div><div class="bar"><div class="bf" id="b-ram" style="background:var(--cy)"></div></div></div>
+    <div class="g"><div class="gl">Disk</div><div class="gv"><span id="v-disk">—</span>%</div><div class="bar"><div class="bf" id="b-disk" style="background:var(--am)"></div></div></div>
+    <div class="g"><div class="gl">Handoff at door</div><div class="gv" style="color:var(--am)" id="v-hand">—</div><div class="bar"><div class="bf" style="width:100%;background:var(--am)"></div></div></div>
+  </div>
+  <div class="tick">▸ <span id="tk">connecting to relay…</span></div>
+  <div class="foot">source: <span id="src">http://100.87.18.15:3012/api/live</span> · refresh 3s · open on a device on the HOCH tailnet for live data</div>
+</div>
+
+<script>
+(function(){
+  var RELAY="http://100.87.18.15:3012/api/live";
+  var $=function(id){return document.getElementById(id);};
+  var last=null, ticks=[], ti=0;
+  function setConn(cls,txt){var p=$("conn");p.className="pill "+cls;p.textContent=txt;
+    $("dot").style.background=cls==="live"?"#34d399":cls==="off"?"#f87171":"#fbbf24";
+    $("dot").style.boxShadow="0 0 12px "+($("dot").style.background);}
+  function bar(id,pct){var e=$(id);if(e)e.style.width=Math.max(0,Math.min(100,pct))+"%";}
+  function render(d){
+    last=d;
+    setConn(d.relay&&d.relay.live?"live":"sample", d.relay&&d.relay.live?"LIVE":"SAMPLE");
+    $("stamp").textContent=(d.ts||"").replace("T"," ").replace("+00:00"," UTC");
+    $("v-post").textContent=d.posture||"—";
+    $("v-work").textContent=d.worker_status||"—";
+    bar("b-work", d.worker_status==="ONLINE"?100:0);
+    $("v-hand").textContent=(d.founder_handoff_count!=null?d.founder_handoff_count:"—");
+    var r=d.relay||{};
+    $("v-ag").textContent=(r.measured_agent_count!=null?r.measured_agent_count:"—");
+    $("v-ram").textContent=(r.ram_pct!=null?(+r.ram_pct).toFixed(1):"—"); bar("b-ram", r.ram_pct||0);
+    $("v-disk").textContent=(r.disk_pct!=null?(+r.disk_pct).toFixed(1):"—"); bar("b-disk", r.disk_pct||0);
+    $("relayline").textContent="relay-001 · "+(r.telemetry_authority||"")+" · "+(r.telemetry_age_seconds!=null?r.telemetry_age_seconds+"s ago":"");
+    (d.factories||[]).forEach(function(f){
+      if(f.id==="HASF")$("f-hasf").textContent = f.state==="SEC_GATE_SIGNED"?"✓ SEC GATE SIGNED":f.state;
+      if(f.id==="HMF")$("f-hmf").textContent = f.state==="AT_DOORSTEP"?"◔ at doorstep":f.state;
+      if(f.id==="HRF")$("f-hrf").textContent = f.state==="AT_DOORSTEP"?"◔ at doorstep":f.state;
+    });
+    var cap=(d.cost&&d.cost.cap_usd!=null)?d.cost.cap_usd:100;
+    ticks=[
+      "relay-001 <b>"+(d.worker_status||"?")+"</b> · "+(r.telemetry_authority||"")+" · "+(r.measured_agent_count||0)+" agents",
+      "posture <b>"+(d.posture||"?")+"</b> · exit = "+(d.doorstep_exit_condition||"?"),
+      "RAM "+((r.ram_pct!=null)?(+r.ram_pct).toFixed(1):"?")+"% · Disk "+((r.disk_pct!=null)?(+r.disk_pct).toFixed(1):"?")+"% · load "+((r.load1!=null)?(+r.load1).toFixed(2):"?"),
+      "cost cap <b>$"+(+cap).toFixed(0)+"</b> · fail-closed · spend on build host",
+      "R2 security gate <b>✓ SIGNED</b> — M. B. Hoch · HASF next: App Store submit"
+    ];
+  }
+  function offline(){ setConn("off","OFFLINE — SAMPLE"); if(!ticks.length){
+    ticks=["relay unreachable — open this on a device on the HOCH tailnet","showing last-known / seeded truth · DOORSTEP posture"];}}
+  function rot(){var e=$("tk"); if(ticks.length){e.innerHTML=ticks[ti%ticks.length]; ti++;}}
+  async function poll(){
+    try{ var r=await fetch(RELAY,{cache:"no-store"}); if(!r.ok) throw 0; render(await r.json()); }
+    catch(e){ offline(); }
+  }
+  poll(); setInterval(poll,3000); rot(); setInterval(rot,2800);
+})();
+</script>
+</body>
+</html>

@@ -24,15 +24,25 @@ from typing import Any
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import FileResponse,  HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 
 # ---------------------------------------------------------------------------
 # App init
 # ---------------------------------------------------------------------------
 app = FastAPI(
     title="HOCH-200 Relay API",
-    version="1.0.0",
+    version="1.1.0",
     docs_url=None,   # disable swagger in prod
     redoc_url=None,
+)
+
+# Read-only telemetry on a Tailscale-internal port — allow browser GETs so the live
+# swarm-brain dashboard can poll from the founder's machine. No writes are exposed via CORS.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["GET"],
+    allow_headers=["*"],
 )
 
 STATIC_DIR = Path("/app/static")
@@ -639,6 +649,55 @@ async def get_burn_in_status() -> JSONResponse:
         "mission_commander": mission_commander,
         "factory_lanes": factory_lanes,
         "agent_resource_map": agent_resource_map
+    })
+
+
+@app.get("/api/live")
+async def api_live() -> JSONResponse:
+    """Single compact, CORS-served payload for the live swarm-brain dashboard.
+    Merges DOORSTEP posture + worker state + MEASURED relay telemetry into one poll.
+    Everything is read-only and fails soft — the dashboard shows honest blanks, never fakes."""
+    worker = _relay_worker()
+    posture, door, exit_cond, staged_count = _doorstep_status()
+
+    # measured relay telemetry (same source + staleness guard as /api/fleet/node)
+    tel = {"telemetry_authority": "DECLARED_ROSTER_NOT_MEASURED", "status": "Reachable",
+           "cpu_pct": None, "ram_pct": None, "disk_pct": None, "load1": None,
+           "measured_agent_count": 0, "telemetry_age_seconds": None}
+    try:
+        data = json.loads(Path("/data/relay_node_telemetry.json").read_text())
+        for k in ("cpu_pct", "ram_pct", "disk_pct", "load1", "measured_agent_count",
+                  "telemetry_authority", "status"):
+            if k in data:
+                tel[k] = data[k]
+        measured = datetime.fromisoformat(data.get("measured_at", "").replace("Z", "+00:00"))
+        age = (datetime.now(timezone.utc) - measured).total_seconds()
+        tel["telemetry_age_seconds"] = int(age)
+        if age > 120:
+            tel["telemetry_authority"] = "STALE_NO_RECENT_MEASUREMENT"
+            tel["status"] = "Stale"
+    except Exception:
+        pass
+
+    live = tel.get("telemetry_authority", "").startswith("MEASURED") and worker.get("status") == "ONLINE"
+    return JSONResponse({
+        "ok": True,
+        "ts": _now_iso(),
+        "posture": posture,
+        "doorstep_door": door,
+        "doorstep_exit_condition": exit_cond,
+        "founder_handoff_count": staged_count,
+        "worker_status": worker.get("status", "UNKNOWN"),
+        "relay": {"node": "hoch-relay-001", "tailscale_ip": "100.87.18.15",
+                  "live": bool(live), **tel},
+        "factories": [
+            {"id": "HASF", "name": "Epic Fury · iOS", "state": "SEC_GATE_SIGNED", "at_door": True},
+            {"id": "HMF", "name": "music", "state": "AT_DOORSTEP", "at_door": True},
+            {"id": "HRF", "name": "research", "state": "AT_DOORSTEP", "at_door": True},
+        ],
+        "harness": ["route", "run", "verify", "escalate", "cost_cap"],
+        "cost": {"cap_usd": float(os.environ.get("AGENT_MONTHLY_CAP_USD", "100")),
+                 "note": "spend tracked on the build host (Mac) ledger"},
     })
 
 
