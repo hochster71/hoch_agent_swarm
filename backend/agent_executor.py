@@ -202,8 +202,11 @@ def _gateway_generate(prompt: str, system: str) -> str:
     if forced in catalog and catalog[forced][0]:
         order = [forced]
     else:
-        # DEFAULT: free Gemini first, then cheap Grok, then funded OpenAI, then Claude.
-        order = ["gemini", "xai", "openai", "anthropic"]
+        # DEFAULT: free Gemini first, then Grok (if keyed), then funded OpenAI.
+        # Anthropic is intentionally EXCLUDED from auto-use — its API Console costs extra money
+        # (separate from a Claude subscription), and the founder opted out. It is only used if
+        # explicitly requested via AGENT_BRAIN=anthropic.
+        order = ["gemini", "xai", "openai"]
     for name in order:
         key, fn = catalog[name]
         if not key:
