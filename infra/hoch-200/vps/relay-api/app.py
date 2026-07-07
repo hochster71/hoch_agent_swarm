@@ -784,6 +784,105 @@ async def api_live() -> JSONResponse:
     })
 
 
+@app.get("/api/northstar")
+async def api_northstar() -> JSONResponse:
+    """Live state of the Northstar Autonomy Engine so a dashboard can watch the swarm build.
+    Read-only, fails soft — never 500s. Reads Northstar JSON snapshots + the tail of the
+    experience ledger from the same DATA_DIR the rest of the relay uses."""
+
+    def _read_json(filename: str, default: Any = None) -> Any:
+        path = DATA_DIR / filename
+        if path.exists():
+            try:
+                return json.loads(path.read_text())
+            except Exception:
+                pass
+        return default
+
+    northstar = _read_json("northstar.json", {})
+    state = _read_json("northstar_state.json", {})
+    digest = _read_json("doorstep_digest.json", {})
+
+    if not isinstance(northstar, dict):
+        northstar = {}
+    if not isinstance(state, dict):
+        state = {}
+    if not isinstance(digest, dict):
+        digest = {}
+
+    # ── goal + phase (northstar.json is the authority, fall back to state) ──
+    goal = northstar.get("goal") or state.get("goal")
+    phase = northstar.get("current_phase") or state.get("phase")
+
+    progress = {
+        "tasks": state.get("tasks"),
+        "done": state.get("done"),
+        "pending": state.get("pending"),
+        "staged_at_door": state.get("staged_at_door"),
+        "deferred_need_code_mode": state.get("deferred_need_code_mode"),
+    }
+
+    # ── tail of the experience ledger, filtered to northstar entries, normalized ──
+    recent_tasks = []
+    try:
+        lp = DATA_DIR / "prompt_brain" / "outcome_feedback_ledger.jsonl"
+        lines = [ln for ln in lp.read_text(encoding="utf-8", errors="ignore").splitlines() if ln.strip()]
+        parsed = []
+        for ln in lines:
+            try:
+                parsed.append(json.loads(ln))
+            except Exception:
+                pass
+        ns_entries = []
+        for e in parsed:
+            if not isinstance(e, dict):
+                continue
+            engine = str(e.get("engine", ""))
+            if engine.startswith("northstar") or "northstar" in e:
+                ns_entries.append(e)
+        for e in ns_entries[-8:]:
+            recent_tasks.append({
+                "task_id": e.get("task_id"),
+                "phase": e.get("phase"),
+                "status": e.get("status"),
+                "verified": e.get("verified"),
+                "tier": e.get("tier"),
+                "cost_usd": e.get("cost_usd"),
+                "summary": e.get("summary"),
+            })
+    except Exception:
+        recent_tasks = []
+
+    # ── items parked at the door (from the doorstep digest) ──
+    doorstep = []
+    try:
+        for d in digest.get("at_the_door", []):
+            if not isinstance(d, dict):
+                continue
+            doorstep.append({
+                "id": d.get("id"),
+                "title": d.get("title"),
+                "status": d.get("status"),
+            })
+    except Exception:
+        doorstep = []
+
+    return JSONResponse({
+        "ok": True,
+        "ts": _now_iso(),
+        "goal": goal,
+        "phase": phase,
+        "progress": progress,
+        "recent_tasks": recent_tasks,
+        "doorstep": doorstep,
+        "message": digest.get("message", ""),
+        "moonshot": {
+            "epic_fury_state": "WAITING_FOR_REVIEW",
+            "factories_live": ["HASF", "HSF"],
+        },
+    })
+
+
 @app.get("/brain", response_class=HTMLResponse, include_in_schema=False)
 async def serve_brain() -> HTMLResponse:
     """Bookmarkable live swarm-brain control room. Served same-origin, so it polls /api/live

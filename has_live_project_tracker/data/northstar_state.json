@@ -1,0 +1,10 @@
+{
+  "goal": "Launch HSF Story Studio as a paid product",
+  "phase": "RESEARCH",
+  "tasks": 2,
+  "done": 1,
+  "staged_at_door": 0,
+  "pending": 1,
+  "ts": "2026-07-07T19:14:33+00:00",
+  "note": "local LM Studio backend erroring (HTTP 400); research tasks pending honest re-run"
+}

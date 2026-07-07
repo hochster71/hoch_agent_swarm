@@ -99,8 +99,9 @@ def _phase_tasks(goal, phase, slug):
             "northstar": slug,
             "phase": phase,
         }
-        if builds_doc:
-            task["acceptance"] = {"artifact_exists": [doc]}
+        # Doc tasks verify via the DEFAULT gate (a real artifact on disk + summary) rather than an
+        # exact path — weak local models vary the filename, and we don't want that to fail a
+        # genuinely-produced research/design doc. Code tasks (DEVELOP) carry their own gate in code mode.
         if gated:
             task["founder_gated"] = True
             task["policy_category"] = "blocked_release"
