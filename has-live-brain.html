@@ -21,8 +21,8 @@
   .pill.sample{background:rgba(251,191,36,.14);color:var(--am);border:1px solid var(--am)}
   .pill.off{background:rgba(239,68,68,.14);color:#f87171;border:1px solid #f87171}
   .stage{display:block;width:100%;height:auto;border-radius:16px;background:rgba(255,255,255,.015);border:1px solid var(--bd)}
-  .hud{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:12px}
-  @media(max-width:760px){.hud{grid-template-columns:repeat(2,1fr)}}
+  .hud{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:12px}
+  @keyframes apulse{0%,100%{opacity:.5;r:7}50%{opacity:1;r:9}}
   .g{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 12px}
   .gl{font-size:9.5px;letter-spacing:.6px;color:var(--mut);text-transform:uppercase}
   .gv{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums;margin-top:3px}
@@ -119,9 +119,16 @@
   </g>
   <rect x="418" y="40" width="592" height="2" fill="url(#wire)" opacity=".5"/>
   <text x="1010" y="52" text-anchor="end" font-size="9.5" fill="#6f7d92">▲ Change-Control Board · baseline + pre-commit gate</text>
-  <text x="215" y="470" text-anchor="middle" font-size="10.5" font-weight="700" fill="#8b98ad">COMPUTE FLOOR · $0</text>
-  <text x="215" y="486" text-anchor="middle" font-size="9" fill="#6f7d92">local fleet: qwen3-coder:30b · gpt-oss:120b</text>
-  <text x="215" y="500" text-anchor="middle" font-size="9" fill="#6f7d92" id="relayline">relay-001 always-on · MEASURED</text>
+  <text x="215" y="452" text-anchor="middle" font-size="10.5" font-weight="700" fill="#8b98ad">COMPUTE FLOOR · $0</text>
+  <text x="215" y="468" text-anchor="middle" font-size="9" fill="#6f7d92">local fleet: qwen3-coder:30b · gpt-oss:120b</text>
+  <text x="215" y="482" text-anchor="middle" font-size="9" fill="#6f7d92" id="relayline">relay-001 always-on · MEASURED</text>
+  <!-- live measured-agent constellation (populated from /api/live) -->
+  <text x="60" y="512" font-size="9.5" font-weight="700" fill="#8b98ad" letter-spacing=".5">MEASURED AGENTS · live</text>
+  <g id="agentnodes"></g>
+  <!-- live cycle progress -->
+  <text x="1010" y="512" text-anchor="end" font-size="9.5" font-weight="700" fill="#8b98ad" letter-spacing=".5" id="cyclelbl">EXECUTION CYCLE</text>
+  <rect x="700" y="522" width="310" height="8" rx="4" fill="rgba(255,255,255,.08)"/>
+  <rect id="cyclebar" x="700" y="522" width="0" height="8" rx="4" fill="#34d399"/>
   </svg>
 
   <div class="hud">
@@ -131,6 +138,8 @@
     <div class="g"><div class="gl">RAM</div><div class="gv"><span id="v-ram">—</span>%</div><div class="bar"><div class="bf" id="b-ram" style="background:var(--cy)"></div></div></div>
     <div class="g"><div class="gl">Disk</div><div class="gv"><span id="v-disk">—</span>%</div><div class="bar"><div class="bf" id="b-disk" style="background:var(--am)"></div></div></div>
     <div class="g"><div class="gl">Handoff at door</div><div class="gv" style="color:var(--am)" id="v-hand">—</div><div class="bar"><div class="bf" style="width:100%;background:var(--am)"></div></div></div>
+    <div class="g"><div class="gl">Cycle · done/pending</div><div class="gv" id="v-cyc">—</div><div class="bar"><div class="bf" id="b-cyc" style="background:var(--gr)"></div></div></div>
+    <div class="g"><div class="gl">Month spend / cap</div><div class="gv" style="color:var(--gr)">$<span id="v-sp">0.00</span></div><div class="bar"><div class="bf" id="b-sp" style="background:var(--gr)"></div></div></div>
   </div>
   <div class="tick">▸ <span id="tk">connecting to relay…</span></div>
   <div class="foot">source: <span id="src">http://100.87.18.15:3012/api/live</span> · refresh 3s · open on a device on the HOCH tailnet for live data</div>
@@ -138,13 +147,35 @@
 
 <script>
 (function(){
-  var RELAY="http://100.87.18.15:3012/api/live";
+  // Same-origin when served from the relay (/brain); absolute tailscale URL when opened as a file.
+  var RELAY=(location.protocol==="http:"||location.protocol==="https:")
+    ? (location.origin+"/api/live") : "http://100.87.18.15:3012/api/live";
+  var SVGNS="http://www.w3.org/2000/svg";
   var $=function(id){return document.getElementById(id);};
   var last=null, ticks=[], ti=0;
   function setConn(cls,txt){var p=$("conn");p.className="pill "+cls;p.textContent=txt;
     $("dot").style.background=cls==="live"?"#34d399":cls==="off"?"#f87171":"#fbbf24";
     $("dot").style.boxShadow="0 0 12px "+($("dot").style.background);}
   function bar(id,pct){var e=$(id);if(e)e.style.width=Math.max(0,Math.min(100,pct))+"%";}
+  function el(tag,attrs){var e=document.createElementNS(SVGNS,tag);for(var k in attrs)e.setAttribute(k,attrs[k]);return e;}
+
+  function renderAgents(agents){
+    var g=$("agentnodes"); if(!g)return; g.textContent="";
+    var x0=72, dx=64, y=534;
+    (agents||[]).slice(0,6).forEach(function(a,i){
+      var active=(a.status||"").toLowerCase()==="active";
+      var col=active?"#34d399":(a.status||"").toLowerCase()==="stale"?"#fbbf24":"#6f7d92";
+      var x=x0+i*dx;
+      var c=el("circle",{cx:x,cy:y,r:7,fill:col,opacity:.85});
+      c.setAttribute("style","color:"+col+";filter:drop-shadow(0 0 5px "+col+");animation:apulse "+(2.2+i*0.3)+"s infinite");
+      g.appendChild(c);
+      var nm=(a.name||"").replace(/\.service$/,"").replace(/^hoch-/,"");
+      if(nm.length>11)nm=nm.slice(0,10)+"…";
+      var t=el("text",{x:x,y:y+20,"text-anchor":"middle","font-size":7.5,fill:"#8b98ad"});
+      t.textContent=nm; g.appendChild(t);
+    });
+  }
+
   function render(d){
     last=d;
     setConn(d.relay&&d.relay.live?"live":"sample", d.relay&&d.relay.live?"LIVE":"SAMPLE");
@@ -163,14 +194,27 @@
       if(f.id==="HMF")$("f-hmf").textContent = f.state==="AT_DOORSTEP"?"◔ at doorstep":f.state;
       if(f.id==="HRF")$("f-hrf").textContent = f.state==="AT_DOORSTEP"?"◔ at doorstep":f.state;
     });
+    // live agent constellation
+    renderAgents(d.agents);
+    // live cycle gauge
+    var cy=d.cycle||{}; var done=cy.completed||0, pend=cy.pending||0, tot=done+pend;
+    $("v-cyc").textContent = (cy.cycle_id?done+" / "+pend:"—");
+    bar("b-cyc", tot? (done/tot*100):0);
+    $("cyclelbl").textContent = cy.cycle_id ? (cy.cycle_id+" · "+(cy.verdict||"")+" · "+(cy.daemon_status||"")) : "EXECUTION CYCLE";
+    // cost
     var cap=(d.cost&&d.cost.cap_usd!=null)?d.cost.cap_usd:100;
-    ticks=[
-      "relay-001 <b>"+(d.worker_status||"?")+"</b> · "+(r.telemetry_authority||"")+" · "+(r.measured_agent_count||0)+" agents",
-      "posture <b>"+(d.posture||"?")+"</b> · exit = "+(d.doorstep_exit_condition||"?"),
-      "RAM "+((r.ram_pct!=null)?(+r.ram_pct).toFixed(1):"?")+"% · Disk "+((r.disk_pct!=null)?(+r.disk_pct).toFixed(1):"?")+"% · load "+((r.load1!=null)?(+r.load1).toFixed(2):"?"),
-      "cost cap <b>$"+(+cap).toFixed(0)+"</b> · fail-closed · spend on build host",
-      "R2 security gate <b>✓ SIGNED</b> — M. B. Hoch · HASF next: App Store submit"
-    ];
+    var sp=(d.cost&&d.cost.spend_usd!=null)?d.cost.spend_usd:0;
+    $("v-sp").textContent=(+sp).toFixed(2); bar("b-sp", cap? Math.min(100,sp/cap*100):0);
+    // ticker — stream real recent cycles when present
+    ticks=[];
+    (d.recent||[]).slice(0,6).forEach(function(e){
+      ticks.push((e.label||"cycle")+" &nbsp;<b>"+(e.verdict||"?")+"</b>&nbsp; "+
+        (e.duration_ms!=null?e.duration_ms+"ms":"")+" · "+(e.done!=null?e.done+" done":"")+
+        (e.pending!=null?" / "+e.pending+" pending":"")+(e.failed?" · "+e.failed+" failed":""));
+    });
+    ticks.push("posture <b>"+(d.posture||"?")+"</b> · exit = "+(d.doorstep_exit_condition||"?"));
+    ticks.push("R2 security gate <b>✓ SIGNED</b> — HASF next: App Store submit");
+    if(d.cost&&d.cost.spend_usd==null) ticks.push("cost cap <b>$"+(+cap).toFixed(0)+"</b> · fail-closed · "+(d.cost.note||""));
   }
   function offline(){ setConn("off","OFFLINE — SAMPLE"); if(!ticks.length){
     ticks=["relay unreachable — open this on a device on the HOCH tailnet","showing last-known / seeded truth · DOORSTEP posture"];}}
@@ -179,7 +223,7 @@
     try{ var r=await fetch(RELAY,{cache:"no-store"}); if(!r.ok) throw 0; render(await r.json()); }
     catch(e){ offline(); }
   }
-  poll(); setInterval(poll,3000); rot(); setInterval(rot,2800);
+  poll(); setInterval(poll,3000); rot(); setInterval(rot,2600);
 })();
 </script>
 </body>

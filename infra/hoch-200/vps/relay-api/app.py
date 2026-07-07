@@ -680,6 +680,71 @@ async def api_live() -> JSONResponse:
         pass
 
     live = tel.get("telemetry_authority", "").startswith("MEASURED") and worker.get("status") == "ONLINE"
+
+    # ── per-agent nodes (measured) — for the pulsing agent constellation ──
+    agents = []
+    try:
+        td = json.loads(Path("/data/relay_node_telemetry.json").read_text())
+        for a in td.get("agents", []):
+            agents.append({"name": a.get("name"), "status": a.get("status", "Unknown"),
+                           "type": a.get("type", "")})
+    except Exception:
+        pass
+
+    # ── recent execution activity + live cycle gauge (real burn-in ledger) ──
+    recent, cycle = [], {}
+    try:
+        lp = Path("/data/ag_execution_burn_in_ledger.jsonl")
+        lines = [ln for ln in lp.read_text(encoding="utf-8", errors="ignore").splitlines() if ln.strip()]
+        parsed = []
+        for ln in lines[-12:]:
+            try:
+                parsed.append(json.loads(ln))
+            except Exception:
+                pass
+        for e in reversed(parsed[-8:]):
+            recent.append({
+                "ts": e.get("timestamp"),
+                "label": e.get("cycle_id", "cycle"),
+                "verdict": e.get("verdict", "?"),
+                "duration_ms": e.get("duration_ms"),
+                "done": e.get("completed_count"), "pending": e.get("pending_count"),
+                "failed": e.get("failed_count"),
+            })
+        if parsed:
+            last = parsed[-1]
+            cycle = {
+                "cycle_id": last.get("cycle_id"),
+                "daemon_status": last.get("daemon_status"),
+                "completed": last.get("completed_count"), "pending": last.get("pending_count"),
+                "blocked": last.get("blocked_count"), "failed": last.get("failed_count"),
+                "verdict": last.get("verdict"), "heartbeat": last.get("heartbeat_status"),
+                "checks": {"proof": last.get("proof_check"), "queue": last.get("queue_check"),
+                           "doctrine": last.get("doctrine_check")},
+            }
+    except Exception:
+        pass
+
+    # ── cost: only report spend if the ledger actually exists here (else cap + honest note) ──
+    cost = {"cap_usd": float(os.environ.get("AGENT_MONTHLY_CAP_USD", "100")),
+            "spend_usd": None, "note": "spend ledger on build host — not present on relay"}
+    try:
+        sp = Path("/data/spend_ledger.jsonl")
+        if sp.exists():
+            mk = datetime.now(timezone.utc).strftime("%Y-%m")
+            tot = 0.0
+            for ln in sp.read_text(encoding="utf-8", errors="ignore").splitlines():
+                try:
+                    r = json.loads(ln)
+                    if r.get("month") == mk:
+                        tot += float(r.get("cost_usd", 0.0))
+                except Exception:
+                    pass
+            cost["spend_usd"] = round(tot, 4)
+            cost["note"] = "measured this month"
+    except Exception:
+        pass
+
     return JSONResponse({
         "ok": True,
         "ts": _now_iso(),
@@ -690,15 +755,27 @@ async def api_live() -> JSONResponse:
         "worker_status": worker.get("status", "UNKNOWN"),
         "relay": {"node": "hoch-relay-001", "tailscale_ip": "100.87.18.15",
                   "live": bool(live), **tel},
+        "agents": agents,
+        "cycle": cycle,
+        "recent": recent,
         "factories": [
             {"id": "HASF", "name": "Epic Fury · iOS", "state": "SEC_GATE_SIGNED", "at_door": True},
             {"id": "HMF", "name": "music", "state": "AT_DOORSTEP", "at_door": True},
             {"id": "HRF", "name": "research", "state": "AT_DOORSTEP", "at_door": True},
         ],
         "harness": ["route", "run", "verify", "escalate", "cost_cap"],
-        "cost": {"cap_usd": float(os.environ.get("AGENT_MONTHLY_CAP_USD", "100")),
-                 "note": "spend tracked on the build host (Mac) ledger"},
+        "cost": cost,
     })
+
+
+@app.get("/brain", response_class=HTMLResponse, include_in_schema=False)
+async def serve_brain() -> HTMLResponse:
+    """Bookmarkable live swarm-brain control room. Served same-origin, so it polls /api/live
+    with no CORS hop."""
+    for cand in (STATIC_DIR / "brain.html", Path(__file__).resolve().parent.parent / "dashboard/brain.html"):
+        if cand.exists():
+            return HTMLResponse(content=cand.read_text(encoding="utf-8"), status_code=200)
+    return HTMLResponse(content="<h1>brain.html not deployed</h1>", status_code=404)
 
 
 @app.get("/api/registry")
