@@ -162,39 +162,59 @@ def _gateway_generate(prompt: str, system: str) -> str:
     """Pick the best available brain: Claude (capable/agentic) > OpenAI GPT > local gateway
     ($0 fallback). The moment provider keys are provisioned, the same loop runs on a real model."""
     _load_env()
+    gk = os.environ.get("GOOGLE_API_KEY") or os.environ.get("GEMINI_API_KEY")
     ak = os.environ.get("ANTHROPIC_API_KEY")
     ok = os.environ.get("OPENAI_API_KEY")
-    # AGENT_BRAIN forces a provider (e.g. "openai" while the Anthropic account is unfunded),
-    # avoiding a wasted failing call to a keyed-but-unfunded provider on every step.
-    _brain = os.environ.get("AGENT_BRAIN", "").lower()
-    if _brain == "openai":
-        ak = None
-    elif _brain == "anthropic":
-        ok = None
-    # 1) Claude — preferred for agentic work
-    if ak:
+    xk = os.environ.get("XAI_API_KEY")
+
+    def _gemini():
+        from openai import OpenAI  # Gemini exposes an OpenAI-compatible endpoint
+        c = OpenAI(api_key=gk, base_url="https://generativelanguage.googleapis.com/v1beta/openai/")
+        return (c.chat.completions.create(
+            model=os.environ.get("AGENT_GEMINI_MODEL", "gemini-2.0-flash"),
+            temperature=0.1, max_tokens=1500,
+            messages=[{"role": "system", "content": system}, {"role": "user", "content": prompt}]
+        ).choices[0].message.content or "")
+
+    def _anthropic():
+        import anthropic
+        r = anthropic.Anthropic(api_key=ak).messages.create(
+            model=os.environ.get("AGENT_ANTHROPIC_MODEL", "claude-haiku-4-5-20251001"),
+            max_tokens=1500, system=system, messages=[{"role": "user", "content": prompt}])
+        return "".join(b.text for b in r.content if getattr(b, "type", None) == "text")
+
+    def _openai():
+        from openai import OpenAI
+        return (OpenAI(api_key=ok).chat.completions.create(
+            model=os.environ.get("AGENT_OPENAI_MODEL", "gpt-4o-mini"), temperature=0.1, max_tokens=1500,
+            messages=[{"role": "system", "content": system}, {"role": "user", "content": prompt}]
+        ).choices[0].message.content or "")
+
+    def _xai():
+        from openai import OpenAI  # xAI/Grok is OpenAI-compatible
+        return (OpenAI(api_key=xk, base_url="https://api.x.ai/v1").chat.completions.create(
+            model=os.environ.get("AGENT_XAI_MODEL", "grok-2-latest"), temperature=0.1, max_tokens=1500,
+            messages=[{"role": "system", "content": system}, {"role": "user", "content": prompt}]
+        ).choices[0].message.content or "")
+
+    catalog = {"gemini": (gk, _gemini), "xai": (xk, _xai), "openai": (ok, _openai), "anthropic": (ak, _anthropic)}
+    forced = os.environ.get("AGENT_BRAIN", "").lower()
+    if forced in catalog and catalog[forced][0]:
+        order = [forced]
+    else:
+        # DEFAULT: free Gemini first, then cheap Grok, then funded OpenAI, then Claude.
+        order = ["gemini", "xai", "openai", "anthropic"]
+    for name in order:
+        key, fn = catalog[name]
+        if not key:
+            continue
         try:
-            import anthropic
-            c = anthropic.Anthropic(api_key=ak)
-            model = os.environ.get("AGENT_ANTHROPIC_MODEL", "claude-haiku-4-5-20251001")
-            r = c.messages.create(model=model, max_tokens=1500, system=system,
-                                  messages=[{"role": "user", "content": prompt}])
-            return "".join(b.text for b in r.content if getattr(b, "type", None) == "text")
+            out = fn()
+            if out:
+                return out
         except Exception as e:
-            print(f"[agent_executor] anthropic failed ({e}); trying next brain", flush=True)
-    # 2) OpenAI GPT
-    if ok:
-        try:
-            from openai import OpenAI
-            c = OpenAI(api_key=ok)
-            model = os.environ.get("AGENT_OPENAI_MODEL", "gpt-4o-mini")
-            r = c.chat.completions.create(
-                model=model, temperature=0.1, max_tokens=1500,
-                messages=[{"role": "system", "content": system}, {"role": "user", "content": prompt}])
-            return r.choices[0].message.content or ""
-        except Exception as e:
-            print(f"[agent_executor] openai failed ({e}); trying next brain", flush=True)
-    # 3) Local gateway — $0, no key (weaker; the pre-key fallback)
+            print(f"[agent_executor] {name} failed ({str(e)[:90]}); next brain", flush=True)
+    # Local gateway — $0, no key (weakest; last resort)
     try:
         from backend.model_gateway import get_gateway
         return get_gateway().generate(prompt, system=system, timeout=120)
