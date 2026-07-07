@@ -72,6 +72,11 @@ def invariants() -> dict:
         ps = (ROOT / "backend/pert_server.py").read_text()
         checks["PERT models the revenue path (R1..R4), not just buildout"] = (
             '"phase": "REVENUE"' in ps and '"id": "R4"' in ps)
+        # No fake-green magic numbers in the metrics summary — these must be derived.
+        checks["PERT metrics derived (not hardcoded tests/evidence/accountability)"] = not any(
+            lit in ps for lit in ('"tests_passing_count": 84',
+                                  '"agent_accountability_score": 80.0',
+                                  '"evidence_coverage_percent": 100,'))
     except Exception:
         checks["pert_server readable"] = False
     return checks

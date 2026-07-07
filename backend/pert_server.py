@@ -753,18 +753,29 @@ def get_pert_data():
         except Exception:
             pass
 
+    # DERIVED truth for the metrics that were previously hardcoded (84 passing, 100% evidence,
+    # 80 accountability). Each is wired to its real source; missing data reads UNKNOWN, never a
+    # fabricated number.
+    _tt = fetch_test_telemetry()
+    _acct_vals = [a.get("trust_score") for a in (agent_scores or [])
+                  if isinstance(a, dict) and isinstance(a.get("trust_score"), (int, float))]
+    _acct = round(sum(_acct_vals) / len(_acct_vals), 1) if _acct_vals else "UNKNOWN"
+    _blocked = sum(1 for t in WORKSTREAMS
+                   if t.get("status") == "blocked" or (t.get("blocker") or "").strip())
+
     # Load cadence metrics — percent_goal_complete from the SINGLE weighted source (_goal_percent),
     # spanning buildout + revenue path, so this and the readiness score can never disagree.
     metrics = {
         "percent_goal_complete": _goal_percent(),
         "critical_path_remaining_minutes": pert_cpm["expected_duration"],
-        "blocked_task_count": 0,
+        "blocked_task_count": _blocked,
         "unassigned_task_count": 0,
         "stale_task_count": 0,
-        "tests_passing_count": 84,
-        "tests_failing_count": 0,
-        "evidence_coverage_percent": 100,
-        "agent_accountability_score": 80.0,
+        "tests_passing_count": _tt.get("passing", "UNKNOWN"),
+        "tests_failing_count": _tt.get("failing", "UNKNOWN"),
+        "tests_summary": _tt.get("summary", "UNKNOWN"),
+        "evidence_coverage_percent": evidence_coverage_percent,
+        "agent_accountability_score": _acct,
         "autonomous_actions_completed": 12,
         "manual_interventions_required": 0,
         "time_saved_minutes": 180,
@@ -782,10 +793,17 @@ def get_pert_data():
         except Exception:
             pass
 
-    # The cached cadence file carried a stale hardcoded percent_goal_complete (80). The DERIVED
-    # weighted value is authoritative and must win over the cache — otherwise the dashboard
-    # fake-greens the goal number regardless of real task state.
+    # The cached cadence file carried stale hardcoded values (goal 80, tests 84, evidence 100,
+    # accountability 80). DERIVED truth is authoritative and must win over the cache — otherwise
+    # the dashboard fake-greens regardless of real state. The cache may only supply fields we do
+    # NOT compute here (e.g. autonomous_actions_completed, time_saved_minutes).
     metrics["percent_goal_complete"] = _goal_percent()
+    metrics["tests_passing_count"] = _tt.get("passing", "UNKNOWN")
+    metrics["tests_failing_count"] = _tt.get("failing", "UNKNOWN")
+    metrics["tests_summary"] = _tt.get("summary", "UNKNOWN")
+    metrics["evidence_coverage_percent"] = evidence_coverage_percent
+    metrics["agent_accountability_score"] = _acct
+    metrics["blocked_task_count"] = _blocked
 
     # Next best actions mapping
     critical_blockers = [t for t in WORKSTREAMS if t["blocker"] and t["id"] in pert_cpm["critical_path"]]
