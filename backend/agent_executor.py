@@ -56,6 +56,93 @@ DENY_WRITE = (
 _CMD_ALLOW = {"ls", "cat", "head", "tail", "grep", "rg", "find", "wc", "echo", "true",
               "ruff", "pytest", "node", "npm", "diff", "sort", "uniq"}
 
+# ─────────────────────────────────────────────────────────────────────────────
+# COST GOVERNOR — three-tier difficulty router + hard monthly spend cap.
+# Tier 0 (LOCAL)    : Ollama on the Mac. $0. Default for analysis / verify / docs.
+# Tier 1 (CHEAP)    : DeepSeek / Gemini Flash — pennies/task. Default for code.
+# Tier 2 (FRONTIER) : GPT-5.4 — dollars/task. Only for tasks flagged hard / escalated.
+# The cap is FAIL-CLOSED: once the month's paid spend hits AGENT_MONTHLY_CAP_USD, every
+# paid tier is disabled and work silently downgrades to the $0 local brain. It can never
+# overspend unattended. Set the cap to 0 to forbid ALL paid calls (pure local/free).
+# ─────────────────────────────────────────────────────────────────────────────
+TIER_LOCAL, TIER_CHEAP, TIER_FRONTIER = 0, 1, 2
+SPEND_LEDGER = ROOT / "has_live_project_tracker/data/spend_ledger.jsonl"
+
+
+def _cap() -> float:
+    """Monthly paid-spend ceiling in USD. 0 = forbid ALL paid calls (pure local/free).
+    Read live (after _load_env) so .env or the shell can change it without a restart."""
+    try:
+        return float(os.environ.get("AGENT_MONTHLY_CAP_USD", "100"))
+    except ValueError:
+        return 100.0
+
+# (input, output) USD per 1,000,000 tokens — July 2026 list prices. Local = free.
+PRICING = {
+    "local": (0.0, 0.0),
+    "gemini-2.5-flash": (0.15, 0.60), "gemini-2.0-flash": (0.10, 0.40),
+    "gemini-3.1-flash-lite": (0.10, 0.40),
+    "deepseek-chat": (0.14, 0.28), "deepseek-reasoner": (0.55, 2.19),
+    "gpt-4o-mini": (0.15, 0.60), "gpt-5-mini": (0.25, 2.00),
+    "gpt-5.4": (2.50, 15.0), "gpt-4o": (2.50, 10.0),
+    "grok-2-latest": (2.00, 10.0),
+}
+
+
+def _est_tokens(text: str) -> int:
+    return max(1, len(text or "") // 4)
+
+
+def _price_of(model: str) -> tuple[float, float]:
+    return PRICING.get(model, (0.0, 0.0))
+
+
+def _is_paid(model: str) -> bool:
+    return _price_of(model) != (0.0, 0.0)
+
+
+def _month_key() -> str:
+    return datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m")
+
+
+def _month_spend() -> float:
+    if not SPEND_LEDGER.exists():
+        return 0.0
+    mk, tot = _month_key(), 0.0
+    for line in SPEND_LEDGER.read_text(encoding="utf-8", errors="ignore").splitlines():
+        try:
+            r = json.loads(line)
+            if r.get("month") == mk:
+                tot += float(r.get("cost_usd", 0.0))
+        except Exception:
+            pass
+    return tot
+
+
+def _record_spend(model: str, in_tok: int, out_tok: int, cost: float, tid: str) -> None:
+    SPEND_LEDGER.parent.mkdir(parents=True, exist_ok=True)
+    with open(SPEND_LEDGER, "a", encoding="utf-8") as f:
+        f.write(json.dumps({
+            "ts": _now(), "month": _month_key(), "task_id": tid, "model": model,
+            "in_tok": in_tok, "out_tok": out_tok, "cost_usd": round(cost, 6),
+        }) + "\n")
+
+
+def _cost_of(model: str, in_tok: int, out_tok: int) -> float:
+    pin, pout = _price_of(model)
+    return in_tok / 1_000_000 * pin + out_tok / 1_000_000 * pout
+
+
+def _tier_for(task: dict) -> int:
+    """Route by declared difficulty. Escalation (set by a retry) forces frontier."""
+    if task.get("escalated") or task.get("hard") or task.get("difficulty") == "hard":
+        return TIER_FRONTIER
+    diff = (task.get("difficulty") or "").lower()
+    tclass = (task.get("task_class") or "").lower()
+    if diff == "medium" or tclass in ("code",):
+        return TIER_CHEAP
+    return TIER_LOCAL  # analysis / verify / docs / research run free by default
+
 
 def _now() -> str:
     return datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds")
@@ -154,75 +241,111 @@ def _load_env() -> None:
             k, v = line.split("=", 1)
             k = k.strip()
             v = v.strip().strip('"').strip("'")
-            if k in ("ANTHROPIC_API_KEY", "OPENAI_API_KEY") and not os.environ.get(k):
+            _KEYS = ("ANTHROPIC_API_KEY", "OPENAI_API_KEY", "GOOGLE_API_KEY",
+                     "GEMINI_API_KEY", "XAI_API_KEY", "DEEPSEEK_API_KEY")
+            # provider keys + any AGENT_* config (cap, model overrides, brain force) from .env
+            if (k in _KEYS or k.startswith("AGENT_")) and not os.environ.get(k):
                 os.environ[k] = v
 
 
-def _gateway_generate(prompt: str, system: str) -> str:
-    """Pick the best available brain: Claude (capable/agentic) > OpenAI GPT > local gateway
-    ($0 fallback). The moment provider keys are provisioned, the same loop runs on a real model."""
-    _load_env()
-    gk = os.environ.get("GOOGLE_API_KEY") or os.environ.get("GEMINI_API_KEY")
-    ak = os.environ.get("ANTHROPIC_API_KEY")
-    ok = os.environ.get("OPENAI_API_KEY")
-    xk = os.environ.get("XAI_API_KEY")
-
-    def _gemini():
-        from openai import OpenAI  # Gemini exposes an OpenAI-compatible endpoint
-        c = OpenAI(api_key=gk, base_url="https://generativelanguage.googleapis.com/v1beta/openai/")
-        return (c.chat.completions.create(
-            model=os.environ.get("AGENT_GEMINI_MODEL", "gemini-2.0-flash"),
-            temperature=0.1, max_tokens=1500,
-            messages=[{"role": "system", "content": system}, {"role": "user", "content": prompt}]
-        ).choices[0].message.content or "")
-
-    def _anthropic():
-        import anthropic
-        r = anthropic.Anthropic(api_key=ak).messages.create(
-            model=os.environ.get("AGENT_ANTHROPIC_MODEL", "claude-haiku-4-5-20251001"),
-            max_tokens=1500, system=system, messages=[{"role": "user", "content": prompt}])
-        return "".join(b.text for b in r.content if getattr(b, "type", None) == "text")
-
-    def _openai():
-        from openai import OpenAI
-        return (OpenAI(api_key=ok).chat.completions.create(
-            model=os.environ.get("AGENT_OPENAI_MODEL", "gpt-4o-mini"), temperature=0.1, max_tokens=1500,
-            messages=[{"role": "system", "content": system}, {"role": "user", "content": prompt}]
-        ).choices[0].message.content or "")
-
-    def _xai():
-        from openai import OpenAI  # xAI/Grok is OpenAI-compatible
-        return (OpenAI(api_key=xk, base_url="https://api.x.ai/v1").chat.completions.create(
-            model=os.environ.get("AGENT_XAI_MODEL", "grok-2-latest"), temperature=0.1, max_tokens=1500,
-            messages=[{"role": "system", "content": system}, {"role": "user", "content": prompt}]
-        ).choices[0].message.content or "")
-
-    catalog = {"gemini": (gk, _gemini), "xai": (xk, _xai), "openai": (ok, _openai), "anthropic": (ak, _anthropic)}
+def _order_for_tier(tier: int) -> list[str]:
+    """Candidate brains for a difficulty tier, cheapest-capable first. Within a tier we still
+    fall through on error. Anthropic is NEVER auto-selected (its Console is extra money the
+    founder opted out of); use AGENT_BRAIN=anthropic to force it."""
     forced = os.environ.get("AGENT_BRAIN", "").lower()
-    if forced in catalog and catalog[forced][0]:
-        order = [forced]
-    else:
-        # DEFAULT: free Gemini first, then Grok (if keyed), then funded OpenAI.
-        # Anthropic is intentionally EXCLUDED from auto-use — its API Console costs extra money
-        # (separate from a Claude subscription), and the founder opted out. It is only used if
-        # explicitly requested via AGENT_BRAIN=anthropic.
-        order = ["gemini", "xai", "openai"]
-    for name in order:
-        key, fn = catalog[name]
-        if not key:
+    if forced in ("gemini", "deepseek", "openai", "openai_frontier", "xai", "anthropic", "local"):
+        return [forced]
+    if tier >= TIER_FRONTIER:
+        return ["openai_frontier", "deepseek", "gemini", "local"]
+    if tier == TIER_CHEAP:
+        return ["deepseek", "gemini", "openai", "local"]
+    return ["local", "gemini"]  # tier 0: free local first, free-tier Gemini as backstop
+
+
+def _gateway_generate(prompt: str, system: str, tier: int = TIER_LOCAL) -> tuple[str, dict]:
+    """Tier-routed brain call with a fail-closed monthly cost cap.
+    Returns (text, meta) where meta = {model, cost_usd, in_tok, out_tok}. Paid tiers are
+    skipped once the month's spend reaches MONTHLY_CAP_USD — work then runs on the $0 local brain."""
+    _load_env()
+    keys = {
+        "gemini": os.environ.get("GOOGLE_API_KEY") or os.environ.get("GEMINI_API_KEY"),
+        "deepseek": os.environ.get("DEEPSEEK_API_KEY"),
+        "openai": os.environ.get("OPENAI_API_KEY"),
+        "openai_frontier": os.environ.get("OPENAI_API_KEY"),
+        "xai": os.environ.get("XAI_API_KEY"),
+        "anthropic": os.environ.get("ANTHROPIC_API_KEY"),
+        "local": "local",
+    }
+    models = {
+        "gemini": os.environ.get("AGENT_GEMINI_MODEL", "gemini-2.5-flash"),
+        "deepseek": os.environ.get("AGENT_DEEPSEEK_MODEL", "deepseek-chat"),
+        "openai": os.environ.get("AGENT_OPENAI_MODEL", "gpt-4o-mini"),
+        "openai_frontier": os.environ.get("AGENT_OPENAI_FRONTIER_MODEL", "gpt-5.4"),
+        "xai": os.environ.get("AGENT_XAI_MODEL", "grok-2-latest"),
+        "anthropic": os.environ.get("AGENT_ANTHROPIC_MODEL", "claude-haiku-4-5-20251001"),
+        "local": "local",
+    }
+
+    def _openai_compat(base_url, key, model):
+        from openai import OpenAI
+        kw = {"api_key": key}
+        if base_url:
+            kw["base_url"] = base_url
+        return (OpenAI(**kw).chat.completions.create(
+            model=model, temperature=0.1, max_tokens=1500,
+            messages=[{"role": "system", "content": system}, {"role": "user", "content": prompt}]
+        ).choices[0].message.content or "")
+
+    def _call(name):
+        m = models[name]
+        if name == "gemini":
+            return _openai_compat("https://generativelanguage.googleapis.com/v1beta/openai/", keys[name], m)
+        if name == "deepseek":
+            return _openai_compat("https://api.deepseek.com", keys[name], m)
+        if name == "xai":
+            return _openai_compat("https://api.x.ai/v1", keys[name], m)
+        if name in ("openai", "openai_frontier"):
+            return _openai_compat(None, keys[name], m)
+        if name == "anthropic":
+            import anthropic
+            r = anthropic.Anthropic(api_key=keys[name]).messages.create(
+                model=m, max_tokens=1500, system=system, messages=[{"role": "user", "content": prompt}])
+            return "".join(b.text for b in r.content if getattr(b, "type", None) == "text")
+        raise RuntimeError("no direct call for local")
+
+    in_tok = _est_tokens(system) + _est_tokens(prompt)
+    spent = _month_spend()
+    cap = _cap()
+    for name in _order_for_tier(tier):
+        if name == "local":
+            try:
+                from backend.model_gateway import get_gateway
+                out = get_gateway().generate(prompt, system=system, timeout=120)
+                if out:
+                    return out, {"model": "local", "cost_usd": 0.0, "in_tok": in_tok,
+                                 "out_tok": _est_tokens(out)}
+            except Exception:
+                pass
+            continue
+        if not keys.get(name):
+            continue
+        model = models[name]
+        # FAIL-CLOSED CAP: never start a paid call that could exceed the month's budget.
+        if _is_paid(model) and (cap <= 0 or spent >= cap):
+            print(f"[cost-cap] month spend ${spent:.2f} ≥ cap ${cap:.2f} — "
+                  f"skipping paid {name}, downgrading to local", flush=True)
             continue
         try:
-            out = fn()
+            out = _call(name)
             if out:
-                return out
+                out_tok = _est_tokens(out)
+                cost = _cost_of(model, in_tok, out_tok)
+                if cost > 0:
+                    _record_spend(model, in_tok, out_tok, cost, os.environ.get("_AGENT_TID", "?"))
+                return out, {"model": model, "cost_usd": cost, "in_tok": in_tok, "out_tok": out_tok}
         except Exception as e:
             print(f"[agent_executor] {name} failed ({str(e)[:90]}); next brain", flush=True)
-    # Local gateway — $0, no key (weakest; last resort)
-    try:
-        from backend.model_gateway import get_gateway
-        return get_gateway().generate(prompt, system=system, timeout=120)
-    except Exception:
-        return ""
+    return "", {"model": "none", "cost_usd": 0.0, "in_tok": in_tok, "out_tok": 0}
 
 
 def execute_task(task: dict) -> dict:
@@ -238,10 +361,19 @@ def execute_task(task: dict) -> dict:
     summary = ""
     ok = False
     _system_prompt = _system()
+    tier = _tier_for(task)
+    os.environ["_AGENT_TID"] = str(tid)
+    task_cost = 0.0
+    models_used: list[str] = []
 
     for step in range(1, MAX_STEPS + 1):
-        raw = _gateway_generate(convo, _system_prompt) or ""
-        transcript.append({"step": step, "model_out": raw[:2000]})
+        raw, meta = _gateway_generate(convo, _system_prompt, tier)
+        raw = raw or ""
+        task_cost += meta.get("cost_usd", 0.0)
+        if meta.get("model"):
+            models_used.append(meta["model"])
+        transcript.append({"step": step, "model": meta.get("model"),
+                           "cost_usd": round(meta.get("cost_usd", 0.0), 6), "model_out": raw[:2000]})
         m = re.search(r"\{.*\}", raw, re.S)
         if not m:
             convo += "\n(assistant gave no JSON)\nRespond with ONE JSON tool object:"
@@ -277,10 +409,14 @@ def execute_task(task: dict) -> dict:
     ev_dir = ROOT / "docs/evidence/runtime"
     ev_dir.mkdir(parents=True, exist_ok=True)
     ev_path = ev_dir / f"agent_exec_{tid}.json"
+    tier_name = {TIER_LOCAL: "local", TIER_CHEAP: "cheap", TIER_FRONTIER: "frontier"}[tier]
     payload = {
         "task_id": tid, "task_name": tname, "task_class": tclass,
-        "executed_at": _now(), "engine": "agent_executor.v1",
+        "executed_at": _now(), "engine": "agent_executor.v2",
         "status": "SUCCESS" if ok else "INCOMPLETE",
+        "tier": tier_name, "models_used": sorted(set(models_used)),
+        "task_cost_usd": round(task_cost, 6), "month_spend_usd": round(_month_spend(), 4),
+        "month_cap_usd": _cap(),
         "summary": summary, "artifacts": sorted(set(a for a in artifacts if a)),
         "steps": len(transcript), "transcript": transcript,
     }
@@ -291,6 +427,8 @@ def execute_task(task: dict) -> dict:
         "summary": summary or "(no summary produced)",
         "artifacts": payload["artifacts"],
         "evidence_path": str(ev_path.relative_to(ROOT)),
+        "tier": tier_name, "task_cost_usd": round(task_cost, 6),
+        "month_spend_usd": round(_month_spend(), 4), "month_cap_usd": _cap(),
         "input_hash": _sha(f"{tname}:{tclass}:{desc}"),
         "output_hash": _sha(json.dumps(payload, sort_keys=True)),
     }

@@ -48,9 +48,12 @@ def _save(p, o):
 def _record_experience(task: dict, result: dict) -> None:
     EXPERIENCE.parent.mkdir(parents=True, exist_ok=True)
     rec = {
-        "ts": _now(), "kind": "combat_record", "engine": "agent_executor.v1",
+        "ts": _now(), "kind": "combat_record", "engine": "agent_executor.v2",
         "task_id": task.get("task_id"), "task_class": task.get("task_class"),
         "task_name": task.get("task_name"), "status": result["status"],
+        "tier": result.get("tier"), "task_cost_usd": result.get("task_cost_usd", 0.0),
+        "month_spend_usd": result.get("month_spend_usd", 0.0),
+        "month_cap_usd": result.get("month_cap_usd"),
         "summary": result["summary"][:400], "artifacts": result["artifacts"],
         "evidence": result["evidence_path"],
     }
@@ -91,7 +94,10 @@ def main() -> None:
             task["result"] = res["summary"][:200]
             task["evidence"] = res["evidence_path"]
             _record_experience(task, res)
-            print(f"[{_now()}]   -> {res['status']}: {res['summary'][:72]}")
+            print(f"[{_now()}]   -> {res['status']} [{res.get('tier')}] "
+                  f"task=${res.get('task_cost_usd', 0):.4f} "
+                  f"month=${res.get('month_spend_usd', 0):.2f}/${res.get('month_cap_usd', 0):.0f}: "
+                  f"{res['summary'][:56]}")
             if res["status"] == "SUCCESS":
                 done += 1
         except Exception as e:
