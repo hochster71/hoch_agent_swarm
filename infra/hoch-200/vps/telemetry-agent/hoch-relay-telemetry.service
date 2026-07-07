@@ -1,0 +1,22 @@
+[Unit]
+Description=HOCH-200 Relay Telemetry Agent (measured host vitals + agent counts)
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Runs on the relay HOST so it can read docker/systemctl/psutil and write into the
+# data dir the read-only relay-api container serves.
+WorkingDirectory=/opt/hoch-relay/telemetry-agent
+ExecStart=/usr/bin/python3 /opt/hoch-relay/telemetry-agent/agent.py
+Environment=HOCH_DATA_DIR=/root/hoch_agent_swarm/has_live_project_tracker/data
+Environment=HOCH_TELEMETRY_INTERVAL=15
+Environment=OLLAMA_URL=http://127.0.0.1:11434
+Restart=always
+RestartSec=5
+# Hardening (agent only reads system state + writes one telemetry file)
+NoNewPrivileges=true
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target

@@ -117,11 +117,62 @@ async def health() -> JSONResponse:
     )
 
 
+@app.get("/api/fleet/node")
+async def api_fleet_node() -> JSONResponse:
+    """Measured relay node telemetry, written by the host telemetry agent
+    (hoch-relay-telemetry.service). Fails soft to an honest 'no agent' payload so the
+    fleet never shows fabricated vitals for this node."""
+    try:
+        p = Path("/data/relay_node_telemetry.json")
+        data = json.loads(p.read_text())
+        # staleness guard — if the agent stopped writing, don't present old vitals as live
+        try:
+            measured = datetime.fromisoformat(data.get("measured_at", "").replace("Z", "+00:00"))
+            age = (datetime.now(timezone.utc) - measured).total_seconds()
+            data["telemetry_age_seconds"] = int(age)
+            if age > 120:
+                data["telemetry_authority"] = "STALE_NO_RECENT_MEASUREMENT"
+                data["status"] = "Stale"
+        except Exception:
+            pass
+        return JSONResponse(data)
+    except Exception:
+        return JSONResponse({
+            "node_id": "RELAY-001",
+            "telemetry_authority": "DECLARED_ROSTER_NOT_MEASURED",
+            "status": "Reachable",
+            "activity": "(telemetry agent not reporting on relay host)",
+            "measured_agent_count": 0,
+            "agents": [],
+        })
+
+
+def _doorstep_status():
+    """Read the DOORSTEP execution posture + how many factory items are staged at
+    the pre-purchase door awaiting founder revenue activation. Fails soft."""
+    posture, door, exit_cond, staged_count = "DEFAULT", None, None, 0
+    try:
+        ctrl = json.loads(Path("/data/orchestration_bridge_control.json").read_text())
+        posture = ctrl.get("execution_posture", "DEFAULT")
+        dp = ctrl.get("doorstep_policy", {})
+        door = dp.get("door")
+        exit_cond = dp.get("exit_condition")
+    except Exception:
+        pass
+    try:
+        hq = json.loads(Path("/data/founder_handoff_queue.json").read_text())
+        staged_count = len([s for s in hq.get("staged", []) if s.get("status") == "READY_FOR_FOUNDER"])
+    except Exception:
+        pass
+    return posture, door, exit_cond, staged_count
+
+
 @app.get("/api/status")
 async def api_status() -> JSONResponse:
     """Full relay status payload."""
     registry = _load_registry()
     worker = _relay_worker()
+    posture, door, exit_cond, staged_count = _doorstep_status()
     return JSONResponse(
         {
             "epic": "HOCH-200",
@@ -133,6 +184,10 @@ async def api_status() -> JSONResponse:
             "worker_status": worker.get("status", "UNKNOWN"),
             "worker_id": "HAS-WORKER-RELAY-001",
             "registry_worker_count": len(registry.get("workers", [])),
+            "execution_posture": posture,
+            "doorstep_door": door,
+            "doorstep_exit_condition": exit_cond,
+            "founder_handoff_count": staged_count,
             "ts": _now_iso(),
         }
     )
@@ -241,6 +296,34 @@ async def get_burn_in_status() -> JSONResponse:
     burn_in_summary_merged = {**burn_in_summary}
     burn_in_summary_merged["elapsed_hours"] = elapsed_hours
 
+    # ------------------------------------------------------------------
+    # 24H GO gate — COMPUTED from live evidence.
+    # Previously this was a hardcoded "NOT_YET" string literal disconnected
+    # from every signal, so it could never flip regardless of the run.
+    # This mirrors the canonical Phase-E gate in
+    # scripts/verify_ag_execution_burn_in.py (no violations + enough real
+    # cycles + heartbeat fresh + elapsed >= 24h) and additionally requires
+    # the same integrity checks the dashboard renders (queue / fencing /
+    # proof). Fails CLOSED to NOT_YET on any missing or failing signal —
+    # this is evidence-gated, not a green stamp.
+    # ------------------------------------------------------------------
+    _failed_rate = burn_in_summary.get("failed_cycle_rate", 1.0)
+    _real_cycles = burn_in_summary.get("real_cycles", 0)
+    _missing_proofs = burn_in_summary.get("missing_proof_detected", 1)
+    go_24h_checks = {
+        "elapsed_ge_24h": elapsed_hours >= 24.0,
+        "heartbeat_fresh": (not is_stale),
+        "daemon_active": bool(daemon_running and systemd_active),
+        "has_real_cycles": _real_cycles > 0,
+        "zero_failed_real": _failed_rate == 0.0,
+        "queue_pass": queue_health.get("health_status") == "PASS",
+        "fencing_pass": fencing_status.get("verdict") == "PASS",
+        "proofs_intact": _missing_proofs == 0,
+    }
+    go_24h_pass = all(go_24h_checks.values())
+    go_24h_status = "GO" if go_24h_pass else "NOT_YET"
+    go_24h_blockers = [k for k, v in go_24h_checks.items() if not v]
+
     return JSONResponse({
         "state_indicator": state_indicator,
         "heartbeat_status": heartbeat_fresh,
@@ -250,7 +333,9 @@ async def get_burn_in_status() -> JSONResponse:
         "proof_index": proof_index,
         "fencing_status": fencing_status,
         "pending_task_count": pending_task_count,
-        "24h_go_status": "NOT_YET",
+        "24h_go_status": go_24h_status,
+        "24h_go_checks": go_24h_checks,
+        "24h_go_blockers": go_24h_blockers,
         "ts": _now_iso(),
         "cycle_count_source": "/root/hoch_agent_swarm/has_live_project_tracker/data/ag_execution_daemon_state.json",
         "cycle_count_timestamp": daemon_state.get("last_heartbeat", _now_iso()),
