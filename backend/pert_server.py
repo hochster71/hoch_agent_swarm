@@ -478,6 +478,21 @@ WORKSTREAMS = [
     }
 ]
 
+# ONE source of goal weights — buildout (W, 50%) + revenue path (R, 50%), summing to 100 across
+# all 20 tasks. Used by BOTH the metrics summary and the readiness score so they can never
+# disagree. "Complete AND monetize": finishing the engine is half; monetization is the other half.
+GOAL_WEIGHTS = {
+    "W1": 3.0, "W2": 3.0, "W3": 3.0, "W4": 3.5, "W5": 3.0, "W6": 3.5, "W7": 3.0, "W8": 3.0,
+    "W9": 3.5, "W10": 3.0, "W11": 3.5, "W12": 5.0, "W13": 3.0, "W14": 3.0, "W15": 4.0,
+    "R1": 10.0, "R2": 15.0, "R3": 8.0, "R4": 12.0, "R5": 5.0,
+}
+
+
+def _goal_percent():
+    return round(float(sum(GOAL_WEIGHTS.get(t["id"], 0.0)
+                           for t in WORKSTREAMS if t.get("status") == "completed")), 1)
+
+
 # Standard PERT / CPM calculation engine
 def calculate_pert_cpm(tasks_list):
     tasks = {t["id"]: t for t in tasks_list}
@@ -738,15 +753,10 @@ def get_pert_data():
         except Exception:
             pass
 
-    # percent_goal_complete DERIVED from the task graph (was a hardcoded 80). Counts completed
-    # tasks across the FULL graph including the revenue path (R1-R5), so it measures distance to
-    # MONETIZE, not just internal buildout. No more magic number.
-    _done = sum(1 for t in WORKSTREAMS if t.get("status") == "completed")
-    _pct_goal = round(100.0 * _done / max(1, len(WORKSTREAMS)), 1)
-
-    # Load cadence metrics
+    # Load cadence metrics — percent_goal_complete from the SINGLE weighted source (_goal_percent),
+    # spanning buildout + revenue path, so this and the readiness score can never disagree.
     metrics = {
-        "percent_goal_complete": _pct_goal,
+        "percent_goal_complete": _goal_percent(),
         "critical_path_remaining_minutes": pert_cpm["expected_duration"],
         "blocked_task_count": 0,
         "unassigned_task_count": 0,
@@ -1132,14 +1142,10 @@ def get_pert_data():
             "status": "PRESENT" if exists else "MISSING"
         })
 
-    # Calculate goal completion dynamically based on weights
-    weights = {
-        "W1": 6.0, "W2": 6.0, "W3": 6.0, "W4": 7.0, "W5": 6.0,
-        "W6": 7.0, "W7": 6.0, "W8": 6.0, "W9": 7.0, "W10": 6.0,
-        "W11": 7.0, "W12": 10.0, "W13": 6.0, "W14": 6.0, "W15": 8.0
-    }
+    # Goal completion from the SINGLE source of goal weights (buildout + revenue path).
+    weights = GOAL_WEIGHTS
     completed_tasks = [t for t in WORKSTREAMS if t["status"] == "completed"]
-    goal_completion_percent = float(sum(weights[t["id"]] for t in completed_tasks))
+    goal_completion_percent = round(float(sum(weights.get(t["id"], 0.0) for t in completed_tasks)), 1)
 
     goal_formula = {
         "weights": weights,
