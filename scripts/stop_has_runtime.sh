@@ -11,7 +11,9 @@ echo "[INFO] Stopping HAS supervised local runtime..."
 uv run python -c "
 import sqlite3, datetime, uuid
 from backend.runtime_truth.state_store import DB_PATH
-conn = sqlite3.connect(DB_PATH)
+conn = sqlite3.connect(DB_PATH, timeout=30.0)
+conn.execute('PRAGMA journal_mode=WAL;')
+conn.execute('PRAGMA busy_timeout=30000;')
 ts = datetime.datetime.now(datetime.UTC).isoformat()
 conn.execute('UPDATE uptime_windows SET window_end = ? WHERE window_end IS NULL', (ts,))
 conn.execute('INSERT INTO supervisor_events (event_id, timestamp, level, message) VALUES (?, ?, ?, ?)', (str(uuid.uuid4()), ts, 'INFO', 'FastAPI supervised service stop requested'))
