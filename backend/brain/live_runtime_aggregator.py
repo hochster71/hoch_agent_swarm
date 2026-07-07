@@ -141,8 +141,17 @@ def aggregate_reasoning_graph() -> Dict[str, Any]:
     # Reasoning graph status depends on factories and sources
     status_val = "GO"
     if sources_res.get("status") != "GO" or factory_res.get("status") != "GO" or brain_res.get("status") != "LIVE":
-        # If the only issue is staleness, overall status can be NO_GO or CONDITIONAL
-        if sources_res.get("status") == "STALE" and factory_res.get("status") == "GO" and brain_res.get("status") == "LIVE":
+        # If the only issue is staleness, overall status can be CONDITIONAL
+        is_stale_only = True
+        if sources_res.get("status") not in ["GO", "STALE"]:
+            is_stale_only = False
+        for name, info in factory_res.get("factories", {}).items():
+            if info.get("status") not in ["GO", "STALE"]:
+                is_stale_only = False
+        if brain_res.get("status") != "LIVE":
+            is_stale_only = False
+            
+        if is_stale_only:
             status_val = "CONDITIONAL"
         else:
             status_val = "NO_GO"
