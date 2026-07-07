@@ -19,7 +19,7 @@ if ! git check-ignore -q "$ENV_FILE" 2>/dev/null; then
   echo "⚠  REFUSING TO RUN: $ENV_FILE is not git-ignored. Add it to .gitignore first."; exit 1
 fi
 
-open_url() { command -v open >/dev/null 2>&1 && open "$1" >/dev/null 2>&1 || echo "   open manually: $1"; }
+open_url() { command -v open >/dev/null 2>&1 && open -a Safari "$1" >/dev/null 2>&1 || echo "   open manually: $1"; }
 upsert_env() {
   touch "$ENV_FILE"; chmod 600 "$ENV_FILE"
   grep -q "^$1=" "$ENV_FILE" 2>/dev/null && { grep -v "^$1=" "$ENV_FILE" > "$ENV_FILE.tmp" && mv "$ENV_FILE.tmp" "$ENV_FILE"; }
