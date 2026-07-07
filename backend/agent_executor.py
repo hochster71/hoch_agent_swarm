@@ -47,7 +47,7 @@ CMD_TIMEOUT = int(os.environ.get("AGENT_CMD_TIMEOUT", "120"))
 DENY_WRITE = (
     "scripts/baseline_guard.py", "scripts/ag_execution_daemon.py",
     "scripts/ag_execution_runner.py", "backend/agent_executor.py",
-    "scripts/northstar_planner.py", "scripts/northstar_daemon.py",
+    "scripts/northstar_planner.py", "scripts/northstar_daemon.py", "scripts/model_upgrade.py",
     "has_live_project_tracker/data/orchestration_bridge_control.json",
     "has_live_project_tracker/data/baseline_tag.txt", "has_live_project_tracker/data/ag_execution_policy.json",
     ".env", ".git/", ".secrets/", "config/", ".gitignore",
@@ -288,6 +288,21 @@ def _gateway_generate(prompt: str, system: str, tier: int = TIER_LOCAL) -> tuple
         "anthropic": os.environ.get("AGENT_ANTHROPIC_MODEL", "claude-haiku-4-5-20251001"),
         "local": "local",
     }
+    # AUTO-UPGRADE: if the model-upgrade station resolved newer best-available models, use them.
+    try:
+        reg = json.loads((ROOT / "has_live_project_tracker/data/model_registry.json").read_text())
+        tiers = reg.get("tiers", {})
+        fr = tiers.get("frontier", {})
+        ch = tiers.get("cheap", {})
+        gm = tiers.get("gemini", {})
+        if fr.get("verified") and fr.get("model"):
+            models["openai_frontier"] = fr["model"]
+        if ch.get("verified") and ch.get("provider") == "openai" and ch.get("model"):
+            models["openai"] = ch["model"]
+        if gm.get("verified") and gm.get("model"):
+            models["gemini"] = gm["model"]
+    except Exception:
+        pass
 
     def _openai_compat(base_url, key, model):
         from openai import OpenAI
