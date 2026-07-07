@@ -153,6 +153,35 @@ def _sha(s: str) -> str:
     return hashlib.sha256(s.encode("utf-8")).hexdigest()
 
 
+def _extract_json_action(raw: str):
+    """Robustly pull ONE tool-call JSON object out of a model turn — tolerant of markdown fences,
+    prose around it, multiple objects, and reasoning-model preambles. Returns a dict with a 'tool'
+    key, or None. This is what makes capable-but-chatty models reliable in the ReAct loop."""
+    if not raw:
+        return None
+    s = re.sub(r"```(?:json)?", "", raw).strip()
+    # collect balanced top-level {...} objects
+    cands, depth, start = [], 0, -1
+    for i, c in enumerate(s):
+        if c == "{":
+            if depth == 0:
+                start = i
+            depth += 1
+        elif c == "}":
+            if depth > 0:
+                depth -= 1
+                if depth == 0 and start >= 0:
+                    cands.append(s[start:i + 1])
+    for cand in reversed(cands):          # prefer the later / most complete object
+        try:
+            obj = json.loads(cand)
+            if isinstance(obj, dict) and obj.get("tool"):
+                return obj
+        except Exception:
+            continue
+    return None
+
+
 def _safe(path: str) -> Path:
     p = (ROOT / path).resolve()
     if p != ROOT and ROOT not in p.parents:
@@ -315,7 +344,7 @@ def _gateway_generate(prompt: str, system: str, tier: int = TIER_LOCAL) -> tuple
         newer = model.startswith("gpt-5") or model.startswith("o1") or model.startswith("o3") or model.startswith("o4")
         params = {"model": model, "messages": msgs}
         if newer:
-            params["max_completion_tokens"] = 1500
+            params["max_completion_tokens"] = 4000   # reasoning models spend tokens thinking; leave room for the answer
         else:
             params["temperature"] = 0.1
             params["max_tokens"] = 1500
@@ -467,14 +496,11 @@ def _run_attempt(task: dict, tier: int, system: str, prior_fail: str = "") -> di
             models_used.append(meta["model"])
         transcript.append({"step": step, "model": meta.get("model"),
                            "cost_usd": round(meta.get("cost_usd", 0.0), 6), "model_out": raw[:2000]})
-        m = re.search(r"\{.*\}", raw, re.S)
-        if not m:
-            convo += "\n(assistant gave no JSON)\nRespond with ONE JSON tool object:"
-            continue
-        try:
-            action = json.loads(m.group(0))
-        except Exception:
-            convo += "\n(invalid JSON)\nRespond with ONE valid JSON tool object:"
+        action = _extract_json_action(raw)
+        if not action:
+            convo += ('\n(No tool call detected. Reply with EXACTLY ONE JSON object and nothing else — '
+                      'e.g. {"tool":"write_file","path":"docs/generated/x.md","content":"..."} '
+                      'or {"tool":"finish","summary":"...","artifacts":["docs/generated/x.md"]})\nNext action:')
             continue
         tool = action.get("tool")
         try:
@@ -503,6 +529,42 @@ def _run_attempt(task: dict, tier: int, system: str, prior_fail: str = "") -> di
             "transcript": transcript, "cost": cost, "models_used": models_used}
 
 
+def _execute_doc_task(task, tid, tname, tclass, desc, tier):
+    """Reliable single-shot path for document-producing tasks (research/design/analysis).
+    The model WRITES the markdown directly (no JSON tool-loop to truncate), and we save it.
+    This is what makes capable models produce clean verified docs every time."""
+    m = re.search(r"(docs/[\w/.\-]+\.md)", desc)
+    doc = m.group(1) if m else f"docs/generated/auto/{tid}.md"
+    prompt = (f"Write a complete, well-structured markdown document for this task. "
+              f"Output ONLY the markdown body — no preamble, no code fences.\n\nTASK: {tname}\nDETAIL: {desc}")
+    out, meta = _gateway_generate(prompt, "You are an expert analyst and technical writer.", tier)
+    out = (out or "").strip()
+    out = re.sub(r"^```(?:markdown)?\s*|\s*```$", "", out).strip()
+    ok = bool(out)
+    if ok:
+        try:
+            _write_file(doc, out + "\n")
+        except Exception as e:
+            ok, out = False, f"(write failed: {e})"
+    tier_name = _TIER_NAME[tier]
+    ev_dir = ROOT / "docs/evidence/runtime"; ev_dir.mkdir(parents=True, exist_ok=True)
+    ev = ev_dir / f"agent_exec_{tid}.json"
+    payload = {"task_id": tid, "task_name": tname, "task_class": tclass, "executed_at": _now(),
+               "engine": "agent_executor.v3-doc", "status": "SUCCESS" if ok else "INCOMPLETE",
+               "verified": ok, "mode": "single-shot-doc", "tier": tier_name,
+               "models_used": [meta.get("model")], "task_cost_usd": round(meta.get("cost_usd", 0.0), 6),
+               "month_spend_usd": round(_month_spend(), 4), "month_cap_usd": _cap(),
+               "summary": (f"Wrote {doc}" if ok else "no content produced"),
+               "artifacts": [doc] if ok else []}
+    ev.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    return {"status": payload["status"], "verified": ok, "summary": payload["summary"],
+            "artifacts": payload["artifacts"], "evidence_path": str(ev.relative_to(ROOT)),
+            "tier": tier_name, "attempts": 1, "task_cost_usd": payload["task_cost_usd"],
+            "month_spend_usd": payload["month_spend_usd"], "month_cap_usd": _cap(),
+            "input_hash": _sha(f"{tname}:{tclass}:{desc}"),
+            "output_hash": _sha(json.dumps(payload, sort_keys=True))}
+
+
 def execute_task(task: dict) -> dict:
     """Perform the task with a VERIFY-AND-RETRY gate: run → check acceptance → on failure
     escalate to the next tier and retry (bounded). Returns real evidence, never a fabricated proof.
@@ -515,6 +577,9 @@ def execute_task(task: dict) -> dict:
     system = _system()
 
     base_tier = _tier_for(task)
+    # Document-producing tasks use the reliable single-shot writer (no fragile JSON tool-loop).
+    if tclass in ("research", "design", "analysis") and not (task.get("acceptance") or {}).get("compiles"):
+        return _execute_doc_task(task, tid, tname, tclass, desc, base_tier)
     total_cost = 0.0
     all_models: list[str] = []
     attempts: list[dict] = []
