@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Shooting for the Moon — The Michael Hoch AI HELM Chronicle</title>
+<style>
+  :root{
+    --bg:#05070e; --ink:#e6edf6; --mut:#8b98ad;
+    --cy:#22d3ee; --gd:#fbbf24; --gr:#34d399; --vi:#a78bfa; --rd:#f87171;
+    --card:rgba(255,255,255,.04); --bd:rgba(255,255,255,.10);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow-x:hidden}
+  /* starfield */
+  .stars,.stars2{position:fixed;inset:0;z-index:0;pointer-events:none}
+  .stars{background-image:radial-gradient(1px 1px at 20% 30%,#fff,transparent),radial-gradient(1px 1px at 70% 60%,#cfe,transparent),radial-gradient(1px 1px at 40% 80%,#fff,transparent),radial-gradient(1px 1px at 85% 20%,#9cf,transparent),radial-gradient(1px 1px at 55% 45%,#fff,transparent),radial-gradient(1px 1px at 10% 65%,#adf,transparent);background-size:100% 100%;opacity:.5;animation:tw 6s infinite}
+  .stars2{background-image:radial-gradient(1px 1px at 30% 20%,#fff,transparent),radial-gradient(1px 1px at 80% 70%,#8df,transparent),radial-gradient(1px 1px at 60% 15%,#fff,transparent),radial-gradient(1px 1px at 15% 85%,#adf,transparent);opacity:.35;animation:tw 9s infinite reverse}
+  @keyframes tw{0%,100%{opacity:.5}50%{opacity:.15}}
+  /* progress */
+  #prog{position:fixed;top:0;left:0;height:3px;width:0;z-index:50;
+    background:linear-gradient(90deg,var(--vi),var(--cy),var(--gd));box-shadow:0 0 10px var(--cy)}
+  .wrap{position:relative;z-index:2;max-width:960px;margin:0 auto;padding:0 22px}
+  section{min-height:92vh;display:flex;flex-direction:column;justify-content:center;padding:60px 0;
+    opacity:0;transform:translateY(40px);transition:opacity 1s ease,transform 1s ease}
+  section.in{opacity:1;transform:none}
+  .kicker{font-size:12px;letter-spacing:3px;color:var(--mut);text-transform:uppercase;margin-bottom:10px}
+  h1{font-size:clamp(30px,6vw,58px);font-weight:800;letter-spacing:1px;margin:.1em 0;line-height:1.05}
+  h2{font-size:clamp(24px,4.5vw,40px);font-weight:800;margin:.1em 0}
+  p.lead{font-size:clamp(15px,2.2vw,19px);color:#c3ccdb;max-width:640px;line-height:1.6}
+  .mut{color:var(--mut)} .cy{color:var(--cy)} .gd{color:var(--gd)} .gr{color:var(--gr)} .vi{color:var(--vi)} .rd{color:var(--rd)}
+  .pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.5px;border:1px solid}
+  .p-live{color:var(--gr);border-color:var(--gr);background:rgba(52,211,153,.10)}
+  .p-plan{color:var(--mut);border-color:#3a4560;background:rgba(255,255,255,.03)}
+  .p-new{color:var(--gd);border-color:var(--gd);background:rgba(251,191,36,.10)}
+  .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+  .chip{padding:8px 14px;border:1px solid var(--bd);border-radius:12px;background:var(--card);font-size:13px;font-weight:600}
+  .grid{display:grid;gap:12px;margin-top:20px}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+  .card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px 16px}
+  .card h3{margin:0 0 4px;font-size:15px} .card p{margin:0;font-size:12px;color:var(--mut)}
+  .big{font-size:clamp(34px,9vw,88px);font-weight:800;letter-spacing:1px;line-height:1}
+  .fade b{color:var(--cy)}
+  .glow{filter:drop-shadow(0 0 8px currentColor)}
+  @keyframes pulse{0%,100%{opacity:.85;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes rise{to{offset-distance:100%}}
+  .helm-gauge{opacity:.25;transition:opacity .6s} section.in .helm-gauge{opacity:1}
+  section.in .helm-gauge:nth-child(2){transition-delay:.2s}
+  section.in .helm-gauge:nth-child(3){transition-delay:.4s}
+  section.in .helm-gauge:nth-child(4){transition-delay:.6s}
+  .glitch{position:relative;display:inline-block}
+  section.in .glitch{animation:gl .9s steps(2) 3}
+  @keyframes gl{0%{transform:translate(0)}25%{transform:translate(-2px,1px);color:var(--rd)}50%{transform:translate(2px,-1px);color:var(--cy)}100%{transform:translate(0)}}
+  .foot{padding:50px 0 80px;text-align:center;color:var(--mut);font-size:12px}
+  .patch{width:min(300px,74vw);height:min(300px,74vw);margin:20px auto;border-radius:50%;
+    border:2px solid var(--gd);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+    background:radial-gradient(circle at 50% 30%,rgba(34,211,238,.08),transparent 60%);position:relative}
+  .patch:before{content:"";position:absolute;inset:8px;border-radius:50%;border:8px dashed #223;opacity:.5;animation:spin 60s linear infinite}
+</style>
+</head>
+<body>
+<div class="stars"></div><div class="stars2"></div>
+<div id="prog"></div>
+
+<div class="wrap">
+
+  <!-- SCENE 0: OPENING PULSE -->
+  <section id="s0" style="text-align:center;align-items:center">
+    <div class="big fade" style="opacity:.9">18 months.</div>
+    <p class="lead" style="margin:18px auto 0;text-align:center">
+      Thousands of prompts. Hundreds of artifacts.<br>
+      <b class="gd">Zero revenue.</b> &nbsp;One moonshot still alive.</p>
+    <div style="margin-top:40px;font-size:44px" class="glow cy">🌘</div>
+    <div class="mut" style="margin-top:20px;font-size:12px;letter-spacing:2px">SCROLL TO BEGIN ↓</div>
+  </section>
+
+  <!-- SCENE 1: PROLOGUE -->
+  <section id="s1">
+    <div class="kicker">Prologue · The man before the machine</div>
+    <h1>Michael Hoch</h1>
+    <p class="lead">Before the swarm, before the factories, before the code — <b>31 years of Navy leadership</b>, cybersecurity discipline, and a family-first reason to keep building.</p>
+    <div class="chips">
+      <span class="chip">⚓ Navy Leader</span>
+      <span class="chip">🛡️ Cyber Operator</span>
+      <span class="chip">👨‍👧 Father · Husband</span>
+      <span class="chip">🚀 Founder</span>
+    </div>
+  </section>
+
+  <!-- SCENE 2: THE CALL TO AI / HELM -->
+  <section id="s2">
+    <div class="kicker">The call to AI</div>
+    <h2>The HELM awakens</h2>
+    <p class="lead">He didn't ask AI for shortcuts. He asked it to help him think, build, test, organize — and eventually <b>command</b>.</p>
+    <div class="grid g3">
+      <div class="card helm-gauge"><h3 class="cy">H — Human Intent</h3><p>the founder decides</p></div>
+      <div class="card helm-gauge"><h3 class="gr">E — Evidence</h3><p>proof over claims</p></div>
+      <div class="card helm-gauge"><h3 class="gd">L — Ledgers</h3><p>everything recorded</p></div>
+      <div class="card helm-gauge"><h3 class="vi">M — Mission Control</h3><p>governed execution</p></div>
+    </div>
+  </section>
+
+  <!-- SCENE 3: TOOLS ORBIT -->
+  <section id="s3">
+    <div class="kicker">The operating partners</div>
+    <h2>The models advised. Michael decided.</h2>
+    <p class="lead">A HELM layer formed on top of the tools — never replacing the commander, only extending reach.</p>
+    <div class="chips">
+      <span class="chip">ChatGPT</span><span class="chip">Claude</span><span class="chip">Cursor</span>
+      <span class="chip">Grok</span><span class="chip">Gemini</span><span class="chip">LM Studio</span>
+      <span class="chip">Ollama</span><span class="chip">Local Models · $0</span>
+    </div>
+  </section>
+
+  <!-- SCENE 4: CONSTELLATION -->
+  <section id="s4">
+    <div class="kicker">The project constellation</div>
+    <h2>Scattered ideas. Connected purpose.</h2>
+    <p class="lead">What looked like a scattered list was a constellation waiting for a command layer.</p>
+    <div class="chips">
+      <span class="chip">CyberQRG-AI</span><span class="chip">OmniSeek</span><span class="chip">AquaForge</span>
+      <span class="chip">HomeMesh</span><span class="chip">HOCH AI OS</span><span class="chip">Prompt Factory</span>
+      <span class="chip">Finance AI</span><span class="chip">SafeVerse</span><span class="chip">Astraveritas</span>
+      <span class="chip">Epic Fury 2026</span>
+    </div>
+  </section>
+
+  <!-- SCENE 5: THE SWARM -->
+  <section id="s5" style="text-align:center;align-items:center">
+    <div class="kicker">The swarm forms</div>
+    <div style="font-size:34px" class="glow cy">◉</div>
+    <h1 style="margin-top:8px">HAS</h1>
+    <p class="mut" style="margin-top:-6px">Hoch Agent Swarm · the HELM core</p>
+    <p class="lead" style="text-align:center;margin-top:14px">Not chaos — <b>governed execution</b>. Every task routes through gates:</p>
+    <div class="chips" style="justify-content:center">
+      <span class="chip">Task</span><span class="chip">→ Agent</span><span class="chip">→ Verify</span>
+      <span class="chip">→ QA Gate</span><span class="chip">→ Founder Approval</span><span class="chip">→ Output</span>
+    </div>
+  </section>
+
+  <!-- SCENE 6: FACTORY SYSTEM -->
+  <section id="s6">
+    <div class="kicker">The factory system</div>
+    <h2>HAS is the mothership. The factories are production bays.</h2>
+    <div class="grid g3">
+      <div class="card"><h3>HASF <span class="pill p-live">LIVE</span></h3><p>Application Software — Epic Fury → Apple review</p></div>
+      <div class="card"><h3>HSF <span class="pill p-new">NEW</span></h3><p>Storybook Factory — you're reading its first product</p></div>
+      <div class="card"><h3>HMF <span class="pill p-plan">forming</span></h3><p>Music &amp; media</p></div>
+      <div class="card"><h3>HRF <span class="pill p-plan">forming</span></h3><p>Research &amp; citations</p></div>
+      <div class="card"><h3>HCF <span class="pill p-plan">planned</span></h3><p>Cyber — RMF · ATO · ConMon</p></div>
+      <div class="card"><h3>HFF <span class="pill p-plan">planned</span></h3><p>Finance — budget · invest</p></div>
+      <div class="card"><h3>HHF <span class="pill p-plan">planned</span></h3><p>Home — family · devices</p></div>
+      <div class="card"><h3>HPF <span class="pill p-plan">planned</span></h3><p>Prompt foundry — doctrine</p></div>
+    </div>
+  </section>
+
+  <!-- SCENE 7: THE COST -->
+  <section id="s7">
+    <div class="kicker">The cost of the moonshot</div>
+    <h2>Honest, not tragic. Just weighty.</h2>
+    <div class="grid g3">
+      <div class="card"><h3 class="cy">18 months</h3><p>nights &amp; weekends</p></div>
+      <div class="card"><h3 class="cy">1,500–3,500 hrs</h3><p>estimated founder time</p></div>
+      <div class="card"><h3 class="gd">$2.5K–$8.5K</h3><p>likely direct AI spend</p></div>
+      <div class="card"><h3 class="gd">$150K–$500K+</h3><p>professional time value</p></div>
+      <div class="card"><h3 class="rd">$0</h3><p>revenue — so far</p></div>
+      <div class="card"><h3 class="gr">recovering</h3><p>R&amp;D value, still compounding</p></div>
+    </div>
+    <p class="lead" style="margin-top:18px">The direct cost was measured in subscriptions. The real cost was measured in nights, weekends, cognitive load, and founder time.</p>
+  </section>
+
+  <!-- SCENE 8: RUNTIME TRUTH CRISIS -->
+  <section id="s8">
+    <div class="kicker">The runtime truth crisis</div>
+    <h2>A green dashboard without evidence is <span class="glitch rd">theater</span>.</h2>
+    <div class="grid g3" style="margin-top:8px">
+      <div class="card"><h3 class="gr">UI: GREEN</h3><p>looks finished</p></div>
+      <div class="card"><h3 class="rd">Ledger: STALE</h3><p>not updated</p></div>
+      <div class="card"><h3 class="rd">Runtime: NOT VERIFIED</h3><p>never proven</p></div>
+      <div class="card"><h3 class="rd">Evidence: MISSING</h3><p>confidence ≠ proof</p></div>
+    </div>
+    <p class="lead" style="margin-top:20px;font-weight:700">
+      <span class="gr">NO FAKE GREEN.</span> Runtime truth. Evidence beats confidence.<br>
+      <span class="mut" style="font-weight:400">Prompts guide · gates enforce.</span></p>
+  </section>
+
+  <!-- SCENE 9: RECOVERY DOCTRINE -->
+  <section id="s9">
+    <div class="kicker">The recovery doctrine</div>
+    <h2>Every artifact has a home. Nothing is wasted.</h2>
+    <p class="lead">The mission was never to start over. It was to recover the work and make it compound.</p>
+    <div class="grid g3">
+      <div class="card"><h3 class="cy">Prompt</h3><p>→ Prompt Factory</p></div>
+      <div class="card"><h3 class="cy">Code</h3><p>→ HASF component library</p></div>
+      <div class="card"><h3 class="cy">Cyber doc</h3><p>→ HCF evidence corpus</p></div>
+      <div class="card"><h3 class="cy">Research</h3><p>→ HRF knowledge base</p></div>
+      <div class="card"><h3 class="cy">Failed test</h3><p>→ QA guardrail</p></div>
+      <div class="card"><h3 class="cy">This chronicle</h3><p>→ HSF storybook</p></div>
+    </div>
+  </section>
+
+  <!-- SCENE 10: THE NEXT LAUNCH — REAL PROOF -->
+  <section id="s10" style="text-align:center;align-items:center">
+    <div class="kicker">The next launch</div>
+    <h1>The moonshot left the pad.</h1>
+    <div class="card" style="margin-top:16px;border-color:var(--gr);background:rgba(52,211,153,.08);max-width:620px">
+      <h3 class="gr" style="font-size:17px">✓ First HASF product reached Apple review</h3>
+      <p style="color:#c3ccdb;font-size:14px;margin-top:6px">Epic Fury 2026 · build 8 · <b class="gr">WAITING_FOR_REVIEW</b> · 2026-07-07<br>
+      <span class="mut">verified by Apple's own API — not a dashboard claim</span></p>
+    </div>
+    <div class="chips" style="justify-content:center;margin-top:20px">
+      <span class="chip">Recover</span><span class="chip">→ Verify</span><span class="chip">→ Package</span>
+      <span class="chip">→ Launch</span><span class="chip">→ Monetize</span><span class="chip">→ Scale</span>
+    </div>
+
+    <div class="patch">
+      <div style="font-size:34px" class="glow gd">🌕</div>
+      <div class="gd" style="font-weight:800;letter-spacing:1px;margin-top:6px">SHOOTING FOR<br>THE MOON</div>
+      <div class="cy" style="font-size:11px;margin-top:8px;letter-spacing:1px">HAS · HASF · HSF · HMF · HRF</div>
+      <div class="gr" style="font-size:10px;margin-top:6px;letter-spacing:2px">NO FAKE GREEN</div>
+    </div>
+    <p class="mut" style="margin-top:6px">The Michael Hoch · AI HELM Chronicle</p>
+  </section>
+
+  <div class="foot">
+    Produced by the <b class="gd">Hoch Storybook Factory (HSF)</b> — first product ·
+    ledger-driven, factually honest · <span class="mut">© 2026 Michael Hoch</span>
+  </div>
+</div>
+
+<script>
+  var secs=[].slice.call(document.querySelectorAll('section'));
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.25});
+  secs.forEach(function(s){io.observe(s);});
+  addEventListener('scroll',function(){
+    var h=document.documentElement, sc=h.scrollTop/(h.scrollHeight-h.clientHeight);
+    document.getElementById('prog').style.width=(sc*100)+'%';
+  },{passive:true});
+</script>
+</body>
+</html>
