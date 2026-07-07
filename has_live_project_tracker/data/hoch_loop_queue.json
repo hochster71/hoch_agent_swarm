@@ -1,0 +1,38 @@
+[
+  {
+    "task_id": "code-verify-suite",
+    "task_name": "Run the change-control + posture tests and record the REAL result",
+    "task_class": "verify",
+    "description": "Use run_command to actually run: pytest tests/prompt_brain/test_doorstep_posture.py -q . Then run: python -m py_compile backend/agent_executor.py scripts/hoch_loop.py scripts/baseline_guard.py . Write docs/generated/r2/code_verification.md with the ACTUAL pass/fail output (not a claim). If a command is refused by policy, record that honestly.",
+    "status": "completed",
+    "result": "Recorded the results of the change-control and posture tests, including the test failure and attempted compilation results.",
+    "evidence": "docs/evidence/runtime/agent_exec_code-verify-suite.json"
+  },
+  {
+    "task_id": "code-write-demo",
+    "task_name": "Write a small self-check module and verify it compiles",
+    "task_class": "code",
+    "description": "Create backend/hoch_selfcheck.py: a tiny module with a function selfcheck() that imports backend.agent_executor and returns the string 'OK'. Then use run_command to run: python -m py_compile backend/hoch_selfcheck.py  to prove it compiles. Report the result in your finish summary. Do NOT touch any other file.",
+    "status": "completed",
+    "result": "Created a self-check module in backend/hoch_selfcheck.py that imports a specific function from backend.agent_executor and returns 'OK'. Verified that the module compiles successfully without errors.",
+    "evidence": "docs/evidence/runtime/agent_exec_code-write-demo.json"
+  },
+  {
+    "task_id": "harness-demo-live",
+    "task_name": "Write a one-paragraph proof note that the live tiered harness ran",
+    "task_class": "analysis",
+    "description": "Write the file docs/generated/harness_live_proof.md. It must contain one short paragraph stating that the HOCH tiered harness executed this task on the local brain at $0 cost, and it MUST include the exact marker token HARNESS_LIVE_OK on its own line.",
+    "acceptance": {
+      "artifact_exists": [
+        "docs/generated/harness_live_proof.md"
+      ],
+      "contains": {
+        "path": "docs/generated/harness_live_proof.md",
+        "text": "HARNESS_LIVE_OK"
+      }
+    },
+    "status": "completed",
+    "result": "Created the required proof file docs/generated/harness_live_proof.md with the mandatory text and marker token.",
+    "evidence": "docs/evidence/runtime/agent_exec_harness-demo-live.json"
+  }
+]

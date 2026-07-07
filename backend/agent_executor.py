@@ -47,6 +47,7 @@ CMD_TIMEOUT = int(os.environ.get("AGENT_CMD_TIMEOUT", "120"))
 DENY_WRITE = (
     "scripts/baseline_guard.py", "scripts/ag_execution_daemon.py",
     "scripts/ag_execution_runner.py", "backend/agent_executor.py",
+    "scripts/northstar_planner.py", "scripts/northstar_daemon.py",
     "has_live_project_tracker/data/orchestration_bridge_control.json",
     "has_live_project_tracker/data/baseline_tag.txt", "has_live_project_tracker/data/ag_execution_policy.json",
     ".env", ".git/", ".secrets/", "config/", ".gitignore",
