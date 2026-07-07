@@ -34,7 +34,7 @@ BACKENDS_CONFIG = [
     # Priority order: most capable first, relay last (always-on backstop).
     # LM Studio (gemma-4-12b) discovered live 2026-07-07 — highest local capability.
     {"name": "lmstudio",      "base": "http://127.0.0.1:1234",       "preferred_model": "google/gemma-4-12b-qat", "priority": 1, "api": "openai"},
-    {"name": "mac-local",     "base": "http://127.0.0.1:11434",      "preferred_model": "llama3.1:8b",            "priority": 2, "api": "ollama"},
+    {"name": "mac-local",     "base": "http://127.0.0.1:11434",      "preferred_model": "llama3.1:8b",            "priority": 2, "api": "ollama", "probe_keep_alive": 0},
     # mac-tailscale REMOVED 2026-07-07: 100.103.155.4 is THIS same MacBook — a duplicate
     # of mac-local that ran a 2nd Ollama server + 2nd resident model copy, pushing free RAM
     # to ~6% and triggering macOS jetsam kills of Chrome. mac-local (127.0.0.1) already
@@ -53,6 +53,11 @@ class BackendState:
     preferred_model: str
     priority: int
     api: str = "ollama"   # "ollama" | "openai" (LM Studio / OpenAI-compatible)
+    # probe_keep_alive: ollama keep_alive for HEALTH PROBES only. 0 = unload the model
+    # right after the probe so a big failover model isn't held resident just to stay "alive"
+    # (real generate calls still load on demand and use ollama's default keep_alive). None =
+    # ollama default. Set 0 on heavy failover backends to protect control-plane RAM.
+    probe_keep_alive: Optional[object] = None
     alive: bool = False
     proven_model: Optional[str] = None
     available_models: List[str] = field(default_factory=list)
@@ -205,9 +210,11 @@ class ModelGateway:
                 ordered = ([state.preferred_model] if state.preferred_model in models else []) +                           [m for m in models if m != state.preferred_model]
                 for m in ordered:
                     try:
-                        payload = json.dumps({"model": m, "prompt": PROBE_PROMPT,
-                                              "stream": False,
-                                              "options": {"num_predict": 1}}).encode()
+                        _body = {"model": m, "prompt": PROBE_PROMPT,
+                                 "stream": False, "options": {"num_predict": 1}}
+                        if state.probe_keep_alive is not None:
+                            _body["keep_alive"] = state.probe_keep_alive  # e.g. 0 = unload after probe
+                        payload = json.dumps(_body).encode()
                         req = urllib.request.Request(f"{state.base}/api/generate", data=payload,
                                                      headers={"Content-Type":"application/json"})
                         with urllib.request.urlopen(req, timeout=PROBE_TIMEOUT) as pr:
