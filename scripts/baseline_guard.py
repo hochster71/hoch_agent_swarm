@@ -73,7 +73,22 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--tag", default=None, help="baseline git tag (default: pinned in baseline_tag.txt)")
     ap.add_argument("--revert", action="store_true", help="snap guarded CODE back to the baseline tag")
+    ap.add_argument("--invariants-only", action="store_true",
+                    help="check only runtime invariants (for the pre-commit change-board gate); "
+                         "ignores normal in-progress code drift")
     args = ap.parse_args()
+
+    if args.invariants_only:
+        inv = invariants()
+        fails = [k for k, v in inv.items() if not v]
+        print("=== CHANGE-BOARD GATE (invariants) ===")
+        for k, v in inv.items():
+            print(f"  {'OK  ' if v else 'FAIL'} {k}")
+        if fails:
+            print("BLOCKED: commit would regress a baseline invariant: " + ", ".join(fails))
+            sys.exit(1)
+        print("APPROVED: invariants hold.")
+        sys.exit(0)
 
     tag = args.tag or (BASELINE_TAG_FILE.read_text().strip() if BASELINE_TAG_FILE.exists() else "")
     if not tag:
