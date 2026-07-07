@@ -22,8 +22,40 @@ RETRY_POLICY_FILE = DATA_DIR / "ag_execution_retry_policy.json"
 POLICY_FILE = DATA_DIR / "ag_execution_policy.json"
 FAILURES_FILE = DATA_DIR / "ag_execution_failures.jsonl"
 PROOF_INDEX_FILE = DATA_DIR / "ag_execution_proof_index.json"
+HANDOFF_QUEUE_FILE = DATA_DIR / "founder_handoff_queue.json"
 
-RUNNER_VERSION = "1.0.0"
+RUNNER_VERSION = "1.1.0"
+
+
+def stage_for_founder(task, policy_category, reason):
+    """DOORSTEP posture: park a door-crossing task in the shared founder handoff
+    queue as READY_FOR_FOUNDER instead of silently dropping it. Idempotent by
+    task_id so repeated cycles don't duplicate. This never crosses the door —
+    it only records that the work is staged and waiting on founder revenue
+    activation."""
+    hq = load_json(HANDOFF_QUEUE_FILE, {
+        "schema_version": "1.0",
+        "queue_purpose": "DOORSTEP staging — factory work parked at the pre-purchase door awaiting founder revenue activation",
+        "exit_condition": "FOUNDER_ACTIVATES_REVENUE",
+        "staged": [],
+    })
+    staged = hq.setdefault("staged", [])
+    tid = task.get("task_id")
+    if any(s.get("task_id") == tid for s in staged):
+        return  # already parked
+    staged.append({
+        "task_id": tid,
+        "task_name": task.get("task_name", "Unknown task"),
+        "task_class": task.get("task_class", "unknown"),
+        "factory": task.get("factory") or task.get("allowed_agent") or "unknown",
+        "policy_category": policy_category,
+        "status": "READY_FOR_FOUNDER",
+        "reason": reason,
+        "staged_at": get_utc_now(),
+        "exit_condition": "FOUNDER_ACTIVATES_REVENUE",
+    })
+    save_json(HANDOFF_QUEUE_FILE, hq)
+    log_message(f"🚪 DOORSTEP: staged task {tid} for founder ({policy_category}). Handoff queue depth: {len(staged)}")
 
 def get_utc_now():
     return datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")
@@ -157,6 +189,26 @@ def run_executor():
         log_message(f"Task classified as {policy_category}. Allowed: {is_allowed}")
         
         if not is_allowed:
+            # DOORSTEP posture: park door-crossing work for the founder instead of
+            # dropping it. The money/credential/publish gates are NOT crossed here —
+            # the task is only staged as READY_FOR_FOUNDER. Genuinely unsafe
+            # categories (destructive actions) are hard-blocked and never staged.
+            posture = control.get("execution_posture", "DEFAULT")
+            doorstep = control.get("doorstep_policy", {})
+            door_categories = set(doorstep.get("door_categories", []))
+            hard_block_categories = set(doorstep.get("hard_block_categories", ["blocked_destructive_action"]))
+
+            if posture == "DOORSTEP" and policy_category in door_categories and policy_category not in hard_block_categories:
+                reason = "DOORSTEP: staged at pre-purchase door, awaiting founder revenue activation"
+                log_message(f"🚪 Policy category {policy_category} is a door-crossing action. Staging for founder.")
+                stage_for_founder(task, policy_category, reason)
+                task["status"] = "STAGED_FOR_FOUNDER"
+                task["policy_category"] = policy_category
+                save_json(QUEUE_FILE, queue)
+                lm.release_lease(lease_id, status="RELEASED")
+                update_runner_state("BLOCKED_BY_POLICY", task_id=task_id, reason=reason)
+                continue
+
             log_message(f"❌ Policy check failed for category {policy_category}.")
             task["status"] = "BLOCKED"
             task["policy_category"] = policy_category

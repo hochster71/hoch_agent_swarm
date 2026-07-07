@@ -1,0 +1,6 @@
+{
+  "schema_version": "1.0",
+  "queue_purpose": "DOORSTEP staging \u2014 factory work parked at the pre-purchase door awaiting founder revenue activation",
+  "exit_condition": "FOUNDER_ACTIVATES_REVENUE",
+  "staged": []
+}
