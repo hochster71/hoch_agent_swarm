@@ -1,46 +1,12 @@
-# ---- Operational activity pools per node role ----
-ACTIVITY_POOLS = {
-    "control": [
-        "Orchestrating cross-node task distribution",
-        "Running ZTA policy enforcement sweep",
-        "Reconciling agent heartbeat telemetry",
-        "Dispatching PERT critical-path task T2→T4",
-        "Validating CDAO RAI compliance tokens",
-        "Flushing execution buffer and re-queuing stale tasks",
-        "Broadcasting cluster health beacon to all nodes",
-        "Routing DoD RMF continuous monitoring payload",
-    ],
-    "coder": [
-        "Triaging runtime exception in module core/router.py",
-        "Self-healing: patching null-ref in API gateway layer",
-        "Reasoning over failing unit test suite — 3 cases",
-        "Applying automated refactor to reduce cyclomatic complexity",
-        "Resolving merge conflict in feature/zta-enforcement branch",
-        "Running static analysis pass — 0 critical findings",
-        "Executing self-heal: rebuilding Docker image layer cache",
-        "Synthesizing fix for memory leak in telemetry collector",
-    ],
-    "deployer": [
-        "Building iOS binary — xcodebuild RELEASE configuration",
-        "Running automated smoke tests against staging environment",
-        "Triaging App Store submission rejection — privacy manifest",
-        "Self-healing: re-signing IPA with updated provisioning profile",
-        "Deploying Docker container revision 4.2.1 to SWARM_A",
-        "Validating TestFlight build artefact checksums",
-        "Reasoning over crash report — symbolication in progress",
-        "Rolling back failed canary deploy — restoring rev 4.1.9",
-    ],
-    "monitor": [
-        "Streaming live vitals to C2 dashboard",
-        "Triaging latency spike — packet loss 0.2% on 10.0.0.8",
-        "Self-healing: rerouting traffic around congested path",
-        "Reasoning over anomaly pattern in RAM usage delta",
-        "Performing network topology health scan",
-        "Alerting: CPU threshold exceeded — auto-scaling response",
-    ],
-}
+# LIVE-REAL-ONLY (2026-07-07): the ACTIVITY_POOLS dict of canned activity strings
+# ("Reasoning over failing unit test suite", "Streaming live vitals to C2 dashboard",
+# "Building iOS binary…") was DELETED. It was dead code (never referenced) but was the
+# origin of the fabricated fleet "activity" theater. Non-measured nodes now report only
+# what is true: reachability + "no telemetry agent on node". A node's activity is real
+# only where telemetry_authority == MEASURED_LOCAL.
 
-# Node configuration — all assets ONLINE and actively working
+# Node roster — identity/config only. cpu/ram/agents/activity for non-L1 nodes are
+# DECLARED roster values, not measurements, and are labeled as such at runtime.
 NODES_CONFIG = {
     "L1": {
         "id": "L1",
@@ -338,6 +304,7 @@ NODES_CONFIG = {
     }
 }
 
+import json
 import random
 import time
 import logging
@@ -345,6 +312,7 @@ import psutil
 import copy
 import subprocess
 import threading
+import urllib.request
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("ClusterManager")
@@ -397,6 +365,7 @@ class ClusterManager:
         while True:
             try:
                 self._update_telemetry_data()
+                self._ingest_relay_node()  # pull MEASURED vitals from the always-on relay
             except Exception as e:
                 logger.error(f"Error in background telemetry loop: {e}")
             time.sleep(3.0)
@@ -415,33 +384,30 @@ class ClusterManager:
         except Exception as e:
             logger.warning(f"Failed to query psutil host vitals: {e}")
 
-        # 2. Worker nodes fluctuations, activity rotation, and ping checks
+        # 2. Ping checks + honest per-node state.
+        # LIVE-REAL-ONLY (2026-07-06): removed (a) random-walk CPU/RAM "fluctuations" that
+        # made fabricated vitals wobble to look alive, and (b) the rotating pool of canned
+        # activity strings ("Triaging latency spike...") that drove fictional statuses like
+        # Self-Healing/Reasoning. Remote nodes report only what is measured: reachability.
         for node_id, node in list(self.nodes.items()):
-            if node_id != "L1":
+            if node_id not in ("L1", "RELAY"):
                 with self.status_lock:
-                    node["cpu_usage"] = min(95, max(8, node["cpu_usage"] + random.randint(-4, 6)))
-                    node["ram_usage"] = min(92, max(15, node["ram_usage"] + random.randint(-2, 3)))
-
-            domain = node.get("missionDomain", "control")
-            pool = ACTIVITY_POOLS.get(domain, ACTIVITY_POOLS["control"])
-            idx = self._activity_idx.get(node_id, 0)
-            
-            with self.status_lock:
-                node["activity"] = pool[idx % len(pool)]
-                self._activity_idx[node_id] = (idx + 1) % len(pool)
-                
-                # Determine status dynamically based on activity keywords
-                act_lower = node["activity"].lower()
-                if "triage" in act_lower or "triaging" in act_lower:
-                    node["status"] = "Triaging"
-                elif "self-healing" in act_lower or "self-heal" in act_lower or "rebuilding" in act_lower or "rollback" in act_lower or "flushing" in act_lower or "rerouting" in act_lower:
-                    node["status"] = "Self-Healing"
-                elif "reasoning" in act_lower or "reason" in act_lower or "validating" in act_lower or "synthesizing" in act_lower:
-                    node["status"] = "Reasoning"
-                elif "deploying" in act_lower or "deploy" in act_lower or "dispatching" in act_lower or "building" in act_lower:
-                    node["status"] = "Deploying"
-                else:
-                    node["status"] = "Active"
+                    node["activity"] = "(unmeasured — no telemetry agent on node)"
+                    node["status"] = "Reachable"
+                    # LIVE-REAL-ONLY (2026-07-07): scrub fabricated per-agent
+                    # descriptions ("Reasoning over 3 candidate root causes",
+                    # "Building iOS binary…") on non-measured nodes. Without a
+                    # telemetry agent reporting real work, these are declared
+                    # roster fiction, not measurements.
+                    for _agent in node.get("agents", []):
+                        _agent["status"] = "DECLARED"
+                        _agent["description"] = (
+                            "DECLARED roster entry — no telemetry agent on this node; "
+                            "not a live measurement."
+                        )
+            else:
+                with self.status_lock:
+                    node["activity"] = "Control plane: API + cadence + BRAIN loops (this host)"
 
             # Run ping check outside status lock to prevent blocking
             if node_id == "L1":
@@ -451,6 +417,93 @@ class ClusterManager:
 
             with self.status_lock:
                 node["latency_ms"] = latency
+                if latency < 0:
+                    # Honest fleet state: no ping response overrides any scripted activity status.
+                    node["status"] = "Unreachable"
+                    node["telemetry_authority"] = "UNREACHABLE"
+                elif node_id == "L1":
+                    # LIVE-REAL-ONLY (2026-07-06): the control-plane node reports REAL local
+                    # telemetry (psutil), replacing the hardcoded roster figures.
+                    try:
+                        node["cpu_usage"] = int(psutil.cpu_percent(interval=None))
+                        node["ram_usage"] = int(psutil.virtual_memory().percent)
+                        # MEASURED agents: enumerate launchd-managed com.hoch.* jobs with a
+                        # live PID right now. LIVE-REAL-ONLY (2026-07-07): this REPLACES the
+                        # hardcoded roster of 4 fabricated agents (KernelHub-Mgr et al. with
+                        # invented "Self-healing…" narratives). Clear the list first so a
+                        # launchctl failure yields an honest empty list, never fiction.
+                        node["agents"] = []
+                        try:
+                            out = subprocess.run(["launchctl", "list"], capture_output=True,
+                                                 text=True, timeout=5).stdout
+                            measured = []
+                            for line in out.splitlines():
+                                parts = line.split("\t")
+                                if len(parts) >= 3 and "com.hoch" in parts[2] and parts[0].strip().isdigit():
+                                    measured.append({
+                                        "name": parts[2].strip(),
+                                        "type": "launchd job",
+                                        "status": "Active",
+                                        "description": f"launchd-managed process (PID {parts[0].strip()}) — measured live.",
+                                    })
+                            node["agents"] = measured
+                            node["total_agents"] = len(measured)
+                            node["telemetry_authority"] = "MEASURED_LOCAL"
+                        except Exception:
+                            # Could not enumerate launchd — report unknown, not fiction.
+                            node["total_agents"] = 0
+                            node["telemetry_authority"] = "DECLARED_ROSTER_NOT_MEASURED"
+                    except Exception:
+                        node["telemetry_authority"] = "DECLARED_ROSTER_NOT_MEASURED"
+                else:
+                    # Reachable but unmeasured: cpu/ram/agents/activity are DECLARED roster
+                    # values, not measurements. Only latency_ms is real (ICMP).
+                    node["telemetry_authority"] = "DECLARED_ROSTER_NOT_MEASURED"
+
+    def _ingest_relay_node(self):
+        """Pull MEASURED telemetry from the always-on HOCH-200 relay over Tailscale and
+        represent it as a real fleet node. LIVE-REAL-ONLY (2026-07-07): this replaces
+        the iPad 'streaming live vitals' theater with the one remote node that actually
+        reports measured vitals + agent counts. Fails closed to UNREACHABLE."""
+        url = "http://100.87.18.15:3012/api/fleet/node"
+        try:
+            with urllib.request.urlopen(url, timeout=5) as r:
+                p = json.loads(r.read().decode())
+            authority = p.get("telemetry_authority", "DECLARED_ROSTER_NOT_MEASURED")
+            # Measured on the relay host, fetched remotely → MEASURED_REMOTE from here.
+            if authority == "MEASURED_LOCAL":
+                authority = "MEASURED_REMOTE"
+            node = {
+                "id": "RELAY", "fleet_group": "always_on_backstop",
+                "name": p.get("display_name", "hoch-relay-001 (HOCH-200)"),
+                "ip": "100.87.18.15",
+                "role": p.get("role", "relay / always-on 24-7 backstop"),
+                "specs": "VPS (Linode) · Ubuntu 24.04",
+                "status": p.get("status", "Active"),
+                "activity": p.get("activity", "Relay API + burn-in daemon (measured)"),
+                "total_agents": p.get("measured_agent_count", 0),
+                "os": "Ubuntu 24.04",
+                "cpu_usage": p.get("cpu_pct") if p.get("cpu_pct") is not None else 0,
+                "ram_usage": p.get("ram_pct") if p.get("ram_pct") is not None else 0,
+                "latency_ms": self._ping_node("100.87.18.15"),
+                "telemetry_authority": authority,
+                "ollama_models": p.get("ollama_models", []),
+                "agents": p.get("agents", []),
+            }
+            with self.status_lock:
+                self.nodes["RELAY"] = node
+        except Exception as e:
+            logger.warning(f"Relay telemetry ingest failed ({e}); marking RELAY UNREACHABLE.")
+            with self.status_lock:
+                self.nodes["RELAY"] = {
+                    "id": "RELAY", "fleet_group": "always_on_backstop",
+                    "name": "hoch-relay-001 (HOCH-200)", "ip": "100.87.18.15",
+                    "role": "relay / always-on 24-7 backstop", "specs": "VPS (Linode)",
+                    "status": "Unreachable", "activity": "(relay telemetry unreachable)",
+                    "total_agents": 0, "os": "Ubuntu 24.04",
+                    "cpu_usage": 0, "ram_usage": 0, "latency_ms": -1.0,
+                    "telemetry_authority": "UNREACHABLE", "agents": [],
+                }
 
     def _ping_node(self, ip: str) -> float:
         """Runs ICMP ping to check actual node latency. Returns ms, or a simulated value if it fails."""
@@ -469,8 +522,10 @@ class ClusterManager:
                 return duration_ms
         except Exception:
             pass
-        # Fallback to simulated latency with minor fluctuation
-        return round(1.0 + random.random() * 2.0, 1)
+        # LIVE-REAL-ONLY (2026-07-06): an unreachable node is UNREACHABLE. The previous
+        # fallback returned a random 1-3ms latency, making dead machines look excellently
+        # online in fleet status. -1.0 = no ICMP response.
+        return -1.0
 
     def get_cluster_status(self):
         with self.status_lock:
@@ -505,14 +560,28 @@ class ClusterManager:
 
         avg_cpu = total_cpu / max(count, 1)
 
+        # LIVE-REAL-ONLY (2026-07-06): summary is COMPUTED, never hardcoded. (Previously
+        # returned literal "HEALTHY 100%" and "1.1ms (Excellent)" regardless of state.)
+        for n in nodes_copy.values():
+            n.setdefault("telemetry_authority", "DECLARED_ROSTER_NOT_MEASURED")
+        reachable = [n for n in nodes_copy.values()
+                     if n["status"] not in ("Offline", "Unreachable")]
+        real_lat = [n["latency_ms"] for n in nodes_copy.values()
+                    if isinstance(n.get("latency_ms"), (int, float)) and n["latency_ms"] >= 0]
+        n_total = max(count, 1)
+        pct = int(100 * len(reachable) / n_total)
         return {
-            "status": "HEALTHY 100%",
-            "active_assets": len([n for n in nodes_copy.values() if n["status"] != "Offline"]),
-            "sync": "OK",
-            "latency": "1.1ms (Excellent)",
+            "status": f"{len(reachable)}/{n_total} REACHABLE ({pct}%)",
+            "active_assets": len(reachable),
+            "sync": "OK" if len(reachable) == n_total else "DEGRADED",
+            "latency": (f"{round(sum(real_lat)/len(real_lat), 1)}ms avg (measured)"
+                        if real_lat else "unmeasured"),
             "total_agents": total_agents,
             "system_cpu": f"{int(avg_cpu)}%",
             "system_ram": f"{round(total_ram_used, 1)}GB/{int(total_ram_cap)}GB",
+            "telemetry_note": ("cpu/ram/agents are MEASURED only where telemetry_authority="
+                               "MEASURED_LOCAL; DECLARED_ROSTER values are configuration, "
+                               "not measurements"),
             "nodes": list(nodes_copy.values())
         }
 
