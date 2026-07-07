@@ -66,6 +66,14 @@ def invariants() -> dict:
         checks["no fabricated ACTIVITY_POOLS (fleet theater)"] = "ACTIVITY_POOLS = {" not in cm
     except Exception:
         checks["cluster_manager readable"] = False
+    try:
+        # North star is "complete AND monetize" — the PERT must model the founder-gated
+        # revenue path, not just internal buildout, or "% to GOAL" is fake-green.
+        ps = (ROOT / "backend/pert_server.py").read_text()
+        checks["PERT models the revenue path (R1..R4), not just buildout"] = (
+            '"phase": "REVENUE"' in ps and '"id": "R4"' in ps)
+    except Exception:
+        checks["pert_server readable"] = False
     return checks
 
 

@@ -416,6 +416,65 @@ WORKSTREAMS = [
         "evidence_path": "docs/release/rc30-merge-package-readiness.md",
         "blocker": "",
         "risk_level": "Low"
+    },
+    # --- REVENUE PATH (added 2026-07-07) --------------------------------------
+    # The internal buildout (W1-W15) is measured in agent work-MINUTES. The north star
+    # is "complete AND MONETIZE", but the founder-gated path to first revenue was never
+    # modeled — so "% to GOAL" understated the truth. These tasks are CALENDAR time
+    # (waiting on the founder + Apple review), expressed in minutes (days*1440) so the
+    # CPM math stays in one unit. They are the real long pole to /GOAL.
+    {
+        "id": "R1", "title": "Founder provisions API keys (K1: OpenAI/Anthropic)",
+        "description": "Un-gates real provider execution (Rung-2). Founder-only credential action.",
+        "owner_agent": "Founder (Michael)", "R": "Founder", "A": "Founder",
+        "C": "Master Orchestrator", "I": "Evidence Collector Agent",
+        "dependencies": ["W15"],
+        "optimistic_minutes": 144.0, "likely_minutes": 720.0, "pessimistic_minutes": 4320.0,
+        "status": "blocked", "evidence_path": "has_live_project_tracker/data/human_approval_queue.json",
+        "blocker": "FOUNDER_CREDENTIAL: K1 API keys not provisioned",
+        "risk_level": "High", "founder_gated": True, "phase": "REVENUE", "calendar_days": "0.1/0.5/3"
+    },
+    {
+        "id": "R2", "title": "Epic Fury iOS → GO (18 HIGH open, real security scan)",
+        "description": "Close App Store gate: resolve HIGH findings, replace fallback security scan with real binaries.",
+        "owner_agent": "HASF Pipeline Agent", "R": "HASF Pipeline Agent", "A": "Founder",
+        "C": "Security Auditor Agent", "I": "Evidence Collector Agent",
+        "dependencies": ["R1"],
+        "optimistic_minutes": 1440.0, "likely_minutes": 4320.0, "pessimistic_minutes": 10080.0,
+        "status": "pending", "evidence_path": "HASF_GATE_VERIFY.json",
+        "blocker": "", "risk_level": "High", "founder_gated": False, "phase": "REVENUE", "calendar_days": "1/3/7"
+    },
+    {
+        "id": "R3", "title": "Apple Developer + App Store Connect + TestFlight (K3)",
+        "description": "Register bundle id, create ASC app, package + upload TestFlight build.",
+        "owner_agent": "Release Agent", "R": "Release Agent", "A": "Founder",
+        "C": "HASF Pipeline Agent", "I": "Evidence Collector Agent",
+        "dependencies": ["R2"],
+        "optimistic_minutes": 720.0, "likely_minutes": 2880.0, "pessimistic_minutes": 7200.0,
+        "status": "pending", "evidence_path": "has_live_project_tracker/data/k_track_founder_action_packet.json",
+        "blocker": "FOUNDER_ACTION: K3 bundle id / ASC app", "risk_level": "Medium",
+        "founder_gated": True, "phase": "REVENUE", "calendar_days": "0.5/2/5"
+    },
+    {
+        "id": "R4", "title": "App Store submit → Apple review → approve (live)",
+        "description": "Submit for review; Apple review latency is external and unbounded by us.",
+        "owner_agent": "Release Agent", "R": "Release Agent", "A": "Founder",
+        "C": "Master Orchestrator", "I": "Evidence Collector Agent",
+        "dependencies": ["R3"],
+        "optimistic_minutes": 1440.0, "likely_minutes": 2880.0, "pessimistic_minutes": 10080.0,
+        "status": "pending", "evidence_path": "docs/evidence/business/rc38-goal-completion-monetization-readiness.md",
+        "blocker": "", "risk_level": "High", "founder_gated": True, "phase": "REVENUE", "calendar_days": "1/2/7"
+    },
+    {
+        "id": "R5", "title": "Stripe live keys + revenue-readiness gate (parallel)",
+        "description": "Flip Stripe to live, verify checkout/onboarding/legal. Parallel to the iOS long pole.",
+        "owner_agent": "Revenue Agent", "R": "Revenue Agent", "A": "Founder",
+        "C": "Master Orchestrator", "I": "Evidence Collector Agent",
+        "dependencies": ["R1"],
+        "optimistic_minutes": 720.0, "likely_minutes": 2160.0, "pessimistic_minutes": 5760.0,
+        "status": "pending", "evidence_path": "docs/evidence/business/project-revenue-readiness-audit.md",
+        "blocker": "FOUNDER_ACTION: Stripe live keys", "risk_level": "Medium",
+        "founder_gated": True, "phase": "REVENUE", "calendar_days": "0.5/1.5/4"
     }
 ]
 
@@ -1864,7 +1923,12 @@ def get_pert_data():
         "execution_authority_status": execution_authority_status,
         "governed_execution_log": governed_execution_data,
         "governed_execution_status": gov_exec_status,
-        "governed_execution_freshness": panels_freshness.get("hoch_governed_execution", {})
+        "governed_execution_freshness": panels_freshness.get("hoch_governed_execution", {}),
+        "store_release_ledger": (
+            json.load(open(os.path.join(get_project_root(), "has_live_project_tracker", "data", "store_goal_release_ledger.json"), "r"))
+            if os.path.exists(os.path.join(get_project_root(), "has_live_project_tracker", "data", "store_goal_release_ledger.json"))
+            else []
+        )
     }
 
 
@@ -1956,6 +2020,7 @@ def get_control_plane_status():
             "security": _unwrap(guardrails.get("security_guardrail_violations")),
         },
         "per_factory": per_factory,
+        "store_release_ledger": d.get("store_release_ledger", []),
     }
 
 
@@ -3794,6 +3859,36 @@ def get_dashboard():
             </div>
         </div>
 
+        <!-- Store Goal Release Ledger & Blocker Status -->
+        <div class="card col-12" id="store-release-ledger-panel">
+            <h3 style="margin-top:0; display:flex; justify-content:space-between; align-items:center;">
+                <span style="color:var(--accent-teal);">Store Goal Release Ledger & Blocker Status</span>
+                <span id="store-verdict-badge" class="badge">VERDICT: CONDITIONAL_GO</span>
+            </h3>
+            <div style="font-size:12px; color:var(--text-secondary); margin-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:8px;">
+                ⚠️ <strong>CRITICAL RULE:</strong> The terminal <code>GOAL</code> cannot be marked green or complete unless store-live proof (public store links) exists for both Apple App Store and Google Play. Verdict is restricted to <code>CONDITIONAL_GO</code> if any store publication or demand validation gates are pending.
+            </div>
+            <div style="overflow-x:auto;">
+                <table style="width:100%; border-collapse:collapse; text-align:left; font-size:13px;">
+                    <thead>
+                        <tr style="border-bottom:2px solid #1e293b; color:var(--text-secondary); text-transform:uppercase; font-size:11px;">
+                            <th style="padding:10px 8px; width:80px;">Node ID</th>
+                            <th style="padding:10px 8px; width:180px;">Gate Name</th>
+                            <th style="padding:10px 8px; width:150px;">Owner</th>
+                            <th style="padding:10px 8px; width:100px;">Status</th>
+                            <th style="padding:10px 8px;">Missing Evidence</th>
+                            <th style="padding:10px 8px;">Blocker Reason</th>
+                            <th style="padding:10px 8px;">Next Executable Action</th>
+                            <th style="padding:10px 8px; width:80px; text-align:center;">Est Min</th>
+                        </tr>
+                    </thead>
+                    <tbody id="store-release-ledger-tbody">
+                        <!-- Populated dynamically via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <!-- 4. PERT/CPM Network visualization -->
         <div class="card col-12" id="pert-network-panel">
             <h3 style="margin-top:0;">PERT / CPM Activity Network (15 Required Workstreams)</h3>
@@ -5414,6 +5509,44 @@ def get_dashboard():
                     blockedTasks.forEach(t => {
                         risksList.innerHTML += `<p><strong>${t.id}:</strong> ${t.blocker} (Owner: ${t.owner_agent})</p>`;
                     });
+                }
+
+                // Populate Store Release Ledger
+                const storeLedgerTbody = document.getElementById("store-release-ledger-tbody");
+                if (storeLedgerTbody && data.store_release_ledger) {
+                    storeLedgerTbody.innerHTML = "";
+                    data.store_release_ledger.forEach(n => {
+                        const statusClass = n.current_status === "CLEARED" ? "badge-pass" : "badge-fail";
+                        const rowBg = n.current_status === "CLEARED" ? "rgba(57, 255, 136, 0.02)" : "rgba(255, 59, 92, 0.02)";
+                        const ownerType = (n.owner === "Michael" || n.owner === "Operator") ? "Founder" : "Agent";
+                        storeLedgerTbody.innerHTML += `
+                            <tr style="background: ${rowBg}; border-bottom: 1px solid rgba(255,255,255,0.04); transition: background 0.2s;">
+                                <td style="padding: 10px 8px; font-weight: bold; color: var(--hoch-cyan);">${n.node_id}</td>
+                                <td style="padding: 10px 8px;"><strong>${n.gate_name}</strong></td>
+                                <td style="padding: 10px 8px;"><span class="badge" style="background: rgba(255,255,255,0.05); color: var(--text-primary); border-color: rgba(255,255,255,0.1);">${n.owner} (${ownerType})</span></td>
+                                <td style="padding: 10px 8px;"><span class="badge ${statusClass}">${n.current_status}</span></td>
+                                <td style="padding: 10px 8px; color: var(--text-secondary); max-width: 250px; white-space: normal;">${n.evidence_required || 'N/A'}</td>
+                                <td style="padding: 10px 8px; color: var(--hoch-red); max-width: 250px; white-space: normal;">${n.blocker_reason || 'None'}</td>
+                                <td style="padding: 10px 8px; color: var(--accent-teal); max-width: 250px; white-space: normal;">${n.next_action || 'None'}</td>
+                                <td style="padding: 10px 8px; text-align: center; font-family: monospace;">${n.estimated_minutes} min</td>
+                            </tr>
+                        `;
+                    });
+                }
+                const allCleared = data.store_release_ledger && data.store_release_ledger.every(n => n.node_id === "GOAL" || n.current_status === "CLEARED");
+                const storeVerdict = document.getElementById("store-verdict-badge");
+                if (storeVerdict) {
+                    if (allCleared) {
+                        storeVerdict.textContent = "VERDICT: FINAL_GO";
+                        storeVerdict.style.background = "rgba(57, 255, 136, 0.2)";
+                        storeVerdict.style.color = "var(--hoch-green)";
+                        storeVerdict.style.borderColor = "var(--hoch-green)";
+                    } else {
+                        storeVerdict.textContent = "VERDICT: CONDITIONAL_GO";
+                        storeVerdict.style.background = "rgba(255, 176, 32, 0.2)";
+                        storeVerdict.style.color = "var(--hoch-amber)";
+                        storeVerdict.style.borderColor = "var(--hoch-amber)";
+                    }
                 }
 
                 // Render Network Graph
@@ -7341,6 +7474,29 @@ function setSummary(n){
 }
 
 function renderCommand(data,n){
+  const allCleared = data.store_release_ledger && data.store_release_ledger.every(x => x.node_id === "GOAL" || x.current_status === "CLEARED");
+  const verdictBadge = allCleared ? badge("FINAL_GO") : badge("CONDITIONAL_GO");
+  
+  let ledgerRows = "";
+  if (data.store_release_ledger) {
+    data.store_release_ledger.forEach(x => {
+      const cls = x.current_status === "CLEARED" ? "fresh" : "stale";
+      const ownerType = (x.owner === "Michael" || x.owner === "Operator") ? "Founder" : "Agent";
+      ledgerRows += `
+        <tr>
+          <td><strong>${x.node_id}</strong></td>
+          <td><strong>${x.gate_name}</strong></td>
+          <td>${x.owner} (${ownerType})</td>
+          <td><span class="badge ${cls}">${x.current_status}</span></td>
+          <td>${x.evidence_required || 'N/A'}</td>
+          <td><span style="color:var(--red);">${x.blocker_reason || 'None'}</span></td>
+          <td><span style="color:var(--cyan);">${x.next_action || 'None'}</span></td>
+          <td>${x.estimated_minutes} min</td>
+        </tr>
+      `;
+    });
+  }
+
   return `
     <section class="grid top">
       <div class="card">
@@ -7364,6 +7520,35 @@ function renderCommand(data,n){
         <p>${val((n.wbs.find(w=>w.id==="W12") || {}).blocker, "No blocker text")}</p>
       </div>
     </section>
+
+    <!-- Store Release Ledger Card -->
+    <section class="card" style="margin-top:14px;">
+      <h2 style="display:flex; justify-content:space-between; align-items:center;">
+        <span>Store Goal Release Ledger & Blocker Status</span>
+        <span>Verdict: ${verdictBadge}</span>
+      </h2>
+      <div style="font-size:11px; color:var(--muted); margin-bottom:10px; border-bottom:1px solid var(--line); padding-bottom:6px;">
+        ⚠️ <strong>CRITICAL RULE:</strong> The terminal <code>GOAL</code> cannot be marked green or complete unless store-live proof exists for both Apple App Store and Google Play. Verdict is restricted to <code>CONDITIONAL_GO</code> if any store publication or demand validation gates are pending.
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Node ID</th>
+            <th>Gate Name</th>
+            <th>Owner</th>
+            <th>Status</th>
+            <th>Missing Evidence</th>
+            <th>Blocker Reason</th>
+            <th>Next Action</th>
+            <th>Est Min</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${ledgerRows || "<tr><td colspan='8'>No release ledger data available.</td></tr>"}
+        </tbody>
+      </table>
+    </section>
+
     <section class="grid two" style="margin-top:14px">
       <div class="card">
         <h2>Critical Telemetry Authority</h2>
