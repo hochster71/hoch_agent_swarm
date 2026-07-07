@@ -22,6 +22,60 @@ def _load(p, default):
         return default
 
 
+
+def _combat_summary():
+    """Aggregate ledger-proven combat records — honest execution counts only."""
+    try:
+        import sys; sys.path.insert(0, str(ROOT))
+        from backend.factory.outcome_stats import write as _write_stats
+        st = _write_stats()
+        top = sorted(st.get("genes", {}).items(),
+                     key=lambda kv: kv[1].get("executions", 0), reverse=True)[:10]
+        return {"at": st.get("at"),
+                "genes_with_combat_record": st.get("genes_with_combat_record", 0),
+                "total_champion_executions": st.get("total_champion_executions", 0),
+                "gates": st.get("gates", {}),
+                "top": [{"gene_id": g, **v} for g, v in top]}
+    except Exception:
+        return {}
+
+
+def _gateway_summary():
+    """Live gateway status — all backends, proven generation, no listing fake-out."""
+    try:
+        import sys; sys.path.insert(0, str(ROOT))
+        from backend.model_gateway import get_gateway
+        st = get_gateway().status()
+        return st
+    except Exception:
+        return {}
+
+
+def _fleet_summary(cluster_mgr=None):
+    """Real fleet telemetry — authority-labeled, never fabricated."""
+    try:
+        import sys, time
+        sys.path.insert(0, str(ROOT))
+        if cluster_mgr:
+            st = cluster_mgr.get_cluster_status()
+        else:
+            from backend.cluster_manager import ClusterManager
+            cm = ClusterManager(); time.sleep(1.5)
+            st = cm.get_cluster_status()
+        return {
+            "status": st.get("status"), "sync": st.get("sync"),
+            "latency": st.get("latency"), "reachable": st.get("active_assets"),
+            "telemetry_note": st.get("telemetry_note"),
+            "nodes": [{"id": n.get("id"), "status": n.get("status"),
+                       "cpu": n.get("cpu_usage"), "ram": n.get("ram_usage"),
+                       "agents": n.get("total_agents"), "latency_ms": n.get("latency_ms"),
+                       "authority": n.get("telemetry_authority"),
+                       "activity": n.get("activity", "")} for n in st.get("nodes", [])]
+        }
+    except Exception:
+        return {}
+
+
 def _factories_summary():
     """Per-factory live summary across ALL registered Factories (HASF/HMF/HRF/...).
     Each field comes from that domain's real state files; a domain that hasn't run yet shows its
@@ -51,7 +105,7 @@ def _factories_summary():
     return out
 
 
-def build_live_state():
+def build_live_state(cluster_mgr=None):
     """Assemble the live BRAIN state dict from real state files + live model detection.
     Reusable by both the static writer (main) and the /api/brain/live endpoint."""
     conv = _load(DATA / "convergence_status.json", {})
@@ -148,8 +202,13 @@ def build_live_state():
         "recent_improvements": list(reversed(improvements))[:8],
         "top_champions": sorted(
             [{"cls": k, "title": v.get("title", "")[:40], "score": v.get("score", 0),
-              "state": v.get("state", "")} for k, v in champs.items()],
+              "state": v.get("state", ""),
+              "fitness_method": v.get("fitness_method", "MECHANICAL_PROXY"),
+              "blended_score": v.get("blended_score")} for k, v in champs.items()],
             key=lambda x: -x["score"])[:6],
+        "combat": _combat_summary(),
+        "fleet": _fleet_summary(cluster_mgr),
+        "gateway": _gateway_summary(),
     }
     return out
 
