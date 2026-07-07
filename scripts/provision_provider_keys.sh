@@ -50,8 +50,15 @@ echo " R1 — Provider API key provisioning (OpenAI + Anthropic)"
 echo " Keys are stored ONLY in $ENV_FILE (chmod 600, git-ignored)."
 echo "==============================================================="
 if [ -f "$ENV_FILE" ]; then
-  BK=".env.bak.$(date -u +%Y%m%dT%H%M%SZ)"; cp "$ENV_FILE" "$BK"; chmod 600 "$BK"
-  echo "Backup of current .env → $BK"
+  BK=".env.bak.$(date -u +%Y%m%dT%H%M%SZ)"
+  if git check-ignore -q "$BK" 2>/dev/null; then
+    cp "$ENV_FILE" "$BK"
+    chmod 600 "$BK"
+    echo "Backup of current .env created in git-ignored path."
+  else
+    echo "⚠  REFUSING TO BACK UP: $BK is not git-ignored."
+    echo "   Existing .env will be updated in place with chmod 600."
+  fi
 fi
 
 TOTAL=${#SERVICES[@]}; i=0; DONE=0
@@ -73,7 +80,7 @@ for row in "${SERVICES[@]}"; do
       read -r YN; case "$YN" in [Yy]*) ;; *) echo "   re-enter."; continue;; esac
     fi
     upsert_env "$VAR" "$KEY"
-    echo "   ✅ $VAR stored (ends …${KEY: -4})."
+    echo "   ✅ $VAR stored."
     DONE=$((DONE+1))
     break
   done
@@ -88,12 +95,10 @@ echo "$DONE / $TOTAL keys provisioned."
 if [ "$DONE" -eq "$TOTAL" ]; then
   echo
   echo "R1 COMPLETE. Next steps to activate provider execution:"
-  echo "  1) Load the keys into the backend:"
-  echo "       launchctl kickstart -k gui/\$(id -u)/com.hoch.api.server"
-  echo "  2) (DOORSTEP revenue gate — do this consciously when ready to let real"
-  echo "      provider missions run) flip allow_provider_api_calls to true in:"
-  echo "       has_live_project_tracker/data/orchestration_bridge_control.json"
-  echo "  3) Re-run the change board:  python3 scripts/baseline_guard.py"
+  echo "  1) Do not restart services automatically."
+  echo "  2) Run the provider-key verification gate before enabling provider execution."
+  echo "  3) Keep allow_provider_api_calls=false until founder approval."
+  echo "  4) Re-run the change board:  python3 scripts/baseline_guard.py"
 else
   echo "Some keys skipped — rerun this script to finish."
 fi
