@@ -259,7 +259,9 @@ def _order_for_tier(tier: int) -> list[str]:
     if tier >= TIER_FRONTIER:
         return ["openai_frontier", "deepseek", "gemini", "local"]
     if tier == TIER_CHEAP:
-        return ["deepseek", "gemini", "openai", "local"]
+        # openai (gpt-4o-mini) first — reliably capable & cheap; gemini free is a quota-limited bonus;
+        # deepseek if keyed; local last. This is what actually does the coding/research work well.
+        return ["openai", "gemini", "deepseek", "local"]
     return ["local", "gemini"]  # tier 0: free local first, free-tier Gemini as backstop
 
 
