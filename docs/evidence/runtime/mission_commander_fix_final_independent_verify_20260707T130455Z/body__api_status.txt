@@ -1,0 +1,1 @@
+{"epic":"HOCH-200","relay_node":"hoch-relay-001","tailscale_ip":"100.87.18.15","public_ipv4":"50.116.41.183","port":3012,"port_public_exposed":false,"worker_status":"ONLINE","worker_id":"HAS-WORKER-RELAY-001","registry_worker_count":1,"execution_posture":"DEFAULT","doorstep_door":null,"doorstep_exit_condition":null,"founder_handoff_count":0,"ts":"2026-07-07T13:04:59+00:00"}

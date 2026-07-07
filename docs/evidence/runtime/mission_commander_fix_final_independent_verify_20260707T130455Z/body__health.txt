@@ -1,0 +1,1 @@
+{"status":"ok","worker":"HAS-WORKER-RELAY-001","worker_status":"ONLINE","hostname":"Michaels-MacBook-Pro.local","ts":"2026-07-07T13:04:59+00:00"}
