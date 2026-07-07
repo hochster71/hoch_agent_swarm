@@ -782,6 +782,11 @@ def get_pert_data():
         except Exception:
             pass
 
+    # The cached cadence file carried a stale hardcoded percent_goal_complete (80). The DERIVED
+    # weighted value is authoritative and must win over the cache — otherwise the dashboard
+    # fake-greens the goal number regardless of real task state.
+    metrics["percent_goal_complete"] = _goal_percent()
+
     # Next best actions mapping
     critical_blockers = [t for t in WORKSTREAMS if t["blocker"] and t["id"] in pert_cpm["critical_path"]]
     next_actions = []
