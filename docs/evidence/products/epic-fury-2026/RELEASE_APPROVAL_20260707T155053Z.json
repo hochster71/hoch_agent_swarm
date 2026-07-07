@@ -1,0 +1,16 @@
+{
+  "artifact": "R2 security gate founder sign-off",
+  "reviewer": "Michael Bryan Hoch",
+  "role": "Founder, sole approver",
+  "decision": "APPROVED",
+  "signed_at_utc": "2026-07-07T15:50:53Z",
+  "signed_doc": "docs/evidence/products/epic-fury-2026/security_scan_results_20260707.md",
+  "signed_doc_sha256": "023d36901221dc39634496abc86e01203e34c277730d51abaf17a2b35af7134e",
+  "gate_verdict": {
+    "R1_REAL_TOOLS": "PASS",
+    "R2_RECONCILED_SCAN": "PASS",
+    "R3_NO_OPEN_HIGH": "PASS",
+    "R5_POSTURE": "READY"
+  },
+  "note": "Security gate signed. DOORSTEP posture unchanged. App Store submission is a separate founder gate."
+}

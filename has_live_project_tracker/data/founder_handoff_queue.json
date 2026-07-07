@@ -2,5 +2,28 @@
   "schema_version": "1.0",
   "queue_purpose": "DOORSTEP staging \u2014 factory work parked at the pre-purchase door awaiting founder revenue activation",
   "exit_condition": "FOUNDER_ACTIVATES_REVENUE",
-  "staged": []
+  "staged": [
+    {
+      "id": "r2-security-signoff",
+      "gate": "blocked_release",
+      "title": "Sign Epic Fury R2 security gate (0 real vulns; 1 accepted false-positive cert)",
+      "why_founder": "Release approval is a founder legal act; scan is clean and reconciled 18->0.",
+      "action": "Sign the sign-off block in docs/evidence/products/epic-fury-2026/security_scan_results_20260707.md, then set posture APPROVED_FOR_PRODUCTION_RELEASE.",
+      "blocking_evidence": "docs/evidence/products/epic-fury-2026/security_scan_results_20260707.md",
+      "staged_at": "2026-07-07T15:40:04+00:00",
+      "status": "SIGNED",
+      "signed_by": "Michael Bryan Hoch",
+      "signed_at": "2026-07-07T15:50:53Z",
+      "evidence": "docs/evidence/products/epic-fury-2026/RELEASE_APPROVAL_20260707T155053Z.json"
+    },
+    {
+      "id": "r2-appstore-submit",
+      "gate": "blocked_release",
+      "title": "App Store submission path (Apple Developer / TestFlight / submit)",
+      "why_founder": "Apple identity + submission are irreducible founder gates (account, 2FA, legal attestation).",
+      "action": "Archive+upload the signed build via Xcode/Fastlane to App Store Connect under Team K34GR8P326.",
+      "blocking_evidence": "docs/generated/r2/testflight_checklist.md",
+      "staged_at": "2026-07-07T15:40:04+00:00"
+    }
+  ]
 }
