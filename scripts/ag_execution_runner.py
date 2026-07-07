@@ -222,59 +222,25 @@ def run_executor():
         task["attempts"] = attempts + 1
         
         try:
-            # Simulate execution of modifications / scaffolding
-            evidence_dir = ROOT / "docs/evidence/runtime"
-            evidence_dir.mkdir(parents=True, exist_ok=True)
-            proof_file = evidence_dir / f"ag_execution_proof_{task_id}.md"
-            
-            input_text = f"{task_id}:{task_name}:{task_class}"
-            input_hash = compute_sha256(input_text)
-            
-            proof_content = f"""# AG Execution Proof
-            
-* **Task ID**: {task_id}
-* **Lease ID**: {lease_id}
-* **Fencing Token**: {fencing_token}
-* **Input Hash**: {input_hash}
-* **Timestamp**: {get_utc_now()}
-* **Policy Verdict**: {policy_category}
-* **Execution Status**: SUCCESS
-* **Evidence Files Touched**: docs/evidence/runtime/ag_execution_proof_{task_id}.md
-* **Runner Version**: {RUNNER_VERSION}
-* **Doctrine Verdict**: GO
+            # REAL execution — the agent actually performs the task with tools and returns
+            # real evidence (full transcript + artifacts + real hashes). This REPLACES the
+            # prior fabricated-proof stub ("Generated code structure blueprints…") that wrote
+            # a fake SUCCESS proof while doing nothing. This is the engine the swarm lacked.
+            import sys as _sys
+            if str(ROOT) not in _sys.path:
+                _sys.path.insert(0, str(ROOT))
+            from backend.agent_executor import execute_task as _agent_execute
 
-## Actions Performed
-- Loaded task parameters from queue.
-- Verified zero-leakage policy constraints.
-- Generated code structure blueprints for CyberQRG-AI.
-- Logged compliance artifacts.
-"""
-            # Compute output hash
-            output_hash = compute_sha256(proof_content)
-            
-            # Write hashes inside the proof content
-            proof_content_with_hashes = f"""# AG Execution Proof
-            
-* **Task ID**: {task_id}
-* **Lease ID**: {lease_id}
-* **Fencing Token**: {fencing_token}
-* **Input Hash**: {input_hash}
-* **Output Hash**: {output_hash}
-* **Timestamp**: {get_utc_now()}
-* **Policy Verdict**: {policy_category}
-* **Execution Status**: SUCCESS
-* **Evidence Files Touched**: docs/evidence/runtime/ag_execution_proof_{task_id}.md
-* **Runner Version**: {RUNNER_VERSION}
-* **Doctrine Verdict**: GO
+            _res = _agent_execute(task)
+            input_hash = _res["input_hash"]
+            output_hash = _res["output_hash"]
+            proof_file = ROOT / _res["evidence_path"]
+            log_message(f"Agent executed {task_id}: {_res['status']} — "
+                        f"{_res['summary'][:100]} (artifacts: {_res['artifacts']})")
+            if _res["status"] != "SUCCESS":
+                # Not an exception, but not finished — hand to the retry machinery below.
+                raise RuntimeError(f"agent execution INCOMPLETE: {_res['summary'][:150]}")
 
-## Actions Performed
-- Loaded task parameters from queue.
-- Verified zero-leakage policy constraints.
-- Generated code structure blueprints for CyberQRG-AI.
-- Logged compliance artifacts.
-"""
-            proof_file.write_text(proof_content_with_hashes, encoding="utf-8")
-            
             # Log to execution log
             logs = load_json(LOG_FILE, [])
             log_entry = {
