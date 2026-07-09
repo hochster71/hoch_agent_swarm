@@ -21,7 +21,7 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request, HTTPException, Response
 from fastapi.responses import FileResponse,  HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -41,9 +41,32 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_methods=["GET"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
+
+@app.middleware("http")
+async def auth_middleware(request: Request, call_next):
+    path = request.url.path
+    if path in ("/health", "/api/status", "/api/burn-in/status", "/favicon.ico") or not path.startswith("/api/"):
+        return await call_next(request)
+    
+    import os
+    method = request.method
+    if method in ("GET", "HEAD", "OPTIONS"):
+        tok = os.environ.get("RELAY_READ_TOKEN")
+        if tok:
+            hdr = request.headers.get("authorization", "") or request.headers.get("x-helm-token", "")
+            if hdr.replace("Bearer ", "").strip() != tok:
+                return JSONResponse({"error": "unauthorized"}, status_code=401)
+    else:
+        tok = os.environ.get("RELAY_WRITE_TOKEN")
+        if tok:
+            hdr = request.headers.get("authorization", "") or request.headers.get("x-helm-token", "")
+            if hdr.replace("Bearer ", "").strip() != tok:
+                return JSONResponse({"error": "unauthorized"}, status_code=401)
+                
+    return await call_next(request)
 
 STATIC_DIR = Path("/app/static")
 if not STATIC_DIR.exists():
@@ -64,7 +87,18 @@ if not DATA_DIR.exists():
             DATA_DIR = possible_local
 
 REGISTRY_PATH = Path("/tmp/worker_registry.json")
-HEARTBEAT_PATH = Path("/tmp/heartbeats.jsonl")
+# Live streams (heartbeats, council messages, ticket overrides) — persist on the writable
+# /state volume (survives container recreation). Falls back to /tmp locally / if /state is absent.
+def _state_dir() -> Path:
+    d = Path("/state")
+    try:
+        d.mkdir(parents=True, exist_ok=True)
+        (d / ".w").write_text("ok")
+        return d
+    except Exception:
+        return Path("/tmp")
+STATE_DIR = _state_dir()
+HEARTBEAT_PATH = STATE_DIR / "heartbeats.jsonl"
 
 # Mount static dashboard if the directory exists
 if STATIC_DIR.exists():
@@ -125,6 +159,12 @@ def _relay_worker() -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 # Routes
 # ---------------------------------------------------------------------------
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon() -> Response:
+    """Return 204 No Content for favicon to prevent 404 logs."""
+    return Response(status_code=204)
+
 
 @app.get("/", response_class=HTMLResponse, include_in_schema=False)
 async def serve_dashboard() -> HTMLResponse:
@@ -660,6 +700,20 @@ async def api_live() -> JSONResponse:
     worker = _relay_worker()
     posture, door, exit_cond, staged_count = _doorstep_status()
 
+    # ── governance flags (truthful, from the control plane) — never fabricated ──
+    provider_api_calls = "UNKNOWN"
+    founder_gated_execution = "UNKNOWN"
+    rung2_provider_calls = None
+    try:
+        ctrl = json.loads(Path("/data/orchestration_bridge_control.json").read_text())
+        if "allow_provider_api_calls" in ctrl:
+            provider_api_calls = "ON" if ctrl.get("allow_provider_api_calls") else "OFF"
+        if "allow_founder_gated_execution" in ctrl:
+            founder_gated_execution = "ON" if ctrl.get("allow_founder_gated_execution") else "OFF"
+        rung2_provider_calls = ctrl.get("rung_2_live_provider_calls")
+    except Exception:
+        pass
+
     # ── the actual items parked at the door (what the founder must act on next) ──
     handoff_items = []
     try:
@@ -764,6 +818,9 @@ async def api_live() -> JSONResponse:
         "ok": True,
         "ts": _now_iso(),
         "posture": posture,
+        "provider_api_calls": provider_api_calls,
+        "founder_gated_execution": founder_gated_execution,
+        "rung_2_live_provider_calls": rung2_provider_calls,
         "doorstep_door": door,
         "doorstep_exit_condition": exit_cond,
         "founder_handoff_count": staged_count,
@@ -893,10 +950,318 @@ async def serve_brain() -> HTMLResponse:
     return HTMLResponse(content="<h1>brain.html not deployed</h1>", status_code=404)
 
 
+@app.get("/space", response_class=HTMLResponse, include_in_schema=False)
+async def serve_space() -> HTMLResponse:
+    """HOCH SPACE — all-factories control plane. Same-origin, polls /api/* with no CORS hop."""
+    for cand in (STATIC_DIR / "space.html", Path(__file__).resolve().parent.parent / "dashboard/space.html"):
+        if cand.exists():
+            return HTMLResponse(content=cand.read_text(encoding="utf-8"), status_code=200)
+    return HTMLResponse(content="<h1>space.html not deployed</h1>", status_code=404)
+
+
+@app.get("/factoryverse", include_in_schema=False)
+@app.get("/helm-factoryverse", include_in_schema=False)
+async def serve_factoryverse():
+    """HELM Factory-Verse — 3D atrium; click a factory to walk inside (agents, lanes, live stats)."""
+    # FileResponse is the proven-working pattern on this relay (read_text 500s here).
+    for cand in (STATIC_DIR / "helm-factoryverse.html", Path(__file__).resolve().parent.parent / "dashboard/helm-factoryverse.html"):
+        if cand.exists():
+            return FileResponse(str(cand), media_type="text/html")
+    return HTMLResponse(content="<h1>helm-factoryverse.html not deployed</h1>", status_code=404)
+
+
+@app.get("/helm-3d", include_in_schema=False)
+async def serve_helm3d():
+    """HELM 3D living core (atrium only)."""
+    for cand in (STATIC_DIR / "helm-3d.html", Path(__file__).resolve().parent.parent / "dashboard/helm-3d.html"):
+        if cand.exists():
+            return FileResponse(str(cand), media_type="text/html")
+    return HTMLResponse(content="<h1>helm-3d.html not deployed</h1>", status_code=404)
+
+
+@app.get("/control", include_in_schema=False)
+@app.get("/helm-control", include_in_schema=False)
+async def serve_control():
+    """HELM CONTROL — live command surface (PERT, gaps, coordination, burn-in)."""
+    for cand in (STATIC_DIR / "helm-control-live.html", Path(__file__).resolve().parent.parent / "dashboard/helm-control-live.html"):
+        if cand.exists():
+            return FileResponse(str(cand), media_type="text/html")
+    return HTMLResponse(content="<h1>helm-control-live.html not deployed</h1>", status_code=404)
+
+
+@app.get("/board", include_in_schema=False)
+@app.get("/jira", include_in_schema=False)
+async def serve_board():
+    """HAS -> GOAL board — Jira-style Kanban of council-derived tickets, epics, goal progress."""
+    for cand in (STATIC_DIR / "helm-board.html", Path(__file__).resolve().parent.parent / "dashboard/helm-board.html"):
+        if cand.exists():
+            return FileResponse(str(cand), media_type="text/html")
+    return HTMLResponse(content="<h1>helm-board.html not deployed</h1>", status_code=404)
+
+
+@app.get("/coordination", include_in_schema=False)
+@app.get("/council", include_in_schema=False)
+@app.get("/storyboard", include_in_schema=False)
+async def serve_coordination():
+    """HELM COUNCIL — live coordination storyboard (real inter-agent dialogue + founder directives)."""
+    for cand in (STATIC_DIR / "helm-coordination.html", Path(__file__).resolve().parent.parent / "dashboard/helm-coordination.html"):
+        if cand.exists():
+            return FileResponse(str(cand), media_type="text/html")
+    return HTMLResponse(content="<h1>helm-coordination.html not deployed</h1>", status_code=404)
+
+
+@app.get("/api/helm-control")
+async def api_helm_control() -> JSONResponse:
+    """Consolidated live payload for the control plane (no fake green)."""
+    for cand in (STATE_DIR / "helm_control_live.json", DATA_DIR / "helm_control_live.json", STATIC_DIR / "helm_control_live.json",
+                 Path(__file__).resolve().parent.parent.parent.parent / "has_live_project_tracker/data/helm_control_live.json"):
+        try:
+            if cand.exists():
+                return JSONResponse(json.loads(cand.read_text(encoding="utf-8")))
+        except Exception:
+            continue
+    return JSONResponse({"error": "helm_control_live.json not synced", "generated": None}, status_code=404)
+
+
+FACTORYVERSE_STATE = STATE_DIR / "factoryverse.json"
+REVENUE_STATE = STATE_DIR / "revenue.json"
+
+
+def _write_authed(request: "Request") -> bool:
+    """Hardening: truth-write endpoints require a bearer token when RELAY_WRITE_TOKEN is set.
+    Unset => tailnet-only trust (fail-open, backward compatible). Set it to ENFORCE (fail-closed)."""
+    import os
+    tok = os.environ.get("RELAY_WRITE_TOKEN")
+    if not tok:
+        return True
+    hdr = request.headers.get("authorization", "") or request.headers.get("x-helm-token", "")
+    return hdr.replace("Bearer ", "").strip() == tok
+
+
+@app.get("/api/factoryverse")
+async def api_factoryverse() -> JSONResponse:
+    """Truthful per-factory payload. Prefers live-pushed /state over baked deploy data (ends stale UI)."""
+    for cand in (FACTORYVERSE_STATE,
+                 DATA_DIR / "helm_factoryverse.json",
+                 STATIC_DIR / "helm_factoryverse.json",
+                 Path(__file__).resolve().parent.parent.parent.parent / "has_live_project_tracker/data/helm_factoryverse.json"):
+        try:
+            if cand.exists():
+                return JSONResponse(json.loads(cand.read_text(encoding="utf-8")))
+        except Exception:
+            continue
+    return JSONResponse({"error": "helm_factoryverse.json not synced to /data", "factories": []}, status_code=404)
+
+
+@app.post("/api/factoryverse/push")
+async def api_factoryverse_push(request: Request) -> JSONResponse:
+    """Live-push fresh factory-verse truth into writable /state so the UI is never stale (no redeploy needed)."""
+    if not _write_authed(request):
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
+    try:
+        body = await request.json()
+    except Exception:
+        return JSONResponse({"error": "invalid json"}, status_code=400)
+    if not isinstance(body, dict) or "factories" not in body:
+        return JSONResponse({"error": "expected {factories:[...]}"}, status_code=400)
+    body["_pushed_at"] = _now_iso()
+    FACTORYVERSE_STATE.parent.mkdir(parents=True, exist_ok=True)
+    FACTORYVERSE_STATE.write_text(json.dumps(body), encoding="utf-8")
+    return JSONResponse({"accepted": True, "ts": body["_pushed_at"], "factories": len(body.get("factories", []))})
+
+
+@app.get("/api/revenue")
+async def api_revenue() -> JSONResponse:
+    """Live revenue truth pushed from the local ledger. No fake green — real captured transactions only."""
+    if REVENUE_STATE.exists():
+        try:
+            return JSONResponse(json.loads(REVENUE_STATE.read_text(encoding="utf-8")))
+        except Exception:
+            pass
+    return JSONResponse({"lifetime_usd": 0, "transactions": 0, "updated": None})
+
+
+@app.post("/api/revenue")
+async def api_revenue_push(request: Request) -> JSONResponse:
+    """Push revenue totals from the local ledger into /state."""
+    if not _write_authed(request):
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
+    try:
+        body = await request.json()
+    except Exception:
+        return JSONResponse({"error": "invalid json"}, status_code=400)
+    body["updated"] = _now_iso()
+    REVENUE_STATE.parent.mkdir(parents=True, exist_ok=True)
+    REVENUE_STATE.write_text(json.dumps(body), encoding="utf-8")
+    return JSONResponse({"accepted": True, "ts": body["updated"]})
+
+
+_STATE_WHITELIST = {"helm_tickets.json", "helm_control_live.json", "helm_factoryverse.json",
+                    "helm_mission_control.json", "revenue.json", "factoryverse.json"}
+
+
+@app.post("/api/state/put")
+async def api_state_put(request: Request) -> JSONResponse:
+    """Generic live-truth sync: write a whitelisted helm_*.json into writable /state so EVERY page
+    reads fresh with no redeploy. This is what ends 'every page is stale'."""
+    if not _write_authed(request):
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
+    try:
+        body = await request.json()
+    except Exception:
+        return JSONResponse({"error": "invalid json"}, status_code=400)
+    name = str(body.get("name", ""))
+    data = body.get("data")
+    if name not in _STATE_WHITELIST or data is None:
+        return JSONResponse({"error": "name must be whitelisted and data required",
+                             "allowed": sorted(_STATE_WHITELIST)}, status_code=400)
+    (STATE_DIR / name).parent.mkdir(parents=True, exist_ok=True)
+    (STATE_DIR / name).write_text(json.dumps(data), encoding="utf-8")
+    return JSONResponse({"accepted": True, "name": name, "ts": _now_iso()})
+
+
+@app.get("/hoch-neuro-derive.js", include_in_schema=False)
+async def serve_derive_js():
+    """Serve the shared derivation module for /space (and /brain) same-origin."""
+    for cand in (STATIC_DIR / "hoch-neuro-derive.js", Path(__file__).resolve().parent.parent / "dashboard/hoch-neuro-derive.js"):
+        if cand.exists():
+            return FileResponse(str(cand), media_type="application/javascript")
+    return JSONResponse({"error": "hoch-neuro-derive.js not deployed"}, status_code=404)
+
+
 @app.get("/api/registry")
 async def api_registry() -> JSONResponse:
     """Return worker registry."""
     return JSONResponse(_load_registry())
+
+
+MESSAGE_PATH = STATE_DIR / "council_messages.jsonl"
+
+
+@app.post("/api/message")
+async def api_message(request: Request) -> JSONResponse:
+    """Append a coordination-council message (actual inter-agent dialogue).
+    Body: {from, to, tier, re, kind, text}. Append-only; the /coordination window renders it live."""
+    try:
+        body = await request.json()
+    except Exception:
+        body = {}
+    entry = {
+        "ts": _now_iso(),
+        "from": str(body.get("from", "unknown"))[:60],
+        "to": str(body.get("to", "all"))[:60],
+        "tier": str(body.get("tier", ""))[:40],
+        "re": str(body.get("re", ""))[:80],
+        "kind": str(body.get("kind", "msg"))[:24],
+        "text": str(body.get("text", ""))[:2000],
+    }
+    MESSAGE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with MESSAGE_PATH.open("a") as fh:
+        fh.write(json.dumps(entry) + "\n")
+    return JSONResponse({"accepted": True, "ts": entry["ts"]})
+
+
+@app.get("/api/messages")
+async def api_messages(limit: int = 100) -> JSONResponse:
+    """Return recent council dialogue (newest last) for the coordination / storyboard window."""
+    msgs = []
+    try:
+        if MESSAGE_PATH.exists():
+            for ln in MESSAGE_PATH.read_text(encoding="utf-8").splitlines()[-max(1, min(limit, 500)):]:
+                try:
+                    msgs.append(json.loads(ln))
+                except Exception:
+                    continue
+    except Exception:
+        pass
+    return JSONResponse({"generated_at": _now_iso(), "count": len(msgs), "messages": msgs})
+
+
+TICKET_OVERRIDE_PATH = STATE_DIR / "tickets_adhoc.jsonl"
+
+
+@app.post("/api/ticket")
+async def api_ticket(request: Request) -> JSONResponse:
+    """Open/move/close a ticket (agent or founder). Body: {id, status, owner?, note?}. Overrides win by id."""
+    try:
+        body = await request.json()
+    except Exception:
+        body = {}
+    if not body.get("id"):
+        return JSONResponse({"error": "id required"}, status_code=400)
+    entry = {"ts": _now_iso(), "id": str(body["id"])[:60], "status": body.get("status"),
+             "owner": body.get("owner"), "note": str(body.get("note", ""))[:400],
+             "title": body.get("title"), "epic": body.get("epic")}
+    TICKET_OVERRIDE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with TICKET_OVERRIDE_PATH.open("a") as fh:
+        fh.write(json.dumps(entry) + "\n")
+    return JSONResponse({"accepted": True, "ts": entry["ts"]})
+
+
+@app.get("/api/tickets")
+async def api_tickets() -> JSONResponse:
+    """Derived truthful ticket board + live agent/founder overrides merged by id (newest wins)."""
+    board = None
+    for cand in (STATE_DIR / "helm_tickets.json", DATA_DIR / "helm_tickets.json", STATIC_DIR / "helm_tickets.json",
+                 Path(__file__).resolve().parent.parent.parent.parent / "has_live_project_tracker/data/helm_tickets.json"):
+        try:
+            if cand.exists():
+                board = json.loads(cand.read_text(encoding="utf-8")); break
+        except Exception:
+            continue
+    if board is None:
+        return JSONResponse({"error": "helm_tickets.json not synced", "tickets": []}, status_code=404)
+    # apply overrides
+    ov = {}
+    try:
+        if TICKET_OVERRIDE_PATH.exists():
+            for ln in TICKET_OVERRIDE_PATH.read_text(encoding="utf-8").splitlines():
+                try:
+                    e = json.loads(ln); ov[e["id"]] = e
+                except Exception:
+                    continue
+    except Exception:
+        pass
+    by_id = {t["id"]: t for t in board.get("tickets", [])}
+    for tid, e in ov.items():
+        t = by_id.get(tid) or {"id": tid, "epic": e.get("epic", "ADHOC"), "title": e.get("title", tid)}
+        for k in ("status", "owner", "note", "title", "epic"):
+            if e.get(k) is not None:
+                t[k] = e[k]
+        t["updated"] = e.get("ts")
+        by_id[tid] = t
+    board["tickets"] = list(by_id.values())
+    from collections import Counter
+    board["counts"] = dict(Counter(t.get("status") for t in board["tickets"]))
+    board["overrides_applied"] = len(ov)
+    return JSONResponse(board)
+
+
+@app.get("/api/heartbeats")
+async def api_heartbeats(limit: int = 40) -> JSONResponse:
+    """Recent agent heartbeats (live comms feed) — lets each agent SEE the others in real time.
+    Reads the append-only heartbeat log; newest last. Read-only, no fake data."""
+    beats = []
+    try:
+        if HEARTBEAT_PATH.exists():
+            lines = HEARTBEAT_PATH.read_text(encoding="utf-8").splitlines()[-max(1, min(limit, 200)):]
+            for ln in lines:
+                try:
+                    e = json.loads(ln)
+                    p = e.get("payload", {}) or {}
+                    beats.append({"ts": e.get("received_at"), "worker": p.get("worker", "unknown"),
+                                  "status": p.get("status"), "focus": p.get("focus") or p.get("tick"),
+                                  "role": p.get("role")})
+                except Exception:
+                    continue
+    except Exception:
+        pass
+    # roster = distinct workers with their most-recent beat
+    roster = {}
+    for b in beats:
+        roster[b["worker"]] = b
+    return JSONResponse({"generated_at": _now_iso(), "count": len(beats),
+                         "workers_live": list(roster.values()), "recent": beats[-limit:]})
 
 
 @app.post("/api/heartbeat")

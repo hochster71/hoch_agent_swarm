@@ -1,17 +1,17 @@
 {
-  "generated_at": "2026-07-09T05:32:33.221690Z",
+  "generated_at": "2026-07-09T06:01:42.519345Z",
   "scope": "hoch_agent_swarm repo + live relay recon (read-only)",
   "honest_posture": "NOT 100% \u2014 real findings below. Compliance is a remediation target, not a starting claim.",
   "summary": {
     "controls_assessed": 12,
-    "controls_met": 2,
+    "controls_met": 3,
     "controls_gap": 6,
-    "controls_partial": 4,
-    "compliance_pct_met_only": 16.7,
-    "total_findings": 110,
+    "controls_partial": 3,
+    "compliance_pct_met_only": 25.0,
+    "total_findings": 95,
     "findings_by_severity": {
-      "HIGH": 69,
-      "CRITICAL": 41
+      "HIGH": 94,
+      "CRITICAL": 1
     }
   },
   "controls": [
@@ -34,7 +34,7 @@
       "family": "Authenticator Management",
       "title": "Secrets not stored in cleartext repo files",
       "status": "GAP",
-      "note": "66 secret findings incl. .env + .env.bak backups. Purge, rotate, gitignore, shred backups."
+      "note": "54 secret findings incl. .env + .env.bak backups. Purge, rotate, gitignore, shred backups."
     },
     {
       "id": "SC-28",
@@ -55,7 +55,7 @@
       "family": "Vulnerability Monitoring",
       "title": "Automated vuln scanning runs",
       "status": "PARTIAL",
-      "note": "Trivy live: 4 HIGH/CRIT deps open. Scanning exists; remediation SLA needed (ConMon)."
+      "note": "Trivy live: 1 HIGH/CRIT deps open. Scanning exists; remediation SLA needed (ConMon)."
     },
     {
       "id": "CM-6",
@@ -75,8 +75,8 @@
       "id": "AU-6",
       "family": "Audit Record Review",
       "title": "Evidence + audit trail exist",
-      "status": "PARTIAL",
-      "note": "Evidence manifests + release attestations exist; tamper gate repaired but manifests lack MAC (hash-only)."
+      "status": "MET",
+      "note": "Evidence manifests + release attestations exist; tamper-evident MAC verified."
     },
     {
       "id": "CA-7",
@@ -109,316 +109,316 @@
       "desc": "chromadb: ChromaDB Python Project: Arbitrary code execution via pre-authentication code injection"
     },
     {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "openai-project-api-key",
-      "file": ".env",
-      "line": 33,
-      "desc": "OpenAI Project API Key"
-    },
-    {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "stripe-secret-token",
-      "file": ".env",
-      "line": 32,
-      "desc": "Stripe Secret Key"
-    },
-    {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "openai-project-api-key",
-      "file": ".env.bak.1783569802",
-      "line": 24,
-      "desc": "OpenAI Project API Key"
-    },
-    {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "openai-project-api-key",
-      "file": ".env.bak.1783569802",
-      "line": 35,
-      "desc": "OpenAI Project API Key"
-    },
-    {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "stripe-secret-token",
-      "file": ".env.bak.1783569802",
-      "line": 33,
-      "desc": "Stripe Secret Key"
-    },
-    {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "openai-project-api-key",
-      "file": ".env.bak.20260707T141502Z",
-      "line": 13,
-      "desc": "OpenAI Project API Key"
-    },
-    {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "stripe-secret-token",
-      "file": ".env.bak.20260707T141502Z",
-      "line": 9,
-      "desc": "Stripe Secret Key"
-    },
-    {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "openai-project-api-key",
-      "file": ".env.bak.20260707T142947Z",
-      "line": 23,
-      "desc": "OpenAI Project API Key"
-    },
-    {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "stripe-secret-token",
-      "file": ".env.bak.20260707T142947Z",
-      "line": 9,
-      "desc": "Stripe Secret Key"
-    },
-    {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "stripe-secret-token",
-      "file": "config/gitleaks.toml",
-      "line": 35,
-      "desc": "Stripe Secret Key"
-    },
-    {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "stripe-secret-token",
-      "file": "data/security_scans/epic-fury-2026/20260709T042647Z-epic-fury-2026-hasf-vetting/gitleaks.json",
-      "line": 409,
-      "desc": "Stripe Secret Key"
-    },
-    {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "stripe-secret-token",
-      "file": "data/security_scans/epic-fury-2026/20260709T042647Z-epic-fury-2026-hasf-vetting/gitleaks.json",
-      "line": 410,
-      "desc": "Stripe Secret Key"
-    },
-    {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "stripe-secret-token",
-      "file": "data/security_scans/epic-fury-2026/20260709T042903Z-epic-fury-2026-hasf-vetting/gitleaks.json",
-      "line": 178,
-      "desc": "Stripe Secret Key"
-    },
-    {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "stripe-secret-token",
-      "file": "data/security_scans/epic-fury-2026/20260709T042903Z-epic-fury-2026-hasf-vetting/gitleaks.json",
-      "line": 179,
-      "desc": "Stripe Secret Key"
-    },
-    {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "openai-project-api-key",
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "stripe-access-token",
       "file": "docs/security/assessment_20260709/gitleaks.json",
-      "line": 29,
-      "desc": "OpenAI Project API Key"
+      "line": 138,
+      "desc": "Found a Stripe Access Token, posing a risk to payment processing services and sensitive financial data."
     },
     {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "openai-project-api-key",
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "stripe-access-token",
       "file": "docs/security/assessment_20260709/gitleaks.json",
-      "line": 30,
-      "desc": "OpenAI Project API Key"
+      "line": 139,
+      "desc": "Found a Stripe Access Token, posing a risk to payment processing services and sensitive financial data."
     },
     {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "openai-project-api-key",
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "stripe-access-token",
       "file": "docs/security/assessment_20260709/gitleaks.json",
-      "line": 89,
-      "desc": "OpenAI Project API Key"
+      "line": 159,
+      "desc": "Found a Stripe Access Token, posing a risk to payment processing services and sensitive financial data."
     },
     {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "openai-project-api-key",
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "stripe-access-token",
       "file": "docs/security/assessment_20260709/gitleaks.json",
-      "line": 90,
-      "desc": "OpenAI Project API Key"
+      "line": 160,
+      "desc": "Found a Stripe Access Token, posing a risk to payment processing services and sensitive financial data."
     },
     {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "openai-project-api-key",
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "stripe-access-token",
       "file": "docs/security/assessment_20260709/gitleaks.json",
-      "line": 372,
-      "desc": "OpenAI Project API Key"
+      "line": 180,
+      "desc": "Found a Stripe Access Token, posing a risk to payment processing services and sensitive financial data."
     },
     {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "openai-project-api-key",
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "stripe-access-token",
       "file": "docs/security/assessment_20260709/gitleaks.json",
-      "line": 373,
-      "desc": "OpenAI Project API Key"
+      "line": 181,
+      "desc": "Found a Stripe Access Token, posing a risk to payment processing services and sensitive financial data."
     },
     {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "openai-project-api-key",
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "stripe-access-token",
       "file": "docs/security/assessment_20260709/gitleaks.json",
-      "line": 575,
-      "desc": "OpenAI Project API Key"
+      "line": 201,
+      "desc": "Found a Stripe Access Token, posing a risk to payment processing services and sensitive financial data."
     },
     {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "openai-project-api-key",
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "stripe-access-token",
       "file": "docs/security/assessment_20260709/gitleaks.json",
-      "line": 576,
-      "desc": "OpenAI Project API Key"
+      "line": 202,
+      "desc": "Found a Stripe Access Token, posing a risk to payment processing services and sensitive financial data."
     },
     {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "openai-project-api-key",
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "stripe-access-token",
       "file": "docs/security/assessment_20260709/gitleaks.json",
-      "line": 595,
-      "desc": "OpenAI Project API Key"
+      "line": 222,
+      "desc": "Found a Stripe Access Token, posing a risk to payment processing services and sensitive financial data."
     },
     {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "openai-project-api-key",
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "stripe-access-token",
       "file": "docs/security/assessment_20260709/gitleaks.json",
-      "line": 596,
-      "desc": "OpenAI Project API Key"
+      "line": 223,
+      "desc": "Found a Stripe Access Token, posing a risk to payment processing services and sensitive financial data."
     },
     {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "stripe-secret-token",
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "stripe-access-token",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 243,
+      "desc": "Found a Stripe Access Token, posing a risk to payment processing services and sensitive financial data."
+    },
+    {
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "stripe-access-token",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 244,
+      "desc": "Found a Stripe Access Token, posing a risk to payment processing services and sensitive financial data."
+    },
+    {
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "stripe-access-token",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 264,
+      "desc": "Found a Stripe Access Token, posing a risk to payment processing services and sensitive financial data."
+    },
+    {
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "stripe-access-token",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 265,
+      "desc": "Found a Stripe Access Token, posing a risk to payment processing services and sensitive financial data."
+    },
+    {
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "generic-api-key",
       "file": "docs/security/assessment_20260709/gitleaks.json",
       "line": 9,
-      "desc": "Stripe Secret Key"
+      "desc": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations."
     },
     {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "stripe-secret-token",
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "generic-api-key",
       "file": "docs/security/assessment_20260709/gitleaks.json",
       "line": 10,
-      "desc": "Stripe Secret Key"
+      "desc": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations."
     },
     {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "stripe-secret-token",
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "generic-api-key",
       "file": "docs/security/assessment_20260709/gitleaks.json",
-      "line": 69,
-      "desc": "Stripe Secret Key"
+      "line": 30,
+      "desc": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations."
     },
     {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "stripe-secret-token",
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "generic-api-key",
       "file": "docs/security/assessment_20260709/gitleaks.json",
-      "line": 70,
-      "desc": "Stripe Secret Key"
+      "line": 31,
+      "desc": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations."
     },
     {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "stripe-secret-token",
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "generic-api-key",
       "file": "docs/security/assessment_20260709/gitleaks.json",
-      "line": 149,
-      "desc": "Stripe Secret Key"
+      "line": 76,
+      "desc": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations."
     },
     {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "stripe-secret-token",
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "generic-api-key",
       "file": "docs/security/assessment_20260709/gitleaks.json",
-      "line": 150,
-      "desc": "Stripe Secret Key"
+      "line": 97,
+      "desc": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations."
     },
     {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "stripe-secret-token",
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "generic-api-key",
       "file": "docs/security/assessment_20260709/gitleaks.json",
-      "line": 189,
-      "desc": "Stripe Secret Key"
+      "line": 117,
+      "desc": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations."
     },
     {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "stripe-secret-token",
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "generic-api-key",
       "file": "docs/security/assessment_20260709/gitleaks.json",
-      "line": 190,
-      "desc": "Stripe Secret Key"
+      "line": 118,
+      "desc": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations."
     },
     {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "stripe-secret-token",
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "generic-api-key",
       "file": "docs/security/assessment_20260709/gitleaks.json",
-      "line": 352,
-      "desc": "Stripe Secret Key"
+      "line": 285,
+      "desc": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations."
     },
     {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "stripe-secret-token",
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "generic-api-key",
       "file": "docs/security/assessment_20260709/gitleaks.json",
-      "line": 353,
-      "desc": "Stripe Secret Key"
+      "line": 286,
+      "desc": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations."
     },
     {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "stripe-secret-token",
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "generic-api-key",
       "file": "docs/security/assessment_20260709/gitleaks.json",
-      "line": 392,
-      "desc": "Stripe Secret Key"
+      "line": 306,
+      "desc": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations."
     },
     {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "stripe-secret-token",
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "generic-api-key",
       "file": "docs/security/assessment_20260709/gitleaks.json",
-      "line": 393,
-      "desc": "Stripe Secret Key"
+      "line": 307,
+      "desc": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations."
     },
     {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "stripe-secret-token",
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "generic-api-key",
       "file": "docs/security/assessment_20260709/gitleaks.json",
-      "line": 555,
-      "desc": "Stripe Secret Key"
+      "line": 327,
+      "desc": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations."
     },
     {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "stripe-secret-token",
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "generic-api-key",
       "file": "docs/security/assessment_20260709/gitleaks.json",
-      "line": 556,
-      "desc": "Stripe Secret Key"
+      "line": 328,
+      "desc": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations."
     },
     {
-      "source": "trivy-secret",
-      "severity": "CRITICAL",
-      "rule": "stripe-secret-token",
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "generic-api-key",
       "file": "docs/security/assessment_20260709/gitleaks.json",
-      "line": 1318,
-      "desc": "Stripe Secret Key"
+      "line": 348,
+      "desc": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations."
+    },
+    {
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "generic-api-key",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 349,
+      "desc": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations."
+    },
+    {
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "generic-api-key",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 369,
+      "desc": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations."
+    },
+    {
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "generic-api-key",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 370,
+      "desc": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations."
+    },
+    {
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "generic-api-key",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 390,
+      "desc": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations."
+    },
+    {
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "generic-api-key",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 391,
+      "desc": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations."
+    },
+    {
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "kubernetes-secret-yaml",
+      "file": "deploy/k3s/secret-template.yaml",
+      "line": 2,
+      "desc": "Possible Kubernetes Secret detected, posing a risk of leaking credentials/tokens from your deployments"
+    },
+    {
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "generic-api-key",
+      "file": "deploy/k3s/secret-template.yaml",
+      "line": 8,
+      "desc": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations."
+    },
+    {
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "kubernetes-secret-yaml",
+      "file": "deploy/k3s/secret-template.yaml",
+      "line": 2,
+      "desc": "Possible Kubernetes Secret detected, posing a risk of leaking credentials/tokens from your deployments"
+    },
+    {
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "generic-api-key",
+      "file": "tests/unit/test_stripe_webhook.py",
+      "line": 16,
+      "desc": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations."
+    },
+    {
+      "source": "gitleaks",
+      "severity": "HIGH",
+      "rule": "generic-api-key",
+      "file": "scripts/epic_fury_staging_access_gate.sh",
+      "line": 9,
+      "desc": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations."
     }
   ]
 }
