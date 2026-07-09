@@ -1,0 +1,167 @@
+{
+  "artifact": "helm_council_roster",
+  "updated": "2026-07-09",
+  "note": "The council seats. Frontier tiers are direct seats (paid \u2192 founder-gated on Rung-2 + spend cap). The LOCAL tier gets ONE representative (Ollama, free, always-on) that can caucus several local models and speak for the swarm. Add a model by adding a seat here.",
+  "seats": [
+    {
+      "name": "HELM (Claude)",
+      "provider": "orchestrator",
+      "tier": "orchestrator",
+      "role": "Orchestrate + truthful state + DOORSTEP gates",
+      "speaks": "internal",
+      "gated": false
+    },
+    {
+      "name": "ChatGPT (OpenAI)",
+      "provider": "openai",
+      "tier": "frontier",
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "key_env": "OPENAI_API_KEY",
+      "model": "gpt-4o",
+      "role": "Frontier \u2014 breadth + synthesis",
+      "gated": true
+    },
+    {
+      "name": "Grok (xAI)",
+      "provider": "openai",
+      "tier": "frontier",
+      "endpoint": "https://api.x.ai/v1/chat/completions",
+      "key_env": "XAI_API_KEY",
+      "model": "grok-4.3",
+      "role": "Frontier \u2014 red-team + creative pressure",
+      "gated": true
+    },
+    {
+      "name": "Gemini (Google)",
+      "provider": "google",
+      "tier": "frontier",
+      "endpoint": "https://generativelanguage.googleapis.com/v1beta/models",
+      "key_env": "GOOGLE_API_KEY",
+      "model": "gemini-2.0-flash",
+      "role": "Frontier \u2014 long-context + grounding",
+      "gated": true
+    },
+    {
+      "name": "Local Rep (Ollama)",
+      "provider": "ollama",
+      "tier": "local",
+      "endpoint": "http://localhost:11434/v1/chat/completions",
+      "key_env": null,
+      "model": "llama3.1:8b",
+      "caucus": [
+        "llama3.3:70b",
+        "gpt-oss:20b"
+      ],
+      "role": "Represents the LOCAL model swarm \u2014 free, always-on; caucuses local models and speaks for them",
+      "gated": false
+    },
+    {
+      "name": "Claude (Anthropic)",
+      "provider": "anthropic",
+      "tier": "frontier",
+      "endpoint": "https://api.anthropic.com/v1/messages",
+      "key_env": "ANTHROPIC_API_KEY",
+      "model": "claude-sonnet-5",
+      "role": "Frontier \u2014 rigor, verification, no-fake-green audit",
+      "gated": true,
+      "status": "GATED \u2014 needs Anthropic API credits (founder: Plans & Billing)"
+    },
+    {
+      "name": "Gemma3-12B (local)",
+      "provider": "ollama",
+      "tier": "local",
+      "endpoint": "http://localhost:11434/v1/chat/completions",
+      "key_env": null,
+      "model": "gemma3:12b",
+      "role": "Local reasoner/generalist \u2014 Google lineage (diversity)",
+      "gated": false,
+      "note": "interim working model; heavyweight (70B/32B/30B-coder) pending ollama repair"
+    },
+    {
+      "name": "Mistral-7B (local)",
+      "provider": "ollama",
+      "tier": "local",
+      "endpoint": "http://localhost:11434/v1/chat/completions",
+      "key_env": null,
+      "model": "mistral:7b",
+      "role": "Local backstop \u2014 European model, distinct training (covers Gemini 429)",
+      "gated": false,
+      "note": "interim working model; heavyweight (70B/32B/30B-coder) pending ollama repair"
+    },
+    {
+      "name": "Qwen2.5-Coder (local)",
+      "provider": "ollama",
+      "tier": "local",
+      "endpoint": "http://localhost:11434/v1/chat/completions",
+      "key_env": null,
+      "model": "qwen2.5-coder:1.5b",
+      "role": "Local BUILDER \u2014 code-capable (fast; upgrade to 30B after ollama repair)",
+      "gated": false,
+      "note": "interim working model; heavyweight (70B/32B/30B-coder) pending ollama repair"
+    },
+    {
+      "name": "Cerebras-GPToss-120B",
+      "provider": "openai",
+      "tier": "frontier",
+      "endpoint": "https://api.cerebras.ai/v1/chat/completions",
+      "key_env": "CEREBRAS_API_KEY",
+      "model": "gpt-oss-120b",
+      "role": "Free heavyweight \u2014 GPT-OSS-120B @ ~2600 tok/s (1M tok/day free)",
+      "gated": true,
+      "live_since": "2026-07-09"
+    },
+    {
+      "name": "Cerebras-GLM-4.7",
+      "provider": "openai",
+      "tier": "frontier",
+      "endpoint": "https://api.cerebras.ai/v1/chat/completions",
+      "key_env": "CEREBRAS_API_KEY",
+      "model": "zai-glm-4.7",
+      "role": "Free reasoner \u2014 GLM-4.7 (deep pressure-test)",
+      "gated": true,
+      "live_since": "2026-07-09"
+    },
+    {
+      "name": "Groq-120B",
+      "provider": "openai",
+      "tier": "frontier",
+      "endpoint": "https://api.groq.com/openai/v1/chat/completions",
+      "key_env": "GROQ_API_KEY",
+      "model": "openai/gpt-oss-120b",
+      "role": "Free backstop \u2014 GPT-OSS-120B, ultra-fast (covers Gemini 429)",
+      "gated": true,
+      "status": "LIVE"
+    },
+    {
+      "name": "OpenRouter-Coder-480B",
+      "provider": "openai",
+      "tier": "frontier",
+      "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+      "key_env": "OPENROUTER_API_KEY",
+      "model": "qwen/qwen3-coder:free",
+      "role": "Free BUILDER \u2014 Qwen3-Coder-480B, 1M ctx (proposes AND implements)",
+      "gated": true,
+      "status": "LIVE"
+    },
+    {
+      "name": "DeepSeek-V4",
+      "provider": "openai",
+      "tier": "frontier",
+      "endpoint": "https://api.deepseek.com/v1/chat/completions",
+      "key_env": "DEEPSEEK_API_KEY",
+      "model": "deepseek-v4-flash",
+      "role": "Ultra-cheap paid backstop \u2014 $0.14/M in ($0.003/M cached)",
+      "gated": true,
+      "status": "LIVE"
+    }
+  ],
+  "heavyweights_pending_ollama_repair": [
+    "llama3.3:70b",
+    "deepseek-r1:32b",
+    "qwen3-coder:30b",
+    "gemma3:27b",
+    "codestral:22b",
+    "gpt-oss:120b"
+  ],
+  "ollama_health": "DEGRADED \u2014 server 0.31.1 / client 0.30.6 mismatch; many models return 'does not support chat'; repair (restart+re-pull) to unlock heavyweights"
+}
