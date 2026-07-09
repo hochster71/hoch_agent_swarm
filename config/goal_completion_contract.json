@@ -1,6 +1,6 @@
 {
   "goal_id": "HAS-HASF-FULL-BUILDOUT",
-  "north_star": "Complete and monetize Hoch Agent Swarm / HASF with verified autonomous execution, live command center, secure relay, evidence ledger, and operator-trusted automation.",
+  "north_star": "Accelerate time-to-value for all factories by enforcing early demand-validation gates, utilizing local-first LLM compute to minimize operational costs, and deploying reusable monetization/relay templates to scale new product rollouts.",
   "completion_definition": [
     "Local runtime starts reliably",
     "PERT dashboard shows current project truth",
@@ -11,7 +11,9 @@
     "No fake PASS/ONLINE states",
     "All high-risk actions require approval",
     "Metrics show progress to GOAL",
-    "Michael no longer has to manually copy/paste routine commands"
+    "Michael no longer has to manually copy/paste routine commands",
+    "Early demand-validation (G1) completed prior to full feature buildout",
+    "Local-first LLM routing utilized for low-risk tasks to minimize API spend"
   ],
   "automation_policy": {
     "auto_execute_low_risk": true,
