@@ -124,6 +124,10 @@
                             <i data-lucide="git-branch"></i>
                             <span>PERT / Critical Path</span>
                         </button>
+                        <button class="nav-item" id="nav-neuro" data-view="neuro" type="button" style="background: none; border: none; font-family: inherit; font-size: inherit; text-align: left; cursor: pointer; width: 100%; color: var(--text-secondary); font-weight: 500;">
+                            <i data-lucide="activity"></i>
+                            <span>Neuro Command</span>
+                        </button>
                         <button class="nav-item" id="nav-pods" data-view="pods" type="button" style="background: none; border: none; font-family: inherit; font-size: inherit; text-align: left; cursor: pointer; width: 100%; color: var(--text-secondary); font-weight: 500;">
                             <i data-lucide="rocket"></i>
                             <span>PODS Theater</span>
@@ -5143,6 +5147,16 @@
     </div>
   </header>
   <div id="react-pert-root"></div>
+</section>
+
+<section class="view live-view" id="view-neuro" data-view="neuro" hidden>
+  <header class="section-header">
+    <div>
+      <p class="eyebrow">CANONICAL CONTROL PLANE</p>
+      <h2>Neuro Command Center</h2>
+    </div>
+  </header>
+  <div id="react-neuro-root"></div>
 </section>
 
 <section class="view live-view" id="view-pods" data-view="pods" hidden>

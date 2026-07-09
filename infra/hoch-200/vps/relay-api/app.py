@@ -959,6 +959,16 @@ async def serve_space() -> HTMLResponse:
     return HTMLResponse(content="<h1>space.html not deployed</h1>", status_code=404)
 
 
+@app.get("/hoch-neuro-command.html", response_class=HTMLResponse, include_in_schema=False)
+@app.get("/has-live-brain.html", response_class=HTMLResponse, include_in_schema=False)
+async def serve_neuro_command() -> HTMLResponse:
+    for cand in (STATIC_DIR / "hoch-neuro-command.html", Path(__file__).resolve().parent.parent / "dashboard/hoch-neuro-command.html",
+                 STATIC_DIR / "has-live-brain.html", Path(__file__).resolve().parent.parent / "dashboard/has-live-brain.html"):
+        if cand.exists():
+            return HTMLResponse(content=cand.read_text(encoding="utf-8"), status_code=200)
+    return HTMLResponse(content="<h1>neuro-command not deployed</h1>", status_code=404)
+
+
 @app.get("/factoryverse", include_in_schema=False)
 @app.get("/helm-factoryverse", include_in_schema=False)
 async def serve_factoryverse():

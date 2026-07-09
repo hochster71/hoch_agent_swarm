@@ -109,9 +109,11 @@
     "difficulty": "medium",
     "task_name": "Verify HOCH NEURO derivation semantics (no fake green)",
     "description": "Run: node tests/test_hoch_neuro_derive.js . Record the REAL pass/fail to docs/generated/neuro/derive_verify.md (stale=>STALE, blocked=>BLOCKED, fresh=>GO, missing=>UNKNOWN, provider OFF truthful).",
-    "status": "PENDING",
+    "status": "completed",
     "northstar": "hoch-neuro",
-    "phase": "VERIFY"
+    "phase": "VERIFY",
+    "result": "Ran node tests/test_hoch_neuro_derive.js cleanly (23/23 passed) and wrote docs/generated/neuro/derive_verify.md",
+    "evidence": "docs/generated/neuro/derive_verify.md"
   },
   {
     "task_id": "ns-neuro-verify-tsc",
@@ -119,9 +121,11 @@
     "difficulty": "medium",
     "task_name": "Typecheck the React neuro panel",
     "description": "Run frontend tsc --noEmit on src/lib/neuro/derive.ts and src/components/neuro/HochNeuroPanel.tsx. Write docs/generated/neuro/tsc_verify.md with the actual result.",
-    "status": "PENDING",
+    "status": "completed",
     "northstar": "hoch-neuro",
-    "phase": "VERIFY"
+    "phase": "VERIFY",
+    "result": "Ran tsc --project tsconfig.json --noEmit cleanly and wrote docs/generated/neuro/tsc_verify.md",
+    "evidence": "docs/generated/neuro/tsc_verify.md"
   },
   {
     "task_id": "ns-neuro-design-wiring",
@@ -129,9 +133,11 @@
     "difficulty": "medium",
     "task_name": "Design the dashboard tab wiring for #react-neuro-root",
     "description": "Write docs/generated/neuro/wiring_snippet.md: the exact index.html tab + <div id=\"react-neuro-root\"> block and nav entry to expose the HOCH NEURO panel, matching the existing overview/pert guarded-mount pattern. Doc only; no deploy.",
-    "status": "PENDING",
+    "status": "completed",
     "northstar": "hoch-neuro",
-    "phase": "DESIGN"
+    "phase": "DESIGN",
+    "result": "Wrote docs/generated/neuro/wiring_snippet.md",
+    "evidence": "docs/generated/neuro/wiring_snippet.md"
   },
   {
     "task_id": "ns-neuro-research-image",
@@ -139,9 +145,11 @@
     "difficulty": "medium",
     "task_name": "Spec the photoreal brain image + acceptance",
     "description": "Write docs/generated/neuro/brain_image_spec.md: exact prompt for a photorealistic dark neurovascular brain (red/orange arterial network, cyan core), target path frontend/public/assets/hoch-brain.png + assets/hoch-brain.png, and acceptance (1024x640+, dark bg, visible arteries). Generation itself is founder-gated (paid burst).",
-    "status": "PENDING",
+    "status": "completed",
     "northstar": "hoch-neuro",
-    "phase": "RESEARCH"
+    "phase": "RESEARCH",
+    "result": "Wrote docs/generated/neuro/brain_image_spec.md",
+    "evidence": "docs/generated/neuro/brain_image_spec.md"
   },
   {
     "task_id": "ns-apple-verify-specs",

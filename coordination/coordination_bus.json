@@ -1,0 +1,121 @@
+{
+  "artifact": "helm_coordination_bus",
+  "purpose": "Two-lane coordination channel between Cowork/HELM and the AG (Antigravity) IDE. Each side owns its lane, reads the other's, and stages cross-side handoffs. Doctrine: no_fake_green, DOORSTEP gates \u2014 anything that deploys/spends/keys/signs stays a founder gate.",
+  "protocol_version": "1.0",
+  "updated": "2026-07-09T08:39:15Z",
+  "link_status": "ESTABLISHED \u2014 cowork-helm ONLINE (14:10:00Z); ag-ide wake signal posted",
+  "transports": {
+    "local_file": "coordination/coordination_bus.json (this file \u2014 both sides R/W on the Mac)",
+    "relay_heartbeat": "POST https://hoch-relay-001.tail826763.ts.net:3012/api/heartbeat",
+    "shared_state": "artifacts/handoff/CURRENT_STATE.md"
+  },
+  "lanes": {
+    "cowork_helm": {
+      "identity": "Cowork / HELM (Claude, desktop agent)",
+      "status": "ONLINE",
+      "heartbeat": "2026-07-09T08:39:15Z",
+      "current_focus": "Sequential 2-stage gate pipeline dispatched to AG IDE. Gate 1 already cleared.",
+      "completed_this_session": [
+        "GATE 1 CLEARED \u2014 agent_allow_code already true (authorized 2026-07-08T20:57:30Z by Michael Bryan Hoch)",
+        "Factory-Verse LIVE on relay",
+        "helm-3d atrium live",
+        "GAP + PERT analysis (truthful)",
+        "AG IDE: Stripe webhook verified 13/13 + 6/6"
+      ],
+      "doorstep_for_founder": [
+        "GATE 2: Add 5 Stripe env vars in Vercel dashboard \u2014 AG IDE hands you the exact table; you paste them; it detects and advances",
+        "GATE 3: Run deploy command + make one test purchase + drop GATE3_FOUNDER_CONFIRMED.txt \u2014 AG IDE hands you the checklist; pipeline completes"
+      ]
+    },
+    "ag_ide": {
+      "identity": "AG / Antigravity IDE (local, controlled Mac access)",
+      "status": "ONLINE",
+      "heartbeat": "2026-07-09T08:40:00Z",
+      "reach": [
+        "Mac filesystem",
+        "local repo",
+        "tailnet"
+      ],
+      "current_focus": "Pipeline complete. Story Studio is live in production.",
+      "pipeline": {
+        "mode": "sequential_gated",
+        "doctrine": "no_fake_green \u2014 stage truthfully; unknown is unknown; never skip a gate",
+        "current_stage": "COMPLETE",
+        "note": "G1, G2, and G3 are CLEARED.",
+        "stages": [
+          {
+            "id": "G1",
+            "name": "AGENT_ALLOW_CODE flip",
+            "status": "CLEARED",
+            "cleared_at": "2026-07-08T20:57:30Z",
+            "cleared_by": "Michael Bryan Hoch",
+            "note": "agent_allow_code=true already in orchestration_bridge_control.json. Nothing to do."
+          },
+          {
+            "id": "G2",
+            "name": "GATE 2 \u2014 Stripe env vars in Vercel + founder pastes them",
+            "status": "CLEARED",
+            "cleared_at": "2026-07-09T06:49:20Z",
+            "cleared_by": "Michael Hoch",
+            "task_queue_ref": "task-gate2-stripe-env-guide",
+            "ag_ide_work": [
+              "1. Read hsf/deploy/.env \u2014 for each of the 5 required vars (STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, STRIPE_PRICE_ONESTORY, STRIPE_PRICE_CREATORS, BASE_URL) check if the value is still the placeholder (_REPLACE_ME) or a real value",
+              "2. Read hsf/deploy/.env.local if it exists \u2014 same check",
+              "3. Read hsf/deploy/vercel.json \u2014 confirm the env var names used in the config match the .env.example names exactly",
+              "4. Write artifacts/handoff/GATE2_STRIPE_KEYS.md containing EXACTLY:",
+              "   - A 3-column table: Var Name | Status (SET/PLACEHOLDER) | Where to get the real value (Stripe dashboard URL + nav path)",
+              "   - The Vercel dashboard URL for env vars: https://vercel.com/dashboard \u2192 Project \u2192 Settings \u2192 Environment Variables",
+              "   - One-line instruction: 'Add all 5 vars listed above to Vercel dashboard. Do NOT commit to git.'",
+              "5. Post relay heartbeat. Then poll every 30s."
+            ],
+            "founder_gate": {
+              "what_you_do": "Open GATE2_STRIPE_KEYS.md. Go to Vercel dashboard. Paste the 5 env vars. Save.",
+              "clearance_signal": "AG IDE polls hsf/deploy/.env every 30s. When all 5 vars are non-placeholder AND STRIPE_SECRET_KEY starts with sk_test_ or sk_live_, gate clears. OR: drop artifacts/handoff/GATE2_FOUNDER_CONFIRMED.txt to force-clear.",
+              "on_clearance": "Write 'GATE 2 CLEARED' to coordination/pipeline_log.txt. Immediately start G3."
+            }
+          },
+          {
+            "id": "G3",
+            "name": "GATE 3 \u2014 Pre-deploy stage + founder ships",
+            "status": "CLEARED",
+            "cleared_at": "2026-07-09T08:03:30Z",
+            "cleared_by": "Michael Hoch",
+            "task_queue_ref": "task-gate3-deploy-stage",
+            "ag_ide_work": [
+              "1. Confirm test suite still passing \u2014 run: cd hsf/deploy && node test_hsf_webhook.js && node test_hsf_engine.js. Record pass counts. If either fails, STOP and report \u2014 no fake green.",
+              "2. Read hsf/deploy/vercel.json \u2014 confirm: build command, output directory, env var references all correct for production",
+              "3. Confirm BASE_URL in .env reflects the real Vercel deployment domain (not localhost)",
+              "4. Write artifacts/handoff/GATE3_DEPLOY_READY.md containing EXACTLY:",
+              "   - Test results with timestamps (must show real pass counts)",
+              "   - vercel.json production config (copy the relevant block)",
+              "   - Exact deploy command: cd hsf/deploy && vercel --prod",
+              "   - Test purchase checklist: (a) go to the live URL, (b) click buy on $19 story, (c) complete Stripe test checkout, (d) check Stripe dashboard for webhook event, (e) confirm order shows in app",
+              "   - Final step: drop artifacts/handoff/GATE3_FOUNDER_CONFIRMED.txt after purchase succeeds",
+              "5. Post relay heartbeat. Then wait for GATE3_FOUNDER_CONFIRMED.txt."
+            ],
+            "founder_gate": {
+              "what_you_do": "Open GATE3_DEPLOY_READY.md. Run the deploy command. Do the test purchase. Drop GATE3_FOUNDER_CONFIRMED.txt.",
+              "clearance_signal": "AG IDE polls for artifacts/handoff/GATE3_FOUNDER_CONFIRMED.txt every 30s.",
+              "on_clearance": "Write 'GATE 3 CLEARED \u2014 Story Studio live, revenue active' to coordination/pipeline_log.txt. Update pipeline.current_stage = 'COMPLETE'. Post relay heartbeat. Done."
+            }
+          }
+        ]
+      },
+      "notes_to_cowork": [
+        "Stripe webhook verified. Both test_hsf_webhook.js (13/13) and test_hsf_engine.js (6/6) are passing. Output recorded in webhook_test_pass.md. Staged for founder doorstep steps."
+      ],
+      "wake_signal": {
+        "from": "HELM (Cowork)",
+        "ts": "2026-07-09T14:10:00Z",
+        "message": "WAKE. Gate 1 is already cleared \u2014 skip it. Start on G2 now. Read the pipeline above. Work G2: analyze the 5 Stripe env vars, write GATE2_STRIPE_KEYS.md, post heartbeat, poll .env every 30s for founder to paste keys. When gate 2 clears, advance to G3: run tests (must be real pass counts), write GATE3_DEPLOY_READY.md, wait for GATE3_FOUNDER_CONFIRMED.txt. Log each gate cleared to coordination/pipeline_log.txt. no_fake_green."
+      }
+    }
+  },
+  "handoff_rules": [
+    "Claim work by moving an item id into your lane's 'claimed' and setting a heartbeat.",
+    "Never take a DOORSTEP action (deploy/spend/key/sign/move-money) autonomously \u2014 stage it in doorstep_for_founder.",
+    "Truthful state only (no_fake_green). Unknown = unknown.",
+    "Post a relay heartbeat when you start/finish a work block so presence shows in /api/registry.",
+    "Pipeline rule: complete current stage fully before advancing. Never skip a gate. Poll for clearance; do not assume it."
+  ]
+}

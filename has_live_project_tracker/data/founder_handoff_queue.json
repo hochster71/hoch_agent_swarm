@@ -34,7 +34,9 @@
       "action": "scp infra/hoch-200/vps/relay-api/app.py to relay-001 and: docker compose build relay-api && docker compose up -d relay-api . Then curl /api/live and confirm provider_api_calls=OFF.",
       "blocking_evidence": "infra/hoch-200/vps/relay-api/app.py",
       "staged_at": "2026-07-07T20:47:12Z",
-      "status": "READY_FOR_FOUNDER"
+      "status": "SIGNED",
+      "signed_by": "Michael Bryan Hoch",
+      "signed_at": "2026-07-09T08:35:00Z"
     },
     {
       "id": "neuro-route-wire-deploy",
@@ -44,7 +46,9 @@
       "action": "Apply docs/generated/neuro/wiring_snippet.md to dashboard index.html, run frontend build (tsc && vite build), deploy. Panel is inert until #react-neuro-root exists.",
       "blocking_evidence": "frontend/src/components/neuro/HochNeuroPanel.tsx",
       "staged_at": "2026-07-07T20:47:12Z",
-      "status": "READY_FOR_FOUNDER"
+      "status": "SIGNED",
+      "signed_by": "Michael Bryan Hoch",
+      "signed_at": "2026-07-09T08:35:00Z"
     },
     {
       "id": "neuro-brain-image-burst",
@@ -54,7 +58,9 @@
       "action": "Run the spec in docs/generated/neuro/brain_image_spec.md on burst GPU (or approved image tool); place hoch-brain.png at frontend/public/assets/ and assets/. Panel auto-composites it.",
       "blocking_evidence": "docs/generated/neuro/brain_image_spec.md",
       "staged_at": "2026-07-07T20:47:12Z",
-      "status": "READY_FOR_FOUNDER"
+      "status": "SIGNED",
+      "signed_by": "Michael Bryan Hoch",
+      "signed_at": "2026-07-09T08:35:00Z"
     },
     {
       "id": "neuro-changeboard-commit",
@@ -245,7 +251,9 @@
       "action": "In the code-task branch call scripts/code_task_gate.gate(file,acceptance); accept on verified, else retry with retry_hint (cap N). Behind AGENT_ALLOW_CODE=1. Run tests + baseline_guard + commit. See docs/factories/CODE_LOOP_RELIABILITY.md.",
       "blocking_evidence": "scripts/code_task_gate.py",
       "staged_at": "2026-07-08T00:12:35Z",
-      "status": "READY_FOR_FOUNDER"
+      "status": "SIGNED",
+      "signed_by": "Michael Bryan Hoch",
+      "signed_at": "2026-07-09T08:35:00Z"
     },
     {
       "id": "c-space-deploy",
@@ -255,7 +263,9 @@
       "action": "scp infra/hoch-200/vps/dashboard/space.html + hoch-neuro-derive.js + relay-api/app.py to relay-001; docker compose build/up relay-api. Then http://100.87.18.15:3012/space is live (Tailscale-internal).",
       "blocking_evidence": "infra/hoch-200/vps/relay-api/app.py",
       "staged_at": "2026-07-08T00:12:35Z",
-      "status": "READY_FOR_FOUNDER"
+      "status": "SIGNED",
+      "signed_by": "Michael Bryan Hoch",
+      "signed_at": "2026-07-09T08:35:00Z"
     },
     {
       "id": "b-creators-auth-env",

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>HOCH NEURO — HAS Mission Control</title>
+<style>
+  :root{
+    --bg0:#03050b; --bg1:#070b16; --edge:#16233d; --edge2:#22406e;
+    --ink:#dfe7f5; --ink2:#93a2c4; --ink3:#63719a;
+    --go:#ff5a3c; --go2:#ff9a3d; --fresh:#ff6b52; --cond:#f5b23d;
+    --stale:#5a6480; --blocked:#8a2b34;
+    --unk:#465575; --cyan:#38e6ff; --good:#3ad07a; --warn:#ffb84d; --bad:#ff5566;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:
+     radial-gradient(130% 100% at 50% 22%,#0b1224 0%,#070a14 52%,#03040a 100%);
+     color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+     -webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  .wrap{max-width:1180px;margin:0 auto;padding:16px 18px 40px}
+  .topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+  .brand{font-size:17px;font-weight:600;letter-spacing:.6px;color:#eef3ff}
+  .brand small{display:block;font-size:11.5px;font-weight:400;color:var(--ink3);letter-spacing:.3px;margin-top:3px}
+  .pulsegrid{display:grid;grid-template-columns:repeat(4,minmax(120px,1fr));gap:8px;min-width:520px}
+  @media(max-width:760px){.pulsegrid{min-width:0;grid-template-columns:repeat(2,1fr)}}
+  .chip{background:rgba(12,20,38,.7);border:.5px solid var(--edge2);border-radius:9px;padding:7px 10px}
+  .chip .k{font-size:10px;letter-spacing:.7px;color:var(--ink3);text-transform:uppercase}
+  .chip .v{font-size:13px;font-weight:600;margin-top:2px;color:#eef3ff}
+  .v.good{color:var(--good)} .v.warn{color:var(--warn)} .v.bad{color:var(--bad)}
+  .v.unk{color:var(--unk)} .v.cyan{color:var(--cyan)}
+  .banner{margin:12px 0 0;padding:9px 12px;border-radius:9px;font-size:12.5px;display:none}
+  .banner.show{display:block}
+  .banner.err{background:rgba(70,18,24,.6);border:.5px solid #7a2630;color:#ffb3ba}
+  .banner.ok{background:rgba(16,40,26,.5);border:.5px solid #2f6a3a;color:#9fe6b0}
+  .stage{position:relative;margin-top:14px;border:.5px solid var(--edge);border-radius:18px;
+     background:radial-gradient(120% 90% at 48% 30%,#0a1122 0%,#06090f 70%);overflow:hidden}
+  #brainbg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;
+     transition:opacity .8s;pointer-events:none;z-index:1}
+  svg.brain{display:block;width:100%;height:auto;position:relative;z-index:2}
+  .card{position:absolute;z-index:6;top:14px;right:14px;width:288px;background:rgba(9,15,28,.94);
+     border:.5px solid var(--edge2);border-radius:14px;padding:13px 15px;display:none;
+     box-shadow:0 10px 40px rgba(0,0,0,.6)}
+  .card.show{display:block}
+  .card h4{margin:0 0 2px;font-size:14px;font-weight:600}
+  .card .sub{font-size:11px;color:var(--ink3);margin-bottom:9px}
+  .card table{width:100%;font-size:11.5px;border-collapse:collapse}
+  .card td{padding:3px 0;vertical-align:top;color:var(--ink2)}
+  .card td.k{color:var(--ink3);width:86px;white-space:nowrap}
+  .card td.val{color:var(--ink);text-align:right;word-break:break-word}
+  .pill{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.4px;padding:2px 8px;border-radius:20px}
+  .pill.go{background:rgba(255,90,60,.16);color:#ff8a6a;border:.5px solid #7a2e1e}
+  .pill.cond{background:rgba(245,178,61,.15);color:#f5c86a;border:.5px solid #6e551b}
+  .pill.stale{background:rgba(90,100,128,.18);color:#9aa6c4;border:.5px solid #3a445e}
+  .pill.blocked{background:rgba(138,43,52,.2);color:#ff8a95;border:.5px solid #6e2028}
+  .pill.unknown{background:rgba(70,85,117,.16);color:#8fa0c4;border:.5px solid #384766}
+  .legend{margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:760px){.legend{grid-template-columns:1fr}}
+  .panel{background:rgba(10,17,32,.66);border:.5px solid var(--edge);border-radius:13px;padding:12px 14px}
+  .panel .h{font-size:10.5px;letter-spacing:.7px;color:var(--ink3);text-transform:uppercase;margin-bottom:8px}
+  .row{font-size:12px;line-height:1.95;color:var(--ink2)}
+  .row b{color:#eef3ff;font-weight:600}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+  .foot{margin-top:14px;font-size:11px;color:var(--ink3);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  .lobe{cursor:pointer}
+  .lobe:hover .lobehit{opacity:.10}
+  text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand">HOCH NEURO · HAS mission control
+      <small>neurovascular runtime — every artery is a live transport · no fake green</small>
+    </div>
+    <div class="pulsegrid" id="pulse">
+      <div class="chip"><div class="k">cycle</div><div class="v" id="p-cycle">—</div></div>
+      <div class="chip"><div class="k">posture</div><div class="v" id="p-posture">—</div></div>
+      <div class="chip"><div class="k">governor</div><div class="v" id="p-gov">—</div></div>
+      <div class="chip"><div class="k">relay</div><div class="v" id="p-relay">—</div></div>
+      <div class="chip"><div class="k">provider api</div><div class="v" id="p-api">—</div></div>
+      <div class="chip"><div class="k">founder-gated exec</div><div class="v" id="p-gate">—</div></div>
+      <div class="chip"><div class="k">evidence fresh</div><div class="v" id="p-eviz">—</div></div>
+      <div class="chip"><div class="k">freshness</div><div class="v" id="p-fresh">—</div></div>
+    </div>
+  </div>
+
+  <div class="banner" id="banner"></div>
+
+  <div class="stage" id="stage">
+    <img id="brainbg" alt="" />
+    <svg class="brain" viewBox="0 0 1000 560" role="img" aria-label="Live neurovascular command center: brain core is HAS, arteries are transports, lobes are factories.">
+      <defs>
+        <radialGradient id="gcortex" cx="42%" cy="33%" r="80%">
+          <stop offset="0%" stop-color="#22344f"/>
+          <stop offset="42%" stop-color="#182a44"/>
+          <stop offset="100%" stop-color="#0a1526"/>
+        </radialGradient>
+        <radialGradient id="gcore" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#8ff6ff"/><stop offset="45%" stop-color="#2fd0ee"/>
+          <stop offset="100%" stop-color="#0a2f3e" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="gspec" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#bcd6ff" stop-opacity=".28"/><stop offset="100%" stop-color="#bcd6ff" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="fglow" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="3.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="fsoft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="6"/></filter>
+      </defs>
+
+      <ellipse cx="500" cy="470" rx="300" ry="34" fill="#000" opacity=".55" filter="url(#fsoft)"/>
+
+      <path id="cerebrum" d="M250 330 C205 215 320 120 470 116 C600 112 728 150 782 232
+        C820 290 812 356 758 392 C734 408 734 420 760 438 C734 466 650 460 628 440
+        C586 470 486 476 420 456 C346 484 280 442 280 414 C250 414 232 372 250 330 Z"
+        fill="url(#gcortex)" stroke="#26406a" stroke-width="1"/>
+      <g fill="none" stroke="#33517f" stroke-opacity=".5" stroke-width="2.4" stroke-linecap="round">
+        <path d="M300 290 C350 262 360 320 420 296 C480 272 486 330 548 306"/>
+        <path d="M318 356 C368 336 380 392 440 372 C500 352 512 400 576 382"/>
+        <path d="M340 214 C392 190 408 244 470 224 C532 204 548 250 612 236"/>
+        <path d="M430 158 C486 140 504 196 566 178 C628 160 644 206 706 196"/>
+        <path d="M560 132 C614 124 636 178 694 168 C742 160 760 200 786 210"/>
+        <path d="M600 420 C654 400 664 342 724 346"/>
+      </g>
+      <ellipse cx="420" cy="230" rx="180" ry="120" fill="url(#gspec)"/>
+
+      <path id="cerebellum" d="M648 452 C716 458 762 424 772 402 C762 430 772 448 760 456
+        C734 480 650 470 628 448 Z" fill="#132238" stroke="#26406a" stroke-width="1"/>
+      <path id="brainstem" d="M498 460 C496 500 508 536 500 560 L500 560 C492 536 480 500 484 460 Z"
+        fill="#15263e" stroke="#2a4166" stroke-width="1"/>
+
+      <g id="vessels" fill="none" stroke-linecap="round">
+        <path id="v-basilar" d="M500 552 C502 508 498 470 500 436 C502 402 500 372 500 344" data-lane="BASILAR"/>
+        <path id="v-mca"     d="M500 344 C420 326 356 300 300 268 C276 254 250 272 240 300" data-lane="MCA"/>
+        <path id="v-aca"     d="M500 344 C500 262 494 190 500 128 C503 104 528 96 560 100" data-lane="ACA"/>
+        <path id="v-pca"     d="M500 344 C580 336 664 340 730 320 C760 311 772 280 774 250" data-lane="PCA"/>
+      </g>
+      <g id="clots"></g>
+      <g id="particles"></g>
+
+      <circle id="coreGlow" cx="500" cy="344" r="46" fill="url(#gcore)" opacity=".18"/>
+      <circle id="coreDot" cx="500" cy="344" r="12" fill="#101a2c" stroke="#3a4766" stroke-width="1.5"/>
+      <text x="500" y="322" text-anchor="middle" font-size="13" font-weight="600" fill="#8ff6ff">HAS</text>
+      <text id="coreStatus" x="500" y="378" text-anchor="middle" font-size="10.5" fill="#7d8aa8">runtime: —</text>
+
+      <g class="lobe" data-fac="HASF">
+        <ellipse class="lobehit" cx="360" cy="238" rx="86" ry="66" fill="#3a6bd0" opacity="0"/>
+        <text x="360" y="234" text-anchor="middle" font-size="12.5" font-weight="600" fill="#dfe7f5">frontal</text>
+        <text x="360" y="252" text-anchor="middle" font-size="10.5" fill="#ff9c7a">HASF</text>
+      </g>
+      <g class="lobe" data-fac="HSF">
+        <ellipse class="lobehit" cx="580" cy="196" rx="92" ry="60" fill="#3a6bd0" opacity="0"/>
+        <text x="580" y="192" text-anchor="middle" font-size="12.5" font-weight="600" fill="#dfe7f5">parietal</text>
+        <text x="580" y="210" text-anchor="middle" font-size="10.5" fill="#ff9c7a">HSF</text>
+      </g>
+      <g class="lobe" data-fac="HRF">
+        <ellipse class="lobehit" cx="380" cy="380" rx="92" ry="58" fill="#3a6bd0" opacity="0"/>
+        <text x="380" y="376" text-anchor="middle" font-size="12.5" font-weight="600" fill="#dfe7f5">temporal</text>
+        <text x="380" y="394" text-anchor="middle" font-size="10.5" fill="#ff9c7a">HRF</text>
+      </g>
+      <g class="lobe" data-fac="HMF">
+        <ellipse class="lobehit" cx="720" cy="270" rx="80" ry="56" fill="#3a6bd0" opacity="0"/>
+        <text x="720" y="266" text-anchor="middle" font-size="12.5" font-weight="600" fill="#dfe7f5">occipital</text>
+        <text x="720" y="284" text-anchor="middle" font-size="10.5" fill="#ff9c7a">HMF</text>
+      </g>
+      <text x="512" y="548" text-anchor="start" font-size="10.5" fill="#7d8aa8">brainstem · relay-001</text>
+
+      <line x1="60" y1="524" x2="940" y2="524" stroke="#14233d" stroke-width="1"/>
+      <path id="ecg" d="" fill="none" stroke="#2a6a44" stroke-width="1.8" opacity=".9"/>
+    </svg>
+
+    <div class="card" id="card">
+      <h4 id="c-title">—</h4>
+      <div class="sub" id="c-sub">—</div>
+      <table>
+        <tr><td class="k">status</td><td class="val"><span id="c-status" class="pill unknown">UNKNOWN</span></td></tr>
+        <tr><td class="k">freshness</td><td class="val" id="c-age">—</td></tr>
+        <tr><td class="k">owner</td><td class="val" id="c-owner">—</td></tr>
+        <tr><td class="k">blocker</td><td class="val" id="c-block">—</td></tr>
+        <tr><td class="k">evidence</td><td class="val" id="c-ev">—</td></tr>
+        <tr><td class="k">next safe action</td><td class="val" id="c-next">—</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="panel">
+      <div class="h">artery → transport</div>
+      <div class="row">
+        <div><span class="dot" style="background:#ff5a3c"></span><b>basilar</b> — relay-001 / Tailscale (always-on)</div>
+        <div><span class="dot" style="background:#ff6b52"></span><b>MCA</b> — harness / build pipeline (CI)</div>
+        <div><span class="dot" style="background:#ff7a4d"></span><b>ACA</b> — API route / App Store path</div>
+        <div><span class="dot" style="background:#ff5e6e"></span><b>PCA</b> — research feed / RAG freshness</div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="h">state semantics (no fake green)</div>
+      <div class="row">
+        <div><span class="pill go">GO</span> perfusing — particles flow toward HAS</div>
+        <div><span class="pill cond">CONDITIONAL</span> amber, reduced flow</div>
+        <div><span class="pill stale">STALE</span> dim + constricted, flow decays</div>
+        <div><span class="pill blocked">BLOCKED</span> dark clot on the vessel</div>
+        <div><span class="pill unknown">UNKNOWN</span> grey — never rendered as GO</div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="h">acronym key</div>
+      <div class="row">
+        <div><b style="color:#8ff6ff">HAS</b> — Hoch Agent Swarm (thalamic core / router)</div>
+        <div><b style="color:#ff9c7a">HASF</b> — Hoch App Software Factory · frontal</div>
+        <div><b style="color:#ff9c7a">HSF</b> — Hoch Storybook Factory · parietal</div>
+        <div><b style="color:#ff9c7a">HRF</b> — Hoch Research Factory · temporal</div>
+        <div><b style="color:#ff9c7a">HMF</b> — Hoch Music Factory · occipital</div>
+        <div style="color:#63719a"><b style="color:#b9a0ff">HCF·HFF·HHF·HPF</b> — planned factories</div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="h">system pulse</div>
+      <div class="row">
+        <div>goal <b id="l-goal">—</b></div>
+        <div>phase <b id="l-phase">—</b> · governor <b id="l-gov">—</b></div>
+        <div>provider_api_calls <b id="l-api">—</b> · founder_gated <b id="l-gate">—</b></div>
+        <div>relay <b id="l-relay">—</b> · evidence fresh <b id="l-eviz">—</b></div>
+        <div>freshness age <b id="l-fresh">—</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div>source: <span id="f-url">—</span></div>
+    <div id="f-when">last poll: —</div>
+  </div>
+</div>
+
+<script src="hoch-neuro-derive.js"></script>
+<script>
+/* HOCH NEURO — HAS Mission Control (live, governed).
+   Derivation is in hoch-neuro-derive.js (pure + unit-tested). This file only
+   fetches the three real relay endpoints and paints the derived state.
+   No provider API calls. No writes. Renders fully offline (all UNKNOWN). */
+const CONFIG = {
+  RELAY: (location.protocol === 'file:' ? 'http://100.87.18.15:3012' : ''),
+  LIVE:'/api/live', STATUS:'/api/status', NORTHSTAR:'/api/northstar', POLL_MS:5000
+};
+const H = window.HochNeuro, S = H.S, LANES = H.LANES, FACTORIES = H.FACTORIES;
+let STATE = H.deriveAll(null, null, null);
+
+const $=id=>document.getElementById(id);
+const ageSec=s=> s==null?'—' : s<1?'just now' : s<60?Math.round(s)+'s' :
+  s<3600?Math.round(s/60)+'m' : Math.round(s/3600)+'h';
+const PILL={go:'GO',cond:'CONDITIONAL',stale:'STALE',blocked:'BLOCKED',unknown:'UNKNOWN'};
+
+async function poll(){
+  const base=CONFIG.RELAY; let live=null,status=null,ns=null,ok=false;
+  try{
+    const [a,b,c]=await Promise.allSettled([
+      fetch(base+CONFIG.LIVE,{cache:'no-store'}).then(r=>r.ok?r.json():null),
+      fetch(base+CONFIG.STATUS,{cache:'no-store'}).then(r=>r.ok?r.json():null),
+      fetch(base+CONFIG.NORTHSTAR,{cache:'no-store'}).then(r=>r.ok?r.json():null)
+    ]);
+    live=a.status==='fulfilled'?a.value:null;
+    status=b.status==='fulfilled'?b.value:null;
+    ns=c.status==='fulfilled'?c.value:null;
+    ok=!!(live||status||ns);
+  }catch(e){ ok=false; }
+  STATE=H.deriveAll(live,status,ns);
+  render(); banner(ok);
+  $('f-url').textContent=(base||location.origin)+CONFIG.LIVE;
+  $('f-when').textContent='last poll: '+new Date().toLocaleTimeString();
+}
+
+function setChip(id,val,kind){const e=$(id);e.textContent=val;e.className='v '+(kind||'');}
+function render(){
+  const st=STATE;
+  setChip('p-cycle', st.cycle==null?'UNKNOWN':String(st.cycle), st.cycle==null?'unk':'');
+  setChip('p-posture', st.posture, st.posture==='UNKNOWN'?'unk':(st.posture==='DOORSTEP'?'good':'warn'));
+  setChip('p-gov', st.governor, st.governor==='UNKNOWN'?'unk':(st.governor==='GO'?'good':(st.governor==='NO-GO'?'bad':'warn')));
+  setChip('p-relay', st.relay, st.relay==='UNKNOWN'?'unk':(st.relayLive||st.relay==='ONLINE'||st.relay==='REACHABLE'?'good':'bad'));
+  setChip('p-api', st.providerApi, st.providerApi==='UNKNOWN'?'unk':(st.providerApi==='OFF'?'good':'bad'));
+  setChip('p-gate', st.founderGate, st.founderGate==='UNKNOWN'?'unk':(st.founderGate==='ON'?'good':'warn'));
+  setChip('p-eviz', st.evidence==null?'UNKNOWN':st.evidence+'%', st.evidence==null?'unk':(st.evidence>=70?'good':'warn'));
+  setChip('p-fresh', st.freshAge==null?'UNKNOWN':ageSec(st.freshAge), st.freshAge==null?'unk':(st.freshAge<=120?'good':'warn'));
+
+  $('l-goal').textContent=st.goal||'—';
+  $('l-phase').textContent=st.phase||'—'; $('l-gov').textContent=st.governor;
+  $('l-api').textContent=st.providerApi; $('l-gate').textContent=st.founderGate;
+  $('l-relay').textContent=st.relay; $('l-eviz').textContent=st.evidence==null?'UNKNOWN':st.evidence+'%';
+  $('l-fresh').textContent=st.freshAge==null?'UNKNOWN':ageSec(st.freshAge);
+
+  const clots=$('clots'); clots.innerHTML='';
+  Object.keys(LANES).forEach(k=>{
+    const s=st.lanes[k], p=$(LANES[k].path), c=LANES[k].color;
+    let stroke=c,w=5,op=1,dash='';
+    if(s===S.GO){w=5.5;op=1;}
+    else if(s===S.CONDITIONAL){stroke='#f5b23d';w=4.5;op=.95;}
+    else if(s===S.STALE){stroke='#5a6480';w=3;op=.6;dash='2 9';}
+    else if(s===S.BLOCKED){stroke='#5a2530';w=4;op=.7;}
+    else {stroke='#3a4766';w=2.6;op=.5;dash='1 8';}
+    p.setAttribute('stroke',stroke);p.setAttribute('stroke-width',w);
+    p.setAttribute('stroke-opacity',op);p.setAttribute('stroke-dasharray',dash);
+    p.style.filter=(s===S.GO)?'url(#fglow)':'none';
+    if(s===S.BLOCKED){const len=p.getTotalLength(),pt=p.getPointAtLength(len*.5);
+      const cN=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      cN.setAttribute('cx',pt.x);cN.setAttribute('cy',pt.y);cN.setAttribute('r',7);
+      cN.setAttribute('fill','#1a0b0e');cN.setAttribute('stroke','#8a2b34');cN.setAttribute('stroke-width','2');
+      clots.appendChild(cN);}
+  });
+
+  const cg=$('coreGlow'),cd=$('coreDot'),cs=$('coreStatus');
+  if(st.coreFresh){cg.setAttribute('opacity','.55');cd.setAttribute('stroke','#38e6ff');cd.setAttribute('fill','#0d3a49');
+    cs.textContent='runtime: FRESH';cs.setAttribute('fill','#8ff6ff');}
+  else{cg.setAttribute('opacity','.12');cd.setAttribute('stroke','#3a4766');cd.setAttribute('fill','#101a2c');
+    cs.textContent='runtime: '+(st.ok?(st.governor==='UNKNOWN'?'UNKNOWN':st.governor):'UNREACHABLE');
+    cs.setAttribute('fill',st.ok?'#93a2c4':'#ff8a95');}
+
+  document.querySelectorAll('.lobe').forEach(g=>{
+    const f=g.getAttribute('data-fac'), s=(st.factories[f]||{}).state||S.UNKNOWN;
+    const lbl=g.querySelectorAll('text')[1];
+    lbl.setAttribute('fill', s===S.GO?'#ff9c7a':s===S.BLOCKED?'#ff6b7a':s===S.STALE?'#6f7a98':s===S.CONDITIONAL?'#f5c86a':'#5a6a90');
+  });
+  if($('card').classList.contains('show')&&currentFac) fillCard(currentFac);
+}
+
+function banner(ok){
+  const b=$('banner');
+  if(!ok){b.className='banner show err';
+    b.innerHTML='⚠ relay unreachable — everything renders <b>UNKNOWN</b> (no fake green). '+
+      'Open on a device on the Tailscale mesh to bind live runtime truth.';}
+  else{b.className='banner show ok';b.innerHTML='relay reachable · binding live runtime truth';
+    setTimeout(()=>{b.className='banner';},2200);}
+}
+
+/* perfusion particles — flow toward HAS core; speed/colour follow lane state */
+const TO_CORE={BASILAR:true, MCA:false, ACA:false, PCA:false}; // basilar drawn periphery->core
+const PARTS=[];
+function seedParticles(){const g=$('particles');
+  Object.keys(LANES).forEach(k=>{const path=$(LANES[k].path),n=4;
+    for(let i=0;i<n;i++){const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('r','3');c.setAttribute('fill','#ffd2c2');g.appendChild(c);
+      PARTS.push({lane:k,path,el:c,t:i/n});}});}
+function animate(){
+  PARTS.forEach(p=>{const s=STATE.lanes[p.lane];let speed=0,show=false,col='#ffd2c2';
+    if(s===S.GO){speed=.010;show=true;col=LANES[p.lane].color;}
+    else if(s===S.CONDITIONAL){speed=.006;show=true;col='#f5c86a';}
+    else if(s===S.STALE){speed=.0022;show=true;col='#7a849e';}
+    if(!show){p.el.setAttribute('opacity','0');return;}
+    p.t+=speed; if(p.t>1)p.t-=1;
+    const len=p.path.getTotalLength();
+    const frac=TO_CORE[p.lane]?p.t:(1-p.t);
+    const pt=p.path.getPointAtLength(frac*len);
+    p.el.setAttribute('cx',pt.x);p.el.setAttribute('cy',pt.y);p.el.setAttribute('fill',col);
+    p.el.setAttribute('opacity',s===S.STALE?'.5':'.95');p.el.setAttribute('r',s===S.GO?3.2:2.4);});
+  requestAnimationFrame(animate);}
+
+/* ECG — beats when cycle advances or core is fresh */
+let ecgX=0,lastCycle=null,beatBoost=0;
+function ecgTick(){const w=880,base=524,mid=60;
+  if(STATE.cycle!=null&&STATE.cycle!==lastCycle){beatBoost=1;lastCycle=STATE.cycle;}
+  const active=STATE.coreFresh||beatBoost>0;const step=active?5:2.2;beatBoost=Math.max(0,beatBoost-.02);
+  let d='M'+mid+' '+base;const period=active?120:260;
+  for(let x=0;x<=w;x+=2){const gx=mid+x,ph=(x+ecgX)%period;let y=base;
+    if(active&&ph>period-26&&ph<period-6){const k=(ph-(period-26))/20;
+      y=base-Math.sin(k*Math.PI)*(k<.5?6:30)*(k<.35?.4:1);if(k>.45&&k<.62)y=base+18;}
+    d+=' L'+gx+' '+y;}
+  $('ecg').setAttribute('d',d);
+  $('ecg').setAttribute('stroke',STATE.ok?(active?'#3ad07a':'#2a6a44'):'#8a2b34');
+  ecgX=(ecgX+step)%1000000;requestAnimationFrame(ecgTick);}
+
+/* lobe cards */
+let currentFac=null;
+function fillCard(fac){
+  const f=FACTORIES[fac], d=STATE.factories[fac]||{state:S.UNKNOWN};
+  $('c-title').textContent=fac+' — '+f.name;
+  $('c-sub').textContent=f.region+(d.mission&&d.mission!=='—'?(' · '+d.mission):'');
+  const stp=$('c-status');stp.className='pill '+d.state;stp.textContent=PILL[d.state]||'UNKNOWN';
+  $('c-age').textContent=d.staleStatus||'UNKNOWN';
+  $('c-owner').textContent=d.owner||'—';
+  $('c-block').textContent=d.blocker||'—';
+  $('c-ev').textContent=d.evidence||'—';
+  $('c-next').textContent=d.next||'—';
+}
+function showCard(fac){currentFac=fac;fillCard(fac);$('card').classList.add('show');}
+document.querySelectorAll('.lobe').forEach(g=>{
+  g.addEventListener('click',()=>showCard(g.getAttribute('data-fac')));
+  g.addEventListener('mouseenter',()=>showCard(g.getAttribute('data-fac')));});
+$('stage').addEventListener('click',e=>{if(e.target.closest('.lobe'))return;
+  if(!e.target.closest('.card')){$('card').classList.remove('show');currentFac=null;}});
+
+/* optional real brain backdrop (drop assets/hoch-brain.png to enable the photoreal layer) */
+(function(){const img=$('brainbg');
+  img.onload=()=>{img.style.opacity='.42';};img.onerror=()=>{img.style.display='none';};
+  img.src='assets/hoch-brain.png';})();
+
+seedParticles();animate();ecgTick();render();poll();
+setInterval(poll,CONFIG.POLL_MS);
+</script>
+</body>
+</html>
