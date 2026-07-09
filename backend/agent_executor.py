@@ -599,8 +599,37 @@ def execute_task(task: dict) -> dict:
         res = _run_attempt(task, tier, system, prior_fail)
         total_cost += res["cost"]
         all_models += res["models_used"]
-        accepted, accept_report = _check_acceptance(task, res["artifacts"], res["summary"]) \
-            if res["finished"] else (False, ["attempt did not finish (no finish action)"])
+        # Wire code_task_gate for code tasks in code mode
+        if ALLOW_CODE and tclass == "code":
+            try:
+                from scripts.code_task_gate import gate as code_gate
+                spec = task.get("acceptance") or {}
+                files_to_check = spec.get("compiles", [])
+                if not files_to_check and res.get("artifacts"):
+                    files_to_check = [res["artifacts"][0]]
+                
+                if not files_to_check:
+                    accepted = False
+                    accept_report = ["no artifact produced for code task"]
+                else:
+                    accepted = True
+                    accept_report = []
+                    for fpath in files_to_check:
+                        gate_res = code_gate(fpath, {"tests": spec.get("pytest")}, cwd=str(ROOT))
+                        if not gate_res.get("verified"):
+                            accepted = False
+                            hint = gate_res.get("retry_hint", "verification failed")
+                            accept_report.append(f"gate check failed for {fpath}: {hint}")
+                        else:
+                            accept_report.append(f"gate check passed for {fpath}")
+            except Exception as e:
+                # fallback on execution failure to regular check
+                accepted, accept_report = _check_acceptance(task, res["artifacts"], res["summary"]) \
+                    if res["finished"] else (False, [f"attempt did not finish (no finish action)"])
+                accept_report.append(f"code gate error: {e}")
+        else:
+            accepted, accept_report = _check_acceptance(task, res["artifacts"], res["summary"]) \
+                if res["finished"] else (False, ["attempt did not finish (no finish action)"])
         attempts.append({
             "attempt": attempt_i, "tier": _TIER_NAME[tier], "finished": res["finished"],
             "accepted": accepted, "acceptance_report": accept_report,
