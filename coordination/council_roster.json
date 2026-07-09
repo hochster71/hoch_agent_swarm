@@ -32,16 +32,6 @@
       "gated": true
     },
     {
-      "name": "Gemini (Google)",
-      "provider": "google",
-      "tier": "frontier",
-      "endpoint": "https://generativelanguage.googleapis.com/v1beta/models",
-      "key_env": "GOOGLE_API_KEY",
-      "model": "gemini-2.0-flash",
-      "role": "Frontier \u2014 long-context + grounding",
-      "gated": true
-    },
-    {
       "name": "Local Rep (Ollama)",
       "provider": "ollama",
       "tier": "local",
@@ -129,28 +119,6 @@
       "key_env": "GROQ_API_KEY",
       "model": "openai/gpt-oss-120b",
       "role": "Free backstop \u2014 GPT-OSS-120B, ultra-fast (covers Gemini 429)",
-      "gated": true,
-      "status": "LIVE"
-    },
-    {
-      "name": "OpenRouter-Coder-480B",
-      "provider": "openai",
-      "tier": "frontier",
-      "endpoint": "https://openrouter.ai/api/v1/chat/completions",
-      "key_env": "OPENROUTER_API_KEY",
-      "model": "qwen/qwen3-coder:free",
-      "role": "Free BUILDER \u2014 Qwen3-Coder-480B, 1M ctx (proposes AND implements)",
-      "gated": true,
-      "status": "LIVE"
-    },
-    {
-      "name": "DeepSeek-V4",
-      "provider": "openai",
-      "tier": "frontier",
-      "endpoint": "https://api.deepseek.com/v1/chat/completions",
-      "key_env": "DEEPSEEK_API_KEY",
-      "model": "deepseek-v4-flash",
-      "role": "Ultra-cheap paid backstop \u2014 $0.14/M in ($0.003/M cached)",
       "gated": true,
       "status": "LIVE"
     }

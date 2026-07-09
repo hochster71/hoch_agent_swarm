@@ -2,7 +2,7 @@
   "artifact": "helm_coordination_bus",
   "purpose": "Two-lane coordination channel between Cowork/HELM and the AG (Antigravity) IDE. Each side owns its lane, reads the other's, and stages cross-side handoffs. Doctrine: no_fake_green, DOORSTEP gates \u2014 anything that deploys/spends/keys/signs stays a founder gate.",
   "protocol_version": "1.0",
-  "updated": "2026-07-09T13:33:29Z",
+  "updated": "2026-07-09T13:38:46Z",
   "link_status": "ESTABLISHED \u2014 cowork-helm ONLINE (14:10:00Z); ag-ide wake signal posted",
   "transports": {
     "local_file": "coordination/coordination_bus.json (this file \u2014 both sides R/W on the Mac)",
@@ -13,7 +13,7 @@
     "cowork_helm": {
       "identity": "Cowork / HELM (Claude, desktop agent)",
       "status": "ONLINE",
-      "heartbeat": "2026-07-09T13:33:29Z",
+      "heartbeat": "2026-07-09T13:38:46Z",
       "current_focus": "Sequential 2-stage gate pipeline dispatched to AG IDE. Gate 1 already cleared.",
       "completed_this_session": [
         "GATE 1 CLEARED \u2014 agent_allow_code already true (authorized 2026-07-08T20:57:30Z by Michael Bryan Hoch)",
