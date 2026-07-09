@@ -1,0 +1,1474 @@
+{
+  "mission_name": "HELM · Hoch Ecosystem Logic Matrix · Live Command",
+  "north_star_goal": "Use HELM as the live orchestration, routing, verification, and command layer for HAS and all Hoch factories.",
+  "primary_system": "HAS · Hoch Agent Swarm",
+  "factories": [
+    "HASF · Hoch Application Software Factory",
+    "HCF · Hoch Cybersecurity Factory",
+    "HRF · Hoch Research Factory",
+    "HMF · Hoch Music Factory",
+    "HSF · Hoch Storybook Factory",
+    "HPF · Hoch Personal Finance Factory",
+    "HFF · Hoch Family/Home Factory",
+    "CORE · Runtime, relay, orchestration, evidence, telemetry"
+  ],
+  "current_objective": "Align council orchestration, runtime architecture, cybersecurity Jira backlog, PERT planning, and execution daemons into one governed HELM command system.",
+  "non_negotiable_doctrine": [
+    "No fake green",
+    "Missing evidence is UNKNOWN",
+    "Failed validation is BLOCKED",
+    "Founder-only approvals are FOUNDER_GATE",
+    "Stale data is STALE",
+    "Runtime truth beats verbal claims",
+    "Council may advise, but evidence promotes"
+  ],
+  "required_outputs": [
+    "Factory alignment matrix",
+    "Runtime architecture alignment",
+    "Cybersecurity Jira ticket set",
+    "PERT critical path",
+    "Evidence requirements",
+    "Founder gate register",
+    "Execution daemon work packets",
+    "Council verdict"
+  ],
+  "council_routing": {
+    "council_assignments": [
+      {
+        "member": "HELM Chair (Claude)",
+        "task": "Create the master mission graph, factory alignment, critical path, and final decision state."
+      },
+      {
+        "member": "ChatGPT (OpenAI)",
+        "task": "Synthesize the overall architecture and convert it into an executive-operational plan."
+      },
+      {
+        "member": "Claude (Anthropic)",
+        "task": "Audit logic, evidence sufficiency, no-fake-green risks, and code/runtime implications."
+      },
+      {
+        "member": "Grok (xAI)",
+        "task": "Red-team assumptions, attack weak dependencies, and identify likely failure modes."
+      },
+      {
+        "member": "Cerebras-GPToss-120B",
+        "task": "Fast alternate path analysis and bottleneck compression."
+      },
+      {
+        "member": "Cerebras-GLM-4.7",
+        "task": "Deep reasoning, code block validation, and context verification."
+      },
+      {
+        "member": "Groq-120B",
+        "task": "Perform fast logical backstop assertions and query routing checks."
+      },
+      {
+        "member": "Local Rep (Ollama)",
+        "task": "Identify what can be done locally, cheaply, offline, and without cloud dependency."
+      },
+      {
+        "member": "AG IDE",
+        "task": "Convert approved plan into implementation-ready work packets and validation commands."
+      },
+      {
+        "member": "SecurityScan-W1 / ConMon-Sentinel",
+        "task": "Generate cybersecurity, ConMon, SAST, dependency, and evidence ticket requirements."
+      }
+    ]
+  },
+  "jira_backlog": [
+    {
+      "key": "HCF-ATO-001",
+      "issue_type": "Epic",
+      "summary": "Build HELM/HAS ATO package structure",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Establish formal ATO directory structures and documentation sets to support System Security Plan (SSP), Security Assessment Report (SAR), and Plan of Action and Milestones (POA&M) artifacts.",
+      "acceptance_criteria": [
+        "ATO folders exist on disk for SSP, SAR, POA&M, risk assessments, and compliance scans."
+      ],
+      "evidence_required": [
+        "Directory structure listing under docs/security/ato/",
+        "ato_package_index.md exists"
+      ],
+      "owner": "ConMon-Sentinel",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [],
+      "definition_of_done": [
+        "Folders created",
+        "Index documented"
+      ]
+    },
+    {
+      "key": "HCF-ATO-002",
+      "issue_type": "Story",
+      "summary": "Create system boundary description",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Define the physical and logical boundaries of the HELM and HAS environments, including local agents, VPS relays, cloud endpoints, and data flows.",
+      "acceptance_criteria": [
+        "Boundary description maps all nodes, relays, and databases."
+      ],
+      "evidence_required": [
+        "docs/security/system_boundary.md"
+      ],
+      "owner": "ConMon-Sentinel",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-ATO-001"
+      ],
+      "definition_of_done": [
+        "boundary document verified by security scan"
+      ]
+    },
+    {
+      "key": "HCF-ATO-003",
+      "issue_type": "Story",
+      "summary": "Create authorization package index",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Create a canonical, versioned index file listing all security authorization package elements and their active implementation posture.",
+      "acceptance_criteria": [
+        "Index file maps all 10 NIST-aligned HELM security epics."
+      ],
+      "evidence_required": [
+        "docs/security/ato_package_index.md"
+      ],
+      "owner": "ConMon-Sentinel",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-ATO-001"
+      ],
+      "definition_of_done": [
+        "Index populated with valid links and statuses"
+      ]
+    },
+    {
+      "key": "HCF-ATO-004",
+      "issue_type": "Task",
+      "summary": "Create risk assessment template",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Draft a risk assessment detailing model routing risks, key exposures, data leaks, and state drift threat mitigation.",
+      "acceptance_criteria": [
+        "Risk matrix categorizes likelihood, impact, and mitigation strategy."
+      ],
+      "evidence_required": [
+        "docs/security/risk_assessment.md"
+      ],
+      "owner": "ConMon-Sentinel",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-ATO-001"
+      ],
+      "definition_of_done": [
+        "Risk matrix completed and checked in"
+      ]
+    },
+    {
+      "key": "HCF-ATO-005",
+      "issue_type": "Task",
+      "summary": "Create POA&M register",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Establish a live register for Plan of Action and Milestones (POA&M) to track open vulnerabilities, dependencies, and remediation milestones.",
+      "acceptance_criteria": [
+        "POA&M register is machine-readable and maps to open Jira tasks."
+      ],
+      "evidence_required": [
+        "docs/security/poam_register.json"
+      ],
+      "owner": "ConMon-Sentinel",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-ATO-001"
+      ],
+      "definition_of_done": [
+        "Register exists and passes json validation"
+      ]
+    },
+    {
+      "key": "HCF-CONMON-001",
+      "issue_type": "Epic",
+      "summary": "Build ConMon runtime monitoring layer",
+      "factory": "HCF",
+      "mission_area": "runtime",
+      "description": "Develop and deploy the active Continuous Monitoring (ConMon) engine to aggregate security status, key validity, and daemon freshness.",
+      "acceptance_criteria": [
+        "Endpoint publishes structured JSON telemetry."
+      ],
+      "evidence_required": [
+        "api/conmon/status endpoint output",
+        "tests/test_conmon.py"
+      ],
+      "owner": "AG IDE",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [],
+      "definition_of_done": [
+        "Endpoint responsive",
+        "ConMon tests pass"
+      ]
+    },
+    {
+      "key": "HCF-CONMON-002",
+      "issue_type": "Story",
+      "summary": "Add freshness detection",
+      "factory": "HCF",
+      "mission_area": "runtime",
+      "description": "Implement stale-data thresholds to mark outdated telemetry as STALE on the dashboard.",
+      "acceptance_criteria": [
+        "Data older than 60s is tagged STALE and blocks auto-loop advances."
+      ],
+      "evidence_required": [
+        "freshness test assertions in test_conmon.py"
+      ],
+      "owner": "AG IDE",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-CONMON-001"
+      ],
+      "definition_of_done": [
+        "Unit tests check stale status flag"
+      ]
+    },
+    {
+      "key": "HCF-CONMON-003",
+      "issue_type": "Story",
+      "summary": "Add evidence heartbeat",
+      "factory": "HCF",
+      "mission_area": "runtime",
+      "description": "Emit verified timestamp heartbeats from the local evidence ledger to the relay.",
+      "acceptance_criteria": [
+        "Last verified heartbeat payload includes active ledger checksum."
+      ],
+      "evidence_required": [
+        "heartbeat payload sample log"
+      ],
+      "owner": "ConMon-Sentinel",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-CONMON-001"
+      ],
+      "definition_of_done": [
+        "Heartbeat verified in relay logs"
+      ]
+    },
+    {
+      "key": "HCF-CONMON-004",
+      "issue_type": "Task",
+      "summary": "Add agent health telemetry",
+      "factory": "HCF",
+      "mission_area": "runtime",
+      "description": "Feed live status metrics of all active 10-device swarm PIDs to the coordination console.",
+      "acceptance_criteria": [
+        "All daemon process states (Active/Idle/Blocked) are visible in the API payload."
+      ],
+      "evidence_required": [
+        "JSON payload schema validation"
+      ],
+      "owner": "AG IDE",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-CONMON-001"
+      ],
+      "definition_of_done": [
+        "Health payload renders on the console UI"
+      ]
+    },
+    {
+      "key": "HCF-CONMON-005",
+      "issue_type": "Task",
+      "summary": "Add security scan status feed",
+      "factory": "HCF",
+      "mission_area": "runtime",
+      "description": "Integrate local SAST and dependency scan logs directly into the ConMon API feed.",
+      "acceptance_criteria": [
+        "Latest scan timestamp and defect counts are appended to the payload."
+      ],
+      "evidence_required": [
+        "conmon status JSON containing scan_summary"
+      ],
+      "owner": "SecurityScan-W1",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-CONMON-001"
+      ],
+      "definition_of_done": [
+        "Scan summaries verified in status feed"
+      ]
+    },
+    {
+      "key": "HCF-EVID-001",
+      "issue_type": "Epic",
+      "summary": "Implement evidence ledger schema",
+      "factory": "CORE",
+      "mission_area": "evidence",
+      "description": "Establish a structured evidence schema in SQLite/JSON to track test outputs, checksums, and git commits.",
+      "acceptance_criteria": [
+        "Ledger schema supports unique ticket keys, file hashes, and timestamps."
+      ],
+      "evidence_required": [
+        "docs/security/evidence_ledger_schema.json"
+      ],
+      "owner": "AG IDE",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [],
+      "definition_of_done": [
+        "Schema written and verified"
+      ]
+    },
+    {
+      "key": "HCF-EVID-002",
+      "issue_type": "Story",
+      "summary": "Add ledger entries for code changes",
+      "factory": "CORE",
+      "mission_area": "evidence",
+      "description": "Implement automated hooks to log every code modification, including file name, diff size, and test coverage results.",
+      "acceptance_criteria": [
+        "Git commit hook logs diff statistics to the ledger."
+      ],
+      "evidence_required": [
+        "ledger database containing code_change events"
+      ],
+      "owner": "AG IDE",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-EVID-001"
+      ],
+      "definition_of_done": [
+        "Commit hook registers entry successfully"
+      ]
+    },
+    {
+      "key": "HCF-EVID-003",
+      "issue_type": "Story",
+      "summary": "Add ledger entries for security scans",
+      "factory": "CORE",
+      "mission_area": "evidence",
+      "description": "Automate security scanner logging to record SAST and dependency scan logs directly to the ledger.",
+      "acceptance_criteria": [
+        "Gitleaks/npm audit run logs recorded with SHA-256 signatures."
+      ],
+      "evidence_required": [
+        "ledger database containing security_scan events"
+      ],
+      "owner": "SecurityScan-W1",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-EVID-001"
+      ],
+      "definition_of_done": [
+        "Security scans log proof entries"
+      ]
+    },
+    {
+      "key": "HCF-EVID-004",
+      "issue_type": "Task",
+      "summary": "Add validator for missing evidence",
+      "factory": "CORE",
+      "mission_area": "evidence",
+      "description": "Build an execution check that parses the ledger and blocks tasks if required evidence files are missing.",
+      "acceptance_criteria": [
+        "Tasks fail-closed if referenced evidence path returns 404 or hash drift is detected."
+      ],
+      "evidence_required": [
+        "tests/test_evidence_validator.py"
+      ],
+      "owner": "AG IDE",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-EVID-001"
+      ],
+      "definition_of_done": [
+        "Validator tests pass successfully"
+      ]
+    },
+    {
+      "key": "HCF-EVID-005",
+      "issue_type": "Task",
+      "summary": "Add artifact path resolver",
+      "factory": "CORE",
+      "mission_area": "evidence",
+      "description": "Ensure all evidence paths listed in the ledger resolve to accessible files on the local disk or private Tailscale server.",
+      "acceptance_criteria": [
+        "Resolver converts database paths to clickable links on the dashboard."
+      ],
+      "evidence_required": [
+        "dashboard link resolution tests"
+      ],
+      "owner": "AG IDE",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-EVID-001"
+      ],
+      "definition_of_done": [
+        "Clickable files verified on dashboard interface"
+      ]
+    },
+    {
+      "key": "HCF-CTRL-001",
+      "issue_type": "Epic",
+      "summary": "Map HELM/HAS to control families",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Map all HELM and HAS functions to NIST SP 800-53 security control families, linking each to formal validation evidence.",
+      "acceptance_criteria": [
+        "Control mapping matrix maps at least 25 core security controls."
+      ],
+      "evidence_required": [
+        "docs/security/control_mapping_matrix.csv"
+      ],
+      "owner": "ConMon-Sentinel",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [],
+      "definition_of_done": [
+        "Control mapping document created and signed off"
+      ]
+    },
+    {
+      "key": "HCF-CTRL-002",
+      "issue_type": "Story",
+      "summary": "Map access control controls",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Draft AC family control narratives including model routing, least privilege roles, and API credential access.",
+      "acceptance_criteria": [
+        "AC narratives detail enforcement of DOORSTEP policies."
+      ],
+      "evidence_required": [
+        "docs/security/narratives/AC_controls.md"
+      ],
+      "owner": "ConMon-Sentinel",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-CTRL-001"
+      ],
+      "definition_of_done": [
+        "AC control narrative completed"
+      ]
+    },
+    {
+      "key": "HCF-CTRL-003",
+      "issue_type": "Story",
+      "summary": "Map audit/accountability controls",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Draft AU family control narratives mapping inter-agent dialogue logging and evidence signature verification.",
+      "acceptance_criteria": [
+        "AU narratives cover secure storage of the evidence ledger."
+      ],
+      "evidence_required": [
+        "docs/security/narratives/AU_controls.md"
+      ],
+      "owner": "ConMon-Sentinel",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-CTRL-001"
+      ],
+      "definition_of_done": [
+        "AU control narrative completed"
+      ]
+    },
+    {
+      "key": "HCF-CTRL-004",
+      "issue_type": "Story",
+      "summary": "Map configuration management controls",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Draft CM family control narratives detailing git baseline checks, drift detection, and Change-Board approval invariants.",
+      "acceptance_criteria": [
+        "CM narratives map the baseline guard execution flow."
+      ],
+      "evidence_required": [
+        "docs/security/narratives/CM_controls.md"
+      ],
+      "owner": "ConMon-Sentinel",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-CTRL-001"
+      ],
+      "definition_of_done": [
+        "CM control narrative completed"
+      ]
+    },
+    {
+      "key": "HCF-CTRL-005",
+      "issue_type": "Story",
+      "summary": "Map vulnerability management controls",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Draft SI and RA family control narratives outlining vulnerability scans, patch windows, and POA&M prioritization.",
+      "acceptance_criteria": [
+        "SI/RA narratives define the remediation loop timelines."
+      ],
+      "evidence_required": [
+        "docs/security/narratives/SI_RA_controls.md"
+      ],
+      "owner": "ConMon-Sentinel",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-CTRL-001"
+      ],
+      "definition_of_done": [
+        "Vulnerability controls mapped"
+      ]
+    },
+    {
+      "key": "HCF-SC-001",
+      "issue_type": "Epic",
+      "summary": "Establish software supply chain security gates",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Configure build-pipeline gates checking dependencies, third-party libraries, base images, and embedded secrets.",
+      "acceptance_criteria": [
+        "Builds block automatically if any security gate fails."
+      ],
+      "evidence_required": [
+        "infra/gates/security_gates.json"
+      ],
+      "owner": "AG IDE",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [],
+      "definition_of_done": [
+        "Pipeline gates verified in test execution"
+      ]
+    },
+    {
+      "key": "HCF-SC-002",
+      "issue_type": "Task",
+      "summary": "Add gitleaks scan",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Integrate Gitleaks secret scanner to block commits containing plaintext API keys or credentials.",
+      "acceptance_criteria": [
+        "Gitleaks runs as a pre-commit hook."
+      ],
+      "evidence_required": [
+        "pre-commit hook output logs"
+      ],
+      "owner": "SecurityScan-W1",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-SC-001"
+      ],
+      "definition_of_done": [
+        "Commit hook intercepts dummy secret successfully"
+      ]
+    },
+    {
+      "key": "HCF-SC-003",
+      "issue_type": "Task",
+      "summary": "Add dependency audit",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Configure NPM audit and Pip audit checks to scan project package manifests.",
+      "acceptance_criteria": [
+        "Any dependency vulnerability with severity High/Critical blocks the build."
+      ],
+      "evidence_required": [
+        "audit logs showing 0 high/critical CVEs"
+      ],
+      "owner": "SecurityScan-W1",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-SC-001"
+      ],
+      "definition_of_done": [
+        "Audit command exits with code 0"
+      ]
+    },
+    {
+      "key": "HCF-SC-004",
+      "issue_type": "Task",
+      "summary": "Add Trivy scan",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Incorporate Trivy scanner to audit Docker files and local project folders.",
+      "acceptance_criteria": [
+        "Trivy scan outputs zero unmitigated CVEs in build image."
+      ],
+      "evidence_required": [
+        "trivy scan json output"
+      ],
+      "owner": "SecurityScan-W1",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-SC-001"
+      ],
+      "definition_of_done": [
+        "Trivy reports verified"
+      ]
+    },
+    {
+      "key": "HCF-SC-005",
+      "issue_type": "Task",
+      "summary": "Add SBOM generation",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Generate a SPDX-compliant Software Bill of Materials (SBOM) for the deployed Story Studio and Epic Fury environments.",
+      "acceptance_criteria": [
+        "SBOM lists all direct and transitive dependencies with licenses."
+      ],
+      "evidence_required": [
+        "docs/security/sbom.spdx.json"
+      ],
+      "owner": "SecurityScan-W1",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-SC-001"
+      ],
+      "definition_of_done": [
+        "SBOM successfully compiled and validated"
+      ]
+    },
+    {
+      "key": "HCF-AC-001",
+      "issue_type": "Epic",
+      "summary": "Define access control and secrets posture",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Establish formal credentials handling, Least Privilege matrices, and .env configuration validation rules.",
+      "acceptance_criteria": [
+        "Gated policies enforce that no API key is written to chat."
+      ],
+      "evidence_required": [
+        "docs/security/secrets_policy.md"
+      ],
+      "owner": "ConMon-Sentinel",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [],
+      "definition_of_done": [
+        "Policy created and reviewed"
+      ]
+    },
+    {
+      "key": "HCF-AC-002",
+      "issue_type": "Story",
+      "summary": "Founder key provisioning gate",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Implement code guards to detect attempts to request live credentials and route them to FOUNDER_GATE status.",
+      "acceptance_criteria": [
+        "Credential provisioning requires a signed founder approval packet."
+      ],
+      "evidence_required": [
+        "unit test confirming key gating block"
+      ],
+      "owner": "AG IDE",
+      "status_gate": "UNKNOWN",
+      "founder_gate": true,
+      "dependencies": [
+        "HCF-AC-001"
+      ],
+      "definition_of_done": [
+        "Verification tests pass"
+      ]
+    },
+    {
+      "key": "HCF-AC-003",
+      "issue_type": "Task",
+      "summary": "Add secret inventory template",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Document an inventory of all environment variable keys (without their values) required by the system.",
+      "acceptance_criteria": [
+        "Template matches required project keys exactly."
+      ],
+      "evidence_required": [
+        "config/secrets_inventory.template"
+      ],
+      "owner": "ConMon-Sentinel",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-AC-001"
+      ],
+      "definition_of_done": [
+        "Template updated in configuration folder"
+      ]
+    },
+    {
+      "key": "HCF-AC-004",
+      "issue_type": "Task",
+      "summary": "Add .env validation",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Build an automated validator to verify the format of keys set in local and VPS deployment environment files.",
+      "acceptance_criteria": [
+        "Validator fails-closed and marks environment UNKNOWN if keys are missing."
+      ],
+      "evidence_required": [
+        "env validation test output logs"
+      ],
+      "owner": "AG IDE",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-AC-001"
+      ],
+      "definition_of_done": [
+        "Validator script passes"
+      ]
+    },
+    {
+      "key": "HCF-AC-005",
+      "issue_type": "Task",
+      "summary": "Add least-privilege role matrix",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Map all 10-device swarm agents to their allowed read/write namespaces to enforce least privilege access.",
+      "acceptance_criteria": [
+        "Agents are restricted from accessing folders outside their active sectors."
+      ],
+      "evidence_required": [
+        "docs/security/agent_privilege_matrix.csv"
+      ],
+      "owner": "ConMon-Sentinel",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-AC-001"
+      ],
+      "definition_of_done": [
+        "Privilege matrix created and integrated into agent runner"
+      ]
+    },
+    {
+      "key": "HCF-AUDIT-001",
+      "issue_type": "Epic",
+      "summary": "Implement audit logging for HELM decisions",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Develop the logging fabric to output immutable, timestamped transaction trails of all Council deliberations.",
+      "acceptance_criteria": [
+        "Decision logs include model responses, timestamps, and active baseline hashes."
+      ],
+      "evidence_required": [
+        "coordination/audit_logs.jsonl",
+        "tests/test_audit_logger.py"
+      ],
+      "owner": "AG IDE",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [],
+      "definition_of_done": [
+        "Log files generated successfully",
+        "Tests pass"
+      ]
+    },
+    {
+      "key": "HCF-AUDIT-002",
+      "issue_type": "Story",
+      "summary": "Log council verdicts",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Automate recording of final aggregated Council verdicts (GO/BLOCKED/UNKNOWN/FOUNDER_GATE).",
+      "acceptance_criteria": [
+        "Decisions are written to the audit log at the conclusion of each tick."
+      ],
+      "evidence_required": [
+        "verdict entries verified in coordination/audit_logs.jsonl"
+      ],
+      "owner": "HELM",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-AUDIT-001"
+      ],
+      "definition_of_done": [
+        "Autoloop records verdict entries"
+      ]
+    },
+    {
+      "key": "HCF-AUDIT-003",
+      "issue_type": "Story",
+      "summary": "Log promotion decisions",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Record all lane promotion actions, detailing the evidence matching that allowed promotion.",
+      "acceptance_criteria": [
+        "Decisions log exact validation output and baseline references."
+      ],
+      "evidence_required": [
+        "promotion entries verified in audit logs"
+      ],
+      "owner": "HELM",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-AUDIT-001"
+      ],
+      "definition_of_done": [
+        "Promotion logic writes to log files"
+      ]
+    },
+    {
+      "key": "HCF-AUDIT-004",
+      "issue_type": "Task",
+      "summary": "Log founder gates",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Log all founder-gate actions, recording the signed approval filename and timestamp.",
+      "acceptance_criteria": [
+        "Gate logs detail approval ID, timestamp, and signed signature hash."
+      ],
+      "evidence_required": [
+        "founder gate log entries in database"
+      ],
+      "owner": "ConMon-Sentinel",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-AUDIT-001"
+      ],
+      "definition_of_done": [
+        "Gate approvals log to audit trails"
+      ]
+    },
+    {
+      "key": "HCF-AUDIT-005",
+      "issue_type": "Task",
+      "summary": "Add audit export",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Provide a script to bundle audit logs, evidence files, and baseline hashes into a zip archive.",
+      "acceptance_criteria": [
+        "Export script generates standard zipped packages."
+      ],
+      "evidence_required": [
+        "scripts/export_audit_trail.py"
+      ],
+      "owner": "AG IDE",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-AUDIT-001"
+      ],
+      "definition_of_done": [
+        "Export packages successfully generated"
+      ]
+    },
+    {
+      "key": "HCF-VM-001",
+      "issue_type": "Epic",
+      "summary": "Build vulnerability management workflow",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Configure the security scanning triage process, converting parser findings into active POA&M elements.",
+      "acceptance_criteria": [
+        "High/Critical vulnerabilities automatically map to the POA&M register."
+      ],
+      "evidence_required": [
+        "docs/security/vuln_remediation_policy.md"
+      ],
+      "owner": "ConMon-Sentinel",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [],
+      "definition_of_done": [
+        "Workflow policy established and reviewed"
+      ]
+    },
+    {
+      "key": "HCF-VM-002",
+      "issue_type": "Story",
+      "summary": "Parse scanner outputs",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Write unified parser scripts to normalize outputs from Gitleaks, npm audit, and Trivy.",
+      "acceptance_criteria": [
+        "Parser outputs standardized JSON summaries containing CVE/Severity."
+      ],
+      "evidence_required": [
+        "scripts/parse_scans.py"
+      ],
+      "owner": "SecurityScan-W1",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-VM-001"
+      ],
+      "definition_of_done": [
+        "Unified scan results parsed successfully"
+      ]
+    },
+    {
+      "key": "HCF-VM-003",
+      "issue_type": "Story",
+      "summary": "Prioritize findings",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Build classification rules prioritizing findings by CVSS severity and ease of exploit.",
+      "acceptance_criteria": [
+        "High severity findings default to P0 blockers."
+      ],
+      "evidence_required": [
+        "prioritized JSON findings file"
+      ],
+      "owner": "SecurityScan-W1",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-VM-001"
+      ],
+      "definition_of_done": [
+        "Vulnerability prioritization verified"
+      ]
+    },
+    {
+      "key": "HCF-VM-004",
+      "issue_type": "Task",
+      "summary": "Create remediation tickets",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Automate creation of HCF-VM Jira tasks for any newly discovered High/Critical scanner findings.",
+      "acceptance_criteria": [
+        "Tasks detail file path, finding code, and fix recommendations."
+      ],
+      "evidence_required": [
+        "remediation ticket payload log"
+      ],
+      "owner": "SecurityScan-W1",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-VM-001"
+      ],
+      "definition_of_done": [
+        "Tickets created in backlog successfully"
+      ]
+    },
+    {
+      "key": "HCF-VM-005",
+      "issue_type": "Task",
+      "summary": "Validate closure evidence",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Verify vulnerability remediation by executing a re-scan of the target file.",
+      "acceptance_criteria": [
+        "Remediation requires 0 defects returned by the scanner."
+      ],
+      "evidence_required": [
+        "clean scan verification report"
+      ],
+      "owner": "SecurityScan-W1",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-VM-001"
+      ],
+      "definition_of_done": [
+        "Re-scan verifies clean target state"
+      ]
+    },
+    {
+      "key": "HCF-IR-001",
+      "issue_type": "Epic",
+      "summary": "Define HELM/HAS incident response workflow",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Establish formal incident response playbooks, defining triggers, containment options, and escalation pathways.",
+      "acceptance_criteria": [
+        "Playbooks cover key leaks, server failures, and unauthorized modifications."
+      ],
+      "evidence_required": [
+        "docs/security/incident_response_plan.md"
+      ],
+      "owner": "ConMon-Sentinel",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [],
+      "definition_of_done": [
+        "Response plan created and signed off"
+      ]
+    },
+    {
+      "key": "HCF-IR-002",
+      "issue_type": "Story",
+      "summary": "Add incident classification",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Build rules to classify security and operational incidents by severity (Severity 1 to Severity 4).",
+      "acceptance_criteria": [
+        "Severity 1 incidents trigger immediate daemon halt."
+      ],
+      "evidence_required": [
+        "classification rule assertions"
+      ],
+      "owner": "ConMon-Sentinel",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-IR-001"
+      ],
+      "definition_of_done": [
+        "Incident rules verified"
+      ]
+    },
+    {
+      "key": "HCF-IR-003",
+      "issue_type": "Story",
+      "summary": "Add alert routing",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Integrate critical alert routing to dispatch mobile push notifications to the founder.",
+      "acceptance_criteria": [
+        "Severity 1 alerts trigger instant push notifications via ntfy."
+      ],
+      "evidence_required": [
+        "pushed alert logs"
+      ],
+      "owner": "ConMon-Sentinel",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-IR-001"
+      ],
+      "definition_of_done": [
+        "Notification arrival verified"
+      ]
+    },
+    {
+      "key": "HCF-IR-004",
+      "issue_type": "Task",
+      "summary": "Add containment playbooks",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Write specific containment markdown playbooks detailing steps to revoke compromised keys or isolate nodes.",
+      "acceptance_criteria": [
+        "Playbooks include commands to disconnect Tailscale nodes."
+      ],
+      "evidence_required": [
+        "docs/security/playbooks/isolation.md"
+      ],
+      "owner": "ConMon-Sentinel",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-IR-001"
+      ],
+      "definition_of_done": [
+        "Playbook files committed to docs"
+      ]
+    },
+    {
+      "key": "HCF-IR-005",
+      "issue_type": "Task",
+      "summary": "Add post-incident review template",
+      "factory": "HCF",
+      "mission_area": "cybersecurity",
+      "description": "Provide a standard Post-Incident Review (PIR) template to document root causes, impacts, and remediation plans.",
+      "acceptance_criteria": [
+        "Template prompts for root cause analysis and POA&M linkage."
+      ],
+      "evidence_required": [
+        "docs/security/PIR_template.md"
+      ],
+      "owner": "ConMon-Sentinel",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-IR-001"
+      ],
+      "definition_of_done": [
+        "Template committed to docs"
+      ]
+    },
+    {
+      "key": "HCF-DASH-001",
+      "issue_type": "Epic",
+      "summary": "Build cybersecurity dashboard panel",
+      "factory": "HCF",
+      "mission_area": "dashboard",
+      "description": "Develop a React/HTML panel displaying live security compliance, POA&M status, and ConMon metrics.",
+      "acceptance_criteria": [
+        "Dashboard panel displays in the HELM console interface."
+      ],
+      "evidence_required": [
+        "frontend/src/components/security/CyberDashboard.tsx",
+        "dashboard screenshot"
+      ],
+      "owner": "AG IDE",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [],
+      "definition_of_done": [
+        "Dashboard UI compiles cleanly",
+        "Panel renders on Tailscale mesh"
+      ]
+    },
+    {
+      "key": "HCF-DASH-002",
+      "issue_type": "Story",
+      "summary": "Add control family status panel",
+      "factory": "HCF",
+      "mission_area": "dashboard",
+      "description": "Add UI components mapping security control family compliance (GO/PARTIAL/UNKNOWN).",
+      "acceptance_criteria": [
+        "Control family cards update dynamically based on the evidence ledger."
+      ],
+      "evidence_required": [
+        "dashboard UI validation logs"
+      ],
+      "owner": "AG IDE",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-DASH-001"
+      ],
+      "definition_of_done": [
+        "Dashboard displays correct statuses"
+      ]
+    },
+    {
+      "key": "HCF-DASH-003",
+      "issue_type": "Story",
+      "summary": "Add POA&M panel",
+      "factory": "HCF",
+      "mission_area": "dashboard",
+      "description": "Create a UI table to display open gaps, severities, remediation owners, and target dates.",
+      "acceptance_criteria": [
+        "Table pulls dynamically from poam_register.json."
+      ],
+      "evidence_required": [
+        "remediation items rendering test"
+      ],
+      "owner": "AG IDE",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-DASH-001"
+      ],
+      "definition_of_done": [
+        "Remediation items render correctly"
+      ]
+    },
+    {
+      "key": "HCF-DASH-004",
+      "issue_type": "Story",
+      "summary": "Add ConMon panel",
+      "factory": "HCF",
+      "mission_area": "dashboard",
+      "description": "Build the dashboard panel displaying live daemon states, heartbeats, and database persistence status.",
+      "acceptance_criteria": [
+        "Telemetry status refreshes at 5s intervals."
+      ],
+      "evidence_required": [
+        "ConMon panel live screenshot"
+      ],
+      "owner": "AG IDE",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-DASH-001"
+      ],
+      "definition_of_done": [
+        "Telemetry refreshes properly in browser"
+      ]
+    },
+    {
+      "key": "HCF-DASH-005",
+      "issue_type": "Task",
+      "summary": "Add export button",
+      "factory": "HCF",
+      "mission_area": "dashboard",
+      "description": "Add a button to download the consolidated compliance package directly from the dashboard.",
+      "acceptance_criteria": [
+        "Clicking the button triggers a download of the zipped audit export."
+      ],
+      "evidence_required": [
+        "download click event validation logs"
+      ],
+      "owner": "AG IDE",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "HCF-DASH-001"
+      ],
+      "definition_of_done": [
+        "Export button triggers file download successfully"
+      ]
+    },
+    {
+      "key": "CORE-HELM-001",
+      "issue_type": "Epic",
+      "summary": "Implement HELM live command layer",
+      "factory": "CORE",
+      "mission_area": "orchestration",
+      "description": "Develop and wire the core HELM logic matrix server supporting structured Council assignments, vote aggregation, and daemon work packets.",
+      "acceptance_criteria": [
+        "FastAPI app mounts the /api/helm/ endpoints successfully."
+      ],
+      "evidence_required": [
+        "backend/helm_command.py",
+        "tests/test_helm_command.py"
+      ],
+      "owner": "AG IDE",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [],
+      "definition_of_done": [
+        "Command server endpoints compile and pass tests"
+      ]
+    },
+    {
+      "key": "CORE-HELM-002",
+      "issue_type": "Story",
+      "summary": "Add HELM mission context schema",
+      "factory": "CORE",
+      "mission_area": "orchestration",
+      "description": "Define the canonical JSON schema for HELM mission contexts, documenting non-negotiable doctrines and required outputs.",
+      "acceptance_criteria": [
+        "Schema parses and validates structured context inputs."
+      ],
+      "evidence_required": [
+        "docs/coordination/helm_mission_context_schema.json"
+      ],
+      "owner": "AG IDE",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "CORE-HELM-001"
+      ],
+      "definition_of_done": [
+        "Schema written and verified"
+      ]
+    },
+    {
+      "key": "CORE-HELM-003",
+      "issue_type": "Story",
+      "summary": "Add council routing matrix",
+      "factory": "CORE",
+      "mission_area": "orchestration",
+      "description": "Implement the routing matrix dynamically assigning specific tasks to council members based on their roles.",
+      "acceptance_criteria": [
+        "Tasks are dispatched to appropriate endpoints defined in the roster."
+      ],
+      "evidence_required": [
+        "routing test verification logs"
+      ],
+      "owner": "AG IDE",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "CORE-HELM-001"
+      ],
+      "definition_of_done": [
+        "Task routing verified"
+      ]
+    },
+    {
+      "key": "CORE-HELM-004",
+      "issue_type": "Story",
+      "summary": "Add no-fake-green validator",
+      "factory": "CORE",
+      "mission_area": "orchestration",
+      "description": "Write code checks to verify that any 'GO' state has verified evidence, raising BLOCKED or UNKNOWN on missing proof.",
+      "acceptance_criteria": [
+        "Validator fails-closed on fabricated stats or mock markers."
+      ],
+      "evidence_required": [
+        "no-fake-green validator unit tests"
+      ],
+      "owner": "AG IDE",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "CORE-HELM-001"
+      ],
+      "definition_of_done": [
+        "Validator tests pass"
+      ]
+    },
+    {
+      "key": "CORE-HELM-005",
+      "issue_type": "Story",
+      "summary": "Add founder gate detector",
+      "factory": "CORE",
+      "mission_area": "orchestration",
+      "description": "Build logic to intercept any restricted actions (credential access, external deployments) and prompt for founder clearance.",
+      "acceptance_criteria": [
+        "Restricted actions are written to founder_gate_register.json."
+      ],
+      "evidence_required": [
+        "gating unit tests"
+      ],
+      "owner": "AG IDE",
+      "status_gate": "UNKNOWN",
+      "founder_gate": true,
+      "dependencies": [
+        "CORE-HELM-001"
+      ],
+      "definition_of_done": [
+        "Gating logic intercepts executions"
+      ]
+    },
+    {
+      "key": "CORE-HELM-006",
+      "issue_type": "Story",
+      "summary": "Add council vote aggregator",
+      "factory": "CORE",
+      "mission_area": "orchestration",
+      "description": "Develop code to aggregate independent votes from active council members into a single, unified verdict.",
+      "acceptance_criteria": [
+        "Verdict requires unanimous APPROVAL from active seats, else returns CONDITIONAL/REJECT."
+      ],
+      "evidence_required": [
+        "vote aggregator test reports"
+      ],
+      "owner": "AG IDE",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "CORE-HELM-001"
+      ],
+      "definition_of_done": [
+        "Aggregator output verified in tests"
+      ]
+    },
+    {
+      "key": "CORE-HELM-007",
+      "issue_type": "Story",
+      "summary": "Add execution daemon work packet schema",
+      "factory": "CORE",
+      "mission_area": "orchestration",
+      "description": "Design the JSON schema for work packets sent to local Gordy/AG IDE execution daemons.",
+      "acceptance_criteria": [
+        "Packets contain exact commands, cwd, validation parameters, and timeout thresholds."
+      ],
+      "evidence_required": [
+        "docs/coordination/work_packet_schema.json"
+      ],
+      "owner": "AG IDE",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "CORE-HELM-001"
+      ],
+      "definition_of_done": [
+        "Schema written and verified"
+      ]
+    },
+    {
+      "key": "CORE-HELM-008",
+      "issue_type": "Task",
+      "summary": "Add live dashboard state emitter",
+      "factory": "CORE",
+      "mission_area": "orchestration",
+      "description": "Create the API route emitting unified HELM command states, including active missions, critical paths, and open gates.",
+      "acceptance_criteria": [
+        "API outputs JSON matching the dashboard data specifications."
+      ],
+      "evidence_required": [
+        "coordination state JSON feed"
+      ],
+      "owner": "AG IDE",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "CORE-HELM-001"
+      ],
+      "definition_of_done": [
+        "Telemetry emitter responsive"
+      ]
+    },
+    {
+      "key": "CORE-HELM-009",
+      "issue_type": "Task",
+      "summary": "Add stale-state detection",
+      "factory": "CORE",
+      "mission_area": "orchestration",
+      "description": "Implement telemetry monitoring to check if the coordination bus hasn't updated within expected intervals.",
+      "acceptance_criteria": [
+        "No bus updates in 120s triggers STALE state and locks executions."
+      ],
+      "evidence_required": [
+        "stale validation tests"
+      ],
+      "owner": "AG IDE",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "CORE-HELM-001"
+      ],
+      "definition_of_done": [
+        "State lock triggers in unit test"
+      ]
+    },
+    {
+      "key": "CORE-HELM-010",
+      "issue_type": "Task",
+      "summary": "Add verification script",
+      "factory": "CORE",
+      "mission_area": "orchestration",
+      "description": "Build an E2E verification script to run all HELM unit and integration checks prior to release.",
+      "acceptance_criteria": [
+        "Script runs all tests and confirms 0 failures."
+      ],
+      "evidence_required": [
+        "scripts/verify_helm_core.sh"
+      ],
+      "owner": "AG IDE",
+      "status_gate": "UNKNOWN",
+      "founder_gate": false,
+      "dependencies": [
+        "CORE-HELM-001"
+      ],
+      "definition_of_done": [
+        "Verification script exits cleanly"
+      ]
+    }
+  ],
+  "expected_outcome_state": {
+    "overall_status": "IN_PROGRESS",
+    "reason": "Mission alignment is defined, but implementation and validation evidence are still required.",
+    "next_action": "Create Jira backlog, HELM state contract, routing matrix, and verification script.",
+    "promotion_allowed": false,
+    "blocked_by": [
+      "No verified Jira import/export evidence yet",
+      "No confirmed HELM runtime state endpoint yet",
+      "No verified cybersecurity evidence ledger yet",
+      "No council vote aggregation output yet"
+    ],
+    "safe_to_execute_now": [
+      "Generate Jira tickets",
+      "Create HELM mission context schema",
+      "Create routing matrix",
+      "Create evidence schema",
+      "Create verification script",
+      "Create dashboard state sample"
+    ],
+    "founder_gate_required": [
+      "Any external account connection",
+      "Any paid tooling",
+      "Any production submission",
+      "Any credential provisioning"
+    ]
+  }
+}
