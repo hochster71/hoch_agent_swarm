@@ -68,12 +68,26 @@ def cycle(domain: str, per_class_cap: int = 4) -> Dict[str, Any]:
 
     # 2. SELECT champion per class with the domain scorer.
     champions = {}
+    from backend.brain_convergence.scorer import blended_score as _blend
     for cls, items in by_class.items():
-        best_s, best = max(((score(g.get("prompt", ""), rubric)["overall"], g) for g in items),
-                           key=lambda x: x[0])
-        champions[cls] = {"gene_id": best.get("gene_id"), "title": best.get("title", ""),
-                          "score": best_s, "state": "SELECTED", "domain": domain,
-                          "pool_size": len(items)}
+        scored_items = []
+        for g in items:
+            rub_score = score(g.get("prompt", ""), rubric)["overall"]
+            gid = g.get("gene_id")
+            blend = _blend(gid, rub_score)
+            scored_items.append((blend["score"], rub_score, blend["method"], g))
+        
+        best_blend_s, best_rub_s, best_method, best = max(scored_items, key=lambda x: x[0])
+        champions[cls] = {
+            "gene_id": best.get("gene_id"),
+            "title": best.get("title", ""),
+            "score": best_rub_s,
+            "blended_score": best_blend_s,
+            "fitness_method": best_method,
+            "state": "SELECTED",
+            "domain": domain,
+            "pool_size": len(items)
+        }
     gen = 1
     if Path(f.champion_registry).exists():
         try:
@@ -85,13 +99,14 @@ def cycle(domain: str, per_class_cap: int = 4) -> Dict[str, Any]:
         {"schema": "brain-champion-registry", "domain": domain, "generation": gen,
          "champions": champions, "at": _now()}, indent=2), encoding="utf-8")
 
-    mean = round(sum(c["score"] for c in champions.values()) / len(champions), 3) if champions else 0.0
+    mean = round(sum(c.get("blended_score", c["score"]) for c in champions.values()) / len(champions), 3) if champions else 0.0
 
     # 3. CONVERGENCE with history (honest state machine, per factory).
     conv = C.update(str(f.convergence_status), gen, mean, epsilon=0.5, patience=3,
                     improver_online=bool(backend))
     return {"domain": domain, "code": f.code, "generation": gen, "champions": len(champions),
             "mean": mean, "admitted": admitted_total, "state": conv["state"]}
+
 
 
 if __name__ == "__main__":

@@ -1,22 +1,61 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "comment": "Hoch Storybook Factory (HSF) deploy config. Static site + Node serverless functions. Inert until the founder adds Stripe keys as Vercel env vars — see README.md.",
   "functions": {
-    "api/*.js": {
-      "runtime": "nodejs20.x",
+    "api/**/*.js": {
       "maxDuration": 15
     }
   },
   "rewrites": [
-    { "source": "/api/create-checkout-session", "destination": "/api/create-checkout-session" },
-    { "source": "/api/webhook", "destination": "/api/webhook" }
+    {
+      "source": "/api/create-checkout-session",
+      "destination": "/api/create-checkout-session"
+    },
+    {
+      "source": "/api/save-story",
+      "destination": "/api/save-story"
+    },
+    {
+      "source": "/api/download",
+      "destination": "/api/download"
+    },
+    {
+      "source": "/api/webhook",
+      "destination": "/api/webhook"
+    },
+    {
+      "source": "/api/entitlement",
+      "destination": "/api/entitlement"
+    },
+    {
+      "source": "/api/auth/request-link",
+      "destination": "/api/auth/request-link"
+    },
+    {
+      "source": "/api/auth/verify",
+      "destination": "/api/auth/verify"
+    },
+    {
+      "source": "/api/export",
+      "destination": "/api/export"
+    },
+    {
+      "source": "/api/share",
+      "destination": "/api/share"
+    },
+    {
+      "source": "/api/morph",
+      "destination": "/api/morph"
+    }
   ],
   "headers": [
     {
       "source": "/api/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "no-store" }
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
       ]
     }
   ]

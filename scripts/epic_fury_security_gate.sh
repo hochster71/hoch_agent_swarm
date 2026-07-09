@@ -5,8 +5,14 @@
 # =============================================================================
 set -euo pipefail
 
-RUN_ID="20260702T233000Z-epic-fury-2026-hasf-vetting"
+LATEST_RUN_ID_FILE="data/security_scans/epic-fury-2026/latest_run_id"
+if [ -f "$LATEST_RUN_ID_FILE" ]; then
+  RUN_ID=$(cat "$LATEST_RUN_ID_FILE")
+else
+  RUN_ID="20260702T233000Z-epic-fury-2026-hasf-vetting"
+fi
 SCANS_DIR="data/security_scans/epic-fury-2026/${RUN_ID}"
+
 
 echo "==> Running Epic Fury Security Gate..."
 

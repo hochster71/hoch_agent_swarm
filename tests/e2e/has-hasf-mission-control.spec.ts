@@ -32,8 +32,21 @@ test.use({
 
 test.describe("HAS/HASF Mission Control Dashboard E2E", () => {
   test("verifies mission control page renders, handles intake goal submission, and approval deployment flow", async ({ page }) => {
+    // Enable browser logs and error capture
+    page.on('pageerror', exception => {
+      console.log(`PAGE ERROR: ${exception}`);
+    });
+    page.on('console', msg => {
+      console.log(`BROWSER CONSOLE: ${msg.text()}`);
+    });
+    page.on('response', response => {
+      if (response.status() >= 400) {
+        console.log(`HTTP ERROR ${response.status()}: ${response.url()}`);
+      }
+    });
+
     // 1. Goto home page
-    await page.goto("/", { waitUntil: "networkidle" });
+    await page.goto("/", { waitUntil: "load" });
 
     // 2. Click sidebar Mission Control item
     const navItem = page.locator('aside >> text="Mission Control"');

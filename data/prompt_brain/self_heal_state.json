@@ -1,11 +1,20 @@
 {
   "schema": "hoch-self-heal-v1",
-  "at": "2026-07-06T02:25:44.836495Z",
-  "verdict": "HEALED",
+  "at": "2026-07-09T06:19:33.053834Z",
+  "verdict": "NEEDS_OPERATOR",
   "immunized": true,
-  "findings": 0,
+  "findings": 1,
   "fixtures": 0,
-  "real_secrets_open": 0,
-  "actions": [],
+  "real_secrets_open": 1,
+  "actions": [
+    {
+      "file": "config/gitleaks.toml",
+      "class": "REAL",
+      "severity": "HIGH",
+      "action": "QUARANTINE + ESCALATE_ROTATION",
+      "healed_by": null,
+      "note": "a real secret cannot be un-leaked autonomously \u2014 operator must rotate"
+    }
+  ],
   "note": "self-heal: fixtures immunized by guard; real secrets quarantined + escalated (rotation is human)."
 }

@@ -4,6 +4,7 @@ import { buildExecutiveReport, downloadBoardReportFile } from "../../lib/executi
 import { FileText, Download, AlertTriangle, ShieldCheck, ArrowRight } from "lucide-react";
 import { useGovernanceRegistryStore } from "../../lib/governance/aiSystemRegistry";
 import { useChaosEngineStore } from "../../lib/adversarial/chaosEngine";
+import { HochNeuroVisualization } from "./HochNeuroVisualization";
 
 export function ExecutiveMissionControl() {
   const { systems } = useGovernanceRegistryStore();
@@ -43,6 +44,9 @@ export function ExecutiveMissionControl() {
           </p>
         </div>
       </div>
+
+      {/* HOCH NEURO runtime visualization panel */}
+      <HochNeuroVisualization />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="space-y-6">

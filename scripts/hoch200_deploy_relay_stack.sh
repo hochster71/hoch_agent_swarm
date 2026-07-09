@@ -109,7 +109,7 @@ fi
 # ---------------------------------------------------------------------------
 log_info "Step 4/5: Verifying /health endpoint via Tailscale..."
 HEALTH_RESP=$(ssh "${VPS_USER}@${VPS_HOST}" \
-  "curl -sf --max-time 10 http://${TAILSCALE_IP}:${RELAY_PORT}/health 2>/dev/null || echo 'CURL_FAIL'")
+  "curl -sfL -k --max-time 10 http://${TAILSCALE_IP}:${RELAY_PORT}/health 2>/dev/null || echo 'CURL_FAIL'")
 
 if echo "${HEALTH_RESP}" | grep -q '"status":"ok"'; then
   log_pass "/health returned OK: ${HEALTH_RESP}"
@@ -129,7 +129,7 @@ log_info "UFW rules for 3012: ${UFW_CHECK}"
 
 # Attempt public-IP reach from VPS itself (loopback to public interface)
 PUB_REACH=$(ssh "${VPS_USER}@${VPS_HOST}" \
-  "curl -sf --max-time 5 --interface eth0 http://${VPS_HOST}:${RELAY_PORT}/health 2>/dev/null && echo REACHABLE || echo NOT_REACHABLE")
+  "curl -sfL -k --max-time 5 --interface eth0 http://${VPS_HOST}:${RELAY_PORT}/health 2>/dev/null && echo REACHABLE || echo NOT_REACHABLE")
 
 if [ "$PUB_REACH" = "NOT_REACHABLE" ]; then
   log_pass "Port ${RELAY_PORT} is NOT reachable on public IP — constraint satisfied"
@@ -142,7 +142,7 @@ fi
 
 # Also verify docker port binding
 DOCKER_BINDING=$(ssh "${VPS_USER}@${VPS_HOST}" \
-  "docker port hoch-relay-api ${RELAY_PORT} 2>/dev/null || echo 'not-found'")
+  "docker port hoch-relay-proxy ${RELAY_PORT} 2>/dev/null || echo 'not-found'")
 log_info "Docker port binding: ${DOCKER_BINDING}"
 if echo "${DOCKER_BINDING}" | grep -q "0.0.0.0"; then
   check_fail "Container port ${RELAY_PORT} is bound to 0.0.0.0 — must be Tailscale IP only!"

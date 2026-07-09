@@ -122,11 +122,13 @@ def execute_epic_fury_step(mission_id: str, step_index: int) -> dict:
     return {"status": "success", "step_index": step_index, "task_status": next_status}
 
 def approve_epic_fury_mission(mission_id: str) -> dict:
+    print(f">>> approve_epic_fury_mission: connecting to SQLite...", flush=True)
     conn = sqlite3.connect(DB_PATH, timeout=30)
     apply_pragmas(conn)
     
     try:
         now = now_iso()
+        print(">>> approve_epic_fury_mission: updating tasks...", flush=True)
         # Mark Step 5 (Operator Final Approval Gate) as COMPLETED
         conn.execute("""
             UPDATE mission_control_tasks 
@@ -134,6 +136,7 @@ def approve_epic_fury_mission(mission_id: str) -> dict:
             WHERE mission_id = ? AND step_index = 5
         """, (now, mission_id))
         
+        print(">>> approve_epic_fury_mission: updating mission...", flush=True)
         # Mark mission as COMPLETED
         conn.execute("""
             UPDATE mission_control_missions 
@@ -141,8 +144,10 @@ def approve_epic_fury_mission(mission_id: str) -> dict:
             WHERE mission_id = ?
         """, (json.dumps({"verdict": "LAUNCHED", "launched_at": now}), now, mission_id))
         
+        print(">>> approve_epic_fury_mission: committing...", flush=True)
         conn.commit()
     finally:
+        print(">>> approve_epic_fury_mission: closing connection...", flush=True)
         conn.close()
         
     return {"status": "success", "mission_status": "COMPLETED"}

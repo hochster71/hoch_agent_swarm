@@ -1,29 +1,36 @@
 {
   "schema": "brain-research-meta-v1",
-  "at": "2026-07-06T02:25:55.148530Z",
+  "at": "2026-07-09T06:19:56.348719Z",
   "improver_online": true,
-  "model": "llama3:latest",
+  "model": "google/gemma-4-12b-qat",
   "chosen_lever": "SELECT",
-  "reason": "4 classes have genes but no champion \u2014 crown them.",
+  "reason": "43 classes have genes but no champion \u2014 crown them.",
   "targets": [
-    "DAST",
-    "Family & Personal",
-    "Legal / Compliance",
-    "UX Security"
+    "App Release Checklist",
+    "Audit cryptographic key lifecycles.",
+    "Audit-Ready Evidence Trail",
+    "Checksum",
+    "Compliance Control Mappings",
+    "ConMon Monthly Evidence Triage",
+    "Configure automated static code scanning.",
+    "Control assessment failures",
+    "DISA STIG Checklist Review",
+    "DISA STIG Gap Review",
+    "Deliverables checklist",
+    "Demos Scheduled"
   ],
   "gaps": {
     "by_constraint": {
-      "SATURATED": 14,
-      "LOW_CEILING": 12,
-      "NO_CHAMPION": 4
+      "SATURATED": 30,
+      "NO_CHAMPION": 43
     },
     "thin": 0,
-    "low_ceiling": 12,
-    "no_champion": 4,
-    "drift": 3,
+    "low_ceiling": 0,
+    "no_champion": 43,
+    "drift": 13,
     "expansion_needed_genes": 0,
-    "mean_champion_score": 72.5,
-    "generation": 24
+    "mean_champion_score": 95.583,
+    "generation": 745
   },
   "global_converged": false
 }

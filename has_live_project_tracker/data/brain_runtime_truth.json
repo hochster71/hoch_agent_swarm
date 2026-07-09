@@ -1,15 +1,15 @@
 {
   "status": "LIVE",
   "go_no_go": "GO",
-  "last_updated": "2026-07-07T01:54:58.366431Z",
+  "last_updated": "2026-07-09T04:23:34.643344Z",
   "evidence": {
     "has_real_execution": true,
     "fallback_used": false,
     "execution_surface": "agent_runner",
-    "usage_id": "c49c0bc24df30937",
+    "usage_id": "e244c111ca13d8b8",
     "outcome_linked": true,
     "outcome_status": "COMPLETED",
-    "timestamp": "2026-07-06T22:50:47.667898Z",
-    "champion_id": "gen-gen-gapfill-caa718343c-20260706T005131-20260706T220723"
+    "timestamp": "2026-07-08T15:42:53.980187Z",
+    "champion_id": "seed-ais-e4d23524b4"
   }
 }

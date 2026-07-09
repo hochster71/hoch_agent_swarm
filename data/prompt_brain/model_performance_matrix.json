@@ -7,11 +7,11 @@
     "executions": 37
   },
   "Tier 2 (Operational)": {
-    "success_rate": 93.45,
+    "success_rate": 92.99,
     "avg_latency_ms": 320,
     "cost_per_1k": 0.002,
     "safety_compliance": 99.4,
-    "executions": 1160
+    "executions": 1272
   },
   "Tier 3 (Edge/Offline)": {
     "success_rate": 84.8,

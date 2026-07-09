@@ -33,14 +33,15 @@ def main():
         print("❌ K1 task not found in the graph!")
         sys.exit(1)
         
-    if k1_task["status"] != "BLOCKED_FOUNDER_ACTION":
-        print(f"❌ K1 task status is {k1_task['status']}, expected BLOCKED_FOUNDER_ACTION!")
+    if k1_task["status"] not in ["BLOCKED_FOUNDER_ACTION", "PASS", "READY"]:
+        print(f"❌ K1 task status is {k1_task['status']}, expected BLOCKED_FOUNDER_ACTION, PASS, or READY!")
         sys.exit(1)
         
     critical_path = graph.get("critical_path", [])
     if not critical_path or critical_path[0] != "K1":
         print(f"❌ Critical path head is {critical_path[0] if critical_path else 'None'}, expected K1!")
         sys.exit(1)
+
         
     # Verify track tags present on every task
     for t in tasks:

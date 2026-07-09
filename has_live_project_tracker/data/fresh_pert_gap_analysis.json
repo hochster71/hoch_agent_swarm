@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-05T07:02:04.665009Z",
-  "data_as_of": "2026-07-05T07:02:04.665009Z",
-  "expires_at": "2026-07-06T07:02:04.665009Z",
+  "generated_at": "2026-07-09T04:21:59.503750Z",
+  "data_as_of": "2026-07-09T04:21:59.503750Z",
+  "expires_at": "2026-07-10T04:21:59.503750Z",
   "overall_status": "CONDITIONAL_GO",
   "gap_summary": "Unified task graph for consumer app-store execution. G1 demand gate and G2 differentiation gate block build and packaging respectively.",
   "critical_path": [
@@ -29,7 +29,7 @@
       "id": "K1",
       "track": "K",
       "title": "OpenAI / Anthropic API Key Provisioning",
-      "status": "BLOCKED_FOUNDER_ACTION",
+      "status": "PASS",
       "dependencies": []
     },
     {
@@ -130,15 +130,12 @@
   ],
   "founder_actions": [
     "K1: Provision OpenAI/Anthropic API keys",
-    "K2: Apple Developer account \u2014 DONE (renews 2027-07-06)",
+    "K2: Register Apple Developer account",
     "K3: Configure App Store Connect app entry",
     "K4: Generate signing profiles",
     "K5: Set remote droplet SSH keys",
     "K6: Conduct secrets review"
   ],
-  "blockers": [
-    "K1"
-  ],
-  "manual_michael_action_required": true,
-  "k2_apple_developer": "CLEARED_2026-07-06"
+  "blockers": [],
+  "manual_michael_action_required": false
 }

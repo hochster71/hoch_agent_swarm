@@ -283,7 +283,13 @@ function facTip(e,code){
   const d=last||{}; const f=(d.factories||[]).find(x=>x.code===code); if(!f)return;
   const champs=(d.top_champions||[]).slice(0,4);
   const rows = code==='HASF'
-    ? champs.map(c=>`<div class="tl"><span>${esc(c.title||c.cls)}</span><b>${num(c.score,0)}</b></div>`).join('')
+    ? champs.map(c=>{
+        const fm=c.fitness_method||'MECHANICAL_PROXY';
+        const blended=fm!=='MECHANICAL_PROXY';
+        const col=blended?(fm==='BLENDED_CONFIDENT'?'var(--green)':'var(--amber)'):'var(--dim)';
+        const badge=blended?` <span style="font-size:9px;color:${col}">${fm.replace('BLENDED_','').toLowerCase()}</span>`:'';
+        return `<div class="tl"><span>${esc(c.title||c.cls)}</span>${badge}<b style="color:${col}">${num(c.score,0)}</b></div>`;
+      }).join('')
     : `<div class="tl"><span>champions</span><b>${f.champions}</b></div><div class="tl"><span>mean (recipe/agenda readiness)</span><b>${num(f.mean_score,0)}</b></div>`;
   showTip(`<div class="tt">${esc(f.title)}</div>
     <div class="tl"><span>state</span><b style="color:${stCol(f.state)}">${esc((f.state||'').toUpperCase())}</b></div>
@@ -535,6 +541,12 @@ function render(){
 
   ${renderFleet()}
 
+  ${renderGateway(d)}
+
+  ${renderCombat(d)}
+
+  ${renderFleetLive(d)}
+
   <div class="ledger">EVIDENCE LEDGER · RELAY MESH — <a href="http://100.87.18.15:3012" target="_blank" rel="noopener" style="color:var(--indigo)">hoch-relay-001</a> · hash + timestamp every claim · no green without proof</div>
   <div class="foot">freshness computed live from data ts (not a static claim) · poll ${POLL/1000}s · source <a href="${LIVE_URL}">${LIVE_URL}</a> ·
     factories pulse ONLY at their real state — IMPROVING breathes green, SELECTED amber, SEEDED dim · upgrade path: SSE push on generation events</div>`;
@@ -562,6 +574,109 @@ document.getElementById('chatq').addEventListener('keydown', e=>{ if(e.key==='En
 load(); loadFleet(); setInterval(load, POLL); setInterval(loadFleet, POLL);
 // Tick the clock only — never rebuild the whole deck (that would restart every SVG/SMIL animation each second).
 setInterval(()=>{ const c=document.getElementById('clock'); if(c) c.textContent=new Date().toLocaleTimeString(); }, 1000);
+
+
+/* ---------- MODEL GATEWAY — live backend status (2026-07-07) ---------- */
+function renderGateway(d){
+  const gw = d.gateway || {};
+  const backends = gw.backends || [];
+  if(!backends.length) return '';
+  const alive = gw.alive_count || 0;
+  const total = backends.length;
+  const allOk = alive === total;
+  const col = allOk ? 'var(--green)' : alive > 0 ? 'var(--amber)' : 'var(--red)';
+  const rows = backends.map(b => {
+    const lms = b.name === 'lmstudio';
+    return `<tr>
+      <td><b>${esc(b.name)}</b>${lms?' <span style="font-size:9px;color:var(--indigo)">●LMStudio</span>':''}</td>
+      <td style="color:${b.alive?'var(--green)':'var(--red)'}">${b.alive?'ALIVE':'DOWN'}</td>
+      <td style="color:var(--mut)">${esc(b.model||'—')}</td>
+      <td>${b.latency_ms!=null?b.latency_ms+'ms':'—'}</td>
+    </tr>`;}).join('');
+  return `<div class="panel">
+    <h3>🔀 MODEL GATEWAY <span style="color:${col}">· ${alive}/${total} BACKENDS ALIVE</span>
+      <span style="font-size:11px;color:var(--dim);margin-left:8px">primary: ${esc(gw.primary||'—')}</span></h3>
+    <table style="width:100%;border-collapse:collapse;font-size:12px;margin-top:6px">
+      <thead><tr style="color:var(--dim)"><th style="text-align:left">Backend</th><th>Status</th><th>Model</th><th>Latency</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div style="font-size:11px;color:var(--dim);margin-top:8px">
+      Auto-failover: lmstudio → mac-local → mac-tailscale → relay-001 (always-on) ·
+      Health sweep every 60s · Generation-proven probes only · MODEL_OFFLINE structurally impossible while any backend alive
+    </div>
+  </div>`;
+}
+
+/* ---------- COMBAT RECORDS — ledger-proven champion executions (2026-07-06) ---------- */
+function renderCombat(d){
+  const c = d.combat || {};
+  const total = c.total_champion_executions;
+  const genes = c.genes_with_combat_record;
+  const top   = c.top || [];
+  const gates = c.gates || {};
+  if(total==null) return '';
+  const gateHtml = Object.entries(gates).map(([k,v])=>
+    `<div class="kv"><span>${esc(k)}</span><b>${esc(v.total||0)} runs</b></div>`).join('');
+  const topHtml = top.slice(0,5).map(g=>{
+    const pct = g.executions ? Math.round((g.completed||0)/g.executions*100) : 0;
+    return `<div class="kv" style="flex-wrap:wrap;gap:4px">
+      <span style="flex:1;min-width:120px">${esc(g.task_class||g.gene_id||'?')}</span>
+      <span style="color:var(--dim)">${g.executions}x</span>
+      <b style="color:${pct>=80?'var(--green)':pct>=50?'var(--amber)':'var(--red)'}">${pct}% ok</b>
+    </div>`;}).join('');
+  const noRecord = total===0;
+  return `<div class="panel">
+    <h3>⚔ CHAMPION COMBAT RECORDS — ledger-proven only</h3>
+    ${noRecord ? `<div class="kv" style="color:var(--dim)">No champion executions logged yet — the loader is wired; results appear after the first task_class-tagged run completes.</div>` : `
+    <div class="kv"><span>genes with combat record</span><b>${genes}</b></div>
+    <div class="kv"><span>total champion executions</span><b style="color:var(--green)">${total}</b></div>
+    ${gateHtml}
+    <div style="margin-top:8px;border-top:1px solid var(--bord);padding-top:8px">${topHtml}</div>`}
+    <div style="font-size:11px;color:var(--dim);margin-top:8px">
+      Source: data/prompt_brain/runtime_usage_ledger.jsonl + outcome_feedback_ledger.jsonl ·
+      <b>fallback_used=false entries only</b> — no rubric scores, no simulated runs
+    </div>
+  </div>`;
+}
+
+/* ---------- REAL FLEET TELEMETRY (2026-07-06) ---------- */
+function renderFleetLive(d){
+  const f = d.fleet || {};
+  if(!f.status) return '';
+  const degraded = (f.sync||'').includes('DEGRADED');
+  const nodes = f.nodes || [];
+  const authColor = a => a==='MEASURED_LOCAL'?'var(--green)':a==='UNREACHABLE'?'var(--red)':'var(--amber)';
+  const nodeRows = nodes.map(n => {
+    const reach = n.status==='Unreachable';
+    return `<tr style="opacity:${reach?0.5:1}">
+      <td><b>${esc(n.id)}</b></td>
+      <td style="color:${reach?'var(--red)':'var(--green)'}">${esc(n.status)}</td>
+      <td>${n.latency_ms>=0?n.latency_ms+'ms':'—'}</td>
+      <td style="color:${authColor(n.authority)}">
+        ${n.authority==='MEASURED_LOCAL'?n.cpu+'%':reach?'—':'decl'}
+      </td>
+      <td>${n.authority==='MEASURED_LOCAL'?n.ram+'%':reach?'—':'decl'}</td>
+      <td>${n.authority==='MEASURED_LOCAL'?n.agents:reach?'—':'decl'}</td>
+      <td style="font-size:10px;color:var(--dim)">${esc((n.activity||'').slice(0,38))}</td>
+    </tr>`;}).join('');
+  return `<div class="panel">
+    <h3>FLEET · REAL TELEMETRY <span style="color:${degraded?'var(--amber)':'var(--green)'}">· ${esc(f.status)} · ${esc(f.sync)}</span></h3>
+    <div class="kv"><span>avg latency</span><b>${esc(f.latency||'—')}</b></div>
+    <table style="width:100%;border-collapse:collapse;font-size:12px;margin-top:8px">
+      <thead><tr style="color:var(--dim);text-align:left">
+        <th>Node</th><th>Status</th><th>Ping</th><th>CPU</th><th>RAM</th><th>Agents</th><th>Activity</th>
+      </tr></thead>
+      <tbody>${nodeRows}</tbody>
+    </table>
+    <div style="font-size:11px;color:var(--dim);margin-top:8px">
+      ${esc(f.telemetry_note||'')} ·
+      <span style="color:var(--green)">●</span> MEASURED_LOCAL = psutil/launchctl on this host ·
+      <span style="color:var(--amber)">●</span> DECLARED = roster config, not measured ·
+      <span style="color:var(--red)">●</span> UNREACHABLE = no ping response
+    </div>
+  </div>`;
+}
+
 </script>
 </body>
 </html>

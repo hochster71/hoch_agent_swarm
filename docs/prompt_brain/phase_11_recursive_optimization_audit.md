@@ -68,3 +68,15 @@ uv run pytest tests/prompt_brain/test_recursive_optimizer.py tests/prompt_brain/
 * **Timestamp**: 2026-07-06T14:55:00-05:00
 * **Known Risks**: Multi-turn local LLM inference may increase CPU utilization during cadence cycles. This is mitigated by the iteration limit and prompt length checks.
 * **Final Verdict**: **READY_FOR_PHASE_11_REVIEW**
+
+---
+
+## 6. Domain Evaluation & Synthesis
+
+* **Synthesis & Grounded Evaluation**:
+  * **Weakest Factory**: **HRF** (Research) is the weakest factory with a mean score of `96.5` and a state of `CONVERGED`.
+  * **Gap Context**: Mean scores do not tell the whole story. **HASF** (Software) has a saturated gap of `30`, indicating significant room for improvement beyond the mean score.
+  * **Domain Evaluation ($0 Local Model Expansion)**:
+    * **Music (HMF)**: Already converged; thin-class gap is `0`.
+    * **Research (HRF)**: Converged, but carries a thin-class gap of `23`, indicating potential for further improvement.
+    * **Software (HASF)**: Currently in an `IMPROVING` state with a significant thin-class gap of `23`.

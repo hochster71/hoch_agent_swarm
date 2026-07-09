@@ -397,6 +397,7 @@
 
                 <!-- Operator Cockpit Container (Active by Default) -->
                 <div id="container-operator-cockpit" style="padding: 0 24px 24px 24px; display: flex; flex-direction: column; gap: 24px;">
+                    <div id="react-executive-root"></div>
                     <!-- A beautiful, operator-focused Dashboard Grid -->
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
                         
@@ -523,6 +524,42 @@
                                 <div style="color: var(--text-secondary); text-align: center; padding: 12px; border: 1px dashed var(--border-glass); border-radius: 6px;">
                                     No pending approvals currently required.
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel 7: Swarm Intake & Mission Registry -->
+                        <div class="glass-panel active-mission-card" id="active-mission-card" style="padding: 20px; border: 1px solid var(--border-glass); border-radius: 12px; background: rgba(22, 28, 45, 0.45); display: flex; flex-direction: column; gap: 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <h3 style="font-size: 13px; font-weight: bold; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; margin: 0;">Swarm Intake & Mission Registry</h3>
+                                <span id="mission-status-badge" class="badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-weight: bold;">NO ACTIVE MISSION</span>
+                            </div>
+                            
+                            <!-- KPIs -->
+                            <div style="display: flex; gap: 12px; justify-content: space-between; font-size: 11px; font-family: monospace;">
+                                <div><span>Total Swarm Missions</span>: <span id="kpi-total-missions" style="color: #fff; font-weight: bold;">0</span></div>
+                                <div><span>Running Swarms</span>: <span id="kpi-running-swarms" style="color: #fff; font-weight: bold;">0</span></div>
+                                <div><span>Pending Human Approval</span>: <span id="kpi-pending-approval" style="color: #fff; font-weight: bold;">0</span></div>
+                            </div>
+                            
+                            <!-- Form -->
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <textarea id="missionGoalInput" placeholder="Enter mission goal (e.g. Launch Business Epic Fury)..." style="width: 100%; height: 60px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 6px; padding: 8px; color: #fff; font-size: 11px; resize: none; outline: none;"></textarea>
+                                <button id="missionSubmitBtn" class="btn btn-primary" style="font-size: 11px; padding: 6px 12px; background: var(--accent-teal); color: #000; border: none; font-weight: bold; border-radius: 4px; cursor: pointer;">Submit Mission</button>
+                            </div>
+
+                            <!-- Active Mission Info -->
+                            <div id="active-mission-info" style="display: none; border-top: 1px dashed var(--border-glass); padding-top: 12px; font-size: 11px; flex-direction: column; gap: 6px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                                    <span id="active-mission-id-display" style="font-family: monospace; color: var(--accent-blue);">fury-123</span>
+                                    <span id="active-mission-status-display" style="font-weight: bold; color: #f59e0b;">WAITING_FOR_APPROVAL</span>
+                                </div>
+                                <div style="color: var(--text-secondary); margin-bottom: 8px;">POD: BUSINESS</div>
+                                <button class="btn approve-mission-btn" id="approve-mission-btn" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; font-size: 11px; padding: 6px 12px; width: 100%; cursor: pointer;">APPROVE MISSION</button>
+                            </div>
+
+                            <!-- Graph Panel -->
+                            <div class="mission-graph-panel" id="mission-graph-panel" style="display: none; border-top: 1px dashed var(--border-glass); padding-top: 12px; font-size: 10px; font-family: monospace; color: var(--text-secondary); max-height: 120px; overflow-y: auto; flex-direction: column; gap: 4px;">
+                                <!-- Task nodes rendered here -->
                             </div>
                         </div>
 
@@ -871,6 +908,29 @@
                             <h3 class="text-base font-bold uppercase tracking-wider text-slate-200 mb-4">Self-Healing Execution & Rollback Ledger</h3>
                             <div class="overflow-y-auto max-height-48 font-mono text-[10px] bg-slate-950 border border-slate-800 p-3 rounded-lg" id="networkops-healing-logs" style="max-height: 200px;">
                                 No remediation logs recorded yet.
+                            </div>
+                        </section>
+
+                        <section class="card p-5">
+                            <h3 class="text-base font-bold uppercase tracking-wider text-slate-200 mb-4">Device Swarming & Approval Queue</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-xs border-collapse">
+                                    <thead>
+                                        <tr class="border-b border-slate-800 text-slate-400">
+                                            <th class="py-2">Hostname</th>
+                                            <th class="py-2">IP Address</th>
+                                            <th class="py-2">MAC Address</th>
+                                            <th class="py-2">Sources</th>
+                                            <th class="py-2">Room Placement</th>
+                                            <th class="py-2 text-right">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="homemesh-approval-tbody">
+                                        <tr>
+                                            <td colspan="6" class="py-4 text-center text-slate-500">Loading unapproved devices...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </section>
                     </div>

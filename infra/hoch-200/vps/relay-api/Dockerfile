@@ -19,6 +19,9 @@ COPY relay-api/app.py .
 
 # Copy static dashboard assets
 COPY dashboard /app/static
+# Ensure the served assets are world-readable (source files may be 0600; the container
+# process is non-root and otherwise cannot read them → 500s / empty responses).
+RUN chmod -R a+rX /app/static
 
 EXPOSE 3012
 

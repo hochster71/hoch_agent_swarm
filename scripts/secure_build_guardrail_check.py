@@ -27,6 +27,12 @@ def check_filename_violation(path: str) -> str | None:
         "setup_has_qa_runner_with_ui_token.sh",
         "deploy/remote-relay/.env.example",
         "prove_secure_guardrail_fails_when_contract_broken.sh",
+        "scripts/scrub_secrets.py",
+        "scripts/scrub_secrets.sh",
+        "deploy/billing/.env.billing.example",
+        "hsf/deploy/.env.example",
+        "services/apple_calendar_adapter/.env.example",
+        "has_live_project_tracker/data/examples/control_plane_status.example.json",
         # Documentation/tests whose NAMES legitimately contain the word "secret".
         # These carry no secret material — the filename is about handling secrets.
         "epic-fury-secret-rotation.md",
@@ -50,7 +56,21 @@ def check_content_violation(path: str) -> str | None:
         "scripts/prompt_brain/model_adapters.py",
         "playwright.config.ts",
         "data/prompt_brain/model_adapter_status.json",
-        "scripts/secure_build_guardrail_check.py"
+        "scripts/secure_build_guardrail_check.py",
+        "AGENTS.md",
+        "deploy/billing/.env.billing.example",
+        "docs/billing/GO_LIVE_CHECKLIST.md",
+        "docs/evidence/goal_runner/",
+        "has_live_project_tracker/data/founder_handoff_queue.json",
+        "has_live_project_tracker/data/relay_live_snapshot.json",
+        "hsf/deploy/.env.example",
+        "hsf/deploy/bootstrap-stripe.js",
+        "scripts/bootstrap_stripe_prompt.sh",
+        "scripts/gate2_hsf_autodeliver.sh",
+        "scripts/new_product.sh",
+        "services/apple_calendar_adapter/README.md",
+        "tests/e2e/has-hasf-hoch-neuro-visualization.spec.ts",
+        "tests/e2e/has-hasf-mission-control.spec.ts"
     ]
     for cw in content_whitelist:
         if cw in path:

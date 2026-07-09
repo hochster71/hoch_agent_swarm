@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-05T00:36:33Z",
+  "generated_at": "2026-07-07T06:09:14.579114Z",
   "pending_approvals": [
     {
       "approval_id": "APPROVE_REAL_24H_BURN_IN",
@@ -18,9 +18,18 @@
       ]
     },
     {
+      "approval_id": "AUTO-facilitation-phase-2-design-2026-07-06T20:36:02.851428Z",
+      "type": "SAFE_EXECUTOR_ROUTED",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Design Phase 2 backend voice policy with cost gates and persistent storage",
+      "reason": "requires_michael_approval=true",
+      "requested_at": "2026-07-06T20:36:02.851571Z"
+    },
+    {
       "approval_id": "k-k1",
       "type": "FOUNDER_CREDENTIAL",
-      "status": "BLOCKED_FOUNDER_ACTION",
+      "status": "READY",
       "lane": "K-Track",
       "item": "K1",
       "title": "OPENAI / ANTHROPIC provisioning",
@@ -30,7 +39,7 @@
     {
       "approval_id": "k-k2",
       "type": "FOUNDER_CREDENTIAL",
-      "status": "BLOCKED_FOUNDER_ACTION",
+      "status": "RESOLVED_FOUNDER_COMPLETE",
       "lane": "K-Track",
       "item": "K2",
       "title": "Apple Developer access",
@@ -76,6 +85,376 @@
       "title": "secrets inventory",
       "description": "Founder to review secrets stored in .secrets/ has_live_project_tracker/data/. Blocks: E2E secure deployment.",
       "evidence_path": "has_live_project_tracker/data/k_track_ledger.json"
+    },
+    {
+      "approval_id": "AUTO-facilitation-phase-2-design-2026-07-06T21:12:58.322573Z",
+      "source_action_id": "facilitation-phase-2-design",
+      "type": "SAFE_EXECUTOR_ROUTED",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Design Phase 2 backend voice policy with cost gates and persistent storage",
+      "reason": "requires_michael_approval=true",
+      "requested_at": "2026-07-06T21:12:58.322729Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-3498b55419f3",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-1.local (34:98:b5:54:19:f3)",
+      "reason": "Discovered on network with IP 10.0.0.1. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "34:98:b5:54:19:f3",
+      "requested_at": "2026-07-07T00:27:29.462913Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-dc54d75456fe",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-3.local (dc:54:d7:54:56:fe)",
+      "reason": "Discovered on network with IP 10.0.0.3. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "dc:54:d7:54:56:fe",
+      "requested_at": "2026-07-07T00:27:29.462919Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-74d637552ee0",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-4.local (74:d6:37:55:2e:e0)",
+      "reason": "Discovered on network with IP 10.0.0.4. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "74:d6:37:55:2e:e0",
+      "requested_at": "2026-07-07T00:27:29.462921Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-14ac5c7dce4",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-5.local (14:a:c5:c7:dc:e4)",
+      "reason": "Discovered on network with IP 10.0.0.5. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "14:a:c5:c7:dc:e4",
+      "requested_at": "2026-07-07T00:27:29.462923Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-5a13e2df38",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-6.local (5a:1:3:e2:df:38)",
+      "reason": "Discovered on network with IP 10.0.0.6. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "5a:1:3:e2:df:38",
+      "requested_at": "2026-07-07T00:27:29.462925Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-0337ac5272b",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-7.local (0:33:7a:c5:27:2b)",
+      "reason": "Discovered on network with IP 10.0.0.7. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "0:33:7a:c5:27:2b",
+      "requested_at": "2026-07-07T00:27:29.462926Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-72c5bbc6715",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-10.local (72:c:5b:bc:67:15)",
+      "reason": "Discovered on network with IP 10.0.0.10. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "72:c:5b:bc:67:15",
+      "requested_at": "2026-07-07T00:27:29.462928Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-f0a3b2494763",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-13.local (f0:a3:b2:49:47:63)",
+      "reason": "Discovered on network with IP 10.0.0.13. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "f0:a3:b2:49:47:63",
+      "requested_at": "2026-07-07T00:27:29.462932Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-d03dfe2df66",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-21.local (d0:3:df:e2:df:66)",
+      "reason": "Discovered on network with IP 10.0.0.21. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "d0:3:df:e2:df:66",
+      "requested_at": "2026-07-07T00:27:29.462934Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-1caf4a10476a",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-22.local (1c:af:4a:10:47:6a)",
+      "reason": "Discovered on network with IP 10.0.0.22. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "1c:af:4a:10:47:6a",
+      "requested_at": "2026-07-07T00:27:29.462935Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-7c575811cb3",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-26.local (7c:57:58:1:1c:b3)",
+      "reason": "Discovered on network with IP 10.0.0.26. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "7c:57:58:1:1c:b3",
+      "requested_at": "2026-07-07T00:27:29.462937Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-3498b55425ba",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-30.local (34:98:b5:54:25:ba)",
+      "reason": "Discovered on network with IP 10.0.0.30. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "34:98:b5:54:25:ba",
+      "requested_at": "2026-07-07T00:27:29.462938Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-3498b55425ce",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-41.local (34:98:b5:54:25:ce)",
+      "reason": "Discovered on network with IP 10.0.0.41. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "34:98:b5:54:25:ce",
+      "requested_at": "2026-07-07T00:27:29.462940Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-14913829f0f2",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-58.local (14:91:38:29:f0:f2)",
+      "reason": "Discovered on network with IP 10.0.0.58. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "14:91:38:29:f0:f2",
+      "requested_at": "2026-07-07T00:27:29.462941Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-9c50d1b1024",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-63.local (9c:50:d1:b:10:24)",
+      "reason": "Discovered on network with IP 10.0.0.63. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "9c:50:d1:b:10:24",
+      "requested_at": "2026-07-07T00:27:29.462943Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-80b98981ddc0",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-74.local (80:b9:89:81:dd:c0)",
+      "reason": "Discovered on network with IP 10.0.0.74. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "80:b9:89:81:dd:c0",
+      "requested_at": "2026-07-07T00:27:29.462944Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-10591702bf8",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-90.local (10:59:17:0:2b:f8)",
+      "reason": "Discovered on network with IP 10.0.0.90. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "10:59:17:0:2b:f8",
+      "requested_at": "2026-07-07T00:27:29.462946Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-645299e0be22",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-96.local (64:52:99:e0:be:22)",
+      "reason": "Discovered on network with IP 10.0.0.96. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "64:52:99:e0:be:22",
+      "requested_at": "2026-07-07T00:27:29.462947Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-645299e0bec0",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-98.local (64:52:99:e0:be:c0)",
+      "reason": "Discovered on network with IP 10.0.0.98. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "64:52:99:e0:be:c0",
+      "requested_at": "2026-07-07T00:27:29.462949Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-f0a3b27db7b",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-101.local (f0:a3:b2:7d:b7:b)",
+      "reason": "Discovered on network with IP 10.0.0.101. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "f0:a3:b2:7d:b7:b",
+      "requested_at": "2026-07-07T00:27:29.462950Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-9048463c5b16",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-145.local (90:48:46:3c:5b:16)",
+      "reason": "Discovered on network with IP 10.0.0.145. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "90:48:46:3c:5b:16",
+      "requested_at": "2026-07-07T00:27:29.462953Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-2c1b3a7157c",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-169.local (2c:1b:3a:71:57:c)",
+      "reason": "Discovered on network with IP 10.0.0.169. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "2c:1b:3a:71:57:c",
+      "requested_at": "2026-07-07T00:27:29.462955Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-acf4731f878",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-205.local (ac:f4:73:1:f8:78)",
+      "reason": "Discovered on network with IP 10.0.0.205. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "ac:f4:73:1:f8:78",
+      "requested_at": "2026-07-07T00:27:29.462959Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-dce994cfa81e",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-216.local (dc:e9:94:cf:a8:1e)",
+      "reason": "Discovered on network with IP 10.0.0.216. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "dc:e9:94:cf:a8:1e",
+      "requested_at": "2026-07-07T00:27:29.462961Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-3ef9736236",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-220.local (3e:f9:73:6:23:6)",
+      "reason": "Discovered on network with IP 10.0.0.220. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "3e:f9:73:6:23:6",
+      "requested_at": "2026-07-07T00:27:29.462963Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-f8172df3d9bf",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-246.local (f8:17:2d:f3:d9:bf)",
+      "reason": "Discovered on network with IP 10.0.0.246. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "f8:17:2d:f3:d9:bf",
+      "requested_at": "2026-07-07T00:27:29.462965Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-105e7ffffa",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-239-255-255-250.local (1:0:5e:7f:ff:fa)",
+      "reason": "Discovered on network with IP 239.255.255.250. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "1:0:5e:7f:ff:fa",
+      "requested_at": "2026-07-07T00:27:29.462966Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-223344556677",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: quest-3-xr.local (22:33:44:55:66:77)",
+      "reason": "Discovered on network with IP 10.0.0.75. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "22:33:44:55:66:77",
+      "requested_at": "2026-07-07T00:27:29.462968Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-fcecda010203",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: unifi-dream-machine-pro (fc:ec:da:01:02:03)",
+      "reason": "Discovered on network with IP 10.0.0.1. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "fc:ec:da:01:02:03",
+      "requested_at": "2026-07-07T00:27:29.462970Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-fcecda040506",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: unifi-ap-office (fc:ec:da:04:05:06)",
+      "reason": "Discovered on network with IP 10.0.0.10. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "fc:ec:da:04:05:06",
+      "requested_at": "2026-07-07T00:27:29.462971Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-112233445566",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: homeassistant-hub.local (11:22:33:44:55:66)",
+      "reason": "Discovered on network with IP 10.0.0.200. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "11:22:33:44:55:66",
+      "requested_at": "2026-07-07T00:27:29.462973Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-16a98ffd3b69",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-201.local (16:a9:8f:fd:3b:69)",
+      "reason": "Discovered on network with IP 10.0.0.201. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "16:a9:8f:fd:3b:69",
+      "requested_at": "2026-07-07T00:27:41.449047Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-c298f18bc9",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-17.local (c:29:8f:1:8b:c9)",
+      "reason": "Discovered on network with IP 10.0.0.17. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "c:29:8f:1:8b:c9",
+      "requested_at": "2026-07-07T06:08:05.517428Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-f4fefb7fb14",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-113.local (f4:fe:fb:7f:b1:4)",
+      "reason": "Discovered on network with IP 10.0.0.113. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "f4:fe:fb:7f:b1:4",
+      "requested_at": "2026-07-07T06:08:05.517432Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-8ebd2a6f6070",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-157.local (8e:bd:2a:6f:60:70)",
+      "reason": "Discovered on network with IP 10.0.0.157. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "8e:bd:2a:6f:60:70",
+      "requested_at": "2026-07-07T06:08:05.517434Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-334455667788",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: synthetic-unknown.local (33:44:55:66:77:88)",
+      "reason": "Discovered on network with IP 10.0.0.88. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "33:44:55:66:77:88",
+      "requested_at": "2026-07-07T06:09:14.579109Z"
     }
   ]
 }

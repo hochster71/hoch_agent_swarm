@@ -1,12 +1,14 @@
 {
   "schema": "brain-champion-registry",
   "domain": "music",
-  "generation": 9,
+  "generation": 731,
   "champions": {
     "Lo-Fi Hip-Hop": {
       "gene_id": "seed-lo-f-1113d93381",
       "title": "Rainy Study Loop",
       "score": 100.0,
+      "blended_score": 100.0,
+      "fitness_method": "BLENDED_SPARSE",
       "state": "SELECTED",
       "domain": "music",
       "pool_size": 3
@@ -15,6 +17,8 @@
       "gene_id": "syn-DeepH-1db8a400fa75",
       "title": "Deep House synthetic gene",
       "score": 100.0,
+      "blended_score": 100.0,
+      "fitness_method": "MECHANICAL_PROXY",
       "state": "SELECTED",
       "domain": "music",
       "pool_size": 3
@@ -23,6 +27,8 @@
       "gene_id": "syn-Melodi-587eca420c78",
       "title": "Melodic Techno synthetic gene",
       "score": 100.0,
+      "blended_score": 100.0,
+      "fitness_method": "MECHANICAL_PROXY",
       "state": "SELECTED",
       "domain": "music",
       "pool_size": 3
@@ -31,6 +37,8 @@
       "gene_id": "seed-ambi-db7bb85622",
       "title": "Glacier Fields",
       "score": 95.0,
+      "blended_score": 96.5,
+      "fitness_method": "BLENDED_SPARSE",
       "state": "SELECTED",
       "domain": "music",
       "pool_size": 3
@@ -39,6 +47,8 @@
       "gene_id": "syn-Drum&-4f4f72731462",
       "title": "Drum & Bass synthetic gene",
       "score": 95.0,
+      "blended_score": 95.0,
+      "fitness_method": "MECHANICAL_PROXY",
       "state": "SELECTED",
       "domain": "music",
       "pool_size": 3
@@ -47,6 +57,8 @@
       "gene_id": "syn-Synthw-0350eb50283f",
       "title": "Synthwave synthetic gene",
       "score": 100.0,
+      "blended_score": 100.0,
+      "fitness_method": "MECHANICAL_PROXY",
       "state": "SELECTED",
       "domain": "music",
       "pool_size": 3
@@ -55,6 +67,8 @@
       "gene_id": "syn-Cinema-acbe85da6681",
       "title": "Cinematic Score synthetic gene",
       "score": 92.5,
+      "blended_score": 92.5,
+      "fitness_method": "MECHANICAL_PROXY",
       "state": "SELECTED",
       "domain": "music",
       "pool_size": 3
@@ -63,10 +77,12 @@
       "gene_id": "syn-Afrobe-9fb3390bfc45",
       "title": "Afrobeats synthetic gene",
       "score": 93.0,
+      "blended_score": 93.0,
+      "fitness_method": "MECHANICAL_PROXY",
       "state": "SELECTED",
       "domain": "music",
       "pool_size": 3
     }
   },
-  "at": "2026-07-06T02:27:24.912827Z"
+  "at": "2026-07-09T06:19:29.180884Z"
 }

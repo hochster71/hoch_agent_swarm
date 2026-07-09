@@ -1,109 +1,108 @@
 {
-  "ts": "2026-07-06T02:27:07.065108Z",
+  "ts": "2026-07-09T06:19:33.216211Z",
   "live_brain": {
     "live_brain_available": true,
     "backend": {
-      "kind": "ollama",
-      "base": "http://localhost:11434",
-      "model": "llama3:latest"
+      "kind": "lmstudio",
+      "base": "http://127.0.0.1:1234",
+      "model": "google/gemma-4-12b-qat"
     },
     "note": "brain can GENERATE at $0"
   },
-  "generation": 25,
-  "genes": 479,
-  "champions": 26,
-  "mean_score": 72.5,
+  "generation": 745,
+  "genes": 737,
+  "champions": 30,
+  "mean_score": 95.583,
   "last_gain": 0.0,
-  "state": "PLATEAUING",
+  "state": "CONVERGED",
   "meta_lever": "SELECT",
-  "meta_reason": "4 classes have genes but no champion \u2014 crown them.",
+  "meta_reason": "43 classes have genes but no champion \u2014 crown them.",
   "global_converged": false,
   "gaps": {
     "by_constraint": {
-      "SATURATED": 14,
-      "LOW_CEILING": 12,
-      "NO_CHAMPION": 4
+      "SATURATED": 30,
+      "NO_CHAMPION": 43
     },
     "thin": 0,
-    "low_ceiling": 12,
-    "drift": 3,
+    "low_ceiling": 0,
+    "drift": 13,
     "expansion_needed_genes": 0,
-    "top5_share": 0.603
+    "top5_share": 0.392
   },
   "factories": [
     {
       "code": "HASF",
       "domain": "software",
       "title": "Hoch Application Software Factory",
-      "genes": 479,
-      "champions": 26,
-      "mean_score": 72.5,
-      "state": "PLATEAUING",
+      "genes": 737,
+      "champions": 30,
+      "mean_score": 95.583,
+      "state": "CONVERGED",
       "gates": 4,
       "history": [
         {
-          "g": 10,
-          "m": 60.769
+          "g": 730,
+          "m": 95.417
         },
         {
-          "g": 11,
-          "m": 60.769
+          "g": 731,
+          "m": 95.417
         },
         {
-          "g": 12,
-          "m": 64.615
+          "g": 732,
+          "m": 95.417
         },
         {
-          "g": 13,
-          "m": 67.019
+          "g": 733,
+          "m": 95.417
         },
         {
-          "g": 14,
-          "m": 68.077
+          "g": 734,
+          "m": 95.417
         },
         {
-          "g": 15,
-          "m": 68.846
+          "g": 735,
+          "m": 95.417
         },
         {
-          "g": 16,
-          "m": 68.846
+          "g": 736,
+          "m": 95.417
         },
         {
-          "g": 17,
-          "m": 68.846
+          "g": 737,
+          "m": 95.583
         },
         {
-          "g": 18,
-          "m": 70.0
+          "g": 738,
+          "m": 95.583
         },
         {
-          "g": 19,
-          "m": 70.0
+          "g": 739,
+          "m": 95.583
         },
         {
-          "g": 20,
-          "m": 70.0
+          "g": 740,
+          "m": 95.583
         },
         {
-          "g": 21,
-          "m": 70.481
+          "g": 741,
+          "m": 95.583
         },
         {
-          "g": 22,
-          "m": 71.827
+          "g": 742,
+          "m": 95.583
         },
         {
-          "g": 23,
-          "m": 72.5
+          "g": 743,
+          "m": 95.583
         },
         {
-          "g": 24,
-          "m": 72.5
+          "g": 744,
+          "m": 95.583
         },
         {
-          "g": 25,
-          "m": 72.5
+          "g": 745,
+          "m": 95.583
         }
       ]
     },
@@ -111,39 +110,75 @@
       "code": "HMF",
       "domain": "music",
       "title": "Hoch Music Factory",
-      "genes": 23,
+      "genes": 24,
       "champions": 8,
-      "mean_score": 96.938,
-      "state": "PLATEAUING",
+      "mean_score": 97.125,
+      "state": "CONVERGED",
       "gates": 4,
       "history": [
         {
-          "g": 2,
-          "m": 93.0
+          "g": 716,
+          "m": 97.125
         },
         {
-          "g": 3,
-          "m": 93.0
+          "g": 717,
+          "m": 97.125
         },
         {
-          "g": 4,
-          "m": 93.0
+          "g": 718,
+          "m": 97.125
         },
         {
-          "g": 5,
-          "m": 93.0
+          "g": 719,
+          "m": 97.125
         },
         {
-          "g": 6,
-          "m": 96.188
+          "g": 720,
+          "m": 97.125
         },
         {
-          "g": 7,
-          "m": 96.938
+          "g": 721,
+          "m": 97.125
         },
         {
-          "g": 8,
-          "m": 96.938
+          "g": 722,
+          "m": 97.125
+        },
+        {
+          "g": 723,
+          "m": 97.125
+        },
+        {
+          "g": 724,
+          "m": 97.125
+        },
+        {
+          "g": 725,
+          "m": 97.125
+        },
+        {
+          "g": 726,
+          "m": 97.125
+        },
+        {
+          "g": 727,
+          "m": 97.125
+        },
+        {
+          "g": 728,
+          "m": 97.125
+        },
+        {
+          "g": 729,
+          "m": 97.125
+        },
+        {
+          "g": 730,
+          "m": 97.125
+        },
+        {
+          "g": 731,
+          "m": 97.125
         }
       ]
     },
@@ -151,35 +186,75 @@
       "code": "HRF",
       "domain": "research",
       "title": "Hoch AI Research Factory",
-      "genes": 8,
+      "genes": 21,
       "champions": 7,
-      "mean_score": 96.0,
-      "state": "PLATEAUING",
+      "mean_score": 96.5,
+      "state": "CONVERGED",
       "gates": 5,
       "history": [
         {
-          "g": 2,
-          "m": 96.0
+          "g": 715,
+          "m": 96.5
         },
         {
-          "g": 3,
-          "m": 96.0
+          "g": 716,
+          "m": 96.5
         },
         {
-          "g": 4,
-          "m": 96.0
+          "g": 717,
+          "m": 96.5
         },
         {
-          "g": 5,
-          "m": 96.0
+          "g": 718,
+          "m": 96.5
         },
         {
-          "g": 6,
-          "m": 96.0
+          "g": 719,
+          "m": 96.5
         },
         {
-          "g": 7,
-          "m": 96.0
+          "g": 720,
+          "m": 96.5
+        },
+        {
+          "g": 721,
+          "m": 96.5
+        },
+        {
+          "g": 722,
+          "m": 96.5
+        },
+        {
+          "g": 723,
+          "m": 96.5
+        },
+        {
+          "g": 724,
+          "m": 96.5
+        },
+        {
+          "g": 725,
+          "m": 96.5
+        },
+        {
+          "g": 726,
+          "m": 96.5
+        },
+        {
+          "g": 727,
+          "m": 96.5
+        },
+        {
+          "g": 728,
+          "m": 96.5
+        },
+        {
+          "g": 729,
+          "m": 96.5
+        },
+        {
+          "g": 730,
+          "m": 96.5
         }
       ]
     }
@@ -198,10 +273,10 @@
     "components": 6
   },
   "self_heal": {
-    "verdict": "HEALED",
+    "verdict": "NEEDS_OPERATOR",
     "immunized": true,
-    "real_open": 0,
-    "findings": 0
+    "real_open": 1,
+    "findings": 1
   },
   "nist": {
     "standard": "NIST SP 800-53 Rev 5 (20 control families; DoD RMF aligned)",
@@ -354,251 +429,586 @@
   },
   "orchestrator": {
     "next_move": {
-      "code": "HRF",
-      "domain": "research",
-      "goal": "novel, citation-verified, reproducible research across grand challenges",
-      "state": "PLATEAUING",
-      "genes": 8,
-      "champions": 7,
-      "thin": 7,
-      "mean": 96.0,
-      "action": "EXPAND",
-      "detail": "grow 7 thin classes (+13 genes) via the $0 local model",
-      "cost": "$0",
-      "tier": "AUTONOMOUS",
-      "answers": "What's the gap?",
-      "leverage": 14
+      "code": "HASF",
+      "domain": "software",
+      "goal": "ship a revenue product while the brain keeps improving",
+      "state": "CONVERGED",
+      "genes": 737,
+      "champions": 30,
+      "thin": 0,
+      "mean": 95.583,
+      "action": "SHIP",
+      "detail": "point HASF at its first real revenue product",
+      "cost": "strategic",
+      "tier": "ESCALATE",
+      "answers": "GO on the next milestone?",
+      "leverage": 5
     },
-    "autonomous_now": [
-      {
-        "code": "HRF",
-        "action": "EXPAND",
-        "detail": "grow 7 thin classes (+13 genes) via the $0 local model"
-      },
-      {
-        "code": "HMF",
-        "action": "EXPAND",
-        "detail": "grow 1 thin classes (+1 genes) via the $0 local model"
-      }
-    ],
+    "autonomous_now": [],
     "needs_operator": [
       {
         "code": "HASF",
         "action": "SHIP",
         "detail": "point HASF at its first real revenue product",
         "why": "strategic \u00b7 GO on the next milestone?"
+      },
+      {
+        "code": "HMF",
+        "action": "RENDER",
+        "detail": "stand up audio render + audio-quality judge (M2/M3)",
+        "why": "cost \u00b7 GO on the next milestone?"
+      },
+      {
+        "code": "HRF",
+        "action": "EXECUTE",
+        "detail": "stand up computational execution + novelty judge (M4/M5)",
+        "why": "cost \u00b7 GO on the next milestone?"
       }
     ],
-    "summary": "AI Michael: 2 action(s) I can take now at $0; 1 need your founder call (T3/cost)."
+    "summary": "AI Michael: 0 action(s) I can take now at $0; 3 need your founder call (T3/cost)."
   },
+  "fleet_reconcile": {
+    "jobs_examined": 1,
+    "unresolved": 1,
+    "job_source": "synthetic",
+    "method": "heuristic static write-set extraction (regex, transitive fan-out; literal + pathlib paths)",
+    "contested_files": {},
+    "recommendations": [],
+    "actions": [],
+    "safety": {
+      "never_executes": true,
+      "all_actions_pending_operator_T3": true
+    },
+    "at": "2026-07-09T06:04:08.750708Z"
+  },
+  "buyer_signals": {
+    "outreach_queued": 12,
+    "outreach_approved": 5,
+    "outreach_sent": 5,
+    "replies_received": 3,
+    "demos_scheduled": 2,
+    "demos_completed": 1,
+    "reviewer_feedback_count": 3,
+    "positive_buyer_signals": 3,
+    "objections": [
+      "Price point validation",
+      "Local model container complexity"
+    ],
+    "pilot_interest_count": 3,
+    "paid_pilot_interest_count": 2,
+    "conversion_rate_percentage": 60.0
+  },
+  "reviewer_feedback": {
+    "total_feedback_count": 3,
+    "average_correctness": 9.0,
+    "average_usefulness": 9.17,
+    "average_trust": 9.0,
+    "willingness_to_pilot_count": 3,
+    "willingness_to_pay_count": 2
+  },
+  "outreach_gate": {
+    "approved_outreach_targets_queued": 5,
+    "external_reviewer_feedback_count": 3,
+    "critical_trust_objections_unresolved": 0,
+    "demos_scheduled": 2,
+    "verdict": "ADVANCE_TO_PAID_PILOT"
+  },
+  "pilot_tracker": {
+    "total_leads": 5,
+    "demos_scheduled": 2,
+    "demos_completed": 1,
+    "pilot_proposals_sent": 1,
+    "active_paid_pilots": 0,
+    "converted_paid_contracts": 0,
+    "conversion_rate_percentage": 0.0,
+    "expected_pipeline_value_usd": 5998.0
+  },
+  "pilot_pipeline": [
+    {
+      "account": "Apex Federal Security",
+      "contact": "Robert Chen",
+      "segment": "GovCon cybersecurity",
+      "demo_status": "COMPLETED",
+      "pilot_interest": "HIGH",
+      "proposed_price_usd": 4999.0,
+      "objection": "Price point justification",
+      "risk": "Local container installation complexity",
+      "next_action": "Send price justification objection response email",
+      "conversion_status": "PROPOSED",
+      "expected_close_date": "2026-07-20",
+      "notes": "Targeting GovCon team pilot cohort"
+    },
+    {
+      "account": "Summit Compliance Partners",
+      "contact": "Sarah Miller",
+      "segment": "RMF consultants",
+      "demo_status": "SCHEDULED",
+      "pilot_interest": "MEDIUM",
+      "proposed_price_usd": 999.0,
+      "objection": "None",
+      "risk": "None",
+      "next_action": "Run walkthrough using 15-minute demo script",
+      "conversion_status": "LEAD",
+      "expected_close_date": "2026-07-25",
+      "notes": "Interested in starter pilot"
+    }
+  ],
   "history": [
     {
-      "g": 2,
-      "m": 50.769,
+      "g": 722,
+      "m": 95.083,
       "gain": 0.0
     },
     {
-      "g": 3,
-      "m": 50.769,
+      "g": 723,
+      "m": 95.083,
       "gain": 0.0
     },
     {
-      "g": 4,
-      "m": 50.769,
+      "g": 724,
+      "m": 95.083,
       "gain": 0.0
     },
     {
-      "g": 5,
-      "m": 50.769,
+      "g": 725,
+      "m": 95.083,
       "gain": 0.0
     },
     {
-      "g": 6,
-      "m": 50.769,
+      "g": 726,
+      "m": 95.417,
+      "gain": 0.334
+    },
+    {
+      "g": 727,
+      "m": 95.417,
       "gain": 0.0
     },
     {
-      "g": 7,
-      "m": 50.769,
+      "g": 728,
+      "m": 95.417,
       "gain": 0.0
     },
     {
-      "g": 8,
-      "m": 50.769,
+      "g": 729,
+      "m": 95.417,
       "gain": 0.0
     },
     {
-      "g": 9,
-      "m": 56.442,
-      "gain": 5.673
-    },
-    {
-      "g": 10,
-      "m": 60.769,
-      "gain": 4.327
-    },
-    {
-      "g": 11,
-      "m": 60.769,
+      "g": 730,
+      "m": 95.417,
       "gain": 0.0
     },
     {
-      "g": 12,
-      "m": 64.615,
-      "gain": 3.846
-    },
-    {
-      "g": 13,
-      "m": 67.019,
-      "gain": 2.404
-    },
-    {
-      "g": 14,
-      "m": 68.077,
-      "gain": 1.058
-    },
-    {
-      "g": 15,
-      "m": 68.846,
-      "gain": 0.769
-    },
-    {
-      "g": 16,
-      "m": 68.846,
+      "g": 731,
+      "m": 95.417,
       "gain": 0.0
     },
     {
-      "g": 17,
-      "m": 68.846,
+      "g": 732,
+      "m": 95.417,
       "gain": 0.0
     },
     {
-      "g": 18,
-      "m": 70.0,
-      "gain": 1.154
-    },
-    {
-      "g": 19,
-      "m": 70.0,
+      "g": 733,
+      "m": 95.417,
       "gain": 0.0
     },
     {
-      "g": 20,
-      "m": 70.0,
+      "g": 734,
+      "m": 95.417,
       "gain": 0.0
     },
     {
-      "g": 21,
-      "m": 70.481,
-      "gain": 0.481
-    },
-    {
-      "g": 22,
-      "m": 71.827,
-      "gain": 1.346
-    },
-    {
-      "g": 23,
-      "m": 72.5,
-      "gain": 0.673
-    },
-    {
-      "g": 24,
-      "m": 72.5,
+      "g": 735,
+      "m": 95.417,
       "gain": 0.0
     },
     {
-      "g": 25,
-      "m": 72.5,
+      "g": 736,
+      "m": 95.417,
+      "gain": 0.0
+    },
+    {
+      "g": 737,
+      "m": 95.583,
+      "gain": 0.166
+    },
+    {
+      "g": 738,
+      "m": 95.583,
+      "gain": 0.0
+    },
+    {
+      "g": 739,
+      "m": 95.583,
+      "gain": 0.0
+    },
+    {
+      "g": 740,
+      "m": 95.583,
+      "gain": 0.0
+    },
+    {
+      "g": 741,
+      "m": 95.583,
+      "gain": 0.0
+    },
+    {
+      "g": 742,
+      "m": 95.583,
+      "gain": 0.0
+    },
+    {
+      "g": 743,
+      "m": 95.583,
+      "gain": 0.0
+    },
+    {
+      "g": 744,
+      "m": 95.583,
+      "gain": 0.0
+    },
+    {
+      "g": 745,
+      "m": 95.583,
       "gain": 0.0
     }
   ],
   "recent_improvements": [
     {
-      "task_class": "Infrastructure & Hardware",
-      "beats_mech": 17.5,
-      "score": 80.0,
-      "at": "2026-07-06T02:14:50.359870Z"
+      "task_class": "Governance / Compliance",
+      "beats_mech": 5.0,
+      "score": 100.0,
+      "at": "2026-07-09T05:11:55.467794Z"
     },
     {
       "task_class": "Self-Healing",
-      "beats_mech": 12.5,
-      "score": 90.0,
-      "at": "2026-07-06T02:05:30.320525Z"
+      "beats_mech": 10.0,
+      "score": 100.0,
+      "at": "2026-07-09T03:59:29.397471Z"
     },
     {
-      "task_class": "AI / ML",
-      "beats_mech": 22.5,
-      "score": 85.0,
-      "at": "2026-07-06T02:05:30.320525Z"
-    },
-    {
-      "task_class": "Software Engineering",
-      "beats_mech": 12.5,
-      "score": 75.0,
-      "at": "2026-07-06T01:59:06.600835Z"
-    },
-    {
-      "task_class": "Industry Specialized",
-      "beats_mech": 30.0,
-      "score": 80.0,
-      "at": "2026-07-06T01:36:52.214337Z"
+      "task_class": "Research & Delivery",
+      "beats_mech": 10.0,
+      "score": 100.0,
+      "at": "2026-07-09T02:54:10.451271Z"
     },
     {
       "task_class": "AGI & Safety",
-      "beats_mech": 7.5,
-      "score": 80.0,
-      "at": "2026-07-06T01:03:15.756552Z"
+      "beats_mech": 10.0,
+      "score": 100.0,
+      "at": "2026-07-09T02:54:10.451271Z"
     },
     {
       "task_class": "Cybersecurity",
-      "beats_mech": 2.5,
-      "score": 75.0,
-      "at": "2026-07-06T01:03:15.756552Z"
+      "beats_mech": 0.0,
+      "score": 100.0,
+      "at": "2026-07-07T02:53:11.420012Z"
     },
     {
-      "task_class": "Cloud Security",
+      "task_class": "AI / ML",
       "beats_mech": 10.0,
-      "score": 67.5,
-      "at": "2026-07-06T01:03:15.756552Z"
+      "score": 95.0,
+      "at": "2026-07-07T01:21:31.351119Z"
+    },
+    {
+      "task_class": "SAST",
+      "beats_mech": 10.0,
+      "score": 92.5,
+      "at": "2026-07-07T01:13:01.556018Z"
+    },
+    {
+      "task_class": "Data Security",
+      "beats_mech": 10.0,
+      "score": 100.0,
+      "at": "2026-07-07T01:05:15.333637Z"
     }
   ],
   "top_champions": [
     {
-      "cls": "Self-Healing",
-      "title": "Rollback and Loop Mitigation Coordinator",
-      "score": 90.0,
-      "state": "GENERATED_AND_JUDGED"
+      "cls": "Audit",
+      "title": "Student Data Privacy Agent (brain-improv",
+      "score": 100.0,
+      "state": "RECURSIVELY_IMPROVED",
+      "fitness_method": "MECHANICAL_PROXY",
+      "blended_score": null
     },
     {
-      "cls": "QA",
-      "title": "Test Automation Architect Agent (brain-i",
-      "score": 87.5,
-      "state": "GENERATED_AND_JUDGED"
+      "cls": "AI / ML Systems",
+      "title": "AI Model Risk QA Agent (brain-improved) ",
+      "score": 100.0,
+      "state": "RECURSIVELY_IMPROVED",
+      "fitness_method": "MECHANICAL_PROXY",
+      "blended_score": null
     },
     {
-      "cls": "AI / ML",
-      "title": "Defense / DoD / National Security AI Ris",
-      "score": 85.0,
-      "state": "GENERATED_AND_JUDGED"
+      "cls": "Privacy",
+      "title": "Privacy-by-Design DPIA Agent (brain-impr",
+      "score": 100.0,
+      "state": "RECURSIVELY_IMPROVED",
+      "fitness_method": "MECHANICAL_PROXY",
+      "blended_score": null
+    },
+    {
+      "cls": "Data Security",
+      "title": "Database Security Agent (brain-improved)",
+      "score": 100.0,
+      "state": "RECURSIVELY_IMPROVED",
+      "fitness_method": "MECHANICAL_PROXY",
+      "blended_score": null
     },
     {
       "cls": "Detection Engineering",
       "title": "Detection Coverage Gap Mapper (brain-imp",
-      "score": 80.0,
-      "state": "GENERATED_AND_JUDGED"
+      "score": 100.0,
+      "state": "RECURSIVELY_IMPROVED",
+      "fitness_method": "MECHANICAL_PROXY",
+      "blended_score": null
     },
     {
       "cls": "Industry Specialized",
       "title": "Telemetry Integrity Agent (brain-improve",
-      "score": 80.0,
-      "state": "GENERATED_AND_JUDGED"
-    },
-    {
-      "cls": "AGI & Safety",
-      "title": "AGI Alignment Telemetry Validator (Initi",
-      "score": 80.0,
-      "state": "GENERATED_AND_JUDGED"
+      "score": 100.0,
+      "state": "RECURSIVELY_IMPROVED",
+      "fitness_method": "MECHANICAL_PROXY",
+      "blended_score": null
     }
-  ]
+  ],
+  "combat": {
+    "at": "2026-07-09T06:19:33.229369Z",
+    "genes_with_combat_record": 7,
+    "total_champion_executions": 22,
+    "gates": {
+      "m0_generation": {
+        "total": 61,
+        "VERIFIED": 61
+      },
+      "live_judge": {
+        "total": 1,
+        "PROMOTED": 1
+      }
+    },
+    "top": [
+      {
+        "gene_id": "gen-gen-gapfill-caa718343c-20260706T005131-20260706T220723",
+        "task_class": "Incident Response",
+        "executions": 10,
+        "completed": 7,
+        "failed": 3,
+        "surfaces": {
+          "agent_runner": 10
+        },
+        "last_used": "2026-07-08T15:37:03.355811Z"
+      },
+      {
+        "gene_id": "gen-gen-HASF-EXP-HEAL-417-20260706T020530-20260706T193901",
+        "task_class": "Self-Healing",
+        "executions": 2,
+        "completed": 2,
+        "failed": 0,
+        "surfaces": {
+          "agent_runner": 2
+        },
+        "last_used": "2026-07-08T15:37:55.022921Z"
+      },
+      {
+        "gene_id": "gen-gen-gen-HASF-CYB-IR-020-20260706T010315-20260706T223608-20260707T025311",
+        "task_class": "Cybersecurity",
+        "executions": 2,
+        "completed": 2,
+        "failed": 0,
+        "surfaces": {
+          "agent_runner": 2
+        },
+        "last_used": "2026-07-08T15:38:55.416322Z",
+        "gate_results": {
+          "live_judge": 1
+        }
+      },
+      {
+        "gene_id": "seed-lo-f-1113d93381",
+        "task_class": "Lo-Fi Hip-Hop",
+        "executions": 2,
+        "completed": 2,
+        "failed": 0,
+        "surfaces": {
+          "agent_runner": 2
+        },
+        "last_used": "2026-07-08T15:39:44.314856Z"
+      },
+      {
+        "gene_id": "seed-ambi-db7bb85622",
+        "task_class": "Ambient",
+        "executions": 2,
+        "completed": 2,
+        "failed": 0,
+        "surfaces": {
+          "agent_runner": 2
+        },
+        "last_used": "2026-07-08T15:40:47.060310Z"
+      },
+      {
+        "gene_id": "seed-long-de9ffeaa1e",
+        "task_class": "Longevity",
+        "executions": 2,
+        "completed": 2,
+        "failed": 0,
+        "surfaces": {
+          "agent_runner": 2
+        },
+        "last_used": "2026-07-08T15:41:39.901125Z"
+      },
+      {
+        "gene_id": "seed-ais-e4d23524b4",
+        "task_class": "AI Safety",
+        "executions": 2,
+        "completed": 2,
+        "failed": 0,
+        "surfaces": {
+          "agent_runner": 2
+        },
+        "last_used": "2026-07-08T15:42:53.980187Z"
+      }
+    ]
+  },
+  "fleet": {
+    "status": "9/10 REACHABLE (90%)",
+    "sync": "DEGRADED",
+    "latency": "2.4ms avg (measured)",
+    "reachable": 9,
+    "telemetry_note": "cpu/ram/agents are MEASURED only where telemetry_authority=MEASURED_LOCAL; DECLARED_ROSTER values are configuration, not measurements",
+    "nodes": [
+      {
+        "id": "L1",
+        "status": "Active",
+        "cpu": 0,
+        "ram": 74,
+        "agents": 20,
+        "latency_ms": 0.0,
+        "authority": "MEASURED_LOCAL",
+        "activity": "Control plane: API + cadence + BRAIN loops (this host)"
+      },
+      {
+        "id": "L2",
+        "status": "Unreachable",
+        "cpu": 58,
+        "ram": 63,
+        "agents": 4,
+        "latency_ms": -1.0,
+        "authority": "UNREACHABLE",
+        "activity": "(unmeasured \u2014 no telemetry agent on node)"
+      },
+      {
+        "id": "L3",
+        "status": "Reachable",
+        "cpu": 74,
+        "ram": 68,
+        "agents": 5,
+        "latency_ms": 1.1,
+        "authority": "DECLARED_ROSTER_NOT_MEASURED",
+        "activity": "(unmeasured \u2014 no telemetry agent on node)"
+      },
+      {
+        "id": "W1",
+        "status": "Reasoning",
+        "cpu": 82,
+        "ram": 78,
+        "agents": 12,
+        "latency_ms": 1.8,
+        "authority": "DECLARED_ROSTER_NOT_MEASURED",
+        "activity": "Reasoning over failing unit test suite \u2014 3 cases"
+      },
+      {
+        "id": "IPAD",
+        "status": "Active",
+        "cpu": 28,
+        "ram": 38,
+        "agents": 3,
+        "latency_ms": 2.4,
+        "authority": "DECLARED_ROSTER_NOT_MEASURED",
+        "activity": "Streaming live vitals to C2 dashboard"
+      },
+      {
+        "id": "IPHONE",
+        "status": "Active",
+        "cpu": 22,
+        "ram": 32,
+        "agents": 3,
+        "latency_ms": 3.1,
+        "authority": "DECLARED_ROSTER_NOT_MEASURED",
+        "activity": "Performing network topology health scan"
+      },
+      {
+        "id": "IPAD_PRO_11",
+        "status": "Active",
+        "cpu": 15,
+        "ram": 25,
+        "agents": 2,
+        "latency_ms": 3.8,
+        "authority": "DECLARED_ROSTER_NOT_MEASURED",
+        "activity": "Streaming live vitals to C2 dashboard"
+      },
+      {
+        "id": "IPAD_MINI_1",
+        "status": "Active",
+        "cpu": 18,
+        "ram": 35,
+        "agents": 2,
+        "latency_ms": 4.1,
+        "authority": "DECLARED_ROSTER_NOT_MEASURED",
+        "activity": "Streaming live vitals to C2 dashboard"
+      },
+      {
+        "id": "IPAD_MINI_2",
+        "status": "Active",
+        "cpu": 22,
+        "ram": 45,
+        "agents": 2,
+        "latency_ms": 5.5,
+        "authority": "DECLARED_ROSTER_NOT_MEASURED",
+        "activity": "Streaming live vitals to C2 dashboard"
+      },
+      {
+        "id": "RELAY",
+        "status": "Active",
+        "cpu": 0,
+        "ram": 0,
+        "agents": 0,
+        "latency_ms": 0.0,
+        "authority": "MEASURED_REMOTE",
+        "activity": "Relay API + burn-in daemon + local inference (measured on host)"
+      }
+    ]
+  },
+  "gateway": {
+    "backends": [
+      {
+        "name": "lmstudio",
+        "alive": true,
+        "model": "google/gemma-4-12b-qat",
+        "latency_ms": 547.6,
+        "failures": 0,
+        "last_probe": 1783577975.303117
+      },
+      {
+        "name": "mac-local",
+        "alive": true,
+        "model": "llama3.1:8b",
+        "latency_ms": 2218.8,
+        "failures": 0,
+        "last_probe": 1783577976.9746869
+      },
+      {
+        "name": "relay-001",
+        "alive": true,
+        "model": "qwen3:1.7b",
+        "latency_ms": 603.3,
+        "failures": 0,
+        "last_probe": 1783577975.3592079
+      }
+    ],
+    "primary": "lmstudio",
+    "alive_count": 3
+  }
 }

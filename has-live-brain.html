@@ -143,14 +143,14 @@
   </div>
   <div class="tick">▸ <span id="tk">connecting to relay…</span></div>
   <div id="door" style="margin-top:10px"></div>
-  <div class="foot">source: <span id="src">http://100.87.18.15:3012/api/live</span> · refresh 3s · open on a device on the HOCH tailnet for live data</div>
+  <div class="foot">source: <span id="src">https://hoch-relay-001.tail826763.ts.net:3012/api/live</span> · refresh 3s · open on a device on the HOCH tailnet for live data</div>
 </div>
 
 <script>
 (function(){
   // Same-origin when served from the relay (/brain); absolute tailscale URL when opened as a file.
   var RELAY=(location.protocol==="http:"||location.protocol==="https:")
-    ? (location.origin+"/api/live") : "http://100.87.18.15:3012/api/live";
+    ? (location.origin+"/api/live") : "https://hoch-relay-001.tail826763.ts.net:3012/api/live";
   var SVGNS="http://www.w3.org/2000/svg";
   var $=function(id){return document.getElementById(id);};
   var last=null, ticks=[], ti=0;

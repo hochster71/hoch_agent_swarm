@@ -131,6 +131,7 @@ import { RevenueOpsDashboard } from "./components/revenue-ops/RevenueOpsDashboar
 import { HochsterDashboard } from "./components/hochster/HochsterDashboard";
 import { OverviewControlPlane } from "./components/overview/OverviewControlPlane";
 import { PertCriticalPathTab } from "./components/overview/PertCriticalPathTab";
+import { HochNeuroPanel } from "./components/neuro/HochNeuroPanel";
 
 // Mount Timeline Replay Dashboard
 const replayRoot = document.getElementById("react-replay-root");
@@ -279,6 +280,17 @@ if (pertRoot) {
   ReactDOM.createRoot(pertRoot).render(
     <React.StrictMode>
       <PertCriticalPathTab />
+    </React.StrictMode>
+  );
+}
+
+// Mount HOCH NEURO neurovascular command center (S4). Guarded: inert until
+// index.html provides #react-neuro-root. Binds the live relay endpoints; no fake green.
+const neuroRoot = document.getElementById("react-neuro-root");
+if (neuroRoot) {
+  ReactDOM.createRoot(neuroRoot).render(
+    <React.StrictMode>
+      <HochNeuroPanel />
     </React.StrictMode>
   );
 }

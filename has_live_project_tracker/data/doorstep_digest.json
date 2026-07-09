@@ -1,7 +1,111 @@
 {
-  "ts": "2026-07-07T19:14:33+00:00",
-  "goal": "Launch HSF Story Studio as a paid product",
-  "phase": "RESEARCH",
-  "at_the_door": [],
-  "message": "Northstar set. RESEARCH queued. (local model backend needs a fix before autonomous run.)"
+  "ts": "2026-07-07T20:12:56+00:00",
+  "northstar": "Launch HSF Story Studio as a paid product",
+  "phase": "DEVELOP",
+  "progress": {
+    "goal": "Launch HSF Story Studio as a paid product",
+    "phase": "DEVELOP",
+    "tasks": 6,
+    "done": 4,
+    "staged_at_door": 0,
+    "pending": 2,
+    "deferred_need_code_mode": 2,
+    "ts": "2026-07-07T20:12:56+00:00"
+  },
+  "at_the_door": [
+    {
+      "id": "r2-appstore-submit",
+      "gate": "blocked_release",
+      "title": "App Store submission path (Apple Developer / TestFlight / submit)",
+      "why_founder": "Apple identity + submission are irreducible founder gates (account, 2FA, legal attestation).",
+      "action": "Archive+upload the signed build via Xcode/Fastlane to App Store Connect under Team K34GR8P326.",
+      "blocking_evidence": "docs/generated/r2/testflight_checklist.md",
+      "staged_at": "2026-07-07T15:40:04+00:00",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "neuro-relay-redeploy",
+      "gate": "blocked_release",
+      "title": "Redeploy relay-api with truthful provider_api_calls / founder_gated_execution",
+      "why_founder": "Deploying to relay-001 is an infra publish act (SSH + docker on the live node).",
+      "action": "scp infra/hoch-200/vps/relay-api/app.py to relay-001 and: docker compose build relay-api && docker compose up -d relay-api . Then curl /api/live and confirm provider_api_calls=OFF.",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "neuro-route-wire-deploy",
+      "gate": "blocked_release",
+      "title": "Expose HOCH NEURO tab in the production dashboard",
+      "why_founder": "Adding the #react-neuro-root tab + rebuilding/deploying the frontend is a publish act.",
+      "action": "Apply docs/generated/neuro/wiring_snippet.md to dashboard index.html, run frontend build (tsc && vite build), deploy. Panel is inert until #react-neuro-root exists.",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "neuro-brain-image-burst",
+      "gate": "blocked_monetization",
+      "title": "Generate photoreal brain image (paid burst GPU)",
+      "why_founder": "Image generation needs paid burst compute or a keyed image service — a spend action.",
+      "action": "Run the spec in docs/generated/neuro/brain_image_spec.md on burst GPU (or approved image tool); place hoch-brain.png at frontend/public/assets/ and assets/. Panel auto-composites it.",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "neuro-changeboard-commit",
+      "gate": "blocked_release",
+      "title": "Commit neuro panel + tests through the change board",
+      "why_founder": "git commit/tag on the real repo runs on your Mac; push is a founder gate.",
+      "action": "Run scripts/baseline_guard.py, commit hoch-neuro-*.{html,js}, frontend/src/{lib,components}/neuro/*, tests/test_hoch_neuro_derive.js, infra/.../app.py, then tag a new baseline.",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "apple-install-tools",
+      "gate": "blocked_release",
+      "title": "Install Apple design tools on the Mac (Icon Composer, SF Symbols 8, fonts, bezels)",
+      "why_founder": "Downloading + installing .dmg tools on your Mac is an on-device install act.",
+      "action": "Download from developer.apple.com/design/resources: Icon Composer (macOS Sequoia+), SF Symbols 8 beta, SF Pro/SF Mono/New York fonts, iPhone 17 + iPad Pro (M5) bezels. Install.",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "apple-liquid-glass-icon",
+      "gate": "blocked_release",
+      "title": "Produce Epic Fury Liquid Glass layered app icon",
+      "why_founder": "Icon art + Xcode packaging is an on-device creative act on your Mac.",
+      "action": "In Icon Composer build the 3-4 layer Epic Fury icon per docs/generated/apple/epic_fury_liquid_glass_refresh.md (light/dark/clear), export Epic-Fury.icon + flattened 1024 PNG. Ship in the next build (not this review).",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "apple-screenshots-bezels",
+      "gate": "blocked_release",
+      "title": "Produce Epic Fury screenshots in current bezels",
+      "why_founder": "Capturing/rendering marketing screenshots is an on-device act; App Store upload is a founder gate.",
+      "action": "Render the 6-frame set (per storyboard) in iPhone 17 / iPad Pro M5 bezels, captions sentence-case, then upload via App Store Connect at next submission.",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "rev-ef-model-price",
+      "gate": "blocked_monetization",
+      "title": "Choose Epic Fury monetization model + set price in App Store Connect",
+      "why_founder": "Pricing + monetization model is a founder money decision.",
+      "action": "In App Store Connect pick model (paid up-front recommended for v1.0) and set the price tier per docs/revenue/epic_fury_pricing.md.",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "rev-ef-paid-agreement",
+      "gate": "blocked_monetization",
+      "title": "Sign Paid Apps agreement + confirm banking/tax",
+      "why_founder": "Legal agreement + banking/tax are irreducible founder acts to receive money.",
+      "action": "Accept the Paid Apps agreement in App Store Connect; confirm bank account + tax forms so sales can pay out.",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "rev-ss-stripe-live",
+      "gate": "blocked_monetization",
+      "title": "Provision Story Studio Stripe live keys + payout bank",
+      "why_founder": "Live payment keys + payout bank are founder credential/money acts.",
+      "action": "Create Stripe live products/prices per docs/revenue/story_studio_stripe_spec.md, connect payout bank, provide live keys to the deploy (never in chat).",
+      "status": "READY_FOR_FOUNDER"
+    }
+  ],
+  "message": "1 decision(s) waiting for you.",
+  "neuro_workpackage_added": "2026-07-07T20:47:12Z",
+  "apple_workpackage_added": "2026-07-07T20:55:57Z",
+  "revenue_workpackage_added": "2026-07-07T21:14:17Z"
 }

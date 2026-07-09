@@ -6,131 +6,21 @@
     "drift_ratio": 0.72
   },
   "totals": {
-    "gene_classes": 30,
-    "champion_classes": 26,
-    "total_genes": 479,
-    "top5_share": 0.603,
-    "mean_champion_score": 72.5,
-    "generation": 25,
-    "state": "PLATEAUING"
+    "gene_classes": 73,
+    "champion_classes": 30,
+    "total_genes": 737,
+    "top5_share": 0.392,
+    "mean_champion_score": 95.583,
+    "generation": 745,
+    "state": "CONVERGED"
   },
   "by_constraint": {
-    "SATURATED": 14,
-    "LOW_CEILING": 12,
-    "NO_CHAMPION": 4
+    "SATURATED": 30,
+    "NO_CHAMPION": 43
   },
   "expansion_needed_genes": 0,
   "thin_classes": [],
-  "low_ceiling_classes": [
-    {
-      "class": "Supply Chain",
-      "genes": 6,
-      "has_champion": true,
-      "score": 57.5,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
-      "class": "Vulnerability Management",
-      "genes": 6,
-      "has_champion": true,
-      "score": 60.0,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
-      "class": "Governance / Compliance",
-      "genes": 50,
-      "has_champion": true,
-      "score": 62.5,
-      "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
-      "class": "Research & Delivery",
-      "genes": 8,
-      "has_champion": true,
-      "score": 62.5,
-      "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
-      "class": "AI / ML Systems",
-      "genes": 6,
-      "has_champion": true,
-      "score": 67.5,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
-      "class": "Cloud Security",
-      "genes": 6,
-      "has_champion": true,
-      "score": 67.5,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
-      "class": "Governance",
-      "genes": 6,
-      "has_champion": true,
-      "score": 67.5,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
-      "class": "Operations",
-      "genes": 41,
-      "has_champion": true,
-      "score": 67.5,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
-      "class": "Privacy",
-      "genes": 6,
-      "has_champion": true,
-      "score": 67.5,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
-      "class": "SAST",
-      "genes": 6,
-      "has_champion": true,
-      "score": 67.5,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
-      "class": "SDLC Governance",
-      "genes": 8,
-      "has_champion": true,
-      "score": 67.5,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
-      "class": "Security Architecture",
-      "genes": 18,
-      "has_champion": true,
-      "score": 67.5,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    }
-  ],
+  "low_ceiling_classes": [],
   "taxonomy_drift": [
     {
       "a": "AI / ML",
@@ -143,14 +33,64 @@
       "similarity": 1.0
     },
     {
+      "a": "Audit",
+      "b": "SSP Control Narrative Audit",
+      "similarity": 1.0
+    },
+    {
+      "a": "Audit",
+      "b": "Audit-Ready Evidence Trail",
+      "similarity": 1.0
+    },
+    {
+      "a": "Audit",
+      "b": "Audit cryptographic key lifecycles.",
+      "similarity": 1.0
+    },
+    {
       "a": "SDLC Governance",
       "b": "Governance",
       "similarity": 1.0
+    },
+    {
+      "a": "Checksum",
+      "b": "Hash Checksums",
+      "similarity": 1.0
+    },
+    {
+      "a": "STIG Checklist Review",
+      "b": "DISA STIG Checklist Review",
+      "similarity": 1.0
+    },
+    {
+      "a": "Review an SSP control narrative",
+      "b": "SSP Control Narrative Review",
+      "similarity": 1.0
+    },
+    {
+      "a": "Review Acceleration",
+      "b": "review acceleration",
+      "similarity": 1.0
+    },
+    {
+      "a": "SSP Control Narrative Audit",
+      "b": "Review an SSP control narrative",
+      "similarity": 0.75
+    },
+    {
+      "a": "SSP Control Narrative Audit",
+      "b": "SSP Control Narrative Review",
+      "similarity": 0.75
+    },
+    {
+      "a": "DISA STIG Gap Review",
+      "b": "DISA STIG Checklist Review",
+      "similarity": 0.75
     }
   ],
   "per_class": [
     {
-      "class": "DAST",
+      "class": "App Release Checklist",
       "genes": 6,
       "has_champion": false,
       "score": null,
@@ -159,7 +99,376 @@
       "pool_deficit": 0
     },
     {
-      "class": "Family & Personal",
+      "class": "Audit cryptographic key lifecycles.",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Audit-Ready Evidence Trail",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Checksum",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Compliance Control Mappings",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "ConMon Monthly Evidence Triage",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Configure automated static code scanning.",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Control assessment failures",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "DISA STIG Checklist Review",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "DISA STIG Gap Review",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Deliverables checklist",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Demos Scheduled",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Design and compile prompt templates.",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Establish zero-trust network boundaries.",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Expected Review Time",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "External Review Rubric",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "External Reviewer Package",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Generating customer monetizable pricing packages.",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Hardened Health Auditing",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Hash Checksums",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Manager Review Prompt",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Mission Commander Agent",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Nessus Vulnerability Triage",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "POA&M Item Triage",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Pilot Launch Checklist",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "READY_FOR_PHASE_11_REVIEW",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Relay Health & Checklists",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Review Acceleration",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Review Scope",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Review Uplift",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Review an SSP control narrative",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Reviewer Feedback Intake",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Reviewer Feedback Logs",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Risk Controls",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "SSP Control Narrative Audit",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "SSP Control Narrative Review",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "STIG Checklist Review",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "STIG checklist parser",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Screenshot Package Checklist",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Stricter Safety Auditing",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Total Audited",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "[x] Reviewer roles",
+      "genes": 6,
+      "has_champion": false,
+      "score": null,
+      "state": null,
+      "constraint": "NO_CHAMPION",
+      "pool_deficit": 0
+    },
+    {
+      "class": "review acceleration",
       "genes": 6,
       "has_champion": false,
       "score": null,
@@ -170,134 +479,179 @@
     {
       "class": "Legal / Compliance",
       "genes": 6,
-      "has_champion": false,
-      "score": null,
-      "state": null,
-      "constraint": "NO_CHAMPION",
-      "pool_deficit": 0
-    },
-    {
-      "class": "UX Security",
-      "genes": 6,
-      "has_champion": false,
-      "score": null,
-      "state": null,
-      "constraint": "NO_CHAMPION",
-      "pool_deficit": 0
-    },
-    {
-      "class": "Supply Chain",
-      "genes": 6,
       "has_champion": true,
-      "score": 57.5,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
-      "class": "Vulnerability Management",
-      "genes": 6,
-      "has_champion": true,
-      "score": 60.0,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
-      "class": "Governance / Compliance",
-      "genes": 50,
-      "has_champion": true,
-      "score": 62.5,
-      "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
-      "class": "Research & Delivery",
-      "genes": 8,
-      "has_champion": true,
-      "score": 62.5,
-      "state": "VERIFIED_ON_HELDOUT",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
-      "class": "AI / ML Systems",
-      "genes": 6,
-      "has_champion": true,
-      "score": 67.5,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "LOW_CEILING",
+      "score": 82.5,
+      "state": "RECURSIVELY_IMPROVED",
+      "constraint": "SATURATED",
       "pool_deficit": 0
     },
     {
       "class": "Cloud Security",
       "genes": 6,
       "has_champion": true,
-      "score": 67.5,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
-      "class": "Governance",
-      "genes": 6,
-      "has_champion": true,
-      "score": 67.5,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
-      "class": "Operations",
-      "genes": 41,
-      "has_champion": true,
-      "score": 67.5,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
-      "class": "Privacy",
-      "genes": 6,
-      "has_champion": true,
-      "score": 67.5,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
-      "class": "SAST",
-      "genes": 6,
-      "has_champion": true,
-      "score": 67.5,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
-      "class": "SDLC Governance",
-      "genes": 8,
-      "has_champion": true,
-      "score": 67.5,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "LOW_CEILING",
-      "pool_deficit": 0
-    },
-    {
-      "class": "Security Architecture",
-      "genes": 18,
-      "has_champion": true,
-      "score": 67.5,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "LOW_CEILING",
+      "score": 85.0,
+      "state": "RECURSIVELY_IMPROVED",
+      "constraint": "SATURATED",
       "pool_deficit": 0
     },
     {
       "class": "Incident Response",
       "genes": 6,
       "has_champion": true,
-      "score": 70.0,
+      "score": 90.0,
+      "state": "RECURSIVELY_IMPROVED",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Operations",
+      "genes": 41,
+      "has_champion": true,
+      "score": 90.0,
+      "state": "RECURSIVELY_IMPROVED",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Software Engineering",
+      "genes": 6,
+      "has_champion": true,
+      "score": 90.0,
+      "state": "RECURSIVELY_IMPROVED",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Supply Chain",
+      "genes": 6,
+      "has_champion": true,
+      "score": 90.0,
+      "state": "RECURSIVELY_IMPROVED",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Coding",
+      "genes": 6,
+      "has_champion": true,
+      "score": 92.5,
+      "state": "RECURSIVELY_IMPROVED",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Governance",
+      "genes": 6,
+      "has_champion": true,
+      "score": 92.5,
+      "state": "RECURSIVELY_IMPROVED",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
+      "class": "SAST",
+      "genes": 6,
+      "has_champion": true,
+      "score": 92.5,
+      "state": "RECURSIVELY_IMPROVED",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Security Architecture",
+      "genes": 18,
+      "has_champion": true,
+      "score": 92.5,
+      "state": "RECURSIVELY_IMPROVED",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
+      "class": "AI / ML",
+      "genes": 51,
+      "has_champion": true,
+      "score": 95.0,
+      "state": "RECURSIVELY_IMPROVED",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
+      "class": "DAST",
+      "genes": 6,
+      "has_champion": true,
+      "score": 95.0,
+      "state": "RECURSIVELY_IMPROVED",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
+      "class": "DevSecOps",
+      "genes": 58,
+      "has_champion": true,
+      "score": 95.0,
+      "state": "RECURSIVELY_IMPROVED",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Family & Personal",
+      "genes": 6,
+      "has_champion": true,
+      "score": 95.0,
+      "state": "RECURSIVELY_IMPROVED",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
+      "class": "QA",
+      "genes": 6,
+      "has_champion": true,
+      "score": 95.0,
+      "state": "RECURSIVELY_IMPROVED",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
+      "class": "SDLC Governance",
+      "genes": 8,
+      "has_champion": true,
+      "score": 95.0,
+      "state": "RECURSIVELY_IMPROVED",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
+      "class": "AGI & Safety",
+      "genes": 10,
+      "has_champion": true,
+      "score": 100.0,
+      "state": "RECURSIVELY_IMPROVED",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
+      "class": "AI / ML Systems",
+      "genes": 6,
+      "has_champion": true,
+      "score": 100.0,
+      "state": "RECURSIVELY_IMPROVED",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Audit",
+      "genes": 13,
+      "has_champion": true,
+      "score": 100.0,
+      "state": "RECURSIVELY_IMPROVED",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Cybersecurity",
+      "genes": 89,
+      "has_champion": true,
+      "score": 100.0,
       "state": "GENERATED_AND_JUDGED",
       "constraint": "SATURATED",
       "pool_deficit": 0
@@ -306,62 +660,8 @@
       "class": "Data Security",
       "genes": 6,
       "has_champion": true,
-      "score": 72.5,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "SATURATED",
-      "pool_deficit": 0
-    },
-    {
-      "class": "Audit",
-      "genes": 13,
-      "has_champion": true,
-      "score": 75.0,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "SATURATED",
-      "pool_deficit": 0
-    },
-    {
-      "class": "Coding",
-      "genes": 6,
-      "has_champion": true,
-      "score": 75.0,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "SATURATED",
-      "pool_deficit": 0
-    },
-    {
-      "class": "Cybersecurity",
-      "genes": 89,
-      "has_champion": true,
-      "score": 75.0,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "SATURATED",
-      "pool_deficit": 0
-    },
-    {
-      "class": "Software Engineering",
-      "genes": 6,
-      "has_champion": true,
-      "score": 75.0,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "SATURATED",
-      "pool_deficit": 0
-    },
-    {
-      "class": "DevSecOps",
-      "genes": 58,
-      "has_champion": true,
-      "score": 77.5,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "SATURATED",
-      "pool_deficit": 0
-    },
-    {
-      "class": "AGI & Safety",
-      "genes": 10,
-      "has_champion": true,
-      "score": 80.0,
-      "state": "GENERATED_AND_JUDGED",
+      "score": 100.0,
+      "state": "RECURSIVELY_IMPROVED",
       "constraint": "SATURATED",
       "pool_deficit": 0
     },
@@ -369,8 +669,17 @@
       "class": "Detection Engineering",
       "genes": 6,
       "has_champion": true,
-      "score": 80.0,
-      "state": "GENERATED_AND_JUDGED",
+      "score": 100.0,
+      "state": "RECURSIVELY_IMPROVED",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Governance / Compliance",
+      "genes": 50,
+      "has_champion": true,
+      "score": 100.0,
+      "state": "RECURSIVELY_IMPROVED",
       "constraint": "SATURATED",
       "pool_deficit": 0
     },
@@ -378,8 +687,8 @@
       "class": "Industry Specialized",
       "genes": 15,
       "has_champion": true,
-      "score": 80.0,
-      "state": "GENERATED_AND_JUDGED",
+      "score": 100.0,
+      "state": "RECURSIVELY_IMPROVED",
       "constraint": "SATURATED",
       "pool_deficit": 0
     },
@@ -387,26 +696,26 @@
       "class": "Infrastructure & Hardware",
       "genes": 7,
       "has_champion": true,
-      "score": 80.0,
-      "state": "GENERATED_AND_JUDGED",
+      "score": 100.0,
+      "state": "RECURSIVELY_IMPROVED",
       "constraint": "SATURATED",
       "pool_deficit": 0
     },
     {
-      "class": "AI / ML",
-      "genes": 51,
-      "has_champion": true,
-      "score": 85.0,
-      "state": "GENERATED_AND_JUDGED",
-      "constraint": "SATURATED",
-      "pool_deficit": 0
-    },
-    {
-      "class": "QA",
+      "class": "Privacy",
       "genes": 6,
       "has_champion": true,
-      "score": 87.5,
-      "state": "GENERATED_AND_JUDGED",
+      "score": 100.0,
+      "state": "RECURSIVELY_IMPROVED",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Research & Delivery",
+      "genes": 8,
+      "has_champion": true,
+      "score": 100.0,
+      "state": "RECURSIVELY_IMPROVED",
       "constraint": "SATURATED",
       "pool_deficit": 0
     },
@@ -414,8 +723,26 @@
       "class": "Self-Healing",
       "genes": 9,
       "has_champion": true,
-      "score": 90.0,
-      "state": "GENERATED_AND_JUDGED",
+      "score": 100.0,
+      "state": "RECURSIVELY_IMPROVED",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
+      "class": "UX Security",
+      "genes": 6,
+      "has_champion": true,
+      "score": 100.0,
+      "state": "RECURSIVELY_IMPROVED",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Vulnerability Management",
+      "genes": 6,
+      "has_champion": true,
+      "score": 100.0,
+      "state": "RECURSIVELY_IMPROVED",
       "constraint": "SATURATED",
       "pool_deficit": 0
     }

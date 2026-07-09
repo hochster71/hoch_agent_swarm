@@ -25,6 +25,403 @@
       "blocking_evidence": "docs/generated/r2/testflight_checklist.md",
       "staged_at": "2026-07-07T15:40:04+00:00",
       "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "neuro-relay-redeploy",
+      "gate": "blocked_release",
+      "title": "Redeploy relay-api with truthful provider_api_calls / founder_gated_execution",
+      "why_founder": "Deploying to relay-001 is an infra publish act (SSH + docker on the live node).",
+      "action": "scp infra/hoch-200/vps/relay-api/app.py to relay-001 and: docker compose build relay-api && docker compose up -d relay-api . Then curl /api/live and confirm provider_api_calls=OFF.",
+      "blocking_evidence": "infra/hoch-200/vps/relay-api/app.py",
+      "staged_at": "2026-07-07T20:47:12Z",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "neuro-route-wire-deploy",
+      "gate": "blocked_release",
+      "title": "Expose HOCH NEURO tab in the production dashboard",
+      "why_founder": "Adding the #react-neuro-root tab + rebuilding/deploying the frontend is a publish act.",
+      "action": "Apply docs/generated/neuro/wiring_snippet.md to dashboard index.html, run frontend build (tsc && vite build), deploy. Panel is inert until #react-neuro-root exists.",
+      "blocking_evidence": "frontend/src/components/neuro/HochNeuroPanel.tsx",
+      "staged_at": "2026-07-07T20:47:12Z",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "neuro-brain-image-burst",
+      "gate": "blocked_monetization",
+      "title": "Generate photoreal brain image (paid burst GPU)",
+      "why_founder": "Image generation needs paid burst compute or a keyed image service \u2014 a spend action.",
+      "action": "Run the spec in docs/generated/neuro/brain_image_spec.md on burst GPU (or approved image tool); place hoch-brain.png at frontend/public/assets/ and assets/. Panel auto-composites it.",
+      "blocking_evidence": "docs/generated/neuro/brain_image_spec.md",
+      "staged_at": "2026-07-07T20:47:12Z",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "neuro-changeboard-commit",
+      "gate": "blocked_release",
+      "title": "Commit neuro panel + tests through the change board",
+      "why_founder": "git commit/tag on the real repo runs on your Mac; push is a founder gate.",
+      "action": "Run scripts/baseline_guard.py, commit hoch-neuro-*.{html,js}, frontend/src/{lib,components}/neuro/*, tests/test_hoch_neuro_derive.js, infra/.../app.py, then tag a new baseline.",
+      "blocking_evidence": "tests/test_hoch_neuro_derive.js",
+      "staged_at": "2026-07-07T20:47:12Z",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "apple-install-tools",
+      "gate": "blocked_release",
+      "title": "Install Apple design tools on the Mac (Icon Composer, SF Symbols 8, fonts, bezels)",
+      "why_founder": "Downloading + installing .dmg tools on your Mac is an on-device install act.",
+      "action": "Download from developer.apple.com/design/resources: Icon Composer (macOS Sequoia+), SF Symbols 8 beta, SF Pro/SF Mono/New York fonts, iPhone 17 + iPad Pro (M5) bezels. Install.",
+      "blocking_evidence": "docs/generated/apple/factory_apple_template_audit.md",
+      "staged_at": "2026-07-07T20:55:57Z",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "apple-liquid-glass-icon",
+      "gate": "blocked_release",
+      "title": "Produce Epic Fury Liquid Glass layered app icon",
+      "why_founder": "Icon art + Xcode packaging is an on-device creative act on your Mac.",
+      "action": "In Icon Composer build the 3-4 layer Epic Fury icon per docs/generated/apple/epic_fury_liquid_glass_refresh.md (light/dark/clear), export Epic-Fury.icon + flattened 1024 PNG. Ship in the next build (not this review).",
+      "blocking_evidence": "docs/generated/apple/epic_fury_liquid_glass_refresh.md",
+      "staged_at": "2026-07-07T20:55:57Z",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "apple-screenshots-bezels",
+      "gate": "blocked_release",
+      "title": "Produce Epic Fury screenshots in current bezels",
+      "why_founder": "Capturing/rendering marketing screenshots is an on-device act; App Store upload is a founder gate.",
+      "action": "Render the 6-frame set (per storyboard) in iPhone 17 / iPad Pro M5 bezels, captions sentence-case, then upload via App Store Connect at next submission.",
+      "blocking_evidence": "docs/generated/apple/epic_fury_liquid_glass_refresh.md",
+      "staged_at": "2026-07-07T20:55:57Z",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "rev-ef-model-price",
+      "gate": "blocked_monetization",
+      "title": "Epic Fury monetization = Path B (monetize now, resubmit)",
+      "why_founder": "App is free; the subscription IAP is the ONLY revenue path and is a founder App Store Connect act.",
+      "action": "Decision made. Execute docs/revenue/epic_fury_pathB_resubmit_plan.md (steps below).",
+      "blocking_evidence": "docs/revenue/FIRST_DOLLAR_PLAN.md",
+      "staged_at": "2026-07-07T21:14:17Z",
+      "status": "DECIDED_PATH_B",
+      "evidence": "docs/revenue/epic_fury_pathB_resubmit_plan.md"
+    },
+    {
+      "id": "rev-ef-paid-agreement",
+      "gate": "blocked_monetization",
+      "title": "Sign Paid Apps agreement + confirm banking/tax",
+      "why_founder": "Legal agreement + banking/tax are irreducible founder acts to receive money.",
+      "action": "Accept the Paid Apps agreement in App Store Connect; confirm bank account + tax forms so sales can pay out.",
+      "blocking_evidence": "docs/revenue/FIRST_DOLLAR_PLAN.md",
+      "staged_at": "2026-07-07T21:14:17Z",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "rev-ss-stripe-live",
+      "gate": "blocked_monetization",
+      "title": "Provision Story Studio Stripe live keys + payout bank",
+      "why_founder": "Live payment keys + payout bank are founder credential/money acts.",
+      "action": "Create Stripe live products/prices per docs/revenue/story_studio_stripe_spec.md, connect payout bank, provide live keys to the deploy (never in chat).",
+      "blocking_evidence": "docs/revenue/FIRST_DOLLAR_PLAN.md",
+      "staged_at": "2026-07-07T21:14:17Z",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "rev-ef-iap-compliance-fix",
+      "gate": "blocked_release",
+      "title": "Ensure Epic Fury in-app upgrades use Apple IAP, not Stripe (3.1.1)",
+      "why_founder": "Payment routing for a shipping iOS app is a release-compliance + build decision.",
+      "action": "Confirmed in code: web->Stripe, native iOS->RevenueCat/StoreKit (lib/purchases.ts + PaywallModal). No 3.1.1 fix needed; keep the split.",
+      "blocking_evidence": "docs/revenue/epic_fury_iap_compliance.md",
+      "staged_at": "2026-07-07T21:28:11Z",
+      "status": "VERIFIED_IN_CODE"
+    },
+    {
+      "id": "cost-brevity-wire",
+      "gate": "blocked_release",
+      "title": "Wire caveman brevity into agent system prompt (change board)",
+      "why_founder": "Edits backend/agent_executor.py (DENY_WRITE) \u2014 must pass baseline_guard + your commit.",
+      "action": "Prepend config/caveman_brevity.json rules as a BREVITY block to the agent system prompt behind env AGENT_BREVITY=1 (reversible); run tests + baseline_guard; commit.",
+      "blocking_evidence": "config/caveman_brevity.json",
+      "staged_at": "2026-07-07T21:28:11Z",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "arc-harden-apply",
+      "gate": "blocked_release",
+      "title": "Close ARC LAN exposure (rebind ~8 services to localhost / pf firewall)",
+      "why_founder": "Rebinding services + pf rules are system-config changes needing sudo/app edits.",
+      "action": "Apply Option A (rebind to 127.0.0.1) or Option B (pf block) from docs/security/arc_hardening.md for ports 8080/8810/8820/8830/8789/8898/3003/54932.",
+      "blocking_evidence": "docs/security/arc_hardening.md",
+      "staged_at": "2026-07-07T21:43:46Z",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "arc-cleanup-orphans",
+      "gate": "blocked_destructive_action",
+      "title": "Kill orphan/duplicate local daemons (incl. double-bound 8080)",
+      "why_founder": "Killing processes is potentially destructive \u2014 founder-only, hard-gated.",
+      "action": "Per docs/security/arc_cleanup.md: inspect each cmd, kill stale daemons (graceful first), stop unused LLM runtimes. Do NOT kill rapportd/ControlCenter/postgres/8011 adapter.",
+      "blocking_evidence": "docs/security/arc_cleanup.md",
+      "staged_at": "2026-07-07T21:43:46Z",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "arc-macos-update",
+      "gate": "blocked_release",
+      "title": "Install available macOS updates (26.5.2 has updates)",
+      "why_founder": "OS install is a system change on your Mac.",
+      "action": "Review softwareupdate -l, then install via System Settings > Software Update (or softwareupdate -i). Reboot as needed.",
+      "blocking_evidence": "has_live_project_tracker/data/asset_registry.json",
+      "staged_at": "2026-07-07T21:43:46Z",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "ef-b2-create-subs",
+      "gate": "blocked_monetization",
+      "title": "ASC: create the 2 auto-renewable subs (exact IDs) + review screenshot",
+      "why_founder": "Creating subs + prices is a founder money act.",
+      "action": "App Store Connect > Subscriptions: create group + com.epicfury.dashboard.pro_monthly ($4.99/mo) + com.epicfury.dashboard.pro_annual ($39.99/yr), localized name/desc + subscription review screenshot; generate App-Specific Shared Secret.",
+      "blocking_evidence": "docs/revenue/epic_fury_pathB_resubmit_plan.md",
+      "staged_at": "2026-07-07T22:05:34Z",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "ef-b3-revenuecat-config",
+      "gate": "blocked_monetization",
+      "title": "RevenueCat: products + entitlement pro + offering + keys + webhook",
+      "why_founder": "RevenueCat account config + keys are founder credential acts.",
+      "action": "RevenueCat: add iOS app (Shared Secret), 2 products (same IDs), entitlement pro, offering current (monthly+annual), copy iOS public SDK key, set webhook to /api/webhooks/revenuecat with secret.",
+      "blocking_evidence": "docs/revenue/epic_fury_pathB_resubmit_plan.md",
+      "staged_at": "2026-07-07T22:05:34Z",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "ef-b4-provide-keys",
+      "gate": "blocked_secret_handling",
+      "title": "Provide RevenueCat keys to build env",
+      "why_founder": "Live keys are secrets you provision, not chat.",
+      "action": "Set NEXT_PUBLIC_REVENUECAT_IOS_KEY + REVENUECAT_WEBHOOK_SECRET in Vercel + local build env. Then the swarm rebuild (ns-ef-rebuild) can run.",
+      "blocking_evidence": "docs/revenue/epic_fury_pathB_resubmit_plan.md",
+      "staged_at": "2026-07-07T22:05:34Z",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "ef-b6-upload-attach-resubmit",
+      "gate": "blocked_release",
+      "title": "Upload new build, attach subs to v1.0, resubmit",
+      "why_founder": "Upload + submit carry your legal attestations.",
+      "action": "Upload the rebuilt binary; in ASC pull v1.0 from review, attach both subs to the version + review submission, resubmit.",
+      "blocking_evidence": "docs/revenue/epic_fury_pathB_resubmit_plan.md",
+      "staged_at": "2026-07-07T22:05:34Z",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "ss-stripe-live",
+      "gate": "blocked_monetization",
+      "title": "Story Studio: create live Stripe products + provision live keys + payout bank",
+      "why_founder": "Live payment keys + payout bank are founder money/credential acts.",
+      "action": "Live catalog + payouts are ON. Remaining to take money: provision Vercel KV, register the LIVE webhook (/api/webhook) -> STRIPE_WEBHOOK_SECRET, set env (price IDs, STRIPE_SECRET_KEY live, AUTH_SECRET, BASE_URL), deploy, then ONE real $19 purchase -> confirm unlock -> refund. See docs/revenue/story_studio_go_live.md.",
+      "blocking_evidence": "docs/revenue/story_studio_stripe_spec.md",
+      "staged_at": "2026-07-07T23:52:42Z",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "notify-channel",
+      "gate": "blocked_secret_handling",
+      "title": "Pick notify channel + set config/notify.json (ntfy topic or Pushover token)",
+      "why_founder": "The push topic/token is a secret you set, not chat.",
+      "action": "Copy config/notify.example.json to config/notify.json; for ntfy set a long random topic + subscribe in the ntfy app; or set Pushover user_key+app_token. Then run ns-notify-selftest.",
+      "blocking_evidence": "config/notify.example.json",
+      "staged_at": "2026-07-07T23:52:42Z",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "a-codeloop-wire",
+      "gate": "blocked_release",
+      "title": "Wire code_task_gate into agent_executor (change board)",
+      "why_founder": "Edits backend/agent_executor.py (DENY_WRITE) - baseline_guard + your commit.",
+      "action": "In the code-task branch call scripts/code_task_gate.gate(file,acceptance); accept on verified, else retry with retry_hint (cap N). Behind AGENT_ALLOW_CODE=1. Run tests + baseline_guard + commit. See docs/factories/CODE_LOOP_RELIABILITY.md.",
+      "blocking_evidence": "scripts/code_task_gate.py",
+      "staged_at": "2026-07-08T00:12:35Z",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "c-space-deploy",
+      "gate": "blocked_release",
+      "title": "Deploy /space to relay (bookmarkable HOCH SPACE link)",
+      "why_founder": "Relay redeploy is an infra publish act.",
+      "action": "scp infra/hoch-200/vps/dashboard/space.html + hoch-neuro-derive.js + relay-api/app.py to relay-001; docker compose build/up relay-api. Then http://100.87.18.15:3012/space is live (Tailscale-internal).",
+      "blocking_evidence": "infra/hoch-200/vps/relay-api/app.py",
+      "staged_at": "2026-07-08T00:12:35Z",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "b-creators-auth-env",
+      "gate": "blocked_secret_handling",
+      "title": "Set Story Studio auth env (AUTH_SECRET + optional mailer)",
+      "why_founder": "Secrets you provision, not chat.",
+      "action": "In Vercel set AUTH_SECRET (long random) to enable magic-link login; optional RESEND_API_KEY + MAIL_FROM to email links (else dev link returned). Enables creators subscription unlock.",
+      "blocking_evidence": "hsf/deploy/lib/auth.js",
+      "staged_at": "2026-07-08T00:12:35Z",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "ss-stripe-account-bootstrap",
+      "gate": "blocked_monetization",
+      "title": "Sign in to Stripe (Google) + run the HAS factory catalog bootstrap",
+      "why_founder": "Account sign-in + API keys + money activation are founder acts (Claude cannot create accounts or log in).",
+      "action": "Follow docs/revenue/stripe_setup_steps.md: sign in at dashboard.stripe.com with michael.b.hoch@gmail.com, grab sk_test_, run `cd hsf/deploy && npm install && STRIPE_SECRET_KEY=sk_test_... node bootstrap-stripe.js`, paste the STRIPE_PRICE_* + AUTH_SECRET into Vercel, register the webhook, deploy, test-purchase with 4242.",
+      "blocking_evidence": "docs/revenue/stripe_setup_steps.md",
+      "staged_at": "2026-07-08T00:23:40Z",
+      "status": "DONE",
+      "result": "Stripe LIVE account active (acct_1Tdge9DINF9KNAIC, charges+payouts enabled). Catalog created: onestory price_1TqjVNDINF9KNAICvsZ4Kl3t ($19), creators price_1TqjVNDINF9KNAICsqE8sy0G ($12/mo).",
+      "done_utc": "2026-07-08T00:40:41Z"
+    },
+    {
+      "id": "hrf-doorstep-graduation",
+      "gate": "blocked_release",
+      "title": "HRF product to the door: activate/publish/monetize",
+      "why_founder": "Publishing, monetizing, or key-provisioning a factory product is a founder act.",
+      "action": "Review HRF deliverables, provision any keys, then approve go-live for: HRF internal engine: produce verified, sourced research briefs + factory specs on demand that make every other factory faster to autonomy.",
+      "blocking_evidence": "docs/factories/HRF/",
+      "staged_at": "2026-07-08T03:10:11+00:00",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "hrf-enable-code-mode",
+      "gate": "blocked_release",
+      "title": "Enable code mode for HRF develop lane (AGENT_ALLOW_CODE=1)",
+      "why_founder": "Autonomous code execution is a founder gate. The HRF brief-builder is built and gate-verified (19/19 tests); enabling code mode flips develop -> done truthfully.",
+      "action": "Set AGENT_ALLOW_CODE=1 for the harness/runner, then run: python3 scripts/factory_harness.py advance HRF . Develop will verify via code_task_gate; HRF stays L2 until verify+package have real evidence.",
+      "blocking_evidence": "docs/factories/HRF/develop/build_manifest.json",
+      "proof_ready": "tests/test_hrf_brief_builder.py (19/19), scripts/hrf_brief_builder.py",
+      "staged_at": "2026-07-08T03:17:00+00:00",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "hmf-doorstep-graduation",
+      "gate": "blocked_release",
+      "title": "HMF product to the door: activate/publish/monetize",
+      "why_founder": "Publishing, monetizing, or key-provisioning a factory product is a founder act.",
+      "action": "Review HMF deliverables, provision any keys, then approve go-live for: HMF: generate license-clean, mood-matched soundtrack cues for HSF storybooks \u2014 instrumental-first, provider-gated, cached.",
+      "blocking_evidence": "docs/factories/HMF/",
+      "staged_at": "2026-07-08T03:22:26+00:00",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "hasf-doorstep-graduation",
+      "gate": "blocked_release",
+      "title": "HASF product to the door: activate/publish/monetize",
+      "why_founder": "Publishing, monetizing, or key-provisioning a factory product is a founder act.",
+      "action": "Review HASF deliverables, provision any keys, then approve go-live for: Bring Hoch App Software Factory online: build and ship Epic Fury + iOS apps",
+      "blocking_evidence": "docs/factories/HASF/",
+      "staged_at": "2026-07-08T03:35:17+00:00",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "hsf-doorstep-graduation",
+      "gate": "blocked_release",
+      "title": "HSF product to the door: activate/publish/monetize",
+      "why_founder": "Publishing, monetizing, or key-provisioning a factory product is a founder act.",
+      "action": "Review HSF deliverables, provision any keys, then approve go-live for: Bring Hoch Storybook Factory online: build and ship Story Studio",
+      "blocking_evidence": "docs/factories/HSF/",
+      "staged_at": "2026-07-08T03:35:17+00:00",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "hcf-doorstep-graduation",
+      "gate": "blocked_release",
+      "title": "HCF product to the door: activate/publish/monetize",
+      "why_founder": "Publishing, monetizing, or key-provisioning a factory product is a founder act.",
+      "action": "Review HCF deliverables, provision any keys, then approve go-live for: Bring Hoch Cyber Factory online: build and ship (to define)",
+      "blocking_evidence": "docs/factories/HCF/",
+      "staged_at": "2026-07-08T03:35:17+00:00",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "hsf-story-studio-go-live",
+      "gate": "blocked_monetization",
+      "title": "Story Studio GO LIVE \u2014 first dollar (Vercel KV + Stripe env + deploy + 1 test purchase)",
+      "why_founder": "Provisioning KV, setting live Stripe keys, deploying, and taking a real payment are founder acts. Build is DONE and verified; guided path needs NO OpenAI key.",
+      "action": "Follow docs/revenue/STORY_STUDIO_GO_LIVE_NOW.md (5 steps). Storefront + buy loop built: public/index.html, api/save-story.js, api/download.js.",
+      "blocking_evidence": "docs/revenue/STORY_STUDIO_GO_LIVE_NOW.md",
+      "staged_at": "2026-07-08T04:45:57+00:00",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "hff-doorstep-graduation",
+      "gate": "blocked_release",
+      "title": "HFF product to the door: activate/publish/monetize",
+      "why_founder": "Publishing, monetizing, or key-provisioning a factory product is a founder act.",
+      "action": "Review HFF deliverables, provision any keys, then approve go-live for: HFF: give an honest cash-flow picture + accountant-ready tax packet \u2014 organize & forecast, never advise.",
+      "blocking_evidence": "docs/factories/HFF/",
+      "staged_at": "2026-07-08T04:50:10+00:00",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "hhf-doorstep-graduation",
+      "gate": "blocked_release",
+      "title": "HHF product to the door: activate/publish/monetize",
+      "why_founder": "Publishing, monetizing, or key-provisioning a factory product is a founder act.",
+      "action": "Review HHF deliverables, provision any keys, then approve go-live for: HHF: one calm, private place for home + family-health admin \u2014 organize & remind, never diagnose.",
+      "blocking_evidence": "docs/factories/HHF/",
+      "staged_at": "2026-07-08T04:50:10+00:00",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "hpf-doorstep-graduation",
+      "gate": "blocked_release",
+      "title": "HPF product to the door: activate/publish/monetize",
+      "why_founder": "Publishing, monetizing, or key-provisioning a factory product is a founder act.",
+      "action": "Review HPF deliverables, provision any keys, then approve go-live for: HPF: make every factory's prompts better, cheaper, measurable \u2014 promote only on a real eval win.",
+      "blocking_evidence": "docs/factories/HPF/",
+      "staged_at": "2026-07-08T04:50:10+00:00",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "hcsf-doorstep-graduation",
+      "gate": "blocked_release",
+      "title": "HCSF product to the door: activate/publish/monetize",
+      "why_founder": "Publishing, monetizing, or key-provisioning a factory product is a founder act.",
+      "action": "Review HCSF deliverables, provision any keys, then approve go-live for: HCSF: NIST Rev5 ATO + ConMon posture for HELM.",
+      "blocking_evidence": "docs/factories/HCSF/",
+      "staged_at": "2026-07-08T06:01:16+00:00",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "hbf-doorstep-graduation",
+      "gate": "blocked_release",
+      "title": "HBF product to the door: activate/publish/monetize",
+      "why_founder": "Publishing, monetizing, or key-provisioning a factory product is a founder act.",
+      "action": "Review HBF deliverables, provision any keys, then approve go-live for: HBF: turn built products into revenue \u2014 truthful % to first $, no fake green.",
+      "blocking_evidence": "docs/factories/HBF/",
+      "staged_at": "2026-07-08T12:32:21+00:00",
+      "status": "READY_FOR_FOUNDER"
+    },
+    {
+      "id": "hif-doorstep-graduation",
+      "gate": "blocked_release",
+      "title": "HIF product to the door: activate/publish/monetize",
+      "why_founder": "Publishing, monetizing, or key-provisioning a factory product is a founder act.",
+      "action": "Review HIF deliverables, provision any keys, then approve go-live for: HIF: live, monitored infra truth (relay/services), stale\u2192amber, deploy founder-gated.",
+      "blocking_evidence": "docs/factories/HIF/",
+      "staged_at": "2026-07-08T12:32:21+00:00",
+      "status": "SIGNED",
+      "signed_by": "Michael Bryan Hoch",
+      "signed_at": "2026-07-09T02:55:19.932528Z",
+      "evidence": "docs/evidence/release/HIF_RELEASE_APPROVAL.json"
+    },
+    {
+      "id": "haf-doorstep-graduation",
+      "gate": "blocked_release",
+      "title": "HAF product to the door: activate/publish/monetize",
+      "why_founder": "Publishing, monetizing, or key-provisioning a factory product is a founder act.",
+      "action": "Review HAF deliverables, provision any keys, then approve go-live for: HAF: drive factories research\u2192doorstep unattended, gated + truthful.",
+      "blocking_evidence": "docs/factories/HAF/",
+      "staged_at": "2026-07-08T12:32:21+00:00",
+      "status": "READY_FOR_FOUNDER"
     }
   ]
 }

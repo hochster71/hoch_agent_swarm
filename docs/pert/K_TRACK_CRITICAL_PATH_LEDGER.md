@@ -5,13 +5,14 @@ This document tracks founder action keys, developer portal credentials, and remo
 ## K-Track Items Status
 
 1. **K1: OPENAI / ANTHROPIC provisioning**
-   - Status: **BLOCKED_FOUNDER_ACTION**
-   - Blocks: Critic seat and Rung 2 live evaluation.
-   - Required Founder Action: Provide API keys.
+   - Status: **RESOLVED_FOUNDER_COMPLETE**
+   - Blocks: None.
+   - Note: Keys securely provisioned and validated on 2026-07-06.
 
 2. **K2: Apple Developer Access**
-   - Status: **BLOCKED_FOUNDER_ACTION**
-   - Blocks: App Store Connect provisioning.
+   - Status: **RESOLVED_FOUNDER_COMPLETE**
+   - Blocks: None.
+   - Note: Membership successfully renewed on 2026-07-06 (expires 2027-07-06).
 
 3. **K3: App Store Connect and bundle ID**
    - Status: **BLOCKED_FOUNDER_ACTION**

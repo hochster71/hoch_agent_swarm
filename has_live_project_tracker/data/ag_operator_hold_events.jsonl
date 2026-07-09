@@ -4,3 +4,4 @@
 {"operator_hold_active": false, "reason": "Clear stale simulated e-stop from failure-injector test", "operator": "Michael Hoch", "timestamp": "2026-07-05T18:27:18.893798Z", "affected_categories": []}
 {"operator_hold_active": false, "reason": "Resume autonomy: dead-daemon restart", "operator": "Michael Hoch", "hold_class": "manual", "timestamp": "2026-07-05T18:41:23.516149Z", "expires_at": null, "affected_categories": []}
 {"operator_hold_active": false, "reason": "Resume autonomy: dead-daemon restart", "operator": "Michael Hoch", "hold_class": "manual", "timestamp": "2026-07-05T18:45:53.988211Z", "expires_at": null, "affected_categories": []}
+{"operator_hold_active": false, "reason": "Resume autonomy: dead-daemon restart", "operator": "Michael Hoch", "hold_class": "manual", "timestamp": "2026-07-07T11:51:42.501365Z", "expires_at": null, "affected_categories": []}

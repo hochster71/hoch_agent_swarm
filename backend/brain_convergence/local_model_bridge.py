@@ -33,14 +33,25 @@ def _urlopen(url_or_req, timeout: float):
 
 def detect_local_backend(timeout: float = 1.5) -> Optional[Dict[str, str]]:
     """Return {'kind','base','model'} for the first reachable local backend, else None."""
-    # Ollama
+    # Ollama — LIVE-REAL-ONLY (2026-07-06): a listed model is not a working model
+    # (llama3.1:8b was listed here but rejected every generate call, silently zeroing the
+    # improver for days). PROVE generation with a 1-token probe before claiming a backend.
+    # LIVE-REAL-ONLY: use the ModelGateway — it probes all three backends
+    # (mac-local, mac-tailscale, relay-001) and returns the best live one.
     try:
-        with _urlopen(f"{OLLAMA_URL}/api/tags", timeout=timeout) as r:
-            tags = json.loads(r.read().decode())
-            models = [m.get("name") for m in tags.get("models", []) if m.get("name")]
-            if models:
-                chosen = _PREFERRED_MODEL if _PREFERRED_MODEL in models else models[0]
-                return {"kind": "ollama", "base": OLLAMA_URL, "model": chosen}
+        import sys as _sys
+        _root = str(Path(__file__).resolve().parent.parent.parent)
+        if _root not in _sys.path:
+            _sys.path.insert(0, _root)
+        from backend.model_gateway import get_gateway
+        gw = get_gateway()
+        st = gw.status()
+        if st["alive_count"] > 0:
+            primary = next(b for b in st["backends"] if b["alive"])
+            return {"kind": "ollama", "base": primary["name"],
+                    "model": primary["model"], "generation_proven": True,
+                    "alive_backends": st["alive_count"],
+                    "gateway": True}
     except Exception:
         pass
     # LM Studio (OpenAI-compatible)

@@ -26,7 +26,6 @@
     "RET-001",
     "DAST-001",
     "HC-002",
-    "BIZ-019",
     "HASF-SEC-STAPLES-AGRI-CI-CD-GATE-273",
     "HASF-SEC-SAAS-CI-CD-GATE-129",
     "HASF-SEC-ROBOTICS-AUTO-CI-CD-GATE-228",
@@ -67,9 +66,7 @@
     "HASF-SEC-TELECOM-INFRA-CI-CD-GATE-258",
     "REL-004",
     "HASF-SEC-UTILITIES-CI-CD-GATE-051",
-    "HASF-SEC-TRANSPORTATION-CI-CD-GATE-087",
     "CODE-002",
-    "CODE-001",
     "HASF-SEC-MEDIA-RELEASE-EV-150",
     "HASF-SEC-RETAIL-RELEASE-EV-108",
     "HASF-SEC-HEALTHCARE-RELEASE-EV-024",
@@ -112,13 +109,9 @@
     "AUTHZ-027",
     "HASF-SEC-TELECOM-INFRA-THREAT-MOD-256",
     "HASF-SEC-ROBOTICS-AUTO-THREAT-MOD-226",
-    "HASF-SEC-BIOTECH-GENOMICS-THREAT-MOD-211",
     "PRIV-003",
     "gapfill-74e69d873c",
-    "OSSLIC-015",
     "BLUE-017",
-    "gapfill-fd95c988a0",
-    "UXSEC-020",
     "EXECRISK-030",
     "IND-013",
     "IND-009",
@@ -130,8 +123,8 @@
     "IND-002",
     "IND-007",
     "IND-004",
+    "IND-012",
     "HASF-ENG-API-003",
-    "HASF-ENG-REQ-001",
     "HASF-SEC-ENERGY-OT-AI-RISK-EV-264",
     "HASF-SEC-PUBLIC-SAFETY-AI-RISK-EV-244",
     "HASF-SEC-AEROSPACE-AI-RISK-EV-070",
@@ -167,7 +160,6 @@
     "HASF-SEC-CLOUD-PLATFORM-AI-RISK-EV-136",
     "HASF-SEC-CONSTRUCTION-AI-RISK-EV-166",
     "HASF-SEC-SMART-GRID-AI-RISK-EV-234",
-    "HASF-SEC-MEDICAL-DEVICE-AI-RISK-EV-028",
     "HASF-GOV-NIST-029",
     "HASF-SEC-LEGAL-COMPLIANCE-122",
     "HASF-SEC-PROPTECH-RE-COMPLIANCE-277",
@@ -202,7 +194,6 @@
     "HASF-SEC-UTILITIES-COMPLIANCE-050",
     "HASF-SEC-AGRICULTURE-COMPLIANCE-158",
     "HASF-SEC-ENERGY-COMPLIANCE-044",
-    "HASF-SEC-TELECOM-INFRA-COMPLIANCE-257",
     "HASF-SEC-INDUSTRIAL-CON-THREAT-MOD-061",
     "HASF-SEC-ENERGY-THREAT-MOD-043",
     "HASF-SEC-LOCAL-AI-EDGE--INCIDENT-P-203",
@@ -265,23 +256,23 @@
     "HASF-SEC-FEDERAL-CIVILI-THREAT-MOD-007",
     "HASF-SEC-RETAIL-INCIDENT-P-107",
     "HASF-SEC-DEVSECOPS-SOFT-THREAT-MOD-193",
+    "HASF-SEC-CRITICAL-INFRA-INCIDENT-P-185",
     "HASF-FAM-ALISON-ESTATE-311",
     "HASF-EXP-NOS-501",
     "HASF-FAM-MICHAEL-HOB-303",
-    "HASF-FAM-ALISON-HOB-309",
     "HASF-EXP-AGI-406",
     "HASF-EXP-AGI-404",
     "HASF-EXP-AGI-410",
     "HASF-EXP-AGI-402",
     "HASF-EXP-AGI-412",
     "HASF-EXP-AGI-403",
-    "HASF-EXP-AGI-414",
     "HASF-EXP-HEAL-416",
     "HASF-EXP-HEAL-421",
     "HASF-EXP-HEAL-419",
     "HASF-EXP-HEAL-422",
     "HASF-EXP-HEAL-427",
     "HASF-EXP-HEAL-420",
+    "gapfill-48e4271980",
     "gapfill-df7ad0025f",
     "HASF-EXP-NETHW-434",
     "HASF-EXP-NETHW-436",
@@ -300,7 +291,6 @@
     "HASF-EXP-RESDEL-469",
     "HASF-EXP-RESDEL-471",
     "gapfill-6e09aa6a43",
-    "gapfill-437564e5ae",
     "gapfill-6b82bd95ba",
     "gapfill-8f94c4ba5c",
     "gapfill-c21d4c19c5"
@@ -310,7 +300,8 @@
     "HC-001",
     "LOG-011",
     "SAST-004",
-    "EN-002",
+    "BIZ-019",
+    "HASF-SEC-TRANSPORTATION-CI-CD-GATE-087",
     "HASF-SEC-MANUFACTURING-CI-CD-GATE-057",
     "HASF-SEC-AVIONICS-AERO-CI-CD-GATE-238",
     "HASF-SEC-E-COMMERCE-CI-CD-GATE-111",
@@ -319,18 +310,21 @@
     "HASF-SEC-LOCAL-AI-EDGE--CI-CD-GATE-201",
     "HASF-DEV-ROLL-016",
     "HASF-SEC-ENERGY-CI-CD-GATE-045",
-    "HASF-SEC-CHEMICAL-MFG-CI-CD-GATE-218",
+    "CODE-001",
     "EN-001",
     "HASF-SEC-DEFENSE-DOD-NA-RELEASE-EV-006",
     "CHAOS-024",
     "HASF-SEC-SAAS-RELEASE-EV-132",
     "HASF-SEC-AGRICULTURE-RELEASE-EV-162",
     "HASF-SEC-CRITICAL-INFRA-RELEASE-EV-186",
+    "HASF-SEC-BIOTECH-GENOMICS-THREAT-MOD-211",
     "HASF-SEC-PUBLIC-SAFETY-THREAT-MOD-241",
     "THREAT-002",
-    "HASF-SEC-ENERGY-OT-THREAT-MOD-261",
-    "IND-012",
+    "gapfill-fd95c988a0",
     "IND-003",
+    "IND-014",
+    "HASF-ENG-REQ-001",
+    "HASF-SEC-MEDICAL-DEVICE-AI-RISK-EV-028",
     "HASF-SEC-SPACE-SYSTEMS-AI-RISK-EV-076",
     "HASF-SEC-AVIONICS-AERO-AI-RISK-EV-239",
     "HASF-AI-ROUTE-023",
@@ -338,7 +332,7 @@
     "HASF-SEC-CHEMICAL-MFG-AI-RISK-EV-219",
     "HASF-SEC-EDUCATION-AI-RISK-EV-118",
     "HASF-SEC-SUPPLY-CHAIN-AI-RISK-EV-190",
-    "HASF-SEC-INSURANCE-AI-RISK-EV-040",
+    "HASF-SEC-TELECOM-INFRA-COMPLIANCE-257",
     "HASF-SEC-MATERIALS-MINING-COMPLIANCE-267",
     "HASF-SEC-REAL-ESTATE-COMPLIANCE-170",
     "HASF-SEC-ROBOTICS-AUTO-COMPLIANCE-227",
@@ -346,8 +340,6 @@
     "HASF-SEC-TELECOMMUNICAT-COMPLIANCE-080",
     "HASF-SEC-SPACE-SYSTEMS-COMPLIANCE-074",
     "HASF-SEC-MEDIA-COMPLIANCE-146",
-    "HASF-SEC-CLOUD-PLATFORM-COMPLIANCE-134",
-    "HASF-SEC-CRITICAL-INFRA-INCIDENT-P-185",
     "HASF-SEC-SAAS-THREAT-MOD-127",
     "HASF-SEC-AVIONICS-AERO-INCIDENT-P-240",
     "HASF-SEC-MEDIA-INCIDENT-P-149",
@@ -360,19 +352,23 @@
     "HASF-CYB-CONMON-028",
     "HASF-SEC-TRANSPORTATION-INCIDENT-P-089",
     "HASF-SEC-HEALTHCARE-THREAT-MOD-019",
-    "HASF-FAM-ALISON-BUS-308",
+    "HASF-SEC-CONSTRUCTION-THREAT-MOD-163",
+    "HASF-FAM-ALISON-HOB-309",
+    "HASF-EXP-AGI-414",
     "HASF-EXP-AGI-401",
-    "HASF-EXP-AGI-411",
-    "gapfill-48e4271980",
+    "HASF-EXP-HEAL-418",
     "HASF-EXP-NETHW-431",
     "HASF-EXP-SDLC-454",
-    "HASF-EXP-RESDEL-470"
+    "HASF-EXP-RESDEL-470",
+    "gapfill-437564e5ae"
   ],
   "heldout": [
     "HASF-QA-AUTO-038",
     "LEG-001",
     "EDU-001",
     "AI-002",
+    "EN-002",
+    "HASF-SEC-CHEMICAL-MFG-CI-CD-GATE-218",
     "HASF-SEC-LOGISTICS-CI-CD-GATE-093",
     "HASF-SEC-RETAIL-CI-CD-GATE-105",
     "HASF-SEC-STATE-AND-LOCA-CI-CD-GATE-015",
@@ -389,16 +385,19 @@
     "HASF-SEC-TRANSPORTATION-RELEASE-EV-090",
     "HASF-OPS-EXEC-041",
     "AI-001",
+    "HASF-SEC-ENERGY-OT-THREAT-MOD-261",
     "ARCHSEC-008",
     "HASF-SEC-CHEMICAL-MFG-THREAT-MOD-216",
     "gapfill-67e9e4409d",
     "DBSEC-010",
+    "OSSLIC-015",
     "gapfill-beed726713",
+    "UXSEC-020",
     "EXCEPT-022",
-    "IND-014",
     "IND-005",
     "IND-010",
     "HASF-ENG-ADR-002",
+    "HASF-SEC-INSURANCE-AI-RISK-EV-040",
     "HASF-SEC-PROPTECH-RE-AI-RISK-EV-279",
     "HASF-SEC-INDUSTRIAL-CON-AI-RISK-EV-064",
     "HASF-SEC-RETAIL-AI-RISK-EV-106",
@@ -406,6 +405,7 @@
     "HASF-SEC-DEFENSE-DOD-NA-AI-RISK-EV-004",
     "HASF-SEC-FEDERAL-CIVILI-AI-RISK-EV-010",
     "HASF-SEC-AI-NATIVE-PROD-AI-RISK-EV-142",
+    "HASF-SEC-CLOUD-PLATFORM-COMPLIANCE-134",
     "HASF-SEC-BIOTECH-GENOMICS-COMPLIANCE-212",
     "HASF-SEC-ENERGY-OT-COMPLIANCE-262",
     "HASF-SEC-CONSTRUCTION-COMPLIANCE-164",
@@ -413,7 +413,6 @@
     "HASF-SEC-EDUCATION-COMPLIANCE-116",
     "HASF-SEC-DEVSECOPS-SOFT-COMPLIANCE-194",
     "HASF-SEC-RETAIL-COMPLIANCE-104",
-    "HASF-SEC-CONSTRUCTION-THREAT-MOD-163",
     "HASF-SEC-LOCAL-AI-EDGE--THREAT-MOD-199",
     "HASF-SEC-HOME-LAB-SMALL-THREAT-MOD-205",
     "HASF-CYB-ISSO-023",
@@ -427,8 +426,9 @@
     "HASF-SEC-SPACE-SYSTEMS-THREAT-MOD-073",
     "HASF-SEC-EDUCATION-INCIDENT-P-119",
     "HASF-SEC-LEGAL-THREAT-MOD-121",
+    "HASF-FAM-ALISON-BUS-308",
+    "HASF-EXP-AGI-411",
     "HASF-EXP-AGI-407",
-    "HASF-EXP-HEAL-418",
     "HASF-EXP-HEAL-417",
     "HASF-EXP-NETHW-435",
     "HASF-EXP-NOS-524",
@@ -455,18 +455,18 @@
       "heldout": 1
     },
     "DAST": {
-      "train": 4,
+      "train": 3,
       "dev": 1,
-      "heldout": 0
+      "heldout": 1
     },
     "DevSecOps": {
-      "train": 41,
+      "train": 40,
       "dev": 9,
-      "heldout": 8
+      "heldout": 9
     },
     "Coding": {
-      "train": 2,
-      "dev": 0,
+      "train": 1,
+      "dev": 1,
       "heldout": 1
     },
     "Operations": {
@@ -480,9 +480,9 @@
       "heldout": 1
     },
     "Security Architecture": {
-      "train": 13,
+      "train": 12,
       "dev": 3,
-      "heldout": 2
+      "heldout": 3
     },
     "Privacy": {
       "train": 1,
@@ -495,19 +495,19 @@
       "heldout": 1
     },
     "Legal / Compliance": {
-      "train": 1,
-      "dev": 0,
-      "heldout": 0
-    },
-    "Detection Engineering": {
-      "train": 2,
+      "train": 0,
       "dev": 0,
       "heldout": 1
     },
-    "UX Security": {
+    "Detection Engineering": {
       "train": 1,
+      "dev": 1,
+      "heldout": 1
+    },
+    "UX Security": {
+      "train": 0,
       "dev": 0,
-      "heldout": 0
+      "heldout": 1
     },
     "Governance": {
       "train": 1,
@@ -515,44 +515,44 @@
       "heldout": 1
     },
     "Industry Specialized": {
-      "train": 10,
+      "train": 11,
       "dev": 2,
-      "heldout": 3
+      "heldout": 2
     },
     "Software Engineering": {
-      "train": 2,
-      "dev": 0,
+      "train": 1,
+      "dev": 1,
       "heldout": 1
     },
     "AI / ML": {
-      "train": 36,
-      "dev": 8,
-      "heldout": 7
-    },
-    "Governance / Compliance": {
       "train": 35,
       "dev": 8,
-      "heldout": 7
+      "heldout": 8
+    },
+    "Governance / Compliance": {
+      "train": 34,
+      "dev": 8,
+      "heldout": 8
     },
     "Cybersecurity": {
-      "train": 62,
+      "train": 63,
       "dev": 13,
-      "heldout": 14
+      "heldout": 13
     },
     "Family & Personal": {
-      "train": 4,
+      "train": 3,
       "dev": 1,
-      "heldout": 0
-    },
-    "AGI & Safety": {
-      "train": 7,
-      "dev": 2,
       "heldout": 1
     },
-    "Self-Healing": {
+    "AGI & Safety": {
       "train": 6,
-      "dev": 1,
+      "dev": 2,
       "heldout": 2
+    },
+    "Self-Healing": {
+      "train": 7,
+      "dev": 1,
+      "heldout": 1
     },
     "Infrastructure & Hardware": {
       "train": 5,
@@ -570,8 +570,8 @@
       "heldout": 1
     },
     "Incident Response": {
-      "train": 2,
-      "dev": 0,
+      "train": 1,
+      "dev": 1,
       "heldout": 1
     },
     "Cloud Security": {
@@ -590,5 +590,5 @@
       "heldout": 1
     }
   },
-  "provenance_hash": "3b3cde87e285eb02210a6d7389f6bcc011d33802df22c04d728ddf540d9c3f97"
+  "provenance_hash": "83e87bed53547646d6d0adbac7abd3fc7c1dc4194f17278ebf5db0b0d1ece08f"
 }

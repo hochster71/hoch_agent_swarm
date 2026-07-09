@@ -81,7 +81,16 @@ def run(max_classes: int = 3):
         prompt = genes.get(gid, {}).get("prompt") or champ.get("prompt")
         if not prompt:
             continue
-        result = improve_champion({"gene_id": gid, "prompt": prompt, "score": champ.get("score")},
+        # Blend rubric score with real outcome evidence before comparison (2026-07-06).
+        # A prompt failing in practice cannot be protected by vocabulary keyword hits.
+        from backend.brain_convergence.scorer import blended_score as _blend
+        blend = _blend(gid, champ.get("score", 0.0))
+        if blend["method"] != "MECHANICAL_PROXY":
+            logger.info(f"BLENDED fitness '{cls}': rubric={champ.get('score')} -> "
+                        f"{blend['score']} ({blend['method']}, "
+                        f"{blend['executions']}x, {blend['outcome_rate']:.1%} ok)")
+        result = improve_champion({"gene_id": gid, "prompt": prompt,
+                                   "score": blend["score"]},
                                   cls, n=1, rubric_path=RUBRIC, backend=backend)
         if result:
             new = {
@@ -96,10 +105,25 @@ def run(max_classes: int = 3):
                 "beats_mech": result["beats_mech"],
                 "at": ts,
             }
+            new["fitness_method"] = blend.get("method", "MECHANICAL_PROXY")
+            new["blended_score"] = blend.get("score")
             champs[cls] = new
             wins.append((cls, result["beats_mech"]))
             with open(DATA / "improved_champions.jsonl", "a", encoding="utf-8") as f:
                 f.write(json.dumps({"task_class": cls, **new}) + "\n")
+            # Gate-outcome piping (2026-07-06): the judge verdict is a REAL live-model
+            # gate result — capture it so fitness can be results-based, not rubric-only.
+            try:
+                from backend.factory.runtime_ledger import record_outcome
+                record_outcome(None, {
+                    "gate": "live_judge", "execution_surface": "improve_run",
+                    "task_class": cls, "champion_id": new["gene_id"],
+                    "improved_from": gid, "mech_score": result["mech_score"],
+                    "judge": result["judge"], "beats_mech": result["beats_mech"],
+                    "model": backend.get("model"), "status": "PROMOTED",
+                })
+            except Exception:
+                pass
 
     if wins:
         save_registry(reg, str(DATA / "champion_registry.json"))

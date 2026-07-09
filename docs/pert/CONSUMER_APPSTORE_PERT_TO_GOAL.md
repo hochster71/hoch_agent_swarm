@@ -8,7 +8,7 @@ This document outlines the PERT graph and critical path to target a live app on 
 
 ```mermaid
 graph TD
-  K1["K1: Key & Provider Provisioning (BLOCKED)"]
+  K1["K1: Key & Provider Provisioning (PASS)"]
   H1["H1: Host Access & Sync (PASS)"]
   H2["H2: Active systemd Telemetry (PASS)"]
   G1["G1: Demand Validation Gate (PENDING)"]
@@ -57,6 +57,6 @@ All tasks are mapped to canonical tracks `[R, K, A, B, D]` to ensure automated p
 ## 3. Critical Path
 
 ```
-K1 (BLOCKED) → H1 (PASS) → H2 (PASS) → G1 (PENDING) → G4 (PENDING) → A2 (PENDING) → A3 (PENDING) → A4 (PENDING) → A6 (PENDING) → SUB (PENDING) → GOAL
+K1 (PASS) → H1 (PASS) → H2 (PASS) → G1 (PENDING) → G4 (PENDING) → A2 (PENDING) → A3 (PENDING) → A4 (PENDING) → A6 (PENDING) → SUB (PENDING) → GOAL
 ```
-**Current Blocker**: **`K1`** (API Keys provisioning).
+**Current Blocker**: **`G1`** (Demand Validation Gate).

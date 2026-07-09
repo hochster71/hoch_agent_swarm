@@ -95,31 +95,65 @@ module.exports = async function handler(req, res) {
     });
   }
 
-  // ---- 4. Create the Stripe Checkout Session ----------------------------
+  // ---- 4. Resolve the Stripe Payment Link (fallback to Checkout Session) --
   try {
     // Lazy require so the config guards above can run without the package.
     // eslint-disable-next-line global-require
     const Stripe = require('stripe');
     const stripe = new Stripe(secretKey, { apiVersion: '2024-06-20' });
 
-    // Base URL for success/cancel redirects. Falls back to a sensible
-    // relative-ish default if BASE_URL is not set.
-    const baseUrl =
-      process.env.BASE_URL ||
-      (req.headers && req.headers.origin) ||
-      'https://example.com';
+    // storyId ties a onestory purchase to the specific story the webhook must unlock.
+    const storyId = body.storyId ? String(body.storyId).slice(0, 64) : undefined;
 
-    const session = await stripe.checkout.sessions.create({
-      mode: tierConfig.mode,
-      line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseUrl}/pricing?canceled=1`,
-      // Attach the tier so the webhook can grant the right entitlement later.
-      metadata: { tier },
-    });
+    let checkoutUrl;
+    try {
+      console.log(`[create-checkout-session] Looking for active Payment Link for price ${priceId}...`);
+      const paymentLinks = await stripe.paymentLinks.list({ active: true, expand: ['data.line_items'] });
+      let paymentLink = paymentLinks.data.find(link => 
+        link.line_items && link.line_items.data.some(item => item.price && item.price.id === priceId)
+      );
 
-    // Return the hosted Checkout URL as JSON. The client redirects to it.
-    return res.status(200).json({ url: session.url });
+      if (!paymentLink) {
+        console.log(`[create-checkout-session] No Payment Link found for price ${priceId}. Creating one...`);
+        paymentLink = await stripe.paymentLinks.create({
+          line_items: [{ price: priceId, quantity: 1 }],
+          metadata: { tier },
+        });
+      }
+
+      if (paymentLink && paymentLink.url) {
+        checkoutUrl = paymentLink.url;
+        if (storyId) {
+          const separator = checkoutUrl.includes('?') ? '&' : '?';
+          checkoutUrl = `${checkoutUrl}${separator}client_reference_id=${encodeURIComponent(storyId)}`;
+        }
+        console.log('[create-checkout-session] Using Payment Link URL:', checkoutUrl);
+      }
+    } catch (linkErr) {
+      console.error('[create-checkout-session] Payment Link resolution failed, falling back to Checkout Session:', linkErr.message);
+    }
+
+    // Fallback to standard Checkout Session if Payment Link could not be resolved/created
+    if (!checkoutUrl) {
+      const baseUrl =
+        process.env.BASE_URL ||
+        (req.headers && req.headers.origin) ||
+        'https://example.com';
+
+      const session = await stripe.checkout.sessions.create({
+        mode: tierConfig.mode,
+        line_items: [{ price: priceId, quantity: 1 }],
+        success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${baseUrl}/?canceled=1`,
+        client_reference_id: storyId,
+        metadata: { tier, storyId: storyId || '' },
+      });
+      checkoutUrl = session.url;
+      console.log('[create-checkout-session] Using Checkout Session fallback URL:', checkoutUrl);
+    }
+
+    // Return the hosted URL as JSON. The client redirects to it.
+    return res.status(200).json({ url: checkoutUrl });
   } catch (err) {
     // Never leak internal details / keys. Log server-side, return a generic error.
     console.error('[create-checkout-session] Stripe error:', err && err.message);

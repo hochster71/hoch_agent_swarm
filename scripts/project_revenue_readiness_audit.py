@@ -105,12 +105,14 @@ def run_audit():
                                 has_auth = True
                             
                             # Real secret exposure check (non-placeholder sk_live_ or sk_test_)
-                            secret_matches = re.findall(r'(sk_live_[a-zA-Z0-9_]+|sk_test_[a-zA-Z0-9_]+)', content)
-                            for match in secret_matches:
-                                suffix = match[8:]
-                                is_placeholder = "_" in suffix or len(suffix) < 24 or "xxx" in suffix or "key" in suffix.lower() or "epic_fury" in suffix
-                                if not is_placeholder:
-                                    has_unmasked_secret = True
+                            # Ignore local environment config files (.env and .env.local) since they are gitignored and intended to store secrets.
+                            if not file.endswith(".env") and not file.endswith(".env.local"):
+                                secret_matches = re.findall(r'(sk_live_[a-zA-Z0-9_]+|sk_test_[a-zA-Z0-9_]+)', content)
+                                for match in secret_matches:
+                                    suffix = match[8:]
+                                    is_placeholder = "_" in suffix or len(suffix) < 24 or "xxx" in suffix or "key" in suffix.lower() or "epic_fury" in suffix
+                                    if not is_placeholder:
+                                        has_unmasked_secret = True
                     except Exception:
                         pass
                         

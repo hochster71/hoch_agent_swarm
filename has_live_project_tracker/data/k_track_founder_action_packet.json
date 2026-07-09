@@ -8,7 +8,7 @@
     "safe_steps": "1. Retrieve keys from OpenAI and Anthropic developer consoles.\n2. Store them locally in the specified config files.",
     "storage_path": ".secrets/provider_keys.json",
     "risk_if_deferred": "Swarm is restricted to local/fallback simulation modes only.",
-    "status": "BLOCKED_FOUNDER_ACTION"
+    "status": "READY"
   },
   {
     "id": "K2",
@@ -19,7 +19,7 @@
     "safe_steps": "1. Go to developer.apple.com and complete registration.\n2. Invite agent email under App Store Connect Users list.",
     "storage_path": "Not applicable (stored in developer portal)",
     "risk_if_deferred": "Preflight binaries cannot be deployed to TestFlight.",
-    "status": "BLOCKED_FOUNDER_ACTION"
+    "status": "RESOLVED_FOUNDER_COMPLETE"
   },
   {
     "id": "K3",

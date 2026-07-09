@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 test.describe("Anti-Fake Runtime Check Gate", () => {
   test("asserts that UI elements map to verified runtime truth and blocks overrides", async ({ page }) => {
     await page.goto("/");
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("load");
 
     // 1. Verify that no fake green state overrides are active
     const errorWarning = page.locator(".no-go-warning");

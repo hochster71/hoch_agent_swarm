@@ -11,19 +11,20 @@ services:
     image: hoch/relay-api:latest
     container_name: hoch-relay-api
     restart: unless-stopped
+    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "3013", "--workers", "1"]
     security_opt:
       - no-new-privileges:true
     cap_drop:
       - ALL
     read_only: false          # /data volume needs writes
-    ports:
-      # CRITICAL: Bound to Tailscale IP only — NOT 0.0.0.0
-      - "100.87.18.15:3012:3012"
+    expose:
+      - "3013"
     volumes:
       - /root/hoch_agent_swarm/has_live_project_tracker/data:/data:ro
       - ./dashboard:/app/static:ro
+      - relay-state:/state          # writable, persists across container recreation (live streams: messages, heartbeats, tickets)
     healthcheck:
-      test: ["CMD-SHELL", "curl -sf http://127.0.0.1:3012/health || exit 1"]
+      test: ["CMD-SHELL", "curl -sf http://127.0.0.1:3013/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -34,8 +35,26 @@ services:
       - PYTHONUNBUFFERED=1
       - PYTHONDONTWRITEBYTECODE=1
 
+  relay-proxy:
+    image: nginx:alpine
+    container_name: hoch-relay-proxy
+    restart: unless-stopped
+    ports:
+      # Bound to Tailscale IP only — NOT 0.0.0.0
+      - "100.87.18.15:3012:3012"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - /root/hoch-relay-001.tail826763.ts.net.crt:/certs/hoch-relay-001.tail826763.ts.net.crt:ro
+      - /root/hoch-relay-001.tail826763.ts.net.key:/certs/hoch-relay-001.tail826763.ts.net.key:ro
+    networks:
+      - relay-net
+    depends_on:
+      - relay-api
+
 volumes:
   relay-data:
+    driver: local
+  relay-state:
     driver: local
 
 networks:

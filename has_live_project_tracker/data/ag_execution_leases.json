@@ -553,5 +553,895 @@
     "status": "RELEASED",
     "fencing_token": 44,
     "released_at": "2026-07-05T21:40:29.367995Z"
+  },
+  {
+    "lease_id": "lease-f7114a58",
+    "task_id": "task-fence-1",
+    "acquired_at": "2026-07-06T19:24:45.762764Z",
+    "expires_at": "2026-07-06T19:24:55.762764Z",
+    "holder": "test-runner-1",
+    "status": "RELEASED",
+    "fencing_token": 45,
+    "released_at": "2026-07-06T19:24:45.763585Z"
+  },
+  {
+    "lease_id": "lease-0d7876c7",
+    "task_id": "task-fence-2",
+    "acquired_at": "2026-07-06T19:24:45.763926Z",
+    "expires_at": "2026-07-06T19:24:55.763926Z",
+    "holder": "test-runner-2",
+    "status": "RELEASED",
+    "fencing_token": 46,
+    "released_at": "2026-07-06T19:24:45.764257Z"
+  },
+  {
+    "lease_id": "lease-8b7f441f",
+    "task_id": "task-allowed",
+    "acquired_at": "2026-07-06T19:24:45.781383Z",
+    "expires_at": "2026-07-06T19:34:45.781383Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 47,
+    "released_at": "2026-07-06T19:24:45.782337Z"
+  },
+  {
+    "lease_id": "lease-4d02ae19",
+    "task_id": "task-blocked",
+    "acquired_at": "2026-07-06T19:24:45.782753Z",
+    "expires_at": "2026-07-06T19:34:45.782753Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "fencing_token": 48,
+    "released_at": "2026-07-06T19:24:45.783258Z"
+  },
+  {
+    "lease_id": "lease-8ff59672",
+    "task_id": "task-test-001",
+    "acquired_at": "2026-07-06T19:24:45.795736Z",
+    "expires_at": "2026-07-06T19:34:45.795736Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 49,
+    "released_at": "2026-07-06T19:24:45.797602Z"
+  },
+  {
+    "lease_id": "lease-1e0d98a1",
+    "task_id": "task-test-002",
+    "acquired_at": "2026-07-06T19:24:45.799180Z",
+    "expires_at": "2026-07-06T19:34:45.799180Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "fencing_token": 50,
+    "released_at": "2026-07-06T19:24:45.800286Z"
+  },
+  {
+    "lease_id": "lease-fdd5e640",
+    "task_id": "task-fence-1",
+    "acquired_at": "2026-07-06T19:25:42.568051Z",
+    "expires_at": "2026-07-06T19:25:52.568051Z",
+    "holder": "test-runner-1",
+    "status": "RELEASED",
+    "fencing_token": 51,
+    "released_at": "2026-07-06T19:25:42.568765Z"
+  },
+  {
+    "lease_id": "lease-983cea2e",
+    "task_id": "task-fence-2",
+    "acquired_at": "2026-07-06T19:25:42.569141Z",
+    "expires_at": "2026-07-06T19:25:52.569141Z",
+    "holder": "test-runner-2",
+    "status": "RELEASED",
+    "fencing_token": 52,
+    "released_at": "2026-07-06T19:25:42.569493Z"
+  },
+  {
+    "lease_id": "lease-9236bc87",
+    "task_id": "task-allowed",
+    "acquired_at": "2026-07-06T19:25:42.584927Z",
+    "expires_at": "2026-07-06T19:35:42.584927Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 53,
+    "released_at": "2026-07-06T19:25:42.585975Z"
+  },
+  {
+    "lease_id": "lease-9e3fe2b2",
+    "task_id": "task-blocked",
+    "acquired_at": "2026-07-06T19:25:42.586418Z",
+    "expires_at": "2026-07-06T19:35:42.586418Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "fencing_token": 54,
+    "released_at": "2026-07-06T19:25:42.586922Z"
+  },
+  {
+    "lease_id": "lease-c3a65959",
+    "task_id": "task-test-001",
+    "acquired_at": "2026-07-06T19:25:42.598299Z",
+    "expires_at": "2026-07-06T19:35:42.598299Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 55,
+    "released_at": "2026-07-06T19:25:42.599382Z"
+  },
+  {
+    "lease_id": "lease-1cd6c74c",
+    "task_id": "task-test-002",
+    "acquired_at": "2026-07-06T19:25:42.599845Z",
+    "expires_at": "2026-07-06T19:35:42.599845Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "fencing_token": 56,
+    "released_at": "2026-07-06T19:25:42.600815Z"
+  },
+  {
+    "lease_id": "lease-0ee94b49",
+    "task_id": "task-fence-1",
+    "acquired_at": "2026-07-06T19:31:07.801195Z",
+    "expires_at": "2026-07-06T19:31:17.801195Z",
+    "holder": "test-runner-1",
+    "status": "RELEASED",
+    "fencing_token": 57,
+    "released_at": "2026-07-06T19:31:07.802052Z"
+  },
+  {
+    "lease_id": "lease-3f4aa98d",
+    "task_id": "task-fence-2",
+    "acquired_at": "2026-07-06T19:31:07.802982Z",
+    "expires_at": "2026-07-06T19:31:17.802982Z",
+    "holder": "test-runner-2",
+    "status": "RELEASED",
+    "fencing_token": 58,
+    "released_at": "2026-07-06T19:31:07.803491Z"
+  },
+  {
+    "lease_id": "lease-6ec8e1cc",
+    "task_id": "task-allowed",
+    "acquired_at": "2026-07-06T19:31:07.826468Z",
+    "expires_at": "2026-07-06T19:41:07.826468Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 59,
+    "released_at": "2026-07-06T19:31:07.827942Z"
+  },
+  {
+    "lease_id": "lease-a2f49e5c",
+    "task_id": "task-blocked",
+    "acquired_at": "2026-07-06T19:31:07.828527Z",
+    "expires_at": "2026-07-06T19:41:07.828527Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "fencing_token": 60,
+    "released_at": "2026-07-06T19:31:07.829244Z"
+  },
+  {
+    "lease_id": "lease-59714bcd",
+    "task_id": "task-test-001",
+    "acquired_at": "2026-07-06T19:31:07.846307Z",
+    "expires_at": "2026-07-06T19:41:07.846307Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 61,
+    "released_at": "2026-07-06T19:31:07.847635Z"
+  },
+  {
+    "lease_id": "lease-7fd24d4e",
+    "task_id": "task-test-002",
+    "acquired_at": "2026-07-06T19:31:07.848253Z",
+    "expires_at": "2026-07-06T19:41:07.848253Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "fencing_token": 62,
+    "released_at": "2026-07-06T19:31:07.848959Z"
+  },
+  {
+    "lease_id": "lease-0b3ac185",
+    "task_id": "task-fence-1",
+    "acquired_at": "2026-07-06T19:43:27.827493Z",
+    "expires_at": "2026-07-06T19:43:37.827493Z",
+    "holder": "test-runner-1",
+    "status": "RELEASED",
+    "fencing_token": 63,
+    "released_at": "2026-07-06T19:43:27.828253Z"
+  },
+  {
+    "lease_id": "lease-7d1ee60c",
+    "task_id": "task-fence-2",
+    "acquired_at": "2026-07-06T19:43:27.828612Z",
+    "expires_at": "2026-07-06T19:43:37.828612Z",
+    "holder": "test-runner-2",
+    "status": "RELEASED",
+    "fencing_token": 64,
+    "released_at": "2026-07-06T19:43:27.828971Z"
+  },
+  {
+    "lease_id": "lease-bf70fd99",
+    "task_id": "task-allowed",
+    "acquired_at": "2026-07-06T19:43:27.848763Z",
+    "expires_at": "2026-07-06T19:53:27.848763Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 65,
+    "released_at": "2026-07-06T19:43:27.850329Z"
+  },
+  {
+    "lease_id": "lease-7c8f848e",
+    "task_id": "task-blocked",
+    "acquired_at": "2026-07-06T19:43:27.850909Z",
+    "expires_at": "2026-07-06T19:53:27.850909Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "fencing_token": 66,
+    "released_at": "2026-07-06T19:43:27.851614Z"
+  },
+  {
+    "lease_id": "lease-867b7ad8",
+    "task_id": "task-test-001",
+    "acquired_at": "2026-07-06T19:43:27.865572Z",
+    "expires_at": "2026-07-06T19:53:27.865572Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 67,
+    "released_at": "2026-07-06T19:43:27.866746Z"
+  },
+  {
+    "lease_id": "lease-17113f7e",
+    "task_id": "task-test-002",
+    "acquired_at": "2026-07-06T19:43:27.867207Z",
+    "expires_at": "2026-07-06T19:53:27.867207Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "fencing_token": 68,
+    "released_at": "2026-07-06T19:43:27.867782Z"
+  },
+  {
+    "lease_id": "lease-1c7a85ca",
+    "task_id": "task-fence-1",
+    "acquired_at": "2026-07-06T19:54:08.286075Z",
+    "expires_at": "2026-07-06T19:54:18.286075Z",
+    "holder": "test-runner-1",
+    "status": "RELEASED",
+    "fencing_token": 69,
+    "released_at": "2026-07-06T19:54:08.287026Z"
+  },
+  {
+    "lease_id": "lease-36740d16",
+    "task_id": "task-fence-2",
+    "acquired_at": "2026-07-06T19:54:08.287495Z",
+    "expires_at": "2026-07-06T19:54:18.287495Z",
+    "holder": "test-runner-2",
+    "status": "RELEASED",
+    "fencing_token": 70,
+    "released_at": "2026-07-06T19:54:08.287942Z"
+  },
+  {
+    "lease_id": "lease-72ef7778",
+    "task_id": "task-allowed",
+    "acquired_at": "2026-07-06T19:54:08.307298Z",
+    "expires_at": "2026-07-06T20:04:08.307298Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 71,
+    "released_at": "2026-07-06T19:54:08.308582Z"
+  },
+  {
+    "lease_id": "lease-3a3b69a0",
+    "task_id": "task-blocked",
+    "acquired_at": "2026-07-06T19:54:08.309148Z",
+    "expires_at": "2026-07-06T20:04:08.309148Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "fencing_token": 72,
+    "released_at": "2026-07-06T19:54:08.310178Z"
+  },
+  {
+    "lease_id": "lease-6cdb144c",
+    "task_id": "task-test-001",
+    "acquired_at": "2026-07-06T19:54:08.325101Z",
+    "expires_at": "2026-07-06T20:04:08.325101Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 73,
+    "released_at": "2026-07-06T19:54:08.326491Z"
+  },
+  {
+    "lease_id": "lease-48df4f7e",
+    "task_id": "task-test-002",
+    "acquired_at": "2026-07-06T19:54:08.327076Z",
+    "expires_at": "2026-07-06T20:04:08.327076Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "fencing_token": 74,
+    "released_at": "2026-07-06T19:54:08.327697Z"
+  },
+  {
+    "lease_id": "lease-22fce807",
+    "task_id": "t-prep",
+    "acquired_at": "2026-07-07T04:33:07.820175Z",
+    "expires_at": "2026-07-07T04:43:07.820175Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 75,
+    "released_at": "2026-07-07T04:33:07.825248Z"
+  },
+  {
+    "lease_id": "lease-72b4e75b",
+    "task_id": "t-pay",
+    "acquired_at": "2026-07-07T04:33:07.845879Z",
+    "expires_at": "2026-07-07T04:43:07.845879Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 76,
+    "released_at": "2026-07-07T04:33:07.849269Z"
+  },
+  {
+    "lease_id": "lease-a8c2cdd0",
+    "task_id": "t-pub",
+    "acquired_at": "2026-07-07T04:33:07.853183Z",
+    "expires_at": "2026-07-07T04:43:07.853183Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 77,
+    "released_at": "2026-07-07T04:33:07.856401Z"
+  },
+  {
+    "lease_id": "lease-add40ce0",
+    "task_id": "t-del",
+    "acquired_at": "2026-07-07T04:33:07.860413Z",
+    "expires_at": "2026-07-07T04:43:07.860413Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "fencing_token": 78,
+    "released_at": "2026-07-07T04:33:07.863604Z"
+  },
+  {
+    "lease_id": "lease-bce594ea",
+    "task_id": "t-pay",
+    "acquired_at": "2026-07-07T04:33:07.867219Z",
+    "expires_at": "2026-07-07T04:43:07.867219Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 79,
+    "released_at": "2026-07-07T04:33:07.869940Z"
+  },
+  {
+    "lease_id": "lease-3a740b64",
+    "task_id": "t-prep",
+    "acquired_at": "2026-07-07T04:33:42.647138Z",
+    "expires_at": "2026-07-07T04:43:42.647138Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 80,
+    "released_at": "2026-07-07T04:33:42.651449Z"
+  },
+  {
+    "lease_id": "lease-26162944",
+    "task_id": "t-pay",
+    "acquired_at": "2026-07-07T04:33:42.656130Z",
+    "expires_at": "2026-07-07T04:43:42.656130Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 81,
+    "released_at": "2026-07-07T04:33:42.659040Z"
+  },
+  {
+    "lease_id": "lease-31d8914d",
+    "task_id": "t-pub",
+    "acquired_at": "2026-07-07T04:33:42.662725Z",
+    "expires_at": "2026-07-07T04:43:42.662725Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 82,
+    "released_at": "2026-07-07T04:33:42.666075Z"
+  },
+  {
+    "lease_id": "lease-e01f3e65",
+    "task_id": "t-del",
+    "acquired_at": "2026-07-07T04:33:42.669693Z",
+    "expires_at": "2026-07-07T04:43:42.669693Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "fencing_token": 83,
+    "released_at": "2026-07-07T04:33:42.673323Z"
+  },
+  {
+    "lease_id": "lease-d003583d",
+    "task_id": "t-pay",
+    "acquired_at": "2026-07-07T04:33:42.677672Z",
+    "expires_at": "2026-07-07T04:43:42.677672Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 84,
+    "released_at": "2026-07-07T04:33:42.682538Z"
+  },
+  {
+    "lease_id": "lease-c1bf046a",
+    "task_id": "hasf-build",
+    "acquired_at": "2026-07-07T04:33:42.735146Z",
+    "expires_at": "2026-07-07T04:43:42.735146Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 85,
+    "released_at": "2026-07-07T04:33:42.738824Z"
+  },
+  {
+    "lease_id": "lease-3bc90447",
+    "task_id": "hasf-test",
+    "acquired_at": "2026-07-07T04:33:42.742755Z",
+    "expires_at": "2026-07-07T04:43:42.742755Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 86,
+    "released_at": "2026-07-07T04:33:42.747259Z"
+  },
+  {
+    "lease_id": "lease-afb9b1e6",
+    "task_id": "hasf-pay",
+    "acquired_at": "2026-07-07T04:33:42.751747Z",
+    "expires_at": "2026-07-07T04:43:42.751747Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 87,
+    "released_at": "2026-07-07T04:33:42.755718Z"
+  },
+  {
+    "lease_id": "lease-0c3aa523",
+    "task_id": "hasf-ship",
+    "acquired_at": "2026-07-07T04:33:42.758726Z",
+    "expires_at": "2026-07-07T04:43:42.758726Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 88,
+    "released_at": "2026-07-07T04:33:42.761720Z"
+  },
+  {
+    "lease_id": "lease-96a04f5f",
+    "task_id": "k1-keys",
+    "acquired_at": "2026-07-07T04:33:42.765197Z",
+    "expires_at": "2026-07-07T04:43:42.765197Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 89,
+    "released_at": "2026-07-07T04:33:42.768210Z"
+  },
+  {
+    "lease_id": "lease-380d9cc1",
+    "task_id": "danger",
+    "acquired_at": "2026-07-07T04:33:42.771112Z",
+    "expires_at": "2026-07-07T04:43:42.771112Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "fencing_token": 90,
+    "released_at": "2026-07-07T04:33:42.774996Z"
+  },
+  {
+    "lease_id": "lease-fe77f245",
+    "task_id": "task-fence-1",
+    "acquired_at": "2026-07-07T06:14:49.670304Z",
+    "expires_at": "2026-07-07T06:14:59.670304Z",
+    "holder": "test-runner-1",
+    "status": "RELEASED",
+    "fencing_token": 91,
+    "released_at": "2026-07-07T06:14:49.671082Z"
+  },
+  {
+    "lease_id": "lease-91436d8e",
+    "task_id": "task-fence-2",
+    "acquired_at": "2026-07-07T06:14:49.671523Z",
+    "expires_at": "2026-07-07T06:14:59.671523Z",
+    "holder": "test-runner-2",
+    "status": "RELEASED",
+    "fencing_token": 92,
+    "released_at": "2026-07-07T06:14:49.671982Z"
+  },
+  {
+    "lease_id": "lease-a427ab45",
+    "task_id": "task-allowed",
+    "acquired_at": "2026-07-07T06:14:49.688230Z",
+    "expires_at": "2026-07-07T06:24:49.688230Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 93,
+    "released_at": "2026-07-07T06:14:49.689334Z"
+  },
+  {
+    "lease_id": "lease-50838084",
+    "task_id": "task-blocked",
+    "acquired_at": "2026-07-07T06:14:49.689925Z",
+    "expires_at": "2026-07-07T06:24:49.689925Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "fencing_token": 94,
+    "released_at": "2026-07-07T06:14:49.690693Z"
+  },
+  {
+    "lease_id": "lease-1f7cd54e",
+    "task_id": "task-test-001",
+    "acquired_at": "2026-07-07T06:14:49.703267Z",
+    "expires_at": "2026-07-07T06:24:49.703267Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 95,
+    "released_at": "2026-07-07T06:14:49.704569Z"
+  },
+  {
+    "lease_id": "lease-bdbbcf05",
+    "task_id": "task-test-002",
+    "acquired_at": "2026-07-07T06:14:49.705219Z",
+    "expires_at": "2026-07-07T06:24:49.705219Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "fencing_token": 96,
+    "released_at": "2026-07-07T06:14:49.706029Z"
+  },
+  {
+    "lease_id": "lease-ea5e91be",
+    "task_id": "t-prep",
+    "acquired_at": "2026-07-07T06:14:49.708062Z",
+    "expires_at": "2026-07-07T06:24:49.708062Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 97,
+    "released_at": "2026-07-07T06:14:49.709314Z"
+  },
+  {
+    "lease_id": "lease-14806e14",
+    "task_id": "t-pay",
+    "acquired_at": "2026-07-07T06:14:49.711070Z",
+    "expires_at": "2026-07-07T06:24:49.711070Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 98,
+    "released_at": "2026-07-07T06:14:49.712742Z"
+  },
+  {
+    "lease_id": "lease-df3bf0d7",
+    "task_id": "t-pub",
+    "acquired_at": "2026-07-07T06:14:49.714646Z",
+    "expires_at": "2026-07-07T06:24:49.714646Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 99,
+    "released_at": "2026-07-07T06:14:49.715438Z"
+  },
+  {
+    "lease_id": "lease-1f8f5867",
+    "task_id": "t-del",
+    "acquired_at": "2026-07-07T06:14:49.717189Z",
+    "expires_at": "2026-07-07T06:24:49.717189Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "fencing_token": 100,
+    "released_at": "2026-07-07T06:14:49.717843Z"
+  },
+  {
+    "lease_id": "lease-24680913",
+    "task_id": "t-pay",
+    "acquired_at": "2026-07-07T06:14:49.719779Z",
+    "expires_at": "2026-07-07T06:24:49.719779Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 101,
+    "released_at": "2026-07-07T06:14:49.721696Z"
+  },
+  {
+    "lease_id": "lease-593cf67d",
+    "task_id": "task-fence-1",
+    "acquired_at": "2026-07-07T06:14:58.692385Z",
+    "expires_at": "2026-07-07T06:15:08.692385Z",
+    "holder": "test-runner-1",
+    "status": "RELEASED",
+    "fencing_token": 102,
+    "released_at": "2026-07-07T06:14:58.693182Z"
+  },
+  {
+    "lease_id": "lease-0c133e46",
+    "task_id": "task-fence-2",
+    "acquired_at": "2026-07-07T06:14:58.693645Z",
+    "expires_at": "2026-07-07T06:15:08.693645Z",
+    "holder": "test-runner-2",
+    "status": "RELEASED",
+    "fencing_token": 103,
+    "released_at": "2026-07-07T06:14:58.694117Z"
+  },
+  {
+    "lease_id": "lease-745fc255",
+    "task_id": "task-allowed",
+    "acquired_at": "2026-07-07T06:14:58.707428Z",
+    "expires_at": "2026-07-07T06:24:58.707428Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 104,
+    "released_at": "2026-07-07T06:14:58.708559Z"
+  },
+  {
+    "lease_id": "lease-0e3e6e6c",
+    "task_id": "task-blocked",
+    "acquired_at": "2026-07-07T06:14:58.709119Z",
+    "expires_at": "2026-07-07T06:24:58.709119Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "fencing_token": 105,
+    "released_at": "2026-07-07T06:14:58.709772Z"
+  },
+  {
+    "lease_id": "lease-f18a58bf",
+    "task_id": "task-test-001",
+    "acquired_at": "2026-07-07T06:14:58.720823Z",
+    "expires_at": "2026-07-07T06:24:58.720823Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 106,
+    "released_at": "2026-07-07T06:14:58.721919Z"
+  },
+  {
+    "lease_id": "lease-1151a2d9",
+    "task_id": "task-test-002",
+    "acquired_at": "2026-07-07T06:14:58.722485Z",
+    "expires_at": "2026-07-07T06:24:58.722485Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "fencing_token": 107,
+    "released_at": "2026-07-07T06:14:58.723139Z"
+  },
+  {
+    "lease_id": "lease-963f765b",
+    "task_id": "t-prep",
+    "acquired_at": "2026-07-07T06:14:58.724747Z",
+    "expires_at": "2026-07-07T06:24:58.724747Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 108,
+    "released_at": "2026-07-07T06:14:58.726040Z"
+  },
+  {
+    "lease_id": "lease-98cc676e",
+    "task_id": "t-pay",
+    "acquired_at": "2026-07-07T06:14:58.727554Z",
+    "expires_at": "2026-07-07T06:24:58.727554Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 109,
+    "released_at": "2026-07-07T06:14:58.728284Z"
+  },
+  {
+    "lease_id": "lease-f29240d0",
+    "task_id": "t-pub",
+    "acquired_at": "2026-07-07T06:14:58.729830Z",
+    "expires_at": "2026-07-07T06:24:58.729830Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 110,
+    "released_at": "2026-07-07T06:14:58.730612Z"
+  },
+  {
+    "lease_id": "lease-125a6b74",
+    "task_id": "t-del",
+    "acquired_at": "2026-07-07T06:14:58.732132Z",
+    "expires_at": "2026-07-07T06:24:58.732132Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "fencing_token": 111,
+    "released_at": "2026-07-07T06:14:58.732785Z"
+  },
+  {
+    "lease_id": "lease-b03ab294",
+    "task_id": "t-pay",
+    "acquired_at": "2026-07-07T06:14:58.734365Z",
+    "expires_at": "2026-07-07T06:24:58.734365Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 112,
+    "released_at": "2026-07-07T06:14:58.735159Z"
+  },
+  {
+    "lease_id": "lease-c76daf10",
+    "task_id": "t-prep",
+    "acquired_at": "2026-07-07T14:46:03.331646Z",
+    "expires_at": "2026-07-07T14:56:03.331646Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "fencing_token": 113,
+    "released_at": "2026-07-07T14:47:23.598393Z"
+  },
+  {
+    "lease_id": "lease-f2b8cb34",
+    "task_id": "t-pay",
+    "acquired_at": "2026-07-07T14:47:23.639559Z",
+    "expires_at": "2026-07-07T14:57:23.639559Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 114,
+    "released_at": "2026-07-07T14:47:23.640574Z"
+  },
+  {
+    "lease_id": "lease-74625feb",
+    "task_id": "t-pub",
+    "acquired_at": "2026-07-07T14:47:23.642924Z",
+    "expires_at": "2026-07-07T14:57:23.642924Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 115,
+    "released_at": "2026-07-07T14:47:23.644033Z"
+  },
+  {
+    "lease_id": "lease-6472b2ab",
+    "task_id": "t-del",
+    "acquired_at": "2026-07-07T14:47:23.645659Z",
+    "expires_at": "2026-07-07T14:57:23.645659Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "fencing_token": 116,
+    "released_at": "2026-07-07T14:47:23.646433Z"
+  },
+  {
+    "lease_id": "lease-9497ecb4",
+    "task_id": "t-pay",
+    "acquired_at": "2026-07-07T14:47:23.648140Z",
+    "expires_at": "2026-07-07T14:57:23.648140Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 117,
+    "released_at": "2026-07-07T14:47:23.648996Z"
+  },
+  {
+    "lease_id": "lease-f2790e02",
+    "task_id": "t-prep",
+    "acquired_at": "2026-07-07T14:48:52.278960Z",
+    "expires_at": "2026-07-07T14:58:52.278960Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 118,
+    "released_at": "2026-07-07T14:48:57.435267Z"
+  },
+  {
+    "lease_id": "lease-0d57e61f",
+    "task_id": "t-pay",
+    "acquired_at": "2026-07-07T14:48:57.440255Z",
+    "expires_at": "2026-07-07T14:58:57.440255Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 119,
+    "released_at": "2026-07-07T14:48:57.443227Z"
+  },
+  {
+    "lease_id": "lease-e5061681",
+    "task_id": "t-pub",
+    "acquired_at": "2026-07-07T14:48:57.445918Z",
+    "expires_at": "2026-07-07T14:58:57.445918Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 120,
+    "released_at": "2026-07-07T14:48:57.446929Z"
+  },
+  {
+    "lease_id": "lease-3b88fc9e",
+    "task_id": "t-del",
+    "acquired_at": "2026-07-07T14:48:57.449051Z",
+    "expires_at": "2026-07-07T14:58:57.449051Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "fencing_token": 121,
+    "released_at": "2026-07-07T14:48:57.450109Z"
+  },
+  {
+    "lease_id": "lease-6014e468",
+    "task_id": "t-pay",
+    "acquired_at": "2026-07-07T14:48:57.451815Z",
+    "expires_at": "2026-07-07T14:58:57.451815Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 122,
+    "released_at": "2026-07-07T14:48:57.452667Z"
+  },
+  {
+    "lease_id": "lease-862478df",
+    "task_id": "task-fence-1",
+    "acquired_at": "2026-07-09T04:11:49.631382Z",
+    "expires_at": "2026-07-09T04:11:59.631382Z",
+    "holder": "test-runner-1",
+    "status": "RELEASED",
+    "fencing_token": 123,
+    "released_at": "2026-07-09T04:11:49.634534Z"
+  },
+  {
+    "lease_id": "lease-433376eb",
+    "task_id": "task-fence-2",
+    "acquired_at": "2026-07-09T04:11:49.635732Z",
+    "expires_at": "2026-07-09T04:11:59.635732Z",
+    "holder": "test-runner-2",
+    "status": "RELEASED",
+    "fencing_token": 124,
+    "released_at": "2026-07-09T04:11:49.636847Z"
+  },
+  {
+    "lease_id": "lease-bd025d2c",
+    "task_id": "task-allowed",
+    "acquired_at": "2026-07-09T04:11:49.683857Z",
+    "expires_at": "2026-07-09T04:21:49.683857Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 125,
+    "released_at": "2026-07-09T04:13:27.152413Z"
+  },
+  {
+    "lease_id": "lease-17642fda",
+    "task_id": "task-blocked",
+    "acquired_at": "2026-07-09T04:13:27.161843Z",
+    "expires_at": "2026-07-09T04:23:27.161843Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "fencing_token": 126,
+    "released_at": "2026-07-09T04:13:27.165959Z"
+  },
+  {
+    "lease_id": "lease-a6b6d987",
+    "task_id": "task-test-001",
+    "acquired_at": "2026-07-09T04:13:27.261163Z",
+    "expires_at": "2026-07-09T04:23:27.261163Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 127,
+    "released_at": "2026-07-09T04:14:34.230601Z"
+  },
+  {
+    "lease_id": "lease-ca857cbb",
+    "task_id": "task-test-002",
+    "acquired_at": "2026-07-09T04:14:34.233450Z",
+    "expires_at": "2026-07-09T04:24:34.233450Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "fencing_token": 128,
+    "released_at": "2026-07-09T04:14:34.242356Z"
+  },
+  {
+    "lease_id": "lease-8d72c664",
+    "task_id": "t-prep",
+    "acquired_at": "2026-07-09T04:14:34.282358Z",
+    "expires_at": "2026-07-09T04:24:34.282358Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 129,
+    "released_at": "2026-07-09T04:17:17.945339Z"
+  },
+  {
+    "lease_id": "lease-0ee6184d",
+    "task_id": "t-pay",
+    "acquired_at": "2026-07-09T04:17:17.986389Z",
+    "expires_at": "2026-07-09T04:27:17.986389Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 130,
+    "released_at": "2026-07-09T04:17:17.988894Z"
+  },
+  {
+    "lease_id": "lease-d5dea64a",
+    "task_id": "t-pub",
+    "acquired_at": "2026-07-09T04:17:17.995610Z",
+    "expires_at": "2026-07-09T04:27:17.995610Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 131,
+    "released_at": "2026-07-09T04:17:17.998564Z"
+  },
+  {
+    "lease_id": "lease-82750c3a",
+    "task_id": "t-del",
+    "acquired_at": "2026-07-09T04:17:18.008577Z",
+    "expires_at": "2026-07-09T04:27:18.008577Z",
+    "holder": "ag_execution_runner",
+    "status": "FAILED",
+    "fencing_token": 132,
+    "released_at": "2026-07-09T04:17:18.011692Z"
+  },
+  {
+    "lease_id": "lease-3bfcecef",
+    "task_id": "t-pay",
+    "acquired_at": "2026-07-09T04:17:18.019077Z",
+    "expires_at": "2026-07-09T04:27:18.019077Z",
+    "holder": "ag_execution_runner",
+    "status": "RELEASED",
+    "fencing_token": 133,
+    "released_at": "2026-07-09T04:17:18.021731Z"
   }
 ]

@@ -7,8 +7,8 @@
     "local_host_name": "Michaels-MacBook-Pro",
     "lan_ip": "10.0.0.10"
   },
-  "health_endpoint": "http://100.87.18.15:3012/health",
-  "dashboard_url": "http://100.87.18.15:3012/",
+  "health_endpoint": "https://hoch-relay-001.tail826763.ts.net:3012/health",
+  "dashboard_url": "https://hoch-relay-001.tail826763.ts.net:3012/",
   "health_status": "HTTP 200 OK",
   "access_method": "SSH root@50.116.41.183",
   "ssh_config_present": true,

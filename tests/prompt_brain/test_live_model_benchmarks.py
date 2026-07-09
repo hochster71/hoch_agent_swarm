@@ -101,7 +101,8 @@ def test_adapter_health_reason_codes():
             "ENDPOINT_REACHABLE",
             "MISSING_API_KEY",
             "ENDPOINT_UNREACHABLE",
-            "SIMULATION_FALLBACK_ALWAYS_AVAILABLE"
+            "SIMULATION_FALLBACK_ALWAYS_AVAILABLE",
+            "API_KEY_PRESENT"
         ]
 
 def test_production_readiness_gate():

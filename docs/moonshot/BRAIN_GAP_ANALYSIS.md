@@ -1,17 +1,16 @@
 # BRAIN Gap Analysis
 
-- generation: **25**  |  mean champion score: **72.5**  |  state: **PLATEAUING**
-- gene classes: **30**  |  champion classes: **26**  |  total genes: **479**
-- concentration (top-5 share of gene pool): **60.3%**
+- generation: **745**  |  mean champion score: **95.583**  |  state: **CONVERGED**
+- gene classes: **73**  |  champion classes: **30**  |  total genes: **737**
+- concentration (top-5 share of gene pool): **39.2%**
 - policy: min_pool=6, target_score=70.0
 
 ## Binding constraint by class
 
 | constraint | classes |
 |---|---|
-| SATURATED | 14 |
-| LOW_CEILING | 12 |
-| NO_CHAMPION | 4 |
+| NO_CHAMPION | 43 |
+| SATURATED | 30 |
 
 **Synthetic genes needed to lift every thin class to min_pool: 0**
 
@@ -24,18 +23,6 @@
 
 | class | genes | score |
 |---|---|---|
-| Supply Chain | 6 | 57.5 |
-| Vulnerability Management | 6 | 60.0 |
-| Governance / Compliance | 50 | 62.5 |
-| Research & Delivery | 8 | 62.5 |
-| AI / ML Systems | 6 | 67.5 |
-| Cloud Security | 6 | 67.5 |
-| Governance | 6 | 67.5 |
-| Operations | 41 | 67.5 |
-| Privacy | 6 | 67.5 |
-| SAST | 6 | 67.5 |
-| SDLC Governance | 8 | 67.5 |
-| Security Architecture | 18 | 67.5 |
 
 ## Taxonomy drift (merge candidates)
 
@@ -43,4 +30,14 @@
 |---|---|---|
 | AI / ML | AI / ML Systems | 1.0 |
 | Governance / Compliance | Governance | 1.0 |
+| Audit | SSP Control Narrative Audit | 1.0 |
+| Audit | Audit-Ready Evidence Trail | 1.0 |
+| Audit | Audit cryptographic key lifecycles. | 1.0 |
 | SDLC Governance | Governance | 1.0 |
+| Checksum | Hash Checksums | 1.0 |
+| STIG Checklist Review | DISA STIG Checklist Review | 1.0 |
+| Review an SSP control narrative | SSP Control Narrative Review | 1.0 |
+| Review Acceleration | review acceleration | 1.0 |
+| SSP Control Narrative Audit | Review an SSP control narrative | 0.75 |
+| SSP Control Narrative Audit | SSP Control Narrative Review | 0.75 |
+| DISA STIG Gap Review | DISA STIG Checklist Review | 0.75 |

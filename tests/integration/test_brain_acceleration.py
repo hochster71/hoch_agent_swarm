@@ -55,9 +55,10 @@ def test_gene_expansion_dual_gate_rejects_dupes_and_keyword_stuffing():
     assert out[0]["state"] == "SYNTHETIC_ADMITTED"
 
 
-def test_gene_expansion_no_backend_returns_empty():
-    from backend.brain_convergence.gene_expansion import expand_class
-    assert expand_class("Privacy", [{"prompt": "x"}], 3, backend=None) == []
+def test_gene_expansion_no_backend_returns_empty(monkeypatch):
+    from backend.brain_convergence import gene_expansion
+    monkeypatch.setattr(gene_expansion, "detect_local_backend", lambda: None)
+    assert gene_expansion.expand_class("Privacy", [{"prompt": "x"}], 3, backend=None) == []
 
 
 def test_convergence_blind_flat_cannot_converge(tmp_path):
@@ -94,3 +95,69 @@ def test_coverage_sweep_touches_all_and_prioritizes_weakest(tmp_path, monkeypatc
             weak_hits += 1
     assert len(seen) >= 16          # broad rotation coverage over cycles
     assert weak_hits >= 10          # weakest near-always prioritized
+
+
+def test_restricted_tournament_selection_niching():
+    from backend.brain_convergence.gene_expansion import expand_class
+    # 3 genes in the class
+    class_genes = [
+        {"gene_id": "g1", "prompt": "Identify code security vulnerabilities in docker containers", "task_class": "Cyber"},
+        {"gene_id": "g2", "prompt": "Parse log files for authentication audit trail anomalies", "task_class": "Cyber"},
+        {"gene_id": "g3", "prompt": "Setup telemetry pipelines using Tailscale status metrics", "task_class": "Cyber"},
+    ]
+    backend = {"kind": "fake", "model": "unit"}
+    
+    # Candidate 1: similar to g3, higher score
+    # Candidate 2: similar to g1, lower score
+    def gen(seed, cls, n=2, backend=None):
+        return [
+            {"text": "Setup telemetry pipelines using Tailscale metrics and relational database", "source": "L"},
+            {"text": "Identify security issues in docker container systems", "source": "L"},
+        ]
+        
+    def judge(backend, a, b, cls):
+        return {"winner": "B"}
+        
+    def score_fake(text, rubric_path=None):
+        if "relational database" in text:
+            return {"overall": 80.0}
+        elif "Identify security" in text:
+            return {"overall": 40.0}
+        elif "Identify code" in text:
+            return {"overall": 50.0}
+        elif "Parse log" in text:
+            return {"overall": 60.0}
+        elif "status metrics" in text:
+            return {"overall": 70.0}
+        return {"overall": 10.0}
+
+    # Set max_pool = 3. Pool is already at 3, so full.
+    admitted, replaced = expand_class(
+        "Cyber", class_genes, n_target=2, backend=backend,
+        generate_fn=gen, judge_fn=judge, score_fn=score_fake,
+        max_pool=3, return_replaced=True
+    )
+    
+    # Candidate 1 (Setup telemetry - score 80) is similar to g3 (score 70).
+    # Since 80 > 70, Candidate 1 replaces g3.
+    # Candidate 2 (Identify security - score 40) is similar to g1 (score 50).
+    # Since 40 <= 50, Candidate 2 is discarded (not admitted).
+    assert len(admitted) == 1
+    assert admitted[0]["prompt"].startswith("Setup telemetry pipelines using Tailscale metrics")
+    assert replaced == ["g3"]
+
+
+def test_splits_guarantee_heldout():
+    from backend.brain_convergence.splits import make_splits, assert_disjoint
+    
+    # Test for various n
+    for n in range(1, 15):
+        by_class = {"Cyber": [f"gene-{i}" for i in range(n)]}
+        res = make_splits(by_class)
+        assert_disjoint(res)
+        
+        counts = res["per_class"]["Cyber"]
+        assert counts["train"] + counts["dev"] + counts["heldout"] == n
+        assert counts["heldout"] >= 1
+
+

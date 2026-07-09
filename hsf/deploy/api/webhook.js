@@ -101,20 +101,40 @@ module.exports = async function handler(req, res) {
           })
         );
 
-        // TODO (founder / later build task): actually grant the entitlement.
-        //   - onestory: mark the specific story as "paid" and enable the
-        //     high-res / watermark-free export + permanent hosting URL.
-        //   - creators: create/activate the subscriber account so ALL their
-        //     stories unlock while the subscription is active.
-        // This is where hosting/unlock would happen (e.g. write to a DB,
-        // flip a flag in KV/blob storage, or call a hosting API).
+        // Grant entitlement (Vercel KV; no-op + log if KV not provisioned).
+        //   - onestory: key by storyId (from client_reference_id) -> unlock that export.
+        //   - creators: key by email -> unlock all their stories (phase 2 needs accounts).
+        const { setPaid, put } = require('../lib/store');
+        const storyId = session.client_reference_id ||
+          (session.metadata && session.metadata.storyId) || null;
+        if (tier === 'creators' && customerEmail) {
+          await setPaid('email:' + customerEmail.toLowerCase(), { tier, sessionId: session.id });
+          // map Stripe customer -> email so we can revoke on cancel/lapse.
+          if (session.customer) await put('cust:' + session.customer, { email: customerEmail });
+        } else if (storyId) {
+          await setPaid('story:' + storyId, { tier, email: customerEmail, sessionId: session.id });
+        }
         break;
       }
 
       case 'customer.subscription.deleted': {
-        // TODO (founder / later build task): revoke creator entitlements when
-        // a subscription is canceled or lapses.
-        console.log('[webhook] subscription ended:', event.data.object.id);
+        const sub = event.data.object;
+        const { setUnpaid, get } = require('../lib/store');
+        const m = sub.customer ? await get('cust:' + sub.customer) : null;
+        if (m && m.email) await setUnpaid('email:' + m.email.toLowerCase());
+        console.log('[webhook] revoked creators for', m && m.email);
+        break;
+      }
+
+      case 'customer.subscription.updated': {
+        const sub = event.data.object;
+        const { setPaid, setUnpaid, get } = require('../lib/store');
+        const m = sub.customer ? await get('cust:' + sub.customer) : null;
+        if (m && m.email) {
+          if (sub.status === 'active' || sub.status === 'trialing')
+            await setPaid('email:' + m.email.toLowerCase(), { tier: 'creators', via: 'sub.updated' });
+          else await setUnpaid('email:' + m.email.toLowerCase());
+        }
         break;
       }
 

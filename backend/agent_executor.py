@@ -407,15 +407,21 @@ _TIER_NAME = {TIER_LOCAL: "local", TIER_CHEAP: "cheap", TIER_FRONTIER: "frontier
 
 
 def _verify_compile(path: str) -> tuple[bool, str]:
-    import subprocess
     p = _safe(path)
     if not p.exists():
         return False, f"compile target missing: {path}"
-    if p.suffix != ".py":
-        return True, f"{path} (non-python, skipped)"
-    r = subprocess.run([sys.executable, "-m", "py_compile", str(p)],
-                       capture_output=True, text=True, timeout=CMD_TIMEOUT)
-    return (r.returncode == 0), (f"py_compile {path}: " + ("ok" if r.returncode == 0 else r.stderr[:300]))
+    try:
+        from scripts.code_task_gate import compile_check
+        ok, msg = compile_check(str(p))
+        return ok, f"compile_check {path}: {msg[:300]}"
+    except Exception as e:
+        # Fallback if import fails
+        if p.suffix != ".py":
+            return True, f"{path} (non-python, skipped)"
+        import subprocess
+        r = subprocess.run([sys.executable, "-m", "py_compile", str(p)],
+                           capture_output=True, text=True, timeout=CMD_TIMEOUT)
+        return (r.returncode == 0), (f"py_compile {path}: " + ("ok" if r.returncode == 0 else r.stderr[:300]))
 
 
 def _verify_pytest(target: str) -> tuple[bool, str]:

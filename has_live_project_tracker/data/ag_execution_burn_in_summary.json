@@ -1,9 +1,9 @@
 {
-  "total_cycles": 118,
-  "real_cycles": 118,
+  "total_cycles": 2828,
+  "real_cycles": 2828,
   "simulated_cycles": 0,
-  "injection_cycles": 3,
-  "successful_real_cycles": 118,
+  "injection_cycles": 0,
+  "successful_real_cycles": 2828,
   "failed_real_cycles": 0,
   "blocked_cycles": 0,
   "duplicate_execution_detected": 0,
@@ -13,7 +13,7 @@
   "unsafe_action_detected": 0,
   "heartbeat_stale_detected": 0,
   "failed_cycle_rate": 0.0,
-  "final_verdict": "PHASE_E_REAL_BURN_IN_PENDING",
+  "final_verdict": "BURN_IN_GO",
   "venue_classification": {
     "host_name": "hoch-relay-001",
     "host_os": "Linux",
@@ -26,5 +26,5 @@
     "evidence_path": "has_live_project_tracker/data/ag_execution_daemon_state.json",
     "verdict": "PRIMARY_SYSTEMD_BURN_IN_ACTIVE"
   },
-  "lane_1_verdict": "RUNTIME_PROOF_CONDITIONAL_GO"
+  "elapsed_hours": 47.43051344194445
 }

@@ -95,6 +95,18 @@ def main():
     aliases = sys.argv[2] if len(sys.argv) > 2 else (DEFAULT_ALIASES if Path(DEFAULT_ALIASES).exists() else None)
     r = run(lib, aliases)
     print(json.dumps(r, indent=2))
+    # Gate-outcome piping (2026-07-06): each generation's verification is a real
+    # mechanical gate result — ledger it alongside execution outcomes.
+    try:
+        from backend.factory.runtime_ledger import record_outcome
+        record_outcome(None, {"gate": "m0_generation", "execution_surface": "run_m0",
+                              "status": r.get("status"), "generation": r.get("generation"),
+                              "promoted": r.get("promoted"),
+                              "mean_champion_score": r.get("mean_champion_score"),
+                              "convergence": r.get("convergence"),
+                              "evidence": r.get("evidence")})
+    except Exception:
+        pass
     print(f"\nSTATUS={r['status']} | gen={r.get('generation')} | promoted={r.get('promoted')} "
           f"| mean={r.get('mean_champion_score')} | {r.get('convergence')} | evidence={r.get('evidence')}")
     sys.exit(0 if r["status"] == "VERIFIED" else 1)

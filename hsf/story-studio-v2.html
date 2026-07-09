@@ -38,17 +38,26 @@
   .muted{color:var(--mut);font-size:12px}
 
   /* ---- STAGE ---- */
-  #stage{position:relative;min-height:460px;border-radius:18px;border:1px solid var(--bd);overflow:hidden;
-    background:radial-gradient(760px 440px at 32% 8%,#111a2e,#06080f 62%)}
-  #stage::after{content:"";position:absolute;inset:0;pointer-events:none;
-    background:radial-gradient(600px 320px at 80% 110%,color-mix(in srgb,var(--acc) 16%,transparent),transparent 70%);
-    transition:background .9s ease}
-  .scene{position:absolute;inset:0;padding:40px 44px;display:flex;flex-direction:column;
+  #stage{position:relative;min-height:480px;border-radius:18px;border:1px solid var(--bd);overflow:hidden;
+    background:#05070e}
+  #motion-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+  .scene{position:absolute;inset:0;padding:40px 44px;display:flex;flex-direction:column;z-index:2;
     opacity:0;transform:translateY(24px) scale(.995);
     transition:opacity .85s cubic-bezier(.2,.7,.2,1),transform .85s cubic-bezier(.2,.7,.2,1);
-    pointer-events:none}
+    pointer-events:none;text-shadow: 0 2px 10px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.9)}
   .scene.show{opacity:1;transform:none;pointer-events:auto}
   @media(max-width:520px){.scene{padding:28px 24px}}
+
+  .spinner {
+    width: 42px;
+    height: 42px;
+    border: 4px solid rgba(34, 211, 238, 0.15);
+    border-radius: 50%;
+    border-top-color: var(--cy);
+    animation: spin 1s ease-in-out infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
 
   .kick{font-size:11px;letter-spacing:2.5px;color:var(--acc);text-transform:uppercase;font-weight:700;
     display:inline-flex;align-items:center;gap:8px}
@@ -155,7 +164,8 @@
     <!-- ===================== PREVIEW + PAYWALL ===================== -->
     <div>
       <div id="stage">
-        <div class="scene lay-center show" id="placeholder">
+        <canvas id="motion-canvas"></canvas>
+        <div class="scene lay-center show" id="placeholder" style="z-index: 10;">
           <div class="kick">Live preview</div>
           <h2>Your chronicle appears here.</h2>
           <p>Fill the form and hit <b>Generate</b> — the engine writes 8–10 scenes and plays them back,
@@ -175,12 +185,20 @@
         <p>Your free preview plays every scene right here. The paid product adds a hosted share link,
           music-timed motion, custom themes, a hero mission patch, and a downloadable export you own forever.</p>
         <div class="price">
-          <div class="tier"><b>$19</b> <small>/ one story</small><br>
-            <span class="muted">keepsake · full export + share link</span></div>
-          <div class="tier"><b>$12</b><small>/mo</small> <span class="badge">CREATORS</span><br>
-            <span class="muted">unlimited chronicles · hosting · themes</span></div>
+          <button class="tier" onclick="checkout('onestory')"><b>$19</b> <small>/ one story</small><br>
+            <span class="muted">keepsake · full export + share link</span></button>
+          <button class="tier" onclick="checkout('creators')"><b>$12</b><small>/mo</small> <span class="badge">CREATORS</span><br>
+            <span class="muted">unlimited chronicles · hosting · themes</span></button>
         </div>
-        <button class="unlock" onclick="unlock()">Unlock full storybook</button>
+        <p class="muted" id="paymsg" style="margin-top:10px;display:none"></p>
+        <div style="margin-top:12px;border-top:1px solid rgba(255,255,255,.08);padding-top:12px">
+          <p class="muted" style="margin:0 0 6px">Already a Creators subscriber? Sign in to unlock on this device.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input id="loginEmail" type="email" placeholder="you@email.com" style="flex:1;min-width:180px;padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:rgba(0,0,0,.25);color:#e8eefc"/>
+            <button class="tier" style="padding:8px 14px" onclick="signIn()">Send link</button>
+          </div>
+          <p class="muted" id="loginmsg" style="margin-top:6px;display:none"></p>
+        </div>
         <p class="muted" style="margin-top:8px">Free preview → paid export. The same model that put products in the App Store.</p>
       </div>
     </div>
@@ -191,8 +209,17 @@
 <script src="story-engine.js"></script>
 <script>
 (function(){
-  var scenes=[], idx=0, timer=null, playing=false;
+  var scenes=[], idx=0, timer=null, playing=false, STORY_ID=null;
   var AUTO_MS=4200;
+  var sceneImages={}; // Index (0-5) -> Image Object (once loaded)
+
+  // Canvas Compositor State
+  var canvas, ctx, stageWidth, stageHeight;
+  var mouseX = 0, mouseY = 0, mouseTargetX = 0, mouseTargetY = 0;
+  var particles = [];
+  var activeImage = null, prevImage = null, fadeVal = 1.0;
+  var kbTime = 0;
+  var isPaid = false;
 
   function el(id){return document.getElementById(id);}
   function esc(s){return (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
@@ -222,10 +249,59 @@
     return '<div class="kick">'+esc(s.kicker)+'</div>'+patch+head+body+chips;
   }
 
-  window.generate=function(){
+  window.generate=async function(){
     var spec=readSpec();
-    scenes = window.buildStory(spec);
-    var stage=el('stage'); stage.innerHTML='';
+    if (!STORY_ID) {
+      STORY_ID = (window.crypto && crypto.randomUUID) ? crypto.randomUUID()
+        : ('s'+Date.now()+Math.random().toString(36).slice(2));
+      try{ localStorage.setItem('ss_story_id', STORY_ID); }catch(e){}
+    }
+
+    // Show typewriter log/spinner during brief generation
+    var stage=el('stage');
+    // Save canvas reference so it is preserved
+    var cnvs = el('motion-canvas');
+    stage.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:15px;"><div class="spinner"></div><div style="color:var(--cy);font-size:14px;letter-spacing:1px;text-transform:uppercase;">Agent Swarm writing story...</div></div>';
+    stage.appendChild(cnvs);
+
+    try {
+      var r=await fetch('/api/story-brief', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          who: spec.who,
+          oneLiner: spec.oneLiner,
+          journey: spec.journey,
+          tone: spec.tone,
+          storyId: STORY_ID
+        })
+      });
+      if (r.status === 501) {
+        console.log("OpenAI key not configured. Falling back to local story engine.");
+        scenes = window.buildStory(spec);
+      } else {
+        var data = await r.json();
+        if (data.error) {
+          stage.innerHTML = '<div class="scene show lay-center" style="z-index: 10;"><h2>Error</h2><p>' + esc(data.message || data.error) + '</p></div>';
+          stage.appendChild(cnvs);
+          return;
+        }
+        scenes = data.scenes;
+      }
+    } catch(e) {
+      console.warn("Failed to generate story brief via API. Falling back to local story engine.", e);
+      scenes = window.buildStory(spec);
+    }
+
+    renderStory();
+  };
+
+  function renderStory() {
+    var stage=el('stage');
+    var cnvs = el('motion-canvas');
+    stage.innerHTML = '';
+    stage.appendChild(cnvs);
+
     scenes.forEach(function(s,i){
       var d=document.createElement('div');
       d.className='scene lay-'+(s.layout||'center');
@@ -234,6 +310,7 @@
       d.innerHTML=sceneHTML(s);
       stage.appendChild(d);
     });
+
     // dots
     var dots=el('dots'); dots.innerHTML='';
     scenes.forEach(function(_,i){
@@ -241,14 +318,17 @@
       b.onclick=function(){ show(i); pause(); };
       dots.appendChild(b);
     });
+
     // reveal controls + paywall
     el('prev').style.display='';
     el('next').style.display='';
     el('play').style.display='';
     el('paywall').style.display='block';
 
-    idx=0; show(0); play();
-  };
+    idx=0;
+    show(0);
+    play();
+  }
 
   function applyAccent(s){
     document.documentElement.style.setProperty('--acc', s.accent||'#22d3ee');
@@ -257,6 +337,7 @@
   function show(i){
     if(!scenes.length) return;
     idx=((i%scenes.length)+scenes.length)%scenes.length;
+    window.idx = idx;
     for(var k=0;k<scenes.length;k++){
       var node=el('sc'+k);
       if(node) node.classList.toggle('show', k===idx);
@@ -264,6 +345,14 @@
     var dots=el('dots').children;
     for(var d=0;d<dots.length;d++) dots[d].classList.toggle('on', d===idx);
     applyAccent(scenes[idx]);
+
+    // Handle transition in canvas
+    var nextImg = sceneImages[idx] || null;
+    if (nextImg !== activeImage) {
+      prevImage = activeImage;
+      activeImage = nextImg;
+      fadeVal = 0.0;
+    }
   }
 
   window.go=function(dir){ show(idx+dir); pause(); };
@@ -279,13 +368,303 @@
   }
   window.togglePlay=function(){ playing ? pause() : play(); };
 
-  window.unlock=function(){
-    alert('Prototype: this is where Stripe checkout opens.\n\n'
-      + '• $19 — one story (full export + hosted share link)\n'
-      + '• $12/mo — Creators (unlimited chronicles, hosting, themes)\n\n'
-      + 'Payment + hosting are founder-gated until launch. No charge will be made in this preview.');
+  // Wired to the Stripe scaffold (hsf/deploy/api/create-checkout-session).
+  window.checkout=async function(tier){
+    var msg=el('paymsg'); msg.style.display='block'; msg.textContent='Opening secure checkout…';
+    try{
+      var r=await fetch('/api/create-checkout-session',{method:'POST',
+        headers:{'Content-Type':'application/json'},body:JSON.stringify({tier:tier, storyId:STORY_ID})});
+      if(r.status===501){ msg.textContent='Checkout switches on at launch — no charge in this preview.'; return; }
+      var j=await r.json();
+      if(j&&j.url){ window.location.href=j.url; return; }
+      msg.textContent=(j&&j.message)?j.message:'Could not start checkout — try again shortly.';
+    }catch(e){ msg.textContent='Checkout unavailable right now — try again shortly.'; }
   };
+
+  // Creators sign-in: request a magic link
+  window.signIn=async function(){
+    var e=(el('loginEmail').value||'').trim(), m=el('loginmsg'); m.style.display='block';
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){ m.textContent='Enter a valid email.'; return; }
+    m.textContent='Sending sign-in link…';
+    try{
+      var r=await fetch('/api/auth/request-link',{method:'POST',
+        headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e})});
+      if(r.status===501){ m.textContent='Sign-in switches on at launch.'; return; }
+      var j=await r.json();
+      if(j.sent){ m.textContent='Check your email for the sign-in link.'; }
+      else if(j.devLink){ m.textContent='Dev link: '; var a=document.createElement('a');
+        a.href=j.devLink; a.textContent='open sign-in'; a.style.color='#8ff6ff'; m.appendChild(a); }
+      else{ m.textContent=(j.message||'Could not send link — try again.'); }
+    }catch(err){ m.textContent='Sign-in unavailable right now.'; }
+  };
+
+  // Export the paid story to a permanent hosted share link
+  window.exportStory=async function(){
+    var m=el('expmsg'); if(m) m.style.display='block';
+    if(!scenes||!scenes.length){ if(m) m.textContent='Generate a story first.'; return; }
+    if(m) m.textContent='Exporting…';
+    try{
+      var r=await fetch('/api/export',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({storyId:STORY_ID, scenes:scenes, title:(el('one')&&el('one').value)||'A Story'})});
+      if(r.status===402){ if(m) m.textContent='Not paid yet — unlock first.'; return; }
+      var j=await r.json();
+      if(j&&j.url){ if(m) m.innerHTML='Share link: <a href="'+j.url+'" target="_blank" style="color:#8ff6ff">'+j.url+'</a>'; }
+      else if(m) m.textContent=(j&&j.message)||'Export failed — try again.';
+    }catch(e){ if(m) m.textContent='Export unavailable right now.'; }
+  };
+
+  window.paintStory=async function(){
+    if (!scenes || !scenes.length) return;
+    var expmsg = el('expmsg');
+    if (expmsg) { expmsg.style.display = 'block'; expmsg.textContent = 'Preparing paint request...'; }
+
+    for (var i = 0; i < scenes.length; i++) {
+      if (expmsg) expmsg.textContent = 'Painting scene ' + (i+1) + '/' + scenes.length + '...';
+      try {
+        var r = await fetch('/api/art', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            art_prompt: scenes[i].art_prompt,
+            storyId: STORY_ID
+          })
+        });
+        if (r.status === 402) {
+          if (expmsg) expmsg.textContent = 'Upgrade required to paint illustrations.';
+          return;
+        }
+        if (r.status === 501) {
+          if (expmsg) expmsg.textContent = 'OpenAI keys are not configured. Paint is inert.';
+          return;
+        }
+        var data = await r.json();
+        if (data.b64) {
+          loadSceneImage(i, 'data:image/png;base64,' + data.b64);
+        } else if (data.message) {
+          if (expmsg) expmsg.textContent = 'Failed: ' + data.message;
+          return;
+        }
+      } catch (e) {
+        console.error('Failed to paint scene ' + i, e);
+      }
+    }
+    if (expmsg) expmsg.textContent = '✓ Storybook fully painted! Enjoy the animated canvas.';
+  };
+
+  function loadSceneImage(idx, src) {
+    var img = new Image();
+    img.onload = function() {
+      sceneImages[idx] = img;
+      if (idx === window.idx) {
+        prevImage = activeImage;
+        activeImage = img;
+        fadeVal = 0.0;
+      }
+    };
+    img.src = src;
+  }
+
+  function unlockUI(){
+    var pw=el('paywall'); if(!pw) return;
+    pw.innerHTML='<h3 style="color:#7bffb0">✓ Pro unlocked</h3>'+
+      '<p>Export this storybook to a permanent, watermark-free share link and paint your illustrations.</p>'+
+      '<div style="display:flex;gap:10px;margin-top:14px;">'+
+        '<button class="tier" style="padding:9px 16px;background:var(--vi);color:#04121a;border:none;font-weight:bold;cursor:pointer;" onclick="paintStory()">Paint Scenes 🎨</button>'+
+        '<button class="tier" style="padding:9px 16px;cursor:pointer;" onclick="exportStory()">Get share link 🔗</button>'+
+      '</div>'+
+      '<p class="muted" id="expmsg" style="margin-top:8px;display:none"></p>';
+    pw.style.display='block';
+  }
+
+  // --- Canvas Motion System ---
+  function initCanvas() {
+    canvas = el('motion-canvas');
+    if (!canvas) return;
+    ctx = canvas.getContext('2d');
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    var stage = el('stage');
+    stage.addEventListener('mousemove', function(e) {
+      var rect = stage.getBoundingClientRect();
+      mouseTargetX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      mouseTargetY = ((e.clientY - rect.top) / rect.height) * 2 - 1;
+    });
+    stage.addEventListener('mouseleave', function() {
+      mouseTargetX = 0; mouseTargetY = 0;
+    });
+
+    // Seed particles (embers)
+    particles = [];
+    for (var i = 0; i < 25; i++) {
+      particles.push({
+        x: Math.random(),
+        y: Math.random(),
+        vx: (Math.random() - 0.5) * 0.001,
+        vy: -Math.random() * 0.002 - 0.001,
+        size: Math.random() * 2 + 1,
+        alpha: Math.random() * 0.5 + 0.3
+      });
+    }
+
+    requestAnimationFrame(tick);
+  }
+
+  function resizeCanvas() {
+    var rect = el('stage').getBoundingClientRect();
+    stageWidth = rect.width;
+    stageHeight = rect.height;
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width = stageWidth * dpr;
+    canvas.height = stageHeight * dpr;
+    ctx.scale(dpr, dpr);
+  }
+
+  function tick() {
+    if (!canvas) return;
+
+    mouseX += (mouseTargetX - mouseX) * 0.08;
+    mouseY += (mouseTargetY - mouseY) * 0.08;
+
+    ctx.fillStyle = '#05070e';
+    ctx.fillRect(0, 0, stageWidth, stageHeight);
+
+    kbTime += 0.002;
+    // one unified respiration (~6.2s inhale/exhale) drives the whole frame
+    window.__breath = 0.5 + 0.5 * Math.sin(performance.now() * (2 * Math.PI / 6200));
+
+    ctx.save();
+    if (activeImage) {
+      ctx.globalAlpha = 1.0;
+      if (fadeVal < 1.0) {
+        if (prevImage) {
+          ctx.save();
+          drawKenBurns(prevImage, 1.0 - fadeVal, kbTime - 0.05);
+          ctx.restore();
+        }
+        ctx.save();
+        drawKenBurns(activeImage, fadeVal, kbTime);
+        ctx.restore();
+        // dissolve through a swell of light (never a hard cut)
+        var _sw = Math.sin(Math.max(0, Math.min(1, fadeVal)) * Math.PI);
+        ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = _sw * 0.5;
+        var _lg = ctx.createRadialGradient(stageWidth/2, stageHeight*0.45, 0, stageWidth/2, stageHeight*0.45, stageHeight*0.62);
+        _lg.addColorStop(0, 'rgba(255,244,224,0.9)'); _lg.addColorStop(1, 'rgba(255,244,224,0)');
+        ctx.fillStyle = _lg; ctx.fillRect(0, 0, stageWidth, stageHeight); ctx.restore();
+        fadeVal += 0.007;
+      } else {
+        drawKenBurns(activeImage, 1.0, kbTime);
+      }
+    } else {
+      drawGenerativeFallback(kbTime);
+    }
+    ctx.restore();
+
+    drawMiracleBloom();
+    drawEmbers();
+
+    requestAnimationFrame(tick);
+  }
+
+  function drawKenBurns(img, opacity, t) {
+    ctx.globalAlpha = opacity;
+    var _b = (window.__breath != null ? window.__breath : 0.5);
+    var scale = 1.03 + _b * 0.055;
+    var px = mouseX * -12 + Math.cos(t * 0.7) * 8;
+    var py = mouseY * -12 + Math.sin(t * 0.7) * 8;
+
+    var iw = img.width, ih = img.height;
+    var sw = stageWidth, sh = stageHeight;
+
+    var r = Math.max(sw / iw, sh / ih) * scale;
+    var nw = iw * r, nh = ih * r;
+    var nx = (sw - nw) / 2 + px;
+    var ny = (sh - nh) / 2 + py;
+
+    ctx.drawImage(img, nx, ny, nw, nh);
+  }
+
+  function drawGenerativeFallback(t) {
+    var accent = document.documentElement.style.getPropertyValue('--acc') || '#22d3ee';
+    var x1 = stageWidth * (0.5 + Math.sin(t * 0.5) * 0.2);
+    var y1 = stageHeight * (0.5 + Math.cos(t * 0.6) * 0.2);
+
+    var grad = ctx.createRadialGradient(x1, y1, 10, x1, y1, Math.max(stageWidth, stageHeight) * 0.6);
+    grad.addColorStop(0, accent + '22');
+    grad.addColorStop(0.5, accent + '05');
+    grad.addColorStop(1, 'transparent');
+
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, stageWidth, stageHeight);
+
+    var x2 = stageWidth * (0.5 + Math.cos(t * 0.4) * 0.3);
+    var y2 = stageHeight * (0.5 + Math.sin(t * 0.7) * 0.3);
+    var grad2 = ctx.createRadialGradient(x2, y2, 20, x2, y2, Math.max(stageWidth, stageHeight) * 0.4);
+    grad2.addColorStop(0, '#a78bfa15');
+    grad2.addColorStop(1, 'transparent');
+    ctx.fillStyle = grad2;
+    ctx.fillRect(0, 0, stageWidth, stageHeight);
+  }
+
+  function drawMiracleBloom() {
+    var accent = document.documentElement.style.getPropertyValue('--acc') || '#22d3ee';
+    var pulse = 0.12 + Math.sin(Date.now() * 0.001) * 0.04;
+
+    var x = stageWidth / 2;
+    var y = stageHeight * 0.85;
+    var r = stageWidth * 0.75;
+
+    var grad = ctx.createRadialGradient(x, y, 10, x, y, r);
+    var hexVal = Math.floor(pulse * 255).toString(16).padStart(2, '0');
+    grad.addColorStop(0, accent + hexVal);
+    grad.addColorStop(1, 'transparent');
+
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, stageWidth, stageHeight);
+  }
+
+  function drawEmbers() {
+    ctx.fillStyle = '#fbbf24';
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      p.y += p.vy;
+      p.x += p.vx + Math.sin(p.y * 40 + kbTime) * 0.0005;
+
+      if (p.y < 0) {
+        p.y = 1.0;
+        p.x = Math.random();
+      }
+
+      var px = p.x * stageWidth + mouseX * -4;
+      var py = p.y * stageHeight + mouseY * -4;
+
+      ctx.globalAlpha = p.alpha * (p.y > 0.8 ? (1.0 - p.y) / 0.2 : (p.y < 0.2 ? p.y / 0.2 : 1.0));
+      ctx.beginPath();
+      ctx.arc(px, py, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1.0;
+  }
+
+  // On load, if a stored story (or signed-in creator) is paid, unlock the export.
+  window.addEventListener('DOMContentLoaded', async function(){
+    initCanvas();
+    var sid; try{ sid=localStorage.getItem('ss_story_id'); }catch(e){}
+    try{
+      var r=await fetch('/api/entitlement'+(sid?('?storyId='+encodeURIComponent(sid)):''));
+      var j=await r.json();
+      if(j&&j.paid) {
+        isPaid = true;
+        unlockUI();
+      }
+    }catch(e){}
+  });
+
+  // Expose idx globally for image loading detection
+  window.idx = 0;
 })();
 </script>
+
 </body>
 </html>

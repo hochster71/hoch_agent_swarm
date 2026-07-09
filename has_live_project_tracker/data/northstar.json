@@ -1,13 +1,33 @@
 {
   "goal": "Launch HSF Story Studio as a paid product",
   "slug": "launch-hsf-story-studio-as-a",
-  "current_phase": "RESEARCH",
-  "created": "2026-07-07T19:21:45+00:00",
-  "updated": "2026-07-07T19:21:45+00:00",
+  "current_phase": "DEVELOP",
+  "created": "2026-07-07T20:11:12+00:00",
+  "updated": "2026-07-07T20:12:56+00:00",
   "history": [
     {
-      "ts": "2026-07-07T19:21:45+00:00",
+      "ts": "2026-07-07T20:11:12+00:00",
       "phase": "RESEARCH",
+      "added": 2
+    },
+    {
+      "ts": "2026-07-07T20:11:42+00:00",
+      "phase": "RESEARCH",
+      "added": 0
+    },
+    {
+      "ts": "2026-07-07T20:12:04+00:00",
+      "phase": "DESIGN",
+      "added": 2
+    },
+    {
+      "ts": "2026-07-07T20:12:33+00:00",
+      "phase": "DESIGN",
+      "added": 0
+    },
+    {
+      "ts": "2026-07-07T20:12:56+00:00",
+      "phase": "DEVELOP",
       "added": 2
     }
   ]

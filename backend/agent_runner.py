@@ -10,83 +10,61 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger("AgentRunner")
 
 class AgentRunner:
-    def __init__(self, ollama_url=None, default_model="llama3"):
-        self.ollama_url = ollama_url or os.environ.get("OLLAMA_HOST", "http://localhost:11434")
-        self.default_model = default_model
+    def __init__(self, ollama_url=None, default_model=None):
+        # 127.0.0.1 explicitly: "localhost" resolves to ::1 on this host, hitting a second,
+        # divergent Ollama daemon whose store rejects generate for several models (verified
+        # 2026-07-06). The IPv4 daemon is the healthy one.
+        self.ollama_url = ollama_url or os.environ.get("OLLAMA_HOST", "http://127.0.0.1:11434")
+        # Default model must be one that actually generates on this host (llama3 and
+        # llama3.1:8b fail here — verified 2026-07-06). Env-overridable, honestly failing.
+        self.default_model = default_model or os.environ.get("HOCH_DEFAULT_MODEL", "llama3.2:3b")
         logger.info(f"Initialized agent runner pointing to Ollama at: {self.ollama_url}")
 
     def query_ollama(self, prompt: str, system_prompt: str = None, model: str = None) -> str:
-        model = model or self.default_model
-        endpoint = f"{self.ollama_url}/api/generate"
-        
-        payload = {
-            "model": model,
-            "prompt": prompt,
-            "stream": False
-        }
-        if system_prompt:
-            payload["system"] = system_prompt
-
+        """Route through ModelGateway — automatic failover across all live backends.
+        MODEL_OFFLINE never acceptable: relay-001 is the always-on $0 backstop.
+        Sources: binadit.com/tutorials/load-balancer-multiple-ollama-instances (2026-04),
+                 localaimaster.com/blog/ollama-load-balancing (2026-04)
+        """
         try:
-            req = urllib.request.Request(
-                endpoint,
-                data=json.dumps(payload).encode('utf-8'),
-                headers={"Content-Type": "application/json"},
-                method="POST"
-            )
-            logger.info(f"Sending prompt to model '{model}' at {endpoint}...")
-            with urllib.request.urlopen(req, timeout=60) as response:
-                result = json.loads(response.read().decode('utf-8'))
-                return result.get("response", "")
-        except urllib.error.URLError as e:
-            logger.warning(f"Ollama connection refused at {self.ollama_url}. Utilizing local premium reasoning model fallback.")
-            return self.generate_premium_fallback(prompt)
+            from backend.model_gateway import get_gateway
+            gw = get_gateway()
+            st = gw.status()
+            logger.info(f"Gateway routing → '{st['primary']}' "
+                        f"({st['alive_count']}/{len(st['backends'])} backends alive)")
+            return gw.generate(prompt, system=system_prompt, model=model,
+                               timeout=300)
         except Exception as e:
-            logger.warning(f"Unexpected error querying Ollama: {e}. Utilizing local premium reasoning model fallback.")
-            return self.generate_premium_fallback(prompt)
+            logger.error(f"ModelGateway error: {e}")
+            raise RuntimeError(f"MODEL_GATEWAY_ERROR: {e}") from e
 
-    def generate_premium_fallback(self, prompt: str) -> str:
-        prompt_lower = prompt.lower()
-        if "research" in prompt_lower or "super ai" in prompt_lower or "cluster" in prompt_lower:
-            return """# RESEARCH REPORT: SPECIALIZED SWARM CLUSTERS FOR ADVANCED SUPER AI
-Document ID: RMF-SI-SWARM-2026
-Routing Node: MacBook Neo [L3] (10.0.0.8) | Charged: 100% | Status: Active
-
-## 1. Executive Summary
-Scaling monolithic agent swarms to achieve Advanced Super AI capabilities introduces severe routing bottlenecks, network latency, and semantic dilution. To resolve these challenges, we propose a decentralized, specialized cluster architecture. By dividing the swarm into compartmentalized, highly optimized micro-clusters, we can increase throughput by 400% and enable parallel, deep multi-agent reasoning.
-
-## 2. Specialized Cluster Topology
-We recommend establishing three specialized clusters:
-1. **The Reasoning Core (Alpha-Core)**: Specialized in logical deduction, algorithmic optimization, and system design. Guided by advanced models like Claude/GPT and local specialized coder instances.
-2. **The Execution & Validation Swarm (Gordy Swarms)**: Light-weight, high-speed Dockerized container agents (e.g. Gordy-Dell, Gordy-Neo) running local compilers, automated testers, and static security auditors.
-3. **The Data Integration & Synthesis Hub (Beta-Synth)**: Responsible for ingesting vector databases, extracting knowledge representations, and compiling ROI assessments.
-
-```mermaid
-graph TD
-    User([User Prompt]) --> Router[Master Router Engine]
-    Router -->|Reasoning Task| Alpha[Alpha-Core Reasoning Cluster]
-    Router -->|Coding/Testing| Gordy[Gordy Execution Swarm]
-    Router -->|Information Retrieval| Beta[Beta-Synth Hub]
-    
-    Alpha --> Sync[Consensus & Integration Layer]
-    Gordy --> Sync
-    Beta --> Sync
-    Sync --> Output([Super AI Output])
-```
-
-## 3. Communication Protocols & Continuous Sync
-- **Inter-Cluster RPC**: Operational assets (like iMac L2 or iPad Pro) host light routing brokers, utilizing gRPC with Protobuf structures for sub-millisecond payloads.
-- **Continuous Monitoring (ConMon)**: Controls like NIST SP 800-53 AC-3 and SI-2 ensure that container security rules are verified continuously during heavy runtime compilation.
-
-## 4. Immediate Remediation & Next Steps
-1. Deploy gRPC broker containers to all active swarm worker assets.
-2. Implement cross-node tensor parallel routing to partition reasoning weights between Mac Studio (L1) and Dell 9440 (W1).
-"""
-        else:
-            return f"[Simulated LLM Fallback Response]\nProcessed request: '{prompt}'\n\nThe local Ollama service is currently offline. This is a high-fidelity mock response to ensure system resilience."
-
-    def execute_task(self, task_id: str, prompt: str, system_prompt: str = None, model: str = None, timeout_sec: float = 300.0):
+    def execute_task(self, task_id: str, prompt: str, system_prompt: str = None, model: str = None, timeout_sec: float = 300.0,
+                     task_class: str = None, domain: str = "software"):
         logger.info(f"Executing task {task_id} with TTL {timeout_sec}s...")
+
+        # BRAIN wiring (2026-07-06): when a task_class is given and no explicit system
+        # prompt overrides it, resolve the CURRENT champion for that class and ledger the
+        # usage. Explicit system_prompt always wins (callers keep full control). Every
+        # resolution — champion or fallback — is recorded in the runtime usage ledger.
+        usage_id = None
+        if task_class:
+            try:
+                from backend.factory.champion_loader import operating_prompt
+                from backend.factory.runtime_ledger import record_usage
+                res = operating_prompt(task_class, domain=domain, fallback=system_prompt)
+                applied = res["source"] == "champion" and not system_prompt
+                if applied:
+                    system_prompt = res["prompt"]
+                elif res["source"] == "champion":
+                    # Ledger integrity: a resolved-but-overridden champion is NOT champion usage.
+                    res = {**res, "source": "champion_overridden_by_explicit_system_prompt",
+                           "prompt": system_prompt or ""}
+                usage_id = record_usage(res, execution_surface="agent_runner",
+                                        production_mutation_allowed=False)
+                logger.info(f"BRAIN resolution for '{task_class}': {res['source']} "
+                            f"(gene={res['provenance'].get('gene_id')}, usage={usage_id})")
+            except Exception as e:
+                logger.warning(f"Champion resolution skipped (non-fatal): {e}")
         
         import threading
         result_holder = {}
@@ -112,6 +90,14 @@ graph TD
             }
         
         if result_holder.get("status") == "FAILED":
+            if usage_id:
+                try:
+                    from backend.factory.runtime_ledger import record_outcome
+                    record_outcome(usage_id, {"execution_surface": "agent_runner",
+                                              "task_id": task_id, "status": "FAILED",
+                                              "error": result_holder.get("error", "")[:300]})
+                except Exception:
+                    pass
             return {
                 "task_id": task_id,
                 "status": "FAILED",
@@ -119,10 +105,23 @@ graph TD
             }
             
         logger.info(f"Task {task_id} completed successfully.")
+        if usage_id:
+            try:
+                import hashlib
+                from backend.factory.runtime_ledger import record_outcome
+                resp = result_holder.get("response", "")
+                record_outcome(usage_id, {
+                    "execution_surface": "agent_runner", "task_id": task_id,
+                    "status": "COMPLETED", "response_chars": len(resp),
+                    "response_sha256": hashlib.sha256(resp.encode("utf-8")).hexdigest(),
+                })
+            except Exception:
+                pass
         return {
             "task_id": task_id,
             "status": "COMPLETED",
-            "result": result_holder.get("response", "")
+            "result": result_holder.get("response", ""),
+            "brain_usage_id": usage_id,
         }
 
 if __name__ == "__main__":

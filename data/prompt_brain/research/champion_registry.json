@@ -1,64 +1,78 @@
 {
   "schema": "brain-champion-registry",
   "domain": "research",
-  "generation": 7,
+  "generation": 730,
   "champions": {
     "Longevity": {
       "gene_id": "seed-long-de9ffeaa1e",
       "title": "Senolytic Combination vs Frailty",
       "score": 100.0,
+      "blended_score": 100.0,
+      "fitness_method": "BLENDED_SPARSE",
       "state": "SELECTED",
       "domain": "research",
-      "pool_size": 2
+      "pool_size": 3
     },
     "AI Safety": {
       "gene_id": "seed-ais-e4d23524b4",
       "title": "Scalable Oversight of Superhuman Judges",
       "score": 100.0,
+      "blended_score": 100.0,
+      "fitness_method": "BLENDED_SPARSE",
       "state": "SELECTED",
       "domain": "research",
-      "pool_size": 1
+      "pool_size": 3
     },
     "Fusion Energy": {
-      "gene_id": "seed-fusi-312e465d6f",
-      "title": "High-Field Confinement Scaling Test",
-      "score": 93.5,
+      "gene_id": "syn-Fusion-982293fa67eb",
+      "title": "Fusion Energy synthetic gene",
+      "score": 94.0,
+      "blended_score": 94.0,
+      "fitness_method": "MECHANICAL_PROXY",
       "state": "SELECTED",
       "domain": "research",
-      "pool_size": 1
+      "pool_size": 3
     },
     "Space": {
-      "gene_id": "seed-spac-e68ef4a134",
-      "title": "In-Situ Regolith Oxygen Yield",
-      "score": 92.5,
+      "gene_id": "syn-Space-58f0f482bba3",
+      "title": "Space synthetic gene",
+      "score": 94.0,
+      "blended_score": 94.0,
+      "fitness_method": "MECHANICAL_PROXY",
       "state": "SELECTED",
       "domain": "research",
-      "pool_size": 1
+      "pool_size": 3
     },
     "Neurotech": {
-      "gene_id": "seed-neur-418e1acded",
-      "title": "Noninvasive BCI Decoding Fidelity",
-      "score": 93.5,
+      "gene_id": "syn-Neurot-8be16ba04365",
+      "title": "Neurotech synthetic gene",
+      "score": 95.0,
+      "blended_score": 95.0,
+      "fitness_method": "MECHANICAL_PROXY",
       "state": "SELECTED",
       "domain": "research",
-      "pool_size": 1
+      "pool_size": 3
     },
     "Climate": {
       "gene_id": "seed-clim-7c28db5041",
       "title": "Enhanced Weathering CO2 Drawdown",
       "score": 100.0,
+      "blended_score": 100.0,
+      "fitness_method": "MECHANICAL_PROXY",
       "state": "SELECTED",
       "domain": "research",
-      "pool_size": 1
+      "pool_size": 3
     },
     "Synthetic Biology": {
       "gene_id": "seed-synt-4cf66e1557",
       "title": "Nitrogen-Fixing Cereal Symbiosis",
       "score": 92.5,
+      "blended_score": 92.5,
+      "fitness_method": "MECHANICAL_PROXY",
       "state": "SELECTED",
       "domain": "research",
-      "pool_size": 1
+      "pool_size": 3
     }
   },
-  "at": "2026-07-06T02:25:44.288884Z"
+  "at": "2026-07-09T06:19:29.348013Z"
 }

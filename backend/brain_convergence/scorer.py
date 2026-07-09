@@ -61,3 +61,80 @@ def compare(candidate_text: str, incumbent_text: str, rubric_path: Optional[str]
     c = score_prompt(candidate_text, rubric_path)["overall"]
     i = score_prompt(incumbent_text, rubric_path)["overall"]
     return {"candidate": c, "incumbent": i, "delta": round(c - i, 2), "candidate_wins": c > i}
+
+
+def blended_score(gene_id: str, rubric_score: float,
+                  ledger_path: Optional[str] = None) -> Dict[str, Any]:
+    """Blend mechanical rubric score with real execution outcomes from the ledger.
+
+    Doctrine (2026-07-06): the rubric is a keyword-presence proxy (method=MECHANICAL_PROXY).
+    It is fast and $0 but measures vocabulary fit, not capability. Real gate outcomes — logged
+    by record_outcome() after live executions — are ground truth and override the proxy when
+    sufficient evidence exists.
+
+    Blend formula (evidence-gated):
+      - 0 outcomes  : score = rubric_score (proxy only; label MECHANICAL_PROXY)
+      - 1-4 outcomes: score = 0.7*rubric + 0.3*outcome_rate*100 (label BLENDED_SPARSE)
+      - 5+ outcomes : score = 0.4*rubric + 0.6*outcome_rate*100 (label BLENDED_CONFIDENT)
+
+    Completion rate = completed / executions from the outcome ledger for this gene_id.
+    Source: Sculley et al. (2015) "Hidden Technical Debt in Machine Learning Systems"
+    (NeurIPS) — Goodhart's Law section; proxy metrics diverge from real objectives under
+    optimisation pressure. Blend weight schedule follows Lakshminarayanan et al. (2017)
+    uncertainty-weighted ensemble logic: proxy dominates until real-world evidence accumulates.
+    """
+    import json as _json
+    from pathlib import Path as _P
+
+    _ledger = _P(ledger_path) if ledger_path else (
+        _P(__file__).resolve().parent.parent.parent /
+        "data" / "prompt_brain" / "outcome_feedback_ledger.jsonl")
+
+    executions = completions = 0
+    if _ledger.exists():
+        # Scan outcome ledger for this gene's real results.
+        # Only COMPLETED/FAILED status entries with a matching champion_id count.
+        usage_ids: set = set()
+        try:
+            ul = _ledger.parent / "runtime_usage_ledger.jsonl"
+            if ul.exists():
+                for ln in ul.read_text(encoding="utf-8").splitlines():
+                    try:
+                        e = _json.loads(ln)
+                        if (e.get("champion_id") == gene_id
+                                and not e.get("fallback_used")):
+                            usage_ids.add(e.get("usage_id"))
+                    except Exception:
+                        pass
+        except Exception:
+            pass
+
+        for ln in _ledger.read_text(encoding="utf-8").splitlines():
+            try:
+                e = _json.loads(ln)
+                if e.get("usage_id") in usage_ids and e.get("status") in ("COMPLETED","FAILED"):
+                    executions += 1
+                    if e.get("status") == "COMPLETED":
+                        completions += 1
+            except Exception:
+                pass
+
+    if executions == 0:
+        return {"score": rubric_score, "method": "MECHANICAL_PROXY",
+                "executions": 0, "completions": 0, "outcome_rate": None,
+                "rubric_score": rubric_score}
+
+    outcome_rate = completions / executions
+    outcome_score = round(outcome_rate * 100, 2)
+
+    if executions < 5:
+        blended = round(0.7 * rubric_score + 0.3 * outcome_score, 2)
+        method = "BLENDED_SPARSE"
+    else:
+        blended = round(0.4 * rubric_score + 0.6 * outcome_score, 2)
+        method = "BLENDED_CONFIDENT"
+
+    return {"score": blended, "method": method,
+            "executions": executions, "completions": completions,
+            "outcome_rate": round(outcome_rate, 4),
+            "rubric_score": rubric_score, "outcome_score": outcome_score}

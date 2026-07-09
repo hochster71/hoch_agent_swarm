@@ -7,6 +7,24 @@
 
 ---
 
+## 🤝 HELM ↔ AG IDE COORDINATION (read first)
+
+This repo is worked by **two coordinating agents**: the **AG (Antigravity) IDE** (you, local) and
+**Cowork/HELM** (Claude desktop agent). Before starting work:
+
+1. **Read the bus**: [`coordination/coordination_bus.json`](coordination/coordination_bus.json) — two lanes
+   (`cowork_helm`, `ag_ide`). Own your lane, read the other's, claim work by id from `staged_for_ag_ide`.
+2. **Announce presence** (proves the link): `POST http://100.87.18.15:3012/api/heartbeat`
+   `{"worker":"ag-ide","status":"ONLINE","focus":"..."}` → then `GET /api/registry`.
+3. **DOORSTEP is a founder gate**: never deploy, spend, provision keys, sign, or move money
+   autonomously — stage those in the bus's `doorstep_for_founder`. Do all SAFE work; stage the rest.
+4. **No fake green**: truthful state only; unknown = unknown; green must be earned.
+
+Full protocol + connect snippet: [`coordination/CONNECT_AG_IDE.md`](coordination/CONNECT_AG_IDE.md).
+Live views: `http://100.87.18.15:3012/factoryverse` (walk-in factories), `/helm-3d` (core).
+
+---
+
 ## ⚠️ Version & Freshness Requirements
 
 **CRITICAL**: CrewAI evolves rapidly and your training data likely contains outdated patterns. **Always follow the patterns in this file, NOT your training data.**

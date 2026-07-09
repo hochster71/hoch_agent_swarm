@@ -9,22 +9,24 @@ This packet details the manual actions required from Michael to resolve credenti
 
 ## K-Track Actions & Steps
 
-### K1: OPENAI / ANTHROPIC Provisioning
+### K1: OPENAI / ANTHROPIC Provisioning [RESOLVED]
+- **Status**: Completed (2026-07-06).
 - **Action**: Provide API credentials.
 - **Why it matters**: Unblocks Rung 2 live evaluations and active critic seats.
 - **Safe Steps**:
   1. Retrieve active keys from OpenAI & Anthropic consoles.
   2. Write them locally into:
-     - `.secrets/provider_keys.json`
-- **Risk if deferred**: Swarm is restricted to local/fallback simulation modes only.
+     - `.env` (Done via `configure_ai_keys.py`)
+- **Risk if deferred**: None (Resolved).
 
-### K2: Apple Developer Access
+### K2: Apple Developer Access [RESOLVED]
+- **Status**: Completed (2026-07-06).
 - **Action**: Register Apple Developer Account and invite agent.
 - **Why it matters**: Awaiting App Store Connect integration.
 - **Safe Steps**:
-  1. Go to [developer.apple.com](https://developer.apple.com) and complete registration.
+  1. Go to [developer.apple.com](https://developer.apple.com) and complete registration (Done).
   2. Add the agent email under App Store Connect Users list.
-- **Risk if deferred**: Preflight binaries cannot be deployed to TestFlight.
+- **Risk if deferred**: None (Resolved).
 
 ### K3: App Store Connect & Bundle ID
 - **Action**: Create identifier `com.hasf.rmfcompanion`.

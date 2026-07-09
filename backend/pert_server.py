@@ -1762,6 +1762,18 @@ def get_pert_data():
         "playwright_e2e": {
             "freshness_state": reconciled_sources["playwright_spec"]["computed_state"],
             "stale_reason": reconciled_sources["playwright_spec"]["reason"]
+        },
+        "compute_goal_acceleration": {
+            "freshness_state": reconciled_sources["hoch_governed_execution"]["computed_state"],
+            "stale_reason": reconciled_sources["hoch_governed_execution"]["reason"]
+        },
+        "parallel_mirror_verification": {
+            "freshness_state": reconciled_sources["hoch_execution_approval"]["computed_state"],
+            "stale_reason": reconciled_sources["hoch_execution_approval"]["reason"]
+        },
+        "monetization_readiness": {
+            "freshness_state": reconciled_sources["revenue_readiness"]["computed_state"],
+            "stale_reason": reconciled_sources["revenue_readiness"]["reason"]
         }
     }
 

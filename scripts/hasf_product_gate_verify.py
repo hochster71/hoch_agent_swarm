@@ -117,7 +117,15 @@ def verify(audit_json: Path, security_md: Path, gate_md: Path, shipping_md: Path
 
 if __name__ == "__main__":
     base = ROOT / "docs" / "products" / "epic-fury-2026"
-    ev = ROOT / "docs" / "evidence" / "products" / "epic-fury-2026" / "20260702T233000Z-epic-fury-2026-hasf-vetting"
+    
+    # Read dynamic Run ID
+    latest_run_id_file = ROOT / "data" / "security_scans" / "epic-fury-2026" / "latest_run_id"
+    if latest_run_id_file.exists():
+        run_id = latest_run_id_file.read_text(encoding="utf-8").strip()
+    else:
+        run_id = "20260702T233000Z-epic-fury-2026-hasf-vetting"
+        
+    ev = ROOT / "docs" / "evidence" / "products" / "epic-fury-2026" / run_id
     res = verify(
         audit_json=ROOT / "has_live_project_tracker" / "data" / "epic_fury_audit_results.json",
         security_md=ev / "03-security-audit.md",
@@ -125,6 +133,7 @@ if __name__ == "__main__":
         shipping_md=base / "FINAL_SHIPPING_REPORT.md",
         accepted_allowlist=ROOT / "config" / "security_accepted_risks.json",
     )
+
     out = base / "HASF_GATE_VERIFY.json"
     out.write_text(json.dumps(res, indent=2), encoding="utf-8")
     print(f"HASF Product Gate Verifier → {res['verdict']}  ({res['high_findings']} HIGH, {res['open_high']} open)")

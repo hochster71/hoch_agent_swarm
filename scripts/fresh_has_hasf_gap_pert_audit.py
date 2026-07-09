@@ -24,12 +24,24 @@ def main():
     expires_at = (now + timedelta(days=1)).isoformat() + "Z"
     
     # Executable Gates Model for Consumer App-Store
+    ledger_path = DATA / "k_track_ledger.json"
+    k1_status = "BLOCKED_FOUNDER_ACTION"
+    if ledger_path.exists():
+        try:
+            with open(ledger_path, "r", encoding="utf-8") as lf:
+                ledger = json.load(lf)
+                for item in ledger:
+                    if item.get("id") == "K1" and item.get("status") in ["READY", "PASS"]:
+                        k1_status = "PASS"
+        except Exception:
+            pass
+
     tasks = [
         {
             "id": "K1",
             "track": "K",
             "title": "OpenAI / Anthropic API Key Provisioning",
-            "status": "BLOCKED_FOUNDER_ACTION",
+            "status": k1_status,
             "dependencies": []
         },
         {
@@ -134,14 +146,15 @@ def main():
             "K5: Set remote droplet SSH keys",
             "K6: Conduct secrets review"
         ],
-        "blockers": ["K1"],
-        "manual_michael_action_required": True
+        "blockers": ["K1"] if k1_status == "BLOCKED_FOUNDER_ACTION" else [],
+        "manual_michael_action_required": True if k1_status == "BLOCKED_FOUNDER_ACTION" else False
     }
 
     PERT_GAP.write_text(json.dumps(audit, indent=2), encoding="utf-8")
     print("Fresh PERT gap analysis written to has_live_project_tracker/data/fresh_pert_gap_analysis.json")
-    print("OVERALL STATUS: CONDITIONAL_GO")
+    print(f"OVERALL STATUS: CONDITIONAL_GO (K1={k1_status})")
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())

@@ -63,3 +63,8 @@ def compare(candidate_text: str, incumbent_text: str, rubric_path: Optional[str]
     c = score_prompt(candidate_text, rubric_path)["overall"]
     i = score_prompt(incumbent_text, rubric_path)["overall"]
     return {"candidate": c, "incumbent": i, "delta": round(c - i, 2), "candidate_wins": c > i}
+
+
+# Wire in live-outcomes blended scoring (2026-07-07)
+from backend.brain_convergence.scorer import blended_score
+

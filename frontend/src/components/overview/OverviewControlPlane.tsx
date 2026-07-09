@@ -113,6 +113,36 @@ export const OverviewControlPlane: React.FC = () => {
         </div>
       </div>
 
+      {/* HomeMesh Spatial Graph / Network Truth */}
+      {data.homemesh && data.homemesh.available && (
+        <div style={{ ...card, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+          <div>
+            <div style={{ fontSize: 11, letterSpacing: ".16em", color: C.mut, textTransform: "uppercase" }}>
+              Network Truth · HomeMesh Graph
+            </div>
+            <div style={{ display: "flex", gap: 24, marginTop: 8, alignItems: "baseline" }}>
+              <span style={{ fontSize: 20, fontWeight: 800, color: C.green }}>
+                {data.homemesh.total_devices ?? 0} <span style={{ fontSize: 12, fontWeight: 400, color: C.mut }}>Devices</span>
+              </span>
+              <span style={{ fontSize: 20, fontWeight: 800, color: C.cyan }}>
+                {data.homemesh.live_devices ?? 0} <span style={{ fontSize: 12, fontWeight: 400, color: C.mut }}>Live</span>
+              </span>
+              <span style={{ fontSize: 20, fontWeight: 800, color: (data.homemesh.unknown_devices ?? 0) > 0 ? C.red : C.green }}>
+                {data.homemesh.unknown_devices ?? 0} <span style={{ fontSize: 12, fontWeight: 400, color: C.mut }}>Unknown</span>
+              </span>
+            </div>
+          </div>
+          <div style={{ textAlign: "right", fontSize: 11, color: C.mut }}>
+            <div>LEDGER: <b style={{ color: C.green }}>ACTIVE (SQLITE)</b></div>
+            <div style={{ marginTop: 4 }}>ADAPTERS: {data.homemesh.sources ? data.homemesh.sources.map((s: any) => (
+              <span key={s.name} style={{ marginLeft: 6, color: s.enabled ? C.green : C.mut }} title={s.status}>
+                ●{s.name}
+              </span>
+            )) : "—"}</div>
+          </div>
+        </div>
+      )}
+
       {/* factories */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))", gap: 12 }}>
         {factories.map(([name, f]) => (
