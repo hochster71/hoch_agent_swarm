@@ -1,0 +1,717 @@
+{
+  "artifact": "HELM Mission Control",
+  "generated": "2026-07-09T14:00:42+00:00",
+  "doctrine": "no_fake_green",
+  "helm_definition": {
+    "acronym": "HELM",
+    "name": "Hoch Ecosystem Logic Matrix",
+    "tagline": "Orchestrating Intelligence \u00b7 Securing Reality \u00b7 Advancing Humanity"
+  },
+  "principles": [
+    {
+      "id": "Truth First",
+      "name": "Truth First",
+      "hover_summary": "No fake green \u2014 unknown renders UNKNOWN, never GO. Doctrine in every payload."
+    },
+    {
+      "id": "Evidence Based",
+      "name": "Evidence Based",
+      "hover_summary": "Every lane 'done' maps to a real artifact + timestamp (evidence_map)."
+    },
+    {
+      "id": "Auditable",
+      "name": "Auditable",
+      "hover_summary": "Signed gates, UTC-stamped ledgers, POA&M. founder_handoff_queue + RELEASE_APPROVAL."
+    },
+    {
+      "id": "Transparent",
+      "name": "Transparent",
+      "hover_summary": "Live control plane + posture, hover evidence, cited sources."
+    },
+    {
+      "id": "Secure by Design",
+      "name": "Secure by Design",
+      "hover_summary": "DOORSTEP gates, code-task gate, private-only relay, supply-chain-pinned tools."
+    },
+    {
+      "id": "Human Centered",
+      "name": "Human Centered",
+      "hover_summary": "Founder gates: spend, keys, sign, submit, move money. You stay in control."
+    },
+    {
+      "id": "Continuously Improving",
+      "name": "Continuously Improving",
+      "hover_summary": "ConMon (SP 800-137) + burn-in; promote only on a real eval win."
+    }
+  ],
+  "has_core": {
+    "acronym": "HAS",
+    "name": "Hoch Agent Swarm",
+    "verbs": [
+      "SENSE",
+      "REASON",
+      "ACT",
+      "LEARN"
+    ],
+    "status": "GO",
+    "hover_summary": "Burn-in live; heartbeat fresh.",
+    "evidence_paths": [
+      "has_live_project_tracker/data/live_relay_ui_burn_in_status.json"
+    ]
+  },
+  "factories": [
+    {
+      "id": "hasf",
+      "acronym": "HASF",
+      "name": "Hoch Application Software Factory",
+      "purpose": "Apps \u00b7 Software \u00b7 Firmware \u00b7 Systems Eng",
+      "owner_type": "factory",
+      "status": "IN_PROGRESS",
+      "status_label": "L2 \u00b7 building",
+      "confidence": 0.8,
+      "evidence_paths": [
+        "docs/factories/HASF/",
+        "has_live_project_tracker/data/factories/HASF.json"
+      ],
+      "hover_summary": "Epic Fury shipped (Apple) + Story Studio engine. Build L2; develop gate-ready.",
+      "next_actions": [
+        "close develop lane behind code-task gate",
+        "founder: enable AGENT_ALLOW_CODE"
+      ]
+    },
+    {
+      "id": "hrf",
+      "acronym": "HRF",
+      "name": "Hoch Research Factory",
+      "purpose": "Research \u00b7 Science \u00b7 AI/ML \u00b7 Knowledge Discovery",
+      "owner_type": "factory",
+      "status": "IN_PROGRESS",
+      "status_label": "L2 \u00b7 building",
+      "confidence": 0.8,
+      "evidence_paths": [
+        "docs/factories/HRF/",
+        "has_live_project_tracker/data/factories/HRF.json"
+      ],
+      "hover_summary": "Internal brief-builder + citation gate. Build L2. Evidence: docs/factories/HRF/",
+      "next_actions": [
+        "close develop lane behind code-task gate",
+        "founder: enable AGENT_ALLOW_CODE"
+      ]
+    },
+    {
+      "id": "hmf",
+      "acronym": "HMF",
+      "name": "Hoch Music Factory",
+      "purpose": "Soundtrack \u00b7 Media Audio (feeds content)",
+      "owner_type": "factory",
+      "status": "IN_PROGRESS",
+      "status_label": "L2 \u00b7 building",
+      "confidence": 0.8,
+      "evidence_paths": [
+        "docs/factories/HMF/",
+        "has_live_project_tracker/data/factories/HMF.json"
+      ],
+      "hover_summary": "Cue planner (instrumental-first, license gate). Build L2.",
+      "next_actions": [
+        "close develop lane behind code-task gate",
+        "founder: enable AGENT_ALLOW_CODE"
+      ]
+    },
+    {
+      "id": "hsf",
+      "acronym": "HSF",
+      "name": "Hoch Storybook Factory",
+      "purpose": "Cinematic animated storybooks (Story Studio)",
+      "owner_type": "factory",
+      "status": "IN_PROGRESS",
+      "status_label": "L2 \u00b7 building",
+      "confidence": 0.8,
+      "evidence_paths": [
+        "docs/factories/HSF/",
+        "has_live_project_tracker/data/factories/HSF.json"
+      ],
+      "hover_summary": "Winner aesthetic engine + storefront. Build L2. Story Studio ~85% to first $.",
+      "next_actions": [
+        "close develop lane behind code-task gate",
+        "founder: enable AGENT_ALLOW_CODE"
+      ]
+    },
+    {
+      "id": "hcf",
+      "acronym": "HCF",
+      "name": "Hoch Content Factory",
+      "purpose": "Content \u00b7 Media \u00b7 Docs \u00b7 Knowledge Assets",
+      "owner_type": "factory",
+      "status": "IN_PROGRESS",
+      "status_label": "L2 \u00b7 building",
+      "confidence": 0.8,
+      "evidence_paths": [
+        "docs/factories/HCF/",
+        "has_live_project_tracker/data/factories/HCF.json"
+      ],
+      "hover_summary": "Umbrella for HSF+HMF outputs (rights-clean catalog). Build L2; research+design real.",
+      "next_actions": [
+        "close develop lane behind code-task gate",
+        "founder: enable AGENT_ALLOW_CODE"
+      ]
+    },
+    {
+      "id": "hff",
+      "acronym": "HFF",
+      "name": "Hoch Finance Factory",
+      "purpose": "Budgeting \u00b7 Cash-flow \u00b7 Tax packet (no advice)",
+      "owner_type": "factory",
+      "status": "IN_PROGRESS",
+      "status_label": "L2 \u00b7 building",
+      "confidence": 0.8,
+      "evidence_paths": [
+        "docs/factories/HFF/",
+        "has_live_project_tracker/data/factories/HFF.json"
+      ],
+      "hover_summary": "Cash-flow engine (UNKNOWN on thin history). Build L2.",
+      "next_actions": [
+        "close develop lane behind code-task gate",
+        "founder: enable AGENT_ALLOW_CODE"
+      ]
+    },
+    {
+      "id": "hhf",
+      "acronym": "HHF",
+      "name": "Hoch Home Factory",
+      "purpose": "Home ops \u00b7 devices \u00b7 family records (no medical advice)",
+      "owner_type": "factory",
+      "status": "IN_PROGRESS",
+      "status_label": "L2 \u00b7 building",
+      "confidence": 0.8,
+      "evidence_paths": [
+        "docs/factories/HHF/",
+        "has_live_project_tracker/data/factories/HHF.json"
+      ],
+      "hover_summary": "Home/health binder (records + reminders). Build L2.",
+      "next_actions": [
+        "close develop lane behind code-task gate",
+        "founder: enable AGENT_ALLOW_CODE"
+      ]
+    },
+    {
+      "id": "hpf",
+      "acronym": "HPF",
+      "name": "Hoch Prompt Factory",
+      "purpose": "Prompt engineering \u00b7 doctrine \u00b7 eval-gated promotion",
+      "owner_type": "factory",
+      "status": "IN_PROGRESS",
+      "status_label": "L2 \u00b7 building",
+      "confidence": 0.8,
+      "evidence_paths": [
+        "docs/factories/HPF/",
+        "has_live_project_tracker/data/factories/HPF.json"
+      ],
+      "hover_summary": "Prompt registry + eval gate. Build L2.",
+      "next_actions": [
+        "close develop lane behind code-task gate",
+        "founder: enable AGENT_ALLOW_CODE"
+      ]
+    },
+    {
+      "id": "hcsf",
+      "acronym": "HCSF",
+      "name": "Hoch Cybersecurity Factory",
+      "purpose": "Cyber Defense \u00b7 Threat Intel \u00b7 Vuln Mgmt \u00b7 Secure Arch",
+      "owner_type": "factory",
+      "status": "IN_PROGRESS",
+      "status_label": "L2 \u00b7 building",
+      "confidence": 0.8,
+      "evidence_paths": [
+        "docs/factories/HCSF/",
+        "has_live_project_tracker/data/factories/HCSF.json"
+      ],
+      "hover_summary": "Posture engine (hcf_posture), gitleaks/trivy, signed gate. Build L2 (registry aligned: HCSF).",
+      "next_actions": [
+        "close develop lane behind code-task gate",
+        "founder: enable AGENT_ALLOW_CODE"
+      ]
+    },
+    {
+      "id": "hbf",
+      "acronym": "HBF",
+      "name": "Hoch Business Factory",
+      "purpose": "Operations \u00b7 Growth Enablement \u00b7 GTM",
+      "owner_type": "factory",
+      "status": "IN_PROGRESS",
+      "status_label": "L2 \u00b7 building",
+      "confidence": 0.8,
+      "evidence_paths": [
+        "docs/factories/HBF/",
+        "has_live_project_tracker/data/factories/HBF.json"
+      ],
+      "hover_summary": "Monetization board + go-live runbooks. Build L2; research+design real.",
+      "next_actions": [
+        "close develop lane behind code-task gate",
+        "founder: enable AGENT_ALLOW_CODE"
+      ]
+    },
+    {
+      "id": "hif",
+      "acronym": "HIF",
+      "name": "Hoch Infrastructure Factory",
+      "purpose": "Cloud \u00b7 Edge \u00b7 Networks \u00b7 Storage \u00b7 Compute \u00b7 DevOps",
+      "owner_type": "factory",
+      "status": "IN_PROGRESS",
+      "status_label": "L2 \u00b7 relay live",
+      "confidence": 0.8,
+      "evidence_paths": [
+        "docs/factories/HIF/",
+        "has_live_project_tracker/data/factories/HIF.json"
+      ],
+      "hover_summary": "Relay (Linode + Tailscale) LIVE; infra-as-truth. Build L2; research+design real.",
+      "next_actions": [
+        "close develop lane behind code-task gate",
+        "founder: enable AGENT_ALLOW_CODE"
+      ]
+    },
+    {
+      "id": "haf",
+      "acronym": "HAF",
+      "name": "Hoch Automation Factory",
+      "purpose": "Automation \u00b7 Robotics \u00b7 Workflows \u00b7 Process Opt",
+      "owner_type": "factory",
+      "status": "IN_PROGRESS",
+      "status_label": "L2 \u00b7 building",
+      "confidence": 0.8,
+      "evidence_paths": [
+        "docs/factories/HAF/",
+        "has_live_project_tracker/data/factories/HAF.json"
+      ],
+      "hover_summary": "Harness + runtime + code-task gate = the automation substrate. Build L2 (25/25 tests).",
+      "next_actions": [
+        "close develop lane behind code-task gate",
+        "founder: enable AGENT_ALLOW_CODE"
+      ]
+    }
+  ],
+  "cybersecurity_ato_package": {
+    "title": "Cybersecurity NIST Rev 5 Full ATO Package for HELM",
+    "status": "BUILDING \u00b7 EVIDENCE REQUIRED",
+    "authority": "founder/AO gate (doorstep)",
+    "controls_frameworks": [
+      {
+        "id": "NIST SP 800-53 Rev 5",
+        "name": "NIST SP 800-53 Rev 5",
+        "acronym": "5",
+        "purpose": "Security & Privacy Controls (20 families)",
+        "owner_type": "control",
+        "status": "GO",
+        "confidence": 0.9,
+        "evidence_paths": [
+          "docs/security/HELM_ATO_PACKAGE.md"
+        ],
+        "citation": "https://csrc.nist.gov/pubs/sp/800/53/r5/upd1/final",
+        "hover_summary": "SI IMPLEMENTED (gitleaks 0 \u00b7 trivy 0 \u00b7 signed gate). Other families mapped/partial/planned \u2014 see HELM_ATO_PACKAGE.md.",
+        "next_actions": [
+          "assess",
+          "gather evidence",
+          "founder/AO review"
+        ]
+      },
+      {
+        "id": "NIST SP 800-37 Rev 2",
+        "name": "NIST SP 800-37 Rev 2",
+        "acronym": "2",
+        "purpose": "Risk Management Framework (7 steps)",
+        "owner_type": "control",
+        "status": "GO",
+        "confidence": 0.9,
+        "evidence_paths": [
+          "docs/security/HELM_ATO_PACKAGE.md"
+        ],
+        "citation": "https://csrc.nist.gov/pubs/sp/800/37/r2/final",
+        "hover_summary": "Package authored: 7 steps mapped; Authorize = AO/founder gate; Monitor = ConMon wired.",
+        "next_actions": [
+          "assess",
+          "gather evidence",
+          "founder/AO review"
+        ]
+      },
+      {
+        "id": "NIST SP 800-137",
+        "name": "NIST SP 800-137",
+        "acronym": "800-137",
+        "purpose": "Continuous Monitoring (ISCM)",
+        "owner_type": "control",
+        "status": "GO",
+        "confidence": 0.9,
+        "evidence_paths": [
+          "docs/security/HELM_ATO_PACKAGE.md"
+        ],
+        "citation": "https://csrc.nist.gov/pubs/sp/800/137/final",
+        "hover_summary": "WIRED: hcf_posture.py \u2192 security_posture.json; truth source = signed gate R3_NO_OPEN_HIGH.",
+        "next_actions": [
+          "assess",
+          "gather evidence",
+          "founder/AO review"
+        ]
+      },
+      {
+        "id": "NIST SP 800-161 Rev 1",
+        "name": "NIST SP 800-161 Rev 1",
+        "acronym": "1",
+        "purpose": "Supply Chain Risk Mgmt (C-SCRM)",
+        "owner_type": "control",
+        "status": "IN_PROGRESS",
+        "confidence": 0.6,
+        "evidence_paths": [
+          "docs/security/HELM_ATO_PACKAGE.md"
+        ],
+        "citation": "https://csrc.nist.gov/pubs/sp/800/161/r1/final",
+        "hover_summary": "PARTIAL: trivy dependency scan + ghcr-pinned images (supply-chain incident avoided). Formal C-SCRM planned.",
+        "next_actions": [
+          "assess",
+          "gather evidence",
+          "founder/AO review"
+        ]
+      },
+      {
+        "id": "NIST SP 800-53A Rev 5",
+        "name": "NIST SP 800-53A Rev 5",
+        "acronym": "5",
+        "purpose": "Assessment Procedures",
+        "owner_type": "control",
+        "status": "IN_PROGRESS",
+        "confidence": 0.6,
+        "evidence_paths": [
+          "docs/security/HELM_ATO_PACKAGE.md"
+        ],
+        "citation": "https://csrc.nist.gov/pubs/sp/800/53/a/r5/final",
+        "hover_summary": "PARTIAL: self-assessment via scans + posture; formal assessment plan (SAP) in progress.",
+        "next_actions": [
+          "assess",
+          "gather evidence",
+          "founder/AO review"
+        ]
+      },
+      {
+        "id": "NIST SP 800-53B Rev 5",
+        "name": "NIST SP 800-53B Rev 5",
+        "acronym": "5",
+        "purpose": "Control Baselines",
+        "owner_type": "control",
+        "status": "IN_PROGRESS",
+        "confidence": 0.6,
+        "evidence_paths": [
+          "docs/security/HELM_ATO_PACKAGE.md"
+        ],
+        "citation": "https://csrc.nist.gov/pubs/sp/800/53/b/upd1/final",
+        "hover_summary": "Low baseline selected (FIPS 199 LOW\u2013MOD proposed). Tailoring in progress.",
+        "next_actions": [
+          "assess",
+          "gather evidence",
+          "founder/AO review"
+        ]
+      },
+      {
+        "id": "NIST SP 800-171 Rev 3",
+        "name": "NIST SP 800-171 Rev 3",
+        "acronym": "3",
+        "purpose": "CUI Protection",
+        "owner_type": "control",
+        "status": "PLANNED",
+        "confidence": 0.3,
+        "evidence_paths": [
+          "docs/security/HELM_ATO_PACKAGE.md"
+        ],
+        "citation": "https://csrc.nist.gov/pubs/sp/800/171/r3/final",
+        "hover_summary": "MAPPED / planned. Applies only if CUI is handled \u2014 not currently in scope for HELM.",
+        "next_actions": [
+          "assess",
+          "gather evidence",
+          "founder/AO review"
+        ]
+      },
+      {
+        "id": "NIST SP 800-39",
+        "name": "NIST SP 800-39",
+        "acronym": "800-39",
+        "purpose": "Managing Information Security Risk",
+        "owner_type": "control",
+        "status": "IN_PROGRESS",
+        "confidence": 0.6,
+        "evidence_paths": [
+          "docs/security/HELM_ATO_PACKAGE.md"
+        ],
+        "citation": "https://csrc.nist.gov/pubs/sp/800/39/final",
+        "hover_summary": "MAPPED: org-level risk framing via HELM governance + POA&M. Formal risk strategy doc planned.",
+        "next_actions": [
+          "assess",
+          "gather evidence",
+          "founder/AO review"
+        ]
+      },
+      {
+        "id": "NIST SP 800-160 v1r1",
+        "name": "NIST SP 800-160 v1r1",
+        "acronym": "v1r1",
+        "purpose": "Systems Security Engineering",
+        "owner_type": "control",
+        "status": "PLANNED",
+        "confidence": 0.3,
+        "evidence_paths": [
+          "docs/security/HELM_ATO_PACKAGE.md"
+        ],
+        "citation": "https://csrc.nist.gov/pubs/sp/800/160/v1/r1/final",
+        "hover_summary": "PLANNED: secure-by-design principles applied ad hoc (DOORSTEP gates); formal SSE mapping planned.",
+        "next_actions": [
+          "assess",
+          "gather evidence",
+          "founder/AO review"
+        ]
+      },
+      {
+        "id": "NIST CSF 2.0",
+        "name": "NIST CSF 2.0",
+        "acronym": "2.0",
+        "purpose": "Framework Alignment (Govern/Identify/Protect/Detect/Respond/Recover)",
+        "owner_type": "control",
+        "status": "IN_PROGRESS",
+        "confidence": 0.6,
+        "evidence_paths": [
+          "docs/security/HELM_ATO_PACKAGE.md"
+        ],
+        "citation": "https://www.nist.gov/cyberframework",
+        "hover_summary": "PARTIAL: Identify/Protect/Detect via scans + posture; Respond/Recover (IR/CP) planned.",
+        "next_actions": [
+          "assess",
+          "gather evidence",
+          "founder/AO review"
+        ]
+      },
+      {
+        "id": "CMMC 2.0",
+        "name": "CMMC 2.0",
+        "acronym": "2.0",
+        "purpose": "Level 2 alignment (DoD)",
+        "owner_type": "control",
+        "status": "PLANNED",
+        "confidence": 0.3,
+        "evidence_paths": [
+          "docs/security/HELM_ATO_PACKAGE.md"
+        ],
+        "citation": "https://dodcio.defense.gov/CMMC/",
+        "hover_summary": "PLANNED: aligns with 800-171 scope; only relevant for DoD contracts \u2014 not current scope.",
+        "next_actions": [
+          "assess",
+          "gather evidence",
+          "founder/AO review"
+        ]
+      }
+    ],
+    "package_contents": [
+      {
+        "id": "System Security Plan (SSP)",
+        "name": "System Security Plan (SSP)",
+        "status": "GO",
+        "hover_summary": "docs/security/HELM_ATO_PACKAGE.md (SSP-style)"
+      },
+      {
+        "id": "Security Assessment Plan (SAP)",
+        "name": "Security Assessment Plan (SAP)",
+        "status": "IN_PROGRESS",
+        "hover_summary": "in progress \u2014 self-assessment via posture engine"
+      },
+      {
+        "id": "POA&M",
+        "name": "POA&M",
+        "status": "GO",
+        "hover_summary": "in the ATO package \u00a76 \u2014 top item: cyberqrg-ai unsigned gate"
+      },
+      {
+        "id": "Control Implementation Evidence",
+        "name": "Control Implementation Evidence",
+        "status": "GO",
+        "hover_summary": "security_scan_results_20260707.md + posture_report.md"
+      },
+      {
+        "id": "Audit Logs & Monitoring Evidence",
+        "name": "Audit Logs & Monitoring Evidence",
+        "status": "GO",
+        "hover_summary": "founder_handoff_queue.json \u00b7 RELEASE_APPROVAL_*.json \u00b7 burn-in ledger"
+      },
+      {
+        "id": "Risk Assessment Report",
+        "name": "Risk Assessment Report",
+        "status": "IN_PROGRESS",
+        "hover_summary": "categorization (FIPS 199 LOW\u2013MOD) proposed; formal RAR planned"
+      },
+      {
+        "id": "Configuration Management Plan",
+        "name": "Configuration Management Plan",
+        "status": "IN_PROGRESS",
+        "hover_summary": "code_task_gate + git-tracked config; formal CM plan planned"
+      },
+      {
+        "id": "Incident Response Plan",
+        "name": "Incident Response Plan",
+        "status": "PLANNED",
+        "hover_summary": "PLANNED (POA&M) \u2014 runbook TBD"
+      },
+      {
+        "id": "Contingency Plan",
+        "name": "Contingency Plan",
+        "status": "PLANNED",
+        "hover_summary": "PLANNED (POA&M) \u2014 backup_state.sh exists; tested DR TBD"
+      },
+      {
+        "id": "Privacy Impact Assessment (PIA)",
+        "name": "Privacy Impact Assessment (PIA)",
+        "status": "PLANNED",
+        "hover_summary": "PLANNED \u2014 for HFF/HHF personal data (local-first, no-egress)"
+      }
+    ],
+    "ssp": "docs/security/HELM_ATO_PACKAGE.md"
+  },
+  "conmon": {
+    "engine": "scripts/hcf_posture.py",
+    "record": "has_live_project_tracker/data/security_posture.json",
+    "truth_source": "signed gate R3_NO_OPEN_HIGH",
+    "overall": "READY",
+    "products": [
+      {
+        "product": "cyberqrg-ai",
+        "state": "PARKED",
+        "signed_at": null,
+        "gate_verdict": null,
+        "scan_doc": null,
+        "gate_doc": null,
+        "tools": [],
+        "note": "product explicitly parked by operator policy"
+      },
+      {
+        "product": "epic-fury-2026",
+        "state": "READY",
+        "signed_at": "2026-07-07T15:50:53Z",
+        "gate_verdict": {
+          "R1_REAL_TOOLS": "PASS",
+          "R2_RECONCILED_SCAN": "PASS",
+          "R3_NO_OPEN_HIGH": "PASS",
+          "R5_POSTURE": "READY"
+        },
+        "scan_doc": "docs/evidence/products/epic-fury-2026/security_scan_results_20260707.md",
+        "gate_doc": "docs/evidence/products/epic-fury-2026/RELEASE_APPROVAL_20260707T155053Z.json",
+        "tools": [
+          "gitleaks",
+          "npm audit",
+          "trivy"
+        ],
+        "note": "signed gate: no open highs, approved",
+        "scan_date": "2026-07-07"
+      },
+      {
+        "product": "story-studio",
+        "state": "PARKED",
+        "signed_at": null,
+        "gate_verdict": null,
+        "scan_doc": null,
+        "gate_doc": null,
+        "tools": [],
+        "note": "product explicitly parked by operator policy"
+      }
+    ]
+  },
+  "guidance_citations": [
+    {
+      "id": "30",
+      "name": "NIST SP 800-30 r1",
+      "citation": "https://csrc.nist.gov/pubs/sp/800/30/r1/final",
+      "status": "MAPPED",
+      "hover_summary": "Risk Assessment methodology \u2014 informs the RAR (planned)."
+    },
+    {
+      "id": "csf",
+      "name": "NIST CSF 2.0",
+      "citation": "https://www.nist.gov/cyberframework",
+      "status": "MAPPED",
+      "hover_summary": "Framework alignment (Govern/Identify/Protect/Detect partial; Respond/Recover planned)."
+    },
+    {
+      "id": "fedramp",
+      "name": "FedRAMP Rev 5 baselines",
+      "citation": "https://www.fedramp.gov/rev5/",
+      "status": "MAPPED",
+      "hover_summary": "Applies only if a cloud product seeks FedRAMP \u2014 not current scope."
+    },
+    {
+      "id": "dodi8510",
+      "name": "DoDI 8510.01 (RMF)",
+      "citation": "https://www.esd.whs.mil/Portals/54/Documents/DD/issuances/dodi/851001p.pdf",
+      "status": "MAPPED",
+      "hover_summary": "DoD RMF process reference \u2014 mapped; applies for DoD use."
+    },
+    {
+      "id": "dodi8500",
+      "name": "DoDI 8500.01 (Cybersecurity)",
+      "citation": "https://www.esd.whs.mil/Portals/54/Documents/DD/issuances/dodi/850001p.pdf",
+      "status": "MAPPED",
+      "hover_summary": "DoD cybersecurity policy reference \u2014 mapped."
+    },
+    {
+      "id": "cnssi",
+      "name": "CNSSI 1253",
+      "citation": "https://www.cnss.gov/CNSS/issuances/Instructions.cfm",
+      "status": "MAPPED",
+      "hover_summary": "NSS categorization/overlays \u2014 mapped; applies for national-security systems."
+    },
+    {
+      "id": "cisasbd",
+      "name": "CISA Secure by Design",
+      "citation": "https://www.cisa.gov/securebydesign",
+      "status": "MAPPED",
+      "hover_summary": "Secure-by-design principles applied via DOORSTEP + gates (partial)."
+    },
+    {
+      "id": "cisakev",
+      "name": "CISA KEV Catalog",
+      "citation": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog",
+      "status": "MAPPED",
+      "hover_summary": "Known-Exploited-Vulns watch \u2014 feed into trivy/dep scanning (planned)."
+    },
+    {
+      "id": "m2218",
+      "name": "OMB M-22-18",
+      "citation": "https://www.whitehouse.gov/wp-content/uploads/2022/09/M-22-18.pdf",
+      "status": "MAPPED",
+      "hover_summary": "Software supply-chain / SBOM attestation \u2014 SBOM planned (partial: pinned deps)."
+    },
+    {
+      "id": "m2131",
+      "name": "OMB M-21-31",
+      "citation": "https://www.whitehouse.gov/wp-content/uploads/2021/08/M-21-31-Improving-the-Federal-Governments-Investigative-and-Remediation-Capabilities-Related-to-Cybersecurity-Incidents.pdf",
+      "status": "MAPPED",
+      "hover_summary": "Logging maturity \u2014 audit ledgers exist; formal maturity mapping planned."
+    }
+  ],
+  "runtime_status": {
+    "helm_core": "GO",
+    "has_swarm": "GO",
+    "factories": "IN_PROGRESS",
+    "security_posture": "READY",
+    "ato_package": "BUILDING"
+  },
+  "risks": [
+    {
+      "id": "posture-unknown",
+      "state": "ATTENTION",
+      "summary": "overall posture UNKNOWN \u2014 cyberqrg-ai has a scan but no signed gate"
+    }
+  ],
+  "blocked_items": [
+    {
+      "id": "enable-code-mode",
+      "owner_type": "founder",
+      "summary": "AGENT_ALLOW_CODE=1 graduates 7 factories to L3 (develop lanes gate-ready)"
+    },
+    {
+      "id": "ato-authorize",
+      "owner_type": "founder",
+      "summary": "ATO is an AO decision \u2014 package prepared, authorization staged at the door"
+    }
+  ]
+}

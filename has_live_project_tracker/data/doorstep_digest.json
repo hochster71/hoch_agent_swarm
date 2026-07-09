@@ -21,7 +21,7 @@
       "action": "Archive+upload the signed build via Xcode/Fastlane to App Store Connect under Team K34GR8P326.",
       "blocking_evidence": "docs/generated/r2/testflight_checklist.md",
       "staged_at": "2026-07-07T15:40:04+00:00",
-      "status": "READY_FOR_FOUNDER"
+      "status": "DONE"
     },
     {
       "id": "neuro-relay-redeploy",
@@ -43,7 +43,7 @@
       "id": "neuro-brain-image-burst",
       "gate": "blocked_monetization",
       "title": "Generate photoreal brain image (paid burst GPU)",
-      "why_founder": "Image generation needs paid burst compute or a keyed image service — a spend action.",
+      "why_founder": "Image generation needs paid burst compute or a keyed image service \u2014 a spend action.",
       "action": "Run the spec in docs/generated/neuro/brain_image_spec.md on burst GPU (or approved image tool); place hoch-brain.png at frontend/public/assets/ and assets/. Panel auto-composites it.",
       "status": "READY_FOR_FOUNDER"
     },

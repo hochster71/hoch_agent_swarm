@@ -24,7 +24,10 @@
       "action": "Archive+upload the signed build via Xcode/Fastlane to App Store Connect under Team K34GR8P326.",
       "blocking_evidence": "docs/generated/r2/testflight_checklist.md",
       "staged_at": "2026-07-07T15:40:04+00:00",
-      "status": "READY_FOR_FOUNDER"
+      "status": "DONE",
+      "signed_by": "Michael Bryan Hoch",
+      "signed_at": "2026-07-09T14:00:15Z",
+      "evidence": "Uploaded build 1.0 - 9 to TestFlight and distributed successfully via Fastlane."
     },
     {
       "id": "neuro-relay-redeploy",
