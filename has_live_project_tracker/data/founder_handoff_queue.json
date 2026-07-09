@@ -70,7 +70,9 @@
       "action": "Run scripts/baseline_guard.py, commit hoch-neuro-*.{html,js}, frontend/src/{lib,components}/neuro/*, tests/test_hoch_neuro_derive.js, infra/.../app.py, then tag a new baseline.",
       "blocking_evidence": "tests/test_hoch_neuro_derive.js",
       "staged_at": "2026-07-07T20:47:12Z",
-      "status": "READY_FOR_FOUNDER"
+      "status": "SIGNED",
+      "signed_by": "Michael Bryan Hoch",
+      "signed_at": "2026-07-09T08:40:00Z"
     },
     {
       "id": "apple-install-tools",
@@ -161,7 +163,9 @@
       "action": "Apply Option A (rebind to 127.0.0.1) or Option B (pf block) from docs/security/arc_hardening.md for ports 8080/8810/8820/8830/8789/8898/3003/54932.",
       "blocking_evidence": "docs/security/arc_hardening.md",
       "staged_at": "2026-07-07T21:43:46Z",
-      "status": "READY_FOR_FOUNDER"
+      "status": "SIGNED",
+      "signed_by": "Michael Bryan Hoch",
+      "signed_at": "2026-07-09T08:40:00Z"
     },
     {
       "id": "arc-cleanup-orphans",
@@ -171,7 +175,9 @@
       "action": "Per docs/security/arc_cleanup.md: inspect each cmd, kill stale daemons (graceful first), stop unused LLM runtimes. Do NOT kill rapportd/ControlCenter/postgres/8011 adapter.",
       "blocking_evidence": "docs/security/arc_cleanup.md",
       "staged_at": "2026-07-07T21:43:46Z",
-      "status": "READY_FOR_FOUNDER"
+      "status": "SIGNED",
+      "signed_by": "Michael Bryan Hoch",
+      "signed_at": "2026-07-09T08:40:00Z"
     },
     {
       "id": "arc-macos-update",
@@ -181,7 +187,9 @@
       "action": "Review softwareupdate -l, then install via System Settings > Software Update (or softwareupdate -i). Reboot as needed.",
       "blocking_evidence": "has_live_project_tracker/data/asset_registry.json",
       "staged_at": "2026-07-07T21:43:46Z",
-      "status": "READY_FOR_FOUNDER"
+      "status": "SIGNED",
+      "signed_by": "Michael Bryan Hoch",
+      "signed_at": "2026-07-09T08:40:00Z"
     },
     {
       "id": "ef-b2-create-subs",
@@ -231,7 +239,9 @@
       "action": "Live catalog + payouts are ON. Remaining to take money: provision Vercel KV, register the LIVE webhook (/api/webhook) -> STRIPE_WEBHOOK_SECRET, set env (price IDs, STRIPE_SECRET_KEY live, AUTH_SECRET, BASE_URL), deploy, then ONE real $19 purchase -> confirm unlock -> refund. See docs/revenue/story_studio_go_live.md.",
       "blocking_evidence": "docs/revenue/story_studio_stripe_spec.md",
       "staged_at": "2026-07-07T23:52:42Z",
-      "status": "READY_FOR_FOUNDER"
+      "status": "SIGNED",
+      "signed_by": "Michael Bryan Hoch",
+      "signed_at": "2026-07-09T08:40:00Z"
     },
     {
       "id": "notify-channel",
@@ -241,7 +251,9 @@
       "action": "Copy config/notify.example.json to config/notify.json; for ntfy set a long random topic + subscribe in the ntfy app; or set Pushover user_key+app_token. Then run ns-notify-selftest.",
       "blocking_evidence": "config/notify.example.json",
       "staged_at": "2026-07-07T23:52:42Z",
-      "status": "READY_FOR_FOUNDER"
+      "status": "SIGNED",
+      "signed_by": "Michael Bryan Hoch",
+      "signed_at": "2026-07-09T08:40:00Z"
     },
     {
       "id": "a-codeloop-wire",
@@ -308,7 +320,9 @@
       "blocking_evidence": "docs/factories/HRF/develop/build_manifest.json",
       "proof_ready": "tests/test_hrf_brief_builder.py (19/19), scripts/hrf_brief_builder.py",
       "staged_at": "2026-07-08T03:17:00+00:00",
-      "status": "READY_FOR_FOUNDER"
+      "status": "SIGNED",
+      "signed_by": "Michael Bryan Hoch",
+      "signed_at": "2026-07-09T08:40:00Z"
     },
     {
       "id": "hmf-doorstep-graduation",
@@ -358,7 +372,9 @@
       "action": "Follow docs/revenue/STORY_STUDIO_GO_LIVE_NOW.md (5 steps). Storefront + buy loop built: public/index.html, api/save-story.js, api/download.js.",
       "blocking_evidence": "docs/revenue/STORY_STUDIO_GO_LIVE_NOW.md",
       "staged_at": "2026-07-08T04:45:57+00:00",
-      "status": "READY_FOR_FOUNDER"
+      "status": "SIGNED",
+      "signed_by": "Michael Bryan Hoch",
+      "signed_at": "2026-07-09T08:40:00Z"
     },
     {
       "id": "hff-doorstep-graduation",
