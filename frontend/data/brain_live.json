@@ -1,5 +1,5 @@
 {
-  "ts": "2026-07-09T13:36:27.733379Z",
+  "ts": "2026-07-09T13:49:24.765960Z",
   "live_brain": {
     "live_brain_available": true,
     "backend": {
@@ -9,7 +9,7 @@
     },
     "note": "brain can GENERATE at $0"
   },
-  "generation": 781,
+  "generation": 783,
   "genes": 737,
   "champions": 30,
   "mean_score": 95.583,
@@ -40,14 +40,6 @@
       "state": "CONVERGED",
       "gates": 4,
       "history": [
-        {
-          "g": 766,
-          "m": 95.583
-        },
-        {
-          "g": 767,
-          "m": 95.583
-        },
         {
           "g": 768,
           "m": 95.583
@@ -103,6 +95,14 @@
         {
           "g": 781,
           "m": 95.583
+        },
+        {
+          "g": 782,
+          "m": 95.583
+        },
+        {
+          "g": 783,
+          "m": 95.583
         }
       ]
     },
@@ -116,14 +116,6 @@
       "state": "CONVERGED",
       "gates": 4,
       "history": [
-        {
-          "g": 752,
-          "m": 97.125
-        },
-        {
-          "g": 753,
-          "m": 97.125
-        },
         {
           "g": 754,
           "m": 97.125
@@ -179,6 +171,14 @@
         {
           "g": 767,
           "m": 97.125
+        },
+        {
+          "g": 768,
+          "m": 97.125
+        },
+        {
+          "g": 769,
+          "m": 97.125
         }
       ]
     },
@@ -192,14 +192,6 @@
       "state": "CONVERGED",
       "gates": 5,
       "history": [
-        {
-          "g": 751,
-          "m": 96.5
-        },
-        {
-          "g": 752,
-          "m": 96.5
-        },
         {
           "g": 753,
           "m": 96.5
@@ -254,6 +246,14 @@
         },
         {
           "g": 766,
+          "m": 96.5
+        },
+        {
+          "g": 767,
+          "m": 96.5
+        },
+        {
+          "g": 768,
           "m": 96.5
         }
       ]
@@ -555,16 +555,6 @@
   ],
   "history": [
     {
-      "g": 758,
-      "m": 95.583,
-      "gain": 0.0
-    },
-    {
-      "g": 759,
-      "m": 95.583,
-      "gain": 0.0
-    },
-    {
       "g": 760,
       "m": 95.583,
       "gain": 0.0
@@ -673,6 +663,16 @@
       "g": 781,
       "m": 95.583,
       "gain": 0.0
+    },
+    {
+      "g": 782,
+      "m": 95.583,
+      "gain": 0.0
+    },
+    {
+      "g": 783,
+      "m": 95.583,
+      "gain": 0.0
     }
   ],
   "recent_improvements": [
@@ -776,13 +776,13 @@
     }
   ],
   "combat": {
-    "at": "2026-07-09T13:36:27.743793Z",
+    "at": "2026-07-09T13:49:24.777664Z",
     "genes_with_combat_record": 7,
     "total_champion_executions": 22,
     "gates": {
       "m0_generation": {
-        "total": 97,
-        "VERIFIED": 97
+        "total": 99,
+        "VERIFIED": 99
       },
       "live_judge": {
         "total": 1,
@@ -883,8 +883,8 @@
         "id": "L1",
         "status": "Active",
         "cpu": 0,
-        "ram": 91,
-        "agents": 12,
+        "ram": 90,
+        "agents": 13,
         "latency_ms": 0.0,
         "authority": "MEASURED_LOCAL",
         "activity": "Control plane: API + cadence + BRAIN loops (this host)"
@@ -987,25 +987,25 @@
         "name": "lmstudio",
         "alive": true,
         "model": "google/gemma-4-12b-qat",
-        "latency_ms": 440.6,
+        "latency_ms": 642.8,
         "failures": 0,
-        "last_probe": 1783604189.770195
+        "last_probe": 1783604966.944336
       },
       {
         "name": "mac-local",
         "alive": true,
         "model": "llama3.1:8b",
-        "latency_ms": 2252.0,
+        "latency_ms": 791.5,
         "failures": 0,
-        "last_probe": 1783604191.581766
+        "last_probe": 1783604967.093289
       },
       {
         "name": "relay-001",
         "alive": true,
         "model": "qwen3:1.7b",
-        "latency_ms": 607.0,
+        "latency_ms": 668.4,
         "failures": 0,
-        "last_probe": 1783604189.9368901
+        "last_probe": 1783604966.97032
       }
     ],
     "primary": "lmstudio",

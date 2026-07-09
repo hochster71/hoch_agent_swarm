@@ -1,7 +1,7 @@
 {
   "schema": "brain-champion-registry",
   "domain": "research",
-  "generation": 766,
+  "generation": 768,
   "champions": {
     "Longevity": {
       "gene_id": "seed-long-de9ffeaa1e",
@@ -74,5 +74,5 @@
       "pool_size": 3
     }
   },
-  "at": "2026-07-09T13:36:26.803265Z"
+  "at": "2026-07-09T13:49:22.306258Z"
 }
