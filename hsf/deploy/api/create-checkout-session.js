@@ -59,7 +59,7 @@ module.exports = async function handler(req, res) {
   }
   body = body || {};
 
-  const tier = body.tier;
+  const tier = body.tier || body.product;
 
   // Map each supported tier to its Stripe config.
   // `mode` is required by Stripe: 'payment' for one-time, 'subscription' for recurring.
