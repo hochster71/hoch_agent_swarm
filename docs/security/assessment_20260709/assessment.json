@@ -1,0 +1,424 @@
+{
+  "generated_at": "2026-07-09T05:32:33.221690Z",
+  "scope": "hoch_agent_swarm repo + live relay recon (read-only)",
+  "honest_posture": "NOT 100% \u2014 real findings below. Compliance is a remediation target, not a starting claim.",
+  "summary": {
+    "controls_assessed": 12,
+    "controls_met": 2,
+    "controls_gap": 6,
+    "controls_partial": 4,
+    "compliance_pct_met_only": 16.7,
+    "total_findings": 110,
+    "findings_by_severity": {
+      "HIGH": 69,
+      "CRITICAL": 41
+    }
+  },
+  "controls": [
+    {
+      "id": "AC-3",
+      "family": "Access Enforcement",
+      "title": "Relay API enforces authorization",
+      "status": "GAP",
+      "note": "Live recon: /api/* return HTTP 200 with no token. Tailscale-private mitigates but does not authorize."
+    },
+    {
+      "id": "IA-2",
+      "family": "Identification & Authentication",
+      "title": "API callers are authenticated",
+      "status": "GAP",
+      "note": "No token required on control-plane endpoints. Add relay auth (bearer/mTLS) even inside the tailnet."
+    },
+    {
+      "id": "IA-5",
+      "family": "Authenticator Management",
+      "title": "Secrets not stored in cleartext repo files",
+      "status": "GAP",
+      "note": "66 secret findings incl. .env + .env.bak backups. Purge, rotate, gitignore, shred backups."
+    },
+    {
+      "id": "SC-28",
+      "family": "Protection of Information at Rest",
+      "title": "No plaintext secrets at rest in tree",
+      "status": "GAP",
+      "note": "Same secret sprawl; .env.bak.* files created during ops carry live keys."
+    },
+    {
+      "id": "SC-8",
+      "family": "Transmission Confidentiality",
+      "title": "TLS on relay",
+      "status": "MET",
+      "note": "Live recon: HTTPS via nginx/1.31.2, HTTP 200 over TLS on the tailnet."
+    },
+    {
+      "id": "RA-5",
+      "family": "Vulnerability Monitoring",
+      "title": "Automated vuln scanning runs",
+      "status": "PARTIAL",
+      "note": "Trivy live: 4 HIGH/CRIT deps open. Scanning exists; remediation SLA needed (ConMon)."
+    },
+    {
+      "id": "CM-6",
+      "family": "Configuration Settings",
+      "title": "No HIGH/CRIT misconfigurations",
+      "status": "GAP",
+      "note": "Trivy: 40 HIGH/CRIT misconfigurations to triage."
+    },
+    {
+      "id": "CM-3",
+      "family": "Configuration Change Control",
+      "title": "Change-board gate on commits",
+      "status": "MET",
+      "note": "baseline_guard.py pre-commit invariant gate is live and passing on merit."
+    },
+    {
+      "id": "AU-6",
+      "family": "Audit Record Review",
+      "title": "Evidence + audit trail exist",
+      "status": "PARTIAL",
+      "note": "Evidence manifests + release attestations exist; tamper gate repaired but manifests lack MAC (hash-only)."
+    },
+    {
+      "id": "CA-7",
+      "family": "Continuous Monitoring",
+      "title": "ConMon program defined",
+      "status": "PARTIAL",
+      "note": "link_monitor 24/7 + gates exist; formal ConMon cadence + control re-assessment schedule being authored."
+    },
+    {
+      "id": "CA-8",
+      "family": "Penetration Testing",
+      "title": "Pen test performed",
+      "status": "IN_PROGRESS",
+      "note": "Red-team scheduled interactive/operator-approved against staging."
+    },
+    {
+      "id": "SI-2",
+      "family": "Flaw Remediation",
+      "title": "Findings tracked to closure",
+      "status": "GAP",
+      "note": "No ticketed backlog yet; Jira/kanban structure being authored to track each finding to closure."
+    }
+  ],
+  "top_findings": [
+    {
+      "source": "trivy-vuln",
+      "severity": "CRITICAL",
+      "rule": "CVE-2026-45829",
+      "file": "uv.lock",
+      "desc": "chromadb: ChromaDB Python Project: Arbitrary code execution via pre-authentication code injection"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "openai-project-api-key",
+      "file": ".env",
+      "line": 33,
+      "desc": "OpenAI Project API Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "stripe-secret-token",
+      "file": ".env",
+      "line": 32,
+      "desc": "Stripe Secret Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "openai-project-api-key",
+      "file": ".env.bak.1783569802",
+      "line": 24,
+      "desc": "OpenAI Project API Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "openai-project-api-key",
+      "file": ".env.bak.1783569802",
+      "line": 35,
+      "desc": "OpenAI Project API Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "stripe-secret-token",
+      "file": ".env.bak.1783569802",
+      "line": 33,
+      "desc": "Stripe Secret Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "openai-project-api-key",
+      "file": ".env.bak.20260707T141502Z",
+      "line": 13,
+      "desc": "OpenAI Project API Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "stripe-secret-token",
+      "file": ".env.bak.20260707T141502Z",
+      "line": 9,
+      "desc": "Stripe Secret Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "openai-project-api-key",
+      "file": ".env.bak.20260707T142947Z",
+      "line": 23,
+      "desc": "OpenAI Project API Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "stripe-secret-token",
+      "file": ".env.bak.20260707T142947Z",
+      "line": 9,
+      "desc": "Stripe Secret Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "stripe-secret-token",
+      "file": "config/gitleaks.toml",
+      "line": 35,
+      "desc": "Stripe Secret Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "stripe-secret-token",
+      "file": "data/security_scans/epic-fury-2026/20260709T042647Z-epic-fury-2026-hasf-vetting/gitleaks.json",
+      "line": 409,
+      "desc": "Stripe Secret Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "stripe-secret-token",
+      "file": "data/security_scans/epic-fury-2026/20260709T042647Z-epic-fury-2026-hasf-vetting/gitleaks.json",
+      "line": 410,
+      "desc": "Stripe Secret Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "stripe-secret-token",
+      "file": "data/security_scans/epic-fury-2026/20260709T042903Z-epic-fury-2026-hasf-vetting/gitleaks.json",
+      "line": 178,
+      "desc": "Stripe Secret Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "stripe-secret-token",
+      "file": "data/security_scans/epic-fury-2026/20260709T042903Z-epic-fury-2026-hasf-vetting/gitleaks.json",
+      "line": 179,
+      "desc": "Stripe Secret Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "openai-project-api-key",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 29,
+      "desc": "OpenAI Project API Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "openai-project-api-key",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 30,
+      "desc": "OpenAI Project API Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "openai-project-api-key",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 89,
+      "desc": "OpenAI Project API Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "openai-project-api-key",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 90,
+      "desc": "OpenAI Project API Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "openai-project-api-key",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 372,
+      "desc": "OpenAI Project API Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "openai-project-api-key",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 373,
+      "desc": "OpenAI Project API Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "openai-project-api-key",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 575,
+      "desc": "OpenAI Project API Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "openai-project-api-key",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 576,
+      "desc": "OpenAI Project API Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "openai-project-api-key",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 595,
+      "desc": "OpenAI Project API Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "openai-project-api-key",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 596,
+      "desc": "OpenAI Project API Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "stripe-secret-token",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 9,
+      "desc": "Stripe Secret Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "stripe-secret-token",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 10,
+      "desc": "Stripe Secret Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "stripe-secret-token",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 69,
+      "desc": "Stripe Secret Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "stripe-secret-token",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 70,
+      "desc": "Stripe Secret Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "stripe-secret-token",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 149,
+      "desc": "Stripe Secret Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "stripe-secret-token",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 150,
+      "desc": "Stripe Secret Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "stripe-secret-token",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 189,
+      "desc": "Stripe Secret Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "stripe-secret-token",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 190,
+      "desc": "Stripe Secret Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "stripe-secret-token",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 352,
+      "desc": "Stripe Secret Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "stripe-secret-token",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 353,
+      "desc": "Stripe Secret Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "stripe-secret-token",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 392,
+      "desc": "Stripe Secret Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "stripe-secret-token",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 393,
+      "desc": "Stripe Secret Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "stripe-secret-token",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 555,
+      "desc": "Stripe Secret Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "stripe-secret-token",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 556,
+      "desc": "Stripe Secret Key"
+    },
+    {
+      "source": "trivy-secret",
+      "severity": "CRITICAL",
+      "rule": "stripe-secret-token",
+      "file": "docs/security/assessment_20260709/gitleaks.json",
+      "line": 1318,
+      "desc": "Stripe Secret Key"
+    }
+  ]
+}
