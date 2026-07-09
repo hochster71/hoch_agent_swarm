@@ -1,7 +1,7 @@
 {
   "schema": "brain-champion-registry",
   "domain": "music",
-  "generation": 731,
+  "generation": 754,
   "champions": {
     "Lo-Fi Hip-Hop": {
       "gene_id": "seed-lo-f-1113d93381",
@@ -84,5 +84,5 @@
       "pool_size": 3
     }
   },
-  "at": "2026-07-09T06:19:29.180884Z"
+  "at": "2026-07-09T09:08:31.339680Z"
 }

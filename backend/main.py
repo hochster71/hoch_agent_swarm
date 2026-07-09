@@ -205,6 +205,10 @@ app.include_router(stripe_router)
 from backend.routers.stripe_billing import router as stripe_billing_router
 app.include_router(stripe_billing_router)
 
+from backend.homemesh_runtime_asset_graph import homemesh_router
+app.include_router(homemesh_router)
+
+
 
 @app.get("/api/v1/control-plane/status")
 def control_plane_status():

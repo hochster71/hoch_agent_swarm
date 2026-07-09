@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-07T06:09:14.579114Z",
+  "generated_at": "2026-07-09T09:03:46.601347Z",
   "pending_approvals": [
     {
       "approval_id": "APPROVE_REAL_24H_BURN_IN",
@@ -455,6 +455,46 @@
       "reason": "Discovered on network with IP 10.0.0.88. Placed in unmapped_devices room (fail-closed).",
       "mac_address": "33:44:55:66:77:88",
       "requested_at": "2026-07-07T06:09:14.579109Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-66d8579c24ec",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-2.local (66:d8:57:9c:24:ec)",
+      "reason": "Discovered on network with IP 10.0.0.2. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "66:d8:57:9c:24:ec",
+      "requested_at": "2026-07-09T09:03:46.601297Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-c298f12bdd1",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-62.local (c:29:8f:12:bd:d1)",
+      "reason": "Discovered on network with IP 10.0.0.62. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "c:29:8f:12:bd:d1",
+      "requested_at": "2026-07-09T09:03:46.601326Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-bccd9986cad6",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-136.local (bc:cd:99:86:ca:d6)",
+      "reason": "Discovered on network with IP 10.0.0.136. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "bc:cd:99:86:ca:d6",
+      "requested_at": "2026-07-09T09:03:46.601339Z"
+    },
+    {
+      "approval_id": "homemesh-approve-device-ce384db838c",
+      "type": "HOMEMESH_DEVICE_APPROVAL",
+      "status": "PENDING",
+      "approval_required_from": "Michael",
+      "title": "Approve unknown device: host-10-0-0-185.local (ce:3:84:db:83:8c)",
+      "reason": "Discovered on network with IP 10.0.0.185. Placed in unmapped_devices room (fail-closed).",
+      "mac_address": "ce:3:84:db:83:8c",
+      "requested_at": "2026-07-09T09:03:46.601345Z"
     }
   ]
 }

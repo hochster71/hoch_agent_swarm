@@ -1,7 +1,8 @@
-# Notification Self-Test Evidence
-
-- **Timestamp:** 2026-07-09T07:55:35Z
-- **Channel:** ntfy
-- **Topic:** `has_ntfy_topic_9f83ea6472b5cd1a7b8e90cf12`
-- **Result:** Successfully sent test notification "HAS test: notify fabric online" (priority: high).
-- **Status:** Verified and online.
+# Notify Fabric Self-Test
+## Objective:
+Notify the fabric that 'HAS test' has been completed successfully.
+## Setup:
+This is a self-test to verify if the notification system works correctly.
+## Execution:
+1. This HOCH swarm worker agent will execute the `python3 scripts/notify.py` command.
+2. The script will send a notification with the subject 'HAS test' and message 'notify fabric online' at high priority via ntfy.

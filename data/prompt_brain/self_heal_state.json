@@ -1,6 +1,6 @@
 {
   "schema": "hoch-self-heal-v1",
-  "at": "2026-07-09T06:19:33.053834Z",
+  "at": "2026-07-09T09:08:35.844913Z",
   "verdict": "NEEDS_OPERATOR",
   "immunized": true,
   "findings": 1,

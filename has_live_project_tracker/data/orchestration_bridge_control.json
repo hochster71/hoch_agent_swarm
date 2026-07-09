@@ -62,7 +62,7 @@
   },
   "agent_allow_code": true,
   "agent_allow_code_authorized_by": "Michael Bryan Hoch",
-  "agent_allow_code_authorized_at": "2026-07-08T20:57:30Z",
+  "agent_allow_code_authorized_at": "2026-07-09T06:42:23Z",
   "agent_allow_code_note": "Autonomous code advances ONLY behind code_task_gate (compile+tests). No fake green.",
   "allow_provider_api_calls_authorized_by": "Michael Bryan Hoch",
   "allow_provider_api_calls_authorized_at": "2026-07-09T04:45:00Z",
