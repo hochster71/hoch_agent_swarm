@@ -1,0 +1,83 @@
+{
+  "generated_at": "2026-07-09T05:28:51.611758Z",
+  "columns": [
+    "BACKLOG",
+    "TRIAGE",
+    "IN_PROGRESS",
+    "REVIEW",
+    "VERIFIED",
+    "CLOSED"
+  ],
+  "tickets": [
+    {
+      "id": "SEC-1",
+      "control": "IA-5/SC-28",
+      "severity": "CRITICAL",
+      "title": "Purge secret sprawl; shred .env.bak.*, rotate 8 council keys",
+      "source": "gitleaks/trivy",
+      "status": "IN_PROGRESS",
+      "evidence": null,
+      "sla_due": "24h"
+    },
+    {
+      "id": "SEC-2",
+      "control": "AC-3/IA-2",
+      "severity": "HIGH",
+      "title": "Add auth to relay /api/* (bearer/mTLS)",
+      "source": "live-recon",
+      "status": "BACKLOG",
+      "evidence": null,
+      "sla_due": "72h"
+    },
+    {
+      "id": "SEC-3",
+      "control": "CM-6",
+      "severity": "HIGH",
+      "title": "Triage 40 trivy misconfigurations",
+      "source": "trivy",
+      "status": "BACKLOG",
+      "evidence": null,
+      "sla_due": "1wk"
+    },
+    {
+      "id": "SEC-4",
+      "control": "RA-5",
+      "severity": "HIGH",
+      "title": "Remediate 4 HIGH/CRIT dependency vulns",
+      "source": "trivy",
+      "status": "BACKLOG",
+      "evidence": null,
+      "sla_due": "1wk"
+    },
+    {
+      "id": "SEC-5",
+      "control": "AU-6",
+      "severity": "MEDIUM",
+      "title": "Rebuild evidence manifests with MAC",
+      "source": "assessment",
+      "status": "VERIFIED",
+      "evidence": "docs/evidence/runtime_scenarios/20260702T222129Z-has-hasf-runtime-scenario/evidence_manifest.json",
+      "sla_due": "2wk"
+    },
+    {
+      "id": "SEC-6",
+      "control": "SC-7",
+      "severity": "MEDIUM",
+      "title": "Deploy LAN adult-content DNS filtering + DoH block",
+      "source": "policy",
+      "status": "IN_PROGRESS",
+      "evidence": "docs/security/NETWORK_CONTENT_FILTERING_10.0.0.x.md",
+      "sla_due": "48h"
+    },
+    {
+      "id": "SEC-7",
+      "control": "CA-8",
+      "severity": "INFO",
+      "title": "Execute operator-approved red team (staging)",
+      "source": "redteam",
+      "status": "BACKLOG",
+      "evidence": null,
+      "sla_due": "scheduled"
+    }
+  ]
+}

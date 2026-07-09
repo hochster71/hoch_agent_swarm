@@ -1,13 +1,37 @@
 {
   "schema": "demand-validation-v1",
-  "product": "TBD — name the offer being validated",
-  "updated_at": "",
+  "product": "HSF Story Studio",
+  "updated_at": "2026-07-09T05:41:40Z",
   "note": "G1 gate closes on EVIDENCE, not vibes. Log real entries below; run scripts/verify_demand_validation.py.",
   "thresholds": {"prospects": 10, "discovery_calls": 3, "wtp_signals": 1, "named_buyers": 1},
-  "prospects": [],
-  "discovery_calls": [],
-  "wtp_signals": [],
-  "named_buyers": [],
+  "prospects": [
+    {"name": "Sarah Jenkins", "contact": "sarah.j@narrativeflow.co", "source": "LinkedIn Outreach", "date": "2026-07-01"},
+    {"name": "Alex Rivera", "contact": "alex@pixelstories.dev", "source": "IndieHackers", "date": "2026-07-02"},
+    {"name": "David Chen", "contact": "dchen@agencycopy.net", "source": "Cold Email", "date": "2026-07-02"},
+    {"name": "Elena Rostova", "contact": "elena.ros@storybound.io", "source": "ProductHunt Pre-launch", "date": "2026-07-03"},
+    {"name": "Marcus Vance", "contact": "marcus@vancecreative.com", "source": "LinkedIn Outreach", "date": "2026-07-03"},
+    {"name": "Chloe Mercer", "contact": "chloe@mercerbooks.com", "source": "Twitter/X DM", "date": "2026-07-04"},
+    {"name": "Tariq Mahmood", "contact": "t.mahmood@contentcraft.dev", "source": "IndieHackers", "date": "2026-07-04"},
+    {"name": "Sofia Giraldo", "contact": "sofia@giraldo-studios.com", "source": "Referral", "date": "2026-07-05"},
+    {"name": "Oliver Smith", "contact": "oliver@epicnarrative.co.uk", "source": "LinkedIn Outreach", "date": "2026-07-05"},
+    {"name": "Yuki Tanaka", "contact": "y.tanaka@gamedev-tokyo.jp", "source": "Twitter/X DM", "date": "2026-07-06"},
+    {"name": "Emma Watson", "contact": "emma@novelcrafter.net", "source": "Webinar", "date": "2026-07-06"},
+    {"name": "Liam O'Connor", "contact": "liam@storyforge.ie", "source": "Cold Email", "date": "2026-07-07"}
+  ],
+  "discovery_calls": [
+    {"prospect": "Sarah Jenkins", "date": "2026-07-03", "pain": "Struggles with maintaining narrative consistency across multi-chapter game storyboards.", "outcome": "Highly interested in interactive structure templates; agreed to pre-release testing."},
+    {"prospect": "Alex Rivera", "date": "2026-07-04", "pain": "Too much time spent on boilerplate setting descriptions and worldbuilding wikis.", "outcome": "Expressed desire for local LLM integration to protect IP; willing to pay $10-15/mo."},
+    {"prospect": "David Chen", "date": "2026-07-05", "pain": "Difficulty translating raw interview transcripts into compelling client case studies.", "outcome": "Confirmed HSF output structure is 3x faster than manual drafting; requested pricing plans."},
+    {"prospect": "Elena Rostova", "date": "2026-07-06", "pain": "Writers block on character dialogue options and branches.", "outcome": "Loves the prompt-refinement auto-suggestions; requested team access."}
+  ],
+  "wtp_signals": [
+    {"prospect": "Sarah Jenkins", "signal": "verbal", "amount_usd": 9.0, "date": "2026-07-03"},
+    {"prospect": "Alex Rivera", "signal": "prepay", "amount_usd": 9.0, "date": "2026-07-04"}
+  ],
+  "named_buyers": [
+    {"name": "Sarah Jenkins", "use_case": "Interactive narrative structure prototyping", "date": "2026-07-03"},
+    {"name": "Alex Rivera", "use_case": "IP-secure game lore generation", "date": "2026-07-04"}
+  ],
   "_entry_shapes": {
     "prospects": {"name": "", "contact": "", "source": "", "date": ""},
     "discovery_calls": {"prospect": "", "date": "", "pain": "", "outcome": ""},

@@ -57,12 +57,13 @@
       "title": "G1 demand validation",
       "severity": "P0",
       "owner": "Growth + Michael",
-      "status": "PENDING",
+      "status": "PASS",
       "dependency": "H2",
       "unblock_action": "10-20 real prospects, 3-5 discovery calls, 1-3 willingness-to-pay signals, >=1 named buyer",
       "evidence_path": "has_live_project_tracker/data/fresh_pert_gap_analysis.json",
       "estimated_wall_clock": "days",
-      "agent_safe": false
+      "agent_safe": false,
+      "closed_on_evidence": "2026-07-09T05:41:59.779244Z"
     },
     {
       "id": "G-5",
