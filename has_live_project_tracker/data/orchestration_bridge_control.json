@@ -1,6 +1,6 @@
 {
   "orchestration_bridge_enabled": true,
-  "allow_provider_api_calls": false,
+  "allow_provider_api_calls": true,
   "allow_ag_execution": true,
   "allow_founder_gated_execution": false,
   "max_concurrent_missions": 1,
@@ -63,5 +63,8 @@
   "agent_allow_code": true,
   "agent_allow_code_authorized_by": "Michael Bryan Hoch",
   "agent_allow_code_authorized_at": "2026-07-08T20:57:30Z",
-  "agent_allow_code_note": "Autonomous code advances ONLY behind code_task_gate (compile+tests). No fake green."
+  "agent_allow_code_note": "Autonomous code advances ONLY behind code_task_gate (compile+tests). No fake green.",
+  "allow_provider_api_calls_authorized_by": "Michael Bryan Hoch",
+  "allow_provider_api_calls_authorized_at": "2026-07-09T04:45:00Z",
+  "allow_provider_api_calls_note": "Council live: 8/8 provider keys validated. Budget-guarded (AGENT_MONTHLY_CAP_USD + verify_api_budget_guard). Change-board record: docs/audits/HELM_FULL_AUDIT_GAP_PERT_2026-07-08.md \u00a76."
 }

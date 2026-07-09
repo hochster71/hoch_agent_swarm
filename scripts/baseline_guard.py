@@ -57,7 +57,10 @@ def invariants() -> dict:
     try:
         c = json.loads((ROOT / "has_live_project_tracker/data/orchestration_bridge_control.json").read_text())
         checks["execution_posture == DOORSTEP"] = c.get("execution_posture") == "DOORSTEP"
-        checks["provider_api_calls OFF (pre-revenue)"] = c.get("allow_provider_api_calls") is False
+        # Baseline change approved by Michael Hoch 2026-07-09: council fully seated
+        # (8 provider keys validated), revenue push active — provider calls now the
+        # intended posture. See docs/audits/HELM_FULL_AUDIT_GAP_PERT_2026-07-08.md §6.
+        checks["provider_api_calls ON (council live, approved 2026-07-09)"] = c.get("allow_provider_api_calls") is True
         checks["founder_gated_execution OFF"] = c.get("allow_founder_gated_execution") is False
     except Exception:
         checks["control_plane readable"] = False
