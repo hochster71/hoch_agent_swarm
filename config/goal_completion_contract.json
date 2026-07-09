@@ -25,7 +25,8 @@
       "destructive filesystem operations",
       "production deploy",
       "tag movement",
-      "external network changes"
+      "external network changes",
+      "release"
     ]
   }
 }

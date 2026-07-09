@@ -63,6 +63,7 @@ def check_high_risk_changes(contract):
         "destructive filesystem operations": ["rm -rf", "shutil.rmtree", "os.remove", "os.unlink"],
         "production deploy": ["deploy", "production", "prod"],
         "tag movement": ["git tag -d", "git push --delete", "tag -f"],
+        "release": ["sign_release_go", "production_go_status", "founder_signature"],
     }
     
     for trigger, terms in risk_terms.items():

@@ -1,0 +1,36 @@
+# Custom Gitleaks configuration extending default rules and adding local-dev Supabase key checking
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "supabase-service-key"
+description = "Supabase Service Role Key"
+regex = '''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.[0-9a-zA-Z_-]{4,}\.[0-9a-zA-Z_-]{4,}'''
+tags = ["key", "supabase"]
+
+[[rules]]
+id = "stripe-secret-key"
+description = "Stripe Secret Key"
+regex = '''sk_live_[0-9a-zA-Z]{24,}'''
+tags = ["key", "stripe"]
+
+[[allowlists]]
+description = "Exclude compiler caches, node modules, build outputs, and iOS code signing certificates"
+paths = [
+    '''/\.next/''',
+    '''/node_modules/''',
+    '''/dist/''',
+    '''/build/''',
+    '''/out/''',
+    '''/build/certs/.*\.p12'''
+]
+
+[[allowlists]]
+description = "Ignore pre-baked dummy keys for local development environment"
+regexes = [
+    '''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9\.CRFA0NiK7ACciz5q8dSkNUFDfA5AxIVT1vS5eKj4Vn4''',
+    '''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0\.EGIM96RAZx35lJzdJsyH-qQwv8Hj04zWl196z2-SBc0''',
+    '''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.dummy_sig\.dummy_sig''',
+    '''sk_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'''
+]
