@@ -9594,6 +9594,25 @@ def ask_the_brain(q: str = ""):
         return _JSONResponse({"error": str(e), "mode": "error"}, headers=_cors)
 
 
+@app.get("/helm-night-watch.html")
+def serve_helm_night_watch():
+    """Serve the HELM Night Watch wall dashboard from frontend/ explicitly.
+
+    Same rationale as the moonshot console route: the catch-all StaticFiles mount only
+    serves frontend/dist (build output), so this hand-authored ops wall is served directly
+    from frontend/ source. Reads the source file each request, so it survives frontend
+    rebuilds and needs no build step.
+    """
+    from fastapi.responses import FileResponse as _FileResponse, PlainTextResponse as _PlainText
+    import os as _os
+    _p = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))),
+                       "frontend", "helm-night-watch.html")
+    if _os.path.exists(_p):
+        return _FileResponse(_p, media_type="text/html",
+                             headers={"Cache-Control": "no-store, no-cache, must-revalidate, max-age=0"})
+    return _PlainText("HELM night watch file not found", status_code=404)
+
+
 @app.get("/has_brain_moonshot.html")
 def serve_brain_moonshot_console():
     """Serve the moonshot console from frontend/ explicitly.
