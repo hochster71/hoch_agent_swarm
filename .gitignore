@@ -165,3 +165,6 @@ frontend/data/goal_runtime_loop_status.json
 data/billing/
 .env*
 scripts/.relay_write_token
+
+# H1B-R2 closure harness outputs under candidate packages dir (archived under docs/evidence/council/)
+coordination/council/live_proof_packages/H1B-R2-CLOSURE-*/

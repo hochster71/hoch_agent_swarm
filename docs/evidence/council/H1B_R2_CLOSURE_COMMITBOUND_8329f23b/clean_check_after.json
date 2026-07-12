@@ -1,0 +1,11 @@
+{
+  "working_tree_clean_after": true,
+  "lines": [
+    "?? coordination/council/live_proof_packages/H1B-R2-CLOSURE-20260712T135350Z/",
+    "?? coordination/council/live_proof_packages/H1B-R2-CLOSURE-20260712T135736Z/",
+    "?? coordination/council/live_proof_packages/H1B-R2-CLOSURE-COMMITBOUND-20260712T140011Z/",
+    "?? coordination/council/live_proof_packages/H1B-R2-CLOSURE-COMMITBOUND-20260712T140121Z/"
+  ],
+  "unexpected": [],
+  "tracked_mutations": []
+}

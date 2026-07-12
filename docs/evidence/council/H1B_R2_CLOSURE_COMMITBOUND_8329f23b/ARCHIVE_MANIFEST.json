@@ -1,0 +1,60 @@
+{
+  "schema": "h1b-r2-closure-archive-v1",
+  "archived_at": "2026-07-12T14:05:48.592227+00:00",
+  "tested_commit": "8329f23b317c182520e9cdfa002621499bd31cce",
+  "source_package": "coordination/council/live_proof_packages/H1B-R2-CLOSURE-COMMITBOUND-20260712T140121Z",
+  "source_validation_sha256": "1bd936904af28eb13d7a88949fa67e38ce40c3d7b76de813f90df06814d4f148",
+  "helm_label": {
+    "h1b_r2": "AUTHORITATIVE_PASS",
+    "release_provenance": "COMMIT-BOUND",
+    "promotion": "ELIGIBLE"
+  },
+  "runtime_posture_note": "promotion=LOCKED safe_to_execute=NO is correct fail-closed under operator hold / missing live proof",
+  "artifacts": [
+    {
+      "path": "docs/evidence/council/H1B_R2_CLOSURE_COMMITBOUND_8329f23b/SHA256SUMS",
+      "sha256": "86fd0566f22ab2eacffe0b4bf5e3df1e170e745865670a56012c2694524120b4",
+      "bytes": 1884
+    },
+    {
+      "path": "docs/evidence/council/H1B_R2_CLOSURE_COMMITBOUND_8329f23b/clean_check_after.json",
+      "sha256": "1212136688a6a9d31880465175b8878a36472e3cb730d6393faa8b69ecc2b18c",
+      "bytes": 463
+    },
+    {
+      "path": "docs/evidence/council/H1B_R2_CLOSURE_COMMITBOUND_8329f23b/clean_check_before.json",
+      "sha256": "285af7a9c8c43e48a418591ffcf5097086be6cce8e707359f4db9b2758a57882",
+      "bytes": 437
+    },
+    {
+      "path": "docs/evidence/council/H1B_R2_CLOSURE_COMMITBOUND_8329f23b/closure.log",
+      "sha256": "1bd936904af28eb13d7a88949fa67e38ce40c3d7b76de813f90df06814d4f148",
+      "bytes": 1033
+    },
+    {
+      "path": "docs/evidence/council/H1B_R2_CLOSURE_COMMITBOUND_8329f23b/council_state.json",
+      "sha256": "a000cdfa3e82105ebe90fba67a5a7b7c1bb53dc3e5c3c42261503ae3663a3fe2",
+      "bytes": 741
+    },
+    {
+      "path": "docs/evidence/council/H1B_R2_CLOSURE_COMMITBOUND_8329f23b/git_status_after.txt",
+      "sha256": "a808c3e08a6f2586e555253c5e8121ea6239cbf61196792501792da616ceeba0",
+      "bytes": 332
+    },
+    {
+      "path": "docs/evidence/council/H1B_R2_CLOSURE_COMMITBOUND_8329f23b/git_status_before.txt",
+      "sha256": "a808c3e08a6f2586e555253c5e8121ea6239cbf61196792501792da616ceeba0",
+      "bytes": 332
+    },
+    {
+      "path": "docs/evidence/council/H1B_R2_CLOSURE_COMMITBOUND_8329f23b/openapi_route_check.txt",
+      "sha256": "bf0ae51f543c2d60d07b2403d9cb7f4988f02237fa2a3b501f30c1f863411fe3",
+      "bytes": 22
+    },
+    {
+      "path": "docs/evidence/council/H1B_R2_CLOSURE_COMMITBOUND_8329f23b/validation.json",
+      "sha256": "1bd936904af28eb13d7a88949fa67e38ce40c3d7b76de813f90df06814d4f148",
+      "bytes": 1033
+    }
+  ]
+}

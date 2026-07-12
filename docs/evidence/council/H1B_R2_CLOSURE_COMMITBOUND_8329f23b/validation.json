@@ -1,0 +1,35 @@
+{
+  "schema": "h1b-r2-closure-validation-v2-commit-bound",
+  "run_id": "H1B-R2-CLOSURE-COMMITBOUND-20260712T140121Z",
+  "generated_at": "2026-07-12T14:01:42.068978+00:00",
+  "tested_commit": "8329f23b317c182520e9cdfa002621499bd31cce",
+  "branch": "helm/h1b-r2-remediation",
+  "working_tree_clean_before": true,
+  "working_tree_clean_after": true,
+  "frontend_build": "PASS",
+  "h1b_tests": {
+    "status": "PASS",
+    "passed": 28,
+    "failed": 0,
+    "errors": 0
+  },
+  "realtime_integrity": "PASS",
+  "baseline_lock": "PASS",
+  "council_route": {
+    "status": "PASS",
+    "http_status": 200
+  },
+  "fail_closed_semantics": "PASS",
+  "overall_status": "AUTHORITATIVE_PASS",
+  "helm_label": "H1B-R2: AUTHORITATIVE_PASS\nRELEASE PROVENANCE: COMMIT-BOUND\nPROMOTION: ELIGIBLE",
+  "live_state_summary": {
+    "package_readiness": "PASS",
+    "quorum_readiness": "BLOCKED",
+    "promotion": "LOCKED",
+    "safe_to_execute": "NO",
+    "blocking_findings": [
+      "OPERATOR_HOLD_ACTIVE",
+      "LIVE_PROOF_EVIDENCE_MISSING"
+    ]
+  }
+}
