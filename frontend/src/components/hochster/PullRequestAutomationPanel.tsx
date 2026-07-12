@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { GitPullRequest, ShieldCheck, CheckCircle2, AlertTriangle, AlertCircle } from "lucide-react";
 import type { SolverCandidate } from "../../lib/hochster/hochsterTypes";
-import { canCreatePullRequest } from "../../../../server/hochster/pr/pullRequestPolicy";
+import { canCreatePullRequest } from "../../lib/hochster/pullRequestPolicy";
 
 interface PullRequestAutomationPanelProps {
   candidate: SolverCandidate | null;

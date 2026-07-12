@@ -131,7 +131,9 @@ import { RevenueOpsDashboard } from "./components/revenue-ops/RevenueOpsDashboar
 import { HochsterDashboard } from "./components/hochster/HochsterDashboard";
 import { OverviewControlPlane } from "./components/overview/OverviewControlPlane";
 import { PertCriticalPathTab } from "./components/overview/PertCriticalPathTab";
-import { HochNeuroPanel } from "./components/neuro/HochNeuroPanel";
+// HochNeuroPanel removed: depends on missing helm shell modules
+// (helmCouncilState, HelmApprovedPlatformShell, etc.) that are not in this checkout.
+// Mount point #react-neuro-root is intentionally inert until those modules exist.
 
 // Mount Timeline Replay Dashboard
 const replayRoot = document.getElementById("react-replay-root");
@@ -284,15 +286,12 @@ if (pertRoot) {
   );
 }
 
-// Mount HOCH NEURO neurovascular command center (S4). Guarded: inert until
-// index.html provides #react-neuro-root. Binds the live relay endpoints; no fake green.
+// Mount HOCH NEURO: inert until Helm shell modules are restored with fail-closed feeds.
+// Do not render a mock-green neuro panel when dependencies are absent.
 const neuroRoot = document.getElementById("react-neuro-root");
 if (neuroRoot) {
-  ReactDOM.createRoot(neuroRoot).render(
-    <React.StrictMode>
-      <HochNeuroPanel />
-    </React.StrictMode>
-  );
+  neuroRoot.textContent =
+    "HOCH NEURO panel unavailable — Helm shell modules not present in this checkout (no simulated GO).";
 }
 
 // Register window callbacks to sync state on tab selection

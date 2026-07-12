@@ -130,7 +130,7 @@ def aggregate(registry, profile_id, dispatch_records, validation_results, adviso
             continue
         counts["validated_live_members"] += 1
         seat = registry.get(mid)
-        if seat["quorum_eligible"]:
+        if seat.get("quorum_eligible", False):
             counts["quorum_eligible_members"] += 1
             live.append(mid)
         resp = vr["response"]

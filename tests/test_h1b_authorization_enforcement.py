@@ -519,50 +519,293 @@ def _read_source(*parts: str) -> str:
     return path.read_text(encoding="utf-8")
 
 
-def test_22_no_ui_field_maps_package_readiness_to_quorum_readiness():
-    # Read REAL implementation files (not string literals).
+def test_22_no_ui_field_maps_package_readiness_to_quorum_readiness(tmp_path, monkeypatch):
+    # Verify implementation files exist and council_router is registered.
     backend_main = _read_source("backend", "main.py")
     council_impl = _read_source("backend", "instrument_integrity", "council_router.py")
     ui = _read_source("frontend", "src", "components", "helm", "topdown", "HelmCouncilView.tsx")
 
-    # main must register council router
     assert "council_router" in backend_main, "backend/main.py does not include council_router"
     assert "include_router(council_router)" in backend_main
 
-    gates = (
-        "h1_package_state",
-        "h1_package_integrity",
-        "h1_credential_state",
-        "h1_founder_authorization",
-        "h1_live_provider_proof",
-        "h1_frontier_live_quorum",
-        "h1_promotion",
-        "h1_safe_to_execute",
-    )
-    for gate in gates:
-        assert gate in council_impl, f"council_router does not expose separate gate '{gate}'"
-        assert gate in ui, f"UI does not render separate gate '{gate}'"
-
-    # Fail-closed defaults present in implementation (not in test literals)
-    assert 'frontier_live_quorum = "BLOCKED"' in council_impl or '"h1_frontier_live_quorum": "BLOCKED"' in council_impl or 'frontier_live_quorum = "BLOCKED"' in council_impl
-    assert 'promotion = "LOCKED"' in council_impl
-    assert 'safe_to_execute = "NO"' in council_impl
-    assert "READY_FOR_FOUNDER_REVIEW" not in ui
-
-    # Route registration + live request (II-002)
-    from backend.main import app
+    # 1. Setup mock environment directories
+    import os
+    import shutil
     from fastapi.testclient import TestClient
-    openapi_paths = set(app.openapi().get("paths", {}))
-    assert "/api/v1/council/state" in openapi_paths, "council route not registered in OpenAPI"
+    from backend.main import app
+
+    council_dir = tmp_path / "council"
+    council_dir.mkdir()
+    packages_dir = council_dir / "live_proof_packages"
+    packages_dir.mkdir()
+
+    # Roster & Contracts paths
+    roster_path = council_dir / "council_roster.json"
+    contracts_path = council_dir / "frontier_seat_contracts.json"
+    roster_path.write_text(json.dumps({}))
+    contracts_path.write_text(json.dumps({}))
+
+    # Set env var so the backend route uses our sandbox
+    monkeypatch.setenv("HELM_COUNCIL_DIR", str(council_dir))
+
     client = TestClient(app)
+
+    # ----------------------------------------------------------------------
+    # Case 5: Missing quorum evidence & missing registry (default fail-closed)
+    # ----------------------------------------------------------------------
     r = client.get("/api/v1/council/state")
-    assert r.status_code == 200, r.text
+    assert r.status_code == 200
     body = r.json()
-    for gate in gates:
-        assert gate in body, f"response missing gate {gate}"
-    assert body.get("h1_frontier_live_quorum") == "BLOCKED"
-    assert body.get("h1_promotion") == "LOCKED"
-    assert body.get("h1_safe_to_execute") == "NO"
+    assert body["package_readiness"] == "FAIL"
+    assert body["quorum_readiness"] == "BLOCKED"
+    assert body["promotion"] == "LOCKED"
+    assert body["safe_to_execute"] == "NO"
+    assert "LIVE_PROOF_EVIDENCE_MISSING" in body["blocking_findings"]
+
+    # ----------------------------------------------------------------------
+    # Case 1: Package readiness PASS, quorum readiness BLOCKED
+    # ----------------------------------------------------------------------
+    # Create candidate registry and package
+    pkg_id = "HELM-H1-CANDIDATE-20260712T013903Z-4B7F62BE"
+    pkg_dir = packages_dir / pkg_id
+    pkg_dir.mkdir()
+
+    # Write package files
+    (pkg_dir / "prompt.redacted.txt").write_text("prompt content")
+    (pkg_dir / "model_policy.json").write_text(json.dumps({"a": 1}))
+    (pkg_dir / "budget_limits.json").write_text(json.dumps({"a": 1}))
+    (pkg_dir / "pricing_evidence.json").write_text(json.dumps({"a": 1}))
+    (pkg_dir / "provider_requests").mkdir()
+    for m in ("chatgpt", "claude", "grok"):
+        (pkg_dir / "provider_requests" / f"{m}.request.redacted.json").write_text(json.dumps({"model": "m"}))
+
+    # Pre-calculate digests for request_digests.json
+    import hashlib
+    def canonical_digest(data):
+        return hashlib.sha256(json.dumps(data, sort_keys=True).encode("utf-8")).hexdigest()
+
+    prompt_sha = hashlib.sha256(b"prompt content").hexdigest()
+    model_policy_sha = canonical_digest({"a": 1})
+    budget_policy_sha = canonical_digest({"a": 1})
+    pricing_evidence_sha = canonical_digest({"a": 1})
+    roster_sha = canonical_digest({})
+    frontier_contract_sha = canonical_digest({})
+    chatgpt_sha = canonical_digest({"model": "m"})
+    claude_sha = canonical_digest({"model": "m"})
+    grok_sha = canonical_digest({"model": "m"})
+
+    auth_fields = {
+        "package_id": pkg_id,
+        "provider_list": ["openai", "anthropic", "xai"],
+        "exact_models": {
+            "openai": "m",
+            "anthropic": "m",
+            "xai": "m"
+        },
+        "prompt": "prompt content",
+        "chatgpt_request": {"model": "m"},
+        "claude_request": {"model": "m"},
+        "grok_request": {"model": "m"},
+        "budget_limits": {"a": 1},
+        "run_count": 1,
+        "expires_in_hours": 24,
+        "operator_hold_override_scope": "SINGLE_H1_PROOF_ONLY",
+        "production_promotion_authorized": False,
+        "pricing_evidence": {"a": 1}
+    }
+    combined_sha = canonical_digest(auth_fields)
+
+    digests = {
+        "prompt_sha256": prompt_sha,
+        "model_policy_sha256": model_policy_sha,
+        "budget_policy_sha256": budget_policy_sha,
+        "pricing_evidence_sha256": pricing_evidence_sha,
+        "roster_sha256": roster_sha,
+        "frontier_contract_sha256": frontier_contract_sha,
+        "chatgpt_request_sha256": chatgpt_sha,
+        "claude_request_sha256": claude_sha,
+        "grok_request_sha256": grok_sha,
+        "combined_authorization_sha256": combined_sha
+    }
+    (pkg_dir / "request_digests.json").write_text(json.dumps(digests))
+
+    # Recompute combined SHA-256 for the candidate package
+    from scripts.council.h1b_candidate_registry import recompute_package_integrity
+    integrity = recompute_package_integrity(pkg_id, packages_dir)
+    assert integrity["integrity_status"] == "PASS"
+
+    # Write registry JSON
+    registry_data = {
+        "schema_version": "1.0",
+        "generated_at": "2026-07-12T02:00:00Z",
+        "status": "RECONCILED",
+        "authoritative_candidate_package_id": pkg_id,
+        "candidate_count": 1,
+        "packages": [
+            {
+                "package_id": pkg_id,
+                "classification": "ACTIVE_CANDIDATE",
+                "authorization_eligible": True,
+                "execution_eligible": False,
+                "reason": "OK"
+            }
+        ]
+    }
+    (council_dir / "h1_candidate_registry.json").write_text(json.dumps(registry_data))
+
+    # Mock live state where quorum is False
+    live_state_data = {
+        "run_id": "RUN-1",
+        "completed_at": datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z"),
+        "aggregation": {
+            "overall_status": "BLOCKED_NO_QUORUM",
+            "frontier_council_quorum": False,
+            "promotion_eligible": False,
+            "safe_to_execute_now": False,
+            "execution_mode": "LIVE_EXTERNAL"
+        }
+    }
+    (council_dir / "council_live_state.json").write_text(json.dumps(live_state_data))
+
+    r = client.get("/api/v1/council/state")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["package_readiness"] == "PASS"
+    assert body["quorum_readiness"] == "BLOCKED"
+    assert body["promotion"] == "LOCKED"
+    assert body["safe_to_execute"] == "NO"
+
+    # ----------------------------------------------------------------------
+    # Case 2: Package readiness PASS, quorum readiness UNKNOWN (missing evidence)
+    # ----------------------------------------------------------------------
+    # Remove live state file
+    (council_dir / "council_live_state.json").unlink()
+    r = client.get("/api/v1/council/state")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["package_readiness"] == "PASS"
+    assert body["quorum_readiness"] == "BLOCKED"
+    assert body["evidence_state"] == "UNKNOWN"
+
+    # ----------------------------------------------------------------------
+    # Case 3: Package readiness FAIL, quorum readiness PASS (independent states)
+    # ----------------------------------------------------------------------
+    # Force package integrity failure (which causes package_readiness to FAIL)
+    prompt_file = pkg_dir / "prompt.redacted.txt"
+    prompt_content = prompt_file.read_text()
+    prompt_file.unlink()
+
+    # Write a successful live state file
+    live_state_data["aggregation"]["overall_status"] = "PASS"
+    live_state_data["aggregation"]["frontier_council_quorum"] = True
+    live_state_data["aggregation"]["safe_to_execute_now"] = True
+    live_state_data["completed_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")
+    (council_dir / "council_live_state.json").write_text(json.dumps(live_state_data))
+
+    r = client.get("/api/v1/council/state")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["package_readiness"] == "FAIL"
+    assert body["quorum_readiness"] == "PASS"
+
+    # Restore package integrity
+    prompt_file.write_text(prompt_content)
+
+    # ----------------------------------------------------------------------
+    # Case 4: Stale quorum evidence
+    # ----------------------------------------------------------------------
+    stale_time = (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(seconds=600)).isoformat().replace("+00:00", "Z")
+    live_state_data["completed_at"] = stale_time
+    (council_dir / "council_live_state.json").write_text(json.dumps(live_state_data))
+
+    r = client.get("/api/v1/council/state")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["freshness_state"] == "STALE"
+    assert body["quorum_readiness"] == "STALE"
+
+    # ----------------------------------------------------------------------
+    # Case 6: Mock evidence excluded
+    # ----------------------------------------------------------------------
+    # Restore freshness
+    live_state_data["completed_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")
+    # Make execution mode non-live
+    live_state_data["aggregation"]["execution_mode"] = "MOCK_INTERNAL"
+    live_state_data["aggregation"]["overall_status"] = "MOCK_FRONTIER_CONTRACT_PASS"
+    (council_dir / "council_live_state.json").write_text(json.dumps(live_state_data))
+
+    r = client.get("/api/v1/council/state")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["quorum_readiness"] == "BLOCKED"
+    assert "QUORUM_CONTAINS_MOCK_EVIDENCE:MOCK_FRONTIER_CONTRACT_PASS" in body["blocking_findings"]
+
+    # ----------------------------------------------------------------------
+    # Case 7: Malformed backend payload
+    # ----------------------------------------------------------------------
+    (council_dir / "council_live_state.json").write_text("malformed json {")
+    r = client.get("/api/v1/council/state")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["evidence_state"] == "INVALID"
+    assert body["quorum_readiness"] == "BLOCKED"
+
+    # ----------------------------------------------------------------------
+    # Case 8: Backend exception (gracefully handled)
+    # ----------------------------------------------------------------------
+    import scripts.council.h1b_candidate_registry as h1b_reg
+    def mock_raise():
+        raise ValueError("Simulated backend error")
+    monkeypatch.setattr(h1b_reg, "reconcile_candidates", mock_raise)
+    r = client.get("/api/v1/council/state")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["package_readiness"] == "UNKNOWN"
+    assert "Simulated backend error" in body["reason"]
+
+    # ----------------------------------------------------------------------
+    # Case 9: Frontend renders each state without promotion
+    # ----------------------------------------------------------------------
+    assert "fetch(STATE_URL" in ui or "fetch('/api/v1/council/state'" in ui
+    assert "promotion" in ui
+    assert "state.promotion" in ui
+    assert "package_readiness" in ui
+    assert "quorum_readiness" in ui
+    assert "safe_to_execute" in ui
+
+    # ----------------------------------------------------------------------
+    # Case 10: Promotion remains LOCKED unless all required gates pass
+    # ----------------------------------------------------------------------
+    # If any gate is not PASS (like operator hold is ACTIVE, or registry is not reconciled, or quorum is missing, or harness says promotion_eligible is False), promotion remains LOCKED.
+    (council_dir / "h1_candidate_registry.json").write_text(json.dumps(registry_data))
+
+    # Write founder decision
+    decision_data = {
+        "authorization_id": "HELM-H1-AUTH-20260712T013903Z-4B7F62BE",
+        "authorization_status": "GRANTED",
+        "package_id": pkg_id,
+        "expires_at": (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1)).isoformat()
+    }
+    (council_dir / "h1b_founder_decision.json").write_text(json.dumps(decision_data))
+
+    # Write consumed entry to ledger
+    ledger_path = council_dir / "authorization_ledger.jsonl"
+    ledger_entry = {
+        "authorization_id": "HELM-H1-AUTH-20260712T013903Z-4B7F62BE",
+        "package_id": pkg_id,
+        "run_id": "RUN-1",
+        "status": "CONSUMED",
+        "process_start_time": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "consumed_at": datetime.datetime.now(datetime.timezone.utc).isoformat()
+    }
+    ledger_path.write_text(json.dumps(ledger_entry) + "\n")
+    monkeypatch.setenv("HELM_AUTH_LEDGER", str(ledger_path))
+
+    r = client.get("/api/v1/council/state")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["promotion"] == "LOCKED"
+
 
 
 def test_23_no_external_dispatch_occurs_in_tests():

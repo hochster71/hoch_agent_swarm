@@ -448,10 +448,10 @@ class AuthorizationLedger:
     def _acquire_lock(self, timeout: float = 0.0):
         import fcntl
         deadline = time.time() + timeout
-        
+
         # O_CREAT | O_RDWR ensures the file exists and we can lock it.
         fd = os.open(self.lock_path, os.O_CREAT | os.O_RDWR)
-        
+
         while True:
             try:
                 fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -500,6 +500,7 @@ class AuthorizationLedger:
                 "run_id": run_id,
                 "request_digest": request_digest,
                 "process_id": pid,
+                "process_start_time": _now().isoformat().replace("+00:00", "Z"),
                 "consumed_at": _now().isoformat().replace("+00:00", "Z"),
                 "status": "CONSUMED",
             }

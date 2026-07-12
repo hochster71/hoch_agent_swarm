@@ -14,12 +14,12 @@ class Registry:
     def __init__(self, roster_path=None, contracts_path=None):
         self.roster_path = Path(roster_path or DEFAULT_ROSTER)
         self.contracts_path = Path(contracts_path or DEFAULT_CONTRACTS)
-        
+
         self.roster = json.loads(self.roster_path.read_text(encoding="utf-8")) if self.roster_path.exists() else {}
         self.contracts = json.loads(self.contracts_path.read_text(encoding="utf-8")) if self.contracts_path.exists() else {}
-        
+
         self.doc = self.roster  # some places use reg.doc["quorum"]["advisory"]
-        self.seats = self.roster.get("members", {})
+        self.seats = self.roster.get("members", {s.get("member_id"): s for s in self.roster.get("seats", [])})
 
     def validate_schema(self):
         errors = []
@@ -50,7 +50,7 @@ class Registry:
         return {k: v for k, v in self.roster.get("members", {}).items() if v.get("enabled", True)}
 
     def get(self, mid):
-        return self.roster.get("members", {}).get(mid, {})
+        return self.seats.get(mid, {})
 
     def min_quorum(self, name):
         return self.profile(name).get("min_quorum", 0)
@@ -64,13 +64,13 @@ class Registry:
         prof = self.profile(profile_id)
         if member_id not in prof.get("allowed_member_ids", []):
             raise ProfileViolation(f"Member {member_id} not allowed in profile {profile_id}")
-            
+
         adapter = mem.get("adapter")
         if not adapter:
             raise NotWired(f"Member {member_id} missing adapter")
-            
+
         contract = self.contracts.get("seats", {}).get(member_id, {})
-        
+
         return {
             "member_id": member_id,
             "provider": mem.get("provider", "unknown"),

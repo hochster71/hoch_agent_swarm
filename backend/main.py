@@ -12,6 +12,7 @@ from datetime import datetime, timedelta, timezone
 import asyncio
 import threading
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
+from backend.instrument_integrity.council_router import council_router
 from backend.mesh_sentinel import build_mesh_sentinel_map
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -192,6 +193,7 @@ security_auditor = SecurityAuditor()
 pert_mgr = PertManager()
 
 from backend.michael_ai import router as michael_ai_router
+app.include_router(council_router)
 app.include_router(michael_ai_router)
 
 from backend.goal_tracker.router import router as goal_router
