@@ -16,5 +16,10 @@
   "total_cost_usd": 0.001296,
   "founder_intervention_required": false,
   "runs_considered": 3,
-  "bound_at": "2026-07-12T22:08:56.478188Z"
+  "bound_at": "2026-07-12T22:08:56.478188Z",
+  "open_p0": "legacy backend model mesh (documented exception); H1D.10\u2013H1D.12 open",
+  "h1d7": {
+    "status": "AUTHORITATIVE_PASS_SCOPED",
+    "evidence": "coordination/council/live_proof_packages/H1D7-DISPATCH-GATEWAY-20260712T230145Z"
+  }
 }

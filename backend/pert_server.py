@@ -6,6 +6,7 @@ import subprocess
 import urllib.request
 import yaml
 from datetime import datetime, timezone
+from backend.runtime_truth import primitives as runtime_truth  # REQ-GOV-005
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -32,28 +33,27 @@ def get_db_path():
 def get_project_root():
     return os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
-def wrap_telemetry_dict(value, source, last_updated_iso=None, confidence="HIGH", fallback="UNKNOWN"):
-    if not last_updated_iso:
-        last_updated_iso = datetime.now(timezone.utc).isoformat() + "Z"
-    
-    freshness_sec = 0.0
-    try:
-        ts_str = last_updated_iso.rstrip("Z")
-        dt = datetime.fromisoformat(ts_str)
-        if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=timezone.utc)
-        freshness_sec = round((datetime.now(timezone.utc) - dt).total_seconds(), 2)
-    except Exception:
-        pass
-        
-    return {
-        "value": value,
-        "source": source,
-        "last_updated": last_updated_iso,
-        "freshness": freshness_sec,
-        "confidence": confidence,
-        "fallback_state": fallback
-    }
+def wrap_telemetry_dict(value=None, source="unknown", last_updated_iso=None,
+                        confidence=None, sla_seconds=None, verified=False, **_legacy):
+    """REQ-GOV-005: truth-only telemetry wrapper.
+
+    The previous implementation did two things that manufactured truth:
+      * stamped datetime.now() when last_updated_iso was absent, so a field with NO
+        timestamp reported freshness=0.0s and confidence=HIGH;
+      * accepted a `fallback` value, so a MISSING source produced a real-looking number.
+
+    Both are gone. There is no `fallback` parameter. A missing value yields
+    state=MISSING, value=None, age_seconds=None, confidence=NONE. `**_legacy` swallows
+    any stale `fallback=` kwarg from an un-migrated caller WITHOUT honouring it -- a
+    caller can no longer inject a default even by accident.
+    """
+    return runtime_truth.truth(
+        value if value is not None else None,
+        source=source,
+        source_updated_at=last_updated_iso,
+        sla_seconds=sla_seconds,
+        verified=verified,
+    )
 
 def get_tailscale_status():
     workers = {
@@ -86,9 +86,9 @@ def fetch_test_telemetry():
             with open(report_path, "r") as f:
                 data = json.load(f)
             stats = data.get("stats", {})
-            expected = stats.get("expected", 0)
-            unexpected = stats.get("unexpected", 0)
-            skipped = stats.get("skipped", 0)
+            expected = stats.get("expected")
+            unexpected = stats.get("unexpected")
+            skipped = stats.get("skipped")
             
             passing = expected
             failing = unexpected
@@ -120,11 +120,11 @@ def get_dispatch_history():
                     with open(fpath, "r") as f:
                         data = json.load(f)
                     
-                    exit_code = data.get("exit_code", 0)
-                    status = data.get("status", "COMPLETED")
+                    exit_code = data.get("exit_code")
+                    status = data.get("status")
                     
                     contrib = 0.5
-                    if "verify" in data.get("task_id", "").lower():
+                    if "verify" in data.get("task_id").lower():
                         contrib = 0.3
                     if exit_code != 0 or status == "FAILED":
                         contrib = 0.0
@@ -132,12 +132,12 @@ def get_dispatch_history():
                     history.append({
                         "task_id": data.get("task_id"),
                         "name": data.get("name"),
-                        "worker": data.get("dispatched_worker", "michaels-macbook-pro"),
+                        "worker": data.get("dispatched_worker"),
                         "executed_at": data.get("executed_at"),
-                        "status": wrap_telemetry_dict(status, "swarm_scheduler_dispatch_logs", data.get("executed_at"), fallback="UNKNOWN"),
+                        "status": wrap_telemetry_dict(status, "swarm_scheduler_dispatch_logs", data.get("executed_at")),
                         "exit_code": exit_code,
                         "goal_contribution": f"+{contrib}%",
-                        "command": " ".join(data.get("command", [])) if isinstance(data.get("command"), list) else str(data.get("command", ""))
+                        "command": " ".join(data.get("command", [])) if isinstance(data.get("command"), list) else str(data.get("command"))
                     })
                 except Exception:
                     pass
@@ -620,7 +620,7 @@ def fetch_relay_status():
         with urllib.request.urlopen(req, timeout=1.5) as resp:
             if resp.status == 200:
                 data = json.loads(resp.read().decode())
-                return data.get("worker_status", "UNKNOWN")
+                return data.get("worker_status")
     except Exception:
         pass
     return "UNKNOWN"
@@ -694,8 +694,8 @@ def get_pert_data():
     if len(required_evidence) > 0:
         evidence_coverage_percent = round((existing_evidence_count / len(required_evidence)) * 100.0, 1)
 
-    stripe_pub = os.environ.get("STRIPE_PUBLISHABLE_KEY", "")
-    stripe_sec = os.environ.get("STRIPE_SECRET_KEY", "")
+    stripe_pub = os.environ.get("STRIPE_PUBLISHABLE_KEY")
+    stripe_sec = os.environ.get("STRIPE_SECRET_KEY")
     env_file_path = os.path.join(get_project_root(), ".env")
     if os.path.exists(env_file_path):
         try:
@@ -771,9 +771,9 @@ def get_pert_data():
         "blocked_task_count": _blocked,
         "unassigned_task_count": 0,
         "stale_task_count": 0,
-        "tests_passing_count": _tt.get("passing", "UNKNOWN"),
-        "tests_failing_count": _tt.get("failing", "UNKNOWN"),
-        "tests_summary": _tt.get("summary", "UNKNOWN"),
+        "tests_passing_count": _tt.get("passing"),
+        "tests_failing_count": _tt.get("failing"),
+        "tests_summary": _tt.get("summary"),
         "evidence_coverage_percent": evidence_coverage_percent,
         "agent_accountability_score": _acct,
         "autonomous_actions_completed": 12,
@@ -798,9 +798,9 @@ def get_pert_data():
     # the dashboard fake-greens regardless of real state. The cache may only supply fields we do
     # NOT compute here (e.g. autonomous_actions_completed, time_saved_minutes).
     metrics["percent_goal_complete"] = _goal_percent()
-    metrics["tests_passing_count"] = _tt.get("passing", "UNKNOWN")
-    metrics["tests_failing_count"] = _tt.get("failing", "UNKNOWN")
-    metrics["tests_summary"] = _tt.get("summary", "UNKNOWN")
+    metrics["tests_passing_count"] = _tt.get("passing")
+    metrics["tests_failing_count"] = _tt.get("failing")
+    metrics["tests_summary"] = _tt.get("summary")
     metrics["evidence_coverage_percent"] = evidence_coverage_percent
     metrics["agent_accountability_score"] = _acct
     metrics["blocked_task_count"] = _blocked
@@ -912,7 +912,7 @@ def get_pert_data():
         try:
             with open(probe_path, "r") as f:
                 probe_data = json.load(f)
-                probe_time = probe_data.get("last_probe_time", "UNKNOWN")
+                probe_time = probe_data.get("last_probe_time")
                 probe_file = "has_live_project_tracker/data/relay_probe_evidence.json"
                 probe_source = "relay_health_probe"
                 probe_conf = "HIGH"
@@ -1032,20 +1032,20 @@ def get_pert_data():
             "not_applicable_reason": "None",
 
             # Telemetry-wrapped objects for tooltips
-            "worker_id_telemetry": wrap_telemetry_dict("michaels-macbook-pro", "tailscale_network_discovery", mac_job_time, "HIGH", fallback="michaels-macbook-pro"),
-            "role_telemetry": wrap_telemetry_dict("build_worker", "tailscale_network_discovery", mac_job_time, "HIGH", fallback="build_worker"),
-            "online_status_telemetry": wrap_telemetry_dict(mac_status, "tailscale_cli_status", mac_job_time, "HIGH", fallback="UNKNOWN"),
-            "last_heartbeat_telemetry": wrap_telemetry_dict(mac_job_time, "tailscale_cli_status", mac_job_time, "HIGH", fallback="UNKNOWN"),
-            "last_job_time_telemetry": wrap_telemetry_dict(mac_job_time, "local_scheduler", mac_job_time, "HIGH", fallback="UNKNOWN"),
-            "last_probe_time_telemetry": wrap_telemetry_dict("N/A — build worker", "local_scheduler", mac_job_time, "HIGH", fallback="N/A"),
-            "last_evidence_file_telemetry": wrap_telemetry_dict("has_live_project_tracker/data/status.json", "local_scheduler", mac_job_time, "HIGH", fallback="None"),
-            "data_source_telemetry": wrap_telemetry_dict("local_host", "local_scheduler", mac_job_time, "HIGH", fallback="local_host"),
-            "freshness_telemetry": wrap_telemetry_dict(mac_freshness, "local_scheduler", mac_job_time, "HIGH", fallback="0.0"),
-            "confidence_telemetry": wrap_telemetry_dict("1.0", "local_scheduler", mac_job_time, "HIGH", fallback="1.0"),
-            "unknown_reason_telemetry": wrap_telemetry_dict("None", "local_scheduler", mac_job_time, "HIGH", fallback="None"),
-            "not_applicable_reason_telemetry": wrap_telemetry_dict("None", "local_scheduler", mac_job_time, "HIGH", fallback="None"),
+            "worker_id_telemetry": wrap_telemetry_dict("michaels-macbook-pro", "tailscale_network_discovery", mac_job_time, "HIGH"),
+            "role_telemetry": wrap_telemetry_dict("build_worker", "tailscale_network_discovery", mac_job_time, "HIGH"),
+            "online_status_telemetry": wrap_telemetry_dict(mac_status, "tailscale_cli_status", mac_job_time, "HIGH"),
+            "last_heartbeat_telemetry": wrap_telemetry_dict(mac_job_time, "tailscale_cli_status", mac_job_time, "HIGH"),
+            "last_job_time_telemetry": wrap_telemetry_dict(mac_job_time, "local_scheduler", mac_job_time, "HIGH"),
+            "last_probe_time_telemetry": wrap_telemetry_dict("N/A — build worker", "local_scheduler", mac_job_time, "HIGH"),
+            "last_evidence_file_telemetry": wrap_telemetry_dict("has_live_project_tracker/data/status.json", "local_scheduler", mac_job_time, "HIGH"),
+            "data_source_telemetry": wrap_telemetry_dict("local_host", "local_scheduler", mac_job_time, "HIGH"),
+            "freshness_telemetry": wrap_telemetry_dict(mac_freshness, "local_scheduler", mac_job_time, "HIGH"),
+            "confidence_telemetry": wrap_telemetry_dict("1.0", "local_scheduler", mac_job_time, "HIGH"),
+            "unknown_reason_telemetry": wrap_telemetry_dict("None", "local_scheduler", mac_job_time, "HIGH"),
+            "not_applicable_reason_telemetry": wrap_telemetry_dict("None", "local_scheduler", mac_job_time, "HIGH"),
             
-            "status": wrap_telemetry_dict(mac_status, "tailscale_cli_status", mac_job_time, "HIGH", fallback="UNKNOWN"),
+            "status": wrap_telemetry_dict(mac_status, "tailscale_cli_status", mac_job_time, "HIGH"),
             "completed_jobs": 104,
             "failed_jobs": 9,
             "utilization": "75.0%",
@@ -1075,20 +1075,20 @@ def get_pert_data():
             "not_applicable_reason": "None",
 
             # Telemetry-wrapped objects for tooltips
-            "worker_id_telemetry": wrap_telemetry_dict("hoch-relay-001", "tailscale_network_discovery", relay_time, "HIGH", fallback="hoch-relay-001"),
-            "role_telemetry": wrap_telemetry_dict("relay_worker", "tailscale_network_discovery", relay_time, "HIGH", fallback="relay_worker"),
-            "online_status_telemetry": wrap_telemetry_dict(relay_status_val, "tailscale_cli_status", relay_time, "HIGH", fallback="UNKNOWN"),
-            "last_heartbeat_telemetry": wrap_telemetry_dict(relay_time, "tailscale_cli_status", relay_time, "HIGH", fallback="UNKNOWN"),
-            "last_job_time_telemetry": wrap_telemetry_dict("UNKNOWN — no dispatch evidence yet", "local_scheduler", relay_time, fallback="UNKNOWN", confidence="HIGH" if probe_time != "UNKNOWN" else "LOW"),
-            "last_probe_time_telemetry": wrap_telemetry_dict(probe_time, "relay_health_probe" if probe_time != "UNKNOWN" else "tailscale_network_discovery", relay_time, probe_conf, fallback="UNKNOWN"),
-            "last_evidence_file_telemetry": wrap_telemetry_dict(probe_file, "relay_health_probe" if probe_time != "UNKNOWN" else "tailscale_network_discovery", relay_time, probe_conf, fallback="None"),
-            "data_source_telemetry": wrap_telemetry_dict("relay_health_probe" if probe_time != "UNKNOWN" else "tailscale_network_discovery", "relay_health_probe", relay_time, probe_conf, fallback="tailscale"),
-            "freshness_telemetry": wrap_telemetry_dict(relay_freshness, "relay_health_probe", relay_time, probe_conf, fallback="0.0"),
-            "confidence_telemetry": wrap_telemetry_dict("0.95" if probe_time != "UNKNOWN" else "0.5", "relay_health_probe", relay_time, probe_conf, fallback="0.5"),
-            "unknown_reason_telemetry": wrap_telemetry_dict("no dispatch evidence yet", "local_scheduler", relay_time, "HIGH", fallback="no dispatch evidence yet"),
-            "not_applicable_reason_telemetry": wrap_telemetry_dict("None", "local_scheduler", relay_time, "HIGH", fallback="None"),
+            "worker_id_telemetry": wrap_telemetry_dict("hoch-relay-001", "tailscale_network_discovery", relay_time, "HIGH"),
+            "role_telemetry": wrap_telemetry_dict("relay_worker", "tailscale_network_discovery", relay_time, "HIGH"),
+            "online_status_telemetry": wrap_telemetry_dict(relay_status_val, "tailscale_cli_status", relay_time, "HIGH"),
+            "last_heartbeat_telemetry": wrap_telemetry_dict(relay_time, "tailscale_cli_status", relay_time, "HIGH"),
+            "last_job_time_telemetry": wrap_telemetry_dict("UNKNOWN — no dispatch evidence yet", "local_scheduler", relay_time, confidence="HIGH" if probe_time != "UNKNOWN" else "LOW"),
+            "last_probe_time_telemetry": wrap_telemetry_dict(probe_time, "relay_health_probe" if probe_time != "UNKNOWN" else "tailscale_network_discovery", relay_time, probe_conf),
+            "last_evidence_file_telemetry": wrap_telemetry_dict(probe_file, "relay_health_probe" if probe_time != "UNKNOWN" else "tailscale_network_discovery", relay_time, probe_conf),
+            "data_source_telemetry": wrap_telemetry_dict("relay_health_probe" if probe_time != "UNKNOWN" else "tailscale_network_discovery", "relay_health_probe", relay_time, probe_conf),
+            "freshness_telemetry": wrap_telemetry_dict(relay_freshness, "relay_health_probe", relay_time, probe_conf),
+            "confidence_telemetry": wrap_telemetry_dict("0.95" if probe_time != "UNKNOWN" else "0.5", "relay_health_probe", relay_time, probe_conf),
+            "unknown_reason_telemetry": wrap_telemetry_dict("no dispatch evidence yet", "local_scheduler", relay_time, "HIGH"),
+            "not_applicable_reason_telemetry": wrap_telemetry_dict("None", "local_scheduler", relay_time, "HIGH"),
             
-            "status": wrap_telemetry_dict(relay_status_val, "tailscale_cli_status", relay_time, "HIGH", fallback="UNKNOWN"),
+            "status": wrap_telemetry_dict(relay_status_val, "tailscale_cli_status", relay_time, "HIGH"),
             "completed_jobs": 0,
             "failed_jobs": 0,
             "utilization": "35.0%",
@@ -1118,20 +1118,20 @@ def get_pert_data():
             "not_applicable_reason": "no CLI support on iOS / monitor-only",
 
             # Telemetry-wrapped objects for tooltips
-            "worker_id_telemetry": wrap_telemetry_dict("iphone-15-pro-max", "tailscale_network_discovery", phone_time, "HIGH", fallback="iphone-15-pro-max"),
-            "role_telemetry": wrap_telemetry_dict("operator_mobile_monitor", "tailscale_network_discovery", phone_time, "HIGH", fallback="operator_mobile_monitor"),
-            "online_status_telemetry": wrap_telemetry_dict(phone_status_val, "tailscale_cli_status", phone_time, "HIGH", fallback="UNKNOWN"),
-            "last_heartbeat_telemetry": wrap_telemetry_dict(phone_time, "tailscale_cli_status", phone_time, "HIGH", fallback="UNKNOWN"),
-            "last_job_time_telemetry": wrap_telemetry_dict("N/A — monitor-only", "tailscale_network_discovery", phone_time, "HIGH", fallback="N/A"),
-            "last_probe_time_telemetry": wrap_telemetry_dict("N/A — no CLI support on iOS / monitor-only", "tailscale_network_discovery", phone_time, "HIGH", fallback="N/A"),
-            "last_evidence_file_telemetry": wrap_telemetry_dict("None", "tailscale_network_discovery", phone_time, "HIGH", fallback="None"),
-            "data_source_telemetry": wrap_telemetry_dict("tailscale_network_discovery", "tailscale_network_discovery", phone_time, "HIGH", fallback="tailscale"),
-            "freshness_telemetry": wrap_telemetry_dict(phone_freshness, "tailscale_network_discovery", phone_time, "HIGH", fallback="0.0"),
-            "confidence_telemetry": wrap_telemetry_dict("1.0", "tailscale_network_discovery", phone_time, "HIGH", fallback="1.0"),
-            "unknown_reason_telemetry": wrap_telemetry_dict("None", "tailscale_network_discovery", phone_time, "HIGH", fallback="None"),
-            "not_applicable_reason_telemetry": wrap_telemetry_dict("no CLI support on iOS / monitor-only", "tailscale_network_discovery", phone_time, "HIGH", fallback="no CLI support on iOS / monitor-only"),
+            "worker_id_telemetry": wrap_telemetry_dict("iphone-15-pro-max", "tailscale_network_discovery", phone_time, "HIGH"),
+            "role_telemetry": wrap_telemetry_dict("operator_mobile_monitor", "tailscale_network_discovery", phone_time, "HIGH"),
+            "online_status_telemetry": wrap_telemetry_dict(phone_status_val, "tailscale_cli_status", phone_time, "HIGH"),
+            "last_heartbeat_telemetry": wrap_telemetry_dict(phone_time, "tailscale_cli_status", phone_time, "HIGH"),
+            "last_job_time_telemetry": wrap_telemetry_dict("N/A — monitor-only", "tailscale_network_discovery", phone_time, "HIGH"),
+            "last_probe_time_telemetry": wrap_telemetry_dict("N/A — no CLI support on iOS / monitor-only", "tailscale_network_discovery", phone_time, "HIGH"),
+            "last_evidence_file_telemetry": wrap_telemetry_dict("None", "tailscale_network_discovery", phone_time, "HIGH"),
+            "data_source_telemetry": wrap_telemetry_dict("tailscale_network_discovery", "tailscale_network_discovery", phone_time, "HIGH"),
+            "freshness_telemetry": wrap_telemetry_dict(phone_freshness, "tailscale_network_discovery", phone_time, "HIGH"),
+            "confidence_telemetry": wrap_telemetry_dict("1.0", "tailscale_network_discovery", phone_time, "HIGH"),
+            "unknown_reason_telemetry": wrap_telemetry_dict("None", "tailscale_network_discovery", phone_time, "HIGH"),
+            "not_applicable_reason_telemetry": wrap_telemetry_dict("no CLI support on iOS / monitor-only", "tailscale_network_discovery", phone_time, "HIGH"),
             
-            "status": wrap_telemetry_dict(phone_status_val, "tailscale_cli_status", phone_time, "HIGH", fallback="UNKNOWN"),
+            "status": wrap_telemetry_dict(phone_status_val, "tailscale_cli_status", phone_time, "HIGH"),
             "completed_jobs": 0,
             "failed_jobs": 0,
             "utilization": "0.0%",
@@ -1167,8 +1167,22 @@ def get_pert_data():
 
     # Goal completion from the SINGLE source of goal weights (buildout + revenue path).
     weights = GOAL_WEIGHTS
+    # REQ-GOV-005 / audit F-01.2: goal completion is NO LONGER a weight-sum over tasks
+    # whose `status` is a hardcoded string literal in this file. It is read from the
+    # canonical goal engine, which computes it ONLY from validators that actually
+    # executed. If that artifact is absent, the answer is None -> MISSING. Never a number.
+    _goal_state_path = os.path.join(get_project_root(), "coordination", "goal", "goal_state.json")
+    goal_completion_percent = None
+    goal_completion_source_ts = None
+    try:
+        with open(_goal_state_path, encoding="utf-8") as _gf:
+            _gs = json.load(_gf)
+        goal_completion_percent = _gs.get("metrics", {}).get("north_star_completion")
+        goal_completion_source_ts = _gs.get("computed_at")
+    except Exception:
+        goal_completion_percent = None      # fail closed: MISSING, not a default
+
     completed_tasks = [t for t in WORKSTREAMS if t["status"] == "completed"]
-    goal_completion_percent = round(float(sum(weights.get(t["id"], 0.0) for t in completed_tasks)), 1)
 
     goal_formula = {
         "weights": weights,
@@ -1183,8 +1197,8 @@ def get_pert_data():
         evidence_coverage_percent = round((existing_evidence_count / len(required_evidence)) * 100.0, 1)
 
     # Monetization Readiness score (cap at 50% if Stripe keys are missing/not configured)
-    stripe_pub = os.environ.get("STRIPE_PUBLISHABLE_KEY", "")
-    stripe_sec = os.environ.get("STRIPE_SECRET_KEY", "")
+    stripe_pub = os.environ.get("STRIPE_PUBLISHABLE_KEY")
+    stripe_sec = os.environ.get("STRIPE_SECRET_KEY")
     
     # Check .env file if not in environment variables
     env_file_path = os.path.join(get_project_root(), ".env")
@@ -1218,8 +1232,8 @@ def get_pert_data():
             "id": t["id"],
             "title": t["title"],
             "owner": t["owner_agent"],
-            "blocker": t.get("blocker", ""),
-            "risk": t.get("risk_level", "Low"),
+            "blocker": t.get("blocker"),
+            "risk": t.get("risk_level"),
             "te": t["te"]
         } for t in pert_cpm["tasks"] if t["status"] != "completed"
     ]
@@ -1242,29 +1256,31 @@ def get_pert_data():
     test_telemetry = fetch_test_telemetry()
     metrics_ts = metrics.get("timestamp") or datetime.now(timezone.utc).isoformat() + "Z"
     
-    wrapped_backend_status = wrap_telemetry_dict(backend_status, "localhost_probe", fallback="UNKNOWN")
-    wrapped_relay_status = wrap_telemetry_dict(relay_status, "relay_vps_health_endpoint", fallback="UNKNOWN")
-    wrapped_port_closed = wrap_telemetry_dict(port_closed, "vps_port_exposure_check", fallback="UNKNOWN")
+    wrapped_backend_status = wrap_telemetry_dict(backend_status, "localhost_probe")
+    wrapped_relay_status = wrap_telemetry_dict(relay_status, "relay_vps_health_endpoint")
+    wrapped_port_closed = wrap_telemetry_dict(port_closed, "vps_port_exposure_check")
     
-    wrapped_tests_summary = wrap_telemetry_dict(test_telemetry["summary"], "playwright_json_report", test_telemetry["last_run"], fallback="UNKNOWN")
-    wrapped_tests_passing = wrap_telemetry_dict(test_telemetry["passing"], "playwright_json_report", test_telemetry["last_run"], fallback="UNKNOWN")
-    wrapped_tests_failing = wrap_telemetry_dict(test_telemetry["failing"], "playwright_json_report", test_telemetry["last_run"], fallback="UNKNOWN")
-    wrapped_evidence_coverage = wrap_telemetry_dict(evidence_coverage_percent, "evidence_ledger_audit", metrics_ts, fallback="0.0")
-    wrapped_accountability = wrap_telemetry_dict(metrics["agent_accountability_score"], "agent_trust_db", metrics_ts, fallback="0.0")
-    wrapped_time_saved = wrap_telemetry_dict(metrics["time_saved_minutes"], "cadence_telemetry", metrics_ts, fallback="0")
+    wrapped_tests_summary = wrap_telemetry_dict(test_telemetry["summary"], "playwright_json_report", test_telemetry["last_run"])
+    wrapped_tests_passing = wrap_telemetry_dict(test_telemetry["passing"], "playwright_json_report", test_telemetry["last_run"])
+    wrapped_tests_failing = wrap_telemetry_dict(test_telemetry["failing"], "playwright_json_report", test_telemetry["last_run"])
+    wrapped_evidence_coverage = wrap_telemetry_dict(evidence_coverage_percent, "evidence_ledger_audit", metrics_ts)
+    wrapped_accountability = wrap_telemetry_dict(metrics["agent_accountability_score"], "agent_trust_db", metrics_ts)
+    wrapped_time_saved = wrap_telemetry_dict(metrics["time_saved_minutes"], "cadence_telemetry", metrics_ts)
     
-    wrapped_devices_visible = wrap_telemetry_dict(tailnet_devices_visible, "tailscale_network_discovery", scheduler.get("timestamp"), fallback="0")
-    wrapped_build_capable = wrap_telemetry_dict(build_capable_workers_online, "tailscale_network_discovery", scheduler.get("timestamp"), fallback="0")
-    wrapped_relay_workers = wrap_telemetry_dict(relay_registry_workers, "tailscale_network_discovery", scheduler.get("timestamp"), fallback="0")
-    wrapped_monitor_clients = wrap_telemetry_dict(monitor_only_clients, "tailscale_network_discovery", scheduler.get("timestamp"), fallback="0")
-    wrapped_offline_clients = wrap_telemetry_dict(offline_clients, "tailscale_network_discovery", scheduler.get("timestamp"), fallback="0")
+    wrapped_devices_visible = wrap_telemetry_dict(tailnet_devices_visible, "tailscale_network_discovery", scheduler.get("timestamp"))
+    wrapped_build_capable = wrap_telemetry_dict(build_capable_workers_online, "tailscale_network_discovery", scheduler.get("timestamp"))
+    wrapped_relay_workers = wrap_telemetry_dict(relay_registry_workers, "tailscale_network_discovery", scheduler.get("timestamp"))
+    wrapped_monitor_clients = wrap_telemetry_dict(monitor_only_clients, "tailscale_network_discovery", scheduler.get("timestamp"))
+    wrapped_offline_clients = wrap_telemetry_dict(offline_clients, "tailscale_network_discovery", scheduler.get("timestamp"))
     
-    wrapped_goal_complete = wrap_telemetry_dict(int(goal_completion_percent), "autonomous_cadence_telemetry", metrics_ts, fallback="0.0")
+    wrapped_goal_complete = wrap_telemetry_dict(
+        goal_completion_percent, "canonical_goal_engine", goal_completion_source_ts,
+        verified=goal_completion_percent is not None)
     
-    wrapped_monetization_readiness = wrap_telemetry_dict(monetization_readiness_percent, "monetization_readiness_policy_check", fallback="0.0")
-    wrapped_evidence_gap_count = wrap_telemetry_dict(evidence_gap_count, "monetization_readiness_policy_check", fallback="0")
-    wrapped_stripe_readiness = wrap_telemetry_dict("TEST_CONFIGURED" if stripe_configured else "NOT_CONFIGURED / APPROVAL_REQUIRED", "stripe_policy_check", fallback="NOT_CONFIGURED")
-    wrapped_export_guardrail = wrap_telemetry_dict(guardrails_policy.get("do_not_expand_export_or_family", "FUTURE_NOT_NOW"), "guardrail_policy_audit", fallback="FUTURE_NOT_NOW")
+    wrapped_monetization_readiness = wrap_telemetry_dict(monetization_readiness_percent, "monetization_readiness_policy_check")
+    wrapped_evidence_gap_count = wrap_telemetry_dict(evidence_gap_count, "monetization_readiness_policy_check")
+    wrapped_stripe_readiness = wrap_telemetry_dict("TEST_CONFIGURED" if stripe_configured else "NOT_CONFIGURED / APPROVAL_REQUIRED", "stripe_policy_check")
+    wrapped_export_guardrail = wrap_telemetry_dict(guardrails_policy.get("do_not_expand_export_or_family"), "guardrail_policy_audit")
     
     # queues
     high_risk_approval_list = metrics.get("approval_queue", [])
@@ -1276,9 +1292,9 @@ def get_pert_data():
     wrapped_intervention_queue = wrap_telemetry_dict(manual_intervention_list, "has_intervention_ledger", metrics_ts, fallback=[])
     
     # violations
-    wrapped_security_violations = wrap_telemetry_dict(guardrails["security_guardrail_violations"], "guardrail_policy_audit", fallback="0")
-    wrapped_public_violations = wrap_telemetry_dict(guardrails["public_exposure_violations"], "guardrail_policy_audit", fallback="0")
-    wrapped_fake_violations = wrap_telemetry_dict(guardrails["fake_status_violations"], "guardrail_policy_audit", fallback="0")
+    wrapped_security_violations = wrap_telemetry_dict(guardrails["security_guardrail_violations"], "guardrail_policy_audit")
+    wrapped_public_violations = wrap_telemetry_dict(guardrails["public_exposure_violations"], "guardrail_policy_audit")
+    wrapped_fake_violations = wrap_telemetry_dict(guardrails["fake_status_violations"], "guardrail_policy_audit")
 
     # Load compute gap metrics
     compute_gap = {}
@@ -1293,32 +1309,34 @@ def get_pert_data():
     # Read/estimate fallback values
     last_updated_ts = compute_gap.get("timestamp") or (datetime.now(timezone.utc).isoformat() + "Z")
 
-    wrapped_total_devices = wrap_telemetry_dict(compute_gap.get("total_tailnet_devices", 3), "tailscale_network_discovery", last_updated_ts, fallback=3)
-    wrapped_build_capable_online = wrap_telemetry_dict(compute_gap.get("build_capable_workers_online", 1), "tailscale_network_discovery", last_updated_ts, fallback=1)
-    wrapped_relay_workers_online = wrap_telemetry_dict(compute_gap.get("relay_workers_online", 1), "tailscale_network_discovery", last_updated_ts, fallback=1)
-    wrapped_idle_worker_count = wrap_telemetry_dict(compute_gap.get("idle_worker_count", 1), "tailscale_network_discovery", last_updated_ts, fallback=1)
-    wrapped_underused_worker_count = wrap_telemetry_dict(compute_gap.get("underused_worker_count", 1), "tailscale_network_discovery", last_updated_ts, fallback=1)
-    wrapped_compute_utilization = wrap_telemetry_dict(compute_gap.get("compute_utilization_percent", 55.0), "compute_gap_analysis", last_updated_ts, fallback="0.0")
-    wrapped_idle_compute = wrap_telemetry_dict(compute_gap.get("idle_compute_percent", 45.0), "compute_gap_analysis", last_updated_ts, fallback="100.0")
-    wrapped_safe_jobs_available = wrap_telemetry_dict(compute_gap.get("safe_jobs_available", 0), "swarm_scheduler_queue", last_updated_ts, fallback=0)
-    wrapped_safe_jobs_completed = wrap_telemetry_dict(compute_gap.get("safe_jobs_completed", 101), "swarm_ledger_tasks", last_updated_ts, fallback=0)
-    wrapped_safe_jobs_failed = wrap_telemetry_dict(compute_gap.get("safe_jobs_failed", 9), "swarm_ledger_tasks", last_updated_ts, fallback=0)
-    wrapped_relay_compute_util = wrap_telemetry_dict(compute_gap.get("relay_compute_utilization_percent", 35.0), "compute_gap_analysis", last_updated_ts, fallback="0.0")
-    wrapped_macbook_compute_util = wrap_telemetry_dict(compute_gap.get("macbook_compute_utilization_percent", 75.0), "compute_gap_analysis", last_updated_ts, fallback="0.0")
-    wrapped_monitor_only_clients = wrap_telemetry_dict(compute_gap.get("monitor_only_clients", 1), "tailscale_network_discovery", last_updated_ts, fallback=1)
-    wrapped_approval_jobs = wrap_telemetry_dict(compute_gap.get("approval_required_jobs", 0), "swarm_scheduler_queue", last_updated_ts, fallback=0)
-    wrapped_public_exposure_viol = wrap_telemetry_dict(compute_gap.get("public_exposure_violations", 0), "guardrail_policy_audit", last_updated_ts, fallback=0)
-    wrapped_quota_saved_min = wrap_telemetry_dict(compute_gap.get("quota_saved_minutes", 60), "acceleration_metrics", last_updated_ts, fallback=0)
-    wrapped_pert_remaining_min = wrap_telemetry_dict(compute_gap.get("pert_remaining_minutes", 90.0), "cpm_analysis", last_updated_ts, fallback="90.0")
-    wrapped_goal_completion_pct = wrap_telemetry_dict(compute_gap.get("goal_completion_percent", 90.0), "autonomous_cadence_telemetry", last_updated_ts, fallback="90.0")
+    wrapped_total_devices = wrap_telemetry_dict(compute_gap.get("total_tailnet_devices"), "tailscale_network_discovery", last_updated_ts)
+    wrapped_build_capable_online = wrap_telemetry_dict(compute_gap.get("build_capable_workers_online"), "tailscale_network_discovery", last_updated_ts)
+    wrapped_relay_workers_online = wrap_telemetry_dict(compute_gap.get("relay_workers_online"), "tailscale_network_discovery", last_updated_ts)
+    wrapped_idle_worker_count = wrap_telemetry_dict(compute_gap.get("idle_worker_count"), "tailscale_network_discovery", last_updated_ts)
+    wrapped_underused_worker_count = wrap_telemetry_dict(compute_gap.get("underused_worker_count"), "tailscale_network_discovery", last_updated_ts)
+    wrapped_compute_utilization = wrap_telemetry_dict(compute_gap.get("compute_utilization_percent"), "compute_gap_analysis", last_updated_ts)
+    wrapped_idle_compute = wrap_telemetry_dict(compute_gap.get("idle_compute_percent"), "compute_gap_analysis", last_updated_ts)
+    wrapped_safe_jobs_available = wrap_telemetry_dict(compute_gap.get("safe_jobs_available"), "swarm_scheduler_queue", last_updated_ts)
+    wrapped_safe_jobs_completed = wrap_telemetry_dict(compute_gap.get("safe_jobs_completed"), "swarm_ledger_tasks", last_updated_ts)
+    wrapped_safe_jobs_failed = wrap_telemetry_dict(compute_gap.get("safe_jobs_failed"), "swarm_ledger_tasks", last_updated_ts)
+    wrapped_relay_compute_util = wrap_telemetry_dict(compute_gap.get("relay_compute_utilization_percent"), "compute_gap_analysis", last_updated_ts)
+    wrapped_macbook_compute_util = wrap_telemetry_dict(compute_gap.get("macbook_compute_utilization_percent"), "compute_gap_analysis", last_updated_ts)
+    wrapped_monitor_only_clients = wrap_telemetry_dict(compute_gap.get("monitor_only_clients"), "tailscale_network_discovery", last_updated_ts)
+    wrapped_approval_jobs = wrap_telemetry_dict(compute_gap.get("approval_required_jobs"), "swarm_scheduler_queue", last_updated_ts)
+    wrapped_public_exposure_viol = wrap_telemetry_dict(compute_gap.get("public_exposure_violations"), "guardrail_policy_audit", last_updated_ts)
+    wrapped_quota_saved_min = wrap_telemetry_dict(compute_gap.get("quota_saved_minutes"), "acceleration_metrics", last_updated_ts)
+    wrapped_pert_remaining_min = wrap_telemetry_dict(compute_gap.get("pert_remaining_minutes"), "cpm_analysis", last_updated_ts)
+    wrapped_goal_completion_pct = wrap_telemetry_dict(
+        goal_completion_percent, "canonical_goal_engine", goal_completion_source_ts,
+        verified=goal_completion_percent is not None)
     w12_val = "TEST_CONFIGURED" if stripe_configured else "PENDING"
-    wrapped_w12_blocker_status = wrap_telemetry_dict(w12_val, "stripe_sandbox_check", last_updated_ts, fallback="PENDING")
-    wrapped_minutes_saved = wrap_telemetry_dict(compute_gap.get("minutes_saved", 180), "acceleration_metrics", last_updated_ts, fallback=0)
-    wrapped_evidence_generated = wrap_telemetry_dict(compute_gap.get("evidence_generated", 0), "acceleration_metrics", last_updated_ts, fallback=0)
-    wrapped_proj_before = wrap_telemetry_dict(compute_gap.get("projected_completion_before_compute_utilization", "90.0 mins"), "cpm_analysis", last_updated_ts, fallback="90.0 mins")
-    wrapped_proj_after = wrap_telemetry_dict(compute_gap.get("projected_completion_after_safe_compute_utilization", "55.0 mins"), "cpm_analysis", last_updated_ts, fallback="55.0 mins")
-    wrapped_confidence = wrap_telemetry_dict(compute_gap.get("confidence_level", "95% Confidence (PERT Beta-Distribution)"), "cpm_analysis", last_updated_ts, fallback="95%")
-    wrapped_calc_source = wrap_telemetry_dict(compute_gap.get("calculation_source", "Swarm Scheduler CPM Engine"), "cpm_analysis", last_updated_ts, fallback="cpm_engine")
+    wrapped_w12_blocker_status = wrap_telemetry_dict(w12_val, "stripe_sandbox_check", last_updated_ts)
+    wrapped_minutes_saved = wrap_telemetry_dict(compute_gap.get("minutes_saved"), "acceleration_metrics", last_updated_ts)
+    wrapped_evidence_generated = wrap_telemetry_dict(compute_gap.get("evidence_generated"), "acceleration_metrics", last_updated_ts)
+    wrapped_proj_before = wrap_telemetry_dict(compute_gap.get("projected_completion_before_compute_utilization"), "cpm_analysis", last_updated_ts)
+    wrapped_proj_after = wrap_telemetry_dict(compute_gap.get("projected_completion_after_safe_compute_utilization"), "cpm_analysis", last_updated_ts)
+    wrapped_confidence = wrap_telemetry_dict(compute_gap.get("confidence_level"), "cpm_analysis", last_updated_ts)
+    wrapped_calc_source = wrap_telemetry_dict(compute_gap.get("calculation_source"), "cpm_analysis", last_updated_ts)
 
     # Freshness calculations & Telemetry Authority Reconciliation Layer
     freshness_policy = {}
@@ -1605,13 +1623,13 @@ def get_pert_data():
     stale_critical_count = sum(1 for k in critical_keys if reconciled_sources[k]["computed_state"] == "STALE")
 
     # Rollup Executive Readiness State
-    tests_failing = test_telemetry.get("failing", 0)
-    tests_passing = test_telemetry.get("passing", 0)
+    tests_failing = test_telemetry.get("failing")
+    tests_passing = test_telemetry.get("passing")
     test_ok = (tests_failing == 0 and tests_passing > 0)
     evidence_ok = (evidence_coverage_percent == 100.0)
     w12_ok = (w12_val in ["COMPLETE", "LIVE_BLOCKED_BY_HUMAN_APPROVAL", "TEST_CONFIGURED", "SANDBOX_VERIFIED"])
     relay_ok = (relay_status_val == "ONLINE")
-    public_ok = (guardrails["public_exposure_violations"] == 0 and metrics.get("public_exposure_violations", 0) == 0)
+    public_ok = (guardrails["public_exposure_violations"] == 0 and metrics.get("public_exposure_violations") == 0)
 
     exec_reason_list = []
     if not test_ok:
@@ -1777,15 +1795,21 @@ def get_pert_data():
         }
     }
 
-    is_fake_failed = (guardrails["fake_status_violations"] > 0 or metrics.get("no_fake_status_violations", 0) > 0)
+    is_fake_failed = (guardrails["fake_status_violations"] > 0 or metrics.get("no_fake_status_violations") > 0)
     if is_fake_failed:
         panels_freshness["executive_readiness"]["freshness_state"] = "DEGRADED"
         panels_freshness["executive_readiness"]["stale_reason"] = "No Fake Telemetry Audit failed"
 
-    confidence_string = "95% Confidence (PERT Beta-Distribution)"
+    # REQ-GOV-005: a confidence level is a MEASUREMENT, not a decoration. The literal
+    # "95% Confidence (PERT Beta-Distribution)" was a fabricated statistical claim --
+    # no beta-distribution was ever computed. UNKNOWN until one is.
+    confidence_string = "UNKNOWN"
     if is_fake_failed:
-        confidence_string = "DEGRADED (Telemetry Audit Failure) [PERT Beta-Distribution]"
-        wrapped_goal_complete["value"] = f"{int(goal_completion_percent)}% (DEGRADED)"
+        confidence_string = "DEGRADED (Telemetry Audit Failure)"
+        # Never coerce a MISSING completion into a number. Degrade the STATE, not the value.
+        wrapped_goal_complete["state"] = runtime_truth.STALE
+        wrapped_goal_complete["confidence"] = runtime_truth.CONF_LOW
+        wrapped_goal_complete["reason"] = "TELEMETRY_AUDIT_FAILURE"
 
     gov_exec_status = "HEALTHY" if reconciled_sources["hoch_governed_execution"]["computed_state"] == "FRESH" else reconciled_sources["hoch_governed_execution"]["computed_state"]
     execution_authority_status = reconciled_sources["hoch_execution_approval"]["computed_state"]
@@ -1886,7 +1910,7 @@ def get_pert_data():
         "agent_accountability_score": wrapped_accountability,
         "time_saved_minutes": wrapped_time_saved,
         "active_workers_count": wrapped_devices_visible,
-        "total_workers_count": wrap_telemetry_dict(5, "tailscale_network_discovery", scheduler.get("timestamp"), fallback="5"),
+        "total_workers_count": wrap_telemetry_dict(5, "tailscale_network_discovery", scheduler.get("timestamp")),
         "high_risk_approval_queue": wrapped_approval_queue,
         "manual_intervention_queue": wrapped_intervention_queue,
         "worker_metrics": {
@@ -1902,8 +1926,8 @@ def get_pert_data():
             "evidence_gap_count": wrapped_evidence_gap_count,
             "stripe_sandbox_readiness": wrapped_stripe_readiness,
             "export_expansion_guardrail_status": wrapped_export_guardrail,
-            "paid_services_configured": guardrails_policy.get("paid_services_configured", False),
-            "public_ports_exposed": guardrails_policy.get("public_ports_exposed", False),
+            "paid_services_configured": guardrails_policy.get("paid_services_configured"),
+            "public_ports_exposed": guardrails_policy.get("public_ports_exposed"),
             "evidence_matrix": evidence_matrix,
             "remaining_work": remaining_work,
             "safe_next_actions": safe_next_actions
@@ -1917,8 +1941,8 @@ def get_pert_data():
         "revenue_action_queue_freshness": panels_freshness.get("revenue_action_queue", {}),
         "hoch_pods_runtime_freshness": panels_freshness.get("hoch_pods_theater", {}),
         "hoch_pod_scheduler_freshness": panels_freshness.get("hoch_pod_scheduler", {}),
-        "stripe_sandbox_status": wrap_telemetry_dict(stripe_sandbox_status, "stripe_sandbox_check", last_updated_ts, fallback="NOT_CONFIGURED"),
-        "no_fake_telemetry_audit": wrap_telemetry_dict("PASS" if not is_fake_failed else "FAIL", "guardrail_policy_audit", last_updated_ts, fallback="FAIL"),
+        "stripe_sandbox_status": wrap_telemetry_dict(stripe_sandbox_status, "stripe_sandbox_check", last_updated_ts),
+        "no_fake_telemetry_audit": wrap_telemetry_dict("PASS" if not is_fake_failed else "FAIL", "guardrail_policy_audit", last_updated_ts),
         
         # Required Metrics for E2E
         "compute_utilization_percent": wrapped_compute_utilization,
@@ -7458,7 +7482,7 @@ function badge(state){
               s === "DEGRADED" || s === "WARNING" || s === "PENDING" || s === "UNKNOWN" ? "degraded" : "unknown";
   return `<span class="badge ${cls}">${s}</span>`;
 }
-function val(x, fallback="UNKNOWN"){ return x === undefined || x === null || x === "" ? fallback : x; }
+function val(x){ return x === undefined || x === null || x === "" ? fallback : x; }
 function pct(x){ return Number.isFinite(Number(x)) ? `${Number(x)}%` : val(x); }
 function money(x){ return Number.isFinite(Number(x)) ? `$${Number(x).toLocaleString()}` : val(x); }
 

@@ -1,6 +1,6 @@
 {
   "schema": "H1D_AUTHORITATIVE_STATUS_v1",
-  "updated_at": "2026-07-12T23:30:00Z",
+  "updated_at": "2026-07-12T23:11:18.611450Z",
   "assessed_by": "founder_assessment_operator_session",
   "local_implementation_commit": "3c5234766d77d6f7450b1f05d54477e1884b8c21",
   "local_branch": "helm/h1b-r2-remediation",
@@ -17,7 +17,7 @@
     "status": "AUTHORITATIVE_PASS_PENDING_EVIDENCE",
     "functionally_demonstrated": true,
     "remotely_reproducible": false,
-    "summary": "PERT-ready task through spend/egress gate, Grok + Ollama dispatch, capture, critic, evidence aggregation, and one controlled PERT transition — first genuine removal of founder from the prompt-transport path for that routed spine only."
+    "summary": "PERT-ready task through spend/egress gate, Grok + Ollama dispatch, capture, critic, evidence aggregation, and one controlled PERT transition \u2014 first genuine removal of founder from the prompt-transport path for that routed spine only."
   },
   "capabilities": {
     "autonomous_grok_dispatch": "YES",
@@ -46,7 +46,7 @@
   },
   "critical_p0": {
     "id": "H1D-P0-UNGATED-DIRECT-NETWORK-ADAPTERS",
-    "status": "OPEN",
+    "status": "CLOSED_FOR_COUNCIL_AND_PROMPT_BRAIN_PATH",
     "title": "Direct network adapters bypass the council choke point",
     "example_path": "scripts/prompt_brain/model_adapters.py::OpenAIAdapter.execute",
     "mechanism": "urllib.request to https://api.openai.com/v1/chat/completions without CouncilDispatchGateway / SubprocessSpendGate",
@@ -71,7 +71,8 @@
         "provider_sdks"
       ]
     },
-    "also_noted_by_live_critic": "H1D-20260712T220802Z-DF8F1B Grok seat identified opt-in gate and parallel urllib/adapter bypasses"
+    "also_noted_by_live_critic": "H1D-20260712T220802Z-DF8F1B Grok seat identified opt-in gate and parallel urllib/adapter bypasses",
+    "residual": "legacy_backend_model_mesh_documented"
   },
   "decomposition": [
     {
@@ -155,12 +156,15 @@
   "next_blocker": "H1D.10_AG_IDE_RELAY",
   "h1d7": {
     "node": "H1D.7",
-    "status": "IN_PROGRESS_IMPLEMENTATION",
+    "status": "AUTHORITATIVE_PASS_SCOPED",
     "gateway_module": "scripts/council/gateway.py",
     "scanner": "scripts/verify_model_dispatch_chokepoint.py",
     "known_openai_bypass_removed": true,
     "runtime_guard": "ModelDispatchGuard",
-    "legacy_backend_mesh": "documented_exception_pending_unification"
+    "legacy_backend_mesh": "documented_exception_pending_unification",
+    "live_proof": "coordination/council/live_proof_packages/H1D7-DISPATCH-GATEWAY-20260712T230145Z",
+    "live_task_id": "H1D7-20260712T230946Z-E27F69",
+    "implementation_commit": "b603c8f8c9cb9bcb8dab5942de533be94b024621"
   },
   "next_objectives": [
     "Close H1D.7 with commit-bound live proof package AUTHORITATIVE_PASS",
