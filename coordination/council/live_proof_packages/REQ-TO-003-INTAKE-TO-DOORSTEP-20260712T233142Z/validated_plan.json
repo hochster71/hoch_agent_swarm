@@ -1,0 +1,36 @@
+{
+  "created_at": "2026-07-12T23:31:42.119740Z",
+  "evidence_contract": [
+    "artifact_exists",
+    "module_imports",
+    "function_contract",
+    "independent_digest_recomputation"
+  ],
+  "founder_gates_detected": [],
+  "mission_id": "REQ-TO-003-20260712T233142Z-DA6D4D",
+  "tasks": [
+    {
+      "adapter_policy": {
+        "frontier_required": false,
+        "local_first": true,
+        "preferred": "ollama"
+      },
+      "cost_ceiling_usd": 0.0,
+      "depends_on": [],
+      "description": "generate the sha256 manifest module",
+      "expected_artifacts": [
+        "sha256_manifest.py"
+      ],
+      "failure_handling": "fail_closed -> BLOCKED, no retry beyond 1 revision",
+      "scope": "write only sha256_manifest.py inside the proof package",
+      "task_id": "TO003-20260712T233142Z-45D6C2",
+      "timeout_seconds": 180,
+      "validators": [
+        "artifact_exists",
+        "module_imports",
+        "function_contract",
+        "independent_digest_recomputation"
+      ]
+    }
+  ]
+}

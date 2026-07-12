@@ -2,8 +2,7 @@
   "schema": "HOCH_GOAL_REQUIREMENTS_v1",
   "canonical_goal": "config/canonical_goal_contract.json",
   "generated_at": "2026-07-12T22:30:00Z",
-  "rule": "A requirement contributes to completion ONLY when its validator has executed successfully against current evidence. There is no other way to be complete. Editing 'state' in this file does nothing — the engine ignores it and runs the validator.",
-
+  "rule": "A requirement contributes to completion ONLY when its validator has executed successfully against current evidence. There is no other way to be complete. Editing 'state' in this file does nothing \u2014 the engine ignores it and runs the validator.",
   "layers": {
     "NS": "north_star",
     "TO": "terminal_outcome",
@@ -11,7 +10,6 @@
     "ES": "enabling_system",
     "GOV": "governance"
   },
-
   "requirements": [
     {
       "id": "REQ-GOV-001",
@@ -72,7 +70,7 @@
       "owner": "agent",
       "blocking": true,
       "weight": 5,
-      "known_state_at_ratification": "FAIL — 94 fallback sites in backend/pert_server.py (audit F-02.1)"
+      "known_state_at_ratification": "FAIL \u2014 94 fallback sites in backend/pert_server.py (audit F-02.1)"
     },
     {
       "id": "REQ-GOV-006",
@@ -135,7 +133,7 @@
       "owner": "agent",
       "blocking": true,
       "weight": 3,
-      "known_state_at_ratification": "FAIL — 616 routes registered, zero containing 'council' (audit F-02.4). Endpoint and frontend tree were destroyed by a concurrent lane."
+      "known_state_at_ratification": "FAIL \u2014 616 routes registered, zero containing 'council' (audit F-02.4). Endpoint and frontend tree were destroyed by a concurrent lane."
     },
     {
       "id": "REQ-TO-001",
@@ -148,7 +146,7 @@
       "owner": "FOUNDER_ONLY",
       "blocking": true,
       "weight": 5,
-      "known_state_at_ratification": "NOT_SELECTED — explicitly de-hardcoded by founder ratification."
+      "known_state_at_ratification": "NOT_SELECTED \u2014 explicitly de-hardcoded by founder ratification."
     },
     {
       "id": "REQ-TO-002",
@@ -168,13 +166,13 @@
       "layer": "TO",
       "statement": "The full autonomous path from intake to DOORSTEP is proven end to end.",
       "acceptance": "one work item traverses intake -> plan -> execute -> validate -> evidence -> DOORSTEP with no founder step except a founder-only gate",
-      "validator": "python3 scripts/goal/verify_intake_to_doorstep.py",
+      "validator": "python3 scripts/verify_intake_to_doorstep.py",
       "evidence_path": "coordination/goal/intake_to_doorstep.json",
       "freshness_sla_hours": 168,
       "owner": "agent",
       "blocking": true,
       "weight": 5,
-      "known_state_at_ratification": "NOT_PROVEN"
+      "known_state_at_ratification": "NOT_PROVEN (superseded: proven 7/7 at REQ-TO-003 commit)"
     },
     {
       "id": "REQ-NS-001",
@@ -199,7 +197,7 @@
       "owner": "agent",
       "blocking": true,
       "weight": 4,
-      "known_state_at_ratification": "UNKNOWN — no founder-minutes ledger exists and no revenue has been shipped. Honest zero."
+      "known_state_at_ratification": "UNKNOWN \u2014 no founder-minutes ledger exists and no revenue has been shipped. Honest zero."
     }
   ]
 }

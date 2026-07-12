@@ -1,0 +1,154 @@
+{
+  "labels": [
+    "TERMINAL_PATH_PROOF_WORKLOAD",
+    "NOT_CHAMPION_PRODUCT",
+    "NOT_PRODUCTION_RELEASE"
+  ],
+  "mission_id": "REQ-TO-003-20260712T233142Z-DA6D4D",
+  "requirement": "REQ-TO-003",
+  "stages": [
+    "INTAKE",
+    "PLAN",
+    "ROUTE",
+    "EXECUTE",
+    "VERIFY",
+    "PACKAGE",
+    "DOORSTEP"
+  ],
+  "state": "VERIFICATION_PASS",
+  "transitions": [
+    {
+      "evidence": {
+        "detail": "",
+        "event_timestamp": "2026-07-12T23:31:42.119665Z",
+        "evidence_digest": "99881e01d4f582fa1fab0b5e5aa40859b7189f0afe5e92a6333372b8f7490657",
+        "evidence_path": "coordination/council/live_proof_packages/REQ-TO-003-INTAKE-TO-DOORSTEP-20260712T233142Z/intake_envelope.json",
+        "input_digest": "GENESIS",
+        "mission_id": "REQ-TO-003-20260712T233142Z-DA6D4D",
+        "output_digest": "2826a477638e9c63f91870681db3ea1b7d2865e2920fe2e7b5c434dda982cfe5",
+        "task_id": "REQ-TO-003-20260712T233142Z-DA6D4D",
+        "validator_exit_code": 0,
+        "validator_name": "validate_intake",
+        "validator_result": true
+      },
+      "from": "INTAKE_RECEIVED",
+      "recorded_at": "2026-07-12T23:31:42.119710Z",
+      "to": "INTAKE_VALIDATED",
+      "verdict": "ADMITTED"
+    },
+    {
+      "evidence": {
+        "detail": "",
+        "event_timestamp": "2026-07-12T23:31:42.119888Z",
+        "evidence_digest": "bd9433217b92757a96e6bac6629f8cd7436cad93fa5feb027ac8d3ffcc5e172d",
+        "evidence_path": "coordination/council/live_proof_packages/REQ-TO-003-INTAKE-TO-DOORSTEP-20260712T233142Z/validated_plan.json",
+        "input_digest": "2826a477638e9c63f91870681db3ea1b7d2865e2920fe2e7b5c434dda982cfe5",
+        "mission_id": "REQ-TO-003-20260712T233142Z-DA6D4D",
+        "output_digest": "82c30c7628b5c3bb7d2d7c4f3fdaaa5463512c8d68aa576afc3a14c6d3186271",
+        "task_id": "REQ-TO-003-20260712T233142Z-DA6D4D",
+        "validator_exit_code": 0,
+        "validator_name": "plan_created",
+        "validator_result": true
+      },
+      "from": "INTAKE_VALIDATED",
+      "recorded_at": "2026-07-12T23:31:42.119914Z",
+      "to": "PLAN_CREATED",
+      "verdict": "ADMITTED"
+    },
+    {
+      "evidence": {
+        "detail": "",
+        "event_timestamp": "2026-07-12T23:31:42.119943Z",
+        "evidence_digest": "bd9433217b92757a96e6bac6629f8cd7436cad93fa5feb027ac8d3ffcc5e172d",
+        "evidence_path": "coordination/council/live_proof_packages/REQ-TO-003-INTAKE-TO-DOORSTEP-20260712T233142Z/validated_plan.json",
+        "input_digest": "2826a477638e9c63f91870681db3ea1b7d2865e2920fe2e7b5c434dda982cfe5",
+        "mission_id": "REQ-TO-003-20260712T233142Z-DA6D4D",
+        "output_digest": "82c30c7628b5c3bb7d2d7c4f3fdaaa5463512c8d68aa576afc3a14c6d3186271",
+        "task_id": "REQ-TO-003-20260712T233142Z-DA6D4D",
+        "validator_exit_code": 0,
+        "validator_name": "plan_has_validators_and_bounds",
+        "validator_result": true
+      },
+      "from": "PLAN_CREATED",
+      "recorded_at": "2026-07-12T23:31:42.119963Z",
+      "to": "PLAN_VALIDATED",
+      "verdict": "ADMITTED"
+    },
+    {
+      "evidence": {
+        "detail": "",
+        "event_timestamp": "2026-07-12T23:31:42.120081Z",
+        "evidence_digest": "36f34fe660ce6c934cb85abe3b865e29217b9bae84cb9f3f93108376b6894e28",
+        "evidence_path": "coordination/council/live_proof_packages/REQ-TO-003-INTAKE-TO-DOORSTEP-20260712T233142Z/route_decision.json",
+        "input_digest": "82c30c7628b5c3bb7d2d7c4f3fdaaa5463512c8d68aa576afc3a14c6d3186271",
+        "mission_id": "REQ-TO-003-20260712T233142Z-DA6D4D",
+        "output_digest": "2eb37ce00b5e2d465ba5c33b28774be8cab01a0652c2fc88f29e74e69a185f10",
+        "task_id": "REQ-TO-003-20260712T233142Z-DA6D4D",
+        "validator_exit_code": 0,
+        "validator_name": "route_selected",
+        "validator_result": true
+      },
+      "from": "PLAN_VALIDATED",
+      "recorded_at": "2026-07-12T23:31:42.120100Z",
+      "to": "ROUTE_SELECTED",
+      "verdict": "ADMITTED"
+    },
+    {
+      "evidence": {
+        "detail": "blocks=[]",
+        "event_timestamp": "2026-07-12T23:31:42.120909Z",
+        "evidence_digest": "36f34fe660ce6c934cb85abe3b865e29217b9bae84cb9f3f93108376b6894e28",
+        "evidence_path": "coordination/council/live_proof_packages/REQ-TO-003-INTAKE-TO-DOORSTEP-20260712T233142Z/route_decision.json",
+        "input_digest": "82c30c7628b5c3bb7d2d7c4f3fdaaa5463512c8d68aa576afc3a14c6d3186271",
+        "mission_id": "REQ-TO-003-20260712T233142Z-DA6D4D",
+        "output_digest": "2eb37ce00b5e2d465ba5c33b28774be8cab01a0652c2fc88f29e74e69a185f10",
+        "task_id": "REQ-TO-003-20260712T233142Z-DA6D4D",
+        "validator_exit_code": 0,
+        "validator_name": "gateway_preflight",
+        "validator_result": true
+      },
+      "from": "ROUTE_SELECTED",
+      "recorded_at": "2026-07-12T23:31:42.120938Z",
+      "to": "ROUTE_AUTHORIZED",
+      "verdict": "ADMITTED"
+    },
+    {
+      "evidence": {
+        "detail": "adapter=COMPLETED",
+        "event_timestamp": "2026-07-12T23:33:46.478277Z",
+        "evidence_digest": "0887f34a2b4d123dfcf8b7ba08cb0792170943bfd0c0d583d060261ccc706a5e",
+        "evidence_path": "coordination/council/live_proof_packages/REQ-TO-003-INTAKE-TO-DOORSTEP-20260712T233142Z/execution_manifest.json",
+        "input_digest": "2eb37ce00b5e2d465ba5c33b28774be8cab01a0652c2fc88f29e74e69a185f10",
+        "mission_id": "REQ-TO-003-20260712T233142Z-DA6D4D",
+        "output_digest": "836c527b460c787aa9a1049815fe88452c12234652879921f4b2fa52c0ca617d",
+        "task_id": "TO003-20260712T233142Z-45D6C2",
+        "validator_exit_code": 0,
+        "validator_name": "execution_completed_in_scope",
+        "validator_result": true
+      },
+      "from": "EXECUTION_ACTIVE",
+      "recorded_at": "2026-07-12T23:33:46.478330Z",
+      "to": "EXECUTION_COMPLETE",
+      "verdict": "ADMITTED"
+    },
+    {
+      "evidence": {
+        "detail": "",
+        "event_timestamp": "2026-07-12T23:33:46.485821Z",
+        "evidence_digest": "d4c51b200e9e8bfb1778567c285cbad85bb2cbabd7ee924c9aaf19dde60c9287",
+        "evidence_path": "coordination/council/live_proof_packages/REQ-TO-003-INTAKE-TO-DOORSTEP-20260712T233142Z/verification_results.json",
+        "input_digest": "836c527b460c787aa9a1049815fe88452c12234652879921f4b2fa52c0ca617d",
+        "mission_id": "REQ-TO-003-20260712T233142Z-DA6D4D",
+        "output_digest": "4ca5f7e73dfc4cb97e4b76a608fdc271db4b91024a973317bedfbbc22abe91ce",
+        "task_id": "REQ-TO-003-20260712T233142Z-DA6D4D",
+        "validator_exit_code": 0,
+        "validator_name": "independent_verification",
+        "validator_result": true
+      },
+      "from": "VERIFICATION_ACTIVE",
+      "recorded_at": "2026-07-12T23:33:46.485858Z",
+      "to": "VERIFICATION_PASS",
+      "verdict": "ADMITTED"
+    }
+  ]
+}

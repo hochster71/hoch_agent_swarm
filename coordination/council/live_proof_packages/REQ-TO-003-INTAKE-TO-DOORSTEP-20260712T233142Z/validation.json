@@ -1,0 +1,9 @@
+{
+  "digest_mismatches": [],
+  "missing_artifacts": [],
+  "mission_id": "REQ-TO-003-20260712T233142Z-DA6D4D",
+  "package_complete": true,
+  "requirement": "REQ-TO-003",
+  "state": "PACKAGE_CREATED",
+  "validated_at": "2026-07-12T23:33:46.487958Z"
+}

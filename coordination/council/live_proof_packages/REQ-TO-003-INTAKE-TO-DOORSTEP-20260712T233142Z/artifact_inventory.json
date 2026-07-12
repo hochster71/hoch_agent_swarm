@@ -1,0 +1,44 @@
+{
+  "artifacts": [
+    {
+      "bytes": 678,
+      "path": "acceptance_results.json"
+    },
+    {
+      "bytes": 1793,
+      "path": "artifacts/__pycache__/sha256_manifest.cpython-314.pyc"
+    },
+    {
+      "bytes": 848,
+      "path": "artifacts/sha256_manifest.py"
+    },
+    {
+      "bytes": 1008,
+      "path": "execution_manifest.json"
+    },
+    {
+      "bytes": 158,
+      "path": "execution_results.json"
+    },
+    {
+      "bytes": 1367,
+      "path": "intake_envelope.json"
+    },
+    {
+      "bytes": 51,
+      "path": "route_authorization.json"
+    },
+    {
+      "bytes": 658,
+      "path": "route_decision.json"
+    },
+    {
+      "bytes": 1006,
+      "path": "validated_plan.json"
+    },
+    {
+      "bytes": 1828,
+      "path": "verification_results.json"
+    }
+  ]
+}

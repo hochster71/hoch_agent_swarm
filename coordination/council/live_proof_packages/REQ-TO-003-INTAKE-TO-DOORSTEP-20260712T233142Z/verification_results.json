@@ -1,0 +1,53 @@
+{
+  "acceptance_criteria": [
+    {
+      "criterion": "artifact file exists and is non-empty",
+      "id": "AC1",
+      "validator": "artifact_exists"
+    },
+    {
+      "criterion": "module imports without error",
+      "id": "AC2",
+      "validator": "module_imports"
+    },
+    {
+      "criterion": "build_manifest is callable and returns a dict",
+      "id": "AC3",
+      "validator": "function_contract"
+    },
+    {
+      "criterion": "manifest digests match an INDEPENDENT hashlib recomputation",
+      "id": "AC4",
+      "validator": "independent_digest_recomputation"
+    }
+  ],
+  "checks": [
+    {
+      "detail": "sha256_manifest.py 848 bytes",
+      "pass": true,
+      "validator": "artifact_exists"
+    },
+    {
+      "detail": "imported",
+      "pass": true,
+      "validator": "module_imports"
+    },
+    {
+      "detail": "build_manifest callable",
+      "pass": true,
+      "validator": "function_contract"
+    },
+    {
+      "detail": "produced={'alpha.txt': '22009a0f15c9377aa8d7be7100a8f9ae95d4f2c1ad3c8b161ec273c714baf6d9', 'beta.bin': '74ba6e227150632ca117c8b478bbef83fe6ea5442b3c64efad32947db2eabf01'} expected={'alpha.txt': '22009a0f15c9377aa8d7be7100a8f9ae95d4f2c1ad3c8b161ec273c714baf6d9', 'beta.bin': '74ba6e227150632ca117c8b47",
+      "pass": true,
+      "validator": "independent_digest_recomputation"
+    }
+  ],
+  "independence_basis": "The verifier is NOT the producing model. It imports the produced module, runs it against a controlled fixture, and recomputes every digest with hashlib -- a different mechanism than the code under test.",
+  "independent": true,
+  "mission_id": "REQ-TO-003-20260712T233142Z-DA6D4D",
+  "producer_identity": "model:ollama",
+  "result": "VERIFICATION_PASS",
+  "verified_at": "2026-07-12T23:33:46.485527Z",
+  "verifier_identity": "deterministic_python_validator"
+}

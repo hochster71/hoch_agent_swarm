@@ -1,0 +1,29 @@
+{
+  "all_pass": true,
+  "criteria": [
+    {
+      "criterion": "artifact file exists and is non-empty",
+      "id": "AC1",
+      "pass": true,
+      "validator": "artifact_exists"
+    },
+    {
+      "criterion": "module imports without error",
+      "id": "AC2",
+      "pass": true,
+      "validator": "module_imports"
+    },
+    {
+      "criterion": "build_manifest is callable and returns a dict",
+      "id": "AC3",
+      "pass": true,
+      "validator": "function_contract"
+    },
+    {
+      "criterion": "manifest digests match an INDEPENDENT hashlib recomputation",
+      "id": "AC4",
+      "pass": true,
+      "validator": "independent_digest_recomputation"
+    }
+  ]
+}

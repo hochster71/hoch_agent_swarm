@@ -1,0 +1,38 @@
+ M config/goal_requirements.json
+ M coordination/council/relay/dispatch_ledger.jsonl
+ M coordination/council/relay/gateway_dispatch_ledger.jsonl
+ M coordination/goal/goal_state.json
+ M coordination/goal/intake_to_doorstep.json
+ M data/prompt_brain/agent_audit.json
+ M data/prompt_brain/champion_registry.json
+ M data/prompt_brain/convergence_status.json
+ M data/prompt_brain/cyber_swarm_state.json
+ M data/prompt_brain/gap_analysis.json
+ M data/prompt_brain/improve_cursor.json
+ M data/prompt_brain/music/champion_registry.json
+ M data/prompt_brain/music/convergence_status.json
+ M data/prompt_brain/orchestrator_brief.json
+ M data/prompt_brain/orchestrator_log.jsonl
+ M data/prompt_brain/research/champion_registry.json
+ M data/prompt_brain/research/convergence_status.json
+ M data/prompt_brain/research_meta_decision.json
+ M data/prompt_brain/research_meta_log.jsonl
+ M data/prompt_brain/self_heal_state.json
+ M docs/moonshot/BRAIN_GAP_ANALYSIS.md
+ M frontend/data/brain_live.json
+ M has_live_project_tracker/data/cost_governor.json
+ M has_live_project_tracker/data/goal_blocker_register.json
+ M hoch_pods/compute/cost_ledger.jsonl
+?? coordination/council/live_proof_packages/H1D7-DISPATCH-GATEWAY-20260712T230145Z/
+?? coordination/council/live_proof_packages/REQ-TO-003-INTAKE-TO-DOORSTEP-20260712T233142Z/
+?? coordination/council/relay/H1D-20260712T230153Z-8C7ADD.council.json
+?? coordination/council/relay/H1D7-20260712T230852Z-B75DCF.council.json
+?? coordination/council/relay/H1D7-20260712T230946Z-E27F69.council.json
+?? data/prompt_brain/outcome_feedback_ledger.jsonl
+?? data/prompt_brain/outcome_stats.json
+?? has_live_project_tracker/data/property_schema.json
+?? has_live_project_tracker/data/room_schema.json
+?? scripts/council/run_terminal_path_proof.py
+?? scripts/council/terminal_path.py
+?? scripts/verify_intake_to_doorstep.py
+?? tests/test_terminal_path_orchestrator.py
