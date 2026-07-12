@@ -5,6 +5,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from backend.runtime_process import RuntimeProcessBus, RuntimeProcessType, RuntimeProcessState
 from backend.model_router.escalation_policy import load_escalation_config
+# REQ-ES-003: install the council dispatch guard so this module's provider
+# egress fails CLOSED (UngatedDispatchError) unless it runs inside a
+# CouncilDispatchGateway context that holds an active token.
+from scripts.council.gateway import ensure_guard
+ensure_guard()
 
 class GoogleFrontierException(Exception):
     pass

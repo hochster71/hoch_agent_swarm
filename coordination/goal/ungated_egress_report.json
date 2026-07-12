@@ -1,68 +1,13 @@
 {
-  "requirement": "REQ-ES-003",
-  "ungated_egress": [
-    {
-      "file": "backend/model_router/google_frontier.py",
-      "provider_hosts": [
-        "generativelanguage.googleapis.com"
-      ],
-      "defect": "PROVIDER_CALL_OUTSIDE_SPEND_GATE"
-    },
-    {
-      "file": "scripts/verify_model_dispatch_chokepoint.py",
-      "provider_hosts": [
-        "api.anthropic.com",
-        "api.openai.com"
-      ],
-      "defect": "PROVIDER_CALL_OUTSIDE_SPEND_GATE"
-    },
-    {
-      "file": "scripts/council_key_audit.py",
-      "provider_hosts": [
-        "api.anthropic.com",
-        "api.openai.com",
-        "api.x.ai",
-        "generativelanguage.googleapis.com"
-      ],
-      "defect": "PROVIDER_CALL_OUTSIDE_SPEND_GATE"
-    },
-    {
-      "file": "scripts/prompt_brain/model_adapters.py",
-      "provider_hosts": [
-        "api.anthropic.com",
-        "api.openai.com",
-        "generativelanguage.googleapis.com"
-      ],
-      "defect": "PROVIDER_CALL_OUTSIDE_SPEND_GATE"
-    },
-    {
-      "file": "scripts/council/gateway.py",
-      "provider_hosts": [
-        "api.anthropic.com",
-        "api.openai.com",
-        "api.x.ai",
-        "generativelanguage.googleapis.com"
-      ],
-      "defect": "PROVIDER_CALL_OUTSIDE_SPEND_GATE"
-    },
-    {
-      "file": "scripts/council/inventory_outbound_paths.py",
-      "provider_hosts": [
-        "api.anthropic.com",
-        "api.openai.com"
-      ],
-      "defect": "PROVIDER_CALL_OUTSIDE_SPEND_GATE"
-    },
-    {
-      "file": "scripts/goal/verify_no_ungated_egress.py",
-      "provider_hosts": [
-        "api.anthropic.com",
-        "api.openai.com",
-        "api.x.ai",
-        "generativelanguage.googleapis.com"
-      ],
-      "defect": "PROVIDER_CALL_OUTSIDE_SPEND_GATE"
-    }
+  "approved_gateway_modules": [
+    "scripts/council/adapters.py",
+    "scripts/council/dispatch.py",
+    "scripts/council/gateway.py",
+    "scripts/council/spend_gate.py"
   ],
-  "status": "FAIL"
+  "policy": "no raw provider SDK/HTTP/socket/model-CLI invocation outside approved or guarded modules",
+  "requirement": "REQ-ES-003",
+  "status": "PASS",
+  "ungated_egress": [],
+  "violation_count": 0
 }

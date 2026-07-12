@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 """Audit all council/provider API keys in .env: presence + live validation. Never prints key values."""
 import os, sys, urllib.request
+# REQ-ES-003: this diagnostic probes provider endpoints with credentials.
+# The guard makes those probes fail CLOSED unless a gateway context is active.
+import sys as _sys; from pathlib import Path as _P
+_sys.path.insert(0, str(_P(__file__).resolve().parents[1]))
+from scripts.council.gateway import ensure_guard
+ensure_guard()
 
 ENV_PATH = os.path.join(os.path.dirname(__file__), "..", ".env")
 
