@@ -1,6 +1,6 @@
 {
   "schema": "hoch-cyber-swarm-v1",
-  "at": "2026-07-09T13:49:23.091788Z",
+  "at": "2026-07-12T21:12:40.269575Z",
   "target": "backend",
   "detection_coverage_pct": 57.1,
   "red_detected": [

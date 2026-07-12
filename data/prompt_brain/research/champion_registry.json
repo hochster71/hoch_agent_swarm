@@ -1,14 +1,14 @@
 {
   "schema": "brain-champion-registry",
   "domain": "research",
-  "generation": 768,
+  "generation": 804,
   "champions": {
     "Longevity": {
       "gene_id": "seed-long-de9ffeaa1e",
       "title": "Senolytic Combination vs Frailty",
       "score": 100.0,
       "blended_score": 100.0,
-      "fitness_method": "BLENDED_SPARSE",
+      "fitness_method": "MECHANICAL_PROXY",
       "state": "SELECTED",
       "domain": "research",
       "pool_size": 3
@@ -18,7 +18,7 @@
       "title": "Scalable Oversight of Superhuman Judges",
       "score": 100.0,
       "blended_score": 100.0,
-      "fitness_method": "BLENDED_SPARSE",
+      "fitness_method": "MECHANICAL_PROXY",
       "state": "SELECTED",
       "domain": "research",
       "pool_size": 3
@@ -74,5 +74,5 @@
       "pool_size": 3
     }
   },
-  "at": "2026-07-09T13:49:22.306258Z"
+  "at": "2026-07-12T21:12:39.814155Z"
 }

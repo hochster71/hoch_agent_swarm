@@ -99,7 +99,7 @@ def main():
         print(f"ERROR: Candidate registry reconciliation failed: {recon['status']}")
         sys.exit(1)
     package_id = recon["active_candidate"]
-    package_digest = recon["integrity"]["combined_authorization_sha256"]
+    package_digest = recon["integrity"]["stored"]["combined_authorization_sha256"]
     print(f"Active candidate resolved: {package_id} (digest: {package_digest})")
 
     # 7. Write Pending template

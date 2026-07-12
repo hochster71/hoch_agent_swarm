@@ -1,7 +1,7 @@
 {
   "schema": "brain-convergence-status-m0",
-  "generation": 769,
-  "mean_score": 97.125,
+  "generation": 805,
+  "mean_score": 96.938,
   "last_gain": 0.0,
   "epsilon": 0.5,
   "patience": 3,
@@ -5384,6 +5384,258 @@
       "gain": 0.0,
       "improver_online": true,
       "at": "2026-07-09T13:49:22.219671Z"
+    },
+    {
+      "generation": 770,
+      "mean_score": 96.938,
+      "gain": -0.187,
+      "improver_online": true,
+      "at": "2026-07-12T17:56:51.478796Z"
+    },
+    {
+      "generation": 771,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T18:00:55.101964Z"
+    },
+    {
+      "generation": 772,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T18:04:49.637825Z"
+    },
+    {
+      "generation": 773,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T18:10:40.309175Z"
+    },
+    {
+      "generation": 774,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T18:17:19.032700Z"
+    },
+    {
+      "generation": 775,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T18:27:53.815819Z"
+    },
+    {
+      "generation": 776,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T18:36:03.640052Z"
+    },
+    {
+      "generation": 777,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T18:42:23.705297Z"
+    },
+    {
+      "generation": 778,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T18:46:16.998320Z"
+    },
+    {
+      "generation": 779,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T18:50:11.354370Z"
+    },
+    {
+      "generation": 780,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T18:54:04.253550Z"
+    },
+    {
+      "generation": 781,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T18:57:49.645262Z"
+    },
+    {
+      "generation": 782,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T19:03:26.761207Z"
+    },
+    {
+      "generation": 783,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T19:09:40.498261Z"
+    },
+    {
+      "generation": 784,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T19:17:37.677192Z"
+    },
+    {
+      "generation": 785,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T19:25:04.088003Z"
+    },
+    {
+      "generation": 786,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T19:31:47.757166Z"
+    },
+    {
+      "generation": 787,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T19:35:35.925299Z"
+    },
+    {
+      "generation": 788,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T19:39:34.682894Z"
+    },
+    {
+      "generation": 789,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T19:43:26.525874Z"
+    },
+    {
+      "generation": 790,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T19:47:14.467395Z"
+    },
+    {
+      "generation": 791,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T19:52:49.464018Z"
+    },
+    {
+      "generation": 792,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T19:58:59.533077Z"
+    },
+    {
+      "generation": 793,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T20:06:26.895269Z"
+    },
+    {
+      "generation": 794,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T20:13:50.352464Z"
+    },
+    {
+      "generation": 795,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T20:20:03.564801Z"
+    },
+    {
+      "generation": 796,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T20:23:52.456045Z"
+    },
+    {
+      "generation": 797,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T20:27:40.566417Z"
+    },
+    {
+      "generation": 798,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T20:31:31.752057Z"
+    },
+    {
+      "generation": 799,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T20:35:18.858637Z"
+    },
+    {
+      "generation": 800,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T20:41:01.715853Z"
+    },
+    {
+      "generation": 801,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T20:47:14.554493Z"
+    },
+    {
+      "generation": 802,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T20:54:41.505842Z"
+    },
+    {
+      "generation": 803,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T21:02:30.502321Z"
+    },
+    {
+      "generation": 804,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T21:08:45.511592Z"
+    },
+    {
+      "generation": 805,
+      "mean_score": 96.938,
+      "gain": 0.0,
+      "improver_online": true,
+      "at": "2026-07-12T21:12:39.730860Z"
     }
   ]
 }

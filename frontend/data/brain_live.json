@@ -1,5 +1,5 @@
 {
-  "ts": "2026-07-09T13:49:24.765960Z",
+  "ts": "2026-07-12T21:12:40.890275Z",
   "live_brain": {
     "live_brain_available": true,
     "backend": {
@@ -9,7 +9,7 @@
     },
     "note": "brain can GENERATE at $0"
   },
-  "generation": 783,
+  "generation": 819,
   "genes": 737,
   "champions": 30,
   "mean_score": 95.583,
@@ -41,67 +41,67 @@
       "gates": 4,
       "history": [
         {
-          "g": 768,
+          "g": 804,
           "m": 95.583
         },
         {
-          "g": 769,
+          "g": 805,
           "m": 95.583
         },
         {
-          "g": 770,
+          "g": 806,
           "m": 95.583
         },
         {
-          "g": 771,
+          "g": 807,
           "m": 95.583
         },
         {
-          "g": 772,
+          "g": 808,
           "m": 95.583
         },
         {
-          "g": 773,
+          "g": 809,
           "m": 95.583
         },
         {
-          "g": 774,
+          "g": 810,
           "m": 95.583
         },
         {
-          "g": 775,
+          "g": 811,
           "m": 95.583
         },
         {
-          "g": 776,
+          "g": 812,
           "m": 95.583
         },
         {
-          "g": 777,
+          "g": 813,
           "m": 95.583
         },
         {
-          "g": 778,
+          "g": 814,
           "m": 95.583
         },
         {
-          "g": 779,
+          "g": 815,
           "m": 95.583
         },
         {
-          "g": 780,
+          "g": 816,
           "m": 95.583
         },
         {
-          "g": 781,
+          "g": 817,
           "m": 95.583
         },
         {
-          "g": 782,
+          "g": 818,
           "m": 95.583
         },
         {
-          "g": 783,
+          "g": 819,
           "m": 95.583
         }
       ]
@@ -112,73 +112,73 @@
       "title": "Hoch Music Factory",
       "genes": 24,
       "champions": 8,
-      "mean_score": 97.125,
+      "mean_score": 96.938,
       "state": "CONVERGED",
       "gates": 4,
       "history": [
         {
-          "g": 754,
-          "m": 97.125
+          "g": 790,
+          "m": 96.938
         },
         {
-          "g": 755,
-          "m": 97.125
+          "g": 791,
+          "m": 96.938
         },
         {
-          "g": 756,
-          "m": 97.125
+          "g": 792,
+          "m": 96.938
         },
         {
-          "g": 757,
-          "m": 97.125
+          "g": 793,
+          "m": 96.938
         },
         {
-          "g": 758,
-          "m": 97.125
+          "g": 794,
+          "m": 96.938
         },
         {
-          "g": 759,
-          "m": 97.125
+          "g": 795,
+          "m": 96.938
         },
         {
-          "g": 760,
-          "m": 97.125
+          "g": 796,
+          "m": 96.938
         },
         {
-          "g": 761,
-          "m": 97.125
+          "g": 797,
+          "m": 96.938
         },
         {
-          "g": 762,
-          "m": 97.125
+          "g": 798,
+          "m": 96.938
         },
         {
-          "g": 763,
-          "m": 97.125
+          "g": 799,
+          "m": 96.938
         },
         {
-          "g": 764,
-          "m": 97.125
+          "g": 800,
+          "m": 96.938
         },
         {
-          "g": 765,
-          "m": 97.125
+          "g": 801,
+          "m": 96.938
         },
         {
-          "g": 766,
-          "m": 97.125
+          "g": 802,
+          "m": 96.938
         },
         {
-          "g": 767,
-          "m": 97.125
+          "g": 803,
+          "m": 96.938
         },
         {
-          "g": 768,
-          "m": 97.125
+          "g": 804,
+          "m": 96.938
         },
         {
-          "g": 769,
-          "m": 97.125
+          "g": 805,
+          "m": 96.938
         }
       ]
     },
@@ -193,67 +193,67 @@
       "gates": 5,
       "history": [
         {
-          "g": 753,
+          "g": 789,
           "m": 96.5
         },
         {
-          "g": 754,
+          "g": 790,
           "m": 96.5
         },
         {
-          "g": 755,
+          "g": 791,
           "m": 96.5
         },
         {
-          "g": 756,
+          "g": 792,
           "m": 96.5
         },
         {
-          "g": 757,
+          "g": 793,
           "m": 96.5
         },
         {
-          "g": 758,
+          "g": 794,
           "m": 96.5
         },
         {
-          "g": 759,
+          "g": 795,
           "m": 96.5
         },
         {
-          "g": 760,
+          "g": 796,
           "m": 96.5
         },
         {
-          "g": 761,
+          "g": 797,
           "m": 96.5
         },
         {
-          "g": 762,
+          "g": 798,
           "m": 96.5
         },
         {
-          "g": 763,
+          "g": 799,
           "m": 96.5
         },
         {
-          "g": 764,
+          "g": 800,
           "m": 96.5
         },
         {
-          "g": 765,
+          "g": 801,
           "m": 96.5
         },
         {
-          "g": 766,
+          "g": 802,
           "m": 96.5
         },
         {
-          "g": 767,
+          "g": 803,
           "m": 96.5
         },
         {
-          "g": 768,
+          "g": 804,
           "m": 96.5
         }
       ]
@@ -467,20 +467,7 @@
     ],
     "summary": "AI Michael: 0 action(s) I can take now at $0; 3 need your founder call (T3/cost)."
   },
-  "fleet_reconcile": {
-    "jobs_examined": 1,
-    "unresolved": 1,
-    "job_source": "synthetic",
-    "method": "heuristic static write-set extraction (regex, transitive fan-out; literal + pathlib paths)",
-    "contested_files": {},
-    "recommendations": [],
-    "actions": [],
-    "safety": {
-      "never_executes": true,
-      "all_actions_pending_operator_T3": true
-    },
-    "at": "2026-07-09T06:04:08.750708Z"
-  },
+  "fleet_reconcile": null,
   "buyer_signals": {
     "outreach_queued": 12,
     "outreach_approved": 5,
@@ -555,122 +542,122 @@
   ],
   "history": [
     {
-      "g": 760,
+      "g": 796,
       "m": 95.583,
       "gain": 0.0
     },
     {
-      "g": 761,
+      "g": 797,
       "m": 95.583,
       "gain": 0.0
     },
     {
-      "g": 762,
+      "g": 798,
       "m": 95.583,
       "gain": 0.0
     },
     {
-      "g": 763,
+      "g": 799,
       "m": 95.583,
       "gain": 0.0
     },
     {
-      "g": 764,
+      "g": 800,
       "m": 95.583,
       "gain": 0.0
     },
     {
-      "g": 765,
+      "g": 801,
       "m": 95.583,
       "gain": 0.0
     },
     {
-      "g": 766,
+      "g": 802,
       "m": 95.583,
       "gain": 0.0
     },
     {
-      "g": 767,
+      "g": 803,
       "m": 95.583,
       "gain": 0.0
     },
     {
-      "g": 768,
+      "g": 804,
       "m": 95.583,
       "gain": 0.0
     },
     {
-      "g": 769,
+      "g": 805,
       "m": 95.583,
       "gain": 0.0
     },
     {
-      "g": 770,
+      "g": 806,
       "m": 95.583,
       "gain": 0.0
     },
     {
-      "g": 771,
+      "g": 807,
       "m": 95.583,
       "gain": 0.0
     },
     {
-      "g": 772,
+      "g": 808,
       "m": 95.583,
       "gain": 0.0
     },
     {
-      "g": 773,
+      "g": 809,
       "m": 95.583,
       "gain": 0.0
     },
     {
-      "g": 774,
+      "g": 810,
       "m": 95.583,
       "gain": 0.0
     },
     {
-      "g": 775,
+      "g": 811,
       "m": 95.583,
       "gain": 0.0
     },
     {
-      "g": 776,
+      "g": 812,
       "m": 95.583,
       "gain": 0.0
     },
     {
-      "g": 777,
+      "g": 813,
       "m": 95.583,
       "gain": 0.0
     },
     {
-      "g": 778,
+      "g": 814,
       "m": 95.583,
       "gain": 0.0
     },
     {
-      "g": 779,
+      "g": 815,
       "m": 95.583,
       "gain": 0.0
     },
     {
-      "g": 780,
+      "g": 816,
       "m": 95.583,
       "gain": 0.0
     },
     {
-      "g": 781,
+      "g": 817,
       "m": 95.583,
       "gain": 0.0
     },
     {
-      "g": 782,
+      "g": 818,
       "m": 95.583,
       "gain": 0.0
     },
     {
-      "g": 783,
+      "g": 819,
       "m": 95.583,
       "gain": 0.0
     }
@@ -776,101 +763,16 @@
     }
   ],
   "combat": {
-    "at": "2026-07-09T13:49:24.777664Z",
-    "genes_with_combat_record": 7,
-    "total_champion_executions": 22,
+    "at": "2026-07-12T21:12:40.899781Z",
+    "genes_with_combat_record": 0,
+    "total_champion_executions": 0,
     "gates": {
       "m0_generation": {
-        "total": 99,
-        "VERIFIED": 99
-      },
-      "live_judge": {
-        "total": 1,
-        "PROMOTED": 1
+        "total": 36,
+        "VERIFIED": 36
       }
     },
-    "top": [
-      {
-        "gene_id": "gen-gen-gapfill-caa718343c-20260706T005131-20260706T220723",
-        "task_class": "Incident Response",
-        "executions": 10,
-        "completed": 7,
-        "failed": 3,
-        "surfaces": {
-          "agent_runner": 10
-        },
-        "last_used": "2026-07-08T15:37:03.355811Z"
-      },
-      {
-        "gene_id": "gen-gen-HASF-EXP-HEAL-417-20260706T020530-20260706T193901",
-        "task_class": "Self-Healing",
-        "executions": 2,
-        "completed": 2,
-        "failed": 0,
-        "surfaces": {
-          "agent_runner": 2
-        },
-        "last_used": "2026-07-08T15:37:55.022921Z"
-      },
-      {
-        "gene_id": "gen-gen-gen-HASF-CYB-IR-020-20260706T010315-20260706T223608-20260707T025311",
-        "task_class": "Cybersecurity",
-        "executions": 2,
-        "completed": 2,
-        "failed": 0,
-        "surfaces": {
-          "agent_runner": 2
-        },
-        "last_used": "2026-07-08T15:38:55.416322Z",
-        "gate_results": {
-          "live_judge": 1
-        }
-      },
-      {
-        "gene_id": "seed-lo-f-1113d93381",
-        "task_class": "Lo-Fi Hip-Hop",
-        "executions": 2,
-        "completed": 2,
-        "failed": 0,
-        "surfaces": {
-          "agent_runner": 2
-        },
-        "last_used": "2026-07-08T15:39:44.314856Z"
-      },
-      {
-        "gene_id": "seed-ambi-db7bb85622",
-        "task_class": "Ambient",
-        "executions": 2,
-        "completed": 2,
-        "failed": 0,
-        "surfaces": {
-          "agent_runner": 2
-        },
-        "last_used": "2026-07-08T15:40:47.060310Z"
-      },
-      {
-        "gene_id": "seed-long-de9ffeaa1e",
-        "task_class": "Longevity",
-        "executions": 2,
-        "completed": 2,
-        "failed": 0,
-        "surfaces": {
-          "agent_runner": 2
-        },
-        "last_used": "2026-07-08T15:41:39.901125Z"
-      },
-      {
-        "gene_id": "seed-ais-e4d23524b4",
-        "task_class": "AI Safety",
-        "executions": 2,
-        "completed": 2,
-        "failed": 0,
-        "surfaces": {
-          "agent_runner": 2
-        },
-        "last_used": "2026-07-08T15:42:53.980187Z"
-      }
-    ]
+    "top": []
   },
   "fleet": {
     "status": "9/10 REACHABLE (90%)",
@@ -883,8 +785,8 @@
         "id": "L1",
         "status": "Active",
         "cpu": 0,
-        "ram": 90,
-        "agents": 13,
+        "ram": 77,
+        "agents": 10,
         "latency_ms": 0.0,
         "authority": "MEASURED_LOCAL",
         "activity": "Control plane: API + cadence + BRAIN loops (this host)"
@@ -987,25 +889,25 @@
         "name": "lmstudio",
         "alive": true,
         "model": "google/gemma-4-12b-qat",
-        "latency_ms": 642.8,
+        "latency_ms": 455.4,
         "failures": 0,
-        "last_probe": 1783604966.944336
+        "last_probe": 1783890762.872038
       },
       {
         "name": "mac-local",
         "alive": true,
         "model": "llama3.1:8b",
-        "latency_ms": 791.5,
+        "latency_ms": 3278.3,
         "failures": 0,
-        "last_probe": 1783604967.093289
+        "last_probe": 1783890765.695167
       },
       {
         "name": "relay-001",
         "alive": true,
         "model": "qwen3:1.7b",
-        "latency_ms": 668.4,
+        "latency_ms": 798.4,
         "failures": 0,
-        "last_probe": 1783604966.97032
+        "last_probe": 1783890763.215416
       }
     ],
     "primary": "lmstudio",

@@ -1,6 +1,6 @@
 {
   "schema": "hoch-agent-audit-v1",
-  "at": "2026-07-09T13:49:24.640699Z",
+  "at": "2026-07-12T21:12:40.825352Z",
   "totals": {
     "active": 2,
     "idle": 4,
@@ -18,7 +18,7 @@
       "agent": "HASF factory (software)",
       "status": "IDLE",
       "state": "CONVERGED",
-      "last_activity_s": 17,
+      "last_activity_s": 8,
       "goal_aligned": true,
       "work_left": "at proxy ceiling \u2014 needs frontier judge (cost)"
     },
@@ -26,7 +26,7 @@
       "agent": "HMF factory (music)",
       "status": "IDLE",
       "state": "CONVERGED",
-      "last_activity_s": 2,
+      "last_activity_s": 1,
       "goal_aligned": true,
       "work_left": "at proxy ceiling \u2014 needs frontier judge (cost)"
     },
@@ -34,7 +34,7 @@
       "agent": "HRF factory (research)",
       "status": "IDLE",
       "state": "CONVERGED",
-      "last_activity_s": 2,
+      "last_activity_s": 1,
       "goal_aligned": true,
       "work_left": "at proxy ceiling \u2014 needs frontier judge (cost)"
     },
@@ -50,7 +50,7 @@
       "agent": "cadence loop",
       "status": "IDLE",
       "state": "10-min launchd interval (NOT continuous)",
-      "last_activity_s": 301737,
+      "last_activity_s": null,
       "goal_aligned": true,
       "work_left": "convert to a continuous KeepAlive daemon so cycles run back-to-back"
     },
@@ -58,7 +58,7 @@
       "agent": "Cyber Swarm (Red/Blue/Purple)",
       "status": "ACTIVE",
       "state": "NOT_SECURE",
-      "last_activity_s": 2,
+      "last_activity_s": 1,
       "goal_aligned": true,
       "work_left": "continuous adversarial hardening of HAS + products (real scanners + seeded faults)"
     }
