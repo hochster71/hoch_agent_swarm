@@ -146,7 +146,7 @@
       "owner": "FOUNDER_ONLY",
       "blocking": true,
       "weight": 5,
-      "known_state_at_ratification": "NOT_SELECTED \u2014 explicitly de-hardcoded by founder ratification."
+      "known_state_at_ratification": "SELECTED 2026-07-12: EPIC_FURY_2026 (founder ratification)"
     },
     {
       "id": "REQ-TO-002",
@@ -198,6 +198,136 @@
       "blocking": true,
       "weight": 4,
       "known_state_at_ratification": "UNKNOWN \u2014 no founder-minutes ledger exists and no revenue has been shipped. Honest zero."
+    },
+    {
+      "id": "REQ-CP-BUILD",
+      "layer": "CP",
+      "statement": "Epic Fury 2026 champion gate: BUILD.",
+      "acceptance": "champion_gates.json gate BUILD == PASS against fresh evidence",
+      "validator": "python3 scripts/goal/verify_champion_gate_one.py BUILD",
+      "evidence_path": "coordination/goal/champion_gates.json",
+      "freshness_sla_hours": 24,
+      "owner": "agent",
+      "blocking": true,
+      "weight": 3,
+      "note": null
+    },
+    {
+      "id": "REQ-CP-TEST",
+      "layer": "CP",
+      "statement": "Epic Fury 2026 champion gate: TEST.",
+      "acceptance": "champion_gates.json gate TEST == PASS against fresh evidence",
+      "validator": "python3 scripts/goal/verify_champion_gate_one.py TEST",
+      "evidence_path": "coordination/goal/champion_gates.json",
+      "freshness_sla_hours": 24,
+      "owner": "agent",
+      "blocking": true,
+      "weight": 4,
+      "note": null
+    },
+    {
+      "id": "REQ-CP-SECURITY",
+      "layer": "CP",
+      "statement": "Epic Fury 2026 champion gate: SECURITY.",
+      "acceptance": "champion_gates.json gate SECURITY == PASS against fresh evidence",
+      "validator": "python3 scripts/goal/verify_champion_gate_one.py SECURITY",
+      "evidence_path": "coordination/goal/champion_gates.json",
+      "freshness_sla_hours": 24,
+      "owner": "agent",
+      "blocking": true,
+      "weight": 5,
+      "note": null
+    },
+    {
+      "id": "REQ-CP-SIGNING_READINESS",
+      "layer": "CP",
+      "statement": "Epic Fury 2026 champion gate: SIGNING_READINESS.",
+      "acceptance": "champion_gates.json gate SIGNING_READINESS == PASS against fresh evidence",
+      "validator": "python3 scripts/goal/verify_champion_gate_one.py SIGNING_READINESS",
+      "evidence_path": "coordination/goal/champion_gates.json",
+      "freshness_sla_hours": 24,
+      "owner": "agent",
+      "blocking": true,
+      "weight": 4,
+      "note": null
+    },
+    {
+      "id": "REQ-CP-STORE_METADATA",
+      "layer": "CP",
+      "statement": "Epic Fury 2026 champion gate: STORE_METADATA.",
+      "acceptance": "champion_gates.json gate STORE_METADATA == PASS against fresh evidence",
+      "validator": "python3 scripts/goal/verify_champion_gate_one.py STORE_METADATA",
+      "evidence_path": "coordination/goal/champion_gates.json",
+      "freshness_sla_hours": 24,
+      "owner": "agent",
+      "blocking": true,
+      "weight": 3,
+      "note": null
+    },
+    {
+      "id": "REQ-CP-PRIVACY",
+      "layer": "CP",
+      "statement": "Epic Fury 2026 champion gate: PRIVACY.",
+      "acceptance": "champion_gates.json gate PRIVACY == PASS against fresh evidence",
+      "validator": "python3 scripts/goal/verify_champion_gate_one.py PRIVACY",
+      "evidence_path": "coordination/goal/champion_gates.json",
+      "freshness_sla_hours": 24,
+      "owner": "agent",
+      "blocking": true,
+      "weight": 3,
+      "note": null
+    },
+    {
+      "id": "REQ-CP-MONETIZATION",
+      "layer": "CP",
+      "statement": "Epic Fury 2026 champion gate: MONETIZATION.",
+      "acceptance": "champion_gates.json gate MONETIZATION == PASS against fresh evidence",
+      "validator": "python3 scripts/goal/verify_champion_gate_one.py MONETIZATION",
+      "evidence_path": "coordination/goal/champion_gates.json",
+      "freshness_sla_hours": 24,
+      "owner": "agent",
+      "blocking": true,
+      "weight": 4,
+      "note": null
+    },
+    {
+      "id": "REQ-CP-TESTFLIGHT",
+      "layer": "CP",
+      "statement": "Epic Fury 2026 champion gate: TESTFLIGHT.",
+      "acceptance": "champion_gates.json gate TESTFLIGHT == PASS against fresh evidence",
+      "validator": "python3 scripts/goal/verify_champion_gate_one.py TESTFLIGHT",
+      "evidence_path": "coordination/goal/champion_gates.json",
+      "freshness_sla_hours": 24,
+      "owner": "FOUNDER_ONLY",
+      "blocking": true,
+      "weight": 4,
+      "note": "FOUNDER_ONLY: state lives in App Store Connect; reading it needs a founder-provisioned credential."
+    },
+    {
+      "id": "REQ-CP-APP_STORE_CONNECT",
+      "layer": "CP",
+      "statement": "Epic Fury 2026 champion gate: APP_STORE_CONNECT.",
+      "acceptance": "champion_gates.json gate APP_STORE_CONNECT == PASS against fresh evidence",
+      "validator": "python3 scripts/goal/verify_champion_gate_one.py APP_STORE_CONNECT",
+      "evidence_path": "coordination/goal/champion_gates.json",
+      "freshness_sla_hours": 24,
+      "owner": "FOUNDER_ONLY",
+      "blocking": true,
+      "weight": 5,
+      "note": "FOUNDER_ONLY: state lives in App Store Connect; reading it needs a founder-provisioned credential."
+    },
+    {
+      "id": "REQ-CP-SUBMISSION_PACKAGE",
+      "layer": "CP",
+      "statement": "Epic Fury 2026 champion gate: SUBMISSION_PACKAGE.",
+      "acceptance": "champion_gates.json gate SUBMISSION_PACKAGE == PASS against fresh evidence",
+      "validator": "python3 scripts/goal/verify_champion_gate_one.py SUBMISSION_PACKAGE",
+      "evidence_path": "coordination/goal/champion_gates.json",
+      "freshness_sla_hours": 24,
+      "owner": "agent",
+      "blocking": true,
+      "weight": 5,
+      "note": null
     }
   ]
 }

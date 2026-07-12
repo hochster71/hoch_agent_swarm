@@ -1,0 +1,37 @@
+{
+  "schema": "CHAMPION_SELECTION_v1",
+  "decision": "Epic Fury 2026 is selected as the current champion product.",
+  "champion_product": "EPIC_FURY_2026",
+  "classification": [
+    "CURRENT_CHAMPION_PRODUCT",
+    "NOT_PERMANENT_NORTH_STAR",
+    "PRODUCTION_DISTRIBUTION_TARGET",
+    "MONETIZATION_PROOF_TARGET"
+  ],
+  "ratified_by": "Michael Bryan Hoch, Founder, Hoch Agent Swarm",
+  "ratified_at": "2026-07-12T23:41:44.373532Z",
+  "selection_basis": [
+    "closest known product to production distribution",
+    "currently positioned at the App Store gate",
+    "shortest credible path to shipped revenue",
+    "substantial existing implementation and release evidence",
+    "suitable for measuring founder intervention and shipped-dollar outcomes"
+  ],
+  "constraints": [
+    "no fake completion",
+    "no production submission without explicit founder action",
+    "no signing, credential provisioning, payment movement, or App Store submission by agents",
+    "all non-founder work must be completed autonomously",
+    "all release assertions must be evidence-bound",
+    "blockers, missing evidence, and stale state must render explicitly",
+    "prior neutral TO-003 proof does not count as a product shipment"
+  ],
+  "terminal_outcome_required": "Epic Fury 2026 reaches a complete DOORSTEP release package containing all non-founder work necessary for TestFlight/App Store submission, with founder-only actions isolated and minimized.",
+  "permanence": "ROTATES \u2014 a current portfolio designation, not a permanent North Star.",
+  "app_identity_from_repo_evidence": {
+    "bundle_id": "com.epicfury.dashboard",
+    "apple_id": "6761866052",
+    "team_id": "K34GR8P326",
+    "source": "has_live_project_tracker/data/epic_fury_release_ledger.json"
+  }
+}

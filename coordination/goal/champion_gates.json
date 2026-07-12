@@ -1,0 +1,141 @@
+{
+  "champion_product": "EPIC_FURY_2026",
+  "champion_product_completion": 70.0,
+  "computation_rule": "Completion is the fraction of gates whose validator PASSED against fresh evidence. UNKNOWN and FAIL contribute ZERO. No percentage is assigned from memory.",
+  "founder_only_gates_pending": [
+    "TESTFLIGHT",
+    "APP_STORE_CONNECT"
+  ],
+  "gates": [
+    {
+      "blocker": null,
+      "contributes": 1.0,
+      "detail": "build 8 VALID, selected=True",
+      "evidence": [
+        "has_live_project_tracker/data/epic_fury_release_ledger.json"
+      ],
+      "evidence_age_hours": 125.3,
+      "gate": "BUILD",
+      "status": "PASS"
+    },
+    {
+      "blocker": "no fresh test-execution artifact",
+      "contributes": 0.0,
+      "detail": "8 Epic Fury e2e specs exist, but no CURRENT execution record was found. Existence of a test is not evidence that it passed.",
+      "evidence": [
+        "tests/e2e/epic-fury-accessibility.spec.ts",
+        "tests/e2e/epic-fury-mobile.spec.ts",
+        "tests/e2e/epic-fury-production-smoke.spec.ts",
+        "tests/e2e/epic-fury-smoke.spec.ts"
+      ],
+      "evidence_age_hours": null,
+      "gate": "TEST",
+      "status": "UNKNOWN"
+    },
+    {
+      "blocker": null,
+      "contributes": 1.0,
+      "detail": "gate verdict GO, open_high=0, 4 rules PASS",
+      "evidence": [
+        "docs/products/epic-fury-2026/HASF_GATE_VERIFY.json",
+        "docs/evidence/products/epic-fury-2026/security_scan_results_20260707.md"
+      ],
+      "evidence_age_hours": 90.6,
+      "gate": "SECURITY",
+      "status": "PASS"
+    },
+    {
+      "blocker": null,
+      "contributes": 1.0,
+      "detail": "founder release approval artifact present; signed by Michael Bryan Hoch",
+      "evidence": [
+        "docs/evidence/products/epic-fury-2026/RELEASE_APPROVAL_20260707T155053Z.json"
+      ],
+      "evidence_age_hours": 127.9,
+      "gate": "SIGNING_READINESS",
+      "status": "PASS"
+    },
+    {
+      "blocker": null,
+      "contributes": 1.0,
+      "detail": "7/7 listing fields DONE",
+      "evidence": [
+        "has_live_project_tracker/data/epic_fury_release_ledger.json"
+      ],
+      "evidence_age_hours": 125.3,
+      "gate": "STORE_METADATA",
+      "status": "PASS"
+    },
+    {
+      "blocker": null,
+      "contributes": 1.0,
+      "detail": "2 privacy fields DONE (policy URL + App Privacy)",
+      "evidence": [
+        "has_live_project_tracker/data/epic_fury_release_ledger.json"
+      ],
+      "evidence_age_hours": 125.3,
+      "gate": "PRIVACY",
+      "status": "PASS"
+    },
+    {
+      "blocker": null,
+      "contributes": 1.0,
+      "detail": "pricing configured. NOTE: configured pricing is not shipped revenue -- $0 has been earned.",
+      "evidence": [
+        "has_live_project_tracker/data/epic_fury_release_ledger.json",
+        "has_live_project_tracker/data/epic_fury_roi_model.json"
+      ],
+      "evidence_age_hours": 125.3,
+      "gate": "MONETIZATION",
+      "status": "PASS"
+    },
+    {
+      "blocker": "requires App Store Connect access (founder-only credential)",
+      "contributes": 0.0,
+      "detail": "TestFlight state lives in App Store Connect. No local artifact records a current TestFlight build/tester state, and ASC credentials are NOT_PROVISIONED.",
+      "evidence": [],
+      "evidence_age_hours": null,
+      "gate": "TESTFLIGHT",
+      "status": "UNKNOWN"
+    },
+    {
+      "blocker": "requires App Store Connect read (founder-only credential)",
+      "contributes": 0.0,
+      "detail": "ledger claims state=WAITING_FOR_REVIEW submitted=2026-07-07T17:25:46Z. This is a 125.3h-old CLAIM in a local file, not a live reading. ASC credentials present: False. Apple may have approved or rejected since. The truthful state is UNKNOWN until App Store Connect is read.",
+      "evidence": [
+        "has_live_project_tracker/data/epic_fury_release_ledger.json"
+      ],
+      "evidence_age_hours": 125.3,
+      "gate": "APP_STORE_CONNECT",
+      "status": "UNKNOWN"
+    },
+    {
+      "blocker": null,
+      "contributes": 1.0,
+      "detail": "5/5 release docs + founder decision present",
+      "evidence": [
+        "docs/products/epic-fury-2026/RELEASE_CHECKLIST.md",
+        "docs/products/epic-fury-2026/FOUNDER_RELEASE_DECISION.md",
+        "docs/products/epic-fury-2026/DEPLOYMENT_PLAN.md",
+        "docs/products/epic-fury-2026/KNOWN_LIMITATIONS.md",
+        "docs/products/epic-fury-2026/PRODUCT_BRIEF.md"
+      ],
+      "evidence_age_hours": null,
+      "gate": "SUBMISSION_PACKAGE",
+      "status": "PASS"
+    }
+  ],
+  "gates_passed": 7,
+  "gates_total": 10,
+  "generated_at": "2026-07-12T23:44:03.185338Z",
+  "ledger_age_hours": 125.3,
+  "ledger_is_stale": false,
+  "next_critical_path_gate": "TEST",
+  "selection_evidence": "coordination/goal/champion_selection.json",
+  "status": "INCOMPLETE",
+  "unresolved_gates": [
+    "TEST",
+    "TESTFLIGHT",
+    "APP_STORE_CONNECT"
+  ]
+}

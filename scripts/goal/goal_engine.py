@@ -196,6 +196,11 @@ def compute(execute: bool = True) -> dict:
                            key=lambda r: (-r["weight"], r["owner"] == "FOUNDER_ONLY", r["id"]))
     agent_actionable = [r for r in critical_path if r["owner"] != "FOUNDER_ONLY"]
 
+    champ = (contract.get("goal_hierarchy", {})
+                     .get("3_current_champion_product", {}))
+    champion_name = champ.get("value")
+    champion_selected = bool(champion_name) and champ.get("value_state") == "SELECTED"
+
     relay = _load(ROOT / "coordination" / "council" / "relay" / "H1D_pert_node.json") or {}
     dispatch_ledger = ROOT / "coordination" / "council" / "relay" / "dispatch_ledger.jsonl"
     founder_minutes = ROOT / "coordination" / "goal" / "founder_minutes_ledger.jsonl"
@@ -209,8 +214,15 @@ def compute(execute: bool = True) -> dict:
         # ---- the nine required top-level metrics (ratified) --------------------
         "metrics": {
             "north_star_completion": score([r for r in agent_reqs if r["layer"] == "NS"]),
-            "champion_product_completion": None,
-            "champion_product_completion_state": "UNKNOWN_NO_CHAMPION_SELECTED",
+            # CP completion is COMPUTED from the champion-gate validators, never
+            # assigned from memory. UNKNOWN only while no champion is selected.
+            "champion_product_completion": (
+                score([r for r in agent_reqs if r["layer"] == "CP"])
+                if champion_selected else None),
+            "champion_product_completion_state": (
+                f"COMPUTED_FROM_VALIDATORS:{champion_name}" if champion_selected
+                else "UNKNOWN_NO_CHAMPION_SELECTED"),
+            "champion_product": champion_name,
             "autonomous_execution_coverage": score(agent_reqs),
             "founder_intervention_rate": None,
             "verified_founder_minutes_per_shipped_dollar": None,
@@ -223,7 +235,8 @@ def compute(execute: bool = True) -> dict:
                                              if r["state"] != "SATISFIED"],
         },
         "metric_unknown_reasons": {
-            "champion_product_completion": "No champion product selected. Founder ratification explicitly de-hardcoded HSF Story Studio. REQ-TO-001 is FOUNDER_ONLY.",
+            "champion_product_completion": ("UNKNOWN only if no champion is selected. When one is, "
+                                            "this is COMPUTED from the champion-gate validators."),
             "founder_intervention_rate": ("computed from the dispatch ledger once it accumulates routine tasks; "
                                           f"ledger present: {dispatch_ledger.exists()}"),
             "verified_founder_minutes_per_shipped_dollar": ("UNKNOWN: no founder-minutes ledger "

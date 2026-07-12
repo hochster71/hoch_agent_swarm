@@ -4,21 +4,17 @@
   "ratified_by": "Michael Bryan Hoch, Founder, Hoch Agent Swarm",
   "ratified_at": "2026-07-12T22:30:00Z",
   "authority": "This is the ONLY file permitted to define the goal. Every other goal artifact in this repository is DERIVED from it and must declare that classification. A conflict between this file and any other file is resolved in favour of this file, always.",
-
   "north_star": "Build a governed autonomous factory that converts Michael Hoch's judgment into shipped, monetized products, while minimizing founder time and never representing unverified work as complete.",
-
   "primary_optimization_objective": {
     "metric": "verified_founder_minutes_per_shipped_dollar",
     "direction": "MINIMIZE",
     "note": "Founder time is the scarce resource. Every design decision is scored against this."
   },
-
   "hard_constraint": {
     "statement": "No fake green. No unevidenced completion. No autonomous execution beyond explicit authorization and policy.",
     "enforcement": "Code, not prose. A constraint with no enforcement point is advisory and must be reported as such.",
-    "corollary": "Absence of evidence is never a pass. A requirement whose validator has not executed against current evidence contributes ZERO completion — never its last known value."
+    "corollary": "Absence of evidence is never a pass. A requirement whose validator has not executed against current evidence contributes ZERO completion \u2014 never its last known value."
   },
-
   "operational_interpretation": {
     "factories": "Produce repeatable, monetizable products.",
     "HAS": "Performs research, design, development, testing, packaging, staging, and operational coordination.",
@@ -26,7 +22,6 @@
     "DOORSTEP": "Delivers completed work to the founder ONLY when a legally, financially, or externally binding human action is required.",
     "founder_is_not_transport": "Michael must not remain the routine transport layer between agents, models, IDEs, or execution systems."
   },
-
   "founder_only_actions": [
     "approval of new or exceptional spend",
     "credentials and key provisioning",
@@ -37,7 +32,6 @@
     "explicit exceptions to established policy"
   ],
   "everything_else": "Performed autonomously by HAS and presented at DOORSTEP with evidence.",
-
   "goal_hierarchy": {
     "1_canonical_north_star": {
       "id": "NS",
@@ -47,15 +41,19 @@
     "2_current_terminal_outcome": {
       "id": "TO-1",
       "statement": "Ship one monetizable factory product to production distribution and prove the full autonomous path from intake to DOORSTEP.",
-      "permanence": "CURRENT — replaceable once achieved. This is a PROOF that the factory works, NOT the identity of the system."
+      "permanence": "CURRENT \u2014 replaceable once achieved. This is a PROOF that the factory works, NOT the identity of the system."
     },
     "3_current_champion_product": {
       "id": "CP",
       "statement": "Selected by the authoritative portfolio prioritization process.",
-      "value": null,
-      "value_state": "NOT_SELECTED",
+      "value": "EPIC_FURY_2026",
+      "value_state": "SELECTED",
       "permanence": "ROTATES",
-      "prohibition": "No product (HSF Story Studio, Epic Fury, or any other) may be hardcoded as the permanent North Star. A champion is an OUTPUT, never the identity."
+      "prohibition": "No product (HSF Story Studio, Epic Fury, or any other) may be hardcoded as the permanent North Star. A champion is an OUTPUT, never the identity.",
+      "selected_at": "2026-07-12T23:41:44.373532Z",
+      "selected_by": "Michael Bryan Hoch (founder ratification)",
+      "evidence_path": "coordination/goal/champion_selection.json",
+      "completion_rule": "COMPUTED_FROM_VALIDATORS. No initial percentage may be assigned from memory or a hardcoded value."
     },
     "4_enabling_system_goals": {
       "id": "ES",
@@ -72,10 +70,19 @@
     },
     "5_subgoals": {
       "id": "SG",
-      "members": ["H1", "H1B", "H1C", "H1D", "factory", "adapter", "security", "monetization", "release milestones"]
+      "members": [
+        "H1",
+        "H1B",
+        "H1C",
+        "H1D",
+        "factory",
+        "adapter",
+        "security",
+        "monetization",
+        "release milestones"
+      ]
     }
   },
-
   "legacy_contract_reclassification": [
     {
       "file": "config/goal_completion_contract.json",
@@ -108,12 +115,16 @@
     }
   ],
   "retention_policy": "Do not delete historical contracts until their provenance is archived. All four are retained and reclassified, never removed.",
-
   "completion_rules": {
     "computed_by": "scripts/goal/goal_engine.py",
     "rule": "completion = weight-sum of requirements whose validator EXECUTED SUCCESSFULLY against CURRENT evidence, divided by the weight-sum of all blocking requirements for that layer.",
     "zero_contribution_states": [
-      "BLOCKED", "STALE", "UNKNOWN", "UNVERIFIED", "MANUALLY_ASSERTED", "VALIDATOR_NOT_RUN"
+      "BLOCKED",
+      "STALE",
+      "UNKNOWN",
+      "UNVERIFIED",
+      "MANUALLY_ASSERTED",
+      "VALIDATOR_NOT_RUN"
     ],
     "prohibitions": [
       "NO fallback completion percentage may ever be emitted. A missing source yields null + UNKNOWN, never a number.",
@@ -122,13 +133,11 @@
       "Product / platform / governance / North-Star progress remain DISTINCT metrics and may never be averaged into one number."
     ]
   },
-
   "critical_path_rules": {
     "generated_from": "unresolved BLOCKING requirements only",
     "prohibition": "Never from hardcoded status strings (audit finding F-01.2).",
     "next_task_rule": "The next recommended task is the highest-impact unresolved node on the canonical goal's current critical path."
   },
-
   "required_top_level_metrics": [
     "north_star_completion",
     "champion_product_completion",
@@ -140,6 +149,6 @@
     "current_critical_path_blocker",
     "founder_only_actions_pending"
   ],
-
-  "governance_posture": "FAIL-CLOSED. Preserved unchanged by this reconciliation."
+  "governance_posture": "FAIL-CLOSED. Preserved unchanged by this reconciliation.",
+  "terminal_outcome_status": "ACTIVE"
 }
