@@ -976,20 +976,12 @@ def test_granted_authorization_opens_then_relocks_and_denies_second(tmp_path, ev
 
 
 def test_real_git_provenance_invariant_check():
-    """Verify that the unmocked file SHA matches the Git HEAD blob SHA when clean."""
+    """Verify that the unmocked file SHA matches the Git HEAD blob SHA."""
     from backend.instrument_integrity.h1c_activation import git_sha
     head_sha = git_sha(ROOT)
     loaded_sha = ORIG_GET_LOADED()
     expected_sha = ORIG_GIT_BLOB(head_sha, "backend/instrument_integrity/h1c_activation.py", ROOT)
-
-    import subprocess
-    proc = subprocess.run(["git", "diff", "--quiet", "backend/instrument_integrity/h1c_activation.py"], cwd=str(ROOT))
-    is_clean = (proc.returncode == 0)
-    if is_clean:
-        assert expected_sha is not None
-        assert loaded_sha == expected_sha
-        print(f"\nReal git provenance check passed: loaded={loaded_sha}, expected={expected_sha}")
-    else:
-        # If dirty, expected_sha might not match, but shouldn't fail the build
-        pass
+    assert expected_sha is not None
+    assert loaded_sha == expected_sha
+    print(f"\nReal git provenance check passed: loaded={loaded_sha}, expected={expected_sha}")
 
