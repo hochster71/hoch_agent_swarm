@@ -488,12 +488,12 @@ def _append_mission_events(nodes: list):
     ts = datetime.utcnow().strftime("%H:%M:%S")
     with _mission_lock:
         for node in nodes:
-            icon = STATUS_ICONS.get(node.get("status", "Active"), "●")
+            icon = STATUS_ICONS.get(node.get("status", "UNKNOWN"), "●")
             _mission_log.append({
                 "ts":       ts,
                 "node_id":  node["id"],
                 "name":     node["name"],
-                "status":   node.get("status", "Active"),
+                "status":   node.get("status", "UNKNOWN"),
                 "icon":     icon,
                 "activity": node.get("activity", node.get("role", "—")),
                 "cpu":      node.get("cpu_usage", 0),
@@ -3023,7 +3023,7 @@ def execute_formal_release_seal_dry_run(formal_preview_id: str, req: SealDryRunR
     reports = list_readiness_reports(1)
     readiness_status = "PASS"
     if reports:
-        readiness_status = reports[0].get("status", "PASS")
+        readiness_status = reports[0].get("status", "UNKNOWN")
         
     # 4. Compute blockers
     blockers = []
@@ -3441,7 +3441,7 @@ def create_formal_preview(req: FormalPreviewRequest):
     reports = list_readiness_reports(1)
     readiness_status = "PASS"
     if reports:
-        readiness_status = reports[0].get("status", "PASS")
+        readiness_status = reports[0].get("status", "UNKNOWN")
         
     # 7. Query Operator approval status
     operator_approval_status = "pending"
@@ -8221,7 +8221,7 @@ def get_readiness_status():
     else:
         report_data = reports[0]
         
-    score = report_data.get("readiness_score", 100)
+    score = report_data.get("readiness_score")
     
     # Calculate live error budget and burn rate using new engine functions
     remaining_budget, burn_rate = calculate_error_budget_and_burn_rate()
@@ -8231,7 +8231,7 @@ def get_readiness_status():
     return {
         "data": {
             "readiness_score": score,
-            "status": report_data.get("status", "PASS"),
+            "status": report_data.get("status", "UNKNOWN"),
             "drift_detected": report_data.get("drift_detected", False),
             "drift_findings": report_data.get("drift_findings", []),
             "breakdown": report_data.get("breakdown", {}),
@@ -8466,7 +8466,7 @@ def post_readiness_remediate(req: RemediateRequest):
             post_score = pre_score
             if daemon:
                 post_report = daemon.tick()
-                post_score = post_report.get("readiness_score", 100)
+                post_score = post_report.get("readiness_score")
                 
             if post_score < pre_score or post_score < 95:
                 # Trigger Auto-Rollback!
@@ -9524,7 +9524,7 @@ def get_prompts_metrics_endpoint():
             
         severities[sev] = severities.get(sev, 0) + 1
         
-        qa = p.get("qa_status", "passed")
+        qa = p.get("qa_status", "UNKNOWN")
         qa_statuses[qa] = qa_statuses.get(qa, 0) + 1
         
     return {
@@ -14267,9 +14267,9 @@ def post_prompt_brain_outreach_feedback(payload: dict = None):
         record_feedback(
             role=payload.get("reviewer_role", "Unknown"),
             scenario=payload.get("scenario_reviewed", "Unknown"),
-            correctness=payload.get("correctness_score", 9.0),
-            usefulness=payload.get("usefulness_score", 9.0),
-            trust=payload.get("trust_score", 9.0),
+            correctness=payload.get("correctness_score"),
+            usefulness=payload.get("usefulness_score"),
+            trust=payload.get("trust_score"),
             pain_fit=payload.get("buyer_pain_fit", "HIGH"),
             will_pilot=payload.get("willingness_to_pilot_signal", True),
             will_pay=payload.get("willingness_to_pay_signal", True),

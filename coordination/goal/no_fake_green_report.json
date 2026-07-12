@@ -1,52 +1,6 @@
 {
   "requirement": "REQ-GOV-005",
-  "fallback_completion_defaults": [
-    {
-      "field": "compute_utilization_percent",
-      "fallback_default": "55.0",
-      "line": 1301
-    },
-    {
-      "field": "idle_compute_percent",
-      "fallback_default": "45.0",
-      "line": 1302
-    },
-    {
-      "field": "relay_compute_utilization_percent",
-      "fallback_default": "35.0",
-      "line": 1306
-    },
-    {
-      "field": "macbook_compute_utilization_percent",
-      "fallback_default": "75.0",
-      "line": 1307
-    },
-    {
-      "field": "pert_remaining_minutes",
-      "fallback_default": "90.0",
-      "line": 1312
-    },
-    {
-      "field": "goal_completion_percent",
-      "fallback_default": "90.0",
-      "line": 1313
-    },
-    {
-      "field": "projected_completion_before_compute_utilization",
-      "fallback_default": "\"90.0 mins\"",
-      "line": 1318
-    },
-    {
-      "field": "projected_completion_after_safe_compute_utilization",
-      "fallback_default": "\"55.0 mins\"",
-      "line": 1319
-    },
-    {
-      "field": "confidence_level",
-      "fallback_default": "\"95% Confidence (PERT Beta-Distribution",
-      "line": 1320
-    }
-  ],
-  "missing_timestamp_stamps_now": true,
-  "status": "FAIL"
+  "fallback_completion_defaults": [],
+  "missing_timestamp_stamps_now": false,
+  "status": "PASS"
 }

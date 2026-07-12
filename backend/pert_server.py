@@ -1288,8 +1288,8 @@ def get_pert_data():
     if len(high_risk_approval_list) > 0:
         manual_intervention_list = [{"id": item.get("id"), "status": "BLOCKED"} for item in high_risk_approval_list]
         
-    wrapped_approval_queue = wrap_telemetry_dict(high_risk_approval_list, "has_approval_queue_ledger", metrics_ts, fallback=[])
-    wrapped_intervention_queue = wrap_telemetry_dict(manual_intervention_list, "has_intervention_ledger", metrics_ts, fallback=[])
+    wrapped_approval_queue = wrap_telemetry_dict(high_risk_approval_list, "has_approval_queue_ledger", metrics_ts)
+    wrapped_intervention_queue = wrap_telemetry_dict(manual_intervention_list, "has_intervention_ledger", metrics_ts)
     
     # violations
     wrapped_security_violations = wrap_telemetry_dict(guardrails["security_guardrail_violations"], "guardrail_policy_audit")

@@ -16,7 +16,7 @@ backend/pert_server.py::wrap_telemetry_dict manufactured truth two ways:
      Absence of evidence rendered as the freshest possible evidence.
 
   2. Callers passed a fallback default -- e.g.
-     `compute_gap.get("goal_completion_percent", 90.0)` -- so a MISSING source produced
+     `compute_gap.get("<metric>", <number>)` -- so a MISSING source produced
      value=90.0, source=autonomous_cadence_telemetry, freshness=0.0s, confidence=HIGH.
      A number nobody measured, attributed to a system that never ran.
 

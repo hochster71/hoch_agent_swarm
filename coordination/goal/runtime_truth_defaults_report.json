@@ -1,0 +1,12 @@
+{
+  "by_pattern": {},
+  "requirement": "REQ-GOV-005",
+  "scanned": [
+    "backend/pert_server.py",
+    "backend/main.py",
+    "backend/runtime_truth/primitives.py"
+  ],
+  "status": "PASS",
+  "violation_count": 0,
+  "violations": []
+}
