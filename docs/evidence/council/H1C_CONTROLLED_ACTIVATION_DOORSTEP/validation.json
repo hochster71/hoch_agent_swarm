@@ -1,0 +1,92 @@
+{
+  "schema": "h1c-controlled-activation-validation-v1",
+  "run_id": "H1C-CONTROLLED-ACTIVATION-20260712T174924Z",
+  "generated_at": "2026-07-12T17:49:52.335276+00:00",
+  "tested_commit": "7389acade3c332fc79bc45769a4753b2d74f484f",
+  "h1b_baseline": "8329f23b AUTHORITATIVE_PASS commit-bound (not reopened)",
+  "gates": {
+    "py_compile": {
+      "exit": 0,
+      "status": "PASS"
+    },
+    "h1b_regression": {
+      "exit": 0,
+      "status": "PASS",
+      "passed": 28,
+      "failed": 0,
+      "errors": 0
+    },
+    "h1c_tests": {
+      "exit": 0,
+      "status": "PASS",
+      "passed": 25,
+      "failed": 0,
+      "errors": 0
+    },
+    "frontend_build": {
+      "exit": 0,
+      "status": "PASS"
+    },
+    "realtime_integrity": {
+      "exit": 0,
+      "status": "PASS"
+    },
+    "baseline_lock": {
+      "exit": 0,
+      "status": "PASS"
+    },
+    "openapi_route": {
+      "exit": 0,
+      "status": "PASS"
+    },
+    "live_http": {
+      "http_status": 200,
+      "status": "PASS"
+    },
+    "fail_closed_current": {
+      "status": "PASS",
+      "safe_to_execute": "NO",
+      "promotion": "LOCKED"
+    },
+    "controlled_dry_run": {
+      "status": "PASS",
+      "mission_id": "H1C-DRY-6083E4D8DB85",
+      "relocked": true
+    },
+    "no_founder_auto_grant": {
+      "status": "PASS",
+      "authorization_status": "NOT_GRANTED"
+    }
+  },
+  "runtime_before": {
+    "overall_status": "OPERATOR_HOLD_ACTIVE",
+    "safe_to_execute": "NO",
+    "promotion": "LOCKED",
+    "blockers": [
+      "FOUNDER_AUTH_NOT_GRANTED:NOT_GRANTED",
+      "OPERATOR_HOLD_ACTIVE",
+      "LIVE_PROOF_FILE_MISSING"
+    ]
+  },
+  "runtime_authorized_window": {
+    "overall_status": "OPERATOR_HOLD_ACTIVE",
+    "safe_to_execute": "NO",
+    "promotion": "LOCKED",
+    "authorization_status": "NOT_GRANTED",
+    "founder_action_required": true,
+    "note": "AUTHORIZED_FOR_CONTROLLED_EXECUTION not reached without founder grant"
+  },
+  "runtime_after": {
+    "overall_status": "OPERATOR_HOLD_ACTIVE",
+    "safe_to_execute": "NO",
+    "promotion": "LOCKED"
+  },
+  "overall_status": "DOORSTEP_READY",
+  "helm_label": {
+    "H1C": "DOORSTEP_READY",
+    "PROMOTION": "LOCKED",
+    "SAFE_TO_EXECUTE": "NO",
+    "FOUNDER_ACTION_REQUIRED": true
+  },
+  "note": "AUTHORIZED_FOR_CONTROLLED_EXECUTION requires founder grant + hold release lifecycle + fresh live proof; none fabricated."
+}

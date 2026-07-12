@@ -1,0 +1,56 @@
+{
+  "schema": "h1c-dependency-map-v1",
+  "generated_at": "2026-07-12T17:49:24.557565+00:00",
+  "chains": [
+    {
+      "field": "operator_hold",
+      "authoritative_source": "has_live_project_tracker/data/ag_operator_hold.json",
+      "parser": "h1c_activation.read_operator_hold",
+      "validator": "validate_release_event + release ledger",
+      "normalized_truth": "operator_hold",
+      "authorization_gate": "inactive + ledgered release",
+      "api": "/api/v1/council/state",
+      "ui": "HelmCouncilView"
+    },
+    {
+      "field": "live_proof",
+      "authoritative_source": "coordination/council/h1c_live_proof.json",
+      "parser": "load_live_proof",
+      "validator": "validate_live_proof",
+      "normalized_truth": "live_proof",
+      "authorization_gate": "PASS+fresh+eligible",
+      "api": "/api/v1/council/state",
+      "ui": "HelmCouncilView"
+    },
+    {
+      "field": "candidate/package/digest",
+      "authoritative_source": "h1b registry + request_digests",
+      "parser": "reconcile_candidates",
+      "validator": "H1B recompute",
+      "normalized_truth": "candidate_id/package_id/package_digest",
+      "authorization_gate": "must match proof and founder decision",
+      "api": "/api/v1/council/state",
+      "ui": "BINDING"
+    },
+    {
+      "field": "founder_authorization",
+      "authoritative_source": "h1b_founder_decision.json",
+      "parser": "json load",
+      "validator": "GRANTED/CONSUMED only; never auto-grant",
+      "normalized_truth": "authorization_status",
+      "authorization_gate": "required for controlled auth",
+      "api": "authorization_status",
+      "ui": "Authorization + FOUNDER_ACTION_REQUIRED"
+    },
+    {
+      "field": "promotion/safe_to_execute",
+      "authoritative_source": "H1B+H1C composed",
+      "parser": "council_router.get_council_state",
+      "validator": "H1C tighten-only",
+      "normalized_truth": "promotion/safe_to_execute",
+      "authorization_gate": "YES only if all gates",
+      "api": "promotion/safe_to_execute",
+      "ui": "GATES"
+    }
+  ]
+}

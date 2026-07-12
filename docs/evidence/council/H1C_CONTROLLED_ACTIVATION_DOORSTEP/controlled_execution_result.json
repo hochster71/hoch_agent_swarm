@@ -1,0 +1,44 @@
+{
+  "mission_id": "H1C-DRY-6083E4D8DB85",
+  "kind": "CONTROLLED_LOCAL_DRY_RUN",
+  "not_production_execution": true,
+  "authorization_binding": {
+    "candidate_id": "HELM-H1-CANDIDATE-20260712T013903Z-4B7F62BE",
+    "package_id": "HELM-H1-CANDIDATE-20260712T013903Z-4B7F62BE",
+    "package_digest": "97910a44dbc757d2f5c84a00812976686bcff4456bfba5c0c912ad2f242f819f",
+    "authorization_status": "NOT_GRANTED",
+    "founder_action_required": true,
+    "note": "No founder grant simulated"
+  },
+  "execution_scope": [
+    "h1c_controlled_dry_run",
+    "local_read_only_probe",
+    "local_evidence_emit",
+    "local_ledger_write"
+  ],
+  "started_at": "2026-07-12T17:49:24.577621Z",
+  "tasks": [
+    {
+      "task_id": "H1C-DRY-6083E4D8DB85-T1",
+      "agent": "helm.h1c.dry_run_agent",
+      "action": "local_read_only_probe",
+      "status": "COMPLETE"
+    }
+  ],
+  "external_dispatch": false,
+  "money_movement": false,
+  "key_provisioning": false,
+  "store_submission": false,
+  "completed_at": "2026-07-12T17:49:24.577635Z",
+  "status": "COMPLETE",
+  "output_digest": "1991b0d642f7ebfcf9e0ce4076c93893563fffb5115d2d62c6341f9dc391ecca",
+  "relock": {
+    "status": "RELOCKED_AFTER_COMPLETION_OR_FAILURE",
+    "mission_id": "H1C-DRY-6083E4D8DB85",
+    "relocked_at": "2026-07-12T17:49:24.577732Z",
+    "safe_to_execute": "NO",
+    "promotion": "LOCKED",
+    "reason": "controlled dry-run completed; gate relocked"
+  },
+  "evidence_path": "coordination/council/live_proof_packages/H1C-CONTROLLED-ACTIVATION-20260712T174924Z/mission/H1C-DRY-6083E4D8DB85_result.json"
+}

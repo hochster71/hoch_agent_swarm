@@ -1,0 +1,35 @@
+{
+  "artifact": "H1C_FOUNDER_AUTHORIZATION_DOORSTEP",
+  "schema_version": "1.0",
+  "generated_at": "2026-07-12T17:49:24.577280Z",
+  "source_revision": "7389acade3c332fc79bc45769a4753b2d74f484f",
+  "action_required": "FOUNDER_REVIEW_AND_OPTIONAL_GRANT",
+  "do_not_auto_approve": true,
+  "candidate_id": "HELM-H1-CANDIDATE-20260712T013903Z-4B7F62BE",
+  "package_id": "HELM-H1-CANDIDATE-20260712T013903Z-4B7F62BE",
+  "package_digest": "97910a44dbc757d2f5c84a00812976686bcff4456bfba5c0c912ad2f242f819f",
+  "requested_execution_scope": [
+    "h1c_controlled_dry_run",
+    "local_read_only_probe",
+    "local_ledger_write",
+    "local_evidence_emit"
+  ],
+  "explicitly_excluded": [
+    "money_movement",
+    "key_provisioning",
+    "store_submission",
+    "external_dispatch",
+    "production_promotion"
+  ],
+  "current_blockers": [
+    "FOUNDER_AUTH_NOT_GRANTED:NOT_GRANTED",
+    "OPERATOR_HOLD_ACTIVE",
+    "LIVE_PROOF_FILE_MISSING"
+  ],
+  "instructions": [
+    "Review package digest and candidate identity.",
+    "If intentional, write founder decision with authorization_status=GRANTED bound to package_id and digest.",
+    "Do not clear operator hold by deleting the hold file; use H1C release lifecycle after grant.",
+    "Authorization is single-scope controlled dry-run only unless expanded explicitly."
+  ]
+}

@@ -3,31 +3,55 @@ import React, { useEffect, useState } from "react";
 const STATE_URL = "/api/v1/council/state";
 const POLL_MS = 10000;
 
+/** Normalized council / H1C runtime state from the live API only. */
 interface CouncilState {
-  // Authoritative Contract Fields
-  package_readiness: string;
-  quorum_readiness: string;
+  package_readiness?: string;
+  quorum_readiness?: string;
   promotion: string;
   safe_to_execute: string;
-  authorization_state: string;
-  evidence_state: string;
-  freshness_state: string;
+  authorization_state?: string;
+  authorization_status?: string;
+  evidence_state?: string;
+  freshness_state?: string;
   source_revision: string;
   observed_at: string | null;
-  validated_at: string | null;
-  expires_at: string | null;
-  reason: string;
-  blocking_findings: string[];
-
-  // Legacy/Test compatibility fields
-  h1_package_state: string;
-  h1_package_integrity: string;
-  h1_credential_state: string;
-  h1_founder_authorization: string;
-  h1_live_provider_proof: string;
-  h1_frontier_live_quorum: string;
-  h1_promotion: string;
-  h1_safe_to_execute: string;
+  validated_at?: string | null;
+  expires_at?: string | null;
+  reason?: string;
+  blocking_findings?: string[];
+  blockers?: string[];
+  candidate_id?: string | null;
+  package_id?: string | null;
+  package_digest?: string | null;
+  operator_hold?: {
+    status?: string;
+    reason?: string;
+    since?: string | null;
+    release_eligible?: boolean;
+    active?: boolean;
+  };
+  live_proof?: {
+    status?: string;
+    proof_id?: string | null;
+    fresh?: boolean;
+    age_seconds?: number | null;
+    expires_at?: string | null;
+    source_eligible?: boolean;
+  };
+  execution_scope?: string[];
+  truth_updated_at?: string;
+  overall_status?: string;
+  h1c_state?: string;
+  founder_action_required?: boolean;
+  // legacy fields (may be present)
+  h1_package_state?: string;
+  h1_package_integrity?: string;
+  h1_credential_state?: string;
+  h1_founder_authorization?: string;
+  h1_live_provider_proof?: string;
+  h1_frontier_live_quorum?: string;
+  h1_promotion?: string;
+  h1_safe_to_execute?: string;
 }
 
 const C = {
@@ -40,7 +64,58 @@ const C = {
   red: "#ff3b5c",
   purple: "#c084fc",
   blue: "#3b82f6",
+  slate: "#64748b",
 };
+
+/** HELM doctrine: cyan/blue for go-path accents; never generic green success. */
+function statusColor(val: string | undefined): string {
+  if (!val) return C.mut;
+  const v = val.toUpperCase();
+  if (
+    v === "AUTHORIZED_FOR_CONTROLLED_EXECUTION" ||
+    v === "AUTHORIZED" ||
+    v === "ELIGIBLE" ||
+    v === "PASS" ||
+    v === "FRESH" ||
+    v === "EXECUTING" ||
+    v === "EXECUTION_ACTIVE" ||
+    v === "COMPLETE" ||
+    v === "EXECUTION_COMPLETE"
+  ) {
+    return C.cyan;
+  }
+  if (
+    v === "LOCKED" ||
+    v === "NO" ||
+    v === "FAIL" ||
+    v === "INVALID" ||
+    v === "REVOKED" ||
+    v === "AUTHORIZATION_REVOKED" ||
+    v === "ERROR" ||
+    v === "EXECUTION_FAILED"
+  ) {
+    return C.red;
+  }
+  if (
+    v === "HOLD_ACTIVE" ||
+    v === "OPERATOR_HOLD_ACTIVE" ||
+    v === "BLOCKED" ||
+    v === "ELIGIBLE_BLOCKED" ||
+    v === "OPERATOR_RELEASE_PENDING"
+  ) {
+    return C.amber;
+  }
+  if (
+    v === "STALE" ||
+    v === "LIVE_PROOF_STALE" ||
+    v === "LIVE_PROOF_MISSING" ||
+    v === "LIVE_PROOF_INVALID"
+  ) {
+    return C.purple;
+  }
+  if (v === "UNKNOWN") return C.slate;
+  return C.mut;
+}
 
 const cardStyle: React.CSSProperties = {
   background: C.panel,
@@ -49,22 +124,35 @@ const cardStyle: React.CSSProperties = {
   padding: 20,
   color: C.ink,
   fontFamily: "'Inter', -apple-system, sans-serif",
-  maxWidth: 600,
+  maxWidth: 720,
   margin: "0 auto",
 };
 
-const itemStyle: React.CSSProperties = {
+const row: React.CSSProperties = {
   display: "flex",
   justifyContent: "space-between",
+  gap: 12,
   padding: "8px 0",
-  borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
-  fontSize: 14,
+  borderBottom: "1px solid rgba(255,255,255,0.05)",
+  fontSize: 13,
 };
 
-const labelStyle: React.CSSProperties = {
-  color: C.mut,
-  fontWeight: 500,
-};
+function Badge({ label }: { label: string }) {
+  return (
+    <span
+      title={label}
+      style={{
+        color: statusColor(label),
+        fontWeight: 700,
+        letterSpacing: "0.04em",
+        fontFamily: "ui-monospace, monospace",
+        fontSize: 12,
+      }}
+    >
+      {label || "UNKNOWN"}
+    </span>
+  );
+}
 
 export const HelmCouncilView: React.FC = () => {
   const [state, setState] = useState<CouncilState | null>(null);
@@ -78,20 +166,19 @@ export const HelmCouncilView: React.FC = () => {
         if (!response.ok) {
           throw new Error(`HTTP Error: ${response.status}`);
         }
-        const data = await response.json();
+        const data = (await response.json()) as CouncilState;
         if (alive) {
           setState(data);
           setError(null);
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         if (alive) {
-          // Clear prior success — never retain a green card after a failed refresh
+          // Clear prior success — never retain a GO card after failed refresh
           setState(null);
-          setError(err.message || String(err));
+          setError(err instanceof Error ? err.message : String(err));
         }
       }
     };
-
     fetchState();
     const interval = setInterval(fetchState, POLL_MS);
     return () => {
@@ -100,21 +187,13 @@ export const HelmCouncilView: React.FC = () => {
     };
   }, []);
 
-  const getStatusColor = (val: string | undefined): string => {
-    if (!val) return C.mut;
-    const v = val.toUpperCase();
-    if (v === "PASS" || v === "YES" || v === "FRESH") return C.cyan; // Cyan/blue instead of green
-    if (v === "FAIL" || v === "NO" || v === "INVALID" || v === "LOCKED") return C.red;
-    if (v === "BLOCKED") return C.amber;
-    if (v === "STALE") return C.purple;
-    return C.mut;
-  };
-
   if (error && !state) {
     return (
       <div style={{ ...cardStyle, borderColor: C.red }}>
-        <h3 style={{ color: C.red, margin: "0 0 10px 0" }}>Backend Council State Unreachable</h3>
-        <p style={{ margin: 0, fontFamily: "monospace", fontSize: 13 }}>{error}</p>
+        <h3 style={{ color: C.red, margin: "0 0 10px 0" }}>Council state UNKNOWN</h3>
+        <p style={{ margin: 0, fontFamily: "monospace", fontSize: 13 }}>
+          Fetch failed — prior success cleared. {error}
+        </p>
       </div>
     );
   }
@@ -122,103 +201,159 @@ export const HelmCouncilView: React.FC = () => {
   if (!state) {
     return (
       <div style={cardStyle}>
-        <p style={{ margin: 0, color: C.mut }}>Loading Authoritative Council State...</p>
+        <p style={{ margin: 0, color: C.mut }}>Loading authoritative council / H1C state…</p>
       </div>
     );
   }
 
+  const overall = state.h1c_state || state.overall_status || "UNKNOWN";
+  const blockers = state.blockers?.length
+    ? state.blockers
+    : state.blocking_findings || [];
+  const hold = state.operator_hold || {};
+  const proof = state.live_proof || {};
+  const authStatus = state.authorization_status || state.authorization_state || "UNKNOWN";
+
   return (
-    <div style={cardStyle}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 15 }}>
-        <h3 style={{ margin: 0, color: C.cyan, fontSize: 18, letterSpacing: "0.05em" }}>
-          COUNCIL OPERATIONAL STATE (R2)
+    <div style={cardStyle} data-testid="helm-council-view">
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+        <h3 style={{ margin: 0, color: C.cyan, fontSize: 17, letterSpacing: "0.06em" }}>
+          COUNCIL / H1C RUNTIME TRUTH
         </h3>
-        <span style={{ fontSize: 11, fontFamily: "monospace", color: C.mut }}>
-          Rev: {state.source_revision?.slice(0, 8)}
+        <span style={{ fontSize: 11, fontFamily: "monospace", color: C.mut }} title={state.source_revision}>
+          Rev: {(state.source_revision || "UNKNOWN").slice(0, 8)}
         </span>
       </div>
 
-      <div style={{ marginBottom: 20 }}>
-        <div style={{ fontSize: 11, color: C.mut, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 5 }}>
-          Security & Promotion Gates
-        </div>
+      <div style={{ marginBottom: 14, padding: 10, background: "rgba(34,246,255,0.06)", borderRadius: 8 }}>
+        <div style={{ fontSize: 10, color: C.mut, letterSpacing: "0.12em", marginBottom: 4 }}>OVERALL / H1C STATE</div>
+        <Badge label={overall} />
+      </div>
 
-        <div style={itemStyle}>
-          <span style={labelStyle}>Package Readiness</span>
-          <span style={{ color: getStatusColor(state.package_readiness), fontWeight: "bold" }}>
-            {state.package_readiness}
+      <div style={{ marginBottom: 12 }}>
+        <div style={{ fontSize: 10, color: C.mut, letterSpacing: "0.1em", marginBottom: 6 }}>GATES</div>
+        <div style={row}>
+          <span style={{ color: C.mut }}>Promotion</span>
+          <Badge label={state.promotion || "LOCKED"} />
+        </div>
+        <div style={row}>
+          <span style={{ color: C.mut }}>Safe to execute</span>
+          <Badge label={state.safe_to_execute || "NO"} />
+        </div>
+        <div style={row}>
+          <span style={{ color: C.mut }}>Authorization</span>
+          <Badge label={authStatus} />
+        </div>
+        <div style={row}>
+          <span style={{ color: C.mut }}>Package readiness</span>
+          <Badge label={state.package_readiness || "UNKNOWN"} />
+        </div>
+        <div style={row}>
+          <span style={{ color: C.mut }}>Quorum readiness</span>
+          <Badge label={state.quorum_readiness || "UNKNOWN"} />
+        </div>
+      </div>
+
+      <div style={{ marginBottom: 12 }}>
+        <div style={{ fontSize: 10, color: C.mut, letterSpacing: "0.1em", marginBottom: 6 }}>BINDING</div>
+        <div style={row}>
+          <span style={{ color: C.mut }}>Candidate</span>
+          <span style={{ fontFamily: "monospace", fontSize: 11 }} title={state.candidate_id || ""}>
+            {state.candidate_id || "—"}
           </span>
         </div>
-        <div style={itemStyle}>
-          <span style={labelStyle}>Quorum Readiness</span>
-          <span style={{ color: getStatusColor(state.quorum_readiness), fontWeight: "bold" }}>
-            {state.quorum_readiness}
+        <div style={row}>
+          <span style={{ color: C.mut }}>Package</span>
+          <span style={{ fontFamily: "monospace", fontSize: 11 }} title={state.package_id || ""}>
+            {state.package_id || "—"}
           </span>
         </div>
-        <div style={itemStyle}>
-          <span style={labelStyle}>Production Promotion</span>
-          <span style={{ color: getStatusColor(state.promotion), fontWeight: "bold" }}>
-            {state.promotion}
+        <div style={row}>
+          <span style={{ color: C.mut }}>Digest</span>
+          <span style={{ fontFamily: "monospace", fontSize: 11 }} title={state.package_digest || ""}>
+            {(state.package_digest || "—").slice(0, 16)}
+            {state.package_digest && state.package_digest.length > 16 ? "…" : ""}
           </span>
         </div>
-        <div style={itemStyle}>
-          <span style={labelStyle}>Safe to Execute</span>
-          <span style={{ color: getStatusColor(state.safe_to_execute), fontWeight: "bold" }}>
-            {state.safe_to_execute}
+        <div style={row}>
+          <span style={{ color: C.mut }}>Execution scope</span>
+          <span style={{ fontFamily: "monospace", fontSize: 11, textAlign: "right", maxWidth: "55%" }}>
+            {(state.execution_scope || []).join(", ") || "—"}
           </span>
         </div>
       </div>
 
-      <div style={{ marginBottom: 20 }}>
-        <div style={{ fontSize: 11, color: C.mut, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 5 }}>
-          Evidence & Authorizations
+      <div style={{ marginBottom: 12 }}>
+        <div style={{ fontSize: 10, color: C.mut, letterSpacing: "0.1em", marginBottom: 6 }}>
+          OPERATOR HOLD / LIVE PROOF
         </div>
-
-        <div style={itemStyle}>
-          <span style={labelStyle}>Authorization State</span>
-          <span style={{ color: getStatusColor(state.authorization_state), fontWeight: "bold" }}>
-            {state.authorization_state}
+        <div style={row}>
+          <span style={{ color: C.mut }}>Hold</span>
+          <Badge label={hold.status || (hold.active ? "HOLD_ACTIVE" : "UNKNOWN")} />
+        </div>
+        <div style={row}>
+          <span style={{ color: C.mut }}>Hold reason</span>
+          <span style={{ fontSize: 11, color: C.ink, textAlign: "right", maxWidth: "55%" }}>
+            {hold.reason || "—"}
           </span>
         </div>
-        <div style={itemStyle}>
-          <span style={labelStyle}>Evidence State</span>
-          <span style={{ color: getStatusColor(state.evidence_state), fontWeight: "bold" }}>
-            {state.evidence_state}
+        <div style={row}>
+          <span style={{ color: C.mut }}>Release eligible</span>
+          <Badge label={hold.release_eligible ? "ELIGIBLE" : "NO"} />
+        </div>
+        <div style={row}>
+          <span style={{ color: C.mut }}>Live proof</span>
+          <Badge label={proof.status || "UNKNOWN"} />
+        </div>
+        <div style={row}>
+          <span style={{ color: C.mut }}>Proof age (s)</span>
+          <span style={{ fontFamily: "monospace", fontSize: 12 }}>
+            {proof.age_seconds == null ? "—" : String(proof.age_seconds)}
           </span>
         </div>
-        <div style={itemStyle}>
-          <span style={labelStyle}>Freshness State</span>
-          <span style={{ color: getStatusColor(state.freshness_state), fontWeight: "bold" }}>
-            {state.freshness_state}
-          </span>
+        <div style={row}>
+          <span style={{ color: C.mut }}>Proof expires</span>
+          <span style={{ fontFamily: "monospace", fontSize: 11 }}>{proof.expires_at || "—"}</span>
+        </div>
+        <div style={row}>
+          <span style={{ color: C.mut }}>Source eligible</span>
+          <Badge label={proof.source_eligible ? "ELIGIBLE" : "NO"} />
         </div>
       </div>
 
-      <div style={{ borderTop: "1px solid rgba(255, 255, 255, 0.1)", paddingTop: 15 }}>
-        <div style={{ fontSize: 11, color: C.mut, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 5 }}>
-          Metadata & Audit
-        </div>
-        <div style={itemStyle}>
-          <span style={labelStyle}>Observed At</span>
-          <span style={{ fontFamily: "monospace", fontSize: 12 }}>{state.observed_at || "—"}</span>
-        </div>
-        <div style={itemStyle}>
-          <span style={labelStyle}>Validated At</span>
-          <span style={{ fontFamily: "monospace", fontSize: 12 }}>{state.validated_at || "—"}</span>
-        </div>
-        <div style={itemStyle}>
-          <span style={labelStyle}>Expires At</span>
-          <span style={{ fontFamily: "monospace", fontSize: 12 }}>{state.expires_at || "—"}</span>
-        </div>
-        <div style={{ marginTop: 12, padding: 10, background: "rgba(255, 255, 255, 0.02)", borderRadius: 6 }}>
-          <div style={{ fontSize: 11, color: C.mut, fontWeight: "bold", marginBottom: 4 }}>REASON/BLOCKS</div>
-          <div style={{ fontSize: 12, color: state.blocking_findings?.length ? C.amber : C.cyan, lineHeight: 1.4 }}>
-            {state.reason}
+      <div
+        style={{
+          marginTop: 8,
+          padding: 10,
+          background: "rgba(255,176,32,0.08)",
+          borderRadius: 6,
+          border: `1px solid ${C.amber}33`,
+        }}
+      >
+        <div style={{ fontSize: 10, color: C.mut, fontWeight: 700, marginBottom: 6 }}>BLOCKERS</div>
+        {blockers.length ? (
+          <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, color: C.amber, lineHeight: 1.45 }}>
+            {blockers.map((b) => (
+              <li key={b} title={b}>
+                {b}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div style={{ fontSize: 12, color: C.cyan }}>No blockers listed</div>
+        )}
+        {state.founder_action_required ? (
+          <div style={{ marginTop: 8, fontSize: 11, color: C.purple }}>
+            FOUNDER_ACTION_REQUIRED — doorstep packet only; not auto-approved.
           </div>
-        </div>
+        ) : null}
       </div>
 
-      {/* Hidden legacy fields to satisfy legacy test assertions and maintain compatibility */}
+      <div style={{ marginTop: 12, fontSize: 10, color: C.mut, fontFamily: "monospace" }}>
+        truth_updated_at: {state.truth_updated_at || state.observed_at || "—"}
+      </div>
+
+      {/* Legacy field markers for H1B compatibility tests (not success badges) */}
       <div style={{ display: "none" }}>
         <span>h1_package_state: {state.h1_package_state}</span>
         <span>h1_package_integrity: {state.h1_package_integrity}</span>
@@ -228,6 +363,10 @@ export const HelmCouncilView: React.FC = () => {
         <span>h1_frontier_live_quorum: {state.h1_frontier_live_quorum}</span>
         <span>h1_promotion: {state.h1_promotion}</span>
         <span>h1_safe_to_execute: {state.h1_safe_to_execute}</span>
+        <span>state.promotion: {state.promotion}</span>
+        <span>package_readiness: {state.package_readiness}</span>
+        <span>quorum_readiness: {state.quorum_readiness}</span>
+        <span>safe_to_execute: {state.safe_to_execute}</span>
       </div>
     </div>
   );

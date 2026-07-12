@@ -266,8 +266,44 @@ def get_council_state():
     h1_promotion = promotion
     h1_safe_to_execute = safe_to_execute
 
+    # H1C controlled activation truth (fail-closed; never invents founder grant)
+    h1c = {}
+    try:
+        from backend.instrument_integrity.h1c_activation import compute_h1c_truth
+
+        h1c = compute_h1c_truth(repo_root=ROOT, council_dir=council_dir)
+        # Merge H1C blockers into findings (unique)
+        for b in h1c.get("blockers") or []:
+            if b not in blocking_findings:
+                blocking_findings.append(b)
+        # Promotion / safe_to_execute: H1C may only tighten, never loosen H1B locks
+        if h1c.get("safe_to_execute") == "YES" and safe_to_execute == "YES":
+            safe_to_execute = "YES"
+        else:
+            safe_to_execute = "NO"
+            h1_safe_to_execute = "NO"
+        if h1c.get("promotion") == "YES" and promotion == "YES":
+            promotion = "YES"
+        else:
+            promotion = "LOCKED"
+            h1_promotion = "LOCKED"
+        if blocking_findings:
+            reason = "Blocked by: " + ", ".join(blocking_findings)
+    except Exception as e:
+        h1c = {
+            "overall_status": "ERROR",
+            "blockers": [f"H1C_TRUTH_EXCEPTION:{type(e).__name__}"],
+            "safe_to_execute": "NO",
+            "promotion": "LOCKED",
+        }
+        safe_to_execute = "NO"
+        promotion = "LOCKED"
+        h1_safe_to_execute = "NO"
+        h1_promotion = "LOCKED"
+        blocking_findings.append(f"H1C_TRUTH_EXCEPTION:{type(e).__name__}")
+
     return {
-        # Authoritative Contract Fields
+        # Authoritative Contract Fields (H1B preserved)
         "package_readiness": package_readiness,
         "quorum_readiness": quorum_readiness,
         "promotion": promotion,
@@ -281,6 +317,34 @@ def get_council_state():
         "expires_at": expires_at,
         "reason": reason,
         "blocking_findings": blocking_findings,
+
+        # H1C normalized runtime truth
+        "candidate_id": h1c.get("candidate_id"),
+        "package_id": h1c.get("package_id"),
+        "package_digest": h1c.get("package_digest"),
+        "authorization_status": h1c.get("authorization_status", authorization_state),
+        "operator_hold": h1c.get("operator_hold")
+        or {
+            "status": "UNKNOWN",
+            "reason": "",
+            "since": None,
+            "release_eligible": False,
+        },
+        "live_proof": h1c.get("live_proof")
+        or {
+            "status": "UNKNOWN",
+            "proof_id": None,
+            "fresh": False,
+            "age_seconds": None,
+            "expires_at": None,
+            "source_eligible": False,
+        },
+        "execution_scope": h1c.get("execution_scope") or [],
+        "blockers": h1c.get("blockers") or blocking_findings,
+        "truth_updated_at": h1c.get("truth_updated_at") or observed_at,
+        "overall_status": h1c.get("overall_status") or "UNKNOWN",
+        "h1c_state": h1c.get("h1c_state") or "UNKNOWN",
+        "founder_action_required": h1c.get("founder_action_required", True),
 
         # Legacy/Test compatibility fields
         "h1_package_state": h1_package_state,
