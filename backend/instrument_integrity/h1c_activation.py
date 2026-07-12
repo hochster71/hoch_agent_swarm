@@ -906,14 +906,27 @@ def validate_founder_authorization_template(
     if signature is None or signature == "":
         blockers.append("FOUNDER_SIGNATURE_MISSING")
 
-    impl = str(template.get("implementation_commit") or "")
+    impl = str(template.get("implementation_commit") or "").strip()
     if expected_commit:
-        # Accept full SHA or short prefix match
-        if not impl or not (
-            impl == expected_commit
-            or expected_commit.startswith(impl)
-            or impl.startswith(expected_commit[:8] if len(expected_commit) >= 8 else expected_commit)
-        ):
+        # Fail closed on commit bind: full SHA match, or unambiguous short SHA
+        # (git convention: minimum 8 hex chars). Never accept 1–7 char prefixes.
+        exp = str(expected_commit).strip()
+        MIN_PREFIX = 8
+
+        def _commits_match(recorded: str, expected: str) -> bool:
+            if not recorded or not expected:
+                return False
+            if recorded == expected:
+                return True
+            # recorded is a short form of expected (e.g. b39c196e of full SHA)
+            if len(recorded) >= MIN_PREFIX and expected.startswith(recorded):
+                return True
+            # expected is a short form of recorded (caller passed short SHA)
+            if len(expected) >= MIN_PREFIX and recorded.startswith(expected):
+                return True
+            return False
+
+        if not _commits_match(impl, exp):
             blockers.append(f"FOUNDER_COMMIT_MISMATCH:{impl}")
 
     digest = str(template.get("package_digest") or "")

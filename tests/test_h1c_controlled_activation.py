@@ -727,3 +727,55 @@ def test_founder_only_actions_flag_prohibited():
     )
     assert r["authorized"] is False
     assert any("FOUNDER_ONLY_ACTIONS" in b for b in r["blockers"])
+
+
+def test_short_prefix_commit_cannot_authorize():
+    """Regression: 1–7 char SHA prefixes must fail closed (not startswith(impl) leak)."""
+    from backend.instrument_integrity.h1c_activation import (
+        validate_founder_authorization_template,
+    )
+    full = "b39c196e5470857a7b8c713de124f6e73b0a7694"
+    for short in ("b", "b3", "b39"):
+        r = validate_founder_authorization_template(
+            {
+                "decision_status": "APPROVED",
+                "decision": "APPROVE_CONTROLLED_LOCAL_EXECUTION",
+                "approval_id": "A1",
+                "founder_signature": "sig",
+                "implementation_commit": short,
+                "package_digest": "d" * 64,
+                "candidate_id": "C",
+                "authorized_execution_scope": ["h1c_controlled_dry_run"],
+                "authorized_environment": "local_only",
+                "external_dispatch_allowed": False,
+                "founder_only_actions_allowed": False,
+                "expires_at": "2099-01-01T00:00:00Z",
+            },
+            expected_commit=full,
+            expected_package_digest="d" * 64,
+            expected_candidate_id="C",
+        )
+        assert r["authorized"] is False, f"short={short!r} wrongly authorized"
+        assert any("COMMIT_MISMATCH" in b for b in r["blockers"]), r["blockers"]
+
+    # Valid 8-char prefix of the same commit is allowed as a short SHA
+    r8 = validate_founder_authorization_template(
+        {
+            "decision_status": "APPROVED",
+            "decision": "APPROVE_CONTROLLED_LOCAL_EXECUTION",
+            "approval_id": "A1",
+            "founder_signature": "sig",
+            "implementation_commit": full[:8],
+            "package_digest": "d" * 64,
+            "candidate_id": "C",
+            "authorized_execution_scope": ["h1c_controlled_dry_run"],
+            "authorized_environment": "local_only",
+            "external_dispatch_allowed": False,
+            "founder_only_actions_allowed": False,
+            "expires_at": "2099-01-01T00:00:00Z",
+        },
+        expected_commit=full,
+        expected_package_digest="d" * 64,
+        expected_candidate_id="C",
+    )
+    assert r8["authorized"] is True, r8["blockers"]
