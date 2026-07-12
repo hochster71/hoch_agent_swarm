@@ -54,9 +54,13 @@ def _valid_proof(**over):
     return base
 
 
+import backend.instrument_integrity.h1c_activation as h1c_act
+ORIG_GET_LOADED = h1c_act.get_loaded_sha256
+ORIG_GIT_BLOB = h1c_act.git_blob_sha256
+
+
 @pytest.fixture(autouse=True)
 def mock_provenance_invariant(monkeypatch):
-    import backend.instrument_integrity.h1c_activation as h1c_act
     monkeypatch.setattr(h1c_act, "get_loaded_sha256", lambda: "mock_sha")
     monkeypatch.setattr(h1c_act, "git_blob_sha256", lambda commit, path, repo_root: "mock_sha")
 
@@ -969,3 +973,23 @@ def test_granted_authorization_opens_then_relocks_and_denies_second(tmp_path, ev
             assert r2["status"] == "DENIED"
     finally:
         h1b_reg.reconcile_candidates = orig
+
+
+def test_real_git_provenance_invariant_check():
+    """Verify that the unmocked file SHA matches the Git HEAD blob SHA when clean."""
+    from backend.instrument_integrity.h1c_activation import git_sha
+    head_sha = git_sha(ROOT)
+    loaded_sha = ORIG_GET_LOADED()
+    expected_sha = ORIG_GIT_BLOB(head_sha, "backend/instrument_integrity/h1c_activation.py", ROOT)
+
+    import subprocess
+    proc = subprocess.run(["git", "diff", "--quiet", "backend/instrument_integrity/h1c_activation.py"], cwd=str(ROOT))
+    is_clean = (proc.returncode == 0)
+    if is_clean:
+        assert expected_sha is not None
+        assert loaded_sha == expected_sha
+        print(f"\nReal git provenance check passed: loaded={loaded_sha}, expected={expected_sha}")
+    else:
+        # If dirty, expected_sha might not match, but shouldn't fail the build
+        pass
+
