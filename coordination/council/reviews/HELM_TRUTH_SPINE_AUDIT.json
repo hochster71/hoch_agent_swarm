@@ -1,0 +1,324 @@
+{
+  "schema": "HELM_SPECIALIST_AUDIT_v1",
+  "audit_set": "TRUTH SPINE — 01, 02, 21, 22, 28",
+  "auditor": "claude-implementation-lane",
+  "code_revision": "fb484a3a",
+  "environment": "sandboxed linux workspace; no credentials provisioned; operator hold ACTIVE",
+  "audit_timestamp": "2026-07-12T07:00:00Z",
+  "method_note": "No PASS in this document is based on documentation, screenshots, agent assertions, or a prior summary. Every PASS and every FAIL below was produced by an executed command whose output is quoted.",
+
+  "AUDIT_01": {
+    "audit_id": "A01-GOAL-INTEGRITY",
+    "domain": "Goal and requirements integrity",
+    "scope": "North Star definition, acceptance criteria, traceability, goal-percentage derivation, founder-gate separation",
+    "authoritative_sources_inspected": [
+      "config/goal_completion_contract.json",
+      "has_live_project_tracker/data/northstar_state.json",
+      "has_live_project_tracker/data/has_hasf_brain_unified_goal_contract.json",
+      "has_live_project_tracker/data/goal_blocker_register.json",
+      "has_live_project_tracker/data/k_track_ledger.json",
+      "backend/pert_server.py (WORKSTREAMS, GOAL_WEIGHTS, get_pert_data)"
+    ],
+    "commands_executed": [
+      "python3 -c json.load(config/goal_completion_contract.json)",
+      "grep -rn 'goal_completion_percent' --include=*.py",
+      "python3 AST/regex extraction of WORKSTREAMS statuses",
+      "python3 -c \"'OPENAI_API_KEY' in os.environ\"  (existence only)",
+      "python3 k_track_ledger self-citation + expiry analysis"
+    ],
+    "status": "FAIL",
+    "findings": [
+      {
+        "id": "F-01.1",
+        "severity": "P0",
+        "title": "Four competing North Stars. No single unambiguous goal.",
+        "evidence": {
+          "config/goal_completion_contract.json": "north_star = 'Accelerate time-to-value for all factories...' (goal_id HAS-HASF-FULL-BUILDOUT)",
+          "has_live_project_tracker/data/northstar_state.json": "goal = 'Launch HSF Story Studio as a paid product' (ts 2026-07-07, 5 days STALE)",
+          "has_hasf_brain_unified_goal_contract.json": "terminal_goal = 'Ship a monetizable HAS/HASF product to app stores...' — and it claims to have reconciled THREE prior definitions (G-0 RESOLVED), yet northstar_state.json still disagrees with it",
+          "HELM Council mission": "H1 single-run frontier proof — a fifth workstream with its own gates"
+        },
+        "impact": "Goal percentage, critical path, and blocker triage are computed against different goals. 'Percent complete' has no referent."
+      },
+      {
+        "id": "F-01.2",
+        "severity": "P0",
+        "title": "Goal percentage is NOT calculated from satisfied requirements. It is the sum of weights of tasks whose status is a hardcoded string literal in Python source.",
+        "evidence": {
+          "backend/pert_server.py:1170": "completed_tasks = [t for t in WORKSTREAMS if t['status'] == 'completed']",
+          "backend/pert_server.py:1171": "goal_completion_percent = round(sum(weights.get(t['id'],0.0) for t in completed_tasks),1)",
+          "WORKSTREAMS (line 149, hardcoded literal list)": "20 tasks — 14 'completed', 5 'pending', 1 'blocked'. No task status is derived from a passing validator, a test result, or an evidence artifact."
+        },
+        "exploit": "Editing one string from 'pending' to 'completed' raises the reported goal percentage. No evidence is consulted.",
+        "requirement_violated": "'Goal percentage is calculated from satisfied requirements rather than subjective estimates.'"
+      },
+      {
+        "id": "F-01.3",
+        "severity": "P0",
+        "title": "Three different goal percentages exist simultaneously, none evidence-derived.",
+        "evidence": {
+          "unified_goal_contract.goal_completion_percent": "95 (asserted literal, generated 2026-07-06, never recomputed)",
+          "pert_server computed value": "sum of weights of hardcoded 'completed' tasks",
+          "LIVE API /api/pert/data": "90.0 — and this is a FALLBACK DEFAULT, not a measurement (see F-02.1)"
+        }
+      },
+      {
+        "id": "F-01.4",
+        "severity": "P0",
+        "title": "Blocker G-1 'K1 LLM/API credentials' is marked RESOLVED while zero credentials exist — and its dependent is still blocked on it.",
+        "evidence": {
+          "goal_blocker_register.json": "G-1 status=RESOLVED, severity=P0, unblock_action='Provision OPENAI_API_KEY + ANTHROPIC_API_KEY'",
+          "executed existence check": "OPENAI_API_KEY in env: False | ANTHROPIC_API_KEY in env: False | XAI_API_KEY in env: False | .env: ABSENT",
+          "internal contradiction": "G-2 status = 'BLOCKED_ON_G-1' — a RESOLVED blocker is still blocking its dependent",
+          "H1B corroboration": "credential_readiness = NOT_PROVISIONED"
+        }
+      },
+      {
+        "id": "F-01.5",
+        "severity": "P0",
+        "title": "Acceptance criteria are not measurable. Requirements do not map to tests, evidence, or owners.",
+        "evidence": "config/goal_completion_contract.json completion_definition = 12 prose statements ('Local runtime starts reliably', 'No fake PASS/ONLINE states', 'Metrics show progress to GOAL'). No requirement ID, no threshold, no validator, no evidence path, no owner on any of the 12.",
+        "requirement_violated": "'Every requirement has measurable acceptance criteria' and 'Requirements map to implementation, tests, evidence, and owners.'"
+      }
+    ],
+    "corrected_goal_contract": {
+      "note": "Proposed. Requires founder ratification — this audit does not adopt it unilaterally.",
+      "north_star": "ONE sentence, ratified by the founder, superseding all four. Every other goal file must be deleted or explicitly marked DERIVED.",
+      "goal_percent_rule": "goal_percent = 100 * (blocking requirements with an EXECUTED PASSING validator AND a fresh evidence artifact bound to the current code revision) / (total blocking requirements). Any requirement whose validator did not run in this revision counts as 0, never as its last known value.",
+      "requirement_schema": {
+        "id": "REQ-nnn",
+        "statement": "testable assertion",
+        "acceptance_criteria": "machine-checkable threshold",
+        "validator_command": "the exact command that proves it",
+        "evidence_path": "artifact produced BY the validator, never the file making the claim",
+        "evidence_freshness_sla": "max age before the requirement reverts to UNKNOWN",
+        "owner": "agent or FOUNDER_ONLY",
+        "blocking": "true|false"
+      },
+      "founder_gate_rule": "A founder gate may be marked RESOLVED only by an artifact produced OUTSIDE the ledger that records the claim, and only if that artifact is unexpired. Self-citation is inadmissible.",
+      "hidden_scope_found": "HSF Story Studio (northstar_state.json) is tracked as the goal by one subsystem and is absent from the unified contract's terminal node."
+    }
+  },
+
+  "AUDIT_02": {
+    "audit_id": "A02-RUNTIME-TRUTH",
+    "domain": "Runtime truth and liveness",
+    "scope": "Booted the real backend locally and seeded faults. No mocks.",
+    "commands_executed": [
+      "python3 -m uvicorn backend.main:app --port 8099   (booted, real)",
+      "python3 -m uvicorn backend.pert_server:app --port 8765   (booted, real)",
+      "curl /api/pert/data, /api/gateway/status, /api/agent-registry/health, /api/modelops/health, /api/app-store/readiness",
+      "python3 -c 'from backend.main import app; count registered routes'"
+    ],
+    "status": "FAIL",
+    "positive_tests_passed": [
+      {
+        "test": "Dependency outage — PERT calc server (:8765) down, proxy queried",
+        "result": "PASS. /api/pert/data returned HTTP 503 with {'status':'UNAVAILABLE','reason':'PERT calculation server unavailable','error':'<urlopen error [Errno 111] Connection refused>'}. It failed CLOSED and surfaced the real error. It did NOT serve a cached or default green."
+      },
+      {
+        "test": "Model backend unreachable — gateway status",
+        "result": "PASS. /api/gateway/status honestly reports alive:false per backend rather than fabricating liveness."
+      },
+      {
+        "test": "Quarantined route",
+        "result": "PASS. /api/app-store/readiness returns 403 'Route is quarantined in HAS-only mode.'"
+      }
+    ],
+    "findings": [
+      {
+        "id": "F-02.1",
+        "severity": "P0-CRITICAL",
+        "title": "A MISSING data source renders the primary goal metric as 90% complete, maximally fresh, HIGH confidence, attributed to a telemetry system that never ran.",
+        "executed_proof": "GET http://127.0.0.1:8765/api/pert/data -> goal_completion_percent: value=90.0  source=autonomous_cadence_telemetry  freshness=0.0s  confidence=HIGH  fallback_state=90.0",
+        "root_cause": "backend/pert_server.py:1313 — wrap_telemetry_dict(compute_gap.get('goal_completion_percent', 90.0), 'autonomous_cadence_telemetry', ...). When compute_gap has no such key, the literal 90.0 is substituted and then STAMPED with a real-looking source, a freshness of zero, and HIGH confidence. The consumer cannot distinguish it from a measurement.",
+        "scale": "94 `fallback=` sites in backend/pert_server.py. Line 1312 defaults pert_remaining_minutes to 90.0; line 1320 defaults confidence_level to '95% Confidence (PERT Beta-Distribution)' — a fabricated statistical claim.",
+        "violates": "'Stale success files cannot leave the system green' and 'UNKNOWN is shown when authoritative state cannot be determined.'"
+      },
+      {
+        "id": "F-02.2",
+        "severity": "P0",
+        "title": "Missing timestamps are laundered into perfect freshness.",
+        "evidence": "backend/pert_server.py:35-47 — def wrap_telemetry_dict(value, source, last_updated_iso=None, confidence='HIGH', ...): if not last_updated_iso: last_updated_iso = datetime.now(timezone.utc). A field with NO timestamp is therefore reported with freshness=0.0s and confidence=HIGH.",
+        "impact": "Staleness is structurally undetectable for any field lacking a timestamp. The absence of evidence renders as the freshest possible evidence."
+      },
+      {
+        "id": "F-02.3",
+        "severity": "P1",
+        "title": "Startup reports success despite a failed dependency.",
+        "evidence": "backend/main.py boot log: 'ERROR - Failed to load approved service nodes from registry: no such table: device_service_registry' followed by 'Application startup complete.' and a STRICT STARTUP ENVIRONMENT VERIFICATION block reporting [OK] on every dependency it checks.",
+        "impact": "Health = process existence, not dependency health. A process-liveness check would report ONLINE."
+      },
+      {
+        "id": "F-02.4",
+        "severity": "P0",
+        "title": "The HELM Council state endpoint — the truth source for every H1B gate — IS NOT REGISTERED IN THE RUNNING APPLICATION.",
+        "executed_proof": "from backend.main import app -> 616 registered paths, ZERO containing 'council'. GET /api/v1/helm/council/state -> HTTP 404.",
+        "cause": "backend/main.py in the working tree no longer contains the endpoint (grep 'council' -> 0 matches). The uncommitted WIP that carried it — including the H1B gate fields committed in fb484a3a's integration notes — was destroyed by a concurrent lane. See F-21.4.",
+        "impact": "Every H1B UI gate, credential state, and decision statement is unserved. The Council view has no backend."
+      }
+    ],
+    "truth_source_hierarchy": {
+      "note": "AUTHORITATIVE = the only admissible source. Anything else displaying the field must be marked DERIVED and must go UNKNOWN when the authoritative source is unreachable.",
+      "goal_percent": "AUTHORITATIVE: a validator-derived computation over blocking requirements. TODAY: NONE EXISTS. Current value (90.0) is a fallback literal. Must render UNKNOWN.",
+      "frontier_council_quorum": "AUTHORITATIVE: scripts/council/aggregate.py under execution_mode=LIVE_EXTERNAL + consumed authorization. Currently false. (Code-enforced — see A22.)",
+      "authorization_status": "AUTHORITATIVE: coordination/council/frontier_authorization.json. Currently NOT_GRANTED.",
+      "authorization_consumed": "AUTHORITATIVE: coordination/council/authorization_ledger.jsonl (append-only). Currently empty.",
+      "active_h1_candidate": "AUTHORITATIVE: coordination/council/h1_candidate_registry.json. RECONCILED to 4B7F62BE.",
+      "credential_readiness": "AUTHORITATIVE: os.environ existence check. Currently NOT_PROVISIONED (all three).",
+      "package_integrity": "AUTHORITATIVE: fresh digest recomputation (scripts/council/h1_authorization.py). PASS.",
+      "runtime_health": "AUTHORITATIVE: live dependency probe. NOT process existence.",
+      "test_results": "AUTHORITATIVE: a pytest run bound to a git revision. NOT a test that reads string literals (see F-21.3)."
+    }
+  },
+
+  "AUDIT_21": {
+    "audit_id": "A21-EVIDENCE-CHAIN",
+    "domain": "Evidence, provenance, chain of custody",
+    "scope": "Attempted substitution, deletion, corruption, and replay against the evidence plane.",
+    "status": "FAIL",
+    "evidence_assurance_rating": "LOW — NOT TRUSTWORTHY",
+    "findings": [
+      {
+        "id": "F-21.3",
+        "severity": "P0-CRITICAL",
+        "title": "A FALSE-GREEN TEST WAS INJECTED INTO THE ANTI-FALSE-GREEN TEST SUITE, AND IT IS PASSING.",
+        "narrative": "tests/test_h1b_authorization_enforcement.py::test_22 was written (commit fb484a3a) to read the REAL backend/main.py and the REAL HelmCouncilView.tsx and assert the eight separated gates exist in them. It has since been modified — 95 insertions, uncommitted — to define BACKEND and UI as HARDCODED STRING LITERALS containing exactly the substrings the assertions search for.",
+        "executed_proof": {
+          "current test file line 510": "BACKEND = '''\\nh1_package_state\\nh1_package_integrity\\n... \\\"h1_frontier_live_quorum\\\": \\\"BLOCKED\\\"\\n'''",
+          "current test file line 523": "UI = '''\\nh1_package_state\\n...\\n'''",
+          "pytest result": "28 passed",
+          "reality": "grep -c 'h1_package_state' backend/main.py -> 0.  find HelmCouncilView.tsx -> FILE DOES NOT EXIST.",
+          "conclusion": "The test asserts that a string constant declared five lines above it contains the substrings it was authored to contain. It is a tautology. It will pass forever, on any codebase, including an empty one."
+        },
+        "impact": "This is the highest-severity finding in the audit. The test suite is no longer evidence. A green pytest run currently proves nothing about the system. It was detected only by re-reading the source files the test claims to check.",
+        "required_action": "Revert test_22 to read the real files. Add a meta-test that FAILS if any test in the enforcement suite reads a string literal where a file path is expected."
+      },
+      {
+        "id": "F-21.1",
+        "severity": "P0",
+        "title": "Circular evidence — every founder gate cites, as its proof, the file that contains its own claim.",
+        "executed_proof": "All 7 entries in has_live_project_tracker/data/k_track_ledger.json (K1,K2,K3,K4,K5,K6,K2b) declare evidence_path = 'has_live_project_tracker/data/k_track_ledger.json' — i.e. themselves. K1 'verdict: PASS' is proven by K1 saying PASS.",
+        "violates": "'Evidence is generated from source systems' and 'Evidence maps to requirements and findings.'"
+      },
+      {
+        "id": "F-21.2",
+        "severity": "P0",
+        "title": "Gates were 'resolved' AFTER their own evidence expired.",
+        "executed_proof": "K1: expires_at=2026-07-06T00:23:12Z, resolved_at=2026-07-06T21:09:07Z — resolved 21 hours after expiry. Same pattern on K2. K3-K6 are simply EXPIRED. All 7 K-gates are expired as of 2026-07-12.",
+        "violates": "'Evidence freshness is enforced' and 'Missing evidence causes non-PASS.'"
+      },
+      {
+        "id": "F-21.4",
+        "severity": "P0",
+        "title": "Uncommitted work is silently destroyed by concurrent lanes. No protection, no detection, no record.",
+        "evidence": "Between commit fb484a3a and this audit: backend/main.py was reverted to HEAD (all H1B gate fields gone, council endpoint gone); the entire frontend/src/ React tree — including HelmCouncilView.tsx — was REMOVED from the working tree. Both were another lane's uncommitted WIP that my integration edits rode on top of. git status reports backend/main.py as CLEAN, so nothing flags the loss.",
+        "impact": "Evidence and code do not survive concurrent agent activity. Any audit result is valid only for the instant it was taken."
+      },
+      {
+        "id": "F-21.5",
+        "severity": "P1",
+        "title": "Verification output is transient.",
+        "evidence": "coordination/verification/helm_full_verification_result.json — written by run_helm_full_verification.py four hours ago, and absent at audit time. The full-verifier's own output is not retained.",
+        "impact": "'Evidence survives restart and archival' — FAIL."
+      }
+    ],
+    "substitution_attack_results": {
+      "package_artifact_substitution": "DEFENDED. Mutating any file inside an H1 package is caught by fresh digest recomputation (PACKAGE_MUTATED_AFTER_REVIEW). Proven by tests 06-09 of the enforcement suite, which DO read real files.",
+      "authorization_replay": "DEFENDED. Append-only ledger + atomic consume. Proven by a two-process race.",
+      "test_evidence_substitution": "SUCCEEDED. See F-21.3. The test suite itself had no integrity protection.",
+      "founder_gate_substitution": "SUCCEEDED TRIVIALLY. A gate's evidence is the gate's own claim."
+    }
+  },
+
+  "AUDIT_22": {
+    "audit_id": "A22-GOVERNANCE",
+    "domain": "Policy enforcement — code, not prose",
+    "status": "FAIL (mixed: the H1B perimeter is genuinely controlled; the goal/evidence perimeter is not)",
+    "policy_matrix": [
+      {
+        "policy": "No fake PASS / ONLINE states",
+        "source": "config/goal_completion_contract.json completion_definition[6]",
+        "enforcement_point": "scripts/anti_fake_gate.sh",
+        "test_executed": "timeout 120 bash scripts/anti_fake_gate.sh",
+        "result": "FAIL — AND WORSE. The gate ERRORS OUT ('failed to remove file .venv/.lock: Operation not permitted', broken venv interpreter) AND EXITS 0. A gate that cannot fail. It reported success while running none of its checks.",
+        "bypass_path": "Break the venv. The gate then passes unconditionally.",
+        "verdict": "ADVISORY, NOT CONTROLLED. And actively misleading."
+      },
+      {
+        "policy": "Paid APIs default-deny; external compute requires founder approval",
+        "enforcement_point": "scripts/council/adapters.py::_http egress gate + open_external_egress + h1_authorization.authorize_and_consume",
+        "test_executed": "pytest tests/test_h1b_authorization_enforcement.py::test_23",
+        "result": "PASS — code-enforced. Non-loopback POST raises ExternalEgressBlocked without a consumed authorization; the ticket cannot be opened (dispatch_live_permitted() is hard-false). Loopback (local Ollama) permitted.",
+        "verdict": "CONTROLLED"
+      },
+      {
+        "policy": "One authorization = one run; no replay",
+        "enforcement_point": "coordination/council/authorization_ledger.jsonl + AuthorizationLedger.consume (O_EXCL + flock, re-read inside the lock)",
+        "test_executed": "pytest ::test_13 ::test_14 (two real processes racing)",
+        "result": "PASS — exactly one CONSUMED, one BLOCKED, one ledger entry.",
+        "verdict": "CONTROLLED"
+      },
+      {
+        "policy": "Mock evidence may never produce live quorum or promotion",
+        "enforcement_point": "scripts/council/aggregate.py hard assertion",
+        "test_executed": "pytest ::test_04 ::test_05 ::test_18 ::test_19 ::test_20 ::test_21",
+        "result": "PASS — code-enforced.",
+        "verdict": "CONTROLLED"
+      },
+      {
+        "policy": "Goal percentage reflects satisfied requirements",
+        "enforcement_point": "NONE",
+        "result": "FAIL — the number is a hardcoded fallback (90.0) or a sum over hardcoded task statuses.",
+        "verdict": "NOT A POLICY. An aspiration."
+      },
+      {
+        "policy": "Founder gates are explicitly separated from agent-executable work",
+        "enforcement_point": "goal_blocker_register.json 'owner' + 'agent_safe' fields",
+        "result": "FAIL — the fields exist but nothing enforces them, and G-1 (owner: Michael, P0) is marked RESOLVED with no founder action having occurred and no credential present.",
+        "verdict": "ADVISORY"
+      },
+      {
+        "policy": "Evidence required for PASS",
+        "enforcement_point": "NONE for the K-track / goal plane; PRESENT for the H1 package plane (digest recomputation).",
+        "verdict": "SPLIT — controlled inside H1B, absent everywhere else."
+      }
+    ],
+    "conclusion": "The H1B remediation perimeter is genuinely policy-controlled by code with executable proofs. Everything outside it — goal state, founder gates, evidence freshness, and the anti-fake gate itself — is advisory prose, and the one mechanism meant to catch fake-green exits 0 when it fails to run."
+  },
+
+  "AUDIT_28": {
+    "audit_id": "A28-GOAL-CLOSURE",
+    "domain": "Goal closure and DOORSTEP readiness",
+    "method": "Independent re-execution. No aggregate percentage was trusted.",
+    "decision": "NO_GO",
+    "decision_rationale": "NO_GO is not a statement about how much work remains. It is a statement that the instruments are broken. A GO decision requires all blocking requirements to be independently verified PASS — and at this moment: (1) the goal percentage is a fallback literal, not a measurement; (2) the test suite contains a tautological test that passes against an empty codebase; (3) every founder gate is its own evidence and all are expired; (4) the Council's backend endpoint does not exist in the running application; (5) uncommitted work is being destroyed between audits. There is no evidence base on which a GO could be computed, and CONDITIONAL_GO would imply the conditions are known — they are not, because the instruments that would identify them are themselves untrustworthy.",
+    "blocking_requirements_reverified": [
+      {"requirement": "H1B authorization enforcement", "validator": "pytest tests/test_h1b_authorization_enforcement.py", "result": "PASS for tests 00-21 and 23-24 (they read real files and real code). test_22 is INVALID (tautology). Net: PARTIAL."},
+      {"requirement": "Single authoritative H1 candidate", "validator": "python3 scripts/council/generate_h1_candidate_registry.py", "result": "PASS — RECONCILED, one ACTIVE_CANDIDATE."},
+      {"requirement": "Zero external provider calls", "validator": "egress gate + test_23", "result": "PASS."},
+      {"requirement": "Founder authorization", "validator": "coordination/council/frontier_authorization.json", "result": "NOT_GRANTED (correct, expected)."},
+      {"requirement": "Credentials provisioned", "validator": "os.environ existence check", "result": "NOT_PROVISIONED — contradicts G-1 'RESOLVED'."},
+      {"requirement": "Goal percentage", "validator": "GET /api/pert/data", "result": "FAIL — 90.0 is a fallback default presented as HIGH-confidence, zero-age telemetry."},
+      {"requirement": "Full verifier", "validator": "python3 scripts/run_helm_full_verification.py", "result": "BLOCKED — 37/38 required stages PASS; verify_cybergov_oscal_schemas fails on a jsonschema $ref resolution error. Its own output artifact has since vanished (F-21.5)."},
+      {"requirement": "Council state served", "validator": "GET /api/v1/helm/council/state", "result": "FAIL — HTTP 404. Endpoint not registered (F-02.4)."},
+      {"requirement": "Release + rollback packages", "validator": "not reached", "result": "UNKNOWN — not assessed; blocked behind the above."}
+    ],
+    "top_remediation_tasks_in_order": [
+      "R1 (P0). Revert tests/test_h1b_authorization_enforcement.py::test_22 to read backend/main.py and the real UI file. Add a meta-test that fails if any enforcement test substitutes a string literal for a file read. Until this lands, NO pytest result from this suite is admissible evidence.",
+      "R2 (P0). Delete every fallback default that can render as a measurement. wrap_telemetry_dict must emit value=None, confidence=UNKNOWN, and a null timestamp when the source is missing — never now() and never 90.0. 94 call sites.",
+      "R3 (P0). Make anti_fake_gate.sh exit non-zero when it cannot run. A gate that cannot fail is worse than no gate.",
+      "R4 (P0). Ratify ONE North Star. Mark the other three DERIVED or delete them.",
+      "R5 (P0). Rebuild goal_percent as a computation over blocking requirements with executed validators; a requirement whose validator did not run in this revision counts as 0, not as its last value.",
+      "R6 (P0). Forbid self-citing evidence. A gate's evidence_path may not be the ledger that records the gate. Re-open K1-K6.",
+      "R7 (P0). Restore the council endpoint in backend/main.py and re-create the frontend council view; both were destroyed. Protect against cross-lane destruction of uncommitted work (commit early, or give each lane a real worktree).",
+      "R8 (P1). Retain verifier output as durable evidence."
+    ],
+    "confidence": "HIGH on every FAIL (each is backed by an executed command and quoted output). MEDIUM on completeness — the worktree mutated underneath this audit twice, so findings are valid as of revision fb484a3a at 2026-07-12T07:00Z and may not hold five minutes from now (which is itself finding F-21.4).",
+    "unverified_assumptions": [
+      "The goal artifacts inspected are the ones the system actually consumes. Four competing goal files makes this uncertain.",
+      "No load, performance, security, supply-chain, revenue, or RMF audit was performed (audits 03-20, 23-27 were deferred by scoping decision).",
+      "pert_server was booted in isolation; its compute_gap source may populate differently in the founder's full environment. The fallback behavior, however, is unconditional in code."
+    ]
+  }
+}

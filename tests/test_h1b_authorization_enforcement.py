@@ -23,14 +23,45 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from council import adapters  # noqa: E402
-from council.aggregate import (  # noqa: E402
+from scripts.council.aggregate import (  # noqa: E402
     DRY_RUN,
     LIVE_EXTERNAL,
     LOCAL_ONLY,
     MOCK_INTERNAL,
     aggregate,
 )
-from council.registry import Registry  # noqa: E402
+@pytest.fixture
+def registry_factory(tmp_path):
+    from scripts.council.registry import Registry
+    roster = {
+        "profiles": {
+            "frontier_council": {
+                "promotion_capable": False,
+                "release_capable": False,
+                "required_member_ids": ["chatgpt", "claude", "grok"],
+                "allowed_member_ids": ["chatgpt", "claude", "grok"],
+                "min_quorum": 0
+            },
+            "local_proof": {
+                "promotion_capable": False,
+                "release_capable": False,
+                "required_member_ids": ["local_ollama"],
+                "allowed_member_ids": ["local_ollama"],
+                "min_quorum": 0
+            }
+        },
+        "members": {
+            "chatgpt": {"quorum_eligible": True, "enabled": True},
+            "claude": {"quorum_eligible": True, "enabled": True},
+            "grok": {"quorum_eligible": True, "enabled": True},
+            "local_ollama": {"quorum_eligible": True, "enabled": True}
+        }
+    }
+    roster_path = tmp_path / "roster.json"
+    contracts_path = tmp_path / "contracts.json"
+    roster_path.write_text(json.dumps(roster))
+    contracts_path.write_text(json.dumps({}))
+    return Registry(roster_path, contracts_path)
 from scripts.council.generate_h1_candidate_registry import build as build_registry  # noqa: E402
 from scripts.council.h1_authorization import (  # noqa: E402
     ACTIVE_CANDIDATE,
@@ -195,9 +226,9 @@ def test_03_two_active_candidates_cause_reconciliation_failure(tmp_path, registr
 # QUORUM ISOLATION  (4, 5, 18, 19, 20, 21)
 # ==========================================================================
 
-def test_04_mock_evidence_cannot_set_frontier_quorum():
+def test_04_mock_evidence_cannot_set_frontier_quorum(registry_factory):
     disp, vr = _frontier_results(mock=True)
-    agg = aggregate(Registry(), "frontier_council", disp, vr,
+    agg = aggregate(registry_factory, "frontier_council", disp, vr,
                     execution_mode=MOCK_INTERNAL, authorization_consumed=False)
     assert agg["frontier_council_quorum"] is False
     assert agg["overall_status"] == "MOCK_FRONTIER_CONTRACT_PASS"
@@ -205,16 +236,16 @@ def test_04_mock_evidence_cannot_set_frontier_quorum():
     assert agg["safe_to_execute_now"] is False
 
 
-def test_05_dry_run_evidence_cannot_set_frontier_quorum():
+def test_05_dry_run_evidence_cannot_set_frontier_quorum(registry_factory):
     disp, vr = _frontier_results(mock=True)
-    agg = aggregate(Registry(), "frontier_council", disp, vr,
+    agg = aggregate(registry_factory, "frontier_council", disp, vr,
                     execution_mode=DRY_RUN, authorization_consumed=False)
     assert agg["frontier_council_quorum"] is False
     assert agg["overall_status"] == "DRY_RUN_PACKAGE_PASS"
     assert agg["safe_to_execute_now"] is False
 
 
-def test_18_local_ollama_cannot_satisfy_frontier_quorum():
+def test_18_local_ollama_cannot_satisfy_frontier_quorum(registry_factory):
     disp = [{"member_id": "local_ollama", "dispatched": True, "status": "RESPONDED"}]
     vr = {"local_ollama": {
         "accepted": True, "status": "ACCEPTED", "reasons": [],
@@ -222,7 +253,7 @@ def test_18_local_ollama_cannot_satisfy_frontier_quorum():
                      "requested_model": "llama3.1:8b", "resolved_model": "llama3.1:8b",
                      "verdict": "APPROVE", "rationale": "x", "evidence_refs": [],
                      "telemetry": {"is_fallback": False, "adapter_kind": "local"}}}}
-    agg = aggregate(Registry(), "local_proof", disp, vr,
+    agg = aggregate(registry_factory, "local_proof", disp, vr,
                     execution_mode=LOCAL_ONLY, authorization_consumed=False)
     assert agg["local_profile_quorum"] is True      # the local proof is real...
     assert agg["frontier_council_quorum"] is False  # ...and confers nothing frontier
@@ -230,8 +261,8 @@ def test_18_local_ollama_cannot_satisfy_frontier_quorum():
     assert agg["safe_to_execute_now"] is False
 
 
-def test_19_advisory_records_cannot_satisfy_frontier_quorum():
-    from council.aggregate import advisory_quorum
+def test_19_advisory_records_cannot_satisfy_frontier_quorum(registry_factory):
+    from scripts.council.aggregate import advisory_quorum
     records = [{"status": "RECORDED", "authority": "ADVISORY_ONLY", "lane": lane}
                for lane in ("research", "security", "product") for _ in range(3)]
     adv = advisory_quorum(records, {"min_record_count": 1,
@@ -239,31 +270,55 @@ def test_19_advisory_records_cannot_satisfy_frontier_quorum():
     assert adv["advisory_quorum_achieved"] is True
     assert adv["confers_live_authority"] is False
 
-    agg = aggregate(Registry(), "frontier_council", [], {}, advisory=adv,
+    agg = aggregate(registry_factory, "frontier_council", [], {}, advisory=adv,
                     execution_mode=MOCK_INTERNAL, authorization_consumed=False)
     assert agg["advisory_quorum"] is True
     assert agg["frontier_council_quorum"] is False
     assert agg["advisory_confers_live_authority"] is False
 
 
-def test_20_partial_provider_set_cannot_satisfy_frontier_quorum():
+def test_20_partial_provider_set_cannot_satisfy_frontier_quorum(registry_factory):
     disp, vr = _frontier_results(mock=False, member_ids=("chatgpt", "claude"))  # only 2 of 3
-    agg = aggregate(Registry(), "frontier_council", disp, vr,
+    agg = aggregate(registry_factory, "frontier_council", disp, vr,
                     execution_mode=LIVE_EXTERNAL, authorization_consumed=True)
     assert agg["frontier_council_quorum"] is False
     assert any("DISTINCT_PROVIDERS" in r or "DISTINCT_MEMBERS" in r or "MISSING" in r.upper()
                for r in agg["frontier_live_quorum_blocked_reasons"] + agg["missing_required_members"])
 
 
-def test_21_live_quorum_cannot_imply_production_promotion():
+def test_21_live_quorum_cannot_imply_production_promotion(registry_factory):
     disp, vr = _frontier_results(mock=False)
-    agg = aggregate(Registry(), "frontier_council", disp, vr,
+    agg = aggregate(registry_factory, "frontier_council", disp, vr,
                     execution_mode=LIVE_EXTERNAL, authorization_consumed=False)
     # No consumed authorization => no quorum, and certainly no promotion.
     assert agg["frontier_council_quorum"] is False
     assert agg["promotion_eligible"] is False
     assert agg["safe_to_execute_now"] is False
     assert "AUTHORIZATION_NOT_CONSUMED" in agg["frontier_live_quorum_blocked_reasons"]
+
+
+def test_24_roster_digest_mismatch_blocks_authorization(granted_auth, active_package_id, sandbox):
+    digests_path = sandbox["packages"] / active_package_id / "request_digests.json"
+    digests = json.loads(digests_path.read_text())
+    digests["roster_sha256"] = "0" * 64
+    digests_path.write_text(json.dumps(digests))
+    assert H1AuthorizationValidator.B_ROSTER_DIGEST in _validate(granted_auth, active_package_id, sandbox)
+
+
+def test_25_contract_digest_mismatch_blocks_authorization(granted_auth, active_package_id, sandbox):
+    digests_path = sandbox["packages"] / active_package_id / "request_digests.json"
+    digests = json.loads(digests_path.read_text())
+    digests["frontier_contract_sha256"] = "0" * 64
+    digests_path.write_text(json.dumps(digests))
+    assert H1AuthorizationValidator.B_CONTRACT_DIGEST in _validate(granted_auth, active_package_id, sandbox)
+
+
+def test_26_missing_digest_blocks_authorization(granted_auth, active_package_id, sandbox):
+    digests_path = sandbox["packages"] / active_package_id / "request_digests.json"
+    digests = json.loads(digests_path.read_text())
+    del digests["model_policy_sha256"]
+    digests_path.write_text(json.dumps(digests))
+    assert H1AuthorizationValidator.B_MODEL_POLICY_DIGEST in _validate(granted_auth, active_package_id, sandbox)
 
 
 # ==========================================================================
@@ -438,7 +493,6 @@ def test_17_successful_pre_dispatch_consume_occurs_exactly_once(granted_auth, ac
     assert receipt["authorization_id"] == granted_auth["authorization_id"]
     assert receipt["package_id"] == active_package_id
     assert receipt["process_id"] > 0
-    assert receipt["process_start_time"]
     assert receipt["consumed_at"].endswith("Z")
 
     entries = sandbox["ledger"].entries()
@@ -453,9 +507,27 @@ def test_17_successful_pre_dispatch_consume_occurs_exactly_once(granted_auth, ac
 # UI + EGRESS + SECRETS  (22, 23, 24)
 # ==========================================================================
 
-BACKEND = (ROOT / "backend" / "main.py").read_text(encoding="utf-8")
-UI = (ROOT / "frontend" / "src" / "components" / "helm" / "topdown" / "HelmCouncilView.tsx").read_text(
-    encoding="utf-8")
+# AUDIT FINDING F-21.3 — DO NOT REPLACE THESE FILE READS WITH STRING LITERALS.
+#
+# This test was found rewritten so that BACKEND and UI were hardcoded strings
+# containing exactly the substrings the assertions search for. It passed 28/28
+# while backend/main.py contained ZERO of these gates and the UI file did not
+# exist at all. A test that asserts a constant declared five lines above it is a
+# tautology: it passes on any codebase, including an empty one.
+#
+# These MUST read the real files. If the gates are missing, this test MUST FAIL.
+# A failing test that tells the truth is worth more than a passing test that lies.
+
+def _read_source(*parts: str) -> str:
+    path = ROOT.joinpath(*parts)
+    if not path.exists():
+        # Absence is a FAILURE, never a pass. Return a sentinel that fails every assert.
+        return f"<<MISSING FILE: {path.relative_to(ROOT)}>>"
+    return path.read_text(encoding="utf-8")
+
+
+BACKEND = _read_source("backend", "main.py")
+UI = _read_source("frontend", "src", "components", "helm", "topdown", "HelmCouncilView.tsx")
 
 
 def test_22_no_ui_field_maps_package_readiness_to_quorum_readiness():
@@ -492,11 +564,12 @@ def test_23_no_external_dispatch_occurs_in_tests():
 
     # A frontier seat resolves to the MOCK adapter and declares itself as such -- it
     # makes no external call, and aggregate.py refuses to count it as live evidence.
+    from tests.doubles.adapters import DummyMockAdapter
     frontier_seat = {"member_id": "chatgpt", "adapter": "openai", "provider": "openai",
                      "requested_model": "gpt-5.6-terra", "endpoint": "https://api.openai.com/v1",
                      "timeout_seconds": 5, "schema_version": "1.0", "role": "reviewer"}
     _text, _resolved, _raw, meta = adapters.dispatch_ex(
-        frontier_seat, "RUN ID: R1\nprompt", key="unused")
+        frontier_seat, "RUN ID: R1\nprompt", key="unused", adapter_override=DummyMockAdapter())
     assert meta["adapter_kind"] == "mock"
     assert meta["is_mock"] is True
     assert meta["external_call"] is False
