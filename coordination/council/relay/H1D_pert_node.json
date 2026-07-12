@@ -1,0 +1,20 @@
+{
+  "schema": "H1D_PERT_NODE_BINDING_v1",
+  "pert_node": "H1D",
+  "title": "Autonomous Council Dispatch and Model Relay",
+  "goal": "Remove the founder from routine prompt transport between AI systems.",
+  "entry": "H1C controlled-execution controls verified.",
+  "exit": "A PERT-ready task is auto-routed to >=2 real model adapters; responses captured, validated, aggregated, reflected into PERT state without manual copying.",
+  "state": "COMPLETED",
+  "state_reason": "MULTI_ADAPTER_VALIDATED_EVIDENCE",
+  "evidence_source": "coordination/council/relay/H1D-20260712T220802Z-DF8F1B.council.json",
+  "accepted_adapters": [
+    "grok",
+    "ollama"
+  ],
+  "manual_copy_paste_operations": 0,
+  "total_cost_usd": 0.001296,
+  "founder_intervention_required": false,
+  "binding_rule": "state moves to COMPLETED only when >=2 distinct adapters independently satisfy the task evidence contract; otherwise PARTIAL/BLOCKED/UNKNOWN. A string literal can never set this.",
+  "bound_at": "2026-07-12T22:08:56.478188Z"
+}

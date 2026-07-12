@@ -1,0 +1,72 @@
+{
+  "task_id": "H1D-20260712T220802Z-DF8F1B",
+  "task_digest": "429e7f8e6cc2504ffa7c3bb6571dcb7d2a2eb6fdc20b8c051b1b5756a4065ee6",
+  "pert_node": "H1D",
+  "adapters_dispatched": [
+    "grok",
+    "ollama"
+  ],
+  "attempts": 2,
+  "revisions_performed": 0,
+  "accepted_adapters": [
+    "grok",
+    "ollama"
+  ],
+  "pert_node_state": "COMPLETED",
+  "pert_node_reason": "MULTI_ADAPTER_VALIDATED_EVIDENCE",
+  "total_cost_usd": 0.001296,
+  "external_calls": 1,
+  "founder_intervention_required": false,
+  "manual_copy_paste_operations": 0,
+  "results": [
+    {
+      "task_id": "H1D-20260712T220802Z-DF8F1B",
+      "adapter": "grok",
+      "status": "COMPLETED",
+      "output": "I'll review how `SubprocessSpendGate` is wired and what paths can still reach external models without `dispatch()`.Found parallel adapter paths \u2014 checking whether they call models outside the spend gate.**VERDICT:** The gate is an opt-in library wrapper, not a process-wide intercept\u2014callers can still invoke model CLIs (or HTTP APIs) outside it.  \n**RATIONALE:** `SubprocessSpendGate.dispatch()` only meters code that chooses to call it; nothing monkey-patches `subprocess`, blocks `os.system`/`Popen`, or enforces policy at the OS. Standing-authorized CLIs (`grok`, `gemini`) already have credentials and bill outside this module, so a one-line shell-out never hits preflight, the cost ledger, or local-first checks. A parallel in-repo path (`scripts/council/adapters.py` \u2192 `_http` / `dispatch_ex`, used by `harness.py`) also reaches providers via urllib and never imports the gate.  \n**BYPASS:** `subprocess.run([\"grok\", \"-p\", <prompt>, ...])` (or `[\"gemini\", \"-p\", ...]`) from any non-gated caller\u2014e.g. any script outside `scripts/council/spend_gate.py` / `CouncilRouter.dispatch_one`.\n",
+      "files_changed": [],
+      "tests": {},
+      "evidence": {
+        "task_digest": "429e7f8e6cc2504ffa7c3bb6571dcb7d2a2eb6fdc20b8c051b1b5756a4065ee6",
+        "prompt_sha256": "a1d427f1460610eb6a6c038bcf5a42499e1feafb7e2354d5d14119cb8cd37f0f",
+        "exit_code": 0,
+        "stderr_tail": ""
+      },
+      "blocks": [],
+      "cost_usd": 0.001296,
+      "latency_ms": 45252,
+      "external_call": true,
+      "response_sha256": "cfea2e58740b9565cec24a797ad5d917df1624b0fcaa94de9c48224e6eade5f2",
+      "cost_ledger_hash": "66559a9aaabe351bdd66e596eccdebc08211d43676382153ce22f5f970cfdfce",
+      "critic_verdict": "ACCEPT",
+      "critic_reasons": [],
+      "revision_of": null,
+      "created_at": "2026-07-12T22:08:47.676228Z"
+    },
+    {
+      "task_id": "H1D-20260712T220802Z-DF8F1B",
+      "adapter": "ollama",
+      "status": "COMPLETED",
+      "output": "VERDICT: The single most likely remaining way a caller could make an extern\u001b[6D\u001b[K\nexternal model call without going through SubprocessSpendGate.dispatch() is\u001b[2D\u001b[K\nis by directly using the `http` package.\n\nRATIONALE: Although HELM has added SubprocessSpendGate to prevent bypassing\u001b[9D\u001b[K\nbypassing budget/authorization controls, it's still possible for callers to\u001b[2D\u001b[K\nto use the low-level `http` package to send requests directly to external m\u001b[1D\u001b[K\nmodels. This would allow them to circumvent the control gate and make exter\u001b[5D\u001b[K\nexternal calls without going through dispatch().\n\n",
+      "files_changed": [],
+      "tests": {},
+      "evidence": {
+        "task_digest": "429e7f8e6cc2504ffa7c3bb6571dcb7d2a2eb6fdc20b8c051b1b5756a4065ee6",
+        "prompt_sha256": "a1d427f1460610eb6a6c038bcf5a42499e1feafb7e2354d5d14119cb8cd37f0f",
+        "exit_code": 0,
+        "stderr_tail": "?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h"
+      },
+      "blocks": [],
+      "cost_usd": 0.0,
+      "latency_ms": 8795,
+      "external_call": false,
+      "response_sha256": "1040952549b68d539e658b3f8e46d98b17fc5813386fc0a3b2a873d163bd0d9c",
+      "cost_ledger_hash": "47b11d54c85d70d90cfa968e7e7dd95a62eb3f771a6870e9675a3926e286386f",
+      "critic_verdict": "ACCEPT",
+      "critic_reasons": [],
+      "revision_of": null,
+      "created_at": "2026-07-12T22:08:56.477927Z"
+    }
+  ],
+  "completed_at": "2026-07-12T22:08:56.478188Z"
+}

@@ -1,0 +1,99 @@
+{
+  "task_id": "H1D-20260712T215950Z-CE5105",
+  "task_digest": "3d700532bd9eca529c9b103423b482c1e0b1d74002998f275d9aa8b069d47827",
+  "pert_node": "H1D",
+  "adapters_dispatched": [
+    "grok",
+    "gemini"
+  ],
+  "attempts": 3,
+  "revisions_performed": 1,
+  "accepted_adapters": [
+    "grok"
+  ],
+  "pert_node_state": "PARTIAL",
+  "pert_node_reason": "SINGLE_ADAPTER_ONLY_NO_CORROBORATION",
+  "total_cost_usd": 0.001322,
+  "external_calls": 3,
+  "founder_intervention_required": false,
+  "manual_copy_paste_operations": 0,
+  "results": [
+    {
+      "task_id": "H1D-20260712T215950Z-CE5105",
+      "adapter": "grok",
+      "status": "COMPLETED",
+      "output": "I'll review the spend gate implementation and how model/external calls are made so I can name the most likely remaining bypass.VERDICT: Not airtight \u2014 enforcement is opt-in library code, not a process-wide intercept.  \nRATIONALE: `SubprocessSpendGate.dispatch()` only meters and authorizes callers that voluntarily use it; nothing replaces, wraps, or forbids `subprocess`/`os.system`/shell/`exec` elsewhere in the process or on the host. Preflight checks `req.binary`/`req.adapter` but does not bind the OS, so any other path that launches a model CLI or hits a paid API never sees budget, founder, or ledger checks. The gate is a convention plus tests on `dispatch.py`, not a hard containment boundary.  \nBYPASS: Invoke a model CLI (or any paid client) outside the gate \u2014 e.g. `subprocess.run([\"grok\", \"-p\", prompt, ...])` / `Popen` / shell / another module \u2014 or use the parallel live path in `scripts/council/adapters.py` (`dispatch_ex` \u2192 `_http`/`urllib` to OpenAI/Anthropic/Gemini) via `harness.py`, none of which call `SubprocessSpendGate.dispatch()`.\n",
+      "files_changed": [],
+      "tests": {},
+      "evidence": {
+        "task_digest": "3d700532bd9eca529c9b103423b482c1e0b1d74002998f275d9aa8b069d47827",
+        "prompt_sha256": "b68ef570a2e3c1207c0ca147840258f1a34b8863abaf7f3d571c1a9bb329e6c7",
+        "exit_code": 0,
+        "stderr_tail": ""
+      },
+      "blocks": [],
+      "cost_usd": 0.001322,
+      "latency_ms": 30543,
+      "external_call": true,
+      "response_sha256": "ddd2da4a6d41b607ac56e57cd6de4f47f19dc5d071f36df86b05566cd88a7e0f",
+      "cost_ledger_hash": "edcfce1781d4344fae85a9480d7fccb8a76d5ce65c2ee622366ba94511a6ad84",
+      "critic_verdict": "ACCEPT",
+      "critic_reasons": [],
+      "revision_of": null,
+      "created_at": "2026-07-12T22:00:20.919467Z"
+    },
+    {
+      "task_id": "H1D-20260712T215950Z-CE5105",
+      "adapter": "gemini",
+      "status": "TIMEOUT",
+      "output": "",
+      "files_changed": [],
+      "tests": {},
+      "evidence": {
+        "task_digest": "3d700532bd9eca529c9b103423b482c1e0b1d74002998f275d9aa8b069d47827",
+        "prompt_sha256": "b68ef570a2e3c1207c0ca147840258f1a34b8863abaf7f3d571c1a9bb329e6c7",
+        "exit_code": null,
+        "stderr_tail": "adapter timed out"
+      },
+      "blocks": [],
+      "cost_usd": 0.0,
+      "latency_ms": 180021,
+      "external_call": true,
+      "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "cost_ledger_hash": "c2477c54bb48d55e70ccf0f2fb7ac7fec773ce064530729ccd4c9ccafbcb31cf",
+      "critic_verdict": "REVISE",
+      "critic_reasons": [
+        "ADAPTER_TIMEOUT"
+      ],
+      "revision_of": null,
+      "created_at": "2026-07-12T22:03:20.943754Z"
+    },
+    {
+      "task_id": "H1D-20260712T215950Z-CE5105",
+      "adapter": "gemini",
+      "status": "TIMEOUT",
+      "output": "",
+      "files_changed": [],
+      "tests": {},
+      "evidence": {
+        "task_digest": "3d700532bd9eca529c9b103423b482c1e0b1d74002998f275d9aa8b069d47827",
+        "prompt_sha256": "10ae868025e7a085368631225cdfa8269386916364c859d49ce0170281a648c1",
+        "exit_code": null,
+        "stderr_tail": "adapter timed out"
+      },
+      "blocks": [],
+      "cost_usd": 0.0,
+      "latency_ms": 180021,
+      "external_call": true,
+      "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "cost_ledger_hash": "e84980bc445c5ffcba4da32de1e7e0e575292ecddac2dd54438704c1810f4119",
+      "critic_verdict": "REVISE",
+      "critic_reasons": [
+        "ADAPTER_TIMEOUT"
+      ],
+      "revision_of": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "created_at": "2026-07-12T22:06:20.974943Z"
+    }
+  ],
+  "completed_at": "2026-07-12T22:06:20.975859Z"
+}

@@ -1,0 +1,99 @@
+{
+  "task_id": "H1D-20260712T215805Z-0FCF0A",
+  "task_digest": "2151e3329d5b33d7e294d817d60676320f23594c49d4ef12ace2ccab2a488b33",
+  "pert_node": "H1D",
+  "adapters_dispatched": [
+    "grok",
+    "gemini"
+  ],
+  "attempts": 3,
+  "revisions_performed": 1,
+  "accepted_adapters": [
+    "grok"
+  ],
+  "pert_node_state": "PARTIAL",
+  "pert_node_reason": "SINGLE_ADAPTER_ONLY_NO_CORROBORATION",
+  "total_cost_usd": 0.001322,
+  "external_calls": 3,
+  "founder_intervention_required": false,
+  "manual_copy_paste_operations": 0,
+  "results": [
+    {
+      "task_id": "H1D-20260712T215805Z-0FCF0A",
+      "adapter": "grok",
+      "status": "COMPLETED",
+      "output": "I'll review `SubprocessSpendGate` and how callers invoke model/CLI paths to find any remaining spend bypass.Next I'll trace adapter and dispatch call paths for any model invocation that skips the gate.VERDICT: Not airtight \u2014 the gate is opt-in; parallel in-process HTTP spend paths never touch it.\n\nRATIONALE: `SubprocessSpendGate.dispatch()` only meters work that voluntarily routes through it; it does not monkey-patch `subprocess`, wrap the process, or interpose on sockets. Any caller that uses raw `subprocess`/`Popen`/`os.system` for a model CLI, or any in-process HTTP/SDK client, skips preflight, the cost ledger, and governor updates entirely. The highest-likelihood live path in this repo is already-wired provider HTTP outside the H1D router, not a theoretical second shellout in `dispatch.py`.\n\nBYPASS: `scripts/prompt_brain/model_adapters.py` \u2014 e.g. `OpenAIAdapter.execute()` POSTs to `https://api.openai.com/v1/chat/completions` via `urllib.request` (and the Anthropic adapter does the same class of call); neither path ever calls `SubprocessSpendGate.dispatch()`.\n",
+      "files_changed": [],
+      "tests": {},
+      "evidence": {
+        "task_digest": "2151e3329d5b33d7e294d817d60676320f23594c49d4ef12ace2ccab2a488b33",
+        "prompt_sha256": "b68ef570a2e3c1207c0ca147840258f1a34b8863abaf7f3d571c1a9bb329e6c7",
+        "exit_code": 0,
+        "stderr_tail": ""
+      },
+      "blocks": [],
+      "cost_usd": 0.001322,
+      "latency_ms": 43741,
+      "external_call": true,
+      "response_sha256": "f045db68a0f21876716d68f67d9a29d461858ead92273911345d62ace72c3d98",
+      "cost_ledger_hash": "ff7e4167ab2f1bff0ed86dd8e1ac00f15204119aabf756ebc38a62c71d3066a7",
+      "critic_verdict": "ACCEPT",
+      "critic_reasons": [],
+      "revision_of": null,
+      "created_at": "2026-07-12T21:58:48.775993Z"
+    },
+    {
+      "task_id": "H1D-20260712T215805Z-0FCF0A",
+      "adapter": "gemini",
+      "status": "FAILED",
+      "output": "",
+      "files_changed": [],
+      "tests": {},
+      "evidence": {
+        "task_digest": "2151e3329d5b33d7e294d817d60676320f23594c49d4ef12ace2ccab2a488b33",
+        "prompt_sha256": "b68ef570a2e3c1207c0ca147840258f1a34b8863abaf7f3d571c1a9bb329e6c7",
+        "exit_code": 55,
+        "stderr_tail": "sted.\nApproval mode overridden to \"default\" because the current folder is not trusted.\n\u001b[31mGemini CLI is not running in a trusted directory. To proceed, either use `--skip-trust`, set the `GEMINI_CLI_TRUST_WORKSPACE=true` environment variable, or trust this directory in interactive mode. For more details, see https://geminicli.com/docs/cli/trusted-folders/#headless-and-automated-environments\u001b[0m\n"
+      },
+      "blocks": [],
+      "cost_usd": 0.0,
+      "latency_ms": 959,
+      "external_call": true,
+      "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "cost_ledger_hash": "6c9fc5b8351d592af3aeb13685c3db9fad2371cf03e26aa9cb036828c9354c7b",
+      "critic_verdict": "REVISE",
+      "critic_reasons": [
+        "ADAPTER_FAILED"
+      ],
+      "revision_of": null,
+      "created_at": "2026-07-12T21:58:49.737345Z"
+    },
+    {
+      "task_id": "H1D-20260712T215805Z-0FCF0A",
+      "adapter": "gemini",
+      "status": "FAILED",
+      "output": "",
+      "files_changed": [],
+      "tests": {},
+      "evidence": {
+        "task_digest": "2151e3329d5b33d7e294d817d60676320f23594c49d4ef12ace2ccab2a488b33",
+        "prompt_sha256": "96e51f2725d928e0af00bb446243b1dfad1af079453f738f95960113ea66b0c8",
+        "exit_code": 55,
+        "stderr_tail": "sted.\nApproval mode overridden to \"default\" because the current folder is not trusted.\n\u001b[31mGemini CLI is not running in a trusted directory. To proceed, either use `--skip-trust`, set the `GEMINI_CLI_TRUST_WORKSPACE=true` environment variable, or trust this directory in interactive mode. For more details, see https://geminicli.com/docs/cli/trusted-folders/#headless-and-automated-environments\u001b[0m\n"
+      },
+      "blocks": [],
+      "cost_usd": 0.0,
+      "latency_ms": 830,
+      "external_call": true,
+      "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "cost_ledger_hash": "d012c549840c24299e1e2279cccbee42429bd14e472bb5401f24b671391a4641",
+      "critic_verdict": "REVISE",
+      "critic_reasons": [
+        "ADAPTER_FAILED"
+      ],
+      "revision_of": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "created_at": "2026-07-12T21:58:50.569366Z"
+    }
+  ],
+  "completed_at": "2026-07-12T21:58:50.569531Z"
+}
