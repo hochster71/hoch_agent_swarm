@@ -4,17 +4,39 @@
   "title": "Autonomous Council Dispatch and Model Relay",
   "goal": "Remove the founder from routine prompt transport between AI systems.",
   "entry": "H1C controlled-execution controls verified.",
-  "exit": "A PERT-ready task is auto-routed to >=2 real model adapters; responses captured, validated, aggregated, reflected into PERT state without manual copying.",
-  "state": "COMPLETED",
-  "state_reason": "MULTI_ADAPTER_VALIDATED_EVIDENCE",
-  "evidence_source": "coordination/council/relay/H1D-20260712T220802Z-DF8F1B.council.json",
-  "accepted_adapters": [
-    "grok",
-    "ollama"
-  ],
-  "manual_copy_paste_operations": 0,
-  "total_cost_usd": 0.001296,
-  "founder_intervention_required": false,
-  "binding_rule": "state moves to COMPLETED only when >=2 distinct adapters independently satisfy the task evidence contract; otherwise PARTIAL/BLOCKED/UNKNOWN. A string literal can never set this.",
-  "bound_at": "2026-07-12T22:08:56.478188Z"
+  "exit": "A PERT-ready task is auto-routed through a single enforceable CouncilDispatchGateway to all required seats; responses captured, validated, aggregated, reflected into PERT state without manual copying; no ungated network/subprocess adapter remains.",
+  "state": "IN_PROGRESS",
+  "state_reason": "M1_SPINE_DEMONSTRATED_FULL_H1D_NOT_COMPLETE",
+  "milestone_1": {
+    "id": "H1D-M1",
+    "status": "AUTHORITATIVE_PASS_PENDING_EVIDENCE",
+    "functionally_demonstrated": true,
+    "evidence_source": "coordination/council/relay/H1D-20260712T220802Z-DF8F1B.council.json",
+    "accepted_adapters": [
+      "grok",
+      "ollama"
+    ],
+    "manual_copy_paste_operations": 0,
+    "estimated_cost_usd": 0.001296,
+    "provider_reported_cost_usd": null,
+    "billing_source": "estimated_from_tokens_or_request",
+    "credit_balance_authoritative": false,
+    "bound_at": "2026-07-12T22:08:56.478188Z",
+    "scope_note": "Single controlled node / routed Grok+Ollama spine only. Does not complete parent H1D."
+  },
+  "live_adapters": {
+    "grok": "YES",
+    "ollama": "YES",
+    "gemini": "PRESENT_BUT_TIMEOUT_OR_UNRELIABLE",
+    "claude": "ABSENT",
+    "chatgpt": "ABSENT"
+  },
+  "open_p0": "H1D.7 Eliminate direct-network bypasses (e.g. scripts/prompt_brain/model_adapters.py::OpenAIAdapter.execute urllib path)",
+  "full_council_takeover": false,
+  "founder_copy_paste_eliminated_for": "ROUTED_GROK_AND_OLLAMA_TASKS_ONLY",
+  "binding_rule": "Parent H1D may not be COMPLETED while H1D.7-H1D.12 remain open, while ungated adapters can call urllib/requests/httpx/subprocess/provider SDKs, or while remote reproducibility of the implementation commit is unproven. A single multi-adapter demo advances H1D-M1 only.",
+  "status_document": "coordination/council/relay/H1D_STATUS.json",
+  "corrected_at": "2026-07-12T23:30:00Z",
+  "prior_incorrect_state": "COMPLETED",
+  "prior_incorrect_reason": "MULTI_ADAPTER_VALIDATED_EVIDENCE over-applied from one controlled demo to full H1D"
 }

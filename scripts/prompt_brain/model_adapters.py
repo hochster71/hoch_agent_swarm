@@ -3,6 +3,10 @@
 model_adapters.py
 =================
 Unified LLM Model Adapter Layer for the HOCH Prompt Brain Runtime (Phase 5).
+
+H1D.7: No adapter may perform direct HTTP/SDK/subprocess model dispatch.
+All execute() paths route through CouncilDispatchGateway or fail closed.
+Health probes for loopback endpoints remain GET-only (not execute).
 """
 
 import os
@@ -13,6 +17,21 @@ import urllib.request
 import urllib.error
 from datetime import datetime, timezone
 from pathlib import Path
+
+# Optional gateway import — fail closed for metered execute if unavailable
+try:
+    from scripts.council.gateway import (
+        CouncilDispatchGateway,
+        DispatchType,
+        GatewayRequest,
+        UngatedDispatchError,
+        ensure_guard,
+    )
+    _GATEWAY_AVAILABLE = True
+except Exception:  # pragma: no cover
+    _GATEWAY_AVAILABLE = False
+    CouncilDispatchGateway = None  # type: ignore
+    UngatedDispatchError = PermissionError  # type: ignore
 
 class ModelAdapter:
     def __init__(self, model_name, provider, endpoint=""):
@@ -71,97 +90,59 @@ class OpenAIAdapter(ModelAdapter):
         return True
 
     def execute(self, prompt_text, input_payload, output_contract):
+        """H1D.7: direct urllib to api.openai.com is forbidden.
+
+        Routes through CouncilDispatchGateway. Metered OpenAI remains
+        founder-gated and fails closed unless authorization_state=FOUNDER_GRANTED
+        and API transport is explicitly enabled (currently not).
+        No hidden direct-call fallback.
+        """
         if not self.is_available:
             raise RuntimeError(f"OpenAIAdapter unavailable: {self.last_error}")
-        
-        import time
-        import urllib.request
-        import urllib.error
-        
-        system_content = prompt_text
-        user_content = json.dumps(input_payload)
-        
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.api_key}"
-        }
-        
-        req_body = {
-            "model": "gpt-4o-mini",
-            "messages": [
-                {"role": "system", "content": system_content},
-                {"role": "user", "content": user_content}
-            ],
-            "temperature": 0.2,
-            "response_format": {"type": "json_object"}
-        }
-        
-        t0 = time.time()
-        try:
-            req = urllib.request.Request(
-                "https://api.openai.com/v1/chat/completions",
-                data=json.dumps(req_body).encode("utf-8"),
-                headers=headers,
-                method="POST"
+        if not _GATEWAY_AVAILABLE:
+            raise RuntimeError(
+                "BLOCKED_EGRESS: OpenAIAdapter requires CouncilDispatchGateway; "
+                "direct HTTP dispatch is removed (H1D.7)."
             )
-            with urllib.request.urlopen(req, timeout=30) as response:
-                res_body = response.read().decode("utf-8")
-                res_json = json.loads(res_body)
-                
-            latency = int((time.time() - t0) * 1000)
-            self.last_successful_execution = datetime.now(timezone.utc).isoformat()
-            
-            usage = res_json.get("usage", {})
-            prompt_tokens = usage.get("prompt_tokens", 0)
-            completion_tokens = usage.get("completion_tokens", 0)
-            total_tokens = usage.get("total_tokens", 0)
-            
-            # gpt-4o-mini: $0.15/1M input, $0.60/1M output
-            cost = (prompt_tokens * 0.00015 / 1000) + (completion_tokens * 0.00060 / 1000)
-            
-            message_content = res_json["choices"][0]["message"]["content"]
-            try:
-                output_data = json.loads(message_content)
-            except Exception:
-                output_data = {"raw_text": message_content}
-                
-            payload_artifact = {
-                "request": req_body,
-                "response": res_json,
-                "cost_usd": cost,
-                "latency_ms": latency,
-                "egress_classification": "PUBLIC_SAFE"
-            }
-            
-            artifact_dir = ROOT / "docs/evidence/runtime"
-            artifact_dir.mkdir(parents=True, exist_ok=True)
-            artifact_path = artifact_dir / "openai_rung2_payload.json"
-            artifact_path.write_text(json.dumps(payload_artifact, indent=2))
-            
-            print(f"Rung 2 real provider call success:")
-            print(f"  Model: gpt-4o-mini")
-            print(f"  Tokens: Input={prompt_tokens}, Output={completion_tokens}, Total={total_tokens}")
-            print(f"  Calculated Cost: ${cost:.6f}")
-            print(f"  Payload Artifact Saved: docs/evidence/runtime/openai_rung2_payload.json")
-            print(f"  Egress Classification: PUBLIC_SAFE")
-            
-            return {
-                "status": "success",
-                "model": "gpt-4o-mini",
-                "provider": self.provider,
-                "latency_ms": latency,
-                "prompt_tokens": prompt_tokens,
-                "completion_tokens": completion_tokens,
-                "total_tokens": total_tokens,
-                "cost_usd": cost,
-                "output": output_data,
-                "egress_classification": "PUBLIC_SAFE"
-            }
-            
-        except Exception as e:
-            latency = int((time.time() - t0) * 1000)
-            print(f"Rung 2 real provider call failed: {e}")
-            raise RuntimeError(f"OpenAI call failed: {e}")
+        ensure_guard()
+        task_meta = {}
+        if isinstance(input_payload, dict):
+            task_meta = input_payload
+        gw = CouncilDispatchGateway()
+        req = GatewayRequest(
+            task_id=str(task_meta.get("task_id") or ""),
+            pert_node=str(task_meta.get("pert_node") or ""),
+            caller_identity=str(task_meta.get("caller_identity") or "prompt_brain.OpenAIAdapter"),
+            dispatch_type=DispatchType.API_OPENAI,
+            prompt=prompt_text + "\n" + json.dumps(input_payload),
+            scope=str(task_meta.get("scope") or "read-only"),
+            frontier_required=bool(task_meta.get("frontier_required", True)),
+            frontier_justification=str(task_meta.get("frontier_justification") or "metered OpenAI request"),
+            authorization_state=str(task_meta.get("authorization_state") or "NONE"),
+            endpoint="https://api.openai.com/v1/chat/completions",
+            external_dispatch_allowed=bool(task_meta.get("external_dispatch_allowed", True)),
+            metadata={"output_contract": output_contract},
+        )
+        result = gw.dispatch(req)
+        if result.status == "BLOCKED" or result.decision_status.startswith("BLOCKED"):
+            raise RuntimeError(
+                f"OpenAIAdapter blocked by CouncilDispatchGateway: "
+                f"{result.decision_status} blocks={result.blocks}"
+            )
+        self.last_successful_execution = datetime.now(timezone.utc).isoformat()
+        return {
+            "status": "success" if result.status == "COMPLETED" else result.status.lower(),
+            "model": self.model_name,
+            "provider": self.provider,
+            "latency_ms": result.latency_ms,
+            "cost_usd": result.estimated_cost,
+            "provider_reported_cost": result.provider_reported_cost,
+            "billing_source": result.billing_source,
+            "credit_balance_authoritative": result.credit_balance_authoritative,
+            "output": {"raw_text": result.output},
+            "gateway_dispatch_id": result.dispatch_id,
+            "egress_classification": "GATEWAY_CONTROLLED",
+        }
 
 class LMStudioAdapter(ModelAdapter):
     def __init__(self, model_name="lmeta-3-8b"):
@@ -236,19 +217,46 @@ class OllamaAdapter(ModelAdapter):
         return False
 
     def execute(self, prompt_text, input_payload, output_contract):
+        """H1D.7: Ollama execute must go through CouncilDispatchGateway (no silent mock)."""
         if not self.is_available:
             raise RuntimeError("OllamaAdapter is unreachable.")
+        if not _GATEWAY_AVAILABLE:
+            raise RuntimeError(
+                "BLOCKED_EGRESS: OllamaAdapter execute requires CouncilDispatchGateway."
+            )
+        ensure_guard()
+        task_meta = input_payload if isinstance(input_payload, dict) else {}
+        gw = CouncilDispatchGateway()
+        req = GatewayRequest(
+            task_id=str(task_meta.get("task_id") or ""),
+            pert_node=str(task_meta.get("pert_node") or ""),
+            caller_identity=str(task_meta.get("caller_identity") or "prompt_brain.OllamaAdapter"),
+            dispatch_type=DispatchType.LOCAL_OLLAMA,
+            prompt=prompt_text,
+            scope=str(task_meta.get("scope") or "read-only"),
+            frontier_required=False,
+            binary="ollama",
+            endpoint="http://127.0.0.1:11434",
+            metadata={"model": self.model_name, "output_contract": output_contract},
+        )
+        result = gw.dispatch(req)
+        if result.status == "BLOCKED" or str(result.decision_status).startswith("BLOCKED"):
+            raise RuntimeError(
+                f"OllamaAdapter blocked by CouncilDispatchGateway: "
+                f"{result.decision_status} blocks={result.blocks}"
+            )
         self.last_successful_execution = datetime.now(timezone.utc).isoformat()
         return {
-            "status": "success",
+            "status": "success" if result.status == "COMPLETED" else result.status.lower(),
             "model": self.model_name,
             "provider": self.provider,
-            "latency_ms": 180,
-            "output": {
-                "decision": "APPROVED",
-                "reasoning": "Ollama local execution passed model constraint tests.",
-                "remediation_steps": []
-            }
+            "latency_ms": result.latency_ms,
+            "cost_usd": result.estimated_cost,
+            "provider_reported_cost": result.provider_reported_cost,
+            "billing_source": result.billing_source,
+            "output": {"raw_text": result.output},
+            "gateway_dispatch_id": result.dispatch_id,
+            "egress_classification": "GATEWAY_CONTROLLED_LOCAL",
         }
 
 class GeminiAdapter(ModelAdapter):
@@ -311,100 +319,51 @@ class ClaudeAdapter(ModelAdapter):
         return True
 
     def execute(self, prompt_text, input_payload, output_contract):
+        """H1D.7: direct urllib to api.anthropic.com is forbidden. Gateway only."""
         if not self.is_available:
             raise RuntimeError(f"ClaudeAdapter unavailable: {self.last_error}")
-        
-        import time
-        import urllib.request
-        import urllib.error
-        
-        system_content = prompt_text
-        user_content = json.dumps(input_payload)
-        
-        headers = {
-            "Content-Type": "application/json",
-            "X-API-Key": self.api_key,
-            "Anthropic-Version": "2023-06-01"
-        }
-        
-        req_body = {
-            "model": self.model_name,
-            "max_tokens": 4096,
-            "system": system_content,
-            "messages": [
-                {"role": "user", "content": user_content}
-            ],
-            "temperature": 0.2
-        }
-        
-        t0 = time.time()
-        try:
-            req = urllib.request.Request(
-                "https://api.anthropic.com/v1/messages",
-                data=json.dumps(req_body).encode("utf-8"),
-                headers=headers,
-                method="POST"
+        if not _GATEWAY_AVAILABLE:
+            raise RuntimeError(
+                "BLOCKED_EGRESS: ClaudeAdapter requires CouncilDispatchGateway; "
+                "direct HTTP dispatch is removed (H1D.7)."
             )
-            with urllib.request.urlopen(req, timeout=30) as response:
-                res_body = response.read().decode("utf-8")
-                res_json = json.loads(res_body)
-                
-            latency = int((time.time() - t0) * 1000)
-            self.last_successful_execution = datetime.now(timezone.utc).isoformat()
-            
-            usage = res_json.get("usage", {})
-            prompt_tokens = usage.get("input_tokens", 0)
-            completion_tokens = usage.get("output_tokens", 0)
-            total_tokens = prompt_tokens + completion_tokens
-            
-            # claude-3-5-sonnet: $3.00/1M input, $15.00/1M output
-            cost = (prompt_tokens * 0.003 / 1000) + (completion_tokens * 0.015 / 1000)
-            
-            message_content = res_json["content"][0]["text"]
-            try:
-                output_data = json.loads(message_content)
-            except Exception:
-                output_data = {"raw_text": message_content}
-                
-            payload_artifact = {
-                "request": req_body,
-                "response": res_json,
-                "cost_usd": cost,
-                "latency_ms": latency,
-                "egress_classification": "EVIDENCE_PROTECTED"
-            }
-            
-            # Use base directory reference correctly (ROOT is not in local scope here, use Path(__file__).parent.parent.parent)
-            base_dir = Path(__file__).resolve().parent.parent.parent
-            artifact_dir = base_dir / "docs/evidence/runtime"
-            artifact_dir.mkdir(parents=True, exist_ok=True)
-            artifact_path = artifact_dir / "claude_rung2_payload.json"
-            artifact_path.write_text(json.dumps(payload_artifact, indent=2))
-            
-            print(f"Rung 2 real Claude call success:")
-            print(f"  Model: {self.model_name}")
-            print(f"  Tokens: Input={prompt_tokens}, Output={completion_tokens}, Total={total_tokens}")
-            print(f"  Calculated Cost: ${cost:.6f}")
-            print(f"  Payload Artifact Saved: docs/evidence/runtime/claude_rung2_payload.json")
-            print(f"  Egress Classification: EVIDENCE_PROTECTED")
-            
-            return {
-                "status": "success",
-                "model": self.model_name,
-                "provider": self.provider,
-                "latency_ms": latency,
-                "prompt_tokens": prompt_tokens,
-                "completion_tokens": completion_tokens,
-                "total_tokens": total_tokens,
-                "cost_usd": cost,
-                "output": output_data,
-                "egress_classification": "EVIDENCE_PROTECTED"
-            }
-            
-        except Exception as e:
-            latency = int((time.time() - t0) * 1000)
-            print(f"Rung 2 real Claude call failed: {e}")
-            raise RuntimeError(f"Claude call failed: {e}")
+        ensure_guard()
+        task_meta = input_payload if isinstance(input_payload, dict) else {}
+        gw = CouncilDispatchGateway()
+        req = GatewayRequest(
+            task_id=str(task_meta.get("task_id") or ""),
+            pert_node=str(task_meta.get("pert_node") or ""),
+            caller_identity=str(task_meta.get("caller_identity") or "prompt_brain.ClaudeAdapter"),
+            dispatch_type=DispatchType.API_ANTHROPIC,
+            prompt=prompt_text + "\n" + json.dumps(input_payload),
+            scope=str(task_meta.get("scope") or "read-only"),
+            frontier_required=bool(task_meta.get("frontier_required", True)),
+            frontier_justification=str(task_meta.get("frontier_justification") or "metered Anthropic request"),
+            authorization_state=str(task_meta.get("authorization_state") or "NONE"),
+            endpoint="https://api.anthropic.com/v1/messages",
+            external_dispatch_allowed=bool(task_meta.get("external_dispatch_allowed", True)),
+            metadata={"output_contract": output_contract},
+        )
+        result = gw.dispatch(req)
+        if result.status == "BLOCKED" or str(result.decision_status).startswith("BLOCKED"):
+            raise RuntimeError(
+                f"ClaudeAdapter blocked by CouncilDispatchGateway: "
+                f"{result.decision_status} blocks={result.blocks}"
+            )
+        self.last_successful_execution = datetime.now(timezone.utc).isoformat()
+        return {
+            "status": "success" if result.status == "COMPLETED" else result.status.lower(),
+            "model": self.model_name,
+            "provider": self.provider,
+            "latency_ms": result.latency_ms,
+            "cost_usd": result.estimated_cost,
+            "provider_reported_cost": result.provider_reported_cost,
+            "billing_source": result.billing_source,
+            "credit_balance_authoritative": result.credit_balance_authoritative,
+            "output": {"raw_text": result.output},
+            "gateway_dispatch_id": result.dispatch_id,
+            "egress_classification": "GATEWAY_CONTROLLED",
+        }
 
 class SimulationFallbackAdapter(ModelAdapter):
     def __init__(self, model_name="hoch-sim-v4"):

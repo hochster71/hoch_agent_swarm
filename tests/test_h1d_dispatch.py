@@ -18,6 +18,12 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from scripts.council import dispatch as D  # noqa: E402
+from scripts.council.gateway import (  # noqa: E402
+    CouncilDispatchGateway,
+    GatewayLedger,
+    default_policy,
+    ensure_guard,
+)
 from scripts.council.spend_gate import CostLedger, SubprocessSpendGate  # noqa: E402
 
 GOV = {"monthly_incremental_budget_usd": 200,
@@ -48,11 +54,39 @@ class FailingAdapter(D.Adapter):
 
 @pytest.fixture
 def router(tmp_path):
+    ensure_guard()
     gov = tmp_path / "gov.json"
     gov.write_text(json.dumps(GOV))
     gate = SubprocessSpendGate(ledger=CostLedger(tmp_path / "cost.jsonl"),
                                governor_path=gov)
-    return D.CouncilRouter(gate=gate, relay_dir=tmp_path / "relay")
+    pol = default_policy()
+    pol["executable_allowlist"]["LOCAL_OLLAMA"] = ["ollama", "echo", "false"]
+    pol["executable_allowlist"]["CLI_GEMINI"] = ["gemini", "echo", "false"]
+    pol["executable_allowlist"]["CLI_GROK"] = ["grok", "echo", "false"]
+    # Use transport double so tests never hit real ollama/grok
+    def _transport(req):
+        # EchoAdapter argv is ["echo", reply] — replay reply without spawn when possible
+        argv = req.argv or []
+        if argv and argv[0] == "false":
+            return {"stdout": "", "stderr": "fail", "exit_code": 1, "status": "FAILED", "latency_ms": 1}
+        if argv and argv[0] == "echo" and len(argv) > 1:
+            return {
+                "stdout": argv[1],
+                "stderr": "",
+                "exit_code": 0,
+                "status": "COMPLETED",
+                "latency_ms": 1,
+            }
+        return {"stdout": "", "stderr": "", "exit_code": 0, "status": "COMPLETED", "latency_ms": 1}
+
+    gw = CouncilDispatchGateway(
+        policy=pol,
+        gateway_ledger=GatewayLedger(tmp_path / "gateway.jsonl"),
+        spend_gate=gate,
+        governor_path=gov,
+        transport=_transport,
+    )
+    return D.CouncilRouter(gate=gate, relay_dir=tmp_path / "relay", gateway=gw)
 
 
 def _task(**kw):
@@ -166,14 +200,14 @@ def test_blocked_adapter_yields_blocked_node_not_a_guess(router):
 # --- the gate is the ONLY spawn point --------------------------------------
 
 def test_no_module_in_the_dispatch_path_spawns_a_subprocess_directly():
-    """Only spend_gate.py may call subprocess. dispatch.py must route through it."""
+    """dispatch.py must not spawn; CouncilDispatchGateway is the choke point."""
     src = (ROOT / "scripts" / "council" / "dispatch.py").read_text(encoding="utf-8")
     assert "import subprocess" not in src
     assert "subprocess.run" not in src
     assert "os.system" not in src
     assert "Popen" not in src
-    # and it must import the gate
-    assert "from scripts.council.spend_gate import" in src
+    assert "CouncilDispatchGateway" in src
+    assert "from scripts.council.gateway import" in src
 
 
 def test_every_dispatch_is_hash_ledgered(router, monkeypatch):

@@ -1,0 +1,176 @@
+{
+  "schema": "H1D_AUTHORITATIVE_STATUS_v1",
+  "updated_at": "2026-07-12T23:30:00Z",
+  "assessed_by": "founder_assessment_operator_session",
+  "local_implementation_commit": "3c5234766d77d6f7450b1f05d54477e1884b8c21",
+  "local_branch": "helm/h1b-r2-remediation",
+  "remote_reproducibility": {
+    "github_repo": "hochster71/hoch_agent_swarm",
+    "commit_pushed": false,
+    "upstream_configured_for_branch": false,
+    "status": "LOCAL_ONLY_NOT_REMOTELY_REPRODUCIBLE",
+    "note": "Commit 3c523476 is present on local branch helm/h1b-r2-remediation only. Not independently retrievable from GitHub until pushed or otherwise hash-archived."
+  },
+  "h1d_status": "IN_PROGRESS",
+  "h1d_m1": {
+    "label": "H1D-M1",
+    "status": "AUTHORITATIVE_PASS_PENDING_EVIDENCE",
+    "functionally_demonstrated": true,
+    "remotely_reproducible": false,
+    "summary": "PERT-ready task through spend/egress gate, Grok + Ollama dispatch, capture, critic, evidence aggregation, and one controlled PERT transition — first genuine removal of founder from the prompt-transport path for that routed spine only."
+  },
+  "capabilities": {
+    "autonomous_grok_dispatch": "YES",
+    "autonomous_ollama_dispatch": "YES",
+    "gemini_dispatch": "PRESENT_BUT_TIMEOUT_OR_UNRELIABLE",
+    "claude_adapter": "ABSENT",
+    "chatgpt_adapter": "ABSENT",
+    "ag_ide_ingestion": "ABSENT",
+    "persistent_unattended_scheduler": "NOT_PROVEN",
+    "full_pert_graph_binding": "NOT_PROVEN",
+    "full_council_takeover": false
+  },
+  "founder_copy_paste": {
+    "eliminated_for": "ROUTED_GROK_AND_OLLAMA_TASKS_ONLY",
+    "eliminated_globally": false,
+    "manual_copy_paste_operations_on_demonstrated_route": 0
+  },
+  "spend_telemetry": {
+    "demonstrated_task_id": "H1D-20260712T220802Z-DF8F1B",
+    "estimated_cost_usd": 0.001296,
+    "provider_reported_cost_usd": null,
+    "billing_source": "estimated_from_tokens_or_request",
+    "credit_balance_observed_at": null,
+    "credit_balance_authoritative": false,
+    "do_not_claim": "Do not claim Grok balance was definitively decremented unless read from an authoritative provider billing interface."
+  },
+  "critical_p0": {
+    "id": "H1D-P0-UNGATED-DIRECT-NETWORK-ADAPTERS",
+    "status": "OPEN",
+    "title": "Direct network adapters bypass the council choke point",
+    "example_path": "scripts/prompt_brain/model_adapters.py::OpenAIAdapter.execute",
+    "mechanism": "urllib.request to https://api.openai.com/v1/chat/completions without CouncilDispatchGateway / SubprocessSpendGate",
+    "required_architecture": {
+      "choke_point": "CouncilDispatchGateway",
+      "must_include": [
+        "authorization",
+        "task_classification",
+        "local_first_decision",
+        "spend_ceiling",
+        "executable_allowlist",
+        "network_egress_policy",
+        "dispatch_ledger",
+        "result_provenance"
+      ],
+      "forbidden_without_gateway": [
+        "urllib",
+        "requests",
+        "httpx",
+        "raw_sockets",
+        "subprocess",
+        "provider_sdks"
+      ]
+    },
+    "also_noted_by_live_critic": "H1D-20260712T220802Z-DF8F1B Grok seat identified opt-in gate and parallel urllib/adapter bypasses"
+  },
+  "decomposition": [
+    {
+      "node": "H1D.1",
+      "requirement": "Subprocess spend/egress gate",
+      "assessment": "Implemented; verification still needed; not process-wide intercept"
+    },
+    {
+      "node": "H1D.2",
+      "requirement": "Typed task/result envelopes",
+      "assessment": "Implemented"
+    },
+    {
+      "node": "H1D.3",
+      "requirement": "Grok adapter",
+      "assessment": "Live on H1D runner route"
+    },
+    {
+      "node": "H1D.4",
+      "requirement": "Ollama adapter",
+      "assessment": "Live on H1D runner route"
+    },
+    {
+      "node": "H1D.5",
+      "requirement": "Critic and revision loop",
+      "assessment": "Demonstrated"
+    },
+    {
+      "node": "H1D.6",
+      "requirement": "Evidence-bound PERT transition",
+      "assessment": "Demonstrated for one controlled node only; not full graph binding"
+    },
+    {
+      "node": "H1D.7",
+      "requirement": "Eliminate direct-network bypasses",
+      "assessment": "OPEN P0"
+    },
+    {
+      "node": "H1D.8",
+      "requirement": "Gemini reliability",
+      "assessment": "OPEN"
+    },
+    {
+      "node": "H1D.9",
+      "requirement": "Claude adapter",
+      "assessment": "OPEN"
+    },
+    {
+      "node": "H1D.10",
+      "requirement": "AG IDE task/result relay",
+      "assessment": "OPEN"
+    },
+    {
+      "node": "H1D.11",
+      "requirement": "Persistent autonomous scheduler",
+      "assessment": "OPEN"
+    },
+    {
+      "node": "H1D.12",
+      "requirement": "Founder-only interruption policy",
+      "assessment": "OPEN integration proof"
+    }
+  ],
+  "demonstrated_spine": [
+    "PERT-ready task",
+    "spend/egress gate (opt-in SubprocessSpendGate)",
+    "Grok dispatch",
+    "Ollama dispatch",
+    "response capture",
+    "critic validation",
+    "evidence aggregation",
+    "one controlled PERT state transition"
+  ],
+  "not_yet_true": [
+    "Council has taken over all coordination between ChatGPT, Grok, Claude, Gemini, and AG IDE",
+    "H1D COMPLETED",
+    "All outbound model/network calls converge through one enforceable gateway",
+    "Authoritative provider billing decrements proven",
+    "Remote hash-reproducible milestone at 3c523476"
+  ],
+  "next_blocker": "H1D.10_AG_IDE_RELAY",
+  "h1d7": {
+    "node": "H1D.7",
+    "status": "IN_PROGRESS_IMPLEMENTATION",
+    "gateway_module": "scripts/council/gateway.py",
+    "scanner": "scripts/verify_model_dispatch_chokepoint.py",
+    "known_openai_bypass_removed": true,
+    "runtime_guard": "ModelDispatchGuard",
+    "legacy_backend_mesh": "documented_exception_pending_unification"
+  },
+  "next_objectives": [
+    "Close H1D.7 with commit-bound live proof package AUTHORITATIVE_PASS",
+    "Connect AG IDE task/result relay (H1D.10)",
+    "Prove persistent unattended PERT scheduler (H1D.11)",
+    "Push or archive implementation commit for remote reproducibility"
+  ],
+  "incorrect_claims_rejected": [
+    "H1D: COMPLETED",
+    "Full multi-model council takeover",
+    "Authoritative Grok balance decrement without provider billing interface"
+  ]
+}

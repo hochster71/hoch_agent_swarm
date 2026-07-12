@@ -3,14 +3,14 @@
 WHAT THIS REPLACES
 ------------------
     BEFORE:  ChatGPT -> Michael copies -> Grok -> Michael copies -> Claude -> AG IDE
-    AFTER:   PERT task READY -> router -> adapters -> capture -> critic -> PERT node
+    AFTER:   PERT task READY -> CouncilDispatchGateway -> adapters -> critic -> PERT
 
 Michael is removed from prompt transport. He is retained for founder-only gates:
 spend beyond policy, metered API keys, credentials, signing, submission, release.
 
-EVERY external call goes through SubprocessSpendGate (scripts/council/spend_gate.py).
-There is no other path. An adapter that bypasses the gate is a defect, and
-test_h1d_dispatch.py asserts the gate is the only spawn point.
+H1D.7: EVERY model invocation routes through CouncilDispatchGateway
+(scripts/council/gateway.py). SubprocessSpendGate is an internal transport of
+the gateway only. Adapters build argv; they never spawn or open sockets.
 
 FAIL-CLOSED: an adapter failure yields BLOCKED or UNKNOWN. It never yields a
 fabricated result, and it never advances a PERT node.
@@ -26,11 +26,13 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
-from scripts.council.spend_gate import (
-    DispatchRequest,
-    DispatchResult,
-    SubprocessSpendGate,
+from scripts.council.gateway import (
+    CouncilDispatchGateway,
+    DispatchType,
+    GatewayRequest,
+    ensure_guard,
 )
+from scripts.council.spend_gate import SubprocessSpendGate
 
 ROOT = Path(__file__).resolve().parents[2]
 RELAY_DIR = ROOT / "coordination" / "council" / "relay"
@@ -159,6 +161,12 @@ ADAPTERS: dict[str, Adapter] = {
     "ollama": OllamaAdapter(),
 }
 
+ADAPTER_DISPATCH_TYPE: dict[str, DispatchType] = {
+    "grok": DispatchType.CLI_GROK,
+    "gemini": DispatchType.CLI_GEMINI,
+    "ollama": DispatchType.LOCAL_OLLAMA,
+}
+
 
 # ===========================================================================
 # CRITIC — validates a result against the task's evidence contract
@@ -209,12 +217,20 @@ def revision_prompt(task: TaskEnvelope, result: ResultEnvelope,
 # ===========================================================================
 
 class CouncilRouter:
-    def __init__(self, gate: SubprocessSpendGate | None = None,
-                 relay_dir: Path | None = None):
+    def __init__(
+        self,
+        gate: SubprocessSpendGate | None = None,
+        relay_dir: Path | None = None,
+        gateway: CouncilDispatchGateway | None = None,
+        caller_identity: str = "helm.council.router",
+    ):
+        ensure_guard()
         self.gate = gate or SubprocessSpendGate()
         self.relay_dir = relay_dir or RELAY_DIR
         self.relay_dir.mkdir(parents=True, exist_ok=True)
         self.ledger_path = self.relay_dir / "dispatch_ledger.jsonl"
+        self.caller_identity = caller_identity
+        self.gateway = gateway or CouncilDispatchGateway(spend_gate=self.gate)
 
     # -- one adapter, one attempt -------------------------------------------
     def dispatch_one(self, task: TaskEnvelope, adapter_name: str,
@@ -228,38 +244,62 @@ class CouncilRouter:
         effective = TaskEnvelope(**{**asdict(task),
                                     "prompt": prompt_override or task.prompt})
 
-        req = DispatchRequest(
+        dtype = ADAPTER_DISPATCH_TYPE.get(adapter.name)
+        if dtype is None:
+            return ResultEnvelope(
+                task_id=task.task_id,
+                adapter=adapter_name,
+                status="BLOCKED",
+                blocks=["UNKNOWN_DISPATCH_TYPE"],
+            )
+
+        # THE ONLY SPAWN POINT. Everything external goes through the gateway.
+        gw_req = GatewayRequest(
             task_id=task.task_id,
-            adapter=adapter.name,
-            binary=adapter.binary,
+            pert_node=task.pert_node or "",
+            caller_identity=self.caller_identity,
+            dispatch_type=dtype,
             prompt=effective.prompt,
+            scope=task.scope,
+            evidence_contract=list(task.evidence_contract),
             frontier_required=task.frontier_required,
+            frontier_justification=(
+                "task declares frontier_required for independent council review"
+                if task.frontier_required
+                else ""
+            ),
             timeout_seconds=task.timeout_seconds,
             per_task_cap_usd=task.per_task_cap_usd,
             milestone_ceiling_usd=task.milestone_ceiling_usd,
+            binary=adapter.binary,
+            argv=adapter.argv(effective),
             cwd=getattr(adapter, "scratch_cwd", None),
+            metadata={"model": getattr(adapter, "model", None)},
         )
-
-        # THE ONLY SPAWN POINT. Everything external goes through the gate.
-        res: DispatchResult = self.gate.dispatch(req, adapter.argv(effective))
+        res = self.gateway.dispatch(gw_req)
 
         env = ResultEnvelope(
             task_id=task.task_id,
             adapter=adapter.name,
             status=res.status,
-            output=res.stdout,
+            output=res.output,
             blocks=res.blocks,
-            cost_usd=res.estimated_cost_usd,
+            cost_usd=res.estimated_cost,
             latency_ms=res.latency_ms,
             external_call=res.external_call,
-            response_sha256=res.raw_sha256,
-            cost_ledger_hash=res.ledger_entry_hash,
+            response_sha256=res.output_digest or None,
+            cost_ledger_hash=res.record_hash or None,
             revision_of=revision_of,
             evidence={
                 "task_digest": task.digest(),
                 "prompt_sha256": _sha(effective.prompt),
                 "exit_code": res.exit_code,
                 "stderr_tail": (res.stderr or "")[-400:],
+                "gateway_dispatch_id": res.dispatch_id,
+                "decision_status": res.decision_status,
+                "billing_source": res.billing_source,
+                "provider_reported_cost": res.provider_reported_cost,
+                "credit_balance_authoritative": res.credit_balance_authoritative,
             },
         )
         verdict, reasons = critic_review(task, env)
