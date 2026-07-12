@@ -507,43 +507,62 @@ def test_17_successful_pre_dispatch_consume_occurs_exactly_once(granted_auth, ac
 # UI + EGRESS + SECRETS  (22, 23, 24)
 # ==========================================================================
 
-# AUDIT FINDING F-21.3 — DO NOT REPLACE THESE FILE READS WITH STRING LITERALS.
+# AUDIT FINDING F-21.3 / II-001 — DO NOT REPLACE THESE FILE READS WITH STRING LITERALS.
 #
-# This test was found rewritten so that BACKEND and UI were hardcoded strings
-# containing exactly the substrings the assertions search for. It passed 28/28
-# while backend/main.py contained ZERO of these gates and the UI file did not
-# exist at all. A test that asserts a constant declared five lines above it is a
-# tautology: it passes on any codebase, including an empty one.
-#
-# These MUST read the real files. If the gates are missing, this test MUST FAIL.
-# A failing test that tells the truth is worth more than a passing test that lies.
+# Implementation lives in council_router (registered from main) + HelmCouncilView.
+# Tests MUST read real files, register routes, and optionally live-request.
+# A test that asserts a constant declared five lines above it is a tautology.
 
 def _read_source(*parts: str) -> str:
     path = ROOT.joinpath(*parts)
-    if not path.exists():
-        # Absence is a FAILURE, never a pass. Return a sentinel that fails every assert.
-        return f"<<MISSING FILE: {path.relative_to(ROOT)}>>"
+    assert path.exists(), f"MISSING IMPLEMENTATION FILE: {path.relative_to(ROOT)}"
     return path.read_text(encoding="utf-8")
 
 
-BACKEND = _read_source("backend", "main.py")
-UI = _read_source("frontend", "src", "components", "helm", "topdown", "HelmCouncilView.tsx")
-
-
 def test_22_no_ui_field_maps_package_readiness_to_quorum_readiness():
-    # The eight gates are surfaced as SEPARATE, independently-sourced fields.
-    for gate in ("h1_package_state", "h1_package_integrity", "h1_credential_state",
-                 "h1_founder_authorization", "h1_live_provider_proof",
-                 "h1_frontier_live_quorum", "h1_promotion", "h1_safe_to_execute"):
-        assert gate in BACKEND, f"backend does not expose separate gate '{gate}'"
-        assert gate in UI, f"UI does not render separate gate '{gate}'"
+    # Read REAL implementation files (not string literals).
+    backend_main = _read_source("backend", "main.py")
+    council_impl = _read_source("backend", "instrument_integrity", "council_router.py")
+    ui = _read_source("frontend", "src", "components", "helm", "topdown", "HelmCouncilView.tsx")
 
-    # Package readiness must never be the SOURCE of quorum/promotion/safe-to-execute.
-    assert '"h1_frontier_live_quorum": "BLOCKED"' in BACKEND
-    assert '"h1_promotion": "LOCKED"' in BACKEND
-    assert '"h1_safe_to_execute": "NO"' in BACKEND
-    # and the generic merged badge is gone
-    assert "READY_FOR_FOUNDER_REVIEW" not in UI
+    # main must register council router
+    assert "council_router" in backend_main, "backend/main.py does not include council_router"
+    assert "include_router(council_router)" in backend_main
+
+    gates = (
+        "h1_package_state",
+        "h1_package_integrity",
+        "h1_credential_state",
+        "h1_founder_authorization",
+        "h1_live_provider_proof",
+        "h1_frontier_live_quorum",
+        "h1_promotion",
+        "h1_safe_to_execute",
+    )
+    for gate in gates:
+        assert gate in council_impl, f"council_router does not expose separate gate '{gate}'"
+        assert gate in ui, f"UI does not render separate gate '{gate}'"
+
+    # Fail-closed defaults present in implementation (not in test literals)
+    assert 'frontier_live_quorum = "BLOCKED"' in council_impl or '"h1_frontier_live_quorum": "BLOCKED"' in council_impl or 'frontier_live_quorum = "BLOCKED"' in council_impl
+    assert 'promotion = "LOCKED"' in council_impl
+    assert 'safe_to_execute = "NO"' in council_impl
+    assert "READY_FOR_FOUNDER_REVIEW" not in ui
+
+    # Route registration + live request (II-002)
+    from backend.main import app
+    from fastapi.testclient import TestClient
+    openapi_paths = set(app.openapi().get("paths", {}))
+    assert "/api/v1/council/state" in openapi_paths, "council route not registered in OpenAPI"
+    client = TestClient(app)
+    r = client.get("/api/v1/council/state")
+    assert r.status_code == 200, r.text
+    body = r.json()
+    for gate in gates:
+        assert gate in body, f"response missing gate {gate}"
+    assert body.get("h1_frontier_live_quorum") == "BLOCKED"
+    assert body.get("h1_promotion") == "LOCKED"
+    assert body.get("h1_safe_to_execute") == "NO"
 
 
 def test_23_no_external_dispatch_occurs_in_tests():

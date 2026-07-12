@@ -85,10 +85,10 @@ def extract_json(text):
     return None
 
 
-def main():
+def main(argv=None, *, adapter_override=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--profile", required=True, choices=["local_proof", "frontier_council"])
-    args = ap.parse_args()
+    args = ap.parse_args(argv)
 
     reg = Registry()
     errs = reg.validate_schema()
@@ -133,7 +133,7 @@ def main():
             prompt = build_prompt(run_id, args.profile, seat)
             t0 = time.time(); s_at = now()
             try:
-                text, resolved, raw, ameta = adapter_dispatch(seat, prompt, key)
+                text, resolved, raw, ameta = adapter_dispatch(seat, prompt, key, adapter_override=adapter_override)
                 rec["dispatched"] = True
                 rec["adapter_kind"] = ameta.get("adapter_kind")
                 adapter_metas[mid] = ameta

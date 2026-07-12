@@ -173,7 +173,7 @@ def dispatch(seat, prompt, key=None):
     return text, resolved, raw
 
 
-def dispatch_ex(seat, prompt, key=None):
+def dispatch_ex(seat, prompt, key=None, *, adapter_override=None):
     """-> (text, resolved_model, raw, meta).
 
     `meta["adapter_kind"]` is "mock" or "live" and is the TRUTH about what produced this
@@ -200,15 +200,10 @@ def dispatch_ex(seat, prompt, key=None):
                 is_mock = True          # unreadable contract => MOCK, never live
 
         if is_mock:
-            if member_id == "chatgpt":
-                from council.providers.chatgpt_mock import ChatGPTMockAdapter
-                adapter = ChatGPTMockAdapter(contracts_path)
-            elif member_id == "claude":
-                from council.providers.claude_mock import ClaudeMockAdapter
-                adapter = ClaudeMockAdapter(contracts_path)
-            else:
-                from council.providers.grok_mock import GrokMockAdapter
-                adapter = GrokMockAdapter(contracts_path)
+            if not adapter_override:
+                raise ValueError("MOCK_ADAPTER_INJECTION_REQUIRED: Mock adapter injection required for mock testing")
+            
+            adapter = adapter_override
             
             import re
             m = re.search(r"RUN ID:\s*([^\n]+)", prompt)

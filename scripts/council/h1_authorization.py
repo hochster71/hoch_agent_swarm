@@ -403,30 +403,6 @@ class LedgerError(Exception):
     pass
 
 
-def _proc_start_time(pid: int) -> str | None:
-    try:
-        stat = Path(f"/proc/{pid}/stat")
-        if stat.exists():                                       # Linux
-            return stat.read_text().rsplit(")", 1)[1].split()[19]
-        import subprocess                                       # macOS/BSD
-        out = subprocess.run(
-            ["ps", "-o", "lstart=", "-p", str(pid)], capture_output=True, text=True, timeout=5
-        )
-        return out.stdout.strip() or None
-    except Exception:
-        return None
-
-
-def _pid_alive(pid: int, start_time: str | None) -> bool:
-    try:
-        os.kill(pid, 0)
-    except Exception:
-        return False
-    current = _proc_start_time(pid)
-    if start_time and current and current != start_time:
-        return False        # PID reused by a different process => the old owner is STALE
-    return True
-
 
 class AuthorizationLedger:
     """Durable, append-only, exclusively-locked authorization consumption ledger.
@@ -470,45 +446,27 @@ class AuthorizationLedger:
 
     # -- exclusive lock -----------------------------------------------------
     def _acquire_lock(self, timeout: float = 0.0):
+        import fcntl
         deadline = time.time() + timeout
+        
+        # O_CREAT | O_RDWR ensures the file exists and we can lock it.
+        fd = os.open(self.lock_path, os.O_CREAT | os.O_RDWR)
+        
         while True:
             try:
-                fd = os.open(self.lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
-                pid = os.getpid()
-                os.write(
-                    fd,
-                    json.dumps({"pid": pid, "start_time": _proc_start_time(pid)}).encode(),
-                )
-                try:                       # belt and braces on POSIX
-                    import fcntl
-                    fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-                except Exception:
-                    pass
+                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
                 return fd
-            except FileExistsError:
-                holder = _load(self.lock_path) or {}
-                hpid = holder.get("pid")
-                # Stale-owner detection: a dead PID, or a PID reused by a different
-                # process, does not hold the lock.
-                if not isinstance(hpid, int) or not _pid_alive(hpid, holder.get("start_time")):
-                    try:
-                        self.lock_path.unlink()
-                        continue
-                    except FileNotFoundError:
-                        continue
+            except (BlockingIOError, OSError):
                 if time.time() >= deadline:
-                    raise LedgerError(f"AUTHORIZATION_LOCK_HELD: pid={hpid}")
+                    os.close(fd)
+                    raise LedgerError("AUTHORIZATION_LOCK_HELD")
                 time.sleep(0.01)
 
     def _release_lock(self, fd) -> None:
+        import fcntl
         try:
+            fcntl.flock(fd, fcntl.LOCK_UN)
             os.close(fd)
-        except Exception:
-            pass
-        try:
-            holder = _load(self.lock_path) or {}
-            if holder.get("pid") == os.getpid():
-                self.lock_path.unlink(missing_ok=True)
         except Exception:
             pass
 
@@ -542,7 +500,6 @@ class AuthorizationLedger:
                 "run_id": run_id,
                 "request_digest": request_digest,
                 "process_id": pid,
-                "process_start_time": _proc_start_time(pid),
                 "consumed_at": _now().isoformat().replace("+00:00", "Z"),
                 "status": "CONSUMED",
             }
