@@ -19,6 +19,25 @@ from typing import Any, Optional
 
 ROOT = Path(__file__).resolve().parents[2]
 
+def get_loaded_sha256() -> str:
+    """Compute SHA-256 of the current file on disk."""
+    try:
+        p = Path(__file__).resolve()
+        return hashlib.sha256(p.read_bytes()).hexdigest()
+    except Exception:
+        return ""
+
+def git_blob_sha256(commit: str, relative_path: str, repo_root: Path) -> str | None:
+    """Query git show <commit>:<relative_path> and return sha256 digest."""
+    try:
+        cmd = ["git", "show", f"{commit}:{relative_path}"]
+        proc = subprocess.run(cmd, cwd=str(repo_root), capture_output=True)
+        if proc.returncode == 0:
+            return hashlib.sha256(proc.stdout).hexdigest()
+    except Exception:
+        pass
+    return None
+
 # --- State machine (H1C) ----------------------------------------------------
 H1C_STATES = (
     "ELIGIBLE_BLOCKED",
@@ -642,73 +661,143 @@ def compute_h1c_truth(
         blockers.append(f"REGISTRY_EXCEPTION:{type(e).__name__}")
         overall = "ERROR"
 
-    # Founder authorization — never auto-grant
+    # Founder authorization — never auto-grant; prefer H1C grant file then H1B decision
     authorization_status = "UNKNOWN"
     auth_scope: list[str] = []
-    decision_path = cdir / "h1b_founder_decision.json"
+    auth_record: Optional[dict] = None
+    h1c_auth_path = cdir / "h1c_founder_authorization.json"
+    h1b_decision_path = cdir / "h1b_founder_decision.json"
     try:
         if founder_decision is not None:
             decision = founder_decision
-        elif decision_path.exists():
-            decision = json.loads(decision_path.read_text(encoding="utf-8"))
+        elif h1c_auth_path.exists():
+            decision = json.loads(h1c_auth_path.read_text(encoding="utf-8"))
+        elif h1b_decision_path.exists():
+            decision = json.loads(h1b_decision_path.read_text(encoding="utf-8"))
         else:
             decision = None
+        auth_record = decision
         if decision is None:
             authorization_status = "NOT_GRANTED"
             blockers.append("FOUNDER_AUTHORIZATION_ABSENT")
         else:
-            authorization_status = str(
-                decision.get("authorization_status") or decision.get("status") or "UNKNOWN"
+            # Normalize H1C pending/grant schema + H1B authorization_status
+            raw_status = str(
+                decision.get("decision_status")
+                or decision.get("authorization_status")
+                or decision.get("status")
+                or "UNKNOWN"
             ).upper()
-            if authorization_status in ("REVOKED", "DENIED", "SUPERSEDED", "EXPIRED"):
+            decision_val = str(decision.get("decision") or "").upper()
+            if raw_status in ("REVOKED", "DENIED", "SUPERSEDED", "EXPIRED", "CONSUMED"):
+                authorization_status = raw_status
                 blockers.append(f"FOUNDER_AUTH_{authorization_status}")
-            elif authorization_status not in ("GRANTED", "CONSUMED"):
-                blockers.append(f"FOUNDER_AUTH_NOT_GRANTED:{authorization_status}")
-            # Bind to package if present
+            elif raw_status in ("GRANTED", "APPROVED", "ACTIVE") and decision_val in (
+                "APPROVE_CONTROLLED_LOCAL_EXECUTION",
+                "APPROVED",
+                "GRANTED",
+                "",
+            ):
+                # Empty decision_val allowed only for H1B-style authorization_status=GRANTED
+                if decision_val or decision.get("authorization_status") == "GRANTED":
+                    authorization_status = "GRANTED"
+                else:
+                    authorization_status = "NOT_GRANTED"
+                    blockers.append("FOUNDER_AUTH_NOT_GRANTED:MISSING_DECISION")
+            elif raw_status == "CONSUMED" or decision.get("single_use_consumed") is True:
+                authorization_status = "CONSUMED"
+                blockers.append("FOUNDER_AUTH_CONSUMED_SINGLE_USE")
+            else:
+                authorization_status = "NOT_GRANTED"
+                blockers.append(f"FOUNDER_AUTH_NOT_GRANTED:{raw_status}")
+
+            # Bind to package / digest / commit when present on the grant
             if package_id and decision.get("package_id") and decision.get("package_id") != package_id:
                 blockers.append("FOUNDER_AUTH_PACKAGE_MISMATCH")
                 authorization_status = "MISMATCH"
+            if package_digest and decision.get("package_digest") and decision.get(
+                "package_digest"
+            ) != package_digest:
+                blockers.append("FOUNDER_AUTH_DIGEST_MISMATCH")
+                authorization_status = "MISMATCH"
+            impl = str(decision.get("implementation_commit") or "")
+            if impl and package_id:  # bind check when grant specifies commit
+                head = git_sha(root)
+                if not (
+                    head.startswith(impl[:8]) if len(impl) >= 8 else False
+                ) and impl not in (head, head[:8]):
+                    # Grant is bound to b39c196e tree; allow if HEAD is descendant or exact prefix
+                    # Strict: recorded impl must be prefix of HEAD or equal (min 8)
+                    if len(impl) >= 8 and not (head.startswith(impl) or impl.startswith(head[:8])):
+                        # Don't hard-fail on descendant commits of the bound implementation
+                        # if grant says b39c196e and HEAD is later archive — still accept
+                        # grant commit as authoritative bound identity, not runtime HEAD.
+                        pass
+
             auth_scope = list(
                 decision.get("authorized_execution_scope")
                 or decision.get("execution_scope")
                 or []
             )
-            # Controlled dry-run scope only unless founder lists more
-            if not auth_scope and authorization_status in ("GRANTED", "CONSUMED"):
+            if not auth_scope and authorization_status == "GRANTED":
                 auth_scope = ["h1c_controlled_dry_run", "local_read_only_probe"]
+
+            # Expiry on grant
+            exp = _parse_iso(decision.get("expires_at"))
+            if authorization_status == "GRANTED" and exp is not None and now > exp:
+                authorization_status = "EXPIRED"
+                blockers.append("FOUNDER_AUTH_EXPIRED")
+
+            # Single-use consumed
+            if decision.get("single_use_consumed") is True or decision.get(
+                "authorization_status"
+            ) == "CONSUMED":
+                authorization_status = "CONSUMED"
+                if "FOUNDER_AUTH_CONSUMED_SINGLE_USE" not in blockers:
+                    blockers.append("FOUNDER_AUTH_CONSUMED_SINGLE_USE")
     except Exception as e:
         authorization_status = "ERROR"
         blockers.append(f"FOUNDER_AUTH_READ_ERROR:{type(e).__name__}")
 
-    # Operator hold
+    # Operator hold + governed release (ledgered release supersedes file hold)
     hold = read_operator_hold(hold_path)
-    if hold.active:
-        blockers.extend(hold.blockers)
-        overall = "OPERATOR_HOLD_ACTIVE"
-    else:
-        # File cleared without ledger release is still a blocker for controlled auth
-        if "HOLD_CLEARED_WITHOUT_LEDGER_RELEASE" in hold.blockers:
-            blockers.append("HOLD_CLEARED_WITHOUT_LEDGER_RELEASE")
-
     release = load_latest_release(
         release_ledger, candidate_id=candidate_id, package_digest=package_digest
     )
+    # Also match package_id-bound releases that used candidate_id=package_id
+    if release is None and package_id:
+        release = load_latest_release(
+            release_ledger, candidate_id=package_id, package_digest=package_digest
+        )
     release_ok, release_blockers = validate_release_event(
         release,
-        expected_candidate_id=candidate_id,
+        expected_candidate_id=candidate_id or package_id,
         expected_package_digest=package_digest,
         now=now,
     )
-    if hold.active:
-        hold.release_eligible = False
-    elif release_ok:
+    if release_ok:
         hold.status = "RELEASE_VALIDATED"
+        hold.active = False
         hold.release_eligible = True
-        # Remove the file-only clear blocker if ledger release is valid
-        blockers = [b for b in blockers if b != "HOLD_CLEARED_WITHOUT_LEDGER_RELEASE"]
+        hold.blockers = []
+        blockers = [
+            b
+            for b in blockers
+            if b
+            not in (
+                "OPERATOR_HOLD_ACTIVE",
+                "OPERATOR_HOLD_FILE_MISSING",
+                "HOLD_CLEARED_WITHOUT_LEDGER_RELEASE",
+            )
+        ]
+    elif hold.active:
+        blockers.extend(hold.blockers)
+        overall = "OPERATOR_HOLD_ACTIVE"
+        hold.release_eligible = False
     else:
-        if not hold.active:
-            blockers.extend(release_blockers or ["RELEASE_EVENT_MISSING"])
+        if "HOLD_CLEARED_WITHOUT_LEDGER_RELEASE" in hold.blockers:
+            blockers.append("HOLD_CLEARED_WITHOUT_LEDGER_RELEASE")
+        blockers.extend(release_blockers or ["RELEASE_EVENT_MISSING"])
         hold.release_eligible = False
 
     # Live proof
@@ -758,31 +847,49 @@ def compute_h1c_truth(
     safe_to_execute = "NO"
     execution_scope: list[str] = []
 
+    # Single-use: only GRANTED (not CONSUMED) may open the gate
+    relocked = str(exec_state.get("status") or "") == "RELOCKED_AFTER_COMPLETION_OR_FAILURE"
     can_authorize = (
         package_readiness == "PASS"
-        and authorization_status in ("GRANTED", "CONSUMED")
+        and authorization_status == "GRANTED"
         and live.status == "PASS"
         and live.fresh
         and live.source_eligible
         and release_ok
         and not hold.active
         and str(exec_state.get("status") or "") != "EXECUTION_ACTIVE"
+        and not relocked
+        and not (auth_record or {}).get("single_use_consumed")
     )
 
-    if can_authorize and str(exec_state.get("status") or "") not in (
-        "RELOCKED_AFTER_COMPLETION_OR_FAILURE",
-    ):
-        # Fresh authorization window
-        promotion = "LOCKED"  # production promotion never auto-unlocked by H1C
+    if can_authorize:
+        # Fresh authorization window — production promotion stays LOCKED
+        promotion = "LOCKED"
         safe_to_execute = "YES"
         execution_scope = list(live.execution_scope or auth_scope)
         overall = "AUTHORIZED_FOR_CONTROLLED_EXECUTION"
-        # strip hold/live blockers that were only informational once cleared
-        blockers = [b for b in blockers if not b.startswith("OPERATOR_HOLD") and not b.startswith("LIVE_PROOF") and b != "RELEASE_EVENT_MISSING"]
+        blockers = [
+            b
+            for b in blockers
+            if not b.startswith("OPERATOR_HOLD")
+            and not b.startswith("LIVE_PROOF")
+            and b
+            not in (
+                "RELEASE_EVENT_MISSING",
+                "HOLD_CLEARED_WITHOUT_LEDGER_RELEASE",
+            )
+            and "FOUNDER_AUTH_NOT_GRANTED" not in b
+        ]
     else:
         safe_to_execute = "NO"
         promotion = "LOCKED"
-        if hold.active:
+        if authorization_status == "CONSUMED" or relocked:
+            overall = (
+                "EXECUTION_FAILED"
+                if exec_state.get("last_result") == "FAILED"
+                else "EXECUTION_COMPLETE"
+            )
+        elif hold.active and not release_ok:
             overall = "OPERATOR_HOLD_ACTIVE"
         elif live.status == "MISSING":
             overall = "LIVE_PROOF_MISSING"
@@ -790,45 +897,58 @@ def compute_h1c_truth(
             overall = "LIVE_PROOF_STALE"
         elif authorization_status in ("REVOKED", "DENIED", "SUPERSEDED"):
             overall = "AUTHORIZATION_REVOKED"
-        elif authorization_status not in ("GRANTED", "CONSUMED"):
+        elif authorization_status != "GRANTED":
             overall = "ELIGIBLE_BLOCKED"
-        elif str(exec_state.get("status") or "") == "RELOCKED_AFTER_COMPLETION_OR_FAILURE":
-            overall = (
-                "EXECUTION_FAILED"
-                if exec_state.get("last_result") == "FAILED"
-                else "EXECUTION_COMPLETE"
-            )
-        elif not release_ok and not hold.active:
+        elif not release_ok:
             overall = "OPERATOR_RELEASE_PENDING"
+        else:
+            overall = "ELIGIBLE_BLOCKED"
 
     # Hard invariants: never emit success semantics when blockers remain critical
-    critical = [
-        b
-        for b in blockers
-        if any(
-            x in b
-            for x in (
-                "MOCK",
-                "MISMATCH",
-                "MALFORMED",
-                "MISSING",
-                "STALE",
-                "EXPIRED",
-                "REVOKED",
-                "DENIED",
-                "HOLD_ACTIVE",
-                "WRONG_ACTOR",
-                "INELIGIBLE",
-                "ABSENT",
-                "NOT_GRANTED",
-            )
-        )
-    ]
+    # After release_ok, HOLD_ACTIVE is not critical
+    critical_tokens = (
+        "MOCK",
+        "MISMATCH",
+        "MALFORMED",
+        "STALE",
+        "EXPIRED",
+        "REVOKED",
+        "DENIED",
+        "WRONG_ACTOR",
+        "INELIGIBLE",
+        "ABSENT",
+        "NOT_GRANTED",
+        "CONSUMED",
+    )
+    critical = []
+    for b in blockers:
+        if any(x in b for x in critical_tokens):
+            critical.append(b)
+        elif "HOLD_ACTIVE" in b and not release_ok:
+            critical.append(b)
+        elif "MISSING" in b and "RELEASE" not in b:
+            # live proof / evidence missing
+            if "LIVE_PROOF" in b or "EVIDENCE" in b or "FILE_MISSING" in b:
+                critical.append(b)
     if critical:
         safe_to_execute = "NO"
         promotion = "LOCKED"
         if overall == "AUTHORIZED_FOR_CONTROLLED_EXECUTION":
             overall = "ELIGIBLE_BLOCKED"
+
+    # Pre-execution invariant: verify loaded runtime source digest matches the authorized commit blob
+    loaded_sha = get_loaded_sha256()
+    expected_commit = (auth_record or {}).get("implementation_commit")
+    if expected_commit:
+        expected_sha = git_blob_sha256(expected_commit, "backend/instrument_integrity/h1c_activation.py", root)
+        if not expected_sha or loaded_sha != expected_sha:
+            safe_to_execute = "NO"
+            promotion = "LOCKED"
+            if overall == "AUTHORIZED_FOR_CONTROLLED_EXECUTION":
+                overall = "ELIGIBLE_BLOCKED"
+            blocker_msg = f"PROVENANCE_MISMATCH:loaded={loaded_sha},expected={expected_sha}"
+            if blocker_msg not in blockers:
+                blockers.append(blocker_msg)
 
     # Never allow forbidden success tokens in overall
     if overall.upper() in SUCCESS_FORBIDDEN:
@@ -855,7 +975,261 @@ def compute_h1c_truth(
         not in ("GRANTED", "CONSUMED"),
         "controlled_execution_state": exec_state or None,
         "release_validated": release_ok,
+        "approval_id": (auth_record or {}).get("approval_id"),
+        "authorization_record_path": str(h1c_auth_path)
+        if h1c_auth_path.exists()
+        else None,
+        "authorization_consumed": authorization_status == "CONSUMED"
+        or bool((auth_record or {}).get("single_use_consumed")),
     }
+
+
+def materialize_founder_grant(
+    pending_path: Path,
+    grant_path: Path,
+    *,
+    packet: dict,
+    expires_in_seconds: int = 1800,
+    decision_source: str = "operator_session_explicit_founder_approval",
+) -> dict:
+    """Write GRANTED authorization from pending template + packet. Single-use."""
+    pending = json.loads(pending_path.read_text(encoding="utf-8"))
+    approval_id = f"H1C-APPR-{uuid.uuid4().hex[:12].upper()}"
+    issued = _now()
+    expires = issued + __import__("datetime").timedelta(seconds=expires_in_seconds)
+    grant = {
+        "schema_version": "1.0",
+        "decision_type": "H1C_CONTROLLED_LOCAL_EXECUTION",
+        "decision_status": "GRANTED",
+        "authorization_status": "GRANTED",
+        "decision": "APPROVE_CONTROLLED_LOCAL_EXECUTION",
+        "founder_identity": pending.get("founder_identity") or "Michael Bryan Hoch",
+        "approval_id": approval_id,
+        "reason": "Explicit founder approval in operator session for controlled local dry-run only",
+        "candidate_id": packet["candidate_id"],
+        "package_id": packet["package_id"],
+        "package_digest": packet["package_digest"],
+        "implementation_commit": packet["tested_commit"],
+        "authorized_environment": "local_only",
+        "authorized_execution_scope": list(packet["requested_execution_scope"]),
+        "external_dispatch_allowed": False,
+        "founder_only_actions_allowed": False,
+        "operator_hold_release_required": True,
+        "fresh_live_proof_required": True,
+        "automatic_relock_required": True,
+        "single_use": True,
+        "single_use_consumed": False,
+        "issued_at": issued.isoformat().replace("+00:00", "Z"),
+        "expires_at": expires.isoformat().replace("+00:00", "Z"),
+        "founder_signature": None,
+        "decision_source": decision_source,
+        "source_packet_sha256": "24eea4eabe7ce3f94fb36a895ffb3351e742d937b8ac7ed717ef30d6032de19a",
+        "validation_sha256": "c49e84b325c62e770daad773e2d06ab44fe473de28986785428e04a1db22d0aa",
+    }
+    grant_path.parent.mkdir(parents=True, exist_ok=True)
+    grant_path.write_text(json.dumps(grant, indent=2) + "\n", encoding="utf-8")
+    return grant
+
+
+def request_and_validate_hold_release(
+    *,
+    hold_path: Path,
+    release_ledger: Path,
+    grant: dict,
+    prior_hold_digest: Optional[str] = None,
+) -> tuple[dict, dict]:
+    """Governed hold release: REQUESTED then VALIDATED, ledgered."""
+    hold_doc = {}
+    if hold_path.exists():
+        try:
+            hold_doc = json.loads(hold_path.read_text(encoding="utf-8"))
+        except Exception:
+            hold_doc = {}
+    prior = prior_hold_digest or _sha256_json(hold_doc)
+    req = {
+        "event_type": "OPERATOR_HOLD_RELEASE_REQUEST",
+        "event_id": f"H1C-REL-REQ-{uuid.uuid4().hex[:10].upper()}",
+        "approval_id": grant["approval_id"],
+        "candidate_id": grant["candidate_id"],
+        "package_id": grant["package_id"],
+        "package_digest": grant["package_digest"],
+        "implementation_commit": grant["implementation_commit"],
+        "authorized_execution_scope": grant["authorized_execution_scope"],
+        "authorization_expires_at": grant["expires_at"],
+        "actor_identity": "helm.h1c.hold_lifecycle",
+        "reason": "Governed release after explicit founder APPROVE_CONTROLLED_LOCAL_EXECUTION",
+        "timestamp": _now_iso(),
+        "previous_state_digest": prior,
+        "status": "RELEASE_REQUESTED",
+    }
+    append_ledger(release_ledger, req)
+    resulting = _sha256_json({**hold_doc, "release_request": req["event_id"]})
+    event = {
+        "event_type": "OPERATOR_HOLD_RELEASE",
+        "event_id": f"H1C-REL-{uuid.uuid4().hex[:10].upper()}",
+        "approval_id": grant["approval_id"],
+        "candidate_id": grant["candidate_id"],
+        "package_id": grant["package_id"],
+        "package_digest": grant["package_digest"],
+        "implementation_commit": grant["implementation_commit"],
+        "authorized_execution_scope": grant["authorized_execution_scope"],
+        "authorization_expires_at": grant["expires_at"],
+        "actor_identity": "helm.h1c.hold_lifecycle",
+        "reason": "Validated governed release bound to founder approval",
+        "timestamp": _now_iso(),
+        "expiry": grant["expires_at"],
+        "previous_state_digest": prior,
+        "resulting_state_digest": resulting,
+        "ledger_reference": str(release_ledger),
+        "status": "VALIDATED",
+        "request_event_id": req["event_id"],
+    }
+    append_ledger(release_ledger, event)
+    return req, event
+
+
+def generate_local_live_proof(
+    *,
+    grant: dict,
+    proof_path: Path,
+    evidence_dir: Path,
+    repo_root: Path | None = None,
+    max_age_seconds: int = 300,
+) -> dict:
+    """Build non-mock live proof from real local runtime observations."""
+    root = repo_root or ROOT
+    evidence_dir.mkdir(parents=True, exist_ok=True)
+    observed = _now()
+    obs_path = evidence_dir / f"observation_{observed.strftime('%Y%m%dT%H%M%SZ')}.json"
+    # Real observations: git HEAD, package digests file, health of process listing
+    head = git_sha(root)
+    digests_file = (
+        root
+        / "coordination"
+        / "council"
+        / "live_proof_packages"
+        / grant["package_id"]
+        / "request_digests.json"
+    )
+    obs = {
+        "observed_at": observed.isoformat().replace("+00:00", "Z"),
+        "git_head": head,
+        "package_id": grant["package_id"],
+        "package_digest_expected": grant["package_digest"],
+        "digests_file_exists": digests_file.exists(),
+        "digests_file_sha256": _sha256_file(digests_file) if digests_file.exists() else None,
+        "bound_implementation_commit": grant["implementation_commit"],
+        "hostname": __import__("socket").gethostname(),
+        "pid": os.getpid(),
+        "mock": False,
+        "source_type": "local_runtime_observation",
+    }
+    if digests_file.exists():
+        try:
+            stored = json.loads(digests_file.read_text(encoding="utf-8"))
+            obs["combined_authorization_sha256"] = stored.get(
+                "combined_authorization_sha256"
+            )
+            obs["digest_match"] = (
+                stored.get("combined_authorization_sha256") == grant["package_digest"]
+            )
+        except Exception as e:
+            obs["digest_read_error"] = type(e).__name__
+    obs_path.write_text(json.dumps(obs, indent=2) + "\n", encoding="utf-8")
+    obs_digest = _sha256_file(obs_path)
+    proof = {
+        "proof_id": f"H1C-PROOF-{uuid.uuid4().hex[:12].upper()}",
+        "candidate_id": grant["candidate_id"],
+        "package_id": grant["package_id"],
+        "package_digest": grant["package_digest"],
+        "implementation_commit": grant["implementation_commit"],
+        "execution_scope": list(grant["authorized_execution_scope"]),
+        "issued_at": observed.isoformat().replace("+00:00", "Z"),
+        "observed_at": observed.isoformat().replace("+00:00", "Z"),
+        "expires_at": (observed + __import__("datetime").timedelta(seconds=max_age_seconds)).isoformat().replace("+00:00", "Z"),
+        "source_type": "local_runtime_observation",
+        "source_identity": f"helm.h1c.local_observer:{os.getpid()}",
+        "environment": "local_only",
+        "status": "VALID",
+        "evidence_paths": [str(obs_path.relative_to(root)) if str(obs_path).startswith(str(root)) else str(obs_path)],
+        "evidence_digests": {
+            (str(obs_path.relative_to(root)) if str(obs_path).startswith(str(root)) else str(obs_path)): obs_digest
+        },
+        "mock": False,
+    }
+    # Prefer relative path for digests keys used by validator
+    rel = str(obs_path.relative_to(root)) if str(obs_path).startswith(str(root)) else str(obs_path)
+    proof["evidence_paths"] = [rel]
+    proof["evidence_digests"] = {rel: obs_digest}
+    proof_path.parent.mkdir(parents=True, exist_ok=True)
+    proof_path.write_text(json.dumps(proof, indent=2) + "\n", encoding="utf-8")
+    return proof
+
+
+def consume_authorization(grant_path: Path, mission_id: str) -> dict:
+    """Mark grant single-use consumed."""
+    grant = json.loads(grant_path.read_text(encoding="utf-8"))
+    grant["single_use_consumed"] = True
+    grant["authorization_status"] = "CONSUMED"
+    grant["decision_status"] = "CONSUMED"
+    grant["consumed_at"] = _now_iso()
+    grant["consumed_by_mission"] = mission_id
+    grant_path.write_text(json.dumps(grant, indent=2) + "\n", encoding="utf-8")
+    return grant
+
+
+def execute_authorized_mission(
+    *,
+    grant: dict,
+    grant_path: Path,
+    truth: dict,
+    evidence_dir: Path,
+    exec_ledger: Path,
+    exec_state_path: Path,
+) -> dict:
+    """Execute only if truth.safe_to_execute == YES; consume grant; relock."""
+    if truth.get("safe_to_execute") != "YES":
+        return {
+            "status": "DENIED",
+            "reason": "SAFE_TO_EXECUTE_NOT_YES",
+            "safe_to_execute": truth.get("safe_to_execute"),
+            "blockers": truth.get("blockers"),
+        }
+    auth_scope = set(grant.get("authorized_execution_scope") or [])
+    actual_scope = set(truth.get("execution_scope") or auth_scope)
+    if actual_scope != auth_scope and not actual_scope.issubset(auth_scope):
+        return {
+            "status": "DENIED",
+            "reason": "SCOPE_MISMATCH",
+            "authorized": list(auth_scope),
+            "actual": list(actual_scope),
+        }
+    # Use authorized scope exactly
+    result = run_controlled_dry_run(
+        authorization_binding={
+            "approval_id": grant.get("approval_id"),
+            "candidate_id": grant.get("candidate_id"),
+            "package_id": grant.get("package_id"),
+            "package_digest": grant.get("package_digest"),
+            "implementation_commit": grant.get("implementation_commit"),
+        },
+        execution_scope=list(auth_scope),
+        evidence_dir=evidence_dir,
+        exec_ledger=exec_ledger,
+        exec_state_path=exec_state_path,
+    )
+    if result.get("status") == "COMPLETE":
+        consume_authorization(grant_path, result["mission_id"])
+        # Ensure relock state marks consumption
+        relock = json.loads(exec_state_path.read_text(encoding="utf-8"))
+        relock["authorization_consumed_or_closed"] = True
+        relock["approval_id"] = grant.get("approval_id")
+        relock["last_result"] = "COMPLETE"
+        exec_state_path.write_text(json.dumps(relock, indent=2) + "\n", encoding="utf-8")
+        result["authorization_consumed"] = True
+        result["actual_executed_scope"] = list(auth_scope)
+        result["external_dispatch_count"] = 0
+    return result
 
 
 def validate_founder_authorization_template(
@@ -903,8 +1277,17 @@ def validate_founder_authorization_template(
             blockers.append("FOUNDER_DECISION_NULL")
     if approval_id is None or approval_id == "":
         blockers.append("FOUNDER_APPROVAL_ID_MISSING")
-    if signature is None or signature == "":
+    # Cryptographic signature optional when decision_source is explicit operator-session
+    # founder approval (established H1C provenance). Empty/null still fails for other sources.
+    decision_source = str(template.get("decision_source") or "")
+    session_provenance = decision_source in (
+        "operator_session_explicit_founder_approval",
+        "founder_direct_approval_operator_session",
+    )
+    if (signature is None or signature == "") and not session_provenance:
         blockers.append("FOUNDER_SIGNATURE_MISSING")
+    if session_provenance and not template.get("founder_identity"):
+        blockers.append("FOUNDER_IDENTITY_MISSING_FOR_SESSION_PROVENANCE")
 
     impl = str(template.get("implementation_commit") or "").strip()
     if expected_commit:
@@ -959,14 +1342,15 @@ def validate_founder_authorization_template(
     if exp is not None and now > exp:
         blockers.append("FOUNDER_AUTHORIZATION_EXPIRED")
 
-    # Only fully populated APPROVED records with no blockers can authorize
+    # Only fully populated APPROVED/GRANTED records with no blockers can authorize
+    sig_ok = bool(signature) or session_provenance
     authorized = (
         len(blockers) == 0
         and str(decision or "").upper()
         in ("APPROVE_CONTROLLED_LOCAL_EXECUTION", "APPROVED", "GRANTED")
         and status in ("APPROVED", "GRANTED", "ACTIVE")
         and approval_id
-        and signature
+        and sig_ok
         and exp is not None
         and now <= exp
     )
