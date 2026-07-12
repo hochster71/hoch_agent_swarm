@@ -1,0 +1,30 @@
+{
+  "schema": "HELM_H1B_INTEGRATION_DIGEST_RECOMPUTATION_v1",
+  "package_id": "HELM-H1-CANDIDATE-20260712T013903Z-4B7F62BE",
+  "recomputed": {
+    "prompt_sha256": "fd0e87a572f00d4a13b5948ac6ab54557505ba11772baec733b854dd57055b47",
+    "roster_sha256": "135ec979386b6dcfaf9e94446bbef4ce596e6c59a3bab1ee7de88435b0777efc",
+    "frontier_contract_sha256": "3f969bee3ae0b7d73c65f2474abd29395ba2c1feb1c7e81500ef53405bc2311a",
+    "model_policy_sha256": "a614cd2d4c08a2e0ec685652c56f35ecdb89943a645147791c568d72e835bbcf",
+    "budget_policy_sha256": "939c018e7d25f8442d8687755d58226cc70861f0ccfe816dfe538d7d9e6d6e59",
+    "chatgpt_request_sha256": "054fe05494fcf30a4658a8c0c67a4514ef487ec1cc50abd8a444b3191783b89f",
+    "claude_request_sha256": "0b2e2cf3c2b79a1e8a0d91d8b56913161edefde11dad9fd06b354a483db0825a",
+    "grok_request_sha256": "bdf432f531238b694f45828f4b93d811f654d53b45ce839f867687d7c672976f",
+    "pricing_evidence_sha256": "2b69bbe632548e04f4823e115765962a5dadc2e878cf01b3b68ee92249b01ecf",
+    "launch_manifest_sha256": "26595ac70ca42333ee4ddeaa07bb88e1f7d0a9c5c5a02603b284146b7a31dfde",
+    "combined_authorization_sha256": "97910a44dbc757d2f5c84a00812976686bcff4456bfba5c0c912ad2f242f819f"
+  },
+  "stored": {
+    "prompt_sha256": "fd0e87a572f00d4a13b5948ac6ab54557505ba11772baec733b854dd57055b47",
+    "frontier_contract_sha256": "3f969bee3ae0b7d73c65f2474abd29395ba2c1feb1c7e81500ef53405bc2311a",
+    "roster_sha256": "135ec979386b6dcfaf9e94446bbef4ce596e6c59a3bab1ee7de88435b0777efc",
+    "model_policy_sha256": "a614cd2d4c08a2e0ec685652c56f35ecdb89943a645147791c568d72e835bbcf",
+    "budget_policy_sha256": "939c018e7d25f8442d8687755d58226cc70861f0ccfe816dfe538d7d9e6d6e59",
+    "chatgpt_request_sha256": "054fe05494fcf30a4658a8c0c67a4514ef487ec1cc50abd8a444b3191783b89f",
+    "claude_request_sha256": "0b2e2cf3c2b79a1e8a0d91d8b56913161edefde11dad9fd06b354a483db0825a",
+    "grok_request_sha256": "bdf432f531238b694f45828f4b93d811f654d53b45ce839f867687d7c672976f",
+    "pricing_evidence_sha256": "2b69bbe632548e04f4823e115765962a5dadc2e878cf01b3b68ee92249b01ecf",
+    "combined_authorization_sha256": "97910a44dbc757d2f5c84a00812976686bcff4456bfba5c0c912ad2f242f819f"
+  },
+  "verification": "PASS"
+}

@@ -185,22 +185,13 @@ def generate(write: bool = True) -> dict:
         )
         DECISION_PATH.write_text(json.dumps(decision, indent=2) + "\n", encoding="utf-8")
 
-        # Stamp the classification back onto each retained package (never delete).
-        for entry in reconciliation["packages"]:
-            vpath = PACKAGES_DIR / entry["package_id"] / "validation.json"
-            existing = _load(vpath) or {}
-            existing.update(
-                {
-                    "status": entry["classification"],
-                    "execution_eligible": False,
-                    "authorization_eligible": bool(entry["authorization_eligible"]),
-                    "classification_reason": entry["reason"],
-                    "reconciled_at": now,
-                }
-            )
-            if entry.get("superseded_by"):
-                existing["superseded_by"] = entry["superseded_by"]
-            vpath.write_text(json.dumps(existing, indent=2) + "\n", encoding="utf-8")
+        # DO NOT stamp validation.json here.
+        #
+        # Grok F2: two writers of the same truth is the defect, not the fix. Package
+        # classification is owned by exactly ONE component --
+        # scripts/council/generate_h1_candidate_registry.py, which writes
+        # coordination/council/h1_candidate_registry.json and stamps supersede markers.
+        # This generator is a downstream READER of that registry.
 
     return decision
 

@@ -1,0 +1,292 @@
+{
+  "reviewer": "grok",
+  "review_type": "INDEPENDENT_ADVERSARIAL",
+  "review_timestamp_utc": "2026-07-12T02:00:00Z",
+  "mode": "READ_ONLY_AUDIT",
+  "candidate_package_id": "HELM-H1-CANDIDATE-20260712T013000Z-4DD41282",
+  "candidate_selection_note": "Selected as latest mtime package with complete pricing_evidence, recomputable digests, and READY_FOR_FOUNDER_REVIEW. NOT the sole ready package on disk.",
+  "expected_state_observed": {
+    "founder_authorization": "NOT_GRANTED",
+    "credentials": "NOT_PROVISIONED_or_PRESENT_UNVERIFIED",
+    "external_provider_calls": 0,
+    "frontier_quorum_in_runtime_state": false,
+    "promotion_eligible_in_runtime_state": false,
+    "safe_to_execute_now_in_runtime_state": false,
+    "operator_hold": "ACTIVE",
+    "exactly_one_authorization_eligible_candidate": false
+  },
+  "digest_recomputation": "FAIL",
+  "credential_leakage": "PASS",
+  "external_call_path": "BLOCKED",
+  "authorization_bypass": "FOUND",
+  "replay_protection": "FAIL",
+  "race_protection": "FAIL",
+  "fake_green_paths": [
+    {
+      "id": "FG-01",
+      "path": "mock frontier members → frontier_council_quorum=true",
+      "proof": "scripts/council/aggregate.py sets frontier_council_quorum from profile_quorum before mock rewrite; with FROZEN_MOCK_ONLY, overall_status becomes MOCK_FRONTIER_CONTRACT_PASS but frontier_council_quorum remains true",
+      "repro": "aggregate(registry,'frontier_council', 3 accepted chatgpt/claude/grok) → frontier_council_quorum=true, promotion_eligible=false, safe_to_execute_now=false, overall_status=MOCK_FRONTIER_CONTRACT_PASS"
+    },
+    {
+      "id": "FG-02",
+      "path": "package READY_FOR_FOUNDER_REVIEW without authorization_eligible=true single-source authority",
+      "proof": "5 packages simultaneously claim validation_status=PASS / overall_status=READY_FOR_FOUNDER_REVIEW including a TEST package",
+      "packages": [
+        "HELM-H1-CANDIDATE-20260712T013000Z-4DD41282",
+        "HELM-H1-CANDIDATE-20260712T013903Z-4B7F62BE",
+        "HELM-H1-CANDIDATE-20260712T013108Z-B1BCD2F3",
+        "HELM-H1-CANDIDATE-TEST-H1-RUN-BCAFCE1E",
+        "HELM-H1-PACKAGE-20260711-235442"
+      ]
+    },
+    {
+      "id": "FG-03",
+      "path": "filename/last-write-wins package authority",
+      "proof": "scripts/council/generate_h1_package.py hard-codes supersession of only HELM-H1-CANDIDATE-20260712T011801Z-F083F6D0 and HELM-H1-PACKAGE-TEST-H1-RUN; other READY packages remain executable-looking; no registry of single active candidate"
+    }
+  ],
+  "findings": [
+    {
+      "id": "H1B-F01",
+      "severity": "CRITICAL",
+      "title": "Multiple packages claim founder-review readiness; not exactly one authorization-eligible candidate",
+      "file_paths": [
+        "coordination/council/live_proof_packages/HELM-H1-CANDIDATE-20260712T013000Z-4DD41282/validation.json",
+        "coordination/council/live_proof_packages/HELM-H1-CANDIDATE-20260712T013903Z-4B7F62BE/validation.json",
+        "coordination/council/live_proof_packages/HELM-H1-CANDIDATE-20260712T013108Z-B1BCD2F3/validation.json",
+        "coordination/council/live_proof_packages/HELM-H1-CANDIDATE-TEST-H1-RUN-BCAFCE1E/validation.json",
+        "coordination/council/live_proof_packages/HELM-H1-PACKAGE-20260711-235442/validation.json",
+        "scripts/council/generate_h1_package.py"
+      ],
+      "repro": "ls coordination/council/live_proof_packages/*/validation.json | xargs grep -l READY_FOR_FOUNDER_REVIEW → 5 packages. explicit authorization_eligible=true count = 0; readiness is implied by overall_status only.",
+      "impact": "Operator cannot determine which package is the sole authorization target. TEST package HELM-H1-CANDIDATE-TEST-H1-RUN-BCAFCE1E also shows READY_FOR_FOUNDER_REVIEW."
+    },
+    {
+      "id": "H1B-F02",
+      "severity": "CRITICAL",
+      "title": "Mock/dry-run evidence can set frontier_council_quorum=true",
+      "file_paths": [
+        "scripts/council/aggregate.py",
+        "coordination/council/frontier_seat_contracts.json",
+        "scripts/council/adapters.py",
+        "scripts/council/frontier_adapter.py"
+      ],
+      "repro": "With contracts.status=FROZEN_MOCK_ONLY and three accepted non-fallback validation_results for chatgpt/claude/grok under profile frontier_council: frontier_council_quorum=true; overall_status=MOCK_FRONTIER_CONTRACT_PASS; promotion_eligible=false; safe_to_execute_now=false.",
+      "impact": "Violates no-fake-green for live quorum flag. Promotion/safe gates currently block, but quorum truth is polluted."
+    },
+    {
+      "id": "H1B-F03",
+      "severity": "HIGH",
+      "title": "Production authorization enforcer does not bind package digests, package_id, or models",
+      "file_paths": [
+        "scripts/council/budget_governor.py",
+        "coordination/council/frontier_authorization.json",
+        "tests/test_h1a_corrective_validation.py"
+      ],
+      "repro": "BudgetGovernor.check_authorization only checks authorization_status==GRANTED, expires_at, permitted_run_count, and cost caps. It does not read package_id, combined_authorization_sha256, permitted_models, or provider set. H1AuthorizationValidator exists only under tests/ and is not imported by scripts/council/.",
+      "impact": "If a future/ad-hoc launcher only calls BudgetGovernor after writing GRANTED into frontier_authorization.json, package-bound constraints are bypassable. Negative tests in H1AuthorizationValidator do not protect runtime."
+    },
+    {
+      "id": "H1B-F04",
+      "severity": "HIGH",
+      "title": "No atomic authorization consumption or replay ledger",
+      "file_paths": [
+        "scripts/council/budget_governor.py",
+        "scripts/council/generate_h1_package.py",
+        "coordination/council/frontier_authorization.json"
+      ],
+      "repro": "No coordination/council/*replay* or *ledger* artifact. permitted_run_count is compared to a caller-supplied run_count integer; there is no O_EXCL consume, no append-only replay ledger, no binding of authorization_id→run_id. Two workers could both pass check_authorization(run_count=0) before either increments.",
+      "impact": "Race and replay protection FAIL for any future live launcher using current governor."
+    },
+    {
+      "id": "H1B-F05",
+      "severity": "HIGH",
+      "title": "No H1 launch executor; protection is absence of code path, not complete policy enforcement",
+      "file_paths": [
+        "scripts/council/live_transport.py",
+        "scripts/council/adapters.py",
+        "scripts/council/generate_h1_package.py"
+      ],
+      "repro": "Only scripts/council/generate_h1_package.py is H1-related launcher surface. LiveTransportAdapter.dispatch_live always raises PermissionError('FOUNDER_GATE_REQUIRED...'). adapters.py frontier live branch raises same when external_execution_authorized is not true (currently false).",
+      "impact": "H1B phase cannot currently fire paid providers (good). But H1B 'readiness' is package generation only; founder-decision gate is incomplete without a production authorize+launch path that enforces digests."
+    },
+    {
+      "id": "H1B-F06",
+      "severity": "MEDIUM",
+      "title": "Digest recompute not uniformly PASS across all packages claiming readiness",
+      "file_paths": [
+        "coordination/council/live_proof_packages/HELM-H1-PACKAGE-20260711-235442/request_digests.json",
+        "coordination/council/live_proof_packages/HELM-H1-CANDIDATE-20260712T013000Z-4DD41282/request_digests.json",
+        "coordination/council/live_proof_packages/HELM-H1-CANDIDATE-20260712T013903Z-4B7F62BE/request_digests.json",
+        "coordination/council/council_roster.json",
+        "coordination/council/frontier_seat_contracts.json"
+      ],
+      "repro": "Independent recompute of prompt/roster/contract/model_policy/budget/provider-request/combined digests: PASS for 013000, 013903, TEST-H1-RUN-BCAFCE1E; FAIL schema/key mismatch for HELM-H1-PACKAGE-20260711-235442 (legacy digest field set). launch_manifest_sha256 is never stored in request_digests.json.",
+      "impact": "Overall digest_recomputation marked FAIL because not all ready-claiming packages recompute cleanly and no manifest digest is chained."
+    },
+    {
+      "id": "H1B-F07",
+      "severity": "MEDIUM",
+      "title": "TEST package remains READY_FOR_FOUNDER_REVIEW",
+      "file_paths": [
+        "coordination/council/live_proof_packages/HELM-H1-CANDIDATE-TEST-H1-RUN-BCAFCE1E/validation.json",
+        "tests/test_h1_package_validation.py",
+        "scripts/council/generate_h1_package.py"
+      ],
+      "repro": "generate_h1_package('TEST-H1-RUN') creates HELM-H1-CANDIDATE-TEST-H1-RUN-* with validation_status PASS. Only HELM-H1-PACKAGE-TEST-H1-RUN is marked NON_EXECUTABLE_TEST_PACKAGE.",
+      "impact": "Test-generated candidates pollute founder decision surface."
+    },
+    {
+      "id": "H1B-F08",
+      "severity": "MEDIUM",
+      "title": "Credentials present as PRESENT_UNVERIFIED on some packages without value exposure",
+      "file_paths": [
+        "coordination/council/live_proof_packages/HELM-H1-CANDIDATE-20260712T011800Z-E58CF462/credential_readiness.json",
+        "coordination/council/live_proof_packages/HELM-H1-PACKAGE-TEST-H1-RUN/credential_readiness.json",
+        "scripts/council/generate_h1_package.py"
+      ],
+      "repro": "credential_readiness records only env var names and PRESENT_UNVERIFIED/NOT_PROVISIONED; value_exposed=false. Candidate 013000 shows all NOT_PROVISIONED. No API key values found in package artifacts.",
+      "impact": "Matches expected credential posture for active candidate. Older packages reflect host env at generation time."
+    },
+    {
+      "id": "H1B-F09",
+      "severity": "LOW",
+      "title": "Secret-shaped test string in readiness tests",
+      "file_paths": [
+        "tests/test_frontier_live_readiness.py"
+      ],
+      "repro": "Regex scan found sk-test1234secretkeyvalue in tests/test_frontier_live_readiness.py only. Not a live provider secret; not in package evidence.",
+      "impact": "No production secret leakage in H1 packages; keep test fixtures clearly synthetic."
+    },
+    {
+      "id": "H1B-F10",
+      "severity": "MEDIUM",
+      "title": "Network capability exists in adapters (urllib) for non-frontier paths; frontier live blocked",
+      "file_paths": [
+        "scripts/council/adapters.py",
+        "scripts/council/live_transport.py",
+        "scripts/council/providers/chatgpt_live.py",
+        "scripts/council/providers/claude_live.py",
+        "scripts/council/providers/grok_live.py"
+      ],
+      "repro": "adapters.py imports urllib.request and urlopen for ollama/openai_compat/anthropic/gemini. Frontier seat dispatch uses mock or raises FOUNDER_GATE_REQUIRED when external_execution_authorized is false. live_transport.dispatch_live always raises.",
+      "impact": "H1B paid external path currently BLOCKED. Residual risk: flipping frontier_seat_contracts.json external_execution_authorized to true without digest-bound founder auth would enable live HTTP."
+    },
+    {
+      "id": "H1B-F11",
+      "severity": "MEDIUM",
+      "title": "UI does not present H1 package vs credential vs authorization vs live proof as separate gates",
+      "file_paths": [
+        "frontend/src/components/helm/HelmCouncilNode.tsx",
+        "frontend/src/components/helm/HelmFounderClearancePage.tsx",
+        "frontend/src/components/helm/HelmProvenanceLockPanel.tsx",
+        "coordination/council/current_state.json",
+        "coordination/council/frontier_verification_status.json"
+      ],
+      "repro": "Helm UI uses READY_FOR_FOUNDER / FOUNDER_GATE badges generically; no H1 package_id / authorization_status / credential_readiness / LIVE_VERIFIED seat matrix. HelmProvenanceLockPanel contains 'READY_FOR_FOUNDER (SIMULATED PLACEHOLDER)'. Runtime state files keep frontier false / promotion false, but package readiness is not rendered as a distinct non-green gate.",
+      "impact": "Broad founder-ready language can hide blocked downstream H1B gates."
+    },
+    {
+      "id": "H1B-F12",
+      "severity": "LOW",
+      "title": "Operator hold is ACTIVE but scope is release-only test override",
+      "file_paths": [
+        "has_live_project_tracker/data/ag_operator_hold.json"
+      ],
+      "repro": "operator_hold_active=true, reason='Test manual override', affected_categories=['release'] only. Not bound to H1 package authorization or SINGLE_H1_PROOF_ONLY scope.",
+      "impact": "Hold does not specifically gate H1B; expected ACTIVE is met, binding is weak."
+    },
+    {
+      "id": "H1B-F13",
+      "severity": "INFO",
+      "title": "Candidate package 013000 digests recompute PASS in isolation",
+      "file_paths": [
+        "coordination/council/live_proof_packages/HELM-H1-CANDIDATE-20260712T013000Z-4DD41282/request_digests.json",
+        "coordination/council/live_proof_packages/HELM-H1-CANDIDATE-20260712T013000Z-4DD41282/prompt.redacted.txt",
+        "coordination/council/live_proof_packages/HELM-H1-CANDIDATE-20260712T013000Z-4DD41282/provider_requests/chatgpt.request.redacted.json",
+        "coordination/council/live_proof_packages/HELM-H1-CANDIDATE-20260712T013000Z-4DD41282/provider_requests/claude.request.redacted.json",
+        "coordination/council/live_proof_packages/HELM-H1-CANDIDATE-20260712T013000Z-4DD41282/provider_requests/grok.request.redacted.json",
+        "coordination/council/live_proof_packages/HELM-H1-CANDIDATE-20260712T013000Z-4DD41282/founder_authorization.template.json"
+      ],
+      "repro": "Independent sha256(prompt), get_digest(roster/contracts/model_policy/budget/each request/pricing_evidence/combined auth_fields) all match stored request_digests.json and template combined_authorization_sha256 for this package.",
+      "impact": "Selected candidate cryptographic chain is sound; global multi-package authority is not."
+    }
+  ],
+  "negative_test_results": {
+    "wrong_package_id": "NOT_ENFORCED_IN_PRODUCTION (only tests/test_h1a_corrective_validation.H1AuthorizationValidator)",
+    "wrong_authorization_id": "NOT_ENFORCED_IN_PRODUCTION",
+    "missing_digest": "NOT_ENFORCED_IN_PRODUCTION",
+    "modified_prompt": "NOT_ENFORCED_IN_PRODUCTION (would change combined digest if recomputed; no runtime gate)",
+    "modified_provider_request": "NOT_ENFORCED_IN_PRODUCTION",
+    "modified_model": "NOT_ENFORCED_IN_PRODUCTION",
+    "modified_budget": "NOT_ENFORCED_IN_PRODUCTION",
+    "expired_authorization": "BLOCKED by BudgetGovernor if expires_at set and status GRANTED",
+    "stale_authorization_replay": "NO_LEDGER — FAIL",
+    "second_execution": "BudgetGovernor blocks if caller supplies run_count >= permitted_run_count; not atomic",
+    "provider_substitution": "NOT_ENFORCED_IN_PRODUCTION",
+    "model_substitution": "NOT_ENFORCED_IN_PRODUCTION",
+    "partial_provider_set": "NOT_ENFORCED_IN_PRODUCTION",
+    "copied_approval_reference": "NOT_ENFORCED_IN_PRODUCTION",
+    "changed_expiration_after_approval": "NOT_ENFORCED_IN_PRODUCTION",
+    "modified_operator_hold_scope": "NOT_ENFORCED_IN_PRODUCTION",
+    "budget_governor_not_granted": "BLOCKED (PASS fail-closed)",
+    "dispatch_live_without_founder": "BLOCKED (PermissionError)",
+    "external_execution_authorized_false": "BLOCKED (PermissionError on frontier live branch)"
+  },
+  "network_path_audit": {
+    "urllib_in_adapters": true,
+    "httpx": false,
+    "openai_sdk_client": false,
+    "anthropic_sdk_client": false,
+    "frontier_dispatch_live": "HARD_RAISE_FOUNDER_GATE",
+    "h1_paid_call_executable_now": false,
+    "note": "external_call_path=BLOCKED for H1B paid frontier under current flags; residual urllib used for local ollama and would open if external_execution_authorized flipped true"
+  },
+  "authority_reconciliation": {
+    "total_packages": 8,
+    "ready_for_founder_review_count": 5,
+    "explicit_authorization_eligible_true": 0,
+    "explicit_execution_eligible_true": 0,
+    "superseded_or_test_blocked": [
+      "HELM-H1-CANDIDATE-20260712T011801Z-F083F6D0",
+      "HELM-H1-PACKAGE-TEST-H1-RUN"
+    ],
+    "blocked_model_identity": [
+      "HELM-H1-CANDIDATE-20260712T011800Z-E58CF462"
+    ],
+    "single_candidate_proven": false,
+    "last_write_wins": true,
+    "filename_based_authority": true
+  },
+  "runtime_state_crosscheck": {
+    "current_state": "coordination/council/current_state.json",
+    "frontier_council_quorum": false,
+    "promotion_eligible": false,
+    "safe_to_execute_now": false,
+    "operator_hold_state": "ACTIVE",
+    "frontier_authorization": "NOT_GRANTED",
+    "frontier_verification_status_external_calls": 0
+  },
+  "verdict": "BLOCKED",
+  "verdict_rationale": [
+    "BLOCKED rule: mock/dry-run evidence can satisfy live quorum — proven: frontier_council_quorum=true under FROZEN_MOCK_ONLY mock validation path (FG-01).",
+    "Expected state violated: not exactly one authorization-eligible H1 candidate — 5 READY_FOR_FOUNDER_REVIEW packages including TEST (H1B-F01/F07).",
+    "Authorization bypass FOUND: production BudgetGovernor unbound to package digests/models; H1AuthorizationValidator is test-only (H1B-F03).",
+    "Replay/race protection FAIL: no ledger, non-atomic permitted_run_count (H1B-F04).",
+    "Not PASS: digests fail globally across ready-claiming packages; multi-authority surface remains.",
+    "Paid external H1 call is currently non-executable (dispatch_live / external_execution_authorized=false) and no secrets found in packages — but BLOCKED still required by mock-quorum and authority defects."
+  ],
+  "required_remediations_before_founder_decision": [
+    "Establish single active candidate registry (one package_id); supersede or mark all others NON_EXECUTABLE including TEST-generated candidates.",
+    "Set validation.authorization_eligible=true only on the active candidate; require explicit false elsewhere.",
+    "Move H1AuthorizationValidator (or equivalent) into production launch path; bind GRANTED auth to package_id + combined_authorization_sha256 + models + providers + budget + hold scope.",
+    "Implement atomic auth consumption (O_EXCL or append-only replay ledger keyed by authorization_id→run_id).",
+    "Fix aggregate.py so mock/dry-run cannot set frontier_council_quorum=true (force false when FROZEN_MOCK_ONLY / is_mock).",
+    "Store and verify launch_manifest_sha256 in the digest chain.",
+    "UI: separate package readiness, credentials, founder authorization, live provider proof, frontier quorum, promotion — no single green READY_FOR_FOUNDER banner.",
+    "Refuse external_execution_authorized=true unless digest-bound founder authorization is GRANTED and unconsumed."
+  ],
+  "patches": [],
+  "patches_note": "READ-ONLY audit. No production code modified. Remediation patches to be supplied only after this report is accepted."
+}

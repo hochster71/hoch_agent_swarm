@@ -1,0 +1,121 @@
+{
+  "schema": "H1B_REMEDIATION_BASELINE_v1",
+  "generated_at": "2026-07-12T02:15:00Z",
+  "auditor": "grok (independent adversarial review)",
+  "audit_verdict": "BLOCKED",
+  "reproduction_policy": "Every finding below was reproduced against the actual files before any edit. Findings are NOT disputed.",
+  "findings": [
+    {
+      "id": "F1",
+      "finding": "Mock evidence can satisfy frontier_council_quorum=true.",
+      "reproduced": true,
+      "exact_path": "scripts/council/aggregate.py:73",
+      "offending_code": "frontier_council_quorum = bool(profile_quorum and profile_id == \"frontier_council\")",
+      "root_cause": "Quorum is derived from PROFILE NAME alone. execution_mode is never consulted. The three mock adapters (scripts/council/providers/*_mock.py) return contract-valid responses, validate.py ACCEPTS them, and aggregate() then treats them as validated live members.",
+      "empirical_repro": {
+        "input": "three ACCEPTED mock responses (chatgpt/claude/grok), profile_id=frontier_council",
+        "observed": {
+          "overall_status": "MOCK_FRONTIER_CONTRACT_PASS",
+          "frontier_council_quorum": true,
+          "promotion_eligible": false,
+          "safe_to_execute_now": false
+        },
+        "verdict": "CONFIRMED. Status is correctly downgraded, but quorum is TRUE on pure mock evidence. Any consumer reading frontier_council_quorum sees a live council that does not exist."
+      },
+      "aggravating_factor": "The MOCK_FRONTIER_CONTRACT_PASS downgrade fires only if coordination/council/frontier_seat_contracts.json still literally says status=FROZEN_MOCK_ONLY. Editing one string in a data file silently promotes mock evidence to PASS."
+    },
+    {
+      "id": "F2",
+      "finding": "Multiple packages appear READY or authorization-eligible, including TEST.",
+      "reproduced": true,
+      "exact_path": "coordination/council/live_proof_packages/*/validation.json",
+      "root_cause": "Eligibility was per-package self-assertion with no central registry. Five packages carried validation_status=PASS / READY_FOR_FOUNDER_REVIEW simultaneously; backend/main.py additionally resolved 'the active candidate' by lexicographic sort of a directory listing, which selects HELM-H1-CANDIDATE-TEST-H1-RUN-BCAFCE1E because \"T\" > \"2\".",
+      "verdict": "CONFIRMED. Filename inference + last-write-wins."
+    },
+    {
+      "id": "F3",
+      "finding": "Production enforcement currently relies mainly on BudgetGovernor.",
+      "reproduced": true,
+      "exact_path": "scripts/council/budget_governor.py:45 check_authorization()",
+      "validates_only": ["authorization_status", "expires_at", "permitted_run_count", "maximum_total_cost_usd", "maximum_cost_per_provider_usd"],
+      "verdict": "CONFIRMED. It is a spend limiter, not an authorization validator."
+    },
+    {
+      "id": "F4",
+      "finding": "Production code does not fully bind package_id, authorization_id, combined_authorization_sha256, exact providers, exact models, request digests.",
+      "reproduced": true,
+      "evidence": "grep of backend/ and scripts/ shows the ONLY production readers of frontier_authorization.json are backend/main.py:18040 (display only) and budget_governor.py (cost only). No production code path compares package_id, authorization_id, combined_authorization_sha256, provider set, model set, or any request digest.",
+      "verdict": "CONFIRMED. Binding is absent, not merely incomplete."
+    },
+    {
+      "id": "F5",
+      "finding": "H1AuthorizationValidator exists only in tests.",
+      "reproduced": true,
+      "exact_path": "tests/test_h1a_corrective_validation.py:10 (class H1AuthorizationValidator)",
+      "verdict": "CONFIRMED. The validator is defined inside the test module and imported by nothing in production. The tests were proving a validator that does not ship."
+    },
+    {
+      "id": "F6",
+      "finding": "No atomic authorization consumption exists.",
+      "reproduced": true,
+      "evidence": "No consume/claim/redeem function anywhere in scripts/council/. scripts/council/h1b_authorization_gate.py accepts consumed_authorization_ids as an IN-MEMORY set parameter supplied by the caller -- it is per-process, non-durable, and trivially bypassed by starting a new process.",
+      "verdict": "CONFIRMED."
+    },
+    {
+      "id": "F7",
+      "finding": "No durable replay ledger exists.",
+      "reproduced": true,
+      "evidence": "No authorization_ledger.jsonl or equivalent. Replay protection is asserted in generate_h1_package.py:348 as a STRING ('authorization_replay_protection': 'BOUND_TO_SINGLE_UNIQUE_RUN_ID') with no code enforcing it.",
+      "verdict": "CONFIRMED. Replay protection was a claim in a JSON field, not a mechanism."
+    },
+    {
+      "id": "F8",
+      "finding": "UI does not clearly separate package readiness / credential readiness / founder authorization / live proof / frontier quorum / promotion.",
+      "reproduced": true,
+      "exact_path": "frontend/src/components/helm/topdown/HelmCouncilView.tsx",
+      "collapsed_fields": [
+        "h1_candidate_package: 'READY_FOR_FOUNDER_REVIEW' -- a generic READY badge that merges package integrity with founder authorization",
+        "no LIVE PROVIDER PROOF state exists at all (NOT RUN / PARTIAL / PASS / FAILED)",
+        "FOUNDER AUTHORIZATION has no CONSUMED or REJECTED state",
+        "CREDENTIALS has no VERIFIED_AT_LAUNCH state"
+      ],
+      "verdict": "CONFIRMED."
+    },
+    {
+      "id": "F9",
+      "finding": "Residual urllib/network path exists in adapters.py.",
+      "reproduced": true,
+      "exact_path": "scripts/council/adapters.py:4 (import urllib.request), :10 _http(), :41 call_openai_compat, :59 call_anthropic, :76 call_gemini",
+      "root_cause": "dispatch() gates frontier members on a contracts file read from scripts/council/frontier_seat_contracts.json -- a path that DOES NOT EXIST (the real file lives at coordination/council/frontier_seat_contracts.json). The guard therefore passes by accident of a wrong path, not by design. If external_execution_authorized were ever true, dispatch() raises -- but call_openai_compat / call_anthropic / call_gemini remain importable, reachable functions holding a live urllib POST path with no authorization check of their own.",
+      "verdict": "CONFIRMED. Defense depends on a path typo."
+    },
+    {
+      "id": "F10",
+      "finding": "No external paid calls are currently fireable.",
+      "reproduced": true,
+      "verdict": "CONFIRMED (favorable). dispatch() raises PermissionError on the frontier branch; harness supplies no key; zero calls observed."
+    },
+    {
+      "id": "F11",
+      "finding": "No live secrets were found in package artifacts.",
+      "reproduced": true,
+      "verdict": "CONFIRMED (favorable). Structural scan of all live_proof_packages found no bearer-token-shaped values and no credential value keys."
+    }
+  ],
+  "baseline_state": {
+    "single_authoritative_candidate": false,
+    "production_authorization_validator": "ABSENT",
+    "atomic_authorization_consume": "ABSENT",
+    "replay_protection": "ABSENT",
+    "mock_quorum_isolation": "FAIL",
+    "dry_run_quorum_isolation": "FAIL",
+    "ui_gate_separation": "FAIL",
+    "external_provider_calls": 0,
+    "credential_readiness": "NOT_PROVISIONED",
+    "authorization_status": "NOT_GRANTED",
+    "frontier_council_quorum": false,
+    "promotion_eligible": false,
+    "safe_to_execute_now": false,
+    "final_status": "H1B_BLOCKED_PENDING_REMEDIATION"
+  }
+}

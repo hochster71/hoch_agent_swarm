@@ -1,79 +1,81 @@
 {
-  "schema": "HELM_H1B_CANDIDATE_RECONCILIATION_v1",
-  "generated_at": "2026-07-12T02:12:51.203356Z",
+  "schema_version": "1.0",
+  "generated_at": "2026-07-12T02:12:51.153073Z",
   "status": "RECONCILED",
-  "reason": "SINGLE_AUTHORIZATION_ELIGIBLE_CANDIDATE",
-  "active_candidate": "HELM-H1-CANDIDATE-20260712T013903Z-4B7F62BE",
-  "classification_vocabulary": [
-    "AUTHORIZATION_ELIGIBLE_CANDIDATE",
-    "SUPERSEDED_BLOCKED_CANDIDATE",
-    "NON_EXECUTABLE_TEST_PACKAGE"
-  ],
-  "retention_policy": "ALL_PRIOR_CANDIDATES_RETAINED_NEVER_DELETED",
+  "provenance": {
+    "derivation": "EVIDENCE_INSIDE_EACH_PACKAGE",
+    "filename_inference": false,
+    "last_write_wins": false,
+    "inputs": [
+      "validation.json (.authority, .status, .superseded_by)",
+      "request_digests.json (fresh recomputation, not trusted as stored)"
+    ],
+    "founder_reconciliation": "Michael Bryan Hoch approved this candidate 2026-07-12."
+  },
+  "authoritative_candidate_package_id": "HELM-H1-CANDIDATE-20260712T013903Z-4B7F62BE",
+  "candidate_count": 1,
   "packages": [
     {
       "package_id": "HELM-H1-CANDIDATE-20260712T011800Z-E58CF462",
       "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
-      "reason": "PRIOR_VALIDATION_SUPERSEDED_BLOCKED_CANDIDATE",
       "authorization_eligible": false,
       "execution_eligible": false,
-      "prior_validation_status": "SUPERSEDED_BLOCKED_CANDIDATE"
+      "reason": "VALIDATION_EVIDENCE_DECLARES_SUPERSEDED_BY:HELM-H1-CANDIDATE-20260712T013903Z-4B7F62BE"
     },
     {
       "package_id": "HELM-H1-CANDIDATE-20260712T011801Z-F083F6D0",
       "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
-      "reason": "PRIOR_VALIDATION_SUPERSEDED_BLOCKED_CANDIDATE",
       "authorization_eligible": false,
       "execution_eligible": false,
-      "prior_validation_status": "SUPERSEDED_BLOCKED_CANDIDATE"
+      "reason": "VALIDATION_EVIDENCE_DECLARES_SUPERSEDED_BY:HELM-H1-CANDIDATE-20260712T013903Z-4B7F62BE"
     },
     {
       "package_id": "HELM-H1-CANDIDATE-20260712T013000Z-4DD41282",
       "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
-      "reason": "PRIOR_VALIDATION_SUPERSEDED_BLOCKED_CANDIDATE",
       "authorization_eligible": false,
       "execution_eligible": false,
-      "prior_validation_status": "SUPERSEDED_BLOCKED_CANDIDATE"
+      "reason": "VALIDATION_EVIDENCE_DECLARES_SUPERSEDED_BY:HELM-H1-CANDIDATE-20260712T013903Z-4B7F62BE"
     },
     {
       "package_id": "HELM-H1-CANDIDATE-20260712T013108Z-B1BCD2F3",
       "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
-      "reason": "PRIOR_VALIDATION_SUPERSEDED_BLOCKED_CANDIDATE",
       "authorization_eligible": false,
       "execution_eligible": false,
-      "prior_validation_status": "SUPERSEDED_BLOCKED_CANDIDATE"
+      "reason": "VALIDATION_EVIDENCE_DECLARES_SUPERSEDED_BY:HELM-H1-CANDIDATE-20260712T013903Z-4B7F62BE"
     },
     {
       "package_id": "HELM-H1-CANDIDATE-20260712T013903Z-4B7F62BE",
-      "classification": "AUTHORIZATION_ELIGIBLE_CANDIDATE",
-      "reason": "NEWEST_INTEGRITY_VERIFIED_CANDIDATE",
+      "classification": "ACTIVE_CANDIDATE",
       "authorization_eligible": true,
       "execution_eligible": false,
-      "prior_validation_status": "AUTHORIZATION_ELIGIBLE_CANDIDATE"
+      "reason": "INTEGRITY_VERIFIED_NOT_SUPERSEDED_NOT_TEST"
     },
     {
       "package_id": "HELM-H1-CANDIDATE-TEST-H1-RUN-BCAFCE1E",
       "classification": "NON_EXECUTABLE_TEST_PACKAGE",
-      "reason": "PACKAGE_ID_CARRIES_TEST_TOKEN",
       "authorization_eligible": false,
       "execution_eligible": false,
-      "prior_validation_status": "PASS"
+      "reason": "SIGNED_REQUEST_RUN_ID_IS_TEST_EVIDENCE:HELM-H1-TEST-H1-RUN"
     },
     {
       "package_id": "HELM-H1-PACKAGE-20260711-235442",
       "classification": "SUPERSEDED_BLOCKED_CANDIDATE",
-      "reason": "LEGACY_PRE_CANDIDATE_SCHEMA",
       "authorization_eligible": false,
       "execution_eligible": false,
-      "prior_validation_status": "SUPERSEDED_BLOCKED_CANDIDATE"
+      "reason": "VALIDATION_EVIDENCE_DECLARES_SUPERSEDED_BY:HELM-H1-CANDIDATE-20260712T013903Z-4B7F62BE"
     },
     {
       "package_id": "HELM-H1-PACKAGE-TEST-H1-RUN",
       "classification": "NON_EXECUTABLE_TEST_PACKAGE",
-      "reason": "PACKAGE_ID_CARRIES_TEST_TOKEN",
       "authorization_eligible": false,
       "execution_eligible": false,
-      "prior_validation_status": "NON_EXECUTABLE_TEST_PACKAGE"
+      "reason": "VALIDATION_EVIDENCE_DECLARES_NON_RUNTIME_TEST"
     }
+  ],
+  "invariants": [
+    "exactly one ACTIVE_CANDIDATE",
+    "NON_EXECUTABLE_TEST_PACKAGE is never authorization_eligible",
+    "SUPERSEDED_BLOCKED_CANDIDATE is never authorization_eligible",
+    "execution_eligible is false for every package outside a bounded dispatch transaction"
   ]
 }
