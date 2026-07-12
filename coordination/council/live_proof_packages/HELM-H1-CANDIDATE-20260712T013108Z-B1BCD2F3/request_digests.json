@@ -1,0 +1,11 @@
+{
+  "prompt_sha256": "fd0e87a572f00d4a13b5948ac6ab54557505ba11772baec733b854dd57055b47",
+  "frontier_contract_sha256": "3f969bee3ae0b7d73c65f2474abd29395ba2c1feb1c7e81500ef53405bc2311a",
+  "roster_sha256": "135ec979386b6dcfaf9e94446bbef4ce596e6c59a3bab1ee7de88435b0777efc",
+  "model_policy_sha256": "a614cd2d4c08a2e0ec685652c56f35ecdb89943a645147791c568d72e835bbcf",
+  "budget_policy_sha256": "939c018e7d25f8442d8687755d58226cc70861f0ccfe816dfe538d7d9e6d6e59",
+  "chatgpt_request_sha256": "ecbb8652a67fccef0b57570eeffeb38b2d116449285e66cf7b237a4f2083ebe4",
+  "claude_request_sha256": "8d74f2086a4a3b062ea9626acce3a7b082e648fb4deb4455591f3ae9b25c81fb",
+  "grok_request_sha256": "cee2c80e23ecada0e47e0da9ca6bde5cef02cfff2967f944e769af79bfe0f7c3",
+  "combined_authorization_sha256": "34874d099fa5ba223d6e1a2041b615eabcb893656309d4709ce2b779a5ea889e"
+}

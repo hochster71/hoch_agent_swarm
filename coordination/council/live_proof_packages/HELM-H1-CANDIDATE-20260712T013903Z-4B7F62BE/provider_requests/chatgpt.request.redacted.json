@@ -1,0 +1,13 @@
+{
+  "run_id": "HELM-H1-20260712T013903Z",
+  "member_id": "chatgpt",
+  "provider": "openai",
+  "model": "gpt-5.6-terra",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Perform authoritative review of HELM control plane. [REDACTED PROMPT FOR SECURITY]"
+    }
+  ],
+  "temperature": 0.0
+}

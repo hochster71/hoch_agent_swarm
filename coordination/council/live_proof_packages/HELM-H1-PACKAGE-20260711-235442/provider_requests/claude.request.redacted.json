@@ -1,0 +1,13 @@
+{
+  "run_id": "HELM-H1-20260711-235442",
+  "member_id": "claude",
+  "provider": "anthropic",
+  "model": "claude-sonnet-5",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Perform authoritative review of HELM control plane. [REDACTED PROMPT FOR SECURITY]"
+    }
+  ],
+  "max_tokens": 4096
+}

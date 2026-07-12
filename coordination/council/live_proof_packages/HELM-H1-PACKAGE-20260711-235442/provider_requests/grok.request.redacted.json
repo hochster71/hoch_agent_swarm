@@ -1,0 +1,13 @@
+{
+  "run_id": "HELM-H1-20260711-235442",
+  "member_id": "grok",
+  "provider": "openai_compat",
+  "model": "grok-4.3",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Perform authoritative review of HELM control plane. [REDACTED PROMPT FOR SECURITY]"
+    }
+  ],
+  "temperature": 0.0
+}

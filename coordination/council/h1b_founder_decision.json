@@ -1,0 +1,89 @@
+{
+  "schema": "HELM_H1B_FOUNDER_DECISION_v1",
+  "generated_at": "2026-07-12T01:48:37.696064Z",
+  "h1_candidate": "READY_FOR_FOUNDER_DECISION",
+  "package_integrity": "PASS",
+  "integrity_recomputation": {
+    "status": "PASS",
+    "fields_verified": [
+      "budget_policy_sha256",
+      "chatgpt_request_sha256",
+      "claude_request_sha256",
+      "combined_authorization_sha256",
+      "frontier_contract_sha256",
+      "grok_request_sha256",
+      "model_policy_sha256",
+      "pricing_evidence_sha256",
+      "prompt_sha256",
+      "roster_sha256"
+    ],
+    "mismatches": []
+  },
+  "authorization_id": "HELM-H1-AUTH-20260712T013903Z-4B7F62BE",
+  "package_id": "HELM-H1-CANDIDATE-20260712T013903Z-4B7F62BE",
+  "combined_authorization_sha256": "97910a44dbc757d2f5c84a00812976686bcff4456bfba5c0c912ad2f242f819f",
+  "permitted_providers": [
+    "openai",
+    "anthropic",
+    "xai"
+  ],
+  "permitted_models": {
+    "openai": "gpt-5.6-terra",
+    "anthropic": "claude-sonnet-5",
+    "xai": "grok-4.5"
+  },
+  "permitted_run_count": 1,
+  "maximum_cost_per_provider_usd": {
+    "openai": 0.13,
+    "anthropic": 0.14,
+    "xai": 0.07
+  },
+  "maximum_total_cost_usd": 0.35,
+  "pricing_status": "VERIFIED",
+  "issued_at": null,
+  "expires_at": null,
+  "approval_reference": null,
+  "authorization_status": "NOT_GRANTED",
+  "operator_hold_override_scope": "SINGLE_H1_PROOF_ONLY",
+  "production_promotion_authorized": false,
+  "additional_runs_authorized": false,
+  "provider_substitution_authorized": false,
+  "model_substitution_authorized": false,
+  "credential_readiness": "NOT_PROVISIONED",
+  "credential_matrix": {
+    "openai": {
+      "credential_reference": "OPENAI_API_KEY",
+      "status": "NOT_PROVISIONED",
+      "value_exposed": false
+    },
+    "anthropic": {
+      "credential_reference": "ANTHROPIC_API_KEY",
+      "status": "NOT_PROVISIONED",
+      "value_exposed": false
+    },
+    "xai": {
+      "credential_reference": "XAI_API_KEY",
+      "status": "NOT_PROVISIONED",
+      "value_exposed": false
+    }
+  },
+  "external_provider_calls": 0,
+  "paid_provider_calls": 0,
+  "frontier_council_quorum": false,
+  "promotion_eligible": false,
+  "safe_to_execute_now": false,
+  "operator_hold_state": "ACTIVE",
+  "superseded_candidates": [
+    "HELM-H1-CANDIDATE-20260712T011800Z-E58CF462",
+    "HELM-H1-CANDIDATE-20260712T011801Z-F083F6D0",
+    "HELM-H1-CANDIDATE-20260712T013000Z-4DD41282",
+    "HELM-H1-CANDIDATE-20260712T013108Z-B1BCD2F3",
+    "HELM-H1-PACKAGE-20260711-235442"
+  ],
+  "non_executable_test_packages": [
+    "HELM-H1-CANDIDATE-TEST-H1-RUN-BCAFCE1E",
+    "HELM-H1-PACKAGE-TEST-H1-RUN"
+  ],
+  "decision_statement": "AUTHORIZE HELM H1 SINGLE-RUN FRONTIER PROOF\nAuthorization ID: HELM-H1-AUTH-20260712T013903Z-4B7F62BE\nPackage ID: HELM-H1-CANDIDATE-20260712T013903Z-4B7F62BE\nCombined authorization SHA-256: 97910a44dbc757d2f5c84a00812976686bcff4456bfba5c0c912ad2f242f819f\nPermitted providers and models:\n- OpenAI: gpt-5.6-terra\n- Anthropic: claude-sonnet-5\n- xAI: grok-4.5\nPermitted run count: 1\nMaximum spend:\n- OpenAI: $0.13\n- Anthropic: $0.14\n- xAI: $0.07\n- Aggregate: $0.35\nIssued at: <filled only on founder approval>\nExpires at: <filled only on founder approval>\nOperator-hold override: SINGLE_H1_PROOF_ONLY\nProduction promotion: NOT AUTHORIZED\nAdditional runs: NOT AUTHORIZED\nProvider substitution: NOT AUTHORIZED\nModel substitution: NOT AUTHORIZED\nApproval reference: <founder-supplied>",
+  "final_status": "H1B_FOUNDER_DECISION_PACKET_READY"
+}

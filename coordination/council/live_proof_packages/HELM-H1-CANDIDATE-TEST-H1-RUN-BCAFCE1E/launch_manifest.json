@@ -1,0 +1,11 @@
+{
+  "package_id": "HELM-H1-CANDIDATE-TEST-H1-RUN-BCAFCE1E",
+  "mode": "H1_LAUNCH_PREPARED",
+  "authorization_status": "NOT_GRANTED",
+  "external_calls": 0,
+  "paid_calls": 0,
+  "live_responses": 0,
+  "frontier_council_quorum": false,
+  "promotion_eligible": false,
+  "safe_to_execute_now": false
+}

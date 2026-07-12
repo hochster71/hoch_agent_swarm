@@ -1,0 +1,15 @@
+{
+  "egress_scope": "LIMITED_H1_PROOF",
+  "local_source_data_sent": [],
+  "telemetry_egress": [
+    "prompt_digest",
+    "model_identity",
+    "latency_ms"
+  ],
+  "exposed_secrets": false,
+  "egress_destinations": [
+    "OpenAI API Endpoint",
+    "Anthropic API Endpoint",
+    "xAI API Endpoint"
+  ]
+}

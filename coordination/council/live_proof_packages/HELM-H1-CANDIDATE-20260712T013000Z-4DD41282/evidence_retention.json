@@ -1,0 +1,13 @@
+{
+  "retained_artifacts": [
+    "raw_response_bytes",
+    "recomputed_sha256_digest",
+    "telemetry_envelope",
+    "run_id"
+  ],
+  "scrubbed_fields": [
+    "api_key",
+    "bearer_token",
+    "client_secrets"
+  ]
+}

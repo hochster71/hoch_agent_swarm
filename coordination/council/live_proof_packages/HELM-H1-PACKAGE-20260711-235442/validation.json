@@ -1,0 +1,11 @@
+{
+  "all_required_files_present": true,
+  "combined_request_digest_verified": true,
+  "validation_status": "PASS",
+  "overall_status": "READY_FOR_FOUNDER_REVIEW",
+  "status": "SUPERSEDED_BLOCKED_CANDIDATE",
+  "execution_eligible": false,
+  "authorization_eligible": false,
+  "classification_reason": "LEGACY_PRE_CANDIDATE_SCHEMA",
+  "reconciled_at": "2026-07-12T01:48:37.696064Z"
+}

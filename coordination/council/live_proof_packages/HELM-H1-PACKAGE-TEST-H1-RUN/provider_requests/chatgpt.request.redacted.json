@@ -1,0 +1,13 @@
+{
+  "run_id": "HELM-H1-TEST-H1-RUN",
+  "member_id": "chatgpt",
+  "provider": "openai",
+  "model": "gpt-4o",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Perform authoritative review of HELM control plane. [REDACTED PROMPT FOR SECURITY]"
+    }
+  ],
+  "temperature": 0.0
+}

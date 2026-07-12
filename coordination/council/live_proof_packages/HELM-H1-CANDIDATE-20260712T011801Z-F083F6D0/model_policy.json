@@ -1,0 +1,11 @@
+{
+  "openai": [
+    "gpt-4o"
+  ],
+  "anthropic": [
+    "claude-sonnet-5"
+  ],
+  "xai": [
+    "grok-4.3"
+  ]
+}

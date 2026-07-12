@@ -1,0 +1,15 @@
+{
+  "pricing_status": "BLOCKED_UNKNOWN_PRICING",
+  "estimated_costs_usd": {
+    "openai": 0.04101,
+    "anthropic": null,
+    "xai": null
+  },
+  "maximum_cost_per_provider_usd": {
+    "openai": 0.05126,
+    "anthropic": null,
+    "xai": null
+  },
+  "maximum_total_cost_usd": null,
+  "contingency_factor": 1.25
+}

@@ -1,0 +1,32 @@
+{
+  "authorization_id": "HELM-H1-AUTH-20260712T011800Z-E58CF462",
+  "authorization_status": "NOT_GRANTED",
+  "package_id": "HELM-H1-CANDIDATE-20260712T011800Z-E58CF462",
+  "combined_authorization_sha256": "39032bc1f9a8a5261e702e1438d06079b1b2ff39e0d8ae2b97c325c31e60d605",
+  "issued_by": "Michael Bryan Hoch",
+  "issued_at": null,
+  "expires_at": null,
+  "permitted_run_count": 1,
+  "permitted_providers": [
+    "openai",
+    "anthropic",
+    "xai"
+  ],
+  "permitted_models": {
+    "openai": "gpt-4o",
+    "anthropic": "claude-sonnet-5",
+    "xai": "grok-4.3"
+  },
+  "maximum_total_cost_usd": null,
+  "maximum_cost_per_provider_usd": {
+    "openai": 0.05126,
+    "anthropic": null,
+    "xai": null
+  },
+  "operator_hold_override_scope": "SINGLE_H1_PROOF_ONLY",
+  "production_promotion_authorized": false,
+  "additional_runs_authorized": false,
+  "model_substitution_authorized": false,
+  "provider_substitution_authorized": false,
+  "approval_reference": null
+}

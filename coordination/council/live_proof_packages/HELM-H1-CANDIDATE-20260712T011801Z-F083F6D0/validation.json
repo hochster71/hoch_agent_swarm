@@ -1,0 +1,7 @@
+{
+  "status": "SUPERSEDED_BLOCKED_CANDIDATE",
+  "execution_eligible": false,
+  "authorization_eligible": false,
+  "superseded_reason": "MODEL_POLICY_AND_BUDGET_UPDATED",
+  "superseded_by": "HELM-H1-CANDIDATE-20260712T013000Z-4DD41282"
+}

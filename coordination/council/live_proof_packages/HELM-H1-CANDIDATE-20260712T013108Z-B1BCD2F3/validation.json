@@ -1,0 +1,12 @@
+{
+  "all_required_files_present": true,
+  "combined_request_digest_verified": true,
+  "validation_status": "PASS",
+  "overall_status": "READY_FOR_FOUNDER_REVIEW",
+  "status": "SUPERSEDED_BLOCKED_CANDIDATE",
+  "execution_eligible": false,
+  "authorization_eligible": false,
+  "classification_reason": "SUPERSEDED_BY_NEWER_CANDIDATE:HELM-H1-CANDIDATE-20260712T013903Z-4B7F62BE",
+  "reconciled_at": "2026-07-12T01:48:37.696064Z",
+  "superseded_by": "HELM-H1-CANDIDATE-20260712T013903Z-4B7F62BE"
+}

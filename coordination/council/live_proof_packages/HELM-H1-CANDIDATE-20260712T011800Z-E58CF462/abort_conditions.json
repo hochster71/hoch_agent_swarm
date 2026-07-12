@@ -1,0 +1,18 @@
+[
+  "authorization absent or expired",
+  "authorization identity mismatch",
+  "request digest mismatch",
+  "roster or contract digest mismatch",
+  "unauthorized model",
+  "provider identity mismatch",
+  "missing credential",
+  "unknown price",
+  "estimated cost above cap",
+  "operator lock unavailable",
+  "duplicate process detected",
+  "stale package",
+  "any request mutation after approval",
+  "one provider substituted for another",
+  "secret detected in retained evidence",
+  "reconciliation cannot establish one authoritative run"
+]

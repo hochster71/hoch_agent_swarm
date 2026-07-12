@@ -1,0 +1,9 @@
+{
+  "authorization_replay_protection": "BOUND_TO_SINGLE_UNIQUE_RUN_ID",
+  "request_mutation_protection": "CRYPTOGRAPHIC_COMBINED_REQUEST_DIGEST",
+  "provider_substitution_protection": "EXACT_ROSTER_MATCH_VERIFIER",
+  "model_substitution_protection": "FROZEN_CONTRACT_requested_model_policy",
+  "budget_cap_bypass_protection": "PRE_DISPATCH_BUDGET_GOVERNOR_ASSERTION",
+  "secret_leakage_protection": "MANDATORY_VALUE_EXPOSURE_NEGATIVE_TESTS",
+  "partial_quorum_promotion_protection": "FAIL_CLOSED_QUORUM_AGGREGATION_POLICY"
+}

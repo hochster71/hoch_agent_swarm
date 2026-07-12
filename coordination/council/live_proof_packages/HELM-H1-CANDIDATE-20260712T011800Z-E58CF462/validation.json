@@ -1,0 +1,11 @@
+{
+  "all_required_files_present": true,
+  "combined_request_digest_verified": false,
+  "validation_status": "BLOCKED",
+  "overall_status": "BLOCKED_MODEL_IDENTITY",
+  "status": "SUPERSEDED_BLOCKED_CANDIDATE",
+  "execution_eligible": false,
+  "authorization_eligible": false,
+  "classification_reason": "PRIOR_VALIDATION_BLOCKED",
+  "reconciled_at": "2026-07-12T01:48:37.696064Z"
+}

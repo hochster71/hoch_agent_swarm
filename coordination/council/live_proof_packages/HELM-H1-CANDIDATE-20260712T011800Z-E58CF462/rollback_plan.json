@@ -1,0 +1,8 @@
+{
+  "operator_hold_restoration": "IMMEDIATE_ON_FAILURE_OR_COMPLETE",
+  "cleanup_scope": [
+    "temp_run_folder",
+    "unverified_response_cache"
+  ],
+  "unfreeze_prevention": "ALL_PROMOTIONS_BLOCKED"
+}

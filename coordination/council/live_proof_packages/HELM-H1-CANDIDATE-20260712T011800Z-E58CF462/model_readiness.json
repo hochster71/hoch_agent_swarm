@@ -1,0 +1,35 @@
+{
+  "openai": {
+    "provider": "openai",
+    "proposed_model": "gpt-4o",
+    "identity_status": "VERIFIED",
+    "contract_allowed": true,
+    "endpoint_compatible": true,
+    "pricing_known": true,
+    "source_reference": "OpenAI pricing model specs",
+    "verified_at": "2026-07-12T00:00:00Z",
+    "live_account_availability": "UNKNOWN_UNTIL_CREDENTIALLED"
+  },
+  "anthropic": {
+    "provider": "anthropic",
+    "proposed_model": "claude-sonnet-5",
+    "identity_status": "UNVERIFIED",
+    "contract_allowed": true,
+    "endpoint_compatible": null,
+    "pricing_known": false,
+    "source_reference": "Anthropic public API models listing",
+    "verified_at": "2026-07-12T00:00:00Z",
+    "live_account_availability": "UNKNOWN_UNTIL_CREDENTIALLED"
+  },
+  "xai": {
+    "provider": "xai",
+    "proposed_model": "grok-4.3",
+    "identity_status": "UNVERIFIED",
+    "contract_allowed": true,
+    "endpoint_compatible": null,
+    "pricing_known": false,
+    "source_reference": "xAI public API models listing",
+    "verified_at": "2026-07-12T00:00:00Z",
+    "live_account_availability": "UNKNOWN_UNTIL_CREDENTIALLED"
+  }
+}

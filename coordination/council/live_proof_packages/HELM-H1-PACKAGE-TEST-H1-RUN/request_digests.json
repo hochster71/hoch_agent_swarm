@@ -1,0 +1,10 @@
+{
+  "prompt_digest": "fd0e87a572f00d4a13b5948ac6ab54557505ba11772baec733b854dd57055b47",
+  "contract_digest": "6072b5cf01392285a1f373511c19a641aeec9b330120602e7668f04f6fd85861",
+  "roster_digest": "3130c5c0ea0a3fb003b55b469ea6555a2bd0f8175d82684acc5e2b141c61c893",
+  "model_policy_digest": "dfe7889f95faf7a177384a3e8bfb31d224ea5f553fa28f13d9e7518cc8b3cc9e",
+  "chatgpt_payload_digest": "8f53a1b07c4c7d2fa1eba4da51a2a132d3f3d414934dc56276b50ea08501c1ce",
+  "claude_payload_digest": "8a1df9f8f06e5e3b1a24504352393aec40e40f03ed2582143ac05ff968687235",
+  "grok_payload_digest": "5139be7c77e7e9a2a2f24a52c9d35624614f4d1fd7f2bad8c45b27638fe7f232",
+  "combined_request_digest": "c491e5598edbeea04c87b5f32dbcb74d28d400714db5f69bb9f306227179d7a5"
+}

@@ -1,0 +1,11 @@
+{
+  "package_id": "HELM-H1-CANDIDATE-20260712T011800Z-E58CF462",
+  "mode": "H1_LAUNCH_BLOCKED",
+  "authorization_status": "NOT_GRANTED",
+  "external_calls": 0,
+  "paid_calls": 0,
+  "live_responses": 0,
+  "frontier_council_quorum": false,
+  "promotion_eligible": false,
+  "safe_to_execute_now": false
+}
