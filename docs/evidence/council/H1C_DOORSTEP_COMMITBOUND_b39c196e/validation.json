@@ -1,0 +1,39 @@
+{
+  "schema": "h1c-doorstep-commitbound-v1",
+  "run_id": "H1C-DOORSTEP-COMMITBOUND-20260712T175254Z",
+  "generated_at": "2026-07-12T17:53:23.931309+00:00",
+  "tested_commit": "b39c196e5470857a7b8c713de124f6e73b0a7694",
+  "h1c_status": "DOORSTEP_READY",
+  "promotion": "LOCKED",
+  "safe_to_execute": "NO",
+  "founder_action_required": true,
+  "founder_authorization": "NOT_GRANTED",
+  "operator_hold": "ACTIVE",
+  "live_proof": "MISSING",
+  "gates": {
+    "py_compile": "PASS",
+    "h1b_tests": {
+      "status": "PASS",
+      "passed": 28,
+      "failed": 0,
+      "errors": 0
+    },
+    "h1c_tests": {
+      "status": "PASS",
+      "passed": 25,
+      "failed": 0,
+      "errors": 0
+    },
+    "frontend_build": "PASS",
+    "realtime_integrity": "PASS",
+    "baseline_lock": "PASS",
+    "route_registration": "PASS",
+    "live_route_fail_closed": "PASS"
+  },
+  "working_tree_clean_except_ignored_packages": true,
+  "overall_status": "DOORSTEP_READY",
+  "release_provenance": "COMMIT-BOUND",
+  "founder_packet_path": "coordination/council/live_proof_packages/H1C-DOORSTEP-COMMITBOUND-20260712T175254Z/FOUNDER_DOORSTEP_PACKET.json",
+  "founder_packet_sha256": "a8da5b4c5b61dacbd5b80caeea182e616f36d36216a9136be8037a13027b83aa",
+  "validation_sha256": "7ee9479b33dce76804a25b35dca55395de8cd200180bcd9389fbedd63023997b"
+}

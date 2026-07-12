@@ -1,0 +1,33 @@
+{
+  "packet_type": "H1C_CONTROLLED_ACTIVATION_AUTHORIZATION_REQUEST",
+  "tested_commit": "b39c196e5470857a7b8c713de124f6e73b0a7694",
+  "candidate_id": "HELM-H1-CANDIDATE-20260712T013903Z-4B7F62BE",
+  "package_id": "HELM-H1-CANDIDATE-20260712T013903Z-4B7F62BE",
+  "package_digest": "97910a44dbc757d2f5c84a00812976686bcff4456bfba5c0c912ad2f242f819f",
+  "requested_execution_scope": [
+    "h1c_controlled_dry_run",
+    "local_read_only_probe",
+    "local_ledger_write",
+    "local_evidence_emit"
+  ],
+  "requested_duration_seconds": 600,
+  "requested_environment": "local_only",
+  "external_dispatch_allowed": false,
+  "founder_only_actions_allowed": false,
+  "operator_hold_release_required": true,
+  "live_proof_required": true,
+  "automatic_relock_required": true,
+  "current_status": "DOORSTEP_READY",
+  "current_promotion": "LOCKED",
+  "current_safe_to_execute": "NO",
+  "authorization_status": "NOT_GRANTED",
+  "evidence_directory": "coordination/council/live_proof_packages/H1C-DOORSTEP-COMMITBOUND-20260712T175254Z",
+  "validation_sha256": "c49e84b325c62e770daad773e2d06ab44fe473de28986785428e04a1db22d0aa",
+  "source_diff_sha256": "a54a338527ef81b614360da37a74d8979c8b40f8195840bc4790904df2a164a3",
+  "created_at": "2026-07-12T17:53:23.931408+00:00",
+  "do_not_auto_approve": true,
+  "no_preselected_approval": true,
+  "approval_id": null,
+  "founder_signature": null,
+  "release_event": null
+}

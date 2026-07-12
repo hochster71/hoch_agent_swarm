@@ -169,3 +169,4 @@ scripts/.relay_write_token
 # H1B-R2 closure harness outputs under candidate packages dir (archived under docs/evidence/council/)
 coordination/council/live_proof_packages/H1B-R2-CLOSURE-*/
 coordination/council/live_proof_packages/H1C-CONTROLLED-ACTIVATION-*/
+coordination/council/live_proof_packages/H1C-DOORSTEP-COMMITBOUND-*/
