@@ -488,3 +488,242 @@ def test_ineligible_source_type_fixture(evidence_file):
     )
     r = validate_live_proof(proof, now=NOW, repo_root=ROOT)
     assert r.status == "INELIGIBLE"
+
+
+# ---------------------------------------------------------------------------
+# Founder pending template — must never authorize
+# ---------------------------------------------------------------------------
+
+def test_pending_template_not_authorization():
+    from backend.instrument_integrity.h1c_activation import (
+        validate_founder_authorization_template,
+    )
+    pending = json.loads(
+        (ROOT / "docs/evidence/council/H1C_DOORSTEP_COMMITBOUND_b39c196e/founder_authorization.pending.json").read_text()
+    )
+    r = validate_founder_authorization_template(
+        pending,
+        expected_commit="b39c196e5470857a7b8c713de124f6e73b0a7694",
+        expected_package_digest=pending["package_digest"],
+        expected_candidate_id=pending["candidate_id"],
+    )
+    assert r["authorized"] is False
+    assert r["decision_status"] == "PENDING_FOUNDER_DECISION"
+    assert any("NOT_APPROVED" in b or "NULL" in b or "MISSING" in b for b in r["blockers"])
+
+
+def test_null_decision_cannot_authorize():
+    from backend.instrument_integrity.h1c_activation import (
+        validate_founder_authorization_template,
+    )
+    r = validate_founder_authorization_template(
+        {
+            "decision_status": "APPROVED",
+            "decision": None,
+            "approval_id": "A1",
+            "founder_signature": "sig",
+            "implementation_commit": "b39c196e",
+            "package_digest": "d" * 64,
+            "candidate_id": "C",
+            "authorized_execution_scope": ["h1c_controlled_dry_run"],
+            "authorized_environment": "local_only",
+            "external_dispatch_allowed": False,
+            "founder_only_actions_allowed": False,
+            "expires_at": "2099-01-01T00:00:00Z",
+        },
+        expected_commit="b39c196e",
+        expected_package_digest="d" * 64,
+        expected_candidate_id="C",
+    )
+    assert r["authorized"] is False
+    assert any("DECISION_NULL" in b for b in r["blockers"])
+
+
+def test_missing_signature_cannot_authorize():
+    from backend.instrument_integrity.h1c_activation import (
+        validate_founder_authorization_template,
+    )
+    r = validate_founder_authorization_template(
+        {
+            "decision_status": "APPROVED",
+            "decision": "APPROVE_CONTROLLED_LOCAL_EXECUTION",
+            "approval_id": "A1",
+            "founder_signature": None,
+            "implementation_commit": "b39c196e",
+            "package_digest": "d" * 64,
+            "candidate_id": "C",
+            "authorized_execution_scope": ["h1c_controlled_dry_run"],
+            "authorized_environment": "local_only",
+            "external_dispatch_allowed": False,
+            "founder_only_actions_allowed": False,
+            "expires_at": "2099-01-01T00:00:00Z",
+        },
+        expected_commit="b39c196e",
+        expected_package_digest="d" * 64,
+        expected_candidate_id="C",
+    )
+    assert r["authorized"] is False
+    assert any("SIGNATURE_MISSING" in b for b in r["blockers"])
+
+
+def test_expired_approval_fails_closed():
+    from backend.instrument_integrity.h1c_activation import (
+        validate_founder_authorization_template,
+    )
+    r = validate_founder_authorization_template(
+        {
+            "decision_status": "APPROVED",
+            "decision": "APPROVE_CONTROLLED_LOCAL_EXECUTION",
+            "approval_id": "A1",
+            "founder_signature": "sig",
+            "implementation_commit": "b39c196e",
+            "package_digest": "d" * 64,
+            "candidate_id": "C",
+            "authorized_execution_scope": ["h1c_controlled_dry_run"],
+            "authorized_environment": "local_only",
+            "external_dispatch_allowed": False,
+            "founder_only_actions_allowed": False,
+            "expires_at": "2020-01-01T00:00:00Z",
+        },
+        expected_commit="b39c196e",
+        expected_package_digest="d" * 64,
+        expected_candidate_id="C",
+        now=NOW,
+    )
+    assert r["authorized"] is False
+    assert any("EXPIRED" in b for b in r["blockers"])
+
+
+def test_wrong_commit_fails_closed():
+    from backend.instrument_integrity.h1c_activation import (
+        validate_founder_authorization_template,
+    )
+    r = validate_founder_authorization_template(
+        {
+            "decision_status": "APPROVED",
+            "decision": "APPROVE_CONTROLLED_LOCAL_EXECUTION",
+            "approval_id": "A1",
+            "founder_signature": "sig",
+            "implementation_commit": "deadbeef",
+            "package_digest": "d" * 64,
+            "candidate_id": "C",
+            "authorized_execution_scope": ["h1c_controlled_dry_run"],
+            "authorized_environment": "local_only",
+            "external_dispatch_allowed": False,
+            "founder_only_actions_allowed": False,
+            "expires_at": "2099-01-01T00:00:00Z",
+        },
+        expected_commit="b39c196e5470857a7b8c713de124f6e73b0a7694",
+        expected_package_digest="d" * 64,
+        expected_candidate_id="C",
+    )
+    assert r["authorized"] is False
+    assert any("COMMIT_MISMATCH" in b for b in r["blockers"])
+
+
+def test_wrong_digest_fails_closed():
+    from backend.instrument_integrity.h1c_activation import (
+        validate_founder_authorization_template,
+    )
+    r = validate_founder_authorization_template(
+        {
+            "decision_status": "APPROVED",
+            "decision": "APPROVE_CONTROLLED_LOCAL_EXECUTION",
+            "approval_id": "A1",
+            "founder_signature": "sig",
+            "implementation_commit": "b39c196e",
+            "package_digest": "0" * 64,
+            "candidate_id": "C",
+            "authorized_execution_scope": ["h1c_controlled_dry_run"],
+            "authorized_environment": "local_only",
+            "external_dispatch_allowed": False,
+            "founder_only_actions_allowed": False,
+            "expires_at": "2099-01-01T00:00:00Z",
+        },
+        expected_commit="b39c196e",
+        expected_package_digest="d" * 64,
+        expected_candidate_id="C",
+    )
+    assert r["authorized"] is False
+    assert any("DIGEST_MISMATCH" in b for b in r["blockers"])
+
+
+def test_wider_scope_fails_closed():
+    from backend.instrument_integrity.h1c_activation import (
+        validate_founder_authorization_template,
+    )
+    r = validate_founder_authorization_template(
+        {
+            "decision_status": "APPROVED",
+            "decision": "APPROVE_CONTROLLED_LOCAL_EXECUTION",
+            "approval_id": "A1",
+            "founder_signature": "sig",
+            "implementation_commit": "b39c196e",
+            "package_digest": "d" * 64,
+            "candidate_id": "C",
+            "authorized_execution_scope": ["h1c_controlled_dry_run", "external_dispatch"],
+            "authorized_environment": "local_only",
+            "external_dispatch_allowed": False,
+            "founder_only_actions_allowed": False,
+            "expires_at": "2099-01-01T00:00:00Z",
+        },
+        expected_commit="b39c196e",
+        expected_package_digest="d" * 64,
+        expected_candidate_id="C",
+    )
+    assert r["authorized"] is False
+    assert any("SCOPE_WIDER" in b for b in r["blockers"])
+
+
+def test_external_dispatch_flag_prohibited():
+    from backend.instrument_integrity.h1c_activation import (
+        validate_founder_authorization_template,
+    )
+    r = validate_founder_authorization_template(
+        {
+            "decision_status": "APPROVED",
+            "decision": "APPROVE_CONTROLLED_LOCAL_EXECUTION",
+            "approval_id": "A1",
+            "founder_signature": "sig",
+            "implementation_commit": "b39c196e",
+            "package_digest": "d" * 64,
+            "candidate_id": "C",
+            "authorized_execution_scope": ["h1c_controlled_dry_run"],
+            "authorized_environment": "local_only",
+            "external_dispatch_allowed": True,
+            "founder_only_actions_allowed": False,
+            "expires_at": "2099-01-01T00:00:00Z",
+        },
+        expected_commit="b39c196e",
+        expected_package_digest="d" * 64,
+        expected_candidate_id="C",
+    )
+    assert r["authorized"] is False
+    assert any("EXTERNAL_DISPATCH" in b for b in r["blockers"])
+
+
+def test_founder_only_actions_flag_prohibited():
+    from backend.instrument_integrity.h1c_activation import (
+        validate_founder_authorization_template,
+    )
+    r = validate_founder_authorization_template(
+        {
+            "decision_status": "APPROVED",
+            "decision": "APPROVE_CONTROLLED_LOCAL_EXECUTION",
+            "approval_id": "A1",
+            "founder_signature": "sig",
+            "implementation_commit": "b39c196e",
+            "package_digest": "d" * 64,
+            "candidate_id": "C",
+            "authorized_execution_scope": ["h1c_controlled_dry_run"],
+            "authorized_environment": "local_only",
+            "external_dispatch_allowed": False,
+            "founder_only_actions_allowed": True,
+            "expires_at": "2099-01-01T00:00:00Z",
+        },
+        expected_commit="b39c196e",
+        expected_package_digest="d" * 64,
+        expected_candidate_id="C",
+    )
+    assert r["authorized"] is False
+    assert any("FOUNDER_ONLY_ACTIONS" in b for b in r["blockers"])

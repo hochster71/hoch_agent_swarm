@@ -858,6 +858,119 @@ def compute_h1c_truth(
     }
 
 
+def validate_founder_authorization_template(
+    template: Optional[dict],
+    *,
+    expected_commit: Optional[str] = None,
+    expected_package_digest: Optional[str] = None,
+    expected_candidate_id: Optional[str] = None,
+    max_allowed_scope: Optional[set[str] | list[str]] = None,
+    now: Optional[datetime] = None,
+) -> dict:
+    """Fail-closed evaluation of founder authorization records.
+
+    A PENDING / null / unsigned template MUST NOT authorize execution.
+    Returns {authorized: bool, blockers: list[str], decision_status: str}.
+    """
+    now = now or _now()
+    blockers: list[str] = []
+    if not template or not isinstance(template, dict):
+        return {
+            "authorized": False,
+            "blockers": ["FOUNDER_TEMPLATE_MISSING"],
+            "decision_status": "UNKNOWN",
+        }
+
+    status = str(template.get("decision_status") or "").upper()
+    decision = template.get("decision")
+    approval_id = template.get("approval_id")
+    signature = template.get("founder_signature")
+    issued_at = template.get("issued_at")
+    expires_at = template.get("expires_at")
+
+    if status in ("PENDING_FOUNDER_DECISION", "PENDING", "DOORSTEP_READY", ""):
+        blockers.append(f"FOUNDER_DECISION_NOT_APPROVED:{status or 'EMPTY'}")
+    if decision is None or str(decision).upper() in ("", "NULL", "NONE", "PENDING"):
+        blockers.append("FOUNDER_DECISION_NULL")
+    if str(decision or "").upper() not in (
+        "APPROVE_CONTROLLED_LOCAL_EXECUTION",
+        "APPROVED",
+        "GRANTED",
+    ):
+        if decision is not None and str(decision).upper() not in ("", "NULL", "NONE", "PENDING"):
+            blockers.append(f"FOUNDER_DECISION_NOT_APPROVAL:{decision}")
+        elif "FOUNDER_DECISION_NULL" not in blockers:
+            blockers.append("FOUNDER_DECISION_NULL")
+    if approval_id is None or approval_id == "":
+        blockers.append("FOUNDER_APPROVAL_ID_MISSING")
+    if signature is None or signature == "":
+        blockers.append("FOUNDER_SIGNATURE_MISSING")
+
+    impl = str(template.get("implementation_commit") or "")
+    if expected_commit:
+        # Accept full SHA or short prefix match
+        if not impl or not (
+            impl == expected_commit
+            or expected_commit.startswith(impl)
+            or impl.startswith(expected_commit[:8] if len(expected_commit) >= 8 else expected_commit)
+        ):
+            blockers.append(f"FOUNDER_COMMIT_MISMATCH:{impl}")
+
+    digest = str(template.get("package_digest") or "")
+    if expected_package_digest and digest != expected_package_digest:
+        blockers.append("FOUNDER_DIGEST_MISMATCH")
+    cand = str(template.get("candidate_id") or "")
+    if expected_candidate_id and cand != expected_candidate_id:
+        blockers.append("FOUNDER_CANDIDATE_MISMATCH")
+
+    scope = template.get("authorized_execution_scope") or []
+    if not isinstance(scope, list):
+        blockers.append("FOUNDER_SCOPE_INVALID")
+        scope = []
+    allowed = set(max_allowed_scope or ALLOWED_DRY_RUN_SCOPE)
+    requested = set(scope)
+    if not requested.issubset(allowed):
+        blockers.append(
+            "FOUNDER_SCOPE_WIDER_THAN_ALLOWED:"
+            + ",".join(sorted(requested - allowed))
+        )
+
+    if template.get("external_dispatch_allowed") is True:
+        blockers.append("FOUNDER_EXTERNAL_DISPATCH_PROHIBITED")
+    if template.get("founder_only_actions_allowed") is True:
+        blockers.append("FOUNDER_ONLY_ACTIONS_PROHIBITED_IN_H1C_SCOPE")
+
+    exp = _parse_iso(expires_at) if expires_at else None
+    if expires_at is not None and exp is None:
+        blockers.append("FOUNDER_EXPIRES_MALFORMED")
+    if exp is not None and now > exp:
+        blockers.append("FOUNDER_AUTHORIZATION_EXPIRED")
+
+    # Only fully populated APPROVED records with no blockers can authorize
+    authorized = (
+        len(blockers) == 0
+        and str(decision or "").upper()
+        in ("APPROVE_CONTROLLED_LOCAL_EXECUTION", "APPROVED", "GRANTED")
+        and status in ("APPROVED", "GRANTED", "ACTIVE")
+        and approval_id
+        and signature
+        and exp is not None
+        and now <= exp
+    )
+    if authorized:
+        # Double-check environment
+        if str(template.get("authorized_environment") or "") != "local_only":
+            authorized = False
+            blockers.append("FOUNDER_ENVIRONMENT_NOT_LOCAL_ONLY")
+
+    return {
+        "authorized": bool(authorized),
+        "blockers": blockers,
+        "decision_status": status or "UNKNOWN",
+        "decision": decision,
+    }
+
+
 def build_doorstep_founder_packet(
     truth: dict, out_path: Path
 ) -> dict:
