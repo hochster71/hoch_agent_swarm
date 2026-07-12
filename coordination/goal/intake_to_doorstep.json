@@ -1,0 +1,14 @@
+{
+  "requirement": "REQ-TO-003",
+  "stages": {
+    "dispatch_relay": true,
+    "intake": false,
+    "plan": false,
+    "execute": false,
+    "validate": true,
+    "evidence": true,
+    "doorstep": false
+  },
+  "status": "FAIL",
+  "reason": "Only the dispatch->validate->evidence segment is proven (H1D). Intake, plan, execute, and DOORSTEP handoff are not yet wired end to end."
+}

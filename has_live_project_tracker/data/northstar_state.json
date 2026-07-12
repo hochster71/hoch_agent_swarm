@@ -6,5 +6,14 @@
   "staged_at_door": 0,
   "pending": 2,
   "deferred_need_code_mode": 2,
-  "ts": "2026-07-07T20:12:56+00:00"
+  "ts": "2026-07-07T20:12:56+00:00",
+  "_GOAL_CLASSIFICATION": {
+    "classification": "PRODUCT_SPECIFIC_OBJECTIVE",
+    "authority": "NON_AUTHORITATIVE",
+    "canonical_goal_contract": "config/canonical_goal_contract.json",
+    "note": "HSF Story Studio is a candidate OUTPUT, not the identity of the system. STALE until reselected by portfolio prioritization.",
+    "reclassified_at": "2026-07-12T23:05:47.205370Z",
+    "reclassified_by": "Founder ratification 2026-07-12 (Michael Bryan Hoch)",
+    "retained": true
+  }
 }

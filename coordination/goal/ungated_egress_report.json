@@ -1,0 +1,68 @@
+{
+  "requirement": "REQ-ES-003",
+  "ungated_egress": [
+    {
+      "file": "backend/model_router/google_frontier.py",
+      "provider_hosts": [
+        "generativelanguage.googleapis.com"
+      ],
+      "defect": "PROVIDER_CALL_OUTSIDE_SPEND_GATE"
+    },
+    {
+      "file": "scripts/verify_model_dispatch_chokepoint.py",
+      "provider_hosts": [
+        "api.anthropic.com",
+        "api.openai.com"
+      ],
+      "defect": "PROVIDER_CALL_OUTSIDE_SPEND_GATE"
+    },
+    {
+      "file": "scripts/council_key_audit.py",
+      "provider_hosts": [
+        "api.anthropic.com",
+        "api.openai.com",
+        "api.x.ai",
+        "generativelanguage.googleapis.com"
+      ],
+      "defect": "PROVIDER_CALL_OUTSIDE_SPEND_GATE"
+    },
+    {
+      "file": "scripts/prompt_brain/model_adapters.py",
+      "provider_hosts": [
+        "api.anthropic.com",
+        "api.openai.com",
+        "generativelanguage.googleapis.com"
+      ],
+      "defect": "PROVIDER_CALL_OUTSIDE_SPEND_GATE"
+    },
+    {
+      "file": "scripts/council/gateway.py",
+      "provider_hosts": [
+        "api.anthropic.com",
+        "api.openai.com",
+        "api.x.ai",
+        "generativelanguage.googleapis.com"
+      ],
+      "defect": "PROVIDER_CALL_OUTSIDE_SPEND_GATE"
+    },
+    {
+      "file": "scripts/council/inventory_outbound_paths.py",
+      "provider_hosts": [
+        "api.anthropic.com",
+        "api.openai.com"
+      ],
+      "defect": "PROVIDER_CALL_OUTSIDE_SPEND_GATE"
+    },
+    {
+      "file": "scripts/goal/verify_no_ungated_egress.py",
+      "provider_hosts": [
+        "api.anthropic.com",
+        "api.openai.com",
+        "api.x.ai",
+        "generativelanguage.googleapis.com"
+      ],
+      "defect": "PROVIDER_CALL_OUTSIDE_SPEND_GATE"
+    }
+  ],
+  "status": "FAIL"
+}

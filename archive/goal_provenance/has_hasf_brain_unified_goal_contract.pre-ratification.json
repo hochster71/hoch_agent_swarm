@@ -5,6 +5,7 @@
   "terminal_goal": "Ship a monetizable HAS/HASF product to app stores or equivalent production distribution, with verified autonomous execution, evidence ledger, operator approval gates, live command center, and outcome-bound BRAIN optimization.",
   "terminal_node": "App Live on Stores",
   "current_status": "CONDITIONAL_GO \u2014 2 of 4 founder gates cleared (K1, K2); remaining G-9 approvals, G1 demand",
+  "goal_completion_percent": 95,
   "readiness_score": 90,
   "brain_status": "M0_PROXY_CONVERGED_NOT_OUTCOME_BOUND",
   "acceptance_criteria": [
@@ -109,16 +110,5 @@
     "K2": "CLEARED 2026-07-06 \u00b7 Apple Developer active (renews 2027-07-06)",
     "K1": "CLEARED 2026-07-06 \u00b7 OpenAI/Anthropic keys provisioned to .env (600, gitignored, untracked)",
     "GOOGLE_PLAY": "SUBMITTED 2026-07-06 \u00b7 verification submitted, Google processing (founder done)"
-  },
-  "_GOAL_CLASSIFICATION": {
-    "classification": "CURRENT_TERMINAL_OUTCOME",
-    "authority": "NON_AUTHORITATIVE",
-    "canonical_goal_contract": "config/canonical_goal_contract.json",
-    "note": "'App Live on Stores' is ONE measurable terminal outcome proving the factory works. It is NOT the permanent North Star. Its goal_completion_percent literal is VOID -- completion is computed by scripts/goal/goal_engine.py.",
-    "reclassified_at": "2026-07-12T23:05:47.205370Z",
-    "reclassified_by": "Founder ratification 2026-07-12 (Michael Bryan Hoch)",
-    "retained": true
-  },
-  "_VOID_goal_completion_percent": 95,
-  "_VOID_note": "Asserted literal. Voided by ratification. See coordination/goal/goal_state.json."
+  }
 }

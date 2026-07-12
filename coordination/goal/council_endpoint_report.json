@@ -1,0 +1,15 @@
+{
+  "requirement": "REQ-ES-004",
+  "route_registered": false,
+  "missing_gates": [
+    "h1_package_state",
+    "h1_package_integrity",
+    "h1_credential_state",
+    "h1_founder_authorization",
+    "h1_live_provider_proof",
+    "h1_frontier_live_quorum",
+    "h1_promotion",
+    "h1_safe_to_execute"
+  ],
+  "status": "FAIL"
+}
