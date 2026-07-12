@@ -2,5 +2,8 @@
   "all_required_files_present": true,
   "combined_request_digest_verified": true,
   "validation_status": "PASS",
-  "overall_status": "READY_FOR_FOUNDER_REVIEW"
+  "overall_status": "READY_FOR_FOUNDER_REVIEW",
+  "superseded_by": "HELM-H1-CANDIDATE-20260712T013903Z-4B7F62BE",
+  "status": "SUPERSEDED_BLOCKED_CANDIDATE",
+  "classification_reason": "SUPERSEDED_BY_NEWER_AUTHORITATIVE_CANDIDATE"
 }

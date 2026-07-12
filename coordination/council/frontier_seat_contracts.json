@@ -1,0 +1,148 @@
+{
+  "schema_version": "1.0",
+  "status": "FROZEN_MOCK_ONLY",
+  "external_execution_authorized": false,
+  "seats": {
+    "chatgpt": {
+      "member_id": "chatgpt",
+      "profile": "frontier_council",
+      "required": true,
+      "enabled_for_live_dispatch": false,
+      "provider": "openai",
+      "requested_model_policy": {
+        "exact_match_required": true,
+        "allowed_models": ["gpt-5.6-terra"]
+      },
+      "identity_policy": {
+        "exact_member_id_required": true,
+        "provider_response_identity_required": true,
+        "fuzzy_matching_prohibited": true
+      },
+      "response_contract": {
+        "required_fields": [
+          "run_id",
+          "member_id",
+          "provider",
+          "requested_model",
+          "resolved_model",
+          "verdict",
+          "rationale",
+          "evidence_refs"
+        ],
+        "allowed_verdicts": [
+          "APPROVE",
+          "REJECT",
+          "ABSTAIN"
+        ]
+      },
+      "validation_policy": {
+        "raw_response_required": true,
+        "digest_recomputation_required": true,
+        "run_id_exact_match_required": true,
+        "empty_approve_prohibited": true,
+        "fallback_disclosure_required": true,
+        "stale_response_prohibited": true,
+        "duplicate_response_prohibited": true
+      },
+      "promotion_effect": {
+        "counts_toward_local_profile_quorum": false,
+        "counts_toward_frontier_council_quorum": true,
+        "advisory_only": false
+      }
+    },
+    "claude": {
+      "member_id": "claude",
+      "profile": "frontier_council",
+      "required": true,
+      "enabled_for_live_dispatch": false,
+      "provider": "anthropic",
+      "requested_model_policy": {
+        "exact_match_required": true,
+        "allowed_models": ["claude-sonnet-5"]
+      },
+      "identity_policy": {
+        "exact_member_id_required": true,
+        "provider_response_identity_required": true,
+        "fuzzy_matching_prohibited": true
+      },
+      "response_contract": {
+        "required_fields": [
+          "run_id",
+          "member_id",
+          "provider",
+          "requested_model",
+          "resolved_model",
+          "verdict",
+          "rationale",
+          "evidence_refs"
+        ],
+        "allowed_verdicts": [
+          "APPROVE",
+          "REJECT",
+          "ABSTAIN"
+        ]
+      },
+      "validation_policy": {
+        "raw_response_required": true,
+        "digest_recomputation_required": true,
+        "run_id_exact_match_required": true,
+        "empty_approve_prohibited": true,
+        "fallback_disclosure_required": true,
+        "stale_response_prohibited": true,
+        "duplicate_response_prohibited": true
+      },
+      "promotion_effect": {
+        "counts_toward_local_profile_quorum": false,
+        "counts_toward_frontier_council_quorum": true,
+        "advisory_only": false
+      }
+    },
+    "grok": {
+      "member_id": "grok",
+      "profile": "frontier_council",
+      "required": true,
+      "enabled_for_live_dispatch": false,
+      "provider": "openai_compat",
+      "requested_model_policy": {
+        "exact_match_required": true,
+        "allowed_models": ["grok-4.5"]
+      },
+      "identity_policy": {
+        "exact_member_id_required": true,
+        "provider_response_identity_required": true,
+        "fuzzy_matching_prohibited": true
+      },
+      "response_contract": {
+        "required_fields": [
+          "run_id",
+          "member_id",
+          "provider",
+          "requested_model",
+          "resolved_model",
+          "verdict",
+          "rationale",
+          "evidence_refs"
+        ],
+        "allowed_verdicts": [
+          "APPROVE",
+          "REJECT",
+          "ABSTAIN"
+        ]
+      },
+      "validation_policy": {
+        "raw_response_required": true,
+        "digest_recomputation_required": true,
+        "run_id_exact_match_required": true,
+        "empty_approve_prohibited": true,
+        "fallback_disclosure_required": true,
+        "stale_response_prohibited": true,
+        "duplicate_response_prohibited": true
+      },
+      "promotion_effect": {
+        "counts_toward_local_profile_quorum": false,
+        "counts_toward_frontier_council_quorum": true,
+        "advisory_only": false
+      }
+    }
+  }
+}

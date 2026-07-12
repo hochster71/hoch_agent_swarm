@@ -1,0 +1,545 @@
+{
+  "artifact": "helm_council_roster",
+  "schema_version": "COUNCIL_ROSTER_v2",
+  "canonical": true,
+  "updated": "2026-07-11",
+  "rung": "R0+R1 \u2014 truth correction, canonical registry, exact member identity, execution profiles",
+  "authority": {
+    "note": "SINGLE SOURCE OF TRUTH for council membership. All dispatch, validation, aggregation, and UI lookup MUST resolve members from here by exact member_id.",
+    "supersedes": [
+      "coordination/council_roster.json (legacy, display-name keyed)",
+      "coordination/helm_council_harness_registry.json (now GENERATED from this file \u2014 do not hand-edit)",
+      "coordination/helm_council_adapters.json (demoted to adapter contract doc; membership removed)",
+      "scripts/run_helm_council_cycle.py:COUNCIL",
+      "scripts/aggregate_helm_council_responses.py:REQUIRED_SEATS"
+    ],
+    "matching_rule": "EXACT_MEMBER_ID_ONLY. Substring, fuzzy, normalized, case-insensitive, alias, and display-name matching are FORBIDDEN. scripts/council/registry.py exposes no display-name lookup at all.",
+    "silent_fallback": "FORBIDDEN. No implicit provider/model/endpoint default exists anywhere. A seat without a working adapter/endpoint/auth/model returns an explicit failure status and NEVER SUCCESS."
+  },
+  "wiring_status_values": [
+    "LIVE_VERIFIED_LOCAL_PROFILE",
+    "LIVE_WIRED",
+    "ENABLED_PENDING_PROOF",
+    "CONFIGURED_NOT_WIRED",
+    "DISABLED"
+  ],
+  "failure_status_values": [
+    "CONFIGURED_NOT_WIRED",
+    "ENDPOINT_UNAVAILABLE",
+    "AUTH_MISSING",
+    "MODEL_MISMATCH",
+    "FAILED_VISIBLE"
+  ],
+  "profiles": {
+    "local_proof": {
+      "profile_id": "local_proof",
+      "purpose": "Prove the end-to-end governed harness at zero API cost.",
+      "required_member_ids": [
+        "local_ollama"
+      ],
+      "allowed_member_ids": [
+        "local_ollama"
+      ],
+      "paid_providers_permitted": false,
+      "promotion_capable": false,
+      "release_capable": false,
+      "min_validated_live_members": 1,
+      "note": "A successful local_proof run NEVER satisfies frontier quorum or release eligibility. Enforced in aggregate.py, not merely documented."
+    },
+    "frontier_council": {
+      "profile_id": "frontier_council",
+      "purpose": "Full frontier council with promotion capability.",
+      "required_member_ids": [
+        "chatgpt",
+        "claude",
+        "grok"
+      ],
+      "allowed_member_ids": [
+        "chatgpt",
+        "claude",
+        "grok",
+        "gemini",
+        "cerebras_gpt_oss_120b",
+        "cerebras_glm_4_7",
+        "local_ollama"
+      ],
+      "paid_providers_permitted": true,
+      "paid_execution_founder_gated": true,
+      "promotion_capable": true,
+      "promotion_condition": "ALL required members validate post-validation as live, non-fallback responses",
+      "release_capable": true,
+      "min_validated_live_members": 3,
+      "note": "Paid execution remains founder-gated. NOT approved this rung."
+    }
+  },
+  "quorum": {
+    "live": {
+      "rule": "POST_VALIDATION_LIVE_ONLY",
+      "counts_toward_quorum": "validated AND live AND not fallback AND not advisory AND not stale AND not mocked",
+      "required_member_ids_source": "profiles.<active_profile>.required_member_ids",
+      "achieved": false,
+      "validated_live_members": 0
+    },
+    "advisory": {
+      "rule": "ADVISORY_RECORDS_ONLY",
+      "min_record_count": 3,
+      "required_lane_distribution": {
+        "builder": 1,
+        "frontier": 2
+      },
+      "max_age_seconds": 604800,
+      "achieved": true,
+      "authority": "ADVISORY_ONLY",
+      "note": "Advisory quorum is REAL but confers NO live authority: cannot promote, cannot unlock TRUE GO, cannot unfreeze factories, and MUST NOT be rendered or reported as council liveness."
+    },
+    "separation_doctrine": "ADVISORY QUORUM != LIVE QUORUM. advisory_quorum_achieved=true and live_quorum_achieved=false are simultaneously true and must ALWAYS be displayed together. Reporting advisory quorum alone is a fake-green violation."
+  },
+  "seats": [
+    {
+      "member_id": "helm_chair",
+      "display_name": "HELM Chair",
+      "role": "Supreme Orchestrator / Governance Chair / aggregate decision owner",
+      "lane": "chair",
+      "required": false,
+      "enabled": false,
+      "current_wiring_status": "CONFIGURED_NOT_WIRED",
+      "provider": null,
+      "requested_model": null,
+      "endpoint": null,
+      "adapter": null,
+      "auth_source": null,
+      "timeout_seconds": null,
+      "retry_policy": {
+        "max_attempts": 0
+      },
+      "fallback_policy": "NONE",
+      "quorum_eligible": false,
+      "aggregation_weight": 0.0,
+      "schema_version": "COUNCIL_RESPONSE_v2",
+      "profiles": [],
+      "disposition_note": "No genuine chair execution adapter exists. Was silently defaulting to Ollama llama3.1:8b (D-02). Explicitly UNWIRED rather than faked."
+    },
+    {
+      "member_id": "ag_ide",
+      "display_name": "AG IDE",
+      "role": "Local builder / implementation packet reviewer",
+      "lane": "builder",
+      "required": false,
+      "enabled": false,
+      "current_wiring_status": "CONFIGURED_NOT_WIRED",
+      "provider": null,
+      "requested_model": null,
+      "endpoint": null,
+      "adapter": null,
+      "auth_source": null,
+      "timeout_seconds": null,
+      "retry_policy": {
+        "max_attempts": 0
+      },
+      "fallback_policy": "NONE",
+      "quorum_eligible": false,
+      "aggregation_weight": 0.0,
+      "schema_version": "COUNCIL_RESPONSE_v2",
+      "profiles": [],
+      "disposition_note": "No genuine AG IDE execution adapter exists. Was silently becoming Ollama llama3.1:8b AND sharing that identical model with helm_chair \u2014 two 'independent' required voices were one 8B model (D-01/D-01a, manufactured consensus). Explicitly UNWIRED."
+    },
+    {
+      "member_id": "chatgpt",
+      "display_name": "ChatGPT (OpenAI)",
+      "role": "Frontier \u2014 architecture synthesis, breadth, executive clarity",
+      "lane": "frontier",
+      "required": true,
+      "enabled": true,
+      "current_wiring_status": "ENABLED_PENDING_PROOF",
+      "provider": "openai",
+      "requested_model": "gpt-5.6-terra",
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "adapter": "openai_compat",
+      "auth_source": "OPENAI_API_KEY",
+      "timeout_seconds": 60,
+      "retry_policy": {
+        "max_attempts": 2,
+        "backoff_seconds": 2,
+        "retry_on": [
+          429,
+          500,
+          502,
+          503,
+          504,
+          "timeout"
+        ]
+      },
+      "fallback_policy": "NONE",
+      "quorum_eligible": true,
+      "aggregation_weight": 1.0,
+      "schema_version": "COUNCIL_RESPONSE_v2",
+      "profiles": [
+        "frontier_council"
+      ],
+      "disposition_note": "Wired, key present, NEVER live-proven. Paid fan-out NOT approved this rung \u2014 will not be dispatched."
+    },
+    {
+      "member_id": "claude",
+      "display_name": "Claude (Anthropic)",
+      "role": "Frontier \u2014 logic/code audit, no-fake-green validation, edge-case reasoning",
+      "lane": "frontier",
+      "required": true,
+      "enabled": true,
+      "current_wiring_status": "ENABLED_PENDING_PROOF",
+      "provider": "anthropic",
+      "requested_model": "claude-sonnet-5",
+      "endpoint": "https://api.anthropic.com/v1/messages",
+      "adapter": "anthropic",
+      "auth_source": "ANTHROPIC_API_KEY",
+      "timeout_seconds": 60,
+      "retry_policy": {
+        "max_attempts": 2,
+        "backoff_seconds": 2,
+        "retry_on": [
+          429,
+          500,
+          502,
+          503,
+          504,
+          "timeout"
+        ]
+      },
+      "fallback_policy": "NONE",
+      "quorum_eligible": true,
+      "aggregation_weight": 1.0,
+      "schema_version": "COUNCIL_RESPONSE_v2",
+      "profiles": [
+        "frontier_council"
+      ],
+      "disposition_note": "D-03: fuzzy matcher resolved 'Claude' onto the orchestrator seat 'HELM (Claude)' (model=None, endpoint=None) -> guaranteed crash -> fabricated UNKNOWN. member_id is now exact; the orchestrator pseudo-seat is REMOVED. Anthropic credit balance UNVERIFIED."
+    },
+    {
+      "member_id": "grok",
+      "display_name": "Grok (xAI)",
+      "role": "Frontier \u2014 adversarial red team, assumption attack, failure-mode discovery",
+      "lane": "frontier",
+      "required": true,
+      "enabled": true,
+      "current_wiring_status": "ENABLED_PENDING_PROOF",
+      "provider": "openai_compat",
+      "requested_model": "grok-4.5",
+      "endpoint": "https://api.x.ai/v1/chat/completions",
+      "adapter": "openai_compat",
+      "auth_source": "XAI_API_KEY",
+      "timeout_seconds": 60,
+      "retry_policy": {
+        "max_attempts": 2,
+        "backoff_seconds": 2,
+        "retry_on": [
+          429,
+          500,
+          502,
+          503,
+          504,
+          "timeout"
+        ]
+      },
+      "fallback_policy": "NONE",
+      "quorum_eligible": true,
+      "aggregation_weight": 1.0,
+      "schema_version": "COUNCIL_RESPONSE_v2",
+      "profiles": [
+        "frontier_council"
+      ],
+      "disposition_note": "Wired, key present, never live-proven. Paid fan-out not approved this rung."
+    },
+    {
+      "member_id": "gemini",
+      "display_name": "Gemini (Google)",
+      "role": "Frontier \u2014 long-context grounding, retrieval, stale-state checks",
+      "lane": "frontier",
+      "required": false,
+      "enabled": true,
+      "current_wiring_status": "ENABLED_PENDING_PROOF",
+      "provider": "google",
+      "requested_model": "gemini-2.5-flash",
+      "endpoint": "https://generativelanguage.googleapis.com/v1beta",
+      "adapter": "gemini",
+      "auth_source": "GOOGLE_API_KEY",
+      "timeout_seconds": 60,
+      "retry_policy": {
+        "max_attempts": 2,
+        "backoff_seconds": 5,
+        "retry_on": [
+          429,
+          500,
+          503,
+          "timeout"
+        ]
+      },
+      "fallback_policy": "NONE",
+      "quorum_eligible": true,
+      "aggregation_weight": 1.0,
+      "schema_version": "COUNCIL_RESPONSE_v2",
+      "profiles": [
+        "frontier_council"
+      ],
+      "disposition_note": "Wired, key present, never live-proven. Known 429 rate-limit risk."
+    },
+    {
+      "member_id": "cerebras_gpt_oss_120b",
+      "display_name": "Cerebras-GPToss-120B",
+      "role": "Frontier \u2014 high-speed heavy reasoning backstop, bottleneck pressure testing",
+      "lane": "frontier",
+      "required": false,
+      "enabled": true,
+      "current_wiring_status": "ENABLED_PENDING_PROOF",
+      "provider": "openai_compat",
+      "requested_model": "gpt-oss-120b",
+      "endpoint": "https://api.cerebras.ai/v1/chat/completions",
+      "adapter": "openai_compat",
+      "auth_source": "CEREBRAS_API_KEY",
+      "timeout_seconds": 90,
+      "retry_policy": {
+        "max_attempts": 2,
+        "backoff_seconds": 2,
+        "retry_on": [
+          429,
+          500,
+          502,
+          503,
+          504,
+          "timeout"
+        ]
+      },
+      "fallback_policy": "NONE",
+      "quorum_eligible": true,
+      "aggregation_weight": 1.0,
+      "schema_version": "COUNCIL_RESPONSE_v2",
+      "profiles": [
+        "frontier_council"
+      ],
+      "disposition_note": "Previously returned UNKNOWN because mission inputs were passed as file PATHS, not content (D-18)."
+    },
+    {
+      "member_id": "cerebras_glm_4_7",
+      "display_name": "Cerebras-GLM-4.7",
+      "role": "Frontier \u2014 high-speed alternate reasoning, plan compression",
+      "lane": "frontier",
+      "required": false,
+      "enabled": true,
+      "current_wiring_status": "ENABLED_PENDING_PROOF",
+      "provider": "openai_compat",
+      "requested_model": "zai-glm-4.7",
+      "endpoint": "https://api.cerebras.ai/v1/chat/completions",
+      "adapter": "openai_compat",
+      "auth_source": "CEREBRAS_API_KEY",
+      "timeout_seconds": 90,
+      "retry_policy": {
+        "max_attempts": 2,
+        "backoff_seconds": 2,
+        "retry_on": [
+          429,
+          500,
+          502,
+          503,
+          504,
+          "timeout"
+        ]
+      },
+      "fallback_policy": "NONE",
+      "quorum_eligible": true,
+      "aggregation_weight": 1.0,
+      "schema_version": "COUNCIL_RESPONSE_v2",
+      "profiles": [
+        "frontier_council"
+      ],
+      "disposition_note": "Same D-18 payload defect as its sibling."
+    },
+    {
+      "member_id": "groq_120b",
+      "display_name": "Groq-120B",
+      "role": "Frontier \u2014 high-speed inference",
+      "lane": "frontier",
+      "required": false,
+      "enabled": false,
+      "current_wiring_status": "DISABLED",
+      "provider": "openai_compat",
+      "requested_model": "openai/gpt-oss-120b",
+      "endpoint": "https://api.groq.com/openai/v1/chat/completions",
+      "adapter": "openai_compat",
+      "auth_source": "GROQ_API_KEY",
+      "timeout_seconds": 60,
+      "retry_policy": {
+        "max_attempts": 2,
+        "backoff_seconds": 2,
+        "retry_on": [
+          429,
+          "timeout"
+        ]
+      },
+      "fallback_policy": "NONE",
+      "quorum_eligible": false,
+      "aggregation_weight": 0.0,
+      "schema_version": "COUNCIL_RESPONSE_v2",
+      "profiles": [],
+      "disposition_note": "FOUNDER-DIRECTED DISABLE. Was callable and billable via the legacy roster while absent from every harness registry, adapter contract, UI, and quorum count \u2014 billable but invisible. Stays DISABLED until fully wired AND visible."
+    },
+    {
+      "member_id": "local_ollama",
+      "display_name": "Local Rep (Ollama)",
+      "role": "Local/offline representative \u2014 autonomy feasibility, $0 always-on seat",
+      "lane": "local",
+      "required": false,
+      "enabled": true,
+      "current_wiring_status": "LIVE_VERIFIED_LOCAL_PROFILE",
+      "provider": "ollama",
+      "requested_model": "llama3.1:8b",
+      "endpoint": "http://127.0.0.1:11434/v1/chat/completions",
+      "adapter": "ollama",
+      "auth_source": null,
+      "timeout_seconds": 300,
+      "retry_policy": {
+        "max_attempts": 1,
+        "backoff_seconds": 0,
+        "retry_on": [
+          "timeout"
+        ]
+      },
+      "fallback_policy": "NONE",
+      "quorum_eligible": true,
+      "aggregation_weight": 0.5,
+      "schema_version": "COUNCIL_RESPONSE_v2",
+      "profiles": [
+        "local_proof",
+        "frontier_council"
+      ],
+      "disposition_note": "ENABLED for the approved $0 local_proof run. The previously-declared 'caucus' of llama3.3:70b + gpt-oss:20b is NOT implemented in any code path \u2014 claim REMOVED. Speaks only as llama3.1:8b. Reachability of 127.0.0.1:11434 must be health-checked ON THE FOUNDER'S HOST; it is not reachable from the audit sandbox.",
+      "proof": {
+        "run_id": "HELM-COUNCIL-20260711-201622-9e744bde",
+        "profile": "local_proof",
+        "resolved_model": "llama3.1:8b",
+        "resolved_model_source": "provider_response",
+        "raw_response_sha256": "64925ecd26325fe5a51f171bdedc0b6a40f9e83a9a6da1f9194d2bbf86b773ee",
+        "digest_match": true
+      },
+      "proof_caveat": "LOCAL PROFILE ONLY. Confers no frontier quorum, no promotion, no release, no paid-provider readiness."
+    },
+    {
+      "member_id": "gemma3_12b",
+      "display_name": "Gemma3-12B (local)",
+      "role": "Local model seat",
+      "lane": "local",
+      "required": false,
+      "enabled": false,
+      "current_wiring_status": "CONFIGURED_NOT_WIRED",
+      "provider": "ollama",
+      "requested_model": "gemma3:12b",
+      "endpoint": "http://127.0.0.1:11434/v1/chat/completions",
+      "adapter": "ollama",
+      "auth_source": null,
+      "timeout_seconds": 300,
+      "retry_policy": {
+        "max_attempts": 1
+      },
+      "fallback_policy": "NONE",
+      "quorum_eligible": false,
+      "aggregation_weight": 0.0,
+      "schema_version": "COUNCIL_RESPONSE_v2",
+      "profiles": [],
+      "disposition_note": "Harness-only phantom seat. Model pull status UNVERIFIED. Disabled until `ollama list` proves it present."
+    },
+    {
+      "member_id": "mistral_7b",
+      "display_name": "Mistral-7B (local)",
+      "role": "Local model seat",
+      "lane": "local",
+      "required": false,
+      "enabled": false,
+      "current_wiring_status": "CONFIGURED_NOT_WIRED",
+      "provider": "ollama",
+      "requested_model": "mistral:7b",
+      "endpoint": "http://127.0.0.1:11434/v1/chat/completions",
+      "adapter": "ollama",
+      "auth_source": null,
+      "timeout_seconds": 300,
+      "retry_policy": {
+        "max_attempts": 1
+      },
+      "fallback_policy": "NONE",
+      "quorum_eligible": false,
+      "aggregation_weight": 0.0,
+      "schema_version": "COUNCIL_RESPONSE_v2",
+      "profiles": [],
+      "disposition_note": "Harness-only phantom seat. Model pull status UNVERIFIED. Disabled."
+    },
+    {
+      "member_id": "qwen2_5_coder",
+      "display_name": "Qwen2.5-Coder (local)",
+      "role": "Local model seat",
+      "lane": "local",
+      "required": false,
+      "enabled": false,
+      "current_wiring_status": "CONFIGURED_NOT_WIRED",
+      "provider": "ollama",
+      "requested_model": "qwen2.5-coder:1.5b",
+      "endpoint": "http://127.0.0.1:11434/v1/chat/completions",
+      "adapter": "ollama",
+      "auth_source": null,
+      "timeout_seconds": 300,
+      "retry_policy": {
+        "max_attempts": 1
+      },
+      "fallback_policy": "NONE",
+      "quorum_eligible": false,
+      "aggregation_weight": 0.0,
+      "schema_version": "COUNCIL_RESPONSE_v2",
+      "profiles": [],
+      "disposition_note": "Harness-only phantom seat. Model pull status UNVERIFIED. Disabled."
+    }
+  ],
+  "removed_seats": [
+    {
+      "was": "HELM (Claude)",
+      "reason": "Orchestrator pseudo-seat (provider=orchestrator, model=null, endpoint=null). Not a model seat \u2014 but the fuzzy matcher resolved the REAL member 'Claude' onto it (substring 'claude' in 'helmclaude'), guaranteeing a crash and a fabricated UNKNOWN. HELM is the orchestrator; it does not sit on its own council. Removed entirely."
+    }
+  ],
+  "seat_status_semantics": {
+    "LIVE_VERIFIED_LOCAL_PROFILE": "Proven live in the local_proof profile with a digest-verified raw response. Proves the governed harness end-to-end. Does NOT imply frontier readiness, promotion readiness, or paid-provider readiness.",
+    "ENABLED_PENDING_PROOF": "Wired and enabled, but has NEVER produced a validated live response.",
+    "CONFIGURED_NOT_WIRED": "No working adapter/endpoint/model. Never dispatched. Never substituted.",
+    "DISABLED": "Explicitly off."
+  },
+  "authoritative_state_artifact": "coordination/council/current_state.json",
+  "note_on_seat_status": "current_wiring_status here is the CONFIGURED intent. Proven live state is authoritative only in current_state.json. Where they disagree, current_state.json wins.",
+  "governance_contract": {
+    "required_states": [
+      "UNKNOWN",
+      "CONTRACT_PRESENT_NOT_LIVE",
+      "SEAT_DECLARED",
+      "ADVISORY_RECORDED",
+      "ADVISORY_STALE",
+      "ADVISORY_BLOCKED",
+      "ADVISORY_ACTIVE",
+      "COUNCIL_HARNESS_CONFIRMED"
+    ],
+    "required_advisory_record_fields": [
+      "record_id",
+      "seat_id",
+      "seat_display_name",
+      "role",
+      "advisory_type",
+      "input_reference",
+      "output_summary",
+      "recommendation",
+      "confidence",
+      "evidence_paths",
+      "limitations",
+      "created_at",
+      "expires_at",
+      "stale_after_seconds",
+      "authority_boundary",
+      "promotion_authority",
+      "founder_authority",
+      "validator_required",
+      "audit_event_id",
+      "status"
+    ],
+    "note": "Governance contract constants consumed by scripts/verify_council_harness_evidence_schema.py. Emitted into the derived harness view."
+  }
+}
