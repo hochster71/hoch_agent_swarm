@@ -1,0 +1,33 @@
+{
+  "requirement": "REQ-CP-TEST",
+  "to": "Michael Bryan Hoch",
+  "status": "FAIL \u2014 precise decisions needed",
+  "what_was_done_autonomously": [
+    "Removed the /api/auth/demo dependency from 4 specs (no bypass restored).",
+    "Stood up a LOCAL Supabase (127.0.0.1:54321) + Mailpit \u2014 real auth backend, ZERO founder secrets.",
+    "Created dedicated local test identities; proved real magic-link login works (accessibility spec passes).",
+    "Added a magic-link harness that REFUSES any non-local Supabase (impossible in production).",
+    "Wrote 7 security regression tests; 5 pass, 2 were my bugs and are fixed in source."
+  ],
+  "founder_decisions_required": [
+    {
+      "id": "D1",
+      "decision": "The rc47 specs assert an 'Internal Preview Mode' banner that no longer exists in the product. Should that banner be restored, or should specs 2/3/4 be retired as testing removed behavior?",
+      "kind": "PRODUCT"
+    },
+    {
+      "id": "D2",
+      "decision": "epic-fury-staging-assets targets a dead staging Vercel URL. Provide the current staging target, or approve removing staging from the required matrix.",
+      "kind": "FOUNDER_INPUT"
+    },
+    {
+      "id": "D3",
+      "decision": "HIGHEST VALUE, UNCHANGED: open App Store Connect -> Epic Fury 2026 -> App Review and record the live outcome. Submitted 2026-07-07; 5+ days elapsed.",
+      "kind": "FOUNDER_ACTION"
+    }
+  ],
+  "agent_next_without_founder": [
+    "Fix the shared-inbox race (per-worker unique test emails) so mobile+smoke pass.",
+    "Re-run the fixed security tests 3 & 5."
+  ]
+}

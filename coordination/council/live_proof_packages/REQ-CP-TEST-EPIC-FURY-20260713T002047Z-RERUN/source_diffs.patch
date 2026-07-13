@@ -1,0 +1,107 @@
+diff --git a/tests/e2e/epic-fury-accessibility.spec.ts b/tests/e2e/epic-fury-accessibility.spec.ts
+index ac326889..35d27539 100644
+--- a/tests/e2e/epic-fury-accessibility.spec.ts
++++ b/tests/e2e/epic-fury-accessibility.spec.ts
+@@ -1,10 +1,11 @@
+ import { test, expect } from '@playwright/test';
++import { loginAsTestUser } from '../support/epic-fury-auth';
+ 
+ test.describe('Epic Fury Accessibility Tests', () => {
+   test('1. Verify semantic HTML structure and ARIA labels', async ({ page }) => {
+     // Log in as founder
+-    await page.goto('http://localhost:3003/api/auth/demo?email=michael.b.hoch@gmail.com&role=founder');
+-    await page.waitForURL('**/dashboard');
++    await loginAsTestUser(page);  // real magic-link auth (no demo bypass)
++    await page.goto('http://localhost:3003/dashboard');
+ 
+     // Verify presence of main semantic containers
+     const nav = page.locator('nav');
+diff --git a/tests/e2e/epic-fury-mobile.spec.ts b/tests/e2e/epic-fury-mobile.spec.ts
+index 81fb4a2a..69b741a5 100644
+--- a/tests/e2e/epic-fury-mobile.spec.ts
++++ b/tests/e2e/epic-fury-mobile.spec.ts
+@@ -1,12 +1,13 @@
+ import { test, expect } from '@playwright/test';
++import { loginAsTestUser } from '../support/epic-fury-auth';
+ 
+ test.describe('Epic Fury Mobile Viewport Tests', () => {
+   test.use({ viewport: { width: 375, height: 812 } });
+ 
+   test('1. Verify mobile layout responsiveness', async ({ page }) => {
+     // Log in as founder
+-    await page.goto('http://localhost:3003/api/auth/demo?email=michael.b.hoch@gmail.com&role=founder');
+-    await page.waitForURL('**/dashboard');
++    await loginAsTestUser(page);  // real magic-link auth (no demo bypass)
++    await page.goto('http://localhost:3003/dashboard');
+ 
+     // Confirm that mobile HUD controls adjust safely
+     const layoutHeader = page.locator('text=EPIC FURY').first();
+diff --git a/tests/e2e/epic-fury-smoke.spec.ts b/tests/e2e/epic-fury-smoke.spec.ts
+index 1ab08a4e..4452c75f 100644
+--- a/tests/e2e/epic-fury-smoke.spec.ts
++++ b/tests/e2e/epic-fury-smoke.spec.ts
+@@ -1,10 +1,11 @@
+ import { test, expect } from '@playwright/test';
++import { loginAsTestUser } from '../support/epic-fury-auth';
+ 
+ test.describe('Epic Fury Smoke Tests', () => {
+   test('1. Verify dashboard feed renders core components', async ({ page }) => {
+     // Log in as admin
+-    await page.goto('http://localhost:3003/api/auth/demo?email=michael.b.hoch@gmail.com&role=admin');
+-    await page.waitForURL('**/dashboard');
++    await loginAsTestUser(page);  // real magic-link auth (no demo bypass)
++    await page.goto('http://localhost:3003/dashboard');
+ 
+     // Confirm that the feed layout is visible
+     const layoutHeader = page.locator('text=EPIC FURY').first();
+diff --git a/tests/e2e/rc47-epic-fury-admin-access.spec.ts b/tests/e2e/rc47-epic-fury-admin-access.spec.ts
+index c7b53946..9ba02aeb 100644
+--- a/tests/e2e/rc47-epic-fury-admin-access.spec.ts
++++ b/tests/e2e/rc47-epic-fury-admin-access.spec.ts
+@@ -1,4 +1,5 @@
+ import { test, expect } from '@playwright/test';
++import { loginAsTestUser } from '../support/epic-fury-auth';
+ import { getEntitlement } from '../../../epic-fury-build/epic-fury-2026/lib/entitlements';
+ import * as fs from 'fs';
+ import * as path from 'path';
+@@ -101,11 +102,9 @@ test.describe('RC47 E2E Integration: Epic Fury Access Gates', () => {
+   });
+ 
+   test('2. Founder can access dashboard and view internal preview banner', async ({ page }) => {
+-    // Use demo login bypass for Founder
+-    await page.goto('http://localhost:3003/api/auth/demo?email=michael.b.hoch@gmail.com&role=founder');
+-    
+-    // Wait for redirect to /dashboard
+-    await page.waitForURL('**/dashboard');
++    // Real magic-link auth as the FOUNDER-allowlisted identity (no demo bypass).
++    await loginAsTestUser(page, 'michael.b.hoch@gmail.com');
++    await page.goto('http://localhost:3003/dashboard');
+     
+     // Check that internal preview banner is visible with correct source
+     const banner = page.locator('#internal-access-banner');
+@@ -115,9 +114,9 @@ test.describe('RC47 E2E Integration: Epic Fury Access Gates', () => {
+   });
+ 
+   test('3. QA user can access dashboard and view internal preview banner', async ({ page }) => {
+-    // Use demo login bypass for QA
+-    await page.goto('http://localhost:3003/api/auth/demo?email=qa@example.com&role=qa');
+-    await page.waitForURL('**/dashboard');
++    // Real magic-link auth as the QA-allowlisted identity (no demo bypass).
++    await loginAsTestUser(page, 'qa@example.com');
++    await page.goto('http://localhost:3003/dashboard');
+     
+     const banner = page.locator('#internal-access-banner');
+     await expect(banner).toBeVisible();
+@@ -125,9 +124,9 @@ test.describe('RC47 E2E Integration: Epic Fury Access Gates', () => {
+   });
+ 
+   test('4. Admin control panel (/admin) renders diagnostics safely', async ({ page }) => {
+-    // Log in as founder
+-    await page.goto('http://localhost:3003/api/auth/demo?email=michael.b.hoch@gmail.com&role=founder');
+-    await page.waitForURL('**/dashboard');
++    // Real magic-link auth as the founder/admin-allowlisted identity.
++    await loginAsTestUser(page, 'michael.b.hoch@gmail.com');
++    await page.goto('http://localhost:3003/dashboard');
+     
+     // Navigate to /admin
+     await page.goto('http://localhost:3003/admin');

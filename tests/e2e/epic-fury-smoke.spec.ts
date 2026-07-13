@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test';
+import { loginAsTestUser } from '../support/epic-fury-auth';
 
 test.describe('Epic Fury Smoke Tests', () => {
   test('1. Verify dashboard feed renders core components', async ({ page }) => {
     // Log in as admin
-    await page.goto('http://localhost:3003/api/auth/demo?email=michael.b.hoch@gmail.com&role=admin');
-    await page.waitForURL('**/dashboard');
+    await loginAsTestUser(page);  // real magic-link auth (no demo bypass)
+    await page.goto('http://localhost:3003/dashboard');
 
     // Confirm that the feed layout is visible
     const layoutHeader = page.locator('text=EPIC FURY').first();

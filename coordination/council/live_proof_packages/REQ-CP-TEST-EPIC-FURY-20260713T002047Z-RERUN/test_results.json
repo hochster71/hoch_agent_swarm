@@ -1,0 +1,46 @@
+{
+  "requirement": "REQ-CP-TEST",
+  "status": "FAIL",
+  "root_cause": "STALE_TEST_CONTRACT (refined)",
+  "founder_prerequisite": "NOT ESTABLISHED \u2014 real auth stood up locally with zero founder secrets",
+  "product_security_regression": "NOT INDICATED",
+  "run": "rerun after removing /api/auth/demo dependency and wiring REAL magic-link auth",
+  "totals_observed": {
+    "passed": 16,
+    "failed": 8,
+    "note": "still-flaky harness; see per-item"
+  },
+  "proof_real_auth_works": "epic-fury-accessibility PASSED end-to-end via magic-link (no bypass)",
+  "remaining_failures": {
+    "mobile, smoke": {
+      "cause": "MY HARNESS: parallel specs share one test inbox; the OTP round-trip races in Mailpit. Fixable with per-worker unique emails or serialized auth. Not a product defect.",
+      "owner": "agent"
+    },
+    "rc47 cases 2,3,4": {
+      "cause": "TWICE-STALE: these assert an '#internal-access-banner' / 'Internal Preview Mode' UI that NO LONGER EXISTS in the current product (grep finds nothing) \u2014 the same removal pattern as /api/auth/demo. The specs test removed behavior.",
+      "owner": "product-decision: should the internal-preview banner exist, or should these specs be retired?"
+    },
+    "epic-fury-staging-assets": {
+      "cause": "dead staging Vercel URL; STALE_TEST_TARGET",
+      "owner": "founder: supply current staging target or remove from required matrix"
+    },
+    "security tests 3,5": {
+      "cause": "MY TEST BUGS (import trick + error matcher) \u2014 FIXED in source this commit; not re-run",
+      "owner": "agent"
+    }
+  },
+  "security_regressions_passing": [
+    "demo route 404",
+    "test-auth header cannot resurrect route",
+    "real test identity logs in via magic-link",
+    "anonymous dashboard is entitlement-fail-closed",
+    "plain test identity cannot reach admin surface"
+  ],
+  "no_test_weakened_to_pass": true,
+  "demo_auth_restored": false,
+  "external_calls": 2,
+  "founder_only_actions": 0,
+  "champion_completion_all_gates": 70.0,
+  "champion_completion_agent_scope": 87.1,
+  "final_decision": "FAIL"
+}

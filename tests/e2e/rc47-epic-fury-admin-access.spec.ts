@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { loginAsTestUser } from '../support/epic-fury-auth';
 import { getEntitlement } from '../../../epic-fury-build/epic-fury-2026/lib/entitlements';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -101,11 +102,9 @@ test.describe('RC47 E2E Integration: Epic Fury Access Gates', () => {
   });
 
   test('2. Founder can access dashboard and view internal preview banner', async ({ page }) => {
-    // Use demo login bypass for Founder
-    await page.goto('http://localhost:3003/api/auth/demo?email=michael.b.hoch@gmail.com&role=founder');
-    
-    // Wait for redirect to /dashboard
-    await page.waitForURL('**/dashboard');
+    // Real magic-link auth as the FOUNDER-allowlisted identity (no demo bypass).
+    await loginAsTestUser(page, 'michael.b.hoch@gmail.com');
+    await page.goto('http://localhost:3003/dashboard');
     
     // Check that internal preview banner is visible with correct source
     const banner = page.locator('#internal-access-banner');
@@ -115,9 +114,9 @@ test.describe('RC47 E2E Integration: Epic Fury Access Gates', () => {
   });
 
   test('3. QA user can access dashboard and view internal preview banner', async ({ page }) => {
-    // Use demo login bypass for QA
-    await page.goto('http://localhost:3003/api/auth/demo?email=qa@example.com&role=qa');
-    await page.waitForURL('**/dashboard');
+    // Real magic-link auth as the QA-allowlisted identity (no demo bypass).
+    await loginAsTestUser(page, 'qa@example.com');
+    await page.goto('http://localhost:3003/dashboard');
     
     const banner = page.locator('#internal-access-banner');
     await expect(banner).toBeVisible();
@@ -125,9 +124,9 @@ test.describe('RC47 E2E Integration: Epic Fury Access Gates', () => {
   });
 
   test('4. Admin control panel (/admin) renders diagnostics safely', async ({ page }) => {
-    // Log in as founder
-    await page.goto('http://localhost:3003/api/auth/demo?email=michael.b.hoch@gmail.com&role=founder');
-    await page.waitForURL('**/dashboard');
+    // Real magic-link auth as the founder/admin-allowlisted identity.
+    await loginAsTestUser(page, 'michael.b.hoch@gmail.com');
+    await page.goto('http://localhost:3003/dashboard');
     
     // Navigate to /admin
     await page.goto('http://localhost:3003/admin');

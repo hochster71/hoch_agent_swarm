@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test';
+import { loginAsTestUser } from '../support/epic-fury-auth';
 
 test.describe('Epic Fury Accessibility Tests', () => {
   test('1. Verify semantic HTML structure and ARIA labels', async ({ page }) => {
     // Log in as founder
-    await page.goto('http://localhost:3003/api/auth/demo?email=michael.b.hoch@gmail.com&role=founder');
-    await page.waitForURL('**/dashboard');
+    await loginAsTestUser(page);  // real magic-link auth (no demo bypass)
+    await page.goto('http://localhost:3003/dashboard');
 
     // Verify presence of main semantic containers
     const nav = page.locator('nav');

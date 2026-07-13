@@ -1,0 +1,9 @@
+{
+  "requirement": "REQ-CP-TEST",
+  "final_decision": "FAIL",
+  "root_cause": "STALE_TEST_CONTRACT",
+  "founder_prerequisite": "NOT ESTABLISHED",
+  "product_security_regression": "NOT INDICATED",
+  "demo_auth_restored": false,
+  "real_auth_proven": true
+}
