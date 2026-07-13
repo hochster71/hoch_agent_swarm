@@ -1,0 +1,49 @@
+{
+  "schema": "HELM_CONTROL_REGISTRY_v1",
+  "ratified_by": "Michael Bryan Hoch",
+  "governing_rule": "A control is not proven because it exists in code. A control is PROVEN only when all 8 matrix conditions hold: positive, negative, boundary, mutation, replay, freshness, provenance, reproducible.",
+  "status_legend": {
+    "PROVEN": "positive + negative + all 8 matrix conditions, evidence on file",
+    "PARTIAL": "has positive+negative (or a real prior proof) but not the full 8-condition matrix",
+    "DECLARED": "policy exists; not yet built or not yet independently proven (ASSERTED)"
+  },
+  "note": "Status is OBSERVED where an evidence pointer exists, otherwise ASSERTED. This registry will not fake its own completion.",
+  "controls": [
+    {"id": "PROOF-CONTRACT-001",       "family": "proof",   "status": "PARTIAL", "class": "OBSERVED", "evidence": "backend/security/proof_contract.py + doctrine_negative_controls.json (pos+neg proven; boundary/mutation/replay TODO)"},
+    {"id": "POSITIVE-CONTROL-001",     "family": "proof",   "status": "PARTIAL", "class": "OBSERVED", "evidence": "proof_contract.py may_advance_state requires positive_control_passed; proven this commit"},
+    {"id": "NEGATIVE-CONTROL-001",     "family": "proof",   "status": "PARTIAL", "class": "OBSERVED", "evidence": "10/10 negative controls pass; caught a real redactor crash"},
+    {"id": "FRESH-EVIDENCE-001",       "family": "proof",   "status": "PARTIAL", "class": "OBSERVED", "evidence": "Evidence.effective_class reclassifies stale OBSERVED->CACHED; proven"},
+    {"id": "NO-SUBSTITUTION-001",      "family": "proof",   "status": "PARTIAL", "class": "OBSERVED", "evidence": "failure_behavior rejects substitute/workaround/infer; proven"},
+    {"id": "BOUNDARY-CONTROL-001",     "family": "proof",   "status": "DECLARED","class": "ASSERTED", "evidence": null},
+    {"id": "MUTATION-CONTROL-001",     "family": "proof",   "status": "DECLARED","class": "ASSERTED", "evidence": null},
+    {"id": "REPLAY-CONTROL-001",       "family": "proof",   "status": "DECLARED","class": "ASSERTED", "evidence": "concept exists in scoped_states blockers; not yet a proof control"},
+    {"id": "FRESHNESS-CONTROL-001",    "family": "proof",   "status": "PARTIAL", "class": "OBSERVED", "evidence": "same engine as FRESH-EVIDENCE-001"},
+    {"id": "PROVENANCE-CONTROL-001",   "family": "proof",   "status": "DECLARED","class": "ASSERTED", "evidence": "tested_commit required by may_advance_state; full binding (tool version, artifact digest) TODO"},
+    {"id": "FAIL-CLOSED-CONTROL-001",  "family": "proof",   "status": "PARTIAL", "class": "OBSERVED", "evidence": "spend_meter price() fails closed; adapter readiness fails closed; redactor fails closed"},
+
+    {"id": "IDEMPOTENCY-CONTROL-001",  "family": "runtime", "status": "DECLARED","class": "ASSERTED", "evidence": "INSERT OR REPLACE seeding is idempotent; webhook idempotency TODO"},
+    {"id": "LEASE-EXCLUSIVITY-CONTROL-001","family":"runtime","status":"PARTIAL","class":"OBSERVED","evidence": "per_task_lease.py O_EXCL + monotonic fencing; proven under real race"},
+    {"id": "CONCURRENCY-TRUTH-CONTROL-001","family":"runtime","status":"PARTIAL","class":"OBSERVED","evidence": "concurrency_report(); 110.8s real overlap proven"},
+    {"id": "FAILURE-ISOLATION-CONTROL-001","family":"runtime","status":"PARTIAL","class":"OBSERVED","evidence": "RMF-4 adapter-failure isolation proven"},
+    {"id": "RETRY-CONTROL-001",        "family": "runtime", "status": "PARTIAL", "class": "OBSERVED", "evidence": "persistent_scheduler retry path; bounded backoff proven RMF-4"},
+    {"id": "RECOVERY-CONTROL-001",     "family": "runtime", "status": "PARTIAL", "class": "OBSERVED", "evidence": "run_restart_recovery_proof.py real SIGKILL; LIVE_RUNTIME_PROOF"},
+    {"id": "QUEUE-VISIBILITY-CONTROL-001","family":"runtime","status":"PARTIAL","class":"OBSERVED","evidence": "build_task_eligibility_ledger.py blocker_scope/blocker_reason"},
+
+    {"id": "SECRET-NONDISCLOSURE-CONTROL-001","family":"security","status":"PARTIAL","class":"OBSERVED","evidence": "redact_evidence.py proven; masked prompts; but full envelope/log coverage TODO"},
+    {"id": "LEAST-PRIVILEGE-CONTROL-001","family":"security","status":"DECLARED","class":"ASSERTED","evidence": "account guard on stripe scripts; broad least-privilege TODO"},
+    {"id": "EGRESS-GATE-CONTROL-001",  "family": "security","status": "PARTIAL", "class": "OBSERVED", "evidence": "CouncilDispatchGateway single chokepoint; seeded bypass tests"},
+    {"id": "TAMPER-DETECTION-CONTROL-001","family":"security","status":"PARTIAL","class":"OBSERVED","evidence": "hash-chained ledgers; real edit detected entry_hash/prev_hash mismatch"},
+    {"id": "BREAK-GLASS-CONTROL-001",  "family": "security","status": "DECLARED","class": "ASSERTED", "evidence": null},
+
+    {"id": "INDEPENDENT-VERIFIER-CONTROL-001","family":"quality","status":"PARTIAL","class":"OBSERVED","evidence": "factory_validators.py inspect artifact not exit_code; builder!=verifier"},
+    {"id": "BENCHMARK-INTEGRITY-CONTROL-001","family":"quality","status":"PARTIAL","class":"OBSERVED","evidence": "test_catalog_is_not_tuned_to_the_benchmark; 46-case held-out"},
+    {"id": "QUALITY-FLOOR-CONTROL-001","family":"quality","status":"PARTIAL","class":"OBSERVED","evidence": "P@1>=95/R@5>=95/R@10=100 enforced in routing regression"},
+    {"id": "DISSENT-CONTROL-001",      "family": "quality","status": "DECLARED","class": "ASSERTED", "evidence": "council records verdicts; structured dissent capture TODO"},
+
+    {"id": "REAL-CUSTOMER-CONTROL-001","family": "money",   "status": "PARTIAL", "class": "OBSERVED", "evidence": "factory_census monetization ladder; EARNING requires settled revenue"},
+    {"id": "REVENUE-TRACE-CONTROL-001","family": "money",   "status": "DECLARED","class": "ASSERTED", "evidence": "checkout+webhook wired & proven individually; full trace unproven until a real purchase"},
+    {"id": "FACTORY-REALITY-CONTROL-001","family": "money", "status": "PARTIAL", "class": "OBSERVED", "evidence": "factory_census: declared 8 / ran 4 / producing 4 / earning 0, observed"}
+  ],
+  "canonical_bundle_for_critical_validators": ["POSITIVE-CONTROL-001","NEGATIVE-CONTROL-001","BOUNDARY-CONTROL-001","MUTATION-CONTROL-001","REPLAY-CONTROL-001","FRESHNESS-CONTROL-001","PROVENANCE-CONTROL-001","FAIL-CLOSED-CONTROL-001"],
+  "runtime_bundle_add": ["IDEMPOTENCY-CONTROL-001","LEASE-EXCLUSIVITY-CONTROL-001","FAILURE-ISOLATION-CONTROL-001","RETRY-CONTROL-001","RECOVERY-CONTROL-001","QUEUE-VISIBILITY-CONTROL-001"]
+}

@@ -108,7 +108,8 @@ class Evidence:
     raw_evidence_sha256: str = ""            # hash of the restricted raw log
     tested_commit: str = ""
     environment: str = ""
-    negative_control_passed: bool | None = None
+    positive_control_passed: bool | None = None   # POSITIVE-CONTROL-001: accepts known-good
+    negative_control_passed: bool | None = None   # NEGATIVE-CONTROL-001: rejects known-bad
     extra: dict[str, Any] = field(default_factory=dict)
 
     def age_seconds(self, now: float | None = None) -> float:
@@ -150,8 +151,41 @@ def may_advance_state(
         return False, "BLOCKED: no hash of raw evidence recorded (unverifiable provenance)"
     if not ev.tested_commit:
         return False, "BLOCKED: no tested_commit recorded (stale-binding risk)"
-    # NEGATIVE-CONTROL-001
-    if require_negative_control and ev.negative_control_passed is not True:
-        return False, "BLOCKED: negative control not proven (validator never shown to reject a broken state)"
+    # POSITIVE + NEGATIVE control (a validator must prove BOTH accept-truth and reject-falsehood)
+    if require_negative_control:
+        if ev.positive_control_passed is not True:
+            return False, "BLOCKED: positive control not proven (validator never shown to accept a known-good state)"
+        if ev.negative_control_passed is not True:
+            return False, "BLOCKED: negative control not proven (validator never shown to reject a broken state)"
 
     return True, f"ADVANCE: {eff.value} evidence, fresh, complete, negative-control proven"
+
+
+# ── CONTROL-PROOF MATRIX (founder-ratified) ──────────────────────────────────
+# "A control is not proven because it exists in code. A control is proven only when
+#  all eight conditions hold." This encodes that rule so a validator cannot self-certify.
+MATRIX_CONDITIONS = (
+    "positive",     # 1. known-good case passes
+    "negative",     # 2. known-bad case fails
+    "boundary",     # 3. threshold behaves correctly (off-by-one caught)
+    "mutation",     # 4. corruption of the protected artifact is detected
+    "replay",       # 5. old evidence cannot be reused as fresh proof
+    "freshness",    # 6. evidence is within its window
+    "provenance",   # 7. bound to commit + environment + artifact digest
+    "reproducible", # 8. re-running the proof yields the same result
+)
+
+
+def control_proof_status(matrix: dict[str, bool]) -> tuple[str, list[str]]:
+    """Return ('PROVEN'|'PARTIAL'|'DECLARED', missing_conditions).
+
+    PROVEN   = all 8 conditions true
+    PARTIAL  = at least positive+negative, but not all 8
+    DECLARED = missing positive or negative (i.e. not yet a real control)
+    """
+    missing = [c for c in MATRIX_CONDITIONS if not matrix.get(c)]
+    if not missing:
+        return "PROVEN", []
+    if matrix.get("positive") and matrix.get("negative"):
+        return "PARTIAL", missing
+    return "DECLARED", missing
