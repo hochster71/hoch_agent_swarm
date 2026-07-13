@@ -216,6 +216,29 @@ class PersistentScheduler:
             task["authority_decision_id"] = _adid
             task["authority_class"] = ruling.authority.value
 
+            # PAYLOAD BOUNDARY RECORD. The <DATA> exclusion is NOT a universal security
+            # boundary -- it is sound ONLY while the adapter is toolless and the payload can
+            # cause no side effects. Record the assumption so it cannot be silently inherited:
+            # any tool-enabled adapter MUST force reclassification under an untrusted-data
+            # policy rather than reusing this ruling.
+            _adapter = str(task.get("dispatch_type", "LOCAL_OLLAMA"))
+            _toolless = _adapter.upper() in ("LOCAL_OLLAMA", "GROK_CLI", "")
+            task["payload_boundary"] = {
+                "payload_boundary": "DATA_INERT",
+                "adapter": _adapter,
+                "adapter_tool_access": (not _toolless),
+                "side_effect_capability": "NONE" if _toolless else "UNKNOWN",
+                "boundary_assumption": "VALID_FOR_TOOLLESS_ADAPTER_ONLY",
+            }
+            if not _toolless:
+                # fail closed: the inert-data assumption does not hold for this adapter.
+                self.log_lease({"ts": get_utc_now_str(), "task_id": task.get("task_id"),
+                                "status": "HELD_UNTRUSTED_PAYLOAD_BOUNDARY",
+                                "adapter": _adapter,
+                                "reason": "tool-enabled adapter requires reclassification "
+                                          "under an untrusted-data policy"})
+                return False
+
             _PROCEED = (Authority.AUTONOMOUS, Authority.PREAUTHORIZED_PLAYBOOK)
             if ruling.authority not in _PROCEED:
                 if ruling.authority is Authority.PROHIBITED:
