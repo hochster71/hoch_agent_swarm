@@ -72,6 +72,26 @@ _FOUNDER_ONLY = (
     "attestation", "submit to apple", "app store connect", "refund", "transfer",
     "trade", "purchase", "move money", "wire ", "charge the", "sign the",
     "execute production deployment", "execute the deployment", "execute deploy",
+    # App Store / external publication / distribution -- FOUNDER_ONLY. Found by probing
+    # the scoped-approval boundary: "submit the build to the app store" classified
+    # AUTONOMOUS, which would have let HELM take an irreversible external action that is
+    # explicitly NOT authorized.
+    # NOTE: signatures must be ARTICLE-FREE. _normalize() strips articles from the TEXT,
+    # so a signature containing "the" can never match. "publish the app" silently never
+    # fired and the action fell through to PROPOSE_ONLY.
+    "app store", "appstore", "app store connect", "testflight", "submit build",
+    "submit for review", "release to production", "publish externally", "publish app",
+    "external publication", "distribute build",
+    # destructive data acts -- "delete all user data" classified AUTONOMOUS. It does not
+    # any more.
+    # Substring matching is too brittle for DESTRUCTIVE acts: "delete all user data"
+    # contains neither "delete user data" nor "delete all data" -- the word "all" splits
+    # them -- so it classified AUTONOMOUS. Destructive verbs now FAIL CLOSED on the verb
+    # itself. Over-triggering here only WITHHOLDS work (safe); under-triggering deletes
+    # data (not safe).
+    "delete all", "delete every", "erase all", "wipe", "purge", "destroy",
+    "delete user", "delete customer", "delete data", "delete the data",
+    "drop database", "drop table", "truncate table",
     "go live in production", "push to production",
 )
 _PROPOSE_ONLY = (
