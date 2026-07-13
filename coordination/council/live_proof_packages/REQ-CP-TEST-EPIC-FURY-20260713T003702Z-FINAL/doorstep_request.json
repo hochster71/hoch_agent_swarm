@@ -1,0 +1,17 @@
+{
+  "requirement": "REQ-CP-TEST",
+  "status": "FAIL",
+  "founder_decisions_remaining": [
+    {
+      "id": "D4",
+      "kind": "PRODUCT_CONTRACT",
+      "decision": "Three specs assert UI that may no longer exist: the 'EPIC FURY' dashboard header string, the '/dashboard/settings' link, and 'admin sees no upgrade CTA'. Confirm the CURRENT intended dashboard contract so these assertions can be updated to match reality (not reverse-engineered)."
+    },
+    {
+      "id": "D3",
+      "kind": "FOUNDER_ACTION",
+      "decision": "UNCHANGED, HIGHEST VALUE: read App Store Connect -> Epic Fury -> App Review live status. 6+ days since submission. Collapses TESTFLIGHT + APP_STORE_CONNECT UNKNOWN."
+    }
+  ],
+  "agent_next": "Once D4 confirms the current dashboard contract, update the 3 assertions and rerun \u2014 no product change, no auth weakening."
+}

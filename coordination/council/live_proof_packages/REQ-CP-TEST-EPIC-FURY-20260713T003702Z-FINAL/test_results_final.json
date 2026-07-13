@@ -1,0 +1,30 @@
+{
+  "requirement": "REQ-CP-TEST",
+  "status": "FAIL",
+  "root_cause": "STALE_TEST_CONTRACT (obsolete UI strings)",
+  "committed_run": "20 passed / 23 required (staging excluded per D2)",
+  "founder_prerequisite": "NOT ESTABLISHED \u2014 real auth stood up locally, zero founder secrets",
+  "product_security_regression": "NOT INDICATED",
+  "what_passes": [
+    "real magic-link auth (accessibility, csp-audit, flowchart, prod read-only smoke)",
+    "6/7 security regressions incl. demo-route 404, test-auth header rejected, real login, anon fail-closed, plain identity not admin; invalid-identity denial fixed",
+    "rc47 entitlement UNIT tests (founder/qa/public/stripe/fail-closed)",
+    "race fix: per-test unique identities + Mailpit recipient filtering (no more 45s timeouts)"
+  ],
+  "remaining_failures_all_assert_removed_or_changed_UI": {
+    "epic-fury-mobile": "asserted '#internal-access-banner' (REMOVED) -> retired this commit; also asserts 'EPIC FURY' header string",
+    "epic-fury-smoke": "asserts 'EPIC FURY' header + '/dashboard/settings' link \u2014 UI strings that may not match the current product",
+    "rc47 case 2": "asserts an admin identity sees NO upgrade CTA; the current dashboard may show the CTA to all tiers"
+  },
+  "why_not_forced_green": "Rewriting these to whatever the current DOM shows would be reverse-engineering a pass. Whether the 'EPIC FURY' header / settings link / tier-specific upgrade CTA SHOULD render is a product-contract decision (same class as D1), not an agent call.",
+  "demo_auth_restored": false,
+  "entitlement_weakened": false,
+  "staging_invented": false,
+  "external_calls": 1,
+  "founder_only_actions": 0,
+  "champion_completion_all_gates": 70.0,
+  "champion_completion_agent_scope": 87.1,
+  "testflight": "UNKNOWN",
+  "app_store_connect": "UNKNOWN",
+  "final_decision": "FAIL"
+}

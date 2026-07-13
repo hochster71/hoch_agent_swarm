@@ -15,7 +15,7 @@ test.describe('Epic Fury Mobile Viewport Tests', () => {
 
     // Confirm upgrade CTA behaves safely on mobile width
     await page.goto('http://localhost:3003/dashboard');
-    const banner = page.locator('#internal-access-banner');
-    await expect(banner).toBeVisible();
+    // D1: the '#internal-access-banner' (Internal Preview Mode) was REMOVED from the
+    // product; asserting it is obsolete. Retired per founder ratification 2026-07-13.
   });
 });
