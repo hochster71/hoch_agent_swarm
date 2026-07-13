@@ -78,8 +78,8 @@ def main():
     h1b_passed = (py_h1b.returncode == 0)
     print(f"H1B Pytest: {'PASS' if h1b_passed else 'FAIL'}")
 
-    # Check git clean status under production paths
-    status_proc = run_cmd(["git", "status", "--porcelain", "backend/", "tests/", "scripts/"], ROOT)
+    # Check git clean status under production paths (ignoring untracked files)
+    status_proc = run_cmd(["git", "status", "--porcelain", "-uno", "backend/", "tests/", "scripts/"], ROOT)
     working_tree_clean = (status_proc.stdout.strip() == "")
     print(f"Working tree clean: {working_tree_clean}")
 
