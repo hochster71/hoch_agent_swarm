@@ -145,6 +145,93 @@ def enforce(task: dict[str, Any], binding: AuthorityBinding, *,
         raise AuthorityDenied("AUTHORITY_SINGLE_USE_CONSUMED", binding.authority_decision_id)
 
 
+REGISTRY = ROOT / "coordination" / "council" / "adapter_registry.json"
+
+# A task carrying (or fishing for) a secret must NEVER reach an external model.
+_SECRET_PATTERNS = (
+    "sk_live", "sk_test", "whsec_", "service_role", "private key", "BEGIN RSA",
+    "auth.json", ".env", "credential", "password", "api_key", "apikey",
+    "bearer ", "refresh_token", "access_token",
+)
+_SECRET_CLASSES = {"SECRET", "CREDENTIAL", "RESTRICTED", "PII"}
+
+
+def _registry() -> dict[str, Any]:
+    return json.loads(REGISTRY.read_text())["adapters"] if REGISTRY.exists() else {}
+
+
+def enforce_adapter(task: dict[str, Any], adapter_id: str) -> None:
+    """ADAPTER-REGISTRY + DATA-CLASSIFICATION controls. Raises AuthorityDenied."""
+    reg = _registry()
+    a = reg.get(adapter_id)
+    if a is None:
+        raise AuthorityDenied("ADAPTER_NOT_REGISTERED", adapter_id)
+    if a.get("health") != "READY":
+        raise AuthorityDenied("ADAPTER_NOT_READY", f"{adapter_id} health={a.get('health')}")
+
+    # the adapter may not receive secret-classified data
+    dc = str(task.get("data_classification", "")).upper()
+    if dc in _SECRET_CLASSES and not a.get("credential_exposure_allowed", False):
+        raise AuthorityDenied("DATA_CLASSIFICATION_VIOLATION",
+                              f"{adapter_id} may not receive {dc} data")
+
+    # ...and the prompt itself must not carry or fish for a secret
+    blob = f"{task.get('action_text','')} {task.get('target','')}".lower()
+    for pat in _SECRET_PATTERNS:
+        if pat.lower() in blob:
+            raise AuthorityDenied("SECRET_BEARING_TASK_DENIED",
+                                  f"task references '{pat}' — refusing to send to {adapter_id}")
+
+
+def dispatch_grok(task: dict[str, Any], binding: AuthorityBinding, *,
+                  scope: dict[str, str] | None = None, model: str | None = None,
+                  timeout: int = 180) -> dict[str, Any]:
+    """Governed GROK_CLI dispatch. Authority + adapter + secret checks BEFORE the subprocess.
+
+    Hardened invocation: headless single-turn, EMPTY tool allowlist (zero tool execution =>
+    it cannot read the filesystem, so ~/.grok/auth.json and .env are unreachable), no
+    subagents, no memory, no web egress, bounded cwd. `always-approve` is irrelevant when
+    there are no tools to approve."""
+    import subprocess
+
+    enforce(task, binding, scope=scope)          # authority binding
+    enforce_adapter(task, "GROK_CLI")            # registry + data classification + secret scan
+    if binding.single_use:
+        _mark_consumed(binding.authority_decision_id)
+
+    a = _registry()["GROK_CLI"]
+    cwd = Path(a["hardening"]["bounded_cwd"])
+    cwd.mkdir(parents=True, exist_ok=True)
+
+    cmd = [a["binary"], "-p", task["action_text"], "--output-format", "json",
+           "--tools", "", "--no-subagents", "--no-memory", "--disable-web-search",
+           "--max-turns", "1", "--verbatim", "--cwd", str(cwd)]
+    if model:
+        cmd += ["-m", model]
+
+    t0 = time.time()
+    proc = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, cwd=str(cwd))
+    out = proc.stdout.strip()
+    try:
+        parsed = json.loads(out)
+        text = parsed.get("result") or parsed.get("response") or parsed.get("text") or out
+    except json.JSONDecodeError:
+        text = out
+
+    return {
+        "result_envelope_version": "1.0",
+        "authority_decision_id": binding.authority_decision_id,
+        "classified_task_sha256": binding.classified_task_sha256,
+        "task_id": task["task_id"],
+        "adapter": "GROK_CLI",
+        "model": model or "grok-default",
+        "output": text,
+        "exit_code": proc.returncode,
+        "dispatched_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "latency_s": round(time.time() - t0, 3),
+    }
+
+
 def dispatch_ollama(task: dict[str, Any], binding: AuthorityBinding, *,
                     model: str = "llama3.1:8b", scope: dict[str, str] | None = None,
                     timeout: int = 120) -> dict[str, Any]:

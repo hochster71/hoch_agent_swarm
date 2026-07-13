@@ -1,0 +1,12 @@
+{
+  "result_envelope_version": "1.0",
+  "authority_decision_id": "AUTH-9a083d558bb52f55",
+  "classified_task_sha256": "0920dba75926887f13c42aecd07597bb06028c94d1993ce6e37f28670c20242f",
+  "task_id": "GROK-CRITIC-001",
+  "adapter": "GROK_CLI",
+  "model": "grok-default",
+  "output": "**An LLM\u2019s self-declared PASS can rubber-stamp a broken or incomplete control plane because the same model that produced the system is also the unaccountable, non-deterministic judge of its own success, with no independent ground truth, adversarial checks, or authority to refuse shipping itself.**",
+  "exit_code": 0,
+  "dispatched_at": "2026-07-13T22:43:14Z",
+  "latency_s": 3.479
+}

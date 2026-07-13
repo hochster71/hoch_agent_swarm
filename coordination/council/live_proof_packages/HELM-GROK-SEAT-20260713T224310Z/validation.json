@@ -1,0 +1,14 @@
+{
+  "package": "HELM-GROK-SEAT-20260713T224310Z",
+  "verdict": "GROK_SEAT_GOVERNED_PASS",
+  "failed_checks": 0,
+  "seat_role": [
+    "ADVERSARIAL_SYSTEMS_CRITIC",
+    "RUNTIME_DEBUGGER",
+    "POLICY_BYPASS_HUNTER",
+    "NEGATIVE_TEST_GENERATOR"
+  ],
+  "verdict_authority": "NONE \u2014 deterministic validators decide PASS, not Grok",
+  "hardening": "headless -p, empty --tools allowlist (no fs access), --no-subagents --no-memory --disable-web-search, bounded cwd; always-approve irrelevant",
+  "assessed_at": "2026-07-13T22:43:14Z"
+}

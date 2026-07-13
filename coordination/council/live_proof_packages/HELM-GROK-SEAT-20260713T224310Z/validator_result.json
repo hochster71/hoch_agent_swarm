@@ -1,0 +1,4 @@
+{
+  "passed": true,
+  "note": "Grok output is advisory; validator owns the verdict"
+}

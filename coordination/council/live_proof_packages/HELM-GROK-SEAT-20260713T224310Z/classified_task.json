@@ -1,0 +1,20 @@
+{
+  "task": {
+    "task_id": "GROK-CRITIC-001",
+    "action_text": "You are an adversarial systems critic. In ONE sentence, name the single biggest risk in trusting an LLM's self-declared PASS verdict for a control plane. Answer in one sentence, no preamble.",
+    "environment": "local",
+    "adapter": "GROK_CLI",
+    "target": "governance-review",
+    "data_classification": "public_repo",
+    "side_effects": "none"
+  },
+  "binding": {
+    "authority_decision_id": "AUTH-9a083d558bb52f55",
+    "classified_task_sha256": "0920dba75926887f13c42aecd07597bb06028c94d1993ce6e37f28670c20242f",
+    "classified_at": "2026-07-13T22:43:10Z",
+    "classifier_version": "founder_model@v2",
+    "authority_matrix_sha256": "1452ac326277eb9c81982a337ce0e1f05670f1a7142499ec39a5b49b08474800",
+    "decision_id": "FD-20260713-004",
+    "single_use": false
+  }
+}

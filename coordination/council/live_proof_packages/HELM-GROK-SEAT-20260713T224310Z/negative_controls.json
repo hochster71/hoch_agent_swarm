@@ -1,0 +1,31 @@
+[
+  {
+    "control": "missing authority id",
+    "expected": "AUTHORITY_ID_MISSING",
+    "got": "AUTHORITY_ID_MISSING",
+    "passed": true
+  },
+  {
+    "control": "mutated task after approval",
+    "expected": "TASK_MUTATED_AFTER_CLASSIFICATION",
+    "got": "TASK_MUTATED_AFTER_CLASSIFICATION",
+    "passed": true
+  },
+  {
+    "control": "secret-bearing task",
+    "expected": "SECRET_BEARING_TASK_DENIED",
+    "got": "SECRET_BEARING_TASK_DENIED",
+    "passed": true
+  },
+  {
+    "control": "unregistered adapter",
+    "expected": "ADAPTER_NOT_REGISTERED",
+    "got": "ADAPTER_NOT_REGISTERED",
+    "passed": true
+  },
+  {
+    "control": "production_deployment",
+    "rule": "FOUNDER_ONLY \u2014 never delegated to GROK_CLI",
+    "enforced_by": "founder_model.classify_action (proven in five-class suite)"
+  }
+]

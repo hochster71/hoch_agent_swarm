@@ -1,0 +1,54 @@
+{
+  "schema_version": "1.0",
+  "adapters": {
+    "GROK_CLI": {
+      "adapter_id": "GROK_CLI",
+      "provider": "xAI",
+      "execution_mode": "LOCAL_CLI_EXTERNAL_MODEL",
+      "binary": "/Users/michaelhoch/.local/bin/grok",
+      "health": "READY",
+      "authorization_required": true,
+      "authority_decision_id_required": true,
+      "data_classification_limit": "PUBLIC_OR_APPROVED_SOURCE",
+      "credential_exposure_allowed": false,
+      "direct_production_actions_allowed": false,
+      "cost_tracking_required": true,
+
+      "helm_role": [
+        "ADVERSARIAL_SYSTEMS_CRITIC",
+        "RUNTIME_DEBUGGER",
+        "POLICY_BYPASS_HUNTER",
+        "NEGATIVE_TEST_GENERATOR"
+      ],
+      "verdict_authority": "NONE — Grok may not declare PASS. Deterministic validators decide.",
+
+      "hardening": {
+        "invocation": "headless single-turn only (-p). Interactive/agentic sessions are NOT a HELM dispatch path.",
+        "always_approve": "PROHIBITED for HELM dispatch. Not persisted in config; it is a session flag, so HELM simply never opens an interactive session.",
+        "tools": "",
+        "tools_note": "empty allowlist => zero tool execution => structurally cannot read the filesystem, so ~/.grok/auth.json and .env are unreachable even under always-approve",
+        "required_flags": [
+          "-p", "--output-format", "json", "--tools", "", "--no-subagents",
+          "--no-memory", "--disable-web-search", "--max-turns", "1", "--verbatim"
+        ],
+        "bounded_cwd": "/tmp/helm-grok-proof",
+        "network_egress": "model API only; web search/fetch disabled",
+        "money_movement": "PROHIBITED",
+        "production_deployment": "FOUNDER_ONLY (never delegated to this adapter)"
+      }
+    },
+    "LOCAL_OLLAMA": {
+      "adapter_id": "LOCAL_OLLAMA",
+      "provider": "local",
+      "execution_mode": "LOCAL_MODEL",
+      "endpoint": "http://127.0.0.1:11434",
+      "health": "READY",
+      "authorization_required": true,
+      "authority_decision_id_required": true,
+      "data_classification_limit": "PUBLIC_OR_APPROVED_SOURCE",
+      "credential_exposure_allowed": false,
+      "direct_production_actions_allowed": false,
+      "cost_tracking_required": false
+    }
+  }
+}
