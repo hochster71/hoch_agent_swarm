@@ -215,10 +215,23 @@ class Escalation:
 
 
 def _dedup_key(esc: "Escalation") -> str:
-    """Two escalations are 'the same question' if their question + why match."""
-    import hashlib
+    """Two escalations are 'the same question' if their question + why match.
+
+    CRITICAL: the key must be computed on the SEMANTIC content only. A first cut hashed the
+    raw `why`, which embeds a freshly-minted [AUTH-xxxx] id -- so every escalation hashed
+    differently and dedup NEVER fired. The founder queue filled with 28 copies of 4 questions.
+    A dedup key containing a nonce does not dedup. Volatile ids/timestamps are stripped.
+    """
+    import hashlib, re
+    def _stable(t: str) -> str:
+        t = re.sub(r"AUTH-[0-9a-f]+", "", t, flags=re.I)      # authority decision ids
+        t = re.sub(r"\b[0-9a-f]{12,}\b", "", t, flags=re.I)   # any hex nonce
+        t = re.sub(r"\d{4}-\d{2}-\d{2}T[\d:.]+Z?", "", t)     # timestamps
+        t = re.sub(r"task_id=\S+", "", t)                      # per-task ids
+        t = re.sub(r"[\[\]()]", " ", t)
+        return re.sub(r"\s+", " ", t).strip().lower()
     return hashlib.sha256(
-        (esc.one_sentence_question.strip().lower() + "|" + esc.why_it_needs_you.strip().lower()).encode()
+        (_stable(esc.one_sentence_question) + "|" + _stable(esc.why_it_needs_you)).encode()
     ).hexdigest()[:16]
 
 
