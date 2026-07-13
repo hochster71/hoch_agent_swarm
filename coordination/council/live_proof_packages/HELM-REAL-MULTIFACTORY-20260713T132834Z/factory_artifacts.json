@@ -1,0 +1,22 @@
+{
+  "T-HCF-REAL-01": {
+    "path": "artifacts/factory/T-HCF-REAL-01.md",
+    "chars": 2266,
+    "sha256": "b5713d7e53ca8a4c4f27c0c353a0e19244dc961ad04312c1af7ab6c72f921edd"
+  },
+  "T-HRF-REAL-01": {
+    "path": "artifacts/factory/T-HRF-REAL-01.md",
+    "chars": 2045,
+    "sha256": "bef3c59ecb7383868478a2918b4406fea44d51e490165f42687b64d36ed2f837"
+  },
+  "T-HSF-REAL-01": {
+    "path": "artifacts/factory/T-HSF-REAL-01.md",
+    "chars": 235,
+    "sha256": "aa8543ac08cac67b2a81698d64e8433add06f951dd441661e17a2d69080ef31d"
+  },
+  "T-RETRY-01": {
+    "path": "artifacts/factory/T-RETRY-01.md",
+    "chars": 121,
+    "sha256": "4d63d7e480cd05a2e4a1b6064c9b30e1f5669a04784a58998e691f0241b7956b"
+  }
+}

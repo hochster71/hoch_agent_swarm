@@ -1,0 +1,48 @@
+{
+  "schema": "RETRY_PROOF_v1",
+  "observed_at_utc": "2026-07-13T13:35:04.082802+00:00",
+  "task_id": "T-RETRY-01",
+  "mechanism": "independent validator fails deterministically (min_lines=999); dispatch itself succeeds",
+  "max_retries": 3,
+  "transitions": [
+    {
+      "cycle": 1,
+      "status_before": "PENDING",
+      "status_after": "PENDING",
+      "retry_count": 1,
+      "dispatched": [
+        {
+          "task_id": "T-RETRY-01",
+          "success": false
+        }
+      ]
+    },
+    {
+      "cycle": 2,
+      "status_before": "PENDING",
+      "status_after": "PENDING",
+      "retry_count": 2,
+      "dispatched": [
+        {
+          "task_id": "T-RETRY-01",
+          "success": false
+        }
+      ]
+    },
+    {
+      "cycle": 3,
+      "status_before": "PENDING",
+      "status_after": "FAILED",
+      "retry_count": 3,
+      "dispatched": [
+        {
+          "task_id": "T-RETRY-01",
+          "success": false
+        }
+      ]
+    }
+  ],
+  "retry_observed": true,
+  "terminal_state": "FAILED",
+  "honest_note": "This task is SUPPOSED to fail. It proves the retry path, not success."
+}

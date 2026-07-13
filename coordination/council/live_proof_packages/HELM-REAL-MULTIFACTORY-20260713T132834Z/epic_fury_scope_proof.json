@@ -1,0 +1,14 @@
+{
+  "schema": "SCOPE_PROOF_v1",
+  "observed_at_utc": "2026-07-13T13:38:19.550586+00:00",
+  "epic_fury_apple_hold": "lane-scoped; not a global stop",
+  "hasf_lane": "BLOCKED by a scoped goal blocker (G-5, owner=HASF agent). T-HASF-REAL-01 was correctly WITHHELD by ScopedStateEvaluator while HRF/HCF/HSF executed -> lane-scoped isolation, not a global halt.",
+  "executed_factories": [
+    "HCF",
+    "HRF",
+    "HSF"
+  ],
+  "withheld_factories": [
+    "HASF"
+  ]
+}

@@ -1,0 +1,11 @@
+{"cycle_start": "2026-07-13T13:28:34.439328Z", "cycle_end": "2026-07-13T13:30:18.539200Z", "status": "ACTIVE", "dispatched_count": 3, "dispatched": [{"task_id": "T-HRF-REAL-01", "success": true}, {"task_id": "T-HCF-REAL-01", "success": true}, {"task_id": "T-HSF-REAL-01", "success": true}]}
+{"cycle_start": "2026-07-13T13:30:18.541119Z", "cycle_end": "2026-07-13T13:30:18.544403Z", "status": "IDLE", "dispatched_count": 0, "dispatched": []}
+{"cycle_start": "2026-07-13T13:30:18.545339Z", "cycle_end": "2026-07-13T13:30:18.545905Z", "status": "IDLE", "dispatched_count": 0, "dispatched": []}
+{"cycle_start": "2026-07-13T13:30:18.546243Z", "cycle_end": "2026-07-13T13:30:18.546670Z", "status": "IDLE", "dispatched_count": 0, "dispatched": []}
+{"cycle_start": "2026-07-13T13:30:18.546973Z", "cycle_end": "2026-07-13T13:30:18.547556Z", "status": "IDLE", "dispatched_count": 0, "dispatched": []}
+{"cycle_start": "2026-07-13T13:30:18.548598Z", "cycle_end": "2026-07-13T13:30:18.549206Z", "status": "IDLE", "dispatched_count": 0, "dispatched": []}
+{"cycle_start": "2026-07-13T13:30:18.549631Z", "cycle_end": "2026-07-13T13:30:18.550052Z", "status": "IDLE", "dispatched_count": 0, "dispatched": []}
+{"cycle_start": "2026-07-13T13:30:18.550362Z", "cycle_end": "2026-07-13T13:30:18.550769Z", "status": "IDLE", "dispatched_count": 0, "dispatched": []}
+{"cycle_start": "2026-07-13T13:33:51.769687Z", "cycle_end": "2026-07-13T13:35:01.991670Z", "status": "ACTIVE", "dispatched_count": 1, "dispatched": [{"task_id": "T-RETRY-01", "success": false}]}
+{"cycle_start": "2026-07-13T13:35:01.992400Z", "cycle_end": "2026-07-13T13:35:03.036422Z", "status": "ACTIVE", "dispatched_count": 1, "dispatched": [{"task_id": "T-RETRY-01", "success": false}]}
+{"cycle_start": "2026-07-13T13:35:03.036581Z", "cycle_end": "2026-07-13T13:35:04.082696Z", "status": "ACTIVE", "dispatched_count": 1, "dispatched": [{"task_id": "T-RETRY-01", "success": false}]}

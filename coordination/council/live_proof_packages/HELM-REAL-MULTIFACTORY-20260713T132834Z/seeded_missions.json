@@ -1,0 +1,72 @@
+{
+  "schema": "SEEDED_MISSIONS_v1",
+  "seeded_at_utc": "2026-07-13T13:22:41.990949+00:00",
+  "fix": "INSERT with EXPLICIT column list (was: positional VALUES against an assumed schema)",
+  "adapter_policy": "LOCAL_ONLY (ollama) -- zero credentials, zero spend",
+  "missions": [
+    {
+      "mission_id": "M-HASF-REAL-01",
+      "factory": "HASF",
+      "name": "Inspect a backend module and report concrete defects",
+      "task_id": "T-HASF-REAL-01",
+      "validator_ctx": {
+        "subject": "backend/mission_control/factory_validators.py"
+      }
+    },
+    {
+      "mission_id": "M-HRF-REAL-01",
+      "factory": "HRF",
+      "name": "Cited technical comparison",
+      "task_id": "T-HRF-REAL-01",
+      "validator_ctx": {
+        "compare": [
+          "fencing",
+          "lease expiry"
+        ]
+      }
+    },
+    {
+      "mission_id": "M-HCF-REAL-01",
+      "factory": "HCF",
+      "name": "Control-to-evidence gap analysis",
+      "task_id": "T-HCF-REAL-01",
+      "validator_ctx": {}
+    },
+    {
+      "mission_id": "M-HSF-REAL-01",
+      "factory": "HSF",
+      "name": "Bounded creative artifact with deterministic package validation",
+      "task_id": "T-HSF-REAL-01",
+      "validator_ctx": {
+        "min_lines": 6,
+        "theme": "evidence"
+      }
+    }
+  ],
+  "verified_rows": [
+    {
+      "task_id": "T-HASF-REAL-01",
+      "status": "PENDING",
+      "step_index": 1,
+      "assigned_agent": "AgentHASF"
+    },
+    {
+      "task_id": "T-HRF-REAL-01",
+      "status": "PENDING",
+      "step_index": 1,
+      "assigned_agent": "AgentHRF"
+    },
+    {
+      "task_id": "T-HCF-REAL-01",
+      "status": "PENDING",
+      "step_index": 1,
+      "assigned_agent": "AgentHCF"
+    },
+    {
+      "task_id": "T-HSF-REAL-01",
+      "status": "PENDING",
+      "step_index": 1,
+      "assigned_agent": "AgentHSF"
+    }
+  ]
+}

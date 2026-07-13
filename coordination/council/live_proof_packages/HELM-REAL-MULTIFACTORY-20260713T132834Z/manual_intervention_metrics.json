@@ -1,0 +1,7 @@
+{
+  "manual_prompt_copies": 0,
+  "manual_result_copies": 0,
+  "operator_holds_set": 0,
+  "bypass_approved": false,
+  "evidence": "Prompts came from mission_prompt in the canonical task record; results were captured by the scheduler from gateway output. No human copy/paste."
+}

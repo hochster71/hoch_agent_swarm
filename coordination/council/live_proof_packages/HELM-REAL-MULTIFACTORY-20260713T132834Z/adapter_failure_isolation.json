@@ -1,0 +1,21 @@
+{
+  "schema": "ADAPTER_FAILURE_ISOLATION_v1",
+  "observed_at_utc": "2026-07-13T13:33:30.286212+00:00",
+  "fault_injection": {
+    "task_id": "T-ADFAIL-01",
+    "method": "dispatch with nonexistent ollama model",
+    "model": "this-model-does-not-exist:99b",
+    "status": "FAILED",
+    "exit_code": 1,
+    "stderr_excerpt": ""
+  },
+  "isolation_check": {
+    "task_id": "T-ADOK-01",
+    "status": "COMPLETED",
+    "exit_code": 0,
+    "output_excerpt": "OK\n\n"
+  },
+  "adapter_failure_observed": true,
+  "failure_isolated": true,
+  "conclusion": "A real adapter failure did NOT poison the gateway; the next dispatch succeeded."
+}

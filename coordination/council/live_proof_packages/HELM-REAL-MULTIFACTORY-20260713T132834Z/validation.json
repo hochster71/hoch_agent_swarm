@@ -1,0 +1,51 @@
+{
+  "schema": "REAL_MULTIFACTORY_VALIDATION_v1",
+  "generated_at_utc": "2026-07-13T13:38:19.550586+00:00",
+  "tested_commit": "5777367cef838e607b5c0ed62eff55c8490c4b06",
+  "adapter": "LOCAL_ONLY ollama llama3.1:8b - zero credentials, zero spend",
+  "task_final_states": {
+    "T-HASF-REAL-01": "PENDING",
+    "T-HRF-REAL-01": "COMPLETED",
+    "T-HCF-REAL-01": "COMPLETED",
+    "T-HSF-REAL-01": "COMPLETED",
+    "T-RETRY-01": "FAILED"
+  },
+  "factories_executed": [
+    "HCF",
+    "HRF",
+    "HSF"
+  ],
+  "factories_withheld": {
+    "HASF": "scoped lane blocker (G-5) - correctly isolated, not a failure"
+  },
+  "real_adapter_dispatches_by_factory": [
+    "HCF",
+    "HRF",
+    "HSF"
+  ],
+  "total_gateway_dispatches": 6,
+  "retry_attempts": 2,
+  "artifacts_produced": 4,
+  "validators_executed": 6,
+  "terminal_pass": 3,
+  "duplicate_executions": 0,
+  "acceptance_criteria": {
+    "4_factories_seeded": true,
+    "4_tasks_independently_leased": false,
+    "4_real_adapter_dispatches": false,
+    "4_result_envelopes": false,
+    "4_output_artifacts": false,
+    "4_validators_executed": false,
+    "at_least_3_terminal_PASS": true,
+    "failed_tasks_reported_honestly": true,
+    "at_least_1_adapter_failure_isolated": true,
+    "at_least_1_retry_proven": true,
+    "zero_manual_prompt_copies": true,
+    "zero_manual_result_copies": true,
+    "zero_duplicate_executions": true,
+    "epic_fury_hold_lane_scoped": true
+  },
+  "all_criteria_met": false,
+  "verdict": "NOT_YET_PASS",
+  "honest_summary": "3 of 4 factories executed REAL work through the full runtime (task -> eligibility -> lease -> fencing -> gateway -> real local adapter -> result envelope -> independent validator -> artifact -> terminal state). HASF was WITHHELD by scoped-lane governance, so the 4-dispatch criteria are NOT met. Retry and adapter-failure isolation are proven. Zero fabricated evidence."
+}
