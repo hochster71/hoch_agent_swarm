@@ -186,7 +186,24 @@ class PersistentScheduler:
             import hashlib as _hl, json as _json, time as _t
             from backend.council.founder_model import (
                 classify_action, Authority, Escalation, escalate)
-            _probe = f"{task.get('name','')} {task.get('mission_prompt','')} " \
+            # INSTRUCTION / DATA BOUNDARY.
+            # The gate classifies what HELM *does*, never the payload it carries. A task that
+            # merely READS a file whose contents happen to contain the word "revoke" is not a
+            # revocation -- but a naive probe over the whole prompt classified exactly that as
+            # FOUNDER_ONLY and withheld safe read-only work. (Observed: all 4 native-concurrency
+            # tasks held with matched='revoke', because they quote decision_record.py, which
+            # defines a REVOKED status.)
+            #
+            # Content inside <DATA>...</DATA> is INERT: it is material the model reads, not an
+            # action HELM performs. Everything OUTSIDE the block is still fully classified, so
+            # an instruction cannot be smuggled past the gate by sitting next to a data block.
+            # (Safe because governed adapters run with no tools and no side effects: an
+            # instruction embedded in data cannot cause HELM to act.)
+            import re as _re
+            _action_only = _re.sub(r"<DATA>.*?</DATA>", " ", task.get("mission_prompt", "") or "",
+                                   flags=_re.DOTALL | _re.IGNORECASE)
+            _probe = f"{task.get('name','')} {_action_only} " \
+                     f"cap:{task.get('required_capability') or ''} " \
                      f"dispatch:{task.get('dispatch_type','LOCAL_OLLAMA')}"
             ruling = classify_action(_probe)
 
@@ -476,25 +493,47 @@ class PersistentScheduler:
         }
 
     def observed_peak_concurrency(self):
-        """Max simultaneously-held leases OBSERVED in the lease ledger. Never inferred."""
+        """Max simultaneously-held leases OBSERVED from AUTHORITATIVE LEASE INTERVALS.
+
+        A first cut summed +1 on {ACQUIRED, DISPATCH_START} and -1 on {RELEASED, ...}. That
+        DOUBLE-COUNTED every task (one lease emits BOTH ACQUIRED and DISPATCH_START), so a
+        single task netted +1 and the peak inflated ~2x -- it could report 4 when only 2
+        tasks ever overlapped. A concurrency number that is wrong in the flattering direction
+        is exactly the fake-green this system exists to prevent.
+
+        Correct method: pair events by lease_id into [acquired, released] intervals and sweep.
+        An unreleased lease (crashed worker) stays open to the end of the window -- honest,
+        since it IS still held.
+        """
         if not self.lease_log.exists():
             return "UNKNOWN"
-        events = []
+        opened: Dict[str, str] = {}     # lease_id -> acquired ts
+        closed: Dict[str, str] = {}     # lease_id -> released ts
+        last_ts = ""
         for line in self.lease_log.read_text().splitlines():
             try:
                 e = json.loads(line)
             except json.JSONDecodeError:
                 continue
-            st, ts = e.get("status"), e.get("ts")
-            if not ts:
-                continue
-            if st in ("ACQUIRED", "DISPATCH_START"):
-                events.append((ts, +1))
-            elif st in ("RELEASED", "COMPLETED", "FAILED", "DISPATCH_END"):
-                events.append((ts, -1))
-        if not events:
+            lid, st, ts = e.get("lease_id"), e.get("status"), e.get("ts")
+            if not lid or not ts:
+                continue                 # HELD_/DENIED_ rows carry no lease: never counted
+            last_ts = max(last_ts, ts)
+            if st == "ACQUIRED":
+                opened.setdefault(lid, ts)
+            elif st in ("RELEASED", "COMPLETED", "FAILED"):
+                closed.setdefault(lid, ts)
+        if not opened:
             return "UNKNOWN"
-        events.sort()
+
+        events = []
+        for lid, a in opened.items():
+            r = closed.get(lid, last_ts)     # still-held lease: open to end of window
+            events.append((a, +1))
+            events.append((r, -1))
+        # -1 before +1 at an identical timestamp: a release at time T does not overlap an
+        # acquire at time T. Never round in the flattering direction.
+        events.sort(key=lambda x: (x[0], x[1]))
         cur = peak = 0
         for _, d in events:
             cur += d
