@@ -74,12 +74,27 @@ def pid_alive(pid: int) -> bool:
 
 
 def active_leases():
-    from scripts.ag_execution_lease_manager import LEASES_FILE
+    """Leases that are BOTH un-released AND un-expired. A stale lease past its
+    expiry is not an active holder -- counting it would fabricate a duplicate."""
+    from scripts.ag_execution_lease_manager import LEASES_FILE, parse_utc_str
     try:
         data = json.loads(Path(LEASES_FILE).read_text())
     except Exception:
         return []
-    return [l for l in data if l.get("status") in (None, "ACTIVE", "ACQUIRED")]
+    now_dt = datetime.datetime.now(datetime.timezone.utc)
+    live = []
+    for l in data:
+        if l.get("status") not in (None, "ACTIVE", "ACQUIRED"):
+            continue
+        exp = l.get("expires_at")
+        if exp:
+            try:
+                if parse_utc_str(exp) <= now_dt:
+                    continue          # expired -> not an active holder
+            except Exception:
+                pass
+        live.append(l)
+    return live
 
 
 def max_token():
@@ -112,6 +127,21 @@ def main() -> int:
     obs: dict = {"schema": "RESTART_RECOVERY_PROOF_v2", "observed_at_utc": now(),
                  "task_id": TASK_ID}
 
+    # ---------------- PRECONDITION ----------------
+    # This proof owns TASK_ID exclusively. Release any lease left over from a
+    # prior run (a SIGKILLed holder cannot release its own lease), so the run is
+    # idempotent and a stale orphan is never mis-read as a duplicate holder.
+    try:
+        from scripts.ag_execution_lease_manager import LeaseManager, LEASES_FILE
+        _pre = [l for l in json.loads(Path(LEASES_FILE).read_text())
+                if l.get("task_id") == TASK_ID
+                and l.get("status") in (None, "ACTIVE", "ACQUIRED")]
+        for l in _pre:
+            LeaseManager().release_lease(l["lease_id"], status="RELEASED")
+        obs["preexisting_leases_cleared"] = [l["lease_id"] for l in _pre]
+    except Exception as e:
+        obs["preexisting_leases_cleared"] = f"UNKNOWN: {e}"
+
     # ---------------- BEFORE ----------------
     obs["heartbeat_before"] = now()
     obs["active_leases_before"] = active_leases()
@@ -121,10 +151,15 @@ def main() -> int:
     proc = subprocess.Popen([sys.executable, "-c", src], stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE, text=True, cwd=str(ROOT))
     child = _read_json_line(proc)
-    if not child:
-        err = proc.stderr.read()[:400]
-        print(f"child failed to acquire lease: {err}", file=sys.stderr)
+    if not child or not child.get("lease"):
+        err = (proc.stderr.read() or "")[:300]
+        print(f"child could not acquire a lease (lock held?): {err}", file=sys.stderr)
         proc.kill()
+        obs["proof_class"] = "STRUCTURAL_PROOF"
+        obs["recovery_status"] = "NOT_PROVEN"
+        obs["notes"] = "worker could not acquire an initial lease; no crash was induced"
+        out = ROOT / "coordination" / "council" / "restart_recovery_proof.json"
+        out.write_text(json.dumps(obs, indent=2) + "\n")
         return 2
     obs["service_pid_before"] = child["pid"]
     obs["fencing_token_before"] = child["lease"]["fencing_token"]
@@ -159,6 +194,15 @@ def main() -> int:
         obs["fencing_token_after"] = None
         abandoned = [TASK_ID]
     proc2.kill(); proc2.wait(timeout=10)
+
+    # Teardown: release the lease we just acquired, so re-running the proof does
+    # not leave an orphan that a later run would mis-read as a duplicate holder.
+    if obs.get("lease_id_after"):
+        try:
+            from scripts.ag_execution_lease_manager import LeaseManager
+            LeaseManager().release_lease(obs["lease_id_after"], status="RELEASED")
+        except Exception:
+            pass
 
     obs["heartbeat_after"] = now()
     obs["active_leases_after"] = active_leases()
