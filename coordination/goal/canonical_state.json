@@ -1,0 +1,32 @@
+{
+  "schema": "HELM_CANONICAL_STATE_v1",
+  "recorded_at_utc": "2026-07-13T01:58:41.603372+00:00",
+  "accepted_by": "Michael Bryan Hoch (founder assessment 2026-07-13)",
+  "tested_commit": "bb217527",
+  "requirements": {
+    "REQ-GOV-005": "SATISFIED",
+    "REQ-ES-003": "SATISFIED",
+    "REQ-TO-003": "SATISFIED",
+    "REQ-TO-001": "SATISFIED",
+    "REQ-CP-TEST": "SATISFIED"
+  },
+  "champion_product": "EPIC_FURY_2026",
+  "completion_labels": {
+    "EPIC_FURY_AGENT_SCOPE_COMPLETION": "100%",
+    "EPIC_FURY_OVERALL_COMPLETION": "NOT_YET_100_PERCENT",
+    "rule": "These two labels must never be collapsed. Agent-scope 100% means all 8 agent-verifiable gates PASS. It does NOT mean shipped."
+  },
+  "apple_distribution_gates": {
+    "TESTFLIGHT": "UNKNOWN",
+    "APP_STORE_CONNECT": "UNKNOWN",
+    "evidence_rule": "A 5-6 day old LOCAL ledger is NOT current Apple evidence. Only a live observation counts."
+  },
+  "classification": {
+    "NON_FOUNDER_WORK": "COMPLETE",
+    "FOUNDER_REVIEW_GATE": "OPEN",
+    "DISTRIBUTION_OUTCOME": "UNKNOWN",
+    "PROMOTION_TO_SHIPPED": "HOLD"
+  },
+  "next_action_owner": "FOUNDER",
+  "next_transition_depends_on": "one live App Store Connect observation"
+}

@@ -1,0 +1,35 @@
+{
+  "schema": "DOORSTEP_FOUNDER_OBSERVATION_v1",
+  "created_at_utc": "2026-07-13T01:58:41.603372+00:00",
+  "requirement": "REQ-CP-TESTFLIGHT + REQ-CP-APP_STORE_CONNECT",
+  "why_founder_only": "Reading live Apple state requires founder-held App Store Connect credentials. No agent may infer it from a local ledger.",
+  "capture": [
+    {
+      "1": "current app version and build number"
+    },
+    {
+      "2": "TestFlight processing / distribution state"
+    },
+    {
+      "3": "App Review status"
+    },
+    {
+      "4": "any rejection, Resolution Center, export-compliance, privacy, agreement, or metadata message"
+    },
+    {
+      "5": "exact observation timestamp (UTC)"
+    },
+    {
+      "6": "screenshots or exported evidence"
+    }
+  ],
+  "mechanical_mapping": {
+    "Ready for Sale / available": "DISTRIBUTION GATE PASS",
+    "In Review / Waiting for Review": "PENDING (not blocked)",
+    "Rejected / Metadata Rejected": "FAIL \u2014 record Apple findings",
+    "Developer Action Needed": "FOUNDER/ACTION BLOCKER",
+    "Build missing or processing": "BLOCKED",
+    "Unable to verify": "UNKNOWN"
+  },
+  "agent_commitment": "On receipt of the observation, the agent maps it mechanically to the HELM result, updates the two Apple gates, recomputes champion completion from validators, and either promotes to SHIPPED or opens the precise remediation. No inference, no ledger substitution."
+}
