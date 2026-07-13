@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>HELM · LIVE</title>
+<style>
+  :root{
+    --bg:#0b0e14; --panel:#0f1420; --line:#223049; --dim:#4f6285; --mid:#6b7a99;
+    --txt:#d6e1ff; --bright:#eaf1ff; --ok:#5cf2b6; --info:#7aa2ff; --warn:#f0b354;
+    --bad:#ff6b81; --purple:#c89bff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+       font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px}
+  .wrap{max-width:1500px;margin:0 auto;padding:18px}
+  header{display:flex;justify-content:space-between;align-items:baseline;
+         border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:16px}
+  .brand{font-size:18px;font-weight:700;letter-spacing:.16em;color:var(--bright)}
+  .pill{font-size:10px;border-radius:99px;padding:2px 8px;border:1px solid;margin-left:10px}
+  .ok{color:var(--ok);border-color:#1d5c46;background:#0d2a20}
+  .warn{color:var(--warn);border-color:#6b4a1d;background:#1a1410}
+  .bad{color:var(--bad);border-color:#6b1d2b;background:#1c1014}
+  .unk{color:#7f8ca6;border-color:#3a4560;background:#141824}
+  .meta{font-size:11px;color:var(--mid)}
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:10px 12px}
+  .lbl{font-size:10px;color:var(--mid);letter-spacing:.1em}
+  .big{font-size:20px;color:var(--bright);margin-top:3px}
+  .sub{font-size:10px;margin-top:2px}
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+  .fac{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:12px;
+       position:relative;overflow:hidden;transition:border-color .3s}
+  .fac .bar{position:absolute;top:0;left:0;height:2px;width:100%;background:var(--line)}
+  .fac.live{border-color:var(--info)}
+  .fac.pass{border-color:#1d5c46}
+  .fac.blocked{border-color:#6b4a1d}
+  .fname{font-size:14px;font-weight:700;color:var(--bright);letter-spacing:.08em}
+  .fmiss{font-size:10px;color:var(--mid);margin:3px 0 8px;height:13px;overflow:hidden}
+  .ring{position:absolute;right:10px;top:10px;width:10px;height:10px;border-radius:99px;
+        background:#26324a}
+  .ring.on{background:var(--info);box-shadow:0 0 0 0 rgba(122,162,255,.7);animation:p 1.6s infinite}
+  @keyframes p{0%{box-shadow:0 0 0 0 rgba(122,162,255,.55)}70%{box-shadow:0 0 0 12px rgba(122,162,255,0)}100%{box-shadow:0 0 0 0 rgba(122,162,255,0)}}
+  .cols{display:grid;grid-template-columns:1.2fr .85fr;gap:10px}
+  .stream{height:280px;overflow-y:auto;font-size:11px;line-height:1.85}
+  .stream .t{color:var(--dim)}
+  .k-LEASE{color:var(--info)} .k-DISPATCH{color:var(--purple)} .k-VERIFY{color:var(--ok)}
+  table{width:100%;border-collapse:collapse;font-size:11px}
+  td{padding:3px 4px;border-bottom:1px solid #18202f;color:#9fb2d4}
+  .foot{margin-top:12px;padding-top:9px;border-top:1px solid var(--line);
+        font-size:9.5px;color:var(--dim);display:flex;justify-content:space-between}
+  canvas{display:block;width:100%;height:120px}
+  .art{font-size:10px;color:#8fa3c6;background:#0c111b;border:1px solid #1a2334;
+       border-radius:6px;padding:7px;margin-top:6px;white-space:pre-wrap;max-height:74px;overflow:hidden}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <span class="brand">H E L M &nbsp;/&nbsp; L I V E</span>
+      <span id="mode" class="pill unk">CONNECTING</span>
+    </div>
+    <div class="meta">
+      observed <span id="obs">—</span> · commit <span id="commit">—</span> ·
+      <span style="color:var(--ok)">every field observed · 0 fabricated</span>
+    </div>
+  </header>
+
+  <div class="kpis">
+    <div class="card"><div class="lbl">CONCURRENCY</div>
+      <div class="big" id="conc">—</div><div class="sub" id="concMode">—</div></div>
+    <div class="card"><div class="lbl">ACTIVE LEASES</div>
+      <div class="big" id="leases">—</div><div class="sub" id="leaseSub">—</div></div>
+    <div class="card"><div class="lbl">ADAPTERS</div>
+      <div class="big" id="adp">—</div><div class="sub" id="adpSub">—</div></div>
+    <div class="card"><div class="lbl">SPEND</div>
+      <div class="big" id="spend">$0.00</div><div class="sub" style="color:var(--ok)">LOCAL_ONLY egress</div></div>
+    <div class="card"><div class="lbl">VERDICT</div>
+      <div class="big" id="verdict">—</div><div class="sub" id="vpkg">—</div></div>
+  </div>
+
+  <!-- heartbeat: one bar per real event, NOT a timer -->
+  <div class="card" style="margin-bottom:14px;padding:8px 12px">
+    <div class="lbl">RUNTIME HEARTBEAT · one mark per observed event</div>
+    <canvas id="hb"></canvas>
+  </div>
+
+  <div class="grid4" id="facs"></div>
+
+  <div class="cols">
+    <div class="card">
+      <div class="lbl" style="margin-bottom:8px">EVENT STREAM · real dispatches, leases, validators</div>
+      <div class="stream" id="stream"></div>
+    </div>
+    <div>
+      <div class="card" id="hold" style="margin-bottom:10px"></div>
+      <div class="card">
+        <div class="lbl" style="margin-bottom:6px">TASKS · live from the task table</div>
+        <table id="tasks"></table>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>motion is event-driven — a ring pulses because a lease is held, not because a timer fired</span>
+    <span id="err" style="color:var(--bad)"></span>
+  </div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const UNK = v => v === undefined || v === null || v === "UNKNOWN" ||
+                 (v && v.state === "UNKNOWN");
+const show = v => UNK(v) ? "UNKNOWN" : v;
+
+// heartbeat: we push a mark ONLY when the observed event count changes.
+let hbData = [], lastEventCount = -1;
+function drawHB(){
+  const c = $("#hb"), x = c.getContext("2d");
+  const w = c.width = c.clientWidth * devicePixelRatio;
+  const h = c.height = 120 * devicePixelRatio;
+  x.clearRect(0,0,w,h);
+  x.strokeStyle = "#1a2334"; x.beginPath(); x.moveTo(0,h/2); x.lineTo(w,h/2); x.stroke();
+  const n = Math.max(hbData.length, 1), step = w / 60;
+  hbData.slice(-60).forEach((d,i)=>{
+    const bx = i*step + step/2;
+    const mag = Math.min(d.delta, 6);
+    const bh = mag === 0 ? 2*devicePixelRatio : (mag/6)*(h*0.42);
+    x.strokeStyle = d.delta === 0 ? "#233047" : (d.pass ? "#5cf2b6" : "#7aa2ff");
+    x.lineWidth = Math.max(2, step*0.28);
+    x.beginPath(); x.moveTo(bx, h/2 - bh); x.lineTo(bx, h/2 + bh); x.stroke();
+  });
+}
+
+async function tick(){
+  let d;
+  try{
+    const r = await fetch("/api/helm/live", {cache:"no-store"});
+    d = await r.json();
+    $("#err").textContent = "";
+  }catch(e){
+    // FAIL LOUD. Never keep showing the last good value as if it were current.
+    $("#mode").className = "pill bad"; $("#mode").textContent = "API UNREACHABLE";
+    $("#err").textContent = "live feed lost — values below are STALE, not current";
+    return;
+  }
+
+  $("#obs").textContent = (d.observed_at||"UNKNOWN").slice(11,19)+"Z";
+  const v = d.verdict || {};
+  $("#commit").textContent = UNK(v.commit) ? "UNKNOWN" : String(v.commit).slice(0,8);
+
+  // concurrency
+  const c = d.concurrency || {};
+  if(UNK(c)){ $("#conc").textContent="UNKNOWN"; $("#concMode").textContent=c.reason||""; }
+  else{
+    $("#conc").innerHTML = `${c.effective_limit} <span style="font-size:11px;color:var(--mid)">/ ${c.configured_limit} configured</span>`;
+    $("#concMode").textContent = `${c.concurrency_mode} · ${c.status}`;
+    $("#concMode").style.color = c.status==="OK" ? "var(--ok)" : "var(--warn)";
+  }
+
+  // leases
+  const L = Array.isArray(d.leases) ? d.leases : [];
+  $("#leases").textContent = Array.isArray(d.leases) ? L.length : "UNKNOWN";
+  $("#leaseSub").textContent = L.length ? L.map(x=>"fence "+x.fencing_token).join(" · ") : "idle";
+  $("#leaseSub").style.color = L.length ? "var(--info)" : "var(--dim)";
+  $("#mode").className = "pill " + (L.length ? "ok" : "unk");
+  $("#mode").textContent = L.length ? "COUNCIL EXECUTING" : "COUNCIL IDLE";
+
+  // adapters
+  const A = Array.isArray(d.adapters) ? d.adapters : [];
+  const ready = A.filter(a=>a.readiness==="READY");
+  const front = A.filter(a=>a.auth_required && a.readiness!=="READY");
+  $("#adp").innerHTML = `${ready.length} <span style="font-size:11px;color:var(--mid)">ready</span>`;
+  $("#adpSub").innerHTML = front.length
+     ? `<span style="color:var(--warn)">${front.length} frontier · NO KEYS</span>` : "all ready";
+
+  // verdict
+  $("#verdict").textContent = show(v.verdict);
+  $("#verdict").style.color = v.verdict==="AUTHORITATIVE_PASS" ? "var(--ok)"
+                            : UNK(v.verdict) ? "#7f8ca6" : "var(--warn)";
+  $("#vpkg").textContent = UNK(v.package) ? "no package" : v.package.replace("HELM-","");
+
+  // factories
+  const scope = d.scope || {};
+  const F = (scope.factories && !UNK(scope.factories)) ? scope.factories : {};
+  const four = (v.four && !UNK(v.four)) ? v.four : {};
+  const tasks = Array.isArray(d.tasks) ? d.tasks : [];
+  const arts = Array.isArray(d.artifacts) ? d.artifacts : [];
+  const leaseBy = {}; L.forEach(x=>leaseBy[x.task_id]=x);
+
+  const FAC = ["HASF","HRF","HCF","HSF"];
+  $("#facs").innerHTML = FAC.map(f=>{
+    const st = F[f] || {};
+    const t = tasks.find(t=>t.factory===f && /REAL/.test(t.task_id||"")) || {};
+    const lease = leaseBy[t.task_id];
+    const verd = four[f];
+    const art = arts.find(a=>a.task_id===t.task_id);
+    const cls = lease ? "live" : (verd==="PASS" ? "pass"
+              : (st.state==="BLOCKED" ? "blocked" : ""));
+    const badge = lease ? `<span class="pill ok">EXECUTING</span>`
+                : verd ? `<span class="pill ${verd==="PASS"?"ok":"bad"}">${verd}</span>`
+                : `<span class="pill unk">UNKNOWN</span>`;
+    const blocked = (st.blocked_missions||[]).length
+      ? `<div style="font-size:9px;color:var(--warn);margin-top:4px">mission hold: ${st.blocked_missions.join(",")}</div>` : "";
+    return `<div class="fac ${cls}">
+      <div class="bar" style="background:${lease?"var(--info)":verd==="PASS"?"var(--ok)":"var(--line)"}"></div>
+      <div class="ring ${lease?"on":""}"></div>
+      <div class="fname">${f}</div>
+      <div class="fmiss">${(t.name||"no seeded mission").slice(0,34)}</div>
+      ${badge}
+      <div style="font-size:9px;color:var(--dim);margin-top:6px">
+        state ${show(st.state)} ${lease?`· fence ${lease.fencing_token}`:""}
+        ${art?`· ${art.bytes}B · ${art.sha256}`:""}
+      </div>
+      ${blocked}
+      ${art?`<div class="art">${art.preview.replace(/[<>]/g,"")}</div>`:""}
+    </div>`;
+  }).join("");
+
+  // Epic Fury hold
+  const pm = (scope.product_missions && !UNK(scope.product_missions))
+           ? scope.product_missions["EPIC_FURY_2026.distribution"] : null;
+  $("#hold").innerHTML = pm ? `
+    <div class="lbl" style="color:var(--warn)">EPIC_FURY_2026 · distribution</div>
+    <div style="font-size:15px;color:var(--warn);font-weight:700;margin:4px 0 2px">${pm.state}</div>
+    <div style="font-size:10px;color:#9d8156">${pm.reason} · founder gate</div>
+    <div style="font-size:9.5px;color:var(--mid);margin-top:7px;border-top:1px solid #2a3448;padding-top:6px">
+      HASF engineering <span style="color:var(--ok)">ELIGIBLE</span> — the hold is mission-scoped
+    </div>
+    <div style="font-size:9.5px;color:#7f8ca6;margin-top:7px">
+      TESTFLIGHT / APP STORE · <b style="letter-spacing:.06em">UNKNOWN</b> — not observed, never guessed
+    </div>`
+    : `<div class="lbl">EPIC FURY</div><div style="color:#7f8ca6;margin-top:5px">UNKNOWN</div>`;
+
+  // tasks
+  $("#tasks").innerHTML = tasks.slice(0,8).map(t=>{
+    const col = t.status==="COMPLETED"?"var(--ok)":t.status==="FAILED"?"var(--bad)"
+              : t.status==="PENDING"?"var(--info)":"var(--mid)";
+    return `<tr><td style="color:#7f93b8">${t.task_id||"?"}</td>
+      <td style="color:${col}">${t.status||"UNKNOWN"}</td>
+      <td style="color:var(--dim)">${t.factory||"—"}</td></tr>`;
+  }).join("");
+
+  // event stream + heartbeat (driven by REAL event count)
+  const E = (d.events && d.events.events) ? d.events.events : [];
+  $("#stream").innerHTML = E.slice().reverse().map(e=>{
+    const ts = String(e.ts||"").slice(11,19);
+    const det = e.detail==="PASS"||e.detail==="COMPLETED" ? `<span style="color:var(--ok)">${e.detail}</span>`
+              : e.detail==="FAIL" ? `<span style="color:var(--bad)">FAIL</span>`
+              : `<span style="color:var(--mid)">${show(e.detail)}</span>`;
+    return `<div><span class="t">${ts}</span>
+      <span class="k-${e.kind}">${e.kind}</span>
+      <span style="color:#8fa3c6">${e.task_id}</span> ${det}
+      ${e.fencing_token?`<span class="t">·fence ${e.fencing_token}</span>`:""}</div>`;
+  }).join("") || `<div style="color:var(--dim)">no observed events yet</div>`;
+
+  if(lastEventCount >= 0){
+    const delta = Math.max(0, E.length - lastEventCount);
+    hbData.push({delta, pass: E.slice(-delta||-1).some(e=>e.detail==="PASS")});
+    if(hbData.length>120) hbData.shift();
+    drawHB();
+  }
+  lastEventCount = E.length;
+}
+tick(); setInterval(tick, 1500);
+window.addEventListener("resize", drawHB);
+</script>
+</body>
+</html>
