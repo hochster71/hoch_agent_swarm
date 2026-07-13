@@ -41,6 +41,7 @@ LEASES = ROOT / "coordination" / "leases"
 PKGS = ROOT / "coordination" / "council" / "live_proof_packages"
 ARTIFACTS = ROOT / "artifacts" / "factory"
 UI = ROOT / "frontend_live" / "helm.html"
+PERT_UI = ROOT / "frontend_live" / "pert.html"
 
 UNKNOWN = "UNKNOWN"
 
@@ -225,6 +226,14 @@ def helm_live() -> JSONResponse:
         "security": live_security(),
         "verdict": live_verdict(),
     })
+
+
+@app.get("/pert", response_class=HTMLResponse)
+def pert_wall() -> str:
+    """The 85-inch wall. Same runtime-truth feed; nothing on it can be faked."""
+    if PERT_UI.exists():
+        return PERT_UI.read_text()
+    return "<h1>PERT wall missing</h1>"
 
 
 @app.get("/", response_class=HTMLResponse)

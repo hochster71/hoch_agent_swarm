@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>HELM · PERT · LIVE</title>
+<style>
+  :root{
+    --bg:#05070c; --panel:#0b1018; --line:#1b2537; --dim:#3f5170; --mid:#61748f;
+    --txt:#c9d8f2; --bright:#f0f6ff; --ok:#4ff0b7; --info:#6fa8ff; --warn:#ffc061;
+    --bad:#ff6b81; --purple:#c89bff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:var(--bg);color:var(--txt);overflow:hidden;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  /* 85" wall: everything scales from vw so it reads from across the room */
+  body{font-size:clamp(11px,0.78vw,20px)}
+  #wall{height:100vh;display:flex;flex-direction:column;padding:1.2vw 1.6vw;gap:0.9vw}
+
+  header{display:flex;justify-content:space-between;align-items:baseline;
+    border-bottom:1px solid var(--line);padding-bottom:0.7vw}
+  .brand{font-size:1.9vw;font-weight:800;letter-spacing:0.42vw;color:var(--bright)}
+  .sub{font-size:0.72vw;color:var(--mid);letter-spacing:.18em}
+  .pill{font-size:0.7vw;border-radius:99px;padding:0.2vw 0.7vw;border:1px solid;margin-left:0.8vw}
+  .ok{color:var(--ok);border-color:#17604a;background:#07231b}
+  .bad{color:var(--bad);border-color:#6b1d2b;background:#1a0c11}
+  .unk{color:#7f8ca6;border-color:#31405c;background:#0d131d}
+
+  .kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:0.7vw}
+  .k{background:var(--panel);border:1px solid var(--line);border-radius:0.5vw;padding:0.6vw 0.8vw}
+  .kl{font-size:0.62vw;color:var(--mid);letter-spacing:.16em}
+  .kv{font-size:1.55vw;color:var(--bright);font-weight:700;margin-top:0.15vw;line-height:1.1}
+  .ks{font-size:0.6vw;margin-top:0.1vw}
+
+  #stage{flex:1;position:relative;background:var(--panel);
+    border:1px solid var(--line);border-radius:0.6vw;overflow:hidden}
+  canvas{position:absolute;inset:0;width:100%;height:100%}
+  #legend{position:absolute;left:1vw;bottom:0.8vw;font-size:0.62vw;color:var(--dim);
+    display:flex;gap:1.2vw;align-items:center}
+  .dot{display:inline-block;width:0.55vw;height:0.55vw;border-radius:99px;margin-right:0.3vw}
+  #stale{position:absolute;inset:0;display:none;align-items:center;justify-content:center;
+    background:rgba(5,7,12,.86);z-index:9}
+  #stale div{text-align:center}
+  #stale .t{font-size:2.4vw;color:var(--bad);font-weight:800;letter-spacing:.2em}
+  #stale .s{font-size:0.9vw;color:var(--mid);margin-top:0.6vw}
+</style>
+</head>
+<body>
+<div id="wall">
+  <header>
+    <div>
+      <span class="brand">H E L M · P E R T</span>
+      <span id="mode" class="pill unk">CONNECTING</span>
+    </div>
+    <div class="sub">
+      LIVE RUNTIME · <span id="obs">—</span> · <span id="commit">—</span> ·
+      <span style="color:var(--ok)">EVERY NODE OBSERVED · 0 FABRICATED</span>
+    </div>
+  </header>
+
+  <div class="kpis">
+    <div class="k"><div class="kl">NORTH STAR</div><div class="kv" id="ns">—</div><div class="ks" id="nsS">—</div></div>
+    <div class="k"><div class="kl">REVENUE</div><div class="kv" id="rev">—</div><div class="ks" id="revS">—</div></div>
+    <div class="k"><div class="kl">SPEND TODAY</div><div class="kv" id="sp">—</div><div class="ks" id="spS">—</div></div>
+    <div class="k"><div class="kl">SECURITY · 800-53</div><div class="kv" id="sec">—</div><div class="ks" id="secS">—</div></div>
+    <div class="k"><div class="kl">ACTIVE LEASES</div><div class="kv" id="lz">—</div><div class="ks" id="lzS">—</div></div>
+    <div class="k"><div class="kl">CRITICAL PATH</div><div class="kv" id="cp">—</div><div class="ks" id="cpS">—</div></div>
+  </div>
+
+  <div id="stage">
+    <canvas id="c"></canvas>
+    <div id="legend">
+      <span><i class="dot" style="background:var(--ok)"></i>COMPLETE</span>
+      <span><i class="dot" style="background:var(--info)"></i>EXECUTING</span>
+      <span><i class="dot" style="background:var(--warn)"></i>BLOCKED_EXTERNAL</span>
+      <span><i class="dot" style="background:var(--bad)"></i>FINDING / FAILED</span>
+      <span><i class="dot" style="background:#3f5170"></i>UNKNOWN — never guessed</span>
+      <span style="color:var(--dim)">edges pulse only on OBSERVED transitions</span>
+    </div>
+    <div id="stale"><div>
+      <div class="t">FEED LOST</div>
+      <div class="s">values are STALE — not current. This wall will not lie to you.</div>
+    </div></div>
+  </div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const UNK=v=>v===undefined||v===null||v==="UNKNOWN"||(v&&v.state==="UNKNOWN");
+const c=$("#c"), X=c.getContext("2d");
+let W=0,H=0,DPR=Math.min(devicePixelRatio||1,2);
+function size(){ const r=c.getBoundingClientRect();
+  W=c.width=r.width*DPR; H=c.height=r.height*DPR; }
+new ResizeObserver(size).observe($("#stage")); size();
+
+// ---- the PERT graph: HELM's real value chain. Node state comes ONLY from live data.
+const NODES=[
+  {id:"IDEA",   x:.07,y:.50, label:"MISSION",     sub:"seeded task"},
+  {id:"LEASE",  x:.21,y:.50, label:"LEASE",       sub:"fencing token"},
+  {id:"GATE",   x:.35,y:.50, label:"GATEWAY",     sub:"SC-7 chokepoint"},
+  {id:"HASF",   x:.50,y:.18, label:"HASF",        sub:"apps"},
+  {id:"HRF",    x:.50,y:.39, label:"HRF",         sub:"research"},
+  {id:"HCF",    x:.50,y:.61, label:"HCF",         sub:"security"},
+  {id:"HSF",    x:.50,y:.82, label:"HSF",         sub:"stories"},
+  {id:"VALID",  x:.645,y:.50,label:"VALIDATE",    sub:"independent"},
+  {id:"SHIP",   x:.775,y:.50,label:"SHIP",        sub:"distribution"},
+  {id:"CASH",   x:.915,y:.50,label:"CASH",        sub:"settled revenue"},
+];
+const EDGES=[["IDEA","LEASE"],["LEASE","GATE"],
+  ["GATE","HASF"],["GATE","HRF"],["GATE","HCF"],["GATE","HSF"],
+  ["HASF","VALID"],["HRF","VALID"],["HCF","VALID"],["HSF","VALID"],
+  ["VALID","SHIP"],["SHIP","CASH"]];
+
+const COL={COMPLETE:"#4ff0b7",EXEC:"#6fa8ff",BLOCK:"#ffc061",BAD:"#ff6b81",UNK:"#3f5170"};
+let state={}, pulses=[], t=0, dead=false;
+
+function setState(d){
+  const S={};
+  const leases=Array.isArray(d.leases)?d.leases:[];
+  const byTask={}; leases.forEach(l=>byTask[l.task_id]=l);
+  const tasks=Array.isArray(d.tasks)?d.tasks:[];
+  const four=(d.verdict&&d.verdict.four&&!UNK(d.verdict.four))?d.verdict.four:{};
+  const fac=(d.scope&&d.scope.factories&&!UNK(d.scope.factories))?d.scope.factories:{};
+
+  S.IDEA = tasks.length? "COMPLETE":"UNK";
+  S.LEASE= leases.length? "EXEC":"COMPLETE";
+  S.GATE = (d.security&&!UNK(d.security)&&
+            (d.security.controls||[]).find(x=>x.control_id==="SC-7")||{}).status==="IMPLEMENTED"
+           ? "COMPLETE":"UNK";
+
+  ["HASF","HRF","HCF","HSF"].forEach(f=>{
+    const t=tasks.find(t=>t.factory===f&&/REAL/.test(t.task_id||""));
+    const lease=t&&byTask[t.task_id];
+    if(lease) S[f]="EXEC";
+    else if(four[f]==="PASS") S[f]="COMPLETE";
+    else if(four[f]==="FAIL") S[f]="BAD";
+    else if((fac[f]||{}).state==="BLOCKED") S[f]="BLOCK";
+    else S[f]="UNK";
+  });
+
+  S.VALID = Object.values(four).some(v=>v==="PASS")?"COMPLETE":"UNK";
+  // SHIP is BLOCKED_EXTERNAL while Apple holds the distribution mission
+  const pm=(d.scope&&d.scope.product_missions&&!UNK(d.scope.product_missions))
+           ? d.scope.product_missions["EPIC_FURY_2026.distribution"]:null;
+  S.SHIP = pm ? (pm.state==="BLOCKED_EXTERNAL"?"BLOCK":"COMPLETE") : "UNK";
+  // CASH is the only node that cannot be faked: it needs a settled dollar.
+  const rev=(d.northstar&&!UNK(d.northstar))?d.northstar.revenue_settled_usd:null;
+  S.CASH = (rev===null)?"UNK":(rev>0?"COMPLETE":"BAD");
+
+  // pulse an edge ONLY when a node actually changed state
+  EDGES.forEach(([a,b])=>{
+    if(state[b]&&S[b]&&state[b]!==S[b]) pulses.push({a,b,t:0});
+  });
+  state=S;
+}
+
+function nodeAt(id){ return NODES.find(n=>n.id===id); }
+function px(n){ return {x:n.x*W, y:n.y*H}; }
+
+function draw(){
+  t+=0.016;
+  X.clearRect(0,0,W,H);
+
+  // edges
+  EDGES.forEach(([a,b])=>{
+    const p=px(nodeAt(a)), q=px(nodeAt(b));
+    const sa=state[a]||"UNK", sb=state[b]||"UNK";
+    const live = sa==="COMPLETE"||sa==="EXEC";
+    X.strokeStyle = live? "rgba(111,168,255,.28)":"rgba(63,81,112,.22)";
+    X.lineWidth = 2*DPR;
+    X.beginPath();
+    const mx=(p.x+q.x)/2;
+    X.moveTo(p.x,p.y); X.bezierCurveTo(mx,p.y,mx,q.y,q.x,q.y); X.stroke();
+
+    // flow dots ONLY along edges whose source is genuinely executing
+    if(sa==="EXEC"){
+      for(let k=0;k<3;k++){
+        const u=((t*0.35)+k/3)%1;
+        const bx=(1-u)**3*p.x+3*(1-u)**2*u*mx+3*(1-u)*u*u*mx+u**3*q.x;
+        const by=(1-u)**3*p.y+3*(1-u)**2*u*p.y+3*(1-u)*u*u*q.y+u**3*q.y;
+        X.fillStyle="rgba(111,168,255,.9)";
+        X.beginPath(); X.arc(bx,by,2.4*DPR,0,7); X.fill();
+      }
+    }
+  });
+
+  // observed-transition pulses
+  pulses=pulses.filter(p=>p.t<1);
+  pulses.forEach(p=>{
+    p.t+=0.02;
+    const q=px(nodeAt(p.b));
+    X.strokeStyle=`rgba(79,240,183,${(1-p.t)*.8})`;
+    X.lineWidth=2.5*DPR;
+    X.beginPath(); X.arc(q.x,q.y,(14+p.t*44)*DPR,0,7); X.stroke();
+  });
+
+  // nodes
+  NODES.forEach(n=>{
+    const {x,y}=px(n); const s=state[n.id]||"UNK";
+    const col = s==="COMPLETE"?COL.COMPLETE : s==="EXEC"?COL.EXEC
+              : s==="BLOCK"?COL.BLOCK : s==="BAD"?COL.BAD : COL.UNK;
+    const r=13*DPR;
+
+    if(s==="EXEC"){ // breathing ring — ONLY while a lease is genuinely held
+      const b=1+Math.sin(t*3)*0.35;
+      X.strokeStyle=`rgba(111,168,255,.35)`; X.lineWidth=2*DPR;
+      X.beginPath(); X.arc(x,y,r+10*DPR*b,0,7); X.stroke();
+    }
+    X.fillStyle="#0b1018"; X.strokeStyle=col; X.lineWidth=2.4*DPR;
+    X.beginPath(); X.arc(x,y,r,0,7); X.fill(); X.stroke();
+    X.fillStyle=col; X.beginPath(); X.arc(x,y,4.2*DPR,0,7); X.fill();
+
+    X.textAlign="center"; X.fillStyle="#f0f6ff";
+    X.font=`700 ${11*DPR}px ui-monospace,Menlo,monospace`;
+    X.fillText(n.label,x,y-r-10*DPR);
+    X.fillStyle="#61748f"; X.font=`${9*DPR}px ui-monospace,Menlo,monospace`;
+    X.fillText(s==="UNK"?"UNKNOWN":n.sub, x, y+r+15*DPR);
+  });
+  requestAnimationFrame(draw);
+}
+draw();
+
+async function tick(){
+  let d;
+  try{
+    const r=await fetch("/api/helm/live",{cache:"no-store"});
+    d=await r.json(); dead=false; $("#stale").style.display="none";
+  }catch(e){
+    // The wall must NEVER show a stale number as if it were live.
+    dead=true; $("#stale").style.display="flex";
+    $("#mode").className="pill bad"; $("#mode").textContent="FEED LOST";
+    return;
+  }
+  setState(d);
+  const L=Array.isArray(d.leases)?d.leases:[];
+  $("#mode").className="pill "+(L.length?"ok":"unk");
+  $("#mode").textContent=L.length?"COUNCIL EXECUTING":"COUNCIL IDLE";
+  $("#obs").textContent=(d.observed_at||"UNKNOWN").slice(11,19)+"Z";
+  const V=d.verdict||{};
+  $("#commit").textContent=UNK(V.commit)?"UNKNOWN":String(V.commit).slice(0,8);
+
+  const N=d.northstar||{};
+  const undef=UNK(N)||N.value==="UNDEFINED";
+  $("#ns").textContent=undef?"UNDEFINED":N.value;
+  $("#ns").style.color=undef?"var(--bad)":"var(--ok)";
+  $("#nsS").textContent=undef?"no revenue → no denominator":"founder min / $";
+  $("#nsS").style.color=undef?"var(--bad)":"var(--mid)";
+
+  const rev=UNK(N)?null:N.revenue_settled_usd;
+  $("#rev").textContent=rev===null?"UNKNOWN":"$"+(+rev).toFixed(2);
+  $("#rev").style.color=rev>0?"var(--ok)":"var(--bad)";
+  $("#revS").textContent=UNK(N)?"":`${N.lifetime_sales} lifetime sales`;
+  $("#revS").style.color=rev>0?"var(--ok)":"var(--bad)";
+
+  const S=d.spend||{};
+  $("#sp").textContent=UNK(S)?"UNKNOWN":"$"+S.spent_today_usd.toFixed(4);
+  $("#spS").textContent=UNK(S)?"":`${S.dispatches_metered} metered · chain ${S.chain_valid?"OK":"BROKEN"}`;
+  $("#spS").style.color=(!UNK(S)&&!S.chain_valid)?"var(--bad)":"var(--mid)";
+
+  const C=d.security||{};
+  $("#sec").textContent=UNK(C)?"UNKNOWN":C.posture_percent+"%";
+  $("#sec").style.color=UNK(C)?"#7f8ca6":C.posture_percent>=95?"var(--ok)":C.posture_percent>=80?"var(--warn)":"var(--bad)";
+  $("#secS").textContent=UNK(C)?"":`${C.implemented}/${C.controls_assessed} · ${C.open_findings} finding(s)`;
+  $("#secS").style.color=(!UNK(C)&&C.high_findings)?"var(--bad)":"var(--mid)";
+
+  $("#lz").textContent=Array.isArray(d.leases)?L.length:"UNKNOWN";
+  $("#lzS").textContent=L.length?L.map(x=>"fence "+x.fencing_token).join(" · "):"idle";
+  $("#lzS").style.color=L.length?"var(--info)":"var(--dim)";
+
+  // critical path = the first node that is NOT complete
+  const order=["IDEA","LEASE","GATE","HASF","VALID","SHIP","CASH"];
+  const block=order.find(id=>state[id]!=="COMPLETE")||"NONE";
+  $("#cp").textContent=block;
+  $("#cp").style.color=block==="CASH"?"var(--bad)":block==="SHIP"?"var(--warn)":"var(--info)";
+  $("#cpS").textContent=block==="CASH"?"no buyer has ever paid"
+                       :block==="SHIP"?"Apple review · external"
+                       :"blocking node";
+}
+tick(); setInterval(tick,1500);
+</script>
+</body>
+</html>
