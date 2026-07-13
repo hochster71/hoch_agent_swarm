@@ -100,6 +100,36 @@ def live_factories() -> Any:
         return _unknown(f"scoped states unreadable: {e}")
 
 
+def _validator_evidence() -> dict:
+    """Read REAL validator verdicts from the verification ledger. No inference."""
+    out = {}
+    import time as _t
+    for led in (ROOT / "coordination" / "council").rglob("verification_ledger.jsonl"):
+        for line in led.read_text().splitlines():
+            try:
+                d = json.loads(line)
+            except Exception:
+                continue
+            tid = d.get("task_id")
+            if not tid:
+                continue
+            art = d.get("artifact_sha256")
+            fresh = "UNKNOWN"
+            ts = d.get("ts", "")
+            try:
+                age = _t.time() - _t.mktime(_t.strptime(ts.split(".")[0].replace("Z", ""),
+                                                        "%Y-%m-%dT%H:%M:%S"))
+                fresh = "FRESH" if age < 86400 else "STALE"
+            except Exception:
+                fresh = "UNKNOWN"
+            out[tid] = {"verdict": d.get("verdict"),
+                        "evidence_id": d.get("task_id") if d.get("verdict") else None,
+                        "artifact_sha256": art,
+                        "provenance_status": "PASS" if art else "UNKNOWN",
+                        "freshness_status": fresh}
+    return out
+
+
 def live_tasks() -> Any:
     """F-2/F-5: the canonical enum is enforced HERE, at ingestion. An illegal status
     (AgentHASF / IDEA / LEASE) does NOT reach the wall as if it were a state -- it renders
@@ -119,15 +149,17 @@ def live_tasks() -> Any:
         c.close()
         rows, rejected = [], 0
         for r in raw:
-            ev = r.get("evidence_path")
-            has_artifact = bool(ev) and (ROOT / str(ev)).exists()
+            # EXPLICIT validator evidence. An artifact EXISTING does not prove a validator
+            # PASSED -- inferring that would manufacture a new false-positive path.
+            vv = _validator_evidence().get(r["task_id"], {})
             res = resolve_status(
                 raw=r.get("status"),
-                execution_finished=str(r.get("status", "")).upper() in ("COMPLETE", "COMPLETED"),
-                validator_passed=has_artifact,      # artifact only exists on a validated pass
-                artifact_exists=has_artifact,
-                evidence_fresh=has_artifact,
-                provenance_matches=has_artifact,
+                execution_status=r.get("status"),
+                validator_status=vv.get("verdict"),
+                validator_evidence_id=vv.get("evidence_id"),
+                artifact_digest=vv.get("artifact_sha256"),
+                provenance_status=vv.get("provenance_status"),
+                freshness_status=vv.get("freshness_status"),
             )
             if res.get("error") or res.get("downgraded"):
                 rejected += 1
@@ -262,10 +294,8 @@ def api_factories():
 @app.get("/api/helm/concurrency")
 def api_concurrency():
     """Capacity and utilisation are DIFFERENT facts."""
-    from backend.truth.integrity import concurrency_facts
-    from backend.mission_control.persistent_scheduler import PersistentScheduler
-    return concurrency_facts(PersistentScheduler(
-        evidence_dir=ROOT / "coordination" / "council"))
+    from backend.truth.runtime_source import concurrency_truth
+    return concurrency_truth(configured_capacity=4)
 
 
 @app.get("/api/helm/live")

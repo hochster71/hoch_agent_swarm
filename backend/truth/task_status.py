@@ -85,35 +85,83 @@ def coerce_for_display(value: Any) -> tuple[str, str | None]:
         return TaskStatus.UNKNOWN.value, str(e)
 
 
+# ---- downgrade reason taxonomy ----------------------------------------------------------
+class DowngradeReason(str, Enum):
+    MISSING_VALIDATOR_EVIDENCE = "MISSING_VALIDATOR_EVIDENCE"
+    MISSING_ARTIFACT = "MISSING_ARTIFACT"
+    STALE_EVIDENCE = "STALE_EVIDENCE"
+    PROVENANCE_MISMATCH = "PROVENANCE_MISMATCH"
+    EXECUTION_NOT_COMPLETE = "EXECUTION_NOT_COMPLETE"
+
+
+class RecordClass(str, Enum):
+    GENUINE_INCOMPLETE = "GENUINE_INCOMPLETE"          # work really isn't done
+    LEGACY_UNMIGRATED = "LEGACY_UNMIGRATED"            # done, but predates evidence capture
+    MALFORMED = "MALFORMED"                            # illegal/garbage record
+    STALE = "STALE"                                    # evidence too old to trust
+
+
 # ---- COMPLETE is earned, never asserted -------------------------------------------------
 COMPLETION_REQUIREMENTS = (
-    "execution_finished", "validator_passed", "artifact_exists",
-    "evidence_fresh", "provenance_matches",
+    "execution_status", "validator_status", "validator_evidence_id",
+    "artifact_digest", "provenance_status", "freshness_status",
 )
 
 
-def may_be_complete(*, execution_finished: bool, validator_passed: bool,
-                    artifact_exists: bool, evidence_fresh: bool,
-                    provenance_matches: bool) -> tuple[bool, list[str]]:
-    """A node may become COMPLETE ONLY when ALL five hold. Returns (ok, unmet)."""
-    facts = dict(execution_finished=execution_finished, validator_passed=validator_passed,
-                 artifact_exists=artifact_exists, evidence_fresh=evidence_fresh,
-                 provenance_matches=provenance_matches)
-    unmet = [k for k in COMPLETION_REQUIREMENTS if not facts[k]]
-    return (not unmet), unmet
+def completion_evidence(*, execution_status: Any = None, validator_status: Any = None,
+                        validator_evidence_id: Any = None, artifact_digest: Any = None,
+                        provenance_status: Any = None,
+                        freshness_status: Any = None) -> tuple[bool, list[str]]:
+    """COMPLETE requires EXPLICIT evidence for each field.
+
+    CRITICAL: an artifact EXISTING does not prove a validator PASSED. An earlier version of
+    this code inferred validator_passed from artifact_exists -- which manufactured a brand new
+    false-positive path: any task that wrote a file would have been reported COMPLETE. The
+    validator's own verdict must be presented, with an evidence id. Nothing is inferred.
+    """
+    reasons: list[str] = []
+    if str(execution_status).upper() not in ("COMPLETED", "COMPLETE"):
+        reasons.append(DowngradeReason.EXECUTION_NOT_COMPLETE.value)
+    if str(validator_status).upper() != "PASS":
+        reasons.append(DowngradeReason.MISSING_VALIDATOR_EVIDENCE.value)
+    if not validator_evidence_id:
+        if DowngradeReason.MISSING_VALIDATOR_EVIDENCE.value not in reasons:
+            reasons.append(DowngradeReason.MISSING_VALIDATOR_EVIDENCE.value)
+    if not artifact_digest:
+        reasons.append(DowngradeReason.MISSING_ARTIFACT.value)
+    if str(provenance_status).upper() != "PASS":
+        reasons.append(DowngradeReason.PROVENANCE_MISMATCH.value)
+    if str(freshness_status).upper() != "FRESH":
+        reasons.append(DowngradeReason.STALE_EVIDENCE.value)
+    return (not reasons), reasons
 
 
-def resolve_status(*, raw: Any, execution_finished: bool = False, validator_passed: bool = False,
-                   artifact_exists: bool = False, evidence_fresh: bool = False,
-                   provenance_matches: bool = False) -> dict[str, Any]:
-    """Authoritative resolution. A COMPLETE claim is DOWNGRADED unless it is earned."""
+def classify_record(raw_status: Any, reasons: list[str]) -> str:
+    """Distinguish genuine incomplete work from legacy/malformed/stale records."""
+    up = str(raw_status).upper()
+    if up not in VALID_TASK_STATUSES and up not in _LEGACY_MAP:
+        return RecordClass.MALFORMED.value
+    if DowngradeReason.STALE_EVIDENCE.value in reasons and len(reasons) == 1:
+        return RecordClass.STALE.value
+    # claimed complete, executed, but simply never captured evidence -> legacy, not a lie
+    if up in ("COMPLETE", "COMPLETED") and \
+            DowngradeReason.EXECUTION_NOT_COMPLETE.value not in reasons:
+        return RecordClass.LEGACY_UNMIGRATED.value
+    return RecordClass.GENUINE_INCOMPLETE.value
+
+
+def resolve_status(*, raw: Any, **evidence: Any) -> dict[str, Any]:
+    """Authoritative resolution. A COMPLETE claim is DOWNGRADED unless EXPLICIT evidence backs
+    every requirement. Downgrades carry a typed reason list and a record classification."""
     status, err = coerce_for_display(raw)
     if status == TaskStatus.COMPLETE.value:
-        ok, unmet = may_be_complete(
-            execution_finished=execution_finished, validator_passed=validator_passed,
-            artifact_exists=artifact_exists, evidence_fresh=evidence_fresh,
-            provenance_matches=provenance_matches)
+        ok, reasons = completion_evidence(**evidence)
         if not ok:
-            return {"status": TaskStatus.VERIFYING.value, "claimed": TaskStatus.COMPLETE.value,
-                    "downgraded": True, "unmet_completion_requirements": unmet, "error": err}
-    return {"status": status, "downgraded": False, "error": err}
+            return {"status": TaskStatus.VERIFYING.value,
+                    "claimed": TaskStatus.COMPLETE.value,
+                    "downgraded": True,
+                    "downgrade_reasons": reasons,
+                    "record_class": classify_record(raw, reasons),
+                    "error": err}
+    return {"status": status, "downgraded": False, "error": err,
+            "record_class": (RecordClass.MALFORMED.value if err else None)}

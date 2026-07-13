@@ -143,6 +143,12 @@ if failures:
     "failed_controls": failures,
     "cycles": len(cycles),
     "observed_peak_concurrency": peak,
+    "capacity": {"configured_worker_capacity": CAPACITY,
+                 "worker_peak_concurrency": worker_peak,
+                 "recovery_peak_concurrency": recovery_peak,
+                 "total_peak_concurrency": total_peak,
+                 "capacity_violation": violation},
+    "notes": notes,
     "unrelated_work_continued_after_every_injection": not any(
         f_.startswith("injection") for f_ in failures),
     "evaluator": "seal_soak_phase.py (independent of the runner that produced the evidence)",

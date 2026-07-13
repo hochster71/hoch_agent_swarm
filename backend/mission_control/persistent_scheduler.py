@@ -50,6 +50,15 @@ class PersistentScheduler:
         # Concurrency & quotas
         self.concurrency_limit = 4
         self.active_leases: Dict[str, Dict[str, Any]] = {}
+        # Declare THIS ledger as the canonical runtime source so the API/UI cannot silently
+        # read a different one and report UNKNOWN when the truth is simply elsewhere.
+        try:
+            import uuid as _uuid
+            from backend.truth.runtime_source import publish as _publish
+            self.instance_id = f"sched-{_uuid.uuid4().hex[:8]}"
+            _publish(self.evidence_dir, self.instance_id)
+        except Exception:
+            self.instance_id = "UNKNOWN"
         self.retries: Dict[str, int] = {}
         self.max_retries = 3
 
@@ -298,6 +307,28 @@ class PersistentScheduler:
             "fencing_token": lease["fencing_token"],
             "status": "ACQUIRED"
         })
+
+        # LEASE-LEAK GUARD (found by the live 2h soak). Everything from here to release runs
+        # under a guard: if ANY exception escapes, the lease is still released and the failure
+        # is recorded. Without this, one raised exception leaked the lease permanently --
+        # the task could never be re-leased, and observed concurrency was inflated by a
+        # phantom holder that had already died.
+        try:
+            return self._execute_task_body(task, task_id, pod, lease)
+        except Exception as _leak_e:
+            logger.error(f"{task_id}: execute body raised: {_leak_e}")
+            self.log_lease({"ts": get_utc_now_str(), "task_id": task_id,
+                            "lease_id": lease["lease_id"], "status": "FAILED",
+                            "error": str(_leak_e)[:160]})
+            return False
+        finally:
+            # idempotent: release_lease is a no-op if already released by the body
+            try:
+                self.lease_manager.release_lease(task_id, lease["lease_id"], status="RELEASED")
+            except Exception:
+                pass
+
+    def _execute_task_body(self, task, task_id, pod, lease) -> bool:
         
         # 2. Envelope & signature
         envelope = {

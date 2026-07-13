@@ -1,0 +1,7 @@
+{
+  "scheduler_instance_id": "sched-c923b269",
+  "ledger_path": "/tmp/leakproof/task_lease_ledger.jsonl",
+  "evidence_dir": "/tmp/leakproof",
+  "pid": 7078,
+  "published_at": "2026-07-13T23:23:28Z"
+}
