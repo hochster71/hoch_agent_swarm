@@ -6,7 +6,10 @@ blockers, dispatches via CouncilDispatchGateway, and records ledgers.
 from __future__ import annotations
 import os
 import json
+import secrets
 import sqlite3
+from pathlib import Path as _P
+ROOT = _P(__file__).resolve().parents[2]
 import datetime
 import hashlib
 import time
@@ -58,6 +61,15 @@ class PersistentScheduler:
     def log_dispatch(self, entry: Dict[str, Any]):
         with open(self.dispatch_log, "a", encoding="utf-8") as f:
             f.write(json.dumps(entry) + "\n")
+
+    def _append_jsonl(self, name, rec):
+        p = self.evidence_dir / name
+        p.parent.mkdir(parents=True, exist_ok=True)
+        with open(p, "a", encoding="utf-8") as f:
+            f.write(json.dumps(rec) + "\n")
+
+    def log_result_envelope(self, rec):
+        self._append_jsonl("result_envelopes.jsonl", rec)
 
     def log_verification(self, entry: Dict[str, Any]):
         with open(self.verification_log, "a", encoding="utf-8") as f:
@@ -173,7 +185,9 @@ class PersistentScheduler:
             "task_id": task_id,
             "pert_node": task_id,
             "scope": f"factory:{pod}",
-            "prompt": f"Execute factory workflow task: {task['name']}",
+            # A real bounded mission carries its own instruction. Fall back to the
+            # generic form only for legacy rows.
+            "prompt": task.get("mission_prompt") or f"Execute factory workflow task: {task['name']}",
             "evidence_contract": ["verdict", "checked_at"]
         }
         envelope_hash = hashlib.sha256(json.dumps(envelope, sort_keys=True).encode()).hexdigest()
@@ -220,15 +234,60 @@ class PersistentScheduler:
             "exit_code": exit_code
         })
         
-        # 4. Independent verification
-        passed = (status_val == "COMPLETED" and exit_code == 0)
+        # 3b. PERSIST THE ARTIFACT. Previously the adapter's output was discarded --
+        #     the run could be "PASS" while producing nothing at all.
+        artifact_dir = ROOT / "artifacts" / "factory"
+        artifact_dir.mkdir(parents=True, exist_ok=True)
+        artifact_path = artifact_dir / f"{task_id}.md"
+        artifact_text = stdout or ""
+        artifact_path.write_text(artifact_text, encoding="utf-8")
+        artifact_sha = hashlib.sha256(artifact_text.encode()).hexdigest()
+
+        # 4. INDEPENDENT VERIFICATION of the artifact -- not merely a dispatch check.
+        #    `exit_code == 0` proves a process ran; it does NOT prove the work is real.
+        dispatch_ok = (status_val == "COMPLETED" and exit_code == 0)
+        try:
+            from backend.mission_control.factory_validators import validate as _validate
+            _ctx = task.get("validator_ctx") or {}
+            if isinstance(_ctx, str):
+                try:
+                    _ctx = json.loads(_ctx)
+                except Exception:
+                    _ctx = {}
+            val = _validate(pod, artifact_text, _ctx)
+        except Exception as e:
+            val = {"validator": "ERROR", "verdict": "FAIL", "checks": [],
+                   "failed_checks": ["validator_exception"], "error": str(e)[:160]}
+
+        passed = bool(dispatch_ok and val.get("verdict") == "PASS")
         verdict = "PASS" if passed else "FAIL"
-        
+
+        # 4b. Result envelope (what came back, bound to what went out)
+        self.log_result_envelope({
+            "ts": get_utc_now_str(),
+            "task_id": task_id,
+            "factory": pod,
+            "envelope_hash": envelope_hash,
+            "adapter": str(getattr(req, "dispatch_type", "")),
+            "dispatch_status": status_val,
+            "exit_code": exit_code,
+            "artifact_path": str(artifact_path.relative_to(ROOT)),
+            "artifact_sha256": artifact_sha,
+            "artifact_chars": len(artifact_text),
+        })
+
         self.log_verification({
             "ts": get_utc_now_str(),
             "task_id": task_id,
+            "factory": pod,
             "verdict": verdict,
-            "details": f"Exit code {exit_code}, status {status_val}"
+            "dispatch_ok": dispatch_ok,
+            "validator": val.get("validator"),
+            "validator_verdict": val.get("verdict"),
+            "checks": val.get("checks", []),
+            "failed_checks": val.get("failed_checks", []),
+            "artifact_sha256": artifact_sha,
+            "details": f"exit={exit_code} status={status_val} validator={val.get('verdict')}"
         })
         
         # Update DB state
