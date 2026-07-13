@@ -125,7 +125,7 @@
   ],
   "gates_passed": 7,
   "gates_total": 10,
-  "generated_at": "2026-07-13T00:02:14.995540Z",
+  "generated_at": "2026-07-13T00:01:15.554677Z",
   "ledger_age_hours": 125.6,
   "ledger_is_stale": false,
   "next_critical_path_gate": "TEST",

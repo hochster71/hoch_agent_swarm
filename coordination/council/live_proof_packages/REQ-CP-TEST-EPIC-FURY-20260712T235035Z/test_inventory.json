@@ -1,0 +1,66 @@
+{
+  "champion": "EPIC_FURY_2026",
+  "app_source": "~/Downloads/Epic-fury-2026-main (Next.js; NOT an Xcode project \u2014 xcodebuild N/A)",
+  "app_source_is_git_repo": false,
+  "harness_repo_commit": "a2f98c035db06e20b484afb60251bb04d61cb468",
+  "framework": "Playwright 1.47 (chromium)",
+  "specs": [
+    {
+      "file": "epic-fury-smoke.spec.ts",
+      "purpose": "dashboard feed renders core components",
+      "target": "http://localhost:3003",
+      "prereq": "authenticated session via /api/auth/demo"
+    },
+    {
+      "file": "epic-fury-accessibility.spec.ts",
+      "purpose": "semantic HTML + ARIA",
+      "target": "http://localhost:3003",
+      "prereq": "authenticated session via /api/auth/demo"
+    },
+    {
+      "file": "epic-fury-mobile.spec.ts",
+      "purpose": "mobile viewport responsiveness",
+      "target": "http://localhost:3003",
+      "prereq": "authenticated session via /api/auth/demo"
+    },
+    {
+      "file": "rc47-epic-fury-admin-access.spec.ts",
+      "purpose": "entitlement helper units + access gates",
+      "target": "http://localhost:3003",
+      "prereq": "units none; E2E integration needs auth"
+    },
+    {
+      "file": "rc42-epic-fury-csp-audit.spec.ts",
+      "purpose": "CSP gap audit via PERT cockpit",
+      "target": "http://127.0.0.1:8765",
+      "prereq": "pert_server"
+    },
+    {
+      "file": "rc44-epic-fury-flowchart.spec.ts",
+      "purpose": "dynamic flowchart render",
+      "target": "http://127.0.0.1:8765",
+      "prereq": "pert_server"
+    },
+    {
+      "file": "epic-fury-production-smoke.spec.ts",
+      "purpose": "production health check",
+      "target": "https://epic-fury-2026.vercel.app",
+      "prereq": "EXTERNAL read-only GET to own deployment"
+    },
+    {
+      "file": "epic-fury-staging-assets.spec.ts",
+      "purpose": "staging asset/TLS load",
+      "target": "https://epic-fury-2026-...vercel.app",
+      "prereq": "EXTERNAL read-only GET; staging deployment must exist"
+    }
+  ],
+  "external_call_classification": {
+    "external_specs": 2,
+    "kind": "read-only HTTP GET against the founder's own Vercel deployments",
+    "no_credentials_used": true,
+    "no_spend": true,
+    "no_submission": true,
+    "no_signing": true,
+    "no_production_mutation": true
+  }
+}

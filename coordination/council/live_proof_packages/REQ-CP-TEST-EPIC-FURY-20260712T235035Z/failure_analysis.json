@@ -1,0 +1,19 @@
+{
+  "root_cause": "GET /api/auth/demo -> HTTP 404. The demo-auth endpoint does not exist in the current Epic Fury source.",
+  "evidence": [
+    "curl http://localhost:3003/api/auth/demo?... -> 404",
+    "grep -rl 'auth/demo' in Epic Fury source -> NO MATCHES",
+    "app/api/* contains intel/* routes only; no auth/demo route file"
+  ],
+  "impact": "4 specs begin with page.goto('/api/auth/demo?...') then waitForURL('**/dashboard'). The redirect never happens, so each times out at 45s. These are the 6 timeout failures (smoke, accessibility, mobile, and 3 of the rc47 E2E access-gate cases).",
+  "classification": "BLOCKED_FOUNDER_PREREQUISITE",
+  "why_not_agent_fixable": "The only ways to make these pass are (a) restore a demo-auth BYPASS route into a product that is sitting at the App Store review gate, or (b) rewrite the specs to stop authenticating. (a) is a security-relevant change to a shipping product and is a founder decision, not an agent one. (b) is explicitly prohibited: weakening a test to obtain a pass. Neither was done.",
+  "seventh_failure": {
+    "spec": "epic-fury-staging-assets.spec.ts",
+    "root_cause": "targets a specific staging Vercel deployment URL that no longer resolves/serves; 6.8s failure, not a 45s timeout. The staging deployment appears retired.",
+    "classification": "STALE_TEST_TARGET"
+  },
+  "product_defect_found": false,
+  "test_suite_defect_found": true,
+  "note": "The tests are STALE relative to the product. The product deliberately has no auth-bypass route and enforces fail-closed entitlement (the 7 rc47 entitlement unit tests PASS, including 'fail-closed production default'). The suite still assumes a demo bypass that was removed."
+}

@@ -95,15 +95,34 @@ def run() -> dict:
                           "ledger stale" if stale else "build not VALID"))
 
     # 2. TEST --------------------------------------------------------------
+    # An EXECUTION RECORD now exists. The gate reflects what actually happened -- it does
+    # not become PASS because the suite was run, only if the suite PASSED.
     specs = sorted((ROOT / "tests" / "e2e").glob("*epic-fury*.spec.ts"))
-    # The specs EXIST. Whether they PASS requires running them against a live app,
-    # which is not available here. Existence is not passage.
-    gates.append(gate(
-        "TEST", UNKNOWN,
-        f"{len(specs)} Epic Fury e2e specs exist, but no CURRENT execution record was "
-        f"found. Existence of a test is not evidence that it passed.",
-        [str(s.relative_to(ROOT)) for s in specs[:4]], None,
-        "no fresh test-execution artifact"))
+    runs = sorted((ROOT / "coordination" / "council" / "live_proof_packages")
+                  .glob("REQ-CP-TEST-EPIC-FURY-*"))
+    tr = load(runs[-1] / "test_results.json") if runs else None
+    if not tr:
+        gates.append(gate("TEST", UNKNOWN,
+                          f"{len(specs)} specs exist; no execution record. "
+                          "Existence of a test is not evidence that it passed.",
+                          [], None, "no test-execution artifact"))
+    elif tr.get("failed", 1) == 0 and tr.get("passed", 0) > 0:
+        gates.append(gate("TEST", PASS,
+                          f"{tr['passed']}/{tr['total_tests']} passed, 0 failed",
+                          [str((runs[-1] / "test_results.json").relative_to(ROOT))],
+                          age_hours(runs[-1] / "test_results.json")))
+    else:
+        gates.append(gate(
+            "TEST", FAIL,
+            f"{tr['passed']} passed, {tr['failed']} FAILED of {tr['total_tests']}. "
+            f"Root cause: /api/auth/demo returns 404 -- the demo-auth endpoint the specs "
+            f"depend on does not exist in the current product. Tests are STALE vs product.",
+            [str((runs[-1] / "test_results.json").relative_to(ROOT)),
+             str((runs[-1] / "failure_analysis.json").relative_to(ROOT))],
+            age_hours(runs[-1] / "test_results.json"),
+            "BLOCKED_FOUNDER_PREREQUISITE: restoring an auth-bypass route into a product at "
+            "the App Store gate is a founder/security decision; rewriting the specs to skip "
+            "auth would be weakening a test to obtain a pass."))
 
     # 3. SECURITY ----------------------------------------------------------
     gv = load(PRODUCT / "HASF_GATE_VERIFY.json")

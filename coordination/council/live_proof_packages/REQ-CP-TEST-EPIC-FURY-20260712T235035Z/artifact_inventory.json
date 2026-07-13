@@ -1,0 +1,52 @@
+{
+  "artifacts": [
+    {
+      "path": "canonical_goal_after.log",
+      "bytes": 4044
+    },
+    {
+      "path": "champion_gates_after.json",
+      "bytes": 5136
+    },
+    {
+      "path": "commands.log",
+      "bytes": 101
+    },
+    {
+      "path": "e2e_test.log",
+      "bytes": 26216
+    },
+    {
+      "path": "failure_analysis.json",
+      "bytes": 1694
+    },
+    {
+      "path": "git_status_after.txt",
+      "bytes": 1634
+    },
+    {
+      "path": "git_status_before.txt",
+      "bytes": 1597
+    },
+    {
+      "path": "source_diffs.patch",
+      "bytes": 60270
+    },
+    {
+      "path": "test_environment.json",
+      "bytes": 564
+    },
+    {
+      "path": "test_inventory.json",
+      "bytes": 2257
+    },
+    {
+      "path": "test_results.json",
+      "bytes": 757
+    },
+    {
+      "path": "tested_commit.txt",
+      "bytes": 41
+    }
+  ]
+}

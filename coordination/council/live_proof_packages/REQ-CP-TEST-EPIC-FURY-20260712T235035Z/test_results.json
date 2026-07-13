@@ -1,0 +1,27 @@
+{
+  "tested_harness_commit": "a2f98c035db06e20b484afb60251bb04d61cb468",
+  "total_tests": 17,
+  "passed": 10,
+  "failed": 7,
+  "skipped": 0,
+  "errors": 0,
+  "e2e_specs_expected": 8,
+  "e2e_specs_executed": 8,
+  "e2e_specs_fully_passed": 3,
+  "specs_with_failures": [
+    "epic-fury-smoke.spec.ts",
+    "epic-fury-accessibility.spec.ts",
+    "epic-fury-mobile.spec.ts",
+    "epic-fury-staging-assets.spec.ts",
+    "rc47-epic-fury-admin-access.spec.ts (3 of 10 cases)"
+  ],
+  "specs_fully_passed": [
+    "epic-fury-production-smoke.spec.ts",
+    "rc42-epic-fury-csp-audit.spec.ts",
+    "rc44-epic-fury-flowchart.spec.ts"
+  ],
+  "suppressed_or_skipped": 0,
+  "no_test_was_weakened_to_obtain_a_pass": true,
+  "external_calls": 2,
+  "founder_only_actions": 0
+}

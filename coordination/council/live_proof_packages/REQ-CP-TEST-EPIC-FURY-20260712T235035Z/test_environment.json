@@ -1,0 +1,10 @@
+{
+  "os": "macOS (darwin)",
+  "node": "v26.3.1",
+  "playwright": "1.47 (repo devDependency)",
+  "browser": "chromium",
+  "epic_fury_dev_server": "next dev -p 3003 (NODE_ENV=development)",
+  "pert_server": "uvicorn backend.pert_server:app 127.0.0.1:8765",
+  "note": "Shell NODE_ENV was 'production', which broke Next middleware (EvalError: Code generation from strings disallowed). Overridden to development for the run. This is an ENVIRONMENT fix, not a product change.",
+  "supabase_credentials": "NOT_PROVISIONED (app booted and served HTTP 200 without them)"
+}

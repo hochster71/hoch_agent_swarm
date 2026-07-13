@@ -1,0 +1,1102 @@
+diff --git a/coordination/council/relay/dispatch_ledger.jsonl b/coordination/council/relay/dispatch_ledger.jsonl
+index 3dc881cd..9966eee9 100644
+--- a/coordination/council/relay/dispatch_ledger.jsonl
++++ b/coordination/council/relay/dispatch_ledger.jsonl
+@@ -2,3 +2,12 @@
+ {"adapter": "ollama", "cost_ledger_hash": "47b11d54c85d70d90cfa968e7e7dd95a62eb3f771a6870e9675a3926e286386f", "cost_usd": 0.0, "critic_reasons": [], "critic_verdict": "ACCEPT", "external_call": false, "response_sha256": "1040952549b68d539e658b3f8e46d98b17fc5813386fc0a3b2a873d163bd0d9c", "revision_of": null, "status": "COMPLETED", "task_digest": "429e7f8e6cc2504ffa7c3bb6571dcb7d2a2eb6fdc20b8c051b1b5756a4065ee6", "task_id": "H1D-20260712T220802Z-DF8F1B", "ts": "2026-07-12T22:08:56.477943Z"}
+ {"adapter": "grok", "cost_ledger_hash": "7da4e24e95eb7148621b3e1f87589258cc3b96e8e0a01a6ed80d447d7e22951e", "cost_usd": 0.001322, "critic_reasons": [], "critic_verdict": "ACCEPT", "external_call": true, "response_sha256": "93e2c229668f0134990cb00b2dd26e86f6a85fcfe09323f03adf722356d6627c", "revision_of": null, "status": "COMPLETED", "task_digest": "7ff9245559d99743f6cf4052edee7ec6ce9b18496ef8e9d155cb8d5f2484018e", "task_id": "H1D-20260712T230153Z-8C7ADD", "ts": "2026-07-12T23:02:44.184390Z"}
+ {"adapter": "gemini", "cost_ledger_hash": "1fa95475891b964d40eeba0b0ae1e0e77432574573f503eb5bc19018aba97131", "cost_usd": 0.0, "critic_reasons": ["ADAPTER_TIMEOUT"], "critic_verdict": "REVISE", "external_call": true, "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "revision_of": null, "status": "TIMEOUT", "task_digest": "7ff9245559d99743f6cf4052edee7ec6ce9b18496ef8e9d155cb8d5f2484018e", "task_id": "H1D-20260712T230153Z-8C7ADD", "ts": "2026-07-12T23:05:44.228629Z"}
++{"adapter": "gemini", "cost_ledger_hash": "1906e3dba24d84fe84ef9c6bf6765df8af2f6301b1f23f1e3e70268066132419", "cost_usd": 0.0, "critic_reasons": ["ADAPTER_TIMEOUT"], "critic_verdict": "REVISE", "external_call": true, "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "revision_of": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "status": "TIMEOUT", "task_digest": "7ff9245559d99743f6cf4052edee7ec6ce9b18496ef8e9d155cb8d5f2484018e", "task_id": "H1D-20260712T230153Z-8C7ADD", "ts": "2026-07-12T23:08:44.276388Z"}
++{"adapter": "grok", "cost_ledger_hash": "52a3ee817e0f747e7ca1d9102f5f76ca1336a574c4afa1357cc44770dfaac049", "cost_usd": 0.001307, "critic_reasons": ["MISSING_REQUIRED_EVIDENCE:VERDICT", "MISSING_REQUIRED_EVIDENCE:RATIONALE"], "critic_verdict": "REVISE", "external_call": true, "response_sha256": "a743b25f13c35146d574dc9eef7df002972d40dfef7ce9fe6211569dfab9698c", "revision_of": null, "status": "COMPLETED", "task_digest": "1281ea838a32a1990104e5826dbe333dac135de544d6576897c8e571aa4147e8", "task_id": "H1D7-20260712T230852Z-B75DCF", "ts": "2026-07-12T23:09:08.917984Z"}
++{"adapter": "grok", "cost_ledger_hash": "ee89204e9353e5709af70d306e7f710f9cbbb9dbb4ff9cb02d03cf27dde6772e", "cost_usd": 0.001332, "critic_reasons": ["MISSING_REQUIRED_EVIDENCE:VERDICT", "MISSING_REQUIRED_EVIDENCE:RATIONALE", "MISSING_REQUIRED_EVIDENCE:BYPASS"], "critic_verdict": "REVISE", "external_call": true, "response_sha256": "2a570d3f36b5fb7423d1ae51f584bea27330acd4d41703c80579b8007a3d7ac9", "revision_of": "a743b25f13c35146d574dc9eef7df002972d40dfef7ce9fe6211569dfab9698c", "status": "COMPLETED", "task_digest": "1281ea838a32a1990104e5826dbe333dac135de544d6576897c8e571aa4147e8", "task_id": "H1D7-20260712T230852Z-B75DCF", "ts": "2026-07-12T23:09:24.228868Z"}
++{"adapter": "ollama", "cost_ledger_hash": "2fa93a0e304a9c503f0170e1f8b766655a44dcc4f14c056dd85627ff090a4d06", "cost_usd": 0.0, "critic_reasons": [], "critic_verdict": "ACCEPT", "external_call": false, "response_sha256": "b50d9683428b499ce477c4367aa34dedcf7457c4e2d6a79ebc61a7a0c77ff26d", "revision_of": null, "status": "COMPLETED", "task_digest": "1281ea838a32a1990104e5826dbe333dac135de544d6576897c8e571aa4147e8", "task_id": "H1D7-20260712T230852Z-B75DCF", "ts": "2026-07-12T23:09:35.572569Z"}
++{"adapter": "grok", "cost_ledger_hash": "4fa23ec961547a277784befc4be7b9e0aeed1e16908e8840ab745c4811d63b73", "cost_usd": 0.00129, "critic_reasons": ["MISSING_REQUIRED_EVIDENCE:VERDICT", "MISSING_REQUIRED_EVIDENCE:RATIONALE"], "critic_verdict": "REVISE", "external_call": true, "response_sha256": "f5f5455bbf0fea4249ca7c1c057c2f91672df27b53831db2aea8b0c3c6a134fc", "revision_of": null, "status": "COMPLETED", "task_digest": "9aeca28663efc02fbdff0bece3ca701f6c668842a4869ed1daf96876ed7f9120", "task_id": "H1D7-20260712T230946Z-E27F69", "ts": "2026-07-12T23:10:01.620319Z"}
++{"adapter": "grok", "cost_ledger_hash": "bdd4ae3ab9abf89b14fcccca3d201cf961c010c86ea7cc158a422b3d54757569", "cost_usd": 0.001314, "critic_reasons": ["MISSING_REQUIRED_EVIDENCE:RATIONALE"], "critic_verdict": "REVISE", "external_call": true, "response_sha256": "639861de7213c45da246ef183c774b056c16002e062d7598135c8c157475d87d", "revision_of": "f5f5455bbf0fea4249ca7c1c057c2f91672df27b53831db2aea8b0c3c6a134fc", "status": "COMPLETED", "task_digest": "9aeca28663efc02fbdff0bece3ca701f6c668842a4869ed1daf96876ed7f9120", "task_id": "H1D7-20260712T230946Z-E27F69", "ts": "2026-07-12T23:10:17.363601Z"}
++{"adapter": "grok", "cost_ledger_hash": "28a9840c787a63844381fdf0b1dcfe72d89602c0e082d75845afc83dbf78500b", "cost_usd": 0.001312, "critic_reasons": [], "critic_verdict": "ACCEPT", "external_call": true, "response_sha256": "8685cfc600dbf77215f29360302268951b7ba0456eb76b1c48389d83894ea13e", "revision_of": "639861de7213c45da246ef183c774b056c16002e062d7598135c8c157475d87d", "status": "COMPLETED", "task_digest": "9aeca28663efc02fbdff0bece3ca701f6c668842a4869ed1daf96876ed7f9120", "task_id": "H1D7-20260712T230946Z-E27F69", "ts": "2026-07-12T23:10:51.650071Z"}
++{"adapter": "ollama", "cost_ledger_hash": "27637ef3c3125a71385332dc789f0814cb2a1c6e69ebb61b86e20a6fcf38e69d", "cost_usd": 0.0, "critic_reasons": [], "critic_verdict": "ACCEPT", "external_call": false, "response_sha256": "9a6cfd685de1abd3e2ebeb36d01d4da642d48c2577a8de94d667fceb4243eba2", "revision_of": null, "status": "COMPLETED", "task_digest": "9aeca28663efc02fbdff0bece3ca701f6c668842a4869ed1daf96876ed7f9120", "task_id": "H1D7-20260712T230946Z-E27F69", "ts": "2026-07-12T23:10:55.593152Z"}
++{"adapter": "ollama", "cost_ledger_hash": "9a5f15054ada27a5375410f079002ff85fb143efb009d0cc64415789a26b3674", "cost_usd": 0.0, "critic_reasons": [], "critic_verdict": "ACCEPT", "external_call": false, "response_sha256": "284ffa8472c5db8d6b8610a5aa2fc05af99be110d6c1caddc8f05980d4d53ef8", "revision_of": null, "status": "COMPLETED", "task_digest": "09c47be588a86bc836b8323024a402c0a85a28e17f2d738d89c82b2f21dba4c9", "task_id": "TO003-20260712T233142Z-45D6C2", "ts": "2026-07-12T23:33:46.477211Z"}
+diff --git a/coordination/council/relay/gateway_dispatch_ledger.jsonl b/coordination/council/relay/gateway_dispatch_ledger.jsonl
+index a7711902..c54b1368 100644
+--- a/coordination/council/relay/gateway_dispatch_ledger.jsonl
++++ b/coordination/council/relay/gateway_dispatch_ledger.jsonl
+@@ -2,3 +2,14 @@
+ {"adapter": "openai", "billing_source": "none_blocked", "blocks": ["FOUNDER_GATE_REQUIRED_METERED_API", "MISSING_PERT_NODE", "MISSING_TASK_ID", "PER_TASK_CAP_EXCEEDED"], "caller_identity": "prompt_brain.OpenAIAdapter", "completed_at": "2026-07-12T23:01:47.740407Z", "credit_balance_authoritative": false, "credit_balance_observed": null, "decision_status": "BLOCKED_SPEND", "dispatch_id": "GD-040CB647C725", "dispatch_type": "API_OPENAI", "estimated_cost": 0.0, "input_digest": "1c1c9b7be0d4e8b14ea0c40b9aacef32f2e6db026cae604a0b75522c7487b9e5", "output_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "pert_node": "", "previous_record_hash": "91d9332d94797569290c8cb839d0c90c6badb2603b6515e123a3d1d75bab2236", "provider_reported_cost": null, "record_hash": "b7fca1dcdd44ea94c9869f329daa46da92510cd1463758efb4c906b50a8c5045", "started_at": "2026-07-12T23:01:47.739854Z", "status": "BLOCKED", "task_id": ""}
+ {"adapter": "grok", "billing_source": "estimated_from_tokens_or_request", "caller_identity": "helm.council.router", "completed_at": "2026-07-12T23:02:44.182883Z", "credit_balance_authoritative": false, "credit_balance_observed": 75.2909, "decision_status": "ALLOWED", "dispatch_id": "GD-8A5E2264D7B1", "dispatch_type": "CLI_GROK", "estimated_cost": 0.001322, "input_digest": "b68ef570a2e3c1207c0ca147840258f1a34b8863abaf7f3d571c1a9bb329e6c7", "output_digest": "93e2c229668f0134990cb00b2dd26e86f6a85fcfe09323f03adf722356d6627c", "pert_node": "H1D", "previous_record_hash": "b7fca1dcdd44ea94c9869f329daa46da92510cd1463758efb4c906b50a8c5045", "provider_reported_cost": null, "record_hash": "7da4e24e95eb7148621b3e1f87589258cc3b96e8e0a01a6ed80d447d7e22951e", "started_at": "2026-07-12T23:01:53.012203Z", "status": "COMPLETED", "task_id": "H1D-20260712T230153Z-8C7ADD"}
+ {"adapter": "gemini", "billing_source": "estimated_from_tokens_or_request", "caller_identity": "helm.council.router", "completed_at": "2026-07-12T23:05:44.226556Z", "credit_balance_authoritative": false, "credit_balance_observed": null, "decision_status": "ALLOWED", "dispatch_id": "GD-9D33FB84671C", "dispatch_type": "CLI_GEMINI", "estimated_cost": 0.0, "input_digest": "b68ef570a2e3c1207c0ca147840258f1a34b8863abaf7f3d571c1a9bb329e6c7", "output_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "pert_node": "H1D", "previous_record_hash": "7da4e24e95eb7148621b3e1f87589258cc3b96e8e0a01a6ed80d447d7e22951e", "provider_reported_cost": null, "record_hash": "1fa95475891b964d40eeba0b0ae1e0e77432574573f503eb5bc19018aba97131", "started_at": "2026-07-12T23:02:44.185194Z", "status": "TIMEOUT", "task_id": "H1D-20260712T230153Z-8C7ADD"}
++{"adapter": "gemini", "billing_source": "estimated_from_tokens_or_request", "caller_identity": "helm.council.router", "completed_at": "2026-07-12T23:08:44.274075Z", "credit_balance_authoritative": false, "credit_balance_observed": null, "decision_status": "ALLOWED", "dispatch_id": "GD-BB183C51B4A1", "dispatch_type": "CLI_GEMINI", "estimated_cost": 0.0, "input_digest": "10ae868025e7a085368631225cdfa8269386916364c859d49ce0170281a648c1", "output_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "pert_node": "H1D", "previous_record_hash": "1fa95475891b964d40eeba0b0ae1e0e77432574573f503eb5bc19018aba97131", "provider_reported_cost": null, "record_hash": "1906e3dba24d84fe84ef9c6bf6765df8af2f6301b1f23f1e3e70268066132419", "started_at": "2026-07-12T23:05:44.229451Z", "status": "TIMEOUT", "task_id": "H1D-20260712T230153Z-8C7ADD"}
++{"adapter": "grok", "billing_source": "estimated_from_tokens_or_request", "caller_identity": "helm.h1d7.live_proof", "completed_at": "2026-07-12T23:09:08.917534Z", "credit_balance_authoritative": false, "credit_balance_observed": 75.2896, "decision_status": "ALLOWED", "dispatch_id": "GD-43B48937910E", "dispatch_type": "CLI_GROK", "estimated_cost": 0.001307, "input_digest": "22c594edc0a409b39a0204dd486529983bd622ccadf3479ce50c73c514f9a4d6", "output_digest": "a743b25f13c35146d574dc9eef7df002972d40dfef7ce9fe6211569dfab9698c", "pert_node": "H1D.7", "previous_record_hash": "1906e3dba24d84fe84ef9c6bf6765df8af2f6301b1f23f1e3e70268066132419", "provider_reported_cost": null, "record_hash": "52a3ee817e0f747e7ca1d9102f5f76ca1336a574c4afa1357cc44770dfaac049", "started_at": "2026-07-12T23:08:52.693477Z", "status": "COMPLETED", "task_id": "H1D7-20260712T230852Z-B75DCF"}
++{"adapter": "grok", "billing_source": "estimated_from_tokens_or_request", "caller_identity": "helm.h1d7.live_proof", "completed_at": "2026-07-12T23:09:24.227968Z", "credit_balance_authoritative": false, "credit_balance_observed": 75.2883, "decision_status": "ALLOWED", "dispatch_id": "GD-7297C7288183", "dispatch_type": "CLI_GROK", "estimated_cost": 0.001332, "input_digest": "39d4be1b634ff7907697faf85bef1f59413f9763fc9595348a84bc018efb731a", "output_digest": "2a570d3f36b5fb7423d1ae51f584bea27330acd4d41703c80579b8007a3d7ac9", "pert_node": "H1D.7", "previous_record_hash": "52a3ee817e0f747e7ca1d9102f5f76ca1336a574c4afa1357cc44770dfaac049", "provider_reported_cost": null, "record_hash": "ee89204e9353e5709af70d306e7f710f9cbbb9dbb4ff9cb02d03cf27dde6772e", "started_at": "2026-07-12T23:09:08.918289Z", "status": "COMPLETED", "task_id": "H1D7-20260712T230852Z-B75DCF"}
++{"adapter": "ollama", "billing_source": "estimated_from_tokens_or_request", "caller_identity": "helm.h1d7.live_proof", "completed_at": "2026-07-12T23:09:35.570753Z", "credit_balance_authoritative": false, "credit_balance_observed": null, "decision_status": "ALLOWED", "dispatch_id": "GD-F6240DDA93CD", "dispatch_type": "LOCAL_OLLAMA", "estimated_cost": 0.0, "input_digest": "22c594edc0a409b39a0204dd486529983bd622ccadf3479ce50c73c514f9a4d6", "output_digest": "b50d9683428b499ce477c4367aa34dedcf7457c4e2d6a79ebc61a7a0c77ff26d", "pert_node": "H1D.7", "previous_record_hash": "ee89204e9353e5709af70d306e7f710f9cbbb9dbb4ff9cb02d03cf27dde6772e", "provider_reported_cost": null, "record_hash": "2fa93a0e304a9c503f0170e1f8b766655a44dcc4f14c056dd85627ff090a4d06", "started_at": "2026-07-12T23:09:24.229272Z", "status": "COMPLETED", "task_id": "H1D7-20260712T230852Z-B75DCF"}
++{"adapter": "grok", "billing_source": "estimated_from_tokens_or_request", "caller_identity": "helm.h1d7.live_proof", "completed_at": "2026-07-12T23:10:01.615516Z", "credit_balance_authoritative": false, "credit_balance_observed": 75.287, "decision_status": "ALLOWED", "dispatch_id": "GD-155A402EABF4", "dispatch_type": "CLI_GROK", "estimated_cost": 0.00129, "input_digest": "5aeebf66edd43c93375efed32fd9d0269d0a80495c3957b955cc8b274a66c06a", "output_digest": "f5f5455bbf0fea4249ca7c1c057c2f91672df27b53831db2aea8b0c3c6a134fc", "pert_node": "H1D.7", "previous_record_hash": "2fa93a0e304a9c503f0170e1f8b766655a44dcc4f14c056dd85627ff090a4d06", "provider_reported_cost": null, "record_hash": "4fa23ec961547a277784befc4be7b9e0aeed1e16908e8840ab745c4811d63b73", "started_at": "2026-07-12T23:09:46.198413Z", "status": "COMPLETED", "task_id": "H1D7-20260712T230946Z-E27F69"}
++{"adapter": "grok", "billing_source": "estimated_from_tokens_or_request", "caller_identity": "helm.h1d7.live_proof", "completed_at": "2026-07-12T23:10:17.356827Z", "credit_balance_authoritative": false, "credit_balance_observed": 75.2857, "decision_status": "ALLOWED", "dispatch_id": "GD-3DBDCC3B70A8", "dispatch_type": "CLI_GROK", "estimated_cost": 0.001314, "input_digest": "07102a904dbe206a1d3aabec67749f5bf08ab572e524630d24629d488fadb98b", "output_digest": "639861de7213c45da246ef183c774b056c16002e062d7598135c8c157475d87d", "pert_node": "H1D.7", "previous_record_hash": "4fa23ec961547a277784befc4be7b9e0aeed1e16908e8840ab745c4811d63b73", "provider_reported_cost": null, "record_hash": "bdd4ae3ab9abf89b14fcccca3d201cf961c010c86ea7cc158a422b3d54757569", "started_at": "2026-07-12T23:10:01.621670Z", "status": "COMPLETED", "task_id": "H1D7-20260712T230946Z-E27F69"}
++{"adapter": "grok", "billing_source": "estimated_from_tokens_or_request", "caller_identity": "helm.h1d7.live_proof", "completed_at": "2026-07-12T23:10:51.648090Z", "credit_balance_authoritative": false, "credit_balance_observed": 75.2844, "decision_status": "ALLOWED", "dispatch_id": "GD-CA1066E9BE75", "dispatch_type": "CLI_GROK", "estimated_cost": 0.001312, "input_digest": "52f8d72ae2a5aa876482391e39b9371f2e350ecc8d2a171f5dac8290628e1f58", "output_digest": "8685cfc600dbf77215f29360302268951b7ba0456eb76b1c48389d83894ea13e", "pert_node": "H1D.7", "previous_record_hash": "bdd4ae3ab9abf89b14fcccca3d201cf961c010c86ea7cc158a422b3d54757569", "provider_reported_cost": null, "record_hash": "28a9840c787a63844381fdf0b1dcfe72d89602c0e082d75845afc83dbf78500b", "started_at": "2026-07-12T23:10:17.364524Z", "status": "COMPLETED", "task_id": "H1D7-20260712T230946Z-E27F69"}
++{"adapter": "ollama", "billing_source": "estimated_from_tokens_or_request", "caller_identity": "helm.h1d7.live_proof", "completed_at": "2026-07-12T23:10:55.590628Z", "credit_balance_authoritative": false, "credit_balance_observed": null, "decision_status": "ALLOWED", "dispatch_id": "GD-871B30A479A4", "dispatch_type": "LOCAL_OLLAMA", "estimated_cost": 0.0, "input_digest": "5aeebf66edd43c93375efed32fd9d0269d0a80495c3957b955cc8b274a66c06a", "output_digest": "9a6cfd685de1abd3e2ebeb36d01d4da642d48c2577a8de94d667fceb4243eba2", "pert_node": "H1D.7", "previous_record_hash": "28a9840c787a63844381fdf0b1dcfe72d89602c0e082d75845afc83dbf78500b", "provider_reported_cost": null, "record_hash": "27637ef3c3125a71385332dc789f0814cb2a1c6e69ebb61b86e20a6fcf38e69d", "started_at": "2026-07-12T23:10:51.650485Z", "status": "COMPLETED", "task_id": "H1D7-20260712T230946Z-E27F69"}
++{"adapter": "openai", "billing_source": "none_blocked", "blocks": ["FOUNDER_GATE_REQUIRED_METERED_API", "MISSING_PERT_NODE", "MISSING_TASK_ID", "PER_TASK_CAP_EXCEEDED"], "caller_identity": "prompt_brain.OpenAIAdapter", "completed_at": "2026-07-12T23:11:39.559527Z", "credit_balance_authoritative": false, "credit_balance_observed": null, "decision_status": "BLOCKED_SPEND", "dispatch_id": "GD-E91A2B336173", "dispatch_type": "API_OPENAI", "estimated_cost": 0.0, "input_digest": "1c1c9b7be0d4e8b14ea0c40b9aacef32f2e6db026cae604a0b75522c7487b9e5", "output_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "pert_node": "", "previous_record_hash": "27637ef3c3125a71385332dc789f0814cb2a1c6e69ebb61b86e20a6fcf38e69d", "provider_reported_cost": null, "record_hash": "399a9908f480c1e814d8323991856ac94ad49495c3b79bc09d492456886af1bf", "started_at": "2026-07-12T23:11:39.559067Z", "status": "BLOCKED", "task_id": ""}
++{"adapter": "openai", "billing_source": "none_blocked", "blocks": ["FOUNDER_GATE_REQUIRED_METERED_API", "MISSING_PERT_NODE", "MISSING_TASK_ID", "PER_TASK_CAP_EXCEEDED"], "caller_identity": "prompt_brain.OpenAIAdapter", "completed_at": "2026-07-12T23:11:46.222938Z", "credit_balance_authoritative": false, "credit_balance_observed": null, "decision_status": "BLOCKED_SPEND", "dispatch_id": "GD-D36BC23D2049", "dispatch_type": "API_OPENAI", "estimated_cost": 0.0, "input_digest": "1c1c9b7be0d4e8b14ea0c40b9aacef32f2e6db026cae604a0b75522c7487b9e5", "output_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "pert_node": "", "previous_record_hash": "399a9908f480c1e814d8323991856ac94ad49495c3b79bc09d492456886af1bf", "provider_reported_cost": null, "record_hash": "11271ce808b46bff1994388e5fc3d344a1ad3ef51939a7e2588d113a31b61274", "started_at": "2026-07-12T23:11:46.222460Z", "status": "BLOCKED", "task_id": ""}
++{"adapter": "ollama", "billing_source": "estimated_from_tokens_or_request", "caller_identity": "helm.council.router", "completed_at": "2026-07-12T23:33:46.474946Z", "credit_balance_authoritative": false, "credit_balance_observed": null, "decision_status": "ALLOWED", "dispatch_id": "GD-940563651E7F", "dispatch_type": "LOCAL_OLLAMA", "estimated_cost": 0.0, "input_digest": "1acc51b96353c2c42fcec27ce4e478440d78656182ff4c53920aa6688f6a423d", "output_digest": "284ffa8472c5db8d6b8610a5aa2fc05af99be110d6c1caddc8f05980d4d53ef8", "pert_node": "TO-003", "previous_record_hash": "11271ce808b46bff1994388e5fc3d344a1ad3ef51939a7e2588d113a31b61274", "provider_reported_cost": null, "record_hash": "9a5f15054ada27a5375410f079002ff85fb143efb009d0cc64415789a26b3674", "started_at": "2026-07-12T23:31:42.121060Z", "status": "COMPLETED", "task_id": "TO003-20260712T233142Z-45D6C2"}
+diff --git a/data/prompt_brain/agent_audit.json b/data/prompt_brain/agent_audit.json
+index 5cf903ab..9a533568 100644
+--- a/data/prompt_brain/agent_audit.json
++++ b/data/prompt_brain/agent_audit.json
+@@ -1,6 +1,6 @@
+ {
+   "schema": "hoch-agent-audit-v1",
+-  "at": "2026-07-12T21:12:40.825352Z",
++  "at": "2026-07-12T23:59:30.836008Z",
+   "totals": {
+     "active": 2,
+     "idle": 4,
+@@ -18,7 +18,7 @@
+       "agent": "HASF factory (software)",
+       "status": "IDLE",
+       "state": "CONVERGED",
+-      "last_activity_s": 8,
++      "last_activity_s": 6,
+       "goal_aligned": true,
+       "work_left": "at proxy ceiling \u2014 needs frontier judge (cost)"
+     },
+diff --git a/data/prompt_brain/champion_registry.json b/data/prompt_brain/champion_registry.json
+index e486d2bb..1307d169 100644
+--- a/data/prompt_brain/champion_registry.json
++++ b/data/prompt_brain/champion_registry.json
+@@ -1,6 +1,6 @@
+ {
+   "schema": "brain-convergence-champions-m0",
+-  "generation": 819,
++  "generation": 830,
+   "champions": {
+     "QA": {
+       "gene_id": "gen-gen-HASF-QA-AUTO-038-20260706T002340-20260706T232944",
+@@ -365,5 +365,5 @@
+       "at": "2026-07-06T23:29:44.271637Z"
+     }
+   },
+-  "last_updated": "2026-07-12T21:12:32.368326Z"
++  "last_updated": "2026-07-12T23:59:24.355810Z"
+ }
+\ No newline at end of file
+diff --git a/data/prompt_brain/convergence_status.json b/data/prompt_brain/convergence_status.json
+index 3b6bc827..759f7e0f 100644
+--- a/data/prompt_brain/convergence_status.json
++++ b/data/prompt_brain/convergence_status.json
+@@ -1,6 +1,6 @@
+ {
+   "schema": "brain-convergence-status-m0",
+-  "generation": 819,
++  "generation": 830,
+   "mean_score": 95.583,
+   "last_gain": 0.0,
+   "epsilon": 0.5,
+@@ -5738,6 +5738,83 @@
+       "gain": 0.0,
+       "improver_online": true,
+       "at": "2026-07-12T21:12:32.393122Z"
++    },
++    {
++      "generation": 820,
++      "mean_score": 95.583,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:02:39.092283Z"
++    },
++    {
++      "generation": 821,
++      "mean_score": 95.583,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:06:44.619183Z"
++    },
++    {
++      "generation": 822,
++      "mean_score": 95.583,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:10:59.168475Z"
++    },
++    {
++      "generation": 823,
++      "mean_score": 95.583,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:17:05.730780Z"
++    },
++    {
++      "generation": 824,
++      "mean_score": 95.583,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:23:51.047551Z"
++    },
++    {
++      "generation": 825,
++      "mean_score": 95.583,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:31:43.228577Z"
++    },
++    {
++      "generation": 826,
++      "mean_score": 95.583,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:40:47.849605Z"
++    },
++    {
++      "generation": 827,
++      "mean_score": 95.583,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:47:22.818309Z"
++    },
++    {
++      "generation": 828,
++      "mean_score": 95.583,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:51:27.480000Z"
++    },
++    {
++      "generation": 829,
++      "mean_score": 95.583,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:55:25.813671Z"
++    },
++    {
++      "generation": 830,
++      "mean_score": 95.583,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:59:24.373117Z"
+     }
+   ]
+ }
+\ No newline at end of file
+diff --git a/data/prompt_brain/cyber_swarm_state.json b/data/prompt_brain/cyber_swarm_state.json
+index 68fcb7fe..bf1cc642 100644
+--- a/data/prompt_brain/cyber_swarm_state.json
++++ b/data/prompt_brain/cyber_swarm_state.json
+@@ -1,6 +1,6 @@
+ {
+   "schema": "hoch-cyber-swarm-v1",
+-  "at": "2026-07-12T21:12:40.269575Z",
++  "at": "2026-07-12T23:59:30.222501Z",
+   "target": "backend",
+   "detection_coverage_pct": 57.1,
+   "red_detected": [
+diff --git a/data/prompt_brain/gap_analysis.json b/data/prompt_brain/gap_analysis.json
+index 5bece36a..eff6913f 100644
+--- a/data/prompt_brain/gap_analysis.json
++++ b/data/prompt_brain/gap_analysis.json
+@@ -11,7 +11,7 @@
+     "total_genes": 737,
+     "top5_share": 0.392,
+     "mean_champion_score": 95.583,
+-    "generation": 819,
++    "generation": 830,
+     "state": "CONVERGED"
+   },
+   "by_constraint": {
+diff --git a/data/prompt_brain/improve_cursor.json b/data/prompt_brain/improve_cursor.json
+index d334642a..02cc915d 100644
+--- a/data/prompt_brain/improve_cursor.json
++++ b/data/prompt_brain/improve_cursor.json
+@@ -1 +1 @@
+-{"cursor": 20}
+\ No newline at end of file
++{"cursor": 26}
+\ No newline at end of file
+diff --git a/data/prompt_brain/music/champion_registry.json b/data/prompt_brain/music/champion_registry.json
+index 8a53f268..21f3646c 100644
+--- a/data/prompt_brain/music/champion_registry.json
++++ b/data/prompt_brain/music/champion_registry.json
+@@ -1,7 +1,7 @@
+ {
+   "schema": "brain-champion-registry",
+   "domain": "music",
+-  "generation": 805,
++  "generation": 816,
+   "champions": {
+     "Lo-Fi Hip-Hop": {
+       "gene_id": "seed-lo-f-1113d93381",
+@@ -84,5 +84,5 @@
+       "pool_size": 3
+     }
+   },
+-  "at": "2026-07-12T21:12:39.721476Z"
++  "at": "2026-07-12T23:59:29.610431Z"
+ }
+\ No newline at end of file
+diff --git a/data/prompt_brain/music/convergence_status.json b/data/prompt_brain/music/convergence_status.json
+index 3b943c97..6da3b342 100644
+--- a/data/prompt_brain/music/convergence_status.json
++++ b/data/prompt_brain/music/convergence_status.json
+@@ -1,6 +1,6 @@
+ {
+   "schema": "brain-convergence-status-m0",
+-  "generation": 805,
++  "generation": 816,
+   "mean_score": 96.938,
+   "last_gain": 0.0,
+   "epsilon": 0.5,
+@@ -5636,6 +5636,83 @@
+       "gain": 0.0,
+       "improver_online": true,
+       "at": "2026-07-12T21:12:39.730860Z"
++    },
++    {
++      "generation": 806,
++      "mean_score": 96.938,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:02:48.346321Z"
++    },
++    {
++      "generation": 807,
++      "mean_score": 96.938,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:06:51.772605Z"
++    },
++    {
++      "generation": 808,
++      "mean_score": 96.938,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:11:03.371353Z"
++    },
++    {
++      "generation": 809,
++      "mean_score": 96.938,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:17:13.415826Z"
++    },
++    {
++      "generation": 810,
++      "mean_score": 96.938,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:24:01.484024Z"
++    },
++    {
++      "generation": 811,
++      "mean_score": 96.938,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:31:51.983759Z"
++    },
++    {
++      "generation": 812,
++      "mean_score": 96.938,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:40:52.915045Z"
++    },
++    {
++      "generation": 813,
++      "mean_score": 96.938,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:47:29.084619Z"
++    },
++    {
++      "generation": 814,
++      "mean_score": 96.938,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:51:33.541792Z"
++    },
++    {
++      "generation": 815,
++      "mean_score": 96.938,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:55:31.075134Z"
++    },
++    {
++      "generation": 816,
++      "mean_score": 96.938,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:59:29.611431Z"
+     }
+   ]
+ }
+\ No newline at end of file
+diff --git a/data/prompt_brain/orchestrator_brief.json b/data/prompt_brain/orchestrator_brief.json
+index 14b60509..31fd7f83 100644
+--- a/data/prompt_brain/orchestrator_brief.json
++++ b/data/prompt_brain/orchestrator_brief.json
+@@ -1,7 +1,7 @@
+ {
+   "schema": "hoch-founder-orchestrator-v1",
+   "persona": "AI Michael \u2014 all-in-one CEO / founder / builder / SME",
+-  "at": "2026-07-12T21:12:40.800705Z",
++  "at": "2026-07-12T23:59:30.811333Z",
+   "doctrine": [
+     "no fake-green \u2014 a factory reads only what it earned",
+     "evidence before any GO; fail-closed on the unproven",
+diff --git a/data/prompt_brain/orchestrator_log.jsonl b/data/prompt_brain/orchestrator_log.jsonl
+index 893ff9b1..99ba5a12 100644
+--- a/data/prompt_brain/orchestrator_log.jsonl
++++ b/data/prompt_brain/orchestrator_log.jsonl
+@@ -832,3 +832,14 @@
+ {"at": "2026-07-12T21:02:31.963650Z", "next": "HASF", "autonomous": 0, "escalate": 3}
+ {"at": "2026-07-12T21:08:46.705238Z", "next": "HASF", "autonomous": 0, "escalate": 3}
+ {"at": "2026-07-12T21:12:40.800705Z", "next": "HASF", "autonomous": 0, "escalate": 3}
++{"at": "2026-07-12T23:02:49.641243Z", "next": "HASF", "autonomous": 0, "escalate": 3}
++{"at": "2026-07-12T23:06:53.170860Z", "next": "HASF", "autonomous": 0, "escalate": 3}
++{"at": "2026-07-12T23:11:04.681602Z", "next": "HASF", "autonomous": 0, "escalate": 3}
++{"at": "2026-07-12T23:17:15.233570Z", "next": "HASF", "autonomous": 0, "escalate": 3}
++{"at": "2026-07-12T23:24:02.949382Z", "next": "HASF", "autonomous": 0, "escalate": 3}
++{"at": "2026-07-12T23:31:57.119238Z", "next": "HASF", "autonomous": 0, "escalate": 3}
++{"at": "2026-07-12T23:40:54.305079Z", "next": "HASF", "autonomous": 0, "escalate": 3}
++{"at": "2026-07-12T23:47:30.401819Z", "next": "HASF", "autonomous": 0, "escalate": 3}
++{"at": "2026-07-12T23:51:35.490472Z", "next": "HASF", "autonomous": 0, "escalate": 3}
++{"at": "2026-07-12T23:55:32.436655Z", "next": "HASF", "autonomous": 0, "escalate": 3}
++{"at": "2026-07-12T23:59:30.811333Z", "next": "HASF", "autonomous": 0, "escalate": 3}
+diff --git a/data/prompt_brain/research/champion_registry.json b/data/prompt_brain/research/champion_registry.json
+index 6ae54178..adf9566d 100644
+--- a/data/prompt_brain/research/champion_registry.json
++++ b/data/prompt_brain/research/champion_registry.json
+@@ -1,7 +1,7 @@
+ {
+   "schema": "brain-champion-registry",
+   "domain": "research",
+-  "generation": 804,
++  "generation": 815,
+   "champions": {
+     "Longevity": {
+       "gene_id": "seed-long-de9ffeaa1e",
+@@ -74,5 +74,5 @@
+       "pool_size": 3
+     }
+   },
+-  "at": "2026-07-12T21:12:39.814155Z"
++  "at": "2026-07-12T23:59:29.678387Z"
+ }
+\ No newline at end of file
+diff --git a/data/prompt_brain/research/convergence_status.json b/data/prompt_brain/research/convergence_status.json
+index 4cda1d15..0ae86b8b 100644
+--- a/data/prompt_brain/research/convergence_status.json
++++ b/data/prompt_brain/research/convergence_status.json
+@@ -1,6 +1,6 @@
+ {
+   "schema": "brain-convergence-status-m0",
+-  "generation": 804,
++  "generation": 815,
+   "mean_score": 96.5,
+   "last_gain": 0.0,
+   "epsilon": 0.5,
+@@ -5629,6 +5629,83 @@
+       "gain": 0.0,
+       "improver_online": true,
+       "at": "2026-07-12T21:12:39.814977Z"
++    },
++    {
++      "generation": 805,
++      "mean_score": 96.5,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:02:48.416810Z"
++    },
++    {
++      "generation": 806,
++      "mean_score": 96.5,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:06:51.861813Z"
++    },
++    {
++      "generation": 807,
++      "mean_score": 96.5,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:11:03.441982Z"
++    },
++    {
++      "generation": 808,
++      "mean_score": 96.5,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:17:13.603635Z"
++    },
++    {
++      "generation": 809,
++      "mean_score": 96.5,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:24:01.562542Z"
++    },
++    {
++      "generation": 810,
++      "mean_score": 96.5,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:31:52.263093Z"
++    },
++    {
++      "generation": 811,
++      "mean_score": 96.5,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:40:52.984597Z"
++    },
++    {
++      "generation": 812,
++      "mean_score": 96.5,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:47:29.157430Z"
++    },
++    {
++      "generation": 813,
++      "mean_score": 96.5,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:51:33.706551Z"
++    },
++    {
++      "generation": 814,
++      "mean_score": 96.5,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:55:31.234692Z"
++    },
++    {
++      "generation": 815,
++      "mean_score": 96.5,
++      "gain": 0.0,
++      "improver_online": true,
++      "at": "2026-07-12T23:59:29.679081Z"
+     }
+   ]
+ }
+\ No newline at end of file
+diff --git a/data/prompt_brain/research_meta_decision.json b/data/prompt_brain/research_meta_decision.json
+index 61aacc5f..dafbcb5c 100644
+--- a/data/prompt_brain/research_meta_decision.json
++++ b/data/prompt_brain/research_meta_decision.json
+@@ -1,6 +1,6 @@
+ {
+   "schema": "brain-research-meta-v1",
+-  "at": "2026-07-12T21:12:57.639978Z",
++  "at": "2026-07-12T23:59:44.637374Z",
+   "improver_online": true,
+   "model": "google/gemma-4-12b-qat",
+   "chosen_lever": "SELECT",
+@@ -30,7 +30,7 @@
+     "drift": 13,
+     "expansion_needed_genes": 0,
+     "mean_champion_score": 95.583,
+-    "generation": 819
++    "generation": 830
+   },
+   "global_converged": false
+ }
+\ No newline at end of file
+diff --git a/data/prompt_brain/research_meta_log.jsonl b/data/prompt_brain/research_meta_log.jsonl
+index 50619231..eb83e201 100644
+--- a/data/prompt_brain/research_meta_log.jsonl
++++ b/data/prompt_brain/research_meta_log.jsonl
+@@ -815,3 +815,14 @@
+ {"at": "2026-07-12T21:02:46.453981Z", "chosen_lever": "SELECT", "reason": "43 classes have genes but no champion \u2014 crown them.", "gaps": {"by_constraint": {"SATURATED": 30, "NO_CHAMPION": 43}, "thin": 0, "low_ceiling": 0, "no_champion": 43, "drift": 13, "expansion_needed_genes": 0, "mean_champion_score": 95.583, "generation": 817}, "improver_online": true, "global_converged": false}
+ {"at": "2026-07-12T21:09:03.611059Z", "chosen_lever": "SELECT", "reason": "43 classes have genes but no champion \u2014 crown them.", "gaps": {"by_constraint": {"SATURATED": 30, "NO_CHAMPION": 43}, "thin": 0, "low_ceiling": 0, "no_champion": 43, "drift": 13, "expansion_needed_genes": 0, "mean_champion_score": 95.583, "generation": 818}, "improver_online": true, "global_converged": false}
+ {"at": "2026-07-12T21:12:57.639978Z", "chosen_lever": "SELECT", "reason": "43 classes have genes but no champion \u2014 crown them.", "gaps": {"by_constraint": {"SATURATED": 30, "NO_CHAMPION": 43}, "thin": 0, "low_ceiling": 0, "no_champion": 43, "drift": 13, "expansion_needed_genes": 0, "mean_champion_score": 95.583, "generation": 819}, "improver_online": true, "global_converged": false}
++{"at": "2026-07-12T23:03:04.463537Z", "chosen_lever": "SELECT", "reason": "43 classes have genes but no champion \u2014 crown them.", "gaps": {"by_constraint": {"SATURATED": 30, "NO_CHAMPION": 43}, "thin": 0, "low_ceiling": 0, "no_champion": 43, "drift": 13, "expansion_needed_genes": 0, "mean_champion_score": 95.583, "generation": 820}, "improver_online": true, "global_converged": false}
++{"at": "2026-07-12T23:07:07.509629Z", "chosen_lever": "SELECT", "reason": "43 classes have genes but no champion \u2014 crown them.", "gaps": {"by_constraint": {"SATURATED": 30, "NO_CHAMPION": 43}, "thin": 0, "low_ceiling": 0, "no_champion": 43, "drift": 13, "expansion_needed_genes": 0, "mean_champion_score": 95.583, "generation": 821}, "improver_online": true, "global_converged": false}
++{"at": "2026-07-12T23:11:19.878898Z", "chosen_lever": "SELECT", "reason": "43 classes have genes but no champion \u2014 crown them.", "gaps": {"by_constraint": {"SATURATED": 30, "NO_CHAMPION": 43}, "thin": 0, "low_ceiling": 0, "no_champion": 43, "drift": 13, "expansion_needed_genes": 0, "mean_champion_score": 95.583, "generation": 822}, "improver_online": true, "global_converged": false}
++{"at": "2026-07-12T23:17:32.536272Z", "chosen_lever": "SELECT", "reason": "43 classes have genes but no champion \u2014 crown them.", "gaps": {"by_constraint": {"SATURATED": 30, "NO_CHAMPION": 43}, "thin": 0, "low_ceiling": 0, "no_champion": 43, "drift": 13, "expansion_needed_genes": 0, "mean_champion_score": 95.583, "generation": 823}, "improver_online": true, "global_converged": false}
++{"at": "2026-07-12T23:24:16.997997Z", "chosen_lever": "SELECT", "reason": "43 classes have genes but no champion \u2014 crown them.", "gaps": {"by_constraint": {"SATURATED": 30, "NO_CHAMPION": 43}, "thin": 0, "low_ceiling": 0, "no_champion": 43, "drift": 13, "expansion_needed_genes": 0, "mean_champion_score": 95.583, "generation": 824}, "improver_online": true, "global_converged": false}
++{"at": "2026-07-12T23:32:13.811262Z", "chosen_lever": "SELECT", "reason": "43 classes have genes but no champion \u2014 crown them.", "gaps": {"by_constraint": {"SATURATED": 30, "NO_CHAMPION": 43}, "thin": 0, "low_ceiling": 0, "no_champion": 43, "drift": 13, "expansion_needed_genes": 0, "mean_champion_score": 95.583, "generation": 825}, "improver_online": true, "global_converged": false}
++{"at": "2026-07-12T23:41:08.048852Z", "chosen_lever": "SELECT", "reason": "43 classes have genes but no champion \u2014 crown them.", "gaps": {"by_constraint": {"SATURATED": 30, "NO_CHAMPION": 43}, "thin": 0, "low_ceiling": 0, "no_champion": 43, "drift": 13, "expansion_needed_genes": 0, "mean_champion_score": 95.583, "generation": 826}, "improver_online": true, "global_converged": false}
++{"at": "2026-07-12T23:47:44.050368Z", "chosen_lever": "SELECT", "reason": "43 classes have genes but no champion \u2014 crown them.", "gaps": {"by_constraint": {"SATURATED": 30, "NO_CHAMPION": 43}, "thin": 0, "low_ceiling": 0, "no_champion": 43, "drift": 13, "expansion_needed_genes": 0, "mean_champion_score": 95.583, "generation": 827}, "improver_online": true, "global_converged": false}
++{"at": "2026-07-12T23:51:51.129445Z", "chosen_lever": "SELECT", "reason": "43 classes have genes but no champion \u2014 crown them.", "gaps": {"by_constraint": {"SATURATED": 30, "NO_CHAMPION": 43}, "thin": 0, "low_ceiling": 0, "no_champion": 43, "drift": 13, "expansion_needed_genes": 0, "mean_champion_score": 95.583, "generation": 828}, "improver_online": true, "global_converged": false}
++{"at": "2026-07-12T23:55:46.099454Z", "chosen_lever": "SELECT", "reason": "43 classes have genes but no champion \u2014 crown them.", "gaps": {"by_constraint": {"SATURATED": 30, "NO_CHAMPION": 43}, "thin": 0, "low_ceiling": 0, "no_champion": 43, "drift": 13, "expansion_needed_genes": 0, "mean_champion_score": 95.583, "generation": 829}, "improver_online": true, "global_converged": false}
++{"at": "2026-07-12T23:59:44.637374Z", "chosen_lever": "SELECT", "reason": "43 classes have genes but no champion \u2014 crown them.", "gaps": {"by_constraint": {"SATURATED": 30, "NO_CHAMPION": 43}, "thin": 0, "low_ceiling": 0, "no_champion": 43, "drift": 13, "expansion_needed_genes": 0, "mean_champion_score": 95.583, "generation": 830}, "improver_online": true, "global_converged": false}
+diff --git a/data/prompt_brain/self_heal_state.json b/data/prompt_brain/self_heal_state.json
+index 87ac7c22..bcaa959e 100644
+--- a/data/prompt_brain/self_heal_state.json
++++ b/data/prompt_brain/self_heal_state.json
+@@ -1,6 +1,6 @@
+ {
+   "schema": "hoch-self-heal-v1",
+-  "at": "2026-07-12T21:12:40.756948Z",
++  "at": "2026-07-12T23:59:30.775632Z",
+   "verdict": "NEEDS_OPERATOR",
+   "immunized": true,
+   "findings": 1,
+diff --git a/docs/moonshot/BRAIN_GAP_ANALYSIS.md b/docs/moonshot/BRAIN_GAP_ANALYSIS.md
+index be4dab61..95ca4954 100644
+--- a/docs/moonshot/BRAIN_GAP_ANALYSIS.md
++++ b/docs/moonshot/BRAIN_GAP_ANALYSIS.md
+@@ -1,6 +1,6 @@
+ # BRAIN Gap Analysis
+ 
+-- generation: **819**  |  mean champion score: **95.583**  |  state: **CONVERGED**
++- generation: **830**  |  mean champion score: **95.583**  |  state: **CONVERGED**
+ - gene classes: **73**  |  champion classes: **30**  |  total genes: **737**
+ - concentration (top-5 share of gene pool): **39.2%**
+ - policy: min_pool=6, target_score=70.0
+diff --git a/frontend/data/brain_live.json b/frontend/data/brain_live.json
+index a45f64cc..adc2cf7e 100644
+--- a/frontend/data/brain_live.json
++++ b/frontend/data/brain_live.json
+@@ -1,5 +1,5 @@
+ {
+-  "ts": "2026-07-12T21:12:40.890275Z",
++  "ts": "2026-07-12T23:59:30.893956Z",
+   "live_brain": {
+     "live_brain_available": true,
+     "backend": {
+@@ -9,7 +9,7 @@
+     },
+     "note": "brain can GENERATE at $0"
+   },
+-  "generation": 819,
++  "generation": 830,
+   "genes": 737,
+   "champions": 30,
+   "mean_score": 95.583,
+@@ -41,67 +41,67 @@
+       "gates": 4,
+       "history": [
+         {
+-          "g": 804,
++          "g": 815,
+           "m": 95.583
+         },
+         {
+-          "g": 805,
++          "g": 816,
+           "m": 95.583
+         },
+         {
+-          "g": 806,
++          "g": 817,
+           "m": 95.583
+         },
+         {
+-          "g": 807,
++          "g": 818,
+           "m": 95.583
+         },
+         {
+-          "g": 808,
++          "g": 819,
+           "m": 95.583
+         },
+         {
+-          "g": 809,
++          "g": 820,
+           "m": 95.583
+         },
+         {
+-          "g": 810,
++          "g": 821,
+           "m": 95.583
+         },
+         {
+-          "g": 811,
++          "g": 822,
+           "m": 95.583
+         },
+         {
+-          "g": 812,
++          "g": 823,
+           "m": 95.583
+         },
+         {
+-          "g": 813,
++          "g": 824,
+           "m": 95.583
+         },
+         {
+-          "g": 814,
++          "g": 825,
+           "m": 95.583
+         },
+         {
+-          "g": 815,
++          "g": 826,
+           "m": 95.583
+         },
+         {
+-          "g": 816,
++          "g": 827,
+           "m": 95.583
+         },
+         {
+-          "g": 817,
++          "g": 828,
+           "m": 95.583
+         },
+         {
+-          "g": 818,
++          "g": 829,
+           "m": 95.583
+         },
+         {
+-          "g": 819,
++          "g": 830,
+           "m": 95.583
+         }
+       ]
+@@ -117,67 +117,67 @@
+       "gates": 4,
+       "history": [
+         {
+-          "g": 790,
++          "g": 801,
+           "m": 96.938
+         },
+         {
+-          "g": 791,
++          "g": 802,
+           "m": 96.938
+         },
+         {
+-          "g": 792,
++          "g": 803,
+           "m": 96.938
+         },
+         {
+-          "g": 793,
++          "g": 804,
+           "m": 96.938
+         },
+         {
+-          "g": 794,
++          "g": 805,
+           "m": 96.938
+         },
+         {
+-          "g": 795,
++          "g": 806,
+           "m": 96.938
+         },
+         {
+-          "g": 796,
++          "g": 807,
+           "m": 96.938
+         },
+         {
+-          "g": 797,
++          "g": 808,
+           "m": 96.938
+         },
+         {
+-          "g": 798,
++          "g": 809,
+           "m": 96.938
+         },
+         {
+-          "g": 799,
++          "g": 810,
+           "m": 96.938
+         },
+         {
+-          "g": 800,
++          "g": 811,
+           "m": 96.938
+         },
+         {
+-          "g": 801,
++          "g": 812,
+           "m": 96.938
+         },
+         {
+-          "g": 802,
++          "g": 813,
+           "m": 96.938
+         },
+         {
+-          "g": 803,
++          "g": 814,
+           "m": 96.938
+         },
+         {
+-          "g": 804,
++          "g": 815,
+           "m": 96.938
+         },
+         {
+-          "g": 805,
++          "g": 816,
+           "m": 96.938
+         }
+       ]
+@@ -193,67 +193,67 @@
+       "gates": 5,
+       "history": [
+         {
+-          "g": 789,
++          "g": 800,
+           "m": 96.5
+         },
+         {
+-          "g": 790,
++          "g": 801,
+           "m": 96.5
+         },
+         {
+-          "g": 791,
++          "g": 802,
+           "m": 96.5
+         },
+         {
+-          "g": 792,
++          "g": 803,
+           "m": 96.5
+         },
+         {
+-          "g": 793,
++          "g": 804,
+           "m": 96.5
+         },
+         {
+-          "g": 794,
++          "g": 805,
+           "m": 96.5
+         },
+         {
+-          "g": 795,
++          "g": 806,
+           "m": 96.5
+         },
+         {
+-          "g": 796,
++          "g": 807,
+           "m": 96.5
+         },
+         {
+-          "g": 797,
++          "g": 808,
+           "m": 96.5
+         },
+         {
+-          "g": 798,
++          "g": 809,
+           "m": 96.5
+         },
+         {
+-          "g": 799,
++          "g": 810,
+           "m": 96.5
+         },
+         {
+-          "g": 800,
++          "g": 811,
+           "m": 96.5
+         },
+         {
+-          "g": 801,
++          "g": 812,
+           "m": 96.5
+         },
+         {
+-          "g": 802,
++          "g": 813,
+           "m": 96.5
+         },
+         {
+-          "g": 803,
++          "g": 814,
+           "m": 96.5
+         },
+         {
+-          "g": 804,
++          "g": 815,
+           "m": 96.5
+         }
+       ]
+@@ -542,122 +542,122 @@
+   ],
+   "history": [
+     {
+-      "g": 796,
++      "g": 807,
+       "m": 95.583,
+       "gain": 0.0
+     },
+     {
+-      "g": 797,
++      "g": 808,
+       "m": 95.583,
+       "gain": 0.0
+     },
+     {
+-      "g": 798,
++      "g": 809,
+       "m": 95.583,
+       "gain": 0.0
+     },
+     {
+-      "g": 799,
++      "g": 810,
+       "m": 95.583,
+       "gain": 0.0
+     },
+     {
+-      "g": 800,
++      "g": 811,
+       "m": 95.583,
+       "gain": 0.0
+     },
+     {
+-      "g": 801,
++      "g": 812,
+       "m": 95.583,
+       "gain": 0.0
+     },
+     {
+-      "g": 802,
++      "g": 813,
+       "m": 95.583,
+       "gain": 0.0
+     },
+     {
+-      "g": 803,
++      "g": 814,
+       "m": 95.583,
+       "gain": 0.0
+     },
+     {
+-      "g": 804,
++      "g": 815,
+       "m": 95.583,
+       "gain": 0.0
+     },
+     {
+-      "g": 805,
++      "g": 816,
+       "m": 95.583,
+       "gain": 0.0
+     },
+     {
+-      "g": 806,
++      "g": 817,
+       "m": 95.583,
+       "gain": 0.0
+     },
+     {
+-      "g": 807,
++      "g": 818,
+       "m": 95.583,
+       "gain": 0.0
+     },
+     {
+-      "g": 808,
++      "g": 819,
+       "m": 95.583,
+       "gain": 0.0
+     },
+     {
+-      "g": 809,
++      "g": 820,
+       "m": 95.583,
+       "gain": 0.0
+     },
+     {
+-      "g": 810,
++      "g": 821,
+       "m": 95.583,
+       "gain": 0.0
+     },
+     {
+-      "g": 811,
++      "g": 822,
+       "m": 95.583,
+       "gain": 0.0
+     },
+     {
+-      "g": 812,
++      "g": 823,
+       "m": 95.583,
+       "gain": 0.0
+     },
+     {
+-      "g": 813,
++      "g": 824,
+       "m": 95.583,
+       "gain": 0.0
+     },
+     {
+-      "g": 814,
++      "g": 825,
+       "m": 95.583,
+       "gain": 0.0
+     },
+     {
+-      "g": 815,
++      "g": 826,
+       "m": 95.583,
+       "gain": 0.0
+     },
+     {
+-      "g": 816,
++      "g": 827,
+       "m": 95.583,
+       "gain": 0.0
+     },
+     {
+-      "g": 817,
++      "g": 828,
+       "m": 95.583,
+       "gain": 0.0
+     },
+     {
+-      "g": 818,
++      "g": 829,
+       "m": 95.583,
+       "gain": 0.0
+     },
+     {
+-      "g": 819,
++      "g": 830,
+       "m": 95.583,
+       "gain": 0.0
+     }
+@@ -763,13 +763,13 @@
+     }
+   ],
+   "combat": {
+-    "at": "2026-07-12T21:12:40.899781Z",
++    "at": "2026-07-12T23:59:30.903209Z",
+     "genes_with_combat_record": 0,
+     "total_champion_executions": 0,
+     "gates": {
+       "m0_generation": {
+-        "total": 36,
+-        "VERIFIED": 36
++        "total": 11,
++        "VERIFIED": 11
+       }
+     },
+     "top": []
+@@ -785,7 +785,7 @@
+         "id": "L1",
+         "status": "Active",
+         "cpu": 0,
+-        "ram": 77,
++        "ram": 70,
+         "agents": 10,
+         "latency_ms": 0.0,
+         "authority": "MEASURED_LOCAL",
+@@ -889,25 +889,25 @@
+         "name": "lmstudio",
+         "alive": true,
+         "model": "google/gemma-4-12b-qat",
+-        "latency_ms": 455.4,
++        "latency_ms": 245.5,
+         "failures": 0,
+-        "last_probe": 1783890762.872038
++        "last_probe": 1783900772.722919
+       },
+       {
+         "name": "mac-local",
+         "alive": true,
+         "model": "llama3.1:8b",
+-        "latency_ms": 3278.3,
++        "latency_ms": 1822.0,
+         "failures": 0,
+-        "last_probe": 1783890765.695167
++        "last_probe": 1783900774.299745
+       },
+       {
+         "name": "relay-001",
+         "alive": true,
+         "model": "qwen3:1.7b",
+-        "latency_ms": 798.4,
++        "latency_ms": 693.4,
+         "failures": 0,
+-        "last_probe": 1783890763.215416
++        "last_probe": 1783900773.171245
+       }
+     ],
+     "primary": "lmstudio",
+diff --git a/has_live_project_tracker/data/cost_governor.json b/has_live_project_tracker/data/cost_governor.json
+index a9035545..cab4b5a9 100644
+--- a/has_live_project_tracker/data/cost_governor.json
++++ b/has_live_project_tracker/data/cost_governor.json
+@@ -2,10 +2,10 @@
+   "generated_at": "2026-07-02T11:30:00Z",
+   "monthly_incremental_budget_usd": 200,
+   "grok": {
+-    "credits_remaining_usd": 75.2922,
+-    "credits_used_usd": 13.5978,
++    "credits_remaining_usd": 75.2844,
++    "credits_used_usd": 13.6056,
+     "tokens_used": 43112382,
+-    "requests": 1412,
++    "requests": 1418,
+     "effective_cost_per_1m_tokens": 0.315,
+     "avg_tokens_per_request": 30663,
+     "avg_cost_per_request": 0.0097,
+@@ -26,6 +26,6 @@
+     "monthly_budget_guardrail_usd": 200
+   },
+   "model_routing": [],
+-  "last_metered_at": "2026-07-12T22:08:47.675771Z",
++  "last_metered_at": "2026-07-12T23:10:51.647449Z",
+   "metered_by": "scripts/council/spend_gate.py"
+ }
+diff --git a/has_live_project_tracker/data/goal_blocker_register.json b/has_live_project_tracker/data/goal_blocker_register.json
+index 8d5c8f30..b24aa116 100644
+--- a/has_live_project_tracker/data/goal_blocker_register.json
++++ b/has_live_project_tracker/data/goal_blocker_register.json
+@@ -63,7 +63,7 @@
+       "evidence_path": "has_live_project_tracker/data/fresh_pert_gap_analysis.json",
+       "estimated_wall_clock": "days",
+       "agent_safe": false,
+-      "closed_on_evidence": "2026-07-12T21:13:30.220874Z"
++      "closed_on_evidence": "2026-07-13T00:00:09.348415Z"
+     },
+     {
+       "id": "G-5",
+diff --git a/hoch_pods/compute/cost_ledger.jsonl b/hoch_pods/compute/cost_ledger.jsonl
+index 689fa26c..772717f5 100644
+--- a/hoch_pods/compute/cost_ledger.jsonl
++++ b/hoch_pods/compute/cost_ledger.jsonl
+@@ -11,3 +11,14 @@
+ {"adapter": "gemini", "amount_usd": 0.0, "billing_period": "2026-07", "category": "model_dispatch", "currency": "USD", "date": "2026-07-12", "entry_hash": "e84980bc445c5ffcba4da32de1e7e0e575292ecddac2dd54438704c1810f4119", "exit_code": null, "external_call": true, "latency_ms": 180021, "note": "marginal cost 0 (already-paid plan)", "prev_hash": "c2477c54bb48d55e70ccf0f2fb7ac7fec773ce064530729ccd4c9ccafbcb31cf", "prompt_sha256": "10ae868025e7a085368631225cdfa8269386916364c859d49ce0170281a648c1", "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "status": "TIMEOUT", "task_id": "H1D-20260712T215950Z-CE5105", "ts": "2026-07-12T22:06:20.968725Z"}
+ {"adapter": "grok", "amount_usd": 0.001296, "billing_period": "2026-07", "category": "model_dispatch", "currency": "USD", "date": "2026-07-12", "entry_hash": "66559a9aaabe351bdd66e596eccdebc08211d43676382153ce22f5f970cfdfce", "exit_code": 0, "external_call": true, "latency_ms": 45252, "note": "", "prev_hash": "e84980bc445c5ffcba4da32de1e7e0e575292ecddac2dd54438704c1810f4119", "prompt_sha256": "a1d427f1460610eb6a6c038bcf5a42499e1feafb7e2354d5d14119cb8cd37f0f", "response_sha256": "cfea2e58740b9565cec24a797ad5d917df1624b0fcaa94de9c48224e6eade5f2", "status": "COMPLETED", "task_id": "H1D-20260712T220802Z-DF8F1B", "ts": "2026-07-12T22:08:47.674582Z"}
+ {"adapter": "ollama", "amount_usd": 0.0, "billing_period": "2026-07", "category": "model_dispatch", "currency": "USD", "date": "2026-07-12", "entry_hash": "47b11d54c85d70d90cfa968e7e7dd95a62eb3f771a6870e9675a3926e286386f", "exit_code": 0, "external_call": false, "latency_ms": 8795, "note": "", "prev_hash": "66559a9aaabe351bdd66e596eccdebc08211d43676382153ce22f5f970cfdfce", "prompt_sha256": "a1d427f1460610eb6a6c038bcf5a42499e1feafb7e2354d5d14119cb8cd37f0f", "response_sha256": "1040952549b68d539e658b3f8e46d98b17fc5813386fc0a3b2a873d163bd0d9c", "status": "COMPLETED", "task_id": "H1D-20260712T220802Z-DF8F1B", "ts": "2026-07-12T22:08:56.474921Z"}
++{"adapter": "grok", "amount_usd": 0.001322, "billing_period": "2026-07", "category": "model_dispatch", "currency": "USD", "date": "2026-07-12", "entry_hash": "bd38ca667f7bc8cc6aa5d1053762a391e465d2abe9a200291c53cb9ca1180e8c", "exit_code": 0, "external_call": true, "latency_ms": 51159, "note": "", "prev_hash": "47b11d54c85d70d90cfa968e7e7dd95a62eb3f771a6870e9675a3926e286386f", "prompt_sha256": "b68ef570a2e3c1207c0ca147840258f1a34b8863abaf7f3d571c1a9bb329e6c7", "response_sha256": "93e2c229668f0134990cb00b2dd26e86f6a85fcfe09323f03adf722356d6627c", "status": "COMPLETED", "task_id": "H1D-20260712T230153Z-8C7ADD", "ts": "2026-07-12T23:02:44.175495Z"}
++{"adapter": "gemini", "amount_usd": 0.0, "billing_period": "2026-07", "category": "model_dispatch", "currency": "USD", "date": "2026-07-12", "entry_hash": "c3781c9c6e70e4bf1db284b424bfa17834fa108d88cc60bfd5beeae3e6519608", "exit_code": null, "external_call": true, "latency_ms": 180032, "note": "marginal cost 0 (already-paid plan)", "prev_hash": "bd38ca667f7bc8cc6aa5d1053762a391e465d2abe9a200291c53cb9ca1180e8c", "prompt_sha256": "b68ef570a2e3c1207c0ca147840258f1a34b8863abaf7f3d571c1a9bb329e6c7", "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "status": "TIMEOUT", "task_id": "H1D-20260712T230153Z-8C7ADD", "ts": "2026-07-12T23:05:44.221479Z"}
++{"adapter": "gemini", "amount_usd": 0.0, "billing_period": "2026-07", "category": "model_dispatch", "currency": "USD", "date": "2026-07-12", "entry_hash": "7cdf614cc77fd79bfd611a798ea1dbb3f6a80bf98a926fcf408420e471dfb6d3", "exit_code": null, "external_call": true, "latency_ms": 180033, "note": "marginal cost 0 (already-paid plan)", "prev_hash": "c3781c9c6e70e4bf1db284b424bfa17834fa108d88cc60bfd5beeae3e6519608", "prompt_sha256": "10ae868025e7a085368631225cdfa8269386916364c859d49ce0170281a648c1", "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "status": "TIMEOUT", "task_id": "H1D-20260712T230153Z-8C7ADD", "ts": "2026-07-12T23:08:44.268024Z"}
++{"adapter": "grok", "amount_usd": 0.001307, "billing_period": "2026-07", "category": "model_dispatch", "currency": "USD", "date": "2026-07-12", "entry_hash": "5e92da935ca70793c3dcdb2e26afbed57af79ab40a010dd1e3f2d549f152ca85", "exit_code": 0, "external_call": true, "latency_ms": 16222, "note": "", "prev_hash": "7cdf614cc77fd79bfd611a798ea1dbb3f6a80bf98a926fcf408420e471dfb6d3", "prompt_sha256": "22c594edc0a409b39a0204dd486529983bd622ccadf3479ce50c73c514f9a4d6", "response_sha256": "a743b25f13c35146d574dc9eef7df002972d40dfef7ce9fe6211569dfab9698c", "status": "COMPLETED", "task_id": "H1D7-20260712T230852Z-B75DCF", "ts": "2026-07-12T23:09:08.916221Z"}
++{"adapter": "grok", "amount_usd": 0.001332, "billing_period": "2026-07", "category": "model_dispatch", "currency": "USD", "date": "2026-07-12", "entry_hash": "ee0642161f5f97748e6c6fb4046560565738b07501e4c0a9163fb1d3b3cd60bd", "exit_code": 0, "external_call": true, "latency_ms": 15305, "note": "", "prev_hash": "5e92da935ca70793c3dcdb2e26afbed57af79ab40a010dd1e3f2d549f152ca85", "prompt_sha256": "39d4be1b634ff7907697faf85bef1f59413f9763fc9595348a84bc018efb731a", "response_sha256": "2a570d3f36b5fb7423d1ae51f584bea27330acd4d41703c80579b8007a3d7ac9", "status": "COMPLETED", "task_id": "H1D7-20260712T230852Z-B75DCF", "ts": "2026-07-12T23:09:24.224850Z"}
++{"adapter": "ollama", "amount_usd": 0.0, "billing_period": "2026-07", "category": "model_dispatch", "currency": "USD", "date": "2026-07-12", "entry_hash": "6f3d0c5ef3de404b98bb60dee4a1fe6c75ab354fcc082eb3fc43c3a804d8f001", "exit_code": 0, "external_call": false, "latency_ms": 11337, "note": "", "prev_hash": "ee0642161f5f97748e6c6fb4046560565738b07501e4c0a9163fb1d3b3cd60bd", "prompt_sha256": "22c594edc0a409b39a0204dd486529983bd622ccadf3479ce50c73c514f9a4d6", "response_sha256": "b50d9683428b499ce477c4367aa34dedcf7457c4e2d6a79ebc61a7a0c77ff26d", "status": "COMPLETED", "task_id": "H1D7-20260712T230852Z-B75DCF", "ts": "2026-07-12T23:09:35.568119Z"}
++{"adapter": "grok", "amount_usd": 0.00129, "billing_period": "2026-07", "category": "model_dispatch", "currency": "USD", "date": "2026-07-12", "entry_hash": "59d35947f3951bf10dd4b58ef89221fee631d689b7aa40e43f686a1ec135d280", "exit_code": 0, "external_call": true, "latency_ms": 15400, "note": "", "prev_hash": "6f3d0c5ef3de404b98bb60dee4a1fe6c75ab354fcc082eb3fc43c3a804d8f001", "prompt_sha256": "5aeebf66edd43c93375efed32fd9d0269d0a80495c3957b955cc8b274a66c06a", "response_sha256": "f5f5455bbf0fea4249ca7c1c057c2f91672df27b53831db2aea8b0c3c6a134fc", "status": "COMPLETED", "task_id": "H1D7-20260712T230946Z-E27F69", "ts": "2026-07-12T23:10:01.604952Z"}
++{"adapter": "grok", "amount_usd": 0.001314, "billing_period": "2026-07", "category": "model_dispatch", "currency": "USD", "date": "2026-07-12", "entry_hash": "727b10fa64403ef769c15c7d75b03654ea027672cf7c354f76dab31c7fb3b529", "exit_code": 0, "external_call": true, "latency_ms": 15716, "note": "", "prev_hash": "59d35947f3951bf10dd4b58ef89221fee631d689b7aa40e43f686a1ec135d280", "prompt_sha256": "07102a904dbe206a1d3aabec67749f5bf08ab572e524630d24629d488fadb98b", "response_sha256": "639861de7213c45da246ef183c774b056c16002e062d7598135c8c157475d87d", "status": "COMPLETED", "task_id": "H1D7-20260712T230946Z-E27F69", "ts": "2026-07-12T23:10:17.344101Z"}
++{"adapter": "grok", "amount_usd": 0.001312, "billing_period": "2026-07", "category": "model_dispatch", "currency": "USD", "date": "2026-07-12", "entry_hash": "a8600b1a3b44959d5d5ed4e1a9067ac4bb3a1e7b0d543f492ad630b2df7c92eb", "exit_code": 0, "external_call": true, "latency_ms": 34279, "note": "", "prev_hash": "727b10fa64403ef769c15c7d75b03654ea027672cf7c354f76dab31c7fb3b529", "prompt_sha256": "52f8d72ae2a5aa876482391e39b9371f2e350ecc8d2a171f5dac8290628e1f58", "response_sha256": "8685cfc600dbf77215f29360302268951b7ba0456eb76b1c48389d83894ea13e", "status": "COMPLETED", "task_id": "H1D7-20260712T230946Z-E27F69", "ts": "2026-07-12T23:10:51.645680Z"}
++{"adapter": "ollama", "amount_usd": 0.0, "billing_period": "2026-07", "category": "model_dispatch", "currency": "USD", "date": "2026-07-12", "entry_hash": "b1b2362c431a2cbb8b93cc0f4fc7918e2726934dfb8a9dc1fde7693433f91dce", "exit_code": 0, "external_call": false, "latency_ms": 3936, "note": "", "prev_hash": "a8600b1a3b44959d5d5ed4e1a9067ac4bb3a1e7b0d543f492ad630b2df7c92eb", "prompt_sha256": "5aeebf66edd43c93375efed32fd9d0269d0a80495c3957b955cc8b274a66c06a", "response_sha256": "9a6cfd685de1abd3e2ebeb36d01d4da642d48c2577a8de94d667fceb4243eba2", "status": "COMPLETED", "task_id": "H1D7-20260712T230946Z-E27F69", "ts": "2026-07-12T23:10:55.588477Z"}
++{"adapter": "ollama", "amount_usd": 0.0, "billing_period": "2026-07", "category": "model_dispatch", "currency": "USD", "date": "2026-07-12", "entry_hash": "e4bb8f9041644a8f8520eb30ec2e60821f9b1f336b3aee922ef22a6bc4e8c655", "exit_code": 0, "external_call": false, "latency_ms": 124339, "note": "", "prev_hash": "b1b2362c431a2cbb8b93cc0f4fc7918e2726934dfb8a9dc1fde7693433f91dce", "prompt_sha256": "1acc51b96353c2c42fcec27ce4e478440d78656182ff4c53920aa6688f6a423d", "response_sha256": "284ffa8472c5db8d6b8610a5aa2fc05af99be110d6c1caddc8f05980d4d53ef8", "status": "COMPLETED", "task_id": "TO003-20260712T233142Z-45D6C2", "ts": "2026-07-12T23:33:46.465497Z"}
+diff --git a/package-lock.json b/package-lock.json
+index 5a75c04e..1df51303 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -8,7 +8,7 @@
+       "name": "hoch-agent-swarm",
+       "version": "0.1.6-ERROR-BUDGET-AWARE-AUTONOMY",
+       "devDependencies": {
+-        "@playwright/test": "^1.47.0",
++        "@playwright/test": "^1.61.1",
+         "@tailwindcss/cli": "^4.3.1",
+         "tailwindcss": "^4.3.1",
+         "tsx": "^4.7.1",
+diff --git a/package.json b/package.json
+index 368216a8..1b0cabc6 100644
+--- a/package.json
++++ b/package.json
+@@ -187,7 +187,7 @@
+     "qa:clawde-ux-upgrade": "npx tsx scripts/qa/test-clawde-ux-upgrade-contract.ts"
+   },
+   "devDependencies": {
+-    "@playwright/test": "^1.47.0",
++    "@playwright/test": "^1.61.1",
+     "@tailwindcss/cli": "^4.3.1",
+     "tailwindcss": "^4.3.1",
+     "tsx": "^4.7.1",

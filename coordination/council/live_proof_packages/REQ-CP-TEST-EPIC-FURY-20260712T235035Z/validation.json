@@ -1,0 +1,20 @@
+{
+  "requirement": "REQ-CP-TEST",
+  "status": "FAIL",
+  "reason": "7 of 17 tests failed. No test was skipped, suppressed, quarantined, or weakened.",
+  "e2e_specs_expected": 8,
+  "e2e_specs_executed": 8,
+  "e2e_specs_fully_passed": 3,
+  "acceptance": {
+    "all_tests_execute": true,
+    "no_unresolved_failure": false,
+    "all_8_specs_pass": false,
+    "nothing_silently_skipped": true,
+    "evidence_fresh": true,
+    "external_calls": 2,
+    "founder_only_actions": 0
+  },
+  "champion_product_completion_before": 87.1,
+  "champion_product_completion_after": 70.0,
+  "final_decision": "FAIL"
+}

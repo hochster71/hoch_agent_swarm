@@ -1,6 +1,6 @@
 {
   "schema": "HOCH_GOAL_STATE_v1",
-  "computed_at": "2026-07-12T23:44:03.193207Z",
+  "computed_at": "2026-07-13T00:02:15.002845Z",
   "canonical_north_star": "Build a governed autonomous factory that converts Michael Hoch's judgment into shipped, monetized products, while minimizing founder time and never representing unverified work as complete.",
   "computation_rule": "weight-sum of requirements whose validator EXECUTED SUCCESSFULLY against current, fresh evidence. Everything else contributes zero. No fallback default exists in this engine.",
   "metrics": {
@@ -140,7 +140,7 @@
       "owner": "agent",
       "state": "FAILED",
       "statement": "Epic Fury 2026 champion gate: TEST.",
-      "detail": "TEST: UNKNOWN \u2014 8 Epic Fury e2e specs exist, but no CURRENT execution record was found"
+      "detail": "TEST: FAIL \u2014 10 passed, 7 FAILED of 17. Root cause: /api/auth/demo returns 404 -- t"
     },
     {
       "id": "REQ-NS-002",
@@ -190,13 +190,13 @@
       "validator": "python3 scripts/council/generate_h1_candidate_registry.py --dry-run",
       "evidence_path": "coordination/council/h1_candidate_registry.json",
       "evidence_exists": true,
-      "evidence_age_hours": 16.08,
+      "evidence_age_hours": 16.39,
       "freshness_sla_hours": 168,
       "state": "SATISFIED",
       "exit_code": 0,
       "detail": "}",
       "contributes": 3.0,
-      "checked_at": "2026-07-12T23:43:53.649246Z"
+      "checked_at": "2026-07-13T00:02:04.499904Z"
     },
     {
       "id": "REQ-GOV-002",
@@ -208,13 +208,13 @@
       "validator": "python3 -m pytest tests/test_h1b_authorization_enforcement.py -q",
       "evidence_path": "scripts/council/h1_authorization.py",
       "evidence_exists": true,
-      "evidence_age_hours": 9.74,
+      "evidence_age_hours": 10.04,
       "freshness_sla_hours": 168,
       "state": "SATISFIED",
       "exit_code": 0,
-      "detail": "28 passed, 3 warnings in 3.62s",
+      "detail": "28 passed, 3 warnings in 4.14s",
       "contributes": 5.0,
-      "checked_at": "2026-07-12T23:43:53.686478Z"
+      "checked_at": "2026-07-13T00:02:04.541595Z"
     },
     {
       "id": "REQ-GOV-003",
@@ -226,13 +226,13 @@
       "validator": "python3 -m pytest tests/test_h1b_authorization_enforcement.py -q -k 'quorum or mock or dry_run or advisory or partial'",
       "evidence_path": "scripts/council/aggregate.py",
       "evidence_exists": true,
-      "evidence_age_hours": 9.74,
+      "evidence_age_hours": 10.04,
       "freshness_sla_hours": 168,
       "state": "SATISFIED",
       "exit_code": 0,
-      "detail": "7 passed, 21 deselected, 3 warnings in 0.74s",
+      "detail": "7 passed, 21 deselected, 3 warnings in 0.72s",
       "contributes": 4.0,
-      "checked_at": "2026-07-12T23:43:57.553010Z"
+      "checked_at": "2026-07-13T00:02:08.978638Z"
     },
     {
       "id": "REQ-GOV-004",
@@ -244,13 +244,13 @@
       "validator": "python3 -m pytest tests/test_h1d_spend_gate.py -q",
       "evidence_path": "hoch_pods/compute/cost_ledger.jsonl",
       "evidence_exists": true,
-      "evidence_age_hours": 0.17,
+      "evidence_age_hours": 0.47,
       "freshness_sla_hours": 168,
       "state": "SATISFIED",
       "exit_code": 0,
-      "detail": "15 passed in 0.05s",
+      "detail": "15 passed in 0.11s",
       "contributes": 4.0,
-      "checked_at": "2026-07-12T23:43:58.521596Z"
+      "checked_at": "2026-07-13T00:02:09.937160Z"
     },
     {
       "id": "REQ-GOV-005",
@@ -262,13 +262,13 @@
       "validator": "python3 scripts/goal/verify_no_fake_green.py",
       "evidence_path": "coordination/goal/no_fake_green_report.json",
       "evidence_exists": true,
-      "evidence_age_hours": -0.0,
+      "evidence_age_hours": 0.0,
       "freshness_sla_hours": 24,
       "state": "SATISFIED",
       "exit_code": 0,
       "detail": "fallback completion defaults: 0 | missing-timestamp->now(): False",
       "contributes": 5.0,
-      "checked_at": "2026-07-12T23:43:58.697757Z"
+      "checked_at": "2026-07-13T00:02:10.171141Z"
     },
     {
       "id": "REQ-GOV-006",
@@ -280,13 +280,13 @@
       "validator": "python3 scripts/goal/verify_no_tautological_tests.py",
       "evidence_path": "coordination/goal/tautology_report.json",
       "evidence_exists": true,
-      "evidence_age_hours": -0.0,
+      "evidence_age_hours": 0.0,
       "freshness_sla_hours": 24,
       "state": "SATISFIED",
       "exit_code": 0,
       "detail": "tautological tests: 0",
       "contributes": 4.0,
-      "checked_at": "2026-07-12T23:43:58.714459Z"
+      "checked_at": "2026-07-13T00:02:10.193166Z"
     },
     {
       "id": "REQ-ES-001",
@@ -298,13 +298,13 @@
       "validator": "python3 scripts/goal/verify_h1d_relay.py",
       "evidence_path": "coordination/council/relay/H1D_pert_node.json",
       "evidence_exists": true,
-      "evidence_age_hours": 0.0,
+      "evidence_age_hours": 0.31,
       "freshness_sla_hours": 168,
       "state": "SATISFIED",
       "exit_code": 0,
       "detail": "state=COMPLETED adapters=['grok', 'ollama'] copypaste=0",
       "contributes": 5.0,
-      "checked_at": "2026-07-12T23:43:58.737333Z"
+      "checked_at": "2026-07-13T00:02:10.214034Z"
     },
     {
       "id": "REQ-ES-002",
@@ -316,13 +316,13 @@
       "validator": "python3 -m pytest tests/test_h1d_dispatch.py -q",
       "evidence_path": "scripts/council/dispatch.py",
       "evidence_exists": true,
-      "evidence_age_hours": 0.74,
+      "evidence_age_hours": 1.05,
       "freshness_sla_hours": 168,
       "state": "SATISFIED",
       "exit_code": 0,
-      "detail": "10 passed in 0.14s",
+      "detail": "10 passed in 0.12s",
       "contributes": 3.0,
-      "checked_at": "2026-07-12T23:43:58.749949Z"
+      "checked_at": "2026-07-13T00:02:10.226515Z"
     },
     {
       "id": "REQ-ES-003",
@@ -340,7 +340,7 @@
       "exit_code": 0,
       "detail": "report sha256: fc1ce8e30b93cbbcdefe113ab8762c10d3c4754c13cd8d7f3d7a118c0f7dc9a3",
       "contributes": 4.0,
-      "checked_at": "2026-07-12T23:43:59.007897Z"
+      "checked_at": "2026-07-13T00:02:10.465194Z"
     },
     {
       "id": "REQ-ES-004",
@@ -358,7 +358,7 @@
       "exit_code": 1,
       "detail": "route_registered=False missing_gates=8",
       "contributes": 0.0,
-      "checked_at": "2026-07-12T23:44:02.786097Z"
+      "checked_at": "2026-07-13T00:02:14.576294Z"
     },
     {
       "id": "REQ-TO-001",
@@ -370,13 +370,13 @@
       "validator": "python3 scripts/goal/verify_champion_selected.py",
       "evidence_path": "coordination/goal/champion_selection.json",
       "evidence_exists": true,
-      "evidence_age_hours": 0.04,
+      "evidence_age_hours": 0.34,
       "freshness_sla_hours": 720,
       "state": "SATISFIED",
       "exit_code": 0,
       "detail": "champion=EPIC_FURY_2026 state=SELECTED",
       "contributes": 5.0,
-      "checked_at": "2026-07-12T23:44:02.804926Z"
+      "checked_at": "2026-07-13T00:02:14.594201Z"
     },
     {
       "id": "REQ-TO-002",
@@ -394,7 +394,7 @@
       "exit_code": 1,
       "detail": "shipped=False (no champion, nothing submitted)",
       "contributes": 0.0,
-      "checked_at": "2026-07-12T23:44:02.817986Z"
+      "checked_at": "2026-07-13T00:02:14.606657Z"
     },
     {
       "id": "REQ-TO-003",
@@ -406,13 +406,13 @@
       "validator": "python3 scripts/verify_intake_to_doorstep.py",
       "evidence_path": "coordination/goal/intake_to_doorstep.json",
       "evidence_exists": true,
-      "evidence_age_hours": -0.0,
+      "evidence_age_hours": 0.0,
       "freshness_sla_hours": 168,
       "state": "SATISFIED",
       "exit_code": 0,
       "detail": "report sha256: cdc94f73ae939bf68a81e220d76175a2a38419052c451a8e3eeec0453c880d61",
       "contributes": 5.0,
-      "checked_at": "2026-07-12T23:44:02.829845Z"
+      "checked_at": "2026-07-13T00:02:14.619437Z"
     },
     {
       "id": "REQ-NS-001",
@@ -424,13 +424,13 @@
       "validator": "python3 scripts/goal/verify_founder_not_transport.py",
       "evidence_path": "coordination/council/relay/dispatch_ledger.jsonl",
       "evidence_exists": true,
-      "evidence_age_hours": 0.17,
+      "evidence_age_hours": 0.47,
       "freshness_sla_hours": 168,
       "state": "SATISFIED",
       "exit_code": 0,
       "detail": "council tasks: 6 | tasks requiring founder transport: 0",
       "contributes": 5.0,
-      "checked_at": "2026-07-12T23:44:02.851718Z"
+      "checked_at": "2026-07-13T00:02:14.641886Z"
     },
     {
       "id": "REQ-NS-002",
@@ -448,7 +448,7 @@
       "exit_code": 1,
       "detail": "founder_minutes_ledger present: False | shipped revenue: $0",
       "contributes": 0.0,
-      "checked_at": "2026-07-12T23:44:02.866088Z"
+      "checked_at": "2026-07-13T00:02:14.656107Z"
     },
     {
       "id": "REQ-CP-BUILD",
@@ -466,7 +466,7 @@
       "exit_code": 0,
       "detail": "BUILD: PASS \u2014 build 8 VALID, selected=True",
       "contributes": 3.0,
-      "checked_at": "2026-07-12T23:44:02.877616Z"
+      "checked_at": "2026-07-13T00:02:14.667347Z"
     },
     {
       "id": "REQ-CP-TEST",
@@ -482,9 +482,9 @@
       "freshness_sla_hours": 24,
       "state": "FAILED",
       "exit_code": 1,
-      "detail": "TEST: UNKNOWN \u2014 8 Epic Fury e2e specs exist, but no CURRENT execution record was found",
+      "detail": "TEST: FAIL \u2014 10 passed, 7 FAILED of 17. Root cause: /api/auth/demo returns 404 -- t",
       "contributes": 0.0,
-      "checked_at": "2026-07-12T23:44:02.912232Z"
+      "checked_at": "2026-07-13T00:02:14.699732Z"
     },
     {
       "id": "REQ-CP-SECURITY",
@@ -502,7 +502,7 @@
       "exit_code": 0,
       "detail": "SECURITY: PASS \u2014 gate verdict GO, open_high=0, 4 rules PASS",
       "contributes": 5.0,
-      "checked_at": "2026-07-12T23:44:02.943482Z"
+      "checked_at": "2026-07-13T00:02:14.731658Z"
     },
     {
       "id": "REQ-CP-SIGNING_READINESS",
@@ -520,7 +520,7 @@
       "exit_code": 0,
       "detail": "SIGNING_READINESS: PASS \u2014 founder release approval artifact present; signed by Michael Bryan Hoc",
       "contributes": 4.0,
-      "checked_at": "2026-07-12T23:44:02.974745Z"
+      "checked_at": "2026-07-13T00:02:14.763235Z"
     },
     {
       "id": "REQ-CP-STORE_METADATA",
@@ -538,7 +538,7 @@
       "exit_code": 0,
       "detail": "STORE_METADATA: PASS \u2014 7/7 listing fields DONE",
       "contributes": 3.0,
-      "checked_at": "2026-07-12T23:44:03.005709Z"
+      "checked_at": "2026-07-13T00:02:14.794234Z"
     },
     {
       "id": "REQ-CP-PRIVACY",
@@ -556,7 +556,7 @@
       "exit_code": 0,
       "detail": "PRIVACY: PASS \u2014 2 privacy fields DONE (policy URL + App Privacy)",
       "contributes": 3.0,
-      "checked_at": "2026-07-12T23:44:03.036007Z"
+      "checked_at": "2026-07-13T00:02:14.825740Z"
     },
     {
       "id": "REQ-CP-MONETIZATION",
@@ -574,7 +574,7 @@
       "exit_code": 0,
       "detail": "MONETIZATION: PASS \u2014 pricing configured. NOTE: configured pricing is not shipped revenue --",
       "contributes": 4.0,
-      "checked_at": "2026-07-12T23:44:03.067424Z"
+      "checked_at": "2026-07-13T00:02:14.856853Z"
     },
     {
       "id": "REQ-CP-TESTFLIGHT",
@@ -592,7 +592,7 @@
       "exit_code": 1,
       "detail": "TESTFLIGHT: UNKNOWN \u2014 TestFlight state lives in App Store Connect. No local artifact records",
       "contributes": 0.0,
-      "checked_at": "2026-07-12T23:44:03.099016Z"
+      "checked_at": "2026-07-13T00:02:14.888385Z"
     },
     {
       "id": "REQ-CP-APP_STORE_CONNECT",
@@ -610,7 +610,7 @@
       "exit_code": 1,
       "detail": "APP_STORE_CONNECT: UNKNOWN \u2014 ledger claims state=WAITING_FOR_REVIEW submitted=2026-07-07T17:25:46Z.",
       "contributes": 0.0,
-      "checked_at": "2026-07-12T23:44:03.129365Z"
+      "checked_at": "2026-07-13T00:02:14.920131Z"
     },
     {
       "id": "REQ-CP-SUBMISSION_PACKAGE",
@@ -628,7 +628,7 @@
       "exit_code": 0,
       "detail": "SUBMISSION_PACKAGE: PASS \u2014 5/5 release docs + founder decision present",
       "contributes": 5.0,
-      "checked_at": "2026-07-12T23:44:03.160718Z"
+      "checked_at": "2026-07-13T00:02:14.961835Z"
     }
   ],
   "hard_constraint": "No fake green. No unevidenced completion. No autonomous execution beyond explicit authorization and policy."
