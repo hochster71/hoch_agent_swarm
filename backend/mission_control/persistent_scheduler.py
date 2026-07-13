@@ -226,6 +226,29 @@ class PersistentScheduler:
         started_at = get_utc_now_str()
         self.log_lease({"ts": started_at, "task_id": task_id, "lease_id": lease["lease_id"],
                         "fencing_token": lease["fencing_token"], "status": "DISPATCH_START"})
+
+        # ---- SPEND PRE-FLIGHT, checked against OBSERVED month/day spend ----------
+        # Previously the cap was checked against a pre-flight GUESS and the actual cost
+        # was never recorded (every envelope said cost_usd: None). Now the cap is
+        # enforced against real metered spend, and an UNPRICED adapter fails closed.
+        adapter_id = str(getattr(req, "dispatch_type", "")).split(".")[-1]
+        adapter_id = {"LOCAL_OLLAMA": "ollama", "LOCAL_LM_STUDIO": "lm_studio",
+                      "CLI_GROK": "grok", "CLI_GEMINI": "gemini",
+                      "CLI_CLAUDE": "claude"}.get(adapter_id, adapter_id.lower())
+        try:
+            from backend.mission_control.spend_meter import SpendMeter
+            meter = SpendMeter()
+            gate = meter.check_caps(adapter_id, envelope["prompt"])
+        except Exception as e:
+            meter, gate = None, {"allowed": False, "reason": f"SPEND_METER_ERROR: {e}"}
+
+        if not gate.get("allowed"):
+            self.log_dispatch({"ts": get_utc_now_str(), "task_id": task_id,
+                               "status": "BLOCKED_SPEND", "reason": gate.get("reason"),
+                               "detail": gate})
+            self.lease_manager.release_lease(task_id, lease["lease_id"], status="RELEASED")
+            logger.warning(f"{task_id}: BLOCKED_SPEND {gate.get('reason')}")
+            return False
         
         # We will dynamically mock the response to avoid network delays while ensuring gateway logs are populated
         try:
@@ -264,6 +287,16 @@ class PersistentScheduler:
         artifact_path.write_text(artifact_text, encoding="utf-8")
         artifact_sha = hashlib.sha256(artifact_text.encode()).hexdigest()
 
+        # ---- METER THE REAL COST (observed I/O, hash-chained, never None) --------
+        spend_entry = None
+        if meter is not None:
+            try:
+                spend_entry = meter.record(task_id=task_id, adapter=adapter_id,
+                                           prompt=envelope["prompt"], output=artifact_text,
+                                           exit_code=exit_code)
+            except Exception as e:
+                logger.error(f"spend meter failed for {task_id}: {e}")
+
         # 4. INDEPENDENT VERIFICATION of the artifact -- not merely a dispatch check.
         #    `exit_code == 0` proves a process ran; it does NOT prove the work is real.
         dispatch_ok = (status_val == "COMPLETED" and exit_code == 0)
@@ -299,6 +332,12 @@ class PersistentScheduler:
             "completed_at": get_utc_now_str(),
             "worker_id": lease.get("worker_id"),
             "fencing_token": lease.get("fencing_token"),
+            # REAL metered cost -- never None again.
+            "cost_usd": (spend_entry or {}).get("cost_usd"),
+            "cost_state": (spend_entry or {}).get("cost_state", "UNMETERED"),
+            "cost_measurement": (spend_entry or {}).get("measurement"),
+            "in_chars": (spend_entry or {}).get("in_chars"),
+            "out_chars": (spend_entry or {}).get("out_chars"),
         })
 
         self.log_verification({

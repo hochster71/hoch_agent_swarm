@@ -161,6 +161,15 @@ def live_artifacts() -> Any:
     return out
 
 
+def live_spend() -> Any:
+    """Observed spend. Never an estimate presented as a fact."""
+    try:
+        from backend.mission_control.spend_meter import SpendMeter
+        return SpendMeter().summary()
+    except Exception as e:
+        return _unknown(f"spend meter unreadable: {e}")
+
+
 def live_verdict() -> Any:
     pkg = _newest_pkg()
     if not pkg or not (pkg / "validation.json").exists():
@@ -188,6 +197,7 @@ def helm_live() -> JSONResponse:
         "tasks": live_tasks(),
         "events": live_events(),
         "artifacts": live_artifacts(),
+        "spend": live_spend(),
         "verdict": live_verdict(),
     })
 

@@ -73,8 +73,8 @@
       <div class="big" id="leases">—</div><div class="sub" id="leaseSub">—</div></div>
     <div class="card"><div class="lbl">ADAPTERS</div>
       <div class="big" id="adp">—</div><div class="sub" id="adpSub">—</div></div>
-    <div class="card"><div class="lbl">SPEND</div>
-      <div class="big" id="spend">$0.00</div><div class="sub" style="color:var(--ok)">LOCAL_ONLY egress</div></div>
+    <div class="card"><div class="lbl">SPEND TODAY · observed</div>
+      <div class="big" id="spend">—</div><div class="sub" id="spendSub">—</div></div>
     <div class="card"><div class="lbl">VERDICT</div>
       <div class="big" id="verdict">—</div><div class="sub" id="vpkg">—</div></div>
   </div>
@@ -173,6 +173,22 @@ async function tick(){
   $("#adp").innerHTML = `${ready.length} <span style="font-size:11px;color:var(--mid)">ready</span>`;
   $("#adpSub").innerHTML = front.length
      ? `<span style="color:var(--warn)">${front.length} frontier · NO KEYS</span>` : "all ready";
+
+  // spend — OBSERVED, hash-chained. Never an estimate dressed as a fact.
+  const sp = d.spend || {};
+  if(UNK(sp)){ $("#spend").textContent="UNKNOWN"; $("#spendSub").textContent=sp.reason||""; }
+  else{
+    const used = sp.spent_today_usd, cap = sp.daily_cap_usd;
+    $("#spend").innerHTML = `$${used.toFixed(4)} <span style="font-size:11px;color:var(--mid)">/ $${cap.toFixed(2)} cap</span>`;
+    const pct = cap ? (used/cap*100) : 0;
+    const chain = sp.chain_valid ? "" : " · CHAIN BROKEN";
+    $("#spendSub").innerHTML =
+      `${sp.dispatches_metered} metered${chain} · ` +
+      Object.entries(sp.by_adapter||{}).map(([k,v])=>`${k} $${(+v).toFixed(4)}`).join(" · ");
+    $("#spendSub").style.color = !sp.chain_valid ? "var(--bad)"
+                               : pct > 80 ? "var(--warn)" : "var(--ok)";
+    $("#spend").style.color = pct > 100 ? "var(--bad)" : "var(--bright)";
+  }
 
   // verdict
   $("#verdict").textContent = show(v.verdict);
