@@ -83,10 +83,10 @@ def main():
         sys.exit(1)
     print("Pytest suite: PASS.")
 
-    # 5. Clean up old active council state files
+    # 5. Clean up old active council state files (except authorization file)
     print("\n--- Cleaning up active council state files ---")
     council_dir = ROOT / "coordination" / "council"
-    for f in ["h1c_founder_authorization.json", "h1c_live_proof.json", "h1c_execution_state.json", "h1c_founder_authorization.pending.json"]:
+    for f in ["h1c_live_proof.json", "h1c_execution_state.json"]:
         p = council_dir / f
         if p.exists():
             p.unlink()
@@ -102,37 +102,34 @@ def main():
     package_digest = recon["integrity"]["stored"]["combined_authorization_sha256"]
     print(f"Active candidate resolved: {package_id} (digest: {package_digest})")
 
-    # 7. Write Pending template
-    pending_path = council_dir / "h1c_founder_authorization.pending.json"
-    pending_data = {
-        "founder_identity": "Michael Bryan Hoch",
-        "decision_status": "PENDING_FOUNDER_DECISION"
-    }
-    pending_path.write_text(json.dumps(pending_data, indent=2) + "\n", encoding="utf-8")
-
-    # 8. Materialize Founder Grant
-    print("\n--- Materializing Founder Grant ---")
-    packet = {
-        "tested_commit": head_sha,
-        "candidate_id": package_id,
-        "package_id": package_id,
-        "package_digest": package_digest,
-        "requested_execution_scope": [
-            "h1c_controlled_dry_run",
-            "local_read_only_probe",
-            "local_ledger_write",
-            "local_evidence_emit"
-        ]
-    }
+    # 7. Check Founder Grant (require manual decision file)
     grant_path = council_dir / "h1c_founder_authorization.json"
-    grant = materialize_founder_grant(
-        pending_path,
-        grant_path,
-        packet=packet,
-        expires_in_seconds=1800
-    )
-    print(f"Founder Grant materialized: {grant_path.name}")
-    print(f"Approval ID: {grant['approval_id']}")
+    if not grant_path.exists():
+        print(f"\nERROR: h1c_founder_authorization.json not found at {grant_path}!")
+        print(f"Please copy the pending template, set decision_status to GRANTED, and authorize commit {head_sha} manually.")
+        sys.exit(1)
+
+    print("\n--- Loading manual founder grant ---")
+    try:
+        grant = json.loads(grant_path.read_text(encoding="utf-8"))
+    except Exception as e:
+        print(f"ERROR: Failed to parse founder grant: {e}")
+        sys.exit(1)
+
+    if grant.get("implementation_commit") != head_sha:
+        print(f"ERROR: Grant implementation_commit mismatch! Expected {head_sha}, got {grant.get('implementation_commit')}")
+        sys.exit(1)
+
+    if grant.get("package_digest") != package_digest:
+        print(f"ERROR: Grant package_digest mismatch! Expected {package_digest}, got {grant.get('package_digest')}")
+        sys.exit(1)
+
+    if grant.get("decision_status") != "GRANTED" and grant.get("authorization_status") != "GRANTED":
+        print(f"ERROR: Founder grant has status {grant.get('decision_status')}. Must be GRANTED.")
+        sys.exit(1)
+
+    print(f"Manual Founder Grant loaded successfully: {grant_path.name}")
+    print(f"Approval ID: {grant.get('approval_id')}")
 
     # 9. Release Operator Hold
     print("\n--- Governing Operator Hold Release ---")
