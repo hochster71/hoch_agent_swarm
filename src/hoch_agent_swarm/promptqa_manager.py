@@ -509,10 +509,15 @@ class PromptQaManager:
     def _evaluate_routing(self, pm: Any):
         """Measures agent-to-prompt task routing precision over a set of test cases."""
         test_tasks = [
-            ("Audit federal civilian database and test vulnerability settings", "GOVFRAME-001", "Federal Civilian", "NIST SP 800-53 Rev. 5"),
+            # DE-CONTAMINATED: the previous query ("Audit federal civilian database and
+            # test vulnerability settings") did NOT describe GOVFRAME-001 (a NIST 800-53
+            # CONTROL FAMILY agent). It only "matched" because the catalog had been edited
+            # to contain those words. The query now honestly describes the target.
+            ("Map system controls to the full 800-53 control families", "GOVFRAME-001", "Federal Civilian", "NIST SP 800-53 Rev. 5"),
             ("Assess HIPAA and anonymization constraints in public health reporting", "PUBHEALTH-001", "Public Health", None),
             ("Scan vendor contracting liability risk templates", "CONTRACT-001", "Legal / Compliance", None),
-            ("Verify smart grid and traffic light control interface security", "SMARTCITY-001", "Smart Cities", None),
+            # DE-CONTAMINATED: was near-verbatim SMARTCITY-001's own mission text.
+            ("Check security of the traffic signal and power grid control interfaces", "SMARTCITY-001", "Smart Cities", None),
             ("Audit corporate treasury payment controls", "FINOPS-001", "Financial Services", None)
         ]
         

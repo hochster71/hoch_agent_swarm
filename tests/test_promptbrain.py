@@ -101,18 +101,23 @@ def test_llm_brain_schema_generation():
 def test_prompt_routing_logic():
     pm = get_promptbrain_manager()
     
-    res = pm.route_task("Audit federal civilian database and test vulnerability settings", industry="Federal Civilian", framework="NIST SP 800-53 Rev. 5")
+    # The query must HONESTLY describe the target. The previous query ("Audit federal
+    # civilian database and test vulnerability settings") described a vuln scan, not a
+    # NIST 800-53 control-family agent; it only passed because the catalog had been
+    # edited to contain its words. Corpus restored -> query corrected.
+    res = pm.route_task("Map system controls to the full 800-53 control families",
+                        industry="Federal Civilian", framework="NIST SP 800-53 Rev. 5")
     recs = res["recommendations"]
     gov_rank = next((idx + 1 for idx, r in enumerate(recs) if r["id"] == "GOVFRAME-001"), -1)
-    assert gov_rank == 1
-    assert recs[gov_rank - 1]["relevance_score"] == 395
+    assert gov_rank == 1, f"exact industry+framework match must rank 1, got {gov_rank}"
 
-    # Verify generic prompts (e.g. all-industries) are rejected from outranking exact matched governance prompts
-    for rec in recs:
-        if rec["id"] == "GOVFRAME-001":
-            break
-        # All prompts ranking above GOVFRAME-001 must be exact framework/industry matches (scoring >= 350)
-        assert rec["relevance_score"] >= 350
+    # BEHAVIOURAL (not magic-number) assertion: the old test hardcoded the removed
+    # scorer's arithmetic (== 395 == 30+15+50+100+200, and >= 350). Assert the CONTRACT
+    # instead: nothing may outrank an exact structured match without itself being one.
+    top = recs[gov_rank - 1]["relevance_score"]
+    for rec in recs[: gov_rank - 1]:
+        assert rec["relevance_score"] >= top, (
+            "a weaker-scoring prompt outranked the exact structured match")
 
     # Test deterministic tie-breaking for identical sorting tuples (must fall back to alphabetical ID A-Z sorting)
     from hoch_agent_swarm.promptqa_manager import get_promptqa_manager
