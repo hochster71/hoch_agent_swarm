@@ -54,12 +54,58 @@ class AdapterRecord:
         self.failure_count = 0
         self.success_count = 0
 
+    # CLI adapters authenticate through their OWN logged-in session, not an env var.
+    # Probing is cached per-process: an auth probe costs a real (tiny) call.
+    _AUTH_PROBE_CACHE: Dict[str, str] = {}
+
+    # adapter_id -> argv that succeeds ONLY when the CLI is authenticated
+    _CLI_AUTH_PROBE = {
+        "grok":   ["grok", "-p", "Reply with exactly: OK"],
+        # NOTE: no --approval-mode here; the extra flags made the probe fail even though
+        # the CLI is authenticated (it returns rc=0 / "OK" on the plain form).
+        "gemini": ["gemini", "-p", "Reply with exactly: OK"],
+        "claude": ["claude", "-p", "Reply with exactly: OK"],
+    }
+
+    def _cli_authenticated(self) -> bool:
+        """A CLI adapter is READY when its binary exists AND its session is authenticated.
+
+        FAKE-RED DEFECT (fixed here): readiness used to be `bool(env[API_KEY_VAR])`.
+        The grok/gemini CLIs never used env keys -- they carry their own login. So the
+        registry reported NOT_READY for adapters that were fully working, and the
+        council was pinned to local models for no reason. Under-claiming capability is
+        the same class of error as over-claiming success: the registry must report what
+        is TRUE, not what is convenient.
+        """
+        import shutil, subprocess
+        aid = self.adapter_id
+        if aid in self._AUTH_PROBE_CACHE:
+            return self._AUTH_PROBE_CACHE[aid] == "READY"
+        argv = self._CLI_AUTH_PROBE.get(aid)
+        if not argv or not shutil.which(argv[0]):
+            self._AUTH_PROBE_CACHE[aid] = "NOT_READY"
+            return False
+        try:
+            r = subprocess.run(argv, capture_output=True, text=True, timeout=45)
+            ok = r.returncode == 0 and "OK" in (r.stdout or "")
+        except Exception:
+            ok = False
+        self._AUTH_PROBE_CACHE[aid] = "READY" if ok else "NOT_READY"
+        return ok
+
     def check_readiness(self, env: Dict[str, str]) -> str:
-        if self.auth_required and self.api_key_env_var:
-            if not env.get(self.api_key_env_var):
+        if self.auth_required:
+            # 1. an explicit API key in env still counts
+            keyed = bool(self.api_key_env_var and env.get(self.api_key_env_var))
+            # 2. otherwise: is the CLI itself logged in?
+            if not keyed and not self._cli_authenticated():
                 self.readiness = "NOT_READY"
                 self.health = "UNKNOWN"
+                self.auth_mode = "NONE"
                 return self.readiness
+            self.auth_mode = "API_KEY_ENV" if keyed else "CLI_SESSION"
+        else:
+            self.auth_mode = "NO_AUTH_REQUIRED"
         self.readiness = "READY"
         self.health = "ACTIVE"
         return self.readiness
@@ -78,6 +124,7 @@ class AdapterRecord:
             "timeout_seconds": self.timeout_seconds,
             "auth_required": self.auth_required,
             "api_key_env_var": self.api_key_env_var,
+            "auth_mode": getattr(self, "auth_mode", "UNKNOWN"),
             "health": self.health,
             "readiness": self.readiness,
             "last_dispatch_ts": self.last_dispatch_ts,
