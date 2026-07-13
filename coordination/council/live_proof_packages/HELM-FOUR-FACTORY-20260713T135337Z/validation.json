@@ -1,0 +1,48 @@
+{
+  "schema": "FOUR_FACTORY_VALIDATION_v1",
+  "generated_at_utc": "2026-07-13T13:56:50.550429+00:00",
+  "tested_commit": "8c04fbb4c1fb0ac4caf84c71c8968eaa0f664ebc",
+  "adapter": "LOCAL_ONLY ollama llama3.1:8b - zero credentials, zero spend",
+  "concurrency": {
+    "concurrency_mode": "PER_TASK_LEASE",
+    "configured_limit": 4,
+    "effective_limit": 4,
+    "status": "OK",
+    "lease_backend": "PerTaskLeaseManager",
+    "note": "Per-task lock records; unrelated tasks run concurrently."
+  },
+  "max_simultaneous_leases": 4,
+  "overlap_seconds": 110.8,
+  "four_factory_terminal_results": {
+    "HRF": "PASS",
+    "HSF": "PASS",
+    "HCF": "PASS",
+    "HASF": "PASS"
+  },
+  "task_final_states": {
+    "T-HASF-REAL-01": "COMPLETED",
+    "T-HRF-REAL-01": "COMPLETED",
+    "T-HCF-REAL-01": "COMPLETED",
+    "T-HSF-REAL-01": "COMPLETED",
+    "T-EF-DIST-01": "PENDING"
+  },
+  "duplicate_terminal_successes": 0,
+  "acceptance_criteria": {
+    "hasf_real_adapter_validator_PASS": true,
+    "hrf_real_adapter_validator_PASS": true,
+    "hcf_real_adapter_validator_PASS": true,
+    "hsf_real_adapter_validator_PASS": true,
+    "epic_fury_mission_remains_blocked": true,
+    "at_least_two_tasks_overlap_in_time": true,
+    "distinct_active_leases_concurrent": true,
+    "one_adapter_fault_isolated": true,
+    "one_retry_path_executed": true,
+    "zero_duplicate_terminal_successes": true,
+    "zero_manual_prompt_copies": true,
+    "zero_manual_result_copies": true,
+    "effective_concurrency_truthful": true
+  },
+  "all_criteria_met": true,
+  "verdict": "AUTHORITATIVE_PASS",
+  "summary": "All four factories executed real work concurrently through the full governed runtime (task -> mission/capability scope -> per-task lease -> fencing token -> CouncilDispatchGateway -> real local adapter -> result envelope -> independent validator -> artifact -> terminal state). Epic Fury distribution remains BLOCKED_EXTERNAL on Apple review. Zero fabricated evidence."
+}

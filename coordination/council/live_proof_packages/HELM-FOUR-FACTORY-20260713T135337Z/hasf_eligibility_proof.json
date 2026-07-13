@@ -1,0 +1,16 @@
+{
+  "schema": "HASF_ELIGIBILITY_PROOF_v1",
+  "observed_at_utc": "2026-07-13T13:43:25.661931+00:00",
+  "HASF_state": "ACTIVE",
+  "HASF_general_engineering": "ELIGIBLE",
+  "EPIC_FURY_distribution_state": "BLOCKED_EXTERNAL",
+  "epic_fury_reason": "APPLE_REVIEW_PENDING",
+  "T-HASF-REAL-01_eligible": true,
+  "T-EF-DIST-01_withheld": true,
+  "ranked_task_ids": [
+    "T-HASF-REAL-01",
+    "T-RETRY-01"
+  ],
+  "verdict": "RESCOPE_PROVEN",
+  "meaning": "A safe HASF engineering task is now ELIGIBLE while the Epic Fury DISTRIBUTION mission remains BLOCKED_EXTERNAL on APPLE_REVIEW_PENDING. The block binds to the mission/capability, not the factory lane."
+}

@@ -1,0 +1,16 @@
+{
+  "task_a": {
+    "task_id": "T-HCF-REAL-01",
+    "started_at": "2026-07-13T13:53:37.744016Z",
+    "completed_at": "2026-07-13T13:55:28.539132Z"
+  },
+  "task_b": {
+    "task_id": "T-HASF-REAL-01",
+    "started_at": "2026-07-13T13:53:37.737407Z",
+    "completed_at": "2026-07-13T13:55:40.580482Z"
+  },
+  "overlap_seconds": 110.8,
+  "schema": "TASK_TIME_OVERLAP_PROOF_v1",
+  "observed_at_utc": "2026-07-13T13:56:50.550429+00:00",
+  "verdict": "CONCURRENT_EXECUTION_PROVEN"
+}

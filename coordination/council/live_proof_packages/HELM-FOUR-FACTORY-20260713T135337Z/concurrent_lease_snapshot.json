@@ -1,0 +1,36 @@
+{
+  "schema": "CONCURRENT_LEASE_SNAPSHOT_v1",
+  "max_simultaneous_active_leases": 4,
+  "snapshot": {
+    "sampled_at": "2026-07-13T13:53:38.234554+00:00",
+    "active_count": 4,
+    "leases": [
+      {
+        "task_id": "T-HASF-REAL-01",
+        "lease_id": "lease-343bbc32",
+        "worker_id": "worker-38487-2116",
+        "fencing_token": 1
+      },
+      {
+        "task_id": "T-HCF-REAL-01",
+        "lease_id": "lease-0dcb0fdb",
+        "worker_id": "worker-38487-9263",
+        "fencing_token": 1
+      },
+      {
+        "task_id": "T-HRF-REAL-01",
+        "lease_id": "lease-7a8fb06a",
+        "worker_id": "worker-38487-f8e4",
+        "fencing_token": 1
+      },
+      {
+        "task_id": "T-HSF-REAL-01",
+        "lease_id": "lease-0ba25358",
+        "worker_id": "worker-38487-d480",
+        "fencing_token": 1
+      }
+    ]
+  },
+  "all_samples_with_2plus": 220,
+  "verdict": "CONCURRENT_LEASES_PROVEN"
+}

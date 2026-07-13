@@ -1,0 +1,18 @@
+{
+  "schema": "BLOCKER_SCOPE_BEFORE_v1",
+  "g5": {
+    "id": "G-5",
+    "title": "A4 differentiation + store packaging",
+    "owner": "HASF agent",
+    "status": "PENDING"
+  },
+  "scope_type": "NONE (no scope fields at all)",
+  "HASF_factory_state": {
+    "state": "BLOCKED",
+    "current_champion": "EPIC_FURY_2026",
+    "distribution_lane": "BLOCKED_EXTERNAL",
+    "reason": "APPLE_REVIEW_PENDING",
+    "agent_work": "COMPLETE"
+  },
+  "defect": "HASF.state=BLOCKED whenever Apple review is pending -> a safe, unrelated HASF engineering task (code review) is withheld by an App Store blocker. Over-broad."
+}

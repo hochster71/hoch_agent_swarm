@@ -1,0 +1,14 @@
+{
+  "schema": "EPIC_FURY_DISTRIBUTION_HOLD_v1",
+  "observed_at_utc": "2026-07-13T13:43:25.661931+00:00",
+  "mission_id": "EPIC_FURY_DISTRIBUTION",
+  "state": "BLOCKED_EXTERNAL",
+  "reason": "APPLE_REVIEW_PENDING",
+  "blocked_capabilities": [
+    "APP_STORE_CONNECT_OBSERVATION",
+    "APPLE_DISTRIBUTION_PROMOTION"
+  ],
+  "withheld_task": "T-EF-DIST-01",
+  "withheld": true,
+  "note": "Apple review remains an external founder-gated hold. It does not stop engineering."
+}

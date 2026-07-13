@@ -1,0 +1,41 @@
+{
+  "schema": "BLOCKER_SCOPE_AFTER_v1",
+  "observed_at_utc": "2026-07-13T13:43:25.661931+00:00",
+  "g5": {
+    "id": "G-5",
+    "status": "BLOCKED_EXTERNAL",
+    "scope_type": "PRODUCT_MISSION",
+    "factory_id": "HASF",
+    "product_id": "EPIC_FURY_2026",
+    "mission_id": "EPIC_FURY_DISTRIBUTION",
+    "blocked_capabilities": [
+      "APP_STORE_CONNECT_OBSERVATION",
+      "APPLE_DISTRIBUTION_PROMOTION"
+    ],
+    "reason": "APPLE_REVIEW_PENDING"
+  },
+  "HASF_factory_state": {
+    "state": "ACTIVE",
+    "current_champion": "EPIC_FURY_2026",
+    "distribution_lane": "BLOCKED_EXTERNAL",
+    "reason": "APPLE_REVIEW_PENDING",
+    "agent_work": "COMPLETE",
+    "general_engineering": "ELIGIBLE",
+    "blocked_missions": [
+      "EPIC_FURY_DISTRIBUTION"
+    ],
+    "blocked_capabilities": [
+      "APP_STORE_CONNECT_OBSERVATION",
+      "APPLE_DISTRIBUTION_PROMOTION"
+    ]
+  },
+  "EPIC_FURY_distribution": {
+    "state": "BLOCKED_EXTERNAL",
+    "reason": "APPLE_REVIEW_PENDING",
+    "mission_id": "EPIC_FURY_DISTRIBUTION",
+    "blocked_capabilities": [
+      "APP_STORE_CONNECT_OBSERVATION",
+      "APPLE_DISTRIBUTION_PROMOTION"
+    ]
+  }
+}

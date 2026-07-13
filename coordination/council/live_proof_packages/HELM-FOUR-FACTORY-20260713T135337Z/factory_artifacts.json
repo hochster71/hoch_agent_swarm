@@ -1,0 +1,18 @@
+{
+  "T-HASF-REAL-01": {
+    "chars": 1532,
+    "sha256": "cfc45fbf29b4b0d2788ea17c6384f487c67ecd0e1db484d4e7cc81a2011584aa"
+  },
+  "T-HCF-REAL-01": {
+    "chars": 2335,
+    "sha256": "90bfc1a546f1e93c2cd706e52f79f94ec5cd62905438d087b1e916d03c011f7e"
+  },
+  "T-HRF-REAL-01": {
+    "chars": 2609,
+    "sha256": "d9e9aa47423f7e67fa59159e453fbd1bf305b47a26cb0e46dcd208569f8edf2d"
+  },
+  "T-HSF-REAL-01": {
+    "chars": 239,
+    "sha256": "7a852100ce985e49182a2190a218a02c1ae3c67ec83fb595b713ebd6da414e37"
+  }
+}
