@@ -1,0 +1,5 @@
+{
+  "passed": true,
+  "reasons": [],
+  "output_preview": "```\n{\n  \"file_path\": \"backend/council/decision_record.py\",\n  \"finding\": \"The code does not correctly implement the founder decision rules.\",\n  \"supporting_line\": \"only RATIFIED and non-expired records authorize action\",\n  \"remediation\": \"Ensure that only ratified and non-expired records are considered for authorization.\"\n}\n```"
+}

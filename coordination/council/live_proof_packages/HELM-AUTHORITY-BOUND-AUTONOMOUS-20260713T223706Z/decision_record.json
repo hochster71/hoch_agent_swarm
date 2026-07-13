@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "decision_id": "FD-20260713-004",
+  "title": "Autonomous local read-only code inspection is AUTONOMOUS",
+  "status": "RATIFIED",
+  "authority": "FOUNDER",
+  "scope": {
+    "factory_ids": [
+      "*"
+    ],
+    "product_ids": [
+      "*"
+    ],
+    "mission_ids": [
+      "*"
+    ],
+    "environments": [
+      "*"
+    ],
+    "action_types": [
+      "*"
+    ]
+  },
+  "decision": "HELM may autonomously inspect local repository modules read-only and produce defect reports.",
+  "rationale": "Read-only local inspection has no spend, egress, or side effects.",
+  "source_type": "FOUNDER_DECISION",
+  "source_reference": "review-2026-07-13-P0",
+  "source_sha256": "25991207634465eeadd478727895720a884773883db97fab44ab164e90d043a9",
+  "confidence": "AUTHORITATIVE",
+  "effective_at": "2026-07-13T22:37:06Z",
+  "expires_at": null,
+  "review_at": null,
+  "supersedes": [],
+  "superseded_by": null,
+  "conflicts_with": [],
+  "created_at": "2026-07-13T22:37:06Z",
+  "created_by": "Michael Bryan Hoch"
+}

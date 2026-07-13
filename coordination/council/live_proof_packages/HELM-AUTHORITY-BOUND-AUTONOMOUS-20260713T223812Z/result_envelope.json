@@ -1,0 +1,10 @@
+{
+  "result_envelope_version": "1.0",
+  "authority_decision_id": "AUTH-03cbba79276dc40e",
+  "classified_task_sha256": "39acd52b44985bb2770c79e5ba677414a44c284c8c96520232579190a61a26e0",
+  "task_id": "AUTH-BOUND-001",
+  "model": "llama3.1:8b",
+  "output": "```\n{\n  \"file_path\": \"backend/council/decision_record.py\",\n  \"finding\": \"The code does not correctly implement the founder decision rules.\",\n  \"supporting_line\": \"only RATIFIED and non-expired records authorize action\",\n  \"remediation\": \"Ensure that only ratified and non-expired records are considered for authorization.\"\n}\n```",
+  "dispatched_at": "2026-07-13T22:38:16Z",
+  "latency_s": 3.69
+}

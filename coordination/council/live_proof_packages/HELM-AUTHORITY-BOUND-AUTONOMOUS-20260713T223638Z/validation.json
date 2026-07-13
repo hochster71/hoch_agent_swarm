@@ -1,0 +1,14 @@
+{
+  "package": "HELM-AUTHORITY-BOUND-AUTONOMOUS-20260713T223638Z",
+  "verdict": "NOT_PASS",
+  "failed_checks": 3,
+  "adapter": "ollama:llama3.1:8b (live)",
+  "positive_control": "authority-bound autonomous dispatch through live local adapter",
+  "authority_id_propagation": {
+    "lease_record": true,
+    "task_envelope": true,
+    "artifact_manifest": true,
+    "pert_transition": true
+  },
+  "assessed_at": "2026-07-13T22:36:39Z"
+}

@@ -1,0 +1,20 @@
+{
+  "task": {
+    "task_id": "AUTH-BOUND-001",
+    "action_text": "You are a code auditor. Read the FILE CONTENT below and return ONLY a JSON object with keys file_path, finding, supporting_line, remediation. Use file_path=\"backend/council/decision_record.py\". supporting_line MUST be an EXACT substring copied verbatim from the content. Set supporting_line to exactly: \"only RATIFIED and non-expired records authorize action\". finding: one sentence. remediation: one sentence. No prose outside the JSON.\n\nFILE CONTENT:\n\"\"\"decision_record.py \u2014 versioned founder decisions. Only RATIFIED + in-scope authorizes.\n\nFOUNDER-RATIFIED RULES (mechanical, no interpretation):\n  * only RATIFIED and non-expired records authorize action;\n  * SUPERSEDED, REVOKED, CONFLICTED, EXPIRED never authorize;\n  * scope must match mechanically \u2014 no implicit wildcard from a MISSING scope field;\n  * the source digest must verify;\n  * supersession chains must be acyclic.\n\nThis is the substrate feedback-ingestion writes to. Without versioned records, an approval\nbecomes mutable, ambiguous policy \u2014 so this comes first.\n\"\"\"\nfrom __future__ import annotations\n\nimport hashlib\nimport json\nimport time\nfrom dataclasses import dataclass, field\nfrom enum import Enum\nfrom pathlib import Path\nfrom typing import Any\n\nROOT = Path(__file__).resolve().parents[2]\nCORPUS = ROOT / \"coordination\" / \"founder\" / \"decision_corpus_v2.jsonl\"\nSCHEMA = ROOT / \"coordination\" / \"founder\" / \"decision_schema.json\"\n\n\nclass Status(str, Enum):\n    DRAFT = \"DRAFT\"\n    PROPOSED = \"PROPOSED\"\n    RATIFIED = \"RATIFIED\"\n    SUPERSEDED = \"SUPERSEDED\"\n    REVOKED = \"REVOKED\"\n    CONFLICTED = \"CONFLICTED\"\n    EXPIRED = \"EXPIRED\"\n\n\n# Only these authorize \u2014 everything else is DECISION-*-CONTROL rejection surface.\nAUTHORIZING = frozenset({Status.RATIFIED})\n\nREQUIRED_FIELDS = (\n    \"schema_version\", \"decision_id\", \"title\", \"status\", \"authority\", \"scope\",\n    \"decision\", \"rationale\", \"source_type\", \"source_reference\", \"source_sha256\",\n    \"confidence\", \"effective_at\", \"created_at\", \"created_by\",\n)\nSCOPE_DIMS = (\"factory_ids\", \"product_ids\", \"mission_ids\", \"environments\", \"action_types\")\n\n\nclass DecisionError(ValueError):\n    pass\n\n\ndef compute_source_sha256(source_text: str) -> str:\n    return hashlib.sha256(source_text.encode(\"utf-8\")).hexdigest()\n\n\n@dataclass\n",
+    "environment": "local",
+    "adapter": "ollama:llama3.1:8b",
+    "target": "backend/council/decision_record.py",
+    "data_classification": "public_repo",
+    "side_effects": "none"
+  },
+  "binding": {
+    "authority_decision_id": "AUTH-4a40c128543579f9",
+    "classified_task_sha256": "39acd52b44985bb2770c79e5ba677414a44c284c8c96520232579190a61a26e0",
+    "classified_at": "2026-07-13T22:36:39Z",
+    "classifier_version": "founder_model@v2",
+    "authority_matrix_sha256": "1452ac326277eb9c81982a337ce0e1f05670f1a7142499ec39a5b49b08474800",
+    "decision_id": "FD-20260713-001",
+    "single_use": false
+  }
+}

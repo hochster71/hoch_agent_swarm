@@ -1,0 +1,9 @@
+{
+  "lease_record": true,
+  "task_envelope": true,
+  "gateway_dispatch": true,
+  "adapter_result": true,
+  "result_envelope": true,
+  "artifact_manifest": true,
+  "pert_transition": true
+}

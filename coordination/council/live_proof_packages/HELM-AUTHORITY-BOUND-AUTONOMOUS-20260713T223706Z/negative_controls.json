@@ -1,0 +1,54 @@
+[
+  {
+    "control": "authority id absent",
+    "expected": "AUTHORITY_ID_MISSING",
+    "got": "AUTHORITY_ID_MISSING",
+    "passed": true
+  },
+  {
+    "control": "record not found",
+    "expected": "AUTHORITY_RECORD_NOT_FOUND",
+    "got": "AUTHORITY_RECORD_NOT_FOUND",
+    "passed": true
+  },
+  {
+    "control": "task mutated after classification",
+    "expected": "TASK_MUTATED_AFTER_CLASSIFICATION",
+    "got": "TASK_MUTATED_AFTER_CLASSIFICATION",
+    "passed": true
+  },
+  {
+    "control": "adapter mutated after classification",
+    "expected": "TASK_MUTATED_AFTER_CLASSIFICATION",
+    "got": "TASK_MUTATED_AFTER_CLASSIFICATION",
+    "passed": true
+  },
+  {
+    "control": "scope mismatch (cross-product)",
+    "expected": "AUTHORITY_SCOPE_MISMATCH",
+    "got": "AUTHORITY_SCOPE_MISMATCH",
+    "passed": true
+  },
+  {
+    "control": "revoked decision",
+    "expected": "AUTHORITY_REVOKED",
+    "got": "AUTHORITY_REVOKED",
+    "passed": true
+  },
+  {
+    "control": "superseded",
+    "got": "AUTHORITY_SUPERSEDED",
+    "passed": true
+  },
+  {
+    "control": "result_envelope_wrong_id",
+    "validator_rejected": true,
+    "reasons": [
+      "WRONG_AUTHORITY_ID"
+    ]
+  },
+  {
+    "control": "pert_omits_id",
+    "valid": false
+  }
+]

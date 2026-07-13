@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "authority": "FOUNDER",
+  "source_type": "FOUNDER_DECISION",
+  "source_reference": "review-2026-07-13",
+  "confidence": "AUTHORITATIVE",
+  "effective_at": "2026-07-13T22:17:27Z",
+  "expires_at": null,
+  "review_at": null,
+  "supersedes": [],
+  "superseded_by": null,
+  "conflicts_with": [],
+  "created_at": "2026-07-13T22:17:27Z",
+  "created_by": "Michael Bryan Hoch",
+  "rationale": "ratified founder doctrine",
+  "scope": {
+    "factory_ids": [
+      "*"
+    ],
+    "product_ids": [
+      "*"
+    ],
+    "mission_ids": [
+      "*"
+    ],
+    "environments": [
+      "*"
+    ],
+    "action_types": [
+      "STATE_PROPAGATION"
+    ]
+  },
+  "decision_id": "FD-20260713-001",
+  "title": "External product holds are lane-scoped",
+  "status": "RATIFIED",
+  "decision": "External product holds do not stop unrelated HELM or factory operations.",
+  "source_sha256": "4d1d38c5256e25c640ea38a76a8d30b5cbcdb5ea839449c98ebb9357c859debd"
+}

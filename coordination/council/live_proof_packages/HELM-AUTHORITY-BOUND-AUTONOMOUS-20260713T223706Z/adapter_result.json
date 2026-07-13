@@ -1,0 +1,5 @@
+{
+  "model": "llama3.1:8b",
+  "latency_s": 7.184,
+  "authority_decision_id": "AUTH-8332d2c55bb0ede6"
+}

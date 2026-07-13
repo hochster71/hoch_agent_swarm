@@ -1,0 +1,10 @@
+{
+  "node": "AUTH-BOUND-001",
+  "from_state": "IN_PROGRESS",
+  "to_state": "VALIDATED",
+  "authority_decision_id": "AUTH-8332d2c55bb0ede6",
+  "classified_task_sha256": "39acd52b44985bb2770c79e5ba677414a44c284c8c96520232579190a61a26e0",
+  "artifact_sha256": "e57850c42025e329419893f0f5eb5587671bc7c3da6482b6912eb10135e300dd",
+  "advanced": true,
+  "at": "2026-07-13T22:37:13Z"
+}

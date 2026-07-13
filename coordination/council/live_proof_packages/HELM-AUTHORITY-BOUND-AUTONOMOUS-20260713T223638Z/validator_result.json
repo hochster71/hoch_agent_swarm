@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "reasons": [
+    "WRONG_AUTHORITY_ID",
+    "TASK_DIGEST_MISMATCH",
+    "EMPTY_OUTPUT"
+  ],
+  "output_preview": ""
+}
