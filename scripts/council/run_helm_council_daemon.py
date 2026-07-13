@@ -75,6 +75,8 @@ def main() -> int:
 
     HEARTBEAT.parent.mkdir(parents=True, exist_ok=True)
     cycle = 0
+    _last_qa = 0.0
+    QA_INTERVAL = float(__import__("os").environ.get("QA_SWEEP_SECONDS", "900"))  # 15 min
     while not _stop:
         cycle += 1
         t0 = time.time()
@@ -138,6 +140,17 @@ def main() -> int:
             with open(HEARTBEAT, "a", encoding="utf-8") as f:
                 f.write(json.dumps(rec) + "\n")
             print(f"[council] cycle {cycle}: ERROR {e}", flush=True)
+
+        # QA SENTINEL sweep, folded into the one 24/7 process. Runs Michael's audit
+        # interrogation every QA_INTERVAL and files/notifies founder-contract escalations.
+        if time.time() - _last_qa >= QA_INTERVAL:
+            _last_qa = time.time()
+            try:
+                from scripts.council.run_qa_sentinel import one_pass
+                qa = one_pass()
+                print(f"[council] qa-sentinel: {qa['provable_now']} OBSERVED, {qa['unknown']} UNKNOWN", flush=True)
+            except Exception as e:
+                print(f"[council] qa-sentinel error: {e}", flush=True)
 
         if args.max_cycles and cycle >= args.max_cycles:
             break

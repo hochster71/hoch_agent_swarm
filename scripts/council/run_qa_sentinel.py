@@ -95,18 +95,22 @@ def one_pass() -> dict:
         name, cls, ok, detail, needs_founder = fn()
         results.append({"check": name, "class": cls, "ok": ok, "detail": detail})
         if needs_founder:
-            escalate(
-                Escalation(
-                    one_sentence_question=f"QA sentinel found something needing you: {name}",
-                    why_it_needs_you="a HIGH-severity or judgment condition was OBSERVED",
-                    options=["Review and direct", "Acknowledge and defer"],
-                    recommendation_and_why=f"review: {detail}",
-                    evidence_sanitized=detail,
-                    cost_of_delay="rises with time for security findings",
-                    reversible=True,
-                ),
-                can_prove_answer=False,
+            esc = Escalation(
+                one_sentence_question=f"QA sentinel found something needing you: {name}",
+                why_it_needs_you="a HIGH-severity or judgment condition was OBSERVED",
+                options=["Review and direct", "Acknowledge and defer"],
+                recommendation_and_why=f"review: {detail}",
+                evidence_sanitized=detail,
+                cost_of_delay="rises with time for security findings",
+                reversible=True,
             )
+            queued, _ = escalate(esc, can_prove_answer=False)
+            if queued:
+                try:
+                    from backend.council.notify_sms import notify
+                    notify(esc.__dict__)   # SMS if configured; WOULD_SEND otherwise. Never raises.
+                except Exception:
+                    pass
 
     rec = {"ts": _now(), "cycle_results": results,
            "provable_now": sum(1 for r in results if r["class"] == "OBSERVED"),
