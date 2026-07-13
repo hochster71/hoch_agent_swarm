@@ -1,0 +1,68 @@
+{
+  "proof": "DECISION-*-CONTROLS",
+  "ts": "2026-07-13T22:17:27Z",
+  "results": [
+    {
+      "check": "corpus loaded 3 records",
+      "pass": true,
+      "observed": "3"
+    },
+    {
+      "check": "SCHEMA incomplete rejected",
+      "pass": true,
+      "observed": ""
+    },
+    {
+      "check": "SCOPE no-implicit-wildcard",
+      "pass": true,
+      "observed": ""
+    },
+    {
+      "check": "POSITIVE ratified+in-scope authorizes",
+      "pass": true,
+      "observed": ""
+    },
+    {
+      "check": "SCOPE cross-product denied",
+      "pass": true,
+      "observed": ""
+    },
+    {
+      "check": "SUPERSESSION superseded cannot authorize",
+      "pass": true,
+      "observed": ""
+    },
+    {
+      "check": "SUPERSESSION prior marked SUPERSEDED",
+      "pass": true,
+      "observed": ""
+    },
+    {
+      "check": "SUPERSESSION acyclic",
+      "pass": true,
+      "observed": ""
+    },
+    {
+      "check": "REVOCATION cannot authorize",
+      "pass": true,
+      "observed": ""
+    },
+    {
+      "check": "EXPIRY cannot authorize",
+      "pass": true,
+      "observed": ""
+    },
+    {
+      "check": "SOURCE-HASH match verifies",
+      "pass": true,
+      "observed": ""
+    },
+    {
+      "check": "SOURCE-HASH tampered rejected",
+      "pass": true,
+      "observed": ""
+    }
+  ],
+  "passed": 12,
+  "failed": 0
+}

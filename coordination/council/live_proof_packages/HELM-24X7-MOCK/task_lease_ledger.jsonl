@@ -1020,3 +1020,433 @@
 {"ts": "2026-07-13T13:55:21.911742Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-f9c83e55", "status": "RELEASED"}
 {"ts": "2026-07-13T13:55:27.000839Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-746c5aa7", "fencing_token": 641, "status": "ACQUIRED"}
 {"ts": "2026-07-13T13:55:28.865864Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-746c5aa7", "status": "RELEASED"}
+{"ts": "2026-07-13T14:27:59.942368Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-236163e4", "fencing_token": 675, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:27:59.975645Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-236163e4", "status": "RELEASED"}
+{"ts": "2026-07-13T14:27:59.986506Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-9ea7a533", "fencing_token": 676, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:27:59.996567Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-9ea7a533", "status": "RELEASED"}
+{"ts": "2026-07-13T14:28:00.002450Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-a3513425", "fencing_token": 677, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:28:00.023508Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-a3513425", "status": "RELEASED"}
+{"ts": "2026-07-13T14:28:06.407141Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-f1894782", "fencing_token": 678, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:28:07.115018Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-f1894782", "status": "RELEASED"}
+{"ts": "2026-07-13T14:28:07.117654Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-7b64ce8b", "fencing_token": 679, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:28:07.126245Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-7b64ce8b", "status": "RELEASED"}
+{"ts": "2026-07-13T14:28:07.128527Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-c076351f", "fencing_token": 680, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:28:07.131650Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-c076351f", "status": "RELEASED"}
+{"ts": "2026-07-13T14:28:14.432935Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-322ea925", "fencing_token": 681, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:28:17.304219Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-322ea925", "status": "RELEASED"}
+{"ts": "2026-07-13T14:28:17.309463Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-3126ec93", "fencing_token": 682, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:28:17.318962Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-3126ec93", "status": "RELEASED"}
+{"ts": "2026-07-13T14:28:17.322251Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-88a11154", "fencing_token": 683, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:28:17.325979Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-88a11154", "status": "RELEASED"}
+{"ts": "2026-07-13T14:28:22.404349Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-9437450e", "fencing_token": 684, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:28:22.452288Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-9437450e", "status": "RELEASED"}
+{"ts": "2026-07-13T14:28:22.462244Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-7d3096c3", "fencing_token": 685, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:28:22.472213Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-7d3096c3", "status": "RELEASED"}
+{"ts": "2026-07-13T14:28:22.479139Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-568f2887", "fencing_token": 686, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:28:23.058656Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-568f2887", "status": "RELEASED"}
+{"ts": "2026-07-13T14:28:28.145585Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-e8120868", "fencing_token": 687, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:28:28.401686Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-e8120868", "status": "RELEASED"}
+{"ts": "2026-07-13T14:28:28.409237Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-f7eba8a4", "fencing_token": 688, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:28:29.087699Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-f7eba8a4", "status": "RELEASED"}
+{"ts": "2026-07-13T14:28:29.090981Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-25ad1ba1", "fencing_token": 689, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:28:29.094644Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-25ad1ba1", "status": "RELEASED"}
+{"ts": "2026-07-13T14:28:34.169868Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-92c16ecc", "fencing_token": 690, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:28:35.657723Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-92c16ecc", "status": "RELEASED"}
+{"ts": "2026-07-13T14:28:35.662313Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-e13037a8", "fencing_token": 691, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:28:35.666882Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-e13037a8", "status": "RELEASED"}
+{"ts": "2026-07-13T14:28:35.670659Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-20a99a09", "fencing_token": 692, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:28:35.679200Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-20a99a09", "status": "RELEASED"}
+{"ts": "2026-07-13T14:28:41.023591Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-54d8f48d", "fencing_token": 693, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:28:46.107506Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-54d8f48d", "status": "RELEASED"}
+{"ts": "2026-07-13T14:28:46.121716Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-625e3b5e", "fencing_token": 694, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:28:47.082279Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-625e3b5e", "status": "RELEASED"}
+{"ts": "2026-07-13T14:28:47.088167Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-281bc0f0", "fencing_token": 695, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:28:47.093473Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-281bc0f0", "status": "RELEASED"}
+{"ts": "2026-07-13T14:28:52.295076Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-b37202f1", "fencing_token": 696, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:28:52.440701Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-b37202f1", "status": "RELEASED"}
+{"ts": "2026-07-13T14:28:52.448468Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-dda36771", "fencing_token": 697, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:28:52.457836Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-dda36771", "status": "RELEASED"}
+{"ts": "2026-07-13T14:28:52.463825Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-aba74cf3", "fencing_token": 698, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:28:53.149524Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-aba74cf3", "status": "RELEASED"}
+{"ts": "2026-07-13T14:28:58.226277Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-c7636579", "fencing_token": 699, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:28:59.330154Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-c7636579", "status": "RELEASED"}
+{"ts": "2026-07-13T14:28:59.333587Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-8f189eb1", "fencing_token": 700, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:28:59.337909Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-8f189eb1", "status": "RELEASED"}
+{"ts": "2026-07-13T14:28:59.341206Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-9f75badb", "fencing_token": 701, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:28:59.345001Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-9f75badb", "status": "RELEASED"}
+{"ts": "2026-07-13T14:29:04.434903Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-b0f8afde", "fencing_token": 702, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:29:04.854487Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-b0f8afde", "status": "RELEASED"}
+{"ts": "2026-07-13T14:29:04.862386Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-06f9c117", "fencing_token": 703, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:29:04.870519Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-06f9c117", "status": "RELEASED"}
+{"ts": "2026-07-13T14:29:09.958898Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-8a1f0317", "fencing_token": 704, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:29:11.608539Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-8a1f0317", "status": "RELEASED"}
+{"ts": "2026-07-13T14:29:11.615910Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-e16701e0", "fencing_token": 705, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:29:11.622756Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-e16701e0", "status": "RELEASED"}
+{"ts": "2026-07-13T14:29:16.701740Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-09b5dab7", "fencing_token": 706, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:29:17.292667Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-09b5dab7", "status": "RELEASED"}
+{"ts": "2026-07-13T14:29:17.295650Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-89941519", "fencing_token": 707, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:29:17.300543Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-89941519", "status": "RELEASED"}
+{"ts": "2026-07-13T14:29:22.317668Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-b2ebea98", "fencing_token": 708, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:29:22.326285Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-b2ebea98", "status": "RELEASED"}
+{"ts": "2026-07-13T14:29:22.330936Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-3d6f7bce", "fencing_token": 709, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:29:22.956335Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-3d6f7bce", "status": "RELEASED"}
+{"ts": "2026-07-13T14:29:28.044129Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-3b3346e7", "fencing_token": 710, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:29:28.669694Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-3b3346e7", "status": "RELEASED"}
+{"ts": "2026-07-13T14:29:28.673576Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-dd67261a", "fencing_token": 711, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:29:28.677983Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-dd67261a", "status": "RELEASED"}
+{"ts": "2026-07-13T14:29:33.697245Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-02d24050", "fencing_token": 712, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:29:34.435627Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-02d24050", "status": "RELEASED"}
+{"ts": "2026-07-13T14:29:34.438865Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-97a91651", "fencing_token": 713, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:29:34.443595Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-97a91651", "status": "RELEASED"}
+{"ts": "2026-07-13T14:29:39.530634Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-52d1e585", "fencing_token": 714, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:29:40.612622Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-52d1e585", "status": "RELEASED"}
+{"ts": "2026-07-13T14:29:45.687326Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-c3ad9d66", "fencing_token": 715, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:29:46.363200Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-c3ad9d66", "status": "RELEASED"}
+{"ts": "2026-07-13T14:29:51.452893Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-408a54e3", "fencing_token": 716, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:29:52.127937Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-408a54e3", "status": "RELEASED"}
+{"ts": "2026-07-13T14:44:29.507142Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-23f1379c", "fencing_token": 717, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:44:30.262841Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-23f1379c", "status": "RELEASED"}
+{"ts": "2026-07-13T14:44:30.271454Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-0d1a9b43", "fencing_token": 718, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:44:30.279250Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-0d1a9b43", "status": "RELEASED"}
+{"ts": "2026-07-13T14:44:30.284991Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-a5202a23", "fencing_token": 719, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:44:30.291204Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-a5202a23", "status": "RELEASED"}
+{"ts": "2026-07-13T14:44:35.310245Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-bd3e31da", "fencing_token": 720, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:44:36.378804Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-bd3e31da", "status": "RELEASED"}
+{"ts": "2026-07-13T14:44:36.386570Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-62d270bd", "fencing_token": 721, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:44:36.395221Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-62d270bd", "status": "RELEASED"}
+{"ts": "2026-07-13T14:44:36.400880Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-1b2fcb94", "fencing_token": 722, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:44:36.406467Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-1b2fcb94", "status": "RELEASED"}
+{"ts": "2026-07-13T14:44:41.445759Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-0012448a", "fencing_token": 723, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:44:42.531113Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-0012448a", "status": "RELEASED"}
+{"ts": "2026-07-13T14:44:42.539120Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-9b41c3f7", "fencing_token": 724, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:44:42.546420Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-9b41c3f7", "status": "RELEASED"}
+{"ts": "2026-07-13T14:44:42.552246Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-9975ba56", "fencing_token": 725, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:44:42.557562Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-9975ba56", "status": "RELEASED"}
+{"ts": "2026-07-13T14:44:47.598537Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-bb0aa04b", "fencing_token": 726, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:44:48.719194Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-bb0aa04b", "status": "RELEASED"}
+{"ts": "2026-07-13T14:44:48.727654Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-be8cdd48", "fencing_token": 727, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:44:48.737217Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-be8cdd48", "status": "RELEASED"}
+{"ts": "2026-07-13T14:44:48.743296Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-de768912", "fencing_token": 728, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:44:48.749007Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-de768912", "status": "RELEASED"}
+{"ts": "2026-07-13T14:44:53.770496Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-8b6fa6b0", "fencing_token": 729, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:44:54.878474Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-8b6fa6b0", "status": "RELEASED"}
+{"ts": "2026-07-13T14:44:54.887557Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-f362ddbf", "fencing_token": 730, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:44:54.898484Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-f362ddbf", "status": "RELEASED"}
+{"ts": "2026-07-13T14:44:54.903277Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-5fd55afa", "fencing_token": 731, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:44:54.911454Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-5fd55afa", "status": "RELEASED"}
+{"ts": "2026-07-13T14:44:59.978809Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-60fbdfe1", "fencing_token": 732, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:45:01.048221Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-60fbdfe1", "status": "RELEASED"}
+{"ts": "2026-07-13T14:45:01.056090Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-bc1fb44c", "fencing_token": 733, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:45:01.064455Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-bc1fb44c", "status": "RELEASED"}
+{"ts": "2026-07-13T14:45:01.070337Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-05c2b8d2", "fencing_token": 734, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:45:01.075660Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-05c2b8d2", "status": "RELEASED"}
+{"ts": "2026-07-13T14:45:06.094802Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-a2faeace", "fencing_token": 735, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:45:07.129394Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-a2faeace", "status": "RELEASED"}
+{"ts": "2026-07-13T14:45:07.137243Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-2fffc3b5", "fencing_token": 736, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:45:07.146614Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-2fffc3b5", "status": "RELEASED"}
+{"ts": "2026-07-13T14:45:07.152007Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-4f3fb3e3", "fencing_token": 737, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:45:07.158299Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-4f3fb3e3", "status": "RELEASED"}
+{"ts": "2026-07-13T14:45:12.896891Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-c50f59d0", "fencing_token": 738, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:45:15.472380Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-c50f59d0", "status": "RELEASED"}
+{"ts": "2026-07-13T14:45:15.476663Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-649ae71f", "fencing_token": 739, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:45:15.481781Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-649ae71f", "status": "RELEASED"}
+{"ts": "2026-07-13T14:45:15.485868Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-744d2f0c", "fencing_token": 740, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:45:15.490134Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-744d2f0c", "status": "RELEASED"}
+{"ts": "2026-07-13T14:45:20.576182Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-33feadf4", "fencing_token": 741, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:45:22.008294Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-33feadf4", "status": "RELEASED"}
+{"ts": "2026-07-13T14:45:22.010748Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-77e943cd", "fencing_token": 742, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:45:22.016349Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-77e943cd", "status": "RELEASED"}
+{"ts": "2026-07-13T14:45:22.019105Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-06e1e718", "fencing_token": 743, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:45:22.022342Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-06e1e718", "status": "RELEASED"}
+{"ts": "2026-07-13T14:45:27.109005Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-36625434", "fencing_token": 744, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:45:28.350036Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-36625434", "status": "RELEASED"}
+{"ts": "2026-07-13T14:45:28.373617Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-e7b81afd", "fencing_token": 745, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:45:28.381825Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-e7b81afd", "status": "RELEASED"}
+{"ts": "2026-07-13T14:45:28.387319Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-a7c1ceaf", "fencing_token": 746, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:45:28.392667Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-a7c1ceaf", "status": "RELEASED"}
+{"ts": "2026-07-13T14:45:33.481066Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-c2affe96", "fencing_token": 747, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:45:40.265715Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-c2affe96", "status": "RELEASED"}
+{"ts": "2026-07-13T14:45:40.275615Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-bf7c6236", "fencing_token": 748, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:45:40.283818Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-bf7c6236", "status": "RELEASED"}
+{"ts": "2026-07-13T14:45:40.288968Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-9812c67f", "fencing_token": 749, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:45:40.341935Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-9812c67f", "status": "RELEASED"}
+{"ts": "2026-07-13T14:45:45.414854Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-04ec335a", "fencing_token": 750, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:45:45.932810Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-04ec335a", "status": "RELEASED"}
+{"ts": "2026-07-13T14:45:45.936763Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-b6014854", "fencing_token": 751, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:45:45.940340Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-b6014854", "status": "RELEASED"}
+{"ts": "2026-07-13T14:45:50.995751Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-58c5299a", "fencing_token": 752, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:45:51.633492Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-58c5299a", "status": "RELEASED"}
+{"ts": "2026-07-13T14:45:51.638972Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-eb95b22d", "fencing_token": 753, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:45:51.642866Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-eb95b22d", "status": "RELEASED"}
+{"ts": "2026-07-13T14:45:56.674782Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-78aba2ef", "fencing_token": 754, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:45:57.463142Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-78aba2ef", "status": "RELEASED"}
+{"ts": "2026-07-13T14:45:57.471740Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-59c063f0", "fencing_token": 755, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:45:57.478789Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-59c063f0", "status": "RELEASED"}
+{"ts": "2026-07-13T14:46:02.525589Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-2f47a9c4", "fencing_token": 756, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:46:02.985486Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-2f47a9c4", "status": "RELEASED"}
+{"ts": "2026-07-13T14:46:08.062927Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-9686befa", "fencing_token": 757, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:46:08.712215Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-9686befa", "status": "RELEASED"}
+{"ts": "2026-07-13T14:46:13.793340Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-3d640d8a", "fencing_token": 758, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:46:16.390371Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-3d640d8a", "status": "RELEASED"}
+{"ts": "2026-07-13T14:57:16.194119Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-b32852ca", "fencing_token": 759, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:57:16.670183Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-b32852ca", "status": "RELEASED"}
+{"ts": "2026-07-13T14:57:16.678696Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-e96b3fa8", "fencing_token": 760, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:57:16.686490Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-e96b3fa8", "status": "RELEASED"}
+{"ts": "2026-07-13T14:57:16.691165Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-9f655c25", "fencing_token": 761, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:57:16.696663Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-9f655c25", "status": "RELEASED"}
+{"ts": "2026-07-13T14:57:21.775382Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-0ea9ec07", "fencing_token": 762, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:57:22.395737Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-0ea9ec07", "status": "RELEASED"}
+{"ts": "2026-07-13T14:57:22.400017Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-e1770e0d", "fencing_token": 763, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:57:22.404614Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-e1770e0d", "status": "RELEASED"}
+{"ts": "2026-07-13T14:57:22.409303Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-e4372db3", "fencing_token": 764, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:57:22.414228Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-e4372db3", "status": "RELEASED"}
+{"ts": "2026-07-13T14:57:27.601603Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-473295b9", "fencing_token": 765, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:57:30.019542Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-473295b9", "status": "RELEASED"}
+{"ts": "2026-07-13T14:57:30.034584Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-579d668d", "fencing_token": 766, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:57:30.794438Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-579d668d", "status": "RELEASED"}
+{"ts": "2026-07-13T14:57:30.802208Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-2062bb2d", "fencing_token": 767, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:57:30.813005Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-2062bb2d", "status": "RELEASED"}
+{"ts": "2026-07-13T14:57:36.423415Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-3c5d37a7", "fencing_token": 768, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:57:39.803200Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-3c5d37a7", "status": "RELEASED"}
+{"ts": "2026-07-13T14:57:39.811143Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-c4fd21a1", "fencing_token": 769, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:57:39.820111Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-c4fd21a1", "status": "RELEASED"}
+{"ts": "2026-07-13T14:57:39.826220Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-715a8347", "fencing_token": 770, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:57:39.833720Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-715a8347", "status": "RELEASED"}
+{"ts": "2026-07-13T14:57:44.919951Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-b3467cf1", "fencing_token": 771, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:57:47.609447Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-b3467cf1", "status": "RELEASED"}
+{"ts": "2026-07-13T14:57:47.615078Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-d4d248fe", "fencing_token": 772, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:57:47.623417Z", "task_id": "T-HCF-REAL-01", "lease_id": "lease-d4d248fe", "status": "RELEASED"}
+{"ts": "2026-07-13T14:57:47.629174Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-15310462", "fencing_token": 773, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:57:47.642913Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-15310462", "status": "RELEASED"}
+{"ts": "2026-07-13T14:57:52.735359Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-f40ea432", "fencing_token": 774, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:57:54.448883Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-f40ea432", "status": "RELEASED"}
+{"ts": "2026-07-13T14:57:54.456400Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-7c2a544c", "fencing_token": 775, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:57:54.461860Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-7c2a544c", "status": "RELEASED"}
+{"ts": "2026-07-13T14:57:59.504664Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-de9da8e1", "fencing_token": 776, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:58:01.726205Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-de9da8e1", "status": "RELEASED"}
+{"ts": "2026-07-13T14:58:01.734329Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-d116c736", "fencing_token": 777, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:58:01.742405Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-d116c736", "status": "RELEASED"}
+{"ts": "2026-07-13T14:58:06.798759Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-9d518634", "fencing_token": 778, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:58:08.584493Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-9d518634", "status": "RELEASED"}
+{"ts": "2026-07-13T14:58:08.588124Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-fd251686", "fencing_token": 779, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:58:08.592288Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-fd251686", "status": "RELEASED"}
+{"ts": "2026-07-13T14:58:13.700486Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-1d2bb058", "fencing_token": 780, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:58:15.602564Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-1d2bb058", "status": "RELEASED"}
+{"ts": "2026-07-13T14:58:15.610460Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-bfb0e875", "fencing_token": 781, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:58:15.617737Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-bfb0e875", "status": "RELEASED"}
+{"ts": "2026-07-13T14:58:20.679756Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-a568ff15", "fencing_token": 782, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:58:22.596996Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-a568ff15", "status": "RELEASED"}
+{"ts": "2026-07-13T14:58:22.605419Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-816aa8f4", "fencing_token": 783, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:58:22.612865Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-816aa8f4", "status": "RELEASED"}
+{"ts": "2026-07-13T14:58:27.689476Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-73866b68", "fencing_token": 784, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:58:28.166383Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-73866b68", "status": "RELEASED"}
+{"ts": "2026-07-13T14:58:28.176605Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-6c09c920", "fencing_token": 785, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:58:29.411139Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-6c09c920", "status": "RELEASED"}
+{"ts": "2026-07-13T14:58:34.473864Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-90ebee05", "fencing_token": 786, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:58:36.561620Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-90ebee05", "status": "RELEASED"}
+{"ts": "2026-07-13T14:58:41.654997Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-054c7c50", "fencing_token": 787, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:58:41.996324Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-054c7c50", "status": "RELEASED"}
+{"ts": "2026-07-13T14:58:47.084794Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-ae1e02c1", "fencing_token": 788, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:58:48.764487Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-ae1e02c1", "status": "RELEASED"}
+{"ts": "2026-07-13T14:58:53.792614Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-ce991ebe", "fencing_token": 789, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:58:55.586711Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-ce991ebe", "status": "RELEASED"}
+{"ts": "2026-07-13T14:59:00.677906Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-fd247c53", "fencing_token": 790, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:59:01.763145Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-fd247c53", "status": "RELEASED"}
+{"ts": "2026-07-13T14:59:06.870061Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-c7df4dc0", "fencing_token": 791, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:59:09.005471Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-c7df4dc0", "status": "RELEASED"}
+{"ts": "2026-07-13T14:59:14.103241Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-8c2037b7", "fencing_token": 792, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:59:14.114871Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-8c2037b7", "status": "RELEASED"}
+{"ts": "2026-07-13T14:59:19.266288Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-a20f8221", "fencing_token": 793, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:59:19.276163Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-a20f8221", "status": "RELEASED"}
+{"ts": "2026-07-13T14:59:24.313193Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-01233ada", "fencing_token": 794, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:59:24.328317Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-01233ada", "status": "RELEASED"}
+{"ts": "2026-07-13T14:59:29.410616Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-c27a191e", "fencing_token": 795, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:59:30.703988Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-c27a191e", "status": "RELEASED"}
+{"ts": "2026-07-13T14:59:35.794545Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-153e9dca", "fencing_token": 796, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:59:36.818657Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-153e9dca", "status": "RELEASED"}
+{"ts": "2026-07-13T14:59:41.906421Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-875ff228", "fencing_token": 797, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:59:42.945287Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-875ff228", "status": "RELEASED"}
+{"ts": "2026-07-13T14:59:48.038248Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-d00db9bc", "fencing_token": 798, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:59:49.955469Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-d00db9bc", "status": "RELEASED"}
+{"ts": "2026-07-13T14:59:55.041552Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-ea8e7dec", "fencing_token": 799, "status": "ACQUIRED"}
+{"ts": "2026-07-13T14:59:56.091180Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-ea8e7dec", "status": "RELEASED"}
+{"ts": "2026-07-13T15:00:01.173033Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-28250be4", "fencing_token": 800, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:00:02.040441Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-28250be4", "status": "RELEASED"}
+{"ts": "2026-07-13T15:00:07.129882Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-d2c4e846", "fencing_token": 801, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:00:08.337579Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-d2c4e846", "status": "RELEASED"}
+{"ts": "2026-07-13T15:00:13.415846Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-1cafc597", "fencing_token": 802, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:00:14.969533Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-1cafc597", "status": "RELEASED"}
+{"ts": "2026-07-13T15:00:20.050994Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-df835403", "fencing_token": 803, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:00:21.064601Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-df835403", "status": "RELEASED"}
+{"ts": "2026-07-13T15:00:26.153013Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-68153bf2", "fencing_token": 804, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:00:27.614599Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-68153bf2", "status": "RELEASED"}
+{"ts": "2026-07-13T15:00:32.702556Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-3eeb0f79", "fencing_token": 805, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:00:34.801583Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-3eeb0f79", "status": "RELEASED"}
+{"ts": "2026-07-13T15:00:39.912642Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-648e37af", "fencing_token": 806, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:00:40.436490Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-648e37af", "status": "RELEASED"}
+{"ts": "2026-07-13T15:00:45.502165Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-20ba3232", "fencing_token": 807, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:00:45.986611Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-20ba3232", "status": "RELEASED"}
+{"ts": "2026-07-13T15:00:51.050661Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-b40fd8a5", "fencing_token": 808, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:00:51.638301Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-b40fd8a5", "status": "RELEASED"}
+{"ts": "2026-07-13T15:00:56.942741Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-4f75d80e", "fencing_token": 809, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:00:58.334665Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-4f75d80e", "status": "RELEASED"}
+{"ts": "2026-07-13T15:01:03.409413Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-cff3354b", "fencing_token": 810, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:01:03.923132Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-cff3354b", "status": "RELEASED"}
+{"ts": "2026-07-13T15:01:08.947205Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-87d18980", "fencing_token": 811, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:01:09.576095Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-87d18980", "status": "RELEASED"}
+{"ts": "2026-07-13T15:01:14.590639Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-11c78e90", "fencing_token": 812, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:01:15.258829Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-11c78e90", "status": "RELEASED"}
+{"ts": "2026-07-13T15:01:20.297488Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-b42d6263", "fencing_token": 813, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:01:20.834210Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-b42d6263", "status": "RELEASED"}
+{"ts": "2026-07-13T15:01:25.855777Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-9db789a1", "fencing_token": 814, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:01:26.485078Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-9db789a1", "status": "RELEASED"}
+{"ts": "2026-07-13T15:01:31.532219Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-8e089c4b", "fencing_token": 815, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:01:32.213265Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-8e089c4b", "status": "RELEASED"}
+{"ts": "2026-07-13T15:01:37.277978Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-f4b41291", "fencing_token": 816, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:01:37.811577Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-f4b41291", "status": "RELEASED"}
+{"ts": "2026-07-13T15:01:42.873242Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-1a3ba630", "fencing_token": 817, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:01:43.494804Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-1a3ba630", "status": "RELEASED"}
+{"ts": "2026-07-13T15:01:48.587566Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-7c47c4bc", "fencing_token": 818, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:01:48.596488Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-7c47c4bc", "status": "RELEASED"}
+{"ts": "2026-07-13T15:01:53.666979Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-043cc030", "fencing_token": 819, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:01:53.675242Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-043cc030", "status": "RELEASED"}
+{"ts": "2026-07-13T15:01:58.759287Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-4aa850b4", "fencing_token": 820, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:01:58.770070Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-4aa850b4", "status": "RELEASED"}
+{"ts": "2026-07-13T15:02:03.853972Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-5dcc4108", "fencing_token": 821, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:02:03.863618Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-5dcc4108", "status": "RELEASED"}
+{"ts": "2026-07-13T15:02:08.946488Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-6ed76a3b", "fencing_token": 822, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:02:08.956712Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-6ed76a3b", "status": "RELEASED"}
+{"ts": "2026-07-13T15:02:14.049312Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-ff04d912", "fencing_token": 823, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:02:14.718099Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-ff04d912", "status": "RELEASED"}
+{"ts": "2026-07-13T15:02:19.811770Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-4db84655", "fencing_token": 824, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:02:20.755955Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-4db84655", "status": "RELEASED"}
+{"ts": "2026-07-13T15:02:25.836576Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-9776217f", "fencing_token": 825, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:02:26.889859Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-9776217f", "status": "RELEASED"}
+{"ts": "2026-07-13T15:02:31.967012Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-1001189e", "fencing_token": 826, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:02:32.897346Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-1001189e", "status": "RELEASED"}
+{"ts": "2026-07-13T15:02:38.007703Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-a63367e6", "fencing_token": 827, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:02:39.380336Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-a63367e6", "status": "RELEASED"}
+{"ts": "2026-07-13T15:02:44.468923Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-11ab5684", "fencing_token": 828, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:02:45.699367Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-11ab5684", "status": "RELEASED"}
+{"ts": "2026-07-13T15:02:50.778399Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-0cc5c1ea", "fencing_token": 829, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:02:51.816018Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-0cc5c1ea", "status": "RELEASED"}
+{"ts": "2026-07-13T15:02:56.908159Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-6a4eb1a0", "fencing_token": 830, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:02:57.944257Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-6a4eb1a0", "status": "RELEASED"}
+{"ts": "2026-07-13T15:03:02.998969Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-16780c4c", "fencing_token": 831, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:03:04.193647Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-16780c4c", "status": "RELEASED"}
+{"ts": "2026-07-13T15:03:09.282628Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-7111dbd4", "fencing_token": 832, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:03:11.090500Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-7111dbd4", "status": "RELEASED"}
+{"ts": "2026-07-13T15:03:16.171692Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-de3ced1a", "fencing_token": 833, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:03:17.814173Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-de3ced1a", "status": "RELEASED"}
+{"ts": "2026-07-13T15:03:23.012353Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-d1f04f52", "fencing_token": 834, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:03:24.941636Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-d1f04f52", "status": "RELEASED"}
+{"ts": "2026-07-13T15:03:30.073073Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-430bccf5", "fencing_token": 835, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:03:31.671685Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-430bccf5", "status": "RELEASED"}
+{"ts": "2026-07-13T15:03:36.732951Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-a482b5a6", "fencing_token": 836, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:03:36.784315Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-a482b5a6", "status": "RELEASED"}
+{"ts": "2026-07-13T15:03:42.584748Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-9d705332", "fencing_token": 837, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:03:45.257658Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-9d705332", "status": "RELEASED"}
+{"ts": "2026-07-13T15:03:50.338919Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-e9de1c09", "fencing_token": 838, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:03:52.433154Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-e9de1c09", "status": "RELEASED"}
+{"ts": "2026-07-13T15:03:57.499156Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-5fefc755", "fencing_token": 839, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:04:01.443471Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-5fefc755", "status": "RELEASED"}
+{"ts": "2026-07-13T15:04:06.551404Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-b7f0b14f", "fencing_token": 840, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:04:07.549312Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-b7f0b14f", "status": "RELEASED"}
+{"ts": "2026-07-13T15:04:12.615658Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-e4f328f3", "fencing_token": 841, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:04:13.138450Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-e4f328f3", "status": "RELEASED"}
+{"ts": "2026-07-13T15:04:18.198092Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-2f46e270", "fencing_token": 842, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:04:18.867286Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-2f46e270", "status": "RELEASED"}
+{"ts": "2026-07-13T15:04:23.928912Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-f45b6158", "fencing_token": 843, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:04:23.939078Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-f45b6158", "status": "RELEASED"}
+{"ts": "2026-07-13T15:04:29.041114Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-34403648", "fencing_token": 844, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:04:29.051467Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-34403648", "status": "RELEASED"}
+{"ts": "2026-07-13T15:04:34.133944Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-d2f20d4b", "fencing_token": 845, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:04:35.161643Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-d2f20d4b", "status": "RELEASED"}
+{"ts": "2026-07-13T15:04:40.228577Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-1d22834b", "fencing_token": 846, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:04:44.735714Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-1d22834b", "status": "RELEASED"}
+{"ts": "2026-07-13T15:04:49.834130Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-20d7c0c3", "fencing_token": 847, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:04:52.685281Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-20d7c0c3", "status": "RELEASED"}
+{"ts": "2026-07-13T15:04:57.775634Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-65cc047b", "fencing_token": 848, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:04:59.639323Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-65cc047b", "status": "RELEASED"}
+{"ts": "2026-07-13T15:05:04.714012Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-6fa7fd62", "fencing_token": 849, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:05:06.502894Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-6fa7fd62", "status": "RELEASED"}
+{"ts": "2026-07-13T15:05:11.591001Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-0468ec3f", "fencing_token": 850, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:05:12.601448Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-0468ec3f", "status": "RELEASED"}
+{"ts": "2026-07-13T15:05:17.692067Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-c325b6d3", "fencing_token": 851, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:05:19.565472Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-c325b6d3", "status": "RELEASED"}
+{"ts": "2026-07-13T15:05:24.643214Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-9747872a", "fencing_token": 852, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:05:26.599453Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-9747872a", "status": "RELEASED"}
+{"ts": "2026-07-13T15:05:31.647477Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-969530e5", "fencing_token": 853, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:05:32.675546Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-969530e5", "status": "RELEASED"}
+{"ts": "2026-07-13T15:05:37.718711Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-93e85bae", "fencing_token": 854, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:05:38.060070Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-93e85bae", "status": "RELEASED"}
+{"ts": "2026-07-13T15:05:43.148828Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-13324984", "fencing_token": 855, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:05:43.158132Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-13324984", "status": "RELEASED"}
+{"ts": "2026-07-13T15:05:48.243302Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-e7525075", "fencing_token": 856, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:05:48.251497Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-e7525075", "status": "RELEASED"}
+{"ts": "2026-07-13T15:05:53.333614Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-17119b45", "fencing_token": 857, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:05:53.345570Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-17119b45", "status": "RELEASED"}
+{"ts": "2026-07-13T15:05:58.434862Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-7daa5514", "fencing_token": 858, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:05:58.444188Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-7daa5514", "status": "RELEASED"}
+{"ts": "2026-07-13T15:06:03.528156Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-ed49625e", "fencing_token": 859, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:06:04.579231Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-ed49625e", "status": "RELEASED"}
+{"ts": "2026-07-13T15:06:09.662686Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-7d818a58", "fencing_token": 860, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:06:10.744105Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-7d818a58", "status": "RELEASED"}
+{"ts": "2026-07-13T15:06:15.834189Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-5108200f", "fencing_token": 861, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:06:16.951853Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-5108200f", "status": "RELEASED"}
+{"ts": "2026-07-13T15:06:22.037750Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-b9646e35", "fencing_token": 862, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:06:23.250673Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-b9646e35", "status": "RELEASED"}
+{"ts": "2026-07-13T15:06:28.343819Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-a36d1037", "fencing_token": 863, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:06:29.398354Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-a36d1037", "status": "RELEASED"}
+{"ts": "2026-07-13T15:06:34.491745Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-8fd3e691", "fencing_token": 864, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:06:35.631416Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-8fd3e691", "status": "RELEASED"}
+{"ts": "2026-07-13T15:06:40.725088Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-5660cdc7", "fencing_token": 865, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:06:41.804650Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-5660cdc7", "status": "RELEASED"}
+{"ts": "2026-07-13T15:06:47.058205Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-45eb7ac6", "fencing_token": 866, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:06:47.131531Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-45eb7ac6", "status": "RELEASED"}
+{"ts": "2026-07-13T15:06:52.217917Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-819a2595", "fencing_token": 867, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:06:52.228305Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-819a2595", "status": "RELEASED"}
+{"ts": "2026-07-13T15:06:57.294050Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-0f5869d1", "fencing_token": 868, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:06:57.303187Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-0f5869d1", "status": "RELEASED"}
+{"ts": "2026-07-13T15:07:02.382341Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-287c7afe", "fencing_token": 869, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:07:02.885091Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-287c7afe", "status": "RELEASED"}
+{"ts": "2026-07-13T15:07:07.933620Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-3ed88458", "fencing_token": 870, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:07:08.495243Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-3ed88458", "status": "RELEASED"}
+{"ts": "2026-07-13T15:07:13.579274Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-e056594b", "fencing_token": 871, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:07:13.588481Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-e056594b", "status": "RELEASED"}
+{"ts": "2026-07-13T15:07:18.676079Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-184b602a", "fencing_token": 872, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:07:18.685817Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-184b602a", "status": "RELEASED"}
+{"ts": "2026-07-13T15:07:23.772383Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-47eaa3d1", "fencing_token": 873, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:07:23.781897Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-47eaa3d1", "status": "RELEASED"}
+{"ts": "2026-07-13T15:07:28.852841Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-bb00deb9", "fencing_token": 874, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:07:28.859915Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-bb00deb9", "status": "RELEASED"}
+{"ts": "2026-07-13T15:07:33.945608Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-f3b0f912", "fencing_token": 875, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:07:34.059224Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-f3b0f912", "status": "RELEASED"}
+{"ts": "2026-07-13T15:07:39.135252Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-2a92b8b8", "fencing_token": 876, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:07:40.873615Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-2a92b8b8", "status": "RELEASED"}
+{"ts": "2026-07-13T15:07:45.901070Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-67b3caf9", "fencing_token": 877, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:07:46.508956Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-67b3caf9", "status": "RELEASED"}
+{"ts": "2026-07-13T15:07:51.531022Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-a2e17d21", "fencing_token": 878, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:07:52.171863Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-a2e17d21", "status": "RELEASED"}
+{"ts": "2026-07-13T15:07:57.225523Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-191b2539", "fencing_token": 879, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:07:57.895970Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-191b2539", "status": "RELEASED"}
+{"ts": "2026-07-13T15:08:02.908474Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-396deb50", "fencing_token": 880, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:08:03.472305Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-396deb50", "status": "RELEASED"}
+{"ts": "2026-07-13T15:08:08.529236Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-db9115e1", "fencing_token": 881, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:08:09.123796Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-db9115e1", "status": "RELEASED"}
+{"ts": "2026-07-13T15:08:14.173611Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-33647212", "fencing_token": 882, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:08:14.796948Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-33647212", "status": "RELEASED"}
+{"ts": "2026-07-13T15:08:19.813114Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-13f8d2f0", "fencing_token": 883, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:08:20.522783Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-13f8d2f0", "status": "RELEASED"}
+{"ts": "2026-07-13T15:08:25.565574Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-d5250983", "fencing_token": 884, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:08:26.099061Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-d5250983", "status": "RELEASED"}
+{"ts": "2026-07-13T15:08:31.149628Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-b1f5bb1a", "fencing_token": 885, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:08:31.799313Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-b1f5bb1a", "status": "RELEASED"}
+{"ts": "2026-07-13T15:08:36.824304Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-04886891", "fencing_token": 886, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:08:37.447363Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-04886891", "status": "RELEASED"}
+{"ts": "2026-07-13T15:08:42.476818Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-522cc9bb", "fencing_token": 887, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:08:43.094015Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-522cc9bb", "status": "RELEASED"}
+{"ts": "2026-07-13T15:08:48.151025Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-a2248ed6", "fencing_token": 888, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:08:48.663482Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-a2248ed6", "status": "RELEASED"}
+{"ts": "2026-07-13T15:08:53.749445Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-22ed1c45", "fencing_token": 889, "status": "ACQUIRED"}
+{"ts": "2026-07-13T15:08:57.367502Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-22ed1c45", "status": "RELEASED"}

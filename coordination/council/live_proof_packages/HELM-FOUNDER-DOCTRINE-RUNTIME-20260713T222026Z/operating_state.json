@@ -1,0 +1,9 @@
+{
+  "schema": "HELM_OPERATING_STATE_v1",
+  "correction": "The money path is a PRODUCT milestone, not a prerequisite for HELM autonomy. Rejected as a global keystone (per ChatGPT 5.6 review, ratified).",
+  "EPIC_FURY_MONEY_PATH": "FOUNDER_ACTION_REQUIRED (service key proven; one real purchase pending)",
+  "HELM_JUDGMENT_LAYER": "ACTIVE — Founder Doctrine Engine live, 5-class gate proven, wired pre-lease",
+  "OTHER_AUTONOMOUS_OPERATIONS": "CONTINUE (self-audit, council dispatch, code hardening, evidence, escalation)",
+  "GLOBAL_OPERATIONS_HOLD": false,
+  "authority_classes": ["AUTONOMOUS","PREAUTHORIZED_PLAYBOOK","PROPOSE_ONLY","FOUNDER_ONLY","PROHIBITED","CONFLICTED","UNKNOWN"]
+}

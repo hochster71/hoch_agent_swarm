@@ -1,0 +1,43 @@
+{
+  "results": [
+    {
+      "task": "FIVECLASS-AUTO",
+      "expected": "AUTONOMOUS",
+      "execute_returned": false,
+      "lease_after": false
+    },
+    {
+      "task": "FIVECLASS-PROPOSE",
+      "expected": "PROPOSE_ONLY",
+      "execute_returned": false,
+      "lease_after": false
+    },
+    {
+      "task": "FIVECLASS-FOUNDER",
+      "expected": "FOUNDER_ONLY",
+      "execute_returned": false,
+      "lease_after": false
+    },
+    {
+      "task": "FIVECLASS-PROHIB",
+      "expected": "PROHIBITED",
+      "execute_returned": false,
+      "lease_after": false
+    },
+    {
+      "task": "FIVECLASS-CONFLICT",
+      "expected": "FOUNDER_ONLY",
+      "execute_returned": false,
+      "lease_after": false
+    }
+  ],
+  "escalations": [
+    "task_id=FIVECLASS-PROPOSE authority_decision_id=AUTH-2991721cd4f05fcb scope=factory:HASF",
+    "task_id=FIVECLASS-FOUNDER authority_decision_id=AUTH-e93cfa51d8d6df28 scope=factory:HASF",
+    "task_id=FIVECLASS-CONFLICT authority_decision_id=AUTH-2a462cc1cce79f9e scope=factory:HASF"
+  ],
+  "security_denials": [
+    "FIVECLASS-PROHIB"
+  ],
+  "failed": 0
+}

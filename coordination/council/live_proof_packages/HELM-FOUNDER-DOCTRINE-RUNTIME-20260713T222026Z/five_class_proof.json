@@ -1,0 +1,44 @@
+{
+  "proof": "five_class+controls",
+  "ts": "2026-07-13T22:13:45Z",
+  "results": [
+    {
+      "check": "AUTONOMOUS",
+      "pass": true,
+      "observed": "AUTONOMOUS"
+    },
+    {
+      "check": "PROPOSE_ONLY",
+      "pass": true,
+      "observed": "PROPOSE_ONLY"
+    },
+    {
+      "check": "FOUNDER_ONLY",
+      "pass": true,
+      "observed": "FOUNDER_ONLY"
+    },
+    {
+      "check": "PROHIBITED",
+      "pass": true,
+      "observed": "PROHIBITED"
+    },
+    {
+      "check": "PREAUTHORIZED_PLAYBOOK",
+      "pass": true,
+      "observed": "PREAUTHORIZED_PLAYBOOK"
+    },
+    {
+      "check": "DEDUP first-queues-then-suppresses",
+      "pass": true,
+      "observed": "DEDUP: an equivalent escalation is already open (b3cd7a38b844ee12); not asking twice"
+    },
+    {
+      "check": "SUPPRESS-when-provable",
+      "pass": true,
+      "observed": ""
+    }
+  ],
+  "passed": 7,
+  "total": 7,
+  "failed": 0
+}

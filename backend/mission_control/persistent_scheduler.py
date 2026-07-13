@@ -183,25 +183,52 @@ class PersistentScheduler:
         # spends/publishes/binds (PROPOSE_ONLY) or is FOUNDER_ONLY is HELD and escalated,
         # never auto-executed. This is what makes 24/7 safe rather than merely unattended.
         try:
+            import hashlib as _hl, json as _json, time as _t
             from backend.council.founder_model import (
                 classify_action, Authority, Escalation, escalate)
             _probe = f"{task.get('name','')} {task.get('mission_prompt','')} " \
                      f"dispatch:{task.get('dispatch_type','LOCAL_OLLAMA')}"
             ruling = classify_action(_probe)
-            if ruling.authority is not Authority.AUTONOMOUS:
-                esc = Escalation(
-                    one_sentence_question=f"Authorize {ruling.authority.value} task '{task.get('name','?')}'?",
-                    why_it_needs_you=f"{ruling.reason} (matched: {ruling.matched or 'n/a'})",
+
+            # AUTHORITY-ID-PROPAGATION-CONTROL: every task gets an authority decision id at
+            # classification. "No authority decision id means no dispatch." It is stamped
+            # onto the task so it flows into lease metadata, dispatch + result envelopes.
+            _adid = "AUTH-" + _hl.sha256(
+                f"{task.get('task_id')}|{ruling.authority.value}|{_t.time()}".encode()
+            ).hexdigest()[:16]
+            task["authority_decision_id"] = _adid
+            task["authority_class"] = ruling.authority.value
+
+            _PROCEED = (Authority.AUTONOMOUS, Authority.PREAUTHORIZED_PLAYBOOK)
+            if ruling.authority not in _PROCEED:
+                if ruling.authority is Authority.PROHIBITED:
+                    # PROHIBITED: deny + SECURITY RECORD. Never escalated — it is not
+                    # approvable, so offering the founder an APPROVE button would be wrong.
+                    _sec = ROOT / "coordination" / "security" / "prohibited_denials.jsonl"
+                    _sec.parent.mkdir(parents=True, exist_ok=True)
+                    with open(_sec, "a", encoding="utf-8") as _f:
+                        _f.write(_json.dumps({"ts": get_utc_now_str(), "task_id": task.get("task_id"),
+                            "authority_decision_id": _adid, "matched": ruling.matched,
+                            "action": "DENIED_PROHIBITED"}) + "\n")
+                    self.log_lease({"ts": get_utc_now_str(), "task_id": task.get("task_id"),
+                        "status": "DENIED_PROHIBITED", "authority_decision_id": _adid,
+                        "matched": ruling.matched})
+                    return False
+
+                # PROPOSE_ONLY / FOUNDER_ONLY / CONFLICTED -> withhold + escalate (decision object)
+                _q = ("Which doctrine applies to" if ruling.authority is Authority.CONFLICTED
+                      else f"Authorize {ruling.authority.value} task")
+                escalate(Escalation(
+                    one_sentence_question=f"{_q} '{task.get('name','?')}'?",
+                    why_it_needs_you=f"{ruling.reason} (matched: {ruling.matched or 'n/a'}) [{_adid}]",
                     options=["Approve this dispatch", "Deny / keep local-only"],
                     recommendation_and_why="HOLD by default — the daemon does not spend, publish, or bind without you",
-                    evidence_sanitized=f"task_id={task.get('task_id')} scope=factory:{task.get('target_pod','?')}",
+                    evidence_sanitized=f"task_id={task.get('task_id')} authority_decision_id={_adid} scope=factory:{task.get('target_pod','?')}",
                     cost_of_delay="none; the mission stays queued",
-                    reversible=True)
-                # can_prove_answer=False: authorization is judgment, never machine-provable
-                escalate(esc, can_prove_answer=False)
+                    reversible=True), can_prove_answer=False)
                 self.log_lease({"ts": get_utc_now_str(), "task_id": task.get("task_id"),
-                                "status": "HELD_AUTHORITY", "authority": ruling.authority.value,
-                                "matched": ruling.matched})
+                    "status": "HELD_AUTHORITY", "authority": ruling.authority.value,
+                    "authority_decision_id": _adid, "matched": ruling.matched})
                 return False
         except Exception as _e:
             # fail CLOSED: if the gate cannot run, do not dispatch — a broken gate must

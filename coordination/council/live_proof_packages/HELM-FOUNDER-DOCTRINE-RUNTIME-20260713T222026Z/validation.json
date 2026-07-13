@@ -1,0 +1,18 @@
+{
+  "package": "HELM-FOUNDER-DOCTRINE-RUNTIME-20260713T222026Z",
+  "assessed_at": "2026-07-13T22:21:02Z",
+  "verdict": "FIVE-CLASS RUNTIME ENFORCEMENT PROVEN (withheld paths); AUTONOMOUS full-dispatch not exercised",
+  "proven": [
+    "PROPOSE_ONLY / FOUNDER_ONLY / PROHIBITED / CONFLICTED withheld -> NO execution lease",
+    "PROHIBITED -> security denial record, NOT escalated",
+    "PROPOSE_ONLY / FOUNDER_ONLY -> escalated carrying authority_decision_id",
+    "authority_decision_id stamped at classification before lease acquisition",
+    "versioned decision corpus: schema/scope/supersession/revocation/expiry/source-hash (12/12)",
+    "feedback ingestion: default single-use, standing->ratified, single-use-double-spend denied (9/9)"
+  ],
+  "declared_open": [
+    "AUTONOMOUS full path (lease->dispatch->validator pass) requires a live adapter; only gate-pass proven",
+    "authority_decision_id propagation into dispatch + result envelope + PERT (stamped on task; envelope wiring pending)",
+    "escalation email delivery not built"
+  ]
+}

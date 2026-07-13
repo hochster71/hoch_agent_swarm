@@ -1,0 +1,53 @@
+{
+  "proof": "FEEDBACK-INGESTION + SINGLE-USE",
+  "ts": "2026-07-13T22:18:28Z",
+  "results": [
+    {
+      "check": "no-provenance rejected",
+      "pass": true,
+      "observed": "REJECTED: no founder provenance (token) on the response"
+    },
+    {
+      "check": "DENY creates no authorization",
+      "pass": true,
+      "observed": "DENY recorded; task remains blocked, no authorization created"
+    },
+    {
+      "check": "RETURN_FOR_CHANGES no auth",
+      "pass": true,
+      "observed": ""
+    },
+    {
+      "check": "default APPROVE = single-use (not doctrine)",
+      "pass": true,
+      "observed": "single-use authorization created (FE-1783981108188); NOT permanent doctrine"
+    },
+    {
+      "check": "single-use: first consume ok",
+      "pass": true,
+      "observed": "single-use grant FE-1783981108188 consumed"
+    },
+    {
+      "check": "single-use: second consume DENIED",
+      "pass": true,
+      "observed": "no UNCONSUMED single-use grant (already spent, or none) \u2014 authorization denied"
+    },
+    {
+      "check": "STANDING approve -> ratified corpus record",
+      "pass": true,
+      "observed": "RATIFIED decision FD-20260713-108189 created (scope=STANDING_POLICY)"
+    },
+    {
+      "check": "ingested standing record is schema-valid + loads",
+      "pass": true,
+      "observed": ""
+    },
+    {
+      "check": "feedback events carry signature + founder_id",
+      "pass": true,
+      "observed": ""
+    }
+  ],
+  "passed": 9,
+  "failed": 0
+}
