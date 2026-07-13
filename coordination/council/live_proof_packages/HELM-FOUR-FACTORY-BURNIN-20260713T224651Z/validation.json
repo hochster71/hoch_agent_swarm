@@ -1,0 +1,18 @@
+{
+  "package": "HELM-FOUR-FACTORY-BURNIN-20260713T224651Z",
+  "verdict": "FOUR_FACTORY_BURNIN_PASS",
+  "failed_checks": 0,
+  "concurrency": {
+    "configured": 4,
+    "observed_peak_concurrency": 4,
+    "wall_clock_s": 18.61,
+    "sum_task_latency_s": 53.95,
+    "overlapped": true,
+    "method": "OBSERVED from real lease acquire/release wall-clock timestamps"
+  },
+  "validators_passed": "4/4",
+  "epic_fury_distribution": "BLOCKED_EXTERNAL throughout",
+  "manual_prompt_copies": 0,
+  "manual_result_copies": 0,
+  "assessed_at": "2026-07-13T22:47:10Z"
+}

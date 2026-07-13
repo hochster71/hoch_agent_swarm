@@ -1,0 +1,19 @@
+{
+  "scope_type": "PRODUCT_MISSION",
+  "factory_id": "HASF",
+  "product_id": "EPIC_FURY_2026",
+  "mission_id": "APPLE_DISTRIBUTION",
+  "blocked_capabilities": [
+    "APP_STORE_CONNECT_OBSERVATION",
+    "APPLE_DISTRIBUTION_PROMOTION"
+  ],
+  "status": "BLOCKED_EXTERNAL",
+  "reason": "APPLE_REVIEW_PENDING",
+  "must_not_block": [
+    "unrelated HASF engineering",
+    "another HASF product",
+    "HELM hardening",
+    "local test execution",
+    "any other factory"
+  ]
+}

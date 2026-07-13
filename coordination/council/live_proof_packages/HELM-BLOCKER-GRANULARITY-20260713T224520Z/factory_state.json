@@ -1,0 +1,88 @@
+{
+  "PRODUCT_MISSION_STATE": {
+    "EPIC_FURY_2026.distribution": {
+      "state": "BLOCKED_EXTERNAL",
+      "reason": "APPLE_REVIEW_PENDING",
+      "mission_id": "EPIC_FURY_DISTRIBUTION",
+      "blocked_capabilities": [
+        "APP_STORE_CONNECT_OBSERVATION",
+        "APPLE_DISTRIBUTION_PROMOTION"
+      ]
+    }
+  },
+  "GLOBAL_PLATFORM_STATE": "ACTIVE",
+  "SCHEDULER_STATE": "ACTIVE",
+  "COUNCIL_STATE": "ACTIVE",
+  "FACTORY_STATE": {
+    "HASF": {
+      "state": "ACTIVE",
+      "current_champion": "EPIC_FURY_2026",
+      "distribution_lane": "BLOCKED_EXTERNAL",
+      "reason": "APPLE_REVIEW_PENDING",
+      "agent_work": "COMPLETE",
+      "general_engineering": "ELIGIBLE",
+      "blocked_missions": [
+        "EPIC_FURY_DISTRIBUTION"
+      ],
+      "blocked_capabilities": [
+        "APP_STORE_CONNECT_OBSERVATION",
+        "APPLE_DISTRIBUTION_PROMOTION"
+      ]
+    },
+    "HRF": {
+      "state": "ACTIVE",
+      "current_champion": "RESEARCH_SYNTHESIS_v1",
+      "distribution_lane": "ELIGIBLE",
+      "reason": "OK",
+      "agent_work": "IN_PROGRESS"
+    },
+    "HCF": {
+      "state": "ACTIVE",
+      "current_champion": "CYBER_HARDENING_MANIFEST",
+      "distribution_lane": "ELIGIBLE",
+      "reason": "OK",
+      "agent_work": "IN_PROGRESS"
+    },
+    "HSF": {
+      "state": "ACTIVE",
+      "current_champion": "STORY_CHRONICLE_v2",
+      "distribution_lane": "ELIGIBLE",
+      "reason": "OK",
+      "agent_work": "IN_PROGRESS"
+    },
+    "HMF": {
+      "state": "ACTIVE",
+      "current_champion": "MUSIC_MELODY_v1",
+      "distribution_lane": "ELIGIBLE",
+      "reason": "OK",
+      "agent_work": "IN_PROGRESS"
+    },
+    "HFF": {
+      "state": "ACTIVE",
+      "current_champion": "UNKNOWN",
+      "distribution_lane": "NOT_READY",
+      "reason": "NO_ACTIVE_CHAMPION",
+      "agent_work": "COMPLETE"
+    },
+    "HHF": {
+      "state": "ACTIVE",
+      "current_champion": "UNKNOWN",
+      "distribution_lane": "NOT_READY",
+      "reason": "NO_ACTIVE_CHAMPION",
+      "agent_work": "COMPLETE"
+    },
+    "HPF": {
+      "state": "ACTIVE",
+      "current_champion": "UNKNOWN",
+      "distribution_lane": "NOT_READY",
+      "reason": "NO_ACTIVE_CHAMPION",
+      "agent_work": "COMPLETE"
+    }
+  },
+  "EXTERNAL_GATE_STATE": {
+    "epic_fury_apple_review": "BLOCKED_EXTERNAL"
+  },
+  "FOUNDER_GATE_STATE": {
+    "h1c_controlled_execution": "LOCKED"
+  }
+}

@@ -455,16 +455,51 @@ class PersistentScheduler:
         Per-task leases remove the shared lock, so effective == configured.
         """
         per_task = isinstance(self.lease_manager, PerTaskLeaseManager)
+        # RUNTIME TRUTH: structural capacity (a class name) is NOT evidence that two tasks
+        # ever actually ran at once. `effective_limit` used to be inferred from an isinstance
+        # check -- that is an assertion, not a measurement. Effective concurrency is OBSERVED
+        # from the lease ledger (overlapping ACTIVE lease intervals) or it is UNKNOWN.
+        observed = self.observed_peak_concurrency()
         return {
             "concurrency_mode": "PER_TASK_LEASE" if per_task else "GLOBAL_SERIAL",
             "configured_limit": self.concurrency_limit,
-            "effective_limit": self.concurrency_limit if per_task else 1,
-            "status": "OK" if per_task else "DEGRADED",
+            "structural_capacity": self.concurrency_limit if per_task else 1,
+            "observed_peak_concurrency": observed,          # int, or "UNKNOWN"
+            "effective_limit": observed if isinstance(observed, int) else "UNKNOWN",
+            "status": ("OK" if isinstance(observed, int) and observed >= 2
+                       else "UNPROVEN" if per_task else "DEGRADED"),
             "lease_backend": type(self.lease_manager).__name__,
-            "note": ("Per-task lock records; unrelated tasks run concurrently."
+            "note": ("Per-task lock records. effective_limit is OBSERVED from overlapping "
+                     "leases; UNKNOWN until a real overlap is recorded."
                      if per_task else
                      "Single global mutex: only one task can hold a lease at a time."),
         }
+
+    def observed_peak_concurrency(self):
+        """Max simultaneously-held leases OBSERVED in the lease ledger. Never inferred."""
+        if not self.lease_log.exists():
+            return "UNKNOWN"
+        events = []
+        for line in self.lease_log.read_text().splitlines():
+            try:
+                e = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            st, ts = e.get("status"), e.get("ts")
+            if not ts:
+                continue
+            if st in ("ACQUIRED", "DISPATCH_START"):
+                events.append((ts, +1))
+            elif st in ("RELEASED", "COMPLETED", "FAILED", "DISPATCH_END"):
+                events.append((ts, -1))
+        if not events:
+            return "UNKNOWN"
+        events.sort()
+        cur = peak = 0
+        for _, d in events:
+            cur += d
+            peak = max(peak, cur)
+        return peak if peak > 0 else "UNKNOWN"
 
     def run_once(self) -> Dict[str, Any]:
         cycle_start = get_utc_now_str()

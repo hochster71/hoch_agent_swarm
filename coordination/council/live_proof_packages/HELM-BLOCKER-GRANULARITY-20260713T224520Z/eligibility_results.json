@@ -1,0 +1,83 @@
+[
+  {
+    "task_id": "EF-DIST",
+    "pod": "HASF",
+    "mission": "EPIC_FURY_DISTRIBUTION",
+    "capability": null,
+    "expected": "BLOCKED",
+    "observed": "BLOCKED",
+    "passed": true
+  },
+  {
+    "task_id": "EF-CAP",
+    "pod": "HASF",
+    "mission": null,
+    "capability": "APP_STORE_CONNECT_OBSERVATION",
+    "expected": "BLOCKED",
+    "observed": "BLOCKED",
+    "passed": true
+  },
+  {
+    "task_id": "HASF-ENG",
+    "pod": "HASF",
+    "mission": "HELM_ENGINEERING",
+    "capability": null,
+    "expected": "RUNNABLE",
+    "observed": "RUNNABLE",
+    "passed": true
+  },
+  {
+    "task_id": "HASF-OTHER-PRODUCT",
+    "pod": "HASF",
+    "mission": "OTHER_PRODUCT_BUILD",
+    "capability": null,
+    "expected": "RUNNABLE",
+    "observed": "RUNNABLE",
+    "passed": true
+  },
+  {
+    "task_id": "HASF-HARDEN",
+    "pod": "HASF",
+    "mission": "HELM_HARDENING",
+    "capability": null,
+    "expected": "RUNNABLE",
+    "observed": "RUNNABLE",
+    "passed": true
+  },
+  {
+    "task_id": "HASF-TESTS",
+    "pod": "HASF",
+    "mission": "LOCAL_TESTS",
+    "capability": null,
+    "expected": "RUNNABLE",
+    "observed": "RUNNABLE",
+    "passed": true
+  },
+  {
+    "task_id": "HRF-1",
+    "pod": "HRF",
+    "mission": null,
+    "capability": null,
+    "expected": "RUNNABLE",
+    "observed": "RUNNABLE",
+    "passed": true
+  },
+  {
+    "task_id": "HCF-1",
+    "pod": "HCF",
+    "mission": null,
+    "capability": null,
+    "expected": "RUNNABLE",
+    "observed": "RUNNABLE",
+    "passed": true
+  },
+  {
+    "task_id": "HSF-1",
+    "pod": "HSF",
+    "mission": null,
+    "capability": null,
+    "expected": "RUNNABLE",
+    "observed": "RUNNABLE",
+    "passed": true
+  }
+]

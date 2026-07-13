@@ -1,0 +1,14 @@
+{
+  "package": "HELM-BLOCKER-GRANULARITY-20260713T224520Z",
+  "verdict": "BLOCKER_GRANULARITY_PASS",
+  "failed_checks": 0,
+  "blocker_active_during_proof": [
+    {
+      "id": "G-6",
+      "status": "OPEN",
+      "reason": "APPLE_REVIEW_PENDING"
+    }
+  ],
+  "claim": "G-5 blocks ONLY EPIC_FURY_2026/APPLE_DISTRIBUTION. HASF lane is ACTIVE. 4 factories eligible => concurrency burn-in is unblocked.",
+  "assessed_at": "2026-07-13T22:45:20Z"
+}
