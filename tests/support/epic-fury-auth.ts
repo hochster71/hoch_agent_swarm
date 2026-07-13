@@ -1,85 +1,119 @@
 /**
- * REQ-CP-TEST remediation — REAL authentication for Epic Fury e2e tests.
+ * Epic Fury e2e authentication — REAL magic-link flow. No bypass. No demo route.
  *
- * FOUNDER CONTRACT (2026-07-12): do NOT restore /api/auth/demo. Authenticate through the
- * same supported boundary a real user uses. This module drives the ACTUAL magic-link flow:
+ * FOUNDER CONTRACT (2026-07-12/13):
+ *   - /api/auth/demo is NOT restored and must stay 404.
+ *   - Tests authenticate through the product's actual supported boundary:
+ *       POST /auth/v1/otp -> Mailpit captures the mail -> open the verify link ->
+ *       /auth/callback establishes the Supabase SSR session.
+ *   - Test-only ONLY by environment: a LOCAL Supabase (127.0.0.1) + LOCAL mail sink.
+ *     assertLocalOnly() REFUSES any other target, so the harness cannot point at prod.
+ *   - No credential, token, cookie, or key is ever committed. All read from env.
  *
- *     POST /auth/v1/otp  →  Mailpit captures the email  →  open the verify link in the
- *     browser  →  /auth/callback establishes the Supabase SSR session cookie.
- *
- * No bypass. No demo route. The only thing that makes this test-only is the ENVIRONMENT:
- * a LOCAL Supabase (127.0.0.1:54321) with a LOCAL mail sink (Mailpit, 127.0.0.1:54324).
- * Neither exists in production. Production still requires a real inbox + real Supabase.
- *
- * Credentials are read from the environment (.env.local / CI secret store). Nothing here
- * commits a token, cookie, password, or key.
+ * RACE FIX (D1/agent): the previous helper shared ONE inbox across parallel specs, so a
+ * worker could consume another worker's magic link. Now `loginAsFreshUser()` mints a
+ * UNIQUE identity per call (e2e+<nonce>@epicfury.local), provisions it via the LOCAL admin
+ * API, and the Mailpit poll filters strictly on that recipient. Parallel-safe by
+ * construction. Role-specific specs still pin a fixed allowlisted email deterministically.
  */
-import type { BrowserContext, Page } from "@playwright/test";
+import type { Page } from "@playwright/test";
+import { randomUUID } from "node:crypto";
 
-const currentSupabaseUrl = () => process.env.NEXT_PUBLIC_SUPABASE_URL ?? "http://127.0.0.1:54321";
-const ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
-const MAILPIT = process.env.EPIC_FURY_MAILPIT_URL ?? "http://127.0.0.1:54324";
-const APP = process.env.EPIC_FURY_BASE_URL ?? "http://localhost:3003";
+const supabaseUrl = () => process.env.NEXT_PUBLIC_SUPABASE_URL ?? "http://127.0.0.1:54321";
+const ANON = () => process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
+const SERVICE = () => process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
+const MAILPIT = () => process.env.EPIC_FURY_MAILPIT_URL ?? "http://127.0.0.1:54324";
+const APP = () => process.env.EPIC_FURY_BASE_URL ?? "http://localhost:3003";
 
-// A dedicated, non-production test identity. Created by the test setup, never a real user.
 export const TEST_EMAIL = process.env.EPIC_FURY_TEST_EMAIL ?? "e2e-test@epicfury.local";
 
-function assertLocalOnly() {
-  // Refuse to run the magic-link harness against anything but a LOCAL Supabase. This is
-  // the guard that makes the mechanism "impossible to enable in production".
-  const SUPABASE_URL = currentSupabaseUrl();
-  if (!/(^https?:\/\/(127\.0\.0\.1|localhost))/.test(SUPABASE_URL)) {
-    throw new Error(
-      `EPIC_FURY_AUTH_REFUSED: magic-link test harness may only target a LOCAL Supabase, ` +
-        `got ${SUPABASE_URL}. Production auth must use a real inbox.`,
-    );
+function assertLocalOnly(): void {
+  const u = supabaseUrl();
+  if (!/^https?:\/\/(127\.0\.0\.1|localhost)/.test(u)) {
+    throw new Error(`EPIC_FURY_AUTH_REFUSED: magic-link harness may only target a LOCAL Supabase, got ${u}.`);
   }
-  if (!/(^https?:\/\/(127\.0\.0\.1|localhost))/.test(MAILPIT)) {
-    throw new Error(`EPIC_FURY_AUTH_REFUSED: Mailpit must be local, got ${MAILPIT}`);
+  if (!/^https?:\/\/(127\.0\.0\.1|localhost)/.test(MAILPIT())) {
+    throw new Error(`EPIC_FURY_AUTH_REFUSED: Mailpit must be local, got ${MAILPIT()}.`);
+  }
+}
+
+async function provisionUser(email: string, role?: "admin" | "subscriber"): Promise<void> {
+  // LOCAL admin API, local service key from env. Never committed. The live app reads
+  // entitlement from app_metadata.role (middleware.getUserRole) -- so a role-scoped test
+  // identity gets exactly its intended permission and nothing broader.
+  const app_metadata = role ? { role } : undefined;
+  await fetch(`${supabaseUrl()}/auth/v1/admin/users`, {
+    method: "POST",
+    headers: { apikey: SERVICE(), authorization: `Bearer ${SERVICE()}`, "content-type": "application/json" },
+    body: JSON.stringify({ email, password: `E2e-${randomUUID()}`, email_confirm: true, app_metadata }),
+  }).catch(() => {});
+  // if it already existed, PATCH the role so entitlement is deterministic
+  if (role) {
+    // GoTrue admin list supports ?filter= on email; fall back to scanning pages.
+    const list = await (await fetch(`${supabaseUrl()}/auth/v1/admin/users?per_page=200`, {
+      headers: { apikey: SERVICE(), authorization: `Bearer ${SERVICE()}` } })).json().catch(() => ({}));
+    const u = (list.users ?? []).find((x: any) => (x.email ?? "").toLowerCase() === email.toLowerCase());
+    if (u) await fetch(`${supabaseUrl()}/auth/v1/admin/users/${u.id}`, {
+      method: "PUT",
+      headers: { apikey: SERVICE(), authorization: `Bearer ${SERVICE()}`, "content-type": "application/json" },
+      body: JSON.stringify({ app_metadata: { role } }) }).catch(() => {});
   }
 }
 
 async function requestOtp(email: string): Promise<void> {
-  const r = await fetch(`${currentSupabaseUrl()}/auth/v1/otp`, {
+  const r = await fetch(`${supabaseUrl()}/auth/v1/otp`, {
     method: "POST",
-    headers: { apikey: ANON, "content-type": "application/json" },
+    headers: { apikey: ANON(), "content-type": "application/json" },
     body: JSON.stringify({ email, create_user: false }),
   });
-  if (!r.ok) throw new Error(`OTP request failed: HTTP ${r.status}`);
+  if (!r.ok) throw new Error(`OTP request failed for ${email}: HTTP ${r.status}`);
 }
 
-async function latestMagicLink(email: string, timeoutMs = 15000): Promise<string> {
+/** The magic link addressed to EXACTLY this recipient — never another worker's. */
+async function magicLinkFor(email: string, timeoutMs = 15000): Promise<string> {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
-    const list = await (await fetch(`${MAILPIT}/api/v1/messages?limit=5`)).json();
+    const list = await (await fetch(`${MAILPIT()}/api/v1/search?query=${encodeURIComponent("to:" + email)}&limit=5`)).json();
     for (const msg of list.messages ?? []) {
-      const to = (msg.To ?? [])[0]?.Address;
-      if (to !== email) continue;
-      const body = await (await fetch(`${MAILPIT}/api/v1/message/${msg.ID}`)).text();
-      const m =
-        body.match(/https?:\/\/[^\s"'<>]+auth\/v1\/verify[^\s"'<>]*/) ??
-        body.match(/https?:\/\/127\.0\.0\.1[^\s"'<>]+token[^\s"'<>]*/);
+      if (((msg.To ?? [])[0]?.Address ?? "").toLowerCase() !== email.toLowerCase()) continue;
+      const body = await (await fetch(`${MAILPIT()}/api/v1/message/${msg.ID}`)).text();
+      const m = body.match(/https?:\/\/[^\s"'<>]+auth\/v1\/verify[^\s"'<>]*/) ??
+                body.match(/https?:\/\/127\.0\.0\.1[^\s"'<>]+token[^\s"'<>]*/);
       if (m) return m[0].replace(/&amp;/g, "&");
     }
-    await new Promise((r) => setTimeout(r, 500));
+    await new Promise((r) => setTimeout(r, 400));
   }
-  throw new Error("no magic link arrived in Mailpit within timeout");
+  throw new Error(`no magic link arrived for ${email} within ${timeoutMs}ms`);
 }
 
-/** Authenticate `page` as the test identity through the real magic-link flow. */
-export async function loginAsTestUser(page: Page, email = TEST_EMAIL): Promise<void> {
+async function loginWithEmail(page: Page, email: string): Promise<void> {
   assertLocalOnly();
   await requestOtp(email);
-  const link = await latestMagicLink(email);
-  // Opening the verify link establishes the Supabase SSR session cookie via /auth/callback.
+  const link = await magicLinkFor(email);
   await page.goto(link, { waitUntil: "domcontentloaded" });
-  // land somewhere authenticated
-  await page.goto(`${APP}/dashboard`, { waitUntil: "domcontentloaded" }).catch(() => {});
+  await page.goto(`${APP()}/dashboard`, { waitUntil: "domcontentloaded" }).catch(() => {});
 }
 
-/** Save an authenticated storageState for reuse across specs. */
-export async function establishSession(context: BrowserContext): Promise<void> {
-  const page = await context.newPage();
-  await loginAsTestUser(page);
-  await page.close();
+/** Fixed identity (e.g. an allowlisted founder/qa email). Provisions if needed. */
+export async function loginAsTestUser(page: Page, email = TEST_EMAIL,
+                                     role?: "admin" | "subscriber"): Promise<void> {
+  assertLocalOnly();
+  await provisionUser(email, role);
+  await loginWithEmail(page, email);
+}
+
+/** Attempt login for an identity that is NOT provisioned. Must FAIL (no mail sent). */
+export async function expectLoginDenied(email: string): Promise<void> {
+  assertLocalOnly();
+  await requestOtp(email);            // create_user:false -> unknown email -> no mail
+  await magicLinkFor(email, 3000);    // throws "no magic link arrived"
+}
+
+/** UNIQUE per call. Use where the test only needs "some authenticated user". Race-proof. */
+export async function loginAsFreshUser(page: Page, slug = "u"): Promise<string> {
+  assertLocalOnly();
+  const email = `e2e+${slug}-${randomUUID().slice(0, 8)}@epicfury.local`;
+  await provisionUser(email);
+  await loginWithEmail(page, email);
+  return email;
 }

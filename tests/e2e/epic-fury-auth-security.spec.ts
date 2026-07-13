@@ -1,5 +1,5 @@
 import { test, expect, request } from '@playwright/test';
-import { loginAsTestUser, TEST_EMAIL } from '../support/epic-fury-auth';
+import { loginAsTestUser, expectLoginDenied, TEST_EMAIL } from '../support/epic-fury-auth';
 
 /**
  * REQ-CP-TEST security regression — proves the production authentication boundary is
@@ -43,8 +43,8 @@ test.describe('Epic Fury auth security regression', () => {
   });
 
   test('5. an invalid identity is DENIED', async ({ page }) => {
-    await expect(loginAsTestUser(page, 'nobody-unknown@epicfury.local'))
-      .rejects.toThrow(/no magic link arrived/i);
+    await expect(expectLoginDenied('nobody-unknown-' + Date.now() + '@epicfury.local'))
+      .rejects.toThrow(/no magic link arrived|OTP request failed/i);
   });
 
   test('6. unauthenticated dashboard access is entitlement-fail-closed', async ({ page }) => {

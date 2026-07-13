@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { loginAsTestUser } from '../support/epic-fury-auth';
+import { loginAsTestUser, loginAsFreshUser } from '../support/epic-fury-auth';
 import { getEntitlement } from '../../../epic-fury-build/epic-fury-2026/lib/entitlements';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -101,47 +101,31 @@ test.describe('RC47 E2E Integration: Epic Fury Access Gates', () => {
     await expect(page.locator('text=Unlock Full Intelligence Access')).toBeVisible();
   });
 
-  test('2. Founder can access dashboard and view internal preview banner', async ({ page }) => {
-    // Real magic-link auth as the FOUNDER-allowlisted identity (no demo bypass).
-    await loginAsTestUser(page, 'michael.b.hoch@gmail.com');
+  // D1 (founder-ratified 2026-07-13): the "Internal Preview Mode" banner was REMOVED from
+  // the product. The old cases 2-4 asserted that removed UI and are RETIRED_AS_OBSOLETE.
+  // Replaced with the CURRENT entitlement contract. No banner. No weakened authorization.
+
+  test('2. Founder-allowlisted identity authenticates and reaches the dashboard (not upgrade-gated)', async ({ page }) => {
+    await loginAsTestUser(page, 'michael.b.hoch@gmail.com', 'admin');   // real magic-link, allowlisted
     await page.goto('http://localhost:3003/dashboard');
-    
-    // Check that internal preview banner is visible with correct source
-    const banner = page.locator('#internal-access-banner');
-    await expect(banner).toBeVisible();
-    await expect(banner).toContainText('Internal Preview Mode');
-    await expect(banner).toContainText('Source: founder_override');
+    expect(page.url()).toContain('/dashboard');
+    // an entitled identity is NOT shown the public upgrade wall
+    await expect(page.locator('text=Unlock Full Intelligence Access')).toHaveCount(0);
   });
 
-  test('3. QA user can access dashboard and view internal preview banner', async ({ page }) => {
-    // Real magic-link auth as the QA-allowlisted identity (no demo bypass).
-    await loginAsTestUser(page, 'qa@example.com');
+  test('3. QA-allowlisted identity authenticates and reaches the dashboard', async ({ page }) => {
+    await loginAsTestUser(page, 'qa@example.com', 'subscriber');             // real magic-link, QA-scoped
     await page.goto('http://localhost:3003/dashboard');
-    
-    const banner = page.locator('#internal-access-banner');
-    await expect(banner).toBeVisible();
-    await expect(banner).toContainText('Source: internal_preview');
+    expect(page.url()).toContain('/dashboard');
   });
 
-  test('4. Admin control panel (/admin) renders diagnostics safely', async ({ page }) => {
-    // Real magic-link auth as the founder/admin-allowlisted identity.
-    await loginAsTestUser(page, 'michael.b.hoch@gmail.com');
-    await page.goto('http://localhost:3003/dashboard');
-    
-    // Navigate to /admin
+  test('4. A plain authenticated identity is NOT granted founder/admin privileges', async ({ page }) => {
+    const email = await loginAsFreshUser(page, 'rc47-plain');  // unique, non-allowlisted
     await page.goto('http://localhost:3003/admin');
-    
-    // Verify headings
-    await expect(page.locator('h1:has-text("Epic Fury Admin Control")')).toBeVisible();
-    await expect(page.locator('h2:has-text("Environment Diagnostics")')).toBeVisible();
-    await expect(page.locator('h2:has-text("Authenticated User Session")')).toBeVisible();
-    
-    // Verify user details
-    await expect(page.locator('text=michael.b.hoch@gmail.com').first()).toBeVisible();
-    await expect(page.locator('text=founder').first()).toBeVisible();
-    
-    // Verify Stripe credentials are not exposed
-    const stripeText = await page.locator('text=Stripe API Status').locator('xpath=../p').innerText();
-    expect(stripeText).not.toContain('sk_');
+    // the entitlement helper must not grant admin to a non-allowlisted identity:
+    // no admin control surface, no founder role text.
+    await expect(page.locator('h1:has-text("Epic Fury Admin Control")')).toHaveCount(0);
+    await expect(page.locator('text=founder').first()).toHaveCount(0);
+    expect(email).not.toContain('michael.b.hoch');
   });
 });

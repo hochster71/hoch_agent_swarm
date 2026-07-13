@@ -1,0 +1,37 @@
+{
+  "schema": "EPIC_FURY_TEST_MATRIX_v1",
+  "ratified_by": "Michael Bryan Hoch (D2, 2026-07-13)",
+  "required_targets": {
+    "LOCAL_INTEGRATION": {
+      "status": "REQUIRED",
+      "target": "http://localhost:3003 + local Supabase",
+      "specs": [
+        "epic-fury-smoke",
+        "epic-fury-accessibility",
+        "epic-fury-mobile",
+        "rc47-epic-fury-admin-access",
+        "rc42-epic-fury-csp-audit",
+        "rc44-epic-fury-flowchart",
+        "epic-fury-auth-security"
+      ]
+    },
+    "CURRENT_PRODUCTION_SMOKE": {
+      "status": "REQUIRED_READ_ONLY",
+      "target": "https://epic-fury-2026.vercel.app",
+      "specs": [
+        "epic-fury-production-smoke"
+      ],
+      "note": "read-only GET; no mutation, no submission"
+    },
+    "LEGACY_STAGING": {
+      "status": "RETIRED",
+      "was_target": "https://epic-fury-2026-4hjkgwv9v-us-is-ir-war-2026.vercel.app",
+      "spec": "epic-fury-staging-assets",
+      "blocking": false,
+      "reason": "dead deployment; no authoritative record or active ownership. Not counted in REQ-CP-TEST.",
+      "history_preserved": "the spec file and its prior failing evidence are retained, not deleted.",
+      "re_add_rule": "a new staging env may be added later ONLY with an authoritative deployment record and active ownership."
+    }
+  },
+  "prohibition": "Do not invent or guess a replacement staging URL."
+}

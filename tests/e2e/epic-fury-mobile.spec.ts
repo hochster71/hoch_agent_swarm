@@ -6,7 +6,7 @@ test.describe('Epic Fury Mobile Viewport Tests', () => {
 
   test('1. Verify mobile layout responsiveness', async ({ page }) => {
     // Log in as founder
-    await loginAsTestUser(page);  // real magic-link auth (no demo bypass)
+    await loginAsTestUser(page, 'michael.b.hoch@gmail.com', 'admin');  // real magic-link auth (no demo bypass)
     await page.goto('http://localhost:3003/dashboard');
 
     // Confirm that mobile HUD controls adjust safely
