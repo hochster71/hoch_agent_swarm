@@ -63,19 +63,38 @@
       "evidence_path": "has_live_project_tracker/data/fresh_pert_gap_analysis.json",
       "estimated_wall_clock": "days",
       "agent_safe": false,
-      "closed_on_evidence": "2026-07-12T21:13:30.220874Z"
+      "closed_on_evidence": "2026-07-13T13:56:10.246590Z"
     },
     {
       "id": "G-5",
       "title": "A4 differentiation + store packaging",
       "severity": "P1",
       "owner": "HASF agent",
-      "status": "PENDING",
+      "status": "BLOCKED_EXTERNAL",
       "dependency": "A3",
       "unblock_action": "Build then pass differentiation gate + package",
       "evidence_path": "has_live_project_tracker/data/fresh_pert_gap_analysis.json",
       "estimated_wall_clock": "hours-days",
-      "agent_safe": true
+      "agent_safe": true,
+      "scope_type": "PRODUCT_MISSION",
+      "factory_id": "HASF",
+      "product_id": "EPIC_FURY_2026",
+      "mission_id": "EPIC_FURY_DISTRIBUTION",
+      "blocked_capabilities": [
+        "APP_STORE_CONNECT_OBSERVATION",
+        "APPLE_DISTRIBUTION_PROMOTION"
+      ],
+      "reason": "APPLE_REVIEW_PENDING",
+      "must_not_block": [
+        "HASF architecture work",
+        "code review",
+        "test generation",
+        "unrelated application products",
+        "HELM hardening",
+        "local-only software missions"
+      ],
+      "rescoped_at": "2026-07-13",
+      "rescoped_by": "founder decision"
     },
     {
       "id": "G-6",

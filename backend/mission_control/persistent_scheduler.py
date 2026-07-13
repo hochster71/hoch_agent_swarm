@@ -17,7 +17,8 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from scripts.ag_execution_lease_manager import LeaseManager
+from scripts.ag_execution_lease_manager import LeaseManager  # legacy global mutex (retained for history)
+from backend.mission_control.per_task_lease import PerTaskLeaseManager
 from scripts.council.gateway import CouncilDispatchGateway, GatewayRequest, DispatchType
 from backend.mission_control.scoped_states import ScopedStateEvaluator, StateStatus
 
@@ -33,7 +34,9 @@ class PersistentScheduler:
     def __init__(self, evidence_dir: Optional[Path] = None):
         self.repo_root = PROJECT_ROOT
         self.db_path = DB_PATH
-        self.lease_manager = LeaseManager()
+        # PER-TASK leases. The legacy LeaseManager was a single GLOBAL mutex, so the
+        # advertised concurrency_limit=4 was effectively 1 (a runtime-truth defect).
+        self.lease_manager = PerTaskLeaseManager()
         self.evidence_dir = evidence_dir or (PROJECT_ROOT / "coordination" / "council" / "live_proof_packages" / "HELM-24X7-MOCK")
         self.evidence_dir.mkdir(parents=True, exist_ok=True)
         self.gateway = CouncilDispatchGateway()
@@ -140,10 +143,26 @@ class PersistentScheduler:
         for t in tasks:
             pod = t.get("target_pod", "").upper()
             f_info = factory_states.get(pod, {})
+
+            # (a) lane-level block (rare: only a genuine whole-factory halt)
             if f_info.get("state") == StateStatus.BLOCKED.value:
-                # Scoped blocker applies to this factory/product lane!
                 logger.info(f"Skipping task {t['task_id']} due to blocked lane {pod}")
                 continue
+
+            # (b) MISSION/CAPABILITY-scoped block. An external App Store review blocks the
+            #     Epic Fury DISTRIBUTION mission -- not safe, unrelated engineering work in
+            #     the same factory. Scope binds to what is actually blocked.
+            blocked_missions = set(f_info.get("blocked_missions") or [])
+            blocked_caps = set(f_info.get("blocked_capabilities") or [])
+            t_mission = (t.get("mission_id") or "").upper()
+            t_cap = (t.get("required_capability") or "").upper()
+            if t_mission and t_mission in {m.upper() for m in blocked_missions}:
+                logger.info(f"Skipping {t['task_id']}: mission {t_mission} is BLOCKED_EXTERNAL")
+                continue
+            if t_cap and t_cap in {c.upper() for c in blocked_caps}:
+                logger.info(f"Skipping {t['task_id']}: capability {t_cap} is BLOCKED_EXTERNAL")
+                continue
+
             filtered.append(t)
             
         # Rank by priority (critical pods first, then step_index, then age/retry count)
@@ -205,6 +224,8 @@ class PersistentScheduler:
         )
         
         started_at = get_utc_now_str()
+        self.log_lease({"ts": started_at, "task_id": task_id, "lease_id": lease["lease_id"],
+                        "fencing_token": lease["fencing_token"], "status": "DISPATCH_START"})
         
         # We will dynamically mock the response to avoid network delays while ensuring gateway logs are populated
         try:
@@ -274,6 +295,10 @@ class PersistentScheduler:
             "artifact_path": str(artifact_path.relative_to(ROOT)),
             "artifact_sha256": artifact_sha,
             "artifact_chars": len(artifact_text),
+            "started_at": started_at,
+            "completed_at": get_utc_now_str(),
+            "worker_id": lease.get("worker_id"),
+            "fencing_token": lease.get("fencing_token"),
         })
 
         self.log_verification({
@@ -313,7 +338,7 @@ class PersistentScheduler:
             conn.close()
             
         # 5. Release lease
-        self.lease_manager.release_lease(lease["lease_id"], status="RELEASED")
+        self.lease_manager.release_lease(task_id, lease["lease_id"], status="RELEASED")
         self.log_lease({
             "ts": get_utc_now_str(),
             "task_id": task_id,
@@ -323,25 +348,57 @@ class PersistentScheduler:
         
         return passed
 
+    def concurrency_report(self) -> Dict[str, Any]:
+        """Report EFFECTIVE concurrency, never the aspirational number.
+
+        With the legacy global mutex this had to read:
+            concurrency_mode: GLOBAL_SERIAL, effective_limit: 1, status: DEGRADED
+        Per-task leases remove the shared lock, so effective == configured.
+        """
+        per_task = isinstance(self.lease_manager, PerTaskLeaseManager)
+        return {
+            "concurrency_mode": "PER_TASK_LEASE" if per_task else "GLOBAL_SERIAL",
+            "configured_limit": self.concurrency_limit,
+            "effective_limit": self.concurrency_limit if per_task else 1,
+            "status": "OK" if per_task else "DEGRADED",
+            "lease_backend": type(self.lease_manager).__name__,
+            "note": ("Per-task lock records; unrelated tasks run concurrently."
+                     if per_task else
+                     "Single global mutex: only one task can hold a lease at a time."),
+        }
+
     def run_once(self) -> Dict[str, Any]:
         cycle_start = get_utc_now_str()
         blockers = self.load_blockers()
         runnable = self.evaluate_runnable_tasks()
         ranked = self.rank_tasks(runnable, blockers)
         
+        # Per-task leases mean unrelated tasks may genuinely run at the same time.
+        # Effective concurrency now equals the configured limit.
+        batch = ranked[: self.concurrency_limit]
         dispatched = []
-        for task in ranked[:self.concurrency_limit]:
-            success = self.execute_task(task)
-            dispatched.append({
-                "task_id": task["task_id"],
-                "success": success
-            })
-            
+        if len(batch) <= 1:
+            for task in batch:
+                dispatched.append({"task_id": task["task_id"],
+                                   "success": self.execute_task(task)})
+        else:
+            from concurrent.futures import ThreadPoolExecutor
+            with ThreadPoolExecutor(max_workers=self.concurrency_limit) as ex:
+                futs = {ex.submit(self.execute_task, t): t for t in batch}
+                for f, t in futs.items():
+                    try:
+                        ok = f.result()
+                    except Exception as e:
+                        logger.error(f"task {t['task_id']} raised: {e}")
+                        ok = False
+                    dispatched.append({"task_id": t["task_id"], "success": ok})
+
         status = "ACTIVE" if dispatched else "IDLE"
         cycle_result = {
             "cycle_start": cycle_start,
             "cycle_end": get_utc_now_str(),
             "status": status,
+            "concurrency": self.concurrency_report(),
             "dispatched_count": len(dispatched),
             "dispatched": dispatched
         }

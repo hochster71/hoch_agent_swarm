@@ -68,12 +68,23 @@ class ScopedStateEvaluator:
 
         # Factory states: HASF (Epic Fury), others
         factory_states = {
+            # RESCOPED (founder decision 2026-07-13): an Apple App Store review must NOT
+            # block the whole HASF factory. Previously HASF.state went BLOCKED whenever
+            # epic_fury_blocked, so a safe, unrelated HASF engineering task (a code review)
+            # was withheld by an external store review. The block now binds to the PRODUCT
+            # MISSION and its capabilities, not to the lane.
             "HASF": {
-                "state": StateStatus.BLOCKED.value if epic_fury_blocked else StateStatus.ACTIVE.value,
+                "state": StateStatus.ACTIVE.value,          # general engineering: ELIGIBLE
                 "current_champion": "EPIC_FURY_2026",
                 "distribution_lane": StateStatus.BLOCKED_EXTERNAL.value if epic_fury_blocked else StateStatus.ELIGIBLE.value,
                 "reason": "APPLE_REVIEW_PENDING" if epic_fury_blocked else "OK",
-                "agent_work": "COMPLETE" if epic_fury_blocked else "IN_PROGRESS"
+                "agent_work": "COMPLETE" if epic_fury_blocked else "IN_PROGRESS",
+                "general_engineering": StateStatus.ELIGIBLE.value,
+                "blocked_missions": ["EPIC_FURY_DISTRIBUTION"] if epic_fury_blocked else [],
+                "blocked_capabilities": ([
+                    "APP_STORE_CONNECT_OBSERVATION",
+                    "APPLE_DISTRIBUTION_PROMOTION",
+                ] if epic_fury_blocked else []),
             },
             "HRF": {
                 "state": StateStatus.ACTIVE.value,
@@ -126,7 +137,21 @@ class ScopedStateEvaluator:
             }
         }
 
+        product_missions = {
+            "EPIC_FURY_2026.distribution": {
+                "state": (StateStatus.BLOCKED_EXTERNAL.value if epic_fury_blocked
+                          else StateStatus.ELIGIBLE.value),
+                "reason": "APPLE_REVIEW_PENDING" if epic_fury_blocked else "OK",
+                "mission_id": "EPIC_FURY_DISTRIBUTION",
+                "blocked_capabilities": ([
+                    "APP_STORE_CONNECT_OBSERVATION",
+                    "APPLE_DISTRIBUTION_PROMOTION",
+                ] if epic_fury_blocked else []),
+            }
+        }
+
         return {
+            "PRODUCT_MISSION_STATE": product_missions,
             "GLOBAL_PLATFORM_STATE": platform_state.value,
             "SCHEDULER_STATE": scheduler_state.value,
             "COUNCIL_STATE": council_state.value,
