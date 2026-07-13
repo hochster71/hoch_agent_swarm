@@ -177,6 +177,39 @@ class PersistentScheduler:
         return filtered
 
     def execute_task(self, task: Dict[str, Any]) -> bool:
+        # ── FOUNDER AUTHORITY GATE ────────────────────────────────────────────
+        # Makes coordination/founder/authority_matrix.json a HARD GATE at dispatch,
+        # not a document. The daemon may run AUTONOMOUS work unattended; anything that
+        # spends/publishes/binds (PROPOSE_ONLY) or is FOUNDER_ONLY is HELD and escalated,
+        # never auto-executed. This is what makes 24/7 safe rather than merely unattended.
+        try:
+            from backend.council.founder_model import (
+                classify_action, Authority, Escalation, escalate)
+            _probe = f"{task.get('name','')} {task.get('mission_prompt','')} " \
+                     f"dispatch:{task.get('dispatch_type','LOCAL_OLLAMA')}"
+            ruling = classify_action(_probe)
+            if ruling.authority is not Authority.AUTONOMOUS:
+                esc = Escalation(
+                    one_sentence_question=f"Authorize {ruling.authority.value} task '{task.get('name','?')}'?",
+                    why_it_needs_you=f"{ruling.reason} (matched: {ruling.matched or 'n/a'})",
+                    options=["Approve this dispatch", "Deny / keep local-only"],
+                    recommendation_and_why="HOLD by default — the daemon does not spend, publish, or bind without you",
+                    evidence_sanitized=f"task_id={task.get('task_id')} scope=factory:{task.get('target_pod','?')}",
+                    cost_of_delay="none; the mission stays queued",
+                    reversible=True)
+                # can_prove_answer=False: authorization is judgment, never machine-provable
+                escalate(esc, can_prove_answer=False)
+                self.log_lease({"ts": get_utc_now_str(), "task_id": task.get("task_id"),
+                                "status": "HELD_AUTHORITY", "authority": ruling.authority.value,
+                                "matched": ruling.matched})
+                return False
+        except Exception as _e:
+            # fail CLOSED: if the gate cannot run, do not dispatch — a broken gate must
+            # never become an open door.
+            self.log_lease({"ts": get_utc_now_str(), "task_id": task.get("task_id"),
+                            "status": "HELD_GATE_ERROR", "error": str(_e)[:120]})
+            return False
+
         task_id = task["task_id"]
         pod = task.get("target_pod", "")
         
