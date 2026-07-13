@@ -102,11 +102,39 @@ def main() -> int:
                 print(f"[council] cycle {cycle}: dispatched={res['dispatched_count']} "
                       f"pass={len(ok)} fail={len(bad)} in {rec['seconds']}s", flush=True)
 
+            # CONTINUOUS MONITORING (NIST SP 800-137): re-derive HELM's own control
+            # posture from live evidence every cycle. Compliance is not a document you
+            # file once; it is a property you must keep proving.
+            try:
+                from backend.security.helm_conmon import assess
+                pos = assess()
+                rec["security_posture_percent"] = pos["posture_percent"]
+                rec["open_findings"] = pos["open_findings"]
+                if pos["high_findings"]:
+                    print(f"[council] !! {pos['high_findings']} HIGH security finding(s)", flush=True)
+            except Exception as e:
+                rec["security_posture_percent"] = "UNKNOWN"
+                rec["conmon_error"] = str(e)[:120]
+
             with open(HEARTBEAT, "a", encoding="utf-8") as f:
                 f.write(json.dumps(rec) + "\n")
 
         except Exception as e:      # a cycle may fail; the council must not die silently
             rec = {"ts": now(), "cycle": cycle, "state": "ERROR", "error": str(e)[:300]}
+            # CONTINUOUS MONITORING (NIST SP 800-137): re-derive HELM's own control
+            # posture from live evidence every cycle. Compliance is not a document you
+            # file once; it is a property you must keep proving.
+            try:
+                from backend.security.helm_conmon import assess
+                pos = assess()
+                rec["security_posture_percent"] = pos["posture_percent"]
+                rec["open_findings"] = pos["open_findings"]
+                if pos["high_findings"]:
+                    print(f"[council] !! {pos['high_findings']} HIGH security finding(s)", flush=True)
+            except Exception as e:
+                rec["security_posture_percent"] = "UNKNOWN"
+                rec["conmon_error"] = str(e)[:120]
+
             with open(HEARTBEAT, "a", encoding="utf-8") as f:
                 f.write(json.dumps(rec) + "\n")
             print(f"[council] cycle {cycle}: ERROR {e}", flush=True)

@@ -179,6 +179,20 @@ def live_northstar() -> Any:
         return _unknown(f"hoch ledger unreadable: {e}")
 
 
+def live_security() -> Any:
+    """NIST 800-53 Rev5 posture of HELM ITSELF, re-derived from live evidence."""
+    try:
+        pos = ROOT / "coordination" / "security" / "helm_control_posture.json"
+        if not pos.exists():
+            return _unknown("no ConMon assessment yet")
+        d = json.loads(pos.read_text())
+        return {k: d[k] for k in ("framework", "assessed_at", "posture_percent",
+                                  "implemented", "controls_assessed", "open_findings",
+                                  "high_findings", "controls", "poam")}
+    except Exception as e:
+        return _unknown(f"posture unreadable: {e}")
+
+
 def live_verdict() -> Any:
     pkg = _newest_pkg()
     if not pkg or not (pkg / "validation.json").exists():
@@ -208,6 +222,7 @@ def helm_live() -> JSONResponse:
         "artifacts": live_artifacts(),
         "spend": live_spend(),
         "northstar": live_northstar(),
+        "security": live_security(),
         "verdict": live_verdict(),
     })
 

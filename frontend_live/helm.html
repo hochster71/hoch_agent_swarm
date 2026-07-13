@@ -82,6 +82,9 @@
   <!-- NORTH STAR: the founder's primary metric. UNDEFINED until a real dollar lands. -->
   <div class="card" id="ns" style="margin-bottom:14px"></div>
 
+  <!-- NIST 800-53 Rev5 posture of HELM ITSELF -->
+  <div class="card" id="sec" style="margin-bottom:14px"></div>
+
   <!-- heartbeat: one bar per real event, NOT a timer -->
   <div class="card" style="margin-bottom:14px;padding:8px 12px">
     <div class="lbl">RUNTIME HEARTBEAT · one mark per observed event</div>
@@ -219,6 +222,39 @@ async function tick(){
           <div style="font-size:17px;color:var(--txt)">${ns.founder_minutes_total}</div></div>
       </div>
       ${undef?`<div style="font-size:10px;color:var(--warn);margin-top:8px;border-top:1px solid #2a3448;padding-top:6px">${ns.reason}</div>`:""}`;
+  }
+
+  // SECURITY — HELM audited against NIST 800-53 Rev5 by HELM's own compliance agents
+  const S = d.security || {};
+  if(UNK(S)){ $("#sec").innerHTML = `<div class="lbl">SECURITY POSTURE</div><div style="color:#7f8ca6">UNKNOWN</div>`; }
+  else{
+    const chips = (S.controls||[]).map(c=>{
+      const col = c.status==="IMPLEMENTED" ? "var(--ok)"
+                : c.status==="NOT_IMPLEMENTED" ? "var(--bad)" : "#7f8ca6";
+      const bg  = c.status==="IMPLEMENTED" ? "#0d2a20"
+                : c.status==="NOT_IMPLEMENTED" ? "#1c1014" : "#141824";
+      return `<span title="${(c.title+" — "+c.evidence).replace(/"/g,"")}"
+        style="font-size:9.5px;color:${col};background:${bg};border:1px solid ${col};
+        border-radius:5px;padding:2px 6px;display:inline-block;margin:2px 3px 0 0">${c.control_id}</span>`;
+    }).join("");
+    const poam = (S.poam||[]).map(x=>
+      `<div style="font-size:10px;color:var(--warn);margin-top:3px">
+         <b>${x.poam_id}</b> <span style="color:var(--dim)">${x.severity}</span> — ${x.weakness}</div>`).join("");
+    const pct = S.posture_percent;
+    $("#sec").innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <div class="lbl">SECURITY POSTURE · NIST SP 800-53 Rev.5 · HELM auditing HELM</div>
+        <div style="font-size:9.5px;color:var(--dim)">ConMon (800-137) · re-derived every cycle</div>
+      </div>
+      <div style="display:flex;gap:14px;align-items:center;margin-top:8px">
+        <div style="font-size:24px;font-weight:700;color:${pct>=95?"var(--ok)":pct>=80?"var(--warn)":"var(--bad)"}">${pct}%</div>
+        <div style="font-size:10px;color:var(--mid)">${S.implemented}/${S.controls_assessed} implemented ·
+          <span style="color:${S.open_findings?"var(--warn)":"var(--ok)"}">${S.open_findings} open finding(s)</span>
+          ${S.high_findings?`· <span style="color:var(--bad)">${S.high_findings} HIGH</span>`:""}</div>
+        <div style="flex:1;text-align:right">${chips}</div>
+      </div>
+      ${poam?`<div style="margin-top:8px;border-top:1px solid #2a3448;padding-top:6px">
+        <div style="font-size:9px;color:var(--mid);letter-spacing:.1em">POA&amp;M · open</div>${poam}</div>`:""}`;
   }
 
   // verdict
