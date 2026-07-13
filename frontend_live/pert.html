@@ -54,7 +54,7 @@
     </div>
     <div class="sub">
       LIVE RUNTIME · <span id="obs">—</span> · <span id="commit">—</span> ·
-      <span style="color:var(--ok)">EVERY NODE OBSERVED · 0 FABRICATED</span>
+      <span id="integrity" title="computed from the live node set; never asserted">INTEGRITY: UNKNOWN</span>
     </div>
   </header>
 
@@ -292,6 +292,24 @@ async function tick(){
   }
 }
 tick(); setInterval(tick,1500);
+</script>
+
+<script>
+async function refreshIntegrity(){
+  const el = document.getElementById('integrity');
+  try{
+    const r = await fetch('/api/helm/integrity'); const d = await r.json();
+    if(d.integrity_status === 'UNKNOWN' || d.nodes_total === undefined){
+      el.textContent = 'INTEGRITY: UNKNOWN'; el.style.color = 'var(--warn, #d08b28)'; return;
+    }
+    el.textContent = `observed ${d.nodes_observed} · asserted ${d.nodes_asserted} · unknown ${d.nodes_unknown} · fabricated ${d.fabricated_detected}`;
+    el.style.color = (d.fabricated_detected > 0) ? 'var(--bad, #c0392b)'
+                   : (d.integrity_status === 'CLEAN') ? 'var(--ok)' : 'var(--warn, #d08b28)';
+  }catch(e){
+    el.textContent = 'INTEGRITY: UNKNOWN (feed lost)'; el.style.color = 'var(--warn, #d08b28)';
+  }
+}
+refreshIntegrity(); setInterval(refreshIntegrity, 5000);
 </script>
 </body>
 </html>

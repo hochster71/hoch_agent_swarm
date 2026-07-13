@@ -101,18 +101,42 @@ def live_factories() -> Any:
 
 
 def live_tasks() -> Any:
+    """F-2/F-5: the canonical enum is enforced HERE, at ingestion. An illegal status
+    (AgentHASF / IDEA / LEASE) does NOT reach the wall as if it were a state -- it renders
+    UNKNOWN and carries a typed INVALID_TASK_STATUS error. It can never render COMPLETE."""
     if not DB.exists():
         return _unknown("task DB missing")
     try:
+        from backend.truth.task_status import resolve_status
         c = sqlite3.connect(f"file:{DB}?mode=ro", uri=True, timeout=5)
         c.row_factory = sqlite3.Row
-        rows = [dict(r) for r in c.execute(
-            "SELECT t.task_id, t.status, t.name, t.updated_at, m.target_pod AS factory "
+        raw = [dict(r) for r in c.execute(
+            "SELECT t.task_id, t.status, t.name, t.updated_at, t.assigned_agent, "
+            "t.evidence_path, m.target_pod AS factory "
             "FROM mission_control_tasks t "
             "LEFT JOIN mission_control_missions m ON t.mission_id=m.mission_id "
             "ORDER BY t.updated_at DESC LIMIT 40")]
         c.close()
-        return rows
+        rows, rejected = [], 0
+        for r in raw:
+            ev = r.get("evidence_path")
+            has_artifact = bool(ev) and (ROOT / str(ev)).exists()
+            res = resolve_status(
+                raw=r.get("status"),
+                execution_finished=str(r.get("status", "")).upper() in ("COMPLETE", "COMPLETED"),
+                validator_passed=has_artifact,      # artifact only exists on a validated pass
+                artifact_exists=has_artifact,
+                evidence_fresh=has_artifact,
+                provenance_matches=has_artifact,
+            )
+            if res.get("error") or res.get("downgraded"):
+                rejected += 1
+            rows.append({**r, "status": res["status"],
+                         "status_error": res.get("error"),
+                         "downgraded_from": res.get("claimed"),
+                         "unmet_completion_requirements": res.get("unmet_completion_requirements")})
+        return {"tasks": rows, "invalid_or_downgraded": rejected,
+                "enum_enforced_at": "ingestion"}
     except Exception as e:
         return _unknown(f"task DB unreadable: {e}")
 
@@ -216,6 +240,32 @@ def live_verdict() -> Any:
                 "commit": v.get("tested_commit", UNKNOWN)}
     except Exception as e:
         return _unknown(f"validation unreadable: {e}")
+
+
+@app.get("/api/helm/integrity")
+def api_integrity():
+    """F-1: integrity is COMPUTED from the live node set, or reported UNKNOWN. The wall no
+    longer prints 'EVERY NODE OBSERVED - 0 FABRICATED' as an unearned green slogan."""
+    from backend.truth.integrity import compute_integrity
+    t = live_tasks()
+    nodes = t.get("tasks") if isinstance(t, dict) else None
+    return compute_integrity(nodes if isinstance(nodes, list) else t)
+
+
+@app.get("/api/helm/factories")
+def api_factories():
+    """F-4: ONE canonical identity source + ONE derived runtime state."""
+    from backend.truth.integrity import canonical_factories
+    return canonical_factories()
+
+
+@app.get("/api/helm/concurrency")
+def api_concurrency():
+    """Capacity and utilisation are DIFFERENT facts."""
+    from backend.truth.integrity import concurrency_facts
+    from backend.mission_control.persistent_scheduler import PersistentScheduler
+    return concurrency_facts(PersistentScheduler(
+        evidence_dir=ROOT / "coordination" / "council"))
 
 
 @app.get("/api/helm/live")
