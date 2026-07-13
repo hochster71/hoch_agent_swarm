@@ -1,0 +1,25 @@
+{
+  "termination_requested_at": "2026-07-13T23:25:54Z",
+  "termination_signal": "SIGTERM",
+  "process_exit_status": "TERMINATED",
+  "pid": 95199,
+  "last_completed_cycle": {
+    "round": 14,
+    "at": "2026-07-13T23:25:50Z",
+    "dispatched": 4,
+    "ids": [
+      "SOAK-HASF-14",
+      "SOAK-HRF-14",
+      "SOAK-HCF-14",
+      "SOAK-HSF-14"
+    ]
+  },
+  "last_heartbeat": {
+    "at": "2026-07-13T23:25:50Z",
+    "cpu_percent": 0.0,
+    "memory_mb": 19.8,
+    "ledger_growth_bytes": 130284
+  },
+  "reason": "KNOWN_TERMINAL_CONTROL_FAILURE",
+  "detail": "A dangling lease was conclusively observed. The remaining runtime could not change that historical fact; continuing would only accumulate evidence on a runtime already known to violate a mandatory acceptance condition."
+}

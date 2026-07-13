@@ -1,0 +1,10 @@
+{
+  "configured_worker_capacity": 4,
+  "worker_peak_concurrency": 5,
+  "recovery_peak_concurrency": 0,
+  "total_peak_concurrency": 5,
+  "worker_peak_excluding_leaked_leases": 4,
+  "capacity_violation": false,
+  "capacity_measurement_impact": "INFLATED_OBSERVED_PEAK",
+  "finding": "Observed peak 5 appeared to exceed capacity 4. Decomposition shows 4 GENUINELY concurrent worker leases (within capacity) plus 1 phantom holder(s) that had already died but never released. Capacity was NOT violated; the metric was inflated by the leak."
+}

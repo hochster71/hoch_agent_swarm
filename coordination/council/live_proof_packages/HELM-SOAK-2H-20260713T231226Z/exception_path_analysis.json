@@ -1,0 +1,16 @@
+{
+  "path": [
+    "execute_task acquires lease",
+    "log_lease ACQUIRED",
+    "body runs (dispatch -> validate -> DB update)",
+    "*** any exception here escapes ***",
+    "release_lease NEVER reached",
+    "lease file remains ACTIVE forever"
+  ],
+  "guard_present_at_time_of_run": false,
+  "consequences": [
+    "task can never be re-leased (permanent starvation)",
+    "observed concurrency inflated by a dead holder",
+    "capacity metric becomes untrustworthy"
+  ]
+}

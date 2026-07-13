@@ -1,0 +1,10 @@
+{
+  "concurrency_mode": "PER_TASK_LEASE",
+  "configured_limit": 4,
+  "structural_capacity": 4,
+  "observed_peak_concurrency": 3,
+  "effective_limit": 3,
+  "status": "OK",
+  "lease_backend": "PerTaskLeaseManager",
+  "note": "Per-task lock records. effective_limit is OBSERVED from overlapping leases; UNKNOWN until a real overlap is recorded."
+}

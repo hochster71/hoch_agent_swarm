@@ -1,0 +1,53 @@
+[
+  {
+    "id": 1,
+    "recovered": true,
+    "stale_write_rejected": true,
+    "detail": "STALE_FENCE_REJECTED token=7 current=8",
+    "at": "2026-07-13T23:09:20Z"
+  },
+  {
+    "id": 2,
+    "recovered": true,
+    "at": "2026-07-13T23:09:20Z",
+    "detail": "corrupt lock quarantined and reclaimed"
+  },
+  {
+    "id": 3,
+    "recovered": true,
+    "token_before": 7,
+    "token_after": 8,
+    "at": "2026-07-13T23:09:20Z",
+    "detail": "floor reconstructed, no token regression"
+  },
+  {
+    "id": 4,
+    "recovered": true,
+    "at": "2026-07-13T23:09:20Z",
+    "detail": "adapter failure isolated: UngatedDispatchError"
+  },
+  {
+    "id": 5,
+    "recovered": true,
+    "typed_denial": "TASK_MUTATED_AFTER_CLASSIFICATION",
+    "at": "2026-07-13T23:09:20Z"
+  },
+  {
+    "id": 6,
+    "recovered": true,
+    "typed_denial": "AUTHORITY_EXPIRED",
+    "at": "2026-07-13T23:09:20Z"
+  },
+  {
+    "id": 7,
+    "recovered": true,
+    "at": "2026-07-13T23:09:20Z",
+    "detail": "fresh scheduler resumed; ledger peak still 4"
+  },
+  {
+    "id": 8,
+    "recovered": true,
+    "typed_denial": "DUPLICATE_TERMINAL_REJECTED",
+    "at": "2026-07-13T23:09:51Z"
+  }
+]

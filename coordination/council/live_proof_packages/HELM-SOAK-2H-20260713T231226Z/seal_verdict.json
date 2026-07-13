@@ -1,0 +1,16 @@
+{
+  "verdict": "SOAK_PHASE_A_FAIL",
+  "failure_code": "DANGLING_LEASE_DETECTED",
+  "affected_task_id": "SOAK-HCF-1",
+  "lease_acquired_at": "2026-07-13T23:12:26.650878Z",
+  "release_event_present": false,
+  "capacity_measurement_impact": "INFLATED_OBSERVED_PEAK",
+  "capacity_violation": false,
+  "root_cause": "EXECUTE_TASK_MISSING_FINALLY_RELEASE",
+  "fixed_in_commit": "23a738d0",
+  "rerun_required": true,
+  "not_inconclusive_because": "The defect was directly OBSERVED in the lease ledger and is sufficient to fail a mandatory acceptance condition. An interrupted run with a conclusively observed terminal defect is a FAIL, not an INCONCLUSIVE.",
+  "value_of_this_run": "This failed package is the artifact of a real defect that shorter tests did not surface.",
+  "sealed_at": "2026-07-13T23:26:37Z",
+  "24_7_status": "NOT PROVEN"
+}

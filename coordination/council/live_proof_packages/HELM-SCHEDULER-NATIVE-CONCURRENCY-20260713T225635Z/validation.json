@@ -1,0 +1,11 @@
+{
+  "package": "HELM-SCHEDULER-NATIVE-CONCURRENCY-20260713T225635Z",
+  "verdict": "NOT_PASS",
+  "failed_checks": 3,
+  "evidence_source": "the scheduler's OWN lease ledger via run_once() \u2014 no burn-in harness",
+  "observed_peak_concurrency": "UNKNOWN",
+  "measurement_method": "authoritative lease intervals paired by lease_id",
+  "measurement_bug_fixed": "observed_peak_concurrency() previously counted ACQUIRED and DISPATCH_START each as +1, double-counting every task and inflating the peak ~2x. Now paired by lease_id.",
+  "epic_fury_distribution": "BLOCKED throughout",
+  "assessed_at": "2026-07-13T22:56:35Z"
+}

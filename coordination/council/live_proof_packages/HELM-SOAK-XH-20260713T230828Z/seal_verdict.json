@@ -1,0 +1,11 @@
+{
+  "verdict": "SOAK_PHASE_SMOKE3_PASS",
+  "failed_controls": [],
+  "cycles": 4,
+  "observed_peak_concurrency": 4,
+  "unrelated_work_continued_after_every_injection": true,
+  "evaluator": "seal_soak_phase.py (independent of the runner that produced the evidence)",
+  "sealed_at": "2026-07-13T23:18:38Z",
+  "next_phase_authorized": true,
+  "24_7_status": "NOT YET PROVEN"
+}

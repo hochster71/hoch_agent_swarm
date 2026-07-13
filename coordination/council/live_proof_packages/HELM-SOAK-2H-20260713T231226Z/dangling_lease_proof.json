@@ -1,0 +1,13 @@
+{
+  "failure_code": "DANGLING_LEASE_DETECTED",
+  "leaked_leases": [
+    {
+      "task_id": "SOAK-HCF-1",
+      "lease_id": "lease-ff21426c",
+      "lease_acquired_at": "2026-07-13T23:12:26.650878Z",
+      "release_event_present": false
+    }
+  ],
+  "count": 1,
+  "detection_method": "ACQUIRED with no corresponding RELEASED/COMPLETED/FAILED event"
+}

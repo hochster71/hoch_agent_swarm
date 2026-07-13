@@ -1,0 +1,5 @@
+{"ts": "2026-07-13T22:56:35.154986Z", "task_id": "SNC-HRF", "status": "HELD_AUTHORITY", "authority": "FOUNDER_ONLY", "authority_decision_id": "AUTH-8b5699e140234cc3", "matched": "revoke"}
+{"ts": "2026-07-13T22:56:35.155107Z", "task_id": "SNC-HCF", "status": "HELD_AUTHORITY", "authority": "FOUNDER_ONLY", "authority_decision_id": "AUTH-15df09e8f07c0c16", "matched": "revoke"}
+{"ts": "2026-07-13T22:56:35.155119Z", "task_id": "SNC-HASF", "status": "HELD_AUTHORITY", "authority": "FOUNDER_ONLY", "authority_decision_id": "AUTH-d91069b87255bd79", "matched": "revoke"}
+{"ts": "2026-07-13T22:56:35.155240Z", "task_id": "SNC-HSF", "status": "HELD_AUTHORITY", "authority": "FOUNDER_ONLY", "authority_decision_id": "AUTH-45deb4ac72552d2c", "matched": "revoke"}
+{"ts": "2099-01-01T00:00:00Z", "status": "ACQUIRED", "task_id": "FORGED", "peak": 999}

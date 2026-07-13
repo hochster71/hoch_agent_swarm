@@ -1,0 +1,8 @@
+{
+  "phase": "SMOKE2",
+  "seconds": 120,
+  "started_at": "2026-07-13T23:03:48Z",
+  "concurrency_limit": 4,
+  "evidence_source": "production daemon path (scheduler.run_once); no burn-in harness",
+  "epic_fury": "APPLE_DISTRIBUTION held via required_capability; unrelated HASF work must continue"
+}

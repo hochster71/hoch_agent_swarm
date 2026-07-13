@@ -1,0 +1,5 @@
+{
+  "root_cause": "EXECUTE_TASK_MISSING_FINALLY_RELEASE",
+  "explanation": "PersistentScheduler.execute_task acquired a per-task lease and released it on the happy path only. There was no try/finally, so any exception between acquire and release leaked the lease permanently.",
+  "why_shorter_tests_missed_it": "Short runs completed every task on the happy path. The leak only surfaces when a task raises mid-execution, which needed sustained real load to hit."
+}

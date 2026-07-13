@@ -1,0 +1,24 @@
+{"ts": "2026-07-13T23:03:48.498021Z", "task_id": "SNC-HASF", "status": "HELD_AUTHORITY", "authority": "FOUNDER_ONLY", "authority_decision_id": "AUTH-7bf592b80842ea6b", "matched": "revoke"}
+{"ts": "2026-07-13T23:03:48.498078Z", "task_id": "SNC-HCF", "status": "HELD_AUTHORITY", "authority": "FOUNDER_ONLY", "authority_decision_id": "AUTH-1d9e2fe64d75670c", "matched": "revoke"}
+{"ts": "2026-07-13T23:03:48.498156Z", "task_id": "SNC-HRF", "status": "HELD_AUTHORITY", "authority": "FOUNDER_ONLY", "authority_decision_id": "AUTH-c9d20f85e5935c08", "matched": "revoke"}
+{"ts": "2026-07-13T23:03:48.499132Z", "task_id": "SOAK-HASF-1", "lease_id": "lease-2083c527", "fencing_token": 7, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:03:48.499198Z", "task_id": "SOAK-HASF-1", "lease_id": "lease-2083c527", "fencing_token": 7, "status": "DISPATCH_START"}
+{"ts": "2026-07-13T23:04:51.875895Z", "task_id": "SOAK-HASF-1", "lease_id": "lease-2083c527", "status": "RELEASED"}
+{"ts": "2026-07-13T23:05:05.925000Z", "task_id": "SNC-HRF", "status": "HELD_AUTHORITY", "authority": "FOUNDER_ONLY", "authority_decision_id": "AUTH-e50c2e49e937219f", "matched": "revoke"}
+{"ts": "2026-07-13T23:05:05.925161Z", "task_id": "SNC-HASF", "status": "HELD_AUTHORITY", "authority": "FOUNDER_ONLY", "authority_decision_id": "AUTH-944171faf500b1fd", "matched": "revoke"}
+{"ts": "2026-07-13T23:05:05.925310Z", "task_id": "SNC-HCF", "status": "HELD_AUTHORITY", "authority": "FOUNDER_ONLY", "authority_decision_id": "AUTH-b3c88943fab51ee7", "matched": "revoke"}
+{"ts": "2026-07-13T23:05:05.925900Z", "task_id": "SOAK-HASF-2", "lease_id": "lease-bd417731", "fencing_token": 6, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:05:05.926002Z", "task_id": "SOAK-HASF-2", "lease_id": "lease-bd417731", "fencing_token": 6, "status": "DISPATCH_START"}
+{"ts": "2026-07-13T23:05:21.120992Z", "task_id": "SOAK-HASF-2", "lease_id": "lease-bd417731", "status": "RELEASED"}
+{"ts": "2026-07-13T23:05:26.265065Z", "task_id": "SNC-HASF", "status": "HELD_AUTHORITY", "authority": "FOUNDER_ONLY", "authority_decision_id": "AUTH-378163ee7d5d8c95", "matched": "revoke"}
+{"ts": "2026-07-13T23:05:26.265303Z", "task_id": "SNC-HCF", "status": "HELD_AUTHORITY", "authority": "FOUNDER_ONLY", "authority_decision_id": "AUTH-11f892255ee41e8c", "matched": "revoke"}
+{"ts": "2026-07-13T23:05:26.265485Z", "task_id": "SNC-HRF", "status": "HELD_AUTHORITY", "authority": "FOUNDER_ONLY", "authority_decision_id": "AUTH-224603d6c0085723", "matched": "revoke"}
+{"ts": "2026-07-13T23:05:26.266788Z", "task_id": "SOAK-HASF-3", "lease_id": "lease-30a4a153", "fencing_token": 4, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:05:26.266986Z", "task_id": "SOAK-HASF-3", "lease_id": "lease-30a4a153", "fencing_token": 4, "status": "DISPATCH_START"}
+{"ts": "2026-07-13T23:05:40.887115Z", "task_id": "SOAK-HASF-3", "lease_id": "lease-30a4a153", "status": "RELEASED"}
+{"ts": "2026-07-13T23:05:49.271753Z", "task_id": "SNC-HASF", "status": "HELD_AUTHORITY", "authority": "FOUNDER_ONLY", "authority_decision_id": "AUTH-34d440014fc67496", "matched": "revoke"}
+{"ts": "2026-07-13T23:05:49.271771Z", "task_id": "SNC-HCF", "status": "HELD_AUTHORITY", "authority": "FOUNDER_ONLY", "authority_decision_id": "AUTH-0d5be0ae9cba0ff9", "matched": "revoke"}
+{"ts": "2026-07-13T23:05:49.272154Z", "task_id": "SNC-HRF", "status": "HELD_AUTHORITY", "authority": "FOUNDER_ONLY", "authority_decision_id": "AUTH-441f7f4760e2098a", "matched": "revoke"}
+{"ts": "2026-07-13T23:05:49.272887Z", "task_id": "SOAK-HASF-4", "lease_id": "lease-9938fe19", "fencing_token": 1, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:05:49.272999Z", "task_id": "SOAK-HASF-4", "lease_id": "lease-9938fe19", "fencing_token": 1, "status": "DISPATCH_START"}
+{"ts": "2026-07-13T23:06:07.430655Z", "task_id": "SOAK-HASF-4", "lease_id": "lease-9938fe19", "status": "RELEASED"}

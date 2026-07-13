@@ -1,0 +1,4 @@
+{"round": 1, "at": "2026-07-13T23:01:09Z", "dispatched": 4, "ids": ["SNC-HASF", "SOAK-HASF-1", "SNC-HRF", "SNC-HCF"]}
+{"round": 2, "at": "2026-07-13T23:01:30Z", "dispatched": 4, "ids": ["SNC-HASF", "SOAK-HASF-1", "SOAK-HASF-2", "SNC-HRF"]}
+{"round": 3, "at": "2026-07-13T23:01:44Z", "dispatched": 4, "ids": ["SOAK-HASF-1", "SOAK-HASF-2", "SNC-HASF", "SOAK-HASF-3"]}
+{"round": 4, "at": "2026-07-13T23:01:58Z", "dispatched": 4, "ids": ["SOAK-HASF-1", "SOAK-HASF-2", "SOAK-HASF-3", "SNC-HASF"]}

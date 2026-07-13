@@ -1,0 +1,8 @@
+{
+  "fixed_in_commit": "23a738d0",
+  "fix": "lease-leak guard: try/except/finally guarantees idempotent release_lease",
+  "proof": "body raises -> execute_task returns False -> lease released -> task re-leasable",
+  "head_at_seal": "23a738d0b19c4e477e649302e7579ab153517fe3",
+  "working_tree_state": "DIRTY",
+  "rerun_required": true
+}

@@ -108,8 +108,11 @@ def classify_active_leases() -> dict[str, Any]:
         admin = any(k in tid.upper() for k in
                     ("KILLED-WORKER", "CORRUPT", "TOKREG", "DUP", "TIMEOUT", "MUT", "EXP"))
         if is_expired:
+            # RULE: an open lease past its TTL is STALE. It requires recovery and MUST NOT
+            # count toward active worker concurrency -- a dead holder is not a worker.
             expired += 1
-            detail.append({"lease": tid, "class": "EXPIRED_NOT_ACTIVE"})
+            detail.append({"lease": tid, "class": "STALE_REQUIRES_RECOVERY",
+                           "counts_toward_worker_concurrency": False})
         elif admin:
             recovery += 1
             detail.append({"lease": tid, "class": "RECOVERY_OR_INJECTION"})

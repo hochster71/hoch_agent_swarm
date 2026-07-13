@@ -1,0 +1,2 @@
+{"ts": "2026-07-13T23:00:20.491449Z", "task_id": "SOAK-HASF-1", "envelope_hash": "0406c9081a4babde611c8b9c836080c801d1c3d2aacacba3a5711269f4981610", "status": "COMPLETED", "started_at": "2026-07-13T22:59:10.708913Z", "exit_code": 0}
+{"ts": "2026-07-13T23:00:37.792377Z", "task_id": "SOAK-HASF-2", "envelope_hash": "4641f43e4b36708011a6f0c7f046556e69cf9fa8614b12c271426c3e1758e902", "status": "COMPLETED", "started_at": "2026-07-13T23:00:34.721267Z", "exit_code": 0}

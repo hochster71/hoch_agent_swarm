@@ -1,0 +1,4 @@
+{"ts": "2026-07-13T23:04:50.888496Z", "task_id": "SOAK-HASF-1", "envelope_hash": "9bfcb4253067ef507bbe3775f31d98447a50d921473fada038c5403bf11b7f7f", "status": "COMPLETED", "started_at": "2026-07-13T23:03:48.499198Z", "exit_code": 0}
+{"ts": "2026-07-13T23:05:21.116049Z", "task_id": "SOAK-HASF-2", "envelope_hash": "0fdcd35a556a17e698263fbcf15bfc5425a314215d9a536ed516d3a4520ba3ec", "status": "COMPLETED", "started_at": "2026-07-13T23:05:05.926002Z", "exit_code": 0}
+{"ts": "2026-07-13T23:05:40.420981Z", "task_id": "SOAK-HASF-3", "envelope_hash": "a7cc94e0e91885494bd76eb2bacda4365121e15e6197db17cfa150e3e1982512", "status": "COMPLETED", "started_at": "2026-07-13T23:05:26.266986Z", "exit_code": 0}
+{"ts": "2026-07-13T23:06:07.169381Z", "task_id": "SOAK-HASF-4", "envelope_hash": "878f4c1e482b298d54bc3acfb6e9f231404862a6ace30450abb2321db18bd66f", "status": "COMPLETED", "started_at": "2026-07-13T23:05:49.272999Z", "exit_code": 0}

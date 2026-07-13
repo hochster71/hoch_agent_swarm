@@ -1450,3 +1450,1010 @@
 {"ts": "2026-07-13T15:08:48.663482Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-a2248ed6", "status": "RELEASED"}
 {"ts": "2026-07-13T15:08:53.749445Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-22ed1c45", "fencing_token": 889, "status": "ACQUIRED"}
 {"ts": "2026-07-13T15:08:57.367502Z", "task_id": "T-HSF-REAL-01", "lease_id": "lease-22ed1c45", "status": "RELEASED"}
+{"ts": "2026-07-13T22:56:37.098114Z", "task_id": "SNC-HRF", "lease_id": "lease-a77f8333", "fencing_token": 890, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:56:37.736456Z", "task_id": "SNC-HRF", "lease_id": "lease-a77f8333", "status": "RELEASED"}
+{"ts": "2026-07-13T22:56:37.746318Z", "task_id": "SNC-HCF", "lease_id": "lease-1e5c9740", "fencing_token": 891, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:56:37.756658Z", "task_id": "SNC-HCF", "lease_id": "lease-1e5c9740", "status": "RELEASED"}
+{"ts": "2026-07-13T22:56:37.764217Z", "task_id": "SNC-HSF", "lease_id": "lease-5641644f", "fencing_token": 892, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:56:37.770535Z", "task_id": "SNC-HSF", "lease_id": "lease-5641644f", "status": "RELEASED"}
+{"ts": "2026-07-13T22:56:42.842800Z", "task_id": "SNC-HRF", "lease_id": "lease-841858ed", "fencing_token": 893, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:56:43.925934Z", "task_id": "SNC-HRF", "lease_id": "lease-841858ed", "status": "RELEASED"}
+{"ts": "2026-07-13T22:56:43.935555Z", "task_id": "SNC-HCF", "lease_id": "lease-bd397b49", "fencing_token": 894, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:56:43.945924Z", "task_id": "SNC-HCF", "lease_id": "lease-bd397b49", "status": "RELEASED"}
+{"ts": "2026-07-13T22:56:43.951794Z", "task_id": "SNC-HSF", "lease_id": "lease-bec6ee26", "fencing_token": 895, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:56:43.956335Z", "task_id": "SNC-HSF", "lease_id": "lease-bec6ee26", "status": "RELEASED"}
+{"ts": "2026-07-13T22:56:49.006947Z", "task_id": "SNC-HRF", "lease_id": "lease-bfe7f1b3", "fencing_token": 896, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:56:50.168483Z", "task_id": "SNC-HRF", "lease_id": "lease-bfe7f1b3", "status": "RELEASED"}
+{"ts": "2026-07-13T22:56:50.177095Z", "task_id": "SNC-HCF", "lease_id": "lease-2fceed69", "fencing_token": 897, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:56:50.187058Z", "task_id": "SNC-HCF", "lease_id": "lease-2fceed69", "status": "RELEASED"}
+{"ts": "2026-07-13T22:56:50.194150Z", "task_id": "SNC-HSF", "lease_id": "lease-19b4e1d2", "fencing_token": 898, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:56:50.199885Z", "task_id": "SNC-HSF", "lease_id": "lease-19b4e1d2", "status": "RELEASED"}
+{"ts": "2026-07-13T22:56:55.258322Z", "task_id": "SNC-HRF", "lease_id": "lease-315de590", "fencing_token": 899, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:56:59.911587Z", "task_id": "SNC-HRF", "lease_id": "lease-315de590", "status": "RELEASED"}
+{"ts": "2026-07-13T22:56:59.915828Z", "task_id": "SNC-HCF", "lease_id": "lease-f3b03ca2", "fencing_token": 900, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:56:59.920126Z", "task_id": "SNC-HCF", "lease_id": "lease-f3b03ca2", "status": "RELEASED"}
+{"ts": "2026-07-13T22:56:59.923140Z", "task_id": "SNC-HSF", "lease_id": "lease-d1a3d9b4", "fencing_token": 901, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:56:59.926871Z", "task_id": "SNC-HSF", "lease_id": "lease-d1a3d9b4", "status": "RELEASED"}
+{"ts": "2026-07-13T22:57:05.011723Z", "task_id": "SNC-HRF", "lease_id": "lease-ef6feb2d", "fencing_token": 902, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:57:06.743466Z", "task_id": "SNC-HRF", "lease_id": "lease-ef6feb2d", "status": "RELEASED"}
+{"ts": "2026-07-13T22:57:06.751178Z", "task_id": "SNC-HCF", "lease_id": "lease-b9b3f6f4", "fencing_token": 903, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:57:06.754833Z", "task_id": "SNC-HCF", "lease_id": "lease-b9b3f6f4", "status": "RELEASED"}
+{"ts": "2026-07-13T22:57:06.757934Z", "task_id": "SNC-HSF", "lease_id": "lease-07452639", "fencing_token": 904, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:57:06.761942Z", "task_id": "SNC-HSF", "lease_id": "lease-07452639", "status": "RELEASED"}
+{"ts": "2026-07-13T22:57:11.776031Z", "task_id": "SNC-HRF", "lease_id": "lease-9f3ee391", "fencing_token": 905, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:57:12.013673Z", "task_id": "SNC-HRF", "lease_id": "lease-9f3ee391", "status": "RELEASED"}
+{"ts": "2026-07-13T22:57:12.021459Z", "task_id": "SNC-HCF", "lease_id": "lease-7a97898f", "fencing_token": 906, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:57:12.030048Z", "task_id": "SNC-HCF", "lease_id": "lease-7a97898f", "status": "RELEASED"}
+{"ts": "2026-07-13T22:57:12.035276Z", "task_id": "SNC-HSF", "lease_id": "lease-b2e13b95", "fencing_token": 907, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:57:12.038783Z", "task_id": "SNC-HSF", "lease_id": "lease-b2e13b95", "status": "RELEASED"}
+{"ts": "2026-07-13T22:57:17.120974Z", "task_id": "SNC-HRF", "lease_id": "lease-1fc980ed", "fencing_token": 908, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:57:18.971974Z", "task_id": "SNC-HRF", "lease_id": "lease-1fc980ed", "status": "RELEASED"}
+{"ts": "2026-07-13T22:57:18.977048Z", "task_id": "SNC-HCF", "lease_id": "lease-aa1d9032", "fencing_token": 909, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:57:18.980695Z", "task_id": "SNC-HCF", "lease_id": "lease-aa1d9032", "status": "RELEASED"}
+{"ts": "2026-07-13T22:57:18.983872Z", "task_id": "SNC-HSF", "lease_id": "lease-5cf32635", "fencing_token": 910, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:57:18.987323Z", "task_id": "SNC-HSF", "lease_id": "lease-5cf32635", "status": "RELEASED"}
+{"ts": "2026-07-13T22:57:24.065425Z", "task_id": "SNC-HRF", "lease_id": "lease-a82a6f4f", "fencing_token": 911, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:57:25.657540Z", "task_id": "SNC-HRF", "lease_id": "lease-a82a6f4f", "status": "RELEASED"}
+{"ts": "2026-07-13T22:57:25.664871Z", "task_id": "SNC-HCF", "lease_id": "lease-c35fc9f2", "fencing_token": 912, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:57:25.672921Z", "task_id": "SNC-HCF", "lease_id": "lease-c35fc9f2", "status": "RELEASED"}
+{"ts": "2026-07-13T22:57:25.678709Z", "task_id": "SNC-HSF", "lease_id": "lease-4598ef27", "fencing_token": 913, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:57:25.685027Z", "task_id": "SNC-HSF", "lease_id": "lease-4598ef27", "status": "RELEASED"}
+{"ts": "2026-07-13T22:57:30.708609Z", "task_id": "SNC-HRF", "lease_id": "lease-6206f452", "fencing_token": 914, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:57:31.029120Z", "task_id": "SNC-HRF", "lease_id": "lease-6206f452", "status": "RELEASED"}
+{"ts": "2026-07-13T22:57:31.037817Z", "task_id": "SNC-HCF", "lease_id": "lease-b819874b", "fencing_token": 915, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:57:31.046044Z", "task_id": "SNC-HCF", "lease_id": "lease-b819874b", "status": "RELEASED"}
+{"ts": "2026-07-13T22:57:31.050993Z", "task_id": "SNC-HSF", "lease_id": "lease-ef851da8", "fencing_token": 916, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:57:31.056850Z", "task_id": "SNC-HSF", "lease_id": "lease-ef851da8", "status": "RELEASED"}
+{"ts": "2026-07-13T22:57:36.116861Z", "task_id": "SNC-HRF", "lease_id": "lease-64c12d9d", "fencing_token": 917, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:57:37.733651Z", "task_id": "SNC-HRF", "lease_id": "lease-64c12d9d", "status": "RELEASED"}
+{"ts": "2026-07-13T22:57:37.737094Z", "task_id": "SNC-HCF", "lease_id": "lease-475843ee", "fencing_token": 918, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:57:37.741394Z", "task_id": "SNC-HCF", "lease_id": "lease-475843ee", "status": "RELEASED"}
+{"ts": "2026-07-13T22:57:37.744677Z", "task_id": "SNC-HSF", "lease_id": "lease-33592f5b", "fencing_token": 919, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:57:37.748560Z", "task_id": "SNC-HSF", "lease_id": "lease-33592f5b", "status": "RELEASED"}
+{"ts": "2026-07-13T22:57:42.778324Z", "task_id": "SNC-HRF", "lease_id": "lease-7b531ea6", "fencing_token": 920, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:57:44.399806Z", "task_id": "SNC-HRF", "lease_id": "lease-7b531ea6", "status": "RELEASED"}
+{"ts": "2026-07-13T22:57:44.408293Z", "task_id": "SNC-HCF", "lease_id": "lease-f37e6c48", "fencing_token": 921, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:57:44.415664Z", "task_id": "SNC-HCF", "lease_id": "lease-f37e6c48", "status": "RELEASED"}
+{"ts": "2026-07-13T22:57:44.419225Z", "task_id": "SNC-HSF", "lease_id": "lease-cb7857db", "fencing_token": 922, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:57:44.423209Z", "task_id": "SNC-HSF", "lease_id": "lease-cb7857db", "status": "RELEASED"}
+{"ts": "2026-07-13T22:57:49.497132Z", "task_id": "SNC-HRF", "lease_id": "lease-9fcba25b", "fencing_token": 923, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:57:50.495834Z", "task_id": "SNC-HRF", "lease_id": "lease-9fcba25b", "status": "RELEASED"}
+{"ts": "2026-07-13T22:57:50.505209Z", "task_id": "SNC-HCF", "lease_id": "lease-d605f295", "fencing_token": 924, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:57:50.513939Z", "task_id": "SNC-HCF", "lease_id": "lease-d605f295", "status": "RELEASED"}
+{"ts": "2026-07-13T22:57:50.517947Z", "task_id": "SNC-HSF", "lease_id": "lease-15570c30", "fencing_token": 925, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:57:51.133747Z", "task_id": "SNC-HSF", "lease_id": "lease-15570c30", "status": "RELEASED"}
+{"ts": "2026-07-13T22:57:56.178257Z", "task_id": "SNC-HRF", "lease_id": "lease-fa9babb7", "fencing_token": 926, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:57:57.079399Z", "task_id": "SNC-HRF", "lease_id": "lease-fa9babb7", "status": "RELEASED"}
+{"ts": "2026-07-13T22:57:57.083398Z", "task_id": "SNC-HCF", "lease_id": "lease-a4c2b192", "fencing_token": 927, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:57:57.087419Z", "task_id": "SNC-HCF", "lease_id": "lease-a4c2b192", "status": "RELEASED"}
+{"ts": "2026-07-13T22:57:57.090778Z", "task_id": "SNC-HSF", "lease_id": "lease-cebe6599", "fencing_token": 928, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:57:57.094716Z", "task_id": "SNC-HSF", "lease_id": "lease-cebe6599", "status": "RELEASED"}
+{"ts": "2026-07-13T22:58:02.113281Z", "task_id": "SNC-HRF", "lease_id": "lease-18e69e26", "fencing_token": 929, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:58:02.716442Z", "task_id": "SNC-HRF", "lease_id": "lease-18e69e26", "status": "RELEASED"}
+{"ts": "2026-07-13T22:58:02.725700Z", "task_id": "SNC-HCF", "lease_id": "lease-bdad37f8", "fencing_token": 930, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:58:02.734412Z", "task_id": "SNC-HCF", "lease_id": "lease-bdad37f8", "status": "RELEASED"}
+{"ts": "2026-07-13T22:58:02.739515Z", "task_id": "SNC-HSF", "lease_id": "lease-2b96770a", "fencing_token": 931, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:58:02.744172Z", "task_id": "SNC-HSF", "lease_id": "lease-2b96770a", "status": "RELEASED"}
+{"ts": "2026-07-13T22:58:07.760784Z", "task_id": "SNC-HRF", "lease_id": "lease-5790b61b", "fencing_token": 932, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:58:08.372259Z", "task_id": "SNC-HRF", "lease_id": "lease-5790b61b", "status": "RELEASED"}
+{"ts": "2026-07-13T22:58:08.377827Z", "task_id": "SNC-HCF", "lease_id": "lease-501eee81", "fencing_token": 933, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:58:08.385234Z", "task_id": "SNC-HCF", "lease_id": "lease-501eee81", "status": "RELEASED"}
+{"ts": "2026-07-13T22:58:08.390017Z", "task_id": "SNC-HSF", "lease_id": "lease-0c894448", "fencing_token": 934, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:58:08.395835Z", "task_id": "SNC-HSF", "lease_id": "lease-0c894448", "status": "RELEASED"}
+{"ts": "2026-07-13T22:58:13.439625Z", "task_id": "SNC-HRF", "lease_id": "lease-734eaf3f", "fencing_token": 935, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:58:15.298950Z", "task_id": "SNC-HRF", "lease_id": "lease-734eaf3f", "status": "RELEASED"}
+{"ts": "2026-07-13T22:58:15.357343Z", "task_id": "SNC-HCF", "lease_id": "lease-81dbffcd", "fencing_token": 936, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:58:15.383604Z", "task_id": "SNC-HCF", "lease_id": "lease-81dbffcd", "status": "RELEASED"}
+{"ts": "2026-07-13T22:58:15.388886Z", "task_id": "SNC-HSF", "lease_id": "lease-57af7398", "fencing_token": 937, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:58:17.640102Z", "task_id": "SNC-HSF", "lease_id": "lease-57af7398", "status": "RELEASED"}
+{"ts": "2026-07-13T22:58:22.846531Z", "task_id": "SNC-HRF", "lease_id": "lease-82d8722f", "fencing_token": 938, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:58:26.946183Z", "task_id": "SNC-HRF", "lease_id": "lease-82d8722f", "status": "RELEASED"}
+{"ts": "2026-07-13T22:58:26.956436Z", "task_id": "SNC-HCF", "lease_id": "lease-31de105e", "fencing_token": 939, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:58:26.966863Z", "task_id": "SNC-HCF", "lease_id": "lease-31de105e", "status": "RELEASED"}
+{"ts": "2026-07-13T22:58:26.970164Z", "task_id": "SNC-HSF", "lease_id": "lease-550c43eb", "fencing_token": 940, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:58:26.973843Z", "task_id": "SNC-HSF", "lease_id": "lease-550c43eb", "status": "RELEASED"}
+{"ts": "2026-07-13T22:58:32.063482Z", "task_id": "SNC-HRF", "lease_id": "lease-197fa8f2", "fencing_token": 941, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:58:33.051863Z", "task_id": "SNC-HRF", "lease_id": "lease-197fa8f2", "status": "RELEASED"}
+{"ts": "2026-07-13T22:58:33.061072Z", "task_id": "SNC-HCF", "lease_id": "lease-70f8eff2", "fencing_token": 942, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:58:33.070004Z", "task_id": "SNC-HCF", "lease_id": "lease-70f8eff2", "status": "RELEASED"}
+{"ts": "2026-07-13T22:58:38.151455Z", "task_id": "SNC-HRF", "lease_id": "lease-e88560b0", "fencing_token": 943, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:58:40.002606Z", "task_id": "SNC-HRF", "lease_id": "lease-e88560b0", "status": "RELEASED"}
+{"ts": "2026-07-13T22:58:40.014113Z", "task_id": "SNC-HCF", "lease_id": "lease-99e25661", "fencing_token": 944, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:58:40.626981Z", "task_id": "SNC-HCF", "lease_id": "lease-99e25661", "status": "RELEASED"}
+{"ts": "2026-07-13T22:58:45.659022Z", "task_id": "SNC-HRF", "lease_id": "lease-de16ec97", "fencing_token": 945, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:58:46.400052Z", "task_id": "SNC-HRF", "lease_id": "lease-de16ec97", "status": "RELEASED"}
+{"ts": "2026-07-13T22:58:46.408534Z", "task_id": "SNC-HCF", "lease_id": "lease-44739085", "fencing_token": 946, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:58:46.417427Z", "task_id": "SNC-HCF", "lease_id": "lease-44739085", "status": "RELEASED"}
+{"ts": "2026-07-13T22:58:51.434933Z", "task_id": "SNC-HRF", "lease_id": "lease-5b1da17b", "fencing_token": 947, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:58:52.496858Z", "task_id": "SNC-HRF", "lease_id": "lease-5b1da17b", "status": "RELEASED"}
+{"ts": "2026-07-13T22:58:52.505732Z", "task_id": "SNC-HCF", "lease_id": "lease-e72a9e84", "fencing_token": 948, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:58:53.168599Z", "task_id": "SNC-HCF", "lease_id": "lease-e72a9e84", "status": "RELEASED"}
+{"ts": "2026-07-13T22:58:58.194321Z", "task_id": "SNC-HRF", "lease_id": "lease-53dab093", "fencing_token": 949, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:58:59.373117Z", "task_id": "SNC-HRF", "lease_id": "lease-53dab093", "status": "RELEASED"}
+{"ts": "2026-07-13T22:58:59.381746Z", "task_id": "SNC-HCF", "lease_id": "lease-b1af295a", "fencing_token": 950, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:58:59.391318Z", "task_id": "SNC-HCF", "lease_id": "lease-b1af295a", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:04.455507Z", "task_id": "SNC-HRF", "lease_id": "lease-47881447", "fencing_token": 951, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:06.697322Z", "task_id": "SNC-HRF", "lease_id": "lease-47881447", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:06.701765Z", "task_id": "SNC-HCF", "lease_id": "lease-ea14c3c8", "fencing_token": 952, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:06.706872Z", "task_id": "SNC-HCF", "lease_id": "lease-ea14c3c8", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:11.801327Z", "task_id": "SNC-HRF", "lease_id": "lease-d5b61fa2", "fencing_token": 953, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:12.246270Z", "task_id": "SNC-HRF", "lease_id": "lease-d5b61fa2", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:12.255161Z", "task_id": "SNC-HCF", "lease_id": "lease-f9b90542", "fencing_token": 954, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:12.267025Z", "task_id": "SNC-HCF", "lease_id": "lease-f9b90542", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:12.271534Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-6c624f0a", "fencing_token": 955, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:12.901005Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-6c624f0a", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:12.904833Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-8930e767", "fencing_token": 956, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:12.911073Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-8930e767", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:17.989645Z", "task_id": "SNC-HRF", "lease_id": "lease-9af8d482", "fencing_token": 957, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:21.647477Z", "task_id": "SNC-HRF", "lease_id": "lease-9af8d482", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:21.656814Z", "task_id": "SNC-HCF", "lease_id": "lease-47f806b4", "fencing_token": 958, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:21.665590Z", "task_id": "SNC-HCF", "lease_id": "lease-47f806b4", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:21.670004Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-4453f067", "fencing_token": 959, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:21.676176Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-4453f067", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:21.696833Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-fb980712", "fencing_token": 960, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:21.719907Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-fb980712", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:26.746990Z", "task_id": "SNC-HRF", "lease_id": "lease-8d5d86eb", "fencing_token": 961, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:28.749955Z", "task_id": "SNC-HRF", "lease_id": "lease-8d5d86eb", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:28.753355Z", "task_id": "SNC-HCF", "lease_id": "lease-1309043b", "fencing_token": 962, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:28.776682Z", "task_id": "SNC-HCF", "lease_id": "lease-1309043b", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:28.793950Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-d708287e", "fencing_token": 963, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:28.798590Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-d708287e", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:28.801708Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-cb6bc75a", "fencing_token": 964, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:28.809757Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-cb6bc75a", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:33.872288Z", "task_id": "SNC-HRF", "lease_id": "lease-3e33d283", "fencing_token": 965, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:35.866504Z", "task_id": "SNC-HRF", "lease_id": "lease-3e33d283", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:35.877753Z", "task_id": "SNC-HCF", "lease_id": "lease-bbacfb7b", "fencing_token": 966, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:35.894876Z", "task_id": "SNC-HCF", "lease_id": "lease-bbacfb7b", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:35.899972Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-0227e19b", "fencing_token": 967, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:35.908030Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-0227e19b", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:35.915459Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-ec72fd8b", "fencing_token": 968, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:35.922567Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-ec72fd8b", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:41.100478Z", "task_id": "SNC-HRF", "lease_id": "lease-1de43ab6", "fencing_token": 969, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:43.297318Z", "task_id": "SNC-HRF", "lease_id": "lease-1de43ab6", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:43.302448Z", "task_id": "SNC-HCF", "lease_id": "lease-91603e28", "fencing_token": 970, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:43.307439Z", "task_id": "SNC-HCF", "lease_id": "lease-91603e28", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:43.312702Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-c100b650", "fencing_token": 971, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:43.318073Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-c100b650", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:43.321719Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-b0704221", "fencing_token": 972, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:43.325637Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-b0704221", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:48.374101Z", "task_id": "SNC-HRF", "lease_id": "lease-901d3df5", "fencing_token": 973, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:50.215054Z", "task_id": "SNC-HRF", "lease_id": "lease-901d3df5", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:50.225763Z", "task_id": "SNC-HCF", "lease_id": "lease-483e3df0", "fencing_token": 974, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:50.233390Z", "task_id": "SNC-HCF", "lease_id": "lease-483e3df0", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:50.236967Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-4bf77c91", "fencing_token": 975, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:50.243968Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-4bf77c91", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:50.248401Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-844644bc", "fencing_token": 976, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:50.264324Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-844644bc", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:55.367185Z", "task_id": "SNC-HRF", "lease_id": "lease-63091030", "fencing_token": 977, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:56.840797Z", "task_id": "SNC-HRF", "lease_id": "lease-63091030", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:56.850391Z", "task_id": "SNC-HCF", "lease_id": "lease-256b924e", "fencing_token": 978, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:57.448609Z", "task_id": "SNC-HCF", "lease_id": "lease-256b924e", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:57.454127Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-f2f07782", "fencing_token": 979, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:57.461208Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-f2f07782", "status": "RELEASED"}
+{"ts": "2026-07-13T22:59:57.467171Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-5511510c", "fencing_token": 980, "status": "ACQUIRED"}
+{"ts": "2026-07-13T22:59:57.472929Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-5511510c", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:02.537108Z", "task_id": "SNC-HRF", "lease_id": "lease-d69fa95b", "fencing_token": 981, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:03.586167Z", "task_id": "SNC-HRF", "lease_id": "lease-d69fa95b", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:03.590060Z", "task_id": "SNC-HCF", "lease_id": "lease-6d47b2f5", "fencing_token": 982, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:03.595351Z", "task_id": "SNC-HCF", "lease_id": "lease-6d47b2f5", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:03.599038Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-e278870f", "fencing_token": 983, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:03.603460Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-e278870f", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:03.607261Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-85754e9b", "fencing_token": 984, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:03.618571Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-85754e9b", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:08.629946Z", "task_id": "SNC-HRF", "lease_id": "lease-df0ad885", "fencing_token": 985, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:11.263286Z", "task_id": "SNC-HRF", "lease_id": "lease-df0ad885", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:11.275250Z", "task_id": "SNC-HCF", "lease_id": "lease-8d9179cf", "fencing_token": 986, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:11.285606Z", "task_id": "SNC-HCF", "lease_id": "lease-8d9179cf", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:11.293611Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-aac3f0b1", "fencing_token": 987, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:11.298396Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-aac3f0b1", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:11.302368Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-4f8240f3", "fencing_token": 988, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:11.307171Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-4f8240f3", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:16.354482Z", "task_id": "SNC-HRF", "lease_id": "lease-afdd5dd4", "fencing_token": 989, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:18.987395Z", "task_id": "SNC-HRF", "lease_id": "lease-afdd5dd4", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:19.049452Z", "task_id": "SNC-HCF", "lease_id": "lease-df0c809a", "fencing_token": 990, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:19.103947Z", "task_id": "SNC-HCF", "lease_id": "lease-df0c809a", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:19.112172Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-9e9e14f9", "fencing_token": 991, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:19.144660Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-9e9e14f9", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:19.153047Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-56a2e920", "fencing_token": 992, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:19.187680Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-56a2e920", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:24.335489Z", "task_id": "SNC-HRF", "lease_id": "lease-354d9358", "fencing_token": 993, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:24.346044Z", "task_id": "SNC-HRF", "lease_id": "lease-354d9358", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:24.353089Z", "task_id": "SNC-HCF", "lease_id": "lease-ab029055", "fencing_token": 994, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:24.360314Z", "task_id": "SNC-HCF", "lease_id": "lease-ab029055", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:24.365800Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-85fcc554", "fencing_token": 995, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:24.371579Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-85fcc554", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:24.377900Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-f6bc3269", "fencing_token": 996, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:24.383205Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-f6bc3269", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:29.878474Z", "task_id": "SNC-HRF", "lease_id": "lease-35068635", "fencing_token": 997, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:29.942194Z", "task_id": "SNC-HRF", "lease_id": "lease-35068635", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:29.950086Z", "task_id": "SNC-HCF", "lease_id": "lease-3a1e6333", "fencing_token": 998, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:29.965203Z", "task_id": "SNC-HCF", "lease_id": "lease-3a1e6333", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:29.968546Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-1417da8c", "fencing_token": 999, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:29.980959Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-1417da8c", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:29.984058Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-0d000136", "fencing_token": 1000, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:29.993397Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-0d000136", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:35.093589Z", "task_id": "SNC-HRF", "lease_id": "lease-319126b8", "fencing_token": 1001, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:35.103632Z", "task_id": "SNC-HRF", "lease_id": "lease-319126b8", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:35.109299Z", "task_id": "SNC-HCF", "lease_id": "lease-d3822855", "fencing_token": 1002, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:35.113113Z", "task_id": "SNC-HCF", "lease_id": "lease-d3822855", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:35.116152Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-50f78264", "fencing_token": 1003, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:35.119767Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-50f78264", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:35.122777Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-fe596c4e", "fencing_token": 1004, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:35.127954Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-fe596c4e", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:40.221013Z", "task_id": "SNC-HRF", "lease_id": "lease-fe45537d", "fencing_token": 1005, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:40.228872Z", "task_id": "SNC-HRF", "lease_id": "lease-fe45537d", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:40.232118Z", "task_id": "SNC-HCF", "lease_id": "lease-f3179ab2", "fencing_token": 1006, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:40.235790Z", "task_id": "SNC-HCF", "lease_id": "lease-f3179ab2", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:40.239521Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-83c3e43d", "fencing_token": 1007, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:40.243040Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-83c3e43d", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:40.246685Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-a5dfc6ac", "fencing_token": 1008, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:40.250473Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-a5dfc6ac", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:45.344945Z", "task_id": "SNC-HRF", "lease_id": "lease-c6360dbb", "fencing_token": 1009, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:45.355406Z", "task_id": "SNC-HRF", "lease_id": "lease-c6360dbb", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:45.362099Z", "task_id": "SNC-HCF", "lease_id": "lease-7dafbb80", "fencing_token": 1010, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:45.369898Z", "task_id": "SNC-HCF", "lease_id": "lease-7dafbb80", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:45.374723Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-29c0165f", "fencing_token": 1011, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:45.381460Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-29c0165f", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:45.385084Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-df1c057c", "fencing_token": 1012, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:45.390383Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-df1c057c", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:50.419486Z", "task_id": "SNC-HRF", "lease_id": "lease-c9068dc1", "fencing_token": 1013, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:51.176629Z", "task_id": "SNC-HRF", "lease_id": "lease-c9068dc1", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:51.181096Z", "task_id": "SNC-HCF", "lease_id": "lease-b89a619e", "fencing_token": 1014, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:51.186673Z", "task_id": "SNC-HCF", "lease_id": "lease-b89a619e", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:51.191035Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-96107646", "fencing_token": 1015, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:51.197018Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-96107646", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:51.201452Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-a6d64912", "fencing_token": 1016, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:51.207188Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-a6d64912", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:56.277201Z", "task_id": "SNC-HRF", "lease_id": "lease-c131f168", "fencing_token": 1017, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:57.837224Z", "task_id": "SNC-HRF", "lease_id": "lease-c131f168", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:57.847856Z", "task_id": "SNC-HCF", "lease_id": "lease-307f11e3", "fencing_token": 1018, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:57.857146Z", "task_id": "SNC-HCF", "lease_id": "lease-307f11e3", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:57.863549Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-3fdf3ffd", "fencing_token": 1019, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:57.870014Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-3fdf3ffd", "status": "RELEASED"}
+{"ts": "2026-07-13T23:00:57.874186Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-7b6b1a98", "fencing_token": 1020, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:00:57.879610Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-7b6b1a98", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:02.901181Z", "task_id": "SNC-HRF", "lease_id": "lease-9ead084b", "fencing_token": 1021, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:04.662405Z", "task_id": "SNC-HRF", "lease_id": "lease-9ead084b", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:04.667677Z", "task_id": "SNC-HCF", "lease_id": "lease-e5767ed8", "fencing_token": 1022, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:04.673636Z", "task_id": "SNC-HCF", "lease_id": "lease-e5767ed8", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:04.678330Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-b942addb", "fencing_token": 1023, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:04.682582Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-b942addb", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:04.686534Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-b952d21b", "fencing_token": 1024, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:04.691184Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-b952d21b", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:09.763054Z", "task_id": "SNC-HRF", "lease_id": "lease-e47e602a", "fencing_token": 1025, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:09.911181Z", "task_id": "SNC-HRF", "lease_id": "lease-e47e602a", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:09.921084Z", "task_id": "SNC-HCF", "lease_id": "lease-235f1d28", "fencing_token": 1026, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:09.932271Z", "task_id": "SNC-HCF", "lease_id": "lease-235f1d28", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:09.936986Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-a9077475", "fencing_token": 1027, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:09.941855Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-a9077475", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:09.945817Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-12353424", "fencing_token": 1028, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:09.954038Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-12353424", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:15.040521Z", "task_id": "SNC-HRF", "lease_id": "lease-0dd90840", "fencing_token": 1029, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:15.961855Z", "task_id": "SNC-HRF", "lease_id": "lease-0dd90840", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:15.974949Z", "task_id": "SNC-HCF", "lease_id": "lease-0ceeacea", "fencing_token": 1030, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:15.981427Z", "task_id": "SNC-HCF", "lease_id": "lease-0ceeacea", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:15.987139Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-c4a366f4", "fencing_token": 1031, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:16.695755Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-c4a366f4", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:16.701159Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-fef71855", "fencing_token": 1032, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:16.706402Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-fef71855", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:21.757224Z", "task_id": "SNC-HRF", "lease_id": "lease-54444428", "fencing_token": 1033, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:22.679712Z", "task_id": "SNC-HRF", "lease_id": "lease-54444428", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:22.686728Z", "task_id": "SNC-HCF", "lease_id": "lease-066c6637", "fencing_token": 1034, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:22.693424Z", "task_id": "SNC-HCF", "lease_id": "lease-066c6637", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:22.698819Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-e27658f2", "fencing_token": 1035, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:22.704342Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-e27658f2", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:22.708829Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-27ccede7", "fencing_token": 1036, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:22.718727Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-27ccede7", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:27.747827Z", "task_id": "SNC-HRF", "lease_id": "lease-f9c82f4b", "fencing_token": 1037, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:29.514950Z", "task_id": "SNC-HRF", "lease_id": "lease-f9c82f4b", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:29.520571Z", "task_id": "SNC-HCF", "lease_id": "lease-57da6ceb", "fencing_token": 1038, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:29.526199Z", "task_id": "SNC-HCF", "lease_id": "lease-57da6ceb", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:29.529896Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-f8f48ab0", "fencing_token": 1039, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:29.534516Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-f8f48ab0", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:29.538892Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-fd34f433", "fencing_token": 1040, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:29.543668Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-fd34f433", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:34.585823Z", "task_id": "SNC-HRF", "lease_id": "lease-89fb52d6", "fencing_token": 1041, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:35.524303Z", "task_id": "SNC-HRF", "lease_id": "lease-89fb52d6", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:35.528798Z", "task_id": "SNC-HCF", "lease_id": "lease-1c413101", "fencing_token": 1042, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:35.534353Z", "task_id": "SNC-HCF", "lease_id": "lease-1c413101", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:35.541241Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-c7a8e597", "fencing_token": 1043, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:35.546743Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-c7a8e597", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:35.550349Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-1429befc", "fencing_token": 1044, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:35.554583Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-1429befc", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:40.592817Z", "task_id": "SNC-HRF", "lease_id": "lease-86accc5d", "fencing_token": 1045, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:41.117900Z", "task_id": "SNC-HRF", "lease_id": "lease-86accc5d", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:41.122653Z", "task_id": "SNC-HCF", "lease_id": "lease-45d0f76e", "fencing_token": 1046, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:41.128016Z", "task_id": "SNC-HCF", "lease_id": "lease-45d0f76e", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:41.132360Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-b3700ccb", "fencing_token": 1047, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:41.136960Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-b3700ccb", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:41.140877Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-3650d2ec", "fencing_token": 1048, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:41.145736Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-3650d2ec", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:46.170779Z", "task_id": "SNC-HRF", "lease_id": "lease-0dea10ab", "fencing_token": 1049, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:46.801663Z", "task_id": "SNC-HRF", "lease_id": "lease-0dea10ab", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:46.806508Z", "task_id": "SNC-HCF", "lease_id": "lease-d4945a06", "fencing_token": 1050, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:46.811666Z", "task_id": "SNC-HCF", "lease_id": "lease-d4945a06", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:46.815747Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-3144e077", "fencing_token": 1051, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:46.820216Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-3144e077", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:46.824157Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-8814770a", "fencing_token": 1052, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:46.828582Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-8814770a", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:51.845502Z", "task_id": "SNC-HRF", "lease_id": "lease-fd59ce60", "fencing_token": 1053, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:52.499757Z", "task_id": "SNC-HRF", "lease_id": "lease-fd59ce60", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:52.504334Z", "task_id": "SNC-HCF", "lease_id": "lease-852b9e0c", "fencing_token": 1054, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:52.509527Z", "task_id": "SNC-HCF", "lease_id": "lease-852b9e0c", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:52.513651Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-55454856", "fencing_token": 1055, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:52.518310Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-55454856", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:52.522279Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-839d5000", "fencing_token": 1056, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:52.526384Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-839d5000", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:57.573020Z", "task_id": "SNC-HRF", "lease_id": "lease-8a486b95", "fencing_token": 1057, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:58.244764Z", "task_id": "SNC-HRF", "lease_id": "lease-8a486b95", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:58.252636Z", "task_id": "SNC-HCF", "lease_id": "lease-e5dbb874", "fencing_token": 1058, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:58.260985Z", "task_id": "SNC-HCF", "lease_id": "lease-e5dbb874", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:58.266009Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-a4be24de", "fencing_token": 1059, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:58.270977Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-a4be24de", "status": "RELEASED"}
+{"ts": "2026-07-13T23:01:58.276306Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-3f2569ce", "fencing_token": 1060, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:01:58.281565Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-3f2569ce", "status": "RELEASED"}
+{"ts": "2026-07-13T23:02:03.358465Z", "task_id": "SNC-HRF", "lease_id": "lease-5dd9f08b", "fencing_token": 1061, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:02:03.828136Z", "task_id": "SNC-HRF", "lease_id": "lease-5dd9f08b", "status": "RELEASED"}
+{"ts": "2026-07-13T23:02:03.833274Z", "task_id": "SNC-HCF", "lease_id": "lease-b59091fe", "fencing_token": 1062, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:02:03.838597Z", "task_id": "SNC-HCF", "lease_id": "lease-b59091fe", "status": "RELEASED"}
+{"ts": "2026-07-13T23:02:03.844062Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-89258946", "fencing_token": 1063, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:02:03.862016Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-89258946", "status": "RELEASED"}
+{"ts": "2026-07-13T23:02:03.868047Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-0fb461fd", "fencing_token": 1064, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:02:03.876592Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-0fb461fd", "status": "RELEASED"}
+{"ts": "2026-07-13T23:02:09.081300Z", "task_id": "SNC-HRF", "lease_id": "lease-8c1ee33a", "fencing_token": 1065, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:02:11.162711Z", "task_id": "SNC-HRF", "lease_id": "lease-8c1ee33a", "status": "RELEASED"}
+{"ts": "2026-07-13T23:02:11.169092Z", "task_id": "SNC-HCF", "lease_id": "lease-c581d50a", "fencing_token": 1066, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:02:11.175177Z", "task_id": "SNC-HCF", "lease_id": "lease-c581d50a", "status": "RELEASED"}
+{"ts": "2026-07-13T23:02:11.179399Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-266a693a", "fencing_token": 1067, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:02:11.183622Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-266a693a", "status": "RELEASED"}
+{"ts": "2026-07-13T23:02:11.188059Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-d08de203", "fencing_token": 1068, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:02:11.194848Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-d08de203", "status": "RELEASED"}
+{"ts": "2026-07-13T23:02:16.270681Z", "task_id": "SNC-HRF", "lease_id": "lease-d468ec8f", "fencing_token": 1069, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:02:16.933078Z", "task_id": "SNC-HRF", "lease_id": "lease-d468ec8f", "status": "RELEASED"}
+{"ts": "2026-07-13T23:02:16.946735Z", "task_id": "SNC-HCF", "lease_id": "lease-2795dca1", "fencing_token": 1070, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:02:23.758223Z", "task_id": "SNC-HCF", "lease_id": "lease-2795dca1", "status": "RELEASED"}
+{"ts": "2026-07-13T23:02:23.770600Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-68b1a340", "fencing_token": 1071, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:02:23.879234Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-68b1a340", "status": "RELEASED"}
+{"ts": "2026-07-13T23:02:23.888740Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-c56a1a53", "fencing_token": 1072, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:02:24.120692Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-c56a1a53", "status": "RELEASED"}
+{"ts": "2026-07-13T23:02:30.006795Z", "task_id": "SNC-HRF", "lease_id": "lease-d76920aa", "fencing_token": 1073, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:02:44.694771Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:02:44.747612Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:02:44.747817Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:02:44.747945Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:02:49.852730Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:02:49.853309Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:02:49.853433Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:02:49.853538Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:02:54.932698Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:02:54.933146Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:02:54.933336Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:02:54.933481Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:02:59.980585Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:02:59.981760Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:02:59.982444Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:02:59.982833Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:05.060888Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:05.061642Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:05.061794Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:05.061904Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:10.135025Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:10.156740Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:10.156905Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:10.157037Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:15.310945Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:15.332064Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:15.332211Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:15.332329Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:20.440397Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:20.441039Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:20.441190Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:20.441320Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:25.523040Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:25.523507Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:25.523872Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:25.524022Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:30.614314Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:30.615504Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:30.616003Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:30.616327Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:35.730865Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:35.737453Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:35.737795Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:35.737906Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:40.751707Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:40.752035Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:40.752461Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:40.752664Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:45.801290Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:45.801729Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:45.801831Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:45.801919Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:50.877140Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:50.877700Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:50.877871Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:50.878015Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:55.959836Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:55.960236Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:55.960410Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:03:55.960551Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:01.037929Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:01.038743Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:01.038987Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:01.039176Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:06.115145Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:06.115515Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:06.115613Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:06.115697Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:11.177075Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:11.177506Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:11.177645Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:11.177758Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:16.234418Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:16.234812Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:16.235023Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:16.235204Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:21.312238Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:21.312607Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:21.313926Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:21.314094Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:26.391856Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:26.392536Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:26.392851Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:26.393037Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:31.473728Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:31.476925Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:31.477363Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:31.477921Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:36.557463Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:36.558117Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:36.558455Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:36.558666Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:41.765267Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:41.787106Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:41.787264Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:41.787377Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:46.862758Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:46.863341Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:46.863526Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:46.863684Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:51.939774Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:51.939979Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:51.940064Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:51.940122Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:56.946253Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:56.946585Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:56.946667Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:04:56.946719Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:01.956396Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:01.956676Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:01.957194Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:01.957337Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:07.023616Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:07.024082Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:07.024185Z", "task_id": "SOAK-HRF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:07.024284Z", "task_id": "SOAK-HCF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:12.074337Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:12.074714Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:12.074809Z", "task_id": "SOAK-HRF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:12.074891Z", "task_id": "SOAK-HCF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:17.171378Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:17.193954Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:17.194161Z", "task_id": "SOAK-HRF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:17.194255Z", "task_id": "SOAK-HCF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:22.276154Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:22.276802Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:22.276959Z", "task_id": "SOAK-HRF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:22.277063Z", "task_id": "SOAK-HCF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:27.358983Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:27.359540Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:27.359662Z", "task_id": "SOAK-HRF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:27.359784Z", "task_id": "SOAK-HCF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:32.425593Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:32.426169Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:32.426361Z", "task_id": "SOAK-HRF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:32.426878Z", "task_id": "SOAK-HCF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:37.509830Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:37.510428Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:37.510616Z", "task_id": "SOAK-HRF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:37.510763Z", "task_id": "SOAK-HCF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:42.616459Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:42.617616Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:42.618206Z", "task_id": "SOAK-HRF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:42.618589Z", "task_id": "SOAK-HCF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:47.793611Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:47.801856Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:47.802254Z", "task_id": "SOAK-HRF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:47.802666Z", "task_id": "SOAK-HCF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:52.867310Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:52.867836Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:52.867996Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:52.868110Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:57.954561Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:57.955115Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:57.955300Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:05:57.955453Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:03.035770Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:03.036268Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:03.036383Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:03.036475Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:08.073032Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:08.073874Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:08.074085Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:08.074256Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:13.155254Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:13.155884Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:13.156105Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:13.156258Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:18.229143Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:18.229513Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:18.229693Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:18.229883Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:23.289961Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:23.290269Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:23.290417Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:23.290519Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:28.364051Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:28.364410Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:28.365015Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:28.365198Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:33.439941Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:33.440472Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:33.440940Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:33.441066Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:38.515724Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:38.516241Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:38.516438Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:38.516556Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:43.563412Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:43.563992Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:43.564236Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:43.564459Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:48.643599Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:48.665311Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:48.703065Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:48.703569Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:53.774717Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:53.775231Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:53.775462Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:53.775629Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:58.854107Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:58.854697Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:58.854863Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:06:58.855016Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:03.925764Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:03.926143Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:03.928022Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:03.928270Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:09.052716Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:09.053448Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:09.053660Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:09.053832Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:14.118084Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:14.118576Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:14.119004Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:14.119124Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:19.172490Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:19.172778Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:19.172869Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:19.172946Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:24.254459Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:24.255049Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:24.255210Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:24.255343Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:29.328010Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:29.328792Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:29.329333Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:29.329648Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:34.404698Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:34.405324Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:34.405498Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:34.405653Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:39.482044Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:39.482940Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:39.483058Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:39.483123Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:44.566466Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:44.567259Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:44.567396Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:44.567482Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:49.644106Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:49.644388Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:49.644501Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:49.644596Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:54.719553Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:54.720110Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:54.720228Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:54.720332Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:59.786475Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:59.786714Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:59.786776Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:07:59.786825Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:04.815681Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:04.816126Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:04.816275Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:04.816401Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:09.876365Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:09.876666Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:09.877193Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:09.877353Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:14.955692Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:14.956249Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:14.956457Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:14.956622Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:20.032855Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:20.033501Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:20.033681Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:20.033844Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:25.113310Z", "task_id": "SNC-HRF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:25.113503Z", "task_id": "SNC-HCF", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:25.113575Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:25.113621Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:30.248211Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:30.252273Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:30.252451Z", "task_id": "SOAK-HSF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:35.333118Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:35.333523Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:35.333684Z", "task_id": "SOAK-HSF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:40.411358Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:40.412324Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:40.412838Z", "task_id": "SOAK-HSF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:45.434327Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:45.434758Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:45.434930Z", "task_id": "SOAK-HSF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:50.515690Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:50.516290Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:50.516503Z", "task_id": "SOAK-HSF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:55.589427Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:08:55.589916Z", "task_id": "SOAK-HSF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:09:00.665073Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:09:00.665621Z", "task_id": "SOAK-HSF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:09:05.740027Z", "task_id": "SOAK-HSF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:09:10.787038Z", "task_id": "SOAK-HSF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:09:26.198992Z", "task_id": "SOAK-HRF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:09:26.347536Z", "task_id": "SOAK-HCF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:09:26.348051Z", "task_id": "SOAK-HSF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:09:31.451923Z", "task_id": "SOAK-HRF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:09:31.452492Z", "task_id": "SOAK-HCF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:09:36.517487Z", "task_id": "SOAK-HCF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:09:41.592941Z", "task_id": "SOAK-HCF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:09:46.643195Z", "task_id": "SOAK-HCF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:10:01.829830Z", "task_id": "SOAK-HRF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:10:01.830461Z", "task_id": "SOAK-HCF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:10:01.830602Z", "task_id": "SOAK-HSF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:10:06.849842Z", "task_id": "SOAK-HRF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:10:06.850104Z", "task_id": "SOAK-HCF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:10:06.850215Z", "task_id": "SOAK-HSF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:10:11.928650Z", "task_id": "SOAK-HCF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:10:11.931437Z", "task_id": "SOAK-HSF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:10:17.005967Z", "task_id": "SOAK-HCF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:10:17.007827Z", "task_id": "SOAK-HSF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:10:22.083523Z", "task_id": "SOAK-HCF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:10:22.084350Z", "task_id": "SOAK-HSF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:10:27.159544Z", "task_id": "SOAK-HCF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:10:27.159885Z", "task_id": "SOAK-HSF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:10:32.246899Z", "task_id": "SOAK-HSF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:10:42.380494Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:10:42.381205Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:10:42.381371Z", "task_id": "SOAK-HSF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:10:47.491163Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:10:47.513256Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:10:47.513580Z", "task_id": "SOAK-HSF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:10:52.665260Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:10:52.666064Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:10:52.666204Z", "task_id": "SOAK-HSF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:10:57.736217Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:10:57.736680Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:10:57.736837Z", "task_id": "SOAK-HSF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:11:02.814976Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:11:02.815908Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:11:07.900344Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:11:07.900955Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:11:12.934589Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:11:12.934858Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:11:17.974229Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:11:23.031056Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:12:28.943396Z", "task_id": "SOAK-HRF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:12:28.944132Z", "task_id": "SOAK-HCF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:12:28.944290Z", "task_id": "SOAK-HSF-1", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:12:34.052748Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-4c581ae2", "fencing_token": 1074, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:12:34.064748Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-4c581ae2", "status": "RELEASED"}
+{"ts": "2026-07-13T23:12:34.071609Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-0a0bea5f", "fencing_token": 1075, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:12:34.078664Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-0a0bea5f", "status": "RELEASED"}
+{"ts": "2026-07-13T23:12:34.083923Z", "task_id": "SOAK-HSF-1", "lease_id": "lease-5436810c", "fencing_token": 1076, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:12:34.090354Z", "task_id": "SOAK-HSF-1", "lease_id": "lease-5436810c", "status": "RELEASED"}
+{"ts": "2026-07-13T23:12:39.179819Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-e453cea8", "fencing_token": 1077, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:12:40.114417Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-e453cea8", "status": "RELEASED"}
+{"ts": "2026-07-13T23:12:40.124133Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-f03915a3", "fencing_token": 1078, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:12:40.134403Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-f03915a3", "status": "RELEASED"}
+{"ts": "2026-07-13T23:12:40.149883Z", "task_id": "SOAK-HSF-1", "lease_id": "lease-7417bb99", "fencing_token": 1079, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:12:40.155148Z", "task_id": "SOAK-HSF-1", "lease_id": "lease-7417bb99", "status": "RELEASED"}
+{"ts": "2026-07-13T23:12:45.230878Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-8e157159", "fencing_token": 1080, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:12:46.450201Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-8e157159", "status": "RELEASED"}
+{"ts": "2026-07-13T23:12:46.461808Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-4ee42bb7", "fencing_token": 1081, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:12:46.471384Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-4ee42bb7", "status": "RELEASED"}
+{"ts": "2026-07-13T23:12:46.477495Z", "task_id": "SOAK-HSF-1", "lease_id": "lease-e6b1509d", "fencing_token": 1082, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:12:46.484600Z", "task_id": "SOAK-HSF-1", "lease_id": "lease-e6b1509d", "status": "RELEASED"}
+{"ts": "2026-07-13T23:12:51.626981Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-8e4dbe4d", "fencing_token": 1083, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:12:52.751658Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-8e4dbe4d", "status": "RELEASED"}
+{"ts": "2026-07-13T23:12:52.760792Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-59b47585", "fencing_token": 1084, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:12:52.767610Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-59b47585", "status": "RELEASED"}
+{"ts": "2026-07-13T23:12:52.771347Z", "task_id": "SOAK-HSF-1", "lease_id": "lease-3f4a7c5d", "fencing_token": 1085, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:12:52.776225Z", "task_id": "SOAK-HSF-1", "lease_id": "lease-3f4a7c5d", "status": "RELEASED"}
+{"ts": "2026-07-13T23:12:57.862095Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-1aecd1c3", "fencing_token": 1086, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:12:59.138126Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-1aecd1c3", "status": "RELEASED"}
+{"ts": "2026-07-13T23:12:59.147976Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-158fed4a", "fencing_token": 1087, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:12:59.155655Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-158fed4a", "status": "RELEASED"}
+{"ts": "2026-07-13T23:12:59.161370Z", "task_id": "SOAK-HSF-1", "lease_id": "lease-9697c52a", "fencing_token": 1088, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:12:59.167658Z", "task_id": "SOAK-HSF-1", "lease_id": "lease-9697c52a", "status": "RELEASED"}
+{"ts": "2026-07-13T23:13:04.197577Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-ead6e9f7", "fencing_token": 1089, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:13:05.444959Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-ead6e9f7", "status": "RELEASED"}
+{"ts": "2026-07-13T23:13:05.455753Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-e90bf0c8", "fencing_token": 1090, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:13:05.462606Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-e90bf0c8", "status": "RELEASED"}
+{"ts": "2026-07-13T23:13:10.528482Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-0540400f", "fencing_token": 1091, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:13:12.077249Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-0540400f", "status": "RELEASED"}
+{"ts": "2026-07-13T23:13:12.082696Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-55cfae7e", "fencing_token": 1092, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:13:12.089673Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-55cfae7e", "status": "RELEASED"}
+{"ts": "2026-07-13T23:13:17.193361Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-54a5c1f5", "fencing_token": 1093, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:13:20.831154Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-54a5c1f5", "status": "RELEASED"}
+{"ts": "2026-07-13T23:13:20.840999Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-8b7fefcd", "fencing_token": 1094, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:13:20.870753Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-8b7fefcd", "status": "RELEASED"}
+{"ts": "2026-07-13T23:13:26.006987Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-d8e4a177", "fencing_token": 1095, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:13:26.019842Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-d8e4a177", "status": "RELEASED"}
+{"ts": "2026-07-13T23:13:26.027056Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-b17ad4cc", "fencing_token": 1096, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:13:26.032560Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-b17ad4cc", "status": "RELEASED"}
+{"ts": "2026-07-13T23:13:31.090045Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-929cb8ee", "fencing_token": 1097, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:13:31.102774Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-929cb8ee", "status": "RELEASED"}
+{"ts": "2026-07-13T23:13:31.110906Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-f43cbe3d", "fencing_token": 1098, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:13:31.117895Z", "task_id": "SOAK-HCF-1", "lease_id": "lease-f43cbe3d", "status": "RELEASED"}
+{"ts": "2026-07-13T23:13:36.261786Z", "task_id": "SOAK-HRF-1", "lease_id": "lease-e7a28a9c", "fencing_token": 1099, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:13:50.038636Z", "task_id": "SOAK-HRF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:13:50.088529Z", "task_id": "SOAK-HCF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:13:50.088657Z", "task_id": "SOAK-HSF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:13:55.140904Z", "task_id": "SOAK-HRF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:13:55.141553Z", "task_id": "SOAK-HCF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:13:55.141687Z", "task_id": "SOAK-HSF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:14:00.264072Z", "task_id": "SOAK-HRF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:14:00.285748Z", "task_id": "SOAK-HCF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:14:05.422048Z", "task_id": "SOAK-HRF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:14:05.440326Z", "task_id": "SOAK-HCF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:14:10.525436Z", "task_id": "SOAK-HRF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:14:15.578291Z", "task_id": "SOAK-HRF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:14:20.656619Z", "task_id": "SOAK-HRF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:14:25.731303Z", "task_id": "SOAK-HRF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:14:30.790736Z", "task_id": "SOAK-HRF-2", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:14:40.945111Z", "task_id": "SOAK-HRF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:14:40.945612Z", "task_id": "SOAK-HCF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:14:40.945755Z", "task_id": "SOAK-HSF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:14:46.050495Z", "task_id": "SOAK-HRF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:14:46.050993Z", "task_id": "SOAK-HCF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:14:46.051149Z", "task_id": "SOAK-HSF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:14:51.148642Z", "task_id": "SOAK-HRF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:14:51.148921Z", "task_id": "SOAK-HCF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:14:51.148993Z", "task_id": "SOAK-HSF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:14:56.204456Z", "task_id": "SOAK-HRF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:14:56.212381Z", "task_id": "SOAK-HCF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:14:56.212712Z", "task_id": "SOAK-HSF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:15:01.399820Z", "task_id": "SOAK-HRF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:15:01.480090Z", "task_id": "SOAK-HCF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:15:01.480376Z", "task_id": "SOAK-HSF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:15:06.573533Z", "task_id": "SOAK-HRF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:15:06.574175Z", "task_id": "SOAK-HCF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:15:06.574354Z", "task_id": "SOAK-HSF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:15:11.629978Z", "task_id": "SOAK-HRF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:15:11.630760Z", "task_id": "SOAK-HCF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:15:11.632140Z", "task_id": "SOAK-HSF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:15:16.782687Z", "task_id": "SOAK-HRF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:15:16.805227Z", "task_id": "SOAK-HCF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:15:16.805471Z", "task_id": "SOAK-HSF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:15:21.900137Z", "task_id": "SOAK-HCF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:15:21.900834Z", "task_id": "SOAK-HSF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:15:26.931983Z", "task_id": "SOAK-HCF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:15:26.932363Z", "task_id": "SOAK-HSF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:15:32.019007Z", "task_id": "SOAK-HCF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:15:32.020020Z", "task_id": "SOAK-HSF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:15:37.111108Z", "task_id": "SOAK-HCF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:15:37.117338Z", "task_id": "SOAK-HSF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:15:42.182123Z", "task_id": "SOAK-HSF-3", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:15:57.478255Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:15:57.482259Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:15:57.482437Z", "task_id": "SOAK-HSF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:16:02.553512Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:16:02.554072Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:16:02.554196Z", "task_id": "SOAK-HSF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:16:07.627099Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:16:07.627861Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:16:07.628038Z", "task_id": "SOAK-HSF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:16:12.711093Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:16:12.711827Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:16:12.711998Z", "task_id": "SOAK-HSF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:16:17.802603Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:16:17.813526Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:16:17.813728Z", "task_id": "SOAK-HSF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:16:22.956918Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:16:22.957560Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:16:22.958109Z", "task_id": "SOAK-HSF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:16:28.098845Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:16:28.100276Z", "task_id": "SOAK-HCF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:16:28.100553Z", "task_id": "SOAK-HSF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:16:33.192001Z", "task_id": "SOAK-HRF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:16:33.193071Z", "task_id": "SOAK-HSF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:16:38.272746Z", "task_id": "SOAK-HSF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:16:43.286111Z", "task_id": "SOAK-HSF-4", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:16:53.441686Z", "task_id": "SOAK-HRF-5", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:16:53.444495Z", "task_id": "SOAK-HCF-5", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:16:53.444827Z", "task_id": "SOAK-HSF-5", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:16:58.577285Z", "task_id": "SOAK-HRF-5", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:16:58.577746Z", "task_id": "SOAK-HCF-5", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:16:58.577941Z", "task_id": "SOAK-HSF-5", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:17:03.656141Z", "task_id": "SOAK-HRF-5", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:17:03.657150Z", "task_id": "SOAK-HCF-5", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:17:08.768037Z", "task_id": "SOAK-HRF-5", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:17:08.769214Z", "task_id": "SOAK-HCF-5", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:17:13.841541Z", "task_id": "SOAK-HCF-5", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:17:18.843145Z", "task_id": "SOAK-HCF-5", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:17:44.489793Z", "task_id": "SOAK-HRF-6", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:17:44.491962Z", "task_id": "SOAK-HCF-6", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:17:44.492199Z", "task_id": "SOAK-HSF-6", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:17:49.565479Z", "task_id": "SOAK-HRF-6", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:17:49.567774Z", "task_id": "SOAK-HCF-6", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:17:49.568088Z", "task_id": "SOAK-HSF-6", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:17:54.609297Z", "task_id": "SOAK-HRF-6", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:17:54.609807Z", "task_id": "SOAK-HCF-6", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:17:59.652695Z", "task_id": "SOAK-HRF-6", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:17:59.654927Z", "task_id": "SOAK-HCF-6", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:18:04.731850Z", "task_id": "SOAK-HRF-6", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:18:04.732517Z", "task_id": "SOAK-HCF-6", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:18:09.783562Z", "task_id": "SOAK-HRF-6", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:18:24.976812Z", "task_id": "SOAK-HRF-7", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:18:24.977661Z", "task_id": "SOAK-HCF-7", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:18:24.977847Z", "task_id": "SOAK-HSF-7", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:18:30.037602Z", "task_id": "SOAK-HRF-7", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:18:30.038011Z", "task_id": "SOAK-HCF-7", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:18:35.114618Z", "task_id": "SOAK-HRF-7", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:18:35.115830Z", "task_id": "SOAK-HCF-7", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:18:40.199322Z", "task_id": "SOAK-HRF-7", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:18:40.199875Z", "task_id": "SOAK-HCF-7", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:18:45.241699Z", "task_id": "SOAK-HRF-7", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:18:45.241945Z", "task_id": "SOAK-HCF-7", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:18:50.309853Z", "task_id": "SOAK-HRF-7", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:18:50.310462Z", "task_id": "SOAK-HCF-7", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:18:55.393660Z", "task_id": "SOAK-HCF-7", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:19:00.464830Z", "task_id": "SOAK-HCF-7", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:19:20.770654Z", "task_id": "SOAK-HRF-8", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:19:20.771240Z", "task_id": "SOAK-HCF-8", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:19:20.771410Z", "task_id": "SOAK-HSF-8", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:19:25.848777Z", "task_id": "SOAK-HRF-8", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:19:25.848992Z", "task_id": "SOAK-HCF-8", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:19:25.849126Z", "task_id": "SOAK-HSF-8", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:19:30.928104Z", "task_id": "SOAK-HCF-8", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:19:30.928509Z", "task_id": "SOAK-HSF-8", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:19:35.981680Z", "task_id": "SOAK-HCF-8", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:19:35.982464Z", "task_id": "SOAK-HSF-8", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:19:41.116854Z", "task_id": "SOAK-HCF-8", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:19:46.199753Z", "task_id": "SOAK-HCF-8", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:19:51.265694Z", "task_id": "SOAK-HCF-8", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:20:11.540553Z", "task_id": "SOAK-HRF-9", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:20:11.541154Z", "task_id": "SOAK-HCF-9", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:20:11.541327Z", "task_id": "SOAK-HSF-9", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:20:16.614898Z", "task_id": "SOAK-HRF-9", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:20:16.615058Z", "task_id": "SOAK-HCF-9", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:20:16.615118Z", "task_id": "SOAK-HSF-9", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:20:21.637057Z", "task_id": "SOAK-HRF-9", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:20:21.637432Z", "task_id": "SOAK-HCF-9", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:20:21.637495Z", "task_id": "SOAK-HSF-9", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:20:26.648422Z", "task_id": "SOAK-HRF-9", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:20:26.649131Z", "task_id": "SOAK-HCF-9", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:20:26.649406Z", "task_id": "SOAK-HSF-9", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:20:31.729336Z", "task_id": "SOAK-HRF-9", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:20:31.729775Z", "task_id": "SOAK-HCF-9", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:20:31.729948Z", "task_id": "SOAK-HSF-9", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:20:36.975628Z", "task_id": "SOAK-HRF-9", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:20:36.997387Z", "task_id": "SOAK-HSF-9", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:20:42.068748Z", "task_id": "SOAK-HRF-9", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:20:42.069062Z", "task_id": "SOAK-HSF-9", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:20:47.154358Z", "task_id": "SOAK-HRF-9", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:20:47.163263Z", "task_id": "SOAK-HSF-9", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:20:52.244182Z", "task_id": "SOAK-HSF-9", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:20:57.283490Z", "task_id": "SOAK-HSF-9", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:21:02.349896Z", "task_id": "SOAK-HSF-9", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:21:07.436286Z", "task_id": "SOAK-HSF-9", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:21:12.511854Z", "task_id": "SOAK-HSF-9", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:21:22.656678Z", "task_id": "SOAK-HRF-10", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:21:22.657280Z", "task_id": "SOAK-HCF-10", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:21:22.657452Z", "task_id": "SOAK-HSF-10", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:21:27.737336Z", "task_id": "SOAK-HRF-10", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:21:27.737976Z", "task_id": "SOAK-HCF-10", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:21:27.738200Z", "task_id": "SOAK-HSF-10", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:21:32.800423Z", "task_id": "SOAK-HRF-10", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:21:32.801340Z", "task_id": "SOAK-HCF-10", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:21:32.801545Z", "task_id": "SOAK-HSF-10", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:21:37.815489Z", "task_id": "SOAK-HRF-10", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:21:37.815800Z", "task_id": "SOAK-HCF-10", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:21:37.815974Z", "task_id": "SOAK-HSF-10", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:21:42.899369Z", "task_id": "SOAK-HRF-10", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:21:42.899927Z", "task_id": "SOAK-HCF-10", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:21:42.900298Z", "task_id": "SOAK-HSF-10", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:21:47.980831Z", "task_id": "SOAK-HRF-10", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:21:47.983631Z", "task_id": "SOAK-HCF-10", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:21:47.983986Z", "task_id": "SOAK-HSF-10", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:21:53.048041Z", "task_id": "SOAK-HCF-10", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:21:53.048618Z", "task_id": "SOAK-HSF-10", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:21:58.102586Z", "task_id": "SOAK-HCF-10", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:21:58.102935Z", "task_id": "SOAK-HSF-10", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:22:03.135878Z", "task_id": "SOAK-HCF-10", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:22:08.206114Z", "task_id": "SOAK-HCF-10", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:22:13.366130Z", "task_id": "SOAK-HCF-10", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:22:23.668356Z", "task_id": "SOAK-HRF-11", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:22:23.676119Z", "task_id": "SOAK-HCF-11", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:22:23.676589Z", "task_id": "SOAK-HSF-11", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:22:28.943085Z", "task_id": "SOAK-HRF-11", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:22:28.964872Z", "task_id": "SOAK-HCF-11", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:22:28.965144Z", "task_id": "SOAK-HSF-11", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:22:34.032211Z", "task_id": "SOAK-HRF-11", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:22:34.032643Z", "task_id": "SOAK-HCF-11", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:22:39.085857Z", "task_id": "SOAK-HRF-11", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:22:39.086794Z", "task_id": "SOAK-HCF-11", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:22:44.129071Z", "task_id": "SOAK-HCF-11", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:22:49.211364Z", "task_id": "SOAK-HCF-11", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:22:54.270922Z", "task_id": "SOAK-HCF-11", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:22:59.353038Z", "task_id": "SOAK-HCF-11", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:23:04.415789Z", "task_id": "SOAK-HCF-11", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:23:09.484196Z", "task_id": "SOAK-HCF-11", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:23:19.855505Z", "task_id": "SOAK-HRF-12", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:23:19.869335Z", "task_id": "SOAK-HCF-12", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:23:19.869694Z", "task_id": "SOAK-HSF-12", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:23:24.961441Z", "task_id": "SOAK-HRF-12", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:23:24.969274Z", "task_id": "SOAK-HCF-12", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:23:29.984161Z", "task_id": "SOAK-HRF-12", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:23:29.984634Z", "task_id": "SOAK-HCF-12", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:23:35.029081Z", "task_id": "SOAK-HRF-12", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:23:35.029698Z", "task_id": "SOAK-HCF-12", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T23:23:40.152855Z", "task_id": "SOAK-HCF-12", "lease_id": "lease-6abab6ed", "fencing_token": 1100, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:23:40.165276Z", "task_id": "SOAK-HCF-12", "lease_id": "lease-6abab6ed", "status": "RELEASED"}
+{"ts": "2026-07-13T23:23:45.245885Z", "task_id": "SOAK-HCF-12", "lease_id": "lease-3188aad6", "fencing_token": 1101, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:23:45.396545Z", "task_id": "SOAK-HCF-12", "lease_id": "lease-3188aad6", "status": "RELEASED"}
+{"ts": "2026-07-13T23:23:50.487785Z", "task_id": "SOAK-HCF-12", "lease_id": "lease-7ddea2fc", "fencing_token": 1102, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:23:51.043472Z", "task_id": "SOAK-HCF-12", "lease_id": "lease-7ddea2fc", "status": "RELEASED"}
+{"ts": "2026-07-13T23:24:16.441218Z", "task_id": "SOAK-HRF-13", "lease_id": "lease-98235d03", "fencing_token": 1103, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:24:16.735502Z", "task_id": "SOAK-HRF-13", "lease_id": "lease-98235d03", "status": "RELEASED"}
+{"ts": "2026-07-13T23:24:16.745696Z", "task_id": "SOAK-HCF-13", "lease_id": "lease-894fc19a", "fencing_token": 1104, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:24:16.755537Z", "task_id": "SOAK-HCF-13", "lease_id": "lease-894fc19a", "status": "RELEASED"}
+{"ts": "2026-07-13T23:24:16.763316Z", "task_id": "SOAK-HSF-13", "lease_id": "lease-8fe66e03", "fencing_token": 1105, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:24:16.769960Z", "task_id": "SOAK-HSF-13", "lease_id": "lease-8fe66e03", "status": "RELEASED"}
+{"ts": "2026-07-13T23:24:21.830131Z", "task_id": "SOAK-HRF-13", "lease_id": "lease-f6e0f86e", "fencing_token": 1106, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:24:22.700531Z", "task_id": "SOAK-HRF-13", "lease_id": "lease-f6e0f86e", "status": "RELEASED"}
+{"ts": "2026-07-13T23:24:22.711601Z", "task_id": "SOAK-HCF-13", "lease_id": "lease-02587701", "fencing_token": 1107, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:24:22.721181Z", "task_id": "SOAK-HCF-13", "lease_id": "lease-02587701", "status": "RELEASED"}
+{"ts": "2026-07-13T23:24:22.727120Z", "task_id": "SOAK-HSF-13", "lease_id": "lease-b2f5e750", "fencing_token": 1108, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:24:22.734050Z", "task_id": "SOAK-HSF-13", "lease_id": "lease-b2f5e750", "status": "RELEASED"}
+{"ts": "2026-07-13T23:24:27.786659Z", "task_id": "SOAK-HCF-13", "lease_id": "lease-73f0996e", "fencing_token": 1109, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:24:28.762158Z", "task_id": "SOAK-HCF-13", "lease_id": "lease-73f0996e", "status": "RELEASED"}
+{"ts": "2026-07-13T23:24:28.772432Z", "task_id": "SOAK-HSF-13", "lease_id": "lease-99fb8745", "fencing_token": 1110, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:24:28.784517Z", "task_id": "SOAK-HSF-13", "lease_id": "lease-99fb8745", "status": "RELEASED"}
+{"ts": "2026-07-13T23:24:33.876017Z", "task_id": "SOAK-HCF-13", "lease_id": "lease-4bdc1f1b", "fencing_token": 1111, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:24:34.993233Z", "task_id": "SOAK-HCF-13", "lease_id": "lease-4bdc1f1b", "status": "RELEASED"}
+{"ts": "2026-07-13T23:24:40.081587Z", "task_id": "SOAK-HCF-13", "lease_id": "lease-249e5d96", "fencing_token": 1112, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:24:40.962532Z", "task_id": "SOAK-HCF-13", "lease_id": "lease-249e5d96", "status": "RELEASED"}
+{"ts": "2026-07-13T23:25:01.244628Z", "task_id": "SOAK-HRF-14", "lease_id": "lease-800e37da", "fencing_token": 1113, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:25:01.263088Z", "task_id": "SOAK-HRF-14", "lease_id": "lease-800e37da", "status": "RELEASED"}
+{"ts": "2026-07-13T23:25:01.269054Z", "task_id": "SOAK-HCF-14", "lease_id": "lease-505abe75", "fencing_token": 1114, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:25:01.275774Z", "task_id": "SOAK-HCF-14", "lease_id": "lease-505abe75", "status": "RELEASED"}
+{"ts": "2026-07-13T23:25:01.280366Z", "task_id": "SOAK-HSF-14", "lease_id": "lease-2d5f928b", "fencing_token": 1115, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:25:01.286515Z", "task_id": "SOAK-HSF-14", "lease_id": "lease-2d5f928b", "status": "RELEASED"}
+{"ts": "2026-07-13T23:25:06.319935Z", "task_id": "SOAK-HRF-14", "lease_id": "lease-f52892f9", "fencing_token": 1116, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:25:06.363118Z", "task_id": "SOAK-HRF-14", "lease_id": "lease-f52892f9", "status": "RELEASED"}
+{"ts": "2026-07-13T23:25:06.368888Z", "task_id": "SOAK-HCF-14", "lease_id": "lease-c1ebcf12", "fencing_token": 1117, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:25:06.378594Z", "task_id": "SOAK-HCF-14", "lease_id": "lease-c1ebcf12", "status": "RELEASED"}
+{"ts": "2026-07-13T23:25:06.384133Z", "task_id": "SOAK-HSF-14", "lease_id": "lease-dc0bd197", "fencing_token": 1118, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:25:06.390660Z", "task_id": "SOAK-HSF-14", "lease_id": "lease-dc0bd197", "status": "RELEASED"}
+{"ts": "2026-07-13T23:25:11.428190Z", "task_id": "SOAK-HCF-14", "lease_id": "lease-1d1860c6", "fencing_token": 1119, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:25:11.594121Z", "task_id": "SOAK-HCF-14", "lease_id": "lease-1d1860c6", "status": "RELEASED"}
+{"ts": "2026-07-13T23:25:11.601276Z", "task_id": "SOAK-HSF-14", "lease_id": "lease-ba2c35ff", "fencing_token": 1120, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:25:12.190705Z", "task_id": "SOAK-HSF-14", "lease_id": "lease-ba2c35ff", "status": "RELEASED"}
+{"ts": "2026-07-13T23:25:17.489115Z", "task_id": "SOAK-HCF-14", "lease_id": "lease-790a546f", "fencing_token": 1121, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:25:19.609883Z", "task_id": "SOAK-HCF-14", "lease_id": "lease-790a546f", "status": "RELEASED"}
+{"ts": "2026-07-13T23:25:25.048509Z", "task_id": "SOAK-HCF-14", "lease_id": "lease-6af12351", "fencing_token": 1122, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:25:25.242758Z", "task_id": "SOAK-HCF-14", "lease_id": "lease-6af12351", "status": "RELEASED"}
+{"ts": "2026-07-13T23:25:30.386132Z", "task_id": "SOAK-HCF-14", "lease_id": "lease-35fa448a", "fencing_token": 1123, "status": "ACQUIRED"}
+{"ts": "2026-07-13T23:25:30.398039Z", "task_id": "SOAK-HCF-14", "lease_id": "lease-35fa448a", "status": "RELEASED"}
