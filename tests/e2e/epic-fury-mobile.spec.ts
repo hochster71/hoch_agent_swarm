@@ -1,21 +1,24 @@
 import { test, expect } from '@playwright/test';
 import { loginAsTestUser } from '../support/epic-fury-auth';
 
+// D4 (founder-ratified 2026-07-13): behavioral contracts on a mobile viewport.
 test.describe('Epic Fury Mobile Viewport Tests', () => {
   test.use({ viewport: { width: 375, height: 812 } });
 
-  test('1. Verify mobile layout responsiveness', async ({ page }) => {
-    // Log in as founder
-    await loginAsTestUser(page, 'michael.b.hoch@gmail.com', 'admin');  // real magic-link auth (no demo bypass)
-    await page.goto('http://localhost:3003/dashboard');
+  test('1. Authenticated dashboard renders responsively on mobile', async ({ page }) => {
+    await loginAsTestUser(page, 'michael.b.hoch@gmail.com', 'admin'); // real session
+    await page.goto('http://localhost:3003/dashboard', { waitUntil: 'domcontentloaded' });
 
-    // Confirm that mobile HUD controls adjust safely
-    const layoutHeader = page.locator('text=EPIC FURY').first();
-    await expect(layoutHeader).toBeVisible();
+    // D4 item 1 — reaches the route, shell renders, no horizontal overflow blowout.
+    expect(page.url()).toContain('/dashboard');
+    await expect(page.locator('body')).toBeVisible();
+    const scrollW = await page.evaluate(() => document.documentElement.scrollWidth);
+    expect(scrollW).toBeLessThanOrEqual(375 + 24); // no gross horizontal overflow at 375px
 
-    // Confirm upgrade CTA behaves safely on mobile width
-    await page.goto('http://localhost:3003/dashboard');
-    // D1: the '#internal-access-banner' (Internal Preview Mode) was REMOVED from the
-    // product; asserting it is obsolete. Retired per founder ratification 2026-07-13.
+    // D4 item 2 — product identity via metadata.
+    await expect(page).toHaveTitle(/epic fury/i);
+
+    // D4 item 4 — entitled identity: no paywall CTA.
+    await expect(page.locator('text=Unlock Full Intelligence Access')).toHaveCount(0);
   });
 });

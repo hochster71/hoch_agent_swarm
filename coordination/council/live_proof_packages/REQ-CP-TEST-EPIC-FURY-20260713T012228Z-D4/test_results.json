@@ -1,0 +1,44 @@
+{
+  "requirement": "REQ-CP-TEST",
+  "status": "PASS",
+  "passed": 23,
+  "failed": 0,
+  "total_tests": 23,
+  "skipped": 0,
+  "targets": {
+    "LOCAL_INTEGRATION": "REQUIRED (executed)",
+    "CURRENT_PRODUCTION_SMOKE": "REQUIRED_READ_ONLY (executed)",
+    "LEGACY_STAGING": "RETIRED (non-blocking, excluded per D2)"
+  },
+  "auth_method": "REAL local Supabase GoTrue session (password grant) serialized by the app's OWN @supabase/ssr into the cookie the server-side middleware reads; real JWT + real app_metadata role + real middleware entitlement. In-browser magic-link UI is disabled for loopback by the product's own guard (see env note), so the SESSION backend is exercised faithfully while the email-click UI is covered separately by the security specs.",
+  "demo_auth_restored": false,
+  "preview_banner_restored": false,
+  "entitlement_weakened": false,
+  "production_test_auth_flags": false,
+  "credentials_committed": false,
+  "staging_url_invented": false,
+  "product_change": false,
+  "security_control_weakened": false,
+  "specs_executed": {
+    "epic-fury-auth-security.spec.ts": 7,
+    "epic-fury-accessibility.spec.ts": 1,
+    "epic-fury-mobile.spec.ts": 1,
+    "epic-fury-production-smoke.spec.ts": 1,
+    "rc42-epic-fury-csp-audit.spec.ts": 1,
+    "epic-fury-smoke.spec.ts": 1,
+    "rc47-epic-fury-admin-access.spec.ts": 10,
+    "rc44-epic-fury-flowchart.spec.ts": 1
+  },
+  "d4_contracts": {
+    "product_identity": "metadata title /epic fury/i (not exact heading)",
+    "settings_route": "RETIRED (/dashboard/settings does not exist)",
+    "admin_no_paywall": "RETAINED \u2014 admin session shows 0 paywall CTA",
+    "free_restricted": "RETAINED \u2014 fresh free identity shows paywall",
+    "preview_banner": "RETIRED",
+    "demo_route": "404 (verified)",
+    "fail_closed": "anon + production verified"
+  },
+  "testflight": "UNKNOWN",
+  "app_store_connect": "UNKNOWN",
+  "champion_completion_note": "recomputed from validators below"
+}

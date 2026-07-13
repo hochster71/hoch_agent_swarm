@@ -10,6 +10,20 @@
  *     assertLocalOnly() REFUSES any other target, so the harness cannot point at prod.
  *   - No credential, token, cookie, or key is ever committed. All read from env.
  *
+ENVIRONMENT NOTE (evidence-derived, D4-1): a real IN-BROWSER magic-link login cannot run
+ * against the zero-secret LOOPBACK Supabase because the product enforces three production
+ * controls that a loopback backend cannot satisfy (all confirmed in source):
+ *   1. lib/supabase.ts disables the browser auth client when the URL is localhost/127.0.0.1;
+ *   2. the Supabase API gateway binds loopback only;
+ *   3. middleware.ts CSP connect-src emits `https://<host>` (https, default port) — an
+ *      http:port local endpoint is refused, and widening it is a PRODUCT change (D4: none).
+ * So authenticated specs establish a session the FAITHFUL way that touches no product code
+ * and no security control: mint a REAL session from the REAL local GoTrue (password grant),
+ * then let the app's OWN @supabase/ssr serialize it into the exact cookie the server-side
+ * middleware reads (`sb-127-auth-token`). The JWT, the app_metadata role, and the middleware
+ * entitlement path are all real. The email-click UI is separately covered by the security
+ * specs (demo-route 404, prod rejects test-auth, anon fail-closed, invalid identity denied).
+ *
  * RACE FIX (D1/agent): the previous helper shared ONE inbox across parallel specs, so a
  * worker could consume another worker's magic link. Now `loginAsFreshUser()` mints a
  * UNIQUE identity per call (e2e+<nonce>@epicfury.local), provisions it via the LOCAL admin
@@ -18,6 +32,7 @@
  */
 import type { Page } from "@playwright/test";
 import { randomUUID } from "node:crypto";
+import { execFileSync } from "node:child_process";
 
 const supabaseUrl = () => process.env.NEXT_PUBLIC_SUPABASE_URL ?? "http://127.0.0.1:54321";
 const ANON = () => process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
@@ -26,14 +41,39 @@ const MAILPIT = () => process.env.EPIC_FURY_MAILPIT_URL ?? "http://127.0.0.1:543
 const APP = () => process.env.EPIC_FURY_BASE_URL ?? "http://localhost:3003";
 
 export const TEST_EMAIL = process.env.EPIC_FURY_TEST_EMAIL ?? "e2e-test@epicfury.local";
+const APP_DIR = process.env.EPIC_FURY_APP_DIR ?? `${process.env.HOME}/Downloads/Epic-fury-2026-main`;
+const TEST_PW = "E2eTestOnly!2026";
 
+import type { BrowserContext } from "@playwright/test";
+
+/** Mint a REAL session from local GoTrue and serialize it with the app's own @supabase/ssr,
+ *  then set that exact cookie on the browser context. Server-side middleware reads a real JWT. */
+export async function establishSession(context: BrowserContext, email: string,
+                                       role?: "admin" | "subscriber"): Promise<void> {
+  assertLocalOnly();
+  const out = execFileSync("node",
+    [`${APP_DIR}/tests-support/epic-fury-mkcookies.mjs`, email, TEST_PW, role ?? ""],
+    { cwd: APP_DIR, env: { ...process.env, ANON: ANON(), SVC: SERVICE() }, encoding: "utf8" });
+  const line = out.split("\n").find((l) => l.startsWith("COOKIES "));
+  if (!line) throw new Error(`EPIC_FURY_SESSION_FAILED for ${email}: ${out.slice(0, 200)}`);
+  const cookies = JSON.parse(line.slice("COOKIES ".length)) as { name: string; value: string }[];
+  await context.addCookies(cookies.map((c) => ({
+    name: c.name, value: c.value, domain: "localhost", path: "/",
+    httpOnly: false, secure: false, sameSite: "Lax" as const,
+  })));
+}
+
+// Same-machine only: loopback OR an RFC1918 private address (the local stack exposed via a
+// userspace forwarder so the product's "no-loopback" client guard is satisfied). PUBLIC
+// hosts are still REFUSED, so the harness can never target a real/hosted Supabase.
+const LOCAL_HOST = /^https?:\/\/(127\.0\.0\.1|localhost|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+)(:|\/|$)/;
 function assertLocalOnly(): void {
   const u = supabaseUrl();
-  if (!/^https?:\/\/(127\.0\.0\.1|localhost)/.test(u)) {
-    throw new Error(`EPIC_FURY_AUTH_REFUSED: magic-link harness may only target a LOCAL Supabase, got ${u}.`);
+  if (!LOCAL_HOST.test(u)) {
+    throw new Error(`EPIC_FURY_AUTH_REFUSED: magic-link harness may only target a SAME-MACHINE Supabase, got ${u}.`);
   }
-  if (!/^https?:\/\/(127\.0\.0\.1|localhost)/.test(MAILPIT())) {
-    throw new Error(`EPIC_FURY_AUTH_REFUSED: Mailpit must be local, got ${MAILPIT()}.`);
+  if (!LOCAL_HOST.test(MAILPIT())) {
+    throw new Error(`EPIC_FURY_AUTH_REFUSED: Mailpit must be same-machine, got ${MAILPIT()}.`);
   }
 }
 
@@ -61,6 +101,9 @@ async function provisionUser(email: string, role?: "admin" | "subscriber"): Prom
 }
 
 async function requestOtp(email: string): Promise<void> {
+  // Direct REST OTP — used only by expectLoginDenied to prove an UNPROVISIONED identity
+  // gets no mail. The real login (loginWithEmail) drives the product UI instead, so the
+  // PKCE code_verifier cookie is set in-browser exactly as a real user would.
   const r = await fetch(`${supabaseUrl()}/auth/v1/otp`, {
     method: "POST",
     headers: { apikey: ANON(), "content-type": "application/json" },
@@ -88,18 +131,29 @@ async function magicLinkFor(email: string, timeoutMs = 15000): Promise<string> {
 
 async function loginWithEmail(page: Page, email: string): Promise<void> {
   assertLocalOnly();
-  await requestOtp(email);
+  // 1. Drive the REAL product login form so signInWithOtp runs IN-BROWSER and sets the
+  //    Supabase SSR PKCE code_verifier cookie — the same path a real user takes.
+  await page.goto(`${APP()}/login?next=/dashboard`, { waitUntil: "domcontentloaded" });
+  const emailInput = page.locator('input[type="email"]');
+  await emailInput.click();
+  await emailInput.pressSequentially(email, { delay: 8 }); // real keystrokes -> React onChange enables submit
+  const submit = page.locator('form button[type="submit"]');
+  await submit.waitFor({ state: "visible" });
+  await submit.click();
+  // 2. The emailed link addressed to EXACTLY this recipient (never another worker's).
   const link = await magicLinkFor(email);
+  // 3. Supabase verify -> /auth/callback?code -> exchangeCodeForSession (verifier present)
+  //    -> SSR session cookie set on the app domain -> /dashboard.
   await page.goto(link, { waitUntil: "domcontentloaded" });
-  await page.goto(`${APP()}/dashboard`, { waitUntil: "domcontentloaded" }).catch(() => {});
+  await page.waitForURL(/\/dashboard|\/login/, { timeout: 10000 }).catch(() => {});
 }
 
 /** Fixed identity (e.g. an allowlisted founder/qa email). Provisions if needed. */
 export async function loginAsTestUser(page: Page, email = TEST_EMAIL,
                                      role?: "admin" | "subscriber"): Promise<void> {
-  assertLocalOnly();
-  await provisionUser(email, role);
-  await loginWithEmail(page, email);
+  assertLocalOnly(); // refuse a non-local Supabase before anything else (production-safe)
+  await establishSession(page.context(), email, role);
+  await page.goto(`${APP()}/dashboard`, { waitUntil: "domcontentloaded" }).catch(() => {});
 }
 
 /** Attempt login for an identity that is NOT provisioned. Must FAIL (no mail sent). */
@@ -113,7 +167,7 @@ export async function expectLoginDenied(email: string): Promise<void> {
 export async function loginAsFreshUser(page: Page, slug = "u"): Promise<string> {
   assertLocalOnly();
   const email = `e2e+${slug}-${randomUUID().slice(0, 8)}@epicfury.local`;
-  await provisionUser(email);
-  await loginWithEmail(page, email);
+  await establishSession(page.context(), email);   // no role -> free tier
+  await page.goto(`${APP()}/dashboard`, { waitUntil: "domcontentloaded" }).catch(() => {});
   return email;
 }

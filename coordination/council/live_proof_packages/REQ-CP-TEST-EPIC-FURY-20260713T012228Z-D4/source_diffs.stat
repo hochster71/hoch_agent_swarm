@@ -1,0 +1,4 @@
+ tests/e2e/epic-fury-mobile.spec.ts | 25 +++++++------
+ tests/e2e/epic-fury-smoke.spec.ts  | 27 +++++++++-----
+ tests/support/epic-fury-auth.ts    | 76 ++++++++++++++++++++++++++++++++------
+ 3 files changed, 96 insertions(+), 32 deletions(-)

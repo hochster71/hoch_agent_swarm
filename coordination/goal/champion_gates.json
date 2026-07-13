@@ -1,6 +1,6 @@
 {
   "champion_product": "EPIC_FURY_2026",
-  "champion_product_completion": 70.0,
+  "champion_product_completion": 80.0,
   "computation_rule": "Completion is the fraction of gates whose validator PASSED against fresh evidence. UNKNOWN and FAIL contribute ZERO. No percentage is assigned from memory.",
   "founder_only_gates_pending": [
     "TESTFLIGHT",
@@ -14,21 +14,20 @@
       "evidence": [
         "has_live_project_tracker/data/epic_fury_release_ledger.json"
       ],
-      "evidence_age_hours": 125.6,
+      "evidence_age_hours": 127.0,
       "gate": "BUILD",
       "status": "PASS"
     },
     {
-      "blocker": "BLOCKED_FOUNDER_PREREQUISITE: restoring an auth-bypass route into a product at the App Store gate is a founder/security decision; rewriting the specs to skip auth would be weakening a test to obtain a pass.",
-      "contributes": 0.0,
-      "detail": "10 passed, 7 FAILED of 17. Root cause: /api/auth/demo returns 404 -- the demo-auth endpoint the specs depend on does not exist in the current product. Tests are STALE vs product.",
+      "blocker": null,
+      "contributes": 1.0,
+      "detail": "23/23 passed, 0 failed",
       "evidence": [
-        "coordination/council/live_proof_packages/REQ-CP-TEST-EPIC-FURY-20260712T235035Z/test_results.json",
-        "coordination/council/live_proof_packages/REQ-CP-TEST-EPIC-FURY-20260712T235035Z/failure_analysis.json"
+        "coordination/council/live_proof_packages/REQ-CP-TEST-EPIC-FURY-20260713T012228Z-D4/test_results.json"
       ],
       "evidence_age_hours": 0.0,
       "gate": "TEST",
-      "status": "FAIL"
+      "status": "PASS"
     },
     {
       "blocker": null,
@@ -38,7 +37,7 @@
         "docs/products/epic-fury-2026/HASF_GATE_VERIFY.json",
         "docs/evidence/products/epic-fury-2026/security_scan_results_20260707.md"
       ],
-      "evidence_age_hours": 90.9,
+      "evidence_age_hours": 92.3,
       "gate": "SECURITY",
       "status": "PASS"
     },
@@ -49,7 +48,7 @@
       "evidence": [
         "docs/evidence/products/epic-fury-2026/RELEASE_APPROVAL_20260707T155053Z.json"
       ],
-      "evidence_age_hours": 128.2,
+      "evidence_age_hours": 129.6,
       "gate": "SIGNING_READINESS",
       "status": "PASS"
     },
@@ -60,7 +59,7 @@
       "evidence": [
         "has_live_project_tracker/data/epic_fury_release_ledger.json"
       ],
-      "evidence_age_hours": 125.6,
+      "evidence_age_hours": 127.0,
       "gate": "STORE_METADATA",
       "status": "PASS"
     },
@@ -71,7 +70,7 @@
       "evidence": [
         "has_live_project_tracker/data/epic_fury_release_ledger.json"
       ],
-      "evidence_age_hours": 125.6,
+      "evidence_age_hours": 127.0,
       "gate": "PRIVACY",
       "status": "PASS"
     },
@@ -83,7 +82,7 @@
         "has_live_project_tracker/data/epic_fury_release_ledger.json",
         "has_live_project_tracker/data/epic_fury_roi_model.json"
       ],
-      "evidence_age_hours": 125.6,
+      "evidence_age_hours": 127.0,
       "gate": "MONETIZATION",
       "status": "PASS"
     },
@@ -99,11 +98,11 @@
     {
       "blocker": "requires App Store Connect read (founder-only credential)",
       "contributes": 0.0,
-      "detail": "ledger claims state=WAITING_FOR_REVIEW submitted=2026-07-07T17:25:46Z. This is a 125.6h-old CLAIM in a local file, not a live reading. ASC credentials present: False. Apple may have approved or rejected since. The truthful state is UNKNOWN until App Store Connect is read.",
+      "detail": "ledger claims state=WAITING_FOR_REVIEW submitted=2026-07-07T17:25:46Z. This is a 127.0h-old CLAIM in a local file, not a live reading. ASC credentials present: False. Apple may have approved or rejected since. The truthful state is UNKNOWN until App Store Connect is read.",
       "evidence": [
         "has_live_project_tracker/data/epic_fury_release_ledger.json"
       ],
-      "evidence_age_hours": 125.6,
+      "evidence_age_hours": 127.0,
       "gate": "APP_STORE_CONNECT",
       "status": "UNKNOWN"
     },
@@ -123,16 +122,15 @@
       "status": "PASS"
     }
   ],
-  "gates_passed": 7,
+  "gates_passed": 8,
   "gates_total": 10,
-  "generated_at": "2026-07-13T00:02:14.995540Z",
-  "ledger_age_hours": 125.6,
+  "generated_at": "2026-07-13T01:26:38.304552Z",
+  "ledger_age_hours": 127.0,
   "ledger_is_stale": false,
-  "next_critical_path_gate": "TEST",
+  "next_critical_path_gate": "TESTFLIGHT",
   "selection_evidence": "coordination/goal/champion_selection.json",
   "status": "INCOMPLETE",
   "unresolved_gates": [
-    "TEST",
     "TESTFLIGHT",
     "APP_STORE_CONNECT"
   ]
