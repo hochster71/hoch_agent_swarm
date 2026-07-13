@@ -1,0 +1,10 @@
+{
+  "control": "NEGATIVE-CONTROL-001 self-proof",
+  "proof_command": "python3 -c '<proof_contract negative controls>'",
+  "exit_code": 0,
+  "sanitized_output": "OK",
+  "expected_result": "exit 0, 'OK'",
+  "observed": "OBSERVED",
+  "timestamp": "2026-07-13T21:11:11Z",
+  "tested_commit": "66b7d3cf"
+}
