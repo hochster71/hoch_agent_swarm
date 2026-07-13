@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="HELM"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="theme-color" content="#05070c"/>
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%2305070c'/%3E%3Ctext x='50' y='68' font-size='54' font-family='system-ui' font-weight='800' fill='%234ff0b7' text-anchor='middle'%3EH%3C/text%3E%3C/svg%3E"/>
+<title>HELM · FOUNDER</title>
+<style>
+  :root{
+    --bg:#05070c; --card:#0b1018; --card2:#070b12; --line:#1b2537; --dim:#3f5170;
+    --mid:#61748f; --txt:#c9d8f2; --bright:#f0f6ff;
+    --ok:#4ff0b7; --bad:#ff6b81; --warn:#ffc061; --info:#6fa8ff; --purple:#c89bff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html{background:var(--bg)}
+  body{
+    background:var(--bg); color:var(--txt); min-height:100dvh;
+    font:15px/1.45 -apple-system,"SF Pro Text",system-ui,sans-serif;
+    padding: calc(env(safe-area-inset-top) + 10px) 16px calc(env(safe-area-inset-bottom) + 28px);
+    -webkit-font-smoothing:antialiased;
+  }
+  header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+  .brand{font-weight:800;letter-spacing:.24em;font-size:13px;color:var(--bright)}
+  .live{font-size:10px;letter-spacing:.14em;color:var(--ok);display:flex;align-items:center;gap:5px}
+  .dot{width:6px;height:6px;border-radius:99px;background:var(--ok);animation:p 2s infinite}
+  @keyframes p{0%,100%{opacity:1}50%{opacity:.25}}
+
+  /* NORTH STAR hero */
+  .hero{background:linear-gradient(160deg,#0d1420,#070b12);border:1px solid var(--line);
+        border-radius:18px;padding:18px;margin-bottom:16px}
+  .hl{font-size:10px;letter-spacing:.2em;color:var(--mid);margin-bottom:8px}
+  .hv{font-size:34px;font-weight:800;color:var(--bright);line-height:1;letter-spacing:-.5px}
+  .hv.zero{color:var(--bad)}
+  .hs{font-size:12px;color:var(--mid);margin-top:8px;line-height:1.4}
+
+  h2{font-size:10px;letter-spacing:.2em;color:var(--mid);margin:22px 0 10px;font-weight:600}
+
+  /* KPI grid */
+  .kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .k{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px}
+  .kl{font-size:9px;letter-spacing:.16em;color:var(--mid)}
+  .kv{font-size:21px;font-weight:700;color:var(--bright);margin-top:4px;line-height:1.1}
+  .ks{font-size:10px;color:var(--dim);margin-top:3px}
+
+  /* decision cards */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;
+        padding:15px;margin-bottom:12px}
+  .tag{display:inline-block;font-size:9px;letter-spacing:.14em;padding:4px 9px;
+       border-radius:99px;border:1px solid;margin-bottom:10px;font-weight:700}
+  .PROPOSE{color:var(--warn);border-color:#6b4d1d;background:#1a140a}
+  .FOUNDER{color:var(--bad);border-color:#6b1d2b;background:#1a0c11}
+  .q{font-size:17px;font-weight:700;color:var(--bright);margin-bottom:7px;line-height:1.32}
+  .why{font-size:13px;color:var(--mid);margin-bottom:10px}
+  .rec{font-size:13px;color:var(--info);background:#0d1522;border:1px solid #1d2c44;
+       border-radius:10px;padding:10px;margin-bottom:10px;line-height:1.4}
+  .ev{font:11px/1.5 ui-monospace,Menlo,monospace;color:var(--mid);background:var(--card2);
+      border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:13px;word-break:break-word}
+  .btns{display:flex;gap:10px}
+  button{flex:1;min-height:54px;border-radius:14px;border:1px solid;font-size:15px;
+         font-weight:700;letter-spacing:.05em;background:transparent;font-family:inherit}
+  button:active{transform:scale(.97)}
+  .approve{color:#04140e;background:var(--ok);border-color:var(--ok)}
+  .deny{color:var(--bad);border-color:#6b1d2b;background:#160a0e}
+  .ack{color:var(--warn);border-color:#6b4d1d;background:#1a140a}
+  .note{font-size:11px;color:var(--dim);margin-top:10px;text-align:center;line-height:1.4}
+
+  .clear{text-align:center;padding:34px 14px;background:var(--card);
+         border:1px solid var(--line);border-radius:16px}
+  .clear .big{font-size:38px;margin-bottom:10px}
+  .clear .t{color:var(--ok);font-weight:700;font-size:15px}
+  .clear .s{font-size:12px;color:var(--mid);margin-top:7px;line-height:1.5}
+
+  /* factory strip */
+  .fac{display:flex;justify-content:space-between;align-items:center;
+       background:var(--card);border:1px solid var(--line);border-radius:12px;
+       padding:11px 13px;margin-bottom:7px}
+  .fn{font-weight:700;font-size:13px;color:var(--bright);letter-spacing:.06em}
+  .fs{font-size:10px;color:var(--mid);margin-top:2px}
+  .fr{font-size:10px;letter-spacing:.1em;padding:4px 9px;border-radius:99px;font-weight:700}
+  .r5{color:var(--ok);background:#07231b;border:1px solid #17604a}
+  .r34{color:var(--warn);background:#1a140a;border:1px solid #6b4d1d}
+  .r12{color:var(--bad);background:#1a0c11;border:1px solid #6b1d2b}
+  .r0{color:var(--dim);background:#0d131d;border:1px solid #31405c}
+
+  .tok{width:100%;padding:14px;border-radius:12px;background:var(--card2);color:var(--txt);
+       border:1px solid var(--line);font:13px ui-monospace,Menlo,monospace;margin-bottom:14px}
+  .toast{position:fixed;left:16px;right:16px;bottom:calc(env(safe-area-inset-bottom) + 20px);
+         padding:15px;border-radius:14px;text-align:center;font-size:14px;font-weight:700;
+         transform:translateY(160%);transition:transform .28s cubic-bezier(.2,.9,.3,1);z-index:99}
+  .toast.show{transform:none}
+  .toast.ok{background:#07231b;color:var(--ok);border:1px solid #17604a}
+  .toast.err{background:#1a0c11;color:var(--bad);border:1px solid #6b1d2b}
+  .stale{background:#1a0c11;border:1px solid #6b1d2b;color:var(--bad);border-radius:12px;
+         padding:12px;text-align:center;font-size:12px;margin-bottom:14px;display:none}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">H E L M · F O U N D E R</div>
+  <div class="live"><span class="dot"></span><span id="obs">LIVE</span></div>
+</header>
+
+<div class="stale" id="stale">FEED LOST — values below are STALE, not current.</div>
+
+<div class="hero">
+  <div class="hl">NORTH STAR · founder-minutes per shipped dollar</div>
+  <div class="hv" id="ns">—</div>
+  <div class="hs" id="nsS">—</div>
+</div>
+
+<h2>DECISIONS AWAITING YOU</h2>
+<input class="tok" id="tok" type="password" placeholder="founder token" autocomplete="off"/>
+<div id="list"></div>
+
+<h2>THE ONLY NUMBER THAT COUNTS</h2>
+<div class="kpis">
+  <div class="k"><div class="kl">EARNING</div><div class="kv" id="earn">—</div><div class="ks" id="earnS">—</div></div>
+  <div class="k"><div class="kl">REVENUE</div><div class="kv" id="rev">—</div><div class="ks">settled, evidenced</div></div>
+  <div class="k"><div class="kl">SPEND TODAY</div><div class="kv" id="sp">—</div><div class="ks" id="spS">—</div></div>
+  <div class="k"><div class="kl">SECURITY</div><div class="kv" id="sec">—</div><div class="ks" id="secS">—</div></div>
+</div>
+
+<h2>FACTORIES</h2>
+<div id="facs"></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const UNK=v=>v==null||v==='UNKNOWN'||(v&&v.state==='UNKNOWN');
+const esc=s=>String(s??'').replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
+const TOKKEY='helm_founder_token';
+$('#tok').value=localStorage.getItem(TOKKEY)||'';
+$('#tok').addEventListener('change',e=>localStorage.setItem(TOKKEY,e.target.value.trim()));
+
+function toast(m,ok){const t=$('#toast');t.textContent=m;t.className='toast show '+(ok?'ok':'err');
+  setTimeout(()=>t.className='toast',2800);}
+
+const RUNG=['DECLARED','RUNS','PRODUCES','PRODUCTIZED','SELLABLE','EARNING'];
+function rungCls(r){return r>=5?'r5':r>=3?'r34':r>=1?'r12':'r0';}
+
+async function loadHelm(){
+  let d;
+  try{ d=await (await fetch('/api/helm/live')).json(); $('#stale').style.display='none'; }
+  catch(e){ $('#stale').style.display='block'; return; }
+
+  // NORTH STAR — never invented. UNDEFINED until a real dollar exists.
+  const ns=d.northstar;
+  if(UNK(ns)){ $('#ns').textContent='UNKNOWN'; $('#nsS').textContent='no ledger'; }
+  else{
+    const v=ns.north_star;
+    const undef = v==='UNDEFINED' || !ns.revenue_usd;
+    $('#ns').textContent = undef ? 'UNDEFINED' : v;
+    $('#ns').className = 'hv' + (undef?' zero':'');
+    $('#nsS').textContent = undef
+      ? 'Cannot compute: revenue is $0. The metric needs a real dollar to divide by.'
+      : `${ns.founder_minutes??'?'} min · $${(ns.revenue_usd||0).toFixed(2)} revenue`;
+    $('#rev').textContent = '$'+((ns.revenue_usd||0)).toFixed(2);
+  }
+
+  // census
+  const c=d.census;
+  if(!UNK(c)){
+    $('#earn').innerHTML = `${c.earning} <span style="font-size:13px;color:var(--mid)">/ ${c.declared}</span>`;
+    $('#earn').style.color = c.earning>0?'var(--ok)':'var(--bad)';
+    $('#earnS').textContent = `ran ${c.ever_ran} · produce ${c.producing}`;
+    $('#facs').innerHTML = c.factories.map(f=>`
+      <div class="fac">
+        <div><div class="fn">${esc(f.factory)}</div><div class="fs">${esc(f.makes)}</div></div>
+        <div class="fr ${rungCls(f.rung)}">${esc(RUNG[f.rung]||'?')}</div>
+      </div>`).join('');
+  }
+
+  const sp=d.spend;
+  if(!UNK(sp)){ $('#sp').textContent='$'+(sp.today_usd||0).toFixed(2);
+    $('#spS').textContent='cap $'+(sp.daily_cap_usd||5).toFixed(2); }
+
+  const se=d.security;
+  if(!UNK(se)){ $('#sec').textContent=(se.posture_percent??'?')+'%';
+    $('#sec').style.color = (se.high_findings||0)>0?'var(--bad)':'var(--ok)';
+    $('#secS').textContent = (se.high_findings||0)+' high · '+(se.open_findings||0)+' open'; }
+
+  $('#obs').textContent='LIVE';
+}
+
+async function loadQueue(){
+  let d; try{ d=await (await fetch('/api/founder/queue')).json(); }catch(e){ return; }
+  const items=d.pending||[];
+  if(!items.length){
+    $('#list').innerHTML=`<div class="clear"><div class="big">✅</div>
+      <div class="t">Nothing needs you.</div>
+      <div class="s">HELM proved everything it could.<br/>You are only woken for judgment.</div></div>`;
+    return;
+  }
+  $('#list').innerHTML=items.map(it=>{
+    const isFounder = /founder[_ ]only|credential|rotate|terms of service|refund|move money|attestation/i
+      .test((it.why_it_needs_you||'')+' '+(it.one_sentence_question||''));
+    const cls=isFounder?'FOUNDER':'PROPOSE';
+    const btns=isFounder
+      ? `<button class="ack" onclick="decide('${it.decision_id}','ACKNOWLEDGE','FOUNDER_ONLY')">ACKNOWLEDGE</button>`
+      : `<button class="deny" onclick="decide('${it.decision_id}','DENY','PROPOSE_ONLY')">DENY</button>
+         <button class="approve" onclick="decide('${it.decision_id}','APPROVE','PROPOSE_ONLY')">APPROVE</button>`;
+    const note=isFounder
+      ? '<div class="note">This one is yours to perform. HELM will not do it on a tap — that is the matrix, not a limitation.</div>':'';
+    return `<div class="card">
+      <span class="tag ${cls}">${isFounder?'FOUNDER ONLY':'PROPOSE ONLY'}</span>
+      <div class="q">${esc(it.one_sentence_question)}</div>
+      <div class="why">${esc(it.why_it_needs_you)}</div>
+      <div class="rec">▸ ${esc(it.recommendation_and_why)}</div>
+      <div class="ev">${esc(it.evidence_sanitized)}</div>
+      <div class="btns">${btns}</div>${note}</div>`;
+  }).join('');
+}
+
+async function decide(id,verb,authority){
+  const token=($('#tok').value||'').trim();
+  if(!token){ toast('enter your founder token',0); return; }
+  try{
+    const r=await fetch('/api/founder/decide',{method:'POST',
+      headers:{'content-type':'application/json'},
+      body:JSON.stringify({decision_id:id,verb,authority,token})});
+    const d=await r.json();
+    toast(d.message||(d.ok?'recorded':'refused'), !!d.ok);
+    if(navigator.vibrate) navigator.vibrate(d.ok?30:[20,40,20]);
+    loadQueue();
+  }catch(e){ toast('failed',0); }
+}
+
+function tick(){ loadHelm(); loadQueue(); }
+tick(); setInterval(tick,10000);
+</script>
+</body>
+</html>

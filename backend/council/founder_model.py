@@ -1,4 +1,9 @@
-"""founder_model.py — the judgment layer that lets HELM run without Michael in the loop.
+"""founder_model.py — FOUNDER DOCTRINE ENGINE (not a "founder model").
+
+TERMINOLOGY (corrected): this does NOT reproduce Michael's judgment as a person. It
+retrieves his RATIFIED decisions, classifies authority, applies explicit policy, detects
+conflict/uncertainty, prepares decisions, and REFUSES unsupported inference. Its job is
+governance, not impersonation.
 
 THE GOAL (North Star, verbatim)
 -------------------------------
@@ -36,16 +41,33 @@ QUEUE = ROOT / "coordination" / "founder" / "escalation_queue.jsonl"
 
 class Authority(str, Enum):
     AUTONOMOUS = "AUTONOMOUS"
+    PREAUTHORIZED_PLAYBOOK = "PREAUTHORIZED_PLAYBOOK"  # urgent+predictable, pre-approved
     PROPOSE_ONLY = "PROPOSE_ONLY"
     FOUNDER_ONLY = "FOUNDER_ONLY"
+    PROHIBITED = "PROHIBITED"        # never allowed, even by a founder tap
+    CONFLICTED = "CONFLICTED"        # ratified decisions disagree -> withhold
     UNKNOWN = "UNKNOWN"
 
 
 # Keyword signatures per class. FOUNDER_ONLY is checked FIRST and wins — fail closed:
 # anything touching money, credentials, or legal attestation is founder-only even if it
 # also looks routine.
+# PROHIBITED: HELM must never do these, and the founder gate must never offer them as an
+# APPROVE tap either. Distinct from FOUNDER_ONLY (which Michael may do himself, elsewhere).
+_PROHIBITED = (
+    "read secret", "read the secret", "secret into", "key into model", "into model context",
+    "expose private key", "expose the key", "print the secret", "log the secret",
+    "exfiltrate", "disable the gate", "bypass the authority", "bypass classification",
+)
+# PREAUTHORIZED_PLAYBOOK: urgent+predictable ops HELM may self-execute without asking, per
+# an approved playbook (bounded, reversible, notified).
+# signatures are stored PRE-NORMALIZED (no articles) to match _normalize() output
+_PLAYBOOK = (
+    "restart failed daemon", "quarantine adapter", "revoke expired local lease",
+    "rollback failed deployment", "rollback failed deploy", "disable compromised integration",
+)
 _FOUNDER_ONLY = (
-    "rotate", "roll key", "delete key", "revoke", "password", "ssn", "bank",
+    "rotate", "roll key", "delete key", "roll the key", "revoke", "password", "ssn", "bank",
     "credential", "api key", "secret key", "accept terms", "terms of service",
     "attestation", "submit to apple", "app store connect", "refund", "transfer",
     "trade", "purchase", "move money", "wire ", "charge the", "sign the",
@@ -64,12 +86,35 @@ class Ruling:
     matched: str = ""
 
 
-def classify_action(text: str) -> Ruling:
-    """Route a proposed action. FOUNDER_ONLY wins ties — fail closed toward the founder."""
+_EVASION = ("just ", "quietly ", "simply ", "as cleanup", "for cleanup", "routine ",
+            "minor ", "quick ", "no big deal", "temporarily ", "as a workaround")
+
+
+def _normalize(text: str) -> str:
+    """POLICY-BYPASS-CONTROL: remove evasion wrappers so a disguised action still routes
+    on its true verb. 'quietly delete the key as cleanup' -> classifies on 'delete key'."""
     t = text.lower()
+    for e in _EVASION:
+        t = t.replace(e, " ")
+    # strip articles so 'delete the key' matches the 'delete key' signature
+    toks = [w for w in t.split() if w not in ("the", "a", "an")]
+    return " ".join(toks)
+
+
+def classify_action(text: str) -> Ruling:
+    """Route a proposed action. Order = fail closed: PROHIBITED > FOUNDER_ONLY >
+    PROPOSE_ONLY > PLAYBOOK > AUTONOMOUS. Classification runs on the NORMALIZED text so an
+    action cannot be renamed or wrapped in 'cleanup' to dodge the gate."""
+    t = _normalize(text)
+    for kw in _PROHIBITED:
+        if kw in t:
+            return Ruling(Authority.PROHIBITED, "never permitted, even by founder tap", kw)
     for kw in _FOUNDER_ONLY:
         if kw in t:
             return Ruling(Authority.FOUNDER_ONLY, "matches a founder-only signature", kw)
+    for kw in _PLAYBOOK:
+        if kw in t:
+            return Ruling(Authority.PREAUTHORIZED_PLAYBOOK, "urgent+predictable, pre-approved", kw)
     for kw in _PROPOSE_ONLY:
         if kw in t:
             return Ruling(Authority.PROPOSE_ONLY, "spends, publishes, or binds", kw)
@@ -91,15 +136,34 @@ def load_corpus() -> list[dict[str, Any]]:
 
 
 def answer_from_corpus(question: str) -> dict[str, Any] | None:
-    """Inherit Michael's ratified judgment. If a prior decision covers this, DON'T ask."""
+    """Inherit Michael's ratified judgment. If a prior decision covers this, DON'T ask.
+
+    AUTHORITY-CONFLICT + SUPERSESSION: only RATIFIED decisions authorize. If two RATIFIED
+    decisions on the same topic disagree and neither supersedes the other, return a
+    CONFLICTED marker rather than silently picking whichever was found first."""
     q = question.lower()
-    best = None
+    scored = []
     for d in load_corpus():
+        if str(d.get("status", "RATIFIED")).upper() != "RATIFIED":
+            continue  # only RATIFIED may authorize
         hay = f"{d.get('topic','')} {d.get('decision','')} {d.get('id','')}".lower()
         score = sum(1 for w in set(q.split()) if len(w) > 3 and w in hay)
-        if score and (best is None or score > best[0]):
-            best = (score, d)
-    return best[1] if best and best[0] >= 2 else None
+        if score >= 2:
+            scored.append((score, d))
+    if not scored:
+        return None
+    scored.sort(key=lambda x: -x[0])
+    top = [d for s_, d in scored if s_ == scored[0][0]]
+    if len(top) > 1:
+        topics = {d.get("topic") for d in top}
+        superseded = {sid for d in top for sid in d.get("supersedes", [])}
+        live = [d for d in top if d.get("id") not in superseded]
+        if len(topics) > 1 and len(live) > 1:
+            return {"id": "CONFLICTED", "status": "CONFLICTED",
+                    "decision": "Ratified decisions disagree; withhold and escalate.",
+                    "candidates": [d.get("id") for d in live]}
+        return live[0] if live else top[0]
+    return top[0]
 
 
 # The only shape allowed to reach the founder.

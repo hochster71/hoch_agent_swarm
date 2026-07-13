@@ -29,7 +29,7 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -251,3 +251,49 @@ def ui() -> str:
     if UI.exists():
         return UI.read_text()
     return "<h1>HELM LIVE</h1><p>UI missing at frontend_live/helm.html</p>"
+
+
+# ── FOUNDER GATE (iPhone) ────────────────────────────────────────────────────
+FOUNDER_UI = ROOT / "frontend_live" / "founder.html"
+
+
+@app.get("/founder", response_class=HTMLResponse)
+def founder_dashboard() -> str:
+    """The iPhone founder cockpit — live HELM state + the approval gate. One surface."""
+    if FOUNDER_UI.exists():
+        return FOUNDER_UI.read_text()
+    return "<h1>founder.html missing</h1>"
+
+
+@app.get("/api/founder/queue")
+def founder_queue() -> JSONResponse:
+    try:
+        from backend.council.founder_gate import pending
+        return JSONResponse({"pending": pending()})
+    except Exception as e:
+        return JSONResponse({"pending": [], "error": str(e)})
+
+
+@app.post("/api/founder/decide")
+async def founder_decide(req: Request) -> JSONResponse:
+    """Record a founder decision. Token-gated + authority-class enforced.
+
+    A FOUNDER_ONLY item can only be ACKNOWLEDGEd here — HELM never performs it on a tap.
+    """
+    from backend.council.founder_gate import authorized, record_decision
+    try:
+        body = await req.json()
+    except Exception:
+        return JSONResponse({"ok": False, "message": "bad request"}, status_code=400)
+
+    if not authorized(body.get("token")):
+        return JSONResponse({"ok": False, "message": "unauthorized (bad or missing founder token)"}, status_code=401)
+
+    ok, msg = record_decision(
+        str(body.get("decision_id", "")),
+        str(body.get("verb", "")),
+        authority=str(body.get("authority", "PROPOSE_ONLY")),
+        note=str(body.get("note", "")),
+    )
+    return JSONResponse({"ok": ok, "message": msg})
+
