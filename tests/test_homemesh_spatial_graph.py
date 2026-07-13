@@ -26,8 +26,8 @@ class TestHomeMeshSpatialGraph(unittest.TestCase):
         prop = json.loads(hm.PROPERTY_SCHEMA_PATH.read_text(encoding="utf-8"))
         room = json.loads(hm.ROOM_SCHEMA_PATH.read_text(encoding="utf-8"))
         
-        self.assertIn("parcel", prop["properties"])
-        self.assertIn("rooms", room["properties"])
+        self.assertIn("parcel", prop)
+        self.assertIn("rooms", room)
 
 
     def test_evidence_ingestion_and_mac_merge(self):

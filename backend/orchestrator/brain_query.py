@@ -58,7 +58,7 @@ def retrieve(question: str, k: int = 6) -> List[Dict[str, Any]]:
         return []
     scored = []
     for g in _all_genes():
-        title_t = set(_toks(g["title"])) | set(_toks(g["task_class"]))
+        title_t = set(_toks(g["title"])) | set(_toks(g["task_class"])) | {(g["code"] or "").lower(), (g["domain"] or "").lower()}
         body_t = set(_toks(g["prompt"]))
         score = 3 * len(q & title_t) + len(q & body_t)
         if score:

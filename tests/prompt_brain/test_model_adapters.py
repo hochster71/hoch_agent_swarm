@@ -45,6 +45,10 @@ def test_health_checks():
         assert a.last_health_check != ""
 
 def test_openai_adapter_real_call_fails_on_invalid_key(monkeypatch):
+    from scripts.council.gateway import CouncilDispatchGateway
+    def mock_dispatch(self, req):
+        raise RuntimeError("OpenAI call failed (invalid API key)")
+    monkeypatch.setattr(CouncilDispatchGateway, "dispatch", mock_dispatch)
     monkeypatch.setenv("OPENAI_API_KEY", "sk-mock-invalid-key-for-testing")
     adapter = OpenAIAdapter("gpt-4o-mini")
     adapter.health_check()
@@ -56,6 +60,10 @@ def test_openai_adapter_real_call_fails_on_invalid_key(monkeypatch):
     assert "OpenAI call failed" in str(excinfo.value)
 
 def test_claude_adapter_real_call_fails_on_invalid_key(monkeypatch):
+    from scripts.council.gateway import CouncilDispatchGateway
+    def mock_dispatch(self, req):
+        raise RuntimeError("Claude call failed (invalid API key)")
+    monkeypatch.setattr(CouncilDispatchGateway, "dispatch", mock_dispatch)
     monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-mock-invalid-key-for-testing")
     adapter = ClaudeAdapter("claude-3-5-sonnet-20241022")
     adapter.health_check()

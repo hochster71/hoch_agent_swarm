@@ -286,12 +286,15 @@ if (pertRoot) {
   );
 }
 
-// Mount HOCH NEURO: inert until Helm shell modules are restored with fail-closed feeds.
-// Do not render a mock-green neuro panel when dependencies are absent.
+// Mount HOCH NEURO: dark neurovascular visual mesh controller
+import { HelmRuntimeDatalinkMesh } from "./components/helm/theater/HelmRuntimeDatalinkMesh";
 const neuroRoot = document.getElementById("react-neuro-root");
 if (neuroRoot) {
-  neuroRoot.textContent =
-    "HOCH NEURO panel unavailable — Helm shell modules not present in this checkout (no simulated GO).";
+  ReactDOM.createRoot(neuroRoot).render(
+    <React.StrictMode>
+      <HelmRuntimeDatalinkMesh />
+    </React.StrictMode>
+  );
 }
 
 // Register window callbacks to sync state on tab selection

@@ -1,0 +1,289 @@
+{
+  "schema": "HELM_ROUTING_BENCHMARK_v1",
+  "purpose": "Held-out routing benchmark. Queries are written in natural analyst language and MUST NOT be copied from prompt titles/missions. The corpus is never edited to satisfy this benchmark.",
+  "anti_overfit_rules": [
+    "Never edit the prompt catalog to contain a benchmark query's terms.",
+    "Never tune scoring constants per individual case.",
+    "Ambiguous clusters are intentional (Professional Services x3, Legal/Compliance x2, Federal Civilian x20)."
+  ],
+  "cases": [
+    {
+      "query": "Map our system controls to the full 800-53 control families",
+      "expected_id": "GOVFRAME-001",
+      "industry": "Federal Civilian",
+      "framework": "NIST SP 800-53 Rev. 5"
+    },
+    {
+      "query": "Walk an authorization package through the risk management framework steps",
+      "expected_id": "GOVFRAME-002",
+      "industry": "Federal Civilian",
+      "framework": "NIST SP 800-37 RMF"
+    },
+    {
+      "query": "Establish an ongoing security monitoring cadence with metrics",
+      "expected_id": "GOVFRAME-003",
+      "industry": "Federal Civilian",
+      "framework": "NIST SP 800-137 Continuous Monitoring"
+    },
+    {
+      "query": "Protect controlled unclassified information in a contractor enclave",
+      "expected_id": "GOVFRAME-004",
+      "industry": "Federal Civilian",
+      "framework": "NIST SP 800-171 CUI"
+    },
+    {
+      "query": "Prepare our defense supplier for a level 2 maturity certification assessment",
+      "expected_id": "GOVFRAME-005",
+      "industry": "Federal Civilian",
+      "framework": null
+    },
+    {
+      "query": "Review criminal justice information handling in police records systems",
+      "expected_id": "GOVFRAME-006",
+      "industry": "Federal Civilian",
+      "framework": null
+    },
+    {
+      "query": "Safeguard federal tax information shared with a state revenue agency",
+      "expected_id": "GOVFRAME-007",
+      "industry": "Federal Civilian",
+      "framework": null
+    },
+    {
+      "query": "Design the trusted internet connection boundary for a cloud migration",
+      "expected_id": "GOVFRAME-008",
+      "industry": "Federal Civilian",
+      "framework": null
+    },
+    {
+      "query": "Roll out continuous diagnostics and mitigation dashboards across agencies",
+      "expected_id": "GOVFRAME-009",
+      "industry": "Federal Civilian",
+      "framework": null
+    },
+    {
+      "query": "Align information resource management policy with circular guidance",
+      "expected_id": "GOVFRAME-010",
+      "industry": "Federal Civilian",
+      "framework": null
+    },
+    {
+      "query": "Meet the mandated maturity tiers for federal event logging",
+      "expected_id": "GOVFRAME-011",
+      "industry": "Federal Civilian",
+      "framework": null,
+      "_rewritten_reason": "de-contaminated: original query shared a verbatim span with the target document"
+    },
+    {
+      "query": "Track remediation deadlines against binding operational directives",
+      "expected_id": "GOVFRAME-012",
+      "industry": "Federal Civilian",
+      "framework": null
+    },
+    {
+      "query": "Assess a machine learning model for trustworthiness and bias risk",
+      "expected_id": "GOVFRAME-013",
+      "industry": "Federal Civilian",
+      "framework": null
+    },
+    {
+      "query": "Evaluate zero trust capability maturity for a defense network",
+      "expected_id": "GOVFRAME-014",
+      "industry": "Federal Civilian",
+      "framework": null
+    },
+    {
+      "query": "Validate cyber workforce role qualifications and certifications",
+      "expected_id": "GOVFRAME-015",
+      "industry": "Federal Civilian",
+      "framework": null
+    },
+    {
+      "query": "Harden server baselines to defense technical implementation guides",
+      "expected_id": "GOVFRAME-016",
+      "industry": "Federal Civilian",
+      "framework": null
+    },
+    {
+      "query": "Categorize a national security system and select its controls",
+      "expected_id": "GOVFRAME-017",
+      "industry": "Federal Civilian",
+      "framework": null
+    },
+    {
+      "query": "Publish a system of records notice for a new citizen database",
+      "expected_id": "GOVFRAME-018",
+      "industry": "Federal Civilian",
+      "framework": null
+    },
+    {
+      "query": "Secure voter registration and ballot tabulation infrastructure",
+      "expected_id": "ELECTION-001",
+      "industry": "State & Local Government",
+      "framework": null
+    },
+    {
+      "query": "Check subrecipient spending compliance on a federal award",
+      "expected_id": "GRANTS-001",
+      "industry": "Federal Civilian",
+      "framework": null
+    },
+    {
+      "query": "Review a subcontract for acquisition regulation flow-down clauses",
+      "expected_id": "FAR-001",
+      "industry": "Federal Civilian",
+      "framework": null
+    },
+    {
+      "query": "Protect farm sensor telemetry and federal crop program data",
+      "expected_id": "AG-001",
+      "industry": "Agriculture",
+      "framework": null
+    },
+    {
+      "query": "Trace a contaminated ingredient batch back through suppliers",
+      "expected_id": "FOOD-001",
+      "industry": "Food & Beverage",
+      "framework": null
+    },
+    {
+      "query": "Assess jobsite project scheduling and safety data exposure",
+      "expected_id": "CONST-001",
+      "industry": "Construction",
+      "framework": null
+    },
+    {
+      "query": "Limit tenant data exposure in a building access platform",
+      "expected_id": "PROP-001",
+      "industry": "Real Estate",
+      "framework": null
+    },
+    {
+      "query": "Detect fraudulent claims and govern policyholder records",
+      "expected_id": "INS-001",
+      "industry": "Insurance",
+      "framework": null
+    },
+    {
+      "query": "Protect streaming content rights and prevent piracy leakage",
+      "expected_id": "MEDIA-001",
+      "industry": "Media / Entertainment",
+      "framework": null
+    },
+    {
+      "query": "Secure guest reservation and loyalty program records",
+      "expected_id": "HOSP-001",
+      "industry": "Hospitality",
+      "framework": null
+    },
+    {
+      "query": "Govern donor records and philanthropic grant reporting",
+      "expected_id": "NONPROFIT-001",
+      "industry": "Nonprofit",
+      "framework": null
+    },
+    {
+      "query": "Preserve client confidentiality across advisory engagements",
+      "expected_id": "PROSERV-001",
+      "industry": "Professional Services",
+      "framework": null
+    },
+    {
+      "query": "Protect employee personal data held in people systems",
+      "expected_id": "HR-001",
+      "industry": "Human Resources",
+      "framework": null
+    },
+    {
+      "query": "Assess HIPAA and anonymization constraints in public health reporting",
+      "expected_id": "PUBHEALTH-001",
+      "industry": "Public Health",
+      "framework": null
+    },
+    {
+      "query": "Secure judicial case files and docket management systems",
+      "expected_id": "COURTS-001",
+      "industry": "Courts",
+      "framework": null
+    },
+    {
+      "query": "Review inmate management system access controls",
+      "expected_id": "CORR-001",
+      "industry": "Corrections",
+      "framework": null
+    },
+    {
+      "query": "Harden emergency dispatch and public alerting systems",
+      "expected_id": "EMERG-001",
+      "industry": "Emergency Management",
+      "framework": null
+    },
+    {
+      "query": "Check security of the traffic signal and power grid control interfaces",
+      "expected_id": "SMARTCITY-001",
+      "industry": "Smart Cities",
+      "framework": null,
+      "_rewritten_reason": "de-contaminated: original query shared a verbatim span with the target document"
+    },
+    {
+      "query": "Ensure integrity of environmental monitoring sensor readings",
+      "expected_id": "ENV-001",
+      "industry": "Environmental",
+      "framework": null
+    },
+    {
+      "query": "Protect laboratory research data and intellectual property",
+      "expected_id": "RESEARCH-001",
+      "industry": "Research Labs",
+      "framework": null
+    },
+    {
+      "query": "Audit corporate treasury payment controls",
+      "expected_id": "FINOPS-001",
+      "industry": "Financial Services",
+      "framework": null
+    },
+    {
+      "query": "Evaluate supplier onboarding and sourcing risk",
+      "expected_id": "PROC-001",
+      "industry": "Professional Services",
+      "framework": null
+    },
+    {
+      "query": "Secure customer records inside the e-commerce platform",
+      "expected_id": "CRM-001",
+      "industry": "Retail / E-commerce",
+      "framework": null
+    },
+    {
+      "query": "Define retention schedules and legal hold procedures",
+      "expected_id": "RECORDS-001",
+      "industry": "Legal / Compliance",
+      "framework": null
+    },
+    {
+      "query": "Track mandatory workforce training completion and attestations",
+      "expected_id": "TRAIN-001",
+      "industry": "Education",
+      "framework": null
+    },
+    {
+      "query": "Assess badge access and physical plant security systems",
+      "expected_id": "FAC-001",
+      "industry": "Manufacturing / OT",
+      "framework": null
+    },
+    {
+      "query": "Scan vendor contracting liability risk templates",
+      "expected_id": "CONTRACT-001",
+      "industry": "Legal / Compliance",
+      "framework": null
+    },
+    {
+      "query": "Flag program milestone slippage and delivery risk",
+      "expected_id": "PMO-001",
+      "industry": "Professional Services",
+      "framework": null
+    }
+  ]
+}

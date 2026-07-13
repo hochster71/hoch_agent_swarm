@@ -794,6 +794,76 @@ def get_helm_status():
         "next_recommended_lane": "Canonical Docker verification for Michael AI layer"
     }
 
+@app.get("/api/v1/helm/scoped_states")
+def get_helm_scoped_states():
+    from backend.mission_control.scoped_states import ScopedStateEvaluator
+    import json
+    from pathlib import Path
+    
+    ROOT_DIR = Path(__file__).resolve().parent.parent
+    blockers_path = ROOT_DIR / "has_live_project_tracker" / "data" / "goal_blocker_register.json"
+    
+    blockers = []
+    if blockers_path.exists():
+        try:
+            data = json.loads(blockers_path.read_text(encoding="utf-8"))
+            blockers = data.get("blockers", [])
+        except Exception:
+            pass
+            
+    # Check operator hold status
+    operator_hold_active = True
+    hold_path = ROOT_DIR / "has_live_project_tracker" / "data" / "ag_operator_hold.json"
+    if hold_path.exists():
+        try:
+            hold_doc = json.loads(hold_path.read_text(encoding="utf-8"))
+            if hold_doc.get("operator_hold_active") is False or hold_doc.get("operator_hold") == "CLEAR":
+                operator_hold_active = False
+        except Exception:
+            pass
+            
+    evaluator = ScopedStateEvaluator(ROOT_DIR)
+    return evaluator.evaluate_states(global_hold=operator_hold_active, blockers=blockers)
+
+class RelayStageRequest(BaseModel):
+    task_id: str
+    prompt: str
+    scope: str
+
+class RelayCompleteRequest(BaseModel):
+    task_id: str
+    output: str
+    cmd_logs: list[str]
+
+@app.post("/api/v1/helm/relay/stage")
+def post_relay_stage(req: RelayStageRequest):
+    from backend.mission_control.ag_ide_relay import AGIDERelay
+    relay = AGIDERelay()
+    correlation_id = relay.stage_task(req.task_id, req.prompt, req.scope)
+    return {"status": "STAGED", "correlation_id": correlation_id}
+
+@app.post("/api/v1/helm/relay/complete")
+def post_relay_complete(req: RelayCompleteRequest):
+    from backend.mission_control.ag_ide_relay import AGIDERelay
+    relay = AGIDERelay()
+    task = relay.complete_task(req.task_id, req.output, req.cmd_logs)
+    return {"status": "COMPLETED", "task": task}
+
+@app.get("/api/v1/helm/relay/tasks")
+def get_relay_tasks():
+    import json
+    from pathlib import Path
+    ROOT_DIR = Path(__file__).resolve().parent.parent
+    task_file = ROOT_DIR / "coordination" / "ag_ide_tasks.json"
+    if not task_file.exists():
+        return []
+    try:
+        return json.loads(task_file.read_text(encoding="utf-8"))
+    except Exception:
+        return []
+
+
+
 @app.get("/api/v1/accountability/agents")
 def api_get_accountability_agents():
     try:

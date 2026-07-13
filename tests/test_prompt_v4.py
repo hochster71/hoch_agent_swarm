@@ -43,7 +43,9 @@ def test_get_prompts_metrics():
     assert "severities" in metrics
     assert "fixtures_summary" in metrics
 
-def test_run_prompt():
+def test_run_prompt(monkeypatch):
+    from backend.model_gateway import ModelGateway
+    monkeypatch.setattr(ModelGateway, "generate", lambda self, *args, **kwargs: "Mocked LLM response.")
     # Test execution for a valid prompt ID
     response = client.post("/api/prompts/AUD-001/run")
     assert response.status_code == 200

@@ -519,17 +519,47 @@ class PromptQaManager:
         passed_cases = 0
         total_cases = len(test_tasks)
         eval_details = []
+        
+        total_p_at_1 = 0
+        total_r_at_5 = 0
+        total_r_at_10 = 0
 
         for query, expected_id, industry, framework in test_tasks:
             res = pm.route_task(query, industry=industry, framework=framework)
-            top_recs = [rec["id"] for rec in res.get("recommendations", [])]
-            success = expected_id in top_recs
+            recs = res.get("recommendations", [])
+            top_recs = [rec["id"] for rec in recs]
+            
+            # Find rank (1-indexed) and relevance score
+            rank = -1
+            relevance_score = 0
+            for idx, rec in enumerate(recs):
+                if rec["id"] == expected_id:
+                    rank = idx + 1
+                    relevance_score = rec.get("relevance_score", 0)
+                    break
+            
+            p_at_1 = 1 if rank == 1 else 0
+            r_at_5 = 1 if (0 < rank <= 5) else 0
+            r_at_10 = 1 if (0 < rank <= 10) else 0
+            
+            total_p_at_1 += p_at_1
+            total_r_at_5 += r_at_5
+            total_r_at_10 += r_at_10
+
+            # Consider it "passed" if it is within top 5
+            success = r_at_5 == 1
             if success:
                 passed_cases += 1
+                
             eval_details.append({
                 "query": query,
                 "expected_prompt_id": expected_id,
                 "top_recommendations": top_recs,
+                "rank": rank,
+                "relevance_score": relevance_score,
+                "precision_at_1": p_at_1,
+                "recall_at_5": r_at_5,
+                "recall_at_10": r_at_10,
                 "passed": success
             })
 
@@ -537,6 +567,9 @@ class PromptQaManager:
             "total_cases": total_cases,
             "passed_cases": passed_cases,
             "routing_eval_score": round((passed_cases / total_cases) * 100, 1),
+            "precision_at_1": round((total_p_at_1 / total_cases) * 100, 1),
+            "recall_at_5": round((total_r_at_5 / total_cases) * 100, 1),
+            "recall_at_10": round((total_r_at_10 / total_cases) * 100, 1),
             "eval_details": eval_details,
             "timestamp": datetime.now(timezone.utc).isoformat()
         }

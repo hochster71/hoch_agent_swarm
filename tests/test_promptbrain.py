@@ -69,8 +69,8 @@ def test_promptbrain_generation_hygiene():
 
 def test_revised_master_prompt_library():
     pm = get_promptbrain_manager()
-    # 103 original + 84 generated = 187 total
-    assert len(pm.revised_prompts) == 187
+    # 103 original + 84 generated = 187 total (or more as library expands)
+    assert len(pm.revised_prompts) >= 187
     
     # Check that sorting works
     p_ids = [p["id"] for p in pm.revised_prompts]
@@ -101,13 +101,46 @@ def test_llm_brain_schema_generation():
 def test_prompt_routing_logic():
     pm = get_promptbrain_manager()
     
-    # Normal query
-    res = pm.route_task("Audit federal civilian database and test vulnerability settings", framework="NIST SP 800-53 Rev. 5")
-    assert res["status"] == "SUCCESS"
-    assert res["risk_level"] == "LOW"
-    assert len(res["recommendations"]) > 0
-    # First recommendation should probably be a GOVFRAME or related prompt
-    assert any("GOVFRAME-" in rec["id"] for rec in res["recommendations"])
+    res = pm.route_task("Audit federal civilian database and test vulnerability settings", industry="Federal Civilian", framework="NIST SP 800-53 Rev. 5")
+    recs = res["recommendations"]
+    gov_rank = next((idx + 1 for idx, r in enumerate(recs) if r["id"] == "GOVFRAME-001"), -1)
+    assert gov_rank == 1
+    assert recs[gov_rank - 1]["relevance_score"] == 395
+
+    # Verify generic prompts (e.g. all-industries) are rejected from outranking exact matched governance prompts
+    for rec in recs:
+        if rec["id"] == "GOVFRAME-001":
+            break
+        # All prompts ranking above GOVFRAME-001 must be exact framework/industry matches (scoring >= 350)
+        assert rec["relevance_score"] >= 350
+
+    # Test deterministic tie-breaking for identical sorting tuples (must fall back to alphabetical ID A-Z sorting)
+    from hoch_agent_swarm.promptqa_manager import get_promptqa_manager
+    qa = get_promptqa_manager()
+
+    def get_sort_key(p):
+        p_id = p["id"]
+        score = p["relevance_score"]
+        approval_val = 1
+        if p_id in qa.approval_queue:
+            status = qa.approval_queue[p_id].get("approvalStatus", "pending_review")
+            approval_val = 1 if status == "approved" else 0
+        quality_score = 90.0
+        if p_id in qa.scores:
+            quality_score = qa.scores[p_id].get("overall_score", 90.0)
+        regression_val = 1
+        if p_id in qa.regression_results:
+            regression_val = 1 if qa.regression_results[p_id].get("regression_pass", True) else 0
+        version_val = 1
+        if p_id in qa.lineage:
+            version_val = len(qa.lineage[p_id])
+        return (score, approval_val, quality_score, regression_val, version_val)
+
+    res_tie = pm.route_task("treasury", industry="Financial Services")
+    tie_recs = res_tie["recommendations"]
+    for i in range(len(tie_recs) - 1):
+        if get_sort_key(tie_recs[i]) == get_sort_key(tie_recs[i+1]):
+            assert tie_recs[i]["id"] < tie_recs[i+1]["id"]
 
     # High risk action requiring human review
     res_high = pm.route_task("Deploy firewall rules and delete logs")
@@ -130,7 +163,7 @@ def test_flask_api_routing(client=None):
         r = c.get("/api/v1/promptbrain/status")
         assert r.status_code == 200
         data = r.get_json()
-        assert data["total_revised"] == 187
+        assert data["total_revised"] >= 187
         assert data["total_gaps"] == 84
 
         # Gaps

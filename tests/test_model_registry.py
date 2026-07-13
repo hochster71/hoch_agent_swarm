@@ -1,7 +1,9 @@
 import os
 from backend.model_router import model_registry
 
-def test_model_registry_defaults():
+def test_model_registry_defaults(monkeypatch):
+    from pathlib import Path
+    monkeypatch.setattr(model_registry, "CONFIG_PATH", Path("non_existent_file.yaml"))
     # Test that defaults are correctly loaded/returned
     assert model_registry.is_local_first() is True
     assert model_registry.are_paid_models_enabled() is False

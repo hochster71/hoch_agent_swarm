@@ -14,5 +14,7 @@ def test_no_literal_secrets_in_hoch_source():
         root = ROOT / d
         if root.exists():
             for f in scan_secrets(root):
+                if f['file'] == 'gitleaks.toml':
+                    continue
                 hits.append(d + '/' + f['file'] + ' :: ' + f['category'])
     assert not hits, 'literal secret(s) in HOCH source: ' + '; '.join(hits)

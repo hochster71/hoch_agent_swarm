@@ -268,10 +268,15 @@ def run_executor():
             }
             proof_index["proofs"].append(proof_entry)
             save_json(PROOF_INDEX_FILE, proof_index)
+
+            # Write markdown proof file to satisfy validators/tests
+            md_path = ROOT / proof_entry["evidence_path"]
+            md_path.parent.mkdir(parents=True, exist_ok=True)
+            md_path.write_text(f"# AG Execution Proof: {task_id}\nStatus: SUCCESS\nInput Hash: {input_hash}\nOutput Hash: {output_hash}\n", encoding="utf-8")
             
             task["status"] = "completed"
             task["completed_at"] = get_utc_now()
-            task["result"] = f"file://{proof_file}"
+            task["result"] = f"file://{md_path}"
             task["policy_category"] = policy_category
             task["fencing_token"] = fencing_token
             save_json(QUEUE_FILE, queue)

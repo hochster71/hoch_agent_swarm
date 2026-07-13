@@ -44,8 +44,46 @@ NONE_PRESENT = {
 }
 
 
+@pytest.fixture(autouse=True, scope="module")
+def restore_module_paths():
+    from scripts.council import h1b_candidate_registry as reg
+    from scripts.council import h1_authorization as auth
+    
+    orig_reg_pkg = getattr(reg, "PACKAGES_DIR", None)
+    orig_reg_rost = getattr(reg, "ROSTER_PATH", None)
+    orig_reg_cont = getattr(reg, "CONTRACTS_PATH", None)
+    
+    orig_auth_counc = getattr(auth, "COUNCIL_DIR", None)
+    orig_auth_pkg = getattr(auth, "PACKAGES_DIR", None)
+    orig_auth_reg = getattr(auth, "REGISTRY_PATH", None)
+    orig_auth_rost = getattr(auth, "ROSTER_PATH", None)
+    orig_auth_cont = getattr(auth, "CONTRACTS_PATH", None)
+    
+    reg.PACKAGES_DIR = ROOT / "coordination" / "council" / "live_proof_packages"
+    reg.ROSTER_PATH = ROOT / "coordination" / "council" / "council_roster.json"
+    reg.CONTRACTS_PATH = ROOT / "coordination" / "council" / "frontier_seat_contracts.json"
+    
+    auth.COUNCIL_DIR = ROOT / "coordination" / "council"
+    auth.PACKAGES_DIR = auth.COUNCIL_DIR / "live_proof_packages"
+    auth.REGISTRY_PATH = auth.COUNCIL_DIR / "h1_candidate_registry.json"
+    auth.ROSTER_PATH = auth.COUNCIL_DIR / "council_roster.json"
+    auth.CONTRACTS_PATH = auth.COUNCIL_DIR / "frontier_seat_contracts.json"
+    
+    yield
+    
+    if orig_reg_pkg is not None: reg.PACKAGES_DIR = orig_reg_pkg
+    if orig_reg_rost is not None: reg.ROSTER_PATH = orig_reg_rost
+    if orig_reg_cont is not None: reg.CONTRACTS_PATH = orig_reg_cont
+    
+    if orig_auth_counc is not None: auth.COUNCIL_DIR = orig_auth_counc
+    if orig_auth_pkg is not None: auth.PACKAGES_DIR = orig_auth_pkg
+    if orig_auth_reg is not None: auth.REGISTRY_PATH = orig_auth_reg
+    if orig_auth_rost is not None: auth.ROSTER_PATH = orig_auth_rost
+    if orig_auth_cont is not None: auth.CONTRACTS_PATH = orig_auth_cont
+
+
 @pytest.fixture(scope="module")
-def active_package_id() -> str:
+def active_package_id(restore_module_paths) -> str:
     report = reconcile_candidates(PACKAGES_DIR)
     assert report["status"] == "RECONCILED", report
     return report["active_candidate"]
