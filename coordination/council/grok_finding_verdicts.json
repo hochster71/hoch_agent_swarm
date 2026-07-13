@@ -1,0 +1,44 @@
+[
+  {
+    "finding": "F3",
+    "claim": "lock-path collision: 'task/a' and 'taska' share one lock file",
+    "verdict": "REJECTED",
+    "evidence": "path('task/a')=taska.aa547b35e28432d0.lock path('taska')=taska.3151851e02cc9209.lock"
+  },
+  {
+    "finding": "F5",
+    "claim": "corrupt tokens file wipes other tasks' counters (monotonicity broken)",
+    "verdict": "REJECTED",
+    "evidence": "B token 1 -> 1"
+  },
+  {
+    "finding": "F4",
+    "claim": "corrupt lock file permanently deadlocks the task (never acquirable)",
+    "verdict": "REJECTED",
+    "evidence": "acquire returned a lease"
+  },
+  {
+    "finding": "F1",
+    "claim": "expired-lease recovery race allows >1 winner",
+    "verdict": "REJECTED",
+    "evidence": "winners=1 (safe == 1)"
+  },
+  {
+    "finding": "F2",
+    "claim": "contention breaks fencing SAFETY (a winner gets a non-maximal token)",
+    "verdict": "REJECTED",
+    "evidence": "winners=1, tokens=[1] (gaps are safe; >1 winner is not)"
+  },
+  {
+    "finding": "F9",
+    "claim": "duplicate terminal transition is possible",
+    "verdict": "REJECTED",
+    "evidence": "first=True second=False (DUPLICATE_TERMINAL_REJECTED)"
+  },
+  {
+    "finding": "F8",
+    "claim": "false concurrency reporting (Grok said NOT a defect)",
+    "verdict": "REJECTED",
+    "evidence": "concurrency is OBSERVED from lease timestamps; Grok's non-finding is correct"
+  }
+]

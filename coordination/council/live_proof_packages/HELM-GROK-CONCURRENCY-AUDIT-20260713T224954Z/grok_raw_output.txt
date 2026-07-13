@@ -1,0 +1,78 @@
+```json
+{
+  "findings": [
+    {
+      "id": "F1",
+      "issue": "acquire_lease recovery path is non-atomic: read → optional rewrite as EXPIRED → unlink → later O_EXCL create. Two workers observing the same expired/stale lease can both pass the ACTIVE gate; the second can write_text+unlink a lease the first already created under O_EXCL, then create its own ACTIVE lease.",
+      "why_it_matters": "Both workers can retain in-memory ACTIVE leases for the same task while only one file remains (or the first's file is destroyed). This enables duplicate execution of one task and stale-worker writes unless every mutation path rejects non-current fencing tokens (not shown in the supplied fragment).",
+      "adversarial_test": "Two processes: seed task T with ACTIVE lease expires_at in the past. Barrier both into acquire_lease(T). Assert at most one returns non-None and the lock file content matches that winner for the entire hold; fail if both return leases or if the first winner's file is unlinked/overwritten while it still believes it holds the lease.",
+      "confidence": "DERIVED",
+      "severity": "HIGH"
+    },
+    {
+      "id": "F2",
+      "issue": "O_EXCL only serializes final create; fencing_token is minted via _next_token before create succeeds. On FileExistsError the token is already persisted. Under F1, loser/winner ordering can leave a worker holding a lower token while another holds a higher token for the same task.",
+      "why_it_matters": "Breaks the claim that acquire success uniquely pairs with the latest token. Zombie/stale writers with the older in-memory lease are only safe if all write paths compare tokens strictly to the on-disk lease; that enforcement is not present in the supplied source.",
+      "adversarial_test": "Force contended acquire on one task_id; record returned fencing_tokens and tokens file. Confirm no caller receives a lease whose token is not the sole ACTIVE file token, and that failed acquires never leave two live holders.",
+      "confidence": "DERIVED",
+      "severity": "HIGH"
+    },
+    {
+      "id": "F3",
+      "issue": "Lock path sanitization: safe = filter to [A-Za-z0-9-_.] only, then f\"{safe}.lock\". Distinct task_ids can map to one path (e.g. 'a/b' vs 'ab', 'foo:1' vs 'foo1', or any ids that strip to the same string / empty → '.lock').",
+      "why_it_matters": "Unrelated tasks contend on one lease file (false mutual exclusion, cross-task blocker). Recovery/expire/unlink for one id can destroy or steal another task's lease (blocker-scope leakage / lock-path collision).",
+      "adversarial_test": "acquire_lease('task/a') and acquire_lease('taska') (and '@@@' vs '') concurrently; assert independent ACTIVE leases and no shared path.fail if _path collides or one acquire blocks/recovers the other.",
+      "confidence": "OBSERVED",
+      "severity": "HIGH"
+    },
+    {
+      "id": "F4",
+      "issue": "read_lease returns None on any JSON/read error while the lock file may still exist. acquire_lease only runs recovery unlink when existing is truthy; otherwise it jumps to O_EXCL, hits FileExistsError, returns None forever.",
+      "why_it_matters": "Crash/partial write after O_EXCL (source ends at os.fdopen; write/close not shown) or corrupt lock content can permanently block the task with no recovery path in this code.",
+      "adversarial_test": "Create coordination/leases/<safe>.lock as empty or invalid JSON; call acquire_lease repeatedly; assert recovery recreates a valid ACTIVE lease rather than permanent None.",
+      "confidence": "DERIVED",
+      "severity": "HIGH"
+    },
+    {
+      "id": "F5",
+      "issue": "_next_token on any tokens_file read/parse Exception resets tokens={} then writes only the current task_id entry, wiping all other tasks' monotonic counters in the shared _fencing_tokens.json.",
+      "why_it_matters": "Single shared control-plane failure becomes cross-task fencing reset (blocker-scope leakage). Depending on unshown write-side token checks, this can re-admit previously fenced zombie writers or collapse token uniqueness assumptions across tasks.",
+      "adversarial_test": "Seed tokens for tasks A and B; corrupt _fencing_tokens.json to invalid JSON; call _next_token(A); assert B's counter is preserved (or define explicit re-fence protocol). Today expect B wiped.",
+      "confidence": "OBSERVED",
+      "severity": "MED"
+    },
+    {
+      "id": "F6",
+      "issue": "Expiry and steal decisions use each process's local UTC clock (datetime.now) with no skew bound. is_expired True on any expires_at parse error also authorizes recovery.",
+      "why_it_matters": "A fast clock or malformed expires_at lets a second worker treat a still-valid lease as recoverable and enter the unsafe recover/unlink path (amplifies F1).",
+      "adversarial_test": "Holder with expires_at = now+300s; second worker with system clock +10 minutes calls acquire_lease; assert it cannot steal while first lease is unexpired under a shared time source, or document max skew.",
+      "confidence": "DERIVED",
+      "severity": "MED"
+    },
+    {
+      "id": "F7",
+      "issue": "Supplied source has no release/heartbeat/complete/validate APIs and truncates mid os.fdopen; cannot prove fencing on writes, single terminal transition, or durable ACTIVE record publication.",
+      "why_it_matters": "Stale-worker write fencing and duplicate terminal transitions are design claims, not evidenced properties. Dual in-memory holders (F1) may both complete if callers trust the returned dict alone.",
+      "adversarial_test": "After a stolen/recovered lease, old holder calls the production complete/write path with its original fencing_token; assert rejection and exactly one terminal transition in whatever store records completion.",
+      "confidence": "UNKNOWN",
+      "severity": "HIGH"
+    },
+    {
+      "id": "F8",
+      "issue": "FALSE CONCURRENCY REPORTING: not supported as a defect by supplied evidence. configured=4, observed_peak_concurrency=4, sum_task_latency_s (53.95) > wall_clock_s (18.61), overlapped=true, method states real acquire/release timestamps.",
+      "why_it_matters": "Per-task lock files remove the old global-mutex effective-concurrency=1 failure mode in design; runtime numbers are consistent with multi-task overlap. Measurement harness code is not supplied, so methodology correctness beyond the given summary remains un-auditable.",
+      "adversarial_test": "Recompute peak concurrent intervals strictly from per-task-id [acquired_at, release_at] pairs (not process count); require peak≥2 for distinct task_ids and sum(latency)/wall≈reported ratio. Without that raw trace: UNKNOWN.",
+      "confidence": "OBSERVED",
+      "severity": "LOW"
+    },
+    {
+      "id": "F9",
+      "issue": "Duplicate terminal transitions: only visible transition is best-effort status rewrite to EXPIRED (or leave prior status) then unlink during recovery; no durable terminal state machine, idempotency key, or compare-and-swap on status is shown.",
+      "why_it_matters": "Multiple recoverers can each 'expire' and delete the same lease; combined with F1, two executors may both attempt success/fail terminalization for one task.",
+      "adversarial_test": "N workers race acquire on one expired lease then each invoke completion; assert exactly one terminal success record and no double side effects.",
+      "confidence": "UNKNOWN",
+      "severity": "MED"
+    }
+  ]
+}
+```

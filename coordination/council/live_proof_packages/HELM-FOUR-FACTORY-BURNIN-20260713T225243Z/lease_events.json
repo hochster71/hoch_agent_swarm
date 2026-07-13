@@ -1,0 +1,42 @@
+[
+  {
+    "epoch": 1783983163.309514,
+    "delta": 1,
+    "task_id": "HASF-BURN"
+  },
+  {
+    "epoch": 1783983163.3102589,
+    "delta": 1,
+    "task_id": "HRF-BURN"
+  },
+  {
+    "epoch": 1783983163.3108711,
+    "delta": 1,
+    "task_id": "HCF-BURN"
+  },
+  {
+    "epoch": 1783983163.3115368,
+    "delta": 1,
+    "task_id": "HSF-BURN"
+  },
+  {
+    "epoch": 1783983173.4750562,
+    "delta": -1,
+    "task_id": "HRF-BURN"
+  },
+  {
+    "epoch": 1783983176.819768,
+    "delta": -1,
+    "task_id": "HSF-BURN"
+  },
+  {
+    "epoch": 1783983180.127198,
+    "delta": -1,
+    "task_id": "HCF-BURN"
+  },
+  {
+    "epoch": 1783983183.4933739,
+    "delta": -1,
+    "task_id": "HASF-BURN"
+  }
+]

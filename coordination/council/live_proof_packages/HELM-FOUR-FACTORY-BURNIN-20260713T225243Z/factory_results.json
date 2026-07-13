@@ -1,0 +1,98 @@
+{
+  "HRF-BURN": {
+    "task_id": "HRF-BURN",
+    "factory": "HRF",
+    "authority_decision_id": "AUTH-6c05d471da6add06",
+    "classified_task_sha256": "7b8dcbc70b0792a7af86e1bb0418a60aa07bae166e0b6ac3f130fd74280d673d",
+    "lease_id": "lease-5346756e",
+    "fencing_token": 2,
+    "result_authority_id": "AUTH-6c05d471da6add06",
+    "validator_passed": true,
+    "validator_reasons": [],
+    "artifact": {
+      "artifact_id": "ART-fd55861f",
+      "sha256": "4d8668ed5e823bf75cf9487b707b3fa7c97860b4d0118703ef969ebe1ddd3f57"
+    },
+    "pert_transition": {
+      "node": "HRF-BURN",
+      "to_state": "VALIDATED",
+      "authority_decision_id": "AUTH-6c05d471da6add06",
+      "advanced": true
+    },
+    "latency_s": 10.16,
+    "lease_acquired_epoch": 1783983163.3102589,
+    "lease_released_epoch": 1783983173.4750562
+  },
+  "HSF-BURN": {
+    "task_id": "HSF-BURN",
+    "factory": "HSF",
+    "authority_decision_id": "AUTH-0f0204a014a2289b",
+    "classified_task_sha256": "b94285ab61b2de6f02a34965339e1e96de2ede100d4a8b226bd0ee143b0a878a",
+    "lease_id": "lease-9e4a0d5c",
+    "fencing_token": 2,
+    "result_authority_id": "AUTH-0f0204a014a2289b",
+    "validator_passed": true,
+    "validator_reasons": [],
+    "artifact": {
+      "artifact_id": "ART-8e9d67b1",
+      "sha256": "4d8668ed5e823bf75cf9487b707b3fa7c97860b4d0118703ef969ebe1ddd3f57"
+    },
+    "pert_transition": {
+      "node": "HSF-BURN",
+      "to_state": "VALIDATED",
+      "authority_decision_id": "AUTH-0f0204a014a2289b",
+      "advanced": true
+    },
+    "latency_s": 13.508,
+    "lease_acquired_epoch": 1783983163.3115368,
+    "lease_released_epoch": 1783983176.819768
+  },
+  "HCF-BURN": {
+    "task_id": "HCF-BURN",
+    "factory": "HCF",
+    "authority_decision_id": "AUTH-2ea4ad4bef0a0f46",
+    "classified_task_sha256": "e006208cce02606f115049a9e1b0bf9f88c4b594e066575178397e637d7df66d",
+    "lease_id": "lease-2ff7e539",
+    "fencing_token": 2,
+    "result_authority_id": "AUTH-2ea4ad4bef0a0f46",
+    "validator_passed": true,
+    "validator_reasons": [],
+    "artifact": {
+      "artifact_id": "ART-6d8f9e1d",
+      "sha256": "4d8668ed5e823bf75cf9487b707b3fa7c97860b4d0118703ef969ebe1ddd3f57"
+    },
+    "pert_transition": {
+      "node": "HCF-BURN",
+      "to_state": "VALIDATED",
+      "authority_decision_id": "AUTH-2ea4ad4bef0a0f46",
+      "advanced": true
+    },
+    "latency_s": 16.815,
+    "lease_acquired_epoch": 1783983163.3108711,
+    "lease_released_epoch": 1783983180.127198
+  },
+  "HASF-BURN": {
+    "task_id": "HASF-BURN",
+    "factory": "HASF",
+    "authority_decision_id": "AUTH-062d91ebb01c8fc1",
+    "classified_task_sha256": "5332e352749df0a17433402eeef5aa832ed903da0da08198be4ea25d096f53a6",
+    "lease_id": "lease-8f546098",
+    "fencing_token": 3,
+    "result_authority_id": "AUTH-062d91ebb01c8fc1",
+    "validator_passed": true,
+    "validator_reasons": [],
+    "artifact": {
+      "artifact_id": "ART-e195b367",
+      "sha256": "4d8668ed5e823bf75cf9487b707b3fa7c97860b4d0118703ef969ebe1ddd3f57"
+    },
+    "pert_transition": {
+      "node": "HASF-BURN",
+      "to_state": "VALIDATED",
+      "authority_decision_id": "AUTH-062d91ebb01c8fc1",
+      "advanced": true
+    },
+    "latency_s": 20.182,
+    "lease_acquired_epoch": 1783983163.309514,
+    "lease_released_epoch": 1783983183.4933739
+  }
+}

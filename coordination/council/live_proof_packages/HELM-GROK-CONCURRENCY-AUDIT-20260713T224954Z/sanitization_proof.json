@@ -1,0 +1,5 @@
+{
+  "secret_patterns_in_outbound_prompt": 0,
+  "method": "regex redaction + assertion before dispatch",
+  "prompt_sha256": "f19a44c9e4faaad96b85472b76a2cc8d936107fdedd915a33a153fc1ef191c84"
+}

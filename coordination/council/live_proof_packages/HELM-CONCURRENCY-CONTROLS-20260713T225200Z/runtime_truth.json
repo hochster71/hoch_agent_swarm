@@ -1,0 +1,8 @@
+{
+  "configured_concurrency": 4,
+  "observed_peak_concurrency": 4,
+  "active_leases": 6,
+  "lease_mode": "PER_TASK",
+  "global_operator_hold": false,
+  "truth_source": "OBSERVED_RUNTIME"
+}

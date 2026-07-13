@@ -1,0 +1,8 @@
+{
+  "package": "HELM-GROK-CONCURRENCY-AUDIT-20260713T224954Z",
+  "grok_verdict_authority": "NONE \u2014 findings are advisory; deterministic tests decide PASS",
+  "findings_count": 9,
+  "authority_bound": true,
+  "next": "each finding must be PROVEN or REJECTED by a deterministic test",
+  "assessed_at": "2026-07-13T22:50:34Z"
+}

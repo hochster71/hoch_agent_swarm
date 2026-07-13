@@ -1,0 +1,86 @@
+[
+  {
+    "control": "LEASE-PER-TASK-CONTROL-001",
+    "check": "unrelated tasks each get their own lease",
+    "passed": true,
+    "observed": ""
+  },
+  {
+    "control": "CONCURRENT-LEASE-CONTROL-001",
+    "check": "A and B hold leases SIMULTANEOUSLY",
+    "passed": true,
+    "observed": ""
+  },
+  {
+    "control": "GLOBAL-HOLD-SEPARATION-CONTROL-001",
+    "check": "no implicit global mutex (B not blocked by A)",
+    "passed": true,
+    "observed": ""
+  },
+  {
+    "control": "LEASE-EXCLUSIVITY-CONTROL-001",
+    "check": "8 workers race same task -> exactly ONE wins",
+    "passed": true,
+    "observed": "winners=1"
+  },
+  {
+    "control": "FENCING-MONOTONICITY-CONTROL-001",
+    "check": "re-acquire mints STRICTLY greater token",
+    "passed": true,
+    "observed": "1 -> 2"
+  },
+  {
+    "control": "FENCING-MONOTONICITY-CONTROL-001",
+    "check": "tokens keep increasing, never reused",
+    "passed": true,
+    "observed": "2 -> 3"
+  },
+  {
+    "control": "STALE-WORKER-REJECTION-CONTROL-001",
+    "check": "stale fence CANNOT commit terminal",
+    "passed": true,
+    "observed": "STALE_FENCE_REJECTED token=1 current=3"
+  },
+  {
+    "control": "STALE-WORKER-REJECTION-CONTROL-001",
+    "check": "validate_fence rejects the stale token",
+    "passed": true,
+    "observed": ""
+  },
+  {
+    "control": "STALE-WORKER-REJECTION-CONTROL-001",
+    "check": "validate_fence accepts the CURRENT token",
+    "passed": true,
+    "observed": ""
+  },
+  {
+    "control": "DUPLICATE-TERMINAL-CONTROL-001",
+    "check": "current fence commits terminal ONCE",
+    "passed": true,
+    "observed": "COMMITTED"
+  },
+  {
+    "control": "DUPLICATE-TERMINAL-CONTROL-001",
+    "check": "second terminal commit REJECTED",
+    "passed": true,
+    "observed": "DUPLICATE_TERMINAL_REJECTED"
+  },
+  {
+    "control": "GLOBAL-HOLD-SEPARATION-CONTROL-001",
+    "check": "crashed task's held lease does NOT block others",
+    "passed": true,
+    "observed": ""
+  },
+  {
+    "control": "LEASE-EXCLUSIVITY-CONTROL-001",
+    "check": "crashed task still exclusively held (no steal while live)",
+    "passed": true,
+    "observed": ""
+  },
+  {
+    "control": "GLOBAL-HOLD-SEPARATION-CONTROL-001",
+    "check": "a factory blocker does not touch unrelated leases",
+    "passed": true,
+    "observed": ""
+  }
+]

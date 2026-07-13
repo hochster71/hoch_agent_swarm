@@ -1,0 +1,16 @@
+{
+  "package": "HELM-CONCURRENCY-CONTROLS-20260713T225200Z",
+  "verdict": "CONCURRENCY_CONTROLS_PASS",
+  "failed_checks": 0,
+  "controls": [
+    "CONCURRENT-LEASE-CONTROL-001",
+    "DUPLICATE-TERMINAL-CONTROL-001",
+    "FENCING-MONOTONICITY-CONTROL-001",
+    "GLOBAL-HOLD-SEPARATION-CONTROL-001",
+    "LEASE-EXCLUSIVITY-CONTROL-001",
+    "LEASE-PER-TASK-CONTROL-001",
+    "STALE-WORKER-REJECTION-CONTROL-001"
+  ],
+  "defect_found_and_fixed": "fencing tokens were MINTED but never VALIDATED at the write boundary \u2014 a stale worker could commit a terminal result. Added validate_fence() + commit_terminal() guard.",
+  "assessed_at": "2026-07-13T22:52:00Z"
+}

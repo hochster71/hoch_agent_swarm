@@ -34,6 +34,8 @@ from __future__ import annotations
 import datetime
 import fcntl
 import json
+import hashlib
+import shutil
 import os
 import threading
 import uuid
@@ -83,29 +85,110 @@ class PerTaskLeaseManager:
     # (cross-process), plus a UNIQUE temp name per writer.
     _token_lock = threading.Lock()
 
+    def _reconstruct_floor(self) -> Optional[Dict[str, int]]:
+        """Rebuild the max-issued token per task from every durable source that records one.
+
+        Sources (union, MAX per task):
+          _fencing_tokens.bak     (may lag one write)
+          _token_journal.jsonl    (append-only, written at ISSUE time -- authoritative)
+          _lease_history.jsonl    (released leases)
+          _terminal_ledger.jsonl  (committed terminals)
+        Returns None only if NOTHING is recoverable, in which case the caller fails closed.
+        """
+        floor: Dict[str, int] = {}
+        found = False
+
+        bak = self.tokens_file.with_suffix(".bak")
+        if bak.exists():
+            try:
+                d = json.loads(bak.read_text())
+                if isinstance(d, dict):
+                    found = True
+                    for k, v in d.items():
+                        floor[k] = max(floor.get(k, 0), int(v))
+            except Exception:
+                pass
+
+        for name in ("_token_journal.jsonl", "_lease_history.jsonl", "_terminal_ledger.jsonl"):
+            fp = self.dir / name
+            if not fp.exists():
+                continue
+            for line in fp.read_text().splitlines():
+                try:
+                    r = json.loads(line)
+                    t, tok = r.get("task_id"), r.get("fencing_token")
+                    if t is not None and tok is not None:
+                        found = True
+                        floor[t] = max(floor.get(t, 0), int(tok))
+                except Exception:
+                    continue
+
+        return floor if found else None
+
+    def _journal_token(self, task_id: str, token: int) -> None:
+        """Append-only record at ISSUE time so the floor is ALWAYS reconstructable."""
+        try:
+            with open(self.dir / "_token_journal.jsonl", "a", encoding="utf-8") as f:
+                f.write(json.dumps({"task_id": task_id, "fencing_token": int(token),
+                                    "issued_at": _iso(_now())}) + "\n")
+        except OSError:
+            pass
+
     def _next_token(self, task_id: str) -> int:
         lockpath = self.dir / "_fencing_tokens.lock"
         with self._token_lock:
             with open(lockpath, "a+") as lf:
                 fcntl.flock(lf.fileno(), fcntl.LOCK_EX)
                 try:
-                    try:
-                        tokens = json.loads(self.tokens_file.read_text())
-                    except Exception:
-                        tokens = {}
+                    # GROK-F5 (CONFIRMED): on ANY read/parse error this reset tokens={},
+                    # silently WIPING every other task's monotonic counter -- so a corrupt
+                    # file re-issued token 1 for tasks that were already at 5, and a stale
+                    # worker's old token would validate again. Fencing must FAIL CLOSED:
+                    # never reset the ledger, never re-issue a used token.
+                    tokens = {}
+                    if self.tokens_file.exists():
+                        try:
+                            tokens = json.loads(self.tokens_file.read_text())
+                            if not isinstance(tokens, dict):
+                                raise ValueError("tokens file is not an object")
+                        except Exception as e:
+                            # The .bak alone is NOT safe: it lags one write behind, so a task
+                            # added since the last backup would VANISH and get token 1 again.
+                            # Rebuild the monotonic floor from every durable source that
+                            # records a token, taking the MAX per task. Never lose a floor.
+                            tokens = self._reconstruct_floor()
+                            if tokens is None:
+                                raise RuntimeError(
+                                    "FENCING_LEDGER_CORRUPT: cannot reconstruct the monotonic "
+                                    "floor from any durable source; refusing to mint a token "
+                                    "that could re-use a retired value (fail closed). "
+                                    f"Repair {self.tokens_file}. cause={e}") from e
+
                     nxt = int(tokens.get(task_id, 0)) + 1
                     tokens[task_id] = nxt
+                    # keep a good backup BEFORE replacing, so corruption is recoverable
+                    if self.tokens_file.exists():
+                        try:
+                            shutil.copyfile(self.tokens_file, self.tokens_file.with_suffix(".bak"))
+                        except OSError:
+                            pass
                     tmp = self.tokens_file.with_name(
                         f"_fencing_tokens.{os.getpid()}.{uuid.uuid4().hex[:6]}.tmp")
                     tmp.write_text(json.dumps(tokens, indent=2))
                     os.replace(tmp, self.tokens_file)   # atomic
+                    self._journal_token(task_id, nxt)   # durable floor, append-only
                     return nxt
                 finally:
                     fcntl.flock(lf.fileno(), fcntl.LOCK_UN)
 
     def _path(self, task_id: str) -> Path:
-        safe = "".join(ch for ch in task_id if ch.isalnum() or ch in "-_.")
-        return self.dir / f"{safe}.lock"
+        # GROK-F3 (CONFIRMED): character-stripping collided distinct task_ids onto ONE lock
+        # file -- 'task/a' and 'taska' both became 'taska.lock', silently breaking mutual
+        # exclusion between two DIFFERENT tasks. The path must be INJECTIVE. A digest of the
+        # raw id guarantees that; the readable prefix is for humans only.
+        safe = "".join(ch for ch in task_id if ch.isalnum() or ch in "-_.")[:40]
+        digest = hashlib.sha256(task_id.encode("utf-8")).hexdigest()[:16]
+        return self.dir / f"{safe}.{digest}.lock"
 
     def read_lease(self, task_id: str) -> Optional[Dict[str, Any]]:
         p = self._path(task_id)
@@ -114,7 +197,11 @@ class PerTaskLeaseManager:
         try:
             return json.loads(p.read_text())
         except Exception:
-            return None
+            # GROK-F4 (CONFIRMED): an empty/corrupt lock file made read_lease return None,
+            # so acquire_lease skipped recovery and then lost the O_EXCL create forever --
+            # the task became permanently unacquirable (liveness deadlock). Surface
+            # corruption instead of hiding it as "no lease".
+            return {"__corrupt__": True, "task_id": task_id, "status": "CORRUPT"}
 
     def is_expired(self, lease: Dict[str, Any]) -> bool:
         try:
@@ -128,8 +215,17 @@ class PerTaskLeaseManager:
         p = self._path(task_id)
         existing = self.read_lease(task_id)
 
-        if existing and existing.get("status") == "ACTIVE" and not self.is_expired(existing):
+        if (existing and not existing.get("__corrupt__")
+                and existing.get("status") == "ACTIVE" and not self.is_expired(existing)):
             return None                      # someone else legitimately holds THIS task
+
+        if existing and existing.get("__corrupt__"):
+            # GROK-F4 fix: a corrupt lock is recoverable, not fatal. Quarantine and reclaim.
+            try:
+                p.replace(p.with_suffix(f".corrupt.{uuid.uuid4().hex[:6]}"))
+            except OSError:
+                p.unlink(missing_ok=True)
+            existing = None
 
         if existing:
             # Stale/expired or released -> recover. Scoped strictly to this task.
@@ -158,6 +254,48 @@ class PerTaskLeaseManager:
         with os.fdopen(fd, "w") as f:
             json.dump(lease, f, indent=2)
         return lease
+
+    # ---- FENCING ENFORCEMENT -------------------------------------------------
+    # Minting a monotonic token is not enough: it must be CHECKED at the write
+    # boundary. Without this, a stale worker whose lease expired (and was superseded
+    # by a strictly greater token) can still commit a terminal result. Fencing tokens
+    # that are never validated are decoration.
+
+    def current_token(self, task_id: str) -> int:
+        """Highest token ever minted for this task (durable across restarts)."""
+        try:
+            return int(json.loads(self.tokens_file.read_text()).get(task_id, 0))
+        except Exception:
+            return 0
+
+    def validate_fence(self, task_id: str, fencing_token: int) -> bool:
+        """STALE-WORKER-REJECTION: a write is valid only from the CURRENT highest token."""
+        return int(fencing_token) >= self.current_token(task_id)
+
+    def commit_terminal(self, task_id: str, lease_id: str, fencing_token: int,
+                        status: str = "COMPLETED") -> tuple[bool, str]:
+        """Guarded terminal transition. Rejects stale-fence writes and duplicate terminals."""
+        term = self.dir / "_terminal_ledger.jsonl"
+
+        # DUPLICATE-TERMINAL-CONTROL: a task may reach a terminal state exactly once.
+        if term.exists():
+            for line in term.read_text().splitlines():
+                try:
+                    if json.loads(line).get("task_id") == task_id:
+                        return False, "DUPLICATE_TERMINAL_REJECTED"
+                except json.JSONDecodeError:
+                    pass
+
+        # STALE-WORKER-REJECTION-CONTROL
+        if not self.validate_fence(task_id, fencing_token):
+            return False, (f"STALE_FENCE_REJECTED token={fencing_token} "
+                           f"current={self.current_token(task_id)}")
+
+        with open(term, "a", encoding="utf-8") as f:
+            f.write(json.dumps({"task_id": task_id, "lease_id": lease_id,
+                                "fencing_token": int(fencing_token), "status": status,
+                                "committed_at": _iso(_now())}) + "\n")
+        return True, "COMMITTED"
 
     def heartbeat(self, task_id: str, lease_id: str) -> bool:
         lease = self.read_lease(task_id)
