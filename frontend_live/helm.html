@@ -79,6 +79,9 @@
       <div class="big" id="verdict">—</div><div class="sub" id="vpkg">—</div></div>
   </div>
 
+  <!-- NORTH STAR: the founder's primary metric. UNDEFINED until a real dollar lands. -->
+  <div class="card" id="ns" style="margin-bottom:14px"></div>
+
   <!-- heartbeat: one bar per real event, NOT a timer -->
   <div class="card" style="margin-bottom:14px;padding:8px 12px">
     <div class="lbl">RUNTIME HEARTBEAT · one mark per observed event</div>
@@ -188,6 +191,34 @@ async function tick(){
     $("#spendSub").style.color = !sp.chain_valid ? "var(--bad)"
                                : pct > 80 ? "var(--warn)" : "var(--ok)";
     $("#spend").style.color = pct > 100 ? "var(--bad)" : "var(--bright)";
+  }
+
+  // NORTH STAR — the whole point. Never fake a number here.
+  const ns = d.northstar || {};
+  if(UNK(ns)){ $("#ns").innerHTML = `<div class="lbl">NORTH STAR</div><div style="color:#7f8ca6">UNKNOWN</div>`; }
+  else{
+    const undef = ns.value === "UNDEFINED";
+    const rev = ns.revenue_settled_usd, sp = ns.spend_total_usd, net = ns.net_usd;
+    $("#ns").innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <div class="lbl">NORTH STAR · verified_founder_minutes_per_shipped_dollar</div>
+        <div style="font-size:9.5px;color:var(--dim)">${ns.lifetime_sales} lifetime sales · chains ${ns.revenue_chain_valid&&ns.founder_chain_valid?"VALID":"BROKEN"}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1.4fr repeat(4,1fr);gap:10px;margin-top:8px;align-items:center">
+        <div style="background:${undef?"#1c1014":"#0d1a16"};border:1px solid ${undef?"#6b1d2b":"#1d5c46"};border-radius:8px;padding:9px 11px">
+          <div style="font-size:22px;font-weight:700;color:${undef?"var(--bad)":"var(--ok)"}">${undef?"UNDEFINED":ns.value}</div>
+          <div style="font-size:9px;color:var(--mid);margin-top:3px">${undef?"no revenue → no denominator":"founder min / $"}</div>
+        </div>
+        <div><div class="lbl">REVENUE IN</div>
+          <div style="font-size:17px;color:${rev>0?"var(--ok)":"var(--bad)"}">$${(+rev).toFixed(2)}</div></div>
+        <div><div class="lbl">SPEND OUT</div>
+          <div style="font-size:17px;color:var(--txt)">$${typeof sp==="number"?sp.toFixed(4):"UNKNOWN"}</div></div>
+        <div><div class="lbl">NET</div>
+          <div style="font-size:17px;color:${typeof net==="number"&&net>=0?"var(--ok)":"var(--warn)"}">${typeof net==="number"?"$"+net.toFixed(4):"UNKNOWN"}</div></div>
+        <div><div class="lbl">FOUNDER MIN</div>
+          <div style="font-size:17px;color:var(--txt)">${ns.founder_minutes_total}</div></div>
+      </div>
+      ${undef?`<div style="font-size:10px;color:var(--warn);margin-top:8px;border-top:1px solid #2a3448;padding-top:6px">${ns.reason}</div>`:""}`;
   }
 
   // verdict

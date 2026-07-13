@@ -170,6 +170,15 @@ def live_spend() -> Any:
         return _unknown(f"spend meter unreadable: {e}")
 
 
+def live_northstar() -> Any:
+    """The founder's PRIMARY metric. Two of its three terms had no instrument until now."""
+    try:
+        from backend.mission_control.hoch_ledger import HochLedger
+        return HochLedger().summary()
+    except Exception as e:
+        return _unknown(f"hoch ledger unreadable: {e}")
+
+
 def live_verdict() -> Any:
     pkg = _newest_pkg()
     if not pkg or not (pkg / "validation.json").exists():
@@ -198,6 +207,7 @@ def helm_live() -> JSONResponse:
         "events": live_events(),
         "artifacts": live_artifacts(),
         "spend": live_spend(),
+        "northstar": live_northstar(),
         "verdict": live_verdict(),
     })
 
