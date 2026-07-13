@@ -71,6 +71,8 @@ _FOUNDER_ONLY = (
     "credential", "api key", "secret key", "accept terms", "terms of service",
     "attestation", "submit to apple", "app store connect", "refund", "transfer",
     "trade", "purchase", "move money", "wire ", "charge the", "sign the",
+    "execute production deployment", "execute the deployment", "execute deploy",
+    "go live in production", "push to production",
 )
 _PROPOSE_ONLY = (
     "deploy", "merge to main", "publish", "change price", "change the price",
@@ -192,14 +194,52 @@ class Escalation:
         return (not missing, missing)
 
 
-def escalate(esc: Escalation, *, can_prove_answer: bool) -> tuple[bool, str]:
-    """Enforce the hard rule: if the model can PROVE the answer, it must NOT escalate."""
+def _dedup_key(esc: "Escalation") -> str:
+    """Two escalations are 'the same question' if their question + why match."""
+    import hashlib
+    return hashlib.sha256(
+        (esc.one_sentence_question.strip().lower() + "|" + esc.why_it_needs_you.strip().lower()).encode()
+    ).hexdigest()[:16]
+
+
+def _open_dedup_keys() -> set[str]:
+    if not QUEUE.exists():
+        return set()
+    out = set()
+    for line in QUEUE.read_text().splitlines():
+        try:
+            out.add(json.loads(line).get("dedup_key", ""))
+        except json.JSONDecodeError:
+            pass
+    return out - {""}
+
+
+def escalate(esc: Escalation, *, can_prove_answer: bool,
+             expires_in_seconds: int = 86400, default_on_expiry: str = "DENY") -> tuple[bool, str]:
+    """Escalate as a DECISION OBJECT (not a narrative). Enforces:
+       * the hard rule — if the model can PROVE the answer, it must NOT escalate;
+       * ESCALATION-DEDUP — the same question is not queued twice;
+       * expiry + default_on_expiry so a stale decision resolves safely."""
     if can_prove_answer:
         return False, "SUPPRESSED: the model can prove this answer; escalation is for judgment, not verification"
     ok, missing = esc.valid()
     if not ok:
         return False, f"REJECTED: escalation not in founder-contract shape; missing {missing}"
+
+    key = _dedup_key(esc)
+    if key in _open_dedup_keys():
+        return False, f"DEDUP: an equivalent escalation is already open ({key}); not asking twice"
+
+    now = time.time()
+    obj = {
+        **esc.__dict__,
+        "dedup_key": key,
+        "queued_at": now,
+        "expires_at": now + expires_in_seconds,
+        "default_on_expiry": default_on_expiry,
+        "requested_action": "APPROVE / DENY / RETURN_FOR_CHANGES",
+    }
     QUEUE.parent.mkdir(parents=True, exist_ok=True)
     with open(QUEUE, "a", encoding="utf-8") as f:
-        f.write(json.dumps({**esc.__dict__, "queued_at": time.time()}) + "\n")
+        f.write(json.dumps(obj) + "\n")
     return True, f"ESCALATED: {esc.decision_id}"
