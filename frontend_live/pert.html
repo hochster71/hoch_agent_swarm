@@ -64,7 +64,7 @@
     <div class="k"><div class="kl">SPEND TODAY</div><div class="kv" id="sp">—</div><div class="ks" id="spS">—</div></div>
     <div class="k"><div class="kl">SECURITY · 800-53</div><div class="kv" id="sec">—</div><div class="ks" id="secS">—</div></div>
     <div class="k"><div class="kl">ACTIVE LEASES</div><div class="kv" id="lz">—</div><div class="ks" id="lzS">—</div></div>
-    <div class="k"><div class="kl">CRITICAL PATH</div><div class="kv" id="cp">—</div><div class="ks" id="cpS">—</div></div>
+    <div class="k"><div class="kl">FACTORIES EARNING</div><div class="kv" id="cp">—</div><div class="ks" id="cpS">—</div></div>
   </div>
 
   <div id="stage">
@@ -98,17 +98,23 @@ const NODES=[
   {id:"IDEA",   x:.07,y:.50, label:"MISSION",     sub:"seeded task"},
   {id:"LEASE",  x:.21,y:.50, label:"LEASE",       sub:"fencing token"},
   {id:"GATE",   x:.35,y:.50, label:"GATEWAY",     sub:"SC-7 chokepoint"},
-  {id:"HASF",   x:.50,y:.18, label:"HASF",        sub:"apps"},
-  {id:"HRF",    x:.50,y:.39, label:"HRF",         sub:"research"},
-  {id:"HCF",    x:.50,y:.61, label:"HCF",         sub:"security"},
-  {id:"HSF",    x:.50,y:.82, label:"HSF",         sub:"stories"},
+  {id:"HASF",   x:.50,y:.09, label:"HASF",  sub:"apps"},
+  {id:"HRF",    x:.50,y:.22, label:"HRF",   sub:"research"},
+  {id:"HCF",    x:.50,y:.35, label:"HCF",   sub:"security"},
+  {id:"HSF",    x:.50,y:.48, label:"HSF",   sub:"stories"},
+  {id:"HMF",    x:.50,y:.61, label:"HMF",   sub:"music"},
+  {id:"HFF",    x:.50,y:.74, label:"HFF",   sub:"finance"},
+  {id:"HHF",    x:.50,y:.87, label:"HHF",   sub:"home"},
+  {id:"HPF",    x:.50,y:.97, label:"HPF",   sub:"goods"},
   {id:"VALID",  x:.645,y:.50,label:"VALIDATE",    sub:"independent"},
   {id:"SHIP",   x:.775,y:.50,label:"SHIP",        sub:"distribution"},
   {id:"CASH",   x:.915,y:.50,label:"CASH",        sub:"settled revenue"},
 ];
 const EDGES=[["IDEA","LEASE"],["LEASE","GATE"],
   ["GATE","HASF"],["GATE","HRF"],["GATE","HCF"],["GATE","HSF"],
+  ["GATE","HMF"],["GATE","HFF"],["GATE","HHF"],["GATE","HPF"],
   ["HASF","VALID"],["HRF","VALID"],["HCF","VALID"],["HSF","VALID"],
+  ["HMF","VALID"],["HFF","VALID"],["HHF","VALID"],["HPF","VALID"],
   ["VALID","SHIP"],["SHIP","CASH"]];
 
 const COL={COMPLETE:"#4ff0b7",EXEC:"#6fa8ff",BLOCK:"#ffc061",BAD:"#ff6b81",UNK:"#3f5170"};
@@ -128,14 +134,20 @@ function setState(d){
             (d.security.controls||[]).find(x=>x.control_id==="SC-7")||{}).status==="IMPLEMENTED"
            ? "COMPLETE":"UNK";
 
-  ["HASF","HRF","HCF","HSF"].forEach(f=>{
+  // A factory's colour is its MONETIZATION RUNG, not merely "did a script run".
+  // Green = EARNING. Everything else is a cost centre, and says so.
+  const cen=(d.census&&!UNK(d.census))?d.census:null;
+  const byFac={}; if(cen) cen.factories.forEach(r=>byFac[r.factory]=r);
+  window.__census=byFac;
+  ["HASF","HRF","HCF","HSF","HMF","HFF","HHF","HPF"].forEach(f=>{
     const t=tasks.find(t=>t.factory===f&&/REAL/.test(t.task_id||""));
-    const lease=t&&byTask[t.task_id];
-    if(lease) S[f]="EXEC";
-    else if(four[f]==="PASS") S[f]="COMPLETE";
-    else if(four[f]==="FAIL") S[f]="BAD";
+    if(t&&byTask[t.task_id]){ S[f]="EXEC"; return; }
+    const r=byFac[f];
+    if(!r){ S[f]="UNK"; return; }
+    if(r.rung>=5) S[f]="COMPLETE";        // EARNING — the only green
     else if((fac[f]||{}).state==="BLOCKED") S[f]="BLOCK";
-    else S[f]="UNK";
+    else if(r.rung===0) S[f]="UNK";       // a config entry is not a factory
+    else S[f]="BAD";                       // runs/produces but earns nothing = RED
   });
 
   S.VALID = Object.values(four).some(v=>v==="PASS")?"COMPLETE":"UNK";
@@ -214,7 +226,9 @@ function draw(){
     X.font=`700 ${11*DPR}px ui-monospace,Menlo,monospace`;
     X.fillText(n.label,x,y-r-10*DPR);
     X.fillStyle="#61748f"; X.font=`${9*DPR}px ui-monospace,Menlo,monospace`;
-    X.fillText(s==="UNK"?"UNKNOWN":n.sub, x, y+r+15*DPR);
+    const cr=(window.__census||{})[n.id];
+    const lab = cr ? cr.stage : (s==="UNK"?"UNKNOWN":n.sub);
+    X.fillText(lab, x, y+r+15*DPR);
   });
   requestAnimationFrame(draw);
 }
@@ -267,14 +281,15 @@ async function tick(){
   $("#lzS").textContent=L.length?L.map(x=>"fence "+x.fencing_token).join(" · "):"idle";
   $("#lzS").style.color=L.length?"var(--info)":"var(--dim)";
 
-  // critical path = the first node that is NOT complete
-  const order=["IDEA","LEASE","GATE","HASF","VALID","SHIP","CASH"];
-  const block=order.find(id=>state[id]!=="COMPLETE")||"NONE";
-  $("#cp").textContent=block;
-  $("#cp").style.color=block==="CASH"?"var(--bad)":block==="SHIP"?"var(--warn)":"var(--info)";
-  $("#cpS").textContent=block==="CASH"?"no buyer has ever paid"
-                       :block==="SHIP"?"Apple review · external"
-                       :"blocking node";
+  // The only factory number that matters: how many EARN?
+  const C2=d.census||{};
+  if(UNK(C2)){ $("#cp").textContent="UNKNOWN"; $("#cpS").textContent=""; }
+  else{
+    $("#cp").innerHTML=`${C2.earning} <span style="font-size:0.8vw;color:var(--mid)">/ ${C2.declared}</span>`;
+    $("#cp").style.color=C2.earning>0?"var(--ok)":"var(--bad)";
+    $("#cpS").textContent=`ran ${C2.ever_ran} · produce ${C2.producing} · sellable ${C2.sellable}`;
+    $("#cpS").style.color=C2.earning>0?"var(--ok)":"var(--bad)";
+  }
 }
 tick(); setInterval(tick,1500);
 </script>

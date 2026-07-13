@@ -194,6 +194,15 @@ def live_security() -> Any:
         return _unknown(f"posture unreadable: {e}")
 
 
+def live_census() -> Any:
+    """Where are the factories, and is any of them actually earning? Observed."""
+    try:
+        from backend.mission_control.factory_census import census
+        return census()
+    except Exception as e:
+        return _unknown(f"factory census unreadable: {e}")
+
+
 def live_verdict() -> Any:
     pkg = _newest_pkg()
     if not pkg or not (pkg / "validation.json").exists():
@@ -224,6 +233,7 @@ def helm_live() -> JSONResponse:
         "spend": live_spend(),
         "northstar": live_northstar(),
         "security": live_security(),
+        "census": live_census(),
         "verdict": live_verdict(),
     })
 
