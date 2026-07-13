@@ -1,0 +1,2 @@
+{"ts": "2026-07-13T13:46:19.066365Z", "task_id": "T-HASF-REAL-01", "envelope_hash": "66a691fd53719194d015f931b61e545387c125d35ed8f068ccf24ad089af88d0", "status": "COMPLETED", "started_at": "2026-07-13T13:44:50.052401Z", "exit_code": 0}
+{"ts": "2026-07-13T13:46:37.817862Z", "task_id": "T-HRF-REAL-01", "envelope_hash": "05f493d9b377bad42e5c125258024ef6968ce9631ba2689874193f43e5bac563", "status": "COMPLETED", "started_at": "2026-07-13T13:44:50.052373Z", "exit_code": 0}

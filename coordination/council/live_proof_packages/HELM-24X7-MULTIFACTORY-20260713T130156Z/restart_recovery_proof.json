@@ -1,0 +1,129 @@
+{
+  "schema": "RESTART_RECOVERY_PROOF_v2",
+  "observed_at_utc": "2026-07-13T13:01:06.120969+00:00",
+  "task_id": "T-RESTART-RECOVERY-PROOF",
+  "heartbeat_before": "2026-07-13T13:01:06.121129+00:00",
+  "active_leases_before": [
+    {
+      "lease_id": "lease-e5626a80",
+      "task_id": "task-fence-1",
+      "acquired_at": "2026-07-05T05:17:10.696843Z",
+      "expires_at": "2026-07-05T05:17:20.696843Z",
+      "holder": "test-runner-1",
+      "status": "ACTIVE",
+      "fencing_token": 1
+    },
+    {
+      "lease_id": "lease-4c199d31",
+      "task_id": "task-zombie-test",
+      "acquired_at": "2026-07-05T15:21:33.927634Z",
+      "expires_at": "2026-07-05T15:31:33.927634Z",
+      "holder": "ag_execution_runner",
+      "status": "ACTIVE",
+      "fencing_token": 19
+    },
+    {
+      "lease_id": "lease-b3923be5",
+      "task_id": "task-allowed",
+      "acquired_at": "2026-07-13T12:13:19.223522Z",
+      "expires_at": "2026-07-13T12:23:19.223522Z",
+      "holder": "ag_execution_runner",
+      "status": "ACTIVE",
+      "fencing_token": 142
+    },
+    {
+      "lease_id": "lease-b8b51f93",
+      "task_id": "task-allowed",
+      "acquired_at": "2026-07-13T12:16:33.737158Z",
+      "expires_at": "2026-07-13T12:26:33.737158Z",
+      "holder": "ag_execution_runner",
+      "status": "ACTIVE",
+      "fencing_token": 145
+    },
+    {
+      "lease_id": "lease-151ce0b4",
+      "task_id": "T-RESTART-RECOVERY-PROOF",
+      "acquired_at": "2026-07-13T13:01:06.140767Z",
+      "expires_at": "2026-07-13T13:01:08.140767Z",
+      "holder": "restart-proof-worker",
+      "status": "ACTIVE",
+      "fencing_token": 204
+    }
+  ],
+  "service_pid_before": 79384,
+  "fencing_token_before": 204,
+  "lease_id_before": "lease-151ce0b4",
+  "restart_command": "SIGKILL 79384 -> respawn worker for T-RESTART-RECOVERY-PROOF",
+  "exit_status": -9,
+  "killed_by_signal": true,
+  "pid_before_alive_after_kill": false,
+  "service_pid_after": 79409,
+  "fencing_token_after": 205,
+  "lease_id_after": "lease-ea3b392a",
+  "heartbeat_after": "2026-07-13T13:01:08.882185+00:00",
+  "active_leases_after": [
+    {
+      "lease_id": "lease-e5626a80",
+      "task_id": "task-fence-1",
+      "acquired_at": "2026-07-05T05:17:10.696843Z",
+      "expires_at": "2026-07-05T05:17:20.696843Z",
+      "holder": "test-runner-1",
+      "status": "ACTIVE",
+      "fencing_token": 1
+    },
+    {
+      "lease_id": "lease-4c199d31",
+      "task_id": "task-zombie-test",
+      "acquired_at": "2026-07-05T15:21:33.927634Z",
+      "expires_at": "2026-07-05T15:31:33.927634Z",
+      "holder": "ag_execution_runner",
+      "status": "ACTIVE",
+      "fencing_token": 19
+    },
+    {
+      "lease_id": "lease-b3923be5",
+      "task_id": "task-allowed",
+      "acquired_at": "2026-07-13T12:13:19.223522Z",
+      "expires_at": "2026-07-13T12:23:19.223522Z",
+      "holder": "ag_execution_runner",
+      "status": "ACTIVE",
+      "fencing_token": 142
+    },
+    {
+      "lease_id": "lease-b8b51f93",
+      "task_id": "task-allowed",
+      "acquired_at": "2026-07-13T12:16:33.737158Z",
+      "expires_at": "2026-07-13T12:26:33.737158Z",
+      "holder": "ag_execution_runner",
+      "status": "ACTIVE",
+      "fencing_token": 145
+    },
+    {
+      "lease_id": "lease-ea3b392a",
+      "task_id": "T-RESTART-RECOVERY-PROOF",
+      "acquired_at": "2026-07-13T13:01:08.877106Z",
+      "expires_at": "2026-07-13T13:02:08.877106Z",
+      "holder": "restart-proof-worker",
+      "status": "ACTIVE",
+      "fencing_token": 205
+    }
+  ],
+  "recovered_task_ids": [
+    "T-RESTART-RECOVERY-PROOF"
+  ],
+  "abandoned_task_ids": [],
+  "fencing_monotonic": true,
+  "fencing_token_env_max_before": 203,
+  "duplicate_execution_count": 0,
+  "scheduler_cycle_after_recovery": {
+    "cycle_start": "2026-07-13T13:01:08.907858Z",
+    "cycle_end": "2026-07-13T13:01:08.908860Z",
+    "status": "IDLE",
+    "dispatched_count": 0,
+    "dispatched": []
+  },
+  "missing_fields": [],
+  "proof_class": "LIVE_RUNTIME_PROOF",
+  "recovery_status": "SUCCESS",
+  "notes": "All values OBSERVED from a real SIGKILL of a real lease-holding process. No literal was written without measurement."
+}

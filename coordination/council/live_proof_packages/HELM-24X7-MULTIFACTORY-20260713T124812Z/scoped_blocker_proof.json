@@ -1,0 +1,6 @@
+{
+  "goal_blockers_active": [
+    "apple_review_hold"
+  ],
+  "evaluation": "HSF factory lane correctly paused. Other factories (HASF, HRF, HCF) bypassed the hold and executed successfully."
+}

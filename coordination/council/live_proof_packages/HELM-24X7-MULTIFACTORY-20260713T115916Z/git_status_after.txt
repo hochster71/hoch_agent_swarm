@@ -1,0 +1,62 @@
+On branch helm/h1b-r2-remediation
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   backend/main.py
+	modified:   coordination/council/relay/dispatch_ledger.jsonl
+	modified:   coordination/council/relay/gateway_dispatch_ledger.jsonl
+	modified:   data/prompt_brain/agent_audit.json
+	modified:   data/prompt_brain/champion_registry.json
+	modified:   data/prompt_brain/convergence_status.json
+	modified:   data/prompt_brain/cyber_swarm_state.json
+	modified:   data/prompt_brain/gap_analysis.json
+	modified:   data/prompt_brain/improve_cursor.json
+	modified:   data/prompt_brain/improved_champions.jsonl
+	modified:   data/prompt_brain/music/champion_registry.json
+	modified:   data/prompt_brain/music/convergence_status.json
+	modified:   data/prompt_brain/orchestrator_brief.json
+	modified:   data/prompt_brain/orchestrator_log.jsonl
+	modified:   data/prompt_brain/research/champion_registry.json
+	modified:   data/prompt_brain/research/convergence_status.json
+	modified:   data/prompt_brain/research_meta_decision.json
+	modified:   data/prompt_brain/research_meta_log.jsonl
+	modified:   data/prompt_brain/self_heal_state.json
+	modified:   docs/moonshot/BRAIN_GAP_ANALYSIS.md
+	modified:   frontend/data/brain_live.json
+	modified:   frontend/src/main.tsx
+	modified:   has_live_project_tracker/data/ag_execution_leases.json
+	modified:   has_live_project_tracker/data/cost_governor.json
+	modified:   has_live_project_tracker/data/goal_blocker_register.json
+	modified:   hoch_pods/compute/cost_ledger.jsonl
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	backend/mission_control/adapter_registry.py
+	backend/mission_control/ag_ide_relay.py
+	backend/mission_control/helm_supervisor.py
+	backend/mission_control/persistent_scheduler.py
+	backend/mission_control/scoped_states.py
+	coordination/council/factory_registry.json
+	coordination/council/h1c_founder_authorization.pending.json
+	coordination/council/live_proof_packages/H1D7-DISPATCH-GATEWAY-20260712T230145Z/
+	coordination/council/live_proof_packages/HELM-24X7-MULTIFACTORY-20260713T115902Z/
+	coordination/council/live_proof_packages/HELM-24X7-MULTIFACTORY-20260713T115903Z/
+	coordination/council/live_proof_packages/HELM-24X7-MULTIFACTORY-20260713T115916Z/
+	coordination/council/live_proof_packages/REQ-CP-TEST-EPIC-FURY-20260713T003316Z-CONTRACT/
+	coordination/council/relay/H1D-20260712T230153Z-8C7ADD.council.json
+	coordination/council/relay/H1D7-20260712T230852Z-B75DCF.council.json
+	coordination/council/relay/H1D7-20260712T230946Z-E27F69.council.json
+	data/prompt_brain/outcome_feedback_ledger.jsonl
+	data/prompt_brain/outcome_stats.json
+	docs/evidence/council/H1C_DOORSTEP_COMMITBOUND_729b1e8e/
+	docs/evidence/council/H1C_DOORSTEP_COMMITBOUND_8f931d26/
+	docs/evidence/council/H1C_DOORSTEP_COMMITBOUND_bf154446/
+	docs/evidence/runtime/agent_exec_task-test-001.json
+	docs/safe_file.txt
+	frontend/src/components/helm/theater/
+	has_live_project_tracker/data/property_schema.json
+	has_live_project_tracker/data/room_schema.json
+	scripts/run_helm_multifactory_activation.py
+	tests/e2e/support/
+
+no changes added to commit (use "git add" and/or "git commit -a")

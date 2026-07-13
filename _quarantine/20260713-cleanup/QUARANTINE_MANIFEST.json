@@ -1,0 +1,62 @@
+{
+  "quarantined_at": "2026-07-13",
+  "reversible": "git mv / plain move \u2014 nothing deleted",
+  "items": {
+    "frontend_dead_components": {
+      "count": 38,
+      "files": [
+        "src/components/audit/AuditEvidencePanel.tsx",
+        "src/components/audit/AuditExportMenu.tsx",
+        "src/components/audit/AuditFilterPanel.tsx",
+        "src/components/audit/AuditIntegritySummary.tsx",
+        "src/components/audit/AuditRecentExports.tsx",
+        "src/components/audit/AuditReportPreview.tsx",
+        "src/components/audit/AuditValidationPanel.tsx",
+        "src/components/collab/DecisionNotes.tsx",
+        "src/components/helm/topdown/HelmCouncilView.tsx",
+        "src/components/hochster/HochsterInstancePool.tsx",
+        "src/components/hochster/HochsterInstanceTable.tsx",
+        "src/components/hochster/HochsterMetricsPanel.tsx",
+        "src/components/hochster/HochsterRequestPanel.tsx",
+        "src/components/hochster/HochsterRequestTable.tsx",
+        "src/components/hochster/HochsterSecurityPanel.tsx",
+        "src/components/hochster/HochsterSolutionViewer.tsx",
+        "src/components/hochster/HochsterToolMatrix.tsx",
+        "src/components/hochster/HochsterTracePanel.tsx",
+        "src/components/hochster/product/MarketplaceListingEditor.tsx",
+        "src/components/hochster/product/RolloutRingPanel.tsx",
+        "src/components/hochster/security/ProvenancePanel.tsx",
+        "src/components/hochster/security/SbomViewer.tsx",
+        "src/components/intel/AnomalyDetectionPanel.tsx",
+        "src/components/intel/InsightCard.tsx",
+        "src/components/intel/InsightExplanationPanel.tsx",
+        "src/components/intel/InsightFeedbackBar.tsx",
+        "src/components/intel/InsightHistory.tsx",
+        "src/components/intel/ModelHealthPanel.tsx",
+        "src/components/intel/OperationalIntelDashboard.tsx",
+        "src/components/intel/RecommendationList.tsx",
+        "src/components/intel/TrendAnalysisPanel.tsx",
+        "src/components/policy/ApprovalRequirementPanel.tsx",
+        "src/components/policy/GuardrailStatusList.tsx",
+        "src/components/policy/OverrideJustificationModal.tsx",
+        "src/components/policy/PolicyDashboard.tsx",
+        "src/components/policy/PolicyDecisionCard.tsx",
+        "src/components/policy/PolicyViolationList.tsx",
+        "src/components/policy/ZtaPosturePanel.tsx"
+      ]
+    },
+    "empty_evidence_husks": {
+      "count": 8,
+      "packages": [
+        "H1B-R2-CLOSURE-20260712T135350Z",
+        "H1C-CONTROLLED-ACTIVATION-20260712T174913Z",
+        "H1C-CONTROLLED-EXECUTION-20260712T181646Z",
+        "HELM-24X7-MULTIFACTORY-20260713T115902Z",
+        "HELM-24X7-MULTIFACTORY-20260713T120154Z",
+        "HELM-24X7-MULTIFACTORY-20260713T124809Z",
+        "HELM-REAL-MULTIFACTORY-20260713T132300Z",
+        "HELM-REAL-MULTIFACTORY-20260713T132537Z"
+      ]
+    }
+  }
+}

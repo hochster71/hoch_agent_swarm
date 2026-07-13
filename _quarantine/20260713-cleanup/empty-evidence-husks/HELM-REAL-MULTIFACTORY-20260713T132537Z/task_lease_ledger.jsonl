@@ -1,0 +1,3 @@
+{"ts": "2026-07-13T13:25:37.108092Z", "task_id": "T-HRF-REAL-01", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T13:25:37.108264Z", "task_id": "T-HCF-REAL-01", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}
+{"ts": "2026-07-13T13:25:37.108318Z", "task_id": "T-HSF-REAL-01", "status": "ACQUIRE_FAILED", "reason": "Lease lock active"}

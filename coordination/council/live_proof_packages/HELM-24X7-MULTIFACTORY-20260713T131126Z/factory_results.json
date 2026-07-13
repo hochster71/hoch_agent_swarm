@@ -1,0 +1,26 @@
+{
+  "HASF": {
+    "task_id": null,
+    "verdict": "NOT_EXECUTED",
+    "details": "No task for this factory was dispatched in this cycle. Absence of execution is not a pass.",
+    "evidence": "scheduler cycle_res.dispatched"
+  },
+  "HRF": {
+    "task_id": null,
+    "verdict": "NOT_EXECUTED",
+    "details": "No task for this factory was dispatched in this cycle. Absence of execution is not a pass.",
+    "evidence": "scheduler cycle_res.dispatched"
+  },
+  "HCF": {
+    "task_id": null,
+    "verdict": "NOT_EXECUTED",
+    "details": "No task for this factory was dispatched in this cycle. Absence of execution is not a pass.",
+    "evidence": "scheduler cycle_res.dispatched"
+  },
+  "HSF": {
+    "task_id": null,
+    "verdict": "NOT_EXECUTED",
+    "details": "No task for this factory was dispatched in this cycle. Absence of execution is not a pass.",
+    "evidence": "scheduler cycle_res.dispatched"
+  }
+}

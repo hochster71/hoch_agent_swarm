@@ -1,0 +1,7 @@
+{
+  "listening_interfaces": [
+    "127.0.0.1",
+    "::1"
+  ],
+  "egress_checks": "ModelDispatchGuard active, external calls blocked without explicit gateway signature tokens"
+}

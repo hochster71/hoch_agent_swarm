@@ -1,0 +1,22 @@
+{
+  "HASF": {
+    "task_id": "T-HASF-01",
+    "verdict": "PASS",
+    "details": "Enclave Ping Success"
+  },
+  "HRF": {
+    "task_id": "T-HRF-01",
+    "verdict": "PASS",
+    "details": "NIST Review completed"
+  },
+  "HCF": {
+    "task_id": "T-HCF-01",
+    "verdict": "PASS",
+    "details": "Gateway Audit Clean"
+  },
+  "HSF": {
+    "task_id": "T-HSF-01",
+    "verdict": "SKIPPED",
+    "details": "Lane held due to apple review blockers"
+  }
+}

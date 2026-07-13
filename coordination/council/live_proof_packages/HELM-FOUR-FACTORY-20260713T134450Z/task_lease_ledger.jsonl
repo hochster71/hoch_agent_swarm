@@ -1,0 +1,6 @@
+{"ts": "2026-07-13T13:44:50.052199Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-b005b993", "fencing_token": 1, "status": "ACQUIRED"}
+{"ts": "2026-07-13T13:44:50.052279Z", "task_id": "T-HASF-REAL-01", "lease_id": "lease-894418e4", "fencing_token": 1, "status": "ACQUIRED"}
+{"ts": "2026-07-13T13:44:50.052373Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-b005b993", "fencing_token": 1, "status": "DISPATCH_START"}
+{"ts": "2026-07-13T13:44:50.052401Z", "task_id": "T-HASF-REAL-01", "lease_id": "lease-894418e4", "fencing_token": 1, "status": "DISPATCH_START"}
+{"ts": "2026-07-13T13:46:19.078679Z", "task_id": "T-HASF-REAL-01", "lease_id": "lease-894418e4", "status": "RELEASED"}
+{"ts": "2026-07-13T13:46:38.071229Z", "task_id": "T-HRF-REAL-01", "lease_id": "lease-b005b993", "status": "RELEASED"}

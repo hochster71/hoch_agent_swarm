@@ -1,0 +1,7 @@
+{
+  "concurrency_limit": 4,
+  "max_retries": 3,
+  "lease_duration_seconds": 600,
+  "budget_per_task_usd": 0.5,
+  "local_first": true
+}

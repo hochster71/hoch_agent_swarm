@@ -1,0 +1,22 @@
+{
+  "task_id": "H1D7-20260712T230946Z-E27F69",
+  "task_digest": "9aeca28663efc02fbdff0bece3ca701f6c668842a4869ed1daf96876ed7f9120",
+  "adapters": [
+    "grok",
+    "ollama"
+  ],
+  "gateway": "CouncilDispatchGateway",
+  "pert_node": "H1D.7",
+  "manual_copy_paste_operations": 0,
+  "total_cost_usd_estimated": 0.003916,
+  "provider_reported_cost": null,
+  "billing_source": "estimated_from_tokens_or_request",
+  "credit_balance_authoritative": false,
+  "pert_node_state": "COMPLETED",
+  "pert_node_reason": "MULTI_ADAPTER_VALIDATED_EVIDENCE",
+  "accepted_adapters": [
+    "grok",
+    "ollama"
+  ],
+  "implementation_commit": "b603c8f8c9cb9bcb8dab5942de533be94b024621"
+}

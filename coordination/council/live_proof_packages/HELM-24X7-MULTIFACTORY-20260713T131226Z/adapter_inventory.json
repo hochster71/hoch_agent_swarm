@@ -1,0 +1,150 @@
+{
+  "grok": {
+    "adapter_id": "grok",
+    "name": "xAI Grok CLI",
+    "egress_class": "EXTERNAL_FRONTIER",
+    "capabilities": [
+      "text",
+      "reasoning"
+    ],
+    "cost_model": {
+      "input_cost_per_1m": 2.0,
+      "output_cost_per_1m": 10.0
+    },
+    "context_limit": 131072,
+    "timeout_seconds": 120,
+    "auth_required": true,
+    "api_key_env_var": "XAI_API_KEY",
+    "health": "UNKNOWN",
+    "readiness": "NOT_READY",
+    "last_dispatch_ts": null,
+    "failure_rate": 0.0
+  },
+  "gemini": {
+    "adapter_id": "gemini",
+    "name": "Google Gemini CLI",
+    "egress_class": "EXTERNAL_FRONTIER",
+    "capabilities": [
+      "text",
+      "vision",
+      "tools"
+    ],
+    "cost_model": {
+      "input_cost_per_1m": 0.15,
+      "output_cost_per_1m": 0.6
+    },
+    "context_limit": 1048576,
+    "timeout_seconds": 180,
+    "auth_required": true,
+    "api_key_env_var": "GEMINI_API_KEY",
+    "health": "UNKNOWN",
+    "readiness": "NOT_READY",
+    "last_dispatch_ts": null,
+    "failure_rate": 0.0
+  },
+  "claude": {
+    "adapter_id": "claude",
+    "name": "Anthropic Claude CLI",
+    "egress_class": "EXTERNAL_FRONTIER",
+    "capabilities": [
+      "text",
+      "reasoning",
+      "tools"
+    ],
+    "cost_model": {
+      "input_cost_per_1m": 3.0,
+      "output_cost_per_1m": 15.0
+    },
+    "context_limit": 200000,
+    "timeout_seconds": 240,
+    "auth_required": true,
+    "api_key_env_var": "ANTHROPIC_API_KEY",
+    "health": "UNKNOWN",
+    "readiness": "NOT_READY",
+    "last_dispatch_ts": null,
+    "failure_rate": 0.0
+  },
+  "openai": {
+    "adapter_id": "openai",
+    "name": "ChatGPT API",
+    "egress_class": "EXTERNAL_FRONTIER",
+    "capabilities": [
+      "text",
+      "tools"
+    ],
+    "cost_model": {
+      "input_cost_per_1m": 2.5,
+      "output_cost_per_1m": 10.0
+    },
+    "context_limit": 128000,
+    "timeout_seconds": 120,
+    "auth_required": true,
+    "api_key_env_var": "OPENAI_API_KEY",
+    "health": "UNKNOWN",
+    "readiness": "NOT_READY",
+    "last_dispatch_ts": null,
+    "failure_rate": 0.0
+  },
+  "ollama": {
+    "adapter_id": "ollama",
+    "name": "Local Ollama Gateway",
+    "egress_class": "LOCAL_ONLY",
+    "capabilities": [
+      "text",
+      "tools"
+    ],
+    "cost_model": {
+      "input_cost_per_1m": 0.0,
+      "output_cost_per_1m": 0.0
+    },
+    "context_limit": 8192,
+    "timeout_seconds": 120,
+    "auth_required": false,
+    "api_key_env_var": null,
+    "health": "ACTIVE",
+    "readiness": "READY",
+    "last_dispatch_ts": null,
+    "failure_rate": 0.0
+  },
+  "lm_studio": {
+    "adapter_id": "lm_studio",
+    "name": "Local LM Studio Gateway",
+    "egress_class": "LOCAL_ONLY",
+    "capabilities": [
+      "text"
+    ],
+    "cost_model": {
+      "input_cost_per_1m": 0.0,
+      "output_cost_per_1m": 0.0
+    },
+    "context_limit": 8192,
+    "timeout_seconds": 120,
+    "auth_required": false,
+    "api_key_env_var": null,
+    "health": "ACTIVE",
+    "readiness": "READY",
+    "last_dispatch_ts": null,
+    "failure_rate": 0.0
+  },
+  "ag_ide_relay": {
+    "adapter_id": "ag_ide_relay",
+    "name": "AG IDE Relay Bridge",
+    "egress_class": "LOCAL_ONLY",
+    "capabilities": [
+      "text",
+      "tools"
+    ],
+    "cost_model": {
+      "input_cost_per_1m": 0.0,
+      "output_cost_per_1m": 0.0
+    },
+    "context_limit": 65536,
+    "timeout_seconds": 300,
+    "auth_required": false,
+    "api_key_env_var": null,
+    "health": "ACTIVE",
+    "readiness": "READY",
+    "last_dispatch_ts": null,
+    "failure_rate": 0.0
+  }
+}

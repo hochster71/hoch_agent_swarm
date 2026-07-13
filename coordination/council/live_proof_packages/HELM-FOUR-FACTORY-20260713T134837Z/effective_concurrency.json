@@ -1,0 +1,8 @@
+{
+  "concurrency_mode": "PER_TASK_LEASE",
+  "configured_limit": 4,
+  "effective_limit": 4,
+  "status": "OK",
+  "lease_backend": "PerTaskLeaseManager",
+  "note": "Per-task lock records; unrelated tasks run concurrently."
+}

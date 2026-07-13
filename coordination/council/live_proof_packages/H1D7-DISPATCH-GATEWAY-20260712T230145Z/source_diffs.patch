@@ -1,0 +1,27 @@
+commit b603c8f8c9cb9bcb8dab5942de533be94b024621
+Author: Michael Hoch <michael.b.hoch@gmail.com>
+Date:   Sun Jul 12 18:01:36 2026 -0500
+
+    H1D.7: CouncilDispatchGateway universal model-dispatch choke point
+    
+    Introduce CouncilDispatchGateway as the sole permitted route for model CLI/API
+    dispatch, with runtime ModelDispatchGuard, fail-closed authorization, honest
+    spend ledger semantics, static chokepoint scanner, and removal of direct
+    OpenAI/Anthropic urllib execute paths from prompt_brain adapters.
+    
+    Grok and Ollama council routes now dispatch only through the gateway.
+    Legacy backend model mesh is inventoried as documented exceptions pending
+    unification; H1D parent remains IN_PROGRESS.
+
+ coordination/council/gateway_policy.json      |  43 ++
+ coordination/council/relay/H1D_STATUS.json    | 176 +++++
+ coordination/council/relay/H1D_pert_node.json |  48 +-
+ scripts/council/dispatch.py                   |  80 ++-
+ scripts/council/gateway.py                    | 991 ++++++++++++++++++++++++++
+ scripts/council/inventory_outbound_paths.py   | 133 ++++
+ scripts/prompt_brain/model_adapters.py        | 329 ++++-----
+ scripts/verify_model_dispatch_chokepoint.py   | 275 +++++++
+ tests/test_h1d_council_loop.py                |   8 +
+ tests/test_h1d_dispatch.py                    |  42 +-
+ tests/test_h1d_dispatch_gateway.py            | 492 +++++++++++++
+ 11 files changed, 2395 insertions(+), 222 deletions(-)

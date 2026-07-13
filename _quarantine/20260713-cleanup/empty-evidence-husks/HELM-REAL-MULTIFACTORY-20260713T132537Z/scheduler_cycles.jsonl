@@ -1,0 +1,1 @@
+{"cycle_start": "2026-07-13T13:25:37.107203Z", "cycle_end": "2026-07-13T13:25:37.108347Z", "status": "ACTIVE", "dispatched_count": 3, "dispatched": [{"task_id": "T-HRF-REAL-01", "success": false}, {"task_id": "T-HCF-REAL-01", "success": false}, {"task_id": "T-HSF-REAL-01", "success": false}]}

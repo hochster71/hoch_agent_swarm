@@ -1,0 +1,50 @@
+{
+  "schema": "RESTART_RECOVERY_PROOF_v2",
+  "observed_at_utc": "2026-07-13T13:12:26.393407+00:00",
+  "task_id": "T-RESTART-RECOVERY-PROOF",
+  "preexisting_leases_cleared": [
+    "lease-ea3b392a"
+  ],
+  "heartbeat_before": "2026-07-13T13:12:26.394481+00:00",
+  "active_leases_before": [
+    {
+      "lease_id": "lease-a602f7bd",
+      "task_id": "T-RESTART-RECOVERY-PROOF",
+      "acquired_at": "2026-07-13T13:12:26.412640Z",
+      "expires_at": "2026-07-13T13:12:28.412640Z",
+      "holder": "restart-proof-worker",
+      "status": "ACTIVE",
+      "fencing_token": 243
+    }
+  ],
+  "service_pid_before": 98644,
+  "fencing_token_before": 243,
+  "lease_id_before": "lease-a602f7bd",
+  "restart_command": "SIGKILL 98644 -> respawn worker for T-RESTART-RECOVERY-PROOF",
+  "exit_status": -9,
+  "killed_by_signal": true,
+  "pid_before_alive_after_kill": false,
+  "service_pid_after": 98824,
+  "fencing_token_after": 244,
+  "lease_id_after": "lease-7815a061",
+  "heartbeat_after": "2026-07-13T13:12:29.163118+00:00",
+  "active_leases_after": [],
+  "recovered_task_ids": [
+    "T-RESTART-RECOVERY-PROOF"
+  ],
+  "abandoned_task_ids": [],
+  "fencing_monotonic": true,
+  "fencing_token_env_max_before": 242,
+  "duplicate_execution_count": 0,
+  "scheduler_cycle_after_recovery": {
+    "cycle_start": "2026-07-13T13:12:29.187253Z",
+    "cycle_end": "2026-07-13T13:12:29.188800Z",
+    "status": "IDLE",
+    "dispatched_count": 0,
+    "dispatched": []
+  },
+  "missing_fields": [],
+  "proof_class": "LIVE_RUNTIME_PROOF",
+  "recovery_status": "SUCCESS",
+  "notes": "All values OBSERVED from a real SIGKILL of a real lease-holding process. No literal was written without measurement."
+}

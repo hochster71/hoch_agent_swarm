@@ -1,0 +1,141 @@
+{
+  "goal_blockers_active": [
+    {
+      "id": "G-0",
+      "title": "Unified goal definition",
+      "severity": "P1",
+      "owner": "Operator",
+      "status": "RESOLVED",
+      "dependency": null,
+      "unblock_action": "Adopt has_hasf_brain_unified_goal_contract.json",
+      "evidence_path": "has_live_project_tracker/data/has_hasf_brain_unified_goal_contract.json",
+      "estimated_wall_clock": "done",
+      "agent_safe": true
+    },
+    {
+      "id": "G-1",
+      "title": "K1 LLM/API credentials",
+      "severity": "P0",
+      "owner": "Michael",
+      "status": "RESOLVED",
+      "dependency": null,
+      "unblock_action": "Provision OPENAI_API_KEY + ANTHROPIC_API_KEY",
+      "evidence_path": "has_live_project_tracker/data/k_track_ledger.json",
+      "estimated_wall_clock": "0.5-8h",
+      "agent_safe": false
+    },
+    {
+      "id": "G-2",
+      "title": "BRAIN M1 live loop",
+      "severity": "P0",
+      "owner": "Brain agent",
+      "status": "BLOCKED_ON_G-1",
+      "dependency": "G-1",
+      "unblock_action": "Enable live generation + adversary across mesh after K1",
+      "evidence_path": "docs/moonshot/HAS_BRAIN_CONVERGENCE_MOONSHOT.md",
+      "estimated_wall_clock": "post-key, hours",
+      "agent_safe": true
+    },
+    {
+      "id": "G-3",
+      "title": "BRAIN M2 outcome binding",
+      "severity": "P1",
+      "owner": "Brain agent",
+      "status": "NOT_STARTED",
+      "dependency": "G-2",
+      "unblock_action": "Wire prompt->execution->result into fitness score",
+      "evidence_path": "backend/brain/confidence_engine.py",
+      "estimated_wall_clock": "days",
+      "agent_safe": true
+    },
+    {
+      "id": "G-4",
+      "title": "G1 demand validation",
+      "severity": "P0",
+      "owner": "Growth + Michael",
+      "status": "PASS",
+      "dependency": "H2",
+      "unblock_action": "10-20 real prospects, 3-5 discovery calls, 1-3 willingness-to-pay signals, >=1 named buyer",
+      "evidence_path": "has_live_project_tracker/data/fresh_pert_gap_analysis.json",
+      "estimated_wall_clock": "days",
+      "agent_safe": false,
+      "closed_on_evidence": "2026-07-13T13:11:28.452088Z"
+    },
+    {
+      "id": "G-5",
+      "title": "A4 differentiation + store packaging",
+      "severity": "P1",
+      "owner": "HASF agent",
+      "status": "PENDING",
+      "dependency": "A3",
+      "unblock_action": "Build then pass differentiation gate + package",
+      "evidence_path": "has_live_project_tracker/data/fresh_pert_gap_analysis.json",
+      "estimated_wall_clock": "hours-days",
+      "agent_safe": true
+    },
+    {
+      "id": "G-6",
+      "title": "SUB store submission -> GOAL",
+      "severity": "P0",
+      "owner": "Michael + agent",
+      "status": "PENDING",
+      "dependency": "A6",
+      "unblock_action": "Submit to Apple/Google; passes review",
+      "evidence_path": "has_live_project_tracker/data/fresh_pert_gap_analysis.json",
+      "estimated_wall_clock": "24-72h review",
+      "agent_safe": false
+    },
+    {
+      "id": "G-7",
+      "title": "K2-K6 founder external accounts",
+      "severity": "P0",
+      "owner": "Michael",
+      "status": "BLOCKED_FOUNDER_ACTION",
+      "dependency": null,
+      "unblock_action": "Apple: DONE. Google Play: account started, identity verification PENDING (founder). Then App Store Connect entry, signing, App Store Connect API key (K4).",
+      "evidence_path": "has_live_project_tracker/data/human_approval_queue.json",
+      "estimated_wall_clock": "24h-2wk",
+      "agent_safe": false,
+      "k2_apple_developer": "CLEARED 2026-07-06 (renews 2027-07-06)",
+      "google_play": "Google Play: identity verification SUBMITTED 2026-07-06 (Google processing; founder action complete). Awaiting Google approval, then App Store Connect-equivalent app entry."
+    },
+    {
+      "id": "G-8",
+      "title": "Git dirty state",
+      "severity": "P1",
+      "owner": "Agent (show-before-commit)",
+      "status": "ACTIVE",
+      "dependency": null,
+      "unblock_action": "Classify changes, stage evidence/source only, commit clean point (operator sees diff first; no tag movement without approval)",
+      "evidence_path": "docs/evidence/moonshot/moonshot_audit_20260702T193448Z.md",
+      "estimated_wall_clock": "<1h",
+      "agent_safe": true
+    },
+    {
+      "id": "G-9",
+      "title": "T3 high-risk approvals",
+      "severity": "P1",
+      "owner": "Michael",
+      "status": "RESOLVED",
+      "dependency": null,
+      "unblock_action": "Review 4 items: stripe/money, secret, public_port, deploy \u2014 approve/reject/defer each",
+      "evidence_path": "has_live_project_tracker/data/human_approval_queue.json",
+      "estimated_wall_clock": "minutes",
+      "agent_safe": false,
+      "resolution": "Original 4 flags were FALSE POSITIVES (substring hits in BRAIN-generated .jsonl, e.g. 'card' in 'scorecard'); root cause fixed in has_autonomous_cadence.py (excludes *.jsonl/*.ndjson/data/). 2 residual flags surfaced and were VERIFIED BENIGN, NOT auto-cleared (founder's call): (1) 'stripe' = Stripe SDK dependency added to pyproject.toml/uv.lock (monetization scaffolding, not a live charge); (2) scripts/configure_ai_keys.py = local key-config helper, UNTRACKED (won't enter git), contains ZERO hardcoded secrets (all regex hits are prompt/validation strings). Neither is on the critical path.",
+      "closed_on_evidence": "2026-07-06 \u00b7 scanner root-caused; 2 residuals inspected & benign",
+      "residual_founder_items": [
+        "stripe SDK dep (pyproject/uv.lock) \u2014 approve/defer",
+        "configure_ai_keys.py untracked helper \u2014 no action needed"
+      ]
+    }
+  ],
+  "executed_factories": [],
+  "not_executed_factories": [
+    "HASF",
+    "HRF",
+    "HCF",
+    "HSF"
+  ],
+  "evaluation": "Derived from scheduler.load_blockers() and the observed dispatch set. No narrative is asserted without a corresponding observation."
+}

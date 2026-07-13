@@ -1,0 +1,14 @@
+{
+  "helm_fastapi": {
+    "port": 8000,
+    "status": "ACTIVE"
+  },
+  "helm_scheduler": {
+    "type": "persistent_scheduler",
+    "status": "ACTIVE"
+  },
+  "helm_supervisor": {
+    "type": "helm_supervisor",
+    "status": "ACTIVE"
+  }
+}

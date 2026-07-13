@@ -1,0 +1,17 @@
+{
+  "manifest_version": "1.0",
+  "run_timestamp": "2026-07-13T13:01:56.687994Z",
+  "factories_tested": [
+    "HASF",
+    "HRF",
+    "HCF",
+    "HSF"
+  ],
+  "cycle_results": {
+    "cycle_start": "2026-07-13T13:01:56.652750Z",
+    "cycle_end": "2026-07-13T13:01:56.653396Z",
+    "status": "IDLE",
+    "dispatched_count": 0,
+    "dispatched": []
+  }
+}

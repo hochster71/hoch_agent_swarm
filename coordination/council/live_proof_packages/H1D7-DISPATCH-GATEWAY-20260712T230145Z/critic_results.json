@@ -1,0 +1,35 @@
+[
+  {
+    "adapter": "grok",
+    "critic_verdict": "REVISE",
+    "critic_reasons": [
+      "MISSING_REQUIRED_EVIDENCE:VERDICT",
+      "MISSING_REQUIRED_EVIDENCE:RATIONALE"
+    ],
+    "status": "COMPLETED",
+    "gateway_dispatch_id": "GD-155A402EABF4"
+  },
+  {
+    "adapter": "grok",
+    "critic_verdict": "REVISE",
+    "critic_reasons": [
+      "MISSING_REQUIRED_EVIDENCE:RATIONALE"
+    ],
+    "status": "COMPLETED",
+    "gateway_dispatch_id": "GD-3DBDCC3B70A8"
+  },
+  {
+    "adapter": "grok",
+    "critic_verdict": "ACCEPT",
+    "critic_reasons": [],
+    "status": "COMPLETED",
+    "gateway_dispatch_id": "GD-CA1066E9BE75"
+  },
+  {
+    "adapter": "ollama",
+    "critic_verdict": "ACCEPT",
+    "critic_reasons": [],
+    "status": "COMPLETED",
+    "gateway_dispatch_id": "GD-871B30A479A4"
+  }
+]

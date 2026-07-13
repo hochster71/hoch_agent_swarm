@@ -1,0 +1,7 @@
+{
+  "expired_leases_detected": 1,
+  "recovered_lease_ids": [
+    "lease-stale-test"
+  ],
+  "recovery_status": "SUCCESS"
+}

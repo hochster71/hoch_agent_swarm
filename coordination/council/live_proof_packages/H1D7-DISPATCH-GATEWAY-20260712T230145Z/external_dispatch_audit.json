@@ -1,0 +1,25 @@
+{
+  "manual_copy_paste_operations": 0,
+  "external_calls": 3,
+  "total_cost_usd_estimated": 0.003916,
+  "provider_reported_cost": null,
+  "billing_source": "estimated_from_tokens_or_request",
+  "credit_balance_authoritative": false,
+  "gateway_dispatch_ids": [
+    "GD-155A402EABF4",
+    "GD-3DBDCC3B70A8",
+    "GD-CA1066E9BE75",
+    "GD-871B30A479A4"
+  ],
+  "all_results_have_gateway_id": true,
+  "direct_bypass_observed": false,
+  "adapters": [
+    "grok",
+    "ollama"
+  ],
+  "accepted_adapters": [
+    "grok",
+    "ollama"
+  ],
+  "pert_node_state": "COMPLETED"
+}

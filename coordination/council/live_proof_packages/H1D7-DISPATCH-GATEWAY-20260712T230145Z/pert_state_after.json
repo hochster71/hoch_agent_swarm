@@ -1,0 +1,21 @@
+{
+  "schema": "H1D7_PERT_STATE_v1",
+  "parent_h1d": "IN_PROGRESS",
+  "h1d7_node": "H1D.7",
+  "h1d7_state": "AUTHORITATIVE_PASS_SCOPED",
+  "state_reason": "GATEWAY_ENFORCED_GROK_OLLAMA_MULTI_ADAPTER_EVIDENCE",
+  "evidence": "live_dispatch_results.json",
+  "accepted_adapters": [
+    "grok",
+    "ollama"
+  ],
+  "manual_copy_paste_operations": 0,
+  "residual_open": [
+    "legacy_backend_model_mesh_documented_exception",
+    "H1D.10_AG_IDE",
+    "H1D.11_scheduler",
+    "H1D.12_founder_interrupt"
+  ],
+  "bound_at": "2026-07-12T23:11:18.497628Z",
+  "implementation_commit": "b603c8f8c9cb9bcb8dab5942de533be94b024621"
+}

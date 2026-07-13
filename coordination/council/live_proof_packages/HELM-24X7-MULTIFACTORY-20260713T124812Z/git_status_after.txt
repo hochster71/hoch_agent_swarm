@@ -1,0 +1,123 @@
+On branch helm/h1b-r2-remediation
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   backend/agent_executor.py
+	modified:   backend/main.py
+	modified:   backend/orchestrator/brain_query.py
+	modified:   coordination/council/relay/dispatch_ledger.jsonl
+	modified:   coordination/council/relay/gateway_dispatch_ledger.jsonl
+	modified:   coordination/goal/goal_state.json
+	modified:   data/agent_execution_ledger.jsonl
+	modified:   data/prompt_brain/agent_audit.json
+	modified:   data/prompt_brain/champion_registry.json
+	modified:   data/prompt_brain/convergence_status.json
+	modified:   data/prompt_brain/cyber_swarm_state.json
+	modified:   data/prompt_brain/demo/reviewer_feedback_log.jsonl
+	modified:   data/prompt_brain/gap_analysis.json
+	modified:   data/prompt_brain/improve_cursor.json
+	modified:   data/prompt_brain/improved_champions.jsonl
+	modified:   data/prompt_brain/model_adapter_status.json
+	modified:   data/prompt_brain/model_performance_matrix.json
+	modified:   data/prompt_brain/music/champion_registry.json
+	modified:   data/prompt_brain/music/convergence_status.json
+	modified:   data/prompt_brain/orchestrator_brief.json
+	modified:   data/prompt_brain/orchestrator_log.jsonl
+	modified:   data/prompt_brain/outreach/outreach_approval_log.jsonl
+	modified:   data/prompt_brain/prompt_repair_queue.jsonl
+	modified:   data/prompt_brain/prompt_selection_log.jsonl
+	modified:   data/prompt_brain/research/champion_registry.json
+	modified:   data/prompt_brain/research/convergence_status.json
+	modified:   data/prompt_brain/research_meta_decision.json
+	modified:   data/prompt_brain/research_meta_log.jsonl
+	modified:   data/prompt_brain/runtime_executions.jsonl
+	modified:   data/prompt_brain/self_heal_state.json
+	modified:   docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/helm-rung-1-promotion-evidence.md
+	modified:   docs/moonshot/BRAIN_GAP_ANALYSIS.md
+	modified:   frontend/data/brain_live.json
+	modified:   frontend/src/main.tsx
+	modified:   has_live_project_tracker/data/ag_daemon_heartbeat_status.json
+	modified:   has_live_project_tracker/data/ag_execution_adapter_state.json
+	modified:   has_live_project_tracker/data/ag_execution_burn_in_ledger.jsonl
+	modified:   has_live_project_tracker/data/ag_execution_burn_in_summary.json
+	modified:   has_live_project_tracker/data/ag_execution_daemon_state.json
+	modified:   has_live_project_tracker/data/ag_execution_leases.json
+	modified:   has_live_project_tracker/data/ag_execution_proof_index.json
+	modified:   has_live_project_tracker/data/ag_execution_queue_health.json
+	modified:   has_live_project_tracker/data/ag_operator_hold.json
+	modified:   has_live_project_tracker/data/brain_runtime_truth.json
+	modified:   has_live_project_tracker/data/cost_governor.json
+	modified:   has_live_project_tracker/data/factory_runtime_truth.json
+	modified:   has_live_project_tracker/data/global_verify.json
+	modified:   has_live_project_tracker/data/goal_blocker_register.json
+	modified:   has_live_project_tracker/data/gpu_pod_adapter_state.json
+	modified:   has_live_project_tracker/data/has_runtime_state.json
+	modified:   has_live_project_tracker/data/hasf_runtime_state.json
+	modified:   has_live_project_tracker/data/helm_adapter_registry.json
+	modified:   has_live_project_tracker/data/helm_runtime_state.json
+	modified:   has_live_project_tracker/data/helm_task_queue.json
+	modified:   has_live_project_tracker/data/hoch_pods_runtime_state.json
+	modified:   has_live_project_tracker/data/reasoning_graph.json
+	modified:   has_live_project_tracker/data/source_authority_manifest.json
+	modified:   hoch_pods/compute/cost_ledger.jsonl
+	modified:   scripts/ag_execution_runner.py
+	modified:   src/hoch_agent_swarm/promptbrain_manager.py
+	modified:   src/hoch_agent_swarm/promptqa_manager.py
+	modified:   tests/integration/test_no_literal_secrets.py
+	modified:   tests/prompt_brain/test_model_adapters.py
+	modified:   tests/test_h1b_founder_decision.py
+	modified:   tests/test_homemesh_spatial_graph.py
+	modified:   tests/test_model_registry.py
+	modified:   tests/test_prompt_v4.py
+	modified:   tests/test_promptbrain.py
+	modified:   tests/test_release_authorization_gate.py
+	modified:   tests/unit/test_security_endpoint_inventory.py
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	backend/mission_control/adapter_registry.py
+	backend/mission_control/ag_ide_relay.py
+	backend/mission_control/helm_supervisor.py
+	backend/mission_control/persistent_scheduler.py
+	backend/mission_control/scoped_states.py
+	coordination/council/current_state.json
+	coordination/council/factory_registry.json
+	coordination/council/frontier_authorization.json
+	coordination/council/h1c_founder_authorization.pending.json
+	coordination/council/live_proof_packages/H1D7-DISPATCH-GATEWAY-20260712T230145Z/
+	coordination/council/live_proof_packages/HELM-24X7-MOCK/
+	coordination/council/live_proof_packages/HELM-24X7-MULTIFACTORY-20260713T115902Z/
+	coordination/council/live_proof_packages/HELM-24X7-MULTIFACTORY-20260713T115903Z/
+	coordination/council/live_proof_packages/HELM-24X7-MULTIFACTORY-20260713T115916Z/
+	coordination/council/live_proof_packages/HELM-24X7-MULTIFACTORY-20260713T120154Z/
+	coordination/council/live_proof_packages/HELM-24X7-MULTIFACTORY-20260713T120302Z/
+	coordination/council/live_proof_packages/HELM-24X7-MULTIFACTORY-20260713T124809Z/
+	coordination/council/live_proof_packages/HELM-24X7-MULTIFACTORY-20260713T124812Z/
+	coordination/council/live_proof_packages/REQ-CP-TEST-EPIC-FURY-20260713T003316Z-CONTRACT/
+	coordination/council/relay/H1D-20260712T230153Z-8C7ADD.council.json
+	coordination/council/relay/H1D7-20260712T230852Z-B75DCF.council.json
+	coordination/council/relay/H1D7-20260712T230946Z-E27F69.council.json
+	data/prompt_brain/outcome_feedback_ledger.jsonl
+	data/prompt_brain/outcome_stats.json
+	docs/AGENTS.md
+	docs/evidence/council/H1C_DOORSTEP_COMMITBOUND_729b1e8e/
+	docs/evidence/council/H1C_DOORSTEP_COMMITBOUND_8f931d26/
+	docs/evidence/council/H1C_DOORSTEP_COMMITBOUND_bf154446/
+	docs/evidence/runtime/ag_execution_proof_task-gate2-stripe-env-guide.md
+	docs/evidence/runtime/ag_execution_proof_task-gate3-deploy-stage.md
+	docs/evidence/runtime/agent_exec_t-prep.json
+	docs/evidence/runtime/agent_exec_task-allowed.json
+	docs/evidence/runtime/agent_exec_task-test-001.json
+	docs/safe_file.txt
+	docs/safe_local_file.txt
+	frontend/src/components/helm/theater/
+	has_live_project_tracker/data/helm_supervisor_heartbeat.json
+	has_live_project_tracker/data/homemesh_manual_devices.json
+	has_live_project_tracker/data/property_schema.json
+	has_live_project_tracker/data/room_schema.json
+	scratch/temp.txt
+	scripts/run_helm_full_verification.py
+	scripts/run_helm_multifactory_activation.py
+	tests/e2e/support/
+
+no changes added to commit (use "git add" and/or "git commit -a")

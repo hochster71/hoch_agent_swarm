@@ -1,0 +1,63 @@
+{
+  "schema": "h1d7-dispatch-gateway-validation-v1",
+  "generated_at": "2026-07-12T23:11:18.551536+00:00",
+  "implementation_commit": "b603c8f8c9cb9bcb8dab5942de533be94b024621",
+  "gates": {
+    "outbound_inventory": {
+      "status": "PASS",
+      "path": "outbound_inventory.json"
+    },
+    "static_chokepoint_scan": {
+      "status": "PASS",
+      "exit": 0
+    },
+    "pytest_gateway_and_council": {
+      "status": "PASS",
+      "exit": 0
+    },
+    "frontend_build": {
+      "status": "PASS",
+      "exit": 0
+    },
+    "openai_direct_bypass_removed": {
+      "status": "PASS"
+    },
+    "runtime_guard_blocks_ungated_cli": {
+      "status": "PASS",
+      "proven_in": "tests/test_h1d_dispatch_gateway.py"
+    },
+    "live_grok_through_gateway": {
+      "status": "PASS"
+    },
+    "live_ollama_through_gateway": {
+      "status": "PASS"
+    },
+    "multi_adapter_pert_completed": {
+      "status": "PASS",
+      "pert_node_state": "COMPLETED",
+      "reason": "MULTI_ADAPTER_VALIDATED_EVIDENCE"
+    },
+    "manual_copy_paste_zero": {
+      "status": "PASS"
+    },
+    "spend_semantics_honest": {
+      "status": "PASS",
+      "estimated_cost": 0.003916,
+      "provider_reported_cost": null,
+      "credit_balance_authoritative": false
+    },
+    "all_live_results_gateway_bound": {
+      "status": "PASS"
+    },
+    "legacy_backend_mesh": {
+      "status": "DOCUMENTED_EXCEPTION",
+      "note": "backend/model_* paths inventoried; not on H1D council runner; pending unification"
+    }
+  },
+  "task_id": "H1D7-20260712T230946Z-E27F69",
+  "scope": "H1D.7 council_dispatch_path + prompt_brain adapters + ModelDispatchGuard",
+  "parent_h1d_status": "IN_PROGRESS",
+  "overall_status": "AUTHORITATIVE_PASS",
+  "follow_up_commit_package_shadow_fix": "dfea2d2b54c516d05be0143e38f29b849f07b8ab",
+  "h1d7_implementation_commit": "b603c8f8c9cb9bcb8dab5942de533be94b024621"
+}

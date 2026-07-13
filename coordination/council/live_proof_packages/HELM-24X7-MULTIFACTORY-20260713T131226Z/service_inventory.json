@@ -1,0 +1,17 @@
+{
+  "helm_fastapi": {
+    "port": 8000,
+    "status": "ACTIVE",
+    "evidence": "tcp connect probe 127.0.0.1:8000"
+  },
+  "helm_scheduler": {
+    "type": "persistent_scheduler",
+    "status": "ACTIVE",
+    "evidence": "pgrep -f persistent_scheduler"
+  },
+  "helm_supervisor": {
+    "type": "helm_supervisor",
+    "status": "ACTIVE",
+    "evidence": "pgrep -f helm_supervisor"
+  }
+}

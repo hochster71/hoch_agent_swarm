@@ -1,0 +1,24 @@
+{
+  "schema": "CONCURRENT_LEASE_SNAPSHOT_v1",
+  "max_simultaneous_active_leases": 2,
+  "snapshot": {
+    "sampled_at": "2026-07-13T13:44:50.553986+00:00",
+    "active_count": 2,
+    "leases": [
+      {
+        "task_id": "T-HASF-REAL-01",
+        "lease_id": "lease-894418e4",
+        "worker_id": "worker-30263-aa38",
+        "fencing_token": 1
+      },
+      {
+        "task_id": "T-HRF-REAL-01",
+        "lease_id": "lease-b005b993",
+        "worker_id": "worker-30263-1d63",
+        "fencing_token": 1
+      }
+    ]
+  },
+  "all_samples_with_2plus": 176,
+  "verdict": "CONCURRENT_LEASES_PROVEN"
+}

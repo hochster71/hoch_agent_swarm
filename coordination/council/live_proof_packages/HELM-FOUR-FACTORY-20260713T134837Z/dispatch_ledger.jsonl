@@ -1,0 +1,4 @@
+{"ts": "2026-07-13T13:49:49.144112Z", "task_id": "T-RETRY-01", "envelope_hash": "ecbd9286036ee129894f76becaf8bd0afd64b14d2873aefd7ddc04097217456d", "status": "COMPLETED", "started_at": "2026-07-13T13:48:37.503950Z", "exit_code": 0}
+{"ts": "2026-07-13T13:49:53.215678Z", "task_id": "T-HSF-REAL-01", "envelope_hash": "9b0b7de591b7c641f361ee15694ca9f6a6518869a2114f414d5a85fabbce6fb7", "status": "COMPLETED", "started_at": "2026-07-13T13:48:37.498719Z", "exit_code": 0}
+{"ts": "2026-07-13T13:50:08.176867Z", "task_id": "T-HCF-REAL-01", "envelope_hash": "e4dcdd52b3d89b3fa0829a94eb5e3aabfc53a09cbe399554615fb1220e23aacc", "status": "COMPLETED", "started_at": "2026-07-13T13:48:37.495568Z", "exit_code": 0}
+{"ts": "2026-07-13T13:50:24.761059Z", "task_id": "T-HRF-REAL-01", "envelope_hash": "05f493d9b377bad42e5c125258024ef6968ce9631ba2689874193f43e5bac563", "status": "COMPLETED", "started_at": "2026-07-13T13:48:37.501387Z", "exit_code": 0}
