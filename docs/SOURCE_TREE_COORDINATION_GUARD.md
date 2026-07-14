@@ -78,6 +78,35 @@ Detection at the commit boundary needs nothing; prevention needs the agent to ta
 > (different binary, more agents), the guard doesn't care — any string works — but keeping the ids
 > consistent is what makes the conflict journal readable.
 
+## Active prevention — `guarded_edit` (upgrade from detect to prevent)
+
+Detection (the commit hook) records a collision after it happened. **Prevention** stops it: an agent
+takes the lease *before* editing, so a second agent is turned away instead of warned later. The
+`guarded_edit` facade makes this one wrapper for any agent.
+
+**Python agent:**
+```python
+from backend.mission_control.guarded_edit import guarded_edit
+with guarded_edit("frontend_live/command.html", holder="claude") as g:
+    if not g.ok:
+        ...                      # held by g.held_by — back off
+    else:
+        ...                      # edit; lease auto-released on exit, even if the edit raises
+```
+
+**Shell-driven agent (Grok / ChatGPT CLI / AG IDE)** — wrap the edit command atomically:
+```bash
+python -m backend.mission_control.guarded_edit run frontend_live/command.html \
+    --holder grok -- <your-edit-command>
+```
+If the file is held by another agent, the command is **not executed** and it exits `3`. Verified live:
+`grok` edits successfully; while `grok` holds it, `claude`'s wrapped edit is refused and the file is
+untouched — the clobber never happens. Also available: `acquire` / `release` / `status` subcommands for
+agents that hold a lease across several steps.
+
+Detection needs nothing (the hook covers every agent). Prevention needs the agent to route its edits
+through `guarded_edit` — start with the highest-contention files (the shared UI + API).
+
 ## What it deliberately does NOT claim
 
 - It does not prevent a non-cooperating process from overwriting a file mid-edit. It **detects** that
