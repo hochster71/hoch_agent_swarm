@@ -1,0 +1,23 @@
+{
+  "task_id": "SOAK-HASF-2",
+  "lease_id": "lease-bf21ec0a",
+  "worker_id": "worker-1182-75de",
+  "holder": "persistent_scheduler",
+  "fencing_token": 15,
+  "acquired_at": "2026-07-14T14:08:26.161242+00:00",
+  "expires_at": "2026-07-14T14:18:26.161242+00:00",
+  "heartbeat_at": "2026-07-14T14:08:26.176035+00:00",
+  "status": "RELEASED",
+  "authority_class": "AUTONOMOUS",
+  "authority_decision_id": "AUTH-0f232a5b30faf424",
+  "authority_status": "ACTIVE",
+  "decision_digest": "a6a085e4b272d0d96faab3e7fe1da567175452dd65cef464dbb544b86ef59472",
+  "dispatch_digest": "7db5650727c766d088b17e6ecb567e3cd9e8aa2616482e5c563bc52dbab6be62",
+  "scheduler_instance_id": "sched-f481712b",
+  "task_digest": "271f4d0d82d8b035f1460e356e34a85af129cea03010ca450e86f63491d4572e",
+  "decision_id": "DEC-88cca134589cdb14",
+  "created_at": "2026-07-14T14:08:26Z",
+  "lease_status": "RUNNING",
+  "release_reason": "PRE_CLEAN_PHASE_A",
+  "released_at": "2026-07-14T14:09:16Z"
+}

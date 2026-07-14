@@ -466,9 +466,11 @@ def api_v1_authority():
 def api_v1_jspace_health():
     """Latest HJOS meta-health. Read-only; never promotes."""
     import time
+    from backend.jspace.burn_in import BurnInTracker
     from backend.jspace.ledger import JSpaceLedger
     led = JSpaceLedger()
-    health = led.latest_health()
+    health = led.latest_health() or {}
+    burn = BurnInTracker(led.root).load()
     path = led.health_path
     freshness = float(time.time() - path.stat().st_mtime) if path.exists() else 0.0
     if not health:
@@ -478,20 +480,21 @@ def api_v1_jspace_health():
             observed_at=now(),
             freshness_seconds=freshness,
             data={"state": UNKNOWN, "reason": "no HJOS cycle has written health yet",
-                  "promotion_authority": "NONE"},
+                  "promotion_authority": "NONE", "burn_in": burn},
         ))
+    data = {**health, "burn_in": burn}
     return JSONResponse(_truth_response(
         truth_class="HJOS_HEALTH_TRUTH",
         source="coordination/jspace/health.json",
         observed_at=now(),
         freshness_seconds=freshness,
-        data=health,
+        data=data,
     ))
 
 
 @app.post("/api/v1/helm/jspace/cycle")
 def api_v1_jspace_cycle():
-    """Run one HJOS observation cycle (read-only). Creates assessments/alerts only."""
+    """Run one HJOS observation cycle. Creates assessments/alerts; quarantine only post burn-in."""
     from backend.jspace.runner import run_hjos_cycle
     try:
         result = run_hjos_cycle()
@@ -510,6 +513,21 @@ def api_v1_jspace_cycle():
             freshness_seconds=0.0,
             data={"state": UNKNOWN, "reason": str(e), "promotion_authority": "NONE"},
         ))
+
+
+@app.get("/api/v1/helm/jspace/burn-in")
+def api_v1_jspace_burn_in():
+    """HJOS burn-in status for auto-quarantine gating."""
+    from backend.jspace.burn_in import BurnInTracker
+    from backend.jspace.ledger import JSpaceLedger
+    st = BurnInTracker(JSpaceLedger().root).load()
+    return JSONResponse(_truth_response(
+        truth_class="HJOS_BURN_IN_TRUTH",
+        source="coordination/jspace/burn_in.json",
+        observed_at=now(),
+        freshness_seconds=0.0,
+        data=st,
+    ))
 
 
 @app.get("/api/v1/helm/integrity")

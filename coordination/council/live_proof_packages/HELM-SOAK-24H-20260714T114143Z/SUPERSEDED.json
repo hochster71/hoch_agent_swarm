@@ -1,0 +1,13 @@
+{
+  "schema": "SOAK_SEAL_SUPERSESSION_v1",
+  "package": "HELM-SOAK-24H-20260714T114143Z",
+  "superseded_at": "2026-07-14T14:06:34Z",
+  "superseded_by_commit": "c4617841",
+  "verdict": "SUPERSEDED_MIXED_CODE",
+  "prior_verdict_void": true,
+  "reason": "Phase C. Started 11:41:43Z from the PRE-FIX commit; release_lease, persistent_scheduler and the sealer were patched underneath the running process mid-flight. Evidence spans two different code versions and cannot be attributed to either. Killed deliberately rather than allowed to produce a 24h seal that would have to be discarded.",
+  "authoritative_pass": "BLOCKED",
+  "24_7_status": "NOT_PROVEN",
+  "replaces": "any prior seal_verdict.json / validation.json PASS in this package",
+  "note": "Evidence retained for chronology. NOT deleted. NOT retrofitted. Must not be cited as proof."
+}

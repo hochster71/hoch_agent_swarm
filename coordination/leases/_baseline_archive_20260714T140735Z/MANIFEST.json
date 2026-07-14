@@ -1,0 +1,138 @@
+{
+  "schema": "LEASE_BASELINE_RECONCILIATION_v1",
+  "archived_at": "2026-07-14T14:07:35Z",
+  "reason": "Clean baseline for Phase A rerun from corrected commit.",
+  "archived_verbatim": true,
+  "note": "Bytes preserved EXACTLY as found; no status rewritten (unlike the earlier HJOS quarantine).",
+  "count": 9,
+  "contradictions": 2,
+  "duplicate_task_ids": {
+    "SOAK-HCF-142": [
+      "SOAK-HCF-142.fdcf3fb5aaa50b5a.lock",
+      "SOAK-HCF-142.lock"
+    ],
+    "SOAK-HRF-142": [
+      "SOAK-HRF-142.8f510ad440681c5d.lock",
+      "SOAK-HRF-142.lock"
+    ]
+  },
+  "locks": [
+    {
+      "lock_file": "SOAK-HASF-142.df1fa547fdd32a90.lock",
+      "task_id": "SOAK-HASF-142",
+      "lease_id": "lease-a5ee4d56",
+      "sha256": "11ffec1aba41a6c1f845d487caac724572fba0c751e68c7bcd6f7fa3e4360c11",
+      "filesystem_status": "ACTIVE",
+      "ledger_last_status": "RELEASED",
+      "contradiction": true,
+      "scheduler_instance_id": "sched-f5abadcf",
+      "acquired_at": "2026-07-14T14:06:21.083533+00:00",
+      "expires_at": "2026-07-14T14:16:21.083533+00:00",
+      "classification": "STRANDED_LEDGER_CONTRADICTION"
+    },
+    {
+      "lock_file": "SOAK-HCF-142.fdcf3fb5aaa50b5a.lock",
+      "task_id": "SOAK-HCF-142",
+      "lease_id": "lease-bde2c37a",
+      "sha256": "5092f8c55a716d569ad2dddb052e7044da36713dd2938d339d2e76139141b693",
+      "filesystem_status": "ACTIVE",
+      "ledger_last_status": "DISPATCH_START",
+      "contradiction": false,
+      "scheduler_instance_id": "sched-f5abadcf",
+      "acquired_at": "2026-07-14T14:06:21.085708+00:00",
+      "expires_at": "2026-07-14T14:16:21.085708+00:00",
+      "classification": "RESIDUAL_FROM_KILLED_PHASE_C"
+    },
+    {
+      "lock_file": "SOAK-HCF-142.lock",
+      "task_id": "SOAK-HCF-142",
+      "lease_id": "lease-62392384",
+      "sha256": "52a656bed5ceeecda2e5158524e9aa64bc37764905f9a7f466fe94b573795d06",
+      "filesystem_status": "ACTIVE",
+      "ledger_last_status": "DISPATCH_START",
+      "contradiction": false,
+      "scheduler_instance_id": null,
+      "acquired_at": "2026-07-14T14:06:57.454190+00:00",
+      "expires_at": "2026-07-14T14:16:57.454190+00:00",
+      "classification": "RESIDUAL_FROM_KILLED_PHASE_C"
+    },
+    {
+      "lock_file": "SOAK-HRF-142.8f510ad440681c5d.lock",
+      "task_id": "SOAK-HRF-142",
+      "lease_id": "lease-b44f8edb",
+      "sha256": "f291ac3fbe44091a396201c4fa6938c32b45cd6306f8908fc4de60b00299f75e",
+      "filesystem_status": "ACTIVE",
+      "ledger_last_status": "DISPATCH_START",
+      "contradiction": false,
+      "scheduler_instance_id": "sched-f5abadcf",
+      "acquired_at": "2026-07-14T14:06:21.082725+00:00",
+      "expires_at": "2026-07-14T14:16:21.082725+00:00",
+      "classification": "RESIDUAL_FROM_KILLED_PHASE_C"
+    },
+    {
+      "lock_file": "SOAK-HRF-142.lock",
+      "task_id": "SOAK-HRF-142",
+      "lease_id": "lease-7be41621",
+      "sha256": "104bd3c3232c0de7a6a2ccbc0ddfc772c0903a0c77c5bba696dba1221207fccc",
+      "filesystem_status": "ACTIVE",
+      "ledger_last_status": "DISPATCH_START",
+      "contradiction": false,
+      "scheduler_instance_id": null,
+      "acquired_at": "2026-07-14T14:06:57.448342+00:00",
+      "expires_at": "2026-07-14T14:16:57.448342+00:00",
+      "classification": "RESIDUAL_FROM_KILLED_PHASE_C"
+    },
+    {
+      "lock_file": "SOAK-HRF-98.lock",
+      "task_id": "SOAK-HRF-98",
+      "lease_id": "lease-7207526b",
+      "sha256": "fb2679f4f1bc0b67061ab53a76da6868b65780421291e59ba90190eb3518a040",
+      "filesystem_status": "ACTIVE",
+      "ledger_last_status": "DISPATCH_START",
+      "contradiction": false,
+      "scheduler_instance_id": null,
+      "acquired_at": "2026-07-14T13:24:27.400446+00:00",
+      "expires_at": "2026-07-14T13:34:27.400446+00:00",
+      "classification": "RESIDUAL_FROM_KILLED_PHASE_C"
+    },
+    {
+      "lock_file": "SOAK-HSF-142.2ea10c9f0e53d906.lock",
+      "task_id": "SOAK-HSF-142",
+      "lease_id": "lease-70e612bf",
+      "sha256": "40608804b23e5259de929a657ed4b7593001470f0f929c07c33179593a283b39",
+      "filesystem_status": "ACTIVE",
+      "ledger_last_status": "RELEASED",
+      "contradiction": true,
+      "scheduler_instance_id": "sched-f5abadcf",
+      "acquired_at": "2026-07-14T14:06:21.085730+00:00",
+      "expires_at": "2026-07-14T14:16:21.085730+00:00",
+      "classification": "STRANDED_LEDGER_CONTRADICTION"
+    },
+    {
+      "lock_file": "SOAK-HSF-85.lock",
+      "task_id": "SOAK-HSF-85",
+      "lease_id": "lease-57c49f4e",
+      "sha256": "8badb3e52de6f68238a79b5b00ff4f37c3ce4edee0c7e4c4ff2ee15224b02726",
+      "filesystem_status": "ACTIVE",
+      "ledger_last_status": "DISPATCH_START",
+      "contradiction": false,
+      "scheduler_instance_id": null,
+      "acquired_at": "2026-07-14T13:12:06.330635+00:00",
+      "expires_at": "2026-07-14T13:22:06.330635+00:00",
+      "classification": "RESIDUAL_FROM_KILLED_PHASE_C"
+    },
+    {
+      "lock_file": "_fencing_tokens.lock",
+      "task_id": "_fencing_tokens",
+      "lease_id": null,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "filesystem_status": "UNREADABLE",
+      "ledger_last_status": "ABSENT_FROM_LEDGER",
+      "contradiction": false,
+      "scheduler_instance_id": null,
+      "acquired_at": null,
+      "expires_at": null,
+      "classification": "RESIDUAL_FROM_KILLED_PHASE_C"
+    }
+  ]
+}

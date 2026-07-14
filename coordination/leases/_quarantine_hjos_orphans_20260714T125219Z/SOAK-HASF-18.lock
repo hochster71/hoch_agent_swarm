@@ -1,0 +1,14 @@
+{
+  "task_id": "SOAK-HASF-18",
+  "lease_id": "lease-74dc57f0",
+  "worker_id": "worker-29368-1b04",
+  "holder": "persistent_scheduler",
+  "fencing_token": 5,
+  "acquired_at": "2026-07-14T12:00:54.701315+00:00",
+  "expires_at": "2026-07-14T12:10:54.701315+00:00",
+  "heartbeat_at": "2026-07-14T12:00:54.701315+00:00",
+  "status": "RELEASED",
+  "released_at": "2026-07-14T12:52:19Z",
+  "release_reason": "HJOS_ORPHAN_EXPIRED_QUARANTINE",
+  "do_not_retrofit_authority": true
+}

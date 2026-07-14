@@ -97,6 +97,48 @@ class PersistentScheduler:
         with open(self.lease_log, "a", encoding="utf-8") as f:
             f.write(json.dumps(entry) + "\n")
 
+    def _release_lease_logged(
+        self,
+        task_id: str,
+        lease_id: str,
+        *,
+        reason: str = "",
+        status_if_ok: str = "RELEASED",
+    ) -> bool:
+        """Release a lease and record what ACTUALLY happened.
+
+        Invariant: never write status=RELEASED unless lock file removal succeeded.
+        If the lease is already gone (prior successful release), return True without
+        inventing a second RELEASED row.
+        """
+        still = self.lease_manager.read_lease(task_id)
+        if not still:
+            return True
+        if still.get("lease_id") != lease_id:
+            self.log_lease({
+                "ts": get_utc_now_str(),
+                "task_id": task_id,
+                "lease_id": lease_id,
+                "status": "RELEASE_FAILED",
+                "lock_file_removed": False,
+                "detail": "lease_id_mismatch_or_foreign_holder",
+                "reason": reason or None,
+            })
+            logger.error(f"{task_id}: LEASE RELEASE FAILED — lease_id mismatch")
+            return False
+        ok = bool(self.lease_manager.release_lease(task_id, lease_id, status=status_if_ok))
+        self.log_lease({
+            "ts": get_utc_now_str(),
+            "task_id": task_id,
+            "lease_id": lease_id,
+            "status": status_if_ok if ok else "RELEASE_FAILED",
+            "lock_file_removed": ok,
+            "reason": reason or None,
+        })
+        if not ok:
+            logger.error(f"{task_id}: LEASE RELEASE FAILED — lock file may be stranded")
+        return ok
+
     def log_dispatch(self, entry: Dict[str, Any]):
         with open(self.dispatch_log, "a", encoding="utf-8") as f:
             f.write(json.dumps(entry) + "\n")
@@ -364,7 +406,8 @@ class PersistentScheduler:
                 "code": str(code), "error": str(_be)[:200],
             })
             try:
-                self.lease_manager.release_lease(task_id, lease["lease_id"], status="RELEASED")
+                self._release_lease_logged(
+                    task_id, lease["lease_id"], reason="authority_binding_failed")
             except Exception:
                 pass
             return False
@@ -392,10 +435,13 @@ class PersistentScheduler:
                             "authority_decision_id": binding.get("authority_decision_id")})
             return False
         finally:
+            # Honest release: only logs RELEASED if lock file actually removed.
+            # No-op (no false ledger row) if body already released successfully.
             try:
-                self.lease_manager.release_lease(task_id, lease["lease_id"], status="RELEASED")
-            except Exception:
-                pass
+                self._release_lease_logged(
+                    task_id, lease["lease_id"], reason="execute_finally")
+            except Exception as _rel_e:
+                logger.error(f"{task_id}: release in finally raised: {_rel_e}")
 
     def _execute_task_body(self, task, task_id, pod, lease, binding, envelope_hash) -> bool:
         from backend.truth.authority_binding import (
@@ -422,7 +468,8 @@ class PersistentScheduler:
                             "lease_id": lease["lease_id"], "status": be.code,
                             "detail": be.detail,
                             "authority_decision_id": binding.get("authority_decision_id")})
-            self.lease_manager.release_lease(task_id, lease["lease_id"], status="RELEASED")
+            self._release_lease_logged(
+                task_id, lease["lease_id"], reason=f"binding_error:{be.code}")
             return False
 
         # 2. Envelope & signature (identity fields must match pre-mint envelope_hash)
@@ -446,7 +493,8 @@ class PersistentScheduler:
             self.log_lease({"ts": get_utc_now_str(), "task_id": task_id,
                             "status": "AUTHORITY_BINDING_MISMATCH",
                             "detail": "envelope mutated after classification"})
-            self.lease_manager.release_lease(task_id, lease["lease_id"], status="RELEASED")
+            self._release_lease_logged(
+                task_id, lease["lease_id"], reason="envelope_mutated")
             return False
 
         # 3. Dispatch through CouncilDispatchGateway
@@ -494,7 +542,8 @@ class PersistentScheduler:
             self.log_dispatch({"ts": get_utc_now_str(), "task_id": task_id,
                                "status": "BLOCKED_SPEND", "reason": gate.get("reason"),
                                "detail": gate})
-            self.lease_manager.release_lease(task_id, lease["lease_id"], status="RELEASED")
+            self._release_lease_logged(
+                task_id, lease["lease_id"], reason=f"blocked_spend:{gate.get('reason')}")
             logger.warning(f"{task_id}: BLOCKED_SPEND {gate.get('reason')}")
             return False
         
@@ -538,7 +587,8 @@ class PersistentScheduler:
                 "dispatch_digest": result_dispatch_digest,
                 "expected_dispatch_digest": binding["dispatch_digest"],
             })
-            self.lease_manager.release_lease(task_id, lease["lease_id"], status="RELEASED")
+            self._release_lease_logged(
+                task_id, lease["lease_id"], reason="dispatch_binding_mismatch")
             return False
 
         self.log_dispatch({
@@ -618,7 +668,8 @@ class PersistentScheduler:
                 "verdict": "FAIL", "code": be.code, "detail": be.detail,
                 "authority_decision_id": binding.get("authority_decision_id"),
             })
-            self.lease_manager.release_lease(task_id, lease["lease_id"], status="RELEASED")
+            self._release_lease_logged(
+                task_id, lease["lease_id"], reason=f"artifact_authority:{be.code}")
             return False
 
         # Validator cannot COMPLETE without the same authority binding
@@ -640,7 +691,8 @@ class PersistentScheduler:
                 "detail": "validator result authority chain incomplete or mismatched",
                 "authority_decision_id": binding.get("authority_decision_id"),
             })
-            self.lease_manager.release_lease(task_id, lease["lease_id"], status="RELEASED")
+            self._release_lease_logged(
+                task_id, lease["lease_id"], reason="validator_authority_incomplete")
             return False
 
         # Recompute pass after authority checks
@@ -725,19 +777,9 @@ class PersistentScheduler:
             conn.close()
             
         # 5. Release lease -- AND RECORD WHAT ACTUALLY HAPPENED.
-        # This used to discard release_lease()'s return value and log "RELEASED"
-        # unconditionally. The ledger therefore recorded success even when the lock file was
-        # never removed, and every "0 leaked leases" metric read from it was meaningless.
-        _released = self.lease_manager.release_lease(task_id, lease["lease_id"], status="RELEASED")
-        self.log_lease({
-            "ts": get_utc_now_str(),
-            "task_id": task_id,
-            "lease_id": lease["lease_id"],
-            "status": "RELEASED" if _released else "RELEASE_FAILED",
-            "lock_file_removed": bool(_released),
-        })
-        if not _released:
-            logger.error(f"{task_id}: LEASE RELEASE FAILED — lock file may be stranded")
+        # Never write RELEASED unless the lock file was actually removed.
+        self._release_lease_logged(
+            task_id, lease["lease_id"], reason="terminal_path")
         
         return passed
 

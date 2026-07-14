@@ -121,6 +121,22 @@ def run_hjos_cycle(
                 a.cycle_id = cycle_id
                 charter.assert_read_only(state_mutated=a.state_mutated)
                 ledger.append_assessment(a)
+                # Immutable incident history: adverse findings never self-clear.
+                if a.assessment.value in ("CONTRADICTED", "BLOCKED", "STALE"):
+                    try:
+                        from backend.jspace.incidents import IncidentLog
+                        IncidentLog(ledger.root / "incidents.jsonl").open_incident(
+                            subject=a.subject,
+                            assessment=a.assessment.value,
+                            observer=a.observer,
+                            cycle_id=cycle_id,
+                            detail=a.detail,
+                            recommended_action=a.recommended_action,
+                            evidence=list(a.evidence),
+                            observation_id=a.observation_id,
+                        )
+                    except Exception:
+                        pass
             for al in res.alerts:
                 al.cycle_id = cycle_id
                 ledger.append_alert(al)

@@ -1,0 +1,11 @@
+{
+  "task_id": "SOAK-HCF-354",
+  "lease_id": "lease-042390d3",
+  "worker_id": "worker-29368-1fac",
+  "holder": "persistent_scheduler",
+  "fencing_token": 2,
+  "acquired_at": "2026-07-14T07:51:42.917250+00:00",
+  "expires_at": "2026-07-14T08:01:42.917250+00:00",
+  "heartbeat_at": "2026-07-14T07:51:42.917250+00:00",
+  "status": "ACTIVE"
+}

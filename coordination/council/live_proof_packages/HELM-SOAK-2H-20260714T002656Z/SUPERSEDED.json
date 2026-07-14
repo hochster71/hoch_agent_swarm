@@ -1,0 +1,14 @@
+{
+  "verdict": "SOAK_PHASE_A_SUPERSEDED",
+  "prior_verdict": "SOAK_PHASE_A_PASS",
+  "supersession_code": "FALSE_RELEASE_LEDGER_INSTRUMENT",
+  "may_be_cited_as_evidence": false,
+  "may_be_cited_for_promotion": false,
+  "reason": "Instrument defect: release_lease() return value discarded; ledger could record RELEASED while lock files remained ACTIVE. Zero-leak claims from these packages are not trustworthy. Superseded \u2014 do not cite as promotion evidence. Remediation: PersistentScheduler._release_lease_logged (RELEASED only if lock_file_removed=true). Clean Phase A\u2192B\u2192C required from fixed commit.",
+  "superseded_at": "2026-07-14T14:08:00Z",
+  "required_action": "CLEAN_RERUN_FROM_FIXED_COMMIT",
+  "fixed_instrument": "backend/mission_control/persistent_scheduler.py::_release_lease_logged",
+  "canonical_wall": "http://10.0.0.10:8770/pert",
+  "24_7_status": "NOT PROVEN",
+  "authoritative_pass": "BLOCKED"
+}
