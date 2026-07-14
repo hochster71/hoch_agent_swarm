@@ -1,0 +1,47 @@
+{
+  "schema": "ABORTED_RUN_RESIDUE_v1",
+  "count": 5,
+  "note": "Locks left by two deliberately-aborted Phase A launches (uncommitted code, then contaminated baseline). Archived verbatim.",
+  "locks": [
+    {
+      "lock_file": "SOAK-HASF-2.2eacb48b10f2f325.lock",
+      "task_id": "SOAK-HASF-2",
+      "sha256": "45087a376d14cefd54f7040ea974a7b5bb28678ee62cd5588450058de189334d",
+      "status": "ACTIVE",
+      "acquired_at": "2026-07-14T14:10:40.361361+00:00",
+      "origin": "claude_aborted_phaseA_run_killed_at_22s_and_1min"
+    },
+    {
+      "lock_file": "SOAK-HCF-1.d0cbe30e7475cc26.lock",
+      "task_id": "SOAK-HCF-1",
+      "sha256": "feec8ab12094c1fda9053694f174526f871003b07118f877aaf00eef6dd31d68",
+      "status": "ACTIVE",
+      "acquired_at": "2026-07-14T14:10:33.985824+00:00",
+      "origin": "claude_aborted_phaseA_run_killed_at_22s_and_1min"
+    },
+    {
+      "lock_file": "SOAK-HRF-1.6a713419e349a40d.lock",
+      "task_id": "SOAK-HRF-1",
+      "sha256": "0afe61a4e280c894a497984450581f6b40e4e7d1339e8e4184c70bd8860075db",
+      "status": "ACTIVE",
+      "acquired_at": "2026-07-14T14:10:33.985423+00:00",
+      "origin": "claude_aborted_phaseA_run_killed_at_22s_and_1min"
+    },
+    {
+      "lock_file": "SOAK-HSF-1.130fa98c8068d35b.lock",
+      "task_id": "SOAK-HSF-1",
+      "sha256": "98e6b26eabc771f3bdaa9e5cdc1cabe5b1c7be3ce5252854fc0ff52c7db1a99f",
+      "status": "ACTIVE",
+      "acquired_at": "2026-07-14T14:10:33.985207+00:00",
+      "origin": "claude_aborted_phaseA_run_killed_at_22s_and_1min"
+    },
+    {
+      "lock_file": "_fencing_tokens.lock",
+      "task_id": null,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": null,
+      "acquired_at": null,
+      "origin": "claude_aborted_phaseA_run_killed_at_22s_and_1min"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "task_id": "SOAK-HSF-1",
+  "lease_id": "lease-80a9b582",
+  "worker_id": "worker-4708-8bd9",
+  "holder": "persistent_scheduler",
+  "fencing_token": 13,
+  "acquired_at": "2026-07-14T14:10:33.985207+00:00",
+  "expires_at": "2026-07-14T14:20:33.985207+00:00",
+  "heartbeat_at": "2026-07-14T14:10:34.012442+00:00",
+  "status": "ACTIVE",
+  "authority_class": "AUTONOMOUS",
+  "authority_decision_id": "AUTH-21a1f59b9a3a5a96",
+  "authority_status": "ACTIVE",
+  "decision_digest": "391fee2e676dc2398e67f7d3afc7bf47a68e0a193046e1747eecbfee547af205",
+  "dispatch_digest": "156f75cfc7c082e65389ff22d1cf5712c2b11b675caf8fed493ea91aedcba702",
+  "scheduler_instance_id": "sched-9f675f37",
+  "task_digest": "367205faa2736ed024585ba99277c85e9f751fa5296ed485bbfeaccecaedcbc5",
+  "decision_id": "DEC-cbe8d24b2ba58f48",
+  "created_at": "2026-07-14T14:10:33Z",
+  "lease_status": "RUNNING"
+}

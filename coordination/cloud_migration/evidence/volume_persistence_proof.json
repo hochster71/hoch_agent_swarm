@@ -1,0 +1,43 @@
+{
+  "schema": "HELM_VOLUME_PERSISTENCE_PROOF_v1",
+  "work_package": "J",
+  "proven_at": "2026-07-14T14:19:15Z",
+  "host": "hoch-relay-001 (50.116.41.183)",
+  "verdict": "PASS",
+  "CRITICAL_NEAR_MISS": {
+    "pert_said": "CLOUD VOLUME: ATTACHED / NOT YET MOUNTED; work package J = FORMAT APPROVED",
+    "reality": "/dev/sdc was ALREADY ext4-formatted, ALREADY mounted at /var/lib/helm, holding 31GB",
+    "consequence_if_executed": "mkfs on /dev/sdc would have DESTROYED 31GB (19G containerd + 13G docker + postgres)",
+    "why_it_did_not_happen": "pre-format identity guard inspected the device read-only before any write",
+    "lesson": "'FORMAT APPROVED' was granted against a stale picture of the world. Approval authorizes an action, it does not verify the precondition. The guard must run anyway."
+  },
+  "persistence_proof": {
+    "method": "stop docker/containerd -> real umount -> mount from /etc/fstab (no device arg) -> hash compare",
+    "canary_sha_before": "73fb470d2378b91b92bb7033bd0f2dd4bc8af2a50efc113950a2a141815a51b0",
+    "canary_sha_after": "73fb470d2378b91b92bb7033bd0f2dd4bc8af2a50efc113950a2a141815a51b0",
+    "unmount": "OK",
+    "bare_dir_entries_while_unmounted": 0,
+    "bare_dir_significance": "0 entries proves the mount was real, not a coincidental directory",
+    "remount_from_fstab": "OK",
+    "docker_recovered": "active, 9 containers",
+    "du_delta_31G_to_22G": "EXPLAINED (not data loss): first du ran with docker up and counted overlayfs mounts; second ran with docker stopped. Canary hash identical proves integrity. Flagged, not waved off."
+  },
+  "fstab_entry": "UUID=4d457355-6801-4767-a30a-036159309660 /var/lib/helm ext4 defaults,noatime,nofail 0 2",
+  "nofail": true,
+  "first_false_green_caught": "My initial remount test reported PASS while the umount had actually FAILED (target busy) \u2014 the hashes matched only because the volume was never unmounted. Vacuous green. Re-run with captured evidence.",
+  "split_brain_assessment": {
+    "relay_runs": "helm-api-mirror (uvicorn helm_live_api), prometheus, postgres, redis, grafana, ollama, backup-agent",
+    "relay_scheduler": "NONE \u2014 no soak_runner, no persistent_scheduler",
+    "relay_authority_pointer": "ABSENT",
+    "relay_runtime_evidence_jspace_dirs": "EMPTY (0 files)",
+    "enabled_systemd_units_for_helm": "NONE (a reboot will not start a competing scheduler)",
+    "port_8770": "bound 0.0.0.0 via docker-proxy BUT ufw active; external probe from Mac -> HTTP 000 (unreachable)",
+    "verdict": "NO SPLIT-BRAIN. Relay is a passive mirror with no authority and no scheduler."
+  },
+  "remaining_for_K_cutover": [
+    "migrate authoritative runtime state onto /var/lib/helm",
+    "install single authority pointer on relay",
+    "prove HELM runs with MacBook OFF",
+    "rollback proof"
+  ]
+}
