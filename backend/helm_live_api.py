@@ -869,6 +869,113 @@ def api_v1_chain():
         data={"state":state,"reason":reason,"total_rows":len(rows),"blocks":blocks}))
 
 
+@app.get("/api/v1/helm/agents")
+def api_v1_agents():
+    """Agent performance & ACCOUNTABILITY, aggregated ONLY by dimensions the ledger actually
+    attributes: factory, validator, adapter, scheduler. Fail-closed:
+      - no package -> UNKNOWN (never an empty-but-green view)
+      - an adapter/factory with no runs is reported as such, never drawn as a zero-loser
+      - cost is reported with its measured state (OBSERVED/$0.00), never blanked
+    Every number here is derived from result_envelopes + verification_ledger, both hash-chained.
+    Worker_id is deliberately NOT surfaced as a leaderboard: it is ephemeral (one per task), so a
+    per-worker ranking would be fabricated continuity. Accountability is per accountable dimension.
+    """
+    import time, statistics
+    from collections import Counter, defaultdict
+    from datetime import datetime
+    pkg = _newest_soak_pkg()
+    daemon = (pkg / "daemon") if pkg else None
+    env_p = daemon / "result_envelopes.jsonl" if daemon else None
+    ver_p = daemon / "verification_ledger.jsonl" if daemon else None
+    if not (env_p and env_p.exists() and ver_p and ver_p.exists()):
+        return JSONResponse(_truth_response(truth_class="HELM_AGENT_TRUTH", source="none",
+            observed_at=now(), freshness_seconds=None,
+            data={"state": "UNKNOWN", "reason": "no attributed evidence package yet"}))
+
+    def _rows(p):
+        return [json.loads(l) for l in p.read_text().splitlines() if l.strip()]
+    env = _rows(env_p); ver = _rows(ver_p)
+
+    def _pt(s):
+        try: return datetime.fromisoformat(str(s).replace("Z", "+00:00"))
+        except Exception: return None
+
+    # factory x verdict matrix + the specific failing checks (the accountability core)
+    fac = defaultdict(lambda: {"pass": 0, "fail": 0, "failing_checks": Counter()})
+    for r in ver:
+        f = r.get("factory") or "?"
+        if r.get("verdict") == "PASS": fac[f]["pass"] += 1
+        else:
+            fac[f]["fail"] += 1
+            for c in (r.get("failed_checks") or []):
+                name = c.get("check") if isinstance(c, dict) else str(c)
+                fac[f]["failing_checks"][name] += 1
+    matrix = [{"factory": f, "pass": d["pass"], "fail": d["fail"],
+               "validator": next((v.get("validator") for v in ver if v.get("factory") == f), None),
+               "failing_checks": dict(d["failing_checks"])}
+              for f, d in sorted(fac.items())]
+
+    # latency distribution per factory + slow tail (with sha256, so a slow task is traceable)
+    lat_by = defaultdict(list); tail = []
+    for r in env:
+        a, b = _pt(r.get("started_at")), _pt(r.get("completed_at"))
+        if a and b:
+            s = (b - a).total_seconds(); lat_by[r.get("factory") or "?"].append(s)
+            tail.append({"task": r.get("task_id"), "factory": r.get("factory"),
+                         "seconds": round(s, 1), "sha256": str(r.get("artifact_sha256") or "")[:12]})
+    def _pct(xs, q):
+        if not xs: return None
+        xs = sorted(xs); k = max(0, min(len(xs) - 1, int(round(q * (len(xs) - 1))))); return round(xs[k], 1)
+    latency = [{"factory": f, "n": len(xs), "p50": _pct(xs, .5), "p95": _pct(xs, .95),
+                "max": round(max(xs), 1)} for f, xs in sorted(lat_by.items())]
+    slow_tail = sorted(tail, key=lambda t: t["seconds"], reverse=True)[:6]
+
+    # adapter panel — per adapter: runs, pass-rate, latency, cost, throughput
+    adp = defaultdict(lambda: {"runs": 0, "pass": 0, "cost_usd": 0.0, "cost_state": set(),
+                               "lat": [], "out_chars": []})
+    vv = {v.get("task_id"): v.get("verdict") for v in ver}
+    for r in env:
+        a = r.get("adapter") or "?"; d = adp[a]; d["runs"] += 1
+        if vv.get(r.get("task_id")) == "PASS": d["pass"] += 1
+        try: d["cost_usd"] += float(r.get("cost_usd") or 0.0)
+        except Exception: pass
+        if r.get("cost_state"): d["cost_state"].add(r.get("cost_state"))
+        s, e = _pt(r.get("started_at")), _pt(r.get("completed_at"))
+        if s and e: d["lat"].append((e - s).total_seconds())
+        if isinstance(r.get("out_chars"), int): d["out_chars"].append(r["out_chars"])
+    adapters = [{"adapter": a, "runs": d["runs"],
+                 "pass_rate": round(100 * d["pass"] / d["runs"], 1) if d["runs"] else None,
+                 "cost_usd": round(d["cost_usd"], 4),
+                 "cost_state": "/".join(sorted(d["cost_state"])) or "UNKNOWN",
+                 "p50_latency": _pct(d["lat"], .5),
+                 "median_out_chars": int(statistics.median(d["out_chars"])) if d["out_chars"] else None}
+                for a, d in sorted(adp.items())]
+
+    # scheduler continuity — the 148/8 restart. AU-9 proves no two co-wrote (that's benign vs split-brain)
+    sched = Counter(r.get("scheduler_instance_id") for r in env if r.get("scheduler_instance_id"))
+    schedulers = [{"instance": s, "tasks": n} for s, n in sched.most_common()]
+
+    # custody sample — full chain of custody for the most recent few tasks
+    custody = [{"task": r.get("task_id"), "factory": r.get("factory"),
+                "authority_decision_id": r.get("authority_decision_id"),
+                "authority_status": r.get("authority_status"),
+                "dispatch_digest": str(r.get("dispatch_digest") or "")[:12],
+                "artifact_sha256": str(r.get("artifact_sha256") or "")[:12],
+                "verdict": vv.get(r.get("task_id")), "fencing_token": r.get("fencing_token")}
+               for r in env[-5:]]
+
+    total = len(ver); passed = sum(1 for v in ver if v.get("verdict") == "PASS")
+    fresh = float(time.time() - env_p.stat().st_mtime)
+    return JSONResponse(_truth_response(truth_class="HELM_AGENT_TRUTH",
+        source=str(env_p.relative_to(ROOT)), observed_at=now(), freshness_seconds=fresh,
+        data={"state": "CONFIRMED_LIVE" if total else "UNKNOWN",
+              "total": total, "passed": passed,
+              "pass_rate": round(100 * passed / total, 1) if total else None,
+              "adapter_count": len(adp), "matrix": matrix, "latency": latency,
+              "slow_tail": slow_tail, "adapters": adapters, "schedulers": schedulers,
+              "custody": custody}))
+
+
 @app.get("/command", response_class=HTMLResponse)
 def serve_command() -> str:
     """HELM Command Center — cinematic wall + flow charts + evidence-chain + controls.

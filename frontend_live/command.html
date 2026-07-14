@@ -76,6 +76,7 @@ canvas{width:100%;display:block;border-radius:12px}
 <nav>
   <span class="tab on" data-v="wall">◈ WALL</span>
   <span class="tab" data-v="flow">▤ FLOW</span>
+  <span class="tab" data-v="agents">◇ AGENTS</span>
   <span class="tab" data-v="chain">⛓ CHAIN</span>
   <span class="tab" data-v="ctrl">✦ CONTROLS</span>
 </nav>
@@ -110,6 +111,26 @@ canvas{width:100%;display:block;border-radius:12px}
     <div class="card"><h3 id="chainhead">EVIDENCE CHAIN</h3><div class="chain" id="chainbox"></div></div>
   </div>
 
+  <div class="view" id="agents">
+    <div class="banner" id="agbanner">Agent accountability — every number derived from the hash-chained result &amp; verification ledgers. Broken down ONLY by dimensions the ledger attributes (factory · validator · adapter · scheduler). worker_id is ephemeral (one per task), so there is no per-agent leaderboard — that would be fabricated continuity.</div>
+    <div class="grid">
+      <div class="card"><h3>Verified Pass Rate</h3><div class="big" id="ag_pr">—</div><div class="k" id="ag_prr" style="font-size:10px"></div></div>
+      <div class="card"><h3>Adapters Active</h3><div class="big" id="ag_ad">—</div><div class="k" style="font-size:10px" id="ag_adr">this run window</div></div>
+      <div class="card"><h3>Scheduler Continuity</h3><div class="big" id="ag_sc">—</div><div class="k" style="font-size:10px" id="ag_scr"></div></div>
+      <div class="card"><h3>Cost (observed)</h3><div class="big" id="ag_cost">—</div><div class="k" style="font-size:10px" id="ag_costr"></div></div>
+    </div>
+    <div class="grid" style="margin-top:12px">
+      <div class="card" style="grid-column:1/-1"><h3>Accountability matrix — factory × validator (failing check named)</h3><div id="ag_matrix"></div></div>
+    </div>
+    <div class="grid" style="margin-top:12px">
+      <div class="card" style="grid-column:1/-1"><h3>Latency per lane — p50 / p95 / max (seconds)</h3><canvas id="ag_lat" class="spark" height="150"></canvas></div>
+    </div>
+    <div class="grid" style="margin-top:12px">
+      <div class="card"><h3>Slowest tasks (traceable by sha256)</h3><div id="ag_slow" style="font-size:11px"></div></div>
+      <div class="card"><h3>Chain of custody · latest tasks</h3><div id="ag_cust" style="font-size:10px"></div></div>
+    </div>
+  </div>
+
   <div class="view" id="ctrl">
     <div class="banner">NIST SP 800-53 Rev.5 · assessed continuously (SP 800-137). A control with no evidence is NOT_IMPLEMENTED — never assumed.</div>
     <div class="grid" id="ctrlgrid"></div>
@@ -132,6 +153,7 @@ document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
   const v=t.dataset.v;
   if(v==='wall'){ fit(); }
   if(v==='flow'){ requestAnimationFrame(()=>drawBars(lastTasks)); }
+  if(v==='agents'){ requestAnimationFrame(()=>{ if(lastAgents) drawLat(lastAgents.latency||[]); }); }
 });
 
 // ---- cinematic wall ----
@@ -271,7 +293,60 @@ async function pullCtrl(){
   }catch(e){ g.innerHTML='<span class="k">API unreachable — UNKNOWN</span>'; }
 }
 
-function tick(){ pull(); pullChain(); pullCtrl(); }
+// ---- agents / accountability ----
+const alc=document.getElementById('ag_lat'), ALX=alc.getContext('2d');
+let lastAgents=null;
+function esc(s){ return String(s==null?'':s).replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])); }
+async function pullAgents(){
+  let d;
+  try{ d=await (await fetch(API+'/api/v1/helm/agents',{cache:'no-store'})).json(); }
+  catch(e){ document.getElementById('ag_pr').textContent='UNKNOWN';
+    document.getElementById('ag_prr').textContent='API unreachable — not last-known-good'; return; }
+  const x=d.data||d; lastAgents=x;
+  if(x.state==='UNKNOWN'){ document.getElementById('ag_pr').textContent='—';
+    document.getElementById('ag_prr').textContent=x.reason||'no attributed evidence yet'; return; }
+  document.getElementById('ag_pr').textContent=(x.pass_rate!=null?x.pass_rate+'%':'—');
+  document.getElementById('ag_prr').textContent=`${x.passed}/${x.total} verified · independent validator`;
+  document.getElementById('ag_ad').textContent=x.adapter_count!=null?x.adapter_count:'—';
+  document.getElementById('ag_adr').textContent=(x.adapters||[]).map(a=>a.adapter.split('.').pop()).join(', ')||'—';
+  const sc=x.schedulers||[]; document.getElementById('ag_sc').textContent=sc.length;
+  document.getElementById('ag_scr').textContent = sc.length>1
+    ? 'sequential restart — AU-9 proves no co-writer (benign)' : 'single writer, continuous';
+  const cost=(x.adapters||[]).reduce((s,a)=>s+(a.cost_usd||0),0);
+  document.getElementById('ag_cost').textContent='$'+cost.toFixed(2);
+  document.getElementById('ag_costr').textContent=(x.adapters||[]).map(a=>a.cost_state).filter((v,i,s)=>s.indexOf(v)===i).join('/')||'';
+  // matrix
+  document.getElementById('ag_matrix').innerHTML=(x.matrix||[]).map(m=>{
+    const tot=m.pass+m.fail, rate=tot?Math.round(100*m.pass/tot):0;
+    const chk=Object.entries(m.failing_checks||{}).map(([k,v])=>`<span class="pill BAD" style="margin-left:6px">${esc(k)} ×${v}</span>`).join('');
+    return `<div class="row"><span><b>${esc(m.factory)}</b> <span class="k">${esc(m.validator||'')}</span></span>
+      <span>${m.pass}/${tot} <span class="k">(${rate}%)</span> ${m.fail?`<b style="color:var(--red)">${m.fail} FAIL</b>`:''}${chk}</span></div>`;
+  }).join('')||'<span class="k">no verification data</span>';
+  drawLat(x.latency||[]);
+  document.getElementById('ag_slow').innerHTML=(x.slow_tail||[]).map(t=>
+    `<div class="row"><span>${esc(t.task)}</span><span>${t.seconds}s <span class="k">${esc(t.sha256)}</span></span></div>`).join('')||'<span class="k">—</span>';
+  document.getElementById('ag_cust').innerHTML=(x.custody||[]).map(c=>
+    `<div class="row" style="display:block"><b>${esc(c.task)}</b> <span class="pill ${c.verdict==='PASS'?'COMPLETE':'BAD'}">${esc(c.verdict)}</span>
+     <div class="k" style="margin-top:2px">auth ${esc(c.authority_status)} · dispatch ${esc(c.dispatch_digest)} · sha ${esc(c.artifact_sha256)} · fence ${esc(c.fencing_token)}</div></div>`).join('')||'<span class="k">—</span>';
+}
+function drawLat(rows){
+  alc.width=alc.clientWidth*Math.min(devicePixelRatio||1,2); alc.height=150*Math.min(devicePixelRatio||1,2);
+  ALX.clearRect(0,0,alc.width,alc.height); if(!rows.length){ return; }
+  const dpr=Math.min(devicePixelRatio||1,2), max=Math.max(1,...rows.map(r=>r.max||0));
+  const gw=alc.width/rows.length, pad=18*dpr;
+  rows.forEach((r,i)=>{ const x0=i*gw+gw*.15, bw=gw*.7/3;
+    [[r.p50,'#00d2ff'],[r.p95,'#5b9dff'],[r.max,'#a371f7']].forEach(([v,col],j)=>{
+      const h=((v||0)/max)*(alc.height-2*pad), x=x0+j*bw, y=alc.height-pad-h;
+      ALX.fillStyle=col; ALX.fillRect(x,y,bw*.86,h);
+      ALX.fillStyle='#cfe0f2'; ALX.font=`${8*dpr}px ui-monospace`; ALX.textAlign='center';
+      ALX.fillText(Math.round(v||0),x+bw*.43,y-3*dpr); });
+    ALX.fillStyle='#78889d'; ALX.font=`${9*dpr}px ui-monospace`; ALX.textAlign='center';
+    ALX.fillText(r.factory,x0+gw*.35,alc.height-5*dpr); });
+  ALX.fillStyle='#78889d'; ALX.font=`${8*dpr}px ui-monospace`; ALX.textAlign='left';
+  ALX.fillText('■ p50   ■ p95   ■ max',6*dpr,10*dpr);
+}
+
+function tick(){ pull(); pullChain(); pullCtrl(); pullAgents(); }
 tick(); setInterval(tick,5000);
 </script>
 </body>
