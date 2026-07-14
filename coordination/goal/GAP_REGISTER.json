@@ -1,0 +1,320 @@
+{
+  "schema": "HELM_GAP_REGISTER_v1",
+  "generated_at": "2026-07-14T15:30:50Z",
+  "generated_under": "PHASE_A_FREEZE (non-mutating; no runtime touched)",
+  "north_star": "MINIMIZE verified_founder_minutes_per_shipped_dollar",
+  "north_star_state": "UNDEFINED (SETTLED=$0.00)",
+  "overall": "HOLD",
+  "counts": {
+    "total": 20,
+    "blocks_goal": 8,
+    "critical": 7,
+    "high": 3,
+    "medium": 7,
+    "low": 3,
+    "founder_only": 5
+  },
+  "critical_path": [
+    "GAP-01",
+    "GAP-02",
+    "GAP-03",
+    "GAP-04",
+    "GAP-05",
+    "GAP-06"
+  ],
+  "parallel_safe_now": [
+    "GAP-08",
+    "GAP-09",
+    "GAP-10",
+    "GAP-11",
+    "GAP-14",
+    "GAP-17",
+    "GAP-19"
+  ],
+  "blocked_by_freeze": [
+    "GAP-07",
+    "GAP-12",
+    "GAP-16"
+  ],
+  "gaps": [
+    {
+      "id": "GAP-01",
+      "title": "Phase A unsealed",
+      "severity": "CRITICAL",
+      "blocks_goal": true,
+      "pert": "D",
+      "state": "IN_PROGRESS",
+      "owner": "evaluator",
+      "detail": "HELM-SOAK-2H-20260714T141914Z running, PID 17876, bound e2db3278, seals 16:19:19Z. No seal_verdict.json. Cannot claim PASS.",
+      "exit_criterion": "Independent evaluator emits exactly one of PASS/FAIL/INCONCLUSIVE",
+      "depends_on": [],
+      "unblocks": [
+        "GAP-02"
+      ]
+    },
+    {
+      "id": "GAP-02",
+      "title": "Phase B not run",
+      "severity": "CRITICAL",
+      "blocks_goal": true,
+      "pert": "E",
+      "state": "BLOCKED",
+      "owner": "scheduler",
+      "detail": "8h soak. Prior Phase B seal SUPERSEDED_INVALID_INSTRUMENT (measured by the blind lease ledger).",
+      "exit_criterion": "8h clean run, negative + concurrency tests pass, filesystem/ledger reconcile",
+      "depends_on": [
+        "GAP-01"
+      ],
+      "unblocks": [
+        "GAP-03"
+      ]
+    },
+    {
+      "id": "GAP-03",
+      "title": "Phase C 24h not run",
+      "severity": "CRITICAL",
+      "blocks_goal": true,
+      "pert": "F",
+      "state": "BLOCKED",
+      "owner": "scheduler",
+      "detail": "Prior Phase C SUPERSEDED_MIXED_CODE (patched mid-flight, killed at 2h24m). 24h is incompressible.",
+      "exit_criterion": "24h uninterrupted, single bound commit, zero instrument drift",
+      "depends_on": [
+        "GAP-02"
+      ],
+      "unblocks": [
+        "GAP-04"
+      ]
+    },
+    {
+      "id": "GAP-04",
+      "title": "Truth reconciliation + independent seal",
+      "severity": "CRITICAL",
+      "blocks_goal": true,
+      "pert": "H,I",
+      "state": "BLOCKED",
+      "owner": "validator",
+      "detail": "Ledger vs physical-lock reconciliation across the full chain; hashes, manifests, chronology.",
+      "exit_criterion": "No ledger/filesystem contradiction; sealed evidence package",
+      "depends_on": [
+        "GAP-03"
+      ],
+      "unblocks": [
+        "GAP-05"
+      ]
+    },
+    {
+      "id": "GAP-05",
+      "title": "Cloud cutover not started",
+      "severity": "CRITICAL",
+      "blocks_goal": true,
+      "pert": "K",
+      "state": "NOT_STARTED",
+      "owner": "agent+founder",
+      "detail": "Volume mounted+persistence PROVEN. But relay authority pointer ABSENT, runtime/evidence/jspace dirs EMPTY. No MacBook-off proof.",
+      "exit_criterion": "Single authoritative runtime proven with MacBook OFF; rollback proven",
+      "depends_on": [
+        "GAP-04"
+      ],
+      "unblocks": [
+        "GAP-06"
+      ]
+    },
+    {
+      "id": "GAP-06",
+      "title": "Founder DOORSTEP gate",
+      "severity": "CRITICAL",
+      "blocks_goal": true,
+      "pert": "L",
+      "state": "BLOCKED",
+      "owner": "FOUNDER",
+      "detail": "Review-only package, no technical gaps remaining.",
+      "exit_criterion": "Founder approves DOORSTEP package",
+      "depends_on": [
+        "GAP-05"
+      ],
+      "unblocks": [
+        "GOAL"
+      ]
+    },
+    {
+      "id": "GAP-07",
+      "title": "SOAK_FRESHNESS_SOURCE_STALE (false-red)",
+      "severity": "MEDIUM",
+      "blocks_goal": false,
+      "pert": "wall",
+      "state": "DISCLOSED_DEFERRED",
+      "owner": "agent",
+      "detail": "/api/v1/helm/soak takes freshness from soak_config.json (written once) not scheduler_cycles.jsonl. A HEALTHY soak renders STALE.",
+      "exit_criterion": "freshness = latest valid scheduler_cycles event; fallback UNKNOWN",
+      "depends_on": [
+        "GAP-01"
+      ],
+      "remediation": "POST-SEAL (freeze forbids repair-in-place)"
+    },
+    {
+      "id": "GAP-08",
+      "title": "hoch_pods_liftoff.html backend dead",
+      "severity": "MEDIUM",
+      "blocks_goal": false,
+      "pert": "wall",
+      "state": "OPEN",
+      "owner": "agent",
+      "detail": ":8777 listens (live-truth-sidecar, pid 858) and serves / but /api/live returns 000. That UI is NOT updating.",
+      "exit_criterion": "/api/live returns 200 OR the UI is formally retired",
+      "depends_on": []
+    },
+    {
+      "id": "GAP-09",
+      "title": "pert/founder/helm UIs not browser-proven",
+      "severity": "MEDIUM",
+      "blocks_goal": false,
+      "pert": "wall",
+      "state": "OPEN",
+      "owner": "agent",
+      "detail": "Only console.html is browser-proven (4/4 DOM). The other three have live backends (200) but a 200 is not proof the DOM ticks or fails closed.",
+      "exit_criterion": "Playwright proof: API-dead=>UNKNOWN, stale=>STALE, contradiction=>CONTRADICTED",
+      "depends_on": []
+    },
+    {
+      "id": "GAP-10",
+      "title": "API bound 127.0.0.1 \u2014 no phone/Tailscale access",
+      "severity": "LOW",
+      "blocks_goal": false,
+      "pert": "wall",
+      "state": "OPEN",
+      "owner": "agent",
+      "detail": "helm_live_api started with --host 127.0.0.1. Founder dashboard unreachable from iPhone.",
+      "exit_criterion": "Bound behind Tailscale, reachable from phone, not publicly exposed",
+      "depends_on": []
+    },
+    {
+      "id": "GAP-11",
+      "title": "frontend_live/HELM.html overlaps console.html",
+      "severity": "LOW",
+      "blocks_goal": false,
+      "pert": "wall",
+      "state": "OPEN",
+      "owner": "agent",
+      "detail": "18.5KB pre-existing HELM.html was NOT overwritten (I refused to destroy unreviewed work). Two candidate canonical consoles now exist.",
+      "exit_criterion": "One canonical console; the other reconciled or formally retired",
+      "depends_on": []
+    },
+    {
+      "id": "GAP-12",
+      "title": "Full test suite NOT run",
+      "severity": "HIGH",
+      "blocks_goal": true,
+      "pert": "I",
+      "state": "OPEN",
+      "owner": "agent",
+      "detail": "88 test files exist in tests/. I have run only 3 (jspace_hjos, jspace_governance, lease_release_truth). The other ~85 are UNVERIFIED against current HEAD.",
+      "exit_criterion": "Full suite green against the sealed commit, or every failure triaged",
+      "depends_on": [
+        "GAP-01"
+      ]
+    },
+    {
+      "id": "GAP-13",
+      "title": "Historical 199.5h burn-in cannot substitute",
+      "severity": "MEDIUM",
+      "blocks_goal": false,
+      "pert": "I",
+      "state": "OPEN",
+      "owner": "validator",
+      "detail": "It predates the release-lease honesty fix, filesystem reconciliation, J-SPACE governance correction and commit-bound soak identity. It is not evidence for the current chain.",
+      "exit_criterion": "Explicitly excluded from the closure evidence set",
+      "depends_on": []
+    },
+    {
+      "id": "GAP-14",
+      "title": "J-SPACE adversarial/negative tests incomplete",
+      "severity": "MEDIUM",
+      "blocks_goal": false,
+      "pert": "G",
+      "state": "PARTIAL",
+      "owner": "agent",
+      "detail": "19 tests pass (governance fail-closed, read-only, historical immutability). Missing: daemon duplicate-prevention, stale-PID recovery, cycle timeout, invalid-policy fail-closed, missing-ledger fail-closed, rollback byte-exactness.",
+      "exit_criterion": "Full negative battery from the audit directive",
+      "depends_on": []
+    },
+    {
+      "id": "GAP-15",
+      "title": "Working tree dirty (71 files)",
+      "severity": "MEDIUM",
+      "blocks_goal": false,
+      "pert": "I",
+      "state": "OPEN",
+      "owner": "agent",
+      "detail": "Runtime ledger churn + untracked artifacts. Auditability requires a clean, commit-bound tree at seal time.",
+      "exit_criterion": "Clean tree or every dirty file classified as expected runtime churn",
+      "depends_on": []
+    },
+    {
+      "id": "GAP-16",
+      "title": "31 launchd agents loaded, unclassified",
+      "severity": "HIGH",
+      "blocks_goal": false,
+      "pert": "ops",
+      "state": "OPEN",
+      "owner": "agent+founder",
+      "detail": "31 hoch agents loaded (63 plists on disk). Process contention, duplicate telemetry, ambiguous ownership, hard incident attribution. NOT respawning the soak (verified) \u2014 but unclassified.",
+      "exit_criterion": "Every agent classified AUTHORITATIVE/SUPPORTING/LEGACY/DUPLICATE/UNKNOWN/SAFE_TO_DISABLE/FOUNDER_REVIEW. No mass deletion.",
+      "depends_on": [
+        "GAP-01"
+      ],
+      "remediation": "POST-SEAL (do not alter during the active run)"
+    },
+    {
+      "id": "GAP-17",
+      "title": "HJOS daemon supervision ungoverned",
+      "severity": "MEDIUM",
+      "blocks_goal": false,
+      "pert": "G",
+      "state": "OPEN",
+      "owner": "agent",
+      "detail": "Runs under nohup with a /tmp pidfile. No single-instance lock, no stale-PID recovery, no health endpoint, no last-success/last-failure, no bounded log rotation, log in /tmp.",
+      "exit_criterion": "Repo-owned launchd definition + single-instance lock + health endpoint",
+      "depends_on": []
+    },
+    {
+      "id": "GAP-18",
+      "title": "HJOS has no authorizing_policy_id",
+      "severity": "LOW",
+      "blocks_goal": false,
+      "pert": "G",
+      "state": "FOUNDER_DECISION",
+      "owner": "FOUNDER",
+      "detail": "authorizing_policy_id=null, auto_quarantine=false, orphan_hygiene=manual_approval. Fail-closed and SAFE. This is the correct default; no action is REQUIRED.",
+      "exit_criterion": "Founder either grants a policy id or affirms read-only permanently",
+      "depends_on": []
+    },
+    {
+      "id": "GAP-19",
+      "title": "Revenue NOT PROVEN",
+      "severity": "CRITICAL",
+      "blocks_goal": false,
+      "pert": "rev",
+      "state": "PACKAGED/FOUNDER_GATE",
+      "owner": "FOUNDER",
+      "detail": "SETTLED=$0.00, PENDING=$18.10 (1 row). Epic Fury is PACKAGED. Not SUBMITTED, not AVAILABLE, not PAYMENT_ENABLED, not REVENUE_PROVEN.",
+      "exit_criterion": "External payment received and SETTLED in the ledger",
+      "depends_on": [],
+      "note": "INDEPENDENT OF HELM CERTIFICATION. This does not need Phase A/B/C to advance."
+    },
+    {
+      "id": "GAP-20",
+      "title": "North Star metric UNDEFINED",
+      "severity": "HIGH",
+      "blocks_goal": true,
+      "pert": "NS",
+      "state": "BLOCKED",
+      "owner": "\u2014",
+      "detail": "verified_founder_minutes_per_shipped_dollar requires SETTLED dollars. SETTLED=$0 => denominator zero => metric UNDEFINED, not zero.",
+      "exit_criterion": "First SETTLED dollar makes the North Star computable",
+      "depends_on": [
+        "GAP-19"
+      ]
+    }
+  ]
+}
