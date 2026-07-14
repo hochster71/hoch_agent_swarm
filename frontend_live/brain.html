@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="theme-color" content="#04060a"/>
+<title>HELM · J-SPACE BRAIN</title>
+<style>
+:root{
+  --bg:#04060a; --live:#5fe3b0; --blocked:#f5c265; --contra:#ff5d73; --unknown:#4a5568;
+  --ink:#e6f0ef; --dim:#7f8ca0;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);overflow:hidden;
+  font:13px/1.5 ui-monospace,"SF Mono",Menlo,monospace;color:var(--ink);
+  -webkit-font-smoothing:antialiased}
+#cv{position:fixed;inset:0;display:block;touch-action:none}
+/* HUD */
+.hud{position:fixed;left:0;right:0;top:0;z-index:10;pointer-events:none;
+  padding:calc(env(safe-area-inset-top) + 12px) 16px 0;
+  display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.title{font-size:12px;letter-spacing:.34em;font-weight:700;opacity:.92}
+.title .j{color:var(--live);text-shadow:0 0 14px rgba(95,227,176,.6)}
+.sub{font-size:9.5px;letter-spacing:.12em;color:var(--dim);margin-top:5px}
+.verdict{text-align:right}
+.vbig{font-size:19px;font-weight:800;letter-spacing:-.5px;line-height:1}
+.vbig.CONTRADICTED{color:var(--contra);text-shadow:0 0 18px rgba(255,93,115,.6)}
+.vbig.CONFIRMED_LIVE{color:var(--live);text-shadow:0 0 18px rgba(95,227,176,.5)}
+.vbig.BLOCKED{color:var(--blocked)} .vbig.UNKNOWN{color:var(--unknown)}
+.vsub{font-size:9.5px;letter-spacing:.1em;color:var(--dim);margin-top:5px}
+.act{margin-top:6px;font-size:10px;font-weight:700;letter-spacing:.06em;
+  padding:4px 9px;border-radius:99px;display:inline-block}
+.act.warn{color:var(--contra);background:rgba(255,93,115,.12);box-shadow:inset 0 0 0 1px rgba(255,93,115,.4)}
+/* legend */
+.legend{position:fixed;left:16px;bottom:calc(env(safe-area-inset-bottom) + 14px);z-index:10;
+  display:flex;flex-direction:column;gap:5px;pointer-events:none;font-size:10px;color:var(--dim)}
+.legend div{display:flex;align-items:center;gap:7px}
+.dot{width:9px;height:9px;border-radius:50%}
+/* detail panel */
+.detail{position:fixed;right:14px;bottom:calc(env(safe-area-inset-bottom) + 14px);z-index:11;
+  width:min(340px,78vw);background:rgba(8,12,18,.94);border:1px solid #1c2634;border-radius:14px;
+  padding:14px;backdrop-filter:blur(10px);box-shadow:0 20px 50px -14px #000;
+  transform:translateY(14px);opacity:0;transition:.25s;pointer-events:none}
+.detail.show{transform:none;opacity:1;pointer-events:auto}
+.detail .dt{font-size:13px;font-weight:800;letter-spacing:.02em}
+.detail .dv{font-size:9.5px;font-weight:800;letter-spacing:.1em;padding:2px 8px;border-radius:99px;
+  display:inline-block;margin-top:6px}
+.detail .dd{font-size:11.5px;color:var(--dim);margin-top:9px;line-height:1.5}
+.detail .da{font-size:10.5px;color:var(--blocked);margin-top:8px;font-weight:700;letter-spacing:.04em}
+.detail .di{font-size:9px;color:#55627a;margin-top:8px;word-break:break-all}
+.detail .dx{position:absolute;top:8px;right:12px;color:var(--dim);cursor:pointer;font-size:16px}
+.stale{position:fixed;left:50%;top:60px;transform:translateX(-50%);z-index:12;
+  background:rgba(255,93,115,.14);color:var(--contra);border:1px solid rgba(255,93,115,.4);
+  border-radius:99px;padding:7px 16px;font-size:11px;font-weight:700;display:none}
+.hint{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 16px);transform:translateX(-50%);
+  z-index:9;font-size:10px;color:#4a5568;pointer-events:none;letter-spacing:.08em}
+</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+
+<div class="hud">
+  <div>
+    <div class="title">J-SPACE <span class="j">BRAIN</span></div>
+    <div class="sub" id="meta">binding to HJOS…</div>
+  </div>
+  <div class="verdict">
+    <div class="vbig UNKNOWN" id="vbig">—</div>
+    <div class="vsub" id="vsub">consensus</div>
+    <div id="actwrap"></div>
+  </div>
+</div>
+
+<div class="stale" id="stale">FEED LOST — brain is UNKNOWN, not last-known-good</div>
+
+<div class="legend">
+  <div><span class="dot" style="background:var(--live)"></span>confirmed live</div>
+  <div><span class="dot" style="background:var(--blocked)"></span>blocked</div>
+  <div><span class="dot" style="background:var(--contra)"></span>contradicted</div>
+</div>
+
+<div class="detail" id="detail">
+  <span class="dx" id="dx">×</span>
+  <div class="dt" id="d_t">—</div>
+  <div class="dv" id="d_v">—</div>
+  <div class="dd" id="d_d"></div>
+  <div class="da" id="d_a"></div>
+  <div class="di" id="d_i"></div>
+</div>
+
+<div class="hint">tap a node · the brain fires only on real observations</div>
+
+<script>
+const API='';
+const CV=document.getElementById('cv'), X=CV.getContext('2d');
+const COL={CONFIRMED_LIVE:'#5fe3b0',BLOCKED:'#f5c265',CONTRADICTED:'#ff5d73',UNKNOWN:'#4a5568'};
+const RGB={CONFIRMED_LIVE:[95,227,176],BLOCKED:[245,194,101],CONTRADICTED:[255,93,115],UNKNOWN:[74,85,104]};
+let W,H,DPR, nodes=[], edges=[], particles=[], rain=[], core=null, T=0, DATA=null, live=false;
+
+function fit(){ DPR=Math.min(devicePixelRatio||1,2);
+  W=window.innerWidth; H=window.innerHeight;   // innerW/H are correct even before first paint
+  CV.width=W*DPR; CV.height=H*DPR; CV.style.width=W+'px'; CV.style.height=H+'px';
+  X.setTransform(DPR,0,0,DPR,0,0); layout(); initRain(); }
+addEventListener('resize',fit);
+
+// ---- matrix digital rain (faint backdrop) ----
+function initRain(){ rain=[]; const cols=Math.floor(W/14);
+  for(let i=0;i<cols;i++) rain.push({x:i*14, y:Math.random()*H, s:1+Math.random()*2.5, c:Math.random()}); }
+const GLYPH="01ｱｲｳｴｵｶｷｸｹｺ<>{}[]#$%&HELMJSPACE".split("");
+function drawRain(){ X.font="12px ui-monospace";
+  for(const r of rain){ const a=0.02+0.05*r.c;
+    X.fillStyle=`rgba(95,227,176,${a})`;
+    X.fillText(GLYPH[(Math.floor(r.y/14)+r.x)%GLYPH.length], r.x, r.y);
+    r.y+=r.s; if(r.y>H){ r.y=-14; r.c=Math.random(); } } }
+
+// ---- layout: core + 6 observer lobes + subject satellites ----
+function layout(){
+  if(!DATA||!DATA.observers){ return; }
+  const cx=W/2, cy=H/2 + (H<680?10:0);
+  const R1=Math.min(W,H)*0.26;               // observer ring
+  const R2=Math.min(W,H)*0.42;               // subject ring
+  nodes=[]; edges=[];
+  core={id:'core',x:cx,y:cy,r:Math.max(26,Math.min(W,H)*0.06),
+        verdict:DATA.consensus||'UNKNOWN',label:'HJOS',kind:'core',phase:0};
+  nodes.push(core);
+  const obs=DATA.observers; const n=obs.length;
+  obs.forEach((o,i)=>{
+    const ang=-Math.PI/2 + i*(2*Math.PI/n);
+    const ox=cx+Math.cos(ang)*R1, oy=cy+Math.sin(ang)*R1;
+    const on={id:'o'+i,x:ox,y:oy,r:15,verdict:o.verdict,label:o.region,kind:'observer',
+              phase:Math.random()*6.28,data:{region:o.region,verdict:o.verdict,
+              detail:o.subjects.length+' subjects observed',observer:o.observer}};
+    nodes.push(on); edges.push({a:core,b:on,verdict:o.verdict});
+    const m=o.subjects.length;
+    o.subjects.forEach((s,j)=>{
+      const spread=0.34, sa=ang + (m>1?(j-(m-1)/2)*spread/Math.max(1,m-1)*2:0);
+      const sx=cx+Math.cos(sa)*R2, sy=cy+Math.sin(sa)*R2;
+      const sn={id:'s'+i+'_'+j,x:sx,y:sy,r:8.5,verdict:s.assessment,label:s.subject,
+                kind:'subject',phase:Math.random()*6.28,data:s};
+      nodes.push(sn); edges.push({a:on,b:sn,verdict:s.assessment});
+    });
+  });
+}
+
+// ---- particles fire along edges (an observation traveling) ----
+function spawnParticles(){
+  particles=[];
+  for(const e of edges){
+    const bad = e.verdict==='CONTRADICTED'||e.verdict==='BLOCKED';
+    const count = bad?2:1;
+    for(let k=0;k<count;k++) particles.push({e,t:Math.random(),v:(bad?0.010:0.006)+Math.random()*0.004,verdict:e.verdict});
+  }
+}
+
+function glow(x,y,r,verdict,amp){
+  const c=RGB[verdict]||RGB.UNKNOWN;
+  const g=X.createRadialGradient(x,y,0,x,y,r*3.2);
+  g.addColorStop(0,`rgba(${c[0]},${c[1]},${c[2]},${0.5*amp})`);
+  g.addColorStop(1,`rgba(${c[0]},${c[1]},${c[2]},0)`);
+  X.fillStyle=g; X.beginPath(); X.arc(x,y,r*3.2,0,6.29); X.fill();
+}
+
+function frame(){
+  T+=0.016;
+  X.clearRect(0,0,W,H);
+  drawRain();
+  if(!DATA||!nodes.length){ requestAnimationFrame(frame); return; }
+  // edges
+  for(const e of edges){
+    const c=RGB[e.verdict]||RGB.UNKNOWN;
+    const bad=e.verdict==='CONTRADICTED';
+    X.strokeStyle=`rgba(${c[0]},${c[1]},${c[2]},${bad?0.5:0.22})`;
+    X.lineWidth=bad?1.6:1;
+    X.beginPath(); X.moveTo(e.a.x,e.a.y); X.lineTo(e.b.x,e.b.y); X.stroke();
+  }
+  // particles
+  for(const p of particles){
+    p.t+=p.v; if(p.t>1)p.t-=1;
+    const x=p.e.a.x+(p.e.b.x-p.e.a.x)*p.t, y=p.e.a.y+(p.e.b.y-p.e.a.y)*p.t;
+    const c=RGB[p.verdict]||RGB.UNKNOWN;
+    X.fillStyle=`rgba(${c[0]},${c[1]},${c[2]},.95)`;
+    X.beginPath(); X.arc(x,y,p.verdict==='CONTRADICTED'?2.6:1.9,0,6.29); X.fill();
+  }
+  // nodes
+  for(const nd of nodes){
+    const bad = nd.verdict==='CONTRADICTED', warn=nd.verdict==='BLOCKED';
+    const pulse = bad? (0.6+0.4*Math.sin(T*4+nd.phase)) : warn? (0.7+0.3*Math.sin(T*2.4+nd.phase)) : (0.82+0.18*Math.sin(T*1.5+nd.phase));
+    glow(nd.x,nd.y,nd.r,nd.verdict,pulse);
+    const c=COL[nd.verdict]||COL.UNKNOWN;
+    X.beginPath(); X.arc(nd.x,nd.y,nd.r,0,6.29);
+    X.fillStyle=nd.kind==='core'?'rgba(6,12,16,.9)':'rgba(8,14,18,.85)';
+    X.fill(); X.lineWidth=nd.kind==='core'?2.5:1.6; X.strokeStyle=c; X.stroke();
+    if(nd.kind==='core'){
+      X.fillStyle=c; X.font='800 15px ui-monospace'; X.textAlign='center'; X.textBaseline='middle';
+      X.fillText('HJOS',nd.x,nd.y-4);
+      X.fillStyle='rgba(230,240,239,.7)'; X.font='8px ui-monospace';
+      X.fillText((DATA.consensus||'').slice(0,12),nd.x,nd.y+9);
+    } else if(nd.kind==='observer'){
+      X.fillStyle='rgba(230,240,239,.9)'; X.font='700 9px ui-monospace';
+      X.textAlign='center'; X.textBaseline='middle';
+      X.fillText(nd.label.replace('_sentinel','').replace('_',' ').slice(0,12),nd.x,nd.y+nd.r+11);
+    }
+  }
+  requestAnimationFrame(frame);
+}
+
+// ---- interaction ----
+function pick(px,py){
+  let best=null,bd=1e9;
+  for(const nd of nodes){ const d=Math.hypot(nd.x-px,nd.y-py); if(d<nd.r+12 && d<bd){bd=d;best=nd;} }
+  return best;
+}
+function showDetail(nd){
+  if(!nd||nd.kind==='core'){ hideDetail(); return; }
+  const d=nd.data||{}, det=document.getElementById('detail');
+  document.getElementById('d_t').textContent = nd.label;
+  const v=document.getElementById('d_v'); v.textContent=nd.verdict;
+  v.style.color=COL[nd.verdict]; v.style.background='rgba(255,255,255,.05)';
+  document.getElementById('d_d').textContent = d.detail || (nd.kind==='observer'?('region: '+nd.label):'');
+  document.getElementById('d_a').textContent = d.recommended_action ? ('▸ '+d.recommended_action) : '';
+  document.getElementById('d_i').textContent = [d.observation_id, d.observer||d.region,
+      d.confidence!=null?('confidence '+d.confidence):''].filter(Boolean).join(' · ');
+  det.classList.add('show');
+}
+function hideDetail(){ document.getElementById('detail').classList.remove('show'); }
+document.getElementById('dx').onclick=hideDetail;
+CV.addEventListener('pointerdown',e=>{ const r=CV.getBoundingClientRect();
+  const nd=pick(e.clientX-r.left,e.clientY-r.top); if(nd) showDetail(nd); else hideDetail(); });
+
+// ---- data ----
+function setStale(){ live=false; document.getElementById('stale').style.display='block';
+  document.getElementById('vbig').textContent='UNKNOWN'; document.getElementById('vbig').className='vbig UNKNOWN';
+  document.getElementById('meta').textContent='HJOS unreachable'; }
+async function pull(){
+  let d;
+  try{ const r=await fetch(API+'/api/v1/helm/jspace/brain',{cache:'no-store'}); if(!r.ok)throw 0; d=await r.json(); }
+  catch(e){ return setStale(); }
+  const x=d.data||d;
+  if(x.state==='UNKNOWN'){ return setStale(); }
+  document.getElementById('stale').style.display='none'; live=true;
+  DATA=x;
+  const vb=document.getElementById('vbig'); vb.textContent=x.consensus||'—'; vb.className='vbig '+(x.consensus||'UNKNOWN');
+  document.getElementById('vsub').textContent =
+    `promotion ${x.promotion_authority||'—'} · ${x.observer_total||0} observers · ${x.subject_total||0} subjects`;
+  const aw=document.getElementById('actwrap');
+  aw.innerHTML = x.recommended_action
+    ? `<span class="act ${/WITHHOLD|ESCALATE|RELEASE|HALT/i.test(x.recommended_action)?'warn':''}">${x.recommended_action}</span>` : '';
+  document.getElementById('meta').textContent =
+    `cycle ${(x.cycle_id||'—')} · ${x.open_alerts??'—'} alerts · ${x.unresolved_findings??'—'} unresolved · live`;
+  fit(); spawnParticles();   // re-measure now that DATA exists and the canvas is painted
+}
+
+fit(); frame(); pull(); setInterval(pull,5000);
+</script>
+</body>
+</html>

@@ -533,6 +533,85 @@ def api_v1_jspace_burn_in():
     ))
 
 
+@app.get("/api/v1/helm/jspace/brain")
+def api_v1_jspace_brain():
+    """The HJOS observation graph as a 'brain': 6 observer regions, each watching subjects, with the
+    LATEST real verdict per (observer, subject). Read-only. Fail-closed: no assessments -> UNKNOWN,
+    never a fabricated-alive brain. Every node/edge here is a real assessment from the ledger."""
+    import time
+    apath = ROOT / "coordination" / "jspace" / "assessments.jsonl"
+    hpath = ROOT / "coordination" / "jspace" / "health.json"
+    if not apath.exists() or not apath.read_text().strip():
+        return JSONResponse(_truth_response(
+            truth_class="HJOS_BRAIN_TRUTH", source="coordination/jspace/assessments.jsonl",
+            observed_at=now(), freshness_seconds=None,
+            data={"state": UNKNOWN, "reason": "no HJOS assessments yet", "observers": []}))
+    # latest assessment per (observer, subject) — the ledger is append-only, newest wins
+    latest = {}
+    for line in apath.read_text().splitlines():
+        if not line.strip():
+            continue
+        try:
+            r = json.loads(line)
+        except Exception:
+            continue
+        k = (r.get("observer"), r.get("subject"))
+        if k[0] and k[1]:
+            latest[k] = r
+    from collections import defaultdict
+    obs_map = defaultdict(list)
+    for (obs, subj), r in latest.items():
+        obs_map[obs].append({
+            "subject": subj,
+            "assessment": r.get("assessment"),
+            "confidence": r.get("confidence"),
+            "detail": (r.get("detail") or "")[:200],
+            "recommended_action": r.get("recommended_action"),
+            "observation_id": r.get("observation_id"),
+            "claimed_state": r.get("claimed_state"),
+            "observed_state": r.get("observed_state"),
+            "state_mutated": r.get("state_mutated"),
+        })
+    def _worst(subs):
+        order = {"CONTRADICTED": 3, "BLOCKED": 2, "CONFIRMED_LIVE": 1}
+        return max((order.get(s["assessment"], 0) for s in subs), default=0)
+    rank = {3: "CONTRADICTED", 2: "BLOCKED", 1: "CONFIRMED_LIVE", 0: "UNKNOWN"}
+    observers = []
+    for obs in sorted(obs_map):
+        subs = sorted(obs_map[obs], key=lambda s: -{"CONTRADICTED": 3, "BLOCKED": 2,
+                                                     "CONFIRMED_LIVE": 1}.get(s["assessment"], 0))
+        observers.append({"observer": obs, "region": obs.replace("jspace_", ""),
+                          "verdict": rank[_worst(subs)], "subjects": subs})
+    health = {}
+    try:
+        health = json.loads(hpath.read_text()) if hpath.exists() else {}
+    except Exception:
+        health = {}
+    fresh = float(time.time() - apath.stat().st_mtime)
+    return JSONResponse(_truth_response(
+        truth_class="HJOS_BRAIN_TRUTH", source="coordination/jspace/assessments.jsonl",
+        observed_at=now(), freshness_seconds=fresh,
+        data={"state": "CONFIRMED_LIVE",
+              "consensus": health.get("overall", "UNKNOWN"),
+              "promotion_authority": health.get("promotion_authority", "NONE"),
+              "recommended_action": health.get("recommended_action"),
+              "cycle_id": health.get("cycle_id"),
+              "observer_counts": health.get("observer_counts", {}),
+              "open_alerts": health.get("open_alerts"),
+              "unresolved_findings": health.get("unresolved_findings"),
+              "observer_total": len(observers),
+              "subject_total": sum(len(o["subjects"]) for o in observers),
+              "observers": observers}))
+
+
+@app.get("/brain", response_class=HTMLResponse)
+def serve_brain() -> str:
+    """The J-Space Brain — cinematic animated neural view of the HJOS observers. Same-origin so it
+    renders identically on the Mac, the phone, and over Tailscale."""
+    f = ROOT / "frontend_live" / "brain.html"
+    return f.read_text() if f.exists() else "<h1>brain missing</h1>"
+
+
 @app.get("/api/v1/helm/integrity")
 @app.get("/api/helm/integrity")
 def api_v1_integrity():
