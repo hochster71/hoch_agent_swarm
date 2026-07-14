@@ -24,6 +24,7 @@ from __future__ import annotations
 import datetime
 import hashlib
 import json
+import re
 import sqlite3
 import sys
 from pathlib import Path
@@ -305,11 +306,22 @@ def _truth_response(truth_class: str, source: str, observed_at: str, freshness_s
     }
 
 
-def _newest_soak_pkg() -> Path | None:
+def _newest_soak_pkg():
+    """The AUTHORITATIVE soak package: the newest REAL phase run (2H/8H/24H/72H).
+
+    Grok F-A2: this was globbing HELM-SOAK-* and could return an arbitrary HELM-SOAK-XH-*
+    SMOKE package -- so the wall reported soak truth from a 90-second smoke test instead of
+    the live phase run. Smoke packages are excluded; phase packages only.
+    """
     if not PKGS.exists():
         return None
-    ds = [d for d in PKGS.iterdir() if d.is_dir() and "SOAK" in d.name]
-    return sorted(ds)[-1] if ds else None
+    phases = [d for d in PKGS.iterdir()
+              if d.is_dir() and re.match(r"HELM-SOAK-(2H|8H|24H|72H)-", d.name)]
+    if not phases:
+        return None
+    # prefer a run still IN_PROGRESS (no seal yet); else the newest sealed run
+    running = [d for d in phases if not (d / "seal_verdict.json").exists()]
+    return sorted(running or phases)[-1]
 
 
 @app.get("/api/v1/helm/wall")

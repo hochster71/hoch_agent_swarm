@@ -1,0 +1,21 @@
+{
+  "verdict": "SOAK_PHASE_A_FAIL",
+  "failure_code": "SCHEDULER_CRASH_DB_LOCK",
+  "not_inconclusive_because": "The process terminated early, but a terminal defect was CONCLUSIVELY OBSERVED: the scheduler crashed. 'No scheduler crash' is a mandatory acceptance condition. An interrupted run with an observed terminal defect is a FAIL.",
+  "cycles_completed": 38,
+  "injections_fired": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "leaked_leases_at_crash": 0,
+  "lease_leak_guard_held": true,
+  "rerun_required": true,
+  "sealed_at": "2026-07-14T00:09:14Z",
+  "24_7_status": "NOT PROVEN"
+}

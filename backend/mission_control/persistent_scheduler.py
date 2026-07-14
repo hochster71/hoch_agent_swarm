@@ -30,8 +30,30 @@ logger = logging.getLogger("HELM.PersistentScheduler")
 def get_utc_now_str() -> str:
     return datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")
 
+def _sqlite_connect(db_path, *, ro: bool = False):
+    """SQLITE CONTENTION GUARD (Phase A run 2 crashed here: 'database is locked').
+
+    Four concurrent workers + the live API + the seeder all write one sqlite file. Without WAL
+    journal mode a writer blocks ALL readers, and without busy_timeout a collision raises
+    immediately instead of waiting. Both are now mandatory on every connection.
+    """
+    import sqlite3 as _sq
+    if ro:
+        c = _sq.connect(f"file:{db_path}?mode=ro", uri=True, timeout=30)
+    else:
+        c = _sq.connect(str(db_path), timeout=30)
+    c.execute("PRAGMA busy_timeout=30000")
+    try:
+        c.execute("PRAGMA journal_mode=WAL")      # readers never block writers
+        c.execute("PRAGMA synchronous=NORMAL")
+    except Exception:
+        pass
+    return c
+
+
 class PersistentScheduler:
-    def __init__(self, evidence_dir: Optional[Path] = None):
+    def __init__(self, evidence_dir: Optional[Path] = None,
+                 publish_runtime_source: bool = False):
         self.repo_root = PROJECT_ROOT
         self.db_path = DB_PATH
         # PER-TASK leases. The legacy LeaseManager was a single GLOBAL mutex, so the
@@ -56,7 +78,12 @@ class PersistentScheduler:
             import uuid as _uuid
             from backend.truth.runtime_source import publish as _publish
             self.instance_id = f"sched-{_uuid.uuid4().hex[:8]}"
-            _publish(self.evidence_dir, self.instance_id)
+            # ONLY a real daemon may publish the canonical pointer. The API constructs a
+            # PersistentScheduler on several routes; each construction was OVERWRITING the
+            # daemon's pointer with the API's own evidence_dir (whose ledger does not exist),
+            # producing RUNTIME_SOURCE_MISMATCH and observed_peak=UNKNOWN. The API is a READER.
+            if publish_runtime_source:
+                _publish(self.evidence_dir, self.instance_id)
         except Exception:
             self.instance_id = "UNKNOWN"
         self.retries: Dict[str, int] = {}
@@ -102,7 +129,7 @@ class PersistentScheduler:
         if not self.db_path.exists():
             return []
         
-        conn = sqlite3.connect(str(self.db_path))
+        conn = _sqlite_connect(self.db_path)
         conn.row_factory = sqlite3.Row
         try:
             # Load pending/failed tasks
@@ -486,7 +513,7 @@ class PersistentScheduler:
         })
         
         # Update DB state
-        conn = sqlite3.connect(str(self.db_path))
+        conn = _sqlite_connect(self.db_path)
         try:
             if passed:
                 new_status = "COMPLETED"

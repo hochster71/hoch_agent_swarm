@@ -92,7 +92,13 @@ def seed_round(n):
     first, so leftover HASF tasks would otherwise fill all 4 slots and the soak would silently
     exercise ONE factory while claiming four.
     """
-    conn = sqlite3.connect(str(DB_PATH)); conn.execute("PRAGMA busy_timeout=8000")
+    # GUARDED: an unhandled 'database is locked' here killed Phase A run 2 at round 38.
+    conn = sqlite3.connect(str(DB_PATH), timeout=30)
+    conn.execute("PRAGMA busy_timeout=30000")
+    try:
+        conn.execute("PRAGMA journal_mode=WAL")
+    except Exception:
+        pass
     ts = now()
     conn.execute("UPDATE mission_control_tasks SET status='RETIRED' "
                  "WHERE (task_id LIKE 'SOAK-%' OR task_id LIKE 'SNC-%') "
@@ -265,7 +271,7 @@ for _pref in ("SNC-%", "SOAK-%"):
     _c.execute("DELETE FROM mission_control_missions WHERE mission_id LIKE ?", ("M-" + _pref,))
 _c.commit(); _c.close()
 
-sched = PersistentScheduler(evidence_dir=EVID)
+sched = PersistentScheduler(evidence_dir=EVID, publish_runtime_source=True)
 BLOCKERS = [{"id": "G-6", "status": "OPEN"}]
 t_end = time.time() + args.seconds
 start = time.time()
@@ -288,7 +294,14 @@ ef_blocked_every_cycle = True
 FACTORIES_SEEN = set()
 while time.time() < t_end:
     rnd += 1
-    ef_id = seed_round(rnd)
+    try:
+        ef_id = seed_round(rnd)
+    except Exception as _e:
+        # A seeding failure must NEVER kill the soak. Record and continue.
+        jl("scheduler_cycles.jsonl", {"round": rnd, "at": now(),
+                                      "seed_error": str(_e)[:160], "dispatched": 0})
+        time.sleep(3)
+        continue
     try:
         cycle = sched.run_once()
         M["scheduler_cycles"] += 1

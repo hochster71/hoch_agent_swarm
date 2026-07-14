@@ -1,0 +1,21 @@
+{
+  "termination": "UNPLANNED_CRASH",
+  "signal": null,
+  "exception": "sqlite3.OperationalError: database is locked",
+  "crash_site": "soak_runner.seed_round -> UPDATE mission_control_tasks",
+  "last_completed_cycle": {
+    "round": 38,
+    "at": "2026-07-14T00:03:52Z",
+    "dispatched": 4,
+    "ids": [
+      "SOAK-HASF-38",
+      "SOAK-HRF-38",
+      "SOAK-HCF-38",
+      "SOAK-HSF-38"
+    ]
+  },
+  "cycles_completed": 38,
+  "planned_seconds": 7200,
+  "actual_seconds_approx": 2200,
+  "reason": "OBSERVED_TERMINAL_DEFECT"
+}

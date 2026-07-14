@@ -1,0 +1,8 @@
+{
+  "failure_code": "SCHEDULER_CRASH_DB_LOCK",
+  "root_cause": "SQLITE_WRITE_CONTENTION_NO_WAL_NO_BUSY_TIMEOUT",
+  "explanation": "Four concurrent workers + the live API + seed_round all write the same sqlite file. Connections were opened WITHOUT WAL journal mode and WITHOUT a busy_timeout, so writers collided and raised 'database is locked'. execute_task survived (the lease-leak guard caught it and released the lease), but seed_round's UPDATE was UNGUARDED -- the exception escaped the soak loop and killed the process.",
+  "evidence": "dozens of 'execute body raised: database is locked' lines, then an unhandled OperationalError traceback at soak_runner.py:97",
+  "what_worked": "The lease-leak guard from 23a738d0 held: every locked task still released its lease. Leaked leases at crash: 0",
+  "why_shorter_tests_missed_it": "Contention scales with sustained concurrent write volume. 38 rounds x 4 workers was enough; a 4-round smoke was not."
+}
