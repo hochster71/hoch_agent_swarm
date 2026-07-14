@@ -1,0 +1,21 @@
+{
+  "schema": "HELM_DEFECT_v1",
+  "id": "SOAK_FRESHNESS_SOURCE_STALE",
+  "class": "FALSE_RED",
+  "severity": "MEDIUM",
+  "recorded_at": "2026-07-14T15:21:40Z",
+  "recorded_before_seal": true,
+  "component": "backend/helm_live_api.py :: /api/v1/helm/soak",
+  "observed": "freshness_seconds=3337 (~56min) while the soak was writing scheduler_cycles every ~50s",
+  "current_freshness_source": "soak_config.json (written ONCE at soak start)",
+  "correct_freshness_source": "latest valid event in scheduler_cycles.jsonl",
+  "required_fallback": "UNKNOWN",
+  "why_false_red": "An actively-healthy soak renders STALE on the wall. This is the INVERSE of fake-green: it manufactures alarm rather than comfort. It is still a truth defect.",
+  "phase_a_impact": "DISCLOSED / NON-MUTATING",
+  "affects_soak_execution": false,
+  "affects_soak_evidence": false,
+  "affects_wall_accuracy_during_run": true,
+  "seal_handling": "This defect MUST NOT automatically fail Phase A: it is in the read-only wall API, not in the runner, the lease instrument, or the sealer, and it did not touch the soak's evidence. BUT it forbids any claim that the wall was fully accurate during the run. No statement of the form 'the wall showed healthy throughout' is admissible for this window.",
+  "remediation": "POST-SEAL",
+  "remediation_blocked_by": "Phase A freeze (no repair-in-place before 2026-07-14T16:19:19Z)"
+}
