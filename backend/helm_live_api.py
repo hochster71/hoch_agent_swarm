@@ -274,28 +274,381 @@ def live_verdict() -> Any:
         return _unknown(f"validation unreadable: {e}")
 
 
+def get_current_commit() -> str:
+    try:
+        pkg = _newest_pkg()
+        if pkg and (pkg / "validation.json").exists():
+            v = json.loads((pkg / "validation.json").read_text())
+            c = v.get("tested_commit")
+            if c and c != "UNKNOWN":
+                return str(c)
+    except Exception:
+        pass
+    try:
+        import subprocess
+        res = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, cwd=str(ROOT))
+        if res.returncode == 0:
+            return res.stdout.strip()
+    except Exception:
+        pass
+    return "UNKNOWN"
+
+
+def _truth_response(truth_class: str, source: str, observed_at: str, freshness_seconds: float, data: dict) -> dict:
+    return {
+        "truth_class": truth_class,
+        "source": source,
+        "observed_at": observed_at,
+        "freshness_seconds": freshness_seconds,
+        "tested_commit": get_current_commit(),
+        **data
+    }
+
+
+def _newest_soak_pkg() -> Path | None:
+    if not PKGS.exists():
+        return None
+    ds = [d for d in PKGS.iterdir() if d.is_dir() and "SOAK" in d.name]
+    return sorted(ds)[-1] if ds else None
+
+
+@app.get("/api/v1/helm/wall")
+def api_wall():
+    """Every scope derived INDEPENDENTLY. A locked 24/7 gate must not freeze the factories."""
+    from backend.truth.wall_state import wall_state
+    return wall_state()
+
+
+@app.get("/api/v1/helm/runtime")
+@app.get("/api/helm/concurrency")
+def api_v1_runtime():
+    import time
+    from backend.truth.runtime_source import concurrency_truth, POINTER
+    data = concurrency_truth(configured_capacity=4)
+    freshness = 0.0
+    if POINTER.exists():
+        freshness = float(time.time() - POINTER.stat().st_mtime)
+    return JSONResponse(_truth_response(
+        truth_class="HELM_RUNTIME_TRUTH",
+        source=str(POINTER.relative_to(ROOT)) if POINTER.exists() else "none",
+        observed_at=now(),
+        freshness_seconds=freshness,
+        data=data
+    ))
+
+
+@app.get("/api/v1/helm/factories")
+@app.get("/api/helm/factories")
+def api_v1_factories():
+    import time
+    from backend.truth.integrity import canonical_factories, FACTORY_REGISTRY
+    data = canonical_factories()
+    freshness = 0.0
+    if FACTORY_REGISTRY.exists():
+        freshness = float(time.time() - FACTORY_REGISTRY.stat().st_mtime)
+    return JSONResponse(_truth_response(
+        truth_class="HELM_FACTORY_TRUTH",
+        source=str(FACTORY_REGISTRY.relative_to(ROOT)) if FACTORY_REGISTRY.exists() else "none",
+        observed_at=now(),
+        freshness_seconds=freshness,
+        data=data
+    ))
+
+
+@app.get("/api/v1/helm/tasks")
+def api_v1_tasks():
+    import time
+    data = live_tasks()
+    freshness = 0.0
+    if DB.exists():
+        freshness = float(time.time() - DB.stat().st_mtime)
+    return JSONResponse(_truth_response(
+        truth_class="HELM_TASK_TRUTH",
+        source=str(DB.relative_to(ROOT)) if DB.exists() else "none",
+        observed_at=now(),
+        freshness_seconds=freshness,
+        data=data
+    ))
+
+
+@app.get("/api/v1/helm/leases")
+def api_v1_leases():
+    import time
+    from backend.truth.runtime_source import classify_active_leases, LEASE_DIR
+    data = classify_active_leases()
+    freshness = 0.0
+    if LEASE_DIR.exists():
+        locks = list(LEASE_DIR.glob("*.lock"))
+        if locks:
+            freshness = float(time.time() - max(lk.stat().st_mtime for lk in locks))
+    return JSONResponse(_truth_response(
+        truth_class="HELM_LEASE_TRUTH",
+        source=str(LEASE_DIR.relative_to(ROOT)) if LEASE_DIR.exists() else "none",
+        observed_at=now(),
+        freshness_seconds=freshness,
+        data=data
+    ))
+
+
+@app.get("/api/v1/helm/authority")
+def api_v1_authority():
+    import time
+    from backend.council.founder_gate import pending, verify_chain, QUEUE, DECISIONS, _read_jsonl
+    chain_ok, chain_msg = verify_chain()
+    history = _read_jsonl(DECISIONS)[-30:]
+    data = {
+        "pending_escalations": pending(),
+        "decided_history": history,
+        "chain_intact": chain_ok,
+        "chain_message": chain_msg
+    }
+    paths = [p for p in (QUEUE, DECISIONS) if p.exists()]
+    freshness = 0.0
+    if paths:
+        freshness = float(time.time() - max(p.stat().st_mtime for p in paths))
+    return JSONResponse(_truth_response(
+        truth_class="HELM_AUTHORITY_TRUTH",
+        source=f"{QUEUE.relative_to(ROOT) if QUEUE.exists() else 'none'} + {DECISIONS.relative_to(ROOT) if DECISIONS.exists() else 'none'}",
+        observed_at=now(),
+        freshness_seconds=freshness,
+        data=data
+    ))
+
+
+@app.get("/api/v1/helm/integrity")
 @app.get("/api/helm/integrity")
-def api_integrity():
-    """F-1: integrity is COMPUTED from the live node set, or reported UNKNOWN. The wall no
-    longer prints 'EVERY NODE OBSERVED - 0 FABRICATED' as an unearned green slogan."""
+def api_v1_integrity():
     from backend.truth.integrity import compute_integrity
     t = live_tasks()
     nodes = t.get("tasks") if isinstance(t, dict) else None
-    return compute_integrity(nodes if isinstance(nodes, list) else t)
+    data = compute_integrity(nodes if isinstance(nodes, list) else t)
+    return JSONResponse(_truth_response(
+        truth_class="HELM_INTEGRITY_TRUTH",
+        source="runtime_verification",
+        observed_at=now(),
+        freshness_seconds=0.0,
+        data=data
+    ))
 
 
-@app.get("/api/helm/factories")
-def api_factories():
-    """F-4: ONE canonical identity source + ONE derived runtime state."""
-    from backend.truth.integrity import canonical_factories
-    return canonical_factories()
+@app.get("/api/v1/helm/soak")
+def api_v1_soak():
+    import time
+    pkg = _newest_soak_pkg()
+    if not pkg:
+        return JSONResponse(_truth_response(
+            truth_class="HELM_SOAK_TRUTH",
+            source="none",
+            observed_at=now(),
+            freshness_seconds=0.0,
+            data={"state": "UNKNOWN", "reason": "no soak package found"}
+        ))
+    cfg_file = pkg / "soak_config.json"
+    cfg = {}
+    if cfg_file.exists():
+        try:
+            cfg = json.loads(cfg_file.read_text())
+        except Exception:
+            cfg = {"error": "unreadable config"}
+    
+    cycles_file = pkg / "daemon" / "scheduler_cycles.jsonl"
+    cycles_count = 0
+    if cycles_file.exists():
+        cycles_count = len(cycles_file.read_text().splitlines())
+        
+    verif_file = pkg / "daemon" / "verification_ledger.jsonl"
+    verif_count = 0
+    if verif_file.exists():
+        verif_count = len(verif_file.read_text().splitlines())
+        
+    lease_file = pkg / "daemon" / "task_lease_ledger.jsonl"
+    lease_count = 0
+    if lease_file.exists():
+        lease_count = len(lease_file.read_text().splitlines())
+        
+    res_file = pkg / "resource_usage.jsonl"
+    usage_entries = []
+    if res_file.exists():
+        for line in res_file.read_text().splitlines()[-10:]:
+            try:
+                usage_entries.append(json.loads(line))
+            except Exception:
+                pass
+                
+    freshness = float(time.time() - cfg_file.stat().st_mtime) if cfg_file.exists() else 0.0
+    return JSONResponse(_truth_response(
+        truth_class="HELM_SOAK_TRUTH",
+        source=str(cfg_file.relative_to(ROOT)) if cfg_file.exists() else str(pkg.relative_to(ROOT)),
+        observed_at=now(),
+        freshness_seconds=freshness,
+        data={
+            "package_name": pkg.name,
+            "soak_config": cfg,
+            "cycles_count": cycles_count,
+            "verifications_count": verif_count,
+            "leases_count": lease_count,
+            "resource_usage_entries": usage_entries
+        }
+    ))
 
 
-@app.get("/api/helm/concurrency")
-def api_concurrency():
-    """Capacity and utilisation are DIFFERENT facts."""
-    from backend.truth.runtime_source import concurrency_truth
-    return concurrency_truth(configured_capacity=4)
+@app.get("/api/v1/helm/pert")
+def api_v1_pert():
+    import time
+    
+    # 1. Runtime
+    from backend.truth.runtime_source import concurrency_truth, POINTER
+    rt_data = concurrency_truth(configured_capacity=4)
+    rt_freshness = float(time.time() - POINTER.stat().st_mtime) if POINTER.exists() else 0.0
+    runtime_sec = _truth_response(
+        truth_class="HELM_RUNTIME_TRUTH",
+        source=str(POINTER.relative_to(ROOT)) if POINTER.exists() else "none",
+        observed_at=now(),
+        freshness_seconds=rt_freshness,
+        data=rt_data
+    )
+    
+    # 2. Factories
+    from backend.truth.integrity import canonical_factories, FACTORY_REGISTRY
+    fac_data = canonical_factories()
+    fac_freshness = float(time.time() - FACTORY_REGISTRY.stat().st_mtime) if FACTORY_REGISTRY.exists() else 0.0
+    factories_sec = _truth_response(
+        truth_class="HELM_FACTORY_TRUTH",
+        source=str(FACTORY_REGISTRY.relative_to(ROOT)) if FACTORY_REGISTRY.exists() else "none",
+        observed_at=now(),
+        freshness_seconds=fac_freshness,
+        data=fac_data
+    )
+    
+    # 3. Tasks
+    tasks_data = live_tasks()
+    tasks_freshness = float(time.time() - DB.stat().st_mtime) if DB.exists() else 0.0
+    tasks_sec = _truth_response(
+        truth_class="HELM_TASK_TRUTH",
+        source=str(DB.relative_to(ROOT)) if DB.exists() else "none",
+        observed_at=now(),
+        freshness_seconds=tasks_freshness,
+        data=tasks_data
+    )
+    
+    # 4. Leases
+    from backend.truth.runtime_source import classify_active_leases, LEASE_DIR
+    leases_data = classify_active_leases()
+    leases_freshness = 0.0
+    if LEASE_DIR.exists():
+        locks = list(LEASE_DIR.glob("*.lock"))
+        if locks:
+            leases_freshness = float(time.time() - max(lk.stat().st_mtime for lk in locks))
+    leases_sec = _truth_response(
+        truth_class="HELM_LEASE_TRUTH",
+        source=str(LEASE_DIR.relative_to(ROOT)) if LEASE_DIR.exists() else "none",
+        observed_at=now(),
+        freshness_seconds=leases_freshness,
+        data=leases_data
+    )
+    
+    # 5. Authority
+    from backend.council.founder_gate import pending, verify_chain, QUEUE, DECISIONS, _read_jsonl
+    chain_ok, chain_msg = verify_chain()
+    auth_data = {
+        "pending_escalations": pending(),
+        "decided_history": _read_jsonl(DECISIONS)[-30:],
+        "chain_intact": chain_ok,
+        "chain_message": chain_msg
+    }
+    auth_paths = [p for p in (QUEUE, DECISIONS) if p.exists()]
+    auth_freshness = float(time.time() - max(p.stat().st_mtime for p in auth_paths)) if auth_paths else 0.0
+    authority_sec = _truth_response(
+        truth_class="HELM_AUTHORITY_TRUTH",
+        source=f"{QUEUE.relative_to(ROOT) if QUEUE.exists() else 'none'} + {DECISIONS.relative_to(ROOT) if DECISIONS.exists() else 'none'}",
+        observed_at=now(),
+        freshness_seconds=auth_freshness,
+        data=auth_data
+    )
+    
+    # 6. Integrity
+    from backend.truth.integrity import compute_integrity
+    tasks_list = tasks_data.get("tasks") if isinstance(tasks_data, dict) else None
+    integ_data = compute_integrity(tasks_list if isinstance(tasks_list, list) else tasks_data)
+    integrity_sec = _truth_response(
+        truth_class="HELM_INTEGRITY_TRUTH",
+        source="runtime_verification",
+        observed_at=now(),
+        freshness_seconds=0.0,
+        data=integ_data
+    )
+    
+    # 7. Soak
+    soak_pkg = _newest_soak_pkg()
+    if soak_pkg:
+        soak_cfg_file = soak_pkg / "soak_config.json"
+        soak_cfg = {}
+        if soak_cfg_file.exists():
+            try:
+                soak_cfg = json.loads(soak_cfg_file.read_text())
+            except Exception:
+                soak_cfg = {"error": "unreadable config"}
+        cycles_file = soak_pkg / "daemon" / "scheduler_cycles.jsonl"
+        cycles_count = len(cycles_file.read_text().splitlines()) if cycles_file.exists() else 0
+        verif_file = soak_pkg / "daemon" / "verification_ledger.jsonl"
+        verif_count = len(verif_file.read_text().splitlines()) if verif_file.exists() else 0
+        lease_file = soak_pkg / "daemon" / "task_lease_ledger.jsonl"
+        lease_count = len(lease_file.read_text().splitlines()) if lease_file.exists() else 0
+        res_file = soak_pkg / "resource_usage.jsonl"
+        usage_entries = []
+        if res_file.exists():
+            for line in res_file.read_text().splitlines()[-10:]:
+                try:
+                    usage_entries.append(json.loads(line))
+                except Exception:
+                    pass
+        soak_freshness = float(time.time() - soak_cfg_file.stat().st_mtime) if soak_cfg_file.exists() else 0.0
+        soak_sec = _truth_response(
+            truth_class="HELM_SOAK_TRUTH",
+            source=str(soak_cfg_file.relative_to(ROOT)) if soak_cfg_file.exists() else str(soak_pkg.relative_to(ROOT)),
+            observed_at=now(),
+            freshness_seconds=soak_freshness,
+            data={
+                "package_name": soak_pkg.name,
+                "soak_config": soak_cfg,
+                "cycles_count": cycles_count,
+                "verifications_count": verif_count,
+                "leases_count": lease_count,
+                "resource_usage_entries": usage_entries
+            }
+        )
+    else:
+        soak_sec = _truth_response(
+            truth_class="HELM_SOAK_TRUTH",
+            source="none",
+            observed_at=now(),
+            freshness_seconds=0.0,
+            data={"state": "UNKNOWN", "reason": "no soak package found"}
+        )
+        
+    pert_data = {
+        "runtime": runtime_sec,
+        "factories": factories_sec,
+        "tasks": tasks_sec,
+        "leases": leases_sec,
+        "authority": authority_sec,
+        "integrity": integrity_sec,
+        "soak": soak_sec,
+        "adapters": live_adapters(),
+        "spend": live_spend(),
+        "northstar": live_northstar(),
+        "security": live_security(),
+        "census": live_census(),
+        "verdict": live_verdict(),
+    }
+    
+    return JSONResponse(_truth_response(
+        truth_class="HELM_PERT_TRUTH",
+        source="multi-source aggregation",
+        observed_at=now(),
+        freshness_seconds=0.0,
+        data=pert_data
+    ))
 
 
 @app.get("/api/helm/live")
