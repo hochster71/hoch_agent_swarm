@@ -24,37 +24,56 @@ echo "  phase=$PHASE status=$STATUS"
 [ "$STATUS" = "HALTED" ] && { echo "  chain HALTED; no-op"; exit 0; }
 [ "$STATUS" = "DONE" ]   && { echo "  chain DONE"; exit 0; }
 
-# find newest package for this phase, seal it
-PKG=$(ls -dt coordination/council/live_proof_packages/HELM-SOAK-*Z 2>/dev/null | head -1)
-[ -z "$PKG" ] && { echo "  no package"; exit 0; }
+# FAKE-GREEN FIX (2026-07-14): the old logic did `ls -dt HELM-SOAK-*Z | head -1` (ANY newest package),
+# read its seal, and matched `*PASS`. When the B/C soak launches silently failed and produced no new
+# package, `head -1` kept returning Phase A (2H), so the chainer re-read SOAK_PHASE_A_PASS three times
+# and fabricated B -> C -> DONE. Only the 2h Phase A ever actually ran. That is a fake green.
+# The fix is strict phase binding: each phase reads ONLY its own duration-prefixed package, requires a
+# verdict that NAMES that phase, and requires the package to belong to THIS chain (started at/after the
+# recorded phase launch). A missing/old package HALTS for founder review instead of advancing.
+
+case "$PHASE" in
+  A) PREF="2H";  NEXT="B";    SECS=28800 ;;   # A(2h) -> B(8h)
+  B) PREF="8H";  NEXT="C";    SECS=86400 ;;   # B(8h) -> C(24h)
+  C) PREF="24H"; NEXT="DONE"; SECS=0 ;;
+  *) echo "  unknown phase '$PHASE'; HALT"; exit 0 ;;
+esac
+
+# this phase's package = newest of its OWN duration prefix (never another phase's)
+PKG=$(ls -dt coordination/council/live_proof_packages/HELM-SOAK-${PREF}-*Z 2>/dev/null | head -1)
+[ -z "$PKG" ] && { echo "  no ${PREF} package for phase $PHASE yet; waiting"; exit 0; }
+
+# it must belong to THIS chain: its start must be at/after the recorded phase launch time
+PHASE_SINCE=$($VENV -c "import json;print(json.load(open('$STATE')).get('phase_started_at',''))" 2>/dev/null)
+PKG_START=$($VENV -c "import json,os;p='$PKG/soak_config.json';print(json.load(open(p)).get('started_at','') if os.path.exists(p) else '')" 2>/dev/null)
+if [ -n "$PHASE_SINCE" ] && [ -n "$PKG_START" ] && [[ "$PKG_START" < "$PHASE_SINCE" ]]; then
+  echo "  newest ${PREF} package ($PKG_START) predates this phase launch ($PHASE_SINCE): the launched soak produced NO package -> HALT"
+  $VENV -c "import json;s=json.load(open('$STATE'));s.update(status='HALTED',reason='phase $PHASE launch produced no fresh ${PREF} package (soak failed to start)');json.dump(s,open('$STATE','w'))"
+  exit 0
+fi
+
 if [ ! -f "$PKG/seal_verdict.json" ]; then
   echo "  sealing $PKG"
   $VENV scripts/council/seal_soak_phase.py --package "$PKG" >/dev/null 2>&1
 fi
-VERDICT=$($VENV -c "import json,glob,os;p='$PKG/seal_verdict.json';print(json.load(open(p)).get('verdict','NONE') if os.path.exists(p) else 'NONE')")
-echo "  verdict=$VERDICT"
+VERDICT=$($VENV -c "import json,os;p='$PKG/seal_verdict.json';print(json.load(open(p)).get('verdict','NONE') if os.path.exists(p) else 'NONE')")
+echo "  phase=$PHASE pkg=$(basename "$PKG") verdict=$VERDICT"
 
-case "$VERDICT" in
-  *PASS)
-    NEXT=""; SECS=0
-    case "$PHASE" in
-      A) NEXT="B"; SECS=28800 ;;   # 8h
-      B) NEXT="C"; SECS=86400 ;;   # 24h
-      C) NEXT="DONE"; SECS=0 ;;
-    esac
-    if [ "$NEXT" = "DONE" ]; then
-      $VENV -c "import json;json.dump({'phase':'C','status':'DONE'},open('$STATE','w'))"
-      echo "  ALL PHASES PASSED. Chain DONE. Founder DOORSTEP is next."
-    else
-      # clean baseline then launch next phase as the SOLE writer
-      $VENV -c "from backend.mission_control.per_task_lease import PerTaskLeaseManager as M; from pathlib import Path; M(Path('coordination/leases')).reclaim_expired_leases()"
-      nohup $VENV scripts/council/soak_runner.py --seconds $SECS --phase $NEXT >/tmp/soak_$NEXT.log 2>&1 &
-      $VENV -c "import json;json.dump({'phase':'$NEXT','status':'RUNNING','prev':'$PHASE PASS'},open('$STATE','w'))"
-      echo "  $PHASE PASSED -> launched phase $NEXT (${SECS}s)"
-    fi
-    ;;
-  *)
-    $VENV -c "import json;json.dump({'phase':'$PHASE','status':'HALTED','verdict':'$VERDICT'},open('$STATE','w'))"
-    echo "  phase $PHASE did NOT pass ($VERDICT). Chain HALTED for founder review."
-    ;;
-esac
+# STRICT: the verdict must NAME this phase. SOAK_PHASE_A_PASS can NEVER advance phase B or C.
+EXPECT="SOAK_PHASE_${PHASE}_PASS"
+if [ "$VERDICT" = "$EXPECT" ]; then
+  if [ "$NEXT" = "DONE" ]; then
+    $VENV -c "import json;s=json.load(open('$STATE'));s.update(phase='C',status='DONE');json.dump(s,open('$STATE','w'))"
+    echo "  ALL PHASES PASSED (A,B,C each proven by its OWN seal). Chain DONE. Founder DOORSTEP is next."
+  else
+    $VENV -c "from backend.mission_control.per_task_lease import PerTaskLeaseManager as M; from pathlib import Path; M(Path('coordination/leases')).reclaim_expired_leases()"
+    NOW=$($VENV -c "import datetime;print(datetime.datetime.now(datetime.timezone.utc).isoformat())")
+    nohup $VENV scripts/council/soak_runner.py --seconds $SECS --phase $NEXT >/tmp/soak_$NEXT.log 2>&1 &
+    sleep 3   # give the runner a moment to create its package before the next tick evaluates it
+    $VENV -c "import json;json.dump({'phase':'$NEXT','status':'RUNNING','prev':'$PHASE $VERDICT','phase_started_at':'$NOW'},open('$STATE','w'))"
+    echo "  $PHASE PASSED ($VERDICT) -> launched phase $NEXT (${SECS}s) at $NOW"
+  fi
+else
+  $VENV -c "import json;s=json.load(open('$STATE'));s.update(status='HALTED',verdict='$VERDICT',expected='$EXPECT');json.dump(s,open('$STATE','w'))"
+  echo "  phase $PHASE verdict='$VERDICT' != expected '$EXPECT'. Chain HALTED for founder review (no fake advance)."
+fi

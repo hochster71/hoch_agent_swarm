@@ -38,8 +38,27 @@ def _sealed_at(pkg: Path) -> str:
     return str(d.get("sealed_at") or "")
 
 
+def _fresh(pkg: Path, budget_seconds: int = 1200) -> bool:
+    """True only if the package's newest daemon evidence was written recently.
+
+    WHY (2026-07-14): an ABANDONED unsealed false-start (soak_runner died, no seal) has a
+    soak_config.json forever, so the old logic treated it as IN_PROGRESS permanently and the
+    wall/API selected it over the real SEALED phase — surfacing a stale broken chain as CONTRADICTED
+    (a false-red). A dead package is not 'in progress'; it is abandoned. Gate on freshness.
+    """
+    import time
+    daemon = pkg / "daemon"
+    newest = 0.0
+    for f in list(daemon.glob("*.jsonl")) + list(pkg.glob("*.jsonl")):
+        try:
+            newest = max(newest, f.stat().st_mtime)
+        except OSError:
+            pass
+    return newest > 0 and (time.time() - newest) <= budget_seconds
+
+
 def _is_in_progress(pkg: Path) -> bool:
-    """True when the package is a live phase run not yet sealed."""
+    """True when the package is a live phase run not yet sealed AND still being written."""
     if (pkg / "seal_verdict.json").exists():
         return False
     # Prefer explicit snapshot status when present
@@ -51,13 +70,15 @@ def _is_in_progress(pkg: Path) -> bool:
                 last = json.loads(lines[-1])
                 st = str(last.get("soak_status") or "").upper()
                 if st == "IN_PROGRESS":
-                    return True
+                    # An IN_PROGRESS snapshot from a DEAD soak (killed mid-run, never wrote a terminal
+                    # status) is ABANDONED, not live. Only trust IN_PROGRESS if evidence is still fresh.
+                    return _fresh(pkg)
                 if st in ("COMPLETE", "FAILED", "PASS", "FAIL"):
                     return False
             except Exception:
                 pass
-    # Unsealed phase package with a config is treated as active
-    return (pkg / "soak_config.json").exists()
+    # Unsealed phase package with a config is active ONLY if still being written (not abandoned).
+    return (pkg / "soak_config.json").exists() and _fresh(pkg)
 
 
 def list_phase_packages(pkgs_root: Optional[Path] = None) -> list[Path]:
