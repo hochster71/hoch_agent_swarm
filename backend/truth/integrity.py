@@ -32,6 +32,19 @@ def compute_integrity(nodes: list[dict[str, Any]] | Any) -> dict[str, Any]:
                 "reason": "node set unavailable; integrity cannot be computed",
                 "truth_source": "none", "observed_at": _now()}
 
+    # VACUOUS-GREEN GUARD. An EMPTY node set produced
+    #     integrity_status: CLEAN  (observed 0/0, fabricated 0)
+    # -- clean because nothing was examined. Zero nodes checked is not zero problems found;
+    # it is NO EVIDENCE. "I looked at nothing and found nothing wrong" is the exact fake-green
+    # this instrument exists to catch, and it was sitting inside the instrument.
+    if len(nodes) == 0:
+        return {"nodes_total": 0, "nodes_observed": 0, "nodes_asserted": 0,
+                "nodes_unknown": 0, "fabricated_detected": 0,
+                "integrity_status": UNKNOWN,
+                "reason": ("no nodes were examined -- integrity is UNKNOWN, not CLEAN. "
+                           "An empty check is not a passed check."),
+                "truth_source": "runtime_verification", "observed_at": _now()}
+
     observed = asserted = unknown = fabricated = 0
     for n in nodes:
         if not isinstance(n, dict):
