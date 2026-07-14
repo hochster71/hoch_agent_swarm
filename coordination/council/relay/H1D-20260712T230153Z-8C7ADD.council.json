@@ -1,0 +1,114 @@
+{
+  "task_id": "H1D-20260712T230153Z-8C7ADD",
+  "task_digest": "7ff9245559d99743f6cf4052edee7ec6ce9b18496ef8e9d155cb8d5f2484018e",
+  "pert_node": "H1D",
+  "adapters_dispatched": [
+    "grok",
+    "gemini"
+  ],
+  "attempts": 3,
+  "revisions_performed": 1,
+  "accepted_adapters": [
+    "grok"
+  ],
+  "pert_node_state": "PARTIAL",
+  "pert_node_reason": "SINGLE_ADAPTER_ONLY_NO_CORROBORATION",
+  "total_cost_usd": 0.001322,
+  "external_calls": 3,
+  "founder_intervention_required": false,
+  "manual_copy_paste_operations": 0,
+  "results": [
+    {
+      "task_id": "H1D-20260712T230153Z-8C7ADD",
+      "adapter": "grok",
+      "status": "COMPLETED",
+      "output": "I'll review the spend gate implementation and how callers invoke model CLIs so I can identify the most realistic remaining bypass.VERDICT: Not airtight \u2014 any in-process provider SDK/HTTP call never hits the gate.  \nRATIONALE: `SubprocessSpendGate` only meters work that voluntarily enters `dispatch()` and then runs `subprocess.run(argv)`. It does not patch the process, sockets, or HTTP stacks, so budget, ledger, and founder controls inside that function never see non-subprocess traffic. Repo paths such as `scripts/model_upgrade.py` already bill providers that way.  \nBYPASS: `from openai import OpenAI; OpenAI().chat.completions.create(model=..., messages=[...])` (or equivalent Anthropic/`httpx`/`requests` POST to a paid model host) \u2014 no `SubprocessSpendGate.dispatch()` involved.\n",
+      "files_changed": [],
+      "tests": {},
+      "evidence": {
+        "task_digest": "7ff9245559d99743f6cf4052edee7ec6ce9b18496ef8e9d155cb8d5f2484018e",
+        "prompt_sha256": "b68ef570a2e3c1207c0ca147840258f1a34b8863abaf7f3d571c1a9bb329e6c7",
+        "exit_code": 0,
+        "stderr_tail": "",
+        "gateway_dispatch_id": "GD-8A5E2264D7B1",
+        "decision_status": "ALLOWED",
+        "billing_source": "estimated_from_tokens_or_request",
+        "provider_reported_cost": null,
+        "credit_balance_authoritative": false
+      },
+      "blocks": [],
+      "cost_usd": 0.001322,
+      "latency_ms": 51159,
+      "external_call": true,
+      "response_sha256": "93e2c229668f0134990cb00b2dd26e86f6a85fcfe09323f03adf722356d6627c",
+      "cost_ledger_hash": "7da4e24e95eb7148621b3e1f87589258cc3b96e8e0a01a6ed80d447d7e22951e",
+      "critic_verdict": "ACCEPT",
+      "critic_reasons": [],
+      "revision_of": null,
+      "created_at": "2026-07-12T23:02:44.184358Z"
+    },
+    {
+      "task_id": "H1D-20260712T230153Z-8C7ADD",
+      "adapter": "gemini",
+      "status": "TIMEOUT",
+      "output": "",
+      "files_changed": [],
+      "tests": {},
+      "evidence": {
+        "task_digest": "7ff9245559d99743f6cf4052edee7ec6ce9b18496ef8e9d155cb8d5f2484018e",
+        "prompt_sha256": "b68ef570a2e3c1207c0ca147840258f1a34b8863abaf7f3d571c1a9bb329e6c7",
+        "exit_code": null,
+        "stderr_tail": "adapter timed out",
+        "gateway_dispatch_id": "GD-9D33FB84671C",
+        "decision_status": "ALLOWED",
+        "billing_source": "estimated_from_tokens_or_request",
+        "provider_reported_cost": null,
+        "credit_balance_authoritative": false
+      },
+      "blocks": [],
+      "cost_usd": 0.0,
+      "latency_ms": 180032,
+      "external_call": true,
+      "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "cost_ledger_hash": "1fa95475891b964d40eeba0b0ae1e0e77432574573f503eb5bc19018aba97131",
+      "critic_verdict": "REVISE",
+      "critic_reasons": [
+        "ADAPTER_TIMEOUT"
+      ],
+      "revision_of": null,
+      "created_at": "2026-07-12T23:05:44.228364Z"
+    },
+    {
+      "task_id": "H1D-20260712T230153Z-8C7ADD",
+      "adapter": "gemini",
+      "status": "TIMEOUT",
+      "output": "",
+      "files_changed": [],
+      "tests": {},
+      "evidence": {
+        "task_digest": "7ff9245559d99743f6cf4052edee7ec6ce9b18496ef8e9d155cb8d5f2484018e",
+        "prompt_sha256": "10ae868025e7a085368631225cdfa8269386916364c859d49ce0170281a648c1",
+        "exit_code": null,
+        "stderr_tail": "adapter timed out",
+        "gateway_dispatch_id": "GD-BB183C51B4A1",
+        "decision_status": "ALLOWED",
+        "billing_source": "estimated_from_tokens_or_request",
+        "provider_reported_cost": null,
+        "credit_balance_authoritative": false
+      },
+      "blocks": [],
+      "cost_usd": 0.0,
+      "latency_ms": 180033,
+      "external_call": true,
+      "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "cost_ledger_hash": "1906e3dba24d84fe84ef9c6bf6765df8af2f6301b1f23f1e3e70268066132419",
+      "critic_verdict": "REVISE",
+      "critic_reasons": [
+        "ADAPTER_TIMEOUT"
+      ],
+      "revision_of": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "created_at": "2026-07-12T23:08:44.276369Z"
+    }
+  ],
+  "completed_at": "2026-07-12T23:08:44.277511Z"
+}

@@ -1,8 +1,13 @@
 {
-  "verdict": "REVENUE_TRACE_PROVEN",
+  "verdict": "REVENUE_TRACE_PROVEN \u2014 but revenue is PENDING, not SETTLED",
   "observed_at": "2026-07-14T02:09:19Z",
   "product": "EPIC_FURY_2026",
-  "revenue_usd": 20.52,
+  "revenue_usd": {
+    "gross": 20.52,
+    "fee": 2.42,
+    "net_pending": 18.1,
+    "settled": 0.0
+  },
   "livemode": true,
   "chain": {
     "checkout_reachable": "PROVEN (PaywallModal loop fixed \u2014 94a21e8)",
@@ -23,8 +28,12 @@
   "bug_i_introduced_and_had_to_own": "My webhook-secret probe stripped the whsec_ prefix before computing the HMAC. Stripe keys the HMAC with the FULL secret. The probe therefore returned 400 for ANY secret and reported SECRET DOES NOT MATCH twice \u2014 falsely. Michael rotated production twice on the strength of a test that could not have passed. The secret was correct the entire time. A broken test that reports FAIL is not safer than one that reports PASS.",
   "north_star": {
     "metric": "verified_founder_minutes_per_shipped_dollar",
-    "denominator_usd": 20.52,
-    "status": "COMPUTABLE \u2014 first time in program history",
-    "previously": "UNDEFINED (revenue was $0; division by zero)"
+    "status": "STILL UNDEFINED",
+    "correction": "I claimed COMPUTABLE. That was WRONG. HELM doctrine counts revenue only when it is SETTLED -- money actually in the account. The Stripe balance transaction is PENDING until 2026-07-21.",
+    "settled_usd": 0.0,
+    "pending_usd": 18.1,
+    "gross_usd": 20.52,
+    "stripe_fee_usd": 2.42,
+    "computable_on": "2026-07-21 (when funds settle)"
   }
 }

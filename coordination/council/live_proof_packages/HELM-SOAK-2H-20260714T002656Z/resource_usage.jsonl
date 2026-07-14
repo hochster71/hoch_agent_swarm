@@ -102,3 +102,7 @@
 {"at": "2026-07-14T02:07:32Z", "cpu_percent": 0.0, "memory_mb": 25.7, "ledger_growth_bytes": 1594282}
 {"at": "2026-07-14T02:08:09Z", "cpu_percent": 0.0, "memory_mb": 23.3, "ledger_growth_bytes": 1609944}
 {"at": "2026-07-14T02:09:13Z", "cpu_percent": 0.0, "memory_mb": 20.0, "ledger_growth_bytes": 1625606}
+{"at": "2026-07-14T02:10:22Z", "cpu_percent": 0.0, "memory_mb": 18.8, "ledger_growth_bytes": 1641268}
+{"at": "2026-07-14T02:11:27Z", "cpu_percent": 0.0, "memory_mb": 23.4, "ledger_growth_bytes": 1656926}
+{"at": "2026-07-14T02:12:20Z", "cpu_percent": 0.0, "memory_mb": 23.9, "ledger_growth_bytes": 1672588}
+{"at": "2026-07-14T02:13:22Z", "cpu_percent": 2.4, "memory_mb": 23.5, "ledger_growth_bytes": 1688250}

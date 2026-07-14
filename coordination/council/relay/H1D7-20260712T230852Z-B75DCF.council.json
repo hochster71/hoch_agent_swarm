@@ -1,0 +1,117 @@
+{
+  "task_id": "H1D7-20260712T230852Z-B75DCF",
+  "task_digest": "1281ea838a32a1990104e5826dbe333dac135de544d6576897c8e571aa4147e8",
+  "pert_node": "H1D.7",
+  "adapters_dispatched": [
+    "grok",
+    "ollama"
+  ],
+  "attempts": 3,
+  "revisions_performed": 1,
+  "accepted_adapters": [
+    "ollama"
+  ],
+  "pert_node_state": "PARTIAL",
+  "pert_node_reason": "SINGLE_ADAPTER_ONLY_NO_CORROBORATION",
+  "total_cost_usd": 0.002639,
+  "external_calls": 2,
+  "founder_intervention_required": false,
+  "manual_copy_paste_operations": 0,
+  "results": [
+    {
+      "task_id": "H1D7-20260712T230852Z-B75DCF",
+      "adapter": "grok",
+      "status": "COMPLETED",
+      "output": "I'll inspect how `CouncilDispatchGateway` is wired and search for call paths that can still hit model CLIs or providers without going through `dispatch()`.There's already H1D.7 inventory and status language about bypasses \u2014 I'll dig into those and the gateway implementation next.Status claims the OpenAI bypass was removed, but legacy mesh and incomplete guard coverage look like the real residual risk \u2014 verifying those paths next.Checking the incomplete socket patch, legacy adapters, and backend model paths for a concrete live bypass.\n",
+      "files_changed": [],
+      "tests": {},
+      "evidence": {
+        "task_digest": "1281ea838a32a1990104e5826dbe333dac135de544d6576897c8e571aa4147e8",
+        "prompt_sha256": "22c594edc0a409b39a0204dd486529983bd622ccadf3479ce50c73c514f9a4d6",
+        "exit_code": 0,
+        "stderr_tail": "",
+        "gateway_dispatch_id": "GD-43B48937910E",
+        "decision_status": "ALLOWED",
+        "billing_source": "estimated_from_tokens_or_request",
+        "provider_reported_cost": null,
+        "credit_balance_authoritative": false
+      },
+      "blocks": [],
+      "cost_usd": 0.001307,
+      "latency_ms": 16222,
+      "external_call": true,
+      "response_sha256": "a743b25f13c35146d574dc9eef7df002972d40dfef7ce9fe6211569dfab9698c",
+      "cost_ledger_hash": "52a3ee817e0f747e7ca1d9102f5f76ca1336a574c4afa1357cc44770dfaac049",
+      "critic_verdict": "REVISE",
+      "critic_reasons": [
+        "MISSING_REQUIRED_EVIDENCE:VERDICT",
+        "MISSING_REQUIRED_EVIDENCE:RATIONALE"
+      ],
+      "revision_of": null,
+      "created_at": "2026-07-12T23:09:08.917963Z"
+    },
+    {
+      "task_id": "H1D7-20260712T230852Z-B75DCF",
+      "adapter": "grok",
+      "status": "COMPLETED",
+      "output": "I'll review the codebase for `CouncilDispatchGateway` and any remaining paths that can reach models or spend money outside `dispatch()`.\n",
+      "files_changed": [],
+      "tests": {},
+      "evidence": {
+        "task_digest": "1281ea838a32a1990104e5826dbe333dac135de544d6576897c8e571aa4147e8",
+        "prompt_sha256": "39d4be1b634ff7907697faf85bef1f59413f9763fc9595348a84bc018efb731a",
+        "exit_code": 0,
+        "stderr_tail": "",
+        "gateway_dispatch_id": "GD-7297C7288183",
+        "decision_status": "ALLOWED",
+        "billing_source": "estimated_from_tokens_or_request",
+        "provider_reported_cost": null,
+        "credit_balance_authoritative": false
+      },
+      "blocks": [],
+      "cost_usd": 0.001332,
+      "latency_ms": 15305,
+      "external_call": true,
+      "response_sha256": "2a570d3f36b5fb7423d1ae51f584bea27330acd4d41703c80579b8007a3d7ac9",
+      "cost_ledger_hash": "ee89204e9353e5709af70d306e7f710f9cbbb9dbb4ff9cb02d03cf27dde6772e",
+      "critic_verdict": "REVISE",
+      "critic_reasons": [
+        "MISSING_REQUIRED_EVIDENCE:VERDICT",
+        "MISSING_REQUIRED_EVIDENCE:RATIONALE",
+        "MISSING_REQUIRED_EVIDENCE:BYPASS"
+      ],
+      "revision_of": "a743b25f13c35146d574dc9eef7df002972d40dfef7ce9fe6211569dfab9698c",
+      "created_at": "2026-07-12T23:09:24.228844Z"
+    },
+    {
+      "task_id": "H1D7-20260712T230852Z-B75DCF",
+      "adapter": "ollama",
+      "status": "COMPLETED",
+      "output": "**VERDICT:** The single most likely remaining way a caller could still spen\u001b[4D\u001b[K\nspend money or make an external model call without passing through CouncilD\u001b[8D\u001b[K\nCouncilDispatchGateway.dispatch() is by using the deprecated HELM H1D.6 dis\u001b[3D\u001b[K\ndispatch mechanism.\n\n**RATIONALE:** Although CouncilDispatchGateway has been added as the univer\u001b[6D\u001b[K\nuniversal model-dispatch choke point, it's possible that some code paths ha\u001b[2D\u001b[K\nhave not yet migrated to use this new gateway. If a caller uses the depreca\u001b[7D\u001b[K\ndeprecated dispatch mechanism from HELM H1D.6, they would bypass CouncilDis\u001b[10D\u001b[K\nCouncilDispatchGateway altogether and still be able to spend money or make \u001b[K\nexternal model calls.\n\n**BYPASS:** `helm.models.dispatch()`\n\n",
+      "files_changed": [],
+      "tests": {},
+      "evidence": {
+        "task_digest": "1281ea838a32a1990104e5826dbe333dac135de544d6576897c8e571aa4147e8",
+        "prompt_sha256": "22c594edc0a409b39a0204dd486529983bd622ccadf3479ce50c73c514f9a4d6",
+        "exit_code": 0,
+        "stderr_tail": "?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h",
+        "gateway_dispatch_id": "GD-F6240DDA93CD",
+        "decision_status": "ALLOWED",
+        "billing_source": "estimated_from_tokens_or_request",
+        "provider_reported_cost": null,
+        "credit_balance_authoritative": false
+      },
+      "blocks": [],
+      "cost_usd": 0.0,
+      "latency_ms": 11337,
+      "external_call": false,
+      "response_sha256": "b50d9683428b499ce477c4367aa34dedcf7457c4e2d6a79ebc61a7a0c77ff26d",
+      "cost_ledger_hash": "2fa93a0e304a9c503f0170e1f8b766655a44dcc4f14c056dd85627ff090a4d06",
+      "critic_verdict": "ACCEPT",
+      "critic_reasons": [],
+      "revision_of": null,
+      "created_at": "2026-07-12T23:09:35.572540Z"
+    }
+  ],
+  "completed_at": "2026-07-12T23:09:35.573065Z"
+}

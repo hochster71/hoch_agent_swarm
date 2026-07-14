@@ -102,3 +102,7 @@
 {"round": 102, "at": "2026-07-14T02:07:32Z", "dispatched": 4, "ids": ["SOAK-HASF-102", "SOAK-HRF-102", "SOAK-HCF-102", "SOAK-HSF-102"]}
 {"round": 103, "at": "2026-07-14T02:08:09Z", "dispatched": 4, "ids": ["SOAK-HASF-103", "SOAK-HRF-103", "SOAK-HCF-103", "SOAK-HSF-103"]}
 {"round": 104, "at": "2026-07-14T02:09:13Z", "dispatched": 4, "ids": ["SOAK-HASF-104", "SOAK-HRF-104", "SOAK-HCF-104", "SOAK-HSF-104"]}
+{"round": 105, "at": "2026-07-14T02:10:22Z", "dispatched": 4, "ids": ["SOAK-HASF-105", "SOAK-HRF-105", "SOAK-HCF-105", "SOAK-HSF-105"]}
+{"round": 106, "at": "2026-07-14T02:11:27Z", "dispatched": 4, "ids": ["SOAK-HASF-106", "SOAK-HRF-106", "SOAK-HCF-106", "SOAK-HSF-106"]}
+{"round": 107, "at": "2026-07-14T02:12:20Z", "dispatched": 4, "ids": ["SOAK-HASF-107", "SOAK-HRF-107", "SOAK-HCF-107", "SOAK-HSF-107"]}
+{"round": 108, "at": "2026-07-14T02:13:22Z", "dispatched": 4, "ids": ["SOAK-HASF-108", "SOAK-HRF-108", "SOAK-HCF-108", "SOAK-HSF-108"]}

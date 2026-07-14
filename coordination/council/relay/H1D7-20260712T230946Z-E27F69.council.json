@@ -1,0 +1,145 @@
+{
+  "task_id": "H1D7-20260712T230946Z-E27F69",
+  "task_digest": "9aeca28663efc02fbdff0bece3ca701f6c668842a4869ed1daf96876ed7f9120",
+  "pert_node": "H1D.7",
+  "adapters_dispatched": [
+    "grok",
+    "ollama"
+  ],
+  "attempts": 4,
+  "revisions_performed": 2,
+  "accepted_adapters": [
+    "grok",
+    "ollama"
+  ],
+  "pert_node_state": "COMPLETED",
+  "pert_node_reason": "MULTI_ADAPTER_VALIDATED_EVIDENCE",
+  "total_cost_usd": 0.003916,
+  "external_calls": 3,
+  "founder_intervention_required": false,
+  "manual_copy_paste_operations": 0,
+  "results": [
+    {
+      "task_id": "H1D7-20260712T230946Z-E27F69",
+      "adapter": "grok",
+      "status": "COMPLETED",
+      "output": "I'll inspect the codebase for CouncilDispatchGateway / H1D.7 and any remaining model-call paths that skip `gateway.dispatch()`.Status says the OpenAI adapter bypass was fixed; next I'll check legacy mesh, guard gaps, and any live non-gateway model paths.\n",
+      "files_changed": [],
+      "tests": {},
+      "evidence": {
+        "task_digest": "9aeca28663efc02fbdff0bece3ca701f6c668842a4869ed1daf96876ed7f9120",
+        "prompt_sha256": "5aeebf66edd43c93375efed32fd9d0269d0a80495c3957b955cc8b274a66c06a",
+        "exit_code": 0,
+        "stderr_tail": "",
+        "gateway_dispatch_id": "GD-155A402EABF4",
+        "decision_status": "ALLOWED",
+        "billing_source": "estimated_from_tokens_or_request",
+        "provider_reported_cost": null,
+        "credit_balance_authoritative": false
+      },
+      "blocks": [],
+      "cost_usd": 0.00129,
+      "latency_ms": 15400,
+      "external_call": true,
+      "response_sha256": "f5f5455bbf0fea4249ca7c1c057c2f91672df27b53831db2aea8b0c3c6a134fc",
+      "cost_ledger_hash": "4fa23ec961547a277784befc4be7b9e0aeed1e16908e8840ab745c4811d63b73",
+      "critic_verdict": "REVISE",
+      "critic_reasons": [
+        "MISSING_REQUIRED_EVIDENCE:VERDICT",
+        "MISSING_REQUIRED_EVIDENCE:RATIONALE"
+      ],
+      "revision_of": null,
+      "created_at": "2026-07-12T23:10:01.620294Z"
+    },
+    {
+      "task_id": "H1D7-20260712T230946Z-E27F69",
+      "adapter": "grok",
+      "status": "COMPLETED",
+      "output": "I'll inspect the CouncilDispatchGateway and related model-call paths so the verdict names a concrete remaining bypass.\n",
+      "files_changed": [],
+      "tests": {},
+      "evidence": {
+        "task_digest": "9aeca28663efc02fbdff0bece3ca701f6c668842a4869ed1daf96876ed7f9120",
+        "prompt_sha256": "07102a904dbe206a1d3aabec67749f5bf08ab572e524630d24629d488fadb98b",
+        "exit_code": 0,
+        "stderr_tail": "",
+        "gateway_dispatch_id": "GD-3DBDCC3B70A8",
+        "decision_status": "ALLOWED",
+        "billing_source": "estimated_from_tokens_or_request",
+        "provider_reported_cost": null,
+        "credit_balance_authoritative": false
+      },
+      "blocks": [],
+      "cost_usd": 0.001314,
+      "latency_ms": 15716,
+      "external_call": true,
+      "response_sha256": "639861de7213c45da246ef183c774b056c16002e062d7598135c8c157475d87d",
+      "cost_ledger_hash": "bdd4ae3ab9abf89b14fcccca3d201cf961c010c86ea7cc158a422b3d54757569",
+      "critic_verdict": "REVISE",
+      "critic_reasons": [
+        "MISSING_REQUIRED_EVIDENCE:RATIONALE"
+      ],
+      "revision_of": "f5f5455bbf0fea4249ca7c1c057c2f91672df27b53831db2aea8b0c3c6a134fc",
+      "created_at": "2026-07-12T23:10:17.363583Z"
+    },
+    {
+      "task_id": "H1D7-20260712T230946Z-E27F69",
+      "adapter": "grok",
+      "status": "COMPLETED",
+      "output": "I'll inspect the H1D.7 CouncilDispatchGateway changes and search for remaining model-call paths that bypass `gateway.dispatch()`.Checking the incomplete socket patch and whether the custom opener path is the intentional residual.VERDICT: After H1D.7, model calls still land via the legacy backend mesh outside CouncilDispatchGateway.\nRATIONALE: Council/prompt_brain execute paths were routed through CouncilDispatchGateway and the old OpenAIAdapter direct POST was removed, with ModelDispatchGuard only monkey-patching urllib.request.urlopen and subprocess when ensure_guard() runs. H1D_STATUS and scripts/verify_model_dispatch_chokepoint.py still mark backend model code as legacy_backend_mesh / documented_exception_pending_unification, and that mesh never calls gateway.dispatch(). Guard coverage also misses requests/provider SDKs, so backend generate paths remain live bypasses.\nBYPASS: backend/brain/model_router.py::ModelRouter.query_local_model \u2192 requests.post(self.ollama_url, ...) to Ollama /api/generate\n",
+      "files_changed": [],
+      "tests": {},
+      "evidence": {
+        "task_digest": "9aeca28663efc02fbdff0bece3ca701f6c668842a4869ed1daf96876ed7f9120",
+        "prompt_sha256": "52f8d72ae2a5aa876482391e39b9371f2e350ecc8d2a171f5dac8290628e1f58",
+        "exit_code": 0,
+        "stderr_tail": "",
+        "gateway_dispatch_id": "GD-CA1066E9BE75",
+        "decision_status": "ALLOWED",
+        "billing_source": "estimated_from_tokens_or_request",
+        "provider_reported_cost": null,
+        "credit_balance_authoritative": false
+      },
+      "blocks": [],
+      "cost_usd": 0.001312,
+      "latency_ms": 34279,
+      "external_call": true,
+      "response_sha256": "8685cfc600dbf77215f29360302268951b7ba0456eb76b1c48389d83894ea13e",
+      "cost_ledger_hash": "28a9840c787a63844381fdf0b1dcfe72d89602c0e082d75845afc83dbf78500b",
+      "critic_verdict": "ACCEPT",
+      "critic_reasons": [],
+      "revision_of": "639861de7213c45da246ef183c774b056c16002e062d7598135c8c157475d87d",
+      "created_at": "2026-07-12T23:10:51.649719Z"
+    },
+    {
+      "task_id": "H1D7-20260712T230946Z-E27F69",
+      "adapter": "ollama",
+      "status": "COMPLETED",
+      "output": "VERDICT: REST API\n\nRATIONALE: The council dispatch gateway is used for direct model calls via \u001b[K\ngateway.dispatch(). If this method is not used, another possible way to int\u001b[3D\u001b[K\ninteract with models would be through the REST API. This approach involves \u001b[K\nmaking HTTP requests to the API endpoints that are typically exposed by the\u001b[3D\u001b[K\nthe system being tested.\n\nBYPASS: NONE\n\n",
+      "files_changed": [],
+      "tests": {},
+      "evidence": {
+        "task_digest": "9aeca28663efc02fbdff0bece3ca701f6c668842a4869ed1daf96876ed7f9120",
+        "prompt_sha256": "5aeebf66edd43c93375efed32fd9d0269d0a80495c3957b955cc8b274a66c06a",
+        "exit_code": 0,
+        "stderr_tail": "?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h\u001b[?25l\u001b[?25h",
+        "gateway_dispatch_id": "GD-871B30A479A4",
+        "decision_status": "ALLOWED",
+        "billing_source": "estimated_from_tokens_or_request",
+        "provider_reported_cost": null,
+        "credit_balance_authoritative": false
+      },
+      "blocks": [],
+      "cost_usd": 0.0,
+      "latency_ms": 3936,
+      "external_call": false,
+      "response_sha256": "9a6cfd685de1abd3e2ebeb36d01d4da642d48c2577a8de94d667fceb4243eba2",
+      "cost_ledger_hash": "27637ef3c3125a71385332dc789f0814cb2a1c6e69ebb61b86e20a6fcf38e69d",
+      "critic_verdict": "ACCEPT",
+      "critic_reasons": [],
+      "revision_of": null,
+      "created_at": "2026-07-12T23:10:55.593123Z"
+    }
+  ],
+  "completed_at": "2026-07-12T23:10:55.593488Z"
+}
