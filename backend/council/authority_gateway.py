@@ -203,20 +203,33 @@ def dispatch_grok(task: dict[str, Any], binding: AuthorityBinding, *,
     cwd = Path(a["hardening"]["bounded_cwd"])
     cwd.mkdir(parents=True, exist_ok=True)
 
+    # --max-turns 1 CANCELLED Grok mid-thought: it spent the single turn reasoning and was
+    # killed before it could answer (stopReason: "Cancelled", "Error: max turns reached").
+    # The output came back EMPTY and auto_council read that as "0 findings — clean".
+    # A strangled model is not a clean audit. Give it room to think AND answer.
     cmd = [a["binary"], "-p", task["action_text"], "--output-format", "json",
            "--tools", "", "--no-subagents", "--no-memory", "--disable-web-search",
-           "--max-turns", "1", "--verbatim", "--cwd", str(cwd)]
+           "--max-turns", "4", "--verbatim", "--cwd", str(cwd)]
     if model:
         cmd += ["-m", model]
 
     t0 = time.time()
     proc = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, cwd=str(cwd))
     out = proc.stdout.strip()
+    stop_reason = None
     try:
         parsed = json.loads(out)
-        text = parsed.get("result") or parsed.get("response") or parsed.get("text") or out
+        text = parsed.get("result") or parsed.get("response") or parsed.get("text") or ""
+        stop_reason = parsed.get("stopReason")
     except json.JSONDecodeError:
         text = out
+
+    # FAIL LOUDLY. An empty adapter response must NEVER be read downstream as "nothing to
+    # report". Silence is not agreement; a strangled model is not a clean audit.
+    if not text.strip() or stop_reason in ("Cancelled", "MaxTurns"):
+        raise RuntimeError(
+            f"GROK_DISPATCH_EMPTY: stopReason={stop_reason} exit={proc.returncode} "
+            f"stderr={(proc.stderr or '')[:160]} — refusing to report an empty audit as clean")
 
     return {
         "result_envelope_version": "1.0",
