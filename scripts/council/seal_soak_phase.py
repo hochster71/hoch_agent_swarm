@@ -190,7 +190,11 @@ if __name__ == "__main__":
     # AU-9: a PASS may NOT be issued over rewritten history. Verify the evidence chain BEFORE
     # any verdict. A seal is a claim about what happened; if the record of what happened can be
     # silently edited, the seal is worthless.
-    _lead = ROOT / "coordination" / "council" / "daemon" / "task_lease_ledger.jsonl"
+    # AU-9 gate verifies the PACKAGE ledger UNDER SEAL — the soak's actual evidence — not the
+    # live daemon ledger (which other components write via non-chained paths).
+    _lead = PKG / "daemon" / "task_lease_ledger.jsonl"
+    if not _lead.exists():
+        _lead = PKG / "lease_ledger.jsonl"
     _chain_ok, _chain_why = chain_precondition(_lead)
     req("evidence chain intact (AU-9, tamper-evident)", _chain_ok, _chain_why)
 

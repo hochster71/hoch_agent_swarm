@@ -132,3 +132,28 @@ def test_sealer_cannot_emit_PASS_over_a_broken_chain(tmp_path):
     ok, reason = chain_precondition(led)
     assert ok is False
     assert "chain" in reason.lower()
+
+
+# ---------------------------------------------------------------- concurrency (added after a real
+# 4-worker soak broke its own chain: append_record was read-head-then-append with no lock)
+def test_concurrent_writers_do_not_break_the_chain(tmp_path):
+    """N threads hammering append_record in parallel must still produce ONE linear chain.
+    The soak runs 4 concurrent workers; without a lock, two of them read the same prev_hash and
+    the chain broke at the first concurrent pair. flock must serialize the critical section."""
+    import threading
+    led = tmp_path / "ledger.jsonl"
+    errors = []
+    def worker(k):
+        try:
+            for i in range(25):
+                append_record(led, {"task": f"T{k}-{i}"})
+        except Exception as e:
+            errors.append(e)
+    threads = [threading.Thread(target=worker, args=(k,)) for k in range(8)]
+    for t in threads: t.start()
+    for t in threads: t.join()
+    assert not errors, f"append raised under concurrency: {errors[:2]}"
+    # 8 threads x 25 = 200 rows, and the chain MUST verify end to end
+    rows = [l for l in led.read_text().splitlines() if l.strip()]
+    assert len(rows) == 200, f"lost writes under concurrency: {len(rows)}/200"
+    assert verify_chain(led) is True

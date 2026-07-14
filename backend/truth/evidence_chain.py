@@ -72,18 +72,35 @@ def head_hash(path: Path) -> str:
 
 
 def append_record(path: Path, payload: Dict[str, Any]) -> Dict[str, Any]:
-    """Append a chained record. Durable: fsync'd, so a crash cannot leave a torn tail."""
+    """Append a chained record, ATOMICALLY under concurrency.
+
+    THE BUG THIS FIXES (caught by the AU-9 chain on a 4-worker soak, 2026-07-14): the old version
+    did head_hash() then append() with NO lock. Two concurrent workers both read the same prev_hash,
+    both computed entry_hash on it, and wrote two rows with the SAME prev_hash -> the chain broke at
+    the first concurrent pair. A concurrent system needs a concurrency-safe chain, or the tamper-
+    evidence is indistinguishable from a real concurrency race.
+
+    An OS-level advisory lock (flock) serializes read-head + append across processes AND threads, so
+    the chain is linear even under real parallel writers. Durable: fsync'd.
+    """
+    import fcntl
     p = Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
-    prev = head_hash(p)
-    rec = dict(payload)
-    rec["prev_hash"] = prev
-    rec["entry_hash"] = compute_hash(rec, prev)
-    with p.open("a", encoding="utf-8") as f:
-        f.write(json.dumps(rec, sort_keys=True, default=str) + "\n")
-        f.flush()
-        os.fsync(f.fileno())
-    return rec
+    lock = p.with_suffix(p.suffix + ".chainlock")
+    with open(lock, "w") as lf:
+        fcntl.flock(lf.fileno(), fcntl.LOCK_EX)     # serialize the read-then-append critical section
+        try:
+            prev = head_hash(p)
+            rec = dict(payload)
+            rec["prev_hash"] = prev
+            rec["entry_hash"] = compute_hash(rec, prev)
+            with p.open("a", encoding="utf-8") as f:
+                f.write(json.dumps(rec, sort_keys=True, default=str) + "\n")
+                f.flush()
+                os.fsync(f.fileno())
+            return rec
+        finally:
+            fcntl.flock(lf.fileno(), fcntl.LOCK_UN)
 
 
 def verify_chain(path: Path, *, expected_head: Optional[str] = None) -> bool:
