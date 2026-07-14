@@ -70,6 +70,25 @@ class JSpaceLedger:
         }
         return self._append(self.quarantine_requests_path, payload)
 
+    def record_containment(self, record: Dict[str, Any]) -> dict:
+        """Record the OUTCOME of a containment attempt — verbatim.
+
+        request_quarantine() hardcodes executed=false, which is correct for a
+        request but is a lie for an executed containment. Provenance must survive
+        the ledger: a containment that moved files says so, with its artifacts,
+        digests and authorizing policy id. It is still append-only, and the row
+        can never claim independent verification (HJOS cannot verify itself).
+        """
+        payload = dict(record)
+        payload.setdefault("executed", False)
+        payload.setdefault("execution_authority", "NONE")
+        payload["independently_verified"] = bool(
+            record.get("independently_verified") is True
+            and record.get("verified_by")
+            and not str(record.get("verified_by")).lower().startswith(("jspace", "hjos"))
+        )
+        return self._append(self.quarantine_requests_path, payload)
+
     def read_jsonl(self, path: Path, *, limit: Optional[int] = None) -> List[dict]:
         if not path.exists():
             return []

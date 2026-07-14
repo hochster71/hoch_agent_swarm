@@ -182,7 +182,9 @@ def run_hjos_cycle(
                         evidence=list(al.evidence),
                         cycle_id=cycle_id,
                         observer=al.observer,
-                        ledger_append=ledger.request_quarantine,
+                        # record the OUTCOME truthfully (request_quarantine would
+                        # hardcode executed:false over an executed containment)
+                        ledger_append=ledger.record_containment,
                         repo_root=repo_root,
                     )
                     quarantine_results.append(qr)
@@ -193,7 +195,7 @@ def run_hjos_cycle(
             hy = quarantine_expired_orphan_locks(
                 enabled=True,
                 current_instance_id=ptr.get("scheduler_instance_id"),
-                ledger_append=ledger.request_quarantine,
+                ledger_append=ledger.record_containment,
                 repo_root=repo_root,
                 cycle_id=cycle_id,
             )
