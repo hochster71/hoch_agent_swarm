@@ -67,7 +67,8 @@ async function tick(){
     const d=await r.json();
     const f=d.freshness_seconds;
     // staleness is a FAILURE state, never rendered as green
-    const s=(f!=null&&f>BUDGET)?'STALE':(d.overall||d.state||'LIVE');
+    // fail-closed: no freshness == no proof of liveness
+    const s=(f==null)?'UNKNOWN':(f>BUDGET)?'STALE':(d.overall||d.state||'LIVE');
     st.textContent=s; st.className='pill '+(KNOWN.includes(s)?s:'UNKNOWN');
     set('auth', d.promotion_authority || 'NONE');
     set('fresh', f==null?'—':f.toFixed(0)+'s');

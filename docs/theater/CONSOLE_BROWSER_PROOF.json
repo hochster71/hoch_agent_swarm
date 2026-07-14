@@ -1,0 +1,46 @@
+{
+  "schema": "CONSOLE_BROWSER_PROOF_v1",
+  "proven_at": "2026-07-14T15:15:51Z",
+  "engine": "playwright-core chromium (headless), real DOM assertions",
+  "contract": "The console must never render an UNEARNED green. It is not required to be green.",
+  "results": [
+    {
+      "case": "API unreachable",
+      "global": "UNKNOWN",
+      "panels": "7/7 UNKNOWN",
+      "verdict": "PASS",
+      "proves": "no last-known-good fallback"
+    },
+    {
+      "case": "freshness budget = 0",
+      "global": "STALE",
+      "panels": "5 STALE + 2 LIVE",
+      "verdict": "PASS",
+      "proves": "the 2 LIVE panels are integrity/authority which are COMPUTED ON REQUEST (freshness==0.0); 0.0 > 0 is false, so LIVE is correct"
+    },
+    {
+      "case": "API healthy",
+      "global": "CONTRADICTED",
+      "panels": "[STALE,STALE,LIVE,STALE,CONTRADICTED,LIVE,LIVE]",
+      "verdict": "PASS",
+      "proves": "faithfully reports a REAL HJOS contradiction rather than a green"
+    }
+  ],
+  "defect_found_in_my_own_console": {
+    "bug": "state guard was `fresh!=null && fresh>budget ? STALE : LIVE` \u2014 an endpoint returning NO freshness_seconds fell through to LIVE",
+    "impact": "absent evidence rendered as liveness \u2014 a fake-green vector",
+    "fix": "fail-closed: fresh==null -> UNKNOWN. Applied to console.html AND frontend/index.html",
+    "caught_by": "the browser proof (2/7 panels LIVE at BUDGET=0)"
+  },
+  "defect_found_in_my_own_test": {
+    "bug": "first test asserted 'API healthy => global LIVE' \u2014 i.e. it asserted a GREEN OUTCOME",
+    "impact": "it FAILED the console for correctly reporting CONTRADICTED",
+    "fix": "test now asserts the CONTRACT (no unearned green), not a green result"
+  },
+  "open_defect_NOT_fixed_during_freeze": {
+    "finding": "/api/v1/helm/soak reports freshness_seconds=3337 (~56min) while the soak is ACTIVELY writing cycles every ~50s",
+    "cause": "the endpoint derives freshness from soak_config.json (written once at start), not from scheduler_cycles.jsonl (live)",
+    "impact": "an actively-running soak renders STALE on the wall \u2014 a FALSE-RED, the inverse pathology",
+    "status": "REPORTED, NOT FIXED \u2014 Phase A freeze is in force; no repair-in-place until the window closes at 16:19:19Z"
+  }
+}

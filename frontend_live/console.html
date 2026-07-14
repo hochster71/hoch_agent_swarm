@@ -75,8 +75,12 @@ async function pull(ep,title){
     const d=await r.json();
     const fresh=d.freshness_seconds, budget=BUDGET[ep]??300;
     // STALENESS IS A FAILURE STATE — never render old data as current.
-    const state=(fresh!=null&&fresh>budget)?'STALE'
-      :(d.overall||d.state||d.status||d.truth_state||'LIVE');
+    // FAIL-CLOSED: absent freshness is NOT proof of liveness. A panel with no
+    // freshness_seconds must render UNKNOWN, never LIVE. (Caught by browser proof:
+    // 2/7 panels rendered LIVE with BUDGET=0 because freshness was null.)
+    const state = (fresh==null) ? 'UNKNOWN'
+                : (fresh>budget) ? 'STALE'
+                : (d.overall||d.state||d.status||d.truth_state||'LIVE');
     const skip=['truth_class','source','observed_at','freshness_seconds','tested_commit'];
     const rows=[];
     for(const [k,v] of Object.entries(d)){
