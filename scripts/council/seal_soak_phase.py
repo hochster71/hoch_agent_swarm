@@ -28,6 +28,10 @@ def chain_precondition(ledger_path, *, expected_head=None):
     the seal is worthless. This is the gate: verify the evidence chain BEFORE any verdict.
     Returns (ok, reason). A broken chain is CONTRADICTED -- never a warning, never a pass.
     """
+    import sys as _sys, os as _os
+    _root = _os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+    if _root not in _sys.path:
+        _sys.path.insert(0, _root)
     from backend.truth.evidence_chain import verify_chain, ChainBroken
     try:
         verify_chain(ledger_path, expected_head=expected_head)

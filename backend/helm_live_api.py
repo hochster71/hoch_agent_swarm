@@ -839,6 +839,25 @@ def helm_live() -> JSONResponse:
     })
 
 
+@app.get("/console", response_class=HTMLResponse)
+def serve_console() -> str:
+    """Serve the single console FROM the API so it is SAME-ORIGIN.
+
+    It previously hardcoded API = "http://127.0.0.1:8770". On a PHONE, 127.0.0.1 is the PHONE's
+    own localhost — so the page loaded and every fetch failed. Same-origin makes it work
+    identically on the Mac, the phone, and over Tailscale.
+    """
+    f = ROOT / "frontend_live" / "console.html"
+    return f.read_text() if f.exists() else "<h1>console missing</h1>"
+
+
+@app.get("/arch", response_class=HTMLResponse)
+def serve_arch() -> str:
+    """DoDAF baseline architecture — same-origin, phone-safe."""
+    f = ROOT / "frontend_live" / "architecture.html"
+    return f.read_text() if f.exists() else "<h1>architecture missing</h1>"
+
+
 @app.get("/pert", response_class=HTMLResponse)
 def pert_wall() -> str:
     """The 85-inch wall. Same runtime-truth feed; nothing on it can be faked."""
