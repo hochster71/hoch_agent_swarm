@@ -871,14 +871,16 @@ def api_v1_chain():
 
 @app.get("/api/v1/helm/agents")
 def api_v1_agents():
-    """Agent performance & ACCOUNTABILITY, aggregated ONLY by dimensions the ledger actually
-    attributes: factory, validator, adapter, scheduler. Fail-closed:
-      - no package -> UNKNOWN (never an empty-but-green view)
-      - an adapter/factory with no runs is reported as such, never drawn as a zero-loser
-      - cost is reported with its measured state (OBSERVED/$0.00), never blanked
-    Every number here is derived from result_envelopes + verification_ledger, both hash-chained.
-    Worker_id is deliberately NOT surfaced as a leaderboard: it is ephemeral (one per task), so a
-    per-worker ranking would be fabricated continuity. Accountability is per accountable dimension.
+    """Agent performance & ACCOUNTABILITY — ledger dimensions only (fail-closed).
+
+    Accountable axes: factory · validator · adapter · scheduler.
+    NOT accountable as a leaderboard: ephemeral worker_id (one per task).
+
+    Fail-closed:
+      - no package → UNKNOWN
+      - adapter with no runs omitted (never drawn as zero-loser)
+      - cost always carries measured state (e.g. $0.00 OBSERVED)
+      - broken AU-9 chain → CONTRADICTED for the whole view
     """
     import time, statistics
     from collections import Counter, defaultdict
@@ -887,10 +889,16 @@ def api_v1_agents():
     daemon = (pkg / "daemon") if pkg else None
     env_p = daemon / "result_envelopes.jsonl" if daemon else None
     ver_p = daemon / "verification_ledger.jsonl" if daemon else None
+    lease_p = daemon / "task_lease_ledger.jsonl" if daemon else None
     if not (env_p and env_p.exists() and ver_p and ver_p.exists()):
         return JSONResponse(_truth_response(truth_class="HELM_AGENT_TRUTH", source="none",
             observed_at=now(), freshness_seconds=None,
-            data={"state": "UNKNOWN", "reason": "no attributed evidence package yet"}))
+            data={"state": "UNKNOWN",
+                  "reason": "no attributed evidence package yet",
+                  "doctrine": {
+                      "no_named_agent_leaderboard": True,
+                      "reason": "worker_id is ephemeral (one per task); ranking would fabricate continuity",
+                  }}))
 
     def _rows(p):
         return [json.loads(l) for l in p.read_text().splitlines() if l.strip()]
@@ -900,80 +908,263 @@ def api_v1_agents():
         try: return datetime.fromisoformat(str(s).replace("Z", "+00:00"))
         except Exception: return None
 
-    # factory x verdict matrix + the specific failing checks (the accountability core)
-    fac = defaultdict(lambda: {"pass": 0, "fail": 0, "failing_checks": Counter()})
+    # AU-9 chain status — if broken, the accountability view is CONTRADICTED
+    chain_state = "UNKNOWN"
+    chain_reason = None
+    if lease_p and lease_p.exists() and lease_p.read_text().strip():
+        try:
+            from backend.truth.evidence_chain import verify_chain, ChainBroken
+            verify_chain(lease_p)
+            chain_state = "CONFIRMED_LIVE"
+        except Exception as e:
+            # ChainBroken or import miss
+            chain_state = "CONTRADICTED"
+            chain_reason = str(e)[:240]
+
+    # factory x verdict matrix + named failing checks (accountability core)
+    fac = defaultdict(lambda: {"pass": 0, "fail": 0, "failing_checks": Counter(),
+                               "validators": Counter()})
     for r in ver:
         f = r.get("factory") or "?"
-        if r.get("verdict") == "PASS": fac[f]["pass"] += 1
+        if r.get("validator"):
+            fac[f]["validators"][r.get("validator")] += 1
+        if r.get("verdict") == "PASS":
+            fac[f]["pass"] += 1
         else:
             fac[f]["fail"] += 1
             for c in (r.get("failed_checks") or []):
                 name = c.get("check") if isinstance(c, dict) else str(c)
                 fac[f]["failing_checks"][name] += 1
-    matrix = [{"factory": f, "pass": d["pass"], "fail": d["fail"],
-               "validator": next((v.get("validator") for v in ver if v.get("factory") == f), None),
-               "failing_checks": dict(d["failing_checks"])}
-              for f, d in sorted(fac.items())]
+    matrix = []
+    for f, d in sorted(fac.items()):
+        tot = d["pass"] + d["fail"]
+        top_val = d["validators"].most_common(1)[0][0] if d["validators"] else None
+        matrix.append({
+            "factory": f,
+            "pass": d["pass"],
+            "fail": d["fail"],
+            "total": tot,
+            "pass_rate": round(100 * d["pass"] / tot, 1) if tot else None,
+            "validator": top_val,
+            "failing_checks": dict(d["failing_checks"]),
+        })
 
-    # latency distribution per factory + slow tail (with sha256, so a slow task is traceable)
+    # latency distribution per factory + slow tail (sha256-traceable)
     lat_by = defaultdict(list); tail = []
     for r in env:
         a, b = _pt(r.get("started_at")), _pt(r.get("completed_at"))
         if a and b:
-            s = (b - a).total_seconds(); lat_by[r.get("factory") or "?"].append(s)
-            tail.append({"task": r.get("task_id"), "factory": r.get("factory"),
-                         "seconds": round(s, 1), "sha256": str(r.get("artifact_sha256") or "")[:12]})
+            s = (b - a).total_seconds()
+            lat_by[r.get("factory") or "?"].append(s)
+            tail.append({
+                "task": r.get("task_id"),
+                "factory": r.get("factory"),
+                "seconds": round(s, 1),
+                "sha256": str(r.get("artifact_sha256") or "")[:16],
+            })
+
     def _pct(xs, q):
-        if not xs: return None
-        xs = sorted(xs); k = max(0, min(len(xs) - 1, int(round(q * (len(xs) - 1))))); return round(xs[k], 1)
-    latency = [{"factory": f, "n": len(xs), "p50": _pct(xs, .5), "p95": _pct(xs, .95),
-                "max": round(max(xs), 1)} for f, xs in sorted(lat_by.items())]
-    slow_tail = sorted(tail, key=lambda t: t["seconds"], reverse=True)[:6]
+        if not xs:
+            return None
+        xs = sorted(xs)
+        k = max(0, min(len(xs) - 1, int(round(q * (len(xs) - 1)))))
+        return round(xs[k], 1)
 
-    # adapter panel — per adapter: runs, pass-rate, latency, cost, throughput
-    adp = defaultdict(lambda: {"runs": 0, "pass": 0, "cost_usd": 0.0, "cost_state": set(),
-                               "lat": [], "out_chars": []})
-    vv = {v.get("task_id"): v.get("verdict") for v in ver}
+    latency = []
+    for f, xs in sorted(lat_by.items()):
+        latency.append({
+            "factory": f,
+            "n": len(xs),
+            "p50": _pct(xs, .5),
+            "p95": _pct(xs, .95),
+            "max": round(max(xs), 1),
+            "mean": round(sum(xs) / len(xs), 1) if xs else None,
+            "min": round(min(xs), 1) if xs else None,
+        })
+    slow_tail = sorted(tail, key=lambda t: t["seconds"], reverse=True)[:8]
+
+    # adapter panel — only adapters that actually ran
+    adp = defaultdict(lambda: {
+        "runs": 0, "pass": 0, "cost_usd": 0.0, "cost_state": set(),
+        "lat": [], "out_chars": [], "in_chars": [],
+    })
+    vv = {v.get("task_id"): v for v in ver}
+    workers = set()
     for r in env:
-        a = r.get("adapter") or "?"; d = adp[a]; d["runs"] += 1
-        if vv.get(r.get("task_id")) == "PASS": d["pass"] += 1
-        try: d["cost_usd"] += float(r.get("cost_usd") or 0.0)
-        except Exception: pass
-        if r.get("cost_state"): d["cost_state"].add(r.get("cost_state"))
+        if r.get("worker_id"):
+            workers.add(r.get("worker_id"))
+        a = r.get("adapter") or "?"
+        d = adp[a]
+        d["runs"] += 1
+        ver_row = vv.get(r.get("task_id")) or {}
+        if ver_row.get("verdict") == "PASS":
+            d["pass"] += 1
+        try:
+            d["cost_usd"] += float(r.get("cost_usd") or 0.0)
+        except Exception:
+            pass
+        if r.get("cost_state"):
+            d["cost_state"].add(r.get("cost_state"))
         s, e = _pt(r.get("started_at")), _pt(r.get("completed_at"))
-        if s and e: d["lat"].append((e - s).total_seconds())
-        if isinstance(r.get("out_chars"), int): d["out_chars"].append(r["out_chars"])
-    adapters = [{"adapter": a, "runs": d["runs"],
-                 "pass_rate": round(100 * d["pass"] / d["runs"], 1) if d["runs"] else None,
-                 "cost_usd": round(d["cost_usd"], 4),
-                 "cost_state": "/".join(sorted(d["cost_state"])) or "UNKNOWN",
-                 "p50_latency": _pct(d["lat"], .5),
-                 "median_out_chars": int(statistics.median(d["out_chars"])) if d["out_chars"] else None}
-                for a, d in sorted(adp.items())]
+        if s and e:
+            d["lat"].append((e - s).total_seconds())
+        if isinstance(r.get("out_chars"), int):
+            d["out_chars"].append(r["out_chars"])
+        if isinstance(r.get("in_chars"), int):
+            d["in_chars"].append(r["in_chars"])
 
-    # scheduler continuity — the 148/8 restart. AU-9 proves no two co-wrote (that's benign vs split-brain)
+    adapters = []
+    for a, d in sorted(adp.items()):
+        if d["runs"] <= 0:
+            continue  # never emit zero-loser empty adapters
+        cost_state = "/".join(sorted(d["cost_state"])) or "UNKNOWN"
+        cost_usd = round(d["cost_usd"], 4)
+        adapters.append({
+            "adapter": a,
+            "runs": d["runs"],
+            "pass_rate": round(100 * d["pass"] / d["runs"], 1),
+            "cost_usd": cost_usd,
+            "cost_state": cost_state,
+            "cost_display": f"${cost_usd:.2f} {cost_state}",
+            "p50_latency": _pct(d["lat"], .5),
+            "median_out_chars": int(statistics.median(d["out_chars"])) if d["out_chars"] else None,
+            "median_in_chars": int(statistics.median(d["in_chars"])) if d["in_chars"] else None,
+        })
+
+    # scheduler continuity
     sched = Counter(r.get("scheduler_instance_id") for r in env if r.get("scheduler_instance_id"))
     schedulers = [{"instance": s, "tasks": n} for s, n in sched.most_common()]
+    sched_continuity = (
+        "SINGLE_WRITER" if len(schedulers) <= 1
+        else "SEQUENTIAL_HANDOFF"  # AU-9 chain proves non-overlap when CONFIRMED_LIVE
+    )
 
-    # custody sample — full chain of custody for the most recent few tasks
-    custody = [{"task": r.get("task_id"), "factory": r.get("factory"),
-                "authority_decision_id": r.get("authority_decision_id"),
-                "authority_status": r.get("authority_status"),
-                "dispatch_digest": str(r.get("dispatch_digest") or "")[:12],
-                "artifact_sha256": str(r.get("artifact_sha256") or "")[:12],
-                "verdict": vv.get(r.get("task_id")), "fencing_token": r.get("fencing_token")}
-               for r in env[-5:]]
+    # custody sample — authority → dispatch → artifact → validator (latest + failures first)
+    by_task_env = {r.get("task_id"): r for r in env if r.get("task_id")}
+    failed_ids = [v.get("task_id") for v in ver if v.get("verdict") != "PASS" and v.get("task_id")]
+    sample_ids = []
+    for tid in failed_ids[-4:]:
+        if tid not in sample_ids:
+            sample_ids.append(tid)
+    for r in reversed(env[-8:]):
+        tid = r.get("task_id")
+        if tid and tid not in sample_ids:
+            sample_ids.append(tid)
+        if len(sample_ids) >= 8:
+            break
+    custody = []
+    for tid in sample_ids:
+        r = by_task_env.get(tid) or {}
+        v = vv.get(tid) or {}
+        failed = []
+        for c in (v.get("failed_checks") or []):
+            failed.append(c.get("check") if isinstance(c, dict) else str(c))
+        custody.append({
+            "task": tid,
+            "factory": r.get("factory") or v.get("factory"),
+            "authority_class": r.get("authority_class"),
+            "authority_decision_id": r.get("authority_decision_id"),
+            "authority_status": r.get("authority_status"),
+            "dispatch_digest": str(r.get("dispatch_digest") or "")[:16],
+            "artifact_sha256": str(r.get("artifact_sha256") or "")[:16],
+            "validator": v.get("validator"),
+            "verdict": v.get("verdict"),
+            "failed_checks": failed,
+            "fencing_token": r.get("fencing_token"),
+            "lease_id": r.get("lease_id"),
+            "worker_id": r.get("worker_id"),  # shown as ephemeral, not ranked
+        })
 
-    total = len(ver); passed = sum(1 for v in ver if v.get("verdict") == "PASS")
+    # remediation — an accountability instrument must make un-acted-upon failures impossible to miss.
+    # Read-only derivation (freeze-safe): a failed task is REMEDIATED only if a later attempt of the
+    # same id verified PASS. Dispatch-COMPLETED + verdict-FAIL is NOT a defect — "the process ran" and
+    # "the output was good" are correctly SEPARATE facts. The real gap is that a validation FAIL has no
+    # retry path today, so a failure sits unremediated. Surface it; never let a green screen hide it.
+    _hist = defaultdict(list)
+    for v in ver:
+        if v.get("task_id"):
+            _hist[v["task_id"]].append(v.get("verdict"))
+    _failed_tasks = [t for t, vs in _hist.items() if "FAIL" in vs]
+    _remediated = [t for t in _failed_tasks if "PASS" in _hist[t]]
+    _unremediated = sorted(t for t in _failed_tasks if "PASS" not in _hist[t])
+    remediation = {
+        "failures": len(_failed_tasks),
+        "remediated": len(_remediated),
+        "unremediated": len(_unremediated),
+        "unremediated_ids": _unremediated[:12],
+        "recovery_rate": round(100 * len(_remediated) / len(_failed_tasks), 1) if _failed_tasks else None,
+        "retry_capability": ("NONE_OBSERVED" if _failed_tasks and not _remediated else "PRESENT"),
+        "note": ("failed validations have no retry path in this run — each is an unremediated known-bad artifact"
+                 if _unremediated else "no unremediated failures"),
+    }
+
+    total = len(ver)
+    passed = sum(1 for v in ver if v.get("verdict") == "PASS")
+    failed = total - passed
     fresh = float(time.time() - env_p.stat().st_mtime)
-    return JSONResponse(_truth_response(truth_class="HELM_AGENT_TRUTH",
-        source=str(env_p.relative_to(ROOT)), observed_at=now(), freshness_seconds=fresh,
-        data={"state": "CONFIRMED_LIVE" if total else "UNKNOWN",
-              "total": total, "passed": passed,
-              "pass_rate": round(100 * passed / total, 1) if total else None,
-              "adapter_count": len(adp), "matrix": matrix, "latency": latency,
-              "slow_tail": slow_tail, "adapters": adapters, "schedulers": schedulers,
-              "custody": custody}))
+
+    # View state: chain contradiction wins over green
+    if chain_state == "CONTRADICTED":
+        view_state = "CONTRADICTED"
+    elif total:
+        view_state = "CONFIRMED_LIVE"
+    else:
+        view_state = "UNKNOWN"
+
+    total_cost = round(sum(a["cost_usd"] for a in adapters), 4)
+    cost_states = sorted({s for a in adapters for s in a["cost_state"].split("/") if s})
+
+    return JSONResponse(_truth_response(
+        truth_class="HELM_AGENT_TRUTH",
+        source=str(env_p.relative_to(ROOT)),
+        observed_at=now(),
+        freshness_seconds=fresh,
+        data={
+            "state": view_state,
+            "reason": chain_reason,
+            "package": pkg.name if pkg else None,
+            "doctrine": {
+                "no_named_agent_leaderboard": True,
+                "accountable_dimensions": [
+                    "factory", "validator", "adapter", "scheduler_instance_id",
+                ],
+                "ephemeral_not_ranked": ["worker_id"],
+                "empty_adapter_lanes": "omitted — never drawn as losers",
+                "cost_display_rule": "always show measured state (e.g. $0.00 OBSERVED)",
+            },
+            "chain_state": chain_state,
+            "total": total,
+            "passed": passed,
+            "failed": failed,
+            "pass_rate": round(100 * passed / total, 1) if total else None,
+            "ephemeral_worker_executions": len(workers),
+            "adapter_count": len(adapters),
+            "adapter_count_label": (
+                f"{len(adapters)} adapter active this run"
+                if len(adapters) == 1
+                else f"{len(adapters)} adapters active this run"
+            ),
+            "cost_total_usd": total_cost,
+            "cost_display": f"${total_cost:.2f} {'/'.join(cost_states) or 'UNKNOWN'}",
+            "matrix": matrix,
+            "latency": latency,
+            "slow_tail": slow_tail,
+            "adapters": adapters,
+            "schedulers": schedulers,
+            "scheduler_continuity": sched_continuity,
+            "remediation": remediation,
+            "custody": custody,
+            "failures": [
+                {
+                    "task": c["task"],
+                    "factory": c["factory"],
+                    "validator": c["validator"],
+                    "failed_checks": c["failed_checks"],
+                }
+                for c in custody if c.get("verdict") and c.get("verdict") != "PASS"
+            ],
+        },
+    ))
 
 
 @app.get("/command", response_class=HTMLResponse)
