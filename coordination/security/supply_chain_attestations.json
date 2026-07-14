@@ -1,0 +1,37 @@
+{
+  "generated_at": "2026-07-14T20:17:44.923292+00:00",
+  "models": {
+    "GROK_CLI:grok-default": {
+      "adapter_id": "GROK_CLI",
+      "attested_at": "2026-07-14T20:17:44.923026+00:00",
+      "attested_by": "michaelhoch",
+      "digest": null,
+      "endpoint": "",
+      "model": "grok-default",
+      "note": "remote weights are NOT attestable from this host",
+      "provenance_class": "REMOTE_ENDPOINT_IDENTITY"
+    },
+    "LOCAL_OLLAMA:llama3.1:8b": {
+      "adapter_id": "LOCAL_OLLAMA",
+      "attested_at": "2026-07-14T20:17:44.886467+00:00",
+      "attested_by": "michaelhoch",
+      "digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+      "endpoint": "http://127.0.0.1:11434",
+      "model": "llama3.1:8b",
+      "note": "",
+      "provenance_class": "LOCAL_WEIGHTS_DIGEST"
+    }
+  },
+  "schema": "HELM_SUPPLY_CHAIN_ATTESTATION_v1",
+  "tools": {
+    "GROK_CLI": {
+      "attested_at": "2026-07-14T20:17:44.837287+00:00",
+      "attested_by": "michaelhoch",
+      "note": "",
+      "path": "/Users/michaelhoch/.local/bin/grok",
+      "resolved_path": "/Users/michaelhoch/.grok/downloads/grok-macos-aarch64",
+      "sha256": "2a97ba675bd992aa9b981e2e83776460d94f469b510c0b8efe28b50d236d767c",
+      "size_bytes": 127259280
+    }
+  }
+}

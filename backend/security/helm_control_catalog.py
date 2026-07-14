@@ -216,45 +216,88 @@ def a_ca07_conmon() -> Dict[str, str]:
 
 
 def a_sr03_supply_chain() -> Dict[str, str]:
-    """SR-3 Supply Chain Controls — a CURRENT SBOM of THIS system, or it's a finding.
+    """SR-3 Supply Chain Controls — every tool binary and model endpoint HELM dispatches
+    to is provenance-attested, and dispatch FAILS CLOSED on anything unattested.
 
-    FALSE-PASS BUG FIXED. v1 globbed `**/sbom*.json` and "passed" by matching:
-      * an SBOM of epic-fury-dashboard -- a DIFFERENT system, 11 days stale;
-      * `.venv/.../cryptography-49.0.0/sboms/sbom.json` -- a THIRD-PARTY package's own
-        SBOM, describing itself, not us;
-      * an old dist/releases artifact.
-    None of those describe HELM's current dependencies. A false PASS on supply chain is
-    the most dangerous kind of lie in this catalog: supply chain is exactly where you get
-    owned, and a green square there is an invitation.
+    THE FINDING THIS CLOSES. HELM invoked the GROK_CLI binary and the LOCAL_OLLAMA endpoint
+    on the strength of a NAME. A re-pointed model tag or a swapped binary on $PATH would have
+    been dispatched to silently. Provenance attestation (backend/truth/supply_chain.py) pins
+    the sha256 of each tool binary and the weights-digest / identity of each model endpoint.
 
-    An SBOM only counts if it describes THIS system, and is fresher than the manifests it
-    claims to describe.
+    ASSESSED FROM LIVE EVIDENCE, not a document. All four checks must hold:
+      (a) the shipped attestation registry loads, is well-formed, and attests the adapters
+          HELM actually dispatches to (GROK_CLI + a LOCAL_OLLAMA model);
+      (b) each shipped TOOL attestation re-verifies against the live binary on disk RIGHT NOW
+          (sha256 recomputed; a swapped binary makes this fail — no network needed);
+      (c) the verifier FAILS CLOSED: an unattested model id is DENIED, observed here;
+      (d) the control is ENFORCED, not declared: the dispatch path calls verify_provenance
+          BEFORE the subprocess / HTTP side effect (a control defined but never invoked is
+          the lease-TTL lie). Proven statically against authority_gateway.py.
+
+    LIMITATION (stated, not hidden): this attests the RUNTIME dispatch artifacts — local
+    tool binaries, local model weights, and remote model IDENTITY. It is NOT a full
+    third-party dependency SBOM, and a remote vendor silently re-pointing hosted weights
+    remains a trust boundary this control cannot see.
     """
-    import datetime as _dt
-    # exclude vendored/third-party and other systems' artifacts
-    cands = [p for p in ROOT.glob("**/sbom*.json")
-             if ".venv" not in p.parts and "node_modules" not in p.parts
-             and "dist" not in p.parts and "data" not in p.parts]
-    manifests = [ROOT / "pyproject.toml", ROOT / "frontend" / "package.json"]
-    newest_manifest = max((m.stat().st_mtime for m in manifests if m.exists()), default=0)
+    import ast as _ast
+    try:
+        from backend.truth import supply_chain as _sc
+    except Exception as e:
+        return _r(UNKNOWN, "supply_chain module unimportable", str(e)[:120])
 
-    for c in cands:
-        try:
-            doc = json.loads(c.read_text())
-            name = ((doc.get("metadata") or {}).get("component") or {}).get("name", "")
-        except Exception:
-            continue
-        if "helm" in name.lower() or "hoch" in name.lower():
-            if c.stat().st_mtime >= newest_manifest:
-                return _r(IMPLEMENTED, f"current SBOM for this system: {c.name}",
-                          f"component={name}, newer than dependency manifests")
-            return _r(NOT_IMPLEMENTED, f"SBOM for this system is STALE ({c.name})",
-                      "dependencies changed after the SBOM was generated")
+    # (a) the registry ships, is well-formed, and covers the real dispatch adapters
+    doc, why = _sc.load_registry()
+    if doc is None:
+        return _r(NOT_IMPLEMENTED, "attestation registry missing/unreadable", why[:140])
+    if "GROK_CLI" not in doc.get("tools", {}):
+        return _r(NOT_IMPLEMENTED, "GROK_CLI is dispatched to but not attested", "")
+    if not any(k.startswith("LOCAL_OLLAMA:") for k in doc.get("models", {})):
+        return _r(NOT_IMPLEMENTED, "no LOCAL_OLLAMA model attested", "dispatch_ollama exists")
 
-    return _r(NOT_IMPLEMENTED,
-              "no current SBOM for HELM (only other systems' / vendored SBOMs exist)",
-              "third-party dependencies are trusted implicitly. REAL OPEN FINDING -- "
-              "this is where supply-chain compromise enters.")
+    # (b) re-verify every attested tool binary against what is on disk right now
+    for tid in doc["tools"]:
+        ok, reason = _sc.verify_tool_provenance(tid)
+        if not ok:
+            return _r(NOT_IMPLEMENTED, f"attested tool fails live verification: {tid}",
+                      reason[:160])
+
+    # (c) fail-closed proof: an unattested model MUST be denied (observed, deterministic)
+    ok_neg, reason_neg = _sc.verify_provenance(adapter_id="LOCAL_OLLAMA",
+                                               model="unattested-substitute:evil")
+    if ok_neg or not reason_neg.startswith("MODEL_NOT_ATTESTED"):
+        return _r(NOT_IMPLEMENTED, "verifier did not fail closed on an unattested model",
+                  reason_neg[:140])
+
+    # (d) enforced, not declared: verify_provenance is called BEFORE the side effect
+    gw = ROOT / "backend" / "council" / "authority_gateway.py"
+    try:
+        tree = _ast.parse(gw.read_text())
+    except Exception as e:
+        return _r(UNKNOWN, "authority_gateway.py unparseable", str(e)[:120])
+    fns = {n.name: n for n in _ast.walk(tree) if isinstance(n, _ast.FunctionDef)}
+
+    def _callee(call: "_ast.Call") -> str:
+        f = call.func
+        return getattr(f, "attr", None) or getattr(f, "id", "") or ""
+
+    for fname, effect in (("dispatch_ollama", "urlopen"), ("dispatch_grok", "run")):
+        fn = fns.get(fname)
+        if fn is None:
+            return _r(NOT_IMPLEMENTED, f"{fname} missing from dispatch path", "")
+        vlines = [n.lineno for n in _ast.walk(fn) if isinstance(n, _ast.Call)
+                  and _callee(n).endswith("verify_provenance")]
+        elines = [n.lineno for n in _ast.walk(fn) if isinstance(n, _ast.Call)
+                  and _callee(n).endswith(effect)]
+        if not vlines or not elines or min(vlines) >= min(elines):
+            return _r(NOT_IMPLEMENTED,
+                      f"{fname} does not verify provenance before {effect}",
+                      "a control defined but not enforced is theatre")
+
+    ntools, nmodels = len(doc["tools"]), len(doc["models"])
+    return _r(IMPLEMENTED,
+              f"provenance attested + enforced ({ntools} tool / {nmodels} model), fail-closed",
+              "tool sha256 re-verified live; dispatch DENIES an unattested model/binary "
+              "BEFORE subprocess/HTTP; runtime-artifact scope, not a full dependency SBOM")
 
 
 CONTROLS: List[Dict[str, Any]] = [

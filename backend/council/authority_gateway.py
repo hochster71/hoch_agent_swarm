@@ -14,6 +14,16 @@ Typed denials (no silent pass):
     AUTHORITY_SUPERSEDED
     AUTHORITY_SINGLE_USE_CONSUMED
     TASK_MUTATED_AFTER_CLASSIFICATION
+    SUPPLY_CHAIN_PROVENANCE_DENIED     (SR-3)
+
+SR-3 SUPPLY CHAIN. Authority answers "is this task allowed?". Provenance answers a
+question the gateway never used to ask: "is the thing I am about to talk to the thing I
+think it is?". A model tag can be re-pointed at different weights and a CLI binary can be
+swapped on $PATH; both were previously invoked on the strength of a NAME. Now every
+dispatch verifies the sha256 of the tool binary and the digest/identity of the model
+endpoint against coordination/security/supply_chain_attestations.json, BEFORE the
+subprocess is spawned or the HTTP request is made, and FAILS CLOSED on anything it cannot
+observe. See backend/truth/supply_chain.py for what this does and does not prove.
 """
 from __future__ import annotations
 
@@ -26,6 +36,7 @@ from pathlib import Path
 from typing import Any
 
 from backend.council.decision_record import load_corpus, apply_supersession
+from backend.truth import supply_chain as sc         # SR-3 provenance attestation
 
 ROOT = Path(__file__).resolve().parents[2]
 OLLAMA = "http://127.0.0.1:11434/api/generate"
@@ -196,10 +207,20 @@ def dispatch_grok(task: dict[str, Any], binding: AuthorityBinding, *,
 
     enforce(task, binding, scope=scope)          # authority binding
     enforce_adapter(task, "GROK_CLI")            # registry + data classification + secret scan
+
+    a = _registry()["GROK_CLI"]
+    # SR-3 SUPPLY CHAIN. Verify the sha256 of the binary we are ABOUT TO EXECUTE and the
+    # identity of the model flag BEFORE the subprocess is spawned. A swapped binary on
+    # $PATH or an unattested `-m` model is a supply-chain substitution — fail closed.
+    ok, reason = sc.verify_provenance(
+        tool_id="GROK_CLI", adapter_id="GROK_CLI", model=model or "grok-default",
+        registry_path=sc.REGISTRY, binary_path=a.get("binary"))
+    if not ok:
+        raise AuthorityDenied("SUPPLY_CHAIN_PROVENANCE_DENIED", reason)
+
     if binding.single_use:
         _mark_consumed(binding.authority_decision_id)
 
-    a = _registry()["GROK_CLI"]
     cwd = Path(a["hardening"]["bounded_cwd"])
     cwd.mkdir(parents=True, exist_ok=True)
 
@@ -251,6 +272,16 @@ def dispatch_ollama(task: dict[str, Any], binding: AuthorityBinding, *,
     """Enforce authority, THEN dispatch to the live local adapter. Returns a result envelope
     that carries the SAME authority_decision_id (RESULT-AUTHORITY-BINDING-CONTROL)."""
     enforce(task, binding, scope=scope)          # raises on any failure — no dispatch on deny
+
+    # SR-3 SUPPLY CHAIN. Verify the LIVE weights digest the ollama daemon would serve for
+    # this tag matches what was attested, BEFORE the prompt is sent. A re-pointed tag
+    # (`ollama create llama3.1:8b -f ./evil`) or an unknown model id is denied here — the
+    # HTTP request is never made. Fails closed if the endpoint is unobservable.
+    ok, reason = sc.verify_provenance(
+        adapter_id="LOCAL_OLLAMA", model=model, registry_path=sc.REGISTRY)
+    if not ok:
+        raise AuthorityDenied("SUPPLY_CHAIN_PROVENANCE_DENIED", reason)
+
     if binding.single_use:
         _mark_consumed(binding.authority_decision_id)
 
