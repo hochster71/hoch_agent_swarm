@@ -1,0 +1,69 @@
+{
+  "phase": "0+1 truth inventory + primary audit",
+  "observed_at": "2026-07-14T12:15:15Z",
+  "local": {
+    "git_head": "4ed502c4045ffef1a5f0605fe56e7ed3319438f0",
+    "branch": "helm/h1b-r2-remediation",
+    "scheduler_pid": 76111,
+    "scheduler_instance": "sched-f5abadcf",
+    "soak": "HELM-SOAK-24H-20260714T114143Z RUNNING (~6h)",
+    "note": "Phase C soak MUST NOT be disrupted; MacBook-off test deferred until it seals"
+  },
+  "primary_node": {
+    "hostname": "hoch-relay-001",
+    "public_ipv4": "50.116.41.183",
+    "public_ipv6": "2600:3c02::2000:c0ff:fe55:9040",
+    "tailscale_ip": "100.87.18.15",
+    "os": "Ubuntu 24.04.4 LTS",
+    "kernel": "6.8.0-134",
+    "cpu_cores": 2,
+    "cpu": "AMD EPYC 7713",
+    "ram_total": "23Gi",
+    "uptime": "11 days"
+  },
+  "findings": {
+    "ssh_key_auth": {
+      "status": "PASS",
+      "detail": "key-based login works, no password prompt"
+    },
+    "ufw": {
+      "status": "PASS",
+      "detail": "active, default-deny, SSH allowed from 99.22.37.25 only"
+    },
+    "fail2ban": {
+      "status": "PASS",
+      "detail": "active"
+    },
+    "unattended_upgrades": {
+      "status": "PASS",
+      "detail": "active"
+    },
+    "time_sync": {
+      "status": "PASS"
+    },
+    "docker": {
+      "status": "PASS",
+      "detail": "29.6.1 + compose v5.2.0"
+    },
+    "root_password_login": {
+      "status": "FAIL",
+      "detail": "PermitRootLogin yes AND PasswordAuthentication yes \u2014 must go key-only"
+    },
+    "ollama_exposure": {
+      "status": "FAIL",
+      "detail": "listening 0.0.0.0:11434 (all interfaces). UFW allows only SSH inbound so it is NOT publicly reachable today, but binding to 0.0.0.0 is a latent hole \u2014 one UFW mistake exposes an unauthenticated model API. Bind to tailscale/localhost."
+    },
+    "disk": {
+      "status": "FAIL",
+      "detail": "93% full \u2014 20G disk, 1.4G free, 7.1G docker. Cannot deploy Postgres + HELM stack safely. Needs prune (0.8G reclaimable) AND likely a volume resize."
+    },
+    "postgres": {
+      "status": "NOT_APPLICABLE",
+      "detail": "not installed \u2014 will deploy in Phase 3"
+    },
+    "existing_helm_services": {
+      "status": "UNKNOWN",
+      "detail": "5 systemd units ALREADY run HELM code from /root/hoch_agent_swarm (helm-runner, has-agent-dispatcher, hoch-ag-execution-daemon, hasf-product-factory, hoch-relay-telemetry). A SECOND HELM already lives on this box. Migrating a new control plane here risks TWO active schedulers -- the exact thing the directive forbids. Must reconcile or stop these first."
+    }
+  }
+}
