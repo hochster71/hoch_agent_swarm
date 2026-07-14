@@ -1,0 +1,10 @@
+{
+  "termination_requested_at": "2026-07-14T00:28:26Z",
+  "termination_signal": "SUPERSEDED",
+  "process_exit_status": "ABORTED_SUPERSEDED",
+  "reason": "SUPERSEDED_BY_FRESH_PHASE_A",
+  "detail": "Partial launch at 00:23:08Z with sched-19819f54; superseded by HELM-SOAK-2H-20260714T002656Z / sched-84edfd45. Orphan SOAK-HRF-4 released. Do not retrofit.",
+  "do_not_retrofit": true,
+  "superseded_by": "HELM-SOAK-2H-20260714T002656Z",
+  "canonical_wall": "http://10.0.0.10:8770/pert"
+}

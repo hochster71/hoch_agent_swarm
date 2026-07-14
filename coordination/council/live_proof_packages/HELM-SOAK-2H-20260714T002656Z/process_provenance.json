@@ -1,0 +1,13 @@
+{
+  "tested_commit": "f4bff5e631cafc1eb2912d3486e97cf5240ebfa3",
+  "required_ancestor_commits": {
+    "f4bff5e6": true,
+    "b8ad622e": true
+  },
+  "process": {
+    "pid": 80347,
+    "started_local": "2026-07-13T19:26:56-05:00",
+    "cwd": "/Users/michaelhoch/hoch_agent_swarm",
+    "command": "scripts/council/soak_runner.py --seconds 7200 --phase A"
+  }
+}

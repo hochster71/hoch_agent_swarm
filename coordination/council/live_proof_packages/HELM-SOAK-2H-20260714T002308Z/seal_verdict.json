@@ -1,0 +1,9 @@
+{
+  "verdict": "SOAK_PHASE_A_SUPERSEDED",
+  "reason": "ABANDONED_BEFORE_COMPLETION_REPLACED_BY_NEWER_RUN",
+  "superseded_by": "HELM-SOAK-2H-20260714T002656Z",
+  "cycles_completed": 3,
+  "explanation": "This run was replaced by a newer Phase A before it could complete. It carries NO acceptance verdict and MUST NOT be cited as evidence for or against any control. An unsealed abandoned run is not a PASS, not a FAIL, and not INCONCLUSIVE -- it is simply not evidence.",
+  "may_be_cited_as_evidence": false,
+  "sealed_at": "2026-07-14T00:35:07Z"
+}

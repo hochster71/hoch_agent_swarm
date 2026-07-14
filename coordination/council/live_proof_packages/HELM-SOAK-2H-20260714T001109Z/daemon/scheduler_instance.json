@@ -1,0 +1,7 @@
+{
+  "scheduler_instance_id": "sched-verify-a37ef02b",
+  "ledger_path": "/Users/michaelhoch/hoch_agent_swarm/coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T001109Z/daemon/task_lease_ledger.jsonl",
+  "evidence_dir": "/Users/michaelhoch/hoch_agent_swarm/coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T001109Z/daemon",
+  "pid": 63950,
+  "published_at": "2026-07-14T00:14:38Z"
+}
