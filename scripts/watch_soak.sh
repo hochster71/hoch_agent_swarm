@@ -6,11 +6,11 @@
 cd "$(dirname "$0")/.." || exit 1
 
 while true; do
-  PKG=$(ls -td coordination/council/live_proof_packages/HELM-SOAK-8H-* 2>/dev/null | head -1)
+  PKG=$(ls -td coordination/council/live_proof_packages/HELM-SOAK-*H-* 2>/dev/null | head -1)
   PID=$(pgrep -f "soak_runner.py" | head -1)
 
   clear
-  printf '\033[1m  HELM · PHASE B SOAK · LIVE\033[0m\n'
+  printf '\033[1m  HELM · SOAK · LIVE\033[0m\n'
   printf '  ─────────────────────────────────────────────────────────────\n'
 
   if [ -z "$PID" ]; then
