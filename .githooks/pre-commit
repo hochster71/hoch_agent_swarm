@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# HELM source-tree coordination guard. Opt-in: git config core.hooksPath .githooks
+# Detects a staged file held by ANOTHER agent's active source lease. Warns+journals by default;
+# set HELM_SOURCE_LEASE_STRICT=1 to hard-block. Never touches the running soak.
+exec python3 backend/mission_control/detect_source_conflicts.py
