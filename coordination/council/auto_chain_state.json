@@ -1,13 +1,7 @@
 {
-  "phase": "A",
-  "status": "HALTED",
-  "reason": "FAKE_GREEN_CORRECTED: chainer advanced A->B->C->DONE re-reading Phase A's seal 3x; 8h Phase B and 24h Phase C NEVER ran (no 8H/24H package produced by the 22:54 chain). Only the 2h Phase A genuinely PASSED and sealed (204715Z, 1668-row chain intact).",
-  "true_state": {
-    "A": "SEALED_PASS",
-    "B": "NEVER_RAN",
-    "C": "NEVER_RAN"
-  },
-  "corrected_at": "2026-07-14T23:20:24.540415+00:00",
-  "corrected_by": "claude",
-  "24_7_status": "NOT PROVEN"
+  "phase": "B",
+  "status": "RUNNING",
+  "prev": "A SOAK_PHASE_A_PASS",
+  "phase_started_at": "2026-07-14T23:37:32Z",
+  "24_7_status": "NOT PROVEN \u2014 B(8h) running, C(24h) pending"
 }

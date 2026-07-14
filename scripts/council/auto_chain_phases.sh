@@ -68,8 +68,16 @@ if [ "$VERDICT" = "$EXPECT" ]; then
   else
     $VENV -c "from backend.mission_control.per_task_lease import PerTaskLeaseManager as M; from pathlib import Path; M(Path('coordination/leases')).reclaim_expired_leases()"
     NOW=$($VENV -c "import datetime;print(datetime.datetime.now(datetime.timezone.utc).isoformat())")
-    nohup $VENV scripts/council/soak_runner.py --seconds $SECS --phase $NEXT >/tmp/soak_$NEXT.log 2>&1 &
-    sleep 3   # give the runner a moment to create its package before the next tick evaluates it
+    # DETACHMENT FIX (2026-07-14): plain `nohup ... &` from a short-lived launchd tick gets REAPED when
+    # the tick exits, so Phase B and C died instantly (empty logs). macOS has no `setsid` binary; use
+    # Python's start_new_session=True (the posix setsid syscall) to fully detach a surviving soak.
+    $VENV -c "import subprocess,os; f=open('/tmp/soak_$NEXT.log','w'); subprocess.Popen(['$VENV','scripts/council/soak_runner.py','--seconds','$SECS','--phase','$NEXT'],stdout=f,stderr=subprocess.STDOUT,stdin=subprocess.DEVNULL,start_new_session=True,cwd=os.getcwd())"
+    sleep 6   # let the runner create its package before the next tick evaluates it
+    if ! pgrep -f "soak_runner.py --seconds $SECS --phase $NEXT" >/dev/null; then
+      echo "  phase $NEXT FAILED TO STAY ALIVE after launch -> HALT (no fake advance)"
+      $VENV -c "import json;s=json.load(open('$STATE'));s.update(status='HALTED',reason='phase $NEXT soak died on launch');json.dump(s,open('$STATE','w'))"
+      exit 0
+    fi
     $VENV -c "import json;json.dump({'phase':'$NEXT','status':'RUNNING','prev':'$PHASE $VERDICT','phase_started_at':'$NOW'},open('$STATE','w'))"
     echo "  $PHASE PASSED ($VERDICT) -> launched phase $NEXT (${SECS}s) at $NOW"
   fi
