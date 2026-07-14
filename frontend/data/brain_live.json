@@ -1,5 +1,5 @@
 {
-  "ts": "2026-07-12T21:12:40.890275Z",
+  "ts": "2026-07-14T14:21:25.896132Z",
   "live_brain": {
     "live_brain_available": true,
     "backend": {
@@ -9,10 +9,10 @@
     },
     "note": "brain can GENERATE at $0"
   },
-  "generation": 819,
+  "generation": 1219,
   "genes": 737,
   "champions": 30,
-  "mean_score": 95.583,
+  "mean_score": 96.167,
   "last_gain": 0.0,
   "state": "CONVERGED",
   "meta_lever": "SELECT",
@@ -36,73 +36,73 @@
       "title": "Hoch Application Software Factory",
       "genes": 737,
       "champions": 30,
-      "mean_score": 95.583,
+      "mean_score": 96.167,
       "state": "CONVERGED",
       "gates": 4,
       "history": [
         {
-          "g": 804,
-          "m": 95.583
+          "g": 1204,
+          "m": 96.167
         },
         {
-          "g": 805,
-          "m": 95.583
+          "g": 1205,
+          "m": 96.167
         },
         {
-          "g": 806,
-          "m": 95.583
+          "g": 1206,
+          "m": 96.167
         },
         {
-          "g": 807,
-          "m": 95.583
+          "g": 1207,
+          "m": 96.167
         },
         {
-          "g": 808,
-          "m": 95.583
+          "g": 1208,
+          "m": 96.167
         },
         {
-          "g": 809,
-          "m": 95.583
+          "g": 1209,
+          "m": 96.167
         },
         {
-          "g": 810,
-          "m": 95.583
+          "g": 1210,
+          "m": 96.167
         },
         {
-          "g": 811,
-          "m": 95.583
+          "g": 1211,
+          "m": 96.167
         },
         {
-          "g": 812,
-          "m": 95.583
+          "g": 1212,
+          "m": 96.167
         },
         {
-          "g": 813,
-          "m": 95.583
+          "g": 1213,
+          "m": 96.167
         },
         {
-          "g": 814,
-          "m": 95.583
+          "g": 1214,
+          "m": 96.167
         },
         {
-          "g": 815,
-          "m": 95.583
+          "g": 1215,
+          "m": 96.167
         },
         {
-          "g": 816,
-          "m": 95.583
+          "g": 1216,
+          "m": 96.167
         },
         {
-          "g": 817,
-          "m": 95.583
+          "g": 1217,
+          "m": 96.167
         },
         {
-          "g": 818,
-          "m": 95.583
+          "g": 1218,
+          "m": 96.167
         },
         {
-          "g": 819,
-          "m": 95.583
+          "g": 1219,
+          "m": 96.167
         }
       ]
     },
@@ -117,67 +117,67 @@
       "gates": 4,
       "history": [
         {
-          "g": 790,
+          "g": 1190,
           "m": 96.938
         },
         {
-          "g": 791,
+          "g": 1191,
           "m": 96.938
         },
         {
-          "g": 792,
+          "g": 1192,
           "m": 96.938
         },
         {
-          "g": 793,
+          "g": 1193,
           "m": 96.938
         },
         {
-          "g": 794,
+          "g": 1194,
           "m": 96.938
         },
         {
-          "g": 795,
+          "g": 1195,
           "m": 96.938
         },
         {
-          "g": 796,
+          "g": 1196,
           "m": 96.938
         },
         {
-          "g": 797,
+          "g": 1197,
           "m": 96.938
         },
         {
-          "g": 798,
+          "g": 1198,
           "m": 96.938
         },
         {
-          "g": 799,
+          "g": 1199,
           "m": 96.938
         },
         {
-          "g": 800,
+          "g": 1200,
           "m": 96.938
         },
         {
-          "g": 801,
+          "g": 1201,
           "m": 96.938
         },
         {
-          "g": 802,
+          "g": 1202,
           "m": 96.938
         },
         {
-          "g": 803,
+          "g": 1203,
           "m": 96.938
         },
         {
-          "g": 804,
+          "g": 1204,
           "m": 96.938
         },
         {
-          "g": 805,
+          "g": 1205,
           "m": 96.938
         }
       ]
@@ -193,67 +193,67 @@
       "gates": 5,
       "history": [
         {
-          "g": 789,
+          "g": 1189,
           "m": 96.5
         },
         {
-          "g": 790,
+          "g": 1190,
           "m": 96.5
         },
         {
-          "g": 791,
+          "g": 1191,
           "m": 96.5
         },
         {
-          "g": 792,
+          "g": 1192,
           "m": 96.5
         },
         {
-          "g": 793,
+          "g": 1193,
           "m": 96.5
         },
         {
-          "g": 794,
+          "g": 1194,
           "m": 96.5
         },
         {
-          "g": 795,
+          "g": 1195,
           "m": 96.5
         },
         {
-          "g": 796,
+          "g": 1196,
           "m": 96.5
         },
         {
-          "g": 797,
+          "g": 1197,
           "m": 96.5
         },
         {
-          "g": 798,
+          "g": 1198,
           "m": 96.5
         },
         {
-          "g": 799,
+          "g": 1199,
           "m": 96.5
         },
         {
-          "g": 800,
+          "g": 1200,
           "m": 96.5
         },
         {
-          "g": 801,
+          "g": 1201,
           "m": 96.5
         },
         {
-          "g": 802,
+          "g": 1202,
           "m": 96.5
         },
         {
-          "g": 803,
+          "g": 1203,
           "m": 96.5
         },
         {
-          "g": 804,
+          "g": 1204,
           "m": 96.5
         }
       ]
@@ -436,7 +436,7 @@
       "genes": 737,
       "champions": 30,
       "thin": 0,
-      "mean": 95.583,
+      "mean": 96.167,
       "action": "SHIP",
       "detail": "point HASF at its first real revenue product",
       "cost": "strategic",
@@ -467,7 +467,20 @@
     ],
     "summary": "AI Michael: 0 action(s) I can take now at $0; 3 need your founder call (T3/cost)."
   },
-  "fleet_reconcile": null,
+  "fleet_reconcile": {
+    "jobs_examined": 1,
+    "unresolved": 1,
+    "job_source": "synthetic",
+    "method": "heuristic static write-set extraction (regex, transitive fan-out; literal + pathlib paths)",
+    "contested_files": {},
+    "recommendations": [],
+    "actions": [],
+    "safety": {
+      "never_executes": true,
+      "all_actions_pending_operator_T3": true
+    },
+    "at": "2026-07-13T14:18:46.363787Z"
+  },
   "buyer_signals": {
     "outreach_queued": 12,
     "outreach_approved": 5,
@@ -542,127 +555,139 @@
   ],
   "history": [
     {
-      "g": 796,
-      "m": 95.583,
+      "g": 1196,
+      "m": 96.167,
       "gain": 0.0
     },
     {
-      "g": 797,
-      "m": 95.583,
+      "g": 1197,
+      "m": 96.167,
       "gain": 0.0
     },
     {
-      "g": 798,
-      "m": 95.583,
+      "g": 1198,
+      "m": 96.167,
       "gain": 0.0
     },
     {
-      "g": 799,
-      "m": 95.583,
+      "g": 1199,
+      "m": 96.167,
       "gain": 0.0
     },
     {
-      "g": 800,
-      "m": 95.583,
+      "g": 1200,
+      "m": 96.167,
       "gain": 0.0
     },
     {
-      "g": 801,
-      "m": 95.583,
+      "g": 1201,
+      "m": 96.167,
       "gain": 0.0
     },
     {
-      "g": 802,
-      "m": 95.583,
+      "g": 1202,
+      "m": 96.167,
       "gain": 0.0
     },
     {
-      "g": 803,
-      "m": 95.583,
+      "g": 1203,
+      "m": 96.167,
       "gain": 0.0
     },
     {
-      "g": 804,
-      "m": 95.583,
+      "g": 1204,
+      "m": 96.167,
       "gain": 0.0
     },
     {
-      "g": 805,
-      "m": 95.583,
+      "g": 1205,
+      "m": 96.167,
       "gain": 0.0
     },
     {
-      "g": 806,
-      "m": 95.583,
+      "g": 1206,
+      "m": 96.167,
       "gain": 0.0
     },
     {
-      "g": 807,
-      "m": 95.583,
+      "g": 1207,
+      "m": 96.167,
       "gain": 0.0
     },
     {
-      "g": 808,
-      "m": 95.583,
+      "g": 1208,
+      "m": 96.167,
       "gain": 0.0
     },
     {
-      "g": 809,
-      "m": 95.583,
+      "g": 1209,
+      "m": 96.167,
       "gain": 0.0
     },
     {
-      "g": 810,
-      "m": 95.583,
+      "g": 1210,
+      "m": 96.167,
       "gain": 0.0
     },
     {
-      "g": 811,
-      "m": 95.583,
+      "g": 1211,
+      "m": 96.167,
       "gain": 0.0
     },
     {
-      "g": 812,
-      "m": 95.583,
+      "g": 1212,
+      "m": 96.167,
       "gain": 0.0
     },
     {
-      "g": 813,
-      "m": 95.583,
+      "g": 1213,
+      "m": 96.167,
       "gain": 0.0
     },
     {
-      "g": 814,
-      "m": 95.583,
+      "g": 1214,
+      "m": 96.167,
       "gain": 0.0
     },
     {
-      "g": 815,
-      "m": 95.583,
+      "g": 1215,
+      "m": 96.167,
       "gain": 0.0
     },
     {
-      "g": 816,
-      "m": 95.583,
+      "g": 1216,
+      "m": 96.167,
       "gain": 0.0
     },
     {
-      "g": 817,
-      "m": 95.583,
+      "g": 1217,
+      "m": 96.167,
       "gain": 0.0
     },
     {
-      "g": 818,
-      "m": 95.583,
+      "g": 1218,
+      "m": 96.167,
       "gain": 0.0
     },
     {
-      "g": 819,
-      "m": 95.583,
+      "g": 1219,
+      "m": 96.167,
       "gain": 0.0
     }
   ],
   "recent_improvements": [
+    {
+      "task_class": "Legal / Compliance",
+      "beats_mech": 15.0,
+      "score": 100.0,
+      "at": "2026-07-13T07:31:45.093151Z"
+    },
+    {
+      "task_class": "Legal / Compliance",
+      "beats_mech": 2.5,
+      "score": 85.0,
+      "at": "2026-07-13T07:25:17.570182Z"
+    },
     {
       "task_class": "Governance / Compliance",
       "beats_mech": 5.0,
@@ -698,18 +723,6 @@
       "beats_mech": 10.0,
       "score": 95.0,
       "at": "2026-07-07T01:21:31.351119Z"
-    },
-    {
-      "task_class": "SAST",
-      "beats_mech": 10.0,
-      "score": 92.5,
-      "at": "2026-07-07T01:13:01.556018Z"
-    },
-    {
-      "task_class": "Data Security",
-      "beats_mech": 10.0,
-      "score": 100.0,
-      "at": "2026-07-07T01:05:15.333637Z"
     }
   ],
   "top_champions": [
@@ -763,13 +776,13 @@
     }
   ],
   "combat": {
-    "at": "2026-07-12T21:12:40.899781Z",
+    "at": "2026-07-14T14:21:25.906535Z",
     "genes_with_combat_record": 0,
     "total_champion_executions": 0,
     "gates": {
       "m0_generation": {
-        "total": 36,
-        "VERIFIED": 36
+        "total": 400,
+        "VERIFIED": 400
       }
     },
     "top": []
@@ -785,8 +798,8 @@
         "id": "L1",
         "status": "Active",
         "cpu": 0,
-        "ram": 77,
-        "agents": 10,
+        "ram": 79,
+        "agents": 12,
         "latency_ms": 0.0,
         "authority": "MEASURED_LOCAL",
         "activity": "Control plane: API + cadence + BRAIN loops (this host)"
@@ -889,28 +902,28 @@
         "name": "lmstudio",
         "alive": true,
         "model": "google/gemma-4-12b-qat",
-        "latency_ms": 455.4,
+        "latency_ms": 288.8,
         "failures": 0,
-        "last_probe": 1783890762.872038
+        "last_probe": 1784038887.776775
       },
       {
         "name": "mac-local",
         "alive": true,
         "model": "llama3.1:8b",
-        "latency_ms": 3278.3,
+        "latency_ms": 3139.3,
         "failures": 0,
-        "last_probe": 1783890765.695167
+        "last_probe": 1784038890.627421
       },
       {
         "name": "relay-001",
-        "alive": true,
-        "model": "qwen3:1.7b",
-        "latency_ms": 798.4,
+        "alive": false,
+        "model": null,
+        "latency_ms": null,
         "failures": 0,
-        "last_probe": 1783890763.215416
+        "last_probe": 1784038887.590139
       }
     ],
     "primary": "lmstudio",
-    "alive_count": 3
+    "alive_count": 2
   }
 }

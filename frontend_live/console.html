@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>HELM — Single Console</title>
+<style>
+:root{--bg:#0b0e13;--card:#141922;--line:#232b38;--tx:#e6edf3;--dim:#8b98a9;
+--live:#2ea043;--stale:#d29922;--unknown:#8b949e;--bad:#f85149;--blocked:#a371f7}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);
+font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace}
+header{padding:14px 20px;border-bottom:1px solid var(--line);display:flex;
+justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg);z-index:9}
+h1{font-size:15px;margin:0;letter-spacing:.14em}
+.sub{color:var(--dim);font-size:11px}
+main{padding:18px 20px;display:grid;gap:14px;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));max-width:1500px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px}
+.card h2{font-size:11px;margin:0 0 10px;color:var(--dim);letter-spacing:.12em;text-transform:uppercase}
+.row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #1c2230}
+.row:last-child{border:0}
+.k{color:var(--dim)}.v{font-weight:600}
+.pill{padding:1px 8px;border-radius:10px;font-size:10px;font-weight:700;letter-spacing:.06em}
+.LIVE,.CONFIRMED_LIVE,.PASS{background:rgba(46,160,67,.16);color:var(--live)}
+.STALE{background:rgba(210,153,34,.16);color:var(--stale)}
+.UNKNOWN{background:rgba(139,148,158,.16);color:var(--unknown)}
+.CONTRADICTED,.FAIL{background:rgba(248,81,73,.16);color:var(--bad)}
+.BLOCKED{background:rgba(163,113,247,.16);color:var(--blocked)}
+.banner{padding:12px 14px;border-radius:8px;border:1px solid #5a4520;
+background:rgba(210,153,34,.07);font-size:12px;margin:18px 20px 0}
+code{color:var(--dim);font-size:11px;word-break:break-all}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>HELM — SINGLE CONSOLE</h1>
+    <div class="sub" id="meta">binding to live runtime…</div>
+  </div>
+  <div><span class="pill UNKNOWN" id="global">BOOTING</span></div>
+</header>
+
+<div class="banner">
+  <b>This console cannot show a stale green.</b> Every panel renders <i>only</i> from the live HELM API.
+  Data past its freshness budget renders <span class="pill STALE">STALE</span>; an unreachable API renders
+  <span class="pill UNKNOWN">UNKNOWN</span>. It never falls back to last-known-good.
+  43 hardcoded dashboards were quarantined so this is the single source.
+</div>
+
+<main id="grid"></main>
+
+<script>
+const API = location.port === '8770' ? '' : 'http://127.0.0.1:8770';
+const BUDGET = {runtime:120, leases:120, soak:300, factories:300, integrity:300, 'jspace/health':180, authority:900};
+const ENDPOINTS = [
+  ['runtime','RUNTIME'], ['soak','SOAK / 24H PROOF'], ['leases','LEASES & CONCURRENCY'],
+  ['factories','FACTORIES'], ['jspace/health','J-SPACE OBSERVER'], ['integrity','INTEGRITY'],
+  ['authority','AUTHORITY']
+];
+const KNOWN=['LIVE','CONFIRMED_LIVE','PASS','STALE','UNKNOWN','CONTRADICTED','FAIL','BLOCKED'];
+const cls=s=>KNOWN.includes(s)?s:'UNKNOWN';
+
+function paint(id,title,state,rows,src,fresh){
+  document.getElementById('c-'+id).innerHTML =
+    `<h2>${title} <span class="pill ${cls(state)}" style="float:right">${state}</span></h2>`
+  + rows.map(([k,v])=>`<div class="row"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')
+  + `<div class="row"><span class="k">freshness</span><span class="v">${fresh==null?'—':fresh.toFixed(0)+'s'}</span></div>`
+  + `<div style="margin-top:8px"><code>${src||'—'}</code></div>`;
+}
+
+async function pull(ep,title){
+  const id=ep.replace(/\//g,'-');
+  try{
+    const r=await fetch(`${API}/api/v1/helm/${ep}`,{cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    const fresh=d.freshness_seconds, budget=BUDGET[ep]??300;
+    // STALENESS IS A FAILURE STATE — never render old data as current.
+    const state=(fresh!=null&&fresh>budget)?'STALE'
+      :(d.overall||d.state||d.status||d.truth_state||'LIVE');
+    const skip=['truth_class','source','observed_at','freshness_seconds','tested_commit'];
+    const rows=[];
+    for(const [k,v] of Object.entries(d)){
+      if(skip.includes(k)||v==null) continue;
+      rows.push([k, typeof v==='object'
+        ? (Array.isArray(v)?`${v.length} item(s)`:`${Object.keys(v).length} field(s)`)
+        : String(v).slice(0,42)]);
+      if(rows.length>=7) break;
+    }
+    if(d.tested_commit) rows.push(['tested_commit',String(d.tested_commit).slice(0,10)]);
+    paint(id,title,state,rows,d.source,fresh);
+    return state;
+  }catch(e){
+    paint(id,title,'UNKNOWN',[['error',String(e.message).slice(0,40)]],
+      'API unreachable — showing UNKNOWN, NOT last-known-good',null);
+    return 'UNKNOWN';
+  }
+}
+
+const grid=document.getElementById('grid');
+ENDPOINTS.forEach(([ep,t])=>{
+  const d=document.createElement('div');
+  d.className='card'; d.id='c-'+ep.replace(/\//g,'-');
+  d.innerHTML=`<h2>${t}</h2><div class="k">loading…</div>`;
+  grid.appendChild(d);
+});
+
+async function tick(){
+  const s=await Promise.all(ENDPOINTS.map(([e,t])=>pull(e,t)));
+  let g='LIVE';
+  if(s.includes('UNKNOWN')) g='UNKNOWN';
+  if(s.includes('STALE')) g='STALE';
+  if(s.includes('CONTRADICTED')) g='CONTRADICTED';
+  const gl=document.getElementById('global');
+  gl.textContent=g; gl.className='pill '+cls(g);
+  document.getElementById('meta').textContent=
+    `live API · ${new Date().toISOString().slice(11,19)}Z · staleness is a failure state`;
+}
+tick(); setInterval(tick,5000);
+</script>
+</body>
+</html>

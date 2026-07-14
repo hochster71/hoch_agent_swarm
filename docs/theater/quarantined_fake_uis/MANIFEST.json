@@ -1,0 +1,266 @@
+{
+  "schema": "FAKE_GREEN_UI_QUARANTINE_v1",
+  "quarantined_at": "2026-07-14T14:27:47Z",
+  "rule": "A UI with ZERO live-API calls cannot report runtime truth. It can only display whatever was hardcoded into it. These are not stale dashboards; they are fake-green generators.",
+  "count": 43,
+  "uis": [
+    {
+      "was": "frontend/index.html",
+      "now": "docs/theater/quarantined_fake_uis/index.html",
+      "hardcoded_success_strings": 101,
+      "live_api_calls": 0
+    },
+    {
+      "was": "hoch-build-live.html",
+      "now": "docs/theater/quarantined_fake_uis/hoch-build-live.html",
+      "hardcoded_success_strings": 20,
+      "live_api_calls": 0
+    },
+    {
+      "was": "hoch-command.html",
+      "now": "docs/theater/quarantined_fake_uis/hoch-command.html",
+      "hardcoded_success_strings": 16,
+      "live_api_calls": 0
+    },
+    {
+      "was": "hsf/chronicle.html",
+      "now": "docs/theater/quarantined_fake_uis/chronicle.html",
+      "hardcoded_success_strings": 15,
+      "live_api_calls": 0
+    },
+    {
+      "was": "has-live-brain.html",
+      "now": "docs/theater/quarantined_fake_uis/has-live-brain.html",
+      "hardcoded_success_strings": 14,
+      "live_api_calls": 0
+    },
+    {
+      "was": "hoch-neuro.html",
+      "now": "docs/theater/quarantined_fake_uis/hoch-neuro.html",
+      "hardcoded_success_strings": 11,
+      "live_api_calls": 0
+    },
+    {
+      "was": "infra/hoch-200/vps/dashboard/hoch-neuro-command.html",
+      "now": "docs/theater/quarantined_fake_uis/hoch-neuro-command.html",
+      "hardcoded_success_strings": 10,
+      "live_api_calls": 0
+    },
+    {
+      "was": "frontend/has_goal_command_widget.html",
+      "now": "docs/theater/quarantined_fake_uis/has_goal_command_widget.html",
+      "hardcoded_success_strings": 8,
+      "live_api_calls": 0
+    },
+    {
+      "was": "frontend/has_brain_moonshot.backup_20260705_195046.html",
+      "now": "docs/theater/quarantined_fake_uis/has_brain_moonshot.backup_20260705_195046.html",
+      "hardcoded_success_strings": 7,
+      "live_api_calls": 0
+    },
+    {
+      "was": "frontend/has_brain_moonshot.html",
+      "now": "docs/theater/quarantined_fake_uis/has_brain_moonshot.html",
+      "hardcoded_success_strings": 7,
+      "live_api_calls": 0
+    },
+    {
+      "was": "shooting-for-the-moon.html",
+      "now": "docs/theater/quarantined_fake_uis/shooting-for-the-moon.html",
+      "hardcoded_success_strings": 6,
+      "live_api_calls": 0
+    },
+    {
+      "was": "frontend/has_brain_console.html",
+      "now": "docs/theater/quarantined_fake_uis/has_brain_console.html",
+      "hardcoded_success_strings": 6,
+      "live_api_calls": 0
+    },
+    {
+      "was": "hsf-story-studio.html",
+      "now": "docs/theater/quarantined_fake_uis/hsf-story-studio.html",
+      "hardcoded_success_strings": 3,
+      "live_api_calls": 0
+    },
+    {
+      "was": "helm-security.html",
+      "now": "docs/theater/quarantined_fake_uis/helm-security.html",
+      "hardcoded_success_strings": 3,
+      "live_api_calls": 0
+    },
+    {
+      "was": "archive/mockups-visual-control-plane/local-cockpit-alias.html",
+      "now": "docs/theater/quarantined_fake_uis/local-cockpit-alias.html",
+      "hardcoded_success_strings": 2,
+      "live_api_calls": 0
+    },
+    {
+      "was": "archive/mockups-visual-control-plane/agents.html",
+      "now": "docs/theater/quarantined_fake_uis/agents.html",
+      "hardcoded_success_strings": 2,
+      "live_api_calls": 0
+    },
+    {
+      "was": "helm-night-watch.html",
+      "now": "docs/theater/quarantined_fake_uis/helm-night-watch.html",
+      "hardcoded_success_strings": 1,
+      "live_api_calls": 0
+    },
+    {
+      "was": "frontend/helm-night-watch.html",
+      "now": "docs/theater/quarantined_fake_uis/helm-night-watch.html",
+      "hardcoded_success_strings": 1,
+      "live_api_calls": 0
+    },
+    {
+      "was": "dist/index.html",
+      "now": "docs/theater/quarantined_fake_uis/index.html",
+      "hardcoded_success_strings": 1,
+      "live_api_calls": 0
+    },
+    {
+      "was": "docs/evidence/ui/approved-visual-authority-review.html",
+      "now": "docs/theater/quarantined_fake_uis/approved-visual-authority-review.html",
+      "hardcoded_success_strings": 1,
+      "live_api_calls": 0
+    },
+    {
+      "was": "archive/mockups-visual-control-plane/index.html",
+      "now": "docs/theater/quarantined_fake_uis/index.html",
+      "hardcoded_success_strings": 1,
+      "live_api_calls": 0
+    },
+    {
+      "was": "archive/mockups-visual-control-plane/side-by-side-review.html",
+      "now": "docs/theater/quarantined_fake_uis/side-by-side-review.html",
+      "hardcoded_success_strings": 1,
+      "live_api_calls": 0
+    },
+    {
+      "was": "archive/mockups-visual-control-plane/models.html",
+      "now": "docs/theater/quarantined_fake_uis/models.html",
+      "hardcoded_success_strings": 1,
+      "live_api_calls": 0
+    },
+    {
+      "was": "frontend/archive/unused_views.html",
+      "now": "docs/theater/quarantined_fake_uis/unused_views.html",
+      "hardcoded_success_strings": 1,
+      "live_api_calls": 0
+    },
+    {
+      "was": "archive/mockups-visual-control-plane/assets.html",
+      "now": "docs/theater/quarantined_fake_uis/assets.html",
+      "hardcoded_success_strings": 0,
+      "live_api_calls": 0
+    },
+    {
+      "was": "archive/mockups-visual-control-plane/approvals.html",
+      "now": "docs/theater/quarantined_fake_uis/approvals.html",
+      "hardcoded_success_strings": 0,
+      "live_api_calls": 0
+    },
+    {
+      "was": "archive/mockups-visual-control-plane/life.html",
+      "now": "docs/theater/quarantined_fake_uis/life.html",
+      "hardcoded_success_strings": 0,
+      "live_api_calls": 0
+    },
+    {
+      "was": "archive/mockups-visual-control-plane/components.html",
+      "now": "docs/theater/quarantined_fake_uis/components.html",
+      "hardcoded_success_strings": 0,
+      "live_api_calls": 0
+    },
+    {
+      "was": "archive/mockups-visual-control-plane/cyber.html",
+      "now": "docs/theater/quarantined_fake_uis/cyber.html",
+      "hardcoded_success_strings": 0,
+      "live_api_calls": 0
+    },
+    {
+      "was": "archive/mockups-visual-control-plane/prompts.html",
+      "now": "docs/theater/quarantined_fake_uis/prompts.html",
+      "hardcoded_success_strings": 0,
+      "live_api_calls": 0
+    },
+    {
+      "was": "archive/mockups-visual-control-plane/life-family.html",
+      "now": "docs/theater/quarantined_fake_uis/life-family.html",
+      "hardcoded_success_strings": 0,
+      "live_api_calls": 0
+    },
+    {
+      "was": "archive/mockups-visual-control-plane/factory.html",
+      "now": "docs/theater/quarantined_fake_uis/factory.html",
+      "hardcoded_success_strings": 0,
+      "live_api_calls": 0
+    },
+    {
+      "was": "archive/mockups-visual-control-plane/life-humanity.html",
+      "now": "docs/theater/quarantined_fake_uis/life-humanity.html",
+      "hardcoded_success_strings": 0,
+      "live_api_calls": 0
+    },
+    {
+      "was": "archive/mockups-visual-control-plane/dashboard-preview.html",
+      "now": "docs/theater/quarantined_fake_uis/dashboard-preview.html",
+      "hardcoded_success_strings": 0,
+      "live_api_calls": 0
+    },
+    {
+      "was": "archive/mockups-visual-control-plane/life-hobbies.html",
+      "now": "docs/theater/quarantined_fake_uis/life-hobbies.html",
+      "hardcoded_success_strings": 0,
+      "live_api_calls": 0
+    },
+    {
+      "was": "archive/mockups-visual-control-plane/factory-apps.html",
+      "now": "docs/theater/quarantined_fake_uis/factory-apps.html",
+      "hardcoded_success_strings": 0,
+      "live_api_calls": 0
+    },
+    {
+      "was": "archive/mockups-visual-control-plane/factory-release.html",
+      "now": "docs/theater/quarantined_fake_uis/factory-release.html",
+      "hardcoded_success_strings": 0,
+      "live_api_calls": 0
+    },
+    {
+      "was": "archive/mockups-visual-control-plane/life-home.html",
+      "now": "docs/theater/quarantined_fake_uis/life-home.html",
+      "hardcoded_success_strings": 0,
+      "live_api_calls": 0
+    },
+    {
+      "was": "archive/mockups-visual-control-plane/control-plane.html",
+      "now": "docs/theater/quarantined_fake_uis/control-plane.html",
+      "hardcoded_success_strings": 0,
+      "live_api_calls": 0
+    },
+    {
+      "was": "archive/mockups-visual-control-plane/factory-build-lanes.html",
+      "now": "docs/theater/quarantined_fake_uis/factory-build-lanes.html",
+      "hardcoded_success_strings": 0,
+      "live_api_calls": 0
+    },
+    {
+      "was": "archive/mockups-visual-control-plane/evidence.html",
+      "now": "docs/theater/quarantined_fake_uis/evidence.html",
+      "hardcoded_success_strings": 0,
+      "live_api_calls": 0
+    },
+    {
+      "was": "artifacts/install-review/visual-control-plane-local/control-plane.html",
+      "now": "docs/theater/quarantined_fake_uis/control-plane.html",
+      "hardcoded_success_strings": 0,
+      "live_api_calls": 0
+    },
+    {
+      "was": "artifacts/releases/visual-control-plane-local/control-plane.html",
+      "now": "docs/theater/quarantined_fake_uis/control-plane.html",
+      "hardcoded_success_strings": 0,
+      "live_api_calls": 0
+    }
+  ]
+}
