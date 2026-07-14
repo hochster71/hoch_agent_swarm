@@ -1,0 +1,97 @@
+{
+  "schema": "HELM_CRITICAL_PATH_BOARD_v1",
+  "updated_at": "2026-07-14T14:16:00Z",
+  "goal": "HELM-NS-01 Autonomous governed delivery to DOORSTEP",
+  "overall": "HOLD",
+  "invariants": [
+    "No fake green",
+    "No circular evidence",
+    "No untracked execution",
+    "No silent lease failure",
+    "No unauthorized promotion",
+    "No split-brain authority",
+    "No destructive founder actions"
+  ],
+  "classifications": {
+    "PHASE_A_140941Z": "ABORTED_OR_UNRESOLVED",
+    "note": "Claimed pid 3268 not running; package directory absent; not sealable"
+  },
+  "work_packages": {
+    "A_lease_release_instrumentation": {
+      "state": "COMPLETE_IN_HEAD",
+      "commit": "02edf144",
+      "exit": "Failed release cannot log RELEASED",
+      "tests": "tests/test_lease_release_honesty.py"
+    },
+    "B_supersede_defective_evidence": {
+      "state": "COMPLETE",
+      "packages_superseded": [
+        "HELM-SOAK-2H-20260714T002656Z",
+        "HELM-SOAK-8H-20260714T023257Z",
+        "HELM-SOAK-24H-20260714T114143Z",
+        "HELM-SOAK-2H-20260714T140811Z",
+        "HELM-SOAK-2H-20260714T140821Z",
+        "HELM-SOAK-2H-20260714T141033Z",
+        "HELM-SOAK-2H-20260714T141134Z"
+      ]
+    },
+    "C_clean_lock_baseline": {
+      "state": "REQUIRED_BEFORE_EACH_PHASE_A",
+      "pointer": "UNPUBLISHED_UNTIL_SOAK_PUBLISH"
+    },
+    "D_phase_A_rerun": {
+      "state": "HOLD_PENDING_SOURCE_ONLY_COMMIT_THEN_RESTART",
+      "blocked_by": ["working_tree_hygiene", "source_only_commit"]
+    },
+    "E_phase_B_rerun": {
+      "state": "BLOCKED",
+      "blocked_by": ["D"]
+    },
+    "F_phase_C_24h": {
+      "state": "BLOCKED",
+      "blocked_by": ["E"]
+    },
+    "G_jspace": {
+      "state": "LIVE_PROVISIONAL",
+      "auto_quarantine": "DISABLED_UNTIL_FOUNDER_POLICY",
+      "orphan_hygiene": "manual_approval",
+      "incidents": "append-only incidents.jsonl"
+    },
+    "H_truth_reconciliation": {
+      "state": "PARTIAL",
+      "blocked_by": ["F", "G"]
+    },
+    "I_independent_seal": {
+      "state": "BLOCKED",
+      "blocked_by": ["H"]
+    },
+    "J_linode_volume": {
+      "state": "NOT_ON_THIS_HOST",
+      "note": "Mac has no /dev/sdc; VPS/founder action"
+    },
+    "K_cloud_cutover": {
+      "state": "BLOCKED",
+      "blocked_by": ["J", "I"]
+    },
+    "L_founder_doorstep": {
+      "state": "BLOCKED",
+      "blocked_by": ["K"]
+    }
+  },
+  "status_line": {
+    "HELM_CORE": "ACTIVE",
+    "JSPACE": "PROVEN_USEFUL_PROVISIONAL",
+    "RUNTIME_TRUTH": "INSTRUMENT_FIXED_IN_02edf144",
+    "PHASE_A_140941Z": "ABORTED_OR_UNRESOLVED",
+    "PHASE_A": "HOLD_RESTART_AFTER_SOURCE_COMMIT",
+    "PHASE_B": "BLOCKED",
+    "PHASE_C": "BLOCKED",
+    "CLOUD_VOLUME": "NOT_MOUNTED_ON_THIS_HOST",
+    "CLOUD_CUTOVER": "BLOCKED",
+    "24H_PROOF": "NOT_PROVEN",
+    "24_7_PROOF": "NOT_PROVEN",
+    "FOUNDER_DOORSTEP": "BLOCKED",
+    "OVERALL": "HOLD"
+  },
+  "decision": "Do not seal 140941Z. Do not advance to B/C. Source-only commit for incidents/daemon/tests/governance docs, then clean Phase A from that commit with working-tree hygiene."
+}
