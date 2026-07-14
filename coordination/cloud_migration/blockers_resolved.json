@@ -1,0 +1,35 @@
+{
+  "observed_at": "2026-07-14T12:18:46Z",
+  "existing_helm_on_node": {
+    "verdict": "DECORATIVE_FAKE_GREEN \u2014 NOT a scheduler conflict",
+    "units": [
+      "helm-runner",
+      "has-agent-dispatcher",
+      "hoch-ag-execution-daemon",
+      "hasf-product-factory",
+      "hoch-relay-telemetry"
+    ],
+    "evidence": {
+      "systemd_state": "active since Jul 7 (11 days)",
+      "git": "NONE \u2014 /root/hoch_agent_swarm is not a git repo (stale copy)",
+      "active_runtime_source": "ABSENT \u2014 holds no canonical authority",
+      "leases": "NONE",
+      "scheduler_process": "NONE running",
+      "helm_runner_last_log": "'Daemon started' Jul 7, then silent 11 days"
+    },
+    "risk": "5 services report ACTIVE while doing zero work -- a fake-green that makes the node look busy. They hold no authority/leases/pointer, so NOT a two-scheduler hazard, but they must be stopped+disabled before the new control plane deploys, so the cloud wall reflects real state.",
+    "recommendation": "STOP+DISABLE the 5 units (snapshot their unit files first). Keep the 3 legit docker containers (hoch-relay-api, proxy, ollama)."
+  },
+  "disk": {
+    "verdict": "HARD BLOCKER \u2014 resize required (billable, FOUNDER GATE)",
+    "before_prune": "1.4G free (93%)",
+    "after_prune": "1.6G free (92%)",
+    "reclaimed": "0.6G",
+    "consumer": "/var/lib/docker 7.1G \u2014 ACTIVE images (ollama etc.), not reclaimable",
+    "why_blocking": "Postgres + a 10-container HELM stack cannot deploy into 1.6G. Need >=30G free headroom.",
+    "options": {
+      "resize_disk": "Linode plan/volume resize. Current plan is 24GB High-Mem ($60/mo owned). A bigger disk or an attached Block Storage volume (e.g. +80GB ~ $8/mo) would give Postgres+evidence room. BILLABLE -> founder gate.",
+      "block_storage": "Attach a Linode Block Storage volume for /var/lib/helm/postgres + evidence. ~$0.10/GB-mo. 100GB ~ $10/mo, within the $5-15 backup budget."
+    }
+  }
+}
