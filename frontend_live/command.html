@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<title>HELM · COMMAND</title>
+<style>
+:root{
+  --bg:#05070c; --bg2:#0a0e16; --card:#0e131d; --line:#1c2636; --tx:#e6edf5; --dim:#78889d;
+  --cyan:#00d2ff; --blue:#5b9dff; --amber:#ffbe4d; --red:#ff5d73; --violet:#a371f7;
+  --grey:#3f5170; --stale:#e0a92e; --green:#2ea043;
+  --glow:0 0 24px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:
+  radial-gradient(1200px 600px at 70% -10%, rgba(0,210,255,.06), transparent 60%),
+  radial-gradient(900px 500px at 10% 110%, rgba(163,113,247,.05), transparent 60%),
+  var(--bg);
+  color:var(--tx);font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;
+  overscroll-behavior:none}
+header{position:sticky;top:0;z-index:20;backdrop-filter:blur(10px);
+  background:linear-gradient(180deg,rgba(5,7,12,.92),rgba(5,7,12,.62));
+  border-bottom:1px solid var(--line);padding:10px 16px;
+  display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+h1{font-size:14px;margin:0;letter-spacing:.28em;font-weight:700}
+h1 .sub{color:var(--cyan);text-shadow:var(--glow) rgba(0,210,255,.5)}
+.meta{color:var(--dim);font-size:10px;letter-spacing:.06em}
+.pill{padding:2px 10px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:.1em}
+.LIVE,.CONFIRMED_LIVE,.PASS,.COMPLETE{background:rgba(46,160,67,.18);color:#5fe08a;box-shadow:inset 0 0 0 1px rgba(46,160,67,.4)}
+.EXEC,.EXECUTING{background:rgba(91,157,255,.18);color:#9cc4ff;box-shadow:inset 0 0 0 1px rgba(91,157,255,.4)}
+.STALE,.QUEUE,.BLOCK{background:rgba(224,169,46,.16);color:var(--amber);box-shadow:inset 0 0 0 1px rgba(224,169,46,.35)}
+.UNKNOWN{background:rgba(120,136,157,.16);color:var(--dim);box-shadow:inset 0 0 0 1px rgba(120,136,157,.3)}
+.CONTRADICTED,.BAD,.FAIL{background:rgba(255,93,115,.18);color:#ff9caa;box-shadow:inset 0 0 0 1px rgba(255,93,115,.45)}
+nav{display:flex;gap:4px;padding:8px 14px;overflow-x:auto;border-bottom:1px solid var(--line);
+  position:sticky;top:44px;z-index:15;background:rgba(5,7,12,.85);backdrop-filter:blur(8px)}
+.tab{padding:6px 14px;border:1px solid var(--line);border-radius:8px;color:var(--dim);
+  cursor:pointer;font-size:11px;letter-spacing:.1em;white-space:nowrap;transition:.15s;user-select:none}
+.tab.on{border-color:var(--cyan);color:var(--cyan);background:rgba(0,210,255,.08);
+  box-shadow:var(--glow) rgba(0,210,255,.15)}
+main{padding:14px}
+.view{display:none}.view.on{display:block}
+canvas{width:100%;display:block;border-radius:12px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
+.card{background:linear-gradient(180deg,var(--card),var(--bg2));border:1px solid var(--line);
+  border-radius:14px;padding:14px;position:relative;overflow:hidden}
+.card h3{margin:0 0 10px;font-size:10px;letter-spacing:.16em;color:var(--dim);text-transform:uppercase}
+.big{font-size:30px;font-weight:800;letter-spacing:-.02em}
+.k{color:var(--dim)}.row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #141c28}
+.row:last-child{border:0}
+.spark{height:34px;width:100%}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;color:var(--dim);font-size:10px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.banner{padding:10px 14px;border-radius:10px;border-left:3px solid #5a4520;
+  background:rgba(224,169,46,.06);color:var(--dim);font-size:11px;margin-bottom:12px}
+/* chain blocks */
+.chain{display:flex;flex-wrap:wrap;gap:0;align-items:center}
+.blk{width:64px;padding:7px 6px;border-radius:8px;font-size:8.5px;text-align:center;
+  border:1px solid var(--line);background:var(--card);position:relative}
+.blk.ok{border-color:rgba(46,160,67,.4)}
+.blk.brk{border-color:var(--red);background:rgba(255,93,115,.1)}
+.blk .h{color:var(--cyan);font-weight:700}
+.bond{width:14px;height:2px;background:linear-gradient(90deg,var(--cyan),transparent);flex:0 0 auto}
+.bond.brk{background:var(--red);box-shadow:var(--glow) rgba(255,93,115,.6)}
+@media(max-width:520px){ .big{font-size:24px} h1{font-size:12px;letter-spacing:.18em} main{padding:10px} }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>HELM <span class="sub">COMMAND</span></h1>
+    <div class="meta" id="meta">binding…</div>
+  </div>
+  <span class="pill UNKNOWN" id="global">BOOT</span>
+</header>
+
+<nav>
+  <span class="tab on" data-v="wall">◈ WALL</span>
+  <span class="tab" data-v="flow">▤ FLOW</span>
+  <span class="tab" data-v="chain">⛓ CHAIN</span>
+  <span class="tab" data-v="ctrl">✦ CONTROLS</span>
+</nav>
+
+<main>
+  <div class="view on" id="wall">
+    <canvas id="cv" height="560"></canvas>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--cyan)"></i>complete</span>
+      <span><i class="dot" style="background:var(--blue)"></i>executing (live lease)</span>
+      <span><i class="dot" style="background:var(--stale)"></i>queued / blocked</span>
+      <span><i class="dot" style="background:var(--red)"></i>failed</span>
+      <span><i class="dot" style="background:var(--grey)"></i>unknown — never guessed</span>
+      <span style="color:var(--dim)">particles flow only when a lease is actually held — no idle motion</span>
+    </div>
+  </div>
+
+  <div class="view" id="flow">
+    <div class="grid">
+      <div class="card"><h3>North Star</h3><div class="big" id="ns">—</div><div class="k" id="nsr" style="font-size:10px"></div></div>
+      <div class="card"><h3>Settled Revenue</h3><div class="big" id="rev">—</div><div class="k" style="font-size:10px">lifetime, external</div></div>
+      <div class="card"><h3>Active Leases</h3><div class="big" id="lz">—</div><div class="k" style="font-size:10px">concurrency now</div></div>
+      <div class="card"><h3>Soak / Proof</h3><div class="big" id="soak">—</div><div class="k" id="soakr" style="font-size:10px"></div></div>
+    </div>
+    <div class="grid" style="margin-top:12px">
+      <div class="card" style="grid-column:1/-1"><h3>Factory throughput (completed tasks per lane)</h3><canvas id="bars" class="spark" height="120"></canvas></div>
+    </div>
+  </div>
+
+  <div class="view" id="chain">
+    <div class="banner" id="chainbanner">The AU-9 evidence chain. Each block binds to the one before by hash. A red bond = the chain is broken there — this is exactly what caught the split-brain scheduler.</div>
+    <div class="card"><h3 id="chainhead">EVIDENCE CHAIN</h3><div class="chain" id="chainbox"></div></div>
+  </div>
+
+  <div class="view" id="ctrl">
+    <div class="banner">NIST SP 800-53 Rev.5 · assessed continuously (SP 800-137). A control with no evidence is NOT_IMPLEMENTED — never assumed.</div>
+    <div class="grid" id="ctrlgrid"></div>
+  </div>
+</main>
+
+<script>
+const API = location.port==='8770' ? '' : '';   // same-origin: served BY the API
+const COL={COMPLETE:'#00d2ff',EXEC:'#5b9dff',STALE:'#e0a92e',BLOCK:'#ffbe4d',BAD:'#ff5d73',QUEUE:'#8493a8',UNK:'#3f5170'};
+const FAC=['HASF','HRF','HCF','HSF','HMF','HFF','HHF','HPF'];
+let STATE={}, HOT=new Set(), particles=[], lastTasks=[];
+
+// ---- tabs ----
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));
+  t.classList.add('on'); document.getElementById(t.dataset.v).classList.add('on');
+  // a canvas sized while its view was display:none has clientWidth 0 -> blank.
+  // Redraw the now-VISIBLE view's canvas with the data already in hand.
+  const v=t.dataset.v;
+  if(v==='wall'){ fit(); }
+  if(v==='flow'){ requestAnimationFrame(()=>drawBars(lastTasks)); }
+});
+
+// ---- cinematic wall ----
+const cv=document.getElementById('cv'), X=cv.getContext('2d');
+function fit(){ cv.width=cv.clientWidth*Math.min(devicePixelRatio||1,2);
+  cv.height=(window.innerWidth<560?520:560)*Math.min(devicePixelRatio||1,2); }
+new ResizeObserver(fit).observe(cv); fit();
+const NODES=[
+  ['IDEA',.07,.5,'MISSION'],['LEASE',.20,.5,'LEASE'],['GATE',.33,.5,'GATEWAY'],
+  ['HASF',.52,.10,'HASF'],['HRF',.52,.225,'HRF'],['HCF',.52,.35,'HCF'],['HSF',.52,.475,'HSF'],
+  ['HMF',.52,.60,'HMF'],['HFF',.52,.725,'HFF'],['HHF',.52,.85,'HHF'],['HPF',.52,.97,'HPF'],
+  ['VALID',.70,.5,'VALIDATE'],['SHIP',.83,.5,'SHIP'],['CASH',.94,.5,'CASH'],
+];
+const EDGES=[['IDEA','LEASE'],['LEASE','GATE'],...FAC.map(f=>['GATE',f]),...FAC.map(f=>['VALID',f].reverse?['','']:['','']),
+  ...FAC.map(f=>[f,'VALID']),['VALID','SHIP'],['SHIP','CASH']].filter(e=>e[0]&&e[1]);
+const pos={}; NODES.forEach(([id,x,y])=>pos[id]={x,y});
+function px(n){return {x:n.x*cv.width, y:n.y*cv.height};}
+
+function draw(){
+  X.clearRect(0,0,cv.width,cv.height);
+  // edges
+  EDGES.forEach(([a,b])=>{
+    const p=px(pos[a]),q=px(pos[b]); const hot=HOT.has(b)||HOT.has(a);
+    X.beginPath(); const mx=(p.x+q.x)/2;
+    X.moveTo(p.x,p.y); X.bezierCurveTo(mx,p.y,mx,q.y,q.x,q.y);
+    X.strokeStyle=hot?'rgba(91,157,255,.55)':'rgba(36,48,68,.7)'; X.lineWidth=hot?2:1; X.stroke();
+  });
+  // particles
+  particles.forEach(pt=>{
+    const p=px(pos[pt.a]),q=px(pos[pt.b]); const mx=(p.x+q.x)/2; const t=pt.t;
+    const x=(1-t)*(1-t)*p.x+2*(1-t)*t*mx+t*t*q.x, y=(1-t)*(1-t)*p.y+2*(1-t)*t*q.y+t*t*q.y*0;
+    const yy=(1-t)*(1-t)*p.y+2*(1-t)*t*((p.y+q.y)/2)+t*t*q.y;
+    X.beginPath(); X.arc(x,yy,2.2*(devicePixelRatio||1),0,7); X.fillStyle='#9cc4ff'; X.shadowBlur=10; X.shadowColor='#5b9dff'; X.fill(); X.shadowBlur=0;
+    pt.t+=pt.v; if(pt.t>1) pt.t=0;
+  });
+  // nodes
+  NODES.forEach(([id,,,label])=>{
+    const p=px(pos[id]); const st=STATE[id]||'UNK'; const c=COL[st]||COL.UNK;
+    const r=7*(devicePixelRatio||1);
+    if(st==='EXEC'||st==='COMPLETE'){ X.beginPath(); X.arc(p.x,p.y,r*2.4,0,7); X.fillStyle=c+'22'; X.fill(); }
+    X.beginPath(); X.arc(p.x,p.y,r,0,7); X.strokeStyle=c; X.lineWidth=2; X.stroke();
+    X.beginPath(); X.arc(p.x,p.y,r*.4,0,7); X.fillStyle=c; X.fill();
+    X.fillStyle='#cfe0f2'; X.font=`${11*(devicePixelRatio||1)}px ui-monospace`; X.textAlign='center';
+    X.fillText(label,p.x,p.y-r-6*(devicePixelRatio||1));
+  });
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+
+// ---- data ----
+function setUnknown(){ NODES.forEach(([id])=>STATE[id]='UNK'); HOT.clear(); particles=[];
+  const g=document.getElementById('global'); g.textContent='UNKNOWN'; g.className='pill UNKNOWN';
+  document.getElementById('meta').textContent='API unreachable — UNKNOWN, not last-known-good'; }
+
+async function pull(){
+  let d;
+  try{ const r=await fetch(API+'/api/v1/helm/pert',{cache:'no-store'}); if(!r.ok)throw 0; d=await r.json(); }
+  catch(e){ return setUnknown(); }
+  const tasks=(d.tasks&&d.tasks.tasks)||[], leases=(d.leases&&d.leases.leases)||[], facs=(d.factories&&d.factories.factories)||{}, ns=d.northstar||{};
+  const active=new Set(leases.filter(l=>String(l.status||'').toUpperCase()==='ACTIVE').map(l=>String(l.task_id)));
+  lastTasks=tasks; HOT.clear();
+  STATE.IDEA=tasks.length?'COMPLETE':'UNK'; STATE.LEASE=leases.length?'EXEC':'COMPLETE';
+  const sc7=((d.security||{}).controls||[]).find(c=>c.control_id==='SC-7'); STATE.GATE=sc7?(sc7.status==='IMPLEMENTED'?'COMPLETE':'BAD'):'UNK';
+  const S_=t=>String(t.status||'').toUpperCase();
+  FAC.forEach(f=>{
+    const mine=tasks.filter(t=>t.factory===f), done=mine.filter(t=>S_(t)==='COMPLETE'),
+      fail=mine.filter(t=>/FAIL|ERROR/.test(S_(t))), stale=mine.filter(t=>S_(t)==='STALE'),
+      lease=mine.filter(t=>active.has(String(t.task_id))), pend=mine.filter(t=>S_(t)==='PENDING');
+    const F=facs[f]||{}, blk=(F.blocked_missions||[]).length>0;
+    let st = fail.length?'BAD':lease.length?'EXEC':(stale.length&&!done.length)?'STALE':done.length?'COMPLETE':blk?'BLOCK':(pend.length||F.runtime_state==='ACTIVE')?'QUEUE':'UNK';
+    STATE[f]=st; if(lease.length){HOT.add(f);}
+  });
+  STATE.VALID=Object.values((d.verdict&&d.verdict.four)||{}).some(v=>v==='PASS')?'COMPLETE':'QUEUE';
+  STATE.SHIP='QUEUE';
+  const settled=ns.revenue_settled_usd; STATE.CASH=(settled==null)?'UNK':(settled>0?'COMPLETE':'QUEUE');
+  // particles: spawn along GATE->hot factory and factory->VALID
+  particles=[]; HOT.forEach(f=>{ for(let k=0;k<3;k++){ particles.push({a:'GATE',b:f,t:Math.random(),v:.006+Math.random()*.004});
+    particles.push({a:f,b:'VALID',t:Math.random(),v:.006+Math.random()*.004}); }});
+  // header
+  const bad=Object.values(STATE).includes('BAD'); const g=document.getElementById('global');
+  g.textContent=bad?'CONTRADICTED':'LIVE'; g.className='pill '+(bad?'CONTRADICTED':'LIVE');
+  document.getElementById('meta').textContent=`live · ${new Date().toISOString().slice(11,19)}Z · commit ${String(d.tested_commit||'').slice(0,8)} · ${leases.length} leases · ${tasks.length} tasks`;
+  // FLOW cards
+  document.getElementById('ns').textContent = ns.value || 'UNDEFINED';
+  document.getElementById('nsr').textContent = ns.reason ? String(ns.reason).slice(0,54) : '';
+  document.getElementById('rev').textContent = settled==null?'—':('$'+Number(settled).toFixed(2));
+  document.getElementById('lz').textContent = leases.length;
+  const soak=(d.soak&&(d.soak.data||d.soak))||{}; document.getElementById('soak').textContent = (soak.cycles_count!=null?soak.cycles_count+' cyc':'—');
+  document.getElementById('soakr').textContent = (d.soak&&d.soak.freshness_seconds!=null)?('fresh '+Math.round(d.soak.freshness_seconds)+'s'):'';
+  drawBars(tasks);
+}
+
+// ---- bars (factory throughput) ----
+const bc=document.getElementById('bars'), BX=bc.getContext('2d');
+function drawBars(tasks){
+  bc.width=bc.clientWidth*Math.min(devicePixelRatio||1,2); bc.height=120*Math.min(devicePixelRatio||1,2);
+  const done=FAC.map(f=>tasks.filter(t=>t.factory===f && String(t.status).toUpperCase()==='COMPLETE').length);
+  const max=Math.max(1,...done); const w=bc.width/FAC.length; BX.clearRect(0,0,bc.width,bc.height);
+  FAC.forEach((f,i)=>{ const h=(done[i]/max)*(bc.height-30); const x=i*w+w*.2, y=bc.height-h-18;
+    const g=BX.createLinearGradient(0,y,0,bc.height); g.addColorStop(0,'#00d2ff'); g.addColorStop(1,'#5b9dff33');
+    BX.fillStyle=done[i]?g:'#1c2636'; BX.fillRect(x,y,w*.6,h);
+    BX.fillStyle='#78889d'; BX.font=`${9*(devicePixelRatio||1)}px ui-monospace`; BX.textAlign='center';
+    BX.fillText(f,x+w*.3,bc.height-5); BX.fillStyle='#cfe0f2'; BX.fillText(done[i],x+w*.3,y-4); });
+}
+
+// ---- chain visualizer ----
+async function pullChain(){
+  const box=document.getElementById('chainbox'), head=document.getElementById('chainhead');
+  try{
+    const d=await (await fetch(API+'/api/v1/helm/chain',{cache:'no-store'})).json();
+    const dt=d.data||d; const blocks=dt.blocks||[];
+    head.textContent=`EVIDENCE CHAIN · ${dt.total_rows||0} records · ${dt.state||'UNKNOWN'}`;
+    if(dt.state==='CONTRADICTED') document.getElementById('chainbanner').innerHTML='<b style="color:var(--red)">CHAIN BROKEN.</b> '+(dt.reason||'').slice(0,120);
+    let html='';
+    blocks.forEach((b,i)=>{
+      if(i>0){ const broke=blocks[i].prev!==blocks[i-1].hash; html+=`<div class="bond ${broke?'brk':''}"></div>`; }
+      html+=`<div class="blk ${b.chained?'ok':'brk'}"><div>${b.task?b.task.slice(0,9):'?'}</div><div class="h">${b.hash||'—'}</div><div style="color:var(--dim)">${b.status||''}</div></div>`;
+    });
+    box.innerHTML=html||'<span class="k">no chained records yet</span>';
+  }catch(e){ head.textContent='EVIDENCE CHAIN · UNKNOWN'; box.innerHTML='<span class="k">API unreachable</span>'; }
+}
+
+// ---- controls ----
+async function pullCtrl(){
+  const g=document.getElementById('ctrlgrid');
+  try{
+    const d=await (await fetch(API+'/api/v1/helm/integrity',{cache:'no-store'})).json();
+    let cs=(d.controls)||(d.data&&d.data.controls)||[];
+    if(!cs.length){ const p=await (await fetch(API+'/api/v1/helm/pert',{cache:'no-store'})).json(); cs=((p.security||{}).controls)||[]; }
+    g.innerHTML=cs.map(c=>{
+      const ok=c.status==='IMPLEMENTED';
+      return `<div class="card"><div class="row"><span><b>${c.control_id}</b> <span class="k">${c.family||''}</span></span>
+        <span class="pill ${ok?'COMPLETE':'BAD'}">${ok?'OK':'OPEN'}</span></div>
+        <div style="font-size:10px;color:var(--dim);margin-top:6px">${(c.title||c.name||'')}</div>
+        <div style="font-size:9px;color:var(--dim);margin-top:4px">${(c.evidence||'').slice(0,70)}</div></div>`;
+    }).join('')||'<span class="k">no control data</span>';
+  }catch(e){ g.innerHTML='<span class="k">API unreachable — UNKNOWN</span>'; }
+}
+
+function tick(){ pull(); pullChain(); pullCtrl(); }
+tick(); setInterval(tick,5000);
+</script>
+</body>
+</html>

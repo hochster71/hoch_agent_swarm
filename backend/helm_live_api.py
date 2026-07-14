@@ -839,6 +839,44 @@ def helm_live() -> JSONResponse:
     })
 
 
+@app.get("/api/v1/helm/chain")
+def api_v1_chain():
+    """AU-9 evidence chain, most-recent N records + live verify status. Never a fake green:
+    a broken chain returns state=CONTRADICTED with the exact break point."""
+    import time
+    from backend.truth.evidence_chain import verify_chain, ChainBroken
+    pkg = _newest_soak_pkg()
+    led = None
+    for cand in ([pkg/"daemon"/"task_lease_ledger.jsonl", pkg/"lease_ledger.jsonl"] if pkg else []) + \
+                [ROOT/"coordination"/"council"/"daemon"/"task_lease_ledger.jsonl"]:
+        if cand and cand.exists() and cand.read_text().strip():
+            led = cand; break
+    if not led:
+        return JSONResponse(_truth_response(truth_class="HELM_CHAIN_TRUTH", source="none",
+            observed_at=now(), freshness_seconds=None,
+            data={"state":"UNKNOWN","reason":"no chained ledger yet","blocks":[]}))
+    rows=[json.loads(l) for l in led.read_text().splitlines() if l.strip()]
+    state="CONFIRMED_LIVE"; reason=None
+    try: verify_chain(led)
+    except ChainBroken as e: state="CONTRADICTED"; reason=str(e)
+    blocks=[{"i":i,"task":r.get("task_id"),"status":r.get("status"),
+             "prev":str(r.get("prev_hash") or "")[:10],"hash":str(r.get("entry_hash") or "")[:10],
+             "chained":bool(r.get("prev_hash") and r.get("entry_hash"))}
+            for i,r in enumerate(rows[-40:])]
+    fresh=float(time.time()-led.stat().st_mtime)
+    return JSONResponse(_truth_response(truth_class="HELM_CHAIN_TRUTH",
+        source=str(led.relative_to(ROOT)), observed_at=now(), freshness_seconds=fresh,
+        data={"state":state,"reason":reason,"total_rows":len(rows),"blocks":blocks}))
+
+
+@app.get("/command", response_class=HTMLResponse)
+def serve_command() -> str:
+    """HELM Command Center — cinematic wall + flow charts + evidence-chain + controls.
+    Same-origin so it works on the Mac, the phone, and over Tailscale identically."""
+    f = ROOT / "frontend_live" / "command.html"
+    return f.read_text() if f.exists() else "<h1>command missing</h1>"
+
+
 @app.get("/console", response_class=HTMLResponse)
 def serve_console() -> str:
     """Serve the single console FROM the API so it is SAME-ORIGIN.
