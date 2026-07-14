@@ -612,6 +612,14 @@ def serve_brain() -> str:
     return f.read_text() if f.exists() else "<h1>brain missing</h1>"
 
 
+@app.get("/jspace", response_class=HTMLResponse)
+def serve_jspace_console() -> str:
+    """HELM J-SPACE operational console — left status rail, AI Agent Network Map (HJOS observers),
+    Cryptographic Hash Tables (AU-9 chain). Every panel is live runtime truth; fail-closed."""
+    f = ROOT / "frontend_live" / "jspace_console.html"
+    return f.read_text() if f.exists() else "<h1>jspace console missing</h1>"
+
+
 @app.get("/api/v1/helm/integrity")
 @app.get("/api/helm/integrity")
 def api_v1_integrity():

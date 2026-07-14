@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="theme-color" content="#08090c"/>
+<title>HELM · J-SPACE</title>
+<style>
+:root{
+  --bg:#08090c; --panel:#0d0e12; --panel2:#101218; --line:#1c1f27; --line2:#2a2f3a;
+  --ink:#d8dde3; --dim:#79818d; --dim2:#565d69;
+  --amber:#f5b942; --amber2:#c88f1f; --amberdim:#2a2312;
+  --green:#43b581; --greendim:#12241b; --red:#e5484d; --reddim:#2a1416; --grey:#464d5b;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--ink);overflow:hidden;
+  font:12px/1.4 ui-monospace,"SF Mono",Menlo,monospace;-webkit-font-smoothing:antialiased}
+body{background:
+  radial-gradient(120% 70% at 50% -20%, #101319 0%, transparent 55%), var(--bg)}
+.mono{font-variant-numeric:tabular-nums;letter-spacing:.02em}
+/* header */
+header{height:52px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 18px;border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,#111319,#0b0c10)}
+.burger{width:26px;height:26px;display:grid;place-items:center;color:var(--dim);
+  border:1px solid var(--line);border-radius:6px;cursor:pointer}
+.title{position:absolute;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:10px;
+  font-size:13px;letter-spacing:.42em;font-weight:700;
+  padding:7px 26px;border:1px solid var(--line2);border-radius:8px;
+  background:linear-gradient(180deg,#14161d,#0d0e13);
+  box-shadow:0 0 22px -8px rgba(245,185,66,.35), inset 0 1px 0 rgba(255,255,255,.03)}
+.title .g{color:var(--amber);text-shadow:0 0 14px rgba(245,185,66,.55)}
+.hicon{color:var(--amber);font-size:14px}
+.hbtns{display:flex;gap:8px;color:var(--dim2)}
+/* layout */
+.wrap{display:grid;grid-template-columns:262px 1fr;grid-template-rows:1fr 232px;
+  height:calc(100vh - 52px);gap:1px;background:var(--line)}
+.rail{grid-row:1/3;background:var(--panel);border-right:1px solid var(--line);
+  display:flex;flex-direction:column;overflow:hidden}
+.map{background:var(--panel);position:relative;overflow:hidden}
+.hash{background:var(--panel);border-top:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden}
+.phdr{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;
+  border-bottom:1px solid var(--line);color:var(--dim);font-size:10px;letter-spacing:.18em}
+.phdr .tools{display:flex;gap:8px;color:var(--dim2)}
+/* left rail */
+.status{padding:16px 16px 14px}
+.srow{display:flex;justify-content:space-between;padding:5px 0;font-size:12px;letter-spacing:.06em}
+.srow .k{color:var(--dim)} .srow .v{font-weight:700}
+.v.hold,.v.locked,.v.frozen{color:var(--amber)} .v.go,.v.open,.v.nominal{color:var(--green)}
+.v.contra{color:var(--red)}
+.bar{height:5px;border-radius:99px;background:#161922;margin:10px 0 4px;overflow:hidden}
+.bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--amber2),var(--amber));
+  box-shadow:0 0 10px rgba(245,185,66,.5)}
+.barlabel{font-size:9.5px;color:var(--dim2);letter-spacing:.1em}
+.sep{height:1px;background:var(--line);margin:6px 0}
+.agentcard{margin:12px 16px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;
+  background:var(--panel2);display:flex;align-items:center;justify-content:space-between}
+.agentcard .who{display:flex;align-items:center;gap:9px;color:var(--dim);font-size:11px}
+.avatar{width:22px;height:22px;border-radius:6px;background:#1a1d25;border:1px solid var(--line2);
+  display:grid;place-items:center;color:var(--amber);font-size:11px}
+.livedot{width:8px;height:8px;border-radius:50%;background:var(--amber);box-shadow:0 0 8px var(--amber);
+  animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+.metrics{padding:2px 16px}
+.mrow{display:flex;justify-content:space-between;padding:5px 0;font-size:11.5px}
+.mrow .k{color:var(--dim);letter-spacing:.06em} .mrow .v{font-weight:700}
+.v.mod{color:var(--amber)} .v.low{color:var(--green)} .v.high{color:var(--red)}
+.railfoot{margin-top:auto;border-top:1px solid var(--line);padding:12px 16px;font-size:9.5px;color:var(--dim2);
+  line-height:1.7;overflow:hidden}
+.railfoot .fk{color:var(--dim);letter-spacing:.1em;display:block;margin-top:6px}
+.railfoot .fv{color:#9aa3af;word-break:break-all}
+/* network map */
+#mapsvg{position:absolute;inset:0;width:100%;height:100%}
+#mapnodes{position:absolute;inset:0}
+.node{position:absolute;transform:translate(-50%,-50%);min-width:118px;
+  border:1px solid var(--line2);border-radius:8px;background:linear-gradient(180deg,#12141b,#0e0f14);
+  padding:8px 9px;box-shadow:0 6px 18px -10px #000;cursor:default}
+.node.hot{border-color:var(--amber2);box-shadow:0 0 20px -6px rgba(245,185,66,.5)}
+.node.root{border-color:var(--amber);box-shadow:0 0 26px -6px rgba(245,185,66,.6)}
+.node .nh{display:flex;align-items:center;gap:7px}
+.node .nico{width:18px;height:18px;border-radius:5px;background:#171a22;border:1px solid var(--line2);
+  display:grid;place-items:center;font-size:10px;color:var(--dim)}
+.node .nlbl{font-size:10px;color:var(--ink);font-weight:600;letter-spacing:.02em;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;max-width:104px}
+.node .nsub{font-size:8px;color:var(--dim2);margin-top:3px;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;max-width:110px}
+.tag{position:absolute;top:-8px;right:8px;font-size:8px;font-weight:800;letter-spacing:.08em;
+  padding:2px 6px;border-radius:5px}
+.tag.VERIFIED{color:#0c1e15;background:var(--green)}
+.tag.PENDING{color:#1e1706;background:var(--amber)}
+.tag.DENIED{color:#fff;background:var(--red)}
+.tag.AUDITED{color:#1e1706;background:var(--amber);opacity:.85}
+/* hash table */
+.tbl{flex:1;overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:10.5px}
+thead th{position:sticky;top:0;background:#0b0c10;color:var(--dim);text-align:left;font-weight:600;
+  letter-spacing:.1em;padding:8px 12px;border-bottom:1px solid var(--line);font-size:9.5px}
+tbody td{padding:7px 12px;border-bottom:1px solid #14161c;color:#aeb6c0;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;max-width:280px}
+tbody tr:hover{background:#0f1116}
+td .ok{color:var(--green)} td .bad{color:var(--red)}
+.hashsig{color:var(--amber);opacity:.85}
+.stale{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:9;
+  color:var(--red);font-size:12px;font-weight:700;letter-spacing:.1em;display:none;
+  background:rgba(229,72,77,.1);border:1px solid rgba(229,72,77,.4);border-radius:10px;padding:10px 18px}
+@media(max-width:820px){ .wrap{grid-template-columns:1fr;grid-template-rows:auto 1fr 200px}
+  .rail{grid-row:auto;flex-direction:row;flex-wrap:wrap;border-right:0;border-bottom:1px solid var(--line)}
+  .title{display:none} }
+</style>
+</head>
+<body>
+<header>
+  <div class="burger">≡</div>
+  <div class="title"><span class="hicon">⬡</span>HELM <span class="g">J-SPACE</span></div>
+  <div class="hbtns"><span>⤢</span><span>⚙</span></div>
+</header>
+
+<div class="wrap">
+  <!-- LEFT RAIL -->
+  <aside class="rail">
+    <div class="status">
+      <div class="srow"><span class="k">HELM_STATUS:</span><span class="v" id="s_status">—</span></div>
+      <div class="srow"><span class="k">FACTORIES:</span><span class="v" id="s_fac">—</span></div>
+      <div class="srow"><span class="k">TRUE_GO:</span><span class="v" id="s_go">—</span></div>
+      <div class="srow"><span class="k">J-SPACE:</span><span class="v" id="s_js">—</span></div>
+      <div class="bar"><i id="s_bar" style="width:0%"></i></div>
+      <div class="barlabel" id="s_barlabel">reconcile progress</div>
+    </div>
+    <div class="agentcard">
+      <div class="who"><span class="avatar">⬡</span><span id="a_label">HJOS OBSERVERS</span></div>
+      <span class="livedot" id="a_dot"></span>
+    </div>
+    <div class="metrics">
+      <div class="mrow"><span class="k">AGENT_COUNT:</span><span class="v mono" id="m_agents">—</span></div>
+      <div class="mrow"><span class="k">ALERT_LEVEL:</span><span class="v" id="m_alert">—</span></div>
+      <div class="mrow"><span class="k">OPEN_FINDINGS:</span><span class="v mono" id="m_find">—</span></div>
+      <div class="mrow"><span class="k">SYSTEM_INTEGRITY:</span><span class="v mono" id="m_integ">—</span></div>
+    </div>
+    <div class="railfoot">
+      <span class="fk">TRANSACTION ID</span><span class="fv" id="f_txn">—</span>
+      <span class="fk">VERIFICATION SIGNATURE</span><span class="fv" id="f_sig">—</span>
+      <span class="fk">CHAIN STATE</span><span class="fv" id="f_chain">—</span>
+      <span class="fk">SYSTEM_INTEGRITY</span><span class="fv" id="f_integ">—</span>
+    </div>
+  </aside>
+
+  <!-- NETWORK MAP -->
+  <section class="map">
+    <div class="phdr"><span>AI AGENT NETWORK MAP</span>
+      <span class="tools" id="map_meta">binding…</span></div>
+    <svg id="mapsvg"></svg>
+    <div id="mapnodes"></div>
+    <div class="stale" id="map_stale">FEED LOST — UNKNOWN</div>
+  </section>
+
+  <!-- HASH TABLE -->
+  <section class="hash">
+    <div class="phdr"><span>CRYPTOGRAPHIC HASH TABLES</span>
+      <span class="tools" id="hash_meta">AU-9 chain</span></div>
+    <div class="tbl">
+      <table>
+        <thead><tr>
+          <th>TIMESTAMP</th><th>TRANSACTION ID</th><th>VERIFICATION SIGNATURE</th>
+          <th>DATA PACKET INTEGRITY CHECK</th><th>PREV</th>
+        </tr></thead>
+        <tbody id="hash_rows"><tr><td colspan="5" style="color:var(--dim2)">reading AU-9 chain…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<script>
+const API='';
+const TAG={CONFIRMED_LIVE:'VERIFIED',BLOCKED:'PENDING',CONTRADICTED:'DENIED',UNKNOWN:'PENDING'};
+const EDGE={CONFIRMED_LIVE:'#43b581',BLOCKED:'#f5b942',CONTRADICTED:'#e5484d',UNKNOWN:'#464d5b'};
+const esc=s=>String(s==null?'':s).replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
+
+// ---------- left rail + status (from jspace/health) ----------
+async function pullHealth(){
+  let d; try{ d=await (await fetch(API+'/api/v1/helm/jspace/health',{cache:'no-store'})).json(); }
+  catch(e){ setUnknownRail(); return; }
+  const x=d.data||d;
+  const consensus=x.overall||'UNKNOWN', promo=x.promotion_authority||'NONE';
+  set('s_status', promo==='NONE'?'HOLD':'GO', promo==='NONE'?'hold':'go');
+  // factories: soak running => FROZEN(soak lane locked) else per posture
+  set('s_fac','FROZEN','frozen');
+  set('s_go', promo==='NONE'?'LOCKED':'OPEN', promo==='NONE'?'locked':'open');
+  const js = consensus==='CONFIRMED_LIVE'?'NOMINAL':consensus==='CONTRADICTED'?'RECONCILING':'RECONCILING';
+  set('s_js', js, consensus==='CONFIRMED_LIVE'?'nominal':'contra');
+  const oc=x.observer_counts||{}; const tot=Object.values(oc).reduce((a,b)=>a+b,0)||1;
+  const pct=Math.round(100*(oc.CONFIRMED_LIVE||0)/tot);
+  document.getElementById('s_bar').style.width=pct+'%';
+  document.getElementById('s_barlabel').textContent=`observers nominal ${oc.CONFIRMED_LIVE||0}/${tot} · ${pct}%`;
+  const alerts=x.open_alerts??0;
+  set('m_alert', alerts>2?'HIGH':alerts>0?'MODERATE':'LOW', alerts>2?'high':alerts>0?'mod':'low');
+  document.getElementById('m_find').textContent=x.unresolved_findings??'—';
+  document.getElementById('f_integ').textContent=(x.health_digest||'').slice(0,24)||'—';
+  document.getElementById('a_dot').style.background = consensus==='CONTRADICTED'?'var(--red)':'var(--amber)';
+}
+function set(id,txt,cls){ const e=document.getElementById(id); e.textContent=txt; e.className='v '+(cls||''); }
+function setUnknownRail(){ ['s_status','s_fac','s_go','s_js'].forEach(i=>set(i,'UNKNOWN','')); }
+
+// ---------- network map (from jspace/brain) ----------
+async function pullBrain(){
+  let d; try{ d=await (await fetch(API+'/api/v1/helm/brain'.replace('/brain','/jspace/brain'),{cache:'no-store'})).json(); }
+  catch(e){ document.getElementById('map_stale').style.display='block'; return; }
+  const x=d.data||d;
+  if(x.state==='UNKNOWN'){ document.getElementById('map_stale').style.display='block'; return; }
+  document.getElementById('map_stale').style.display='none';
+  document.getElementById('map_meta').textContent=
+    `${x.observer_total||0} agents · ${x.subject_total||0} subjects · ${x.consensus||'—'}`;
+  document.getElementById('m_agents').textContent=(x.observer_total||0)+(x.subject_total||0)+1;
+  renderMap(x);
+}
+function renderMap(x){
+  const svg=document.getElementById('mapsvg'), box=document.getElementById('mapnodes');
+  const W=box.clientWidth, H=box.clientHeight; svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  box.innerHTML=''; let edges='';
+  const obs=x.observers||[]; const n=obs.length||1;
+  // 3 layered columns: root | observers | subjects
+  const cx1=W*0.11, cx2=W*0.40, cx3=W*0.72;
+  const root={x:cx1,y:H*0.5};
+  const place=(x0,y0,cls,label,sub,verdict,hot)=>{
+    const nd=document.createElement('div'); nd.className='node '+(cls||'')+(hot?' hot':'');
+    nd.style.left=x0+'px'; nd.style.top=y0+'px';
+    const tag=TAG[verdict]||'PENDING';
+    nd.innerHTML=`<span class="tag ${tag}">${tag}</span>
+      <div class="nh"><span class="nico">⬢</span><span class="nlbl">${esc(label)}</span></div>
+      ${sub?`<div class="nsub">${esc(sub)}</div>`:''}`;
+    box.appendChild(nd); return {x:x0,y:y0};
+  };
+  const rootN=place(root.x,root.y,'root','AI AGENT SOURCE',x.cycle_id||'HJOS',x.consensus,true);
+  // all subjects evenly down the right column (no overlap), remembering which observer owns each
+  const allSubs=[]; obs.forEach((o,i)=>o.subjects.forEach(s=>allSubs.push({s,oi:i})));
+  const S=allSubs.length||1; const topPad=52, botPad=30;
+  const subY = k => topPad + (H-topPad-botPad)*(S>1? k/(S-1) : 0.5);
+  const obsY = {};
+  obs.forEach((o,i)=>{ obsY[i]=H*(0.12 + 0.76*(i/Math.max(1,n-1))); });
+  // observer nodes
+  obs.forEach((o,i)=>{
+    place(cx2,obsY[i],'',o.region.replace('_',' '),o.subjects.length+' subjects',o.verdict,o.verdict!=='CONFIRMED_LIVE');
+    edges+=edge(rootN.x,rootN.y,cx2,obsY[i],EDGE[o.verdict]);
+  });
+  // subject nodes, evenly spaced, edge back to their observer
+  allSubs.forEach((it,k)=>{
+    const sy=subY(k);
+    place(cx3, sy, '', it.s.subject, it.s.assessment, it.s.assessment, false);
+    edges+=edge(cx2, obsY[it.oi], cx3, sy, EDGE[it.s.assessment]);
+  });
+  svg.innerHTML=edges;
+}
+function edge(x1,y1,x2,y2,col){
+  const mx=(x1+x2)/2;
+  return `<path d="M${x1} ${y1} C ${mx} ${y1}, ${mx} ${y2}, ${x2} ${y2}" fill="none"
+    stroke="${col}" stroke-width="1.3" opacity="0.5"/>`;
+}
+
+// ---------- cryptographic hash table (from AU-9 chain) ----------
+async function pullChain(){
+  let d; try{ d=await (await fetch(API+'/api/v1/helm/chain',{cache:'no-store'})).json(); }
+  catch(e){ return; }
+  const x=d.data||d; const blocks=(x.blocks||[]).slice().reverse();
+  document.getElementById('hash_meta').textContent=`AU-9 · ${x.total_rows||0} records · ${x.state||'—'}`;
+  document.getElementById('f_chain').textContent=x.state||'—';
+  const broken=x.state==='CONTRADICTED';
+  const rows=blocks.map(b=>{
+    const ok=b.chained && !broken;
+    return `<tr>
+      <td class="mono">${esc((d.observed_at||'').slice(0,19).replace('T',' '))||'—'}</td>
+      <td class="mono">${esc(b.task||'—')}</td>
+      <td class="mono hashsig">${esc(b.hash||'—')}…</td>
+      <td>DATA PACKET INTEGRITY <span class="${ok?'ok':'bad'}">${ok?'✔ '+esc(b.status||'OK'):'✘ '+(broken?'CHAIN BROKEN':esc(b.status||'UNVERIFIED'))}</span></td>
+      <td class="mono" style="color:var(--dim2)">${esc(b.prev||'—')}…</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('hash_rows').innerHTML=rows||'<tr><td colspan="5" style="color:var(--dim2)">no chained records</td></tr>';
+  if(broken){ set('s_js','RECONCILING','contra'); }
+}
+
+// SYSTEM_INTEGRITY = real verified pass-rate from the accountability endpoint (fail-closed)
+async function pullIntegrity(){
+  try{ const d=await (await fetch(API+'/api/v1/helm/agents',{cache:'no-store'})).json();
+    const x=d.data||d; const pr=x.pass_rate;
+    document.getElementById('m_integ').textContent = pr!=null ? pr.toFixed(1)+'%' : 'UNKNOWN';
+    document.getElementById('m_integ').style.color = pr!=null && pr>=95 ? 'var(--green)' : 'var(--amber)';
+  }catch(e){ document.getElementById('m_integ').textContent='UNKNOWN'; }
+}
+function tick(){ pullHealth(); pullBrain(); pullChain(); pullIntegrity(); }
+tick(); setInterval(tick,5000);
+addEventListener('resize',()=>{ /* re-layout map on next tick */ });
+</script>
+</body>
+</html>
