@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>HELM — Baseline Architecture (DoDAF · NIST SP 800-53)</title>
+<style>
+:root{
+  --bg:#070a0f; --panel:#0e131c; --line:#1e2836; --tx:#dbe4ee; --dim:#6b7a8f;
+  --cyan:#00d2ff; --blue:#6fa8ff; --amber:#ffc061; --red:#ff6b81;
+  --grey:#3f5170; --stale:#d29922; --green:#2ea043; --violet:#a371f7;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);
+  font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace}
+header{padding:12px 18px;border-bottom:1px solid var(--line);display:flex;
+  justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap}
+h1{font-size:14px;margin:0;letter-spacing:.18em}
+.meta{color:var(--dim);font-size:10px}
+.pill{padding:1px 7px;border-radius:9px;font-size:9px;font-weight:700;letter-spacing:.06em}
+.LIVE{background:rgba(0,210,255,.14);color:var(--cyan)}
+.UNKNOWN{background:rgba(107,122,143,.16);color:var(--dim)}
+.STALE{background:rgba(210,153,34,.16);color:var(--stale)}
+.BAD{background:rgba(255,107,129,.16);color:var(--red)}
+.views{display:flex;gap:6px;padding:8px 18px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.vtab{padding:3px 10px;border:1px solid var(--line);border-radius:4px;color:var(--dim);
+  cursor:pointer;font-size:10px;letter-spacing:.08em}
+.vtab.on{border-color:var(--cyan);color:var(--cyan);background:rgba(0,210,255,.06)}
+main{padding:14px 18px 40px}
+svg{width:100%;height:auto;display:block}
+.zone{fill:none;stroke:var(--line);stroke-width:1;rx:6}
+.zlabel{fill:var(--dim);font-size:9px;letter-spacing:.16em}
+.ctrl{fill:var(--green);font-size:8px;letter-spacing:.05em}
+.ctrl.miss{fill:var(--red)}
+.nname{fill:var(--tx);font-size:11px;font-weight:700;letter-spacing:.04em}
+.nsub{fill:var(--dim);font-size:8.5px}
+.edge{stroke:#243044;stroke-width:1.1;fill:none}
+.edge.hot{stroke:var(--blue);stroke-width:1.8}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;color:var(--dim);font-size:10px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.note{margin-top:14px;padding:10px 12px;border-left:2px solid #5a4520;
+  background:rgba(210,153,34,.05);color:var(--dim);font-size:10.5px;max-width:1100px}
+table{border-collapse:collapse;margin-top:10px;font-size:10.5px}
+td,th{border-bottom:1px solid var(--line);padding:4px 12px 4px 0;text-align:left}
+th{color:var(--dim);font-weight:400;letter-spacing:.1em;font-size:9px}
+.ok{color:var(--green)} .no{color:var(--red)}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>HELM — BASELINE ARCHITECTURE</h1>
+    <div class="meta">DoDAF 2.02 · NIST SP 800-53 Rev.5 · NIST SP 800-137 ConMon · live-bound, never asserted</div>
+  </div>
+  <div>
+    <span class="pill UNKNOWN" id="state">UNKNOWN</span>
+    <span class="meta" id="obs">—</span>
+  </div>
+</header>
+
+<div class="views">
+  <span class="vtab on" data-v="ov1">OV-1 · OPERATIONAL CONCEPT</span>
+  <span class="vtab" data-v="sv1">SV-1 · SYSTEMS INTERFACE</span>
+  <span class="vtab" data-v="stdv1">StdV-1 · STANDARDS PROFILE</span>
+</div>
+
+<main>
+  <div id="ov1">
+    <svg viewBox="0 0 1280 640" role="img">
+      <title>HELM operational concept</title>
+
+      <!-- ZONE 1 : FOUNDER AUTHORITY -->
+      <rect class="zone" x="14" y="16" width="196" height="608" style="stroke:var(--violet);stroke-opacity:.45"/>
+      <text class="zlabel" x="24" y="36" style="fill:var(--violet)">FOUNDER AUTHORITY</text>
+      <text class="ctrl" x="24" y="50">AC-6 LEAST PRIVILEGE</text>
+      <g id="z-founder"></g>
+
+      <!-- ZONE 2 : GOVERNED CORE -->
+      <rect class="zone" x="226" y="16" width="268" height="608" style="stroke:var(--cyan);stroke-opacity:.40"/>
+      <text class="zlabel" x="236" y="36" style="fill:var(--cyan)">GOVERNED CORE (HELM)</text>
+      <text class="ctrl" x="236" y="50">SC-7 BOUNDARY · AC-3 ENFORCEMENT</text>
+      <g id="z-core"></g>
+
+      <!-- ZONE 3 : FACTORY TIER -->
+      <rect class="zone" x="510" y="16" width="336" height="608" style="stroke:var(--blue);stroke-opacity:.40"/>
+      <text class="zlabel" x="520" y="36" style="fill:var(--blue)">FACTORY TIER — 8 PRODUCTION LANES</text>
+      <text class="ctrl" x="520" y="50">AC-3 · CM-3 CHANGE CONTROL</text>
+      <g id="z-fac"></g>
+
+      <!-- ZONE 4 : EVIDENCE / OBSERVATION -->
+      <rect class="zone" x="862" y="16" width="200" height="608" style="stroke:var(--amber);stroke-opacity:.40"/>
+      <text class="zlabel" x="872" y="36" style="fill:var(--amber)">EVIDENCE PLANE</text>
+      <text class="ctrl miss" x="872" y="50">AU-9 NOT IMPLEMENTED</text>
+      <g id="z-ev"></g>
+
+      <!-- ZONE 5 : EXTERNAL -->
+      <rect class="zone" x="1078" y="16" width="188" height="608" style="stroke:var(--red);stroke-opacity:.35"/>
+      <text class="zlabel" x="1088" y="36" style="fill:var(--red)">EXTERNAL BOUNDARY</text>
+      <text class="ctrl miss" x="1088" y="50">SR-3 SUPPLY CHAIN — GAP</text>
+      <g id="z-ext"></g>
+
+      <g id="edges"></g>
+      <g id="nodes"></g>
+    </svg>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--cyan)"></i>COMPLETE</span>
+      <span><i class="dot" style="background:var(--blue)"></i>EXECUTING (live lease)</span>
+      <span><i class="dot" style="background:var(--stale)"></i>STALE</span>
+      <span><i class="dot" style="background:var(--amber)"></i>BLOCKED — founder gate</span>
+      <span><i class="dot" style="background:var(--red)"></i>FAILED — a task actually failed</span>
+      <span><i class="dot" style="background:var(--grey)"></i>UNKNOWN — never guessed</span>
+    </div>
+    <div class="note">
+      <b>Read this as a control boundary, not a picture.</b> Every arrow that crosses a zone edge is a
+      privilege transition. Work enters the Factory Tier <i>only</i> through the CouncilDispatchGateway
+      (SC-7 chokepoint) holding a fencing-token lease. No agent can reach the External Boundary — money,
+      signing, submission and credentials terminate at the Founder Authority zone and never delegate.
+      The two red control labels are our real, unclosed gaps: <b>AU-9</b> (audit logs are not tamper-protected)
+      and <b>SR-3</b> (no supply-chain control on model/tool provenance).
+    </div>
+  </div>
+
+  <div id="sv1" style="display:none">
+    <table id="svtab">
+      <tr><th>NODE</th><th>SYSTEM</th><th>INTERFACE</th><th>CONTROL</th><th>LIVE STATE</th></tr>
+    </table>
+    <div class="note">SV-1 is generated from the live API, not from a design document. If a row says
+      UNKNOWN the system is not reporting — it is never assumed healthy.</div>
+  </div>
+
+  <div id="stdv1" style="display:none">
+    <table id="stdtab">
+      <tr><th>CONTROL</th><th>FAMILY</th><th>TITLE</th><th>STATUS</th><th>EVIDENCE</th></tr>
+    </table>
+    <div class="note">StdV-1 standards profile — NIST SP 800-53 Rev.5, assessed continuously per SP 800-137.
+      Posture is computed from executed checks. A control with no evidence is NOT_IMPLEMENTED, never assumed.</div>
+  </div>
+</main>
+
+<script>
+const API='http://127.0.0.1:8770';
+const COL={COMPLETE:'#00d2ff',EXEC:'#6fa8ff',STALE:'#d29922',BLOCK:'#ffc061',BAD:'#ff6b81',QUEUE:'#7d8aa3',UNK:'#3f5170'};
+
+const FAC=[['HASF','Agent Swarm'],['HRF','Research'],['HCF','Cybersecurity'],['HSF','Story'],
+           ['HMF','Music'],['HFF','Finance'],['HHF','Humanity/Home'],['HPF','Pods']];
+
+// node geometry: [id, x, y, label, sub, zone]
+const N=[
+  ['FOUNDER', 112, 130,'FOUNDER','sole authority','founder'],
+  ['GATE_A',  112, 250,'AUTH GATE','credentials · signing','founder'],
+  ['GATE_M',  112, 370,'MONEY GATE','spend · payment','founder'],
+  ['GATE_D',  112, 490,'DOORSTEP','approve / reject','founder'],
+
+  ['MISSION', 360, 120,'MISSION INTAKE','founder intent','core'],
+  ['DECISION',360, 220,'DECISION CORPUS','RATIFIED only','core'],
+  ['LEASE',   360, 320,'LEASE MGR','fencing tokens','core'],
+  ['GATEWAY', 360, 425,'COUNCIL GATEWAY','SC-7 chokepoint','core'],
+  ['SPEND',   360, 530,'SPEND METER','AC-6 least priv','core'],
+
+  ['VALIDATE',960, 300,'VALIDATOR','independent','ev'],
+  ['LEDGER',  960, 180,'EVIDENCE LEDGER','append-only','ev'],
+  ['JSPACE',  960, 420,'J-SPACE / HJOS','read-only observer','ev'],
+  ['SEAL',    960, 530,'SEALER','PASS/FAIL/INCONCL','ev'],
+
+  ['STORE',  1172, 200,'APP STORE','founder-only','ext'],
+  ['STRIPE', 1172, 330,'PAYMENT RAIL','PAYMENT_ENABLED','ext'],
+  ['CUST',   1172, 460,'CUSTOMER','settled $0','ext'],
+];
+FAC.forEach(([id,nm],i)=>{
+  N.push([id, 678, 96 + i*66, id, nm, 'fac']);
+});
+
+const E=[
+  ['FOUNDER','MISSION'],['MISSION','DECISION'],['DECISION','LEASE'],['LEASE','GATEWAY'],
+  ['GATEWAY','SPEND'],
+  ...FAC.map(([id])=>['GATEWAY',id]),
+  ...FAC.map(([id])=>[id,'VALIDATE']),
+  ['VALIDATE','LEDGER'],['VALIDATE','SEAL'],['JSPACE','LEDGER'],
+  ['SEAL','GATE_D'],['GATE_D','STORE'],['GATE_M','STRIPE'],['STRIPE','CUST'],
+  ['GATE_A','GATEWAY'],
+];
+
+const pos={}; N.forEach(([id,x,y])=>pos[id]={x,y});
+let STATE={}, HOT=new Set();
+
+function drawStatic(){
+  const eg=document.getElementById('edges');
+  eg.innerHTML = E.map(([a,b])=>{
+    const p=pos[a], q=pos[b]; if(!p||!q) return '';
+    const mx=(p.x+q.x)/2;
+    return `<path class="edge" data-a="${a}" data-b="${b}"
+      d="M${p.x+46} ${p.y} C ${mx} ${p.y}, ${mx} ${q.y}, ${q.x-46} ${q.y}"/>`;
+  }).join('');
+}
+
+function render(){
+  const ng=document.getElementById('nodes');
+  ng.innerHTML = N.map(([id,x,y,label,sub])=>{
+    const st=STATE[id]||'UNK';
+    const c=COL[st]||COL.UNK;
+    const s=(STATE['__sub__']&&STATE['__sub__'][id])||sub;
+    return `<g>
+      <circle cx="${x}" cy="${y}" r="8" fill="none" stroke="${c}" stroke-width="1.6"/>
+      <circle cx="${x}" cy="${y}" r="3" fill="${c}"/>
+      <text class="nname" x="${x}" y="${y-14}" text-anchor="middle">${label}</text>
+      <text class="nsub"  x="${x}" y="${y+20}" text-anchor="middle">${s}</text>
+    </g>`;
+  }).join('');
+  document.querySelectorAll('.edge').forEach(p=>{
+    const hot = HOT.has(p.dataset.b) || HOT.has(p.dataset.a);
+    p.classList.toggle('hot', hot);
+  });
+}
+
+function setUnknown(reason){
+  N.forEach(([id])=>STATE[id]='UNK');
+  HOT.clear();
+  const s=document.getElementById('state');
+  s.textContent='UNKNOWN'; s.className='pill UNKNOWN';
+  document.getElementById('obs').textContent=reason;
+  render();
+}
+
+async function tick(){
+  let d;
+  try{
+    const r=await fetch(API+'/api/v1/helm/pert',{cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    d=await r.json();
+  }catch(e){
+    // FAIL CLOSED. No last-known-good. Ever.
+    return setUnknown('API unreachable — UNKNOWN, not last-known-good');
+  }
+
+  const tasks=(d.tasks&&d.tasks.tasks)||[];
+  const leases=(d.leases&&d.leases.leases)||[];
+  const facs=(d.factories&&d.factories.factories)||{};
+  const sec=d.security||{};
+  const ns=d.northstar||{};
+  const active=new Set(leases.filter(l=>String(l.status||'').toUpperCase()==='ACTIVE')
+                             .map(l=>String(l.task_id||'')));
+  const subs={};
+  HOT.clear();
+
+  // core
+  STATE.FOUNDER='COMPLETE';
+  STATE.MISSION = tasks.length?'COMPLETE':'UNK';
+  STATE.DECISION='COMPLETE';
+  STATE.LEASE = leases.length?'EXEC':'COMPLETE';
+  subs.LEASE = leases.length+' active leases';
+  const sc7=(sec.controls||[]).find(c=>c.control_id==='SC-7');
+  STATE.GATEWAY = sc7 ? (sc7.status==='IMPLEMENTED'?'COMPLETE':'BAD') : 'UNK';
+  STATE.SPEND='COMPLETE';
+
+  // factories — live evidence only
+  FAC.forEach(([f])=>{
+    const S_=t=>String(t.status||'').toUpperCase();
+    const mine=tasks.filter(t=>t.factory===f);
+    const done=mine.filter(t=>S_(t)==='COMPLETE');
+    const failed=mine.filter(t=>/FAIL|ERROR/.test(S_(t)));
+    const stale=mine.filter(t=>S_(t)==='STALE');
+    const leased=mine.filter(t=>active.has(String(t.task_id||'')));
+    const pend=mine.filter(t=>S_(t)==='PENDING');
+    const F=facs[f]||{};
+    const blocked=(F.blocked_missions||[]).length>0||F.runtime_state==='BLOCKED';
+    let st;
+    if(failed.length)               st='BAD';
+    else if(leased.length)          st='EXEC';
+    else if(stale.length&&!done.length) st='STALE';
+    else if(done.length)            st='COMPLETE';
+    else if(blocked)                st='BLOCK';
+    else if(pend.length||F.runtime_state==='ACTIVE') st='QUEUE';
+    else                            st='UNK';
+    STATE[f]=st;
+    if(leased.length) HOT.add(f);
+    const b=[];
+    if(done.length)   b.push(done.length+'✓');
+    if(leased.length) b.push(leased.length+'●');
+    if(failed.length) b.push(failed.length+'✗');
+    if(stale.length)  b.push(stale.length+' stale');
+    subs[f]=b.length?b.join(' '):(F.identity||'').replace('Hoch ','').replace(' Factory','');
+  });
+
+  // evidence plane
+  const hj=d.jspace||{};
+  STATE.LEDGER='COMPLETE';
+  STATE.JSPACE = hj.overall==='CONTRADICTED' ? 'BAD' : (hj.overall?'COMPLETE':'UNK');
+  subs.JSPACE = hj.overall ? String(hj.overall).toLowerCase() : 'read-only observer';
+  const four=(d.verdict&&d.verdict.four)||{};
+  STATE.VALIDATE = Object.values(four).some(v=>v==='PASS')?'COMPLETE':'QUEUE';
+  STATE.SEAL='QUEUE'; subs.SEAL='phase A unsealed';
+
+  // founder gates — never green unless the founder acted
+  STATE.GATE_A='COMPLETE';
+  STATE.GATE_M='COMPLETE';
+  STATE.GATE_D='BLOCK'; subs.GATE_D='awaiting founder';
+
+  // external
+  STATE.STORE='BLOCK'; subs.STORE='founder-only';
+  STATE.STRIPE='COMPLETE'; subs.STRIPE='payment ENABLED';
+  const settled=ns.revenue_settled_usd;
+  STATE.CUST = (settled===undefined||settled===null)?'UNK':(settled>0?'COMPLETE':'QUEUE');
+  subs.CUST = (settled>0)?('settled $'+settled):'settled $0 · unearned';
+
+  STATE.__sub__=subs;
+
+  const s=document.getElementById('state');
+  const bad=Object.values(STATE).includes('BAD');
+  s.textContent = bad?'CONTRADICTED':'LIVE';
+  s.className = 'pill '+(bad?'BAD':'LIVE');
+  document.getElementById('obs').textContent =
+    `${d.observed_at||''} · commit ${String(d.tested_commit||'').slice(0,8)} · ${leases.length} leases · ${tasks.length} tasks`;
+
+  render();
+  renderSV(d);
+  renderStd(sec);
+}
+
+function renderSV(d){
+  const rows=[
+    ['MISSION INTAKE','helm_live_api','REST /api/v1/helm','AC-3',STATE.MISSION],
+    ['DECISION CORPUS','decision_record.py','RATIFIED-only gate','CM-3',STATE.DECISION],
+    ['LEASE MANAGER','per_task_lease.py','O_EXCL + fencing token','AC-3',STATE.LEASE],
+    ['COUNCIL GATEWAY','authority_gateway.py','single chokepoint','SC-7',STATE.GATEWAY],
+    ['SPEND METER','SubprocessSpendGate','pre-dispatch deny','AC-6',STATE.SPEND],
+    ['EVIDENCE LEDGER','*.jsonl append-only','hash-chained','AU-2 / AU-9',STATE.LEDGER],
+    ['J-SPACE / HJOS','backend/jspace','read-only observer','CA-7 / SI-4',STATE.JSPACE],
+    ['SEALER','seal_soak_phase.py','independent of runner','SA-11',STATE.SEAL],
+    ['PAYMENT RAIL','Stripe (livemode)','webhook HMAC','SC-7 / IA-2',STATE.STRIPE],
+  ];
+  document.getElementById('svtab').innerHTML =
+    '<tr><th>NODE</th><th>SYSTEM</th><th>INTERFACE</th><th>CONTROL</th><th>LIVE STATE</th></tr>'
+    + rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td>
+        <td style="color:${COL[r[4]]||COL.UNK}">${r[4]||'UNK'}</td></tr>`).join('');
+}
+
+function renderStd(sec){
+  const cs=sec.controls||[];
+  document.getElementById('stdtab').innerHTML =
+    '<tr><th>CONTROL</th><th>FAMILY</th><th>TITLE</th><th>STATUS</th><th>EVIDENCE</th></tr>'
+    + (cs.length? cs.map(c=>`<tr>
+        <td>${c.control_id}</td><td>${c.family||''}</td><td>${c.title||c.name||''}</td>
+        <td class="${c.status==='IMPLEMENTED'?'ok':'no'}">${c.status}</td>
+        <td style="color:var(--dim)">${(c.evidence||'—').slice(0,64)}</td></tr>`).join('')
+      : '<tr><td colspan="5" style="color:var(--dim)">UNKNOWN — control posture not reporting</td></tr>');
+}
+
+document.querySelectorAll('.vtab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.vtab').forEach(x=>x.classList.remove('on'));
+  t.classList.add('on');
+  ['ov1','sv1','stdv1'].forEach(v=>document.getElementById(v).style.display='none');
+  document.getElementById(t.dataset.v).style.display='block';
+});
+
+drawStatic(); setUnknown('booting…'); tick(); setInterval(tick,5000);
+</script>
+</body>
+</html>

@@ -138,6 +138,8 @@
       <span><i class="dot" style="background:var(--info)"></i>EXECUTING</span>
       <span><i class="dot" style="background:var(--warn)"></i>BLOCKED_EXTERNAL</span>
       <span><i class="dot" style="background:var(--bad)"></i>FAILED / ERROR</span>
+      <span><i class="dot" style="background:#7d8aa3"></i>QUEUED / UNEARNED</span>
+      <span><i class="dot" style="background:#d29922"></i>STALE</span>
       <span><i class="dot" style="background:#3f5170"></i>UNKNOWN — never guessed</span>
       <span style="color:var(--dim)">premium static command-theater aesthetic (no dynamic motion)</span>
     </div>
@@ -181,7 +183,7 @@ const EDGES=[["IDEA","LEASE"],["LEASE","GATE"],
   ["HMF","VALID"],["HFF","VALID"],["HHF","VALID"],["HPF","VALID"],
   ["VALID","SHIP"],["SHIP","CASH"]];
 
-const COL={COMPLETE:"#00d2ff",EXEC:"#6fa8ff",BLOCK:"#ffc061",BAD:"#ff6b81",UNK:"#3f5170"};
+const COL={COMPLETE:"#00d2ff",EXEC:"#6fa8ff",QUEUE:"#7d8aa3",STALE:"#d29922",BLOCK:"#ffc061",BAD:"#ff6b81",UNK:"#3f5170"};
 let state={}, t=0, dead=false;
 
 function setState(d){
@@ -206,23 +208,63 @@ function setState(d){
   }
   window.__census = byFac;
   
+  // LIVE FACTORY STATE — derived ONLY from tasks + leases the API actually reports.
+  // Previous logic was wrong in three ways and every one of them LIED:
+  //   * it only matched task_id =~ /REAL/, so the live SOAK-* work was INVISIBLE
+  //   * census rung 1-4 (partial progress) was painted BAD == red == FAILED
+  //   * a factory doing real work showed UNKNOWN
+  // Rules now, in priority order. Red means a task ACTUALLY FAILED. Nothing else is red.
+  const activeLeaseTasks = new Set(
+    leases.filter(l=>String(l.status||"").toUpperCase()==="ACTIVE")
+          .map(l=>String(l.task_id||"")));
+
   ["HASF","HRF","HCF","HSF","HMF","HFF","HHF","HPF"].forEach(f=>{
-    const t = tasks.find(t=>t.factory===f && /REAL/.test(t.task_id||""));
-    if (t && byTask[t.task_id]) { S[f]="EXEC"; return; }
-    const r = byFac[f];
-    if (!r) { S[f]="UNK"; return; }
-    if (r.rung >= 5) S[f]="COMPLETE";
-    else if ((factoriesObj[f]||{}).runtime_state==="BLOCKED" || (factoriesObj[f]||{}).state==="BLOCKED") S[f]="BLOCK";
-    else if (r.rung === 0) S[f]="UNK";
-    else S[f]="BAD";
+    const mine = tasks.filter(t=>t.factory===f);
+    const S_=t=>String(t.status||"").toUpperCase();
+    const done    = mine.filter(t=>S_(t)==="COMPLETE");
+    const failed  = mine.filter(t=>/FAIL|ERROR/.test(S_(t)));
+    const stale   = mine.filter(t=>S_(t)==="STALE");
+    const verify  = mine.filter(t=>S_(t)==="VERIFYING");
+    const leased  = mine.filter(t=>activeLeaseTasks.has(String(t.task_id||"")));
+    const pending = mine.filter(t=>S_(t)==="PENDING");
+    const fac = factoriesObj[f] || {};
+    const blocked = fac.runtime_state==="BLOCKED" || fac.state==="BLOCKED"
+                    || (fac.blocked_missions||[]).length>0;
+
+    let st;
+    if (failed.length)                     st="BAD";      // a task genuinely FAILED — the ONLY red
+    else if (leased.length||verify.length) st="EXEC";     // executing RIGHT NOW
+    else if (stale.length && !done.length) st="STALE";    // stale evidence is NOT completion
+    else if (done.length)                  st="COMPLETE"; // produced completed work
+    else if (blocked)                      st="BLOCK";    // externally blocked (founder gate)
+    else if (pending.length)               st="QUEUE";
+    else if (fac.runtime_state==="ACTIVE") st="QUEUE";
+    else                                   st="UNK";      // no evidence -> never guessed
+    S[f]=st;
+
+    const n=nodeAt(f);
+    if(n){
+      const bits=[];
+      if(done.length)   bits.push(done.length+"\u2713");
+      if(leased.length||verify.length) bits.push((leased.length+verify.length)+"\u25CF");
+      if(failed.length) bits.push(failed.length+"\u2717");
+      if(stale.length)  bits.push(stale.length+" stale");
+      if(pending.length)bits.push(pending.length+"\u2026");
+      n.sub = bits.length ? bits.join(" ")
+            : (fac.runtime_state==="ACTIVE" ? "active \u00b7 no tasks" : "\u2014");
+    }
   });
 
   S.VALID = Object.values(four).some(v=>v==="PASS") ? "COMPLETE" : "UNK";
   const pm = (d.factories && d.factories.product_missions)
              ? d.factories.product_missions["EPIC_FURY_2026.distribution"] : null;
   S.SHIP = pm ? (pm.state==="BLOCKED_EXTERNAL"?"BLOCK":"COMPLETE") : "UNK";
+  // CASH: settled revenue > 0 is the only COMPLETE. $0 is UNEARNED, NOT failed.
+  // Painting $0 red implied something broke. Nothing broke — no external customer has paid yet.
   const rev = (d.northstar && !UNK(d.northstar)) ? d.northstar.revenue_settled_usd : null;
-  S.CASH = (rev===null) ? "UNK" : (rev>0 ? "COMPLETE" : "BAD");
+  S.CASH = (rev===null) ? "UNK" : (rev>0 ? "COMPLETE" : "QUEUE");
+  const cn=nodeAt("CASH");
+  if(cn) cn.sub = (rev===null) ? "unknown" : (rev>0 ? `settled $${rev}` : "settled $0 \u00b7 unearned");
 
   state = S;
 }
