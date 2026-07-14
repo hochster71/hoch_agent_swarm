@@ -724,14 +724,20 @@ class PersistentScheduler:
         finally:
             conn.close()
             
-        # 5. Release lease
-        self.lease_manager.release_lease(task_id, lease["lease_id"], status="RELEASED")
+        # 5. Release lease -- AND RECORD WHAT ACTUALLY HAPPENED.
+        # This used to discard release_lease()'s return value and log "RELEASED"
+        # unconditionally. The ledger therefore recorded success even when the lock file was
+        # never removed, and every "0 leaked leases" metric read from it was meaningless.
+        _released = self.lease_manager.release_lease(task_id, lease["lease_id"], status="RELEASED")
         self.log_lease({
             "ts": get_utc_now_str(),
             "task_id": task_id,
             "lease_id": lease["lease_id"],
-            "status": "RELEASED"
+            "status": "RELEASED" if _released else "RELEASE_FAILED",
+            "lock_file_removed": bool(_released),
         })
+        if not _released:
+            logger.error(f"{task_id}: LEASE RELEASE FAILED — lock file may be stranded")
         
         return passed
 

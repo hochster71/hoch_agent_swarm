@@ -1,0 +1,42 @@
+{
+  "cycle_id": "JCYC-20260714-A31726",
+  "health_digest": "317dffc8ca36c63db11456d6bd2f617db770014cb1a489cf7041c44c45958112",
+  "observed_at": "2026-07-14T12:48:20Z",
+  "observer_counts": {
+    "BLOCKED": 1,
+    "CONFIRMED_LIVE": 8,
+    "CONTRADICTED": 2
+  },
+  "open_alerts": 2,
+  "overall": "CONTRADICTED",
+  "promotion_authority": "NONE",
+  "recommended_action": "WITHHOLD_PROMOTION",
+  "schema": "JSPACE_HEALTH_v1",
+  "state_mutated": false,
+  "worst_findings": [
+    {
+      "assessment": "CONTRADICTED",
+      "detail": "Active leases missing authority_decision_id: ['SOAK-HASF-18', 'SOAK-HCF-1', 'SOAK-HCF-52', 'SOAK-HRF-52', 'SOAK-HSF-1', 'SOAK-HSF-12', 'SOAK-HSF-18', 'SOAK-HSF-7']",
+      "observation_id": "JOBS-20260714-A1140B",
+      "observer": "jspace_truth_sentinel",
+      "recommended_action": "WITHHOLD_PROMOTION",
+      "subject": "active_leases_authority"
+    },
+    {
+      "assessment": "CONTRADICTED",
+      "detail": "Locks past expires_at still ACTIVE: ['SOAK-HASF-18', 'SOAK-HCF-1', 'SOAK-HCF-52', 'SOAK-HRF-52', 'SOAK-HSF-1', 'SOAK-HSF-12', 'SOAK-HSF-18', 'SOAK-HSF-7']",
+      "observation_id": "JOBS-20260714-F376AA",
+      "observer": "jspace_flow_sentinel",
+      "recommended_action": "RELEASE_EXPIRED_LEASES",
+      "subject": "lease_expiry"
+    },
+    {
+      "assessment": "BLOCKED",
+      "detail": "Unusually high number of simultaneous lease locks.",
+      "observation_id": "JOBS-20260714-2D58C6",
+      "observer": "jspace_flow_sentinel",
+      "recommended_action": "THROTTLE_OR_INVESTIGATE",
+      "subject": "concurrency_pressure"
+    }
+  ]
+}

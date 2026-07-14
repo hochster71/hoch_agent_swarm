@@ -335,8 +335,19 @@ class PerTaskLeaseManager:
         return True
 
     def release_lease(self, task_id: str, lease_id: str, status: str = "RELEASED") -> bool:
+        """Release THIS lease. Returns False if it could not be released.
+
+        CALLERS MUST CHECK THE RETURN VALUE. The scheduler discarded it and then logged
+        'RELEASED' to the ledger unconditionally -- so the ledger recorded success whether or
+        not the lock file was ever removed. 256 acquired / 236 released in the ledger, while
+        14 lock files sat on disk still marked ACTIVE. Every '0 leaked leases' measurement in
+        Phases A, B and C came from an instrument that could not record a failure.
+        A ledger that cannot record failure is not evidence. It is a decoration.
+        """
         lease = self.read_lease(task_id)
-        if not lease or lease.get("lease_id") != lease_id:
+        if not lease or lease.get("lease_id") != lease_id or lease.get("__corrupt__"):
+            # STRANDED LOCK: the file exists but we cannot legitimately release it (mismatched
+            # lease_id, corrupt, or already gone). Say so; never let the caller assume success.
             return False
         lease["status"] = status
         lease["released_at"] = _iso(_now())

@@ -273,73 +273,79 @@ function draw(){
 }
 draw();
 
+let _pertTickInFlight=false;
 async function tick(){
+  // Do not stack polls while a slow /pert response is still open (single API worker).
+  if(_pertTickInFlight) return;
+  _pertTickInFlight=true;
   let d;
   try{
     const r=await fetch("/api/v1/helm/pert",{cache:"no-store"});
+    if(!r.ok) throw new Error("pert http "+r.status);
     d=await r.json(); dead=false; $("#stale").style.display="none";
+
+    // Set local state
+    setState(d);
+
+    // Update overall status header
+    const L = (d.leases && d.leases.leases) ? d.leases.leases : [];
+    $("#mode").className="pill "+(L.length?"ok":"unk");
+    $("#mode").textContent=L.length?"COUNCIL EXECUTING":"COUNCIL IDLE";
+    $("#obs").textContent=(d.observed_at||"UNKNOWN").slice(11,19)+"Z";
+    const V=d.verdict||{};
+    $("#commit").textContent=UNK(V.commit)?"UNKNOWN":String(V.commit).slice(0,8);
+
+    // Update observation times in KPI cards
+    const obsTimeStr = (d.observed_at||"UNKNOWN").slice(11,19)+"Z";
+    document.querySelectorAll(".obs-t").forEach(el => el.textContent = obsTimeStr);
+
+    // NORTH STAR
+    const N=d.northstar||{};
+    const undef=UNK(N)||N.value==="UNDEFINED";
+    $("#ns").textContent=undef?"UNDEFINED":N.value;
+    $("#ns").style.color=undef?"var(--bad)":"var(--ok)";
+    $("#nsS").textContent=undef?"no revenue → no denominator":"founder min / $";
+    $("#nsS").style.color=undef?"var(--bad)":"var(--mid)";
+
+    // REVENUE
+    const rev=UNK(N)?null:N.revenue_settled_usd;
+    $("#rev").textContent=rev===null?"UNKNOWN":"$"+(+rev).toFixed(2);
+    $("#rev").style.color=rev>0?"var(--ok)":"var(--bad)";
+    $("#revS").textContent=UNK(N)?"":`${N.lifetime_sales} lifetime sales`;
+    $("#revS").style.color=rev>0?"var(--ok)":"var(--bad)";
+
+    // SPEND TODAY
+    const S=d.spend||{};
+    $("#sp").textContent=UNK(S)?"UNKNOWN":"$"+S.spent_today_usd.toFixed(4);
+    $("#spS").textContent=UNK(S)?"":`${S.dispatches_metered} metered · chain ${S.chain_valid?"OK":"BROKEN"}`;
+    $("#spS").style.color=(!UNK(S)&&!S.chain_valid)?"var(--bad)":"var(--mid)";
+
+    // SECURITY
+    const C=d.security||{};
+    $("#sec").textContent=UNK(C)?"UNKNOWN":C.posture_percent+"%";
+    $("#sec").style.color=UNK(C)?"#7f8ca6":C.posture_percent>=95?"var(--ok)":C.posture_percent>=80?"var(--warn)":"var(--bad)";
+    $("#secS").textContent=UNK(C)?"":`${C.implemented}/${C.controls_assessed} · ${C.open_findings} finding(s)`;
+    $("#secS").style.color=(!UNK(C)&&C.high_findings)?"var(--bad)":"var(--mid)";
+
+    // LEASES
+    $("#lz").textContent=(d.leases && d.leases.total_active_records !== undefined)?d.leases.total_active_records:"UNKNOWN";
+    $("#lzS").textContent=L.length?L.map(x=>"fence "+(x.fencing_token||x.lease)).join(" · "):"idle";
+    $("#lzS").style.color=L.length?"var(--info)":"var(--dim)";
+
+    // FACTORIES
+    const C2=d.census||{};
+    if(UNK(C2)){ $("#cp").textContent="UNKNOWN"; $("#cpS").textContent=""; }
+    else{
+      $("#cp").innerHTML=`${C2.earning} <span style="font-size:0.8vw;color:var(--mid)">/ ${C2.declared}</span>`;
+      $("#cp").style.color=C2.earning>0?"var(--ok)":"var(--bad)";
+      $("#cpS").textContent=`ran ${C2.ever_ran} · produce ${C2.producing} · sellable ${C2.sellable}`;
+      $("#cpS").style.color=C2.earning>0?"var(--ok)":"var(--bad)";
+    }
   }catch(e){
     dead=true; $("#stale").style.display="flex";
     $("#mode").className="pill bad"; $("#mode").textContent="FEED LOST";
-    return;
-  }
-  
-  // Set local state
-  setState(d);
-
-  // Update overall status header
-  const L = (d.leases && d.leases.leases) ? d.leases.leases : [];
-  $("#mode").className="pill "+(L.length?"ok":"unk");
-  $("#mode").textContent=L.length?"COUNCIL EXECUTING":"COUNCIL IDLE";
-  $("#obs").textContent=(d.observed_at||"UNKNOWN").slice(11,19)+"Z";
-  const V=d.verdict||{};
-  $("#commit").textContent=UNK(V.commit)?"UNKNOWN":String(V.commit).slice(0,8);
-
-  // Update observation times in KPI cards
-  const obsTimeStr = (d.observed_at||"UNKNOWN").slice(11,19)+"Z";
-  document.querySelectorAll(".obs-t").forEach(el => el.textContent = obsTimeStr);
-
-  // NORTH STAR
-  const N=d.northstar||{};
-  const undef=UNK(N)||N.value==="UNDEFINED";
-  $("#ns").textContent=undef?"UNDEFINED":N.value;
-  $("#ns").style.color=undef?"var(--bad)":"var(--ok)";
-  $("#nsS").textContent=undef?"no revenue → no denominator":"founder min / $";
-  $("#nsS").style.color=undef?"var(--bad)":"var(--mid)";
-
-  // REVENUE
-  const rev=UNK(N)?null:N.revenue_settled_usd;
-  $("#rev").textContent=rev===null?"UNKNOWN":"$"+(+rev).toFixed(2);
-  $("#rev").style.color=rev>0?"var(--ok)":"var(--bad)";
-  $("#revS").textContent=UNK(N)?"":`${N.lifetime_sales} lifetime sales`;
-  $("#revS").style.color=rev>0?"var(--ok)":"var(--bad)";
-
-  // SPEND TODAY
-  const S=d.spend||{};
-  $("#sp").textContent=UNK(S)?"UNKNOWN":"$"+S.spent_today_usd.toFixed(4);
-  $("#spS").textContent=UNK(S)?"":`${S.dispatches_metered} metered · chain ${S.chain_valid?"OK":"BROKEN"}`;
-  $("#spS").style.color=(!UNK(S)&&!S.chain_valid)?"var(--bad)":"var(--mid)";
-
-  // SECURITY
-  const C=d.security||{};
-  $("#sec").textContent=UNK(C)?"UNKNOWN":C.posture_percent+"%";
-  $("#sec").style.color=UNK(C)?"#7f8ca6":C.posture_percent>=95?"var(--ok)":C.posture_percent>=80?"var(--warn)":"var(--bad)";
-  $("#secS").textContent=UNK(C)?"":`${C.implemented}/${C.controls_assessed} · ${C.open_findings} finding(s)`;
-  $("#secS").style.color=(!UNK(C)&&C.high_findings)?"var(--bad)":"var(--mid)";
-
-  // LEASES
-  $("#lz").textContent=(d.leases && d.leases.total_active_records !== undefined)?d.leases.total_active_records:"UNKNOWN";
-  $("#lzS").textContent=L.length?L.map(x=>"fence "+(x.fencing_token||x.lease)).join(" · "):"idle";
-  $("#lzS").style.color=L.length?"var(--info)":"var(--dim)";
-
-  // FACTORIES
-  const C2=d.census||{};
-  if(UNK(C2)){ $("#cp").textContent="UNKNOWN"; $("#cpS").textContent=""; }
-  else{
-    $("#cp").innerHTML=`${C2.earning} <span style="font-size:0.8vw;color:var(--mid)">/ ${C2.declared}</span>`;
-    $("#cp").style.color=C2.earning>0?"var(--ok)":"var(--bad)";
-    $("#cpS").textContent=`ran ${C2.ever_ran} · produce ${C2.producing} · sellable ${C2.sellable}`;
-    $("#cpS").style.color=C2.earning>0?"var(--ok)":"var(--bad)";
+  }finally{
+    _pertTickInFlight=false;
   }
 }
 tick(); setInterval(tick,1500);

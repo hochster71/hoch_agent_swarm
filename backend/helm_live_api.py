@@ -76,14 +76,55 @@ def live_concurrency() -> Any:
 
 
 def live_adapters() -> Any:
+    """Wall-safe adapter snapshot.
+
+    MUST NOT run CLI auth probes on the request path. ``check_all_readiness``
+    shells out to grok/gemini/claude (up to 45s each). The wall polls
+    ``/api/v1/helm/pert`` every 1.5s on a single uvicorn worker; those probes
+    starve the worker and surface as browser 500 / timeouts / FEED LOST.
+
+    Observed (non-blocking) signals only:
+      - env API key present
+      - prior CLI probe cache (if already filled elsewhere)
+      - binary on PATH (without invoking it)
+    """
+    import os
+    import shutil
     try:
-        from backend.mission_control.adapter_registry import AdapterRegistry
-        reg = AdapterRegistry().check_all_readiness()
-        return [{"id": k, "readiness": v.get("readiness", UNKNOWN),
-                 "health": v.get("health", UNKNOWN),
-                 "egress": v.get("egress_class", UNKNOWN),
-                 "auth_required": v.get("auth_required")}
-                for k, v in reg.items() if isinstance(v, dict)]
+        from backend.mission_control.adapter_registry import AdapterRecord, AdapterRegistry
+        reg = AdapterRegistry()
+        env = dict(os.environ)
+        out: List[Dict[str, Any]] = []
+        for aid, rec in reg.adapters.items():
+            auth_required = bool(rec.auth_required)
+            egress = rec.egress_class.value if hasattr(rec.egress_class, "value") else str(rec.egress_class)
+            if not auth_required:
+                readiness, health, auth_mode = "READY", "ACTIVE", "NO_AUTH_REQUIRED"
+            else:
+                keyed = bool(rec.api_key_env_var and env.get(rec.api_key_env_var))
+                cached = AdapterRecord._AUTH_PROBE_CACHE.get(aid)
+                probe = AdapterRecord._CLI_AUTH_PROBE.get(aid)
+                has_bin = bool(probe and shutil.which(probe[0]))
+                if keyed:
+                    readiness, health, auth_mode = "READY", "ACTIVE", "API_KEY_ENV"
+                elif cached == "READY":
+                    readiness, health, auth_mode = "READY", "ACTIVE", "CLI_SESSION_CACHED"
+                elif cached == "NOT_READY":
+                    readiness, health, auth_mode = "NOT_READY", "UNKNOWN", "CLI_SESSION_CACHED"
+                elif has_bin:
+                    # Binary present but no non-blocking proof of session — do not invent READY.
+                    readiness, health, auth_mode = UNKNOWN, UNKNOWN, "CLI_PROBE_DEFERRED"
+                else:
+                    readiness, health, auth_mode = "NOT_READY", "UNKNOWN", "NONE"
+            out.append({
+                "id": aid,
+                "readiness": readiness,
+                "health": health,
+                "egress": egress,
+                "auth_required": auth_required,
+                "auth_mode": auth_mode,
+            })
+        return out
     except Exception as e:
         return _unknown(f"adapter registry unreadable: {e}")
 
@@ -149,10 +190,13 @@ def live_tasks() -> Any:
             "ORDER BY t.updated_at DESC LIMIT 40")]
         c.close()
         rows, rejected = [], 0
+        # Load validator evidence ONCE — rglob+read of all ledgers is O(packages×lines).
+        # Calling it per-task made /api/v1/helm/pert take multi-seconds and starve the wall tick.
+        validator_by_task = _validator_evidence()
         for r in raw:
             # EXPLICIT validator evidence. An artifact EXISTING does not prove a validator
             # PASSED -- inferring that would manufacture a new false-positive path.
-            vv = _validator_evidence().get(r["task_id"], {})
+            vv = validator_by_task.get(r["task_id"], {})
             res = resolve_status(
                 raw=r.get("status"),
                 execution_status=r.get("status"),
@@ -418,6 +462,56 @@ def api_v1_authority():
     ))
 
 
+@app.get("/api/v1/helm/jspace/health")
+def api_v1_jspace_health():
+    """Latest HJOS meta-health. Read-only; never promotes."""
+    import time
+    from backend.jspace.ledger import JSpaceLedger
+    led = JSpaceLedger()
+    health = led.latest_health()
+    path = led.health_path
+    freshness = float(time.time() - path.stat().st_mtime) if path.exists() else 0.0
+    if not health:
+        return JSONResponse(_truth_response(
+            truth_class="HJOS_HEALTH_TRUTH",
+            source="coordination/jspace/health.json",
+            observed_at=now(),
+            freshness_seconds=freshness,
+            data={"state": UNKNOWN, "reason": "no HJOS cycle has written health yet",
+                  "promotion_authority": "NONE"},
+        ))
+    return JSONResponse(_truth_response(
+        truth_class="HJOS_HEALTH_TRUTH",
+        source="coordination/jspace/health.json",
+        observed_at=now(),
+        freshness_seconds=freshness,
+        data=health,
+    ))
+
+
+@app.post("/api/v1/helm/jspace/cycle")
+def api_v1_jspace_cycle():
+    """Run one HJOS observation cycle (read-only). Creates assessments/alerts only."""
+    from backend.jspace.runner import run_hjos_cycle
+    try:
+        result = run_hjos_cycle()
+        return JSONResponse(_truth_response(
+            truth_class="HJOS_CYCLE_TRUTH",
+            source="backend.jspace.runner",
+            observed_at=now(),
+            freshness_seconds=0.0,
+            data=result,
+        ))
+    except Exception as e:
+        return JSONResponse(_truth_response(
+            truth_class="HJOS_CYCLE_TRUTH",
+            source="backend.jspace.runner",
+            observed_at=now(),
+            freshness_seconds=0.0,
+            data={"state": UNKNOWN, "reason": str(e), "promotion_authority": "NONE"},
+        ))
+
+
 @app.get("/api/v1/helm/integrity")
 @app.get("/api/helm/integrity")
 def api_v1_integrity():
@@ -497,8 +591,30 @@ def api_v1_soak():
 
 @app.get("/api/v1/helm/pert")
 def api_v1_pert():
+    """Aggregate wall feed. Must not take tens of seconds or the 1.5s wall tick piles up."""
     import time
-    
+    try:
+        return _api_v1_pert_body()
+    except Exception as e:
+        # Fail soft: feed stays JSON-shaped so the wall shows UNKNOWN, not an opaque 500.
+        return JSONResponse(
+            status_code=200,
+            content=_truth_response(
+                truth_class="HELM_PERT_TRUTH",
+                source="multi-source aggregation",
+                observed_at=now(),
+                freshness_seconds=0.0,
+                data={
+                    "state": UNKNOWN,
+                    "reason": f"pert aggregation failed: {type(e).__name__}: {e}",
+                },
+            ),
+        )
+
+
+def _api_v1_pert_body() -> JSONResponse:
+    import time
+
     # 1. Runtime
     from backend.truth.runtime_source import concurrency_truth, POINTER
     rt_data = concurrency_truth(configured_capacity=4)

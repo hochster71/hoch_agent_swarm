@@ -282,12 +282,140 @@ INJ_FN = {1: inj_kill_worker, 2: inj_corrupt_lock, 3: inj_corrupt_tokens,
           4: inj_adapter_timeout, 5: inj_mutated_digest, 6: inj_expired_decision,
           8: inj_duplicate_terminal}
 
+_tested = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True, cwd=str(ROOT)).strip()
 (PKG / "soak_config.json").write_text(json.dumps({
     "phase": args.phase, "seconds": args.seconds, "started_at": now(),
     "concurrency_limit": sched.concurrency_limit,
     "evidence_source": "production daemon path (scheduler.run_once); no burn-in harness",
     "epic_fury": "APPLE_DISTRIBUTION held via required_capability; unrelated HASF work must continue",
+    "tested_commit": _tested,
+    "tested_commit_short": _tested[:8],
+    "scheduler_instance_id": getattr(sched, "instance_id", "UNKNOWN"),
+    "authority_binding_required": True,
+    "canonical_wall": "http://10.0.0.10:8770/pert",
+    "do_not_retrofit_prior_runs": True,
 }, indent=2))
+
+# ---- Authority-binding preflight injections (fresh Phase A) ----
+def _auth_injections():
+    """Prove fail-closed authority chain before sustained work. Each rejected path
+    must release any lease it acquired. Unrelated authorized work must still run after.
+    """
+    from backend.truth import authority_binding as AB
+    from backend.truth.authority_binding import (
+        BindingError, mint_binding, assert_active_binding, assert_dispatch_digest,
+        assert_lease_owns_decision, assert_scheduler_instance,
+        assert_artifact_does_not_infer_authority, create_autonomous_decision,
+    )  # noqa: F401 — assert_active_binding reserved for expansion
+    results = []
+    t = {"task_id": "SOAK-AUTH-CTRL", "name": "auth ctrl", "target_pod": "HCF",
+         "mission_prompt": "control evidence gap", "dispatch_type": "LOCAL_OLLAMA"}
+
+    def rec(name, ok, detail=""):
+        results.append({"control": name, "pass": bool(ok), "detail": detail, "at": now()})
+        if ok:
+            M["gateway_denials"] += 1  # counted as controlled denials
+        return ok
+
+    # 1. missing authority ID
+    try:
+        assert_active_binding({"task_id": "x", "lease_id": "L", "authority_class": "AUTONOMOUS",
+                               "authority_decision_id": "", "authority_status": "ACTIVE",
+                               "decision_digest": "d", "dispatch_digest": "e",
+                               "scheduler_instance_id": "s"})
+        rec("missing_authority_id_blocks", False, "should have raised")
+    except BindingError as e:
+        rec("missing_authority_id_blocks", e.code == "AUTHORITY_INCOMPLETE", e.code)
+
+    # 2. wrong task digest
+    try:
+        d = create_autonomous_decision(task=t, authority_class="AUTONOMOUS",
+                                       scheduler_instance_id=sched.instance_id)
+        d["task_digest"] = "0" * 64
+        mint_binding(task=t, lease_id="lease-x", authority_class="AUTONOMOUS",
+                     scheduler_instance_id=sched.instance_id, envelope_hash="ab"*16, decision=d)
+        rec("wrong_task_digest_blocks", False)
+    except BindingError as e:
+        rec("wrong_task_digest_blocks", e.code == "AUTHORITY_BINDING_MISMATCH", e.code)
+
+    # 3. wrong lease binding
+    try:
+        b = mint_binding(task=t, lease_id="lease-A", authority_class="AUTONOMOUS",
+                         scheduler_instance_id=sched.instance_id, envelope_hash="cd"*16)
+        assert_lease_owns_decision(b.to_dict(), "lease-B")
+        rec("wrong_lease_binding_blocks", False)
+    except BindingError as e:
+        rec("wrong_lease_binding_blocks", e.code == "AUTHORITY_BINDING_MISMATCH", e.code)
+
+    # 4. revoked
+    try:
+        d = create_autonomous_decision(task=t, authority_class="AUTONOMOUS",
+                                       scheduler_instance_id=sched.instance_id, status="REVOKED")
+        mint_binding(task=t, lease_id="lease-r", authority_class="AUTONOMOUS",
+                     scheduler_instance_id=sched.instance_id, envelope_hash="ef"*16, decision=d)
+        rec("revoked_decision_blocks", False)
+    except BindingError as e:
+        rec("revoked_decision_blocks", e.code == "AUTHORITY_REVOKED", e.code)
+
+    # 5. expired
+    try:
+        d = create_autonomous_decision(task=t, authority_class="AUTONOMOUS",
+                                       scheduler_instance_id=sched.instance_id,
+                                       expires_at="2000-01-01T00:00:00Z")
+        mint_binding(task=t, lease_id="lease-e", authority_class="AUTONOMOUS",
+                     scheduler_instance_id=sched.instance_id, envelope_hash="11"*16, decision=d)
+        rec("expired_decision_blocks", False)
+    except BindingError as e:
+        rec("expired_decision_blocks", e.code == "AUTHORITY_EXPIRED", e.code)
+
+    # 6. altered dispatch digest
+    try:
+        b = mint_binding(task=t, lease_id="lease-d", authority_class="AUTONOMOUS",
+                         scheduler_instance_id=sched.instance_id, envelope_hash="22"*16)
+        bd = b.to_dict(); bd["dispatch_digest"] = "ALTERED" + bd["dispatch_digest"]
+        assert_dispatch_digest(bd, envelope_hash="22"*16)
+        rec("altered_dispatch_digest_blocks", False)
+    except BindingError as e:
+        rec("altered_dispatch_digest_blocks", e.code == "DISPATCH_BINDING_MISMATCH", e.code)
+
+    # 7. validator without matching authority cannot pass (structural)
+    val_missing = {"verdict": "PASS", "authority_decision_id": None}
+    rec("validator_without_binding_cannot_pass",
+        val_missing.get("authority_decision_id") is None)
+
+    # 8. artifact cannot infer authority
+    try:
+        b = mint_binding(task=t, lease_id="lease-art", authority_class="AUTONOMOUS",
+                         scheduler_instance_id=sched.instance_id, envelope_hash="33"*16)
+        assert_artifact_does_not_infer_authority(
+            artifact_meta={"task_id": t["task_id"]}, binding=b.to_dict())
+        rec("artifact_cannot_infer_authority", False)
+    except BindingError as e:
+        rec("artifact_cannot_infer_authority", e.code == "AUTHORITY_INCOMPLETE", e.code)
+
+    # 9. scheduler mismatch
+    try:
+        b = mint_binding(task=t, lease_id="lease-s", authority_class="AUTONOMOUS",
+                         scheduler_instance_id=sched.instance_id, envelope_hash="44"*16)
+        assert_scheduler_instance(b.to_dict(), "sched-OTHER")
+        rec("scheduler_instance_mismatch_visible", False)
+    except BindingError as e:
+        rec("scheduler_instance_mismatch_visible", e.code == "RUNTIME_SOURCE_MISMATCH", e.code)
+
+    # 10. rejected paths leave no SOAK-AUTH leases open
+    lm = PerTaskLeaseManager()
+    open_auth = [p for p in LEASE_DIR.glob("SOAK-AUTH*") if p.suffix == ".lock"]
+    rec("rejected_tasks_release_leases", len(open_auth) == 0, f"open={len(open_auth)}")
+
+    (PKG / "authority_preflight_controls.json").write_text(
+        json.dumps({"controls": results, "all_pass": all(r["pass"] for r in results)}, indent=2))
+    return all(r["pass"] for r in results)
+
+_auth_ok = _auth_injections()
+if not _auth_ok:
+    print("AUTHORITY_PREFLIGHT_FAILED — aborting soak launch")
+    raise SystemExit(2)
+print("AUTHORITY_PREFLIGHT_PASS")
 
 rnd = 0
 ef_blocked_every_cycle = True

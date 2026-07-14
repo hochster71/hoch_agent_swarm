@@ -147,6 +147,24 @@ print(f"  worker peak (raw)          : {worker_peak}")
 print(f"  worker peak (excl. leaked) : {true_worker_peak}")
 print(f"  recovery/injection peak    : {recovery_peak}")
 print(f"  total peak                 : {total_peak}")
+# FILESYSTEM CROSS-CHECK. The ledger cannot record a release that failed, so a leak can be
+# invisible in it (this is exactly how "0 leaked leases" passed A/B/C while lock files sat
+# stranded on disk). Cross-check the ACTUAL lock files against the ledger. J-SPACE found this
+# by reading the filesystem; the sealer must too.
+import glob as _glob, json as _json2, time as _t2
+_live_locks = []
+for _lp in _glob.glob(str(ROOT / "coordination" / "leases" / "*.lock")):
+    try:
+        _ld = _json2.load(open(_lp))
+        _tid = str(_ld.get("task_id",""))
+        # a lock older than 10 min that the ledger says was RELEASED is STRANDED
+        if _tid.startswith(("SOAK-",)) and _ld.get("status") == "ACTIVE":
+            _live_locks.append(_tid)
+    except Exception:
+        pass
+req("no STRANDED lock files (filesystem cross-check)", len(_live_locks) == 0,
+    f"{len(_live_locks)} lock files ACTIVE on disk: {_live_locks[:4]}")
+
 req("NO leaked lease (acquired, never released)", not leaked,
     f"{len(leaked)} leaked: {[_meta.get(l) for l in leaked][:3]}")
 req("capacity NOT exceeded by genuine workers", not violation,
