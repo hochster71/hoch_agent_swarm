@@ -1,6 +1,6 @@
 {
-  "status": "CONDITIONAL",
-  "last_updated": "2026-07-09T04:23:34.645715Z",
+  "status": "NO_GO",
+  "last_updated": "2026-07-13T14:19:48.558086Z",
   "nodes": [
     {
       "id": "source-naics",
@@ -45,13 +45,13 @@
       "id": "ledger-usage",
       "type": "ledger",
       "label": "Runtime Usage Ledger",
-      "status": "GO"
+      "status": "NO_GO"
     },
     {
       "id": "ledger-outcome",
       "type": "ledger",
       "label": "Outcome Feedback Ledger",
-      "status": "GO"
+      "status": "NO_GO"
     }
   ],
   "edges": [

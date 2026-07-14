@@ -1,0 +1,11 @@
+{
+  "run_id": "bbe281f7-edbd-41ce-9616-b90e5f4ad90e",
+  "ollama_container_recreated": true,
+  "new_binding": "127.0.0.1:11434",
+  "verification": {
+    "public_ip_inbound_blocked": "PASS",
+    "tailscale_ip_inbound_blocked": "PASS",
+    "localhost_inbound_allowed": "PASS"
+  },
+  "timestamp": "2026-07-14T12:36:00Z"
+}

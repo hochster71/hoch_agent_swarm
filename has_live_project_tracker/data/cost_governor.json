@@ -2,10 +2,10 @@
   "generated_at": "2026-07-02T11:30:00Z",
   "monthly_incremental_budget_usd": 200,
   "grok": {
-    "credits_remaining_usd": 75.2922,
-    "credits_used_usd": 13.5978,
+    "credits_remaining_usd": 75.2844,
+    "credits_used_usd": 13.6056,
     "tokens_used": 43112382,
-    "requests": 1412,
+    "requests": 1418,
     "effective_cost_per_1m_tokens": 0.315,
     "avg_tokens_per_request": 30663,
     "avg_cost_per_request": 0.0097,
@@ -26,6 +26,6 @@
     "monthly_budget_guardrail_usd": 200
   },
   "model_routing": [],
-  "last_metered_at": "2026-07-12T22:08:47.675771Z",
+  "last_metered_at": "2026-07-12T23:10:51.647449Z",
   "metered_by": "scripts/council/spend_gate.py"
 }

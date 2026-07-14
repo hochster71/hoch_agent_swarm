@@ -1,0 +1,62 @@
+{
+  "pricing_model_version": "1.0",
+  "currency": "USD",
+  "paid_pilot_packages": [
+    {
+      "tier": "Rapid Assessment",
+      "price": 2500,
+      "deliverables_included": [
+        "Privilege-boundary mapping",
+        "Executive gap analysis summary"
+      ],
+      "estimated_duration_days": 5,
+      "estimated_effort_hours": 12
+    },
+    {
+      "tier": "Full Technical Assessment",
+      "price": 5000,
+      "deliverables_included": [
+        "Privilege-boundary mapping",
+        "AI threat model (OWASP LLM mapping)",
+        "NIST 800-53 gap ledger",
+        "Executive summary report"
+      ],
+      "estimated_duration_days": 10,
+      "estimated_effort_hours": 24
+    },
+    {
+      "tier": "Assessment & Implementation Roadmap",
+      "price": 10000,
+      "deliverables_included": [
+        "All Full Technical Assessment deliverables",
+        "Custom 30/60/90-day remediation roadmap",
+        "1-month post-assessment ConMon monitoring trials"
+      ],
+      "estimated_duration_days": 15,
+      "estimated_effort_hours": 40
+    }
+  ],
+  "recurring_governance_subscription": {
+    "tier_name": "Continuous Governance (ConMon)",
+    "monthly_rate_range": {
+      "min": 1500,
+      "max": 5000
+    },
+    "deliverables": [
+      "Weekly automated execution proof audits",
+      "Monthly drift detection and system policy checks",
+      "Quarterly NIST control update mappings",
+      "Critical vulnerability and threat boundary updates"
+    ]
+  },
+  "cost_of_delivery_estimates": {
+    "hosting_gcp_server_monthly": 120,
+    "api_llm_inference_per_assessment": 45,
+    "evidence_archive_storage_per_year": 12,
+    "human_analyst_hours_rate": 150
+  },
+  "pricing_validation_gate": {
+    "founder_sign_off_required": true,
+    "discount_limit_without_approval_percent": 0.0
+  }
+}

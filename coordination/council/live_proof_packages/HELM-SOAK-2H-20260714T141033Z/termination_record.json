@@ -1,0 +1,6 @@
+{
+  "termination_signal": "SIGTERM_OR_ABSENT",
+  "reason": "PRE_CLEAN_RESTART",
+  "may_be_cited_as_evidence": false,
+  "at": "2026-07-14T14:15:15Z"
+}

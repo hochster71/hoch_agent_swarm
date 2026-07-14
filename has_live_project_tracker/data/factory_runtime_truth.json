@@ -1,26 +1,26 @@
 {
   "status": "GO",
-  "last_updated": "2026-07-09T04:23:34.645604Z",
+  "last_updated": "2026-07-13T14:19:48.557778Z",
   "factories": {
     "software": {
       "status": "GO",
       "state": "CONVERGED",
-      "mean_score": 95.417,
-      "generation": 728,
+      "mean_score": 96.167,
+      "generation": 994,
       "freshness": "fresh"
     },
     "music": {
       "status": "GO",
       "state": "CONVERGED",
-      "mean_score": 97.125,
-      "generation": 714,
+      "mean_score": 96.938,
+      "generation": 980,
       "freshness": "fresh"
     },
     "research": {
       "status": "GO",
       "state": "CONVERGED",
       "mean_score": 96.5,
-      "generation": 713,
+      "generation": 979,
       "freshness": "fresh"
     }
   }

@@ -1,0 +1,45 @@
+{
+  "task_id": "t-prep",
+  "task_name": "analyze_market_data",
+  "task_class": "factory",
+  "executed_at": "2026-07-13T14:19:06+00:00",
+  "engine": "agent_executor.v3",
+  "status": "SUCCESS",
+  "verified": true,
+  "acceptance_report": [
+    "default gate: 1 real artifact(s) on disk + summary present"
+  ],
+  "attempts": 1,
+  "final_tier": "local",
+  "models_used": [
+    "mock"
+  ],
+  "task_cost_usd": 0.0,
+  "month_spend_usd": 0.0,
+  "month_cap_usd": 100.0,
+  "summary": "SUCCESS \u2014 Created a safe local file at docs/safe_file.txt as requested.",
+  "artifacts": [
+    "docs/safe_file.txt"
+  ],
+  "attempt_log": [
+    {
+      "attempt": 1,
+      "tier": "local",
+      "finished": true,
+      "accepted": true,
+      "acceptance_report": [
+        "default gate: 1 real artifact(s) on disk + summary present"
+      ],
+      "cost_usd": 0.0,
+      "steps": 1,
+      "transcript": [
+        {
+          "step": 1,
+          "model": "mock",
+          "cost_usd": 0.0,
+          "model_out": "{\"tool\": \"finish\", \"summary\": \"SUCCESS \u2014 Created a safe local file at docs/safe_file.txt as requested.\", \"artifacts\": [\"docs/safe_file.txt\"]}"
+        }
+      ]
+    }
+  ]
+}

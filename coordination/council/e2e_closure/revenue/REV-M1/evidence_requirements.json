@@ -1,0 +1,46 @@
+{
+  "evidence_schema_version": "1.0",
+  "product_id": "REV-M1",
+  "required_evidence": [
+    {
+      "id": "EV-01",
+      "name": "System Architecture & Data Flow Diagram",
+      "purpose": "Identify trust zones, API connection paths, and external network boundaries.",
+      "accepted_formats": ["PDF", "PNG", "Mermaid Chart"],
+      "recommended_detail": "Must show orchestrator, LLM service, application backend, database, and third-party APIs.",
+      "sensitivity": "CONFIDENTIAL"
+    },
+    {
+      "id": "EV-02",
+      "name": "Agent & Prompt Configuration Files",
+      "purpose": "Verify system instructions, prompt templates, and security guidelines.",
+      "accepted_formats": ["JSON", "YAML", "Markdown"],
+      "recommended_detail": "System prompts and instruction parameters for all primary agents. Redaction of API keys and client identities allowed.",
+      "sensitivity": "HIGHLY_CONFIDENTIAL"
+    },
+    {
+      "id": "EV-03",
+      "name": "Tool & API Definitions",
+      "purpose": "Determine what write-access capabilities are available to the agent.",
+      "accepted_formats": ["JSON", "YAML", "OpenAPI Spec"],
+      "recommended_detail": "Detailed function signatures, allowed input parameters, and authorization modes.",
+      "sensitivity": "CONFIDENTIAL"
+    },
+    {
+      "id": "EV-04",
+      "name": "Infrastructure & Permission Policies",
+      "purpose": "Audit system permissions (least privilege compliance).",
+      "accepted_formats": ["JSON", "YAML", "Dockerfile"],
+      "recommended_detail": "IAM role definitions, Kubernetes service accounts, Docker configuration files.",
+      "sensitivity": "CONFIDENTIAL"
+    },
+    {
+      "id": "EV-05",
+      "name": "Sample Agent Execution Logs",
+      "purpose": "Audit log schemas, traceability, and evidence integrity options.",
+      "accepted_formats": ["JSONL", "TXT"],
+      "recommended_detail": "At least 10 complete execution flows, showing prompt inputs, tool calls, and output responses. PII/Secrets should be redacted.",
+      "sensitivity": "CONFIDENTIAL"
+    }
+  ]
+}

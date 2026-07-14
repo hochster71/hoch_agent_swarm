@@ -1,27 +1,39 @@
 {
-  "daemon_status": "RUNNING",
-  "started_at": "2026-07-05T15:25:36.016539Z",
-  "last_heartbeat": "2026-07-05T17:22:41.719469Z",
-  "heartbeat_expires_at": "2026-07-05T17:25:11.719469Z",
-  "cycle_count": 118,
-  "real_cycle_count": 118,
-  "simulated_cycle_count": 0,
+  "daemon_status": "IDLE",
+  "run_id": "run-20260713T124756Z",
+  "started_at": "2026-07-13T12:47:56.875381Z",
+  "last_heartbeat": "2026-07-13T12:47:57.885728Z",
+  "heartbeat_expires_at": "2026-07-13T12:48:00.385728Z",
+  "cycle_count": 2,
+  "real_cycle_count": 0,
+  "simulated_cycle_count": 2,
   "last_cycle_status": "BLOCKED_BY_HOLD",
   "last_task_id": null,
   "last_error": null,
   "operator_hold_status": "ACTIVE",
-  "doctrine_status": "GO",
+  "doctrine_status": "HOLD",
   "verdict": "HEARTBEAT_FRESH",
   "venue_classification": {
-    "host_name": "hoch-relay-001",
-    "host_os": "Linux",
-    "launch_command": "python3 scripts/ag_execution_daemon.py",
-    "supervisor_type": "systemd",
-    "systemd_active": true,
-    "caffeinate_active": false,
-    "primary_burn_in_eligible": true,
-    "reason_if_not_primary_eligible": "",
+    "host_name": "Michaels-MacBook-Pro.local",
+    "host_os": "Darwin",
+    "launch_command": "DAEMON_TEST_MODE=false caffeinate -i -s -d python3 scripts/ag_execution_daemon.py",
+    "supervisor_type": "caffeinate",
+    "systemd_active": false,
+    "caffeinate_active": true,
+    "primary_burn_in_eligible": false,
+    "reason_if_not_primary_eligible": "MacBook is developer/secondary node, not primary always-on systemd server",
     "evidence_path": "has_live_project_tracker/data/ag_execution_daemon_state.json",
-    "verdict": "PRIMARY_SYSTEMD_BURN_IN_ACTIVE"
+    "verdict": "SECONDARY_CAFFEINATE_RUN_ACTIVE"
+  },
+  "port_public": null,
+  "queue_health": {
+    "verdict": "FOREIGN_BACKLOG",
+    "valid": true,
+    "pending": 7,
+    "serviceable_pending": 0,
+    "foreign_pending": 7,
+    "pending_by_agent": {
+      "hasf_scoring_agent": 7
+    }
   }
 }

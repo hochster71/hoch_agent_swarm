@@ -1,0 +1,96 @@
+# /etc/systemd/system/has-agent-dispatcher.service
+[Unit]
+Description=HAS Agent Dispatcher Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/hoch_agent_swarm
+ExecStart=/usr/bin/python3 -u /root/hoch_agent_swarm/scripts/has_agent_dispatcher.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+
+# /etc/systemd/system/hasf-product-factory.service
+[Unit]
+Description=HASF Product Factory Runner Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/hoch_agent_swarm
+ExecStart=/usr/bin/python3 -u /root/hoch_agent_swarm/scripts/hasf_product_factory_runner.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+
+# /etc/systemd/system/helm-runner.service
+[Unit]
+Description=HELM Autonomous Model Runner Daemon
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/hoch_agent_swarm
+ExecStart=/usr/bin/python3 -u /root/hoch_agent_swarm/scripts/helm_autonomy_runner.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+
+# /etc/systemd/system/hoch-ag-execution-daemon.service
+[Unit]
+Description=HOCH Agent Swarm Autonomy Execution Daemon
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/hoch_agent_swarm
+ExecStart=/root/hoch_agent_swarm/.venv/bin/python3 -u scripts/ag_execution_daemon.py
+Restart=on-failure
+RestartSec=15s
+Environment=DAEMON_TEST_MODE=false DAEMON_INTERVAL_SECONDS=60 PYTHONUNBUFFERED=1
+StandardOutput=append:/root/hoch_agent_swarm/has_live_project_tracker/data/ag_daemon.log
+StandardError=append:/root/hoch_agent_swarm/has_live_project_tracker/data/ag_daemon.err
+
+[Install]
+WantedBy=multi-user.target
+
+# /etc/systemd/system/hoch-relay-telemetry.service
+[Unit]
+Description=HOCH-200 Relay Telemetry Agent (measured host vitals + agent counts)
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Runs on the relay HOST so it can read docker/systemctl/psutil and write into the
+# data dir the read-only relay-api container serves.
+WorkingDirectory=/opt/hoch-relay/telemetry-agent
+ExecStart=/usr/bin/python3 /opt/hoch-relay/telemetry-agent/agent.py
+Environment=HOCH_DATA_DIR=/root/hoch_agent_swarm/has_live_project_tracker/data
+Environment=HOCH_TELEMETRY_INTERVAL=15
+Environment=OLLAMA_URL=http://127.0.0.1:11434
+Restart=always
+RestartSec=5
+# Hardening (agent only reads system state + writes one telemetry file)
+NoNewPrivileges=true
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target

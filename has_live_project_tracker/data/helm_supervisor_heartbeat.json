@@ -1,0 +1,17 @@
+{
+  "timestamp": "2026-07-14T14:58:32.949538+00:00",
+  "supervisor_pid": 12844,
+  "processes": {
+    "backend": {
+      "pid": 12846,
+      "status": "RUNNING",
+      "exit_code": null
+    },
+    "scheduler": {
+      "pid": 17807,
+      "status": "RUNNING",
+      "exit_code": null
+    }
+  },
+  "status": "HEALTHY"
+}

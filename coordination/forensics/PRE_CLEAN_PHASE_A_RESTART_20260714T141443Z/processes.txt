@@ -1,0 +1,4 @@
+ 6340       03:09 .venv/bin/python scripts/council/soak_runner.py --seconds 7200 --phase A
+ 8692    01:06:08 .venv/bin/python scripts/jspace/hjos_daemon.py --interval 60
+12847 01-02:05:50 /Users/michaelhoch/hoch_agent_swarm/.venv/bin/python3 -c from backend.mission_control.persistent_scheduler import PersistentScheduler; PersistentScheduler().run_loop()
+81750    01:22:07 .venv/bin/python -m uvicorn backend.helm_live_api:app --host 0.0.0.0 --port 8770

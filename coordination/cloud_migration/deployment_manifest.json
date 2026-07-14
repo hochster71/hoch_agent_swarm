@@ -1,0 +1,11 @@
+{
+  "host": "hoch-relay-001",
+  "source_commit": "5eda9421dce1c6a71ea1cefad61c190d2552ae6b",
+  "image_digest": "sha256:88c3bdcb59eea1f1a10e9f44784c7d32cfb01656a30fc2cf78dafc48b5ec794c",
+  "deployed_at": "2026-07-14T14:35:36Z",
+  "docker_root": "/var/lib/helm/docker",
+  "containerd_root": "/var/lib/helm/containerd",
+  "helm_volume_uuid": "a74cc2d1-21bb-4f3b-b72e-07eebc5d9472",
+  "mode": "PASSIVE_MIRROR",
+  "promotion_authority": "NONE"
+}

@@ -1,0 +1,42 @@
+{
+  "validation_schema": "REVENUE_VALIDATION_PLAN_v1",
+  "product_id": "REV-M1",
+  "funnel_metrics_targets": {
+    "outreach_list_size": 25,
+    "target_response_rate_percent": 20.0,
+    "target_scoping_calls": 5,
+    "target_proposals_sent": 3,
+    "target_closed_contracts": 1
+  },
+  "financial_targets_usd": {
+    "pilot_target_revenue": 5000,
+    "monthly_recurring_target": 2500,
+    "cost_of_delivery_cap": 500
+  },
+  "verification_gates": {
+    "V-01": {
+      "name": "Outreach List Scrutiny",
+      "verification_method": "Manual founder review of 25 targets to ensure ideal customer fit.",
+      "status": "PENDING"
+    },
+    "V-02": {
+      "name": "Statement of Work Sign-off",
+      "verification_method": "Founder signature verification via gpg or manual check in authority_binding_ledger.jsonl.",
+      "status": "PENDING"
+    },
+    "V-03": {
+      "name": "Upfront Payment Verification",
+      "verification_method": "Bank / processor confirmation of 50% deposit before kickoff.",
+      "status": "PENDING"
+    },
+    "V-04": {
+      "name": "Deliverable Sign-off",
+      "verification_method": "Client written approval of completed reports.",
+      "status": "PENDING"
+    }
+  },
+  "audit_trail": {
+    "ledger_file": "coordination/founder/autonomous_decision_ledger.jsonl",
+    "required_record_fields": ["event_type", "client_id", "amount_usd", "signature_sha256", "timestamp"]
+  }
+}

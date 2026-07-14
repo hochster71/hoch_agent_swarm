@@ -63,6 +63,7 @@
     <div class="sub">
       LIVE RUNTIME · <span id="obs">—</span> · <span id="commit">—</span> ·
       <span id="integrity" title="computed from the live node set; never asserted">INTEGRITY: UNKNOWN</span>
+      · <span id="hjos" title="HJOS independent observability — never promotes">HJOS: UNKNOWN</span>
     </div>
   </header>
 
@@ -74,7 +75,8 @@
     <div class="boundary">
       PLATFORM: <span id="platform">—</span> · SCHEDULER: <span id="sched">—</span> ·
       TRUE_GO: <span style="color:var(--bad);font-weight:700">LOCKED</span> ·
-      THEATER: <span style="color:var(--dim)">NOT_LIVE</span>
+      THEATER: <span style="color:var(--dim)">NOT_LIVE</span> ·
+      HJOS: <span id="hjosBar">—</span>
     </div>
   </div>
 
@@ -367,6 +369,40 @@ async function refreshIntegrity(){
   }
 }
 refreshIntegrity(); setInterval(refreshIntegrity, 5000);
+</script>
+
+<script>
+// HJOS — independent observability swarm. Never GO / never promote.
+async function refreshHjos(){
+  const el = document.getElementById('hjos');
+  const bar = document.getElementById('hjosBar');
+  try{
+    const r = await fetch('/api/v1/helm/jspace/health',{cache:'no-store'});
+    if(!r.ok) throw new Error('hjos http '+r.status);
+    const d = await r.json();
+    const overall = d.overall || d.state || 'UNKNOWN';
+    const action = d.recommended_action || '—';
+    const alerts = (d.open_alerts !== undefined) ? d.open_alerts : '—';
+    const promo = d.promotion_authority || 'NONE';
+    const color = (overall==='CONFIRMED_LIVE') ? 'var(--ok)'
+                : (overall==='CONTRADICTED'||overall==='BLOCKED') ? 'var(--bad)'
+                : (overall==='UNKNOWN'||overall==='STALE') ? 'var(--warn)'
+                : 'var(--mid)';
+    if(el){
+      el.textContent = `HJOS: ${overall} · alerts ${alerts} · ${action} · promo ${promo}`;
+      el.style.color = color;
+    }
+    if(bar){
+      bar.textContent = `${overall} · ${action}`;
+      bar.style.color = color;
+      bar.title = d.health_digest ? ('digest '+String(d.health_digest).slice(0,16)) : 'no digest';
+    }
+  }catch(e){
+    if(el){ el.textContent = 'HJOS: UNKNOWN (feed lost)'; el.style.color = 'var(--warn)'; }
+    if(bar){ bar.textContent = 'UNKNOWN'; bar.style.color = 'var(--warn)'; }
+  }
+}
+refreshHjos(); setInterval(refreshHjos, 8000);
 </script>
 
 <script>

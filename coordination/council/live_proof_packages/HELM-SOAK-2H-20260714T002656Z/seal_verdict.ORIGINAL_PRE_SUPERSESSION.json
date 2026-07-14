@@ -1,0 +1,19 @@
+{
+  "verdict": "SOAK_PHASE_A_PASS",
+  "failed_controls": [],
+  "cycles": 122,
+  "observed_peak_concurrency": 4,
+  "capacity": {
+    "configured_worker_capacity": 4,
+    "worker_peak_concurrency": 4,
+    "recovery_peak_concurrency": 0,
+    "total_peak_concurrency": 4,
+    "capacity_violation": false
+  },
+  "notes": [],
+  "unrelated_work_continued_after_every_injection": true,
+  "evaluator": "seal_soak_phase.py (independent of the runner that produced the evidence)",
+  "sealed_at": "2026-07-14T02:30:29Z",
+  "next_phase_authorized": true,
+  "24_7_status": "NOT YET PROVEN"
+}

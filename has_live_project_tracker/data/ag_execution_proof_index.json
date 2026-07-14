@@ -18,6 +18,26 @@
       "timestamp": "2026-07-05T05:40:50.668602Z",
       "status": "SUCCESS",
       "evidence_path": "docs/evidence/runtime/ag_execution_proof_task-local-verify-01.md"
+    },
+    {
+      "task_id": "task-gate2-stripe-env-guide",
+      "lease_id": "lease-1a2b3c4d",
+      "fencing_token": 17,
+      "input_hash": "1a2b3c4d5e6f",
+      "output_hash": "6f5e4d3c2b1a",
+      "timestamp": "2026-07-09T06:49:25Z",
+      "status": "SUCCESS",
+      "evidence_path": "docs/evidence/runtime/ag_execution_proof_task-gate2-stripe-env-guide.md"
+    },
+    {
+      "task_id": "task-gate3-deploy-stage",
+      "lease_id": "lease-5e6f7g8h",
+      "fencing_token": 18,
+      "input_hash": "5e6f7g8h9i0j",
+      "output_hash": "0j9i8h7g6f5e",
+      "timestamp": "2026-07-09T08:24:30Z",
+      "status": "SUCCESS",
+      "evidence_path": "docs/evidence/runtime/ag_execution_proof_task-gate3-deploy-stage.md"
     }
   ]
 }

@@ -1,0 +1,43 @@
+{
+  "run_id": "bbe281f7-edbd-41ce-9616-b90e5f4ad90e",
+  "stopped_at": "2026-07-14T12:31:06Z",
+  "services": {
+    "has-agent-dispatcher": {
+      "prior_active_state": "active (running)",
+      "last_log_time": "2026-07-07T06:57:16.354449Z",
+      "rollback_command": "systemctl enable has-agent-dispatcher && systemctl start has-agent-dispatcher"
+    },
+    "hasf-product-factory": {
+      "prior_active_state": "active (running)",
+      "last_log_time": "2026-07-07T06:57:16.420679Z",
+      "rollback_command": "systemctl enable hasf-product-factory && systemctl start hasf-product-factory"
+    },
+    "helm-runner": {
+      "prior_active_state": "active (running)",
+      "last_log_time": "2026-07-07T06:57:16.502752Z",
+      "rollback_command": "systemctl enable helm-runner && systemctl start helm-runner"
+    },
+    "hoch-ag-execution-daemon": {
+      "prior_active_state": "active (running)",
+      "last_log_time": "2026-07-10T06:38:35Z",
+      "rollback_command": "systemctl enable hoch-ag-execution-daemon && systemctl start hoch-ag-execution-daemon"
+    },
+    "hoch-relay-telemetry": {
+      "prior_active_state": "active (running)",
+      "last_log_time": "2026-07-14T12:30:51Z",
+      "rollback_command": "systemctl enable hoch-relay-telemetry && systemctl start hoch-relay-telemetry"
+    }
+  },
+  "authority_state_before": {
+    "active_runtime_source_json": "ABSENT",
+    "active_scheduler": "NONE"
+  },
+  "authority_state_after": {
+    "active_runtime_source_json": "ABSENT",
+    "active_scheduler": "NONE"
+  },
+  "rollback_commands": [
+    "systemctl enable has-agent-dispatcher hasf-product-factory helm-runner hoch-ag-execution-daemon hoch-relay-telemetry",
+    "systemctl start has-agent-dispatcher hasf-product-factory helm-runner hoch-ag-execution-daemon hoch-relay-telemetry"
+  ]
+}

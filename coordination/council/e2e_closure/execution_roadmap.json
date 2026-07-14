@@ -1,0 +1,45 @@
+{
+  "schema": "HELM_EXECUTION_ROADMAP_v1",
+  "updated_at": "2026-07-14T14:33:45Z",
+  "north_star": "HELM-GOAL-01 Governed autonomous product delivery with verified revenue",
+  "critical_path": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P",
+    "GOAL"
+  ],
+  "parallel_monetization": [
+    "M1",
+    "M2",
+    "M3",
+    "M4",
+    "M5",
+    "M6"
+  ],
+  "waves": {
+    "W0": "Preserve; source-only commits; stop uncontrolled drift \u2014 DONE/IN_PROGRESS",
+    "W1": "Clean A/B/C + J-SPACE read-only + volume parallel",
+    "W2": "Commercial packaging HCF service + Epic Fury doorstep",
+    "W3": "Seal + cutover",
+    "W4": "Revenue event + feedback into HELM"
+  },
+  "schedule_estimate_hours": {
+    "technical_critical_path_expected": "60-90",
+    "calendar_days_focused": "3-5",
+    "phase_c_wall_clock_hours": 24,
+    "method": "PERT (O+4M+P)/6 with Phase C non-compressible"
+  }
+}

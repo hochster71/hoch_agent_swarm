@@ -1,0 +1,73 @@
+{
+  "schema": "HELM_RAID_v1",
+  "updated_at": "2026-07-14T14:33:45Z",
+  "risks": [
+    {
+      "id": "R-01",
+      "item": "Phase A mid-flight fails or is killed again",
+      "impact": "HIGH",
+      "likelihood": "MED",
+      "mitigation": "Leave 141914Z alone; no dual launch"
+    },
+    {
+      "id": "R-02",
+      "item": "24h soak wall-clock delay",
+      "impact": "HIGH",
+      "likelihood": "HIGH",
+      "mitigation": "Cannot compress; start immediately after B"
+    },
+    {
+      "id": "R-03",
+      "item": "App Store rejection delays HASF revenue",
+      "impact": "MED",
+      "likelihood": "MED",
+      "mitigation": "Parallel HCF service revenue"
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "A-01",
+      "item": "Lease honesty instrument remains correct through A/B/C",
+      "status": "TESTED_UNIT"
+    },
+    {
+      "id": "A-02",
+      "item": "Founder available for signing/submission within days of package",
+      "status": "UNVERIFIED"
+    }
+  ],
+  "issues": [
+    {
+      "id": "I-01",
+      "item": "140941Z claimed clean Phase A was ABORTED_OR_UNRESOLVED",
+      "status": "CLOSED_CLASSIFIED"
+    },
+    {
+      "id": "I-02",
+      "item": "Competing PersistentScheduler caused sqlite lock",
+      "status": "MITIGATED_ONCE"
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "D-01",
+      "item": "Clean A seal before B",
+      "owner": "scheduler"
+    },
+    {
+      "id": "D-02",
+      "item": "Clean B before C 24h",
+      "owner": "scheduler"
+    },
+    {
+      "id": "D-03",
+      "item": "VPS volume mount for durable cutover",
+      "owner": "founder+infra"
+    },
+    {
+      "id": "D-04",
+      "item": "Founder gate for signing/money",
+      "owner": "Michael"
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 {
   "schema": "hoch-founder-orchestrator-v1",
   "persona": "AI Michael \u2014 all-in-one CEO / founder / builder / SME",
-  "at": "2026-07-12T21:12:40.800705Z",
+  "at": "2026-07-14T14:54:40.959102Z",
   "doctrine": [
     "no fake-green \u2014 a factory reads only what it earned",
     "evidence before any GO; fail-closed on the unproven",
@@ -19,7 +19,7 @@
       "genes": 737,
       "champions": 30,
       "thin": 0,
-      "mean": 95.583,
+      "mean": 96.167,
       "action": "SHIP",
       "detail": "point HASF at its first real revenue product",
       "cost": "strategic",
@@ -68,7 +68,7 @@
     "genes": 737,
     "champions": 30,
     "thin": 0,
-    "mean": 95.583,
+    "mean": 96.167,
     "action": "SHIP",
     "detail": "point HASF at its first real revenue product",
     "cost": "strategic",

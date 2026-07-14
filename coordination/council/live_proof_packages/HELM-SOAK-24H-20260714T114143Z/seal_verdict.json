@@ -1,0 +1,8 @@
+{
+  "verdict": "SOAK_PHASE_C_SUPERSEDED",
+  "reason": "ABANDONED_TAINTED_EVIDENCE_CHAIN",
+  "may_be_cited_as_evidence": false,
+  "superseded_at": "2026-07-14T14:08:00Z",
+  "detail": "Phase C started on pre-full-fix release instrumentation and while Phase A/B zero-leak claims were known false-green capable. Controlled stop; evidence preserved; clean restart required after fixed commit + clean lease baseline.",
+  "24_7_status": "NOT PROVEN"
+}

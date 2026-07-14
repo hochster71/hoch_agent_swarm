@@ -1,0 +1,8 @@
+{
+  "verdict": "SOAK_PHASE_A_SUPERSEDED",
+  "reason": "PRE_CLEAN_RESTART_FORENSIC_HOLD",
+  "may_be_cited_as_evidence": false,
+  "classification": "ABORTED_OR_UNRESOLVED",
+  "detail": "Not a completed clean Phase A. Superseded during source-only recovery; restart from reviewed commit after tree hygiene.",
+  "superseded_at": "2026-07-14T14:15:15Z"
+}

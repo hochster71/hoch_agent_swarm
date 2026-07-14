@@ -1,0 +1,61 @@
+{
+  "target_market": "Regulated Enterprise AI & Government Integrations",
+  "version": "1.0",
+  "customer_segments": [
+    {
+      "segment": "Defense Contractors & Aerospace Integrators",
+      "pain_points": [
+        "Rigid compliance requirements (CMMC, FedRAMP, NIST SP 800-171/800-53)",
+        "Security boundary verification for LLM agent actions",
+        "Fear of unauthorized API execution or data egress from secure enclaves"
+      ],
+      "compliance_targets": ["CMMC Level 2/3", "NIST SP 800-53", "DoD SRG"],
+      "authority_required": "Authority to Operate (ATO) for AI components",
+      "priority_level": "CRITICAL"
+    },
+    {
+      "segment": "Regulated Financial & Healthcare SaaS Providers",
+      "pain_points": [
+        "HIPAA or SOC 2 compliance for LLM-driven workflow automation",
+        "Deterministic audit trails proving that agents did not perform unauthorized transactions",
+        "Model drift leading to security policy violations"
+      ],
+      "compliance_targets": ["HIPAA Security Rule", "SOC 2 Type II", "PCI-DSS"],
+      "authority_required": "CISO security sign-off",
+      "priority_level": "HIGH"
+    },
+    {
+      "segment": "Enterprise AI Startups (Series A/B)",
+      "pain_points": [
+        "Enterprise procurement security reviews blocking sales",
+        "Lack of standardized documentation to prove agent safety to enterprise CISOs",
+        "Insecure direct tool execution by customer-facing agents"
+      ],
+      "compliance_targets": ["SOC 2", "ISO 27001"],
+      "authority_required": "VP of Engineering / CTO",
+      "priority_level": "MEDIUM_HIGH"
+    }
+  ],
+  "demographics": {
+    "organization_size": "50 to 5000+ employees",
+    "annual_revenue": "$10M - $500M+",
+    "deployment_state": "Deploying LLM agents in production or late-stage staging"
+  },
+  "buyer_personas": [
+    {
+      "role": "Chief Information Security Officer (CISO)",
+      "focus": "Risk mitigation, regulatory compliance, prevention of unauthorized egress/actions",
+      "hook": "We map your AI agents to NIST 800-53 controls so you can audit them like traditional software."
+    },
+    {
+      "role": "VP of Engineering / Head of AI",
+      "focus": "Development velocity, enterprise readiness, security compliance without slowing down feature releases",
+      "hook": "Unblock enterprise sales by providing standard trust maps and privilege boundaries."
+    },
+    {
+      "role": "Director of Compliance / DevSecOps",
+      "focus": "Documentation, control logging, evidence collection for SOC 2 or RMF audits",
+      "hook": "Generate automated evidence packages of agent executions for your auditor."
+    }
+  ]
+}

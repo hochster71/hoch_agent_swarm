@@ -1,0 +1,64 @@
+{
+  "schema": "MONETIZATION_PRIORITY_MATRIX_v1",
+  "updated_at": "2026-07-14T14:33:45Z",
+  "method": "WSJF = Cost of Delay / Job Size (ordinal planning)",
+  "ranking": [
+    {
+      "rank": 1,
+      "product": "Cybersecurity/RMF assessment service",
+      "wsjf": "VERY_HIGH",
+      "price_band_pilot_usd": "2500-5000",
+      "price_band_full_usd": "10000-25000",
+      "recurring_usd_mo": "1500-5000",
+      "note": "planning assumptions"
+    },
+    {
+      "rank": 2,
+      "product": "Epic Fury App Store launch",
+      "wsjf": "HIGH",
+      "note": "scalable product; founder signing required"
+    },
+    {
+      "rank": 3,
+      "product": "AI-agent audit and governance service",
+      "wsjf": "HIGH",
+      "note": "can bundle with HCF"
+    },
+    {
+      "rank": 4,
+      "product": "HRF paid research briefs",
+      "wsjf": "MEDIUM"
+    },
+    {
+      "rank": 5,
+      "product": "Prompt marketplace/library",
+      "wsjf": "MEDIUM"
+    },
+    {
+      "rank": 6,
+      "product": "HMF music products",
+      "wsjf": "MEDIUM_LOW"
+    }
+  ],
+  "first_mission": {
+    "id": "REV-M1",
+    "name": "HELM AI Agent and Cybersecurity Governance Assessment",
+    "type": "FIXED_PRICE_SERVICE",
+    "deliverables": [
+      "AI-agent architecture audit",
+      "privilege-boundary assessment",
+      "evidence-chain review",
+      "security threat model",
+      "NIST/DoD control mapping",
+      "remediation roadmap",
+      "executive dashboard",
+      "30/60/90-day plan"
+    ],
+    "founder_only": [
+      "contractual commitment",
+      "payment acceptance",
+      "credential provisioning if client env"
+    ],
+    "status": "READY_TO_PACKAGE"
+  }
+}

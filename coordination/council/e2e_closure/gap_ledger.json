@@ -1,0 +1,108 @@
+{
+  "schema": "HELM_GAP_LEDGER_v1",
+  "updated_at": "2026-07-14T14:33:45Z",
+  "gaps": [
+    {
+      "id": "G-01",
+      "area": "runtime_truth",
+      "gap": "Clean Phase A not sealed",
+      "severity": "CRITICAL",
+      "blocks": [
+        "Phase B",
+        "AUTHORITATIVE_PASS"
+      ],
+      "status": "IN_PROGRESS",
+      "evidence": "HELM-SOAK-2H-20260714T141914Z mid-flight"
+    },
+    {
+      "id": "G-02",
+      "area": "runtime_truth",
+      "gap": "Prior A/B/C seals superseded (false RELEASED instrument)",
+      "severity": "CRITICAL",
+      "blocks": [
+        "promotion"
+      ],
+      "status": "CLOSED_SUPERSEDED"
+    },
+    {
+      "id": "G-03",
+      "area": "runtime_truth",
+      "gap": "Single post-cutover authoritative runtime unproven",
+      "severity": "CRITICAL",
+      "blocks": [
+        "K cutover",
+        "DOORSTEP"
+      ],
+      "status": "OPEN"
+    },
+    {
+      "id": "G-04",
+      "area": "evidence",
+      "gap": "Full regression+security suite not run as seal package",
+      "severity": "HIGH",
+      "blocks": [
+        "I seal"
+      ],
+      "status": "OPEN"
+    },
+    {
+      "id": "G-05",
+      "area": "infra",
+      "gap": "Durable cloud state /var/lib/helm not proven on Mac host; VPS track separate",
+      "severity": "HIGH",
+      "blocks": [
+        "J",
+        "K"
+      ],
+      "status": "PARTIAL"
+    },
+    {
+      "id": "G-06",
+      "area": "jspace",
+      "gap": "Auto-quarantine disabled (correct); long-horizon observation burn-in not independently authorized",
+      "severity": "MEDIUM",
+      "blocks": [],
+      "status": "GOVERNED"
+    },
+    {
+      "id": "G-07",
+      "area": "commercial",
+      "gap": "No verified external revenue event",
+      "severity": "CRITICAL",
+      "blocks": [
+        "GOAL"
+      ],
+      "status": "OPEN"
+    },
+    {
+      "id": "G-08",
+      "area": "commercial",
+      "gap": "Epic Fury App Store submission founder-gated",
+      "severity": "HIGH",
+      "blocks": [
+        "HASF revenue"
+      ],
+      "status": "OPEN"
+    },
+    {
+      "id": "G-09",
+      "area": "hygiene",
+      "gap": "Working tree routinely dirty with runtime ledgers; risk of mixed commits",
+      "severity": "HIGH",
+      "blocks": [
+        "reproducible seals"
+      ],
+      "status": "MITIGATED_PROCESS"
+    },
+    {
+      "id": "G-10",
+      "area": "e2e",
+      "gap": "No complete factory mission \u2192 doorstep \u2192 revenue closed loop",
+      "severity": "CRITICAL",
+      "blocks": [
+        "E2E DONE"
+      ],
+      "status": "OPEN"
+    }
+  ]
+}

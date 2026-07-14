@@ -1,0 +1,206 @@
+=== HEAD ===
+5eda9421dce1c6a71ea1cefad61c190d2552ae6b
+5eda9421 ONE CONSOLE: quarantine 43 fake-green UIs, bind the survivor to live runtime only
+e2db3278 J: /var/lib/helm persistence PROVEN — and a near-miss that would have destroyed 31GB
+528b71ec fix(hjos): incidents log, daemon, lease-honesty tests, governance README
+02edf144 Work packages A/B/C: honest lease release everywhere, defective seals superseded, clean baseline
+c4617841 HJOS post-Grok audit: HOLD — auto-quarantine was self-authorized; gated fail-closed
+=== STATUS ===
+ D archive/mockups-visual-control-plane/agents.html
+ D archive/mockups-visual-control-plane/approvals.html
+ D archive/mockups-visual-control-plane/assets.html
+ D archive/mockups-visual-control-plane/components.html
+ D archive/mockups-visual-control-plane/control-plane.html
+ D archive/mockups-visual-control-plane/cyber.html
+ D archive/mockups-visual-control-plane/dashboard-preview.html
+ D archive/mockups-visual-control-plane/evidence.html
+ D archive/mockups-visual-control-plane/factory-apps.html
+ D archive/mockups-visual-control-plane/factory-build-lanes.html
+ D archive/mockups-visual-control-plane/factory-release.html
+ D archive/mockups-visual-control-plane/factory.html
+ D archive/mockups-visual-control-plane/index.html
+ D archive/mockups-visual-control-plane/life-family.html
+ D archive/mockups-visual-control-plane/life-hobbies.html
+ D archive/mockups-visual-control-plane/life-home.html
+ D archive/mockups-visual-control-plane/life-humanity.html
+ D archive/mockups-visual-control-plane/life.html
+ D archive/mockups-visual-control-plane/local-cockpit-alias.html
+ D archive/mockups-visual-control-plane/models.html
+ D archive/mockups-visual-control-plane/prompts.html
+ D archive/mockups-visual-control-plane/side-by-side-review.html
+ D artifacts/install-review/visual-control-plane-local/control-plane.html
+ D artifacts/releases/visual-control-plane-local/control-plane.html
+ M backend/helm_live_api.py
+ M backend/instrument_integrity/council_router.py
+ M backend/main.py
+ M coordination/council/active_runtime_source.json
+ M coordination/council/council_heartbeat.jsonl
+ M coordination/council/daemon/dispatch_ledger.jsonl
+ M coordination/council/daemon/result_envelopes.jsonl
+ M coordination/council/daemon/scheduler_cycles.jsonl
+ M coordination/council/daemon/task_lease_ledger.jsonl
+ M coordination/council/daemon/verification_ledger.jsonl
+ M coordination/council/live_proof_packages/HELM-24X7-MOCK/dispatch_ledger.jsonl
+ M coordination/council/live_proof_packages/HELM-24X7-MOCK/scheduler_cycles.jsonl
+ M coordination/council/live_proof_packages/HELM-24X7-MOCK/task_lease_ledger.jsonl
+ M coordination/council/live_proof_packages/HELM-24X7-MOCK/verification_ledger.jsonl
+ M coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T002656Z/seal_verdict.json
+ M coordination/council/relay/gateway_dispatch_ledger.jsonl
+ M coordination/council/spend_ledger.jsonl
+ M coordination/goal/champion_gates.json
+ M coordination/goal/council_endpoint_report.json
+ M coordination/goal/goal_state.json
+ M coordination/goal/intake_to_doorstep.json
+ M coordination/jspace/alerts.jsonl
+ M coordination/jspace/assessments.jsonl
+ M coordination/jspace/burn_in.json
+ M coordination/jspace/cycles.jsonl
+ M coordination/jspace/events.jsonl
+ M coordination/jspace/health.json
+ M coordination/leases/_fencing_tokens.bak
+ M coordination/leases/_fencing_tokens.json
+ M coordination/leases/_lease_history.jsonl
+ M coordination/leases/_token_journal.jsonl
+ M coordination/security/conmon_ledger.jsonl
+ M coordination/security/helm_control_posture.json
+ M data/agent_execution_ledger.jsonl
+ M data/prompt_brain/agent_audit.json
+ M data/prompt_brain/champion_registry.json
+ M data/prompt_brain/convergence_status.json
+ M data/prompt_brain/cyber_swarm_state.json
+ M data/prompt_brain/demo/reviewer_feedback_log.jsonl
+ M data/prompt_brain/gap_analysis.json
+ M data/prompt_brain/improve_cursor.json
+ M data/prompt_brain/improved_champions.jsonl
+ M data/prompt_brain/model_adapter_status.json
+ M data/prompt_brain/model_performance_matrix.json
+ M data/prompt_brain/music/champion_registry.json
+ M data/prompt_brain/music/convergence_status.json
+ M data/prompt_brain/orchestrator_brief.json
+ M data/prompt_brain/orchestrator_log.jsonl
+ M data/prompt_brain/outreach/outreach_approval_log.jsonl
+ M data/prompt_brain/prompt_repair_queue.jsonl
+ M data/prompt_brain/prompt_selection_log.jsonl
+ M data/prompt_brain/research/champion_registry.json
+ M data/prompt_brain/research/convergence_status.json
+ M data/prompt_brain/research_meta_decision.json
+ M data/prompt_brain/research_meta_log.jsonl
+ M data/prompt_brain/runtime_executions.jsonl
+ M data/prompt_brain/self_heal_state.json
+ M docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/helm-rung-1-promotion-evidence.md
+ D docs/evidence/ui/approved-visual-authority-review.html
+ M docs/moonshot/BRAIN_GAP_ANALYSIS.md
+ M frontend_live/pert.html
+ M has_live_project_tracker/data/ag_daemon_heartbeat_status.json
+ M has_live_project_tracker/data/ag_execution_adapter_state.json
+ M has_live_project_tracker/data/ag_execution_burn_in_ledger.jsonl
+ M has_live_project_tracker/data/ag_execution_burn_in_summary.json
+ M has_live_project_tracker/data/ag_execution_daemon_state.json
+ M has_live_project_tracker/data/ag_execution_leases.json
+ M has_live_project_tracker/data/ag_execution_lock.json
+ M has_live_project_tracker/data/ag_execution_proof_index.json
+ M has_live_project_tracker/data/ag_execution_queue_health.json
+ M has_live_project_tracker/data/ag_operator_hold.json
+ M has_live_project_tracker/data/brain_runtime_truth.json
+ M has_live_project_tracker/data/cost_governor.json
+ M has_live_project_tracker/data/doorstep_digest.json
+ M has_live_project_tracker/data/factory_runtime_truth.json
+ M has_live_project_tracker/data/global_verify.json
+ M has_live_project_tracker/data/goal_blocker_register.json
+ M has_live_project_tracker/data/gpu_pod_adapter_state.json
+ M has_live_project_tracker/data/has_runtime_state.json
+ M has_live_project_tracker/data/hasf_runtime_state.json
+ M has_live_project_tracker/data/helm_adapter_registry.json
+ M has_live_project_tracker/data/helm_runtime_state.json
+ M has_live_project_tracker/data/helm_task_queue.json
+ M has_live_project_tracker/data/hoch_pods_runtime_state.json
+ M has_live_project_tracker/data/reasoning_graph.json
+ M has_live_project_tracker/data/source_authority_manifest.json
+ M hoch_pods/compute/cost_ledger.jsonl
+?? HELM_PROMPT_PLAYBOOK.md
+?? coordination/cloud_migration/evidence/bbe281f7-edbd-41ce-9616-b90e5f4ad90e/
+?? coordination/council/active_runtime_source.pre_baseline_20260714T090800Z.json
+?? coordination/council/live_proof_packages/HELM-24X7-MOCK/result_envelopes.jsonl
+?? coordination/council/live_proof_packages/HELM-SOAK-24H-20260714T114143Z/authority_preflight_controls.json
+?? coordination/council/live_proof_packages/HELM-SOAK-24H-20260714T114143Z/daemon/
+?? coordination/council/live_proof_packages/HELM-SOAK-24H-20260714T114143Z/recovery_events.jsonl
+?? coordination/council/live_proof_packages/HELM-SOAK-24H-20260714T114143Z/resource_usage.jsonl
+?? coordination/council/live_proof_packages/HELM-SOAK-24H-20260714T114143Z/runtime_truth_snapshots.jsonl
+?? coordination/council/live_proof_packages/HELM-SOAK-24H-20260714T114143Z/scheduler_cycles.jsonl
+?? coordination/council/live_proof_packages/HELM-SOAK-24H-20260714T114143Z/seal_verdict.json
+?? coordination/council/live_proof_packages/HELM-SOAK-24H-20260714T114143Z/soak_config.json
+?? coordination/council/live_proof_packages/HELM-SOAK-24H-20260714T114143Z/termination_record.json
+?? coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T002656Z/independent_reverify.json
+?? coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T002656Z/seal_verdict.ORIGINAL_PRE_SUPERSESSION.json
+?? coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T140811Z/
+?? coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T140821Z/
+?? coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T141033Z/
+?? coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T141134Z/
+?? coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T141718Z/
+?? coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T141743Z/
+?? coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T141914Z/
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/SHA256SUMS
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/authority_preflight_controls.json
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/concurrency_report.json
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/daemon/
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/dispatch_ledger.jsonl
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/failure_injections.json
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/lease_ledger.jsonl
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/manual_intervention_metrics.json
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/recovery_events.json
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/recovery_events.jsonl
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/resource_usage.jsonl
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/runtime_truth_snapshots.jsonl
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/scheduler_cycles.jsonl
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/seal_verdict.ORIGINAL_PRE_SUPERSESSION.json
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/seal_verdict.json
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/soak_config.json
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/terminal_ledger.jsonl
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/validation.json
+?? coordination/council/live_proof_packages/_preflight_phase_a_528b71ec.json
+?? coordination/council/live_proof_packages/_preflight_phase_a_source_clean.json
+?? coordination/forensics/
+?? coordination/founder/authority_binding_ledger.jsonl
+?? coordination/founder/autonomous_decision_ledger.jsonl
+?? coordination/founder/notifications_sent.jsonl
+?? coordination/jspace/audit_snapshots/
+?? coordination/jspace/quarantine_requests.jsonl
+?? coordination/leases/SOAK-CORRUPT-LOCK.e2e5f5739dc7923f.corrupt.b683c5
+?? coordination/leases/SOAK-HASF-13.f7870b4e84f0edd6.lock
+?? coordination/leases/SOAK-HCF-13.038ba459a643ad37.lock
+?? data/prompt_brain/outcome_feedback_ledger.jsonl
+?? data/prompt_brain/outcome_stats.json
+?? docs/AGENTS.md
+?? docs/evidence/council/H1C_DOORSTEP_COMMITBOUND_729b1e8e/
+?? docs/evidence/council/H1C_DOORSTEP_COMMITBOUND_8f931d26/
+?? docs/evidence/council/H1C_DOORSTEP_COMMITBOUND_bf154446/
+?? docs/evidence/runtime/ag_execution_proof_task-gate2-stripe-env-guide.md
+?? docs/evidence/runtime/ag_execution_proof_task-gate3-deploy-stage.md
+?? docs/evidence/runtime/agent_exec_t-prep.json
+?? docs/evidence/runtime/agent_exec_task-allowed.json
+?? docs/evidence/runtime/agent_exec_task-test-001.json
+?? docs/safe_file.txt
+?? docs/safe_local_file.txt
+?? docs/scout/
+?? has_live_project_tracker/data/helm_supervisor_heartbeat.json
+?? has_live_project_tracker/data/homemesh_manual_devices.json
+?? has_live_project_tracker/data/property_schema.json
+?? has_live_project_tracker/data/room_schema.json
+?? scratch/temp.txt
+?? scripts/__init__.py
+?? scripts/cloud/
+?? scripts/council/__init__.py
+=== PROCESSES ===
+ 8692    01:24:02 .venv/bin/python scripts/jspace/hjos_daemon.py --interval 60
+17807       13:23 /Users/michaelhoch/hoch_agent_swarm/.venv/bin/python3 -c from backend.mission_control.persistent_scheduler import PersistentScheduler; PersistentScheduler().run_loop()
+17876       13:23 .venv/bin/python scripts/council/soak_runner.py --seconds 7200 --phase A
+28163       06:54 .venv/bin/python -m uvicorn backend.helm_live_api:app --host 127.0.0.1 --port 8770
+=== POINTER ===
+{
+  "scheduler_instance_id": "sched-77dcea88",
+  "ledger_path": "/Users/michaelhoch/hoch_agent_swarm/coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T141914Z/daemon/task_lease_ledger.jsonl",
+  "evidence_dir": "/Users/michaelhoch/hoch_agent_swarm/coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T141914Z/daemon",
+  "instance_sidecar": "/Users/michaelhoch/hoch_agent_swarm/coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T141914Z/daemon/scheduler_instance.json",
+  "pid": 17876,
+  "published_at": "2026-07-14T14:19:19Z"
+}

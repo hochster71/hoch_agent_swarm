@@ -1,0 +1,47 @@
+{
+  "gate_schema": "FOUNDER_APPROVAL_GATE_v1",
+  "product_id": "REV-M1",
+  "governing_rules": {
+    "founder_identity": "Michael Hoch",
+    "signing_role": "Founder & Managing Director",
+    "fail_closed_posture": "ACTIVE"
+  },
+  "gates": [
+    {
+      "gate_id": "GATE-REV-01",
+      "name": "Outreach Target List Approval",
+      "status": "LOCKED",
+      "requires_founder_action": true,
+      "requires_signature": true,
+      "description": "Verification of the initial list of 25 outreach contacts prior to any sales contact.",
+      "audit_file": "coordination/founder/outreach_approval_log.jsonl"
+    },
+    {
+      "gate_id": "GATE-REV-02",
+      "name": "Statement of Work (SOW) Execution",
+      "status": "LOCKED",
+      "requires_founder_action": true,
+      "requires_signature": true,
+      "description": "Founder signature required on SOW and contract before project kickoff.",
+      "audit_file": "coordination/founder/authority_binding_ledger.jsonl"
+    },
+    {
+      "gate_id": "GATE-REV-03",
+      "name": "Pricing Adjustments & Discounts",
+      "status": "LOCKED",
+      "requires_founder_action": true,
+      "requires_signature": false,
+      "description": "Any change to pilot pricing tiers requires founder email/written approval.",
+      "audit_file": "coordination/founder/autonomous_decision_ledger.jsonl"
+    },
+    {
+      "gate_id": "GATE-REV-04",
+      "name": "Customer Credential Ingestion",
+      "status": "LOCKED",
+      "requires_founder_action": true,
+      "requires_signature": true,
+      "description": "Handling or storage of client read-only environment credentials requires founder-approved storage enclaves. No secrets in Git repositories.",
+      "audit_file": "coordination/founder/credentials_audit.jsonl"
+    }
+  ]
+}

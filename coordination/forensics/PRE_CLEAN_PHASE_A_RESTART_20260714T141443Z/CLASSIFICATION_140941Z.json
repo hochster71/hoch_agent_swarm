@@ -1,0 +1,9 @@
+{
+  "classification": "PHASE_A_140941Z_ABORTED_OR_UNRESOLVED",
+  "claimed_pid": 3268,
+  "package_path_exists": false,
+  "process_alive_at_forensics": false,
+  "note": "Package directory absent; PID 3268 not in process table. No termination_record. Not a sealable Phase A.",
+  "recorded_at": "2026-07-14T14:14:44Z",
+  "head_at_forensics": "02edf1447a709ca87efec188b49aeee350c2773b"
+}

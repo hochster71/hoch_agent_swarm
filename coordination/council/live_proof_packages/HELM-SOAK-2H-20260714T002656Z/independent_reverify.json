@@ -1,0 +1,18 @@
+{
+  "schema": "PHASE_A_INDEPENDENT_REVERIFY_v1",
+  "package": "HELM-SOAK-2H-20260714T002656Z",
+  "existing_seal": "SOAK_PHASE_A_PASS",
+  "sealed_at": "2026-07-14T02:30:29Z",
+  "validation_verdict": "SOAK_PHASE_A_PASS",
+  "failed_checks": [],
+  "cycles": 122,
+  "injections_8_of_8": true,
+  "authority_fully_bound_acquired": "488/488",
+  "tested_commit": "f4bff5e631cafc1eb2912d3486e97cf5240ebfa3",
+  "scheduler_instance_id": "sched-84edfd45",
+  "reverified_at": "2026-07-14T12:52:47Z",
+  "authoritative_pass": "BLOCKED",
+  "24_7_status": "NOT YET PROVEN",
+  "disposition": "EXISTING_SEAL_CONFIRMED_PASS",
+  "note": "Independent re-verification of sealed package; no retrofit; no seal rewrite. HJOS burn-in and wall binding completed separately."
+}

@@ -1,15 +1,13 @@
 {
-  "status": "LIVE",
-  "go_no_go": "GO",
-  "last_updated": "2026-07-09T04:23:34.643344Z",
+  "status": "NO_GO",
+  "go_no_go": "NO_GO",
+  "last_updated": "2026-07-13T14:19:48.555204Z",
   "evidence": {
-    "has_real_execution": true,
-    "fallback_used": false,
-    "execution_surface": "agent_runner",
-    "usage_id": "e244c111ca13d8b8",
-    "outcome_linked": true,
-    "outcome_status": "COMPLETED",
-    "timestamp": "2026-07-08T15:42:53.980187Z",
-    "champion_id": "seed-ais-e4d23524b4"
+    "has_real_execution": false,
+    "fallback_used": true,
+    "execution_surface": null,
+    "usage_id": null,
+    "outcome_linked": false,
+    "outcome_status": null
   }
 }

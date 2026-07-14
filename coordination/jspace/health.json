@@ -1,14 +1,14 @@
 {
-  "active_alerts": 1,
+  "active_alerts": 4,
   "contained_findings": 1,
-  "cycle_id": "JCYC-20260714-D965C8",
+  "cycle_id": "JCYC-20260714-9AC091",
   "governance": {
     "authorizing_policy_id": null,
     "automatic_quarantine_enabled": false,
     "orphan_lease_hygiene": "manual_approval"
   },
-  "health_digest": "293ebddf32bf4b1bc429baca23053f5f01fe973ae9004e539cfdf8906737f054",
-  "historical_findings": 16,
+  "health_digest": "3c4fb8011b8e13a8feac7f22adf1bc9948c59f8eece2f1a6c66dbda6f7e4289a",
+  "historical_findings": 262,
   "mutation_truth": {
     "authoritative_state_mutated": false,
     "containment_authorized": false,
@@ -17,25 +17,50 @@
     "containment_state_mutated": false,
     "observation_state_mutated": false
   },
-  "observed_at": "2026-07-14T13:12:35Z",
+  "observed_at": "2026-07-14T14:57:36Z",
   "observer_counts": {
-    "CONFIRMED_LIVE": 9,
-    "CONTRADICTED": 1
+    "BLOCKED": 1,
+    "CONFIRMED_LIVE": 7,
+    "CONTRADICTED": 3
   },
-  "open_alerts": 1,
+  "open_alerts": 4,
   "overall": "CONTRADICTED",
   "promotion_authority": "NONE",
   "recommended_action": "WITHHOLD_PROMOTION",
   "schema": "JSPACE_HEALTH_v1",
-  "unresolved_findings": 15,
+  "unresolved_findings": 261,
   "worst_findings": [
     {
       "assessment": "CONTRADICTED",
-      "detail": "Active leases missing authority_decision_id: ['SOAK-HCF-85', 'SOAK-HRF-85', 'SOAK-HSF-85']",
-      "observation_id": "JOBS-20260714-A7D1BD",
+      "detail": "Active leases missing authority_decision_id: ['SOAK-HRF-24', 'SOAK-HSF-24', 'SOAK-HSF-31']",
+      "observation_id": "JOBS-20260714-DF0F5D",
       "observer": "jspace_truth_sentinel",
       "recommended_action": "WITHHOLD_PROMOTION",
       "subject": "active_leases_authority"
+    },
+    {
+      "assessment": "CONTRADICTED",
+      "detail": "Active locks reference a different scheduler_instance_id than the runtime pointer.",
+      "observation_id": "JOBS-20260714-BA8961",
+      "observer": "jspace_truth_sentinel",
+      "recommended_action": "RELEASE_ORPHAN_LEASES",
+      "subject": "scheduler_instance_consistency"
+    },
+    {
+      "assessment": "CONTRADICTED",
+      "detail": "Locks past expires_at still ACTIVE: ['SOAK-HRF-24', 'SOAK-HSF-24']",
+      "observation_id": "JOBS-20260714-5AD947",
+      "observer": "jspace_flow_sentinel",
+      "recommended_action": "RELEASE_EXPIRED_LEASES",
+      "subject": "lease_expiry"
+    },
+    {
+      "assessment": "BLOCKED",
+      "detail": "Control posture degraded or high findings open.",
+      "observation_id": "JOBS-20260714-B11BF9",
+      "observer": "jspace_security_sentinel",
+      "recommended_action": "ESCALATE_FOUNDER_GATE",
+      "subject": "control_posture"
     }
   ]
 }

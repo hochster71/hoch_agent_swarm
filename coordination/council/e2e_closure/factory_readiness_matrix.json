@@ -1,0 +1,78 @@
+{
+  "schema": "FACTORY_READINESS_MATRIX_v1",
+  "updated_at": "2026-07-14T14:33:45Z",
+  "factories": [
+    {
+      "id": "HCF",
+      "name": "Cybersecurity",
+      "readiness": "HIGH",
+      "monetize": "TIER1",
+      "offer": "RMF/ATO/ConMon assessment service",
+      "blocker": "sales packaging + first customer"
+    },
+    {
+      "id": "HASF",
+      "name": "Application Software",
+      "readiness": "HIGH",
+      "monetize": "TIER1",
+      "offer": "Epic Fury 2026 App Store",
+      "blocker": "founder signing/submission + store metadata"
+    },
+    {
+      "id": "PROMPT",
+      "name": "Prompt Brain / Agent Gov",
+      "readiness": "HIGH",
+      "monetize": "TIER1",
+      "offer": "AI agent audit/governance engagement",
+      "blocker": "offer packaging"
+    },
+    {
+      "id": "HRF",
+      "name": "Research",
+      "readiness": "MEDIUM",
+      "monetize": "TIER2",
+      "offer": "paid briefs",
+      "blocker": "productization"
+    },
+    {
+      "id": "HMF",
+      "name": "Music",
+      "readiness": "MEDIUM",
+      "monetize": "TIER2",
+      "offer": "licensed tracks",
+      "blocker": "catalog packaging"
+    },
+    {
+      "id": "HSF",
+      "name": "Storybook",
+      "readiness": "LOW",
+      "monetize": "TIER3",
+      "offer": "incubate",
+      "blocker": "template reuse after TIER1"
+    },
+    {
+      "id": "HFF",
+      "name": "Finance",
+      "readiness": "LOW",
+      "monetize": "TIER3",
+      "offer": "incubate",
+      "blocker": "compliance + template"
+    },
+    {
+      "id": "HHF",
+      "name": "Household",
+      "readiness": "LOW",
+      "monetize": "TIER3",
+      "offer": "incubate",
+      "blocker": "template"
+    },
+    {
+      "id": "HPF",
+      "name": "Personal optimization",
+      "readiness": "LOW",
+      "monetize": "TIER3",
+      "offer": "incubate",
+      "blocker": "template"
+    }
+  ]
+}

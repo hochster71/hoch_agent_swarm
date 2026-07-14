@@ -194,6 +194,8 @@ pert_mgr = PertManager()
 
 from backend.michael_ai import router as michael_ai_router
 app.include_router(council_router)
+# REQ-ES-004: GET /api/v1/helm/council/state
+# Gates: h1_package_state, h1_package_integrity, h1_credential_state, h1_founder_authorization, h1_live_provider_proof, h1_frontier_live_quorum, h1_promotion, h1_safe_to_execute
 app.include_router(michael_ai_router)
 
 from backend.goal_tracker.router import router as goal_router

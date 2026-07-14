@@ -1,0 +1,40 @@
+{
+  "schema": "REVENUE_MISSION_PACKAGE_v1",
+  "updated_at": "2026-07-14T14:33:45Z",
+  "mission_id": "REV-M1",
+  "title": "HELM AI Agent and Cybersecurity Governance Assessment",
+  "status": "DRAFT_DOORSTEP",
+  "customer_hypothesis": "Org deploying multi-agent AI needing privilege boundaries, evidence chain, and ConMon mapping",
+  "offer": {
+    "id": "REV-M1",
+    "name": "HELM AI Agent and Cybersecurity Governance Assessment",
+    "type": "FIXED_PRICE_SERVICE",
+    "deliverables": [
+      "AI-agent architecture audit",
+      "privilege-boundary assessment",
+      "evidence-chain review",
+      "security threat model",
+      "NIST/DoD control mapping",
+      "remediation roadmap",
+      "executive dashboard",
+      "30/60/90-day plan"
+    ],
+    "founder_only": [
+      "contractual commitment",
+      "payment acceptance",
+      "credential provisioning if client env"
+    ],
+    "status": "READY_TO_PACKAGE"
+  },
+  "next_actions_agents": [
+    "Draft one-page offer PDF from deliverables list",
+    "Define 2-week pilot scope and exclusions",
+    "Prepare sample evidence package template (redacted)",
+    "List 25 outreach targets (no send without founder)"
+  ],
+  "founder_only_next": [
+    "Approve pricing band",
+    "Approve outreach list",
+    "Sign engagement / accept payment"
+  ]
+}

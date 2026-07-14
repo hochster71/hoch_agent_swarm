@@ -1,7 +1,7 @@
 {
   "status": "ONLINE",
   "uptime_seconds": 1783272203,
-  "last_heartbeat": "2026-07-09T04:05:52.965928Z",
+  "last_heartbeat": "2026-07-13T12:47:53.107494Z",
   "active_services": [
     "helm-runner",
     "has-agent-dispatcher",
@@ -19,5 +19,9 @@
       "model_endpoint_status": "DEGRADED",
       "native_ollama_status": "ONLINE"
     }
-  }
+  },
+  "manual_relay_status": "REMOVED",
+  "orchestration_bridge_status": "ACTIVE",
+  "copy_paste_required_computed": false,
+  "copy_paste_required_reason": "At least 3 missions processed end-to-end with automated critic review and no manual interventions."
 }

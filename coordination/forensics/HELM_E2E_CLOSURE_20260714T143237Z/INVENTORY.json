@@ -1,0 +1,619 @@
+{
+  "schema": "HELM_E2E_FORENSIC_INVENTORY_v1",
+  "observed_at": "2026-07-14T14:32:37Z",
+  "head": "5eda9421dce1c6a71ea1cefad61c190d2552ae6b",
+  "head_short": "5eda9421",
+  "ancestors": {
+    "528b71ec": true,
+    "02edf144": true
+  },
+  "processes": [
+    "8692    01:24:02 .venv/bin/python scripts/jspace/hjos_daemon.py --interval 60",
+    "17807       13:23 /Users/michaelhoch/hoch_agent_swarm/.venv/bin/python3 -c from backend.mission_control.persistent_scheduler import PersistentScheduler; PersistentScheduler().run_loop()",
+    "17876       13:23 .venv/bin/python scripts/council/soak_runner.py --seconds 7200 --phase A",
+    "28163       06:54 .venv/bin/python -m uvicorn backend.helm_live_api:app --host 127.0.0.1 --port 8770"
+  ],
+  "pointer": {
+    "scheduler_instance_id": "sched-77dcea88",
+    "ledger_path": "/Users/michaelhoch/hoch_agent_swarm/coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T141914Z/daemon/task_lease_ledger.jsonl",
+    "evidence_dir": "/Users/michaelhoch/hoch_agent_swarm/coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T141914Z/daemon",
+    "instance_sidecar": "/Users/michaelhoch/hoch_agent_swarm/coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T141914Z/daemon/scheduler_instance.json",
+    "pid": 17876,
+    "published_at": "2026-07-14T14:19:19Z"
+  },
+  "recent_packages": [
+    {
+      "name": "HELM-SOAK-2H-20260714T141914Z",
+      "soak_config.json": {
+        "phase": "A",
+        "seconds": 7200,
+        "started_at": "2026-07-14T14:19:19Z",
+        "concurrency_limit": 4,
+        "evidence_source": "production daemon path (scheduler.run_once); no burn-in harness",
+        "epic_fury": "APPLE_DISTRIBUTION held via required_capability; unrelated HASF work must continue",
+        "tested_commit": "e2db3278246d58df14b5ea99dbbda55a3032691a",
+        "tested_commit_short": "e2db3278",
+        "scheduler_instance_id": "sched-77dcea88",
+        "authority_binding_required": true,
+        "canonical_wall": "http://10.0.0.10:8770/pert",
+        "do_not_retrofit_prior_runs": true
+      },
+      "preflight.json": {
+        "schema": "PHASE_A_PREFLIGHT_v1",
+        "tested_commit": "e2db3278246d58df14b5ea99dbbda55a3032691a",
+        "tested_commit_short": "e2db3278",
+        "ancestors": {
+          "528b71ec": true,
+          "02edf144": true
+        },
+        "working_tree_helm_paths_clean": true,
+        "working_tree_full_clean": false,
+        "runner_hash": "b89b6b78e6279eb6784efcddcf338cca17ef9e447f2ead23d50d9aa61d2d4d70",
+        "lease_instrument_hash": "3d28f6aac8f045ff8fa09824a0a76380d54615386fc4230b8c780a6e0e3e8d6e",
+        "lease_manager_hash": "abf02307ddbd9113318c362eac9d9cef42924407468c0c33cb1e6d3e747f136c",
+        "hjos_policy_hash": "d8b71fe58bc682b04c2e8417b08c3b6a550cad64e4267abea05b65453855c092",
+        "hjos_incidents_hash": "c6277a2fd382f8b06ac338a2ecb878620219b40514f626d24733832f10f608ef",
+        "hjos_daemon_hash": "68b47c250cd4197d0ff985c93ba0785faef9b557df377a0c1a5d4c4f8c8a40f7",
+        "sealer_hash": "894f7549670d5c6dc489867dd247d6b5ab2a5c3d210fd1acb115cc9edaf5c1fe",
+        "competing_persistent_scheduler_killed": 12847,
+        "phase_a_140941z": "ABORTED_OR_UNRESOLVED",
+        "package": "HELM-SOAK-2H-20260714T141914Z",
+        "pid": 17876,
+        "scheduler_instance_id": "sched-77dcea88",
+        "early_ledger": {
+          "ACQUIRED": 4,
+          "DISPATCH_START": 4,
+          "RELEASED": 2
+        },
+        "released_all_lock_file_removed": true,
+        "forensics": "coordination/forensics/PRE_CLEAN_PHASE_A_RESTART_20260714T141443Z",
+        "source_only_commit": "528b71ec18129c9f2293c14b779440362420318e",
+        "recorded_at": "2026-07-14T14:20:14Z"
+      }
+    },
+    {
+      "name": "HELM-SOAK-2H-20260714T141743Z",
+      "soak_config.json": {
+        "phase": "A",
+        "seconds": 30,
+        "started_at": "2026-07-14T14:17:48Z",
+        "concurrency_limit": 4,
+        "evidence_source": "production daemon path (scheduler.run_once); no burn-in harness",
+        "epic_fury": "APPLE_DISTRIBUTION held via required_capability; unrelated HASF work must continue",
+        "tested_commit": "528b71ec18129c9f2293c14b779440362420318e",
+        "tested_commit_short": "528b71ec",
+        "scheduler_instance_id": "sched-106664e3",
+        "authority_binding_required": true,
+        "canonical_wall": "http://10.0.0.10:8770/pert",
+        "do_not_retrofit_prior_runs": true
+      },
+      "validation.json": {
+        "package": "HELM-SOAK-2H-20260714T141743Z",
+        "phase": "A",
+        "verdict": "SOAK_PHASE_A_PASS",
+        "failed_checks": [],
+        "checks": {
+          "scheduler_native_overlap_observed": true,
+          "observed_peak_concurrency_ge_2": true,
+          "effective_equals_observed": true,
+          "status_proven": true,
+          "daemon_survived_no_crash": true,
+          "scheduler_restarted_successfully": true,
+          "worker_kill_recovered": true,
+          "corrupt_lock_recovered": true,
+          "corrupt_tokens_no_regression": true,
+          "adapter_timeout_isolated": true,
+          "mutated_task_denied": true,
+          "expired_decision_denied": true,
+          "duplicate_terminal_rejected": true,
+          "stale_writes_rejected": true,
+          "zero_duplicate_terminal_success": true,
+          "epic_fury_stayed_lane_scoped": true,
+          "real_work_completed": true,
+          "factories_exercised_ge_3": true,
+          "zero_manual_prompt_copies": true,
+          "zero_manual_result_copies": true
+        },
+        "metrics": {
+          "scheduler_cycles": 1,
+          "tasks_admitted": 4,
+          "tasks_completed": 4,
+          "tasks_failed": 0,
+          "tasks_retried": 0,
+          "stale_leases_recovered": 2,
+          "stale_writes_rejected": 1,
+          "duplicate_terminal_attempts": 1,
+          "gateway_denials": 12,
+          "authority_mismatches": 0,
+          "adapter_failures": 1,
+          "evidence_integrity_failures": 0,
+          "manual_prompt_copies": 0,
+          "manual_result_copies": 0,
+          "founder_interruptions": 0,
+          "scheduler_restarts": 1
+        },
+        "concurrency": {
+          "concurrency_mode": "PER_TASK_LEASE",
+          "configured_limit": 4,
+          "structural_capacity": 4,
+          "observed_peak_concurrency": 4,
+          "effective_limit": 4,
+          "status": "OK",
+          "lease_backend": "PerTaskLeaseManager",
+          "note": "Per-task lock records. effective_limit is OBSERVED from overlapping leases; UNKNOWN until a real overlap is recorded."
+        },
+        "factories_exercised": [
+          "HASF",
+          "HCF",
+          "HRF",
+          "HSF"
+        ],
+        "soak_status": "COMPLETE",
+        "24_7_status": "NOT YET PROVEN",
+        "duration_seconds": 30,
+        "finished_at": "2026-07-14T14:18:52Z"
+      }
+    },
+    {
+      "name": "HELM-SOAK-2H-20260714T141718Z",
+      "preflight.json": {
+        "schema": "PHASE_A_PREFLIGHT_v1",
+        "tested_commit": "528b71ec18129c9f2293c14b779440362420318e",
+        "tested_commit_short": "528b71ec",
+        "working_tree_helm_paths_clean": true,
+        "helm_path_porcelain": "",
+        "helm_paths_checked": [
+          "backend/mission_control/persistent_scheduler.py",
+          "backend/mission_control/per_task_lease.py",
+          "backend/jspace/",
+          "scripts/council/soak_runner.py",
+          "scripts/jspace/",
+          "tests/test_lease_release_honesty.py",
+          "tests/test_jspace_hjos.py",
+          "tests/test_authority_binding_chain.py",
+          "coordination/jspace/README.md",
+          "coordination/jspace/quarantine_governance.json"
+        ],
+        "working_tree_full_clean": false,
+        "working_tree_runtime_and_unrelated_dirty": true,
+        "note": "Full git status remains dirty with runtime ledgers and unrelated docs; HELM Phase-A instrument paths match tested_commit with no local modifications.",
+        "runner_hash": "b89b6b78e6279eb6784efcddcf338cca17ef9e447f2ead23d50d9aa61d2d4d70",
+        "lease_instrument_hash": "3d28f6aac8f045ff8fa09824a0a76380d54615386fc4230b8c780a6e0e3e8d6e",
+        "lease_manager_hash": "abf02307ddbd9113318c362eac9d9cef42924407468c0c33cb1e6d3e747f136c",
+        "hjos_policy_hash": "d8b71fe58bc682b04c2e8417b08c3b6a550cad64e4267abea05b65453855c092",
+        "hjos_incidents_hash": "c6277a2fd382f8b06ac338a2ecb878620219b40514f626d24733832f10f608ef",
+        "hjos_daemon_hash": "68b47c250cd4197d0ff985c93ba0785faef9b557df377a0c1a5d4c4f8c8a40f7",
+        "sealer_path": "scripts/release_seal.py",
+        "sealer_hash": "894f7549670d5c6dc489867dd247d6b5ab2a5c3d210fd1acb115cc9edaf5c1fe",
+        "soak_process_running": true,
+        "open_soak_locks": 0,
+        "pointer_status": "UNPUBLISHED",
+        "phase_a_140941z": "ABORTED_OR_UNRESOLVED",
+        "forensics": "coordination/forensics/PRE_CLEAN_PHASE_A_RESTART_20260714T141443Z",
+        "source_commit_message": "fix(hjos): incidents log, daemon, lease-honesty tests, governance README",
+        "recorded_at": "2026-07-14T14:17:17Z"
+      }
+    },
+    {
+      "name": "HELM-SOAK-2H-20260714T141134Z",
+      "soak_config.json": {
+        "phase": "A",
+        "seconds": 7200,
+        "started_at": "2026-07-14T14:11:41Z",
+        "concurrency_limit": 4,
+        "evidence_source": "production daemon path (scheduler.run_once); no burn-in harness",
+        "epic_fury": "APPLE_DISTRIBUTION held via required_capability; unrelated HASF work must continue",
+        "tested_commit": "02edf1447a709ca87efec188b49aeee350c2773b",
+        "tested_commit_short": "02edf144",
+        "scheduler_instance_id": "sched-75dfcbad",
+        "authority_binding_required": true,
+        "canonical_wall": "http://10.0.0.10:8770/pert",
+        "do_not_retrofit_prior_runs": true
+      },
+      "seal_verdict.json": {
+        "verdict": "SOAK_PHASE_A_SUPERSEDED",
+        "reason": "PRE_CLEAN_RESTART_FORENSIC_HOLD",
+        "may_be_cited_as_evidence": false,
+        "classification": "ABORTED_OR_UNRESOLVED",
+        "detail": "Not a completed clean Phase A. Superseded during source-only recovery; restart from reviewed commit after tree hygiene.",
+        "superseded_at": "2026-07-14T14:15:15Z"
+      },
+      "termination_record.json": {
+        "termination_signal": "SIGTERM_OR_ABSENT",
+        "reason": "PRE_CLEAN_RESTART",
+        "may_be_cited_as_evidence": false,
+        "at": "2026-07-14T14:15:15Z"
+      }
+    },
+    {
+      "name": "HELM-SOAK-2H-20260714T141033Z",
+      "soak_config.json": {
+        "phase": "A",
+        "seconds": 7200,
+        "started_at": "2026-07-14T14:10:33Z",
+        "concurrency_limit": 4,
+        "evidence_source": "production daemon path (scheduler.run_once); no burn-in harness",
+        "epic_fury": "APPLE_DISTRIBUTION held via required_capability; unrelated HASF work must continue",
+        "tested_commit": "02edf1447a709ca87efec188b49aeee350c2773b",
+        "tested_commit_short": "02edf144",
+        "scheduler_instance_id": "sched-9f675f37",
+        "authority_binding_required": true,
+        "canonical_wall": "http://10.0.0.10:8770/pert",
+        "do_not_retrofit_prior_runs": true
+      },
+      "seal_verdict.json": {
+        "verdict": "SOAK_PHASE_A_SUPERSEDED",
+        "reason": "PRE_CLEAN_RESTART_FORENSIC_HOLD",
+        "may_be_cited_as_evidence": false,
+        "classification": "ABORTED_OR_UNRESOLVED",
+        "detail": "Not a completed clean Phase A. Superseded during source-only recovery; restart from reviewed commit after tree hygiene.",
+        "superseded_at": "2026-07-14T14:15:15Z"
+      },
+      "termination_record.json": {
+        "termination_signal": "SIGTERM_OR_ABSENT",
+        "reason": "PRE_CLEAN_RESTART",
+        "may_be_cited_as_evidence": false,
+        "at": "2026-07-14T14:15:15Z"
+      }
+    },
+    {
+      "name": "HELM-SOAK-2H-20260714T140811Z",
+      "soak_config.json": {
+        "phase": "A",
+        "seconds": 7200,
+        "started_at": "2026-07-14T14:08:13Z",
+        "concurrency_limit": 4,
+        "evidence_source": "production daemon path (scheduler.run_once); no burn-in harness",
+        "epic_fury": "APPLE_DISTRIBUTION held via required_capability; unrelated HASF work must continue",
+        "tested_commit": "c46178416b452d6391dfc47944254b1242b0f9e6",
+        "tested_commit_short": "c4617841",
+        "scheduler_instance_id": "sched-77cbc67d",
+        "authority_binding_required": true,
+        "canonical_wall": "http://10.0.0.10:8770/pert",
+        "do_not_retrofit_prior_runs": true
+      },
+      "seal_verdict.json": {
+        "verdict": "SOAK_PHASE_A_SUPERSEDED",
+        "reason": "PRE_CLEAN_RESTART_FORENSIC_HOLD",
+        "may_be_cited_as_evidence": false,
+        "classification": "ABORTED_OR_UNRESOLVED",
+        "detail": "Not a completed clean Phase A. Superseded during source-only recovery; restart from reviewed commit after tree hygiene.",
+        "superseded_at": "2026-07-14T14:15:15Z"
+      },
+      "termination_record.json": {
+        "termination_signal": "SIGTERM_OR_ABSENT",
+        "reason": "PRE_CLEAN_RESTART",
+        "may_be_cited_as_evidence": false,
+        "at": "2026-07-14T14:15:15Z"
+      }
+    },
+    {
+      "name": "HELM-SOAK-2H-20260714T140821Z",
+      "soak_config.json": {
+        "phase": "A",
+        "seconds": 7200,
+        "started_at": "2026-07-14T14:08:21Z",
+        "concurrency_limit": 4,
+        "evidence_source": "production daemon path (scheduler.run_once); no burn-in harness",
+        "epic_fury": "APPLE_DISTRIBUTION held via required_capability; unrelated HASF work must continue",
+        "tested_commit": "c46178416b452d6391dfc47944254b1242b0f9e6",
+        "tested_commit_short": "c4617841",
+        "scheduler_instance_id": "sched-f481712b",
+        "authority_binding_required": true,
+        "canonical_wall": "http://10.0.0.10:8770/pert",
+        "do_not_retrofit_prior_runs": true
+      },
+      "seal_verdict.json": {
+        "verdict": "SOAK_PHASE_A_SUPERSEDED",
+        "reason": "PRE_CLEAN_RESTART_FORENSIC_HOLD",
+        "may_be_cited_as_evidence": false,
+        "classification": "ABORTED_OR_UNRESOLVED",
+        "detail": "Not a completed clean Phase A. Superseded during source-only recovery; restart from reviewed commit after tree hygiene.",
+        "superseded_at": "2026-07-14T14:15:15Z"
+      },
+      "termination_record.json": {
+        "termination_signal": "SIGTERM",
+        "reason": "DUAL_LAUNCH",
+        "superseded_by": "HELM-SOAK-2H-20260714T140811Z",
+        "may_be_cited_as_evidence": false,
+        "at": "2026-07-14T14:08:54Z"
+      }
+    },
+    {
+      "name": "HELM-SOAK-24H-20260714T114143Z",
+      "soak_config.json": {
+        "phase": "C",
+        "seconds": 86400,
+        "started_at": "2026-07-14T11:41:43Z",
+        "concurrency_limit": 4,
+        "evidence_source": "production daemon path (scheduler.run_once); no burn-in harness",
+        "epic_fury": "APPLE_DISTRIBUTION held via required_capability; unrelated HASF work must continue",
+        "tested_commit": "fec23549e04e139b35f8770588942fb46755c3e8",
+        "tested_commit_short": "fec23549",
+        "scheduler_instance_id": "sched-f5abadcf",
+        "authority_binding_required": true,
+        "canonical_wall": "http://10.0.0.10:8770/pert",
+        "do_not_retrofit_prior_runs": true
+      },
+      "seal_verdict.json": {
+        "verdict": "SOAK_PHASE_C_SUPERSEDED",
+        "reason": "ABANDONED_TAINTED_EVIDENCE_CHAIN",
+        "may_be_cited_as_evidence": false,
+        "superseded_at": "2026-07-14T14:08:00Z",
+        "detail": "Phase C started on pre-full-fix release instrumentation and while Phase A/B zero-leak claims were known false-green capable. Controlled stop; evidence preserved; clean restart required after fixed commit + clean lease baseline.",
+        "24_7_status": "NOT PROVEN"
+      },
+      "termination_record.json": {
+        "termination_requested_at": "2026-07-14T14:08:00Z",
+        "termination_signal": "SIGTERM",
+        "process_exit_status": "TERMINATED_TAINTED",
+        "reason": "EVIDENCE_CHAIN_NOT_TRUSTWORTHY",
+        "detail": "Phase C started on pre-full-fix release instrumentation and while Phase A/B zero-leak claims were known false-green capable. Controlled stop; evidence preserved; clean restart required after fixed commit + clean lease baseline.",
+        "may_be_cited_as_evidence": false,
+        "do_not_retrofit": true,
+        "supersession_code": "FALSE_RELEASE_LEDGER_INSTRUMENT",
+        "canonical_wall": "http://10.0.0.10:8770/pert"
+      }
+    },
+    {
+      "name": "HELM-SOAK-8H-20260714T023257Z",
+      "soak_config.json": {
+        "phase": "B",
+        "seconds": 28800,
+        "started_at": "2026-07-14T02:32:58Z",
+        "concurrency_limit": 4,
+        "evidence_source": "production daemon path (scheduler.run_once); no burn-in harness",
+        "epic_fury": "APPLE_DISTRIBUTION held via required_capability; unrelated HASF work must continue",
+        "tested_commit": "a5318cb0dad40a012689677c8ab07ce38be01b92",
+        "tested_commit_short": "a5318cb0",
+        "scheduler_instance_id": "sched-d3b66980",
+        "authority_binding_required": true,
+        "canonical_wall": "http://10.0.0.10:8770/pert",
+        "do_not_retrofit_prior_runs": true
+      },
+      "seal_verdict.json": {
+        "verdict": "SOAK_PHASE_B_SUPERSEDED",
+        "prior_verdict": "SOAK_PHASE_B_PASS",
+        "supersession_code": "FALSE_RELEASE_LEDGER_INSTRUMENT",
+        "may_be_cited_as_evidence": false,
+        "may_be_cited_for_promotion": false,
+        "reason": "Instrument defect: release_lease() return value discarded; ledger could record RELEASED while lock files remained ACTIVE. Zero-leak claims from these packages are not trustworthy. Superseded \u2014 do not cite as promotion evidence. Remediation: PersistentScheduler._release_lease_logged (RELEASED only if lock_file_removed=true). Clean Phase A\u2192B\u2192C required from fixed commit.",
+        "superseded_at": "2026-07-14T14:08:00Z",
+        "required_action": "CLEAN_RERUN_FROM_FIXED_COMMIT",
+        "fixed_instrument": "backend/mission_control/persistent_scheduler.py::_release_lease_logged",
+        "canonical_wall": "http://10.0.0.10:8770/pert",
+        "24_7_status": "NOT PROVEN",
+        "authoritative_pass": "BLOCKED"
+      },
+      "validation.json": {
+        "package": "HELM-SOAK-8H-20260714T023257Z",
+        "phase": "B",
+        "verdict": "SOAK_PHASE_B_PASS",
+        "failed_checks": [],
+        "checks": {
+          "scheduler_native_overlap_observed": true,
+          "observed_peak_concurrency_ge_2": true,
+          "effective_equals_observed": true,
+          "status_proven": true,
+          "daemon_survived_no_crash": true,
+          "scheduler_restarted_successfully": true,
+          "worker_kill_recovered": true,
+          "corrupt_lock_recovered": true,
+          "corrupt_tokens_no_regression": true,
+          "adapter_timeout_isolated": true,
+          "mutated_task_denied": true,
+          "expired_decision_denied": true,
+          "duplicate_terminal_rejected": true,
+          "stale_writes_rejected": true,
+          "zero_duplicate_terminal_success": true,
+          "epic_fury_stayed_lane_scoped": true,
+          "real_work_completed": true,
+          "factories_exercised_ge_3": true,
+          "zero_manual_prompt_copies": true,
+          "zero_manual_result_copies": true
+        },
+        "metrics": {
+          "scheduler_cycles": 530,
+          "tasks_admitted": 2120,
+          "tasks_completed": 2057,
+          "tasks_failed": 63,
+          "tasks_retried": 0,
+          "stale_leases_recovered": 2,
+          "stale_writes_rejected": 1,
+          "duplicate_terminal_attempts": 1,
+          "gateway_denials": 12,
+          "authority_mismatches": 0,
+          "adapter_failures": 1,
+          "evidence_integrity_failures": 0,
+          "manual_prompt_copies": 0,
+          "manual_result_copies": 0,
+          "founder_interruptions": 0,
+          "scheduler_restarts": 1
+        },
+        "concurrency": {
+          "concurrency_mode": "PER_TASK_LEASE",
+          "configured_limit": 4,
+          "structural_capacity": 4,
+          "observed_peak_concurrency": 4,
+          "effective_limit": 4,
+          "status": "OK",
+          "lease_backend": "PerTaskLeaseManager",
+          "note": "Per-task lock records. effective_limit is OBSERVED from overlapping leases; UNKNOWN until a real overlap is recorded."
+        },
+        "factories_exercised": [
+          "HASF",
+          "HCF",
+          "HRF",
+          "HSF"
+        ],
+        "soak_status": "COMPLETE",
+        "24_7_status": "NOT YET PROVEN",
+        "duration_seconds": 28800,
+        "finished_at": "2026-07-14T10:33:42Z"
+      }
+    },
+    {
+      "name": "HELM-SOAK-2H-20260714T002656Z",
+      "soak_config.json": {
+        "phase": "A",
+        "seconds": 7200,
+        "started_at": "2026-07-14T00:26:57Z",
+        "concurrency_limit": 4,
+        "evidence_source": "production daemon path (scheduler.run_once); no burn-in harness",
+        "epic_fury": "APPLE_DISTRIBUTION held via required_capability; unrelated HASF work must continue",
+        "tested_commit": "f4bff5e631cafc1eb2912d3486e97cf5240ebfa3",
+        "tested_commit_short": "f4bff5e6",
+        "scheduler_instance_id": "sched-84edfd45",
+        "authority_binding_required": true,
+        "canonical_wall": "http://10.0.0.10:8770/pert",
+        "do_not_retrofit_prior_runs": true
+      },
+      "seal_verdict.json": {
+        "verdict": "SOAK_PHASE_A_SUPERSEDED",
+        "prior_verdict": "SOAK_PHASE_A_PASS",
+        "supersession_code": "FALSE_RELEASE_LEDGER_INSTRUMENT",
+        "may_be_cited_as_evidence": false,
+        "may_be_cited_for_promotion": false,
+        "reason": "Instrument defect: release_lease() return value discarded; ledger could record RELEASED while lock files remained ACTIVE. Zero-leak claims from these packages are not trustworthy. Superseded \u2014 do not cite as promotion evidence. Remediation: PersistentScheduler._release_lease_logged (RELEASED only if lock_file_removed=true). Clean Phase A\u2192B\u2192C required from fixed commit.",
+        "superseded_at": "2026-07-14T14:08:00Z",
+        "required_action": "CLEAN_RERUN_FROM_FIXED_COMMIT",
+        "fixed_instrument": "backend/mission_control/persistent_scheduler.py::_release_lease_logged",
+        "canonical_wall": "http://10.0.0.10:8770/pert",
+        "24_7_status": "NOT PROVEN",
+        "authoritative_pass": "BLOCKED"
+      },
+      "validation.json": {
+        "package": "HELM-SOAK-2H-20260714T002656Z",
+        "phase": "A",
+        "verdict": "SOAK_PHASE_A_PASS",
+        "failed_checks": [],
+        "checks": {
+          "scheduler_native_overlap_observed": true,
+          "observed_peak_concurrency_ge_2": true,
+          "effective_equals_observed": true,
+          "status_proven": true,
+          "daemon_survived_no_crash": true,
+          "scheduler_restarted_successfully": true,
+          "worker_kill_recovered": true,
+          "corrupt_lock_recovered": true,
+          "corrupt_tokens_no_regression": true,
+          "adapter_timeout_isolated": true,
+          "mutated_task_denied": true,
+          "expired_decision_denied": true,
+          "duplicate_terminal_rejected": true,
+          "stale_writes_rejected": true,
+          "zero_duplicate_terminal_success": true,
+          "epic_fury_stayed_lane_scoped": true,
+          "real_work_completed": true,
+          "factories_exercised_ge_3": true,
+          "zero_manual_prompt_copies": true,
+          "zero_manual_result_copies": true
+        },
+        "metrics": {
+          "scheduler_cycles": 122,
+          "tasks_admitted": 488,
+          "tasks_completed": 475,
+          "tasks_failed": 13,
+          "tasks_retried": 0,
+          "stale_leases_recovered": 2,
+          "stale_writes_rejected": 1,
+          "duplicate_terminal_attempts": 1,
+          "gateway_denials": 12,
+          "authority_mismatches": 0,
+          "adapter_failures": 1,
+          "evidence_integrity_failures": 0,
+          "manual_prompt_copies": 0,
+          "manual_result_copies": 0,
+          "founder_interruptions": 0,
+          "scheduler_restarts": 1
+        },
+        "concurrency": {
+          "concurrency_mode": "PER_TASK_LEASE",
+          "configured_limit": 4,
+          "structural_capacity": 4,
+          "observed_peak_concurrency": 4,
+          "effective_limit": 4,
+          "status": "OK",
+          "lease_backend": "PerTaskLeaseManager",
+          "note": "Per-task lock records. effective_limit is OBSERVED from overlapping leases; UNKNOWN until a real overlap is recorded."
+        },
+        "factories_exercised": [
+          "HASF",
+          "HCF",
+          "HRF",
+          "HSF"
+        ],
+        "soak_status": "COMPLETE",
+        "24_7_status": "NOT YET PROVEN",
+        "duration_seconds": 7200,
+        "finished_at": "2026-07-14T02:27:17Z"
+      }
+    }
+  ],
+  "active_locks_count": 2,
+  "active_locks_sample": [
+    {
+      "task_id": "SOAK-HASF-13",
+      "lease_id": "lease-8342f50f",
+      "status": "ACTIVE",
+      "scheduler_instance_id": "sched-77dcea88",
+      "authority_decision_id": "AUTH-20e55e7c636611d2"
+    },
+    {
+      "task_id": "SOAK-HCF-13",
+      "lease_id": "lease-9a6688a7",
+      "status": "ACTIVE",
+      "scheduler_instance_id": "sched-77dcea88",
+      "authority_decision_id": "AUTH-f3531a4fc2b15cc8"
+    }
+  ],
+  "ledger_truth": {
+    "events": {
+      "ACQUIRED": 52,
+      "DISPATCH_START": 52,
+      "RELEASED": 50
+    },
+    "released_with_lock_removed": 50,
+    "released_total": 50,
+    "release_failed": 0
+  },
+  "jspace_health": {
+    "overall": "BLOCKED",
+    "recommended_action": "WITHHOLD_PROMOTION",
+    "open_alerts": 1,
+    "promotion_authority": "NONE",
+    "state_mutated": null
+  },
+  "jspace_governance": {
+    "schema": "HJOS_QUARANTINE_GOVERNANCE_v1",
+    "automatic_quarantine_enabled": false,
+    "orphan_lease_hygiene": "manual_approval",
+    "authorizing_policy_id": null,
+    "rationale": "Independent audit 2026-07-14: auto-quarantine + orphan hygiene were self-authorized by a ~5-minute burn-in, not by any approved governance artifact. The charter still declares automatic_quarantine_enabled=False and promotion_authority=NONE. Mutation is disabled fail-closed until a founder-approved policy id is present here. Observation continues.",
+    "set_by": "claude_independent_audit",
+    "set_at_note": "see audit_evidence/",
+    "requires_for_enable": [
+      "founder-approved authorizing_policy_id",
+      "burn-in defined by that policy (not a hardcoded 5)",
+      "clean cycle must mean overall==CONFIRMED_LIVE, not merely no-mutation"
+    ]
+  },
+  "hashes": {
+    "persistent_scheduler": "3d28f6aac8f045ff8fa09824a0a76380d54615386fc4230b8c780a6e0e3e8d6e",
+    "per_task_lease": "abf02307ddbd9113318c362eac9d9cef42924407468c0c33cb1e6d3e747f136c",
+    "soak_runner": "b89b6b78e6279eb6784efcddcf338cca17ef9e447f2ead23d50d9aa61d2d4d70",
+    "hjos_incidents": "c6277a2fd382f8b06ac338a2ecb878620219b40514f626d24733832f10f608ef",
+    "hjos_daemon": "68b47c250cd4197d0ff985c93ba0785faef9b557df377a0c1a5d4c4f8c8a40f7",
+    "quarantine_governance": "d8b71fe58bc682b04c2e8417b08c3b6a550cad64e4267abea05b65453855c092"
+  },
+  "volume": "Mac workstation \u2014 no /dev/sdc; cloud volume is VPS track",
+  "phase_a_140941z": "ABORTED_OR_UNRESOLVED",
+  "classification": {
+    "helm_overall": "HOLD \u2014 CLOSEABLE",
+    "clean_phase_a": "IN_PROGRESS_OR_UNKNOWN",
+    "clean_phase_b": "BLOCKED",
+    "clean_phase_c": "BLOCKED",
+    "authoritative_pass": "BLOCKED",
+    "monetization": "PARALLEL_READY"
+  }
+}

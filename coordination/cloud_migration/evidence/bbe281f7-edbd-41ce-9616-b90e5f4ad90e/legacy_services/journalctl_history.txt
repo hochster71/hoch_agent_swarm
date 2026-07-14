@@ -1,0 +1,508 @@
+=== has-agent-dispatcher ===
+Jul 03 05:44:12 hoch-relay-001 systemd[1]: Started has-agent-dispatcher.service - HAS Agent Dispatcher Service.
+Jul 03 05:44:12 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:44:12 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Failed with result 'exit-code'.
+Jul 03 05:44:22 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Scheduled restart job, restart counter is at 20.
+Jul 03 05:44:22 hoch-relay-001 systemd[1]: Started has-agent-dispatcher.service - HAS Agent Dispatcher Service.
+Jul 03 05:44:22 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:44:22 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Failed with result 'exit-code'.
+Jul 03 05:44:32 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Scheduled restart job, restart counter is at 21.
+Jul 03 05:44:32 hoch-relay-001 systemd[1]: Started has-agent-dispatcher.service - HAS Agent Dispatcher Service.
+Jul 03 05:44:32 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:44:32 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Failed with result 'exit-code'.
+Jul 03 05:44:42 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Scheduled restart job, restart counter is at 22.
+Jul 03 05:44:42 hoch-relay-001 systemd[1]: Started has-agent-dispatcher.service - HAS Agent Dispatcher Service.
+Jul 03 05:44:42 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:44:42 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Failed with result 'exit-code'.
+Jul 03 05:44:53 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Scheduled restart job, restart counter is at 23.
+Jul 03 05:44:53 hoch-relay-001 systemd[1]: Started has-agent-dispatcher.service - HAS Agent Dispatcher Service.
+Jul 03 05:44:53 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:44:53 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Failed with result 'exit-code'.
+Jul 03 05:45:03 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Scheduled restart job, restart counter is at 24.
+Jul 03 05:45:03 hoch-relay-001 systemd[1]: Started has-agent-dispatcher.service - HAS Agent Dispatcher Service.
+Jul 03 05:45:03 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:45:03 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Failed with result 'exit-code'.
+Jul 03 05:45:13 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Scheduled restart job, restart counter is at 25.
+Jul 03 05:45:13 hoch-relay-001 systemd[1]: Started has-agent-dispatcher.service - HAS Agent Dispatcher Service.
+Jul 03 05:45:13 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:45:13 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Failed with result 'exit-code'.
+Jul 03 05:45:23 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Scheduled restart job, restart counter is at 26.
+Jul 03 05:45:23 hoch-relay-001 systemd[1]: Started has-agent-dispatcher.service - HAS Agent Dispatcher Service.
+Jul 03 05:45:23 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:45:23 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Failed with result 'exit-code'.
+Jul 03 05:45:34 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Scheduled restart job, restart counter is at 27.
+Jul 03 05:45:34 hoch-relay-001 systemd[1]: Started has-agent-dispatcher.service - HAS Agent Dispatcher Service.
+Jul 03 05:45:34 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:45:34 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Failed with result 'exit-code'.
+Jul 03 05:45:44 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Scheduled restart job, restart counter is at 28.
+Jul 03 05:45:44 hoch-relay-001 systemd[1]: Started has-agent-dispatcher.service - HAS Agent Dispatcher Service.
+Jul 03 05:45:44 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:45:44 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Failed with result 'exit-code'.
+Jul 03 05:45:54 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Scheduled restart job, restart counter is at 29.
+Jul 03 05:45:54 hoch-relay-001 systemd[1]: Started has-agent-dispatcher.service - HAS Agent Dispatcher Service.
+Jul 03 05:45:54 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:45:54 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Failed with result 'exit-code'.
+Jul 03 05:46:04 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Scheduled restart job, restart counter is at 30.
+Jul 03 05:46:04 hoch-relay-001 systemd[1]: Started has-agent-dispatcher.service - HAS Agent Dispatcher Service.
+Jul 03 05:46:04 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:46:04 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Failed with result 'exit-code'.
+Jul 03 05:46:15 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Scheduled restart job, restart counter is at 31.
+Jul 03 05:46:15 hoch-relay-001 systemd[1]: Started has-agent-dispatcher.service - HAS Agent Dispatcher Service.
+Jul 03 05:46:15 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:46:15 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Failed with result 'exit-code'.
+Jul 03 05:46:25 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Scheduled restart job, restart counter is at 32.
+Jul 03 05:46:25 hoch-relay-001 systemd[1]: Started has-agent-dispatcher.service - HAS Agent Dispatcher Service.
+Jul 03 05:46:25 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:46:25 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Failed with result 'exit-code'.
+Jul 03 05:46:35 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Scheduled restart job, restart counter is at 33.
+Jul 03 05:46:35 hoch-relay-001 systemd[1]: Started has-agent-dispatcher.service - HAS Agent Dispatcher Service.
+Jul 03 05:46:35 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:46:35 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Failed with result 'exit-code'.
+Jul 03 05:46:45 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Scheduled restart job, restart counter is at 34.
+Jul 03 05:46:45 hoch-relay-001 systemd[1]: Started has-agent-dispatcher.service - HAS Agent Dispatcher Service.
+Jul 03 05:46:45 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:46:45 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Failed with result 'exit-code'.
+Jul 03 05:46:56 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Scheduled restart job, restart counter is at 35.
+Jul 03 05:46:56 hoch-relay-001 systemd[1]: Started has-agent-dispatcher.service - HAS Agent Dispatcher Service.
+Jul 03 05:46:56 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:46:56 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Failed with result 'exit-code'.
+Jul 03 05:47:06 hoch-relay-001 systemd[1]: Stopped has-agent-dispatcher.service - HAS Agent Dispatcher Service.
+Jul 03 05:47:06 hoch-relay-001 systemd[1]: Started has-agent-dispatcher.service - HAS Agent Dispatcher Service.
+Jul 03 05:47:06 hoch-relay-001 python3[143562]: /root/hoch_agent_swarm/scripts/has_agent_dispatcher.py:13: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+Jul 03 05:47:06 hoch-relay-001 python3[143562]:   return datetime.utcnow().isoformat() + "Z"
+Jul 03 05:47:56 hoch-relay-001 systemd[1]: Stopping has-agent-dispatcher.service - HAS Agent Dispatcher Service...
+Jul 03 05:47:56 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Deactivated successfully.
+Jul 03 05:47:56 hoch-relay-001 systemd[1]: Stopped has-agent-dispatcher.service - HAS Agent Dispatcher Service.
+Jul 03 05:47:56 hoch-relay-001 systemd[1]: Started has-agent-dispatcher.service - HAS Agent Dispatcher Service.
+Jul 03 05:47:56 hoch-relay-001 python3[144106]: /root/hoch_agent_swarm/scripts/has_agent_dispatcher.py:13: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+Jul 03 05:47:56 hoch-relay-001 python3[144106]:   return datetime.utcnow().isoformat() + "Z"
+Jul 03 05:47:56 hoch-relay-001 python3[144106]: [2026-07-03T05:47:56.109155Z] HAS Agent Dispatcher started.
+Jul 03 05:49:21 hoch-relay-001 systemd[1]: Stopping has-agent-dispatcher.service - HAS Agent Dispatcher Service...
+Jul 03 05:49:21 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Deactivated successfully.
+Jul 03 05:49:21 hoch-relay-001 systemd[1]: Stopped has-agent-dispatcher.service - HAS Agent Dispatcher Service.
+Jul 03 05:49:21 hoch-relay-001 systemd[1]: Started has-agent-dispatcher.service - HAS Agent Dispatcher Service.
+Jul 03 05:49:22 hoch-relay-001 python3[145158]: /root/hoch_agent_swarm/scripts/has_agent_dispatcher.py:13: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+Jul 03 05:49:22 hoch-relay-001 python3[145158]:   return datetime.utcnow().isoformat() + "Z"
+Jul 03 05:49:22 hoch-relay-001 python3[145158]: [2026-07-03T05:49:22.048583Z] HAS Agent Dispatcher started.
+Jul 03 06:07:17 hoch-relay-001 systemd[1]: Stopping has-agent-dispatcher.service - HAS Agent Dispatcher Service...
+Jul 03 06:07:17 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Deactivated successfully.
+Jul 03 06:07:17 hoch-relay-001 systemd[1]: Stopped has-agent-dispatcher.service - HAS Agent Dispatcher Service.
+-- Boot 20d3977e2d8d4453bfaff24bb3ce9b1f --
+Jul 03 06:09:31 hoch-relay-001 systemd[1]: Started has-agent-dispatcher.service - HAS Agent Dispatcher Service.
+Jul 03 06:09:31 hoch-relay-001 python3[754]: /root/hoch_agent_swarm/scripts/has_agent_dispatcher.py:13: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+Jul 03 06:09:31 hoch-relay-001 python3[754]:   return datetime.utcnow().isoformat() + "Z"
+Jul 03 06:09:31 hoch-relay-001 python3[754]: [2026-07-03T06:09:31.928650Z] HAS Agent Dispatcher started.
+Jul 07 06:57:16 hoch-relay-001 systemd[1]: Stopping has-agent-dispatcher.service - HAS Agent Dispatcher Service...
+Jul 07 06:57:16 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Deactivated successfully.
+Jul 07 06:57:16 hoch-relay-001 systemd[1]: Stopped has-agent-dispatcher.service - HAS Agent Dispatcher Service.
+Jul 07 06:57:16 hoch-relay-001 systemd[1]: has-agent-dispatcher.service: Consumed 37.067s CPU time, 6.4M memory peak, 0B memory swap peak.
+Jul 07 06:57:16 hoch-relay-001 systemd[1]: Started has-agent-dispatcher.service - HAS Agent Dispatcher Service.
+Jul 07 06:57:16 hoch-relay-001 python3[511716]: /root/hoch_agent_swarm/scripts/has_agent_dispatcher.py:13: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+Jul 07 06:57:16 hoch-relay-001 python3[511716]:   return datetime.utcnow().isoformat() + "Z"
+Jul 07 06:57:16 hoch-relay-001 python3[511716]: [2026-07-07T06:57:16.354449Z] HAS Agent Dispatcher started.
+=== hasf-product-factory ===
+Jul 03 05:44:12 hoch-relay-001 systemd[1]: Started hasf-product-factory.service - HASF Product Factory Runner Service.
+Jul 03 05:44:12 hoch-relay-001 systemd[1]: hasf-product-factory.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:44:12 hoch-relay-001 systemd[1]: hasf-product-factory.service: Failed with result 'exit-code'.
+Jul 03 05:44:22 hoch-relay-001 systemd[1]: hasf-product-factory.service: Scheduled restart job, restart counter is at 20.
+Jul 03 05:44:22 hoch-relay-001 systemd[1]: Started hasf-product-factory.service - HASF Product Factory Runner Service.
+Jul 03 05:44:22 hoch-relay-001 systemd[1]: hasf-product-factory.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:44:22 hoch-relay-001 systemd[1]: hasf-product-factory.service: Failed with result 'exit-code'.
+Jul 03 05:44:32 hoch-relay-001 systemd[1]: hasf-product-factory.service: Scheduled restart job, restart counter is at 21.
+Jul 03 05:44:32 hoch-relay-001 systemd[1]: Started hasf-product-factory.service - HASF Product Factory Runner Service.
+Jul 03 05:44:32 hoch-relay-001 systemd[1]: hasf-product-factory.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:44:32 hoch-relay-001 systemd[1]: hasf-product-factory.service: Failed with result 'exit-code'.
+Jul 03 05:44:42 hoch-relay-001 systemd[1]: hasf-product-factory.service: Scheduled restart job, restart counter is at 22.
+Jul 03 05:44:42 hoch-relay-001 systemd[1]: Started hasf-product-factory.service - HASF Product Factory Runner Service.
+Jul 03 05:44:42 hoch-relay-001 systemd[1]: hasf-product-factory.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:44:42 hoch-relay-001 systemd[1]: hasf-product-factory.service: Failed with result 'exit-code'.
+Jul 03 05:44:53 hoch-relay-001 systemd[1]: hasf-product-factory.service: Scheduled restart job, restart counter is at 23.
+Jul 03 05:44:53 hoch-relay-001 systemd[1]: Started hasf-product-factory.service - HASF Product Factory Runner Service.
+Jul 03 05:44:53 hoch-relay-001 systemd[1]: hasf-product-factory.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:44:53 hoch-relay-001 systemd[1]: hasf-product-factory.service: Failed with result 'exit-code'.
+Jul 03 05:45:03 hoch-relay-001 systemd[1]: hasf-product-factory.service: Scheduled restart job, restart counter is at 24.
+Jul 03 05:45:03 hoch-relay-001 systemd[1]: Started hasf-product-factory.service - HASF Product Factory Runner Service.
+Jul 03 05:45:03 hoch-relay-001 systemd[1]: hasf-product-factory.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:45:03 hoch-relay-001 systemd[1]: hasf-product-factory.service: Failed with result 'exit-code'.
+Jul 03 05:45:13 hoch-relay-001 systemd[1]: hasf-product-factory.service: Scheduled restart job, restart counter is at 25.
+Jul 03 05:45:13 hoch-relay-001 systemd[1]: Started hasf-product-factory.service - HASF Product Factory Runner Service.
+Jul 03 05:45:13 hoch-relay-001 systemd[1]: hasf-product-factory.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:45:13 hoch-relay-001 systemd[1]: hasf-product-factory.service: Failed with result 'exit-code'.
+Jul 03 05:45:23 hoch-relay-001 systemd[1]: hasf-product-factory.service: Scheduled restart job, restart counter is at 26.
+Jul 03 05:45:23 hoch-relay-001 systemd[1]: Started hasf-product-factory.service - HASF Product Factory Runner Service.
+Jul 03 05:45:23 hoch-relay-001 systemd[1]: hasf-product-factory.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:45:23 hoch-relay-001 systemd[1]: hasf-product-factory.service: Failed with result 'exit-code'.
+Jul 03 05:45:34 hoch-relay-001 systemd[1]: hasf-product-factory.service: Scheduled restart job, restart counter is at 27.
+Jul 03 05:45:34 hoch-relay-001 systemd[1]: Started hasf-product-factory.service - HASF Product Factory Runner Service.
+Jul 03 05:45:34 hoch-relay-001 systemd[1]: hasf-product-factory.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:45:34 hoch-relay-001 systemd[1]: hasf-product-factory.service: Failed with result 'exit-code'.
+Jul 03 05:45:44 hoch-relay-001 systemd[1]: hasf-product-factory.service: Scheduled restart job, restart counter is at 28.
+Jul 03 05:45:44 hoch-relay-001 systemd[1]: Started hasf-product-factory.service - HASF Product Factory Runner Service.
+Jul 03 05:45:44 hoch-relay-001 systemd[1]: hasf-product-factory.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:45:44 hoch-relay-001 systemd[1]: hasf-product-factory.service: Failed with result 'exit-code'.
+Jul 03 05:45:54 hoch-relay-001 systemd[1]: hasf-product-factory.service: Scheduled restart job, restart counter is at 29.
+Jul 03 05:45:54 hoch-relay-001 systemd[1]: Started hasf-product-factory.service - HASF Product Factory Runner Service.
+Jul 03 05:45:54 hoch-relay-001 systemd[1]: hasf-product-factory.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:45:54 hoch-relay-001 systemd[1]: hasf-product-factory.service: Failed with result 'exit-code'.
+Jul 03 05:46:04 hoch-relay-001 systemd[1]: hasf-product-factory.service: Scheduled restart job, restart counter is at 30.
+Jul 03 05:46:04 hoch-relay-001 systemd[1]: Started hasf-product-factory.service - HASF Product Factory Runner Service.
+Jul 03 05:46:04 hoch-relay-001 systemd[1]: hasf-product-factory.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:46:04 hoch-relay-001 systemd[1]: hasf-product-factory.service: Failed with result 'exit-code'.
+Jul 03 05:46:15 hoch-relay-001 systemd[1]: hasf-product-factory.service: Scheduled restart job, restart counter is at 31.
+Jul 03 05:46:15 hoch-relay-001 systemd[1]: Started hasf-product-factory.service - HASF Product Factory Runner Service.
+Jul 03 05:46:15 hoch-relay-001 systemd[1]: hasf-product-factory.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:46:15 hoch-relay-001 systemd[1]: hasf-product-factory.service: Failed with result 'exit-code'.
+Jul 03 05:46:25 hoch-relay-001 systemd[1]: hasf-product-factory.service: Scheduled restart job, restart counter is at 32.
+Jul 03 05:46:25 hoch-relay-001 systemd[1]: Started hasf-product-factory.service - HASF Product Factory Runner Service.
+Jul 03 05:46:25 hoch-relay-001 systemd[1]: hasf-product-factory.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:46:25 hoch-relay-001 systemd[1]: hasf-product-factory.service: Failed with result 'exit-code'.
+Jul 03 05:46:35 hoch-relay-001 systemd[1]: hasf-product-factory.service: Scheduled restart job, restart counter is at 33.
+Jul 03 05:46:35 hoch-relay-001 systemd[1]: Started hasf-product-factory.service - HASF Product Factory Runner Service.
+Jul 03 05:46:35 hoch-relay-001 systemd[1]: hasf-product-factory.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:46:35 hoch-relay-001 systemd[1]: hasf-product-factory.service: Failed with result 'exit-code'.
+Jul 03 05:46:45 hoch-relay-001 systemd[1]: hasf-product-factory.service: Scheduled restart job, restart counter is at 34.
+Jul 03 05:46:45 hoch-relay-001 systemd[1]: Started hasf-product-factory.service - HASF Product Factory Runner Service.
+Jul 03 05:46:45 hoch-relay-001 systemd[1]: hasf-product-factory.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:46:45 hoch-relay-001 systemd[1]: hasf-product-factory.service: Failed with result 'exit-code'.
+Jul 03 05:46:56 hoch-relay-001 systemd[1]: hasf-product-factory.service: Scheduled restart job, restart counter is at 35.
+Jul 03 05:46:56 hoch-relay-001 systemd[1]: Started hasf-product-factory.service - HASF Product Factory Runner Service.
+Jul 03 05:46:56 hoch-relay-001 systemd[1]: hasf-product-factory.service: Main process exited, code=exited, status=203/EXEC
+Jul 03 05:46:56 hoch-relay-001 systemd[1]: hasf-product-factory.service: Failed with result 'exit-code'.
+Jul 03 05:47:06 hoch-relay-001 systemd[1]: Stopped hasf-product-factory.service - HASF Product Factory Runner Service.
+Jul 03 05:47:06 hoch-relay-001 systemd[1]: Started hasf-product-factory.service - HASF Product Factory Runner Service.
+Jul 03 05:47:06 hoch-relay-001 python3[143564]: /root/hoch_agent_swarm/scripts/hasf_product_factory_runner.py:12: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+Jul 03 05:47:06 hoch-relay-001 python3[143564]:   return datetime.utcnow().isoformat() + "Z"
+Jul 03 05:47:56 hoch-relay-001 systemd[1]: Stopping hasf-product-factory.service - HASF Product Factory Runner Service...
+Jul 03 05:47:56 hoch-relay-001 systemd[1]: hasf-product-factory.service: Deactivated successfully.
+Jul 03 05:47:56 hoch-relay-001 systemd[1]: Stopped hasf-product-factory.service - HASF Product Factory Runner Service.
+Jul 03 05:47:56 hoch-relay-001 systemd[1]: Started hasf-product-factory.service - HASF Product Factory Runner Service.
+Jul 03 05:47:56 hoch-relay-001 python3[144109]: /root/hoch_agent_swarm/scripts/hasf_product_factory_runner.py:12: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+Jul 03 05:47:56 hoch-relay-001 python3[144109]:   return datetime.utcnow().isoformat() + "Z"
+Jul 03 05:47:56 hoch-relay-001 python3[144109]: [2026-07-03T05:47:56.151243Z] HASF Product Factory started.
+Jul 03 05:49:21 hoch-relay-001 systemd[1]: Stopping hasf-product-factory.service - HASF Product Factory Runner Service...
+Jul 03 05:49:21 hoch-relay-001 systemd[1]: hasf-product-factory.service: Deactivated successfully.
+Jul 03 05:49:21 hoch-relay-001 systemd[1]: Stopped hasf-product-factory.service - HASF Product Factory Runner Service.
+Jul 03 05:49:21 hoch-relay-001 systemd[1]: Started hasf-product-factory.service - HASF Product Factory Runner Service.
+Jul 03 05:49:22 hoch-relay-001 python3[145161]: /root/hoch_agent_swarm/scripts/hasf_product_factory_runner.py:12: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+Jul 03 05:49:22 hoch-relay-001 python3[145161]:   return datetime.utcnow().isoformat() + "Z"
+Jul 03 05:49:22 hoch-relay-001 python3[145161]: [2026-07-03T05:49:22.066401Z] HASF Product Factory started.
+Jul 03 06:07:17 hoch-relay-001 systemd[1]: Stopping hasf-product-factory.service - HASF Product Factory Runner Service...
+Jul 03 06:07:17 hoch-relay-001 systemd[1]: hasf-product-factory.service: Deactivated successfully.
+Jul 03 06:07:17 hoch-relay-001 systemd[1]: Stopped hasf-product-factory.service - HASF Product Factory Runner Service.
+-- Boot 20d3977e2d8d4453bfaff24bb3ce9b1f --
+Jul 03 06:09:31 hoch-relay-001 systemd[1]: Started hasf-product-factory.service - HASF Product Factory Runner Service.
+Jul 03 06:09:31 hoch-relay-001 python3[757]: /root/hoch_agent_swarm/scripts/hasf_product_factory_runner.py:12: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+Jul 03 06:09:31 hoch-relay-001 python3[757]:   return datetime.utcnow().isoformat() + "Z"
+Jul 03 06:09:31 hoch-relay-001 python3[757]: [2026-07-03T06:09:31.940856Z] HASF Product Factory started.
+Jul 07 06:57:16 hoch-relay-001 systemd[1]: Stopping hasf-product-factory.service - HASF Product Factory Runner Service...
+Jul 07 06:57:16 hoch-relay-001 systemd[1]: hasf-product-factory.service: Deactivated successfully.
+Jul 07 06:57:16 hoch-relay-001 systemd[1]: Stopped hasf-product-factory.service - HASF Product Factory Runner Service.
+Jul 07 06:57:16 hoch-relay-001 systemd[1]: hasf-product-factory.service: Consumed 9.300s CPU time, 5.9M memory peak, 0B memory swap peak.
+Jul 07 06:57:16 hoch-relay-001 systemd[1]: Started hasf-product-factory.service - HASF Product Factory Runner Service.
+Jul 07 06:57:16 hoch-relay-001 python3[511720]: /root/hoch_agent_swarm/scripts/hasf_product_factory_runner.py:12: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+Jul 07 06:57:16 hoch-relay-001 python3[511720]:   return datetime.utcnow().isoformat() + "Z"
+Jul 07 06:57:16 hoch-relay-001 python3[511720]: [2026-07-07T06:57:16.420679Z] HASF Product Factory started.
+=== helm-runner ===
+Jul 03 05:49:21 hoch-relay-001 systemd[1]: Started helm-runner.service - HELM Autonomous Model Runner Daemon.
+Jul 03 05:49:22 hoch-relay-001 python3[145155]: /root/hoch_agent_swarm/scripts/helm_autonomy_runner.py:17: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+Jul 03 05:49:22 hoch-relay-001 python3[145155]:   return datetime.utcnow().isoformat() + "Z"
+Jul 03 05:49:22 hoch-relay-001 python3[145155]: [2026-07-03T05:49:22.048162Z] [HELM-RUNNER] HELM Autonomy Runner Daemon started.
+Jul 03 06:04:50 hoch-relay-001 systemd[1]: Stopping helm-runner.service - HELM Autonomous Model Runner Daemon...
+Jul 03 06:04:50 hoch-relay-001 systemd[1]: helm-runner.service: Deactivated successfully.
+Jul 03 06:04:50 hoch-relay-001 systemd[1]: Stopped helm-runner.service - HELM Autonomous Model Runner Daemon.
+Jul 03 06:04:50 hoch-relay-001 systemd[1]: Started helm-runner.service - HELM Autonomous Model Runner Daemon.
+Jul 03 06:04:50 hoch-relay-001 python3[147570]: /root/hoch_agent_swarm/scripts/helm_autonomy_runner.py:17: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+Jul 03 06:04:50 hoch-relay-001 python3[147570]:   return datetime.utcnow().isoformat() + "Z"
+Jul 03 06:04:50 hoch-relay-001 python3[147570]: [2026-07-03T06:04:50.972871Z] [HELM-RUNNER] HELM Autonomy Runner Daemon started.
+Jul 03 06:05:30 hoch-relay-001 python3[147570]: [2026-07-03T06:05:30.981901Z] [HELM-RUNNER] Found queued task: task-001 - 'Create a Product 002 candidate scoring report using HASF mission filters.'
+Jul 03 06:05:30 hoch-relay-001 python3[147570]: [2026-07-03T06:05:30.982296Z] [HELM-RUNNER] Executing product candidate scoring task...
+Jul 03 06:05:30 hoch-relay-001 python3[147570]: [2026-07-03T06:05:30.982322Z] [HELM-RUNNER] Attempting native inference with qwen2.5:1.5b-instruct on HOCH-200...
+Jul 03 06:05:36 hoch-relay-001 python3[147570]: [2026-07-03T06:05:36.397939Z] [HELM-RUNNER] Native Ollama inference failed: timed out
+Jul 03 06:05:36 hoch-relay-001 python3[147570]: [2026-07-03T06:05:36.398015Z] [HELM-RUNNER] Falling back to LM Studio reverse tunnel with google/gemma-4-12b-qat...
+Jul 03 06:05:46 hoch-relay-001 python3[147570]: [2026-07-03T06:05:46.409163Z] [HELM-RUNNER] LM Studio fallback also failed: timed out
+Jul 03 06:05:46 hoch-relay-001 python3[147570]: [2026-07-03T06:05:46.409803Z] [HELM-RUNNER] Evidence written to autonomous-task-proof.md
+Jul 03 06:05:46 hoch-relay-001 python3[147570]: [2026-07-03T06:05:46.410372Z] [HELM-RUNNER] Task task-001 marked complete.
+Jul 03 06:05:51 hoch-relay-001 systemd[1]: Stopping helm-runner.service - HELM Autonomous Model Runner Daemon...
+Jul 03 06:05:51 hoch-relay-001 systemd[1]: helm-runner.service: Deactivated successfully.
+Jul 03 06:05:51 hoch-relay-001 systemd[1]: Stopped helm-runner.service - HELM Autonomous Model Runner Daemon.
+Jul 03 06:05:51 hoch-relay-001 systemd[1]: Started helm-runner.service - HELM Autonomous Model Runner Daemon.
+Jul 03 06:05:51 hoch-relay-001 python3[147923]: /root/hoch_agent_swarm/scripts/helm_autonomy_runner.py:17: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+Jul 03 06:05:51 hoch-relay-001 python3[147923]:   return datetime.utcnow().isoformat() + "Z"
+Jul 03 06:05:51 hoch-relay-001 python3[147923]: [2026-07-03T06:05:51.678513Z] [HELM-RUNNER] HELM Autonomy Runner Daemon started.
+Jul 03 06:05:51 hoch-relay-001 python3[147923]: [2026-07-03T06:05:51.678970Z] [HELM-RUNNER] Found queued task: task-001 - 'Create a Product 002 candidate scoring report using HASF mission filters.'
+Jul 03 06:05:51 hoch-relay-001 python3[147923]: [2026-07-03T06:05:51.679433Z] [HELM-RUNNER] Executing product candidate scoring task...
+Jul 03 06:05:51 hoch-relay-001 python3[147923]: [2026-07-03T06:05:51.679459Z] [HELM-RUNNER] Attempting native inference with qwen2.5:1.5b-instruct on HOCH-200...
+Jul 03 06:06:36 hoch-relay-001 python3[147923]: [2026-07-03T06:06:36.228280Z] [HELM-RUNNER] Evidence written to autonomous-task-proof.md
+Jul 03 06:06:36 hoch-relay-001 python3[147923]: [2026-07-03T06:06:36.229723Z] [HELM-RUNNER] Task task-001 marked complete.
+Jul 03 06:07:17 hoch-relay-001 systemd[1]: Stopping helm-runner.service - HELM Autonomous Model Runner Daemon...
+Jul 03 06:07:17 hoch-relay-001 systemd[1]: helm-runner.service: Deactivated successfully.
+Jul 03 06:07:17 hoch-relay-001 systemd[1]: Stopped helm-runner.service - HELM Autonomous Model Runner Daemon.
+-- Boot 20d3977e2d8d4453bfaff24bb3ce9b1f --
+Jul 03 06:09:31 hoch-relay-001 systemd[1]: Started helm-runner.service - HELM Autonomous Model Runner Daemon.
+Jul 03 06:09:32 hoch-relay-001 python3[758]: /root/hoch_agent_swarm/scripts/helm_autonomy_runner.py:17: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+Jul 03 06:09:32 hoch-relay-001 python3[758]:   return datetime.utcnow().isoformat() + "Z"
+Jul 03 06:09:32 hoch-relay-001 python3[758]: [2026-07-03T06:09:32.282510Z] [HELM-RUNNER] HELM Autonomy Runner Daemon started.
+Jul 03 06:17:11 hoch-relay-001 systemd[1]: Stopping helm-runner.service - HELM Autonomous Model Runner Daemon...
+Jul 03 06:17:11 hoch-relay-001 systemd[1]: helm-runner.service: Deactivated successfully.
+Jul 03 06:17:11 hoch-relay-001 systemd[1]: Stopped helm-runner.service - HELM Autonomous Model Runner Daemon.
+Jul 03 06:17:11 hoch-relay-001 systemd[1]: Started helm-runner.service - HELM Autonomous Model Runner Daemon.
+Jul 03 06:17:11 hoch-relay-001 python3[2928]: /root/hoch_agent_swarm/scripts/helm_autonomy_runner.py:17: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+Jul 03 06:17:11 hoch-relay-001 python3[2928]:   return datetime.utcnow().isoformat() + "Z"
+Jul 03 06:17:11 hoch-relay-001 python3[2928]: [2026-07-03T06:17:11.739530Z] [HELM-RUNNER] HELM Autonomy Runner Daemon started.
+Jul 03 06:17:11 hoch-relay-001 python3[2928]: [2026-07-03T06:17:11.740300Z] [HELM-RUNNER] Found queued task: task-002 - 'Generate a Product 002 development roadmap for CyberQRG-AI, detailing key phases for a local mobile-first implementation.'
+Jul 03 06:17:11 hoch-relay-001 python3[2928]: [2026-07-03T06:17:11.740794Z] [HELM-RUNNER] Executing CyberQRG-AI roadmap generation task...
+Jul 03 06:17:11 hoch-relay-001 python3[2928]: [2026-07-03T06:17:11.740820Z] [HELM-RUNNER] Attempting native inference with qwen2.5:1.5b-instruct on HOCH-200...
+Jul 03 06:18:39 hoch-relay-001 python3[2928]: [2026-07-03T06:18:39.139336Z] [HELM-RUNNER] Evidence written to cyberqrg-roadmap-proof.md
+Jul 03 06:18:39 hoch-relay-001 python3[2928]: [2026-07-03T06:18:39.140743Z] [HELM-RUNNER] Task task-002 marked complete.
+Jul 03 06:25:11 hoch-relay-001 systemd[1]: Stopping helm-runner.service - HELM Autonomous Model Runner Daemon...
+Jul 03 06:25:11 hoch-relay-001 systemd[1]: helm-runner.service: Deactivated successfully.
+Jul 03 06:25:11 hoch-relay-001 systemd[1]: Stopped helm-runner.service - HELM Autonomous Model Runner Daemon.
+Jul 03 06:25:11 hoch-relay-001 systemd[1]: Started helm-runner.service - HELM Autonomous Model Runner Daemon.
+Jul 03 06:25:11 hoch-relay-001 python3[5470]: /root/hoch_agent_swarm/scripts/helm_autonomy_runner.py:17: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+Jul 03 06:25:11 hoch-relay-001 python3[5470]:   return datetime.utcnow().isoformat() + "Z"
+Jul 03 06:25:11 hoch-relay-001 python3[5470]: [2026-07-03T06:25:11.601445Z] [HELM-RUNNER] HELM Autonomy Runner Daemon started.
+Jul 03 06:25:21 hoch-relay-001 python3[5470]: [2026-07-03T06:25:21.603940Z] [HELM-RUNNER] Found queued task: task-003 - 'Generate a Product 002 gate review package for CyberQRG-AI.'
+Jul 03 06:25:21 hoch-relay-001 python3[5470]: [2026-07-03T06:25:21.604154Z] [HELM-RUNNER] Resolved capacity tier: heavy for agent: hasf_builder_agent
+Jul 03 06:25:21 hoch-relay-001 python3[5470]: [2026-07-03T06:25:21.604741Z] [HELM-RUNNER] Executing Product 002 candidate gate package task...
+Jul 03 06:25:21 hoch-relay-001 python3[5470]: [2026-07-03T06:25:21.604769Z] [HELM-RUNNER] Attempting inference via LM Studio tunnel google/gemma-4-12b-qat on port 1234...
+Jul 03 06:26:14 hoch-relay-001 python3[5470]: [2026-07-03T06:26:14.810911Z] [HELM-RUNNER] Evidence written to cyberqrg-gate-package.md
+Jul 03 06:26:14 hoch-relay-001 python3[5470]: [2026-07-03T06:26:14.812473Z] [HELM-RUNNER] Task task-003 marked complete.
+Jul 03 12:32:10 hoch-relay-001 systemd[1]: Stopping helm-runner.service - HELM Autonomous Model Runner Daemon...
+Jul 03 12:32:10 hoch-relay-001 systemd[1]: helm-runner.service: Deactivated successfully.
+Jul 03 12:32:10 hoch-relay-001 systemd[1]: Stopped helm-runner.service - HELM Autonomous Model Runner Daemon.
+Jul 03 12:32:10 hoch-relay-001 systemd[1]: helm-runner.service: Consumed 3.536s CPU time.
+Jul 03 12:32:10 hoch-relay-001 systemd[1]: Started helm-runner.service - HELM Autonomous Model Runner Daemon.
+Jul 03 12:32:10 hoch-relay-001 python3[37096]: /root/hoch_agent_swarm/scripts/helm_autonomy_runner.py:24: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+Jul 03 12:32:10 hoch-relay-001 python3[37096]:   return datetime.utcnow().isoformat() + "Z"
+Jul 03 12:32:10 hoch-relay-001 python3[37096]: [2026-07-03T12:32:10.278490Z] [HELM-RUNNER] HELM Autonomy Runner Daemon started.
+Jul 03 12:33:40 hoch-relay-001 systemd[1]: Stopping helm-runner.service - HELM Autonomous Model Runner Daemon...
+Jul 03 12:33:40 hoch-relay-001 systemd[1]: helm-runner.service: Deactivated successfully.
+Jul 03 12:33:40 hoch-relay-001 systemd[1]: Stopped helm-runner.service - HELM Autonomous Model Runner Daemon.
+Jul 03 12:33:40 hoch-relay-001 systemd[1]: Started helm-runner.service - HELM Autonomous Model Runner Daemon.
+Jul 03 12:33:40 hoch-relay-001 python3[38748]: /root/hoch_agent_swarm/scripts/helm_autonomy_runner.py:24: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+Jul 03 12:33:40 hoch-relay-001 python3[38748]:   return datetime.utcnow().isoformat() + "Z"
+Jul 03 12:33:40 hoch-relay-001 python3[38748]: [2026-07-03T12:33:40.868316Z] [HELM-RUNNER] HELM Autonomy Runner Daemon started.
+Jul 03 13:00:07 hoch-relay-001 systemd[1]: Stopping helm-runner.service - HELM Autonomous Model Runner Daemon...
+Jul 03 13:00:07 hoch-relay-001 systemd[1]: helm-runner.service: Deactivated successfully.
+Jul 03 13:00:07 hoch-relay-001 systemd[1]: Stopped helm-runner.service - HELM Autonomous Model Runner Daemon.
+Jul 03 13:00:07 hoch-relay-001 systemd[1]: Started helm-runner.service - HELM Autonomous Model Runner Daemon.
+Jul 03 13:00:07 hoch-relay-001 python3[41494]: /root/hoch_agent_swarm/scripts/helm_autonomy_runner.py:24: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+Jul 03 13:00:07 hoch-relay-001 python3[41494]:   return datetime.utcnow().isoformat() + "Z"
+Jul 03 13:00:07 hoch-relay-001 python3[41494]: [2026-07-03T13:00:07.366732Z] [HELM-RUNNER] HELM Autonomy Runner Daemon started.
+Jul 03 13:24:15 hoch-relay-001 systemd[1]: Stopping helm-runner.service - HELM Autonomous Model Runner Daemon...
+Jul 03 13:24:15 hoch-relay-001 systemd[1]: helm-runner.service: Deactivated successfully.
+Jul 03 13:24:15 hoch-relay-001 systemd[1]: Stopped helm-runner.service - HELM Autonomous Model Runner Daemon.
+Jul 03 13:24:15 hoch-relay-001 systemd[1]: Started helm-runner.service - HELM Autonomous Model Runner Daemon.
+Jul 03 13:24:15 hoch-relay-001 python3[43758]: /root/hoch_agent_swarm/scripts/helm_autonomy_runner.py:24: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+Jul 03 13:24:15 hoch-relay-001 python3[43758]:   return datetime.utcnow().isoformat() + "Z"
+Jul 03 13:24:15 hoch-relay-001 python3[43758]: [2026-07-03T13:24:15.990690Z] [HELM-RUNNER] HELM Autonomy Runner Daemon started.
+Jul 07 06:57:16 hoch-relay-001 systemd[1]: Stopping helm-runner.service - HELM Autonomous Model Runner Daemon...
+Jul 07 06:57:16 hoch-relay-001 systemd[1]: helm-runner.service: Deactivated successfully.
+Jul 07 06:57:16 hoch-relay-001 systemd[1]: Stopped helm-runner.service - HELM Autonomous Model Runner Daemon.
+Jul 07 06:57:16 hoch-relay-001 systemd[1]: helm-runner.service: Consumed 50.765s CPU time, 9.5M memory peak, 0B memory swap peak.
+Jul 07 06:57:16 hoch-relay-001 systemd[1]: Started helm-runner.service - HELM Autonomous Model Runner Daemon.
+Jul 07 06:57:16 hoch-relay-001 python3[511722]: /root/hoch_agent_swarm/scripts/helm_autonomy_runner.py:24: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+Jul 07 06:57:16 hoch-relay-001 python3[511722]:   return datetime.utcnow().isoformat() + "Z"
+Jul 07 06:57:16 hoch-relay-001 python3[511722]: [2026-07-07T06:57:16.502752Z] [HELM-RUNNER] HELM Autonomy Runner Daemon started.
+=== hoch-ag-execution-daemon ===
+Jul 05 06:18:12 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Failed with result 'exit-code'.
+Jul 05 06:18:27 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Scheduled restart job, restart counter is at 1.
+Jul 05 06:18:27 hoch-relay-001 systemd[1]: Started hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 05 06:18:27 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Main process exited, code=exited, status=203/EXEC
+Jul 05 06:18:27 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Failed with result 'exit-code'.
+Jul 05 06:18:43 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Scheduled restart job, restart counter is at 2.
+Jul 05 06:18:43 hoch-relay-001 systemd[1]: Started hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 05 06:18:43 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Main process exited, code=exited, status=203/EXEC
+Jul 05 06:18:43 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Failed with result 'exit-code'.
+Jul 05 06:18:58 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Scheduled restart job, restart counter is at 3.
+Jul 05 06:18:58 hoch-relay-001 systemd[1]: Started hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 05 06:18:58 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Main process exited, code=exited, status=203/EXEC
+Jul 05 06:18:58 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Failed with result 'exit-code'.
+Jul 05 06:19:13 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Scheduled restart job, restart counter is at 4.
+Jul 05 06:19:13 hoch-relay-001 systemd[1]: Started hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 05 06:19:13 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Main process exited, code=exited, status=203/EXEC
+Jul 05 06:19:13 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Failed with result 'exit-code'.
+Jul 05 06:19:28 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Scheduled restart job, restart counter is at 5.
+Jul 05 06:19:28 hoch-relay-001 systemd[1]: Started hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 05 06:19:28 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Main process exited, code=exited, status=203/EXEC
+Jul 05 06:19:28 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Failed with result 'exit-code'.
+Jul 05 06:19:44 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Scheduled restart job, restart counter is at 6.
+Jul 05 06:19:44 hoch-relay-001 systemd[1]: Started hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 05 06:19:44 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Main process exited, code=exited, status=203/EXEC
+Jul 05 06:19:44 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Failed with result 'exit-code'.
+Jul 05 06:19:59 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Scheduled restart job, restart counter is at 7.
+Jul 05 06:19:59 hoch-relay-001 systemd[1]: Started hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 05 06:19:59 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Main process exited, code=exited, status=203/EXEC
+Jul 05 06:19:59 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Failed with result 'exit-code'.
+Jul 05 06:20:14 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Scheduled restart job, restart counter is at 8.
+Jul 05 06:20:14 hoch-relay-001 systemd[1]: Started hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 05 06:20:14 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Main process exited, code=exited, status=203/EXEC
+Jul 05 06:20:14 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Failed with result 'exit-code'.
+Jul 05 06:20:29 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Scheduled restart job, restart counter is at 9.
+Jul 05 06:20:29 hoch-relay-001 systemd[1]: Started hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 05 06:20:29 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Main process exited, code=exited, status=203/EXEC
+Jul 05 06:20:29 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Failed with result 'exit-code'.
+Jul 05 06:20:45 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Scheduled restart job, restart counter is at 10.
+Jul 05 06:20:45 hoch-relay-001 systemd[1]: Started hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 05 06:20:45 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Main process exited, code=exited, status=203/EXEC
+Jul 05 06:20:45 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Failed with result 'exit-code'.
+Jul 05 06:21:00 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Scheduled restart job, restart counter is at 11.
+Jul 05 06:21:00 hoch-relay-001 systemd[1]: Started hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 05 08:05:14 hoch-relay-001 systemd[1]: Stopping hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon...
+Jul 05 08:05:14 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Deactivated successfully.
+Jul 05 08:05:14 hoch-relay-001 systemd[1]: Stopped hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 05 08:05:14 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Consumed 5.432s CPU time, 14.4M memory peak, 0B memory swap peak.
+Jul 05 08:05:14 hoch-relay-001 systemd[1]: Started hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 05 08:05:14 hoch-relay-001 (python3)[265933]: hoch-ag-execution-daemon.service: Failed to determine user credentials: No such process
+Jul 05 08:05:14 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Main process exited, code=exited, status=217/USER
+Jul 05 08:05:14 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Failed with result 'exit-code'.
+Jul 05 08:05:29 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Scheduled restart job, restart counter is at 1.
+Jul 05 08:05:29 hoch-relay-001 systemd[1]: Started hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 05 08:05:29 hoch-relay-001 (python3)[266112]: hoch-ag-execution-daemon.service: Failed to determine user credentials: No such process
+Jul 05 08:05:29 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Main process exited, code=exited, status=217/USER
+Jul 05 08:05:29 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Failed with result 'exit-code'.
+Jul 05 08:05:45 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Scheduled restart job, restart counter is at 2.
+Jul 05 08:05:45 hoch-relay-001 systemd[1]: Started hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 05 08:05:45 hoch-relay-001 (python3)[266127]: hoch-ag-execution-daemon.service: Failed to determine user credentials: No such process
+Jul 05 08:05:45 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Main process exited, code=exited, status=217/USER
+Jul 05 08:05:45 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Failed with result 'exit-code'.
+Jul 05 08:05:48 hoch-relay-001 systemd[1]: Stopped hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 05 08:05:48 hoch-relay-001 systemd[1]: Started hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 05 08:15:05 hoch-relay-001 systemd[1]: Stopping hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon...
+Jul 05 08:15:05 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Deactivated successfully.
+Jul 05 08:15:05 hoch-relay-001 systemd[1]: Stopped hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 05 08:15:05 hoch-relay-001 systemd[1]: Started hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 05 08:16:41 hoch-relay-001 systemd[1]: Stopping hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon...
+Jul 05 08:16:41 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Deactivated successfully.
+Jul 05 08:16:41 hoch-relay-001 systemd[1]: Stopped hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 05 08:16:41 hoch-relay-001 systemd[1]: Started hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 05 15:25:35 hoch-relay-001 systemd[1]: Stopping hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon...
+Jul 05 15:25:35 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Deactivated successfully.
+Jul 05 15:25:35 hoch-relay-001 systemd[1]: Stopped hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 05 15:25:35 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Consumed 22.822s CPU time, 14.5M memory peak, 0B memory swap peak.
+Jul 05 15:25:35 hoch-relay-001 systemd[1]: Started hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 05 18:49:15 hoch-relay-001 systemd[1]: Stopping hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon...
+Jul 05 18:49:15 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Deactivated successfully.
+Jul 05 18:49:15 hoch-relay-001 systemd[1]: Stopped hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 05 18:49:15 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Consumed 5.828s CPU time, 15.5M memory peak, 0B memory swap peak.
+Jul 05 18:49:15 hoch-relay-001 systemd[1]: Started hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 05 18:59:57 hoch-relay-001 systemd[1]: Stopping hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon...
+Jul 05 18:59:57 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Deactivated successfully.
+Jul 05 18:59:57 hoch-relay-001 systemd[1]: Stopped hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 05 18:59:57 hoch-relay-001 systemd[1]: Started hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 07 04:35:54 hoch-relay-001 systemd[1]: Stopping hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon...
+Jul 07 04:35:54 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Deactivated successfully.
+Jul 07 04:35:54 hoch-relay-001 systemd[1]: Stopped hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 07 04:35:54 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Consumed 2min 2.111s CPU time, 16.6M memory peak, 0B memory swap peak.
+Jul 07 04:35:54 hoch-relay-001 systemd[1]: Started hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 07 06:57:16 hoch-relay-001 systemd[1]: Stopping hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon...
+Jul 07 06:57:16 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Deactivated successfully.
+Jul 07 06:57:16 hoch-relay-001 systemd[1]: Stopped hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 07 06:57:16 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Consumed 10.273s CPU time, 16.5M memory peak, 0B memory swap peak.
+Jul 07 06:57:16 hoch-relay-001 systemd[1]: Started hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 10 06:38:35 hoch-relay-001 systemd[1]: Stopping hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon...
+Jul 10 06:38:35 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Deactivated successfully.
+Jul 10 06:38:35 hoch-relay-001 systemd[1]: Stopped hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+Jul 10 06:38:35 hoch-relay-001 systemd[1]: hoch-ag-execution-daemon.service: Consumed 5min 28.439s CPU time, 31.2M memory peak, 0B memory swap peak.
+Jul 10 06:38:35 hoch-relay-001 systemd[1]: Started hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+=== hoch-relay-telemetry ===
+Jul 14 12:02:33 hoch-relay-001 python3[511725]: [2026-07-14T12:02:33+00:00] relay telemetry: cpu=2.0 ram=11.2 agents=6 models=2
+Jul 14 12:02:49 hoch-relay-001 python3[511725]: [2026-07-14T12:02:49+00:00] relay telemetry: cpu=0.0 ram=11.2 agents=6 models=2
+Jul 14 12:03:05 hoch-relay-001 python3[511725]: [2026-07-14T12:03:05+00:00] relay telemetry: cpu=3.0 ram=11.2 agents=6 models=2
+Jul 14 12:03:20 hoch-relay-001 python3[511725]: [2026-07-14T12:03:20+00:00] relay telemetry: cpu=100.0 ram=11.4 agents=6 models=2
+Jul 14 12:03:36 hoch-relay-001 python3[511725]: [2026-07-14T12:03:36+00:00] relay telemetry: cpu=0.0 ram=11.4 agents=6 models=2
+Jul 14 12:03:51 hoch-relay-001 python3[511725]: [2026-07-14T12:03:51+00:00] relay telemetry: cpu=4.0 ram=11.3 agents=6 models=2
+Jul 14 12:04:07 hoch-relay-001 python3[511725]: [2026-07-14T12:04:07+00:00] relay telemetry: cpu=0.0 ram=11.3 agents=6 models=2
+Jul 14 12:04:23 hoch-relay-001 python3[511725]: [2026-07-14T12:04:23+00:00] relay telemetry: cpu=0.0 ram=11.3 agents=6 models=2
+Jul 14 12:04:38 hoch-relay-001 python3[511725]: [2026-07-14T12:04:38+00:00] relay telemetry: cpu=0.0 ram=11.3 agents=6 models=2
+Jul 14 12:04:54 hoch-relay-001 python3[511725]: [2026-07-14T12:04:54+00:00] relay telemetry: cpu=0.0 ram=11.3 agents=6 models=2
+Jul 14 12:05:09 hoch-relay-001 python3[511725]: [2026-07-14T12:05:09+00:00] relay telemetry: cpu=3.0 ram=11.3 agents=6 models=2
+Jul 14 12:05:25 hoch-relay-001 python3[511725]: [2026-07-14T12:05:25+00:00] relay telemetry: cpu=0.0 ram=11.3 agents=6 models=2
+Jul 14 12:05:40 hoch-relay-001 python3[511725]: [2026-07-14T12:05:40+00:00] relay telemetry: cpu=0.0 ram=11.3 agents=6 models=2
+Jul 14 12:05:56 hoch-relay-001 python3[511725]: [2026-07-14T12:05:56+00:00] relay telemetry: cpu=0.0 ram=11.3 agents=6 models=2
+Jul 14 12:06:12 hoch-relay-001 python3[511725]: [2026-07-14T12:06:12+00:00] relay telemetry: cpu=0.0 ram=11.2 agents=6 models=2
+Jul 14 12:06:27 hoch-relay-001 python3[511725]: [2026-07-14T12:06:27+00:00] relay telemetry: cpu=1.0 ram=11.3 agents=6 models=2
+Jul 14 12:06:43 hoch-relay-001 python3[511725]: [2026-07-14T12:06:43+00:00] relay telemetry: cpu=2.0 ram=11.3 agents=6 models=2
+Jul 14 12:06:58 hoch-relay-001 python3[511725]: [2026-07-14T12:06:58+00:00] relay telemetry: cpu=0.0 ram=11.3 agents=6 models=2
+Jul 14 12:07:14 hoch-relay-001 python3[511725]: [2026-07-14T12:07:14+00:00] relay telemetry: cpu=0.0 ram=11.3 agents=6 models=2
+Jul 14 12:07:29 hoch-relay-001 python3[511725]: [2026-07-14T12:07:29+00:00] relay telemetry: cpu=3.0 ram=11.2 agents=6 models=2
+Jul 14 12:07:45 hoch-relay-001 python3[511725]: [2026-07-14T12:07:45+00:00] relay telemetry: cpu=8.9 ram=11.2 agents=6 models=2
+Jul 14 12:08:01 hoch-relay-001 python3[511725]: [2026-07-14T12:08:01+00:00] relay telemetry: cpu=2.0 ram=11.2 agents=6 models=2
+Jul 14 12:08:16 hoch-relay-001 python3[511725]: [2026-07-14T12:08:16+00:00] relay telemetry: cpu=1.0 ram=11.2 agents=6 models=2
+Jul 14 12:08:32 hoch-relay-001 python3[511725]: [2026-07-14T12:08:32+00:00] relay telemetry: cpu=0.0 ram=3.8 agents=6 models=2
+Jul 14 12:08:47 hoch-relay-001 python3[511725]: [2026-07-14T12:08:47+00:00] relay telemetry: cpu=1.0 ram=3.7 agents=6 models=2
+Jul 14 12:09:03 hoch-relay-001 python3[511725]: [2026-07-14T12:09:03+00:00] relay telemetry: cpu=1.0 ram=3.7 agents=6 models=2
+Jul 14 12:09:18 hoch-relay-001 python3[511725]: [2026-07-14T12:09:18+00:00] relay telemetry: cpu=1.0 ram=3.7 agents=6 models=2
+Jul 14 12:09:34 hoch-relay-001 python3[511725]: [2026-07-14T12:09:34+00:00] relay telemetry: cpu=0.0 ram=3.7 agents=6 models=2
+Jul 14 12:09:50 hoch-relay-001 python3[511725]: [2026-07-14T12:09:50+00:00] relay telemetry: cpu=3.0 ram=3.7 agents=6 models=2
+Jul 14 12:10:05 hoch-relay-001 python3[511725]: [2026-07-14T12:10:05+00:00] relay telemetry: cpu=0.0 ram=3.6 agents=6 models=2
+Jul 14 12:10:21 hoch-relay-001 python3[511725]: [2026-07-14T12:10:21+00:00] relay telemetry: cpu=50.5 ram=8.7 agents=6 models=2
+Jul 14 12:10:36 hoch-relay-001 python3[511725]: [2026-07-14T12:10:36+00:00] relay telemetry: cpu=1.0 ram=11.2 agents=6 models=2
+Jul 14 12:10:52 hoch-relay-001 python3[511725]: [2026-07-14T12:10:52+00:00] relay telemetry: cpu=0.0 ram=11.2 agents=6 models=2
+Jul 14 12:11:07 hoch-relay-001 python3[511725]: [2026-07-14T12:11:07+00:00] relay telemetry: cpu=1.0 ram=11.2 agents=6 models=2
+Jul 14 12:11:23 hoch-relay-001 python3[511725]: [2026-07-14T12:11:23+00:00] relay telemetry: cpu=5.0 ram=11.2 agents=6 models=2
+Jul 14 12:11:39 hoch-relay-001 python3[511725]: [2026-07-14T12:11:39+00:00] relay telemetry: cpu=0.0 ram=11.2 agents=6 models=2
+Jul 14 12:11:54 hoch-relay-001 python3[511725]: [2026-07-14T12:11:54+00:00] relay telemetry: cpu=2.0 ram=11.2 agents=6 models=2
+Jul 14 12:12:10 hoch-relay-001 python3[511725]: [2026-07-14T12:12:10+00:00] relay telemetry: cpu=0.0 ram=11.2 agents=6 models=2
+Jul 14 12:12:25 hoch-relay-001 python3[511725]: [2026-07-14T12:12:25+00:00] relay telemetry: cpu=0.0 ram=11.3 agents=6 models=2
+Jul 14 12:12:41 hoch-relay-001 python3[511725]: [2026-07-14T12:12:41+00:00] relay telemetry: cpu=1.0 ram=11.3 agents=6 models=2
+Jul 14 12:12:56 hoch-relay-001 python3[511725]: [2026-07-14T12:12:56+00:00] relay telemetry: cpu=1.0 ram=11.2 agents=6 models=2
+Jul 14 12:13:12 hoch-relay-001 python3[511725]: [2026-07-14T12:13:12+00:00] relay telemetry: cpu=0.0 ram=11.2 agents=6 models=2
+Jul 14 12:13:28 hoch-relay-001 python3[511725]: [2026-07-14T12:13:28+00:00] relay telemetry: cpu=52.5 ram=11.1 agents=6 models=2
+Jul 14 12:13:43 hoch-relay-001 python3[511725]: [2026-07-14T12:13:43+00:00] relay telemetry: cpu=41.4 ram=11.3 agents=6 models=2
+Jul 14 12:13:59 hoch-relay-001 python3[511725]: [2026-07-14T12:13:59+00:00] relay telemetry: cpu=1.0 ram=11.3 agents=6 models=2
+Jul 14 12:14:14 hoch-relay-001 python3[511725]: [2026-07-14T12:14:14+00:00] relay telemetry: cpu=0.0 ram=11.3 agents=6 models=2
+Jul 14 12:14:30 hoch-relay-001 python3[511725]: [2026-07-14T12:14:30+00:00] relay telemetry: cpu=0.0 ram=11.3 agents=6 models=2
+Jul 14 12:14:45 hoch-relay-001 python3[511725]: [2026-07-14T12:14:45+00:00] relay telemetry: cpu=5.1 ram=11.3 agents=6 models=2
+Jul 14 12:15:01 hoch-relay-001 python3[511725]: [2026-07-14T12:15:01+00:00] relay telemetry: cpu=2.0 ram=11.3 agents=6 models=2
+Jul 14 12:15:17 hoch-relay-001 python3[511725]: [2026-07-14T12:15:17+00:00] relay telemetry: cpu=0.0 ram=11.2 agents=6 models=2
+Jul 14 12:15:32 hoch-relay-001 python3[511725]: [2026-07-14T12:15:32+00:00] relay telemetry: cpu=1.0 ram=11.2 agents=6 models=2
+Jul 14 12:15:48 hoch-relay-001 python3[511725]: [2026-07-14T12:15:48+00:00] relay telemetry: cpu=1.0 ram=11.2 agents=6 models=2
+Jul 14 12:16:03 hoch-relay-001 python3[511725]: [2026-07-14T12:16:03+00:00] relay telemetry: cpu=0.0 ram=11.1 agents=6 models=2
+Jul 14 12:16:19 hoch-relay-001 python3[511725]: [2026-07-14T12:16:19+00:00] relay telemetry: cpu=2.0 ram=11.2 agents=6 models=2
+Jul 14 12:16:35 hoch-relay-001 python3[511725]: [2026-07-14T12:16:35+00:00] relay telemetry: cpu=20.0 ram=11.2 agents=6 models=2
+Jul 14 12:16:50 hoch-relay-001 python3[511725]: [2026-07-14T12:16:50+00:00] relay telemetry: cpu=1.0 ram=11.2 agents=6 models=2
+Jul 14 12:17:06 hoch-relay-001 python3[511725]: [2026-07-14T12:17:06+00:00] relay telemetry: cpu=1.0 ram=11.2 agents=6 models=2
+Jul 14 12:17:21 hoch-relay-001 python3[511725]: [2026-07-14T12:17:21+00:00] relay telemetry: cpu=1.0 ram=11.2 agents=6 models=2
+Jul 14 12:17:37 hoch-relay-001 python3[511725]: [2026-07-14T12:17:37+00:00] relay telemetry: cpu=0.0 ram=11.2 agents=6 models=2
+Jul 14 12:17:52 hoch-relay-001 python3[511725]: [2026-07-14T12:17:52+00:00] relay telemetry: cpu=1.0 ram=11.2 agents=6 models=2
+Jul 14 12:18:08 hoch-relay-001 python3[511725]: [2026-07-14T12:18:08+00:00] relay telemetry: cpu=1.0 ram=11.3 agents=6 models=2
+Jul 14 12:18:24 hoch-relay-001 python3[511725]: [2026-07-14T12:18:24+00:00] relay telemetry: cpu=0.0 ram=11.3 agents=6 models=2
+Jul 14 12:18:39 hoch-relay-001 python3[511725]: [2026-07-14T12:18:39+00:00] relay telemetry: cpu=0.0 ram=3.8 agents=6 models=2
+Jul 14 12:18:55 hoch-relay-001 python3[511725]: [2026-07-14T12:18:55+00:00] relay telemetry: cpu=1.0 ram=3.7 agents=6 models=2
+Jul 14 12:19:10 hoch-relay-001 python3[511725]: [2026-07-14T12:19:10+00:00] relay telemetry: cpu=0.0 ram=3.7 agents=6 models=2
+Jul 14 12:19:26 hoch-relay-001 python3[511725]: [2026-07-14T12:19:26+00:00] relay telemetry: cpu=0.0 ram=3.7 agents=6 models=2
+Jul 14 12:19:41 hoch-relay-001 python3[511725]: [2026-07-14T12:19:41+00:00] relay telemetry: cpu=4.0 ram=3.6 agents=6 models=2
+Jul 14 12:19:57 hoch-relay-001 python3[511725]: [2026-07-14T12:19:57+00:00] relay telemetry: cpu=0.0 ram=3.6 agents=6 models=2
+Jul 14 12:20:13 hoch-relay-001 python3[511725]: [2026-07-14T12:20:13+00:00] relay telemetry: cpu=1.0 ram=3.6 agents=6 models=2
+Jul 14 12:20:28 hoch-relay-001 python3[511725]: [2026-07-14T12:20:28+00:00] relay telemetry: cpu=51.5 ram=5.9 agents=6 models=2
+Jul 14 12:20:44 hoch-relay-001 python3[511725]: [2026-07-14T12:20:44+00:00] relay telemetry: cpu=0.0 ram=11.2 agents=6 models=2
+Jul 14 12:20:59 hoch-relay-001 python3[511725]: [2026-07-14T12:20:59+00:00] relay telemetry: cpu=20.2 ram=11.2 agents=6 models=2
+Jul 14 12:21:15 hoch-relay-001 python3[511725]: [2026-07-14T12:21:15+00:00] relay telemetry: cpu=0.0 ram=11.2 agents=6 models=2
+Jul 14 12:21:30 hoch-relay-001 python3[511725]: [2026-07-14T12:21:30+00:00] relay telemetry: cpu=0.0 ram=11.2 agents=6 models=2
+Jul 14 12:21:46 hoch-relay-001 python3[511725]: [2026-07-14T12:21:46+00:00] relay telemetry: cpu=0.0 ram=11.3 agents=6 models=2
+Jul 14 12:22:02 hoch-relay-001 python3[511725]: [2026-07-14T12:22:02+00:00] relay telemetry: cpu=3.0 ram=11.3 agents=6 models=2
+Jul 14 12:22:17 hoch-relay-001 python3[511725]: [2026-07-14T12:22:17+00:00] relay telemetry: cpu=3.0 ram=11.2 agents=6 models=2
+Jul 14 12:22:33 hoch-relay-001 python3[511725]: [2026-07-14T12:22:33+00:00] relay telemetry: cpu=0.0 ram=11.2 agents=6 models=2
+Jul 14 12:22:48 hoch-relay-001 python3[511725]: [2026-07-14T12:22:48+00:00] relay telemetry: cpu=0.0 ram=11.2 agents=6 models=2
+Jul 14 12:23:04 hoch-relay-001 python3[511725]: [2026-07-14T12:23:04+00:00] relay telemetry: cpu=1.0 ram=11.2 agents=6 models=2
+Jul 14 12:23:19 hoch-relay-001 python3[511725]: [2026-07-14T12:23:19+00:00] relay telemetry: cpu=0.0 ram=11.2 agents=6 models=2
+Jul 14 12:23:35 hoch-relay-001 python3[511725]: [2026-07-14T12:23:35+00:00] relay telemetry: cpu=3.0 ram=11.2 agents=6 models=2
+Jul 14 12:23:51 hoch-relay-001 python3[511725]: [2026-07-14T12:23:51+00:00] relay telemetry: cpu=0.0 ram=11.3 agents=6 models=2
+Jul 14 12:24:06 hoch-relay-001 python3[511725]: [2026-07-14T12:24:06+00:00] relay telemetry: cpu=0.0 ram=11.3 agents=6 models=2
+Jul 14 12:24:22 hoch-relay-001 python3[511725]: [2026-07-14T12:24:22+00:00] relay telemetry: cpu=0.0 ram=11.3 agents=6 models=2
+Jul 14 12:24:37 hoch-relay-001 python3[511725]: [2026-07-14T12:24:37+00:00] relay telemetry: cpu=1.0 ram=11.3 agents=6 models=2
+Jul 14 12:24:53 hoch-relay-001 python3[511725]: [2026-07-14T12:24:53+00:00] relay telemetry: cpu=1.0 ram=11.3 agents=6 models=2
+Jul 14 12:25:08 hoch-relay-001 python3[511725]: [2026-07-14T12:25:08+00:00] relay telemetry: cpu=1.0 ram=11.3 agents=6 models=2
+Jul 14 12:25:24 hoch-relay-001 python3[511725]: [2026-07-14T12:25:24+00:00] relay telemetry: cpu=0.0 ram=11.3 agents=6 models=2
+Jul 14 12:25:40 hoch-relay-001 python3[511725]: [2026-07-14T12:25:40+00:00] relay telemetry: cpu=1.0 ram=11.2 agents=6 models=2
+Jul 14 12:25:55 hoch-relay-001 python3[511725]: [2026-07-14T12:25:55+00:00] relay telemetry: cpu=0.0 ram=11.2 agents=6 models=2
+Jul 14 12:26:11 hoch-relay-001 python3[511725]: [2026-07-14T12:26:11+00:00] relay telemetry: cpu=1.0 ram=11.3 agents=6 models=2
+Jul 14 12:26:26 hoch-relay-001 python3[511725]: [2026-07-14T12:26:26+00:00] relay telemetry: cpu=2.0 ram=11.3 agents=6 models=2
+Jul 14 12:26:42 hoch-relay-001 python3[511725]: [2026-07-14T12:26:42+00:00] relay telemetry: cpu=0.0 ram=11.2 agents=6 models=2
+Jul 14 12:26:57 hoch-relay-001 python3[511725]: [2026-07-14T12:26:57+00:00] relay telemetry: cpu=1.0 ram=11.2 agents=6 models=2
+Jul 14 12:27:13 hoch-relay-001 python3[511725]: [2026-07-14T12:27:13+00:00] relay telemetry: cpu=1.0 ram=11.4 agents=6 models=2
+Jul 14 12:27:29 hoch-relay-001 python3[511725]: [2026-07-14T12:27:29+00:00] relay telemetry: cpu=4.0 ram=11.5 agents=6 models=2
+Jul 14 12:27:44 hoch-relay-001 python3[511725]: [2026-07-14T12:27:44+00:00] relay telemetry: cpu=1.0 ram=11.5 agents=6 models=2
+Jul 14 12:28:00 hoch-relay-001 python3[511725]: [2026-07-14T12:28:00+00:00] relay telemetry: cpu=0.0 ram=11.4 agents=6 models=2
+Jul 14 12:28:15 hoch-relay-001 python3[511725]: [2026-07-14T12:28:15+00:00] relay telemetry: cpu=0.0 ram=11.4 agents=6 models=2

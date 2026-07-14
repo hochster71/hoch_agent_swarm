@@ -32,9 +32,9 @@
 ---
 
 ## 3. Onboarding Counters & Metrics
-* **Total Processed Missions**: 8
-* **Completed Clean Missions**: 4 (Missions 1a033caf, e05812ef, bec9c5cd, 5f91ad9f)
-* **Escalated Missions**: 1
+* Total Processed Missions: 8
+* Completed Clean Missions: 4 (Missions 1a033caf, e05812ef, bec9c5cd, 5f91ad9f)
+* Escalated Missions: 1
 * **Blocked Missions**: 0
 * **Rejected Injection Missions**: 1
 * **manual_prompt_injected Count**: 0
@@ -71,5 +71,5 @@
 ## 6. Derivation & Promotion Status
 * **copy_paste_required**: False
 * **Reason**: Mission processed end-to-end without manual copy-paste triggers.
-* **Promotion Criteria Met**: **🟢 YES** (Completed clean missions = 4, which is >= required 3. Enforced by tracker rules. Ready for Rung 2 promotion when Michael explicitly authorizes).
+* Promotion Criteria Met: 🟢 YES (Completed clean missions = 4, which is >= required 3. Enforced by tracker rules. Ready for Rung 2 promotion when Michael explicitly authorizes).
 * **Rollback Trigger Status**: Inactive.

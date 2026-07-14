@@ -1,1 +1,9 @@
-null
+{
+  "lease_id": "lease-6ce1b097",
+  "task_id": "SOAK-HCF-4",
+  "acquired_at": "2026-07-14T14:15:59.676405Z",
+  "expires_at": "2026-07-14T14:25:59.676405Z",
+  "holder": "persistent_scheduler",
+  "status": "ACTIVE",
+  "fencing_token": 12998
+}

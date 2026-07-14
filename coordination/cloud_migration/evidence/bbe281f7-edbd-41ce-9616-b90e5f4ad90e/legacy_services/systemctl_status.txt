@@ -1,0 +1,77 @@
+● has-agent-dispatcher.service - HAS Agent Dispatcher Service
+     Loaded: loaded (/etc/systemd/system/has-agent-dispatcher.service; enabled; preset: enabled)
+     Active: active (running) since Tue 2026-07-07 06:57:16 UTC; 1 week 0 days ago
+   Main PID: 511716 (python3)
+      Tasks: 1 (limit: 28742)
+     Memory: 5.7M (peak: 6.2M)
+        CPU: 1min 9.533s
+     CGroup: /system.slice/has-agent-dispatcher.service
+             └─511716 /usr/bin/python3 -u /root/hoch_agent_swarm/scripts/has_agent_dispatcher.py
+
+Jul 07 06:57:16 hoch-relay-001 systemd[1]: Started has-agent-dispatcher.service - HAS Agent Dispatcher Service.
+Jul 07 06:57:16 hoch-relay-001 python3[511716]: /root/hoch_agent_swarm/scripts/has_agent_dispatcher.py:13: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+Jul 07 06:57:16 hoch-relay-001 python3[511716]:   return datetime.utcnow().isoformat() + "Z"
+Jul 07 06:57:16 hoch-relay-001 python3[511716]: [2026-07-07T06:57:16.354449Z] HAS Agent Dispatcher started.
+
+● hasf-product-factory.service - HASF Product Factory Runner Service
+     Loaded: loaded (/etc/systemd/system/hasf-product-factory.service; enabled; preset: enabled)
+     Active: active (running) since Tue 2026-07-07 06:57:16 UTC; 1 week 0 days ago
+   Main PID: 511720 (python3)
+      Tasks: 1 (limit: 28742)
+     Memory: 5.5M (peak: 6.0M)
+        CPU: 16.995s
+     CGroup: /system.slice/hasf-product-factory.service
+             └─511720 /usr/bin/python3 -u /root/hoch_agent_swarm/scripts/hasf_product_factory_runner.py
+
+Jul 07 06:57:16 hoch-relay-001 systemd[1]: Started hasf-product-factory.service - HASF Product Factory Runner Service.
+Jul 07 06:57:16 hoch-relay-001 python3[511720]: /root/hoch_agent_swarm/scripts/hasf_product_factory_runner.py:12: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+Jul 07 06:57:16 hoch-relay-001 python3[511720]:   return datetime.utcnow().isoformat() + "Z"
+Jul 07 06:57:16 hoch-relay-001 python3[511720]: [2026-07-07T06:57:16.420679Z] HASF Product Factory started.
+
+● helm-runner.service - HELM Autonomous Model Runner Daemon
+     Loaded: loaded (/etc/systemd/system/helm-runner.service; enabled; preset: enabled)
+     Active: active (running) since Tue 2026-07-07 06:57:16 UTC; 1 week 0 days ago
+   Main PID: 511722 (python3)
+      Tasks: 1 (limit: 28742)
+     Memory: 9.0M (peak: 9.5M)
+        CPU: 1min 43.995s
+     CGroup: /system.slice/helm-runner.service
+             └─511722 /usr/bin/python3 -u /root/hoch_agent_swarm/scripts/helm_autonomy_runner.py
+
+Jul 07 06:57:16 hoch-relay-001 systemd[1]: Started helm-runner.service - HELM Autonomous Model Runner Daemon.
+Jul 07 06:57:16 hoch-relay-001 python3[511722]: /root/hoch_agent_swarm/scripts/helm_autonomy_runner.py:24: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+Jul 07 06:57:16 hoch-relay-001 python3[511722]:   return datetime.utcnow().isoformat() + "Z"
+Jul 07 06:57:16 hoch-relay-001 python3[511722]: [2026-07-07T06:57:16.502752Z] [HELM-RUNNER] HELM Autonomy Runner Daemon started.
+
+● hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon
+     Loaded: loaded (/etc/systemd/system/hoch-ag-execution-daemon.service; enabled; preset: enabled)
+     Active: active (running) since Fri 2026-07-10 06:38:35 UTC; 4 days ago
+   Main PID: 1032990 (python3)
+      Tasks: 1 (limit: 28742)
+     Memory: 32.9M (peak: 48.8M)
+        CPU: 20min 17.449s
+     CGroup: /system.slice/hoch-ag-execution-daemon.service
+             └─1032990 /root/hoch_agent_swarm/.venv/bin/python3 -u scripts/ag_execution_daemon.py
+
+Jul 10 06:38:35 hoch-relay-001 systemd[1]: Started hoch-ag-execution-daemon.service - HOCH Agent Swarm Autonomy Execution Daemon.
+
+● hoch-relay-telemetry.service - HOCH-200 Relay Telemetry Agent (measured host vitals + agent counts)
+     Loaded: loaded (/etc/systemd/system/hoch-relay-telemetry.service; enabled; preset: enabled)
+     Active: active (running) since Tue 2026-07-07 06:57:16 UTC; 1 week 0 days ago
+   Main PID: 511725 (python3)
+      Tasks: 1 (limit: 28742)
+     Memory: 12.9M (peak: 22.0M)
+        CPU: 22min 10.823s
+     CGroup: /system.slice/hoch-relay-telemetry.service
+             └─511725 /usr/bin/python3 /opt/hoch-relay/telemetry-agent/agent.py
+
+Jul 14 12:25:40 hoch-relay-001 python3[511725]: [2026-07-14T12:25:40+00:00] relay telemetry: cpu=1.0 ram=11.2 agents=6 models=2
+Jul 14 12:25:55 hoch-relay-001 python3[511725]: [2026-07-14T12:25:55+00:00] relay telemetry: cpu=0.0 ram=11.2 agents=6 models=2
+Jul 14 12:26:11 hoch-relay-001 python3[511725]: [2026-07-14T12:26:11+00:00] relay telemetry: cpu=1.0 ram=11.3 agents=6 models=2
+Jul 14 12:26:26 hoch-relay-001 python3[511725]: [2026-07-14T12:26:26+00:00] relay telemetry: cpu=2.0 ram=11.3 agents=6 models=2
+Jul 14 12:26:42 hoch-relay-001 python3[511725]: [2026-07-14T12:26:42+00:00] relay telemetry: cpu=0.0 ram=11.2 agents=6 models=2
+Jul 14 12:26:57 hoch-relay-001 python3[511725]: [2026-07-14T12:26:57+00:00] relay telemetry: cpu=1.0 ram=11.2 agents=6 models=2
+Jul 14 12:27:13 hoch-relay-001 python3[511725]: [2026-07-14T12:27:13+00:00] relay telemetry: cpu=1.0 ram=11.4 agents=6 models=2
+Jul 14 12:27:29 hoch-relay-001 python3[511725]: [2026-07-14T12:27:29+00:00] relay telemetry: cpu=4.0 ram=11.5 agents=6 models=2
+Jul 14 12:27:44 hoch-relay-001 python3[511725]: [2026-07-14T12:27:44+00:00] relay telemetry: cpu=1.0 ram=11.5 agents=6 models=2
+Jul 14 12:28:00 hoch-relay-001 python3[511725]: [2026-07-14T12:28:00+00:00] relay telemetry: cpu=0.0 ram=11.4 agents=6 models=2

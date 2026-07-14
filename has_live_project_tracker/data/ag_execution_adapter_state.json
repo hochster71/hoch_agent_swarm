@@ -15,7 +15,7 @@
     "credentials",
     "public_claims"
   ],
-  "last_execution_at": "2026-07-09T04:11:49.656149Z",
+  "last_execution_at": "2026-07-13T14:19:06.862031Z",
   "evidence_path": null,
   "founder_gate_respected": true,
   "source_of_truth": false,
@@ -790,6 +790,214 @@
     },
     {
       "timestamp": "2026-07-09T04:11:49.656144Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "LEASE_ACQUIRED",
+      "next_state": "BLOCKED_BY_POLICY",
+      "reason": "Fencing token is stale",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-13T12:13:19.212667Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "BLOCKED_BY_POLICY",
+      "next_state": "LEASE_ACQUIRED",
+      "reason": "Acquired lock",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-13T12:13:19.213501Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "LEASE_ACQUIRED",
+      "next_state": "BLOCKED_BY_POLICY",
+      "reason": "Fencing token is stale",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-13T12:16:33.699599Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "BLOCKED_BY_POLICY",
+      "next_state": "LEASE_ACQUIRED",
+      "reason": "Acquired lock",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-13T12:16:33.701663Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "LEASE_ACQUIRED",
+      "next_state": "BLOCKED_BY_POLICY",
+      "reason": "Fencing token is stale",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-13T12:18:34.274126Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "BLOCKED_BY_POLICY",
+      "next_state": "LEASE_ACQUIRED",
+      "reason": "Acquired lock",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-13T12:18:34.274802Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "LEASE_ACQUIRED",
+      "next_state": "BLOCKED_BY_POLICY",
+      "reason": "Fencing token is stale",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-13T12:31:58.623880Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "BLOCKED_BY_POLICY",
+      "next_state": "LEASE_ACQUIRED",
+      "reason": "Acquired lock",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-13T12:31:58.624878Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "LEASE_ACQUIRED",
+      "next_state": "BLOCKED_BY_POLICY",
+      "reason": "Fencing token is stale",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-13T12:37:05.169980Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "BLOCKED_BY_POLICY",
+      "next_state": "LEASE_ACQUIRED",
+      "reason": "Acquired lock",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-13T12:37:05.170796Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "LEASE_ACQUIRED",
+      "next_state": "BLOCKED_BY_POLICY",
+      "reason": "Fencing token is stale",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-13T12:42:56.589756Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "BLOCKED_BY_POLICY",
+      "next_state": "LEASE_ACQUIRED",
+      "reason": "Acquired lock",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-13T12:42:56.590827Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "LEASE_ACQUIRED",
+      "next_state": "BLOCKED_BY_POLICY",
+      "reason": "Fencing token is stale",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-13T12:46:38.851185Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "BLOCKED_BY_POLICY",
+      "next_state": "LEASE_ACQUIRED",
+      "reason": "Acquired lock",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-13T12:46:38.852287Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "LEASE_ACQUIRED",
+      "next_state": "BLOCKED_BY_POLICY",
+      "reason": "Fencing token is stale",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-13T13:03:47.179563Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "BLOCKED_BY_POLICY",
+      "next_state": "LEASE_ACQUIRED",
+      "reason": "Acquired lock",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-13T13:03:47.180584Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "LEASE_ACQUIRED",
+      "next_state": "BLOCKED_BY_POLICY",
+      "reason": "Fencing token is stale",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-13T13:06:19.135413Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "BLOCKED_BY_POLICY",
+      "next_state": "LEASE_ACQUIRED",
+      "reason": "Acquired lock",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-13T13:06:19.136416Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "LEASE_ACQUIRED",
+      "next_state": "BLOCKED_BY_POLICY",
+      "reason": "Fencing token is stale",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-13T13:10:11.533822Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "BLOCKED_BY_POLICY",
+      "next_state": "LEASE_ACQUIRED",
+      "reason": "Acquired lock",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-13T13:10:11.535340Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "LEASE_ACQUIRED",
+      "next_state": "BLOCKED_BY_POLICY",
+      "reason": "Fencing token is stale",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-13T13:57:43.082572Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "BLOCKED_BY_POLICY",
+      "next_state": "LEASE_ACQUIRED",
+      "reason": "Acquired lock",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-13T13:57:43.083878Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "LEASE_ACQUIRED",
+      "next_state": "BLOCKED_BY_POLICY",
+      "reason": "Fencing token is stale",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-13T14:16:06.429288Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "BLOCKED_BY_POLICY",
+      "next_state": "LEASE_ACQUIRED",
+      "reason": "Acquired lock",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-13T14:16:06.430098Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "LEASE_ACQUIRED",
+      "next_state": "BLOCKED_BY_POLICY",
+      "reason": "Fencing token is stale",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-13T14:19:06.861003Z",
+      "task_id": "task-zombie-test",
+      "previous_state": "BLOCKED_BY_POLICY",
+      "next_state": "LEASE_ACQUIRED",
+      "reason": "Acquired lock",
+      "evidence_path": ""
+    },
+    {
+      "timestamp": "2026-07-13T14:19:06.862029Z",
       "task_id": "task-zombie-test",
       "previous_state": "LEASE_ACQUIRED",
       "next_state": "BLOCKED_BY_POLICY",

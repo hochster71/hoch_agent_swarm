@@ -1,0 +1,158 @@
+ M coordination/council/active_runtime_source.json
+ M coordination/council/council_heartbeat.jsonl
+ M coordination/council/daemon/dispatch_ledger.jsonl
+ M coordination/council/daemon/result_envelopes.jsonl
+ M coordination/council/daemon/scheduler_cycles.jsonl
+ M coordination/council/daemon/task_lease_ledger.jsonl
+ M coordination/council/daemon/verification_ledger.jsonl
+ M coordination/council/live_proof_packages/HELM-24X7-MOCK/dispatch_ledger.jsonl
+ M coordination/council/live_proof_packages/HELM-24X7-MOCK/scheduler_cycles.jsonl
+ M coordination/council/live_proof_packages/HELM-24X7-MOCK/task_lease_ledger.jsonl
+ M coordination/council/live_proof_packages/HELM-24X7-MOCK/verification_ledger.jsonl
+ M coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T002656Z/seal_verdict.json
+ M coordination/council/relay/gateway_dispatch_ledger.jsonl
+ M coordination/council/spend_ledger.jsonl
+ M coordination/goal/champion_gates.json
+ M coordination/goal/goal_state.json
+ M coordination/goal/intake_to_doorstep.json
+ M coordination/jspace/README.md
+ M coordination/jspace/alerts.jsonl
+ M coordination/jspace/assessments.jsonl
+ M coordination/jspace/burn_in.json
+ M coordination/jspace/cycles.jsonl
+ M coordination/jspace/events.jsonl
+ M coordination/jspace/health.json
+ D coordination/leases/SOAK-HASF-1.4988d7e154a76afd.lock
+ D coordination/leases/SOAK-HCF-1.d0cbe30e7475cc26.lock
+ D coordination/leases/SOAK-HSF-1.130fa98c8068d35b.lock
+ M coordination/leases/_fencing_tokens.bak
+ M coordination/leases/_fencing_tokens.json
+ M coordination/leases/_lease_history.jsonl
+ M coordination/leases/_token_journal.jsonl
+ M coordination/security/conmon_ledger.jsonl
+ M coordination/security/helm_control_posture.json
+ M data/agent_execution_ledger.jsonl
+ M data/prompt_brain/agent_audit.json
+ M data/prompt_brain/champion_registry.json
+ M data/prompt_brain/convergence_status.json
+ M data/prompt_brain/cyber_swarm_state.json
+ M data/prompt_brain/demo/reviewer_feedback_log.jsonl
+ M data/prompt_brain/gap_analysis.json
+ M data/prompt_brain/improve_cursor.json
+ M data/prompt_brain/improved_champions.jsonl
+ M data/prompt_brain/model_adapter_status.json
+ M data/prompt_brain/model_performance_matrix.json
+ M data/prompt_brain/music/champion_registry.json
+ M data/prompt_brain/music/convergence_status.json
+ M data/prompt_brain/orchestrator_brief.json
+ M data/prompt_brain/orchestrator_log.jsonl
+ M data/prompt_brain/outreach/outreach_approval_log.jsonl
+ M data/prompt_brain/prompt_repair_queue.jsonl
+ M data/prompt_brain/prompt_selection_log.jsonl
+ M data/prompt_brain/research/champion_registry.json
+ M data/prompt_brain/research/convergence_status.json
+ M data/prompt_brain/research_meta_decision.json
+ M data/prompt_brain/research_meta_log.jsonl
+ M data/prompt_brain/runtime_executions.jsonl
+ M data/prompt_brain/self_heal_state.json
+ M docs/evidence/runtime_scenarios/20260702T222129Z-24-7-autonomy-reset/helm-rung-1-promotion-evidence.md
+ M docs/moonshot/BRAIN_GAP_ANALYSIS.md
+ M frontend/data/brain_live.json
+ M frontend_live/pert.html
+ M has_live_project_tracker/data/ag_daemon_heartbeat_status.json
+ M has_live_project_tracker/data/ag_execution_adapter_state.json
+ M has_live_project_tracker/data/ag_execution_burn_in_ledger.jsonl
+ M has_live_project_tracker/data/ag_execution_burn_in_summary.json
+ M has_live_project_tracker/data/ag_execution_daemon_state.json
+ M has_live_project_tracker/data/ag_execution_leases.json
+ M has_live_project_tracker/data/ag_execution_lock.json
+ M has_live_project_tracker/data/ag_execution_proof_index.json
+ M has_live_project_tracker/data/ag_execution_queue_health.json
+ M has_live_project_tracker/data/ag_operator_hold.json
+ M has_live_project_tracker/data/brain_runtime_truth.json
+ M has_live_project_tracker/data/cost_governor.json
+ M has_live_project_tracker/data/doorstep_digest.json
+ M has_live_project_tracker/data/factory_runtime_truth.json
+ M has_live_project_tracker/data/global_verify.json
+ M has_live_project_tracker/data/goal_blocker_register.json
+ M has_live_project_tracker/data/gpu_pod_adapter_state.json
+ M has_live_project_tracker/data/has_runtime_state.json
+ M has_live_project_tracker/data/hasf_runtime_state.json
+ M has_live_project_tracker/data/helm_adapter_registry.json
+ M has_live_project_tracker/data/helm_runtime_state.json
+ M has_live_project_tracker/data/helm_task_queue.json
+ M has_live_project_tracker/data/hoch_pods_runtime_state.json
+ M has_live_project_tracker/data/reasoning_graph.json
+ M has_live_project_tracker/data/source_authority_manifest.json
+ M hoch_pods/compute/cost_ledger.jsonl
+?? HELM_PROMPT_PLAYBOOK.md
+?? backend/jspace/incidents.py
+?? coordination/cloud_migration/evidence/
+?? coordination/council/HELM_CRITICAL_PATH_BOARD.json
+?? coordination/council/active_runtime_source.pre_baseline_20260714T090800Z.json
+?? coordination/council/live_proof_packages/HELM-SOAK-24H-20260714T114143Z/authority_preflight_controls.json
+?? coordination/council/live_proof_packages/HELM-SOAK-24H-20260714T114143Z/daemon/
+?? coordination/council/live_proof_packages/HELM-SOAK-24H-20260714T114143Z/recovery_events.jsonl
+?? coordination/council/live_proof_packages/HELM-SOAK-24H-20260714T114143Z/resource_usage.jsonl
+?? coordination/council/live_proof_packages/HELM-SOAK-24H-20260714T114143Z/runtime_truth_snapshots.jsonl
+?? coordination/council/live_proof_packages/HELM-SOAK-24H-20260714T114143Z/scheduler_cycles.jsonl
+?? coordination/council/live_proof_packages/HELM-SOAK-24H-20260714T114143Z/seal_verdict.json
+?? coordination/council/live_proof_packages/HELM-SOAK-24H-20260714T114143Z/soak_config.json
+?? coordination/council/live_proof_packages/HELM-SOAK-24H-20260714T114143Z/termination_record.json
+?? coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T002656Z/independent_reverify.json
+?? coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T002656Z/seal_verdict.ORIGINAL_PRE_SUPERSESSION.json
+?? coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T140811Z/
+?? coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T140821Z/
+?? coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T141033Z/
+?? coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T141134Z/
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/SHA256SUMS
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/authority_preflight_controls.json
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/concurrency_report.json
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/daemon/
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/dispatch_ledger.jsonl
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/failure_injections.json
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/lease_ledger.jsonl
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/manual_intervention_metrics.json
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/recovery_events.json
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/recovery_events.jsonl
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/resource_usage.jsonl
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/runtime_truth_snapshots.jsonl
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/scheduler_cycles.jsonl
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/seal_verdict.ORIGINAL_PRE_SUPERSESSION.json
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/seal_verdict.json
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/soak_config.json
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/terminal_ledger.jsonl
+?? coordination/council/live_proof_packages/HELM-SOAK-8H-20260714T023257Z/validation.json
+?? coordination/forensics/
+?? coordination/founder/authority_binding_ledger.jsonl
+?? coordination/founder/autonomous_decision_ledger.jsonl
+?? coordination/founder/notifications_sent.jsonl
+?? coordination/jspace/audit_snapshots/
+?? coordination/jspace/quarantine_requests.jsonl
+?? coordination/leases/SOAK-HASF-4.3656ed954dbb97e0.lock
+?? coordination/leases/SOAK-HCF-4.7212408269faf2fa.lock
+?? coordination/leases/SOAK-HRF-4.a42e5fc3f1ebe0c3.lock
+?? coordination/leases/SOAK-HSF-4.e2988ed0f7699a04.lock
+?? coordination/leases/_aborted_run_residue_20260714T141134Z/
+?? data/prompt_brain/outcome_feedback_ledger.jsonl
+?? data/prompt_brain/outcome_stats.json
+?? docs/AGENTS.md
+?? docs/evidence/council/H1C_DOORSTEP_COMMITBOUND_729b1e8e/
+?? docs/evidence/council/H1C_DOORSTEP_COMMITBOUND_8f931d26/
+?? docs/evidence/council/H1C_DOORSTEP_COMMITBOUND_bf154446/
+?? docs/evidence/runtime/ag_execution_proof_task-gate2-stripe-env-guide.md
+?? docs/evidence/runtime/ag_execution_proof_task-gate3-deploy-stage.md
+?? docs/evidence/runtime/agent_exec_t-prep.json
+?? docs/evidence/runtime/agent_exec_task-allowed.json
+?? docs/evidence/runtime/agent_exec_task-test-001.json
+?? docs/safe_file.txt
+?? docs/safe_local_file.txt
+?? docs/scout/
+?? has_live_project_tracker/data/helm_supervisor_heartbeat.json
+?? has_live_project_tracker/data/homemesh_manual_devices.json
+?? has_live_project_tracker/data/property_schema.json
+?? has_live_project_tracker/data/room_schema.json
+?? scratch/temp.txt
+?? scripts/cloud/
+?? scripts/jspace/hjos_daemon.py
+?? tests/test_lease_release_honesty.py

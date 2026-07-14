@@ -1,5 +1,7 @@
 {
-  "errors": [],
+  "errors": [
+    "DIGEST_TARGET_MISSING:artifacts/__pycache__/sha256_manifest.cpython-314.pyc"
+  ],
   "manual_intervention_metrics": {
     "founder_actions": [],
     "founder_interventions": 0,
@@ -13,5 +15,5 @@
     "of": 7,
     "proven": 7
   },
-  "status": "PASS"
+  "status": "FAIL"
 }

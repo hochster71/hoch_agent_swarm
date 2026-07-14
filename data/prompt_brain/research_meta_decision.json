@@ -1,6 +1,6 @@
 {
   "schema": "brain-research-meta-v1",
-  "at": "2026-07-12T21:12:57.639978Z",
+  "at": "2026-07-14T14:54:54.542260Z",
   "improver_online": true,
   "model": "google/gemma-4-12b-qat",
   "chosen_lever": "SELECT",
@@ -29,8 +29,8 @@
     "no_champion": 43,
     "drift": 13,
     "expansion_needed_genes": 0,
-    "mean_champion_score": 95.583,
-    "generation": 819
+    "mean_champion_score": 96.167,
+    "generation": 1222
   },
   "global_converged": false
 }

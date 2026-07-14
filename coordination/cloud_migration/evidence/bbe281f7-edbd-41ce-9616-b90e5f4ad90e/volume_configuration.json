@@ -1,0 +1,10 @@
+{
+  "device": "/dev/sdc",
+  "filesystem_uuid": "4d457355-6801-4767-a30a-036159309660",
+  "mount_point": "/var/lib/helm",
+  "capacity_bytes": 105089261568,
+  "available_bytes": 99703730176,
+  "fstab_entry_persisted": true,
+  "verification_status": "OK",
+  "timestamp": "2026-07-14T13:37:47Z"
+}

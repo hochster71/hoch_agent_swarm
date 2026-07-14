@@ -1,0 +1,11 @@
+{
+  "run_id": "bbe281f7-edbd-41ce-9616-b90e5f4ad90e",
+  "classification": "NON_AUTHORITATIVE_DECORATIVE_RUNTIME",
+  "evidence": {
+    "canonical_authority_pointer_absent": true,
+    "active_leases_absent": true,
+    "scheduler_process_absent": true,
+    "current_runtime_writes_absent": true
+  },
+  "observed_at": "2026-07-14T12:30:00Z"
+}

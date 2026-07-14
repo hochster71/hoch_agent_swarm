@@ -1,0 +1,26 @@
+{
+  "schema": "FOUNDER_DOORSTEP_PACKAGE_v1",
+  "updated_at": "2026-07-14T14:33:45Z",
+  "status": "BLOCKED_TECHNICAL_GAPS_REMAIN",
+  "ready_items": [
+    "HJOS governance restored read-only",
+    "Lease honesty instrument committed",
+    "Source-only commit process established"
+  ],
+  "not_ready": [
+    "Clean Phase A/B/C sealed",
+    "Single authoritative post-cutover runtime",
+    "Independent evidence seal",
+    "External revenue proof"
+  ],
+  "founder_only_actions_catalog": [
+    "expenditure approval",
+    "production credential provisioning",
+    "legal acceptance",
+    "application signing",
+    "App Store / external submission",
+    "production cutover approval",
+    "money movement",
+    "contractual commitment"
+  ]
+}

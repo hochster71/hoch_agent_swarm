@@ -1,0 +1,20 @@
+{
+  "run_id": "bbe281f7-edbd-41ce-9616-b90e5f4ad90e",
+  "admin_user_created": "michael",
+  "sudo_access_verified": true,
+  "ssh_configs_applied": {
+    "PermitRootLogin": "prohibit-password",
+    "PasswordAuthentication": "no",
+    "PubkeyAuthentication": "yes"
+  },
+  "verification": {
+    "root_key_login": "PASS",
+    "michael_key_login": "PASS",
+    "password_login_rejected": "PASS"
+  },
+  "rollback_commands": [
+    "cp /etc/ssh/sshd_config.bak /etc/ssh/sshd_config",
+    "systemctl restart ssh"
+  ],
+  "timestamp": "2026-07-14T12:35:00Z"
+}

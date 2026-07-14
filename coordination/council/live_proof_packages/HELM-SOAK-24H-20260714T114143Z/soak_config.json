@@ -1,0 +1,14 @@
+{
+  "phase": "C",
+  "seconds": 86400,
+  "started_at": "2026-07-14T11:41:43Z",
+  "concurrency_limit": 4,
+  "evidence_source": "production daemon path (scheduler.run_once); no burn-in harness",
+  "epic_fury": "APPLE_DISTRIBUTION held via required_capability; unrelated HASF work must continue",
+  "tested_commit": "fec23549e04e139b35f8770588942fb46755c3e8",
+  "tested_commit_short": "fec23549",
+  "scheduler_instance_id": "sched-f5abadcf",
+  "authority_binding_required": true,
+  "canonical_wall": "http://10.0.0.10:8770/pert",
+  "do_not_retrofit_prior_runs": true
+}

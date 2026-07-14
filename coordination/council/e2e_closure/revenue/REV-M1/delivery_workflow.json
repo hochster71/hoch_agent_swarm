@@ -1,0 +1,112 @@
+{
+  "workflow_schema": "DELIVERY_WORKFLOW_v1",
+  "product_id": "REV-M1",
+  "project_duration_days": 10,
+  "phases": [
+    {
+      "phase_number": 1,
+      "name": "Kickoff & Intake Scoping",
+      "target_days": [1],
+      "activities": [
+        "Align project stakeholders on objectives and exclusions",
+        "Distribute and collect discovery questionnaire",
+        "Setup secure shared directory for documentation sharing"
+      ],
+      "inputs": [
+        "Client initial contact notes"
+      ],
+      "outputs": [
+        "Completed discovery questionnaire",
+        "Scoping document signed by client"
+      ],
+      "responsible_roles": {
+        "HELM_lead": "Governance Architect",
+        "client_lead": "Security Liaison"
+      }
+    },
+    {
+      "phase_number": 2,
+      "name": "Architecture & Privilege Boundary Audit",
+      "target_days": [2, 3, 4],
+      "activities": [
+        "Perform read-only code review of agent orchestrations",
+        "Map agent database and API scopes",
+        "Audit network egress and VPC configurations"
+      ],
+      "inputs": [
+        "Client architecture diagram",
+        "VPC/infrastructure config files",
+        "Agent source code repository access"
+      ],
+      "outputs": [
+        "Draft Privilege Boundary Map (Deliverable D1)"
+      ],
+      "responsible_roles": {
+        "HELM_lead": "Security Auditor",
+        "client_lead": "Engineering Lead"
+      }
+    },
+    {
+      "phase_number": 3,
+      "name": "Threat Modeling & Security Vulnerability Assessment",
+      "target_days": [5, 6, 7],
+      "activities": [
+        "Conduct prompt injection and boundary breakout testing (sandboxed)",
+        "Audit insecure output parsing and direct tool call limits",
+        "Evaluate logging mechanisms for tamper-evident validation"
+      ],
+      "inputs": [
+        "Prompt definitions",
+        "API access tokens (sandbox environment)"
+      ],
+      "outputs": [
+        "Draft AI Threat Model (Deliverable D2)"
+      ],
+      "responsible_roles": {
+        "HELM_lead": "Security Auditor",
+        "client_lead": "Security Architect"
+      }
+    },
+    {
+      "phase_number": 4,
+      "name": "NIST 800-53 Control Mapping & Gap Analysis",
+      "target_days": [8, 9],
+      "activities": [
+        "Evaluate findings against NIST 800-53 families (AC, AU, SC)",
+        "Compile Gap Ledger with severity ratings and compliance scoring",
+        "Draft 30/60/90-day compliance roadmap"
+      ],
+      "inputs": [
+        "Findings from Phase 2 and Phase 3"
+      ],
+      "outputs": [
+        "Draft NIST 800-53 Gap Ledger (Deliverable D3)",
+        "Draft 30/60/90-Day Roadmap (Deliverable D5)"
+      ],
+      "responsible_roles": {
+        "HELM_lead": "Compliance Architect"
+      }
+    },
+    {
+      "phase_number": 5,
+      "name": "Final Delivery & Executive Readout",
+      "target_days": [10],
+      "activities": [
+        "Deliver finalized Executive Summary Report and detailed files",
+        "Conduct 1-hour technical readout and walkthrough",
+        "Establish follow-up scoping for ConMon monthly support subscription"
+      ],
+      "inputs": [
+        "All verified drafts"
+      ],
+      "outputs": [
+        "Finalized Executive Summary Report (Deliverable D4)",
+        "Final project sign-off and feedback collection"
+      ],
+      "responsible_roles": {
+        "HELM_lead": "Governance Architect",
+        "client_lead": "CISO / VP of Engineering"
+      }
+    }
+  ]
+}

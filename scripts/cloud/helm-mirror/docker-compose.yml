@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: helm-postgres
+    restart: always
+    environment:
+      - POSTGRES_DB=helm_mirror
+      - POSTGRES_USER=helm_operator
+      - POSTGRES_PASSWORD=helm_secure_pass
+    volumes:
+      - /var/lib/helm/postgres:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    container_name: helm-redis
+    restart: always
+    ports:
+      - "127.0.0.1:6379:6379"
+
+  helm-api:
+    build:
+      context: /root/hoch_agent_swarm
+      dockerfile: Dockerfile.api
+    container_name: helm-api-mirror
+    restart: always
+    working_dir: /app
+    volumes:
+      - /root/hoch_agent_swarm:/app
+      - /app/.venv
+      - /var/lib/helm:/var/lib/helm
+    environment:
+      - PYTHONPATH=/app
+      - CLOUD_SCHEDULER=DISABLED
+      - CLOUD_AUTHORITY=READ_ONLY
+      - WALL_MODE=MIRROR_ONLY
+      - PORT=8770
+    command: ["/app/.venv/bin/python", "-m", "uvicorn", "backend.helm_live_api:app", "--host", "0.0.0.0", "--port", "8770"]
+    ports:
+      # Bound to public/all interfaces on 8770 as needed for PERT wall reachability
+      - "8770:8770"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8770/api/v1/helm/wall"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 20s
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: helm-prometheus
+    restart: always
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "127.0.0.1:9090:9090"
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: helm-grafana
+    restart: always
+    ports:
+      - "127.0.0.1:3000:3000"
+
+  backup-agent:
+    image: alpine:latest
+    container_name: helm-backup-agent
+    restart: always
+    volumes:
+      - /var/lib/helm:/var/lib/helm
+    command: ["sh", "-c", "while true; do echo 'Backing up HELM state...'; tar -czf /var/lib/helm/backups/helm_backup_$$(date +%F).tar.gz -C /var/lib/helm runtime evidence jspace; sleep 86400; done"]

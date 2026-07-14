@@ -1,0 +1,11 @@
+{
+  "termination_requested_at": "2026-07-14T14:08:00Z",
+  "termination_signal": "SIGTERM",
+  "process_exit_status": "TERMINATED_TAINTED",
+  "reason": "EVIDENCE_CHAIN_NOT_TRUSTWORTHY",
+  "detail": "Phase C started on pre-full-fix release instrumentation and while Phase A/B zero-leak claims were known false-green capable. Controlled stop; evidence preserved; clean restart required after fixed commit + clean lease baseline.",
+  "may_be_cited_as_evidence": false,
+  "do_not_retrofit": true,
+  "supersession_code": "FALSE_RELEASE_LEDGER_INSTRUMENT",
+  "canonical_wall": "http://10.0.0.10:8770/pert"
+}

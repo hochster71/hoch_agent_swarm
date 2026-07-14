@@ -18,7 +18,7 @@ import scripts.council.h1_authorization as h1_auth
 
 council_router = APIRouter()
 
-@council_router.get("/api/v1/council/state")
+@council_router.get("/api/v1/helm/council/state")
 def get_council_state():
     # Authoritative council directory (sandbox via HELM_COUNCIL_DIR for tests)
     council_dir = (

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>HELM</title>
+<style>
+:root{--bg:#0b0e13;--card:#141922;--line:#232b38;--tx:#e6edf3;--dim:#8b98a9;
+--live:#2ea043;--stale:#d29922;--unknown:#8b949e;--bad:#f85149}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);
+font:14px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;
+display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}
+.wrap{max-width:620px;width:100%}
+h1{font-size:16px;letter-spacing:.14em;margin:0 0 4px}
+.sub{color:var(--dim);font-size:11px;margin-bottom:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;margin-bottom:12px}
+.row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #1c2230}
+.row:last-child{border:0}
+.k{color:var(--dim)}
+.pill{padding:1px 8px;border-radius:10px;font-size:10px;font-weight:700;letter-spacing:.06em}
+.LIVE{background:rgba(46,160,67,.16);color:var(--live)}
+.STALE{background:rgba(210,153,34,.16);color:var(--stale)}
+.UNKNOWN{background:rgba(139,148,158,.16);color:var(--unknown)}
+.CONTRADICTED{background:rgba(248,81,73,.16);color:var(--bad)}
+a{color:#58a6ff;text-decoration:none}
+.note{font-size:11px;color:var(--dim);border-left:2px solid #5a4520;padding-left:10px;margin-top:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>HELM</h1>
+  <div class="sub">this entrypoint reports runtime truth or nothing at all</div>
+
+  <div class="card">
+    <div class="row">
+      <span class="k">runtime</span>
+      <span class="pill UNKNOWN" id="state">UNKNOWN</span>
+    </div>
+    <div class="row"><span class="k">freshness</span><span id="fresh">—</span></div>
+    <div class="row"><span class="k">tested commit</span><span id="commit">—</span></div>
+    <div class="row"><span class="k">source</span><span id="src">—</span></div>
+  </div>
+
+  <div class="card">
+    <div class="row"><span class="k">single console</span>
+      <a href="/frontend_live/console.html">console.html →</a></div>
+    <div class="row"><span class="k">pert wall</span>
+      <a href="/frontend_live/pert.html">pert.html →</a></div>
+    <div class="row"><span class="k">founder queue</span>
+      <a href="/frontend_live/founder.html">founder.html →</a></div>
+  </div>
+
+  <div class="note">
+    The previous <code>frontend/index.html</code> contained no API calls — it rendered hardcoded
+    success text regardless of runtime state. It is quarantined as evidence under
+    <code>docs/theater/quarantined_fake_uis/</code>. This replacement reads the live HELM API and
+    shows <b>UNKNOWN</b> when the API is unreachable. It never shows last-known-good.
+  </div>
+</div>
+
+<script>
+const API='http://127.0.0.1:8770';
+const BUDGET=120;
+async function tick(){
+  const st=document.getElementById('state');
+  try{
+    const r=await fetch(API+'/api/v1/helm/runtime',{cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    const f=d.freshness_seconds;
+    // staleness is a failure state, not a cosmetic one
+    const s=(f!=null&&f>BUDGET)?'STALE':(d.overall||d.state||'LIVE');
+    st.textContent=s; st.className='pill '+(['LIVE','STALE','UNKNOWN','CONTRADICTED'].includes(s)?s:'UNKNOWN');
+    document.getElementById('fresh').textContent=f==null?'—':f.toFixed(0)+'s';
+    document.getElementById('commit').textContent=(d.tested_commit||'—').toString().slice(0,10);
+    document.getElementById('src').textContent=(d.source||'—').toString().slice(0,34);
+  }catch(e){
+    st.textContent='UNKNOWN'; st.className='pill UNKNOWN';
+    document.getElementById('fresh').textContent='—';
+    document.getElementById('commit').textContent='—';
+    document.getElementById('src').textContent='API unreachable';
+  }
+}
+tick(); setInterval(tick,5000);
+</script>
+</body>
+</html>

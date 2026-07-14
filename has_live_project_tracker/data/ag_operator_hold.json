@@ -2,7 +2,7 @@
   "operator_hold_active": true,
   "reason": "Test manual override",
   "operator": "Developer Unit Test",
-  "timestamp": "2026-07-09T04:13:27.255085Z",
+  "timestamp": "2026-07-13T14:19:06.909761Z",
   "affected_categories": [
     "release"
   ]

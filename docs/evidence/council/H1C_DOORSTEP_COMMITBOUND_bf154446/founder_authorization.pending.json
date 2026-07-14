@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "decision_type": "H1C_CONTROLLED_LOCAL_EXECUTION",
+  "decision_status": "PENDING_FOUNDER_DECISION",
+  "founder_identity": "Michael Bryan Hoch",
+  "approval_id": null,
+  "decision": null,
+  "reason": null,
+  "candidate_id": "HELM-H1-CANDIDATE-20260712T013903Z-4B7F62BE",
+  "package_id": "HELM-H1-CANDIDATE-20260712T013903Z-4B7F62BE",
+  "package_digest": "97910a44dbc757d2f5c84a00812976686bcff4456bfba5c0c912ad2f242f819f",
+  "implementation_commit": "bf154446d41d498b70da4e85574866c5d25db1c1",
+  "authorized_environment": "local_only",
+  "authorized_execution_scope": [
+    "h1c_controlled_dry_run",
+    "local_read_only_probe",
+    "local_ledger_write",
+    "local_evidence_emit"
+  ],
+  "external_dispatch_allowed": false,
+  "founder_only_actions_allowed": false,
+  "operator_hold_release_required": true,
+  "fresh_live_proof_required": true,
+  "automatic_relock_required": true,
+  "issued_at": null,
+  "expires_at": null,
+  "founder_signature": null,
+  "source_packet_sha256": "24eea4eabe7ce3f94fb36a895ffb3351e742d937b8ac7ed717ef30d6032de19a",
+  "validation_sha256": "c49e84b325c62e770daad773e2d06ab44fe473de28986785428e04a1db22d0aa"
+}

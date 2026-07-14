@@ -1,0 +1,20 @@
+{
+  "schema": "HELM_E2E_VALIDATION_REPORT_v1",
+  "updated_at": "2026-07-14T14:33:45Z",
+  "executive_verdict": "HOLD",
+  "why_not_pass": [
+    "Clean Phase A not sealed",
+    "Phase B/C not run",
+    "No independent full seal",
+    "No verified external revenue",
+    "Cloud cutover not complete on this host"
+  ],
+  "positive_midflight": {
+    "phase_a_package": "HELM-SOAK-2H-20260714T141914Z",
+    "pid": 17876,
+    "auth_binding": "52/52 ACQUIRED fully bound (sample at ~14m)",
+    "release_honesty": "all RELEASED have lock_file_removed=true",
+    "jspace_auto_quarantine": "disabled"
+  },
+  "forensics": "coordination/forensics/HELM_E2E_CLOSURE_20260714T143237Z"
+}

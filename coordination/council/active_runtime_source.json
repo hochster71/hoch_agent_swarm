@@ -1,8 +1,8 @@
 {
-  "scheduler_instance_id": "sched-84edfd45",
-  "ledger_path": "/Users/michaelhoch/hoch_agent_swarm/coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T002656Z/daemon/task_lease_ledger.jsonl",
-  "evidence_dir": "/Users/michaelhoch/hoch_agent_swarm/coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T002656Z/daemon",
-  "instance_sidecar": "/Users/michaelhoch/hoch_agent_swarm/coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T002656Z/daemon/scheduler_instance.json",
-  "pid": 80347,
-  "published_at": "2026-07-14T00:26:57Z"
+  "scheduler_instance_id": "sched-77dcea88",
+  "ledger_path": "/Users/michaelhoch/hoch_agent_swarm/coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T141914Z/daemon/task_lease_ledger.jsonl",
+  "evidence_dir": "/Users/michaelhoch/hoch_agent_swarm/coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T141914Z/daemon",
+  "instance_sidecar": "/Users/michaelhoch/hoch_agent_swarm/coordination/council/live_proof_packages/HELM-SOAK-2H-20260714T141914Z/daemon/scheduler_instance.json",
+  "pid": 17876,
+  "published_at": "2026-07-14T14:19:19Z"
 }

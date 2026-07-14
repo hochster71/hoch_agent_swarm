@@ -10,8 +10,8 @@
     "champion_classes": 30,
     "total_genes": 737,
     "top5_share": 0.392,
-    "mean_champion_score": 95.583,
-    "generation": 819,
+    "mean_champion_score": 96.167,
+    "generation": 1222,
     "state": "CONVERGED"
   },
   "by_constraint": {
@@ -477,15 +477,6 @@
       "pool_deficit": 0
     },
     {
-      "class": "Legal / Compliance",
-      "genes": 6,
-      "has_champion": true,
-      "score": 82.5,
-      "state": "RECURSIVELY_IMPROVED",
-      "constraint": "SATURATED",
-      "pool_deficit": 0
-    },
-    {
       "class": "Cloud Security",
       "genes": 6,
       "has_champion": true,
@@ -695,6 +686,15 @@
     {
       "class": "Infrastructure & Hardware",
       "genes": 7,
+      "has_champion": true,
+      "score": 100.0,
+      "state": "RECURSIVELY_IMPROVED",
+      "constraint": "SATURATED",
+      "pool_deficit": 0
+    },
+    {
+      "class": "Legal / Compliance",
+      "genes": 6,
       "has_champion": true,
       "score": 100.0,
       "state": "RECURSIVELY_IMPROVED",

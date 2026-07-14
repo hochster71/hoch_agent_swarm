@@ -1,0 +1,96 @@
+{
+  "schema": "HELM_FMEA_v1",
+  "updated_at": "2026-07-14T14:33:45Z",
+  "items": [
+    {
+      "id": "F-01",
+      "failure": "Ledger RELEASED without lock removal",
+      "sev": 10,
+      "occ": 3,
+      "det": 2,
+      "rpn": 60,
+      "status": "MITIGATED",
+      "control": "_release_lease_logged + tests in 02edf144/528b71ec"
+    },
+    {
+      "id": "F-02",
+      "failure": "SQLite lock from competing PersistentScheduler kills soak",
+      "sev": 9,
+      "occ": 4,
+      "det": 3,
+      "rpn": 108,
+      "status": "OPEN_CONTROL",
+      "control": "Kill competing schedulers preflight; busy_timeout; single authority pointer"
+    },
+    {
+      "id": "F-03",
+      "failure": "Dual soak launch / split-brain instance",
+      "sev": 9,
+      "occ": 3,
+      "det": 3,
+      "rpn": 81,
+      "status": "OPEN_CONTROL",
+      "control": "Single launch preflight; pointer ownership"
+    },
+    {
+      "id": "F-04",
+      "failure": "HJOS self-authorizes mutation via short burn-in",
+      "sev": 8,
+      "occ": 2,
+      "det": 2,
+      "rpn": 32,
+      "status": "MITIGATED",
+      "control": "quarantine_governance.json auto_q=false"
+    },
+    {
+      "id": "F-05",
+      "failure": "Historical incidents self-clear on green cycle",
+      "sev": 7,
+      "occ": 2,
+      "det": 3,
+      "rpn": 42,
+      "status": "MITIGATED",
+      "control": "incidents.jsonl append-only lifecycle"
+    },
+    {
+      "id": "F-06",
+      "failure": "Cloud disk misformat / wrong device",
+      "sev": 10,
+      "occ": 1,
+      "det": 4,
+      "rpn": 40,
+      "status": "OPEN",
+      "control": "Explicit /dev/sdc guard; founder confirm"
+    },
+    {
+      "id": "F-07",
+      "failure": "Founder-only action automated",
+      "sev": 10,
+      "occ": 1,
+      "det": 2,
+      "rpn": 20,
+      "status": "CONTROLLED",
+      "control": "charter + doorstep isolation"
+    },
+    {
+      "id": "F-08",
+      "failure": "Revenue claimed without payment proof",
+      "sev": 9,
+      "occ": 2,
+      "det": 2,
+      "rpn": 36,
+      "status": "OPEN",
+      "control": "External payment/contract artifact required"
+    },
+    {
+      "id": "F-09",
+      "failure": "Dirty-tree soak not commit-bound",
+      "sev": 8,
+      "occ": 5,
+      "det": 2,
+      "rpn": 80,
+      "status": "OPEN_CONTROL",
+      "control": "preflight hashes + tested_commit + helm-path clean"
+    }
+  ]
+}

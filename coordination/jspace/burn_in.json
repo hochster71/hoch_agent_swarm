@@ -3,267 +3,419 @@
   "burn_in_complete": false,
   "burn_in_completed_at": "2026-07-14T12:52:19Z",
   "clean_cycles": 0,
-  "completed_cycles": 31,
+  "completed_cycles": 137,
   "disabled_by_audit": true,
   "disabled_reason": "Independent audit: 5-cycle burn-in is not approved production maturity evidence; mutation gated fail-closed via quarantine_governance.json",
   "history": [
     {
-      "at": "2026-07-14T12:52:19Z",
+      "at": "2026-07-14T14:09:34Z",
       "clean": true,
-      "cycle_id": "JCYC-20260714-1BB997",
-      "exception": null,
-      "overall": "CONTRADICTED",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-14T12:52:19Z",
-      "clean": true,
-      "cycle_id": "JCYC-20260714-853C1D",
-      "exception": null,
-      "overall": "CONTRADICTED",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-14T12:52:19Z",
-      "clean": true,
-      "cycle_id": "JCYC-20260714-5DB4F7",
-      "exception": null,
-      "overall": "CONTRADICTED",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-14T12:52:19Z",
-      "clean": true,
-      "cycle_id": "JCYC-20260714-EDEB40",
-      "exception": null,
-      "overall": "CONTRADICTED",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-14T12:52:19Z",
-      "clean": true,
-      "cycle_id": "JCYC-20260714-32C01C",
-      "exception": null,
-      "overall": "CONTRADICTED",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-14T12:52:36Z",
-      "clean": true,
-      "cycle_id": "JCYC-20260714-B41CBA",
+      "cycle_id": "JCYC-20260714-60F493",
       "exception": null,
       "overall": "CONFIRMED_LIVE",
       "state_mutated": false
     },
     {
-      "at": "2026-07-14T12:52:39Z",
+      "at": "2026-07-14T14:09:36Z",
       "clean": true,
-      "cycle_id": "JCYC-20260714-260DB5",
+      "cycle_id": "JCYC-20260714-F9E4EE",
       "exception": null,
       "overall": "CONFIRMED_LIVE",
       "state_mutated": false
     },
     {
-      "at": "2026-07-14T12:53:39Z",
+      "at": "2026-07-14T14:10:36Z",
       "clean": true,
-      "cycle_id": "JCYC-20260714-CD3078",
+      "cycle_id": "JCYC-20260714-33A35C",
       "exception": null,
       "overall": "CONFIRMED_LIVE",
       "state_mutated": false
     },
     {
-      "at": "2026-07-14T12:54:39Z",
+      "at": "2026-07-14T14:11:36Z",
       "clean": true,
-      "cycle_id": "JCYC-20260714-EB0867",
+      "cycle_id": "JCYC-20260714-A1E1A0",
       "exception": null,
       "overall": "CONFIRMED_LIVE",
       "state_mutated": false
     },
     {
-      "at": "2026-07-14T12:55:39Z",
+      "at": "2026-07-14T14:12:36Z",
       "clean": true,
-      "cycle_id": "JCYC-20260714-24DF71",
+      "cycle_id": "JCYC-20260714-7F04C7",
       "exception": null,
       "overall": "CONFIRMED_LIVE",
       "state_mutated": false
     },
     {
-      "at": "2026-07-14T12:56:39Z",
+      "at": "2026-07-14T14:13:36Z",
       "clean": true,
-      "cycle_id": "JCYC-20260714-2CCC75",
+      "cycle_id": "JCYC-20260714-E9F673",
       "exception": null,
       "overall": "CONFIRMED_LIVE",
       "state_mutated": false
     },
     {
-      "at": "2026-07-14T12:57:39Z",
+      "at": "2026-07-14T14:14:36Z",
       "clean": true,
-      "cycle_id": "JCYC-20260714-136F59",
+      "cycle_id": "JCYC-20260714-331B8B",
       "exception": null,
       "overall": "CONFIRMED_LIVE",
       "state_mutated": false
     },
     {
-      "at": "2026-07-14T12:58:39Z",
-      "clean": true,
-      "cycle_id": "JCYC-20260714-EDBAC8",
-      "exception": null,
-      "overall": "CONFIRMED_LIVE",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-14T12:59:39Z",
-      "clean": true,
-      "cycle_id": "JCYC-20260714-715EBC",
-      "exception": null,
-      "overall": "CONFIRMED_LIVE",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-14T13:00:39Z",
-      "clean": true,
-      "cycle_id": "JCYC-20260714-763EB9",
-      "exception": null,
-      "overall": "CONFIRMED_LIVE",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-14T13:01:39Z",
-      "clean": true,
-      "cycle_id": "JCYC-20260714-CEC939",
-      "exception": null,
-      "overall": "CONFIRMED_LIVE",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-14T13:02:39Z",
-      "clean": true,
-      "cycle_id": "JCYC-20260714-A40244",
-      "exception": null,
-      "overall": "CONFIRMED_LIVE",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-14T13:03:40Z",
-      "clean": true,
-      "cycle_id": "JCYC-20260714-C5FF62",
-      "exception": null,
-      "overall": "CONFIRMED_LIVE",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-14T13:04:40Z",
-      "clean": true,
-      "cycle_id": "JCYC-20260714-ABCE44",
-      "exception": null,
-      "overall": "CONFIRMED_LIVE",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-14T13:05:40Z",
-      "clean": true,
-      "cycle_id": "JCYC-20260714-E7FE04",
-      "exception": null,
-      "overall": "CONFIRMED_LIVE",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-14T13:06:40Z",
-      "clean": true,
-      "cycle_id": "JCYC-20260714-D7C400",
-      "exception": null,
-      "overall": "CONTRADICTED",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-14T13:07:40Z",
-      "clean": true,
-      "cycle_id": "JCYC-20260714-920E74",
-      "exception": null,
-      "overall": "CONFIRMED_LIVE",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-14T13:08:11Z",
-      "clean": true,
-      "cycle_id": "JCYC-20260714-ECDB0D",
-      "exception": null,
-      "overall": "CONFIRMED_LIVE",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-14T13:08:35Z",
-      "clean": true,
-      "cycle_id": "JCYC-20260714-B56DD6",
-      "exception": null,
-      "overall": "CONFIRMED_LIVE",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-14T13:09:35Z",
-      "clean": true,
-      "cycle_id": "JCYC-20260714-30B1BD",
-      "exception": null,
-      "overall": "CONFIRMED_LIVE",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-14T13:09:35Z",
-      "clean": true,
-      "cycle_id": "JCYC-20260714-DEF07F",
-      "exception": null,
-      "overall": "CONFIRMED_LIVE",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-14T13:10:32Z",
-      "clean": true,
-      "cycle_id": "JCYC-20260714-698DE6",
-      "exception": null,
-      "overall": "CONFIRMED_LIVE",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-14T13:10:35Z",
-      "clean": true,
-      "cycle_id": "JCYC-20260714-5458C6",
-      "exception": null,
-      "overall": "CONFIRMED_LIVE",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-14T13:11:30Z",
-      "clean": true,
-      "cycle_id": "JCYC-20260714-7D5D63",
-      "exception": null,
-      "overall": "CONFIRMED_LIVE",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-14T13:11:35Z",
-      "clean": true,
-      "cycle_id": "JCYC-20260714-86BEC7",
-      "exception": null,
-      "overall": "CONFIRMED_LIVE",
-      "state_mutated": false
-    },
-    {
-      "at": "2026-07-14T13:12:35Z",
+      "at": "2026-07-14T14:15:36Z",
       "clean": false,
-      "cycle_id": "JCYC-20260714-D965C8",
+      "cycle_id": "JCYC-20260714-608CFF",
+      "exception": null,
+      "overall": "UNKNOWN",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:16:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-CECDCE",
+      "exception": null,
+      "overall": "UNKNOWN",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:17:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-1B13B6",
+      "exception": null,
+      "overall": "UNKNOWN",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:18:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-64A4BD",
+      "exception": null,
+      "overall": "CONTRADICTED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:19:36Z",
+      "clean": true,
+      "cycle_id": "JCYC-20260714-636601",
+      "exception": null,
+      "overall": "CONFIRMED_LIVE",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:20:36Z",
+      "clean": true,
+      "cycle_id": "JCYC-20260714-EC170A",
+      "exception": null,
+      "overall": "CONFIRMED_LIVE",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:21:36Z",
+      "clean": true,
+      "cycle_id": "JCYC-20260714-ABCDB7",
+      "exception": null,
+      "overall": "CONFIRMED_LIVE",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:22:36Z",
+      "clean": true,
+      "cycle_id": "JCYC-20260714-05C77E",
+      "exception": null,
+      "overall": "CONFIRMED_LIVE",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:23:36Z",
+      "clean": true,
+      "cycle_id": "JCYC-20260714-1AF2C1",
+      "exception": null,
+      "overall": "CONFIRMED_LIVE",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:24:36Z",
+      "clean": true,
+      "cycle_id": "JCYC-20260714-0B9470",
+      "exception": null,
+      "overall": "CONFIRMED_LIVE",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:25:36Z",
+      "clean": true,
+      "cycle_id": "JCYC-20260714-E268EF",
+      "exception": null,
+      "overall": "CONFIRMED_LIVE",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:26:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-30FA29",
+      "exception": null,
+      "overall": "CONTRADICTED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:27:36Z",
+      "clean": true,
+      "cycle_id": "JCYC-20260714-7785C3",
+      "exception": null,
+      "overall": "CONFIRMED_LIVE",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:28:36Z",
+      "clean": true,
+      "cycle_id": "JCYC-20260714-6F23A6",
+      "exception": null,
+      "overall": "CONFIRMED_LIVE",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:29:36Z",
+      "clean": true,
+      "cycle_id": "JCYC-20260714-760A37",
+      "exception": null,
+      "overall": "CONFIRMED_LIVE",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:30:36Z",
+      "clean": true,
+      "cycle_id": "JCYC-20260714-C1E312",
+      "exception": null,
+      "overall": "CONFIRMED_LIVE",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:31:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-8CE64B",
+      "exception": null,
+      "overall": "CONTRADICTED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:32:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-D76F29",
+      "exception": null,
+      "overall": "BLOCKED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:33:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-B21E4B",
+      "exception": null,
+      "overall": "BLOCKED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:34:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-6556F2",
+      "exception": null,
+      "overall": "BLOCKED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:35:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-91FC10",
+      "exception": null,
+      "overall": "BLOCKED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:36:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-AEB027",
+      "exception": null,
+      "overall": "BLOCKED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:37:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-ED22CC",
+      "exception": null,
+      "overall": "CONTRADICTED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:38:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-07340F",
+      "exception": null,
+      "overall": "BLOCKED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:39:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-9CF1E5",
+      "exception": null,
+      "overall": "BLOCKED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:40:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-26A044",
+      "exception": null,
+      "overall": "BLOCKED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:41:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-D6083C",
+      "exception": null,
+      "overall": "BLOCKED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:42:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-2813D1",
+      "exception": null,
+      "overall": "BLOCKED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:43:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-A87D9E",
+      "exception": null,
+      "overall": "CONTRADICTED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:44:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-FA0594",
+      "exception": null,
+      "overall": "CONTRADICTED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:45:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-CFA5A2",
+      "exception": null,
+      "overall": "CONTRADICTED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:46:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-534A21",
+      "exception": null,
+      "overall": "CONTRADICTED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:47:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-7DA73B",
+      "exception": null,
+      "overall": "CONTRADICTED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:48:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-BB9E0B",
+      "exception": null,
+      "overall": "CONTRADICTED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:49:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-AEC8E3",
+      "exception": null,
+      "overall": "CONTRADICTED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:50:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-40EF4F",
+      "exception": null,
+      "overall": "CONTRADICTED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:51:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-6D8B28",
+      "exception": null,
+      "overall": "CONTRADICTED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:52:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-C9C8E9",
+      "exception": null,
+      "overall": "CONTRADICTED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:53:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-9436D4",
+      "exception": null,
+      "overall": "CONTRADICTED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:54:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-CE67DA",
+      "exception": null,
+      "overall": "CONTRADICTED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:55:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-C084D0",
+      "exception": null,
+      "overall": "CONTRADICTED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:56:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-CC8DAA",
+      "exception": null,
+      "overall": "CONTRADICTED",
+      "state_mutated": false
+    },
+    {
+      "at": "2026-07-14T14:57:36Z",
+      "clean": false,
+      "cycle_id": "JCYC-20260714-9AC091",
       "exception": null,
       "overall": "CONTRADICTED",
       "state_mutated": false
     }
   ],
   "last_dirty": {
-    "at": "2026-07-14T13:12:35Z",
-    "cycle_id": "JCYC-20260714-D965C8",
+    "at": "2026-07-14T14:57:36Z",
+    "cycle_id": "JCYC-20260714-9AC091",
     "exception": null,
     "overall": "CONTRADICTED",
     "state_mutated": false
   },
   "min_cycles": 5,
   "schema": "HJOS_BURN_IN_v1",
-  "updated_at": "2026-07-14T13:12:35Z"
+  "updated_at": "2026-07-14T14:57:36Z"
 }

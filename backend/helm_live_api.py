@@ -49,6 +49,9 @@ UNKNOWN = "UNKNOWN"
 app = FastAPI(title="HELM LIVE")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
+from backend.instrument_integrity.council_router import council_router
+app.include_router(council_router)
+
 
 def now() -> str:
     return datetime.datetime.now(datetime.timezone.utc).isoformat()

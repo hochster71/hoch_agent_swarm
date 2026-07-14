@@ -1,0 +1,67 @@
+{
+  "rooms": [
+    {
+      "id": "office",
+      "name": "Michael's Office",
+      "floor": 1,
+      "zone_id": "secure_office",
+      "description": "Primary workspace"
+    },
+    {
+      "id": "living_room",
+      "name": "Living Room",
+      "floor": 1,
+      "zone_id": "living_zones",
+      "description": "Central family area"
+    },
+    {
+      "id": "kitchen",
+      "name": "Kitchen",
+      "floor": 1,
+      "zone_id": "living_zones",
+      "description": "Family dining zone"
+    },
+    {
+      "id": "master_bedroom",
+      "name": "Master Bedroom",
+      "floor": 2,
+      "zone_id": "living_zones",
+      "description": "Michael's bedroom"
+    },
+    {
+      "id": "kids_rooms",
+      "name": "Kids Rooms",
+      "floor": 2,
+      "zone_id": "living_zones",
+      "description": "Children bedrooms"
+    },
+    {
+      "id": "garage",
+      "name": "Garage",
+      "floor": 1,
+      "zone_id": "living_zones",
+      "description": "Vehicle storage"
+    },
+    {
+      "id": "network_closet",
+      "name": "Network Closet",
+      "floor": 1,
+      "zone_id": "secure_office",
+      "description": "UDM/Switch server room"
+    }
+  ],
+  "zones": [
+    {
+      "id": "secure_office",
+      "name": "Office & Network Core",
+      "security_level": 5,
+      "description": "Highest security zone"
+    },
+    {
+      "id": "living_zones",
+      "name": "Living Spaces",
+      "security_level": 2,
+      "description": "Standard interior spaces"
+    }
+  ]
+}
