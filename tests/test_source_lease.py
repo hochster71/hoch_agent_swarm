@@ -193,3 +193,32 @@ def test_expired_lease_does_not_block_a_commit():
     _expire(mgr, "x.py", minutes_ago=45)
     conflicts = check_paths_against_leases(["x.py"], committer="claude", manager=mgr)
     assert conflicts == [], "an EXPIRED lease should not block commits (it is reclaimable)"
+
+
+# ---------------------------------------------------------------- standalone invocation (regression)
+def test_detector_runs_as_a_standalone_script_without_import_error():
+    """REGRESSION: run as a git hook (`python3 backend/mission_control/detect_source_conflicts.py`) the
+    package root is not on sys.path, so `import backend...` raised ModuleNotFoundError and the hook
+    crashed with exit 1 — which in warn mode would BLOCK every commit on the guard's own bug. The unit
+    tests missed it because pytest adds the root. This runs the real entrypoint in a clean subprocess."""
+    import subprocess
+    import sys as _sys
+    root = Path(__file__).resolve().parents[1]
+    script = root / "backend" / "mission_control" / "detect_source_conflicts.py"
+    # empty index (no staged paths) -> must exit 0 cleanly, and must NOT emit an import traceback
+    r = subprocess.run([_sys.executable, str(script)], cwd=str(root),
+                       capture_output=True, text=True)
+    assert "ModuleNotFoundError" not in r.stderr, f"standalone import regressed:\n{r.stderr}"
+    assert r.returncode in (0, 1), f"unexpected crash exit {r.returncode}:\n{r.stderr}"
+
+
+def test_internal_error_fails_open_in_warn_mode(monkeypatch, tmp_path):
+    """A bug inside the guard must not block commits in warn mode (false-red). It blocks only in strict."""
+    import backend.mission_control.detect_source_conflicts as det
+    monkeypatch.setattr(det, "_staged_paths", lambda: ["x.py"])
+    monkeypatch.setattr(det, "check_paths_against_leases",
+                        lambda *a, **k: (_ for _ in ()).throw(RuntimeError("boom")))
+    monkeypatch.delenv("HELM_SOURCE_LEASE_STRICT", raising=False)
+    assert det.main() == 0, "warn mode must fail OPEN on an internal guard error"
+    monkeypatch.setenv("HELM_SOURCE_LEASE_STRICT", "1")
+    assert det.main() == 1, "strict mode must fail CLOSED on an internal guard error"

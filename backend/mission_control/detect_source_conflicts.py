@@ -31,6 +31,11 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 ROOT = Path(__file__).resolve().parents[2]
+# Run as a git hook (`python3 backend/mission_control/detect_source_conflicts.py`) the package root is
+# NOT on sys.path, so `import backend...` fails. Put it there. (The unit tests passed only because
+# pytest already adds the root — a gap this standalone entrypoint exposed.)
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 
 def _committer() -> str:
@@ -98,15 +103,22 @@ def _journal(conflicts: List[Dict[str, Any]]) -> None:
 
 
 def main() -> int:
-    committer = _committer()
-    paths = _staged_paths()
-    if not paths:
-        return 0
-    conflicts = check_paths_against_leases(paths, committer=committer)
+    strict = os.environ.get("HELM_SOURCE_LEASE_STRICT") == "1"
+    try:
+        committer = _committer()
+        paths = _staged_paths()
+        if not paths:
+            return 0
+        conflicts = check_paths_against_leases(paths, committer=committer)
+    except Exception as e:
+        # The guard itself errored. Do NOT block a commit on our own bug in warn mode — that would be
+        # a false-red wedging the whole team. Surface it loudly; block only if the operator chose strict.
+        sys.stderr.write(f"\n⚠️  source-guard internal error: {e}\n"
+                         f"   {'BLOCKED (strict)' if strict else 'commit allowed (warn) — guard skipped'}\n\n")
+        return 1 if strict else 0
     if not conflicts:
         return 0
     _journal(conflicts)
-    strict = os.environ.get("HELM_SOURCE_LEASE_STRICT") == "1"
     sys.stderr.write("\n⚠️  SOURCE-TREE COORDINATION CONFLICT\n")
     for c in conflicts:
         sys.stderr.write(

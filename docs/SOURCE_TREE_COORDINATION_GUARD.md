@@ -53,6 +53,31 @@ Default is **warn + record** so a non-participating agent (e.g. one not yet wire
 not hard-blocked, but the collision is durably recorded. Flip to **strict** for full single-writer
 enforcement once every agent in the swarm takes leases.
 
+## The swarm roster — every agent is covered
+
+The commit-boundary detector fires on **any** `git commit` to this repo, no matter which tool makes it
+(the hook is wired through `core.hooksPath`, not into any one agent). So Claude, Grok, the ChatGPT CLI,
+and the AG IDE are **already** covered for detection the moment the hook is enabled — there is no
+per-agent code to write. The only per-agent step is giving each one a stable **holder identity** so the
+conflict record names the right author. Set it once per tool:
+
+| Agent | holder id | how it sets identity |
+|---|---|---|
+| Claude (this agent) | `claude` | `export HELM_SOURCE_HOLDER=claude` in its shell env |
+| Grok CLI / `agent` | `grok` | `export HELM_SOURCE_HOLDER=grok` |
+| ChatGPT CLI (e.g. `codex`) | `chatgpt-cli` | `export HELM_SOURCE_HOLDER=chatgpt-cli` |
+| AG IDE | `ag-ide` | `export HELM_SOURCE_HOLDER=ag-ide` |
+
+If an agent sets no `HELM_SOURCE_HOLDER`, the detector falls back to `git config user.name`, then
+`$USER` — so a conflict is still recorded, just under whatever identity git sees. To make a cooperating
+agent also **take** leases before editing (so others are actively blocked, not just warned after), wire
+the `acquire()/record_own_write()/release()` calls from the snippet above into that agent's edit step.
+Detection at the commit boundary needs nothing; prevention needs the agent to take the lease.
+
+> The holder ids above are a starting convention for the agents named so far. If the roster differs
+> (different binary, more agents), the guard doesn't care — any string works — but keeping the ids
+> consistent is what makes the conflict journal readable.
+
 ## What it deliberately does NOT claim
 
 - It does not prevent a non-cooperating process from overwriting a file mid-edit. It **detects** that
