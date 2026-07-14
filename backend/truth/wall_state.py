@@ -231,7 +231,11 @@ def _active_task_factories() -> dict[str, int]:
 
 def _task_nodes() -> list[dict[str, Any]]:
     import sqlite3
-    db = ROOT / "has_live_project_tracker" / "data" / "mission_control.db"
+    # BUG: this pointed at a DB that does not exist, so it silently returned 0 nodes --
+    # and the old integrity code called 0 nodes "CLEAN". Use the SCHEDULER'S canonical
+    # DB_PATH, and if it is missing, say so instead of returning a quiet empty list.
+    from backend.mission_control.persistent_scheduler import DB_PATH
+    db = Path(DB_PATH)
     if not db.exists():
         return []
     try:
