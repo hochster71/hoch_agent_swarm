@@ -94,8 +94,11 @@ class PersistentScheduler:
             f.write(json.dumps(entry) + "\n")
 
     def log_lease(self, entry: Dict[str, Any]):
-        with open(self.lease_log, "a", encoding="utf-8") as f:
-            f.write(json.dumps(entry) + "\n")
+        # AU-9: every evidence record binds to its predecessor. Delete, edit, reorder or truncate
+        # this ledger and verify_chain() breaks at that point and stays broken. Before this, a
+        # record could be removed from the middle of history and NOTHING detected it.
+        from backend.truth.evidence_chain import append_record
+        append_record(self.lease_log, entry)
 
     def _release_lease_logged(
         self,
@@ -140,8 +143,8 @@ class PersistentScheduler:
         return ok
 
     def log_dispatch(self, entry: Dict[str, Any]):
-        with open(self.dispatch_log, "a", encoding="utf-8") as f:
-            f.write(json.dumps(entry) + "\n")
+        from backend.truth.evidence_chain import append_record
+        append_record(self.dispatch_log, entry)
 
     def _append_jsonl(self, name, rec):
         p = self.evidence_dir / name
@@ -860,6 +863,27 @@ class PersistentScheduler:
         return peak if peak > 0 else "UNKNOWN"
 
     def run_once(self) -> Dict[str, Any]:
+        # RECLAIM EXPIRED LEASES FIRST. Phase A 2026-07-14 FAILED because this did not exist:
+        # is_expired() was defined and never called, so a killed worker pinned its slot forever.
+        # The TTL is now enforced, not decorative.
+        try:
+            _reclaimed = self.lease_manager.reclaim_expired_leases()
+            for _r in _reclaimed:
+                self.log_lease({
+                    "ts": get_utc_now_str(),
+                    "task_id": _r.get("task_id"),
+                    "lease_id": _r.get("lease_id"),
+                    "status": "LEASE_RECLAIMED_EXPIRED",
+                    "lock_file_removed": True,
+                    "held_seconds": _r.get("held_seconds"),
+                    "reason": _r.get("reclaim_reason") or _r.get("status"),
+                })
+                logger.warning(
+                    f"{_r.get('task_id')}: LEASE RECLAIMED (expired, held "
+                    f"{_r.get('held_seconds')}s) — slot freed")
+        except Exception as _re:
+            logger.error(f"lease reclamation failed: {_re}")
+
         cycle_start = get_utc_now_str()
         blockers = self.load_blockers()
         runnable = self.evaluate_runnable_tasks()

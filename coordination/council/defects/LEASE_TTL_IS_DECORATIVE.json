@@ -2,12 +2,12 @@
   "schema": "HELM_DEFECT_v1",
   "id": "LEASE_TTL_IS_DECORATIVE",
   "class": "REAL_LEAK",
-  "severity": "CRITICAL",
+  "severity": "HIGH",
   "found_by": "Phase A seal \u2014 filesystem cross-check (the check added AFTER J-SPACE caught me)",
   "recorded_at": "2026-07-14T16:22:36Z",
   "verdict_it_caused": "SOAK_PHASE_A_FAIL",
   "finding": "PerTaskLeaseManager.is_expired() EXISTS. The scheduler NEVER CALLS IT. grep for expiry references in persistent_scheduler.py = 0. There is NO expired-lease reclamation anywhere in the runtime. The lease TTL is DECORATIVE \u2014 it is written into every lock file and enforced by nothing.",
-  "consequence": "A task that hangs after DISPATCH_START holds its lease FOREVER. Observed in this run: SOAK-HRF-24 and SOAK-HSF-24 held leases for 96.4 minutes (TTL 10 min \u2014 expired 86 minutes before the soak even ended). SOAK-HSF-31 held 89.6 min. They permanently consumed 3 of 4 concurrency slots for most of the run.",
+  "consequence": "CORRECTED. My first claim -- 'pinned 3 of 4 concurrency slots for most of the run' -- was FALSE. active_leases() already filters expired leases, and all 129 rounds dispatched a full 4/4. Concurrency NEVER degraded. I asserted an impact I had not measured.",
   "why_the_ledger_did_not_see_it": "The ledger was PERFECTLY CLEAN: 516 ACQUIRED / 516 DISPATCH_START / 516 RELEASED / 0 RELEASE_FAILED. The hung tasks never reached a terminal state, so no release was ever ATTEMPTED \u2014 and a release that is never attempted cannot be recorded as failed. The honest-release fix works. It just cannot see a task that never comes back.",
   "j_space_named_this_first": "HJOS flagged 'lease_expiry -> RELEASE_EXPIRED_LEASES' as CONTRADICTED hours ago. I correctly disabled its auto-quarantine on governance grounds \u2014 and then never fixed the defect it named. The observer was right. I silenced the alarm and left the fire.",
   "also_found": "coordination/leases/_fencing_tokens.lock is CORRUPT (unreadable JSON).",
@@ -17,5 +17,7 @@
     "dispatch must carry a hard timeout so a hung adapter cannot pin a slot forever",
     "the sealer's filesystem cross-check STAYS \u2014 it is the only thing that caught this"
   ],
-  "phase_b": "BLOCKED \u2014 only an unqualified PASS unlocks it"
+  "phase_b": "BLOCKED \u2014 only an unqualified PASS unlocks it",
+  "real_consequence": "WORK IS DISPATCHED AND SILENTLY LOST. SOAK-HRF-24, SOAK-HSF-24, SOAK-HSF-31 and SOAK-HASF-116 reached DISPATCH_START and then NOTHING -- no COMPLETE, no FAILED, no timeout, no terminal state, no alarm. The tasks simply vanished. The only evidence they ever existed is a lock file that nothing reclaims. A system that can lose work without recording that it lost work cannot hold a baseline, because its history is silently incomplete.",
+  "my_own_overclaim": "I claimed slot-pinning without measuring it -- the exact failure mode I spent the day auditing (the claim was wider than the measurement). Caught by my own test asserting the impact."
 }

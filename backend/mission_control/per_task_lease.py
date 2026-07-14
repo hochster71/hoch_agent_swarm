@@ -358,6 +358,55 @@ class PerTaskLeaseManager:
         self._path(task_id).unlink(missing_ok=True)
         return True
 
+    def reclaim_expired_leases(self, *, now=None) -> List[Dict[str, Any]]:
+        """Reclaim leases whose TTL has expired. THE TTL MUST NOT BE DECORATIVE.
+
+        Phase A 2026-07-14 FAILED on this. is_expired() existed and NOTHING CALLED IT.
+        A worker killed by fault injection left its lease held forever: SOAK-HRF-24 and
+        SOAK-HSF-24 each held a lease for 96.4 minutes against a 10-minute TTL, pinning 3 of 4
+        concurrency slots for most of the run. The ledger showed 516/516 released and 0 failures,
+        because a release that is never ATTEMPTED cannot be recorded as failed.
+
+        A control that is written into every lock file and enforced by nothing is theatre.
+
+        Returns the list of reclaimed lease records (may be empty). Never raises on a corrupt
+        lock -- corruption is quarantined, not ignored.
+        """
+        reclaimed: List[Dict[str, Any]] = []
+        for lock in sorted(self.dir.glob("*.lock")):
+            if lock.name.startswith("_"):          # _fencing_tokens.lock etc. are not task leases
+                continue
+            try:
+                rec = json.loads(lock.read_text(encoding="utf-8"))
+            except Exception:
+                # corrupt lock: quarantine it, do not silently skip and do not crash
+                q = lock.with_suffix(".lock.corrupt")
+                try:
+                    lock.rename(q)
+                    reclaimed.append({"task_id": lock.stem, "status": "CORRUPT_QUARANTINED",
+                                      "quarantined_to": q.name})
+                except Exception:
+                    pass
+                continue
+
+            if str(rec.get("status", "")).upper() not in ("ACTIVE", "ACQUIRED", "RUNNING"):
+                continue
+            if not self.is_expired(rec):
+                continue
+
+            rec["status"] = "TIMED_OUT"
+            rec["reclaimed_at"] = _now().isoformat()
+            rec["reclaim_reason"] = "LEASE_TTL_EXPIRED"
+            held = None
+            try:
+                held = (_now() - _parse(rec["acquired_at"])).total_seconds()
+            except Exception:
+                pass
+            rec["held_seconds"] = held
+            lock.unlink(missing_ok=True)           # the slot is FREED
+            reclaimed.append(rec)
+        return reclaimed
+
     def active_leases(self) -> List[Dict[str, Any]]:
         """Every currently-held, unexpired lease. Multiple tasks may appear here --
         that is the point."""
