@@ -54,6 +54,11 @@ injs = json.loads((PKG / "failure_injections.json").read_text()) if (PKG / "fail
 val = json.loads((PKG / "validation.json").read_text()) if (PKG / "validation.json").exists() else None
 
 failures, notes = [], []
+# A verdict that cannot be RECORDED is not a verdict. Bind these up front so the
+# seal is always writable, even if a section is skipped.
+CAPACITY = 4
+worker_peak = recovery_peak = total_peak = 0
+violation = False
 def req(name, cond, detail=""):
     if not cond:
         failures.append(name)
@@ -97,6 +102,56 @@ zero = [c for c in cycles if c.get("dispatched", 0) == 0]
 req("no cycle stalled to zero dispatch", len(zero) == 0, f"{len(zero)} zero-dispatch cycles")
 
 # ---------- required recoveries ----------
+
+# ---- CAPACITY DECOMPOSITION + DANGLING LEASES ----------------------------------------
+# These are the two checks that FAILED the previous Phase A runs. A PASS issued without
+# running them is not a PASS. (My earlier edit to add them silently did not apply -- the
+# sealer graded 122 cycles without ever looking for a leaked lease.)
+print("\n--- CAPACITY + LEASE INTEGRITY ---")
+ADMIN = ("KILLED-WORKER", "CORRUPT", "TOKREG", "DUP", "TIMEOUT", "MUT", "EXP", "STUCK")
+_is_worker = lambda t: not any(k in str(t).upper() for k in ADMIN)
+lease_rows = jl("lease_ledger.jsonl") or jl("daemon/task_lease_ledger.jsonl")
+
+_op, _cl, _meta, _last = {}, {}, {}, ""
+for e in lease_rows:
+    lid, st, ts, tid = e.get("lease_id"), e.get("status"), e.get("ts"), e.get("task_id", "")
+    if not lid or not ts:
+        continue
+    _last = max(_last, ts); _meta[lid] = tid
+    if st == "ACQUIRED":
+        _op.setdefault(lid, ts)
+    elif st in ("RELEASED", "COMPLETED", "FAILED"):
+        _cl.setdefault(lid, ts)
+
+def _peak(pred, exclude=()):
+    ev = []
+    for l, a in _op.items():
+        if l in exclude or not pred(_meta.get(l, "")):
+            continue
+        ev.append((a, +1)); ev.append((_cl.get(l, _last), -1))
+    ev.sort(key=lambda x: (x[0], x[1]))
+    c = pk = 0
+    for _, d in ev:
+        c += d; pk = max(pk, c)
+    return pk
+
+leaked = [l for l in _op if l not in _cl]
+worker_peak = _peak(_is_worker)
+true_worker_peak = _peak(_is_worker, exclude=set(leaked))
+recovery_peak = _peak(lambda t: not _is_worker(t))
+total_peak = _peak(lambda t: True)
+violation = true_worker_peak > CAPACITY
+
+print(f"  configured capacity        : {CAPACITY}")
+print(f"  worker peak (raw)          : {worker_peak}")
+print(f"  worker peak (excl. leaked) : {true_worker_peak}")
+print(f"  recovery/injection peak    : {recovery_peak}")
+print(f"  total peak                 : {total_peak}")
+req("NO leaked lease (acquired, never released)", not leaked,
+    f"{len(leaked)} leaked: {[_meta.get(l) for l in leaked][:3]}")
+req("capacity NOT exceeded by genuine workers", not violation,
+    f"worker_peak={true_worker_peak} > capacity={CAPACITY}")
+
 print("\n--- REQUIRED RECOVERIES ---")
 rec = {r.get("id"): r for r in recov}
 REQUIRED = {1: "worker kill recovered", 2: "corrupt lock quarantined+recovered",

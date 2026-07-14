@@ -107,3 +107,16 @@
 {"at": "2026-07-14T02:12:20Z", "cpu_percent": 0.0, "memory_mb": 23.9, "ledger_growth_bytes": 1672588}
 {"at": "2026-07-14T02:13:22Z", "cpu_percent": 2.4, "memory_mb": 23.5, "ledger_growth_bytes": 1688250}
 {"at": "2026-07-14T02:14:18Z", "cpu_percent": 0.0, "memory_mb": 25.3, "ledger_growth_bytes": 1703904}
+{"at": "2026-07-14T02:15:33Z", "cpu_percent": 0.0, "memory_mb": 24.5, "ledger_growth_bytes": 1719558}
+{"at": "2026-07-14T02:16:41Z", "cpu_percent": 0.0, "memory_mb": 24.4, "ledger_growth_bytes": 1735216}
+{"at": "2026-07-14T02:17:35Z", "cpu_percent": 0.0, "memory_mb": 25.3, "ledger_growth_bytes": 1750874}
+{"at": "2026-07-14T02:18:19Z", "cpu_percent": 0.0, "memory_mb": 24.3, "ledger_growth_bytes": 1766532}
+{"at": "2026-07-14T02:19:22Z", "cpu_percent": 0.0, "memory_mb": 24.5, "ledger_growth_bytes": 1782186}
+{"at": "2026-07-14T02:20:19Z", "cpu_percent": 0.0, "memory_mb": 24.5, "ledger_growth_bytes": 1797848}
+{"at": "2026-07-14T02:21:19Z", "cpu_percent": 0.0, "memory_mb": 21.1, "ledger_growth_bytes": 1813510}
+{"at": "2026-07-14T02:22:43Z", "cpu_percent": 0.0, "memory_mb": 17.8, "ledger_growth_bytes": 1829164}
+{"at": "2026-07-14T02:23:36Z", "cpu_percent": 2.5, "memory_mb": 18.4, "ledger_growth_bytes": 1844822}
+{"at": "2026-07-14T02:24:20Z", "cpu_percent": 1.6, "memory_mb": 24.6, "ledger_growth_bytes": 1860480}
+{"at": "2026-07-14T02:25:12Z", "cpu_percent": 0.0, "memory_mb": 24.6, "ledger_growth_bytes": 1876138}
+{"at": "2026-07-14T02:26:13Z", "cpu_percent": 0.0, "memory_mb": 23.8, "ledger_growth_bytes": 1891800}
+{"at": "2026-07-14T02:27:12Z", "cpu_percent": 3.0, "memory_mb": 24.0, "ledger_growth_bytes": 1907462}
