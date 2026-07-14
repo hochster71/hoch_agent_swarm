@@ -1,0 +1,11 @@
+{
+  "id": "TEST_SUITE_BLOCKED_BY_BASENAME_COLLISION",
+  "class": "VERIFICATION_BLINDNESS",
+  "severity": "HIGH",
+  "finding": "tests/test_agent_router.py and tests/unit/coding_control_plane/test_agent_router.py share a basename with no __init__.py. pytest's default prepend import-mode cannot import both, so COLLECTION ABORTED and THE ENTIRE SUITE NEVER RAN. Each file passes in isolation.",
+  "consequence": "This is why 85 test files were 'never run'. It was never a discipline problem. A single filename collision made the whole suite un-runnable, and nothing surfaced that \u2014 the run just errored out and everyone moved on. Verification blindness, not laziness.",
+  "fix": "pyproject: addopts = \"--import-mode=importlib\". 1468 tests now collect.",
+  "status": "FIXED",
+  "schema": "HELM_DEFECT_v1",
+  "recorded_at": "2026-07-14T16:52:33Z"
+}

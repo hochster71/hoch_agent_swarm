@@ -1,10 +1,23 @@
 """Lease TTL must be ENFORCED, not decorative.
 
 Reproduces the exact defect that FAILED Phase A on 2026-07-14:
-  is_expired() existed. Nothing called it. A worker killed by fault injection left its lease held
-  forever — SOAK-HRF-24 held a 10-minute lease for 96.4 minutes and pinned a concurrency slot for
-  most of the run. The ledger read 516/516 released with 0 failures, because a release that is
-  never ATTEMPTED cannot be recorded as failed.
+  is_expired() existed. NOTHING CALLED IT. acquire_lease() could steal an expired lease, but only
+  on RE-ACQUIRE of the same task_id -- and the soak never re-seeds SOAK-HRF-24, it moves to round
+  25, 26, 27. So a killed worker's lock sat forever. A reclaimer that only fires on re-acquire is
+  a reclaimer that never fires.
+
+  SOAK-HRF-24 held a 10-minute lease for 96.4 minutes.
+
+RETRACTION: I first wrote that this "pinned a concurrency slot for most of the run". That was
+FALSE. active_leases() already filters expired leases and all 129 rounds dispatched a full 4/4.
+Concurrency never degraded. I asserted an impact I had not measured -- the same failure I spent
+the day auditing in others.
+
+THE REAL DEFECT: work is dispatched and SILENTLY LOST. Four tasks reached DISPATCH_START and then
+nothing -- no COMPLETE, no FAILED, no timeout, no terminal state, no alarm. The ledger read
+516/516 released with 0 failures, because a release that is never ATTEMPTED cannot be recorded as
+failed. A system that can lose work without recording that it lost work cannot hold a baseline,
+because its history is silently incomplete.
 
 A control written into every lock file and enforced by nothing is theatre.
 """

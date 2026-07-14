@@ -1,0 +1,9 @@
+{
+  "id": "COUNCIL_ROUTER_ENDPOINT_404",
+  "class": "REGRESSION",
+  "severity": "MEDIUM",
+  "finding": "test_22 asserts a council_router endpoint returns 200; it returns 404. include_router(council_router) IS present at backend/main.py:196 \u2014 the router is mounted but the path does not resolve.",
+  "status": "OPEN \u2014 real regression, needs the route traced",
+  "schema": "HELM_DEFECT_v1",
+  "recorded_at": "2026-07-14T16:52:33Z"
+}

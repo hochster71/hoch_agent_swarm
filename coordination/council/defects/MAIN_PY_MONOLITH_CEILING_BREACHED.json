@@ -1,0 +1,9 @@
+{
+  "id": "MAIN_PY_MONOLITH_CEILING_BREACHED",
+  "class": "HYGIENE_GUARDRAIL",
+  "severity": "LOW",
+  "finding": "backend/main.py = 17,749 lines vs a committed ceiling of 17,747. The guardrail test is WORKING \u2014 it is telling the truth. A 17.7k-line monolith with a documented split plan (docs/security/main-split-plan.md) that is being ignored.",
+  "status": "OPEN \u2014 guardrail firing correctly; do not raise the ceiling to make it green",
+  "schema": "HELM_DEFECT_v1",
+  "recorded_at": "2026-07-14T16:52:33Z"
+}

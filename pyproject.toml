@@ -62,6 +62,7 @@ dev = [
 # trivy (container/IaC scan) is a standalone binary: `brew install trivy` or apt. Not a pip dep.
 
 [tool.pytest.ini_options]
+addopts = "--import-mode=importlib"
 testpaths = ["tests"]
 pythonpath = ["."]
 filterwarnings = [
