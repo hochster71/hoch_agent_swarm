@@ -1305,3 +1305,4 @@
 {"ts": "2026-07-14T02:14:04.086419Z", "task_id": "SOAK-HASF-109", "lease_id": "lease-3e34a70a", "status": "RELEASED"}
 {"ts": "2026-07-14T02:14:04.086907Z", "task_id": "SOAK-HSF-109", "lease_id": "lease-78646e4e", "status": "RELEASED"}
 {"ts": "2026-07-14T02:14:06.679695Z", "task_id": "SOAK-HCF-109", "lease_id": "lease-bd96e794", "status": "RELEASED"}
+{"ts": "2026-07-14T02:14:18.023858Z", "task_id": "SOAK-HRF-109", "lease_id": "lease-bb51dd57", "status": "RELEASED"}

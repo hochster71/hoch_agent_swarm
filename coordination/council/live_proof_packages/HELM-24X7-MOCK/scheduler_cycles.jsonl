@@ -9561,3 +9561,8 @@
 {"cycle_start": "2026-07-14T02:13:54.893772Z", "cycle_end": "2026-07-14T02:13:56.508978Z", "status": "ACTIVE", "dispatched_count": 3, "dispatched": [{"task_id": "SOAK-HRF-109", "success": false}, {"task_id": "SOAK-HCF-109", "success": false}, {"task_id": "SOAK-HSF-109", "success": false}]}
 {"cycle_start": "2026-07-14T02:14:01.627645Z", "cycle_end": "2026-07-14T02:14:01.937805Z", "status": "ACTIVE", "dispatched_count": 3, "dispatched": [{"task_id": "SOAK-HRF-109", "success": false}, {"task_id": "SOAK-HCF-109", "success": false}, {"task_id": "SOAK-HSF-109", "success": false}]}
 {"cycle_start": "2026-07-14T02:14:07.023304Z", "cycle_end": "2026-07-14T02:14:07.431885Z", "status": "ACTIVE", "dispatched_count": 1, "dispatched": [{"task_id": "SOAK-HRF-109", "success": false}]}
+{"cycle_start": "2026-07-14T02:14:12.528733Z", "cycle_end": "2026-07-14T02:14:12.618972Z", "status": "ACTIVE", "dispatched_count": 1, "dispatched": [{"task_id": "SOAK-HRF-109", "success": false}]}
+{"cycle_start": "2026-07-14T02:14:17.672563Z", "cycle_end": "2026-07-14T02:14:19.528734Z", "status": "IDLE", "dispatched_count": 0, "dispatched": []}
+{"cycle_start": "2026-07-14T02:14:24.875252Z", "cycle_end": "2026-07-14T02:14:25.926029Z", "status": "IDLE", "dispatched_count": 0, "dispatched": []}
+{"cycle_start": "2026-07-14T02:14:31.006283Z", "cycle_end": "2026-07-14T02:14:31.016534Z", "status": "IDLE", "dispatched_count": 0, "dispatched": []}
+{"cycle_start": "2026-07-14T02:14:36.141456Z", "cycle_end": "2026-07-14T02:14:36.148365Z", "status": "IDLE", "dispatched_count": 0, "dispatched": []}
