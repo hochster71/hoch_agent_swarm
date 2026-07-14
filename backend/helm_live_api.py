@@ -593,10 +593,36 @@ def api_v1_soak():
             except Exception:
                 pass
                 
-    freshness = float(time.time() - cfg_file.stat().st_mtime) if cfg_file.exists() else 0.0
+    # GAP-07 FALSE-RED FIX. freshness was computed from soak_config.json — written ONCE at soak
+    # start. So a HEALTHY soak writing cycles every ~50s rendered STALE on the wall, and the
+    # staleness only grew. That is the INVERSE of fake-green: it manufactures alarm. Still a lie.
+    # Freshness must come from the newest LIVE evidence, and be UNKNOWN when there is none.
+    _live = None
+    for _cand in (cycles_file, lease_file, pkg / "scheduler_cycles.jsonl"):
+        try:
+            if _cand.exists():
+                _m = _cand.stat().st_mtime
+                if _live is None or _m > _live[0]:
+                    _live = (_m, _cand)
+        except Exception:
+            pass
+    if _live is not None:
+        freshness = float(time.time() - _live[0])
+        _src = _live[1]
+    elif cfg_file.exists():
+        # config exists but NO cycle evidence yet -> we genuinely do not know if it is running
+        freshness = None
+        _src = cfg_file
+    else:
+        freshness = None
+        _src = pkg
+    # COMMIT ATTRIBUTION. _truth_response stamps the CURRENT HEAD. For a soak that is FALSE
+    # ATTRIBUTION: the run is bound to the commit recorded in soak_config, and HEAD has moved on
+    # since. Reporting HEAD would tell a reader the soak ran on code it never ran on.
+    _bound = cfg.get("tested_commit") or cfg.get("tested_commit_short")
     return JSONResponse(_truth_response(
         truth_class="HELM_SOAK_TRUTH",
-        source=str(cfg_file.relative_to(ROOT)) if cfg_file.exists() else str(pkg.relative_to(ROOT)),
+        source=str(_src.relative_to(ROOT)) if _src.exists() else str(pkg.relative_to(ROOT)),
         observed_at=now(),
         freshness_seconds=freshness,
         data={
@@ -605,7 +631,9 @@ def api_v1_soak():
             "cycles_count": cycles_count,
             "verifications_count": verif_count,
             "leases_count": lease_count,
-            "resource_usage_entries": usage_entries
+            "resource_usage_entries": usage_entries,
+            "bound_commit": _bound,
+            "head_commit_note": "tested_commit below is HEAD; the RUN is bound to bound_commit",
         }
     ))
 
