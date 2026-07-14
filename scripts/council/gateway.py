@@ -802,6 +802,16 @@ class CouncilDispatchGateway:
 
             record = {
                 "dispatch_id": dispatch_id,
+                # AUTHORITY-ID-PROPAGATION. The authority gate runs BEFORE this dispatch
+                # (persistent_scheduler.execute_task line ~216, before lease acquisition), so
+                # nothing here is ungoverned. But the dispatch RECORD did not carry the
+                # authority_decision_id -- so the ledger could not PROVE the dispatch was
+                # authorised. You had to trust the code path instead of reading the evidence.
+                # 500 consecutive dispatches showed authority: NONE, which is indistinguishable
+                # from a bypass until you go read the call order. Evidence you have to take on
+                # faith is not evidence.
+                "authority_decision_id": getattr(req, "authority_decision_id", None),
+                "authority_class": getattr(req, "authority_class", None),
                 "task_id": req.task_id,
                 "pert_node": req.pert_node,
                 "adapter": adapter,

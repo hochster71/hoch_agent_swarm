@@ -505,6 +505,15 @@ class PersistentScheduler:
             token = secrets.token_hex(16)
             token_handle = _GATEWAY_TOKEN.set(token)
             
+            # Bind the authority decision to the request so it lands in the DISPATCH RECORD.
+            # It was stamped on the task at classification (before the lease); it must travel
+            # all the way into the ledger or the ledger cannot prove the dispatch was allowed.
+            try:
+                req.authority_decision_id = task.get("authority_decision_id")
+                req.authority_class = task.get("authority_class")
+            except Exception:
+                pass
+
             # Dispatch
             res = self.gateway.dispatch(req)
             stdout = res.output
