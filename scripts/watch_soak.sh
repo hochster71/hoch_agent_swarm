@@ -14,7 +14,13 @@ while true; do
   printf '  ─────────────────────────────────────────────────────────────\n'
 
   if [ -z "$PID" ]; then
-    printf '  \033[31mSTATUS   NOT RUNNING\033[0m\n'
+    # A status display that cannot tell SUCCESS from DEATH is one you cannot trust.
+    if [ -f "$PKG/validation.json" ]; then
+      V=$(python3 -c "import json;print(json.load(open('$PKG/validation.json'))['verdict'])" 2>/dev/null)
+      printf '  \033[32mSTATUS   COMPLETE\033[0m  %s\n' "$V"
+    else
+      printf '  \033[31mSTATUS   DIED (no validation.json — did not finish)\033[0m\n'
+    fi
   else
     ET=$(ps -p "$PID" -o etime= | tr -d ' ')
     printf '  STATUS   \033[32mRUNNING\033[0m   pid %s   elapsed %s / 8h\n' "$PID" "$ET"
