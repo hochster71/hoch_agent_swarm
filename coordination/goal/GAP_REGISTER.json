@@ -1,12 +1,12 @@
 {
   "schema": "HELM_GAP_REGISTER_v1",
-  "generated_at": "2026-07-14T15:30:50Z",
+  "generated_at": "2026-07-14T15:37:43Z",
   "generated_under": "PHASE_A_FREEZE (non-mutating; no runtime touched)",
   "north_star": "MINIMIZE verified_founder_minutes_per_shipped_dollar",
   "north_star_state": "UNDEFINED (SETTLED=$0.00)",
   "overall": "HOLD",
   "counts": {
-    "total": 20,
+    "total": 22,
     "blocks_goal": 8,
     "critical": 7,
     "high": 3,
@@ -155,25 +155,26 @@
     {
       "id": "GAP-08",
       "title": "hoch_pods_liftoff.html backend dead",
-      "severity": "MEDIUM",
+      "severity": "LOW",
       "blocks_goal": false,
       "pert": "wall",
-      "state": "OPEN",
+      "state": "RESOLVED_WAS_FALSE_RED",
       "owner": "agent",
-      "detail": ":8777 listens (live-truth-sidecar, pid 858) and serves / but /api/live returns 000. That UI is NOT updating.",
-      "exit_criterion": "/api/live returns 200 OR the UI is formally retired",
-      "depends_on": []
+      "detail": "NOT dead. /api/live returns HTTP 200 in 8.6s. My 3-4s curl timeout produced 000 and I reported the backend as broken. The real (minor) issue is LATENCY: live_payload() takes 8.6s.",
+      "exit_criterion": "Reduce /api/live latency below the UI's fetch timeout, or cache the payload",
+      "depends_on": [],
+      "correction": "I manufactured this defect with a too-short probe timeout."
     },
     {
       "id": "GAP-09",
       "title": "pert/founder/helm UIs not browser-proven",
-      "severity": "MEDIUM",
+      "severity": "LOW",
       "blocks_goal": false,
       "pert": "wall",
-      "state": "OPEN",
+      "state": "RESOLVED",
       "owner": "agent",
-      "detail": "Only console.html is browser-proven (4/4 DOM). The other three have live backends (200) but a 200 is not proof the DOM ticks or fails closed.",
-      "exit_criterion": "Playwright proof: API-dead=>UNKNOWN, stale=>STALE, contradiction=>CONTRADICTED",
+      "detail": "Browser-proven with Playwright: pert=PASS (DOM ticks, fails closed), root=PASS, founder=PASS after fix. API-death simulated by route-abort so the real API was never touched.",
+      "exit_criterion": "MET",
       "depends_on": []
     },
     {
@@ -194,10 +195,10 @@
       "severity": "LOW",
       "blocks_goal": false,
       "pert": "wall",
-      "state": "OPEN",
+      "state": "DECIDED",
       "owner": "agent",
-      "detail": "18.5KB pre-existing HELM.html was NOT overwritten (I refused to destroy unreviewed work). Two candidate canonical consoles now exist.",
-      "exit_criterion": "One canonical console; the other reconciled or formally retired",
+      "detail": "console.html (125 lines) is BROWSER-PROVEN and staleness-aware (12 freshness/STALE refs). HELM.html (352 lines) is NOT browser-proven and has only 1 staleness ref. CANONICAL = console.html. HELM.html to be retired or merged, not deleted unreviewed.",
+      "exit_criterion": "Retire HELM.html after harvesting anything it does better",
       "depends_on": []
     },
     {
@@ -315,6 +316,40 @@
       "depends_on": [
         "GAP-19"
       ]
+    },
+    {
+      "id": "GAP-21",
+      "title": "founder.html silently retained last-known-good queue",
+      "severity": "HIGH",
+      "blocks_goal": false,
+      "pert": "wall",
+      "state": "FIXED_AND_PROVEN",
+      "owner": "agent",
+      "detail": "loadQueue() had `catch(e){ return; }` \u2014 when /api/founder/queue failed AFTER a good render, it left the PREVIOUS queue on screen. Stale approvals rendered as current. A founder could have approved from a dead view.",
+      "exit_criterion": "MET \u2014 now declares QUEUE UNKNOWN and refuses to show the old queue. Playwright-proven: API killed after a good render => 'QUEUE UNKNOWN', no silent retention.",
+      "depends_on": []
+    },
+    {
+      "id": "GAP-22",
+      "title": "/api/founder/queue has no observed_at or freshness_seconds",
+      "severity": "MEDIUM",
+      "blocks_goal": false,
+      "pert": "wall",
+      "state": "OPEN_DEFERRED",
+      "owner": "agent",
+      "detail": "The founder queue endpoint returns only {pending}. No observed_at, no freshness_seconds. The page cannot know whether its data is stale.",
+      "exit_criterion": "Endpoint carries observed_at + freshness_seconds like the other truth endpoints",
+      "remediation": "POST-SEAL (helm_live_api \u2014 same component as GAP-07)",
+      "depends_on": [
+        "GAP-01"
+      ]
     }
-  ]
+  ],
+  "false_reds_i_manufactured": [
+    "pgrep -fc soak_runner returned 0 while PID 17876 was alive -> nearly declared the soak dead",
+    "regex read CSS values (setInterval 1500, max-width) as ports -> nearly declared 3 working UIs broken",
+    "curl -m3 against an 8.6s endpoint returned 000 -> declared :8777/api/live a dead backend (GAP-08)",
+    "asserted 'API healthy => console must show LIVE' -> failed the console for correctly reporting CONTRADICTED"
+  ],
+  "lesson": "Every one of these came from a probe that was narrower or shorter than the thing it measured. A false-red is not 'safe' \u2014 it burns trust and hides the real defects underneath it."
 }

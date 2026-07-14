@@ -266,7 +266,24 @@ async function loadHelm(){
 }
 
 async function loadQueue(){
-  let d; try{ d=await (await fetch('/api/founder/queue',{cache:'no-store'})).json(); }catch(e){ return; }
+  // FAIL-CLOSED: a silent `return` here left the PREVIOUS queue on screen when the API died,
+  // so stale approvals kept rendering as if current — a last-known-good fallback.
+  // If we cannot read the queue, we must say so, not keep showing the old one.
+  let d;
+  try{
+    const r = await fetch('/api/founder/queue',{cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    d = await r.json();
+  }catch(e){
+    lastQueueSig = '__unknown__';
+    const box=$('#queue');
+    if(box) box.innerHTML =
+      '<div class="clear"><div class="ring">?</div>'
+      + '<div><b>QUEUE UNKNOWN</b><div style="opacity:.7;font-size:12px">'
+      + 'Cannot reach /api/founder/queue. Showing UNKNOWN rather than the last known queue. '
+      + 'Do not approve anything from this view until it recovers.</div></div></div>';
+    return;
+  }
   const items=d.pending||[];
   const sig=items.map(i=>i.decision_id).join(',');
   if(sig===lastQueueSig) return; lastQueueSig=sig;
