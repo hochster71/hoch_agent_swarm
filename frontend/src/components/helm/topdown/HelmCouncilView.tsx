@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 
-const STATE_URL = "/api/v1/council/state";
+// FIXED 2026-07-14: this pointed at "/api/v1/council/state", which returns 404. The route was
+// moved to the /api/v1/helm/* namespace and this consumer was never updated. The component has
+// been fetching a 404 in production. Nobody knew, because the test that catches it lived in a
+// suite that could not run (basename collision aborted collection).
+const STATE_URL = "/api/v1/helm/council/state";
 const POLL_MS = 10000;
 
 /** Normalized council / H1C runtime state from the live API only. */

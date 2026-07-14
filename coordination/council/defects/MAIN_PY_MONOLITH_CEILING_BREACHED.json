@@ -2,8 +2,9 @@
   "id": "MAIN_PY_MONOLITH_CEILING_BREACHED",
   "class": "HYGIENE_GUARDRAIL",
   "severity": "LOW",
-  "finding": "backend/main.py = 17,749 lines vs a committed ceiling of 17,747. The guardrail test is WORKING \u2014 it is telling the truth. A 17.7k-line monolith with a documented split plan (docs/security/main-split-plan.md) that is being ignored.",
-  "status": "OPEN \u2014 guardrail firing correctly; do not raise the ceiling to make it green",
+  "finding": "backend/main.py = 17,749 lines vs a committed ceiling of 17,747. The split plan (docs/security/main-split-plan.md) was written when main.py was ~12,095 lines with 365 route handlers. It has since grown 47% PAST the size that triggered the plan. The plan is being ignored.",
+  "status": "OPEN \u2014 LEFT RED DELIBERATELY",
   "schema": "HELM_DEFECT_v1",
-  "recorded_at": "2026-07-14T16:52:33Z"
+  "recorded_at": "2026-07-14T16:52:33Z",
+  "decision": "I am NOT raising the ceiling to make the suite green. That would be gaming the exact class of guardrail I spent today defending. A red test telling the truth is worth more than a green one that lies. The honest fix is to actually extract endpoints into backend/routers/."
 }

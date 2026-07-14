@@ -553,7 +553,7 @@ def test_22_no_ui_field_maps_package_readiness_to_quorum_readiness(tmp_path, mon
     # ----------------------------------------------------------------------
     # Case 5: Missing quorum evidence & missing registry (default fail-closed)
     # ----------------------------------------------------------------------
-    r = client.get("/api/v1/council/state")
+    r = client.get("/api/v1/helm/council/state")
     assert r.status_code == 200
     body = r.json()
     assert body["package_readiness"] == "FAIL"
@@ -667,7 +667,7 @@ def test_22_no_ui_field_maps_package_readiness_to_quorum_readiness(tmp_path, mon
     }
     (council_dir / "council_live_state.json").write_text(json.dumps(live_state_data))
 
-    r = client.get("/api/v1/council/state")
+    r = client.get("/api/v1/helm/council/state")
     assert r.status_code == 200
     body = r.json()
     assert body["package_readiness"] == "PASS"
@@ -680,7 +680,7 @@ def test_22_no_ui_field_maps_package_readiness_to_quorum_readiness(tmp_path, mon
     # ----------------------------------------------------------------------
     # Remove live state file
     (council_dir / "council_live_state.json").unlink()
-    r = client.get("/api/v1/council/state")
+    r = client.get("/api/v1/helm/council/state")
     assert r.status_code == 200
     body = r.json()
     assert body["package_readiness"] == "PASS"
@@ -702,7 +702,7 @@ def test_22_no_ui_field_maps_package_readiness_to_quorum_readiness(tmp_path, mon
     live_state_data["completed_at"] = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")
     (council_dir / "council_live_state.json").write_text(json.dumps(live_state_data))
 
-    r = client.get("/api/v1/council/state")
+    r = client.get("/api/v1/helm/council/state")
     assert r.status_code == 200
     body = r.json()
     assert body["package_readiness"] == "FAIL"
@@ -718,7 +718,7 @@ def test_22_no_ui_field_maps_package_readiness_to_quorum_readiness(tmp_path, mon
     live_state_data["completed_at"] = stale_time
     (council_dir / "council_live_state.json").write_text(json.dumps(live_state_data))
 
-    r = client.get("/api/v1/council/state")
+    r = client.get("/api/v1/helm/council/state")
     assert r.status_code == 200
     body = r.json()
     assert body["freshness_state"] == "STALE"
@@ -734,7 +734,7 @@ def test_22_no_ui_field_maps_package_readiness_to_quorum_readiness(tmp_path, mon
     live_state_data["aggregation"]["overall_status"] = "MOCK_FRONTIER_CONTRACT_PASS"
     (council_dir / "council_live_state.json").write_text(json.dumps(live_state_data))
 
-    r = client.get("/api/v1/council/state")
+    r = client.get("/api/v1/helm/council/state")
     assert r.status_code == 200
     body = r.json()
     assert body["quorum_readiness"] == "BLOCKED"
@@ -744,7 +744,7 @@ def test_22_no_ui_field_maps_package_readiness_to_quorum_readiness(tmp_path, mon
     # Case 7: Malformed backend payload
     # ----------------------------------------------------------------------
     (council_dir / "council_live_state.json").write_text("malformed json {")
-    r = client.get("/api/v1/council/state")
+    r = client.get("/api/v1/helm/council/state")
     assert r.status_code == 200
     body = r.json()
     assert body["evidence_state"] == "INVALID"
@@ -757,7 +757,7 @@ def test_22_no_ui_field_maps_package_readiness_to_quorum_readiness(tmp_path, mon
     def mock_raise():
         raise ValueError("Simulated backend error")
     monkeypatch.setattr(h1b_reg, "reconcile_candidates", mock_raise)
-    r = client.get("/api/v1/council/state")
+    r = client.get("/api/v1/helm/council/state")
     assert r.status_code == 200
     body = r.json()
     assert body["package_readiness"] == "UNKNOWN"
@@ -766,7 +766,7 @@ def test_22_no_ui_field_maps_package_readiness_to_quorum_readiness(tmp_path, mon
     # ----------------------------------------------------------------------
     # Case 9: Frontend renders each state without promotion
     # ----------------------------------------------------------------------
-    assert "fetch(STATE_URL" in ui or "fetch('/api/v1/council/state'" in ui
+    assert "fetch(STATE_URL" in ui or "fetch('/api/v1/helm/council/state'" in ui
     assert "promotion" in ui
     assert "state.promotion" in ui
     assert "package_readiness" in ui
@@ -801,7 +801,7 @@ def test_22_no_ui_field_maps_package_readiness_to_quorum_readiness(tmp_path, mon
     ledger_path.write_text(json.dumps(ledger_entry) + "\n")
     monkeypatch.setenv("HELM_AUTH_LEDGER", str(ledger_path))
 
-    r = client.get("/api/v1/council/state")
+    r = client.get("/api/v1/helm/council/state")
     assert r.status_code == 200
     body = r.json()
     assert body["promotion"] == "LOCKED"

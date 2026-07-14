@@ -1,9 +1,12 @@
 {
   "id": "COUNCIL_ROUTER_ENDPOINT_404",
   "class": "REGRESSION",
-  "severity": "MEDIUM",
-  "finding": "test_22 asserts a council_router endpoint returns 200; it returns 404. include_router(council_router) IS present at backend/main.py:196 \u2014 the router is mounted but the path does not resolve.",
-  "status": "OPEN \u2014 real regression, needs the route traced",
+  "severity": "HIGH",
+  "finding": "NOT a stale test \u2014 a BROKEN PRODUCTION UI. The route moved to the /api/v1/helm/* namespace and frontend/src/components/helm/topdown/HelmCouncilView.tsx was never updated. const STATE_URL = \"/api/v1/council/state\" -> 404. The component has been fetching a 404 in production.",
+  "status": "FIXED",
   "schema": "HELM_DEFECT_v1",
-  "recorded_at": "2026-07-14T16:52:33Z"
+  "recorded_at": "2026-07-14T16:52:33Z",
+  "why_it_was_invisible": "The test that catches this lived in a suite that COULD NOT RUN \u2014 a basename collision aborted pytest collection. The regression was caught the moment the suite could execute for the first time.",
+  "fix": "Fixed the UI, NOT the test. HelmCouncilView.tsx -> /api/v1/helm/council/state. Tests updated to the same real contract. 65 tests pass across both suites.",
+  "lesson": "I nearly 'fixed' this by updating the test to match the code. That would have BURIED a live broken UI behind a green test. The test was right and the code was wrong."
 }

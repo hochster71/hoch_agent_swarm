@@ -409,7 +409,7 @@ def test_21_frontend_fetch_failure_clears_prior_success():
     ui = (ROOT / "frontend/src/components/helm/topdown/HelmCouncilView.tsx").read_text()
     assert "setState(null)" in ui
     assert "prior success" in ui.lower() or "Clear prior success" in ui or "cleared" in ui.lower()
-    assert 'fetch(STATE_URL' in ui or 'fetch("/api/v1/council/state"' in ui or "STATE_URL" in ui
+    assert 'fetch(STATE_URL' in ui or 'fetch("/api/v1/helm/council/state"' in ui or "STATE_URL" in ui
     # no generic green success tokens as hardcoded GO
     assert 'value: "GO"' not in ui
     assert "AUTHORIZED_FOR_CONTROLLED_EXECUTION" in ui  # state label support
