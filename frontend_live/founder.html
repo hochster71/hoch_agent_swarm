@@ -177,6 +177,45 @@
         linear-gradient(100deg,var(--surface) 30%,var(--surface2) 50%,var(--surface) 70%);
         background-size:200% 100%;animation:sh 1.4s infinite}
   @keyframes sh{to{background-position:-200% 0}}
+
+  /* ── J-Space (HJOS) system-truth ─────────────────────────────── */
+  .js-hero{border-radius:22px;padding:18px;background:linear-gradient(165deg,#16171d,#0d0e12);
+           border:1px solid var(--hair2);box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .js-hero.CONTRADICTED{border-color:#4a2426}
+  .js-hero.CONTRADICTED::before{content:"";position:absolute;inset:0;pointer-events:none;
+           background:radial-gradient(120% 80% at 85% -20%,rgba(245,129,127,.10),transparent 60%)}
+  .js-hero.CONFIRMED_LIVE::before{content:"";position:absolute;inset:0;pointer-events:none;
+           background:radial-gradient(120% 80% at 85% -20%,rgba(110,231,183,.10),transparent 60%)}
+  .js-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .js-verdict{font-size:24px;font-weight:800;letter-spacing:-.5px;line-height:1}
+  .js-verdict.CONTRADICTED{color:var(--rose)} .js-verdict.CONFIRMED_LIVE{color:var(--accent)}
+  .js-verdict.BLOCKED{color:var(--amber)} .js-verdict.UNKNOWN{color:var(--ink3)}
+  .js-auth{font-size:10px;letter-spacing:.1em;font-weight:700;padding:5px 10px;border-radius:99px;
+           white-space:nowrap;color:var(--ink2);background:var(--bg2);border:1px solid var(--hair)}
+  .js-act{font-size:12.5px;color:var(--sky);background:var(--sky-dim);border:1px solid #24344f;
+          border-radius:12px;padding:11px;margin-top:13px;line-height:1.45;display:flex;gap:8px}
+  .js-act.warn{color:var(--rose);background:var(--rose-dim);border-color:#4a2426}
+  /* observer constellation */
+  .constel{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+  .obs{width:11px;height:11px;border-radius:99px;position:relative}
+  .obs.CONFIRMED_LIVE{background:var(--accent);box-shadow:0 0 8px rgba(110,231,183,.5)}
+  .obs.BLOCKED{background:var(--amber);box-shadow:0 0 8px rgba(245,194,101,.5)}
+  .obs.CONTRADICTED{background:var(--rose);box-shadow:0 0 9px rgba(245,129,127,.7);
+                    animation:beat 1.8s ease-in-out infinite}
+  .constel-key{font-size:11px;color:var(--ink3);margin-top:9px}
+  /* finding rows */
+  .find{display:flex;gap:11px;padding:13px 14px;border-radius:15px;background:var(--surface);
+        border:1px solid var(--hair);margin-bottom:8px;box-shadow:var(--shadow)}
+  .find .fdot{width:8px;height:8px;border-radius:99px;margin-top:5px;flex-shrink:0}
+  .find .fdot.CONTRADICTED{background:var(--rose)} .find .fdot.BLOCKED{background:var(--amber)}
+  .find .fsub{font-weight:700;font-size:13px;color:var(--ink);letter-spacing:.02em}
+  .find .fdet{font-size:12px;color:var(--ink2);margin-top:3px;line-height:1.45}
+  .find .fact{font-size:10.5px;letter-spacing:.06em;color:var(--amber);margin-top:6px;font-weight:700}
+  .find .fobs{font-size:10px;color:var(--ink3);margin-top:5px;font-family:ui-monospace,Menlo,monospace}
+  .js-gov{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+  .gpill{font-size:10.5px;color:var(--ink2);background:var(--bg2);border:1px solid var(--hair);
+         border-radius:99px;padding:5px 10px}
+  .gpill.good{color:var(--accent);border-color:#2a5c4a;background:var(--accent-dim)}
 </style>
 </head>
 <body>
@@ -208,6 +247,22 @@
   <div class="tile"><div class="t">Spend today</div><div class="n" id="sp">—</div><div class="s" id="spS">—</div></div>
   <div class="tile"><div class="t">Security</div><div class="n" id="sec">—</div><div class="s" id="secS">—</div></div>
 </div>
+
+<div class="section">System truth · J-Space</div>
+<div class="js-hero UNKNOWN" id="jsHero">
+  <div class="js-top">
+    <div>
+      <div class="lbl" style="font-size:11px;letter-spacing:.14em;color:var(--ink3);text-transform:uppercase">HJOS observers · consensus</div>
+      <div class="js-verdict UNKNOWN" id="jsVerdict">—</div>
+    </div>
+    <div class="js-auth" id="jsAuth">promotion —</div>
+  </div>
+  <div class="constel" id="jsConstel"></div>
+  <div class="constel-key" id="jsKey">reading observers…</div>
+  <div class="js-act" id="jsAct" style="display:none"></div>
+  <div class="js-gov" id="jsGov"></div>
+</div>
+<div id="jsFindings" style="margin-top:12px"></div>
 
 <div class="section">Factories</div>
 <div id="facs" class="stagger"></div>
@@ -329,7 +384,57 @@ async function decide(id,verb,authority){
   }catch(e){ toast('Failed to reach HELM',0); haptic([20,40,20]); }
 }
 
-function tick(){ loadHelm(); loadQueue(); }
+async function loadJSpace(){
+  // FAIL-CLOSED: if HJOS is unreachable, show UNKNOWN — never leave a stale green verdict on the
+  // founder's screen. The whole point of J-Space is to be trusted about system truth.
+  const hero=$('#jsHero'), verd=$('#jsVerdict'), auth=$('#jsAuth'),
+        con=$('#jsConstel'), key=$('#jsKey'), act=$('#jsAct'), gov=$('#jsGov'), find=$('#jsFindings');
+  let d;
+  try{ d=await (await fetch('/api/v1/helm/jspace/health',{cache:'no-store'})).json(); }
+  catch(e){
+    hero.className='js-hero UNKNOWN'; verd.className='js-verdict UNKNOWN'; verd.textContent='UNKNOWN';
+    auth.textContent='promotion UNKNOWN'; con.innerHTML=''; act.style.display='none'; gov.innerHTML='';
+    key.textContent='HJOS unreachable — not last-known-good'; find.innerHTML=''; return;
+  }
+  const x=d.data||d;
+  const overall=x.overall||'UNKNOWN';
+  hero.className='js-hero '+overall; verd.className='js-verdict '+overall; verd.textContent=overall;
+  auth.textContent='promotion '+(x.promotion_authority||'—');
+  // observer constellation
+  const oc=x.observer_counts||{};
+  const dots=[]; ['CONFIRMED_LIVE','BLOCKED','CONTRADICTED'].forEach(st=>{
+    for(let i=0;i<(oc[st]||0);i++) dots.push('<span class="obs '+st+'"></span>'); });
+  con.innerHTML=dots.join('')||'<span class="constel-key">no observers reporting</span>';
+  const tot=Object.values(oc).reduce((a,b)=>a+b,0);
+  key.textContent=`${oc.CONFIRMED_LIVE||0}/${tot} live · ${oc.BLOCKED||0} blocked · ${oc.CONTRADICTED||0} contradicted · ${x.open_alerts??'—'} open alerts · ${x.unresolved_findings??'—'} unresolved`;
+  // recommended action
+  if(x.recommended_action){
+    const warn=/WITHHOLD|ESCALATE|RELEASE|HALT/i.test(x.recommended_action);
+    act.style.display='flex'; act.className='js-act'+(warn?' warn':'');
+    act.innerHTML='<b>▸</b><span>Recommended: <b>'+esc(x.recommended_action)+'</b></span>';
+  } else act.style.display='none';
+  // governance + mutation-truth (read-only proof)
+  const g=x.governance||{}, mt=x.mutation_truth||{};
+  const notMutated = mt.authoritative_state_mutated===false;
+  gov.innerHTML=
+    `<span class="gpill ${notMutated?'good':''}">${notMutated?'observer did not mutate state':'STATE MUTATED'}</span>`
+    +`<span class="gpill">quarantine ${g.automatic_quarantine_enabled?'auto':'manual'}</span>`
+    +`<span class="gpill">orphan leases: ${esc(g.orphan_lease_hygiene||'—')}</span>`;
+  // worst findings — each with its recommended founder action
+  const wf=x.worst_findings||[];
+  find.innerHTML=wf.map(f=>`
+    <div class="find">
+      <div class="fdot ${esc(f.assessment)}"></div>
+      <div style="min-width:0">
+        <div class="fsub">${esc(f.subject||'finding')}</div>
+        <div class="fdet">${esc(f.detail||'')}</div>
+        ${f.recommended_action?`<div class="fact">▸ ${esc(f.recommended_action)}</div>`:''}
+        <div class="fobs">${esc(f.observer||'')} · ${esc(f.observation_id||'')}</div>
+      </div>
+    </div>`).join('');
+}
+
+function tick(){ loadHelm(); loadQueue(); loadJSpace(); }
 tick(); setInterval(tick,8000);
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden){lastQueueSig='';tick();} });
 </script>
