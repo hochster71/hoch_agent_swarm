@@ -1,0 +1,22 @@
+{
+  "verdict": "SOAK_PHASE_A_FAIL",
+  "failed_controls": [
+    "evidence chain intact (AU-9, tamper-evident)"
+  ],
+  "cycles": 137,
+  "observed_peak_concurrency": 4,
+  "capacity": {
+    "configured_worker_capacity": 4,
+    "worker_peak_concurrency": 4,
+    "recovery_peak_concurrency": 0,
+    "total_peak_concurrency": 4,
+    "capacity_violation": false
+  },
+  "notes": [],
+  "unrelated_work_continued_after_every_injection": true,
+  "evaluator": "seal_soak_phase.py (independent of the runner that produced the evidence)",
+  "sealed_at": "2026-07-14T20:03:06Z",
+  "next_phase_authorized": false,
+  "24_7_status": "NOT YET PROVEN",
+  "discovery": "This FAIL is the artifact that finally identified the split-brain scheduler. Preserved, not rerun."
+}

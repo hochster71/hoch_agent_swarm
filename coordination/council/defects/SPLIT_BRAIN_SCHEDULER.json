@@ -1,0 +1,20 @@
+{
+  "schema": "HELM_DEFECT_v1",
+  "id": "SPLIT_BRAIN_SCHEDULER_CORRUPTED_ALL_BASELINES",
+  "class": "SPLIT_BRAIN",
+  "severity": "CRITICAL",
+  "found_by": "Phase A rerun seal \u2014 AU-9 evidence-chain gate (built 2 hours earlier the same day)",
+  "recorded_at": "2026-07-14T20:10:00Z",
+  "the_finding": "TWO schedulers were writing the SAME lease/dispatch ledgers the entire time. (1) the Phase A soak_runner (PID 67046, commit 28cb05bd, CHAINED writes). (2) a PersistentScheduler (PID 17807) kept alive by the launchd agent com.hoch.helm.operations (PID 12844), started 09:19, running PRE-FIX code, writing UNCHAINED rows for the SAME SOAK-* task ids. They interleaved. The package ledger chain broke at record 7.",
+  "why_this_is_the_answer_to_a_year": "This is why no baseline has EVER stuck. A second scheduler nobody accounted for has been co-writing the evidence. Every 'clean' run was silently contaminated by a foreign writer. No prior instrument could detect it -- a ledger that cannot detect a second writer looks identical to one with a single writer. The AU-9 tamper-evident chain, built the same day, caught it on its FIRST real seal. Without the chain this would have sealed as a clean PASS over corrupted dual-writer evidence.",
+  "how_confirmed": [
+    "package task_lease_ledger.jsonl: CHAIN BROKEN at record 7",
+    "live daemon ledger: last rows SOAK-HCF-135/SOAK-HSF-135 written UNCHAINED (prev_hash absent)",
+    "PID 17807 parent = PID 12844 = com.hoch.helm.operations (KeepAlive launchd agent)",
+    "independent parallel agent (launchd classification) flagged the SAME process as the scheduler parent"
+  ],
+  "remediation_taken": "launchctl bootout com.hoch.helm.operations -> supervisor 12844 GONE, phantom scheduler 17807 GONE, no respawn after 15s. Plist PRESERVED (not deleted). Restore command recorded in coordination/ops/RESTORE_helm_operations.md. Founder chose: kill now, do NOT rerun yet.",
+  "phase_a_verdict": "SOAK_PHASE_A_FAIL \u2014 CONTRADICTED on AU-9 chain (split-brain co-writer). CORRECT failure.",
+  "next_when_founder_says_go": "The live daemon ledger is now chain-contaminated by the phantom's unchained rows and must be reset to a clean chained baseline before a rerun. Then relaunch Phase A on the SINGLE writer.",
+  "residual_risk": "com.hoch.helm-autoloop (still loaded) can spawn a COMPETING uvicorn on 0.0.0.0:8770 if its health curl fails. Not a ledger writer, but a second API. Flagged for the same treatment before rerun."
+}
