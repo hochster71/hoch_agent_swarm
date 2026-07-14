@@ -1,0 +1,14 @@
+{
+  "verdict": "SOAK_PHASE_A_FAIL",
+  "failure_code": "AUTHORITY_INCOMPLETE",
+  "not_inconclusive_because": "Active LEASED/RUNNING workers lacked authority_decision_id. AUTHORITATIVE_PASS prohibited. Panel correctly INCOMPLETE.",
+  "authority_panel": "INCOMPLETE",
+  "rerun_required": true,
+  "fresh_authority_bound_phase_a_required": true,
+  "canonical_wall": "http://10.0.0.10:8770/pert",
+  "operational_beta": "PASS",
+  "authoritative_pass": "BLOCKED",
+  "sealed_at": "2026-07-14T00:21:12Z",
+  "24_7_status": "NOT PROVEN",
+  "implementation_followup": "backend/truth/authority_binding.py + scheduler propagation (committed separately)"
+}

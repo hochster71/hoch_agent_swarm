@@ -175,50 +175,40 @@ def wall_state() -> dict[str, Any]:
 
 
 def _authority_panel(active_tasks: dict[str, int]) -> dict[str, Any]:
-    """Authority on wall: EMPTY is acceptable ONLY when no active work.
+    """Authority panel: COMPLETE | INCOMPLETE | MISMATCH | REVOKED | EXPIRED | UNPROVEN | EMPTY_OK.
 
-    If any task is LEASED / RUNNING / VERIFYING, each must show a decision binding
-    or the panel is INCOMPLETE (not vacuous OK).
+    EMPTY_OK only when no LEASED/RUNNING/VERIFYING work. Active work without a full
+    binding chain is INCOMPLETE — never OK/COMPLETE.
     """
-    from backend.truth.runtime_source import classify_active_leases
+    from backend.truth.runtime_source import classify_active_leases, LEASE_DIR
+    from backend.truth.authority_binding import panel_status_from_workers
+    import json as _json
 
     leases = classify_active_leases()
-    workers = [L for L in leases.get("leases", []) if L.get("class") == "WORKER"]
-    active_count = sum(active_tasks.values()) + len(workers)
-
-    bindings = []
-    missing = []
-    for L in workers:
-        aid = L.get("authority_decision_id")
+    workers = []
+    for L in leases.get("leases", []) or []:
+        if L.get("class") != "WORKER":
+            continue
+        # Enrich from on-disk lease record when present
         tid = L.get("task_id") or L.get("lease")
-        if aid:
-            bindings.append({"task_id": tid, "authority_decision_id": aid, "status": "BOUND"})
-        else:
-            missing.append({"task_id": tid, "status": "MISSING_AUTHORITY_BINDING"})
+        rec = dict(L)
+        if tid and LEASE_DIR.exists():
+            for lock in LEASE_DIR.glob("*.lock"):
+                try:
+                    d = _json.loads(lock.read_text(encoding="utf-8"))
+                except Exception:
+                    continue
+                if d.get("task_id") == tid:
+                    rec.update({k: d.get(k) for k in (
+                        "lease_id", "authority_class", "authority_decision_id",
+                        "authority_status", "decision_digest", "dispatch_digest",
+                        "scheduler_instance_id", "task_digest",
+                    ) if d.get(k) is not None})
+                    break
+        workers.append(rec)
 
-    if active_count == 0 and not missing:
-        return {
-            "panel_status": "EMPTY_OK",
-            "reason": "no LEASED/RUNNING/VERIFYING tasks; empty authority panel is acceptable",
-            "active_work_count": 0,
-            "bindings": [],
-            "missing_bindings": [],
-        }
-    if missing:
-        return {
-            "panel_status": "INCOMPLETE",
-            "reason": "active work without authority_decision_id binding",
-            "active_work_count": active_count,
-            "bindings": bindings,
-            "missing_bindings": missing,
-        }
-    return {
-        "panel_status": "BOUND",
-        "reason": "all active worker leases carry authority_decision_id",
-        "active_work_count": active_count,
-        "bindings": bindings,
-        "missing_bindings": [],
-    }
+    idle = not workers and not active_tasks
+    return panel_status_from_workers(workers, idle=idle)
 
 
 def _active_task_factories() -> dict[str, int]:

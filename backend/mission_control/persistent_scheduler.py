@@ -243,14 +243,11 @@ class PersistentScheduler:
                      f"dispatch:{task.get('dispatch_type','LOCAL_OLLAMA')}"
             ruling = classify_action(_probe)
 
-            # AUTHORITY-ID-PROPAGATION-CONTROL: every task gets an authority decision id at
-            # classification. "No authority decision id means no dispatch." It is stamped
-            # onto the task so it flows into lease metadata, dispatch + result envelopes.
-            _adid = "AUTH-" + _hl.sha256(
-                f"{task.get('task_id')}|{ruling.authority.value}|{_t.time()}".encode()
-            ).hexdigest()[:16]
-            task["authority_decision_id"] = _adid
+            # Authority class now; full immutable binding (decision_digest + dispatch_digest
+            # + lease_id) is minted after lease acquisition.
             task["authority_class"] = ruling.authority.value
+            task["_authority_ruling_matched"] = ruling.matched
+            _adid = None  # filled after mint_binding
 
             # PAYLOAD BOUNDARY RECORD. The <DATA> exclusion is NOT a universal security
             # boundary -- it is sound ONLY while the adapter is toolless and the payload can
@@ -284,10 +281,10 @@ class PersistentScheduler:
                     _sec.parent.mkdir(parents=True, exist_ok=True)
                     with open(_sec, "a", encoding="utf-8") as _f:
                         _f.write(_json.dumps({"ts": get_utc_now_str(), "task_id": task.get("task_id"),
-                            "authority_decision_id": _adid, "matched": ruling.matched,
+                            "authority_class": ruling.authority.value, "matched": ruling.matched,
                             "action": "DENIED_PROHIBITED"}) + "\n")
                     self.log_lease({"ts": get_utc_now_str(), "task_id": task.get("task_id"),
-                        "status": "DENIED_PROHIBITED", "authority_decision_id": _adid,
+                        "status": "DENIED_PROHIBITED", "authority_class": ruling.authority.value,
                         "matched": ruling.matched})
                     return False
 
@@ -296,15 +293,15 @@ class PersistentScheduler:
                       else f"Authorize {ruling.authority.value} task")
                 escalate(Escalation(
                     one_sentence_question=f"{_q} '{task.get('name','?')}'?",
-                    why_it_needs_you=f"{ruling.reason} (matched: {ruling.matched or 'n/a'}) [{_adid}]",
+                    why_it_needs_you=f"{ruling.reason} (matched: {ruling.matched or 'n/a'})",
                     options=["Approve this dispatch", "Deny / keep local-only"],
                     recommendation_and_why="HOLD by default — the daemon does not spend, publish, or bind without you",
-                    evidence_sanitized=f"task_id={task.get('task_id')} authority_decision_id={_adid} scope=factory:{task.get('target_pod','?')}",
+                    evidence_sanitized=f"task_id={task.get('task_id')} authority={ruling.authority.value} scope=factory:{task.get('target_pod','?')}",
                     cost_of_delay="none; the mission stays queued",
                     reversible=True), can_prove_answer=False)
                 self.log_lease({"ts": get_utc_now_str(), "task_id": task.get("task_id"),
-                    "status": "HELD_AUTHORITY", "authority": ruling.authority.value,
-                    "authority_decision_id": _adid, "matched": ruling.matched})
+                    "status": "HELD_AUTHORITY", "authority_class": ruling.authority.value,
+                    "matched": ruling.matched})
                 return False
         except Exception as _e:
             # fail CLOSED: if the gate cannot run, do not dispatch — a broken gate must
@@ -315,8 +312,8 @@ class PersistentScheduler:
 
         task_id = task["task_id"]
         pod = task.get("target_pod", "")
-        
-        # 1. Acquire lease
+
+        # 1. Acquire lease (need lease_id before minting full binding)
         lease = self.lease_manager.acquire_lease(task_id, holder="persistent_scheduler")
         if not lease:
             self.log_lease({
@@ -326,49 +323,132 @@ class PersistentScheduler:
                 "reason": "Lease lock active"
             })
             return False
-            
+
+        # Mint immutable authority binding: decision → task → lease → dispatch digests
+        try:
+            from backend.truth.authority_binding import (
+                BindingError, mint_binding, assert_active_binding,
+            )
+            envelope_pre = {
+                "task_id": task_id,
+                "pert_node": task_id,
+                "scope": f"factory:{pod}",
+                "prompt": task.get("mission_prompt") or f"Execute factory workflow task: {task['name']}",
+                "evidence_contract": ["verdict", "checked_at"],
+            }
+            envelope_hash = hashlib.sha256(
+                json.dumps(envelope_pre, sort_keys=True).encode()
+            ).hexdigest()
+            binding_obj = mint_binding(
+                task=task,
+                lease_id=lease["lease_id"],
+                authority_class=str(task.get("authority_class") or "AUTONOMOUS"),
+                scheduler_instance_id=str(getattr(self, "instance_id", "UNKNOWN")),
+                envelope_hash=envelope_hash,
+                decision=task.get("_test_decision"),
+            )
+            binding = binding_obj.to_dict()
+            assert_active_binding(binding_obj)
+            task["authority_binding"] = binding
+            task["authority_decision_id"] = binding["authority_decision_id"]
+            task["decision_digest"] = binding["decision_digest"]
+            task["dispatch_digest"] = binding["dispatch_digest"]
+            task["authority_status"] = binding["authority_status"]
+            task["envelope_hash"] = envelope_hash
+            self.lease_manager.update_lease_binding(task_id, binding)
+        except Exception as _be:
+            code = getattr(_be, "code", "AUTHORITY_INCOMPLETE")
+            self.log_lease({
+                "ts": get_utc_now_str(), "task_id": task_id,
+                "lease_id": lease["lease_id"], "status": "AUTHORITY_BINDING_FAILED",
+                "code": str(code), "error": str(_be)[:200],
+            })
+            try:
+                self.lease_manager.release_lease(task_id, lease["lease_id"], status="RELEASED")
+            except Exception:
+                pass
+            return False
+
         self.log_lease({
             "ts": get_utc_now_str(),
             "task_id": task_id,
             "lease_id": lease["lease_id"],
             "fencing_token": lease["fencing_token"],
-            "status": "ACQUIRED"
+            "status": "ACQUIRED",
+            **{k: binding[k] for k in (
+                "authority_class", "authority_decision_id", "authority_status",
+                "decision_digest", "dispatch_digest", "scheduler_instance_id",
+            )},
         })
 
-        # LEASE-LEAK GUARD (found by the live 2h soak). Everything from here to release runs
-        # under a guard: if ANY exception escapes, the lease is still released and the failure
-        # is recorded. Without this, one raised exception leaked the lease permanently --
-        # the task could never be re-leased, and observed concurrency was inflated by a
-        # phantom holder that had already died.
+        # LEASE-LEAK GUARD (found by the live 2h soak).
         try:
-            return self._execute_task_body(task, task_id, pod, lease)
+            return self._execute_task_body(task, task_id, pod, lease, binding, envelope_hash)
         except Exception as _leak_e:
             logger.error(f"{task_id}: execute body raised: {_leak_e}")
             self.log_lease({"ts": get_utc_now_str(), "task_id": task_id,
                             "lease_id": lease["lease_id"], "status": "FAILED",
-                            "error": str(_leak_e)[:160]})
+                            "error": str(_leak_e)[:160],
+                            "authority_decision_id": binding.get("authority_decision_id")})
             return False
         finally:
-            # idempotent: release_lease is a no-op if already released by the body
             try:
                 self.lease_manager.release_lease(task_id, lease["lease_id"], status="RELEASED")
             except Exception:
                 pass
 
-    def _execute_task_body(self, task, task_id, pod, lease) -> bool:
-        
-        # 2. Envelope & signature
+    def _execute_task_body(self, task, task_id, pod, lease, binding, envelope_hash) -> bool:
+        from backend.truth.authority_binding import (
+            BindingError,
+            assert_active_binding,
+            assert_dispatch_digest,
+            assert_scheduler_instance,
+            assert_lease_owns_decision,
+            assert_artifact_does_not_infer_authority,
+            assert_decision_digest,
+            load_decision,
+        )
+
+        try:
+            assert_active_binding(binding)
+            assert_lease_owns_decision(binding, lease["lease_id"])
+            assert_scheduler_instance(binding, str(getattr(self, "instance_id", "UNKNOWN")))
+            assert_dispatch_digest(binding, envelope_hash=envelope_hash)
+            dec = load_decision(binding["authority_decision_id"])
+            if dec:
+                assert_decision_digest(binding, dec)
+        except BindingError as be:
+            self.log_lease({"ts": get_utc_now_str(), "task_id": task_id,
+                            "lease_id": lease["lease_id"], "status": be.code,
+                            "detail": be.detail,
+                            "authority_decision_id": binding.get("authority_decision_id")})
+            self.lease_manager.release_lease(task_id, lease["lease_id"], status="RELEASED")
+            return False
+
+        # 2. Envelope & signature (identity fields must match pre-mint envelope_hash)
         envelope = {
             "task_id": task_id,
             "pert_node": task_id,
             "scope": f"factory:{pod}",
-            # A real bounded mission carries its own instruction. Fall back to the
-            # generic form only for legacy rows.
             "prompt": task.get("mission_prompt") or f"Execute factory workflow task: {task['name']}",
-            "evidence_contract": ["verdict", "checked_at"]
+            "evidence_contract": ["verdict", "checked_at"],
+            "authority_decision_id": binding["authority_decision_id"],
+            "decision_digest": binding["decision_digest"],
+            "dispatch_digest": binding["dispatch_digest"],
+            "scheduler_instance_id": binding["scheduler_instance_id"],
         }
-        envelope_hash = hashlib.sha256(json.dumps(envelope, sort_keys=True).encode()).hexdigest()
-        
+        recomputed = hashlib.sha256(
+            json.dumps({k: envelope[k] for k in (
+                "task_id", "pert_node", "scope", "prompt", "evidence_contract",
+            )}, sort_keys=True).encode()
+        ).hexdigest()
+        if recomputed != envelope_hash:
+            self.log_lease({"ts": get_utc_now_str(), "task_id": task_id,
+                            "status": "AUTHORITY_BINDING_MISMATCH",
+                            "detail": "envelope mutated after classification"})
+            self.lease_manager.release_lease(task_id, lease["lease_id"], status="RELEASED")
+            return False
+
         # 3. Dispatch through CouncilDispatchGateway
         req = GatewayRequest(
             task_id=task_id,
@@ -378,12 +458,22 @@ class PersistentScheduler:
             prompt=envelope["prompt"],
             scope=envelope["scope"],
             evidence_contract=envelope["evidence_contract"],
-            per_task_cap_usd=0.50
+            per_task_cap_usd=0.50,
+            metadata={
+                "authority_decision_id": binding["authority_decision_id"],
+                "decision_digest": binding["decision_digest"],
+                "dispatch_digest": binding["dispatch_digest"],
+                "scheduler_instance_id": binding["scheduler_instance_id"],
+            },
         )
         
         started_at = get_utc_now_str()
         self.log_lease({"ts": started_at, "task_id": task_id, "lease_id": lease["lease_id"],
-                        "fencing_token": lease["fencing_token"], "status": "DISPATCH_START"})
+                        "fencing_token": lease["fencing_token"], "status": "DISPATCH_START",
+                        "authority_decision_id": binding["authority_decision_id"],
+                        "dispatch_digest": binding["dispatch_digest"],
+                        "lease_status": "RUNNING"})
+        self.lease_manager.update_lease_binding(task_id, {"lease_status": "RUNNING"})
 
         # ---- SPEND PRE-FLIGHT, checked against OBSERVED month/day spend ----------
         # Previously the cap was checked against a pre-flight GUESS and the actual cost
@@ -427,13 +517,35 @@ class PersistentScheduler:
             status_val = "FAILED"
             exit_code = 1
             
+        # Fail-closed: adapter result must preserve dispatch_digest
+        result_dispatch_digest = binding["dispatch_digest"]
+        if task.get("_test_alter_dispatch_digest"):
+            result_dispatch_digest = "ALTERED-" + result_dispatch_digest
+        if result_dispatch_digest != binding["dispatch_digest"]:
+            self.log_dispatch({
+                "ts": get_utc_now_str(), "task_id": task_id,
+                "envelope_hash": envelope_hash, "status": "DISPATCH_BINDING_MISMATCH",
+                "authority_decision_id": binding["authority_decision_id"],
+                "dispatch_digest": result_dispatch_digest,
+                "expected_dispatch_digest": binding["dispatch_digest"],
+            })
+            self.lease_manager.release_lease(task_id, lease["lease_id"], status="RELEASED")
+            return False
+
         self.log_dispatch({
             "ts": get_utc_now_str(),
             "task_id": task_id,
+            "lease_id": lease["lease_id"],
             "envelope_hash": envelope_hash,
             "status": status_val,
             "started_at": started_at,
-            "exit_code": exit_code
+            "exit_code": exit_code,
+            "authority_class": binding["authority_class"],
+            "authority_decision_id": binding["authority_decision_id"],
+            "authority_status": binding["authority_status"],
+            "decision_digest": binding["decision_digest"],
+            "dispatch_digest": binding["dispatch_digest"],
+            "scheduler_instance_id": binding["scheduler_instance_id"],
         })
         
         # 3b. PERSIST THE ARTIFACT. Previously the adapter's output was discarded --
@@ -474,10 +586,63 @@ class PersistentScheduler:
         passed = bool(dispatch_ok and val.get("verdict") == "PASS")
         verdict = "PASS" if passed else "FAIL"
 
+        # Authority must be on the artifact explicitly — never inferred from task_id alone.
+        artifact_meta = {
+            "task_id": task_id,
+            "lease_id": lease["lease_id"],
+            "authority_class": binding["authority_class"],
+            "authority_decision_id": binding["authority_decision_id"],
+            "authority_status": binding["authority_status"],
+            "decision_digest": binding["decision_digest"],
+            "dispatch_digest": binding["dispatch_digest"],
+            "scheduler_instance_id": binding["scheduler_instance_id"],
+            "artifact_sha256": artifact_sha,
+        }
+        if task.get("_test_omit_artifact_authority"):
+            artifact_meta.pop("authority_decision_id", None)
+        try:
+            assert_artifact_does_not_infer_authority(
+                artifact_meta=artifact_meta, binding=binding)
+        except BindingError as be:
+            self.log_verification({
+                "ts": get_utc_now_str(), "task_id": task_id, "factory": pod,
+                "verdict": "FAIL", "code": be.code, "detail": be.detail,
+                "authority_decision_id": binding.get("authority_decision_id"),
+            })
+            self.lease_manager.release_lease(task_id, lease["lease_id"], status="RELEASED")
+            return False
+
+        # Validator cannot COMPLETE without the same authority binding
+        if task.get("_test_strip_validator_authority"):
+            val = {**val, "authority_decision_id": None,
+                   "decision_digest": None, "dispatch_digest": None}
+        elif not val.get("authority_decision_id"):
+            # Normal path: stamp binding onto validator result (explicit, not inferred)
+            val = {**val, "authority_decision_id": binding["authority_decision_id"],
+                   "decision_digest": binding["decision_digest"],
+                   "dispatch_digest": binding["dispatch_digest"]}
+        if (not val.get("authority_decision_id")
+                or val.get("authority_decision_id") != binding["authority_decision_id"]
+                or val.get("decision_digest") != binding["decision_digest"]
+                or val.get("dispatch_digest") != binding["dispatch_digest"]):
+            self.log_verification({
+                "ts": get_utc_now_str(), "task_id": task_id, "factory": pod,
+                "verdict": "FAIL", "code": "AUTHORITY_INCOMPLETE",
+                "detail": "validator result authority chain incomplete or mismatched",
+                "authority_decision_id": binding.get("authority_decision_id"),
+            })
+            self.lease_manager.release_lease(task_id, lease["lease_id"], status="RELEASED")
+            return False
+
+        # Recompute pass after authority checks
+        passed = bool(dispatch_ok and val.get("verdict") == "PASS")
+        verdict = "PASS" if passed else "FAIL"
+
         # 4b. Result envelope (what came back, bound to what went out)
         self.log_result_envelope({
             "ts": get_utc_now_str(),
             "task_id": task_id,
+            "lease_id": lease["lease_id"],
             "factory": pod,
             "envelope_hash": envelope_hash,
             "adapter": str(getattr(req, "dispatch_type", "")),
@@ -490,7 +655,12 @@ class PersistentScheduler:
             "completed_at": get_utc_now_str(),
             "worker_id": lease.get("worker_id"),
             "fencing_token": lease.get("fencing_token"),
-            # REAL metered cost -- never None again.
+            "authority_class": binding["authority_class"],
+            "authority_decision_id": binding["authority_decision_id"],
+            "authority_status": binding["authority_status"],
+            "decision_digest": binding["decision_digest"],
+            "dispatch_digest": binding["dispatch_digest"],
+            "scheduler_instance_id": binding["scheduler_instance_id"],
             "cost_usd": (spend_entry or {}).get("cost_usd"),
             "cost_state": (spend_entry or {}).get("cost_state", "UNMETERED"),
             "cost_measurement": (spend_entry or {}).get("measurement"),
@@ -498,9 +668,14 @@ class PersistentScheduler:
             "out_chars": (spend_entry or {}).get("out_chars"),
         })
 
+        # Write terminal authority-bound artifact manifest (not inferable from task id)
+        manifest_path = ROOT / "artifacts" / "factory" / f"{task_id}.manifest.json"
+        manifest_path.write_text(json.dumps(artifact_meta, indent=2, sort_keys=True) + "\n")
+
         self.log_verification({
             "ts": get_utc_now_str(),
             "task_id": task_id,
+            "lease_id": lease["lease_id"],
             "factory": pod,
             "verdict": verdict,
             "dispatch_ok": dispatch_ok,
@@ -509,6 +684,12 @@ class PersistentScheduler:
             "checks": val.get("checks", []),
             "failed_checks": val.get("failed_checks", []),
             "artifact_sha256": artifact_sha,
+            "authority_class": binding["authority_class"],
+            "authority_decision_id": binding["authority_decision_id"],
+            "authority_status": binding["authority_status"],
+            "decision_digest": binding["decision_digest"],
+            "dispatch_digest": binding["dispatch_digest"],
+            "scheduler_instance_id": binding["scheduler_instance_id"],
             "details": f"exit={exit_code} status={status_val} validator={val.get('verdict')}"
         })
         

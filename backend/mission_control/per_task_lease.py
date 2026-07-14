@@ -210,8 +210,13 @@ class PerTaskLeaseManager:
             return True
 
     def acquire_lease(self, task_id: str, holder: str,
-                      duration_seconds: int = DEFAULT_LEASE_SECONDS) -> Optional[Dict[str, Any]]:
-        """Acquire the lease for THIS task only. Never blocks on other tasks."""
+                      duration_seconds: int = DEFAULT_LEASE_SECONDS,
+                      binding: Optional[Dict[str, Any]] = None) -> Optional[Dict[str, Any]]:
+        """Acquire the lease for THIS task only. Never blocks on other tasks.
+
+        ``binding`` (optional) stamps authority fields onto the durable lock record so
+        the wall/API can observe authority_decision_id without retrofitting history.
+        """
         p = self._path(task_id)
         existing = self.read_lease(task_id)
 
@@ -246,6 +251,15 @@ class PerTaskLeaseManager:
             "heartbeat_at": _iso(now),
             "status": "ACTIVE",
         }
+        # Authority binding (fail-visible on wall if absent for active work)
+        if binding:
+            for k in (
+                "authority_class", "authority_decision_id", "authority_status",
+                "decision_digest", "dispatch_digest", "scheduler_instance_id",
+                "decision_id", "task_digest",
+            ):
+                if k in binding and binding[k] is not None:
+                    lease[k] = binding[k]
         # Atomic create: if another worker won the race, O_EXCL raises and we lose.
         try:
             fd = os.open(p, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
@@ -254,6 +268,21 @@ class PerTaskLeaseManager:
         with os.fdopen(fd, "w") as f:
             json.dump(lease, f, indent=2)
         return lease
+
+    def update_lease_binding(self, task_id: str, binding: Dict[str, Any]) -> bool:
+        """Merge authority fields into an existing ACTIVE lease (after digest mint)."""
+        p = self._path(task_id)
+        lease = self.read_lease(task_id)
+        if not lease or lease.get("__corrupt__") or lease.get("status") != "ACTIVE":
+            return False
+        for k, v in binding.items():
+            if v is not None:
+                lease[k] = v
+        lease["heartbeat_at"] = _iso(_now())
+        tmp = p.with_suffix(f".{uuid.uuid4().hex[:6]}.tmp")
+        tmp.write_text(json.dumps(lease, indent=2))
+        os.replace(tmp, p)
+        return True
 
     # ---- FENCING ENFORCEMENT -------------------------------------------------
     # Minting a monotonic token is not enough: it must be CHECKED at the write

@@ -1,0 +1,10 @@
+{
+  "termination_requested_at": "2026-07-14T00:21:12Z",
+  "termination_signal": "SIGTERM",
+  "process_exit_status": "TERMINATED",
+  "reason": "KNOWN_TERMINAL_CONTROL_FAILURE",
+  "detail": "Authority binding incomplete for active SOAK workers (missing authority_decision_id). Controlled termination; preserve evidence; fresh authority-bound Phase A required. Do not retrofit historical tasks.",
+  "defect": "AUTHORITY_INCOMPLETE_ON_ACTIVE_WORK",
+  "do_not_retrofit": true,
+  "canonical_wall": "http://10.0.0.10:8770/pert"
+}
