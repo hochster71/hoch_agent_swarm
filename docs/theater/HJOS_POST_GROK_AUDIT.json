@@ -1,0 +1,45 @@
+{
+  "schema": "HJOS_POST_GROK_AUDIT_v1",
+  "audited_at": "2026-07-14T13:12:14Z",
+  "auditor": "claude_independent",
+  "verdict": "HOLD",
+  "grok_claims_verified": {
+    "daemon_pid_81804_running": "WAS_TRUE_now_restarted_8692_after_fix",
+    "burn_in_5_cycles_sufficient": "REJECTED_INSUFFICIENT",
+    "auto_quarantine_enabled": "DISABLED_pending_governance",
+    "orphan_hygiene_enabled": "SET_TO_MANUAL_APPROVAL",
+    "tests_8_passed": "TRUE_but_insufficient_now_19_incl_governance",
+    "phase_A_002656Z_SEALED_PASS": "DOWNGRADED_TO_PROVISIONAL",
+    "no_external_model_calls": "CONFIRMED_zero_network_sockets",
+    "sched_f5abadcf_spared": "CONFIRMED"
+  },
+  "defects_found": [
+    "runner emitted flat state_mutated:false while containment moved 8 lock files",
+    "assert_read_only vacuous against the containment phase Grok added",
+    "burn-in self-authorized mutation after ~5 minutes; no approved policy",
+    "clean burn-in cycle did not require CONFIRMED_LIVE (CONTRADICTED counted clean)",
+    "orphan-lease hygiene ran outside the 4 charter-permitted classes",
+    "health/dashboard showed CONFIRMED_LIVE/0 alerts with no historical/contained counts (self-clearing green)",
+    "quarantine overwrote original lock bytes ACTIVE->RELEASED (observer rewrote operational truth)"
+  ],
+  "corrections_applied": [
+    "fail-closed quarantine_governance.json (mutation requires approved authorizing_policy_id)",
+    "quarantine.py: both paths deny without approved policy",
+    "runner.py: differentiated mutation_truth (observation/containment/authoritative) + containment_evidence",
+    "runner.py: health surface now carries active/historical/contained/unresolved counts; flat state_mutated removed",
+    "burn_in.py: clean requires CONFIRMED_LIVE; burn-in no longer self-authorizes; audit-disable is sticky",
+    "burn_in.json reset to disabled; prior preserved in audit_evidence/",
+    "tests: +11 governance/boundary tests; 4 stale tests updated to corrected contract (19 pass)"
+  ],
+  "orphan_hygiene_finding": {
+    "moved_locks": 8,
+    "classification": "INDEPENDENTLY_PROVEN_expired_foreign_orphans (all expired pre-quarantine, none == sched-f5abadcf, already ledger-released debris of the release_lease bug)",
+    "disposition": "PRESERVED_in_quarantine (not deleted, not force-restored); classification correct so no restore required",
+    "caveat": "original ACTIVE bytes were overwritten to RELEASED by the mover; verbatim originals not recoverable"
+  },
+  "phase_A_disposition": "PROVISIONAL",
+  "phase_A_reason": "lease-leak freedom measured by pre-fix ledger blind to release failures; physical-lock dimension never snapshotted; other controls (122 cycles, 488/488 authority, 4/4 concurrency, 8/8 injections) independently hold",
+  "active_soak": "IN_PROGRESS sched-f5abadcf phase C 24h started 2026-07-14T11:41:43Z",
+  "authoritative_pass": "BLOCKED",
+  "24_7_status": "NOT_PROVEN"
+}

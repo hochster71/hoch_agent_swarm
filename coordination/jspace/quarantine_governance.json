@@ -1,0 +1,14 @@
+{
+  "schema": "HJOS_QUARANTINE_GOVERNANCE_v1",
+  "automatic_quarantine_enabled": false,
+  "orphan_lease_hygiene": "manual_approval",
+  "authorizing_policy_id": null,
+  "rationale": "Independent audit 2026-07-14: auto-quarantine + orphan hygiene were self-authorized by a ~5-minute burn-in, not by any approved governance artifact. The charter still declares automatic_quarantine_enabled=False and promotion_authority=NONE. Mutation is disabled fail-closed until a founder-approved policy id is present here. Observation continues.",
+  "set_by": "claude_independent_audit",
+  "set_at_note": "see audit_evidence/",
+  "requires_for_enable": [
+    "founder-approved authorizing_policy_id",
+    "burn-in defined by that policy (not a hardcoded 5)",
+    "clean cycle must mean overall==CONFIRMED_LIVE, not merely no-mutation"
+  ]
+}

@@ -19,67 +19,6 @@ from backend.jspace.quarantine import (
 )
 from backend.jspace.schema import JSpaceEvent, new_id
 from backend.jspace.sources import collect_wall_inputs
-from backend.jspace.quarantine import _governance as _load_governance
-
-import json as _json
-from pathlib import Path as _Path
-
-
-def _finding_history(ledger_root) -> Dict[str, int]:
-    """Count findings that EVER occurred vs those contained. History is immutable;
-    active alerts may fall to zero but historical/contained must not."""
-    root = _Path(ledger_root)
-    historical = 0
-    seen = set()
-    ap = root / "assessments.jsonl"
-    if ap.exists():
-        for line in ap.read_text(encoding="utf-8").splitlines():
-            if not line.strip():
-                continue
-            try:
-                d = _json.loads(line)
-            except Exception:
-                continue
-            if str(d.get("assessment")) in ("CONTRADICTED", "BLOCKED"):
-                key = (d.get("observer"), d.get("subject"), d.get("observed_at"))
-                if key not in seen:
-                    seen.add(key)
-                    historical += 1
-    contained = 0
-    qp = root / "quarantine_requests.jsonl"
-    if qp.exists():
-        for line in qp.read_text(encoding="utf-8").splitlines():
-            if not line.strip():
-                continue
-            try:
-                d = _json.loads(line)
-            except Exception:
-                continue
-            if d.get("executed") is True or d.get("moved"):
-                contained += 1
-    return {
-        "historical_findings": historical,
-        "contained_findings": contained,
-        "unresolved_findings": max(historical - contained, 0),
-    }
-
-
-def _augment_health(ledger_root, mutation_truth, finding_counts, gov_doc) -> None:
-    root = _Path(ledger_root)
-    hp = root / "health.json"
-    try:
-        h = _json.loads(hp.read_text(encoding="utf-8"))
-    except Exception:
-        return
-    h.pop("state_mutated", None)  # remove the flat lie
-    h["mutation_truth"] = mutation_truth
-    h.update(finding_counts)
-    h["governance"] = {
-        "authorizing_policy_id": gov_doc.get("authorizing_policy_id"),
-        "automatic_quarantine_enabled": bool(gov_doc.get("authorizing_policy_id")) and bool(gov_doc.get("automatic_quarantine_enabled")),
-        "orphan_lease_hygiene": gov_doc.get("orphan_lease_hygiene"),
-    }
-    hp.write_text(_json.dumps(h, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
 def run_hjos_cycle(
@@ -198,46 +137,13 @@ def run_hjos_cycle(
             event_id=f"JEVT-{cycle_id[-6:]}-END",
         ))
 
-        # ---- DIFFERENTIATED MUTATION TRUTH (independent audit 2026-07-14) ----
-        # A flat state_mutated:false is a lie when containment moved lease files.
-        containment_moved = []
-        for qr in quarantine_results:
-            for a in (qr.get("actions") or []):
-                containment_moved.append(a)
-            for m in (qr.get("moved") or []):
-                containment_moved.append(m)
-        containment_mutated = bool(containment_moved)
-        gov_doc = _load_governance(repo_root)
-
-        # ---- HISTORICAL vs ACTIVE finding counts (no self-clearing green) ----
-        hist = _finding_history(ledger.root)
-
-        mutation_truth = {
-            "observation_state_mutated": False,
-            "containment_state_mutated": containment_mutated,
-            "authoritative_state_mutated": False,
-            "containment_authorized": bool(gov_doc.get("authorizing_policy_id")) and containment_mutated,
-            "containment_policy_id": gov_doc.get("authorizing_policy_id"),
-            "containment_evidence": containment_moved,
-        }
-        finding_counts = {
-            "active_alerts": health.open_alerts,
-            "historical_findings": hist["historical_findings"],
-            "contained_findings": hist["contained_findings"],
-            "unresolved_findings": hist["unresolved_findings"],
-        }
-        # Re-write health.json with the full truth so the dashboard/API cannot show
-        # a clean green that hides contained history.
-        _augment_health(ledger.root, mutation_truth, finding_counts, gov_doc)
-
         return {
             "schema": "HJOS_CYCLE_RESULT_v1",
             "cycle_id": cycle_id,
             "charter": charter.short_name,
             "mode": charter.default_mode.value,
             "promotion_authority": "NONE",
-            "mutation_truth": mutation_truth,
-            "finding_counts": finding_counts,
+            "state_mutated": False,
             "overall": health.overall.value,
             "open_alerts": health.open_alerts,
             "recommended_action": health.recommended_action,
@@ -246,11 +152,6 @@ def run_hjos_cycle(
             "health_digest": health_doc.get("health_digest"),
             "ledger_root": str(ledger.root),
             "observed_at": health.observed_at,
-            "governance": {
-                "authorizing_policy_id": gov_doc.get("authorizing_policy_id"),
-                "automatic_quarantine_enabled": bool(gov_doc.get("authorizing_policy_id")) and bool(gov_doc.get("automatic_quarantine_enabled")),
-                "orphan_lease_hygiene": gov_doc.get("orphan_lease_hygiene"),
-            },
             "burn_in": {
                 "complete": burn_state.get("burn_in_complete"),
                 "clean_cycles": burn_state.get("clean_cycles"),

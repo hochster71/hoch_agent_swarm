@@ -97,7 +97,8 @@ def test_cycle_detects_unbound_active_lease(tmp_path: Path):
 
     jspace = tmp_path / "jspace"
     result = run_hjos_cycle(repo_root=repo, ledger_root=jspace)
-    assert result["state_mutated"] is False
+    assert result["mutation_truth"]["observation_state_mutated"] is False
+    assert result["mutation_truth"]["authoritative_state_mutated"] is False
     assert result["promotion_authority"] == "NONE"
     assert result["overall"] == "CONTRADICTED"
     assert result["recommended_action"] == "WITHHOLD_PROMOTION"
@@ -109,7 +110,8 @@ def test_cycle_detects_unbound_active_lease(tmp_path: Path):
     assert any(a["assessment"] == "CONTRADICTED" for a in auth_rows)
     health = json.loads((jspace / "health.json").read_text())
     assert health["promotion_authority"] == "NONE"
-    assert health["state_mutated"] is False
+    assert "state_mutated" not in health  # flat lie removed
+    assert health["mutation_truth"]["authoritative_state_mutated"] is False
 
 
 def test_cycle_bound_lease_not_contradicted(tmp_path: Path):
@@ -146,7 +148,7 @@ def test_cycle_bound_lease_not_contradicted(tmp_path: Path):
 
     jspace = tmp_path / "jspace2"
     result = run_hjos_cycle(repo_root=repo, ledger_root=jspace)
-    assert result["state_mutated"] is False
+    assert result["mutation_truth"]["authoritative_state_mutated"] is False
     # Should not be CONTRADICTED on authority binding
     assessments = JSpaceLedger(jspace).recent_assessments()
     auth_rows = [a for a in assessments if a["subject"] == "active_leases_authority"]
@@ -161,3 +163,59 @@ def test_ledger_append_only(tmp_path: Path):
     led.append_event(JSpaceEvent(event_type="T", source="t", subject="s2"))
     rows = led.read_jsonl(led.events_path)
     assert len(rows) == 2
+
+
+def test_burn_in_gates_quarantine(tmp_path: Path):
+    from backend.jspace.burn_in import BurnInTracker
+    b = BurnInTracker(tmp_path, min_cycles=3)
+    assert b.load()["automatic_quarantine_enabled"] is False
+    for i in range(3):
+        st = b.record_cycle(
+            cycle_id=f"c{i}", overall="CONFIRMED_LIVE", state_mutated=False
+        )
+    # CORRECTED (audit 2026-07-14): burn-in may reach readiness but must NEVER
+    # self-authorize mutation. The fail-closed governance gate is the only authority.
+    assert st["automatic_quarantine_enabled"] is False
+    assert st.get("burn_in_ready") is True
+
+
+def test_orphan_hygiene_spares_live_instance(tmp_path: Path):
+    from backend.jspace.quarantine import quarantine_expired_orphan_locks
+    leases = tmp_path / "coordination" / "leases"
+    leases.mkdir(parents=True)
+    # orphan hygiene is now fail-closed on governance; authorize it for this test
+    (tmp_path / "coordination" / "jspace").mkdir(parents=True)
+    (tmp_path / "coordination" / "jspace" / "quarantine_governance.json").write_text(
+        json.dumps({"automatic_quarantine_enabled": True,
+                    "orphan_lease_hygiene": "auto",
+                    "authorizing_policy_id": "TEST-POLICY"}))
+    # expired orphan
+    (leases / "OLD.abc.lock").write_text(json.dumps({
+        "task_id": "OLD", "lease_id": "l1", "status": "ACTIVE",
+        "scheduler_instance_id": "sched-dead",
+        "expires_at": "2020-01-01T00:00:00+00:00",
+    }))
+    # live instance unexpired
+    (leases / "LIVE.abc.lock").write_text(json.dumps({
+        "task_id": "LIVE", "lease_id": "l2", "status": "ACTIVE",
+        "scheduler_instance_id": "sched-live",
+        "expires_at": "2099-01-01T00:00:00+00:00",
+    }))
+    # live instance but expired — still spare because same instance
+    (leases / "LIVEEXP.abc.lock").write_text(json.dumps({
+        "task_id": "LIVEEXP", "lease_id": "l3", "status": "ACTIVE",
+        "scheduler_instance_id": "sched-live",
+        "expires_at": "2020-01-01T00:00:00+00:00",
+    }))
+    logged = []
+    r = quarantine_expired_orphan_locks(
+        enabled=True,
+        current_instance_id="sched-live",
+        ledger_append=logged.append,
+        repo_root=tmp_path,
+        cycle_id="c1",
+    )
+    assert r["executed"] is True
+    assert not (leases / "OLD.abc.lock").exists()
+    assert (leases / "LIVE.abc.lock").exists()
+    assert (leases / "LIVEEXP.abc.lock").exists()  # spared — live instance
