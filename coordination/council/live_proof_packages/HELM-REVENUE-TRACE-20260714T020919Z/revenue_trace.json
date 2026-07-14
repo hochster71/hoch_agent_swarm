@@ -1,0 +1,30 @@
+{
+  "verdict": "REVENUE_TRACE_PROVEN",
+  "observed_at": "2026-07-14T02:09:19Z",
+  "product": "EPIC_FURY_2026",
+  "revenue_usd": 20.52,
+  "livemode": true,
+  "chain": {
+    "checkout_reachable": "PROVEN (PaywallModal loop fixed \u2014 94a21e8)",
+    "real_charge": "PROVEN \u2014 $20.52 succeeded, livemode=true",
+    "subscription_active": "PROVEN \u2014 sub_1Tsv7sDK7BrrgheoshRHrKGk",
+    "webhook_delivered": "PROVEN \u2014 pending_webhooks=0, Stripe reported 200 OK",
+    "entitlement_written": "PROVEN \u2014 to the PURCHASING user 73ffe34b-\u2026",
+    "subscription_status": "active",
+    "stripe_customer_id": "linked",
+    "privileged_role_preserved": "PROVEN \u2014 role=admin survived payment (3ed86ef)",
+    "paid_customer_entitlement": "PROVEN \u2014 getEntitlement() -> paid_customer"
+  },
+  "bugs_found_by_this_one_dollar": [
+    "CHECKOUT LOOP: PaywallModal pre-flighted the session with the BROWSER supabase client, which cannot read httpOnly cookies. Every signed-in user was bounced back to /login forever. NO CUSTOMER COULD EVER HAVE PAID.",
+    "ADMIN DESTRUCTION: all 3 webhook handlers wrote the role blindly. Paying would have replaced role=admin with 'subscriber'; cancelling would have set role='free', stripping admin entirely.",
+    "UNPROVABLE PAID PATH: entitlement keyed only on role='subscriber', so a paying admin could never register as a customer."
+  ],
+  "bug_i_introduced_and_had_to_own": "My webhook-secret probe stripped the whsec_ prefix before computing the HMAC. Stripe keys the HMAC with the FULL secret. The probe therefore returned 400 for ANY secret and reported SECRET DOES NOT MATCH twice \u2014 falsely. Michael rotated production twice on the strength of a test that could not have passed. The secret was correct the entire time. A broken test that reports FAIL is not safer than one that reports PASS.",
+  "north_star": {
+    "metric": "verified_founder_minutes_per_shipped_dollar",
+    "denominator_usd": 20.52,
+    "status": "COMPUTABLE \u2014 first time in program history",
+    "previously": "UNDEFINED (revenue was $0; division by zero)"
+  }
+}

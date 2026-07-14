@@ -1,0 +1,28 @@
+{
+  "schema": "PRODUCT_REGISTRY_v1",
+  "doctrine": "A product exists when a stranger can name it, see a price, and reach a checkout. Anything less is an artifact.",
+  "products": [
+    {
+      "product_id": "EPIC_FURY_2026",
+      "factory": "HASF",
+      "name": "Epic Fury 2026",
+      "what_it_is": "Conflict-intelligence platform. Live OSINT feeds AND the Operation Epic Fury simulated scenario, with every dashboard labelled LIVE / SIMULATION / MIXED so an analyst never has to guess which they are reading.",
+      "buyer": "Geopolitical/defense analysts, risk desks, journalists, wargamers",
+      "price_usd": 19,
+      "billing": "monthly",
+      "annual_price_usd": 190,
+      "merchant_of_record": "stripe_managed_payments",
+      "checkout_url": "https://epic-fury-2026.vercel.app/upgrade",
+      "checkout_blocked_by": null,
+      "entitlement_source": "signed lemonsqueezy webhook only",
+      "app_commit": "e92e75a",
+      "stripe_price_monthly": "price_1TsnrvDK7BrrgheoqJxC3QxU",
+      "stripe_price_annual": "price_1TsnrvDK7Brrgheo06ZuaCNz",
+      "verified_at": "2026-07-14T02:09:19Z",
+      "revenue_usd_total": 20.52,
+      "first_paying_customer_at": "2026-07-14T02:09:19Z",
+      "revenue_trace": "PROVEN",
+      "monetization_rung": "5_EARNING"
+    }
+  ]
+}
