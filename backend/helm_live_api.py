@@ -307,28 +307,19 @@ def _truth_response(truth_class: str, source: str, observed_at: str, freshness_s
 
 
 def _newest_soak_pkg():
-    """The AUTHORITATIVE soak package: the newest REAL phase run (2H/8H/24H/72H).
-
-    Grok F-A2: this was globbing HELM-SOAK-* and could return an arbitrary HELM-SOAK-XH-*
-    SMOKE package -- so the wall reported soak truth from a 90-second smoke test instead of
-    the live phase run. Smoke packages are excluded; phase packages only.
-    """
-    if not PKGS.exists():
-        return None
-    phases = [d for d in PKGS.iterdir()
-              if d.is_dir() and re.match(r"HELM-SOAK-(2H|8H|24H|72H)-", d.name)]
-    if not phases:
-        return None
-    # prefer a run still IN_PROGRESS (no seal yet); else the newest sealed run
-    running = [d for d in phases if not (d / "seal_verdict.json").exists()]
-    return sorted(running or phases)[-1]
+    """F-A2: authoritative phase soak package (not XH smoke; not pure name sort)."""
+    from backend.truth.soak_select import select_soak_package
+    return select_soak_package(PKGS)
 
 
 @app.get("/api/v1/helm/wall")
 def api_wall():
-    """Every scope derived INDEPENDENTLY. A locked 24/7 gate must not freeze the factories."""
+    """Every scope derived INDEPENDENTLY. A locked 24/7 gate must not freeze the factories.
+
+    F-A6: response carries the standard truth metadata contract.
+    """
     from backend.truth.wall_state import wall_state
-    return wall_state()
+    return JSONResponse(wall_state())
 
 
 @app.get("/api/v1/helm/runtime")
