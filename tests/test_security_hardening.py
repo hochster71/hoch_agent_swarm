@@ -62,15 +62,20 @@ def _client(app):
 
 
 # ------------------------------------------------------------------- bind audit
-def test_bind_audit_detects_real_config_0000():
-    """The real repo launcher binds --host 0.0.0.0; the audit MUST flag it."""
+def test_bind_audit_live_launcher_hardened_but_flags_remaining():
+    """Post Zero-Trust cutover (DEC-ZT-CUTOVER-001): the live-API launcher
+    helm_autoloop.sh is loopback-bound, so it is NO LONGER flagged. The audit still
+    fail-closes (FAIL) because other 0.0.0.0 configs remain in the tree — the retired
+    voice launcher scripts (dead: their launchd job is disabled) and separate
+    services (docker :8000, relay :8010). That is an honest 'not fully hardened yet'
+    verdict; detection of a 0.0.0.0 binding is proven against a synthetic fixture in
+    test_bind_audit_flags_synthetic_all_interface_listener."""
     report = bind_audit.run_audit()
-    cfg_findings = report["config"]["all_interface_bindings"]
-    assert cfg_findings, "expected at least one 0.0.0.0 config binding in the repo"
-    files = {f["file"] for f in cfg_findings}
-    assert any("helm_autoloop.sh" in f for f in files), files
-    # any exposure => fail-closed verdict, nonzero exit
-    assert report["verdict"] == "FAIL"
+    files = {f["file"] for f in report["config"]["all_interface_bindings"]}
+    assert not any("helm_autoloop.sh" in f for f in files), (
+        f"helm_autoloop.sh must stay loopback-bound after the cutover; found {files}"
+    )
+    assert report["verdict"] == "FAIL"      # other services / dead scripts still expose 0.0.0.0
     assert report["exit_code"] == 2
 
 
@@ -112,9 +117,10 @@ def test_bind_audit_fail_closed_when_runtime_unavailable(monkeypatch):
     assert report["exit_code"] == 3
 
 
-def test_bind_audit_reports_tls_gap():
+def test_bind_audit_reports_tls_configured_post_cutover():
+    """Post-cutover the live-API launcher terminates TLS at the origin (SC-8)."""
     report = bind_audit.run_audit()
-    assert report["tls"]["live_api_tls_configured"] is False
+    assert report["tls"]["live_api_tls_configured"] is True
 
 
 # -------------------------------------------------------------------- read auth
